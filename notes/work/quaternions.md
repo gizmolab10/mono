@@ -17,7 +17,7 @@ i want to render 3D data as 2D perspective. Rotatable objects, rotatable sub-obj
 **Stack:**
 - `gl-matrix` for quaternions, matrices, projection math
 - Canvas 2D API for line drawing
-- Vanilla TS (maybe Svelte later)
+- Svelte + Vite + TypeScript
 
 **Pipeline:**
 1. Define 3D vertices + edges
@@ -35,6 +35,7 @@ i want to render 3D data as 2D perspective. Rotatable objects, rotatable sub-obj
 - [x] Create a VSCode project, in ~/GitHub/di
 - [x] Line styling (depth-based opacity)
 - [x] create github repo
+- [x] add Svelte
 
 ## Resume Points
 
@@ -54,3 +55,6 @@ i want to render 3D data as 2D perspective. Rotatable objects, rotatable sub-obj
 - **2025-01-05**: Renamed `SceneObject` to `O_Scene`. Added `O_` prefix to style.md for data object interfaces.
 - **2025-01-05**: Created GitHub repo `design.intuition`, pushed.
 - **2025-01-05**: Added `Point3`, `Size3`, `Block` to Coordinates.ts. Replaced `vertices` arrays with `Point3[]` in O_Scene, Scene, Render, test.ts.
+- **2025-01-05**: Added Svelte. Created App.svelte, updated vite.config.ts, tsconfig.json. Run `yarn` to install new deps.
+- **2025-01-05**: Fixed circular dependency hell—use `import type` for type-only imports (Interfaces.ts, Input.ts, Scene.ts, Render.ts). Sanitized webseriously imports in Extensions.ts, Testworthy_Utilities.ts, S_Mouse.ts.
+- **2025-01-05**: Moved Enumerations.ts from common/ to types/.

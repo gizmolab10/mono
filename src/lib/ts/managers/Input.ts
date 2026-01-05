@@ -1,5 +1,5 @@
 import { quat } from 'gl-matrix';
-import { O_Scene } from '../types/Interfaces';
+import type { O_Scene } from '../types/Interfaces';
 import { Point } from '../types/Coordinates';
 
 type T_Handle_Drag = (delta: Point) => void;

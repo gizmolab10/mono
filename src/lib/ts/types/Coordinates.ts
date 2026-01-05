@@ -1,6 +1,5 @@
 import { T_Quadrant, T_Orientation } from './Angle';
-// import type { SvelteComponent } from 'svelte';
-// import type { BBox } from 'rbush';
+import '../common/Extensions';
 import Angle from './Angle';
 
 const p = 2;
@@ -29,7 +28,7 @@ export class Point {
 	get pixelVerbose():				 		 string { return `${this.x.toFixed(p)}px ${this.y.toFixed(p)}px`; }
 	get verbose():					 		 string { return `(${this.x.toFixed(p)}, ${this.y.toFixed(p)})`; }
 	get description():				 		 string { return `${this.x.toFixed(p)} ${this.y.toFixed(p)}`; }
-	get asBBox():							   BBox { return { minX: this.x, minY: this.y, maxX: this.x, maxY: this.y }; }
+	// get asBBox():							   BBox { return { minX: this.x, minY: this.y, maxX: this.x, maxY: this.y }; }
 	get asPolar():							  Polar { return new Polar(this.magnitude, this.angle); }
 	get asSize():					 	 	   Size { return new Size(this.x, this.y); }		// NB: can have negative values, so rect extended by negative works
 	get negated():					 		  Point { return this.multipliedEquallyBy(-1); }
@@ -183,7 +182,7 @@ export class Rect {
 	get verbose():					 string { return `${this.origin.verbose}, ${this.size.verbose}`; }
 	get description():				 string { return `${this.origin.description} ${this.size.description}`; }
 	get pixelVerbose():				 string { return `${this.origin.pixelVerbose} ${this.size.pixelVerbose}`; }
-	get asBBox():					   BBox { return { minX: this.x, minY: this.y, maxX: this.right, maxY: this.bottom }; }
+	// get asBBox():					   BBox { return { minX: this.x, minY: this.y, maxX: this.right, maxY: this.bottom }; }
 	get center():					  Point { return this.origin.offsetBy(this.size.center); }
 	get extent():					  Point { return this.origin.offsetBy(this.size.asPoint); }		// bottom right
 	get topRight():					  Point { return new Point(this.extent.x, this.origin.y); }
@@ -324,18 +323,19 @@ export class Rect {
 		return new Rect(origin, size);
 	}
 
-	static rect_forComponent(c: SvelteComponent): Rect {
-		const top = c['offsetTop'];
-		const left = c['offsetLeft'];
-		const width = c['offsetWidth'];
-		const height = c['offsetHeight'];
-		if ((!!top || top == 0) && (!!left || left == 0) && !!width && !!height) {
-			return new Rect(new Point(left, top), new Size(width, height));
-		}
-		return Rect.zero;
-	}
+	// static rect_forComponent(c: SvelteComponent): Rect {
+	// 	const top = c['offsetTop'];
+	// 	const left = c['offsetLeft'];
+	// 	const width = c['offsetWidth'];
+	// 	const height = c['offsetHeight'];
+	// 	if ((!!top || top == 0) && (!!left || left == 0) && !!width && !!height) {
+	// 		return new Rect(new Point(left, top), new Size(width, height));
+	// 	}
+	// 	return Rect.zero;
+	// }
 
 }
+
 export class Point3 {
 	x: number;
 	y: number;

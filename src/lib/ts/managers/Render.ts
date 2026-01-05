@@ -1,5 +1,5 @@
 import { mat4, vec4 } from 'gl-matrix';
-import { Projected, O_Scene } from '../types/Interfaces';
+import type { Projected, O_Scene } from '../types/Interfaces';
 import { Size, Point3 } from '../types/Coordinates';
 import { camera } from './Camera';
 import { scene } from './Scene';

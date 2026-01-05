@@ -1,5 +1,5 @@
 import { quat, vec3 } from 'gl-matrix';
-import { O_Scene } from '../types/Interfaces';
+import type { O_Scene } from '../types/Interfaces';
 import { Point3 } from '../types/Coordinates';
 
 class Scene {

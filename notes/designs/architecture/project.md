@@ -7,12 +7,15 @@ How does the app actually run? Here's the flow.
 ```
 index.html
     └── src/main.ts
-            └── init(canvas)  ← from src/lib/ts/test.ts
+            └── App.svelte
+                    └── init(canvas)  ← from src/lib/ts/test.ts
 ```
 
 **index.html** loads the module.
 
-**main.ts** builds the DOM—styles, canvas, info text—then calls `init(canvas)`.
+**main.ts** mounts the Svelte app.
+
+**App.svelte** renders the canvas and UI, calls `init(canvas)` on mount.
 
 **test.ts** wires everything together:
 1. Initializes managers with the canvas

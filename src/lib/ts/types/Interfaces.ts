@@ -1,5 +1,5 @@
-import { quat, vec3 } from 'gl-matrix';
-import { Point3 } from './Coordinates';
+import type { quat, vec3 } from 'gl-matrix';
+import type { Point3 } from './Coordinates';
 
 // Projected stays here (not in Coordinates.ts) because it's a pipeline-specific
 // output structure, not a reusable geometry primitive. The `w` field is for

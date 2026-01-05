@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/quaternions.md",
+                "file": "notes/designs/architecture/files.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "quaternions"
+              "title": "files"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "notes/work/quaternions.md",
+                "file": "notes/designs/architecture/files.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for quaternions"
+              "title": "Backlinks for files"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "notes/work/quaternions.md",
+                "file": "notes/designs/architecture/files.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from quaternions"
+              "title": "Outgoing links from files"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/work/quaternions.md",
+                "file": "notes/designs/architecture/files.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of quaternions"
+              "title": "Outline of files"
             }
           }
         ]
@@ -186,31 +186,40 @@
   "active": "15b510b01357815f",
   "lastOpenFiles": [
     "notes/designs/architecture/project.md",
-    "notes/work/quaternions.md",
-    "notes/designs/architecture/types.md",
-    "notes/designs/guides/style.md",
-    "notes/designs/architecture/managers.md",
-    "notes/designs/architecture/files.md",
-    "src/lib/svelte/draw/Printable.svelte",
-    "src/lib/svelte/draw",
-    "src/lib/ts/utilities/Utilities.ts",
     "src/lib/ts/common/Extensions.ts",
-    "src/lib/ts/common",
-    "src/lib/ts/utilities/Print.ts",
-    "src/lib/ts/utilities/Colors.ts",
-    "src/lib/ts/utilities/Testworthy_Utilities.ts",
-    "src/lib/ts/utilities",
-    "src/lib/ts/types/Interfaces.ts",
-    "CLAUDE.MD",
-    "notes/designs/guides/access.md",
-    "notes/designs/guides/markdown.md",
-    "notes/designs/guides/chat.md",
-    "notes/designs/guides/voice.md",
-    "notes/designs/guides/refactoring.md",
-    "notes/designs/guides/migration.md",
-    "notes/designs/guides/index.md",
-    "notes/designs/guides/gotchas.md",
-    "notes/designs/guides/debugging.md",
-    "notes/designs/guides/composition.md"
+    "vite.config.ts.timestamp-1767654746529-ed3f3f3d327b3.mjs",
+    "src/lib/ts/types/Extensions.ts",
+    "src/lib/ts/types/Enumerations.ts",
+    "vite.config.ts.timestamp-1767654214077-15372865a9096.mjs",
+    "vite.config.ts.timestamp-1767653917956-861d5eeab8ea8.mjs",
+    "vite.config.ts.timestamp-1767653788440-cf7d80e1192fa.mjs",
+    "vite.config.ts.timestamp-1767653694847-2fce861de5939.mjs",
+    "src/lib/ts/common/Constants.ts",
+    "vite.config.ts.timestamp-1767653387078-108b856ff3239.mjs",
+    "node_modules/typed-signals/README.md",
+    "node_modules/@types/uuid/README.md",
+    "node_modules/uuid/README.md",
+    "node_modules/uuid/LICENSE.md",
+    "node_modules/sorcery/bin/help.md",
+    "node_modules/mdn-data/css/readme.md",
+    "node_modules/@jridgewell/sourcemap-codec/README.md",
+    "node_modules/@sveltejs/vite-plugin-svelte-inspector/README.md",
+    "node_modules/@jridgewell/trace-mapping/README.md",
+    "node_modules/@jridgewell/resolve-uri/README.md",
+    "node_modules/@sveltejs/vite-plugin-svelte/README.md",
+    "node_modules/@ampproject/remapping/README.md",
+    "node_modules/@tsconfig/svelte/README.md",
+    "node_modules/vitefu/README.md",
+    "node_modules/@jridgewell/gen-mapping/README.md",
+    "node_modules/wrappy/README.md",
+    "node_modules/to-regex-range/README.md",
+    "node_modules/svelte-preprocess/README.md",
+    "node_modules/svelte-hmr/README.md",
+    "node_modules/svelte-check/README.md",
+    "node_modules/svelte/README.md",
+    "node_modules/svelte/LICENSE.md",
+    "node_modules/strip-indent/readme.md",
+    "node_modules/sander/CHANGELOG.md",
+    "node_modules/sorcery/README.md"
   ]
 }

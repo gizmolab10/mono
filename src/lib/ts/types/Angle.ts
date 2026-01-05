@@ -1,6 +1,3 @@
-import { tu } from '../utilities/Testworthy_Utilities';
-import '../common/Extensions';
-
 export enum T_Quadrant {
 	upperRight = 'ur',	// 				0 ... quarter
 	upperLeft  = 'ul',	//		  quarter ... half
@@ -53,7 +50,15 @@ export default class Angle {
 	}
 
 	get angle_points_down(): boolean { return this.orientation_ofAngle == T_Orientation.down; }
-	get quadrant_basis_angle(): number { return tu.basis_angle_ofType_Quadrant(this.quadrant_ofAngle); }
+
+	get quadrant_basis_angle(): number {
+		switch (this.quadrant_ofAngle) {
+			case T_Quadrant.upperRight: return 0;
+			case T_Quadrant.upperLeft:  return Angle.quarter;
+			case T_Quadrant.lowerLeft:  return Angle.half;
+			case T_Quadrant.lowerRight: return Angle.three_quarters;
+		}
+	}
 
 	get angle_slants_forward(): boolean {
 		const quadrant = this.quadrant_ofAngle;

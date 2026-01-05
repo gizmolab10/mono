@@ -1,5 +1,5 @@
 import { parseToRgba, transparentize } from 'color2k';
-import { T_Preference } from '../common/Enumerations';
+import { T_Preference } from '../types/Enumerations';
 import { get, writable } from 'svelte/store';
 import { p } from '../managers/Preferences';
 
