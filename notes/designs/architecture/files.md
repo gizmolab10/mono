@@ -33,7 +33,7 @@ src/
 | File | What it does |
 |------|--------------|
 | `types/Angle.ts` | `Angle` class, `T_Quadrant`, `T_Orientation`, `Direction` enums |
-| `types/Coordinates.ts` | `Point`, `Size`, `Rect`, `Polar` classes |
+| `types/Coordinates.ts` | `Point`, `Size`, `Rect`, `Polar`, `Point3`, `Size3`, `Block` classes |
 | `types/Interfaces.ts` | `Projected`, `O_Scene` interfaces |
 
 ## Managers

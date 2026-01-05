@@ -1,12 +1,13 @@
 import { quat, vec3 } from 'gl-matrix';
 import { O_Scene } from '../types/Interfaces';
+import { Point3 } from '../types/Coordinates';
 
 class Scene {
   private objects: Map<string, O_Scene> = new Map();
   private id_counter = 0;
 
   create(config: {
-    vertices: [number, number, number][];
+    vertices: Point3[];
     edges: [number, number][];
     position?: vec3;
     scale?: number;

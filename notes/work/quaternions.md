@@ -34,7 +34,7 @@ i want to render 3D data as 2D perspective. Rotatable objects, rotatable sub-obj
 - [x] Nested transforms (object within object)
 - [x] Create a VSCode project, in ~/GitHub/di
 - [x] Line styling (depth-based opacity)
-- [ ] create github repo
+- [x] create github repo
 
 ## Resume Points
 
@@ -52,16 +52,5 @@ i want to render 3D data as 2D perspective. Rotatable objects, rotatable sub-obj
 - **2025-01-05**: Applied style.md naming—snake_case for variables/methods, `T_` prefix for types. Updated all managers and test.ts.
 - **2025-01-05**: Phase 3 done—Camera.init() now takes `Size`. Phase 5 callers updated. Migration complete (skipping Phase 4 per plan).
 - **2025-01-05**: Renamed `SceneObject` to `O_Scene`. Added `O_` prefix to style.md for data object interfaces.
-
-## Repository
-
-Need to push `~/GitHub/di` to GitHub.
-
-### Steps
-
-- [x] 1. Create `.gitignore` (node_modules, dist, .DS_Store)
-- [x] 2. `git init`
-- [ ] 3. Initial commit
-- [ ] 4. Create repo on GitHub: `design.intuition`
-- [ ] 5. Add remote, push
-- [ ] 6. Verify repo is public/private as intended
+- **2025-01-05**: Created GitHub repo `design.intuition`, pushed.
+- **2025-01-05**: Added `Point3`, `Size3`, `Block` to Coordinates.ts. Replaced `vertices` arrays with `Point3[]` in O_Scene, Scene, Render, test.ts.

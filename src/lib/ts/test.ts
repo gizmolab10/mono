@@ -4,15 +4,15 @@ import { camera } from './managers/Camera';
 import { render } from './managers/Render';
 import { input } from './managers/Input';
 import { animation } from './managers/Animation';
-import { Size } from './types/Coordinates';
+import { Size, Point3 } from './types/Coordinates';
 
 // ============================================
 // GEOMETRY
 // ============================================
 
-const cube_vertices: [number, number, number][] = [
-  [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
-  [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1],
+const cube_vertices: Point3[] = [
+  new Point3(-1, -1, -1), new Point3(1, -1, -1), new Point3(1, 1, -1), new Point3(-1, 1, -1),
+  new Point3(-1, -1,  1), new Point3(1, -1,  1), new Point3(1, 1,  1), new Point3(-1, 1,  1),
 ];
 
 const cube_edges: [number, number][] = [

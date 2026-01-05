@@ -1,6 +1,6 @@
 import { T_Quadrant, T_Orientation } from './Angle';
-import type { SvelteComponent } from 'svelte';
-import type { BBox } from 'rbush';
+// import type { SvelteComponent } from 'svelte';
+// import type { BBox } from 'rbush';
 import Angle from './Angle';
 
 const p = 2;
@@ -335,4 +335,133 @@ export class Rect {
 		return Rect.zero;
 	}
 
+}
+export class Point3 {
+	x: number;
+	y: number;
+	z: number;
+
+	constructor(x: number = 0, y: number = 0, z: number = 0) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
+	get magnitude():					 number { return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
+	get isZero():						boolean { return this.x == 0 && this.y == 0 && this.z == 0; }
+	get verbose():						 string { return `(${this.x.toFixed(p)}, ${this.y.toFixed(p)}, ${this.z.toFixed(p)})`; }
+	get description():					 string { return `${this.x.toFixed(p)} ${this.y.toFixed(p)} ${this.z.toFixed(p)}`; }
+	get negated():						 Point3 { return this.multiplied_equally_by(-1); }
+	get doubled():						 Point3 { return this.multiplied_equally_by(2); }
+	get divided_in_half():				 Point3 { return this.divided_equally_by(2); }
+	get abs():							 Point3 { return new Point3(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z)); }
+	get xy():							  Point { return new Point(this.x, this.y); }
+	get xz():							  Point { return new Point(this.x, this.z); }
+	get yz():							  Point { return new Point(this.y, this.z); }
+	get as_size3():						  Size3 { return new Size3(this.x, this.y, this.z); }
+	offset_by_x(x: number):				 Point3 { return this.offset_by_xyz(x, 0, 0); }
+	offset_by_y(y: number):				 Point3 { return this.offset_by_xyz(0, y, 0); }
+	offset_by_z(z: number):				 Point3 { return this.offset_by_xyz(0, 0, z); }
+	offset_equally_by(offset: number):	 Point3 { return this.offset_by_xyz(offset, offset, offset); }
+	offset_by_xyz(x: number, y: number, z: number): Point3 { return new Point3(this.x + x, this.y + y, this.z + z); }
+	offset_by(point: Point3):			 Point3 { return new Point3(this.x + point.x, this.y + point.y, this.z + point.z); }
+	vector_to(point: Point3):			 Point3 { return point.offset_by(this.negated); }
+	equals(other: Point3):			    boolean { return this.x == other.x && this.y == other.y && this.z == other.z; }
+	divided_equally_by(divisor: number): Point3 { return new Point3(this.x / divisor, this.y / divisor, this.z / divisor); }
+	multiplied_equally_by(m: number):	 Point3 { return new Point3(this.x * m, this.y * m, this.z * m); }
+	dot(other: Point3):					 number { return this.x * other.x + this.y * other.y + this.z * other.z; }
+
+	cross(other: Point3): Point3 {
+		return new Point3(
+			this.y * other.z - this.z * other.y,
+			this.z * other.x - this.x * other.z,
+			this.x * other.y - this.y * other.x
+		);
+	}
+
+	get normalized(): Point3 {
+		const m = this.magnitude;
+		if (m == 0) return Point3.zero;
+		return this.divided_equally_by(m);
+	}
+
+	static cube(length: number):		  Point3 { return new Point3(length, length, length); }
+	static x(x: number):				  Point3 { return new Point3(x, 0, 0); }
+	static y(y: number):				  Point3 { return new Point3(0, y, 0); }
+	static z(z: number):				  Point3 { return new Point3(0, 0, z); }
+	static get zero():					  Point3 { return new Point3(); }
+}
+
+export class Size3 {
+	width: number;
+	height: number;
+	depth: number;
+
+	constructor(width: number = 0, height: number = 0, depth: number = 0) {
+		this.width = width;
+		this.height = height;
+		this.depth = depth;
+	}
+
+	get isZero():						boolean { return this.width == 0 && this.height == 0 && this.depth == 0; }
+	get verbose():						 string { return `(${this.width.toFixed(p)}, ${this.height.toFixed(p)}, ${this.depth.toFixed(p)})`; }
+	get description():					 string { return `${this.width.toFixed(p)} ${this.height.toFixed(p)} ${this.depth.toFixed(p)}`; }
+	get center():						 Point3 { return this.as_point3.divided_in_half; }
+	get as_point3():					 Point3 { return new Point3(this.width, this.height, this.depth); }
+	get negated():						  Size3 { return this.multiplied_equally_by(-1); }
+	get divided_in_half():				  Size3 { return this.divided_equally_by(2); }
+	extended_by(delta: Point3):			  Size3 { return new Size3(this.width + delta.x, this.height + delta.y, this.depth + delta.z); }
+	divided_equally_by(divisor: number):  Size3 { return this.multiplied_equally_by(1 / divisor); }
+	multiplied_equally_by(m: number):	  Size3 { return new Size3(this.width * m, this.height * m, this.depth * m); }
+	equals(other: Size3):				boolean { return this.width == other.width && this.height == other.height && this.depth == other.depth; }
+	static cube(length: number):		  Size3 { return new Size3(length, length, length); }
+	static get zero():					  Size3 { return new Size3(); }
+}
+
+export class Block {
+	origin: Point3;
+	size: Size3;
+
+	constructor(origin: Point3 = Point3.zero, size: Size3 = Size3.zero) {
+		this.origin = origin;
+		this.size = size;
+	}
+
+	get x():							 number { return this.origin.x; }
+	get y():							 number { return this.origin.y; }
+	get z():							 number { return this.origin.z; }
+	get width():						 number { return this.size.width; }
+	get height():						 number { return this.size.height; }
+	get depth():						 number { return this.size.depth; }
+	get extent():						 Point3 { return this.origin.offset_by(this.size.as_point3); }
+	get center():						 Point3 { return this.origin.offset_by(this.size.center); }
+	get isZero():					    boolean { return this.size.isZero; }
+	get verbose():						 string { return `${this.origin.verbose}, ${this.size.verbose}`; }
+	get description():					 string { return `${this.origin.description} ${this.size.description}`; }
+	get at_zero():						  Block { return new Block(Point3.zero, this.size); }
+	offset_by(delta: Point3):			  Block { return new Block(this.origin.offset_by(delta), this.size); }
+	equals(other: Block):				boolean { return this.origin.equals(other.origin) && this.size.equals(other.size); }
+	multiplied_equally_by(m: number):	  Block { return new Block(this.origin.multiplied_equally_by(m), this.size.multiplied_equally_by(m)); }
+	divided_equally_by(m: number):		  Block { return new Block(this.origin.divided_equally_by(m), this.size.divided_equally_by(m)); }
+
+	contains(point: Point3): boolean {
+		const ext = this.extent;
+		return point.x >= this.origin.x && point.x <= ext.x &&
+			   point.y >= this.origin.y && point.y <= ext.y &&
+			   point.z >= this.origin.z && point.z <= ext.z;
+	}
+
+	intersects(block: Block): boolean {
+		const this_ext = this.extent;
+		const block_ext = block.extent;
+		return !(this.origin.x > block_ext.x || this.origin.y > block_ext.y || this.origin.z > block_ext.z ||
+				 block.origin.x > this_ext.x || block.origin.y > this_ext.y || block.origin.z > this_ext.z);
+	}
+
+	static create_center_block(center: Point3, size: Size3): Block {
+		const origin = center.offset_by(size.center.negated);
+		return new Block(origin, size);
+	}
+
+	static get zero(): Block { return new Block(Point3.zero, Size3.zero); }
 }

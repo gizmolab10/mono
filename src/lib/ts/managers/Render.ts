@@ -1,6 +1,6 @@
 import { mat4, vec4 } from 'gl-matrix';
 import { Projected, O_Scene } from '../types/Interfaces';
-import { Size } from '../types/Coordinates';
+import { Size, Point3 } from '../types/Coordinates';
 import { camera } from './Camera';
 import { scene } from './Scene';
 
@@ -37,8 +37,8 @@ class Render {
     return local;
   }
 
-  private project_vertex(v: [number, number, number], world_matrix: mat4): Projected {
-    const point = vec4.fromValues(v[0], v[1], v[2], 1);
+  private project_vertex(v: Point3, world_matrix: mat4): Projected {
+    const point = vec4.fromValues(v.x, v.y, v.z, 1);
 
     mat4.multiply(this.mvp_matrix, camera.view, world_matrix);
     mat4.multiply(this.mvp_matrix, camera.projection, this.mvp_matrix);
