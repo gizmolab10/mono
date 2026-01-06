@@ -18,7 +18,9 @@ A living roadmap: origin story, major milestones with context and outcomes, temp
 
 After writing the first milestone, I’ve decided on a format or template for the two kinds of file:
 
-### Milestones Index -- each entry
+### Milestones Index
+
+A concise snapshot of the arc of the project at the milestone level, each is part of the whole.
 
 ```markdown
 ### N -- Name
@@ -29,7 +31,7 @@ After writing the first milestone, I’ve decided on a format or template for th
 
 ### Milestone Detail File
 
-This is intended to capture the look of \[\[m.1.solid.foundation\]\], so refer to it (a) when you begin a new milestone and (b) when you polish it for completion.
+This is intended to capture the look of [[1.solid.foundation]], so refer to it (a) when you begin a new milestone and (b) when you polish it for completion.
 
 ```markdown
 # Milestone N: Name

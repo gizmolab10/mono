@@ -4,17 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "bf40d01780d17424",
+        "id": "d3465aa5c5a06a39",
         "type": "tabs",
         "children": [
           {
-            "id": "4f8a4f2f0997da0e",
+            "id": "e356750d6daf8c08",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "notes/work/milestones/index.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "index"
             }
           }
         ]
@@ -179,19 +183,26 @@
       "bases:Create new base": false
     }
   },
-  "active": "4f8a4f2f0997da0e",
+  "active": "e356750d6daf8c08",
   "lastOpenFiles": [
+    "notes/work/milestones/m.3.docs.md",
+    "notes/work/milestones/3.docs.md",
+    "notes/work/milestones/2.panel.layout.md",
+    "notes/work/milestones/m.1.solid.foundation.md",
+    "notes/work/milestones/1.solid.foundation.md",
+    "1.txt",
     "notes/work/milestones/index.md",
-    "notes/work/milestones/milestones.md",
+    "notes/work/milestones/m.2.panel.layout.md",
+    "CLAUDE.MD",
+    "notes/guides/workflow.md",
     "notes/guides/road.map.md",
+    "notes/work/milestones/milestones.md",
     "notes/guides/milestones copy.md",
     "notes/work/road.map/m.1.solid.foundation.md",
-    "notes/work/milestones/m.1.solid.foundation.md",
     "notes/work/milestones",
     "notes/work/road.map/milestones.md",
     "notes/guides/milestones.md",
     "notes/guides/voice.md",
-    "notes/guides/workflow.md",
     "notes/guides/testing.md",
     "notes/guides/style.md",
     "notes/guides/refactoring.md",
@@ -202,20 +213,13 @@
     "notes/guides/debugging.md",
     "notes/guides/composition.md",
     "notes/guides/chat.md",
-    "notes/guides/access.md",
     "notes/guides",
-    "notes/architecture/types.md",
-    "notes/architecture/project.md",
-    "notes/architecture/managers.md",
-    "notes/architecture/files.md",
     "notes/architecture",
-    "notes/designs/guides/road.map.md",
     "notes/work/road.map",
     "src/lib/ts/tests/Extensions.test.ts",
     "foo.txt",
     "src/lib/ts/tests/Coordinates.test.ts",
     "src/lib/ts/tests/Angle.test.ts",
-    "src/lib/ts/tests/Render.test.ts",
-    "src/lib/ts/tests/test.ts"
+    "src/lib/ts/tests/Render.test.ts"
   ]
 }

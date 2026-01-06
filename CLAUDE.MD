@@ -1,12 +1,21 @@
 # CLAUDE.MD
 
-REPO: `~/GitHub/di`
-EXECUTE: Always granted—just do it
-FILESYSTEM: Full read/write/execute within \~/GitHub
+FILESYSTEM: Full read/write/execute within `~/GitHub`
+
+REPO: `~/GitHub/di` EXECUTE: Always granted—just do it
+
 WORK TRACKING: Keep `notes/work/<file>.md` updated as we go
-GUIDES: Read all md files in `notes/guides/` at start of session
+
+GUIDES: Read all md files in `notes/guides` at start of session
+
+MEMORY: Use `conversation_search/recent_chats` before claiming no context 
+
+FILES: Always read current version before editing
+
+DOCS STYLE: voice.md | Keep TOC updated
 
 ## Workarounds
+
 
 `filesystem:create_directory` fails → use `bash_tool` with `mkdir -p`
 
@@ -20,15 +29,17 @@ GUIDES: Read all md files in `notes/guides/` at start of session
 | `go` | ask which project: (d) di or (w) webseriously, then read that repo's CLAUDE.MD |
 | `go d` / `di` | read `/Users/sand/GitHub/di/CLAUDE.MD` |
 | `go w` / `web` | read `/Users/sand/GitHub/webseriously/CLAUDE.MD` |
+| `chime in` | give me your observations, suggestions, corrections about the topic at hand |
 
 ## Typical Abbreviations
 
 | Abbrev | Meaning |
 |----|----|
 | m | milestone |
-| ua | update accordingly |
+| m<#> | milestone # |
 | `n` | no |
-| `y` | yes |
 | `ni` | no improvement, try something different |
+| `y` | yes |
+| ua | update accordingly |
 
 

@@ -590,6 +590,55 @@ get hasRoot(): boolean { return !!this.root; }
 
 ---
 
+## Markdown Files
+
+### Vertical Whitespace
+
+Keep it tight. No excessive gaps.
+
+- Title + metadata on consecutive lines (no blank between)
+- Single blank line before `##` sections
+- No blank line between heading and its content
+- Avoid `---` separators unless marking major divisions
+- No multiple consecutive blank lines
+
+**Compact:**
+```markdown
+# Title
+**Timeline:** date | **Status:** in progress
+
+## Goal
+What we set out to do.
+
+## What we did
+### First thing
+Content here.
+```
+
+**Too gappy:**
+```markdown
+# Title
+
+**Timeline:** date
+**Status:** in progress
+
+---
+
+## Goal
+
+What we set out to do.
+
+---
+
+## What we did
+
+### First thing
+
+Content here.
+```
+
+---
+
 ## Links
 
 ### Obsidian-Style Wiki Links
