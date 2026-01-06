@@ -1,23 +1,24 @@
-<script>
+<script lang='ts'>
 	import { Point, Rect, Size } from '../../ts/types/Coordinates';
-	import { k } from '../../ts/common/Constants';
-	export let element; // The HTML element (E) to print
-	export let rect; // The rect (position and size of D)
-	const screen_scale_factor = window.devicePixelRatio;``
+	import { k, printer_aspect_ratio } from '../../ts/common/Constants';
+
+	let { element, rect }: { element: HTMLElement; rect: Rect } = $props();
+
+	const screen_scale_factor = window.devicePixelRatio;
 	const message_height = 290;
 	let printer_page_width = 722;
-	let final_content_rect;
+	let final_content_rect: Rect;
 	let printer_dpi = 96;
-	let final_inset_size;
-	let final_page_size;
-	let final_origin;
-	let log_message;
-	let isLandscape;
-	let scaleFactor;
+	let final_inset_size: Size;
+	let final_page_size: Size;
+	let final_origin: Point;
+	let log_message: string;
+	let isLandscape: boolean;
+	let scaleFactor: number;
 	let margin = 0;
-	let scale_size;
-	let printable;
-	let kludge
+	let scale_size: Size;
+	let printable: HTMLDivElement;
+	let kludge: Point;
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -45,10 +46,12 @@
 	configure();
 	layout();
 
-	$: if (!!printable) {
-		printable.innerHTML = k.empty;
-		printable.appendChild(element.cloneNode(true));
-	}
+	$effect(() => {
+		if (!!printable) {
+			printable.innerHTML = k.empty;
+			printable.appendChild(element.cloneNode(true));
+		}
+	});
 
 	function configure() {
 		const printCSS = `
