@@ -83,13 +83,15 @@ export default class Angle {
 
 	get orientation_ofAngle(): T_Orientation {
 		let quadrant = this.quadrant_ofAngle;
-		// isFirstEighth first of two half quadrants, counting counter-clockwise
-		const isFirstEighth = this.angle.normalize_between_zeroAnd(Angle.quarter) < (Angle.quarter / 2);
+		const normalized = this.angle.angle_normalized();
+		const quadrantStart = this.quadrant_basis_angle;
+		const offsetInQuadrant = (normalized - quadrantStart).angle_normalized();
+		const isFirstHalf = offsetInQuadrant < (Angle.quarter / 2);
 		switch (quadrant) {		// going counter-clockwise
-			case T_Quadrant.upperRight: return isFirstEighth ? T_Orientation.right : T_Orientation.up;
-			case T_Quadrant.upperLeft:  return isFirstEighth ? T_Orientation.up    : T_Orientation.left;
-			case T_Quadrant.lowerLeft:  return isFirstEighth ? T_Orientation.left  : T_Orientation.down;
-			case T_Quadrant.lowerRight: return isFirstEighth ? T_Orientation.down  : T_Orientation.right;
+			case T_Quadrant.upperRight: return isFirstHalf ? T_Orientation.right : T_Orientation.up;
+			case T_Quadrant.upperLeft:  return isFirstHalf ? T_Orientation.up    : T_Orientation.left;
+			case T_Quadrant.lowerLeft:  return isFirstHalf ? T_Orientation.left  : T_Orientation.down;
+			case T_Quadrant.lowerRight: return isFirstHalf ? T_Orientation.down  : T_Orientation.right;
 		}
 	}
 
@@ -119,7 +121,7 @@ export default class Angle {
 	}
 
 	get cursor_forAngle(): string {
-		if (!!this.angle) {
+		if (this.angle !== undefined && this.angle !== null) {
 			const octant = this.octant_ofAngle;
 			switch (octant % 4) {
 				case 0: return 'ns-resize';

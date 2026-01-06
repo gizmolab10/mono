@@ -1,7 +1,7 @@
 # Testing Infrastructure
 
 **Started:** 2026-01-05  
-**Status:** Phase 1 in progress
+**Status:** Phase 4 complete ✅
 
 ---
 
@@ -24,6 +24,7 @@ Set up vitest for unit testing pure TypeScript code. Focus on geometry classes f
 | `types/Coordinates.ts` | Point, Size, Rect, Point3, Size3, Block | Core geometry, heavily used |
 | `types/Angle.ts` | Angle, quadrant/octant calculations | Math-heavy, easy to get wrong |
 | `utilities/Testworthy_Utilities.ts` | cumulativeSum, strip_duplicates, etc. | Named "testworthy" for a reason |
+| `utilities/Colors.ts` | RGBA/HSBA conversions, luminance, blending | Color math, easy to get wrong |
 
 ### Medium Value (some DOM)
 
@@ -43,10 +44,10 @@ Set up vitest for unit testing pure TypeScript code. Focus on geometry classes f
 
 ## Phase 1: Setup Vitest
 
-- [ ] Install vitest
-- [ ] Create vitest.config.ts
-- [ ] Verify `yarn test` runs
-- [ ] Create first test file
+- [x] Install vitest ✅
+- [x] Create vitest.config.ts ✅
+- [x] Add test scripts to package.json ✅
+- [x] Verify `yarn test:run` works ✅
 
 ### 1.1 Install
 
@@ -80,30 +81,59 @@ Add to scripts:
 
 ## Phase 2: Coordinates Tests
 
-- [ ] Point basics (constructor, getters, arithmetic)
-- [ ] Point.rotate_by() — tricky math
-- [ ] Size basics
-- [ ] Rect.contains(), Rect.intersects()
-- [ ] Point3, Size3, Block basics
+- [x] Point basics (constructor, getters, arithmetic) ✅
+- [x] Point.rotate_by() ✅
+- [x] Size basics ✅
+- [x] Rect.contains(), Rect.intersects() ✅
+- [x] Point3, Size3, Polar ✅
+
+**Result:** 40 tests passing in 549ms
 
 ---
 
 ## Phase 3: Angle Tests
 
-- [ ] quadrant_ofAngle
-- [ ] octant_ofAngle  
-- [ ] orientation_ofAngle
+- [x] quadrant_ofAngle ✅
+- [x] octant_ofAngle ✅
+- [x] orientation_ofAngle ✅
+- [x] cursor_forAngle ✅
+- [x] angle_points_* helpers ✅
+
+**Result:** 51 tests passing
+
+**Bugs found and fixed:**
+1. `cursor_forAngle` used `!!this.angle` which treated 0 as falsy — fixed to check `!== null && !== undefined`
+2. `orientation_ofAngle` used broken modulo logic at quadrant boundaries — fixed to calculate offset within quadrant properly
 
 ---
 
 ## Phase 4: Utilities Tests
 
-- [ ] cumulativeSum
-- [ ] strip_duplicates
-- [ ] remove_fromArray_byReference
+- [x] cumulativeSum ✅
+- [x] strip_duplicates ✅
+- [x] strip_falsies ✅
+- [x] remove / remove_fromArray_byReference ✅
+- [x] indexOf_inArray_byReference ✅
+- [x] concatenateArrays / uniquely_concatenateArrays ✅
+- [x] convert_toNumber ✅
+- [x] valueFrom_atIndex ✅
+- [x] copyObject / convertToObject ✅
+
+**Result:** 41 tests passing, no bugs found
+
+---
+
+## Phase 5: Colors Tests
+
+- [ ] RGBA_toHex
+- [ ] HSBA_toRGBA / RBGA_toHSBA roundtrip
+- [ ] luminance_ofColor
+- [ ] darkerBy / lighterBy
+- [ ] color_fromSeriously (parse seriously format)
+- [ ] blend / special_blend
 
 ---
 
 ## Next Action
 
-**Phase 1.1:** Install vitest
+**Phase 5:** Add Colors tests (RGBA/HSBA conversions, luminance, blending)
