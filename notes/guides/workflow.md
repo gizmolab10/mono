@@ -53,11 +53,11 @@ When work is complete, one of two destinations:
 | Destination | When | Example |
 |-------------|------|---------|
 | `notes/work/done/` | Task is finished, doc is historical record | svelte.md, quaternions.md |
-| `notes/designs/guides/` | Doc becomes living reference for future work | testing.md |
+| `notes/guides/` | Doc becomes living reference for future work | testing.md |
 
 ## Guides
 
-Guides in `notes/designs/guides/` are living documents:
+Guides in `notes/guides/` are living documents:
 
 - Read at start of relevant work
 - Update when patterns change

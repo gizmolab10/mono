@@ -590,5 +590,16 @@ get hasRoot(): boolean { return !!this.root; }
 
 ---
 
+## Links
+
+### Obsidian-Style Wiki Links
+
+Use `[[page]]` syntax for internal links, not markdown `[text](path.md)`. Obsidian is the primary authoring environment—wiki links work natively there. The publishing system handles conversion for other formats.
+
+- ✅ `[[project]]`, `[[svelte]]`
+- ❌ `[project](../../designs/architecture/project.md)`
+
+---
+
 **Remember**: Consistency is key. When in doubt, look at existing similar code and match its patterns.
 

@@ -328,8 +328,4 @@ As you work:
 
 ## Real-World Example
 
-See `/notes/designs/refactor/breadcrumbs.md` for a complete example showing:
-- How phases evolved
-- What worked and what didn't
-- How documentation accumulated
-- Layout verification process
+See webseriously's `/notes/designs/refactor/breadcrumbs.md` for a complete example from another project.
