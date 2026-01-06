@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { init } from './lib/ts/test';
+  import { init } from './lib/ts/tests/Render.test';
 
   let canvas: HTMLCanvasElement;
 

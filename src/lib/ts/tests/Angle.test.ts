@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import Angle, { T_Quadrant, T_Orientation, Direction } from './Angle';
+import Angle, { T_Quadrant, T_Orientation, Direction } from '../types/Angle';
 import '../common/Extensions';
 
 describe('Angle', () => {

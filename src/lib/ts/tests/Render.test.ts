@@ -1,10 +1,10 @@
 import { quat, vec3 } from 'gl-matrix';
-import { scene } from './managers/Scene';
-import { camera } from './managers/Camera';
-import { render } from './managers/Render';
-import { input } from './managers/Input';
-import { animation } from './managers/Animation';
-import { Size, Point3 } from './types/Coordinates';
+import { scene } from '../render/Scene';
+import { camera } from '../render/Camera';
+import { render } from '../render/Render';
+import { input } from '../render/Input';
+import { animation } from '../render/Animation';
+import { Size, Point3 } from '../types/Coordinates';
 
 // ============================================
 // GEOMETRY

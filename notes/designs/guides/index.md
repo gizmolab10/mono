@@ -13,5 +13,7 @@ Hey. For my own sanity and to save immense time composing queries for AI, I aske
 - [Migration](./migration.md)
 - [Refactoring](./refactoring.md)
 - [Style](./style.md)
+- [Testing](./testing.md)
 - [Voice](./voice.md)
+- [Workflow](./workflow.md)
 

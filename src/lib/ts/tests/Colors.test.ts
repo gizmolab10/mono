@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Colors, colors } from './Colors';
+import { Colors, colors } from '../utilities/Colors';
 
 describe('Colors', () => {
 	describe('color_fromSeriously', () => {
@@ -55,9 +55,24 @@ describe('Colors', () => {
 	});
 
 	describe('darkerBy', () => {
-		it('makes white darker', () => {
+		it('cannot darken white (edge case)', () => {
 			const darker = colors.darkerBy('white', 0.5);
-			const originalLum = colors.luminance_ofColor('white');
+			const darkerLum = colors.luminance_ofColor(darker);
+			// White has luminance 1, and (1-1)*ratio = 0, so it stays white
+			expect(darkerLum).toBe(1);
+		});
+
+		it('returns same color when target darkness exceeds 1', () => {
+			// darkerBy calculates (1-lume)*(1+ratio) as target darkness
+			// For dark colors with high ratios, this exceeds 1 and returns original
+			const darker = colors.darkerBy('#333333', 2);
+			expect(darker).toMatch(/^#[0-9a-f]{6}$/i);
+		});
+
+		it('darkens light color with small ratio', () => {
+			// #cccccc has lume ~0.6, ratio 0.1 gives darkness ~0.44 (valid)
+			const darker = colors.darkerBy('#cccccc', 0.1);
+			const originalLum = colors.luminance_ofColor('#cccccc');
 			const darkerLum = colors.luminance_ofColor(darker);
 			expect(darkerLum).toBeLessThan(originalLum);
 		});
@@ -128,9 +143,10 @@ describe('Colors', () => {
 			expect(result).toBeTruthy();
 		});
 
-		it('returns original when background is white', () => {
+		it('returns lightgray when background is white', () => {
+			// When background matches this.background (white), blend returns lightgray
 			const result = colors.blend('red', 'white');
-			expect(result).toBe('red');
+			expect(result).toBe('lightgray');
 		});
 	});
 

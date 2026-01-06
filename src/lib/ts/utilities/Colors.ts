@@ -1,7 +1,5 @@
 import { parseToRgba, transparentize } from 'color2k';
-import { T_Preference } from '../types/Enumerations';
-import { get, writable } from 'svelte/store';
-import { p } from '../managers/Preferences';
+import { get, writable } from 'svelte/store';``
 
 // single source of truth for all colors
 
@@ -19,19 +17,19 @@ export class Colors {
 	w_thing_color	   = writable<string | null>(null);
 	w_separator_color  = writable<string>(this.separator);
 
-	restore_preferences() {
-		this.w_background_color.set( p.read_key(T_Preference.background) ?? this.background);
-		this.w_separator_color .set( p.read_key(T_Preference.separator) ?? this.separator);
-		this.w_separator_color .subscribe((color: string) => {
-			p.write_key(T_Preference.separator, color);
-			this.w_background_color.set(this.ofBackgroundFor(color));
-		})
-		this.w_background_color.subscribe((color: string) => {
-			document.documentElement.style.setProperty('--css-background-color', color);
-			p.write_key(T_Preference.background, color);
-			this.banner = this.ofBannerFor(color);
-		})
-	}
+	// restore_preferences() {
+	// 	this.w_background_color.set( p.read_key(T_Preference.background) ?? this.background);
+	// 	this.w_separator_color .set( p.read_key(T_Preference.separator) ?? this.separator);
+	// 	this.w_separator_color .subscribe((color: string) => {
+	// 		p.write_key(T_Preference.separator, color);
+	// 		this.w_background_color.set(this.ofBackgroundFor(color));
+	// 	})
+	// 	this.w_background_color.subscribe((color: string) => {
+	// 		document.documentElement.style.setProperty('--css-background-color', color);
+	// 		p.write_key(T_Preference.background, color);
+	// 		this.banner = this.ofBannerFor(color);
+	// 	})
+	// }
 
 	ofBackgroundFor(color: string): string { return this.lighterBy(color, 10);}
 	ofBannerFor(background: string): string { return this.blend('white', background, 4);}

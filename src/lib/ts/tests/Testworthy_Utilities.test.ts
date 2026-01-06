@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Testworthy_Utilities, tu } from './Testworthy_Utilities';
+import { Testworthy_Utilities, tu } from '../utilities/Testworthy_Utilities';
 
 describe('Testworthy_Utilities', () => {
 	describe('cumulativeSum', () => {

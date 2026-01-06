@@ -12,11 +12,14 @@ GUIDES: Read all md files in `notes/designs/guides/` at start of session
 
 ## Commands
 
-| Command | Meaning |
-|---------|---------|
-| `n` | no |
-| `y` | yes |
-| `ni` | no improvement needed |
-| `read claude` | reread this file |
-| `update docs` | run `./notes/tools/update-docs.sh`, report output |
-| `work on <file>` | if `notes/work/<file>.md` missing, create it + follow `notes/designs/guides/chat.md`; else read + resume |
+| Command        | Meaning                                                                                               |
+| -------------- | ----------------------------------------------------------------------------------------------------- |
+| `n`            | no                                                                                                    |
+| `y`            | yes                                                                                                   |
+| `ni`           | no improvement needed                                                                                 |
+| `read claude`  | reread this file                                                                                      |
+| `update docs`  | run `./notes/tools/update-docs.sh`, report output                                                     |
+| `work on <X>`  | if `notes/work/<X>.md` missing, create it + follow `notes/designs/guides/chat.md`; else read + resume |
+| `go`           | ask which project: (d) di or (w) webseriously, then read that repo's CLAUDE.MD                        |
+| `go d` / `di`  | read `/Users/sand/GitHub/di/CLAUDE.MD`                                                                |
+| `go w` / `web` | read `/Users/sand/GitHub/webseriously/CLAUDE.MD`                                                      |
