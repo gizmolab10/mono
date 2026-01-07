@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/milestones/index.md",
+                "file": "notes/work/write.article.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "write.article"
             }
           }
         ]
@@ -185,13 +185,17 @@
   },
   "active": "e356750d6daf8c08",
   "lastOpenFiles": [
+    "notes/work/article.third.draft.md",
+    "notes/work/article.second.draft.md",
+    "notes/work/article.first.draft.md",
+    "notes/work/write.article.md",
+    "notes/work/milestones/index.md",
     "notes/work/milestones/m.3.docs.md",
     "notes/work/milestones/3.docs.md",
     "notes/work/milestones/2.panel.layout.md",
     "notes/work/milestones/m.1.solid.foundation.md",
     "notes/work/milestones/1.solid.foundation.md",
     "1.txt",
-    "notes/work/milestones/index.md",
     "notes/work/milestones/m.2.panel.layout.md",
     "CLAUDE.MD",
     "notes/guides/workflow.md",
@@ -209,10 +213,6 @@
     "notes/guides/migration.md",
     "notes/guides/markdown.md",
     "notes/guides/index.md",
-    "notes/guides/gotchas.md",
-    "notes/guides/debugging.md",
-    "notes/guides/composition.md",
-    "notes/guides/chat.md",
     "notes/guides",
     "notes/architecture",
     "notes/work/road.map",
