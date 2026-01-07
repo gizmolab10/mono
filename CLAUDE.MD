@@ -16,8 +16,11 @@ DOCS STYLE: voice.md | Keep TOC updated
 
 ## Workarounds
 
-
 `filesystem:create_directory` fails → use `bash_tool` with `mkdir -p`
+
+`delete` unavailable → user must delete manually
+
+`execute` unavailable → user must run commands manually
 
 ## Commands
 

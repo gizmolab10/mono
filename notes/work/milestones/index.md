@@ -26,7 +26,7 @@ Two decades on, no CAD software has matched its power. I'm eager to recreate my 
 ---
 ## 2 - Panel layout
 
-**Timeline:** **Jan 5-6, 2025** | [details](2.panel.layout.md)
+**Timeline:** **Jan 5-6, 2025** | [details](milestone%202.md)
 
 **Goal:** begin to flesh out the skeleton of the final product, using existing `webseriously` code. I spent a lot of time on its look and feel, so hey, reuse, recycle, live life to its fullest.
 

@@ -4,7 +4,7 @@
 
 ---
 
-I accidentally built an astonishingly helpful, inexpensive junior programmer. What a team!
+I accidentally built an astonishing, helpful, inexpensive junior programmer. I like this team!
 
 It didn't start that way. It started with annoyance.
 
@@ -70,15 +70,30 @@ Every problem we solve, every pattern we establish, every gotcha we document —
 
 My AI today knows a mountain of things because i've been teaching it, one markdown file at a time. Each problem we work on gets added to this accumulated teaching. Baby steps that add up to a giant leap. The office i sit in now feels like driving a Mack truck, gobbling up the miles, hauling my soul.
 
+## What's the Catch?
+
+Gee, you're not paying anyone to store all the files. Besides which, they're completely yours. Plus, likely this entire recipe will work fine on any AI.
+
+But I suppose the catch is getting used to thinking differently. The skills I had to learn:
+
+- [ ] good questions
+- [ ] careful scrutiny of the answers
+- [ ] correct mistakes, wrong assumptions
+- [ ] rewrite instructions
+	- [ ] do NOT trust the AI
+	- [ ] take very small baby steps
+	- [ ] verify and identify anything unwanted
+	- [ ] rinse and repeat
+
 ## An Invitation
 
 I'm not selling anything. There's no course, no framework, no SaaS product.
 
-Just this: if you're using AI as a fancy search engine, you're leaving something on the table. The real magic isn't in the answers. It's in the relationship. The accumulated context. The institutional memory.
+Just this: if you're using AI as a fancy search engine, you're missing out. The real magic is beyond the answers. It's the accumulated and massaged answers, an institutional memory.
 
 Build the pile. Teach the AI how you work. Let it learn your quirks.
 
-You might end up with your own high-tech, endlessly helpful junior programmer.
+You might end up with your own high-tech, endlessly helpful (cheap!) junior programmer.
 
 ---
 

@@ -51,8 +51,8 @@ Not "here's a cool prompt." Instead: "here's a system that compounds."
 - [x] Include code/file examples where useful ✅
 
 **Drafts:**
-- [article.first.draft.md](article.first.draft.md) — technical details
-- [article.second.draft.md](article.second.draft.md) — journey/emotion
+- [accidental.programmer.md](articles/accidental.programmer.md) — journey/emotion (Part 1)
+- [how.to.build.it.md](articles/how.to.build.it.md) — practical guide (Part 2)
 
 ## Phase 3: Polish
 - [ ] Tighten prose (voice.md rules)
