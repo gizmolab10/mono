@@ -10,7 +10,7 @@ export class Colors {
 	default                   = 'black';
 	banner                    = '#f8f8f8';
 	disabled                  = 'lightGray';
-	separator                 = '#eeeee0';
+	separator                 = '#c55622ff';
 	background                = 'white';
 	rubberband                = '#4a90e2';
 	default_forThings         = 'blue';

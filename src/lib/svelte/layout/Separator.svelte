@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { Point } from '../../ts/types/Coordinates';
 	import { Direction } from '../../ts/types/Angle';
-	import { colors } from '../../ts/utilities/Colors';
+	import { colors } from '../../ts/draw/Colors';
 	import Gull_Wings from './Gull_Wings.svelte';
 
 	let {
@@ -53,7 +53,7 @@
 	class:vertical         = {!isHorizontal}
 	style:width            = '{separatorWidth}px'
 	style:height           = '{separatorHeight}px'
-	style:background-color = {$w_separator_color}>
+	style:background-color = 'transparent'>
 	{#if hasGullWings}
 		<Gull_Wings
 			{thickness}
@@ -93,6 +93,7 @@
 <style>
 	.separator {
 		position : relative;
+		overflow : visible;
 	}
 
 	.thin-divider {

@@ -121,10 +121,12 @@
 	.separator-top,
 	.separator-bottom {
 		flex-shrink : 0;
+		overflow    : visible;
 	}
 
 	.separator-left,
 	.separator-right {
 		flex-shrink : 0;
+		overflow    : visible;
 	}
 </style>

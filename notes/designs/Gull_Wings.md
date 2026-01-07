@@ -8,7 +8,7 @@ Decorative curved corners for separators.
 
 ## Purpose
 
-Draws curved SVG arcs at the ends of separators. Creates a "gull wing" shape — two quarter-circle arcs facing opposite directions.
+Draws curved SVG arcs at the ends of separators. Creates a "gull wing" shape — two quarter-circle arcs forming a half-circle that curves opposite to the direction.
 
 ## Visual
 
@@ -26,10 +26,9 @@ Direction: down      Direction: up
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | `radius` | `number` | `6` | Arc radius |
-| `thickness` | `number` | `1` | Stroke width |
-| `direction` | `Direction` | `Direction.right` | Which way wings point |
 | `color` | `string` | `'black'` | Fill/stroke color |
 | `center` | `Point` | `Point.zero` | Position offset |
+| `direction` | `Direction` | `Direction.right` | Which way separator extends |
 
 ## State
 
@@ -37,19 +36,24 @@ None — purely presentational.
 
 ## Rendering
 
-Uses SVG `<path>` with arc commands. Path is computed from:
-- `radius` — size of the arcs
-- `direction` — rotation angle (from `Direction` enum)
-- `center` — position offset
+Uses `svg_paths.gull_wings()` to generate the SVG path string. The path consists of two quarter-circle arcs that form a half-circle wing shape.
+
+Path generation (from `SVG_Paths.ts`):
+1. Calculate `baseAngle = direction + Angle.half` (opposite to direction)
+2. Compute three points at `leftEndAngle`, `baseAngle`, and `rightEndAngle`
+3. Draw: start → arc to middle → arc to end → line back to start
 
 ## Dependencies
 
 - `Point` — coordinate class
 - `Direction` — enum with angle values (up, down, left, right)
 - `Angle` — angle constants
+- `svg_paths` — singleton from `draw/SVG_Paths.ts`
 
-## Simplifications from webseriously
+## Related Files
 
-- Removed: `T_Layer` z-index
-- Removed: `svgPaths.gull_wings()` helper (inline the path logic)
-- Cleaner: compute path directly in component
+| File | What it provides |
+|------|------------------|
+| `ts/draw/SVG_Paths.ts` | `svg_paths.gull_wings()` and `svg_paths.gull_wings_bounds()` |
+| `ts/types/Angle.ts` | `Direction` enum, `Angle` constants |
+| `ts/types/Coordinates.ts` | `Point` class with `fromPolar()` and `offsetBy()` |

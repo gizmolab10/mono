@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { colors } from '../../ts/utilities/Colors';
+	import { colors } from '../../ts/draw/Colors';
 	const { w_text_color, w_background_color } = colors;
 
 	let {

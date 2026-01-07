@@ -185,6 +185,12 @@
   },
   "active": "e32a6ad9ee169683",
   "lastOpenFiles": [
+    "src/lib/ts/draw/SVG_Paths.ts",
+    "notes/work/utilities",
+    "src/lib/ts/common/Testworthy_Utilities.ts",
+    "src/lib/ts/draw/Colors.ts",
+    "src/lib/ts/draw",
+    "src/lib/ts/managers/draw",
     "Screenshot 2026-01-07 at 1.26.15 AM.png",
     "Screenshot 2026-01-07 at 1.20.05 AM.png",
     "Screenshot 2026-01-07 at 1.18.21 AM.png",
@@ -217,11 +223,6 @@
     "notes/guides/develop/markdown.md",
     "notes/guides/develop/gotchas.md",
     "notes/guides/develop/composition.md",
-    "notes/guides/develop/best.practices.md",
-    "notes/guides/develop",
-    "notes/guides/test",
-    "notes/guides/ai",
-    "notes/guides/testing",
-    "notes/guides/development"
+    "notes/guides/develop/best.practices.md"
   ]
 }

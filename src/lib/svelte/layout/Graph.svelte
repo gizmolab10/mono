@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { init } from '../../ts/tests/Render.test';
 	import { render } from '../../ts/render/Render';
-	import { colors } from '../../ts/utilities/Colors';
+	import { colors } from '../../ts/draw/Colors';
 	const { w_text_color, w_background_color } = colors;
 
 	let canvas      : HTMLCanvasElement;
