@@ -15,8 +15,12 @@ class Camera {
   private far = 100;
 
   init(size: Size): void {
-    this.aspect = size.width / size.height;
+    this.resize(size);
     this.update_view();
+  }
+
+  resize(size: Size): void {
+    this.aspect = size.width / size.height;
     this.update_projection();
   }
 

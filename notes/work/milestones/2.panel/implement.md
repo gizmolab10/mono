@@ -14,8 +14,8 @@ I am keen to avoid the newbie pitfalls that the webseriously code suffers from. 
 		- [x] include all class names ✅
 		- [x] diagram of the layout ✅
 		- [x] identifying each class ✅
-	- [ ] work with me to mold it as needed
-		- [ ] specify position and sticky edges
+	- [x] work with me to mold it as needed
+		- [x] specify position and sticky edges
 	- [ ] I will then choose the next component
 - [ ] implement it and incorporate it into panel
 	- [ ] rinse and repeat until
@@ -165,7 +165,13 @@ Panel
 - Native `onresize` handler
 
 **Files created/modified:**
-- `src/lib/svelte/layout/Panel.svelte` — new
-- `src/App.svelte` — updated to use Panel
+- `src/lib/svelte/layout/Main.svelte` — root layout + children
+- `src/lib/svelte/layout/Controls.svelte` — top bar
+- `src/lib/svelte/layout/Graph.svelte` — canvas with resize
+- `src/lib/svelte/layout/Details.svelte` — left sidebar
+- `src/App.svelte` — imports Main
+
+**Deleted:**
+- `src/lib/svelte/layout/Panel.svelte` — merged into Main
 
 **Next:** Run `yarn dev` to verify, then iterate on layout/styling as needed.

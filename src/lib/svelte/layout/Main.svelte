@@ -1,44 +1,32 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-
-	// Props with Svelte 5 runes
-	let {
-		children,
-		controls,
-		details,
-		graph
-	}: {
-		children?: Snippet;
-		controls?: Snippet;
-		details?: Snippet;
-		graph?: Snippet;
-	} = $props();
+	import Controls from './Controls.svelte';
+	import Graph from './Graph.svelte';
+	import Details from './Details.svelte';
 
 	// Reactive state for window dimensions
 	let width = $state(window.innerWidth);
 	let height = $state(window.innerHeight);
 
-	// Derived layout regions (will be configurable later)
+	// Layout constants (configurable later)
 	let controlsHeight = $derived(48);
 	let detailsWidth = $derived(280);
 	let showDetails = $state(true);
 
 	// Computed regions
 	let graphRect = $derived({
-		x: 0,
+		x: showDetails ? detailsWidth : 0,
 		y: controlsHeight,
 		width: showDetails ? width - detailsWidth : width,
 		height: height - controlsHeight
 	});
 
 	let detailsRect = $derived({
-		x: width - detailsWidth,
+		x: 0,
 		y: controlsHeight,
 		width: detailsWidth,
 		height: height - controlsHeight
 	});
 
-	// Handle window resize
 	function handleResize() {
 		width = window.innerWidth;
 		height = window.innerHeight;
@@ -52,45 +40,32 @@
 	style:width="{width}px"
 	style:height="{height}px"
 >
-	<!-- Controls region (top) -->
-	{#if controls}
-		<div
-			class="region controls"
-			style:height="{controlsHeight}px"
-		>
-			{@render controls()}
-		</div>
-	{/if}
+	<div
+		class="region controls"
+		style:height="{controlsHeight}px"
+	>
+		<Controls />
+	</div>
 
-	<!-- Main content area -->
 	<div class="main">
-		<!-- Graph region -->
-		{#if graph}
-			<div
-				class="region graph"
-				style:width="{graphRect.width}px"
-				style:height="{graphRect.height}px"
-			>
-				{@render graph()}
-			</div>
-		{/if}
-
-		<!-- Details region (right side) -->
-		{#if details && showDetails}
+		{#if showDetails}
 			<div
 				class="region details"
 				style:width="{detailsRect.width}px"
 				style:height="{detailsRect.height}px"
 			>
-				{@render details()}
+				<Details />
 			</div>
 		{/if}
-	</div>
 
-	<!-- Fallback for direct children -->
-	{#if children}
-		{@render children()}
-	{/if}
+		<div
+			class="region graph"
+			style:width="{graphRect.width}px"
+			style:height="{graphRect.height}px"
+		>
+			<Graph />
+		</div>
+	</div>
 </div>
 
 <style>
@@ -127,6 +102,6 @@
 	}
 
 	.details {
-		border-left: 1px solid var(--border-color, #333);
+		border-right: 1px solid var(--border-color, #333);
 	}
 </style>

@@ -17,6 +17,11 @@ export class Colors {
 	w_thing_color	   = writable<string | null>(null);
 	w_separator_color  = writable<string>(this.separator);
 
+	constructor() {
+		this.w_background_color.set('coral');
+	}
+
+
 	// restore_preferences() {
 	// 	this.w_background_color.set( p.read_key(T_Preference.background) ?? this.background);
 	// 	this.w_separator_color .set( p.read_key(T_Preference.separator) ?? this.separator);

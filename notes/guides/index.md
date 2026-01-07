@@ -4,16 +4,25 @@ Hey. For my own sanity and to save immense time composing queries for AI, I aske
 
 ## Contents
 
-- [Access](./access.md)
-- [Chat](./chat.md)
-- [Composition](./composition.md)
-- [Debugging](./debugging.md)
-- [Gotchas](./gotchas.md)
-- [Markdown](./markdown.md)
-- [Migration](./migration.md)
-- [Refactoring](./refactoring.md)
-- [Style](./style.md)
-- [Testing](./testing.md)
-- [Voice](./voice.md)
-- [Workflow](./workflow.md)
+### Collaborate
+- [Access](collaborate/access.md)
+- [Chat](collaborate/chat.md)
+- [Voice](collaborate/voice.md)
+- [Workflow](collaborate/workflow.md)
 
+### Develop
+- [Best Practices](develop/best.practices.md)
+- [Composition](develop/composition.md)
+- [Gotchas](develop/gotchas.md)
+- [Markdown](develop/markdown.md)
+- [Migration](develop/migration.md)
+- [Refactoring](develop/refactoring.md)
+- [Style](develop/style.md)
+
+### Test
+- [Debugging](test/debugging.md)
+- [Testing](test/testing.md)
+
+---
+
+- [Road Map](road.map.md)

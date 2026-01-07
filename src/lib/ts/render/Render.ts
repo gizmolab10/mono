@@ -17,6 +17,13 @@ class Render {
     this.size = new Size(canvas.width, canvas.height);
   }
 
+  resize(width: number, height: number): void {
+    this.canvas.width = width;
+    this.canvas.height = height;
+    this.size = new Size(width, height);
+    camera.resize(this.size);
+  }
+
   render(): void {
     this.ctx.clearRect(0, 0, this.size.width, this.size.height);
     for (const obj of scene.get_all()) {
