@@ -4,21 +4,29 @@
 
 I am keen to avoid the newbie pitfalls that the webseriously code suffers from. Before proceeding, I want us to be well up to speed on industry best advice for Svelte and gl.
 
+
+I also want us to write a design description file for each component we create. Place that file in notes/designs, and keep it up to date.
+
 ## Tasks
 
 - [x] research the svelte community and docs ✅
-	- [x] write a short list of the most important points made ✅
+  - [x] write a short list of the most important points made ✅
 - [x] implement panel, empty but with boilerplate ✅
-	- [x] write milestones/2.panel/architecture.md ✅
-		- [x] describe what you built ✅
-		- [x] include all class names ✅
-		- [x] diagram of the layout ✅
-		- [x] identifying each class ✅
-	- [x] work with me to mold it as needed
-		- [x] specify position and sticky edges
-	- [ ] I will then choose the next component
-- [ ] implement it and incorporate it into panel
-	- [ ] rinse and repeat until
+  - [x] write milestones/2.panel/architecture.md ✅
+    - [x] describe what you built ✅
+    - [x] include all class names ✅
+    - [x] diagram of the layout ✅
+    - [x] identifying each class ✅
+  - [x] work with me to mold it as needed
+    - [x] specify position and sticky edges
+  - [x] Graph, Details, Controls
+  - [x] Separator
+  - [x] Gull Wings
+  - [x] Box
+  - [x] Preferences.ts
+  - [x] incorporate Box and Separator into Main
+- [ ] rinse and repeat until I am happy with it
+
 
 ---
 
@@ -27,7 +35,7 @@ I am keen to avoid the newbie pitfalls that the webseriously code suffers from. 
 ### Runes — The New Reactivity Model
 
 | Rune | Purpose | Replaces |
-|------|---------|----------|
+|----|----|----|
 | `$state()` | Mutable reactive state | `let x = 0` at top level |
 | `$derived()` | Computed values (memoized) | `$: x = y * 2` |
 | `$effect()` | Side effects (browser only) | `$: { doSomething() }` |
@@ -80,8 +88,8 @@ Slots are deprecated. Use snippets + `{@render}`:
 
 ### Event Handlers
 
-- Use native DOM attributes: `onclick`, `oninput` (not `on:click`)
-- Pass callback props instead of `createEventDispatcher`
+* Use native DOM attributes: `onclick`, `oninput` (not `on:click`)
+* Pass callback props instead of `createEventDispatcher`
 
 ### Shared State
 
@@ -97,23 +105,25 @@ export const appState = $state({
 
 ### Component Structure (Order)
 
+
 1. `<script lang="ts">` — imports, props, state, derived, effects, functions
 2. Template markup
 3. `<style>` (if needed)
 
 ### Performance Tips
 
-- Runes track dependencies at runtime (more reliable than Svelte 4)
-- `$derived` is memoized — only recalculates when dependencies change
-- Smaller bundles (15-30% reduction over Svelte 4)
-- No virtual DOM — compiles to direct DOM manipulation
+* Runes track dependencies at runtime (more reliable than Svelte 4)
+* `$derived` is memoized — only recalculates when dependencies change
+* Smaller bundles (15-30% reduction over Svelte 4)
+* No virtual DOM — compiles to direct DOM manipulation
 
 ### Avoid
 
-- Don't mutate state inside `$derived` (infinite loop)
-- Don't use `$effect` for derived values
-- Don't use `<svelte:component>` in runes mode (deprecated)
-- Stores still work but aren't necessary — prefer runes
+* Don't mutate state inside `$derived` (infinite loop)
+* Don't use `$effect` for derived values
+* Don't use `<svelte:component>` in runes mode (deprecated)
+* Stores still work but aren't necessary — prefer runes
+
 
 ---
 
@@ -122,15 +132,17 @@ export const appState = $state({
 These seven components will form the backbone of the UX.
 
 ### Layout/Structure
-| Component           | Purpose                                                                                                                                                                      |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Panel.svelte`      | Main container — orchestrates everything. Routes between normal view, BuildNotes, Import, Preview. Houses Primary_Controls, Details, Secondary_Controls, and the graph area. |
-| `Box.svelte`        | Bordered container with Separators on all four sides. Uses slots for content.                                                                                                |
-| `Separator.svelte`  | Visual dividers with optional gull wings, titles, and thin divider lines. Horizontal or vertical.                                                                            |
-| `Gull_Wings.svelte` | Decorative curved corners for separators.                                                                                                                                    |
-| `Details.svelte`    | Empty                                                                                                                                                                        |
-| `Controls.svelte`   | Empty                                                                                                                                                                        |
-| `Graph.svelte`      | Empty                                                                                                                                                                        |
+
+| Component | Purpose |
+|----|----|
+| `Panel.svelte` | Main container — orchestrates everything. Routes between normal view, BuildNotes, Import, Preview. Houses Primary_Controls, Details, Secondary_Controls, and the graph area. |
+| `Box.svelte` | Bordered container with Separators on all four sides. Uses slots for content. |
+| `Separator.svelte` | Visual dividers with optional gull wings, titles, and thin divider lines. Horizontal or vertical. |
+| `Gull_Wings.svelte` | Decorative curved corners for separators. |
+| `Details.svelte` | Empty |
+| `Controls.svelte` | Empty |
+| `Graph.svelte` | Empty |
+
 
 ---
 
@@ -141,13 +153,15 @@ These seven components will form the backbone of the UX.
 Created `src/lib/svelte/layout/Panel.svelte` using Svelte 5 best practices:
 
 **Features:**
-- Full viewport coverage with reactive window sizing
-- Three-region layout: controls (top), graph (main), details (right)
-- Snippets for content injection (not deprecated slots)
-- Typed props with TypeScript
-- CSS custom properties for theming
+
+* Full viewport coverage with reactive window sizing
+* Three-region layout: controls (top), graph (main), details (right)
+* Snippets for content injection (not deprecated slots)
+* Typed props with TypeScript
+* CSS custom properties for theming
 
 **Architecture:**
+
 ```
 Panel
 ├── controls region (top bar, 48px)
@@ -158,20 +172,23 @@ Panel
 ```
 
 **Svelte 5 patterns used:**
-- `$state()` for width/height
-- `$derived()` for computed regions
-- `$props()` with TypeScript interface
-- `{@render snippet?.()}` for content
-- Native `onresize` handler
+
+* `$state()` for width/height
+* `$derived()` for computed regions
+* `$props()` with TypeScript interface
+* `{@render snippet?.()}` for content
+* Native `onresize` handler
 
 **Files created/modified:**
-- `src/lib/svelte/layout/Main.svelte` — root layout + children
-- `src/lib/svelte/layout/Controls.svelte` — top bar
-- `src/lib/svelte/layout/Graph.svelte` — canvas with resize
-- `src/lib/svelte/layout/Details.svelte` — left sidebar
-- `src/App.svelte` — imports Main
+
+* `src/lib/svelte/layout/Main.svelte` — root layout + children
+* `src/lib/svelte/layout/Controls.svelte` — top bar
+* `src/lib/svelte/layout/Graph.svelte` — canvas with resize
+* `src/lib/svelte/layout/Details.svelte` — left sidebar
+* `src/App.svelte` — imports Main
 
 **Deleted:**
-- `src/lib/svelte/layout/Panel.svelte` — merged into Main
+
+* `src/lib/svelte/layout/Panel.svelte` — merged into Main
 
 **Next:** Run `yarn dev` to verify, then iterate on layout/styling as needed.

@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "7d971506dab183bf",
+        "id": "70bee0db2aed513e",
         "type": "tabs",
         "children": [
           {
-            "id": "e6b9ab350517d45d",
+            "id": "e32a6ad9ee169683",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "notes/guides/develop/style.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "style"
             }
           }
         ]
@@ -183,11 +183,29 @@
       "bases:Create new base": false
     }
   },
-  "active": "e6b9ab350517d45d",
+  "active": "e32a6ad9ee169683",
   "lastOpenFiles": [
+    "Screenshot 2026-01-07 at 1.26.15 AM.png",
+    "Screenshot 2026-01-07 at 1.20.05 AM.png",
+    "Screenshot 2026-01-07 at 1.18.21 AM.png",
+    "notes/work/milestones/2.panel/implement.md",
+    "notes/designs/Box.md",
+    "notes/designs/Preferences.md",
+    "src/lib/svelte/layout/Box.svelte",
+    "notes/designs/index.md",
+    "src/lib/svelte/layout/Separator.svelte",
+    "src/lib/svelte/layout/Gull_Wings.svelte",
+    "notes/designs/Gull_Wings.md",
+    "notes/designs/Separator.md",
+    "notes/designs/Details.md",
+    "notes/designs/Graph.md",
+    "notes/designs/Controls.md",
+    "notes/designs/Main.md",
+    "notes/designs",
+    "notes/guides/index.md",
     "notes/guides/road.map.md",
     "README.md",
-    "notes/guides/index.md",
+    "notes/work/articles/accidental.programmer.md",
     "notes/guides/collaborate/voice.md",
     "notes/guides/collaborate/workflow.md",
     "notes/guides/collaborate/chat.md",
@@ -201,25 +219,9 @@
     "notes/guides/develop/composition.md",
     "notes/guides/develop/best.practices.md",
     "notes/guides/develop",
-    "notes/guides/test/testing.md",
-    "notes/guides/test/debugging.md",
     "notes/guides/test",
-    "notes/guides/development/best.practices.md",
     "notes/guides/ai",
     "notes/guides/testing",
-    "notes/guides/development",
-    "notes/work/milestones/2.panel/implement.md",
-    "src/lib/svelte/layout/Main.svelte",
-    "src/lib/svelte/layout/Controls.svelte",
-    "src/lib/svelte/layout/Details.svelte",
-    "src/lib/svelte/layout/Graph.svelte",
-    "notes/work/milestones/2.panel/architecture.md",
-    "notes/work/milestones/2.panel/milestone 2.md",
-    "notes/work/articles/accidental.programmer.md",
-    "notes/work/milestones/2.panel/components.md",
-    "notes/work/milestones/3.docs.md",
-    "notes/architecture/files.md",
-    "notes/work/articles/how.to.build.it.md",
-    "notes/work/articles/write.article.md"
+    "notes/guides/development"
   ]
 }

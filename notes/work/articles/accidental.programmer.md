@@ -74,15 +74,17 @@ My AI today knows a mountain of things because i've been teaching it, one markdo
 
 Gee, you're not paying anyone to store all the files. Besides which, they're completely yours. Plus, likely this entire recipe will work fine on any AI.
 
-But I suppose the catch is getting used to thinking differently. The skills I had to learn:
+But I suppose the catch is getting used to thinking differently. I had to learn:
 
-- [ ] good questions
-- [ ] careful scrutiny of the answers
-- [ ] correct mistakes, wrong assumptions
-- [ ] rewrite instructions
+- [ ] carefully craft questions
+- [ ] patiences while it does its thing
+- [ ] careful scrutiny of its answers
+- [ ] correct mistakes, wrong assumptions, craziness
+- [ ] compose dog-simple instructions
 	- [ ] do NOT trust the AI
 	- [ ] take very small baby steps
-	- [ ] verify and identify anything unwanted
+	- [ ] test, identify anything wacko
+	- [ ] take time to get it right
 	- [ ] rinse and repeat
 
 ## An Invitation

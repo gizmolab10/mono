@@ -1,26 +1,34 @@
-<script lang="ts">
+<script lang='ts'>
+	import { colors } from '../../ts/utilities/Colors';
+	const { w_text_color, w_background_color } = colors;
+
 	let {
 		title = 'Design Intuition'
-	}: {
-		title?: string;
+	} : {
+		title? : string;
 	} = $props();
 </script>
 
-<div class="controls">
+<div
+	class            = 'controls'
+	style:color      = {$w_text_color}
+	style:background = {$w_background_color}>
 	<h1>{title}</h1>
 </div>
 
 <style>
 	.controls {
-		display: flex;
-		align-items: center;
-		padding: 0 1rem;
-		height: 100%;
+		width       : 100%;
+		height      : 100%;
+		display     : flex;
+		padding     : 0 1rem;
+		align-items : center;
+		box-sizing  : border-box;
 	}
 
 	.controls h1 {
-		margin: 0;
-		font-size: 1.25rem;
-		font-weight: 300;
+		margin      : 0;
+		font-size   : 1.25rem;
+		font-weight : 300;
 	}
 </style>

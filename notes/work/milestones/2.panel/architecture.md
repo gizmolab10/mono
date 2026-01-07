@@ -10,17 +10,19 @@ Panel is the root layout component for the di application. It provides a fixed, 
 ┌─────────────────────────────────────────────────────────────────┐
 │                         .controls                               │
 │                        (48px height)                            │
-├─────────────────┬───────────────────────────────────────────────┤
-│                 │                                               │
-│                 │                                               │
-│    .details     │                    .graph                     │
-│   (280px width) │               (flex: 1, fills)                │
-│                 │                                               │
-│                 │                                               │
-│                 │                                               │
-│                 │                                               │
-│                 │                                               │
-└─────────────────┴───────────────────────────────────────────────┘
+├═══════════════════════════════════════════════════════════════╮─┤
+│                    Separator (horizontal, 8px)                ╯ │
+├─────────────────╦═══════════════════════════════════════════════┤
+│                 ║                                               │
+│                 ║                                               │
+│    .details     ║                    .graph                     │
+│   (280px width) ║               (flex: 1, fills)                │
+│                 ║                                               │
+│                 ║  Separator                                    │
+│                 ║  (vertical, 8px)                              │
+│                 ║                                               │
+│                 ║                                               │
+└─────────────────╩═══════════════════════════════════════════════┘
                               .panel
                     (fixed, full viewport)
 ```
@@ -31,9 +33,11 @@ Panel is the root layout component for the di application. It provides a fixed, 
 Main.svelte (.panel)
 ├── .region.controls      ← top bar
 │   └── Controls.svelte
+├── Separator             ← horizontal, below controls
 ├── .main                 ← flexbox container
-│   ├── .region.details   ← left sidebar
+│   ├── .region.details   ← left sidebar (if showDetails)
 │   │   └── Details.svelte
+│   ├── Separator         ← vertical, between details/graph (if showDetails)
 │   └── .region.graph     ← main content area
 │       └── Graph.svelte
 ```
@@ -46,6 +50,15 @@ Main.svelte (.panel)
 | `Controls.svelte` | `layout/` | Top bar with title |
 | `Graph.svelte` | `layout/` | Canvas with ResizeObserver, 3D rendering |
 | `Details.svelte` | `layout/` | Left sidebar, properties panel |
+| `Separator.svelte` | `layout/` | Visual divider lines with optional decorations |
+| `Gull_Wings.svelte` | `layout/` | SVG curved corner decorations |
+| `Box.svelte` | `layout/` | Bordered container using separators |
+
+### Managers
+
+| Component | Location | Purpose |
+|-----------|----------|--------|
+| `Preferences.ts` | `managers/` | localStorage read/write for persistent settings |
 
 ## CSS Classes
 

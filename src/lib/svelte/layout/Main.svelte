@@ -1,107 +1,123 @@
-<script lang="ts">
+<script lang='ts'>
 	import Controls from './Controls.svelte';
 	import Graph from './Graph.svelte';
 	import Details from './Details.svelte';
+	import Separator from './Separator.svelte';
+	import Box from './Box.svelte';
 
 	// Reactive state for window dimensions
-	let width = $state(window.innerWidth);
+	let width  = $state(window.innerWidth);
 	let height = $state(window.innerHeight);
 
-	// Layout constants (configurable later)
+	// Layout constants
+	const separatorThickness = 8;
+	const boxThickness       = 8;
+
 	let controlsHeight = $derived(48);
-	let detailsWidth = $derived(280);
-	let showDetails = $state(true);
+	let detailsWidth   = $derived(280);
+	let showDetails    = $state(true);
 
-	// Computed regions
-	let graphRect = $derived({
-		x: showDetails ? detailsWidth : 0,
-		y: controlsHeight,
-		width: showDetails ? width - detailsWidth : width,
-		height: height - controlsHeight
-	});
+	// Box inner dimensions (accounting for box borders)
+	let innerWidth  = $derived(width - boxThickness * 2);
+	let innerHeight = $derived(height - boxThickness * 2);
 
-	let detailsRect = $derived({
-		x: 0,
-		y: controlsHeight,
-		width: detailsWidth,
-		height: height - controlsHeight
-	});
+	// Computed dimensions accounting for separators
+	let mainHeight = $derived(innerHeight - controlsHeight - separatorThickness);
+	let graphWidth = $derived(innerWidth - (showDetails ? detailsWidth + separatorThickness : 0));
 
 	function handleResize() {
-		width = window.innerWidth;
+		width  = window.innerWidth;
 		height = window.innerHeight;
 	}
 </script>
 
-<svelte:window onresize={handleResize} />
+<svelte:window
+	onresize = {handleResize}
+/>
 
 <div
-	class="panel"
-	style:width="{width}px"
-	style:height="{height}px"
->
-	<div
-		class="region controls"
-		style:height="{controlsHeight}px"
-	>
-		<Controls />
-	</div>
-
-	<div class="main">
-		{#if showDetails}
-			<div
-				class="region details"
-				style:width="{detailsRect.width}px"
-				style:height="{detailsRect.height}px"
-			>
-				<Details />
-			</div>
-		{/if}
-
+	class = 'panel'>
+	<Box
+		{width}
+		{height}
+		thickness = {boxThickness}>
+		<!-- Controls region -->
 		<div
-			class="region graph"
-			style:width="{graphRect.width}px"
-			style:height="{graphRect.height}px"
-		>
-			<Graph />
+			class        = 'region controls'
+			style:height = '{controlsHeight}px'>
+			<Controls />
 		</div>
-	</div>
+
+		<!-- Horizontal separator below controls -->
+		<Separator
+			length       = {innerWidth}
+			hasGullWings = {true}
+			hasBothWings = {true}
+			isHorizontal = {true}
+			thickness    = {separatorThickness}
+		/>
+
+		<!-- Main content area -->
+		<div
+			class        = 'main'
+			style:height = '{mainHeight}px'>
+			{#if showDetails}
+				<!-- Details region -->
+				<div
+					class        = 'region details'
+					style:width  = '{detailsWidth}px'
+					style:height = '{mainHeight}px'>
+					<Details />
+				</div>
+
+				<!-- Vertical separator between details and graph -->
+				<Separator
+					length       = {mainHeight}
+					hasGullWings = {true}
+					hasBothWings = {true}
+					isHorizontal = {false}
+					thickness    = {separatorThickness}
+				/>
+			{/if}
+
+			<!-- Graph region -->
+			<div
+				class        = 'region graph'
+				style:width  = '{graphWidth}px'
+				style:height = '{mainHeight}px'>
+				<Graph />
+			</div>
+		</div>
+	</Box>
 </div>
 
 <style>
 	.panel {
-		position: fixed;
-		top: 0;
-		left: 0;
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-		background: var(--panel-bg, #1a1a2e);
-		color: var(--panel-fg, #eee);
-		font-family: system-ui, sans-serif;
+		top         : 0;
+		left        : 0;
+		position    : fixed;
+		font-family : system-ui, sans-serif;
 	}
 
 	.main {
-		display: flex;
-		flex: 1;
-		overflow: hidden;
+		display  : flex;
+		overflow : hidden;
 	}
 
 	.region {
-		position: relative;
-		overflow: hidden;
+		overflow : hidden;
+		position : relative;
 	}
 
 	.controls {
-		width: 100%;
-		border-bottom: 1px solid var(--border-color, #333);
+		width : 100%;
 	}
 
 	.graph {
-		flex: 1;
+		flex : 1;
 	}
 
 	.details {
-		border-right: 1px solid var(--border-color, #333);
+		flex-shrink : 0;
 	}
 </style>

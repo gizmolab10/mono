@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang='ts'>
 	import Main from './lib/svelte/layout/Main.svelte';
 </script>
 
@@ -6,9 +6,7 @@
 
 <style>
 	:global(body) {
-		margin: 0;
-		background: #1a1a2e;
-		font-family: system-ui, sans-serif;
-		color: #eee;
+		margin      : 0;
+		font-family : system-ui, sans-serif;
 	}
 </style>

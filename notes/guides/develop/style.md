@@ -113,7 +113,7 @@ This document comprehensively addresses all idiosyncrasies found in the webserio
 
 ### Alignment
 
-- **Align equals signs** in property declarations when in a group:
+- **Align equals signs** in property declarations, attributes, and props when in a group:
 ```typescript
 w_t_cluster_pager		= writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
 w_t_breadcrumbs			= writable<T_Breadcrumbs>(T_Breadcrumbs.ancestry);
@@ -122,10 +122,13 @@ w_show_details			= writable<boolean>(true);
 w_show_tiny_dots		= writable<boolean>(true);
 ```
 
+- Align types and colons when in a group or switch statement and within that, group types together:
+
+![[Screenshot 2026-01-07 at 1.26.15 AM.png]]
 ### Spacing
 
 - **Single space** after keywords: `if (condition)`, `for (const item of items)`
-- **No space** before colons in type annotations: `writable<T_Graph>`, `Array<T_Detail>`
+- **Spaces** around all colons everywhere
 - **Spaces around operators**: `a + b`, `x === y`, `flag ? value1 : value2`
 - **No space** before commas: `[a, b, c]`, `function(a, b, c)`
 - **Space after commas**: `[a, b, c]`, `function(a, b, c)`
@@ -145,44 +148,79 @@ style='
 
 ### Svelte-Specific Formatting
 
-- **Multi-line style attributes**: Use single quotes with line breaks:
+#### Element and Component Structure
+
+- **Opening tag on its own line**, first attribute indented on the next line
+- **Align equals signs** with spaces on both sides: `attr = {value}`
+- **Closing `>`** stays on the same line as the last attribute (never alone)
+- **Self-closing `/>`** may be on its own line
+
+**Elements with content:**
 ```svelte
-style='
-	position: absolute;
-	width: {width}px;
-	height: {height}px;
-'
+<div
+	class            = 'controls'
+	style:color      = {$w_text_color}
+	style:background = {$w_background_color}>
+	<h1>{title}</h1>
+</div>
 ```
-- **Component props**: One per line for readability when multiple:
+
+**Self-closing components:**
 ```svelte
-<Segmented name='counts-shown-options'
-	left={106}
-	allow_none={false}
-	allow_multiple={false}
-	width={segmented_width}
-	height={segmented_height}
-	origin={Point.y(tops[1])}
-	handle_selection={handle_counts_shown}
-	titles={[T_Counts_Shown.dots, T_Counts_Shown.numbers]}/>
+<Separator
+	length       = {innerWidth}
+	hasGullWings = {true}
+	hasBothWings = {true}
+	isHorizontal = {true}
+	thickness    = {separatorThickness}
+/>
+```
+
+**Single-attribute elements:**
+```svelte
+<div
+	class = 'box-middle'>
+	...
+</div>
+```
+
+#### CSS in Style Blocks
+
+- **Align colons** with space on both sides
+- **Order by length** (shortest first)
+
+```svelte
+<style>
+	.controls {
+		width       : 100%;
+		height      : 100%;
+		display     : flex;
+		padding     : 0 1rem;
+		align-items : center;
+		box-sizing  : border-box;
+	}
+
+	.controls h1 {
+		margin      : 0;
+		font-size   : 1.25rem;
+		font-weight : 300;
+	}
+</style>
 ```
 
 ### Template Styles: Props and Style Attributes
 
 #### Component Props Ordering
 
-**Props passed to components** are ordered by **length of prop statement** (the entire prop including its value, shortest first), enabling visual alignment and easier scanning:
+**Props passed to components** are ordered by **length of prop statement** (shortest first), with aligned equals signs:
 
 ```svelte
-<Separator name='counts-shown-separator'
-	length={width}							// 14 chars
-	isHorizontal={true}						// 18 chars
-	position={position}						// 19 chars
-	has_gull_wings={true}					// 21 chars
-	margin={k.details_margin}				// 24 chars
-	origin={Point.y(tops[0])}				// 25 chars
-	title='show list lengths as'			// 27 chars
-	title_left={k.separator_title_left}		// 33 chars
-	thickness={k.thickness.separator.details}	// 40 chars
+<Separator
+	length       = {width}
+	hasGullWings = {true}
+	hasBothWings = {true}
+	isHorizontal = {true}
+	thickness    = {separatorThickness}
 />
 ```
 
@@ -190,35 +228,17 @@ style='
 
 #### Style Attribute Ordering
 
-**CSS properties within style attributes** are ordered by **length of property statement** (the entire property including its value, shortest first):
+**CSS properties** are ordered by **length** (shortest first) with aligned colons:
 
 ```svelte
-<div style='
-	width: 17px;						// 11 chars
-	height: 17px;						// 12 chars
-	left: {color_left}px;					// ~20 chars
-	position: {position};					// ~19 chars
-	border: 1px solid black;				// 22 chars
-	border-radius: 50%;					// 18 chars
-	z-index: {T_Layer.details};				// ~28 chars
-	background-color: {$w_separator_color}		// ~33 chars
-'>
-```
-
-**CSS custom properties (variables)** are typically grouped together and ordered by length within that group:
-
-```svelte
-<div style='
-	--hover-color: {hover_color};					// ~28 chars
-	--border-color: {border_color};					// ~30 chars
-	--selected-color: {selected_color};				// ~33 chars
-	--selected-text-color: {selected_text_color};			// ~38 chars
-	--hover-background-color: {hover_background_color};		// ~42 chars
-	--selected-hover-text-color: {selected_hover_text_color};	// ~48 chars
-	left: {left}px;						// ~15 chars
-	height: {height}px;					// ~17 chars
-	top: {origin.y}px;					// ~18 chars
-'>
+<style>
+	.panel {
+		top         : 0;
+		left        : 0;
+		position    : fixed;
+		font-family : system-ui, sans-serif;
+	}
+</style>
 ```
 
 **Benefits of length-based ordering**:
