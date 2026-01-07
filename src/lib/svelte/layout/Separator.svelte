@@ -1,46 +1,45 @@
 <script lang='ts'>
+	import { k } from '../../ts/common/Constants';
 	import { Point } from '../../ts/types/Coordinates';
 	import { Direction } from '../../ts/types/Angle';
 	import { colors } from '../../ts/draw/Colors';
-	import Gull_Wings from './Gull_Wings.svelte';
+	import Fillets from './Fillets.svelte';
 
 	let {
 		length,
-		thickness      = 8,
-		cornerRadius   = 6,
+		thickness      = k.thickness.separator.main,
 		isHorizontal   = true,
-		hasGullWings   = true,
-		hasBothWings   = true,
+		hasFillets       = true,
+		hasDoubleFillet  = true,
 		hasThinDivider = false,
 		title          = null as string | null
 	} : {
 		length          : number;
 		thickness?      : number;
-		cornerRadius?   : number;
 		title?          : string | null;
-		isHorizontal?   : boolean;
-		hasGullWings?   : boolean;
-		hasBothWings?   : boolean;
+		isHorizontal?    : boolean;
+		hasFillets?      : boolean;
+		hasDoubleFillet? : boolean;
 		hasThinDivider? : boolean;
 	} = $props();
 
 	const { w_separator_color, w_background_color } = colors;
 
-	// Wing positions and directions
-	let wingCenter1 = $derived(
+	// Fillet positions and directions
+	let filletCenter1 = $derived(
 		isHorizontal
 			? new Point(0, thickness / 2)
 			: new Point(thickness / 2, 0)
 	);
 
-	let wingCenter2 = $derived(
+	let filletCenter2 = $derived(
 		isHorizontal
 			? new Point(length, thickness / 2)
 			: new Point(thickness / 2, length)
 	);
 
-	let wingDirection1 = $derived(isHorizontal ? Direction.right : Direction.down);
-	let wingDirection2 = $derived(isHorizontal ? Direction.left : Direction.up);
+	let filletDirection1 = $derived(isHorizontal ? Direction.right : Direction.down);
+	let filletDirection2 = $derived(isHorizontal ? Direction.left : Direction.up);
 
 	// Dimensions
 	let separatorWidth  = $derived(isHorizontal ? length : thickness);
@@ -54,21 +53,17 @@
 	style:width            = '{separatorWidth}px'
 	style:height           = '{separatorHeight}px'
 	style:background-color = 'transparent'>
-	{#if hasGullWings}
-		<Gull_Wings
-			{thickness}
-			radius    = {cornerRadius}
-			center    = {wingCenter1}
+	{#if hasFillets}
+		<Fillets
+			center    = {filletCenter1}
 			color     = {$w_separator_color}
-			direction = {wingDirection1}
+			direction = {filletDirection1}
 		/>
-		{#if hasBothWings}
-			<Gull_Wings
-				{thickness}
-				radius    = {cornerRadius}
-				center    = {wingCenter2}
+		{#if hasDoubleFillet}
+			<Fillets
+				center    = {filletCenter2}
 				color     = {$w_separator_color}
-				direction = {wingDirection2}
+				direction = {filletDirection2}
 			/>
 		{/if}
 	{/if}

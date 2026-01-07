@@ -1,4 +1,5 @@
 <script lang='ts'>
+	import { k } from '../../ts/common/Constants';
 	import Controls from './Controls.svelte';
 	import Graph from './Graph.svelte';
 	import Details from './Details.svelte';
@@ -10,20 +11,19 @@
 	let height = $state(window.innerHeight);
 
 	// Layout constants
-	const separatorThickness = 8;
-	const boxThickness       = 8;
+	const thickness = k.thickness.separator.main;
 
 	let controlsHeight = $derived(48);
 	let detailsWidth   = $derived(280);
 	let showDetails    = $state(true);
 
 	// Box inner dimensions (accounting for box borders)
-	let innerWidth  = $derived(width - boxThickness * 2);
-	let innerHeight = $derived(height - boxThickness * 2);
+	let innerWidth  = $derived(width - thickness * 2);
+	let innerHeight = $derived(height - thickness * 2);
 
 	// Computed dimensions accounting for separators
-	let mainHeight = $derived(innerHeight - controlsHeight - separatorThickness);
-	let graphWidth = $derived(innerWidth - (showDetails ? detailsWidth + separatorThickness : 0));
+	let mainHeight = $derived(innerHeight - controlsHeight - thickness);
+	let graphWidth = $derived(innerWidth - (showDetails ? detailsWidth + thickness : 0));
 
 	function handleResize() {
 		width  = window.innerWidth;
@@ -40,7 +40,7 @@
 	<Box
 		{width}
 		{height}
-		thickness = {boxThickness}>
+		{thickness}>
 		<!-- Controls region -->
 		<div
 			class        = 'region controls'
@@ -50,11 +50,11 @@
 
 		<!-- Horizontal separator below controls -->
 		<Separator
-			length       = {innerWidth}
-			hasGullWings = {true}
-			hasBothWings = {true}
-			isHorizontal = {true}
-			thickness    = {separatorThickness}
+			{thickness}
+			length          = {innerWidth}
+			hasFillets      = {true}
+			hasDoubleFillet = {true}
+			isHorizontal    = {true}
 		/>
 
 		<!-- Main content area -->
@@ -72,11 +72,11 @@
 
 				<!-- Vertical separator between details and graph -->
 				<Separator
-					length       = {mainHeight}
-					hasGullWings = {true}
-					hasBothWings = {true}
-					isHorizontal = {false}
-					thickness    = {separatorThickness}
+					{thickness}
+					length          = {mainHeight}
+					hasFillets      = {true}
+					hasDoubleFillet = {true}
+					isHorizontal    = {false}
 				/>
 			{/if}
 

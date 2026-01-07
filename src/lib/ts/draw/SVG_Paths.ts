@@ -3,7 +3,7 @@ import Angle, { Direction } from '../types/Angle';
 
 export class SVG_Paths {
 
-	gull_wings(center : Point, radius : number, direction : Direction) : string {
+	fillets(center : Point, radius : number, direction : Direction) : string {
 		const baseAngle     = direction + Angle.half;
 		const leftEndAngle  = baseAngle + Angle.quarter;
 		const rightEndAngle = baseAngle - Angle.quarter;
@@ -15,7 +15,7 @@ export class SVG_Paths {
 		return `M ${a_start.x} ${a_start.y} ${leftArc} ${rightArc} L ${a_start.x} ${a_start.y} Z`;
 	}
 
-	gull_wings_bounds(radius : number, direction : Direction) : { minX : number; minY : number; width : number; height : number } {
+	fillets_bounds(radius : number, direction : Direction) : { minX : number; minY : number; width : number; height : number } {
 		const baseAngle     = direction + Angle.half;
 		const leftEndAngle  = baseAngle + Angle.quarter;
 		const rightEndAngle = baseAngle - Angle.quarter;

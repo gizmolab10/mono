@@ -80,7 +80,7 @@ export default class Constants {
 		text_area_border:  7,
 		arcSlider_cap: 	   7.5,
 		ring_minimum:  	  55,
-		gull_wings: { 
+		fillets: { 
 			thick:	   	  14,
 			thin:		   8,
 			ultra_thin:	   5,

@@ -5,7 +5,7 @@
 	import { svg_paths } from '../../ts/draw/SVG_Paths';
 
 	let {
-		radius    = k.radius.gull_wings.thick,
+		radius    = k.radius.fillets.thick,
 		thickness = k.thickness.separator.main,
 		color     = 'black',
 		center    = Point.zero,
@@ -19,8 +19,8 @@
 	} = $props();
 
 	// Get path and bounds from svg_paths
-	let path   = $derived(svg_paths.gull_wings(Point.zero, radius, direction));
-	let bounds = $derived(svg_paths.gull_wings_bounds(radius, direction));
+	let path   = $derived(svg_paths.fillets(Point.zero, radius, direction));
+	let bounds = $derived(svg_paths.fillets_bounds(radius, direction));
 
 	// Expand bounds to account for stroke width (stroke extends half outside path)
 	let padding = $derived(thickness / 2);
@@ -35,7 +35,7 @@
 </script>
 
 <svg
-	class      = 'gull-wings'
+	class      = 'fillets'
 	{width}
 	{height}
 	style:top  = '{svgTop}px'
@@ -50,7 +50,7 @@
 </svg>
 
 <style>
-	.gull-wings {
+	.fillets {
 		z-index        : 10;
 		position       : absolute;
 		pointer-events : none;

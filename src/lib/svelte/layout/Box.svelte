@@ -1,27 +1,26 @@
 <script lang='ts'>
+	import { k } from '../../ts/common/Constants';
 	import type { Snippet } from 'svelte';
 	import Separator from './Separator.svelte';
 
 	let {
 		width,
 		height,
-		showTop      = true,
-		showBottom   = true,
-		showLeft     = true,
-		showRight    = true,
-		thickness    = 8,
-		cornerRadius = 6,
+		showTop    = true,
+		showBottom = true,
+		showLeft   = true,
+		showRight  = true,
+		thickness  = k.thickness.separator.main,
 		children
 	} : {
-		width         : number;
-		height        : number;
-		thickness?    : number;
-		cornerRadius? : number;
-		showTop?      : boolean;
-		showBottom?   : boolean;
-		showLeft?     : boolean;
-		showRight?    : boolean;
-		children?     : Snippet;
+		width       : number;
+		height      : number;
+		thickness?  : number;
+		showTop?    : boolean;
+		showBottom? : boolean;
+		showLeft?   : boolean;
+		showRight?  : boolean;
+		children?   : Snippet;
 	} = $props();
 
 	// Content area dimensions (inside separators)
@@ -37,11 +36,10 @@
 		<div
 			class = 'separator-top'>
 			<Separator
-				length       = {width}
 				{thickness}
-				{cornerRadius}
+				length       = {width}
 				isHorizontal = {true}
-				hasGullWings = {false}
+				hasFillets   = {false}
 			/>
 		</div>
 	{/if}
@@ -53,11 +51,10 @@
 				class = 'separator-left'>
 				<Separator
 					{thickness}
-					{cornerRadius}
-					hasGullWings = {true}
-					hasBothWings = {true}
-					isHorizontal = {false}
-					length       = {height - (showTop ? thickness : 0) - (showBottom ? thickness : 0)}
+					hasFillets       = {true}
+					hasDoubleFillet  = {true}
+					isHorizontal   = {false}
+					length         = {height - (showTop ? thickness : 0) - (showBottom ? thickness : 0)}
 				/>
 			</div>
 		{/if}
@@ -76,11 +73,10 @@
 				class = 'separator-right'>
 				<Separator
 					{thickness}
-					{cornerRadius}
-					hasGullWings = {true}
-					hasBothWings = {true}
-					isHorizontal = {false}
-					length       = {height - (showTop ? thickness : 0) - (showBottom ? thickness : 0)}
+					hasFillets       = {true}
+					hasDoubleFillet  = {true}
+					isHorizontal   = {false}
+					length         = {height - (showTop ? thickness : 0) - (showBottom ? thickness : 0)}
 				/>
 			</div>
 		{/if}
@@ -90,11 +86,10 @@
 		<div
 			class = 'separator-bottom'>
 			<Separator
-				length       = {width}
 				{thickness}
-				{cornerRadius}
+				length       = {width}
 				isHorizontal = {true}
-				hasGullWings = {false}
+				hasFillets   = {false}
 			/>
 		</div>
 	{/if}

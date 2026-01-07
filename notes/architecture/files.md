@@ -13,8 +13,8 @@ src/
     │       ├── Box.svelte
     │       ├── Controls.svelte
     │       ├── Details.svelte
+    │       ├── Fillets.svelte
     │       ├── Graph.svelte
-    │       ├── Gull_Wings.svelte
     │       ├── Main.svelte
     │       └── Separator.svelte
     └── ts/
@@ -80,7 +80,7 @@ Visual utilities for colors and SVG generation.
 | File | Export | What it does |
 |------|--------|--------------|
 | `Colors.ts` | `colors` | Color utilities, reactive stores for theme colors |
-| `SVG_Paths.ts` | `svg_paths` | SVG path string generators (gull wings, etc.) |
+| `SVG_Paths.ts` | `svg_paths` | SVG path string generators (fillets, etc.) |
 
 ## Types
 
@@ -138,8 +138,8 @@ Svelte components for the panel UI.
 |------|--------------|
 | `Main.svelte` | Top-level layout, orchestrates regions |
 | `Box.svelte` | Container with separators on edges |
-| `Separator.svelte` | Divider with optional gull wings |
-| `Gull_Wings.svelte` | Decorative curved corners |
+| `Separator.svelte` | Divider with optional fillets |
+| `Fillets.svelte` | Decorative curved corners |
 | `Controls.svelte` | Top toolbar region |
 | `Details.svelte` | Right panel region |
 | `Graph.svelte` | Main canvas region |
