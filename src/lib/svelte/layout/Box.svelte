@@ -26,15 +26,23 @@
 	// Content area dimensions (inside separators)
 	let contentWidth  = $derived(width - (showLeft ? thickness : 0) - (showRight ? thickness : 0));
 	let contentHeight = $derived(height - (showTop ? thickness : 0) - (showBottom ? thickness : 0));
+
+	// Vertical separator positioning: fillets should align with horizontal separator centers
+	let verticalTop    = $derived(showTop ? thickness / 2 : 0);
+	let verticalLength = $derived(height - (showTop ? thickness / 2 : 0) - (showBottom ? thickness / 2 : 0));
 </script>
 
 <div
 	class        = 'box'
 	style:width  = '{width}px'
 	style:height = '{height}px'>
+
+	<!-- Horizontal separators (no fillets) -->
 	{#if showTop}
 		<div
-			class = 'separator-top'>
+			class      = 'separator-top'
+			style:top  = '0'
+			style:left = '0'>
 			<Separator
 				{thickness}
 				length       = {width}
@@ -43,48 +51,12 @@
 			/>
 		</div>
 	{/if}
-
-	<div
-		class = 'box-middle'>
-		{#if showLeft}
-			<div
-				class = 'separator-left'>
-				<Separator
-					{thickness}
-					hasFillets       = {true}
-					hasDoubleFillet  = {true}
-					isHorizontal   = {false}
-					length         = {height - (showTop ? thickness : 0) - (showBottom ? thickness : 0)}
-				/>
-			</div>
-		{/if}
-
-		<div
-			class        = 'box-content'
-			style:width  = '{contentWidth}px'
-			style:height = '{contentHeight}px'>
-			{#if children}
-				{@render children()}
-			{/if}
-		</div>
-
-		{#if showRight}
-			<div
-				class = 'separator-right'>
-				<Separator
-					{thickness}
-					hasFillets       = {true}
-					hasDoubleFillet  = {true}
-					isHorizontal   = {false}
-					length         = {height - (showTop ? thickness : 0) - (showBottom ? thickness : 0)}
-				/>
-			</div>
-		{/if}
-	</div>
 
 	{#if showBottom}
 		<div
-			class = 'separator-bottom'>
+			class      = 'separator-bottom'
+			style:top  = '{height - thickness}px'
+			style:left = '0'>
 			<Separator
 				{thickness}
 				length       = {width}
@@ -93,35 +65,67 @@
 			/>
 		</div>
 	{/if}
+
+	<!-- Vertical separators (with fillets) -->
+	{#if showLeft}
+		<div
+			class      = 'separator-left'
+			style:top  = '{verticalTop}px'
+			style:left = '0'>
+			<Separator
+				{thickness}
+				length          = {verticalLength}
+				isHorizontal    = {false}
+				hasFillets      = {true}
+				hasDoubleFillet = {true}
+			/>
+		</div>
+	{/if}
+
+	{#if showRight}
+		<div
+			class      = 'separator-right'
+			style:top  = '{verticalTop}px'
+			style:left = '{width - thickness}px'>
+			<Separator
+				{thickness}
+				length          = {verticalLength}
+				isHorizontal    = {false}
+				hasFillets      = {true}
+				hasDoubleFillet = {true}
+			/>
+		</div>
+	{/if}
+
+	<!-- Content area -->
+	<div
+		class        = 'box-content'
+		style:top    = '{showTop ? thickness : 0}px'
+		style:left   = '{showLeft ? thickness : 0}px'
+		style:width  = '{contentWidth}px'
+		style:height = '{contentHeight}px'>
+		{#if children}
+			{@render children()}
+		{/if}
+	</div>
 </div>
 
 <style>
 	.box {
-		display        : flex;
-		position       : relative;
-		box-sizing     : border-box;
-		flex-direction : column;
-	}
-
-	.box-middle {
-		flex    : 1;
-		display : flex;
-	}
-
-	.box-content {
-		flex     : 1;
-		overflow : hidden;
+		position   : relative;
+		box-sizing : border-box;
 	}
 
 	.separator-top,
-	.separator-bottom {
-		flex-shrink : 0;
-		overflow    : visible;
-	}
-
+	.separator-bottom,
 	.separator-left,
 	.separator-right {
-		flex-shrink : 0;
-		overflow    : visible;
+		position : absolute;
+		overflow : visible;
+	}
+
+	.box-content {
+		position : absolute;
+		overflow : hidden;
 	}
 </style>

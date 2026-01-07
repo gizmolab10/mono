@@ -52,7 +52,7 @@
 	class:vertical         = {!isHorizontal}
 	style:width            = '{separatorWidth}px'
 	style:height           = '{separatorHeight}px'
-	style:background-color = 'transparent'>
+	style:background-color = {$w_separator_color}>
 	{#if hasFillets}
 		<Fillets
 			center    = {filletCenter1}

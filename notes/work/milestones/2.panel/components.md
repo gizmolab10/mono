@@ -26,8 +26,8 @@ The code should be treated as rotten. The concepts, capabilities, purpose should
 |-----------|---------|
 | `Panel.svelte` | Main container — orchestrates everything. Routes between normal view, BuildNotes, Import, Preview. Houses Primary_Controls, Details, Secondary_Controls, and the graph area. |
 | `Box.svelte` | Bordered container with Separators on all four sides. Uses slots for content. |
-| `Separator.svelte` | Visual dividers with optional gull wings, titles, and thin divider lines. Horizontal or vertical. |
-| `Gull_Wings.svelte` | Decorative curved corners for separators. |
+| `Separator.svelte` | Visual dividers with optional fillets, titles, and thin divider lines. Horizontal or vertical. |
+| `Fillets.svelte` | Decorative curved corners for separators. |
 
 ### Graph Views
 | Component | Purpose |

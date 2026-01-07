@@ -25,6 +25,14 @@
 	let mainHeight = $derived(innerHeight - controlsHeight - thickness);
 	let graphWidth = $derived(innerWidth - (showDetails ? detailsWidth + thickness : 0));
 
+	// Horizontal separator: fillets should align with box border centers
+	// Extend by thickness/2 on each side
+	let hSeparatorLength = $derived(innerWidth + thickness);
+
+	// Vertical separator: fillets should align with horizontal separator centers
+	// Extend by thickness/2 on each end
+	let vSeparatorLength = $derived(mainHeight + thickness);
+
 	function handleResize() {
 		width  = window.innerWidth;
 		height = window.innerHeight;
@@ -48,14 +56,20 @@
 			<Controls />
 		</div>
 
-		<!-- Horizontal separator below controls -->
-		<Separator
-			{thickness}
-			length          = {innerWidth}
-			hasFillets      = {true}
-			hasDoubleFillet = {true}
-			isHorizontal    = {true}
-		/>
+		<!-- Horizontal separator below controls (inset by thickness/2 on each side) -->
+		<div
+			class       = 'h-separator-wrapper'
+			style:width = '{innerWidth}px'>
+			<div style:margin-left = '{-thickness / 2}px'>
+				<Separator
+					{thickness}
+					length          = {hSeparatorLength}
+					hasFillets      = {true}
+					hasDoubleFillet = {true}
+					isHorizontal    = {true}
+				/>
+			</div>
+		</div>
 
 		<!-- Main content area -->
 		<div
@@ -70,14 +84,19 @@
 					<Details />
 				</div>
 
-				<!-- Vertical separator between details and graph -->
-				<Separator
-					{thickness}
-					length          = {mainHeight}
-					hasFillets      = {true}
-					hasDoubleFillet = {true}
-					isHorizontal    = {false}
-				/>
+				<!-- Vertical separator between details and graph (inset by thickness/2 on each end) -->
+				<div
+					class        = 'v-separator-wrapper'
+					style:height = '{mainHeight}px'
+					style:margin-top = '{-thickness / 2}px'>
+					<Separator
+						{thickness}
+						length          = {vSeparatorLength}
+						hasFillets      = {true}
+						hasDoubleFillet = {true}
+						isHorizontal    = {false}
+					/>
+				</div>
 			{/if}
 
 			<!-- Graph region -->
@@ -119,5 +138,16 @@
 
 	.details {
 		flex-shrink : 0;
+	}
+
+	.h-separator-wrapper {
+		flex-shrink : 0;
+		overflow    : visible;
+	}
+
+	.v-separator-wrapper {
+		flex-shrink  : 0;
+		overflow     : visible;
+		box-sizing   : border-box;
 	}
 </style>

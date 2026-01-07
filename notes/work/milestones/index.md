@@ -24,18 +24,13 @@ Two decades on, no CAD software has matched its power. I'm eager to recreate my 
 **Outcome:** Working quaternion demo, dev environment (Vite + Svelte 5 + TypeScript + vitest), documentation system, workflow that survives across sessions, style guide for consistency.
 
 ---
-## 2 - Panel layout
+### 2 — Panel Layout
 
-**Timeline:** **Jan 5-6, 2025** | [details](milestone%202.md)
+**Timeline:** Jan 6-7, 2025 | [details](2.panel/milestone%202.md)
 
-**Goal:** begin to flesh out the skeleton of the final product, using existing `webseriously` code. I spent a lot of time on its look and feel, so hey, reuse, recycle, live life to its fullest.
+**Goal:** Flesh out the skeleton with panel layout, reusing webseriously's look and feel.
 
-**Outcome:** (add this later)
-
-**Tasks:** 
-
-- [ ] Copy significant pieces of the webseriously svelte components.
-
+**Outcome:** Clean panel with Box + Separator + Fillets. Regions get rounded corners from adjacent fillets. Overlap rule for alignment. Svelte 5 best practices throughout.
 
 ---
 ### 3 -- Document Publishing

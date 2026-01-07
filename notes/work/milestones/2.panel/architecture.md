@@ -50,8 +50,8 @@ Main.svelte (.panel)
 | `Controls.svelte` | `layout/` | Top bar with title |
 | `Graph.svelte` | `layout/` | Canvas with ResizeObserver, 3D rendering |
 | `Details.svelte` | `layout/` | Left sidebar, properties panel |
-| `Separator.svelte` | `layout/` | Visual divider lines with optional decorations |
-| `Gull_Wings.svelte` | `layout/` | SVG curved corner decorations |
+| `Separator.svelte` | `layout/` | Visual divider with optional fillets |
+| `Fillets.svelte` | `layout/` | SVG curved corner decorations |
 | `Box.svelte` | `layout/` | Bordered container using separators |
 
 ### Managers

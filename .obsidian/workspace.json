@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/aesthetics.md",
+                "file": "notes/work/milestones/2.panel/implement.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "aesthetics"
+              "title": "implement"
             }
           }
         ]
@@ -185,11 +185,12 @@
   },
   "active": "e32a6ad9ee169683",
   "lastOpenFiles": [
+    "notes/work/layout-algorithm.md",
+    "notes/work/aesthetics.md",
     "notes/designs/aesthetics.md",
     "notes/designs/Fillets.md",
     "src/lib/svelte/layout/Fillets.svelte",
     "notes/guides/develop/style.md",
-    "notes/work/aesthetics.md",
     "src/lib/ts/draw/SVG_Paths.ts",
     "notes/work/utilities",
     "src/lib/ts/common/Testworthy_Utilities.ts",
@@ -222,7 +223,6 @@
     "notes/guides/collaborate/access.md",
     "notes/guides/develop/refactoring.md",
     "notes/guides/develop/migration.md",
-    "notes/guides/develop/markdown.md",
-    "notes/guides/develop/gotchas.md"
+    "notes/guides/develop/markdown.md"
   ]
 }

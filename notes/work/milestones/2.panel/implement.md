@@ -4,7 +4,6 @@
 
 I am keen to avoid the newbie pitfalls that the webseriously code suffers from. Before proceeding, I want us to be well up to speed on industry best advice for Svelte and gl.
 
-
 I also want us to write a design description file for each component we create. Place that file in notes/designs, and keep it up to date.
 
 ## Tasks
@@ -21,11 +20,11 @@ I also want us to write a design description file for each component we create. 
     - [x] specify position and sticky edges
   - [x] Graph, Details, Controls
   - [x] Separator
-  - [x] Gull Wings
+  - [x] Fillets
   - [x] Box
   - [x] Preferences.ts
   - [x] incorporate Box and Separator into Main
-- [ ] rinse and repeat until I am happy with it
+- [x] rinse and repeat until I am happy with it ✅
 
 
 ---
@@ -105,7 +104,6 @@ export const appState = $state({
 
 ### Component Structure (Order)
 
-
 1. `<script lang="ts">` — imports, props, state, derived, effects, functions
 2. Template markup
 3. `<style>` (if needed)
@@ -129,66 +127,16 @@ export const appState = $state({
 
 ## First set of components
 
-These seven components will form the backbone of the UX.
+These seven components form the backbone of the UX.
 
 ### Layout/Structure
 
 | Component | Purpose |
 |----|----|
-| `Panel.svelte` | Main container — orchestrates everything. Routes between normal view, BuildNotes, Import, Preview. Houses Primary_Controls, Details, Secondary_Controls, and the graph area. |
-| `Box.svelte` | Bordered container with Separators on all four sides. Uses slots for content. |
-| `Separator.svelte` | Visual dividers with optional gull wings, titles, and thin divider lines. Horizontal or vertical. |
-| `Gull_Wings.svelte` | Decorative curved corners for separators. |
-| `Details.svelte` | Empty |
-| `Controls.svelte` | Empty |
-| `Graph.svelte` | Empty |
-
-
----
-
-## Work Performed
-
-### Panel.svelte — Initial Implementation
-
-Created `src/lib/svelte/layout/Panel.svelte` using Svelte 5 best practices:
-
-**Features:**
-
-* Full viewport coverage with reactive window sizing
-* Three-region layout: controls (top), graph (main), details (right)
-* Snippets for content injection (not deprecated slots)
-* Typed props with TypeScript
-* CSS custom properties for theming
-
-**Architecture:**
-
-```
-Panel
-├── controls region (top bar, 48px)
-├── main
-│   ├── graph region (fills remaining space)
-│   └── details region (280px right sidebar)
-└── children fallback
-```
-
-**Svelte 5 patterns used:**
-
-* `$state()` for width/height
-* `$derived()` for computed regions
-* `$props()` with TypeScript interface
-* `{@render snippet?.()}` for content
-* Native `onresize` handler
-
-**Files created/modified:**
-
-* `src/lib/svelte/layout/Main.svelte` — root layout + children
-* `src/lib/svelte/layout/Controls.svelte` — top bar
-* `src/lib/svelte/layout/Graph.svelte` — canvas with resize
-* `src/lib/svelte/layout/Details.svelte` — left sidebar
-* `src/App.svelte` — imports Main
-
-**Deleted:**
-
-* `src/lib/svelte/layout/Panel.svelte` — merged into Main
-
-**Next:** Run `yarn dev` to verify, then iterate on layout/styling as needed.
+| `Main.svelte` | Root layout — orchestrates regions with Box container |
+| `Box.svelte` | Bordered container with Separators on all four sides |
+| `Separator.svelte` | Visual dividers with optional fillets and titles |
+| `Fillets.svelte` | Decorative curved corners for separators |
+| `Details.svelte` | Left sidebar region |
+| `Controls.svelte` | Top toolbar region |
+| `Graph.svelte` | Main canvas region |

@@ -2,6 +2,24 @@
 
 Decorative curved corners for separators.
 
+## Terminology Migration
+
+Renamed from "gull wings" to "fillets" for industry-standard clarity.
+
+| Old (gull/wing) | New (fillets) |
+|-----------------|---------------|
+| `Gull_Wings.svelte` | `Fillets.svelte` |
+| `gull_wings()` | `fillets()` |
+| `gull_wings_bounds()` | `fillets_bounds()` |
+| `k.radius.gull_wings` | `k.radius.fillets` |
+| `hasGullWings` | `hasFillets` |
+| `hasBothWings` | `hasDoubleFillet` |
+| `wingCenter` | `filletCenter` |
+| `wingDirection` | `filletDirection` |
+| `gullWingsPath` | `filletsPath` |
+| `has_gull_wings` | `has_fillets` |
+| `has_both_wings` | `has_double_fillet` |
+
 ## Location
 
 `src/lib/svelte/layout/Fillets.svelte`
