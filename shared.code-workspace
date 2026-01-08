@@ -1,14 +1,14 @@
 {
 	"folders": [
 		{
-			"path": "/Users/sand/GitHub/shared"
+			"path": "."
 		},
 		{
-			"path": "/Users/sand/GitHub/di"
+			"path": "../di"
 		},
 		{
-			"path": "/Users/sand/GitHub/webseriously"
-		},
+			"path": "../ws"
+		}
 	],
 	"settings": {}
 }
