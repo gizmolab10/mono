@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/milestones/2.panel/implement.md",
+                "file": "notes/work/layout-algorithm.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "implement"
+              "title": "layout-algorithm"
             }
           }
         ]
@@ -185,7 +185,11 @@
   },
   "active": "e32a6ad9ee169683",
   "lastOpenFiles": [
+    "notes/architecture/rendering.types.md",
+    "notes/work/combined-docs.md",
     "notes/work/layout-algorithm.md",
+    "notes/work/milestones/2.panel/implement.md",
+    "notes/guides/aesthetics.md",
     "notes/work/aesthetics.md",
     "notes/designs/aesthetics.md",
     "notes/designs/Fillets.md",
@@ -200,7 +204,6 @@
     "Screenshot 2026-01-07 at 1.26.15 AM.png",
     "Screenshot 2026-01-07 at 1.20.05 AM.png",
     "Screenshot 2026-01-07 at 1.18.21 AM.png",
-    "notes/work/milestones/2.panel/implement.md",
     "notes/designs/Box.md",
     "notes/designs/Preferences.md",
     "src/lib/svelte/layout/Box.svelte",
@@ -220,9 +223,6 @@
     "notes/guides/collaborate/voice.md",
     "notes/guides/collaborate/workflow.md",
     "notes/guides/collaborate/chat.md",
-    "notes/guides/collaborate/access.md",
-    "notes/guides/develop/refactoring.md",
-    "notes/guides/develop/migration.md",
-    "notes/guides/develop/markdown.md"
+    "notes/guides/collaborate/access.md"
   ]
 }

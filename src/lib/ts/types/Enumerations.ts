@@ -120,8 +120,8 @@ export enum T_Auto_Adjust_Graph {
 
 export enum T_Button_SVG {
 	triangle = 'triangle',
-	arrow = 'arrow',
-	none = 'none',
+	arrow	 = 'arrow',
+	none	 = 'none',
 }
 
 export enum T_Search_Preference {
