@@ -28,7 +28,7 @@ export class Point {
 	get pixelVerbose():				 		 string { return `${this.x.toFixed(p)}px ${this.y.toFixed(p)}px`; }
 	get verbose():					 		 string { return `(${this.x.toFixed(p)}, ${this.y.toFixed(p)})`; }
 	get description():				 		 string { return `${this.x.toFixed(p)} ${this.y.toFixed(p)}`; }
-	// get asBBox():							   BBox { return { minX: this.x, minY: this.y, maxX: this.x, maxY: this.y }; }
+	get asBBox():							   { minX: number; minY: number; maxX: number; maxY: number } { return { minX: this.x, minY: this.y, maxX: this.x, maxY: this.y }; }
 	get asPolar():							  Polar { return new Polar(this.magnitude, this.angle); }
 	get asSize():					 	 	   Size { return new Size(this.x, this.y); }		// NB: can have negative values, so rect extended by negative works
 	get negated():					 		  Point { return this.multipliedEquallyBy(-1); }
@@ -182,7 +182,7 @@ export class Rect {
 	get verbose():					 string { return `${this.origin.verbose}, ${this.size.verbose}`; }
 	get description():				 string { return `${this.origin.description} ${this.size.description}`; }
 	get pixelVerbose():				 string { return `${this.origin.pixelVerbose} ${this.size.pixelVerbose}`; }
-	// get asBBox():					   BBox { return { minX: this.x, minY: this.y, maxX: this.right, maxY: this.bottom }; }
+	get asBBox(): { minX: number; minY: number; maxX: number; maxY: number } { return { minX: this.x, minY: this.y, maxX: this.right, maxY: this.bottom }; }
 	get center():					  Point { return this.origin.offsetBy(this.size.center); }
 	get extent():					  Point { return this.origin.offsetBy(this.size.asPoint); }		// bottom right
 	get topRight():					  Point { return new Point(this.extent.x, this.origin.y); }

@@ -35,15 +35,17 @@ Two decades on, no CAD software has matched its power. I'm eager to recreate my 
 ---
 ### 3 -- Document Publishing
 
-**Timeline:** TBD | [details](3.docs.md)
+**Timeline:** Jan 5-8, 2025 | [details](3.docs.md)
 
-**Goal:** Publishing the docs on a brand new subdomain (for now) of `webseriously` 
+**Goal:** Two deployments from one repo: docs.designintuition.app (VitePress) and designintuition.app (main app).
+
+**Outcome:** (in progress)
+
+---
+### 4 -- Hits Manager
+
+**Timeline:** TBD | [details](4.hits.manager.md)
+
+**Goal:** Borrow and deploy the hits manager from ws.
 
 **Outcome:** (add this later)
-
-**Tasks:** 
-
-- [x] add a `didocs` `CNAME` at dynadot and wait for propagation
-- [ ] create a new netlify project called `docs-designintuition`
-- [ ] test the publishing automation
-- [ ] visit the new website
