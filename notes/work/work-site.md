@@ -23,6 +23,56 @@ One command to restart all servers, plus a hub page for quick navigation.
 
 ## What We Built
 
+### UX Layout
+```
+┌─────────────────────────────────────┐
+│             Work Sites              │
+└─────────────---───-─────────────────┘
+╭────────────────╮╭───────────────────╮
+│    Dev Docs    ││     Projects      │
+└────────────────╯╰───────────────────┘
+╭────────────────────╮╭───────────────╮
+│    Local Public    ││     More      │
+└────-───────────────╯╰───────-───────┘
+```
+
+*Conceptual layout — shows groupings, not exact visual appearance*
+
+Key takeaways:
+- three rows of boxes
+- boxes contain elements: text, segmented controls, buttons
+- three layers: background, boxes, elements
+
+#### New Revised Layout
+```
+┌────────────────────────╮╭───────────┐
+│       Work Sites       ││   Start   │
+└───────---───-──────────╯╰───────────┘
+╭────────────────╮╭───────────────────╮
+│    Dev Docs    ││     Projects      │
+└────────────────╯╰───────────────────┘
+╭────────────────────╮╭───────────────╮
+│    Local Public    ││     More      │
+└────-───────────────╯╰───────-───────┘
+```
+
+
+#### Button Color Scheme
+
+1. **Choices**
+	1. **Chosen** — green with white text
+	2. **Not chosen** — dark blue with gray text
+	3. **Unavailable** — dark blue at 30% opacity
+2. **Action** — dark blue with white text
+
+#### Visual Language
+
+Shares visual language with Design Intuition (di):
+- Rounded rectangle boxes as containers
+- Three-layer hierarchy: background → boxes → elements
+- Muted blues/purples for containers, darker blues for buttons
+- Clean separation between groups
+
 ### dev-servers.sh
 
 Location: `~/GitHub/shared/tools/dev-servers.sh`

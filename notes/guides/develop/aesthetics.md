@@ -94,17 +94,16 @@ Static colors:
 ## Layout
 
 The panel fills the viewport with a Box container that has separators on all edges. Interior regions are separated by additional separators with fillets.
-
 ```
 ┌─────────────────────────────────────┐
 │            Controls                 │
-├──────────────╮╭────────────────────┤
+└─────────────---───-─────────────────┘
+╭──────────────╮╭───-─────────────────╮
 │              ││                     │
 │   Details    ││       Graph         │
 │              ││                     │
-└──────────────╯╰────────────────────┘
+└──────────────╯╰────-────────────────┘
 ```
-
 The fillets (╮╭╯╰) create smooth rounded transitions at separator intersections.
 
 ## Design Principles

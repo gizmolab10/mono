@@ -8,17 +8,38 @@
   <style>
     :root {
       --bg-page: #8282b1;
-      --bg-container: #16213e;
-      --bg-button: #0f3460;
-      --bg-button-hover: #1a4a7a;
-      --bg-active: #1a6b4a;
-      --bg-badge: #2a4a7a;
+      --bg-container: rgb(129, 156, 229);
       --bg-command: #0a0a1a;
-      --bg-line: #8282b1;
-      --text-primary: #ffffff;
-      --text-secondary: #888;
-      --text-title: #fff;
+
+      /* Button backgrounds */
+      --bg-chosen: #1a6b4a;
+      --bg-available: #1e4472;
+      --bg-unavailable: #557197;
+      --bg-button-hover: #1a4a7a;
+      --bg-badge: rgb(171, 190, 241);
+
+      /* Button text */
+      --text-unavailable: #222;
+      --text-chosen: #fff;
+      --text-choice: #888;
+      --text-action: #fff;
+      --text-badge: #000;
+
+      --text-primary: #fff;
       --text-command: #a8006d;
+      --text-title: #fff;
+
+      /* Font sizes */
+      --font-command: 13px;
+      --font-button: 14px;
+      --font-title: 24px;
+      --font-badge: 8px;
+
+      /* Spacing */
+      --gap-horizontal: 6px;
+      --gap-vertical: 6px;
+      --button-gap: 6px;
+      --box-padding: 6px;
     }
 
     * {
@@ -37,171 +58,160 @@
     }
 
     .container {
-      background: var(--bg-container);
-      border-radius: 12px;
       padding: 32px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       min-width: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     h1 {
-      margin: 0 0 0 0;
-      font-size: 24px;
+      margin: 0;
+      font-size: var(--font-title);
       font-weight: 500;
       color: var(--text-title);
       text-align: center;
-      padding-bottom: 10px;
     }
 
-    .title-line {
-      width: 120px;
-      height: 10px;
-      background: var(--bg-line);
-      margin: 0 auto 14px auto;
-      border-radius: 5px;
+    .title-row {
+      display: inline-flex;
+      gap: var(--gap-horizontal);
+      margin-bottom: var(--gap-vertical);
     }
 
     .segment-row {
       display: flex;
-      gap: 8px;
-      margin-bottom: 0;
-      padding-bottom: 0;
+      gap: var(--gap-horizontal);
+      margin-bottom: var(--gap-vertical);
       justify-content: center;
-      position: relative;
-      margin-left: 100px;
+    }
+
+    .actions-row {
+      display: inline-flex;
+      gap: var(--gap-horizontal);
+    }
+
+    .title-box {
+      display: flex;
+      justify-content: center;
+      background: var(--bg-container);
+      padding: 12px 24px;
+      border-radius: 12px;
+      box-sizing: border-box;
+    }
+
+    .start-group {
+      display: flex;
+      gap: var(--button-gap);
+      background: var(--bg-container);
+      padding: var(--box-padding);
+      border-radius: 12px;
+      align-items: center;
+    }
+
+    .mode-group,
+    .project-group {
+      display: flex;
+      gap: var(--button-gap);
+      background: var(--bg-container);
+      padding: var(--box-padding);
+      border-radius: 12px;
     }
 
     .segment {
-      background: var(--bg-button);
-      color: var(--text-secondary);
+      background: var(--bg-available);
+      color: var(--text-choice);
       border: none;
       padding: 10px 20px;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: var(--font-button);
       transition: all 0.2s;
       position: relative;
+      text-transform: lowercase;
     }
 
     .segment .badge {
       position: absolute;
-      top: -8px;
-      right: -8px;
-      width: 20px;
-      height: 20px;
+      top: 2px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
       background: var(--bg-badge);
-      color: var(--text-secondary);
+      color: var(--text-badge);
       border-radius: 50%;
-      font-size: 11px;
+      font-size: var(--font-badge);
       font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: center;
+      text-transform: lowercase;
     }
 
     .segment:hover {
-      background: var(--bg-button-hover);
+      background: var(--bg-chosen);
+      color: var(--text-chosen);
     }
 
     .segment.active {
-      background: var(--bg-active);
-      color: var(--text-title);
+      background: var(--bg-chosen);
+      color: var(--text-chosen);
     }
 
     .segment.disabled {
-      opacity: 0.3;
+      background: var(--bg-unavailable);
+      color: var(--text-unavailable);
       cursor: not-allowed;
     }
 
-    .divider {
-      width: 10px;
-      background: var(--bg-line);
-      margin: 0 8px;
-      align-self: stretch;
-      position: relative;
-      margin-top: -14px;
-      padding-top: 14px;
-    }
-
-    .divider::after {
-      content: '';
-      position: absolute;
-      width: 10px;
-      background: var(--bg-line);
-      top: 100%;
-      left: 0;
-      height: 14px;
-    }
-
-    .actions {
+    .navigate-group,
+    .more-group {
       display: flex;
-      gap: 12px;
-      margin-top: 14px;
-      justify-content: center;
-      flex-wrap: wrap;
-      padding-top: 24px;
-      position: relative;
-    }
-
-    .actions::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 10px;
-      background: var(--bg-line);
-      border-radius: 5px;
+      gap: var(--button-gap);
+      background: var(--bg-container);
+      padding: var(--box-padding);
+      border-radius: 12px;
     }
 
     .action {
-      background: var(--bg-button);
-      color: var(--text-primary);
+      background: var(--bg-available);
+      color: var(--text-action);
       border: none;
       padding: 12px 20px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: var(--font-button);
       transition: all 0.2s;
       position: relative;
+      text-transform: lowercase;
     }
 
     .action .badge {
       position: absolute;
-      top: -8px;
-      right: -8px;
-      width: 20px;
-      height: 20px;
+      top: 2px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
       background: var(--bg-badge);
-      color: var(--text-secondary);
+      color: var(--text-badge);
       border-radius: 50%;
-      font-size: 11px;
+      font-size: var(--font-badge);
       font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: center;
-      text-transform: uppercase;
+      text-transform: lowercase;
     }
 
     .action:hover:not(.disabled) {
-      background: var(--bg-active);
-      color: var(--text-title);
+      background: var(--bg-chosen);
+      color: var(--text-chosen);
     }
 
     .action.disabled {
-      opacity: 0.3;
+      background: var(--bg-unavailable);
+      color: var(--text-unavailable);
       cursor: not-allowed;
-    }
-
-    .h-divider {
-      width: 10px;
-      background: var(--bg-line);
-      align-self: stretch;
-      margin-top: -24px;
-      margin-bottom: -14px;
-      padding-top: 24px;
-      padding-bottom: 14px;
-      border-radius: 0 0 5px 5px;
     }
 
     .command {
@@ -210,7 +220,7 @@
       background: var(--bg-command);
       border-radius: 6px;
       font-family: monospace;
-      font-size: 13px;
+      font-size: var(--font-command);
       color: var(--text-command);
       text-align: center;
       display: none;
@@ -224,29 +234,39 @@
 
 <body>
   <div class="container">
-    <h1>Work Sites</h1>
-    <div class="title-line"></div>
-
-    <div class="segment-row">
-      <button class="segment active" data-mode="dev">Dev<span class="badge">1</span></button>
-      <button class="segment" data-mode="docs">Docs<span class="badge">2</span></button>
-      <span class="divider"></span>
-      <button class="segment active" data-project="ws">ws<span class="badge">W</span></button>
-      <button class="segment" data-project="di">di<span class="badge">D</span></button>
-      <button class="segment" data-project="shared">shared<span class="badge">S</span></button>
-      <button class="segment" data-project="en">en<span class="badge">E</span></button>
+    <div class="title-row">
+      <div class="title-box">
+        <h1>Work Sites</h1>
+      </div>
+      <div class="start-group">
+        <button class="action" id="btn-start">Restart<span class="badge">⏎</span></button>
+      </div>
     </div>
 
-    <div class="actions">
-      <button class="action" id="btn-start">Start<span class="badge">⏎</span></button>
-      <span class="h-divider"></span>
-      <button class="action" id="btn-local">Local<span class="badge">L</span></button>
-      <button class="action" id="btn-public">Public<span class="badge">P</span></button>
-      <span class="h-divider"></span>
-      <button class="action" id="btn-repo">Repo<span class="badge">R</span></button>
-      <button class="action" id="btn-deploy">Deploy<span class="badge">Y</span></button>
-      <button class="action" id="btn-dns">DNS<span class="badge">N</span></button>
-      <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
+    <div class="segment-row">
+      <div class="mode-group">
+        <button class="segment active" data-mode="dev">Dev<span class="badge">1</span></button>
+        <button class="segment" data-mode="docs">Docs<span class="badge">2</span></button>
+      </div>
+      <div class="project-group">
+        <button class="segment active" data-project="ws">ws<span class="badge">W</span></button>
+        <button class="segment" data-project="di">di<span class="badge">D</span></button>
+        <button class="segment" data-project="shared">shared<span class="badge">S</span></button>
+        <button class="segment" data-project="en">en<span class="badge">E</span></button>
+      </div>
+    </div>
+
+    <div class="actions-row">
+      <div class="navigate-group">
+        <button class="action" id="btn-local">Local<span class="badge">L</span></button>
+        <button class="action" id="btn-public">Public<span class="badge">P</span></button>
+      </div>
+      <div class="more-group">
+        <button class="action" id="btn-repo">Repo<span class="badge">R</span></button>
+        <button class="action" id="btn-deploy">Deploy<span class="badge">Y</span></button>
+        <button class="action" id="btn-dns">DNS<span class="badge">N</span></button>
+        <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
+      </div>
     </div>
 
     <div class="command" id="command"></div>
@@ -305,8 +325,8 @@
 
     const modeButtons = document.querySelectorAll('.segment[data-mode]');
     const projectButtons = document.querySelectorAll('.segment[data-project]');
-    const btnStart = document.getElementById('btn-start');
     const btnLocal = document.getElementById('btn-local');
+    const btnStart = document.getElementById('btn-start');
     const btnPublic = document.getElementById('btn-public');
     const btnRepo = document.getElementById('btn-repo');
     const btnDeploy = document.getElementById('btn-deploy');
@@ -363,11 +383,45 @@
     }
 
     function doStart() {
-      const cfg = config[mode][project];
-      if (!cfg) return;
-      const cmd = `~/GitHub/shared/tools/dev-servers.sh ${cfg.site}`;
-      commandDiv.textContent = cmd;
-      commandDiv.classList.add('visible');
+      console.log('doStart called');
+      btnStart.classList.add('disabled');
+      btnStart.innerHTML = 'Restarting<span class="badge">⏎</span>';
+      matchRowWidths();
+      
+      console.log('fetching...');
+      fetch('http://localhost:5171/restart-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => {
+        console.log('response:', res);
+        return res.json();
+      })
+      .then(data => {
+        console.log('data:', data);
+        if (data.success) {
+          // Wait 7 seconds before reverting button
+          setTimeout(() => {
+            btnStart.innerHTML = 'Restart<span class="badge">⏎</span>';
+            btnStart.classList.remove('disabled');
+            matchRowWidths();
+          }, 7000);
+        } else {
+          btnStart.innerHTML = 'Restart<span class="badge">⏎</span>';
+          btnStart.classList.remove('disabled');
+          matchRowWidths();
+          commandDiv.textContent = `Error: ${data.error || 'Some sites failed'}`;
+          commandDiv.classList.add('visible');
+        }
+      })
+      .catch(err => {
+        console.log('error:', err);
+        btnStart.innerHTML = 'Restart<span class="badge">⏎</span>';
+        btnStart.classList.remove('disabled');
+        matchRowWidths();
+        commandDiv.textContent = `API error: ${err.message}`;
+        commandDiv.classList.add('visible');
+      });
     }
 
     function doLocal() {
@@ -442,6 +496,20 @@
     });
 
     update();
+
+    function matchRowWidths() {
+      const actionsRow = document.querySelector('.actions-row');
+      const titleRow = document.querySelector('.title-row');
+      const titleBox = document.querySelector('.title-box');
+      const startGroup = document.querySelector('.start-group');
+      const gap = 6;
+      
+      // Set title-box width so title-row matches actions-row
+      const targetTitleBoxWidth = actionsRow.offsetWidth - startGroup.offsetWidth - gap;
+      titleBox.style.width = targetTitleBoxWidth + 'px';
+    }
+    matchRowWidths();
+    window.addEventListener('resize', matchRowWidths);
   </script>
 </body>
 

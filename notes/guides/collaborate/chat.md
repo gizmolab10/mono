@@ -104,3 +104,7 @@ Without these, every conversation starts from zero.
 ## Summary
 
 You bring direction, decisions, and taste. Collaborator brings execution, memory, and analysis. The md files are the shared ground where learning accumulates.
+
+## Formatting Guidelines
+
+When giving executable commands for the user to run, format them in a fenced code block (no language tag) so they're easy to copy.
