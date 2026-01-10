@@ -1,0 +1,14 @@
+{
+  "things": [
+    { "id": "hub", "port": 5170, "key": "H", "type": "hub" },
+    { "id": "ws", "port": 5173, "key": "W", "type": "app" },
+    { "id": "di", "port": 5174, "key": "D", "type": "app" },
+    { "id": "ws-docs", "port": 5176, "key": "E", "type": "docs" },
+    { "id": "shared", "port": 5177, "key": "S", "type": "docs" }
+  ],
+  "relationships": [
+    { "from": "ws-docs", "to": "ws", "type": "docs-for" },
+    { "from": "shared", "to": "ws", "type": "docs-for" },
+    { "from": "shared", "to": "di", "type": "docs-for" }
+  ]
+}

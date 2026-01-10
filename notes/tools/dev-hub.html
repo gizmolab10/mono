@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work Sites</title>
+  <style>
+    :root {
+      --bg-page: #8282b1;
+      --bg-container: #16213e;
+      --bg-button: #0f3460;
+      --bg-button-hover: #1a4a7a;
+      --bg-active: #1a6b4a;
+      --bg-badge: #2a4a7a;
+      --bg-command: #0a0a1a;
+      --bg-line: #8282b1;
+      --text-primary: #ffffff;
+      --text-secondary: #888;
+      --text-title: #fff;
+      --text-command: #a8006d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: var(--bg-container);
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      min-width: 420px;
+    }
+
+    h1 {
+      margin: 0 0 0 0;
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--text-title);
+      text-align: center;
+      padding-bottom: 10px;
+    }
+
+    .title-line {
+      width: 120px;
+      height: 10px;
+      background: var(--bg-line);
+      margin: 0 auto 14px auto;
+      border-radius: 5px;
+    }
+
+    .segment-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 0;
+      padding-bottom: 0;
+      justify-content: center;
+      position: relative;
+      margin-left: 100px;
+    }
+
+    .segment {
+      background: var(--bg-button);
+      color: var(--text-secondary);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .segment .badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 20px;
+      height: 20px;
+      background: var(--bg-badge);
+      color: var(--text-secondary);
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .segment:hover {
+      background: var(--bg-button-hover);
+    }
+
+    .segment.active {
+      background: var(--bg-active);
+      color: var(--text-title);
+    }
+
+    .segment.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .divider {
+      width: 10px;
+      background: var(--bg-line);
+      margin: 0 8px;
+      align-self: stretch;
+      position: relative;
+      margin-top: -14px;
+      padding-top: 14px;
+    }
+
+    .divider::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      background: var(--bg-line);
+      top: 100%;
+      left: 0;
+      height: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding-top: 24px;
+      position: relative;
+    }
+
+    .actions::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: var(--bg-line);
+      border-radius: 5px;
+    }
+
+    .action {
+      background: var(--bg-button);
+      color: var(--text-primary);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .action .badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 20px;
+      height: 20px;
+      background: var(--bg-badge);
+      color: var(--text-secondary);
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+    }
+
+    .action:hover:not(.disabled) {
+      background: var(--bg-active);
+      color: var(--text-title);
+    }
+
+    .action.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .h-divider {
+      width: 10px;
+      background: var(--bg-line);
+      align-self: stretch;
+      margin-top: -24px;
+      margin-bottom: -14px;
+      padding-top: 24px;
+      padding-bottom: 14px;
+      border-radius: 0 0 5px 5px;
+    }
+
+    .command {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--bg-command);
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 13px;
+      color: var(--text-command);
+      text-align: center;
+      display: none;
+    }
+
+    .command.visible {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Work Sites</h1>
+    <div class="title-line"></div>
+
+    <div class="segment-row">
+      <button class="segment active" data-mode="dev">Dev<span class="badge">1</span></button>
+      <button class="segment" data-mode="docs">Docs<span class="badge">2</span></button>
+      <span class="divider"></span>
+      <button class="segment active" data-project="ws">ws<span class="badge">W</span></button>
+      <button class="segment" data-project="di">di<span class="badge">D</span></button>
+      <button class="segment" data-project="shared">shared<span class="badge">S</span></button>
+      <button class="segment" data-project="en">en<span class="badge">E</span></button>
+    </div>
+
+    <div class="actions">
+      <button class="action" id="btn-start">Start<span class="badge">⏎</span></button>
+      <span class="h-divider"></span>
+      <button class="action" id="btn-local">Local<span class="badge">L</span></button>
+      <button class="action" id="btn-public">Public<span class="badge">P</span></button>
+      <span class="h-divider"></span>
+      <button class="action" id="btn-repo">Repo<span class="badge">R</span></button>
+      <button class="action" id="btn-deploy">Deploy<span class="badge">Y</span></button>
+      <button class="action" id="btn-dns">DNS<span class="badge">N</span></button>
+      <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
+    </div>
+
+    <div class="command" id="command"></div>
+  </div>
+
+  <script>
+    const config = {
+      dev: {
+        ws: {
+          port: 5173,
+          site: 'ws',
+          public: null,
+          repo: 'https://github.com/gizmolab10/webseriously',
+          deploy: 'https://app.netlify.com/sites/webseriously/deploys',
+          dns: 'https://app.netlify.com/sites/webseriously/settings/domain',
+          bubble: 'https://bubble.io/plugin_editor?id=1703476102498x770498940498370600'
+        },
+        di: {
+          port: 5174,
+          site: 'di',
+          public: null,
+          repo: 'https://github.com/gizmolab10/di',
+          deploy: 'https://app.netlify.com/sites/di/deploys',
+          dns: 'https://app.netlify.com/sites/di/settings/domain',
+          bubble: null
+        },
+        shared: null,
+        en: null
+      },
+      docs: {
+        ws: {
+          port: 5176,
+          site: 'ws-docs',
+          public: null,
+          repo: 'https://github.com/gizmolab10/webseriously',
+          deploy: 'https://app.netlify.com/sites/webseriously-docs/deploys',
+          dns: 'https://app.netlify.com/sites/webseriously-docs/settings/domain',
+          bubble: null
+        },
+        di: null,
+        shared: {
+          port: 5177,
+          site: 'shared',
+          public: null,
+          repo: 'https://github.com/gizmolab10/shared',
+          deploy: null,
+          dns: null,
+          bubble: null
+        },
+        en: null
+      }
+    };
+
+    let mode = 'dev';
+    let project = 'ws';
+
+    const modeButtons = document.querySelectorAll('.segment[data-mode]');
+    const projectButtons = document.querySelectorAll('.segment[data-project]');
+    const btnStart = document.getElementById('btn-start');
+    const btnLocal = document.getElementById('btn-local');
+    const btnPublic = document.getElementById('btn-public');
+    const btnRepo = document.getElementById('btn-repo');
+    const btnDeploy = document.getElementById('btn-deploy');
+    const btnDns = document.getElementById('btn-dns');
+    const btnBubble = document.getElementById('btn-bubble');
+    const commandDiv = document.getElementById('command');
+
+    function update() {
+      modeButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+
+      projectButtons.forEach(btn => {
+        const p = btn.dataset.project;
+        const valid = config[mode][p] !== null;
+        btn.classList.toggle('active', p === project);
+        btn.classList.toggle('disabled', !valid);
+      });
+
+      if (config[mode][project] === null) {
+        for (const p of ['ws', 'di', 'shared']) {
+          if (config[mode][p] !== null) {
+            project = p;
+            break;
+          }
+        }
+        update();
+        return;
+      }
+
+      const cfg = config[mode][project];
+      const hasConfig = cfg !== null;
+      btnStart.classList.toggle('disabled', !hasConfig);
+      btnLocal.classList.toggle('disabled', !hasConfig);
+      btnPublic.classList.toggle('disabled', !hasConfig || !cfg.public);
+      btnRepo.classList.toggle('disabled', !hasConfig || !cfg.repo);
+      btnDeploy.classList.toggle('disabled', !hasConfig || !cfg.deploy);
+      btnDns.classList.toggle('disabled', !hasConfig || !cfg.dns);
+      btnBubble.classList.toggle('disabled', !hasConfig || !cfg.bubble);
+
+      commandDiv.classList.remove('visible');
+    }
+
+    function setMode(m) {
+      mode = m;
+      update();
+    }
+
+    function setProject(p) {
+      if (config[mode][p] !== null) {
+        project = p;
+        update();
+      }
+    }
+
+    function doStart() {
+      const cfg = config[mode][project];
+      if (!cfg) return;
+      const cmd = `~/GitHub/shared/tools/dev-servers.sh ${cfg.site}`;
+      commandDiv.textContent = cmd;
+      commandDiv.classList.add('visible');
+    }
+
+    function doLocal() {
+      const cfg = config[mode][project];
+      if (!cfg) return;
+      window.location.href = `http://localhost:${cfg.port}`;
+    }
+
+    function doPublic() {
+      const cfg = config[mode][project];
+      if (!cfg || !cfg.public) return;
+      window.location.href = cfg.public;
+    }
+
+    function doRepo() {
+      const cfg = config[mode][project];
+      if (!cfg || !cfg.repo) return;
+      window.open(cfg.repo, '_blank');
+    }
+
+    function doDeploy() {
+      const cfg = config[mode][project];
+      if (!cfg || !cfg.deploy) return;
+      window.open(cfg.deploy, '_blank');
+    }
+
+    function doDns() {
+      const cfg = config[mode][project];
+      if (!cfg || !cfg.dns) return;
+      window.open(cfg.dns, '_blank');
+    }
+
+    function doBubble() {
+      const cfg = config[mode][project];
+      if (!cfg || !cfg.bubble) return;
+      window.open(cfg.bubble, '_blank');
+    }
+
+    modeButtons.forEach(btn => {
+      btn.addEventListener('click', () => setMode(btn.dataset.mode));
+    });
+
+    projectButtons.forEach(btn => {
+      btn.addEventListener('click', () => setProject(btn.dataset.project));
+    });
+
+    btnStart.addEventListener('click', doStart);
+    btnLocal.addEventListener('click', doLocal);
+    btnPublic.addEventListener('click', doPublic);
+    btnRepo.addEventListener('click', doRepo);
+    btnDeploy.addEventListener('click', doDeploy);
+    btnDns.addEventListener('click', doDns);
+    btnBubble.addEventListener('click', doBubble);
+
+    document.addEventListener('keydown', (e) => {
+      const key = e.key.toLowerCase();
+      switch (key) {
+        case '1': setMode('dev'); break;
+        case '2': setMode('docs'); break;
+        case 'w': setProject('ws'); break;
+        case 'd': setProject('di'); break;
+        case 's': setProject('shared'); break;
+        case 'e': setProject('en'); break;
+        case 'enter': doStart(); break;
+        case 'l': doLocal(); break;
+        case 'p': doPublic(); break;
+        case 'r': doRepo(); break;
+        case 'y': doDeploy(); break;
+        case 'n': doDns(); break;
+        case 'b': doBubble(); break;
+      }
+    });
+
+    update();
+  </script>
+</body>
+
+</html>

@@ -41,6 +41,11 @@ I plan to use this to do some harder refactoring, making a backup, first.
   * [After: Centralized Timing](#after-centralized-timing)
   * [Key Abstractions](#key-abstractions)
   * [Migration Pattern](#migration-pattern)
+* [Example: Preference Defaults Centralization](#example-preference-defaults-centralization)
+  * [Before: Scattered Defaults](#before-scattered-defaults)
+  * [After: Centralized Defaults](#after-centralized-defaults)
+  * [Key Abstractions](#key-abstractions-1)
+  * [Migration Pattern](#migration-pattern-1)
 * [Applying to Layout Algorithms](#applying-to-layout-algorithms)
   * [Analysis Questions](#analysis-questions)
   * [Design Questions](#design-questions)
@@ -318,6 +323,68 @@ Component → Declares Intent → Central Manager → Automatic Lifecycle
 2. Declare on target (`mouse_detection`, `*_callback`)
 3. Remove manual lifecycle code
 4. Test thoroughly
+
+## Example: Preference Defaults Centralization
+
+### Before: Scattered Defaults
+
+```typescript
+// Visibility.ts - writable initializers
+w_t_focus = writable<T_Focus>(T_Focus.dynamic);
+w_t_graph = writable<T_Graph>(T_Graph.tree);
+
+// Preferences.ts - restore fallbacks
+show.w_t_focus.set(this.read_key(T_Preference.focus) ?? T_Focus.dynamic);
+show.w_t_graph.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
+```
+
+* Defaults duplicated in two places
+* Can drift out of sync
+* No validation of stored enum values against current valid members
+* Stale localStorage values slip past `??` guard
+
+### After: Centralized Defaults
+
+```typescript
+// Enumerations.ts - single source of truth
+export const spec_dict_byType: Enum_Spec_ByType = {
+    [T_Preference.focus]: new Enum_Spec(T_Focus, T_Focus.dynamic),
+    [T_Preference.graph]: new Enum_Spec(T_Graph, T_Graph.tree),
+    // ...
+};
+export const def = (key: T_Preference): any => spec_dict_byType[key]?.defaultValue ?? null;
+
+// Visibility.ts - pulls from spec
+w_t_focus = writable<T_Focus>(def(P.focus));
+
+// Preferences.ts - validates against spec
+read_key(key: T_Preference): any {
+    const spec = spec_dict_byType[key];
+    const stored = this.get_forKey(key);
+    if (stored !== null && spec?.enum_type) {
+        if (Object.values(spec.enum_type).includes(stored)) {
+            return stored;  // valid
+        }
+    }
+    // invalid or missing: reset to default
+    return spec?.defaultValue ?? null;
+}
+```
+
+### Key Abstractions
+
+* **Enum_Spec**: Pairs enum type with its default value
+* **spec_dict_byType**: Lookup table keyed by `T_Preference`
+* **def()**: Helper to pull default for writable initializers
+* **Validation**: `read_key()` checks stored value against `Object.values(enum_type)`
+
+### Migration Pattern
+
+1. Create `Enum_Spec` class and `spec_dict_byType` in Enumerations.ts
+2. Gather all `?? default` fallbacks into the dict
+3. Update `read_key()` to validate against spec
+4. Replace writable initializers with `def(P.key)`
+5. Remove scattered defaults
 
 ## Applying to Layout Algorithms
 

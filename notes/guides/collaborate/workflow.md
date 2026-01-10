@@ -92,3 +92,10 @@ What's less common:
 This feels more like pair programming methodology than prompt engineering. An institutional memory system that happens to include an AI.
 
 The pieces are obvious in hindsight, but rarely assembled this way.
+
+## Terminology
+
+- **Collaborator** (or **co**) — Claude's role in this workflow
+- **current-go** — the active project (shared, ws, di)
+
+See `chat.md` for the full division of labor.

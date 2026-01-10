@@ -1,6 +1,6 @@
 # Shared Context
 
-Read all `.md` files within `guides/` before starting work.
+Read all `.md` files within `notes/guides/` before starting work.
 
 ## Defaults
 
@@ -12,9 +12,11 @@ MEMORY: Use `conversation_search/recent_chats` before claiming no context
 
 FILES: Always read current version before editing
 
+UNDO: Before `write_file`, always `read_file` first and hold content. On "undo", restore it.
+
 WORK TRACKING: Keep `notes/work/<file>.md` updated as we go
 
-DOCS STYLE: Follow `guides/collaborate/voice.md` | Keep TOC updated
+DOCS STYLE: Follow `notes/guides/collaborate/voice.md` | Keep TOC updated
 
 ## Workarounds
 
@@ -28,23 +30,30 @@ DOCS STYLE: Follow `guides/collaborate/voice.md` | Keep TOC updated
 
 | Command | Meaning |
 |----|----|
-| `read claude` | reread CLAUDE.MD |
-| `update docs` | run `./notes/tools/update-docs.sh`, report output |
+| `go` | read ~/GitHub/<current-go>/CLAUDE.MD |
+| `go <X>` | set current-go to X, then read ~/GitHub/X/CLAUDE.MD |
+| `what go` | tell current-go value |
 | `work on <X>` | if `notes/work/<X>.md` missing, create it; else read + resume |
-| `go` | ask which project: (d) di or (w) ws, then read that repo's CLAUDE.MD |
-| `go di` | read `~/GitHub/di/CLAUDE.MD` |
-| `go ws` | read `~/GitHub/ws/CLAUDE.MD` |
 | `chime in` | give observations, suggestions, corrections about the topic at hand |
+| `ua` | update current md file with chat content |
+| `undo` | revert last file change |
+| `propose` / `?` | explain plan before executing |
+| `claude` | reread CLAUDE.MD |
 
 ## Abbreviations
 
 | Abbrev | Meaning |
 |----|----|
-| m | milestone |
-| m<#> | milestone # |
-| n | no |
-| ni | no improvement, try something different |
-| y | yes |
-| ua | update accordingly -- add all/any of this chat that seems significant or brings it up to date, remove redundancies, simplify without losing significant details |
+| cb     | use checkboxes for this |
+| m      | milestone |
+| m<#>   | milestone # |
+| n      | no |
+| ni     | no improvement, try something different |
+| y      | yes |
+| ua     | update accordingly |
 
+## Meanings
 
+### update accordingly
+
+Add all/any of this chat that seems significant or brings it up to date, remove redundancies, simplify without losing significant details

@@ -1,0 +1,64 @@
+/* Hide the entire bottom prev/next section */
+.VPDocFooter .prev-next {
+  display: none;
+}
+
+/* Reorder navbar elements */
+.VPNavBar .content-body {
+  display: flex;
+}
+
+.VPNavBar .content-body .appearance {
+  order: 10;
+}
+
+.VPNavBar .content-body .social-links {
+  order: 11;
+}
+
+.VPNavBar .content-body .extra {
+  order: 12;
+}
+
+.VPNavBar .content-body .hamburger {
+  order: 13;
+}
+
+.VPNavBar .content-body .nav-prev-next {
+  order: 5;
+}
+
+/* Hide all sidebar carets */
+.VPSidebarItem .caret {
+  display: none;
+}
+
+/* User-collapsed override */
+.VPSidebarItem[data-user-collapsed="true"] > .items {
+  display: none !important;
+}
+
+.VPSidebarItem.level-0[data-user-collapsed="true"] {
+  padding-bottom: 10px;
+}
+
+/* User-expanded override */
+.VPSidebarItem[data-user-expanded="true"] > .items {
+  display: block !important;
+  border-left: 1px solid var(--vp-c-divider);
+  padding-left: 16px;
+}
+
+.VPSidebarItem.level-0[data-user-expanded="true"] {
+  padding-bottom: 24px;
+}
+
+/* Make items with children bold */
+.VPSidebarItem.collapsible > .item .text {
+  font-weight: 700;
+}
+
+/* Always show scrollbar */
+html {
+  overflow-y: scroll;
+}
