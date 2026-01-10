@@ -108,6 +108,10 @@ export default class Hits {
 		}
 	}
 
+	clear_hover() {
+		this.w_s_hover.set(null);
+	}
+
 	// ===== GENERAL =====
 
 	reset() {

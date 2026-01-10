@@ -1,10 +1,17 @@
 <script lang='ts'>
+	import { onMount } from 'svelte';
 	import { k } from '../../ts/common/Constants';
+	import { e } from '../../ts/signals/Events';
 	import Controls from './Controls.svelte';
 	import Graph from './Graph.svelte';
 	import Details from './Details.svelte';
-	import Separator from './Separator.svelte';
-	import Box from './Box.svelte';
+	import Separator from '../draw/Separator.svelte';
+	import Box from '../draw/Box.svelte';
+
+	// Initialize event system
+	onMount(() => {
+		e.setup();
+	});
 
 	// Reactive state for window dimensions
 	let width  = $state(window.innerWidth);

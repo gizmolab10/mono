@@ -3,9 +3,11 @@
 ## Problem
 
 Project history lives in my head. No quick way to see how we got here or what the major turning points were. Future me (or anyone else) would have to dig through commits and docs to reconstruct the journey. Plus i intend this project to lean into creating at all levels of abstraction. Creativity is gold.
+
 ## Goal
 
 A living roadmap: origin story, major milestones with context and outcomes, template pattern for other projects.
+
 ## Origin
 
 Twenty years ago, I wrote a CAD program for Mac. No iPhone yet, no tablets. The marketplace favored Windows. Marketing cost more than revenue could support. I count it as success—return rate under 1%, and I loved using it.
