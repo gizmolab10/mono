@@ -1,7 +1,7 @@
 # Work Site
 
 **Started:** 2025-01-09
-**Status:** Phase 2 complete
+**Status:** Phase 3 complete
 
 ## Table of Contents
 
@@ -9,9 +9,11 @@
 - [Goal](#goal)
 - [What We Built](#what-we-built)
   - [dev-servers.sh](#dev-serverssh)
+  - [dev-api.py](#dev-apipy)
   - [dev-hub.html](#dev-hubhtml)
   - [Shell Alias](#shell-alias)
 - [Setup](#setup)
+- [Evolving the UI](#evolving-the-ui)
 
 ## Problem
 
@@ -25,9 +27,9 @@ One command to restart all servers, plus a hub page for quick navigation.
 
 ### UX Layout
 ```
-┌─────────────────────────────────────┐
-│             Work Sites              │
-└─────────────---───-─────────────────┘
+┌────────────────────────╮╭───────────┐
+│       Work Sites       ││  Restart  │
+└───────---───-──────────╯╰───────────┘
 ╭────────────────╮╭───────────────────╮
 │    Dev Docs    ││     Projects      │
 └────────────────╯╰───────────────────┘
@@ -42,20 +44,6 @@ Key takeaways:
 - three rows of boxes
 - boxes contain elements: text, segmented controls, buttons
 - three layers: background, boxes, elements
-
-#### New Revised Layout
-```
-┌────────────────────────╮╭───────────┐
-│       Work Sites       ││   Start   │
-└───────---───-──────────╯╰───────────┘
-╭────────────────╮╭───────────────────╮
-│    Dev Docs    ││     Projects      │
-└────────────────╯╰───────────────────┘
-╭────────────────────╮╭───────────────╮
-│    Local Public    ││     More      │
-└────-───────────────╯╰───────-───────┘
-```
-
 
 #### Button Color Scheme
 
@@ -75,13 +63,14 @@ Shares visual language with Design Intuition (di):
 
 ### dev-servers.sh
 
-Location: `~/GitHub/shared/tools/dev-servers.sh`
+Location: `~/GitHub/shared/notes/tools/sites/dev-servers.sh`
 
 Starts/restarts dev servers, kills existing processes on ports first.
 
 | Site | Port | Dir | Command |
 |------|------|-----|---------|
-| hub | 5170 | shared/tools | python3 -m http.server 5170 |
+| api | 5171 | shared/notes/tools/sites | python3 dev-api.py |
+| hub | 5170 | shared/notes/tools/sites | python3 -m http.server 5170 |
 | ws | 5173 | ws | yarn dev |
 | di | 5174 | di | yarn dev |
 | ws-docs | 5176 | ws | yarn docs:dev |
@@ -90,15 +79,25 @@ Starts/restarts dev servers, kills existing processes on ports first.
 **Usage:**
 ```bash
 restart              # start all (via alias)
-~/GitHub/shared/tools/dev-servers.sh ws      # just ws
-~/GitHub/shared/tools/dev-servers.sh all --kill-only  # kill all
+~/GitHub/shared/notes/tools/sites/dev-servers.sh ws      # just ws
+~/GitHub/shared/notes/tools/sites/dev-servers.sh all --kill-only  # kill all
 ```
 
-**Logs:** `~/GitHub/shared/logs/<name>.log`
+**Logs:** `~/GitHub/shared/notes/tools/logs/<n>.log`
+
+### dev-api.py
+
+Location: `~/GitHub/shared/notes/tools/sites/dev-api.py`
+
+Simple API server that executes dev-servers.sh commands. Listens on port 5171.
+
+**Endpoints:**
+- `POST /restart-all` — Restarts all dev servers (excludes hub and api)
+- `POST /start` — Restarts a specific site (body: `{"site": "ws"}`)
 
 ### dev-hub.html
 
-Location: `~/GitHub/shared/tools/dev-hub.html`
+Location: `~/GitHub/shared/notes/tools/sites/dev-hub.html`
 
 URL: http://localhost:5170/dev-hub.html
 
@@ -117,7 +116,7 @@ URL: http://localhost:5170/dev-hub.html
 
 | Key | Action |
 |-----|--------|
-| Enter | Start (shows command) |
+| Enter | Restart (restarts all dev servers) |
 | L | Local (navigate to localhost) |
 | P | Public (navigate to deployed site) |
 | R | Repo (GitHub) |
@@ -128,23 +127,22 @@ URL: http://localhost:5170/dev-hub.html
 #### UI Features
 
 - Keyboard badges on all buttons
-- Visual line separators between control groups
-- Rounded line ends
 - Dark theme with green accent for active state
 - Invalid mode/project combos are disabled
+- Dynamic title-box width adjustment (accommodates Restart/Restarting text change)
 
 ### Shell Alias
 
 Add to `~/.zshrc`:
 ```bash
-alias restart="~/GitHub/shared/tools/dev-servers.sh all"
+alias restart="~/GitHub/shared/notes/tools/sites/dev-servers.sh all"
 ```
 
 ## Setup
 
 ```bash
-chmod +x ~/GitHub/shared/tools/dev-servers.sh
-echo 'alias restart="~/GitHub/shared/tools/dev-servers.sh all"' >> ~/.zshrc
+chmod +x ~/GitHub/shared/notes/tools/sites/dev-servers.sh
+echo 'alias restart="~/GitHub/shared/notes/tools/sites/dev-servers.sh all"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
@@ -170,18 +168,60 @@ source ~/.zshrc
 - [x] Update config with URLs per project
 - [x] Disable buttons for projects that don't have that resource
 - [x] Add keyboard badges to buttons
-- [x] Add visual line separators
-- [x] Rounded line ends
 
-### Phase 3: Start Server Execution
+### Phase 3: Restart Server Execution ✅
 
-- [ ] Create local API endpoint to trigger dev-servers.sh
-- [ ] Start button calls endpoint
-- [ ] Show feedback (starting/started/failed)
+- [x] Create local API endpoint (dev-api.py) to trigger dev-servers.sh
+- [x] Restart button calls endpoint
+- [x] Show feedback (button text changes to "Restarting" for 7 seconds)
 
 ### Phase 4: Public URLs
 
-- [ ] Deploy shared docs to Netlify
-- [ ] Gather all public URLs
-- [ ] Update behavior matrix
-- [ ] Public buttons work
+- [ ] a. Gather all public URLs for each project
+- [ ] b. Add public URLs to dev-hub.html config
+- [ ] c. Public button navigates to deployed site
+- [ ] d. Update behavior matrix in docs
+- [ ] e. Deploy di to Netlify
+- [ ] f. Deploy shared docs to Netlify
+
+#### Current Deployment Status
+
+| Mode | Project | at Netlify        | Status                 |
+| ---- | ------- | ----------------- | ---------------------- |
+| dev  | ws      | webseriously      | deployed               |
+| dev  | di      | di                | needs setup (Phase 4e) |
+| docs | ws      | webseriously-docs | deployed               |
+| docs | shared  | —                 | needs setup (Phase 4f) |
+| dev  | shared  | n/a               | no dev mode            |
+| dev  | en      | n/a               | not configured         |
+| docs | di      | n/a               | no docs mode           |
+| docs | en      | n/a               | not configured         |
+
+#### Proposed Public URLs
+
+| Mode | Project | Public URL |
+|------|---------|------------|
+| dev | ws | https://webseriously.netlify.app |
+| dev | di | — (pending Phase 4e) |
+| docs | ws | https://webseriously-docs.netlify.app |
+| docs | shared | — (pending Phase 4f) |
+
+## Evolving the UI
+
+The interface went through several iterations:
+
+1. **Connected lines** — Initial design used visual separators (lines with rounded ends) connecting groups. Felt cluttered.
+
+2. **Standalone boxes** — Removed connecting lines. Each group became an independent rounded rectangle. Cleaner, but rows felt disconnected.
+
+3. **Row alignment** — Added dynamic width matching so all rows share the same visual width. Used JavaScript to measure and sync.
+
+4. **Two-box title row** — Title and Restart button in separate boxes side-by-side. Required complex width calculation (total - button - gap).
+
+5. **Single-box title row** — Merged title and Restart into one box. Title uses `flex: 1` to fill space and center. Simpler code, cleaner result.
+
+**Lessons:**
+- Start simple, add complexity only when needed
+- Visual elements that change size (like button text) need dynamic layout adjustment
+- Fewer containers = simpler math = fewer bugs
+- CSS flex handles alignment better than manual width calculations

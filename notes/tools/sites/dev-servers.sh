@@ -4,13 +4,13 @@
 # Usage: ./dev-servers.sh [all|ws|ws-docs|di|shared] [--kill-only]
 
 GITHUB_DIR="$HOME/GitHub"
-LOG_DIR="$GITHUB_DIR/shared/notes/logs"
+LOG_DIR="$GITHUB_DIR/shared/notes/tools/logs"
 mkdir -p "$LOG_DIR"
 
 # Site definitions: name|port|dir|command
 SITES=(
-  "api|5171|shared/notes/tools|python3 dev-api.py"
-  "hub|5170|shared/notes/tools|python3 -m http.server 5170"
+  "api|5171|shared/notes/tools/sites|python3 dev-api.py"
+  "hub|5170|shared/notes/tools/sites|python3 -m http.server 5170"
   "ws|5173|ws|yarn dev"
   "ws-docs|5176|ws|yarn docs:dev"
   "di|5174|di|yarn dev"

@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  srcDir: './guides',
+  srcDir: './notes/guides',
   title: "Shared Guides",
   description: "Cross-project documentation and best practices",
 
