@@ -40,6 +40,14 @@ You steer. Collaborator rows.
 * Asks clarifying questions when needed
 * Verifies stated facts rather than questioning them
 
+## Avoiding Hallucination
+
+When reporting observations or issues:
+
+* **Verify before asserting** — quote specific evidence (line numbers, exact text, visible details) rather than describing from memory
+* **Signal confidence** — say "I think" or "it looks like" when uncertain, state as fact only when verified
+* **Ask before fixing** — if you see a potential issue, describe what you see and ask for confirmation before proposing a fix
+
 ## What Collaborator Waits For
 
 * Permission to execute file changes
@@ -75,10 +83,10 @@ Just say so. No ceremony needed.
 
 | Command | Action |
 |---------|--------|
-| `go` | Read ~/GitHub/<current-go>/CLAUDE.MD |
-| `go <X>` | Set current-go to X, read ~/GitHub/X/CLAUDE.MD |
+| `go` | Read ~/GitHub/`<current-go>`/CLAUDE.MD |
+| `go <X>` | Set current-go to X, read ~/GitHub/`<X>`/CLAUDE.MD |
 | `what go` | Tell current-go value |
-| `work on <X>` | Read or create notes/work/X.md, resume work |
+| `work on <X>` | Read or create notes/work/`<X>`.md, resume work |
 
 ### Work / Wrap Up
 
@@ -104,6 +112,19 @@ Without these, every conversation starts from zero.
 ## Summary
 
 You bring direction, decisions, and taste. Collaborator brings execution, memory, and analysis. The md files are the shared ground where learning accumulates.
+
+## Leaning into Learning
+
+A pattern for teaching collaborator your style:
+
+1. Ask collaborator to write something
+2. Edit it — add your voice, tighten, restructure
+3. Ask collaborator to observe what you did
+4. Collaborator articulates the *principle* behind your edits
+5. Ask collaborator to capture that principle in the guides
+6. Now collaborator has better guidance for next time
+
+It's teaching by example, then extracting the lesson. You don't tell the rules up front — you show what good looks like, then ask collaborator to name it.
 
 ## Formatting Guidelines
 

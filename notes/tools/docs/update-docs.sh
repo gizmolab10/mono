@@ -18,7 +18,7 @@ SHARED_TOOLS="${SHARED_TOOLS:-$SCRIPT_DIR}"
 
 # Defaults (can be overridden by config.sh)
 NOTES_DIR="${NOTES_DIR:-notes}"
-TOOLS_DIST="${TOOLS_DIST:-$NOTES_DIR/tools/dist}"
+TOOLS_DIST="${TOOLS_DIST:-$SHARED_TOOLS/dist}"
 
 echo "=================================================="
 echo "UPDATE DOCS WORKFLOW"
@@ -29,7 +29,7 @@ echo ""
 # Step 1: Compile TypeScript tools
 echo "Step 1: Compiling TypeScript tools..."
 cd "$SHARED_TOOLS"
-npx tsc --outDir "$PROJECT_ROOT/$TOOLS_DIST"
+npx tsc
 
 if [ $? -ne 0 ]; then
   echo "❌ TypeScript compilation failed"

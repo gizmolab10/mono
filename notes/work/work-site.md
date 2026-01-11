@@ -1,19 +1,19 @@
 # Work Site
 
 **Started:** 2025-01-09
-**Status:** Phase 3 complete
+**Status:** Phase 4 in progress
 
 ## Table of Contents
 
-- [Problem](#problem)
-- [Goal](#goal)
-- [What We Built](#what-we-built)
-  - [dev-servers.sh](#dev-serverssh)
-  - [dev-api.py](#dev-apipy)
-  - [dev-hub.html](#dev-hubhtml)
-  - [Shell Alias](#shell-alias)
-- [Setup](#setup)
-- [Evolving the UI](#evolving-the-ui)
+* [Problem](#problem)
+* [Goal](#goal)
+* [What We Built](#what-we-built)
+  * [dev-servers.sh](#dev-serverssh)
+  * [dev-api.py](#dev-apipy)
+  * [dev-hub.html](#dev-hubhtml)
+  * [Shell Alias](#shell-alias)
+* [Setup](#setup)
+* [Evolving the UI](#evolving-the-ui)
 
 ## Problem
 
@@ -26,6 +26,7 @@ One command to restart all servers, plus a hub page for quick navigation.
 ## What We Built
 
 ### UX Layout
+
 ```
 ┌────────────────────────╮╭───────────┐
 │       Work Sites       ││  Restart  │
@@ -41,25 +42,40 @@ One command to restart all servers, plus a hub page for quick navigation.
 *Conceptual layout — shows groupings, not exact visual appearance*
 
 Key takeaways:
-- three rows of boxes
-- boxes contain elements: text, segmented controls, buttons
-- three layers: background, boxes, elements
+
+* Four rows: title, segments, feedback, actions
+* Feedback row shows project/mode and previews destination URL
+* Three layers: background, boxes, elements
+
+#### Dual Purpose: Dispatch and Status
+
+The hub serves two complementary purposes:
+
+**Dispatch** — Pick project/mode, pick action, go
+**Status** — Hover to preview what *would* happen before committing
+
+The feedback row provides **preflight confirmation**: hovering over action buttons shows the destination URL, removing guesswork. Hovering over project/mode buttons temporarily previews that selection (including updating action button states) without committing.
 
 #### Button Color Scheme
 
+
+
 1. **Choices**
-	1. **Chosen** — green with white text
-	2. **Not chosen** — dark blue with gray text
-	3. **Unavailable** — dark blue at 30% opacity
+
+   
+   1. **Chosen** — green with white text
+   2. **Not chosen** — dark blue with gray text
+   3. **Unavailable** — dark blue at 30% opacity
 2. **Action** — dark blue with white text
 
 #### Visual Language
 
 Shares visual language with Design Intuition (di):
-- Rounded rectangle boxes as containers
-- Three-layer hierarchy: background → boxes → elements
-- Muted blues/purples for containers, darker blues for buttons
-- Clean separation between groups
+
+* Rounded rectangle boxes as containers
+* Three-layer hierarchy: background → boxes → elements
+* Muted blues/purples for containers, darker blues for buttons
+* Clean separation between groups
 
 ### dev-servers.sh
 
@@ -68,7 +84,7 @@ Location: `~/GitHub/shared/notes/tools/sites/dev-servers.sh`
 Starts/restarts dev servers, kills existing processes on ports first.
 
 | Site | Port | Dir | Command |
-|------|------|-----|---------|
+|----|----|----|----|
 | api | 5171 | shared/notes/tools/sites | python3 dev-api.py |
 | hub | 5170 | shared/notes/tools/sites | python3 -m http.server 5170 |
 | ws | 5173 | ws | yarn dev |
@@ -77,6 +93,7 @@ Starts/restarts dev servers, kills existing processes on ports first.
 | shared | 5177 | shared | yarn docs:dev |
 
 **Usage:**
+
 ```bash
 restart              # start all (via alias)
 ~/GitHub/shared/notes/tools/sites/dev-servers.sh ws      # just ws
@@ -92,8 +109,9 @@ Location: `~/GitHub/shared/notes/tools/sites/dev-api.py`
 Simple API server that executes dev-servers.sh commands. Listens on port 5171.
 
 **Endpoints:**
-- `POST /restart-all` — Restarts all dev servers (excludes hub and api)
-- `POST /start` — Restarts a specific site (body: `{"site": "ws"}`)
+
+* `POST /restart-all` — Restarts all dev servers (excludes hub and api)
+* `POST /start` — Restarts a specific site (body: `{"site": "ws"}`)
 
 ### dev-hub.html
 
@@ -104,7 +122,7 @@ URL: http://localhost:5170/dev-hub.html
 #### Segmented Controls
 
 | Key | Control |
-|-----|---------|
+|----|----|
 | 1 | Dev mode |
 | 2 | Docs mode |
 | W | ws project |
@@ -115,7 +133,7 @@ URL: http://localhost:5170/dev-hub.html
 #### Action Buttons
 
 | Key | Action |
-|-----|--------|
+|----|----|
 | Enter | Restart (restarts all dev servers) |
 | L | Local (navigate to localhost) |
 | P | Public (navigate to deployed site) |
@@ -126,14 +144,18 @@ URL: http://localhost:5170/dev-hub.html
 
 #### UI Features
 
-- Keyboard badges on all buttons
-- Dark theme with green accent for active state
-- Invalid mode/project combos are disabled
-- Dynamic title-box width adjustment (accommodates Restart/Restarting text change)
+* Keyboard badges on all buttons
+* Dark theme with green accent for active state
+* Invalid mode/project combos are disabled
+* Dynamic title-box width adjustment (accommodates Restart/Restarting text change)
+* Sticky action highlight — last hovered action stays highlighted until another is hovered
+* Preview on hover — hovering project/mode buttons shows preview in feedback row and updates action button disabled states
+* Selection persists in localStorage across sessions
 
 ### Shell Alias
 
 Add to `~/.zshrc`:
+
 ```bash
 alias restart="~/GitHub/shared/notes/tools/sites/dev-servers.sh all"
 ```
@@ -177,30 +199,35 @@ source ~/.zshrc
 
 ### Phase 4: Public URLs
 
-- [ ] a. Gather all public URLs for each project
-- [ ] b. Add public URLs to dev-hub.html config
-- [ ] c. Public button navigates to deployed site
-- [ ] d. Update behavior matrix in docs
-- [ ] e. Deploy di to Netlify
-- [ ] f. Deploy shared docs to Netlify
+- [x] a. Gather all currently working public URLs for each project
+- [x] b. Add public URLs to dev-hub.html config
+- [x] c. Public button navigates to deployed site
+- [x] d. Update behavior matrix in docs
+
+### Phase 5: Final Doc Deploys to Netlify
+
+- [ ] reorganize tools
+- [ ] shared
+- [ ] di
 
 #### Current Deployment Status
 
-| Mode | Project | at Netlify        | Status                 |
-| ---- | ------- | ----------------- | ---------------------- |
-| dev  | ws      | webseriously      | deployed               |
-| dev  | di      | di                | needs setup (Phase 4e) |
-| docs | ws      | webseriously-docs | deployed               |
-| docs | shared  | —                 | needs setup (Phase 4f) |
-| dev  | shared  | n/a               | no dev mode            |
-| dev  | en      | n/a               | not configured         |
-| docs | di      | n/a               | no docs mode           |
-| docs | en      | n/a               | not configured         |
+| Mode | Project | at Netlify | Status |
+|----|----|----|----|
+| dev | ws | webseriously | deployed |
+| docs | ws | webseriously-docs | deployed |
+| dev | shared | n/a | no dev mode |
+| dev | en | n/a | not configured |
+| docs | di | n/a | no docs mode |
+| docs | en | n/a | not configured |
+|    |    |    |    |
+| dev | di | di | 5 |
+| docs | shared | — | 4f |
 
 #### Proposed Public URLs
 
 | Mode | Project | Public URL |
-|------|---------|------------|
+|----|----|----|
 | dev | ws | https://webseriously.netlify.app |
 | dev | di | — (pending Phase 4e) |
 | docs | ws | https://webseriously-docs.netlify.app |
@@ -208,20 +235,18 @@ source ~/.zshrc
 
 ## Evolving the UI
 
-The interface went through several iterations:
+See [evolve.md](/notes/guides/collaborate/evolve.md) for the general pattern.
+
+This project followed that journey — from basic layout through hover previews to edge case refinement.
+
+### Iterations
+
+
 
 1. **Connected lines** — Initial design used visual separators (lines with rounded ends) connecting groups. Felt cluttered.
-
 2. **Standalone boxes** — Removed connecting lines. Each group became an independent rounded rectangle. Cleaner, but rows felt disconnected.
-
 3. **Row alignment** — Added dynamic width matching so all rows share the same visual width. Used JavaScript to measure and sync.
-
 4. **Two-box title row** — Title and Restart button in separate boxes side-by-side. Required complex width calculation (total - button - gap).
-
 5. **Single-box title row** — Merged title and Restart into one box. Title uses `flex: 1` to fill space and center. Simpler code, cleaner result.
 
-**Lessons:**
-- Start simple, add complexity only when needed
-- Visual elements that change size (like button text) need dynamic layout adjustment
-- Fewer containers = simpler math = fewer bugs
-- CSS flex handles alignment better than manual width calculations
+

@@ -7,37 +7,39 @@
   <title>Work Sites</title>
   <style>
     :root {
-      --bg-page: #8282b1;
-      --bg-container: rgb(129, 156, 229);
-      --bg-command: #0a0a1a;
 
-      /* Button backgrounds */
+      /* Backgrounds */
+      --bg-page: #8282b1;
+      --bg-command: #0a0a1a;
       --bg-chosen: #016c42;
       --bg-available: #002f68;
       --bg-unavailable: #557197;
       --bg-button-hover: #1a4a7a;
       --bg-badge: rgb(171, 190, 241);
+      --bg-container: rgb(129, 156, 229);
 
       /* Button text */
       --text-unavailable: #222;
+      --text-command: #a8006d;
+      --text-feedback: #fff;
+      --text-primary: #fff;
       --text-chosen: #fff;
       --text-choice: #888;
       --text-action: #fff;
+      --text-title: #fff;
       --text-badge: #000;
 
-      --text-primary: #fff;
-      --text-command: #a8006d;
-      --text-title: #fff;
 
       /* Font sizes */
+      --font-feedback: 11px;
       --font-command: 13px;
       --font-button: 14px;
       --font-title: 24px;
       --font-badge: 8px;
 
       /* Spacing */
-      --gap-horizontal: 6px;
-      --gap-vertical: 6px;
+      --gap-horizontal: 12px;
+      --gap-vertical: 12px;
       --button-gap: 6px;
       --box-padding: 6px;
     }
@@ -89,6 +91,38 @@
     .actions-row {
       display: inline-flex;
       gap: var(--gap-horizontal);
+    }
+
+    .feedback-row {
+      display: flex;
+      gap: var(--button-gap);
+      margin-bottom: var(--gap-vertical);
+    }
+
+    .feedback-btn {
+      height: 24px;
+      background: var(--bg-page);
+      border: none;
+      border-radius: 6px;
+      color: var(--text-feedback);
+      font-size: var(--font-feedback);
+      cursor: default;
+    }
+
+    #btn-feedback-mode {
+      text-align: center;
+      flex: 1;
+    }
+
+    #btn-feedback-project {
+      text-align: center;
+      flex: 1;
+    }
+
+    #btn-destination {
+      text-align: left;
+      padding-left: 8px;
+      flex: 10;
     }
 
     .title-box {
@@ -173,7 +207,7 @@
       background: var(--bg-available);
       color: var(--text-action);
       border: none;
-      padding: 12px 20px;
+      padding: 10px 20px;
       border-radius: 8px;
       cursor: pointer;
       font-size: var(--font-button);
@@ -199,7 +233,8 @@
       text-transform: lowercase;
     }
 
-    .action:hover:not(.disabled) {
+    .action:hover:not(.disabled),
+    .action.sticky:not(.disabled) {
       background: var(--bg-chosen);
       color: var(--text-chosen);
     }
@@ -232,34 +267,41 @@
   <div class="container">
     <div class="title-row">
       <div class="title-box">
-        <h1>Work Sites</h1>
         <button class="action" id="btn-start">Restart<span class="badge">⏎</span></button>
+        <h1>Work Sites</h1>
       </div>
     </div>
 
     <div class="segment-row">
+      <div class="project-group">
+        <button class="segment" data-project="en">en<span class="badge">E</span></button>
+        <button class="segment" data-project="shared">shared<span class="badge">S</span></button>
+        <button class="segment" data-project="di">di<span class="badge">D</span></button>
+        <button class="segment active" data-project="ws">ws<span class="badge">W</span></button>
+      </div>
       <div class="mode-group">
         <button class="segment active" data-mode="dev">Dev<span class="badge">1</span></button>
         <button class="segment" data-mode="docs">Docs<span class="badge">2</span></button>
       </div>
-      <div class="project-group">
-        <button class="segment active" data-project="ws">ws<span class="badge">W</span></button>
-        <button class="segment" data-project="di">di<span class="badge">D</span></button>
-        <button class="segment" data-project="shared">shared<span class="badge">S</span></button>
-        <button class="segment" data-project="en">en<span class="badge">E</span></button>
-      </div>
+    </div>
+
+    <div class="feedback-row" id="feedback-row">
+      <button class="feedback-btn" id="btn-feedback-project"></button>
+      <button class="feedback-btn" id="btn-feedback-mode"></button>
+      <button class="feedback-btn" id="btn-destination"></button>
     </div>
 
     <div class="actions-row">
-      <div class="navigate-group">
-        <button class="action" id="btn-local">Local<span class="badge">L</span></button>
-        <button class="action" id="btn-public">Public<span class="badge">P</span></button>
-      </div>
       <div class="more-group">
+        <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
+        <button class="action" id="btn-dns">DNS<span class="badge">N</span></button>
         <button class="action" id="btn-repo">Repo<span class="badge">R</span></button>
         <button class="action" id="btn-deploy">Deploy<span class="badge">Y</span></button>
-        <button class="action" id="btn-dns">DNS<span class="badge">N</span></button>
-        <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
+      </div>
+      <div class="navigate-group">
+        <button class="action" id="btn-local">Local<span class="badge">L</span></button>
+        <button class="action" id="btn-netlify">Netlify<span class="badge">T</span></button>
+        <button class="action" id="btn-public">Public<span class="badge">P</span></button>
       </div>
     </div>
 
@@ -267,24 +309,32 @@
   </div>
 
   <script>
+    const PORT_WS_DEV = 5173;
+    const PORT_DI_DEV = 5174;
+    const PORT_WS_DOCS = 5176;
+    const PORT_DI_DOCS = 5178;
+    const PORT_SHARED_DOCS = 5177;
+
     const config = {
       dev: {
         ws: {
-          port: 5173,
+          port: PORT_WS_DEV,
           site: 'ws',
           public: null,
-          repo: 'https://github.com/gizmolab10/webseriously',
-          deploy: 'https://app.netlify.com/sites/webseriously/deploys',
-          dns: 'https://app.netlify.com/sites/webseriously/settings/domain',
-          bubble: 'https://bubble.io/plugin_editor?id=1703476102498x770498940498370600'
+          netlify: 'https://webseriously.netlify.app',
+          repo: 'https://github.com/gizmolab10/seriously-svelte',
+          deploy: 'https://app.netlify.com/projects/webseriously/deploys',
+          dns: 'https://www.dynadot.com/account/domain/name/list.html',
+          bubble: 'https://bubble.io/home/plugins'
         },
         di: {
-          port: 5174,
+          port: PORT_DI_DEV,
           site: 'di',
           public: null,
-          repo: 'https://github.com/gizmolab10/di',
-          deploy: 'https://app.netlify.com/sites/di/deploys',
-          dns: 'https://app.netlify.com/sites/di/settings/domain',
+          netlify: 'https://designintuition.netlify.app',
+          repo: 'https://github.com/gizmolab10/design.intuition',
+          deploy: 'https://app.netlify.com/projects/designintuition/deploys',
+          dns: 'https://www.dynadot.com/account/domain/name/list.html',
           bubble: null
         },
         shared: null,
@@ -292,34 +342,46 @@
       },
       docs: {
         ws: {
-          port: 5176,
+          port: PORT_WS_DOCS,
           site: 'ws-docs',
           public: null,
-          repo: 'https://github.com/gizmolab10/webseriously',
-          deploy: 'https://app.netlify.com/sites/webseriously-docs/deploys',
-          dns: 'https://app.netlify.com/sites/webseriously-docs/settings/domain',
+          netlify: 'https://webseriously-documentation.netlify.app',
+          repo: 'https://github.com/gizmolab10/seriously-svelte',
+          deploy: 'https://app.netlify.com/projects/webseriously-documentation/deploys',
+          dns: 'https://www.dynadot.com/account/domain/name/list.html',
           bubble: null
         },
-        di: null,
+        di: {
+          port: PORT_DI_DOCS,
+          site: 'di-docs',
+          public: null,
+          netlify: 'https://designintuition-documentation.netlify.app',
+          repo: 'https://github.com/gizmolab10/design.intuition',
+          deploy: 'https://app.netlify.com/projects/designintuition-docs/deploys',
+          dns: 'https://www.dynadot.com/account/domain/name/list.html',
+          bubble: null
+        },
         shared: {
-          port: 5177,
+          port: PORT_SHARED_DOCS,
           site: 'shared',
           public: null,
+          netlify: 'https://gizmolab-shared-docs.netlify.app',
           repo: 'https://github.com/gizmolab10/shared',
-          deploy: null,
-          dns: null,
+          deploy: 'https://app.netlify.com/projects/gizmolab-shared-docs/deploys',
+          dns: 'https://www.dynadot.com/account/domain/name/list.html',
           bubble: null
         },
         en: null
       }
     };
 
-    let mode = 'dev';
-    let project = 'ws';
+    let mode = localStorage.getItem('hub-mode') || 'dev';
+    let project = localStorage.getItem('hub-project') || 'ws';
 
     const modeButtons = document.querySelectorAll('.segment[data-mode]');
     const projectButtons = document.querySelectorAll('.segment[data-project]');
     const btnLocal = document.getElementById('btn-local');
+    const btnNetlify = document.getElementById('btn-netlify');
     const btnStart = document.getElementById('btn-start');
     const btnPublic = document.getElementById('btn-public');
     const btnRepo = document.getElementById('btn-repo');
@@ -341,7 +403,7 @@
       });
 
       if (config[mode][project] === null) {
-        for (const p of ['ws', 'di', 'shared']) {
+        for (const p of ['ws', 'di', 'shared', 'en']) {
           if (config[mode][p] !== null) {
             project = p;
             break;
@@ -355,6 +417,7 @@
       const hasConfig = cfg !== null;
       btnStart.classList.toggle('disabled', !hasConfig);
       btnLocal.classList.toggle('disabled', !hasConfig);
+      btnNetlify.classList.toggle('disabled', !hasConfig || !cfg.netlify);
       btnPublic.classList.toggle('disabled', !hasConfig || !cfg.public);
       btnRepo.classList.toggle('disabled', !hasConfig || !cfg.repo);
       btnDeploy.classList.toggle('disabled', !hasConfig || !cfg.deploy);
@@ -366,13 +429,23 @@
 
     function setMode(m) {
       mode = m;
+      localStorage.setItem('hub-mode', mode);
       update();
+      if (hoveredActionId) {
+        hoveredAction = actionButtons[hoveredActionId]();
+      }
+      updateFeedbackRow();
     }
 
     function setProject(p) {
       if (config[mode][p] !== null) {
         project = p;
+        localStorage.setItem('hub-project', project);
         update();
+        if (hoveredActionId) {
+          hoveredAction = actionButtons[hoveredActionId]();
+        }
+        updateFeedbackRow();
       }
     }
 
@@ -421,13 +494,19 @@
     function doLocal() {
       const cfg = config[mode][project];
       if (!cfg) return;
-      window.location.href = `http://localhost:${cfg.port}`;
+      window.open(`http://localhost:${cfg.port}`, '_blank');
+    }
+
+    function doNetlify() {
+      const cfg = config[mode][project];
+      if (!cfg || !cfg.netlify) return;
+      window.open(cfg.netlify, '_blank');
     }
 
     function doPublic() {
       const cfg = config[mode][project];
       if (!cfg || !cfg.public) return;
-      window.location.href = cfg.public;
+      window.open(cfg.public, '_blank');
     }
 
     function doRepo() {
@@ -456,14 +535,53 @@
 
     modeButtons.forEach(btn => {
       btn.addEventListener('click', () => setMode(btn.dataset.mode));
+      btn.addEventListener('mouseenter', () => {
+        const m = btn.dataset.mode;
+        if (m !== mode) {
+          previewMode = m;
+          if (hoveredActionId) {
+            hoveredAction = actionButtons[hoveredActionId]();
+          }
+          updateActionButtonsPreview();
+          updateFeedbackRow();
+        }
+      });
+      btn.addEventListener('mouseleave', () => {
+        previewMode = null;
+        if (hoveredActionId) {
+          hoveredAction = actionButtons[hoveredActionId]();
+        }
+        updateActionButtonsPreview();
+        updateFeedbackRow();
+      });
     });
 
     projectButtons.forEach(btn => {
       btn.addEventListener('click', () => setProject(btn.dataset.project));
+      btn.addEventListener('mouseenter', () => {
+        const p = btn.dataset.project;
+        if (p !== project && config[mode][p] !== null && !btn.classList.contains('disabled')) {
+          previewProject = p;
+          if (hoveredActionId) {
+            hoveredAction = actionButtons[hoveredActionId]();
+          }
+          updateActionButtonsPreview();
+          updateFeedbackRow();
+        }
+      });
+      btn.addEventListener('mouseleave', () => {
+        previewProject = null;
+        if (hoveredActionId) {
+          hoveredAction = actionButtons[hoveredActionId]();
+        }
+        updateActionButtonsPreview();
+        updateFeedbackRow();
+      });
     });
 
     btnStart.addEventListener('click', doStart);
     btnLocal.addEventListener('click', doLocal);
+    btnNetlify.addEventListener('click', doNetlify);
     btnPublic.addEventListener('click', doPublic);
     btnRepo.addEventListener('click', doRepo);
     btnDeploy.addEventListener('click', doDeploy);
@@ -481,6 +599,7 @@
         case 'e': setProject('en'); break;
         case 'enter': doStart(); break;
         case 'l': doLocal(); break;
+        case 't': doNetlify(); break;
         case 'p': doPublic(); break;
         case 'r': doRepo(); break;
         case 'y': doDeploy(); break;
@@ -491,13 +610,107 @@
 
     update();
 
+    let hoveredActionId = null;
+    let hoveredAction = null;
+    let previewMode = null;
+    let previewProject = null;
+
+    function getDisplayMode() {
+      return previewMode !== null ? previewMode : mode;
+    }
+
+    function getDisplayProject() {
+      return previewProject !== null ? previewProject : project;
+    }
+
+    function hoverText() {
+      if (hoveredAction) {
+        return `${mode} / ${project} — ${hoveredAction}`;
+      }
+      return `${mode} / ${project}`;
+    }
+
+    function updateFeedbackRow() {
+      document.getElementById('btn-feedback-mode').textContent = getDisplayMode();
+      document.getElementById('btn-feedback-project').textContent = getDisplayProject();
+      document.getElementById('btn-destination').textContent = hoveredAction || '';
+    }
+
+    function updateActionButtonsPreview() {
+      const m = getDisplayMode();
+      const p = getDisplayProject();
+      const cfg = config[m]?.[p];
+      const hasConfig = cfg !== null;
+
+      btnStart.classList.toggle('disabled', !hasConfig);
+      btnLocal.classList.toggle('disabled', !hasConfig);
+      btnNetlify.classList.toggle('disabled', !hasConfig || !cfg?.netlify);
+      btnPublic.classList.toggle('disabled', !hasConfig || !cfg?.public);
+      btnRepo.classList.toggle('disabled', !hasConfig || !cfg?.repo);
+      btnDeploy.classList.toggle('disabled', !hasConfig || !cfg?.deploy);
+      btnDns.classList.toggle('disabled', !hasConfig || !cfg?.dns);
+      btnBubble.classList.toggle('disabled', !hasConfig || !cfg?.bubble);
+    }
+
     function matchRowWidths() {
       const actionsRow = document.querySelector('.actions-row');
       const titleBox = document.querySelector('.title-box');
-      titleBox.style.width = actionsRow.offsetWidth + 'px';
+      const feedbackRow = document.querySelector('.feedback-row');
+      const width = actionsRow.offsetWidth + 'px';
+      titleBox.style.width = width;
+      feedbackRow.style.width = width;
     }
     matchRowWidths();
+    updateFeedbackRow();
     window.addEventListener('resize', matchRowWidths);
+
+    // Action button hover handlers
+    const actionButtons = {
+      'btn-local': () => {
+        const cfg = config[getDisplayMode()][getDisplayProject()];
+        return cfg ? `http://localhost:${cfg.port}` : null;
+      },
+      'btn-netlify': () => {
+        const cfg = config[getDisplayMode()][getDisplayProject()];
+        return cfg?.netlify || null;
+      },
+      'btn-public': () => {
+        const cfg = config[getDisplayMode()][getDisplayProject()];
+        return cfg?.public || null;
+      },
+      'btn-repo': () => {
+        const cfg = config[getDisplayMode()][getDisplayProject()];
+        return cfg?.repo || null;
+      },
+      'btn-deploy': () => {
+        const cfg = config[getDisplayMode()][getDisplayProject()];
+        return cfg?.deploy || null;
+      },
+      'btn-dns': () => {
+        const cfg = config[getDisplayMode()][getDisplayProject()];
+        return cfg?.dns || null;
+      },
+      'btn-bubble': () => {
+        const cfg = config[getDisplayMode()][getDisplayProject()];
+        return cfg?.bubble || null;
+      }
+    };
+
+    Object.keys(actionButtons).forEach(id => {
+      const btn = document.getElementById(id);
+      btn.addEventListener('mouseenter', () => {
+        if (btn.classList.contains('disabled')) return;
+        // Remove sticky from previous button
+        if (hoveredActionId) {
+          document.getElementById(hoveredActionId).classList.remove('sticky');
+        }
+        // Add sticky to this button
+        hoveredActionId = id;
+        btn.classList.add('sticky');
+        hoveredAction = actionButtons[id]();
+        updateFeedbackRow();
+      });
+    });
   </script>
 </body>
 

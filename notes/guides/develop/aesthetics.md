@@ -112,3 +112,20 @@ The fillets (╮╭╯╰) create smooth rounded transitions at separator inters
 2. **Overlap for alignment** — Separators extend `thickness/2` past endpoints to center fillets on intersections
 3. **Substantial fillets** — Use `k.radius.fillets.thick` for prominent visual effect
 4. **Unified color** — Separators and fillets both use `w_separator_color`
+
+## Dual-Purpose UI: Dispatch and Status
+
+A well-designed interface can serve two complementary purposes:
+
+**Dispatch** — Execute an action (pick options, click, go)
+**Status** — Preview what *would* happen before committing
+
+The key insight: status aids dispatch by providing **preflight confirmation**. When hovering reveals the destination URL before clicking, the user sees exactly where they're headed. This removes guesswork and builds confidence.
+
+**Implementation pattern:**
+- Hover over options to preview resulting state
+- Show computed values (URLs, paths, commands) in a feedback area
+- Keep the actual selection visually distinct from the preview
+- Revert preview on mouse leave, commit on click
+
+This pattern transforms a simple launcher into an exploratory tool — users can "try on" combinations without committing.

@@ -1,6 +1,18 @@
 # Voice and Tone Guide
 
-This doc captures my writing style for documentation. The goal: docs that sound like me, Jonathan, not like a technical writer.
+I do have strong opinions about what I read, so I want our guides to satisfy and nurture, not just inform. I try to write that way (aka voice), but my output is meager. I very much enjoy a collaborator's help to boost that output, while maintaining crisp, lighthearted, joyful prose.
+
+My motto: We are building stuff that we want humans to love using. I luxuriate in the hypothetical soul of my user. I try to sense and to guess when things feel smooth, engaging, gentle. I want that, as well, to come across in these guides. This is an enterprise immersed in the joy of being human, riding the ever-present waves of technical disruption.
+
+## Capturing Intuition
+
+These guides aren't rules — they're captured intuitions. I'm an artist before I'm an engineer. The engineering serves the art. Aesthetics matters to me.
+
+This means:
+- Integrate everything into a narrative. Forms and formulas feel dead
+- Hand-tweaking beats formulas — I'm sensing, not computing
+- Warmth in naming matters — "Leaning into Learning" has soul, "Edit Loop" doesn't
+- When in doubt, correctness is good, but does it feel alive, warm, intriguing?
 
 ## Core Principles
 
@@ -61,6 +73,32 @@ Express frustration, satisfaction, confusion. The docs should feel human.
 - ✅ "my early code was a nightmare to tweak"
 - ❌ Dry, emotionless technical prose
 
+## Structure
+
+### Synopsis Formula
+
+A good synopsis typically follows this pattern:
+
+1. **State the problem** (what was broken/annoying/missing)
+2. **Hint at the solution** (what you built)
+3. **Maybe add a detail** (one interesting technical point or outcome)
+
+Not a rigid formula, but it works.
+
+### Integrate, Don't Append
+
+Instead of separate labeled sections (Problem / Solution / Rule / Setup), weave them into a narrative flow. The rule becomes a lead-in sentence. The setup reference moves to where it's naturally relevant. Section headers become transition phrases.
+
+The result reads like someone explaining it, not like a form being filled out.
+
+### Naming Things
+
+When naming sections or concepts, favor warmth over mechanics:
+
+- ✅ "Leaning into Learning" — alliterative, collaborative spirit, both parties engaged
+- ❌ "The Edit Loop" — mechanical, clinical
+- ❌ "Teaching by Example" — one-directional, lecture-y
+
 ## Examples
 
 ### Good Synopses
@@ -89,25 +127,30 @@ Express frustration, satisfaction, confusion. The docs should feel human.
 
 ❌ "User preferences are persisted to localStorage through a reactive store subscription pattern."
 
-## Synopsis Formula
+## Special Cases
 
-A good synopsis typically follows this pattern:
+### When to Break the Rules
 
-1. **State the problem** (what was broken/annoying/missing)
-2. **Hint at the solution** (what you built)
-3. **Maybe add a detail** (one interesting technical point or outcome)
-
-Not a rigid formula, but it works.
-
-## When to Break the Rules
-
-- **Code blocks**: Use proper capitalization and formatting
+- **When Writing Code**: Use proper capitalization and formatting
 - **Technical terms**: Keep them precise (don't make "Svelte" lowercase)
 - **Headers**: Follow markdown conventions
-- **Tables and diagrams**: Clarity over personality
+- **Tables and diagrams**: Clarity and concision over personality
 
 The voice is for prose, not for code or formal structures.
 
+### Describing UI/UX Work
+
+When documenting interface evolution, favor sensory and experiential language:
+
+- ✅ "hand-tweak colors until it all feels relaxing to the eye"
+- ✅ "preflight URLs while comfortably moving the mouse"
+- ✅ "get it to feel natural and informative"
+- ❌ "adjust color values" 
+- ❌ "preview destination URLs on hover"
+- ❌ "improve usability"
+
+Nurture the *feeling* — does it feel natural, intuitive, helpful?
+
 ## Meta Note
 
-This doc itself tries to follow the rules. Notice the casual tone, first person, problem-first thinking. If it doesn't sound like me, something's wrong.
+This doc itself tries to follow the rules. Notice the casual tone, first person, problem-first thinking. If it doesn't sound like Jonathan, something's wrong.

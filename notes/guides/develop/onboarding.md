@@ -260,5 +260,5 @@ https://docs.github.com/en/authentication/connecting-to-github-with-ssh
 
 Ask Jonathan. Or check the guides in `shared/guides/` — especially:
 - `collaborate/chat.md` — how to work with Claude effectively
-- `collaborate/docs.md` — how the shared architecture works
+- `collaborate/repo.md` — how the shared architecture works
 - `develop/style.md` — code conventions
