@@ -11,7 +11,7 @@ import os
 import threading
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-DEV_SERVERS = os.path.join(SCRIPT_DIR, 'dev-servers.sh')
+DEV_SERVERS = os.path.join(SCRIPT_DIR, 'servers.sh')
 
 # Sites to restart (excludes hub and api)
 RESTART_SITES = ['ws', 'ws-docs', 'di', 'di-docs', 'shared']

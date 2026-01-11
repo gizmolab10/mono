@@ -6,7 +6,7 @@
 GITHUB_DIR="$HOME/GitHub"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="$GITHUB_DIR/shared/notes/tools/logs"
-PORTS_FILE="$SCRIPT_DIR/dev-ports.json"
+PORTS_FILE="$SCRIPT_DIR/ports.json"
 mkdir -p "$LOG_DIR"
 
 # Read port from JSON
@@ -16,7 +16,7 @@ get_port() {
 }
 
 # Load ports
-PORT_HUB=$(get_port hub)
+PORT_DISPATCH=$(get_port dispatch)
 PORT_API=$(get_port api)
 PORT_WS=$(get_port ws)
 PORT_DI=$(get_port di)
@@ -26,13 +26,13 @@ PORT_DI_DOCS=$(get_port di-docs)
 
 # Site definitions: name|port|dir|command
 SITES=(
-  "api|$PORT_API|shared/notes/tools/sites|python3 dev-api.py"
-  "hub|$PORT_HUB|shared/notes/tools/sites|python3 -m http.server $PORT_HUB"
+  "api|$PORT_API|shared/notes/tools/sites|python3 api.py"
+  "dispatch|$PORT_DISPATCH|shared/notes/tools/sites|python3 -m http.server $PORT_DISPATCH"
   "ws|$PORT_WS|ws|yarn dev"
-  "ws-docs|$PORT_WS_DOCS|ws|yarn docs:dev"
+  "ws-docs|$PORT_WS_DOCS|ws|VITE_PORT=$PORT_WS_DOCS yarn docs:dev"
   "di|$PORT_DI|di|yarn dev"
-  "di-docs|$PORT_DI_DOCS|di|yarn docs:dev"
-  "shared|$PORT_SHARED|shared|yarn docs:dev"
+  "di-docs|$PORT_DI_DOCS|di|VITE_PORT=$PORT_DI_DOCS yarn docs:dev"
+  "shared|$PORT_SHARED|shared|VITE_PORT=$PORT_SHARED yarn docs:dev"
 )
 
 kill_port() {
@@ -54,7 +54,7 @@ start_site() {
   local logfile="$LOG_DIR/$name.log"
   echo "Starting $name on port $port... (log: $logfile)"
   cd "$GITHUB_DIR/$dir"
-  $cmd > "$logfile" 2>&1 &
+  eval $cmd > "$logfile" 2>&1 &
   sleep 1
 }
 
@@ -100,7 +100,7 @@ if [ "$KILL_ONLY" = "true" ]; then
 else
   echo ""
   echo "Running servers:"
-  echo "  $PORT_HUB  hub       (H)"
+  echo "  $PORT_DISPATCH  dispatch  (H)"
   echo "  $PORT_API  api"
   echo "  $PORT_WS  ws        app   (W)"
   echo "  $PORT_DI  di        app   (D)"
