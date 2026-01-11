@@ -1,2 +1,2 @@
 #!/bin/bash
-bash ~/GitHub/shared/notes/tools/docs/update-docs.sh ~/GitHub/di
+bash ~/GitHub/shared/notes/tools/docs/update-project-docs.sh ~/GitHub/di
