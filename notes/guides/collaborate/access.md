@@ -25,7 +25,7 @@ By default, Claude can't access your local files. Setting up filesystem access l
 ### 4. Add Your Project Directory
 
 **Option A: Through UI**
-- Add `~/GitHub/<project>` to allowed directories
+- Add `~/GitHub/\<project\>` to allowed directories
 
 **Option B: Edit Config File**
 
@@ -40,7 +40,7 @@ Edit it to add:
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/<you>/GitHub/<project>"]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/\<you\>/GitHub/\<project\>"]
     }
   }
 }
@@ -160,7 +160,7 @@ If filesystem access is actually broken:
 2. Check JSON syntax carefully - valid JSON has no trailing commas, matching brackets
 3. Test the MCP server directly:
    ```bash
-   npx -y @modelcontextprotocol/server-filesystem ~/GitHub/<project>
+   npx -y @modelcontextprotocol/server-filesystem ~/GitHub/\<project\>
    ```
    If this succeeds but Claude Desktop still disconnects, the issue is with Claude Desktop's MCP integration itself, not your config or the MCP server
 4. **If MCP server test succeeds but disconnect persists:**
@@ -170,7 +170,7 @@ If filesystem access is actually broken:
 5. If MCP server test fails, the MCP server itself isn't working
 6. If all else fails: temporarily delete/rename the config file, restart Claude, then recreate it
 
-**"Can't cd to ~/GitHub/<project>"**
+**"Can't cd to ~/GitHub/\<project\>"**
 - Filesystem access isn't configured yet
 - Try the manual config file method above
 
@@ -180,7 +180,7 @@ If filesystem access is actually broken:
 - Verify the config file syntax is valid JSON
 
 **Using full path to npx causes issues**
-- Don't use paths like `/Users/<you>/.nvms/versions/node/v20.19.5/bin/npx`
+- Don't use paths like `/Users/\<you\>/.nvms/versions/node/v20.19.5/bin/npx`
 - Just use `"command": "npx"` - Claude Desktop will find it in your PATH
 
 ## Alternative: Manual Upload/Download

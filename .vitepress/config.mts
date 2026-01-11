@@ -4,6 +4,9 @@ export default defineConfig({
   srcDir: './notes/guides',
   title: "Shared Guides",
   description: "Cross-project documentation and best practices",
+  ignoreDeadLinks: [
+    /^http:\/\/localhost/
+  ],
 
   vite: {
     server: {

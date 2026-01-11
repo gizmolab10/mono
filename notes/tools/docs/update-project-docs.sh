@@ -3,7 +3,35 @@
 # Update Docs Workflow
 # Builds VitePress documentation and automatically fixes broken links
 #
-# Usage: update-docs.sh [project-root]
+# Usage: update-project-docs.sh [project-root]
+#        update-project-docs.sh all    # updates all projects
+
+GITHUB_DIR="$HOME/GitHub"
+ALL_PROJECTS=("ws" "di" "shared")
+
+# Handle "all" option
+if [ "$1" = "all" ]; then
+  echo "================================================="
+  echo "UPDATING ALL PROJECT DOCS"
+  echo "================================================="
+  echo ""
+  
+  for proj in "${ALL_PROJECTS[@]}"; do
+    echo ">>> Updating $proj..."
+    echo ""
+    bash "$0" "$GITHUB_DIR/$proj"
+    if [ $? -ne 0 ]; then
+      echo "❌ Failed to update $proj"
+      exit 1
+    fi
+    echo ""
+  done
+  
+  echo "================================================="
+  echo "ALL PROJECTS UPDATED"
+  echo "================================================="
+  exit 0
+fi
 
 PROJECT_ROOT="${1:-$(pwd)}"
 cd "$PROJECT_ROOT" || exit 1

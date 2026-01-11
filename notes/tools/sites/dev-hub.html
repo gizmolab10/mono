@@ -269,6 +269,7 @@
       <div class="title-box">
         <button class="action" id="btn-start">Restart<span class="badge">⏎</span></button>
         <h1>Work Sites</h1>
+        <button class="action" id="btn-dns">DNS<span class="badge">N</span></button>
       </div>
     </div>
 
@@ -294,7 +295,6 @@
     <div class="actions-row">
       <div class="more-group">
         <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
-        <button class="action" id="btn-dns">DNS<span class="badge">N</span></button>
         <button class="action" id="btn-repo">Repo<span class="badge">R</span></button>
         <button class="action" id="btn-deploy">Deploy<span class="badge">Y</span></button>
       </div>
@@ -309,75 +309,19 @@
   </div>
 
   <script>
-    const PORT_WS_DEV = 5173;
-    const PORT_DI_DEV = 5174;
-    const PORT_WS_DOCS = 5176;
-    const PORT_DI_DOCS = 5178;
-    const PORT_SHARED_DOCS = 5177;
-
-    const config = {
-      dev: {
-        ws: {
-          port: PORT_WS_DEV,
-          site: 'ws',
-          public: null,
-          netlify: 'https://webseriously.netlify.app',
-          repo: 'https://github.com/gizmolab10/seriously-svelte',
-          deploy: 'https://app.netlify.com/projects/webseriously/deploys',
-          dns: 'https://www.dynadot.com/account/domain/name/list.html',
-          bubble: 'https://bubble.io/home/plugins'
-        },
-        di: {
-          port: PORT_DI_DEV,
-          site: 'di',
-          public: null,
-          netlify: 'https://designintuition.netlify.app',
-          repo: 'https://github.com/gizmolab10/design.intuition',
-          deploy: 'https://app.netlify.com/projects/designintuition/deploys',
-          dns: 'https://www.dynadot.com/account/domain/name/list.html',
-          bubble: null
-        },
-        shared: null,
-        en: null
-      },
-      docs: {
-        ws: {
-          port: PORT_WS_DOCS,
-          site: 'ws-docs',
-          public: null,
-          netlify: 'https://webseriously-documentation.netlify.app',
-          repo: 'https://github.com/gizmolab10/seriously-svelte',
-          deploy: 'https://app.netlify.com/projects/webseriously-documentation/deploys',
-          dns: 'https://www.dynadot.com/account/domain/name/list.html',
-          bubble: null
-        },
-        di: {
-          port: PORT_DI_DOCS,
-          site: 'di-docs',
-          public: null,
-          netlify: 'https://designintuition-documentation.netlify.app',
-          repo: 'https://github.com/gizmolab10/design.intuition',
-          deploy: 'https://app.netlify.com/projects/designintuition-docs/deploys',
-          dns: 'https://www.dynadot.com/account/domain/name/list.html',
-          bubble: null
-        },
-        shared: {
-          port: PORT_SHARED_DOCS,
-          site: 'shared',
-          public: null,
-          netlify: 'https://gizmolab-shared-docs.netlify.app',
-          repo: 'https://github.com/gizmolab10/shared',
-          deploy: 'https://app.netlify.com/projects/gizmolab-shared-docs/deploys',
-          dns: 'https://www.dynadot.com/account/domain/name/list.html',
-          bubble: null
-        },
-        en: null
-      }
-    };
-
+    // === Variables ===
+    let ports = {};
+    let config = {};
     let mode = localStorage.getItem('hub-mode') || 'dev';
     let project = localStorage.getItem('hub-project') || 'ws';
+    let hoveredActionId = null;
+    let hoveredAction = null;
+    let previewMode = null;
+    let previewProject = null;
 
+    const DNS_URL = 'https://www.dynadot.com/account/domain/name/list.html';
+
+    // === DOM Elements ===
     const modeButtons = document.querySelectorAll('.segment[data-mode]');
     const projectButtons = document.querySelectorAll('.segment[data-project]');
     const btnLocal = document.getElementById('btn-local');
@@ -390,7 +334,107 @@
     const btnBubble = document.getElementById('btn-bubble');
     const commandDiv = document.getElementById('command');
 
+    // === Config Initialization ===
+    function initConfig() {
+      config = {
+        dev: {
+          ws: {
+            port: ports.ws,
+            site: 'ws',
+            public: null,
+            netlify: 'https://webseriously.netlify.app',
+            repo: 'https://github.com/gizmolab10/seriously-svelte',
+            deploy: 'https://app.netlify.com/projects/webseriously/deploys',
+            bubble: 'https://bubble.io/home/plugins'
+          },
+          di: {
+            port: ports.di,
+            site: 'di',
+            public: null,
+            netlify: 'https://designintuition.netlify.app',
+            repo: 'https://github.com/gizmolab10/design.intuition',
+            deploy: 'https://app.netlify.com/projects/designintuition/deploys',
+            bubble: null
+          },
+          shared: null,
+          en: null
+        },
+        docs: {
+          ws: {
+            port: ports['ws-docs'],
+            site: 'ws-docs',
+            public: null,
+            netlify: 'https://webseriously-documentation.netlify.app',
+            repo: 'https://github.com/gizmolab10/seriously-svelte',
+            deploy: 'https://app.netlify.com/projects/webseriously-documentation/deploys',
+            bubble: null
+          },
+          di: {
+            port: ports['di-docs'],
+            site: 'di-docs',
+            public: null,
+            netlify: 'https://designintuition-documentation.netlify.app',
+            repo: 'https://github.com/gizmolab10/design.intuition',
+            deploy: 'https://app.netlify.com/projects/designintuition-docs/deploys',
+            bubble: null
+          },
+          shared: {
+            port: ports.shared,
+            site: 'shared',
+            public: null,
+            netlify: 'https://gizmolab-shared-docs.netlify.app',
+            repo: 'https://github.com/gizmolab10/shared',
+            deploy: 'https://app.netlify.com/projects/gizmolab-shared-docs/deploys',
+            bubble: null
+          },
+          en: null
+        }
+      };
+    }
+
+    // === Helper Functions ===
+    function getDisplayMode() {
+      return previewMode !== null ? previewMode : mode;
+    }
+
+    function getDisplayProject() {
+      return previewProject !== null ? previewProject : project;
+    }
+
+    function matchRowWidths() {
+      const actionsRow = document.querySelector('.actions-row');
+      const titleBox = document.querySelector('.title-box');
+      const feedbackRow = document.querySelector('.feedback-row');
+      const width = actionsRow.offsetWidth + 'px';
+      titleBox.style.width = width;
+      feedbackRow.style.width = width;
+    }
+
+    function updateFeedbackRow() {
+      document.getElementById('btn-feedback-mode').textContent = getDisplayMode();
+      document.getElementById('btn-feedback-project').textContent = getDisplayProject();
+      document.getElementById('btn-destination').textContent = hoveredAction || '';
+    }
+
+    function updateActionButtonsPreview() {
+      const m = getDisplayMode();
+      const p = getDisplayProject();
+      const cfg = config[m]?.[p];
+      const hasConfig = cfg !== null;
+
+      btnStart.classList.toggle('disabled', !hasConfig);
+      btnLocal.classList.toggle('disabled', !hasConfig);
+      btnNetlify.classList.toggle('disabled', !hasConfig || !cfg?.netlify);
+      btnPublic.classList.toggle('disabled', !hasConfig || !cfg?.public);
+      btnRepo.classList.toggle('disabled', !hasConfig || !cfg?.repo);
+      btnDeploy.classList.toggle('disabled', !hasConfig || !cfg?.deploy);
+      btnBubble.classList.toggle('disabled', !hasConfig || !cfg?.bubble);
+    }
+
+    // === Core Functions ===
     function update() {
+      if (!config.dev) return; // Not initialized yet
+
       modeButtons.forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === mode);
       });
@@ -421,7 +465,6 @@
       btnPublic.classList.toggle('disabled', !hasConfig || !cfg.public);
       btnRepo.classList.toggle('disabled', !hasConfig || !cfg.repo);
       btnDeploy.classList.toggle('disabled', !hasConfig || !cfg.deploy);
-      btnDns.classList.toggle('disabled', !hasConfig || !cfg.dns);
       btnBubble.classList.toggle('disabled', !hasConfig || !cfg.bubble);
 
       commandDiv.classList.remove('visible');
@@ -438,6 +481,7 @@
     }
 
     function setProject(p) {
+      if (!config.dev) return;
       if (config[mode][p] !== null) {
         project = p;
         localStorage.setItem('hub-project', project);
@@ -450,24 +494,17 @@
     }
 
     function doStart() {
-      console.log('doStart called');
       btnStart.classList.add('disabled');
       btnStart.innerHTML = 'Restarting<span class="badge">⏎</span>';
       matchRowWidths();
 
-      console.log('fetching...');
-      fetch('http://localhost:5171/restart-all', {
+      fetch(`http://localhost:${ports.api}/restart-all`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })
-        .then(res => {
-          console.log('response:', res);
-          return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
-          console.log('data:', data);
           if (data.success) {
-            // Wait 7 seconds before reverting button
             setTimeout(() => {
               btnStart.innerHTML = 'Restart<span class="badge">⏎</span>';
               btnStart.classList.remove('disabled');
@@ -482,7 +519,6 @@
           }
         })
         .catch(err => {
-          console.log('error:', err);
           btnStart.innerHTML = 'Restart<span class="badge">⏎</span>';
           btnStart.classList.remove('disabled');
           matchRowWidths();
@@ -492,47 +528,75 @@
     }
 
     function doLocal() {
-      const cfg = config[mode][project];
+      const cfg = config[mode]?.[project];
       if (!cfg) return;
       window.open(`http://localhost:${cfg.port}`, '_blank');
     }
 
     function doNetlify() {
-      const cfg = config[mode][project];
+      const cfg = config[mode]?.[project];
       if (!cfg || !cfg.netlify) return;
       window.open(cfg.netlify, '_blank');
     }
 
     function doPublic() {
-      const cfg = config[mode][project];
+      const cfg = config[mode]?.[project];
       if (!cfg || !cfg.public) return;
       window.open(cfg.public, '_blank');
     }
 
     function doRepo() {
-      const cfg = config[mode][project];
+      const cfg = config[mode]?.[project];
       if (!cfg || !cfg.repo) return;
       window.open(cfg.repo, '_blank');
     }
 
     function doDeploy() {
-      const cfg = config[mode][project];
+      const cfg = config[mode]?.[project];
       if (!cfg || !cfg.deploy) return;
       window.open(cfg.deploy, '_blank');
     }
 
     function doDns() {
-      const cfg = config[mode][project];
-      if (!cfg || !cfg.dns) return;
-      window.open(cfg.dns, '_blank');
+      window.open(DNS_URL, '_blank');
     }
 
     function doBubble() {
-      const cfg = config[mode][project];
+      const cfg = config[mode]?.[project];
       if (!cfg || !cfg.bubble) return;
       window.open(cfg.bubble, '_blank');
     }
 
+    // === Action Button Handlers ===
+    const actionButtons = {
+      'btn-local': () => {
+        const cfg = config[getDisplayMode()]?.[getDisplayProject()];
+        return cfg ? `http://localhost:${cfg.port}` : null;
+      },
+      'btn-netlify': () => {
+        const cfg = config[getDisplayMode()]?.[getDisplayProject()];
+        return cfg?.netlify || null;
+      },
+      'btn-public': () => {
+        const cfg = config[getDisplayMode()]?.[getDisplayProject()];
+        return cfg?.public || null;
+      },
+      'btn-repo': () => {
+        const cfg = config[getDisplayMode()]?.[getDisplayProject()];
+        return cfg?.repo || null;
+      },
+      'btn-deploy': () => {
+        const cfg = config[getDisplayMode()]?.[getDisplayProject()];
+        return cfg?.deploy || null;
+      },
+      'btn-bubble': () => {
+        const cfg = config[getDisplayMode()]?.[getDisplayProject()];
+        return cfg?.bubble || null;
+      },
+      'btn-dns': () => DNS_URL
+    };
+
+    // === Event Listeners ===
     modeButtons.forEach(btn => {
       btn.addEventListener('click', () => setMode(btn.dataset.mode));
       btn.addEventListener('mouseenter', () => {
@@ -560,7 +624,7 @@
       btn.addEventListener('click', () => setProject(btn.dataset.project));
       btn.addEventListener('mouseenter', () => {
         const p = btn.dataset.project;
-        if (p !== project && config[mode][p] !== null && !btn.classList.contains('disabled')) {
+        if (p !== project && config[mode]?.[p] !== null && !btn.classList.contains('disabled')) {
           previewProject = p;
           if (hoveredActionId) {
             hoveredAction = actionButtons[hoveredActionId]();
@@ -608,109 +672,35 @@
       }
     });
 
-    update();
-
-    let hoveredActionId = null;
-    let hoveredAction = null;
-    let previewMode = null;
-    let previewProject = null;
-
-    function getDisplayMode() {
-      return previewMode !== null ? previewMode : mode;
-    }
-
-    function getDisplayProject() {
-      return previewProject !== null ? previewProject : project;
-    }
-
-    function hoverText() {
-      if (hoveredAction) {
-        return `${mode} / ${project} — ${hoveredAction}`;
-      }
-      return `${mode} / ${project}`;
-    }
-
-    function updateFeedbackRow() {
-      document.getElementById('btn-feedback-mode').textContent = getDisplayMode();
-      document.getElementById('btn-feedback-project').textContent = getDisplayProject();
-      document.getElementById('btn-destination').textContent = hoveredAction || '';
-    }
-
-    function updateActionButtonsPreview() {
-      const m = getDisplayMode();
-      const p = getDisplayProject();
-      const cfg = config[m]?.[p];
-      const hasConfig = cfg !== null;
-
-      btnStart.classList.toggle('disabled', !hasConfig);
-      btnLocal.classList.toggle('disabled', !hasConfig);
-      btnNetlify.classList.toggle('disabled', !hasConfig || !cfg?.netlify);
-      btnPublic.classList.toggle('disabled', !hasConfig || !cfg?.public);
-      btnRepo.classList.toggle('disabled', !hasConfig || !cfg?.repo);
-      btnDeploy.classList.toggle('disabled', !hasConfig || !cfg?.deploy);
-      btnDns.classList.toggle('disabled', !hasConfig || !cfg?.dns);
-      btnBubble.classList.toggle('disabled', !hasConfig || !cfg?.bubble);
-    }
-
-    function matchRowWidths() {
-      const actionsRow = document.querySelector('.actions-row');
-      const titleBox = document.querySelector('.title-box');
-      const feedbackRow = document.querySelector('.feedback-row');
-      const width = actionsRow.offsetWidth + 'px';
-      titleBox.style.width = width;
-      feedbackRow.style.width = width;
-    }
-    matchRowWidths();
-    updateFeedbackRow();
-    window.addEventListener('resize', matchRowWidths);
-
-    // Action button hover handlers
-    const actionButtons = {
-      'btn-local': () => {
-        const cfg = config[getDisplayMode()][getDisplayProject()];
-        return cfg ? `http://localhost:${cfg.port}` : null;
-      },
-      'btn-netlify': () => {
-        const cfg = config[getDisplayMode()][getDisplayProject()];
-        return cfg?.netlify || null;
-      },
-      'btn-public': () => {
-        const cfg = config[getDisplayMode()][getDisplayProject()];
-        return cfg?.public || null;
-      },
-      'btn-repo': () => {
-        const cfg = config[getDisplayMode()][getDisplayProject()];
-        return cfg?.repo || null;
-      },
-      'btn-deploy': () => {
-        const cfg = config[getDisplayMode()][getDisplayProject()];
-        return cfg?.deploy || null;
-      },
-      'btn-dns': () => {
-        const cfg = config[getDisplayMode()][getDisplayProject()];
-        return cfg?.dns || null;
-      },
-      'btn-bubble': () => {
-        const cfg = config[getDisplayMode()][getDisplayProject()];
-        return cfg?.bubble || null;
-      }
-    };
-
     Object.keys(actionButtons).forEach(id => {
       const btn = document.getElementById(id);
       btn.addEventListener('mouseenter', () => {
         if (btn.classList.contains('disabled')) return;
-        // Remove sticky from previous button
         if (hoveredActionId) {
           document.getElementById(hoveredActionId).classList.remove('sticky');
         }
-        // Add sticky to this button
         hoveredActionId = id;
         btn.classList.add('sticky');
         hoveredAction = actionButtons[id]();
         updateFeedbackRow();
       });
     });
+
+    window.addEventListener('resize', matchRowWidths);
+
+    // === Initialize ===
+    fetch('./dev-ports.json')
+      .then(res => res.json())
+      .then(data => {
+        ports = data;
+        initConfig();
+        update();
+        matchRowWidths();
+        updateFeedbackRow();
+      })
+      .catch(err => {
+        console.error('Failed to load ports:', err);
+      });
   </script>
 </body>
 

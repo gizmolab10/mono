@@ -4,17 +4,35 @@
 # Usage: ./dev-servers.sh [all|ws|ws-docs|di|shared] [--kill-only]
 
 GITHUB_DIR="$HOME/GitHub"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="$GITHUB_DIR/shared/notes/tools/logs"
+PORTS_FILE="$SCRIPT_DIR/dev-ports.json"
 mkdir -p "$LOG_DIR"
+
+# Read port from JSON
+get_port() {
+  local key=$1
+  grep "\"$key\"" "$PORTS_FILE" | sed 's/[^0-9]//g'
+}
+
+# Load ports
+PORT_HUB=$(get_port hub)
+PORT_API=$(get_port api)
+PORT_WS=$(get_port ws)
+PORT_DI=$(get_port di)
+PORT_WS_DOCS=$(get_port ws-docs)
+PORT_SHARED=$(get_port shared)
+PORT_DI_DOCS=$(get_port di-docs)
 
 # Site definitions: name|port|dir|command
 SITES=(
-  "api|5171|shared/notes/tools/sites|python3 dev-api.py"
-  "hub|5170|shared/notes/tools/sites|python3 -m http.server 5170"
-  "ws|5173|ws|yarn dev"
-  "ws-docs|5176|ws|yarn docs:dev"
-  "di|5174|di|yarn dev"
-  "shared|5177|shared|yarn docs:dev"
+  "api|$PORT_API|shared/notes/tools/sites|python3 dev-api.py"
+  "hub|$PORT_HUB|shared/notes/tools/sites|python3 -m http.server $PORT_HUB"
+  "ws|$PORT_WS|ws|yarn dev"
+  "ws-docs|$PORT_WS_DOCS|ws|yarn docs:dev"
+  "di|$PORT_DI|di|yarn dev"
+  "di-docs|$PORT_DI_DOCS|di|yarn docs:dev"
+  "shared|$PORT_SHARED|shared|yarn docs:dev"
 )
 
 kill_port() {
@@ -82,10 +100,11 @@ if [ "$KILL_ONLY" = "true" ]; then
 else
   echo ""
   echo "Running servers:"
-  echo "  5170  hub       (H)"
-  echo "  5171  api"
-  echo "  5173  ws        app   (W)"
-  echo "  5174  di        app   (D)"
-  echo "  5176  ws        docs  (E)"
-  echo "  5177  shared    docs  (S)"
+  echo "  $PORT_HUB  hub       (H)"
+  echo "  $PORT_API  api"
+  echo "  $PORT_WS  ws        app   (W)"
+  echo "  $PORT_DI  di        app   (D)"
+  echo "  $PORT_WS_DOCS  ws        docs  (E)"
+  echo "  $PORT_SHARED  shared    docs  (S)"
+  echo "  $PORT_DI_DOCS  di        docs"
 fi
