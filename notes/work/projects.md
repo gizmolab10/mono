@@ -1,7 +1,7 @@
 # Commoditize the Workflow
 
 **Started:** 2026-01-08
-**Status:** Planning
+**Status:** Phase 1 complete, Phase 2 next
 
 ## Problem
 
@@ -28,8 +28,8 @@ Not files — a methodology:
 - [x] Starter notes/guides/ structure (voice.md, workflow.md, style.md stubs) ✅
 - [x] Starter notes/work/ structure ✅
 - [x] README explaining the system ✅
-- [ ] Initialize git repo
-- [ ] Push to GitHub
+- [x] Initialize git repo ✅
+- [x] Push to GitHub ✅
 
 #### Git Setup Steps
 
@@ -83,4 +83,4 @@ git push -u origin main
 
 ## Next Action
 
-**Phase 1:** Create the template repo structure. Start minimal.
+**Phase 2:** Write the methodology article. Draft exists in `shared/work/articles/`.

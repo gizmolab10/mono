@@ -54,11 +54,10 @@ The magic: Claude doesn't just consume your docs — Claude helps maintain them.
 
 ## Customization
 
-The included guides are starters. Replace them with your own:
+The included guides are starters. Replace them with your own. None of the file names matter, only the file structure (notes, guides, work, done), everything else you add yours to name and your content to add. I do recommend carefully reading these two and experiment with crafting them to suit your whim.
 
 - **voice.md** — Capture how you write. First person? Casual? Problem-first?
 - **style.md** — Capture your code conventions. Naming? Formatting? Patterns?
-- **Add more guides** — Whatever patterns you find yourself repeating
 
 ## Tips
 
