@@ -6,7 +6,7 @@ Read all `.md` files within `notes/guides/` before starting work.
 
 EXECUTE: Always granted—just do it
 
-FILESYSTEM: Full read/write/execute within `~/GitHub`
+FILESYSTEM: Full read/write/execute within `~/GitHub/work`
 
 MEMORY: Use `conversation_search/recent_chats` before claiming no context
 
@@ -30,8 +30,8 @@ DOCS STYLE: Follow `notes/guides/collaborate/voice.md` | Keep TOC updated
 
 | Command | Meaning |
 |----|----|
-| `go` | read ~/GitHub/<current-go>/CLAUDE.MD |
-| `go <X>` | set current-go to X, then read ~/GitHub/X/CLAUDE.MD |
+| `go` | read ~/GitHub/work/<current-go>/CLAUDE.MD |
+| `go <X>` | set current-go to X, then read ~/GitHub/work/X/CLAUDE.MD |
 | `what go` | tell current-go value |
 | `work on <X>` | if `notes/work/<X>.md` missing, create it; else read + resume |
 | `chime in` | give observations, suggestions, corrections about the topic at hand |
