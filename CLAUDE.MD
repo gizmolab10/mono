@@ -2,7 +2,7 @@
 
 COMMON: Read `../shared/CLAUDE.MD`
 
-REPO: `~/GitHub/ws`
+REPO: `~/GitHub/work/ws`
 
 GUIDES: Read all `.md` files in `notes/guides/`
 
