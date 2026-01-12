@@ -2,11 +2,12 @@
 	import { onMount } from 'svelte';
 	import { k } from '../../ts/common/Constants';
 	import { e } from '../../ts/signals/Events';
+	import { colors } from '../../ts/draw/Colors';
 	import Controls from './Controls.svelte';
 	import Graph from './Graph.svelte';
 	import Details from './Details.svelte';
-	import Separator from '../draw/Separator.svelte';
-	import Box from '../draw/Box.svelte';
+
+	const { w_separator_color } = colors;
 
 	// Initialize event system
 	onMount(() => {
@@ -18,27 +19,16 @@
 	let height = $state(window.innerHeight);
 
 	// Layout constants
-	const thickness = k.thickness.separator.main;
+	const gap    = k.thickness.separator.main;
+	const radius = gap * 3;
 
 	let controlsHeight = $derived(48);
-	let detailsWidth   = $derived(280);
+	let detailsWidth   = $derived(280 - gap * 2);
 	let showDetails    = $state(true);
 
-	// Box inner dimensions (accounting for box borders)
-	let innerWidth  = $derived(width - thickness * 2);
-	let innerHeight = $derived(height - thickness * 2);
-
-	// Computed dimensions accounting for separators
-	let mainHeight = $derived(innerHeight - controlsHeight - thickness);
-	let graphWidth = $derived(innerWidth - (showDetails ? detailsWidth + thickness : 0));
-
-	// Horizontal separator: fillets should align with box border centers
-	// Extend by thickness/2 on each side
-	let hSeparatorLength = $derived(innerWidth + thickness);
-
-	// Vertical separator: fillets should align with horizontal separator centers
-	// Extend by thickness/2 on each end
-	let vSeparatorLength = $derived(mainHeight + thickness);
+	// Computed dimensions
+	let mainHeight = $derived(height - controlsHeight - gap * 3);
+	let graphWidth = $derived(width - (showDetails ? detailsWidth + gap : 0) - gap * 2);
 
 	function handleResize() {
 		width  = window.innerWidth;
@@ -51,70 +41,43 @@
 />
 
 <div
-	class = 'panel'>
-	<Box
-		{width}
-		{height}
-		{thickness}>
-		<!-- Controls region -->
-		<div
-			class        = 'region controls'
-			style:height = '{controlsHeight}px'>
-			<Controls />
-		</div>
+	class        = 'panel'
+	style:width  = '{width}px'
+	style:height = '{height}px'
+	style:padding = '{gap}px'
+	style:--gap    = '{gap}px'
+	style:--radius = '{radius}px'
+	style:background-color = {$w_separator_color}>
+	<!-- Controls region -->
+	<div
+		class        = 'region controls'
+		style:height = '{controlsHeight}px'>
+		<Controls />
+	</div>
 
-		<!-- Horizontal separator below controls (inset by thickness/2 on each side) -->
-		<div
-			class       = 'h-separator-wrapper'
-			style:width = '{innerWidth}px'>
-			<div style:margin-left = '{-thickness / 2}px'>
-				<Separator
-					{thickness}
-					length          = {hSeparatorLength}
-					hasFillets      = {true}
-					hasDoubleFillet = {true}
-					isHorizontal    = {true}
-				/>
-			</div>
-		</div>
-
-		<!-- Main content area -->
-		<div
-			class        = 'main'
-			style:height = '{mainHeight}px'>
-			{#if showDetails}
-				<!-- Details region -->
-				<div
-					class        = 'region details'
-					style:width  = '{detailsWidth}px'
-					style:height = '{mainHeight}px'>
-					<Details />
-				</div>
-
-				<!-- Vertical separator between details and graph (inset by thickness/2 on each end) -->
-				<div
-					class        = 'v-separator-wrapper'
-					style:height = '{mainHeight}px'
-					style:margin-top = '{-thickness / 2}px'>
-					<Separator
-						{thickness}
-						length          = {vSeparatorLength}
-						hasFillets      = {true}
-						hasDoubleFillet = {true}
-						isHorizontal    = {false}
-					/>
-				</div>
-			{/if}
-
-			<!-- Graph region -->
+	<!-- Main content area -->
+	<div
+		class         = 'main'
+		style:height  = '{mainHeight}px'
+		style:margin-top = '{gap}px'>
+		{#if showDetails}
+			<!-- Details region -->
 			<div
-				class        = 'region graph'
-				style:width  = '{graphWidth}px'
+				class        = 'region details'
+				style:width  = '{detailsWidth}px'
 				style:height = '{mainHeight}px'>
-				<Graph />
+				<Details />
 			</div>
+		{/if}
+
+		<!-- Graph region -->
+		<div
+			class        = 'region graph'
+			style:width  = '{graphWidth}px'
+			style:height = '{mainHeight}px'>
+			<Graph />
 		</div>
-	</Box>
+	</div>
 </div>
 
 <style>
@@ -123,16 +86,19 @@
 		left        : 0;
 		position    : fixed;
 		font-family : system-ui, sans-serif;
+		box-sizing  : border-box;
 	}
 
 	.main {
 		display  : flex;
 		overflow : hidden;
+		gap      : var(--gap);
 	}
 
 	.region {
-		overflow : hidden;
-		position : relative;
+		overflow      : hidden;
+		position      : relative;
+		border-radius : var(--radius);
 	}
 
 	.controls {
@@ -145,16 +111,5 @@
 
 	.details {
 		flex-shrink : 0;
-	}
-
-	.h-separator-wrapper {
-		flex-shrink : 0;
-		overflow    : visible;
-	}
-
-	.v-separator-wrapper {
-		flex-shrink  : 0;
-		overflow     : visible;
-		box-sizing   : border-box;
 	}
 </style>
