@@ -178,7 +178,8 @@
       text-transform: lowercase;
     }
 
-    .segment:hover {
+    .segment:hover,
+    .segment.sticky:not(.disabled) {
       background: var(--bg-chosen);
       color: var(--text-chosen);
     }
@@ -192,6 +193,11 @@
       background: var(--bg-unavailable);
       color: var(--text-unavailable);
       cursor: not-allowed;
+    }
+
+    .segment.hover-hidden:not(.disabled) {
+      background: var(--bg-available);
+      color: var(--text-choice);
     }
 
     .navigate-group,
@@ -267,7 +273,7 @@
   <div class="container">
     <div class="title-row">
       <div class="title-box">
-        <button class="action" id="btn-start">Restart<span class="badge">⏎</span></button>
+        <button class="action" id="btn-start">Restart<span class="badge">⌫</span></button>
         <h1>Work Sites</h1>
         <button class="action" id="btn-dns">DNS<span class="badge">N</span></button>
       </div>
@@ -276,13 +282,13 @@
     <div class="segment-row">
       <div class="project-group">
         <button class="segment" data-project="en">en<span class="badge">E</span></button>
-        <button class="segment" data-project="shared">shared<span class="badge">S</span></button>
+        <button class="segment" data-project="sh">sh<span class="badge">S</span></button>
         <button class="segment" data-project="di">di<span class="badge">D</span></button>
         <button class="segment active" data-project="ws">ws<span class="badge">W</span></button>
       </div>
       <div class="mode-group">
-        <button class="segment active" data-mode="dev">Dev<span class="badge">1</span></button>
-        <button class="segment" data-mode="docs">Docs<span class="badge">2</span></button>
+        <button class="segment active" data-mode="app">App<span class="badge">A</span></button>
+        <button class="segment" data-mode="docs">Docs<span class="badge">X</span></button>
       </div>
     </div>
 
@@ -312,7 +318,7 @@
     // === Variables ===
     let ports = {};
     let config = {};
-    let mode = localStorage.getItem('hub-mode') || 'dev';
+    let mode = localStorage.getItem('hub-mode') || 'app';
     let project = localStorage.getItem('hub-project') || 'ws';
     let hoveredActionId = null;
     let hoveredAction = null;
@@ -337,11 +343,11 @@
     // === Config Initialization ===
     function initConfig() {
       config = {
-        dev: {
+        app: {
           ws: {
             port: ports.ws,
             site: 'ws',
-            public: null,
+            public: 'https://webseriously.org',
             netlify: 'https://webseriously.netlify.app',
             repo: 'https://github.com/gizmolab10/seriously-svelte',
             deploy: 'https://app.netlify.com/projects/webseriously/deploys',
@@ -350,20 +356,20 @@
           di: {
             port: ports.di,
             site: 'di',
-            public: null,
+            public: 'https://designintuition.app',
             netlify: 'https://designintuition.netlify.app',
             repo: 'https://github.com/gizmolab10/design.intuition',
             deploy: 'https://app.netlify.com/projects/designintuition/deploys',
             bubble: null
           },
-          shared: null,
+          sh: null,
           en: null
         },
         docs: {
           ws: {
             port: ports['ws-docs'],
             site: 'ws-docs',
-            public: null,
+            public: 'https://docs.webseriously.org',
             netlify: 'https://webseriously-documentation.netlify.app',
             repo: 'https://github.com/gizmolab10/seriously-svelte',
             deploy: 'https://app.netlify.com/projects/webseriously-documentation/deploys',
@@ -372,16 +378,16 @@
           di: {
             port: ports['di-docs'],
             site: 'di-docs',
-            public: null,
+            public: 'https://docs.designintuition.app',
             netlify: 'https://designintuition-documentation.netlify.app',
             repo: 'https://github.com/gizmolab10/design.intuition',
-            deploy: 'https://app.netlify.com/projects/designintuition-docs/deploys',
+            deploy: 'https://app.netlify.com/projects/designintuition-documentation/deploys',
             bubble: null
           },
-          shared: {
+          sh: {
             port: ports.shared,
             site: 'shared',
-            public: null,
+            public: 'https://shared.gizmolab.com',
             netlify: 'https://gizmolab-shared-docs.netlify.app',
             repo: 'https://github.com/gizmolab10/shared',
             deploy: 'https://app.netlify.com/projects/gizmolab-shared-docs/deploys',
@@ -416,6 +422,38 @@
       document.getElementById('btn-destination').textContent = hoveredAction || '';
     }
 
+    function highlightActionButton(id) {
+      // Remove sticky from all action buttons
+      Object.keys(actionButtons).forEach(btnId => {
+        document.getElementById(btnId).classList.remove('sticky');
+      });
+      // Add sticky to the specified button
+      const btn = document.getElementById(id);
+      if (btn && !btn.classList.contains('disabled')) {
+        btn.classList.add('sticky');
+      }
+    }
+
+    function highlightModeButton(m) {
+      modeButtons.forEach(btn => {
+        const isTarget = btn.dataset.mode === m;
+        btn.classList.toggle('sticky', isTarget);
+        if (!isTarget) btn.classList.remove('active');
+      });
+    }
+
+    function highlightProjectButton(p) {
+      const m = getDisplayMode();
+      projectButtons.forEach(btn => {
+        const proj = btn.dataset.project;
+        const isDisabled = config[m]?.[proj] === null;
+        btn.classList.toggle('disabled', isDisabled);
+        const isTarget = proj === p && !isDisabled;
+        btn.classList.toggle('sticky', isTarget);
+        if (!isTarget) btn.classList.remove('active');
+      });
+    }
+
     function updateActionButtonsPreview() {
       const m = getDisplayMode();
       const p = getDisplayProject();
@@ -433,7 +471,7 @@
 
     // === Core Functions ===
     function update() {
-      if (!config.dev) return; // Not initialized yet
+      if (!config.app) return; // Not initialized yet
 
       modeButtons.forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === mode);
@@ -447,7 +485,7 @@
       });
 
       if (config[mode][project] === null) {
-        for (const p of ['ws', 'di', 'shared', 'en']) {
+        for (const p of ['ws', 'di', 'sh', 'en']) {
           if (config[mode][p] !== null) {
             project = p;
             break;
@@ -481,7 +519,7 @@
     }
 
     function setProject(p) {
-      if (!config.dev) return;
+      if (!config.app) return;
       if (config[mode][p] !== null) {
         project = p;
         localStorage.setItem('hub-project', project);
@@ -495,7 +533,7 @@
 
     function doStart() {
       btnStart.classList.add('disabled');
-      btnStart.innerHTML = 'Restarting<span class="badge">⏎</span>';
+      btnStart.innerHTML = 'Restarting<span class="badge">⌫</span>';
       matchRowWidths();
 
       fetch(`http://localhost:${ports.api}/restart-all`, {
@@ -506,12 +544,12 @@
         .then(data => {
           if (data.success) {
             setTimeout(() => {
-              btnStart.innerHTML = 'Restart<span class="badge">⏎</span>';
+              btnStart.innerHTML = 'Restart<span class="badge">⌫</span>';
               btnStart.classList.remove('disabled');
               matchRowWidths();
             }, 7000);
           } else {
-            btnStart.innerHTML = 'Restart<span class="badge">⏎</span>';
+            btnStart.innerHTML = 'Restart<span class="badge">⌫</span>';
             btnStart.classList.remove('disabled');
             matchRowWidths();
             commandDiv.textContent = `Error: ${data.error || 'Some sites failed'}`;
@@ -519,7 +557,7 @@
           }
         })
         .catch(err => {
-          btnStart.innerHTML = 'Restart<span class="badge">⏎</span>';
+          btnStart.innerHTML = 'Restart<span class="badge">⌫</span>';
           btnStart.classList.remove('disabled');
           matchRowWidths();
           commandDiv.textContent = `API error: ${err.message}`;
@@ -601,6 +639,10 @@
       btn.addEventListener('click', () => setMode(btn.dataset.mode));
       btn.addEventListener('mouseenter', () => {
         const m = btn.dataset.mode;
+        // Temporarily hide other buttons in group
+        modeButtons.forEach(b => {
+          if (b !== btn) b.classList.add('hover-hidden');
+        });
         if (m !== mode) {
           previewMode = m;
           if (hoveredActionId) {
@@ -611,6 +653,8 @@
         }
       });
       btn.addEventListener('mouseleave', () => {
+        // Restore other buttons in group
+        modeButtons.forEach(b => b.classList.remove('hover-hidden'));
         previewMode = null;
         if (hoveredActionId) {
           hoveredAction = actionButtons[hoveredActionId]();
@@ -623,8 +667,13 @@
     projectButtons.forEach(btn => {
       btn.addEventListener('click', () => setProject(btn.dataset.project));
       btn.addEventListener('mouseenter', () => {
+        if (btn.classList.contains('disabled')) return;
         const p = btn.dataset.project;
-        if (p !== project && config[mode]?.[p] !== null && !btn.classList.contains('disabled')) {
+        // Temporarily hide other buttons in group
+        projectButtons.forEach(b => {
+          if (b !== btn) b.classList.add('hover-hidden');
+        });
+        if (p !== project && config[mode]?.[p] !== null) {
           previewProject = p;
           if (hoveredActionId) {
             hoveredAction = actionButtons[hoveredActionId]();
@@ -634,6 +683,9 @@
         }
       });
       btn.addEventListener('mouseleave', () => {
+        if (btn.classList.contains('disabled')) return;
+        // Restore other buttons in group
+        projectButtons.forEach(b => b.classList.remove('hover-hidden'));
         previewProject = null;
         if (hoveredActionId) {
           hoveredAction = actionButtons[hoveredActionId]();
@@ -653,22 +705,33 @@
     btnBubble.addEventListener('click', doBubble);
 
     document.addEventListener('keydown', (e) => {
+      // Blur any focused button so keyboard works
+      if (document.activeElement?.tagName === 'BUTTON') {
+        document.activeElement.blur();
+      }
+
+      // Ignore if typing in an input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
       const key = e.key.toLowerCase();
       switch (key) {
-        case '1': setMode('dev'); break;
-        case '2': setMode('docs'); break;
-        case 'w': setProject('ws'); break;
-        case 'd': setProject('di'); break;
-        case 's': setProject('shared'); break;
-        case 'e': setProject('en'); break;
-        case 'enter': doStart(); break;
-        case 'l': doLocal(); break;
-        case 't': doNetlify(); break;
-        case 'p': doPublic(); break;
-        case 'r': doRepo(); break;
-        case 'y': doDeploy(); break;
-        case 'n': doDns(); break;
-        case 'b': doBubble(); break;
+        case 'a': previewMode = 'app'; highlightModeButton('app'); highlightProjectButton(getDisplayProject()); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
+        case 'x': previewMode = 'docs'; highlightModeButton('docs'); highlightProjectButton(getDisplayProject()); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
+        case 'w': previewProject = 'ws'; highlightProjectButton('ws'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
+        case 'd': previewProject = 'di'; highlightProjectButton('di'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
+        case 's': { const m = getDisplayMode(); if (config[m]?.['sh'] !== null) { previewProject = 'sh'; highlightProjectButton('sh'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); } } break;
+        case 'e': { const m = getDisplayMode(); if (config[m]?.['en'] !== null) { previewProject = 'en'; highlightProjectButton('en'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); } } break;
+        case 'escape': previewMode = null; previewProject = null; modeButtons.forEach(btn => { btn.classList.remove('sticky'); btn.classList.toggle('active', btn.dataset.mode === mode); }); projectButtons.forEach(btn => { btn.classList.remove('sticky'); const valid = config[mode][btn.dataset.project] !== null; btn.classList.toggle('disabled', !valid); btn.classList.toggle('active', btn.dataset.project === project); }); btnDns.classList.remove('sticky'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
+        case 'enter': if (hoveredAction) { window.open(hoveredAction, '_blank'); } break;
+        case 'delete': doStart(); break;
+        case 'l': hoveredActionId = 'btn-local'; hoveredAction = actionButtons['btn-local'](); highlightActionButton('btn-local'); updateFeedbackRow(); break;
+        case 't': hoveredActionId = 'btn-netlify'; hoveredAction = actionButtons['btn-netlify'](); highlightActionButton('btn-netlify'); updateFeedbackRow(); break;
+        case 'p': hoveredActionId = 'btn-public'; hoveredAction = actionButtons['btn-public'](); highlightActionButton('btn-public'); updateFeedbackRow(); break;
+        case 'r': hoveredActionId = 'btn-repo'; hoveredAction = actionButtons['btn-repo'](); highlightActionButton('btn-repo'); updateFeedbackRow(); break;
+        case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); updateFeedbackRow(); break;
+        case 'n': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); updateFeedbackRow(); break;
+        case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); updateFeedbackRow(); break;
+        case 'c': if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } break;
       }
     });
 

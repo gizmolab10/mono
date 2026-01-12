@@ -60,6 +60,9 @@ The feedback row provides **preflight confirmation**: hovering over action butto
 
 
 
+
+
+
 1. **Choices**
 
    
@@ -206,32 +209,25 @@ source ~/.zshrc
 
 ### Phase 5: Final Doc Deploys to Netlify
 
-- [ ] reorganize tools
+- [x] reorganize tools
 - [ ] shared
 - [ ] di
 
 #### Current Deployment Status
 
-| Mode | Project | at Netlify | Status |
-|----|----|----|----|
-| dev | ws | webseriously | deployed |
-| docs | ws | webseriously-docs | deployed |
-| dev | shared | n/a | no dev mode |
-| dev | en | n/a | not configured |
-| docs | di | n/a | no docs mode |
-| docs | en | n/a | not configured |
-|    |    |    |    |
-| dev | di | di | 5 |
-| docs | shared | — | 4f |
+| Project | Deploy | Public |
+|---:|----|----|
+|    | **app** |    |
+| ws | webseriously | [https://webseriously.](https://webseriously.netlify.app)org |
+| di | designintuition |    |
+| shared | n/a |    |
+| en | n/a |    |
+|    | **documentation** |    |
+| ws | webseriously-documentation |    |
+| di | designintuition-documentation |    |
+| shared | n/a |    |
+| en | n/a |    |
 
-#### Proposed Public URLs
-
-| Mode | Project | Public URL |
-|----|----|----|
-| dev | ws | https://webseriously.netlify.app |
-| dev | di | — (pending Phase 4e) |
-| docs | ws | https://webseriously-docs.netlify.app |
-| docs | shared | — (pending Phase 4f) |
 
 ## Evolving the UI
 
@@ -240,6 +236,9 @@ See [evolve.md](/notes/guides/collaborate/evolve.md) for the general pattern.
 This project followed that journey — from basic layout through hover previews to edge case refinement.
 
 ### Iterations
+
+
+
 
 
 
