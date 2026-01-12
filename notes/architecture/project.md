@@ -29,7 +29,7 @@ index.html
 
 ## Types
 
-See [types.md](types.md).
+See [rendering.types.md](rendering.types.md).
 
 ## Scene Graph
 

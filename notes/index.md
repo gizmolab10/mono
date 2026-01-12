@@ -1,10 +1,12 @@
-# Design Intuition
+# Notes
 
 Documentation and design notes for the Design Intuition project.
 
 ## Contents
 
-- [Architecture](./architecture/) - System structure and core concepts
-- [Designs](./designs/) - Component and feature designs
-- [Guides](./guides/) - Development guides and best practices
-- [Work](./work/) - Current work items and milestones
+- [Architecture](./architecture/)
+- [Designs](./designs/)
+- [Guides](./guides/)
+- [Tools](./tools/)
+- [Work](./work/)
+

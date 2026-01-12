@@ -4,7 +4,7 @@ The care we put into each file.
 
 ## Let it develop naturally
 
-I like that we let structure emerge, like a journey without a map. Start with nice pithy articulation of raw curiosity. Travel carefully. The structure comes at the end, emphasize significant features, <give examples>.
+I like that we let structure emerge, like a journey without a map. Start with nice pithy articulation of raw curiosity. Travel carefully. The structure comes at the end, emphasize significant features, \<give examples\>.
 
 Work files are just that. Things we need to know and things we did. Guides are the maps of the turf, what's been learned about it. So, the guides are condensed out of the work, things like "oh, shit, we need to this and not that."
 

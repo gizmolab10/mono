@@ -4,5 +4,6 @@ Development guides and best practices.
 
 ## Contents
 
-- [Best Practices](./best.practices.md)
+- [Best.practices](./best.practices.md)
 - [Gotchas](./gotchas.md)
+

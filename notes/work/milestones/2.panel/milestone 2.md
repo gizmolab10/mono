@@ -52,6 +52,5 @@ Escaped from webseriously's newbie mistakes by:
 - [[implement]] — task checklist + Svelte 5 best practices
 - [[architecture]] — DOM structure + CSS classes
 - [[components]] — webseriously component catalog
-- [designs/aesthetics.md](../../../designs/aesthetics.md) — visual design source of truth
 - [designs/Fillets.md](../../../designs/Fillets.md) — Fillets component doc
 - [layout-algorithm.md](../../layout-algorithm.md) — emerging layout model
