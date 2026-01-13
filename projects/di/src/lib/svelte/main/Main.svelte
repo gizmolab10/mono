@@ -1,0 +1,115 @@
+<script lang='ts'>
+	import { onMount } from 'svelte';
+	import { k } from '../../ts/common/Constants';
+	import { e } from '../../ts/signals/Events';
+	import { colors } from '../../ts/draw/Colors';
+	import Controls from './Controls.svelte';
+	import Graph from './Graph.svelte';
+	import Details from './Details.svelte';
+
+	const { w_separator_color } = colors;
+
+	// Initialize event system
+	onMount(() => {
+		e.setup();
+	});
+
+	// Reactive state for window dimensions
+	let width  = $state(window.innerWidth);
+	let height = $state(window.innerHeight);
+
+	// Layout constants
+	const gap    = k.thickness.separator.main;
+	const radius = gap * 3;
+
+	let controlsHeight = $derived(48);
+	let detailsWidth   = $derived(280 - gap * 2);
+	let showDetails    = $state(true);
+
+	// Computed dimensions
+	let mainHeight = $derived(height - controlsHeight - gap * 3);
+	let graphWidth = $derived(width - (showDetails ? detailsWidth + gap : 0) - gap * 2);
+
+	function handleResize() {
+		width  = window.innerWidth;
+		height = window.innerHeight;
+	}
+</script>
+
+<svelte:window
+	onresize = {handleResize}
+/>
+
+<div
+	class        = 'panel'
+	style:width  = '{width}px'
+	style:height = '{height}px'
+	style:padding = '{gap}px'
+	style:--gap    = '{gap}px'
+	style:--radius = '{radius}px'
+	style:background-color = {$w_separator_color}>
+	<!-- Controls region -->
+	<div
+		class        = 'region controls'
+		style:height = '{controlsHeight}px'>
+		<Controls />
+	</div>
+
+	<!-- Main content area -->
+	<div
+		class         = 'main'
+		style:height  = '{mainHeight}px'
+		style:margin-top = '{gap}px'>
+		{#if showDetails}
+			<!-- Details region -->
+			<div
+				class        = 'region details'
+				style:width  = '{detailsWidth}px'
+				style:height = '{mainHeight}px'>
+				<Details />
+			</div>
+		{/if}
+
+		<!-- Graph region -->
+		<div
+			class        = 'region graph'
+			style:width  = '{graphWidth}px'
+			style:height = '{mainHeight}px'>
+			<Graph />
+		</div>
+	</div>
+</div>
+
+<style>
+	.panel {
+		top         : 0;
+		left        : 0;
+		position    : fixed;
+		font-family : system-ui, sans-serif;
+		box-sizing  : border-box;
+	}
+
+	.main {
+		display  : flex;
+		overflow : hidden;
+		gap      : var(--gap);
+	}
+
+	.region {
+		overflow      : hidden;
+		position      : relative;
+		border-radius : var(--radius);
+	}
+
+	.controls {
+		width : 100%;
+	}
+
+	.graph {
+		flex : 1;
+	}
+
+	.details {
+		flex-shrink : 0;
+	}
+</style>

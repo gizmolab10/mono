@@ -1,0 +1,228 @@
+{
+  "main": {
+    "id": "b06ab8869be44054",
+    "type": "split",
+    "children": [
+      {
+        "id": "70bee0db2aed513e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e32a6ad9ee169683",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "notes/work/layout-algorithm.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "layout-algorithm"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "39b4c06c2dd1c39e",
+    "type": "split",
+    "children": [
+      {
+        "id": "3e7cb66539fb7bd6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a796f3592b7de946",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "3e7696fe2b4f990d",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "a1684dafdfec962d",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "a912b0103fb9e225",
+    "type": "split",
+    "children": [
+      {
+        "id": "0a9521770bee001a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6afe67911c68a3d0",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "notes/work/svelte.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for svelte"
+            }
+          },
+          {
+            "id": "186fa782ea84aa69",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "notes/work/svelte.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from svelte"
+            }
+          },
+          {
+            "id": "32f4a3b722e529d2",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "33a4f069835e1ca7",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "2b0b551f291ce7dc",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "notes/work/svelte.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of svelte"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "e32a6ad9ee169683",
+  "lastOpenFiles": [
+    "notes/architecture/rendering.types.md",
+    "notes/work/combined-docs.md",
+    "notes/work/layout-algorithm.md",
+    "notes/work/milestones/2.panel/implement.md",
+    "notes/guides/aesthetics.md",
+    "notes/work/aesthetics.md",
+    "notes/designs/aesthetics.md",
+    "notes/designs/Fillets.md",
+    "src/lib/svelte/layout/Fillets.svelte",
+    "notes/guides/develop/style.md",
+    "src/lib/ts/draw/SVG_Paths.ts",
+    "notes/work/utilities",
+    "src/lib/ts/common/Testworthy_Utilities.ts",
+    "src/lib/ts/draw/Colors.ts",
+    "src/lib/ts/draw",
+    "src/lib/ts/managers/draw",
+    "Screenshot 2026-01-07 at 1.26.15 AM.png",
+    "Screenshot 2026-01-07 at 1.20.05 AM.png",
+    "Screenshot 2026-01-07 at 1.18.21 AM.png",
+    "notes/designs/Box.md",
+    "notes/designs/Preferences.md",
+    "src/lib/svelte/layout/Box.svelte",
+    "notes/designs/index.md",
+    "src/lib/svelte/layout/Separator.svelte",
+    "src/lib/svelte/layout/Gull_Wings.svelte",
+    "notes/designs/Gull_Wings.md",
+    "notes/designs/Separator.md",
+    "notes/designs/Details.md",
+    "notes/designs/Graph.md",
+    "notes/designs/Controls.md",
+    "notes/designs/Main.md",
+    "notes/guides/index.md",
+    "notes/guides/road.map.md",
+    "README.md",
+    "notes/work/articles/accidental.programmer.md",
+    "notes/guides/collaborate/voice.md",
+    "notes/guides/collaborate/workflow.md",
+    "notes/guides/collaborate/chat.md",
+    "notes/guides/collaborate/access.md"
+  ]
+}
