@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../ws"
+		},
+		{
+			"path": "../di"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../enhanced"
+		},
+	],
+	"settings": {}
+}

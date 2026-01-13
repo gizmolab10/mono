@@ -1,0 +1,2 @@
+Dead link: notes/tools/docs/test/fixtures/index.md -> guides/test-moved.md
+Dead link: notes/tools/docs/test/fixtures/index.md -> guides/test-deleted.md
