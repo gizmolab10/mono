@@ -1,0 +1,36 @@
+# Logs
+lerna-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+npm-debug.log*
+*.log
+logs
+
+# Build files
+node_modules
+.svelte-kit
+yarn.lock
+dist-ssr
+esbuild
+*.local
+package
+dist
+docs
+
+# Editor directories and files
+!.vscode/extensions.json
+webseriously.js
+experimental
+.DS_Store
+*.njsproj
+.vscode
+*.ntvs*
+.idea
+*.suo
+*.sln
+*.sw?
+
+# Local Netlify folder
+.netlify
+.vitepress/cache/

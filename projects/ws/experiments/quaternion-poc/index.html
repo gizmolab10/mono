@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quaternion Rotation POC</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #1a1a2e;
+      font-family: system-ui, sans-serif;
+      color: #eee;
+    }
+    canvas {
+      background: #0f0f1a;
+      border: 1px solid #333;
+      cursor: grab;
+    }
+    canvas:active { cursor: grabbing; }
+    .info {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: #888;
+    }
+    h1 { margin-bottom: 1rem; font-weight: 300; }
+  </style>
+</head>
+<body>
+  <h1>Quaternion Rotation + Perspective Projection</h1>
+  <canvas id="canvas" width="600" height="600"></canvas>
+  <div class="info">Drag to rotate • No gimbal lock</div>
+
+  <script type="module">
+    import { mat4, vec3, vec4, quat } from 'https://esm.sh/gl-matrix@3.4.3';
+
+    // ============================================
+    // 1. DEFINE 3D GEOMETRY
+    // ============================================
+    
+    // Cube vertices (centered at origin, side length 2)
+    const vertices = [
+      [-1, -1, -1],  // 0: back-bottom-left
+      [ 1, -1, -1],  // 1: back-bottom-right
+      [ 1,  1, -1],  // 2: back-top-right
+      [-1,  1, -1],  // 3: back-top-left
+      [-1, -1,  1],  // 4: front-bottom-left
+      [ 1, -1,  1],  // 5: front-bottom-right
+      [ 1,  1,  1],  // 6: front-top-right
+      [-1,  1,  1],  // 7: front-top-left
+    ];
+
+    // Edges as pairs of vertex indices
+    const edges = [
+      // Back face
+      [0, 1], [1, 2], [2, 3], [3, 0],
+      // Front face
+      [4, 5], [5, 6], [6, 7], [7, 4],
+      // Connecting edges
+      [0, 4], [1, 5], [2, 6], [3, 7],
+    ];
+
+    // ============================================
+    // 2. SET UP MATRICES
+    // ============================================
+    
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    // Camera/View setup
+    const eye = vec3.fromValues(0, 0, 5);      // Camera position
+    const center = vec3.fromValues(0, 0, 0);   // Look at origin
+    const up = vec3.fromValues(0, 1, 0);       // Up direction
+
+    // Matrices
+    const viewMatrix = mat4.create();
+    const projMatrix = mat4.create();
+    const modelMatrix = mat4.create();
+    const mvpMatrix = mat4.create();
+
+    // View matrix (camera transform)
+    mat4.lookAt(viewMatrix, eye, center, up);
+
+    // Perspective projection
+    mat4.perspective(projMatrix, Math.PI / 4, W / H, 0.1, 100);
+
+    // ============================================
+    // 3. QUATERNION ROTATION STATE
+    // ============================================
+    
+    // Current orientation as quaternion (starts as identity = no rotation)
+    const orientation = quat.create();
+    
+    // ============================================
+    // 4. PROJECTION PIPELINE
+    // ============================================
+    
+    function projectVertex(v) {
+      const point = vec4.fromValues(v[0], v[1], v[2], 1);
+      
+      mat4.fromQuat(modelMatrix, orientation);
+      mat4.multiply(mvpMatrix, viewMatrix, modelMatrix);
+      mat4.multiply(mvpMatrix, projMatrix, mvpMatrix);
+      
+      vec4.transformMat4(point, point, mvpMatrix);
+      
+      const w = point[3];
+      const ndcX = point[0] / w;
+      const ndcY = point[1] / w;
+      const ndcZ = point[2] / w;
+      
+      const screenX = (ndcX + 1) * 0.5 * W;
+      const screenY = (1 - ndcY) * 0.5 * H;
+      
+      return { x: screenX, y: screenY, z: ndcZ, w };
+    }
+
+    // ============================================
+    // 5. RENDER
+    // ============================================
+    
+    function render() {
+      ctx.clearRect(0, 0, W, H);
+      
+      const projected = vertices.map(projectVertex);
+      
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      
+      for (const [i, j] of edges) {
+        const a = projected[i];
+        const b = projected[j];
+        
+        if (a.w < 0 || b.w < 0) continue;
+        
+        const avgZ = (a.z + b.z) / 2;
+        const alpha = 0.3 + 0.7 * (1 - avgZ);
+        ctx.strokeStyle = `rgba(78, 205, 196, ${Math.max(0.2, Math.min(1, alpha)).toFixed(2)})`;
+        
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+      
+      ctx.fillStyle = '#ff6b6b';
+      for (const p of projected) {
+        if (p.w < 0) continue;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // ============================================
+    // 6. MOUSE ROTATION
+    // ============================================
+    
+    let isDragging = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      
+      const sensitivity = 0.01;
+      const angleY = dx * sensitivity;
+      const angleX = dy * sensitivity;
+      
+      const rotX = quat.create();
+      const rotY = quat.create();
+      
+      quat.setAxisAngle(rotX, [1, 0, 0], angleX);
+      quat.setAxisAngle(rotY, [0, 1, 0], angleY);
+      
+      quat.multiply(orientation, rotY, orientation);
+      quat.multiply(orientation, rotX, orientation);
+      quat.normalize(orientation, orientation);
+      
+      render();
+    });
+
+    // ============================================
+    // 7. INITIAL RENDER
+    // ============================================
+    
+    // Start with a slight rotation so cube isn't face-on
+    const initQuat = quat.create();
+    quat.setAxisAngle(initQuat, vec3.normalize(vec3.create(), [1, 1, 0]), 0.5);
+    quat.multiply(orientation, initQuat, orientation);
+    quat.normalize(orientation, orientation);
+
+    render();
+    console.log('Quaternion POC loaded');
+  </script>
+</body>
+</html>

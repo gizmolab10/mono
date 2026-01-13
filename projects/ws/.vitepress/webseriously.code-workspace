@@ -1,0 +1,29 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../di"
+		}
+	],
+	"settings": {
+		"terminal.integrated.tabStopWidth": 4,
+		"explorer.decorations.colors": false,
+		"notebook.experimental.generate": false,
+		"workbench.editor.enablePreview": true,
+		"git.confirmForcePush": true,
+		"outline.problems.colors": true,
+		"svelte.enable-ts-plugin": true,
+		"search.decorations.colors": true,
+		"typescript.enablePromptUseWorkspaceTsdk": true,
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"material-icon-theme.files.color": "#aaaaaa",
+		"terminal.integrated.minimumContrastRatio": 21,
+		"workbench.preferredHighContrastColorTheme": "Default Light Modern",
+		"workbench.preferredHighContrastLightColorTheme": "Default Light Modern",
+		"workbench.colorTheme": "Default Light Modern",
+		"workbench.preferredDarkColorTheme": "Default Light Modern",
+		"workbench.preferredLightColorTheme": "Default Light Modern"
+	}
+}

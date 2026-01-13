@@ -1,0 +1,74 @@
+
+  vitepress v1.6.4
+
+- building client + server bundles...
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is noDone in 21.23s.
+g back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+[32m✓[0m building client + server bundles...
+- rendering pages...
+[32m✓[0m rendering pages...
+build complete in 20.56s.

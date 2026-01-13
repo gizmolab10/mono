@@ -1,0 +1,51 @@
+svg {
+	display: block;		/* override inline to eliminate unwanted vertical displacements */
+}
+
+div, span, input {
+	background-color: transparent;
+}
+
+body {
+	background-color: var(--css-background-color);
+    width: var(--css-body-width, 100%);
+}
+
+input[type='range'] {
+	user-select: auto !important;
+	touch-action: auto !important;
+}
+
+button, svg {
+	&:focus {
+		outline: none;
+	}
+}
+
+html, body {
+	overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+/* Global spinner animation */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spinner-circle {
+    transform-origin: center;
+    animation: spin var(--spinner-speed, 1s) linear infinite;
+}
+
+.graph-container {
+	transform: translate3d(var(--graph-x), var(--graph-y), 0);
+	will-change: transform;
+	transition: transform 0.1s ease-out;
+}
+
+.widget {
+	transform: translate3d(var(--widget-x), var(--widget-y), 0);
+	will-change: transform;
+}

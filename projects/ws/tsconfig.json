@@ -1,0 +1,47 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"target": "es6",
+		"jsx": "preserve",
+		"module": "CommonJS",
+		"outDir": "notes/dist",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"strictNullChecks": true,
+		"esModuleInterop": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"allowJs": true,
+		"checkJs": true,
+		"strict": true,
+		"paths": {
+			"*": [
+				"app/*",
+				"plugin/*"
+			]
+		},
+		"forceConsistentCasingInFileNames": true
+	},
+	"typedocOptions": {
+		"highlightLanguages": {
+			"css": "css",
+			"html": "html",
+			"js": "javascript",
+			"ts": "typescript",
+			"svelte": "svelte",
+			"json": "javascript"
+		}
+	},
+	"exclude": [
+		"notes",
+		"bubble",
+		"**/*.svelte",
+		"node_modules",
+	],
+	"include": [
+		"src/**/*",
+		"src/main.js",
+		"src/lib/**/*"
+, "notes/experiments/slim", "notes/experiments/source/Detect.ts", "notes/aside/2025/Radial_Focus.svelte", "notes/aside/2025/Widget_Title.svelte", "notes/aside/2025/Mouse_Responder.svelte", "notes/archives/2025/Breadcrumb_Separator.svelte"	]
+}

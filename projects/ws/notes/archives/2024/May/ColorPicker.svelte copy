@@ -1,0 +1,36 @@
+<script>
+  let color = '#ff0000';
+
+  function handleColorChange(event) {
+    color = event.target.value;
+  }
+</script>
+
+<style>
+  .color-input {
+    top: 150px;
+    cursor: pointer;
+    position: absolute;
+    opacity: 0;
+    width: 100px;
+    height: 100px;
+    z-index: 1;
+  }
+
+  .color-display {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 150px;
+    cursor: pointer;
+    z-index: 0;
+  }
+</style>
+
+<div class='color-display'></div>
+
+<input class='color-input'
+       on:input={handleColorChange}
+       bind:value={color}
+       id='colorPicker'
+       type='color'>

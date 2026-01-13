@@ -1,0 +1,39 @@
+import { defineConfig } from 'vitepress'
+import { withMermaid } from 'vitepress-plugin-mermaid'
+
+export default withMermaid(
+  defineConfig({
+    title: "Webseriously Documentation",
+    description: "Project documentation and design notes",
+    srcDir: './notes/designs',
+    srcExclude: ['obsolete/**', 'next/**'],
+
+    vite: {
+      server: {
+        port: 5176
+      }
+    },
+
+    head: [
+      ['link', { rel: 'icon', type: 'image/png', href: '/seriously-icon.png' }]
+    ],
+
+    themeConfig: {
+
+      sidebar: [
+        {
+          text: 'Overview',
+          link: '/overview'
+        },
+        {
+          text: 'Digest',
+          link: '/digest'
+        },
+      ],
+
+      search: {
+        provider: 'local'
+      }
+    }
+  })
+)

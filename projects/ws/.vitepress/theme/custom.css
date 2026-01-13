@@ -1,0 +1,69 @@
+/* Custom VitePress theme styles */
+
+/* Hide the entire bottom prev/next section (includes the divider) */
+.VPDocFooter .prev-next {
+  display: none;
+}
+
+/* Reorder navbar elements to place prev/next before appearance toggle */
+.VPNavBar .content-body {
+  display: flex;
+}
+
+.VPNavBar .content-body .appearance {
+  order: 10;
+}
+
+.VPNavBar .content-body .social-links {
+  order: 11;
+}
+
+.VPNavBar .content-body .extra {
+  order: 12;
+}
+
+.VPNavBar .content-body .hamburger {
+  order: 13;
+}
+
+/* My prev/next sits at order 5 (between menu and appearance) */
+.VPNavBar .content-body .nav-prev-next {
+  order: 5;
+}
+
+/* Hide all sidebar carets */
+.VPSidebarItem .caret {
+  display: none;
+}
+
+/* User-collapsed override: hide items visually */
+.VPSidebarItem[data-user-collapsed="true"] > .items {
+  display: none !important;
+}
+
+/* User-collapsed override: reduce padding like VitePress does for collapsed */
+.VPSidebarItem.level-0[data-user-collapsed="true"] {
+  padding-bottom: 10px;
+}
+
+/* User-expanded override: show items even when VitePress has collapsed */
+.VPSidebarItem[data-user-expanded="true"] > .items {
+  display: block !important;
+  border-left: 1px solid var(--vp-c-divider);
+  padding-left: 16px;
+}
+
+/* User-expanded override: restore padding */
+.VPSidebarItem.level-0[data-user-expanded="true"] {
+  padding-bottom: 24px;
+}
+
+/* Make items with children bold */
+.VPSidebarItem.collapsible > .item .text {
+  font-weight: 700;
+}
+
+/* Always show scrollbar to prevent layout jump and flickering */
+html {
+  overflow-y: scroll;
+}
