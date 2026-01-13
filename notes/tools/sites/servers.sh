@@ -3,7 +3,7 @@
 # dev-servers.sh - Start/restart development servers
 # Usage: ./dev-servers.sh [all|ws|ws-docs|di|shared] [--kill-only]
 
-GITHUB_DIR="$HOME/GitHub"
+GITHUB_DIR="$HOME/GitHub/work"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="$GITHUB_DIR/shared/notes/tools/logs"
 PORTS_FILE="$SCRIPT_DIR/ports.json"

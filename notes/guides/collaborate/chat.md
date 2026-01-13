@@ -48,6 +48,20 @@ When reporting observations or issues:
 * **Signal confidence** — say "I think" or "it looks like" when uncertain, state as fact only when verified
 * **Ask before fixing** — if you see a potential issue, describe what you see and ask for confirmation before proposing a fix
 
+## File Freshness
+
+Collaborator's in-memory cache of file contents goes stale as you edit files during the conversation. This causes false claims like "they're identical" when they're not.
+
+**Rule:** When comparing files, checking for differences, or making any claim about current file contents — ALWAYS re-read the file immediately before. Never trust cached content from earlier in the conversation.
+
+**Trigger phrases that demand re-reading:**
+* "these are different"
+* "that's not what's in the file"
+* "check again"
+* "you're wrong about the contents"
+
+With many files involved, you rely on collaborator for file analysis. Freshness is vital.
+
 ## What Collaborator Waits For
 
 * Permission to execute file changes

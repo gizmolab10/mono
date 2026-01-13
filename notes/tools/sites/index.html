@@ -362,7 +362,15 @@
             deploy: 'https://app.netlify.com/projects/designintuition/deploys',
             bubble: null
           },
-          sh: null,
+          sh: {
+            port: ports.sh,
+            site: 'sh',
+            public: null,
+            netlify: null,
+            repo: 'https://github.com/gizmolab10/shared',
+            deploy: 'https://app.netlify.com/projects/gizmolab-shared-docs/deploys',
+            bubble: null
+          },
           en: null
         },
         docs: {
@@ -385,8 +393,8 @@
             bubble: null
           },
           sh: {
-            port: ports.shared,
-            site: 'shared',
+            port: ports['sh-docs'],
+            site: 'sh-docs',
             public: 'https://shared.gizmolab.com',
             netlify: 'https://gizmolab-shared-docs.netlify.app',
             repo: 'https://github.com/gizmolab10/shared',
