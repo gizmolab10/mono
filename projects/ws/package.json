@@ -2,7 +2,7 @@
     "license": "proprietary",
     "main": "dist/index.js",
     "name": "webseriously",
-    "version": "0.1",
+    "version": "0.1.0",
     "type": "module",
     "private": true,
     "files": [
