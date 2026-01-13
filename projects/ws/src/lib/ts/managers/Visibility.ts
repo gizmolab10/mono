@@ -1,6 +1,7 @@
 import { T_Breadcrumbs, T_Counts_Shown, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
 import { T_Focus, T_Graph, T_Detail, T_Kinship, T_Startup, T_Preference } from '../common/Global_Imports';
-import { g, k, p, x, core, g_graph_tree } from '../common/Global_Imports';
+import { g, k, p, x, g_graph_tree } from '../common/Global_Imports';
+import { core } from '../managers/Core';
 import { def } from '../common/Enumerations';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';

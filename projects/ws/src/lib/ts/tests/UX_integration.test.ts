@@ -17,6 +17,7 @@ import { get } from 'svelte/store';
 
 describe('Breadcrumbs system integration tests', () => {
 	beforeEach(() => {
+		if (!h?.rootAncestry) return;
 		// Reset recents to known state
 		x.si_recents.items = [];
 		if (h.rootAncestry) {
@@ -25,10 +26,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should update focus correctly when clicking breadcrumb button', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const ancestry = h.rootAncestry;
 		const initialFocus = get(x.w_ancestry_focus);
@@ -48,10 +46,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should sync focus with recents index when navigating next/previous', () => {
-		if (!h.rootAncestry || x.si_recents.length < 2) {
-			console.warn('Skipping test: insufficient recents history');
-			return;
-		}
+		if (!h?.rootAncestry || x.si_recents.length < 2) return;
 
 		const initialIndex = x.si_recents.index;
 		const initialFocus = get(x.w_ancestry_focus);
@@ -71,10 +66,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should handle rapid successive focus changes', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const root = h.rootAncestry;
 		
@@ -94,6 +86,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should handle empty recents gracefully', () => {
+		if (!h?.rootAncestry) return;
 		// Clear recents
 		x.si_recents.items = [];
 		
@@ -109,10 +102,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should maintain sync between si_recents.index and w_ancestry_focus', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Create multiple recents entries
 		const root = h.rootAncestry;
@@ -135,10 +125,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should update ancestry_forDetails when focus changes', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const ancestry = h.rootAncestry;
 		ancestry.becomeFocus();
@@ -149,10 +136,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should handle recents truncation correctly', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Create multiple recents entries
 		const root = h.rootAncestry;
@@ -174,10 +158,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should verify subscription handler updates focus from recents', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const root = h.rootAncestry;
 		root.becomeFocus();
@@ -196,10 +177,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should handle mode switching between ancestry and recents', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Switch to recents mode
 		show.w_t_breadcrumbs.set(T_Breadcrumbs.recents);
@@ -217,10 +195,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should verify all reactive subscriptions to w_ancestry_focus fire correctly', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Track subscription calls
 		let subscriptionFired = false;
@@ -239,10 +214,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should maintain consistency when navigating and then clicking breadcrumb', () => {
-		if (!h.rootAncestry || x.si_recents.length < 2) {
-			console.warn('Skipping test: insufficient recents history');
-			return;
-		}
+		if (!h?.rootAncestry || x.si_recents.length < 2) return;
 
 		// Navigate forward in recents
 		x.ancestry_next_focusOn(true);
@@ -264,10 +236,7 @@ describe('Breadcrumbs system integration tests', () => {
 	});
 
 	it('should handle concurrent updates gracefully', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const root = h.rootAncestry;
 		

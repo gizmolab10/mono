@@ -1,24 +1,24 @@
 {
   "main": {
-    "id": "1130d321dc3649dc",
+    "id": "db1d1909f4bd59be",
     "type": "split",
     "children": [
       {
-        "id": "e784f28ac809b186",
+        "id": "dc5e9a399e37af81",
         "type": "tabs",
         "children": [
           {
-            "id": "43340ec9d2d8a4b1",
+            "id": "92ba4c9b93a17746",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "guides/develop/onboarding.md",
+                "file": "notes/work/monorepo.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "onboarding"
+              "title": "monorepo"
             }
           }
         ]
@@ -27,15 +27,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "b6ee74bcbb630738",
+    "id": "45724c3e6acad166",
     "type": "split",
     "children": [
       {
-        "id": "b7d76869623427b2",
+        "id": "7131393e7c0f1ec3",
         "type": "tabs",
         "children": [
           {
-            "id": "28efd06b3771a640",
+            "id": "26b78cd156d15e82",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -48,7 +48,7 @@
             }
           },
           {
-            "id": "71d83b2db2cd9f1b",
+            "id": "32946b464b2686ef",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -65,7 +65,7 @@
             }
           },
           {
-            "id": "22c9745a7693adf0",
+            "id": "f405f4d5b909d423",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -81,20 +81,20 @@
     "width": 300
   },
   "right": {
-    "id": "9824a18d31a1c53d",
+    "id": "d9854c86a0d31055",
     "type": "split",
     "children": [
       {
-        "id": "0942d730d2b14d28",
+        "id": "734cf31ac27881aa",
         "type": "tabs",
         "children": [
           {
-            "id": "e6c3689959d38d74",
+            "id": "9285cc29b8659a56",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "guides/develop/onboarding.md",
+                "file": "notes/work/monorepo.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,25 +104,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for onboarding"
+              "title": "Backlinks for monorepo"
             }
           },
           {
-            "id": "aab2a3c9649ddb5a",
+            "id": "26936b00215c2b2a",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "guides/develop/onboarding.md",
+                "file": "notes/work/monorepo.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from onboarding"
+              "title": "Outgoing links from monorepo"
             }
           },
           {
-            "id": "87c690aa4480b83a",
+            "id": "e20af7f1507efb97",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -137,7 +137,7 @@
             }
           },
           {
-            "id": "e1854b2eaf45ce59",
+            "id": "d83ef371139dd3ce",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -151,18 +151,18 @@
             }
           },
           {
-            "id": "df57ea5cc1d736b3",
+            "id": "1c8db68f687bfaed",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "guides/develop/onboarding.md",
+                "file": "notes/work/monorepo.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of onboarding"
+              "title": "Outline of monorepo"
             }
           }
         ]
@@ -183,11 +183,43 @@
       "bases:Create new base": false
     }
   },
-  "active": "43340ec9d2d8a4b1",
+  "active": "92ba4c9b93a17746",
   "lastOpenFiles": [
-    "work/projects.md",
-    "guides/develop/onboarding.md",
-    "guides/develop/jonathan.md",
-    "CLAUDE.MD"
+    "notes/work/done/docs/test/fixtures/advanced/test-moved.md",
+    "notes/work/done/docs/test/merge-fixtures/test-links.md",
+    "notes/work/done/docs/test/merge-fixtures/file-b.md.original",
+    "notes/work/done/docs/test/merge-fixtures/file-b.md",
+    "notes/work/done/docs/test/merge-fixtures/file-a.md.original",
+    "notes/work/done/docs/test/merge-fixtures/file-a.md",
+    "notes/work/done/docs/test/fixtures/vitepress.build.txt",
+    "notes/work/done/docs/test/fixtures/index.md",
+    "notes/work/done/docs/test/fixtures/advanced",
+    "notes/work/done/docs/test/fixtures/config.mts",
+    "notes/work/done/docs/test/test-runner.mjs",
+    "notes/work/done/docs/test/test-fix-links.sh",
+    "notes/work/done/docs/test/run-test.sh",
+    "notes/work/done/docs/test/merge-fixtures",
+    "notes/work/done/docs/test/fixtures",
+    "notes/work/done/docs/test/README.md",
+    "notes/work/done/docs/test/HOW-TO-TEST.md",
+    "notes/work/done/docs/history/REORGANIZATION.md",
+    "notes/work/done/docs/history/PHASE2-MINIMIZED.md",
+    "notes/work/done/docs/history/PHASE2-FINAL.md",
+    "notes/work/done/docs/history/PHASE2-COMPLETE.md",
+    "notes/work/done/docs/history/PHASE1-RESULTS.md",
+    "notes/work/done/docs/history/CLAUDE-MD-UPDATED.md",
+    "notes/work/done/docs/history/PHASE1-FINAL.md",
+    "notes/work/done/docs/history/PHASE1-COMPLETE.md",
+    "notes/work/done/docs/history/FIXTURES-RELOCATED.md",
+    "notes/work/done/docs/history/FINAL-ORGANIZATION.md",
+    "notes/work/done/docs/README.md",
+    "notes/work/done/work-site.md",
+    "notes/work/done/vitepress-setup.md",
+    "notes/work/done/docs.md",
+    "notes/work/done/combined-docs.md",
+    "notes/work/articles/write.article.md",
+    "notes/work/articles/index.md",
+    "notes/work/articles/how.to.build.it.md",
+    "notes/work/articles/accidental.programmer.md"
   ]
 }

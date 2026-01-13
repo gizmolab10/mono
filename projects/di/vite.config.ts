@@ -5,5 +5,5 @@ export default defineConfig({
   plugins: [svelte()],
   server: {
     port: 5174
-  }
+  },
 });

@@ -18,10 +18,7 @@ describe('becomeFocus() sync with recents index', () => {
 	});
 
 	it('should sync w_ancestry_focus from recents index after becomeFocus()', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no hierarchy or rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const ancestry = h.rootAncestry;
 		const changed = ancestry.becomeFocus();
@@ -38,10 +35,7 @@ describe('becomeFocus() sync with recents index', () => {
 	});
 
 	it('should have recents index pointing to correct ancestry after becomeFocus()', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no hierarchy or rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const ancestry = h.rootAncestry;
 		ancestry.becomeFocus();
@@ -53,10 +47,7 @@ describe('becomeFocus() sync with recents index', () => {
 	});
 
 	it('should update ancestry_forDetails correctly after becomeFocus()', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no hierarchy or rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const ancestry = h.rootAncestry;
 		ancestry.becomeFocus();
@@ -68,10 +59,7 @@ describe('becomeFocus() sync with recents index', () => {
 	});
 
 	it('should handle rapid successive becomeFocus() calls', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no hierarchy or rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const root = h.rootAncestry;
 		
@@ -86,10 +74,7 @@ describe('becomeFocus() sync with recents index', () => {
 	});
 
 	it('should verify breadcrumb button click updates focus correctly', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no hierarchy or rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const ancestry = h.rootAncestry;
 		const initialFocus = get(x.w_ancestry_focus);

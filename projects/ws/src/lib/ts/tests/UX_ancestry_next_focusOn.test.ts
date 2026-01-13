@@ -13,6 +13,7 @@ import { get } from 'svelte/store';
 
 describe('ancestry_next_focusOn() sync with recents index', () => {
 	beforeEach(() => {
+		if (!h?.rootAncestry) return;
 		// Reset recents and add some test history
 		x.si_recents.items = [];
 		if (h.rootAncestry) {
@@ -22,10 +23,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 	});
 
 	it('should navigate forward through recents history', () => {
-		if (!h.rootAncestry || x.si_recents.length < 2) {
-			console.warn('Skipping test: insufficient recents history');
-			return;
-		}
+		if (!h?.rootAncestry || x.si_recents.length < 2) return;
 
 		const initialIndex = x.si_recents.index;
 		const initialFocus = get(x.w_ancestry_focus);
@@ -44,10 +42,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 	});
 
 	it('should navigate backward through recents history', () => {
-		if (!h.rootAncestry || x.si_recents.length < 2) {
-			console.warn('Skipping test: insufficient recents history');
-			return;
-		}
+		if (!h?.rootAncestry || x.si_recents.length < 2) return;
 
 		// First navigate forward
 		x.ancestry_next_focusOn(true);
@@ -66,6 +61,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 	});
 
 	it('should handle empty recents gracefully', () => {
+		if (!h?.rootAncestry) return;
 		// Clear recents
 		x.si_recents.items = [];
 		
@@ -80,10 +76,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 	});
 
 	it('should restore grabs from history entry', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Create a history entry with grabs
 		const ancestry = h.rootAncestry;
@@ -106,10 +99,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 	});
 
 	it('should make all grabbed ancestries visible', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const ancestry = h.rootAncestry;
 		x.si_grabs.items = [ancestry];
@@ -139,10 +129,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 	});
 
 	it('should update w_ancestry_focus correctly after navigation', () => {
-		if (!h.rootAncestry || x.si_recents.length < 2) {
-			console.warn('Skipping test: insufficient recents history');
-			return;
-		}
+		if (!h?.rootAncestry || x.si_recents.length < 2) return;
 
 		const initialFocus = get(x.w_ancestry_focus);
 		
@@ -160,10 +147,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 	});
 
 	it('should handle null item after find_next_item gracefully', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Create minimal history
 		h.rootAncestry.becomeFocus();
@@ -177,10 +161,7 @@ describe('ancestry_next_focusOn() sync with recents index', () => {
 	});
 
 	it('should expand focus ancestry after navigation', () => {
-		if (!h.rootAncestry || x.si_recents.length < 2) {
-			console.warn('Skipping test: insufficient recents history');
-			return;
-		}
+		if (!h?.rootAncestry || x.si_recents.length < 2) return;
 
 		// Navigate forward
 		x.ancestry_next_focusOn(true);

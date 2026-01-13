@@ -155,3 +155,15 @@ Commands that delete, overwrite, or alter git state require extra care:
 **Verify after:** After destructive operations, check the result before proceeding to the next step.
 
 **Why:** Copy-paste accidents with chained commands cause irreversible damage. The extra round-trip is worth the safety.
+
+## Package Manager
+
+Use yarn, not npm. When giving commands or examples, always use yarn equivalents.
+
+## Paths and Locations
+
+Always specify the working directory when referencing files. Use paths relative to `~/GitHub` (e.g., `mono/notes/guides/chat.md` not the full path).
+
+## Follow Instructions Literally
+
+When given a direct instruction (e.g., "uncheck all checkboxes"), do exactly that. Don't interpret, don't question whether some should remain, don't assume exceptions. Just do it. If clarification is needed, ask first before acting.

@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { onMount, onDestroy } from 'svelte';
-	import { init } from '../../ts/tests/Render.test';
 	import { render } from '../../ts/render/Render';
 	import { colors } from '../../ts/draw/Colors';
 	import { components } from '../../ts/managers/Components';
 	import { hits } from '../../ts/managers/Hits';
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
 	import S_Mouse from '../../ts/state/S_Mouse';
+	import { init } from '../../ts/render/Trivial';
 
 	const { w_text_color, w_background_color } = colors;
 	const GRAPH_HID = 1;

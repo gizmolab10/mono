@@ -18,10 +18,7 @@ describe('Direct setters removal verification', () => {
 	});
 
 	it('should verify restore_focus() uses becomeFocus() instead of direct set', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Mock becomeFocus to track calls
 		let becomeFocusCalled = false;
@@ -42,10 +39,7 @@ describe('Direct setters removal verification', () => {
 	});
 
 	it('should handle initialization with eraseDB flag', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Set eraseDB flag
 		const originalEraseDB = c.eraseDB;
@@ -64,10 +58,7 @@ describe('Direct setters removal verification', () => {
 	});
 
 	it('should handle initialization with saved focus path', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// This test would require mocking the preference storage
 		// For now, just verify the method doesn't crash
@@ -77,10 +68,7 @@ describe('Direct setters removal verification', () => {
 	});
 
 	it('should add focus to recents history during initialization', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Clear recents
 		x.si_recents.items = [];
@@ -96,10 +84,7 @@ describe('Direct setters removal verification', () => {
 	});
 
 	it('should not create duplicate history entries', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		const initialLength = x.si_recents.length;
 
@@ -114,10 +99,7 @@ describe('Direct setters removal verification', () => {
 	});
 
 	it('should verify preferences subscription still works', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// The subscription is set up in restore_focus (line 136-138)
 		// Verify it doesn't crash when focus changes

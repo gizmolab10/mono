@@ -17,10 +17,7 @@ describe('Initialization sequence verification', () => {
 	});
 
 	it('should have si_recents populated after restore_focus() completes', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Call restore_focus
 		p.restore_focus();
@@ -32,10 +29,7 @@ describe('Initialization sequence verification', () => {
 	});
 
 	it('should handle empty si_recents gracefully in subscription handler', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Clear recents to simulate edge case
 		x.si_recents.items = [];
@@ -53,10 +47,7 @@ describe('Initialization sequence verification', () => {
 	});
 
 	it('should verify initialization sequence order', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Simulate initialization sequence
 		// 1. restore_focus() should be called first
@@ -85,10 +76,7 @@ describe('Initialization sequence verification', () => {
 	});
 
 	it('should verify subscription handler handles empty si_recents with fallback', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Set a focus first
 		h.rootAncestry.becomeFocus();
@@ -105,10 +93,7 @@ describe('Initialization sequence verification', () => {
 	});
 
 	it('should set w_ancestry_focus correctly after initialization', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Simulate full initialization
 		p.restore_focus();
@@ -126,10 +111,7 @@ describe('Initialization sequence verification', () => {
 	});
 
 	it('should verify initialization works in Hierarchy.wrapUp_data_forUX() path', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// This test verifies the initialization sequence used in
 		// Hierarchy.wrapUp_data_forUX():
@@ -150,10 +132,7 @@ describe('Initialization sequence verification', () => {
 	});
 
 	it('should verify initialization works in DB_Common.hierarchy_setup_fetch_andBuild() path', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// This test verifies the initialization sequence used in
 		// DB_Common.hierarchy_setup_fetch_andBuild():
@@ -169,10 +148,7 @@ describe('Initialization sequence verification', () => {
 	});
 
 	it('should ensure si_recents is seeded before subscription is active', () => {
-		if (!h || !h.rootAncestry) {
-			console.warn('Skipping test: no rootAncestry available');
-			return;
-		}
+		if (!h?.rootAncestry) return;
 
 		// Clear recents
 		x.si_recents.items = [];

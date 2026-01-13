@@ -281,8 +281,7 @@
 
     <div class="segment-row">
       <div class="project-group">
-        <button class="segment" data-project="en">en<span class="badge">E</span></button>
-        <button class="segment" data-project="sh">sh<span class="badge">S</span></button>
+        <button class="segment" data-project="core">core<span class="badge">C</span></button>
         <button class="segment" data-project="di">di<span class="badge">D</span></button>
         <button class="segment active" data-project="ws">ws<span class="badge">W</span></button>
       </div>
@@ -362,16 +361,7 @@
             deploy: 'https://app.netlify.com/projects/designintuition/deploys',
             bubble: null
           },
-          sh: {
-            port: ports.sh,
-            site: 'sh',
-            public: null,
-            netlify: null,
-            repo: 'https://github.com/gizmolab10/shared',
-            deploy: 'https://app.netlify.com/projects/gizmolab-shared-docs/deploys',
-            bubble: null
-          },
-          en: null
+          core: null
         },
         docs: {
           ws: {
@@ -392,16 +382,15 @@
             deploy: 'https://app.netlify.com/projects/designintuition-documentation/deploys',
             bubble: null
           },
-          sh: {
-            port: ports['sh-docs'],
-            site: 'sh-docs',
-            public: 'https://shared.gizmolab.com',
-            netlify: 'https://gizmolab-shared-docs.netlify.app',
-            repo: 'https://github.com/gizmolab10/shared',
-            deploy: 'https://app.netlify.com/projects/gizmolab-shared-docs/deploys',
+          core: {
+            port: ports['core-docs'],
+            site: 'core-docs',
+            public: null,
+            netlify: null,
+            repo: 'https://github.com/gizmolab10/mono',
+            deploy: null,
             bubble: null
-          },
-          en: null
+          }
         }
       };
     }
@@ -493,7 +482,7 @@
       });
 
       if (config[mode][project] === null) {
-        for (const p of ['ws', 'di', 'sh', 'en']) {
+        for (const p of ['ws', 'di', 'core']) {
           if (config[mode][p] !== null) {
             project = p;
             break;
@@ -727,8 +716,7 @@
         case 'x': previewMode = 'docs'; highlightModeButton('docs'); highlightProjectButton(getDisplayProject()); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
         case 'w': previewProject = 'ws'; highlightProjectButton('ws'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
         case 'd': previewProject = 'di'; highlightProjectButton('di'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
-        case 's': { const m = getDisplayMode(); if (config[m]?.['sh'] !== null) { previewProject = 'sh'; highlightProjectButton('sh'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); } } break;
-        case 'e': { const m = getDisplayMode(); if (config[m]?.['en'] !== null) { previewProject = 'en'; highlightProjectButton('en'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); } } break;
+        case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } else { const m = getDisplayMode(); if (config[m]?.['core'] !== null) { previewProject = 'core'; highlightProjectButton('core'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); } } } break;
         case 'escape': previewMode = null; previewProject = null; modeButtons.forEach(btn => { btn.classList.remove('sticky'); btn.classList.toggle('active', btn.dataset.mode === mode); }); projectButtons.forEach(btn => { btn.classList.remove('sticky'); const valid = config[mode][btn.dataset.project] !== null; btn.classList.toggle('disabled', !valid); btn.classList.toggle('active', btn.dataset.project === project); }); btnDns.classList.remove('sticky'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
         case 'enter': if (hoveredAction) { window.open(hoveredAction, '_blank'); } break;
         case 'delete': doStart(); break;
@@ -739,7 +727,6 @@
         case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); updateFeedbackRow(); break;
         case 'n': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); updateFeedbackRow(); break;
         case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); updateFeedbackRow(); break;
-        case 'c': if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } break;
       }
     });
 
