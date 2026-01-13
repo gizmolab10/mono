@@ -1,0 +1,17 @@
+{
+	"jsc": {
+		"target": "es2017", // Output JavaScript version
+		"parser": {
+			"syntax": "typescript",
+			"tsx": true // Enable TSX (if using React)
+		},
+		"transform": {
+			"react": {
+				"runtime": "automatic" // For React projects using JSX
+			}
+		}
+	},
+	"module": {
+		"type": "es6" // Use ES modules (or "commonjs" for Node.js)
+	}
+}

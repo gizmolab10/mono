@@ -1,0 +1,56 @@
+# Milestone 2: Panel Layout
+**Timeline:** Jan 6-7, 2025 | **Status:** complete ✅
+
+## Goal
+Begin to flesh out the skeleton of the final product, using IDEAS and purpose of existing `webseriously` code. I spent a lot of time on its look and feel, so hey, reuse, recycle, live life to its fullest.
+
+## What Emerged
+
+A clean panel layout with rounded-corner regions separated by colored bars with decorative fillets. Key insights:
+
+1. **Fillets create region corners** — Regions don't have their own corner logic. Their rounded appearance emerges from fillets on adjacent separators.
+
+2. **Overlap rule** — Separators extend `thickness/2` beyond endpoints so fillets align with intersecting separator centers.
+
+3. **Unified color** — Separators and fillets share `w_separator_color` for a cohesive look.
+
+4. **Terminology rename** — "Gull wings" → "Fillets" for clearer industry-standard naming.
+
+See [layout-algorithm.md](layout-algorithm.md) for the emerging layout model.
+
+## What we did
+
+Escaped from webseriously's newbie mistakes by:
+- Using Svelte 5 runes (`$state`, `$derived`, `$props`)
+- Typed props with TypeScript interfaces
+- Snippets instead of deprecated slots
+- Clean component separation
+
+### Components Built
+
+| Component | Purpose |
+|-----------|---------|
+| `Main.svelte` | Root layout with Box + interior separators |
+| `Box.svelte` | Frame with 4 separators + corner fillets |
+| `Separator.svelte` | Colored bar with optional fillets |
+| `Fillets.svelte` | Quarter-circle SVG arcs |
+| `Controls.svelte` | Top toolbar (empty) |
+| `Details.svelte` | Left sidebar (empty) |
+| `Graph.svelte` | Canvas region with 3D cube |
+
+### Supporting Code
+
+| File | Purpose |
+|------|---------|
+| `Constants.ts` | `k.thickness.separator.main`, `k.radius.fillets.*` |
+| `Colors.ts` | `w_separator_color`, `w_background_color` stores |
+| `SVG_Paths.ts` | `svg_paths.fillets()` path generator |
+| `Preferences.ts` | localStorage wrapper |
+
+## Artifacts
+
+- [[implement]] — task checklist + Svelte 5 best practices
+- [[architecture]] — DOM structure + CSS classes
+- [[components]] — webseriously component catalog
+- [designs/Fillets.md](../../../designs/Fillets.md) — Fillets component doc
+- [layout-algorithm.md](layout-algorithm.md) — emerging layout model
