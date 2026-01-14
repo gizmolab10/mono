@@ -1,7 +1,9 @@
 # Deliverables
 
 
-**Started:** 2025-01-13**Status:** Tracking
+**Started:** 2025-01-13
+
+**Status:** Tracking
 
 
 Before I even demo a fix to Vincent, review it with Wendy. For items that are marked as **fixed**, they need Wendy's feedback, so she wants me to let her know in Telegram.
@@ -26,10 +28,9 @@ The urls for review and feedback
 
 ### Questions
 
-- [ ] **cannot reproduce** -- sometimes (rarely) title is same color as background
-- [ ] **cannot reproduce** -- in catalist, focus on main argument, then focus on its parent. FUBAR
-- [ ] click in background of graph deselects everything
-	- [ ] should it NOT do that until the rubber band INCLUDES some widgets and then alter the selection?
+- [ ] \
+  - [ ] \
+  - [ ] or just disable rubber band
 
 ## Webseriously
 
@@ -37,31 +38,41 @@ The urls for review and feedback
 
 - [x] no breadcrumbs in catalist
 - [x] must send select event
+- [x] sometimes (rarely) title is same color as background
+- [x] in catalist, focus on main argument, then focus on its parent. FUBAR
+- [x] little button to visit this material missing from netlify and public
 - [ ] editing is NOT disabled, which may cause:
-	- [ ] clicking around sometimes doesn’t select things on the first click
-	- [ ] edit a widget. click background. rubber band another widget. editing remains active
+  - [ ] clicking around sometimes doesn’t select things on the first click
+  - [ ] edit a widget. click background. rubber band another widget. editing remains active
 - [ ] sliding the levels does not update the number
-	- [ ] the tree graph shows a different number of levels
-	- [ ] command + set the levels to 12
+  - [ ] the tree graph shows a different number of levels
+  - [ ] command + set the levels to 12
 - [ ] click on A, then click on B, sometimes A still indicates it is selected
 - [ ] in every widget the title is not vertically centered
 - [ ] build notes steppers ignored
-- [ ] little button to visit this material missing from netlify and public
 
 ### Change Requests
 
 - [x] disable double-click
 - [ ] disable rubber band
-- [ ] fix multiple selection behavior
-	- [ ] shift key + click
-	- [ ] shift key + arrow key
-- [ ] click on a breadcrumb should select, NEVER focus (adding a dot is unnecessary)
-	- [ ] remove breadcrumb mode selector. default to "selection" and perfect it
-	- [ ] breadcrumbs have duplicates for selection mode
-	- [ ] right now, click on a breadcrumb sends a select event, it shouldn't
-- [ ] remove the force graph to, from preferences
+
+
 - [ ] remove the static-dynamic selector, always dynamic
+
+
+- [ ] remove the force graph to, from preferences
 - [ ] make numbers for lists the default
+- [ ] fix multiple selection behavior
+  - [ ] shift key + click
+  - [ ] shift key + arrow key
+- [ ] click on a breadcrumb should select, NEVER focus (adding a dot is unnecessary)
+  - [ ] remove breadcrumb mode selector. default to "selection" and perfect it
+  - [ ] breadcrumbs have duplicates for selection mode
+  - [ ] right now, click on a breadcrumb sends a select event, it shouldn't
+
+
+- [ ] click in background of graph deselects everything
+  - [ ] NOT do that until the rubber band INCLUDES some widgets and then alter the selection
 
 ### Work in Progress
 
@@ -74,4 +85,5 @@ The urls for review and feedback
 - [ ] implement keep the graph centered on the selection
 - [ ] support edits made in Catalist (API is **incomplete**)
 - [ ] do we need an introductory summary of current behavior?
+
 

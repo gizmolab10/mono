@@ -19,7 +19,7 @@
 	const visit_height = 21;
 
 	function handle_visit_click() {
-		const url = 'https://monorepo-documentation.netlify.app/ws/guides/deliverables.html';
+		const url = 'https://docs.gizmolab.com/ws/guides/deliverables.html';
 		window.open(url, '_blank');
 	}
 	
