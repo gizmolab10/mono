@@ -16,7 +16,7 @@ A clean panel layout with rounded-corner regions separated by colored bars with 
 
 4. **Terminology rename** — "Gull wings" → "Fillets" for clearer industry-standard naming.
 
-See [layout-algorithm.md](layout-algorithm.md) for the emerging layout model.
+See [layout-algorithm.md](../../layout-algorithm.md) for the emerging layout model.
 
 ## What we did
 
@@ -53,4 +53,4 @@ Escaped from webseriously's newbie mistakes by:
 - [[architecture]] — DOM structure + CSS classes
 - [[components]] — webseriously component catalog
 - [designs/Fillets.md](../../../designs/Fillets.md) — Fillets component doc
-- [layout-algorithm.md](layout-algorithm.md) — emerging layout model
+- [layout-algorithm.md](../../layout-algorithm.md) — emerging layout model

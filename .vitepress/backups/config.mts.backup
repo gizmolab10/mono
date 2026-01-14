@@ -2,138 +2,140 @@ import { defineConfig } from 'vitepress'
 import ports from '../sites/ports.json'
 
 export default defineConfig({
-  srcDir: './notes/guides',
-  title: "Shared Guides",
-  description: "Cross-project documentation and best practices",
+  srcDir: './notes',
+  title: "Mono Docs",
+  description: "Unified documentation for all projects",
   ignoreDeadLinks: [
     /^http:\/\/localhost/
   ],
 
   vite: {
     server: {
-      port: ports['core-docs']
+      port: ports['mono-docs']
     }
   },
 
   themeConfig: {
-    sidebar: [
+    nav: [
+      { text: 'WS', link: '/ws/' },
+      { text: 'DI', link: '/di/' },
+      { text: 'Guides', link: '/guides/' }
+    ],
+
+    sidebar: {
+      '/ws/': [
         {
-          text: 'Collaborate >',
-          link: '/collaborate/',
-          collapsed: true,
+          text: 'WebSeriously',
+          link: '/ws/',
           items: [
+            { text: 'Project', link: '/ws/project' },
             {
-              text: 'Access',
-              link: '/collaborate/access'
+              text: 'Architecture >',
+              link: '/ws/architecture/',
+              collapsed: true,
+              items: []
             },
             {
-              text: 'Chat',
-              link: '/collaborate/chat'
+              text: 'Guides >',
+              link: '/ws/guides/',
+              collapsed: true,
+              items: []
             },
             {
-              text: 'Evolve',
-              link: '/collaborate/evolve'
-            },
-            {
-              text: 'Markdown',
-              link: '/collaborate/markdown'
-            },
-            {
-              text: 'Repo',
-              link: '/collaborate/repo'
-            },
-            {
-              text: 'Vitepress Setup',
-              link: '/collaborate/vitepress-setup'
-            },
-            {
-              text: 'Voice',
-              link: '/collaborate/voice'
-            },
-            {
-              text: 'Work Site',
-              link: '/collaborate/work-site'
-            },
-            {
-              text: 'Workflow',
-              link: '/collaborate/workflow'
-            }
-          ]
-        },
-        {
-          text: 'Develop >',
-          link: '/develop/',
-          collapsed: true,
-          items: [
-            {
-              text: 'Aesthetics',
-              link: '/develop/aesthetics'
-            },
-            {
-              text: 'Css',
-              link: '/develop/css'
-            },
-            {
-              text: 'Deliverables',
-              link: '/develop/deliverables'
-            },
-            {
-              text: 'Migration',
-              link: '/develop/migration'
-            },
-            {
-              text: 'Refactoring',
-              link: '/develop/refactoring'
-            },
-            {
-              text: 'Style',
-              link: '/develop/style'
-            }
-          ]
-        },
-        {
-          text: 'Setup >',
-          link: '/setup/',
-          collapsed: true,
-          items: [
-            {
-              text: 'Deploy',
-              link: '/setup/deploy'
-            },
-            {
-              text: 'Jonathan',
-              link: '/setup/jonathan'
-            },
-            {
-              text: 'Monorepo',
-              link: '/setup/monorepo'
-            },
-            {
-              text: 'Onboarding',
-              link: '/setup/onboarding'
-            },
-            {
-              text: 'Single.project',
-              link: '/setup/single.project'
-            }
-          ]
-        },
-        {
-          text: 'Test >',
-          link: '/test/',
-          collapsed: true,
-          items: [
-            {
-              text: 'Debugging',
-              link: '/test/debugging'
-            },
-            {
-              text: 'Testing',
-              link: '/test/testing'
+              text: 'Work >',
+              link: '/ws/work/',
+              collapsed: true,
+              items: []
             }
           ]
         }
       ],
+
+      '/di/': [
+        {
+          text: 'Design Intuition',
+          link: '/di/',
+          items: [
+            {
+              text: 'Architecture >',
+              link: '/di/architecture/',
+              collapsed: true,
+              items: []
+            },
+            {
+              text: 'Designs >',
+              link: '/di/designs/',
+              collapsed: true,
+              items: []
+            },
+            {
+              text: 'Guides >',
+              link: '/di/guides/',
+              collapsed: true,
+              items: []
+            },
+            {
+              text: 'Work >',
+              link: '/di/work/',
+              collapsed: true,
+              items: []
+            }
+          ]
+        }
+      ],
+
+      '/guides/': [
+        {
+          text: 'Collaborate >',
+          link: '/guides/collaborate/',
+          collapsed: true,
+          items: [
+            { text: 'Access', link: '/guides/collaborate/access' },
+            { text: 'Chat', link: '/guides/collaborate/chat' },
+            { text: 'Evolve', link: '/guides/collaborate/evolve' },
+            { text: 'Markdown', link: '/guides/collaborate/markdown' },
+            { text: 'Repo', link: '/guides/collaborate/repo' },
+            { text: 'Vitepress Setup', link: '/guides/collaborate/vitepress-setup' },
+            { text: 'Voice', link: '/guides/collaborate/voice' },
+            { text: 'Work Site', link: '/guides/collaborate/work-site' },
+            { text: 'Workflow', link: '/guides/collaborate/workflow' }
+          ]
+        },
+        {
+          text: 'Develop >',
+          link: '/guides/develop/',
+          collapsed: true,
+          items: [
+            { text: 'Aesthetics', link: '/guides/develop/aesthetics' },
+            { text: 'CSS', link: '/guides/develop/css' },
+            { text: 'Migration', link: '/guides/develop/migration' },
+            { text: 'Refactoring', link: '/guides/develop/refactoring' },
+            { text: 'Style', link: '/guides/develop/style' }
+          ]
+        },
+        {
+          text: 'Setup >',
+          link: '/guides/setup/',
+          collapsed: true,
+          items: [
+            { text: 'Deploy', link: '/guides/setup/deploy' },
+            { text: 'Jonathan', link: '/guides/setup/jonathan' },
+            { text: 'Monorepo', link: '/guides/setup/monorepo' },
+            { text: 'Onboarding', link: '/guides/setup/onboarding' },
+            { text: 'Single Project', link: '/guides/setup/single.project' }
+          ]
+        },
+        {
+          text: 'Test >',
+          link: '/guides/test/',
+          collapsed: true,
+          items: [
+            { text: 'Debugging', link: '/guides/test/debugging' },
+            { text: 'Testing', link: '/guides/test/testing' }
+          ]
+        }
+      ]
+    },
 
     search: {
       provider: 'local'

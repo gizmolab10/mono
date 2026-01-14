@@ -5,6 +5,7 @@ Hey. For my own sanity and to save immense time composing queries for AI, I aske
 ## Contents
 
 - [Composition](./composition.md)
+- [Deliverables](./deliverables.md)
 - [Gotchas](./gotchas.md)
 - [Plugin](./plugin.md)
 

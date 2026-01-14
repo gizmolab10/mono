@@ -21,7 +21,7 @@ PORT_API=$(get_port api)
 PORT_WS=$(get_port ws)
 PORT_DI=$(get_port di)
 PORT_WS_DOCS=$(get_port ws-docs)
-PORT_CORE_DOCS=$(get_port core-docs)
+PORT_MONO_DOCS=$(get_port mono-docs)
 PORT_DI_DOCS=$(get_port di-docs)
 
 # Site definitions: name|port|dir|command
@@ -32,7 +32,7 @@ SITES=(
   "ws-docs|$PORT_WS_DOCS|projects/ws|VITE_PORT=$PORT_WS_DOCS yarn docs:dev"
   "di|$PORT_DI|projects/di|yarn dev"
   "di-docs|$PORT_DI_DOCS|projects/di|VITE_PORT=$PORT_DI_DOCS yarn docs:dev"
-  "core-docs|$PORT_CORE_DOCS|.|yarn docs:dev"
+  "mono-docs|$PORT_MONO_DOCS|.|yarn docs:dev"
 )
 
 kill_port() {
@@ -106,5 +106,5 @@ else
   echo "  $PORT_DI  di        app"
   echo "  $PORT_WS_DOCS  ws        docs"
   echo "  $PORT_DI_DOCS  di        docs"
-  echo "  $PORT_CORE_DOCS  core      docs"
+  echo "  $PORT_MONO_DOCS  mono      docs"
 fi

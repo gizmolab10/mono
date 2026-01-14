@@ -6,7 +6,6 @@ Code style, patterns, and development practices.
 
 - [Aesthetics](./aesthetics.md)
 - [Css](./css.md)
-- [Deliverables](./deliverables.md)
 - [Migration](./migration.md)
 - [Refactoring](./refactoring.md)
 - [Style](./style.md)

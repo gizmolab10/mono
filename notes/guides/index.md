@@ -9,5 +9,6 @@ I am trying here to convey a way of being. Rules, in contrast, are for weak mind
 
 - [Collaborate](./collaborate/)
 - [Develop](./develop/)
+- [Setup](./setup/)
 - [Test](./test/)
 

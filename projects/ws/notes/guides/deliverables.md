@@ -69,13 +69,13 @@ The urls for review and feedback
 - [ ] do we need an introductory summary of current behavior?
 
 
----
-
 ## Under Construction
 
 ### Little round button to visit this material
 
 #### **Questions:**
+
+
 
 1. Where does the button go? — in the build notes overlay, at the bottom left corner
 2. What does "visit" mean? — open a url (to be determined)
@@ -83,9 +83,18 @@ The urls for review and feedback
 
 #### Tasks:
 
-  - [ ] add a round button component to bottom left corner of build notes component
-  - [ ] devise a url for presenting this content
-  - [ ] wire up the handle click logic
+- [x] add a round button component to bottom left corner of build notes component
+- [ ] devise a url for presenting this content
+  - [ ] move deliverables to ws/notes/guides
+  - [ ] create deployment
+	* [ ] a. Update .vitepress/config.ts with multi-project sidebar
+	* [ ] b. Configure rewrites so `/ws/` → `projects/ws/notes/`, `/di/` → `projects/di/notes/`, `/mono/` → `notes/`
+	* [ ] c. Update `update-project-docs.sh` to build unified docs
+	* [ ] d. Create Netlify site for mono-docs
+	* [ ] e. Point `docs.webseriously.org` to mono-docs Netlify
+	* [ ] f. Update hub config with new public URLs
+	* [ ] g. Retire separate ws-docs and di-docs Netlify sites
+- [ ] wire up the handle click logic
 
 
 

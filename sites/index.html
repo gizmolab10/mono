@@ -281,7 +281,7 @@
 
     <div class="segment-row">
       <div class="project-group">
-        <button class="segment" data-project="core">core<span class="badge">C</span></button>
+        <button class="segment" data-project="mono">mono<span class="badge">M</span></button>
         <button class="segment" data-project="di">di<span class="badge">D</span></button>
         <button class="segment active" data-project="ws">ws<span class="badge">W</span></button>
       </div>
@@ -361,7 +361,7 @@
             deploy: 'https://app.netlify.com/projects/designintuition/deploys',
             bubble: null
           },
-          core: null
+          mono: null
         },
         docs: {
           ws: {
@@ -382,9 +382,9 @@
             deploy: 'https://app.netlify.com/projects/designintuition-documentation/deploys',
             bubble: null
           },
-          core: {
-            port: ports['core-docs'],
-            site: 'core-docs',
+          mono: {
+            port: ports['mono-docs'],
+            site: 'mono-docs',
             public: null,
             netlify: null,
             repo: 'https://github.com/gizmolab10/mono',
@@ -482,7 +482,7 @@
       });
 
       if (config[mode][project] === null) {
-        for (const p of ['ws', 'di', 'core']) {
+        for (const p of ['ws', 'di', 'mono']) {
           if (config[mode][p] !== null) {
             project = p;
             break;
@@ -716,7 +716,8 @@
         case 'x': previewMode = 'docs'; highlightModeButton('docs'); highlightProjectButton(getDisplayProject()); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
         case 'w': previewProject = 'ws'; highlightProjectButton('ws'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
         case 'd': previewProject = 'di'; highlightProjectButton('di'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
-        case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } else { const m = getDisplayMode(); if (config[m]?.['core'] !== null) { previewProject = 'core'; highlightProjectButton('core'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); } } } break;
+        case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } } break;
+        case 'm': { const m = getDisplayMode(); if (config[m]?.['mono'] !== null) { previewProject = 'mono'; highlightProjectButton('mono'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); } } break;
         case 'escape': previewMode = null; previewProject = null; modeButtons.forEach(btn => { btn.classList.remove('sticky'); btn.classList.toggle('active', btn.dataset.mode === mode); }); projectButtons.forEach(btn => { btn.classList.remove('sticky'); const valid = config[mode][btn.dataset.project] !== null; btn.classList.toggle('disabled', !valid); btn.classList.toggle('active', btn.dataset.project === project); }); btnDns.classList.remove('sticky'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
         case 'enter': if (hoveredAction) { window.open(hoveredAction, '_blank'); } break;
         case 'delete': doStart(); break;

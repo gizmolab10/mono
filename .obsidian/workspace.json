@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "projects/ws/notes/work/deliverables.md",
+                "file": "projects/ws/notes/guides/deliverables.md",
                 "mode": "source",
                 "source": false
               },
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "projects/ws/notes/work/deliverables.md",
+                "file": "projects/ws/notes/guides/deliverables.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "projects/ws/notes/work/deliverables.md",
+                "file": "projects/ws/notes/guides/deliverables.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -156,7 +156,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "projects/ws/notes/work/deliverables.md",
+                "file": "projects/ws/notes/guides/deliverables.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -185,6 +185,12 @@
   },
   "active": "92ba4c9b93a17746",
   "lastOpenFiles": [
+    "projects/ws/notes/work/deliverables.md",
+    "projects/ws/notes/work/book.md",
+    "projects/ws/vite.config.js.timestamp-1768415874156-e339a0eaee95e.mjs",
+    "projects/ws/notes/guides/deliverables.md",
+    "tools/logs/mono-docs.log",
+    "projects/ws/vite.config.js.timestamp-1768415146185-7502a0f704e19.mjs",
     "notes/guides/setup/index.md",
     "notes/guides/develop/deliverables.md",
     "notes/guides/collaborate/chat.md",
@@ -211,15 +217,9 @@
     "node_modules/vite-node/node_modules/vite/dist/node/chunks/preview.js",
     "node_modules/vite-node/node_modules/vite/dist/node/chunks/optimizer.js",
     "node_modules/vite-node/node_modules/vite/dist/node/chunks/moduleRunnerTransport.d.ts",
-    "node_modules/vite-node/node_modules/vite/dist/node/chunks/logger.js",
-    "node_modules/vite-node/node_modules/vite/dist/node/chunks/lib.js",
-    "node_modules/vite-node/node_modules/vite/dist/node/chunks/build2.js",
     "node_modules/markdown-it-task-lists/test/fixtures/mixed-nested.md",
     "node_modules/markdown-it-task-lists/test/fixtures/ordered.md",
     "node_modules/markdown-it-task-lists/test/fixtures/bullet.md",
-    "node_modules/markdown-it-task-lists/test/fixtures/dirty.md",
-    "node_modules/vite-node/node_modules/picomatch/README.md",
-    "node_modules/katex/node_modules/commander/Readme.md",
-    "node_modules/markdown-it-task-lists/CHANGELOG.md"
+    "node_modules/markdown-it-task-lists/test/fixtures/dirty.md"
   ]
 }
