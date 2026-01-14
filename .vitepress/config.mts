@@ -123,7 +123,7 @@ export default defineConfig({
             },
             {
               text: 'Tools',
-              link: '/di/tools/'
+              link: '/di/tools/',
               collapsed: true,
             },
             {
@@ -691,7 +691,7 @@ export default defineConfig({
             },
             {
               text: 'Tools',
-              link: '/ws/tools/'
+              link: '/ws/tools/',
               collapsed: true,
             },
             {
