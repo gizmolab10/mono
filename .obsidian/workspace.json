@@ -185,6 +185,7 @@
   },
   "active": "92ba4c9b93a17746",
   "lastOpenFiles": [
+    "sites/docs/package.json",
     "projects/ws/vite.config.js.timestamp-1768429012713-8df963c13cdb3.mjs",
     "projects/ws/notes/guides/deliverables.md",
     "projects/ws/notes/work/public-deliverables.md",
@@ -211,7 +212,6 @@
     "notes/guides/setup/monorepo.md",
     "notes/guides/setup/jonathan.md",
     "notes/guides/setup",
-    "notes/guides/develop/setup",
     "notes/guides/develop/monorepo.md",
     "notes/guides/collaborate/vitepress-setup.md",
     "notes/guides/collaborate/work-site.md",
