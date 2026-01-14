@@ -680,6 +680,10 @@ export default defineConfig({
                   link: '/ws/guides/composition'
                 },
                 {
+                  text: 'Deliverables',
+                  link: '/ws/guides/deliverables'
+                },
+                {
                   text: 'Gotchas',
                   link: '/ws/guides/gotchas'
                 },
