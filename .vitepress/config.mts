@@ -7,6 +7,11 @@ export default defineConfig({
   description: "Unified documentation for all projects",
   ignoreDeadLinks: true,
 
+  rewrites: {
+    'projects/ws/notes/:path*': 'ws/:path*',
+    'projects/di/notes/:path*': 'di/:path*'
+  },
+
   vite: {
     server: {
       port: ports['mono-docs']
