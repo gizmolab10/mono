@@ -7,7 +7,7 @@
 #        update-project-docs.sh all    # updates all projects
 
 GITHUB_DIR="$HOME/GitHub"
-ALL_PROJECTS=("ws" "di" "shared")
+ALL_PROJECTS=("mono" "mono/projects/ws" "mono/projects/di")
 
 # Handle "all" option
 if [ "$1" = "all" ]; then

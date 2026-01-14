@@ -1,6 +1,6 @@
 # Shared Architecture
 
-How the shared repo works with project repos. See [onboarding.md](../develop/onboarding.md) for new machine setup.
+How the shared repo works with project repos. See [onboarding.md](../setup/onboarding.md) for new machine setup.
 
 ## Problem
 

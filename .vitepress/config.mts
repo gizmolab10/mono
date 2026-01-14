@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import ports from '../sites/ports.json'
 
 export default defineConfig({
   srcDir: './notes/guides',
@@ -10,7 +11,7 @@ export default defineConfig({
 
   vite: {
     server: {
-      port: parseInt(process.env.VITE_PORT || '5178')
+      port: ports['core-docs']
     }
   },
 
@@ -34,12 +35,24 @@ export default defineConfig({
               link: '/collaborate/evolve'
             },
             {
+              text: 'Markdown',
+              link: '/collaborate/markdown'
+            },
+            {
               text: 'Repo',
               link: '/collaborate/repo'
             },
             {
+              text: 'Vitepress Setup',
+              link: '/collaborate/vitepress-setup'
+            },
+            {
               text: 'Voice',
               link: '/collaborate/voice'
+            },
+            {
+              text: 'Work Site',
+              link: '/collaborate/work-site'
             },
             {
               text: 'Workflow',
@@ -61,24 +74,12 @@ export default defineConfig({
               link: '/develop/css'
             },
             {
-              text: 'Deploy',
-              link: '/develop/deploy'
-            },
-            {
-              text: 'Jonathan',
-              link: '/develop/jonathan'
-            },
-            {
-              text: 'Markdown',
-              link: '/develop/markdown'
+              text: 'Deliverables',
+              link: '/develop/deliverables'
             },
             {
               text: 'Migration',
               link: '/develop/migration'
-            },
-            {
-              text: 'Onboarding',
-              link: '/develop/onboarding'
             },
             {
               text: 'Refactoring',
@@ -87,6 +88,33 @@ export default defineConfig({
             {
               text: 'Style',
               link: '/develop/style'
+            }
+          ]
+        },
+        {
+          text: 'Setup >',
+          link: '/setup/',
+          collapsed: true,
+          items: [
+            {
+              text: 'Deploy',
+              link: '/setup/deploy'
+            },
+            {
+              text: 'Jonathan',
+              link: '/setup/jonathan'
+            },
+            {
+              text: 'Monorepo',
+              link: '/setup/monorepo'
+            },
+            {
+              text: 'Onboarding',
+              link: '/setup/onboarding'
+            },
+            {
+              text: 'Single.project',
+              link: '/setup/single.project'
             }
           ]
         },

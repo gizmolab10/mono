@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import taskLists from 'markdown-it-task-lists'
 
 export default defineConfig({
   srcDir: './notes',
@@ -7,6 +8,12 @@ export default defineConfig({
   ignoreDeadLinks: [
     /^http:\/\/localhost/
   ],
+
+  markdown: {
+    config: (md) => {
+      md.use(taskLists)
+    }
+  },
 
   vite: {
     server: {

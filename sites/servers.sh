@@ -5,7 +5,7 @@
 
 GITHUB_DIR="$HOME/GitHub/mono"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG_DIR="$GITHUB_DIR/notes/tools/logs"
+LOG_DIR="$GITHUB_DIR/tools/logs"
 PORTS_FILE="$SCRIPT_DIR/ports.json"
 mkdir -p "$LOG_DIR"
 
@@ -21,18 +21,18 @@ PORT_API=$(get_port api)
 PORT_WS=$(get_port ws)
 PORT_DI=$(get_port di)
 PORT_WS_DOCS=$(get_port ws-docs)
-PORT_SHARED=$(get_port shared)
+PORT_CORE_DOCS=$(get_port core-docs)
 PORT_DI_DOCS=$(get_port di-docs)
 
 # Site definitions: name|port|dir|command
 SITES=(
-  "api|$PORT_API|notes/tools/sites|python3 api.py"
-  "dispatch|$PORT_DISPATCH|notes/tools/sites|python3 -m http.server $PORT_DISPATCH"
+  "api|$PORT_API|sites|python3 api.py"
+  "hub|$PORT_DISPATCH|sites|python3 -m http.server $PORT_DISPATCH"
   "ws|$PORT_WS|projects/ws|yarn dev"
   "ws-docs|$PORT_WS_DOCS|projects/ws|VITE_PORT=$PORT_WS_DOCS yarn docs:dev"
   "di|$PORT_DI|projects/di|yarn dev"
   "di-docs|$PORT_DI_DOCS|projects/di|VITE_PORT=$PORT_DI_DOCS yarn docs:dev"
-  "docs|$PORT_SHARED|.|yarn docs:dev"
+  "core-docs|$PORT_CORE_DOCS|.|yarn docs:dev"
 )
 
 kill_port() {
@@ -100,11 +100,11 @@ if [ "$KILL_ONLY" = "true" ]; then
 else
   echo ""
   echo "Running servers:"
-  echo "  $PORT_DISPATCH  dispatch  (H)"
+  echo "  $PORT_DISPATCH  hub"
   echo "  $PORT_API  api"
-  echo "  $PORT_WS  ws        app   (W)"
-  echo "  $PORT_DI  di        app   (D)"
-  echo "  $PORT_WS_DOCS  ws        docs  (E)"
-  echo "  $PORT_SHARED  shared    docs  (S)"
+  echo "  $PORT_WS  ws        app"
+  echo "  $PORT_DI  di        app"
+  echo "  $PORT_WS_DOCS  ws        docs"
   echo "  $PORT_DI_DOCS  di        docs"
+  echo "  $PORT_CORE_DOCS  core      docs"
 fi

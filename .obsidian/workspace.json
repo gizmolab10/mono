@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/monorepo.md",
+                "file": "projects/ws/notes/work/deliverables.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "monorepo"
+              "title": "deliverables"
             }
           }
         ]
@@ -94,8 +94,8 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "notes/work/monorepo.md",
-                "collapseAll": false,
+                "file": "projects/ws/notes/work/deliverables.md",
+                "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
                 "showSearch": false,
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for monorepo"
+              "title": "Backlinks for deliverables"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "notes/work/monorepo.md",
+                "file": "projects/ws/notes/work/deliverables.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from monorepo"
+              "title": "Outgoing links from deliverables"
             }
           },
           {
@@ -156,21 +156,21 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/work/monorepo.md",
+                "file": "projects/ws/notes/work/deliverables.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of monorepo"
+              "title": "Outline of deliverables"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -185,41 +185,41 @@
   },
   "active": "92ba4c9b93a17746",
   "lastOpenFiles": [
-    "notes/work/done/docs/test/fixtures/advanced/test-moved.md",
-    "notes/work/done/docs/test/merge-fixtures/test-links.md",
-    "notes/work/done/docs/test/merge-fixtures/file-b.md.original",
-    "notes/work/done/docs/test/merge-fixtures/file-b.md",
-    "notes/work/done/docs/test/merge-fixtures/file-a.md.original",
-    "notes/work/done/docs/test/merge-fixtures/file-a.md",
-    "notes/work/done/docs/test/fixtures/vitepress.build.txt",
-    "notes/work/done/docs/test/fixtures/index.md",
-    "notes/work/done/docs/test/fixtures/advanced",
-    "notes/work/done/docs/test/fixtures/config.mts",
-    "notes/work/done/docs/test/test-runner.mjs",
-    "notes/work/done/docs/test/test-fix-links.sh",
-    "notes/work/done/docs/test/run-test.sh",
-    "notes/work/done/docs/test/merge-fixtures",
-    "notes/work/done/docs/test/fixtures",
-    "notes/work/done/docs/test/README.md",
-    "notes/work/done/docs/test/HOW-TO-TEST.md",
-    "notes/work/done/docs/history/REORGANIZATION.md",
-    "notes/work/done/docs/history/PHASE2-MINIMIZED.md",
-    "notes/work/done/docs/history/PHASE2-FINAL.md",
-    "notes/work/done/docs/history/PHASE2-COMPLETE.md",
-    "notes/work/done/docs/history/PHASE1-RESULTS.md",
-    "notes/work/done/docs/history/CLAUDE-MD-UPDATED.md",
-    "notes/work/done/docs/history/PHASE1-FINAL.md",
-    "notes/work/done/docs/history/PHASE1-COMPLETE.md",
-    "notes/work/done/docs/history/FIXTURES-RELOCATED.md",
-    "notes/work/done/docs/history/FINAL-ORGANIZATION.md",
-    "notes/work/done/docs/README.md",
-    "notes/work/done/work-site.md",
-    "notes/work/done/vitepress-setup.md",
+    "notes/guides/setup/index.md",
+    "notes/guides/develop/deliverables.md",
+    "notes/guides/collaborate/chat.md",
+    "notes/work/done/docs/docs.md",
     "notes/work/done/docs.md",
-    "notes/work/done/combined-docs.md",
-    "notes/work/articles/write.article.md",
-    "notes/work/articles/index.md",
-    "notes/work/articles/how.to.build.it.md",
-    "notes/work/articles/accidental.programmer.md"
+    "notes/work/done/docs/combined-docs.md",
+    "notes/guides/setup/single.project.md",
+    "notes/guides/collaborate/markdown.md",
+    "notes/guides/setup/deploy.md",
+    "notes/guides/setup/onboarding.md",
+    "notes/guides/setup/monorepo.md",
+    "notes/guides/setup/jonathan.md",
+    "notes/guides/setup",
+    "notes/guides/develop/setup",
+    "notes/guides/develop/monorepo.md",
+    "notes/guides/collaborate/vitepress-setup.md",
+    "notes/guides/collaborate/work-site.md",
+    "notes/work/working-minimum.md",
+    "notes/guides/collaborate/evolve.md",
+    "notes/guides/collaborate/workflow.md",
+    "notes/work/articles/accidental.programmer.md",
+    "node_modules/vite-node/node_modules/vite/dist/node/chunks/postcss-import.js",
+    "node_modules/vite-node/node_modules/vite/dist/node/chunks/server.js",
+    "node_modules/vite-node/node_modules/vite/dist/node/chunks/preview.js",
+    "node_modules/vite-node/node_modules/vite/dist/node/chunks/optimizer.js",
+    "node_modules/vite-node/node_modules/vite/dist/node/chunks/moduleRunnerTransport.d.ts",
+    "node_modules/vite-node/node_modules/vite/dist/node/chunks/logger.js",
+    "node_modules/vite-node/node_modules/vite/dist/node/chunks/lib.js",
+    "node_modules/vite-node/node_modules/vite/dist/node/chunks/build2.js",
+    "node_modules/markdown-it-task-lists/test/fixtures/mixed-nested.md",
+    "node_modules/markdown-it-task-lists/test/fixtures/ordered.md",
+    "node_modules/markdown-it-task-lists/test/fixtures/bullet.md",
+    "node_modules/markdown-it-task-lists/test/fixtures/dirty.md",
+    "node_modules/vite-node/node_modules/picomatch/README.md",
+    "node_modules/katex/node_modules/commander/Readme.md",
+    "node_modules/markdown-it-task-lists/CHANGELOG.md"
   ]
 }

@@ -231,7 +231,7 @@ source ~/.zshrc
 
 ## Evolving the UI
 
-See [evolve.md](/notes/guides/collaborate/evolve.md) for the general pattern.
+See [evolve.md](./evolve.md) for the general pattern.
 
 This project followed that journey — from basic layout through hover previews to edge case refinement.
 

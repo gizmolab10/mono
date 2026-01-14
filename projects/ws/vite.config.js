@@ -1,5 +1,6 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
+import ports from '../../sites/ports.json';
 import path from 'path';
 
 // Detect whether we're building the plugin or the Svelte app
@@ -9,7 +10,7 @@ export default defineConfig({
 	plugins: isPluginBuild ? [] : [svelte()],
 	server: {
 		host: true,
-		port: 5173,
+		port: ports.ws,
 	},
 	css: {
 		preprocessorOptions: {

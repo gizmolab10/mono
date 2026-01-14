@@ -89,14 +89,11 @@ mono/
 
 ## Phase 5: Cleanup
 
-- [ ] Delete old repos from ~/GitHub/work/ (or rename to -archive)
+- [ ] Promote mono/notes/tools/sites files into "normal project" organization
 - [ ] Update Netlify configs for monorepo paths
 - [ ] Fix di app vs docs serving same content issue
 - [ ] Final verification of all sites
-
-## Next Action
-
-**Phase 4:** Run ws tests, fix any remaining Extensions imports
+- [ ] Delete old repos from ~/GitHub/work/ (or rename to -archive)
 
 ---
 

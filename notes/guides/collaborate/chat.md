@@ -1,35 +1,60 @@
-
 # Working with Collaborator
 
-A guide to the division of labor between you and collaborator (Claude).
+A guide to the division of labor between me and collaborator (Claude).
 
-## Roles
+## Summary
 
-**You:**
+I bring direction, decisions, and taste. Collaborator brings execution, memory, and analysis. The md files are the shared ground where learning accumulates.
 
-* Direction — what to work on, when to stop
-* Decisions — approve, reject, refine proposals
+### The Mental Model
+
+I steer and distill. Collaborator presents. I ask ("pros, cons"). Collaborator executes or digs, then presents. I extract what matters ("done and widely used"). I might ask some more (this is the loop). Collaborator adds a synopsis to a guide.
+
+I am **what** and **why**
+	direction, quality, essence
+Collaborator is **how** and **where**
+	dig, present, distill
+
+My job is hard, complex, always on guard, and damned fast.
+
+### The Basic [Workflow](workflow)
+
+1. **I** define the problem and goal 
+2. **Collaborator** proposes an approach
+3. **I** approve, adjust, or reject
+4. **Collaborator** executes
+5. **Both** verify it works
+6. **Collaborator** remembers (see leaning into learning)
+
+### Leaning into Learning
+
+"**6. Collaborator** remembers" involves a few steps
+
+1. I ask collaborator to write something
+2. I edit it — add my voice, tighten, restructure
+3. I ask collaborator to analyze what I did
+4. Collaborator articulates the *principle* behind my edits
+5. I ask collaborator to capture that principle
+6. Collaborator knows where to insert it in the guides
+
+Now collaborator has better guidance for next time. It's teaching by example, then extracting the lesson. I don't tell the rules up front — I show what good looks like, then ask collaborator to name it.
+
+## Formal Roles
+
+**Me:**
+
+* Direct — my want, alter course
+* Decide — approve, reject, refine proposals
 * Taste — what's good enough, what feels off
 * Context — domain knowledge, project history, priorities
 
 **Collaborator:**
 
-* Execution — reads, writes, searches, edits
+* Execute — reads, writes, searches, edits
 * Memory — maintains docs, tracks progress, recalls past work
-* Analysis — investigates problems, proposes solutions
-* Learning — adapts to your patterns within each conversation
-
-You steer. Collaborator rows.
-
-## The Basic Flow
-
-
-1. **You** define the problem and goal
-2. **Collaborator** proposes an approach
-3. **You** approve, adjust, or reject
-4. **Collaborator** executes
-5. **Both** verify it works
-6. **Collaborator** documents what happened
+* Analyze — investigates problems, proposes solutions
+* Learn — adapts to my patterns within each conversation
+* Proofread — grammar, spelling, redundancy, awkward stuff
 
 ## What Collaborator Does Automatically
 
@@ -39,6 +64,8 @@ You steer. Collaborator rows.
 * Searches past conversations for context
 * Asks clarifying questions when needed
 * Verifies stated facts rather than questioning them
+* Present reasoned concise report
+* Code snippets always presented with relative file path
 
 ## Avoiding Hallucination
 
@@ -46,21 +73,22 @@ When reporting observations or issues:
 
 * **Verify before asserting** — quote specific evidence (line numbers, exact text, visible details) rather than describing from memory
 * **Signal confidence** — say "I think" or "it looks like" when uncertain, state as fact only when verified
-* **Ask before fixing** — if you see a potential issue, describe what you see and ask for confirmation before proposing a fix
+* **Ask before fixing** — if I see a potential issue, describe what I see and ask for confirmation before proposing a fix
 
 ## File Freshness
 
-Collaborator's in-memory cache of file contents goes stale as you edit files during the conversation. This causes false claims like "they're identical" when they're not.
+Collaborator's in-memory cache of file contents goes stale as I edit files during the conversation. This causes false claims like "they're identical" when they're not.
 
 **Rule:** When comparing files, checking for differences, or making any claim about current file contents — ALWAYS re-read the file immediately before. Never trust cached content from earlier in the conversation.
 
 **Trigger phrases that demand re-reading:**
+
 * "these are different"
 * "that's not what's in the file"
 * "check again"
 * "you're wrong about the contents"
 
-With many files involved, you rely on collaborator for file analysis. Freshness is vital.
+With many files involved, I rely on collaborator for file analysis. Freshness is vital.
 
 ## What Collaborator Waits For
 
@@ -75,17 +103,17 @@ Interrupt collaborator when:
 
 * It's heading the wrong direction
 * The approach feels overcomplicated
-* You have context it doesn't know
+* I have context it doesn't know
 * Something seems off
 
 Just say so. No ceremony needed.
 
 ## Common Patterns
 
-| Pattern | You | Collaborator |
+| Pattern | I | Collaborator |
 |----|----|----|
 | Fix | Describe the bug | Diagnose, propose fix, implement |
-| Build | Describe what you need | Design, implement incrementally |
+| Build | Describe what I need | Design, implement incrementally |
 | Refactor | Identify the smell | Plan detailed changes, execute systematically |
 | Research | Ask the question | Search, synthesize, summarize |
 | Document | Say "update docs" | Write it up, maintain consistency |
@@ -93,52 +121,37 @@ Just say so. No ceremony needed.
 
 ## Commands
 
-### Begin / Identify Work
+Since typing is something my fingers are becoming terrible at, I want short commands. They must not something i might accidentally type, not good that.
+
+### Begin
 
 | Command | Action |
-|---------|--------|
-| `go` | Read ~/GitHub/`<current-go>`/CLAUDE.MD |
-| `go <X>` | Set current-go to X, read ~/GitHub/`<X>`/CLAUDE.MD |
+|----|----|
+| `go` | Read \~/GitHub/`<current-go>`/CLAUDE.MD |
+| `go <X>` | Set current-go to X, read \~/GitHub/`<X>`/CLAUDE.MD |
 | `what go` | Tell current-go value |
 | `work on <X>` | Read or create notes/work/`<X>`.md, resume work |
 
-### Work / Wrap Up
+### Work
 
-| Command | Action |
-|---------|--------|
-| `ex` | Execute mode — skip proposals, just do it (end responses with: in "ex" mode, type "hy" to exit) |
-| `hy` | Hybrid mode — propose before file changes |
-| `propose` / `?` | Explain plan before executing |
-| `chime in` | Give observations, suggestions about the topic |
-| `undo` | Revert last file change |
-| `ua` | Update current md file with chat content |
+| Command    | Action                                                                                          |
+| ---------- | ----------------------------------------------------------------------------------------------- |
+| `ex`       | Execute mode — skip proposals, just do it (end responses with: in "ex" mode, type "hy" to exit) |
+| `hy`       | Hybrid mode — propose before file changes                                                       |
+| `propose`  | Explain plan before executing                                                                   |
+| `chime in` | Give observations, suggestions about the topic                                                  |
+| `undo`     | Revert last file change                                                                         |
+| `ua`       | Update current md file with chat content                                                        |
 
 ## Persistence
 
 Collaborator resets between conversations. What persists:
 
-* **Your md files** — CLAUDE.MD, guides, work files
+* **My md files** — CLAUDE.MD, guides, work files
 * **Memory** — short entries that survive sessions
 * **Conversation history** — reopen a chat, searchable via tools
 
 Without these, every conversation starts from zero.
-
-## Summary
-
-You bring direction, decisions, and taste. Collaborator brings execution, memory, and analysis. The md files are the shared ground where learning accumulates.
-
-## Leaning into Learning
-
-A pattern for teaching collaborator your style:
-
-1. Ask collaborator to write something
-2. Edit it — add your voice, tighten, restructure
-3. Ask collaborator to observe what you did
-4. Collaborator articulates the *principle* behind your edits
-5. Ask collaborator to capture that principle in the guides
-6. Now collaborator has better guidance for next time
-
-It's teaching by example, then extracting the lesson. You don't tell the rules up front — you show what good looks like, then ask collaborator to name it.
 
 ## Formatting Guidelines
 

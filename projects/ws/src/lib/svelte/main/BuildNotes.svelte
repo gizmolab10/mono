@@ -1,7 +1,10 @@
 <script lang='ts'>
-	import { k, core, u, show, colors, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, core, u, show, colors, Point, builds, T_Layer, elements } from '../../ts/common/Global_Imports';
+	import { T_Hit_Target, S_Element } from '../../ts/common/Global_Imports';
 	import Close_Button from '../mouse/Close_Button.svelte';
+	import Identifiable from '../../ts/runtime/Identifiable';
 	import Steppers from '../mouse/Steppers.svelte';
+	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();
 	const { w_id_popupView, w_t_directionals } = show;
@@ -10,6 +13,16 @@
 	let title = k.empty;
 	let notesIndex = 0;
 	let notes = [];
+
+	// Visit button
+	const s_visit = elements.s_element_for(new Identifiable('visit-material'), T_Hit_Target.button, 'visit-material');
+	const visit_height = 21;
+
+	function handle_visit_click() {
+		// TODO: construct URL from current context
+		const url = 'https://www.catalist.network';
+		window.open(url, '_blank');
+	}
 	
 	updateNotes();
 
@@ -57,6 +70,17 @@
 			size={k.height.dot * 1.5}
 			closure={() => $w_id_popupView = null}
 			origin={new Point(8, k.height.dot * 0.75)}/>
+		<div class='visit-button-container'>
+			<Button
+				name='visit-material'
+				s_button={s_visit}
+				width={90}
+				height={visit_height}
+				origin={new Point(0, 0)}
+				align_left={true}
+				position='relative'
+				handle_s_mouse={() => { handle_visit_click(); return true; }}>deliverables</Button>
+		</div>
 		<br>
 		<table style='width:100%'>
 			<tbody>
@@ -109,5 +133,10 @@
 	}
 	th {
 		border-bottom: 1px solid black;
+	}
+	.visit-button-container {
+		position: absolute;
+		bottom: 8px;
+		right: 8px;
 	}
 </style>
