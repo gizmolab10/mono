@@ -4,3 +4,13 @@
 
 [build.environment]
   NODE_VERSION = "20.19.0"
+
+[[redirects]]
+  from = "/projects/ws/notes/*"
+  to = "/ws/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/projects/di/notes/*"
+  to = "/di/:splat"
+  status = 301
