@@ -19,8 +19,7 @@
 	const visit_height = 21;
 
 	function handle_visit_click() {
-		// TODO: construct URL from current context
-		const url = 'https://www.catalist.network';
+		const url = 'https://monorepo-documentation.netlify.app/ws/guides/deliverables.html';
 		window.open(url, '_blank');
 	}
 	
