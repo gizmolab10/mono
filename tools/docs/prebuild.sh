@@ -2,7 +2,7 @@
 # Creates symlinks for VitePress to find project docs
 # Run locally after clone, or automatically by Netlify
 
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 
 # Create symlinks (remove first if they exist)
 rm -f notes/ws notes/di
