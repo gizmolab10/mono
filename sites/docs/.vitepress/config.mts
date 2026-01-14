@@ -1,8 +1,8 @@
+import ports from '../../../sites/ports.json'
 import { defineConfig } from 'vitepress'
-import ports from '../sites/ports.json'
 
 export default defineConfig({
-  srcDir: './notes',
+  srcDir: '../../notes',
   title: "Mono Docs",
   description: "Unified documentation for all projects",
   ignoreDeadLinks: true,

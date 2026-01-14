@@ -1,4 +1,5 @@
 [build]
+  base = "projects/ws"
   command = "yarn build"
   publish = "dist"
 

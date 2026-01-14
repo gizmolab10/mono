@@ -29,32 +29,39 @@ The urls for review and feedback
 - [ ] **cannot reproduce** -- sometimes (rarely) title is same color as background
 - [ ] **cannot reproduce** -- in catalist, focus on main argument, then focus on its parent. FUBAR
 - [ ] click in background of graph deselects everything
-  - [ ] should it NOT do that until the rubber band INCLUDES some widgets and then alter the selection?
+	- [ ] should it NOT do that until the rubber band INCLUDES some widgets and then alter the selection?
 
 ## Webseriously
 
 ### Bugs
 
-- [ ] sliding the levels does not update the number
-  - [ ] the tree graph shows a different number of levels
-  - [ ] command + set the levels to 12
-- [ ] editing is NOT disabled, which may cause:
-  - [ ] clicking around sometimes doesn’t select things on the first click
-  - [ ] edit a widget. click background. rubber band another widget. editing remains active
 - [x] no breadcrumbs in catalist
 - [x] must send select event
+- [ ] editing is NOT disabled, which may cause:
+	- [ ] clicking around sometimes doesn’t select things on the first click
+	- [ ] edit a widget. click background. rubber band another widget. editing remains active
+- [ ] sliding the levels does not update the number
+	- [ ] the tree graph shows a different number of levels
+	- [ ] command + set the levels to 12
+- [ ] click on A, then click on B, sometimes A still indicates it is selected
+- [ ] in every widget the title is not vertically centered
+- [ ] build notes steppers ignored
+- [ ] little button to visit this material missing from netlify and public
 
 ### Change Requests
 
-- [x] double-click should be disabled
+- [x] disable double-click
+- [ ] disable rubber band
+- [ ] fix multiple selection behavior
+	- [ ] shift key + click
+	- [ ] shift key + arrow key
 - [ ] click on a breadcrumb should select, NEVER focus (adding a dot is unnecessary)
-  - [ ] remove breadcrumb mode selector. default to "selection" and perfect it
-  - [ ] breadcrumbs have duplicates for selection mode
-  - [ ] right now, click on a breadcrumb sends a select event, it shouldn't
+	- [ ] remove breadcrumb mode selector. default to "selection" and perfect it
+	- [ ] breadcrumbs have duplicates for selection mode
+	- [ ] right now, click on a breadcrumb sends a select event, it shouldn't
 - [ ] remove the force graph to, from preferences
 - [ ] remove the static-dynamic selector, always dynamic
 - [ ] make numbers for lists the default
-- [ ] little button to visit this material
 
 ### Work in Progress
 
@@ -67,36 +74,4 @@ The urls for review and feedback
 - [ ] implement keep the graph centered on the selection
 - [ ] support edits made in Catalist (API is **incomplete**)
 - [ ] do we need an introductory summary of current behavior?
-
-
-## Under Construction
-
-### Little round button to visit this material
-
-#### **Questions:**
-
-
-
-
-
-1. Where does the button go? — in the build notes overlay, at the bottom left corner
-2. What does "visit" mean? — open a url (to be determined)
-3. ws-only or also Bubble plugin? — ws only
-
-#### Tasks:
-
-- [x] add a round button component to bottom left corner of build notes component
-- [ ] devise a url for presenting this content
-  - [x] move deliverables to ws/notes/guides
-  - [x] deploy
-    - [x] a. Update .vitepress/config.ts with multi-project sidebar
-    - [x] b. Create Netlify site for mono-docs
-    - [x] c. Symlinks so ws/di point to project notes
-    - [x] d. Prebuild script creates symlinks on Netlify
-    - [ ] e. Point `docs.gizmolab.com` to mono-docs Netlify (DNS propagating)
-    - [ ] f. Update hub config with new public URLs
-    - [ ] g. Retire separate ws-docs and di-docs Netlify sites
-- [ ] wire up the handle click logic
-
-
 

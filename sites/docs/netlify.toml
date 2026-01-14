@@ -1,5 +1,5 @@
 [build]
-  command = "bash tools/docs/prebuild.sh && yarn docs:build"
+  command = "bash ../../tools/docs/prebuild.sh && yarn docs:build"
   publish = ".vitepress/dist"
 
 [build.environment]

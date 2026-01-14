@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "projects/ws/notes/guides/deliverables.md",
+                "file": "projects/ws/notes/work/public-deliverables.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "deliverables"
+              "title": "public-deliverables"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "projects/ws/notes/guides/deliverables.md",
+                "file": "projects/ws/notes/work/public-deliverables.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for deliverables"
+              "title": "Backlinks for public-deliverables"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "projects/ws/notes/guides/deliverables.md",
+                "file": "projects/ws/notes/work/public-deliverables.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from deliverables"
+              "title": "Outgoing links from public-deliverables"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "projects/ws/notes/guides/deliverables.md",
+                "file": "projects/ws/notes/work/public-deliverables.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of deliverables"
+              "title": "Outline of public-deliverables"
             }
           }
         ],
@@ -185,12 +185,17 @@
   },
   "active": "92ba4c9b93a17746",
   "lastOpenFiles": [
+    "projects/ws/vite.config.js.timestamp-1768429012713-8df963c13cdb3.mjs",
+    "projects/ws/notes/guides/deliverables.md",
+    "projects/ws/notes/work/public-deliverables.md",
+    "sites/docs/netlify.toml",
+    "sites/docs",
+    "sites/untitled folder",
     "tools/docs/prebuild.sh",
     "tools/prebuild-docs.sh",
     "projects/ws/notes/work/deliverables.md",
     "projects/ws/notes/work/book.md",
     "projects/ws/vite.config.js.timestamp-1768415874156-e339a0eaee95e.mjs",
-    "projects/ws/notes/guides/deliverables.md",
     "tools/logs/mono-docs.log",
     "projects/ws/vite.config.js.timestamp-1768415146185-7502a0f704e19.mjs",
     "notes/guides/setup/index.md",
@@ -214,12 +219,7 @@
     "notes/guides/collaborate/evolve.md",
     "notes/guides/collaborate/workflow.md",
     "notes/work/articles/accidental.programmer.md",
-    "node_modules/vite-node/node_modules/vite/dist/node/chunks/postcss-import.js",
-    "node_modules/vite-node/node_modules/vite/dist/node/chunks/server.js",
-    "node_modules/vite-node/node_modules/vite/dist/node/chunks/preview.js",
-    "node_modules/vite-node/node_modules/vite/dist/node/chunks/optimizer.js",
     "node_modules/markdown-it-task-lists/test/fixtures/mixed-nested.md",
-    "node_modules/markdown-it-task-lists/test/fixtures/ordered.md",
-    "node_modules/markdown-it-task-lists/test/fixtures/bullet.md"
+    "node_modules/markdown-it-task-lists/test/fixtures/ordered.md"
   ]
 }
