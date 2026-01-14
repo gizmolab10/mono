@@ -1,14 +1,14 @@
 #!/bin/bash
-# Creates symlinks for VitePress to find project docs
-# Run locally after clone, or automatically by Netlify
+# Copies project docs into notes/ for VitePress build
+# Netlify runs this; locally use symlinks instead
 
 cd "$(dirname "$0")/../.."
 
-# Remove old copies/symlinks
+# Remove old symlinks/copies
 rm -rf notes/ws notes/di
 
-# Create symlinks using absolute paths (prevents path resolution issues)
-ln -s "$(pwd)/projects/ws/notes" notes/ws
-ln -s "$(pwd)/projects/di/notes" notes/di
+# Copy (not symlink) so VitePress sees correct paths
+cp -r projects/ws/notes notes/ws
+cp -r projects/di/notes notes/di
 
-echo "✅ Created symlinks: notes/ws, notes/di"
+echo "✅ Copied project docs to notes/ws and notes/di"
