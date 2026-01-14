@@ -77,6 +77,8 @@ The urls for review and feedback
 
 
 
+
+
 1. Where does the button go? — in the build notes overlay, at the bottom left corner
 2. What does "visit" mean? — open a url (to be determined)
 3. ws-only or also Bubble plugin? — ws only
@@ -86,14 +88,14 @@ The urls for review and feedback
 - [x] add a round button component to bottom left corner of build notes component
 - [ ] devise a url for presenting this content
   - [ ] move deliverables to ws/notes/guides
-  - [ ] create deployment
-	* [ ] a. Update .vitepress/config.ts with multi-project sidebar
-	* [ ] b. Configure rewrites so `/ws/` → `projects/ws/notes/`, `/di/` → `projects/di/notes/`, `/mono/` → `notes/`
-	* [ ] c. Update `update-project-docs.sh` to build unified docs
-	* [ ] d. Create Netlify site for mono-docs
-	* [ ] e. Point `docs.webseriously.org` to mono-docs Netlify
-	* [ ] f. Update hub config with new public URLs
-	* [ ] g. Retire separate ws-docs and di-docs Netlify sites
+  - [ ] deploy
+    - [x] a. Update .vitepress/config.ts with multi-project sidebar
+    - [ ] b. Create Netlify site for mono-docs
+    - [ ] c. Configure rewrites so `/ws/` → `projects/ws/notes/`, `/di/` → `projects/di/notes/`, `/mono/` → `notes/`
+    - [ ] d. Update `update-project-docs.sh` to build unified docs
+    - [ ] e. Point `docs.webseriously.org` to mono-docs Netlify
+    - [ ] f. Update hub config with new public URLs
+    - [ ] g. Retire separate ws-docs and di-docs Netlify sites
 - [ ] wire up the handle click logic
 
 

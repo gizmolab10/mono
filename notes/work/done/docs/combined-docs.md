@@ -1,7 +1,5 @@
 # Combined Docs Architecture
 
-See [docs.md](../../guides/collaborate/docs.md) for the architecture reference.
-
 ## Task History
 
 - [x] Create `~/GitHub/shared/` repo with CLAUDE.MD and guides/
