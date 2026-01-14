@@ -3,3 +3,7 @@ dist/
 .vitepress/cache/
 .DS_Store
 *.log
+
+# Symlinks created locally and by prebuild
+notes/ws
+notes/di

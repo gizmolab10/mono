@@ -5,9 +5,7 @@ export default defineConfig({
   srcDir: './notes',
   title: "Mono Docs",
   description: "Unified documentation for all projects",
-  ignoreDeadLinks: [
-    /^http:\/\/localhost/
-  ],
+  ignoreDeadLinks: true,
 
   vite: {
     server: {

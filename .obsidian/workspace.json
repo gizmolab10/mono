@@ -185,6 +185,8 @@
   },
   "active": "92ba4c9b93a17746",
   "lastOpenFiles": [
+    "tools/docs/prebuild.sh",
+    "tools/prebuild-docs.sh",
     "projects/ws/notes/work/deliverables.md",
     "projects/ws/notes/work/book.md",
     "projects/ws/vite.config.js.timestamp-1768415874156-e339a0eaee95e.mjs",
@@ -216,10 +218,8 @@
     "node_modules/vite-node/node_modules/vite/dist/node/chunks/server.js",
     "node_modules/vite-node/node_modules/vite/dist/node/chunks/preview.js",
     "node_modules/vite-node/node_modules/vite/dist/node/chunks/optimizer.js",
-    "node_modules/vite-node/node_modules/vite/dist/node/chunks/moduleRunnerTransport.d.ts",
     "node_modules/markdown-it-task-lists/test/fixtures/mixed-nested.md",
     "node_modules/markdown-it-task-lists/test/fixtures/ordered.md",
-    "node_modules/markdown-it-task-lists/test/fixtures/bullet.md",
-    "node_modules/markdown-it-task-lists/test/fixtures/dirty.md"
+    "node_modules/markdown-it-task-lists/test/fixtures/bullet.md"
   ]
 }
