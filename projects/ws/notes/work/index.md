@@ -9,5 +9,6 @@ Documentation of ongoing and completed work.
 - [Book](./book.md)
 - [Docs](./docs.md)
 - [Plugin Bugs](./plugin-bugs.md)
+- [Public Deliverables](./public-deliverables.md)
 - [Search Links](./search-links.md)
 

@@ -35,9 +35,29 @@ class FixLinks {
       this.buildFilePath = path.join(testDir, 'vitepress.build.txt');
       this.configPath = path.join(testDir, 'config.mts');
     } else {
-      this.buildFilePath = path.join(this.repoRoot, 'vitepress.build.txt');
-      this.configPath = path.join(this.repoRoot, '.vitepress', 'config.mts');
+      this.buildFilePath = this.findBuildFile();
+      this.configPath = this.findConfigPath();
     }
+  }
+
+  private findBuildFile(): string {
+    // Check sites/docs first (mono layout)
+    const sitesDocsBuild = path.join(this.repoRoot, 'sites', 'docs', 'vitepress.build.txt');
+    if (fs.existsSync(sitesDocsBuild)) {
+      return sitesDocsBuild;
+    }
+    // Fall back to repo root
+    return path.join(this.repoRoot, 'vitepress.build.txt');
+  }
+
+  private findConfigPath(): string {
+    // Check sites/docs/.vitepress first (mono layout)
+    const sitesDocsConfig = path.join(this.repoRoot, 'sites', 'docs', '.vitepress', 'config.mts');
+    if (fs.existsSync(sitesDocsConfig)) {
+      return sitesDocsConfig;
+    }
+    // Fall back to root .vitepress (project layout)
+    return path.join(this.repoRoot, '.vitepress', 'config.mts');
   }
 
   private findRepoRoot(): string {

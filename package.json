@@ -7,9 +7,9 @@
     "projects/*"
   ],
   "scripts": {
-    "docs:dev": "vitepress dev",
-    "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "docs:dev": "cd sites/docs && vitepress dev",
+    "docs:build": "cd sites/docs && vitepress build",
+    "docs:preview": "cd sites/docs && vitepress preview"
   },
   "devDependencies": {
     "mermaid": "^11.4.0",

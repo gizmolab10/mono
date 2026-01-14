@@ -80,7 +80,15 @@ echo ""
 
 # Step 3: Try building VitePress (may fail with broken links)
 echo "Step 3: Building VitePress documentation..."
-yarn docs:build > vitepress.build.txt 2>&1
+
+# Determine where to write build output
+if [ -d "sites/docs/.vitepress" ]; then
+  BUILD_OUTPUT="sites/docs/vitepress.build.txt"
+else
+  BUILD_OUTPUT="vitepress.build.txt"
+fi
+
+yarn docs:build > "$BUILD_OUTPUT" 2>&1
 
 BUILD_EXIT=$?
 if [ $BUILD_EXIT -eq 0 ]; then
@@ -129,11 +137,11 @@ fi
 
 # Step 6: Rebuild VitePress (should succeed now)
 echo "Step 6: Rebuilding VitePress documentation..."
-yarn docs:build > vitepress.build.txt 2>&1
+yarn docs:build > "$BUILD_OUTPUT" 2>&1
 
 if [ $? -ne 0 ]; then
   echo "❌ VitePress rebuild failed"
-  cat vitepress.build.txt
+  cat "$BUILD_OUTPUT"
   exit 1
 fi
 

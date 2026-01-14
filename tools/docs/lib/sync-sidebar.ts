@@ -20,7 +20,17 @@ class SyncSidebar {
   constructor(verbose: boolean = false) {
     this.verbose = verbose;
     this.repoRoot = this.findRepoRoot();
-    this.configPath = path.join(this.repoRoot, '.vitepress', 'config.mts');
+    this.configPath = this.findConfigPath();
+  }
+
+  private findConfigPath(): string {
+    // Check sites/docs/.vitepress first (mono layout)
+    const sitesDocsConfig = path.join(this.repoRoot, 'sites', 'docs', '.vitepress', 'config.mts');
+    if (fs.existsSync(sitesDocsConfig)) {
+      return sitesDocsConfig;
+    }
+    // Fall back to root .vitepress (project layout)
+    return path.join(this.repoRoot, '.vitepress', 'config.mts');
   }
 
   private findRepoRoot(): string {
@@ -80,7 +90,11 @@ class SyncSidebar {
     const srcDirMatch = configContent.match(/srcDir:\s*['"](.+?)['"]/);
     const srcExcludeMatch = configContent.match(/srcExclude:\s*\[([^\]]+)\]/);
     
-    const srcDir = srcDirMatch ? path.join(this.repoRoot, srcDirMatch[1]) : path.join(this.repoRoot, 'notes', 'designs');
+    const vitepressDir = path.dirname(this.configPath); // .vitepress folder
+    const siteRoot = path.dirname(vitepressDir); // sites/docs or repo root
+    const srcDir = srcDirMatch 
+      ? path.resolve(siteRoot, srcDirMatch[1]) 
+      : path.join(this.repoRoot, 'notes');
     const srcExclude = srcExcludeMatch 
       ? srcExcludeMatch[1].split(',').map(s => s.trim().replace(/['"]/g, ''))
       : [];
@@ -170,7 +184,8 @@ class SyncSidebar {
       configContent.substring(closeBracket + 1);
 
     // Create backup
-    const backupDir = path.join(this.repoRoot, '.vitepress', 'backups');
+    const configDir = path.dirname(this.configPath);
+    const backupDir = path.join(configDir, 'backups');
     if (!fs.existsSync(backupDir)) {
       fs.mkdirSync(backupDir, { recursive: true });
     }
