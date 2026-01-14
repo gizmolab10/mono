@@ -4,9 +4,11 @@
 
 cd "$(dirname "$0")/../.."
 
-# Create symlinks (remove first if they exist)
-rm -f notes/ws notes/di
-ln -s ../projects/ws/notes notes/ws
-ln -s ../projects/di/notes notes/di
+# Remove old copies/symlinks
+rm -rf notes/ws notes/di
 
-echo "✅ Created symlinks: notes/ws -> projects/ws/notes, notes/di -> projects/di/notes"
+# Create symlinks using absolute paths (prevents path resolution issues)
+ln -s "$(pwd)/projects/ws/notes" notes/ws
+ln -s "$(pwd)/projects/di/notes" notes/di
+
+echo "✅ Created symlinks: notes/ws, notes/di"

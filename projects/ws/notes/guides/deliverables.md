@@ -87,13 +87,13 @@ The urls for review and feedback
 
 - [x] add a round button component to bottom left corner of build notes component
 - [ ] devise a url for presenting this content
-  - [ ] move deliverables to ws/notes/guides
-  - [ ] deploy
+  - [x] move deliverables to ws/notes/guides
+  - [x] deploy
     - [x] a. Update .vitepress/config.ts with multi-project sidebar
-    - [ ] b. Create Netlify site for mono-docs
-    - [ ] c. Configure rewrites so `/ws/` → `projects/ws/notes/`, `/di/` → `projects/di/notes/`, `/mono/` → `notes/`
-    - [ ] d. Update `update-project-docs.sh` to build unified docs
-    - [ ] e. Point `docs.webseriously.org` to mono-docs Netlify
+    - [x] b. Create Netlify site for mono-docs
+    - [x] c. Symlinks so ws/di point to project notes
+    - [x] d. Prebuild script creates symlinks on Netlify
+    - [ ] e. Point `docs.gizmolab.com` to mono-docs Netlify (DNS propagating)
     - [ ] f. Update hub config with new public URLs
     - [ ] g. Retire separate ws-docs and di-docs Netlify sites
 - [ ] wire up the handle click logic

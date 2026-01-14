@@ -8,8 +8,8 @@ Unified documentation for all projects.
 
 ## Contents
 
-- [Di](./di/)
-- [Guides](./guides/)
-- [Work](./work/)
-- [Ws](./ws/)
+- [Di](/di/)
+- [Guides](/guides/)
+- [Work](/work/)
+- [Ws](/ws/)
 
