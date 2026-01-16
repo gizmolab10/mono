@@ -86,6 +86,27 @@ Defined in `sites/ports.json`:
 
 ## Troubleshooting
 
+### Check Deploy Status
+
+The API provides deploy status from Netlify:
+
+```bash
+# All sites
+curl http://localhost:5171/deploy-status
+
+# Single site
+curl http://localhost:5171/deploy-status/ws
+curl http://localhost:5171/deploy-status/di-docs
+```
+
+Returns:
+- `state`: `building`, `ready`, or `error`
+- `created_at`: when deploy started
+- `published_at`: when deploy finished
+- `error_message`: if failed
+
+Requires `NETLIFY_ACCESS_TOKEN` environment variable (already in zshrc).
+
 ### Deploy fails with syntax error in config.mts
 
 1. Check the error line number

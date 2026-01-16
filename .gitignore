@@ -10,3 +10,6 @@
 # Symlinks created locally and by prebuild
 notes/ws
 notes/di
+
+# Local Netlify folder
+.netlify

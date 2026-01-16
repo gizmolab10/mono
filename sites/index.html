@@ -692,10 +692,12 @@
 
     let pollInterval = null;
     let restartPollInterval = null;
+    let deployPollInterval = null;
     let pollErrorCount = 0;
     const MAX_POLL_ERRORS = 3;
     let shouldClearConsole = false;
-    let activeConsoleKey = null; // 'restart' or 'rebuild'
+    let activeConsoleKey = null; // 'restart', 'rebuild', or 'deploy'
+    let lastDeployStatus = null; // Track last known deploy status
 
     function setConsoleOutput(key, text) {
       consoleOutput.textContent = text;
@@ -789,6 +791,61 @@
         .catch(err => {
           setConsoleOutput('rebuild', `Poll error: ${err.message}`);
         });
+    }
+
+    // === Deploy Status Polling ===
+    function pollDeployStatus() {
+      // Don't poll if restart or rebuild is in progress
+      if (pollInterval || restartPollInterval) return;
+      
+      fetch(`http://localhost:${ports.api}/deploy-status`)
+        .then(res => res.json())
+        .then(data => {
+          const building = [];
+          const errors = [];
+          
+          for (const [site, status] of Object.entries(data)) {
+            if (status.state === 'building') {
+              building.push(site);
+            } else if (status.state === 'error') {
+              errors.push(site);
+            }
+          }
+          
+          if (building.length > 0) {
+            // Something is deploying
+            setConsoleOutput('deploy', `Deploying: ${building.join(', ')}`);
+            lastDeployStatus = 'building';
+          } else if (lastDeployStatus === 'building') {
+            // Just finished deploying
+            if (errors.length > 0) {
+              setConsoleOutput('deploy', `Deploy failed: ${errors.join(', ')}`);
+            } else {
+              setConsoleOutput('deploy', '✓ All deploys complete');
+            }
+            lastDeployStatus = 'done';
+            // Clear after 5 seconds
+            setTimeout(() => {
+              if (activeConsoleKey === 'deploy' && !pollInterval && !restartPollInterval) {
+                consoleOutput.textContent = '';
+                lastDeployStatus = null;
+              }
+            }, 5000);
+          }
+          // If nothing building and wasn't building before, show nothing (keep existing console)
+        })
+        .catch(err => {
+          // Silently fail - deploy status is optional
+          console.log('Deploy status poll failed:', err.message);
+        });
+    }
+
+    // Start deploy polling when page loads
+    function startDeployPolling() {
+      // Poll every 10 seconds
+      deployPollInterval = setInterval(pollDeployStatus, 10000);
+      // Also poll immediately
+      pollDeployStatus();
     }
 
     // === Action Button Handlers ===
@@ -954,6 +1011,7 @@
         update();
         matchRowWidths();
         updateFeedbackRow();
+        startDeployPolling();
       })
       .catch(err => {
         console.error('Failed to load ports:', err);

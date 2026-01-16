@@ -10,6 +10,8 @@ import json
 import os
 import threading
 import time
+import urllib.request
+import urllib.error
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEV_SERVERS = os.path.join(SCRIPT_DIR, 'servers.sh')
@@ -39,6 +41,17 @@ current_rebuild_project = None
 # Track if rebuild is running
 rebuild_running = False
 restart_running = False
+
+# Netlify site IDs (from Netlify dashboard)
+NETLIFY_SITES = {
+    'ws': 'webseriously',
+    'ws-docs': 'webseriously-documentation',
+    'di': 'designintuition',
+    'di-docs': 'designintuition-documentation',
+    'mono-docs': 'monorepo-documentation',
+}
+
+NETLIFY_TOKEN = os.environ.get('NETLIFY_ACCESS_TOKEN', '')
 
 # Sites to restart: name, port, dir, command, env
 RESTART_SITES = [
@@ -115,6 +128,34 @@ def rebuild_docs_async(project_path):
     finally:
         rebuild_running = False
 
+def get_netlify_deploy_status(site_name):
+    """Fetch latest deploy status from Netlify API"""
+    if not NETLIFY_TOKEN:
+        return {'error': 'No Netlify token configured'}
+    
+    try:
+        url = f'https://api.netlify.com/api/v1/sites/{site_name}.netlify.app/deploys?per_page=1'
+        req = urllib.request.Request(url)
+        req.add_header('Authorization', f'Bearer {NETLIFY_TOKEN}')
+        
+        with urllib.request.urlopen(req, timeout=10) as response:
+            deploys = json.loads(response.read().decode())
+            if deploys:
+                deploy = deploys[0]
+                return {
+                    'state': deploy.get('state'),  # building, ready, error
+                    'created_at': deploy.get('created_at'),
+                    'published_at': deploy.get('published_at'),
+                    'error_message': deploy.get('error_message'),
+                    'deploy_url': deploy.get('deploy_ssl_url'),
+                    'title': deploy.get('title', ''),
+                }
+            return {'error': 'No deploys found'}
+    except urllib.error.HTTPError as e:
+        return {'error': f'HTTP {e.code}'}
+    except Exception as e:
+        return {'error': str(e)}
+
 class APIHandler(BaseHTTPRequestHandler):
     def _send_response(self, status, data):
         self.send_response(status)
@@ -167,6 +208,26 @@ class APIHandler(BaseHTTPRequestHandler):
                     'done': done,
                     'running': restart_running
                 })
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+        
+        elif self.path == '/deploy-status':
+            try:
+                results = {}
+                for key, site_name in NETLIFY_SITES.items():
+                    results[key] = get_netlify_deploy_status(site_name)
+                self._send_response(200, results)
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+        
+        elif self.path.startswith('/deploy-status/'):
+            try:
+                site_key = self.path.split('/')[-1]
+                if site_key in NETLIFY_SITES:
+                    result = get_netlify_deploy_status(NETLIFY_SITES[site_key])
+                    self._send_response(200, result)
+                else:
+                    self._send_response(404, {'error': f'Unknown site: {site_key}'})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
         
