@@ -27,7 +27,7 @@
       --text-choice: #888;
       --text-action: #fff;
       --text-title: #fff;
-      --text-badge: #000;
+      --text-badge: #016c42;
 
 
       /* Font sizes */
@@ -35,7 +35,7 @@
       --font-command: 13px;
       --font-button: 14px;
       --font-title: 24px;
-      --font-badge: 8px;
+      --font-badge: 11px;
 
       /* Spacing */
       --gap-horizontal: 12px;
@@ -91,6 +91,33 @@
     .actions-row {
       display: inline-flex;
       gap: var(--gap-horizontal);
+      margin-bottom: var(--gap-vertical);
+    }
+
+    .console-row {
+      display: flex;
+      margin-bottom: var(--gap-vertical);
+    }
+
+    .console-box {
+      background: transparent;
+      padding: var(--box-padding);
+      border-radius: 12px;
+    }
+
+    .console-output {
+      background: transparent;
+      color: var(--text-feedback);
+      font-family: monospace;
+      font-size: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      height: 20px;
+      min-width: 400px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: -7px;
     }
 
     .feedback-row {
@@ -109,20 +136,20 @@
       cursor: default;
     }
 
-    #btn-feedback-mode {
+    #btn-mode {
       text-align: center;
-      flex: 1;
+      width: 40px;
     }
 
-    #btn-feedback-project {
+    #btn-project {
       text-align: center;
-      flex: 1;
+      width: 40px;
     }
 
     #btn-destination {
       text-align: left;
       padding-left: 8px;
-      flex: 10;
+      flex: 1;
     }
 
     .title-box {
@@ -266,44 +293,65 @@
     .command.visible {
       display: block;
     }
+
+    /* Side-A/Side-B swap support */
+    .side-b {
+      display: flex;
+      gap: var(--button-gap);
+    }
+
+    .swapped {
+      flex-direction: row-reverse;
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
     <div class="title-row">
-      <div class="title-box">
-        <button class="action" id="btn-start">Restart<span class="badge">⌫</span></button>
-        <h1>Work Sites</h1>
-        <button class="action" id="btn-dns">DNS<span class="badge">N</span></button>
+      <div class="title-box swapped">
+        <button class="action side-a" id="btn-dns">DNS<span class="badge">N</span></button>
+        <h1 class="middle">Work Sites</h1>
+        <div class="side-b">
+          <button class="action" id="btn-start">Restart<span class="badge">esc</span></button>
+          <button class="action" id="btn-rebuild">Rebuild Docs<span class="badge">⌫</span></button>
+        </div>
       </div>
     </div>
 
-    <div class="segment-row">
-      <div class="project-group">
+    <div class="console-row" id="console-row">
+      <div class="console-box">
+        <div class="console-output" id="console-output"></div>
+      </div>
+    </div>
+
+    <div class="segment-row swapped">
+      <div class="project-group side-a">
         <button class="segment" data-project="mono">mono<span class="badge">M</span></button>
         <button class="segment" data-project="di">di<span class="badge">D</span></button>
         <button class="segment active" data-project="ws">ws<span class="badge">W</span></button>
       </div>
-      <div class="mode-group">
+      <div class="mode-group side-b">
         <button class="segment active" data-mode="app">App<span class="badge">A</span></button>
         <button class="segment" data-mode="docs">Docs<span class="badge">X</span></button>
       </div>
     </div>
 
     <div class="feedback-row" id="feedback-row">
-      <button class="feedback-btn" id="btn-feedback-project"></button>
-      <button class="feedback-btn" id="btn-feedback-mode"></button>
-      <button class="feedback-btn" id="btn-destination"></button>
+      <button class="feedback-btn side-a" id="btn-destination"></button>
+      <div class="side-b">
+        <button class="feedback-btn" id="btn-project"></button>
+        <button class="feedback-btn" id="btn-mode"></button>
+      </div>
     </div>
 
     <div class="actions-row">
-      <div class="more-group">
+      <div class="more-group side-a">
         <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
         <button class="action" id="btn-repo">Repo<span class="badge">R</span></button>
         <button class="action" id="btn-deploy">Deploy<span class="badge">Y</span></button>
       </div>
-      <div class="navigate-group">
+      <div class="navigate-group side-b">
         <button class="action" id="btn-local">Local<span class="badge">L</span></button>
         <button class="action" id="btn-netlify">Netlify<span class="badge">T</span></button>
         <button class="action" id="btn-public">Public<span class="badge">P</span></button>
@@ -337,6 +385,9 @@
     const btnDeploy = document.getElementById('btn-deploy');
     const btnDns = document.getElementById('btn-dns');
     const btnBubble = document.getElementById('btn-bubble');
+    const btnRebuild = document.getElementById('btn-rebuild');
+    const consoleOutput = document.getElementById('console-output');
+    const consoleRow = document.getElementById('console-row');
     const commandDiv = document.getElementById('command');
 
     // === Config Initialization ===
@@ -408,14 +459,16 @@
       const actionsRow = document.querySelector('.actions-row');
       const titleBox = document.querySelector('.title-box');
       const feedbackRow = document.querySelector('.feedback-row');
+      const consoleBox = document.querySelector('.console-box');
       const width = actionsRow.offsetWidth + 'px';
       titleBox.style.width = width;
       feedbackRow.style.width = width;
+      consoleBox.style.width = width;
     }
 
     function updateFeedbackRow() {
-      document.getElementById('btn-feedback-mode').textContent = getDisplayMode();
-      document.getElementById('btn-feedback-project').textContent = getDisplayProject();
+      document.getElementById('btn-mode').textContent = getDisplayMode();
+      document.getElementById('btn-project').textContent = getDisplayProject();
       document.getElementById('btn-destination').textContent = hoveredAction || '';
     }
 
@@ -529,8 +582,12 @@
     }
 
     function doStart() {
+      if (pollInterval || restartPollInterval) return; // Operation in progress
+      
       btnStart.classList.add('disabled');
-      btnStart.innerHTML = 'Restarting<span class="badge">⌫</span>';
+      btnRebuild.classList.add('disabled'); // Disable rebuild while restarting
+      btnStart.innerHTML = 'Restarting<span class="badge">esc</span>';
+      setConsoleOutput('restart', 'Starting...');
       matchRowWidths();
 
       fetch(`http://localhost:${ports.api}/restart-all`, {
@@ -540,25 +597,56 @@
         .then(res => res.json())
         .then(data => {
           if (data.success) {
-            setTimeout(() => {
-              btnStart.innerHTML = 'Restart<span class="badge">⌫</span>';
-              btnStart.classList.remove('disabled');
-              matchRowWidths();
-            }, 7000);
+            // Start polling for status
+            restartPollInterval = setInterval(pollRestartStatus, 500);
           } else {
-            btnStart.innerHTML = 'Restart<span class="badge">⌫</span>';
+            btnStart.innerHTML = 'Restart<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
+            setConsoleOutput('restart', `Error: ${data.error}`);
             matchRowWidths();
-            commandDiv.textContent = `Error: ${data.error || 'Some sites failed'}`;
-            commandDiv.classList.add('visible');
           }
         })
         .catch(err => {
-          btnStart.innerHTML = 'Restart<span class="badge">⌫</span>';
+          btnStart.innerHTML = 'Restart<span class="badge">esc</span>';
           btnStart.classList.remove('disabled');
+          setConsoleOutput('restart', `API error: ${err.message}`);
           matchRowWidths();
-          commandDiv.textContent = `API error: ${err.message}`;
-          commandDiv.classList.add('visible');
+        });
+    }
+
+    function pollRestartStatus() {
+      fetch(`http://localhost:${ports.api}/restart-status`)
+        .then(res => res.json())
+        .then(data => {
+          pollErrorCount = 0; // Reset on success
+          setConsoleOutput('restart', data.status || 'Working...');
+          
+          if (data.done) {
+            clearInterval(restartPollInterval);
+            restartPollInterval = null;
+            btnStart.innerHTML = 'Restart<span class="badge">esc</span>';
+            btnStart.classList.remove('disabled');
+            btnRebuild.classList.remove('disabled'); // Re-enable rebuild
+            matchRowWidths();
+            
+            // Clear console if mouse is not over console row or restart button
+            setTimeout(() => {
+              shouldClearConsole = true;
+            }, 1000);
+          }
+        })
+        .catch(err => {
+          pollErrorCount++;
+          // Allow a few failures (API might be momentarily busy)
+          if (pollErrorCount >= MAX_POLL_ERRORS) {
+            clearInterval(restartPollInterval);
+            restartPollInterval = null;
+            btnStart.innerHTML = 'Restart<span class="badge">esc</span>';
+            btnStart.classList.remove('disabled');
+            btnRebuild.classList.remove('disabled'); // Re-enable rebuild
+            setConsoleOutput('restart', `Poll error: ${err.message}`);
+            matchRowWidths();
+          }
         });
     }
 
@@ -602,6 +690,107 @@
       window.open(cfg.bubble, '_blank');
     }
 
+    let pollInterval = null;
+    let restartPollInterval = null;
+    let pollErrorCount = 0;
+    const MAX_POLL_ERRORS = 3;
+    let shouldClearConsole = false;
+    let activeConsoleKey = null; // 'restart' or 'rebuild'
+
+    function setConsoleOutput(key, text) {
+      consoleOutput.textContent = text;
+      if (text) {
+        localStorage.setItem(`hub-console-${key}`, text);
+      }
+      activeConsoleKey = key;
+    }
+
+    function getConsoleOutput(key) {
+      return localStorage.getItem(`hub-console-${key}`) || '';
+    }
+
+    function clearConsoleOutput(key) {
+      localStorage.removeItem(`hub-console-${key}`);
+    }
+    
+    // Clear console when entering any button OTHER than restart/rebuild
+    function clearConsoleOnOtherButton() {
+      if (!restartPollInterval && !pollInterval) {
+        consoleOutput.textContent = '';
+      }
+    }
+    
+    // Show console output on hover for restart/rebuild buttons
+    btnStart.addEventListener('mouseenter', () => {
+      if (!restartPollInterval && !pollInterval) {
+        consoleOutput.textContent = getConsoleOutput('restart');
+      }
+    });
+    btnRebuild.addEventListener('mouseenter', () => {
+      if (!restartPollInterval && !pollInterval) {
+        consoleOutput.textContent = getConsoleOutput('rebuild');
+      }
+    });
+
+    function doRebuild() {
+      if (pollInterval || restartPollInterval) return; // Operation in progress
+      
+      btnRebuild.classList.add('disabled');
+      btnStart.classList.add('disabled'); // Disable restart while rebuilding
+      btnRebuild.innerHTML = 'Rebuilding Docs<span class="badge">⌫</span>';
+      setConsoleOutput('rebuild', 'Starting...');
+      matchRowWidths();
+
+      fetch(`http://localhost:${ports.api}/rebuild-docs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project: project })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            // Start polling for status
+            pollInterval = setInterval(pollRebuildStatus, 500);
+          } else {
+            btnRebuild.innerHTML = 'Rebuild Docs<span class="badge">⌫</span>';
+            btnRebuild.classList.remove('disabled');
+            setConsoleOutput('rebuild', `Error: ${data.error}`);
+            matchRowWidths();
+          }
+        })
+        .catch(err => {
+          btnRebuild.innerHTML = 'Rebuild Docs<span class="badge">⌫</span>';
+          btnRebuild.classList.remove('disabled');
+          setConsoleOutput('rebuild', `API error: ${err.message}`);
+          matchRowWidths();
+        });
+    }
+
+    function pollRebuildStatus() {
+      fetch(`http://localhost:${ports.api}/rebuild-status`)
+        .then(res => res.json())
+        .then(data => {
+          setConsoleOutput('rebuild', data.status || 'Working...');
+          
+          if (data.done) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+            btnRebuild.innerHTML = 'Rebuild Docs<span class="badge">⌫</span>';
+            btnRebuild.classList.remove('disabled');
+            btnStart.classList.remove('disabled'); // Re-enable restart
+            matchRowWidths();
+            
+            // Enable console clear on mouseleave after 1 second
+            setTimeout(() => {
+              shouldClearConsole = true;
+            }, 1000);
+          }
+        })
+        .catch(err => {
+          setConsoleOutput('rebuild', `Poll error: ${err.message}`);
+        });
+    }
+
     // === Action Button Handlers ===
     const actionButtons = {
       'btn-local': () => {
@@ -635,6 +824,7 @@
     modeButtons.forEach(btn => {
       btn.addEventListener('click', () => setMode(btn.dataset.mode));
       btn.addEventListener('mouseenter', () => {
+        clearConsoleOnOtherButton();
         const m = btn.dataset.mode;
         // Temporarily hide other buttons in group
         modeButtons.forEach(b => {
@@ -664,6 +854,7 @@
     projectButtons.forEach(btn => {
       btn.addEventListener('click', () => setProject(btn.dataset.project));
       btn.addEventListener('mouseenter', () => {
+        clearConsoleOnOtherButton();
         if (btn.classList.contains('disabled')) return;
         const p = btn.dataset.project;
         // Temporarily hide other buttons in group
@@ -700,6 +891,7 @@
     btnDeploy.addEventListener('click', doDeploy);
     btnDns.addEventListener('click', doDns);
     btnBubble.addEventListener('click', doBubble);
+    btnRebuild.addEventListener('click', doRebuild);
 
     document.addEventListener('keydown', (e) => {
       // Blur any focused button so keyboard works
@@ -718,9 +910,10 @@
         case 'd': previewProject = 'di'; highlightProjectButton('di'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
         case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } } break;
         case 'm': { const m = getDisplayMode(); if (config[m]?.['mono'] !== null) { previewProject = 'mono'; highlightProjectButton('mono'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); } } break;
-        case 'escape': previewMode = null; previewProject = null; modeButtons.forEach(btn => { btn.classList.remove('sticky'); btn.classList.toggle('active', btn.dataset.mode === mode); }); projectButtons.forEach(btn => { btn.classList.remove('sticky'); const valid = config[mode][btn.dataset.project] !== null; btn.classList.toggle('disabled', !valid); btn.classList.toggle('active', btn.dataset.project === project); }); btnDns.classList.remove('sticky'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
+        case 'escape': doStart(); break;
         case 'enter': if (hoveredAction) { window.open(hoveredAction, '_blank'); } break;
-        case 'delete': doStart(); break;
+        case 'delete':
+        case 'backspace': doRebuild(); break;
         case 'l': hoveredActionId = 'btn-local'; hoveredAction = actionButtons['btn-local'](); highlightActionButton('btn-local'); updateFeedbackRow(); break;
         case 't': hoveredActionId = 'btn-netlify'; hoveredAction = actionButtons['btn-netlify'](); highlightActionButton('btn-netlify'); updateFeedbackRow(); break;
         case 'p': hoveredActionId = 'btn-public'; hoveredAction = actionButtons['btn-public'](); highlightActionButton('btn-public'); updateFeedbackRow(); break;
@@ -734,6 +927,7 @@
     Object.keys(actionButtons).forEach(id => {
       const btn = document.getElementById(id);
       btn.addEventListener('mouseenter', () => {
+        clearConsoleOnOtherButton();
         if (btn.classList.contains('disabled')) return;
         if (hoveredActionId) {
           document.getElementById(hoveredActionId).classList.remove('sticky');
@@ -748,6 +942,10 @@
     window.addEventListener('resize', matchRowWidths);
 
     // === Initialize ===
+    // Clear console storage on refresh
+    localStorage.removeItem('hub-console-restart');
+    localStorage.removeItem('hub-console-rebuild');
+
     fetch('./ports.json')
       .then(res => res.json())
       .then(data => {

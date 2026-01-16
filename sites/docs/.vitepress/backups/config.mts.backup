@@ -97,6 +97,10 @@ export default defineConfig({
                   link: '/guides/develop/refactoring'
                 },
                 {
+                  text: 'Single Line',
+                  link: '/guides/develop/single-line'
+                },
+                {
                   text: 'Style',
                   link: '/guides/develop/style'
                 }
@@ -152,24 +156,16 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: 'Crazy Idea',
-              link: '/work/crazy-idea'
+              text: 'Commoditize',
+              link: '/work/commoditize'
             },
             {
               text: 'Pacing',
               link: '/work/pacing'
             },
             {
-              text: 'Projects',
-              link: '/work/projects'
-            },
-            {
               text: 'Simplicity',
               link: '/work/simplicity'
-            },
-            {
-              text: 'Working Minimum',
-              link: '/work/working-minimum'
             },
             {
               text: 'Articles >',
@@ -194,6 +190,18 @@ export default defineConfig({
               text: 'Done >',
               collapsed: true,
               items: [
+                {
+                  text: 'Guides Clutter',
+                  link: '/work/done/guides-clutter'
+                },
+                {
+                  text: 'Single Line Progress',
+                  link: '/work/done/single-line-progress'
+                },
+                {
+                  text: 'Sites Hub',
+                  link: '/work/done/sites-hub'
+                },
                 {
                   text: 'Docs >',
                   collapsed: true,

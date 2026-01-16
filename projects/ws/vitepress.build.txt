@@ -3,8 +3,7 @@
 
 - building client + server bundles...
 
-The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is noDone in 23.14s.
-g back to 'txt' for syntax highlighting.
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
 
 The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
 
@@ -71,4 +70,4 @@ The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 't
 [32m✓[0m building client + server bundles...
 - rendering pages...
 [32m✓[0m rendering pages...
-build complete in 22.47s.
+build complete in 22.58s.

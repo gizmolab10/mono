@@ -1,8 +1,11 @@
-**/node_modules/
-**/dist/
+
 **/.vitepress/cache/
+**/node_modules/
 **/.DS_Store
+**/aside/
 **/*.log
+**/dist/
+**/logs/
 
 # Symlinks created locally and by prebuild
 notes/ws

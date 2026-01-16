@@ -26,11 +26,6 @@ The urls for review and feedback
 - [ ] webseriously view is taller than the window
 - [ ] top banner wraps badly (places things on top of webseriously) when window too narrow
 
-### Questions
-
-- [ ] \
-  - [ ] \
-  - [ ] or just disable rubber band
 
 ## Webseriously
 

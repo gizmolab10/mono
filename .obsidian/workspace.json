@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "projects/ws/notes/work/done/public-deliverables.md",
+                "file": "notes/work/class-lists.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "public-deliverables"
+              "title": "class-lists"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "projects/ws/notes/work/done/public-deliverables.md",
+                "file": "notes/work/class-lists.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for public-deliverables"
+              "title": "Backlinks for class-lists"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "projects/ws/notes/work/done/public-deliverables.md",
+                "file": "notes/work/class-lists.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from public-deliverables"
+              "title": "Outgoing links from class-lists"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "projects/ws/notes/work/done/public-deliverables.md",
+                "file": "notes/work/class-lists.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of public-deliverables"
+              "title": "Outline of class-lists"
             }
           }
         ],
@@ -183,21 +183,34 @@
       "bases:Create new base": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "92ba4c9b93a17746",
   "lastOpenFiles": [
-    "projects/ws/notes/work/done/experiments/quaternion-poc/index.html",
-    "projects/ws/notes/work/done/experiments/quaternion-poc",
-    "projects/ws/notes/work/done/experiments",
-    "projects/ws/notes/work/experiments/quaternion-poc/index.html",
-    "projects/ws/notes/work/experiments/quaternion-poc",
-    "projects/ws/notes/work/experiments",
-    "projects/ws/notes/experiments/quaternion-poc/index.html",
-    "projects/ws/notes/experiments/quaternion-poc",
-    "projects/ws/notes/experiments",
-    "sites/docs/node_modules",
-    "sites/docs/package.json",
-    "projects/ws/notes/guides/deliverables.md",
+    "projects/ws/vite.config.js.timestamp-1768524544984-e3cc34e253dec.mjs",
+    "projects/ws/vite.config.js.timestamp-1768524508548-c77c4db8b00cb.mjs",
+    "projects/ws/vite.config.js.timestamp-1768524417719-ded58ce4de09.mjs",
+    "projects/ws/vite.config.js.timestamp-1768523399528-51f98fc9bb91b.mjs",
+    "projects/ws/vite.config.js.timestamp-1768523277853-e63aa03a26393.mjs",
+    "projects/ws/vite.config.js.timestamp-1768523265774-343db8c8a4ea2.mjs",
+    "projects/ws/vite.config.js.timestamp-1768523142476-3bf8e3e1b6931.mjs",
+    "projects/ws/vite.config.js.timestamp-1768522861763-13a3deeae8585.mjs",
+    "projects/ws/vite.config.js.timestamp-1768522845943-c948607058c9f.mjs",
+    "projects/ws/vite.config.js.timestamp-1768522774037-aedbc2595dca1.mjs",
+    "projects/ws/vite.config.js.timestamp-1768522762675-80e1b6a1d73ef.mjs",
     "projects/ws/notes/work/done/public-deliverables.md",
+    "notes/work/class-lists.md",
+    "notes/work/cleanup.md",
+    "notes/work/done/cleanup.md",
+    "notes/work/done/guides-clutter.md",
+    "notes/work/guides-clutter.md",
+    "notes/work/done/single-line-progress.md",
+    "notes/work/single-line-progress.md",
+    "notes/work/done/sites-hub.md",
+    "notes/work/sites-hub.md",
+    "notes/work/foo.md",
+    "notes/guides/develop/single-line.md",
+    "notes/work/updating-docs.md",
+    "notes/work/commoditize.md",
+    "projects/ws/notes/guides/deliverables.md",
     "projects/ws/notes/work/deliverables.md",
     "projects/ws/notes/work/book.md",
     "notes/guides/setup/index.md",
@@ -207,19 +220,6 @@
     "notes/work/done/docs.md",
     "notes/work/done/docs/combined-docs.md",
     "notes/guides/setup/single.project.md",
-    "notes/guides/collaborate/markdown.md",
-    "notes/guides/setup/deploy.md",
-    "notes/guides/setup/onboarding.md",
-    "notes/guides/setup/monorepo.md",
-    "notes/guides/setup/jonathan.md",
-    "notes/guides/develop/monorepo.md",
-    "notes/guides/collaborate/vitepress-setup.md",
-    "notes/guides/collaborate/work-site.md",
-    "notes/work/working-minimum.md",
-    "notes/guides/collaborate/evolve.md",
-    "notes/guides/collaborate/workflow.md",
-    "notes/work/articles/accidental.programmer.md",
-    "node_modules/markdown-it-task-lists/test/fixtures/mixed-nested.md",
-    "node_modules/markdown-it-task-lists/test/fixtures/ordered.md"
+    "notes/guides/collaborate/markdown.md"
   ]
 }
