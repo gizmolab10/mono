@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(lsof:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebFetch(domain:docs.gizmolab.com)",
+      "WebFetch(domain:monorepo-documentation.netlify.app)",
+      "Bash(ls:*)",
+      "Bash(git -C ~/GitHub/mono status notes/ws/)",
+      "Bash(git -C ~/GitHub/mono ls-files:*)",
+      "Bash(git -C ~/GitHub/mono status:*)",
+      "Bash(git -C:*)"
     ]
   }
 }

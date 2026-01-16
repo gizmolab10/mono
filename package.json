@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "docs:dev": "cd sites/docs && vitepress dev",
-    "docs:build": "cd sites/docs && vitepress build",
+    "docs:build": "ln -sf ../projects/ws/notes notes/ws && ln -sf ../projects/di/notes notes/di && cd sites/docs && vitepress build",
     "docs:preview": "cd sites/docs && vitepress preview"
   },
   "devDependencies": {
