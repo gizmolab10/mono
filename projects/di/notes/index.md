@@ -1,4 +1,4 @@
-# Notes
+# Di
 
 Documentation and design notes for the Design Intuition project.
 

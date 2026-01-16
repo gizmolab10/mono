@@ -619,7 +619,12 @@
         .then(res => res.json())
         .then(data => {
           pollErrorCount = 0; // Reset on success
-          setConsoleOutput('restart', data.status || 'Working...');
+          // Only show "Working..." if actually running
+          if (data.running) {
+            setConsoleOutput('restart', data.status || 'Working...');
+          } else if (data.status) {
+            setConsoleOutput('restart', data.status);
+          }
           
           if (data.done) {
             clearInterval(restartPollInterval);
@@ -772,7 +777,12 @@
       fetch(`http://localhost:${ports.api}/rebuild-status`)
         .then(res => res.json())
         .then(data => {
-          setConsoleOutput('rebuild', data.status || 'Working...');
+          // Only show "Working..." if actually running
+          if (data.running) {
+            setConsoleOutput('rebuild', data.status || 'Working...');
+          } else if (data.status) {
+            setConsoleOutput('rebuild', data.status);
+          }
           
           if (data.done) {
             clearInterval(pollInterval);
@@ -832,7 +842,6 @@
         })
         .catch(err => {
           // Silently fail - deploy status is optional
-          console.log('Deploy status poll failed:', err.message);
         });
     }
 

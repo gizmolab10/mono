@@ -1,109 +1,101 @@
 # Deploy to Netlify
 
-How to add a new site to Netlify for any project/mode combination.
+## Overview
 
-## Prerequisites
+The monorepo has 5 deployable sites across 3 projects. All deploy from the `gizmolab10/mono` repo.
 
-- Netlify account with access to the team
-- GitHub repo connected to Netlify
-- Project builds locally (`yarn build` or `yarn docs:build`)
+## Current Sites
 
-## Site Naming Convention
+| Site | Netlify Project | Base Dir | Build Command | Publish Dir |
+|------|-----------------|----------|---------------|-------------|
+| ws app | webseriously | `projects/ws` | `yarn build` | `dist` |
+| ws docs | webseriously-documentation | `projects/ws` | `yarn docs:build` | `.vitepress/dist` |
+| di app | designintuition | `projects/di` | `yarn build` | `dist` |
+| di docs | designintuition-documentation | `projects/di` | `yarn docs:build` | `.vitepress/dist` |
+| mono docs | monorepo-documentation | `sites/docs` | `yarn docs:build` | `.vitepress/dist` |
 
-Sites follow the pattern: `{project}` or `{project}-docs`
+## Public URLs
 
-| Project | Mode | Netlify Site Name |
-|---------|------|-------------------|
-| ws | dev | webseriously |
-| ws | docs | webseriously-docs |
-| di | dev | di |
-| di | docs | di-docs |
-| shared | docs | shared-docs |
+| Site | Netlify URL | Custom Domain |
+|------|-------------|---------------|
+| ws app | https://webseriously.netlify.app | https://webseriously.org |
+| ws docs | https://webseriously-documentation.netlify.app | https://docs.webseriously.org |
+| di app | https://designintuition.netlify.app | https://designintuition.app |
+| di docs | https://designintuition-documentation.netlify.app | https://docs.designintuition.app |
+| mono docs | https://monorepo-documentation.netlify.app | https://docs.gizmolab.com |
 
-## Steps to Add a New Site
+## Dashboard URLs
 
-### 1. Create the Site in Netlify
+- ws app: https://app.netlify.com/projects/webseriously/settings/build-and-deploy
+- ws docs: https://app.netlify.com/projects/webseriously-documentation/settings/build-and-deploy
+- di app: https://app.netlify.com/projects/designintuition/settings/build-and-deploy
+- di docs: https://app.netlify.com/projects/designintuition-documentation/settings/build-and-deploy
+- mono docs: https://app.netlify.com/projects/monorepo-documentation/settings/build-and-deploy
 
-1. Log in to [Netlify](https://app.netlify.com)
-2. Click **Add new site** → **Import an existing project**
-3. Select **GitHub**
-4. Choose the repository (e.g., `gizmolab10/di`)
-5. Configure build settings (leave base directory blank):
+## Config Files
 
-| Project | Mode | Build command     | Publish directory            | Done |
-| ------- | ---- | ----------------- | ---------------------------- | ---- |
-| ws      | dev  | `yarn build`      | `dist`                       | yes  |
-| ws      | docs | `yarn docs:build` | `notes/docs/.vitepress/dist` | yes  |
-| di      | dev  | `yarn build`      | `dist`                       | no   |
-| di      | docs | `yarn docs:build` | `notes/docs/.vitepress/dist` | no   |
-| shared  | docs | `yarn docs:build` | `notes/docs/.vitepress/dist` | no   |
+Each docs site has its own VitePress config:
 
-6. Click **Deploy**
+| Site | Config Path |
+|------|-------------|
+| ws docs | `projects/ws/.vitepress/config.mts` |
+| di docs | `projects/di/.vitepress/config.mts` |
+| mono docs | `sites/docs/.vitepress/config.mts` |
 
-### 2. Rename the Site
+**Important:** No `netlify.toml` files — all build settings are in the Netlify dashboard.
 
-Netlify assigns a random name. Change it:
+## Check Deploy Status
 
-1. Go to **Site settings** → **General** → **Site details**
-2. Click **Change site name**
-3. Enter the name from the naming convention above
-4. Save
+The hub API provides deploy status:
 
-### 3. Get the Site ID
+```bash
+# All sites
+curl http://localhost:5171/deploy-status
 
-1. Go to **Site settings** → **General** → **Site details**
-2. Copy the **Site ID** (a UUID like `0770f16d-e009-48e8-a548-38a5bb2c18f5`)
-3. Add to project's `notes/tools/config.sh`:
-   ```bash
-   NETLIFY_SITE_ID="your-site-id-here"
-   ```
-
-### 4. Update dev-hub.html Config
-
-Add URLs to the config in `dev-hub.html`:
-
-```javascript
-di: {
-  port: 5174,
-  site: 'di',
-  public: 'https://di.netlify.app',  // ← add this
-  repo: 'https://github.com/gizmolab10/di',
-  deploy: 'https://app.netlify.com/sites/di/deploys',
-  dns: 'https://app.netlify.com/sites/di/settings/domain',
-  bubble: null
-}
+# Single site
+curl http://localhost:5171/deploy-status/ws
+curl http://localhost:5171/deploy-status/di-docs
 ```
 
-### 5. Verify Deployment
+Returns:
+- `state`: `building`, `ready`, or `error`
+- `created_at`: when deploy started
+- `published_at`: when deploy finished
+- `error_message`: if failed
 
-1. Push a change to the repo
-2. Check Netlify dashboard for build status
-3. Visit the public URL to confirm it works
-4. Test the **Public** button in dev-hub.html
+Requires `NETLIFY_ACCESS_TOKEN` environment variable.
 
 ## Troubleshooting
 
-### Build fails
+### Deploy fails with syntax error in config.mts
 
-- Check build command matches what works locally
-- Verify publish directory path is correct
-- Check Netlify build logs for specific errors
+1. Check the error line number
+2. Look for missing comma after `link:` property
+3. Run `update-project-docs.sh` to regenerate sidebar with correct syntax
 
-### Site not updating
+### Deploy builds wrong content
 
-- Confirm the branch is set correctly (usually `main`)
-- Check if auto-publishing is enabled in **Site settings** → **Build & deploy**
+1. Check Netlify base directory setting in dashboard
+2. Must match project path (e.g., `projects/di` not `/`)
+3. Verify no `netlify.toml` file exists (they override dashboard settings)
 
-### Custom domain
+### "No content change" error
 
-See **Site settings** → **Domain management** to add a custom domain.
+Not a real error — Netlify skips builds when nothing changed. The hub filters these out.
 
-## Current Deployments
+### Deploy not triggered after push
 
-| Site | Status | URL |
-|------|--------|-----|
-| webseriously | ✅ | https://webseriously.netlify.app |
-| webseriously-docs | ✅ | https://webseriously-docs.netlify.app |
-| di | ❌ | (not deployed) |
-| di-docs | ❌ | (not deployed) |
-| shared-docs | ❌ | (not deployed) |
+1. Check the repo is `gizmolab10/mono` (not old standalone repos)
+2. Check the branch is `main`
+3. Check auto-publishing is enabled in Netlify dashboard
+
+## Adding a New Site
+
+1. Create site in Netlify → Import existing project → GitHub → `gizmolab10/mono`
+2. Set Base directory to the project path (e.g., `projects/newproject`)
+3. Set Build command (`yarn build` for app, `yarn docs:build` for docs)
+4. Set Publish directory (`dist` for app, `.vitepress/dist` for docs)
+5. Rename site to follow naming convention
+6. Add to `sites/api.py` NETLIFY_SITES dict
+7. Add to `sites/index.html` config
+8. Add to `sites/ports.json` if it has a local dev server

@@ -6,5 +6,5 @@
 - [Jonathan](./jonathan.md)
 - [Monorepo](./monorepo.md)
 - [Onboarding](./onboarding.md)
-- [Single.project](./single.project.md)
+- [Vitepress](./vitepress.md)
 

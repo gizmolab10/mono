@@ -1,6 +1,6 @@
 # CLAUDE.MD
 
-COMMON: Read `../sh/CLAUDE.MD`
+COMMON: Read `../../CLAUDE.MD`
 
 REPO: `~/GitHub/mono/projects/ws`
 

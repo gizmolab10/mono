@@ -154,7 +154,12 @@ cd "$PROJECT_ROOT" || exit 1
 PROJECT_ROOT=$(pwd)  # Convert to absolute path
 
 # Set up logs directory
-LOGS_DIR="$PROJECT_ROOT/../logs"
+# For mono root, use mono/logs; for subprojects, use projects/logs
+if [ "$(basename "$PROJECT_ROOT")" = "mono" ]; then
+  LOGS_DIR="$PROJECT_ROOT/logs"
+else
+  LOGS_DIR="$PROJECT_ROOT/../logs"
+fi
 mkdir -p "$LOGS_DIR"
 
 # Set up status file for hub polling

@@ -182,8 +182,9 @@ class APIHandler(BaseHTTPRequestHandler):
                     with open(status_file, 'r') as f:
                         status = f.read().strip()
                 
-                # Check if done (starts with ✓ or ❌)
-                done = status.startswith('✓') or status.startswith('❌')
+                # Done if not running OR status indicates completion
+                status_done = status.startswith('✓') or status.startswith('❌')
+                done = (not rebuild_running) or status_done
                 
                 self._send_response(200, {
                     'status': status,
@@ -200,8 +201,9 @@ class APIHandler(BaseHTTPRequestHandler):
                     with open(RESTART_STATUS_FILE, 'r') as f:
                         status = f.read().strip()
                 
-                # Check if done (starts with ✓ or ❌)
-                done = status.startswith('✓') or status.startswith('❌')
+                # Done if not running OR status indicates completion
+                status_done = status.startswith('✓') or status.startswith('❌')
+                done = (not restart_running) or status_done
                 
                 self._send_response(200, {
                     'status': status,
@@ -314,6 +316,9 @@ class APIHandler(BaseHTTPRequestHandler):
             self._send_response(404, {'error': 'Not found'})
 
     def log_message(self, format, *args):
+        # Suppress noisy deploy-status polling
+        if '/deploy-status' in args[0]:
+            return
         print(f"[API] {args[0]}")
 
 if __name__ == '__main__':

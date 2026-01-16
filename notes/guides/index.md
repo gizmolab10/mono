@@ -11,5 +11,4 @@ I am trying here to convey a way of being. Rules, in contrast, are for weak mind
 - [Develop](./develop/)
 - [Setup](./setup/)
 - [Test](./test/)
-- [Deploy Architecture](./deploy-architecture.md)
 

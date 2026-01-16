@@ -20,8 +20,33 @@
               "icon": "lucide-file",
               "title": "class-lists"
             }
+          },
+          {
+            "id": "b80db6a30a831734",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.11.4"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.11.4"
+            }
+          },
+          {
+            "id": "fdd30f9e1bce1ed3",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.11.4"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.11.4"
+            }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -156,13 +181,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/work/class-lists.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of class-lists"
+              "title": "Outline"
             }
           }
         ],
@@ -183,8 +207,19 @@
       "bases:Create new base": false
     }
   },
-  "active": "92ba4c9b93a17746",
+  "active": "fdd30f9e1bce1ed3",
   "lastOpenFiles": [
+    "logs/update-docs.error.log",
+    "logs/rebuild-status.txt",
+    "projects/ws/vite.config.js.timestamp-1768602688318-4c4a369caf21e.mjs",
+    "projects/ws/vite.config.js.timestamp-1768602388897-ed07760cfae44.mjs",
+    "projects/ws/vite.config.js.timestamp-1768596578438-b28db1f46849.mjs",
+    "notes/guides/develop/hub-app.md",
+    "notes/guides/collaborate/hub-app.md",
+    "notes/work/done/single.project.md",
+    "notes/work/done/monorepo.md",
+    "notes/guides/setup/vitepress.md",
+    "notes/guides/setup/vitepress-setup.md",
     "projects/ws/vite.config.js.timestamp-1768540571545-7ff8bc4097b6d.mjs",
     "projects/logs/update-docs.error.log",
     "notes/guides/deploy-architecture.md",
@@ -193,11 +228,6 @@
     "projects/ws/vite.config.js.timestamp-1768526263459-eeef15ab3dde3.mjs",
     "notes/work/jeff/index.md",
     "projects/ws/vite.config.js.timestamp-1768524544984-e3cc34e253dec.mjs",
-    "projects/ws/vite.config.js.timestamp-1768524508548-c77c4db8b00cb.mjs",
-    "projects/ws/vite.config.js.timestamp-1768524417719-ded58ce4de09.mjs",
-    "projects/ws/vite.config.js.timestamp-1768523399528-51f98fc9bb91b.mjs",
-    "projects/ws/vite.config.js.timestamp-1768523277853-e63aa03a26393.mjs",
-    "projects/ws/vite.config.js.timestamp-1768523265774-343db8c8a4ea2.mjs",
     "projects/ws/notes/work/done/public-deliverables.md",
     "notes/work/class-lists.md",
     "notes/work/cleanup.md",
@@ -214,12 +244,6 @@
     "notes/work/commoditize.md",
     "projects/ws/notes/guides/deliverables.md",
     "projects/ws/notes/work/deliverables.md",
-    "projects/ws/notes/work/book.md",
-    "notes/guides/setup/index.md",
-    "notes/guides/develop/deliverables.md",
-    "notes/guides/collaborate/chat.md",
-    "notes/work/done/docs/docs.md",
-    "notes/work/done/docs.md",
-    "notes/work/done/docs/combined-docs.md"
+    "projects/ws/notes/work/book.md"
   ]
 }

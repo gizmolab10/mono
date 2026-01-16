@@ -33,10 +33,6 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: 'Deploy Architecture',
-              link: '/guides/deploy-architecture'
-            },
-            {
               text: 'Collaborate >',
               link: '/guides/collaborate/',
               collapsed: true,
@@ -62,16 +58,8 @@ export default defineConfig({
                   link: '/guides/collaborate/repo'
                 },
                 {
-                  text: 'Vitepress Setup',
-                  link: '/guides/collaborate/vitepress-setup'
-                },
-                {
                   text: 'Voice',
                   link: '/guides/collaborate/voice'
-                },
-                {
-                  text: 'Work Site',
-                  link: '/guides/collaborate/work-site'
                 },
                 {
                   text: 'Workflow',
@@ -91,6 +79,10 @@ export default defineConfig({
                 {
                   text: 'Css',
                   link: '/guides/develop/css'
+                },
+                {
+                  text: 'Hub App',
+                  link: '/guides/develop/hub-app'
                 },
                 {
                   text: 'Migration',
@@ -132,8 +124,8 @@ export default defineConfig({
                   link: '/guides/setup/onboarding'
                 },
                 {
-                  text: 'Single.project',
-                  link: '/guides/setup/single.project'
+                  text: 'VitePress',
+                  link: '/guides/setup/vitepress'
                 }
               ]
             },
@@ -207,8 +199,16 @@ export default defineConfig({
                   link: '/work/done/guides-clutter'
                 },
                 {
+                  text: 'Monorepo',
+                  link: '/work/done/monorepo'
+                },
+                {
                   text: 'Single Line Progress',
                   link: '/work/done/single-line-progress'
+                },
+                {
+                  text: 'Single.project',
+                  link: '/work/done/single.project'
                 },
                 {
                   text: 'Sites Hub',

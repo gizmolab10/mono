@@ -26,10 +26,6 @@ export default withMermaid(
         link: '/project'
         }, // @keep
         {
-          text: 'Digest',
-          link: '/digest'
-        },
-        {
           text: 'Architecture >',
           link: '/architecture/',
           collapsed: true,
@@ -85,6 +81,10 @@ export default withMermaid(
                 {
                   text: 'Persistable',
                   link: '/architecture/internals/persistable'
+                },
+                {
+                  text: 'Preferences',
+                  link: '/architecture/internals/preferences'
                 },
                 {
                   text: 'Reactivity',
@@ -170,44 +170,20 @@ export default withMermaid(
           collapsed: true,
           items: [
             {
-              text: 'Access',
-              link: '/guides/access'
-            },
-            {
-              text: 'Chat',
-              link: '/guides/chat'
-            },
-            {
               text: 'Composition',
               link: '/guides/composition'
             },
             {
-              text: 'Debugging',
-              link: '/guides/debugging'
+              text: 'Deliverables',
+              link: '/guides/deliverables'
             },
             {
               text: 'Gotchas',
               link: '/guides/gotchas'
             },
             {
-              text: 'Markdown',
-              link: '/guides/markdown'
-            },
-            {
-              text: 'Migration',
-              link: '/guides/migration'
-            },
-            {
-              text: 'Refactoring',
-              link: '/guides/refactoring'
-            },
-            {
-              text: 'Style',
-              link: '/guides/style'
-            },
-            {
-              text: 'Voice',
-              link: '/guides/voice'
+              text: 'Plugin',
+              link: '/guides/plugin'
             }
           ]
         },
@@ -223,6 +199,10 @@ export default withMermaid(
             {
               text: 'Docs',
               link: '/work/docs'
+            },
+            {
+              text: 'Plugin Bugs',
+              link: '/work/plugin-bugs'
             },
             {
               text: 'Search Links',
@@ -252,6 +232,10 @@ export default withMermaid(
                 {
                   text: 'Focus',
                   link: '/work/done/focus'
+                },
+                {
+                  text: 'Public Deliverables',
+                  link: '/work/done/public-deliverables'
                 },
                 {
                   text: 'Relocate.controls',
