@@ -808,7 +808,10 @@
             if (status.state === 'building') {
               building.push(site);
             } else if (status.state === 'error') {
-              errors.push(site);
+              // "no content change" is not a real error
+              if (!status.error_message?.includes('no content change')) {
+                errors.push(site);
+              }
             }
           }
           
