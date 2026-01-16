@@ -3,9 +3,10 @@
 ## Contents
 
 - [Articles](./articles/)
-- [Crazy Idea](./crazy-idea.md)
+- [Jeff](./jeff/)
+- [Class Lists](./class-lists.md)
+- [Cleanup](./cleanup.md)
+- [Commoditize](./commoditize.md)
 - [Pacing](./pacing.md)
-- [Projects](./projects.md)
 - [Simplicity](./simplicity.md)
-- [Working Minimum](./working-minimum.md)
 

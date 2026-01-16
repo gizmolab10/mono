@@ -156,6 +156,10 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              text: 'Class Lists',
+              link: '/work/class-lists'
+            },
+            {
               text: 'Cleanup',
               link: '/work/cleanup'
             },
@@ -320,6 +324,11 @@ export default defineConfig({
                   ]
                 }
               ]
+            },
+            {
+              text: 'Jeff',
+              link: '/work/jeff/'
+              collapsed: true,
             }
           ]
         }

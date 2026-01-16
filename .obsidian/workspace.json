@@ -185,6 +185,11 @@
   },
   "active": "92ba4c9b93a17746",
   "lastOpenFiles": [
+    "projects/logs/update-docs.error.log",
+    "projects/ws/vite.config.js.timestamp-1768526958831-0acd327ee7fcf.mjs",
+    "projects/ws/vite.config.js.timestamp-1768526928985-c475dfa9716c8.mjs",
+    "projects/ws/vite.config.js.timestamp-1768526263459-eeef15ab3dde3.mjs",
+    "notes/work/jeff/index.md",
     "projects/ws/vite.config.js.timestamp-1768524544984-e3cc34e253dec.mjs",
     "projects/ws/vite.config.js.timestamp-1768524508548-c77c4db8b00cb.mjs",
     "projects/ws/vite.config.js.timestamp-1768524417719-ded58ce4de09.mjs",
@@ -192,10 +197,6 @@
     "projects/ws/vite.config.js.timestamp-1768523277853-e63aa03a26393.mjs",
     "projects/ws/vite.config.js.timestamp-1768523265774-343db8c8a4ea2.mjs",
     "projects/ws/vite.config.js.timestamp-1768523142476-3bf8e3e1b6931.mjs",
-    "projects/ws/vite.config.js.timestamp-1768522861763-13a3deeae8585.mjs",
-    "projects/ws/vite.config.js.timestamp-1768522845943-c948607058c9f.mjs",
-    "projects/ws/vite.config.js.timestamp-1768522774037-aedbc2595dca1.mjs",
-    "projects/ws/vite.config.js.timestamp-1768522762675-80e1b6a1d73ef.mjs",
     "projects/ws/notes/work/done/public-deliverables.md",
     "notes/work/class-lists.md",
     "notes/work/cleanup.md",
@@ -219,7 +220,6 @@
     "notes/work/done/docs/docs.md",
     "notes/work/done/docs.md",
     "notes/work/done/docs/combined-docs.md",
-    "notes/guides/setup/single.project.md",
-    "notes/guides/collaborate/markdown.md"
+    "notes/guides/setup/single.project.md"
   ]
 }
