@@ -33,6 +33,10 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              text: 'Deploy Architecture',
+              link: '/guides/deploy-architecture'
+            },
+            {
               text: 'Collaborate >',
               link: '/guides/collaborate/',
               collapsed: true,
@@ -327,7 +331,7 @@ export default defineConfig({
             },
             {
               text: 'Jeff',
-              link: '/work/jeff/'
+              link: '/work/jeff/',
               collapsed: true,
             }
           ]

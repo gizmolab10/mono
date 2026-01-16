@@ -10,7 +10,7 @@ export default withMermaid(
 
     vite: {
       server: {
-        port: 5176
+        port: parseInt(process.env.VITE_PORT || '5176')
       }
     },
 
