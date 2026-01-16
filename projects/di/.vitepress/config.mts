@@ -117,7 +117,7 @@ export default defineConfig({
         },
         {
           text: 'Tools',
-          link: '/tools/'
+          link: '/tools/',
           collapsed: true,
         },
         {

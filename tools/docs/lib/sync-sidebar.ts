@@ -261,7 +261,7 @@ class SyncSidebar {
     lines.push(pad + `  text: '${displayText}',`);
     
     if (item.link) {
-      if (item.items) {
+      if (item.items || item.collapsed !== undefined) {
         lines.push(pad + `  link: '${item.link}',`);
       } else {
         lines.push(pad + `  link: '${item.link}'`);
