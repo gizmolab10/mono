@@ -24,7 +24,17 @@ class SyncSidebar {
   }
 
   private findConfigPath(): string {
-    // Check sites/docs/.vitepress first (mono layout)
+    // Check if we're in a subproject (projects/ws or projects/di)
+    const cwd = process.cwd();
+    const projectMatch = cwd.match(/projects\/(ws|di)/);
+    if (projectMatch) {
+      const projectConfig = path.join(cwd, '.vitepress', 'config.mts');
+      if (fs.existsSync(projectConfig)) {
+        return projectConfig;
+      }
+    }
+    
+    // Check sites/docs/.vitepress (mono layout)
     const sitesDocsConfig = path.join(this.repoRoot, 'sites', 'docs', '.vitepress', 'config.mts');
     if (fs.existsSync(sitesDocsConfig)) {
       return sitesDocsConfig;
