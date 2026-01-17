@@ -1,11 +1,18 @@
 import ports from '../../../sites/ports.json'
 import { defineConfig } from 'vitepress'
+import taskLists from 'markdown-it-task-lists'
 
 export default defineConfig({
   srcDir: '../../notes',
   title: "Mono Docs",
   description: "Unified documentation for all projects",
   ignoreDeadLinks: true,
+
+  markdown: {
+    config: (md) => {
+      md.use(taskLists)
+    }
+  },
 
   rewrites: {
     'projects/ws/notes/:path*': 'ws/:path*',

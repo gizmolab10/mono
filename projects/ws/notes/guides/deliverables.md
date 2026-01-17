@@ -16,7 +16,7 @@ Before I even demo a fix to Vincent, review it with Wendy. For items that are ma
 
 The urls for review and feedback
 
-- [ ] [Catalist](https://www.catalist.network/version-test/seriously_view?object=1759366865929x617964618791821700&space=1759365279523x305705732516610050) Vincent currently has this pointing to the version of webseriously that is under construction (it is **not** frozen).
+- [ ] [Catalist](https://www.catalist.network/version-test/seriously_view?object=1759366865929x617964618791821700&space=1759365279523x305705732516610050&theme=bubble) Vincent currently has this pointing to the version of webseriously that is under construction (it is **not** frozen).
 - [ ] [webseriously](https://webseriously.org)
 
 ## Catalist

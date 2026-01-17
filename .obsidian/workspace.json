@@ -37,12 +37,14 @@
             "id": "fdd30f9e1bce1ed3",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "markdown",
               "state": {
-                "currentVersion": "1.11.4"
+                "file": "projects/ws/notes/guides/deliverables.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.11.4"
+              "icon": "lucide-file",
+              "title": "deliverables"
             }
           }
         ],
@@ -181,12 +183,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "projects/ws/notes/guides/deliverables.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of deliverables"
             }
           }
         ],
@@ -209,6 +212,9 @@
   },
   "active": "fdd30f9e1bce1ed3",
   "lastOpenFiles": [
+    "logs/update-docs.error.log",
+    "logs/rebuild-status.txt",
+    "logs",
     "node_modules/commander/lib/command.js",
     "node_modules/commander/lib/suggestSimilar.js",
     "node_modules/commander/lib/error.js",
@@ -218,10 +224,7 @@
     "node_modules/commander/typings/index.d.ts",
     "node_modules/tcs/node_modules/commander/index.js",
     "node_modules/tcs/node_modules/commander/Readme.md",
-    "node_modules/tcs/node_modules/commander/package.json",
     "node_modules/tcs/node_modules/commander/History.md",
-    "node_modules/commander/esm.mjs",
-    "node_modules/commander/package-support.json",
     "notes/guides/develop/hub-app.md",
     "notes/guides/collaborate/hub-app.md",
     "notes/work/done/single.project.md",
