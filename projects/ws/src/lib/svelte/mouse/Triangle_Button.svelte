@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, x, hits, elements, svgPaths, T_Mouse_Detection } from '../../ts/common/Global_Imports';
+	import { k, x, hits, Point, elements, svgPaths, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { S_Mouse, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -20,6 +20,34 @@
 	s_triangle.color_background = 'transparent';
 	let extraColor = 'white';
 	let fillColor = 'white';
+
+	// Point-in-triangle test for hover confined to SVG shape
+	function triangle_contains_point(point: Point | null): boolean {
+		if (!point || !center) return false;
+		// Get triangle vertices (simplified - using outer radius)
+		const outer = size / 2;
+		const vertices: Point[] = [];
+		for (let i = 0; i < 3; i++) {
+			const vertexAngle = angle + i * (Math.PI * 2 / 3);
+			vertices.push(new Point(
+				center.x + outer * Math.cos(vertexAngle),
+				center.y + outer * Math.sin(vertexAngle)
+			));
+		}
+		// Barycentric coordinate method
+		const [p0, p1, p2] = vertices;
+		const dX = point.x - p2.x;
+		const dY = point.y - p2.y;
+		const dX21 = p2.x - p1.x;
+		const dY12 = p1.y - p2.y;
+		const D = dY12 * (p0.x - p2.x) + dX21 * (p0.y - p2.y);
+		const s = dY12 * dX + dX21 * dY;
+		const t = (p2.y - p0.y) * dX + (p0.x - p2.x) * dY;
+		if (D < 0) return s <= 0 && t <= 0 && s + t >= D;
+		return s >= 0 && t >= 0 && s + t <= D;
+	}
+
+	s_triangle.contains_point = triangle_contains_point;
 
 	$: $w_grabbed, setFillColor(false);
 	
