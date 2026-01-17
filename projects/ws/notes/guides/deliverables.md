@@ -36,6 +36,7 @@ The urls for review and feedback
 - [x] sometimes (rarely) title is same color as background
 - [x] in catalist, focus on main argument, then focus on its parent. FUBAR
 - [x] little button to visit this material missing from netlify and public
+- [ ] **fixed** -- build notes steppers ignored
 - [ ] **fixed** -- editing is NOT disabled in 0.3.3, which may cause:
   - [ ] clicking around sometimes doesn’t select things on the first click
   - [ ] edit a widget. click background. rubber band another widget. editing remains active
@@ -44,7 +45,6 @@ The urls for review and feedback
   - [ ] command + set the levels to 12
 - [ ] click on A, then click on B, sometimes A still indicates it is selected
 - [ ] in every widget the title is not vertically centered
-- [ ] build notes steppers ignored
 
 ### Change Requests
 

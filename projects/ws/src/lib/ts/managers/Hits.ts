@@ -60,12 +60,13 @@ export default class Hits {
 		const matches = this.targets_atPoint(point);
 		const target = this.targetOf_highest_precedence(matches) ?? matches[0];
 		if (!!s_mouse.event) {
-			if (s_mouse.event.metaKey) {												// If meta key is held, force rubberband target (for graph dragging)
+			if (s_mouse.event.metaKey && !target?.isAControl) {						// If meta key is held and not on a control, force rubberband target (for graph dragging)
 				const rubberband_target = matches.find(s => s.type === T_Hit_Target.rubberband);
 				if (rubberband_target) {
 					return rubberband_target.handle_s_mouse?.(s_mouse) ?? false;
 				}
-			} else if (!!target) {
+			}
+			if (!!target) {
 				if (s_mouse.isDown && s_mouse.event) {
 					target.clicks += 1;
 					if (target.respondsTo_autorepeat) {

@@ -4,6 +4,7 @@
     import * as d3 from 'd3';
 	export let viewBox_width: number | undefined = undefined;
 	export let stroke_width: number = k.thickness.stroke;
+    export let pathElement: SVGPathElement | null = null;
     export let stroke = colors.default;
     export let zindex = T_Layer.common;
     export let position = 'absolute';
@@ -17,7 +18,7 @@
 	let svg;
 
     onMount(() => {
-        d3.select(svg)
+        const path = d3.select(svg)
             .append('path')
             .attr('fill', fill)
             .attr('stroke', stroke)
@@ -26,6 +27,7 @@
             .attr('vector-effect', 'non-scaling-stroke')
             .attr('shape-rendering', 'geometricPrecision') // anti-alias;
             .attr('d', svgPath);
+        pathElement = path.node() as SVGPathElement;
     })
 
     $: viewBox_w = viewBox_width ?? width;

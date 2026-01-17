@@ -431,6 +431,34 @@ export default class SVG_Paths {
 		return new Size(maxX - minX, maxY - minY);
 	}
 
+	/**
+	 * Test if a screen point is inside an SVG path's fill area.
+	 * Uses native SVG hit testing - works with any path complexity.
+	 *
+	 * @param point - Screen coordinates (e.g., from mouse event)
+	 * @param pathElement - The SVG path element to test against
+	 * @returns true if point is inside the path's fill
+	 */
+	isPointInPath(point: Point | null, pathElement: SVGPathElement | null): boolean {
+		if (!point || !pathElement) return false;
+
+		const svg = pathElement.ownerSVGElement;
+		if (!svg) return false;
+
+		// Convert screen coordinates to SVG coordinates
+		const svgPoint = svg.createSVGPoint();
+		svgPoint.x = point.x;
+		svgPoint.y = point.y;
+
+		const ctm = pathElement.getScreenCTM();
+		if (!ctm) return false;
+
+		const transformed = svgPoint.matrixTransform(ctm.inverse());
+
+		// Use native SVG hit testing
+		return pathElement.isPointInFill(new DOMPoint(transformed.x, transformed.y));
+	}
+
 }
 
 export const svgPaths = new SVG_Paths();

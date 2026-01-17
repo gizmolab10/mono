@@ -4,8 +4,8 @@
     export let hit_closure;
     const buttonSize = 20;
     const origin = new Point(19, 29);
-    const offsetY = buttonSize / 2 - 1;
     const { w_t_directionals } = show;
+    const offsetY = buttonSize / 2 - 1;
 
 	function hover_closure(isHovering) {
         const hover_color = colors.background_special_blend(colors.default, k.opacity.medium);
@@ -14,7 +14,7 @@
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
         const target = s_mouse.element;
-        if (!!target && (s_mouse.isDown || s_mouse.isLong || s_mouse.isRepeat)) {
+        if (!!target && (s_mouse.isDown || s_mouse.isRepeat)) {
             const pointsUp = target.getAttribute('name') == 'up';
             hit_closure(pointsUp, s_mouse.event?.metaKey);
         }

@@ -18,8 +18,14 @@
 	const s_triangle = elements.s_element_for(new Identifiable(name), T_Hit_Target.button, name);
 	let trianglePath = svgPaths.fat_polygon(size, angle);
 	s_triangle.color_background = 'transparent';
+	s_triangle.hoverColor = 'transparent';
+	let trianglePathElement: SVGPathElement | null = null;
 	let extraColor = 'white';
 	let fillColor = 'white';
+
+	$: if (trianglePathElement) {
+		s_triangle.contains_point = (point) => svgPaths.isPointInPath(point, trianglePathElement);
+	}
 
 	$: $w_grabbed, setFillColor(false);
 	
@@ -51,6 +57,7 @@
 	width={size}
 	name={name}>
 	<SVG_D3 name='triangle'
+		bind:pathElement={trianglePathElement}
 		svgPath={trianglePath}
 		stroke={strokeColor}
 		fill={fillColor}

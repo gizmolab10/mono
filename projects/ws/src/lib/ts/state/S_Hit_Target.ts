@@ -7,6 +7,8 @@ export default class S_Hit_Target {
 	// supports hit testing for all user-interactables in the DOM
 	// S_Element, S_Widget, S_Component, S_Rotation, S_Resizing
 
+	private _element_color_override?: string;	// Explicit override for buttons/controls (dots use thing_color automatically)
+	private _hoverColor_override?: string;	// Cached hoverColor when element_color is explicitly set
 	mouse_detection: T_Mouse_Detection = T_Mouse_Detection.none;
     containedIn_rect?: (rect: Rect | null) => boolean;
     contains_point?: (point: Point | null) => boolean;
@@ -21,8 +23,6 @@ export default class S_Hit_Target {
 	hoverCursor = k.cursor_default;
 	autorepeat_event?: MouseEvent;		// stored here to survive component recreation
 	autorepeat_isFirstCall = true;		// stored here to survive component recreation
-	private _hoverColor_override?: string;	// Cached hoverColor when element_color is explicitly set
-	private _element_color_override?: string;	// Explicit override for buttons/controls (dots use thing_color automatically)
 	autorepeat_id?: number;
 	type: T_Hit_Target;
 	clicks: number = 0;
@@ -84,6 +84,10 @@ export default class S_Hit_Target {
 		}
 		// Otherwise compute from current element_color (which may be reactive for dots)
 		return colors.background_special_blend(this.element_color, k.opacity.medium);
+	}
+
+	set hoverColor(value: string) {
+		this._hoverColor_override = value;
 	}
 
 	hasSameID_as(other: S_Hit_Target | null): boolean { return !!other && this.id == other.id; }
