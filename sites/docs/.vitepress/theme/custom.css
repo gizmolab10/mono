@@ -74,14 +74,31 @@ html {
 }
 
 .task-list-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
   margin-right: 0.5em;
   width: 16px;
   height: 16px;
-  accent-color: #22863a;
   border: 2px solid #555;
+  border-radius: 3px;
+  background: #fff;
   cursor: default;
+  vertical-align: middle;
+  position: relative;
 }
 
 .task-list-item input[type="checkbox"]:checked {
-  accent-color: #22863a;
+  background: #22863a;
+  border-color: #22863a;
+}
+
+.task-list-item input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
