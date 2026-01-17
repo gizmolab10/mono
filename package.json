@@ -12,6 +12,7 @@
     "docs:preview": "cd sites/docs && vitepress preview"
   },
   "devDependencies": {
+    "markdown-it-task-lists": "^2.1.1",
     "mermaid": "^11.4.0",
     "vitepress": "^1.6.4",
     "vitepress-plugin-mermaid": "^2.0.16",
