@@ -36,7 +36,7 @@ The urls for review and feedback
 - [x] sometimes (rarely) title is same color as background
 - [x] in catalist, focus on main argument, then focus on its parent. FUBAR
 - [x] little button to visit this material missing from netlify and public
-- [ ] editing is NOT disabled, which may cause:
+- [ ] **fixed** -- editing is NOT disabled in 0.3.3, which may cause:
   - [ ] clicking around sometimes doesn’t select things on the first click
   - [ ] edit a widget. click background. rubber band another widget. editing remains active
 - [ ] sliding the levels does not update the number

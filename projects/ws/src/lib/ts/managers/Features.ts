@@ -5,11 +5,12 @@ export class Features {
 	theme = T_Theme.standalone;
 
 	has_zoom_controls	 = false;	// NB: hidden until implemented
+	has_rubber_band		 = false;
 	has_details_button 	 = true;
 	has_every_detail	 = true;
 
-	allow_graph_editing	 = true;
-	allow_title_editing	 = true;
+	allow_graph_editing	 = false;
+	allow_title_editing	 = false;
 	allow_h_scrolling	 = true;
 	allow_tree_mode		 = true;
 	allow_autoSave		 = true;
