@@ -807,34 +807,40 @@
     function pollDeployStatus() {
       // Don't poll if restart or rebuild is in progress
       if (pollInterval || restartPollInterval) return;
-      
+
       fetch(`http://localhost:${ports.api}/deploy-status`)
         .then(res => res.json())
         .then(data => {
           const building = [];
+          const ready = [];
           const errors = [];
-          
+
           for (const [site, status] of Object.entries(data)) {
             if (status.state === 'building') {
               building.push(site);
+            } else if (status.state === 'ready') {
+              ready.push(site);
             } else if (status.state === 'error') {
               // "no content change" is not a real error
               if (!status.error_message?.includes('no content change')) {
                 errors.push(site);
+              } else {
+                ready.push(site); // skipped = ready
               }
             }
           }
-          
+
           if (building.length > 0) {
-            // Something is deploying
-            setConsoleOutput('deploy', `Deploying: ${building.join(', ')}`);
+            // Show building and done counts
+            const msg = `Deploying: ${building.join(', ')} (${ready.length} done)`;
+            setConsoleOutput('deploy', msg);
             lastDeployStatus = 'building';
           } else if (lastDeployStatus === 'building') {
             // Just finished deploying
             if (errors.length > 0) {
               setConsoleOutput('deploy', `Deploy failed: ${errors.join(', ')}`);
             } else {
-              setConsoleOutput('deploy', '✓ All deploys complete');
+              setConsoleOutput('deploy', `✓ All ${ready.length} deploys complete`);
             }
             lastDeployStatus = 'done';
           }
