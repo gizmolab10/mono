@@ -23,15 +23,19 @@
 
 	// Point-in-triangle test for hover confined to SVG shape
 	function triangle_contains_point(point: Point | null): boolean {
-		if (!point || !center) return false;
+		if (!point) return false;
+		const rect = s_triangle.rect;
+		if (!rect) return false;
+		// Screen center of the triangle
+		const screenCenter = new Point(rect.x + rect.width / 2, rect.y + rect.height / 2);
 		// Get triangle vertices (simplified - using outer radius)
 		const outer = size / 2;
 		const vertices: Point[] = [];
 		for (let i = 0; i < 3; i++) {
 			const vertexAngle = angle + i * (Math.PI * 2 / 3);
 			vertices.push(new Point(
-				center.x + outer * Math.cos(vertexAngle),
-				center.y + outer * Math.sin(vertexAngle)
+				screenCenter.x + outer * Math.cos(vertexAngle),
+				screenCenter.y + outer * Math.sin(vertexAngle)
 			));
 		}
 		// Barycentric coordinate method
