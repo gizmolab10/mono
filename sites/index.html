@@ -850,7 +850,8 @@
             if (errors.length > 0) {
               setConsoleOutput('deploy', `Deploy failed: ${errors.join(', ')}`);
             } else {
-              setConsoleOutput('deploy', `✓ All ${ready.length} deploys complete`);
+              const total = Object.keys(data).length;
+              setConsoleOutput('deploy', `✓ All ${total} deploys complete`);
             }
             lastDeployStatus = 'done';
           }

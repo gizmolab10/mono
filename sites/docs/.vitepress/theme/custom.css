@@ -75,4 +75,13 @@ html {
 
 .task-list-item input[type="checkbox"] {
   margin-right: 0.5em;
+  width: 16px;
+  height: 16px;
+  accent-color: #22863a;
+  border: 2px solid #555;
+  cursor: default;
+}
+
+.task-list-item input[type="checkbox"]:checked {
+  accent-color: #22863a;
 }
