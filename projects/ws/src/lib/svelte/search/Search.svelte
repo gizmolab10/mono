@@ -21,7 +21,7 @@
 		}, 1);
 	}
 
-	function search_width() { return graph_width() + 26; }
+	function search_width() { return graph_width() - 74; }
 	function graph_width() { return g.windowSize.width - 84; }
 
 	function handle_input(event) {

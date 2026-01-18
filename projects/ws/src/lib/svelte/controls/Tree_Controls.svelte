@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Layer, T_Graph, T_Focus, T_Control, T_Kinship } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Control, T_Kinship } from '../../ts/common/Global_Imports';
 	import { e, g, k, u, show, Point, colors, controls } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -9,7 +9,7 @@
 	const { w_depth_limit } = g;
 	const heights = [ 3, 5, 18 ];
 	const { w_separator_color } = colors;
-	const { w_t_trees, w_t_focus } = show;
+	const { w_t_trees } = show;
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button + 2;
 	let widths: Array<number> = [];
@@ -19,10 +19,9 @@
 		widths = {
 			0: 10,		// initial offset (for tree types start position)
 			1: 122,		// tree types segmented control width
-			2: 22,		// separator width
-			3: 94,		// focus-response-type segmented control width
-			4: 117,		// slider width
-			5: 42,		// depth value width
+			2: 6,		// separator width
+			3: 117,		// slider width
+			4: 42,		// depth value width
 		};
 		lefts = u.cumulativeSum(Object.values(widths));
 	}
@@ -66,14 +65,6 @@
 		origin={new Point(lefts[1], -0.5)}
 		thickness={k.thickness.separator.main}
 		corner_radius={k.radius.fillets.thick}/>
-	<Segmented name='focus-response-type'
-		width={50}
-		allow_multiple={false}
-		selected={[$w_t_focus]}
-		height={segmented_height}
-		origin={new Point(lefts[2], 5)}
-		titles={[T_Focus.static, T_Focus.dynamic]}
-		handle_selection={(titles) => controls.handle_segmented_choices('focus', titles)}/>
 	<Slider
 		max={12}
 		width={117}
@@ -81,7 +72,7 @@
 		isLogarithmic={true}
 		value={$w_depth_limit}
 		height={k.height.button + 4}
-		origin={new Point(lefts[3], 3)}
+		origin={new Point(lefts[2], 3)}
 		thumb_color={$w_separator_color}
 		title_font_size={k.font_size.banners}
 		handle_value_change={handle_depth_limit}/>
@@ -90,7 +81,7 @@
 		width: 56px;
 		height: 26px;
 		display: flex;
-		left: {lefts[4]}px;
+		left: {lefts[3]}px;
 		position: absolute;
 		align-items: center;
 		justify-content: center;

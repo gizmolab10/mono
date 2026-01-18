@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { e, g, h, k, core, u, x, hits, show, Rect, Point, builds, debug, signals, elements } from '../../ts/common/Global_Imports';
+	import { e, g, h, k, core, u, x, hits, show, Rect, Point, builds, debug, signals, elements, features } from '../../ts/common/Global_Imports';
 	import { S_Component, T_Layer, T_Graph, T_Signal, T_Startup, T_Control } from '../../ts/common/Global_Imports';
 	import Radial_Graph from '../radial/Radial_Graph.svelte';
 	import Rubberband from '../mouse/Rubberband.svelte';
@@ -115,10 +115,12 @@
 					'>
 				</div>
 			{/if}
-			<Rubberband
-				bounds={draggableRect}
-				strokeWidth={k.thickness.rubberband}
-			/>
+			{#if features.has_rubber_band}
+				<Rubberband
+					bounds={draggableRect}
+					strokeWidth={k.thickness.rubberband}
+				/>
+			{/if}
 		</div>
 		<div class='bottom-controls'
 			style='

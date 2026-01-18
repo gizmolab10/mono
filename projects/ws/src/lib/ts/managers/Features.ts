@@ -5,9 +5,9 @@ export class Features {
 	theme = T_Theme.standalone;
 
 	has_zoom_controls	 = false;	// NB: hidden until implemented
-	has_rubber_band		 = false;
 	has_details_button 	 = true;
 	has_every_detail	 = true;
+	has_rubber_band		 = true;
 
 	allow_graph_editing	 = false;
 	allow_title_editing	 = false;
@@ -40,6 +40,7 @@ export class Features {
 					this.allow_title_editing = false;
 					this.allow_h_scrolling	 = false;
 					this.allow_autoSave		 = false;
+					this.has_rubber_band	 = false;
 					this.has_every_detail	 = false;
 					this.has_details_button  = false;
 					break;

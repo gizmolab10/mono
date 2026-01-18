@@ -377,29 +377,3 @@ export enum T_Preference {
 	tree			  = 'tree',
 	db				  = 'db',
 }
-
-// default preferences
-
-export class Enum_Spec {
-	constructor(public enum_type: object | null, public defaultValue: any) {}
-}
-
-export type Enum_Spec_ByType = { [type: string]: Enum_Spec };
-export const def = (key: T_Preference): any => spec_dict_byType[key]?.defaultValue ?? null;
-
-export const spec_dict_byType: Enum_Spec_ByType = {
-	[T_Preference.auto_adjust]:     new Enum_Spec(T_Auto_Adjust_Graph, null),
-	[T_Preference.paging_style]:    new Enum_Spec(T_Cluster_Pager,     T_Cluster_Pager.sliders),
-	[T_Preference.breadcrumbs]:     new Enum_Spec(T_Breadcrumbs,       T_Breadcrumbs.selection),
-	[T_Preference.show_countsAs]:   new Enum_Spec(T_Counts_Shown,      T_Counts_Shown.dots),
-	[T_Preference.tree]:            new Enum_Spec(T_Kinship,           T_Kinship.children),
-	[T_Preference.focus]:           new Enum_Spec(T_Focus,             T_Focus.dynamic),
-	[T_Preference.graph]:           new Enum_Spec(T_Graph,             T_Graph.tree),
-	[T_Preference.countDots]:       new Enum_Spec(null,                []),
-	[T_Preference.show_details]:    new Enum_Spec(null,                false),
-	[T_Preference.show_related]:    new Enum_Spec(null,                false),
-	[T_Preference.other_databases]: new Enum_Spec(null,                false),
-	[T_Preference.thing]:           new Enum_Spec(null,                'default'),
-	[T_Preference.font]:            new Enum_Spec(null,                'Times New Roman'),
-	[T_Preference.detail_types]:    new Enum_Spec(null,                [T_Detail.actions, T_Detail.data]),
-};

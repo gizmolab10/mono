@@ -1,4 +1,4 @@
-# Deliverables
+# **fixed** -- Deliverables
 
 
 **Started:** 2025-01-13
@@ -49,23 +49,19 @@ The urls for review and feedback
 ### Change Requests
 
 - [x] disable double-click
-- [ ] disable rubber band
-
-
-- [ ] remove the static-dynamic selector, always dynamic
-
-
+- [ ] **fixed** -- disable rubber band
+- [ ] **fixed** -- remove the static-dynamic selector, always dynamic
+- [ ] **fixed** -- remove the breadcrumbs focus/selection/recents. always selection
+- [ ] **fixed** -- search input field is too wide
 - [ ] remove the force graph to, from preferences
 - [ ] make numbers for lists the default
-- [ ] fix multiple selection behavior
+- [ ] fix multiple widget selection behavior
   - [ ] shift key + click
   - [ ] shift key + arrow key
 - [ ] click on a breadcrumb should select, NEVER focus (adding a dot is unnecessary)
   - [ ] remove breadcrumb mode selector. default to "selection" and perfect it
   - [ ] breadcrumbs have duplicates for selection mode
   - [ ] right now, click on a breadcrumb sends a select event, it shouldn't
-
-
 - [ ] click in background of graph deselects everything
   - [ ] NOT do that until the rubber band INCLUDES some widgets and then alter the selection
 
