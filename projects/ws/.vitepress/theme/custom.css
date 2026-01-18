@@ -67,3 +67,75 @@
 html {
   overflow-y: scroll;
 }
+
+/* Task list checkboxes */
+.contains-task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.task-list-item {
+  list-style: none;
+}
+
+.task-list-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  margin-right: 0.5em;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #555;
+  border-radius: 3px;
+  background: #fff;
+  cursor: default;
+  vertical-align: middle;
+  position: relative;
+}
+
+.task-list-item input[type="checkbox"]:checked {
+  background: #22863a;
+  border-color: #22863a;
+}
+
+.task-list-item input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.task-list-item input[type="checkbox"]:indeterminate {
+  background: #6a737d;
+  border-color: #6a737d;
+}
+
+.task-list-item input[type="checkbox"]:indeterminate::after {
+  content: '–';
+  position: absolute;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.task-list-item input[type="checkbox"].checkbox-plus {
+  background: #f5a623;
+  border-color: #f5a623;
+}
+
+.task-list-item input[type="checkbox"].checkbox-plus::after {
+  content: '?';
+  position: absolute;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

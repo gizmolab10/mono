@@ -38,7 +38,7 @@ The urls for review and feedback
 - [x] little button to visit this material missing from netlify and public
 - [+] **fixed** -- build notes steppers ignored
 - [+] **fixed** -- editing is NOT disabled in 0.3.3, which may cause:
-	- [+] clicking around sometimes doesn’t select things on the first click
+	- [+] clicking around sometimes doesn't select things on the first click
 	- [+] edit a widget. click background. rubber band another widget. editing remains active
 - [+] **fixed** -- sliding the levels does not update the number
 	- [+] the tree graph shows a different number of levels
@@ -76,5 +76,4 @@ The urls for review and feedback
 - [ ] implement keep the graph centered on the selection
 - [ ] support edits made in Catalist (API is **incomplete**)
 - [ ] do we need an introductory summary of current behavior?
-
 

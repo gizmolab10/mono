@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitepress'
 import { withMermaid } from 'vitepress-plugin-mermaid'
+import taskLists from 'markdown-it-task-lists'
+import taskListPlusPlugin from '../../../sites/markdown-it-task-list-plus.mts'
 
 export default withMermaid(
   defineConfig({
@@ -7,6 +9,13 @@ export default withMermaid(
     title: "Webseriously Inside Peak",
     srcExclude: ['archives/**', 'tools/**'],
     description: "Project documentation and design notes",
+
+    markdown: {
+      config: (md) => {
+        md.use(taskLists)
+        md.use(taskListPlusPlugin)
+      }
+    },
 
     vite: {
       server: {
