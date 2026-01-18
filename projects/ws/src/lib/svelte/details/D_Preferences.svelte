@@ -9,24 +9,26 @@
 	import { onMount, tick } from 'svelte';
 	export let top = 0;
 	const back_up = -5;
+	const picker_width = 122;
 	const separator_left = 35;
 	const position = 'relative';
 	const { w_scale_factor } = g;
-	const width = k.width.details;
-	const picker_offset = `-189px`;
-	const color_left = width / 2 - 13;
-	const segmented_width = width - 6;
+	const picker_internal_fudge = 41;
 	const { w_separator_color } = colors;
+	const details_width = k.width.details;
 	const segmented_height = k.height.button;
+	const color_left = details_width / 2 - 13;
+	const segmented_width = details_width - 6;
 	const separator_height = segmented_height + 9;
-	const separator_width = width - 5 - separator_left * 2;
+	const separator_width = details_width - 5 - separator_left * 2;
 	const { w_t_details, w_t_countDots, w_show_countsAs, w_t_graph } = show;
 	let color_wrapper: HTMLDivElement | null = null;
 	let color_origin = Point.square(-3.5);
 	let color = $w_separator_color;
 
-	$: show_dots = $w_show_countsAs == T_Counts_Shown.dots;
 	$: offset = show_dots ? 2 : 0;
+	$: show_dots = $w_show_countsAs == T_Counts_Shown.dots;
+	$: picker_offset = `${(details_width - picker_width) / 2 - color_origin.x - picker_internal_fudge}px`;
 
 	$: heights = [
 		10,
@@ -91,10 +93,10 @@
 		padding-bottom:{tops[tops.length - 1]}px;
 		font-size:{k.font_size.info}px;'>
 	<Separator name='counts-shown-separator'
-		length={width}
+		has_fillets={true}
 		isHorizontal={true}
 		position={position}
-		has_fillets={true}
+		length={details_width}
 		margin={k.details_margin}
 		origin={Point.y(tops[0])}
 		title='show list sizes as'
@@ -112,10 +114,10 @@
 		selected={selected_counts}/>
 	{#if show_dots}
 		<Separator name='tiny-dots-separator'
-			length={width}
+			has_fillets={true}
 			isHorizontal={true}
 			position={position}
-			has_fillets={true}
+			length={details_width}
 			margin={k.details_margin}
 			origin={Point.y(tops[2])}
 			title='show tiny dots for'
@@ -134,11 +136,11 @@
 	{/if}
 	{#key show_dots}
 		<Separator name='background-color'
-			length={width}
+			has_fillets={true}
 			position={position}
 			isHorizontal={true}
 			title='accent color'
-			has_fillets={true}
+			length={details_width}
 			has_thin_divider={true}
 			margin={k.details_margin}
 			origin={Point.y(tops[2 + offset])}

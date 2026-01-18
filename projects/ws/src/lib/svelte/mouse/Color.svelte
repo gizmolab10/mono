@@ -10,7 +10,11 @@
 	export let color_closure = (color: string) => {};
 	const selectorSize = k.height.dot + 1;
 	const pickerSize = 122;
+	const { w_color_picker_isOpen } = colors;
 	let borderColor = colors.separator;
+	let isOpen = false;
+
+	$: $w_color_picker_isOpen = isOpen;
 
 	async function handle_color_change(event) {
 		u.consume_event(event);
@@ -33,6 +37,7 @@
 		--picker_offset: {picker_offset};'>
 	<ColorPicker
 		label=''
+		bind:isOpen
 		on:input={handle_color_change}
 		hex={colors.color_toHex(color)}
 		--picker-indicator-size='{selectorSize}px'
@@ -45,8 +50,8 @@
 </div>
 
 <style>
-	div :global(.component) {
-		left: var(--picker_offset);
+	div :global([role='dialog']) {
+		left: var(--picker_offset) !important;
 		top: 24px;
 	}
 

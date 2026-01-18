@@ -72,18 +72,18 @@ export default class Ancestry extends Identifiable {
 	get isFocus(): boolean { return get(x.w_ancestry_focus)?.equals(this) ?? false; }
 	becomeFocus(): boolean { return x.becomeFocus(this); }
 
-	get depth_below_focus(): number {
+	get depth_within_focus_subtree(): number {
 		const focus = get(x.w_ancestry_focus);
 		if (!!focus) {
-			return Math.abs(this.depth - focus.depth);
+			return this.depth - focus.depth;
 		}
 		return 0;
 	}
 
-	get isVisible_accordingTo_depth_below_focus(): boolean {
-		const depth_limit = this.depth_limit;
-		if (!!depth_limit) {
-			return this.depth_below_focus < depth_limit;
+	get isVisible_accordingTo_depth_within_focus_subtree(): boolean {
+		const limit = this.global_depth_limit;
+		if (!!limit) {
+			return this.depth_within_focus_subtree < limit;
 		}
 		return true;
 	}
@@ -212,11 +212,11 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____VISIBILITY: unique symbol;
 
-	get depth_limit():				   number { return get(g.w_depth_limit) ?? 0; }
+	get global_depth_limit():		   number { return get(g.w_depth_limit) ?? 0; }
 	get halfHeight_ofVisibleSubtree(): number { return this.height_ofVisibleSubtree() / 2; }
 	get halfSize_ofVisibleSubtree():     Size { return this.size_ofVisibleSubtree.dividedInHalf; }
 	get size_ofVisibleSubtree():	     Size { return new Size(this.visibleSubtree_width(), this.height_ofVisibleSubtree()); }
-	get hidden_by_depth_limit():	  boolean { return !this.isVisible_accordingTo_depth_below_focus && this.isExpanded && this.hasChildren && controls.inTreeMode; }
+	get hidden_by_depth_limit():	  boolean { return !this.isVisible_accordingTo_depth_within_focus_subtree && this.isExpanded && this.hasChildren && controls.inTreeMode; }
 
 	assure_isVisible_within(ancestries: Array<Ancestry>) {
 		if (!!this.predicate && controls.inRadialMode) {
@@ -232,8 +232,7 @@ export default class Ancestry extends Identifiable {
 	ancestry_assureIsVisible(): boolean {
 		if (!this.isVisible) {
 			if (controls.inTreeMode) {
-				const depth_limit = this.depth_limit;
-				const focusAncestry = this.ancestry_createUnique_byStrippingBack(depth_limit);
+				const focusAncestry = this.ancestry_createUnique_byStrippingBack(this.global_depth_limit);
 				focusAncestry?.becomeFocus();
 				this.reveal_toFocus();
 			} else {
@@ -255,7 +254,7 @@ export default class Ancestry extends Identifiable {
 			isVisible = this.isFocus || childIsFocus || parentIsFocus;
 		} else {
 			const focus = get(x.w_ancestry_focus) ?? null;
-			const visible = this.isVisible_accordingTo_depth_below_focus;
+			const visible = this.isVisible_accordingTo_depth_within_focus_subtree;
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpanded_fromRootTo(focus);
 			isVisible = incorporates && expanded && visible;
@@ -469,7 +468,7 @@ export default class Ancestry extends Identifiable {
 	collapse() { return this.expanded_setTo(false); }
 	toggleExpanded() { return this.expanded_setTo(!this.isExpanded); }
 	get shows_branches(): boolean { return get(g.w_branches_areChildren) ? this.shows_children : !this.isRoot; }
-	get shows_children(): boolean { return this.isExpanded && this.hasChildren && this.isVisible_accordingTo_depth_below_focus; }
+	get shows_children(): boolean { return this.isExpanded && this.hasChildren && this.isVisible_accordingTo_depth_within_focus_subtree; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(x.si_expanded.w_items); }
 
 	remove_fromGrabbed_andExpanded() {

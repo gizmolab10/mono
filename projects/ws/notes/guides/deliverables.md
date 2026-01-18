@@ -53,8 +53,8 @@ The urls for review and feedback
 - [ ] **fixed** -- remove the static-dynamic selector, always dynamic
 - [ ] **fixed** -- remove the breadcrumbs focus/selection/recents. always selection
 - [ ] **fixed** -- search input field is too wide
-- [ ] remove the force graph to, from preferences
-- [ ] make numbers for lists the default
+- [ ] **fixed** -- remove the force graph to, from preferences
+- [ ] **fixed** -- make numbers for lists the default
 - [ ] fix multiple widget selection behavior
   - [ ] shift key + click
   - [ ] shift key + arrow key
@@ -67,8 +67,8 @@ The urls for review and feedback
 
 ### Work in Progress
 
-- [ ] static-dynamic focus
-- [ ] experimental breadcrumb mode
+- [ ] **fixed** -- static-dynamic focus
+- [ ] **fixed** -- experimental breadcrumb mode
 
 ### Future Tasks
 

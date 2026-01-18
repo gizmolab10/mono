@@ -1,4 +1,4 @@
-import { c, g, h, k, u, x, hits, g_graph_tree, debug, search, radial } from '../common/Global_Imports';
+import { c, g, h, k, u, x, hits, g_graph_tree, debug, search, radial, colors } from '../common/Global_Imports';
 import { details, signals, controls, elements, features } from '../common/Global_Imports';
 import { T_File_Extension, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
@@ -94,6 +94,9 @@ export class Events {
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
 
 	private handle_mouse_down = (event: MouseEvent) => {
+		if (get(colors.w_color_picker_isOpen)) {
+			return;
+		}
 		const location = new Point(event.clientX, event.clientY);
 		const scaled = location.dividedEquallyBy(get(g.w_scale_factor));
 		hits.handle_s_mouse_at(scaled, S_Mouse.down(event, null));
@@ -107,7 +110,7 @@ export class Events {
 		const location = new Point(event.clientX, event.clientY);
 		const scaled = location.dividedEquallyBy(get(g.w_scale_factor));
 		hits.handle_s_mouse_at(scaled, S_Mouse.up(event, null));
-		hits.disable_hover = false;
+		hits.disable_hover = get(colors.w_color_picker_isOpen);
 		this.w_scaled_movement.set(null);
 		this.w_count_mouse_up.update(n => n + 1);
 		this.w_mouse_button_down.set(false);

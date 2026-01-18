@@ -49,7 +49,8 @@
 	$:	{
 		const _ = `${u.descriptionBy_titles($w_expanded)}
 		:::${$w_ancestry_focus?.titles.join(k.comma)}
-		:::${$w_t_graph}`;
+		:::${$w_t_graph}
+		:::${$w_depth_limit}`;
 		grand_layout_andReattach();
 	}
 

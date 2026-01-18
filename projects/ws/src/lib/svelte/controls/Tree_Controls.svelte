@@ -27,10 +27,9 @@
 	}
 
 	function handle_depth_limit(value: number) {
-		const asInteger = Math.round(value);
-		if (asInteger !== $w_depth_limit) {
-			$w_depth_limit = asInteger;  // Store the integer, not the raw value
-			e.throttle('tree_layout', 50, () => g.layout());
+		const rounded = Math.round(value);
+		if (rounded !== $w_depth_limit) {
+			$w_depth_limit = rounded;		// store the rounded value [an actual integer], not the raw value
 		}
 	}
 
@@ -68,6 +67,7 @@
 	<Slider
 		max={12}
 		width={117}
+		name='depth-limit'
 		show_value={false}
 		isLogarithmic={true}
 		value={$w_depth_limit}

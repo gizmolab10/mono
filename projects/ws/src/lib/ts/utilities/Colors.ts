@@ -18,6 +18,7 @@ export class Colors {
 	w_background_color = writable<string>();
 	w_thing_color	   = writable<string | null>(null);
 	w_separator_color  = writable<string>(this.separator);
+	w_color_picker_isOpen = writable<boolean>(false);
 
 	restore_preferences() {
 		this.w_background_color.set( p.read_key(T_Preference.background) ?? this.background);

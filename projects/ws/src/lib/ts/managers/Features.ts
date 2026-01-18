@@ -9,8 +9,8 @@ export class Features {
 	has_every_detail	 = true;
 	has_rubber_band		 = true;
 
-	allow_graph_editing	 = false;
-	allow_title_editing	 = false;
+	allow_graph_editing	 = true;
+	allow_title_editing	 = true;
 	allow_h_scrolling	 = true;
 	allow_tree_mode		 = true;
 	allow_autoSave		 = true;
