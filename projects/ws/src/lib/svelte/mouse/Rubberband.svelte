@@ -142,6 +142,7 @@
     function handle_s_mouse(s_mouse: S_Mouse): boolean {
         if (s_mouse.isDown && s_mouse.event) {
             const event = s_mouse.event;
+            x.w_s_title_edit?.set(null);
             startPoint = new Point(event.clientX, event.clientY);
             if (event.metaKey) {
                 $w_dragging = T_Drag.graph;

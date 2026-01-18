@@ -5,6 +5,7 @@ Code style, patterns, and development practices.
 ## Contents
 
 - [Aesthetics](./aesthetics.md)
+- [Class Lists](./class-lists.md)
 - [Css](./css.md)
 - [Hub App](./hub-app.md)
 - [Migration](./migration.md)

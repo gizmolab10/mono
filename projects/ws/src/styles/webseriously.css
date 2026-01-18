@@ -9,6 +9,9 @@ div, span, input {
 body {
 	background-color: var(--css-background-color);
     width: var(--css-body-width, 100%);
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
 }
 
 input[type='range'] {

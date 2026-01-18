@@ -84,6 +84,10 @@ export default defineConfig({
                   link: '/guides/develop/aesthetics'
                 },
                 {
+                  text: 'Class Lists',
+                  link: '/guides/develop/class-lists'
+                },
+                {
                   text: 'Css',
                   link: '/guides/develop/css'
                 },
@@ -159,24 +163,8 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: 'Class Lists',
-              link: '/work/class-lists'
-            },
-            {
-              text: 'Cleanup',
-              link: '/work/cleanup'
-            },
-            {
-              text: 'Commoditize',
-              link: '/work/commoditize'
-            },
-            {
-              text: 'Pacing',
-              link: '/work/pacing'
-            },
-            {
-              text: 'Simplicity',
-              link: '/work/simplicity'
+              text: 'Journal',
+              link: '/work/journal'
             },
             {
               text: 'Articles >',
@@ -201,6 +189,10 @@ export default defineConfig({
               text: 'Done >',
               collapsed: true,
               items: [
+                {
+                  text: 'Code',
+                  link: '/work/done/code'
+                },
                 {
                   text: 'Guides Clutter',
                   link: '/work/done/guides-clutter'
@@ -340,6 +332,29 @@ export default defineConfig({
               text: 'Jeff',
               link: '/work/jeff/',
               collapsed: true,
+            },
+            {
+              text: 'Next >',
+              link: '/work/next/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Cleanup',
+                  link: '/work/next/cleanup'
+                },
+                {
+                  text: 'Commoditize',
+                  link: '/work/next/commoditize'
+                },
+                {
+                  text: 'Pacing',
+                  link: '/work/next/pacing'
+                },
+                {
+                  text: 'Simplicity',
+                  link: '/work/next/simplicity'
+                }
+              ]
             }
           ]
         }
