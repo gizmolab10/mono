@@ -1,12 +1,11 @@
 <script lang='ts'>
-    import { e, g, k, core, u, x, hits, debug, colors, elements } from '../../ts/common/Global_Imports';
+    import { e, g, k, u, x, core, hits, debug, colors, elements, features } from '../../ts/common/Global_Imports';
     import { T_Layer, T_Drag, T_Hit_Target, S_Mouse } from '../../ts/common/Global_Imports';
     import { Rect, Size, Point, Ancestry } from '../../ts/common/Global_Imports';
     import Identifiable from '../../ts/runtime/Identifiable';
     import { onMount } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
-    const enabled = true;
     const { w_dragging } = hits;
     const { w_s_title_edit } = x;
     const { w_count_mouse_up } = e;
@@ -146,9 +145,8 @@
             startPoint = new Point(event.clientX, event.clientY);
             if (event.metaKey) {
                 $w_dragging = T_Drag.graph;
-            } else {
-                // Start rubberband - we know no widget/dot/ring was clicked
-                // because handle_s_mouse_at prioritizes those targets
+            } else if (features.has_rubber_band) {
+                // Start rubberband selection (only if feature enabled)
                 const constrained = constrainToRect(startPoint);
                 original_grab_count = x.si_grabs.items.length;
                 rect.y = constrained.y;
@@ -175,7 +173,7 @@
         z-index: {T_Layer.graph};
         height: {bounds.height}px;'/>
 
-{#if enabled && $w_dragging === T_Drag.rubberband}
+{#if features.has_rubber_band && $w_dragging === T_Drag.rubberband}
     <div class='rubberband' {style}/>
 {/if}
 

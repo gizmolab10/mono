@@ -11,7 +11,9 @@
       "Bash(git -C ~/GitHub/mono status:*)",
       "Bash(git -C:*)",
       "Bash(python3:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm test:*)"
     ]
   }
 }

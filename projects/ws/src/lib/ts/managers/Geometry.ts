@@ -86,6 +86,11 @@ export default class Geometry {
 		const rect = new Rect(origin_ofGraphView, size_ofGraphView);
 		debug.log_mouse(`GRAPH View ====> ${rect.description}`);
 		this.w_rect_ofGraphView.set(rect);													// emits a signal, to adjust the graph location
+		// Update graph center to keep hit testing in sync with visual position
+		const user_offset = get(this.w_user_graph_offset) ?? Point.zero;
+		this.w_user_graph_center.set(rect.center.offsetBy(user_offset));
+		// Recalibrate hit target positions after rect change
+		setTimeout(() => hits.recalibrate(), 100);
 	}
 
 	static readonly _____USER_OFFSET: unique symbol;
