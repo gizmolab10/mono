@@ -25,18 +25,11 @@ PROJECT_PATHS = {
     'di': os.path.join(GITHUB_DIR, 'projects/di'),
 }
 
-# Status files for rebuild progress (per project location)
-STATUS_FILES = {
-    'mono': os.path.join(GITHUB_DIR, 'logs', 'rebuild-status.txt'),
-    'ws': os.path.join(GITHUB_DIR, 'projects', 'logs', 'rebuild-status.txt'),
-    'di': os.path.join(GITHUB_DIR, 'projects', 'logs', 'rebuild-status.txt'),
-}
+# Status file for rebuild progress (single file, Option C)
+REBUILD_STATUS_FILE = os.path.join(GITHUB_DIR, 'logs', 'rebuild-status.txt')
 
 # Restart status file
 RESTART_STATUS_FILE = os.path.join(GITHUB_DIR, 'logs', 'restart-status.txt')
-
-# Track current rebuild project
-current_rebuild_project = None
 
 # Track if rebuild is running
 rebuild_running = False
@@ -108,23 +101,21 @@ def restart_sites_async():
     finally:
         restart_running = False
 
-def rebuild_docs_async(project_path):
+def rebuild_docs_async(project_arg):
     """Run rebuild in background thread"""
     global rebuild_running
     try:
         subprocess.run(
-            [UPDATE_DOCS, project_path],
+            [UPDATE_DOCS, project_arg],
             capture_output=True,
             text=True,
-            timeout=300
+            timeout=600  # 10 min timeout for all projects
         )
     except Exception as e:
         # Write error to status file
-        status_file = STATUS_FILES.get(current_rebuild_project, '')
-        if status_file:
-            os.makedirs(os.path.dirname(status_file), exist_ok=True)
-            with open(status_file, 'w') as f:
-                f.write(f"❌ Error: {str(e)}")
+        os.makedirs(os.path.dirname(REBUILD_STATUS_FILE), exist_ok=True)
+        with open(REBUILD_STATUS_FILE, 'w') as f:
+            f.write(f"❌ Error: {str(e)}")
     finally:
         rebuild_running = False
 
@@ -177,9 +168,8 @@ class APIHandler(BaseHTTPRequestHandler):
         if self.path == '/rebuild-status':
             try:
                 status = ''
-                status_file = STATUS_FILES.get(current_rebuild_project, '')
-                if status_file and os.path.exists(status_file):
-                    with open(status_file, 'r') as f:
+                if os.path.exists(REBUILD_STATUS_FILE):
+                    with open(REBUILD_STATUS_FILE, 'r') as f:
                         status = f.read().strip()
                 
                 # Done if not running OR status indicates completion
@@ -281,27 +271,16 @@ class APIHandler(BaseHTTPRequestHandler):
                 self._send_response(500, {'success': False, 'error': str(e)})
         
         elif self.path == '/rebuild-docs':
-            global rebuild_running, current_rebuild_project
-            content_length = int(self.headers.get('Content-Length', 0))
-            body = self.rfile.read(content_length).decode()
+            global rebuild_running
             
             try:
-                data = json.loads(body) if body else {}
-                project = data.get('project', 'mono')
-                project_path = PROJECT_PATHS.get(project)
-                
-                if not project_path:
-                    self._send_response(400, {'success': False, 'error': f'Unknown project: {project}'})
-                    return
-                
                 if rebuild_running:
                     self._send_response(400, {'success': False, 'error': 'Rebuild already in progress'})
                     return
                 
-                # Start rebuild in background
+                # Start rebuild of all projects in background
                 rebuild_running = True
-                current_rebuild_project = project
-                thread = threading.Thread(target=rebuild_docs_async, args=(project_path,))
+                thread = threading.Thread(target=rebuild_docs_async, args=('all',))
                 thread.daemon = True
                 thread.start()
                 
@@ -312,14 +291,33 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
         
+        elif self.path == '/restart-api':
+            try:
+                self._send_response(200, {'success': True, 'message': 'Restarting...'})
+                # Spawn new process and exit
+                subprocess.Popen(
+                    ['python3', os.path.abspath(__file__)],
+                    start_new_session=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+                os._exit(0)
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+        
         else:
             self._send_response(404, {'error': 'Not found'})
 
     def log_message(self, format, *args):
-        # Suppress noisy deploy-status polling
-        if '/deploy-status' in args[0]:
-            return
-        print(f"[API] {args[0]}")
+        # Suppress all request logging
+        pass
+
+    def handle(self):
+        """Override to suppress BrokenPipeError noise"""
+        try:
+            super().handle()
+        except BrokenPipeError:
+            pass
 
 if __name__ == '__main__':
     server = HTTPServer(('localhost', 5171), APIHandler)

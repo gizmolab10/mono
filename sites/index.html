@@ -313,8 +313,9 @@
         <button class="action side-a" id="btn-dns">DNS<span class="badge">N</span></button>
         <h1 class="middle">Work Sites</h1>
         <div class="side-b">
-          <button class="action" id="btn-start">Restart<span class="badge">esc</span></button>
-          <button class="action" id="btn-rebuild">Rebuild Docs<span class="badge">⌫</span></button>
+          <button class="action" id="btn-start">vite<span class="badge">esc</span></button>
+          <button class="action" id="btn-rebuild">docs<span class="badge">⌫</span></button>
+          <button class="action" id="btn-api">api<span class="badge">`</span></button>
         </div>
       </div>
     </div>
@@ -386,6 +387,7 @@
     const btnDns = document.getElementById('btn-dns');
     const btnBubble = document.getElementById('btn-bubble');
     const btnRebuild = document.getElementById('btn-rebuild');
+    const btnApi = document.getElementById('btn-api');
     const consoleOutput = document.getElementById('console-output');
     const consoleRow = document.getElementById('console-row');
     const commandDiv = document.getElementById('command');
@@ -586,7 +588,7 @@
       
       btnStart.classList.add('disabled');
       btnRebuild.classList.add('disabled'); // Disable rebuild while restarting
-      btnStart.innerHTML = 'Restarting<span class="badge">esc</span>';
+      btnStart.innerHTML = 'restarting<span class="badge">esc</span>';
       setConsoleOutput('restart', 'Starting...');
       matchRowWidths();
 
@@ -600,14 +602,14 @@
             // Start polling for status
             restartPollInterval = setInterval(pollRestartStatus, 500);
           } else {
-            btnStart.innerHTML = 'Restart<span class="badge">esc</span>';
+            btnStart.innerHTML = 'vite<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
             setConsoleOutput('restart', `Error: ${data.error}`);
             matchRowWidths();
           }
         })
         .catch(err => {
-          btnStart.innerHTML = 'Restart<span class="badge">esc</span>';
+          btnStart.innerHTML = 'vite<span class="badge">esc</span>';
           btnStart.classList.remove('disabled');
           setConsoleOutput('restart', `API error: ${err.message}`);
           matchRowWidths();
@@ -629,7 +631,7 @@
           if (data.done) {
             clearInterval(restartPollInterval);
             restartPollInterval = null;
-            btnStart.innerHTML = 'Restart<span class="badge">esc</span>';
+            btnStart.innerHTML = 'vite<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
             btnRebuild.classList.remove('disabled'); // Re-enable rebuild
             matchRowWidths();
@@ -646,7 +648,7 @@
           if (pollErrorCount >= MAX_POLL_ERRORS) {
             clearInterval(restartPollInterval);
             restartPollInterval = null;
-            btnStart.innerHTML = 'Restart<span class="badge">esc</span>';
+            btnStart.innerHTML = 'vite<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
             btnRebuild.classList.remove('disabled'); // Re-enable rebuild
             setConsoleOutput('restart', `Poll error: ${err.message}`);
@@ -744,7 +746,7 @@
       
       btnRebuild.classList.add('disabled');
       btnStart.classList.add('disabled'); // Disable restart while rebuilding
-      btnRebuild.innerHTML = 'Rebuilding Docs<span class="badge">⌫</span>';
+      btnRebuild.innerHTML = 'rebuilding<span class="badge">⌫</span>';
       setConsoleOutput('rebuild', 'Starting...');
       matchRowWidths();
 
@@ -759,14 +761,14 @@
             // Start polling for status
             pollInterval = setInterval(pollRebuildStatus, 500);
           } else {
-            btnRebuild.innerHTML = 'Rebuild Docs<span class="badge">⌫</span>';
+            btnRebuild.innerHTML = 'docs<span class="badge">⌫</span>';
             btnRebuild.classList.remove('disabled');
             setConsoleOutput('rebuild', `Error: ${data.error}`);
             matchRowWidths();
           }
         })
         .catch(err => {
-          btnRebuild.innerHTML = 'Rebuild Docs<span class="badge">⌫</span>';
+          btnRebuild.innerHTML = 'docs<span class="badge">⌫</span>';
           btnRebuild.classList.remove('disabled');
           setConsoleOutput('rebuild', `API error: ${err.message}`);
           matchRowWidths();
@@ -787,7 +789,7 @@
           if (data.done) {
             clearInterval(pollInterval);
             pollInterval = null;
-            btnRebuild.innerHTML = 'Rebuild Docs<span class="badge">⌫</span>';
+            btnRebuild.innerHTML = 'docs<span class="badge">⌫</span>';
             btnRebuild.classList.remove('disabled');
             btnStart.classList.remove('disabled'); // Re-enable restart
             matchRowWidths();
@@ -801,6 +803,42 @@
         .catch(err => {
           setConsoleOutput('rebuild', `Poll error: ${err.message}`);
         });
+    }
+
+    function doApi() {
+      setConsoleOutput('api', 'Restarting API...');
+      fetch(`http://localhost:${ports.api}/restart-api`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then(() => {
+          // API will die, so this may not complete
+          setConsoleOutput('api', 'API restarting...');
+        })
+        .catch(() => {
+          // Expected - API died
+          setConsoleOutput('api', 'API restarting...');
+        });
+      
+      // Poll until API is back
+      let attempts = 0;
+      const checkApi = setInterval(() => {
+        attempts++;
+        fetch(`http://localhost:${ports.api}/rebuild-status`)
+          .then(res => res.json())
+          .then(() => {
+            clearInterval(checkApi);
+            setConsoleOutput('api', '✓ API restarted');
+            // Reload the page after a brief moment
+            setTimeout(() => location.reload(), 300);
+          })
+          .catch(() => {
+            if (attempts > 20) {
+              clearInterval(checkApi);
+              setConsoleOutput('api', '❌ API failed to restart');
+            }
+          });
+      }, 500);
     }
 
     // === Deploy Status Polling ===
@@ -971,6 +1009,7 @@
     btnDns.addEventListener('click', doDns);
     btnBubble.addEventListener('click', doBubble);
     btnRebuild.addEventListener('click', doRebuild);
+    btnApi.addEventListener('click', doApi);
 
     document.addEventListener('keydown', (e) => {
       // Blur any focused button so keyboard works
@@ -1000,6 +1039,7 @@
         case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); updateFeedbackRow(); break;
         case 'n': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); updateFeedbackRow(); break;
         case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); updateFeedbackRow(); break;
+        case '`': doApi(); break;
       }
     });
 

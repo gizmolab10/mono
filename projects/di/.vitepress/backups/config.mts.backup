@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import taskLists from 'markdown-it-task-lists'
+import taskListPlusPlugin from '../../../sites/markdown-it-task-list-plus.mts'
 
 export default defineConfig({
   srcDir: './notes',
@@ -12,6 +13,7 @@ export default defineConfig({
   markdown: {
     config: (md) => {
       md.use(taskLists)
+      md.use(taskListPlusPlugin)
     }
   },
 

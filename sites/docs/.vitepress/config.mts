@@ -59,12 +59,20 @@ export default defineConfig({
                   link: '/guides/collaborate/evolve'
                 },
                 {
+                  text: 'Journals',
+                  link: '/guides/collaborate/journals'
+                },
+                {
                   text: 'Markdown',
                   link: '/guides/collaborate/markdown'
                 },
                 {
                   text: 'Repo',
                   link: '/guides/collaborate/repo'
+                },
+                {
+                  text: 'Shorthand',
+                  link: '/guides/collaborate/shorthand'
                 },
                 {
                   text: 'Voice',
@@ -165,8 +173,20 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              text: 'Hub App Spec',
+              link: '/work/hub-app-spec'
+            },
+            {
+              text: 'Hub App',
+              link: '/work/hub-app'
+            },
+            {
               text: 'Journal',
               link: '/work/journal'
+            },
+            {
+              text: 'Resume',
+              link: '/work/resume'
             },
             {
               text: 'Articles >',

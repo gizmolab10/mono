@@ -67,6 +67,10 @@ Now collaborator has better guidance for next time. It's teaching by example, th
 * Present reasoned concise report
 * Code snippets always presented with relative file path
 
+## Tool Reliability
+
+**Use `write_file`, not `create_file`** — the `create_file` tool can report success without actually creating the file. `write_file` is reliable.
+
 ## Avoiding Hallucination
 
 When reporting observations or issues:
@@ -74,6 +78,20 @@ When reporting observations or issues:
 * **Verify before asserting** — quote specific evidence (line numbers, exact text, visible details) rather than describing from memory
 * **Signal confidence** — say "I think" or "it looks like" when uncertain, state as fact only when verified
 * **Ask before fixing** — if I see a potential issue, describe what I see and ask for confirmation before proposing a fix
+
+## Code Analysis Discipline
+
+When proposing code changes:
+
+* **Verify return types** — before writing `if (x())`, confirm `x()` returns boolean
+* **Trace the full call chain** — if `a()` calls `b()`, read `b()` too
+* **Don't trust patterns** — just because `becomeFocus()` returns boolean doesn't mean `grabOnly()` does
+* **Quote the signature** — when proposing code, state the return type: "`grabOnly()` returns void, so..."
+
+When analyzing existing code:
+
+* **Don't assume correctness** — existing code may be buggy
+* **Read implementations, not just calls** — method names lie, implementations don't
 
 ## File Freshness
 
@@ -121,27 +139,7 @@ Just say so. No ceremony needed.
 
 ## Commands
 
-Since typing is something my fingers are becoming terrible at, I want short commands. They must not something i might accidentally type, not good that.
-
-### Begin
-
-| Command | Action |
-|----|----|
-| `go` | Read \~/GitHub/`<current-go>`/CLAUDE.MD |
-| `go <X>` | Set current-go to X, read \~/GitHub/`<X>`/CLAUDE.MD |
-| `what go` | Tell current-go value |
-| `work on <X>` | Read or create notes/work/`<X>`.md, resume work |
-
-### Work
-
-| Command    | Action                                                                                          |
-| ---------- | ----------------------------------------------------------------------------------------------- |
-| `ex`       | Execute mode — skip proposals, just do it (end responses with: in "ex" mode, type "hy" to exit) |
-| `hy`       | Hybrid mode — propose before file changes                                                       |
-| `propose`  | Explain plan before executing                                                                   |
-| `chime in` | Give observations, suggestions about the topic                                                  |
-| `undo`     | Revert last file change                                                                         |
-| `ua`       | Update current md file with chat content                                                        |
+See [shorthand.md](shorthand.md) for the full list of commands and abbreviations.
 
 ## Persistence
 

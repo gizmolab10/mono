@@ -30,7 +30,14 @@ done
 
 # Progress display (single line, overwriting)
 # Also writes to status file for hub polling
+# If REBUILD_STATUS_FILE is set (from parent "all" call), use it and prefix with REBUILD_PROJECT
 STATUS_FILE=""
+PROJECT_PREFIX=""
+
+if [ -n "$REBUILD_STATUS_FILE" ]; then
+  STATUS_FILE="$REBUILD_STATUS_FILE"
+  PROJECT_PREFIX="$REBUILD_PROJECT: "
+fi
 
 progress() {
   if [ "$VERBOSE" = true ]; then
@@ -40,7 +47,7 @@ progress() {
   fi
   # Write to status file if set
   if [ -n "$STATUS_FILE" ]; then
-    echo "Step $1/$TOTAL_STEPS: $2" > "$STATUS_FILE"
+    echo "${PROJECT_PREFIX}Step $1/$TOTAL_STEPS: $2" > "$STATUS_FILE"
   fi
 }
 
@@ -53,7 +60,7 @@ progress_item() {
   fi
   # Write to status file if set
   if [ -n "$STATUS_FILE" ]; then
-    echo "Step $CURRENT_STEP/$TOTAL_STEPS: $STEP_NAME... ${1:0:30}" > "$STATUS_FILE"
+    echo "${PROJECT_PREFIX}Step $CURRENT_STEP/$TOTAL_STEPS: $STEP_NAME... ${1:0:30}" > "$STATUS_FILE"
   fi
 }
 
@@ -119,7 +126,9 @@ start_step() {
 fail() {
   clear_progress
   echo "❌ Failed at step $CURRENT_STEP: $STEP_NAME"
-  echo "❌ Failed at step $CURRENT_STEP: $STEP_NAME" > "$STATUS_FILE"
+  if [ -n "$STATUS_FILE" ]; then
+    echo "${PROJECT_PREFIX}❌ Failed at step $CURRENT_STEP: $STEP_NAME" > "$STATUS_FILE"
+  fi
   echo ""
   cat "$ERROR_LOG"
   exit 1
@@ -127,24 +136,39 @@ fail() {
 
 # Handle "all" option
 if [ "$PROJECT_ARG" = "all" ]; then
+  # Single status file for all projects
+  STATUS_FILE="$GITHUB_DIR/mono/logs/rebuild-status.txt"
+  mkdir -p "$GITHUB_DIR/mono/logs"
+  
   clear_progress
   echo "Updating all projects..."
+  echo "all: Starting..." > "$STATUS_FILE"
   echo ""
   
+  PROJ_COUNT=${#ALL_PROJECTS[@]}
+  PROJ_NUM=0
+  
   for proj in "${ALL_PROJECTS[@]}"; do
+    PROJ_NUM=$((PROJ_NUM + 1))
+    PROJ_NAME=$(basename "$proj")
     echo ">>> $proj"
+    
+    # Run sub-build, passing status file and project name via env
     if [ "$VERBOSE" = true ]; then
-      bash "$0" "$GITHUB_DIR/$proj" --verbose
+      REBUILD_STATUS_FILE="$STATUS_FILE" REBUILD_PROJECT="[$PROJ_NUM/$PROJ_COUNT] $PROJ_NAME" bash "$0" "$GITHUB_DIR/$proj" --verbose
     else
-      bash "$0" "$GITHUB_DIR/$proj"
+      REBUILD_STATUS_FILE="$STATUS_FILE" REBUILD_PROJECT="[$PROJ_NUM/$PROJ_COUNT] $PROJ_NAME" bash "$0" "$GITHUB_DIR/$proj"
     fi
+    
     if [ $? -ne 0 ]; then
+      echo "❌ [$PROJ_NUM/$PROJ_COUNT] $PROJ_NAME failed" > "$STATUS_FILE"
       exit 1
     fi
     echo ""
   done
   
-  echo "✓ All projects updated"
+  echo "✓ All $PROJ_COUNT projects updated"
+  echo "✓ mono, ws, di docs updated" > "$STATUS_FILE"
   exit 0
 fi
 
@@ -162,9 +186,11 @@ else
 fi
 mkdir -p "$LOGS_DIR"
 
-# Set up status file for hub polling
-STATUS_FILE="$LOGS_DIR/rebuild-status.txt"
-echo "Starting..." > "$STATUS_FILE"
+# Set up status file for hub polling (only if not already set by parent)
+if [ -z "$STATUS_FILE" ]; then
+  STATUS_FILE="$LOGS_DIR/rebuild-status.txt"
+  echo "Starting..." > "$STATUS_FILE"
+fi
 
 # Set up error log
 ERROR_LOG="$LOGS_DIR/update-docs.error.log"

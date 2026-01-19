@@ -106,7 +106,7 @@
 			const isEditingNow = ancestry?.isEditing ?? false;
 			const isGrabbed = ancestry?.isGrabbed ?? false;
 			const adjust = controls.inRadialMode && isFocus;
-			top = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
+			top = 0.7 + (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
 			color = s_widget.color;
 			left = adjust ? 1.5 : 0.8;
 			trigger = reactives;

@@ -183,10 +183,6 @@ export default withMermaid(
               link: '/guides/composition'
             },
             {
-              text: 'Deliverables',
-              link: '/guides/deliverables'
-            },
-            {
               text: 'Gotchas',
               link: '/guides/gotchas'
             },
@@ -204,6 +200,10 @@ export default withMermaid(
             {
               text: 'Book',
               link: '/work/book'
+            },
+            {
+              text: 'Deliverables',
+              link: '/work/deliverables'
             },
             {
               text: 'Docs',
