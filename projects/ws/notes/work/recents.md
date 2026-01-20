@@ -85,15 +85,20 @@ All new code checks this flag. Old paths stay intact until Phase 5.
 - [ ] Create `S_Recent` type in `state/S_Recent.ts`
 - [ ] Create `si_recents_new: S_Items<S_Recent>` in UX.ts
 - [ ] Create derived stores `w_focus_new`, `w_grabs_new`, `w_depth_new`
+- [ ] Create `src/lib/ts/tests/recents_new.test.ts`
+- [ ] Run `yarn test recents_new` — all pass
 
-Test:
-
+Test file:
 ```typescript
-// Unit test: derived stores react to si_recents_new
-si_recents_new.push({ focus: A, grabs: [B], grabIndex: 0, depth: 2 })
-expect(get(w_focus_new)).toBe(A)
-expect(get(w_grabs_new)).toEqual([B])
-expect(get(w_depth_new)).toBe(2)
+// recents_new.test.ts
+describe('Phase 1: derived stores', () => {
+  it('reacts to si_recents_new push', () => {
+    si_recents_new.push({ focus: A, grabs: [B], grabIndex: 0, depth: 2 })
+    expect(get(w_focus_new)).toBe(A)
+    expect(get(w_grabs_new)).toEqual([B])
+    expect(get(w_depth_new)).toBe(2)
+  })
+})
 ```
 
 **Phase 2: Wire up snapshot creation** (decisions: 4, 6, 7, 8)
@@ -101,62 +106,93 @@ expect(get(w_depth_new)).toBe(2)
 - [ ] Create `snapshot_current(): S_Recent` helper
 - [ ] Call snapshot on: `becomeFocus`, `grab`, `grabOnly`, `ungrab`, depth change
 - [ ] Push snapshots to `si_recents_new` (parallel to old system)
+- [ ] Add Phase 2 tests to `recents_new.test.ts`
+- [ ] Run `yarn test recents_new` — all pass
 
-Test:
-
+Add to test file:
 ```typescript
-// Unit test: snapshot captures current state
-A.becomeFocus()
-expect(si_recents_new.length).toBe(1)
-expect(si_recents_new.item.focus).toBe(A)
+describe('Phase 2: snapshot creation', () => {
+  it('creates snapshot on becomeFocus', () => {
+    A.becomeFocus()
+    expect(si_recents_new.length).toBe(1)
+    expect(si_recents_new.item.focus).toBe(A)
+  })
 
-B.grab()
-expect(si_recents_new.length).toBe(2)
-expect(si_recents_new.item.grabs).toContain(B)
+  it('creates snapshot on grab', () => {
+    B.grab()
+    expect(si_recents_new.length).toBe(2)
+    expect(si_recents_new.item.grabs).toContain(B)
+  })
 
-C.grabOnly()
-expect(si_recents_new.length).toBe(3)
-expect(si_recents_new.item.grabs).toEqual([C])
+  it('creates snapshot on grabOnly', () => {
+    C.grabOnly()
+    expect(si_recents_new.length).toBe(3)
+    expect(si_recents_new.item.grabs).toEqual([C])
+  })
+})
 ```
 
 **Phase 3: Wire up navigation** (decisions: 3, 10)
 
 - [ ] Implement `recents_go(next: boolean)` using `si_recents_new`
 - [ ] On navigate: state comes from snapshot, no replay
+- [ ] Add Phase 3 tests to `recents_new.test.ts`
+- [ ] Run `yarn test recents_new` — all pass
 
-Test:
-
+Add to test file:
 ```typescript
-// Unit test: navigation restores state
-A.becomeFocus()           // index 0: focus=A, grabs=[]
-B.grabOnly()              // index 1: focus=A, grabs=[B]
-C.becomeFocus()           // index 2: focus=C, grabs=[B]
+describe('Phase 3: navigation', () => {
+  beforeEach(() => {
+    A.becomeFocus()           // index 0: focus=A, grabs=[]
+    B.grabOnly()              // index 1: focus=A, grabs=[B]
+    C.becomeFocus()           // index 2: focus=C, grabs=[B]
+  })
 
-recents_go(false)         // backward to index 1
-expect(get(w_focus_new)).toBe(A)
-expect(get(w_grabs_new)).toEqual([B])
+  it('goes backward', () => {
+    recents_go(false)         // backward to index 1
+    expect(get(w_focus_new)).toBe(A)
+    expect(get(w_grabs_new)).toEqual([B])
+  })
 
-recents_go(false)         // backward to index 0
-expect(get(w_grabs_new)).toEqual([])
+  it('goes backward again', () => {
+    recents_go(false)
+    recents_go(false)         // backward to index 0
+    expect(get(w_grabs_new)).toEqual([])
+  })
 
-recents_go(false)         // circular: backward to index 2
-expect(get(w_focus_new)).toBe(C)
+  it('wraps circular', () => {
+    recents_go(false)
+    recents_go(false)
+    recents_go(false)         // circular: backward to index 2
+    expect(get(w_focus_new)).toBe(C)
+  })
 
-recents_go(true)          // forward to index 0
-expect(get(w_focus_new)).toBe(A)
+  it('goes forward', () => {
+    recents_go(false)
+    recents_go(false)
+    recents_go(false)
+    recents_go(true)          // forward to index 0
+    expect(get(w_focus_new)).toBe(A)
+  })
+})
 ```
 
-**Phase 4: Set features.use_new_recents = true** (decisions: 11)
+**Phase 4: Swap consumers (behind flag)** (decisions: 11)
 
 - [ ] `isGrabbed` checks flag, uses new or old
+- [ ] Add Phase 4 tests to `recents_new.test.ts`
+- [ ] Run `yarn test recents_new` — all pass
 
-Unit test:
-
+Add to test file:
 ```typescript
-features.use_new_recents = true
-A.grabOnly()
-expect(A.isGrabbed).toBe(true)
-expect(B.isGrabbed).toBe(false)
+describe('Phase 4: isGrabbed with flag', () => {
+  it('uses new system when flag on', () => {
+    features.use_new_recents = true
+    A.grabOnly()
+    expect(A.isGrabbed).toBe(true)
+    expect(B.isGrabbed).toBe(false)
+  })
+})
 ```
 
 Manual test:
@@ -181,9 +217,10 @@ Manual test:
 - [ ] Delete `si_grabs`, old `si_recents`, `w_ancestry_focus`, `save_grabs`, `update_grabs_forSearch`
 - [ ] Remove feature flag
 - [ ] Rename `_new` → final names
+- [ ] Update test file: remove flag references, rename `_new` → final names
+- [ ] Run `yarn test recents_new` — all pass
 
 Verify no dangling references:
-
 ```
 grep -r "si_grabs\|save_grabs\|update_grabs_forSearch" src/
 ```
