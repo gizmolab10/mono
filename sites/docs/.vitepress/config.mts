@@ -37,6 +37,11 @@ export default defineConfig({
     sidebar: {
       '/ws/': [
         {
+          text: 'Aside',
+          link: '/aside/',
+          collapsed: true,
+        },
+        {
           text: 'Guides >',
           link: '/guides/',
           collapsed: true,
