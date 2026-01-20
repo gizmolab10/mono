@@ -49,7 +49,13 @@
 		s_drag.set_html_element(element);
 		s_drag.handle_s_mouse = (s_mouse) => {
 			if (s_mouse.isDown && !!ancestry && !radial.isDragging && (!$w_dragging || $w_dragging === T_Drag.none)) {
-				e.handle_singleClick_onDragDot(false, ancestry);
+				const shiftKey = s_mouse.event?.shiftKey ?? false;
+				if (shiftKey) {
+					// Only block Widget when we actually handle the grab
+					x.dragDotJustClicked = true;
+					setTimeout(() => { x.dragDotJustClicked = false; }, 100);
+				}
+				e.handle_singleClick_onDragDot(shiftKey, ancestry);
 			}
 			return true;
 		};

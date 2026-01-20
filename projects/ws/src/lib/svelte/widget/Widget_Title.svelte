@@ -138,6 +138,7 @@
 	}
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
+		console.log(`[WIDGET_TITLE] handle_s_mouse isDown=${s_mouse.isDown}`);
 		if (s_mouse.isDown) {
 			if (!!ancestry) {
 				if (get(databases.w_t_database) === T_Database.filesystem) {
@@ -163,7 +164,8 @@
 						$w_s_title_edit = null;
 					}
 					if (!ancestry.isGrabbed) {
-						ancestry.grab_forShift(false);
+						const shiftKey = s_mouse.event?.shiftKey ?? false;
+						ancestry.grab_forShift(shiftKey);
 					} else if (ancestry.isEditable && !!input) {
 						// Only start editing if this is not a deferred single-click from double-click timer
 						// When the timer fires, doubleClick_fired is set to true, so check that

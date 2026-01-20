@@ -20,6 +20,7 @@ export class Events {
 	w_count_window_resized	= writable<number>(0);
 	w_count_mouse_down		= writable<number>(0);
 	w_count_mouse_up		= writable<number>(0);
+	w_shift_on_mouse_up		= writable<boolean>(false);  // Phase 4: track shift for grab
 	w_control_key_down		= writable<boolean>(false);
 	w_mouse_button_down		= writable<boolean>(false);
 	w_scaled_movement		= writable<Point | null>(null);
@@ -112,6 +113,7 @@ export class Events {
 		hits.handle_s_mouse_at(scaled, S_Mouse.up(event, null));
 		hits.disable_hover = get(colors.w_color_picker_isOpen);
 		this.w_scaled_movement.set(null);
+		this.w_shift_on_mouse_up.set(event.shiftKey);  // Phase 4: capture shift state
 		this.w_count_mouse_up.update(n => n + 1);
 		this.w_mouse_button_down.set(false);
 	}
@@ -293,8 +295,8 @@ export class Events {
 						case '!':				g.grand_adjust_toFit(); break;
 						case '?':				controls.showHelp_home(); return;
 						case 'm':				controls.toggle_graph_type(); break;
-						case ']':				x.ancestry_next_focusOn(true); break;
-						case '[':				x.ancestry_next_focusOn(false); break;
+						case ']':				console.log(`[KEY] ] pressed, use_new_recents=${features.use_new_recents}`); if (features.use_new_recents) { x.recents_go(true); } else { x.ancestry_next_focusOn(true); } break;
+						case '[':				console.log(`[KEY] [ pressed, use_new_recents=${features.use_new_recents}`); if (features.use_new_recents) { x.recents_go(false); } else { x.ancestry_next_focusOn(false); } break;
 						case '>':				g_graph_tree.increase_depth_limit_by(1); break;
 						case '<':				g_graph_tree.increase_depth_limit_by(-1); break;
 						case 'p':				if (!COMMAND) { u.print_graph(); }; break;

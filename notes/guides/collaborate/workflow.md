@@ -53,6 +53,46 @@ When work is complete, one of two destinations:
 | `notes/work/done/` | Task is finished, doc is historical record | svelte.md, quaternions.md |
 | `notes/guides/` | Doc becomes living reference for future work | testing.md |
 
+## Debugging Discipline
+
+When something isn't working:
+
+1. **Verify the switch is on.** Feature flags, config values, enable/disable settings — check these FIRST before writing any debug code.
+
+2. **One log at the entry point.** Add a single `console.log` at the function entry to confirm it's being called at all. Trace forward from there.
+
+3. **Verify assumptions before writing code.** Don't assume you know what's broken. Prove it.
+
+4. **Reference vs semantic equality.** `indexOf()` and `===` compare object references. Use `.equals()` or `findIndex(a => a.equals(x))` when comparing objects by value.
+
+5. **Follow the documented plan.** If there's a migration doc or checklist, follow it step by step. Don't skip ahead.
+
+**Anti-patterns:**
+- Scattering `console.log` everywhere hoping to spot something
+- Chasing symptoms without verifying the function is even reached
+- Making multiple speculative fixes at once
+- Assuming the config is correct without checking
+
+## Implementation Discipline
+
+Before writing code:
+
+1. **Quote the plan.** If there's a work doc or migration plan, QUOTE the relevant section in your response before writing any code. This proves you read it.
+
+2. **Re-read before editing.** ALWAYS `view` a file immediately before editing it. Never rely on what you "remember" from earlier in the conversation.
+
+3. **One change at a time.** Make one fix, test it, then move on. Don't stack multiple speculative changes.
+
+4. **Say "let me re-read" out loud.** If you're about to implement something from a plan, say "Let me re-read [file]" and actually do it. This is a forcing function.
+
+**When working on a migration or multi-phase plan:**
+- State which phase you're in
+- Quote what the plan says to do for that phase
+- Do exactly that, nothing more
+- Don't take shortcuts that "should work" — follow the plan
+
+**The trap:** Optimizing for appearing helpful by producing code quickly. The fix: slow down, verify, quote sources.
+
 ## Why This Works
 This workflow is a good use of AI capabilities.
 

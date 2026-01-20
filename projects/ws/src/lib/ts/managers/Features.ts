@@ -4,6 +4,8 @@ export class Features {
 
 	theme = T_Theme.standalone;
 
+	use_new_recents		 = true;	// Phase 4: flip to true when ready
+
 	has_zoom_controls	 = false;	// NB: hidden until implemented
 	has_details_button 	 = true;
 	has_every_detail	 = true;

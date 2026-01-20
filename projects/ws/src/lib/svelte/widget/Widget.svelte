@@ -11,7 +11,7 @@
 	export let g_widget!: G_Widget;
 	const s_widget = g_widget.s_widget;	// put me first
 	const { w_s_hover } = hits;
-	const { w_count_mouse_up } = e;
+	const { w_count_mouse_up, w_shift_on_mouse_up } = e;
 	const s_drag = s_widget.s_drag;
 	const s_title = s_widget.s_title;
 	const { w_thing_color } = colors;
@@ -19,6 +19,7 @@
 	const s_reveal = s_widget.s_reveal;
 	const { w_show_catalist_details } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
+	const { w_grabs_new } = x;  // Phase 4: new grabs store
     const reveal_isAt_right = g_widget.reveal_isAt_right;
 	const reveal_pointsTo_child = g_widget.pointsTo_child;
 	const { w_s_title_edit, w_ancestry_focus } = x;
@@ -97,7 +98,8 @@
 	}
 
 	$: {
-		const reactives = `${$w_s_title_edit?.t_edit}:::${u.descriptionBy_titles($w_grabbed)}`;
+		const grabs_new_ids = $w_grabs_new?.map(a => a.id).join(',') ?? '';
+		const reactives = `${$w_s_title_edit?.t_edit}:::${u.descriptionBy_titles($w_grabbed)}:::${grabs_new_ids}`;
 		if (reactives != trigger && !!ancestry && s_widget.detect_ifState_didChange) {
 			trigger = reactives;
 			if (!(controls.inRadialMode && ancestry.isFocus)) {
@@ -110,7 +112,9 @@
 
 	$: if (mouse_up_count != $w_count_mouse_up) {
 		mouse_up_count = $w_count_mouse_up;
-		if ($w_s_hover?.id === s_widget.id) {
+		// Only handle if hover is on THIS widget and drag dot didn't just handle it
+		const hoverIsOnThisWidget = $w_s_hover?.id === s_widget.id;
+		if (hoverIsOnThisWidget && !x.dragDotJustClicked) {
 			// Don't grab if we're waiting for a double-click - let the deferred single-click handle it
 			const waitingForDoubleClick = hits.pending_singleClick_target === s_widget && 
 				hits.click_timer.hasTimer_forID(T_Timer.double);
@@ -143,7 +147,7 @@
 	}
 
 	function handle_mouseUp() {
-		ancestry?.grab_forShift(false);
+		ancestry?.grab_forShift($w_shift_on_mouse_up);
 		update_style();
 	}
 

@@ -27,7 +27,13 @@
 
 	function togglePopupID(id) { $w_id_popupView = ($w_id_popupView == id) ? null : id; }
 	function handle_recents_mouseClick(index: number, event?: MouseEvent | null, element?: HTMLElement | null, isFirstCall?: boolean) { 
-		x.ancestry_next_focusOn(index == 1); 
+		const next = index == 1;
+		console.log(`[PRIMARY] handle_recents_mouseClick, use_new_recents=${features.use_new_recents}, next=${next}`);
+		if (features.use_new_recents) {
+			x.recents_go(next);
+		} else {
+			x.ancestry_next_focusOn(next);
+		}
 	}
 	function handle_scale_control(index: number, event?: MouseEvent | null, element?: HTMLElement | null, isFirstCall?: boolean) {
 		const t_control = index === 0 ? T_Control.shrink : T_Control.grow;

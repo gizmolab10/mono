@@ -1,6 +1,7 @@
 import { S_Items, T_Search, T_Startup, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
+import type { S_Recent } from '../state/S_Recent';
 import { g, h, core, u, hits, debug, radial } from '../common/Global_Imports';
-import { details, controls, databases } from '../common/Global_Imports';
+import { details, controls, databases, features } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { get, writable, derived, type Readable } from 'svelte/store';
 import Identifiable from '../runtime/Identifiable';
@@ -13,6 +14,12 @@ export default class S_UX {
 	w_ancestry_forDetails! : Readable<Ancestry | null>;
 	w_ancestry_focus!	   : Readable<Ancestry | null>;
 
+	// New recents system (Phase 1)
+	w_focus_new!           : Readable<Ancestry | null>;
+	w_grabs_new!           : Readable<Ancestry[]>;
+	w_depth_new!           : Readable<number>;
+	si_recents_new         = new S_Items<S_Recent>([]);
+
 	w_s_title_edit		   = writable<S_Title_Edit | null>(null);
 	w_s_alteration		   = writable<S_Alteration | null>();
 	w_thing_title		   = writable<string | null>();
@@ -24,16 +31,23 @@ export default class S_UX {
 	si_grabs			   = new S_Items<Ancestry>([]);
 	si_found			   = new S_Items<Thing>([]);
 	private si_saved_grabs = new S_Items<Ancestry>([]);
+	private isNavigating   = false;  // Phase 3: prevent snapshot during navigation
+	dragDotJustClicked     = false;  // Prevent Widget from double-handling drag dot clicks
 
 	parents_focus!: Ancestry;
 	prior_focus!: Ancestry;
 
 	constructor() {
-		this.w_ancestry_focus = derived(			// derived store AFTER si_recents is available
-			[this.si_recents.w_items, this.si_recents.w_index],
-			([items, index]) => {
+		this.w_ancestry_focus = derived(
+			[this.si_recents.w_items, this.si_recents.w_index, this.si_recents_new.w_item],
+			([items, index, newItem]) => {
+				// Phase 4: use new system when flag is on
+				if (features.use_new_recents && newItem?.focus) {
+					return newItem.focus;
+				}
+				// Old system fallback
 				if (items.length === 0) {
-					return h?.rootAncestry;			// fallback during initialization
+					return h?.rootAncestry;
 				}
 				const pair = items[index] as Identifiable_S_Items_Pair | undefined;
 				const focus = pair?.[0] as Ancestry | null;
@@ -69,6 +83,20 @@ export default class S_UX {
 				}
 				return h?.rootAncestry;				// Fallback: root ancestry
 			}
+		);
+
+		// New recents system derived stores (Phase 1)
+		this.w_focus_new = derived(
+			this.si_recents_new.w_item,
+			(item) => item?.focus ?? null
+		);
+		this.w_grabs_new = derived(
+			this.si_recents_new.w_item,
+			(item) => item?.si_grabs?.items ?? []
+		);
+		this.w_depth_new = derived(
+			this.si_recents_new.w_item,
+			(item) => item?.depth ?? 0
 		);
 	}
 
@@ -109,6 +137,16 @@ export default class S_UX {
 			this.update_grabs_forSearch();
 		});
 		this.update_grabs_forSearch();
+
+		// Phase 2: snapshot on depth change (skip during navigation)
+		g.w_depth_limit.subscribe((depth: number) => {
+			if (!this.isNavigating) {
+				const focus = get(this.w_ancestry_focus);
+				if (focus) {
+					this.push_snapshot(focus, 'depth_change');
+				}
+			}
+		});
 	}
 	
 	static readonly _____ANCESTRY: unique symbol;
@@ -126,6 +164,35 @@ export default class S_UX {
 		
 	static readonly _____FOCUS: unique symbol;
 
+	// Phase 2: snapshot helper for new recents system
+	private snapshot_current(focus: Ancestry): S_Recent {
+		const si_grabs_clone = new S_Items<Ancestry>([...this.si_grabs.items]);
+		si_grabs_clone.index = this.si_grabs.index;
+		return {
+			focus,
+			si_grabs: si_grabs_clone,
+			depth: get(g.w_depth_limit)
+		};
+	}
+
+	private last_snapshot_signature = '';
+
+	private push_snapshot(focus: Ancestry, caller: string) {
+		if (this.isNavigating) {
+			console.log(`[RECENTS] push_snapshot from ${caller}: SKIPPED (navigating)`);
+			return;
+		}
+		const snapshot = this.snapshot_current(focus);
+		const signature = `${focus.id}:${snapshot.si_grabs.items.map(a => a.id).join(',')}:${snapshot.depth}`;
+		if (signature === this.last_snapshot_signature) {
+			console.log(`[RECENTS] push_snapshot from ${caller}: SKIPPED (no change)`);
+			return;
+		}
+		this.last_snapshot_signature = signature;
+		console.log(`[RECENTS] push_snapshot from ${caller}: focus=${focus.title}, grabs=[${snapshot.si_grabs.items.map(a => a.title).join(', ')}], total=${this.si_recents_new.length + 1}`);
+		this.si_recents_new.push(snapshot);
+	}
+
 	ancestry_next_focusOn(next: boolean) {
 		if (this.si_recents.find_next_item(next)) {		// w_ancestry_focus is now updated
 			const [focus, grabs] = this.si_recents.item as [Ancestry, S_Items<Ancestry> | null];
@@ -141,6 +208,40 @@ export default class S_UX {
 		}
 	}
 
+	// Phase 3: navigate new recents system
+	recents_go(next: boolean) {
+		console.log(`[RECENTS] recents_go(${next}), length=${this.si_recents_new.length}`);
+		if (this.si_recents_new.length === 0) return;
+		
+		this.isNavigating = true;
+		try {
+			if (this.si_recents_new.find_next_item(next)) {
+				const snapshot = this.si_recents_new.item;
+				console.log(`[RECENTS] navigated to snapshot:`, snapshot?.focus?.title, snapshot?.si_grabs?.items?.map(a => a.title));
+				if (snapshot) {
+					// Apply grabs from snapshot
+					this.si_grabs.items = [...snapshot.si_grabs.items];
+					this.si_grabs.index = snapshot.si_grabs.index;
+					
+					// Focus comes from w_focus_new (derived from si_recents_new.item)
+					// Just expand and ensure visible
+					snapshot.focus?.expand();
+					for (const grab of snapshot.si_grabs.items) {
+						grab?.ancestry_assureIsVisible();
+					}
+					
+					// Apply depth
+					g.w_depth_limit.set(snapshot.depth);
+					
+					g.grand_build();
+					details.redraw();
+				}
+			}
+		} finally {
+			this.isNavigating = false;
+		}
+	}
+
 	becomeFocus(ancestry: Ancestry): boolean {
 		const priorFocus = get(this.w_ancestry_focus);
 		const changed = !priorFocus || !ancestry.equals(priorFocus);
@@ -148,6 +249,7 @@ export default class S_UX {
 			const pair: Identifiable_S_Items_Pair = [ancestry, this.si_grabs];
 			this.si_recents.remove_all_beyond_index();
 			this.si_recents.push(pair);
+			this.push_snapshot(ancestry, 'becomeFocus');  // Phase 2: parallel to old system
 			x.w_s_alteration.set(null);
 			ancestry.expand();
 			hits.recalibrate();
@@ -193,6 +295,7 @@ export default class S_UX {
 	grabOnly(ancestry: Ancestry) {
 		if (!radial.isDragging) {
 			this.si_grabs.items = [ancestry];
+			this.push_snapshot(get(this.w_ancestry_focus) ?? ancestry, 'grabOnly');  // Phase 2
 			h?.stop_alteration();
 			debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
 		}
@@ -202,13 +305,19 @@ export default class S_UX {
 		if (!radial.isDragging) {
 			let items = this.si_grabs.items ?? [];
 			if (!!items) {
-				const index = items.indexOf(ancestry);
+				// Use equals() instead of reference equality
+				const index = items.findIndex(a => a.equals(ancestry));
 				if (items.length != 0 && (index != -1) && (index != items.length - 1)) {
 					items.splice(index, 1);
 				}
-				items.push(ancestry);
+				// Only push if not already at end
+				const lastIndex = items.findIndex(a => a.equals(ancestry));
+				if (lastIndex === -1) {
+					items.push(ancestry);
+				}
 			}
 			this.si_grabs.items = items;
+			this.push_snapshot(get(this.w_ancestry_focus) ?? ancestry, 'grab');  // Phase 2
 			debug.log_grab(`  GRAB '${ancestry.title}'`);
 			h?.stop_alteration();
 		}
@@ -220,7 +329,8 @@ export default class S_UX {
 			const rootAncestry = h?.rootAncestry;
 			this.w_s_title_edit?.set(null);
 			if (!!grabbed) {
-				const index = grabbed.indexOf(ancestry);
+				// Use equals() instead of reference equality
+				const index = grabbed.findIndex(a => a.equals(ancestry));
 				if (index != -1) {				// only splice grabbed when item is found
 					grabbed.splice(index, 1);		// 2nd parameter means remove one item only
 				}
@@ -234,6 +344,7 @@ export default class S_UX {
 				h?.stop_alteration(); // do not show editingActions for root
 			}
 			this.si_grabs.items = grabbed;
+			this.push_snapshot(get(this.w_ancestry_focus) ?? rootAncestry, 'ungrab');  // Phase 2
 			debug.log_grab(`  UNGRAB '${ancestry.title}'`);
 		}
 	}

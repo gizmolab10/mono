@@ -82,10 +82,10 @@ All new code checks this flag. Old paths stay intact until Phase 5.
 
 **Phase 1: Add new structure alongside old** (decisions: 1, 2)
 
-- [ ] Create `S_Recent` type in `state/S_Recent.ts`
-- [ ] Create `si_recents_new: S_Items<S_Recent>` in UX.ts
-- [ ] Create derived stores `w_focus_new`, `w_grabs_new`, `w_depth_new`
-- [ ] Create `src/lib/ts/tests/recents_new.test.ts`
+- [x] Create `S_Recent` type in `state/S_Recent.ts`
+- [x] Create `si_recents_new: S_Items<S_Recent>` in UX.ts
+- [x] Create derived stores `w_focus_new`, `w_grabs_new`, `w_depth_new`
+- [x] Create `src/lib/ts/tests/recents_new.test.ts`
 - [ ] Run `yarn test recents_new` — all pass
 
 Test file:
@@ -103,10 +103,10 @@ describe('Phase 1: derived stores', () => {
 
 **Phase 2: Wire up snapshot creation** (decisions: 4, 6, 7, 8)
 
-- [ ] Create `snapshot_current(): S_Recent` helper
-- [ ] Call snapshot on: `becomeFocus`, `grab`, `grabOnly`, `ungrab`, depth change
-- [ ] Push snapshots to `si_recents_new` (parallel to old system)
-- [ ] Add Phase 2 tests to `recents_new.test.ts`
+- [x] Create `snapshot_current(): S_Recent` helper
+- [x] Call snapshot on: `becomeFocus`, `grab`, `grabOnly`, `ungrab`, depth change
+- [x] Push snapshots to `si_recents_new` (parallel to old system)
+- [x] Add Phase 2 tests to `recents_new.test.ts`
 - [ ] Run `yarn test recents_new` — all pass
 
 Add to test file:
@@ -134,9 +134,10 @@ describe('Phase 2: snapshot creation', () => {
 
 **Phase 3: Wire up navigation** (decisions: 3, 10)
 
-- [ ] Implement `recents_go(next: boolean)` using `si_recents_new`
-- [ ] On navigate: state comes from snapshot, no replay
-- [ ] Add Phase 3 tests to `recents_new.test.ts`
+- [x] Implement `recents_go(next: boolean)` using `si_recents_new`
+- [x] On navigate: state comes from snapshot, no replay
+- [x] Add Phase 3 tests to `recents_new.test.ts`
+- [x] Added `isNavigating` flag to prevent snapshot during navigation
 - [ ] Run `yarn test recents_new` — all pass
 
 Add to test file:
@@ -179,8 +180,9 @@ describe('Phase 3: navigation', () => {
 
 **Phase 4: Swap consumers (behind flag)** (decisions: 11)
 
-- [ ] `isGrabbed` checks flag, uses new or old
-- [ ] Add Phase 4 tests to `recents_new.test.ts`
+- [x] Add `use_new_recents` flag to Features.ts
+- [x] `isGrabbed` checks flag, uses new or old
+- [x] Add Phase 4 tests to `recents_new.test.ts`
 - [ ] Run `yarn test recents_new` — all pass
 
 Add to test file:
@@ -197,20 +199,21 @@ describe('Phase 4: isGrabbed with flag', () => {
 
 Manual test:
 
-| Step | Action | Expected |
-|----|----|----|
-| 1 | Set `use_new_recents = true` in Features.ts | App compiles |
-| 2 | Load app in tree mode | Root is focus, no grabs highlighted |
-| 3 | Click widget A | A highlighted (grabbed), details shows A |
-| 4 | Shift-click widget B | A and B highlighted, details shows B |
-| 5 | Click widget C | Only C highlighted, details shows C |
-| 6 | Press back key | Previous state restored (A+B or just A) |
-| 7 | Press forward key | C highlighted again |
-| 8 | Switch to radial mode | Same grab state preserved |
-| 9 | Click different widget | Highlight updates correctly |
-| 10 | Open search, type query | Grabs unchanged (no highlight pollution) |
-| 11 | Select search result | Details shows result, grabs still unchanged |
-| 12 | Press Escape (close search) | Original grabs restored in view |
+| Step | Action                                      | Expected                                    |
+| ---- | ------------------------------------------- | ------------------------------------------- |
+| 1    | Set `use_new_recents = true` in Features.ts | App compiles                                |
+| 2    | Load app in tree mode                       | Root is focus, no grabs highlighted         |
+| 3    | Click widget A                              | A highlighted (grabbed), details shows A    |
+| 4    | Shift-click widget B                        | A and B highlighted, details shows B        |
+| 5    | Click widget C                              | Only C highlighted, details shows C         |
+| 6    | Press back key                              | Previous state restored (A+B or just A)     |
+| 7    | Press forward key                           | C highlighted again                         |
+| 8    | Switch to radial mode                       | Same grab state preserved                   |
+| 9    | Click different widget                      | Highlight updates correctly                 |
+| 10   | Open search, type query                     | Grabs unchanged (no highlight pollution)    |
+| 11   | Select search result                        | Details shows result, grabs still unchanged |
+| 12   | Press Escape (close search)                 | Original grabs restored in view             |
+
 
 **Phase 5: Remove old code** (decisions: 5, 9)
 
