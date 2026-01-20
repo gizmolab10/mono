@@ -216,12 +216,13 @@ Consumers to migrate:
 - `w_grabbed` in Svelte files → `w_grabs`
 
 Steps:
-- [ ] Create `w_grabs` as true derived store (replace `w_grabs_new`)
-- [ ] Find all `si_grabs` consumers: `grep -rn "si_grabs" src/`
-- [ ] Migrate each consumer to use `w_grabs`
-- [ ] Remove sync subscription
-- [ ] Remove `si_grabs` property
-- [ ] Test
+- [x] Create `w_grabIndex_new` derived store
+- [x] Update `w_ancestry_forDetails` to use new system when flag on
+- [x] Update `grab_next_ancestry()` to mutate snapshot's index directly
+- [x] Update `grab()`, `ungrab()` to read from `w_grabs_new`
+- [x] Update `becomeFocus()` to read from `w_grabs_new` / `w_grabIndex_new`
+- [x] Remove sync subscription
+- [ ] Test (manual steps 1-14)
 
 Add to test file:
 ```typescript

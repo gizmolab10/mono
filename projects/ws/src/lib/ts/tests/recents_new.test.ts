@@ -300,3 +300,87 @@ describe('Phase 4: isGrabbed with flag', () => {
 		expect(get(x.w_grabs_new)).toEqual([]);
 	});
 });
+
+describe('Phase 4b: actual derivation', () => {
+	beforeEach(() => {
+		// Reset to known state
+		x.si_recents_new.items = [];
+		x.si_grabs.items = [];
+		features.use_new_recents = true;
+	});
+
+	afterEach(() => {
+		features.use_new_recents = false;
+	});
+
+	it('w_grabIndex_new derives from snapshot', () => {
+		if (!h?.rootAncestry) return;
+
+		const A = h.rootAncestry;
+
+		// Create snapshot with si_grabs.index = 0
+		const si_grabs = new S_Items<Ancestry>([A, A]);
+		si_grabs.index = 1;
+		const snapshot: S_Recent = { focus: A, si_grabs, depth: 2 };
+		x.si_recents_new.push(snapshot);
+
+		expect(get(x.w_grabIndex_new)).toBe(1);
+	});
+
+	it('grab_next_ancestry cycles through grabs', () => {
+		if (!h?.rootAncestry) return;
+
+		const A = h.rootAncestry;
+
+		// Create snapshot with multiple grabs
+		const si_grabs = new S_Items<Ancestry>([A, A, A]);  // 3 grabs
+		si_grabs.index = 0;
+		const snapshot: S_Recent = { focus: A, si_grabs, depth: 2 };
+		x.si_recents_new.push(snapshot);
+
+		expect(get(x.w_grabIndex_new)).toBe(0);
+
+		// Cycle forward
+		x.grab_next_ancestry(true);
+		expect(get(x.w_grabIndex_new)).toBe(1);
+
+		x.grab_next_ancestry(true);
+		expect(get(x.w_grabIndex_new)).toBe(2);
+
+		// Wrap around
+		x.grab_next_ancestry(true);
+		expect(get(x.w_grabIndex_new)).toBe(0);
+	});
+
+	it('grab_next_ancestry cycles backward', () => {
+		if (!h?.rootAncestry) return;
+
+		const A = h.rootAncestry;
+
+		const si_grabs = new S_Items<Ancestry>([A, A, A]);
+		si_grabs.index = 0;
+		const snapshot: S_Recent = { focus: A, si_grabs, depth: 2 };
+		x.si_recents_new.push(snapshot);
+
+		// Cycle backward (wraps to end)
+		x.grab_next_ancestry(false);
+		expect(get(x.w_grabIndex_new)).toBe(2);
+	});
+
+	it('grab reads from w_grabs_new not si_grabs', () => {
+		if (!h?.rootAncestry) return;
+
+		const A = h.rootAncestry;
+
+		// Put something in old si_grabs
+		x.si_grabs.items = [A];
+
+		// New system has empty grabs
+		x.becomeFocus(A);  // pushes snapshot with current (derived) grabs
+
+		// grab() should read from w_grabs_new (empty), not si_grabs
+		const snapshot = x.si_recents_new.item;
+		// When new system, becomeFocus reads from w_grabs_new which starts empty
+		expect(snapshot?.si_grabs.items.length).toBe(0);
+	});
+});

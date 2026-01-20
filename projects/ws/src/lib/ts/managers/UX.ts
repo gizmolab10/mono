@@ -17,6 +17,7 @@ export default class S_UX {
 	// New recents system (Phase 1)
 	w_focus_new!           : Readable<Ancestry | null>;
 	w_grabs_new!           : Readable<Ancestry[]>;
+	w_grabIndex_new!       : Readable<number>;
 	w_depth_new!           : Readable<number>;
 	si_recents_new         = new S_Items<S_Recent>([]);
 
@@ -61,9 +62,10 @@ export default class S_UX {
 				show.w_show_search_controls,
 				this.si_grabs.w_items,
 				this.si_grabs.w_index,
-				this.w_ancestry_focus
+				this.w_ancestry_focus,
+				this.si_recents_new.w_item  // Phase 4b: add new system dependency
 			],
-			([t_search, foundIndex, foundItems, showSearchControls, grabsItems, grabsIndex, focus]) => {
+			([t_search, foundIndex, foundItems, showSearchControls, grabsItems, grabsIndex, focus, newSnapshot]) => {
 				const row = foundIndex;				// First priority: search selected ancestry (if search is active)
 				if (row !== null && showSearchControls && t_search === T_Search.selected) {
 					const thing = foundItems[row];
@@ -71,8 +73,12 @@ export default class S_UX {
 						return thing.ancestry;
 					}
 				}
-				if (grabsItems.length > 0) {		// Second priority: current grab
-					const grab = grabsItems[grabsIndex] as Ancestry | null;
+				// Phase 4b: use new system when flag is on
+				const useNew = features.use_new_recents && newSnapshot;
+				const grabs = useNew ? (newSnapshot.si_grabs?.items ?? []) : grabsItems;
+				const index = useNew ? (newSnapshot.si_grabs?.index ?? 0) : grabsIndex;
+				if (grabs.length > 0) {				// Second priority: current grab
+					const grab = grabs[index] as Ancestry | null;
 					if (grab) {
 						return grab;
 					}
@@ -92,6 +98,10 @@ export default class S_UX {
 		this.w_grabs_new = derived(
 			this.si_recents_new.w_item,
 			(item) => item?.si_grabs?.items ?? []
+		);
+		this.w_grabIndex_new = derived(
+			this.si_recents_new.w_item,
+			(item) => item?.si_grabs?.index ?? 0
 		);
 		this.w_depth_new = derived(
 			this.si_recents_new.w_item,
@@ -137,21 +147,7 @@ export default class S_UX {
 		});
 		this.update_grabs_forSearch();
 
-		// Reactive snapshot: when state differs from current snapshot, push new one
-		if (features.use_new_recents) {
-			// Sync si_grabs FROM snapshot when it changes
-			this.si_recents_new.w_item.subscribe((snapshot: S_Recent | null) => {
-				if (snapshot) {
-					const currentGrabIds = this.si_grabs.items.map(a => a.id).join(',');
-					const snapshotGrabIds = snapshot.si_grabs.items.map(a => a.id).join(',');
-					if (currentGrabIds !== snapshotGrabIds) {
-						console.log(`[RECENTS] sync grabs from snapshot: [${snapshot.si_grabs.items.map(a => a.title).join(', ')}]`);
-						this.si_grabs.items = [...snapshot.si_grabs.items];
-						this.si_grabs.index = snapshot.si_grabs.index;
-					}
-				}
-			});
-		}
+		// Phase 4b: sync subscription removed — grabs now derived directly from snapshot
 	}
 	
 	static readonly _____ANCESTRY: unique symbol;
@@ -161,6 +157,14 @@ export default class S_UX {
 	grab_next_ancestry(next: boolean) {	// for next/previous in details selection banner
 		if (get(search.w_t_search) > T_Search.off) {
 			this.si_found.find_next_item(next);
+		} else if (features.use_new_recents) {
+			// Phase 4b: mutate snapshot's grabIndex directly (no new history entry)
+			const snapshot = this.si_recents_new.item;
+			if (snapshot?.si_grabs) {
+				snapshot.si_grabs.find_next_item(next);
+				// Trigger reactivity by re-setting index (w_item is derived, can't call update on it)
+				this.si_recents_new.index = this.si_recents_new.index;
+			}
 		} else {
 			this.si_grabs.find_next_item(next);
 		}
@@ -196,8 +200,8 @@ export default class S_UX {
 			const snapshot = this.si_recents_new.item;
 			console.log(`[RECENTS] navigated to snapshot:`, snapshot?.focus?.title, snapshot?.si_grabs?.items?.map(a => a.title));
 			if (snapshot) {
-				// Grabs sync automatically via w_item subscription
-				// Focus comes from w_ancestry_focus (derived from si_recents_new.item)
+				// Phase 4b: grabs derived directly from snapshot via w_grabs_new
+				// Focus derived from snapshot via w_ancestry_focus
 				
 				// Just expand and ensure visible
 				snapshot.focus?.expand();
@@ -228,11 +232,13 @@ export default class S_UX {
 			this.si_recents.push(pair);
 			
 			if (features.use_new_recents) {
-				// Create snapshot with new focus and push
-				const si_grabs_clone = new S_Items<Ancestry>([...this.si_grabs.items]);
-				si_grabs_clone.index = this.si_grabs.index;
+				// Phase 4b: read current grabs from new system
+				const currentGrabs = get(this.w_grabs_new);
+				const currentIndex = get(this.w_grabIndex_new);
+				const si_grabs_clone = new S_Items<Ancestry>([...currentGrabs]);
+				si_grabs_clone.index = currentIndex;
 				const snapshot: S_Recent = { focus: ancestry, si_grabs: si_grabs_clone, depth: get(g.w_depth_limit) };
-				console.log(`[RECENTS] becomeFocus push: focus=${ancestry.title}, grabs=[${this.si_grabs.items.map(a => a.title).join(', ')}]`);
+				console.log(`[RECENTS] becomeFocus push: focus=${ancestry.title}, grabs=[${currentGrabs.map(a => a.title).join(', ')}]`);
 				this.si_recents_new.push(snapshot);
 			}
 			
@@ -297,7 +303,11 @@ export default class S_UX {
 
 	grab(ancestry: Ancestry) {
 		if (!radial.isDragging) {
-			let items = [...(this.si_grabs.items ?? [])];
+			// Phase 4b: read current grabs from new system when flag is on
+			const currentGrabs = features.use_new_recents 
+				? get(this.w_grabs_new) 
+				: this.si_grabs.items;
+			let items = [...(currentGrabs ?? [])];
 			// Use equals() instead of reference equality
 			const index = items.findIndex(a => a.equals(ancestry));
 			if (items.length != 0 && (index != -1) && (index != items.length - 1)) {
@@ -310,9 +320,10 @@ export default class S_UX {
 			}
 			
 			if (features.use_new_recents) {
-				// Create snapshot with new grabs and push - sync subscription updates si_grabs
+				// Create snapshot with new grabs and push
 				const focus = get(this.w_ancestry_focus) ?? ancestry;
 				const si_grabs_new = new S_Items<Ancestry>(items);
+				si_grabs_new.index = items.length - 1;  // Point to newly added item
 				const snapshot: S_Recent = { focus, si_grabs: si_grabs_new, depth: get(g.w_depth_limit) };
 				console.log(`[RECENTS] grab push: focus=${focus.title}, grabs=[${items.map(a => a.title).join(', ')}]`);
 				this.si_recents_new.push(snapshot);
@@ -326,7 +337,11 @@ export default class S_UX {
 
 	ungrab(ancestry: Ancestry) {
 		if (!radial.isDragging) {
-			let grabbed = [...(this.si_grabs.items ?? [])];
+			// Phase 4b: read current grabs from new system when flag is on
+			const currentGrabs = features.use_new_recents 
+				? get(this.w_grabs_new) 
+				: this.si_grabs.items;
+			let grabbed = [...(currentGrabs ?? [])];
 			const rootAncestry = h?.rootAncestry;
 			this.w_s_title_edit?.set(null);
 			// Use equals() instead of reference equality
@@ -344,7 +359,7 @@ export default class S_UX {
 			}
 			
 			if (features.use_new_recents) {
-				// Create snapshot with new grabs and push - sync subscription updates si_grabs
+				// Create snapshot with new grabs and push
 				const focus = get(this.w_ancestry_focus) ?? rootAncestry;
 				const si_grabs_new = new S_Items<Ancestry>(grabbed);
 				const snapshot: S_Recent = { focus, si_grabs: si_grabs_new, depth: get(g.w_depth_limit) };

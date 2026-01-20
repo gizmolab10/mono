@@ -29,6 +29,9 @@ Short commands and abbreviations for working with collaborator.
 | `propose` | Explain plan before executing |
 | `undo` | Revert last file change |
 | `chime in` | Give observations, suggestions, corrections about the topic at hand |
+| `summary` | Summarize what you just did (forces verification) |
+| `relearn` | Reread relevant guides before continuing |
+| `show` | Show your work — quote the lines or evidence |
 
 ## Abbreviations
 

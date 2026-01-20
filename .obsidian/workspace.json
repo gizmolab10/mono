@@ -183,8 +183,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "96f8d32ee4605e89",
   "lastOpenFiles": [
+    "Untitled.md",
+    "notes/guides/collaborate/filesystem.md",
+    "projects/ws/notes/work/recents.md",
     "projects/ws/notes/work/debounce.md",
     "projects/ws/vite.config.js.timestamp-1768935770302-9343506cdc3d.mjs",
     "projects/ws/vite.config.js.timestamp-1768934874854-4aaac39b1283b.mjs",
@@ -193,7 +196,6 @@
     "projects/logs/update-docs.error.log",
     "logs/update-docs.error.log",
     "projects/ws/notes/work/search.md",
-    "projects/ws/notes/work/recents.md",
     "projects/ws/notes/work/deliverables.md",
     "sites/docs/package.json",
     "sites/docs",
@@ -219,8 +221,6 @@
     "notes/work/next/cleanup.md",
     "notes/work/journal.md",
     "notes/work/journal/index.md",
-    "notes/guides/develop/class-lists.md",
-    "notes/work/journal/journal.md",
     "projects/ws/dist/assets/seriously-icon.png",
     "projects/ws/dist/vite.svg",
     "projects/ws/dist/settings.svg"

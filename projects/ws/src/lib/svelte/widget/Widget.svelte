@@ -18,8 +18,8 @@
 	const ancestry = g_widget.ancestry;
 	const s_reveal = s_widget.s_reveal;
 	const { w_show_catalist_details } = show;
-	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_grabs_new } = x;  // Phase 4: new grabs store
+	const { w_items: w_grabbed } = x.si_grabs;  // Old system
+	const { w_grabs_new } = x;  // Phase 4b: new grabs store (true derivation)
     const reveal_isAt_right = g_widget.reveal_isAt_right;
 	const reveal_pointsTo_child = g_widget.pointsTo_child;
 	const { w_s_title_edit, w_ancestry_focus } = x;
