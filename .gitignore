@@ -6,12 +6,3 @@
 **/*.log
 **/dist/
 **/logs/
-
-# Symlinks created locally and by prebuild
-notes/ws
-notes/di
-projects/ws/notes/notes
-projects/di/notes/notes
-
-# Local Netlify folder
-.netlify

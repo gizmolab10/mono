@@ -10,6 +10,5 @@ Unified documentation for all projects.
 
 - [Di](./di/)
 - [Guides](./guides/)
-- [Work](./work/)
 - [Ws](./ws/)
 
