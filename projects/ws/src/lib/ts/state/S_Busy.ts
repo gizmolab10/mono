@@ -1,8 +1,9 @@
 import { databases } from '../database/Databases';
 
 export class S_Busy {
-	isPersisting = false;
 	isFetching = false;
+	isRendering = false;  // Rate-limit navigation during key repeat
+	isPersisting = false;
 	isFocusEventDisabled = false;
 
 	get isFocusEventEnabled(): boolean { return !this.isFocusEventDisabled; }
