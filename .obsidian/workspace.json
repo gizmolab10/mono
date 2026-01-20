@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 316.5
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -183,8 +183,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "96f8d32ee4605e89",
+  "active": "26b78cd156d15e82",
   "lastOpenFiles": [
+    "projects/ws/notes/work/debounce.md",
     "projects/ws/vite.config.js.timestamp-1768935770302-9343506cdc3d.mjs",
     "projects/ws/vite.config.js.timestamp-1768934874854-4aaac39b1283b.mjs",
     "projects/ws/src/lib/ts/tests/recents_new.test.ts",
@@ -202,7 +203,6 @@
     "notes/aside/index.md",
     "notes/index.md",
     "projects/ws/vite.config.js.timestamp-1768870577582-8b200d2eb6a07.mjs",
-    "projects/ws/vite.config.js.timestamp-1768870491833-2016cb2bf5653.mjs",
     "notes/work/hub-app-spec.md",
     "notes/work/hub-app.md",
     "projects/ws/notes/guides/deliverables.md",

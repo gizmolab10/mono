@@ -183,7 +183,45 @@ describe('Phase 3: navigation', () => {
 - [x] Add `use_new_recents` flag to Features.ts
 - [x] `isGrabbed` checks flag, uses new or old
 - [x] Add Phase 4 tests to `recents_new.test.ts`
+- [x] Removed `isNavigating` hack — replaced with direct push model
+- [x] Added `busy.isRendering` rate-limiting for key repeat
+- [ ] Implement actual derivation for `si_grabs` (see below)
 - [ ] Run `yarn test recents_new` — all pass
+
+**Phase 4b: Actual Derivation for si_grabs**
+
+Current approach uses sync subscription to update `si_grabs` from snapshots:
+```typescript
+si_recents_new.w_item.subscribe(snapshot => {
+    si_grabs.items = snapshot.si_grabs.items;
+});
+```
+
+This works but `si_grabs` is "effectively derived" — two sources of truth.
+
+Target: true derivation with single source of truth:
+```typescript
+w_grabs = derived(si_recents_new.w_item, item => item?.si_grabs?.items ?? [])
+```
+
+| Approach | Pros | Cons |
+|----------|------|------|
+| Sync subscription (current) | Zero consumer changes | Two sources, possible race |
+| True derivation | Single source of truth, impossible race | Consumer migration |
+
+Consumers to migrate:
+- `x.si_grabs.items` → `get(x.w_grabs)`
+- `x.si_grabs.w_items` → `x.w_grabs`
+- `x.si_grabs.index` → derive from snapshot or add `w_grabIndex`
+- `w_grabbed` in Svelte files → `w_grabs`
+
+Steps:
+- [ ] Create `w_grabs` as true derived store (replace `w_grabs_new`)
+- [ ] Find all `si_grabs` consumers: `grep -rn "si_grabs" src/`
+- [ ] Migrate each consumer to use `w_grabs`
+- [ ] Remove sync subscription
+- [ ] Remove `si_grabs` property
+- [ ] Test
 
 Add to test file:
 ```typescript
@@ -213,11 +251,13 @@ Manual test:
 | 10   | Open search, type query                     | Grabs unchanged (no highlight pollution)    |
 | 11   | Select search result                        | Details shows result, grabs still unchanged |
 | 12   | Press Escape (close search)                 | Original grabs restored in view             |
+| 13   | Multi-grab A, B, C (shift-click)            | Details shows one (per grabIndex)           |
+| 14   | Click next/prev arrows in details           | Cycles through A → B → C → A                |
 
 
 **Phase 5: Remove old code** (decisions: 5, 9)
 
-- [ ] Delete `si_grabs`, old `si_recents`, `w_ancestry_focus`, `save_grabs`, `update_grabs_forSearch`
+- [ ] Delete old `si_recents`, `save_grabs`, `update_grabs_forSearch`
 - [ ] Remove feature flag
 - [ ] Rename `_new` → final names
 - [ ] Update test file: remove flag references, rename `_new` → final names
