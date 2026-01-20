@@ -1,0 +1,475 @@
+import ports from '../../../sites/ports.json'
+import { defineConfig } from 'vitepress'
+import taskLists from 'markdown-it-task-lists'
+import taskListPlusPlugin from '../../../sites/markdown-it-task-list-plus.mts'
+
+export default defineConfig({
+  srcDir: '../../notes',
+  title: "Mono Docs",
+  description: "Unified documentation for all projects",
+  ignoreDeadLinks: true,
+
+  markdown: {
+    config: (md) => {
+      md.use(taskLists)
+      md.use(taskListPlusPlugin)
+    }
+  },
+
+  rewrites: {
+    'projects/ws/notes/:path*': 'ws/:path*',
+    'projects/di/notes/:path*': 'di/:path*'
+  },
+
+  vite: {
+    server: {
+      port: ports['mono-docs']
+    }
+  },
+
+  themeConfig: {
+    nav: [
+      { text: 'WS', link: '/ws/' },
+      { text: 'DI', link: '/di/' },
+      { text: 'Guides', link: '/guides/' }
+    ],
+
+    sidebar: {
+      '/ws/': [
+        {
+          text: 'Guides >',
+          link: '/guides/',
+          collapsed: true,
+          items: [
+            {
+              text: 'Collaborate >',
+              link: '/guides/collaborate/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Access',
+                  link: '/guides/collaborate/access'
+                },
+                {
+                  text: 'Chat',
+                  link: '/guides/collaborate/chat'
+                },
+                {
+                  text: 'Evolve',
+                  link: '/guides/collaborate/evolve'
+                },
+                {
+                  text: 'Journals',
+                  link: '/guides/collaborate/journals'
+                },
+                {
+                  text: 'Markdown',
+                  link: '/guides/collaborate/markdown'
+                },
+                {
+                  text: 'Repo',
+                  link: '/guides/collaborate/repo'
+                },
+                {
+                  text: 'Shorthand',
+                  link: '/guides/collaborate/shorthand'
+                },
+                {
+                  text: 'Voice',
+                  link: '/guides/collaborate/voice'
+                },
+                {
+                  text: 'Workflow',
+                  link: '/guides/collaborate/workflow'
+                }
+              ]
+            },
+            {
+              text: 'Develop >',
+              link: '/guides/develop/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Aesthetics',
+                  link: '/guides/develop/aesthetics'
+                },
+                {
+                  text: 'Class Lists',
+                  link: '/guides/develop/class-lists'
+                },
+                {
+                  text: 'Css',
+                  link: '/guides/develop/css'
+                },
+                {
+                  text: 'Hub App',
+                  link: '/guides/develop/hub-app'
+                },
+                {
+                  text: 'Migration',
+                  link: '/guides/develop/migration'
+                },
+                {
+                  text: 'Refactoring',
+                  link: '/guides/develop/refactoring'
+                },
+                {
+                  text: 'Single Line',
+                  link: '/guides/develop/single-line'
+                },
+                {
+                  text: 'Style',
+                  link: '/guides/develop/style'
+                }
+              ]
+            },
+            {
+              text: 'Setup >',
+              link: '/guides/setup/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Deploy',
+                  link: '/guides/setup/deploy'
+                },
+                {
+                  text: 'Jonathan',
+                  link: '/guides/setup/jonathan'
+                },
+                {
+                  text: 'Monorepo',
+                  link: '/guides/setup/monorepo'
+                },
+                {
+                  text: 'Onboarding',
+                  link: '/guides/setup/onboarding'
+                },
+                {
+                  text: 'VitePress',
+                  link: '/guides/setup/vitepress'
+                }
+              ]
+            },
+            {
+              text: 'Test >',
+              link: '/guides/test/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Debugging',
+                  link: '/guides/test/debugging'
+                },
+                {
+                  text: 'Testing',
+                  link: '/guides/test/testing'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          text: 'Work >',
+          link: '/work/',
+          collapsed: true,
+          items: [
+            {
+              text: 'Hub App Spec',
+              link: '/work/hub-app-spec'
+            },
+            {
+              text: 'Hub App',
+              link: '/work/hub-app'
+            },
+            {
+              text: 'Journal',
+              link: '/work/journal'
+            },
+            {
+              text: 'Resume',
+              link: '/work/resume'
+            },
+            {
+              text: 'Articles >',
+              link: '/work/articles/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Accidental.programmer',
+                  link: '/work/articles/accidental.programmer'
+                },
+                {
+                  text: 'How.to.build.it',
+                  link: '/work/articles/how.to.build.it'
+                },
+                {
+                  text: 'Write.article',
+                  link: '/work/articles/write.article'
+                }
+              ]
+            },
+            {
+              text: 'Done >',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Code',
+                  link: '/work/done/code'
+                },
+                {
+                  text: 'Guides Clutter',
+                  link: '/work/done/guides-clutter'
+                },
+                {
+                  text: 'Monorepo',
+                  link: '/work/done/monorepo'
+                },
+                {
+                  text: 'Single Line Progress',
+                  link: '/work/done/single-line-progress'
+                },
+                {
+                  text: 'Single.project',
+                  link: '/work/done/single.project'
+                },
+                {
+                  text: 'Sites Hub',
+                  link: '/work/done/sites-hub'
+                },
+                {
+                  text: 'Docs >',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Combined Docs',
+                      link: '/work/done/docs/combined-docs'
+                    },
+                    {
+                      text: 'Docs',
+                      link: '/work/done/docs/docs'
+                    },
+                    {
+                      text: 'README',
+                      link: '/work/done/docs/README'
+                    },
+                    {
+                      text: 'History >',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'CLAUDE MD UPDATED',
+                          link: '/work/done/docs/history/CLAUDE-MD-UPDATED'
+                        },
+                        {
+                          text: 'FINAL ORGANIZATION',
+                          link: '/work/done/docs/history/FINAL-ORGANIZATION'
+                        },
+                        {
+                          text: 'FIXTURES RELOCATED',
+                          link: '/work/done/docs/history/FIXTURES-RELOCATED'
+                        },
+                        {
+                          text: 'PHASE1 COMPLETE',
+                          link: '/work/done/docs/history/PHASE1-COMPLETE'
+                        },
+                        {
+                          text: 'PHASE1 FINAL',
+                          link: '/work/done/docs/history/PHASE1-FINAL'
+                        },
+                        {
+                          text: 'PHASE1 RESULTS',
+                          link: '/work/done/docs/history/PHASE1-RESULTS'
+                        },
+                        {
+                          text: 'PHASE2 COMPLETE',
+                          link: '/work/done/docs/history/PHASE2-COMPLETE'
+                        },
+                        {
+                          text: 'PHASE2 FINAL',
+                          link: '/work/done/docs/history/PHASE2-FINAL'
+                        },
+                        {
+                          text: 'PHASE2 MINIMIZED',
+                          link: '/work/done/docs/history/PHASE2-MINIMIZED'
+                        },
+                        {
+                          text: 'REORGANIZATION',
+                          link: '/work/done/docs/history/REORGANIZATION'
+                        }
+                      ]
+                    },
+                    {
+                      text: 'Test >',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'HOW TO TEST',
+                          link: '/work/done/docs/test/HOW-TO-TEST'
+                        },
+                        {
+                          text: 'README',
+                          link: '/work/done/docs/test/README'
+                        },
+                        {
+                          text: 'Fixtures >',
+                          link: '/work/done/docs/test/fixtures/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Advanced >',
+                              collapsed: true,
+                              items: [
+                                {
+                                  text: 'Test Moved',
+                                  link: '/work/done/docs/test/fixtures/advanced/test-moved'
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          text: 'Merge Fixtures >',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'File A',
+                              link: '/work/done/docs/test/merge-fixtures/file-a'
+                            },
+                            {
+                              text: 'File B',
+                              link: '/work/done/docs/test/merge-fixtures/file-b'
+                            },
+                            {
+                              text: 'Test Links',
+                              link: '/work/done/docs/test/merge-fixtures/test-links'
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              text: 'Jeff',
+              link: '/work/jeff/',
+              collapsed: true,
+            },
+            {
+              text: 'Next >',
+              link: '/work/next/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Cleanup',
+                  link: '/work/next/cleanup'
+                },
+                {
+                  text: 'Commoditize',
+                  link: '/work/next/commoditize'
+                },
+                {
+                  text: 'Pacing',
+                  link: '/work/next/pacing'
+                },
+                {
+                  text: 'Simplicity',
+                  link: '/work/next/simplicity'
+                }
+              ]
+            }
+          ]
+        }
+      ],
+
+      '/di/': [
+        {
+          text: 'Design Intuition',
+          link: '/di/',
+          items: [
+            {
+              text: 'Architecture >',
+              link: '/di/architecture/',
+              collapsed: true,
+              items: []
+            },
+            {
+              text: 'Designs >',
+              link: '/di/designs/',
+              collapsed: true,
+              items: []
+            },
+            {
+              text: 'Guides >',
+              link: '/di/guides/',
+              collapsed: true,
+              items: []
+            },
+            {
+              text: 'Work >',
+              link: '/di/work/',
+              collapsed: true,
+              items: []
+            }
+          ]
+        }
+      ],
+
+      '/guides/': [
+        {
+          text: 'Collaborate >',
+          link: '/guides/collaborate/',
+          collapsed: true,
+          items: [
+            { text: 'Access', link: '/guides/collaborate/access' },
+            { text: 'Chat', link: '/guides/collaborate/chat' },
+            { text: 'Evolve', link: '/guides/collaborate/evolve' },
+            { text: 'Markdown', link: '/guides/collaborate/markdown' },
+            { text: 'Repo', link: '/guides/collaborate/repo' },
+            { text: 'Vitepress Setup', link: '/guides/collaborate/vitepress-setup' },
+            { text: 'Voice', link: '/guides/collaborate/voice' },
+            { text: 'Work Site', link: '/guides/collaborate/work-site' },
+            { text: 'Workflow', link: '/guides/collaborate/workflow' }
+          ]
+        },
+        {
+          text: 'Develop >',
+          link: '/guides/develop/',
+          collapsed: true,
+          items: [
+            { text: 'Aesthetics', link: '/guides/develop/aesthetics' },
+            { text: 'CSS', link: '/guides/develop/css' },
+            { text: 'Migration', link: '/guides/develop/migration' },
+            { text: 'Refactoring', link: '/guides/develop/refactoring' },
+            { text: 'Style', link: '/guides/develop/style' }
+          ]
+        },
+        {
+          text: 'Setup >',
+          link: '/guides/setup/',
+          collapsed: true,
+          items: [
+            { text: 'Deploy', link: '/guides/setup/deploy' },
+            { text: 'Jonathan', link: '/guides/setup/jonathan' },
+            { text: 'Monorepo', link: '/guides/setup/monorepo' },
+            { text: 'Onboarding', link: '/guides/setup/onboarding' },
+            { text: 'Single Project', link: '/guides/setup/single.project' }
+          ]
+        },
+        {
+          text: 'Test >',
+          link: '/guides/test/',
+          collapsed: true,
+          items: [
+            { text: 'Debugging', link: '/guides/test/debugging' },
+            { text: 'Testing', link: '/guides/test/testing' }
+          ]
+        }
+      ]
+    },
+
+    search: {
+      provider: 'local'
+    }
+  }
+})
