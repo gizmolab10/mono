@@ -16,7 +16,7 @@ Before I even demo a fix to Vincent, review it with Wendy. For items that are ma
 
 The urls for review and feedback
 
-- [ ] [Catalist](https://www.catalist.network/version-test/seriously_view?object=1759366865929x617964618791821700&space=1759365279523x305705732516610050&theme=bubble) Vincent currently has this pointing to the version of webseriously that is under construction (it is **not** frozen).
+- [ ] [Catalist](https://www.catalist.network/seriously_view?object=1768857908919x153587680602915040&space=1747073877366x313460503630839800&theme=bubble) Vincent currently has this pointing to the version of webseriously that is under construction (it is **not** frozen).
 - [ ] [webseriously](https://webseriously.org)
 
 ## Catalist
@@ -65,6 +65,7 @@ The urls for review and feedback
 	- [+] **fixed** -- select something 3 levels inside focus. reduce # of levels, focus should change so the selection remains visible. it disappears
 	- [+] **fixed** -- set levels to 1, tap RIGHT arrow. nothing selected, focus did not change
 	- [+] **fixed** -- set levels to 1, select the focus. tap DOWN arrow. nothing selected, focus did not change
+	- [ ] tap DOWN arrow. should not change focus
 - [ ] fix multiple widget selection behavior
 	- [ ] shift key + click
 	- [ ] shift key + arrow key

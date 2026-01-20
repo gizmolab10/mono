@@ -214,8 +214,20 @@ export default withMermaid(
               link: '/work/plugin-bugs'
             },
             {
+              text: 'Recents',
+              link: '/work/recents'
+            },
+            {
               text: 'Search Links',
               link: '/work/search-links'
+            },
+            {
+              text: 'Search',
+              link: '/work/search'
+            },
+            {
+              text: 'Truth',
+              link: '/work/truth'
             },
             {
               text: 'Done >',

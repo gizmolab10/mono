@@ -294,12 +294,12 @@
       display: block;
     }
 
-    .action[title] {
+    .action[data-tooltip] {
       position: relative;
     }
 
-    .action[title]:hover::after {
-      content: attr(title);
+    .action[data-tooltip]:hover::after {
+      content: attr(data-tooltip);
       position: absolute;
       bottom: 100%;
       left: 50%;
@@ -333,11 +333,11 @@
         <button class="action side-a" id="btn-dns">DNS<span class="badge">N</span></button>
         <h1 class="middle">Work Sites</h1>
         <div class="side-b">
-          <button class="action" id="btn-start" title="restart all Vite servers">vite<span
+          <button class="action" id="btn-start" data-tooltip="restart all Vite servers">vite<span
               class="badge">esc</span></button>
-          <button class="action" id="btn-update" title="update all md and html files">docs<span
+          <button class="action" id="btn-prePublish" data-tooltip="prePublish all md and html files">docs<span
               class="badge">⌫</span></button>
-          <button class="action" id="btn-api" title="read/write single source of truth">api<span
+          <button class="action" id="btn-api" data-tooltip="read/write single source of truth">api<span
               class="badge">`</span></button>
         </div>
       </div>
@@ -409,7 +409,7 @@
     const btnDeploy = document.getElementById('btn-deploy');
     const btnDns = document.getElementById('btn-dns');
     const btnBubble = document.getElementById('btn-bubble');
-    const btnUpdate = document.getElementById('btn-update');
+    const btnPrePublish = document.getElementById('btn-prePublish');
     const btnApi = document.getElementById('btn-api');
     const consoleOutput = document.getElementById('console-output');
     const consoleRow = document.getElementById('console-row');
@@ -491,7 +491,7 @@
       consoleBox.style.width = width;
     }
 
-    function updateFeedbackRow() {
+    function prePublishFeedbackRow() {
       document.getElementById('btn-mode').textContent = getDisplayMode();
       document.getElementById('btn-project').textContent = getDisplayProject();
       document.getElementById('btn-destination').textContent = hoveredAction || '';
@@ -529,7 +529,7 @@
       });
     }
 
-    function updateActionButtonsPreview() {
+    function prePublishActionButtonsPreview() {
       const m = getDisplayMode();
       const p = getDisplayProject();
       const cfg = config[m]?.[p];
@@ -545,7 +545,7 @@
     }
 
     // === Core Functions ===
-    function update() {
+    function prePublish() {
       if (!config.app) return; // Not initialized yet
 
       modeButtons.forEach(btn => {
@@ -566,7 +566,7 @@
             break;
           }
         }
-        update();
+        prePublish();
         return;
       }
 
@@ -586,11 +586,11 @@
     function setMode(m) {
       mode = m;
       localStorage.setItem('hub-mode', mode);
-      update();
+      prePublish();
       if (hoveredActionId) {
         hoveredAction = actionButtons[hoveredActionId]();
       }
-      updateFeedbackRow();
+      prePublishFeedbackRow();
     }
 
     function setProject(p) {
@@ -598,11 +598,11 @@
       if (config[mode][p] !== null) {
         project = p;
         localStorage.setItem('hub-project', project);
-        update();
+        prePublish();
         if (hoveredActionId) {
           hoveredAction = actionButtons[hoveredActionId]();
         }
-        updateFeedbackRow();
+        prePublishFeedbackRow();
       }
     }
 
@@ -610,7 +610,7 @@
       if (pollInterval || restartPollInterval) return; // Operation in progress
 
       btnStart.classList.add('disabled');
-      btnUpdate.classList.add('disabled'); // Disable rebuild while restarting
+      btnPrePublish.classList.add('disabled'); // Disable rebuild while restarting
       btnApi.classList.add('disabled'); // Disable API restart while restarting
       btnStart.innerHTML = 'restarting<span class="badge">esc</span>';
       setConsoleOutput('restart', 'Starting...');
@@ -657,7 +657,7 @@
             restartPollInterval = null;
             btnStart.innerHTML = 'vite<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
-            btnUpdate.classList.remove('disabled'); // Re-enable rebuild
+            btnPrePublish.classList.remove('disabled'); // Re-enable rebuild
             btnApi.classList.remove('disabled'); // Re-enable API restart
             matchRowWidths();
 
@@ -675,7 +675,7 @@
             restartPollInterval = null;
             btnStart.innerHTML = 'vite<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
-            btnUpdate.classList.remove('disabled'); // Re-enable rebuild
+            btnPrePublish.classList.remove('disabled'); // Re-enable rebuild
             btnApi.classList.remove('disabled'); // Re-enable API restart
             setConsoleOutput('restart', `Poll error: ${err.message}`);
             matchRowWidths();
@@ -761,19 +761,19 @@
         consoleOutput.textContent = getConsoleOutput('restart');
       }
     });
-    btnUpdate.addEventListener('mouseenter', () => {
+    btnPrePublish.addEventListener('mouseenter', () => {
       if (!restartPollInterval && !pollInterval) {
         consoleOutput.textContent = getConsoleOutput('rebuild');
       }
     });
 
-    function doUpdate() {
+    function doPrePublish() {
       if (pollInterval || restartPollInterval) return; // Operation in progress
 
-      btnUpdate.classList.add('disabled');
-      btnStart.classList.add('disabled'); // Disable restart while updating
-      btnApi.classList.add('disabled'); // Disable API restart while updating
-      btnUpdate.innerHTML = 'updating<span class="badge">⌫</span>';
+      btnPrePublish.classList.add('disabled');
+      btnStart.classList.add('disabled'); // Disable restart while pre-publishing
+      btnApi.classList.add('disabled'); // Disable API restart while pre-publishing
+      btnPrePublish.innerHTML = 'pre-publishing<span class="badge">⌫</span>';
       setConsoleOutput('rebuild', 'Starting...');
       matchRowWidths();
 
@@ -786,23 +786,23 @@
         .then(data => {
           if (data.success) {
             // Start polling for status
-            pollInterval = setInterval(pollUpdateStatus, 500);
+            pollInterval = setInterval(pollPrePublishStatus, 500);
           } else {
-            btnUpdate.innerHTML = 'docs<span class="badge">⌫</span>';
-            btnUpdate.classList.remove('disabled');
+            btnPrePublish.innerHTML = 'docs<span class="badge">⌫</span>';
+            btnPrePublish.classList.remove('disabled');
             setConsoleOutput('rebuild', `Error: ${data.error}`);
             matchRowWidths();
           }
         })
         .catch(err => {
-          btnUpdate.innerHTML = 'docs<span class="badge">⌫</span>';
-          btnUpdate.classList.remove('disabled');
+          btnPrePublish.innerHTML = 'docs<span class="badge">⌫</span>';
+          btnPrePublish.classList.remove('disabled');
           setConsoleOutput('rebuild', `API error: ${err.message}`);
           matchRowWidths();
         });
     }
 
-    function pollUpdateStatus() {
+    function pollPrePublishStatus() {
       fetch(`http://localhost:${ports.api}/rebuild-status`)
         .then(res => res.json())
         .then(data => {
@@ -816,8 +816,8 @@
           if (data.done) {
             clearInterval(pollInterval);
             pollInterval = null;
-            btnUpdate.innerHTML = 'docs<span class="badge">⌫</span>';
-            btnUpdate.classList.remove('disabled');
+            btnPrePublish.innerHTML = 'docs<span class="badge">⌫</span>';
+            btnPrePublish.classList.remove('disabled');
             btnStart.classList.remove('disabled'); // Re-enable restart
             btnApi.classList.remove('disabled'); // Re-enable API restart
             matchRowWidths();
@@ -980,8 +980,8 @@
           if (hoveredActionId) {
             hoveredAction = actionButtons[hoveredActionId]();
           }
-          updateActionButtonsPreview();
-          updateFeedbackRow();
+          prePublishActionButtonsPreview();
+          prePublishFeedbackRow();
         }
       });
       btn.addEventListener('mouseleave', () => {
@@ -991,8 +991,8 @@
         if (hoveredActionId) {
           hoveredAction = actionButtons[hoveredActionId]();
         }
-        updateActionButtonsPreview();
-        updateFeedbackRow();
+        prePublishActionButtonsPreview();
+        prePublishFeedbackRow();
       });
     });
 
@@ -1011,8 +1011,8 @@
           if (hoveredActionId) {
             hoveredAction = actionButtons[hoveredActionId]();
           }
-          updateActionButtonsPreview();
-          updateFeedbackRow();
+          prePublishActionButtonsPreview();
+          prePublishFeedbackRow();
         }
       });
       btn.addEventListener('mouseleave', () => {
@@ -1023,8 +1023,8 @@
         if (hoveredActionId) {
           hoveredAction = actionButtons[hoveredActionId]();
         }
-        updateActionButtonsPreview();
-        updateFeedbackRow();
+        prePublishActionButtonsPreview();
+        prePublishFeedbackRow();
       });
     });
 
@@ -1036,7 +1036,7 @@
     btnDeploy.addEventListener('click', doDeploy);
     btnDns.addEventListener('click', doDns);
     btnBubble.addEventListener('click', doBubble);
-    btnUpdate.addEventListener('click', doUpdate);
+    btnPrePublish.addEventListener('click', doPrePublish);
     btnApi.addEventListener('click', doApi);
 
     document.addEventListener('keydown', (e) => {
@@ -1050,23 +1050,23 @@
 
       const key = e.key.toLowerCase();
       switch (key) {
-        case 'a': previewMode = 'app'; highlightModeButton('app'); highlightProjectButton(getDisplayProject()); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
-        case 'x': previewMode = 'docs'; highlightModeButton('docs'); highlightProjectButton(getDisplayProject()); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
-        case 'w': previewProject = 'ws'; highlightProjectButton('ws'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
-        case 'd': previewProject = 'di'; highlightProjectButton('di'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); break;
+        case 'a': previewMode = 'app'; highlightModeButton('app'); highlightProjectButton(getDisplayProject()); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
+        case 'x': previewMode = 'docs'; highlightModeButton('docs'); highlightProjectButton(getDisplayProject()); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
+        case 'w': previewProject = 'ws'; highlightProjectButton('ws'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
+        case 'd': previewProject = 'di'; highlightProjectButton('di'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } } break;
-        case 'm': { const m = getDisplayMode(); if (config[m]?.['mono'] !== null) { previewProject = 'mono'; highlightProjectButton('mono'); updateActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } updateFeedbackRow(); } } break;
+        case 'm': { const m = getDisplayMode(); if (config[m]?.['mono'] !== null) { previewProject = 'mono'; highlightProjectButton('mono'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'escape': doStart(); break;
         case 'enter': if (hoveredAction) { window.open(hoveredAction, '_blank'); } break;
         case 'delete':
-        case 'backspace': doUpdate(); break;
-        case 'l': hoveredActionId = 'btn-local'; hoveredAction = actionButtons['btn-local'](); highlightActionButton('btn-local'); updateFeedbackRow(); break;
-        case 't': hoveredActionId = 'btn-netlify'; hoveredAction = actionButtons['btn-netlify'](); highlightActionButton('btn-netlify'); updateFeedbackRow(); break;
-        case 'p': hoveredActionId = 'btn-public'; hoveredAction = actionButtons['btn-public'](); highlightActionButton('btn-public'); updateFeedbackRow(); break;
-        case 'r': hoveredActionId = 'btn-repo'; hoveredAction = actionButtons['btn-repo'](); highlightActionButton('btn-repo'); updateFeedbackRow(); break;
-        case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); updateFeedbackRow(); break;
-        case 'n': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); updateFeedbackRow(); break;
-        case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); updateFeedbackRow(); break;
+        case 'backspace': doPrePublish(); break;
+        case 'l': hoveredActionId = 'btn-local'; hoveredAction = actionButtons['btn-local'](); highlightActionButton('btn-local'); prePublishFeedbackRow(); break;
+        case 't': hoveredActionId = 'btn-netlify'; hoveredAction = actionButtons['btn-netlify'](); highlightActionButton('btn-netlify'); prePublishFeedbackRow(); break;
+        case 'p': hoveredActionId = 'btn-public'; hoveredAction = actionButtons['btn-public'](); highlightActionButton('btn-public'); prePublishFeedbackRow(); break;
+        case 'r': hoveredActionId = 'btn-repo'; hoveredAction = actionButtons['btn-repo'](); highlightActionButton('btn-repo'); prePublishFeedbackRow(); break;
+        case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); prePublishFeedbackRow(); break;
+        case 'n': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
+        case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); prePublishFeedbackRow(); break;
         case '`': doApi(); break;
       }
     });
@@ -1082,7 +1082,7 @@
         hoveredActionId = id;
         btn.classList.add('sticky');
         hoveredAction = actionButtons[id]();
-        updateFeedbackRow();
+        prePublishFeedbackRow();
       });
     });
 
@@ -1091,16 +1091,16 @@
     // === Initialize ===
     // Clear console storage on refresh
     localStorage.removeItem('hub-console-restart');
-    localStorage.removeItem('hub-console-update');
+    localStorage.removeItem('hub-console-prePublish');
 
     fetch('./ports.json')
       .then(res => res.json())
       .then(data => {
         ports = data;
         initConfig();
-        update();
+        prePublish();
         matchRowWidths();
-        updateFeedbackRow();
+        prePublishFeedbackRow();
         startDeployPolling();
       })
       .catch(err => {

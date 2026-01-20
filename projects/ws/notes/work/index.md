@@ -10,5 +10,8 @@ Documentation of ongoing and completed work.
 - [Deliverables](./deliverables.md)
 - [Docs](./docs.md)
 - [Plugin Bugs](./plugin-bugs.md)
+- [Recents](./recents.md)
 - [Search Links](./search-links.md)
+- [Search](./search.md)
+- [Truth](./truth.md)
 
