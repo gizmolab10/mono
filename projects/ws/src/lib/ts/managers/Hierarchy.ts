@@ -1070,7 +1070,7 @@ export class Hierarchy {
 				if (controls.inTreeMode) {
 					const depth_limit = get(g.w_depth_limit);
 					graph_needsSweep = ancestry.expand();
-					if (!!newGrabAncestry && newGrabAncestry.isVisible_accordingTo_depth_within_focus_subtree) {
+					if (!!newGrabAncestry && !newGrabAncestry.isVisible_accordingTo_depth_within_focus_subtree) {
 						newFocusAncestry = newGrabAncestry.ancestry_createUnique_byStrippingBack(depth_limit);
 					} else {
 						newFocusAncestry = null;

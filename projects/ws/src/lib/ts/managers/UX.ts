@@ -170,6 +170,15 @@ export default class S_UX {
 	
 	static readonly _____GRABS: unique symbol;
 
+	assure_grab_isVisible() {
+		const ancestry = get(this.w_ancestry_forDetails);
+		if (!!ancestry) {
+			ancestry.ancestry_assureIsVisible();
+			g.grand_build();
+			details.redraw();
+		}
+	}
+
 	save_grabs(save: boolean = true) {
 		if (save) {
 			this.si_saved_grabs.items = [...this.si_grabs.items];

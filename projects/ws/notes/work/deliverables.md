@@ -38,13 +38,13 @@ The urls for review and feedback
 - [x] little button to visit this material missing from netlify and public
 - [+] **fixed** -- build notes steppers ignored
 - [+] **fixed** -- editing is NOT disabled in 0.3.3, which may cause:
-  - [+] clicking around sometimes doesn’t select things on the first click
-  - [+] edit a widget. click background. rubber band another widget. editing remains active
+	- [+] clicking around sometimes doesn’t select things on the first click
+	- [+] edit a widget. click background. rubber band another widget. editing remains active
 - [+] **fixed** -- sliding the levels does not update the number
-  - [+] **fixed** -- the tree graph shows a different number of levels
-  - [+] **fixed** -- command + set the levels to 12
+	- [+] **fixed** -- the tree graph shows a different number of levels
+	- [+] **fixed** -- command + set the levels to 12
 - [+] **fixed** -- in every widget the title is not vertically centered
-- [ ] click on A, then click on B, sometimes A still indicates it is selected
+- [+] **cannot replicate** -- click on A, then click on B, sometimes A still indicates it is selected
 
 ### Change Requests
 
@@ -56,14 +56,18 @@ The urls for review and feedback
 - [+] **fixed** -- remove the force graph to, from preferences
 - [+] **fixed** -- make numbers for lists the default
 - [+] **fixed** -- click in background of graph deselects everything
-  - [ ] NOT do that until the rubber band INCLUDES some widgets and then alter the selection
+	- [ ] **for standalone only --** NOT do that until the rubber band INCLUDES some widgets and then alter the selection
+- [+] **fixed** -- click on a breadcrumb should select, NEVER focus (adding a dot is unnecessary)
+	- [+] **fixed** -- remove breadcrumb mode selector. default to "selection" and perfect it
+	- [+] **declined, unreasonable** -- right now, click on a breadcrumb sends a select event, it shouldn't
+	- [+] **cannot replicate** -- breadcrumbs have duplicates
+- [+] **fixed** -- assure selection is always visible
+	- [+] **fixed** -- select something 3 levels inside focus. reduce # of levels, focus should change so the selection remains visible. it disappears
+	- [+] **fixed** -- set levels to 1, tap RIGHT arrow. nothing selected, focus did not change
+	- [+] **fixed** -- set levels to 1, select the focus. tap DOWN arrow. nothing selected, focus did not change
 - [ ] fix multiple widget selection behavior
-  - [ ] shift key + click
-  - [ ] shift key + arrow key
-- [ ] click on a breadcrumb should select, NEVER focus (adding a dot is unnecessary)
-  - [ ] remove breadcrumb mode selector. default to "selection" and perfect it
-  - [ ] breadcrumbs have duplicates for selection mode
-  - [ ] right now, click on a breadcrumb sends a select event, it shouldn't
+	- [ ] shift key + click
+	- [ ] shift key + arrow key
 
 ### Work in Progress
 

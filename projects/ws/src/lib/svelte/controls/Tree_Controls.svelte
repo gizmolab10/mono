@@ -1,15 +1,15 @@
 <script lang='ts'>
-	import { T_Layer, T_Graph, T_Control, T_Kinship } from '../../ts/common/Global_Imports';
-	import { e, g, k, u, show, Point, colors, controls } from '../../ts/common/Global_Imports';
+	import { e, g, k, u, x, show, Point, colors, controls } from '../../ts/common/Global_Imports';
+	import { T_Graph, T_Layer, T_Control, T_Kinship } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	import { transparentize } from 'color2k';
 	export let zindex = T_Layer.graph;
+	const { w_t_trees } = show;
 	const { w_depth_limit } = g;
 	const heights = [ 3, 5, 18 ];
 	const { w_separator_color } = colors;
-	const { w_t_trees } = show;
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button + 2;
 	let widths: Array<number> = [];
@@ -30,6 +30,7 @@
 		const rounded = Math.round(value);
 		if (rounded !== $w_depth_limit) {
 			$w_depth_limit = rounded;		// store the rounded value [an actual integer], not the raw value
+			x.assure_grab_isVisible();
 		}
 	}
 

@@ -373,8 +373,8 @@ export default class Ancestry extends Identifiable {
 				if (!!grabAncestry) {
 					if (controls.inRadialMode) {
 						needs_graphRebuild = grabAncestry.assure_isVisible_within(this.sibling_ancestries) || needs_graphRebuild;	// change paging
-					// } else if (!parentAncestry.isFocus && !grabAncestry.isVisible) {
-					// 	needs_graphRebuild = parentAncestry.becomeFocus() || needs_graphRebuild;
+					} else if (!parentAncestry.isFocus && !grabAncestry.isVisible) {
+						needs_graphRebuild = parentAncestry.becomeFocus() || needs_graphRebuild;
 					}
 				}
 			}

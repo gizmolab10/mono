@@ -41,16 +41,16 @@
 	$:	{
 		const _ = `${$w_rect_ofGraphView.description}
 			:::${$w_s_hover?.id ?? 'null'}
-			:::${$w_t_graph}
-			:::${$w_t_startup}`;
+			:::${$w_t_startup}
+			:::${$w_t_graph}`;
 		update_style();
 	}
 
 	$:	{
 		const _ = `${u.descriptionBy_titles($w_expanded)}
 		:::${$w_ancestry_focus?.titles.join(k.comma)}
-		:::${$w_t_graph}
-		:::${$w_depth_limit}`;
+		:::${$w_depth_limit}
+		:::${$w_t_graph}`;
 		grand_layout_andReattach();
 	}
 
