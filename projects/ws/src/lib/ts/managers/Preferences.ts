@@ -1,6 +1,7 @@
 import { T_Kinship, T_Focus, T_Detail, T_Breadcrumbs, T_Counts_Shown } from '../common/Global_Imports';
 import { T_Graph, T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
-import { c, g, h, k, u, x, show, debug, radial, Ancestry, databases } from '../common/Global_Imports';
+import { c, g, h, k, u, x, show, debug, radial, Ancestry, databases, features, S_Items } from '../common/Global_Imports';
+import type { S_Recent } from '../state/S_Recent';
 import { get } from 'svelte/store';
 
 class Enum_Spec {
@@ -122,6 +123,10 @@ export class Preferences {
 			x.si_grabs.items = this.ancestries_readDB_key(T_Preference.grabbed);
 			debug.log_grab(`  READ (${get(databases.w_t_database)}): "${ids_forDB(x.si_grabs.items)}"`);
 		}
+		
+		// Phase 4b: si_recents_new is seeded by becomeFocus() in restore_focus()
+		// Don't seed here - it breaks the old system's initialization
+		
 		setTimeout(() => {
 			x.si_grabs.w_items.subscribe((array: Array<Ancestry>) => {
 				if (array.length > 0) {
@@ -129,6 +134,15 @@ export class Preferences {
 					debug.log_grab(`  WRITING (${get(databases.w_t_database)}): "${ids_forDB(array)}"`);
 				}
 			});
+			// Phase 4b: also persist from new system
+			if (features.use_new_recents) {
+				x.w_grabs_new.subscribe((array: Array<Ancestry>) => {
+					if (array.length > 0) {
+						this.ancestries_writeDB_key(array, T_Preference.grabbed);
+						debug.log_grab(`  WRITING NEW (${get(databases.w_t_database)}): "${ids_forDB(array)}"`);
+					}
+				});
+			}
 		}, 100);
 	}
 		

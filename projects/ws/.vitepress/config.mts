@@ -202,12 +202,20 @@ export default withMermaid(
               link: '/work/book'
             },
             {
+              text: 'Debounce',
+              link: '/work/debounce'
+            },
+            {
               text: 'Deliverables',
               link: '/work/deliverables'
             },
             {
               text: 'Docs',
               link: '/work/docs'
+            },
+            {
+              text: 'Housekeeping',
+              link: '/work/housekeeping'
             },
             {
               text: 'Plugin Bugs',

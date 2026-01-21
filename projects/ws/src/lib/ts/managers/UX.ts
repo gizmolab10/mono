@@ -232,9 +232,14 @@ export default class S_UX {
 			this.si_recents.push(pair);
 			
 			if (features.use_new_recents) {
-				// Phase 4b: read current grabs from new system
-				const currentGrabs = get(this.w_grabs_new);
-				const currentIndex = get(this.w_grabIndex_new);
+				// Phase 4b: read current grabs from new system, fall back to old if empty (startup)
+				let currentGrabs = get(this.w_grabs_new);
+				let currentIndex = get(this.w_grabIndex_new);
+				if (currentGrabs.length === 0 && this.si_recents_new.length === 0) {
+					// First snapshot during startup - use restored grabs from old system
+					currentGrabs = this.si_grabs.items;
+					currentIndex = this.si_grabs.index;
+				}
 				const si_grabs_clone = new S_Items<Ancestry>([...currentGrabs]);
 				si_grabs_clone.index = currentIndex;
 				const snapshot: S_Recent = { focus: ancestry, si_grabs: si_grabs_clone, depth: get(g.w_depth_limit) };
@@ -307,6 +312,7 @@ export default class S_UX {
 			const currentGrabs = features.use_new_recents 
 				? get(this.w_grabs_new) 
 				: this.si_grabs.items;
+			console.log(`[RECENTS] grab() called: currentGrabs=[${currentGrabs?.map(a => a.title).join(', ') ?? 'null'}]`);
 			let items = [...(currentGrabs ?? [])];
 			// Use equals() instead of reference equality
 			const index = items.findIndex(a => a.equals(ancestry));

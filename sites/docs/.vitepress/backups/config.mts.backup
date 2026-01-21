@@ -64,6 +64,10 @@ export default defineConfig({
                   link: '/guides/collaborate/evolve'
                 },
                 {
+                  text: 'Filesystem',
+                  link: '/guides/collaborate/filesystem'
+                },
+                {
                   text: 'Journals',
                   link: '/guides/collaborate/journals'
                 },

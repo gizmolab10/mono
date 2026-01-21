@@ -36,30 +36,42 @@ The urls for review and feedback
 - [x] sometimes (rarely) title is same color as background
 - [x] in catalist, focus on main argument, then focus on its parent. FUBAR
 - [x] little button to visit this material missing from netlify and public
-- [+] **fixed** -- build notes steppers ignored
-- [+] **fixed** -- editing is NOT disabled in 0.3.3, which may cause:
-	- [+] clicking around sometimes doesn’t select things on the first click
-	- [+] edit a widget. click background. rubber band another widget. editing remains active
-- [+] **fixed** -- sliding the levels does not update the number
-	- [+] **fixed** -- the tree graph shows a different number of levels
-	- [+] **fixed** -- command + set the levels to 12
-- [+] **fixed** -- in every widget the title is not vertically centered
-- [+] **cannot replicate** -- click on A, then click on B, sometimes A still indicates it is selected
+- [x] **fixed** -- build notes steppers ignored
+- [ ] restore recents is broken
+- [ ] need to test two-finger no longer moves the graph
+- [ ] click to collapse when a child is selected -> this is okay
+- [ ] in catalist, click A -> details shows A, click B -> details still shows A
+- [ ] reveal children should change focus, doesn't
+- [ ] click breadcrumb to left of focus -> is ignored
+- [ ] when selection event not passed to catalist (and hover ignored), switch between graph modes to restore
+- [ ] in radial mode
+	- [ ] widgets overlap vertically
+	- [ ] not show details of focus
+- [x] **fixed** -- editing is NOT disabled in 0.3.3, which may cause:
+	- [x] clicking around sometimes doesn’t select things on the first click
+	- [x] edit a widget. click background. rubber band another widget. editing remains active
+- [x] **fixed** -- sliding the levels does not update the number
+	- [x] **fixed** -- the tree graph shows a different number of levels
+	- [x] **fixed** -- command + set the levels to 12
+- [x] **fixed** -- in every widget the title is not vertically centered
+- [ ] **cannot replicate** -- click on A, then click on B, sometimes A still indicates it is selected
 
 ### Change Requests
 
 - [x] disable double-click
-- [+] **fixed** -- disable rubber band
-- [+] **fixed** -- remove the static-dynamic selector, always dynamic
-- [+] **fixed** -- remove the breadcrumbs focus/selection/recents. always selection
-- [+] **fixed** -- search input field is too wide
-- [+] **fixed** -- remove the force graph to, from preferences
-- [+] **fixed** -- make numbers for lists the default
-- [+] **fixed** -- click in background of graph deselects everything
+- [x] **fixed** -- disable rubber band
+- [x] **fixed** -- remove the static-dynamic selector, always dynamic
+- [x] **fixed** -- remove the breadcrumbs focus/selection/recents. always selection
+- [x] **fixed** -- search input field is too wide
+- [x] **fixed** -- remove the force graph to, from preferences
+- [x] **fixed** -- make numbers for lists the default
+- [ ] select A, more than one level below focus, switch to radial, expected focus to change so A will still be visible
+	- [ ] make focus derived from radial vs. tree modes
+- [x] **fixed** -- click in background of graph deselects everything
 	- [ ] **for standalone only --** NOT do that until the rubber band INCLUDES some widgets and then alter the selection
-- [+] **fixed** -- click on a breadcrumb should select, NEVER focus (adding a dot is unnecessary)
-	- [+] **fixed** -- remove breadcrumb mode selector. default to "selection" and perfect it
-	- [+] **declined, unreasonable** -- right now, click on a breadcrumb sends a select event, it shouldn't
+- [x] **fixed** -- click on a breadcrumb should select, NEVER focus (adding a dot is unnecessary)
+	- [x] **fixed** -- remove breadcrumb mode selector. default to "selection" and perfect it
+	- [ ] **declined, unreasonable** -- right now, click on a breadcrumb sends a select event, it shouldn't
 	- [+] **cannot replicate** -- breadcrumbs have duplicates
 - [+] **fixed** -- assure selection is always visible
 	- [+] **fixed** -- select something 3 levels inside focus. reduce # of levels, focus should change so the selection remains visible. it disappears

@@ -222,7 +222,12 @@ Steps:
 - [x] Update `grab()`, `ungrab()` to read from `w_grabs_new`
 - [x] Update `becomeFocus()` to read from `w_grabs_new` / `w_grabIndex_new`
 - [x] Remove sync subscription
-- [ ] Test (manual steps 1-14)
+- [x] Test (manual steps 1-14)
+- [x] Fix: shift-click (grab index not set)
+- [x] Fix: startup seeding (fallback to si_grabs when si_recents_new empty)
+- [x] Add persistence subscription for w_grabs_new
+
+**Note:** Full history is NOT persisted — only current grabs/focus restore on refresh. History resets.
 
 Add to test file:
 ```typescript
