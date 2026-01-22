@@ -93,6 +93,59 @@ Before writing code:
 
 **The trap:** Optimizing for appearing helpful by producing code quickly. The fix: slow down, verify, quote sources.
 
+## Refactoring Discipline
+
+**MANDATORY.** Before ANY change that removes, renames, or changes the signature of:
+- Functions or methods
+- Properties or fields
+- Stores or state variables
+- Import patterns
+- Type definitions
+
+### The Rule: Search FIRST, Change NEVER Until Scope Is Known
+
+1. **STOP.** Do not write any code yet.
+
+2. **SEARCH.** Run grep/find for ALL usages:
+   ```bash
+   grep -rn "function_name\|old_pattern" src/lib/ --include="*.ts" --include="*.svelte"
+   ```
+
+3. **LIST.** Present EVERY file that needs changes:
+   ```
+   Files requiring changes:
+   - src/lib/svelte/widget/Widget.svelte (line 21)
+   - src/lib/svelte/details/D_Header.svelte (line 4)
+   - src/lib/ts/signals/Events.ts (lines 279, 356)
+   ```
+
+4. **WAIT.** Get user acknowledgment of scope before proceeding.
+
+5. **CHANGE ALL.** Update every file in one pass.
+
+6. **THEN TEST.**
+
+### Enforcement
+
+If collaborator produces a fix and user reports "still broken" or "new error in different file":
+- This is a REFACTORING DISCIPLINE FAILURE
+- Collaborator must STOP, apologize, and run the search that should have happened first
+- Do not make another point fix
+
+### Why This Exists
+
+Reactive, symptom-driven fixing wastes hours. The search takes 30 seconds. There is no excuse for skipping it.
+
+**The pattern to eliminate:**
+```
+User reports bug → Fix ONE file → User finds NEXT broken file → Repeat 5x
+```
+
+**The required pattern:**
+```
+User reports bug → Search ALL usages → List ALL files → Fix ALL at once → Done
+```
+
 ## Why This Works
 This workflow is a good use of AI capabilities.
 

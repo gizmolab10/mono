@@ -14,9 +14,8 @@
 	const g_widget = ancestry.g_widget;
 	const { w_background_color } = colors;
 	const { w_s_hover, w_dragging } = hits;
-	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_t_countDots, w_show_countsAs } = show;
-	const { w_ancestry_focus, w_ancestry_forDetails } = x;
+	const { w_grabs, w_ancestry_focus, w_ancestry_forDetails } = x;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
 	let element: HTMLElement | null = null;
@@ -76,7 +75,7 @@
 			:::${$w_ancestry_focus?.id}
 			:::${$w_s_hover?.id ?? 'null'}
 			:::${$w_ancestry_forDetails?.id}
-			:::${u.descriptionBy_titles($w_grabbed)}`;
+			:::${u.descriptionBy_titles($w_grabs)}`;
 		update_colors();
 	}
 

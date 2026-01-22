@@ -13,7 +13,7 @@
 	const { w_thing_color } = colors;
 	const { w_t_breadcrumbs } = show;
 	const { w_rect_ofGraphView } = g;
-	const { w_items: w_grabbed } = x.si_grabs;
+	const { w_grabs } = x;
 	const { w_s_title_edit, w_ancestry_focus, w_ancestry_forDetails } = x;
 	let s_component: S_Component | null = null;
 	let crumb_ancestries: Array<Ancestry> = [];
@@ -30,7 +30,7 @@
 	onMount(() => { return () => s_component.disconnect(); });
 
 	$: {
-		const _ = `${u.descriptionBy_titles($w_grabbed)}
+		const _ = `${u.descriptionBy_titles($w_grabs)}
 		:::${$w_rect_ofGraphView.description}
 		:::${$w_s_title_edit?.description}
 		:::${$w_ancestry_forDetails?.id}

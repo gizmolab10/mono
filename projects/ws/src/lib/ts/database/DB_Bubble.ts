@@ -226,7 +226,7 @@ export default class DB_Bubble extends DB_Common {
 			show.w_show_catalist_details.subscribe((inform_bubble: boolean) => {
 				if (!!inform_bubble) {
 					show.w_show_catalist_details.set(false);
-					const ancestries = get(x.si_grabs.w_items) as Array<Ancestry>;
+					const ancestries = get(x.w_grabs) as Array<Ancestry>;
 					const grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.empty);
 					if (!!ancestries && grabbed_ids.join(', ') != this.prior_grabbed_ids.join(', ')) {
 						if (this.allow_response_to[T_MID.grab]) {
@@ -238,7 +238,7 @@ export default class DB_Bubble extends DB_Common {
 					}
 				}
 			});
-			x.si_grabs.w_items.subscribe((ancestries: Array<Ancestry>) => {
+			x.w_grabs.subscribe((ancestries: Array<Ancestry>) => {
 				const grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.empty);
 				if (!!ancestries && grabbed_ids.join(', ') != this.prior_grabbed_ids.join(', ')) {
 					if (this.allow_response_to[T_MID.grab]) {

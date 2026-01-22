@@ -12,9 +12,8 @@
 	export let top = 6;
 	const id = 'selection details';
 	const { w_t_details } = show;
-	const { w_items: w_grabbed } = x.si_grabs;
 	const s_info = elements.s_element_for(new Identifiable(id), T_Hit_Target.details, id);
-	const { w_thing_title, w_ancestry_focus, w_ancestry_forDetails, w_relationship_order } = x;
+	const { w_grabs, w_thing_title, w_ancestry_focus, w_ancestry_forDetails, w_relationship_order } = x;
 	let ancestry: Ancestry | null = $w_ancestry_forDetails;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
@@ -37,7 +36,7 @@
 
 	$: {
 		update_forAncestry();
-		trigger = `${u.descriptionBy_title($w_grabbed)}:::${$w_ancestry_focus?.title}:::${$w_thing_title}:::>${u.descriptionBy_title($w_grabbed)}:::${$w_ancestry_forDetails?.title}:::<${$w_relationship_order}`;
+		trigger = `${u.descriptionBy_title($w_grabs)}:::${$w_ancestry_focus?.title}:::${$w_thing_title}:::>${u.descriptionBy_title($w_grabs)}:::${$w_ancestry_forDetails?.title}:::<${$w_relationship_order}`;
 	}
 
 	onMount(() => {

@@ -1,22 +1,31 @@
 <script lang='ts'>
-	import { g, k, core, u, x, hits, show, T_Layer, T_Detail, details } from '../../ts/common/Global_Imports';
+	import { g, k, core, u, x, hits, show, T_Layer, T_Detail, T_Direction, details } from '../../ts/common/Global_Imports';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
 	import { tick } from 'svelte';
     export let t_detail: T_Detail;
-	const { w_ancestry_forDetails } = x;
+	const { w_ancestry_forDetails, w_grabs, w_grabIndex } = x;
 	const { w_t_details } = show;
 	const s_banner_hideable = details.s_banner_hideables_dict_byType[t_detail];
-	const { w_description, w_extra_titles } = s_banner_hideable?.si_items;
+	const isSelection = t_detail === T_Detail.selection;
+	// For selection, derive extra_titles from grabs; for others, use si_items
+	const si_items = isSelection ? null : s_banner_hideable?.si_items;
+	const { w_description, w_extra_titles: w_extra_titles_from_si } = si_items ?? {};
 	let title = details.banner_title_forDetail(t_detail);
-	let titles = [title, ...$w_extra_titles];
+	let titles = [title];
 	let hideable_isVisible = true;
 	let trigger = k.empty;
 
 	update_hideable_isVisible();
 
 	$: {
-		const _ = `${$w_description}:::${$w_ancestry_forDetails?.id}`;
-		update_banner_titles();
+		const grabs = $w_grabs ?? [];
+		const grabIndex = $w_grabIndex ?? 0;
+		const _ = `${$w_description}:::${$w_ancestry_forDetails?.id}:::${grabs.length}:::${grabIndex}`;
+		// Compute extra_titles: for selection use grabs, for others use si_items
+		const extra = isSelection 
+			? (grabs.length > 1 ? [T_Direction.previous, T_Direction.next] : [])
+			: ($w_extra_titles_from_si ?? []);
+		update_banner_titles(grabs, grabIndex, extra);
 	}
 
 	$: { 
@@ -27,9 +36,9 @@
 
 	function update_trigger() {}// trigger = `${titles.join(k.comma)}:::${hideable_isVisible}:::${$w_description}:::${$w_ancestry_forDetails?.id}`; }
 
-	function update_banner_titles() {
-		const new_title = details.banner_title_forDetail(t_detail);
-		const new_titles = [new_title, ...$w_extra_titles];
+	function update_banner_titles(grabs: any[], grabIndex: number, extra_titles: string[]) {
+		const new_title = details.banner_title_forDetail(t_detail, grabs, grabIndex);
+		const new_titles = [new_title, ...extra_titles];
 		if (new_titles.join(k.comma) == titles.join(k.comma)) {
 			// console.log(`no trigger: "${new_title}"`);
 		} else {

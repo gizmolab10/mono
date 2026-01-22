@@ -16,7 +16,7 @@
 	const { w_user_graph_offset } = g;
 	const { w_background_color } = colors;
 	const table_width = k.width.details - 8;
-	const { w_items: w_grabbed } = x.si_grabs;
+	const w_grabs = x.w_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
 	const bottom_padding = bottom_tableHeight - 48;
 	const { w_s_alteration, w_ancestry_forDetails } = x;
@@ -46,7 +46,7 @@
 	}
 
 	$: {
-		const _ = `${u.descriptionBy_titles($w_expanded)}:::${u.descriptionBy_titles($w_grabbed)}`;
+		const _ = `${u.descriptionBy_titles($w_expanded)}:::${u.descriptionBy_titles($w_grabs)}`;
 		update_button_titles();
 	}
 
@@ -151,7 +151,7 @@
 </script>
 
 {#key reattachments}
-	{#if !$w_grabbed || $w_grabbed.length == 0 || $w_s_title_edit?.isActive}
+	{#if !$w_grabs || $w_grabs.length == 0 || $w_s_title_edit?.isActive}
 		<div class='no-actions'>
 			<p style='user-select:none; text-align:center; font-size:{k.font_size.instructions}px; position:relative; display:flex; align-items:center; justify-content:center;'>
 				{no_actions}

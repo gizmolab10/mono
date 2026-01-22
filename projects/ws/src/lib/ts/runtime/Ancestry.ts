@@ -1,4 +1,4 @@
-import { g, h, k, u, x, show, debug, search, controls, features, svgPaths, databases, components } from '../common/Global_Imports';
+import { g, h, k, u, x, show, debug, controls, features, svgPaths, databases, components } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Hit_Target } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
 import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
@@ -532,14 +532,7 @@ export default class Ancestry extends Identifiable {
 	grabOnly() { x.grabOnly(this); }
 
 	get isGrabbed(): boolean {
-		if (features.use_new_recents) {
-			// Phase 4: new system - no search fallback
-			return this.includedInAncestries(get(x.w_grabs_new));
-		}
-		// Old system
-		const grabs = x.si_grabs.w_items ?? [] as Array<Ancestry> | null;
-		return this.includedInStore_ofAncestries(grabs)
-			|| (search.selected_ancestry?.equals(this) ?? false);		// so details can show the user-selected search result
+		return this.includedInAncestries(get(x.w_grabs));
 	}
 
 	toggleGrab() {

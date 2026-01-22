@@ -4,7 +4,7 @@ Read all `.md` files (do not recurse) within `notes/guides/collaborate` and `not
 
 ## Defaults
 
-EXECUTE: Always granted—just do it
+EXECUTE: Never granted, must be explicitly requested
 
 FILESYSTEM: Full read/write/execute within `~/GitHub/mono`
 
@@ -40,3 +40,26 @@ When a `notes/work/*.md` file contains a migration plan or spec:
 `delete` unavailable → user must delete manually
 
 `execute` unavailable → user must run commands manually
+## Gates
+
+Task-specific checkpoints. BEFORE the task, read the guide.
+
+| Task | Gate |
+|------|------|
+| Refactoring (remove/rename symbols) | Read workflow.md#refactoring-discipline, then STOP/SEARCH/LIST/WAIT |
+| Writing prose for guides | Read voice.md |
+| Updating journal | Read journals.md |
+| Creating new md files | Read markdown.md |
+| Multi-file edits | Search ALL files first, list scope, then proceed |
+| Starting a work session | Read the relevant notes/work/*.md file |
+
+### Gate Protocol
+
+When a task matches a gate:
+
+1. **Announce:** "This is a [task type]. Let me read [guide] first."
+2. **Read:** Actually read the guide section.
+3. **Quote:** State the key rule from the guide.
+4. **Execute:** Follow the rule.
+
+Do not skip gates to appear faster. The gate exists because skipping it caused failures and massive time wastage.

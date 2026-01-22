@@ -32,6 +32,7 @@ Short commands and abbreviations for working with collaborator.
 | `summary` | Summarize what you just did (forces verification) |
 | `relearn` | Reread relevant guides before continuing |
 | `show` | Show your work — quote the lines or evidence |
+| `lazy` | Discipline failure — reread Refactoring Discipline in workflow.md |
 
 ## Abbreviations
 

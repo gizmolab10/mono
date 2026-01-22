@@ -1,7 +1,6 @@
 <script lang='ts'>
     import { k, x } from '../../ts/common/Global_Imports';
 	const { w_item: w_tag } = x.si_thing_tags;
-    x.update_grabs_forSearch();
 </script>
 
 {#if !!$w_tag}

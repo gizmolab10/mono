@@ -280,7 +280,7 @@ export class Events {
 						}
 						switch (key) {
 							case 'delete':
-							case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(x.si_grabs.items); break;
+							case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(get(x.w_grabs)); break;
 						}
 					}
 					if (!!ancestry) {
@@ -295,8 +295,8 @@ export class Events {
 						case '!':				g.grand_adjust_toFit(); break;
 						case '?':				controls.showHelp_home(); return;
 						case 'm':				controls.toggle_graph_type(); break;
-						case ']':				console.log(`[KEY] ] pressed, use_new_recents=${features.use_new_recents}`); if (features.use_new_recents) { x.recents_go(true); } else { x.ancestry_next_focusOn(true); } break;
-						case '[':				console.log(`[KEY] [ pressed, use_new_recents=${features.use_new_recents}`); if (features.use_new_recents) { x.recents_go(false); } else { x.ancestry_next_focusOn(false); } break;
+						case ']':				x.recents_go(true); break;
+						case '[':				x.recents_go(false); break;
 						case '>':				g_graph_tree.increase_depth_limit_by(1); break;
 						case '<':				g_graph_tree.increase_depth_limit_by(-1); break;
 						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
@@ -357,7 +357,7 @@ export class Events {
 					case a.add.related:				controls.toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
 				}								break;
 				case T_Action.delete:			switch (column) {
-					case a.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(x.si_grabs.items); break;
+					case a.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(get(x.w_grabs)); break;
 					case a.delete.parent:			controls.toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
 					case a.delete.related:			controls.toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}								break;

@@ -26,9 +26,9 @@ export default class S_Items<T> {
 	//	  s elements, details, breadcrumbs,		//
 	//	  results (25 files)					//
 	//											//
-	//	 const { w_item: grab } = x.si_grabs;	//
-	//					 ^^^^					//
-	//			 reactive store ($grab)			//
+	//	 const { w_grabs } = x;					//
+	//			 ^^^^^^^						//
+	//			 reactive store ($w_grabs)		//
 	//											//
 	//////////////////////////////////////////////
 	

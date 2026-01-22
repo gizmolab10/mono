@@ -30,13 +30,11 @@ class Search {
 	}
 
 	activate() {
-		x.save_grabs();
 		show.w_show_search_controls.set(true);
 		this.search_for(this.search_text);
 	}
 
 	deactivate() {
-		x.save_grabs(false);
 		this.w_search_results_found.set(0);
 		this.w_t_search.set(T_Search.off);
 		show.w_show_search_controls.set(false);

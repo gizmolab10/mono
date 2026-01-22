@@ -1,6 +1,6 @@
 import { T_Breadcrumbs, T_Counts_Shown, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
 import { T_Focus, T_Graph, T_Detail, T_Kinship, T_Startup, T_Preference } from '../common/Global_Imports';
-import { g, k, p, x, g_graph_tree } from '../common/Global_Imports';
+import { g, k, p, g_graph_tree } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 import { core } from '../managers/Core';
@@ -33,9 +33,6 @@ export class Visibility {
 	constructor() {
 		core.w_t_startup.subscribe((t_startup: T_Startup) => {
 			if (t_startup == T_Startup.ready) {
-				this.w_t_details.subscribe((t_details: Array<T_Detail>) => {
-					x.update_grabs_forSearch();
-				});
 				this.w_show_details.subscribe(() => {
 					g.update_rect_ofGraphView();
 					g.layout();

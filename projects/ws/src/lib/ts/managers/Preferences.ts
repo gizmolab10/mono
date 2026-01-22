@@ -1,6 +1,6 @@
 import { T_Kinship, T_Focus, T_Detail, T_Breadcrumbs, T_Counts_Shown } from '../common/Global_Imports';
 import { T_Graph, T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
-import { c, g, h, k, u, x, show, debug, radial, Ancestry, databases, features, S_Items } from '../common/Global_Imports';
+import { c, g, h, k, u, x, show, debug, radial, Ancestry, databases, S_Items } from '../common/Global_Imports';
 import type { S_Recent } from '../state/S_Recent';
 import { get } from 'svelte/store';
 
@@ -113,37 +113,69 @@ export class Preferences {
 
 	restore_paging() { radial.createAll_thing_pages_fromDict(this.readDB_key(T_Preference.paging)); }
 
-	restore_grabbed() {
+	restore_recents() {
+		// Read focus and grabs from localStorage, create initial snapshot, push to si_recents
 		function ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
+		
+		// Read grabs
+		let grabs: Ancestry[] = [];
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
-			const grabbed = !!h.rootAncestry ? [h.rootAncestry] : [];
-			x.si_grabs.items = grabbed;
+			grabs = !!h.rootAncestry ? [h.rootAncestry] : [];
 		} else {
-			x.si_grabs.items = this.ancestries_readDB_key(T_Preference.grabbed);
-			debug.log_grab(`  READ (${get(databases.w_t_database)}): "${ids_forDB(x.si_grabs.items)}"`);
+			grabs = this.ancestries_readDB_key(T_Preference.grabbed);
+			debug.log_grab(`  READ (${get(databases.w_t_database)}): "${ids_forDB(grabs)}"`);
 		}
 		
-		// Phase 4b: si_recents_new is seeded by becomeFocus() in restore_focus()
-		// Don't seed here - it breaks the old system's initialization
+		// Read focus
+		let focus = h?.rootAncestry ?? null;
+		if (c.eraseDB > 0) {
+			c.eraseDB -= 1;
+		} else {
+			const focusPath = p.readDB_key(this.focus_key) ?? p.readDB_key('focus');
+			if (!!focusPath) {
+				const focusAncestry = h?.ancestry_remember_createUnique(focusPath) ?? null;
+				if (!!focusAncestry) {
+					focus = focusAncestry;
+				}
+			}
+		}
 		
+		// Validate focus
+		if (!!focus && !focus.thing) {
+			const lastGrabbedAncestry = grabs.length > 0 ? grabs[grabs.length - 1]?.parentAncestry : null;
+			if (lastGrabbedAncestry) {
+				focus = lastGrabbedAncestry;
+			}
+		}
+		
+		// Fallback to root
+		if (!focus) {
+			focus = h?.rootAncestry ?? null;
+		}
+		
+		// Create and push initial snapshot
+		if (!!focus) {
+			const si_grabs = new S_Items<Ancestry>([...grabs]);
+			si_grabs.index = grabs.length > 0 ? grabs.length - 1 : 0;
+			const snapshot: S_Recent = { focus, si_grabs, depth: get(g.w_depth_limit) };
+			x.si_recents.push(snapshot);
+			focus.expand();
+		}
+		
+		// Set up persistence subscriptions
 		setTimeout(() => {
-			x.si_grabs.w_items.subscribe((array: Array<Ancestry>) => {
+			x.w_grabs.subscribe((array: Array<Ancestry>) => {
 				if (array.length > 0) {
 					this.ancestries_writeDB_key(array, T_Preference.grabbed);
 					debug.log_grab(`  WRITING (${get(databases.w_t_database)}): "${ids_forDB(array)}"`);
 				}
 			});
-			// Phase 4b: also persist from new system
-			if (features.use_new_recents) {
-				x.w_grabs_new.subscribe((array: Array<Ancestry>) => {
-					if (array.length > 0) {
-						this.ancestries_writeDB_key(array, T_Preference.grabbed);
-						debug.log_grab(`  WRITING NEW (${get(databases.w_t_database)}): "${ids_forDB(array)}"`);
-					}
-				});
-			}
 		}, 100);
+		
+		x.w_ancestry_focus.subscribe((ancestry: Ancestry | null) => {
+			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);
+		});
 	}
 		
 	restore_expanded() {
@@ -163,42 +195,6 @@ export class Preferences {
 				}
 			});
 		}, 100);
-	}
-
-	restore_focus() {
-		let ancestryToFocus = h?.rootAncestry ?? null;
-		if (c.eraseDB > 0) {
-			c.eraseDB -= 1;
-			// Direct set removed: becomeFocus() below will handle focus setting and add to history
-		} else {
-			const focusPath = p.readDB_key(this.focus_key) ?? p.readDB_key('focus');
-			if (!!focusPath) {
-				const focusAncestry = h?.ancestry_remember_createUnique(focusPath) ?? null;
-				if (!!focusAncestry) {
-					ancestryToFocus = focusAncestry;
-				}
-			}
-		}
-		if (!!ancestryToFocus) {
-			if (!ancestryToFocus.thing) {
-				const lastGrabbedAncestry = x.ancestry_forDetails?.parentAncestry;
-				if (lastGrabbedAncestry) {
-					ancestryToFocus = lastGrabbedAncestry;
-				}
-			}
-			// becomeFocus() will set focus via subscription from si_recents index and add to history
-			ancestryToFocus.becomeFocus();
-		} else {
-			// Ensure si_recents is always seeded, even if ancestryToFocus is null
-			// Use rootAncestry as fallback to seed history
-			const rootAncestry = h?.rootAncestry;
-			if (!!rootAncestry) {
-				rootAncestry.becomeFocus();
-			}
-		}
-		x.w_ancestry_focus.subscribe((ancestry: Ancestry | null) => {
-			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);
-		});
 	}
 
 	restore_preferences() {

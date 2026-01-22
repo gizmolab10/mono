@@ -1731,11 +1731,9 @@ export class Hierarchy {
 	}
 
 	restore_fromPreferences() {
-		// this.stop_alteration();
-		p.restore_grabbed();	// must precede restore_focus (which alters grabbed and expanded)
 		p.restore_paging();
 		p.restore_expanded();
-		p.restore_focus();
+		p.restore_recents();  // Creates initial snapshot with focus + grabs
 	}
 
 	async wrapUp_data_forUX() {

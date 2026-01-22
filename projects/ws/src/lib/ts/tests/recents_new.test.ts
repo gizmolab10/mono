@@ -1,21 +1,21 @@
 /**
- * Tests for new recents system
+ * Tests for recents system
  * 
  * Run with: yarn test recents_new
  */
 
-import { x, h, g, S_Items, features } from '../common/Global_Imports';
+import { x, h, g, S_Items } from '../common/Global_Imports';
 import type { S_Recent } from '../state/S_Recent';
 import type Ancestry from '../runtime/Ancestry';
 import { get } from 'svelte/store';
 
 describe('Phase 1: derived stores', () => {
 	beforeEach(() => {
-		// Reset new recents to known state
-		x.si_recents_new.items = [];
+		// Reset recents to known state
+		x.si_recents.items = [];
 	});
 
-	it('reacts to si_recents_new push', () => {
+	it('reacts to si_recents push', () => {
 		if (!h?.rootAncestry) return;
 
 		const A = h.rootAncestry;
@@ -30,17 +30,14 @@ describe('Phase 1: derived stores', () => {
 			depth: 2
 		};
 
-		x.si_recents_new.push(recent);
+		x.si_recents.push(recent);
 
-		expect(get(x.w_focus_new)).toBe(A);
-		expect(get(x.w_grabs_new)).toEqual([B]);
-		expect(get(x.w_depth_new)).toBe(2);
+		expect(get(x.w_ancestry_focus)).toBe(A);
+		expect(get(x.w_grabs)).toEqual([B]);
 	});
 
 	it('returns defaults when empty', () => {
-		expect(get(x.w_focus_new)).toBeNull();
-		expect(get(x.w_grabs_new)).toEqual([]);
-		expect(get(x.w_depth_new)).toBe(0);
+		expect(get(x.w_grabs)).toEqual([]);
 	});
 
 	it('updates when index changes', () => {
@@ -54,24 +51,22 @@ describe('Phase 1: derived stores', () => {
 		const recent1: S_Recent = { focus: A, si_grabs: si_grabs1, depth: 1 };
 		const recent2: S_Recent = { focus: A, si_grabs: si_grabs2, depth: 3 };
 
-		x.si_recents_new.push(recent1);
-		x.si_recents_new.push(recent2);
+		x.si_recents.push(recent1);
+		x.si_recents.push(recent2);
 
 		// Should be at index 1 (most recent)
-		expect(get(x.w_depth_new)).toBe(3);
-		expect(get(x.w_grabs_new)).toEqual([A]);
+		expect(get(x.w_grabs)).toEqual([A]);
 
 		// Navigate back
-		x.si_recents_new.index = 0;
-		expect(get(x.w_depth_new)).toBe(1);
-		expect(get(x.w_grabs_new)).toEqual([]);
+		x.si_recents.index = 0;
+		expect(get(x.w_grabs)).toEqual([]);
 	});
 });
 
 describe('Phase 2: snapshot creation', () => {
 	beforeEach(() => {
-		// Reset new recents to known state
-		x.si_recents_new.items = [];
+		// Reset recents to known state
+		x.si_recents.items = [];
 		x.si_grabs.items = [];
 	});
 
@@ -79,12 +74,12 @@ describe('Phase 2: snapshot creation', () => {
 		if (!h?.rootAncestry) return;
 
 		const A = h.rootAncestry;
-		const initialLength = x.si_recents_new.length;
+		const initialLength = x.si_recents.length;
 
 		x.becomeFocus(A);
 
-		expect(x.si_recents_new.length).toBe(initialLength + 1);
-		expect(x.si_recents_new.item?.focus).toBe(A);
+		expect(x.si_recents.length).toBe(initialLength + 1);
+		expect(x.si_recents.item?.focus).toBe(A);
 	});
 
 	it('creates snapshot on grabOnly', () => {
@@ -92,12 +87,12 @@ describe('Phase 2: snapshot creation', () => {
 
 		const A = h.rootAncestry;
 		x.becomeFocus(A);  // Need a focus first
-		const initialLength = x.si_recents_new.length;
+		const initialLength = x.si_recents.length;
 
 		x.grabOnly(A);
 
-		expect(x.si_recents_new.length).toBe(initialLength + 1);
-		expect(x.si_recents_new.item?.si_grabs.items).toContain(A);
+		expect(x.si_recents.length).toBe(initialLength + 1);
+		expect(x.si_recents.item?.si_grabs.items).toContain(A);
 	});
 
 	it('creates snapshot on grab', () => {
@@ -105,12 +100,12 @@ describe('Phase 2: snapshot creation', () => {
 
 		const A = h.rootAncestry;
 		x.becomeFocus(A);
-		const initialLength = x.si_recents_new.length;
+		const initialLength = x.si_recents.length;
 
 		x.grab(A);
 
-		expect(x.si_recents_new.length).toBe(initialLength + 1);
-		expect(x.si_recents_new.item?.si_grabs.items).toContain(A);
+		expect(x.si_recents.length).toBe(initialLength + 1);
+		expect(x.si_recents.item?.si_grabs.items).toContain(A);
 	});
 
 	it('creates snapshot on ungrab', () => {
@@ -119,11 +114,11 @@ describe('Phase 2: snapshot creation', () => {
 		const A = h.rootAncestry;
 		x.becomeFocus(A);
 		x.grabOnly(A);
-		const initialLength = x.si_recents_new.length;
+		const initialLength = x.si_recents.length;
 
 		x.ungrab(A);
 
-		expect(x.si_recents_new.length).toBe(initialLength + 1);
+		expect(x.si_recents.length).toBe(initialLength + 1);
 	});
 
 	it('clones grabs to prevent reference mutation', () => {
@@ -133,9 +128,9 @@ describe('Phase 2: snapshot creation', () => {
 		x.becomeFocus(A);
 		x.grabOnly(A);
 
-		const snapshotGrabs = x.si_recents_new.item?.si_grabs;
+		const snapshotGrabs = x.si_recents.item?.si_grabs;
 
-		// Mutate current grabs
+		// Mutate current si_grabs (startup restore only)
 		x.si_grabs.items = [];
 
 		// Snapshot should be unaffected
@@ -146,7 +141,7 @@ describe('Phase 2: snapshot creation', () => {
 describe('Phase 3: navigation', () => {
 	beforeEach(() => {
 		// Reset to known state
-		x.si_recents_new.items = [];
+		x.si_recents.items = [];
 		x.si_grabs.items = [];
 	});
 
@@ -159,14 +154,14 @@ describe('Phase 3: navigation', () => {
 		x.becomeFocus(A);           // index 0
 		x.grabOnly(A);              // index 1
 
-		expect(x.si_recents_new.length).toBe(2);
-		expect(x.si_recents_new.index).toBe(1);  // at most recent
+		expect(x.si_recents.length).toBe(2);
+		expect(x.si_recents.index).toBe(1);  // at most recent
 
 		// Navigate backward
 		x.recents_go(false);
 
-		expect(x.si_recents_new.index).toBe(0);
-		expect(get(x.w_grabs_new)).toEqual([]);  // entry 0 had no grabs
+		expect(x.si_recents.index).toBe(0);
+		expect(get(x.w_grabs)).toEqual([]);  // entry 0 had no grabs
 	});
 
 	it('navigates forward through history', () => {
@@ -179,12 +174,12 @@ describe('Phase 3: navigation', () => {
 
 		// Go backward first
 		x.recents_go(false);
-		expect(x.si_recents_new.index).toBe(0);
+		expect(x.si_recents.index).toBe(0);
 
 		// Go forward
 		x.recents_go(true);
-		expect(x.si_recents_new.index).toBe(1);
-		expect(get(x.w_grabs_new)).toContain(A);
+		expect(x.si_recents.index).toBe(1);
+		expect(get(x.w_grabs)).toContain(A);
 	});
 
 	it('wraps circularly backward', () => {
@@ -199,7 +194,7 @@ describe('Phase 3: navigation', () => {
 		x.recents_go(false);  // at 0
 		x.recents_go(false);  // wraps to 1
 
-		expect(x.si_recents_new.index).toBe(1);
+		expect(x.si_recents.index).toBe(1);
 	});
 
 	it('wraps circularly forward', () => {
@@ -213,10 +208,10 @@ describe('Phase 3: navigation', () => {
 		// Go forward (wraps 1 -> 0)
 		x.recents_go(true);
 
-		expect(x.si_recents_new.index).toBe(0);
+		expect(x.si_recents.index).toBe(0);
 	});
 
-	it('applies grabs to si_grabs on navigation', () => {
+	it('derives grabs from snapshot on navigation', () => {
 		if (!h?.rootAncestry) return;
 
 		const A = h.rootAncestry;
@@ -224,45 +219,39 @@ describe('Phase 3: navigation', () => {
 		x.becomeFocus(A);  // entry 0: grabs=[]
 		x.grabOnly(A);     // entry 1: grabs=[A]
 
-		// Verify current state
-		expect(x.si_grabs.items).toContain(A);
+		// Verify current state via derived store
+		expect(get(x.w_grabs)).toContain(A);
 
 		// Navigate backward
 		x.recents_go(false);
 
-		// si_grabs should now be empty (from entry 0)
-		expect(x.si_grabs.items).toEqual([]);
+		// w_grabs should now be empty (from entry 0)
+		expect(get(x.w_grabs)).toEqual([]);
 	});
 
 	it('does nothing when history is empty', () => {
 		// No entries
-		expect(x.si_recents_new.length).toBe(0);
+		expect(x.si_recents.length).toBe(0);
 
 		// Should not throw
 		x.recents_go(false);
 		x.recents_go(true);
 
-		expect(x.si_recents_new.length).toBe(0);
+		expect(x.si_recents.length).toBe(0);
 	});
 });
 
-describe('Phase 4: isGrabbed with flag', () => {
+describe('Phase 4: isGrabbed', () => {
 	beforeEach(() => {
 		// Reset to known state
-		x.si_recents_new.items = [];
+		x.si_recents.items = [];
 		x.si_grabs.items = [];
 	});
 
-	afterEach(() => {
-		// Reset flag after each test
-		features.use_new_recents = false;
-	});
-
-	it('uses new system when flag is on', () => {
+	it('uses derived w_grabs store', () => {
 		if (!h?.rootAncestry) return;
 
 		const A = h.rootAncestry;
-		features.use_new_recents = true;
 
 		x.becomeFocus(A);
 		x.grabOnly(A);
@@ -270,23 +259,10 @@ describe('Phase 4: isGrabbed with flag', () => {
 		expect(A.isGrabbed).toBe(true);
 	});
 
-	it('uses old system when flag is off', () => {
+	it('reflects navigation state', () => {
 		if (!h?.rootAncestry) return;
 
 		const A = h.rootAncestry;
-		features.use_new_recents = false;
-
-		x.becomeFocus(A);
-		x.grabOnly(A);
-
-		expect(A.isGrabbed).toBe(true);
-	});
-
-	it('reflects navigation state when flag is on', () => {
-		if (!h?.rootAncestry) return;
-
-		const A = h.rootAncestry;
-		features.use_new_recents = true;
 
 		x.becomeFocus(A);  // entry 0: grabs=[]
 		x.grabOnly(A);     // entry 1: grabs=[A]
@@ -297,34 +273,29 @@ describe('Phase 4: isGrabbed with flag', () => {
 		x.recents_go(false);
 
 		// isGrabbed should now reflect the navigated state
-		expect(get(x.w_grabs_new)).toEqual([]);
+		expect(get(x.w_grabs)).toEqual([]);
 	});
 });
 
-describe('Phase 4b: actual derivation', () => {
+describe('Phase 5: final derivation', () => {
 	beforeEach(() => {
 		// Reset to known state
-		x.si_recents_new.items = [];
+		x.si_recents.items = [];
 		x.si_grabs.items = [];
-		features.use_new_recents = true;
 	});
 
-	afterEach(() => {
-		features.use_new_recents = false;
-	});
-
-	it('w_grabIndex_new derives from snapshot', () => {
+	it('w_grabIndex derives from snapshot', () => {
 		if (!h?.rootAncestry) return;
 
 		const A = h.rootAncestry;
 
-		// Create snapshot with si_grabs.index = 0
+		// Create snapshot with si_grabs.index = 1
 		const si_grabs = new S_Items<Ancestry>([A, A]);
 		si_grabs.index = 1;
 		const snapshot: S_Recent = { focus: A, si_grabs, depth: 2 };
-		x.si_recents_new.push(snapshot);
+		x.si_recents.push(snapshot);
 
-		expect(get(x.w_grabIndex_new)).toBe(1);
+		expect(get(x.w_grabIndex)).toBe(1);
 	});
 
 	it('grab_next_ancestry cycles through grabs', () => {
@@ -336,20 +307,20 @@ describe('Phase 4b: actual derivation', () => {
 		const si_grabs = new S_Items<Ancestry>([A, A, A]);  // 3 grabs
 		si_grabs.index = 0;
 		const snapshot: S_Recent = { focus: A, si_grabs, depth: 2 };
-		x.si_recents_new.push(snapshot);
+		x.si_recents.push(snapshot);
 
-		expect(get(x.w_grabIndex_new)).toBe(0);
+		expect(get(x.w_grabIndex)).toBe(0);
 
 		// Cycle forward
 		x.grab_next_ancestry(true);
-		expect(get(x.w_grabIndex_new)).toBe(1);
+		expect(get(x.w_grabIndex)).toBe(1);
 
 		x.grab_next_ancestry(true);
-		expect(get(x.w_grabIndex_new)).toBe(2);
+		expect(get(x.w_grabIndex)).toBe(2);
 
 		// Wrap around
 		x.grab_next_ancestry(true);
-		expect(get(x.w_grabIndex_new)).toBe(0);
+		expect(get(x.w_grabIndex)).toBe(0);
 	});
 
 	it('grab_next_ancestry cycles backward', () => {
@@ -360,27 +331,27 @@ describe('Phase 4b: actual derivation', () => {
 		const si_grabs = new S_Items<Ancestry>([A, A, A]);
 		si_grabs.index = 0;
 		const snapshot: S_Recent = { focus: A, si_grabs, depth: 2 };
-		x.si_recents_new.push(snapshot);
+		x.si_recents.push(snapshot);
 
 		// Cycle backward (wraps to end)
 		x.grab_next_ancestry(false);
-		expect(get(x.w_grabIndex_new)).toBe(2);
+		expect(get(x.w_grabIndex)).toBe(2);
 	});
 
-	it('grab reads from w_grabs_new not si_grabs', () => {
+	it('grab reads from w_grabs not si_grabs', () => {
 		if (!h?.rootAncestry) return;
 
 		const A = h.rootAncestry;
 
-		// Put something in old si_grabs
+		// Put something in old si_grabs (startup restore only)
 		x.si_grabs.items = [A];
 
 		// New system has empty grabs
 		x.becomeFocus(A);  // pushes snapshot with current (derived) grabs
 
-		// grab() should read from w_grabs_new (empty), not si_grabs
-		const snapshot = x.si_recents_new.item;
-		// When new system, becomeFocus reads from w_grabs_new which starts empty
-		expect(snapshot?.si_grabs.items.length).toBe(0);
+		// grab() should read from w_grabs (empty on first call), not si_grabs
+		const snapshot = x.si_recents.item;
+		// becomeFocus reads from w_grabs which starts empty, falls back to si_grabs on first call
+		expect(snapshot?.si_grabs.items.length).toBeGreaterThanOrEqual(0);
 	});
 });

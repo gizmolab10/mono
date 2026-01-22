@@ -1,9 +1,10 @@
 <script lang='ts'>
-    import { e, g, k, u, x, core, hits, debug, colors, elements, features } from '../../ts/common/Global_Imports';
+    import { e, g, k, u, x, h, core, hits, debug, colors, elements, features, S_Items } from '../../ts/common/Global_Imports';
     import { T_Layer, T_Drag, T_Hit_Target, S_Mouse } from '../../ts/common/Global_Imports';
     import { Rect, Size, Point, Ancestry } from '../../ts/common/Global_Imports';
     import Identifiable from '../../ts/runtime/Identifiable';
     import { onMount } from 'svelte';
+    import { get } from 'svelte/store';
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
     const { w_dragging } = hits;
@@ -91,9 +92,19 @@
             startPoint = null;
             $w_dragging = T_Drag.none;
         } else if ($w_dragging === T_Drag.rubberband) {
-            if (!has_rubberbanded_grabs) {
-                x.si_grabs.reset();
+            // Commit rubberband grabs to snapshot if any, then clear live grabs
+            const rubberbandGrabs = get(x.w_rubberband_grabs);
+            if (rubberbandGrabs.length > 0) {
+                // Commit to history by pushing a snapshot
+                const focus = get(x.w_ancestry_focus) ?? h?.rootAncestry;
+                if (focus) {
+                    const si_grabs = new S_Items<Ancestry>(rubberbandGrabs);
+                    si_grabs.index = rubberbandGrabs.length - 1;  // Preserve last-item selection
+                    const snapshot = { focus, si_grabs, depth: get(g.w_depth_limit) };
+                    x.si_recents.push(snapshot);
+                }
             }
+            x.w_rubberband_grabs.set([]);  // Clear live grabs
             startPoint = null;
             rect.height = 0;
             rect.width = 0;
@@ -102,7 +113,9 @@
     }
 
     function ancestries_intersecting_rubberband(): Array<Ancestry> {
-        return rbush_forRubberband.search(rect.asBBox).map(b => b.target.ancestry);
+        return rbush_forRubberband.search(rect.asBBox)
+            .map(b => b.target.ancestry)
+            .filter(a => !!a);
     }
 
     function constrainToRect(point: Point): Point {
@@ -128,12 +141,8 @@
     function detect_and_grab() {
         if ($w_dragging === T_Drag.rubberband) {
             const ancestries = ancestries_intersecting_rubberband();
-            if (ancestries.length != 0) {
-                x.si_grabs.items = ancestries;
-            } else {
-                x.si_grabs.reset();
-            }
-            // w_ancestry_forDetails is now automatically updated via derived store
+            x.setGrabs_forRubberband(ancestries);
+            has_rubberbanded_grabs = ancestries.length > 0;
         }
     }
 
@@ -149,7 +158,7 @@
             } else if (features.has_rubber_band) {
                 // Start rubberband selection (only if feature enabled)
                 const constrained = constrainToRect(startPoint);
-                original_grab_count = x.si_grabs.items.length;
+                original_grab_count = get(x.w_grabs).length;
                 rect.y = constrained.y;
                 rect.x = constrained.x;
                 $w_dragging = T_Drag.rubberband;

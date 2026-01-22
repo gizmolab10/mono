@@ -12,9 +12,9 @@ export class S_Banner_Hideable {
 		this.t_detail = t_detail;
     }
 
-	get si_items(): S_Items<any> {
+	get si_items(): S_Items<any> | null {
 		switch (this.t_detail) {
-			case T_Detail.selection: return x.si_grabs;
+			case T_Detail.selection: return null;  // Selection computes extra_titles directly from w_grabs
 			case T_Detail.tags:		 return x.si_thing_tags;
 			case T_Detail.traits:	 return x.si_thing_traits;
 			default:				 return S_Items.dummy;

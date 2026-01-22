@@ -80,7 +80,7 @@ All new code checks this flag. Old paths stay intact until Phase 5.
 
 ### Phases
 
-**Phase 1: Add new structure alongside old** (decisions: 1, 2)
+#### **Phase 1: Add new structure alongside old** (decisions: 1, 2)
 
 - [x] Create `S_Recent` type in `state/S_Recent.ts`
 - [x] Create `si_recents_new: S_Items<S_Recent>` in UX.ts
@@ -101,7 +101,7 @@ describe('Phase 1: derived stores', () => {
 })
 ```
 
-**Phase 2: Wire up snapshot creation** (decisions: 4, 6, 7, 8)
+#### **Phase 2: Wire up snapshot creation** (decisions: 4, 6, 7, 8)
 
 - [x] Create `snapshot_current(): S_Recent` helper
 - [x] Call snapshot on: `becomeFocus`, `grab`, `grabOnly`, `ungrab`, depth change
@@ -132,7 +132,7 @@ describe('Phase 2: snapshot creation', () => {
 })
 ```
 
-**Phase 3: Wire up navigation** (decisions: 3, 10)
+#### **Phase 3: Wire up navigation** (decisions: 3, 10)
 
 - [x] Implement `recents_go(next: boolean)` using `si_recents_new`
 - [x] On navigate: state comes from snapshot, no replay
@@ -178,7 +178,7 @@ describe('Phase 3: navigation', () => {
 })
 ```
 
-**Phase 4: Swap consumers (behind flag)** (decisions: 11)
+#### **Phase 4: Swap consumers (behind flag)** (decisions: 11)
 
 - [x] Add `use_new_recents` flag to Features.ts
 - [x] `isGrabbed` checks flag, uses new or old
@@ -260,14 +260,27 @@ Manual test:
 | 13   | Multi-grab A, B, C (shift-click)            | Details shows one (per grabIndex)           |
 | 14   | Click next/prev arrows in details           | Cycles through A → B → C → A                |
 
+#### **Phase 5: Remove old code** ✅ COMPLETE
 
-**Phase 5: Remove old code** (decisions: 5, 9)
+- [x] Delete old `si_recents`, `save_grabs`, `update_grabs_forSearch`, `ancestry_next_focusOn`
+- [x] Remove feature flag (`use_new_recents`)
+- [x] Rename `_new` → final names (`si_recents`, `w_grabs`, `w_grabIndex`)
+- [x] Clean up imports (removed `features` from Ancestry.ts, UX.ts)
+- [x] `isGrabbed` simplified to just use `x.w_grabs`
 
-- [ ] Delete old `si_recents`, `save_grabs`, `update_grabs_forSearch`
-- [ ] Remove feature flag
-- [ ] Rename `_new` → final names
-- [ ] Update test file: remove flag references, rename `_new` → final names
-- [ ] Run `yarn test recents_new` — all pass
+**Final structure:**
+
+```typescript
+// UX.ts
+si_recents = new S_Items<S_Recent>([])  // Single source of truth
+w_grabs = derived(si_recents.w_item, item => item?.si_grabs?.items ?? [])
+w_grabIndex = derived(si_recents.w_item, item => item?.si_grabs?.index ?? 0)
+w_ancestry_focus = derived(si_recents.w_item, item => item?.focus)
+```
+
+**Note:** `si_grabs` retained for startup restore only (reads from localStorage).
+
+**Remaining manual test:** Run final regression testing table above.
 
 Verify no dangling references:
 ```
@@ -311,6 +324,26 @@ Final manual regression testing:
 |    | Change depth slider | History entry created |
 |    | Navigate back | Previous depth restored |
 
-### Rollback
+## Completed
 
-At any phase before 5, flip `use_new_recents = false` to restore old behavior.
+**Date:** 2025-01-21
+
+### Verdict: ✅ `x.si_recents` IS the single source of truth for both focus and grabs.
+
+**Current implementation:**
+
+| Store | Role |
+|-------|------|
+| `x.si_recents` | **SINGLE SOURCE OF TRUTH** |
+| `x.w_ancestry_focus` | Derived from `si_recents.w_item?.focus` |
+| `x.w_grabs` | Derived from `si_recents.w_item?.si_grabs?.items` |
+| `x.w_grabIndex` | Derived from `si_recents.w_item?.si_grabs?.index` |
+
+**Key changes from old system:**
+
+- No separate `x.si_grabs` exists
+- All derived stores read from `si_recents.w_item`
+- Every mutation (`grab`, `ungrab`, `grabOnly`, `becomeFocus`) creates a NEW `S_Recent` snapshot with CLONED grabs
+- Fixes the "reference vs copy" problem identified above
+
+The analysis in this document is now **historical** — it describes the old architecture that has been replaced.

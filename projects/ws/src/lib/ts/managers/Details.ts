@@ -34,7 +34,7 @@ class Details {
 		}
 	}
 
-	banner_title_forDetail(t_detail: T_Detail): string {
+	banner_title_forDetail(t_detail: T_Detail, passedGrabs?: any[], passedGrabIndex?: number): string {
 		const si_items = this.s_banner_hideables_dict_byType[t_detail].si_items;
 		let title = T_Detail[t_detail];
 		switch (t_detail) {
@@ -48,11 +48,17 @@ class Details {
 				const si_found = x.si_found;
 				const row	   = si_found.index;
 				const found    = si_found.length;
-				const grabbed  = si_items.items;
+				// Use passed values if available, otherwise fall back to get()
+				const grabs = passedGrabs ?? get(x.w_grabs);
+				const grabIndex = passedGrabIndex ?? get(x.w_grabIndex);
 				if (row != null && !!found && found > 1 && get(search.w_t_search) != T_Search.off) {
 					title = si_found.title('search result', 'focus', title);
-				} else if (!!grabbed) {
-					title = si_items.title('selected', 'focus', title); break;
+				} else if (grabs.length > 1) {
+					title = grabIndex.of_n_for_type(grabs.length, 'selected', '');
+				} else if (grabs.length === 1) {
+					title = 'focus';
+				} else {
+					title = 'focus';
 				}
 				break;
 			default:

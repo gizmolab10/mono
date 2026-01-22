@@ -10,10 +10,9 @@
 	const size = k.height.dot;
 	const viewBox_width = size;
 	const { w_s_hover } = hits;
-	const { w_thing_title } = x;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
-	const { w_items: w_grabbed } = x.si_grabs;
+	const { w_grabs, w_thing_title } = x;
 	const viewBox = k.tiny_outer_dots.viewBox;
 	const reveal_count = g_widget.reveal_count;
 	const show_reveal_count = reveal_count > 1;
@@ -72,7 +71,7 @@
 	});
 	
 	$: {
-		const _ = `${u.descriptionBy_titles($w_grabbed)}
+		const _ = `${u.descriptionBy_titles($w_grabs)}
 			:::${u.descriptionBy_titles($w_expanded)}
 			:::${$w_s_hover?.id ?? 'null'}
 			:::${$w_background_color}

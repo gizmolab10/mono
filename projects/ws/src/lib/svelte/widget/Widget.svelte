@@ -10,16 +10,15 @@
 	import Widget_Drag from './Widget_Drag.svelte';
 	export let g_widget!: G_Widget;
 	const s_widget = g_widget.s_widget;	// put me first
+	const { w_grabs } = x;
 	const { w_s_hover } = hits;
-	const { w_count_mouse_up, w_shift_on_mouse_up } = e;
 	const s_drag = s_widget.s_drag;
 	const s_title = s_widget.s_title;
 	const { w_thing_color } = colors;
 	const ancestry = g_widget.ancestry;
 	const s_reveal = s_widget.s_reveal;
 	const { w_show_catalist_details } = show;
-	const { w_items: w_grabbed } = x.si_grabs;  // Old system
-	const { w_grabs_new } = x;  // Phase 4b: new grabs store (true derivation)
+	const { w_count_mouse_up, w_shift_on_mouse_up } = e;
     const reveal_isAt_right = g_widget.reveal_isAt_right;
 	const reveal_pointsTo_child = g_widget.pointsTo_child;
 	const { w_s_title_edit, w_ancestry_focus } = x;
@@ -98,8 +97,7 @@
 	}
 
 	$: {
-		const grabs_new_ids = $w_grabs_new?.map(a => a.id).join(',') ?? '';
-		const reactives = `${$w_s_title_edit?.t_edit}:::${u.descriptionBy_titles($w_grabbed)}:::${grabs_new_ids}`;
+		const reactives = `${$w_s_title_edit?.t_edit}:::${u.descriptionBy_titles($w_grabs)}`;
 		if (reactives != trigger && !!ancestry && s_widget.detect_ifState_didChange) {
 			trigger = reactives;
 			if (!(controls.inRadialMode && ancestry.isFocus)) {

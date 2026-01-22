@@ -17,10 +17,9 @@
 	const g_widget = ancestry.g_widget;
 	const s_widget = g_widget.s_widget;
 	const input_height = k.height.dot + 2;
-	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_mouse_location, w_mouse_button_down } = e;
-	const { w_s_title_edit, w_ancestry_focus, w_thing_title, w_thing_fontFamily } = x;
+	const { w_grabs, w_s_title_edit, w_ancestry_focus, w_thing_title, w_thing_fontFamily } = x;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
 	let layout_timer: number | null = null;
@@ -99,7 +98,7 @@
 			:::${$w_mouse_button_down}
 			:::${$w_ancestry_focus?.id}
 			:::${$w_s_hover?.id ?? 'null'}
-			:::${u.descriptionBy_titles($w_grabbed)}
+			:::${u.descriptionBy_titles($w_grabs)}
 			:::${u.descriptionBy_titles($w_expanded)}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
@@ -138,7 +137,6 @@
 	}
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
-		console.log(`[WIDGET_TITLE] handle_s_mouse isDown=${s_mouse.isDown}`);
 		if (s_mouse.isDown) {
 			if (!!ancestry) {
 				if (get(databases.w_t_database) === T_Database.filesystem) {

@@ -8,7 +8,6 @@
 	const s_button = elements.s_element_for(new Identifiable('trait'), T_Hit_Target.trait, 'trait');
 	let text_box_size = new Size(k.width.details - 34, 68);
 	s_button.set_forHovering(colors.default, 'pointer');
-	x.update_grabs_forSearch();
 
 	const { w_t_database } = databases;
 	$: isFilesystemDB = $w_t_database === T_Database.filesystem;

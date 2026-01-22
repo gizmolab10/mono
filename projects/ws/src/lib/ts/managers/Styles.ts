@@ -24,8 +24,8 @@ export default class Styles {
 	//		$w_ancestry_focus											//
 	//		$w_s_title_edit												//
 	//		$w_expanded													//
-	//		$w_grabbed													//
 	//		$w_s_hover													//
+	//		$w_grabs													//
 	//																	//
 	//////////////////////////////////////////////////////////////////////
 

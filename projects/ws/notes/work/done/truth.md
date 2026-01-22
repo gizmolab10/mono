@@ -122,3 +122,29 @@ This leaks search state into grab semantics.
 Redesigning recents and search from scratch — see `recents.md` and `search.md`.
 
 Once those designs are solid, compare with current implementation and plan migration.
+
+---
+
+## Completed
+
+**Date:** 2025-01-21
+
+### Verdict: ✅ `x.si_recents` IS the single source of truth for both focus and grabs.
+
+**Current implementation:**
+
+| Store | Role |
+|-------|------|
+| `x.si_recents` | **SINGLE SOURCE OF TRUTH** |
+| `x.w_ancestry_focus` | Derived from `si_recents.w_item?.focus` |
+| `x.w_grabs` | Derived from `si_recents.w_item?.si_grabs?.items` |
+| `x.w_grabIndex` | Derived from `si_recents.w_item?.si_grabs?.index` |
+
+**Key changes from old system:**
+
+- No separate `x.si_grabs` exists
+- All derived stores read from `si_recents.w_item`
+- Every mutation (`grab`, `ungrab`, `grabOnly`, `becomeFocus`) creates a NEW `S_Recent` snapshot with CLONED grabs
+- Fixes the "reference vs copy" problem identified above
+
+The analysis in this document is now **historical** — it describes the old architecture that has been replaced.

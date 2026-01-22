@@ -13,8 +13,8 @@
 	export let center;
 	export let angle;
 	export let size;
+	const w_grabs = x.w_grabs;
 	const { w_s_hover } = hits;
-	const { w_items: w_grabbed } = x.si_grabs;
 	const s_triangle = elements.s_element_for(new Identifiable(name), T_Hit_Target.button, name);
 	let trianglePath = svgPaths.fat_polygon(size, angle);
 	s_triangle.color_background = 'transparent';
@@ -27,7 +27,7 @@
 		s_triangle.contains_point = (point) => svgPaths.isPointInPath(point, trianglePathElement);
 	}
 
-	$: $w_grabbed, setFillColor(false);
+	$: $w_grabs, setFillColor(false);
 	
 	$: {
 		trianglePath = svgPaths.fat_polygon(size, angle);

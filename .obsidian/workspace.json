@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "projects/ws/notes/work/deliverables.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "deliverables"
+              "title": "README"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "projects/ws/notes/work/deliverables.md",
+                "file": "README.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of deliverables"
+              "title": "Outline of README"
             }
           }
         ],
@@ -170,7 +170,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 377.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -185,27 +185,33 @@
   },
   "active": "96f8d32ee4605e89",
   "lastOpenFiles": [
+    "CLAUDE.MD",
+    "notes/guides/collaborate/gating.md",
+    "notes/guides/collaborate/filesystem.md",
+    "projects/ws/notes/work/book.md",
+    "projects/ws/notes/work/index.md",
+    "projects/ws/notes/work/done/docs.md",
+    "projects/ws/notes/architecture/internals/debounce.md",
+    "projects/ws/notes/work/startup.md",
+    "projects/ws/notes/work/done/recents.md",
+    "projects/ws/notes/work/done/truth.md",
+    "projects/ws/notes/work/deliverables.md",
+    "projects/ws/vite.config.js.timestamp-1769033453520-33cedccd35d1e.mjs",
     "projects/logs/update-docs.error.log",
     "logs/update-docs.error.log",
     "projects/ws/notes/work/housekeeping.md",
-    "projects/ws/notes/work/recents.md",
     "Untitled.md",
-    "notes/guides/collaborate/filesystem.md",
-    "projects/ws/notes/work/debounce.md",
     "projects/ws/vite.config.js.timestamp-1768935770302-9343506cdc3d.mjs",
     "projects/ws/vite.config.js.timestamp-1768934874854-4aaac39b1283b.mjs",
     "projects/ws/src/lib/ts/tests/recents_new.test.ts",
     "projects/ws/src/lib/ts/state/S_Recent.ts",
     "projects/ws/notes/work/search.md",
-    "projects/ws/notes/work/deliverables.md",
     "sites/docs/package.json",
     "sites/docs",
     "projects/ws/vite.config.js.timestamp-1768888572330-821edeb3031de.mjs",
     "projects/search.md",
-    "projects/ws/notes/work/truth.md",
     "notes/aside/index.md",
     "notes/index.md",
-    "projects/ws/vite.config.js.timestamp-1768870577582-8b200d2eb6a07.mjs",
     "notes/work/hub-app-spec.md",
     "notes/work/hub-app.md",
     "projects/ws/notes/guides/deliverables.md",
@@ -215,11 +221,6 @@
     "notes/work/today.md",
     "notes/guides/collaborate/journals.md",
     "notes/guides/collaborate/journal.md",
-    "notes/work/next/index.md",
-    "notes/work/next/simplicity.md",
-    "notes/work/next/pacing.md",
-    "notes/work/next/commoditize.md",
-    "notes/work/next/cleanup.md",
     "projects/ws/dist/assets/seriously-icon.png",
     "projects/ws/dist/vite.svg",
     "projects/ws/dist/settings.svg"

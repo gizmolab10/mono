@@ -146,13 +146,21 @@ export class Utilities extends Testworthy_Utilities {
 	}
 
 	temporarily_setDefaults_while(closure: () => void) {
-		const grabbed = x.si_grabs.items;
+		const snapshot = get(x.si_recents.w_item);
+		const grabbed = snapshot?.si_grabs?.items ?? [];
+		const grabIndex = snapshot?.si_grabs?.index ?? 0;
 		const color = get(colors.w_background_color);
 		colors.w_background_color.set('white');
-		x.si_grabs.reset();	// triggers reactivity, takes time to percolate
+		if (snapshot?.si_grabs) {
+			snapshot.si_grabs.items = [];
+			snapshot.si_grabs.index = 0;
+		}
 		setTimeout(() => {
 			closure();
-			x.si_grabs.items = grabbed;
+			if (snapshot?.si_grabs) {
+				snapshot.si_grabs.items = grabbed;
+				snapshot.si_grabs.index = grabIndex;
+			}
 			colors.w_background_color.set(color);
 		}, 10);
 	}

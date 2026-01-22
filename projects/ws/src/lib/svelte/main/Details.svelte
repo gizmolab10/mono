@@ -15,9 +15,8 @@
 	const width = k.width.details;
 	const { w_t_search } = search;
 	const { w_count_details } = e;
-	const { w_ancestry_forDetails } = x;	
+	const { w_ancestry_forDetails, w_grabs } = x;	
 	const { w_index: w_found } = x.si_found;
-	const { w_description: w_grabs_description } = x.si_grabs;
 	const { w_description: w_tags_description } = x.si_thing_tags;
 	const { w_description: w_traits_description } = x.si_thing_traits;
 
@@ -29,7 +28,7 @@
 		const _ = `${$w_found}
 		:::${$w_t_search}
 		:::${$w_tags_description}
-		:::${$w_grabs_description}
+		:::${$w_grabs.length}
 		:::${$w_traits_description}
 		:::${$w_ancestry_forDetails}`;
 		$w_count_details++;
