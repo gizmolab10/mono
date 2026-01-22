@@ -11,12 +11,12 @@
 	import D_Data from '../details/D_Data.svelte';
 	import D_Tags from '../details/D_Tags.svelte';
 	import { T_Graph } from '../../ts/common/Global_Imports';
-	const { w_t_graph, w_show_search_controls } = show;
 	const width = k.width.details;
 	const { w_t_search } = search;
 	const { w_count_details } = e;
-	const { w_ancestry_forDetails, w_grabs } = x;	
 	const { w_index: w_found } = x.si_found;
+	const { w_ancestry_forDetails, w_grabs } = x;	
+	const { w_t_graph, w_show_search_controls } = show;
 	const { w_description: w_tags_description } = x.si_thing_tags;
 	const { w_description: w_traits_description } = x.si_thing_traits;
 

@@ -286,28 +286,28 @@ export class Events {
 					if (!!ancestry) {
 						switch (key) {
 							case '/':			graph_needsSweep = ancestry.becomeFocus(); break;
-							case 'arrowright':	u.consume_event(event); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
 							case 'arrowleft':	u.consume_event(event); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
+							case 'arrowright':	u.consume_event(event); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
 						}
 					}
 					switch (key) {
+						case 'f':				search.activate(); break;
+						case ']':				x.recents_go(true); break;
+						case '[':				x.recents_go(false); break;
 						case 'a':				u.consume_event(event); break;
 						case '!':				g.grand_adjust_toFit(); break;
 						case '?':				controls.showHelp_home(); return;
 						case 'm':				controls.toggle_graph_type(); break;
-						case ']':				x.recents_go(true); break;
-						case '[':				x.recents_go(false); break;
+						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
+						case 'c':				g.set_user_graph_offsetTo(Point.zero); return;
 						case '>':				g_graph_tree.increase_depth_limit_by(1); break;
 						case '<':				g_graph_tree.increase_depth_limit_by(-1); break;
-						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
-						case 'f':				search.activate(); break;
 						case 's':				h.persist_toFile(T_File_Extension.json); return;
-						case 'c':				g.set_user_graph_offsetTo(Point.zero); return;
 						case 'o':				h.select_file_toUpload(T_File_Extension.json, event.shiftKey); break;
 						case '/':				if (!ancestry) { graph_needsSweep = h.rootAncestry?.becomeFocus(); } break;
 						case 'escape':			if (!!get(x.w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
-						case 'arrowup':			h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
-						case 'arrowdown':		h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+						case 'arrowup':			u.consume_event(event); h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
+						case 'arrowdown':		u.consume_event(event); h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
 					}
 				}
 			}

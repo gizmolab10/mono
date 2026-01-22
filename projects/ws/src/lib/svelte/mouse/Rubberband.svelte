@@ -8,11 +8,10 @@
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
     const { w_dragging } = hits;
-    const { w_s_title_edit } = x;
-    const { w_count_mouse_up } = e;
     const { w_user_graph_offset } = g;
 	const { w_separator_color } = colors;
-	const { w_mouse_location, w_scaled_movement } = e;
+    const { w_si_grabs, w_s_title_edit } = x;
+    const { w_count_mouse_up, w_mouse_location, w_scaled_movement } = e;
     const s_element = elements.s_element_for(new Identifiable('rubberband'), T_Hit_Target.rubberband, 'graph');
     let rbush_forRubberband = hits.rbush_forRubberband;
     let rubberband_hit_area: HTMLElement;
@@ -104,7 +103,7 @@
                     x.si_recents.push(snapshot);
                 }
             }
-            x.w_rubberband_grabs.set([]);  // Clear live grabs
+            x.setGrabs_forRubberband([]);  // Clear live grabs
             startPoint = null;
             rect.height = 0;
             rect.width = 0;
@@ -155,10 +154,12 @@
             startPoint = new Point(event.clientX, event.clientY);
             if (event.metaKey) {
                 $w_dragging = T_Drag.graph;
+            } else if (event.shiftKey) {
+                x.grab_none();
             } else if (features.has_rubber_band) {
                 // Start rubberband selection (only if feature enabled)
                 const constrained = constrainToRect(startPoint);
-                original_grab_count = get(x.w_grabs).length;
+                original_grab_count = $w_si_grabs.length;
                 rect.y = constrained.y;
                 rect.x = constrained.x;
                 $w_dragging = T_Drag.rubberband;
@@ -182,7 +183,6 @@
         width: {bounds.width}px;
         z-index: {T_Layer.graph};
         height: {bounds.height}px;'/>
-
 {#if features.has_rubber_band && $w_dragging === T_Drag.rubberband}
     <div class='rubberband' {style}/>
 {/if}

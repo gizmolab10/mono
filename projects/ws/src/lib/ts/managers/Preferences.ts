@@ -1,7 +1,7 @@
+import { S_Items, T_Graph, T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
 import { T_Kinship, T_Focus, T_Detail, T_Breadcrumbs, T_Counts_Shown } from '../common/Global_Imports';
-import { T_Graph, T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
-import { c, g, h, k, u, x, show, debug, radial, Ancestry, databases, S_Items } from '../common/Global_Imports';
-import type { S_Recent } from '../state/S_Recent';
+import { c, g, h, k, u, x, show, debug, radial, Ancestry, databases } from '../common/Global_Imports';
+import type { S_Recent } from '../types/Types';
 import { get } from 'svelte/store';
 
 class Enum_Spec {

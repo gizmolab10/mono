@@ -4,7 +4,7 @@
 * [Keyboard Shortcuts](#keyboard-shortcuts)
 * [UI Components](#ui-components)
 
-Reference for the hub app. See [hub-app.md](hub-app.md) for architecture, environment variables, and current issues.
+Reference for the hub app. See [hub-app.md](notes/guides/setup/hub-app.md) for architecture, environment variables, and current issues.
 
 ## Ports
 

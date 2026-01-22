@@ -1,13 +1,14 @@
 import { S_Items, T_Search, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
-import type { S_Recent } from '../state/S_Recent';
 import { g, h, hits, debug, radial, busy } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { get, writable, derived, type Readable } from 'svelte/store';
 import { details, controls } from '../common/Global_Imports';
+import type { S_Recent } from '../types/Types';
 import { show } from '../managers/Visibility';
 import { search } from '../managers/Search';
 
 export default class S_UX {
+	w_si_grabs!			   : Readable<S_Items<Ancestry> | null>;
 	w_ancestry_forDetails! : Readable<Ancestry | null>;
 	w_ancestry_focus!	   : Readable<Ancestry | null>;
 	w_grabs!               : Readable<Ancestry[]>;
@@ -34,14 +35,21 @@ export default class S_UX {
 			(item) => item?.focus ?? h?.rootAncestry
 		);
 
+		this.w_si_grabs = derived(
+			[this.si_recents.w_item],
+			([recent]) => {
+				return recent?.si_grabs ?? null;
+			}
+		);
+
 		this.w_grabs = derived(
 			[this.si_recents.w_item, this.w_rubberband_grabs],
-			([item, rubberbandGrabs]) => {
+			([recent, rubberbandGrabs]) => {
 				// Rubberband grabs take priority during drag
 				if (rubberbandGrabs.length > 0) {
 					return rubberbandGrabs;
 				}
-				return item?.si_grabs?.items ?? [];
+				return recent?.si_grabs?.items ?? [];
 			}
 		);
 
@@ -204,6 +212,17 @@ export default class S_UX {
 			ancestry.ancestry_assureIsVisible();
 			g.grand_build();
 			details.redraw();
+		}
+	}
+
+	grab_none() {
+		if (!radial.isDragging) {
+			const focus = get(this.w_ancestry_focus) ?? h.rootAncestry;
+			const si_grabs_new = new S_Items<Ancestry>([]);
+			const recent: S_Recent = { focus, si_grabs: si_grabs_new, depth: get(g.w_depth_limit) };
+			this.si_recents.push(recent);
+			h?.stop_alteration();
+			debug.log_grab('  GRAB NONE');
 		}
 	}
 

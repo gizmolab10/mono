@@ -545,7 +545,7 @@ export default class Ancestry extends Identifiable {
 
 	grab_forShift(SHIFT: boolean) {
 		if (SHIFT) {
-			this.grab();
+			this.toggleGrab();
 		} else {
 			this.grabOnly();
 		}

@@ -60,7 +60,7 @@ export default class Hits {
 		const matches = this.targets_atPoint(point);
 		const target = this.targetOf_highest_precedence(matches) ?? matches[0];
 		if (!!s_mouse.event) {
-			if (s_mouse.event.metaKey && !target?.isAControl) {						// If meta key is held and not on a control, force rubberband target (for graph dragging)
+			if (s_mouse.event.metaKey && !target?.isAControl) {						// If COMMAND key is held and not on a control, pass to rubberband target (for graph dragging)
 				const rubberband_target = matches.find(s => s.type === T_Hit_Target.rubberband);
 				if (rubberband_target) {
 					return rubberband_target.handle_s_mouse?.(s_mouse) ?? false;

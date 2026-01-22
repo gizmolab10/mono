@@ -6,11 +6,10 @@
 	import { onMount } from 'svelte';
 	const name = 'rings';
 	const { w_s_hover } = hits;
-	const { w_s_title_edit } = x;
 	const { w_count_mouse_up } = e;
-	const { w_ancestry_focus } = x;
 	const { w_thing_color } = colors;
 	const ring_width = k.thickness.radial.ring;
+	const { w_s_title_edit, w_ancestry_focus } = x;
 	const { w_g_cluster, w_rotate_angle, w_resize_radius } = radial;
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let rotate_element: HTMLElement | null = null;

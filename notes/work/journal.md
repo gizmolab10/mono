@@ -1,6 +1,6 @@
 # Journal
 
-**Current** Fixed MCP, created this journal (distilled from work/done files), added `[+]` checkbox support across all VitePress sites. Built a custom markdown-it plugin (`sites/markdown-it-task-list-plus.mts`) that transforms `[+]` into orange checkboxes with "?" — for "fixed but awaiting review" state. Added plugin and CSS to mono, ws, and di configs.
+**Current** Investigating dual persona design — work vs personal, each with own gating and guides. Core insight: shared infrastructure (~15 lines of defaults) belongs in Claude user preferences, leaving CLAUDE.MD files as pure persona. Exploring `shared/` repo for personal persona. See `notes/work/claude.md`.
 
 
 **2025** Started webseriously as graph visualization tool. Built di as quaternion rotation demo, rebuilding a 20-year-old CAD program. Developed collaboration workflow with Claude through trial and error — CLAUDE.MD files, structured guides, work tracking. The pattern emerged: Claude handles execution and analysis, I handle direction and distillation.
@@ -22,3 +22,6 @@
 
 
 **January 17, 2026** Fixed **MCP** connection issue in Claude Desktop. Root cause: npm prefix pointed to `.nvms` while node binary lived in `.nvm` — a split configuration I didn't know I had. When Claude Desktop launched the filesystem server via npx, it started with node v20 but subprocess calls found v14 in PATH, which crashed on modern syntax. **Solution: bypass npx entirely**, call node directly with full path to the installed module. Industry standard is single `.nvm` directory; I had two competing setups.
+
+
+**January 17, 2026** Created journal, added `[+]` checkbox support across all VitePress sites. Built custom markdown-it plugin (`sites/markdown-it-task-list-plus.mts`) that transforms `[+]` into orange checkboxes with "?" — for "fixed but awaiting review" state.

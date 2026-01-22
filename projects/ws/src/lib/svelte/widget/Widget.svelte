@@ -10,7 +10,6 @@
 	import Widget_Drag from './Widget_Drag.svelte';
 	export let g_widget!: G_Widget;
 	const s_widget = g_widget.s_widget;	// put me first
-	const { w_grabs } = x;
 	const { w_s_hover } = hits;
 	const s_drag = s_widget.s_drag;
 	const s_title = s_widget.s_title;
@@ -21,7 +20,7 @@
 	const { w_count_mouse_up, w_shift_on_mouse_up } = e;
     const reveal_isAt_right = g_widget.reveal_isAt_right;
 	const reveal_pointsTo_child = g_widget.pointsTo_child;
-	const { w_s_title_edit, w_ancestry_focus } = x;
+	const { w_grabs, w_s_title_edit, w_ancestry_focus } = x;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let mouse_up_count = $w_count_mouse_up;

@@ -11,16 +11,14 @@
 	const { w_t_graph } = show;
 	const top_tableHeight = 93;
 	const left_afterTitle = 39.5;
-	const { w_s_title_edit } = x;
 	const bottom_tableHeight = 73;
 	const { w_user_graph_offset } = g;
 	const { w_background_color } = colors;
 	const table_width = k.width.details - 8;
-	const w_grabs = x.w_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
 	const bottom_padding = bottom_tableHeight - 48;
-	const { w_s_alteration, w_ancestry_forDetails } = x;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
+	const { w_grabs, w_s_title_edit, w_s_alteration, w_ancestry_forDetails } = x;
     const s_banner_hideable = details.s_banner_hideables_dict_byType[T_Detail.actions];
 	const s_cancel = elements.s_element_for($w_ancestry_forDetails, T_Hit_Target.cancel, k.empty);
 	let list_title = $w_ancestry_forDetails?.isExpanded && controls.inTreeMode ? 'hide list' : 'list';
