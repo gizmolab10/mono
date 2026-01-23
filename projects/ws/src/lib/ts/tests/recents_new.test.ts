@@ -4,9 +4,9 @@
  * Run with: yarn test recents_new
  */
 
-import { x, h, g, S_Items } from '../common/Global_Imports';
-import type { S_Recent } from '../state/S_Recent';
+import { x, h, S_Items } from '../common/Global_Imports';
 import type Ancestry from '../runtime/Ancestry';
+import type { S_Recent } from '../types/Types';
 import { get } from 'svelte/store';
 
 describe('Phase 1: derived stores', () => {
@@ -67,7 +67,6 @@ describe('Phase 2: snapshot creation', () => {
 	beforeEach(() => {
 		// Reset recents to known state
 		x.si_recents.items = [];
-		x.si_grabs.items = [];
 	});
 
 	it('creates snapshot on becomeFocus', () => {
@@ -131,7 +130,6 @@ describe('Phase 2: snapshot creation', () => {
 		const snapshotGrabs = x.si_recents.item?.si_grabs;
 
 		// Mutate current si_grabs (startup restore only)
-		x.si_grabs.items = [];
 
 		// Snapshot should be unaffected
 		expect(snapshotGrabs?.items).toContain(A);
@@ -142,7 +140,6 @@ describe('Phase 3: navigation', () => {
 	beforeEach(() => {
 		// Reset to known state
 		x.si_recents.items = [];
-		x.si_grabs.items = [];
 	});
 
 	it('navigates backward through history', () => {
@@ -245,7 +242,6 @@ describe('Phase 4: isGrabbed', () => {
 	beforeEach(() => {
 		// Reset to known state
 		x.si_recents.items = [];
-		x.si_grabs.items = [];
 	});
 
 	it('uses derived w_grabs store', () => {
@@ -281,7 +277,6 @@ describe('Phase 5: final derivation', () => {
 	beforeEach(() => {
 		// Reset to known state
 		x.si_recents.items = [];
-		x.si_grabs.items = [];
 	});
 
 	it('w_grabIndex derives from snapshot', () => {
@@ -343,8 +338,7 @@ describe('Phase 5: final derivation', () => {
 
 		const A = h.rootAncestry;
 
-		// Put something in old si_grabs (startup restore only)
-		x.si_grabs.items = [A];
+		x.grabOnly(A);
 
 		// New system has empty grabs
 		x.becomeFocus(A);  // pushes snapshot with current (derived) grabs

@@ -68,6 +68,10 @@ export default defineConfig({
                   link: '/guides/collaborate/filesystem'
                 },
                 {
+                  text: 'Gating',
+                  link: '/guides/collaborate/gating'
+                },
+                {
                   text: 'Journals',
                   link: '/guides/collaborate/journals'
                 },
@@ -142,6 +146,14 @@ export default defineConfig({
                   link: '/guides/setup/deploy'
                 },
                 {
+                  text: 'Hub App Spec',
+                  link: '/guides/setup/hub-app-spec'
+                },
+                {
+                  text: 'Hub App',
+                  link: '/guides/setup/hub-app'
+                },
+                {
                   text: 'Jonathan',
                   link: '/guides/setup/jonathan'
                 },
@@ -182,12 +194,16 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: 'Hub App Spec',
-              link: '/work/hub-app-spec'
+              text: 'Claude',
+              link: '/work/claude'
             },
             {
-              text: 'Hub App',
-              link: '/work/hub-app'
+              text: 'Guidance Journal',
+              link: '/work/guidance-journal'
+            },
+            {
+              text: 'Housekeeping',
+              link: '/work/housekeeping'
             },
             {
               text: 'Journal',

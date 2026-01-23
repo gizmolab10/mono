@@ -5,8 +5,9 @@
 - [Articles](./articles/)
 - [Jeff](./jeff/)
 - [Next](./next/)
-- [Hub App Spec](hub-app-spec.md)
-- [Hub App](notes/guides/setup/hub-app.md)
+- [Claude](./claude.md)
+- [Guidance Journal](./guidance-journal.md)
+- [Housekeeping](./housekeeping.md)
 - [Journal](./journal.md)
 - [Resume](./resume.md)
 

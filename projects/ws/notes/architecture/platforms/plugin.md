@@ -1,6 +1,6 @@
 # Bubble Plugin Guide
 
-How-to's for working with the Bubble plugin. For architecture details, see [bubble.md](../architecture/platforms/bubble.md).
+How-to's for working with the Bubble plugin. For architecture details, see [bubble.md](./bubble.md).
 
 ## Table of Contents
 - [Debugging](#debugging)

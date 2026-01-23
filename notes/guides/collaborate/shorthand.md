@@ -34,6 +34,12 @@ Short commands and abbreviations for working with collaborator.
 | `show` | Show your work — quote the lines or evidence |
 | `lazy` | Discipline failure — reread Refactoring Discipline in workflow.md |
 
+## Memory
+
+| Command | Action |
+|----|----|
+| `memory` | Describe any useful auto-generated insights from userMemories (normally ignored) |
+
 ## Abbreviations
 
 | Abbrev | Meaning |

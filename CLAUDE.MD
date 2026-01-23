@@ -1,14 +1,24 @@
 # Shared Context
 
-Read all `.md` files (do not recurse) within `notes/guides/collaborate` and `notes/work` before starting work.
+Read all `.md` files (do not recurse) within `notes/collaborate` and `notes/work` before starting work.
+
+## Who
+
+Jonathan: artist before engineer. Engineering serves the art. Values intuition, warmth, hand-tweaking over formulas.
+
+Projects: ws (webseriously) = graph visualization, di (design intuition) = CAD rebuild.
+
+Collaborator (or "co") = Claude.
 
 ## Defaults
 
-EXECUTE: Never granted, must be explicitly requested
+EXECUTE: Hybrid — reads/searches immediately, propose file changes before executing
 
 FILESYSTEM: Full read/write/execute within `~/GitHub/mono`
 
 MEMORY: Use `conversation_search/recent_chats` before claiming no context
+
+userMemories: Ignore entirely. Stale data risk outweighs serendipity. Use `memory` command if curious.
 
 FILES: ALWAYS read file before editing—no exceptions. If proposing edits, quote the lines being changed.
 
@@ -40,24 +50,25 @@ When a `notes/work/*.md` file contains a migration plan or spec:
 `delete` unavailable → user must delete manually
 
 `execute` unavailable → user must run commands manually
+
 ## Gates
 
 Task-specific checkpoints. BEFORE the task, read the guide.
 
 | Task | Gate |
-|------|------|
+|----|----|
 | Refactoring (remove/rename symbols) | Read workflow.md#refactoring-discipline, then STOP/SEARCH/LIST/WAIT |
 | Writing prose for guides | Read voice.md |
 | Updating journal | Read journals.md |
 | Creating new md files | Read markdown.md |
 | Multi-file edits | Search ALL files first, list scope, then proceed |
-| Starting a work session | Read the relevant notes/work/*.md file |
+| Starting a work session | Read the relevant notes/work/\*.md file |
 
 ### Gate Protocol
 
 When a task matches a gate:
 
-1. **Announce:** "This is a [task type]. Let me read [guide] first."
+1. **Announce:** "This is a \[task type\]. Let me read \[guide\] first."
 2. **Read:** Actually read the guide section.
 3. **Quote:** State the key rule from the guide.
 4. **Execute:** Follow the rule.

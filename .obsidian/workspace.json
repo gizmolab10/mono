@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "projects/ws/notes/work/deliverables.md",
+                "file": "projects/ws/notes/index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "deliverables"
+              "title": "index"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "projects/ws/notes/work/deliverables.md",
+                "file": "projects/ws/notes/index.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of deliverables"
+              "title": "Outline of index"
             }
           }
         ],
@@ -170,7 +170,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 377.5
+    "width": 377.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -185,17 +186,32 @@
   },
   "active": "96f8d32ee4605e89",
   "lastOpenFiles": [
+    "logs/update-docs.error.log",
+    "notes/work/housekeeping.md",
+    "projects/logs/update-docs.error.log",
+    "projects/ws/notes/architecture/platforms/bubble.md",
+    "tools/health.sh",
+    "projects/ws/dist/assets/index.js.map",
+    "projects/ws/dist/assets/index.js",
+    "projects/ws/dist/index.html",
+    "projects/ws/dist/assets/seriously-icon.png",
+    "projects/ws/dist/assets/index.css",
+    "projects/ws/dist/assets",
+    "projects/ws/vite.config.js.timestamp-1769152531936-518fae9b8279d.mjs",
+    "projects/ws/vite.config.js.timestamp-1769152408834-1b682dd2e43a.mjs",
+    "projects/ws/notes/work/deliverables.md",
+    "projects/ws/notes/work/housekeeping.md",
+    "notes/housekeeping.md",
+    "projects/ws/notes/work/new-chat.md",
     "projects/ws/notes/architecture/internals/recents.md",
     "projects/ws/notes/work/done/recents.md",
     "projects/ws/notes/architecture/recents.md",
     "projects/ws/notes/collaborate/index.md",
     "projects/ws/notes/collaborate/gotchas.md",
     "projects/ws/notes/collaborate/composition.md",
-    "projects/ws/notes/collaborate",
     "projects/ws/notes/architecture/platforms/plugin.md",
     "projects/ws/notes/guides/plugin.md",
     "projects/ws/notes/architecture/plugin.md",
-    "ws-2025-commits.txt",
     "projects/ws/public/vite.svg",
     "projects/ws/public/settings.svg",
     "notes/work/guidance-journal.md",
@@ -208,22 +224,6 @@
     "notes/guides/collaborate/gating.md",
     "notes/guides/collaborate/filesystem.md",
     "projects/ws/notes/work/book.md",
-    "projects/ws/notes/work/index.md",
-    "projects/ws/notes/work/done/docs.md",
-    "projects/ws/notes/architecture/internals/debounce.md",
-    "projects/ws/notes/work/startup.md",
-    "projects/ws/notes/work/done/truth.md",
-    "projects/ws/notes/work/deliverables.md",
-    "projects/ws/vite.config.js.timestamp-1769033453520-33cedccd35d1e.mjs",
-    "projects/logs/update-docs.error.log",
-    "logs/update-docs.error.log",
-    "projects/ws/notes/work/housekeeping.md",
-    "projects/ws/vite.config.js.timestamp-1768935770302-9343506cdc3d.mjs",
-    "projects/ws/vite.config.js.timestamp-1768934874854-4aaac39b1283b.mjs",
-    "projects/ws/src/lib/ts/tests/recents_new.test.ts",
-    "projects/ws/src/lib/ts/state/S_Recent.ts",
-    "sites/docs/package.json",
-    "projects/ws/dist/assets/seriously-icon.png",
     "projects/ws/dist/vite.svg",
     "projects/ws/dist/settings.svg"
   ]

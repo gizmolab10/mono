@@ -146,20 +146,20 @@ export class Utilities extends Testworthy_Utilities {
 	}
 
 	temporarily_setDefaults_while(closure: () => void) {
-		const snapshot = get(x.si_recents.w_item);
-		const grabbed = snapshot?.si_grabs?.items ?? [];
-		const grabIndex = snapshot?.si_grabs?.index ?? 0;
+		const recent = get(x.si_recents.w_item);
+		const grabbed = recent?.si_grabs?.items ?? [];
+		const grabIndex = recent?.si_grabs?.index ?? 0;
 		const color = get(colors.w_background_color);
 		colors.w_background_color.set('white');
-		if (snapshot?.si_grabs) {
-			snapshot.si_grabs.items = [];
-			snapshot.si_grabs.index = 0;
+		if (recent?.si_grabs) {
+			recent.si_grabs.items = [];
+			recent.si_grabs.index = 0;
 		}
 		setTimeout(() => {
 			closure();
-			if (snapshot?.si_grabs) {
-				snapshot.si_grabs.items = grabbed;
-				snapshot.si_grabs.index = grabIndex;
+			if (recent?.si_grabs) {
+				recent.si_grabs.items = grabbed;
+				recent.si_grabs.index = grabIndex;
 			}
 			colors.w_background_color.set(color);
 		}, 10);

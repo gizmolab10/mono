@@ -1,0 +1,186 @@
+#!/bin/bash
+#
+# validate-paths.sh
+# Scan files for path references and check they exist
+#
+# Output: logs/paths.log
+# Display: Single updating line with count
+
+MONO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+LOG_FILE="$MONO_ROOT/logs/paths.log"
+START_TIME=$(date +%s.%N)
+
+mkdir -p "$MONO_ROOT/logs"
+echo "=== Path Validator ===" > "$LOG_FILE"
+echo "Root: $MONO_ROOT" >> "$LOG_FILE"
+echo "Run: $(date)" >> "$LOG_FILE"
+echo "" >> "$LOG_FILE"
+
+cd "$MONO_ROOT"
+
+COUNTER=0
+CACHED_PASSED=0
+CACHED_FAILED=0
+
+update_display() {
+  local current_file="$1"
+  COUNTER=$((COUNTER + 1))
+  printf "\r\033[KChecked: %d  Passed: %d  Broken: %d  Path: %s" "$((CACHED_PASSED + CACHED_FAILED))" "$CACHED_PASSED" "$CACHED_FAILED" "$current_file"
+}
+
+# Returns 0 if path OK or skipped, 1 if broken
+check_path() {
+  local file="$1"
+  local line_num="$2"
+  local path="$3"
+
+  # Skip URLs and anchors
+  [[ "$path" =~ ^https?:// ]] && return 0
+  [[ "$path" =~ ^mailto: ]] && return 0
+  [[ "$path" == \#* ]] && return 0
+  
+  # Skip variables and templates
+  [[ "$path" == \$* ]] && return 0
+  [[ "$path" == \{* ]] && return 0
+  [[ "$path" == *\\* ]] && return 0
+  
+  # Skip package refs
+  [[ "$path" == node_modules* ]] && return 0
+  [[ "$path" == @* ]] && return 0
+  [[ "$path" == svelte* ]] && return 0
+  [[ "$path" == vite* ]] && return 0
+  
+  # Skip empty, trailing slash, method calls
+  [[ -z "$path" ]] && return 0
+  [[ "$path" == */ ]] && return 0
+  [[ "$path" =~ ^\.[a-zA-Z]+\(\)$ ]] && return 0
+  
+  # Skip bare words (no / or . extension)
+  [[ ! "$path" =~ [/] ]] && [[ ! "$path" =~ \.[a-z]{1,4}$ ]] && return 0
+  
+  # Skip bare extensions (just ".ext" mentioned in prose)
+  [[ "$path" =~ ^\.[a-zA-Z0-9]+$ ]] && return 0
+  
+  # Skip paths with shell variables
+  [[ "$path" == *'${'* ]] && return 0
+  
+  # Skip placeholder filenames
+  [[ "$path" == *'.N.'* ]] && return 0
+  
+  # Strip anchors
+  path="${path%%#*}"
+  
+  # Skip /mnt paths
+  [[ "$path" == /mnt* ]] && return 0
+  
+  # Skip placeholder/template paths
+  [[ "$path" == *'/X/'* ]] && return 0
+  [[ "$path" == *'<'*'>'* ]] && return 0
+  
+  # Skip tilde paths outside mono
+  if [[ "$path" == '~/'* ]]; then
+    # Only check ~/GitHub/mono paths
+    [[ "$path" != '~/GitHub/mono'* ]] && [[ "$path" != '~/GitHub/mono' ]] && return 0
+  fi
+
+  local file_dir="$(dirname "$file")"
+  local resolved=""
+  
+  # Resolve path
+  if [[ "$path" == '~/'* ]]; then
+    resolved="${HOME}${path:1}"
+  elif [[ "$path" == /* ]]; then
+    resolved="$path"
+  else
+    resolved="$file_dir/$path"
+  fi
+
+  # Normalize without realpath (faster)
+  resolved=$(cd "$MONO_ROOT" && cd "$(dirname "$resolved")" 2>/dev/null && echo "$(pwd)/$(basename "$resolved")" || echo "$resolved")
+  
+  # Only validate paths within mono
+  [[ "$resolved" != "$MONO_ROOT"* ]] && return 0
+
+  if [[ ! -e "$resolved" ]]; then
+    CACHED_FAILED=$((CACHED_FAILED + 1))
+    echo "BROKEN: $file:$line_num" >> "$LOG_FILE"
+    echo "  Path: $path" >> "$LOG_FILE"
+    echo "  Resolved: $resolved" >> "$LOG_FILE"
+    echo "" >> "$LOG_FILE"
+    update_display "$file"
+    return 1
+  else
+    CACHED_PASSED=$((CACHED_PASSED + 1))
+    update_display "$file"
+    return 0
+  fi
+}
+
+scan_file() {
+  local file="$1"
+  local failed=0
+
+  local line_num=0
+  while IFS= read -r line; do
+    [[ $failed -eq 1 ]] && break
+    line_num=$((line_num + 1))
+    
+    # Markdown links
+    for p in $(echo "$line" | grep -oE '\]\([^)]+\)' | sed 's/^](//' | sed 's/)$//'); do
+      check_path "$file" "$line_num" "$p" || { failed=1; break; }
+    done
+    [[ $failed -eq 1 ]] && break
+
+    # Backtick paths
+    for p in $(echo "$line" | grep -oE '\`[.~/][^\`]+\`' | sed 's/\`//g'); do
+      check_path "$file" "$line_num" "$p" || { failed=1; break; }
+    done
+    [[ $failed -eq 1 ]] && break
+
+    # ~/GitHub paths
+    for p in $(echo "$line" | grep -oE '~/GitHub/[^ "'\''`)<>]+'); do
+      check_path "$file" "$line_num" "$p" || { failed=1; break; }
+    done
+    [[ $failed -eq 1 ]] && break
+
+    # Quoted paths with slashes
+    for p in $(echo "$line" | grep -oE '"[^"]*\/[^"]*"' | sed 's/"//g'); do
+      check_path "$file" "$line_num" "$p" || { failed=1; break; }
+    done
+
+  done < "$file"
+}
+
+# Process files
+for f in $(find . \( -name "*.md" -o -name "*.sh" -o -name "*.py" \) \
+  -not -name "index.md" \
+  -not -name "package.json" \
+  -not -path "*/node_modules/*" \
+  -not -path "*/.git/*" \
+  -not -path "*/.svelte-kit/*" \
+  -not -path "*/dist/*" \
+  -not -path "*/done/*" \
+  -not -path "*/logs/*" \
+  -not -path "*/.obsidian/*" \
+  -not -path "*/.vitepress/cache/*" \
+  -not -path "*/archives/*" \
+  -maxdepth 6 | sort); do
+  scan_file "$f"
+done
+
+END_TIME=$(date +%s.%N)
+ELAPSED=$(echo "$END_TIME - $START_TIME" | bc)
+MINS=$(echo "$ELAPSED / 60" | bc)
+SECS=$(echo "$ELAPSED % 60" | bc | xargs printf "%.0f")
+
+echo ""
+echo "Log: $LOG_FILE"
+printf "Time: %02d:%02d\n" "$MINS" "$SECS"
+
+if [[ $CACHED_FAILED -gt 0 ]]; then
+  echo "RESULT: $CACHED_FAILED broken path(s)"
+  exit 1
+else
+  echo "RESULT: All $CACHED_PASSED paths valid"
+  exit 0
+fi

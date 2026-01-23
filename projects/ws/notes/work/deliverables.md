@@ -34,7 +34,7 @@ The urls for review and feedback
 - [x] unselect: SHIFT-click on background
 - [ ] w_rubberband_grabs WTF?
 - [ ] HITS detector location data -> out of date
-	- [ ] when?
+	- [ ] **need --** reproduction steps
 - [ ] reveal children sometimes must (but never does) change focus (for levels)
 - [ ] at launch, restore recents is broken
 - [ ] **DEFER --** need to test whether two-finger no longer moves the graph

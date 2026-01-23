@@ -24,7 +24,7 @@ Bubble plugins are beasts. Webseriously runs in an iframe and uses postMessage t
 * [Edge Cases](#edge-cases)
 * [Related Files](#related-files)
 
-For how-to guides (debugging, adding state, publishing), see [plugin.md](../../guides/plugin.md).
+For how-to guides (debugging, adding state, publishing), see [[plugin.md]].
 
 ## Overview
 

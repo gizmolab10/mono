@@ -84,6 +84,10 @@ export default withMermaid(
               collapsed: true,
               items: [
                 {
+                  text: 'Debounce',
+                  link: '/architecture/internals/debounce'
+                },
+                {
                   text: 'Layout',
                   link: '/architecture/internals/layout'
                 },
@@ -98,6 +102,10 @@ export default withMermaid(
                 {
                   text: 'Reactivity',
                   link: '/architecture/internals/reactivity'
+                },
+                {
+                  text: 'Recents',
+                  link: '/architecture/internals/recents'
                 },
                 {
                   text: 'Styles',
@@ -117,6 +125,10 @@ export default withMermaid(
                 {
                   text: 'Bubble',
                   link: '/architecture/platforms/bubble'
+                },
+                {
+                  text: 'Plugin',
+                  link: '/architecture/platforms/plugin'
                 },
                 {
                   text: 'Svelte 5',
@@ -174,21 +186,17 @@ export default withMermaid(
           ]
         },
         {
-          text: 'Guides >',
-          link: '/guides/',
+          text: 'Collaborate >',
+          link: '/collaborate/',
           collapsed: true,
           items: [
             {
               text: 'Composition',
-              link: '/guides/composition'
+              link: '/collaborate/composition'
             },
             {
               text: 'Gotchas',
-              link: '/guides/gotchas'
-            },
-            {
-              text: 'Plugin',
-              link: '/guides/plugin'
+              link: '/collaborate/gotchas'
             }
           ]
         },
@@ -202,28 +210,12 @@ export default withMermaid(
               link: '/work/book'
             },
             {
-              text: 'Debounce',
-              link: '/work/debounce'
-            },
-            {
               text: 'Deliverables',
               link: '/work/deliverables'
             },
             {
-              text: 'Docs',
-              link: '/work/docs'
-            },
-            {
-              text: 'Housekeeping',
-              link: '/work/housekeeping'
-            },
-            {
-              text: 'Plugin Bugs',
-              link: '/work/plugin-bugs'
-            },
-            {
-              text: 'Recents',
-              link: '/work/recents'
+              text: 'New Chat',
+              link: '/work/new-chat'
             },
             {
               text: 'Search Links',
@@ -234,8 +226,8 @@ export default withMermaid(
               link: '/work/search'
             },
             {
-              text: 'Truth',
-              link: '/work/truth'
+              text: 'Startup',
+              link: '/work/startup'
             },
             {
               text: 'Done >',
@@ -249,6 +241,10 @@ export default withMermaid(
                 {
                   text: 'Claude.write',
                   link: '/work/done/claude.write'
+                },
+                {
+                  text: 'Docs',
+                  link: '/work/done/docs'
                 },
                 {
                   text: 'Ethernet',
@@ -267,8 +263,16 @@ export default withMermaid(
                   link: '/work/done/public-deliverables'
                 },
                 {
+                  text: 'Recents',
+                  link: '/work/done/recents'
+                },
+                {
                   text: 'Relocate.controls',
                   link: '/work/done/relocate.controls'
+                },
+                {
+                  text: 'Truth',
+                  link: '/work/done/truth'
                 },
                 {
                   text: 'Migration >',

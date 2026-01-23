@@ -55,12 +55,12 @@ export default class S_UX {
 
 		this.w_grabIndex = derived(
 			[this.si_recents.w_item, this.w_rubberband_grabs],
-			([item, rubberbandGrabs]) => {
+			([recent, rubberbandGrabs]) => {
 				// During rubberband, index is last item
 				if (rubberbandGrabs.length > 0) {
 					return rubberbandGrabs.length - 1;
 				}
-				return item?.si_grabs?.index ?? 0;
+				return recent?.si_grabs?.index ?? 0;
 			}
 		);
 
