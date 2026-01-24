@@ -10,5 +10,8 @@ Unified documentation for all projects.
 
 - [Aside](./aside/)
 - [Guides](./guides/)
+- [Logs](./logs/)
+- [Sites](./sites/)
+- [Tools](./tools/)
 - [Work](./work/)
 

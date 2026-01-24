@@ -6,9 +6,9 @@ Short commands and abbreviations for working with collaborator.
 
 | Command | Action |
 |----|----|
-| `go` | Read ~/GitHub/mono/projects/`<current-go>`/CLAUDE.MD |
+| `go` | Read ~/GitHub/mono/`<current-go>`/CLAUDE.MD |
 | `go mo` | Read ~/GitHub/mono/CLAUDE.MD |
-| `go <X>` | Set current-go to X, read ~/GitHub/mono/projects/X/CLAUDE.MD |
+| `go <X>` | Set current-go to X, read ~/GitHub/mono/X/CLAUDE.MD |
 | `what go` | Tell current-go value |
 | `claude` | Reread CLAUDE.MD |
 
