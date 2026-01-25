@@ -1,7 +1,7 @@
 - [x] explain why we need "w_rubberband_grabs"
 - [x] promote di and ws out of projects and up to mono itself and delete projects
 - [x] move sites and tools from mono into mono/notes
-- [ ] make sure everything in hub app still works (run manual test checklist)
+- [x] make sure everything in hub app still works (run manual test checklist)
 
 ---
 

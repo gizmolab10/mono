@@ -333,11 +333,11 @@
         <button class="action side-a" id="btn-dns">DNS<span class="badge">N</span></button>
         <h1 class="middle">Work Sites</h1>
         <div class="side-b">
-          <button class="action" id="btn-start" data-tooltip="restart all Vite servers">vite<span
+          <button class="action" id="btn-start" data-tooltip="restart all local dev servers">localhosts<span
               class="badge">esc</span></button>
           <button class="action" id="btn-prePublish" data-tooltip="pre-publish all md and html files">docs<span
               class="badge">⌫</span></button>
-          <button class="action" id="btn-api" data-tooltip="read/write single source of truth">api<span
+          <button class="action" id="btn-dispatcher" data-tooltip="restart local command runner">dispatcher<span
               class="badge">`</span></button>
         </div>
       </div>
@@ -410,7 +410,7 @@
     const btnDns = document.getElementById('btn-dns');
     const btnBubble = document.getElementById('btn-bubble');
     const btnPrePublish = document.getElementById('btn-prePublish');
-    const btnApi = document.getElementById('btn-api');
+    const btnDispatcher = document.getElementById('btn-dispatcher');
     const consoleOutput = document.getElementById('console-output');
     const consoleRow = document.getElementById('console-row');
     const commandDiv = document.getElementById('command');
@@ -611,12 +611,12 @@
 
       btnStart.classList.add('disabled');
       btnPrePublish.classList.add('disabled'); // Disable rebuild while restarting
-      btnApi.classList.add('disabled'); // Disable API restart while restarting
+      btnDispatcher.classList.add('disabled'); // Disable dispatcher restart while restarting
       btnStart.innerHTML = 'restarting<span class="badge">esc</span>';
       setConsoleOutput('restart', 'Starting...');
       matchRowWidths();
 
-      fetch(`http://localhost:${ports.api}/restart-all`, {
+      fetch(`http://localhost:${ports.dispatcher}/restart-all`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -626,14 +626,14 @@
             // Start polling for status
             restartPollInterval = setInterval(pollRestartStatus, 500);
           } else {
-            btnStart.innerHTML = 'vite<span class="badge">esc</span>';
+            btnStart.innerHTML = 'localhosts<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
             setConsoleOutput('restart', `Error: ${data.error}`);
             matchRowWidths();
           }
         })
         .catch(err => {
-          btnStart.innerHTML = 'vite<span class="badge">esc</span>';
+          btnStart.innerHTML = 'localhosts<span class="badge">esc</span>';
           btnStart.classList.remove('disabled');
           setConsoleOutput('restart', `API error: ${err.message}`);
           matchRowWidths();
@@ -641,7 +641,7 @@
     }
 
     function pollRestartStatus() {
-      fetch(`http://localhost:${ports.api}/restart-status`)
+      fetch(`http://localhost:${ports.dispatcher}/restart-status`)
         .then(res => res.json())
         .then(data => {
           pollErrorCount = 0; // Reset on success
@@ -655,10 +655,10 @@
           if (data.done) {
             clearInterval(restartPollInterval);
             restartPollInterval = null;
-            btnStart.innerHTML = 'vite<span class="badge">esc</span>';
+            btnStart.innerHTML = 'localhosts<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
             btnPrePublish.classList.remove('disabled'); // Re-enable rebuild
-            btnApi.classList.remove('disabled'); // Re-enable API restart
+            btnDispatcher.classList.remove('disabled'); // Re-enable dispatcher restart
             matchRowWidths();
 
             // Clear console if mouse is not over console row or restart button
@@ -673,10 +673,10 @@
           if (pollErrorCount >= MAX_POLL_ERRORS) {
             clearInterval(restartPollInterval);
             restartPollInterval = null;
-            btnStart.innerHTML = 'vite<span class="badge">esc</span>';
+            btnStart.innerHTML = 'localhosts<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
             btnPrePublish.classList.remove('disabled'); // Re-enable rebuild
-            btnApi.classList.remove('disabled'); // Re-enable API restart
+            btnDispatcher.classList.remove('disabled'); // Re-enable dispatcher restart
             setConsoleOutput('restart', `Poll error: ${err.message}`);
             matchRowWidths();
           }
@@ -766,18 +766,23 @@
         consoleOutput.textContent = getConsoleOutput('rebuild');
       }
     });
+    btnDispatcher.addEventListener('mouseenter', () => {
+      if (!restartPollInterval && !pollInterval) {
+        consoleOutput.textContent = getConsoleOutput('dispatcher');
+      }
+    });
 
     function doPrePublish() {
       if (pollInterval || restartPollInterval) return; // Operation in progress
 
       btnPrePublish.classList.add('disabled');
       btnStart.classList.add('disabled'); // Disable restart while pre-publishing
-      btnApi.classList.add('disabled'); // Disable API restart while pre-publishing
+      btnDispatcher.classList.add('disabled'); // Disable dispatcher restart while pre-publishing
       btnPrePublish.innerHTML = 'pre-publishing<span class="badge">⌫</span>';
       setConsoleOutput('rebuild', 'Starting...');
       matchRowWidths();
 
-      fetch(`http://localhost:${ports.api}/rebuild-docs`, {
+      fetch(`http://localhost:${ports.dispatcher}/rebuild-docs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ project: project })
@@ -803,7 +808,7 @@
     }
 
     function pollPrePublishStatus() {
-      fetch(`http://localhost:${ports.api}/rebuild-status`)
+      fetch(`http://localhost:${ports.dispatcher}/rebuild-status`)
         .then(res => res.json())
         .then(data => {
           // Only show "Working..." if actually running
@@ -819,7 +824,7 @@
             btnPrePublish.innerHTML = 'docs<span class="badge">⌫</span>';
             btnPrePublish.classList.remove('disabled');
             btnStart.classList.remove('disabled'); // Re-enable restart
-            btnApi.classList.remove('disabled'); // Re-enable API restart
+            btnDispatcher.classList.remove('disabled'); // Re-enable dispatcher restart
             matchRowWidths();
 
             // Enable console clear on mouseleave after 1 second
@@ -833,40 +838,18 @@
         });
     }
 
-    function doApi() {
-      setConsoleOutput('api', 'Restarting API...');
-      fetch(`http://localhost:${ports.api}/restart-api`, {
+    function doDispatcher() {
+      setConsoleOutput('dispatcher', 'Restarting dispatcher...');
+      fetch(`http://localhost:${ports.dispatcher}/restart-dispatcher`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
-      })
-        .then(() => {
-          // API will die, so this may not complete
-          setConsoleOutput('api', 'API restarting...');
-        })
-        .catch(() => {
-          // Expected - API died
-          setConsoleOutput('api', 'API restarting...');
-        });
+      }).catch(() => {});
 
-      // Poll until API is back
-      let attempts = 0;
-      const checkApi = setInterval(() => {
-        attempts++;
-        fetch(`http://localhost:${ports.api}/rebuild-status`)
-          .then(res => res.json())
-          .then(() => {
-            clearInterval(checkApi);
-            setConsoleOutput('api', '✓ API restarted');
-            // Reload the page after a brief moment
-            setTimeout(() => location.reload(), 300);
-          })
-          .catch(() => {
-            if (attempts > 20) {
-              clearInterval(checkApi);
-              setConsoleOutput('api', '❌ API failed to restart');
-            }
-          });
-      }, 500);
+      // Dispatcher takes ~1 second to restart, then reload page
+      setTimeout(() => {
+        setConsoleOutput('dispatcher', '✓ Dispatcher restarted');
+        setTimeout(() => location.reload(), 500);
+      }, 2500);
     }
 
     // === Deploy Status Polling ===
@@ -874,7 +857,7 @@
       // Don't poll if restart or rebuild is in progress
       if (pollInterval || restartPollInterval) return;
 
-      fetch(`http://localhost:${ports.api}/deploy-status`)
+      fetch(`http://localhost:${ports.dispatcher}/deploy-status`)
         .then(res => res.json())
         .then(data => {
           const building = [];
@@ -1037,7 +1020,7 @@
     btnDns.addEventListener('click', doDns);
     btnBubble.addEventListener('click', doBubble);
     btnPrePublish.addEventListener('click', doPrePublish);
-    btnApi.addEventListener('click', doApi);
+    btnDispatcher.addEventListener('click', doDispatcher);
 
     document.addEventListener('keydown', (e) => {
       // Blur any focused button so keyboard works
@@ -1067,7 +1050,7 @@
         case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); prePublishFeedbackRow(); break;
         case 'n': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
         case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); prePublishFeedbackRow(); break;
-        case '`': doApi(); break;
+        case '`': doDispatcher(); break;
       }
     });
 

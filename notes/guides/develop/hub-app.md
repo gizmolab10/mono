@@ -1,7 +1,7 @@
-# Work Site
+# Hub App
 
 **Started:** 2025-01-09
-**Status:** Complete
+**Status:** Stable 2026-01-24
 
 ## Table of Contents
 
@@ -14,9 +14,9 @@
 
 ## Overview
 
-The work site provides a local hub for managing dev servers and navigating between projects in the monorepo.
+The hub app provides a local dashboard for managing dev servers and navigating between projects in the monorepo.
 
-**Location:** `~/GitHub/mono/sites/`
+**Location:** `~/GitHub/mono/notes/sites/`
 
 **URL:** http://localhost:5170
 
@@ -24,12 +24,12 @@ The work site provides a local hub for managing dev servers and navigating betwe
 
 ### Sites and Ports
 
-Defined in `sites/ports.json`:
+Defined in `notes/sites/ports.json`:
 
 | Site | Port | Purpose |
 |------|------|---------|
-| hub | 5170 | Navigation hub |
-| api | 5171 | API for hub actions |
+| dispatch | 5170 | Hub UI (static server) |
+| dispatcher | 5171 | API for hub actions |
 | ws app | 5172 | WebSeriously app |
 | di app | 5173 | Design Intuition app |
 | ws docs | 5174 | WebSeriously docs |
@@ -40,10 +40,10 @@ Defined in `sites/ports.json`:
 
 | File | Purpose |
 |------|---------|
-| `sites/index.html` | Hub UI |
-| `sites/api.py` | API server |
-| `sites/servers.sh` | Start/restart/kill dev servers |
-| `sites/ports.json` | Port configuration |
+| `notes/sites/index.html` | Hub UI |
+| `notes/sites/dispatcher.py` | API server (command runner) |
+| `notes/sites/servers.sh` | Start/restart/kill dev servers |
+| `notes/sites/ports.json` | Port configuration |
 
 ### servers.sh
 
@@ -60,46 +60,61 @@ Verification checks:
 1. Port listening (lsof, 10s timeout)
 2. HTTP 200 response (curl, 20s timeout)
 
-**Note:** API (port 5171) is not in the restart list — it can't restart itself. Use `restart-api` alias separately.
+**Note:** The dispatcher automatically makes servers.sh executable if needed.
 
 ## Hub UI
 
 ### Layout
 
 ```
-┌─────────────────────────────────────────────┐
-│  DNS  │     Work Sites     │ Restart │ Rebuild │
-├─────────────────────────────────────────────┤
-│            [console output]                 │
-├─────────────────────────────────────────────┤
-│  mono │ di │ ws  ││  App │ Docs             │
-├─────────────────────────────────────────────┤
-│  [destination URL preview]  │ ws │ app      │
-├─────────────────────────────────────────────┤
-│ Bubble │ Repo │ Deploy ││ Local │ Netlify │ Public │
-└─────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ localhosts │ docs │ dispatcher │      Work Sites      │ dns │
+├─────────────────────────────────────────────────────────────┤
+│                    [console output]                         │
+├─────────────────────────────────────────────────────────────┤
+│ app │ docs │                               │ mono │ di │ ws │
+├─────────────────────────────────────────────────────────────┤
+│  [destination URL preview]              │ [project] [mode]  │
+├─────────────────────────────────────────────────────────────┤
+│ bubble │ repo │ deploy │         │ local │ netlify │ public │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+### Top Row Buttons
+
+| Button | Shortcut | Action |
+|--------|----------|--------|
+| localhosts | Esc | Restart all local dev servers |
+| docs | ⌫ | Pre-publish all md and html files |
+| dispatcher | \` | Restart local command runner |
+| dns | N | Open domain registrar |
 
 ### Features
 
 - **Project/Mode selection** — Pick ws/di/mono + app/docs
 - **Action buttons** — Navigate to local, Netlify, public URLs
-- **Restart** — Restarts all dev servers with verification
-- **Rebuild Docs** — Runs update-project-docs.sh for current project
+- **localhosts** — Restarts all dev servers with verification
+- **docs** — Runs update-project-docs.sh for all projects
+- **dispatcher** — Restarts the command runner (itself)
 - **Deploy status** — Console shows Netlify deploy progress
 - **Hover preview** — Shows destination URL before clicking
 - **Keyboard driven** — All actions have shortcuts
 
 ### Console Row
 
-Shows status for:
+Shows status messages for:
 - Restart progress (per-site verification)
-- Rebuild docs progress (7 steps)
+- Rebuild docs progress
 - Deploy status (polls Netlify every 10s)
+- Dispatcher restart status
 
-Priority: restart/rebuild status takes precedence over deploy status.
+Hover over localhosts, docs, or dispatcher buttons to see their last status message.
 
-Deploy status filters out Netlify's "no content change" errors (builds skipped when nothing changed) — these appear as errors in the API but aren't real failures.
+### Feedback Row
+
+The row below the mode/project segments shows:
+- **Left:** Destination URL preview (when hovering action buttons)
+- **Right:** Current project and mode
 
 ### Button States
 
@@ -109,14 +124,16 @@ Deploy status filters out Netlify's "no content change" errors (builds skipped w
 
 ## API Endpoints
 
+The dispatcher server (`dispatcher.py`) provides these endpoints:
+
 ### POST /restart-all
 Restarts all dev servers via servers.sh.
 
 ### POST /rebuild-docs
-Rebuilds docs for specified project.
-```json
-{"project": "ws"}  // or "di" or "mono"
-```
+Rebuilds docs for all projects.
+
+### POST /restart-dispatcher
+Restarts the dispatcher itself. Spawns new process then exits.
 
 ### GET /restart-status
 Returns restart progress.
@@ -132,23 +149,32 @@ Returns deploy status for one site (ws, di, ws-docs, di-docs, mono-docs).
 
 ## Setup
 
+### Starting the Hub
+
+1. Start the static server for the hub UI:
+   ```bash
+   cd ~/GitHub/mono/notes/sites && python3 -m http.server 5170
+   ```
+
+2. Start the dispatcher:
+   ```bash
+   cd ~/GitHub/mono/notes/sites && python3 dispatcher.py
+   ```
+
+3. Open http://localhost:5170
+
 ### Shell Aliases
 
 Add to `~/.zshrc`:
 
 ```bash
-alias restart="~/GitHub/mono/sites/servers.sh"
-alias restart-api="kill -9 \$(lsof -ti :5171) 2>/dev/null; cd ~/GitHub/mono/sites && python3 api.py > ~/GitHub/mono/tools/logs/api.log 2>&1 &"
-alias killdev="~/GitHub/mono/sites/servers.sh --kill-only"
+alias restart="~/GitHub/mono/notes/sites/servers.sh"
+alias killdev="~/GitHub/mono/notes/sites/servers.sh --kill-only"
 ```
 
 ### Environment
 
 Requires `NETLIFY_ACCESS_TOKEN` for deploy status polling.
-
-### API Logging
-
-The API suppresses `/deploy-status` requests from logs to avoid spam (polls every 10s).
 
 ## Keyboard Shortcuts
 
@@ -166,8 +192,9 @@ The API suppresses `/deploy-status` requests from logs to avoid spam (polls ever
 
 | Key | Action |
 |-----|--------|
-| Esc | Restart all servers |
+| Esc | Restart all local dev servers |
 | ⌫ | Rebuild docs |
+| \` | Restart dispatcher |
 | Enter | Open hovered destination |
 | ⌘C | Copy hovered URL |
 | L | Local |

@@ -4,16 +4,16 @@
 * [Keyboard Shortcuts](#keyboard-shortcuts)
 * [UI Components](#ui-components)
 
-Reference for the hub app. See [hub-app.md](./hub-app.md) for architecture, environment variables, and current issues.
+Reference for the hub app. See [hub-app.md](../develop/hub-app.md) for architecture and setup.
 
 ## Ports
 
-Port assignments for all services. Check here if something won't start or you need to know what's running where.
+Port assignments for all services. Defined in `notes/sites/ports.json`.
 
 | Port | Service |
-|----|----|
-| 5170 | Hub UI (served by dispatch or direct file) |
-| 5171 | API server |
+|------|---------|
+| 5170 | Hub UI (static server) |
+| 5171 | Dispatcher (command runner) |
 | 5172 | ws app |
 | 5173 | di app |
 | 5174 | ws-docs |
@@ -25,7 +25,7 @@ Port assignments for all services. Check here if something won't start or you ne
 Quick reference for power users.
 
 | Key | Action |
-|----|----|
+|-----|--------|
 | A | Select App mode |
 | X | Select Docs mode |
 | W | Select ws project |
@@ -38,11 +38,11 @@ Quick reference for power users.
 | Y | Highlight Deploy button |
 | N | Highlight DNS button |
 | B | Highlight Bubble button |
-| Esc | Restart Vite servers |
-| Backspace | Rebuild docs |
-| \` | Restart API server |
+| Esc | Restart local dev servers |
+| ⌫ | Rebuild docs |
+| \` | Restart dispatcher |
 | Enter | Open highlighted URL |
-| Cmd+C | Copy highlighted URL |
+| ⌘C | Copy highlighted URL |
 
 ## UI Components
 
@@ -54,23 +54,38 @@ What the buttons and controls do.
 * **Project**: mono, ws, di
 * Combinations determine which URLs/actions are available
 
-### Action Buttons
+### Top Row Buttons
 
-* **vite**: Restart all Vite dev servers (calls POST /restart-all)
-* **docs**: Rebuild documentation for all projects
-* **api**: Restart the API server
-* **Local**: Open localhost URL for selected mode/project
-* **Netlify**: Open Netlify preview URL
-* **Public**: Open production URL
-* **Repo**: Open GitHub repo
-* **Deploy**: Open Netlify deploys page
-* **DNS**: Open domain registrar
-* **Bubble**: Open Bubble.io (ws only)
+| Button | Shortcut | Description |
+|--------|----------|-------------|
+| localhosts | Esc | Restart all local dev servers |
+| docs | ⌫ | Pre-publish all md and html files |
+| dispatcher | \` | Restart local command runner |
+| dns | N | Open domain registrar (Dynadot) |
+
+### Navigation Buttons
+
+| Button | Shortcut | Description |
+|--------|----------|-------------|
+| Local | L | Open localhost URL for selected mode/project |
+| Netlify | T | Open Netlify preview URL |
+| Public | P | Open production URL |
+| Repo | R | Open GitHub repo |
+| Deploy | Y | Open Netlify deploys page |
+| Bubble | B | Open Bubble.io (ws only) |
 
 ### Console Row
 
-Single-line status display showing:
+Shows status messages for:
+* Restart progress (per-site verification)
+* Rebuild docs progress
+* Deploy status (polls Netlify every 10s)
+* Dispatcher restart status
 
-* Restart progress
-* Rebuild progress
-* Deploy status (when building on Netlify)
+Hover over localhosts, docs, or dispatcher to see their last status message.
+
+### Feedback Row
+
+The row below the mode/project segments shows:
+* **Left:** Destination URL preview (when hovering action buttons)
+* **Right:** Current project and mode

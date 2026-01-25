@@ -39,7 +39,7 @@ get_port() {
 
 # Load ports
 PORT_DISPATCH=$(get_port dispatch)
-PORT_API=$(get_port api)
+PORT_DISPATCHER=$(get_port dispatcher)
 PORT_WS=$(get_port ws)
 PORT_DI=$(get_port di)
 PORT_WS_DOCS=$(get_port ws-docs)

@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Simple API server for dev-hub.html
-Listens on port 5171, executes dev-servers.sh commands
+Dispatcher server for hub
+Listens on port 5171, executes shell commands on behalf of the browser
 """
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import subprocess
+import sys
 import json
 import os
 import threading
@@ -94,9 +95,10 @@ def restart_sites_async():
     """Run restarts by calling servers.sh"""
     global restart_running
     try:
-        # Call servers.sh which handles everything including verification
-        # It writes progress to RESTART_STATUS_FILE
         servers_script = os.path.join(SCRIPT_DIR, 'servers.sh')
+        # Ensure script is executable
+        if not os.access(servers_script, os.X_OK):
+            os.chmod(servers_script, 0o755)
         subprocess.run([servers_script], capture_output=True)
     finally:
         restart_running = False
@@ -291,18 +293,18 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
         
-        elif self.path == '/restart-api':
-            try:
-                self._send_response(200, {'success': True, 'message': 'Restarting...'})
-                # Spawn new process using nohup to fully detach
-                log_file = os.path.join(GITHUB_DIR, 'logs', 'api-restart.log')
-                os.makedirs(os.path.dirname(log_file), exist_ok=True)
-                script_path = os.path.abspath(__file__)
-                os.system(f'nohup python3 "{script_path}" > "{log_file}" 2>&1 &')
-                time.sleep(0.2)  # Let it start
-                os._exit(0)
-            except Exception as e:
-                self._send_response(500, {'success': False, 'error': str(e)})
+        elif self.path == '/restart-dispatcher' or self.path == '/restart-api':  # /restart-api for backwards compat
+            log_file = os.path.join(GITHUB_DIR, 'logs', 'dispatcher-restart.log')
+            os.makedirs(os.path.dirname(log_file), exist_ok=True)
+            script_path = os.path.abspath(__file__)
+            cmd = f'nohup python3 "{script_path}" > "{log_file}" 2>&1 &'
+            
+            # Spawn new process FIRST, before any HTTP stuff
+            os.system(cmd)
+            time.sleep(1.0)  # Let it start
+            
+            # Now exit - the new process will kill us anyway
+            os._exit(0)
         
         else:
             self._send_response(404, {'error': 'Not found'})
@@ -331,14 +333,14 @@ if __name__ == '__main__':
                 print(f"Killed existing process {pid} on port 5171")
             except:
                 pass
-        time.sleep(0.5)  # Wait for port to be released
+        time.sleep(1.0)  # Wait for port to be released
     
     # Allow rebinding to port immediately after restart
     class ReusableHTTPServer(HTTPServer):
         allow_reuse_address = True
     
     server = ReusableHTTPServer(('localhost', 5171), APIHandler)
-    print("API server running on http://localhost:5171")
+    print("Dispatcher running on http://localhost:5171")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

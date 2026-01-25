@@ -6,4 +6,7 @@ Gathered here are what I hope will bring you up to speed, or once at speed, prov
 
 - [Architecture](./architecture/)
 - [Collaborate](./collaborate/)
+- [Tools](./tools/)
 - [Work](./work/)
+- [Project](./project.md)
+
