@@ -45,6 +45,7 @@ export default class Geometry {
 		// NB: set html element fails (in S_Component)
 		// if id does not match, or exist yet
 		signals.signal_reposition_widgets_fromFocus();
+		setTimeout(() => hits.recalibrate(), 100);
 	}
 
 	grand_adjust_toFit() {

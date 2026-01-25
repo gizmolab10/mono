@@ -1,7 +1,6 @@
 <script lang='ts'>
-	import { g, k, core, u, x, hits, show, T_Layer, T_Detail, T_Direction, details } from '../../ts/common/Global_Imports';
+	import { g, k, core, u, x, show, T_Layer, T_Detail, T_Direction, details } from '../../ts/common/Global_Imports';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
-	import { tick } from 'svelte';
     export let t_detail: T_Detail;
 	const { w_ancestry_forDetails, w_grabs, w_grabIndex } = x;
 	const { w_t_details } = show;
@@ -70,8 +69,6 @@
 		}
 		$w_t_details = t_details;
 		update_hideable_isVisible();
-		await tick();
-		hits.recalibrate();
 	}
 
 </script>

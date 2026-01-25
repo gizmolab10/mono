@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, g, k, p, core, u, x, hits, show, colors, details, elements } from '../../ts/common/Global_Imports';
+	import { c, g, k, p, core, u, x, show, colors, details, elements } from '../../ts/common/Global_Imports';
 	import { T_Thing, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -8,7 +8,7 @@
 	import Separator from '../draw/Separator.svelte';
 	import Portal from '../draw/Portal.svelte';
 	import Color from '../mouse/Color.svelte';
-	import { onMount, tick } from 'svelte';
+	import { onMount } from 'svelte';
 	export let top = 6;
 	const id = 'selection details';
 	const { w_t_details } = show;
@@ -28,10 +28,8 @@
 	let trigger = k.empty;
 
 	$: $w_t_details, layout_forColor();
-	async function handle_toggle_properties(event: Event) {
+	function handle_toggle_properties(event: Event) {
 		details.show_properties = !details.show_properties;
-		await tick();
-		hits.recalibrate();
 	}
 
 	$: {

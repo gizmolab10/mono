@@ -181,7 +181,6 @@ export default class S_UX {
 			
 			x.w_s_alteration.set(null);
 			ancestry.expand();
-			hits.recalibrate();
 		}
 		return changed;
 	}
