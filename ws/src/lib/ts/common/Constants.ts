@@ -99,16 +99,16 @@ export default class Constants {
 	};
 
 	font_size = {
-		cluster_slider:	  dot_size - 5,
-		instructions: dot_size - 4,
-		separator:	  dot_size - 4,
-		details:	  dot_size - 3,
-		banners:	  dot_size - 2,
-		info:		  dot_size - 1,
-		common:		  dot_size,
-		segmented:	  dot_size + 1,
-		warning:	  dot_size + 2,
-		tree_prefs:	  36,
+		cluster_slider: dot_size - 5,
+		instructions:   dot_size - 4,
+		separator:	    dot_size - 4,
+		details:	    dot_size - 3,
+		banners:	    dot_size - 2,
+		info:		    dot_size - 1,
+		common:		    dot_size,
+		segmented:	    dot_size + 1,
+		warning:	    dot_size + 2,
+		tree_prefs:	    36,
 	};
 
 	thickness = {

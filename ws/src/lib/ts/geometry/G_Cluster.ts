@@ -35,6 +35,7 @@ export default class G_Cluster {
 	widgets_shown = 0;
 	total_widgets = 0;
 	isPaging = false;
+	row_height = 0;
 
 	// heavy lifting for positioning everything in one cluster
 
@@ -43,6 +44,9 @@ export default class G_Cluster {
 		this.isCluster_ofChildren = isCluster_ofChildren;
 		this.predicate = predicate;
 		radial.w_resize_radius.subscribe((radius: number) => {
+			const base_row_height = k.height.dot + 3;
+			const inset = k.thickness.radial.ring / 1.5;
+			this.row_height = base_row_height * radius / (radius + inset);
 			if (this.g_cluster_pager.outside_arc_radius != radius) {
 				this.layout();		// do not set_paging_index (else expand will hang)
 			}
@@ -195,13 +199,12 @@ export default class G_Cluster {
 	layout_cluster_widgets() {
 		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
-			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
-			const factor = 1;//this.predicate.kind == T_Predicate.contains ? this.isCluster_ofChildren ? 0 : 1 : 2;
-			const inset = (factor + 3) * k.thickness.radial.ring / 6;
+			const inset = k.thickness.radial.ring / 1.5;
 			const radial_vector = Point.x(radial.ring_radius + inset);
 			const radial_vector_ofFork = this.radial_vector_ofFork;				// points at middle widget (of cluster)
 			const fork_points_right = radial_vector_ofFork.x > 0;
 			const fork_points_down = radial_vector_ofFork.y < 0;
+			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
 			let index = 0;
 			while (index < this.widgets_shown) {
 				const adjusted_index = fork_points_right ? (this.widgets_shown - index - 1) : index;
@@ -234,8 +237,7 @@ export default class G_Cluster {
 		const row = (max / 2) - index;						// row goes from minus to plus (equally divided around fork_y)
 		const radius = radial.ring_radius;
 		const radial_vector = this.radial_vector_ofFork;	// points at cluster's middle widget
-		const row_height = k.height.dot - 3.2;
-		let y = radial_vector.y + (row * row_height);		// distribute y equally around fork_y
+		let y = radial_vector.y + (row * this.row_height);		// distribute y equally around fork_y
 		let y_isOutside = false;
 		const absY = Math.abs(y);
 		if (absY > radius) {

@@ -32,22 +32,24 @@ The urls for review and feedback
 
 ### Bugs
 
-- [x] unselect: SHIFT-click on background
-- [x] w_rubberband_grabs WTF?
 - [ ] HITS detector location data -> out of date
 	- [ ] **need --** reproduction steps
 - [ ] reveal children sometimes must (but never does) change focus (for levels)
 - [ ] at launch, restore recents is broken
 - [ ] **DEFER --** need to test whether two-finger no longer moves the graph
 - [ ] "<" and ">" are ignored. should bump depth levels
+- [ ] after a while, the resize feature becomes "reluctant" (just changes a tiny bit)
 - [ ] select A, more than one level below focus, switch to radial, expected focus to change (it didn't) so A will still be visible
 	- [ ] **derive** focus from graph (radial / tree) mode
 - [ ] breadcrumbs
 	- [ ] **FUBAR --** out of date in plugin
 	- [ ] click breadcrumb to left of focus -> is ignored
 - [ ] in radial mode
-	- [ ] widgets overlap vertically
-	- [ ] not show details of focus
+	- [ ] not show details of focus -- Vincent
+	- [x] widgets overlap vertically
+		- [x] when rotate ring is large
+- [x] unselect: SHIFT-click on background
+- [x] w_rubberband_grabs WTF?
 - [x] selection
 	- [x] multiple
 		- [x] shift key + click
