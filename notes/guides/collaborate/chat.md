@@ -115,6 +115,14 @@ With many files involved, I rely on collaborator for file analysis. Freshness is
 * Judgment calls on quality and scope
 * Confirmation before destructive actions
 
+## Options Require Choice
+
+When collaborator presents numbered options, collaborator must STOP and wait for selection. No exceptions. Presenting options is not a proposal — it's a question.
+
+**Anti-pattern:** "Option 1... Option 2... Since X seems likely, I'll do Option 1."
+
+**Required pattern:** "Option 1... Option 2... Which do you prefer?"
+
 ## When to Intervene
 
 Interrupt collaborator when:

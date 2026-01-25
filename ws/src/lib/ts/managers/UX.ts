@@ -1,5 +1,5 @@
 import { S_Items, T_Search, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
-import { g, h, hits, debug, radial, busy } from '../common/Global_Imports';
+import { g, h, debug, radial, busy } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { get, writable, derived, type Readable } from 'svelte/store';
 import { details, controls } from '../common/Global_Imports';

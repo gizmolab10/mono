@@ -62,7 +62,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -225,10 +225,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "c36edc6861c3bb25",
   "lastOpenFiles": [
-    "ws/notes/work/deliverables.md",
     "ws/notes/work/hits-detection.md",
+    "ws/notes/work/deliverables.md",
     "notes/tools/file-structure-check.sh",
     "logs/update-docs.error.log",
     "notes/guides/develop/hub-app.md",

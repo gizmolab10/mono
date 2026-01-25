@@ -7,7 +7,7 @@ export default withMermaid(
   defineConfig({
     srcDir: './notes',
     title: "Webseriously Inside Peak",
-    srcExclude: ['archives/**', 'tools/**'],
+    srcExclude: ['archives/**'],
     description: "Project documentation and design notes",
 
     markdown: {

@@ -24524,6 +24524,10 @@ export default defineConfig({
                       link: '/ws/notes/work/deliverables'
                     },
                     {
+                      text: 'Hits Detection',
+                      link: '/ws/notes/work/hits-detection'
+                    },
+                    {
                       text: 'New Chat',
                       link: '/ws/notes/work/new-chat'
                     },

@@ -60,7 +60,7 @@
 		}
 	}
 
-	async function toggle_hidden(t_detail: string) {
+	function toggle_hidden(t_detail: string) {
 		let t_details = $w_t_details;
 		if (t_details.includes(t_detail)) {
 			t_details = u.remove_fromArray_byReference(t_detail, t_details);

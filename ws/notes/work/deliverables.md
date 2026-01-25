@@ -32,8 +32,8 @@ The urls for review and feedback
 
 ### Bugs
 
-- [ ] HITS detector location data -> out of date
-	- [ ] **need --** reproduction steps
+- [x] HITS detector location data -> out of date
+	- [x] **need --** reproduction steps
 - [ ] reveal children sometimes must (but never does) change focus (for levels)
 - [ ] at launch, restore recents is broken
 - [ ] **DEFER --** need to test whether two-finger no longer moves the graph

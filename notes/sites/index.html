@@ -335,7 +335,7 @@
         <div class="side-b">
           <button class="action" id="btn-start" data-tooltip="restart all local dev servers">localhosts<span
               class="badge">esc</span></button>
-          <button class="action" id="btn-prePublish" data-tooltip="pre-publish all md and html files">docs<span
+          <button class="action" id="btn-docs" data-tooltip="build all documentation">docs<span
               class="badge">⌫</span></button>
           <button class="action" id="btn-dispatcher" data-tooltip="restart local command runner">dispatcher<span
               class="badge">`</span></button>
@@ -409,7 +409,7 @@
     const btnDeploy = document.getElementById('btn-deploy');
     const btnDns = document.getElementById('btn-dns');
     const btnBubble = document.getElementById('btn-bubble');
-    const btnPrePublish = document.getElementById('btn-prePublish');
+    const btnDocs = document.getElementById('btn-docs');
     const btnDispatcher = document.getElementById('btn-dispatcher');
     const consoleOutput = document.getElementById('console-output');
     const consoleRow = document.getElementById('console-row');
@@ -610,7 +610,7 @@
       if (pollInterval || restartPollInterval) return; // Operation in progress
 
       btnStart.classList.add('disabled');
-      btnPrePublish.classList.add('disabled'); // Disable rebuild while restarting
+      btnDocs.classList.add('disabled'); // Disable rebuild while restarting
       btnDispatcher.classList.add('disabled'); // Disable dispatcher restart while restarting
       btnStart.innerHTML = 'restarting<span class="badge">esc</span>';
       setConsoleOutput('restart', 'Starting...');
@@ -657,7 +657,7 @@
             restartPollInterval = null;
             btnStart.innerHTML = 'localhosts<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
-            btnPrePublish.classList.remove('disabled'); // Re-enable rebuild
+            btnDocs.classList.remove('disabled'); // Re-enable rebuild
             btnDispatcher.classList.remove('disabled'); // Re-enable dispatcher restart
             matchRowWidths();
 
@@ -675,7 +675,7 @@
             restartPollInterval = null;
             btnStart.innerHTML = 'localhosts<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
-            btnPrePublish.classList.remove('disabled'); // Re-enable rebuild
+            btnDocs.classList.remove('disabled'); // Re-enable rebuild
             btnDispatcher.classList.remove('disabled'); // Re-enable dispatcher restart
             setConsoleOutput('restart', `Poll error: ${err.message}`);
             matchRowWidths();
@@ -761,7 +761,7 @@
         consoleOutput.textContent = getConsoleOutput('restart');
       }
     });
-    btnPrePublish.addEventListener('mouseenter', () => {
+    btnDocs.addEventListener('mouseenter', () => {
       if (!restartPollInterval && !pollInterval) {
         consoleOutput.textContent = getConsoleOutput('rebuild');
       }
@@ -772,13 +772,13 @@
       }
     });
 
-    function doPrePublish() {
+    function doDocs() {
       if (pollInterval || restartPollInterval) return; // Operation in progress
 
-      btnPrePublish.classList.add('disabled');
-      btnStart.classList.add('disabled'); // Disable restart while pre-publishing
-      btnDispatcher.classList.add('disabled'); // Disable dispatcher restart while pre-publishing
-      btnPrePublish.innerHTML = 'pre-publishing<span class="badge">⌫</span>';
+      btnDocs.classList.add('disabled');
+      btnStart.classList.add('disabled'); // Disable restart while building docs
+      btnDispatcher.classList.add('disabled'); // Disable dispatcher restart while building docs
+      btnDocs.innerHTML = 'building<span class="badge">⌫</span>';
       setConsoleOutput('rebuild', 'Starting...');
       matchRowWidths();
 
@@ -791,23 +791,23 @@
         .then(data => {
           if (data.success) {
             // Start polling for status
-            pollInterval = setInterval(pollPrePublishStatus, 500);
+            pollInterval = setInterval(pollDocsStatus, 500);
           } else {
-            btnPrePublish.innerHTML = 'docs<span class="badge">⌫</span>';
-            btnPrePublish.classList.remove('disabled');
+            btnDocs.innerHTML = 'docs<span class="badge">⌫</span>';
+            btnDocs.classList.remove('disabled');
             setConsoleOutput('rebuild', `Error: ${data.error}`);
             matchRowWidths();
           }
         })
         .catch(err => {
-          btnPrePublish.innerHTML = 'docs<span class="badge">⌫</span>';
-          btnPrePublish.classList.remove('disabled');
+          btnDocs.innerHTML = 'docs<span class="badge">⌫</span>';
+          btnDocs.classList.remove('disabled');
           setConsoleOutput('rebuild', `API error: ${err.message}`);
           matchRowWidths();
         });
     }
 
-    function pollPrePublishStatus() {
+    function pollDocsStatus() {
       fetch(`http://localhost:${ports.dispatcher}/rebuild-status`)
         .then(res => res.json())
         .then(data => {
@@ -821,8 +821,8 @@
           if (data.done) {
             clearInterval(pollInterval);
             pollInterval = null;
-            btnPrePublish.innerHTML = 'docs<span class="badge">⌫</span>';
-            btnPrePublish.classList.remove('disabled');
+            btnDocs.innerHTML = 'docs<span class="badge">⌫</span>';
+            btnDocs.classList.remove('disabled');
             btnStart.classList.remove('disabled'); // Re-enable restart
             btnDispatcher.classList.remove('disabled'); // Re-enable dispatcher restart
             matchRowWidths();
@@ -1019,7 +1019,7 @@
     btnDeploy.addEventListener('click', doDeploy);
     btnDns.addEventListener('click', doDns);
     btnBubble.addEventListener('click', doBubble);
-    btnPrePublish.addEventListener('click', doPrePublish);
+    btnDocs.addEventListener('click', doDocs);
     btnDispatcher.addEventListener('click', doDispatcher);
 
     document.addEventListener('keydown', (e) => {
@@ -1042,7 +1042,7 @@
         case 'escape': doStart(); break;
         case 'enter': if (hoveredAction) { window.open(hoveredAction, '_blank'); } break;
         case 'delete':
-        case 'backspace': doPrePublish(); break;
+        case 'backspace': doDocs(); break;
         case 'l': hoveredActionId = 'btn-local'; hoveredAction = actionButtons['btn-local'](); highlightActionButton('btn-local'); prePublishFeedbackRow(); break;
         case 't': hoveredActionId = 'btn-netlify'; hoveredAction = actionButtons['btn-netlify'](); highlightActionButton('btn-netlify'); prePublishFeedbackRow(); break;
         case 'p': hoveredActionId = 'btn-public'; hoveredAction = actionButtons['btn-public'](); highlightActionButton('btn-public'); prePublishFeedbackRow(); break;
@@ -1074,7 +1074,7 @@
     // === Initialize ===
     // Clear console storage on refresh
     localStorage.removeItem('hub-console-restart');
-    localStorage.removeItem('hub-console-prePublish');
+    localStorage.removeItem('hub-console-docs');
 
     fetch('./ports.json')
       .then(res => res.json())
