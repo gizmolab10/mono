@@ -8,6 +8,9 @@ const isPluginBuild = process.env.BUILD_TARGET === 'plugin';
 
 export default defineConfig({
 	plugins: isPluginBuild ? [] : [svelte()],
+	define: {
+		global: 'globalThis'
+	},
 	server: {
 		host: true,
 		port: ports.ws,
