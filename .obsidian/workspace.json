@@ -11,10 +11,14 @@
             "id": "f71f75e9772e4308",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "ws/notes/work/deliverables.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "deliverables"
             }
           }
         ]
@@ -152,12 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "ws/notes/work/deliverables.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of deliverables"
             }
           }
         ],
@@ -180,6 +185,7 @@
   },
   "active": "f71f75e9772e4308",
   "lastOpenFiles": [
+    "ws/notes/work/done/startup.md",
     "notes/work/done/tools-sites.md",
     "notes/philosophy/index.md",
     "logs/update-docs.error.log",
@@ -215,7 +221,6 @@
     "notes/guides/collaborate/workflow.md",
     "notes/philosophy/motive.md",
     "notes/guides/collaborate/index.md",
-    "notes/work/resume.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

@@ -2,7 +2,7 @@
 
 recents is broken. let's start over
 
-## I Want the app to:
+## I Want the app to
 
 * Remember what i grab or when i change the focus
 * Go backwards and forwards through history
@@ -45,9 +45,6 @@ w_depth = derived(si_recents.w_item, item => item?.depth)
 
 No separate `si_grabs`, no separate `w_ancestry_focus`. Just `si_recents`.
 
-
----
-
 ## Migration Plan
 
 ### Panic Button
@@ -82,13 +79,14 @@ All new code checks this flag. Old paths stay intact until Phase 5.
 
 #### **Phase 1: Add new structure alongside old** (decisions: 1, 2)
 
-- [x] Create `S_Recent` type in `state/S_Recent.ts`
-- [x] Create `si_recents_new: S_Items<S_Recent>` in UX.ts
-- [x] Create derived stores `w_focus_new`, `w_grabs_new`, `w_depth_new`
-- [x] Create `src/lib/ts/tests/recents_new.test.ts`
-- [ ] Run `yarn test recents_new` — all pass
+* [x] Create `S_Recent` type in `state/S_Recent.ts`
+* [x] Create `si_recents_new: S_Items<S_Recent>` in UX.ts
+* [x] Create derived stores `w_focus_new`, `w_grabs_new`, `w_depth_new`
+* [x] Create `src/lib/ts/tests/recents_new.test.ts`
+* [ ] Run `yarn test recents_new` — all pass
 
 Test file:
+
 ```typescript
 // recents_new.test.ts
 describe('Phase 1: derived stores', () => {
@@ -103,13 +101,14 @@ describe('Phase 1: derived stores', () => {
 
 #### **Phase 2: Wire up snapshot creation** (decisions: 4, 6, 7, 8)
 
-- [x] Create `snapshot_current(): S_Recent` helper
-- [x] Call snapshot on: `becomeFocus`, `grab`, `grabOnly`, `ungrab`, depth change
-- [x] Push snapshots to `si_recents_new` (parallel to old system)
-- [x] Add Phase 2 tests to `recents_new.test.ts`
-- [ ] Run `yarn test recents_new` — all pass
+* [x] Create `snapshot_current(): S_Recent` helper
+* [x] Call snapshot on: `becomeFocus`, `grab`, `grabOnly`, `ungrab`, depth change
+* [x] Push snapshots to `si_recents_new` (parallel to old system)
+* [x] Add Phase 2 tests to `recents_new.test.ts`
+* [ ] Run `yarn test recents_new` — all pass
 
 Add to test file:
+
 ```typescript
 describe('Phase 2: snapshot creation', () => {
   it('creates snapshot on becomeFocus', () => {
@@ -134,13 +133,14 @@ describe('Phase 2: snapshot creation', () => {
 
 #### **Phase 3: Wire up navigation** (decisions: 3, 10)
 
-- [x] Implement `recents_go(next: boolean)` using `si_recents_new`
-- [x] On navigate: state comes from snapshot, no replay
-- [x] Add Phase 3 tests to `recents_new.test.ts`
-- [x] Added `isNavigating` flag to prevent snapshot during navigation
-- [ ] Run `yarn test recents_new` — all pass
+* [x] Implement `recents_go(next: boolean)` using `si_recents_new`
+* [x] On navigate: state comes from snapshot, no replay
+* [x] Add Phase 3 tests to `recents_new.test.ts`
+* [x] Added `isNavigating` flag to prevent snapshot during navigation
+* [ ] Run `yarn test recents_new` — all pass
 
 Add to test file:
+
 ```typescript
 describe('Phase 3: navigation', () => {
   beforeEach(() => {
@@ -180,17 +180,18 @@ describe('Phase 3: navigation', () => {
 
 #### **Phase 4: Swap consumers (behind flag)** (decisions: 11)
 
-- [x] Add `use_new_recents` flag to Features.ts
-- [x] `isGrabbed` checks flag, uses new or old
-- [x] Add Phase 4 tests to `recents_new.test.ts`
-- [x] Removed `isNavigating` hack — replaced with direct push model
-- [x] Added `busy.isRendering` rate-limiting for key repeat
-- [ ] Implement actual derivation for `si_grabs` (see below)
-- [ ] Run `yarn test recents_new` — all pass
+* [x] Add `use_new_recents` flag to Features.ts
+* [x] `isGrabbed` checks flag, uses new or old
+* [x] Add Phase 4 tests to `recents_new.test.ts`
+* [x] Removed `isNavigating` hack — replaced with direct push model
+* [x] Added `busy.isRendering` rate-limiting for key repeat
+* [ ] Implement actual derivation for `si_grabs` (see below)
+* [ ] Run `yarn test recents_new` — all pass
 
 **Phase 4b: Actual Derivation for si_grabs**
 
 Current approach uses sync subscription to update `si_grabs` from snapshots:
+
 ```typescript
 si_recents_new.w_item.subscribe(snapshot => {
     si_grabs.items = snapshot.si_grabs.items;
@@ -200,36 +201,40 @@ si_recents_new.w_item.subscribe(snapshot => {
 This works but `si_grabs` is "effectively derived" — two sources of truth.
 
 Target: true derivation with single source of truth:
+
 ```typescript
 w_grabs = derived(si_recents_new.w_item, item => item?.si_grabs?.items ?? [])
 ```
 
 | Approach | Pros | Cons |
-|----------|------|------|
+|----|----|----|
 | Sync subscription (current) | Zero consumer changes | Two sources, possible race |
 | True derivation | Single source of truth, impossible race | Consumer migration |
 
 Consumers to migrate:
-- `x.si_grabs.items` → `get(x.w_grabs)`
-- `x.si_grabs.w_items` → `x.w_grabs`
-- `x.si_grabs.index` → derive from snapshot or add `w_grabIndex`
-- `w_grabbed` in Svelte files → `w_grabs`
+
+* `x.si_grabs.items` → `get(x.w_grabs)`
+* `x.si_grabs.w_items` → `x.w_grabs`
+* `x.si_grabs.index` → derive from snapshot or add `w_grabIndex`
+* `w_grabbed` in Svelte files → `w_grabs`
 
 Steps:
-- [x] Create `w_grabIndex_new` derived store
-- [x] Update `w_ancestry_forDetails` to use new system when flag on
-- [x] Update `grab_next_ancestry()` to mutate snapshot's index directly
-- [x] Update `grab()`, `ungrab()` to read from `w_grabs_new`
-- [x] Update `becomeFocus()` to read from `w_grabs_new` / `w_grabIndex_new`
-- [x] Remove sync subscription
-- [x] Test (manual steps 1-14)
-- [x] Fix: shift-click (grab index not set)
-- [x] Fix: startup seeding (fallback to si_grabs when si_recents_new empty)
-- [x] Add persistence subscription for w_grabs_new
+
+* [x] Create `w_grabIndex_new` derived store
+* [x] Update `w_ancestry_forDetails` to use new system when flag on
+* [x] Update `grab_next_ancestry()` to mutate snapshot's index directly
+* [x] Update `grab()`, `ungrab()` to read from `w_grabs_new`
+* [x] Update `becomeFocus()` to read from `w_grabs_new` / `w_grabIndex_new`
+* [x] Remove sync subscription
+* [x] Test (manual steps 1-14)
+* [x] Fix: shift-click (grab index not set)
+* [x] Fix: startup seeding (fallback to si_grabs when si_recents_new empty)
+* [x] Add persistence subscription for w_grabs_new
 
 **Note:** Full history is NOT persisted — only current grabs/focus restore on refresh. History resets.
 
 Add to test file:
+
 ```typescript
 describe('Phase 4: isGrabbed with flag', () => {
   it('uses new system when flag on', () => {
@@ -243,30 +248,30 @@ describe('Phase 4: isGrabbed with flag', () => {
 
 Manual test:
 
-| Step | Action                                      | Expected                                    |
-| ---- | ------------------------------------------- | ------------------------------------------- |
-| 1    | Set `use_new_recents = true` in Features.ts | App compiles                                |
-| 2    | Load app in tree mode                       | Root is focus, no grabs highlighted         |
-| 3    | Click widget A                              | A highlighted (grabbed), details shows A    |
-| 4    | Shift-click widget B                        | A and B highlighted, details shows B        |
-| 5    | Click widget C                              | Only C highlighted, details shows C         |
-| 6    | Press back key                              | Previous state restored (A+B or just A)     |
-| 7    | Press forward key                           | C highlighted again                         |
-| 8    | Switch to radial mode                       | Same grab state preserved                   |
-| 9    | Click different widget                      | Highlight updates correctly                 |
-| 10   | Open search, type query                     | Grabs unchanged (no highlight pollution)    |
-| 11   | Select search result                        | Details shows result, grabs still unchanged |
-| 12   | Press Escape (close search)                 | Original grabs restored in view             |
-| 13   | Multi-grab A, B, C (shift-click)            | Details shows one (per grabIndex)           |
-| 14   | Click next/prev arrows in details           | Cycles through A → B → C → A                |
+| Step | Action | Expected |
+|----|----|----|
+| 1 | Set `use_new_recents = true` in Features.ts | App compiles |
+| 2 | Load app in tree mode | Root is focus, no grabs highlighted |
+| 3 | Click widget A | A highlighted (grabbed), details shows A |
+| 4 | Shift-click widget B | A and B highlighted, details shows B |
+| 5 | Click widget C | Only C highlighted, details shows C |
+| 6 | Press back key | Previous state restored (A+B or just A) |
+| 7 | Press forward key | C highlighted again |
+| 8 | Switch to radial mode | Same grab state preserved |
+| 9 | Click different widget | Highlight updates correctly |
+| 10 | Open search, type query | Grabs unchanged (no highlight pollution) |
+| 11 | Select search result | Details shows result, grabs still unchanged |
+| 12 | Press Escape (close search) | Original grabs restored in view |
+| 13 | Multi-grab A, B, C (shift-click) | Details shows one (per grabIndex) |
+| 14 | Click next/prev arrows in details | Cycles through A → B → C → A |
 
 #### **Phase 5: Remove old code** ✅ COMPLETE
 
-- [x] Delete old `si_recents`, `save_grabs`, `update_grabs_forSearch`, `ancestry_next_focusOn`
-- [x] Remove feature flag (`use_new_recents`)
-- [x] Rename `_new` → final names (`si_recents`, `w_grabs`, `w_grabIndex`)
-- [x] Clean up imports (removed `features` from Ancestry.ts, UX.ts)
-- [x] `isGrabbed` simplified to just use `x.w_grabs`
+* [x] Delete old `si_recents`, `save_grabs`, `update_grabs_forSearch`, `ancestry_next_focusOn`
+* [x] Remove feature flag (`use_new_recents`)
+* [x] Rename `_new` → final names (`si_recents`, `w_grabs`, `w_grabIndex`)
+* [x] Clean up imports (removed `features` from Ancestry.ts, UX.ts)
+* [x] `isGrabbed` simplified to just use `x.w_grabs`
 
 **Final structure:**
 
@@ -283,6 +288,7 @@ w_ancestry_focus = derived(si_recents.w_item, item => item?.focus)
 **Remaining manual test:** Run final regression testing table above.
 
 Verify no dangling references:
+
 ```
 grep -r "si_grabs\|save_grabs\|update_grabs_forSearch" src/
 ```
@@ -328,12 +334,12 @@ Final manual regression testing:
 
 **Date:** 2025-01-21
 
-### Verdict: ✅ `x.si_recents` IS the single source of truth for both focus and grabs.
+### Verdict: ✅ `x.si_recents` IS the single source of truth for both focus and grabs
 
 **Current implementation:**
 
 | Store | Role |
-|-------|------|
+|----|----|
 | `x.si_recents` | **SINGLE SOURCE OF TRUTH** |
 | `x.w_ancestry_focus` | Derived from `si_recents.w_item?.focus` |
 | `x.w_grabs` | Derived from `si_recents.w_item?.si_grabs?.items` |
@@ -341,9 +347,86 @@ Final manual regression testing:
 
 **Key changes from old system:**
 
-- No separate `x.si_grabs` exists
-- All derived stores read from `si_recents.w_item`
-- Every mutation (`grab`, `ungrab`, `grabOnly`, `becomeFocus`) creates a NEW `S_Recent` snapshot with CLONED grabs
-- Fixes the "reference vs copy" problem identified above
+* No separate `x.si_grabs` exists
+* All derived stores read from `si_recents.w_item`
+* Every mutation (`grab`, `ungrab`, `grabOnly`, `becomeFocus`) creates a NEW `S_Recent` snapshot with CLONED grabs
+* Fixes the "reference vs copy" problem identified above
 
 The analysis in this document is now **historical** — it describes the old architecture that has been replaced.
+
+# Recents Persistence
+
+**Started:** 2025-01-26 **Status:** Complete
+
+## Problem
+
+On startup, `si_recents` wasn't being restored properly. The old system persisted `grabbed` and `focus` separately, then created a single snapshot from those on launch. Full recents history was lost on refresh.
+
+## Solution
+
+Persist the entire `si_recents` array (max 10 items) instead of just current grabs/focus.
+
+### Changes
+
+**Enumerations.ts**
+
+* Changed `T_Preference.grabbed` → `T_Preference.recents`
+
+**S_Items.ts** — Added serialization support:
+
+* `serialize<U>(itemSerializer)` — maps items through serializer
+* `static deserialize<T,U>(data, itemDeserializer)` — creates S_Items from serialized data
+* `static fromDefault<T>(item)` — creates S_Items with single default item
+
+**Preferences.ts** — Rewrote `restore_recents()`:
+
+* Local `serialize` and `deserialize` functions for S_Recent ↔ plain object
+* Uses `S_Items.deserialize()` to restore
+* Subscribes to `si_recents.w_items` to persist on change (max 10 items)
+* Removed separate `grabbed`/`focus` subscriptions
+
+**Serialization format:**
+
+```typescript
+{
+  focus: string,      // ancestry.pathString
+  grabs: string[],    // array of pathStrings
+  grabIndex: number,  // si_grabs.index
+  depth: number
+}
+```
+
+### Reset execution order fix
+
+`reset_recents` and `reset_preferences` are called during `apply_queryStrings`, but `restore_*` functions run later and would overwrite the reset.
+
+**Solution:** Use flags in Configuration.ts:
+
+* `c.erase_recents` — checked by `restore_recents()`
+* `c.erase_preferences` — checked by `restore_preferences()`
+
+The `restore_*` functions check their flag first, clear localStorage if true, then continue with normal restore (which now uses defaults).
+
+### Naming
+
+Renamed for consistency:
+
+* `preferences_reset` → `reset_preferences`
+* `recents_reset` → `reset_recents`
+
+## Key insight
+
+Can't replace `x.si_recents` entirely — UX.ts constructor sets up derived stores that reference `si_recents.w_item`. Instead, populate the existing instance:
+
+```typescript
+x.si_recents.items = restored.items;
+x.si_recents.index = restored.index;
+```
+
+## Related files
+
+* `src/lib/ts/common/Enumerations.ts`
+* `src/lib/ts/state/S_Items.ts`
+* `src/lib/ts/managers/Preferences.ts`
+* `src/lib/ts/managers/Configuration.ts`
+* `src/lib/ts/managers/UX.ts`

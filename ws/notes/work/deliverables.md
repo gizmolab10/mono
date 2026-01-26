@@ -32,10 +32,8 @@ The urls for review and feedback
 
 ### Bugs
 
+- [ ] show recents count and index in primary controls
 - [ ] reveal children sometimes must (but never does) change focus (for levels)
-- [ ] at launch, restore recents is broken
-- [ ] **DEFER --** need to test whether two-finger no longer moves the graph
-- [ ] "<" and ">" are ignored. should bump depth levels
 - [ ] after a while, the resize feature becomes "reluctant" (just changes a tiny bit)
 - [ ] select A, more than one level below focus, switch to radial, expected focus to change (it didn't) so A will still be visible
 	- [ ] **derive** focus from graph (radial / tree) mode
@@ -46,6 +44,8 @@ The urls for review and feedback
 	- [ ] not show details of focus -- Vincent
 	- [x] widgets overlap vertically
 		- [x] when rotate ring is large
+- [x] at launch, restore recents is broken
+- [x] "<" and ">" are ignored. should bump depth levels
 - [x] HITS detector location data -> out of date
 	- [x] **need --** reproduction steps
 - [x] unselect: SHIFT-click on background
@@ -70,5 +70,6 @@ The urls for review and feedback
 - [ ] implement keep the graph centered on the selection
 - [ ] support edits made in Catalist (API is **incomplete**)
 - [ ] do we need an introductory summary of current behavior?
+- [ ] test whether two-finger no longer moves the graph
 
 
