@@ -32,8 +32,6 @@ The urls for review and feedback
 
 ### Bugs
 
-- [x] HITS detector location data -> out of date
-	- [x] **need --** reproduction steps
 - [ ] reveal children sometimes must (but never does) change focus (for levels)
 - [ ] at launch, restore recents is broken
 - [ ] **DEFER --** need to test whether two-finger no longer moves the graph
@@ -48,6 +46,8 @@ The urls for review and feedback
 	- [ ] not show details of focus -- Vincent
 	- [x] widgets overlap vertically
 		- [x] when rotate ring is large
+- [x] HITS detector location data -> out of date
+	- [x] **need --** reproduction steps
 - [x] unselect: SHIFT-click on background
 - [x] w_rubberband_grabs WTF?
 - [x] selection
