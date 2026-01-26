@@ -1,5 +1,6 @@
 export class Builds {
 	notes: Record<number, Array<string>> = {
+		189 : ['January 26, 2026', 'persist recents in local storage'],
 		188 : ['January 25, 2026', 'major housekeeping, minor UI improvements'],
 		187 : ['January 21, 2026', 'new recents as source of truth'],
 		186 : ['January 14, 2026', 'new public deliverables status page'],

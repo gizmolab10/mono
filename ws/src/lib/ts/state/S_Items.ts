@@ -1,6 +1,6 @@
+import { get, writable, derived, type Readable } from 'svelte/store';
 import { T_Direction } from '../common/Enumerations';
 import Identifiable from '../runtime/Identifiable';
-import { get, writable, derived, type Readable } from 'svelte/store';
 import '../common/Extensions';
 
 export default class S_Items<T> {
@@ -66,6 +66,8 @@ export default class S_Items<T> {
 		// Then can set items (which will trigger these derived stores to update)
 	}
 
+	static readonly _____PRIMITIVES: unique symbol;
+
     set index(i: number) { this.w_index.set(i); }
 	get index(): number { return get(this.w_index); }
 	get item(): T | null { return get(this.w_item); }
@@ -81,6 +83,18 @@ export default class S_Items<T> {
 		this.w_items.set(items);
 		this.index = index;
 	}
+
+	title(many: string, zero: string, one: string): string {
+		if (this.length == 0) {
+			return zero;
+		} else if (this.length == 1) {
+			return one;
+		} else {
+			return this.index.of_n_for_type(this.length, many, '');
+		}
+	}
+
+	static readonly _____MANIPULATION: unique symbol;
 
 	reset() {
 		this.items = [];
@@ -100,16 +114,6 @@ export default class S_Items<T> {
 					this.push(item);
 				}
 			}	
-		}
-	}
-
-	title(many: string, zero: string, one: string): string {
-		if (this.length == 0) {
-			return zero;
-		} else if (this.length == 1) {
-			return one;
-		} else {
-			return this.index.of_n_for_type(this.length, many, '');
 		}
 	}
 
@@ -148,6 +152,25 @@ export default class S_Items<T> {
 				this.index -= 1;
 			}
 		}
+	}
+
+	static readonly _____PERSISTENCE: unique symbol;
+
+	serialize<U>(itemSerializer: (item: T) => U): U[] {
+		return this.items.map(itemSerializer);
+	}
+
+	static fromDefault<T>(item: T): S_Items<T> {
+		return new S_Items<T>([item]);
+	}
+
+	static deserialize<T, U>(data: U[] | null, itemDeserializer: (data: U) => T | null): S_Items<T> | null {
+		if (!data || data.length === 0) return null;
+		const items = data.map(itemDeserializer).filter((item): item is T => item !== null);
+		if (items.length === 0) return null;
+		const si = new S_Items<T>(items);
+		si.index = items.length - 1;
+		return si;
 	}
 
 }

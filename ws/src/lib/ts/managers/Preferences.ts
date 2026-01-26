@@ -109,73 +109,56 @@ export class Preferences {
 		return defaultValue;
 	}
 	
+	static readonly _____PRIMITIVES: unique symbol;
+
+	db_keyFor	(key: string):			 string | null { const type = databases.db_now?.t_database; return !type ? null : this.keyPair_for(type, key); }
+	keyPair_for	(key: string, sub_key: string):	string { return `${key}${k.separator.generic}${sub_key}`; }
+
+	parse(key: string | null | undefined): any | null {
+		if (!key || key == 'undefined') {
+			return null;
+		}		
+		return JSON.parse(key);
+	}
+
+	reset_preferences() {
+		const keys = Object.keys(T_Preference)
+			.filter(key => isNaN(Number(key))) // Exclude numeric keys
+			.map(key => T_Preference[key as keyof typeof T_Preference]);
+		for (const key of keys) {
+			if (key != 'local') {
+				this.write_key(key, null);
+			}
+		}
+	}
+	
+	reset_recents() {
+		const focus = get(x.w_ancestry_focus) ?? h?.rootAncestry;
+		const grabs = get(x.w_grabs) ?? [];
+		if (focus) {
+			const si_grabs = new S_Items<Ancestry>([...grabs]);
+			si_grabs.index = grabs.length > 0 ? grabs.length - 1 : 0;
+			x.si_recents.reset();
+			x.si_recents.push({ focus, si_grabs, depth: get(g.w_depth_limit) });
+		}
+	}
+
 	static readonly _____RESTORE: unique symbol;
 
 	restore_paging() { radial.createAll_thing_pages_fromDict(this.readDB_key(T_Preference.paging)); }
 
-	restore_recents() {
-		// Read focus and grabs from localStorage, create initial snapshot, push to si_recents
-		function ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
-		
-		// Read grabs
-		let grabs: Ancestry[] = [];
-		if (c.eraseDB > 0) {
-			c.eraseDB -= 1;
-			grabs = !!h.rootAncestry ? [h.rootAncestry] : [];
-		} else {
-			grabs = this.ancestries_readDB_key(T_Preference.grabbed);
-			debug.log_grab(`  READ (${get(databases.w_t_database)}): "${ids_forDB(grabs)}"`);
+	restore_preferences() {
+		if (c.erase_preferences) {
+			c.erase_preferences = false;
+			this.reset_preferences();
 		}
-		
-		// Read focus
-		let focus = h?.rootAncestry ?? null;
-		if (c.eraseDB > 0) {
-			c.eraseDB -= 1;
-		} else {
-			const focusPath = p.readDB_key(this.focus_key) ?? p.readDB_key('focus');
-			if (!!focusPath) {
-				const focusAncestry = h?.ancestry_remember_createUnique(focusPath) ?? null;
-				if (!!focusAncestry) {
-					focus = focusAncestry;
-				}
-			}
-		}
-		
-		// Validate focus
-		if (!!focus && !focus.thing) {
-			const lastGrabbedAncestry = grabs.length > 0 ? grabs[grabs.length - 1]?.parentAncestry : null;
-			if (lastGrabbedAncestry) {
-				focus = lastGrabbedAncestry;
-			}
-		}
-		
-		// Fallback to root
-		if (!focus) {
-			focus = h?.rootAncestry ?? null;
-		}
-		
-		// Create and push initial snapshot
-		if (!!focus) {
-			const si_grabs = new S_Items<Ancestry>([...grabs]);
-			si_grabs.index = grabs.length > 0 ? grabs.length - 1 : 0;
-			const snapshot: S_Recent = { focus, si_grabs, depth: get(g.w_depth_limit) };
-			x.si_recents.push(snapshot);
-			focus.expand();
-		}
-		
-		// Set up persistence subscriptions
-		setTimeout(() => {
-			x.w_grabs.subscribe((array: Array<Ancestry>) => {
-				if (array.length > 0) {
-					this.ancestries_writeDB_key(array, T_Preference.grabbed);
-					debug.log_grab(`  WRITING (${get(databases.w_t_database)}): "${ids_forDB(array)}"`);
-				}
-			});
-		}, 100);
-		
-		x.w_ancestry_focus.subscribe((ancestry: Ancestry | null) => {
-			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);
-		});
+		show.w_t_auto_adjust_graph.set(this.read_key(T_Preference.auto_adjust));
+		show.w_t_cluster_pager    .set(this.read_key(T_Preference.paging_style));
+		show.w_t_breadcrumbs      .set(this.read_key(T_Preference.breadcrumbs));
+		show.w_show_countsAs      .set(this.read_key(T_Preference.show_countsAs));
+		x.w_thing_title           .set(this.read_key(T_Preference.thing));
+		x.w_thing_fontFamily      .set(this.read_key(T_Preference.font));
+		this.reactivity_subscribe()
 	}
 		
 	restore_expanded() {
@@ -197,14 +180,51 @@ export class Preferences {
 		}, 100);
 	}
 
-	restore_preferences() {
-		show.w_t_auto_adjust_graph.set(this.read_key(T_Preference.auto_adjust));
-		show.w_t_cluster_pager    .set(this.read_key(T_Preference.paging_style));
-		show.w_t_breadcrumbs      .set(this.read_key(T_Preference.breadcrumbs));
-		show.w_show_countsAs      .set(this.read_key(T_Preference.show_countsAs));
-		x.w_thing_title           .set(this.read_key(T_Preference.thing));
-		x.w_thing_fontFamily      .set(this.read_key(T_Preference.font));
-		this.reactivity_subscribe()
+	restore_recents() {
+		const serialize = (r: S_Recent) => ({
+			focus: r.focus?.pathString ?? k.root,
+			grabs: r.si_grabs?.items?.map(a => a?.pathString ?? k.empty) ?? [],
+			grabIndex: r.si_grabs?.index ?? 0,
+			depth: r.depth
+		});
+		const deserialize = (item: any): S_Recent | null => {
+			const focus = h?.ancestry_isAssured_valid_forPath(item.focus);
+			if (!focus) return null;
+			const grabs = (item.grabs ?? []).map((p: string) => h?.ancestry_isAssured_valid_forPath(p)).filter(Boolean);
+			const si_grabs = new S_Items<Ancestry>(grabs);
+			si_grabs.index = item.grabIndex ?? grabs.length - 1;
+			return { focus, si_grabs, depth: item.depth ?? get(g.w_depth_limit) };
+		};
+		let serialized = null;
+		if (c.eraseDB > 0) {
+			c.eraseDB--;
+		} else if (c.erase_recents) {
+			c.erase_recents = false;
+			this.writeDB_key(T_Preference.recents, null);
+		} else {
+			serialized = this.readDB_key(T_Preference.recents);
+			const restored = S_Items.deserialize(serialized, deserialize);
+			if (!!restored) {
+				x.si_recents.items = restored.items;
+				x.si_recents.index = restored.index;
+			}
+		}
+		if (x.si_recents.length === 0) {
+			const focus = h?.rootAncestry;
+			if (!!focus) {
+				x.si_recents.push({ focus, si_grabs: new S_Items<Ancestry>([]), depth: get(g.w_depth_limit) });
+			}
+		}
+		x.si_recents.item?.focus?.expand();
+		setTimeout(() => {
+			x.si_recents.w_items.subscribe((items: Array<S_Recent>) => {
+				if (items.length > 0) {
+					const MAX_RECENTS = 10;
+					this.writeDB_key(T_Preference.recents, x.si_recents.serialize(serialize).slice(-MAX_RECENTS));
+					debug.log_grab(`  WRITING RECENTS (${get(databases.w_t_database)}): ${items.length} items`);
+				}
+			});
+		}, 100);
 	}
 	
 	static readonly _____ANCESTRIES: unique symbol;
@@ -228,29 +248,6 @@ export class Preferences {
 		}
 		debug.log_preferences(`  ${key.toUpperCase()} ${ancestries.map(a => a.id)}`);
 		return ancestries;
-	}
-	
-	static readonly _____PRIMITIVES: unique symbol;
-
-	db_keyFor	(key: string):			 string | null { const type = databases.db_now?.t_database; return !type ? null : this.keyPair_for(type, key); }
-	keyPair_for	(key: string, sub_key: string):	string { return `${key}${k.separator.generic}${sub_key}`; }
-
-	parse(key: string | null | undefined): any | null {
-		if (!key || key == 'undefined') {
-			return null;
-		}		
-		return JSON.parse(key);
-	}
-
-	preferences_reset() {
-		const keys = Object.keys(T_Preference)
-			.filter(key => isNaN(Number(key))) // Exclude numeric keys
-			.map(key => T_Preference[key as keyof typeof T_Preference]);
-		for (const key of keys) {
-			if (key != 'local') {
-				this.write_key(key, null);
-			}
-		}
 	}
 	
 	static readonly _____SUBSCRIBE: unique symbol;

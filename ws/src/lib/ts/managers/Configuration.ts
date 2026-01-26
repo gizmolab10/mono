@@ -8,6 +8,8 @@ export class Configuration {
 
 	queryStrings = new URLSearchParams(window.location.search);
 	w_device_isMobile = writable<boolean>(false);
+	erase_recents = false;
+	erase_preferences = false;
 	erasePreferences = 0;
 	eraseDB = 0;
 
@@ -40,8 +42,9 @@ export class Configuration {
         const eraseOptions	 = queryStrings.get('erase')?.split(k.comma) ?? [];
 		for (const eraseOption of eraseOptions) {
 			switch (eraseOption) {
-				case 'data':	 this.eraseDB = 4;		break;
-				case 'settings': p.preferences_reset(); break;
+				case 'data':	 this.eraseDB = 4;		 break;
+				case 'recents':	 c.erase_recents = true; break;
+				case 'settings': c.erase_preferences = true; break;
 			}
 		}
     }

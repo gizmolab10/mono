@@ -362,7 +362,7 @@ export enum T_Preference {
 	separator		  = 'separator',
 	base_id			  = 'base_id',
 	details			  = 'details',				// visible details control
-	grabbed			  = 'grabbed',
+	recents			  = 'recents',
 	bubble 			  = 'bubble',
 	levels			  = 'levels',
 	paging 			  = 'paging',
