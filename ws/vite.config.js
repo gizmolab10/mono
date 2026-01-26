@@ -1,6 +1,6 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
-import ports from '../notes/sites/ports.json';
+import ports from '../notes/tools/hub/ports.json';
 import path from 'path';
 
 // Detect whether we're building the plugin or the Svelte app

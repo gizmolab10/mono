@@ -27,11 +27,11 @@ Rules for the journal file (`notes/work/journal.md`).
 
 ## Daily workflow
 
-1. Start of day: create or update `notes/work/resume.md` with current tasks
-2. During work: update resume.md with checkboxes, notes, discoveries
-3. End of day: distill resume.md into a journal entry, move **Current** content to dated entry
+1. Start of session: read `notes/work/journal.md` to recall context
+2. During work: update active work files in `notes/work/`
+3. End of session: add a journal entry summarizing what happened
 
-`resume.md` is a scratch pad — detailed, messy, uses checkboxes. `journal.md` is the archive — distilled, prose, permanent.
+The journal is the archive — distilled, prose, permanent. Work files are the scratch pad — detailed, messy, checkboxes.
 
 ## Example
 
@@ -49,5 +49,3 @@ Rules for the journal file (`notes/work/journal.md`).
 
 **January 11, 2026** Planned the monorepo migration.
 ```
-
-

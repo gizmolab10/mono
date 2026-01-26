@@ -5,7 +5,7 @@
 
 GITHUB_DIR="$HOME/GitHub/mono"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG_DIR="$GITHUB_DIR/notes/tools/logs"
+LOG_DIR="$GITHUB_DIR/logs"
 PORTS_FILE="$SCRIPT_DIR/ports.json"
 STATUS_FILE="$GITHUB_DIR/logs/restart-status.txt"
 mkdir -p "$LOG_DIR"
@@ -48,7 +48,7 @@ PORT_DI_DOCS=$(get_port di-docs)
 
 # Site definitions: name|port|dir|command
 SITES=(
-  "hub|$PORT_DISPATCH|notes/sites|python3 -m http.server $PORT_DISPATCH"
+  "hub|$PORT_DISPATCH|notes/tools/hub|python3 -m http.server $PORT_DISPATCH"
   "ws|$PORT_WS|ws|yarn dev"
   "ws-docs|$PORT_WS_DOCS|ws|VITE_PORT=$PORT_WS_DOCS yarn docs:dev"
   "di|$PORT_DI|di|yarn dev"

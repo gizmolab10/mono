@@ -8,10 +8,8 @@ Unified documentation for all projects.
 
 ## Contents
 
-- [Aside](./aside/)
 - [Guides](./guides/)
-- [Logs](./logs/)
-- [Sites](./sites/)
+- [Philosophy](./philosophy/)
 - [Tools](./tools/)
 - [Work](./work/)
 

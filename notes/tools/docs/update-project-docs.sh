@@ -251,7 +251,7 @@ run_cmd yarn docs:build || fail
 # Step 7: Sync all sidebars
 start_step 7 "Syncing sidebars"
 MONO_ROOT="$GITHUB_DIR/mono"
-for proj_dir in "$MONO_ROOT/ws" "$MONO_ROOT/di" "$MONO_ROOT/notes/sites/docs"; do
+for proj_dir in "$MONO_ROOT/ws" "$MONO_ROOT/di"; do
   if [ -d "$proj_dir/.vitepress" ]; then
     cd "$proj_dir"
     run_cmd node "$TOOLS_DIST/sync-sidebar.js" || fail

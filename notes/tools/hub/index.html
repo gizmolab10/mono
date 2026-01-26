@@ -337,7 +337,7 @@
               class="badge">esc</span></button>
           <button class="action" id="btn-docs" data-tooltip="build all documentation">docs<span
               class="badge">⌫</span></button>
-          <button class="action" id="btn-dispatcher" data-tooltip="restart local command runner">dispatcher<span
+          <button class="action" id="btn-dispatcher" data-tooltip="restart local bash executor">dispatcher<span
               class="badge">`</span></button>
         </div>
       </div>
@@ -843,7 +843,7 @@
       fetch(`http://localhost:${ports.dispatcher}/restart-dispatcher`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
-      }).catch(() => {});
+      }).catch(() => { });
 
       // Dispatcher takes ~1 second to restart, then reload page
       setTimeout(() => {

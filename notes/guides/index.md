@@ -1,9 +1,6 @@
 # Guides
 
-I am trying here to convey a way of being. Rules, in contrast, are for weak minds. That's not us.
-- **Collaborate** — How to work with Claude effectively
-- **Develop** — Code style, patterns, and practices  
-- **Test** — Debugging and testing guides
+I am trying here to convey a way of being that persists from chat to chat. Not so much a rule book as a process of learning and retention.
 
 ## Contents
 
@@ -11,4 +8,5 @@ I am trying here to convey a way of being. Rules, in contrast, are for weak mind
 - [Develop](./develop/)
 - [Setup](./setup/)
 - [Test](./test/)
+- [Tools](./tools/)
 

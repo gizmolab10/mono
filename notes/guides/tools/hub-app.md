@@ -16,7 +16,7 @@
 
 The hub app provides a local dashboard for managing dev servers and navigating between projects in the monorepo.
 
-**Location:** `~/GitHub/mono/notes/sites/`
+**Location:** `~/GitHub/mono/notes/tools/hub/`
 
 **URL:** http://localhost:5170
 
@@ -24,7 +24,7 @@ The hub app provides a local dashboard for managing dev servers and navigating b
 
 ### Sites and Ports
 
-Defined in `notes/sites/ports.json`:
+Defined in `notes/tools/hub/ports.json`:
 
 | Site | Port | Purpose |
 |------|------|---------|
@@ -40,10 +40,10 @@ Defined in `notes/sites/ports.json`:
 
 | File | Purpose |
 |------|---------|
-| `notes/sites/index.html` | Hub UI |
-| `notes/sites/dispatcher.py` | API server (command runner) |
-| `notes/sites/servers.sh` | Start/restart/kill dev servers |
-| `notes/sites/ports.json` | Port configuration |
+| `notes/tools/hub/index.html` | Hub UI |
+| `notes/tools/hub/dispatcher.py` | API server (command runner) |
+| `notes/tools/hub/servers.sh` | Start/restart/kill dev servers |
+| `notes/tools/hub/ports.json` | Port configuration |
 
 ### servers.sh
 
@@ -153,12 +153,12 @@ Returns deploy status for one site (ws, di, ws-docs, di-docs, mono-docs).
 
 1. Start the static server for the hub UI:
    ```bash
-   cd ~/GitHub/mono/notes/sites && python3 -m http.server 5170
+   cd ~/GitHub/mono/notes/tools/hub && python3 -m http.server 5170
    ```
 
 2. Start the dispatcher:
    ```bash
-   cd ~/GitHub/mono/notes/sites && python3 dispatcher.py
+   cd ~/GitHub/mono/notes/tools/hub && python3 dispatcher.py
    ```
 
 3. Open http://localhost:5170
@@ -168,8 +168,8 @@ Returns deploy status for one site (ws, di, ws-docs, di-docs, mono-docs).
 Add to `~/.zshrc`:
 
 ```bash
-alias restart="~/GitHub/mono/notes/sites/servers.sh"
-alias killdev="~/GitHub/mono/notes/sites/servers.sh --kill-only"
+alias restart="~/GitHub/mono/notes/tools/hub/servers.sh"
+alias killdev="~/GitHub/mono/notes/tools/hub/servers.sh --kill-only"
 ```
 
 ### Environment

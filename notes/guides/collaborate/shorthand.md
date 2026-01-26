@@ -24,15 +24,16 @@ Short commands and abbreviations for working with collaborator.
 
 | Command | Action |
 |----|----|
+| `help` | Show this table |
 | `ex` | Execute mode — skip proposals, just do it |
-| `hy` | Hybrid mode — propose before file changes |
+| `rs` | Reserved mode — propose before file changes |
 | `propose` | Explain plan before executing |
 | `undo` | Revert last file change |
 | `chime in` | Give observations, suggestions, corrections about the topic at hand |
 | `summary` | Summarize what you just did (forces verification) |
 | `relearn` | Reread relevant guides before continuing |
 | `show` | Show your work — quote the lines or evidence |
-| `lazy` | Discipline failure — reread Refactoring Discipline in workflow.md |
+| `lean` | Reread workflow.md, identify the principle at play, propose where to capture it |
 
 ## Memory
 
@@ -47,9 +48,7 @@ Short commands and abbreviations for working with collaborator.
 | `cb` | Use checkboxes for this |
 | `m` | Milestone |
 | `m<#>` | Milestone # |
-| `n` | No |
 | `ni` | No improvement, try something different |
-| `y` | Yes |
 
 ## Update Accordingly
 

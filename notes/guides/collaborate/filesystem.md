@@ -1,1 +1,0 @@
-Collaborator has often remarked that bash tools have limited access. In particular create_file can fail silently, so must NEVER be used.

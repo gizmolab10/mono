@@ -1,12 +1,11 @@
 # Setup
 
+Environment, tooling, and deployment configuration.
+
 ## Contents
 
-- [Deploy](./deploy.md)
-- [Hub App Spec](./hub-app-spec.md)
-- [Hub App](./hub-app.md)
-- [Jonathan](./jonathan.md)
-- [Monorepo](./monorepo.md)
+- [Access](./access.md)
+- [Netlify](./netlify.md)
 - [Onboarding](./onboarding.md)
 - [Vitepress](./vitepress.md)
 
