@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ws/notes/work/deliverables.md",
+                "file": "ws/notes/work/migration/next.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "deliverables"
+              "title": "next"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ws/notes/work/deliverables.md",
+                "file": "ws/notes/work/migration/next.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of deliverables"
+              "title": "Outline of next"
             }
           }
         ],
@@ -185,7 +185,13 @@
   },
   "active": "f71f75e9772e4308",
   "lastOpenFiles": [
-    "ws/notes/work/amnesia.md",
+    "ws/notes/work/migration/proposal.md",
+    "ws/notes/work/migration/next.md",
+    "ws/notes/work/migration/combined.md",
+    "ws/notes/work/deliverables.md",
+    "ws/notes/work/migration",
+    "ws/notes/work/migration/steppers.md",
+    "ws/notes/work/next/amnesia.md",
     "ws/notes/work/done/hits-detection.md",
     "ws/notes/work/done/startup.md",
     "notes/work/done/tools-sites.md",
@@ -200,7 +206,6 @@
     "notes/tools/scripts/update-docs.sh",
     "notes/tools/scripts/file-structure-check.sh",
     "notes/tools/scripts/delete-netlify-deploys.sh",
-    "notes/tools/scripts/analyze-counts.sh",
     "notes/tools/hub/index.md",
     "notes/tools/index.md",
     "notes/sites/index.md",
@@ -216,11 +221,6 @@
     "notes/guides/test/testing.md",
     "notes/guides/test/debugging.md",
     "notes/work/done/jonathan-old.md",
-    "notes/work/done/hub-app-spec-old.md",
-    "notes/guides/setup/jonathan.md",
-    "notes/work/done/repo-old.md",
-    "notes/guides/setup/deploy.md",
-    "notes/guides/collaborate/workflow.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",
