@@ -32,7 +32,6 @@ The urls for review and feedback
 
 ### Bugs
 
-- [ ] show recents count and index in primary controls
 - [ ] reveal children sometimes must (but never does) change focus (for levels)
 - [ ] after a while, the resize feature becomes "reluctant" (just changes a tiny bit)
 - [ ] select A, more than one level below focus, switch to radial, expected focus to change (it didn't) so A will still be visible
@@ -66,6 +65,7 @@ The urls for review and feedback
 
 ### Future Tasks
 
+- [ ] show recents count and index in primary controls
 - [ ] support change in root
 - [ ] implement keep the graph centered on the selection
 - [ ] support edits made in Catalist (API is **incomplete**)

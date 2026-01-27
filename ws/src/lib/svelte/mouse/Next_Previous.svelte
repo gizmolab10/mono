@@ -11,39 +11,50 @@
 	export let closure: (column: number, event?: MouseEvent | null, element?: HTMLElement | null, isFirstCall?: boolean) => any;
 	const titles = [T_Direction.previous, T_Direction.next];
 	const { w_s_hover, w_autorepeat } = hits;
-	let s_elements: S_Element[] = [];
-	let button_elements: HTMLElement[] = [];
-	let autorepeat_isFirstCall: boolean[] = [];			// Track first call for each button
-	let autorepeat_events: (MouseEvent | null)[] = [];	// Capture events for each button
+	let html_elements: HTMLElement[] = [];	// transient bind object
+
+	interface S_Button {
+		// state for managing button's hover & autorepeat
+		s_element: S_Element | null;
+		event: MouseEvent | null;
+		isFirstCall: boolean;
+	}
+
+	let s_buttons: S_Button[] = [
+		{ s_element: null, event: null, isFirstCall: true },
+		{ s_element: null, event: null, isFirstCall: true }
+	];
 
 	onMount(() => {
 		titles.forEach((title, button_id) => {
 			const s_element = elements.s_element_for(new Identifiable(`next-prev-${name}-${title}`), T_Hit_Target.button, title);
-			s_elements[button_id] = s_element;
-			if (button_elements[button_id]) {
-				s_element.set_html_element(button_elements[button_id]);
+			s_buttons[button_id].s_element = s_element;
+			if (html_elements[button_id]) {
+				s_element.set_html_element(html_elements[button_id]);
 			}
 			s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
 				return handle_s_mouse(s_mouse, button_id);
 			};
 			s_element.mouse_detection = T_Mouse_Detection.autorepeat;
-			autorepeat_isFirstCall[button_id] = true;
+			s_buttons[button_id].isFirstCall = true;
 			s_element.autorepeat_callback = () => {
-				if (autorepeat_events[button_id]) {
-					const isFirst = autorepeat_isFirstCall[button_id];
-					autorepeat_isFirstCall[button_id] = false;
-					closure(button_id, autorepeat_events[button_id], button_elements[button_id], isFirst);
+				if (s_buttons[button_id].event) {
+					const isFirst = s_buttons[button_id].isFirstCall;
+					s_buttons[button_id].isFirstCall = false;
+					closure(button_id, s_buttons[button_id].event, s_buttons[button_id].s_element?.html_element, isFirst);
 				}
 			};
 			s_element.autorepeat_id = button_id;
 		});
 		return () => {
-			s_elements.forEach(s => hits.delete_hit_target(s));
+			s_buttons.forEach(b => {
+				if (b.s_element) hits.delete_hit_target(b.s_element);
+			});
 		};
 	});
 
-	$: index_forHover = s_elements.findIndex(s => s.hasSameID_as($w_s_hover));
-	$: isAutorepeating = (button_id: number) => s_elements[button_id]?.hasSameID_as($w_autorepeat) ?? false;
+	$: index_forHover = s_buttons.findIndex(b => b.s_element?.hasSameID_as($w_s_hover));
+	$: isAutorepeating = (button_id: number) => s_buttons[button_id]?.s_element?.hasSameID_as($w_autorepeat) ?? false;
 
 	function get_path_for(title: string, button_id: number): string {
 		if (!custom_svgPaths) {
@@ -82,11 +93,11 @@
 
 	function handle_s_mouse(s_mouse: S_Mouse, button_id: number): boolean {
 		if (s_mouse.isDown && s_mouse.event) {
-			autorepeat_events[button_id] = s_mouse.event;
-			autorepeat_isFirstCall[button_id] = true;
+			s_buttons[button_id].event = s_mouse.event;
+			s_buttons[button_id].isFirstCall = true;
 		} else if (s_mouse.isUp) {
-			autorepeat_events[button_id] = null;
-			autorepeat_isFirstCall[button_id] = true;
+			s_buttons[button_id].event = null;
+			s_buttons[button_id].isFirstCall = true;
 		}
 		return true;
 	}
@@ -103,7 +114,7 @@
 		align-items:center;'>
 	{#each titles as title, button_id}
 		<button class='{name}-{title}-button'
-			bind:this={button_elements[button_id]}
+			bind:this={html_elements[button_id]}
 			class:held={isAutorepeating(button_id)}
 			style='
 				padding: 0;

@@ -26,48 +26,30 @@ A reusable previous/next button pair component.
 - `name` — identifier for CSS classes
 - `custom_svgPaths` — optional custom up/down icons
 
-## Changes
+## State
 
-- [x] eliminate has_title
-- [ ] consolidate parallel arrays into ButtonState objects
-- [ ] add two new props: show_numbers:boolean, source_of_truth:S_Item
-	- [ ] if true separate the two triangles to make room for a label
-	- [ ] label is two numbers, one above the other, separated by a thin h line
-	- [ ] top number is the current index (provided by source of truth)
-	- [ ] bottom number is the length (also provided by source of truth)
-
-## Migration: Consolidate Parallel Arrays
-
-**Benefits:**
-- Cleaner — all button state in one place
-- Less room for index mismatches
-- Easier to reason about
-
-**Current (parallel arrays):**
 ```typescript
-let button_elements: HTMLElement[] = [];
-let s_elements: S_Element[] = [];
-let autorepeat_events: (MouseEvent | null)[] = [];
-let autorepeat_isFirstCall: boolean[] = [];
-```
-
-**Proposed (array of objects):**
-```typescript
-interface ButtonState {
-    element: HTMLElement | null;
+interface S_Button {
     s_element: S_Element | null;
     event: MouseEvent | null;
     isFirstCall: boolean;
 }
 
-let buttons: ButtonState[] = [
-    { element: null, s_element: null, event: null, isFirstCall: true },
-    { element: null, s_element: null, event: null, isFirstCall: true }
+let s_buttons: S_Button[] = [
+    { s_element: null, event: null, isFirstCall: true },
+    { s_element: null, event: null, isFirstCall: true }
 ];
+
+let html_elements: HTMLElement[] = [];  // transient single source of truth, for bind:this
 ```
 
-**Affected:**
-- `onMount` — creates `s_element`, binds `element`, sets `isFirstCall`, reads `event`
-- `handle_s_mouse` — sets/clears `event`, sets `isFirstCall`
-- `isAutorepeating` — reads `s_element`
-- Template — binds `element` via `bind:this`
+## Changes
+
+- [x] eliminate has_title
+- [x] consolidate parallel arrays into S_Button objects
+- [x] remove element from S_Button, use s_element.html_element instead
+- [ ] add two new props: show_numbers:boolean, source_of_truth:S_Item
+	- [ ] if true separate the two triangles to make room for a label
+	- [ ] label is two numbers, one above the other, separated by a thin h line
+	- [ ] top number is the current index (provided by source of truth)
+	- [ ] bottom number is the length (also provided by source of truth)
