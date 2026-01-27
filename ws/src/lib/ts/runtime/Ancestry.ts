@@ -218,6 +218,11 @@ export default class Ancestry extends Identifiable {
 	get size_ofVisibleSubtree():	     Size { return new Size(this.visibleSubtree_width(), this.height_ofVisibleSubtree()); }
 	get hidden_by_depth_limit():	  boolean { return !this.isVisible_accordingTo_depth_within_focus_subtree && this.isExpanded && this.hasChildren && controls.inTreeMode; }
 
+	get children_hidden_by_depth_limit(): boolean {
+		return this.depth_within_focus_subtree >= (this.global_depth_limit - 5) &&
+			this.isExpanded && this.hasChildren && controls.inTreeMode;
+	}
+
 	assure_isVisible_within(ancestries: Array<Ancestry>) {
 		if (!!this.predicate && controls.inRadialMode) {
 			const index = u.indexOf_withMatchingThingID_in(this, ancestries);

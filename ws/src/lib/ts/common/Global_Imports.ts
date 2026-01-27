@@ -38,10 +38,10 @@ import { T_Theme, T_Button_SVG } from './Enumerations';
 import { T_Oblong, T_Direction } from './Enumerations';
 import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { T_Persistable, T_Persistence } from './Enumerations';
+import { T_Graph, T_Banner, T_Control } from './Enumerations';
 import { T_Search, T_Search_Preference } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Image_Extension, T_Text_Extension } from './Enumerations';
-import { T_Graph, T_Banner, T_Control, T_Focus } from './Enumerations';
 import { T_Tree_Line, T_Order, T_Widget, T_Layer } from './Enumerations';
 import { T_Thing, T_Trait, T_Kinship, T_Predicate } from './Enumerations';
 import { T_Signal, T_Hit_Target, T_Mouse_Detection } from './Enumerations';
@@ -115,7 +115,6 @@ export {
 	Ancestry, Hierarchy, Seriously_Range,
 	Tag, Thing, Trait, Predicate, Relationship,
 	
-	T_Focus,
 	T_Debug, T_Timer,
 	T_Theme, T_Graph, T_Browser, 
 	T_Search, T_Search_Preference,

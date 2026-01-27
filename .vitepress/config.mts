@@ -23510,6 +23510,10 @@ export default defineConfig({
                       link: '/notes/work/done/sites-hub'
                     },
                     {
+                      text: 'Tools Sites',
+                      link: '/notes/work/done/tools-sites'
+                    },
+                    {
                       text: 'Docs >',
                       collapsed: true,
                       items: [
@@ -26002,32 +26006,8 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
-                      text: 'Book',
-                      link: '/ws/notes/work/book'
-                    },
-                    {
                       text: 'Deliverables',
                       link: '/ws/notes/work/deliverables'
-                    },
-                    {
-                      text: 'Hits Detection',
-                      link: '/ws/notes/work/hits-detection'
-                    },
-                    {
-                      text: 'New Chat',
-                      link: '/ws/notes/work/new-chat'
-                    },
-                    {
-                      text: 'Search Links',
-                      link: '/ws/notes/work/search-links'
-                    },
-                    {
-                      text: 'Search',
-                      link: '/ws/notes/work/search'
-                    },
-                    {
-                      text: 'Startup',
-                      link: '/ws/notes/work/startup'
                     },
                     {
                       text: 'Done >',
@@ -26059,6 +26039,10 @@ export default defineConfig({
                           link: '/ws/notes/work/done/focus'
                         },
                         {
+                          text: 'Hits Detection',
+                          link: '/ws/notes/work/done/hits-detection'
+                        },
+                        {
                           text: 'Public Deliverables',
                           link: '/ws/notes/work/done/public-deliverables'
                         },
@@ -26069,6 +26053,10 @@ export default defineConfig({
                         {
                           text: 'Relocate.controls',
                           link: '/ws/notes/work/done/relocate.controls'
+                        },
+                        {
+                          text: 'Startup',
+                          link: '/ws/notes/work/done/startup'
                         },
                         {
                           text: 'Truth',
@@ -26130,6 +26118,29 @@ export default defineConfig({
                       ]
                     },
                     {
+                      text: 'Migration >',
+                      link: '/ws/notes/work/migration/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Combined',
+                          link: '/ws/notes/work/migration/combined'
+                        },
+                        {
+                          text: 'Next',
+                          link: '/ws/notes/work/migration/next'
+                        },
+                        {
+                          text: 'Proposal',
+                          link: '/ws/notes/work/migration/proposal'
+                        },
+                        {
+                          text: 'Steppers',
+                          link: '/ws/notes/work/migration/steppers'
+                        }
+                      ]
+                    },
+                    {
                       text: 'Next >',
                       link: '/ws/notes/work/next/',
                       collapsed: true,
@@ -26139,12 +26150,28 @@ export default defineConfig({
                           link: '/ws/notes/work/next/ai-ux-spider-guide'
                         },
                         {
+                          text: 'Amnesia',
+                          link: '/ws/notes/work/next/amnesia'
+                        },
+                        {
+                          text: 'Book',
+                          link: '/ws/notes/work/next/book'
+                        },
+                        {
                           text: 'Holons.api',
                           link: '/ws/notes/work/next/holons.api'
                         },
                         {
                           text: 'Resize Optimization AI',
                           link: '/ws/notes/work/next/Resize_Optimization_AI'
+                        },
+                        {
+                          text: 'Search Links',
+                          link: '/ws/notes/work/next/search-links'
+                        },
+                        {
+                          text: 'Search',
+                          link: '/ws/notes/work/next/search'
                         }
                       ]
                     }

@@ -19,8 +19,6 @@
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_t_countDots, w_show_countsAs } = show;
 	const { w_thing_color, w_background_color } = colors;
-	const count_fontSize = reveal_count < 100 ? reveal_count < 10 ? 10 : 7 : 5;
-	const reveal_count_top = reveal_count < 100 ? reveal_count < 10 ? 2 : 4 : 5.6;
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 	let svgPathFor_tiny_outer_dots: string | null = null;
 	let svgPathFor_fat_center_dot: string | null = null;
@@ -33,17 +31,16 @@
 	let offsetFor_fat_center_dot = 0;
 	let s_component: S_Component;
 	let wrapper_style = k.empty;
-
-	update_colors();
+	let reveal_count_left = 0;
+	let reveal_count_top = 0;
+	let count_fontSize = 0;
 
 	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Hit_Target.reveal, (received_ancestry) => {
 		center = g_widget.center_ofReveal;
 	});
 
 	onMount(() => {
-		update_svgPaths();
-		s_reveal.isHovering = false;
-		update_colors();
+		update();
 		return () => s_component.disconnect();
 	});
 
@@ -56,8 +53,8 @@
 					focus_ancestry = ancestry;
 				} else if (ancestry.hasChildren || ancestry.thing.isBulkAlias) {
 					h.ancestry_toggle_expansion(ancestry);
-					if (show.isDynamic_focus && ancestry.hidden_by_depth_limit) {
-						focus_ancestry = ancestry.ancestry_createUnique_byStrippingBack(ancestry.depth_limit - 1);
+					if (ancestry.children_hidden_by_depth_limit) {
+						focus_ancestry = ancestry.ancestry_createUnique_byStrippingBack(ancestry.global_depth_limit - 1);
 					}
 				}
 				focus_ancestry?.becomeFocus();
@@ -78,8 +75,7 @@
 			:::${$w_t_countDots}
 			:::${$w_thing_title}
 			:::${$w_thing_color}`;
-		update_svgPaths();
-		update_colors();
+		update();
 	}
 
 	$: {
@@ -92,6 +88,19 @@
 			top: ${center.y - size / 2}px;
 			left: ${center.x - size / 2}px;
 		`.removeWhiteSpace();
+	}
+
+	function update () {
+		update_forCounts();
+		update_svgPaths();
+		update_colors();
+	}
+
+	function update_forCounts() {
+		const count_index = reveal_count < 10 ? 0 : reveal_count < 100 ? 1 : 2;
+		reveal_count_left = ancestry.points_right ? -1.5 : -1;
+		reveal_count_top = [2.3, 4.3, 6][count_index];
+		count_fontSize = [10, 7, 5][count_index];
 	}
 
 	function update_colors() {
@@ -107,7 +116,7 @@
 	function update_svgPaths() {
 		const thing = ancestry.thing;
 		if (!!thing) {
-			const dotsAre_hiding = ancestry.hidden_by_depth_limit && !ancestry.points_right;
+			const dotsAre_hiding = ancestry.hidden_by_depth_limit && !ancestry.shows_children;
 			const show_fat_center_dot = thing.isBulkAlias || dotsAre_hiding;
 			offsetFor_fat_center_dot = show_fat_center_dot ? 0 : -1;
 			svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
@@ -173,7 +182,6 @@
 				{#if ($w_show_countsAs == T_Counts_Shown.numbers) && show_reveal_count && !svgPathFor_fat_center_dot}
 					<div class='reveal-count-number'
 						style='
-							left:-1.2px;
 							width:100%;
 							height:100%;
 							position: absolute;
@@ -181,6 +189,7 @@
 							color:{counts_color};
 							vertical-align: middle;
 							top:{reveal_count_top}px;
+							left:{reveal_count_left}px;
 							font-size:{count_fontSize}px;
 							shape-rendering: geometricPrecision;'>
 						{reveal_count}

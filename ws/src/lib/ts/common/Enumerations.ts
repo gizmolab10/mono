@@ -101,11 +101,6 @@ export enum T_Breadcrumbs {
 	focus	  = 'focus',
 }
 
-export enum T_Focus {
-	dynamic = 'dynamic',
-	static  = 'static',
-}
-
 export enum T_Counts_Shown {
 	numbers = 'numbers',
 	hidden  = 'hidden',
@@ -370,7 +365,6 @@ export enum T_Preference {
 	traits			  = 'traits',
 	graph			  = 'graph',
 	scale			  = 'scale',
-	focus			  = 'focus',
 	local			  = 'local',
 	thing	    	  = 'thing',
 	font			  = 'font',

@@ -1,5 +1,5 @@
-import { S_Items, T_Graph, T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
-import { T_Kinship, T_Focus, T_Detail, T_Breadcrumbs, T_Counts_Shown } from '../common/Global_Imports';
+import { T_Graph, T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
+import { S_Items, T_Kinship, T_Detail, T_Breadcrumbs, T_Counts_Shown } from '../common/Global_Imports';
 import { c, g, h, k, u, x, show, debug, radial, Ancestry, databases } from '../common/Global_Imports';
 import type { S_Recent } from '../types/Types';
 import { get } from 'svelte/store';
@@ -17,7 +17,6 @@ const spec_dict_byType: Enum_Spec_ByType = {
 	[T_Preference.breadcrumbs]:     new Enum_Spec(T_Breadcrumbs,       T_Breadcrumbs.selection),
 	[T_Preference.show_countsAs]:   new Enum_Spec(T_Counts_Shown,      T_Counts_Shown.numbers),
 	[T_Preference.tree]:            new Enum_Spec(T_Kinship,           T_Kinship.children),
-	[T_Preference.focus]:           new Enum_Spec(T_Focus,             T_Focus.dynamic),
 	[T_Preference.graph]:           new Enum_Spec(T_Graph,             T_Graph.tree),
 	[T_Preference.countDots]:       new Enum_Spec(null,                []),
 	[T_Preference.show_details]:    new Enum_Spec(null,                false),

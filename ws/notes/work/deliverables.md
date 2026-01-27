@@ -17,32 +17,39 @@ Before I even demo a fix to Vincent, review it with Wendy. For items that are ma
 The urls for review and feedback
 
 - [ ] [Catalist](https://www.catalist.network/seriously_view?object=1768857908919x153587680602915040&space=1747073877366x313460503630839800&theme=bubble) Vincent currently has this pointing to the version of webseriously that is under construction (it is **not** frozen).
-- [ ] [webseriously](https://webseriously.org)
+- [ ] [webseriously](https://webseriously.org) current work in progress
 
 ## Catalist
 
-### Bugs and Questions
+### Bugs
 
 - [ ] webseriously view is taller than the window
-- [ ] top banner wraps badly (places things on top of webseriously) when window too narrow
-- [ ] click to collapse when a child is selected -> okay that the selection is no longer visible?
-- [ ] testing "connections" is vital for final golden master
+- [ ] top banner wraps badly -> places things on top of webseriously
+### Questions
+
+- [ ] is testing "connections" **vital** for final golden master?
+- [ ] do we need an introductory summary of current behavior?
+- [ ] click to collapse when a child is selected
+	- [ ] is it okay that the selection is no longer visible?
 
 ## Webseriously
 
 ### Bugs
 
-- [ ] reveal children sometimes must (but never does) change focus (for levels)
-- [ ] after a while, the resize feature becomes "reluctant" (just changes a tiny bit)
-- [ ] select A, more than one level below focus, switch to radial, expected focus to change (it didn't) so A will still be visible
-	- [ ] **derive** focus from graph (radial / tree) mode
 - [ ] breadcrumbs
+	- [ ] assure focus is ALWAYS shown in breadcrumbs
+		- [ ] do NOT make root the focus by default !!!
 	- [ ] **FUBAR --** out of date in plugin
-	- [ ] click breadcrumb to left of focus -> is ignored
-- [ ] in radial mode
+- [ ] radial mode
+	- [ ] after a while, the resize feature becomes "reluctant" (just changes a tiny bit)
 	- [ ] not show details of focus -- Vincent
+	- [ ] select A, more than one level below focus, switch to radial
+		- [ ] need focus to change so A will still be visible
+			- [ ] **derive** focus from graph (radial / tree) mode
+		- [x] ignored
 	- [x] widgets overlap vertically
 		- [x] when rotate ring is large
+- [x] click reveal dot to expand sometimes must (but never does) change focus (for levels)
 - [x] at launch, restore recents is broken
 - [x] "<" and ">" are ignored. should bump depth levels
 - [x] HITS detector location data -> out of date
@@ -66,10 +73,10 @@ The urls for review and feedback
 ### Future Tasks
 
 - [ ] show recents count and index in primary controls
+- [ ] instead of reveal dot's big inner dot, enlarge stroke to indicate "hidden children here"
 - [ ] support change in root
 - [ ] implement keep the graph centered on the selection
 - [ ] support edits made in Catalist (API is **incomplete**)
-- [ ] do we need an introductory summary of current behavior?
 - [ ] test whether two-finger no longer moves the graph
 
 

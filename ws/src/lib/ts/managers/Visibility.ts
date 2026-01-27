@@ -1,5 +1,5 @@
 import { T_Breadcrumbs, T_Counts_Shown, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
-import { T_Focus, T_Graph, T_Detail, T_Kinship, T_Startup, T_Preference } from '../common/Global_Imports';
+import { T_Graph, T_Detail, T_Kinship, T_Startup, T_Preference } from '../common/Global_Imports';
 import { g, k, p, g_graph_tree } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
@@ -16,7 +16,6 @@ export class Visibility {
 	w_t_breadcrumbs			= writable<T_Breadcrumbs>(def(P.breadcrumbs));
 	w_t_trees				= writable<Array<T_Kinship>>(def(P.tree));
 	w_t_directionals		= writable<boolean[]>([false, true]);
-	w_t_focus				= writable<T_Focus>(def(P.focus));
 	w_t_graph				= writable<T_Graph>(def(P.graph));
 
 	w_show_countsAs			= writable<T_Counts_Shown>(def(P.show_countsAs));
@@ -71,8 +70,6 @@ export class Visibility {
 	get children_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.children); }
 	get related_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.related); }
 	get parent_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.parents); }
-	get isDynamic_focus(): boolean { return get(this.w_t_focus) == T_Focus.dynamic; }
-	get isStatic_focus(): boolean { return get(this.w_t_focus) == T_Focus.static; }
 
 	toggle_show_other_databases() {
 		const other_databases = !get(this.w_show_other_databases)
@@ -86,7 +83,6 @@ export class Visibility {
 		this.w_show_related        .set(p.read_key(T_Preference.show_related));
 		this.w_show_other_databases.set(p.read_key(T_Preference.other_databases));
 		this.w_t_graph             .set(p.read_key(T_Preference.graph));
-		this.w_t_focus             .set(p.read_key(T_Preference.focus));
 		this.w_t_trees             .set(p.read_key(T_Preference.tree));
 		this.w_show_countsAs       .set(p.read_key(T_Preference.show_countsAs));
 		this.w_t_details           .set(p.read_key(T_Preference.detail_types));
@@ -105,9 +101,6 @@ export class Visibility {
 		});
 		this.w_t_graph.subscribe((flag: any) => {
 			writeAnd_reactTo(T_Preference.graph, flag);
-		});
-		this.w_t_focus.subscribe((flag: any) => {
-			writeAnd_reactTo(T_Preference.focus, flag);
 		});
     }
 }
