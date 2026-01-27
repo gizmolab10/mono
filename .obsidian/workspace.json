@@ -185,8 +185,8 @@
   },
   "active": "f71f75e9772e4308",
   "lastOpenFiles": [
-    "ws/notes/work/migration/index.md",
     "logs/update-docs.error.log",
+    "ws/notes/work/migration/index.md",
     "ws/notes/work/migration/next.md",
     "ws/notes/work/migration/proposal.md",
     "ws/notes/work/migration/combined.md",
@@ -220,7 +220,6 @@
     "notes/guides/setup/netlify.md",
     "notes/guides/develop/hub-app.md",
     "notes/guides/test/testing.md",
-    "notes/guides/test/debugging.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

@@ -95,12 +95,6 @@ export enum T_Cluster_Pager {
 	sliders  = 'sliders',
 }
 
-export enum T_Breadcrumbs {
-	selection = 'selection',
-	recents   = 'recents',
-	focus	  = 'focus',
-}
-
 export enum T_Counts_Shown {
 	numbers = 'numbers',
 	hidden  = 'hidden',
@@ -347,7 +341,6 @@ export enum T_Preference {
 	ring_radius		  = 'ring_radius',
 	user_offset		  = 'user_offset',
 	auto_adjust		  = 'auto_adjust',
-	breadcrumbs		  = 'breadcrumbs',
 	search_text		  = 'search_text',
 	background		  = 'background',
 	ring_angle  	  = 'ring_angle',

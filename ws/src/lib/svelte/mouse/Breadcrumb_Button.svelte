@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, h, k, u, x, core, hits, show, colors, search, elements } from '../../ts/common/Global_Imports';
-	import { Point, T_Search, T_Banner, T_Hit_Target, T_Breadcrumbs } from '../../ts/common/Global_Imports';
+	import { Point, T_Search, T_Banner, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Button from './Button.svelte';
 	export let center = Point.zero;
@@ -8,7 +8,6 @@
 	export let left = 0;
 	const { w_s_hover } = hits;
 	const borderStyle = '1px solid';
-	const { w_t_breadcrumbs } = show;
 	const { w_grabs, w_thing_fontFamily } = x;
 	const { w_thing_color, w_background_color } = colors;
 	let thing = s_breadcrumb.ancestry.thing;
@@ -40,7 +39,7 @@
 	$: {
 		// Check if this ancestry is in the grabbed items array
 		const isGrabbed = $w_grabs.some(g => g && g.equals(ancestry));
-		const _ = `${$w_t_breadcrumbs}:::${$w_grabs.length}:::${isGrabbed}`;
+		const _ = `${$w_grabs.length}:::${isGrabbed}`;
 		updateColors();
 	}
 	
@@ -71,10 +70,10 @@
 		if (!!h && h.hasRoot && s_mouse.isDown) {
 			search.deactivate();
 			ancestry.grabOnly();
-			if (ancestry.ancestry_assureIsVisible()) {
-				g.ancestry_place_atCenter(ancestry);
-			}
-			g.grand_build();
+			// if (ancestry.ancestry_assureIsVisible()) {
+			// 	g.ancestry_place_atCenter(ancestry);
+			// }
+			// g.grand_build();
 		}
 	}
 

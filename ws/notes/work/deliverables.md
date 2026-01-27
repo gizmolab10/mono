@@ -1,12 +1,9 @@
 # Deliverables
 
-
 **Started:** 2025-01-13
+**Status:** In progress
 
-**Status:** Tracking
-
-
-Before I even demo a fix to Vincent, review it with Wendy. For items that are marked as **fixed**, they need Wendy's feedback, so she wants me to let her know in Telegram.
+Before I demo a fix to Vincent, review it with Wendy. For items that are checked, I need Wendy's feedback/confirmation. I will let her know in Telegram, and then meet with her to receive it.
 
 ## Milestones
 
@@ -27,6 +24,7 @@ The urls for review and feedback
 - [ ] top banner wraps badly -> places things on top of webseriously
 ### Questions
 
+- [ ] do you show details on change of focus?
 - [ ] is testing "connections" **vital** for final golden master?
 - [ ] do we need an introductory summary of current behavior?
 - [ ] click to collapse when a child is selected
@@ -36,19 +34,18 @@ The urls for review and feedback
 
 ### Bugs
 
-- [ ] breadcrumbs
-	- [ ] assure focus is ALWAYS shown in breadcrumbs
-		- [ ] do NOT make root the focus by default !!!
-	- [ ] **FUBAR --** out of date in plugin
 - [ ] radial mode
-	- [ ] after a while, the resize feature becomes "reluctant" (just changes a tiny bit)
-	- [ ] not show details of focus -- Vincent
 	- [ ] select A, more than one level below focus, switch to radial
 		- [ ] need focus to change so A will still be visible
 			- [ ] **derive** focus from graph (radial / tree) mode
 		- [x] ignored
+	- [ ] after a while, the resize feature becomes "reluctant" (just changes a tiny bit)
 	- [x] widgets overlap vertically
 		- [x] when rotate ring is large
+- [ ] breadcrumbs
+	- [x] assure focus is ALWAYS shown in breadcrumbs
+		- [x] do NOT make root the focus by default !!!
+	- [ ] **FUBAR --** out of sync in plugin
 - [x] click reveal dot to expand sometimes must (but never does) change focus (for levels)
 - [x] at launch, restore recents is broken
 - [x] "<" and ">" are ignored. should bump depth levels

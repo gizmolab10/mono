@@ -1,5 +1,6 @@
 
 **/.vitepress/cache/
+**/.vitepress/.temp/
 **/node_modules/
 **/.DS_Store
 **/aside/
