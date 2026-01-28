@@ -6,6 +6,7 @@
 # Usage: update.sh [project-root]
 #        update.sh all           # updates all projects
 #        update.sh --verbose     # full output (old behavior)
+#        update.sh --force       # rebuild even if no changes
 #        update.sh [project] --verbose
 
 # Compute SCRIPT_DIR immediately before any cd commands
@@ -20,10 +21,14 @@ TOTAL_STEPS=7
 
 # Parse arguments
 PROJECT_ARG=""
+FORCE=false
 for arg in "$@"; do
   case "$arg" in
     --verbose|-v)
       VERBOSE=true
+      ;;
+    --force|-f)
+      FORCE=true
       ;;
     *)
       PROJECT_ARG="$arg"
@@ -297,11 +302,11 @@ if [ "$PROJECT_ARG" = "all" ]; then
     echo ">>> $proj"
     
     # Run sub-build, passing status file and project name via env
-    if [ "$VERBOSE" = true ]; then
-      REBUILD_STATUS_FILE="$STATUS_FILE" REBUILD_PROJECT="$PROJ_NAME" bash "$0" "$GITHUB_DIR/$proj" --verbose
-    else
-      REBUILD_STATUS_FILE="$STATUS_FILE" REBUILD_PROJECT="$PROJ_NAME" bash "$0" "$GITHUB_DIR/$proj"
-    fi
+    sub_args="$GITHUB_DIR/$proj"
+    [ "$VERBOSE" = true ] && sub_args="$sub_args --verbose"
+    [ "$FORCE" = true ] && sub_args="$sub_args --force"
+    
+    REBUILD_STATUS_FILE="$STATUS_FILE" REBUILD_PROJECT="$PROJ_NAME" bash "$0" $sub_args
     
     if [ $? -ne 0 ]; then
       echo "$PROJ_NAME failed" > "$STATUS_FILE"
@@ -359,24 +364,77 @@ TOOLS_DIST="${TOOLS_DIST:-$SHARED_TOOLS/dist}"
 # Determine build output location
 BUILD_OUTPUT="$LOGS_DIR/vitepress.build.log"
 
+# Marker file for tracking last successful build
+MARKER_FILE="$PROJECT_ROOT/.vitepress/.last-build"
+
+# Check if rebuild is needed (skip if sources unchanged)
+check_needs_rebuild() {
+  # Always rebuild if marker doesn't exist or --force
+  if [ "$FORCE" = true ]; then
+    [ "$VERBOSE" = true ] && echo "  [debug] --force specified"
+    return 0  # needs rebuild
+  fi
+  
+  if [ ! -f "$MARKER_FILE" ]; then
+    [ "$VERBOSE" = true ] && echo "  [debug] no marker file: $MARKER_FILE"
+    return 0  # needs rebuild
+  fi
+  
+  # Find newest source file (md files in notes/, config files)
+  local newest_source
+  newest_source=$(find "$PROJECT_ROOT/$NOTES_DIR" -name "*.md" -type f -newer "$MARKER_FILE" 2>/dev/null | head -1)
+  
+  if [ -n "$newest_source" ]; then
+    [ "$VERBOSE" = true ] && echo "  [debug] newer md: $newest_source"
+    return 0
+  fi
+  
+  # Check config.mts
+  if [ -f "$PROJECT_ROOT/.vitepress/config.mts" ]; then
+    if [ "$PROJECT_ROOT/.vitepress/config.mts" -nt "$MARKER_FILE" ]; then
+      [ "$VERBOSE" = true ] && echo "  [debug] config.mts is newer"
+      return 0
+    fi
+  fi
+  
+  # Check shared tools (if they changed, rebuild all)
+  newest_source=$(find "$SHARED_TOOLS" -name "*.ts" -type f -newer "$MARKER_FILE" 2>/dev/null | head -1)
+  if [ -n "$newest_source" ]; then
+    [ "$VERBOSE" = true ] && echo "  [debug] newer ts: $newest_source"
+    return 0
+  fi
+  
+  return 1  # no rebuild needed
+}
+
+# Check if we can skip this project
+if ! check_needs_rebuild; then
+  clear_progress
+  echo "○ $PROJECT_NAME up to date"
+  if [ -n "$STATUS_FILE" ]; then
+    echo "$PROJECT_NAME up to date" > "$STATUS_FILE"
+  fi
+  exit 0
+fi
+
 # Step 1: Compile TypeScript tools
-start_step 1 "compile"
+start_step 1 "compiling"
 cd "$SHARED_TOOLS"
 run_cmd npx tsc || fail
 cd "$PROJECT_ROOT"
 
 # Step 2: Sync index.md files
-start_step 2 "sync index"
+start_step 2 "syncing index"
 run_cmd bash "$SHARED_TOOLS/sync-index-files.sh" "$PROJECT_ROOT" || fail
 
 # Step 3: Build VitePress (may fail with broken links)
-start_step 3 "build"
+start_step 3 "building"
 run_vp_build
 BUILD_EXIT=$?
 # Don't fail here - broken links are expected, step 4 will fix them
 
 # Step 4: Fix broken links
-start_step 4 "fix links"
+start_step 4 "fixing links"
 run_cmd node "$TOOLS_DIST/fix-links.js"
 FIX_EXIT=$?
 if [ $FIX_EXIT -ne 0 ] && [ $FIX_EXIT -ne 2 ]; then
@@ -384,17 +442,17 @@ if [ $FIX_EXIT -ne 0 ] && [ $FIX_EXIT -ne 2 ]; then
 fi
 
 # Step 5: Generate docs database structure (if configured)
-start_step 5 "docs db"
+start_step 5 "generating docs db"
 if [ -n "$DOCS_OUTPUT" ]; then
   run_cmd bash "$SHARED_TOOLS/create-docs-db-data.sh" "$PROJECT_ROOT" || fail
 fi
 
 # Step 6: Rebuild VitePress
-start_step 6 "rebuild"
+start_step 6 "rebuilding"
 run_vp_build || fail
 
 # Step 7: Sync all sidebars
-start_step 7 "sidebars"
+start_step 7 "syncing sidebars"
 MONO_ROOT="$GITHUB_DIR/mono"
 for proj_dir in "$MONO_ROOT/ws" "$MONO_ROOT/di"; do
   if [ -d "$proj_dir/.vitepress" ]; then
@@ -410,6 +468,9 @@ echo "✓ $PROJECT_NAME done"
 if [ -n "$STATUS_FILE" ]; then
   echo "$PROJECT_NAME 7/7 done" > "$STATUS_FILE"
 fi
+
+# Touch marker file to track successful build time
+touch "$MARKER_FILE"
 
 # Clean up error log if empty
 if [ ! -s "$ERROR_LOG" ]; then

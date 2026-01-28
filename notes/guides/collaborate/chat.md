@@ -90,6 +90,7 @@ The following material specifies what Jonathan expects and relies upon from Co. 
 ### What Co Does Automatically
 
 * Reads files before editing
+* Reads logs/errors directly when debugging — never asks user to cat files co can access
 * Proposes changes before executing (reserved mode)
 * Updates work files as we go
 * Searches past conversations for context

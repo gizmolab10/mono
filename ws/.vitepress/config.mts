@@ -36,150 +36,150 @@ export default withMermaid(
         }, // @keep
         {
           text: 'Architecture >',
-          link: '/architecture/',
+          link: '/guides/architecture/',
           collapsed: true,
           items: [
             {
               text: 'Overview',
-              link: '/architecture/overview'
+              link: '/guides/architecture/overview'
             },
             {
               text: 'Core >',
-              link: '/architecture/core/',
+              link: '/guides/architecture/core/',
               collapsed: true,
               items: [
                 {
                   text: 'Components',
-                  link: '/architecture/core/components'
+                  link: '/guides/architecture/core/components'
                 },
                 {
                   text: 'Databases',
-                  link: '/architecture/core/databases'
+                  link: '/guides/architecture/core/databases'
                 },
                 {
                   text: 'Geometry',
-                  link: '/architecture/core/geometry'
+                  link: '/guides/architecture/core/geometry'
                 },
                 {
                   text: 'Hits',
-                  link: '/architecture/core/hits'
+                  link: '/guides/architecture/core/hits'
                 },
                 {
                   text: 'Managers',
-                  link: '/architecture/core/managers'
+                  link: '/guides/architecture/core/managers'
                 },
                 {
                   text: 'State',
-                  link: '/architecture/core/state'
+                  link: '/guides/architecture/core/state'
                 },
                 {
                   text: 'UX',
-                  link: '/architecture/core/ux'
+                  link: '/guides/architecture/core/ux'
                 }
               ]
             },
             {
               text: 'Internals >',
-              link: '/architecture/internals/',
+              link: '/guides/architecture/internals/',
               collapsed: true,
               items: [
                 {
                   text: 'Debounce',
-                  link: '/architecture/internals/debounce'
+                  link: '/guides/architecture/internals/debounce'
                 },
                 {
                   text: 'Layout',
-                  link: '/architecture/internals/layout'
+                  link: '/guides/architecture/internals/layout'
                 },
                 {
                   text: 'Persistable',
-                  link: '/architecture/internals/persistable'
+                  link: '/guides/architecture/internals/persistable'
                 },
                 {
                   text: 'Preferences',
-                  link: '/architecture/internals/preferences'
+                  link: '/guides/architecture/internals/preferences'
                 },
                 {
                   text: 'Reactivity',
-                  link: '/architecture/internals/reactivity'
+                  link: '/guides/architecture/internals/reactivity'
                 },
                 {
                   text: 'Recents',
-                  link: '/architecture/internals/recents'
+                  link: '/guides/architecture/internals/recents'
                 },
                 {
                   text: 'Styles',
-                  link: '/architecture/internals/styles'
+                  link: '/guides/architecture/internals/styles'
                 },
                 {
                   text: 'Timers',
-                  link: '/architecture/internals/timers'
+                  link: '/guides/architecture/internals/timers'
                 }
               ]
             },
             {
               text: 'Platforms >',
-              link: '/architecture/platforms/',
+              link: '/guides/architecture/platforms/',
               collapsed: true,
               items: [
                 {
                   text: 'Bubble',
-                  link: '/architecture/platforms/bubble'
+                  link: '/guides/architecture/platforms/bubble'
                 },
                 {
                   text: 'Plugin',
-                  link: '/architecture/platforms/plugin'
+                  link: '/guides/architecture/platforms/plugin'
                 },
                 {
                   text: 'Svelte 5',
-                  link: '/architecture/platforms/svelte.5'
+                  link: '/guides/architecture/platforms/svelte.5'
                 },
                 {
                   text: 'Svelte',
-                  link: '/architecture/platforms/svelte'
+                  link: '/guides/architecture/platforms/svelte'
                 },
                 {
                   text: 'VitePress',
-                  link: '/architecture/platforms/vitepress'
+                  link: '/guides/architecture/platforms/vitepress'
                 }
               ]
             },
             {
               text: 'UX >',
-              link: '/architecture/ux/',
+              link: '/guides/architecture/ux/',
               collapsed: true,
               items: [
                 {
                   text: 'Breadcrumbs',
-                  link: '/architecture/ux/breadcrumbs'
+                  link: '/guides/architecture/ux/breadcrumbs'
                 },
                 {
                   text: 'Buttons',
-                  link: '/architecture/ux/buttons'
+                  link: '/guides/architecture/ux/buttons'
                 },
                 {
                   text: 'Controls',
-                  link: '/architecture/ux/controls'
+                  link: '/guides/architecture/ux/controls'
                 },
                 {
                   text: 'Details',
-                  link: '/architecture/ux/details'
+                  link: '/guides/architecture/ux/details'
                 },
                 {
                   text: 'Paging',
-                  link: '/architecture/ux/paging'
+                  link: '/guides/architecture/ux/paging'
                 },
                 {
                   text: 'Preferences',
-                  link: '/architecture/ux/preferences'
+                  link: '/guides/architecture/ux/preferences'
                 },
                 {
                   text: 'Search',
-                  link: '/architecture/ux/search'
+                  link: '/guides/architecture/ux/search'
                 },
                 {
                   text: 'Titles',
-                  link: '/architecture/ux/titles'
+                  link: '/guides/architecture/ux/titles'
                 }
               ]
             }
@@ -187,16 +187,16 @@ export default withMermaid(
         },
         {
           text: 'Collaborate >',
-          link: '/collaborate/',
+          link: '/guides/collaborate/',
           collapsed: true,
           items: [
             {
               text: 'Composition',
-              link: '/collaborate/composition'
+              link: '/guides/collaborate/composition'
             },
             {
               text: 'Gotchas',
-              link: '/collaborate/gotchas'
+              link: '/guides/collaborate/gotchas'
             }
           ]
         },

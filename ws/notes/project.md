@@ -122,43 +122,43 @@ const ancestry = h.ancestry_forThing(thing);
 
 State objects (S_* classes) persist across component recreation and provide computed properties via getters. Svelte stores (w_* writables) provide reactivity. Stores organized by manager domain.
 
-See [architecture/core/state.md](./architecture/core/state.md) for state objects, stores inventory, and why we use this hybrid approach.
+See [architecture/core/state.md](./guides/architecture/core/state.md) for state objects, stores inventory, and why we use this hybrid approach.
 
 #### 2. Manager Pattern
 
 16 singleton managers coordinate different aspects: Components, Configuration, Controls, Core (system state), Details, Elements, Features, Geometry (layout), Hierarchy (data), Hits (click/hover), Preferences, Radial, Search, Styles, UX (focus/grabs), Visibility.
 
-See [architecture/core/managers.md](./architecture/core/managers.md) for complete responsibilities, access patterns, and examples.
+See [architecture/core/managers.md](./guides/architecture/core/managers.md) for complete responsibilities, access patterns, and examples.
 
 #### 3. Persistable Pattern
 
 8 data models extend `Persistable`: Access, Persistable (base), Predicate, Relationship, Tag, Thing, Trait, User. Each has hash-based ID, database-agnostic CRUD, and serialization.
 
-See [architecture/internals/persistable.md](./architecture/internals/persistable.md) for identity, serialization, and lifecycle.
+See [architecture/internals/persistable.md](./guides/architecture/internals/persistable.md) for identity, serialization, and lifecycle.
 
 #### 4. Database Abstraction
 
 Supports 5 database backends: Local (IndexedDB), Firebase, Airtable, Bubble plugin, and Test (in-memory).
 
-See [architecture/core/databases.md](./architecture/core/databases.md) for architecture, switching, and implementation.
+See [architecture/core/databases.md](./guides/architecture/core/databases.md) for architecture, switching, and implementation.
 
 #### 5. Component Architecture
 
 11 component directories: controls/, details/, draw/ (SVG primitives), experimental/, main/ (app core), mouse/ (interactive), radial/, search/, text/, tree/, widget/. Components manager tracks S_Component state for complex interactive components.
 
-See [architecture/core/components.md](./architecture/core/components.md) for organization, patterns, state management, and Components manager.
+See [architecture/core/components.md](./guides/architecture/core/components.md) for organization, patterns, state management, and Components manager.
 
 #### 6. Hit Testing & Hover
 
 Centralized hit testing with RBush spatial indexing. Priority: dots > widgets > rings > controls > rubberband.
 
-See [architecture/core/hits.md](./architecture/core/hits.md) for complete click system (autorepeat, long-click, double-click), migration guide, testing.
+See [architecture/core/hits.md](./guides/architecture/core/hits.md) for complete click system (autorepeat, long-click, double-click), migration guide, testing.
 
 #### 7. Geometry Layout
 
 Coordinates layout algorithms for tree and radial graph modes.
 
-See [architecture/core/geometry.md](./architecture/core/geometry.md) for responsibilities, layout invocation, and coordination patterns.
+See [architecture/core/geometry.md](./guides/architecture/core/geometry.md) for responsibilities, layout invocation, and coordination patterns.
 
 ## Development
 
@@ -309,21 +309,21 @@ class MyThing extends Persistable {
 **Index**: [index.md](./index.md) - Complete index of all design documentation
 
 **Architecture** (architecture/):
-- [buttons.md](./architecture/ux/buttons.md) - Button hierarchy, SVG icons
-- [components.md](./architecture/core/components.md) - Component architecture: organization and Components manager
-- [controls.md](./architecture/ux/controls.md) - Control components
-- [database.md](./architecture/core/databases.md) - Database abstraction layer
-- [details.md](./architecture/ux/details.md) - Details panel architecture
-- [geometry.md](./architecture/core/geometry.md) - Layout coordination and positioning
-- [hits.md](./architecture/core/hits.md) - Click/hover system, migration guide
-- [managers.md](./architecture/core/managers.md) - Singleton manager pattern and responsibilities
-- [paging.md](./architecture/ux/paging.md) - Radial paging system
-- [persistable.md](./architecture/internals/persistable.md) - Persistable data models and serialization
-- [preferences.md](./architecture/ux/preferences.md) - Settings management
-- [search.md](./architecture/ux/search.md) - Search functionality
-- [state.md](./architecture/core/state.md) - State objects and stores architecture
-- [styles.md](./architecture/internals/styles.md) - Styling system
-- [ux.md](./architecture/core/ux.md) - UX manager (focus, grabs, details)
+- [buttons.md](./guides/architecture/ux/buttons.md) - Button hierarchy, SVG icons
+- [components.md](./guides/architecture/core/components.md) - Component architecture: organization and Components manager
+- [controls.md](./guides/architecture/ux/controls.md) - Control components
+- [database.md](./guides/architecture/core/databases.md) - Database abstraction layer
+- [details.md](./guides/architecture/ux/details.md) - Details panel architecture
+- [geometry.md](./guides/architecture/core/geometry.md) - Layout coordination and positioning
+- [hits.md](./guides/architecture/core/hits.md) - Click/hover system, migration guide
+- [managers.md](./guides/architecture/core/managers.md) - Singleton manager pattern and responsibilities
+- [paging.md](./guides/architecture/ux/paging.md) - Radial paging system
+- [persistable.md](./guides/architecture/internals/persistable.md) - Persistable data models and serialization
+- [preferences.md](./guides/architecture/ux/preferences.md) - Settings management
+- [search.md](./guides/architecture/ux/search.md) - Search functionality
+- [state.md](./guides/architecture/core/state.md) - State objects and stores architecture
+- [styles.md](./guides/architecture/internals/styles.md) - Styling system
+- [ux.md](./guides/architecture/core/ux.md) - UX manager (focus, grabs, details)
 
 ---
 

@@ -9,7 +9,6 @@ Unified documentation for all projects.
 ## Contents
 
 - [Guides](./guides/)
-- [Philosophy](./philosophy/)
 - [Tools](./tools/)
 - [Work](./work/)
 

@@ -1,6 +1,7 @@
 
 **/.vitepress/cache/
 **/.vitepress/.temp/
+**/.vitepress/.last-build
 **/node_modules/
 **/.DS_Store
 **/aside/

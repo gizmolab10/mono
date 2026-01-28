@@ -332,6 +332,17 @@ export default defineConfig({
                   ]
                 },
                 {
+                  text: 'Philosophy >',
+                  link: '/notes/guides/philosophy/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Motive',
+                      link: '/notes/guides/philosophy/motive'
+                    }
+                  ]
+                },
+                {
                   text: 'Setup >',
                   link: '/notes/guides/setup/',
                   collapsed: true,
@@ -357,25 +368,10 @@ export default defineConfig({
               ]
             },
             {
-              text: 'Philosophy >',
-              link: '/notes/philosophy/',
-              collapsed: true,
-              items: [
-                {
-                  text: 'Motive',
-                  link: '/notes/philosophy/motive'
-                }
-              ]
-            },
-            {
               text: 'Work >',
               link: '/notes/work/',
               collapsed: true,
               items: [
-                {
-                  text: 'Hub App Refinements',
-                  link: '/notes/work/hub-app-refinements'
-                },
                 {
                   text: 'Resume',
                   link: '/notes/work/resume'
@@ -586,157 +582,6 @@ export default defineConfig({
                   link: '/ws/notes/project'
                 },
                 {
-                  text: 'Architecture >',
-                  link: '/ws/notes/architecture/',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Overview',
-                      link: '/ws/notes/architecture/overview'
-                    },
-                    {
-                      text: 'Core >',
-                      link: '/ws/notes/architecture/core/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Components',
-                          link: '/ws/notes/architecture/core/components'
-                        },
-                        {
-                          text: 'Databases',
-                          link: '/ws/notes/architecture/core/databases'
-                        },
-                        {
-                          text: 'Geometry',
-                          link: '/ws/notes/architecture/core/geometry'
-                        },
-                        {
-                          text: 'Hits',
-                          link: '/ws/notes/architecture/core/hits'
-                        },
-                        {
-                          text: 'Managers',
-                          link: '/ws/notes/architecture/core/managers'
-                        },
-                        {
-                          text: 'State',
-                          link: '/ws/notes/architecture/core/state'
-                        },
-                        {
-                          text: 'UX',
-                          link: '/ws/notes/architecture/core/ux'
-                        }
-                      ]
-                    },
-                    {
-                      text: 'Internals >',
-                      link: '/ws/notes/architecture/internals/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Debounce',
-                          link: '/ws/notes/architecture/internals/debounce'
-                        },
-                        {
-                          text: 'Layout',
-                          link: '/ws/notes/architecture/internals/layout'
-                        },
-                        {
-                          text: 'Persistable',
-                          link: '/ws/notes/architecture/internals/persistable'
-                        },
-                        {
-                          text: 'Preferences',
-                          link: '/ws/notes/architecture/internals/preferences'
-                        },
-                        {
-                          text: 'Reactivity',
-                          link: '/ws/notes/architecture/internals/reactivity'
-                        },
-                        {
-                          text: 'Recents',
-                          link: '/ws/notes/architecture/internals/recents'
-                        },
-                        {
-                          text: 'Styles',
-                          link: '/ws/notes/architecture/internals/styles'
-                        },
-                        {
-                          text: 'Timers',
-                          link: '/ws/notes/architecture/internals/timers'
-                        }
-                      ]
-                    },
-                    {
-                      text: 'Platforms >',
-                      link: '/ws/notes/architecture/platforms/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Bubble',
-                          link: '/ws/notes/architecture/platforms/bubble'
-                        },
-                        {
-                          text: 'Plugin',
-                          link: '/ws/notes/architecture/platforms/plugin'
-                        },
-                        {
-                          text: 'Svelte 5',
-                          link: '/ws/notes/architecture/platforms/svelte.5'
-                        },
-                        {
-                          text: 'Svelte',
-                          link: '/ws/notes/architecture/platforms/svelte'
-                        },
-                        {
-                          text: 'VitePress',
-                          link: '/ws/notes/architecture/platforms/vitepress'
-                        }
-                      ]
-                    },
-                    {
-                      text: 'UX >',
-                      link: '/ws/notes/architecture/ux/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Breadcrumbs',
-                          link: '/ws/notes/architecture/ux/breadcrumbs'
-                        },
-                        {
-                          text: 'Buttons',
-                          link: '/ws/notes/architecture/ux/buttons'
-                        },
-                        {
-                          text: 'Controls',
-                          link: '/ws/notes/architecture/ux/controls'
-                        },
-                        {
-                          text: 'Details',
-                          link: '/ws/notes/architecture/ux/details'
-                        },
-                        {
-                          text: 'Paging',
-                          link: '/ws/notes/architecture/ux/paging'
-                        },
-                        {
-                          text: 'Preferences',
-                          link: '/ws/notes/architecture/ux/preferences'
-                        },
-                        {
-                          text: 'Search',
-                          link: '/ws/notes/architecture/ux/search'
-                        },
-                        {
-                          text: 'Titles',
-                          link: '/ws/notes/architecture/ux/titles'
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
                   text: 'Archives >',
                   collapsed: true,
                   items: [
@@ -775,17 +620,175 @@ export default defineConfig({
                   ]
                 },
                 {
-                  text: 'Collaborate >',
-                  link: '/ws/notes/collaborate/',
+                  text: 'Guides >',
+                  link: '/ws/notes/guides/',
                   collapsed: true,
                   items: [
                     {
-                      text: 'Composition',
-                      link: '/ws/notes/collaborate/composition'
+                      text: 'Architecture >',
+                      link: '/ws/notes/guides/architecture/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Overview',
+                          link: '/ws/notes/guides/architecture/overview'
+                        },
+                        {
+                          text: 'Core >',
+                          link: '/ws/notes/guides/architecture/core/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Components',
+                              link: '/ws/notes/guides/architecture/core/components'
+                            },
+                            {
+                              text: 'Databases',
+                              link: '/ws/notes/guides/architecture/core/databases'
+                            },
+                            {
+                              text: 'Geometry',
+                              link: '/ws/notes/guides/architecture/core/geometry'
+                            },
+                            {
+                              text: 'Hits',
+                              link: '/ws/notes/guides/architecture/core/hits'
+                            },
+                            {
+                              text: 'Managers',
+                              link: '/ws/notes/guides/architecture/core/managers'
+                            },
+                            {
+                              text: 'State',
+                              link: '/ws/notes/guides/architecture/core/state'
+                            },
+                            {
+                              text: 'UX',
+                              link: '/ws/notes/guides/architecture/core/ux'
+                            }
+                          ]
+                        },
+                        {
+                          text: 'Internals >',
+                          link: '/ws/notes/guides/architecture/internals/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Debounce',
+                              link: '/ws/notes/guides/architecture/internals/debounce'
+                            },
+                            {
+                              text: 'Layout',
+                              link: '/ws/notes/guides/architecture/internals/layout'
+                            },
+                            {
+                              text: 'Persistable',
+                              link: '/ws/notes/guides/architecture/internals/persistable'
+                            },
+                            {
+                              text: 'Preferences',
+                              link: '/ws/notes/guides/architecture/internals/preferences'
+                            },
+                            {
+                              text: 'Reactivity',
+                              link: '/ws/notes/guides/architecture/internals/reactivity'
+                            },
+                            {
+                              text: 'Recents',
+                              link: '/ws/notes/guides/architecture/internals/recents'
+                            },
+                            {
+                              text: 'Styles',
+                              link: '/ws/notes/guides/architecture/internals/styles'
+                            },
+                            {
+                              text: 'Timers',
+                              link: '/ws/notes/guides/architecture/internals/timers'
+                            }
+                          ]
+                        },
+                        {
+                          text: 'Platforms >',
+                          link: '/ws/notes/guides/architecture/platforms/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Bubble',
+                              link: '/ws/notes/guides/architecture/platforms/bubble'
+                            },
+                            {
+                              text: 'Plugin',
+                              link: '/ws/notes/guides/architecture/platforms/plugin'
+                            },
+                            {
+                              text: 'Svelte 5',
+                              link: '/ws/notes/guides/architecture/platforms/svelte.5'
+                            },
+                            {
+                              text: 'Svelte',
+                              link: '/ws/notes/guides/architecture/platforms/svelte'
+                            },
+                            {
+                              text: 'VitePress',
+                              link: '/ws/notes/guides/architecture/platforms/vitepress'
+                            }
+                          ]
+                        },
+                        {
+                          text: 'UX >',
+                          link: '/ws/notes/guides/architecture/ux/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Breadcrumbs',
+                              link: '/ws/notes/guides/architecture/ux/breadcrumbs'
+                            },
+                            {
+                              text: 'Buttons',
+                              link: '/ws/notes/guides/architecture/ux/buttons'
+                            },
+                            {
+                              text: 'Controls',
+                              link: '/ws/notes/guides/architecture/ux/controls'
+                            },
+                            {
+                              text: 'Details',
+                              link: '/ws/notes/guides/architecture/ux/details'
+                            },
+                            {
+                              text: 'Paging',
+                              link: '/ws/notes/guides/architecture/ux/paging'
+                            },
+                            {
+                              text: 'Preferences',
+                              link: '/ws/notes/guides/architecture/ux/preferences'
+                            },
+                            {
+                              text: 'Search',
+                              link: '/ws/notes/guides/architecture/ux/search'
+                            },
+                            {
+                              text: 'Titles',
+                              link: '/ws/notes/guides/architecture/ux/titles'
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
-                      text: 'Gotchas',
-                      link: '/ws/notes/collaborate/gotchas'
+                      text: 'Collaborate >',
+                      link: '/ws/notes/guides/collaborate/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Composition',
+                          link: '/ws/notes/guides/collaborate/composition'
+                        },
+                        {
+                          text: 'Gotchas',
+                          link: '/ws/notes/guides/collaborate/gotchas'
+                        }
+                      ]
                     }
                   ]
                 },

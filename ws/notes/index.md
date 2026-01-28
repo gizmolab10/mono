@@ -4,9 +4,7 @@ Gathered here are what I hope will bring you up to speed, or once at speed, prov
 
 ## Contents
 
-- [Architecture](./architecture/)
-- [Collaborate](./collaborate/)
-- [Tools](./tools/)
+- [Guides](./guides/)
 - [Work](./work/)
 - [Project](./project.md)
 
