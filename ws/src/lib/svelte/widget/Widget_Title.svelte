@@ -37,7 +37,7 @@
 	function hasHTMLFocus(): boolean { return document.activeElement === input; }
 	function isStopping(): boolean { return $w_s_title_edit?.ancestry_isStopping(ancestry) ?? false; }
 	function isPercolating(): boolean { return $w_s_title_edit?.ancestry_isPercolating(ancestry) ?? false; }
-	function title_extra(): number { return (controls.inTreeMode && isEditing()) ? 2.2 : 0; }
+	function title_extra(): number { return (show.inTreeMode && isEditing()) ? 2.2 : 0; }
 	function hasChanges() { return title_prior != title_binded; }
 
 	s_component = signals.handle_anySignal_atPriority(0, ancestry, T_Hit_Target.title, (t_signal, ancestry) => {
@@ -104,7 +104,7 @@
 			const isFocus = ancestry?.isFocus ?? false;
 			const isEditingNow = ancestry?.isEditing ?? false;
 			const isGrabbed = ancestry?.isGrabbed ?? false;
-			const adjust = controls.inRadialMode && isFocus;
+			const adjust = show.inRadialMode && isFocus;
 			top = 0.7 + (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
 			color = s_widget.color;
 			left = adjust ? 1.5 : 0.8;

@@ -1,4 +1,4 @@
-import { g, h, k, u, x, show, debug, controls, features, svgPaths, databases, components } from '../common/Global_Imports';
+import { g, h, k, u, x, show, debug, features, svgPaths, databases, components } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Hit_Target } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
 import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
@@ -155,7 +155,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____SVG: unique symbol;
 
 	svgPathFor_tiny_outer_dot_pointTo_child(pointsTo_child: boolean): string | null {
-		const in_radial_mode = controls.inRadialMode;
+		const in_radial_mode = show.inRadialMode;
 		const tiny_outer_dots_count = this.count_ofChilcren(pointsTo_child);
 		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = pointsTo_child ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
@@ -216,15 +216,15 @@ export default class Ancestry extends Identifiable {
 	get halfHeight_ofVisibleSubtree(): number { return this.height_ofVisibleSubtree() / 2; }
 	get halfSize_ofVisibleSubtree():     Size { return this.size_ofVisibleSubtree.dividedInHalf; }
 	get size_ofVisibleSubtree():	     Size { return new Size(this.visibleSubtree_width(), this.height_ofVisibleSubtree()); }
-	get hidden_by_depth_limit():	  boolean { return !this.isVisible_accordingTo_depth_within_focus_subtree && this.isExpanded && this.hasChildren && controls.inTreeMode; }
+	get hidden_by_depth_limit():	  boolean { return !this.isVisible_accordingTo_depth_within_focus_subtree && this.isExpanded && this.hasChildren && show.inTreeMode; }
 
 	get children_hidden_by_depth_limit(): boolean {
 		return this.depth_within_focus_subtree >= (this.global_depth_limit - 5) &&
-			this.isExpanded && this.hasChildren && controls.inTreeMode;
+			this.isExpanded && this.hasChildren && show.inTreeMode;
 	}
 
 	assure_isVisible_within(ancestries: Array<Ancestry>) {
-		if (!!this.predicate && controls.inRadialMode) {
+		if (!!this.predicate && show.inRadialMode) {
 			const index = u.indexOf_withMatchingThingID_in(this, ancestries);
 			const g_paging = this.g_cluster?.g_paging;
 			if (!!g_paging && !g_paging.index_isVisible(index)) {
@@ -236,7 +236,7 @@ export default class Ancestry extends Identifiable {
 
 	ancestry_assureIsVisible(): boolean {
 		if (!this.isVisible) {
-			if (controls.inTreeMode) {
+			if (show.inTreeMode) {
 				const focusAncestry = this.ancestry_createUnique_byStrippingBack(this.global_depth_limit);
 				focusAncestry?.becomeFocus();
 				this.reveal_toFocus();
@@ -251,7 +251,7 @@ export default class Ancestry extends Identifiable {
 
 	get isVisible(): boolean {
 		let isVisible = false;
-		if (controls.inRadialMode) {
+		if (show.inRadialMode) {
 			const parent = this.parentAncestry;
 			const childIsFocus = get(x.w_ancestry_focus)?.parentAncestry == this;
 			const thisIsVisible = this.g_paging?.index_isVisible(this.siblingIndex) ?? true;
@@ -376,7 +376,7 @@ export default class Ancestry extends Identifiable {
 					this.reorder_within(this.sibling_ancestries, up);
 				}
 				if (!!grabAncestry) {
-					if (controls.inRadialMode) {
+					if (show.inRadialMode) {
 						needs_graphRebuild = grabAncestry.assure_isVisible_within(this.sibling_ancestries) || needs_graphRebuild;	// change paging
 					} else {
 						x.assure_grab_isVisible();
@@ -609,7 +609,7 @@ export default class Ancestry extends Identifiable {
 	get ancestry_ofFirst_visibleChild(): Ancestry {
 		const childAncestries = this.childAncestries;
 		const first = childAncestries[0]
-		if (controls.inRadialMode) {
+		if (show.inRadialMode) {
 			const g_paging = this.g_paging
 			const maybe = g_paging?.ancestry_atIndex(childAncestries);
 			if (!!maybe) {
@@ -888,7 +888,7 @@ export default class Ancestry extends Identifiable {
 	get points_right(): boolean {
 		const hasVisibleChildren = this.isExpanded && this.hasChildren;
 		const radial_points_right = this.g_widget?.reveal_isAt_right ?? true;
-		return controls.inRadialMode ? radial_points_right : !hasVisibleChildren;
+		return show.inRadialMode ? radial_points_right : !hasVisibleChildren;
 	}
 
 	get id_thing(): string {
@@ -932,7 +932,7 @@ export default class Ancestry extends Identifiable {
 		const hasParents = !pointsTo_child && this.count_ofParents > 0;
 		const isBidirectional = this.predicate?.isBidirectional ?? true;
 		const hasChildren = pointsTo_child && this.count_ofChilcren(true) > 0;
-		if (controls.inRadialMode) {
+		if (show.inRadialMode) {
 			return !isBidirectional && !this.isFocus && (hasParents || hasChildren || isBulkAlias);
 		}
 		return !isBidirectional && (hasChildren || isBulkAlias);

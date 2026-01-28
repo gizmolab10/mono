@@ -1,5 +1,5 @@
 
-import { e, k, hits, colors, S_Snapshot, controls, T_Hit_Target } from '../common/Global_Imports';
+import { e, k, hits, show, colors, S_Snapshot, T_Hit_Target } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 	//////////////////////////////////////////
@@ -110,7 +110,7 @@ export default class Styles {
 		if (has_widget_context && thing_color !== k.empty) {
 			if (ss.isEditing) {
 				border = `dashed ${thing_color} 1px`;
-			} else if (ss.isFocus && controls.inRadialMode) {
+			} else if (ss.isFocus && show.inRadialMode) {
 				border = `solid ${thing_color} 1px`;
 			} else {
 				border = border_style;

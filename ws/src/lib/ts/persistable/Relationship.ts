@@ -88,7 +88,7 @@ export default class Relationship extends Persistable {
 		const difference = Math.abs(order - newOrder);
 		if (difference > 0.001) {
 			this.orders[t_order] = newOrder;
-			x.w_relationship_order.set(Date.now());
+			x.w_order_changed_at.set(Date.now());
 			this.set_isDirty();
 		}
 	}

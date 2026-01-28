@@ -1,4 +1,4 @@
-import { k, u, show, Rect, Size, Point, debug, elements, controls, Ancestry } from '../common/Global_Imports';
+import { k, u, show, Rect, Size, Point, debug, elements, Ancestry } from '../common/Global_Imports';
 import { S_Widget, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
 import { T_Widget, T_Graph } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -71,7 +71,7 @@ export default class G_Widget {
 
 	private get t_widget(): T_Widget {
 		const isFocus = this.ancestry?.isFocus ?? false;
-		return controls.inRadialMode ? T_Widget.radial : isFocus ? T_Widget.focus : T_Widget.tree;
+		return show.inRadialMode ? T_Widget.radial : isFocus ? T_Widget.focus : T_Widget.tree;
 	}
 
 	get origin(): Point {
@@ -92,14 +92,14 @@ export default class G_Widget {
 	}
 
 	private layout_origin_ofTrunk() {
-		if (!!this.ancestry && controls.inTreeMode) {
+		if (!!this.ancestry && show.inTreeMode) {
 			this.origin_ofTrunk = this.g_line.rect.extent.offsetByXY(k.height.row, -8.6);
 			this.g_line.layout();
 		}
 	}
 
 	layout_necklaceWidget(rotated_origin: Point, reveal_isAt_right: boolean) {
-		if (controls.inRadialMode) {
+		if (show.inRadialMode) {
 			this.t_graph = T_Graph.radial;
 			this.location_within_necklace = rotated_origin;
 			this.reveal_isAt_right = reveal_isAt_right;
@@ -133,7 +133,7 @@ export default class G_Widget {
 	}
 
 	layout_each_bidirectional_generation_recursively(depth: number, visited: string[] = [], bidirectionals: G_TreeLine[] = []) {
-		if (controls.inTreeMode && get(show.w_show_related) && depth > 0) {
+		if (show.inTreeMode && get(show.w_show_related) && depth > 0) {
 			this.g_bidirectionalLines = [];
 			const more = this.layout_bidirectional_lines(bidirectionals);
 			const ancestry = this.ancestry;	
@@ -176,7 +176,7 @@ export default class G_Widget {
 		if (!!ancestry.thing) {
 			const dot_size = k.height.dot;
 			const show_reveal = this.showingReveal;
-			const inRadialMode = controls.inRadialMode;
+			const inRadialMode = show.inRadialMode;
 			const reveal_isAt_right = this.reveal_isAt_right;
 			const width_ofTitle = ancestry.thing.width_ofTitle;
 			const width_ofReveal_dot = show_reveal ? dot_size : 0;

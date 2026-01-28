@@ -21,7 +21,7 @@
 	const { w_grabs, w_s_title_edit, w_s_alteration, w_ancestry_forDetails } = x;
     const s_banner_hideable = details.s_banner_hideables_dict_byType[T_Detail.actions];
 	const s_cancel = elements.s_element_for($w_ancestry_forDetails, T_Hit_Target.cancel, k.empty);
-	let list_title = $w_ancestry_forDetails?.isExpanded && controls.inTreeMode ? 'hide list' : 'list';
+	let list_title = $w_ancestry_forDetails?.isExpanded && show.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();
 	let no_actions = k.nothing_to_show;
 	let actions_top = top + 3;
@@ -82,7 +82,7 @@
 
 	function update_button_titles(): void {
 		const ancestry = $w_ancestry_forDetails;
-		list_title = controls.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
+		list_title = show.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
 		button_titles = compute_button_titles();
 		setTimeout(() => reattachments++, 0);
 	}

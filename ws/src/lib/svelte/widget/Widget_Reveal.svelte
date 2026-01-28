@@ -49,7 +49,7 @@
 		s_reveal.handle_s_mouse = (s_mouse) => {
 			if (s_mouse.isDown) {
 				let focus_ancestry: Ancestry | null = null;
-				if (controls.inRadialMode) {
+				if (show.inRadialMode) {
 					focus_ancestry = ancestry;
 				} else if (ancestry.hasChildren || ancestry.thing.isBulkAlias) {
 					h.ancestry_toggle_expansion(ancestry);

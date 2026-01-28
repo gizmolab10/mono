@@ -1,8 +1,7 @@
-import { S_Items, T_Search, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
-import { g, h, debug, radial, busy } from '../common/Global_Imports';
+import { S_Items, T_Graph, T_Search, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
+import { g, h, busy, debug, radial, details, controls } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { get, writable, derived, type Readable } from 'svelte/store';
-import { details, controls } from '../common/Global_Imports';
 import type { S_Recent } from '../types/Types';
 import { show } from '../managers/Visibility';
 import { search } from '../managers/Search';
@@ -18,7 +17,7 @@ export default class S_UX {
 	w_s_alteration		   = writable<S_Alteration | null>();
 	w_rubberband_grabs	   = writable<Ancestry[]>([]);  // Live grabs during rubberband (bypasses history)
 	w_thing_title		   = writable<string | null>();
-	w_relationship_order   = writable<number>(0);
+	w_order_changed_at	   = writable<number>(0);
 	w_thing_fontFamily	   = writable<string>();
 
 	si_expanded			   = new S_Items<Ancestry>([]); 
@@ -30,11 +29,6 @@ export default class S_UX {
 	prior_focus!: Ancestry;
 
 	constructor() {
-		this.w_ancestry_focus = derived(
-			this.si_recents.w_item,
-			(item) => item?.focus ?? h?.rootAncestry
-		);
-
 		this.w_si_grabs = derived(
 			[this.si_recents.w_item],
 			([recent]) => {
@@ -62,6 +56,14 @@ export default class S_UX {
 				}
 				return recent?.si_grabs?.index ?? 0;
 			}
+		);
+
+		this.w_ancestry_focus = derived(
+			[this.si_recents.w_item,
+				this.w_grabIndex,
+				show.w_t_graph,
+				this.w_grabs],
+			([item, index, mode, grabs]) => (/* (mode == T_Graph.radial && !!grabs) ? grabs[index ?? 0]?.parentAncestry :*/ item?.focus) ?? h?.rootAncestry
 		);
 
 		this.w_ancestry_forDetails = derived(
@@ -275,7 +277,7 @@ export default class S_UX {
 			if (grabbed.length == 0) {
 				grabbed.push(rootAncestry);
 			}
-			if (grabbed.length == 0 && controls.inTreeMode) {
+			if (grabbed.length == 0 && show.inTreeMode) {
 				grabbed = [rootAncestry];
 			} else {
 				h?.stop_alteration();

@@ -1,4 +1,4 @@
-import { c, e, k, p, u, hits, show, debug, g_graph_tree, g_graph_radial, signals, controls, features } from '../common/Global_Imports';
+import { c, e, k, p, u, hits, show, debug, g_graph_tree, g_graph_radial, signals, features } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { G_Widget, T_Graph, T_Preference } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
@@ -37,7 +37,7 @@ export default class Geometry {
 	}
 
 	layout() {
-		if (controls.inRadialMode) {
+		if (show.inRadialMode) {
 			g_graph_radial.layout();
 		} else {
 			g_graph_tree.layout();
@@ -66,7 +66,7 @@ export default class Geometry {
 	get rect_ofAllWidgets(): Rect { return u.get_rect_ofGraphDrawing_forAll_g_widgets(this.all_g_widgets); }
 
 	get all_g_widgets(): G_Widget[] {
-		if (controls.inRadialMode) {
+		if (show.inRadialMode) {
 			return g_graph_radial.visible_g_widgets;
 		} else {
 			return g_graph_tree.visible_g_widgets;

@@ -85,8 +85,8 @@
 		hits.delete_hit_target(s_widget);
 	});
 
-	$: showing_drag = (!ancestry.isFocus || !controls.inRadialMode) && (!ancestry.isRoot || controls.inRadialMode);
-	$: showing_reveal = (!ancestry.isFocus || !controls.inRadialMode) && (ancestry?.showsReveal_forPointingToChild(reveal_pointsTo_child));
+	$: showing_drag = (!ancestry.isFocus || !show.inRadialMode) && (!ancestry.isRoot || show.inRadialMode);
+	$: showing_reveal = (!ancestry.isFocus || !show.inRadialMode) && (ancestry?.showsReveal_forPointingToChild(reveal_pointsTo_child));
 
 	$: {
 		const _ = `${$w_thing_color}
@@ -99,25 +99,11 @@
 		const reactives = `${$w_s_title_edit?.t_edit}:::${u.descriptionBy_titles($w_grabs)}`;
 		if (reactives != trigger && !!ancestry && s_widget.detect_ifState_didChange) {
 			trigger = reactives;
-			if (!(controls.inRadialMode && ancestry.isFocus)) {
+			if (!(show.inRadialMode && ancestry.isFocus)) {
 				g_widget.layout();
 			}
 			final_layout();
 			s_component.debug_log_connection_state('GRABBED STATE CHANGED');
-		}
-	}
-
-	$: if (mouse_up_count != $w_count_mouse_up) {
-		mouse_up_count = $w_count_mouse_up;
-		// Only handle if hover is on THIS widget and drag dot didn't just handle it
-		const hoverIsOnThisWidget = $w_s_hover?.id === s_widget.id;
-		if (hoverIsOnThisWidget && !x.dragDotJustClicked) {
-			// Don't grab if we're waiting for a double-click - let the deferred single-click handle it
-			const waitingForDoubleClick = hits.pending_singleClick_target === s_widget && 
-				hits.click_timer.hasTimer_forID(T_Timer.double);
-			if (!waitingForDoubleClick) {
-				handle_mouseUp();
-			}
 		}
 	}
 
@@ -140,12 +126,7 @@
 	}
 
 	function z_index(): number {
-		return (controls.inRadialMode && ancestry.isFocus) ? T_Layer.frontmost : T_Layer.widget;
-	}
-
-	function handle_mouseUp() {
-		ancestry?.grab_forShift($w_shift_on_mouse_up);
-		update_style();
+		return (show.inRadialMode && ancestry.isFocus) ? T_Layer.frontmost : T_Layer.widget;
 	}
 
 	function layout_maybe() {
@@ -210,8 +191,8 @@
 				height: {height}px;
 				position: absolute;
 				width: {width_ofWidget}px;
-				z-index: {(controls.inRadialMode && ancestry.isFocus) ? T_Layer.frontmost : T_Layer.widget};
-				top: {(controls.inRadialMode && ancestry.isFocus) ? -0.5 : -3}px;'>
+				z-index: {(show.inRadialMode && ancestry.isFocus) ? T_Layer.frontmost : T_Layer.widget};
+				top: {(show.inRadialMode && ancestry.isFocus) ? -0.5 : -3}px;'>
 			<Widget_Title
 				s_title = {s_title}
 				fontSize = {k.font_size.common}px/>

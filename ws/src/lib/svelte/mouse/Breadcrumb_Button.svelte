@@ -68,12 +68,15 @@
 
 	function handle_s_mouse(s_mouse) {
 		if (!!h && h.hasRoot && s_mouse.isDown) {
+			const event = s_mouse.event;
 			search.deactivate();
-			ancestry.grabOnly();
-			// if (ancestry.ancestry_assureIsVisible()) {
-			// 	g.ancestry_place_atCenter(ancestry);
-			// }
-			// g.grand_build();
+			if (event.metaKey) {
+				ancestry.becomeFocus();
+			} else if (event.shiftKey) {
+				ancestry.grab();
+			} else {
+				ancestry.grabOnly();
+			}
 		}
 	}
 

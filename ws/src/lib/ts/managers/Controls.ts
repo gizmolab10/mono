@@ -5,8 +5,6 @@ import { get } from 'svelte/store';
 class Controls {
 	
 	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }
-	get inTreeMode(): boolean { return get(show.w_t_graph) == T_Graph.tree; }
-	get inRadialMode(): boolean { return get(show.w_t_graph) == T_Graph.radial; }
 	showHelp_home() { this.open_tabFor(c.isServerLocal ? k.help_url.local : k.help_url.remote); }
 
 	togglePopupID(id: T_Control) {

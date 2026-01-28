@@ -117,7 +117,7 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.8, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (controls.inRadialMode ? 5.2 : 4.5) * (reveal_isAt_right ? -1 : 1);
+				const x = (show.inRadialMode ? 5.2 : 4.5) * (reveal_isAt_right ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, Point.x(x));
 			}
 		}

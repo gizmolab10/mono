@@ -1,6 +1,6 @@
 import { T_Create, T_Startup, T_Alteration, T_File_Extension, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { g, k, p, u, x, busy, show, debug, controls, features, databases } from '../common/Global_Imports';
+import { g, k, p, u, x, busy, show, debug, features, databases } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
 import { Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
 import DB_Common, { DB_Name, T_Database } from '../database/DB_Common';
@@ -871,7 +871,7 @@ export class Hierarchy {
 	}
 
 	async ancestry_toggle_expansion(ancestry: Ancestry) {
-		if (controls.inRadialMode) {
+		if (show.inRadialMode) {
 			// kludge for now? in radial mode we need to do a bit extra for our user
 			await this.ancestry_rebuild_persistentMoveRight(ancestry, !ancestry.isExpanded, false, false, false, false);
 			g.grand_build();
@@ -898,7 +898,7 @@ export class Hierarchy {
 			if (!!childAncestry) {
 				childAncestry.grabOnly();
 				childAncestry.order_setTo(order);
-				if (!parentAncestry.isRoot && (controls.inRadialMode || !childAncestry.isVisible)) {
+				if (!parentAncestry.isRoot && (show.inRadialMode || !childAncestry.isVisible)) {
 					parentAncestry.becomeFocus();
 				}
 				g.grand_sweep();
@@ -959,7 +959,7 @@ export class Hierarchy {
 			await this.db.hierarchy_fetch_forID(thing.title)
 			this.relationships_refreshKnowns();
 			const childAncestries = ancestry?.childAncestries;
-			const isRadialMode = controls.inRadialMode;
+			const isRadialMode = show.inRadialMode;
 			if (!!childAncestries && childAncestries.length > 0) {
 				if (!!grab) {
 					childAncestries[0].grabOnly()
@@ -1061,13 +1061,13 @@ export class Hierarchy {
 		const newGrabIsFocus = newGrabAncestry?.isFocus ?? false;
 		let graph_needsSweep = false;
 		if (RIGHT) {
-			if (!ancestry.hasRelevantRelationships && controls.inTreeMode) {
+			if (!ancestry.hasRelevantRelationships && show.inTreeMode) {
 				return;
 			} else {
 				if (SHIFT) {
 					newGrabAncestry = null;
 				}
-				if (controls.inTreeMode) {
+				if (show.inTreeMode) {
 					const depth_limit = get(g.w_depth_limit);
 					graph_needsSweep = ancestry.expand();
 					if (!!newGrabAncestry && !newGrabAncestry.isVisible_accordingTo_depth_within_focus_subtree) {
@@ -1107,7 +1107,7 @@ export class Hierarchy {
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			const newFocusIsVisible = newFocusAncestry?.isVisible ?? false;
-			if (!newGrabIsFocus && !!newFocusAncestry && (controls.inTreeMode || RIGHT || !newFocusIsVisible)) {
+			if (!newGrabIsFocus && !!newFocusAncestry && (show.inTreeMode || RIGHT || !newFocusIsVisible)) {
 				const newFocusIsGrabbed = newFocusAncestry.equals(newGrabAncestry);
 				const becomeFocus = (!SHIFT || newFocusIsGrabbed) && (RIGHT || !newFocusIsVisible);
 				if (show.isDynamic_focus && becomeFocus && newFocusAncestry.becomeFocus()) {

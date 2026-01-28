@@ -69,6 +69,8 @@ export class Visibility {
 	get children_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.children); }
 	get related_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.related); }
 	get parent_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.parents); }
+	get inRadialMode(): boolean { return get(show.w_t_graph) == T_Graph.radial; }
+	get inTreeMode(): boolean { return get(show.w_t_graph) == T_Graph.tree; }
 
 	toggle_show_other_databases() {
 		const other_databases = !get(this.w_show_other_databases)

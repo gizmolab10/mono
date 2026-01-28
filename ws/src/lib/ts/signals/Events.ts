@@ -1,5 +1,5 @@
-import { c, g, h, k, u, x, hits, g_graph_tree, debug, search, radial, colors } from '../common/Global_Imports';
-import { details, signals, controls, elements, features } from '../common/Global_Imports';
+import { details, signals, controls, elements, features, g_graph_tree } from '../common/Global_Imports';
+import { c, g, h, k, u, x, hits, show, debug, search, radial, colors } from '../common/Global_Imports';
 import { T_File_Extension, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
@@ -224,7 +224,9 @@ export class Events {
 				h.ancestry_alter_connectionTo_maybe(ancestry);
 				g.grand_build();
 				return;
-			} else if (!shiftKey) {
+			} else if (shiftKey) {
+				ancestry.toggleGrab();
+			} else {
 				let focus = ancestry;
 				if (ancestry.isFocus && !!ancestry.parentAncestry) {
 					focus = ancestry.parentAncestry;
@@ -233,10 +235,6 @@ export class Events {
 					g.grand_build();
 					return;
 				}
-			} else if (shiftKey || ancestry.isGrabbed) {
-				ancestry.toggleGrab();
-			} else {
-				ancestry.grabOnly();
 			}
 			g.layout();
 		}
@@ -379,7 +377,7 @@ export class Events {
 			const no_siblings = !ancestry.hasSiblings;
 			const is_root = ancestry.isRoot;
 			const a = this.actions;
-			const disable_revealConceal = no_children || is_root || (controls.inRadialMode && ancestry.isFocus);
+			const disable_revealConceal = no_children || is_root || (show.inRadialMode && ancestry.isFocus);
 			switch (t_action) {
 				case T_Action.browse:			switch (column) {
 					case a.browse.left:				return is_root;

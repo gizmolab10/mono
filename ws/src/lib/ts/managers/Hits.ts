@@ -1,4 +1,4 @@
-import { e, Point, radial, controls } from '../common/Global_Imports';
+import { e, show, Point, radial } from '../common/Global_Imports';
 import { S_Mouse, S_Hit_Target } from '../common/Global_Imports';
 import { T_Drag, T_Hit_Target } from '../common/Global_Imports';
 import Mouse_Timer, { T_Timer } from '../signals/Mouse_Timer';
@@ -122,7 +122,7 @@ export default class Hits {
 				}
 			});
 		}
-		if (controls.inRadialMode) {
+		if (show.inRadialMode) {
 			e.throttle('radial_drag', 80, () => {
 				radial.handle_mouse_drag();
 			});
