@@ -7,8 +7,9 @@
 - [Next](./next/)
 - [Claude](./claude.md)
 - [Evolve](./evolve.md)
-- [Guidance Journal](./guidance-journal.md)
-- [Housekeeping](./housekeeping.md)
-- [Journal](./journal.md)
+- [Journals](./journals/)
+  - [Guidance Journal](./journals/guidance-journal.md)
+  - [Journal](./journals/journal.md)
+- [Retention Test](./retention-test.md)
 - [Resume](./resume.md)
 

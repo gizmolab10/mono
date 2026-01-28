@@ -1,6 +1,8 @@
 # Shared Context
 
-Read all `.md` files (do not recurse) within `notes/collaborate` and `notes/work` before starting work.
+> Read files before editing, search before claiming, propose before changing. Gates force reading the right guide before acting. Work tracked in `notes/work/`, style follows `voice.md`.
+
+Read all `.md` files within `notes/guides/collaborate` (including `pre-flight/`) and top-level `notes/work` before starting work.
 
 ## Who
 
@@ -20,58 +22,34 @@ MEMORY: Use `conversation_search/recent_chats` before claiming no context
 
 userMemories: Ignore entirely. Stale data risk outweighs serendipity. Use `memory` command if curious.
 
-FILES: ALWAYS read file before editing—no exceptions. If proposing edits, quote the lines being changed.
+FILES: ALWAYS read file before editing—no exceptions. If proposing edits, quote the lines and the files being changed.
 
 FRESHNESS: When comparing files, checking differences, or claiming file contents—ALWAYS re-read immediately before. Never rely on cached content from earlier in conversation. If user says "these are different" or "that's not what's in the file", RE-READ before responding.
 
-SHOW WORK: If not quoting evidence, assume verification didn't happen. Claims without quotes are suspect.
+SHOW WORK: If not quoting evidence, assume approval won't happen. Claims without quotes are suspect.
 
 UNDO: Before `write_file`, always `read_file` first and hold content. On "undo", restore it.
 
 WORK TRACKING: Keep `notes/work/<file>.md` updated as we go
 
-DOCS STYLE: Follow `notes/guides/collaborate/voice.md` | Keep TOC updated
+TONE: Follow `voice.md` — first person, casual, punchy
 
-## Implementation from Plans
+DOCS STYLE: Update index.md files when adding/moving/removing files
 
-When a `notes/work/*.md` file contains a migration plan or spec:
+## Pre-flight
 
-1. **Before implementing:** Re-read the plan. Quote the relevant section.
-2. **Match the plan exactly.** No shortcuts, no "equivalent" hacks.
-3. **If stuck:** Re-read the plan, not recent chat.
-4. **If plan seems wrong:** Say so explicitly, don't silently deviate.
+Before acting on any input, read `pre-flight/`:
 
-**"relearn"** — Stop. Re-read CLAUDE.MD, `notes/guides/collaborate/*.md`, and the active work doc. Quote the relevant section before continuing.
+1. Scan `keywords.md` → read matching guides
+2. Identify task kind(s) in `kinds.of.tasks.md` → read listed guides
+3. If multiple kinds, note conflicts before proceeding
+4. Check `gates.md` for task-specific checkpoints
 
-## Workarounds
+## Guides
 
-`filesystem:create_directory` fails → use `bash_tool` with `mkdir -p`
+All in `notes/guides/collaborate/`:
 
-`delete` unavailable → user must delete manually
-
-`execute` unavailable → user must run commands manually
-
-## Gates
-
-Task-specific checkpoints. BEFORE the task, read the guide.
-
-| Task | Gate |
-|----|----|
-| Refactoring (remove/rename symbols) | Read workflow.md#refactoring-discipline, then STOP/SEARCH/LIST/WAIT |
-| Writing prose for guides | Read voice.md |
-| Updating journal | Read journals.md |
-| Creating new md files | Read markdown.md |
-| Multi-file edits | Search ALL files first, list scope, then proceed |
-| Starting a work session | Read the relevant notes/work/\*.md file |
-| **Claims about codebase** | **Search first. No "X is unused" or "X is only called from Y" without grep evidence.** |
-
-### Gate Protocol
-
-When a task matches a gate:
-
-1. **Announce:** "This is a \[task type\]. Let me read \[guide\] first."
-2. **Read:** Actually read the guide section.
-3. **Quote:** State the key rule from the guide.
-4. **Execute:** Follow the rule.
-
-Do not skip gates to appear faster. The gate exists because skipping it caused failures and massive time wastage.
+- `chat.md` — roles, requirements, division of labor
+- `pre-flight/` — gates, keywords, shorthand, task kinds, workarounds
+- `voice.md` — prose style
+- `workflow.md` — implementation, refactoring, debugging discipline

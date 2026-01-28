@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/hub-app.refinements.md",
+                "file": "notes/guides/collaborate/pre-flight/shorthand.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "hub-app.refinements"
+              "title": "shorthand"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/work/hub-app.refinements.md",
+                "file": "notes/guides/collaborate/pre-flight/shorthand.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of hub-app.refinements"
+              "title": "Outline of shorthand"
             }
           }
         ],
@@ -186,42 +186,42 @@
   },
   "active": "9650ce98a259afdd",
   "lastOpenFiles": [
-    "ws/notes/work/deliverables.md",
+    "notes/work/retention-test.md",
+    "CLAUDE.MD",
+    "notes/guides/collaborate/pre-flight/workarounds.md",
+    "notes/guides/collaborate/pre-flight/index.md",
+    "notes/guides/collaborate/build.md",
+    "notes/guides/develop/build.md",
+    "notes/guides/collaborate/pre-flight/shorthand.md",
+    "notes/guides/collaborate/pre-flight/kinds.of.tasks.md",
+    "notes/guides/collaborate/pre-flight/keywords.md",
+    "notes/guides/collaborate/pre-flight/gates.md",
+    "notes/guides/collaborate/pre-flight",
+    "notes/guides/collaborate/gates.md",
+    "notes/guides/collaborate/workarounds.md",
+    "notes/guides/collaborate/keywords.md",
+    "notes/guides/collaborate/kinds.of.tasks.md",
+    "notes/guides/collaborate/index.md",
     "notes/work/hub-app.refinements.md",
+    "notes/work/kinds.of.tasks.md",
+    "notes/work/keywords.md",
+    "notes/guides/collaborate/tldr.md",
+    "notes/work/journals/index.md",
+    "notes/work/journals/guidance-journal.md",
+    "notes/work/journals/journal.md",
+    "notes/work/journals",
+    "notes/work/done/migrations.md",
+    "ws/notes/work/deliverables.md",
     "ws/notes/work/next/crazy/index.md",
     "logs/update-docs.error.log",
     "ws/notes/work/next/crazy/ethernet.md",
-    "ws/notes/work/next/crazy/book.md",
-    "ws/notes/work/next/crazy/ai-ux-spider-guide.md",
     "ws/notes/work/next/crazy",
-    "ws/notes/work/done/other/bad.tree.center.md",
-    "ws/notes/work/done/other/startup.md",
-    "ws/notes/work/done/other/relocate.controls.md",
-    "ws/notes/work/done/other/recents.md",
-    "ws/notes/work/done/other/index.md",
-    "ws/notes/work/done/other/hits-detection.md",
-    "ws/notes/work/done/other/focus.md",
     "ws/notes/work/done/other",
-    "ws/notes/work/done/migrations/mono/index.md",
-    "ws/notes/work/done/migrations/mono/next.md",
-    "ws/notes/work/done/migrations/mono/steppers.md",
-    "ws/notes/work/done/migrations/mono/proposal.md",
-    "ws/notes/work/done/migrations/mono/combined.md",
     "ws/notes/work/done/migrations/mono",
-    "ws/notes/work/done/migrations/focus/index.md",
-    "ws/notes/work/done/migrations/focus/grow-shrink.md",
-    "ws/notes/work/done/migrations/focus/focus.md",
     "ws/notes/work/done/migrations/focus",
-    "ws/notes/work/done/migrations/breadcrumbs/layout.md",
-    "ws/notes/work/done/migrations/breadcrumbs/index.md",
-    "ws/notes/work/done/migrations/breadcrumbs/breadcrumbs.md",
-    "ws/notes/work/done/migrations/breadcrumbs/breadcrumbs re-compositioon.md",
-    "ws/notes/work/done/migrations/breadcrumbs/banners.md",
     "ws/notes/work/done/migrations/breadcrumbs",
     "ws/notes/work/done/migrations/breadcrumbs-migration",
     "ws/notes/work/done/migrations/mono-migration",
-    "ws/notes/work/done/migrations/focus-migration",
-    "ws/notes/work/done/migrations",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

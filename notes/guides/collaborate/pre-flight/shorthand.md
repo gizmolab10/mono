@@ -43,12 +43,13 @@ Short commands and abbreviations for working with collaborator.
 
 ## Abbreviations
 
-| Abbrev | Meaning |
-|----|----|
-| `cb` | Use checkboxes for this |
-| `m` | Milestone |
-| `m<#>` | Milestone # |
-| `ni` | No improvement, try something different |
+| Abbrev | Meaning                                 |
+| ------ | --------------------------------------- |
+| `cb`   | Use checkboxes for this                 |
+| `m`    | Milestone                               |
+| `m<#>` | Milestone #                             |
+| `ni`   | No improvement, try something different |
+| `pac`  | pros and cons                           |
 
 ## Update Accordingly
 
