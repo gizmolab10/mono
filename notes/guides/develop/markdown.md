@@ -84,3 +84,11 @@ More content.
 - **Local + global view**: Each section has detailed context; the summary provides a scannable overview
 - **Anchor stability**: Real headings as anchors keep links predictable
 - **Explicit origin**: `From [#heading]` makes it clear where each item came from
+
+## Small, Composable Pieces
+
+Files stay focused. It might be a class, it might be a concern.
+
+When something grows too big, split it. And, jeez, the fewer the better. Shrink, evaporate, snip.
+
+Lessons learned that are universal get promoted to shared guides.

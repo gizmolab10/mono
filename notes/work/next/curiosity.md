@@ -1,0 +1,3 @@
+- [ ] i want to explore giving collaborator curiosity
+- [ ] about what?
+- [ ] design

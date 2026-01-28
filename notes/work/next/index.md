@@ -2,8 +2,8 @@
 
 ## Contents
 
-- [Cleanup](./cleanup.md)
 - [Commoditize](./commoditize.md)
+- [Curiosity](./curiosity.md)
 - [Pacing](./pacing.md)
-- [Simplicity](./simplicity.md)
+- [Personas](./personas.md)
 

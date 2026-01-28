@@ -7,15 +7,12 @@ Reflections on why this workflow works and how it differs from typical AI intera
 This workflow is a good use of AI capabilities.
 
 **What's working:**
-- The guides encode decisions once, Claude applies them forever. No re-explaining style preferences, no drift.
-- Work tracking survives sessions. Read `index.md`, know exactly where we are.
-- "Execute without asking" removes friction. You trust Claude to act, you course-correct when needed.
-- Documentation is dual-purpose — helps future-you *and* brings Claude up to speed instantly.
-
-**What Claude is good at here:**
-- Bulk consistency (fixing all path references when you restructure)
-- Pattern application (milestone template → actual milestone files)
-- Never forgetting what's in the guides
+- Guides encode decisions once, Claude applies them forever — no re-explaining, no drift
+- Work tracking survives sessions — read the file, know exactly where we are
+- "Execute without asking" removes friction — trust Claude to act, course-correct when needed
+- Documentation is dual-purpose — helps future-you *and* brings Claude up to speed instantly
+- Bulk consistency — Claude fixes all path references when you restructure
+- Pattern application — milestone template → actual milestone files
 - Drafting content you can massage rather than starting from blank
 
 **What you're still doing:**
@@ -43,3 +40,23 @@ What's less common:
 This feels more like pair programming methodology than prompt engineering. An institutional memory system that happens to include an AI.
 
 The pieces are obvious in hindsight, but rarely assembled this way.
+
+## The Philosophy Underneath
+
+### Let it develop naturally
+
+i like that we let structure emerge, like a journey without a map. Start with nice pithy articulation of raw curiosity. Travel carefully. The structure comes at the end.
+
+Work files are just that — things we need to know and things we did. Guides are the maps of the turf, what's been learned about it. The guides are condensed out of the work, things like "oh, shit, we need to do this and not that."
+
+### Dual purpose
+
+Documentation has two audiences: me, a lot later and rather forgetful, and AI the amnesiac.
+
+Work tracking is the other side of the coin. Focus, details, decisions. Later, read the file, know exactly where we are. My brain feels better just saying this.
+
+### Friction into feature
+
+We describe our process, too. Like, "ugh, this thing is badly broken." Pause and scratch noggin. Often enough something cool settles into play.
+
+Patterns come from pain — why else remember them?

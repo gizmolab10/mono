@@ -13,6 +13,10 @@ See [chat.md](chat.md) for how we interact — roles, requirements, and the divi
 - `notes/work/` — ALL work is recorded here, as we go
 - `CLAUDE.MD` — entry point, tells Claude where to start
 
+## One Truth, One Place
+
+Guides encode decisions, grouped by topic. CLAUDE.MD is the entry point, the large scale map. Don't duplicate — reference.
+
 ## How we Work Together
 
 ### Approval Gate

@@ -34,6 +34,17 @@ Start with what pissed me off or what i needed, not with the solution.
 - ❌ "This document describes the paging system."
 - ❌ "The color management system provides centralized state."
 
+### Concise AND Complete
+
+Every word earns its place AND nothing essential is missing.
+
+- Problem first, always. Pinch points, yearnings
+- Research, plan, details, verify
+- Then the solution, punchy
+- Interesting details if they are spicy
+
+Lose the filler, love the flavor.
+
 ### Casual Language
 
 Write like i'm explaining it to someone over coffee. Contractions, informal words, personality.

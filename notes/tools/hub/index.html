@@ -314,6 +314,34 @@
       margin-bottom: 4px;
     }
 
+    .title-wrapper {
+      position: relative;
+      display: inline-block;
+      flex: 1;
+    }
+
+    .deploy-tooltip {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      white-space: pre;
+      z-index: 100;
+      margin-top: 8px;
+      font-family: monospace;
+      line-height: 1.6;
+    }
+
+    .title-wrapper:hover .deploy-tooltip {
+      display: block;
+    }
+
     /* Side-A/Side-B swap support */
     .side-b {
       display: flex;
@@ -331,7 +359,10 @@
     <div class="title-row">
       <div class="title-box swapped">
         <button class="action side-a" id="btn-dns">DNS<span class="badge">N</span></button>
-        <h1 class="middle">Work Sites</h1>
+        <div class="title-wrapper">
+          <h1 class="middle">Work Sites</h1>
+          <div class="deploy-tooltip" id="deploy-tooltip">Loading...</div>
+        </div>
         <div class="side-b">
           <button class="action" id="btn-start" data-tooltip="restart all local dev servers">localhosts<span
               class="badge">esc</span></button>
@@ -731,6 +762,7 @@
     let shouldClearConsole = false;
     let activeConsoleKey = null; // 'restart', 'rebuild', or 'deploy'
     let lastDeployStatus = null; // Track last known deploy status
+    let cachedDeployData = null; // Cache for tooltip
 
     function setConsoleOutput(key, text) {
       consoleOutput.textContent = text;
@@ -853,6 +885,51 @@
     }
 
     // === Deploy Status Polling ===
+    function formatRelativeTime(isoString) {
+      if (!isoString) return '';
+      const date = new Date(isoString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffDays = Math.floor(diffHours / 24);
+      
+      if (diffMins < 1) return 'just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      return `${diffDays}d ago`;
+    }
+
+    function updateDeployTooltip(data) {
+      const tooltip = document.getElementById('deploy-tooltip');
+      if (!tooltip || !data) return;
+      
+      const lines = [];
+      const order = ['ws', 'di', 'ws-docs', 'di-docs', 'mono-docs'];
+      
+      for (const site of order) {
+        const status = data[site];
+        if (!status) continue;
+        
+        let stateStr = status.state || 'unknown';
+        let timeStr = '';
+        
+        if (status.state === 'ready') {
+          stateStr = '✓ ready';
+          timeStr = formatRelativeTime(status.published_at);
+        } else if (status.state === 'building') {
+          stateStr = '⋯ building';
+        } else if (status.state === 'error') {
+          stateStr = '✗ error';
+        }
+        
+        const line = timeStr ? `${site}: ${stateStr} (${timeStr})` : `${site}: ${stateStr}`;
+        lines.push(line);
+      }
+      
+      tooltip.textContent = lines.join('\n');
+    }
+
     function pollDeployStatus() {
       // Don't poll if restart or rebuild is in progress
       if (pollInterval || restartPollInterval) return;
@@ -860,6 +937,10 @@
       fetch(`http://localhost:${ports.dispatcher}/deploy-status`)
         .then(res => res.json())
         .then(data => {
+          // Update tooltip with latest data
+          cachedDeployData = data;
+          updateDeployTooltip(data);
+          
           const building = [];
           const ready = [];
           const errors = [];

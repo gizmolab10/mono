@@ -1,5 +1,50 @@
 # Resume
 
+**January 28, 2026**
+
+## Guide System Overhaul
+
+Major reorganization of collaboration guides and CLAUDE.MD.
+
+**Pre-flight folder created** — `notes/guides/collaborate/pre-flight/`:
+- [x] `gates.md` — extracted from CLAUDE.MD
+- [x] `keywords.md` — new, word → guide mapping
+- [x] `kinds.of.tasks.md` — new, task type → guides + conflicts
+- [x] `shorthand.md` — moved from collaborate/
+- [x] `workarounds.md` — extracted from CLAUDE.MD
+- [x] `index.md` — numbered reading order
+
+**CLAUDE.MD slimmed** from 83 → 57 lines:
+- [x] Added synopsis blockquote at top
+- [x] Pre-flight section points to folder
+- [x] Guides list simplified
+- [x] TONE separated from DOCS STYLE
+- [x] Clarified "including pre-flight/" for recursion
+
+**Workflow.md cleaned**:
+- [x] Added "relearn" command
+- [x] Extracted Build & Deploy to `develop/build.md`
+
+**Other moves**:
+- [x] `housekeeping.md` → `done/migrations.md`
+- [x] `journal.md`, `guidance-journal.md` → `journals/` folder
+- [x] `evolve.md` content merged into `develop/aesthetics.md` Process section
+- [x] `claude.md` renamed to `personas.md`
+
+**Stale content removed**:
+- [x] "`execute` unavailable" workaround (bash_tool exists)
+
+## Retention Test
+
+Created `notes/work/retention-test.md` — 5 probes to measure guide effectiveness across sessions:
+1. `pac` shorthand
+2. Refactoring gate (STOP/SEARCH/LIST/WAIT)
+3. Multi-file gate (search references first)
+4. Voice (first person, casual, punchy)
+5. Freshness (re-read before claiming)
+
+---
+
 **January 18, 2026**
 
 ## Checkbox Plugin
