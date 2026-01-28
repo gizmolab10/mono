@@ -41,7 +41,12 @@ class FixLinks {
   }
 
   private findBuildFile(): string {
-    // Check sites/docs first (mono layout)
+    // Check current working directory first (for project-specific builds like ws/, di/)
+    const cwdBuild = path.join(process.cwd(), 'vitepress.build.txt');
+    if (fs.existsSync(cwdBuild)) {
+      return cwdBuild;
+    }
+    // Check sites/docs (mono layout)
     const sitesDocsBuild = path.join(this.repoRoot, 'sites', 'docs', 'vitepress.build.txt');
     if (fs.existsSync(sitesDocsBuild)) {
       return sitesDocsBuild;
@@ -133,6 +138,10 @@ class FixLinks {
 
     const replacements = new Map<string, string | null>();
     
+    // Use cwd/notes for project-specific notes, fall back to repoRoot/notes
+    const cwdNotes = path.join(process.cwd(), 'notes');
+    const notesDir = fs.existsSync(cwdNotes) ? cwdNotes : path.join(this.repoRoot, 'notes');
+    
     for (const [targetPath, links] of linksByTarget.entries()) {
       // Extract just the filename from the target path
       const filename = path.basename(targetPath).replace(/\.md$/, '') + '.md';
@@ -143,7 +152,6 @@ class FixLinks {
         console.log(`  Referenced in ${links.length} location(s)`);
       }
 
-      const notesDir = path.join(this.repoRoot, 'notes');
       const matches = LinkFinder.findFilesByName(notesDir, filename);
 
       if (matches.length === 0) {
@@ -173,7 +181,7 @@ class FixLinks {
     }
 
     console.log('\nUpdating markdown files...');
-    const markdownFiles = this.findMarkdownFiles(path.join(this.repoRoot, 'notes'));
+    const markdownFiles = this.findMarkdownFiles(notesDir);
     
     for (const mdFile of markdownFiles) {
       const updated = MarkdownParser.updateLinks(mdFile, replacements, this.repoRoot);

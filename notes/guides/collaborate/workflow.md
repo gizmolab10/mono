@@ -139,3 +139,17 @@ The pieces are obvious in hindsight, but rarely assembled this way.
 
 See [philosophy.md](motive.md) for reflections on why this works.
 
+## Build & Deploy
+
+**Netlify base directory:** When set, all paths in `netlify.toml` are relative to it. The build command runs from there.
+
+**VitePress srcDir:** Relative to where vitepress runs (the directory containing `.vitepress/`), not relative to `.vitepress/config.mts`.
+
+**Gitignore wildcards:** `**/` prefix matches at any depth. Useful for `.vitepress/cache/` that could exist in multiple locations.
+
+**Build output location:** `yarn docs:build > file.txt` writes relative to where the shell runs, not where vitepress runs. Need to explicitly set the output path.
+
+## Glob Pattern Gotcha
+
+**srcExclude patterns:** VitePress uses glob patterns like `**/node_modules/**`. When parsing these in custom tools, strip both the `**/` prefix AND `/**` suffix to get the directory name. Otherwise `**/node_modules/**` won't match `node_modules`.
+

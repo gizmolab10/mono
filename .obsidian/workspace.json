@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "42f1bfe4a6aa8ae5",
+        "id": "40400ca0bd177cee",
         "type": "tabs",
         "children": [
           {
-            "id": "f71f75e9772e4308",
+            "id": "9650ce98a259afdd",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ws/notes/work/deliverables.md",
+                "file": "notes/work/hub-app.refinements.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "deliverables"
+              "title": "hub-app.refinements"
             }
           }
         ]
@@ -78,8 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 316.5,
-    "collapsed": true
+    "width": 316.5
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -157,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ws/notes/work/deliverables.md",
+                "file": "notes/work/hub-app.refinements.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of deliverables"
+              "title": "Outline of hub-app.refinements"
             }
           }
         ],
@@ -185,43 +184,44 @@
       "bases:Create new base": false
     }
   },
-  "active": "f71f75e9772e4308",
+  "active": "9650ce98a259afdd",
   "lastOpenFiles": [
-    "logs/update-docs.error.log",
-    "ws/notes/work/migration/index.md",
-    "ws/notes/work/migration/next.md",
-    "ws/notes/work/migration/proposal.md",
-    "ws/notes/work/migration/combined.md",
     "ws/notes/work/deliverables.md",
-    "ws/notes/work/migration",
-    "ws/notes/work/migration/steppers.md",
-    "ws/notes/work/next/amnesia.md",
-    "ws/notes/work/done/hits-detection.md",
-    "ws/notes/work/done/startup.md",
-    "notes/work/done/tools-sites.md",
-    "notes/philosophy/index.md",
-    "ws/vite.config.js.timestamp-1769457764542-cc888288a85a.mjs",
-    "ws/vite.config.js.timestamp-1769457584191-995e0006322aa.mjs",
-    "notes/tools/hub/start-hub.sh",
-    "notes/tools/scripts/index.md",
-    "notes/tools/scripts/validate-paths.ts",
-    "notes/tools/scripts/validate-paths.sh.bak",
-    "notes/tools/scripts/update-docs.sh",
-    "notes/tools/scripts/file-structure-check.sh",
-    "notes/tools/scripts/delete-netlify-deploys.sh",
-    "notes/tools/hub/index.md",
-    "notes/tools/index.md",
-    "notes/sites/index.md",
-    "notes/guides/index.md",
-    "notes/aside/index.md",
-    "notes/guides/tools/hub-app.md",
-    "notes/guides/tools/index.md",
-    "notes/guides/tools/single-line.md",
-    "notes/guides/setup/access.md",
-    "notes/work/done/class-lists.md",
-    "notes/guides/setup/netlify.md",
-    "notes/guides/develop/hub-app.md",
-    "notes/guides/test/testing.md",
+    "notes/work/hub-app.refinements.md",
+    "ws/notes/work/next/crazy/index.md",
+    "logs/update-docs.error.log",
+    "ws/notes/work/next/crazy/ethernet.md",
+    "ws/notes/work/next/crazy/book.md",
+    "ws/notes/work/next/crazy/ai-ux-spider-guide.md",
+    "ws/notes/work/next/crazy",
+    "ws/notes/work/done/other/bad.tree.center.md",
+    "ws/notes/work/done/other/startup.md",
+    "ws/notes/work/done/other/relocate.controls.md",
+    "ws/notes/work/done/other/recents.md",
+    "ws/notes/work/done/other/index.md",
+    "ws/notes/work/done/other/hits-detection.md",
+    "ws/notes/work/done/other/focus.md",
+    "ws/notes/work/done/other",
+    "ws/notes/work/done/migrations/mono/index.md",
+    "ws/notes/work/done/migrations/mono/next.md",
+    "ws/notes/work/done/migrations/mono/steppers.md",
+    "ws/notes/work/done/migrations/mono/proposal.md",
+    "ws/notes/work/done/migrations/mono/combined.md",
+    "ws/notes/work/done/migrations/mono",
+    "ws/notes/work/done/migrations/focus/index.md",
+    "ws/notes/work/done/migrations/focus/grow-shrink.md",
+    "ws/notes/work/done/migrations/focus/focus.md",
+    "ws/notes/work/done/migrations/focus",
+    "ws/notes/work/done/migrations/breadcrumbs/layout.md",
+    "ws/notes/work/done/migrations/breadcrumbs/index.md",
+    "ws/notes/work/done/migrations/breadcrumbs/breadcrumbs.md",
+    "ws/notes/work/done/migrations/breadcrumbs/breadcrumbs re-compositioon.md",
+    "ws/notes/work/done/migrations/breadcrumbs/banners.md",
+    "ws/notes/work/done/migrations/breadcrumbs",
+    "ws/notes/work/done/migrations/breadcrumbs-migration",
+    "ws/notes/work/done/migrations/mono-migration",
+    "ws/notes/work/done/migrations/focus-migration",
+    "ws/notes/work/done/migrations",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

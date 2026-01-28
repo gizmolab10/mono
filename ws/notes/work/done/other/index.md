@@ -7,8 +7,8 @@
 - [Migration](./migration/)
 - [Vitepress](./vitepress/)
 - [Bad.tree.center](./bad.tree.center.md)
-- [Claude.write](./claude.write.md)
-- [Ethernet](./ethernet.md)
-- [Filesystem](./filesystem.md)
+- [Claude.write](../ai/claude.write.md)
+- [Ethernet](../../next/crazy/ethernet.md)
+- [Filesystem](../ai/filesystem.md)
 - [Focus](./focus.md)
 

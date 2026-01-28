@@ -243,6 +243,10 @@ export class MarkdownParser {
       p = p.replace(/\.md$/, '');
       // Remove leading ./ 
       p = p.replace(/^\.?\//, '');
+      // Handle directory links: dir/ -> dir/index
+      if (p.endsWith('/')) {
+        p = p + 'index';
+      }
       // Normalize ../ sequences
       const parts = p.split('/');
       const normalized: string[] = [];

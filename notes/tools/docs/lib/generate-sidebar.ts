@@ -135,12 +135,17 @@ export class SidebarGenerator {
     
     // Skip excluded patterns
     for (const pattern of this.srcExclude) {
-      if (pattern.endsWith('/**')) {
-        const dirName = pattern.replace('/**', '');
-        if (name === dirName) {
-          return true;
-        }
-      } else if (name === pattern) {
+      // Handle glob patterns like '**/node_modules/**'
+      // Strip **/ prefix and /** suffix to get directory name
+      let dirName = pattern;
+      if (dirName.startsWith('**/')) {
+        dirName = dirName.slice(3);
+      }
+      if (dirName.endsWith('/**')) {
+        dirName = dirName.slice(0, -3);
+      }
+      
+      if (name === dirName) {
         return true;
       }
     }
