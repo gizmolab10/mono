@@ -260,16 +260,39 @@ export default defineConfig({
                       link: '/notes/guides/collaborate/journals'
                     },
                     {
-                      text: 'Shorthand',
-                      link: '/notes/guides/collaborate/shorthand'
-                    },
-                    {
                       text: 'Voice',
                       link: '/notes/guides/collaborate/voice'
                     },
                     {
                       text: 'Workflow',
                       link: '/notes/guides/collaborate/workflow'
+                    },
+                    {
+                      text: 'Pre Flight >',
+                      link: '/notes/guides/collaborate/pre-flight/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Gates',
+                          link: '/notes/guides/collaborate/pre-flight/gates'
+                        },
+                        {
+                          text: 'Keywords',
+                          link: '/notes/guides/collaborate/pre-flight/keywords'
+                        },
+                        {
+                          text: 'Kinds.of.tasks',
+                          link: '/notes/guides/collaborate/pre-flight/kinds.of.tasks'
+                        },
+                        {
+                          text: 'Shorthand',
+                          link: '/notes/guides/collaborate/pre-flight/shorthand'
+                        },
+                        {
+                          text: 'Workarounds',
+                          link: '/notes/guides/collaborate/pre-flight/workarounds'
+                        }
+                      ]
                     }
                   ]
                 },
@@ -281,6 +304,10 @@ export default defineConfig({
                     {
                       text: 'Aesthetics',
                       link: '/notes/guides/develop/aesthetics'
+                    },
+                    {
+                      text: 'Build',
+                      link: '/notes/guides/develop/build'
                     },
                     {
                       text: 'Css',
@@ -346,32 +373,16 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
-                  text: 'Claude',
-                  link: '/notes/work/claude'
-                },
-                {
-                  text: 'Evolve',
-                  link: '/notes/work/evolve'
-                },
-                {
-                  text: 'Guidance Journal',
-                  link: '/notes/work/guidance-journal'
-                },
-                {
-                  text: 'Housekeeping',
-                  link: '/notes/work/housekeeping'
-                },
-                {
-                  text: 'Hub App.refinements',
-                  link: '/notes/work/hub-app.refinements'
-                },
-                {
-                  text: 'Journal',
-                  link: '/notes/work/journal'
+                  text: 'Hub App Refinements',
+                  link: '/notes/work/hub-app-refinements'
                 },
                 {
                   text: 'Resume',
                   link: '/notes/work/resume'
+                },
+                {
+                  text: 'Retention Test',
+                  link: '/notes/work/retention-test'
                 },
                 {
                   text: 'Articles >',
@@ -401,6 +412,10 @@ export default defineConfig({
                       link: '/notes/work/done/class-lists'
                     },
                     {
+                      text: 'Cleanup',
+                      link: '/notes/work/done/cleanup'
+                    },
+                    {
                       text: 'Code',
                       link: '/notes/work/done/code'
                     },
@@ -419,6 +434,10 @@ export default defineConfig({
                     {
                       text: 'Jonathan Old',
                       link: '/notes/work/done/jonathan-old'
+                    },
+                    {
+                      text: 'Migrations',
+                      link: '/notes/work/done/migrations'
                     },
                     {
                       text: 'Monorepo',
@@ -512,25 +531,40 @@ export default defineConfig({
                   collapsed: true,
                 },
                 {
+                  text: 'Journals >',
+                  link: '/notes/work/journals/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Guidance Journal',
+                      link: '/notes/work/journals/guidance-journal'
+                    },
+                    {
+                      text: 'Journal',
+                      link: '/notes/work/journals/journal'
+                    }
+                  ]
+                },
+                {
                   text: 'Next >',
                   link: '/notes/work/next/',
                   collapsed: true,
                   items: [
                     {
-                      text: 'Cleanup',
-                      link: '/notes/work/next/cleanup'
-                    },
-                    {
                       text: 'Commoditize',
                       link: '/notes/work/next/commoditize'
+                    },
+                    {
+                      text: 'Curiosity',
+                      link: '/notes/work/next/curiosity'
                     },
                     {
                       text: 'Pacing',
                       link: '/notes/work/next/pacing'
                     },
                     {
-                      text: 'Simplicity',
-                      link: '/notes/work/next/simplicity'
+                      text: 'Personas',
+                      link: '/notes/work/next/personas'
                     }
                   ]
                 }

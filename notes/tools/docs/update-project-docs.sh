@@ -31,39 +31,116 @@ for arg in "$@"; do
   esac
 done
 
-# Progress display (single line, overwriting)
-# Also writes to status file for hub polling
-# If REBUILD_STATUS_FILE is set (from parent "all" call), use it and prefix with REBUILD_PROJECT
+# Progress display
+# Writes compact status to file for hub polling
+# Format: "{project} {step}/{total} {step-name}" with optional sub-progress
 STATUS_FILE=""
-PROJECT_PREFIX=""
+PROJECT_NAME=""
 
 if [ -n "$REBUILD_STATUS_FILE" ]; then
   STATUS_FILE="$REBUILD_STATUS_FILE"
-  PROJECT_PREFIX="$REBUILD_PROJECT: "
+  PROJECT_NAME="$REBUILD_PROJECT"
 fi
 
+# Translate VitePress output to simple status
+translate_vp_line() {
+  local line="$1"
+  case "$line" in
+    *"building client + server bundles..."*)
+      if [[ "$line" == *"✓"* ]]; then
+        echo "bundled"
+      else
+        echo "bundling"
+      fi
+      ;;
+    *"rendering pages..."*)
+      if [[ "$line" == *"✓"* ]]; then
+        echo "rendered"
+      else
+        echo "rendering"
+      fi
+      ;;
+    *"generating sitemap..."*)
+      echo "sitemap"
+      ;;
+    *"build error:"*)
+      echo "error"
+      ;;
+    *"Build failed"*)
+      echo "failed"
+      ;;
+    *"built in"*)
+      echo "done"
+      ;;
+    *"dead links:"*)
+      # Pass through our own count message
+      echo "$line"
+      ;;
+    *"Found dead link"*|*"dead link"*)
+      echo "dead link"
+      ;;
+    *"Fixed:"*)
+      echo "fixed"
+      ;;
+    *"Unfixable:"*)
+      echo "unfixable"
+      ;;
+    *"npx"*|*"tsc"*)
+      echo "compiling"
+      ;;
+    *"The language"*|*"(!)"*|*"yarn run"*|*"vitepress v"*|*"info Visit"*|*"error Command"*|*"$ vitepress"*|*"> vitepress"*)
+      # Skip noise
+      echo ""
+      ;;
+    *)
+      # Unknown - show truncated
+      echo "${line:0:20}"
+      ;;
+  esac
+}
+
 progress() {
+  local step="$1"
+  local name="$2"
+  local sub="$3"
+  
   if [ "$VERBOSE" = true ]; then
-    echo "$2"
+    echo "$name"
   else
-    printf "\r\033[KStep %d/%d: %s" "$1" "$TOTAL_STEPS" "${2:0:30}"
+    if [ -n "$sub" ]; then
+      printf "\r\033[K%s %d/%d %s → %s" "$PROJECT_NAME" "$step" "$TOTAL_STEPS" "$name" "$sub"
+    else
+      printf "\r\033[K%s %d/%d %s" "$PROJECT_NAME" "$step" "$TOTAL_STEPS" "$name"
+    fi
   fi
+  
   # Write to status file if set
   if [ -n "$STATUS_FILE" ]; then
-    echo "${PROJECT_PREFIX}Step $1/$TOTAL_STEPS: $2" > "$STATUS_FILE"
+    if [ -n "$sub" ]; then
+      echo "$PROJECT_NAME $step/$TOTAL_STEPS $name → $sub" > "$STATUS_FILE"
+    else
+      echo "$PROJECT_NAME $step/$TOTAL_STEPS $name" > "$STATUS_FILE"
+    fi
   fi
 }
 
 # Progress with sub-item (for streaming output)
 progress_item() {
+  local raw="$1"
+  local translated=$(translate_vp_line "$raw")
+  
+  # Skip empty translations (noise)
+  [ -z "$translated" ] && return
+  
   if [ "$VERBOSE" = true ]; then
-    echo "  $1"
+    echo "  $raw"
   else
-    printf "\r\033[KStep %d/%d: %s... %s" "$CURRENT_STEP" "$TOTAL_STEPS" "$STEP_NAME" "${1:0:30}"
+    printf "\r\033[K%s %d/%d %s → %s" "$PROJECT_NAME" "$CURRENT_STEP" "$TOTAL_STEPS" "$STEP_NAME" "$translated"
   fi
+  
   # Write to status file if set
   if [ -n "$STATUS_FILE" ]; then
-    echo "${PROJECT_PREFIX}Step $CURRENT_STEP/$TOTAL_STEPS: $STEP_NAME... ${1:0:30}" > "$STATUS_FILE"
+    echo "$PROJECT_NAME $CURRENT_STEP/$TOTAL_STEPS $STEP_NAME → $translated" > "$STATUS_FILE"
   fi
 }
 
@@ -118,6 +195,69 @@ run_cmd() {
   return $exit_code
 }
 
+# Run vitepress build, streaming progress from its output file
+run_vp_build() {
+  local output_file="$PROJECT_ROOT/vitepress.build.txt"
+  
+  # Clear previous output
+  > "$output_file"
+  
+  # Start build in background
+  if [ "$VERBOSE" = true ]; then
+    yarn docs:build
+    return $?
+  fi
+  
+  yarn docs:build > /dev/null 2>&1 &
+  local pid=$!
+  
+  local last_line=""
+  local dead_link_count=0
+  
+  # Poll the output file while build runs
+  while kill -0 $pid 2>/dev/null; do
+    if [ -s "$output_file" ]; then
+      local current_line=$(tail -1 "$output_file")
+      if [ "$current_line" != "$last_line" ]; then
+        last_line="$current_line"
+        
+        # Count dead links
+        if [[ "$current_line" == *"Found dead link"* ]] || [[ "$current_line" == *"dead link"* ]]; then
+          dead_link_count=$((dead_link_count + 1))
+          progress_item "dead links: $dead_link_count"
+        else
+          progress_item "$current_line"
+        fi
+      fi
+    fi
+    sleep 0.2
+  done
+  
+  # Get exit code
+  wait $pid
+  local exit_code=$?
+  
+  # Show final status
+  if [ -s "$output_file" ]; then
+    local final_line=$(tail -1 "$output_file")
+    if [[ "$final_line" == *"Found dead link"* ]] || [[ "$final_line" == *"dead link"* ]]; then
+      dead_link_count=$((dead_link_count + 1))
+      progress_item "dead links: $dead_link_count"
+    else
+      progress_item "$final_line"
+    fi
+  fi
+  
+  # On error, append to error log
+  if [ $exit_code -ne 0 ]; then
+    echo "" >> "$ERROR_LOG"
+    echo "=== Step $CURRENT_STEP: $STEP_NAME ===" >> "$ERROR_LOG"
+    cat "$output_file" >> "$ERROR_LOG"
+  fi
+  
+  return $exit_code
+}
+
 # Start a step
 start_step() {
   CURRENT_STEP=$1
@@ -128,9 +268,9 @@ start_step() {
 # Fail and exit
 fail() {
   clear_progress
-  echo "❌ Failed at step $CURRENT_STEP: $STEP_NAME"
+  echo "❌ $PROJECT_NAME $CURRENT_STEP/$TOTAL_STEPS $STEP_NAME failed"
   if [ -n "$STATUS_FILE" ]; then
-    echo "${PROJECT_PREFIX}❌ Failed at step $CURRENT_STEP: $STEP_NAME" > "$STATUS_FILE"
+    echo "$PROJECT_NAME $CURRENT_STEP/$TOTAL_STEPS $STEP_NAME → failed" > "$STATUS_FILE"
   fi
   echo ""
   cat "$ERROR_LOG"
@@ -145,7 +285,7 @@ if [ "$PROJECT_ARG" = "all" ]; then
   
   clear_progress
   echo "Updating all projects..."
-  echo "all: Starting..." > "$STATUS_FILE"
+  echo "all 0/3 starting" > "$STATUS_FILE"
   echo ""
   
   PROJ_COUNT=${#ALL_PROJECTS[@]}
@@ -158,20 +298,20 @@ if [ "$PROJECT_ARG" = "all" ]; then
     
     # Run sub-build, passing status file and project name via env
     if [ "$VERBOSE" = true ]; then
-      REBUILD_STATUS_FILE="$STATUS_FILE" REBUILD_PROJECT="[$PROJ_NUM/$PROJ_COUNT] $PROJ_NAME" bash "$0" "$GITHUB_DIR/$proj" --verbose
+      REBUILD_STATUS_FILE="$STATUS_FILE" REBUILD_PROJECT="$PROJ_NAME" bash "$0" "$GITHUB_DIR/$proj" --verbose
     else
-      REBUILD_STATUS_FILE="$STATUS_FILE" REBUILD_PROJECT="[$PROJ_NUM/$PROJ_COUNT] $PROJ_NAME" bash "$0" "$GITHUB_DIR/$proj"
+      REBUILD_STATUS_FILE="$STATUS_FILE" REBUILD_PROJECT="$PROJ_NAME" bash "$0" "$GITHUB_DIR/$proj"
     fi
     
     if [ $? -ne 0 ]; then
-      echo "❌ [$PROJ_NUM/$PROJ_COUNT] $PROJ_NAME failed" > "$STATUS_FILE"
+      echo "$PROJ_NAME failed" > "$STATUS_FILE"
       exit 1
     fi
     echo ""
   done
   
-  echo "✓ All $PROJ_COUNT projects updated"
-  echo "✓ mono, ws, di docs updated" > "$STATUS_FILE"
+  echo "✓ mono, ws, di"
+  echo "✓ mono, ws, di" > "$STATUS_FILE"
   exit 0
 fi
 
@@ -179,6 +319,11 @@ fi
 PROJECT_ROOT="${PROJECT_ARG:-$(pwd)}"
 cd "$PROJECT_ROOT" || exit 1
 PROJECT_ROOT=$(pwd)  # Convert to absolute path
+
+# Set PROJECT_NAME if not already set (single project run)
+if [ -z "$PROJECT_NAME" ]; then
+  PROJECT_NAME=$(basename "$PROJECT_ROOT")
+fi
 
 # Set up logs directory
 # For mono root, use mono/logs; for subprojects, use projects/logs
@@ -215,23 +360,23 @@ TOOLS_DIST="${TOOLS_DIST:-$SHARED_TOOLS/dist}"
 BUILD_OUTPUT="$LOGS_DIR/vitepress.build.log"
 
 # Step 1: Compile TypeScript tools
-start_step 1 "Compiling TypeScript"
+start_step 1 "compile"
 cd "$SHARED_TOOLS"
 run_cmd npx tsc || fail
 cd "$PROJECT_ROOT"
 
 # Step 2: Sync index.md files
-start_step 2 "Syncing index files"
+start_step 2 "sync index"
 run_cmd bash "$SHARED_TOOLS/sync-index-files.sh" "$PROJECT_ROOT" || fail
 
 # Step 3: Build VitePress (may fail with broken links)
-start_step 3 "Building docs (first pass)"
-run_cmd yarn docs:build
+start_step 3 "build"
+run_vp_build
 BUILD_EXIT=$?
 # Don't fail here - broken links are expected, step 4 will fix them
 
 # Step 4: Fix broken links
-start_step 4 "Fixing links"
+start_step 4 "fix links"
 run_cmd node "$TOOLS_DIST/fix-links.js"
 FIX_EXIT=$?
 if [ $FIX_EXIT -ne 0 ] && [ $FIX_EXIT -ne 2 ]; then
@@ -239,17 +384,17 @@ if [ $FIX_EXIT -ne 0 ] && [ $FIX_EXIT -ne 2 ]; then
 fi
 
 # Step 5: Generate docs database structure (if configured)
-start_step 5 "Generating docs database"
+start_step 5 "docs db"
 if [ -n "$DOCS_OUTPUT" ]; then
   run_cmd bash "$SHARED_TOOLS/create-docs-db-data.sh" "$PROJECT_ROOT" || fail
 fi
 
 # Step 6: Rebuild VitePress
-start_step 6 "Rebuilding docs"
-run_cmd yarn docs:build || fail
+start_step 6 "rebuild"
+run_vp_build || fail
 
 # Step 7: Sync all sidebars
-start_step 7 "Syncing sidebars"
+start_step 7 "sidebars"
 MONO_ROOT="$GITHUB_DIR/mono"
 for proj_dir in "$MONO_ROOT/ws" "$MONO_ROOT/di"; do
   if [ -d "$proj_dir/.vitepress" ]; then
@@ -261,8 +406,10 @@ cd "$PROJECT_ROOT"
 
 # Done
 clear_progress
-echo "✓ All $TOTAL_STEPS doc update steps succeeded"
-echo "✓ All $TOTAL_STEPS doc update steps succeeded" > "$STATUS_FILE"
+echo "✓ $PROJECT_NAME done"
+if [ -n "$STATUS_FILE" ]; then
+  echo "$PROJECT_NAME 7/7 done" > "$STATUS_FILE"
+fi
 
 # Clean up error log if empty
 if [ ! -s "$ERROR_LOG" ]; then

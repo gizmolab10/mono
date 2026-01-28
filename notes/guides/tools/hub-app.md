@@ -1,7 +1,7 @@
 # Hub App
 
 **Started:** 2025-01-09
-**Status:** Stable 2026-01-24
+**Updated:** 2026-01-28
 
 ## Table of Contents
 
@@ -89,6 +89,20 @@ Verification checks:
 | dispatcher | \` | Restart local command runner |
 | dns | N | Open domain registrar |
 
+**Status dot:** A colored dot appears above "Work Sites" title:
+- Green = all deploys ready/canceled
+- Yellow = building/enqueued  
+- Red = error/failed
+
+**Deploy tooltip:** Hover over "Work Sites" to see per-site deploy status:
+```
+ws: ✓ ready -2m
+di: ⋯ building -1m
+ws-docs: ✓ ready -5m
+di-docs: ⊘ canceled -3m
+mono-docs: ✗ error -10m
+```
+
 ### Features
 
 - **Project/Mode selection** — Pick ws/di/mono + app/docs
@@ -96,7 +110,8 @@ Verification checks:
 - **localhosts** — Restarts all dev servers with verification
 - **docs** — Runs update-project-docs.sh for all projects
 - **dispatcher** — Restarts the command runner (itself)
-- **Deploy status** — Console shows Netlify deploy progress
+- **Deploy status dot** — Persistent colored indicator of deploy health
+- **Deploy tooltip** — Hover title to see per-site status with timestamps
 - **Hover preview** — Shows destination URL before clicking
 - **Keyboard driven** — All actions have shortcuts
 
@@ -107,6 +122,16 @@ Shows status messages for:
 - Rebuild docs progress
 - Deploy status (polls Netlify every 10s)
 - Dispatcher restart status
+
+**Docs rebuild format:**
+```
+ws 3/7 build → bundling
+ws 3/7 build → dead links: 2
+ws 6/7 rebuild → done
+✓ mono, ws, di
+```
+
+Sub-progress shows: `bundling`, `rendering`, `sitemap`, `done`, `failed`, `dead links: N`
 
 Hover over localhosts, docs, or dispatcher buttons to see their last status message.
 

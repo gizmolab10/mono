@@ -342,6 +342,37 @@
       display: block;
     }
 
+    .status-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ffc800;
+      position: absolute;
+      top: -2px;
+      left: 10px;
+    }
+
+    .title-text {
+      position: relative;
+      z-index: 1;
+    }
+
+    h1.middle {
+      position: relative;
+    }
+
+    .status-dot.ready {
+      background: #2ecc71;
+    }
+
+    .status-dot.building {
+      background: #f1c40f;
+    }
+
+    .status-dot.error {
+      background: #e74c3c;
+    }
+
     /* Side-A/Side-B swap support */
     .side-b {
       display: flex;
@@ -360,7 +391,8 @@
       <div class="title-box swapped">
         <button class="action side-a" id="btn-dns">DNS<span class="badge">N</span></button>
         <div class="title-wrapper">
-          <h1 class="middle">Work Sites</h1>
+          <h1 class="middle"><span class="status-dot" id="status-dot"></span><span class="title-text">Work Sites</span>
+          </h1>
           <div class="deploy-tooltip" id="deploy-tooltip">Loading...</div>
         </div>
         <div class="side-b">
@@ -893,41 +925,77 @@
       const diffMins = Math.floor(diffMs / 60000);
       const diffHours = Math.floor(diffMins / 60);
       const diffDays = Math.floor(diffHours / 24);
-      
-      if (diffMins < 1) return 'just now';
-      if (diffMins < 60) return `${diffMins}m ago`;
-      if (diffHours < 24) return `${diffHours}h ago`;
-      return `${diffDays}d ago`;
+
+      if (diffMins < 1) return '-0m';
+      if (diffMins < 60) return `-${diffMins}m`;
+      if (diffHours < 24) return `-${diffHours}h`;
+      return `-${diffDays}d`;
     }
 
     function updateDeployTooltip(data) {
       const tooltip = document.getElementById('deploy-tooltip');
       if (!tooltip || !data) return;
-      
+
       const lines = [];
       const order = ['ws', 'di', 'ws-docs', 'di-docs', 'mono-docs'];
-      
+
       for (const site of order) {
         const status = data[site];
         if (!status) continue;
-        
-        let stateStr = status.state || 'unknown';
-        let timeStr = '';
-        
-        if (status.state === 'ready') {
+
+        const state = (status.state || '').toLowerCase();
+        let stateStr = state || 'unknown';
+        // Use published_at for ready, created_at for everything else
+        const timeStr = formatRelativeTime(state === 'ready' ? status.published_at : status.created_at);
+
+        if (state === 'ready') {
           stateStr = '✓ ready';
-          timeStr = formatRelativeTime(status.published_at);
-        } else if (status.state === 'building') {
+        } else if (state === 'building') {
           stateStr = '⋯ building';
-        } else if (status.state === 'error') {
+        } else if (state === 'enqueued') {
+          stateStr = '⋯ enqueued';
+        } else if (state === 'canceled' || (status.error_message && status.error_message.toLowerCase().includes('cancel'))) {
+          stateStr = '⊘ canceled';
+        } else if (state === 'error' || state === 'failed') {
           stateStr = '✗ error';
+        } else {
+          stateStr = `? ${status.state}`;  // show raw value
         }
-        
-        const line = timeStr ? `${site}: ${stateStr} (${timeStr})` : `${site}: ${stateStr}`;
+
+        const line = timeStr ? `${site}: ${stateStr} ${timeStr}` : `${site}: ${stateStr}`;
         lines.push(line);
       }
-      
+
       tooltip.textContent = lines.join('\n');
+    }
+
+    function updateStatusDot(data) {
+      const dot = document.getElementById('status-dot');
+      if (!dot || !data) return;
+
+      let hasError = false;
+      let hasBuilding = false;
+
+      for (const [site, status] of Object.entries(data)) {
+        const state = (status.state || '').toLowerCase();
+        const isCanceled = state === 'canceled' || (status.error_message && status.error_message.toLowerCase().includes('cancel'));
+        // Only actual errors count as errors (not canceled)
+        if ((state === 'error' || state === 'failed') && !isCanceled) {
+          hasError = true;
+        } else if (state === 'building' || state === 'enqueued') {
+          hasBuilding = true;
+        }
+        // canceled, ready, and other states are fine
+      }
+
+      dot.classList.remove('ready', 'building', 'error');
+      if (hasError) {
+        dot.classList.add('error');
+      } else if (hasBuilding) {
+        dot.classList.add('building');
+      } else {
+        dot.classList.add('ready');
+      }
     }
 
     function pollDeployStatus() {
@@ -940,7 +1008,8 @@
           // Update tooltip with latest data
           cachedDeployData = data;
           updateDeployTooltip(data);
-          
+          updateStatusDot(data);
+
           const building = [];
           const ready = [];
           const errors = [];
