@@ -5,7 +5,6 @@ How collaborator works with Jonathan and maintains shared context.
 
 ## Contents
 
-- [Pre Flight](./pre-flight/)
 - [Chat](./chat.md)
 - [Journals](./journals.md)
 - [Voice](./voice.md)

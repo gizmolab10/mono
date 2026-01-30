@@ -29,64 +29,24 @@ urls for review and feedback
 - [ ] is testing "connections" **vital** for final golden master?
 - [ ] do we need an introductory summary of current behavior?
 
-### Should we extend GM date beyond Wednesday January 28?
+### Should we extend GM date beyond Friday January 30?
 
-- [ ] 95% confidence that breadcrumbs are always in sync in plugin
-- [ ] is it okay? -> after a while, resize feature becomes "reluctant" (just changes a tiny bit)
-- [ ] click to collapse when a child is selected
-	- [ ] is it okay that selection is no longer visible?
-- [ ] click reveal dot to expand -> changes focus when levels otherwise hide children
-	- [ ] not pleasant, too abrupt and disorienting
-	- [ ] increment levels instead?
-- [ ] select A in breadcrumbs, **more** than one to left of focus, switch to radial
-	- [ ] A is no longer visible
-	- [ ] need focus to change so A will still be visible
-		- [ ] **derive** focus from graph (radial / tree) mode
-			- [ ] in radial, derived focus = selected's parent
-			- [ ] A being selected **freezes radial view** (in order to focus on A's parent)
-	- [ ] cannot be done without either:
-		- [ ] deselect A
-		- [ ] change (not derive) focus (so going back to tree, focus and tree have changed)
+- [ ] nothing here
 
 ## Webseriously
 
 ### Bugs
 
-- [ ] levels slider is ignored on increase
-- [x] radial mode
-	- [x] widgets overlap vertically
-		- [x] when rotate ring is large
-- [x] breadcrumbs
-	- [x] command click on breadcrumb -> focus
-	- [x] assure focus is ALWAYS shown in breadcrumbs
-		- [x] do NOT make root focus by default !!!
-- [x] at launch, restore recents is broken
-- [x] "<" and ">" are ignored. should bump depth levels
-- [x] HITS detector location data -> out of date
-	- [x] **need --** reproduction steps
-- [x] unselect: SHIFT-click on background
-- [x] w_rubberband_grabs WTF?
-- [x] selection
-	- [x] multiple
-		- [x] shift key + click
-		- [x] shift key + arrow key
-	- [x] assure selection is always visible
-		- [x] select something 3 levels inside focus. reduce # of levels, focus should change so selection remains visible. it disappears
-		- [x] set levels to 1, tap RIGHT arrow. nothing selected, focus did not change
-		- [x] set levels to 1, select focus. tap DOWN arrow. nothing selected, focus did not change
-	- [x] click to select -> sends FOCUS event to bubble, should send SELECT
-		- [x] unselect: SHIFT-click on selected
-		- [x] in catalist, click A -> details shows A, click B -> details still shows A
-		- [x] click recents button -> send a select event
-		- [x] **No longer needed --** when selection event not passed to catalist (and hover ignored), switch between graph modes to restore
+- [x] shift-click one of the multiply selected, deselects all
+- [x] click on a breadcrumb to the left of the focus -> change the focus
+- [x] radial mode -> changing the focus -> selects the focus
 
 ### Future Tasks
 
-- [ ] show recents count and index in primary controls
+- [ ] add dot to breadcrumb -> focus
+- [ ] API -> change in root
+- [ ] API -> edits made in Catalist
+- [ ] show recents count and index -> primary controls
 - [ ] instead of reveal dot's big inner dot, enlarge stroke to indicate "hidden children here"
-- [ ] support change in root
 - [ ] implement keep graph centered on selection
-- [ ] support edits made in Catalist (API is **incomplete**)
 - [ ] test whether two-finger no longer moves graph
-
-

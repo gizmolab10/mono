@@ -63,7 +63,7 @@ export enum T_Layer {
 	frontmost,
 }
 
-// the order of the following is unimportant
+// the order of the following is NOT important
 
 export enum T_Graph {
 	radial = 'radial',

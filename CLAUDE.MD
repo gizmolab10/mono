@@ -2,7 +2,13 @@
 
 > Read files before editing, search before claiming, propose before changing. Gates force reading the right guide before acting. Work tracked in `notes/work/`, style follows `voice.md`.
 
-Read all `.md` files within `notes/guides/collaborate` (including `pre-flight/`) and top-level `notes/work` before starting work.
+**Every response:** read `notes/guides/pre-flight/always.md`, then scan `keywords.md`. If any keyword matches, read the listed guide(s).
+
+Before starting work, read all `.md` files within:
+
+`notes/guides/collaborate`
+`notes/guides/pre-flight` 
+`notes/work` (top level only)
 
 ## Who
 
@@ -38,18 +44,25 @@ DOCS STYLE: Update index.md files when adding/moving/removing files
 
 ## Pre-flight
 
-Before acting on any input, read `pre-flight/`:
+**Every response:** read `always.md`, then scan `keywords.md`. If match, read listed guide(s).
 
-1. Scan `keywords.md` → read matching guides
-2. Identify task kind(s) in `kinds.of.tasks.md` → read listed guides
-3. If multiple kinds, note conflicts before proceeding
-4. Check `gates.md` for task-specific checkpoints
+At session start, also read:
+
+1. `shorthand.md` — parse commands and abbreviations
+2. `kinds.of.tasks.md` — classify task type, note conflicts
+3. `gates.md` — check for STOP/SEARCH/LIST/WAIT
+4. `workarounds.md` — know tool fallbacks
 
 ## Guides
 
-All in `notes/guides/collaborate/`:
+In `notes/guides/collaborate/`:
 
 - `chat.md` — roles, requirements, division of labor
-- `pre-flight/` — gates, keywords, shorthand, task kinds, workarounds
 - `voice.md` — prose style
 - `workflow.md` — implementation, refactoring, debugging discipline
+
+In `notes/guides/pre-flight/`:
+
+- `always.md` — read every response
+- `keywords.md` — scan every response
+- `gates.md`, `shorthand.md`, `kinds.of.tasks.md`, `workarounds.md` — session start

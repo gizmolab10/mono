@@ -77,27 +77,26 @@ export default class S_UX {
 				this.w_grabIndex
 			],
 			([t_search, foundIndex, foundItems, showSearchControls, focus, grabs, grabIndex]) => {
-				// First priority: search selected ancestry (if search is active)
 				const row = foundIndex;
 				if (row !== null && showSearchControls && t_search === T_Search.selected) {
+					// First priority: search selected ancestry (if search is active)
 					const thing = foundItems[row];
 					if (thing?.ancestry) {
 						return thing.ancestry;
 					}
 				}
-				// Second priority: current grab
 				if (grabs.length > 0) {
+					// Second priority: current grab
 					const grab = grabs[grabIndex] as Ancestry | null;
 					if (grab) {
 						return grab;
 					}
 				}
-				// Third priority: focus
 				if (focus) {
+					// Third priority: focus
 					return focus;
 				}
-				// Fallback: root ancestry
-				return h?.rootAncestry;
+				return null;				// Fallback
 			}
 		);
 	}
@@ -180,7 +179,6 @@ export default class S_UX {
 			si_grabs_clone.index = currentIndex;
 			const recent: S_Recent = { focus: ancestry, si_grabs: si_grabs_clone, depth: get(g.w_depth_limit) };
 			this.si_recents.push(recent);
-			
 			x.w_s_alteration.set(null);
 			ancestry.expand();
 		}
@@ -267,23 +265,15 @@ export default class S_UX {
 		if (!radial.isDragging) {
 			const currentGrabs = get(this.w_grabs);
 			let grabbed = [...(currentGrabs ?? [])];
-			const rootAncestry = h?.rootAncestry;
 			this.w_s_title_edit?.set(null);
 			// Use equals() instead of reference equality
 			const index = grabbed.findIndex(a => a.equals(ancestry));
 			if (index != -1) {
 				grabbed.splice(index, 1);
 			}
-			if (grabbed.length == 0) {
-				grabbed.push(rootAncestry);
-			}
-			if (grabbed.length == 0 && show.inTreeMode) {
-				grabbed = [rootAncestry];
-			} else {
-				h?.stop_alteration();
-			}
+			h?.stop_alteration();
 			
-			const focus = get(this.w_ancestry_focus) ?? rootAncestry;
+			const focus = get(this.w_ancestry_focus) ?? h?.rootAncestry;
 			const si_grabs_new = new S_Items<Ancestry>(grabbed);
 			const recent: S_Recent = { focus, si_grabs: si_grabs_new, depth: get(g.w_depth_limit) };
 			this.si_recents.push(recent);
@@ -301,12 +291,13 @@ export default class S_UX {
 	//																	//
 	//////////////////////////////////////////////////////////////////////
 
-	select_next_thingTrait(next: boolean) { this.si_thing_traits.find_next_item(next); }
 	get trait(): Trait | null { return h.si_traits.item as Trait | null; }
+	select_next_thingTrait(next: boolean) { this.si_thing_traits.find_next_item(next); }
 	get thing_trait(): Trait | null { return this.si_thing_traits?.item as Trait | null; }
 	get si_thing_traits(): S_Items<Trait> { return this.ancestry_forDetails?.thing?.si_traits ?? new S_Items<Trait>([]); }
 	
 	select_next_trait(next: boolean) {
+		// not yet used, save in case we want it
 		const si_traits = h.si_traits;
 		if (!!si_traits && si_traits.find_next_item(next)) {
 			const ancestry = si_traits.item?.owner?.ancestry;

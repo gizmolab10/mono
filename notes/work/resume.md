@@ -71,6 +71,8 @@ Added timestamp-based skip logic to `update-project-docs.sh`:
 
 - [x] Added to `chat.md`: "Reads logs/errors directly when debugging — never asks user to cat files co can access"
 
+---
+
 **January 28, 2026 (morning)**
 
 ## Hub App Refinements

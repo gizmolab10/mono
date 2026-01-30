@@ -1110,7 +1110,7 @@ export class Hierarchy {
 			if (!newGrabIsFocus && !!newFocusAncestry && (show.inTreeMode || RIGHT || !newFocusIsVisible)) {
 				const newFocusIsGrabbed = newFocusAncestry.equals(newGrabAncestry);
 				const becomeFocus = (!SHIFT || newFocusIsGrabbed) && (RIGHT || !newFocusIsVisible);
-				if (show.isDynamic_focus && becomeFocus && newFocusAncestry.becomeFocus()) {
+				if (becomeFocus && newFocusAncestry.becomeFocus()) {
 					graph_needsSweep = true;
 				}
 			}

@@ -163,12 +163,6 @@ When analyzing existing code:
 * **Don't assume correctness** — existing code may be buggy
 * **Read implementations, not just calls** — method names lie, implementations don't
 
-### Tool Reliability
-
-**Use `write_file`, not `create_file`** — the `create_file` tool can report success without actually creating the file. `write_file` is reliable.
-
-**Bash tools have limited access** — some filesystem operations may fail silently or be unavailable. Verify results.
-
 ### Destructive Commands
 
 Commands that delete, overwrite, or alter git state require extra care:

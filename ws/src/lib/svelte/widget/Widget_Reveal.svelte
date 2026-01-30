@@ -58,6 +58,9 @@
 					}
 				}
 				focus_ancestry?.becomeFocus();
+				if (show.inRadialMode) {
+					focus_ancestry?.grabOnly();
+				}
 			}
 			return true;
 		};

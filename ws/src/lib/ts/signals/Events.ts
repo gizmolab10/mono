@@ -232,6 +232,9 @@ export class Events {
 					focus = ancestry.parentAncestry;
 				}
 				if (focus.becomeFocus()) {
+					if (show.inRadialMode) {
+						focus.grabOnly();
+					}
 					g.grand_build();
 					return;
 				}

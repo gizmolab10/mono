@@ -139,6 +139,7 @@
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
 		if (s_mouse.isDown) {
 			if (!!ancestry) {
+				const SHIFT = !!s_mouse.event?.shiftKey;
 				if (get(databases.w_t_database) === T_Database.filesystem) {
 					if (ancestry.isRoot && !h.db.hasFolder) {
 						// if root without folder selected - trigger folder picker
@@ -156,29 +157,35 @@
 					return true;
 				} else if (isEditing()) {
 					extractRange_fromInput_toThing();
-				} else {
-					if (!!$w_s_title_edit && $w_s_title_edit.isActive) {
-						$w_s_title_edit.stop_editing();
-						$w_s_title_edit = null;
+					return true;
+				} else if (!!$w_s_title_edit && $w_s_title_edit.isActive) {
+					// while editing A, select a range, click B, click A, RETURN should reselect the range
+					extractRange_fromInput_toThing();
+					$w_s_title_edit.stop_editing();
+					$w_s_title_edit = null;
+					if (SHIFT) {
+						ancestry.ungrab();
 					}
-					if (!ancestry.isGrabbed) {
-						const shiftKey = s_mouse.event?.shiftKey ?? false;
-						ancestry.grab_forShift(shiftKey);
-					} else if (ancestry.isEditable && !!input) {
-						// Only start editing if this is not a deferred single-click from double-click timer
-						// When the timer fires, doubleClick_fired is set to true, so check that
-						const isDeferredClick = hits.doubleClick_fired;
-						if (!isDeferredClick) {
-							setTimeout(() => {
-								ancestry.startEdit();
-								thing_setSelectionRange_fromMouseLocation();
-								// Focus directly - reactive statement will also try, but this ensures it happens
-							if (input && !hasHTMLFocus()) {
-								input.focus({ preventScroll: true });
-							}
-							applyRange_fromThing_toInput();
-							}, 1);
+				}
+				
+				if (SHIFT) {
+					ancestry.toggleGrab();
+				} else if (!ancestry.isGrabbed) {
+					ancestry.grabOnly();
+				} else if (ancestry.isEditable && !!input) {
+					// Only start editing if this is not a deferred single-click from double-click timer
+					// When the timer fires, doubleClick_fired is set to true, so check that
+					const isDeferredClick = hits.doubleClick_fired;
+					if (!isDeferredClick) {
+						setTimeout(() => {
+							ancestry.startEdit();
+							thing_setSelectionRange_fromMouseLocation();
+							// Focus directly - reactive statement will also try, but this ensures it happens
+						if (input && !hasHTMLFocus()) {
+							input.focus({ preventScroll: true });
 						}
+						applyRange_fromThing_toInput();
+						}, 1);
 					}
 				}
 			}

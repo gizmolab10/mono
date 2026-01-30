@@ -7,9 +7,10 @@
 	export let s_breadcrumb;
 	export let left = 0;
 	const { w_s_hover } = hits;
+	const { w_depth_limit } = g;
 	const borderStyle = '1px solid';
-	const { w_grabs, w_thing_fontFamily } = x;
 	const { w_thing_color, w_background_color } = colors;
+	const { w_grabs, w_thing_fontFamily, w_ancestry_forDetails } = x;
 	let thing = s_breadcrumb.ancestry.thing;
 	let title = thing.breadcrumb_title ?? k.empty;
 	let s_element = elements.s_element_for(s_breadcrumb.ancestry, T_Hit_Target.button, title);
@@ -66,14 +67,21 @@
 		`.removeWhiteSpace();
 	}
 
+	function adjust_focus() {
+		if (ancestry.becomeFocus() && $w_ancestry_forDetails.hidden_by_depth_limit) {
+			// adjust level to make selection visible
+			$w_depth_limit = $w_ancestry_forDetails.depth_within_focus_subtree;
+		}
+	}
+
 	function handle_s_mouse(s_mouse) {
 		if (!!h && h.hasRoot && s_mouse.isDown) {
 			const event = s_mouse.event;
 			search.deactivate();
-			if (event.metaKey) {
-				ancestry.becomeFocus();
+			if (event.metaKey || ancestry.depth_within_focus_subtree < 0) {
+				adjust_focus();
 			} else if (event.shiftKey) {
-				ancestry.grab();
+				ancestry.toggleGrab();
 			} else {
 				ancestry.grabOnly();
 			}

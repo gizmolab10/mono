@@ -1,36 +1,28 @@
 <script lang='ts'>
-    import { e, g, k, u, x, h, core, hits, debug, colors, elements, features, S_Items } from '../../ts/common/Global_Imports';
+    import { e, g, k, u, x, h, hits, debug, colors, elements, features, S_Items } from '../../ts/common/Global_Imports';
     import { T_Layer, T_Drag, T_Hit_Target, S_Mouse } from '../../ts/common/Global_Imports';
     import { Rect, Size, Point, Ancestry } from '../../ts/common/Global_Imports';
+    import { s_rubberband } from '../../ts/state/S_Rubberband';
     import Identifiable from '../../ts/runtime/Identifiable';
-    import { onMount } from 'svelte';
     import { get } from 'svelte/store';
+    import { onMount } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
     const { w_dragging } = hits;
     const { w_user_graph_offset } = g;
-	const { w_separator_color } = colors;
-    const { w_si_grabs, w_s_title_edit } = x;
+    const { w_separator_color } = colors;
+    const { w_s_title_edit } = x;
     const { w_count_mouse_up, w_mouse_location, w_scaled_movement } = e;
     const s_element = elements.s_element_for(new Identifiable('rubberband'), T_Hit_Target.rubberband, 'graph');
-    let rbush_forRubberband = hits.rbush_forRubberband;
     let rubberband_hit_area: HTMLElement;
     let mouse_upCount = $w_count_mouse_up;
-    let startPoint: Point | null = null;
-    let has_rubberbanded_grabs = true;
-    let has_intersections = false;
-    let original_grab_count = 0;
-    let rect = Rect.zero;
-    let lastUpdate = 0;
 
     onMount(() => {
-        // Set up hit area element
         if (rubberband_hit_area) {
             s_element.set_html_element(rubberband_hit_area);
         }
         s_element.handle_s_mouse = handle_s_mouse;
 
-        // Block events during rubberband
         document.addEventListener('pointerenter', blockEvent, true);
         document.addEventListener('pointerleave', blockEvent, true);
         document.addEventListener('pointermove', blockEvent, true);
@@ -47,7 +39,7 @@
     });
 
     $: if ($w_dragging === T_Drag.rubberband) {
-        document.body.classList.add('rubberband-blocking');     // see style:global block below
+        document.body.classList.add('rubberband-blocking');
     } else {
         document.body.classList.remove('rubberband-blocking');
     }
@@ -61,26 +53,27 @@
         }
     }
 
+    $: rect = s_rubberband.rect;
+
     $: style = `
+        position: fixed;
         top: ${rect.y}px;
         left: ${rect.x}px;
+        border-style: dashed;
+        pointer-events: none;
+        box-sizing: border-box;
         width: ${rect.width}px;
         height: ${rect.height}px;
         z-index: ${T_Layer.rubberband};
         border-width: ${strokeWidth}px;
         border-color: ${$w_separator_color};
+        background-color: rgba(0, 0, 0, 0.05);
         display: ${$w_dragging === T_Drag.rubberband ? 'block' : 'none'};`
     ;
 
-    $: if ($w_dragging !== T_Drag.none && startPoint && $w_mouse_location) {
-        const now = Date.now();
-        if (now - lastUpdate >= 40) {
-            lastUpdate = now;
-            const constrainedEnd = constrainToRect($w_mouse_location);
-            rect.height = Math.abs(constrainedEnd.y - startPoint.y);
-            rect.width = Math.abs(constrainedEnd.x - startPoint.x);
-            rect.x = Math.min(constrainedEnd.x, startPoint.x);
-            rect.y = Math.min(constrainedEnd.y, startPoint.y);
+    $: if ($w_dragging === T_Drag.rubberband && $w_mouse_location) {
+        if (s_rubberband.update($w_mouse_location, bounds)) {
+            rect = s_rubberband.rect;
             detect_and_grab();
         }
     }
@@ -88,45 +81,37 @@
     $: if ($w_count_mouse_up !== mouse_upCount) {
         mouse_upCount = $w_count_mouse_up;
         if ($w_dragging === T_Drag.graph) {
-            startPoint = null;
+            s_rubberband.startPoint = null;
             $w_dragging = T_Drag.none;
         } else if ($w_dragging === T_Drag.rubberband) {
-            // Commit rubberband grabs to snapshot if any, then clear live grabs
             const rubberbandGrabs = get(x.w_rubberband_grabs);
             if (rubberbandGrabs.length > 0) {
-                // Commit to history by pushing a snapshot
                 const focus = get(x.w_ancestry_focus) ?? h?.rootAncestry;
                 if (focus) {
                     const si_grabs = new S_Items<Ancestry>(rubberbandGrabs);
-                    si_grabs.index = rubberbandGrabs.length - 1;  // Preserve last-item selection
+                    si_grabs.index = rubberbandGrabs.length - 1;
                     const snapshot = { focus, si_grabs, depth: get(g.w_depth_limit) };
                     x.si_recents.push(snapshot);
                 }
+            } else {
+                x.grab_none();
             }
-            x.setGrabs_forRubberband([]);  // Clear live grabs
-            startPoint = null;
-            rect.height = 0;
-            rect.width = 0;
-            $w_dragging = T_Drag.none;
+            x.setGrabs_forRubberband([]);
+            s_rubberband.stop();
+            rect = s_rubberband.rect;
         }
     }
 
     function ancestries_intersecting_rubberband(): Array<Ancestry> {
-        return rbush_forRubberband.search(rect.asBBox)
+        const rbush = s_rubberband.rbush;
+        if (!rbush) return [];
+        return rbush.search(s_rubberband.rect.asBBox)
             .map(b => b.target.ancestry)
             .filter(a => !!a);
     }
 
-    function constrainToRect(point: Point): Point {
-        return new Point(
-            point.x.force_between(bounds.x, bounds.right),
-            point.y.force_between(bounds.y, bounds.bottom)
-        );
-    }
-
     function blockEvent(e: Event) {
         const target = e.target;
-        // Only block events when rubberband is active and target is not an interactive element
         if ($w_dragging === T_Drag.rubberband && target instanceof HTMLElement) {
             if (!target.closest('.panel') && 
                 !target.closest('.draggable') &&
@@ -141,29 +126,22 @@
         if ($w_dragging === T_Drag.rubberband) {
             const ancestries = ancestries_intersecting_rubberband();
             x.setGrabs_forRubberband(ancestries);
-            has_rubberbanded_grabs = ancestries.length > 0;
         }
     }
 
-    // Handle clicks on empty graph space
-    // This only gets called if no higher-priority target (dot/widget/ring) handled the click
     function handle_s_mouse(s_mouse: S_Mouse): boolean {
         if (s_mouse.isDown && s_mouse.event) {
             const event = s_mouse.event;
             x.w_s_title_edit?.set(null);
-            startPoint = new Point(event.clientX, event.clientY);
+            const startPoint = new Point(event.clientX, event.clientY);
             if (event.metaKey) {
+                s_rubberband.startPoint = startPoint;
                 $w_dragging = T_Drag.graph;
             } else if (event.shiftKey) {
                 x.grab_none();
             } else if (features.has_rubber_band) {
-                // Start rubberband selection (only if feature enabled)
-                const constrained = constrainToRect(startPoint);
-                original_grab_count = $w_si_grabs.length;
-                rect.y = constrained.y;
-                rect.x = constrained.x;
-                $w_dragging = T_Drag.rubberband;
-                rbush_forRubberband = hits.rbush_forRubberband;
+                s_rubberband.start(startPoint, bounds);
+                rect = s_rubberband.rect;
             }
             return true;
         }
@@ -172,7 +150,6 @@
 
 </script>
 
-<!-- Hit area covering full graph bounds -->
 <div class='rubberband-hit-area' 
     bind:this={rubberband_hit_area}
     style='
@@ -202,13 +179,5 @@
             .rubberband-blocking .details-stack,
             .rubberband-blocking .bottom-controls) {
         pointer-events: none !important;
-    }
-
-    .rubberband {
-        position: fixed;
-        border-style: dashed;
-        pointer-events: none;
-        box-sizing: border-box;
-        background-color: rgba(0, 0, 0, 0.05);
     }
 </style>

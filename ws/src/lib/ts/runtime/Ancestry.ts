@@ -85,7 +85,7 @@ export default class Ancestry extends Identifiable {
 		if (!!limit) {
 			return this.depth_within_focus_subtree < limit;
 		}
-		return true;
+		return false;
 	}
 
 	reveal_toFocus() {

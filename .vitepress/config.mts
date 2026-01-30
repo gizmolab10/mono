@@ -266,33 +266,6 @@ export default defineConfig({
                     {
                       text: 'Workflow',
                       link: '/notes/guides/collaborate/workflow'
-                    },
-                    {
-                      text: 'Pre Flight >',
-                      link: '/notes/guides/collaborate/pre-flight/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Gates',
-                          link: '/notes/guides/collaborate/pre-flight/gates'
-                        },
-                        {
-                          text: 'Keywords',
-                          link: '/notes/guides/collaborate/pre-flight/keywords'
-                        },
-                        {
-                          text: 'Kinds.of.tasks',
-                          link: '/notes/guides/collaborate/pre-flight/kinds.of.tasks'
-                        },
-                        {
-                          text: 'Shorthand',
-                          link: '/notes/guides/collaborate/pre-flight/shorthand'
-                        },
-                        {
-                          text: 'Workarounds',
-                          link: '/notes/guides/collaborate/pre-flight/workarounds'
-                        }
-                      ]
                     }
                   ]
                 },
@@ -337,8 +310,43 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
+                      text: 'Limitations',
+                      link: '/notes/guides/philosophy/limitations'
+                    },
+                    {
                       text: 'Motive',
                       link: '/notes/guides/philosophy/motive'
+                    }
+                  ]
+                },
+                {
+                  text: 'Pre Flight >',
+                  link: '/notes/guides/pre-flight/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Always',
+                      link: '/notes/guides/pre-flight/always'
+                    },
+                    {
+                      text: 'Gates',
+                      link: '/notes/guides/pre-flight/gates'
+                    },
+                    {
+                      text: 'Keywords',
+                      link: '/notes/guides/pre-flight/keywords'
+                    },
+                    {
+                      text: 'Kinds.of.tasks',
+                      link: '/notes/guides/pre-flight/kinds.of.tasks'
+                    },
+                    {
+                      text: 'Shorthand',
+                      link: '/notes/guides/pre-flight/shorthand'
+                    },
+                    {
+                      text: 'Workarounds',
+                      link: '/notes/guides/pre-flight/workarounds'
                     }
                   ]
                 },
@@ -802,13 +810,13 @@ export default defineConfig({
                       link: '/ws/notes/work/deliverables'
                     },
                     {
+                      text: 'Resume',
+                      link: '/ws/notes/work/resume'
+                    },
+                    {
                       text: 'Done >',
                       collapsed: true,
                       items: [
-                        {
-                          text: 'Deliverables.january.27.2026',
-                          link: '/ws/notes/work/done/deliverables.january.27.2026'
-                        },
                         {
                           text: 'Ai >',
                           collapsed: true,
@@ -828,6 +836,20 @@ export default defineConfig({
                             {
                               text: 'Truth',
                               link: '/ws/notes/work/done/ai/truth'
+                            }
+                          ]
+                        },
+                        {
+                          text: 'Deliverables >',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'January.27.2026',
+                              link: '/ws/notes/work/done/deliverables/january.27.2026'
+                            },
+                            {
+                              text: 'January.28.2026',
+                              link: '/ws/notes/work/done/deliverables/january.28.2026'
                             }
                           ]
                         },
