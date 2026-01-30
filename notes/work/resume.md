@@ -2,6 +2,10 @@
 
 **January 28, 2026 (early afternoon)**
 
+## Next steps
+
+- [ ] add button to hub app for running tests
+
 ## Netlify Deployment Fixes & Package Cleanup
 
 Major cleanup of ws build configuration and dependencies.

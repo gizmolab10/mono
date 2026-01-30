@@ -12,6 +12,13 @@ Short commands and abbreviations for working with collaborator.
 | `what go` | Tell current-go value |
 | `claude` | Reread CLAUDE.MD |
 
+### Go Implementation
+
+1. `list_allowed_directories` → get base (e.g., `/Users/sand/GitHub`)
+2. Construct path: `<base>/mono/<X>/CLAUDE.MD`
+3. Use `read_text_file` (not `view`)
+4. No exploration. Path is known.
+
 ## Work Tracking
 
 | Command | Action |

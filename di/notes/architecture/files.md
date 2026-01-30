@@ -1,110 +1,107 @@
 # File Layout
 
-Where everything lives. There's a lot of files, and we're only just getting started.
+Where everything lives.
 
 ```
 src/
 ├── main.ts                  # Mounts Svelte app
-├── App.svelte               # Root component, canvas + UI
+├── App.svelte               # Root component
 ├── vite-env.d.ts            # Type declarations
 └── lib/
     ├── svelte/
-    │   └── layout/          # UI components
-    │       ├── Box.svelte
+    │   ├── draw/
+    │   │   └── Printable.svelte
+    │   └── main/
     │       ├── Controls.svelte
     │       ├── Details.svelte
-    │       ├── Fillets.svelte
     │       ├── Graph.svelte
-    │       ├── Main.svelte
-    │       └── Separator.svelte
+    │       └── Main.svelte
     └── ts/
         ├── common/
-        │   ├── Constants.ts           # App-wide constants
-        │   ├── Extensions.ts          # Number/String prototype extensions
-        │   └── Testworthy_Utilities.ts  # General utilities (tu singleton)
+        │   ├── Constants.ts
+        │   ├── Extensions.ts
+        │   └── Testworthy_Utilities.ts
         ├── draw/
-        │   ├── Colors.ts              # Color utilities + stores
-        │   └── SVG_Paths.ts           # SVG path generators (svg_paths singleton)
+        │   ├── Colors.ts
+        │   └── SVG_Paths.ts
         ├── managers/
-        │   └── Preferences.ts         # localStorage wrapper
+        │   ├── Components.ts
+        │   ├── Hits.ts
+        │   └── Preferences.ts
         ├── render/
-        │   ├── index.ts               # re-exports singletons
+        │   ├── index.ts
         │   ├── Animation.ts
         │   ├── Camera.ts
         │   ├── Input.ts
         │   ├── Render.ts
-        │   └── Scene.ts
+        │   ├── Scene.ts
+        │   └── Trivial.ts
         ├── runtime/
-        │   └── Identifiable.ts        # Base class with id/hid
+        │   └── Identifiable.ts
+        ├── signals/
+        │   ├── Events.ts
+        │   └── Mouse_Timer.ts
         ├── state/
-        │   └── S_Mouse.ts             # Mouse state encapsulation
+        │   ├── S_Component.ts
+        │   ├── S_Hit_Target.ts
+        │   └── S_Mouse.ts
         ├── tests/
         │   ├── Angle.test.ts
         │   ├── Colors.test.ts
         │   ├── Coordinates.test.ts
         │   ├── Extensions.test.ts
-        │   ├── Render.test.ts
-        │   └── Testworthy_Utilities.test.ts
+        │   ├── Testworthy_Utilities.test.ts
+        │   └── setup.ts
         └── types/
-            ├── index.ts               # re-exports
-            ├── Angle.ts               # Orientation, Quadrant, Direction
-            ├── Coordinates.ts         # Point, Size, Rect, Polar, Point3, Size3, Block
-            ├── Enumerations.ts        # App-wide enums
-            ├── Interfaces.ts          # Projected, O_Scene
-            └── Types.ts               # Type aliases (Dictionary, Integer, etc.)
+            ├── index.ts
+            ├── Angle.ts
+            ├── Coordinates.ts
+            ├── Enumerations.ts
+            ├── Interfaces.ts
+            └── Types.ts
 ```
 
 ## Entry
 
-The front door. Svelte mounts, canvas renders, managers wake up.
-
 | File | What it does |
 |------|--------------|
 | `main.ts` | Mounts `App.svelte` |
-| `App.svelte` | Renders canvas, calls `init(canvas)` on mount |
+| `App.svelte` | Renders Main, initializes app |
+
+## Svelte Components
+
+| File | What it does |
+|------|--------------|
+| `main/Main.svelte` | Root layout, viewport management |
+| `main/Controls.svelte` | Top toolbar region |
+| `main/Details.svelte` | Left sidebar region |
+| `main/Graph.svelte` | Canvas region with 3D rendering |
+| `draw/Printable.svelte` | Print-friendly output |
 
 ## Common
 
-Shared foundations that everything else relies on.
-
 | File | What it does |
 |------|--------------|
-| `Constants.ts` | App-wide constants |
-| `Extensions.ts` | Number/String prototype extensions (`isBetween`, `hash`, etc.) |
-| `Testworthy_Utilities.ts` | General utilities, exported as `tu` singleton |
+| `Constants.ts` | App-wide constants (`k` singleton) |
+| `Extensions.ts` | Number/String prototype extensions |
+| `Testworthy_Utilities.ts` | General utilities (`tu` singleton) |
 
 ## Draw
 
-Visual utilities for colors and SVG generation.
-
 | File | Export | What it does |
 |------|--------|--------------|
-| `Colors.ts` | `colors` | Color utilities, reactive stores for theme colors |
-| `SVG_Paths.ts` | `svg_paths` | SVG path string generators (fillets, etc.) |
-
-## Types
-
-Geometry primitives, enums, interfaces—imported everywhere.
-
-| File | What it does |
-|------|--------------|
-| `Angle.ts` | `Angle` class, `T_Quadrant`, `T_Orientation`, `Direction` enums |
-| `Coordinates.ts` | `Point`, `Size`, `Rect`, `Polar`, `Point3`, `Size3`, `Block` classes |
-| `Enumerations.ts` | App-wide enums (`T_Signal`, `T_Persistence`, `T_Predicate`, etc.) |
-| `Interfaces.ts` | `Projected`, `O_Scene` interfaces |
-| `Types.ts` | Type aliases (`Dictionary`, `Integer`, callbacks) |
+| `Colors.ts` | `colors` | Color utilities, reactive stores |
+| `SVG_Paths.ts` | `svg_paths` | SVG path string generators |
 
 ## Managers
 
-Singletons that own specific concerns.
-
 | File | Export | What it does |
 |------|--------|--------------|
-| `Preferences.ts` | `preferences` | localStorage read/write wrapper |
+| `Preferences.ts` | `preferences` | localStorage wrapper |
+| `Hits.ts` | `hits` | RBush spatial index, click routing |
+| `Components.ts` | `components` | Component registry |
 
 ## Render
-
-3D rendering pipeline singletons.
 
 | File | Export | What it does |
 |------|--------|--------------|
@@ -113,33 +110,35 @@ Singletons that own specific concerns.
 | `Render.ts` | `render` | Projection pipeline, draw calls |
 | `Input.ts` | `input` | Mouse events → rotation |
 | `Animation.ts` | `animation` | rAF loop, tick callbacks |
+| `Trivial.ts` | `trivial` | Simple rendering utilities |
 
-## Runtime
+## Signals
 
-Base classes for objects that need identity and lifecycle.
-
-| File | What it does |
-|------|--------------|
-| `Identifiable.ts` | Base class with `id` (string) and `hid` (hash) |
+| File | Export | What it does |
+|------|--------|--------------|
+| `Events.ts` | `e` | Unified mouse event handlers |
+| `Mouse_Timer.ts` | `Mouse_Timer` | Long-click, double-click timing |
 
 ## State
 
-Encapsulated snapshots. Pass these around instead of raw events.
+| File | What it does |
+|------|--------------|
+| `S_Mouse.ts` | Mouse event state encapsulation |
+| `S_Hit_Target.ts` | Hit target state for spatial indexing |
+| `S_Component.ts` | Component state for hit detection |
+
+## Runtime
 
 | File | What it does |
 |------|--------------|
-| `S_Mouse.ts` | Encapsulates mouse event state (up, down, double, long, etc.) |
+| `Identifiable.ts` | Base class with `id` and `hid` |
 
-## Layout Components
-
-Svelte components for the panel UI.
+## Types
 
 | File | What it does |
 |------|--------------|
-| `Main.svelte` | Top-level layout, orchestrates regions |
-| `Box.svelte` | Container with separators on edges |
-| `Separator.svelte` | Divider with optional fillets |
-| `Fillets.svelte` | Decorative curved corners |
-| `Controls.svelte` | Top toolbar region |
-| `Details.svelte` | Right panel region |
-| `Graph.svelte` | Main canvas region |
+| `Angle.ts` | `Angle` class, quadrant/orientation enums |
+| `Coordinates.ts` | `Point`, `Size`, `Rect`, `Point3`, etc. |
+| `Enumerations.ts` | App-wide enums |
+| `Interfaces.ts` | `Projected`, `O_Scene` interfaces |
+| `Types.ts` | Type aliases, callbacks |

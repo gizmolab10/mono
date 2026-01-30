@@ -89,10 +89,6 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
-                      text: 'Box',
-                      link: '/di/notes/designs/Box'
-                    },
-                    {
                       text: 'Controls',
                       link: '/di/notes/designs/Controls'
                     },
@@ -101,16 +97,8 @@ export default defineConfig({
                       link: '/di/notes/designs/Details'
                     },
                     {
-                      text: 'Fillets',
-                      link: '/di/notes/designs/Fillets'
-                    },
-                    {
                       text: 'Graph',
                       link: '/di/notes/designs/Graph'
-                    },
-                    {
-                      text: 'Gull Wings',
-                      link: '/di/notes/designs/Gull_Wings'
                     },
                     {
                       text: 'Main',
@@ -119,10 +107,6 @@ export default defineConfig({
                     {
                       text: 'Preferences',
                       link: '/di/notes/designs/Preferences'
-                    },
-                    {
-                      text: 'Separator',
-                      link: '/di/notes/designs/Separator'
                     }
                   ]
                 },
@@ -160,6 +144,10 @@ export default defineConfig({
                     {
                       text: 'Pacing',
                       link: '/di/notes/work/pacing'
+                    },
+                    {
+                      text: 'Resume',
+                      link: '/di/notes/work/resume'
                     },
                     {
                       text: 'Simplicity',

@@ -7,5 +7,6 @@ Current work items and milestones.
 - [Done](./done/)
 - [Milestones](./milestones/)
 - [Pacing](./pacing.md)
+- [Resume](./resume.md)
 - [Simplicity](./simplicity.md)
 

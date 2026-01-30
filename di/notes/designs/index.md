@@ -1,30 +1,33 @@
 # Designs
 
-Design documentation for each component.
-## Layout
+Design documentation for components and managers.
+## Layout Components
 | Component | Description |
 |-----------|-------------|
 | [Main](Main.md) | Root layout, viewport management |
 | [Controls](Controls.md) | Top bar with title |
 | [Graph](Graph.md) | Canvas for 3D visualization |
 | [Details](Details.md) | Left sidebar for properties |
-| [Separator](Separator.md) | Visual divider lines |
-| [Gull_Wings](Gull_Wings.md) | Curved corner decorations |
-| [Box](Box.md) | Bordered container with separators |
 ## Managers
 | Component | Description |
 |-----------|-------------|
 | [Preferences](Preferences.md) | localStorage persistence |
+## Missing Designs
+These files exist but lack design docs:
+| File | Location |
+|------|----------|
+| Hits | `managers/Hits.ts` |
+| Components | `managers/Components.ts` |
+| Events | `signals/Events.ts` |
+| Mouse_Timer | `signals/Mouse_Timer.ts` |
+| S_Hit_Target | `state/S_Hit_Target.ts` |
+| S_Component | `state/S_Component.ts` |
 
 ## Contents
 
-- [Box](./Box.md)
 - [Controls](./Controls.md)
 - [Details](./Details.md)
-- [Fillets](./Fillets.md)
 - [Graph](./Graph.md)
-- [Gull_Wings](./Gull_Wings.md)
 - [Main](./Main.md)
 - [Preferences](./Preferences.md)
-- [Separator](./Separator.md)
 

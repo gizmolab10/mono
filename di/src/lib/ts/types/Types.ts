@@ -1,5 +1,5 @@
+import type { SignalConnection } from 'typed-signals';
 import { T_Signal } from './Enumerations';
-import { SignalConnection } from 'typed-signals';
 import S_Mouse from '../state/S_Mouse';	
 
 export type Dictionary<T = any> = Record<string, T>;
