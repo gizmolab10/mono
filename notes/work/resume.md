@@ -4,7 +4,8 @@
 
 ## Next steps
 
-- [ ] add button to hub app for running tests
+- [ ] rename localhosts -> hosts, dispatcher -> bash
+- [ ] add 'tests' button
 
 ## Netlify Deployment Fixes & Package Cleanup
 

@@ -1,18 +1,18 @@
 <script lang='ts'>
-	import { g, k, core, u, x, show, T_Layer, T_Detail, T_Direction, details } from '../../ts/common/Global_Imports';
+	import { g, k, u, x, core, show, details } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let t_detail: T_Detail;
-	const { w_ancestry_forDetails, w_grabs, w_grabIndex } = x;
 	const { w_t_details } = show;
+	const isSelection = (t_detail === T_Detail.selection);
+	const { w_ancestry_forDetails, w_grabs, w_grabIndex } = x;
 	const s_banner_hideable = details.s_banner_hideables_dict_byType[t_detail];
-	const isSelection = t_detail === T_Detail.selection;
-	// For selection, derive extra_titles from grabs; for others, use si_items
 	const si_items = isSelection ? null : s_banner_hideable?.si_items;
 	const { w_description, w_extra_titles: w_extra_titles_from_si } = si_items ?? {};
 	let title = details.banner_title_forDetail(t_detail);
-	let titles = [title];
 	let hideable_isVisible = true;
 	let trigger = k.empty;
+	let titles = [title];
 
 	update_hideable_isVisible();
 

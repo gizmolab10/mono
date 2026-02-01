@@ -1,5 +1,5 @@
 import { g, k, p, x, core, hits, show, Point, Angle, debug, signals, elements, g_graph_radial } from '../common/Global_Imports';
-import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager } from '../common/Global_Imports';
+import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone } from '../common/Global_Imports';
 import { G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { G_Paging } from '../geometry/G_Paging';
@@ -114,7 +114,6 @@ export default class Radial {
 	ring_zone_atVector_relativeToGraphCenter(mouse_vector: Point): T_Radial_Zone {
 		let ring_zone = T_Radial_Zone.miss;
 		if (!!mouse_vector) {
-			const show_cluster_sliders = get(show.w_t_cluster_pager) == T_Cluster_Pager.sliders;
 			const g_cluster = g_graph_radial.g_cluster_atMouseLocation;
 			const inner = get(radial.w_resize_radius);
 			const distance = mouse_vector.magnitude;
@@ -125,7 +124,7 @@ export default class Radial {
 			if (!!distance) {
 				if (distance < inner) {
 					ring_zone = T_Radial_Zone.resize;
-				} else if (distance < thumb && show_cluster_sliders && !!g_cluster && g_cluster.isMouse_insideThumb) {
+				} else if (distance < thumb && !!g_cluster && g_cluster.isMouse_insideThumb) {
 					ring_zone = T_Radial_Zone.paging;
 				} else if (distance <= outer) {
 					ring_zone = T_Radial_Zone.rotate;

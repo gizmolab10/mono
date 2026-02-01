@@ -5,9 +5,9 @@ import RBush from 'rbush';
 
 export default class S_Rubberband {
     startPoint: Point | null = null;
+    rbush: RBush<any> | null = null;
     rect: Rect = Rect.zero;
     lastUpdate: number = 0;
-    rbush: RBush<any> | null = null;
 
     get isActive(): boolean {
         return get(hits.w_dragging) === T_Drag.rubberband;

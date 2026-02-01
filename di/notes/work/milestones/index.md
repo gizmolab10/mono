@@ -19,10 +19,16 @@ Project milestones for Design Intuition.
 **Goal:** Port the hits manager from ws to enable spatial click/hover detection.
 **Outcome:** RBush-based hit detection with hover, click, long-click, and double-click handling.
 
+### 5 — Smart Objects
+**Timeline:** Jan 29, 2025 | [details](./5.smart.objects.md)
+**Goal:** Introduce smart objects (SO) — geometry with attributes.
+**Outcome:** (in progress)
+
 ## Contents
 
+- [5.smart.objects](./5.smart.objects.md)
+- [4.hits.manager](./4.hits.manager.md)
+- [3.docs](./3.docs.md)
 - [2.panel](./2.panel/)
 - [1.solid.foundation](./1.solid.foundation.md)
-- [3.docs](./3.docs.md)
-- [4.hits.manager](./4.hits.manager.md)
 

@@ -5,7 +5,7 @@ Where we are in Design Intuition.
 ---
 ## Milestones
 
-- [ ] 5 smart objects == SO (attributes)
+- [ ] [5 smart objects](milestones/5.smart.objects.md) == SO (Attributes)
 - [ ] 6 mouse editing of SO (selection corners, drag)
 - [ ] 7 dimensions (terminators, text, dimension and extension lines)
 - [ ] 8 hierarchy of SO
@@ -15,7 +15,13 @@ Where we are in Design Intuition.
 
 ## Current State
 
-**Milestone 4 complete.** The app has:
+**Milestone 5 in progress.** Smart objects foundation:
+
+- `Smart_Object.ts` — extends Identifiable, optional O_Scene ref
+- `Attribute.ts` — name/value boilerplate
+- Decision: SO is primary, O_Scene is rendering detail
+
+The app has:
 
 - Panel layout with controls, details, graph regions
 - Separators with fillets for rounded corners

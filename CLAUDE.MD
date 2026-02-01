@@ -52,6 +52,7 @@ At session start, also read:
 2. `kinds.of.tasks.md` — classify task type, note conflicts
 3. `gates.md` — check for STOP/SEARCH/LIST/WAIT
 4. `workarounds.md` — know tool fallbacks
+5. `../work/feedstock.md` — don't repeat them. If 10+ entries, say: "Feedstock: [N] — time to distill."
 
 ## Guides
 

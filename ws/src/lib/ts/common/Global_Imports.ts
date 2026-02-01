@@ -46,7 +46,7 @@ import { T_Thing, T_Trait, T_Kinship, T_Predicate } from './Enumerations';
 import { T_Signal, T_Hit_Target, T_Mouse_Detection } from './Enumerations';
 import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Drag, T_File_Extension, T_File_Operation, T_Startup } from './Enumerations';
-import { T_Radial_Zone, T_Preference, T_Auto_Adjust_Graph, T_Cluster_Pager, T_Counts_Shown } from './Enumerations';
+import { T_Radial_Zone, T_Preference, T_Auto_Adjust_Graph, T_Counts_Shown } from './Enumerations';
 
 import './Extensions';
 import { k } from './Constants';
@@ -120,11 +120,11 @@ export {
 	T_Search, T_Search_Preference,
 	T_Startup, T_Drag, T_Alteration,
 	T_Image_Extension, T_Text_Extension,
+	T_Auto_Adjust_Graph, T_Counts_Shown,
 	T_Quadrant, T_Orientation, T_Direction,
 	T_Layer, T_Tree_Line, T_Radial_Zone, T_Oblong,
 	T_Edit, T_Create, T_Persistable, T_Persistence,
 	T_File_Extension, T_File_Operation, T_Storage_Need,
-	T_Auto_Adjust_Graph, T_Cluster_Pager, T_Counts_Shown,
 	T_Signal, T_Control, T_Hit_Target, T_Mouse_Detection,
 	T_Banner, T_Detail, T_Request, T_Action, T_Button_SVG,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Preference,

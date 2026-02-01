@@ -68,6 +68,7 @@
 	}
 
 	function adjust_focus() {
+		ancestry.grabOnly();
 		if (ancestry.becomeFocus() && $w_ancestry_forDetails.hidden_by_depth_limit) {
 			// adjust level to make selection visible
 			$w_depth_limit = $w_ancestry_forDetails.depth_within_focus_subtree;

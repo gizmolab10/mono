@@ -3,6 +3,7 @@
 ## Contents
 
 - [Articles](./articles/)
+- [Feedstock](./feedstock.md)
 - [Jeff](./jeff/)
 - [Journals](./journals/)
 - [Next](./next/)

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { e, g, h, k, core, u, x, hits, show, Rect, Point, builds, debug, signals, elements } from '../../ts/common/Global_Imports';
-	import { S_Component, T_Layer, T_Graph, T_Signal, T_Startup, T_Control } from '../../ts/common/Global_Imports';
+	import { S_Component, T_Drag, T_Layer, T_Graph, T_Signal, T_Startup, T_Control } from '../../ts/common/Global_Imports';
 	import Radial_Graph from '../radial/Radial_Graph.svelte';
 	import Rubberband from '../mouse/Rubberband.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
@@ -64,7 +64,7 @@
 	}
 
 	function grand_layout_andReattach() {
-		if (!!h && h.hasRoot) {
+		if (!!h && h.hasRoot && $w_dragging !== T_Drag.rubberband) {
 			g.layout();
 			debug.log_draw(`GRAPH grand_layout_andReattach`);
 			actual_content_rect = g.user_offset_toGraphDrawing;
@@ -161,4 +161,5 @@
 		-moz-user-select: none !important;
 		-webkit-user-select: none !important;
 	}
+
 </style>

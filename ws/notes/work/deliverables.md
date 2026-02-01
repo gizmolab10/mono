@@ -18,7 +18,7 @@ urls for review and feedback
 
 ## Catalist
 
-### Bugs
+`### Bugs
 
 - [ ] webseriously view is taller than window
 - [ ] top banner wraps badly -> places things on top of webseriously
@@ -31,7 +31,7 @@ urls for review and feedback
 
 ### Should we extend GM date beyond Friday January 30?
 
-- [ ] nothing here
+- [ ] yes
 
 ## Webseriously
 
@@ -40,6 +40,12 @@ urls for review and feedback
 - [x] shift-click one of the multiply selected, deselects all
 - [x] click on a breadcrumb to the left of the focus -> change the focus
 - [x] radial mode -> changing the focus -> selects the focus
+- [x] send vincent the ws logo
+- [x] click in breadcrumb left of focus, change the selection
+	- [x] details should say selection, not focus
+- [ ] **firefox** level slider and reveal dots render funny, next prev buttons invisible
+- [x] remove cluster pager from Visibility, etc
+- [x] click background in radial -> HANG
 
 ### Future Tasks
 

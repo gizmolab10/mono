@@ -90,11 +90,6 @@ export enum T_Theme {
 	bubble	   = 'bubble',
 }
 
-export enum T_Cluster_Pager {
-	steppers = 'steppers',
-	sliders  = 'sliders',
-}
-
 export enum T_Counts_Shown {
 	numbers = 'numbers',
 	hidden  = 'hidden',
@@ -335,7 +330,6 @@ export enum T_Preference {
 	show_countsAs	  = 'show_countsAs',
 	relationships	  = 'relationships',
 	detail_types	  = 'detail_types',			// shown in details view, vertical stack
-	paging_style	  = 'paging_style',
 	show_details	  = 'show_details',			// left side
 	show_related	  = 'show_related',
 	ring_radius		  = 'ring_radius',

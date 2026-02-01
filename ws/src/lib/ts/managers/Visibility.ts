@@ -1,5 +1,5 @@
 import { T_Graph, T_Detail, T_Kinship, T_Startup, T_Preference } from '../common/Global_Imports';
-import { T_Counts_Shown, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
+import { T_Counts_Shown, T_Auto_Adjust_Graph } from '../common/Global_Imports';
 import { g, k, p, g_graph_tree } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
@@ -10,7 +10,6 @@ const P = T_Preference;
 
 export class Visibility {
 	w_t_auto_adjust_graph	= writable<T_Auto_Adjust_Graph | null>(def(P.auto_adjust));
-	w_t_cluster_pager		= writable<T_Cluster_Pager>(def(P.paging_style));
 	w_t_details				= writable<Array<T_Detail>>(def(P.detail_types));
 	w_t_countDots			= writable<Array<T_Kinship>>(def(P.countDots));
 	w_t_trees				= writable<Array<T_Kinship>>(def(P.tree));

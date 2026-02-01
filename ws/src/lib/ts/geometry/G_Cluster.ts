@@ -1,5 +1,5 @@
-import { G_Widget, G_Cluster_Pager, S_Rotation, T_Predicate, T_Cluster_Pager } from '../common/Global_Imports';
-import { g, k, u, x, show, debug, colors, radial, signals } from '../common/Global_Imports';
+import { g, k, u, x, debug, colors, radial, signals } from '../common/Global_Imports';
+import { G_Widget, G_Cluster_Pager, S_Rotation } from '../common/Global_Imports';
 import { Point, Angle, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Paging } from './G_Paging';
 import { get } from 'svelte/store';
@@ -107,10 +107,10 @@ export default class G_Cluster {
 	private layout_label() {		// rotate text tangent to arc, at center of arc
 		const angle = this.g_cluster_pager.angle_ofFork;
 		const ortho = this.arc_in_lower_half ? Angle.three_quarters : Angle.quarter;
-		const tweak = [10, 7, -17.4, -22.4][u.convert_toNumber([this.arc_in_lower_half, this.show_forks])];
+		const tweak = [10, 7, -17.4, -22.4][u.convert_toNumber([this.arc_in_lower_half, true])];
 		const label_radius = radial.ring_radius + tweak;
 		this.label_center = this.center.offsetBy(Point.fromPolar(label_radius, angle));
-		this.g_cluster_pager.label_text_angle = this.show_forks ? ortho - angle : Math.PI / 2;
+		this.g_cluster_pager.label_text_angle = ortho - angle;
 	}
 	
 	private update_label_forIndex() {
@@ -128,12 +128,12 @@ export default class G_Cluster {
 	get maximum_paging_index():	  number { return this.total_widgets - this.widgets_shown; }
 	get paging_index_ofFocus():	  number { return Math.round(this.g_focusPaging?.index ?? 0); }
 	get s_paging():			  S_Rotation { return radial.s_paging_forName_ofCluster(this.name); }
+	get g_paging():		 G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.isCluster_ofChildren); }
+
 	get g_focusPaging(): G_Paging | null { 
 		const focus = get(x.w_ancestry_focus);
 		return focus ? this.g_paging_forAncestry(focus) : null;
 	}
-	get show_forks():			 boolean { return get(show.w_t_cluster_pager) == T_Cluster_Pager.sliders; }
-	get g_paging():		 G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.isCluster_ofChildren); }
 
 	g_paging_forPredicate_toChildren(predicate: Predicate, isCluster_ofChildren: boolean): G_Paging | null {
 		const g_pages = radial.g_pages_forThingID(get(x.w_ancestry_focus)?.thing?.id);

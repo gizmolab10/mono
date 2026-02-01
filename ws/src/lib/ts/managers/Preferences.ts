@@ -1,6 +1,6 @@
 import { c, g, h, k, u, x, show, debug, radial, Ancestry, databases } from '../common/Global_Imports';
-import { T_Graph, S_Items, T_Kinship, T_Detail, T_Counts_Shown } from '../common/Global_Imports';
-import { T_Preference, T_Cluster_Pager, T_Auto_Adjust_Graph } from '../common/Global_Imports';
+import { T_Graph, T_Kinship, T_Detail, T_Counts_Shown } from '../common/Global_Imports';
+import { S_Items, T_Preference, T_Auto_Adjust_Graph } from '../common/Global_Imports';
 import type { S_Recent } from '../types/Types';
 import { get } from 'svelte/store';
 
@@ -13,7 +13,6 @@ export const def = (key: T_Preference): any => spec_dict_byType[key]?.defaultVal
 
 const spec_dict_byType: Enum_Spec_ByType = {
 	[T_Preference.auto_adjust]:     new Enum_Spec(T_Auto_Adjust_Graph, null),
-	[T_Preference.paging_style]:    new Enum_Spec(T_Cluster_Pager,     T_Cluster_Pager.sliders),
 	[T_Preference.show_countsAs]:   new Enum_Spec(T_Counts_Shown,      T_Counts_Shown.numbers),
 	[T_Preference.tree]:            new Enum_Spec(T_Kinship,           T_Kinship.children),
 	[T_Preference.graph]:           new Enum_Spec(T_Graph,             T_Graph.tree),
@@ -32,13 +31,9 @@ export class Preferences {
 	get expanded_key(): string { return get(g.w_branches_areChildren) ? T_Preference.expanded_children : T_Preference.expanded_parents; }
 
 	apply_queryStrings(queryStrings: URLSearchParams) {
-		const paging_style = queryStrings.get('paging_style');
 		const levels = queryStrings.get('levels');
 		if (!!levels) {
 			g.w_depth_limit.set(Number(levels));
-		}
-		if (!!paging_style) {
-			show.w_t_cluster_pager.set(paging_style == 'sliders' ? T_Cluster_Pager.sliders : T_Cluster_Pager.steppers);
 		}
 		this.restore_preferences();
 	}
@@ -151,7 +146,6 @@ export class Preferences {
 			this.reset_preferences();
 		}
 		show.w_t_auto_adjust_graph.set(this.read_key(T_Preference.auto_adjust));
-		show.w_t_cluster_pager    .set(this.read_key(T_Preference.paging_style));
 		show.w_show_countsAs      .set(this.read_key(T_Preference.show_countsAs));
 		x.w_thing_title           .set(this.read_key(T_Preference.thing));
 		x.w_thing_fontFamily      .set(this.read_key(T_Preference.font));
@@ -261,9 +255,6 @@ export class Preferences {
 		});
 		show.w_t_details.subscribe((value) => {
 			this.write_key(T_Preference.detail_types, value);
-		});
-		show.w_t_cluster_pager.subscribe((paging_style: T_Cluster_Pager) => {
-			this.write_key(T_Preference.paging_style, paging_style);
 		});
 		show.w_t_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust_Graph | null) => {
 			this.write_key(T_Preference.auto_adjust, auto_adjust);

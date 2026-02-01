@@ -39,10 +39,10 @@ class Details {
 		let title = T_Detail[t_detail];
 		switch (t_detail) {
 			case T_Detail.tags:
-				title = si_items.title('tag', 'tags', title);
+				title = si_items?.title('tag', 'tags', title) ?? 'tags';
 				break;
 			case T_Detail.traits:
-				title = si_items.title('trait', 'traits', title);
+				title = si_items?.title('trait', 'traits', title) ?? 'traits';
 				break;
 			case T_Detail.selection:
 				const si_found = x.si_found;
@@ -56,7 +56,7 @@ class Details {
 				} else if (grabs.length > 1) {
 					title = grabIndex.of_n_for_type(grabs.length, 'selected', '');
 				} else if (grabs.length === 1) {
-					title = 'focus';
+					title = 'selection';
 				} else {
 					title = 'focus';
 				}
