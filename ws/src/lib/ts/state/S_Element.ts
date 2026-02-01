@@ -29,7 +29,7 @@ export default class S_Element extends S_Hit_Target {
 		this.name = elements.name_from(identifiable, type, subtype);
 		this.subtype = subtype;
 		if (this.isADot) { 
-			this.color_background = subtype == T_Control.search ? 'transparent' : get(colors.w_background_color);
+			this.color_background = subtype == T_Control.search ? 'transparent' : get(colors.w_background_color); // colors.graph_background
 		}
 	}
 

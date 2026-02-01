@@ -33,7 +33,7 @@
 	}
 
 	function update_trigger() {
-		setTimeout(hits.recalibrate(), 2000)
+		setTimeout(() => hits.recalibrate(), 1)
 	}
 
 	function update_banner_titles(grabs: any[], grabIndex: number, extra_titles: string[]) {
@@ -78,8 +78,7 @@
 		display: flex;
 		position: relative;
 		flex-direction: column;
-		z-index:{T_Layer.stackable};
-		background-color: transparent;'>
+		z-index:{T_Layer.stackable};'>
 	{#key trigger}
 		{#if s_banner_hideable?.hasBanner}
 			<div class='banner'

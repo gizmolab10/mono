@@ -18,7 +18,7 @@ urls for review and feedback
 
 ## Catalist
 
-`### Bugs
+\`### Bugs
 
 - [ ] webseriously view is taller than window
 - [ ] top banner wraps badly -> places things on top of webseriously
@@ -44,16 +44,16 @@ urls for review and feedback
 - [x] remove cluster pager from Visibility, etc
 - [x] click background in radial -> HANG
 - [x] click in breadcrumb left of focus, change the selection
-	- [x] details should say selection, not focus
-- [ ] details banners hover wrong for traits and data
-- [ ] **firefox**
-	- [ ] next and previous buttons not visible
-	- [ ] reveal dots not visible
-		- [ ] svg is tiny 3 x 3 px
-	- [x] preferences details accent color dot's border is broken
-	- [x] levels slider is incorrectly drawn
+  - [x] details should say selection, not focus
+- [x] **firefox**
+  - [x] next and previous buttons not visible
+  - [x] reveal dots not visible
+  - [x] preferences details accent color dot's border is broken
+  - [x] levels slider is incorrectly drawn
+
 ### Future Tasks
 
+- [ ] details banners hover wrong for traits and data
 - [ ] add dot to breadcrumb -> focus
 - [ ] API -> change in root
 - [ ] API -> edits made in Catalist

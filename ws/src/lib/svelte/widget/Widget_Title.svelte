@@ -394,7 +394,6 @@
 			z-index: {T_Layer.text};
 			height: {input_height}px;
 			{k.prevent_selection_style};
-			background-color: transparent;
 			font-family: {$w_thing_fontFamily};
 			cursor: {isEditing() ? "text" : "pointer"};'/>
 </div>

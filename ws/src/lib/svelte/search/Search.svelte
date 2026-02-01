@@ -39,8 +39,7 @@
 	height: 25px;
 	z-index: {zindex};
 	position: absolute;
-	width: {graph_width()}px;
-	background-color: transparent;'>
+	width: {graph_width()}px;'>
 	<div class='search-results-found'
 		style='
 			top: 3.8px;

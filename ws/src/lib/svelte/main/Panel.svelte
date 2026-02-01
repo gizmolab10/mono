@@ -66,6 +66,7 @@
 				left: 0px;
 				position: fixed;
 				on:wheel={ignore_wheel}
+				background_color: white;
 				{k.prevent_selection_style};
 				width: {g.windowSize.width}px;
 				height: {g.windowSize.height}px;'>
@@ -84,6 +85,7 @@
 				<div class='main'
 					style='
 						position: fixed;
+						background_color: white;
 						z-index: {T_Layer.graph};
 						top: {$w_rect_ofGraphView.origin.y}px;
 						left: {$w_rect_ofGraphView.origin.x}px;

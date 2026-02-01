@@ -107,7 +107,6 @@
 						position: absolute;
 						border: 1px dashed green;
 						z-index: ${T_Layer.frontmost};
-						background-color: transparent;
 						top: {actual_content_rect.origin.y - 1}px;
 						left: {actual_content_rect.origin.x + 14}px;
 						width: {actual_content_rect.size.width - 10}px;

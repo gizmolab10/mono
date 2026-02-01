@@ -99,7 +99,6 @@
             -moz-user-select: none;
             font-size: {font_size}px;
             -webkit-user-select: none;
-            background-color: transparent;
             transform: translate(-50%, -50%);'>
         {#if !!icon_path}
             <svg

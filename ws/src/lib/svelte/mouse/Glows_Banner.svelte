@@ -10,10 +10,11 @@
 	export let titles: string[];
 	export let height: number;
 	export let width: number;
-	$: banner_title = titles[0];
 	const { w_background_color } = colors;
-	$: g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, 0, false, font_size, true);
 	let banner_color = colors.banner;
+
+	$: banner_title = titles[0];
+	$: g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, 0, false, font_size, true);
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//																				//

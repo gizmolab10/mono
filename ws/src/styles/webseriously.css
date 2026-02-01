@@ -1,17 +1,20 @@
 svg {
-	display: block;		/* override inline to eliminate unwanted vertical displacements */
+	display: block;
+	/* override inline to eliminate unwanted vertical displacements */
 }
 
-div, span, input {
+div,
+span,
+input {
 	background-color: transparent;
 }
 
 body {
-	background-color: var(--css-background-color);
-    width: var(--css-body-width, 100%);
 	user-select: none;
-	-webkit-user-select: none;
 	-moz-user-select: none;
+	-webkit-user-select: none;
+	width: var(--css-body-width, 100%);
+	background-color: var(--css-background-color);
 }
 
 input[type='range'] {
@@ -19,36 +22,43 @@ input[type='range'] {
 	touch-action: auto !important;
 }
 
-button, svg {
+button,
+svg {
 	&:focus {
 		outline: none;
 	}
 }
 
-html, body {
+html,
+body {
+	margin: 0;
+	padding: 0;
 	overflow: hidden;
-    padding: 0;
-    margin: 0;
 }
 
 /* Global spinner animation */
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .spinner-circle {
-    transform-origin: center;
-    animation: spin var(--spinner-speed, 1s) linear infinite;
+	transform-origin: center;
+	animation: spin var(--spinner-speed, 1s) linear infinite;
 }
 
 .graph-container {
-	transform: translate3d(var(--graph-x), var(--graph-y), 0);
 	will-change: transform;
 	transition: transform 0.1s ease-out;
+	transform: translate3d(var(--graph-x), var(--graph-y), 0);
 }
 
 .widget {
-	transform: translate3d(var(--widget-x), var(--widget-y), 0);
 	will-change: transform;
+	transform: translate3d(var(--widget-x), var(--widget-y), 0);
 }

@@ -84,8 +84,7 @@
 
 <div class='radial-cluster'
 	style='
-		z-index:{T_Layer.paging};
-		background-color: transparent;'>
+		z-index:{T_Layer.paging};'>
 	<div class='cluster-wrapper'
 		style={wrapper_style}>
         <svg class='svg-radial-cluster'

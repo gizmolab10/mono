@@ -46,8 +46,7 @@
 	z-index: {zindex};
 	position: absolute;
 	border-radius: 20px;
-	pointer-events: auto;
-	background-color: transparent;'>
+	pointer-events: auto;'>
 	{#key $w_t_trees}
 		<Segmented name='tree-types'
 			left={58}

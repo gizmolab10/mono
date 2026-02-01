@@ -143,15 +143,17 @@ export default class Hits {
 	}
 
 	recalibrate() {
-		const bush = new RBush<Target_RBRect>();
-		for (const target of [...this.targets]) {
-			target.update_rect();
-			const rect = target.rect;
-			if (!!rect) {
-				this.insert_into_rbush(target, bush);
+		if (!!this.targets) {
+			const bush = new RBush<Target_RBRect>();
+			for (const target of this.targets) {
+				target.update_rect();
+				const rect = target.rect;
+				if (!!rect) {
+					this.insert_into_rbush(target, bush);
+				}
 			}
+			this.rbush = bush;  // atomic swap
 		}
-		this.rbush = bush;  // atomic swap
 	}
 
 	static readonly _____ADD_AND_REMOVE: unique symbol;
