@@ -51,8 +51,8 @@
 
 <svg class={name}
     bind:this={svg}
-    width={width}px
-    height={height}px
+    width='{width}px'
+    height='{height}px'
     viewBox='{left} {top} {viewBox_w} {height}'
     preserveAspectRatio='none'
     style='

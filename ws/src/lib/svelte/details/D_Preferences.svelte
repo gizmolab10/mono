@@ -89,6 +89,7 @@
 		color:black;
 		width: 100%;
 		top:{top}px;
+		overflow: visible;
 		position:{position};
 		padding-bottom:{tops[tops.length - 1]}px;
 		font-size:{k.font_size.info}px;'>
@@ -153,10 +154,11 @@
 			width: 17px;
 			height: 17px;
 			top: {tops[3 + offset]}px;
-			border-radius: 50%;
+			border-radius: 9px;
 			left: {color_left}px;
 			position: {position};
 			border: 1px solid black;
+			box-sizing: border-box;
 			z-index: {T_Layer.details};
 			background-color: {$w_separator_color}'>
 		<Portal className='preferences-color-portal' id='preferences'>

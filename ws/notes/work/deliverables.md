@@ -41,12 +41,17 @@ urls for review and feedback
 - [x] click on a breadcrumb to the left of the focus -> change the focus
 - [x] radial mode -> changing the focus -> selects the focus
 - [x] send vincent the ws logo
-- [x] click in breadcrumb left of focus, change the selection
-	- [x] details should say selection, not focus
-- [ ] **firefox** level slider and reveal dots render funny, next prev buttons invisible
 - [x] remove cluster pager from Visibility, etc
 - [x] click background in radial -> HANG
-
+- [x] click in breadcrumb left of focus, change the selection
+	- [x] details should say selection, not focus
+- [ ] details banners hover wrong for traits and data
+- [ ] **firefox**
+	- [ ] next and previous buttons not visible
+	- [ ] reveal dots not visible
+		- [ ] svg is tiny 3 x 3 px
+	- [x] preferences details accent color dot's border is broken
+	- [x] levels slider is incorrectly drawn
 ### Future Tasks
 
 - [ ] add dot to breadcrumb -> focus

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, x, core, show, details } from '../../ts/common/Global_Imports';
+	import { g, k, u, x, core, hits, show, details } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let t_detail: T_Detail;
@@ -30,22 +30,20 @@
 	$: { 
 		const _ = $w_t_details;
 		update_hideable_isVisible();
-		// hits.recalibrate();
 	}
 
-	function update_trigger() {}// trigger = `${titles.join(k.comma)}:::${hideable_isVisible}:::${$w_description}:::${$w_ancestry_forDetails?.id}`; }
+	function update_trigger() {
+		setTimeout(hits.recalibrate(), 2000)
+	}
 
 	function update_banner_titles(grabs: any[], grabIndex: number, extra_titles: string[]) {
 		const new_title = details.banner_title_forDetail(t_detail, grabs, grabIndex);
 		const new_titles = [new_title, ...extra_titles];
-		if (new_titles.join(k.comma) == titles.join(k.comma)) {
-			// console.log(`no trigger: "${new_title}"`);
-		} else {
+		if (new_titles.join(k.comma) != titles.join(k.comma)) {
 			const prior_titles = titles;
 			titles = new_titles;
 			title = new_title;
 			update_trigger();
-			// console.log(`now: "${new_title}" description: "${$w_description}"`);
 		}
 	}
 

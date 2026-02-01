@@ -144,14 +144,14 @@
 	}
 	input[type='range']::-moz-range-track {
 		background: white;
-		border-radius: 50%;
+		border-radius: 16px;
 		height: var(--height);
 		border: var(--border);
 	}
 	input[type='range']::-ms-fill-lower,
 	input[type='range']::-ms-fill-upper {
 		background: white;
-		border-radius: 50%;
+		border-radius: 16px;
 		border: var(--border);
 	}
 	input[type='range']::-ms-thumb {

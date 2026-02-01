@@ -194,6 +194,10 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/4.hits.manager'
                         },
                         {
+                          text: '5.smart.objects',
+                          link: '/di/notes/work/milestones/5.smart.objects'
+                        },
+                        {
                           text: '2.panel >',
                           link: '/di/notes/work/milestones/2.panel/',
                           collapsed: true,
@@ -368,6 +372,14 @@ export default defineConfig({
               link: '/notes/work/',
               collapsed: true,
               items: [
+                {
+                  text: 'Feedstock',
+                  link: '/notes/work/feedstock'
+                },
+                {
+                  text: 'Handoff',
+                  link: '/notes/work/handoff'
+                },
                 {
                   text: 'Resume',
                   link: '/notes/work/resume'
@@ -796,6 +808,10 @@ export default defineConfig({
                     {
                       text: 'Deliverables',
                       link: '/ws/notes/work/deliverables'
+                    },
+                    {
+                      text: 'Handoff',
+                      link: '/ws/notes/work/handoff'
                     },
                     {
                       text: 'Resume',

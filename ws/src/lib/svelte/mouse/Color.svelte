@@ -11,6 +11,7 @@
 	const selectorSize = k.height.dot + 1;
 	const pickerSize = 122;
 	const { w_color_picker_isOpen } = colors;
+	const isFirefox = typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes('firefox');
 	let borderColor = colors.separator;
 	let isOpen = false;
 
@@ -31,7 +32,7 @@
 <div class='color'
 	style='
 		z-index: {zindex};
-		top: {origin.y}px;
+		top: {origin.y + (isFirefox ? 1 : 0)}px;
 		left: {origin.x}px;
 		position: absolute;
 		--picker_offset: {picker_offset};'>

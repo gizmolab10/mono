@@ -21,6 +21,27 @@ Then it might be good to know what patterns cause the stop-dead moments? Is it a
 
 ---
 
+## 2025-01-31
+
+### Tool failure handling
+
+#### Repeated failing tool calls
+**What:** Same tool, same path, multiple times — each returning "No result received" or empty.
+**Why:** Hoping it would work instead of switching approaches.
+**Proposed new rule:** When a tool fails, immediately cycle: filesystem → bash → view. Don't repeat the same failing call.
+
+#### Asking for paths already given
+**What:** User said "svelte/draw", I asked for the full path instead of constructing it.
+**Why:** Didn't trust myself to build the path from context (ws project, standard structure).
+**Proposed new rule:** If user gives partial path, construct full path from known project structure. Don't ask.
+
+#### Waiting instead of acting on tool failure
+**What:** Tools failed, I asked user what to do instead of exhausting alternatives.
+**Why:** Deflecting instead of problem-solving.
+**Rule violated:** Action First — "if obvious, do it"
+
+---
+
 ## 2025-01-29
 
 ### Proposing new rules

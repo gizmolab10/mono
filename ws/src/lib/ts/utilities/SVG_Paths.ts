@@ -272,7 +272,7 @@ export default class SVG_Paths {
 		}
 		const start = data[vertices - 1].end;
 		const arcs = data.map(d => `C${d.controlOne.description} ${d.controlTwo.description} ${d.end.description}`);
-		return 'M' + start.description+ k.comma + arcs.join(k.space) + 'Z';
+		return 'M' + start.description+ k.space + arcs.join(k.space) + 'Z';
 	}
 
 	oblong(center: Point, size: Size, part: T_Oblong = T_Oblong.full): string {
