@@ -1,11 +1,37 @@
 # Resume
 
+**February 1, 2026**
+
+## Hub App Updates
+
+Completed all requested changes to the hub app dashboard.
+
+**Deploy status tooltip fix:**
+- [x] Added error handling for missing Netlify token (shows `⚠` instead of `undefined`)
+
+**Tests button:**
+- [x] Added "tests" button with `;` keyboard shortcut
+- [x] Runs `yarn test:run` for both ws and di projects
+- [x] Shows live progress: "Running ws tests..." → "ws: 192 passed. Running di tests..."
+- [x] Final output: `✓ [WS] Passed: 192, Failed: 0 --- [DI] Passed: 206, Failed: 0`
+
+**Dispatcher API additions:**
+- [x] `/run-tests` POST endpoint — starts async test run
+- [x] `/tests-status` GET endpoint — returns progress/results
+- [x] `run_tests_async()` — runs both ws and di tests sequentially
+- [x] `parse_test_output()` — strips ANSI codes, extracts passed/failed counts
+
+**Button renames:**
+- [x] "localhosts" → "hosts"
+- [x] "dispatcher" → "linkage" → "relay"
+
+**Files modified:**
+- `notes/tools/hub/index.html` — button labels, doTests(), pollTestsStatus(), tooltip error handling
+- `notes/tools/hub/dispatcher.py` — test endpoints and async runner
+
+---
+
 **January 28, 2026 (early afternoon)**
-
-## Next steps
-
-- [ ] rename localhosts -> hosts, dispatcher -> bash
-- [ ] add 'tests' button
 
 ## Netlify Deployment Fixes & Package Cleanup
 

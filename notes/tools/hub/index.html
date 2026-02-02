@@ -391,17 +391,18 @@
       <div class="title-box swapped">
         <button class="action side-a" id="btn-dns">DNS<span class="badge">N</span></button>
         <div class="title-wrapper">
-          <h1 class="middle"><span class="status-dot" id="status-dot"></span><span class="title-text">Work Sites</span>
+          <h1 class="middle"><span class="status-dot" id="status-dot"></span><span class="title-text">Mono</span>
           </h1>
           <div class="deploy-tooltip" id="deploy-tooltip">Loading...</div>
         </div>
         <div class="side-b">
-          <button class="action" id="btn-start" data-tooltip="restart all local dev servers">localhosts<span
+          <button class="action" id="btn-start" data-tooltip="restart all local dev servers">hosts<span
               class="badge">esc</span></button>
           <button class="action" id="btn-docs" data-tooltip="build all documentation">docs<span
               class="badge">⌫</span></button>
-          <button class="action" id="btn-dispatcher" data-tooltip="restart local bash executor">dispatcher<span
+          <button class="action" id="btn-relay" data-tooltip="restart local bash executor">relay<span
               class="badge">`</span></button>
+          <button class="action" id="btn-tests" data-tooltip="run all tests">tests<span class="badge">;</span></button>
         </div>
       </div>
     </div>
@@ -473,7 +474,8 @@
     const btnDns = document.getElementById('btn-dns');
     const btnBubble = document.getElementById('btn-bubble');
     const btnDocs = document.getElementById('btn-docs');
-    const btnDispatcher = document.getElementById('btn-dispatcher');
+    const btnRelay = document.getElementById('btn-relay');
+    const btnTests = document.getElementById('btn-tests');
     const consoleOutput = document.getElementById('console-output');
     const consoleRow = document.getElementById('console-row');
     const commandDiv = document.getElementById('command');
@@ -674,7 +676,7 @@
 
       btnStart.classList.add('disabled');
       btnDocs.classList.add('disabled'); // Disable rebuild while restarting
-      btnDispatcher.classList.add('disabled'); // Disable dispatcher restart while restarting
+      btnRelay.classList.add('disabled'); // Disable dispatcher restart while restarting
       btnStart.innerHTML = 'restarting<span class="badge">esc</span>';
       setConsoleOutput('restart', 'Starting...');
       matchRowWidths();
@@ -689,14 +691,14 @@
             // Start polling for status
             restartPollInterval = setInterval(pollRestartStatus, 500);
           } else {
-            btnStart.innerHTML = 'localhosts<span class="badge">esc</span>';
+            btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
             setConsoleOutput('restart', `Error: ${data.error}`);
             matchRowWidths();
           }
         })
         .catch(err => {
-          btnStart.innerHTML = 'localhosts<span class="badge">esc</span>';
+          btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
           btnStart.classList.remove('disabled');
           setConsoleOutput('restart', `API error: ${err.message}`);
           matchRowWidths();
@@ -718,10 +720,10 @@
           if (data.done) {
             clearInterval(restartPollInterval);
             restartPollInterval = null;
-            btnStart.innerHTML = 'localhosts<span class="badge">esc</span>';
+            btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
             btnDocs.classList.remove('disabled'); // Re-enable rebuild
-            btnDispatcher.classList.remove('disabled'); // Re-enable dispatcher restart
+            btnRelay.classList.remove('disabled'); // Re-enable dispatcher restart
             matchRowWidths();
 
             // Clear console if mouse is not over console row or restart button
@@ -736,10 +738,10 @@
           if (pollErrorCount >= MAX_POLL_ERRORS) {
             clearInterval(restartPollInterval);
             restartPollInterval = null;
-            btnStart.innerHTML = 'localhosts<span class="badge">esc</span>';
+            btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
             btnStart.classList.remove('disabled');
             btnDocs.classList.remove('disabled'); // Re-enable rebuild
-            btnDispatcher.classList.remove('disabled'); // Re-enable dispatcher restart
+            btnRelay.classList.remove('disabled'); // Re-enable dispatcher restart
             setConsoleOutput('restart', `Poll error: ${err.message}`);
             matchRowWidths();
           }
@@ -830,9 +832,14 @@
         consoleOutput.textContent = getConsoleOutput('rebuild');
       }
     });
-    btnDispatcher.addEventListener('mouseenter', () => {
+    btnRelay.addEventListener('mouseenter', () => {
       if (!restartPollInterval && !pollInterval) {
-        consoleOutput.textContent = getConsoleOutput('dispatcher');
+        consoleOutput.textContent = getConsoleOutput('relay');
+      }
+    });
+    btnTests.addEventListener('mouseenter', () => {
+      if (!restartPollInterval && !pollInterval && !testsPollInterval) {
+        consoleOutput.textContent = getConsoleOutput('tests');
       }
     });
 
@@ -841,7 +848,7 @@
 
       btnDocs.classList.add('disabled');
       btnStart.classList.add('disabled'); // Disable restart while building docs
-      btnDispatcher.classList.add('disabled'); // Disable dispatcher restart while building docs
+      btnRelay.classList.add('disabled'); // Disable dispatcher restart while building docs
       btnDocs.innerHTML = 'building<span class="badge">⌫</span>';
       setConsoleOutput('rebuild', 'Starting...');
       matchRowWidths();
@@ -888,7 +895,7 @@
             btnDocs.innerHTML = 'docs<span class="badge">⌫</span>';
             btnDocs.classList.remove('disabled');
             btnStart.classList.remove('disabled'); // Re-enable restart
-            btnDispatcher.classList.remove('disabled'); // Re-enable dispatcher restart
+            btnRelay.classList.remove('disabled'); // Re-enable dispatcher restart
             matchRowWidths();
 
             // Enable console clear on mouseleave after 1 second
@@ -902,18 +909,81 @@
         });
     }
 
-    function doDispatcher() {
-      setConsoleOutput('dispatcher', 'Restarting dispatcher...');
+    function doRelay() {
+      setConsoleOutput('relay', 'Restarting relay...');
       fetch(`http://localhost:${ports.dispatcher}/restart-dispatcher`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       }).catch(() => { });
 
-      // Dispatcher takes ~1 second to restart, then reload page
+      // Relay takes ~1 second to restart, then reload page
       setTimeout(() => {
-        setConsoleOutput('dispatcher', '✓ Dispatcher restarted');
+        setConsoleOutput('relay', '✓ Relay restarted');
         setTimeout(() => location.reload(), 500);
       }, 2500);
+    }
+
+    let testsPollInterval = null;
+
+    function doTests() {
+      if (testsPollInterval || pollInterval || restartPollInterval) return; // Operation in progress
+
+      btnTests.classList.add('disabled');
+      btnTests.innerHTML = 'running<span class="badge">;</span>';
+      setConsoleOutput('tests', 'Starting tests...');
+      matchRowWidths();
+
+      fetch(`http://localhost:${ports.dispatcher}/run-tests`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            // Start polling for status
+            testsPollInterval = setInterval(pollTestsStatus, 500);
+          } else {
+            btnTests.innerHTML = 'tests<span class="badge">;</span>';
+            btnTests.classList.remove('disabled');
+            setConsoleOutput('tests', `Error: ${data.error}`);
+            matchRowWidths();
+          }
+        })
+        .catch(err => {
+          btnTests.innerHTML = 'tests<span class="badge">;</span>';
+          btnTests.classList.remove('disabled');
+          setConsoleOutput('tests', `API error: ${err.message}`);
+          matchRowWidths();
+        });
+    }
+
+    function pollTestsStatus() {
+      fetch(`http://localhost:${ports.dispatcher}/tests-status`)
+        .then(res => res.json())
+        .then(data => {
+          // Show status while running
+          if (data.running) {
+            setConsoleOutput('tests', data.status || 'Running tests...');
+          } else if (data.status) {
+            setConsoleOutput('tests', data.status);
+          }
+
+          if (data.done) {
+            clearInterval(testsPollInterval);
+            testsPollInterval = null;
+            btnTests.innerHTML = 'tests<span class="badge">;</span>';
+            btnTests.classList.remove('disabled');
+            matchRowWidths();
+
+            // Enable console clear after 1 second
+            setTimeout(() => {
+              shouldClearConsole = true;
+            }, 1000);
+          }
+        })
+        .catch(err => {
+          setConsoleOutput('tests', `Poll error: ${err.message}`);
+        });
     }
 
     // === Deploy Status Polling ===
@@ -958,8 +1028,10 @@
           stateStr = '⊘ canceled';
         } else if (state === 'error' || state === 'failed') {
           stateStr = '✗ error';
+        } else if (status.error) {
+          stateStr = `⚠ ${status.error}`;
         } else {
-          stateStr = `? ${status.state}`;  // show raw value
+          stateStr = `? ${status.state}`;
         }
 
         const line = timeStr ? `${site}: ${stateStr} ${timeStr}` : `${site}: ${stateStr}`;
@@ -1170,7 +1242,8 @@
     btnDns.addEventListener('click', doDns);
     btnBubble.addEventListener('click', doBubble);
     btnDocs.addEventListener('click', doDocs);
-    btnDispatcher.addEventListener('click', doDispatcher);
+    btnRelay.addEventListener('click', doRelay);
+    btnTests.addEventListener('click', doTests);
 
     document.addEventListener('keydown', (e) => {
       // Blur any focused button so keyboard works
@@ -1200,7 +1273,8 @@
         case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); prePublishFeedbackRow(); break;
         case 'n': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
         case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); prePublishFeedbackRow(); break;
-        case '`': doDispatcher(); break;
+        case '`': doRelay(); break;
+        case ';': doTests(); break;
       }
     });
 

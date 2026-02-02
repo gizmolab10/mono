@@ -3,7 +3,7 @@ export default class Attribute {
 	name: string;
 
 	constructor(name: string = '', value: number) {
-		this.name = name;
 		this.value = value;
+		this.name = name;
 	}
 }

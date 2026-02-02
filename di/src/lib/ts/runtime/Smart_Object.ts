@@ -14,4 +14,8 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	get hasScene(): boolean { return !!this.scene; }
+
+	setup() {
+		
+	}
 }

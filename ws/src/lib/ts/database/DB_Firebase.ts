@@ -742,15 +742,16 @@ export default class DB_Firebase extends DB_Common {
 	static readonly _____VALIDATION: unique symbol;
 
 	static data_isValidOfKind(t_persistable: T_Persistable, data: DocumentData) {
+		if (!data) return false;
 		switch (t_persistable) {
-			case T_Persistable.things:		
-				const thing = data as PersistentThing;	
+			case T_Persistable.things:
+				const thing = new PersistentThing(data);
 				if (thing.hasNoData) {
 					return false;
 				}
 				break;
-			case T_Persistable.traits:		
-				const trait = data as PersistentTrait;	
+			case T_Persistable.traits:
+				const trait = new PersistentTrait(data);
 				if (trait.hasNoData) {
 					return false;
 				}

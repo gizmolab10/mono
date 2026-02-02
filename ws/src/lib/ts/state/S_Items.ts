@@ -102,7 +102,8 @@ export default class S_Items<T> {
 	}
 
 	remove_all_beyond_index() {
-		for (let i = this.index + 1; i < this.length; i++) {
+		// Iterate backwards to avoid skipping items as array shrinks
+		for (let i = this.length - 1; i > this.index; i--) {
 			this.remove(this.items[i]);
 		}
 	}

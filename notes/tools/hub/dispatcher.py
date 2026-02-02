@@ -32,9 +32,13 @@ REBUILD_STATUS_FILE = os.path.join(GITHUB_DIR, 'logs', 'rebuild-status.txt')
 # Restart status file
 RESTART_STATUS_FILE = os.path.join(GITHUB_DIR, 'logs', 'restart-status.txt')
 
+# Tests status file
+TESTS_STATUS_FILE = os.path.join(GITHUB_DIR, 'logs', 'tests-status.txt')
+
 # Track if rebuild is running
 rebuild_running = False
 restart_running = False
+tests_running = False
 
 # Netlify site IDs (from Netlify dashboard)
 NETLIFY_SITES = {
@@ -121,6 +125,76 @@ def rebuild_docs_async(project_arg):
     finally:
         rebuild_running = False
 
+def run_tests_async():
+    """Run all tests in background thread (ws and di)"""
+    global tests_running
+    import re
+
+    def parse_test_output(output):
+        """Parse vitest output, return (passed, failed)"""
+        output = re.sub(r'\x1b\[[0-9;]*m', '', output)  # Strip ANSI codes
+        passed_match = re.search(r'Tests\s+(?:\d+\s+failed\s+\|\s+)?(\d+)\s+passed', output)
+        failed_match = re.search(r'Tests\s+(\d+)\s+failed', output)
+        passed = int(passed_match.group(1)) if passed_match else 0
+        failed = int(failed_match.group(1)) if failed_match else 0
+        return passed, failed
+
+    try:
+        os.makedirs(os.path.dirname(TESTS_STATUS_FILE), exist_ok=True)
+        total_passed = 0
+        total_failed = 0
+
+        # Run ws tests
+        with open(TESTS_STATUS_FILE, 'w') as f:
+            f.write('Running ws tests...')
+
+        ws_dir = os.path.join(GITHUB_DIR, 'ws')
+        result = subprocess.run(
+            ['yarn', 'test:run'],
+            cwd=ws_dir,
+            capture_output=True,
+            text=True,
+            timeout=300
+        )
+        ws_passed, ws_failed = parse_test_output(result.stdout + result.stderr)
+        total_passed += ws_passed
+        total_failed += ws_failed
+
+        # Run di tests
+        with open(TESTS_STATUS_FILE, 'w') as f:
+            f.write(f'ws: {ws_passed} passed. Running di tests...')
+
+        di_dir = os.path.join(GITHUB_DIR, 'di')
+        result = subprocess.run(
+            ['yarn', 'test:run'],
+            cwd=di_dir,
+            capture_output=True,
+            text=True,
+            timeout=300
+        )
+        di_passed, di_failed = parse_test_output(result.stdout + result.stderr)
+        total_passed += di_passed
+        total_failed += di_failed
+
+        # Write final status with per-project breakdown
+        with open(TESTS_STATUS_FILE, 'w') as f:
+            if total_failed > 0:
+                f.write(f'❌ [WS] Passed: {ws_passed}, Failed: {ws_failed} --- [DI] Passed: {di_passed}, Failed: {di_failed}')
+            elif total_passed > 0:
+                f.write(f'✓ [WS] Passed: {ws_passed}, Failed: 0 --- [DI] Passed: {di_passed}, Failed: 0')
+            else:
+                f.write('✓ Tests completed')
+
+    except subprocess.TimeoutExpired:
+        with open(TESTS_STATUS_FILE, 'w') as f:
+            f.write('❌ Tests timed out')
+    except Exception as e:
+        os.makedirs(os.path.dirname(TESTS_STATUS_FILE), exist_ok=True)
+        with open(TESTS_STATUS_FILE, 'w') as f:
+            f.write(f'❌ Error: {str(e)}')
+    finally:
+        tests_running = False
+
 def get_netlify_deploy_status(site_name):
     """Fetch latest deploy status from Netlify API"""
     if not NETLIFY_TOKEN:
@@ -192,11 +266,11 @@ class APIHandler(BaseHTTPRequestHandler):
                 if os.path.exists(RESTART_STATUS_FILE):
                     with open(RESTART_STATUS_FILE, 'r') as f:
                         status = f.read().strip()
-                
+
                 # Done if not running OR status indicates completion
                 status_done = status.startswith('✓') or status.startswith('❌')
                 done = (not restart_running) or status_done
-                
+
                 self._send_response(200, {
                     'status': status,
                     'done': done,
@@ -204,7 +278,26 @@ class APIHandler(BaseHTTPRequestHandler):
                 })
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
-        
+
+        elif self.path == '/tests-status':
+            try:
+                status = ''
+                if os.path.exists(TESTS_STATUS_FILE):
+                    with open(TESTS_STATUS_FILE, 'r') as f:
+                        status = f.read().strip()
+
+                # Done if not running OR status indicates completion
+                status_done = status.startswith('✓') or status.startswith('❌')
+                done = (not tests_running) or status_done
+
+                self._send_response(200, {
+                    'status': status,
+                    'done': done,
+                    'running': tests_running
+                })
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         elif self.path == '/deploy-status':
             try:
                 results = {}
@@ -293,6 +386,27 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
         
+        elif self.path == '/run-tests':
+            global tests_running
+
+            try:
+                if tests_running:
+                    self._send_response(400, {'success': False, 'error': 'Tests already running'})
+                    return
+
+                # Start tests in background
+                tests_running = True
+                thread = threading.Thread(target=run_tests_async)
+                thread.daemon = True
+                thread.start()
+
+                self._send_response(200, {
+                    'success': True,
+                    'message': 'Tests started'
+                })
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         elif self.path == '/restart-dispatcher' or self.path == '/restart-api':  # /restart-api for backwards compat
             log_file = os.path.join(GITHUB_DIR, 'logs', 'dispatcher-restart.log')
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
