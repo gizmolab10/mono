@@ -377,10 +377,6 @@ export default defineConfig({
                   link: '/notes/work/feedstock'
                 },
                 {
-                  text: 'Handoff',
-                  link: '/notes/work/handoff'
-                },
-                {
                   text: 'Resume',
                   link: '/notes/work/resume'
                 },
@@ -422,6 +418,10 @@ export default defineConfig({
                     {
                       text: 'Code',
                       link: '/notes/work/done/code'
+                    },
+                    {
+                      text: 'February.1.2026',
+                      link: '/notes/work/done/february.1.2026'
                     },
                     {
                       text: 'Gating',
@@ -810,10 +810,6 @@ export default defineConfig({
                       link: '/ws/notes/work/deliverables'
                     },
                     {
-                      text: 'Handoff',
-                      link: '/ws/notes/work/handoff'
-                    },
-                    {
                       text: 'Resume',
                       link: '/ws/notes/work/resume'
                     },
@@ -821,6 +817,10 @@ export default defineConfig({
                       text: 'Done >',
                       collapsed: true,
                       items: [
+                        {
+                          text: 'February.1.2026',
+                          link: '/ws/notes/work/done/february.1.2026'
+                        },
                         {
                           text: 'Ai >',
                           collapsed: true,

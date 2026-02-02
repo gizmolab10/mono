@@ -6,6 +6,5 @@ Documentation of ongoing and completed work.
 
 - [Next](./next/)
 - [Deliverables](./deliverables.md)
-- [Handoff](./handoff.md)
 - [Resume](./resume.md)
 
