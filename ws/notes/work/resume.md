@@ -1,8 +1,23 @@
 # Resume
 
-**January 28, 2026 (early afternoon)**
+**February 1, 2026**
 
 ## Current
+
+Hub improvements:
+- [x] Title buttons (hosts, docs, relay, tests) now turn green while working and disable all four
+- [x] Status dot repositioned to top-left corner of "Mono" title, behind text
+- [x] Deploy status now skips canceled builds, shows last successful/failed deploy instead
+- [x] Badge styling updated (grey background, black text)
+
+Vitepress:
+- [x] Fixed dead link `./handoff` in ws/notes/work/index.md — build passes
+
+---
+
+**January 28, 2026 (early afternoon)**
+
+## Previous
 
 - [x] shift-click one of the multiply selected, deselects all
 - [x] deselect all -> NOT select root (confusing)

@@ -36,3 +36,6 @@ Words in input that trigger reading a guide before acting.
 | debug | test/debugging.md |
 | bug | test/debugging.md |
 | fix | test/debugging.md |
+| cd | pre-flight/always.md |
+| go | pre-flight/always.md |
+| path | pre-flight/always.md |

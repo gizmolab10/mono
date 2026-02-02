@@ -196,28 +196,63 @@ def run_tests_async():
         tests_running = False
 
 def get_netlify_deploy_status(site_name):
-    """Fetch latest deploy status from Netlify API"""
+    """Fetch latest deploy status from Netlify API.
+    If the most recent deploy is canceled, find the last non-canceled one."""
     if not NETLIFY_TOKEN:
         return {'error': 'No Netlify token configured'}
-    
+
     try:
-        url = f'https://api.netlify.com/api/v1/sites/{site_name}.netlify.app/deploys?per_page=1'
+        url = f'https://api.netlify.com/api/v1/sites/{site_name}.netlify.app/deploys?per_page=5'
         req = urllib.request.Request(url)
         req.add_header('Authorization', f'Bearer {NETLIFY_TOKEN}')
-        
+
         with urllib.request.urlopen(req, timeout=10) as response:
             deploys = json.loads(response.read().decode())
-            if deploys:
-                deploy = deploys[0]
+            if not deploys:
+                return {'error': 'No deploys found'}
+
+            # Check if most recent is canceled
+            latest = deploys[0]
+            latest_state = latest.get('state', '').lower()
+            is_canceled = latest_state == 'canceled' or (
+                latest.get('error_message', '') and
+                'cancel' in latest.get('error_message', '').lower()
+            )
+
+            if is_canceled:
+                # Find most recent non-canceled deploy
+                for deploy in deploys[1:]:
+                    state = deploy.get('state', '').lower()
+                    err_msg = deploy.get('error_message', '') or ''
+                    if state != 'canceled' and 'cancel' not in err_msg.lower():
+                        return {
+                            'state': deploy.get('state'),
+                            'created_at': deploy.get('created_at'),
+                            'published_at': deploy.get('published_at'),
+                            'error_message': deploy.get('error_message'),
+                            'deploy_url': deploy.get('deploy_ssl_url'),
+                            'title': deploy.get('title', ''),
+                            'skipped_canceled': True,  # Flag that we skipped a canceled deploy
+                        }
+                # All deploys in window are canceled, return the latest anyway
                 return {
-                    'state': deploy.get('state'),  # building, ready, error
-                    'created_at': deploy.get('created_at'),
-                    'published_at': deploy.get('published_at'),
-                    'error_message': deploy.get('error_message'),
-                    'deploy_url': deploy.get('deploy_ssl_url'),
-                    'title': deploy.get('title', ''),
+                    'state': latest.get('state'),
+                    'created_at': latest.get('created_at'),
+                    'published_at': latest.get('published_at'),
+                    'error_message': latest.get('error_message'),
+                    'deploy_url': latest.get('deploy_ssl_url'),
+                    'title': latest.get('title', ''),
                 }
-            return {'error': 'No deploys found'}
+
+            # Not canceled, return latest
+            return {
+                'state': latest.get('state'),
+                'created_at': latest.get('created_at'),
+                'published_at': latest.get('published_at'),
+                'error_message': latest.get('error_message'),
+                'deploy_url': latest.get('deploy_ssl_url'),
+                'title': latest.get('title', ''),
+            }
     except urllib.error.HTTPError as e:
         return {'error': f'HTTP {e.code}'}
     except Exception as e:

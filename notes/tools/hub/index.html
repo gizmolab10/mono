@@ -15,7 +15,8 @@
       --bg-available: #002f68;
       --bg-unavailable: #557197;
       --bg-button-hover: #1a4a7a;
-      --bg-badge: rgb(171, 190, 241);
+      --bg-working: #28a745;
+      --bg-badge: grey;
       --bg-container: rgb(129, 156, 229);
 
       /* Button text */
@@ -27,7 +28,7 @@
       --text-choice: #888;
       --text-action: #fff;
       --text-title: #fff;
-      --text-badge: #016c42;
+      --text-badge: black;
 
 
       /* Font sizes */
@@ -278,6 +279,11 @@
       cursor: not-allowed;
     }
 
+    .action.working {
+      background: var(--bg-working);
+      color: var(--text-chosen);
+    }
+
     .command {
       margin-top: 16px;
       padding: 12px;
@@ -348,13 +354,15 @@
       border-radius: 50%;
       background: #ffc800;
       position: absolute;
-      top: -2px;
-      left: 10px;
+      top: -1.5px;
+      right: -15px;
+      z-index: -1;
     }
 
     .title-text {
       position: relative;
       z-index: 1;
+      display: inline-block;
     }
 
     h1.middle {
@@ -391,7 +399,7 @@
       <div class="title-box swapped">
         <button class="action side-a" id="btn-dns">DNS<span class="badge">N</span></button>
         <div class="title-wrapper">
-          <h1 class="middle"><span class="status-dot" id="status-dot"></span><span class="title-text">Mono</span>
+          <h1 class="middle"><span class="title-text"><span class="status-dot" id="status-dot"></span>Mono</span>
           </h1>
           <div class="deploy-tooltip" id="deploy-tooltip">Loading...</div>
         </div>
@@ -672,11 +680,9 @@
     }
 
     function doStart() {
-      if (pollInterval || restartPollInterval) return; // Operation in progress
+      if (pollInterval || restartPollInterval || testsPollInterval) return; // Operation in progress
 
-      btnStart.classList.add('disabled');
-      btnDocs.classList.add('disabled'); // Disable rebuild while restarting
-      btnRelay.classList.add('disabled'); // Disable dispatcher restart while restarting
+      setTitleButtonsWorking(btnStart);
       btnStart.innerHTML = 'restarting<span class="badge">esc</span>';
       setConsoleOutput('restart', 'Starting...');
       matchRowWidths();
@@ -692,14 +698,14 @@
             restartPollInterval = setInterval(pollRestartStatus, 500);
           } else {
             btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
-            btnStart.classList.remove('disabled');
+            clearTitleButtonsWorking();
             setConsoleOutput('restart', `Error: ${data.error}`);
             matchRowWidths();
           }
         })
         .catch(err => {
           btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
-          btnStart.classList.remove('disabled');
+          clearTitleButtonsWorking();
           setConsoleOutput('restart', `API error: ${err.message}`);
           matchRowWidths();
         });
@@ -721,9 +727,7 @@
             clearInterval(restartPollInterval);
             restartPollInterval = null;
             btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
-            btnStart.classList.remove('disabled');
-            btnDocs.classList.remove('disabled'); // Re-enable rebuild
-            btnRelay.classList.remove('disabled'); // Re-enable dispatcher restart
+            clearTitleButtonsWorking();
             matchRowWidths();
 
             // Clear console if mouse is not over console row or restart button
@@ -739,9 +743,7 @@
             clearInterval(restartPollInterval);
             restartPollInterval = null;
             btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
-            btnStart.classList.remove('disabled');
-            btnDocs.classList.remove('disabled'); // Re-enable rebuild
-            btnRelay.classList.remove('disabled'); // Re-enable dispatcher restart
+            clearTitleButtonsWorking();
             setConsoleOutput('restart', `Poll error: ${err.message}`);
             matchRowWidths();
           }
@@ -844,11 +846,9 @@
     });
 
     function doDocs() {
-      if (pollInterval || restartPollInterval) return; // Operation in progress
+      if (pollInterval || restartPollInterval || testsPollInterval) return; // Operation in progress
 
-      btnDocs.classList.add('disabled');
-      btnStart.classList.add('disabled'); // Disable restart while building docs
-      btnRelay.classList.add('disabled'); // Disable dispatcher restart while building docs
+      setTitleButtonsWorking(btnDocs);
       btnDocs.innerHTML = 'building<span class="badge">⌫</span>';
       setConsoleOutput('rebuild', 'Starting...');
       matchRowWidths();
@@ -865,14 +865,14 @@
             pollInterval = setInterval(pollDocsStatus, 500);
           } else {
             btnDocs.innerHTML = 'docs<span class="badge">⌫</span>';
-            btnDocs.classList.remove('disabled');
+            clearTitleButtonsWorking();
             setConsoleOutput('rebuild', `Error: ${data.error}`);
             matchRowWidths();
           }
         })
         .catch(err => {
           btnDocs.innerHTML = 'docs<span class="badge">⌫</span>';
-          btnDocs.classList.remove('disabled');
+          clearTitleButtonsWorking();
           setConsoleOutput('rebuild', `API error: ${err.message}`);
           matchRowWidths();
         });
@@ -893,9 +893,7 @@
             clearInterval(pollInterval);
             pollInterval = null;
             btnDocs.innerHTML = 'docs<span class="badge">⌫</span>';
-            btnDocs.classList.remove('disabled');
-            btnStart.classList.remove('disabled'); // Re-enable restart
-            btnRelay.classList.remove('disabled'); // Re-enable dispatcher restart
+            clearTitleButtonsWorking();
             matchRowWidths();
 
             // Enable console clear on mouseleave after 1 second
@@ -910,7 +908,13 @@
     }
 
     function doRelay() {
+      if (pollInterval || restartPollInterval || testsPollInterval) return; // Operation in progress
+
+      setTitleButtonsWorking(btnRelay);
+      btnRelay.innerHTML = 'restarting<span class="badge">`</span>';
       setConsoleOutput('relay', 'Restarting relay...');
+      matchRowWidths();
+
       fetch(`http://localhost:${ports.dispatcher}/restart-dispatcher`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
@@ -928,7 +932,7 @@
     function doTests() {
       if (testsPollInterval || pollInterval || restartPollInterval) return; // Operation in progress
 
-      btnTests.classList.add('disabled');
+      setTitleButtonsWorking(btnTests);
       btnTests.innerHTML = 'running<span class="badge">;</span>';
       setConsoleOutput('tests', 'Starting tests...');
       matchRowWidths();
@@ -944,14 +948,14 @@
             testsPollInterval = setInterval(pollTestsStatus, 500);
           } else {
             btnTests.innerHTML = 'tests<span class="badge">;</span>';
-            btnTests.classList.remove('disabled');
+            clearTitleButtonsWorking();
             setConsoleOutput('tests', `Error: ${data.error}`);
             matchRowWidths();
           }
         })
         .catch(err => {
           btnTests.innerHTML = 'tests<span class="badge">;</span>';
-          btnTests.classList.remove('disabled');
+          clearTitleButtonsWorking();
           setConsoleOutput('tests', `API error: ${err.message}`);
           matchRowWidths();
         });
@@ -972,7 +976,7 @@
             clearInterval(testsPollInterval);
             testsPollInterval = null;
             btnTests.innerHTML = 'tests<span class="badge">;</span>';
-            btnTests.classList.remove('disabled');
+            clearTitleButtonsWorking();
             matchRowWidths();
 
             // Enable console clear after 1 second
@@ -1169,6 +1173,24 @@
       },
       'btn-dns': () => DNS_URL
     };
+
+    // === Title Button State Management ===
+    const titleButtons = [btnStart, btnDocs, btnRelay, btnTests];
+
+    function setTitleButtonsWorking(activeBtn) {
+      titleButtons.forEach(btn => {
+        btn.classList.add('disabled');
+        if (btn === activeBtn) {
+          btn.classList.add('working');
+        }
+      });
+    }
+
+    function clearTitleButtonsWorking() {
+      titleButtons.forEach(btn => {
+        btn.classList.remove('disabled', 'working');
+      });
+    }
 
     // === Event Listeners ===
     modeButtons.forEach(btn => {

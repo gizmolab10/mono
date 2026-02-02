@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Read",
       "Bash(lsof:*)",
       "Bash(curl:*)",
       "WebFetch(domain:docs.gizmolab.com)",

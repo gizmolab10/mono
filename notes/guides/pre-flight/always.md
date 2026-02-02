@@ -10,6 +10,8 @@ Then scan `keywords.md` — if any keyword appears in the user's input, read the
 
 **Bash tools have limited access** — some filesystem operations may fail silently or be unavailable. Verify results.
 
+**All file paths:** Always use `~/GitHub/mono/`, never worktree paths (`.claude-worktrees`). This applies to reads, writes, globs, greps — everything.
+
 ## Freshness
 
 **Re-read before claiming** — before any assertion about file contents, re-read the file. Never trust cached content from earlier in the conversation. If comparing files, checking differences, or stating what's in a file — read it first.

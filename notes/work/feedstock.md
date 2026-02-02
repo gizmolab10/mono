@@ -21,6 +21,24 @@ Then it might be good to know what patterns cause the stop-dead moments? Is it a
 
 ---
 
+## 2026-02-01
+
+### Worktree path for reads (same session, after adding the rule)
+
+**What:** Used worktree paths for Read calls right after adding "never use worktree paths" to always.md.
+**Why:** Didn't internalize the rule. Treated it as write-only when it should apply to all file operations.
+**Rule violated:** Write path rule — should be "File path" rule covering reads too.
+**Severity:** broke flow — triggered permission prompts, user had to yell.
+
+### Worktree path mistake (again)
+
+**What:** Wrote `faster.md` to worktree path (`~/.claude-worktrees/mono/gifted-noyce/`) instead of main repo (`~/GitHub/mono/`).
+**Why:** Session started in worktree, used working directory without checking. User has asked "over and over" not to do this.
+**Rule violated:** Write to main repo, not worktrees.
+**Severity:** broke flow — user had to correct me, check filesystem, explain again.
+
+---
+
 ## 2025-01-31
 
 ### Tool failure handling

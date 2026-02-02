@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/resume.md",
+                "file": "di/notes/work/milestones/5.smart.objects.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "resume"
+              "title": "5.smart.objects"
             }
           }
         ],
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/work/resume.md",
+                "file": "di/notes/work/milestones/5.smart.objects.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of resume"
+              "title": "Outline of 5.smart.objects"
             }
           }
         ],
@@ -214,8 +214,25 @@
   },
   "active": "1b99de89086dbf1e",
   "lastOpenFiles": [
-    "notes/work/index.md",
+    "ws/notes/manuals/plugin/bubble.plugin.md",
+    "ws/notes/manuals/user/2.getting.started.md",
+    "ws/notes/manuals/plugin",
+    "ws/notes/manuals/user/8.preferences.md",
+    "ws/notes/manuals/user/7.import.export.md",
+    "ws/notes/manuals/user/6.search.md",
+    "ws/notes/manuals/user/5.details.panel.md",
+    "ws/notes/manuals/user/4.working.with.items.md",
+    "ws/notes/manuals/user/3.the.graph.md",
+    "ws/notes/manuals/user/1.what.is.webseriously.md",
+    "ws/notes/work/user.manual.md",
+    "ws/notes/manuals/user",
+    "ws/notes/manuals",
+    "notes/work/feedstock.md",
     "notes/work/resume.md",
+    "notes/work/faster.md",
+    "ws/vite.config.js.timestamp-1770002546277-3e4546d23e91e.mjs",
+    "ws/vite.config.js.timestamp-1770001392528-b63ba3d9eedaa.mjs",
+    "notes/work/index.md",
     "notes/tools/hub/index.md",
     "ws/notes/work/done/february.1.2026.md",
     "notes/work/done/february.1.2026.md",
@@ -229,27 +246,9 @@
     "ws/src/lib/ts/tests/S_Items.test.ts",
     "di/notes/work/resume.md",
     "ws/notes/work/handoff.md",
-    "logs/update-docs.error.log",
     "ws/notes/work/resume.md",
     "ws/notes/work/deliverables.md",
     "notes/tools/scripts/snapshot.md",
-    "notes/tools/scripts/snapshot.sh",
-    "notes/tools/scripts/bundle.sh",
-    "notes/work/handoff.md",
-    "notes/guides/tools/hub-app.md",
-    "ws/vite.config.js.timestamp-1769835665936-cfc1c8716c6c9.mjs",
-    "notes/guides/setup/onboarding.md",
-    "ws/vite.config.js.timestamp-1769834824371-e67ebe55a9e8.mjs",
-    "CLAUDE.MD",
-    "notes/work/feedstock.md",
-    "notes/guides/pre-flight/always.md",
-    "notes/work/raw.md",
-    "notes/work/mistakes.md",
-    "di/notes/designs/index.md",
-    "node_modules/katex/node_modules/commander/Readme.md",
-    "node_modules/commander/History.md",
-    "di/notes/designs/Graph.md",
-    "di/notes/designs/Controls.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",
