@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/5.smart.objects.md",
+                "file": "di/notes/work/milestones/index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "5.smart.objects"
+              "title": "index"
             }
           },
           {
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/5.smart.objects.md",
+                "file": "di/notes/work/milestones/index.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 5.smart.objects"
+              "title": "Outline of index"
             }
           }
         ],
@@ -214,7 +214,10 @@
   },
   "active": "aad679d4ff97fd7e",
   "lastOpenFiles": [
+    "di/notes/guides/develop/testing.md",
     "logs/update-docs.error.log",
+    "di/notes/work/milestones/5.smart.objects.md",
+    "di/src/lib/ts/tests/hits_3d.test.ts",
     "di/notes/architecture/managers.md",
     "ws/notes/guides/collaborate/style.md",
     "di/src/lib/ts/draw/index.ts",
@@ -227,12 +230,10 @@
     "ws/notes/manuals/plugin/index.md",
     "ws/notes/manuals/index.md",
     "di/notes/architecture/files.md",
-    "di/notes/work/milestones/5.smart.objects.md",
     "di/notes/designs/Smart_Objects.md",
     "di/notes/designs/Hits_3D.md",
     "di/src/lib/ts/signals/Events_3D.ts",
     "di/src/lib/ts/managers/Events.ts",
-    "di/src/lib/ts/managers/Hits_3D.ts",
     "ws/notes/manuals/plugin/bubble.plugin.md",
     "ws/notes/manuals/user/2.getting.started.md",
     "ws/notes/manuals/user/8.preferences.md",
@@ -248,7 +249,6 @@
     "notes/work/faster.md",
     "notes/work/index.md",
     "notes/tools/hub/index.md",
-    "ws/notes/work/done/february.1.2026.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

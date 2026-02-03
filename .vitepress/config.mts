@@ -139,6 +139,10 @@ export default defineConfig({
                         {
                           text: 'Gotchas',
                           link: '/di/notes/guides/develop/gotchas'
+                        },
+                        {
+                          text: 'Testing',
+                          link: '/di/notes/guides/develop/testing'
                         }
                       ]
                     }

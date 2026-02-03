@@ -6,4 +6,5 @@ Development guides and best practices.
 
 - [Best.practices](./best.practices.md)
 - [Gotchas](./gotchas.md)
+- [Testing](./testing.md)
 
