@@ -1,12 +1,9 @@
 import { quat, vec3 } from 'gl-matrix';
-import { scene } from './Scene';
-import { camera } from './Camera';
-import { render } from './Render';
-import { animation } from './Animation';
-import { Size, Point3 } from '../types/Coordinates';
-import { e3 } from '../signals/Events_3D';
-import { hits_3d } from '../managers/Hits_3D';
-import Smart_Object from '../runtime/Smart_Object';
+import { scene, camera, render, animation } from '.';
+import { Size, Point3 } from '../types';
+import { e3 } from '../signals';
+import { hits_3d } from '../managers';
+import { Smart_Object } from '../runtime';
 
 // ============================================
 // GEOMETRY

@@ -18,13 +18,16 @@ src/
     │       └── Main.svelte
     └── ts/
         ├── common/
+        │   ├── index.ts
         │   ├── Constants.ts
         │   ├── Extensions.ts
         │   └── Testworthy_Utilities.ts
         ├── draw/
+        │   ├── index.ts
         │   ├── Colors.ts
         │   └── SVG_Paths.ts
         ├── managers/
+        │   ├── index.ts
         │   ├── Components.ts
         │   ├── Hits.ts
         │   ├── Hits_3D.ts
@@ -37,13 +40,16 @@ src/
         │   ├── Scene.ts
         │   └── Trivial.ts
         ├── runtime/
+        │   ├── index.ts
         │   ├── Identifiable.ts
         │   └── Smart_Object.ts
         ├── signals/
+        │   ├── index.ts
         │   ├── Events.ts
         │   ├── Events_3D.ts
         │   └── Mouse_Timer.ts
         ├── state/
+        │   ├── index.ts
         │   ├── S_Component.ts
         │   ├── S_Hit_Target.ts
         │   └── S_Mouse.ts
