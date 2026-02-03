@@ -8,49 +8,49 @@
         "type": "tabs",
         "children": [
           {
-            "id": "775fd6229ee0a2d1",
+            "id": "aee0ce6cf4d314f4",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/guides/tools/hub-app.md",
+                "file": "notes/work/resume.mo.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "hub-app"
+              "title": "resume.mo"
             }
           },
           {
-            "id": "aad679d4ff97fd7e",
+            "id": "42f23f8193350cd5",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/index.md",
+                "file": "di/notes/work/resume.di.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "resume.di"
             }
           },
           {
-            "id": "1b99de89086dbf1e",
+            "id": "68db5e008beaa152",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/architecture/managers.md",
+                "file": "notes/work/journal.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "managers"
+              "title": "journal"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -82,7 +82,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "\"Rule needed\"",
+                "query": "2025",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/index.md",
+                "file": "notes/work/journal.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of index"
+              "title": "Outline of journal"
             }
           }
         ],
@@ -212,43 +212,44 @@
       "bases:Create new base": false
     }
   },
-  "active": "aad679d4ff97fd7e",
+  "active": "68db5e008beaa152",
   "lastOpenFiles": [
-    "di/notes/guides/develop/testing.md",
+    "di/notes/work/next/index.md",
     "logs/update-docs.error.log",
-    "di/notes/work/milestones/5.smart.objects.md",
-    "di/src/lib/ts/tests/hits_3d.test.ts",
+    "di/notes/work/resume.di.md",
+    "notes/work/resume.mo.md",
+    "notes/guides/tools/hub-app.md",
+    "notes/work/journal.md",
+    "di/notes/work/milestones/index.md",
+    "ws/notes/work/resume.ws.md",
+    "notes/work/journals/journal.md",
+    "notes/work/journals/guidance-journal.md",
+    "notes/guides/collaborate/journals.md",
+    "di/src/lib/md/builds.md",
+    "notes/work/done/january.2026.md",
+    "notes/work/done/resume.mo copy.md",
+    "notes/work/resume.mo copy.md",
+    "notes/work/adapt.md",
+    "di/notes/work/milestones/6.build.notes.md",
     "di/notes/architecture/managers.md",
+    "notes/work/jonathan.md",
+    "notes/work/next/personas.md",
+    "notes/work/personas.md",
+    "di/notes/work/next/muice.md",
+    "di/notes/work/next",
+    "di/dist/assets/index-nHezZTKn.css",
+    "di/dist/assets/index-IiSQhQqo.js",
+    "di/src/lib/svelte/main/BuildNotes.svelte",
+    "di/dist/assets/index-Dcj8uePH.js",
+    "di/src/lib/md",
+    "ws/vite.config.js.timestamp-1770086883079-23367d883ccf4.mjs",
+    "di/dist/assets/index-aUdNMRSD.css",
+    "di/dist/assets/index-D34OSvbX.css",
+    "di/notes/builds.md",
+    "di/notes/guides/develop/testing.md",
+    "di/notes/work/milestones/5.smart.objects.md",
     "ws/notes/guides/collaborate/style.md",
-    "di/src/lib/ts/draw/index.ts",
-    "di/src/lib/ts/common/index.ts",
-    "di/src/lib/ts/runtime/index.ts",
-    "di/src/lib/ts/state/index.ts",
-    "di/src/lib/ts/signals/index.ts",
-    "di/src/lib/ts/managers/index.ts",
     "ws/notes/manuals/user/index.md",
-    "ws/notes/manuals/plugin/index.md",
-    "ws/notes/manuals/index.md",
-    "di/notes/architecture/files.md",
-    "di/notes/designs/Smart_Objects.md",
-    "di/notes/designs/Hits_3D.md",
-    "di/src/lib/ts/signals/Events_3D.ts",
-    "di/src/lib/ts/managers/Events.ts",
-    "ws/notes/manuals/plugin/bubble.plugin.md",
-    "ws/notes/manuals/user/2.getting.started.md",
-    "ws/notes/manuals/user/8.preferences.md",
-    "ws/notes/manuals/user/7.import.export.md",
-    "ws/notes/manuals/user/6.search.md",
-    "ws/notes/manuals/user/5.details.panel.md",
-    "ws/notes/manuals/user/4.working.with.items.md",
-    "ws/notes/manuals/user/3.the.graph.md",
-    "ws/notes/manuals/user/1.what.is.webseriously.md",
-    "ws/notes/work/user.manual.md",
-    "notes/work/feedstock.md",
-    "notes/work/resume.md",
-    "notes/work/faster.md",
-    "notes/work/index.md",
-    "notes/tools/hub/index.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

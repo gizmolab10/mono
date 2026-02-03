@@ -352,7 +352,20 @@ class APIHandler(BaseHTTPRequestHandler):
                     self._send_response(404, {'error': f'Unknown site: {site_key}'})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
-        
+
+        elif self.path.startswith('/obsidian/'):
+            try:
+                # Extract path after /obsidian/
+                file_path = self.path[len('/obsidian/'):]
+                # URL decode the path
+                from urllib.parse import unquote
+                file_path = unquote(file_path)
+                # Open in Obsidian (vault name = mono)
+                subprocess.run(['open', f'obsidian://open?vault=mono&file={file_path}'])
+                self._send_response(200, {'success': True, 'file': file_path})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         else:
             self._send_response(404, {'error': 'Not found'})
 

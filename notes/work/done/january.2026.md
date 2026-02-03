@@ -1,35 +1,45 @@
-# Resume
+# Work during January 2026
 
-**February 1, 2026**
+**February 2, 2026**
+
+- [x] i want a single page that has a link to each of my resume.md files
+- [x] where to put it -> here
+- [x] feedstock -> adapt
+- [x] resume content should be archived and synopsized -> journal
 
 ## Hub App Updates
+
+**February 1, 2026**
 
 Completed all requested changes to the hub app dashboard.
 
 **Deploy status tooltip fix:**
+
 - [x] Added error handling for missing Netlify token (shows `⚠` instead of `undefined`)
 
 **Tests button:**
+
 - [x] Added "tests" button with `;` keyboard shortcut
 - [x] Runs `yarn test:run` for both ws and di projects
 - [x] Shows live progress: "Running ws tests..." → "ws: 192 passed. Running di tests..."
 - [x] Final output: `✓ [WS] Passed: 192, Failed: 0 --- [DI] Passed: 206, Failed: 0`
 
 **Dispatcher API additions:**
+
 - [x] `/run-tests` POST endpoint — starts async test run
 - [x] `/tests-status` GET endpoint — returns progress/results
 - [x] `run_tests_async()` — runs both ws and di tests sequentially
 - [x] `parse_test_output()` — strips ANSI codes, extracts passed/failed counts
 
 **Button renames:**
+
 - [x] "localhosts" → "hosts"
 - [x] "dispatcher" → "linkage" → "relay"
 
 **Files modified:**
+
 - `notes/tools/hub/index.html` — button labels, doTests(), pollTestsStatus(), tooltip error handling
 - `notes/tools/hub/dispatcher.py` — test endpoints and async runner
-
----
 
 **January 28, 2026 (early afternoon)**
 
@@ -101,8 +111,6 @@ Added timestamp-based skip logic to `update-project-docs.sh`:
 ## Guide Updates
 
 - [x] Added to `chat.md`: "Reads logs/errors directly when debugging — never asks user to cat files co can access"
-
----
 
 **January 28, 2026 (morning)**
 
@@ -186,17 +194,7 @@ Major reorganization of collaboration guides and CLAUDE.MD.
 
 - [x] "`execute` unavailable" workaround (bash_tool exists)
 
-## Retention Test
-
-Created `notes/work/retention-test.md` — 5 probes to measure guide effectiveness across sessions:
-
-1. `pac` shorthand
-2. Refactoring gate (STOP/SEARCH/LIST/WAIT)
-3. Multi-file gate (search references first)
-4. Voice (first person, casual, punchy)
-5. Freshness (re-read before claiming)
-
-**January 18, 2026**
+## **January 18, 2026**
 
 ## Checkbox Plugin
 

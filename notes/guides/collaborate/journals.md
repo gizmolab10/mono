@@ -1,10 +1,10 @@
 # Journals
 
-Rules for the journal file (`notes/work/journals/journal.md`).
+Rules for the journal file (`notes/work/journal.md`).
 
 ## Format
 
-* **Chronological order** — oldest at top, newest at bottom
+* **Reverse chronological order** — newest at top, oldest at bottom
 * **Current section** — exception to chronological; always at the very top for active work
 * **Bold dates** — each entry starts with `**Date**` (e.g., `**January 18, 2026**`)
 * **No headings** — dates are bold text, not H2 or H3

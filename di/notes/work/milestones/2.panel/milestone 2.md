@@ -1,5 +1,5 @@
 # Milestone 2: Panel Layout
-**Timeline:** Jan 6-7, 2025 | **Status:** complete ✅
+**Timeline:** Jan 6-7, 2026 | **Status:** complete ✅
 
 ## Goal
 Begin to flesh out the skeleton of the final product, using IDEAS and purpose of existing `webseriously` code. I spent a lot of time on its look and feel, so hey, reuse, recycle, live life to its fullest.

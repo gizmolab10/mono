@@ -24,4 +24,4 @@ Then scan `keywords.md` — if any keyword appears in the user's input, read the
 
 ## Feedstock
 
-**Log mistakes immediately** — when you catch an error (stale read, incomplete action, restating what's already said), add it to `notes/work/feedstock.md` right away. Don't wait, don't batch. The habit matters more than the entry.
+**Log mistakes immediately** — when you catch an error (stale read, incomplete action, restating what's already said), add it to `notes/work/adapt.md` right away. Don't wait, don't batch. The habit matters more than the entry.

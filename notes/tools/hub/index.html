@@ -446,6 +446,7 @@
         <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
         <button class="action" id="btn-repo">Repo<span class="badge">R</span></button>
         <button class="action" id="btn-deploy">Deploy<span class="badge">Y</span></button>
+        <button class="action" id="btn-md">md<span class="badge">O</span></button>
       </div>
       <div class="navigate-group side-b">
         <button class="action" id="btn-local">Local<span class="badge">L</span></button>
@@ -479,6 +480,7 @@
     const btnPublic = document.getElementById('btn-public');
     const btnRepo = document.getElementById('btn-repo');
     const btnDeploy = document.getElementById('btn-deploy');
+    const btnMd = document.getElementById('btn-md');
     const btnDns = document.getElementById('btn-dns');
     const btnBubble = document.getElementById('btn-bubble');
     const btnDocs = document.getElementById('btn-docs');
@@ -788,6 +790,12 @@
       const cfg = config[mode]?.[project];
       if (!cfg || !cfg.bubble) return;
       window.open(cfg.bubble, '_blank');
+    }
+
+    function doMd() {
+      fetch(`http://localhost:${ports.dispatcher}/obsidian/notes/work/resume.md`)
+        .then(res => res.json())
+        .catch(() => {});
     }
 
     let pollInterval = null;
@@ -1171,7 +1179,8 @@
         const cfg = config[getDisplayMode()]?.[getDisplayProject()];
         return cfg?.bubble || null;
       },
-      'btn-dns': () => DNS_URL
+      'btn-dns': () => DNS_URL,
+      'btn-md': () => 'obsidian://open?vault=mono&file=notes/work/resume.md'
     };
 
     // === Title Button State Management ===
@@ -1263,6 +1272,7 @@
     btnDeploy.addEventListener('click', doDeploy);
     btnDns.addEventListener('click', doDns);
     btnBubble.addEventListener('click', doBubble);
+    btnMd.addEventListener('click', doMd);
     btnDocs.addEventListener('click', doDocs);
     btnRelay.addEventListener('click', doRelay);
     btnTests.addEventListener('click', doTests);
@@ -1295,6 +1305,7 @@
         case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); prePublishFeedbackRow(); break;
         case 'n': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
         case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); prePublishFeedbackRow(); break;
+        case 'o': hoveredActionId = 'btn-md'; hoveredAction = actionButtons['btn-md'](); highlightActionButton('btn-md'); prePublishFeedbackRow(); break;
         case '`': doRelay(); break;
         case ';': doTests(); break;
       }

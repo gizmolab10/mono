@@ -158,8 +158,8 @@ export default defineConfig({
                       link: '/di/notes/work/pacing'
                     },
                     {
-                      text: 'Resume',
-                      link: '/di/notes/work/resume'
+                      text: 'Resume.di',
+                      link: '/di/notes/work/resume.di'
                     },
                     {
                       text: 'Simplicity',
@@ -210,6 +210,10 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/5.smart.objects'
                         },
                         {
+                          text: '6.build.notes',
+                          link: '/di/notes/work/milestones/6.build.notes'
+                        },
+                        {
                           text: '2.panel >',
                           link: '/di/notes/work/milestones/2.panel/',
                           collapsed: true,
@@ -231,6 +235,17 @@ export default defineConfig({
                               link: '/di/notes/work/milestones/2.panel/milestone 2'
                             }
                           ]
+                        }
+                      ]
+                    },
+                    {
+                      text: 'Next >',
+                      link: '/di/notes/work/next/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Muice',
+                          link: '/di/notes/work/next/muice'
                         }
                       ]
                     }
@@ -385,16 +400,24 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
+                  text: 'Adapt',
+                  link: '/notes/work/adapt'
+                },
+                {
                   text: 'Faster',
                   link: '/notes/work/faster'
                 },
                 {
-                  text: 'Feedstock',
-                  link: '/notes/work/feedstock'
+                  text: 'Jonathan',
+                  link: '/notes/work/jonathan'
                 },
                 {
-                  text: 'Resume',
-                  link: '/notes/work/resume'
+                  text: 'Journal',
+                  link: '/notes/work/journal'
+                },
+                {
+                  text: 'Resume.mo',
+                  link: '/notes/work/resume.mo'
                 },
                 {
                   text: 'Articles >',
@@ -446,6 +469,10 @@ export default defineConfig({
                     {
                       text: 'Hub App Spec Old',
                       link: '/notes/work/done/hub-app-spec-old'
+                    },
+                    {
+                      text: 'January.2026',
+                      link: '/notes/work/done/january.2026'
                     },
                     {
                       text: 'Jonathan Old',
@@ -545,21 +572,6 @@ export default defineConfig({
                   text: 'Jeff',
                   link: '/notes/work/jeff/',
                   collapsed: true,
-                },
-                {
-                  text: 'Journals >',
-                  link: '/notes/work/journals/',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Guidance Journal',
-                      link: '/notes/work/journals/guidance-journal'
-                    },
-                    {
-                      text: 'Journal',
-                      link: '/notes/work/journals/journal'
-                    }
-                  ]
                 },
                 {
                   text: 'Next >',
@@ -887,8 +899,8 @@ export default defineConfig({
                       link: '/ws/notes/work/deliverables'
                     },
                     {
-                      text: 'Resume',
-                      link: '/ws/notes/work/resume'
+                      text: 'Resume.ws',
+                      link: '/ws/notes/work/resume.ws'
                     },
                     {
                       text: 'User.manual',

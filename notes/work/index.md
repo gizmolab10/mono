@@ -4,9 +4,10 @@
 
 - [Articles](./articles/)
 - [Jeff](./jeff/)
-- [Journals](./journals/)
 - [Next](./next/)
+- [Adapt](./adapt.md)
 - [Faster](./faster.md)
-- [Feedstock](./feedstock.md)
-- [Resume](./resume.md)
+- [Jonathan](./jonathan.md)
+- [Journal](./journal.md)
+- [Resume.mo](./resume.mo.md)
 

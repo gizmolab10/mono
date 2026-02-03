@@ -21,6 +21,17 @@ Then it might be good to know what patterns cause the stop-dead moments? Is it a
 
 ---
 
+## 2026-02-03
+
+### Wrong year in dates (multiple files)
+
+**What:** Wrote "2025" instead of "2026" in all di milestone files when documenting work done in January 2026.
+**Why:** Had stale/wrong information about the current year. Assumed 2025 without checking.
+**Impact:** User had to catch the error, ask me to fix it, then ask me to explain why. Wasted time, broke trust.
+**Better approach:** When writing dates, verify the current year. Don't assume.
+
+---
+
 ## 2026-02-02
 
 ### Replacing project-specific with project-specific (3x)
