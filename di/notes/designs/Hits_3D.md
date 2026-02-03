@@ -41,6 +41,11 @@ class Hits_3D {
   w_hover: Writable<Hit_3D_Result | null>
   hover: Hit_3D_Result | null
   set_hover(result: Hit_3D_Result | null)
+
+  // Selection state
+  w_selection: Writable<Hit_3D_Result | null>
+  selection: Hit_3D_Result | null
+  set_selection(result: Hit_3D_Result | null)
 }
 ```
 
@@ -60,12 +65,29 @@ Faces use CCW winding when viewed from outside. Hit test:
 1. `is_front_facing()` — 2D cross product < 0 means front-facing in screen coords
 2. `point_in_polygon()` — ray casting algorithm
 
+## Selection Behavior
+
+- Click sets selection to current hit (only if something was hit)
+- Selection persists until another element is clicked
+- Rendered as blue dots; hover rendered as red dots on top
+
+### Face Flip on Rotation
+
+When a face is selected and the object rotates, the selected face may flip away from the camera. `update_projected()` detects this and auto-switches to the opposite face:
+
+1. Check if selected face is still front-facing
+2. If not, try opposite face (index XOR 1: 0↔1, 2↔3, 4↔5)
+3. If opposite is front-facing, switch selection to it
+
+This assumes faces are paired (front/back, left/right, top/bottom).
+
 ## Data Flow
 
 1. `Trivial.ts` creates SOs, registers with `hits_3d`
 2. `Render.ts` projects vertices, calls `hits_3d.update_projected()`
 3. `Events_3D.ts` on mousemove calls `hits_3d.test()`, `hits_3d.set_hover()`
-4. `Render.ts` reads `hits_3d.hover`, draws highlight
+4. `Events_3D.ts` on mousedown calls `hits_3d.set_selection()` if hit
+5. `Render.ts` reads `hits_3d.selection` and `hits_3d.hover`, draws highlights
 
 ## Related
 

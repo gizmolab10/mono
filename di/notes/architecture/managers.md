@@ -51,7 +51,7 @@ render → hits_3d.update_projected()
 
 events.mousemove → hits_3d.test() → hits_3d.set_hover()
     ↓
-render.render_hover_highlight()
+render.render_hover()
 
 hits ← components (spatial index for DOM)
     ↓
@@ -134,7 +134,8 @@ hits_3d.unregister(so: Smart_Object)
 hits_3d.update_projected(scene_id: string, projected: Projected[])
 hits_3d.test(point: Point) → Hit_3D_Result | null
 hits_3d.set_hover(result: Hit_3D_Result | null)
-// w_hover: Writable<Hit_3D_Result | null>
+hits_3d.set_selection(result: Hit_3D_Result | null)
+// w_hover, w_selection: Writable<Hit_3D_Result | null>
 ```
 
 ## Components

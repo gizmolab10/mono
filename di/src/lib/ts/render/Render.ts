@@ -31,7 +31,8 @@ class Render {
     for (const obj of scene.get_all()) {
       this.render_object(obj);
     }
-    this.render_hover_highlight();
+    this.render_selection();
+    this.render_hover();
   }
 
   private get_world_matrix(obj: O_Scene): mat4 {
@@ -84,28 +85,63 @@ class Render {
     }
   }
 
-  private render_hover_highlight(): void {
+  private render_selection(): void {
+    const sel = hits_3d.selection;
+    if (!sel || !sel.so.scene) return;
+
+    const projected = hits_3d.get_projected(sel.so.scene.id);
+    if (!projected) return;
+
+    this.ctx.fillStyle = 'blue';
+    this.render_hit_dots(sel, projected);
+  }
+
+  private render_hover(): void {
     const hover = hits_3d.hover;
     if (!hover || !hover.so.scene) return;
 
     const projected = hits_3d.get_projected(hover.so.scene.id);
     if (!projected) return;
 
-    const color = 'rgba(255, 0, 0, 0.8)';
+    this.ctx.fillStyle = 'red';
+    this.render_hit_dots(hover, projected);
+  }
 
-    switch (hover.type) {
+  private render_hit_dots(hit: { so: { scene: O_Scene | null }, type: T_Hit_3D, index: number }, projected: Projected[]): void {
+    if (!hit.so.scene) return;
+
+    switch (hit.type) {
       case T_Hit_3D.corner:
-        this.draw_corner_dot(projected[hover.index], color);
+        this.draw_dot(projected[hit.index]);
         break;
       case T_Hit_3D.edge:
-        const [a, b] = hover.so.scene.edges[hover.index];
-        this.draw_edge_highlight(projected[a], projected[b], color);
+        const [a, b] = hit.so.scene.edges[hit.index];
+        const pa = projected[a], pb = projected[b];
+        this.draw_dot(pa);
+        this.draw_dot(pb);
+        this.draw_dot(this.midpoint(pa, pb));
         break;
       case T_Hit_3D.face:
-        const face = hover.so.scene.faces![hover.index];
-        this.draw_face_highlight(face.map(i => projected[i]), color);
+        const face = hit.so.scene.faces![hit.index];
+        for (let i = 0; i < face.length; i++) {
+          const p1 = projected[face[i]];
+          const p2 = projected[face[(i + 1) % face.length]];
+          this.draw_dot(p1);
+          this.draw_dot(this.midpoint(p1, p2));
+        }
         break;
     }
+  }
+
+  private draw_dot(p: Projected): void {
+    if (p.w < 0) return;
+    this.ctx.beginPath();
+    this.ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+    this.ctx.fill();
+  }
+
+  private midpoint(a: Projected, b: Projected): Projected {
+    return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: (a.z + b.z) / 2, w: Math.min(a.w, b.w) };
   }
 
   private draw_corner_dot(p: Projected, color: string): void {

@@ -17,6 +17,14 @@ class Events_3D {
     canvas.addEventListener('mousedown', (e) => {
       this.is_dragging = true;
       this.last_position = new Point(e.clientX, e.clientY);
+
+      // Select current hover target (only if hit something)
+      const rect = canvas.getBoundingClientRect();
+      const point = new Point(e.clientX - rect.left, e.clientY - rect.top);
+      const hit = hits_3d.test(point);
+      if (hit) {
+        hits_3d.set_selection(hit);
+      }
     });
 
     window.addEventListener('mouseup', () => {

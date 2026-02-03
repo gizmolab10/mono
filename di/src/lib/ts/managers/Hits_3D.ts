@@ -19,11 +19,17 @@ class Hits_3D {
 	edge_radius = 5;
 
 	w_hover = writable<Hit_3D_Result | null>(null);
+	w_selection = writable<Hit_3D_Result | null>(null);
 
 	get hover(): Hit_3D_Result | null { return get(this.w_hover); }
+	get selection(): Hit_3D_Result | null { return get(this.w_selection); }
 
 	set_hover(result: Hit_3D_Result | null) {
 		this.w_hover.set(result);
+	}
+
+	set_selection(result: Hit_3D_Result | null) {
+		this.w_selection.set(result);
 	}
 
 	get_projected(scene_id: string): Projected[] | undefined {
@@ -52,6 +58,25 @@ class Hits_3D {
 
 	update_projected(scene_id: string, projected: Projected[]) {
 		this.projected_cache.set(scene_id, projected);
+		this.check_face_flip(scene_id, projected);
+	}
+
+	private check_face_flip(scene_id: string, projected: Projected[]): void {
+		const sel = this.selection;
+		if (!sel || sel.type !== T_Hit_3D.face || !sel.so.scene?.faces) return;
+		if (sel.so.scene.id !== scene_id) return; // only check for selected SO
+
+		const face = sel.so.scene.faces[sel.index];
+		if (this.is_front_facing(face, projected)) return; // still visible
+
+		// Switch to opposite face (assumes paired faces: 0↔1, 2↔3, 4↔5)
+		const opposite_index = sel.index ^ 1;
+		if (opposite_index < sel.so.scene.faces.length) {
+			const opposite_face = sel.so.scene.faces[opposite_index];
+			if (this.is_front_facing(opposite_face, projected)) {
+				this.set_selection({ so: sel.so, type: T_Hit_3D.face, index: opposite_index });
+			}
+		}
 	}
 
 	test(point: Point): Hit_3D_Result | null {
