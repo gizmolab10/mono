@@ -118,11 +118,6 @@ export default defineConfig({
           ]
         },
         {
-          text: 'Tools',
-          link: '/tools/',
-          collapsed: true,
-        },
-        {
           text: 'Work >',
           link: '/work/',
           collapsed: true,

@@ -807,6 +807,10 @@ export default defineConfig({
                         {
                           text: 'Gotchas',
                           link: '/ws/notes/guides/collaborate/gotchas'
+                        },
+                        {
+                          text: 'Style',
+                          link: '/ws/notes/guides/collaborate/style'
                         }
                       ]
                     }

@@ -23,6 +23,13 @@ Then it might be good to know what patterns cause the stop-dead moments? Is it a
 
 ## 2026-02-02
 
+### Replacing project-specific with project-specific (3x)
+
+**What:** Asked to move ws-specific content out of shared mono guide. Three times replaced ws examples with di examples instead of making it generic.
+**Why:** Thinking "what should replace this" instead of "should anything replace this at all."
+**Impact:** User had to reject edits three times, explain the same mistake repeatedly.
+**Better approach:** When removing project-specific content from shared docs, remove examples entirely or use truly abstract placeholders. Don't swap one project's patterns for another's.
+
 ### Write+delete instead of mv for file rename/move
 
 **What:** Created new file + deleted old file instead of using `mv` when asked to rename Input.ts to Events.ts and move to managers/.

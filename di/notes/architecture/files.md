@@ -63,6 +63,7 @@ src/
         └── types/
             ├── index.ts
             ├── Angle.ts
+            ├── Attribute.ts
             ├── Coordinates.ts
             ├── Enumerations.ts
             ├── Interfaces.ts
