@@ -101,12 +101,20 @@ export default defineConfig({
                       link: '/di/notes/designs/Graph'
                     },
                     {
+                      text: 'Hits 3D',
+                      link: '/di/notes/designs/Hits_3D'
+                    },
+                    {
                       text: 'Main',
                       link: '/di/notes/designs/Main'
                     },
                     {
                       text: 'Preferences',
                       link: '/di/notes/designs/Preferences'
+                    },
+                    {
+                      text: 'Smart Objects',
+                      link: '/di/notes/designs/Smart_Objects'
                     }
                   ]
                 },
@@ -373,16 +381,16 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
+                  text: 'Faster',
+                  link: '/notes/work/faster'
+                },
+                {
                   text: 'Feedstock',
                   link: '/notes/work/feedstock'
                 },
                 {
                   text: 'Resume',
                   link: '/notes/work/resume'
-                },
-                {
-                  text: 'Retention Test',
-                  link: '/notes/work/retention-test'
                 },
                 {
                   text: 'Articles >',
@@ -569,6 +577,10 @@ export default defineConfig({
                     {
                       text: 'Personas',
                       link: '/notes/work/next/personas'
+                    },
+                    {
+                      text: 'Retention Test',
+                      link: '/notes/work/next/retention-test'
                     }
                   ]
                 }
@@ -801,6 +813,63 @@ export default defineConfig({
                   ]
                 },
                 {
+                  text: 'Manuals >',
+                  link: '/ws/notes/manuals/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Plugin >',
+                      link: '/ws/notes/manuals/plugin/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Bubble.plugin',
+                          link: '/ws/notes/manuals/plugin/bubble.plugin'
+                        }
+                      ]
+                    },
+                    {
+                      text: 'User >',
+                      link: '/ws/notes/manuals/user/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: '1.what.is.webseriously',
+                          link: '/ws/notes/manuals/user/1.what.is.webseriously'
+                        },
+                        {
+                          text: '2.getting.started',
+                          link: '/ws/notes/manuals/user/2.getting.started'
+                        },
+                        {
+                          text: '3.the.graph',
+                          link: '/ws/notes/manuals/user/3.the.graph'
+                        },
+                        {
+                          text: '4.working.with.items',
+                          link: '/ws/notes/manuals/user/4.working.with.items'
+                        },
+                        {
+                          text: '5.details.panel',
+                          link: '/ws/notes/manuals/user/5.details.panel'
+                        },
+                        {
+                          text: '6.search',
+                          link: '/ws/notes/manuals/user/6.search'
+                        },
+                        {
+                          text: '7.import.export',
+                          link: '/ws/notes/manuals/user/7.import.export'
+                        },
+                        {
+                          text: '8.preferences',
+                          link: '/ws/notes/manuals/user/8.preferences'
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
                   text: 'Work >',
                   link: '/ws/notes/work/',
                   collapsed: true,
@@ -812,6 +881,10 @@ export default defineConfig({
                     {
                       text: 'Resume',
                       link: '/ws/notes/work/resume'
+                    },
+                    {
+                      text: 'User.manual',
+                      link: '/ws/notes/work/user.manual'
                     },
                     {
                       text: 'Done >',

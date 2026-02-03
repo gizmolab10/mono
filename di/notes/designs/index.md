@@ -12,6 +12,11 @@ Design documentation for components and managers.
 | Component | Description |
 |-----------|-------------|
 | [Preferences](Preferences.md) | localStorage persistence |
+| [Hits_3D](Hits_3D.md) | 3D hit testing for canvas objects |
+## Runtime
+| Component | Description |
+|-----------|-------------|
+| [Smart_Objects](Smart_Objects.md) | Geometry with attributes |
 ## Missing Designs
 These files exist but lack design docs:
 | File | Location |
@@ -28,6 +33,8 @@ These files exist but lack design docs:
 - [Controls](./Controls.md)
 - [Details](./Details.md)
 - [Graph](./Graph.md)
+- [Hits_3D](./Hits_3D.md)
 - [Main](./Main.md)
 - [Preferences](./Preferences.md)
+- [Smart_Objects](./Smart_Objects.md)
 

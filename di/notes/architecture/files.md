@@ -27,19 +27,21 @@ src/
         ├── managers/
         │   ├── Components.ts
         │   ├── Hits.ts
+        │   ├── Hits_3D.ts
         │   └── Preferences.ts
         ├── render/
         │   ├── index.ts
         │   ├── Animation.ts
         │   ├── Camera.ts
-        │   ├── Input.ts
         │   ├── Render.ts
         │   ├── Scene.ts
         │   └── Trivial.ts
         ├── runtime/
-        │   └── Identifiable.ts
+        │   ├── Identifiable.ts
+        │   └── Smart_Object.ts
         ├── signals/
         │   ├── Events.ts
+        │   ├── Events_3D.ts
         │   └── Mouse_Timer.ts
         ├── state/
         │   ├── S_Component.ts
@@ -99,6 +101,7 @@ src/
 |------|--------|--------------|
 | `Preferences.ts` | `preferences` | localStorage wrapper |
 | `Hits.ts` | `hits` | RBush spatial index, click routing |
+| `Hits_3D.ts` | `hits_3d` | 3D hit testing for canvas objects |
 | `Components.ts` | `components` | Component registry |
 
 ## Render
@@ -108,15 +111,15 @@ src/
 | `Scene.ts` | `scene` | O_Scene CRUD, hierarchy |
 | `Camera.ts` | `camera` | View/projection matrices |
 | `Render.ts` | `render` | Projection pipeline, draw calls |
-| `Input.ts` | `input` | Mouse events → rotation |
 | `Animation.ts` | `animation` | rAF loop, tick callbacks |
-| `Trivial.ts` | `trivial` | Simple rendering utilities |
+| `Trivial.ts` | `init` | Demo scene setup |
 
 ## Signals
 
 | File | Export | What it does |
 |------|--------|--------------|
-| `Events.ts` | `e` | Unified mouse event handlers |
+| `Events.ts` | `e` | Unified mouse event handlers (DOM) |
+| `Events_3D.ts` | `e3` | Canvas mouse events → rotation, hover |
 | `Mouse_Timer.ts` | `Mouse_Timer` | Long-click, double-click timing |
 
 ## State
@@ -132,13 +135,15 @@ src/
 | File | What it does |
 |------|--------------|
 | `Identifiable.ts` | Base class with `id` and `hid` |
+| `Smart_Object.ts` | Geometry with attributes, wraps O_Scene |
 
 ## Types
 
 | File | What it does |
 |------|--------------|
 | `Angle.ts` | `Angle` class, quadrant/orientation enums |
+| `Attribute.ts` | Name/value pairs for Smart Objects |
 | `Coordinates.ts` | `Point`, `Size`, `Rect`, `Point3`, etc. |
-| `Enumerations.ts` | App-wide enums |
+| `Enumerations.ts` | App-wide enums, `T_Hit_3D` |
 | `Interfaces.ts` | `Projected`, `O_Scene` interfaces |
 | `Types.ts` | Type aliases, callbacks |

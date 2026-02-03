@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, h, k, u, x, core, hits, show, colors, search, elements } from '../../ts/common/Global_Imports';
-	import { Point, T_Search, T_Banner, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import { Point, T_Search, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Button from './Button.svelte';
 	export let center = Point.zero;

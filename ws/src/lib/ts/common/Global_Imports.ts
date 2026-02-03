@@ -37,7 +37,7 @@ import { T_Theme, T_Button_SVG } from './Enumerations';
 import { T_Oblong, T_Direction } from './Enumerations';
 import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { T_Persistable, T_Persistence } from './Enumerations';
-import { T_Graph, T_Banner, T_Control } from './Enumerations';
+import { T_Graph, T_Control } from './Enumerations';
 import { T_Search, T_Search_Preference } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Image_Extension, T_Text_Extension } from './Enumerations';
@@ -126,6 +126,6 @@ export {
 	T_Edit, T_Create, T_Persistable, T_Persistence,
 	T_File_Extension, T_File_Operation, T_Storage_Need,
 	T_Signal, T_Control, T_Hit_Target, T_Mouse_Detection,
-	T_Banner, T_Detail, T_Request, T_Action, T_Button_SVG,
+	T_Detail, T_Request, T_Action, T_Button_SVG,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Preference,
 };

@@ -21,6 +21,17 @@ Then it might be good to know what patterns cause the stop-dead moments? Is it a
 
 ---
 
+## 2026-02-02
+
+### Write+delete instead of mv for file rename/move
+
+**What:** Created new file + deleted old file instead of using `mv` when asked to rename Input.ts to Events.ts and move to managers/.
+**Why:** Defaulted to Write tool without thinking about simpler bash alternative.
+**Impact:** Loses git history for the file, more steps than necessary.
+**Better approach:** `mv old/path new/path`, then edit in place.
+
+---
+
 ## 2026-02-01
 
 ### Worktree path for reads (same session, after adding the rule)

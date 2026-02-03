@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, e, g, h, k, core, u, x, show, busy, debug, colors, search, elements, databases } from '../../ts/common/Global_Imports';
 	import { Rect, Size, Point, Thing, Ancestry, Hierarchy, Direction } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Search, T_Control, T_Startup } from '../../ts/common/Global_Imports';
 	import Secondary_Controls from '../controls/Secondary_Controls.svelte';
 	import Primary_Controls from '../controls/Primary_Controls.svelte';
 	import Search_Results from '../search/Search_Results.svelte';

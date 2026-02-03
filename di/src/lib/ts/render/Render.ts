@@ -1,6 +1,8 @@
 import { mat4, vec4 } from 'gl-matrix';
 import type { Projected, O_Scene } from '../types/Interfaces';
 import { Size, Point3 } from '../types/Coordinates';
+import { hits_3d } from '../managers/Hits_3D';
+import { T_Hit_3D } from '../types/Enumerations';
 import { camera } from './Camera';
 import { scene } from './Scene';
 
@@ -29,6 +31,7 @@ class Render {
     for (const obj of scene.get_all()) {
       this.render_object(obj);
     }
+    this.render_hover_highlight();
   }
 
   private get_world_matrix(obj: O_Scene): mat4 {
@@ -63,6 +66,7 @@ class Render {
   private render_object(obj: O_Scene): void {
     const world_matrix = this.get_world_matrix(obj);
     const projected = obj.vertices.map((v) => this.project_vertex(v, world_matrix));
+    hits_3d.update_projected(obj.id, projected);
 
     this.ctx.lineWidth = 2;
     this.ctx.lineCap = 'round';
@@ -78,6 +82,60 @@ class Render {
       this.ctx.lineTo(b.x, b.y);
       this.ctx.stroke();
     }
+  }
+
+  private render_hover_highlight(): void {
+    const hover = hits_3d.hover;
+    if (!hover || !hover.so.scene) return;
+
+    const projected = hits_3d.get_projected(hover.so.scene.id);
+    if (!projected) return;
+
+    const color = 'rgba(255, 0, 0, 0.8)';
+
+    switch (hover.type) {
+      case T_Hit_3D.corner:
+        this.draw_corner_dot(projected[hover.index], color);
+        break;
+      case T_Hit_3D.edge:
+        const [a, b] = hover.so.scene.edges[hover.index];
+        this.draw_edge_highlight(projected[a], projected[b], color);
+        break;
+      case T_Hit_3D.face:
+        const face = hover.so.scene.faces![hover.index];
+        this.draw_face_highlight(face.map(i => projected[i]), color);
+        break;
+    }
+  }
+
+  private draw_corner_dot(p: Projected, color: string): void {
+    if (p.w < 0) return;
+    this.ctx.fillStyle = color;
+    this.ctx.beginPath();
+    this.ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+    this.ctx.fill();
+  }
+
+  private draw_edge_highlight(a: Projected, b: Projected, color: string): void {
+    if (a.w < 0 || b.w < 0) return;
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = 3;
+    this.ctx.beginPath();
+    this.ctx.moveTo(a.x, a.y);
+    this.ctx.lineTo(b.x, b.y);
+    this.ctx.stroke();
+  }
+
+  private draw_face_highlight(verts: Projected[], color: string): void {
+    if (verts.some(v => v.w < 0)) return;
+    this.ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+    this.ctx.beginPath();
+    this.ctx.moveTo(verts[0].x, verts[0].y);
+    for (let i = 1; i < verts.length; i++) {
+      this.ctx.lineTo(verts[i].x, verts[i].y);
+    }
+    this.ctx.closePath();
+    this.ctx.fill();
   }
 }
 

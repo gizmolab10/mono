@@ -5,12 +5,6 @@ export enum T_Order {	// need two orders, so .... ???
 	other,
 }
 
-export enum T_Banner {
-	controls,
-	graph,
-	crumbs,
-}
-
 export enum T_Startup {
 	start,
 	fetch,

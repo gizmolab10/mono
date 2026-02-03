@@ -1,10 +1,11 @@
 import { quat } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
+import { hits_3d } from '../managers/Hits_3D';
 import { Point } from '../types/Coordinates';
 
 type T_Handle_Drag = (delta: Point) => void;
 
-class Input {
+class Events_3D {
   private canvas!: HTMLCanvasElement;
   private is_dragging = false;
   private last_position: Point = Point.zero;
@@ -23,11 +24,18 @@ class Input {
     });
 
     canvas.addEventListener('mousemove', (e) => {
-      if (!this.is_dragging || !this.on_drag) return;
-      const current = new Point(e.clientX, e.clientY);
-      const delta = this.last_position.vector_to(current);
-      this.last_position = current;
-      this.on_drag(delta);
+      const rect = canvas.getBoundingClientRect();
+      const point = new Point(e.clientX - rect.left, e.clientY - rect.top);
+
+      if (!this.is_dragging) {
+        const hit = hits_3d.test(point);
+        hits_3d.set_hover(hit);
+      } else if (this.on_drag) {
+        const current = new Point(e.clientX, e.clientY);
+        const delta = this.last_position.vector_to(current);
+        this.last_position = current;
+        this.on_drag(delta);
+      }
     });
   }
 
@@ -46,4 +54,4 @@ class Input {
   }
 }
 
-export const input = new Input();
+export const e3 = new Events_3D();

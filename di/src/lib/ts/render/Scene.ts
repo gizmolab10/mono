@@ -9,6 +9,7 @@ class Scene {
   create(config: {
     vertices: Point3[];
     edges: [number, number][];
+    faces?: number[][];
     position?: vec3;
     scale?: number;
     color?: string;
@@ -19,6 +20,7 @@ class Scene {
       id,
       vertices: config.vertices,
       edges: config.edges,
+      faces: config.faces,
       orientation: quat.create(),
       position: config.position ?? vec3.fromValues(0, 0, 0),
       scale: config.scale ?? 1,

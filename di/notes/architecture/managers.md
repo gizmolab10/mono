@@ -4,16 +4,17 @@ Each manager owns one concern. Singleton pattern throughout.
 
 ## Overview
 
-| Class | Export | Location | What it does |
-|-------|--------|----------|--------------|
-| `Scene` | `scene` | `render/` | O_Scene CRUD, hierarchy |
-| `Camera` | `camera` | `render/` | View/projection matrices |
-| `Render` | `render` | `render/` | Projection pipeline, draw calls |
-| `Input` | `input` | `render/` | Mouse events → rotation |
-| `Animation` | `animation` | `render/` | rAF loop, tick callbacks |
-| `Hits` | `hits` | `managers/` | RBush spatial index, click routing |
-| `Components` | `components` | `managers/` | Component registry |
-| `Preferences` | `preferences` | `managers/` | localStorage wrapper |
+| Class         | Export        | Location    | What it does                             |
+| ------------- | ------------- | ----------- | ---------------------------------------- |
+| `Scene`       | `scene`       | `render/`   | O_Scene CRUD, hierarchy                  |
+| `Camera`      | `camera`      | `render/`   | View/projection matrices                 |
+| `Render`      | `render`      | `render/`   | Projection pipeline, draw calls          |
+| `Events_3D`   | `e3`          | `signals/`  | Canvas mouse events → rotation, hover    |
+| `Animation`   | `animation`   | `render/`   | rAF loop, tick callbacks                 |
+| `Hits`        | `hits`        | `managers/` | RBush spatial index, click routing (DOM) |
+| `Hits_3D`     | `hits_3d`     | `managers/` | 3D hit testing for canvas objects        |
+| `Components`  | `components`  | `managers/` | Component registry                       |
+| `Preferences` | `preferences` | `managers/` | localStorage wrapper                     |
 
 ## File Layout
 
@@ -22,15 +23,17 @@ src/lib/ts/
 ├── managers/
 │   ├── Components.ts
 │   ├── Hits.ts
+│   ├── Hits_3D.ts
 │   └── Preferences.ts
-└── render/
-    ├── index.ts
-    ├── Animation.ts
-    ├── Camera.ts
-    ├── Input.ts
-    ├── Render.ts
-    ├── Scene.ts
-    └── Trivial.ts
+├── render/
+│   ├── index.ts
+│   ├── Animation.ts
+│   ├── Camera.ts
+│   ├── Render.ts
+│   ├── Scene.ts
+│   └── Trivial.ts
+└── signals/
+    └── Events_3D.ts
 ```
 
 ## Dependencies
@@ -38,13 +41,19 @@ src/lib/ts/
 ```
 animation.on_tick()
     ↓
-input → scene (rotate object)
+events → scene (rotate object)
     ↓
 render ← camera (matrices)
     ↓
 scene.get_all() → render
+    ↓
+render → hits_3d.update_projected()
 
-hits ← components (spatial index)
+events.mousemove → hits_3d.test() → hits_3d.set_hover()
+    ↓
+render.render_hover_highlight()
+
+hits ← components (spatial index for DOM)
     ↓
 Events.ts → hits.handle_mouse()
 ```
@@ -83,14 +92,15 @@ render.render()
 render.resize(width, height)
 ```
 
-## Input
+## Events_3D
 
-Mouse drag → quaternion rotations.
+Canvas mouse events → quaternion rotations, hover detection.
 
 ```ts
-input.init(canvas)
-input.set_drag_handler((delta: Point) => void)
-input.rotate_object(obj, delta, sensitivity?)
+e3.init(canvas)
+e3.set_drag_handler((delta: Point) => void)
+e3.rotate_object(obj, delta, sensitivity?)
+// mousemove → hits_3d.test() → set_hover()
 ```
 
 ## Animation
@@ -105,13 +115,26 @@ animation.on_tick((dt) => void)
 
 ## Hits
 
-RBush-based spatial indexing for click/hover detection.
+RBush-based spatial indexing for DOM click/hover detection.
 
 ```ts
 hits.register(target: S_Hit_Target)
 hits.unregister(id: string)
 hits.handle_mouse(s_mouse: S_Mouse)
 hits.target_at(point: Point) → S_Hit_Target | null
+```
+
+## Hits_3D
+
+Screen-space hit testing for 3D canvas objects (Smart Objects).
+
+```ts
+hits_3d.register(so: Smart_Object)
+hits_3d.unregister(so: Smart_Object)
+hits_3d.update_projected(scene_id: string, projected: Projected[])
+hits_3d.test(point: Point) → Hit_3D_Result | null
+hits_3d.set_hover(result: Hit_3D_Result | null)
+// w_hover: Writable<Hit_3D_Result | null>
 ```
 
 ## Components

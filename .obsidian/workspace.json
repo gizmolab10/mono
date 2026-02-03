@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/5.smart.objects.md",
+                "file": "di/notes/architecture/managers.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "5.smart.objects"
+              "title": "managers"
             }
           }
         ],
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/5.smart.objects.md",
+                "file": "di/notes/architecture/managers.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 5.smart.objects"
+              "title": "Outline of managers"
             }
           }
         ],
@@ -214,6 +214,17 @@
   },
   "active": "1b99de89086dbf1e",
   "lastOpenFiles": [
+    "ws/notes/manuals/user/index.md",
+    "ws/notes/manuals/plugin/index.md",
+    "ws/notes/manuals/index.md",
+    "di/notes/architecture/files.md",
+    "di/notes/architecture/managers.md",
+    "di/notes/work/milestones/5.smart.objects.md",
+    "di/notes/designs/Smart_Objects.md",
+    "di/notes/designs/Hits_3D.md",
+    "di/src/lib/ts/signals/Events_3D.ts",
+    "di/src/lib/ts/managers/Events.ts",
+    "di/src/lib/ts/managers/Hits_3D.ts",
     "ws/notes/manuals/plugin/bubble.plugin.md",
     "ws/notes/manuals/user/2.getting.started.md",
     "ws/notes/manuals/plugin",
@@ -237,18 +248,8 @@
     "ws/notes/work/done/february.1.2026.md",
     "notes/work/done/february.1.2026.md",
     "ws/notes/work/february.1.2026.md",
-    "notes/work/february.1.2026.md",
     "logs/tests-status.txt",
-    "di/notes/work/milestones/5.smart.objects.md",
     "ws/src/lib/ts/tests/DB_Firebase.test.ts",
-    "ws/src/lib/ts/tests/S_Persistence.test.ts",
-    "ws/src/lib/ts/tests/Identifiable.test.ts",
-    "ws/src/lib/ts/tests/S_Items.test.ts",
-    "di/notes/work/resume.md",
-    "ws/notes/work/handoff.md",
-    "ws/notes/work/resume.md",
-    "ws/notes/work/deliverables.md",
-    "notes/tools/scripts/snapshot.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

@@ -13,12 +13,13 @@ export interface Projected {
 }
 
 export interface O_Scene {
-  id: string;
-  vertices: Point3[];
   edges: [number, number][];
+  faces?: number[][];
+  vertices: Point3[];
   orientation: quat;
+  parent?: O_Scene;
   position: vec3;
   scale: number;
   color: string;
-  parent?: O_Scene;
+  id: string;
 }
