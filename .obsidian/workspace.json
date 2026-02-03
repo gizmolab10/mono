@@ -13,12 +13,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/resume.mo.md",
+                "file": "me/CLAUDE.MD",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "resume.mo"
+              "title": "CLAUDE"
+            }
+          },
+          {
+            "id": "a2ff5e49fdd73f6e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "me/notes/work/resume.me.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "resume.me"
             }
           },
           {
@@ -50,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -185,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/work/journal.md",
+                "file": "me/notes/work/resume.me.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of journal"
+              "title": "Outline of resume.me"
             }
           }
         ],
@@ -212,14 +226,22 @@
       "bases:Create new base": false
     }
   },
-  "active": "68db5e008beaa152",
+  "active": "26b78cd156d15e82",
   "lastOpenFiles": [
+    "me/CLAUDE.MD",
+    "me/notes/work/resume.me.md",
+    "me/notes/work",
+    "notes/work/jonathan.md",
+    "me/notes/research",
+    "me/notes/ideas",
+    "me/notes",
+    "me",
+    "notes/work/resume.mo.md",
+    "notes/work/journal.md",
     "di/notes/work/next/index.md",
     "logs/update-docs.error.log",
     "di/notes/work/resume.di.md",
-    "notes/work/resume.mo.md",
     "notes/guides/tools/hub-app.md",
-    "notes/work/journal.md",
     "di/notes/work/milestones/index.md",
     "ws/notes/work/resume.ws.md",
     "notes/work/journals/journal.md",
@@ -232,7 +254,6 @@
     "notes/work/adapt.md",
     "di/notes/work/milestones/6.build.notes.md",
     "di/notes/architecture/managers.md",
-    "notes/work/jonathan.md",
     "notes/work/next/personas.md",
     "notes/work/personas.md",
     "di/notes/work/next/muice.md",
@@ -240,16 +261,9 @@
     "di/dist/assets/index-nHezZTKn.css",
     "di/dist/assets/index-IiSQhQqo.js",
     "di/src/lib/svelte/main/BuildNotes.svelte",
-    "di/dist/assets/index-Dcj8uePH.js",
-    "di/src/lib/md",
-    "ws/vite.config.js.timestamp-1770086883079-23367d883ccf4.mjs",
-    "di/dist/assets/index-aUdNMRSD.css",
-    "di/dist/assets/index-D34OSvbX.css",
     "di/notes/builds.md",
     "di/notes/guides/develop/testing.md",
     "di/notes/work/milestones/5.smart.objects.md",
-    "ws/notes/guides/collaborate/style.md",
-    "ws/notes/manuals/user/index.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

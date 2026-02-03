@@ -19,6 +19,19 @@ DEV_SERVERS = os.path.join(SCRIPT_DIR, 'servers.sh')
 GITHUB_DIR = os.path.expanduser('~/GitHub/mono')
 UPDATE_DOCS = os.path.join(GITHUB_DIR, 'notes/tools/docs/update-project-docs.sh')
 
+# Load .env file if it exists (for secrets like NETLIFY_ACCESS_TOKEN)
+def load_env_file():
+    env_path = os.path.join(SCRIPT_DIR, '.env')
+    if os.path.exists(env_path):
+        with open(env_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ.setdefault(key.strip(), value.strip())
+
+load_env_file()
+
 # Project paths for rebuild-docs
 PROJECT_PATHS = {
     'mono': GITHUB_DIR,
@@ -459,12 +472,18 @@ class APIHandler(BaseHTTPRequestHandler):
             log_file = os.path.join(GITHUB_DIR, 'logs', 'dispatcher-restart.log')
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
             script_path = os.path.abspath(__file__)
-            cmd = f'nohup python3 "{script_path}" > "{log_file}" 2>&1 &'
-            
-            # Spawn new process FIRST, before any HTTP stuff
-            os.system(cmd)
+
+            # Spawn new process with current environment (so NETLIFY_ACCESS_TOKEN is inherited)
+            with open(log_file, 'w') as log:
+                subprocess.Popen(
+                    ['python3', script_path],
+                    stdout=log,
+                    stderr=log,
+                    env=os.environ,
+                    start_new_session=True
+                )
             time.sleep(1.0)  # Let it start
-            
+
             # Now exit - the new process will kill us anyway
             os._exit(0)
         

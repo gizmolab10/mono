@@ -4,6 +4,8 @@
 
 ---
 
+**February 3, 2026** Created `me/` project — third mono project alongside ws and di for ideas, research, creative exploration. Added `.env` config file support to dispatcher (loads `NETLIFY_ACCESS_TOKEN` from `notes/tools/hub/.env` instead of relying on shell environment). Reorganized work files: renamed feedstock→adapt, merged guidance-journal into journal, moved journal to `work/` level. Fixed di milestone dates (2025→2026). Changed ws "Milestones" terminology to "Builds" in journal entries.
+
 **February 1, 2026** Hub app updates. Tests button with `;` shortcut runs both ws and di tests. Deploy status tooltip fix for missing Netlify token. Title buttons turn green while working, status dot repositioned behind "Mono" title, deploy status skips canceled builds. Button renames: localhosts → hosts, dispatcher → relay.
 
 **January 28, 2026 (ws)** Selection fixes: shift-click on multiply-selected now deselects all, deselect-all no longer selects root, breadcrumb click changes focus AND level, radial mode focus change selects the focus, background click deselects all, rubber band fixed.

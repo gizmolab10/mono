@@ -13,4 +13,4 @@
 
 current
 
-- [ ] none
+- [ ] create mono/me project

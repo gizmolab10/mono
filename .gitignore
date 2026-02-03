@@ -1,4 +1,5 @@
 
+**/.env
 **/.vitepress/cache/
 **/.vitepress/.temp/
 **/.vitepress/.last-build

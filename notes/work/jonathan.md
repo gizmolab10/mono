@@ -19,9 +19,10 @@ mono/
 ├── di/           # design intuition (CAD)
 └── me/           # jonathan's space (ideas)
     ├── CLAUDE.MD
-    ├── ideas/
-    ├── research/
-    └── ...
+	└── notes/
+	    ├── ideas/
+	    ├── research/
+	    └── ...
 ```
 
 Navigation: `go me` works like `go ws` or `go di`.
