@@ -15,15 +15,10 @@ urls for review and feedback
 
 ## Catalist
 
-\### Bugs
+### Bugs
 
 - [ ] webseriously view is taller than window
 - [ ] top banner wraps badly -> places things on top of webseriously
-
-### Questions
-
-- [ ] is testing "connections" **vital** for final golden master?
-- [ ] do we need an introductory summary of current behavior?
 
 ## Webseriously
 
@@ -39,5 +34,5 @@ urls for review and feedback
 - [ ] API → edits made in Catalist
 - [ ] second radial ring (needs detailed spec)
 - [ ] implement keep graph centered on selection
-- [ ] two-finger should move graph
+- [ ] two-finger drag should move graph
 - [ ] show recents count and index -> primary controls

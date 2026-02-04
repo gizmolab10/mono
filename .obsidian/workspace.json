@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/resume.mo.md",
+                "file": "di/notes/work/resume.di.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "resume.mo"
+              "title": "resume.di"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/work/resume.mo.md",
+                "file": "di/notes/work/resume.di.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of resume.mo"
+              "title": "Outline of resume.di"
             }
           }
         ],
@@ -185,14 +185,14 @@
   },
   "active": "b3d3e42500b4089f",
   "lastOpenFiles": [
+    "notes/work/resume.mo.md",
+    "ws/notes/work/deliverables.md",
     "di/notes/work/resume.di.md",
     "di/notes/work/milestones/7.edit.drags.md",
     "ws/notes/work/resume.ws.md",
     "ws/vite.config.js.timestamp-1770247454672-a9ce9d110a728.mjs",
     "ws/notes/work/done/deliverables/february.4.2026.md",
     "ws/notes/work/done/deliverables/deliverables.md",
-    "ws/notes/work/deliverables.md",
-    "notes/work/resume.mo.md",
     "di/notes/work/milestones/6.build.notes.md",
     "notes/guides/pre-flight/pitfalls.md",
     "notes/archives/always.old.md",
