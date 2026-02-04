@@ -5,8 +5,8 @@
 - [Articles](./articles/)
 - [Jeff](./jeff/)
 - [Next](./next/)
-- [Learn](./learn.md)
 - [Faster](./faster.md)
 - [Journal](./journal.md)
+- [Learn](./learn.md)
 - [Resume.mo](./resume.mo.md)
 

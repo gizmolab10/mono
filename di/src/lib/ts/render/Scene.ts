@@ -1,13 +1,13 @@
 import { quat, vec3 } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
-import { Point3 } from '../types/Coordinates';
+import type Smart_Object from '../runtime/Smart_Object';
 
 class Scene {
   private objects: Map<string, O_Scene> = new Map();
   private id_counter = 0;
 
   create(config: {
-    vertices: Point3[];
+    so: Smart_Object;
     edges: [number, number][];
     faces?: number[][];
     position?: vec3;
@@ -18,7 +18,7 @@ class Scene {
     const id = `obj_${this.id_counter++}`;
     const obj: O_Scene = {
       id,
-      vertices: config.vertices.map(v => v.clone()),
+      so: config.so,
       edges: config.edges,
       faces: config.faces,
       orientation: quat.create(),

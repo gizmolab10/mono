@@ -4,8 +4,9 @@ import { Point3 } from '../types/Coordinates';
 import Attribute from '../types/Attribute';
 import Identifiable from './Identifiable';
 
-// SO has 3 dimensions: width (X), height (Y), depth (Z)
-type Dim = 'width' | 'height' | 'depth';
+// Bounds: min/max for each axis
+export type Bound = 'x_min' | 'x_max' | 'y_min' | 'y_max' | 'z_min' | 'z_max';
+export type Axis = 'x' | 'y' | 'z';
 
 export default class Smart_Object extends Identifiable {
 	attributes_dict_byName: Dictionary<Attribute> = {};
@@ -22,192 +23,221 @@ export default class Smart_Object extends Identifiable {
 	get hasScene(): boolean { return !!this.scene; }
 
 	setup() {
-		for (const name of ['x', 'y', 'z', 'width', 'height', 'depth']) {
+		for (const name of ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max']) {
 			this.attributes_dict_byName[name] = new Attribute(name);
 		}
+		// Default: 2x2x2 cube from -1 to +1 on each axis
+		this.set_bound('x_min', -1); this.set_bound('x_max', 1);
+		this.set_bound('y_min', -1); this.set_bound('y_max', 1);
+		this.set_bound('z_min', -1); this.set_bound('z_max', 1);
 	}
 
-	// Move a single vertex by delta (in world coords)
-	move_vertex(index: number, delta: Point3): void {
-		if (!this.scene) return;
-		const v = this.scene.vertices[index];
-		if (!v) return;
-		this.scene.vertices[index] = v.offset_by(delta);
+	// ═══════════════════════════════════════════════════════════════════
+	// BOUND ACCESSORS
+	// ═══════════════════════════════════════════════════════════════════
+
+	get_bound(bound: Bound): number {
+		return this.attributes_dict_byName[bound]?.value ?? 0;
 	}
 
-	// Move multiple vertices (for edge/face drag)
-	move_vertices(indices: number[], delta: Point3): void {
-		for (const i of indices) {
-			this.move_vertex(i, delta);
-		}
+	set_bound(bound: Bound, value: number): void {
+		const attr = this.attributes_dict_byName[bound];
+		if (attr) attr.value = value;
 	}
 
-	// Get vertex indices for an edge
-	edge_vertices(edge_index: number): number[] {
-		if (!this.scene) return [];
-		const edge = this.scene.edges[edge_index];
-		return edge ? [edge[0], edge[1]] : [];
+	get x_min(): number { return this.get_bound('x_min'); }
+	get x_max(): number { return this.get_bound('x_max'); }
+	get y_min(): number { return this.get_bound('y_min'); }
+	get y_max(): number { return this.get_bound('y_max'); }
+	get z_min(): number { return this.get_bound('z_min'); }
+	get z_max(): number { return this.get_bound('z_max'); }
+
+	set x_min(v: number) { this.set_bound('x_min', v); }
+	set x_max(v: number) { this.set_bound('x_max', v); }
+	set y_min(v: number) { this.set_bound('y_min', v); }
+	set y_max(v: number) { this.set_bound('y_max', v); }
+	set z_min(v: number) { this.set_bound('z_min', v); }
+	set z_max(v: number) { this.set_bound('z_max', v); }
+
+	// Derived dimensions (for convenience)
+	get width(): number { return this.x_max - this.x_min; }
+	get height(): number { return this.y_max - this.y_min; }
+	get depth(): number { return this.z_max - this.z_min; }
+
+	// ═══════════════════════════════════════════════════════════════════
+	// VERTEX GENERATION
+	// ═══════════════════════════════════════════════════════════════════
+
+	// Generate cube vertices directly from bounds
+	// Vertex order:
+	//   0-3: front face (z_min), 4-7: back face (z_max)
+	//   Within each face: (x_min,y_min), (x_max,y_min), (x_max,y_max), (x_min,y_max)
+	// NOTE: Uses actual min/max to keep topology consistent even when bounds cross
+	get vertices(): Point3[] {
+		const xLo = Math.min(this.x_min, this.x_max), xHi = Math.max(this.x_min, this.x_max);
+		const yLo = Math.min(this.y_min, this.y_max), yHi = Math.max(this.y_min, this.y_max);
+		const zLo = Math.min(this.z_min, this.z_max), zHi = Math.max(this.z_min, this.z_max);
+		return [
+			new Point3(xLo, yLo, zLo), new Point3(xHi, yLo, zLo), new Point3(xHi, yHi, zLo), new Point3(xLo, yHi, zLo),
+			new Point3(xLo, yLo, zHi), new Point3(xHi, yLo, zHi), new Point3(xHi, yHi, zHi), new Point3(xLo, yHi, zHi),
+		];
 	}
 
-	// Get vertex indices for a face
+	// ═══════════════════════════════════════════════════════════════════
+	// TOPOLOGY HELPERS
+	// ═══════════════════════════════════════════════════════════════════
+
+	edge_vertices(edge_index: number): [number, number] {
+		if (!this.scene) return [0, 0];
+		return this.scene.edges[edge_index] ?? [0, 0];
+	}
+
 	face_vertices(face_index: number): number[] {
 		if (!this.scene?.faces) return [];
 		return this.scene.faces[face_index] ?? [];
 	}
 
-	// Check if a corner (vertex) belongs to a face
 	corner_in_face(corner_index: number, face_index: number): boolean {
-		const face_verts = this.face_vertices(face_index);
-		return face_verts.includes(corner_index);
+		return this.face_vertices(face_index).includes(corner_index);
 	}
 
-	// Check if an edge belongs to a face (both endpoints must be in the face)
 	edge_in_face(edge_index: number, face_index: number): boolean {
 		const [a, b] = this.edge_vertices(edge_index);
-		const face_verts = this.face_vertices(face_index);
-		return face_verts.includes(a) && face_verts.includes(b);
-	}
-
-	// Get face normal in local coordinates (before object rotation)
-	face_normal(face_index: number): Point3 | null {
-		if (!this.scene?.faces) return null;
-		const face = this.scene.faces[face_index];
-		if (!face || face.length < 3) return null;
-
-		const v0 = this.scene.vertices[face[0]];
-		const v1 = this.scene.vertices[face[1]];
-		const v2 = this.scene.vertices[face[2]];
-		if (!v0 || !v1 || !v2) return null;
-
-		const e1 = v0.vector_to(v1);
-		const e2 = v0.vector_to(v2);
-		return e1.cross(e2).normalized;
+		const face = this.face_vertices(face_index);
+		return face.includes(a) && face.includes(b);
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
-	// DIMENSION-CENTRIC MODEL
-	// Face selects 2 of 3 dimensions. Edge selects 1 of those 2.
+	// BOUND-CENTRIC GEOMETRY
+	// Each vertex is at a specific bound on each axis (min or max).
+	// Dragging moves only the bounds that vertex touches.
 	// ═══════════════════════════════════════════════════════════════════
 
-	// Which dimension is fixed (perpendicular to this face)?
-	face_fixed_dimension(face_index: number): Dim | null {
-		const normal = this.face_normal(face_index);
-		if (!normal) return null;
+	// Face normals by index (matches cube_faces in Trivial.ts)
+	// 0: front (z_min), 1: back (z_max), 2: left (x_min), 3: right (x_max), 4: top (y_max), 5: bottom (y_min)
+	private static readonly FACE_NORMALS: Point3[] = [
+		new Point3(0, 0, -1), new Point3(0, 0, 1),
+		new Point3(-1, 0, 0), new Point3(1, 0, 0),
+		new Point3(0, 1, 0), new Point3(0, -1, 0),
+	];
 
-		const ax = Math.abs(normal.x);
-		const ay = Math.abs(normal.y);
-		const az = Math.abs(normal.z);
-
-		if (ax >= ay && ax >= az) return 'width';   // left/right face
-		if (ay >= ax && ay >= az) return 'height';  // top/bottom face
-		return 'depth';                              // front/back face
+	face_normal(face_index: number): Point3 {
+		return Smart_Object.FACE_NORMALS[face_index] ?? new Point3(0, 0, 1);
 	}
 
-	// Which 2 dimensions does this face control?
-	face_dimensions(face_index: number): [Dim, Dim] | null {
-		const fixed = this.face_fixed_dimension(face_index);
-		if (!fixed) return null;
-
-		const all: Dim[] = ['width', 'height', 'depth'];
-		const dims = all.filter(d => d !== fixed) as [Dim, Dim];
-		return dims;
+	// Which axis is perpendicular to this face?
+	face_fixed_axis(face_index: number): Axis {
+		const axes: Axis[] = ['z', 'z', 'x', 'x', 'y', 'y'];
+		return axes[face_index] ?? 'z';
 	}
 
-	// Get edge direction vector (normalized, in local coords)
-	edge_direction(edge_index: number): Point3 | null {
-		if (!this.scene) return null;
+	// Which 2 axes does this face allow editing?
+	face_axes(face_index: number): [Axis, Axis] {
+		const fixed = this.face_fixed_axis(face_index);
+		const all: Axis[] = ['x', 'y', 'z'];
+		return all.filter(a => a !== fixed) as [Axis, Axis];
+	}
+
+	// Unit vector for an axis
+	axis_vector(axis: Axis): Point3 {
+		switch (axis) {
+			case 'x': return new Point3(1, 0, 0);
+			case 'y': return new Point3(0, 1, 0);
+			case 'z': return new Point3(0, 0, 1);
+		}
+	}
+
+	// Which bound does this vertex touch on a given axis?
+	// Vertex layout: 0-3 at z_min, 4-7 at z_max
+	//   0,4: x_min,y_min  1,5: x_max,y_min  2,6: x_max,y_max  3,7: x_min,y_max
+	vertex_bound(vertex_index: number, axis: Axis): Bound {
+		const v = vertex_index % 4;  // 0-3 pattern repeats for front/back
+		switch (axis) {
+			case 'x': return (v === 0 || v === 3) ? 'x_min' : 'x_max';
+			case 'y': return (v === 0 || v === 1) ? 'y_min' : 'y_max';
+			case 'z': return vertex_index < 4 ? 'z_min' : 'z_max';
+		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════════
+	// EDGE EDITING
+	// Dragging an edge moves 1 bound (the bound shared by both endpoints).
+	// ═══════════════════════════════════════════════════════════════════
+
+	// Which axis does this edge run along?
+	edge_along_axis(edge_index: number): Axis {
 		const [a, b] = this.edge_vertices(edge_index);
-		const va = this.scene.vertices[a];
-		const vb = this.scene.vertices[b];
-		if (!va || !vb) return null;
-		return va.vector_to(vb).normalized;
+		const verts = this.vertices;
+		const va = verts[a], vb = verts[b];
+		const dx = Math.abs(vb.x - va.x);
+		const dy = Math.abs(vb.y - va.y);
+		const dz = Math.abs(vb.z - va.z);
+		if (dx >= dy && dx >= dz) return 'x';
+		if (dy >= dx && dy >= dz) return 'y';
+		return 'z';
 	}
 
-	// Which dimension does this edge run along (constant when dragging)?
-	edge_along_dimension(edge_index: number): Dim | null {
-		const dir = this.edge_direction(edge_index);
-		if (!dir) return null;
-
-		const ax = Math.abs(dir.x);
-		const ay = Math.abs(dir.y);
-		const az = Math.abs(dir.z);
-
-		if (ax >= ay && ax >= az) return 'width';
-		if (ay >= ax && ay >= az) return 'height';
-		return 'depth';
+	// Which axis does dragging this edge change? (the face axis that's not the edge's axis)
+	edge_changes_axis(edge_index: number, face_index: number): Axis {
+		const face_axes = this.face_axes(face_index);
+		const edge_along = this.edge_along_axis(edge_index);
+		return face_axes.find(a => a !== edge_along) ?? face_axes[0];
 	}
 
-	// Which dimension does dragging this edge change?
-	// It's the face dimension that's NOT the edge's along-dimension
-	edge_changes_dimension(edge_index: number, face_index: number): Dim | null {
-		const face_dims = this.face_dimensions(face_index);
-		const edge_along = this.edge_along_dimension(edge_index);
-		if (!face_dims || !edge_along) return null;
-
-		// The dimension being changed is the face dimension that isn't the edge's axis
-		return face_dims.find(d => d !== edge_along) ?? null;
-	}
-
-	// Unit vector for a dimension
-	dimension_axis(dim: Dim): Point3 {
-		switch (dim) {
-			case 'width': return new Point3(1, 0, 0);
-			case 'height': return new Point3(0, 1, 0);
-			case 'depth': return new Point3(0, 0, 1);
-		}
-	}
-
-	// Get coordinate value for a dimension
-	vertex_dim_value(vertex_index: number, dim: Dim): number | null {
-		if (!this.scene) return null;
-		const v = this.scene.vertices[vertex_index];
-		if (!v) return null;
-		switch (dim) {
-			case 'width': return v.x;
-			case 'height': return v.y;
-			case 'depth': return v.z;
-		}
-	}
-
-	// Find all vertices that share the same value on a dimension
-	vertices_at_dim_value(dim: Dim, value: number, epsilon = 0.001): number[] {
-		if (!this.scene) return [];
-		const result: number[] = [];
-		for (let i = 0; i < this.scene.vertices.length; i++) {
-			const v = this.vertex_dim_value(i, dim);
-			if (v !== null && Math.abs(v - value) < epsilon) {
-				result.push(i);
-			}
-		}
-		return result;
-	}
-
-	// Resize SO by moving all vertices at edge's position on change-dimension
-	move_edge_resize(edge_index: number, face_index: number, local_delta: Point3): number {
-		const dim = this.edge_changes_dimension(edge_index, face_index);
-		if (!dim) return 0;
-
-		const axis = this.dimension_axis(dim);
-		const amount = local_delta.dot(axis);
-		const move = axis.multiplied_equally_by(amount);
-
-		// Get the edge's position on the change-dimension
+	// Which bound does dragging this edge move?
+	edge_bound(edge_index: number, face_index: number): Bound {
+		const axis = this.edge_changes_axis(edge_index, face_index);
 		const [a] = this.edge_vertices(edge_index);
-		const edge_value = this.vertex_dim_value(a, dim);
-		if (edge_value === null) return 0;
-
-		// Move ALL vertices at that position (not just the edge)
-		const verts_to_move = this.vertices_at_dim_value(dim, edge_value);
-		this.move_vertices(verts_to_move, move);
-
-		return amount;
+		return this.vertex_bound(a, axis);
 	}
 
-	// Update dimension attribute
-	update_dimension(dim: Dim, delta: number): void {
-		const attr = this.attributes_dict_byName[dim];
-		if (attr) {
-			attr.value = (attr.value ?? 0) + delta;
+	// Apply edge drag: moves 1 bound
+	apply_edge_drag(edge_index: number, face_index: number, local_delta: Point3): void {
+		const axis = this.edge_changes_axis(edge_index, face_index);
+		const bound = this.edge_bound(edge_index, face_index);
+		const axis_vec = this.axis_vector(axis);
+		const amount = local_delta.dot(axis_vec);
+
+		const current = this.get_bound(bound);
+		const opposite = bound.endsWith('_min')
+			? this.get_bound(bound.replace('_min', '_max') as Bound)
+			: this.get_bound(bound.replace('_max', '_min') as Bound);
+
+		// Clamp: don't let min exceed max (leave 0.1 gap)
+		const is_min = bound.endsWith('_min');
+		const new_value = is_min
+			? Math.min(current + amount, opposite - 0.1)
+			: Math.max(current + amount, opposite + 0.1);
+
+		this.set_bound(bound, new_value);
+	}
+
+	// ═══════════════════════════════════════════════════════════════════
+	// CORNER EDITING
+	// Dragging a corner moves 2 bounds (the bounds that vertex touches on the face's axes).
+	// ═══════════════════════════════════════════════════════════════════
+
+	// Apply corner drag: moves 2 bounds
+	apply_corner_drag(corner_index: number, face_index: number, local_delta: Point3): void {
+		const axes = this.face_axes(face_index);
+
+		for (const axis of axes) {
+			const bound = this.vertex_bound(corner_index, axis);
+			const axis_vec = this.axis_vector(axis);
+			const amount = local_delta.dot(axis_vec);
+
+			const current = this.get_bound(bound);
+			const opposite = bound.endsWith('_min')
+				? this.get_bound(bound.replace('_min', '_max') as Bound)
+				: this.get_bound(bound.replace('_max', '_min') as Bound);
+
+			// Clamp: don't let min exceed max
+			const is_min = bound.endsWith('_min');
+			const new_value = is_min
+				? Math.min(current + amount, opposite - 0.1)
+				: Math.max(current + amount, opposite + 0.1);
+
+			this.set_bound(bound, new_value);
 		}
 	}
 }

@@ -1,13 +1,10 @@
 # Deliverables
 
-**Started:** 2025-01-13
-**Status:** In progress
+**Started:** 2026-01-13
 
-Before I demo a fix to Vincent, review it with Wendy. For items that are checked, I need Wendy's feedback/confirmation. I will let her know in Telegram, and then meet with her to receive it.
+**Completed:** GOLDEN MASTER Wednesday February 4
 
-## Milestones
-
-- [ ] MVP that has no bugs (we must close bug list, delivery by February) called "**golden master**"
+## GOLDEN MASTER Wednesday February 4
 
 ## Testing environments
 
@@ -18,46 +15,29 @@ urls for review and feedback
 
 ## Catalist
 
-\`### Bugs
+\### Bugs
 
 - [ ] webseriously view is taller than window
 - [ ] top banner wraps badly -> places things on top of webseriously
 
 ### Questions
 
-- [ ] do you show details on change of focus?
 - [ ] is testing "connections" **vital** for final golden master?
 - [ ] do we need an introductory summary of current behavior?
-
-### Should we extend GM date beyond Friday January 30?
-
-- [ ] yes
 
 ## Webseriously
 
 ### Bugs
 
-- [x] shift-click one of the multiply selected, deselects all
-- [x] click on a breadcrumb to the left of the focus -> change the focus
-- [x] radial mode -> changing the focus -> selects the focus
-- [x] send vincent the ws logo
-- [x] remove cluster pager from Visibility, etc
-- [x] click background in radial -> HANG
-- [x] click in breadcrumb left of focus, change the selection
-  - [x] details should say selection, not focus
-- [x] **firefox**
-  - [x] next and previous buttons not visible
-  - [x] reveal dots not visible
-  - [x] preferences details accent color dot's border is broken
-  - [x] levels slider is incorrectly drawn
+- [x] always change focus for click on reveal dot → to unhide children
 
 ### Future Tasks
 
-- [ ] details banners hover wrong for traits and data
-- [ ] add dot to breadcrumb -> focus
-- [ ] API -> change in root
-- [ ] API -> edits made in Catalist
-- [ ] show recents count and index -> primary controls
-- [ ] instead of reveal dot's big inner dot, enlarge stroke to indicate "hidden children here"
+- [ ] startup logo
+- [ ] API → change in root
+- [ ] API → connections
+- [ ] API → edits made in Catalist
+- [ ] second radial ring (needs detailed spec)
 - [ ] implement keep graph centered on selection
-- [ ] test whether two-finger no longer moves graph
+- [ ] two-finger should move graph
+- [ ] show recents count and index -> primary controls

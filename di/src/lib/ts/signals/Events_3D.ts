@@ -1,33 +1,35 @@
-import { quat, vec3 } from 'gl-matrix';
+import { quat, vec3, mat4 } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
 import { hits_3d, type Hit_3D_Result } from '../managers/Hits_3D';
 import { Point, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
+import { camera } from '../render/Camera';
 
-type T_Handle_Drag = (delta: Point) => void;
+type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point) => void;
 
 class Events_3D {
-  private canvas!: HTMLCanvasElement;
   private is_dragging = false;
   private did_drag = false;  // true if mouse moved while dragging
-  private last_position: Point = Point.zero;
+  private last_canvas_position: Point = Point.zero;  // canvas-relative position
   private on_drag: T_Handle_Drag | null = null;
   private drag_target: Hit_3D_Result | null = null;
 
   init(canvas: HTMLCanvasElement): void {
-    this.canvas = canvas;
-
     canvas.addEventListener('mousedown', (e) => {
       this.is_dragging = true;
       this.did_drag = false;
-      this.last_position = new Point(e.clientX, e.clientY);
 
       const rect = canvas.getBoundingClientRect();
       const point = new Point(e.clientX - rect.left, e.clientY - rect.top);
+      this.last_canvas_position = point;
+
       const hit = hits_3d.test(point);
 
       // Store what we're actually dragging (corner/edge/face)
       this.drag_target = hit;
+
+      // Clear hover during drag (especially rotation)
+      hits_3d.set_hover(null);
 
       // Selection is only faces — clicking corner/edge or background keeps existing selection
       if (hit?.type === T_Hit_3D.face) {
@@ -52,15 +54,20 @@ class Events_3D {
       if (!this.is_dragging) {
         const hit = hits_3d.test(point);
         // Hover shows face — convert corner/edge hits to best face
-        hits_3d.set_hover(hit ? hits_3d.hit_to_face(hit) : null);
+        // But don't hover on already-selected face
+        const face_hit = hit ? hits_3d.hit_to_face(hit) : null;
+        const sel = hits_3d.selection;
+        const is_selected = face_hit && sel &&
+          face_hit.so === sel.so && face_hit.index === sel.index;
+        hits_3d.set_hover(is_selected ? null : face_hit);
       } else if (this.on_drag) {
-        const current = new Point(e.clientX, e.clientY);
-        const delta = this.last_position.vector_to(current);
-        if (!delta.isZero) {
+        const prev = this.last_canvas_position;
+        const curr = point;
+        if (prev.x !== curr.x || prev.y !== curr.y) {
           this.did_drag = true;
         }
-        this.last_position = current;
-        this.on_drag(delta);
+        this.last_canvas_position = curr;
+        this.on_drag(prev, curr);
       }
     });
   }
@@ -69,50 +76,21 @@ class Events_3D {
     this.on_drag = callback;
   }
 
-  rotate_object(obj: O_Scene, delta: Point, sensitivity = 0.01): void {
+  rotate_object(obj: O_Scene, prev: Point, curr: Point, sensitivity = 0.01): void {
+    const dx = curr.x - prev.x;
+    const dy = curr.y - prev.y;
     const rot_x = quat.create();
     const rot_y = quat.create();
-    quat.setAxisAngle(rot_x, [1, 0, 0], delta.y * sensitivity);
-    quat.setAxisAngle(rot_y, [0, 1, 0], delta.x * sensitivity);
+    quat.setAxisAngle(rot_x, [1, 0, 0], dy * sensitivity);
+    quat.setAxisAngle(rot_y, [0, 1, 0], dx * sensitivity);
     quat.multiply(obj.orientation, rot_y, obj.orientation);
     quat.multiply(obj.orientation, rot_x, obj.orientation);
     quat.normalize(obj.orientation, obj.orientation);
   }
 
-  // Convert screen delta to local object delta, constrained to face plane
-  // Returns movement in local object coordinates
-  screen_to_local(delta: Point, scale = 0.01, face_normal?: Point3, orientation?: quat): Point3 {
-    // Screen delta in world coords (view plane: right=+X, up=+Y)
-    const view_delta = new Point3(delta.x * scale, -delta.y * scale, 0);
-
-    if (!face_normal || !orientation) {
-      return view_delta;
-    }
-
-    // Transform face normal from local to world coordinates
-    const n_local = vec3.fromValues(face_normal.x, face_normal.y, face_normal.z);
-    const n_world = vec3.create();
-    vec3.transformQuat(n_world, n_local, orientation);
-
-    // Project view_delta onto the face plane (remove component along normal)
-    const normal = new Point3(n_world[0], n_world[1], n_world[2]);
-    const dot = view_delta.dot(normal);
-    const world_delta = view_delta.offset_by(normal.multiplied_equally_by(-dot));
-
-    // Transform world delta back to local coordinates (inverse quaternion)
-    const inv_orientation = quat.create();
-    quat.invert(inv_orientation, orientation);
-    const w = vec3.fromValues(world_delta.x, world_delta.y, world_delta.z);
-    const local = vec3.create();
-    vec3.transformQuat(local, w, inv_orientation);
-
-    return new Point3(local[0], local[1], local[2]);
-  }
-
-  // Edit the current selection by moving vertices
-  // Only works if dragging a corner or edge that belongs to the selected face
-  // Movement is constrained to the face's 2D plane
-  edit_selection(delta: Point): boolean {
+  // Edit the current selection by modifying SO bounds
+  // Projects mouse positions onto face plane to get world-space delta
+  edit_selection(prev_mouse: Point, curr_mouse: Point): boolean {
     const sel = hits_3d.selection;
     const drag = this.drag_target;
     if (!sel || !drag) return false;
@@ -126,28 +104,166 @@ class Events_3D {
     // Drag target must belong to same SO as selection
     if (drag.so !== sel.so) return false;
 
-    // Get face normal and object orientation for plane constraint
-    const face_normal = sel.so.face_normal(sel.index);
-    const orientation = sel.so.scene?.orientation;
-    const local_delta = this.screen_to_local(delta, 0.01, face_normal ?? undefined, orientation);
+    const scene = sel.so.scene;
+    if (!scene) return false;
 
-    // Check if dragged element belongs to the selected face
+    // Get world-space delta by projecting both mouse positions onto face plane
+    const world_delta = this.get_world_delta_on_face(prev_mouse, curr_mouse, sel.index, scene);
+    if (!world_delta) return false;
+
+    // Apply drag based on what we're dragging
     switch (drag.type) {
       case T_Hit_3D.corner:
         if (!sel.so.corner_in_face(drag.index, sel.index)) return false;
-        sel.so.move_vertex(drag.index, local_delta);
+        this.apply_corner_drag(drag.index, sel.index, sel.so, world_delta);
         return true;
-      case T_Hit_3D.edge: {
+      case T_Hit_3D.edge:
         if (!sel.so.edge_in_face(drag.index, sel.index)) return false;
-        // Move edge along its change-dimension (resize face)
-        const dim = sel.so.edge_changes_dimension(drag.index, sel.index);
-        if (!dim) return false;
-        const amount = sel.so.move_edge_resize(drag.index, sel.index, local_delta);
-        sel.so.update_dimension(dim, amount);
+        this.apply_edge_drag(drag.index, sel.index, sel.so, world_delta);
         return true;
-      }
     }
     return false;
+  }
+
+  // Project two screen positions onto the face plane, return world-space delta
+  private get_world_delta_on_face(
+    prev: Point,
+    curr: Point,
+    face_index: number,
+    scene: O_Scene
+  ): Point3 | null {
+    // Get face plane in world space
+    const so = scene.so;
+    const normal_local = so.face_normal(face_index);
+
+    // Get world matrix for the scene object
+    const world_matrix = this.get_world_matrix(scene);
+
+    // Transform normal to world space (use inverse transpose for normals)
+    const normal_matrix = mat4.create();
+    mat4.invert(normal_matrix, world_matrix);
+    mat4.transpose(normal_matrix, normal_matrix);
+
+    const normal_world = vec3.fromValues(normal_local.x, normal_local.y, normal_local.z);
+    vec3.transformMat4(normal_world, normal_world, normal_matrix);
+    vec3.normalize(normal_world, normal_world);
+
+    // Get a point on the face plane (use center of face vertices)
+    const face_verts = so.face_vertices(face_index);
+    const local_verts = so.vertices;
+    let cx = 0, cy = 0, cz = 0;
+    for (const vi of face_verts) {
+      const v = local_verts[vi];
+      cx += v.x; cy += v.y; cz += v.z;
+    }
+    cx /= face_verts.length;
+    cy /= face_verts.length;
+    cz /= face_verts.length;
+
+    // Transform to world space
+    const plane_point = vec3.fromValues(cx, cy, cz);
+    vec3.transformMat4(plane_point, plane_point, world_matrix);
+
+    // Ray-plane intersection for both mouse positions
+    const prev_world = this.ray_plane_intersect(prev, plane_point, normal_world);
+    const curr_world = this.ray_plane_intersect(curr, plane_point, normal_world);
+
+    if (!prev_world || !curr_world) return null;
+
+    // Delta in world space
+    const delta_world = vec3.create();
+    vec3.subtract(delta_world, curr_world, prev_world);
+
+    // Transform delta back to local space
+    const inv_world = mat4.create();
+    mat4.invert(inv_world, world_matrix);
+
+    // For delta vectors, transform without translation
+    const delta_local = vec3.create();
+    // Extract rotation/scale part only (use mat3 or manually zero translation)
+    const delta_start = vec3.create();
+    const delta_end = vec3.clone(delta_world);
+    vec3.transformMat4(delta_start, delta_start, inv_world);
+    vec3.transformMat4(delta_end, delta_end, inv_world);
+    vec3.subtract(delta_local, delta_end, delta_start);
+
+    return new Point3(delta_local[0], delta_local[1], delta_local[2]);
+  }
+
+  // Get world matrix for a scene object
+  private get_world_matrix(obj: O_Scene): mat4 {
+    const local = mat4.create();
+    const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
+    mat4.fromRotationTranslationScale(local, obj.orientation, obj.position, scale_vec);
+
+    if (obj.parent) {
+      const parent_world = this.get_world_matrix(obj.parent);
+      mat4.multiply(local, parent_world, local);
+    }
+
+    return local;
+  }
+
+  // Intersect camera ray through screen point with a plane
+  private ray_plane_intersect(
+    screen: Point,
+    plane_point: vec3,
+    plane_normal: vec3
+  ): vec3 | null {
+    const ray = camera.screen_to_ray(screen.x, screen.y);
+
+    // Ray: P = origin + t * dir
+    // Plane: dot(P - plane_point, normal) = 0
+    // Solve: dot(origin + t*dir - plane_point, normal) = 0
+    // t = dot(plane_point - origin, normal) / dot(dir, normal)
+
+    const denom = vec3.dot(ray.dir, plane_normal);
+    if (Math.abs(denom) < 0.0001) return null;  // Ray parallel to plane
+
+    const diff = vec3.create();
+    vec3.subtract(diff, plane_point, ray.origin);
+    const t = vec3.dot(diff, plane_normal) / denom;
+
+    if (t < 0) return null;  // Intersection behind camera
+
+    const result = vec3.create();
+    vec3.scaleAndAdd(result, ray.origin, ray.dir, t);
+    return result;
+  }
+
+  // Apply edge drag: affects 1 bound
+  // No clamping — bounds can cross (negative dimension = flipped)
+  private apply_edge_drag(
+    edge_index: number,
+    face_index: number,
+    so: typeof hits_3d.selection extends { so: infer T } | null ? T : never,
+    local_delta: Point3
+  ): void {
+    const axis = so.edge_changes_axis(edge_index, face_index);
+    const bound = so.edge_bound(edge_index, face_index);
+    const axis_vec = so.axis_vector(axis);
+    const amount = local_delta.dot(axis_vec);
+
+    so.set_bound(bound, so.get_bound(bound) + amount);
+  }
+
+  // Apply corner drag: affects 2 bounds
+  // No clamping — bounds can cross (negative dimension = flipped)
+  private apply_corner_drag(
+    corner_index: number,
+    face_index: number,
+    so: typeof hits_3d.selection extends { so: infer T } | null ? T : never,
+    local_delta: Point3
+  ): void {
+    const axes = so.face_axes(face_index);
+
+    for (const axis of axes) {
+      const bound = so.vertex_bound(corner_index, axis);
+      const axis_vec = so.axis_vector(axis);
+      const amount = local_delta.dot(axis_vec);
+
+      so.set_bound(bound, so.get_bound(bound) + amount);
+    }
   }
 }
 

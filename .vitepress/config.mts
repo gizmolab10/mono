@@ -216,6 +216,10 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/6.build.notes'
                         },
                         {
+                          text: '7.edit.drags',
+                          link: '/di/notes/work/milestones/7.edit.drags'
+                        },
+                        {
                           text: '2.panel >',
                           link: '/di/notes/work/milestones/2.panel/',
                           collapsed: true,
@@ -288,6 +292,16 @@ export default defineConfig({
           link: '/notes/',
           collapsed: true,
           items: [
+            {
+              text: 'Archives >',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Always.old',
+                  link: '/notes/archives/always.old'
+                }
+              ]
+            },
             {
               text: 'Guides >',
               link: '/notes/guides/',
@@ -388,12 +402,16 @@ export default defineConfig({
                       link: '/notes/guides/pre-flight/kinds.of.tasks'
                     },
                     {
+                      text: 'Pitfalls',
+                      link: '/notes/guides/pre-flight/pitfalls'
+                    },
+                    {
                       text: 'Shorthand',
                       link: '/notes/guides/pre-flight/shorthand'
                     },
                     {
-                      text: 'Workarounds',
-                      link: '/notes/guides/pre-flight/workarounds'
+                      text: 'Tools',
+                      link: '/notes/guides/pre-flight/tools'
                     }
                   ]
                 },
@@ -428,16 +446,16 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
-                  text: 'Adapt',
-                  link: '/notes/work/adapt'
-                },
-                {
                   text: 'Faster',
                   link: '/notes/work/faster'
                 },
                 {
                   text: 'Journal',
                   link: '/notes/work/journal'
+                },
+                {
+                  text: 'Learn',
+                  link: '/notes/work/learn'
                 },
                 {
                   text: 'Resume.mo',
@@ -964,6 +982,10 @@ export default defineConfig({
                           text: 'Deliverables >',
                           collapsed: true,
                           items: [
+                            {
+                              text: 'February.4.2026',
+                              link: '/ws/notes/work/done/deliverables/february.4.2026'
+                            },
                             {
                               text: 'January.27.2026',
                               link: '/ws/notes/work/done/deliverables/january.27.2026'

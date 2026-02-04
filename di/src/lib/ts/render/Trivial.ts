@@ -1,18 +1,13 @@
 import { quat, vec3 } from 'gl-matrix';
 import { scene, camera, render, animation } from '.';
-import { Size, Point3 } from '../types';
+import { Size } from '../types';
 import { e3 } from '../signals';
 import { hits_3d } from '../managers';
 import { Smart_Object } from '../runtime';
 
 // ============================================
-// GEOMETRY
+// GEOMETRY (topology only — vertices come from SO)
 // ============================================
-
-const cube_vertices: Point3[] = [
-  new Point3(-1, -1, -1), new Point3(1, -1, -1), new Point3(1, 1, -1), new Point3(-1, 1, -1),
-  new Point3(-1, -1,  1), new Point3(1, -1,  1), new Point3(1, 1,  1), new Point3(-1, 1,  1),
-];
 
 const cube_edges: [number, number][] = [
   [0, 1], [1, 2], [2, 3], [3, 0],
@@ -41,48 +36,33 @@ export function init(canvas: HTMLCanvasElement) {
   render.init(canvas);
   e3.init(canvas);
 
-  // Create scene objects as Smart_Objects
-  const outer_scene = scene.create({
-    vertices: cube_vertices,
+  // Create Smart_Object — it owns the bounds
+  const cube = new Smart_Object('cube');
+  const cube_scene = scene.create({
+    so: cube,
     edges: cube_edges,
     faces: cube_faces,
     color: 'rgba(78, 205, 196,',
   });
-  const outer_cube = new Smart_Object('outer_cube', outer_scene);
+  cube.scene = cube_scene;
 
-  const inner_scene = scene.create({
-    vertices: cube_vertices,
-    edges: cube_edges,
-    faces: cube_faces,
-    scale: 0.4,
-    color: 'rgba(255, 107, 107,',
-    parent: outer_scene,
-  });
-  const inner_cube = new Smart_Object('inner_cube', inner_scene);
+  hits_3d.register(cube);
 
-  hits_3d.register(outer_cube);
-  hits_3d.register(inner_cube);
-
-  // Initial rotation for outer cube
+  // Initial rotation
   const init_quat = quat.create();
   quat.setAxisAngle(init_quat, vec3.normalize(vec3.create(), [1, 1, 0]), 0.5);
-  quat.multiply(outer_cube.scene!.orientation, init_quat, outer_cube.scene!.orientation);
-  quat.normalize(outer_cube.scene!.orientation, outer_cube.scene!.orientation);
+  quat.multiply(cube_scene.orientation, init_quat, cube_scene.orientation);
+  quat.normalize(cube_scene.orientation, cube_scene.orientation);
 
-  // Input: drag edits selection OR rotates outer cube
-  e3.set_drag_handler((delta) => {
-    if (!e3.edit_selection(delta)) {
-      e3.rotate_object(outer_cube.scene!, delta);
+  // Input: drag edits selection OR rotates cube
+  e3.set_drag_handler((prev, curr) => {
+    if (!e3.edit_selection(prev, curr)) {
+      e3.rotate_object(cube_scene, prev, curr);
     }
   });
 
-  // Animation: spin inner cube + render
+  // Render loop
   animation.on_tick(() => {
-    const spin = quat.create();
-    quat.setAxisAngle(spin, [0, 1, 0], 0.02);
-    quat.multiply(inner_cube.scene!.orientation, spin, inner_cube.scene!.orientation);
-    quat.normalize(inner_cube.scene!.orientation, inner_cube.scene!.orientation);
-
     render.render();
   });
 

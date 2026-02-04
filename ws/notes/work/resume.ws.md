@@ -1,12 +1,13 @@
 # Resume
 
+- [ ] click on reveal dot when it shows big inner dot -> change focus to show children
+
 ## Future
 
-- [ ] add dot to breadcrumb -> focus
+- [ ] add startup logo
 - [ ] API -> change in root
 - [ ] API -> edits made in Catalist
 - [ ] show recents count and index -> primary controls
-- [ ] instead of reveal dot's big inner dot, enlarge stroke to indicate "hidden children here"
 - [ ] implement keep graph centered on selection
-- [ ] test whether two-finger no longer moves graph
+- [ ] two-finger should move graph
 - [ ] while editing A, select a range, click B, click A, RETURN should reselect the range

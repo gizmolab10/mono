@@ -15,4 +15,5 @@
 - [4.hits.manager](./4.hits.manager.md)
 - [5.smart.objects](./5.smart.objects.md)
 - [6.build.notes](./6.build.notes.md)
+- [7.edit.drags](./7.edit.drags.md)
 

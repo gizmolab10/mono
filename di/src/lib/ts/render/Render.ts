@@ -66,7 +66,7 @@ class Render {
 
   private render_object(obj: O_Scene): void {
     const world_matrix = this.get_world_matrix(obj);
-    const projected = obj.vertices.map((v) => this.project_vertex(v, world_matrix));
+    const projected = obj.so.vertices.map((v) => this.project_vertex(v, world_matrix));
     hits_3d.update_projected(obj.id, projected);
 
     this.ctx.lineWidth = 2;

@@ -214,6 +214,7 @@ export default class Ancestry extends Identifiable {
 
 	get global_depth_limit():		   number { return get(g.w_depth_limit) ?? 0; }
 	get halfHeight_ofVisibleSubtree(): number { return this.height_ofVisibleSubtree() / 2; }
+	get focus_isProgeny():			  boolean { return this.depth_within_focus_subtree < 0; }
 	get halfSize_ofVisibleSubtree():     Size { return this.size_ofVisibleSubtree.dividedInHalf; }
 	get size_ofVisibleSubtree():	     Size { return new Size(this.visibleSubtree_width(), this.height_ofVisibleSubtree()); }
 	get hidden_by_depth_limit():	  boolean { return !this.isVisible_accordingTo_depth_within_focus_subtree && this.isExpanded && this.hasChildren && show.inTreeMode; }

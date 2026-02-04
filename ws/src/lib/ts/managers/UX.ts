@@ -205,6 +205,14 @@ export default class S_UX {
 		this.w_rubberband_grabs.set(ancestries);
 	}
 
+	ungrab_invisible_grabs() {
+		for (const grab of get(this.w_grabs)) {
+			if (grab.hidden_by_depth_limit || grab.focus_isProgeny) {
+				grab.ungrab();
+			}
+		}
+	}
+
 	assure_grab_isVisible() {
 		const ancestry = get(this.w_ancestry_forDetails);
 		if (!!ancestry) {

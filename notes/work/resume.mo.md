@@ -9,5 +9,8 @@
 - [[hub-app]]
 
 ---
+### Ideas
 
-current
+- [ ] ask it the right qs -> lean i nto learning
+	- [ ] are you leading me d own the garden path?
+

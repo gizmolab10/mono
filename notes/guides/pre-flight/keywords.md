@@ -5,7 +5,7 @@ Words in input that trigger reading a guide before acting.
 | Keyword | Guide |
 |----|----|
 | refactor | develop/refactoring.md |
-| rename | develop/refactoring.md |
+| rename | develop/refactoring.md, pre-flight/pitfalls.md#exact-match |
 | remove | develop/refactoring.md |
 | delete | develop/refactoring.md |
 | move | develop/refactoring.md |
@@ -39,3 +39,6 @@ Words in input that trigger reading a guide before acting.
 | cd | pre-flight/always.md |
 | go | pre-flight/always.md |
 | path | pre-flight/always.md |
+| doesn't exist | pre-flight/pitfalls.md#show-evidence |
+| not found | pre-flight/pitfalls.md#show-evidence |
+| which one | pre-flight/pitfalls.md#task-list-order |

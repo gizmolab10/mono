@@ -12,5 +12,7 @@ At session start, also read:
 - [Gates](./gates.md)
 - [Keywords](./keywords.md)
 - [Kinds.of.tasks](./kinds.of.tasks.md)
+- [Pitfalls](./pitfalls.md)
 - [Shorthand](./shorthand.md)
+- [Tools](./tools.md)
 

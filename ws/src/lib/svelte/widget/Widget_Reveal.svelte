@@ -52,7 +52,9 @@
 				if (show.inRadialMode) {
 					focus_ancestry = ancestry;
 				} else if (ancestry.hasChildren || ancestry.thing.isBulkAlias) {
-					h.ancestry_toggle_expansion(ancestry);
+					if (ancestry.hasChildren && !ancestry.isExpanded) {
+						h.ancestry_toggle_expansion(ancestry);
+					}
 					if (ancestry.children_hidden_by_depth_limit) {
 						focus_ancestry = ancestry.ancestry_createUnique_byStrippingBack(ancestry.global_depth_limit - 1);
 					}
@@ -60,6 +62,11 @@
 				focus_ancestry?.becomeFocus();
 				if (show.inRadialMode) {
 					focus_ancestry?.grabOnly();
+				} else {
+					x.ungrab_invisible_grabs();
+					if ($w_grabs.length == 0) {
+						ancestry.grab();
+					}
 				}
 			}
 			return true;

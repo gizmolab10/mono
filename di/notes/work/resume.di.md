@@ -5,7 +5,7 @@ Where we are in Design Intuition.
 ---
 ## Milestones
 
-- [ ] 7 mouse editing of SO (selection corners, drag)
+- [x] 7 mouse editing of SO (selection corners, drag)
 - [ ] 8 dimensions (terminators, text, dimension and extension lines)
 	- [ ] edit dimensions -> renders the change
 - [ ] 9 hierarchy of SO
@@ -13,21 +13,16 @@ Where we are in Design Intuition.
 - [ ] 11 **controls UI** — actual buttons in the toolbar
 - [ ] 12. **details**: attributes
 
-### Ideas
-
-- [ ] ask it the right qs -> lean i nto learning
-	- [ ] are you leading me d own the garden path?
-
-
 ## What's Working
 
-| Layer | Status |
-|-------|--------|
-| Rendering | Quaternions, wireframe, depth-based alpha |
-| Layout | Three regions, separators, fillets |
-| Interaction | Hits manager ported from ws |
-| Docs | VitePress, dual Netlify deploy |
-| Testing | 232 tests for core types |
+| Layer       | Status                                    |
+| ----------- | ----------------------------------------- |
+| Rendering   | Quaternions, wireframe, depth-based alpha |
+| Layout      | Three regions: controls, details, graph   |
+| Interaction | 2D (ported from ws) and 3D Hits managers  |
+| Docs        | VitePress configured, new guides content  |
+| Testing     | 232 tests for core types                  |
+| Editing     | Select face, drag edge or vertex          |
 
 ## Quick Links
 
@@ -38,17 +33,20 @@ Where we are in Design Intuition.
 ---
 ## Current State
 
-**Milestone 6 next.** Smart objects foundation complete:
+**Milestone 7 complete.** Edge/corner drag editing works:
 
-- `Smart_Object.ts` — extends Identifiable, optional O_Scene ref
-- `Attribute.ts` — name/value boilerplate
-- Decision: SO is primary, O_Scene is rendering detail
+- Bounds-based geometry: SO stores `x_min/max`, `y_min/max`, `z_min/max`
+- Vertices derived from bounds (no stored vertex arrays)
+- Ray-plane intersection projects mouse onto selected face
+- Drag corner → resizes 2 dimensions; drag edge → resizes 1
+- Bounds can cross (negative dimensions flip the shape)
+- Hover disabled during drag/rotation
 
 The app has:
 
 - Panel layout with controls, details, graph regions
 - Separators with fillets for rounded corners
 - Quaternion-based 3D rendering (two nested cubes, drag to rotate)
-- RBush hit detection with hover/click/long-click/double-click
+- 3D hit detection for corners, edges, faces with hover/selection
 - VitePress docs at docs.designintuition.app
 - Main app at designintuition.app
