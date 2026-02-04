@@ -69,9 +69,11 @@ export function init(canvas: HTMLCanvasElement) {
   quat.multiply(outer_cube.scene!.orientation, init_quat, outer_cube.scene!.orientation);
   quat.normalize(outer_cube.scene!.orientation, outer_cube.scene!.orientation);
 
-  // Input: drag rotates outer cube
+  // Input: drag edits selection OR rotates outer cube
   e3.set_drag_handler((delta) => {
-    e3.rotate_object(outer_cube.scene!, delta);
+    if (!e3.edit_selection(delta)) {
+      e3.rotate_object(outer_cube.scene!, delta);
+    }
   });
 
   // Animation: spin inner cube + render

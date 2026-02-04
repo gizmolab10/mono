@@ -18,7 +18,7 @@ class Scene {
     const id = `obj_${this.id_counter++}`;
     const obj: O_Scene = {
       id,
-      vertices: config.vertices,
+      vertices: config.vertices.map(v => v.clone()),
       edges: config.edges,
       faces: config.faces,
       orientation: quat.create(),

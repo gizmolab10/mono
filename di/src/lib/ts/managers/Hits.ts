@@ -1,6 +1,7 @@
 import S_Hit_Target, { setHitsManager } from '../state/S_Hit_Target';
 import Mouse_Timer, { T_Timer } from '../signals/Mouse_Timer';
 import { T_Drag, T_Hit_Target } from '../types/Enumerations';
+import { hits_3d } from '../managers/Hits_3D';
 import type { Dictionary } from '../types/Types';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
@@ -46,6 +47,7 @@ export default class Hits {
 		if (this.disable_hover) {
 			return false;
 		}
+		// 2D RBush only — 3D hover is managed by Events_3D
 		const matches = this.targets_atPoint(point);
 		const match = this.targetOf_highest_precedence(matches);
 		this.set_asHovering(match);
@@ -57,6 +59,17 @@ export default class Hits {
 	handle_s_mouse_at(point: Point, s_mouse: S_Mouse): boolean {
 		const matches = this.targets_atPoint(point);
 		const target = this.targetOf_highest_precedence(matches) ?? matches[0];
+
+		// If no 2D target, try 3D
+		if (!target) {
+			const hit_3d = hits_3d.test(point);
+			if (hit_3d && s_mouse.isDown) {
+				hits_3d.set_selection(hit_3d);
+				return true;
+			}
+			return false;
+		}
+
 		if (!!s_mouse.event && !!target) {
 			if (s_mouse.isDown && s_mouse.event) {
 				target.clicks += 1;

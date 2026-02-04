@@ -385,6 +385,7 @@ export class Point3 {
 		return this.divided_equally_by(m);
 	}
 
+	clone():							  Point3 { return new Point3(this.x, this.y, this.z); }
 	static cube(length: number):		  Point3 { return new Point3(length, length, length); }
 	static x(x: number):				  Point3 { return new Point3(x, 0, 0); }
 	static y(y: number):				  Point3 { return new Point3(0, y, 0); }

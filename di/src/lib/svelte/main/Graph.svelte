@@ -8,20 +8,14 @@
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import { init } from '../../ts/render/Trivial';
 
-	const { w_text_color, w_background_color } = colors;
+	const { w_text_color } = colors;
 	const GRAPH_HID = 1;
 
 	let canvas      : HTMLCanvasElement;
 	let container   : HTMLDivElement;
 	let initialized = false;
-	let isHovering  = $state(false);
 
 	const s_component = components.component_forHID_andType_createUnique(GRAPH_HID, T_Hit_Target.rubberband);
-
-	// Subscribe to hover changes
-	const unsubscribe = hits.w_s_hover.subscribe((hovering) => {
-		isHovering = hovering?.hasSameID_as(s_component) ?? false;
-	});
 
 	function initCanvas(width : number, height : number) {
 		if (!canvas || initialized) return;
@@ -75,7 +69,6 @@
 	});
 
 	onDestroy(() => {
-		unsubscribe();
 		components.component_remove(s_component);
 	});
 </script>
@@ -84,7 +77,7 @@
 	class            = 'graph'
 	bind:this        = {container}
 	style:color      = {$w_text_color}
-	style:background = {isHovering ? 'white' : $w_background_color}>
+	style:background = 'white'>
 	<canvas
 		bind:this = {canvas}></canvas>
 </div>
