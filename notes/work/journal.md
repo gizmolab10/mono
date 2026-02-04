@@ -4,7 +4,7 @@
 
 ---
 
-**February 3, 2026** Created `me/` project — third mono project alongside ws and di for ideas, research, creative exploration. Added `.env` config file support to dispatcher (loads `NETLIFY_ACCESS_TOKEN` from `notes/tools/hub/.env` instead of relying on shell environment). Reorganized work files: renamed feedstock→adapt, merged guidance-journal into journal, moved journal to `work/` level. Fixed di milestone dates (2025→2026). Changed ws "Milestones" terminology to "Builds" in journal entries.
+**February 3, 2026** Created `me/` project — third mono project alongside ws and di for ideas, research, creative exploration. Hub app: added `me` button (J), renamed `mono`→`mo` (M), auto-switch mode when clicking projects without config (app+mo→docs, docs+me→app), renamed md→resume button (R), consolidated all URLs into ports.json (single source of truth), simplified initConfig to build from ports.json. Cross-project links: implemented comment-based approach for Obsidian/VitePress compatibility (`[text](relative) <!-- @project/path -->`). Added `.env` config file support to dispatcher. Reorganized work files: renamed feedstock→adapt, merged guidance-journal into journal. (di) Milestone 5 complete — integrated Hits_3D into main Hits manager: RBush 2D first, 3D fallback for Smart Objects.
 
 **February 1, 2026** Hub app updates. Tests button with `;` shortcut runs both ws and di tests. Deploy status tooltip fix for missing Netlify token. Title buttons turn green while working, status dot repositioned behind "Mono" title, deploy status skips canceled builds. Button renames: localhosts → hosts, dispatcher → relay.
 

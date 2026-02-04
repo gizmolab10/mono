@@ -12,9 +12,30 @@ Then scan `keywords.md` — if any keyword appears in the user's input, read the
 
 **All file paths:** Always use `~/GitHub/mono/`, never worktree paths (`.claude-worktrees`). This applies to reads, writes, globs, greps — everything.
 
+**On tool failure, cycle tools — don't repeat or ask.** If a tool fails, try alternatives: Read → Bash → Glob. Don't repeat the same failing call. Don't ask the user what to do — investigate.
+
+**Tool-specific fallbacks:**
+- `filesystem:create_directory` fails → use Bash with `mkdir -p`
+- `delete` unavailable → user must delete manually
+- `view` tool fails on valid paths → use Read instead
+
 ## Freshness
 
 **Re-read before claiming** — before any assertion about file contents, re-read the file. Never trust cached content from earlier in the conversation. If comparing files, checking differences, or stating what's in a file — read it first.
+
+**Re-read before editing** — before editing or commenting on a file's contents, re-read it. The user may have changed it.
+
+## Verify Before Writing
+
+**Don't assume dates, years, or paths** — when writing dates, verify the current year. When writing paths, verify they exist. When writing project-specific content, verify you're in the right project.
+
+## Shorthand First
+
+**Check shorthand for short commands** — when the user sends a single word or very short command (`help`, `resume di`, `journal`), check `shorthand.md` before responding. These are commands, not conversation.
+
+## Requirements Echo
+
+**Re-state requirements before implementing** — when the user gives multi-part requirements, echo them back before coding. After implementing, verify each requirement is met. Don't drift.
 
 ## Action First
 
@@ -24,4 +45,4 @@ Then scan `keywords.md` — if any keyword appears in the user's input, read the
 
 ## Feedstock
 
-**Log mistakes immediately** — when you catch an error (stale read, incomplete action, restating what's already said), add it to `notes/work/adapt.md` right away. Don't wait, don't batch. The habit matters more than the entry.
+**Log mistakes immediately** — when you catch an error (stale read, incomplete action, restating what's already said), add it to `notes/work/learn.md` right away. Don't wait, don't batch. The habit matters more than the entry.

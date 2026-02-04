@@ -13,7 +13,7 @@ export default defineConfig({
 	},
 	server: {
 		host: true,
-		port: ports.ws,
+		port: ports.ws.port,
 	},
 	css: {
 		preprocessorOptions: {

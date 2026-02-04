@@ -208,9 +208,25 @@ def run_tests_async():
     finally:
         tests_running = False
 
+def is_skippable_deploy(deploy):
+    """Check if a deploy should be skipped (canceled or failed build)."""
+    state = deploy.get('state', '').lower()
+    err_msg = deploy.get('error_message', '') or ''
+    published_at = deploy.get('published_at')
+
+    # Skip canceled deploys
+    if state == 'canceled' or 'cancel' in err_msg.lower():
+        return True
+
+    # Skip failed builds (error state with no published_at)
+    if state == 'error' and not published_at:
+        return True
+
+    return False
+
 def get_netlify_deploy_status(site_name):
     """Fetch latest deploy status from Netlify API.
-    If the most recent deploy is canceled, find the last non-canceled one."""
+    Skip canceled deploys and failed builds to find the last successful/active one."""
     if not NETLIFY_TOKEN:
         return {'error': 'No Netlify token configured'}
 
@@ -224,40 +240,20 @@ def get_netlify_deploy_status(site_name):
             if not deploys:
                 return {'error': 'No deploys found'}
 
-            # Check if most recent is canceled
+            # Find first non-skippable deploy
+            for deploy in deploys:
+                if not is_skippable_deploy(deploy):
+                    return {
+                        'state': deploy.get('state'),
+                        'created_at': deploy.get('created_at'),
+                        'published_at': deploy.get('published_at'),
+                        'error_message': deploy.get('error_message'),
+                        'deploy_url': deploy.get('deploy_ssl_url'),
+                        'title': deploy.get('title', ''),
+                    }
+
+            # All deploys in window are skippable, return the latest anyway
             latest = deploys[0]
-            latest_state = latest.get('state', '').lower()
-            is_canceled = latest_state == 'canceled' or (
-                latest.get('error_message', '') and
-                'cancel' in latest.get('error_message', '').lower()
-            )
-
-            if is_canceled:
-                # Find most recent non-canceled deploy
-                for deploy in deploys[1:]:
-                    state = deploy.get('state', '').lower()
-                    err_msg = deploy.get('error_message', '') or ''
-                    if state != 'canceled' and 'cancel' not in err_msg.lower():
-                        return {
-                            'state': deploy.get('state'),
-                            'created_at': deploy.get('created_at'),
-                            'published_at': deploy.get('published_at'),
-                            'error_message': deploy.get('error_message'),
-                            'deploy_url': deploy.get('deploy_ssl_url'),
-                            'title': deploy.get('title', ''),
-                            'skipped_canceled': True,  # Flag that we skipped a canceled deploy
-                        }
-                # All deploys in window are canceled, return the latest anyway
-                return {
-                    'state': latest.get('state'),
-                    'created_at': latest.get('created_at'),
-                    'published_at': latest.get('published_at'),
-                    'error_message': latest.get('error_message'),
-                    'deploy_url': latest.get('deploy_ssl_url'),
-                    'title': latest.get('title', ''),
-                }
-
-            # Not canceled, return latest
             return {
                 'state': latest.get('state'),
                 'created_at': latest.get('created_at'),

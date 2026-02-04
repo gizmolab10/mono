@@ -119,6 +119,12 @@ Before writing code:
 
 **"relearn"** — Stop. Re-read CLAUDE.MD, `notes/guides/collaborate/*.md`, and the active work doc. Quote the relevant section before continuing.
 
+## File Operations
+
+**Rename with `mv`, then search.** On rename or move: use `mv old new`, then search for all references (index.md, CLAUDE.MD, imports, links). Update everything in one pass.
+
+**Remove, don't swap.** When removing project-specific content from shared docs, remove entirely — don't replace ws examples with di examples or vice versa.
+
 ## Refactoring Discipline
 
 See [refactoring.md](../develop/refactoring.md) for the full guide with examples.

@@ -8,7 +8,7 @@ shared infrastructure (\~15 lines of defaults) belongs in Claude user preference
 
 Two distinct personas—work and personal—each with their own gating and guides. Choose at chat start. Simple mental model, minimal infrastructure, adaptable.
 
-Merge with [personas](notes/work/jonathan.md)
+Merge with [personas](../../../me/notes/work/jonathan.md)
 
 ## Current State
 

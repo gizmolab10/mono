@@ -2,6 +2,7 @@ import ports from '../notes/tools/hub/ports.json'
 import { defineConfig } from 'vitepress'
 import taskLists from 'markdown-it-task-lists'
 import taskListPlusPlugin from './markdown-it-task-list-plus.mts'
+import crossProjectPlugin from './markdown-it-cross-project.mts'
 
 export default defineConfig({
   srcDir: '.',
@@ -27,6 +28,7 @@ export default defineConfig({
     config: (md) => {
       md.use(taskLists)
       md.use(taskListPlusPlugin)
+      md.use(crossProjectPlugin)
     }
   },
 
@@ -38,7 +40,7 @@ export default defineConfig({
 
   vite: {
     server: {
-      port: ports['mono-docs']
+      port: ports.mono.docs
     }
   },
 
@@ -256,6 +258,32 @@ export default defineConfig({
           ]
         },
         {
+          text: 'Me >',
+          collapsed: true,
+          items: [
+            {
+              text: 'Notes >',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Work >',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Jonathan',
+                      link: '/me/notes/work/jonathan'
+                    },
+                    {
+                      text: 'Resume.me',
+                      link: '/me/notes/work/resume.me'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           text: 'Notes >',
           link: '/notes/',
           collapsed: true,
@@ -406,10 +434,6 @@ export default defineConfig({
                 {
                   text: 'Faster',
                   link: '/notes/work/faster'
-                },
-                {
-                  text: 'Jonathan',
-                  link: '/notes/work/jonathan'
                 },
                 {
                   text: 'Journal',

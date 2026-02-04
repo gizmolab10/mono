@@ -31,20 +31,19 @@ progress_fail() {
   echo "❌ Failed: $1" > "$STATUS_FILE"
 }
 
-# Read port from JSON
+# Read port from nested JSON using python
 get_port() {
-  local key=$1
-  grep "\"$key\"" "$PORTS_FILE" | sed 's/[^0-9]//g'
+  python3 -c "import json; d=json.load(open('$PORTS_FILE')); print(d$1)"
 }
 
 # Load ports
-PORT_DISPATCH=$(get_port dispatch)
-PORT_DISPATCHER=$(get_port dispatcher)
-PORT_WS=$(get_port ws)
-PORT_DI=$(get_port di)
-PORT_WS_DOCS=$(get_port ws-docs)
-PORT_MONO_DOCS=$(get_port mono-docs)
-PORT_DI_DOCS=$(get_port di-docs)
+PORT_DISPATCH=$(get_port "['hub']['port']")
+PORT_DISPATCHER=$(get_port "['dispatcher']['port']")
+PORT_WS=$(get_port "['ws']['port']")
+PORT_DI=$(get_port "['di']['port']")
+PORT_WS_DOCS=$(get_port "['ws']['docs']")
+PORT_MONO_DOCS=$(get_port "['mono']['docs']")
+PORT_DI_DOCS=$(get_port "['di']['docs']")
 
 # Site definitions: name|port|dir|command
 SITES=(

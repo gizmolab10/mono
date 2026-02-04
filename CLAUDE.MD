@@ -51,8 +51,7 @@ At session start, also read:
 1. `shorthand.md` — parse commands and abbreviations
 2. `kinds.of.tasks.md` — classify task type, note conflicts
 3. `gates.md` — check for STOP/SEARCH/LIST/WAIT
-4. `workarounds.md` — know tool fallbacks
-5. `../work/adapt.md` — don't repeat them. If 10+ entries, say: "Feedstock: [N] — time to distill."
+4. `../work/learn.md` — don't repeat them. If 10+ entries, say: "Feedstock: [N] — time to distill."
 
 ## Guides
 
@@ -66,4 +65,4 @@ In `notes/guides/pre-flight/`:
 
 - `always.md` — read every response
 - `keywords.md` — scan every response
-- `gates.md`, `shorthand.md`, `kinds.of.tasks.md`, `workarounds.md` — session start
+- `gates.md`, `shorthand.md`, `kinds.of.tasks.md` — session start

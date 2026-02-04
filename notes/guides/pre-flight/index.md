@@ -5,7 +5,6 @@ At session start, also read:
 - [Shorthand](./shorthand.md) — parse commands and abbreviations
 - [Kinds of Tasks](./kinds.of.tasks.md) — classify task type, note conflicts
 - [Gates](./gates.md) — check for STOP/SEARCH/LIST/WAIT
-- [Workarounds](./workarounds.md) — know tool fallbacks
 
 ## Contents
 
@@ -14,5 +13,4 @@ At session start, also read:
 - [Keywords](./keywords.md)
 - [Kinds.of.tasks](./kinds.of.tasks.md)
 - [Shorthand](./shorthand.md)
-- [Workarounds](./workarounds.md)
 

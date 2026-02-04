@@ -397,7 +397,7 @@
   <div class="container">
     <div class="title-row">
       <div class="title-box swapped">
-        <button class="action side-a" id="btn-dns">DNS<span class="badge">N</span></button>
+        <button class="action side-a" id="btn-dns">DNS<span class="badge">D</span></button>
         <div class="title-wrapper">
           <h1 class="middle"><span class="title-text"><span class="status-dot" id="status-dot"></span>Mono</span>
           </h1>
@@ -423,9 +423,10 @@
 
     <div class="segment-row swapped">
       <div class="project-group side-a">
-        <button class="segment" data-project="mono">mono<span class="badge">M</span></button>
-        <button class="segment" data-project="di">di<span class="badge">D</span></button>
+        <button class="segment" data-project="mo">mo<span class="badge">M</span></button>
+        <button class="segment" data-project="di">di<span class="badge">I</span></button>
         <button class="segment active" data-project="ws">ws<span class="badge">W</span></button>
+        <button class="segment" data-project="me">me<span class="badge">J</span></button>
       </div>
       <div class="mode-group side-b">
         <button class="segment active" data-mode="app">App<span class="badge">A</span></button>
@@ -444,13 +445,13 @@
     <div class="actions-row">
       <div class="more-group side-a">
         <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
-        <button class="action" id="btn-repo">Repo<span class="badge">R</span></button>
+        <button class="action" id="btn-repo">Repo<span class="badge">G</span></button>
         <button class="action" id="btn-deploy">Deploy<span class="badge">Y</span></button>
-        <button class="action" id="btn-md">md<span class="badge">O</span></button>
+        <button class="action" id="btn-resume">resume<span class="badge">R</span></button>
       </div>
       <div class="navigate-group side-b">
         <button class="action" id="btn-local">Local<span class="badge">L</span></button>
-        <button class="action" id="btn-netlify">Netlify<span class="badge">T</span></button>
+        <button class="action" id="btn-netlify">Netlify<span class="badge">N</span></button>
         <button class="action" id="btn-public">Public<span class="badge">P</span></button>
       </div>
     </div>
@@ -464,6 +465,11 @@
     let config = {};
     let mode = localStorage.getItem('hub-mode') || 'app';
     let project = localStorage.getItem('hub-project') || 'ws';
+    // Migration: rename mono -> mo
+    if (project === 'mono') {
+      project = 'mo';
+      localStorage.setItem('hub-project', 'mo');
+    }
     let hoveredActionId = null;
     let hoveredAction = null;
     let previewMode = null;
@@ -480,7 +486,7 @@
     const btnPublic = document.getElementById('btn-public');
     const btnRepo = document.getElementById('btn-repo');
     const btnDeploy = document.getElementById('btn-deploy');
-    const btnMd = document.getElementById('btn-md');
+    const btnResume = document.getElementById('btn-resume');
     const btnDns = document.getElementById('btn-dns');
     const btnBubble = document.getElementById('btn-bubble');
     const btnDocs = document.getElementById('btn-docs');
@@ -492,56 +498,37 @@
 
     // === Config Initialization ===
     function initConfig() {
+      // Build config from ports.json - single source of truth
+      const buildProjectConfig = (p, mode) => {
+        const src = p === 'mo' ? ports.mono : ports[p];
+        if (!src) return null;
+        const isApp = mode === 'app';
+        // No app mode for mo, no docs mode for me
+        if (isApp && p === 'mo') return null;
+        if (!isApp && p === 'me') return null;
+        return {
+          port: isApp ? src.port : src.docs,
+          site: isApp ? p : `${p}-docs`,
+          public: isApp ? src.public : src.docsPublic,
+          netlify: isApp ? src.netlify : src.docsNetlify,
+          repo: src.repo,
+          deploy: isApp ? src.deploy : src.docsDeploy,
+          bubble: isApp ? src.bubble : null
+        };
+      };
+
       config = {
         app: {
-          ws: {
-            port: ports.ws,
-            site: 'ws',
-            public: 'https://webseriously.org',
-            netlify: 'https://webseriously.netlify.app',
-            repo: 'https://github.com/gizmolab10/seriously-svelte',
-            deploy: 'https://app.netlify.com/projects/webseriously/deploys',
-            bubble: 'https://bubble.io/home/plugins'
-          },
-          di: {
-            port: ports.di,
-            site: 'di',
-            public: 'https://designintuition.app',
-            netlify: 'https://designintuition.netlify.app',
-            repo: 'https://github.com/gizmolab10/design.intuition',
-            deploy: 'https://app.netlify.com/projects/designintuition/deploys',
-            bubble: null
-          },
-          mono: null
+          ws: buildProjectConfig('ws', 'app'),
+          di: buildProjectConfig('di', 'app'),
+          mo: buildProjectConfig('mo', 'app'),
+          me: buildProjectConfig('me', 'app')
         },
         docs: {
-          ws: {
-            port: ports['ws-docs'],
-            site: 'ws-docs',
-            public: 'https://docs.webseriously.org',
-            netlify: 'https://webseriously-documentation.netlify.app',
-            repo: 'https://github.com/gizmolab10/seriously-svelte',
-            deploy: 'https://app.netlify.com/projects/webseriously-documentation/deploys',
-            bubble: null
-          },
-          di: {
-            port: ports['di-docs'],
-            site: 'di-docs',
-            public: 'https://docs.designintuition.app',
-            netlify: 'https://designintuition-documentation.netlify.app',
-            repo: 'https://github.com/gizmolab10/design.intuition',
-            deploy: 'https://app.netlify.com/projects/designintuition-documentation/deploys',
-            bubble: null
-          },
-          mono: {
-            port: ports['mono-docs'],
-            site: 'mono-docs',
-            public: 'https://docs.gizmolab.com',
-            netlify: 'https://monorepo-documentation.netlify.app',
-            repo: 'https://github.com/gizmolab10/mono',
-            deploy: 'https://app.netlify.com/projects/monorepo-documentation/deploys',
-            bubble: null
-          }
+          ws: buildProjectConfig('ws', 'docs'),
+          di: buildProjectConfig('di', 'docs'),
+          mo: buildProjectConfig('mo', 'docs'),
+          me: buildProjectConfig('me', 'docs')
         }
       };
     }
@@ -624,18 +611,20 @@
       if (!config.app) return; // Not initialized yet
 
       modeButtons.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.mode === mode);
+        const m = btn.dataset.mode;
+        const valid = config[m][project] !== null;
+        btn.classList.toggle('active', m === mode);
+        btn.classList.toggle('disabled', !valid);
       });
 
       projectButtons.forEach(btn => {
         const p = btn.dataset.project;
-        const valid = config[mode][p] !== null;
         btn.classList.toggle('active', p === project);
-        btn.classList.toggle('disabled', !valid);
+        // All project buttons always enabled
       });
 
       if (config[mode][project] === null) {
-        for (const p of ['ws', 'di', 'mono']) {
+        for (const p of ['ws', 'di', 'mo', 'me']) {
           if (config[mode][p] !== null) {
             project = p;
             break;
@@ -670,15 +659,26 @@
 
     function setProject(p) {
       if (!config.app) return;
-      if (config[mode][p] !== null) {
-        project = p;
-        localStorage.setItem('hub-project', project);
-        prePublish();
-        if (hoveredActionId) {
-          hoveredAction = actionButtons[hoveredActionId]();
+
+      // Auto-switch mode when selecting project with no config in current mode
+      if (config[mode][p] === null) {
+        // app + mo → docs, docs + me → app
+        if (mode === 'app' && p === 'mo') {
+          mode = 'docs';
+          localStorage.setItem('hub-mode', mode);
+        } else if (mode === 'docs' && p === 'me') {
+          mode = 'app';
+          localStorage.setItem('hub-mode', mode);
         }
-        prePublishFeedbackRow();
       }
+
+      project = p;
+      localStorage.setItem('hub-project', project);
+      prePublish();
+      if (hoveredActionId) {
+        hoveredAction = actionButtons[hoveredActionId]();
+      }
+      prePublishFeedbackRow();
     }
 
     function doStart() {
@@ -689,7 +689,7 @@
       setConsoleOutput('restart', 'Starting...');
       matchRowWidths();
 
-      fetch(`http://localhost:${ports.dispatcher}/restart-all`, {
+      fetch(`http://localhost:${ports.dispatcher.port}/restart-all`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -714,7 +714,7 @@
     }
 
     function pollRestartStatus() {
-      fetch(`http://localhost:${ports.dispatcher}/restart-status`)
+      fetch(`http://localhost:${ports.dispatcher.port}/restart-status`)
         .then(res => res.json())
         .then(data => {
           pollErrorCount = 0; // Reset on success
@@ -792,10 +792,18 @@
       window.open(cfg.bubble, '_blank');
     }
 
-    function doMd() {
-      fetch(`http://localhost:${ports.dispatcher}/obsidian/notes/work/resume.md`)
+    function doResume() {
+      // Map project to resume file path
+      const resumePaths = {
+        ws: 'ws/notes/work/resume.ws.md',
+        di: 'di/notes/work/resume.di.md',
+        mo: 'notes/work/resume.mo.md',
+        me: 'me/notes/work/resume.me.md'
+      };
+      const path = resumePaths[project] || 'notes/work/resume.mo.md';
+      fetch(`http://localhost:${ports.dispatcher.port}/obsidian/${path}`)
         .then(res => res.json())
-        .catch(() => {});
+        .catch(() => { });
     }
 
     let pollInterval = null;
@@ -861,7 +869,7 @@
       setConsoleOutput('rebuild', 'Starting...');
       matchRowWidths();
 
-      fetch(`http://localhost:${ports.dispatcher}/rebuild-docs`, {
+      fetch(`http://localhost:${ports.dispatcher.port}/rebuild-docs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ project: project })
@@ -887,7 +895,7 @@
     }
 
     function pollDocsStatus() {
-      fetch(`http://localhost:${ports.dispatcher}/rebuild-status`)
+      fetch(`http://localhost:${ports.dispatcher.port}/rebuild-status`)
         .then(res => res.json())
         .then(data => {
           // Only show "Working..." if actually running
@@ -923,7 +931,7 @@
       setConsoleOutput('relay', 'Restarting relay...');
       matchRowWidths();
 
-      fetch(`http://localhost:${ports.dispatcher}/restart-dispatcher`, {
+      fetch(`http://localhost:${ports.dispatcher.port}/restart-dispatcher`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       }).catch(() => { });
@@ -945,7 +953,7 @@
       setConsoleOutput('tests', 'Starting tests...');
       matchRowWidths();
 
-      fetch(`http://localhost:${ports.dispatcher}/run-tests`, {
+      fetch(`http://localhost:${ports.dispatcher.port}/run-tests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -970,7 +978,7 @@
     }
 
     function pollTestsStatus() {
-      fetch(`http://localhost:${ports.dispatcher}/tests-status`)
+      fetch(`http://localhost:${ports.dispatcher.port}/tests-status`)
         .then(res => res.json())
         .then(data => {
           // Show status while running
@@ -1086,7 +1094,7 @@
       // Don't poll if restart or rebuild is in progress
       if (pollInterval || restartPollInterval) return;
 
-      fetch(`http://localhost:${ports.dispatcher}/deploy-status`)
+      fetch(`http://localhost:${ports.dispatcher.port}/deploy-status`)
         .then(res => res.json())
         .then(data => {
           // Update tooltip with latest data
@@ -1180,7 +1188,17 @@
         return cfg?.bubble || null;
       },
       'btn-dns': () => DNS_URL,
-      'btn-md': () => 'obsidian://open?vault=mono&file=notes/work/resume.md'
+      'btn-resume': () => {
+        const resumePaths = {
+          ws: 'ws/notes/work/resume.ws.md',
+          di: 'di/notes/work/resume.di.md',
+          mo: 'notes/work/resume.mo.md',
+          me: 'me/notes/work/resume.me.md'
+        };
+        const p = getDisplayProject();
+        const path = resumePaths[p] || 'notes/work/resume.mo.md';
+        return `obsidian://open?vault=mono&file=${path}`;
+      }
     };
 
     // === Title Button State Management ===
@@ -1272,7 +1290,7 @@
     btnDeploy.addEventListener('click', doDeploy);
     btnDns.addEventListener('click', doDns);
     btnBubble.addEventListener('click', doBubble);
-    btnMd.addEventListener('click', doMd);
+    btnResume.addEventListener('click', doResume);
     btnDocs.addEventListener('click', doDocs);
     btnRelay.addEventListener('click', doRelay);
     btnTests.addEventListener('click', doTests);
@@ -1291,21 +1309,22 @@
         case 'a': previewMode = 'app'; highlightModeButton('app'); highlightProjectButton(getDisplayProject()); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'x': previewMode = 'docs'; highlightModeButton('docs'); highlightProjectButton(getDisplayProject()); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'w': previewProject = 'ws'; highlightProjectButton('ws'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
-        case 'd': previewProject = 'di'; highlightProjectButton('di'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
+        case 'i': previewProject = 'di'; highlightProjectButton('di'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } } break;
-        case 'm': { const m = getDisplayMode(); if (config[m]?.['mono'] !== null) { previewProject = 'mono'; highlightProjectButton('mono'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
+        case 'm': { const m = getDisplayMode(); if (config[m]?.['mo'] !== null) { previewProject = 'mo'; highlightProjectButton('mo'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
+        case 'j': { const m = getDisplayMode(); if (config[m]?.['me'] !== null) { previewProject = 'me'; highlightProjectButton('me'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'escape': doStart(); break;
         case 'enter': if (hoveredAction) { window.open(hoveredAction, '_blank'); } break;
         case 'delete':
         case 'backspace': doDocs(); break;
         case 'l': hoveredActionId = 'btn-local'; hoveredAction = actionButtons['btn-local'](); highlightActionButton('btn-local'); prePublishFeedbackRow(); break;
-        case 't': hoveredActionId = 'btn-netlify'; hoveredAction = actionButtons['btn-netlify'](); highlightActionButton('btn-netlify'); prePublishFeedbackRow(); break;
+        case 'n': hoveredActionId = 'btn-netlify'; hoveredAction = actionButtons['btn-netlify'](); highlightActionButton('btn-netlify'); prePublishFeedbackRow(); break;
         case 'p': hoveredActionId = 'btn-public'; hoveredAction = actionButtons['btn-public'](); highlightActionButton('btn-public'); prePublishFeedbackRow(); break;
-        case 'r': hoveredActionId = 'btn-repo'; hoveredAction = actionButtons['btn-repo'](); highlightActionButton('btn-repo'); prePublishFeedbackRow(); break;
+        case 'g': hoveredActionId = 'btn-repo'; hoveredAction = actionButtons['btn-repo'](); highlightActionButton('btn-repo'); prePublishFeedbackRow(); break;
         case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); prePublishFeedbackRow(); break;
-        case 'n': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
+        case 'd': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
         case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); prePublishFeedbackRow(); break;
-        case 'o': hoveredActionId = 'btn-md'; hoveredAction = actionButtons['btn-md'](); highlightActionButton('btn-md'); prePublishFeedbackRow(); break;
+        case 'r': hoveredActionId = 'btn-resume'; hoveredAction = actionButtons['btn-resume'](); highlightActionButton('btn-resume'); prePublishFeedbackRow(); break;
         case '`': doRelay(); break;
         case ';': doTests(); break;
       }

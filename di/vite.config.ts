@@ -18,7 +18,7 @@ const buildNumber = Math.max(...buildNotes.map(n => n.build));
 export default defineConfig({
   plugins: [svelte()],
   server: {
-    port: ports.di
+    port: ports.di.port
   },
   define: {
     __BUILD_NOTES__: JSON.stringify(buildNotes),

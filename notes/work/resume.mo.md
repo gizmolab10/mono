@@ -2,15 +2,12 @@
 
 ---
 
-[[hub-app]]
-[web seriously](resume.ws.md)
-[design intuition](resume.di.md)
-[di milestones](di/notes/work/milestones/index.md)
-[[jonathan]]
-[[journal]]
+- [web seriously](/ws/notes/work/resume.ws.md) <!-- @ws/work/resume.ws.md -->
+- [design intuition](/di/notes/work/resume.di.md) <!-- @di/work/resume.di.md -->
+- [jonathan](/me/notes/work/resume.me.md) <!-- @me/work/resume.me.md -->
+- [[journal]]
+- [[hub-app]]
 
 ---
 
 current
-
-- [ ] create mono/me project
