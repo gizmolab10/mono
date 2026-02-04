@@ -51,7 +51,8 @@ class Events_3D {
 
       if (!this.is_dragging) {
         const hit = hits_3d.test(point);
-        hits_3d.set_hover(hit);
+        // Hover shows face — convert corner/edge hits to best face
+        hits_3d.set_hover(hit ? hits_3d.hit_to_face(hit) : null);
       } else if (this.on_drag) {
         const current = new Point(e.clientX, e.clientY);
         const delta = this.last_position.vector_to(current);

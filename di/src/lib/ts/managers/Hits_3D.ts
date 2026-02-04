@@ -10,10 +10,18 @@ export interface Hit_3D_Result {
 	index: number;
 }
 
+interface BBox {
+	minX: number;
+	minY: number;
+	maxX: number;
+	maxY: number;
+}
+
 class Hits_3D {
 	private objects: Smart_Object[] = [];
 	private scene_to_so: Map<string, Smart_Object> = new Map();
 	private projected_cache: Map<string, Projected[]> = new Map();
+	private bbox_cache: Map<string, BBox> = new Map();
 
 	corner_radius = 8;
 	edge_radius = 5;
@@ -52,13 +60,27 @@ class Hits_3D {
 			if (so.scene) {
 				this.scene_to_so.delete(so.scene.id);
 				this.projected_cache.delete(so.scene.id);
+				this.bbox_cache.delete(so.scene.id);
 			}
 		}
 	}
 
 	update_projected(scene_id: string, projected: Projected[]) {
 		this.projected_cache.set(scene_id, projected);
+		this.bbox_cache.set(scene_id, this.compute_bbox(projected));
 		this.check_face_flip(scene_id, projected);
+	}
+
+	private compute_bbox(projected: Projected[]): BBox {
+		let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+		for (const p of projected) {
+			if (p.w < 0) continue;
+			minX = Math.min(minX, p.x);
+			minY = Math.min(minY, p.y);
+			maxX = Math.max(maxX, p.x);
+			maxY = Math.max(maxY, p.y);
+		}
+		return { minX, minY, maxX, maxY };
 	}
 
 	private check_face_flip(scene_id: string, projected: Projected[]): void {
@@ -82,6 +104,16 @@ class Hits_3D {
 	test(point: Point): Hit_3D_Result | null {
 		for (const so of this.objects) {
 			if (!so.scene) continue;
+
+			// Quick reject via bounding box
+			const bbox = this.bbox_cache.get(so.scene.id);
+			if (!bbox) continue;
+			const r = this.corner_radius;
+			if (point.x < bbox.minX - r || point.x > bbox.maxX + r ||
+				point.y < bbox.minY - r || point.y > bbox.maxY + r) {
+				continue;
+			}
+
 			const projected = this.projected_cache.get(so.scene.id);
 			if (!projected) continue;
 
@@ -153,19 +185,71 @@ class Hits_3D {
 		return -1;
 	}
 
-	// CCW winding in screen space (y-down) means normal points toward camera
-	private is_front_facing(face: number[], projected: Projected[]): boolean {
-		if (face.length < 3) return false;
+	// 2D cross product — more negative = more front-facing
+	private face_cross(face: number[], projected: Projected[]): number {
+		if (face.length < 3) return Infinity;
 		const p0 = projected[face[0]];
 		const p1 = projected[face[1]];
 		const p2 = projected[face[2]];
-		if (p0.w < 0 || p1.w < 0 || p2.w < 0) return false;
-		// 2D cross product: (p1-p0) × (p2-p0)
-		// In screen coords (y-down), positive cross = CW, negative = CCW
-		// Our cube faces use CCW winding when viewed from outside (outward normals)
-		// So negative cross means front-facing
-		const cross = (p1.x - p0.x) * (p2.y - p0.y) - (p1.y - p0.y) * (p2.x - p0.x);
-		return cross < 0;
+		if (p0.w < 0 || p1.w < 0 || p2.w < 0) return Infinity;
+		return (p1.x - p0.x) * (p2.y - p0.y) - (p1.y - p0.y) * (p2.x - p0.x);
+	}
+
+	// CCW winding in screen space (y-down) means normal points toward camera
+	private is_front_facing(face: number[], projected: Projected[]): boolean {
+		return this.face_cross(face, projected) < 0;
+	}
+
+	// Find faces containing a vertex, return most front-facing one
+	private best_face_for_vertex(vertex_index: number, so: Smart_Object, projected: Projected[]): number {
+		if (!so.scene?.faces) return -1;
+		let best_face = -1;
+		let best_cross = Infinity;
+		for (let i = 0; i < so.scene.faces.length; i++) {
+			const face = so.scene.faces[i];
+			if (!face.includes(vertex_index)) continue;
+			const cross = this.face_cross(face, projected);
+			if (cross < best_cross) {
+				best_cross = cross;
+				best_face = i;
+			}
+		}
+		return best_cross < 0 ? best_face : -1;  // only if front-facing
+	}
+
+	// Find faces containing an edge (both vertices), return most front-facing one
+	private best_face_for_edge(edge_index: number, so: Smart_Object, projected: Projected[]): number {
+		if (!so.scene?.faces || !so.scene.edges[edge_index]) return -1;
+		const [a, b] = so.scene.edges[edge_index];
+		let best_face = -1;
+		let best_cross = Infinity;
+		for (let i = 0; i < so.scene.faces.length; i++) {
+			const face = so.scene.faces[i];
+			if (!face.includes(a) || !face.includes(b)) continue;
+			const cross = this.face_cross(face, projected);
+			if (cross < best_cross) {
+				best_cross = cross;
+				best_face = i;
+			}
+		}
+		return best_cross < 0 ? best_face : -1;  // only if front-facing
+	}
+
+	// Convert corner/edge hit to best face hit for hover
+	hit_to_face(hit: Hit_3D_Result): Hit_3D_Result | null {
+		if (hit.type === T_Hit_3D.face) return hit;
+		if (!hit.so.scene) return null;
+		const projected = this.projected_cache.get(hit.so.scene.id);
+		if (!projected) return null;
+
+		let face_index: number;
+		if (hit.type === T_Hit_3D.corner) {
+			face_index = this.best_face_for_vertex(hit.index, hit.so, projected);
+		} else {
+			face_index = this.best_face_for_edge(hit.index, hit.so, projected);
+		}
+		if (face_index === -1) return null;
+		return { so: hit.so, type: T_Hit_3D.face, index: face_index };
 	}
 
 	// Ray casting point-in-polygon
