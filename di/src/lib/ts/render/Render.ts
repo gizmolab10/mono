@@ -292,36 +292,48 @@ class Render {
     this.draw_dimension_3d(pw1_start, pw1_end, pw2_start, pw2_end, pd1, pd2, value);
   }
 
-  // Get witness direction from the most front-facing face that contains the edge's axis
-  // This may be ANY face (including the back face), not just faces adjacent to the edge
+  // Algorithm B: Pick the face whose normal points most directly at the camera.
+  // The witness lines extend in that face's plane, perpendicular to the edge axis.
   private edge_witness_direction(
     so: Smart_Object,
-    v1: number, v2: number,
+    _v1: number, _v2: number,
     edge_axis: Axis,
-    projected: Projected[]
+    _projected: Projected[]
   ): Point3 {
     if (!so.scene?.faces) return new Point3(0, 0, 1);
 
-    // Find all faces that contain this axis (i.e., faces where the edge axis is one of their axes)
-    // Face axes: 0,1 (front/back) have x,y; 2,3 (left/right) have y,z; 4,5 (top/bottom) have x,z
+    // Transform camera eye into object-local space
+    const world_matrix = this.get_world_matrix(so.scene);
+    const inv_world = mat4.create();
+    mat4.invert(inv_world, world_matrix);
+    const eye = camera.eye;
+    const local_eye = vec4.fromValues(eye[0], eye[1], eye[2], 1);
+    vec4.transformMat4(local_eye, local_eye, inv_world);
+    const cam_len = Math.sqrt(local_eye[0] ** 2 + local_eye[1] ** 2 + local_eye[2] ** 2);
+    const cam_n = cam_len > 0
+      ? { x: local_eye[0] / cam_len, y: local_eye[1] / cam_len, z: local_eye[2] / cam_len }
+      : { x: 0, y: 0, z: 1 };
+
+    // Find all faces that contain the edge axis
     const candidate_faces: number[] = [];
     for (let fi = 0; fi < so.scene.faces.length; fi++) {
-      const face_axes = so.face_axes(fi);
-      if (face_axes.includes(edge_axis)) {
+      if (so.face_axes(fi).includes(edge_axis)) {
         candidate_faces.push(fi);
       }
     }
 
     if (candidate_faces.length === 0) return new Point3(0, 0, 1);
 
-    // Pick the most front-facing face (most negative winding = most toward viewer)
+    // Pick the face whose normal points most directly at the camera
+    // Use abs(dot) so back faces are also considered (their inward normal counts)
     let best_face = candidate_faces[0];
-    let best_winding = this.face_winding(so.scene.faces[best_face], projected);
+    let best_dot = -Infinity;
 
     for (const fi of candidate_faces) {
-      const winding = this.face_winding(so.scene.faces[fi], projected);
-      if (winding < best_winding) {
-        best_winding = winding;
+      const n = so.face_normal(fi);
+      const d = Math.abs(n.x * cam_n.x + n.y * cam_n.y + n.z * cam_n.z);
+      if (d > best_dot) {
+        best_dot = d;
         best_face = fi;
       }
     }
@@ -332,8 +344,9 @@ class Render {
     return so.axis_vector(witness_axis);
   }
 
-  // Find the best edge along a given axis (for dimensioning)
-  // Must be on a front-facing face
+  // Algorithm A: Find the silhouette edge for a given axis.
+  // A silhouette edge sits on the circumference — one adjacent face is front-facing,
+  // the other is back-facing. There are always exactly 2 per axis; prefer the front one.
   private find_best_edge_for_axis(
     so: Smart_Object,
     axis: Axis,
@@ -342,72 +355,65 @@ class Render {
     if (!so.scene?.faces) return null;
     const verts = so.vertices;
     const faces = so.scene.faces;
+    const edges = so.scene.edges;
 
-    // Face info: index, fixed axis, and whether front-facing
-    // Faces: 0=front(z), 1=back(z), 2=left(x), 3=right(x), 4=top(y), 5=bottom(y)
-    const face_fixed_axes: Axis[] = ['z', 'z', 'x', 'x', 'y', 'y'];
-
-    type EdgeCandidate = {
-      v1: number; v2: number;
-      midX: number; midY: number;
+    // Build edge→face adjacency: for each edge, find which 2 faces contain it
+    const edge_faces = (v1: number, v2: number): number[] => {
+      const result: number[] = [];
+      for (let fi = 0; fi < faces.length; fi++) {
+        const face = faces[fi];
+        // Check if both vertices appear adjacent in the face
+        for (let i = 0; i < face.length; i++) {
+          const a = face[i], b = face[(i + 1) % face.length];
+          if ((a === v1 && b === v2) || (a === v2 && b === v1)) {
+            result.push(fi);
+            break;
+          }
+        }
+      }
+      return result;
     };
-    const candidates: EdgeCandidate[] = [];
 
-    for (let fi = 0; fi < faces.length; fi++) {
-      const face = faces[fi];
-      const fixed_axis = face_fixed_axes[fi];
+    type SilhouetteCandidate = {
+      v1: number; v2: number;
+      front_face: number;  // index of the front-facing adjacent face
+    };
+    const silhouettes: SilhouetteCandidate[] = [];
 
-      // Skip faces whose fixed axis matches the dimension axis
-      // (those faces don't have edges along this axis)
-      if (fixed_axis === axis) continue;
+    // Check every edge in the topology
+    for (const [v1, v2] of edges) {
+      // Only consider edges along the target axis
+      if (this.edge_axis(verts[v1], verts[v2]) !== axis) continue;
 
-      // Check if face is front-facing (CCW winding = negative cross product)
-      const cross = this.face_winding(face, projected);
-      if (cross >= 0) continue; // back-facing, skip
+      const adj = edge_faces(v1, v2);
+      if (adj.length !== 2) continue;
 
-      // Find the edge in this face that runs along the target axis
-      const face_axes = so.face_axes(fi);
-      if (!face_axes.includes(axis)) continue;
+      const w0 = this.face_winding(faces[adj[0]], projected);
+      const w1 = this.face_winding(faces[adj[1]], projected);
 
-      // Find an edge along the target axis in this face
-      for (let i = 0; i < face.length; i++) {
-        const v1 = face[i];
-        const v2 = face[(i + 1) % face.length];
-        const vert1 = verts[v1], vert2 = verts[v2];
-
-        // Check if this edge runs along the target axis
-        const edge_axis = this.edge_axis(vert1, vert2);
-        if (edge_axis !== axis) continue;
-
-        const p1 = projected[v1], p2 = projected[v2];
-        if (p1.w < 0 || p2.w < 0) continue;
-
-        // Score by distance from cube center — further = more "outside"
-        const midX = (p1.x + p2.x) / 2;
-        const midY = (p1.y + p2.y) / 2;
-        candidates.push({ v1, v2, midX, midY });
+      // Silhouette: one front-facing (negative winding), one back-facing (positive)
+      if (w0 < 0 && w1 >= 0) {
+        silhouettes.push({ v1, v2, front_face: adj[0] });
+      } else if (w1 < 0 && w0 >= 0) {
+        silhouettes.push({ v1, v2, front_face: adj[1] });
       }
     }
 
-    if (candidates.length === 0) return null;
+    if (silhouettes.length === 0) return null;
 
-    // Compute cube center in screen space
-    const center = this.project_vertex(new Point3(0, 0, 0), this.get_world_matrix(so.scene!));
-
-    // Score each candidate by distance from center — furthest = most "outside"
-    candidates.sort((a, b) => {
-      const distA = (a.midX - center.x) ** 2 + (a.midY - center.y) ** 2;
-      const distB = (b.midX - center.x) ** 2 + (b.midY - center.y) ** 2;
-      return distB - distA;
+    // Prefer the silhouette edge whose front-facing face is most toward the viewer
+    // (most negative winding = most directly facing camera)
+    silhouettes.sort((a, b) => {
+      const wa = this.face_winding(faces[a.front_face], projected);
+      const wb = this.face_winding(faces[b.front_face], projected);
+      return wa - wb;  // most negative first
     });
-    const best = candidates[0];
 
-    return {
-      p1: projected[best.v1],
-      p2: projected[best.v2],
-      v1_idx: best.v1,
-      v2_idx: best.v2
-    };
+    const best = silhouettes[0];
+    const p1 = projected[best.v1], p2 = projected[best.v2];
+    if (p1.w < 0 || p2.w < 0) return null;
+
+    return { p1, p2, v1_idx: best.v1, v2_idx: best.v2 };
   }
 
   // Determine which axis an edge runs along (or null if diagonal)

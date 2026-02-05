@@ -5,12 +5,18 @@ Where we are in Design Intuition.
 ---
 ## Milestones
 
-- [ ] 8 dimensions (terminator arrows, text, dimension and witness lines)
+- [ ] [8 dimensionals](8.dimensionals) (terminator arrows, text, dimension and witness lines)
 	- [ ] edit dimensions -> renders the change
 - [ ] 9 hierarchy of SO
 - [ ] 10 **persistence** — save/load scene state
 - [ ] 11 **controls UI** — actual buttons in the toolbar
 - [ ] 12. **details**: attributes
+
+## Code Debt
+
+- [ ] fat triangle
+- [ ] steppers
+- [ ] close button
 
 ## What's Working
 

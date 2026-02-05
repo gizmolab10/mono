@@ -11,6 +11,8 @@
 ---
 ### Ideas
 
+- [ ] rename resume -> revisit
+- [ ] hierarchy of docs
 - [ ] ask it the right qs -> lean i nto learning
 	- [ ] are you leading me d own the garden path?
 
