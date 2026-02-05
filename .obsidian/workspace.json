@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/learn.md",
+                "file": "ws/notes/work/resume.ws.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "learn"
+              "title": "resume.ws"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/work/learn.md",
+                "file": "ws/notes/work/resume.ws.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of learn"
+              "title": "Outline of resume.ws"
             }
           }
         ],
@@ -183,9 +183,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "b3d3e42500b4089f",
   "lastOpenFiles": [
     "di/notes/work/resume.di.md",
+    "di/notes/work/milestones/8.dimensions.md",
+    "notes/work/learn.md",
+    "notes/guides/tools/git.md",
     "di/src/lib/svelte/mouse/Steppers.svelte",
     "di/src/lib/svelte/mouse/Close_Button.svelte",
     "di/src/lib/svelte/mouse",
@@ -209,7 +212,6 @@
     "notes/guides/pre-flight/always.old.md",
     "notes/guides/pre-flight/always.longer.md",
     "notes/guides/pre-flight/always.shorter.md",
-    "notes/work/learn.md",
     "me/notes/work/jonathan.md",
     "notes/work/jonathan.md",
     "notes/work/adapt.md",
@@ -219,7 +221,6 @@
     "di/dist/assets/index-Dndnf-Rd.js",
     "di/dist/assets",
     "me/CLAUDE.MD",
-    "notes/work/journal.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

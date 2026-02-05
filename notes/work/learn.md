@@ -83,3 +83,4 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 | Misread exact name | `always.md` — "Exact names matter" |
 | Checked off without testing | `always.md` — "Code written ≠ feature complete" |
 | Asked which task first | `always.md` — "Task lists are priority-ordered" |
+| Used Bash ls instead of Glob/Read | `always.md` — "Use Glob/Read, not Bash" |

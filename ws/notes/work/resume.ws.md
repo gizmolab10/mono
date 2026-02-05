@@ -11,3 +11,4 @@
 - [ ] implement keep graph centered on selection
 - [ ] two-finger should move graph
 - [ ] while editing A, select a range, click B, click A, RETURN should reselect the range
+- [ ] ai describe what all the source does -> make me one of those -> 2 weeks?

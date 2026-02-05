@@ -5,7 +5,7 @@ class Camera {
   readonly view: mat4 = mat4.create();
   readonly projection: mat4 = mat4.create();
 
-  private _eye: vec3 = vec3.fromValues(0, 0, 5);
+  private _eye: vec3 = vec3.fromValues(0, 0, 9);
   private center: vec3 = vec3.fromValues(0, 0, 0);
   private up: vec3 = vec3.fromValues(0, 1, 0);
 

@@ -26,10 +26,10 @@ export default class Smart_Object extends Identifiable {
 		for (const name of ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max']) {
 			this.attributes_dict_byName[name] = new Attribute(name);
 		}
-		// Default: 2x2x2 cube from -1 to +1 on each axis
-		this.set_bound('x_min', -1); this.set_bound('x_max', 1);
-		this.set_bound('y_min', -1); this.set_bound('y_max', 1);
-		this.set_bound('z_min', -1); this.set_bound('z_max', 1);
+		// Default: 1x2x3 cube centered at origin
+		this.set_bound('x_min', -0.5); this.set_bound('x_max', 0.5);
+		this.set_bound('y_min', -1);   this.set_bound('y_max', 1);
+		this.set_bound('z_min', -1.5); this.set_bound('z_max', 1.5);
 	}
 
 	// ═══════════════════════════════════════════════════════════════════

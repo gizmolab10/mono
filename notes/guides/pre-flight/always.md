@@ -6,3 +6,4 @@
 4. **Do, don't ask** — if obvious, act; if it fails, investigate
 5. **Test before done** — code written ≠ working; verify before checking off
 6. **Use** `yarn` — never use `npm`
+7. **Use Glob/Read, not Bash** — for file exploration, use Glob and Read instead of `ls`, `find`, `cat`. Avoids permission prompts.

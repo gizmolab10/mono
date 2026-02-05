@@ -5,8 +5,7 @@ Where we are in Design Intuition.
 ---
 ## Milestones
 
-- [x] 6 tweaks to build notes
-- [ ] 8 dimensions (terminators, text, dimension and extension lines)
+- [ ] 8 dimensions (terminator arrows, text, dimension and witness lines)
 	- [ ] edit dimensions -> renders the change
 - [ ] 9 hierarchy of SO
 - [ ] 10 **persistence** — save/load scene state
@@ -23,6 +22,7 @@ Where we are in Design Intuition.
 | Docs        | VitePress configured, new guides content  |
 | Testing     | 232 tests for core types                  |
 | Editing     | Select face, drag edge or vertex          |
+| Build Notes | List of important steps in our progress   |
 
 ## Quick Links
 
