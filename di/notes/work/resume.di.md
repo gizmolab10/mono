@@ -5,7 +5,7 @@ Where we are in Design Intuition.
 ---
 ## Milestones
 
-- [x] 7 mouse editing of SO (selection corners, drag)
+- [x] 6 tweaks to build notes
 - [ ] 8 dimensions (terminators, text, dimension and extension lines)
 	- [ ] edit dimensions -> renders the change
 - [ ] 9 hierarchy of SO

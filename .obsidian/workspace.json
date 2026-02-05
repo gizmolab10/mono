@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/resume.di.md",
+                "file": "notes/work/learn.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "resume.di"
+              "title": "learn"
             }
           }
         ]
@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "2025",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/resume.di.md",
+                "file": "notes/work/learn.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of resume.di"
+              "title": "Outline of learn"
             }
           }
         ],
@@ -183,17 +183,23 @@
       "bases:Create new base": false
     }
   },
-  "active": "b3d3e42500b4089f",
+  "active": "26b78cd156d15e82",
   "lastOpenFiles": [
+    "di/notes/work/resume.di.md",
+    "di/src/lib/svelte/mouse/Steppers.svelte",
+    "di/src/lib/svelte/mouse/Close_Button.svelte",
+    "di/src/lib/svelte/mouse",
+    "di/notes/work/milestones/6.build.notes.md",
+    "di/notes/work/milestones/index.md",
+    "di/notes/work/next/muice.md",
+    "ws/notes/work/index.md",
     "notes/work/resume.mo.md",
     "ws/notes/work/deliverables.md",
-    "di/notes/work/resume.di.md",
     "di/notes/work/milestones/7.edit.drags.md",
     "ws/notes/work/resume.ws.md",
     "ws/vite.config.js.timestamp-1770247454672-a9ce9d110a728.mjs",
     "ws/notes/work/done/deliverables/february.4.2026.md",
     "ws/notes/work/done/deliverables/deliverables.md",
-    "di/notes/work/milestones/6.build.notes.md",
     "notes/guides/pre-flight/pitfalls.md",
     "notes/archives/always.old.md",
     "notes/archives",
@@ -212,15 +218,8 @@
     "di/dist/assets/index-nHezZTKn.css",
     "di/dist/assets/index-Dndnf-Rd.js",
     "di/dist/assets",
-    "di/dist/assets/index-XGz6zEjV.js",
     "me/CLAUDE.MD",
     "notes/work/journal.md",
-    "me/notes/work/resume.me.md",
-    "ws/vite.config.js.timestamp-1770167713067-1f026726f80fb.mjs",
-    "ws/vite.config.js.timestamp-1770167696474-eb49ae23f4fa9.mjs",
-    "di/notes/work/milestones/index.md",
-    "di/notes/work/milestones.md",
-    "me.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

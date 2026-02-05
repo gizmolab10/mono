@@ -1,11 +1,41 @@
 <script lang='ts'>
+	import Close_Button from '../mouse/Close_Button.svelte';
+	import Steppers from '../mouse/Steppers.svelte';
 	import { colors } from '../../ts/draw/Colors';
+	import { Point } from '../../ts/types/Coordinates';
 	const { w_text_color, w_background_color } = colors;
 
 	let { onclose } : { onclose: () => void } = $props();
 
-	const notes = __BUILD_NOTES__;
-	const title = 'Build Notes';
+	const allNotes = __BUILD_NOTES__;
+	const notesLimit = allNotes.length;
+	const pageSize = 5;
+	const modalWidth = 600;
+	const isNewestFirst = allNotes.length > 1 && allNotes[0].build > allNotes[1].build;
+	let notesIndex = $state(0);
+	let notes = $state(allNotes.slice(0, pageSize));
+	let title = $state(isNewestFirst ? `Build Notes (${pageSize} most recent)` : 'Build Notes');
+	let show_up = $state(false);
+	let show_down = $state(notesLimit > pageSize);
+
+	function updateNotes() {
+		const end = Math.min(notesLimit, notesIndex + pageSize);
+		notes = allNotes.slice(notesIndex, end);
+		const showingMostRecent = isNewestFirst && notesIndex === 0;
+		title = showingMostRecent ? `Build Notes (${pageSize} most recent)` : 'Build Notes';
+		show_up = notesIndex > 0;
+		show_down = notesIndex < notesLimit - pageSize;
+	}
+
+	function hit_closure(pointsUp: boolean, isLong: boolean) {
+		if (isLong) {
+			notesIndex = pointsUp ? 0 : Math.max(0, notesLimit - pageSize);
+		} else {
+			const nextIndex = notesIndex + (pageSize * (pointsUp ? -1 : 1));
+			notesIndex = Math.max(0, Math.min(nextIndex, notesLimit - pageSize));
+		}
+		updateNotes();
+	}
 
 	function handle_key_down(event: KeyboardEvent) {
 		if (event.key === 'Escape') {
@@ -26,12 +56,14 @@
 		class='modal'
 		style:color={$w_text_color}
 		style:background={$w_background_color}
+		style:width="{modalWidth}px"
 		onclick={(e) => e.stopPropagation()}
 		onkeyup={() => {}}
 		role="dialog">
+		<Steppers {show_up} {show_down} {hit_closure} />
+		<Close_Button size={24} origin={new Point(8, 8)} {onclose} />
 		<div class='header'>
 			<span class='title'>{title}</span>
-			<button class='close' onclick={onclose}>x</button>
 		</div>
 		<table>
 			<thead>
@@ -70,16 +102,15 @@
 
 	.modal {
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-		border-radius: 4px;
+		border-radius: 12px;
 		font-size: 0.85em;
 		padding: 16px 20px;
-		min-width: 400px;
-		max-width: 600px;
+		position: relative;
 	}
 
 	.header {
 		display: flex;
-		justify-content: space-between;
+		justify-content: center;
 		align-items: center;
 		margin-bottom: 12px;
 	}
@@ -87,20 +118,6 @@
 	.title {
 		font-size: 1.25em;
 		font-weight: 300;
-	}
-
-	.close {
-		background: transparent;
-		border: none;
-		font-size: 1.25em;
-		cursor: pointer;
-		color: inherit;
-		opacity: 0.6;
-		padding: 0 4px;
-	}
-
-	.close:hover {
-		opacity: 1;
 	}
 
 	table {

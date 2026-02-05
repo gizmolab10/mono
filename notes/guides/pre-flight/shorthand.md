@@ -17,7 +17,7 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | Command | Action |
 |----|----|
 | `memory` | Describe any useful auto-generated insights from userMemories (normally ignored) |
-| `tokens` | show percentage of token content consumed |
+| `tokens` | estimate percentage of context consumed (no exact measurement available) |
 
 ## Execution
 
