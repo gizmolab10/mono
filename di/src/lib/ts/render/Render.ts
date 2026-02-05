@@ -251,7 +251,7 @@ class Render {
     const value = axis === 'x' ? so.width : axis === 'y' ? so.height : so.depth;
 
     // Get witness direction from the most front-facing adjacent face
-    let witness_dir = this.edge_witness_direction(so, v1_idx, v2_idx, axis, projected);
+    let witness_dir = this.edge_witness_direction(so, v1_idx, v2_idx, axis, projected, world_matrix);
 
     // Pick direction that points away from cube center
     const verts = so.vertices;
@@ -263,13 +263,12 @@ class Render {
     }
 
     // Compute witness line endpoints in 3D, then project
-    // Scale witness distance relative to object size for consistent appearance
-    const avg_size = (so.width + so.height + so.depth) / 3;
-    const witness_dist = avg_size * 0.15;  // distance from edge to dimension line
-    const witness_ext = avg_size * 0.1;   // extension past dimension line
+    // Fixed distances independent of object size
+    const witness_dist = 0.3;  // distance from edge to dimension line
+    const witness_ext = 0.2;   // extension past dimension line
 
     // Witness line start (small offset from edge)
-    const gap = avg_size * 0.05;
+    const gap = 0.1;
     const w1_start = new Point3(v1.x + witness_dir.x * gap, v1.y + witness_dir.y * gap, v1.z + witness_dir.z * gap);
     const w2_start = new Point3(v2.x + witness_dir.x * gap, v2.y + witness_dir.y * gap, v2.z + witness_dir.z * gap);
 
@@ -289,59 +288,59 @@ class Render {
     const pd1 = this.project_vertex(d1, world_matrix);
     const pd2 = this.project_vertex(d2, world_matrix);
 
+    // Hide if witness lines are too short on screen ("crunched")
+    const witness_dx = pw1_end.x - pw1_start.x, witness_dy = pw1_end.y - pw1_start.y;
+    const witness_screen_len = Math.sqrt(witness_dx * witness_dx + witness_dy * witness_dy);
+    if (witness_screen_len < 8) return;
+
     this.draw_dimension_3d(pw1_start, pw1_end, pw2_start, pw2_end, pd1, pd2, value);
   }
 
-  // Algorithm B: Pick the face whose normal points most directly at the camera.
-  // The witness lines extend in that face's plane, perpendicular to the edge axis.
+  // Algorithm B: Pick the witness direction most perpendicular to the edge on screen.
+  // The two candidates are the axes perpendicular to the edge axis in 3D.
   private edge_witness_direction(
     so: Smart_Object,
-    _v1: number, _v2: number,
+    v1_idx: number, v2_idx: number,
     edge_axis: Axis,
-    _projected: Projected[]
+    projected: Projected[],
+    world_matrix: mat4
   ): Point3 {
-    if (!so.scene?.faces) return new Point3(0, 0, 1);
 
-    // Transform camera eye into object-local space
-    const world_matrix = this.get_world_matrix(so.scene);
-    const inv_world = mat4.create();
-    mat4.invert(inv_world, world_matrix);
-    const eye = camera.eye;
-    const local_eye = vec4.fromValues(eye[0], eye[1], eye[2], 1);
-    vec4.transformMat4(local_eye, local_eye, inv_world);
-    const cam_len = Math.sqrt(local_eye[0] ** 2 + local_eye[1] ** 2 + local_eye[2] ** 2);
-    const cam_n = cam_len > 0
-      ? { x: local_eye[0] / cam_len, y: local_eye[1] / cam_len, z: local_eye[2] / cam_len }
-      : { x: 0, y: 0, z: 1 };
+    // Edge direction on screen
+    const ep1 = projected[v1_idx], ep2 = projected[v2_idx];
+    const edge_dx = ep2.x - ep1.x, edge_dy = ep2.y - ep1.y;
+    const edge_len = Math.sqrt(edge_dx * edge_dx + edge_dy * edge_dy);
+    if (edge_len < 0.001) return so.axis_vector('x'); // degenerate
+    const edge_ux = edge_dx / edge_len, edge_uy = edge_dy / edge_len;
 
-    // Find all faces that contain the edge axis
-    const candidate_faces: number[] = [];
-    for (let fi = 0; fi < so.scene.faces.length; fi++) {
-      if (so.face_axes(fi).includes(edge_axis)) {
-        candidate_faces.push(fi);
+    // The two candidate witness axes are perpendicular to the edge in 3D
+    const all_axes: Axis[] = ['x', 'y', 'z'];
+    const candidates = all_axes.filter(a => a !== edge_axis);
+
+    // Project origin and each candidate unit vector to screen
+    const origin = new Point3(0, 0, 0);
+    const p0 = this.project_vertex(origin, world_matrix);
+
+    let best_axis = candidates[0];
+    let best_perp = -Infinity;
+
+    for (const axis of candidates) {
+      const unit_vec = axis === 'x' ? new Point3(1, 0, 0)
+                     : axis === 'y' ? new Point3(0, 1, 0)
+                     : new Point3(0, 0, 1);
+      const p1 = this.project_vertex(unit_vec, world_matrix);
+      const wx = p1.x - p0.x, wy = p1.y - p0.y;
+
+      // Cross product magnitude = perpendicularity (scaled by witness length)
+      const cross = Math.abs(edge_ux * wy - edge_uy * wx);
+
+      if (cross > best_perp) {
+        best_perp = cross;
+        best_axis = axis;
       }
     }
 
-    if (candidate_faces.length === 0) return new Point3(0, 0, 1);
-
-    // Pick the face whose normal points most directly at the camera
-    // Use abs(dot) so back faces are also considered (their inward normal counts)
-    let best_face = candidate_faces[0];
-    let best_dot = -Infinity;
-
-    for (const fi of candidate_faces) {
-      const n = so.face_normal(fi);
-      const d = Math.abs(n.x * cam_n.x + n.y * cam_n.y + n.z * cam_n.z);
-      if (d > best_dot) {
-        best_dot = d;
-        best_face = fi;
-      }
-    }
-
-    // Witness direction: the other axis in this face's plane (not the edge axis)
-    const face_axes = so.face_axes(best_face);
-    const witness_axis = face_axes.find(a => a !== edge_axis) ?? face_axes[0];
-    return so.axis_vector(witness_axis);
+    return so.axis_vector(best_axis);
   }
 
   // Algorithm A: Find the silhouette edge for a given axis.
@@ -456,7 +455,31 @@ class Render {
 
     const ctx = this.ctx;
 
-    // Witness lines (projected in 3D)
+    // Text setup
+    ctx.font = '12px sans-serif';
+    const text = value.toFixed(2);
+    const textWidth = ctx.measureText(text).width;
+    const textHeight = 12; // approximate line height
+
+    // Dimension line direction
+    const midX = (d1.x + d2.x) / 2, midY = (d1.y + d2.y) / 2;
+    const dx = d2.x - d1.x, dy = d2.y - d1.y;
+    const lineLen = Math.sqrt(dx * dx + dy * dy);
+    if (lineLen < 1) return;
+    const ux = dx / lineLen, uy = dy / lineLen;
+
+    // Algorithm C: compute gap as projected text bounding box onto dimension line
+    const padding = 8;
+    const gap = textWidth * Math.abs(ux) + textHeight * Math.abs(uy) + padding;
+    const arrowSize = 20; // space needed for arrows in normal layout
+
+    // Three cases based on available space
+    if (lineLen < gap) {
+      // Case 3: can't fit text at all — hide (including witness lines)
+      return;
+    }
+
+    // Witness lines (only drawn if dimensional is visible)
     ctx.strokeStyle = 'rgba(100, 100, 100, 0.7)';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -466,38 +489,46 @@ class Render {
     ctx.lineTo(w2_end.x, w2_end.y);
     ctx.stroke();
 
-    // Text setup (need dimensions for gap)
-    ctx.font = '12px sans-serif';
-    const text = value.toFixed(2);
-    const textWidth = ctx.measureText(text).width;
-    const gap = textWidth + 8; // padding around text
-
-    // Dimension line with gap for text
-    const midX = (d1.x + d2.x) / 2, midY = (d1.y + d2.y) / 2;
-    const dx = d2.x - d1.x, dy = d2.y - d1.y;
-    const lineLen = Math.sqrt(dx * dx + dy * dy);
-    if (lineLen < 1) return;
-    const ux = dx / lineLen, uy = dy / lineLen;
     const halfGap = gap / 2;
 
-    // Left segment: d1 to gap start
-    ctx.beginPath();
-    ctx.moveTo(d1.x, d1.y);
-    ctx.lineTo(midX - ux * halfGap, midY - uy * halfGap);
-    ctx.stroke();
+    if (lineLen >= gap + arrowSize) {
+      // Case 1: normal layout — arrows inside, pointing outward from text
+      ctx.beginPath();
+      ctx.moveTo(d1.x, d1.y);
+      ctx.lineTo(midX - ux * halfGap, midY - uy * halfGap);
+      ctx.stroke();
 
-    // Right segment: gap end to d2
-    ctx.beginPath();
-    ctx.moveTo(midX + ux * halfGap, midY + uy * halfGap);
-    ctx.lineTo(d2.x, d2.y);
-    ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(midX + ux * halfGap, midY + uy * halfGap);
+      ctx.lineTo(d2.x, d2.y);
+      ctx.stroke();
 
-    // Arrows
-    ctx.fillStyle = 'rgba(100, 100, 100, 0.7)';
-    this.draw_arrow(d1.x, d1.y, d2.x - d1.x, d2.y - d1.y);
-    this.draw_arrow(d2.x, d2.y, d1.x - d2.x, d1.y - d2.y);
+      ctx.fillStyle = 'rgba(100, 100, 100, 0.7)';
+      this.draw_arrow(d1.x, d1.y, dx, dy);
+      this.draw_arrow(d2.x, d2.y, -dx, -dy);
+    } else {
+      // Case 2: inverted layout — extension lines go outward, arrows at witness lines point inward
+      const extLen = 30; // how far extension lines go past witness lines
 
-    // Text centered in gap
+      // Extension lines go outward from d1 and d2
+      ctx.beginPath();
+      ctx.moveTo(d1.x, d1.y);
+      ctx.lineTo(d1.x - ux * extLen, d1.y - uy * extLen);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(d2.x, d2.y);
+      ctx.lineTo(d2.x + ux * extLen, d2.y + uy * extLen);
+      ctx.stroke();
+
+      // Arrows at d1/d2 (witness line positions), pointing inward toward text
+      // draw_arrow: tip at (x,y), base extends in (dx,dy) direction
+      ctx.fillStyle = 'rgba(100, 100, 100, 0.7)';
+      this.draw_arrow(d1.x, d1.y, -dx, -dy);
+      this.draw_arrow(d2.x, d2.y, dx, dy);
+    }
+
+    // Text centered between d1 and d2
     ctx.fillStyle = '#333';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';

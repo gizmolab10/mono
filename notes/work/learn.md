@@ -27,6 +27,12 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 
 ## Raw Log
 
+### #7 2026-02-04: Used abbreviations in code names
+
+**What:** Named a property `edge_adj` and local variables `adj` instead of `edge_adjacency` and `adjacency`. Had to rename across 3 files.
+**Why:** Defaulted to terse naming habits. Didn't match Jonathan's preference for readable, unabbreviated code.
+**Rule:** Avoid abbreviations in function and property names. Spell out full words.
+
 ### #6 2026-02-04: Speculated instead of reading what's visible
 
 **What:** Asked "what's wrong with this image?" showing Build Notes with title "(5 most recent)" but displaying builds 1-5 (oldest). I guessed technical causes (missing builds, server restart needed, wrong sort order) instead of noticing the visible contradiction: title claims "most recent" but data shows oldest.

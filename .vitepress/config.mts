@@ -220,6 +220,10 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/7.edit.drags'
                         },
                         {
+                          text: '8.dimensionals',
+                          link: '/di/notes/work/milestones/8.dimensionals'
+                        },
+                        {
                           text: '2.panel >',
                           link: '/di/notes/work/milestones/2.panel/',
                           collapsed: true,
