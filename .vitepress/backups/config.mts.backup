@@ -135,6 +135,10 @@ export default defineConfig({
                       collapsed: true,
                       items: [
                         {
+                          text: 'Architecture',
+                          link: '/di/notes/guides/develop/architecture'
+                        },
+                        {
                           text: 'Best.practices',
                           link: '/di/notes/guides/develop/best.practices'
                         },
@@ -155,6 +159,10 @@ export default defineConfig({
                   link: '/di/notes/work/',
                   collapsed: true,
                   items: [
+                    {
+                      text: 'Code.debt',
+                      link: '/di/notes/work/code.debt'
+                    },
                     {
                       text: 'Pacing',
                       link: '/di/notes/work/pacing'
@@ -200,6 +208,14 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/1.solid.foundation'
                         },
                         {
+                          text: '10.controls',
+                          link: '/di/notes/work/milestones/10.controls'
+                        },
+                        {
+                          text: '2.panel',
+                          link: '/di/notes/work/milestones/2.panel'
+                        },
+                        {
                           text: '3.docs',
                           link: '/di/notes/work/milestones/3.docs'
                         },
@@ -226,29 +242,6 @@ export default defineConfig({
                         {
                           text: '9.persistence',
                           link: '/di/notes/work/milestones/9.persistence'
-                        },
-                        {
-                          text: '2.panel >',
-                          link: '/di/notes/work/milestones/2.panel/',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'Architecture',
-                              link: '/di/notes/work/milestones/2.panel/architecture'
-                            },
-                            {
-                              text: 'Components',
-                              link: '/di/notes/work/milestones/2.panel/components'
-                            },
-                            {
-                              text: 'Implement',
-                              link: '/di/notes/work/milestones/2.panel/implement'
-                            },
-                            {
-                              text: 'Milestone 2',
-                              link: '/di/notes/work/milestones/2.panel/milestone 2'
-                            }
-                          ]
                         }
                       ]
                     },
@@ -262,6 +255,54 @@ export default defineConfig({
                           link: '/di/notes/work/next/muice'
                         }
                       ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          text: 'Ga >',
+          collapsed: true,
+          items: [
+            {
+              text: 'Notes >',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Design >',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'File.layout',
+                      link: '/ga/notes/design/file.layout'
+                    },
+                    {
+                      text: 'Keep.in.mind',
+                      link: '/ga/notes/design/keep.in.mind'
+                    },
+                    {
+                      text: 'Original.sites',
+                      link: '/ga/notes/design/original.sites'
+                    },
+                    {
+                      text: 'Project',
+                      link: '/ga/notes/design/project'
+                    },
+                    {
+                      text: 'Vision',
+                      link: '/ga/notes/design/vision'
+                    }
+                  ]
+                },
+                {
+                  text: 'Work >',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Revisit.ga',
+                      link: '/ga/notes/work/revisit.ga'
                     }
                   ]
                 }
@@ -843,6 +884,10 @@ export default defineConfig({
                             {
                               text: 'Buttons',
                               link: '/ws/notes/guides/architecture/ux/buttons'
+                            },
+                            {
+                              text: 'Components',
+                              link: '/ws/notes/guides/architecture/ux/components'
                             },
                             {
                               text: 'Controls',

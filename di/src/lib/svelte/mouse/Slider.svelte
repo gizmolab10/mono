@@ -86,7 +86,7 @@
 	const hoverUp = $derived($w_s_hover?.id === upTarget.id);
 	const hoverDown = $derived($w_s_hover?.id === downTarget.id);
 	const current_thumb_color = $derived(
-		(hoverSlider || is_dragging) ? 'rgba(128,128,128,0.7)' : thumb_color_default
+		(hoverSlider || is_dragging) ? 'black' : thumb_color_default
 	);
 
 	const upPath = $derived(svg_paths.fat_polygon(buttonSize, Direction.up));
