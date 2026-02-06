@@ -31,7 +31,7 @@ Then scan `keywords.md` — if any keyword appears in the user's input, read the
 
 ## Shorthand First
 
-**Check shorthand for short commands** — when the user sends a single word or very short command (`help`, `resume di`, `journal`), check `shorthand.md` before responding. These are commands, not conversation.
+**Check shorthand for short commands** — when the user sends a single word or very short command (`help`, `revisit di`, `journal`), check `shorthand.md` before responding. These are commands, not conversation.
 
 ## Requirements Echo
 

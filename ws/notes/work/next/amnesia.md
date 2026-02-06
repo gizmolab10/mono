@@ -13,7 +13,7 @@ Summary of steps taken during "go ws" initialization, plus research on AI memory
  5. **Read mono/CLAUDE.MD** — shared context: defaults, gates, workarounds
  6. **Read collaborate guides (batch 1)** — index, access, chat, evolve, filesystem, gating
  7. **Read collaborate guides (batch 2)** — journals, markdown, repo, shorthand, voice, workflow
- 8. **Read mono/notes/work files** — index, resume.md, journal.md
+ 8. **Read mono/notes/work files** — index, revisit.md, journal.md
  9. **Explored ws/notes** — found collaborate dir (no guides dir)
 10. **Read ws-specific guides** — gotchas.md, composition.md (Svelte patterns)
 11. **Read ws/notes/work files** — index, deliverables.md (bug tracking)

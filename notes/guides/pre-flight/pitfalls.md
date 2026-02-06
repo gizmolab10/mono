@@ -125,7 +125,7 @@ Applies to: reads, writes, globs, greps — everything.
 
 Single-word or very short commands → check `shorthand.md` first.
 
-Examples: `help`, `resume di`, `journal`, `pac`, `egads`
+Examples: `help`, `revisit di`, `journal`, `pac`, `egads`
 
 These are commands, not conversation.
 

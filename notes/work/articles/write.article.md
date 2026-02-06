@@ -9,7 +9,7 @@ Most developers use AI as a fancy search engine — one-off questions, copy-past
 
 ## Goal
 
-A Medium article that shows developers a different approach: treating AI as a collaborative partner with institutional memory. The workflow system you've built — CLAUDE.MD bootstrapping, living guides, work tracking with resume points.
+A Medium article that shows developers a different approach: treating AI as a collaborative partner with institutional memory. The workflow system you've built — CLAUDE.MD bootstrapping, living guides, work tracking with revisit points.
 
 ## Audience
 
@@ -39,7 +39,7 @@ Not "here's a cool prompt." Instead: "here's a system that compounds."
 1. **The Accident** — hook + origin story
 2. **The Bootstrap File** — CLAUDE.MD as entry point
 3. **Living Guides** — patterns AI applies without being told
-4. **Work Tracking** — resume points that survive sessions
+4. **Work Tracking** — revisit points that survive sessions
 5. **The Dynamic Shift** — trust + course-correct
 6. **What AI Is Good At** — and what you still do
 7. **Try It Yourself** — practical takeaway

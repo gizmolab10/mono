@@ -5,7 +5,7 @@
 
 ## Problem
 
-`go di` costs ~45k input tokens — reads CLAUDE.MD chain, all pre-flight guides, collaborate guides, di project files, work/resume. Every new session pays this cost. No way to "bake" context into reusable tokens.
+`go di` costs ~45k input tokens — reads CLAUDE.MD chain, all pre-flight guides, collaborate guides, di project files, work/revisit. Every new session pays this cost. No way to "bake" context into reusable tokens.
 
 ## Options
 
@@ -14,7 +14,7 @@
 | Trim guides | Remove rarely-used files from always-read path |
 | Lazy load | Only read guides when keyword triggers, not at session start |
 | Consolidate | Merge small files into fewer larger ones (fewer read calls) |
-| Shorten resume.md | Keep tight; archive detail to milestone files |
+| Shorten revisit.md | Keep tight; archive detail to milestone files |
 
 ## Constraint
 

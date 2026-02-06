@@ -75,7 +75,7 @@ FILES: Always read current version before editing
 
 | Command | Meaning |
 |---------|---------|
-| `work on <X>` | read `notes/work/<X>.md` and resume |
+| `work on <X>` | read `notes/work/<X>.md` and revisit |
 | `update docs` | update relevant documentation |
 ```
 

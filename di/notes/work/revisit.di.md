@@ -17,7 +17,7 @@ Where we are in Design Intuition.
 - [ ] [8 dimensionals](./milestones/8.dimensionals) (terminator arrows, text, dimension and witness lines)
 	- [ ] edit dimensions -> renders the change
 	- [ ] tweaks to assure that dimensionals extend outward from SO
-- [ ] [9 persistence](./milestones/9.persistence) — save/load scene state
+- [ ] [9 persistence](./milestones/9.persistence) — save/load scene state <-- CURRENTLY WORKING ON THIS
 - [ ] **10 hierarchy** of SO
 - [ ] **11 controls UI** — actual buttons in the toolbar
 	- [ ] scaling (logarithmic, coarse and fine)

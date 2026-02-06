@@ -83,7 +83,7 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 | Worktree paths | `always.md` — already covered in "All file paths" |
 | Drifting from requirements | `always.md` — "Requirements Echo" |
 | Ignoring shorthand | `always.md` — "Shorthand First" |
-| Resume as info not action | `shorthand.md` — resume now includes "ask Work on?" |
+| Revisit as info not action | `shorthand.md` — revisit now includes "ask Work on?" |
 | Incomplete journal | `shorthand.md` — journal now says "Execute ALL parts" |
 | Contradicted self | `always.md` — "Before saying No, verify" |
 | Misread exact name | `always.md` — "Exact names matter" |
