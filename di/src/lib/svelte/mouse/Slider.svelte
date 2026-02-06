@@ -18,6 +18,7 @@
 		height = 20,
 		show_value = false,
 		show_steppers = true,
+		style = 'line',
 		onstep,
 		onchange,
 	}: {
@@ -30,13 +31,14 @@
 		height?: number;
 		show_value?: boolean;
 		show_steppers?: boolean;
+		style?: 'pill' | 'line';
 		onstep?: (pointsUp: boolean, isLong: boolean) => void;
 		onchange: (value: number) => void;
 	} = $props();
 
 	const border = '1px solid darkgray';
 	const thumb_color_default = '#007aff';
-	const buttonSize = 20;
+	const buttonSize = 15;
 
 	// Hit targets
 	const sliderTarget = new S_Hit_Target(T_Hit_Target.control, 'slider-thumb');
@@ -62,11 +64,11 @@
 	// Slider position → value
 	function position_to_value(pos: number): number {
 		if (logarithmic) {
-			return Math.round(Math.pow(10, pos * step_size));
+			return Math.max(min, Math.round(Math.pow(10, pos * step_size)));
 		}
 		// For linear: round to 2 decimal places
 		const raw = pos * step_size;
-		return Math.round(raw * 100) / 100;
+		return Math.max(min, Math.round(raw * 100) / 100);
 	}
 
 	function on_input(e: Event) {
@@ -132,7 +134,10 @@
 </script>
 
 <div class='slider-compound'>
-	<div class='slider-border' style:width="{width}px"
+	<div class='slider-border'
+		class:pill={style === 'pill'}
+		class:line={style === 'line'}
+		style:width="{width}px"
 		style:--border={border}
 		style:--height="{height}px"
 		style:--thumb-color={current_thumb_color}>
@@ -162,10 +167,11 @@
 						d={upPath}
 						fill={hoverUp ? colors.default : 'white'}
 						stroke={colors.default}
-						stroke-width="0.75"
+						stroke-width="0.375"
 					/>
 				</svg>
 			</div>
+			<span class='stepper-value'>{value.toFixed(1)}</span>
 			<div class='stepper-button'
 				bind:this={downElement}
 				role="button"
@@ -175,7 +181,7 @@
 						d={downPath}
 						fill={hoverDown ? colors.default : 'white'}
 						stroke={colors.default}
-						stroke-width="0.75"
+						stroke-width="0.375"
 					/>
 				</svg>
 			</div>
@@ -188,7 +194,7 @@
 		display     : flex;
 		align-items : center;
 		margin-left : 6px;
-		gap         : 2px;
+		gap         : 0;
 	}
 	.slider-border {
 		position    : relative;
@@ -205,10 +211,27 @@
 	.steppers {
 		display        : flex;
 		flex-direction : column;
+		align-items    : center;
+		position       : relative;
+		top            : 1px;
+		margin-left    : -1px;
+	}
+	.stepper-value {
+		font-size   : 8px;
+		font-weight : bold;
+		text-align  : center;
+		min-width   : 2.5em;
+		line-height : 1;
+		margin      : -3px 0;
+		position    : relative;
+		top         : -0.75px;
+		user-select : none;
 	}
 	.stepper-button {
 		cursor      : pointer;
 		user-select : none;
+		position    : relative;
+		top         : 0.5px;
 	}
 
 	/* === Native range input styling === */
@@ -262,5 +285,45 @@
 	}
 	input[type='range']:focus {
 		outline : none;
+	}
+
+	/* === Line style: thin track, small round thumb === */
+
+	.line input[type='range']::-webkit-slider-runnable-track {
+		background    : rgba(0, 0, 0, 0.15);
+		border-radius : 2px;
+		height        : 4px;
+		border        : none;
+	}
+	.line input[type='range']::-webkit-slider-thumb {
+		width      : 14px;
+		height     : 14px;
+		margin-top : -5.5px;
+		background : var(--thumb-color);
+		border     : 1px solid rgba(0, 0, 0, 0.4);
+	}
+	.line input[type='range']::-moz-range-track {
+		background    : rgba(0, 0, 0, 0.15);
+		border-radius : 2px;
+		height        : 4px;
+		border        : none;
+	}
+	.line input[type='range']::-moz-range-thumb {
+		width      : 14px;
+		height     : 14px;
+		background : var(--thumb-color);
+		border     : 1px solid rgba(0, 0, 0, 0.4);
+	}
+	.line input[type='range']::-ms-fill-lower,
+	.line input[type='range']::-ms-fill-upper {
+		background    : rgba(0, 0, 0, 0.15);
+		border-radius : 2px;
+		border        : none;
+	}
+	.line input[type='range']::-ms-thumb {
+		width      : 14px;
+		height     : 14px;
+		background : var(--thumb-color);
+		border     : 1px solid rgba(0, 0, 0, 0.4);
 	}
 </style>

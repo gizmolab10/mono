@@ -1,4 +1,5 @@
 import { quat, vec3 } from 'gl-matrix';
+import { writable } from 'svelte/store';
 import { scene, camera, render, animation } from '.';
 import { Size } from '../types';
 import { e3 } from '../signals';
@@ -31,6 +32,15 @@ const example_faces: number[][] = [
 // ============================================
 
 let active_scene: import('../types/Interfaces').O_Scene | null = null;
+export const w_scale = writable<number>(1);
+
+// Keep O_Scene.scale in sync with the store
+w_scale.subscribe((value) => {
+  if (active_scene && active_scene.scale !== value) {
+    active_scene.scale = value;
+    persistence.save();
+  }
+});
 
 // ============================================
 // INIT
@@ -72,6 +82,7 @@ export function init(canvas: HTMLCanvasElement) {
   });
   example.scene = example_scene;
   active_scene = example_scene;
+  w_scale.set(saved_scale);
 
   hits_3d.register(example);
 
@@ -90,7 +101,7 @@ export function init(canvas: HTMLCanvasElement) {
   // Input: scroll wheel scales object
   e3.set_wheel_handler((delta, fine) => {
     e3.scale_object(example_scene, delta, fine);
-    persistence.save();
+    w_scale.set(example_scene.scale);
   });
 
   // Render loop
@@ -108,21 +119,11 @@ export function init(canvas: HTMLCanvasElement) {
 export function scale_up(): void {
   if (!active_scene) return;
   e3.scale_object(active_scene, 1, false);
-  persistence.save();
+  w_scale.set(active_scene.scale);
 }
 
 export function scale_down(): void {
   if (!active_scene) return;
   e3.scale_object(active_scene, -1, false);
-  persistence.save();
-}
-
-export function set_scale(value: number): void {
-  if (!active_scene) return;
-  active_scene.scale = value;
-  persistence.save();
-}
-
-export function get_scale(): number {
-  return active_scene?.scale ?? 1;
+  w_scale.set(active_scene.scale);
 }
