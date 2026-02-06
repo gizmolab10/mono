@@ -247,7 +247,7 @@ export default class Smart_Object extends Identifiable {
 	// SERIALIZATION
 	// ═══════════════════════════════════════════════════════════════════
 
-	serialize(): { name: string; bounds: Record<Bound, number>; orientation: number[] } {
+	serialize(): { name: string; bounds: Record<Bound, number>; orientation: number[]; scale: number } {
 		return {
 			name: this.name,
 			bounds: {
@@ -256,10 +256,11 @@ export default class Smart_Object extends Identifiable {
 				z_min: this.z_min, z_max: this.z_max,
 			},
 			orientation: Array.from(this.orientation),
+			scale: this.scene?.scale ?? 1,
 		};
 	}
 
-	static deserialize(data: { name: string; bounds: Record<Bound, number>; orientation?: number[] }): Smart_Object {
+	static deserialize(data: { name: string; bounds: Record<Bound, number>; orientation?: number[]; scale?: number }): { so: Smart_Object; scale: number } {
 		const so = new Smart_Object(data.name);
 		for (const [key, value] of Object.entries(data.bounds)) {
 			so.set_bound(key as Bound, value);
@@ -267,6 +268,6 @@ export default class Smart_Object extends Identifiable {
 		if (data.orientation) {
 			quat.set(so.orientation, data.orientation[0], data.orientation[1], data.orientation[2], data.orientation[3]);
 		}
-		return so;
+		return { so, scale: data.scale ?? 1 };
 	}
 }

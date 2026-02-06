@@ -6,12 +6,14 @@ import { T_Hit_3D } from '../types/Enumerations';
 import { camera } from '../render/Camera';
 
 type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point) => void;
+type T_Handle_Wheel = (delta: number, fine: boolean) => void;
 
 class Events_3D {
   private is_dragging = false;
   private did_drag = false;  // true if mouse moved while dragging
   private last_canvas_position: Point = Point.zero;  // canvas-relative position
   private on_drag: T_Handle_Drag | null = null;
+  private on_wheel: T_Handle_Wheel | null = null;
   private drag_target: Hit_3D_Result | null = null;
 
   init(canvas: HTMLCanvasElement): void {
@@ -70,10 +72,27 @@ class Events_3D {
         this.on_drag(prev, curr);
       }
     });
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (this.on_wheel) {
+        const delta = e.deltaY > 0 ? -1 : 1;  // scroll up = grow, down = shrink
+        this.on_wheel(delta, e.shiftKey);
+      }
+    }, { passive: false });
   }
 
   set_drag_handler(callback: T_Handle_Drag): void {
     this.on_drag = callback;
+  }
+
+  set_wheel_handler(callback: T_Handle_Wheel): void {
+    this.on_wheel = callback;
+  }
+
+  scale_object(obj: O_Scene, delta: number, fine: boolean): void {
+    const factor = fine ? (delta > 0 ? 1.02 : 0.98) : (delta > 0 ? 1.1 : 0.9);
+    obj.scale *= factor;
   }
 
   rotate_object(obj: O_Scene, prev: Point, curr: Point, sensitivity = 0.01): void {

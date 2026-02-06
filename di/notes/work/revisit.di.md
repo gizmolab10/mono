@@ -14,24 +14,14 @@ Where we are in Design Intuition.
 ---
 ## Milestones (current work)
 
-- [ ] [8 dimensionals](./milestones/8.dimensionals) (terminator arrows, text, dimension and witness lines)
-	- [ ] edit dimensions -> renders the change
-	- [ ] tweaks to assure that dimensionals extend outward from SO
-- [ ] [9 persistence](./milestones/9.persistence) — save/load scene state <-- CURRENTLY WORKING ON THIS
-- [ ] **10 hierarchy** of SO
-- [ ] **11 controls UI** — actual buttons in the toolbar
-	- [ ] scaling (logarithmic, coarse and fine)
-- [ ] **12 details** — attributes
+- [ ] **10 controls UI** — actual buttons in the toolbar
+	- [x] scaling (logarithmic, coarse and fine)
+- [ ] **11 details** — attributes
+- [ ] **12 hierarchy** of SO
 - [ ] **13 algebra** — recursive descent compiler
 	- [ ] compile tree
 	- [ ] traverse and reverse traverse
 - [ ] **14 what? **
-
-## Code Debt
-
-- [ ] fat triangle
-- [ ] steppers
-- [ ] close button
 
 ## What's Working
 
@@ -45,5 +35,5 @@ Where we are in Design Intuition.
 | Editing     | Select face, drag edge or vertex           |
 | Build Notes | List of important steps in our progress    |
 | Dimensions  | Dynamic (value, layout, not yet editable)  |
-| Persistence | SO, camera orientation                     |
+| Persistence | SO, camera orientation, scale              |
 

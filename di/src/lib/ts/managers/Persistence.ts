@@ -11,7 +11,7 @@ import { scene } from '../render/Scene';
 import type { Bound } from '../runtime/Smart_Object';
 
 export interface Saved_Scene {
-	smart_objects: { name: string; bounds: Record<Bound, number>; orientation: number[] }[];
+	smart_objects: { name: string; bounds: Record<Bound, number>; orientation: number[]; scale?: number }[];
 	camera: { eye: number[]; center: number[]; up: number[] };
 }
 

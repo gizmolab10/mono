@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { colors } from '../../ts/draw/Colors';
 	import { persistence } from '../../ts/managers/Persistence';
+	import { scale_up, scale_down } from '../../ts/render/Trivial';
 	import BuildNotes from './BuildNotes.svelte';
 	const { w_text_color, w_background_color } = colors;
 
@@ -23,8 +24,10 @@
 	style:background = {$w_background_color}>
 	<h1>{title}</h1>
 	<span class='spacer'></span>
-	<button class='reset' onclick={() => { persistence.clear(); location.reload(); }}>reset</button>
-	<button class='build' onclick={() => showBuildNotes = true}>build {__BUILD_NUMBER__}</button>
+	<button class='toolbar-btn' onclick={scale_down}>&minus;</button>
+	<button class='toolbar-btn' onclick={scale_up}>+</button>
+	<button class='toolbar-btn reset' onclick={() => { persistence.clear(); location.reload(); }}>reset</button>
+	<button class='toolbar-btn' onclick={() => showBuildNotes = true}>build {__BUILD_NUMBER__}</button>
 </div>
 
 <style>
@@ -47,7 +50,7 @@
 		flex-grow: 1;
 	}
 
-	.build {
+	.toolbar-btn {
 		background    : white;
 		border        : 0.5px solid currentColor;
 		border-radius : 10px;
@@ -56,26 +59,10 @@
 		font-size     : 11px;
 		height        : 20px;
 		cursor        : pointer;
+		margin-left   : 6px;
 	}
 
-	.build:hover {
-		background : black;
-		color      : white;
-	}
-
-	.reset {
-		background    : white;
-		border        : 0.5px solid currentColor;
-		border-radius : 10px;
-		color         : inherit;
-		padding       : 0 6px 1px 6px;
-		font-size     : 11px;
-		height        : 20px;
-		cursor        : pointer;
-		margin-right  : 6px;
-	}
-
-	.reset:hover {
+	.toolbar-btn:hover {
 		background : black;
 		color      : white;
 	}

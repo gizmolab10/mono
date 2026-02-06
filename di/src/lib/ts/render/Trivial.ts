@@ -27,6 +27,12 @@ const example_faces: number[][] = [
 ];
 
 // ============================================
+// MODULE STATE
+// ============================================
+
+let active_scene: import('../types/Interfaces').O_Scene | null = null;
+
+// ============================================
 // INIT
 // ============================================
 
@@ -38,9 +44,16 @@ export function init(canvas: HTMLCanvasElement) {
 
   // Load saved state or create defaults
   const saved = persistence.load();
-  const example = saved?.smart_objects[0]
-    ? Smart_Object.deserialize(saved.smart_objects[0])
-    : new Smart_Object('example');
+  let example: Smart_Object;
+  let saved_scale = 1;
+
+  if (saved?.smart_objects[0]) {
+    const result = Smart_Object.deserialize(saved.smart_objects[0]);
+    example = result.so;
+    saved_scale = result.scale;
+  } else {
+    example = new Smart_Object('example');
+  }
 
   if (!saved) {
     // Initial rotation (default)
@@ -54,9 +67,11 @@ export function init(canvas: HTMLCanvasElement) {
     so: example,
     edges: example_edges,
     faces: example_faces,
+    scale: saved_scale,
     color: 'rgba(78, 205, 196,',
   });
   example.scene = example_scene;
+  active_scene = example_scene;
 
   hits_3d.register(example);
 
@@ -72,10 +87,32 @@ export function init(canvas: HTMLCanvasElement) {
     persistence.save();
   });
 
+  // Input: scroll wheel scales object
+  e3.set_wheel_handler((delta, fine) => {
+    e3.scale_object(example_scene, delta, fine);
+    persistence.save();
+  });
+
   // Render loop
   animation.on_tick(() => {
     render.render();
   });
 
   animation.start();
+}
+
+// ============================================
+// TOOLBAR ACTIONS
+// ============================================
+
+export function scale_up(): void {
+  if (!active_scene) return;
+  e3.scale_object(active_scene, 1, false);
+  persistence.save();
+}
+
+export function scale_down(): void {
+  if (!active_scene) return;
+  e3.scale_object(active_scene, -1, false);
+  persistence.save();
 }
