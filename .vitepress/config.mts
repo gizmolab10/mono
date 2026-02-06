@@ -224,6 +224,10 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/8.dimensionals'
                         },
                         {
+                          text: '9.persistence',
+                          link: '/di/notes/work/milestones/9.persistence'
+                        },
+                        {
                           text: '2.panel >',
                           link: '/di/notes/work/milestones/2.panel/',
                           collapsed: true,
@@ -273,6 +277,17 @@ export default defineConfig({
               text: 'Notes >',
               collapsed: true,
               items: [
+                {
+                  text: 'Civilization2 >',
+                  link: '/me/notes/civilization2/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Index.md',
+                      link: '/me/notes/civilization2/index.md'
+                    }
+                  ]
+                },
                 {
                   text: 'Work >',
                   collapsed: true,
@@ -331,6 +346,17 @@ export default defineConfig({
                     {
                       text: 'Workflow',
                       link: '/notes/guides/collaborate/workflow'
+                    }
+                  ]
+                },
+                {
+                  text: 'Design >',
+                  link: '/notes/guides/design/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Port',
+                      link: '/notes/guides/design/port'
                     }
                   ]
                 },

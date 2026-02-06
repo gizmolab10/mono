@@ -19,4 +19,5 @@
 - [6.build.notes](./6.build.notes.md)
 - [7.edit.drags](./7.edit.drags.md)
 - [8.dimensionals](./8.dimensionals.md)
+- [9.persistence](./9.persistence.md)
 

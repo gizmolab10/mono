@@ -160,8 +160,8 @@ export default defineConfig({
                       link: '/di/notes/work/pacing'
                     },
                     {
-                      text: 'Resume.di',
-                      link: '/di/notes/work/resume.di'
+                      text: 'Revisit.di',
+                      link: '/di/notes/work/revisit.di'
                     },
                     {
                       text: 'Simplicity',
@@ -224,6 +224,10 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/8.dimensionals'
                         },
                         {
+                          text: '9.persistence',
+                          link: '/di/notes/work/milestones/9.persistence'
+                        },
+                        {
                           text: '2.panel >',
                           link: '/di/notes/work/milestones/2.panel/',
                           collapsed: true,
@@ -274,6 +278,17 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
+                  text: 'Civilization2 >',
+                  link: '/me/notes/civilization2/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Index.md',
+                      link: '/me/notes/civilization2/index.md'
+                    }
+                  ]
+                },
+                {
                   text: 'Work >',
                   collapsed: true,
                   items: [
@@ -282,8 +297,8 @@ export default defineConfig({
                       link: '/me/notes/work/jonathan'
                     },
                     {
-                      text: 'Resume.me',
-                      link: '/me/notes/work/resume.me'
+                      text: 'Revisit.me',
+                      link: '/me/notes/work/revisit.me'
                     }
                   ]
                 }
@@ -331,6 +346,17 @@ export default defineConfig({
                     {
                       text: 'Workflow',
                       link: '/notes/guides/collaborate/workflow'
+                    }
+                  ]
+                },
+                {
+                  text: 'Design >',
+                  link: '/notes/guides/design/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Port',
+                      link: '/notes/guides/design/port'
                     }
                   ]
                 },
@@ -462,8 +488,8 @@ export default defineConfig({
                   link: '/notes/work/learn'
                 },
                 {
-                  text: 'Resume.mo',
-                  link: '/notes/work/resume.mo'
+                  text: 'Revisit.mo',
+                  link: '/notes/work/revisit.mo'
                 },
                 {
                   text: 'Articles >',
@@ -945,8 +971,8 @@ export default defineConfig({
                       link: '/ws/notes/work/deliverables'
                     },
                     {
-                      text: 'Resume.ws',
-                      link: '/ws/notes/work/resume.ws'
+                      text: 'Revisit.ws',
+                      link: '/ws/notes/work/revisit.ws'
                     },
                     {
                       text: 'User.manual',

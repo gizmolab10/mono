@@ -2,6 +2,7 @@
 
 | Build | Date | Note |
 |----|----|----|
+| 9 | Feb 5, 2026 | persistence |
 | 8 | Feb 5, 2026 | dimmensionals |
 | 7 | Feb 4, 2026 | edge/corner drag editing |
 | 6 | Feb 2, 2026 | smart objects with selection |

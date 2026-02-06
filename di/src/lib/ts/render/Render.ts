@@ -41,7 +41,7 @@ class Render {
   private get_world_matrix(obj: O_Scene): mat4 {
     const local = mat4.create();
     const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
-    mat4.fromRotationTranslationScale(local, obj.orientation, obj.position, scale_vec);
+    mat4.fromRotationTranslationScale(local, obj.so.orientation, obj.position, scale_vec);
 
     if (obj.parent) {
       const parent_world = this.get_world_matrix(obj.parent);

@@ -83,9 +83,9 @@ class Events_3D {
     const rot_y = quat.create();
     quat.setAxisAngle(rot_x, [1, 0, 0], dy * sensitivity);
     quat.setAxisAngle(rot_y, [0, 1, 0], dx * sensitivity);
-    quat.multiply(obj.orientation, rot_y, obj.orientation);
-    quat.multiply(obj.orientation, rot_x, obj.orientation);
-    quat.normalize(obj.orientation, obj.orientation);
+    quat.multiply(obj.so.orientation, rot_y, obj.so.orientation);
+    quat.multiply(obj.so.orientation, rot_x, obj.so.orientation);
+    quat.normalize(obj.so.orientation, obj.so.orientation);
   }
 
   // Edit the current selection by modifying SO bounds
@@ -194,7 +194,7 @@ class Events_3D {
   private get_world_matrix(obj: O_Scene): mat4 {
     const local = mat4.create();
     const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
-    mat4.fromRotationTranslationScale(local, obj.orientation, obj.position, scale_vec);
+    mat4.fromRotationTranslationScale(local, obj.so.orientation, obj.position, scale_vec);
 
     if (obj.parent) {
       const parent_world = this.get_world_matrix(obj.parent);

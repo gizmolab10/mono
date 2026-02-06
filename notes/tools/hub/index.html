@@ -390,6 +390,56 @@
     .swapped {
       flex-direction: row-reverse;
     }
+
+    /* Errors popup */
+    .errors-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .errors-overlay.visible {
+      display: flex;
+    }
+
+    .errors-popup {
+      background: var(--bg-command);
+      color: #ccc;
+      border-radius: 12px;
+      padding: 20px 24px;
+      max-width: 600px;
+      min-width: 360px;
+      max-height: 70vh;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .errors-popup .errors-title {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .errors-popup .errors-loading {
+      color: #888;
+    }
+
+    .errors-popup .errors-none {
+      color: #2ecc71;
+    }
   </style>
 </head>
 
@@ -445,6 +495,7 @@
     <div class="actions-row">
       <div class="more-group side-a">
         <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
+        <button class="action" id="btn-errors">Errors<span class="badge">E</span></button>
         <button class="action" id="btn-repo">Repo<span class="badge">G</span></button>
         <button class="action" id="btn-deploy">Deploy<span class="badge">Y</span></button>
         <button class="action" id="btn-revisit">revisit<span class="badge">R</span></button>
@@ -457,6 +508,10 @@
     </div>
 
     <div class="command" id="command"></div>
+  </div>
+
+  <div class="errors-overlay" id="errors-overlay">
+    <div class="errors-popup" id="errors-popup"></div>
   </div>
 
   <script>
@@ -492,6 +547,9 @@
     const btnDocs = document.getElementById('btn-docs');
     const btnRelay = document.getElementById('btn-relay');
     const btnTests = document.getElementById('btn-tests');
+    const btnErrors = document.getElementById('btn-errors');
+    const errorsOverlay = document.getElementById('errors-overlay');
+    const errorsPopup = document.getElementById('errors-popup');
     const consoleOutput = document.getElementById('console-output');
     const consoleRow = document.getElementById('console-row');
     const commandDiv = document.getElementById('command');
@@ -805,6 +863,47 @@
         .then(res => res.json())
         .catch(() => { });
     }
+
+    function doErrors() {
+      errorsPopup.innerHTML = '<div class="errors-title">Doc Build Errors</div><div class="errors-loading">analyzing...</div>';
+      errorsOverlay.classList.add('visible');
+
+      fetch(`http://localhost:${ports.dispatcher.port}/doc-errors-analysis`)
+        .then(res => res.json())
+        .then(data => {
+          let html = '<div class="errors-title">Doc Build Errors</div>';
+
+          if (data.has_errors === false) {
+            html += '<div class="errors-none">✓ No errors</div>';
+          } else if (data.analysis) {
+            html += data.analysis;
+          } else if (data.raw) {
+            // No analysis available — show raw errors
+            if (data.error) html += `${data.error}\n\n`;
+            for (const [proj, text] of Object.entries(data.raw)) {
+              if (text) html += `── ${proj} ──\n${text}\n\n`;
+            }
+          } else if (data.error) {
+            html += `Error: ${data.error}`;
+          } else {
+            html += 'No analysis available';
+          }
+
+          errorsPopup.innerHTML = html;
+        })
+        .catch(err => {
+          errorsPopup.innerHTML = `<div class="errors-title">Doc Build Errors</div>API error: ${err.message}`;
+        });
+    }
+
+    function closeErrors() {
+      errorsOverlay.classList.remove('visible');
+    }
+
+    // Close popup on overlay click (not popup itself)
+    errorsOverlay.addEventListener('click', (e) => {
+      if (e.target === errorsOverlay) closeErrors();
+    });
 
     let pollInterval = null;
     let restartPollInterval = null;
@@ -1290,6 +1389,7 @@
     btnDeploy.addEventListener('click', doDeploy);
     btnDns.addEventListener('click', doDns);
     btnBubble.addEventListener('click', doBubble);
+    btnErrors.addEventListener('click', doErrors);
     btnRevisit.addEventListener('click', doRevisit);
     btnDocs.addEventListener('click', doDocs);
     btnRelay.addEventListener('click', doRelay);
@@ -1303,6 +1403,12 @@
 
       // Ignore if typing in an input
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      // Close errors popup on Escape
+      if (e.key === 'Escape' && errorsOverlay.classList.contains('visible')) {
+        closeErrors();
+        return;
+      }
 
       const key = e.key.toLowerCase();
       switch (key) {
@@ -1324,6 +1430,7 @@
         case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); prePublishFeedbackRow(); break;
         case 'd': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
         case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); prePublishFeedbackRow(); break;
+        case 'e': doErrors(); break;
         case 'r': hoveredActionId = 'btn-revisit'; hoveredAction = actionButtons['btn-revisit'](); highlightActionButton('btn-revisit'); prePublishFeedbackRow(); break;
         case '`': doRelay(); break;
         case ';': doTests(); break;

@@ -213,19 +213,20 @@ run_vp_build() {
     return $?
   fi
   
-  yarn docs:build > /dev/null 2>&1 &
+  local build_log=$(mktemp)
+  yarn docs:build > "$build_log" 2>&1 &
   local pid=$!
-  
+
   local last_line=""
   local dead_link_count=0
-  
+
   # Poll the output file while build runs
   while kill -0 $pid 2>/dev/null; do
     if [ -s "$output_file" ]; then
       local current_line=$(tail -1 "$output_file")
       if [ "$current_line" != "$last_line" ]; then
         last_line="$current_line"
-        
+
         # Count dead links
         if [[ "$current_line" == *"Found dead link"* ]] || [[ "$current_line" == *"dead link"* ]]; then
           dead_link_count=$((dead_link_count + 1))
@@ -237,11 +238,11 @@ run_vp_build() {
     fi
     sleep 0.2
   done
-  
+
   # Get exit code
   wait $pid
   local exit_code=$?
-  
+
   # Show final status
   if [ -s "$output_file" ]; then
     local final_line=$(tail -1 "$output_file")
@@ -252,14 +253,23 @@ run_vp_build() {
       progress_item "$final_line"
     fi
   fi
-  
-  # On error, append to error log
+
+  # On error, append both vitepress output and build log to error log
   if [ $exit_code -ne 0 ]; then
     echo "" >> "$ERROR_LOG"
     echo "=== Step $CURRENT_STEP: $STEP_NAME ===" >> "$ERROR_LOG"
-    cat "$output_file" >> "$ERROR_LOG"
+    # Append vitepress progress file (dead links, etc.)
+    if [ -s "$output_file" ]; then
+      cat "$output_file" >> "$ERROR_LOG"
+    fi
+    # Append yarn/node stderr+stdout (actual error messages)
+    if [ -s "$build_log" ]; then
+      echo "--- build output ---" >> "$ERROR_LOG"
+      cat "$build_log" >> "$ERROR_LOG"
+    fi
   fi
-  
+
+  rm -f "$build_log"
   return $exit_code
 }
 
@@ -345,8 +355,8 @@ if [ -z "$STATUS_FILE" ]; then
   echo "Starting..." > "$STATUS_FILE"
 fi
 
-# Set up error log
-ERROR_LOG="$LOGS_DIR/update-docs.error.log"
+# Set up error log (per-project so they don't clobber each other)
+ERROR_LOG="$LOGS_DIR/update-docs.error.$PROJECT_NAME.log"
 rm -f "$ERROR_LOG"
 touch "$ERROR_LOG"
 

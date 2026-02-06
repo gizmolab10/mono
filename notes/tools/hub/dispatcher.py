@@ -63,6 +63,72 @@ NETLIFY_SITES = {
 }
 
 NETLIFY_TOKEN = os.environ.get('NETLIFY_ACCESS_TOKEN', '')
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
+
+# Per-project error log paths
+DOC_ERROR_LOGS = {
+    'mono': os.path.join(GITHUB_DIR, 'logs', 'update-docs.error.mono.log'),
+    'ws': os.path.join(GITHUB_DIR, 'logs', 'update-docs.error.ws.log'),
+    'di': os.path.join(GITHUB_DIR, 'logs', 'update-docs.error.di.log'),
+}
+
+def read_doc_errors():
+    """Read all per-project error logs, return dict of project -> content."""
+    results = {}
+    for proj, path in DOC_ERROR_LOGS.items():
+        if os.path.exists(path) and os.path.getsize(path) > 0:
+            with open(path, 'r') as f:
+                results[proj] = f.read().strip()
+        else:
+            results[proj] = ''
+    return results
+
+def analyze_doc_errors(errors):
+    """Call Claude API (haiku) to summarize errors and suggest fixes."""
+    # Build prompt from non-empty errors
+    parts = []
+    for proj, text in errors.items():
+        if text:
+            parts.append(f"── {proj} ──\n{text}")
+
+    if not parts:
+        return {'has_errors': False}
+
+    if not ANTHROPIC_API_KEY:
+        return {'has_errors': True, 'error': 'No ANTHROPIC_API_KEY configured', 'raw': errors}
+
+    error_text = '\n\n'.join(parts)
+    prompt = (
+        "You are a build-error analyst. Below are VitePress/docs build error logs from a monorepo. "
+        "For each project that has errors, give a 1-3 sentence summary of what broke and how to fix it. "
+        "Be specific: name the file, the missing script, the dead link, etc. "
+        "Return plain text, one section per project, no markdown.\n\n"
+        f"{error_text}"
+    )
+
+    try:
+        req_body = json.dumps({
+            'model': 'claude-haiku-4-20250414',
+            'max_tokens': 1024,
+            'messages': [{'role': 'user', 'content': prompt}]
+        }).encode()
+
+        req = urllib.request.Request(
+            'https://api.anthropic.com/v1/messages',
+            data=req_body,
+            method='POST'
+        )
+        req.add_header('Content-Type', 'application/json')
+        req.add_header('x-api-key', ANTHROPIC_API_KEY)
+        req.add_header('anthropic-version', '2023-06-01')
+
+        with urllib.request.urlopen(req, timeout=30) as response:
+            data = json.loads(response.read().decode())
+            analysis = data.get('content', [{}])[0].get('text', '')
+            return {'has_errors': True, 'analysis': analysis, 'raw': errors}
+
+    except Exception as e:
+        return {'has_errors': True, 'analysis': f'Analysis failed: {str(e)}', 'raw': errors}
 
 # Sites to restart: name, port, dir, command, env
 RESTART_SITES = [
@@ -372,6 +438,22 @@ class APIHandler(BaseHTTPRequestHandler):
                 # Open in Obsidian (vault name = mono)
                 subprocess.run(['open', f'obsidian://open?vault=mono&file={file_path}'])
                 self._send_response(200, {'success': True, 'file': file_path})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif self.path == '/doc-errors':
+            try:
+                errors = read_doc_errors()
+                has_errors = any(v for v in errors.values())
+                self._send_response(200, {'has_errors': has_errors, 'errors': errors})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif self.path == '/doc-errors-analysis':
+            try:
+                errors = read_doc_errors()
+                result = analyze_doc_errors(errors)
+                self._send_response(200, result)
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 

@@ -43,7 +43,7 @@ Purpose: <one line>
 
 ### 2. Spec for Target
 
-**Goal:** <what this component should do in the new context>
+**Goal:** tbd
 
 **Interface:**
 - ...

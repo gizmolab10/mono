@@ -1,4 +1,4 @@
-import { quat, vec3 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
 import type Smart_Object from '../runtime/Smart_Object';
 
@@ -21,7 +21,6 @@ class Scene {
       so: config.so,
       edges: config.edges,
       faces: config.faces,
-      orientation: quat.create(),
       position: config.position ?? vec3.fromValues(0, 0, 0),
       scale: config.scale ?? 1,
       color: config.color ?? 'rgba(255, 255, 255,',

@@ -1,3 +1,4 @@
+import { quat } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
 import type { Dictionary } from '../types/Types';
 import { Point3 } from '../types/Coordinates';
@@ -12,6 +13,7 @@ export default class Smart_Object extends Identifiable {
 	attributes_dict_byName: Dictionary<Attribute> = {};
 	scene: O_Scene | null;
 	name: string;
+	orientation: quat = quat.create();
 
 	constructor(name: string = '', scene: O_Scene | null = null) {
 		super();
@@ -245,7 +247,7 @@ export default class Smart_Object extends Identifiable {
 	// SERIALIZATION
 	// ═══════════════════════════════════════════════════════════════════
 
-	serialize(): { name: string; bounds: Record<Bound, number> } {
+	serialize(): { name: string; bounds: Record<Bound, number>; orientation: number[] } {
 		return {
 			name: this.name,
 			bounds: {
@@ -253,13 +255,17 @@ export default class Smart_Object extends Identifiable {
 				y_min: this.y_min, y_max: this.y_max,
 				z_min: this.z_min, z_max: this.z_max,
 			},
+			orientation: Array.from(this.orientation),
 		};
 	}
 
-	static deserialize(data: { name: string; bounds: Record<Bound, number> }): Smart_Object {
+	static deserialize(data: { name: string; bounds: Record<Bound, number>; orientation?: number[] }): Smart_Object {
 		const so = new Smart_Object(data.name);
 		for (const [key, value] of Object.entries(data.bounds)) {
 			so.set_bound(key as Bound, value);
+		}
+		if (data.orientation) {
+			quat.set(so.orientation, data.orientation[0], data.orientation[1], data.orientation[2], data.orientation[3]);
 		}
 		return so;
 	}
