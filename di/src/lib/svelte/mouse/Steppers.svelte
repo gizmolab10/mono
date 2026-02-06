@@ -11,10 +11,12 @@
 	let {
 		show_up = true,
 		show_down = true,
+		horizontal = false,
 		hit_closure
 	}: {
 		show_up?: boolean;
 		show_down?: boolean;
+		horizontal?: boolean;
 		hit_closure: (pointsUp: boolean, isLong: boolean) => void;
 	} = $props();
 
@@ -25,8 +27,8 @@
 	const upTarget = new S_Hit_Target(T_Hit_Target.button, 'stepper-up');
 	const downTarget = new S_Hit_Target(T_Hit_Target.button, 'stepper-down');
 
-	const upPath = svg_paths.fat_polygon(buttonSize, Direction.up);
-	const downPath = svg_paths.fat_polygon(buttonSize, Direction.down);
+	const firstPath = $derived(svg_paths.fat_polygon(buttonSize, horizontal ? Direction.left : Direction.up));
+	const secondPath = $derived(svg_paths.fat_polygon(buttonSize, horizontal ? Direction.right : Direction.down));
 
 	$effect(() => {
 		if (upElement) {
@@ -60,17 +62,16 @@
 	const hoverDown = $derived($w_s_hover?.id === downTarget.id);
 </script>
 
-<div class='steppers'>
+<div class='steppers' class:horizontal>
 	{#if show_up}
 		<div
 			class='stepper-button'
 			bind:this={upElement}
-			style:top="0px"
 			role="button"
 			tabindex="0">
 			<svg width={buttonSize} height={buttonSize} viewBox="0 0 {buttonSize} {buttonSize}">
 				<path
-					d={upPath}
+					d={firstPath}
 					fill={hoverUp ? colors.default : 'white'}
 					stroke={colors.default}
 					stroke-width="0.75"
@@ -82,12 +83,11 @@
 		<div
 			class='stepper-button'
 			bind:this={downElement}
-			style:top="{buttonSize}px"
 			role="button"
 			tabindex="0">
 			<svg width={buttonSize} height={buttonSize} viewBox="0 0 {buttonSize} {buttonSize}">
 				<path
-					d={downPath}
+					d={secondPath}
 					fill={hoverDown ? colors.default : 'white'}
 					stroke={colors.default}
 					stroke-width="0.75"
@@ -102,9 +102,16 @@
 		position: absolute;
 		top: 8px;
 		left: 8px;
+		display: flex;
+		flex-direction: column;
+	}
+	.steppers.horizontal {
+		position: relative;
+		top: auto;
+		left: auto;
+		flex-direction: row;
 	}
 	.stepper-button {
-		position: absolute;
 		cursor: pointer;
 		user-select: none;
 	}

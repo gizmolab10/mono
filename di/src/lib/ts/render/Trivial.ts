@@ -116,3 +116,13 @@ export function scale_down(): void {
   e3.scale_object(active_scene, -1, false);
   persistence.save();
 }
+
+export function set_scale(value: number): void {
+  if (!active_scene) return;
+  active_scene.scale = value;
+  persistence.save();
+}
+
+export function get_scale(): number {
+  return active_scene?.scale ?? 1;
+}

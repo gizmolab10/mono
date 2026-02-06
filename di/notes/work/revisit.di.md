@@ -16,6 +16,8 @@ Where we are in Design Intuition.
 
 - [ ] **10 controls UI** — actual buttons in the toolbar
 	- [x] scaling (logarithmic, coarse and fine)
+	- [x] horizontal Stepper layout
+	- [x] slider (linear, with logarithmic option)
 - [ ] **11 details** — attributes
 - [ ] **12 hierarchy** of SO
 - [ ] **13 algebra** — recursive descent compiler
@@ -35,5 +37,6 @@ Where we are in Design Intuition.
 | Editing     | Select face, drag edge or vertex           |
 | Build Notes | List of important steps in our progress    |
 | Dimensions  | Dynamic (value, layout, not yet editable)  |
+| Controls    | Steppers (h/v), slider, scale +/−/wheel   |
 | Persistence | SO, camera orientation, scale              |
 

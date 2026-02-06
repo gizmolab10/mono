@@ -9,7 +9,7 @@
 
 	const allNotes = __BUILD_NOTES__;
 	const notesLimit = allNotes.length;
-	const pageSize = 12;
+	const pageSize = 3;
 	const modalWidth = 600;
 	const isNewestFirst = allNotes.length > 1 && allNotes[0].build > allNotes[1].build;
 	let notesIndex = $state(0);
