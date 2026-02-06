@@ -240,4 +240,27 @@ export default class Smart_Object extends Identifiable {
 			this.set_bound(bound, new_value);
 		}
 	}
+
+	// ═══════════════════════════════════════════════════════════════════
+	// SERIALIZATION
+	// ═══════════════════════════════════════════════════════════════════
+
+	serialize(): { name: string; bounds: Record<Bound, number> } {
+		return {
+			name: this.name,
+			bounds: {
+				x_min: this.x_min, x_max: this.x_max,
+				y_min: this.y_min, y_max: this.y_max,
+				z_min: this.z_min, z_max: this.z_max,
+			},
+		};
+	}
+
+	static deserialize(data: { name: string; bounds: Record<Bound, number> }): Smart_Object {
+		const so = new Smart_Object(data.name);
+		for (const [key, value] of Object.entries(data.bounds)) {
+			so.set_bound(key as Bound, value);
+		}
+		return so;
+	}
 }

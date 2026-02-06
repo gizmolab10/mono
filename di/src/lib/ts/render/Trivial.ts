@@ -2,7 +2,7 @@ import { quat, vec3 } from 'gl-matrix';
 import { scene, camera, render, animation } from '.';
 import { Size } from '../types';
 import { e3 } from '../signals';
-import { hits_3d } from '../managers';
+import { hits_3d, persistence } from '../managers';
 import { Smart_Object } from '../runtime';
 
 // ============================================
@@ -36,8 +36,12 @@ export function init(canvas: HTMLCanvasElement) {
   render.init(canvas);
   e3.init(canvas);
 
-  // Create Smart_Object — it owns the bounds
-  const cube = new Smart_Object('cube');
+  // Load saved state or create defaults
+  const saved = persistence.load();
+  const cube = saved?.smart_objects[0]
+    ? Smart_Object.deserialize(saved.smart_objects[0])
+    : new Smart_Object('cube');
+
   const cube_scene = scene.create({
     so: cube,
     edges: cube_edges,
@@ -48,17 +52,23 @@ export function init(canvas: HTMLCanvasElement) {
 
   hits_3d.register(cube);
 
-  // Initial rotation
-  const init_quat = quat.create();
-  quat.setAxisAngle(init_quat, vec3.normalize(vec3.create(), [1, 1, 0]), 0.5);
-  quat.multiply(cube_scene.orientation, init_quat, cube_scene.orientation);
-  quat.normalize(cube_scene.orientation, cube_scene.orientation);
+  if (saved?.camera) {
+    // Restore camera position
+    camera.deserialize(saved.camera);
+  } else {
+    // Initial rotation (default)
+    const init_quat = quat.create();
+    quat.setAxisAngle(init_quat, vec3.normalize(vec3.create(), [1, 1, 0]), 0.5);
+    quat.multiply(cube_scene.orientation, init_quat, cube_scene.orientation);
+    quat.normalize(cube_scene.orientation, cube_scene.orientation);
+  }
 
-  // Input: drag edits selection OR rotates cube
+  // Input: drag edits selection OR rotates cube, then save
   e3.set_drag_handler((prev, curr) => {
     if (!e3.edit_selection(prev, curr)) {
       e3.rotate_object(cube_scene, prev, curr);
     }
+    persistence.save();
   });
 
   // Render loop

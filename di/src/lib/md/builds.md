@@ -2,8 +2,9 @@
 
 | Build | Date | Note |
 |----|----|----|
-| 7 | Feb 4, 2026 | milestone 7 complete — edge/corner drag editing |
-| 6 | Feb 2, 2026 | milestone 5 complete — smart objects with selection |
+| 8 | Feb 5, 2026 | dimmensionals |
+| 7 | Feb 4, 2026 | edge/corner drag editing |
+| 6 | Feb 2, 2026 | smart objects with selection |
 | 5 | Jan 31, 2026 | 3D hit testing for corners, edges, faces |
 | 4 | Jan 30, 2026 | smart object composition pattern |
 | 3 | Jan 29, 2026 | canvas events separated from DOM events |

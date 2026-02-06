@@ -14,6 +14,9 @@ export enum T_Preference {
 	textColor       = 'textColor',
 	separatorColor  = 'separatorColor',
 	backgroundColor = 'backgroundColor',
+
+	// Persistence
+	scene = 'scene',
 }
 
 const STORAGE_PREFIX = 'di:';

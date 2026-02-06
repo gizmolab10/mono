@@ -86,6 +86,25 @@ class Camera {
   private update_projection(): void {
     mat4.perspective(this.projection, this.fov, this._aspect, this.near, this.far);
   }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // SERIALIZATION
+  // ═══════════════════════════════════════════════════════════════════
+
+  serialize(): { eye: number[]; center: number[]; up: number[] } {
+    return {
+      eye: Array.from(this._eye),
+      center: Array.from(this.center),
+      up: Array.from(this.up),
+    };
+  }
+
+  deserialize(data: { eye: number[]; center: number[]; up: number[] }): void {
+    vec3.set(this._eye, data.eye[0], data.eye[1], data.eye[2]);
+    vec3.set(this.center, data.center[0], data.center[1], data.center[2]);
+    vec3.set(this.up, data.up[0], data.up[1], data.up[2]);
+    this.update_view();
+  }
 }
 
 export const camera = new Camera();
