@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { colors } from '../../ts/draw/Colors';
+	import { persistence } from '../../ts/managers/Persistence';
 	import BuildNotes from './BuildNotes.svelte';
 	const { w_text_color, w_background_color } = colors;
 
@@ -22,6 +23,7 @@
 	style:background = {$w_background_color}>
 	<h1>{title}</h1>
 	<span class='spacer'></span>
+	<button class='reset' onclick={() => { persistence.clear(); location.reload(); }}>reset</button>
 	<button class='build' onclick={() => showBuildNotes = true}>build {__BUILD_NUMBER__}</button>
 </div>
 
@@ -46,7 +48,7 @@
 	}
 
 	.build {
-		background    : transparent;
+		background    : white;
 		border        : 0.5px solid currentColor;
 		border-radius : 10px;
 		color         : inherit;
@@ -57,6 +59,24 @@
 	}
 
 	.build:hover {
-		background: rgba(128, 128, 128, 0.15);
+		background : black;
+		color      : white;
+	}
+
+	.reset {
+		background    : white;
+		border        : 0.5px solid currentColor;
+		border-radius : 10px;
+		color         : inherit;
+		padding       : 0 6px 1px 6px;
+		font-size     : 11px;
+		height        : 20px;
+		cursor        : pointer;
+		margin-right  : 6px;
+	}
+
+	.reset:hover {
+		background : black;
+		color      : white;
 	}
 </style>
