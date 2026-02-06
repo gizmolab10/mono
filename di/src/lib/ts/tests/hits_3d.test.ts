@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { Point } from '../types/Coordinates';
 import type { Projected } from '../types/Interfaces';
 

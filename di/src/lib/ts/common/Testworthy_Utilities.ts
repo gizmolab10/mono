@@ -5,7 +5,7 @@ export type Dictionary<T = any> = Record<string, T>;
 export class Testworthy_Utilities {
 	private orderedKeysCache = new WeakMap<object, string[]>();
 
-	ignore(event: Event)							{}
+	ignore(_event: Event)							{}
 	t_or_f(value: boolean): string					{ return value ? '|' : '-'; }
 	location_ofMouseEvent(event: MouseEvent): { x: number, y: number } { return { x: event.clientX, y: event.clientY }; }
 	consume_event(event: Event)						{ event.preventDefault(); event.stopPropagation(); }
@@ -124,6 +124,13 @@ export class Testworthy_Utilities {
 			return sum;
 		}, 0);
 		return result;
+	}
+
+	gcd(a: number, b: number): number {
+		a = Math.abs(a);
+		b = Math.abs(b);
+		while (b) { [a, b] = [b, a % b]; }
+		return a;
 	}
 
 }

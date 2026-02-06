@@ -11,10 +11,10 @@
 	let { size = 20, origin, name = 'close', onclose }: { size?: number; origin: Point; name?: string; onclose: () => void } = $props();
 
 	let element: HTMLElement | null = $state(null);
-	const target = new S_Hit_Target(T_Hit_Target.button, name);
+	const target = $derived(new S_Hit_Target(T_Hit_Target.button, name));
 
-	const circlePath = svg_paths.circle_atOffset(size, size - 2);
-	const crossPath = svg_paths.x_cross(size, size / 6);
+	const circlePath = $derived(svg_paths.circle_atOffset(size, size - 2));
+	const crossPath = $derived(svg_paths.x_cross(size, size / 6));
 
 	$effect(() => {
 		if (element) {

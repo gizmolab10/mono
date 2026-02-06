@@ -1,7 +1,6 @@
-import { Rect, Point } from '../types/Coordinates';
 import { T_Hit_Target } from '../types/Enumerations';
 import S_Hit_Target from './S_Hit_Target';
-import k from '../common/Constants';
+import { k } from '../common/Constants';
 
 // Formerly called Svelte Wrapper
 // (?) style construction (by type and hid)
@@ -18,8 +17,6 @@ export default class S_Component extends S_Hit_Target {
 		this.hid = hid;
 		this.id = this.component_id;
 	}
-
-	private get description(): string { return this.type; }
 
 	private get component_id(): string {
 		return `${this.type}-${this.hid ?? 'no-hid'}`;

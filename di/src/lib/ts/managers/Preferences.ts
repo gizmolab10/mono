@@ -15,6 +15,9 @@ export enum T_Preference {
 	separatorColor  = 'separatorColor',
 	backgroundColor = 'backgroundColor',
 
+	// Units
+	unitSystem = 'unitSystem',
+
 	// Persistence
 	scene = 'scene',
 }

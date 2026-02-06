@@ -1,4 +1,4 @@
-import k from '../common/Constants';
+import { k } from '../common/Constants';
 
 export enum T_Timer {
 	repeat	= 'repeat',

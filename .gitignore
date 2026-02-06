@@ -1,5 +1,6 @@
 
 **/.env
+**/.git/worktrees/
 **/.vitepress/cache/
 **/.vitepress/.temp/
 **/.vitepress/.last-build

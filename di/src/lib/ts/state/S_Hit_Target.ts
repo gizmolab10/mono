@@ -1,7 +1,7 @@
 import { T_Hit_Target, T_Mouse_Detection } from '../types/Enumerations';
 import { Rect, Point } from '../types/Coordinates';
 import S_Mouse from './S_Mouse';
-import k from '../common/Constants';
+import { k } from '../common/Constants';
 import { get } from 'svelte/store';
 
 // Forward declaration - will be set by Hits manager

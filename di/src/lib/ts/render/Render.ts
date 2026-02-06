@@ -7,6 +7,7 @@ import type Smart_Object from '../runtime/Smart_Object';
 import type { Axis } from '../runtime/Smart_Object';
 import { camera } from './Camera';
 import { scene } from './Scene';
+import { units, current_unit_system } from '../types/Units';
 
 class Render {
   private canvas!: HTMLCanvasElement;
@@ -186,36 +187,6 @@ class Render {
     return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: (a.z + b.z) / 2, w: Math.min(a.w, b.w) };
   }
 
-  private draw_corner_dot(p: Projected, color: string): void {
-    if (p.w < 0) return;
-    this.ctx.fillStyle = color;
-    this.ctx.beginPath();
-    this.ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
-    this.ctx.fill();
-  }
-
-  private draw_edge_highlight(a: Projected, b: Projected, color: string): void {
-    if (a.w < 0 || b.w < 0) return;
-    this.ctx.strokeStyle = color;
-    this.ctx.lineWidth = 3;
-    this.ctx.beginPath();
-    this.ctx.moveTo(a.x, a.y);
-    this.ctx.lineTo(b.x, b.y);
-    this.ctx.stroke();
-  }
-
-  private draw_face_highlight(verts: Projected[], color: string): void {
-    if (verts.some(v => v.w < 0)) return;
-    this.ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
-    this.ctx.beginPath();
-    this.ctx.moveTo(verts[0].x, verts[0].y);
-    for (let i = 1; i < verts.length; i++) {
-      this.ctx.lineTo(verts[i].x, verts[i].y);
-    }
-    this.ctx.closePath();
-    this.ctx.fill();
-  }
-
   // ═══════════════════════════════════════════════════════════════════
   // DIMENSION RENDERING
   // ═══════════════════════════════════════════════════════════════════
@@ -247,10 +218,11 @@ class Render {
     const edge_info = this.find_best_edge_for_axis(so, axis, projected);
     if (!edge_info) return;
 
-    const { p1, p2, v1_idx, v2_idx } = edge_info;
+    const { v1_idx, v2_idx } = edge_info;
     const value = axis === 'x' ? so.width : axis === 'y' ? so.height : so.depth;
 
-    // Get witness direction from the most front-facing adjacent face
+    // Get witness direction in screen space (perpendicular to edge on screen,
+    // pointing away from object center). Fixed pixel distances regardless of scale.
     let witness_dir = this.edge_witness_direction(so, v1_idx, v2_idx, axis, projected, world_matrix);
 
     // Pick direction that points away from cube center
@@ -262,36 +234,31 @@ class Render {
       witness_dir = new Point3(-witness_dir.x, -witness_dir.y, -witness_dir.z);
     }
 
-    // Compute witness line endpoints in 3D, then project
-    // Fixed distances independent of object size
-    const witness_dist = 0.3;  // distance from edge to dimension line
-    const witness_ext = 0.2;   // extension past dimension line
+    // Project edge endpoints to screen
+    const p1 = projected[v1_idx], p2 = projected[v2_idx];
+    if (p1.w < 0 || p2.w < 0) return;
 
-    // Witness line start (small offset from edge)
-    const gap = 0.1;
-    const w1_start = new Point3(v1.x + witness_dir.x * gap, v1.y + witness_dir.y * gap, v1.z + witness_dir.z * gap);
-    const w2_start = new Point3(v2.x + witness_dir.x * gap, v2.y + witness_dir.y * gap, v2.z + witness_dir.z * gap);
+    // Witness direction in screen space: project witness_dir via world matrix
+    const origin_3d = new Point3(0, 0, 0);
+    const p_origin = this.project_vertex(origin_3d, world_matrix);
+    const p_witness = this.project_vertex(witness_dir, world_matrix);
+    let wx = p_witness.x - p_origin.x, wy = p_witness.y - p_origin.y;
+    const wlen = Math.sqrt(wx * wx + wy * wy);
+    if (wlen < 0.001) return;
+    wx /= wlen; wy /= wlen;
 
-    // Witness line end (past dimension line)
-    const w1_end = new Point3(v1.x + witness_dir.x * (witness_dist + witness_ext), v1.y + witness_dir.y * (witness_dist + witness_ext), v1.z + witness_dir.z * (witness_dist + witness_ext));
-    const w2_end = new Point3(v2.x + witness_dir.x * (witness_dist + witness_ext), v2.y + witness_dir.y * (witness_dist + witness_ext), v2.z + witness_dir.z * (witness_dist + witness_ext));
+    // Fixed pixel distances
+    const gap_px = 4;        // gap from edge to witness line start
+    const dist_px = 20;      // edge to dimension line
+    const ext_px = 8;        // extension past dimension line
 
-    // Dimension line endpoints (at witness_dist from edge)
-    const d1 = new Point3(v1.x + witness_dir.x * witness_dist, v1.y + witness_dir.y * witness_dist, v1.z + witness_dir.z * witness_dist);
-    const d2 = new Point3(v2.x + witness_dir.x * witness_dist, v2.y + witness_dir.y * witness_dist, v2.z + witness_dir.z * witness_dist);
-
-    // Project all points
-    const pw1_start = this.project_vertex(w1_start, world_matrix);
-    const pw1_end = this.project_vertex(w1_end, world_matrix);
-    const pw2_start = this.project_vertex(w2_start, world_matrix);
-    const pw2_end = this.project_vertex(w2_end, world_matrix);
-    const pd1 = this.project_vertex(d1, world_matrix);
-    const pd2 = this.project_vertex(d2, world_matrix);
-
-    // Hide if witness lines are too short on screen ("crunched")
-    const witness_dx = pw1_end.x - pw1_start.x, witness_dy = pw1_end.y - pw1_start.y;
-    const witness_screen_len = Math.sqrt(witness_dx * witness_dx + witness_dy * witness_dy);
-    if (witness_screen_len < 8) return;
+    // Build all 6 screen-space points
+    const pw1_start: Projected = { x: p1.x + wx * gap_px, y: p1.y + wy * gap_px, z: p1.z, w: p1.w };
+    const pw2_start: Projected = { x: p2.x + wx * gap_px, y: p2.y + wy * gap_px, z: p2.z, w: p2.w };
+    const pw1_end: Projected = { x: p1.x + wx * (dist_px + ext_px), y: p1.y + wy * (dist_px + ext_px), z: p1.z, w: p1.w };
+    const pw2_end: Projected = { x: p2.x + wx * (dist_px + ext_px), y: p2.y + wy * (dist_px + ext_px), z: p2.z, w: p2.w };
+    const pd1: Projected = { x: p1.x + wx * dist_px, y: p1.y + wy * dist_px, z: p1.z, w: p1.w };
+    const pd2: Projected = { x: p2.x + wx * dist_px, y: p2.y + wy * dist_px, z: p2.z, w: p2.w };
 
     this.draw_dimension_3d(pw1_start, pw1_end, pw2_start, pw2_end, pd1, pd2, value);
   }
@@ -435,15 +402,6 @@ class Render {
     return (p1.x - p0.x) * (p2.y - p0.y) - (p1.y - p0.y) * (p2.x - p0.x);
   }
 
-  private face_center(face_verts: number[], projected: Projected[]): { x: number; y: number } {
-    let x = 0, y = 0;
-    for (const v of face_verts) {
-      x += projected[v].x;
-      y += projected[v].y;
-    }
-    return { x: x / face_verts.length, y: y / face_verts.length };
-  }
-
   private draw_dimension_3d(
     w1_start: Projected, w1_end: Projected,
     w2_start: Projected, w2_end: Projected,
@@ -457,7 +415,7 @@ class Render {
 
     // Text setup
     ctx.font = '12px sans-serif';
-    const text = value.toFixed(2);
+    const text = units.format_for_system(value, current_unit_system());
     const textWidth = ctx.measureText(text).width;
     const textHeight = 12; // approximate line height
 

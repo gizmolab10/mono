@@ -54,6 +54,42 @@ export enum T_Layer {
 
 // the order of the following is unimportant
 
+export enum T_Unit_System {
+	imperial = 'imperial',
+	metric   = 'metric',
+	marine   = 'marine',
+	archaic  = 'archaic',
+}
+
+export enum T_Unit {
+	// imperial
+	inch			= 'inch',
+	foot			= 'foot',
+	yard			= 'yard',
+	mile			= 'mile',
+	// metric
+	angstrom		= 'angstrom',
+	nanometer		= 'nanometer',
+	micrometer		= 'micrometer',
+	millimeter		= 'millimeter',
+	centimeter		= 'centimeter',
+	meter			= 'meter',
+	kilometer		= 'kilometer',
+	// marine
+	fathom			= 'fathom',
+	nautical_mile	= 'nautical_mile',
+	// archaic
+	hand			= 'hand',
+	span			= 'span',
+	cubit			= 'cubit',
+	ell				= 'ell',
+	rod				= 'rod',
+	perch			= 'perch',
+	chain			= 'chain',
+	furlong			= 'furlong',
+	league			= 'league',
+}
+
 export enum T_File_Operation {
 	import = 'import',	// persist
 	export = 'export',	// fetch
@@ -141,11 +177,16 @@ export enum T_Text_Extension {
 export enum T_Hit_Target {
 	rubberband	= 'rubberband',
 	database	= 'database',
+	resizing	= 'resizing',
+	rotation	= 'rotation',
 	details		= 'details',
 	control		= 'control',
+	widget		= 'widget',
+	reveal		= 'reveal',
 	action		= 'action',
 	button		= 'button',
 	cancel		= 'cancel',
+	paging		= 'paging',
 	search		= 'search',
 	drag		= 'drag',
 	glow		= 'glow',

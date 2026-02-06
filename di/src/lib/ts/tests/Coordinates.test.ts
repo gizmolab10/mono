@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Point, Size, Rect, Polar, Point3, Size3, Block } from '../types/Coordinates';
+import { Point, Size, Rect, Polar, Point3 } from '../types/Coordinates';
 import '../common/Extensions';
 
 describe('Point', () => {

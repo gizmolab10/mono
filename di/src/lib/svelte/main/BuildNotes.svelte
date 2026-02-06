@@ -59,7 +59,8 @@
 		style:width="{modalWidth}px"
 		onclick={(e) => e.stopPropagation()}
 		onkeyup={() => {}}
-		role="dialog">
+		role="dialog"
+		tabindex="-1">
 		<Steppers {show_up} {show_down} {hit_closure} />
 		<Close_Button size={24} origin={new Point(8, 8)} {onclose} />
 		<div class='header'>

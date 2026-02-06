@@ -5,14 +5,14 @@ class Camera {
   readonly view: mat4 = mat4.create();
   readonly projection: mat4 = mat4.create();
 
-  private _eye: vec3 = vec3.fromValues(0, 0, 9);
+  private _eye: vec3 = vec3.fromValues(0, 0, 2750);  // ~9' back in mm
   private center: vec3 = vec3.fromValues(0, 0, 0);
   private up: vec3 = vec3.fromValues(0, 1, 0);
 
   private fov = Math.PI / 4;
   private _aspect = 1;
-  private near = 0.1;
-  private far = 100;
+  private near = 10;
+  private far = 30_000;  // ~100' in mm
   private _size: Size = Size.zero;
 
   get eye(): vec3 { return this._eye; }

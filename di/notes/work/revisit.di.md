@@ -14,16 +14,14 @@ Where we are in Design Intuition.
 ---
 ## Milestones (current work)
 
-- [ ] **10 controls UI** — actual buttons in the toolbar
-	- [x] scaling (logarithmic, coarse and fine)
-	- [x] horizontal Stepper layout
-	- [x] slider (linear, with logarithmic option)
-- [ ] **11 details** — attributes
-- [ ] **12 hierarchy** of SO
-- [ ] **13 algebra** — recursive descent compiler
+
+- [ ] **11 units** — inches, feet, meters, etc.
+- [ ] **12 details** — attributes
+- [ ] **13 hierarchy** of SO
+- [ ] **14 algebra** — recursive descent compiler
 	- [ ] compile tree
 	- [ ] traverse and reverse traverse
-- [ ] **14 what? **
+- [ ] **15 what? **
 
 ## What's Working
 

@@ -7,7 +7,7 @@ Current work items and milestones.
 - [Done](./done/)
 - [Milestones](./milestones/)
 - [Next](./next/)
-- [Code.debt](./code.debt.md)
+- [Code.debt](code.debt.md)
 - [Pacing](./pacing.md)
 - [Revisit.di](./revisit.di.md)
 - [Simplicity](./simplicity.md)
