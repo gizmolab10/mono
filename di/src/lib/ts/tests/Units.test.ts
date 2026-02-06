@@ -1,6 +1,6 @@
+import { T_Unit, T_Units } from '../types/Enumerations';
 import { describe, it, expect } from 'vitest';
 import { units } from '../types/Units';
-import { T_Unit, T_Unit_System } from '../types/Enumerations';
 
 describe('Units', () => {
 
@@ -69,7 +69,7 @@ describe('Units', () => {
 		});
 
 		it('system_units returns correct members', () => {
-			const imperial = units.system_units(T_Unit_System.imperial);
+			const imperial = units.system_units(T_Units.imperial);
 			expect(imperial).toContain(T_Unit.inch);
 			expect(imperial).toContain(T_Unit.foot);
 			expect(imperial).toContain(T_Unit.yard);
@@ -78,9 +78,9 @@ describe('Units', () => {
 		});
 
 		it('system_units covers all systems', () => {
-			expect(units.system_units(T_Unit_System.metric)).toHaveLength(7);
-			expect(units.system_units(T_Unit_System.marine)).toHaveLength(2);
-			expect(units.system_units(T_Unit_System.archaic)).toHaveLength(9);
+			expect(units.system_units(T_Units.metric)).toHaveLength(7);
+			expect(units.system_units(T_Units.marine)).toHaveLength(2);
+			expect(units.system_units(T_Units.archaic)).toHaveLength(9);
 		});
 
 		it('is_imperial detects imperial units', () => {
@@ -91,10 +91,10 @@ describe('Units', () => {
 		});
 
 		it('system_for finds correct system', () => {
-			expect(units.system_for(T_Unit.inch)).toBe(T_Unit_System.imperial);
-			expect(units.system_for(T_Unit.meter)).toBe(T_Unit_System.metric);
-			expect(units.system_for(T_Unit.fathom)).toBe(T_Unit_System.marine);
-			expect(units.system_for(T_Unit.cubit)).toBe(T_Unit_System.archaic);
+			expect(units.system_for(T_Unit.inch)).toBe(T_Units.imperial);
+			expect(units.system_for(T_Unit.meter)).toBe(T_Units.metric);
+			expect(units.system_for(T_Unit.fathom)).toBe(T_Units.marine);
+			expect(units.system_for(T_Unit.cubit)).toBe(T_Units.archaic);
 		});
 	});
 

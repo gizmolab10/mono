@@ -5,3 +5,4 @@ export type { Hit_3D_Result } from './Hits_3D';
 export { preferences, T_Preference } from './Preferences';
 export { persistence } from './Persistence';
 export type { Saved_Scene } from './Persistence';
+export { editor } from './Editor';

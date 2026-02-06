@@ -54,7 +54,7 @@ export enum T_Layer {
 
 // the order of the following is unimportant
 
-export enum T_Unit_System {
+export enum T_Units {
 	imperial = 'imperial',
 	metric   = 'metric',
 	marine   = 'marine',

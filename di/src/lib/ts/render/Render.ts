@@ -1,13 +1,13 @@
-import { mat4, vec4 } from 'gl-matrix';
-import type { Projected, O_Scene } from '../types/Interfaces';
-import { Size, Point3 } from '../types/Coordinates';
-import { hits_3d } from '../managers/Hits_3D';
-import { T_Hit_3D } from '../types/Enumerations';
+import type { Projected, O_Scene, Dimension_Rect } from '../types/Interfaces';
+import { units, current_unit_system } from '../types/Units';
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Axis } from '../runtime/Smart_Object';
+import { Size, Point3 } from '../types/Coordinates';
+import { T_Hit_3D } from '../types/Enumerations';
+import { hits_3d } from '../managers/Hits_3D';
+import { mat4, vec4 } from 'gl-matrix';
 import { camera } from './Camera';
 import { scene } from './Scene';
-import { units, current_unit_system } from '../types/Units';
 
 class Render {
   private canvas!: HTMLCanvasElement;
@@ -15,6 +15,9 @@ class Render {
   private size: Size = Size.zero;
 
   private mvp_matrix = mat4.create();
+
+  /** Per-frame dimension rects for click-to-edit. Cleared each render(). */
+  dimension_rects: Dimension_Rect[] = [];
 
   init(canvas: HTMLCanvasElement): void {
     this.canvas = canvas;
@@ -31,6 +34,7 @@ class Render {
 
   render(): void {
     this.ctx.clearRect(0, 0, this.size.width, this.size.height);
+    this.dimension_rects = [];
     for (const obj of scene.get_all()) {
       this.render_object(obj);
     }
@@ -260,7 +264,7 @@ class Render {
     const pd1: Projected = { x: p1.x + wx * dist_px, y: p1.y + wy * dist_px, z: p1.z, w: p1.w };
     const pd2: Projected = { x: p2.x + wx * dist_px, y: p2.y + wy * dist_px, z: p2.z, w: p2.w };
 
-    this.draw_dimension_3d(pw1_start, pw1_end, pw2_start, pw2_end, pd1, pd2, value);
+    this.draw_dimension_3d(pw1_start, pw1_end, pw2_start, pw2_end, pd1, pd2, value, axis, so);
   }
 
   // Algorithm B: Pick the witness direction most perpendicular to the edge on screen.
@@ -406,7 +410,9 @@ class Render {
     w1_start: Projected, w1_end: Projected,
     w2_start: Projected, w2_end: Projected,
     d1: Projected, d2: Projected,
-    value: number
+    value: number,
+    axis: Axis,
+    so: Smart_Object
   ): void {
     // Check all points are in front of camera
     if (w1_start.w < 0 || w1_end.w < 0 || w2_start.w < 0 || w2_end.w < 0 || d1.w < 0 || d2.w < 0) return;
@@ -491,6 +497,13 @@ class Render {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(text, midX, midY);
+
+    // Record rect for click-to-edit
+    this.dimension_rects.push({
+      axis, so,
+      x: midX, y: midY,
+      w: textWidth, h: textHeight,
+    });
   }
 
   private draw_arrow(x: number, y: number, dx: number, dy: number): void {

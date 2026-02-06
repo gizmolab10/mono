@@ -1,7 +1,7 @@
-import { writable, get } from 'svelte/store';
-import { T_Unit, T_Unit_System } from './Enumerations';
-import { tu } from '../common/Testworthy_Utilities';
 import { preferences, T_Preference } from '../managers/Preferences';
+import { tu } from '../common/Testworthy_Utilities';
+import { T_Unit, T_Units } from './Enumerations';
+import { writable, get } from 'svelte/store';
 
 // ═══════════════════════════════════════════════════════════════════
 // CONVERSION TABLE — millimeters per unit
@@ -73,14 +73,14 @@ const symbol: Record<T_Unit, string> = {
 // SYSTEM MEMBERSHIP
 // ═══════════════════════════════════════════════════════════════════
 
-const system_map: Record<T_Unit_System, T_Unit[]> = {
-	[T_Unit_System.imperial]: [T_Unit.inch, T_Unit.foot, T_Unit.yard, T_Unit.mile],
-	[T_Unit_System.metric]:   [T_Unit.angstrom, T_Unit.nanometer, T_Unit.micrometer, T_Unit.millimeter, T_Unit.centimeter, T_Unit.meter, T_Unit.kilometer],
-	[T_Unit_System.marine]:   [T_Unit.fathom, T_Unit.nautical_mile],
-	[T_Unit_System.archaic]:  [T_Unit.hand, T_Unit.span, T_Unit.cubit, T_Unit.ell, T_Unit.rod, T_Unit.perch, T_Unit.chain, T_Unit.furlong, T_Unit.league],
+const system_map: Record<T_Units, T_Unit[]> = {
+	[T_Units.imperial]: [T_Unit.inch, T_Unit.foot, T_Unit.yard, T_Unit.mile],
+	[T_Units.metric]:   [T_Unit.angstrom, T_Unit.nanometer, T_Unit.micrometer, T_Unit.millimeter, T_Unit.centimeter, T_Unit.meter, T_Unit.kilometer],
+	[T_Units.marine]:   [T_Unit.fathom, T_Unit.nautical_mile],
+	[T_Units.archaic]:  [T_Unit.hand, T_Unit.span, T_Unit.cubit, T_Unit.ell, T_Unit.rod, T_Unit.perch, T_Unit.chain, T_Unit.furlong, T_Unit.league],
 };
 
-const imperial_units = new Set(system_map[T_Unit_System.imperial]);
+const imperial_units = new Set(system_map[T_Units.imperial]);
 
 // ═══════════════════════════════════════════════════════════════════
 // FRACTION HELPERS
@@ -190,14 +190,14 @@ export class Units {
 
 	mm_per_unit(unit: T_Unit): number { return mm_per[unit]; }
 	symbol_for(unit: T_Unit): string { return symbol[unit]; }
-	system_units(system: T_Unit_System): T_Unit[] { return system_map[system]; }
+	system_units(system: T_Units): T_Unit[] { return system_map[system]; }
 	is_imperial(unit: T_Unit): boolean { return imperial_units.has(unit); }
 
-	system_for(unit: T_Unit): T_Unit_System {
+	system_for(unit: T_Unit): T_Units {
 		for (const [system, members] of Object.entries(system_map)) {
-			if (members.includes(unit)) return system as T_Unit_System;
+			if (members.includes(unit)) return system as T_Units;
 		}
-		return T_Unit_System.metric;
+		return T_Units.metric;
 	}
 
 	// ── formatting (mm → string) ──
@@ -242,8 +242,8 @@ export class Units {
 
 	// ── system-aware formatting (mm → string) ──
 
-	format_for_system(mm: number, system: T_Unit_System): string {
-		if (system === T_Unit_System.imperial) {
+	format_for_system(mm: number, system: T_Units): string {
+		if (system === T_Units.imperial) {
 			return this.format_compound(mm);
 		}
 		// metric/marine/archaic: pick best unit for the magnitude
@@ -283,6 +283,51 @@ export class Units {
 		if (value === null) return null;
 		return value * mm_per[unit];
 	}
+
+	// ── system-aware parsing (string → mm) ──
+
+	/** Parse input in the context of a unit system.
+	 *  1. Try compound (5' 3 1/4") — always, regardless of system
+	 *  2. Try each unit suffix in all systems (762 mm, 5 cm, 3 ft, etc.)
+	 *  3. Bare number → interpret in the system's default display unit
+	 */
+	parse_for_system(input: string, unit_system: T_Units): number | null {
+		const trimmed = input.trim();
+		if (trimmed === '') return null;
+
+		// 1. Compound imperial (5' 3 1/4")
+		if (trimmed.includes("'") || trimmed.includes('"')) {
+			const compound_result = parse_compound(trimmed);
+			if (compound_result !== null) return compound_result;
+		}
+
+		// 2. Try every unit suffix across all systems
+		for (const [unit_key, sym] of Object.entries(symbol)) {
+			const suffix = sym.trim();
+			if (!suffix) continue;
+			if (trimmed.toLowerCase().endsWith(suffix.toLowerCase())) {
+				const numeric_part = trimmed.slice(0, -suffix.length).trim();
+				const value = parse_fraction(numeric_part);
+				if (value !== null) return value * mm_per[unit_key as T_Unit];
+			}
+		}
+
+		// 3. Bare number → system's default unit
+		const value = parse_fraction(trimmed);
+		if (value === null) return null;
+		const default_unit = this.default_unit_for_system(unit_system);
+		return value * mm_per[default_unit];
+	}
+
+	/** Default display unit for a system (used when parsing bare numbers) */
+	default_unit_for_system(unit_system: T_Units): T_Unit {
+		switch (unit_system) {
+			case T_Units.imperial: return T_Unit.inch;
+			case T_Units.metric:   return T_Unit.millimeter;
+			case T_Units.marine:   return T_Unit.fathom;
+			case T_Units.archaic:  return T_Unit.cubit;
+		}
+	}
 }
 
 export const units = new Units();
@@ -291,14 +336,14 @@ export const units = new Units();
 // REACTIVE UNIT SYSTEM STORE (persisted)
 // ═══════════════════════════════════════════════════════════════════
 
-const saved_system = preferences.read<T_Unit_System>(T_Preference.unitSystem);
-export const w_unit_system = writable<T_Unit_System>(saved_system ?? T_Unit_System.imperial);
+const saved_system = preferences.read<T_Units>(T_Preference.unitSystem);
+export const w_unit_system = writable<T_Units>(saved_system ?? T_Units.imperial);
 
-w_unit_system.subscribe((system: T_Unit_System) => {
+w_unit_system.subscribe((system: T_Units) => {
 	preferences.write(T_Preference.unitSystem, system);
 });
 
 /** Read current unit system synchronously (for non-reactive contexts like Render) */
-export function current_unit_system(): T_Unit_System {
+export function current_unit_system(): T_Units {
 	return get(w_unit_system);
 }

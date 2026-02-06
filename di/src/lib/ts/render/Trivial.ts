@@ -1,10 +1,10 @@
-import { quat, vec3 } from 'gl-matrix';
-import { writable } from 'svelte/store';
 import { scene, camera, render, animation } from '.';
-import { Size } from '../types';
-import { e3 } from '../signals';
 import { hits_3d, persistence } from '../managers';
 import { Smart_Object } from '../runtime';
+import { writable } from 'svelte/store';
+import { quat, vec3 } from 'gl-matrix';
+import { Size } from '../types';
+import { e3 } from '../signals';
 
 // ============================================
 // GEOMETRY (topology only — vertices come from SO)

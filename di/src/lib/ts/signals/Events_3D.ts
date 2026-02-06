@@ -1,6 +1,7 @@
 import { quat, vec3, mat4 } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
 import { hits_3d, type Hit_3D_Result } from '../managers/Hits_3D';
+import { editor } from '../managers/Editor';
 import { Point, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { camera } from '../render/Camera';
@@ -41,9 +42,15 @@ class Events_3D {
     });
 
     window.addEventListener('mouseup', () => {
-      // Click (no drag) on background → deselect
-      if (!this.did_drag && !this.drag_target) {
-        hits_3d.set_selection(null);
+      if (!this.did_drag) {
+        // Click (no drag) — check dimension rects first
+        const dim_hit = editor.test(this.last_canvas_position.x, this.last_canvas_position.y);
+        if (dim_hit) {
+          editor.begin(dim_hit);
+        } else if (!this.drag_target) {
+          // Click on background → deselect
+          hits_3d.set_selection(null);
+        }
       }
       this.is_dragging = false;
       this.did_drag = false;
