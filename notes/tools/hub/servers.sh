@@ -26,6 +26,18 @@ progress_done() {
   echo "✓ All $TOTAL_STEPS sites are up" > "$STATUS_FILE"
 }
 
+progress_done_with_status() {
+  local up_list=$1
+  local down_list=$2
+  if [ -z "$down_list" ]; then
+    printf "\r\033[K✓ All servers restarted\n"
+    echo "✓ UP: $up_list" > "$STATUS_FILE"
+  else
+    printf "\r\033[K✓ Restart complete (some failed)\n"
+    echo "✓ UP: $up_list    DOWN: $down_list" > "$STATUS_FILE"
+  fi
+}
+
 progress_fail() {
   printf "\r\033[K❌ Failed: %s\n" "$1"
   echo "❌ Failed: $1" > "$STATUS_FILE"
@@ -44,6 +56,7 @@ PORT_DI=$(get_port "['di']['port']")
 PORT_WS_DOCS=$(get_port "['ws']['docs']")
 PORT_MONO_DOCS=$(get_port "['mono']['docs']")
 PORT_DI_DOCS=$(get_port "['di']['docs']")
+PORT_GA=$(get_port "['ga']['port']")
 
 # Site definitions: name|port|dir|command
 SITES=(
@@ -53,6 +66,7 @@ SITES=(
   "di|$PORT_DI|di|yarn dev"
   "di-docs|$PORT_DI_DOCS|di|VITE_PORT=$PORT_DI_DOCS yarn docs:dev"
   "mono-docs|$PORT_MONO_DOCS|.|yarn docs:dev"
+  "ga|$PORT_GA|ga|yarn dev"
 )
 
 kill_port() {
@@ -126,7 +140,7 @@ for arg in "$@"; do
     --kill-only) KILL_ONLY=true ;;
     --no-verify) NO_VERIFY=true ;;
     --verify-only) VERIFY_ONLY=true ;;
-    ws|ws-docs|di|di-docs|mono-docs|hub) TARGET=$arg ;;
+    ws|ws-docs|di|di-docs|mono-docs|hub|ga) TARGET=$arg ;;
   esac
 done
 
@@ -156,39 +170,42 @@ if [ -z "$TARGET" ]; then
   
   # Verify if not suppressed
   if [ "$KILL_ONLY" != "true" ] && [ "$NO_VERIFY" != "true" ]; then
-    FAILED=""
-    
-    # Verify ports
+    UP_SITES=""
+    DOWN_SITES=""
+
+    # Verify ports and HTTP responses for each site
     CURRENT_STEP=0
     for entry in "${STARTED_SITES[@]}"; do
       CURRENT_STEP=$((CURRENT_STEP + 1))
       IFS='|' read -r name port <<< "$entry"
-      progress $CURRENT_STEP "Verifying port $CURRENT_STEP/$TOTAL_STEPS: $name"
+      progress $CURRENT_STEP "Verifying $CURRENT_STEP/$TOTAL_STEPS: $name"
+
+      site_ok=true
       if ! verify_port $port 10; then
-        FAILED="$FAILED $name"
+        site_ok=false
+      elif ! verify_url $port 20; then
+        site_ok=false
+      fi
+
+      if [ "$site_ok" = "true" ]; then
+        if [ -z "$UP_SITES" ]; then
+          UP_SITES="$name"
+        else
+          UP_SITES="$UP_SITES, $name"
+        fi
+      else
+        if [ -z "$DOWN_SITES" ]; then
+          DOWN_SITES="$name"
+        else
+          DOWN_SITES="$DOWN_SITES, $name"
+        fi
       fi
     done
-    
-    # Verify HTTP responses (only if ports succeeded)
-    if [ -z "$FAILED" ]; then
-      CURRENT_STEP=0
-      for entry in "${STARTED_SITES[@]}"; do
-        CURRENT_STEP=$((CURRENT_STEP + 1))
-        IFS='|' read -r name port <<< "$entry"
-        progress $CURRENT_STEP "Verifying response $CURRENT_STEP/$TOTAL_STEPS: $name"
-        if ! verify_url $port 20; then
-          FAILED="$FAILED $name"
-        fi
-      done
-    fi
-    
-    if [ -n "$FAILED" ]; then
-      progress_fail "Failed to start:$FAILED"
-      exit 1
-    fi
+
+    progress_done_with_status "$UP_SITES" "$DOWN_SITES"
+  else
+    progress_done
   fi
-  
-  progress_done
 else
   for site in "${SITES[@]}"; do
     IFS='|' read -r name port dir cmd <<< "$site"
@@ -203,19 +220,15 @@ else
       
       # Verify single site if not suppressed
       if [ "$KILL_ONLY" != "true" ] && [ "$NO_VERIFY" != "true" ]; then
-        progress 1 "Verifying port: $name"
-        if ! verify_port $port 10; then
-          progress_fail "Failed to start: $name"
-          exit 1
+        progress 1 "Verifying: $name"
+        if ! verify_port $port 10 || ! verify_url $port 20; then
+          progress_done_with_status "" "$name"
+        else
+          progress_done_with_status "$name" ""
         fi
-        progress 1 "Verifying response: $name"
-        if ! verify_url $port 20; then
-          progress_fail "Failed to start: $name"
-          exit 1
-        fi
+      else
+        progress_done
       fi
-      
-      progress_done
       break
     fi
   done

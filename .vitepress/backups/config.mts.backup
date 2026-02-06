@@ -278,17 +278,6 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
-                  text: 'Civilization2 >',
-                  link: '/me/notes/civilization2/',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Index.md',
-                      link: '/me/notes/civilization2/index.md'
-                    }
-                  ]
-                },
-                {
                   text: 'Work >',
                   collapsed: true,
                   items: [

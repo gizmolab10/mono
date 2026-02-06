@@ -11,8 +11,7 @@
 ---
 ### Ideas
 
-- [x] rename resume -> revisit
-- [x] new port.md guide (ws -> what, begin fresh -> how)
+- [ ] add game to hub app
 - [ ] hierarchy of docs
 - [ ] ask it the right qs -> lean i nto learning
 	- [ ] are you leading me d own the garden path?

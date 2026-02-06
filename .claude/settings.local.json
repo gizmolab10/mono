@@ -15,7 +15,9 @@
       "Bash(npx tsc:*)",
       "Bash(npm run build:*)",
       "Bash(npm test:*)",
-      "WebSearch"
+      "WebSearch",
+      "Write",
+      "Edit"
     ]
   }
 }

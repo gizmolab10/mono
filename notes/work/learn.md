@@ -27,6 +27,12 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 
 ## Raw Log
 
+### #8 2026-02-05: Used worktree paths again
+
+**What:** Read files from `/Users/sand/.claude-worktrees/mono/loving-khayyam/` instead of `~/GitHub/mono/`. Multiple reads before Jonathan caught it.
+**Why:** Defaulted to working directory paths. Didn't check pitfalls.md #7 or always.md #2 before acting.
+**Rule:** Already covered — pitfalls.md #7: "Always use ~/GitHub/mono/, never .claude-worktrees paths."
+
 ### #7 2026-02-04: Used abbreviations in code names
 
 **What:** Named a property `edge_adj` and local variables `adj` instead of `edge_adjacency` and `adjacency`. Had to rename across 3 files.

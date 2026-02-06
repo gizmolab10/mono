@@ -1,6 +1,10 @@
 {
-  "dispatcher": { "port": 5171 },
-  "hub": { "port": 5170 },
+  "dispatcher": {
+    "port": 5171
+  },
+  "hub": {
+    "port": 5170
+  },
   "ws": {
     "port": 5172,
     "docs": 5174,
@@ -32,7 +36,10 @@
     "docsDeploy": "https://app.netlify.com/projects/monorepo-documentation/deploys"
   },
   "me": {
-    "docsPublic": "https://jonathansand.me",
+    "public": "https://jonathansand.me",
     "repo": "https://github.com/gizmolab10/mono"
+  },
+  "ga": {
+    "port": 5177
   }
 }

@@ -16,7 +16,7 @@
       --bg-unavailable: #557197;
       --bg-button-hover: #1a4a7a;
       --bg-working: #28a745;
-      --bg-badge: grey;
+      --bg-badge: #a0a0a0;
       --bg-container: rgb(129, 156, 229);
 
       /* Button text */
@@ -82,7 +82,7 @@
       margin-bottom: var(--gap-vertical);
     }
 
-    .segment-row {
+    .project-row {
       display: flex;
       gap: var(--gap-horizontal);
       margin-bottom: var(--gap-vertical);
@@ -168,7 +168,8 @@
     }
 
     .mode-group,
-    .project-group {
+    .project-group,
+    .tools-group {
       display: flex;
       gap: var(--button-gap);
       background: var(--bg-container);
@@ -176,7 +177,7 @@
       border-radius: 12px;
     }
 
-    .segment {
+    .project {
       background: var(--bg-available);
       color: var(--text-choice);
       border: none;
@@ -189,7 +190,7 @@
       text-transform: lowercase;
     }
 
-    .segment .badge {
+    .project .badge {
       position: absolute;
       top: 2px;
       right: 2px;
@@ -206,24 +207,24 @@
       text-transform: lowercase;
     }
 
-    .segment:hover,
-    .segment.sticky:not(.disabled) {
+    .project:hover,
+    .project.sticky:not(.disabled) {
       background: var(--bg-chosen);
       color: var(--text-chosen);
     }
 
-    .segment.active {
+    .project.active {
       background: var(--bg-chosen);
       color: var(--text-chosen);
     }
 
-    .segment.disabled {
+    .project.disabled {
       background: var(--bg-unavailable);
       color: var(--text-unavailable);
       cursor: not-allowed;
     }
 
-    .segment.hover-hidden:not(.disabled) {
+    .project.hover-hidden:not(.disabled) {
       background: var(--bg-available);
       color: var(--text-choice);
     }
@@ -446,7 +447,7 @@
 <body>
   <div class="container">
     <div class="title-row">
-      <div class="title-box swapped">
+      <div class="title-box">
         <button class="action side-a" id="btn-dns">DNS<span class="badge">D</span></button>
         <div class="title-wrapper">
           <h1 class="middle"><span class="title-text"><span class="status-dot" id="status-dot"></span>Mono</span>
@@ -471,16 +472,17 @@
       </div>
     </div>
 
-    <div class="segment-row swapped">
+    <div class="project-row">
       <div class="project-group side-a">
-        <button class="segment" data-project="mo">mo<span class="badge">M</span></button>
-        <button class="segment" data-project="di">di<span class="badge">I</span></button>
-        <button class="segment active" data-project="ws">ws<span class="badge">W</span></button>
-        <button class="segment" data-project="me">me<span class="badge">J</span></button>
+        <button class="project" data-project="me">me<span class="badge">J</span></button>
+        <button class="project" data-project="ga">ga<span class="badge">G</span></button>
+        <button class="project" data-project="mo">mo<span class="badge">M</span></button>
+        <button class="project" data-project="di">di<span class="badge">I</span></button>
+        <button class="project active" data-project="ws">ws<span class="badge">W</span></button>
       </div>
       <div class="mode-group side-b">
-        <button class="segment active" data-mode="app">App<span class="badge">A</span></button>
-        <button class="segment" data-mode="docs">Docs<span class="badge">X</span></button>
+        <button class="project active" data-mode="app">App<span class="badge">A</span></button>
+        <button class="project" data-mode="docs">Docs<span class="badge">X</span></button>
       </div>
     </div>
 
@@ -495,15 +497,20 @@
     <div class="actions-row">
       <div class="more-group side-a">
         <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
-        <button class="action" id="btn-errors">Errors<span class="badge">E</span></button>
         <button class="action" id="btn-repo">Repo<span class="badge">G</span></button>
         <button class="action" id="btn-deploy">Deploy<span class="badge">Y</span></button>
-        <button class="action" id="btn-revisit">revisit<span class="badge">R</span></button>
       </div>
       <div class="navigate-group side-b">
         <button class="action" id="btn-local">Local<span class="badge">L</span></button>
         <button class="action" id="btn-netlify">Netlify<span class="badge">N</span></button>
         <button class="action" id="btn-public">Public<span class="badge">P</span></button>
+      </div>
+    </div>
+
+    <div class="actions-row">
+      <div class="tools-group">
+        <button class="action" id="btn-errors">Errors<span class="badge">E</span></button>
+        <button class="action" id="btn-revisit">revisit<span class="badge">R</span></button>
       </div>
     </div>
 
@@ -533,8 +540,8 @@
     const DNS_URL = 'https://www.dynadot.com/account/domain/name/list.html';
 
     // === DOM Elements ===
-    const modeButtons = document.querySelectorAll('.segment[data-mode]');
-    const projectButtons = document.querySelectorAll('.segment[data-project]');
+    const modeButtons = document.querySelectorAll('.project[data-mode]');
+    const projectButtons = document.querySelectorAll('.project[data-project]');
     const btnLocal = document.getElementById('btn-local');
     const btnNetlify = document.getElementById('btn-netlify');
     const btnStart = document.getElementById('btn-start');
@@ -580,13 +587,15 @@
           ws: buildProjectConfig('ws', 'app'),
           di: buildProjectConfig('di', 'app'),
           mo: buildProjectConfig('mo', 'app'),
-          me: buildProjectConfig('me', 'app')
+          me: buildProjectConfig('me', 'app'),
+          ga: buildProjectConfig('ga', 'app')
         },
         docs: {
           ws: buildProjectConfig('ws', 'docs'),
           di: buildProjectConfig('di', 'docs'),
           mo: buildProjectConfig('mo', 'docs'),
-          me: buildProjectConfig('me', 'docs')
+          me: buildProjectConfig('me', 'docs'),
+          ga: buildProjectConfig('ga', 'docs')
         }
       };
     }
@@ -682,7 +691,7 @@
       });
 
       if (config[mode][project] === null) {
-        for (const p of ['ws', 'di', 'mo', 'me']) {
+        for (const p of ['me', 'ga', 'mo', 'di', 'ws']) {
           if (config[mode][p] !== null) {
             project = p;
             break;
@@ -856,7 +865,8 @@
         ws: 'ws/notes/work/revisit.ws.md',
         di: 'di/notes/work/revisit.di.md',
         mo: 'notes/work/revisit.mo.md',
-        me: 'me/notes/work/revisit.me.md'
+        me: 'me/notes/work/revisit.me.md',
+        ga: 'ga/notes/work/revisit.ga.md'
       };
       const path = revisitPaths[project] || 'notes/work/revisit.mo.md';
       fetch(`http://localhost:${ports.dispatcher.port}/obsidian/${path}`)
@@ -865,6 +875,7 @@
     }
 
     function doErrors() {
+      if (btnErrors.classList.contains('disabled')) return;
       errorsPopup.innerHTML = '<div class="errors-title">Doc Build Errors</div><div class="errors-loading">analyzing...</div>';
       errorsOverlay.classList.add('visible');
 
@@ -898,6 +909,18 @@
 
     function closeErrors() {
       errorsOverlay.classList.remove('visible');
+    }
+
+    function checkErrorsStatus() {
+      fetch(`http://localhost:${ports.dispatcher.port}/doc-errors`)
+        .then(res => res.json())
+        .then(data => {
+          btnErrors.classList.toggle('disabled', !data.has_errors);
+        })
+        .catch(() => {
+          // On error, keep button enabled
+          btnErrors.classList.remove('disabled');
+        });
     }
 
     // Close popup on overlay click (not popup itself)
@@ -1292,7 +1315,8 @@
           ws: 'ws/notes/work/revisit.ws.md',
           di: 'di/notes/work/revisit.di.md',
           mo: 'notes/work/revisit.mo.md',
-          me: 'me/notes/work/revisit.me.md'
+          me: 'me/notes/work/revisit.me.md',
+          ga: 'ga/notes/work/revisit.ga.md'
         };
         const p = getDisplayProject();
         const path = revisitPaths[p] || 'notes/work/revisit.mo.md';
@@ -1416,6 +1440,7 @@
         case 'x': previewMode = 'docs'; highlightModeButton('docs'); highlightProjectButton(getDisplayProject()); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'w': previewProject = 'ws'; highlightProjectButton('ws'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'i': previewProject = 'di'; highlightProjectButton('di'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
+        case 'g': { const m = getDisplayMode(); if (config[m]?.['ga'] !== null) { previewProject = 'ga'; highlightProjectButton('ga'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } } break;
         case 'm': { const m = getDisplayMode(); if (config[m]?.['mo'] !== null) { previewProject = 'mo'; highlightProjectButton('mo'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'j': { const m = getDisplayMode(); if (config[m]?.['me'] !== null) { previewProject = 'me'; highlightProjectButton('me'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
@@ -1468,6 +1493,9 @@
         matchRowWidths();
         prePublishFeedbackRow();
         startDeployPolling();
+        checkErrorsStatus();
+        // Re-check errors every 30 seconds
+        setInterval(checkErrorsStatus, 30000);
       })
       .catch(err => {
         console.error('Failed to load ports:', err);
