@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "6198bb272ca1e5bb",
+        "id": "bbad23358a3243ac",
         "type": "tabs",
         "children": [
           {
-            "id": "cd0af9b87c81ada6",
+            "id": "5c8a0db45402d8f0",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/8.dimensionals.md",
+                "file": "di/notes/work/revisit.di.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "8.dimensionals"
+              "title": "revisit.di"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/8.dimensionals.md",
+                "file": "di/notes/work/revisit.di.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 8.dimensionals"
+              "title": "Outline of revisit.di"
             }
           }
         ],
@@ -183,13 +183,28 @@
       "bases:Create new base": false
     }
   },
-  "active": "cd0af9b87c81ada6",
+  "active": "5c8a0db45402d8f0",
   "lastOpenFiles": [
+    "notes/work/revisit.mo.md",
+    "di/notes/work/milestones/9.persistence.md",
+    "notes/work/resume.mo.md",
+    "di/notes/work/revisit.di.md",
+    "ws/notes/work/revisit.ws.md",
+    "me/notes/work/revisit.me.md",
+    "notes/guides/design/port.md",
+    "notes/guides/design",
+    "ws/notes/guides/architecture/ux/titles.md",
+    "ws/notes/guides/architecture/ux/controls.md",
+    "ws/notes/guides/architecture/ux/preferences.md",
+    "ws/notes/guides/architecture/internals/preferences.md",
+    "ws/notes/guides/architecture/internals/persistable.md",
+    "di/notes/work/resume.di.md",
+    "docs.designintuition.app.md",
+    "di/notes/work/milestones/8.dimensionals.md",
+    "di/dist/assets/index-GMgdKLYZ.js",
+    "di/dist/assets/index-B9vwUVhf.css",
     "logs/update-docs.error.log",
     "di/notes/work/milestones/index.md",
-    "di/notes/work/milestones/8.dimensionals.md",
-    "di/notes/work/resume.di.md",
-    "notes/work/resume.mo.md",
     "di/notes/work/milestones/8.dimensions.md",
     "di/notes/work/milestones/8.dimensions.redux.md",
     "di/notes/designs/Hits_3D.md",
@@ -203,24 +218,9 @@
     "di/src/lib/svelte/mouse",
     "di/notes/work/milestones/6.build.notes.md",
     "di/notes/work/next/muice.md",
-    "ws/notes/work/index.md",
-    "ws/notes/work/deliverables.md",
-    "di/notes/work/milestones/7.edit.drags.md",
     "ws/vite.config.js.timestamp-1770247454672-a9ce9d110a728.mjs",
-    "ws/notes/work/done/deliverables/february.4.2026.md",
-    "ws/notes/work/done/deliverables/deliverables.md",
-    "notes/guides/pre-flight/pitfalls.md",
-    "notes/archives/always.old.md",
     "notes/archives",
     "notes/guides/pre-flight/archives",
-    "notes/guides/pre-flight/tools.md",
-    "notes/guides/pre-flight/always.md",
-    "notes/guides/pre-flight/always.old.md",
-    "notes/guides/pre-flight/always.longer.md",
-    "di/dist/assets/index-DWYTjxnf.js",
-    "di/dist/assets/index-nHezZTKn.css",
-    "di/dist/assets/index-Dndnf-Rd.js",
-    "di/dist/assets",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

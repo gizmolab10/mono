@@ -447,7 +447,7 @@
         <button class="action" id="btn-bubble">Bubble<span class="badge">B</span></button>
         <button class="action" id="btn-repo">Repo<span class="badge">G</span></button>
         <button class="action" id="btn-deploy">Deploy<span class="badge">Y</span></button>
-        <button class="action" id="btn-resume">resume<span class="badge">R</span></button>
+        <button class="action" id="btn-revisit">revisit<span class="badge">R</span></button>
       </div>
       <div class="navigate-group side-b">
         <button class="action" id="btn-local">Local<span class="badge">L</span></button>
@@ -486,7 +486,7 @@
     const btnPublic = document.getElementById('btn-public');
     const btnRepo = document.getElementById('btn-repo');
     const btnDeploy = document.getElementById('btn-deploy');
-    const btnResume = document.getElementById('btn-resume');
+    const btnRevisit = document.getElementById('btn-revisit');
     const btnDns = document.getElementById('btn-dns');
     const btnBubble = document.getElementById('btn-bubble');
     const btnDocs = document.getElementById('btn-docs');
@@ -792,15 +792,15 @@
       window.open(cfg.bubble, '_blank');
     }
 
-    function doResume() {
-      // Map project to resume file path
-      const resumePaths = {
-        ws: 'ws/notes/work/resume.ws.md',
-        di: 'di/notes/work/resume.di.md',
-        mo: 'notes/work/resume.mo.md',
-        me: 'me/notes/work/resume.me.md'
+    function doRevisit() {
+      // Map project to revisit file path
+      const revisitPaths = {
+        ws: 'ws/notes/work/revisit.ws.md',
+        di: 'di/notes/work/revisit.di.md',
+        mo: 'notes/work/revisit.mo.md',
+        me: 'me/notes/work/revisit.me.md'
       };
-      const path = resumePaths[project] || 'notes/work/resume.mo.md';
+      const path = revisitPaths[project] || 'notes/work/revisit.mo.md';
       fetch(`http://localhost:${ports.dispatcher.port}/obsidian/${path}`)
         .then(res => res.json())
         .catch(() => { });
@@ -1188,15 +1188,15 @@
         return cfg?.bubble || null;
       },
       'btn-dns': () => DNS_URL,
-      'btn-resume': () => {
-        const resumePaths = {
-          ws: 'ws/notes/work/resume.ws.md',
-          di: 'di/notes/work/resume.di.md',
-          mo: 'notes/work/resume.mo.md',
-          me: 'me/notes/work/resume.me.md'
+      'btn-revisit': () => {
+        const revisitPaths = {
+          ws: 'ws/notes/work/revisit.ws.md',
+          di: 'di/notes/work/revisit.di.md',
+          mo: 'notes/work/revisit.mo.md',
+          me: 'me/notes/work/revisit.me.md'
         };
         const p = getDisplayProject();
-        const path = resumePaths[p] || 'notes/work/resume.mo.md';
+        const path = revisitPaths[p] || 'notes/work/revisit.mo.md';
         return `obsidian://open?vault=mono&file=${path}`;
       }
     };
@@ -1290,7 +1290,7 @@
     btnDeploy.addEventListener('click', doDeploy);
     btnDns.addEventListener('click', doDns);
     btnBubble.addEventListener('click', doBubble);
-    btnResume.addEventListener('click', doResume);
+    btnRevisit.addEventListener('click', doRevisit);
     btnDocs.addEventListener('click', doDocs);
     btnRelay.addEventListener('click', doRelay);
     btnTests.addEventListener('click', doTests);
@@ -1324,7 +1324,7 @@
         case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); prePublishFeedbackRow(); break;
         case 'd': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
         case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); prePublishFeedbackRow(); break;
-        case 'r': hoveredActionId = 'btn-resume'; hoveredAction = actionButtons['btn-resume'](); highlightActionButton('btn-resume'); prePublishFeedbackRow(); break;
+        case 'r': hoveredActionId = 'btn-revisit'; hoveredAction = actionButtons['btn-revisit'](); highlightActionButton('btn-revisit'); prePublishFeedbackRow(); break;
         case '`': doRelay(); break;
         case ';': doTests(); break;
       }

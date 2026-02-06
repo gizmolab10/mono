@@ -1,0 +1,19 @@
+# Revisit
+
+---
+
+- [web seriously](/ws/notes/work/revisit.ws.md) <!-- @ws/work/revisit.ws.md -->
+- [design intuition](/di/notes/work/revisit.di.md) <!-- @di/work/revisit.di.md -->
+- [jonathan](/me/notes/work/revisit.me.md) <!-- @me/work/revisit.me.md -->
+- [[journal]]
+- [[hub-app]]
+
+---
+### Ideas
+
+- [x] rename resume -> revisit
+- [x] new port.md guide (ws -> what, begin fresh -> how)
+- [ ] hierarchy of docs
+- [ ] ask it the right qs -> lean i nto learning
+	- [ ] are you leading me d own the garden path?
+

@@ -160,8 +160,8 @@ export default defineConfig({
                       link: '/di/notes/work/pacing'
                     },
                     {
-                      text: 'Resume.di',
-                      link: '/di/notes/work/resume.di'
+                      text: 'Revisit.di',
+                      link: '/di/notes/work/revisit.di'
                     },
                     {
                       text: 'Simplicity',
@@ -282,8 +282,8 @@ export default defineConfig({
                       link: '/me/notes/work/jonathan'
                     },
                     {
-                      text: 'Resume.me',
-                      link: '/me/notes/work/resume.me'
+                      text: 'Revisit.me',
+                      link: '/me/notes/work/revisit.me'
                     }
                   ]
                 }
@@ -462,8 +462,8 @@ export default defineConfig({
                   link: '/notes/work/learn'
                 },
                 {
-                  text: 'Resume.mo',
-                  link: '/notes/work/resume.mo'
+                  text: 'Revisit.mo',
+                  link: '/notes/work/revisit.mo'
                 },
                 {
                   text: 'Articles >',
@@ -945,8 +945,8 @@ export default defineConfig({
                       link: '/ws/notes/work/deliverables'
                     },
                     {
-                      text: 'Resume.ws',
-                      link: '/ws/notes/work/resume.ws'
+                      text: 'Revisit.ws',
+                      link: '/ws/notes/work/revisit.ws'
                     },
                     {
                       text: 'User.manual',

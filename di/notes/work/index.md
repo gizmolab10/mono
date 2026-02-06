@@ -8,6 +8,6 @@ Current work items and milestones.
 - [Milestones](./milestones/)
 - [Next](./next/)
 - [Pacing](./pacing.md)
-- [Resume.di](./resume.di.md)
+- [Revisit.di](./revisit.di.md)
 - [Simplicity](./simplicity.md)
 

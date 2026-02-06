@@ -8,5 +8,5 @@
 - [Faster](./faster.md)
 - [Journal](./journal.md)
 - [Learn](./learn.md)
-- [Resume.mo](./resume.mo.md)
+- [Revisit.mo](./revisit.mo.md)
 

@@ -1,4 +1,4 @@
-# Resume
+# Revisit
 
 - [ ] click on reveal dot when it shows big inner dot -> change focus to show children
 
