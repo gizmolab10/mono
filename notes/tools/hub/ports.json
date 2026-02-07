@@ -1,13 +1,13 @@
 {
-  "dispatcher": {
-    "port": 5171
-  },
   "hub": {
     "port": 5170
   },
+  "dispatcher": {
+    "port": 5171
+  },
   "ws": {
     "port": 5172,
-    "docs": 5174,
+    "docs": 5173,
     "public": "https://webseriously.org",
     "docsPublic": "https://docs.webseriously.org",
     "netlify": "https://webseriously.netlify.app",
@@ -18,7 +18,7 @@
     "bubble": "https://bubble.io/home/plugins"
   },
   "di": {
-    "port": 5173,
+    "port": 5174,
     "docs": 5175,
     "public": "https://designintuition.app",
     "docsPublic": "https://docs.designintuition.app",
@@ -29,7 +29,7 @@
     "docsDeploy": "https://app.netlify.com/projects/designintuition-documentation/deploys"
   },
   "mono": {
-    "docs": 5176,
+    "docs": 5180,
     "docsPublic": "https://docs.gizmolab.com",
     "docsNetlify": "https://monorepo-documentation.netlify.app",
     "repo": "https://github.com/gizmolab10/mono",
@@ -37,9 +37,10 @@
   },
   "me": {
     "public": "https://jonathansand.me",
-    "repo": "https://github.com/gizmolab10/mono"
+    "repo": "https://github.com/gizmolab10/jonathansand-me"
   },
   "ga": {
-    "port": 5177
+    "docs": 5182,
+    "port": 5183
   }
 }

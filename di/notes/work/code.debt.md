@@ -1,4 +1,6 @@
 # Code Debt
 
-- [ ] [8 dimensionals](8.dimensionals.md) 
-- [ ] [9 persistence](9.persistence.md) 
+- [ ] [[6.build.notes]]
+- [ ] [[8.dimensionals]]
+- [ ] [[9.persistence]]
+- [ ] [[11.units]]

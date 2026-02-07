@@ -5,6 +5,6 @@ import ports from '../notes/tools/hub/ports.json';
 export default defineConfig({
   plugins: [svelte()],
   server: {
-    port: ports.ci.port
+    port: ports.ga.port
   }
 });

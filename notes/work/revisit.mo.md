@@ -11,7 +11,9 @@
 ---
 ### Ideas
 
-- [ ] add game to hub app
+- [x] add game to hub app
+	- [ ] localhost fails
+	- [ ] manually test to make sure it works
 - [ ] hierarchy of docs
 - [ ] ask it the right qs -> lean i nto learning
 	- [ ] are you leading me d own the garden path?

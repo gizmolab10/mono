@@ -212,6 +212,10 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/10.controls'
                         },
                         {
+                          text: '11.units',
+                          link: '/di/notes/work/milestones/11.units'
+                        },
+                        {
                           text: '2.panel',
                           link: '/di/notes/work/milestones/2.panel'
                         },

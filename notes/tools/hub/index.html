@@ -207,8 +207,8 @@
       text-transform: lowercase;
     }
 
-    .project:hover,
-    .project.sticky:not(.disabled) {
+    .project:hover:not(.no-config),
+    .project.sticky:not(.disabled):not(.no-config) {
       background: var(--bg-chosen);
       color: var(--text-chosen);
     }
@@ -219,6 +219,12 @@
     }
 
     .project.disabled {
+      background: var(--bg-unavailable);
+      color: var(--text-unavailable);
+      cursor: not-allowed;
+    }
+
+    .project.no-config:hover {
       background: var(--bg-unavailable);
       color: var(--text-unavailable);
       cursor: not-allowed;
@@ -568,10 +574,7 @@
         const src = p === 'mo' ? ports.mono : ports[p];
         if (!src) return null;
         const isApp = mode === 'app';
-        // No app mode for mo, no docs mode for me
-        if (isApp && p === 'mo') return null;
-        if (!isApp && p === 'me') return null;
-        return {
+        const cfg = {
           port: isApp ? src.port : src.docs,
           site: isApp ? p : `${p}-docs`,
           public: isApp ? src.public : src.docsPublic,
@@ -580,6 +583,9 @@
           deploy: isApp ? src.deploy : src.docsDeploy,
           bubble: isApp ? src.bubble : null
         };
+        // null if no mode-specific fields (repo alone doesn't make a mode valid)
+        const hasModeContent = cfg.port || cfg.public || cfg.netlify || cfg.deploy || cfg.bubble;
+        return hasModeContent ? cfg : null;
       };
 
       config = {
@@ -650,9 +656,9 @@
       const m = getDisplayMode();
       projectButtons.forEach(btn => {
         const proj = btn.dataset.project;
-        const isDisabled = config[m]?.[proj] === null;
-        btn.classList.toggle('disabled', isDisabled);
-        const isTarget = proj === p && !isDisabled;
+        const noConfig = config[m]?.[proj] === null;
+        btn.classList.toggle('no-config', noConfig && !!hoveredActionId);
+        const isTarget = proj === p && !noConfig;
         btn.classList.toggle('sticky', isTarget);
         if (!isTarget) btn.classList.remove('active');
       });
@@ -665,12 +671,22 @@
       const hasConfig = cfg !== null;
 
       btnStart.classList.toggle('disabled', !hasConfig);
-      btnLocal.classList.toggle('disabled', !hasConfig);
+      btnLocal.classList.toggle('disabled', !hasConfig || !cfg?.port);
       btnNetlify.classList.toggle('disabled', !hasConfig || !cfg?.netlify);
       btnPublic.classList.toggle('disabled', !hasConfig || !cfg?.public);
       btnRepo.classList.toggle('disabled', !hasConfig || !cfg?.repo);
       btnDeploy.classList.toggle('disabled', !hasConfig || !cfg?.deploy);
       btnBubble.classList.toggle('disabled', !hasConfig || !cfg?.bubble);
+
+      // Show no-config on project/mode buttons only when an action is selected
+      projectButtons.forEach(btn => {
+        const noConfig = config[m]?.[btn.dataset.project] === null;
+        btn.classList.toggle('no-config', noConfig && !!hoveredActionId);
+      });
+      modeButtons.forEach(btn => {
+        const noConfig = config[btn.dataset.mode]?.[p] === null;
+        btn.classList.toggle('no-config', noConfig && !!hoveredActionId);
+      });
     }
 
     // === Core Functions ===
@@ -681,13 +697,14 @@
         const m = btn.dataset.mode;
         const valid = config[m][project] !== null;
         btn.classList.toggle('active', m === mode);
-        btn.classList.toggle('disabled', !valid);
+        btn.classList.toggle('no-config', !valid && !!hoveredActionId);
       });
 
       projectButtons.forEach(btn => {
         const p = btn.dataset.project;
-        btn.classList.toggle('active', p === project);
-        // All project buttons always enabled
+        const noConfig = config[mode]?.[p] === null;
+        btn.classList.toggle('active', p === project && !noConfig);
+        btn.classList.toggle('no-config', noConfig && !!hoveredActionId);
       });
 
       if (config[mode][project] === null) {
@@ -704,12 +721,12 @@
       const cfg = config[mode][project];
       const hasConfig = cfg !== null;
       btnStart.classList.toggle('disabled', !hasConfig);
-      btnLocal.classList.toggle('disabled', !hasConfig);
-      btnNetlify.classList.toggle('disabled', !hasConfig || !cfg.netlify);
-      btnPublic.classList.toggle('disabled', !hasConfig || !cfg.public);
-      btnRepo.classList.toggle('disabled', !hasConfig || !cfg.repo);
-      btnDeploy.classList.toggle('disabled', !hasConfig || !cfg.deploy);
-      btnBubble.classList.toggle('disabled', !hasConfig || !cfg.bubble);
+      btnLocal.classList.toggle('disabled', !hasConfig || !cfg?.port);
+      btnNetlify.classList.toggle('disabled', !hasConfig || !cfg?.netlify);
+      btnPublic.classList.toggle('disabled', !hasConfig || !cfg?.public);
+      btnRepo.classList.toggle('disabled', !hasConfig || !cfg?.repo);
+      btnDeploy.classList.toggle('disabled', !hasConfig || !cfg?.deploy);
+      btnBubble.classList.toggle('disabled', !hasConfig || !cfg?.bubble);
 
       commandDiv.classList.remove('visible');
     }
@@ -821,7 +838,7 @@
 
     function doLocal() {
       const cfg = config[mode]?.[project];
-      if (!cfg) return;
+      if (!cfg || !cfg.port) return;
       window.open(`http://localhost:${cfg.port}`, '_blank');
     }
 
@@ -1287,7 +1304,7 @@
     const actionButtons = {
       'btn-local': () => {
         const cfg = config[getDisplayMode()]?.[getDisplayProject()];
-        return cfg ? `http://localhost:${cfg.port}` : null;
+        return cfg?.port ? `http://localhost:${cfg.port}` : null;
       },
       'btn-netlify': () => {
         const cfg = config[getDisplayMode()]?.[getDisplayProject()];
@@ -1377,13 +1394,12 @@
       btn.addEventListener('click', () => setProject(btn.dataset.project));
       btn.addEventListener('mouseenter', () => {
         clearConsoleOnOtherButton();
-        if (btn.classList.contains('disabled')) return;
         const p = btn.dataset.project;
         // Temporarily hide other buttons in group
         projectButtons.forEach(b => {
           if (b !== btn) b.classList.add('hover-hidden');
         });
-        if (p !== project && config[mode]?.[p] !== null) {
+        if (p !== project) {
           previewProject = p;
           if (hoveredActionId) {
             hoveredAction = actionButtons[hoveredActionId]();
@@ -1393,7 +1409,6 @@
         }
       });
       btn.addEventListener('mouseleave', () => {
-        if (btn.classList.contains('disabled')) return;
         // Restore other buttons in group
         projectButtons.forEach(b => b.classList.remove('hover-hidden'));
         previewProject = null;
