@@ -1,0 +1,10 @@
+{
+    "plugins": [],
+    "scripts": [],
+    "skip": [
+        "node_modules",
+        "dist",
+        ".svelte-kit"
+    ],
+    "playUrl": "http://localhost:5183"
+}

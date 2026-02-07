@@ -1,5 +1,7 @@
 # Shared Context
 
+ALL FILE PATHS: ~/GitHub/mono/ — NEVER use the worktree working directory
+
 > Read files before editing, search before claiming, propose before changing. Gates force reading the right guide before acting. Work tracked in `notes/work/`, style follows `voice.md`.
 
 **Every response:** read `notes/guides/pre-flight/always.md`, then scan `keywords.md`. If any keyword matches, read the listed guide(s).
@@ -19,6 +21,8 @@ Projects: ws (webseriously) = graph visualization, di (design intuition) = CAD r
 Collaborator (or "co") = Claude.
 
 ## Defaults
+
+NEVER use .claude-worktrees paths, even though that's the working directory
 
 EXECUTE: Hybrid — reads/searches immediately, propose file changes before executing
 

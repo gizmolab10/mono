@@ -164,16 +164,8 @@ export default defineConfig({
                       link: '/di/notes/work/code.debt'
                     },
                     {
-                      text: 'Pacing',
-                      link: '/di/notes/work/pacing'
-                    },
-                    {
                       text: 'Revisit.di',
                       link: '/di/notes/work/revisit.di'
-                    },
-                    {
-                      text: 'Simplicity',
-                      link: '/di/notes/work/simplicity'
                     },
                     {
                       text: 'Done >',
@@ -257,6 +249,14 @@ export default defineConfig({
                         {
                           text: 'Muice',
                           link: '/di/notes/work/next/muice'
+                        },
+                        {
+                          text: 'Pacing',
+                          link: '/di/notes/work/next/pacing'
+                        },
+                        {
+                          text: 'Simplicity',
+                          link: '/di/notes/work/next/simplicity'
                         }
                       ]
                     }
@@ -283,6 +283,10 @@ export default defineConfig({
                       link: '/ga/notes/design/file.layout'
                     },
                     {
+                      text: 'Game.engines',
+                      link: '/ga/notes/design/game.engines'
+                    },
+                    {
                       text: 'Keep.in.mind',
                       link: '/ga/notes/design/keep.in.mind'
                     },
@@ -304,6 +308,18 @@ export default defineConfig({
                   text: 'Work >',
                   collapsed: true,
                   items: [
+                    {
+                      text: 'Map',
+                      link: '/ga/notes/work/map'
+                    },
+                    {
+                      text: 'Phaser.editor',
+                      link: '/ga/notes/work/phaser.editor'
+                    },
+                    {
+                      text: 'Phaser.start',
+                      link: '/ga/notes/work/phaser.start'
+                    },
                     {
                       text: 'Revisit.ga',
                       link: '/ga/notes/work/revisit.ga'

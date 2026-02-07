@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/revisit.di.md",
+                "file": "di/notes/work/code.debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "revisit.di"
+              "title": "code.debt"
             }
           },
           {
@@ -27,16 +27,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ga/notes/work/revisit.ga.md",
+                "file": "di/notes/work/milestones/6.build.notes.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "revisit.ga"
+              "title": "6.build.notes"
             }
           },
           {
-            "id": "1a3e704cd11a82e0",
+            "id": "cd41763f196cea2d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ga/notes/work/phaser.start.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "phaser.start"
+            }
+          },
+          {
+            "id": "1d86e2958b342c00",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -47,24 +61,9 @@
               },
               "icon": "lucide-file",
               "title": "revisit.ga"
-            }
-          },
-          {
-            "id": "53b975c17bb4346e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/code.debt.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "code.debt"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -199,13 +198,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ga/notes/work/revisit.ga.md",
+                "file": "di/notes/work/code.debt.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of revisit.ga"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -213,7 +212,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 377.5
+    "width": 291.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -226,53 +225,53 @@
       "bases:Create new base": false
     }
   },
-  "active": "1a3e704cd11a82e0",
+  "active": "cd0abf627c61bf12",
   "lastOpenFiles": [
-    "ga/notes/design/game.engines.md",
-    "ga/notes/work/revisit.ga.md",
+    "logs/update-docs.error.di.log",
     "di/notes/work/milestones/11.units.md",
-    "me/notes/work/revisit.me.md",
-    "ws/vite.config.js.timestamp-1770428632576-c4b962494025a.mjs",
-    "di/notes/work/revisit.di.md",
+    "di/notes/work/code.debt.md",
     "di/notes/work/milestones/9.persistence.md",
     "di/notes/work/milestones/8.dimensionals.md",
-    "di/notes/work/milestones/10.controls.md",
-    "di/notes/work/code.debt.md",
-    "di/notes/work/milestones/3.docs.md",
-    "di/notes/work/milestones/5.smart.objects.md",
+    "di/notes/work/revisit.di.md",
+    "ga/notes/work/revisit.ga.md",
+    "ga/notes/work/phaser.start.md",
     "di/notes/work/milestones/6.build.notes.md",
-    "di/notes/work/milestones/7.edit.drags.md",
-    "di/notes/work/milestones/index.md",
-    "logs/update-docs.error.mono.log",
-    "ws/vite.config.js.timestamp-1770426739377-793af4b067633.mjs",
-    "ws/vite.config.js.timestamp-1770423519695-585c1c20c8817.mjs",
-    "ws/vite.config.js.timestamp-1770423227000-a6894d9095ce1.mjs",
-    "ws/vite.config.js.timestamp-1770423042254-e75b0f123856.mjs",
-    "ws/vite.config.js.timestamp-1770422775079-2314a2175b17c.mjs",
-    "ws/vite.config.js.timestamp-1770422635468-21c05a74768d7.mjs",
-    "ws/vite.config.js.timestamp-1770420717091-48a7dc58bd264.mjs",
-    "notes/work/revisit.mo.md",
-    "ws/vite.config.js.timestamp-1770419743960-c9d2883832aa9.mjs",
-    "di/notes/work/milestones/10.controls copy.md",
-    "di/notes/work/milestones/11.code.debt.md",
-    "di/notes/work/milestones/2.panel.md",
-    "di/notes/work/milestones/2.panel/implement.md",
-    "di/notes/guides/develop/best.practices.md",
-    "di/notes/work/milestones/2.panel/components.md",
-    "ws/notes/guides/architecture/ux/components.md",
-    "di/notes/guides/develop/architecture.md",
-    "notes/guides/pre-flight/always.md",
-    "ga/notes/design/keep.in.mind.md",
-    "ga/notes/design/project.md",
-    "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
-    "ws/node_modules/@vitest/ui/dist/client/bg.png",
-    "ws/dist/assets/seriously-icon.png",
-    "ws/node_modules/undici/docs/assets/lifecycle-diagram.png",
-    "ws/src/assets/svelte.svg",
-    "ws/src/assets/seriously-icon.png",
-    "ws/src/assets/information-svgrepo-com.svg",
-    "ws/src/assets/construction-equipment-hammer-tool-repair-tools-svgrepo-com.svg",
-    "ws/src/assets/cloud-progress-svgrepo-com.svg",
-    "ws/src/assets/clock-activity-svgrepo-com.svg"
+    "ga/src/lib/game/Scene_Utilities.ts",
+    "ga/src/lib/game/scenes/Boot_Scene.ts",
+    "ga/src/lib/game/scenes/Needs_Scene.ts",
+    "ga/src/lib/game/scenes/Trust_Scene.ts",
+    "ga/src/lib/game/scenes/Kindness_Scene.ts",
+    "ga/src/lib/game/scenes/Map_Scene.ts",
+    "ga/src/lib/game/Phaser_Game.svelte",
+    "ga/src/lib/game/Event_Bridge.ts",
+    "ga/src/lib/game/scene_utilities.ts",
+    "ga/src/lib/game/sceneUtils.ts",
+    "ga/notes/work/phaser.v2.md",
+    "ga/notes/work/phaser.editor.md",
+    "ga/notes/work/map.md",
+    "ga/node_modules/phaser/changelog/3.60/images/plane.png",
+    "ga/node_modules/phaser/changelog/3.60/images/timeline.png",
+    "ga/node_modules/phaser/changelog/3.60/images/videogameobject.png",
+    "ga/node_modules/phaser/changelog/3.60/images/tweens.png",
+    "ga/node_modules/phaser/changelog/3.60/images/spine4.png",
+    "ga/node_modules/phaser/changelog/3.60/images/spectorjs.png",
+    "ga/node_modules/phaser/changelog/3.60/images/particles2.png",
+    "ga/node_modules/phaser/changelog/3.60/images/perf2.png",
+    "ga/node_modules/phaser/changelog/3.60/images/phaser10banner.png",
+    "ga/node_modules/phaser/changelog/3.60/images/perf1.png",
+    "ga/node_modules/phaser/plugins/fbinstant/readme.md",
+    "ga/node_modules/phaser/plugins/spine4.1/README.md",
+    "ga/node_modules/phaser/plugins/spine/README.md",
+    "ga/node_modules/phaser/plugins/camera3d/readme.md",
+    "ga/node_modules/phaser/changelog/3.23/CHANGELOG-v3.23.md",
+    "ga/node_modules/phaser/changelog/3.24.1/CHANGELOG-v3.24.1.md",
+    "ga/node_modules/phaser/changelog/3.20/CHANGELOG-v3.20.md",
+    "ga/node_modules/phaser/changelog/3.85/MatterWorldUpdate.md",
+    "ga/node_modules/phaser/changelog/3.87/CHANGELOG-v3.87.md",
+    "ga/node_modules/phaser/scripts/tsgen/README.md",
+    "ga/node_modules/phaser/changelog/3.53/CHANGELOG-v3.53.md",
+    "ga/node_modules/phaser/changelog/3.88.2/CHANGELOG-v3.88.2.md",
+    "ga/node_modules/phaser/changelog/3.88/CHANGELOG-v3.88.md",
+    "ga/node_modules/phaser/changelog/3.9/CHANGELOG-v3.9.md"
   ]
 }
