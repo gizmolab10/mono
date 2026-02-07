@@ -9,38 +9,39 @@
     "port": 5172,
     "docs": 5173,
     "public": "https://webseriously.org",
+    "bubble": "https://bubble.io/home/plugins",
     "docsPublic": "https://docs.webseriously.org",
     "netlify": "https://webseriously.netlify.app",
+    "repo": "https://github.com/gizmolab10/mono/ws",
     "docsNetlify": "https://webseriously-documentation.netlify.app",
-    "repo": "https://github.com/gizmolab10/seriously-svelte",
     "deploy": "https://app.netlify.com/projects/webseriously/deploys",
-    "docsDeploy": "https://app.netlify.com/projects/webseriously-documentation/deploys",
-    "bubble": "https://bubble.io/home/plugins"
+    "docsDeploy": "https://app.netlify.com/projects/webseriously-documentation/deploys"
   },
   "di": {
     "port": 5174,
     "docs": 5175,
     "public": "https://designintuition.app",
+    "repo": "https://github.com/gizmolab10/mono/di",
     "docsPublic": "https://docs.designintuition.app",
     "netlify": "https://designintuition.netlify.app",
     "docsNetlify": "https://designintuition-documentation.netlify.app",
-    "repo": "https://github.com/gizmolab10/design.intuition",
     "deploy": "https://app.netlify.com/projects/designintuition/deploys",
     "docsDeploy": "https://app.netlify.com/projects/designintuition-documentation/deploys"
   },
   "mono": {
     "docs": 5180,
     "docsPublic": "https://docs.gizmolab.com",
-    "docsNetlify": "https://monorepo-documentation.netlify.app",
     "repo": "https://github.com/gizmolab10/mono",
+    "docsNetlify": "https://monorepo-documentation.netlify.app",
     "docsDeploy": "https://app.netlify.com/projects/monorepo-documentation/deploys"
+  },
+  "ga": {
+    "docs": 5182,
+    "port": 5183,
+    "repo": "https://github.com/gizmolab10/mono/ga"
   },
   "me": {
     "public": "https://jonathansand.me",
     "repo": "https://github.com/gizmolab10/jonathansand-me"
-  },
-  "ga": {
-    "docs": 5182,
-    "port": 5183
   }
 }

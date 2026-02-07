@@ -7,8 +7,9 @@
 
 ## Next Steps
 
-- [ ] Jonathan to review this summary
+- [x] Jonathan to review this summary
 - [x] Claude to begin building minimal carnival prototype
+- [ ] research [[game.engines]]
 - [ ] Iterate based on Jonathan's reactions
 
 ---

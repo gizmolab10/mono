@@ -1,0 +1,7 @@
+- [ ] i want to understand the development options for my game
+- [ ] i do not need realism or 3D
+- [ ] i want it to be
+	- [ ] easy for you to configure and build onto
+	- [ ] extremely performant
+	- [ ] web based
+	- [ ] suitable for mobile

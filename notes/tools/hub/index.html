@@ -179,7 +179,7 @@
 
     .project {
       background: var(--bg-available);
-      color: var(--text-choice);
+      color: var(--text-primary);
       border: none;
       padding: 10px 20px;
       border-radius: 6px;
@@ -461,7 +461,7 @@
           <div class="deploy-tooltip" id="deploy-tooltip">Loading...</div>
         </div>
         <div class="side-b">
-          <button class="action" id="btn-start" data-tooltip="restart all local dev servers">hosts<span
+          <button class="action" id="btn-start" data-tooltip="restart all local dev servers">locals<span
               class="badge">esc</span></button>
           <button class="action" id="btn-docs" data-tooltip="build all documentation">docs<span
               class="badge">⌫</span></button>
@@ -670,7 +670,6 @@
       const cfg = config[m]?.[p];
       const hasConfig = cfg !== null;
 
-      btnStart.classList.toggle('disabled', !hasConfig);
       btnLocal.classList.toggle('disabled', !hasConfig || !cfg?.port);
       btnNetlify.classList.toggle('disabled', !hasConfig || !cfg?.netlify);
       btnPublic.classList.toggle('disabled', !hasConfig || !cfg?.public);
@@ -720,7 +719,6 @@
 
       const cfg = config[mode][project];
       const hasConfig = cfg !== null;
-      btnStart.classList.toggle('disabled', !hasConfig);
       btnLocal.classList.toggle('disabled', !hasConfig || !cfg?.port);
       btnNetlify.classList.toggle('disabled', !hasConfig || !cfg?.netlify);
       btnPublic.classList.toggle('disabled', !hasConfig || !cfg?.public);
@@ -783,14 +781,14 @@
             // Start polling for status
             restartPollInterval = setInterval(pollRestartStatus, 500);
           } else {
-            btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
+            btnStart.innerHTML = 'locals<span class="badge">esc</span>';
             clearTitleButtonsWorking();
             setConsoleOutput('restart', `Error: ${data.error}`);
             matchRowWidths();
           }
         })
         .catch(err => {
-          btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
+          btnStart.innerHTML = 'locals<span class="badge">esc</span>';
           clearTitleButtonsWorking();
           setConsoleOutput('restart', `API error: ${err.message}`);
           matchRowWidths();
@@ -812,7 +810,7 @@
           if (data.done) {
             clearInterval(restartPollInterval);
             restartPollInterval = null;
-            btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
+            btnStart.innerHTML = 'locals<span class="badge">esc</span>';
             clearTitleButtonsWorking();
             matchRowWidths();
 
@@ -828,7 +826,7 @@
           if (pollErrorCount >= MAX_POLL_ERRORS) {
             clearInterval(restartPollInterval);
             restartPollInterval = null;
-            btnStart.innerHTML = 'hosts<span class="badge">esc</span>';
+            btnStart.innerHTML = 'locals<span class="badge">esc</span>';
             clearTitleButtonsWorking();
             setConsoleOutput('restart', `Poll error: ${err.message}`);
             matchRowWidths();

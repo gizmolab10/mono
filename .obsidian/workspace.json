@@ -27,12 +27,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/11.units.md",
+                "file": "ga/notes/work/revisit.ga.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "11.units"
+              "title": "revisit.ga"
+            }
+          },
+          {
+            "id": "1a3e704cd11a82e0",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ga/notes/work/revisit.ga.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "revisit.ga"
             }
           },
           {
@@ -50,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -185,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/11.units.md",
+                "file": "ga/notes/work/revisit.ga.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 11.units"
+              "title": "Outline of revisit.ga"
             }
           }
         ],
@@ -212,14 +226,18 @@
       "bases:Create new base": false
     }
   },
-  "active": "e1818cca2b61ee28",
+  "active": "1a3e704cd11a82e0",
   "lastOpenFiles": [
+    "ga/notes/design/game.engines.md",
+    "ga/notes/work/revisit.ga.md",
+    "di/notes/work/milestones/11.units.md",
+    "me/notes/work/revisit.me.md",
+    "ws/vite.config.js.timestamp-1770428632576-c4b962494025a.mjs",
     "di/notes/work/revisit.di.md",
     "di/notes/work/milestones/9.persistence.md",
     "di/notes/work/milestones/8.dimensionals.md",
     "di/notes/work/milestones/10.controls.md",
     "di/notes/work/code.debt.md",
-    "di/notes/work/milestones/11.units.md",
     "di/notes/work/milestones/3.docs.md",
     "di/notes/work/milestones/5.smart.objects.md",
     "di/notes/work/milestones/6.build.notes.md",
@@ -235,7 +253,6 @@
     "ws/vite.config.js.timestamp-1770420717091-48a7dc58bd264.mjs",
     "notes/work/revisit.mo.md",
     "ws/vite.config.js.timestamp-1770419743960-c9d2883832aa9.mjs",
-    "di/src/lib/ts/managers/Dimensional_Editor.ts",
     "di/notes/work/milestones/10.controls copy.md",
     "di/notes/work/milestones/11.code.debt.md",
     "di/notes/work/milestones/2.panel.md",
@@ -246,10 +263,7 @@
     "di/notes/guides/develop/architecture.md",
     "notes/guides/pre-flight/always.md",
     "ga/notes/design/keep.in.mind.md",
-    "ga/notes/work/revisit.ga.md",
     "ga/notes/design/project.md",
-    "ga/notes/design/vision.md",
-    "ga/notes/design/original.sites.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/dist/assets/seriously-icon.png",

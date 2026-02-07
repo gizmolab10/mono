@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Dispatcher server for hub
-Listens on port 5171, executes shell commands on behalf of the browser
+Listens on the port defined in ports.json, executes shell commands on behalf of the browser
 """
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -582,24 +582,30 @@ class APIHandler(BaseHTTPRequestHandler):
 if __name__ == '__main__':
     import socket
     import signal
-    
-    # Kill any existing process on port 5171
-    result = subprocess.run(['lsof', '-ti', ':5171'], capture_output=True, text=True)
+
+    # Load port from ports.json
+    ports_path = os.path.join(SCRIPT_DIR, 'ports.json')
+    with open(ports_path, 'r') as f:
+        ports = json.load(f)
+    PORT = ports['dispatcher']['port']
+
+    # Kill any existing process on the port
+    result = subprocess.run(['lsof', '-ti', f':{PORT}'], capture_output=True, text=True)
     if result.stdout.strip():
         for pid in result.stdout.strip().split('\n'):
             try:
                 os.kill(int(pid), signal.SIGKILL)
-                print(f"Killed existing process {pid} on port 5171")
+                print(f"Killed existing process {pid} on port {PORT}")
             except:
                 pass
         time.sleep(1.0)  # Wait for port to be released
-    
+
     # Allow rebinding to port immediately after restart
     class ReusableHTTPServer(HTTPServer):
         allow_reuse_address = True
-    
-    server = ReusableHTTPServer(('localhost', 5171), APIHandler)
-    print("Dispatcher running on http://localhost:5171")
+
+    server = ReusableHTTPServer(('localhost', PORT), APIHandler)
+    print(f"Dispatcher running on http://localhost:{PORT}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
