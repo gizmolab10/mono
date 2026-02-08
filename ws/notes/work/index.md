@@ -7,5 +7,5 @@ Documentation of ongoing and completed work.
 - [Next](./next/)
 - [Deliverables](./deliverables.md)
 - [Revisit.ws](./revisit.ws.md)
-- [User.manual](./user.manual.md)
+- [W2](./w2.md)
 

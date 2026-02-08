@@ -31,7 +31,7 @@ src/lib/ts/
 │   ├── Camera.ts
 │   ├── Render.ts
 │   ├── Scene.ts
-│   └── Trivial.ts
+│   └── Setup.ts
 └── signals/
     └── Events_3D.ts
 ```

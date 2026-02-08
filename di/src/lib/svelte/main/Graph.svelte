@@ -7,7 +7,7 @@
 	import { editor } from '../../ts/managers/Editor';
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
 	import S_Mouse from '../../ts/state/S_Mouse';
-	import { init } from '../../ts/render/Trivial';
+	import { init } from '../../ts/render/Setup';
 
 	const { w_text_color } = colors;
 	const { w_editing } = editor;

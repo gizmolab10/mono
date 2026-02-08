@@ -62,7 +62,7 @@ export function init(canvas: HTMLCanvasElement) {
     example = result.so;
     saved_scale = result.scale;
   } else {
-    example = new Smart_Object('example');
+    example = new Smart_Object('A');
   }
 
   if (!saved) {

@@ -10,4 +10,5 @@ I may find enough time and will to pursue some crazy or not-so-crazy ideas:
 - [Resize_Optimization_AI](./Resize_Optimization_AI.md)
 - [Search Links](./search-links.md)
 - [Search](./search.md)
+- [User.manual](./user.manual.md)
 

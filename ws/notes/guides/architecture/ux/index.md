@@ -17,6 +17,7 @@ User experience components and interaction patterns.
 
 - [Breadcrumbs](./breadcrumbs.md)
 - [Buttons](./buttons.md)
+- [Components](./components.md)
 - [Controls](./controls.md)
 - [Details](./details.md)
 - [Paging](./paging.md)

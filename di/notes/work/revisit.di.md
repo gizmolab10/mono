@@ -15,12 +15,12 @@ Where we are in Design Intuition.
 ## Milestones (current work)
 
 
-- [ ] **11 units** — inches, feet, meters, etc.
-- [ ] **12 details** — attributes
-- [ ] **13 hierarchy** of SO
-- [ ] **14 algebra** — recursive descent compiler
+- [ ] **[[12.hierarchy]]** of SO
+- [ ] **13 algebra** — recursive descent compiler
 	- [ ] compile tree
 	- [ ] traverse and reverse traverse
+- [ ] **14 details** — attributes
+	- [ ] port from ws: banners, glow buttons & details
 - [ ] **15 what? **
 
 ## What's Working

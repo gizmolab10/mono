@@ -11,9 +11,9 @@ export type Axis = 'x' | 'y' | 'z';
 
 export default class Smart_Object extends Identifiable {
 	attributes_dict_byName: Dictionary<Attribute> = {};
+	orientation: quat = quat.create();
 	scene: O_Scene | null;
 	name: string;
-	orientation: quat = quat.create();
 
 	constructor(name: string = '', scene: O_Scene | null = null) {
 		super();
@@ -115,7 +115,7 @@ export default class Smart_Object extends Identifiable {
 	// Dragging moves only the bounds that vertex touches.
 	// ═══════════════════════════════════════════════════════════════════
 
-	// Face normals by index (matches cube_faces in Trivial.ts)
+	// Face normals by index (matches cube_faces in Setup.ts)
 	// 0: front (z_min), 1: back (z_max), 2: left (x_min), 3: right (x_max), 4: top (y_max), 5: bottom (y_min)
 	private static readonly FACE_NORMALS: Point3[] = [
 		new Point3(0, 0, -1), new Point3(0, 0, 1),

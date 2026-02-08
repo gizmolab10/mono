@@ -8,7 +8,35 @@
         "type": "tabs",
         "children": [
           {
+            "id": "1d86e2958b342c00",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/revisit.di.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "revisit.di"
+            }
+          },
+          {
             "id": "cd0abf627c61bf12",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/12.hierarchy.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "12.hierarchy"
+            }
+          },
+          {
+            "id": "e1818cca2b61ee28",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -22,48 +50,21 @@
             }
           },
           {
-            "id": "e1818cca2b61ee28",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/milestones/6.build.notes.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "6.build.notes"
-            }
-          },
-          {
             "id": "cd41763f196cea2d",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ga/notes/work/phaser.start.md",
+                "file": "di/notes/work/milestones/11.units.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "phaser.start"
-            }
-          },
-          {
-            "id": "1d86e2958b342c00",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ga/notes/work/revisit.ga.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "revisit.ga"
+              "title": "11.units"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -198,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/12.hierarchy.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of 12.hierarchy"
             }
           }
         ],
@@ -228,24 +229,28 @@
   "active": "cd0abf627c61bf12",
   "lastOpenFiles": [
     "logs/update-docs.error.di.log",
+    "logs/update-docs.error.mono.log",
     "di/notes/work/milestones/11.units.md",
     "di/notes/work/code.debt.md",
+    "di/notes/work/milestones/10.controls.md",
     "di/notes/work/milestones/9.persistence.md",
     "di/notes/work/milestones/8.dimensionals.md",
+    "di/notes/work/12.hierarchy.md",
+    "di/dist/assets/index-CRXSsCHF.js",
+    "di/dist/assets/index-Dj4KgyFa.css",
+    "di/src/lib/ts/render/Setup.ts",
     "di/notes/work/revisit.di.md",
-    "ga/notes/work/revisit.ga.md",
-    "ga/notes/work/phaser.start.md",
     "di/notes/work/milestones/6.build.notes.md",
+    "ga/notes/work/phaser.start.md",
+    "ga/notes/work/revisit.ga.md",
+    "di/notes/work/milestones/5.smart.objects.md",
+    "ws/notes/work/w2.md",
     "ga/src/lib/game/Scene_Utilities.ts",
     "ga/src/lib/game/scenes/Boot_Scene.ts",
     "ga/src/lib/game/scenes/Needs_Scene.ts",
     "ga/src/lib/game/scenes/Trust_Scene.ts",
     "ga/src/lib/game/scenes/Kindness_Scene.ts",
     "ga/src/lib/game/scenes/Map_Scene.ts",
-    "ga/src/lib/game/Phaser_Game.svelte",
-    "ga/src/lib/game/Event_Bridge.ts",
-    "ga/src/lib/game/scene_utilities.ts",
-    "ga/src/lib/game/sceneUtils.ts",
     "ga/notes/work/phaser.v2.md",
     "ga/notes/work/phaser.editor.md",
     "ga/notes/work/map.md",
@@ -268,10 +273,6 @@
     "ga/node_modules/phaser/changelog/3.20/CHANGELOG-v3.20.md",
     "ga/node_modules/phaser/changelog/3.85/MatterWorldUpdate.md",
     "ga/node_modules/phaser/changelog/3.87/CHANGELOG-v3.87.md",
-    "ga/node_modules/phaser/scripts/tsgen/README.md",
-    "ga/node_modules/phaser/changelog/3.53/CHANGELOG-v3.53.md",
-    "ga/node_modules/phaser/changelog/3.88.2/CHANGELOG-v3.88.2.md",
-    "ga/node_modules/phaser/changelog/3.88/CHANGELOG-v3.88.md",
-    "ga/node_modules/phaser/changelog/3.9/CHANGELOG-v3.9.md"
+    "ga/node_modules/phaser/scripts/tsgen/README.md"
   ]
 }

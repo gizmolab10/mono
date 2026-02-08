@@ -83,7 +83,7 @@ This assumes faces are paired (front/back, left/right, top/bottom).
 
 ## Data Flow
 
-1. `Trivial.ts` creates SOs, registers with `hits_3d`
+1. `Setup.ts` creates SOs, registers with `hits_3d`
 2. `Render.ts` projects vertices, calls `hits_3d.update_projected()`
 3. `Events_3D.ts` on mousemove calls `hits_3d.test()`, `hits_3d.set_hover()`
 4. `Events_3D.ts` on mousedown calls `hits_3d.set_selection()` if hit

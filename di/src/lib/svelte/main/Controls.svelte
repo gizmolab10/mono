@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { colors } from '../../ts/draw/Colors';
 	import { persistence } from '../../ts/managers/Persistence';
-	import { scale_up, scale_down, w_scale } from '../../ts/render/Trivial';
+	import { scale_up, scale_down, w_scale } from '../../ts/render/Setup';
 	import Slider from '../mouse/Slider.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	const { w_text_color, w_background_color } = colors;

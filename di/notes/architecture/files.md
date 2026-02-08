@@ -38,7 +38,7 @@ src/
         │   ├── Camera.ts
         │   ├── Render.ts
         │   ├── Scene.ts
-        │   └── Trivial.ts
+        │   └── Setup.ts
         ├── runtime/
         │   ├── index.ts
         │   ├── Identifiable.ts
@@ -119,7 +119,7 @@ src/
 | `Camera.ts` | `camera` | View/projection matrices |
 | `Render.ts` | `render` | Projection pipeline, draw calls |
 | `Animation.ts` | `animation` | rAF loop, tick callbacks |
-| `Trivial.ts` | `init` | Demo scene setup |
+| `Setup.ts` | `init` | Scene setup |
 
 ## Signals
 
