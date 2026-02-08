@@ -1,5 +1,6 @@
 import type { Dimension_Rect, S_Editing } from '../types/Interfaces';
 import { units, current_unit_system } from '../types/Units';
+import { current_precision } from '../render/Setup';
 import { constraints } from '../algebra/Constraints';
 import { writable, get } from 'svelte/store';
 import { scenes } from './Scenes';
@@ -38,7 +39,7 @@ class Editor {
 			axis: rect.axis,
 			x: rect.x,
 			y: rect.y,
-			formatted: units.format_for_system(value_mm, system),
+			formatted: units.format_for_system(value_mm, system, current_precision()),
 		});
 	}
 
@@ -54,14 +55,15 @@ class Editor {
 			return false;
 		}
 
-		// Symmetric resize: grow/shrink from center
-		const half = new_mm / 2;
+		// Snap parsed value to precision grid, then symmetric resize from center
+		const snapped_mm = units.snap_for_system(new_mm, system, current_precision());
+		const half = snapped_mm / 2;
 		const axis = state.axis;
 		const min_bound = `${axis}_min` as const;
 		const max_bound = `${axis}_max` as const;
 		const center = (state.so.get_bound(min_bound) + state.so.get_bound(max_bound)) / 2;
-		state.so.set_bound(min_bound, center - half);
-		state.so.set_bound(max_bound, center + half);
+		state.so.set_bound(min_bound, units.snap_for_system(center - half, system, current_precision()));
+		state.so.set_bound(max_bound, units.snap_for_system(center + half, system, current_precision()));
 		constraints.propagate(state.so);
 
 		scenes.save();

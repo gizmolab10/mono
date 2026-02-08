@@ -6,7 +6,7 @@ import { Size, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { hits_3d } from '../managers/Hits_3D';
 import { mat4, vec4, quat } from 'gl-matrix';
-import { current_view_mode, show_dimensionals } from './Setup';
+import { current_view_mode, show_dimensionals, current_precision } from './Setup';
 import { camera } from './Camera';
 import { scene } from './Scene';
 
@@ -477,7 +477,7 @@ class Render {
 
     // Text setup
     ctx.font = '12px sans-serif';
-    const text = units.format_for_system(value, current_unit_system());
+    const text = units.format_for_system(value, current_unit_system(), current_precision());
     const textWidth = ctx.measureText(text).width;
     const textHeight = 12; // approximate line height
 

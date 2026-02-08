@@ -37,7 +37,7 @@
 	<span class='spacer'></span>
 	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} onclick={toggle_view_mode}>{$w_view_mode}</button>
 	<button class='toolbar-btn' onclick={straighten}>straighten</button>
-	<button class='toolbar-btn' class:active={$w_show_dimensionals} onclick={toggle_dimensionals}>dims</button>
+	<button class='toolbar-btn' class:active={$w_show_dimensionals} onclick={toggle_dimensionals}>{$w_show_dimensionals ? 'hide' : 'show'} dimensions</button>
 	<Slider min={0.1} max={10} value={$w_scale} onchange={handle_slider} onstep={handle_scale} />
 	<button class='toolbar-btn' onclick={() => { scenes.clear(); location.reload(); }}>reset</button>
 	<button class='toolbar-btn' onclick={() => showBuildNotes = true}>build {__BUILD_NUMBER__}</button>

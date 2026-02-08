@@ -18,6 +18,9 @@ export default class Smart_Object extends Identifiable {
 	scene: O_Scene | null;
 	name: string;
 
+	/** Snap callback — set by Setup to snap mm values to the current precision grid. */
+	static snap: (mm: number) => number = (v) => v;
+
 	constructor(name: string = '', scene: O_Scene | null = null) {
 		super();
 		this.name = name;
@@ -31,10 +34,10 @@ export default class Smart_Object extends Identifiable {
 		for (const name of ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max']) {
 			this.attributes_dict_byName[name] = new Attribute(name);
 		}
-		// Default: 1'×2'×3' box centered at origin (stored in mm)
-		this.set_bound('x_min', -152.4); this.set_bound('x_max', 152.4);
-		this.set_bound('y_min', -304.8); this.set_bound('y_max', 304.8);
-		this.set_bound('z_min', -457.2); this.set_bound('z_max', 457.2);
+		// Default: 1"×2"×3" box centered at origin (stored in mm)
+		this.set_bound('x_min', -12.7); this.set_bound('x_max', 12.7);
+		this.set_bound('y_min', -25.4); this.set_bound('y_max', 25.4);
+		this.set_bound('z_min', -38.1); this.set_bound('z_max', 38.1);
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
@@ -210,11 +213,11 @@ export default class Smart_Object extends Identifiable {
 
 		// Clamp: don't let min exceed max (leave 0.1 gap)
 		const is_min = bound.endsWith('_min');
-		const new_value = is_min
+		const clamped = is_min
 			? Math.min(current + amount, opposite - 0.1)
 			: Math.max(current + amount, opposite + 0.1);
 
-		this.set_bound(bound, new_value);
+		this.set_bound(bound, Smart_Object.snap(clamped));
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
@@ -238,11 +241,11 @@ export default class Smart_Object extends Identifiable {
 
 			// Clamp: don't let min exceed max
 			const is_min = bound.endsWith('_min');
-			const new_value = is_min
+			const clamped = is_min
 				? Math.min(current + amount, opposite - 0.1)
 				: Math.max(current + amount, opposite + 0.1);
 
-			this.set_bound(bound, new_value);
+			this.set_bound(bound, Smart_Object.snap(clamped));
 		}
 	}
 

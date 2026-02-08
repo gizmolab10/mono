@@ -6,6 +6,7 @@ import { Point, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { camera } from '../render/Camera';
 import { recompute_max_bounds_from_rotation } from '../algebra/Orientation';
+import Smart_Object from '../runtime/Smart_Object';
 
 type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point) => void;
 type T_Handle_Wheel = (delta: number, fine: boolean) => void;
@@ -17,6 +18,9 @@ class Events_3D {
   private on_drag: T_Handle_Drag | null = null;
   private on_wheel: T_Handle_Wheel | null = null;
   private drag_target: Hit_3D_Result | null = null;
+
+  /** Unsnapped bound accumulators — tracks raw values during drag so snap doesn't eat small deltas. */
+  private raw_bounds: Map<string, number> = new Map();
 
   init(canvas: HTMLCanvasElement): void {
     canvas.addEventListener('mousedown', (e) => {
@@ -31,6 +35,7 @@ class Events_3D {
 
       // Store what we're actually dragging (corner/edge/face)
       this.drag_target = hit;
+      this.raw_bounds.clear();
 
       // Clear hover during drag (especially rotation)
       hits_3d.set_hover(null);
@@ -55,6 +60,7 @@ class Events_3D {
       }
       this.is_dragging = false;
       this.did_drag = false;
+      this.raw_bounds.clear();
     });
 
     canvas.addEventListener('mousemove', (e) => {
@@ -263,8 +269,16 @@ class Events_3D {
     return result;
   }
 
+  /** Accumulate raw delta for a bound, snap for storage. */
+  private drag_bound(so: Smart_Object, bound: string, amount: number): void {
+    const key = `${so.name}.${bound}`;
+    const raw = this.raw_bounds.get(key) ?? so.get_bound(bound as any);
+    const updated = raw + amount;
+    this.raw_bounds.set(key, updated);
+    so.set_bound(bound as any, Smart_Object.snap(updated));
+  }
+
   // Apply edge drag: affects 1 bound
-  // No clamping — bounds can cross (negative dimension = flipped)
   private apply_edge_drag(
     edge_index: number,
     face_index: number,
@@ -274,13 +288,10 @@ class Events_3D {
     const axis = so.edge_changes_axis(edge_index, face_index);
     const bound = so.edge_bound(edge_index, face_index);
     const axis_vec = so.axis_vector(axis);
-    const amount = local_delta.dot(axis_vec);
-
-    so.set_bound(bound, so.get_bound(bound) + amount);
+    this.drag_bound(so, bound, local_delta.dot(axis_vec));
   }
 
   // Apply corner drag: affects 2 bounds
-  // No clamping — bounds can cross (negative dimension = flipped)
   private apply_corner_drag(
     corner_index: number,
     face_index: number,
@@ -288,13 +299,10 @@ class Events_3D {
     local_delta: Point3
   ): void {
     const axes = so.face_axes(face_index);
-
     for (const axis of axes) {
       const bound = so.vertex_bound(corner_index, axis);
       const axis_vec = so.axis_vector(axis);
-      const amount = local_delta.dot(axis_vec);
-
-      so.set_bound(bound, so.get_bound(bound) + amount);
+      this.drag_bound(so, bound, local_delta.dot(axis_vec));
     }
   }
 }

@@ -53,12 +53,18 @@ export function current_view_mode(): '2d' | '3d' {
   return get(w_view_mode);
 }
 
-// Precision mode: when true, drag snaps to clean increments
-const saved_precision = preferences.read<boolean>(T_Preference.precision);
-export const w_precision = writable<boolean>(saved_precision ?? false);
-w_precision.subscribe((on) => {
-  preferences.write(T_Preference.precision, on);
+// Precision: index into the tick array for the current unit system.
+// 0 = whole (coarsest), higher = finer. Persisted as a number.
+const saved_precision = preferences.read<number>(T_Preference.precision);
+export const w_precision = writable<number>(saved_precision ?? 0);
+w_precision.subscribe((level) => {
+  preferences.write(T_Preference.precision, level);
 });
+
+/** Read current precision level synchronously. */
+export function current_precision(): number {
+  return get(w_precision);
+}
 
 // Show/hide dimensionals
 const saved_dims = preferences.read<boolean>(T_Preference.showDimensionals);
@@ -94,6 +100,9 @@ export function init(canvas: HTMLCanvasElement) {
   camera.init(new Size(canvas.width, canvas.height));
   render.init(canvas);
   e3.init(canvas);
+
+  // Wire up precision snapping for drag operations
+  Smart_Object.snap = (mm) => units.snap_for_system(mm, current_unit_system(), current_precision());
 
   // Load saved state or create defaults
   const saved = scenes.load();
@@ -134,7 +143,7 @@ export function init(canvas: HTMLCanvasElement) {
       so,
       edges: example_edges,
       faces: example_faces,
-      scale: 1,
+      scale: 8.5,
       color: 'rgba(78, 205, 196,',
     });
     so.scene = so_scene;
@@ -231,9 +240,20 @@ export function toggle_view_mode(): void {
   scenes.save();
 }
 
-/** Toggle precision mode. */
-export function toggle_precision(): void {
-  w_precision.update(v => !v);
+/** Set precision level (index into tick array). Snaps all SO bounds to the new grid. */
+export function set_precision(level: number): void {
+  w_precision.set(level);
+  // Snap every non-formula bound to the precision grid
+  const system = current_unit_system();
+  for (const obj of scene.get_all()) {
+    const so = obj.so;
+    for (const attr of Object.values(so.attributes_dict_byName)) {
+      if (attr.has_formula) continue;
+      attr.value = units.snap_for_system(attr.value, system, level);
+    }
+  }
+  constraints.propagate_all();
+  scenes.save();
 }
 
 // ============================================

@@ -100,8 +100,8 @@ function to_fraction(decimal: number, max_denominator: number = 64): { whole: nu
 	return { whole, numerator: raw_numerator / divisor, denominator: max_denominator / divisor };
 }
 
-function format_fractional(value: number, unit_symbol: string): string {
-	const { whole, numerator, denominator } = to_fraction(Math.abs(value));
+function format_fractional(value: number, unit_symbol: string, max_denominator: number = 64): string {
+	const { whole, numerator, denominator } = to_fraction(Math.abs(value), max_denominator);
 	const sign = value < 0 ? '-' : '';
 	if (numerator === 0) {
 		return sign + whole + unit_symbol;
@@ -202,27 +202,29 @@ export class Units {
 
 	// ── formatting (mm → string) ──
 
-	format(mm: number, unit: T_Unit): string {
+	// Imperial precision index → max denominator: [1, 2, 4, 8, 16, 32, 64]
+	private static readonly IMPERIAL_DENOMS = [1, 2, 4, 8, 16, 32, 64];
+
+	format(mm: number, unit: T_Unit, decimal_places: number = 1): string {
 		const value = this.from_mm(mm, unit);
 		if (this.is_imperial(unit)) {
 			return format_fractional(value, symbol[unit]);
 		}
-		// metric/marine/archaic: 1 decimal place
-		const rounded = parseFloat(value.toFixed(1));
+		const rounded = parseFloat(value.toFixed(decimal_places));
 		return rounded + symbol[unit];
 	}
 
-	format_compound(mm: number): string {
+	format_compound(mm: number, max_denominator: number = 64): string {
 		const total_inches = mm / mm_per[T_Unit.inch];
 		const abs_inches = Math.abs(total_inches);
 		const sign = total_inches < 0 ? '-' : '';
 		const feet = Math.floor(abs_inches / 12);
 		const remaining_inches = abs_inches - feet * 12;
-		const { whole, numerator, denominator } = to_fraction(remaining_inches);
+		const { whole, numerator, denominator } = to_fraction(remaining_inches, max_denominator);
 
 		if (feet === 0) {
 			// less than a foot — show inches only
-			return sign + format_fractional(abs_inches, '"');
+			return sign + format_fractional(abs_inches, '"', max_denominator);
 		}
 		if (whole === 0 && numerator === 0) {
 			// exact feet, no inches
@@ -242,22 +244,61 @@ export class Units {
 
 	// ── system-aware formatting (mm → string) ──
 
-	format_for_system(mm: number, system: T_Units): string {
+	/**
+	 * Format mm for display, respecting precision level.
+	 * @param precision Index into the tick array (0 = coarsest).
+	 *   Imperial: 0=whole, 1=1/2, 2=1/4, … 6=1/64
+	 *   Others:   0=whole, 1=1dp, 2=2dp, 3=3dp
+	 */
+	format_for_system(mm: number, system: T_Units, precision: number = 6): string {
 		if (system === T_Units.imperial) {
-			return this.format_compound(mm);
+			const denom = Units.IMPERIAL_DENOMS[Math.min(precision, Units.IMPERIAL_DENOMS.length - 1)];
+			return this.format_compound(mm, denom);
 		}
-		// metric/marine/archaic: pick best unit for the magnitude
+		// metric/marine/archaic: precision = decimal places
+		const dp = Math.min(precision, 3);
 		const members = system_map[system];
 		const abs_mm = Math.abs(mm);
 		// Walk from largest to smallest; first unit where value ≥ 1 wins
 		for (let i = members.length - 1; i >= 0; i--) {
 			const unit = members[i];
 			if (abs_mm >= mm_per[unit]) {
-				return this.format(mm, unit);
+				return this.format(mm, unit, dp);
 			}
 		}
 		// Fallback: smallest unit in the system
-		return this.format(mm, members[0]);
+		return this.format(mm, members[0], dp);
+	}
+
+	// ── snapping (mm → nearest grid point in mm) ──
+
+	/**
+	 * Snap a mm value to the nearest precision grid point.
+	 * Imperial: rounds to nearest 1/max_denominator inch.
+	 * Others:   rounds to `dp` decimal places in the best display unit.
+	 */
+	snap_for_system(mm: number, system: T_Units, precision: number): number {
+		if (system === T_Units.imperial) {
+			const denom = Units.IMPERIAL_DENOMS[Math.min(precision, Units.IMPERIAL_DENOMS.length - 1)];
+			const inches = mm / mm_per[T_Unit.inch];
+			const snapped_inches = Math.round(inches * denom) / denom;
+			return snapped_inches * mm_per[T_Unit.inch];
+		}
+		// metric/marine/archaic: snap in the best display unit
+		const dp = Math.min(precision, 3);
+		const members = system_map[system];
+		const abs_mm = Math.abs(mm);
+		let unit = members[0];
+		for (let i = members.length - 1; i >= 0; i--) {
+			if (abs_mm >= mm_per[members[i]]) {
+				unit = members[i];
+				break;
+			}
+		}
+		const value_in_unit = mm / mm_per[unit];
+		const factor = Math.pow(10, dp);
+		const snapped = Math.round(value_in_unit * factor) / factor;
+		return snapped * mm_per[unit];
 	}
 
 	// ── parsing (string → mm) ──

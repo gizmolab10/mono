@@ -97,6 +97,21 @@ class Constraints {
 		}
 	}
 
+	/** Re-evaluate all formulas across all SOs. Used after bulk changes like precision snapping. */
+	propagate_all(): void {
+		const all_objects = scene.get_all();
+		for (const o of all_objects) {
+			const so = o.so;
+			let updated = false;
+			for (const attr of Object.values(so.attributes_dict_byName)) {
+				if (!attr.compiled) continue;
+				attr.value = evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
+				updated = true;
+			}
+			if (updated) recompute_orientation(so);
+		}
+	}
+
 	// ── helpers ──
 
 	private find_so(name: string): Smart_Object | null {

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { colors } from '../../ts/draw/Colors';
-	import { w_root_so, w_all_sos, add_child_so, toggle_precision, w_precision } from '../../ts/render/Setup';
+	import { w_root_so, w_all_sos, add_child_so, set_precision, w_precision } from '../../ts/render/Setup';
 	import { hits_3d, scenes } from '../../ts/managers';
 	import { T_Hit_3D, T_Units } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
@@ -17,6 +17,17 @@
 			scenes.save();
 		}
 	}
+
+	const imperial_ticks = ['whole', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64'];
+	const decimal_ticks  = ['whole', '1', '2', '3'];
+
+	let ticks = $derived($w_unit_system === T_Units.imperial ? imperial_ticks : decimal_ticks);
+	let max_tick = $derived(ticks.length - 1);
+
+	// Clamp precision when unit system changes
+	$effect(() => {
+		if ($w_precision > max_tick) set_precision(max_tick);
+	});
 
 	function handle_unit_change(e: Event) {
 		const select = e.target as HTMLSelectElement;
@@ -63,12 +74,24 @@
 		<p>No object selected</p>
 	{/if}
 	<div class='settings'>
-		<button class='action-btn' class:active={$w_precision} onclick={toggle_precision}>precision</button>
 		<select class='details-select' value={$w_unit_system} onchange={handle_unit_change}>
 			{#each Object.values(T_Units) as system}
 				<option value={system}>{system}</option>
 			{/each}
 		</select>
+	</div>
+	<div class='precision-group'>
+		<span class='label'>precision</span>
+		<div class='segmented'>
+			{#each ticks as label, i}
+				<button
+					class='segment'
+					class:active={i === $w_precision}
+					onclick={() => set_precision(i)}>
+					{label}
+				</button>
+			{/each}
+		</div>
 	</div>
 </div>
 
@@ -168,7 +191,44 @@
 		margin-top : 1rem;
 	}
 
-	.action-btn.active {
+	.precision-group {
+		margin-top     : 1rem;
+		display        : flex;
+		flex-direction : column;
+		gap            : 4px;
+	}
+
+	.segmented {
+		display        : flex;
+		border         : 0.5px solid currentColor;
+		border-radius  : 6px;
+		overflow       : hidden;
+	}
+
+	.segment {
+		flex           : 1;
+		background     : transparent;
+		border         : none;
+		border-right   : 0.5px solid currentColor;
+		color          : inherit;
+		font-size      : 9px;
+		padding        : 3px 0;
+		cursor         : pointer;
+		text-align     : center;
+		opacity        : 0.5;
+	}
+
+	.segment:last-child {
+		border-right : none;
+	}
+
+	.segment:hover {
+		opacity    : 0.8;
+		background : rgba(128, 128, 128, 0.1);
+	}
+
+	.segment.active {
+		opacity    : 1;
 		background : currentColor;
 		color      : var(--bg, white);
 	}
@@ -178,10 +238,8 @@
 		border             : 0.5px solid currentColor;
 		border-radius      : 10px;
 		color              : inherit;
-		padding            : 0 6px;
+		padding            : 2px 8px;
 		font-size          : 11px;
-		height             : 22px;
-		line-height        : 20px;
 		cursor             : pointer;
 		outline            : none;
 		box-sizing         : border-box;
