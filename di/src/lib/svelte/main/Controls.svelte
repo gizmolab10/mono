@@ -76,12 +76,12 @@
 		box-sizing    : border-box;
 	}
 
-	.toolbar-btn:hover {
-		background : black;
-		color      : white;
+	.toolbar-btn.active {
+		background : white;
+		color      : black;
 	}
 
-	.toolbar-btn.active {
+	.toolbar-btn:hover {
 		background : black;
 		color      : white;
 	}

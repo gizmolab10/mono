@@ -6,7 +6,6 @@ import { constraints } from '../algebra/Constraints';
 import { units, current_unit_system } from '../types/Units';
 import { writable, get } from 'svelte/store';
 import { quat, vec3 } from 'gl-matrix';
-import { Size } from '../types';
 import { T_Hit_3D } from '../types/Enumerations';
 import type { O_Scene } from '../types/Interfaces';
 import { e3 } from '../signals';
@@ -83,6 +82,23 @@ export function show_dimensionals(): boolean {
   return get(w_show_dimensionals);
 }
 
+// Solid / see-through
+const saved_solid = preferences.read<boolean>(T_Preference.solid);
+export const w_solid = writable<boolean>(saved_solid ?? true);
+w_solid.subscribe((on) => {
+  preferences.write(T_Preference.solid, on);
+});
+
+/** Toggle solid / see-through. */
+export function toggle_solid(): void {
+  w_solid.update(v => !v);
+}
+
+/** Read current solid state synchronously. */
+export function is_solid(): boolean {
+  return get(w_solid);
+}
+
 // Keep O_Scene.scale in sync with the store
 w_scale.subscribe((value) => {
   if (root_scene && root_scene.scale !== value) {
@@ -97,8 +113,8 @@ w_scale.subscribe((value) => {
 
 export function init(canvas: HTMLCanvasElement) {
   // Initialize managers
-  camera.init(new Size(canvas.width, canvas.height));
   render.init(canvas);
+  camera.init(render.logical_size);
   e3.init(canvas);
 
   // Wire up precision snapping for drag operations

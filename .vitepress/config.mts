@@ -1,8 +1,8 @@
-import ports from '../notes/tools/hub/ports.json'
-import { defineConfig } from 'vitepress'
-import taskLists from 'markdown-it-task-lists'
 import taskListPlusPlugin from './markdown-it-task-list-plus.mts'
 import crossProjectPlugin from './markdown-it-cross-project.mts'
+import ports from '../notes/tools/hub/ports.json'
+import taskLists from 'markdown-it-task-lists'
+import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   srcDir: '.',
@@ -26,8 +26,8 @@ export default defineConfig({
 
   markdown: {
     config: (md) => {
-      md.use(taskLists)
-      md.use(taskListPlusPlugin)
+      md.use(taskLists),
+      md.use(taskListPlusPlugin),
       md.use(crossProjectPlugin)
     }
   },
@@ -74,6 +74,10 @@ export default defineConfig({
                     {
                       text: 'Managers',
                       link: '/di/notes/architecture/managers'
+                    },
+                    {
+                      text: 'Panel.layout',
+                      link: '/di/notes/architecture/panel.layout'
                     },
                     {
                       text: 'Project',
@@ -126,31 +130,24 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
+                      text: 'Best.practices',
+                      link: '/di/notes/guides/best.practices'
+                    },
+                    {
+                      text: 'Gotchas',
+                      link: '/di/notes/guides/gotchas'
+                    },
+                    {
                       text: 'Road.map',
                       link: '/di/notes/guides/road.map'
                     },
                     {
-                      text: 'Develop >',
-                      link: '/di/notes/guides/develop/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Architecture',
-                          link: '/di/notes/guides/develop/architecture'
-                        },
-                        {
-                          text: 'Best.practices',
-                          link: '/di/notes/guides/develop/best.practices'
-                        },
-                        {
-                          text: 'Gotchas',
-                          link: '/di/notes/guides/develop/gotchas'
-                        },
-                        {
-                          text: 'Testing',
-                          link: '/di/notes/guides/develop/testing'
-                        }
-                      ]
+                      text: 'Style',
+                      link: '/di/notes/guides/style'
+                    },
+                    {
+                      text: 'Testing',
+                      link: '/di/notes/guides/testing'
                     }
                   ]
                 },
@@ -159,10 +156,6 @@ export default defineConfig({
                   link: '/di/notes/work/',
                   collapsed: true,
                   items: [
-                    {
-                      text: '12.hierarchy',
-                      link: '/di/notes/work/12.hierarchy'
-                    },
                     {
                       text: 'Code.debt',
                       link: '/di/notes/work/code.debt'
@@ -210,6 +203,14 @@ export default defineConfig({
                         {
                           text: '11.units',
                           link: '/di/notes/work/milestones/11.units'
+                        },
+                        {
+                          text: '12.hierarchy',
+                          link: '/di/notes/work/milestones/12.hierarchy'
+                        },
+                        {
+                          text: '13.algebra',
+                          link: '/di/notes/work/milestones/13.algebra'
                         },
                         {
                           text: '2.panel',
@@ -546,6 +547,10 @@ export default defineConfig({
                   link: '/notes/work/revisit.mo'
                 },
                 {
+                  text: 'Worktrees',
+                  link: '/notes/work/worktrees'
+                },
+                {
                   text: 'Articles >',
                   link: '/notes/work/articles/',
                   collapsed: true,
@@ -729,533 +734,6 @@ export default defineConfig({
               ]
             }
           ]
-        },
-        {
-          text: 'Ws >',
-          collapsed: true,
-          items: [
-            {
-              text: 'Notes >',
-              link: '/ws/notes/',
-              collapsed: true,
-              items: [
-                {
-                  text: 'Project',
-                  link: '/ws/notes/project'
-                },
-                {
-                  text: 'Archives >',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Bubble >',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: '2 >',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'Bubble Tears',
-                              link: '/ws/notes/archives/bubble/2/bubble tears'
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      text: 'Experiments >',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Simulate Bubble >',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'README Test',
-                              link: '/ws/notes/archives/experiments/simulate bubble/README-test'
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  text: 'Guides >',
-                  link: '/ws/notes/guides/',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Architecture >',
-                      link: '/ws/notes/guides/architecture/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Overview',
-                          link: '/ws/notes/guides/architecture/overview'
-                        },
-                        {
-                          text: 'Core >',
-                          link: '/ws/notes/guides/architecture/core/',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'Components',
-                              link: '/ws/notes/guides/architecture/core/components'
-                            },
-                            {
-                              text: 'Databases',
-                              link: '/ws/notes/guides/architecture/core/databases'
-                            },
-                            {
-                              text: 'Geometry',
-                              link: '/ws/notes/guides/architecture/core/geometry'
-                            },
-                            {
-                              text: 'Hits',
-                              link: '/ws/notes/guides/architecture/core/hits'
-                            },
-                            {
-                              text: 'Managers',
-                              link: '/ws/notes/guides/architecture/core/managers'
-                            },
-                            {
-                              text: 'State',
-                              link: '/ws/notes/guides/architecture/core/state'
-                            },
-                            {
-                              text: 'UX',
-                              link: '/ws/notes/guides/architecture/core/ux'
-                            }
-                          ]
-                        },
-                        {
-                          text: 'Internals >',
-                          link: '/ws/notes/guides/architecture/internals/',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'Debounce',
-                              link: '/ws/notes/guides/architecture/internals/debounce'
-                            },
-                            {
-                              text: 'Layout',
-                              link: '/ws/notes/guides/architecture/internals/layout'
-                            },
-                            {
-                              text: 'Persistable',
-                              link: '/ws/notes/guides/architecture/internals/persistable'
-                            },
-                            {
-                              text: 'Preferences',
-                              link: '/ws/notes/guides/architecture/internals/preferences'
-                            },
-                            {
-                              text: 'Reactivity',
-                              link: '/ws/notes/guides/architecture/internals/reactivity'
-                            },
-                            {
-                              text: 'Recents',
-                              link: '/ws/notes/guides/architecture/internals/recents'
-                            },
-                            {
-                              text: 'Styles',
-                              link: '/ws/notes/guides/architecture/internals/styles'
-                            },
-                            {
-                              text: 'Timers',
-                              link: '/ws/notes/guides/architecture/internals/timers'
-                            }
-                          ]
-                        },
-                        {
-                          text: 'Platforms >',
-                          link: '/ws/notes/guides/architecture/platforms/',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'Bubble',
-                              link: '/ws/notes/guides/architecture/platforms/bubble'
-                            },
-                            {
-                              text: 'Plugin',
-                              link: '/ws/notes/guides/architecture/platforms/plugin'
-                            },
-                            {
-                              text: 'Svelte 5',
-                              link: '/ws/notes/guides/architecture/platforms/svelte.5'
-                            },
-                            {
-                              text: 'Svelte',
-                              link: '/ws/notes/guides/architecture/platforms/svelte'
-                            },
-                            {
-                              text: 'VitePress',
-                              link: '/ws/notes/guides/architecture/platforms/vitepress'
-                            }
-                          ]
-                        },
-                        {
-                          text: 'UX >',
-                          link: '/ws/notes/guides/architecture/ux/',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'Breadcrumbs',
-                              link: '/ws/notes/guides/architecture/ux/breadcrumbs'
-                            },
-                            {
-                              text: 'Buttons',
-                              link: '/ws/notes/guides/architecture/ux/buttons'
-                            },
-                            {
-                              text: 'Components',
-                              link: '/ws/notes/guides/architecture/ux/components'
-                            },
-                            {
-                              text: 'Controls',
-                              link: '/ws/notes/guides/architecture/ux/controls'
-                            },
-                            {
-                              text: 'Details',
-                              link: '/ws/notes/guides/architecture/ux/details'
-                            },
-                            {
-                              text: 'Paging',
-                              link: '/ws/notes/guides/architecture/ux/paging'
-                            },
-                            {
-                              text: 'Preferences',
-                              link: '/ws/notes/guides/architecture/ux/preferences'
-                            },
-                            {
-                              text: 'Search',
-                              link: '/ws/notes/guides/architecture/ux/search'
-                            },
-                            {
-                              text: 'Titles',
-                              link: '/ws/notes/guides/architecture/ux/titles'
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      text: 'Collaborate >',
-                      link: '/ws/notes/guides/collaborate/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Composition',
-                          link: '/ws/notes/guides/collaborate/composition'
-                        },
-                        {
-                          text: 'Gotchas',
-                          link: '/ws/notes/guides/collaborate/gotchas'
-                        },
-                        {
-                          text: 'Style',
-                          link: '/ws/notes/guides/collaborate/style'
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  text: 'Manuals >',
-                  link: '/ws/notes/manuals/',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Plugin >',
-                      link: '/ws/notes/manuals/plugin/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Bubble.plugin',
-                          link: '/ws/notes/manuals/plugin/bubble.plugin'
-                        }
-                      ]
-                    },
-                    {
-                      text: 'User >',
-                      link: '/ws/notes/manuals/user/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: '1.what.is.webseriously',
-                          link: '/ws/notes/manuals/user/1.what.is.webseriously'
-                        },
-                        {
-                          text: '2.getting.started',
-                          link: '/ws/notes/manuals/user/2.getting.started'
-                        },
-                        {
-                          text: '3.the.graph',
-                          link: '/ws/notes/manuals/user/3.the.graph'
-                        },
-                        {
-                          text: '4.working.with.items',
-                          link: '/ws/notes/manuals/user/4.working.with.items'
-                        },
-                        {
-                          text: '5.details.panel',
-                          link: '/ws/notes/manuals/user/5.details.panel'
-                        },
-                        {
-                          text: '6.search',
-                          link: '/ws/notes/manuals/user/6.search'
-                        },
-                        {
-                          text: '7.import.export',
-                          link: '/ws/notes/manuals/user/7.import.export'
-                        },
-                        {
-                          text: '8.preferences',
-                          link: '/ws/notes/manuals/user/8.preferences'
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  text: 'Work >',
-                  link: '/ws/notes/work/',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Deliverables',
-                      link: '/ws/notes/work/deliverables'
-                    },
-                    {
-                      text: 'Revisit.ws',
-                      link: '/ws/notes/work/revisit.ws'
-                    },
-                    {
-                      text: 'W2',
-                      link: '/ws/notes/work/w2'
-                    },
-                    {
-                      text: 'Done >',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'February.1.2026',
-                          link: '/ws/notes/work/done/february.1.2026'
-                        },
-                        {
-                          text: 'Ai >',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'Claude.write',
-                              link: '/ws/notes/work/done/ai/claude.write'
-                            },
-                            {
-                              text: 'Docs',
-                              link: '/ws/notes/work/done/ai/docs'
-                            },
-                            {
-                              text: 'Filesystem',
-                              link: '/ws/notes/work/done/ai/filesystem'
-                            },
-                            {
-                              text: 'Truth',
-                              link: '/ws/notes/work/done/ai/truth'
-                            }
-                          ]
-                        },
-                        {
-                          text: 'Deliverables >',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'February.4.2026',
-                              link: '/ws/notes/work/done/deliverables/february.4.2026'
-                            },
-                            {
-                              text: 'January.27.2026',
-                              link: '/ws/notes/work/done/deliverables/january.27.2026'
-                            },
-                            {
-                              text: 'January.28.2026',
-                              link: '/ws/notes/work/done/deliverables/january.28.2026'
-                            }
-                          ]
-                        },
-                        {
-                          text: 'Migrations >',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'Breadcrumbs >',
-                              link: '/ws/notes/work/done/migrations/breadcrumbs/',
-                              collapsed: true,
-                              items: [
-                                {
-                                  text: 'Banners',
-                                  link: '/ws/notes/work/done/migrations/breadcrumbs/banners'
-                                },
-                                {
-                                  text: 'Breadcrumbs Re Compositioon',
-                                  link: '/ws/notes/work/done/migrations/breadcrumbs/breadcrumbs re-compositioon'
-                                },
-                                {
-                                  text: 'Breadcrumbs',
-                                  link: '/ws/notes/work/done/migrations/breadcrumbs/breadcrumbs'
-                                },
-                                {
-                                  text: 'Layout',
-                                  link: '/ws/notes/work/done/migrations/breadcrumbs/layout'
-                                }
-                              ]
-                            },
-                            {
-                              text: 'Focus >',
-                              link: '/ws/notes/work/done/migrations/focus/',
-                              collapsed: true,
-                              items: [
-                                {
-                                  text: 'Focus',
-                                  link: '/ws/notes/work/done/migrations/focus/focus'
-                                },
-                                {
-                                  text: 'Grow Shrink',
-                                  link: '/ws/notes/work/done/migrations/focus/grow-shrink'
-                                }
-                              ]
-                            },
-                            {
-                              text: 'Mono >',
-                              link: '/ws/notes/work/done/migrations/mono/',
-                              collapsed: true,
-                              items: [
-                                {
-                                  text: 'Combined',
-                                  link: '/ws/notes/work/done/migrations/mono/combined'
-                                },
-                                {
-                                  text: 'Next',
-                                  link: '/ws/notes/work/done/migrations/mono/next'
-                                },
-                                {
-                                  text: 'Proposal',
-                                  link: '/ws/notes/work/done/migrations/mono/proposal'
-                                },
-                                {
-                                  text: 'Steppers',
-                                  link: '/ws/notes/work/done/migrations/mono/steppers'
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          text: 'Other >',
-                          link: '/ws/notes/work/done/other/',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'Bad.tree.center',
-                              link: '/ws/notes/work/done/other/bad.tree.center'
-                            },
-                            {
-                              text: 'Focus',
-                              link: '/ws/notes/work/done/other/focus'
-                            },
-                            {
-                              text: 'Hits Detection',
-                              link: '/ws/notes/work/done/other/hits-detection'
-                            },
-                            {
-                              text: 'Recents',
-                              link: '/ws/notes/work/done/other/recents'
-                            },
-                            {
-                              text: 'Relocate.controls',
-                              link: '/ws/notes/work/done/other/relocate.controls'
-                            },
-                            {
-                              text: 'Startup',
-                              link: '/ws/notes/work/done/other/startup'
-                            }
-                          ]
-                        },
-                        {
-                          text: 'VitePress >',
-                          link: '/ws/notes/work/done/vitepress/',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'Redox',
-                              link: '/ws/notes/work/done/vitepress/redox'
-                            },
-                            {
-                              text: 'Webseriously Driven Docs',
-                              link: '/ws/notes/work/done/vitepress/webseriously-driven-docs'
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      text: 'Next >',
-                      link: '/ws/notes/work/next/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Amnesia',
-                          link: '/ws/notes/work/next/amnesia'
-                        },
-                        {
-                          text: 'Holons.api',
-                          link: '/ws/notes/work/next/holons.api'
-                        },
-                        {
-                          text: 'Resize Optimization AI',
-                          link: '/ws/notes/work/next/Resize_Optimization_AI'
-                        },
-                        {
-                          text: 'Search Links',
-                          link: '/ws/notes/work/next/search-links'
-                        },
-                        {
-                          text: 'Search',
-                          link: '/ws/notes/work/next/search'
-                        },
-                        {
-                          text: 'User.manual',
-                          link: '/ws/notes/work/next/user.manual'
-                        },
-                        {
-                          text: 'Crazy >',
-                          link: '/ws/notes/work/next/crazy/',
-                          collapsed: true,
-                          items: [
-                            {
-                              text: 'Ai Ux Spider Guide',
-                              link: '/ws/notes/work/next/crazy/ai-ux-spider-guide'
-                            },
-                            {
-                              text: 'Book',
-                              link: '/ws/notes/work/next/crazy/book'
-                            },
-                            {
-                              text: 'Ethernet',
-                              link: '/ws/notes/work/next/crazy/ethernet'
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
         },
         {
           text: 'Ws >',

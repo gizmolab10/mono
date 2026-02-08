@@ -20,6 +20,8 @@ All done through 11.
 - [1.solid.foundation](./1.solid.foundation.md)
 - [10.controls](./10.controls.md)
 - [11.units](./11.units.md)
+- [12.hierarchy](./12.hierarchy.md)
+- [13.algebra](./13.algebra.md)
 - [2.panel](./2.panel.md)
 - [3.docs](./3.docs.md)
 - [4.hits.manager](./4.hits.manager.md)

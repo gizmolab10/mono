@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { colors } from '../../ts/draw/Colors';
-	import { w_root_so, w_all_sos, add_child_so, set_precision, w_precision } from '../../ts/render/Setup';
+	import { w_root_so, w_all_sos, add_child_so, set_precision, w_precision, toggle_solid, w_solid } from '../../ts/render/Setup';
 	import { hits_3d, scenes } from '../../ts/managers';
 	import { T_Hit_3D, T_Units } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
@@ -18,7 +18,7 @@
 		}
 	}
 
-	const imperial_ticks = ['whole', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64'];
+	const imperial_ticks = ['feet', 'inch', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64'];
 	const decimal_ticks  = ['whole', '1', '2', '3'];
 
 	let ticks = $derived($w_unit_system === T_Units.imperial ? imperial_ticks : decimal_ticks);
@@ -69,11 +69,12 @@
 				oninput  = {handle_name}
 			/>
 		</label>
-		<button class='action-btn' onclick={add_child_so}>add child</button>
 	{:else}
 		<p>No object selected</p>
 	{/if}
 	<div class='settings'>
+		<button class='action-btn' onclick={add_child_so}>add child</button>
+		<button class='action-btn' onclick={toggle_solid}>{$w_solid ? 'solid' : 'see through'}</button>
 		<select class='details-select' value={$w_unit_system} onchange={handle_unit_change}>
 			{#each Object.values(T_Units) as system}
 				<option value={system}>{system}</option>
@@ -121,12 +122,14 @@
 	}
 
 	input {
-		background    : transparent;
+		background    : white;
 		border        : 0.5px solid currentColor;
 		border-radius : 4px;
 		color         : inherit;
 		font-size     : 0.875rem;
-		padding       : 4px 6px;
+		padding       : 0 6px;
+		height        : 20px;
+		box-sizing    : border-box;
 		outline       : none;
 	}
 
@@ -143,18 +146,22 @@
 	}
 
 	.so-btn {
-		background    : transparent;
+		background    : white;
 		border        : 0.5px solid currentColor;
 		border-radius : 4px;
 		color         : inherit;
-		padding       : 2px 8px;
+		padding       : 0 8px;
 		font-size     : 11px;
+		height        : 20px;
+		box-sizing    : border-box;
 		cursor        : pointer;
 		opacity       : 0.5;
 	}
 
 	.so-btn:hover {
-		opacity : 0.8;
+		opacity    : 1;
+		background : black;
+		color      : white;
 	}
 
 	.so-btn.selected {
@@ -164,19 +171,25 @@
 	}
 
 	.action-btn {
-		background    : transparent;
+		background    : white;
 		border        : 0.5px solid currentColor;
 		border-radius : 10px;
 		color         : inherit;
-		padding       : 2px 8px;
+		padding       : 0 8px;
 		font-size     : 11px;
+		height        : 20px;
+		box-sizing    : border-box;
 		cursor        : pointer;
 		margin-top    : 0.75rem;
 	}
 
+	.settings .action-btn {
+		margin-top : 0;
+	}
+
 	.action-btn:hover {
-		background : currentColor;
-		color      : var(--bg, white);
+		background : black;
+		color      : white;
 	}
 
 	p {
@@ -203,48 +216,63 @@
 		border         : 0.5px solid currentColor;
 		border-radius  : 6px;
 		overflow       : hidden;
+		height         : 20px;
+		box-sizing     : border-box;
 	}
 
 	.segment {
-		flex           : 1;
-		background     : transparent;
+		flex           : 1 1 auto;
+		background     : white;
 		border         : none;
 		border-right   : 0.5px solid currentColor;
-		color          : inherit;
+		color          : rgba(0, 0, 0, 0.5);
 		font-size      : 9px;
-		padding        : 3px 0;
+		padding        : 0;
 		cursor         : pointer;
 		text-align     : center;
-		opacity        : 0.5;
+		white-space    : nowrap;
+		display        : flex;
+		align-items    : center;
+		justify-content: center;
 	}
 
 	.segment:last-child {
-		border-right : none;
+		border-right : 0.5px solid transparent;
 	}
 
 	.segment:hover {
-		opacity    : 0.8;
-		background : rgba(128, 128, 128, 0.1);
+		background : black;
+		color      : white;
 	}
 
 	.segment.active {
 		opacity    : 1;
-		background : currentColor;
-		color      : var(--bg, white);
+		background : transparent;
+		color      : black;
 	}
 
 	.details-select {
-		background         : transparent;
+		background         : white;
+		background-image   : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23999'/%3E%3C/svg%3E");
+		background-repeat  : no-repeat;
+		background-position: right 6px center;
 		border             : 0.5px solid currentColor;
 		border-radius      : 10px;
 		color              : inherit;
-		padding            : 2px 8px;
+		padding            : 0 18px 0 8px;
 		font-size          : 11px;
+		height             : 20px;
+		box-sizing         : border-box;
 		cursor             : pointer;
 		outline            : none;
-		box-sizing         : border-box;
 		appearance         : none;
 		-webkit-appearance : none;
+	}
+
+	.details-select:hover {
+		background       : black;
+		background-image : none;
+		color            : white;
 	}
 
 	.details-select:focus,

@@ -6,7 +6,7 @@ import { Size, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { hits_3d } from '../managers/Hits_3D';
 import { mat4, vec4, quat } from 'gl-matrix';
-import { current_view_mode, show_dimensionals, current_precision } from './Setup';
+import { current_view_mode, show_dimensionals, current_precision, is_solid } from './Setup';
 import { camera } from './Camera';
 import { scene } from './Scene';
 
@@ -14,6 +14,7 @@ class Render {
   private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D;
   private size: Size = Size.zero;
+  private dpr = 1;
 
   /** When true, faces render with debug colors. When false, faces are transparent. */
   debug = false;
@@ -23,17 +24,32 @@ class Render {
   /** Per-frame dimension rects for click-to-edit. Cleared each render(). */
   dimension_rects: Dimension_Rect[] = [];
 
+  /** Logical (CSS) size — for external consumers like camera init. */
+  get logical_size(): Size { return this.size; }
+
   init(canvas: HTMLCanvasElement): void {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d')!;
-    this.size = new Size(canvas.width, canvas.height);
+    this.dpr = window.devicePixelRatio || 1;
+    const w = canvas.width, h = canvas.height;
+    this.size = new Size(w, h);
+    this.apply_dpr(w, h);
   }
 
   resize(width: number, height: number): void {
-    this.canvas.width = width;
-    this.canvas.height = height;
+    this.dpr = window.devicePixelRatio || 1;
     this.size = new Size(width, height);
+    this.apply_dpr(width, height);
     camera.resize(this.size);
+  }
+
+  /** Set canvas buffer to physical pixels, CSS size to logical pixels. */
+  private apply_dpr(w: number, h: number): void {
+    this.canvas.width = w * this.dpr;
+    this.canvas.height = h * this.dpr;
+    this.canvas.style.width = w + 'px';
+    this.canvas.style.height = h + 'px';
+    this.ctx.scale(this.dpr, this.dpr);
   }
 
   render(): void {
@@ -111,11 +127,11 @@ class Render {
     }
 
     const is_2d = current_view_mode() === '2d';
-    this.ctx.lineWidth = is_2d ? 2 / 3 : 2;
-    this.ctx.lineCap = 'round';
+    this.ctx.lineWidth = 1;
+    this.ctx.lineCap = 'square';
 
-    // In 2D mode, only draw edges belonging to front-facing faces
-    const front_edges = is_2d ? this.front_face_edges(obj, projected) : null;
+    // In 2D or solid mode, only draw edges belonging to front-facing faces
+    const front_edges = (is_2d || is_solid()) ? this.front_face_edges(obj, projected) : null;
 
     for (const [i, j] of obj.edges) {
       const a = projected[i],
@@ -125,8 +141,11 @@ class Render {
       const alpha = is_2d ? 1 : 0.3 + 0.7 * (1 - (a.z + b.z) / 2);
       this.ctx.strokeStyle = `${obj.color}${Math.max(0.2, Math.min(1, alpha)).toFixed(2)})`;
       this.ctx.beginPath();
-      this.ctx.moveTo(a.x, a.y);
-      this.ctx.lineTo(b.x, b.y);
+      // Snap to half-pixel grid for crisp 1px lines
+      const ax = Math.round(a.x) + 0.5, ay = Math.round(a.y) + 0.5;
+      const bx = Math.round(b.x) + 0.5, by = Math.round(b.y) + 0.5;
+      this.ctx.moveTo(ax, ay);
+      this.ctx.lineTo(bx, by);
       this.ctx.stroke();
     }
 
@@ -157,7 +176,7 @@ class Render {
       cx /= face.length;
       cy /= face.length;
 
-      ctx.fillText(obj.so.name, cx, cy);
+      ctx.fillText(obj.so.name, Math.round(cx), Math.round(cy));
     }
   }
 
@@ -501,7 +520,7 @@ class Render {
 
     // Witness lines (only drawn if dimensional is visible)
     ctx.strokeStyle = 'rgba(100, 100, 100, 0.7)';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 0.5;
     ctx.beginPath();
     ctx.moveTo(w1_start.x, w1_start.y);
     ctx.lineTo(w1_end.x, w1_end.y);

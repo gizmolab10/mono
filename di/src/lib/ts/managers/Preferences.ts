@@ -22,6 +22,7 @@ export enum T_Preference {
 	viewMode         = 'viewMode',
 	precision        = 'precision',
 	showDimensionals = 'showDimensionals',
+	solid            = 'solid',
 
 	// Scenes
 	scene = 'scene',

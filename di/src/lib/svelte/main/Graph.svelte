@@ -127,8 +127,6 @@
 	}
 
 	.graph canvas {
-		width      : 100%;
-		height     : 100%;
 		cursor     : grab;
 		display    : block;
 		background : inherit;

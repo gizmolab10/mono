@@ -202,8 +202,9 @@ export class Units {
 
 	// ── formatting (mm → string) ──
 
-	// Imperial precision index → max denominator: [1, 2, 4, 8, 16, 32, 64]
-	private static readonly IMPERIAL_DENOMS = [1, 2, 4, 8, 16, 32, 64];
+	// Imperial precision index → max denominator.
+	// 0 = feet-only (sentinel), 1 = whole inches, 2+ = fractional inches.
+	private static readonly IMPERIAL_DENOMS = [0, 1, 2, 4, 8, 16, 32, 64];
 
 	format(mm: number, unit: T_Unit, decimal_places: number = 1): string {
 		const value = this.from_mm(mm, unit);
@@ -247,12 +248,18 @@ export class Units {
 	/**
 	 * Format mm for display, respecting precision level.
 	 * @param precision Index into the tick array (0 = coarsest).
-	 *   Imperial: 0=whole, 1=1/2, 2=1/4, … 6=1/64
+	 *   Imperial: 0=feet, 1=inch, 2=1/2, … 7=1/64
 	 *   Others:   0=whole, 1=1dp, 2=2dp, 3=3dp
 	 */
-	format_for_system(mm: number, system: T_Units, precision: number = 6): string {
+	format_for_system(mm: number, system: T_Units, precision: number = 7): string {
 		if (system === T_Units.imperial) {
 			const denom = Units.IMPERIAL_DENOMS[Math.min(precision, Units.IMPERIAL_DENOMS.length - 1)];
+			if (denom === 0) {
+				// Feet only — round to nearest foot
+				const total_inches = mm / mm_per[T_Unit.inch];
+				const feet = Math.round(total_inches / 12);
+				return (feet === 0 ? '0' : String(feet)) + "'";
+			}
 			return this.format_compound(mm, denom);
 		}
 		// metric/marine/archaic: precision = decimal places
@@ -280,6 +287,12 @@ export class Units {
 	snap_for_system(mm: number, system: T_Units, precision: number): number {
 		if (system === T_Units.imperial) {
 			const denom = Units.IMPERIAL_DENOMS[Math.min(precision, Units.IMPERIAL_DENOMS.length - 1)];
+			if (denom === 0) {
+				// Feet — snap to nearest 12 inches
+				const inches = mm / mm_per[T_Unit.inch];
+				const feet = Math.round(inches / 12);
+				return feet * 12 * mm_per[T_Unit.inch];
+			}
 			const inches = mm / mm_per[T_Unit.inch];
 			const snapped_inches = Math.round(inches * denom) / denom;
 			return snapped_inches * mm_per[T_Unit.inch];
