@@ -1,9 +1,11 @@
 import { scene, camera, render, animation } from '.';
-import { hits_3d, persistence } from '../managers';
+import { hits_3d, scenes } from '../managers';
 import { Smart_Object } from '../runtime';
 import { writable } from 'svelte/store';
 import { quat, vec3 } from 'gl-matrix';
 import { Size } from '../types';
+import { T_Hit_3D } from '../types/Enumerations';
+import type { O_Scene } from '../types/Interfaces';
 import { e3 } from '../signals';
 
 // ============================================
@@ -31,14 +33,16 @@ const example_faces: number[][] = [
 // MODULE STATE
 // ============================================
 
-let active_scene: import('../types/Interfaces').O_Scene | null = null;
+let root_scene: O_Scene | null = null;
 export const w_scale = writable<number>(1);
+export const w_root_so = writable<Smart_Object | null>(null);
+export const w_all_sos = writable<Smart_Object[]>([]);
 
 // Keep O_Scene.scale in sync with the store
 w_scale.subscribe((value) => {
-  if (active_scene && active_scene.scale !== value) {
-    active_scene.scale = value;
-    persistence.save();
+  if (root_scene && root_scene.scale !== value) {
+    root_scene.scale = value;
+    scenes.save();
   }
 });
 
@@ -53,55 +57,88 @@ export function init(canvas: HTMLCanvasElement) {
   e3.init(canvas);
 
   // Load saved state or create defaults
-  const saved = persistence.load();
-  let example: Smart_Object;
-  let saved_scale = 1;
+  const saved = scenes.load();
+  const smart_objects: Smart_Object[] = [];
 
-  if (saved?.smart_objects[0]) {
-    const result = Smart_Object.deserialize(saved.smart_objects[0]);
-    example = result.so;
-    saved_scale = result.scale;
+  if (saved?.smart_objects.length) {
+    for (const data of saved.smart_objects) {
+      const result = Smart_Object.deserialize(data);
+      const so = result.so;
+      const so_scene = scene.create({
+        so,
+        edges: example_edges,
+        faces: example_faces,
+        scale: result.scale,
+        color: 'rgba(78, 205, 196,',
+      });
+      so.scene = so_scene;
+      hits_3d.register(so);
+      smart_objects.push(so);
+    }
+    // Restore parent refs by name
+    for (let i = 0; i < saved.smart_objects.length; i++) {
+      const parent_name = saved.smart_objects[i].parent_name;
+      if (!parent_name) continue;
+      const parent_so = smart_objects.find(so => so.name === parent_name);
+      if (parent_so?.scene) {
+        smart_objects[i].scene!.parent = parent_so.scene;
+      }
+    }
   } else {
-    example = new Smart_Object('A');
-  }
-
-  if (!saved) {
-    // Initial rotation (default)
+    // First run — create default SO with initial rotation
+    const so = new Smart_Object('A');
     const init_quat = quat.create();
     quat.setAxisAngle(init_quat, vec3.normalize(vec3.create(), [1, 1, 0]), 0.5);
-    quat.multiply(example.orientation, init_quat, example.orientation);
-    quat.normalize(example.orientation, example.orientation);
+    quat.multiply(so.orientation, init_quat, so.orientation);
+    quat.normalize(so.orientation, so.orientation);
+    const so_scene = scene.create({
+      so,
+      edges: example_edges,
+      faces: example_faces,
+      scale: 1,
+      color: 'rgba(78, 205, 196,',
+    });
+    so.scene = so_scene;
+    hits_3d.register(so);
+    smart_objects.push(so);
   }
 
-  const example_scene = scene.create({
-    so: example,
-    edges: example_edges,
-    faces: example_faces,
-    scale: saved_scale,
-    color: 'rgba(78, 205, 196,',
-  });
-  example.scene = example_scene;
-  active_scene = example_scene;
-  w_scale.set(saved_scale);
+  // Restore root SO by name, or default to first
+  const saved_name = saved?.root_name ?? '';
+  const root_so = smart_objects.find(so => so.name === saved_name) ?? smart_objects[0];
+  root_scene = root_so.scene;
+  w_scale.set(root_scene?.scale ?? 1);
+  w_root_so.set(root_so);
+  scenes.root_name = root_so.name;
+  w_all_sos.set(smart_objects);
 
-  hits_3d.register(example);
+  // Restore selection (SO + face) by name
+  if (saved?.selected_name != null) {
+    const sel_so = smart_objects.find(so => so.name === saved.selected_name);
+    if (sel_so && saved.selected_face != null) {
+      hits_3d.set_selection({ so: sel_so, type: T_Hit_3D.face, index: saved.selected_face });
+    }
+  }
 
   if (saved?.camera) {
     camera.deserialize(saved.camera);
   }
 
-  // Input: drag edits selection OR rotates object, then save
+  // Input: drag edits selection OR rotates selected object, then save
   e3.set_drag_handler((prev, curr) => {
+    const target = hits_3d.selection?.so.scene ?? root_scene;
+    if (!target) return;
     if (!e3.edit_selection(prev, curr)) {
-      e3.rotate_object(example_scene, prev, curr);
+      e3.rotate_object(target, prev, curr);
     }
-    persistence.save();
+    scenes.save();
   });
 
-  // Input: scroll wheel scales object
+  // Input: scroll wheel scales entire rendering
   e3.set_wheel_handler((delta, fine) => {
-    e3.scale_object(example_scene, delta, fine);
-    w_scale.set(example_scene.scale);
+    if (!root_scene) return;
+    e3.scale_object(root_scene, delta, fine);
+    w_scale.set(root_scene.scale);
   });
 
   // Render loop
@@ -117,13 +154,47 @@ export function init(canvas: HTMLCanvasElement) {
 // ============================================
 
 export function scale_up(): void {
-  if (!active_scene) return;
-  e3.scale_object(active_scene, 1, false);
-  w_scale.set(active_scene.scale);
+  if (!root_scene) return;
+  e3.scale_object(root_scene, 1, false);
+  w_scale.set(root_scene.scale);
 }
 
 export function scale_down(): void {
-  if (!active_scene) return;
-  e3.scale_object(active_scene, -1, false);
-  w_scale.set(active_scene.scale);
+  if (!root_scene) return;
+  e3.scale_object(root_scene, -1, false);
+  w_scale.set(root_scene.scale);
+}
+
+// ============================================
+// HIERARCHY
+// ============================================
+
+export function add_child_so(): void {
+  if (!root_scene) return;
+
+  const all = scene.get_all();
+  const used = new Set(all.map(o => o.so.name));
+  let name = 'A';
+  while (used.has(name)) {
+    name = String.fromCharCode(name.charCodeAt(0) + 1);
+  }
+
+  const so = new Smart_Object(name);
+  const so_scene = scene.create({
+    so,
+    edges: example_edges,
+    faces: example_faces,
+    scale: 1,
+    color: 'rgba(78, 205, 196,',
+    parent: root_scene,
+  });
+  so.scene = so_scene;
+  hits_3d.register(so);
+
+  root_scene = so_scene;
+  w_scale.set(so_scene.scale);
+  w_root_so.set(so);
+  w_all_sos.update(list => [...list, so]);
+  scenes.root_name = so.name;
+  scenes.save();
 }

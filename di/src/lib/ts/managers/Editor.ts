@@ -1,7 +1,7 @@
 import type { Dimension_Rect, S_Editing } from '../types/Interfaces';
 import { units, current_unit_system } from '../types/Units';
 import { writable, get } from 'svelte/store';
-import { persistence } from './Persistence';
+import { scenes } from './Scenes';
 import { render } from '../render/Render';
 
 class Editor {
@@ -62,7 +62,7 @@ class Editor {
 		state.so.set_bound(min_bound, center - half);
 		state.so.set_bound(max_bound, center + half);
 
-		persistence.save();
+		scenes.save();
 		this.w_editing.set(null);
 		return true;
 	}

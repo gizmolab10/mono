@@ -9,4 +9,5 @@
 - [Journal](./journal.md)
 - [Learn](./learn.md)
 - [Revisit.mo](./revisit.mo.md)
+- [Worktrees](./worktrees.md)
 

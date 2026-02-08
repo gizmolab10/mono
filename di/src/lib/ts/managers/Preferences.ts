@@ -18,7 +18,7 @@ export enum T_Preference {
 	// Units
 	unitSystem = 'unitSystem',
 
-	// Persistence
+	// Scenes
 	scene = 'scene',
 }
 

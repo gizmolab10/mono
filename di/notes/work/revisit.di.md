@@ -15,10 +15,10 @@ Where we are in Design Intuition.
 ## Milestones (current work)
 
 
-- [ ] **[[12.hierarchy]]** of SO
 - [ ] **13 algebra** — recursive descent compiler
 	- [ ] compile tree
 	- [ ] traverse and reverse traverse
+	- [ ] incorporate into SO
 - [ ] **14 details** — attributes
 	- [ ] port from ws: banners, glow buttons & details
 - [ ] **15 what? **
@@ -36,5 +36,5 @@ Where we are in Design Intuition.
 | Build Notes | List of important steps in our progress    |
 | Dimensions  | Dynamic (value, layout, not yet editable)  |
 | Controls    | Steppers (h/v), slider, scale +/−/wheel   |
-| Persistence | SO, camera orientation, scale              |
+| Scenes      | SO, camera orientation, scale              |
 

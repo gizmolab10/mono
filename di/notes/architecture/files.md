@@ -29,9 +29,11 @@ src/
         ├── managers/
         │   ├── index.ts
         │   ├── Components.ts
+        │   ├── Editor.ts
         │   ├── Hits.ts
         │   ├── Hits_3D.ts
-        │   └── Preferences.ts
+        │   ├── Preferences.ts
+        │   └── Scenes.ts
         ├── render/
         │   ├── index.ts
         │   ├── Animation.ts
@@ -110,6 +112,8 @@ src/
 | `Hits.ts` | `hits` | RBush spatial index, click routing |
 | `Hits_3D.ts` | `hits_3d` | 3D hit testing for canvas objects |
 | `Components.ts` | `components` | Component registry |
+| `Editor.ts` | `editor` | Dimensional editing lifecycle |
+| `Scenes.ts` | `scenes` | Scene save/load/clear via Preferences |
 
 ## Render
 

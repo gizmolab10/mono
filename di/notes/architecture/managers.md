@@ -15,6 +15,8 @@ Each manager owns one concern. Singleton pattern throughout.
 | `Hits_3D`     | `hits_3d`     | `managers/` | 3D hit testing for canvas objects        |
 | `Components`  | `components`  | `managers/` | Component registry                       |
 | `Preferences` | `preferences` | `managers/` | localStorage wrapper                     |
+| `Scenes`      | `scenes`      | `managers/` | Scene save/load/clear                    |
+| `Editor`      | `editor`      | `managers/` | Dimensional editing lifecycle            |
 
 ## File Layout
 
@@ -24,7 +26,9 @@ src/lib/ts/
 │   ├── Components.ts
 │   ├── Hits.ts
 │   ├── Hits_3D.ts
-│   └── Preferences.ts
+│   ├── Preferences.ts
+│   ├── Scenes.ts
+│   └── Editor.ts
 ├── render/
 │   ├── index.ts
 │   ├── Animation.ts
@@ -157,4 +161,15 @@ preferences.read(key: T_Preference) → T | null
 preferences.write(key: T_Preference, value: T)
 preferences.remove(key: T_Preference)
 preferences.restore()
+```
+
+## Scenes
+
+Save/load scene state (SOs + camera + active selection) via Preferences.
+
+```ts
+scenes.save()
+scenes.load() → Saved_Scene | null
+scenes.clear()
+scenes.active_name: string
 ```

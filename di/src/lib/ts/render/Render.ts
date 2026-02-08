@@ -118,6 +118,36 @@ class Render {
       this.ctx.lineTo(b.x, b.y);
       this.ctx.stroke();
     }
+
+    // Draw SO name on each front-facing face
+    this.render_face_names(obj, projected);
+  }
+
+  private render_face_names(obj: O_Scene, projected: Projected[]): void {
+    if (!obj.faces) return;
+    const ctx = this.ctx;
+    ctx.font = '10px sans-serif';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (let fi = 0; fi < obj.faces.length; fi++) {
+      const face = obj.faces[fi];
+      if (this.face_winding(face, projected) >= 0) continue; // skip back-facing
+
+      // Compute centroid of face in screen space
+      let cx = 0, cy = 0, behind = false;
+      for (const vi of face) {
+        if (projected[vi].w < 0) { behind = true; break; }
+        cx += projected[vi].x;
+        cy += projected[vi].y;
+      }
+      if (behind) continue;
+      cx /= face.length;
+      cy /= face.length;
+
+      ctx.fillText(obj.so.name, cx, cy);
+    }
   }
 
   private draw_debug_face(face: number[], fi: number, projected: Projected[]): void {

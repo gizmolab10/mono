@@ -14,11 +14,11 @@ export interface Projected {
 }
 
 export interface S_Editing {
+  formatted: string;  // pre-filled text
   so: Smart_Object;
   axis: Axis;
-  x: number;        // screen x (center of text)
+  x: number;          // screen x (center of text)
   y: number;        // screen y (center of text)
-  formatted: string;  // pre-filled text
 }
 
 export interface Dimension_Rect {
