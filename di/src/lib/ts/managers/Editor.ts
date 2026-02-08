@@ -2,9 +2,7 @@ import type { Dimension_Rect, S_Editing } from '../types/Interfaces';
 import { units, current_unit_system } from '../types/Units';
 import { T_Units } from '../types/Enumerations';
 import { current_precision } from './Stores';
-import { constraints } from '../algebra/Constraints';
-import { compile } from '../algebra/Compiler';
-import { evaluate } from '../algebra/Evaluate';
+import { constraints, compiler, evaluator } from '../algebra';
 import { writable, get } from 'svelte/store';
 import { scenes } from './Scenes';
 import { render } from '../render/Render';
@@ -83,8 +81,8 @@ class Editor {
 		const simple = units.parse_for_system(input, system);
 		if (simple !== null) return simple;
 		try {
-			const node = compile(input);
-			const mm = evaluate(node, (o, a) => constraints.resolve(o, a));
+			const node = compiler.compile(input);
+			const mm = evaluator.evaluate(node, (o, a) => constraints.resolve(o, a));
 			if (isFinite(mm)) return mm;
 		} catch { /* not a valid expression either */ }
 		return null;

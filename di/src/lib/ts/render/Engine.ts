@@ -1,14 +1,14 @@
+import { w_scale, w_root_so, w_all_sos, w_view_mode, w_precision, current_precision } from '../managers/Stores';
+import { units, current_unit_system } from '../types/Units';
 import { scene, camera, render, animation } from '.';
+import { constraints } from '../algebra';
+import type { O_Scene } from '../types/Interfaces';
+import { T_Hit_3D } from '../types/Enumerations';
 import { hits_3d, scenes } from '../managers';
 import { Smart_Object } from '../runtime';
-import { constraints } from '../algebra/Constraints';
-import { units, current_unit_system } from '../types/Units';
-import { get } from 'svelte/store';
 import { quat, vec3 } from 'gl-matrix';
-import { T_Hit_3D } from '../types/Enumerations';
-import type { O_Scene } from '../types/Interfaces';
+import { get } from 'svelte/store';
 import { e3 } from '../signals';
-import { w_scale, w_root_so, w_all_sos, w_view_mode, w_precision, current_precision } from '../managers/Stores';
 
 class Engine {
   private root_scene: O_Scene | null = null;

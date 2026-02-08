@@ -1,21 +1,18 @@
+import type Smart_Object from '../runtime/Smart_Object';
+import type { Bound } from '../runtime/Smart_Object';
+import { evaluator } from './Evaluator';
+import type { FormulaMap } from './Evaluator';
+import { orientation } from './Orientation';
+import { scene } from '../render/Scene';
+import { compiler } from './Compiler';
+import type { Node } from './Nodes';
+import { nodes } from './Nodes';
+
 // ═══════════════════════════════════════════════════════════════════
 // ALGEBRA — CONSTRAINTS
 // Glue between the algebra engine and the scene.
 // Holds formulas, resolves references, triggers propagation.
 // ═══════════════════════════════════════════════════════════════════
-
-import type { Node } from './Node';
-import { compile } from './Compiler';
-import { evaluate, detect_cycle } from './Evaluate';
-import type { FormulaMap } from './Evaluate';
-import type Smart_Object from '../runtime/Smart_Object';
-import type { Bound } from '../runtime/Smart_Object';
-import { scene } from '../render/Scene';
-import { recompute_orientation } from './Orientation';
-
-function ref_key(object: string, attribute: string): string {
-	return `${object}.${attribute}`;
-}
 
 class Constraints {
 
@@ -44,16 +41,16 @@ class Constraints {
 
 		let compiled: Node;
 		try {
-			compiled = compile(formula);
+			compiled = compiler.compile(formula);
 		} catch (e: any) {
 			return `Compile error: ${e.message}`;
 		}
 
 		// Check for cycles before accepting
 		const formulas = this.build_formula_map();
-		const key = ref_key(so.name, bound);
+		const key = nodes.ref_key(so.name, bound);
 		formulas.set(key, compiled);
-		const cycle = detect_cycle(formulas);
+		const cycle = evaluator.detect_cycle(formulas);
 		if (cycle) {
 			return `Cycle detected: ${cycle.join(' → ')}`;
 		}
@@ -62,7 +59,7 @@ class Constraints {
 		attr.compiled = compiled;
 
 		// Evaluate immediately
-		attr.value = evaluate(compiled, (o, a) => this.resolve(o, a));
+		attr.value = evaluator.evaluate(compiled, (o, a) => this.resolve(o, a));
 		return null;
 	}
 
@@ -89,11 +86,11 @@ class Constraints {
 				if (!attr.compiled) continue;
 				// Does this formula reference the changed SO?
 				if (!this.formula_references(attr.compiled, changed_so.name)) continue;
-				attr.value = evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
+				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
 				updated = true;
 			}
 			// Recompute orientation for variable children whose bounds changed
-			if (updated) recompute_orientation(so);
+			if (updated) orientation.recompute(so);
 		}
 	}
 
@@ -105,10 +102,10 @@ class Constraints {
 			let updated = false;
 			for (const attr of Object.values(so.attributes_dict_byName)) {
 				if (!attr.compiled) continue;
-				attr.value = evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
+				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
 				updated = true;
 			}
-			if (updated) recompute_orientation(so);
+			if (updated) orientation.recompute(so);
 		}
 	}
 
@@ -126,7 +123,7 @@ class Constraints {
 		for (const o of all) {
 			for (const attr of Object.values(o.so.attributes_dict_byName)) {
 				if (attr.compiled) {
-					map.set(ref_key(o.so.name, attr.name), attr.compiled);
+					map.set(nodes.ref_key(o.so.name, attr.name), attr.compiled);
 				}
 			}
 		}

@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { onMount } from 'svelte';
+	import { colors } from '../../ts/draw/Colors';
 	import { k } from '../../ts/common/Constants';
 	import { e } from '../../ts/signals/Events';
-	import { colors } from '../../ts/draw/Colors';
 	import Controls from './Controls.svelte';
-	import Graph from './Graph.svelte';
 	import Details from './Details.svelte';
+	import Graph from './Graph.svelte';
+	import { onMount } from 'svelte';
 
 	const { w_separator_color } = colors;
 

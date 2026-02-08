@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { colors } from '../../ts/draw/Colors';
 	import { w_root_so, w_all_sos, w_precision, w_solid, toggle_solid } from '../../ts/managers/Stores';
-	import { engine } from '../../ts/render/Engine';
+	import { engine } from '../../ts/render';
 	import { hits_3d, scenes } from '../../ts/managers';
 	import { T_Hit_3D, T_Units } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';

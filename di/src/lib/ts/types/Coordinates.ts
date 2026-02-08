@@ -28,7 +28,7 @@ export class Point {
 	get pixelVerbose():				 		 string { return `${this.x.toFixed(p)}px ${this.y.toFixed(p)}px`; }
 	get verbose():					 		 string { return `(${this.x.toFixed(p)}, ${this.y.toFixed(p)})`; }
 	get description():				 		 string { return `${this.x.toFixed(p)} ${this.y.toFixed(p)}`; }
-	get asBBox():							   { minX: number; minY: number; maxX: number; maxY: number } { return { minX: this.x, minY: this.y, maxX: this.x, maxY: this.y }; }
+	get asBBox(): { minX: number; minY: number; maxX: number; maxY: number } { return { minX: this.x, minY: this.y, maxX: this.x, maxY: this.y }; }
 	get asPolar():							  Polar { return new Polar(this.magnitude, this.angle); }
 	get asSize():					 	 	   Size { return new Size(this.x, this.y); }		// NB: can have negative values, so rect extended by negative works
 	get negated():					 		  Point { return this.multipliedEquallyBy(-1); }

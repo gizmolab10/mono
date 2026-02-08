@@ -1,3 +1,8 @@
+import { nodes } from './Nodes';
+import type { Node, Operator } from './Nodes';
+import type { Token } from './Tokenizer';
+import { tokenizer } from './Tokenizer';
+
 // ═══════════════════════════════════════════════════════════════════
 // ALGEBRA — COMPILER
 // Token stream → Node tree via recursive descent.
@@ -9,18 +14,20 @@
 //   atom        →  NUMBER | BARE_NUMBER | REFERENCE | '(' expression ')'
 // ═══════════════════════════════════════════════════════════════════
 
-import type { Token } from './Tokenizer';
-import { tokenize } from './Tokenizer';
-import type { Node, Operator } from './Node';
-import { literal, reference, binary, unary } from './Node';
+class Compiler {
 
-export function compile(input: string): Node {
-	const tokens = tokenize(input);
-	const parser = new Parser(tokens);
-	const node = parser.expression();
-	parser.expect_end();
-	return node;
+	compile(input: string): Node {
+		const tokens = tokenizer.tokenize(input);
+		const parser = new Parser(tokens);
+		const node = parser.expression();
+		parser.expect_end();
+		return node;
+	}
 }
+
+export const compiler = new Compiler();
+
+// ── internal parser ──
 
 class Parser {
 	private tokens: Token[];
@@ -53,7 +60,7 @@ class Parser {
 		while (this.is_operator('+') || this.is_operator('-')) {
 			const op = (this.advance() as { type: 'operator'; value: Operator }).value;
 			const right = this.term();
-			left = binary(op, left, right);
+			left = nodes.binary(op, left, right);
 		}
 		return left;
 	}
@@ -64,7 +71,7 @@ class Parser {
 		while (this.is_operator('*') || this.is_operator('/')) {
 			const op = (this.advance() as { type: 'operator'; value: Operator }).value;
 			const right = this.factor();
-			left = binary(op, left, right);
+			left = nodes.binary(op, left, right);
 		}
 		return left;
 	}
@@ -74,7 +81,7 @@ class Parser {
 		if (this.is_operator('-')) {
 			this.advance();
 			const operand = this.factor();
-			return unary(operand);
+			return nodes.unary(operand);
 		}
 		return this.atom();
 	}
@@ -85,17 +92,17 @@ class Parser {
 
 		if (token.type === 'number') {
 			this.advance();
-			return literal(token.value);
+			return nodes.literal(token.value);
 		}
 
 		if (token.type === 'bare_number') {
 			this.advance();
-			return literal(token.value);
+			return nodes.literal(token.value);
 		}
 
 		if (token.type === 'reference') {
 			this.advance();
-			return reference(token.object, token.attribute);
+			return nodes.reference(token.object, token.attribute);
 		}
 
 		if (token.type === 'paren' && token.value === '(') {

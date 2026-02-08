@@ -3,7 +3,7 @@ import type { O_Scene } from '../types/Interfaces';
 import type { Dictionary } from '../types/Types';
 import { Point3 } from '../types/Coordinates';
 import Attribute from '../types/Attribute';
-import { compile } from '../algebra/Compiler';
+import { compiler } from '../algebra';
 import Identifiable from './Identifiable';
 
 // Bounds: min/max for each axis
@@ -286,7 +286,7 @@ export default class Smart_Object extends Identifiable {
 				const attr = so.attributes_dict_byName[bound];
 				if (attr) {
 					attr.formula = formula;
-					try { attr.compiled = compile(formula); } catch { /* skip bad formulas */ }
+					try { attr.compiled = compiler.compile(formula); } catch { /* skip bad formulas */ }
 				}
 			}
 		}

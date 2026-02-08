@@ -2,7 +2,8 @@
 	import { colors } from '../../ts/draw/Colors';
 	import { scenes } from '../../ts/managers/Scenes';
 	import { w_scale, w_view_mode, w_show_dimensionals, toggle_dimensionals } from '../../ts/managers/Stores';
-	import { engine } from '../../ts/render/Engine';
+	import { engine } from '../../ts/render';
+	import { k } from '../../ts/common/Constants';
 	import Slider from '../mouse/Slider.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	const { w_text_color, w_background_color } = colors;
@@ -41,7 +42,7 @@
 	<button class='toolbar-btn' class:active={$w_show_dimensionals} onclick={toggle_dimensionals}>{$w_show_dimensionals ? 'hide' : 'show'} dimensions</button>
 	<Slider min={0.1} max={100} value={$w_scale} onchange={handle_slider} onstep={handle_scale} />
 	<button class='toolbar-btn' onclick={() => { scenes.clear(); location.reload(); }}>reset</button>
-	<button class='toolbar-btn' onclick={() => showBuildNotes = true}>build {__BUILD_NUMBER__}</button>
+	<button class='toolbar-btn' onclick={() => showBuildNotes = true}>build {k.build_number}</button>
 </div>
 
 <style>

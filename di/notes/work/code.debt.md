@@ -1,7 +1,8 @@
 # Code Debt
 
+- [ ] convert Orientation functions into a class
 - [ ] **bugs**
-	- [ ] algebra fails 1" + 2" -> 1'
+	- [x] algebra fails 1" + 2" -> 1'
 	- [ ] new children spontaneously appear
 	- [ ] steppers hop up and down
 	- [ ] dimensionals sometimes do not extend outward from SO

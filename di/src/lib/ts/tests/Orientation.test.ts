@@ -2,8 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import Smart_Object from '../runtime/Smart_Object';
 import type { Bound } from '../runtime/Smart_Object';
 import { scene } from '../render/Scene';
-import { constraints } from '../algebra/Constraints';
-import { orientation_from_bounds, recompute_orientation, recompute_max_bounds_from_rotation } from '../algebra/Orientation';
+import { constraints, orientation } from '../algebra';
 import { quat } from 'gl-matrix';
 
 // ═══════════════════════════════════════════════════════════════════
@@ -39,7 +38,7 @@ describe('orientation_from_bounds', () => {
 
 	it('flat box with zero height returns identity (no angle to compute)', () => {
 		const so = add_so('box', { x_min: 0, x_max: 100, y_min: 0, y_max: 0, z_min: 0, z_max: 10 });
-		const q = orientation_from_bounds(so);
+		const q = orientation.from_bounds(so);
 		// One axis in the plane is zero → identity
 		expect(q[3]).toBeCloseTo(1);
 	});
@@ -47,14 +46,14 @@ describe('orientation_from_bounds', () => {
 	it('non-square box computes angle from non-thin axes', () => {
 		// 100×50 with thin z → atan2(50, 100) ≈ 26.57°
 		const so = add_so('box', { x_min: 0, x_max: 100, y_min: 0, y_max: 50, z_min: 0, z_max: 10 });
-		const q = orientation_from_bounds(so);
+		const q = orientation.from_bounds(so);
 		const angle = 2 * Math.acos(Math.abs(q[3]));
 		expect(angle).toBeCloseTo(Math.atan2(50, 100));
 	});
 
 	it('equal XY with thin Z gives 45° around Z', () => {
 		const so = add_so('diag', { x_min: 0, x_max: 100, y_min: 0, y_max: 100, z_min: 0, z_max: 10 });
-		const q = orientation_from_bounds(so);
+		const q = orientation.from_bounds(so);
 		const angle = 2 * Math.acos(Math.abs(q[3]));
 		expect(angle).toBeCloseTo(Math.PI / 4); // 45°
 		// Rotation axis should be Z
@@ -65,7 +64,7 @@ describe('orientation_from_bounds', () => {
 
 	it('equal XZ with thin Y gives 45° around Y', () => {
 		const so = add_so('diag', { x_min: 0, x_max: 100, y_min: 0, y_max: 10, z_min: 0, z_max: 100 });
-		const q = orientation_from_bounds(so);
+		const q = orientation.from_bounds(so);
 		const angle = 2 * Math.acos(Math.abs(q[3]));
 		expect(angle).toBeCloseTo(Math.PI / 4); // 45°
 		const axis = [0, 0, 0];
@@ -75,7 +74,7 @@ describe('orientation_from_bounds', () => {
 
 	it('equal YZ with thin X gives 45° around X', () => {
 		const so = add_so('diag', { x_min: 0, x_max: 10, y_min: 0, y_max: 100, z_min: 0, z_max: 100 });
-		const q = orientation_from_bounds(so);
+		const q = orientation.from_bounds(so);
 		const angle = 2 * Math.acos(Math.abs(q[3]));
 		expect(angle).toBeCloseTo(Math.PI / 4); // 45°
 		const axis = [0, 0, 0];
@@ -86,7 +85,7 @@ describe('orientation_from_bounds', () => {
 	it('30° staircase in XY (thin Z)', () => {
 		// tan(30°) = y/x ≈ 0.577, so y ≈ 57.7 when x = 100
 		const so = add_so('stair', { x_min: 0, x_max: 100, y_min: 0, y_max: 57.735, z_min: 0, z_max: 10 });
-		const q = orientation_from_bounds(so);
+		const q = orientation.from_bounds(so);
 		const angle = 2 * Math.acos(Math.abs(q[3]));
 		expect(angle).toBeCloseTo(Math.PI / 6, 2); // 30°
 	});
@@ -111,7 +110,7 @@ describe('use case S — variable staircase', () => {
 		constraints.set_formula(stair, 'z_min', 'R.z_min');
 
 		// Compute initial orientation from bounds (set_formula doesn't call recompute)
-		recompute_orientation(stair);
+		orientation.recompute(stair);
 
 		// Initially square → 45°
 		const angle_before = 2 * Math.acos(Math.abs(stair.orientation[3]));
@@ -137,7 +136,7 @@ describe('use case S — variable staircase', () => {
 		constraints.set_formula(stair, 'y_min', 'R.y_min');
 		constraints.set_formula(stair, 'y_max', 'R.y_max');
 		constraints.set_formula(stair, 'z_min', 'R.z_min');
-		recompute_orientation(stair);
+		orientation.recompute(stair);
 
 		// Stretch room taller → steeper angle
 		room.set_bound('y_max', 2000);
@@ -235,7 +234,7 @@ describe('recompute_max_bounds_from_rotation', () => {
 		const so = add_so('wall', { x_min: 0, x_max: 100, y_min: 0, y_max: 0, z_min: 0, z_max: 10 });
 		// Set 45° around Z
 		quat.setAxisAngle(so.orientation, [0, 0, 1], Math.PI / 4);
-		recompute_max_bounds_from_rotation(so);
+		orientation.recompute_max_bounds(so);
 
 		// Original length was 100 along x. After 45° rotation:
 		// x_max = cos(45°) * 100 ≈ 70.71
@@ -252,7 +251,7 @@ describe('recompute_max_bounds_from_rotation', () => {
 	it('30° around Z', () => {
 		const so = add_so('wall', { x_min: 0, x_max: 200, y_min: 0, y_max: 0, z_min: 0, z_max: 10 });
 		quat.setAxisAngle(so.orientation, [0, 0, 1], Math.PI / 6);
-		recompute_max_bounds_from_rotation(so);
+		orientation.recompute_max_bounds(so);
 
 		expect(so.x_max).toBeCloseTo(200 * Math.cos(Math.PI / 6), 1);
 		expect(so.y_max).toBeCloseTo(200 * Math.sin(Math.PI / 6), 1);
@@ -263,7 +262,7 @@ describe('recompute_max_bounds_from_rotation', () => {
 		const length_before = Math.sqrt(300 * 300 + 100 * 100);
 
 		quat.setAxisAngle(so.orientation, [0, 0, 1], Math.PI / 3);
-		recompute_max_bounds_from_rotation(so);
+		orientation.recompute_max_bounds(so);
 
 		const length_after = Math.sqrt(
 			(so.x_max - so.x_min) ** 2 + (so.y_max - so.y_min) ** 2

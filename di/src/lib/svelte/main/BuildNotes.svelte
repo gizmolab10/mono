@@ -3,11 +3,12 @@
 	import Steppers from '../mouse/Steppers.svelte';
 	import { colors } from '../../ts/draw/Colors';
 	import { Point } from '../../ts/types/Coordinates';
+	import { k } from '../../ts/common/Constants';
 	const { w_text_color, w_background_color } = colors;
 
 	let { onclose } : { onclose: () => void } = $props();
 
-	const allNotes = __BUILD_NOTES__;
+	const allNotes = k.build_notes;
 	const notesLimit = allNotes.length;
 	const pageSize = 3;
 	const modalWidth = 600;

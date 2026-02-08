@@ -24,6 +24,8 @@ Collaborator (or "co") = Claude.
 
 NEVER use .claude-worktrees paths, even though that's the working directory
 
+NEVER use npm or npx — ALWAYS use yarn. `yarn vitest`, `yarn svelte-check`, `yarn <script>`. No exceptions.
+
 EXECUTE: Hybrid — reads/searches immediately, propose file changes before executing
 
 FILESYSTEM: Full read/write/execute within `~/GitHub/mono`

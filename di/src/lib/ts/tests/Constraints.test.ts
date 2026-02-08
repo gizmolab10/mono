@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import Smart_Object from '../runtime/Smart_Object';
 import type { Bound } from '../runtime/Smart_Object';
 import { scene } from '../render/Scene';
-import { constraints } from '../algebra/Constraints';
+import { constraints } from '../algebra';
 import { units } from '../types/Units';
 import { T_Unit } from '../types/Enumerations';
 import { quat } from 'gl-matrix';

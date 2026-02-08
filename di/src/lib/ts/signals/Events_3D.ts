@@ -5,7 +5,7 @@ import { editor } from '../managers/Editor';
 import { Point, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { camera } from '../render/Camera';
-import { recompute_max_bounds_from_rotation } from '../algebra/Orientation';
+import { orientation } from '../algebra';
 import Smart_Object from '../runtime/Smart_Object';
 
 type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point) => void;
@@ -122,7 +122,7 @@ class Events_3D {
 
     // Fixed child: preserve origin (min bounds), recompute max bounds from new angle + length
     if (obj.so.fixed && obj.parent) {
-      recompute_max_bounds_from_rotation(obj.so);
+      orientation.recompute_max_bounds(obj.so);
     }
   }
 

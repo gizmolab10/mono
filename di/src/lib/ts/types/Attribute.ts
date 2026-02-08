@@ -1,4 +1,4 @@
-import type { Node } from '../algebra/Node';
+import type { Node } from '../algebra';
 
 export default class Attribute {
 	value: number;
