@@ -1,7 +1,10 @@
 import { scene, camera, render, animation } from '.';
 import { hits_3d, scenes } from '../managers';
+import { preferences, T_Preference } from '../managers/Preferences';
 import { Smart_Object } from '../runtime';
-import { writable } from 'svelte/store';
+import { constraints } from '../algebra/Constraints';
+import { units, current_unit_system } from '../types/Units';
+import { writable, get } from 'svelte/store';
 import { quat, vec3 } from 'gl-matrix';
 import { Size } from '../types';
 import { T_Hit_3D } from '../types/Enumerations';
@@ -37,6 +40,42 @@ let root_scene: O_Scene | null = null;
 export const w_scale = writable<number>(1);
 export const w_root_so = writable<Smart_Object | null>(null);
 export const w_all_sos = writable<Smart_Object[]>([]);
+
+// View mode: '2d' or '3d'
+const saved_view = preferences.read<'2d' | '3d'>(T_Preference.viewMode);
+export const w_view_mode = writable<'2d' | '3d'>(saved_view ?? '3d');
+w_view_mode.subscribe((mode) => {
+  preferences.write(T_Preference.viewMode, mode);
+});
+
+/** Read current view mode synchronously (for non-reactive contexts like Render) */
+export function current_view_mode(): '2d' | '3d' {
+  return get(w_view_mode);
+}
+
+// Precision mode: when true, drag snaps to clean increments
+const saved_precision = preferences.read<boolean>(T_Preference.precision);
+export const w_precision = writable<boolean>(saved_precision ?? false);
+w_precision.subscribe((on) => {
+  preferences.write(T_Preference.precision, on);
+});
+
+// Show/hide dimensionals
+const saved_dims = preferences.read<boolean>(T_Preference.showDimensionals);
+export const w_show_dimensionals = writable<boolean>(saved_dims ?? true);
+w_show_dimensionals.subscribe((on) => {
+  preferences.write(T_Preference.showDimensionals, on);
+});
+
+/** Toggle dimensionals visibility. */
+export function toggle_dimensionals(): void {
+  w_show_dimensionals.update(v => !v);
+}
+
+/** Read current dimensionals visibility synchronously. */
+export function show_dimensionals(): boolean {
+  return get(w_show_dimensionals);
+}
 
 // Keep O_Scene.scale in sync with the store
 w_scale.subscribe((value) => {
@@ -124,6 +163,11 @@ export function init(canvas: HTMLCanvasElement) {
     camera.deserialize(saved.camera);
   }
 
+  // Restore ortho mode if saved view was 2d
+  if (get(w_view_mode) === '2d') {
+    camera.set_ortho(true);
+  }
+
   // Input: drag edits selection OR rotates selected object, then save
   e3.set_drag_handler((prev, curr) => {
     const target = hits_3d.selection?.so.scene ?? root_scene;
@@ -165,12 +209,40 @@ export function scale_down(): void {
   w_scale.set(root_scene.scale);
 }
 
+/** Reset root SO orientation to identity (face-on). */
+export function straighten(): void {
+  if (!root_scene) return;
+  quat.identity(root_scene.so.orientation);
+  scenes.save();
+}
+
+/** Toggle between 2D and 3D view. 2D = orthographic, face-on. */
+export function toggle_view_mode(): void {
+  const mode = get(w_view_mode) === '3d' ? '2d' : '3d';
+  w_view_mode.set(mode);
+  if (mode === '2d') {
+    // Face-on: camera on z axis, orthographic projection
+    camera.set_position(vec3.fromValues(0, 0, 2750));
+    camera.set_ortho(true);
+  } else {
+    // Back to perspective
+    camera.set_ortho(false);
+  }
+  scenes.save();
+}
+
+/** Toggle precision mode. */
+export function toggle_precision(): void {
+  w_precision.update(v => !v);
+}
+
 // ============================================
 // HIERARCHY
 // ============================================
 
 export function add_child_so(): void {
   if (!root_scene) return;
+  const parent_so = root_scene.so;
 
   const all = scene.get_all();
   const used = new Set(all.map(o => o.so.name));
@@ -180,6 +252,25 @@ export function add_child_so(): void {
   }
 
   const so = new Smart_Object(name);
+
+  // Copy parent orientation
+  quat.copy(so.orientation, parent_so.orientation);
+
+  // Set bounds: shared origin with parent, 1 default-unit in each dimension
+  const system = current_unit_system();
+  const default_unit = units.default_unit_for_system(system);
+  const half = units.to_mm(0.5, default_unit); // half of 1 unit
+  const parent_name = parent_so.name;
+
+  // Child shares parent's origin: formulas reference parent min bounds
+  // Dimensions: 1 default unit centered at parent origin
+  constraints.set_formula(so, 'x_min', `${parent_name}.x_min`);
+  constraints.set_formula(so, 'y_min', `${parent_name}.y_min`);
+  constraints.set_formula(so, 'z_min', `${parent_name}.z_min`);
+  so.set_bound('x_max', parent_so.x_min + units.to_mm(1, default_unit));
+  so.set_bound('y_max', parent_so.y_min + units.to_mm(1, default_unit));
+  so.set_bound('z_max', parent_so.z_min + units.to_mm(1, default_unit));
+
   const so_scene = scene.create({
     so,
     edges: example_edges,

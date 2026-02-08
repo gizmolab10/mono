@@ -14,11 +14,7 @@ Where we are in Design Intuition.
 ---
 ## Milestones (current work)
 
-
-- [ ] **13 algebra** — recursive descent compiler
-	- [x] compile tree
-	- [x] traverse and reverse traverse
-	- [ ] incorporate into SO
+- [ ] [[code.debt]] 
 - [ ] **14 details** — attributes
 	- [ ] port from ws: banners, glow buttons & details
 - [ ] **15 what? **
@@ -31,10 +27,12 @@ Where we are in Design Intuition.
 | Main        | Three regions: controls, details, graph    |
 | Interaction | Hits managers — 2D (ported from ws) and 3D |
 | Docs        | VitePress configured, new guides content   |
-| Testing     | 232 tests for core types                   |
+| Testing     | 377 tests — core types, algebra, orientation |
 | Editing     | Select face, drag edge or vertex           |
 | Build Notes | List of important steps in our progress    |
 | Dimensions  | Dynamic (value, layout, not yet editable)  |
 | Controls    | Steppers (h/v), slider, scale +/−/wheel   |
 | Scenes      | SO, camera orientation, scale              |
+| Algebra     | Compiler, eval, reverse propagation, constraints |
+| Orientation | Fixed/variable, derived from bounds, trig redistribution |
 

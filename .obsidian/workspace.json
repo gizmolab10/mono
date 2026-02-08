@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/guides/road.map.md",
+                "file": "di/notes/work/revisit.di.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "road.map"
+              "title": "revisit.di"
             }
           },
           {
@@ -69,15 +69,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/12.hierarchy.md",
+                "file": "di/notes/work/milestones/10.controls.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "12.hierarchy"
+              "title": "10.controls"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -212,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/13.algebra.md",
+                "file": "di/notes/work/code.debt.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 13.algebra"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -239,27 +240,27 @@
       "bases:Create new base": false
     }
   },
-  "active": "1d86e2958b342c00",
+  "active": "e1818cca2b61ee28",
   "lastOpenFiles": [
-    "di/src/lib/ts/tests/Evaluate.test.ts",
-    "di/src/lib/ts/algebra/Evaluate.ts",
-    "di/src/lib/ts/tests/Compiler.test.ts",
-    "di/src/lib/ts/algebra/Compiler.ts",
-    "di/src/lib/ts/algebra/Tokenizer.ts",
-    "di/src/lib/ts/algebra/Node.ts",
-    "di/src/lib/ts/algebra",
+    "di/dist/assets/index-n9TRjb8H.js",
+    "di/dist/assets/index-BEmagGnP.js",
+    "di/dist/assets/index-B0s4uDOf.css",
+    "di/dist/assets/index-CdB7N-0O.js",
+    "di/dist/assets/index-QSP_ACJJ.js",
+    "di/dist/assets/index-zqAM7OlP.js",
+    "di/dist/assets/index-N5uoTE3a.css",
+    "di/dist/assets",
+    "di/dist/assets/index-DFwJyTjm.js",
+    "di/dist/assets/index-drhCa2W-.js",
+    "di/dist/assets/index-DmLalKnZ.js",
+    "di/notes/work/milestones/10.controls.md",
+    "di/notes/work/code.debt.md",
     "di/notes/work/revisit.di.md",
     "di/notes/guides/road.map.md",
-    "di/notes/work/milestones/13.algebra.md",
     "di/notes/work/milestones/12.hierarchy.md",
+    "di/notes/work/milestones/13.algebra.md",
     "di/notes/work/milestones/11.units.md",
     "notes/work/worktrees.md",
-    "notes/tools/hub/clean.worktrees.sh",
-    "di/src/lib/ts/managers/Scenes.ts",
-    "di/dist/assets/index-Dl2QbJ_L.js",
-    "di/dist/assets/index-jragr4V6.js",
-    "di/notes/work/code.debt.md",
-    "di/notes/work/milestones/10.controls.md",
     "di/notes/work/milestones/9.persistence.md",
     "di/notes/work/milestones/8.dimensionals.md",
     "di/notes/work/milestones/6.build.notes.md",

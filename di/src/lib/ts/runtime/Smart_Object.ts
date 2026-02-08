@@ -3,6 +3,7 @@ import type { O_Scene } from '../types/Interfaces';
 import type { Dictionary } from '../types/Types';
 import { Point3 } from '../types/Coordinates';
 import Attribute from '../types/Attribute';
+import { compile } from '../algebra/Compiler';
 import Identifiable from './Identifiable';
 
 // Bounds: min/max for each axis
@@ -12,6 +13,8 @@ export type Axis = 'x' | 'y' | 'z';
 export default class Smart_Object extends Identifiable {
 	attributes_dict_byName: Dictionary<Attribute> = {};
 	orientation: quat = quat.create();
+	/** When true (default), rotating preserves angle and length. When false (variable), orientation is recomputed from bounds after propagation. */
+	fixed: boolean = true;
 	scene: O_Scene | null;
 	name: string;
 
@@ -247,7 +250,11 @@ export default class Smart_Object extends Identifiable {
 	// SERIALIZATION
 	// ═══════════════════════════════════════════════════════════════════
 
-	serialize(): { name: string; bounds: Record<Bound, number>; orientation: number[]; scale: number } {
+	serialize(): { name: string; bounds: Record<Bound, number>; orientation: number[]; scale: number; fixed?: boolean; formulas?: Record<string, string> } {
+		const formulas: Record<string, string> = {};
+		for (const attr of Object.values(this.attributes_dict_byName)) {
+			if (attr.formula) formulas[attr.name] = attr.formula;
+		}
 		return {
 			name: this.name,
 			bounds: {
@@ -257,16 +264,28 @@ export default class Smart_Object extends Identifiable {
 			},
 			orientation: Array.from(this.orientation),
 			scale: this.scene?.scale ?? 1,
+			...(!this.fixed ? { fixed: false } : {}),
+			...(Object.keys(formulas).length > 0 ? { formulas } : {}),
 		};
 	}
 
-	static deserialize(data: { name: string; bounds: Record<Bound, number>; orientation?: number[]; scale?: number }): { so: Smart_Object; scale: number } {
+	static deserialize(data: { name: string; bounds: Record<Bound, number>; orientation?: number[]; scale?: number; fixed?: boolean; formulas?: Record<string, string> }): { so: Smart_Object; scale: number } {
 		const so = new Smart_Object(data.name);
 		for (const [key, value] of Object.entries(data.bounds)) {
 			so.set_bound(key as Bound, value);
 		}
 		if (data.orientation) {
 			quat.set(so.orientation, data.orientation[0], data.orientation[1], data.orientation[2], data.orientation[3]);
+		}
+		if (data.fixed === false) so.fixed = false;
+		if (data.formulas) {
+			for (const [bound, formula] of Object.entries(data.formulas)) {
+				const attr = so.attributes_dict_byName[bound];
+				if (attr) {
+					attr.formula = formula;
+					try { attr.compiled = compile(formula); } catch { /* skip bad formulas */ }
+				}
+			}
 		}
 		return { so, scale: data.scale ?? 1 };
 	}

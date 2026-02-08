@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { colors } from '../../ts/draw/Colors';
 	import { scenes } from '../../ts/managers/Scenes';
-	import { scale_up, scale_down, w_scale } from '../../ts/render/Setup';
+	import { scale_up, scale_down, w_scale, straighten, toggle_view_mode, w_view_mode, toggle_dimensionals, w_show_dimensionals } from '../../ts/render/Setup';
 	import Slider from '../mouse/Slider.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	const { w_text_color, w_background_color } = colors;
@@ -22,6 +22,7 @@
 	function handle_slider(value: number) {
 		w_scale.set(value);
 	}
+
 </script>
 
 {#if showBuildNotes}
@@ -34,6 +35,9 @@
 	style:background = {$w_background_color}>
 	<h1>{title}</h1>
 	<span class='spacer'></span>
+	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} onclick={toggle_view_mode}>{$w_view_mode}</button>
+	<button class='toolbar-btn' onclick={straighten}>straighten</button>
+	<button class='toolbar-btn' class:active={$w_show_dimensionals} onclick={toggle_dimensionals}>dims</button>
 	<Slider min={0.1} max={10} value={$w_scale} onchange={handle_slider} onstep={handle_scale} />
 	<button class='toolbar-btn' onclick={() => { scenes.clear(); location.reload(); }}>reset</button>
 	<button class='toolbar-btn' onclick={() => showBuildNotes = true}>build {__BUILD_NUMBER__}</button>
@@ -69,9 +73,15 @@
 		height        : 20px;
 		cursor        : pointer;
 		margin-left   : 6px;
+		box-sizing    : border-box;
 	}
 
 	.toolbar-btn:hover {
+		background : black;
+		color      : white;
+	}
+
+	.toolbar-btn.active {
 		background : black;
 		color      : white;
 	}

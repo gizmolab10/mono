@@ -13,7 +13,7 @@ import { T_Hit_3D } from '../types/Enumerations';
 import type { Bound } from '../runtime/Smart_Object';
 
 export interface Saved_Scene {
-	smart_objects: { name: string; bounds: Record<Bound, number>; orientation: number[]; scale?: number; parent_name?: string }[];
+	smart_objects: { name: string; bounds: Record<Bound, number>; orientation: number[]; scale?: number; fixed?: boolean; parent_name?: string; formulas?: Record<string, string> }[];
 	camera: { eye: number[]; center: number[]; up: number[] };
 	root_name?: string;
 	selected_name?: string;

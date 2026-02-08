@@ -207,8 +207,8 @@ export class Units {
 		if (this.is_imperial(unit)) {
 			return format_fractional(value, symbol[unit]);
 		}
-		// metric/marine/archaic: clean decimal
-		const rounded = parseFloat(value.toPrecision(10));
+		// metric/marine/archaic: 1 decimal place
+		const rounded = parseFloat(value.toFixed(1));
 		return rounded + symbol[unit];
 	}
 
@@ -322,8 +322,8 @@ export class Units {
 	/** Default display unit for a system (used when parsing bare numbers) */
 	default_unit_for_system(unit_system: T_Units): T_Unit {
 		switch (unit_system) {
-			case T_Units.imperial: return T_Unit.inch;
-			case T_Units.metric:   return T_Unit.millimeter;
+			case T_Units.imperial: return T_Unit.foot;
+			case T_Units.metric:   return T_Unit.meter;
 			case T_Units.marine:   return T_Unit.fathom;
 			case T_Units.archaic:  return T_Unit.cubit;
 		}

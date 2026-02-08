@@ -14,6 +14,7 @@ class Camera {
   private near = 10;
   private far = 30_000;  // ~100' in mm
   private _size: Size = Size.zero;
+  private _ortho = false;
 
   get eye(): vec3 { return this._eye; }
 
@@ -36,6 +37,11 @@ class Camera {
 
   set_fov(fov: number): void {
     this.fov = fov;
+    this.update_projection();
+  }
+
+  set_ortho(ortho: boolean): void {
+    this._ortho = ortho;
     this.update_projection();
   }
 
@@ -84,7 +90,14 @@ class Camera {
   }
 
   private update_projection(): void {
-    mat4.perspective(this.projection, this.fov, this._aspect, this.near, this.far);
+    if (this._ortho) {
+      // Orthographic: half-height derived from eye distance and fov to match perspective framing
+      const half_h = this._eye[2] * Math.tan(this.fov / 2);
+      const half_w = half_h * this._aspect;
+      mat4.ortho(this.projection, -half_w, half_w, -half_h, half_h, this.near, this.far);
+    } else {
+      mat4.perspective(this.projection, this.fov, this._aspect, this.near, this.far);
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════════

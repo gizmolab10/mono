@@ -5,6 +5,7 @@ import { editor } from '../managers/Editor';
 import { Point, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { camera } from '../render/Camera';
+import { recompute_max_bounds_from_rotation } from '../algebra/Orientation';
 
 type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point) => void;
 type T_Handle_Wheel = (delta: number, fine: boolean) => void;
@@ -112,6 +113,11 @@ class Events_3D {
     quat.multiply(obj.so.orientation, rot_y, obj.so.orientation);
     quat.multiply(obj.so.orientation, rot_x, obj.so.orientation);
     quat.normalize(obj.so.orientation, obj.so.orientation);
+
+    // Fixed child: preserve origin (min bounds), recompute max bounds from new angle + length
+    if (obj.so.fixed && obj.parent) {
+      recompute_max_bounds_from_rotation(obj.so);
+    }
   }
 
   // Edit the current selection by modifying SO bounds

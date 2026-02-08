@@ -5,7 +5,8 @@ import type { Axis } from '../runtime/Smart_Object';
 import { Size, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { hits_3d } from '../managers/Hits_3D';
-import { mat4, vec4 } from 'gl-matrix';
+import { mat4, vec4, quat } from 'gl-matrix';
+import { current_view_mode, show_dimensionals } from './Setup';
 import { camera } from './Camera';
 import { scene } from './Scene';
 
@@ -13,6 +14,9 @@ class Render {
   private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D;
   private size: Size = Size.zero;
+
+  /** When true, faces render with debug colors. When false, faces are transparent. */
+  debug = false;
 
   private mvp_matrix = mat4.create();
 
@@ -39,14 +43,15 @@ class Render {
       this.render_object(obj);
     }
     this.render_selection();
-    this.render_dimensions();
+    if (show_dimensionals()) this.render_dimensions();
     this.render_hover();
   }
 
   private get_world_matrix(obj: O_Scene): mat4 {
     const local = mat4.create();
     const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
-    mat4.fromRotationTranslationScale(local, obj.so.orientation, obj.position, scale_vec);
+    const orientation = current_view_mode() === '2d' ? quat.create() : obj.so.orientation;
+    mat4.fromRotationTranslationScale(local, orientation, obj.position, scale_vec);
 
     if (obj.parent) {
       const parent_world = this.get_world_matrix(obj.parent);
@@ -89,29 +94,35 @@ class Render {
     hits_3d.update_projected(obj.id, projected);
 
     // Draw faces with debug colors (back faces first, then front faces on top)
-    if (obj.faces) {
+    // In 2D mode, skip face fills entirely — edges only
+    if (obj.faces && current_view_mode() !== '2d') {
       // First pass: back-facing faces
       for (let fi = 0; fi < obj.faces.length; fi++) {
         const face = obj.faces[fi];
-        if (this.face_winding(face, projected) < 0) continue; // skip front-facing
+        if (this.face_winding(face, projected) < 0) continue;
         this.draw_debug_face(face, fi, projected);
       }
       // Second pass: front-facing faces
       for (let fi = 0; fi < obj.faces.length; fi++) {
         const face = obj.faces[fi];
-        if (this.face_winding(face, projected) >= 0) continue; // skip back-facing
+        if (this.face_winding(face, projected) >= 0) continue;
         this.draw_debug_face(face, fi, projected);
       }
     }
 
-    this.ctx.lineWidth = 2;
+    const is_2d = current_view_mode() === '2d';
+    this.ctx.lineWidth = is_2d ? 2 / 3 : 2;
     this.ctx.lineCap = 'round';
+
+    // In 2D mode, only draw edges belonging to front-facing faces
+    const front_edges = is_2d ? this.front_face_edges(obj, projected) : null;
 
     for (const [i, j] of obj.edges) {
       const a = projected[i],
         b = projected[j];
       if (a.w < 0 || b.w < 0) continue;
-      const alpha = 0.3 + 0.7 * (1 - (a.z + b.z) / 2);
+      if (front_edges && !front_edges.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
+      const alpha = is_2d ? 1 : 0.3 + 0.7 * (1 - (a.z + b.z) / 2);
       this.ctx.strokeStyle = `${obj.color}${Math.max(0.2, Math.min(1, alpha)).toFixed(2)})`;
       this.ctx.beginPath();
       this.ctx.moveTo(a.x, a.y);
@@ -152,7 +163,8 @@ class Render {
 
   private draw_debug_face(face: number[], fi: number, projected: Projected[]): void {
     const rgb = Render.FACE_RGB[fi] ?? [128, 128, 128];
-    this.ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1)`;
+    const alpha = this.debug ? 1 : 0;
+    this.ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
     this.ctx.beginPath();
     this.ctx.moveTo(projected[face[0]].x, projected[face[0]].y);
     for (let i = 1; i < face.length; i++) {
@@ -234,8 +246,8 @@ class Render {
       const so = obj.so;
       const world_matrix = this.get_world_matrix(obj);
 
-      // Show all 3 dimensions (width, height, depth)
-      const all_axes: Axis[] = ['x', 'y', 'z'];
+      // In 2D mode, skip depth (z) — only show width and height
+      const all_axes: Axis[] = current_view_mode() === '2d' ? ['x', 'y'] : ['x', 'y', 'z'];
       for (const axis of all_axes) {
         this.render_axis_dimension(so, axis, projected, world_matrix);
       }
@@ -426,6 +438,20 @@ class Render {
     if (dy > eps && dx < eps && dz < eps) return 'y';
     if (dz > eps && dx < eps && dy < eps) return 'z';
     return null;
+  }
+
+  /** Collect edge keys belonging to front-facing faces (for 2D mode). */
+  private front_face_edges(obj: O_Scene, projected: Projected[]): Set<string> {
+    const edges = new Set<string>();
+    if (!obj.faces) return edges;
+    for (const face of obj.faces) {
+      if (this.face_winding(face, projected) >= 0) continue; // skip back-facing
+      for (let i = 0; i < face.length; i++) {
+        const a = face[i], b = face[(i + 1) % face.length];
+        edges.add(`${Math.min(a, b)}-${Math.max(a, b)}`);
+      }
+    }
+    return edges;
   }
 
   // Compute face winding (negative = front-facing with CCW convention)

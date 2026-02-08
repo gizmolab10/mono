@@ -18,6 +18,11 @@ export enum T_Preference {
 	// Units
 	unitSystem = 'unitSystem',
 
+	// View
+	viewMode         = 'viewMode',
+	precision        = 'precision',
+	showDimensionals = 'showDimensionals',
+
 	// Scenes
 	scene = 'scene',
 }

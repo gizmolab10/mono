@@ -1,8 +1,9 @@
 <script lang='ts'>
 	import { colors } from '../../ts/draw/Colors';
-	import { w_root_so, w_all_sos, add_child_so } from '../../ts/render/Setup';
+	import { w_root_so, w_all_sos, add_child_so, toggle_precision, w_precision } from '../../ts/render/Setup';
 	import { hits_3d, scenes } from '../../ts/managers';
-	import { T_Hit_3D } from '../../ts/types/Enumerations';
+	import { T_Hit_3D, T_Units } from '../../ts/types/Enumerations';
+	import { w_unit_system } from '../../ts/types/Units';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	const { w_text_color, w_background_color } = colors;
 	const { w_selection } = hits_3d;
@@ -15,6 +16,11 @@
 			selected_so.name = input.value;
 			scenes.save();
 		}
+	}
+
+	function handle_unit_change(e: Event) {
+		const select = e.target as HTMLSelectElement;
+		w_unit_system.set(select.value as T_Units);
 	}
 
 	function select_so(so: Smart_Object) {
@@ -56,6 +62,14 @@
 	{:else}
 		<p>No object selected</p>
 	{/if}
+	<div class='settings'>
+		<button class='action-btn' class:active={$w_precision} onclick={toggle_precision}>precision</button>
+		<select class='details-select' value={$w_unit_system} onchange={handle_unit_change}>
+			{#each Object.values(T_Units) as system}
+				<option value={system}>{system}</option>
+			{/each}
+		</select>
+	</div>
 </div>
 
 <style>
@@ -146,5 +160,39 @@
 		margin    : 0;
 		opacity   : 0.6;
 		font-size : 0.875rem;
+	}
+
+	.settings {
+		display    : flex;
+		gap        : 6px;
+		margin-top : 1rem;
+	}
+
+	.action-btn.active {
+		background : currentColor;
+		color      : var(--bg, white);
+	}
+
+	.details-select {
+		background         : transparent;
+		border             : 0.5px solid currentColor;
+		border-radius      : 10px;
+		color              : inherit;
+		padding            : 0 6px;
+		font-size          : 11px;
+		height             : 22px;
+		line-height        : 20px;
+		cursor             : pointer;
+		outline            : none;
+		box-sizing         : border-box;
+		appearance         : none;
+		-webkit-appearance : none;
+	}
+
+	.details-select:focus,
+	.details-select:focus-visible {
+		outline    : none;
+		box-shadow : none;
+		border     : 0.5px solid currentColor;
 	}
 </style>

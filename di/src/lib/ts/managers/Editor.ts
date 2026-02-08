@@ -1,5 +1,6 @@
 import type { Dimension_Rect, S_Editing } from '../types/Interfaces';
 import { units, current_unit_system } from '../types/Units';
+import { constraints } from '../algebra/Constraints';
 import { writable, get } from 'svelte/store';
 import { scenes } from './Scenes';
 import { render } from '../render/Render';
@@ -61,6 +62,7 @@ class Editor {
 		const center = (state.so.get_bound(min_bound) + state.so.get_bound(max_bound)) / 2;
 		state.so.set_bound(min_bound, center - half);
 		state.so.set_bound(max_bound, center + half);
+		constraints.propagate(state.so);
 
 		scenes.save();
 		this.w_editing.set(null);
