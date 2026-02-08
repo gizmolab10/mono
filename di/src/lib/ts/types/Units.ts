@@ -136,15 +136,15 @@ function parse_fraction(input: string): number | null {
 		if (d === 0) return null;
 		return n / d;
 	}
-	// decimal: "5.25" or "5"
-	const num = parseFloat(trimmed);
-	return isNaN(num) ? null : num;
+	// decimal: "5.25" or "5" (must be the entire string, not just a prefix)
+	if (!/^-?\d+(\.\d+)?$/.test(trimmed)) return null;
+	return parseFloat(trimmed);
 }
 
 function parse_compound(input: string): number | null {
 	const trimmed = input.trim();
-	// feet and inches: 5' 3 1/4"
-	const compound = trimmed.match(/^(-?\d+)'\s*(.+)"$/);
+	// feet and inches: 5' 3 1/4" (reject if extra ' or " in inches part — that's an expression)
+	const compound = trimmed.match(/^(-?\d+)'\s*([^'"]+)"$/);
 	if (compound) {
 		const feet = parseInt(compound[1]);
 		const inches = parse_fraction(compound[2]);
@@ -156,8 +156,8 @@ function parse_compound(input: string): number | null {
 	if (feet_only) {
 		return parseInt(feet_only[1]) * mm_per[T_Unit.foot];
 	}
-	// inches only with symbol: 3 1/4"
-	const inches_only = trimmed.match(/^(.+)"$/);
+	// inches only with symbol: 3 1/4" (reject if extra ' or " inside — that's an expression)
+	const inches_only = trimmed.match(/^([^'"]+)"$/);
 	if (inches_only) {
 		const inches = parse_fraction(inches_only[1]);
 		if (inches === null) return null;

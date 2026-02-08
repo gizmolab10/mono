@@ -4,7 +4,7 @@ import type { Bound } from '../runtime/Smart_Object';
 import { scene } from '../render/Scene';
 import { constraints } from '../algebra/Constraints';
 import { units } from '../types/Units';
-import { T_Unit, T_Units } from '../types/Enumerations';
+import { T_Unit } from '../types/Enumerations';
 import { quat } from 'gl-matrix';
 
 // ═══════════════════════════════════════════════════════════════════
@@ -39,7 +39,7 @@ beforeEach(() => {
 describe('formula on Attribute', () => {
 
 	it('sets formula and evaluates immediately', () => {
-		const wall = add_so('wall', { y_min: 0, y_max: 2438.4 });
+		add_so('wall', { y_min: 0, y_max: 2438.4 });
 		const door = add_so('door', { y_min: 0, y_max: 2000 });
 
 		const error = constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
@@ -50,7 +50,7 @@ describe('formula on Attribute', () => {
 	});
 
 	it('stores formula text on attribute', () => {
-		const wall = add_so('wall', { y_max: 2438.4 });
+		add_so('wall', { y_max: 2438.4 });
 		const door = add_so('door');
 
 		constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
@@ -84,7 +84,7 @@ describe('formula on Attribute', () => {
 	});
 
 	it('clear_formula removes formula, keeps value', () => {
-		const wall = add_so('wall', { y_max: 2438.4 });
+		add_so('wall', { y_max: 2438.4 });
 		const door = add_so('door');
 
 		constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
@@ -159,7 +159,7 @@ describe('propagation', () => {
 describe('serialize/deserialize formulas', () => {
 
 	it('serializes formula strings', () => {
-		const wall = add_so('wall', { y_max: 2438.4 });
+		add_so('wall', { y_max: 2438.4 });
 		const door = add_so('door');
 
 		constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
@@ -191,7 +191,7 @@ describe('serialize/deserialize formulas', () => {
 	});
 
 	it('round-trips: serialize → deserialize preserves formulas', () => {
-		const wall = add_so('wall', { y_max: 2438.4 });
+		add_so('wall', { y_max: 2438.4 });
 		const door = add_so('door');
 
 		constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
@@ -252,7 +252,7 @@ describe('orientation', () => {
 describe('add child with formulas', () => {
 
 	it('child min bounds track parent min bounds via formula', () => {
-		const parent = add_so('parent', { x_min: -100, x_max: 100, y_min: -200, y_max: 200, z_min: -300, z_max: 300 });
+		add_so('parent', { x_min: -100, x_max: 100, y_min: -200, y_max: 200, z_min: -300, z_max: 300 });
 		const child = add_so('child');
 
 		// Simulate what add_child_so does

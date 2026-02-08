@@ -1,7 +1,10 @@
 import type { Dimension_Rect, S_Editing } from '../types/Interfaces';
 import { units, current_unit_system } from '../types/Units';
+import { T_Units } from '../types/Enumerations';
 import { current_precision } from './Stores';
 import { constraints } from '../algebra/Constraints';
+import { compile } from '../algebra/Compiler';
+import { evaluate } from '../algebra/Evaluate';
 import { writable, get } from 'svelte/store';
 import { scenes } from './Scenes';
 import { render } from '../render/Render';
@@ -49,26 +52,42 @@ class Editor {
 		if (!state) return false;
 
 		const system = current_unit_system();
-		const new_mm = units.parse_for_system(input, system);
+		const new_mm = this.parse_input(input, system);
 		if (new_mm === null || new_mm <= 0) {
 			this.cancel();
 			return false;
 		}
 
-		// Snap parsed value to precision grid, then symmetric resize from center
-		const snapped_mm = units.snap_for_system(new_mm, system, current_precision());
+		// Snap the dimension once, then place bounds symmetrically around center.
+		// (Snapping each bound individually caused asymmetric rounding — Math.round
+		// rounds half-values toward +∞, so center−half and center+half could
+		// snap unevenly, shrinking the dimension.)
+		const precision = current_precision();
+		const snapped_mm = units.snap_for_system(new_mm, system, precision);
 		const half = snapped_mm / 2;
 		const axis = state.axis;
 		const min_bound = `${axis}_min` as const;
 		const max_bound = `${axis}_max` as const;
 		const center = (state.so.get_bound(min_bound) + state.so.get_bound(max_bound)) / 2;
-		state.so.set_bound(min_bound, units.snap_for_system(center - half, system, current_precision()));
-		state.so.set_bound(max_bound, units.snap_for_system(center + half, system, current_precision()));
+		state.so.set_bound(min_bound, center - half);
+		state.so.set_bound(max_bound, center + half);
 		constraints.propagate(state.so);
 
 		scenes.save();
 		this.w_editing.set(null);
 		return true;
+	}
+
+	/** Parse input: try unit parser, then algebra compiler for expressions (1" + 2"). */
+	private parse_input(input: string, system: T_Units): number | null {
+		const simple = units.parse_for_system(input, system);
+		if (simple !== null) return simple;
+		try {
+			const node = compile(input);
+			const mm = evaluate(node, (o, a) => constraints.resolve(o, a));
+			if (isFinite(mm)) return mm;
+		} catch { /* not a valid expression either */ }
+		return null;
 	}
 
 	/** Cancel editing without changing anything. */

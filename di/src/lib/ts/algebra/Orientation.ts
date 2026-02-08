@@ -75,7 +75,6 @@ export function recompute_max_bounds_from_rotation(so: Smart_Object): void {
 	const dx = so.x_max - so.x_min;
 	const dy = so.y_max - so.y_min;
 	const dz = so.z_max - so.z_min;
-	const adx = Math.abs(dx), ady = Math.abs(dy), adz = Math.abs(dz);
 
 	// Extract angle from the quaternion
 	// The rotation axis tells us which plane the angle is in

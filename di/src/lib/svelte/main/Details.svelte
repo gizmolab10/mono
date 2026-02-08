@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { colors } from '../../ts/draw/Colors';
 	import { w_root_so, w_all_sos, w_precision, w_solid, toggle_solid } from '../../ts/managers/Stores';
-	import { add_child_so, set_precision } from '../../ts/render/Engine';
+	import { engine } from '../../ts/render/Engine';
 	import { hits_3d, scenes } from '../../ts/managers';
 	import { T_Hit_3D, T_Units } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
@@ -19,7 +19,7 @@
 		}
 	}
 
-	const imperial_ticks = ['feet', 'inch', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64'];
+	const imperial_ticks = ['foot', 'inch', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64'];
 	const decimal_ticks  = ['whole', '1', '2', '3'];
 
 	let ticks = $derived($w_unit_system === T_Units.imperial ? imperial_ticks : decimal_ticks);
@@ -27,7 +27,7 @@
 
 	// Clamp precision when unit system changes
 	$effect(() => {
-		if ($w_precision > max_tick) set_precision(max_tick);
+		if ($w_precision > max_tick) engine.set_precision(max_tick);
 	});
 
 	function handle_unit_change(e: Event) {
@@ -74,7 +74,7 @@
 		<p>No object selected</p>
 	{/if}
 	<div class='settings'>
-		<button class='action-btn' onclick={add_child_so}>add child</button>
+		<button class='action-btn' onclick={() => engine.add_child_so()}>add child</button>
 		<button class='action-btn' onclick={toggle_solid}>{$w_solid ? 'solid' : 'see through'}</button>
 		<select class='details-select' value={$w_unit_system} onchange={handle_unit_change}>
 			{#each Object.values(T_Units) as system}
@@ -89,7 +89,7 @@
 				<button
 					class='segment'
 					class:active={i === $w_precision}
-					onclick={() => set_precision(i)}>
+					onclick={() => engine.set_precision(i)}>
 					{label}
 				</button>
 			{/each}

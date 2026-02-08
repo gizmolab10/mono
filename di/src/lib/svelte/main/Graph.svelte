@@ -7,7 +7,7 @@
 	import { editor } from '../../ts/managers/Editor';
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
 	import S_Mouse from '../../ts/state/S_Mouse';
-	import { setup } from '../../ts/render/Engine';
+	import { engine } from '../../ts/render/Engine';
 
 	const { w_text_color } = colors;
 	const { w_editing } = editor;
@@ -24,7 +24,7 @@
 		if (!canvas || initialized) return;
 		canvas.width  = width;
 		canvas.height = height;
-		setup(canvas);
+		engine.setup(canvas);
 		initialized = true;
 	}
 

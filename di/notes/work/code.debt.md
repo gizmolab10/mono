@@ -1,11 +1,7 @@
 # Code Debt
 
-- [ ] cruft
-	- [x] consolidate redundancy
-	- [x] simplify over-engineering
-	- [x] remove inconsistencies
-	- [ ] ameliorate structural risks
 - [ ] **bugs**
+	- [ ] algebra fails 1" + 2" -> 1'
 	- [ ] new children spontaneously appear
 	- [ ] steppers hop up and down
 	- [ ] dimensionals sometimes do not extend outward from SO
@@ -13,6 +9,7 @@
 - [ ] ability to drag the current SO
 - [ ] hidden line clipping
 - [ ] ability to export/import to/from file
+- [ ] logarithmic scaling slider
 - [ ] tweak dimensionals
 	- [ ] tab between dimensionals
 	- [ ] arrow-key nudging (±unit of precision)
@@ -31,4 +28,9 @@
 	- [x] imperial: whole, 1/2, 1/4, 1/8, 1/16, 1/32, 1/64
 	- [x] others: whole, 1, 2, 3
 	- [x] constrain the SOT values accordingly
+- [x] cruft
+	- [x] consolidate redundancy
+	- [x] simplify over-engineering
+	- [x] remove inconsistencies
+	- [x] ameliorate structural risks
 
