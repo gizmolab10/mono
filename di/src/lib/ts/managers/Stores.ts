@@ -1,4 +1,4 @@
-import { preferences, T_Preference } from '../managers/Preferences';
+import { preferences, T_Preference } from './Preferences';
 import { writable, get } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import { Smart_Object } from '../runtime';

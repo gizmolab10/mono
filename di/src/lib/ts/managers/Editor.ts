@@ -1,6 +1,6 @@
 import type { Dimension_Rect, S_Editing } from '../types/Interfaces';
 import { units, current_unit_system } from '../types/Units';
-import { current_precision } from '../render/Stores';
+import { current_precision } from './Stores';
 import { constraints } from '../algebra/Constraints';
 import { writable, get } from 'svelte/store';
 import { scenes } from './Scenes';

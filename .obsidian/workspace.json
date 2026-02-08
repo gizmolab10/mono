@@ -215,6 +215,8 @@
   },
   "active": "ffdb7bac37c87e46",
   "lastOpenFiles": [
+    "di/src/lib/ts/managers/Stores.ts",
+    "di/src/lib/ts/render/Engine.ts",
     "di/notes/work/cruft.md",
     "di/src/lib/ts/render/Stores.ts",
     "di/notes/work/code.debt.md",
@@ -232,7 +234,6 @@
     "di/dist/assets/index-2wLPraBj.css",
     "di/dist/assets/index-DuLh0DLl.js",
     "di/dist/assets/index-BdlJkbM4.css",
-    "di/dist/assets/index-CVNSVcyV.css",
     "di/notes/work/milestones/8.dimensionals.md",
     "di/notes/work/milestones/11.units.md",
     "di/notes/work/milestones/13.algebra.md",

@@ -8,7 +8,7 @@ import { quat, vec3 } from 'gl-matrix';
 import { T_Hit_3D } from '../types/Enumerations';
 import type { O_Scene } from '../types/Interfaces';
 import { e3 } from '../signals';
-import { w_scale, w_root_so, w_all_sos, w_view_mode, w_precision, current_precision } from './Stores';
+import { w_scale, w_root_so, w_all_sos, w_view_mode, w_precision, current_precision } from '../managers/Stores';
 
 // ============================================
 // GEOMETRY (topology only — vertices come from SO)
@@ -46,10 +46,10 @@ w_scale.subscribe((value) => {
 });
 
 // ============================================
-// INIT
+// SETUP
 // ============================================
 
-export function init(canvas: HTMLCanvasElement) {
+export function setup(canvas: HTMLCanvasElement) {
   // Initialize managers
   render.init(canvas);
   camera.init(render.logical_size);

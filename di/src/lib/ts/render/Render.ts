@@ -6,7 +6,7 @@ import { Size, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { hits_3d } from '../managers/Hits_3D';
 import { mat4, vec4, quat } from 'gl-matrix';
-import { current_view_mode, show_dimensionals, current_precision, is_solid } from './Stores';
+import { current_view_mode, show_dimensionals, current_precision, is_solid } from '../managers/Stores';
 import { camera } from './Camera';
 import { scene } from './Scene';
 

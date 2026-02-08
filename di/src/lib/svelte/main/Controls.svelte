@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { colors } from '../../ts/draw/Colors';
 	import { scenes } from '../../ts/managers/Scenes';
-	import { w_scale, w_view_mode, w_show_dimensionals, toggle_dimensionals } from '../../ts/render/Stores';
-	import { scale_up, scale_down, straighten, toggle_view_mode } from '../../ts/render/Setup';
+	import { w_scale, w_view_mode, w_show_dimensionals, toggle_dimensionals } from '../../ts/managers/Stores';
+	import { scale_up, scale_down, straighten, toggle_view_mode } from '../../ts/render/Engine';
 	import Slider from '../mouse/Slider.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	const { w_text_color, w_background_color } = colors;
