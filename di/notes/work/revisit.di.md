@@ -16,8 +16,8 @@ Where we are in Design Intuition.
 
 
 - [ ] **13 algebra** — recursive descent compiler
-	- [ ] compile tree
-	- [ ] traverse and reverse traverse
+	- [x] compile tree
+	- [x] traverse and reverse traverse
 	- [ ] incorporate into SO
 - [ ] **14 details** — attributes
 	- [ ] port from ws: banners, glow buttons & details

@@ -33,7 +33,7 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `lean` | Reread workflow.md, identify the principle at play, propose where to capture it |
 | `revisit <X>` | read `<X>/notes/work/revisit.<X>.md`, then ask "Work on \[first unchecked item\]?" |
 | `journal` | move (synopsis of) content from (delete the content) `revisit.*.md` → `journal`. Execute ALL parts. |
-| `egads` | summarize the mistake you just made, add it to learn, and report number of pending entries |
+| `learn` | summarize the mistake you just made, add it to learn, and report number of pending entries |
 | `shorthand` | read this file (`shorthand.md`) |
 
 ## Abbreviations

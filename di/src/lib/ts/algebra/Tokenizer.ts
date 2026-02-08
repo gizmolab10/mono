@@ -42,7 +42,6 @@ export function tokenize(input: string): Token[] {
 
 	function read_number(): number {
 		const start = pos;
-		if (src[pos] === '-' || src[pos] === '+') pos++;
 		while (pos < src.length && (src[pos] >= '0' && src[pos] <= '9')) pos++;
 		if (pos < src.length && src[pos] === '.') {
 			pos++;
@@ -92,27 +91,10 @@ export function tokenize(input: string): Token[] {
 		const ch = peek();
 
 		// operators
-		if (ch === '+' || ch === '*' || ch === '/') {
-			tokens.push({ type: 'operator', value: ch });
+		if (ch === '+' || ch === '-' || ch === '*' || ch === '/') {
+			tokens.push({ type: 'operator', value: ch as '+' | '-' | '*' | '/' });
 			pos++;
 			continue;
-		}
-
-		// minus — could be operator or part of a number
-		if (ch === '-') {
-			// it's a unary minus (part of negation) if:
-			//   - at start of input
-			//   - after an operator or open paren
-			const last = tokens[tokens.length - 1];
-			const is_unary = !last
-				|| (last.type === 'operator')
-				|| (last.type === 'paren' && last.value === '(');
-			if (!is_unary) {
-				tokens.push({ type: 'operator', value: '-' });
-				pos++;
-				continue;
-			}
-			// fall through to number parsing — read_number handles leading minus
 		}
 
 		// parens
@@ -123,7 +105,7 @@ export function tokenize(input: string): Token[] {
 		}
 
 		// number (possibly with unit suffix)
-		if ((ch >= '0' && ch <= '9') || ch === '.' || ch === '-') {
+		if ((ch >= '0' && ch <= '9') || ch === '.') {
 			const value = read_number();
 			if (isNaN(value)) throw new Error(`Invalid number at position ${pos}`);
 			const unit = try_unit_suffix();

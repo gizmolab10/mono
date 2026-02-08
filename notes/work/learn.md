@@ -27,6 +27,12 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 
 ## Raw Log
 
+### #9 2026-02-07: Misread "the table here" as literal column name
+
+**What:** Jonathan said "the table here has Lines for the second column, replace the Purpose column in 13 with that." I interpreted "Lines" as the column header and wrote line counts (30, 139, 129, 268) instead of copying the description text from my chat output. Took three corrections to get it right.
+**Why:** Treated "here" as pointing at the file, not at my own chat output. Didn't look at what was actually in the table I'd written in chat — jumped to a literal interpretation of the word "Lines."
+**Rule:** When the user says "here" or "that table" or "the output above," they mean the chat output, not a file. Match the actual content they're pointing at, don't reinterpret column names.
+
 ### #8 2026-02-05: Used worktree paths again
 
 **What:** Read files from `/Users/sand/.claude-worktrees/mono/loving-khayyam/` instead of `~/GitHub/mono/`. Multiple reads before Jonathan caught it.
