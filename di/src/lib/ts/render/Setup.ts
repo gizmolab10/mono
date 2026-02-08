@@ -1,14 +1,14 @@
 import { scene, camera, render, animation } from '.';
 import { hits_3d, scenes } from '../managers';
-import { preferences, T_Preference } from '../managers/Preferences';
 import { Smart_Object } from '../runtime';
 import { constraints } from '../algebra/Constraints';
 import { units, current_unit_system } from '../types/Units';
-import { writable, get } from 'svelte/store';
+import { get } from 'svelte/store';
 import { quat, vec3 } from 'gl-matrix';
 import { T_Hit_3D } from '../types/Enumerations';
 import type { O_Scene } from '../types/Interfaces';
 import { e3 } from '../signals';
+import { w_scale, w_root_so, w_all_sos, w_view_mode, w_precision, current_precision } from './Stores';
 
 // ============================================
 // GEOMETRY (topology only — vertices come from SO)
@@ -36,68 +36,6 @@ const example_faces: number[][] = [
 // ============================================
 
 let root_scene: O_Scene | null = null;
-export const w_scale = writable<number>(1);
-export const w_root_so = writable<Smart_Object | null>(null);
-export const w_all_sos = writable<Smart_Object[]>([]);
-
-// View mode: '2d' or '3d'
-const saved_view = preferences.read<'2d' | '3d'>(T_Preference.viewMode);
-export const w_view_mode = writable<'2d' | '3d'>(saved_view ?? '3d');
-w_view_mode.subscribe((mode) => {
-  preferences.write(T_Preference.viewMode, mode);
-});
-
-/** Read current view mode synchronously (for non-reactive contexts like Render) */
-export function current_view_mode(): '2d' | '3d' {
-  return get(w_view_mode);
-}
-
-// Precision: index into the tick array for the current unit system.
-// 0 = whole (coarsest), higher = finer. Persisted as a number.
-const saved_precision = preferences.read<number>(T_Preference.precision);
-export const w_precision = writable<number>(saved_precision ?? 0);
-w_precision.subscribe((level) => {
-  preferences.write(T_Preference.precision, level);
-});
-
-/** Read current precision level synchronously. */
-export function current_precision(): number {
-  return get(w_precision);
-}
-
-// Show/hide dimensionals
-const saved_dims = preferences.read<boolean>(T_Preference.showDimensionals);
-export const w_show_dimensionals = writable<boolean>(saved_dims ?? true);
-w_show_dimensionals.subscribe((on) => {
-  preferences.write(T_Preference.showDimensionals, on);
-});
-
-/** Toggle dimensionals visibility. */
-export function toggle_dimensionals(): void {
-  w_show_dimensionals.update(v => !v);
-}
-
-/** Read current dimensionals visibility synchronously. */
-export function show_dimensionals(): boolean {
-  return get(w_show_dimensionals);
-}
-
-// Solid / see-through
-const saved_solid = preferences.read<boolean>(T_Preference.solid);
-export const w_solid = writable<boolean>(saved_solid ?? true);
-w_solid.subscribe((on) => {
-  preferences.write(T_Preference.solid, on);
-});
-
-/** Toggle solid / see-through. */
-export function toggle_solid(): void {
-  w_solid.update(v => !v);
-}
-
-/** Read current solid state synchronously. */
-export function is_solid(): boolean {
-  return get(w_solid);
-}
 
 // Keep O_Scene.scale in sync with the store
 w_scale.subscribe((value) => {

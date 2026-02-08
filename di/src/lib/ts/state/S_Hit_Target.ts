@@ -1,11 +1,12 @@
 import { T_Hit_Target, T_Mouse_Detection } from '../types/Enumerations';
 import { Rect, Point } from '../types/Coordinates';
-import S_Mouse from './S_Mouse';
 import { k } from '../common/Constants';
 import { get } from 'svelte/store';
+import type { Writable } from 'svelte/store';
+import S_Mouse from './S_Mouse';
 
 // Forward declaration - will be set by Hits manager
-let hits: { w_s_hover: any; add_hit_target: (target: S_Hit_Target) => void } | null = null;
+let hits: { w_s_hover: Writable<S_Hit_Target | null>; add_hit_target: (target: S_Hit_Target) => void } | null = null;
 
 export function setHitsManager(h: typeof hits) {
 	hits = h;
@@ -31,9 +32,12 @@ export default class S_Hit_Target {
 	autorepeat_id?: number;
 	type: T_Hit_Target;
 	clicks: number = 0;
+	hid: number | null;
 	id: string;
-	
+
 	constructor(type: T_Hit_Target, id: string) {
+		const n = Number(id);
+		this.hid = Number.isFinite(n) ? n : null;
 		this.id = type + '-' + id;
 		this.type = type;
 	}

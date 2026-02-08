@@ -1,6 +1,6 @@
  // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class into test code
 
-export type Dictionary<T = any> = Record<string, T>;
+import { type Dictionary } from '../types/Types'
 
 export class Testworthy_Utilities {
 	private orderedKeysCache = new WeakMap<object, string[]>();

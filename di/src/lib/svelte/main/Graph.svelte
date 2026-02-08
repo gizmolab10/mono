@@ -18,7 +18,7 @@
 	let dim_input   = $state<HTMLInputElement>();
 	let initialized = false;
 
-	const s_component = components.component_forHID_andType_createUnique(GRAPH_HID, T_Hit_Target.rubberband);
+	const s_hit_target = components.component_forHID_andType_createUnique(GRAPH_HID, T_Hit_Target.rubberband);
 
 	function initCanvas(width : number, height : number) {
 		if (!canvas || initialized) return;
@@ -54,10 +54,10 @@
 		if (!container) return;
 
 		// Register the container as a hit target
-		s_component.set_html_element(container);
+		s_hit_target.set_html_element(container);
 
 		// Set up click handler
-		s_component.handle_s_mouse = (s_mouse: S_Mouse) => {
+		s_hit_target.handle_s_mouse = (s_mouse: S_Mouse) => {
 			if (s_mouse.isDown) {
 				console.log('Graph clicked!');
 			}
@@ -74,7 +74,7 @@
 			resizeCanvas(Math.floor(width), Math.floor(height));
 
 			// Update hit target rect after resize
-			s_component.update_rect();
+			s_hit_target.update_rect();
 			hits.recalibrate();
 		});
 
@@ -86,7 +86,7 @@
 	});
 
 	onDestroy(() => {
-		components.component_remove(s_component);
+		components.component_remove(s_hit_target);
 	});
 
 	// Focus the input when editing starts

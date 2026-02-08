@@ -11,10 +11,8 @@ export default class Constants {
 	details_margin = 0;
 	halfIncrement = 0.5;
 	separator_title_left = 0;
-	hid_unknown = 1000000000000;
 	radial_widget_inset = dot_size + 14;
 	printer_aspect_ratio = 11.69 / 8.27;
-	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
 	nothing_to_show = 'Please select something to show here';
 	name_bulkAdmin = 'Jonathan Sand';
 	cursor_default = 'default';

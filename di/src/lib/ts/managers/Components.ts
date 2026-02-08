@@ -1,61 +1,40 @@
 import { T_Hit_Target } from '../types/Enumerations';
-import S_Component from '../state/S_Component';
+import S_Hit_Target from '../state/S_Hit_Target';
 import type { Dictionary } from '../types/Types';
 
 export class Components {
-	private components_dict_byType_andHID: Dictionary<Dictionary<S_Component>> = {};
-	private _dummy!: S_Component;
-
-	//////////////////////////////////////////////////////////////////
-	//																//
-	//				  state managed outside svelte					//
-	//																//
-	// debug logging												//
-	// signal management											//
-	// (?) style construction (by type and hid)						//
-	// (?) unique id assignment (of html elements) for DOM lookups	//
-	//																//
-	//////////////////////////////////////////////////////////////////
+	private components_dict_byType_andHID: Dictionary<Dictionary<S_Hit_Target>> = {};
 
 	// ===== REGISTER =====
 
-	private component_register(s_component: S_Component) {
-		const type = s_component.type;
-		const hid = s_component.hid;
+	private component_register(s_hit_target: S_Hit_Target) {
+		const type = s_hit_target.type;
+		const hid = s_hit_target.hid;
 		if (hid !== null && !!type) {
 			const array = this.components_dict_byType_andHID;
 			const dict = array[type] ?? {};
-			dict[hid] = s_component;
+			dict[hid] = s_hit_target;
 			array[type] = dict;
 		}
 	}
 
 	// ===== CREATE =====
 
-	get dummy(): S_Component {
-		if (!this._dummy) {
-			this._dummy = new S_Component(null, T_Hit_Target.none);
-		}
-		return this._dummy;
-	}
-
-	component_forHID_andType(hid: number | null, type: T_Hit_Target): S_Component | null {
+	component_forHID_andType(hid: number | null, type: T_Hit_Target): S_Hit_Target | null {
 		const dict = this.components_byHID_forType(type);
 		return dict[hid ?? -1] ?? null;
 	}
 
-	component_forHID_andType_createUnique(hid: number | null, type: T_Hit_Target): S_Component {
-		let s_component: S_Component | null = this.component_forHID_andType(hid, type);
-		if (!s_component) {
-			s_component = new S_Component(hid, type);
-			if (!!s_component) {
-				this.component_register(s_component);
-			}
+	component_forHID_andType_createUnique(hid: number | null, type: T_Hit_Target): S_Hit_Target {
+		let s_hit_target: S_Hit_Target | null = this.component_forHID_andType(hid, type);
+		if (!s_hit_target) {
+			s_hit_target = new S_Hit_Target(type, String(hid ?? 'no-hid'));
+			this.component_register(s_hit_target);
 		}
-		return s_component;
+		return s_hit_target;
 	}
 
-	private components_byHID_forType(type: string): { [hid: number]: S_Component } {
+	private components_byHID_forType(type: string): { [hid: number]: S_Hit_Target } {
 		let dict = this.components_dict_byType_andHID[type];
 		if (!dict) {
 			dict = {};
@@ -66,19 +45,15 @@ export class Components {
 
 	// ===== CLEANUP =====
 
-	component_remove(s_component: S_Component) {
-		const type = s_component.type;
-		const hid = s_component.hid;
+	component_remove(s_hit_target: S_Hit_Target) {
+		const type = s_hit_target.type;
+		const hid = s_hit_target.hid;
 		if (hid !== null && !!type) {
 			const dict = this.components_dict_byType_andHID[type];
 			if (dict) {
 				delete dict[hid];
 			}
 		}
-	}
-
-	reset() {
-		this.components_dict_byType_andHID = {};
 	}
 
 }
