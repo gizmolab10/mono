@@ -6,3 +6,4 @@ export { preferences, T_Preference } from './Preferences';
 export { scenes } from './Scenes';
 export type { Saved_Scene } from './Scenes';
 export { editor } from './Editor';
+export { stores } from './Stores';

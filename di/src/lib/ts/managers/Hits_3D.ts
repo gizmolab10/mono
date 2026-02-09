@@ -35,6 +35,14 @@ class Hits_3D {
 		return this.cache.get(scene_id)?.projected;
 	}
 
+	/** Clear all registrations and caches (for HMR re-mount). */
+	clear() {
+		this.objects = [];
+		this.cache.clear();
+		this.w_hover.set(null);
+		this.w_selection.set(null);
+	}
+
 	register(so: Smart_Object) {
 		if (!this.objects.includes(so)) {
 			this.objects.push(so);
@@ -76,7 +84,7 @@ class Hits_3D {
 		}
 	}
 
-	test(point: Point): Hit_3D_Result | null {
+	hit_test(point: Point): Hit_3D_Result | null {
 		for (const so of this.objects) {
 			if (!so.scene) continue;
 			const c = this.cache.get(so.scene.id);

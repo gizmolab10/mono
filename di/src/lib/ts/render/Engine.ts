@@ -1,13 +1,11 @@
-import { w_scale, w_root_so, w_all_sos, w_view_mode, w_precision, current_precision } from '../managers/Stores';
 import { units, current_unit_system } from '../types/Units';
 import { scene, camera, render, animation } from '.';
-import { constraints } from '../algebra';
 import type { O_Scene } from '../types/Interfaces';
 import { T_Hit_3D } from '../types/Enumerations';
-import { hits_3d, scenes } from '../managers';
+import { hits_3d, scenes, stores } from '../managers';
 import { Smart_Object } from '../runtime';
+import { constraints } from '../algebra';
 import { quat, vec3 } from 'gl-matrix';
-import { get } from 'svelte/store';
 import { e3 } from '../signals';
 
 class Engine {
@@ -34,7 +32,7 @@ class Engine {
 
   constructor() {
     // Keep O_Scene.scale in sync with the store
-    w_scale.subscribe((value) => {
+    stores.w_scale.subscribe((value) => {
       if (this.root_scene && this.root_scene.scale !== value) {
         this.root_scene.scale = value;
         scenes.save();
@@ -45,13 +43,18 @@ class Engine {
   // ── setup ──
 
   setup(canvas: HTMLCanvasElement) {
+    // Clear stale state (handles HMR re-mount where singletons survive)
+    scene.clear();
+    animation.reset();
+    hits_3d.clear();
+
     // Initialize managers
     render.init(canvas);
     camera.init(render.logical_size);
     e3.init(canvas);
 
     // Wire up precision snapping for drag operations
-    Smart_Object.snap = (mm) => units.snap_for_system(mm, current_unit_system(), current_precision());
+    Smart_Object.snap = (mm) => units.snap_for_system(mm, current_unit_system(), stores.current_precision());
 
     // Load saved state or create defaults
     const saved = scenes.load();
@@ -104,10 +107,10 @@ class Engine {
     const saved_name = saved?.root_name ?? '';
     const root_so = smart_objects.find(so => so.name === saved_name) ?? smart_objects[0];
     this.root_scene = root_so.scene;
-    w_scale.set(this.root_scene?.scale ?? 1);
-    w_root_so.set(root_so);
+    stores.w_scale.set(this.root_scene?.scale ?? 1);
+    stores.w_root_so.set(root_so);
     scenes.root_name = root_so.name;
-    w_all_sos.set(smart_objects);
+    stores.w_all_sos.set(smart_objects);
 
     // Restore selection (SO + face) by name
     if (saved?.selected_name != null) {
@@ -122,7 +125,7 @@ class Engine {
     }
 
     // Restore ortho mode if saved view was 2d
-    if (get(w_view_mode) === '2d') {
+    if (stores.current_view_mode() === '2d') {
       camera.set_ortho(true);
     }
 
@@ -140,7 +143,7 @@ class Engine {
     e3.set_wheel_handler((delta, fine) => {
       if (!this.root_scene) return;
       e3.scale_object(this.root_scene, delta, fine);
-      w_scale.set(this.root_scene.scale);
+      stores.w_scale.set(this.root_scene.scale);
     });
 
     // Render loop
@@ -156,13 +159,13 @@ class Engine {
   scale_up(): void {
     if (!this.root_scene) return;
     e3.scale_object(this.root_scene, 1, false);
-    w_scale.set(this.root_scene.scale);
+    stores.w_scale.set(this.root_scene.scale);
   }
 
   scale_down(): void {
     if (!this.root_scene) return;
     e3.scale_object(this.root_scene, -1, false);
-    w_scale.set(this.root_scene.scale);
+    stores.w_scale.set(this.root_scene.scale);
   }
 
   /** Reset root SO orientation to identity (face-on). */
@@ -174,8 +177,8 @@ class Engine {
 
   /** Toggle between 2D and 3D view. 2D = orthographic, face-on. */
   toggle_view_mode(): void {
-    const mode = get(w_view_mode) === '3d' ? '2d' : '3d';
-    w_view_mode.set(mode);
+    const mode = stores.current_view_mode() === '3d' ? '2d' : '3d';
+    stores.w_view_mode.set(mode);
     if (mode === '2d') {
       // Face-on: camera on z axis, orthographic projection
       camera.set_position(vec3.fromValues(0, 0, 2750));
@@ -189,7 +192,7 @@ class Engine {
 
   /** Set precision level (index into tick array). Snaps all SO bounds to the new grid. */
   set_precision(level: number): void {
-    w_precision.set(level);
+    stores.w_precision.set(level);
     // Snap every non-formula bound to the precision grid
     const system = current_unit_system();
     for (const obj of scene.get_all()) {
@@ -247,9 +250,9 @@ class Engine {
     hits_3d.register(so);
 
     this.root_scene = so_scene;
-    w_scale.set(so_scene.scale);
-    w_root_so.set(so);
-    w_all_sos.update(list => [...list, so]);
+    stores.w_scale.set(so_scene.scale);
+    stores.w_root_so.set(so);
+    stores.w_all_sos.update(list => [...list, so]);
     scenes.root_name = so.name;
     scenes.save();
   }

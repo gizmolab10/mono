@@ -5,8 +5,8 @@ import type { Axis } from '../runtime/Smart_Object';
 import { Size, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { hits_3d } from '../managers/Hits_3D';
+import { stores } from '../managers/Stores';
 import { mat4, vec4, quat } from 'gl-matrix';
-import { current_view_mode, show_dimensionals, current_precision, is_solid } from '../managers/Stores';
 import { camera } from './Camera';
 import { scene } from './Scene';
 
@@ -59,14 +59,14 @@ class Render {
       this.render_object(obj);
     }
     this.render_selection();
-    if (show_dimensionals()) this.render_dimensions();
+    if (stores.show_dimensionals()) this.render_dimensions();
     this.render_hover();
   }
 
   private get_world_matrix(obj: O_Scene): mat4 {
     const local = mat4.create();
     const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
-    const orientation = current_view_mode() === '2d' ? quat.create() : obj.so.orientation;
+    const orientation = stores.current_view_mode() === '2d' ? quat.create() : obj.so.orientation;
     mat4.fromRotationTranslationScale(local, orientation, obj.position, scale_vec);
 
     if (obj.parent) {
@@ -111,7 +111,7 @@ class Render {
 
     // Draw faces with debug colors (back faces first, then front faces on top)
     // In 2D mode, skip face fills entirely — edges only
-    if (obj.faces && current_view_mode() !== '2d') {
+    if (obj.faces && stores.current_view_mode() !== '2d') {
       // First pass: back-facing faces
       for (let fi = 0; fi < obj.faces.length; fi++) {
         const face = obj.faces[fi];
@@ -126,12 +126,12 @@ class Render {
       }
     }
 
-    const is_2d = current_view_mode() === '2d';
+    const is_2d = stores.current_view_mode() === '2d';
     this.ctx.lineWidth = 1;
     this.ctx.lineCap = 'square';
 
     // In 2D or solid mode, only draw edges belonging to front-facing faces
-    const front_edges = (is_2d || is_solid()) ? this.front_face_edges(obj, projected) : null;
+    const front_edges = (is_2d || stores.is_solid()) ? this.front_face_edges(obj, projected) : null;
 
     for (const [i, j] of obj.edges) {
       const a = projected[i],
@@ -266,7 +266,7 @@ class Render {
       const world_matrix = this.get_world_matrix(obj);
 
       // In 2D mode, skip depth (z) — only show width and height
-      const all_axes: Axis[] = current_view_mode() === '2d' ? ['x', 'y'] : ['x', 'y', 'z'];
+      const all_axes: Axis[] = stores.current_view_mode() === '2d' ? ['x', 'y'] : ['x', 'y', 'z'];
       for (const axis of all_axes) {
         this.render_axis_dimension(so, axis, projected, world_matrix);
       }
@@ -294,7 +294,12 @@ class Render {
     const verts = so.vertices;
     const v1 = verts[v1_idx], v2 = verts[v2_idx];
     const edge_mid = new Point3((v1.x + v2.x) / 2, (v1.y + v2.y) / 2, (v1.z + v2.z) / 2);
-    const dot = witness_dir.x * edge_mid.x + witness_dir.y * edge_mid.y + witness_dir.z * edge_mid.z;
+    // Vector from SO center to edge midpoint — determines "outward"
+    const cx = (so.x_min + so.x_max) / 2;
+    const cy = (so.y_min + so.y_max) / 2;
+    const cz = (so.z_min + so.z_max) / 2;
+    const outward = new Point3(edge_mid.x - cx, edge_mid.y - cy, edge_mid.z - cz);
+    const dot = witness_dir.x * outward.x + witness_dir.y * outward.y + witness_dir.z * outward.z;
     if (dot < 0) {
       witness_dir = new Point3(-witness_dir.x, -witness_dir.y, -witness_dir.z);
     }
@@ -496,7 +501,7 @@ class Render {
 
     // Text setup
     ctx.font = '12px sans-serif';
-    const text = units.format_for_system(value, current_unit_system(), current_precision());
+    const text = units.format_for_system(value, current_unit_system(), stores.current_precision());
     const textWidth = ctx.measureText(text).width;
     const textHeight = 12; // approximate line height
 

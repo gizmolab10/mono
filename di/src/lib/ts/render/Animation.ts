@@ -16,6 +16,12 @@ class Animation {
     this.running = false;
   }
 
+  /** Stop and clear all callbacks (for HMR re-mount). */
+  reset(): void {
+    this.running = false;
+    this.callbacks = [];
+  }
+
   on_tick(callback: T_Tick_Callback): void {
     this.callbacks.push(callback);
   }

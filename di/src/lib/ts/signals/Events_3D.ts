@@ -31,7 +31,7 @@ class Events_3D {
       const point = new Point(e.clientX - rect.left, e.clientY - rect.top);
       this.last_canvas_position = point;
 
-      const hit = hits_3d.test(point);
+      const hit = hits_3d.hit_test(point);
 
       // Store what we're actually dragging (corner/edge/face)
       this.drag_target = hit;
@@ -40,17 +40,22 @@ class Events_3D {
       // Clear hover during drag (especially rotation)
       hits_3d.set_hover(null);
 
-      // Selection is only faces — clicking corner/edge or background keeps existing selection
-      if (hit?.type === T_Hit_3D.face) {
-        hits_3d.set_selection(hit);
+      // Face click → select that face
+      // Corner/edge click → select best face (only if nothing selected yet)
+      if (hit) {
+        if (hit.type === T_Hit_3D.face) {
+          hits_3d.set_selection(hit);
+        } else if (!hits_3d.selection) {
+          const face_hit = hits_3d.hit_to_face(hit);
+          if (face_hit) hits_3d.set_selection(face_hit);
+        }
       }
-      // Clicking background or corner/edge keeps existing selection (for rotation)
     });
 
     window.addEventListener('mouseup', () => {
       if (!this.did_drag) {
         // Click (no drag) — check dimension rects first
-        const dim_hit = editor.test(this.last_canvas_position.x, this.last_canvas_position.y);
+        const dim_hit = editor.hit_test(this.last_canvas_position.x, this.last_canvas_position.y);
         if (dim_hit) {
           editor.begin(dim_hit);
         } else if (!this.drag_target) {
@@ -68,7 +73,7 @@ class Events_3D {
       const point = new Point(e.clientX - rect.left, e.clientY - rect.top);
 
       if (!this.is_dragging) {
-        const hit = hits_3d.test(point);
+        const hit = hits_3d.hit_test(point);
         // Hover shows face — convert corner/edge hits to best face
         // But don't hover on already-selected face
         const face_hit = hit ? hits_3d.hit_to_face(hit) : null;

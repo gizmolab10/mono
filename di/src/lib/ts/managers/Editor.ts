@@ -1,7 +1,7 @@
 import type { Dimension_Rect, S_Editing } from '../types/Interfaces';
 import { units, current_unit_system } from '../types/Units';
 import { T_Units } from '../types/Enumerations';
-import { current_precision } from './Stores';
+import { stores } from './Stores';
 import { constraints, compiler, evaluator } from '../algebra';
 import { writable, get } from 'svelte/store';
 import { scenes } from './Scenes';
@@ -16,7 +16,7 @@ class Editor {
 	// ── hit testing ──
 
 	/** Test if a screen point lands on any dimension rect. */
-	test(x: number, y: number): Dimension_Rect | null {
+	hit_test(x: number, y: number): Dimension_Rect | null {
 		const padding = 4;
 		for (const rect of render.dimension_rects) {
 			const half_w = rect.w / 2 + padding;
@@ -30,7 +30,7 @@ class Editor {
 
 	// ── lifecycle ──
 
-	/** Start editing a dimensional. Called on click when test() hits. */
+	/** Start editing a dimensional. Called on click when hit_test() hits. */
 	begin(rect: Dimension_Rect): void {
 		const so = rect.so;
 		const value_mm = rect.axis === 'x' ? so.width : rect.axis === 'y' ? so.height : so.depth;
@@ -40,7 +40,7 @@ class Editor {
 			axis: rect.axis,
 			x: rect.x,
 			y: rect.y,
-			formatted: units.format_for_system(value_mm, system, current_precision()),
+			formatted: units.format_for_system(value_mm, system, stores.current_precision()),
 		});
 	}
 
@@ -60,7 +60,7 @@ class Editor {
 		// (Snapping each bound individually caused asymmetric rounding — Math.round
 		// rounds half-values toward +∞, so center−half and center+half could
 		// snap unevenly, shrinking the dimension.)
-		const precision = current_precision();
+		const precision = stores.current_precision();
 		const snapped_mm = units.snap_for_system(new_mm, system, precision);
 		const half = snapped_mm / 2;
 		const axis = state.axis;

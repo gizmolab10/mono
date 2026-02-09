@@ -1,13 +1,13 @@
 <script lang='ts'>
 	import { colors } from '../../ts/draw/Colors';
-	import { w_root_so, w_all_sos, w_precision, w_solid, toggle_solid } from '../../ts/managers/Stores';
 	import { engine } from '../../ts/render';
-	import { hits_3d, scenes } from '../../ts/managers';
+	import { hits_3d, scenes, stores } from '../../ts/managers';
 	import { T_Hit_3D, T_Units } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	const { w_text_color, w_background_color } = colors;
 	const { w_selection } = hits_3d;
+	const { w_root_so, w_all_sos, w_precision, w_solid } = stores;
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
 
@@ -75,7 +75,7 @@
 	{/if}
 	<div class='settings'>
 		<button class='action-btn' onclick={() => engine.add_child_so()}>add child</button>
-		<button class='action-btn' onclick={toggle_solid}>{$w_solid ? 'solid' : 'see through'}</button>
+		<button class='action-btn' onclick={() => stores.toggle_solid()}>{$w_solid ? 'solid' : 'see through'}</button>
 		<select class='details-select' value={$w_unit_system} onchange={handle_unit_change}>
 			{#each Object.values(T_Units) as system}
 				<option value={system}>{system}</option>

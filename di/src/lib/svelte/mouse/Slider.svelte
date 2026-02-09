@@ -209,29 +209,26 @@
 		text-align   : right;
 	}
 	.steppers {
-		display        : flex;
-		flex-direction : column;
-		align-items    : center;
-		position       : relative;
-		top            : 1px;
-		margin-left    : -1px;
+		display                : flex;
+		flex-direction         : column;
+		align-items            : center;
+		margin-left            : -1px;
 	}
 	.stepper-value {
-		font-size   : 8px;
-		font-weight : bold;
-		text-align  : center;
-		min-width   : 2.5em;
-		line-height : 1;
-		margin      : -3px 0;
-		position    : relative;
-		top         : -0.75px;
-		user-select : none;
+		font-size              : 8px;
+		font-weight            : bold;
+		font-variant-numeric   : tabular-nums;
+		text-align             : center;
+		width                  : 3em;
+		height                 : 8px;
+		line-height            : 8px;
+		margin                 : -3px 0;
+		user-select            : none;
+		overflow               : hidden;
 	}
 	.stepper-button {
 		cursor      : pointer;
 		user-select : none;
-		position    : relative;
-		top         : 0.5px;
 	}
 
 	/* === Native range input styling === */

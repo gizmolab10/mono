@@ -62,7 +62,7 @@ export default class Hits {
 
 		// If no 2D target, try 3D
 		if (!target) {
-			const hit_3d = hits_3d.test(point);
+			const hit_3d = hits_3d.hit_test(point);
 			if (hit_3d && s_mouse.isDown) {
 				hits_3d.set_selection(hit_3d);
 				return true;

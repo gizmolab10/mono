@@ -1,23 +1,26 @@
 # Code Debt
 
-- [ ] convert Orientation functions into a class
-- [ ] **bugs**
-	- [x] algebra fails 1" + 2" -> 1'
-	- [ ] new children spontaneously appear
-	- [ ] steppers hop up and down
-	- [ ] dimensionals sometimes do not extend outward from SO
-	- [ ] selecting often fails
-- [ ] ability to drag the current SO
+- [ ] add new child -> wrong dimensions
+	- [ ] algorithm: using smallest length of parent, divide that in half, use that for all dimensions
 - [ ] hidden line clipping
-- [ ] ability to export/import to/from file
 - [ ] logarithmic scaling slider
+- [ ] ability to drag the current SO
+- [ ] ability to export/import to/from file
 - [ ] tweak dimensionals
 	- [ ] tab between dimensionals
 	- [ ] arrow-key nudging (±unit of precision)
 
 ## Done
 
+- [x] selecting often fails
+- [x] rename test -> hit_test
+- [x] algebra fails 1" + 2" -> 1'
+- [x] convert Stores into a class
 - [x] move precision and units to details
+- [x] new children spontaneously appear
+- [x] steppers hop up and down in build notes
+- [x] convert Orientation functions into a class
+- [x] dimensionals sometimes do not extend outward from SO
 - [x] add a controls button "show/hide dimensionals" a boolean
 - [x] add button "show/hide dimensionals" a boolean that render reacts to
 - [x] make the height of units system button consistent with other buttons
