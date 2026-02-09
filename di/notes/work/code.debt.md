@@ -10,6 +10,8 @@
 - [ ] tweak dimensionals
 	- [ ] tab between dimensionals
 	- [ ] arrow-key nudging (±unit of precision)
+- [ ] screen-space spatial partitioning (tiled bins or BVH) to cull face checks per edge
+	- [ ] Occlusion is brute-force O(edges × faces) — every edge checks every front-facing face from every other object. Intersection lines add O(face_pairs × faces) on top. Fine for a handful of objects, but will choke at scale. Fix: 
 
 ## Done
 

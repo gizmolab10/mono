@@ -19,6 +19,15 @@ class Render {
   /** When true, faces render with debug colors. When false, faces are transparent. */
   debug = false;
 
+  /** Per-frame list of front-facing faces for occlusion: world-space normal, offset, and screen-space polygon. */
+  private occluding_faces: {
+    n: vec3; d: number;            // face plane in world space (n·p = d)
+    corners: vec3[];               // world-space corners
+    poly: { x: number; y: number }[]; // screen-space polygon
+    obj_id: string;
+  }[] = [];
+
+
   private mvp_matrix = mat4.create();
 
   /** Per-frame dimension rects for click-to-edit. Cleared each render(). */
@@ -109,6 +118,42 @@ class Render {
       }
     }
 
+    // Build occluding face list for edge clipping (solid mode only)
+    this.occluding_faces = [];
+    if (!is_2d && solid) {
+      for (const obj of objects) {
+        const projected = projected_map.get(obj.id)!;
+        if (!obj.faces) continue;
+        const world = this.get_world_matrix(obj);
+        const verts = obj.so.vertices;
+        for (const face of obj.faces) {
+          if (this.face_winding(face, projected) >= 0) continue;
+          // Screen-space polygon
+          const poly: { x: number; y: number }[] = [];
+          let cam_behind = false;
+          for (const vi of face) {
+            if (projected[vi].w < 0) { cam_behind = true; break; }
+            poly.push({ x: projected[vi].x, y: projected[vi].y });
+          }
+          if (cam_behind) continue;
+          // World-space corners and plane
+          const corners: vec3[] = [];
+          for (const vi of face) {
+            const lv = verts[vi];
+            const wv = vec4.create();
+            vec4.transformMat4(wv, [lv.x, lv.y, lv.z, 1], world);
+            corners.push(vec3.fromValues(wv[0], wv[1], wv[2]));
+          }
+          const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);
+          const e2 = vec3.sub(vec3.create(), corners[3], corners[0]);
+          const n = vec3.cross(vec3.create(), e1, e2);
+          vec3.normalize(n, n);
+          const d = vec3.dot(n, corners[0]);
+          this.occluding_faces.push({ n, d, corners, poly, obj_id: obj.id });
+        }
+      }
+    }
+
     // Phase 2c: intersection lines between overlapping SOs
     if (!is_2d && objects.length > 1) {
       this.render_intersections(objects);
@@ -117,7 +162,8 @@ class Render {
     // Phase 3: draw edges
     for (const obj of objects) {
       const projected = projected_map.get(obj.id)!;
-      this.render_edges(obj, projected, is_2d, solid);
+      const world = (!is_2d && solid) ? this.get_world_matrix(obj) : undefined;
+      this.render_edges(obj, projected, is_2d, solid, world);
       this.render_face_names(obj, projected);
     }
 
@@ -178,7 +224,7 @@ class Render {
     this.ctx.fill();
   }
 
-  private render_edges(obj: O_Scene, projected: Projected[], is_2d: boolean, solid: boolean): void {
+  private render_edges(obj: O_Scene, projected: Projected[], is_2d: boolean, solid: boolean, world?: mat4): void {
     this.ctx.lineWidth = 1;
     this.ctx.lineCap = 'square';
 
@@ -190,15 +236,34 @@ class Render {
         b = projected[j];
       if (a.w < 0 || b.w < 0) continue;
       if (front_edges && !front_edges.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
+
       const alpha = is_2d ? 1 : 0.3 + 0.7 * (1 - (a.z + b.z) / 2);
       this.ctx.strokeStyle = `${obj.color}${Math.max(0.2, Math.min(1, alpha)).toFixed(2)})`;
-      this.ctx.beginPath();
-      // Snap to half-pixel grid for crisp 1px lines
-      const ax = Math.round(a.x) + 0.5, ay = Math.round(a.y) + 0.5;
-      const bx = Math.round(b.x) + 0.5, by = Math.round(b.y) + 0.5;
-      this.ctx.moveTo(ax, ay);
-      this.ctx.lineTo(bx, by);
-      this.ctx.stroke();
+
+      if (solid && world) {
+        // Get world-space edge endpoints
+        const vi = obj.so.vertices[i], vj = obj.so.vertices[j];
+        const wi = vec4.create(), wj = vec4.create();
+        vec4.transformMat4(wi, [vi.x, vi.y, vi.z, 1], world);
+        vec4.transformMat4(wj, [vj.x, vj.y, vj.z, 1], world);
+        const w1 = vec3.fromValues(wi[0], wi[1], wi[2]);
+        const w2 = vec3.fromValues(wj[0], wj[1], wj[2]);
+
+        const visible = this.clip_segment_for_occlusion(
+          { x: a.x, y: a.y }, { x: b.x, y: b.y }, w1, w2, obj.id
+        );
+        for (const [s, e] of visible) {
+          this.ctx.beginPath();
+          this.ctx.moveTo(Math.round(s.x) + 0.5, Math.round(s.y) + 0.5);
+          this.ctx.lineTo(Math.round(e.x) + 0.5, Math.round(e.y) + 0.5);
+          this.ctx.stroke();
+        }
+      } else {
+        this.ctx.beginPath();
+        this.ctx.moveTo(Math.round(a.x) + 0.5, Math.round(a.y) + 0.5);
+        this.ctx.lineTo(Math.round(b.x) + 0.5, Math.round(b.y) + 0.5);
+        this.ctx.stroke();
+      }
     }
   }
 
@@ -209,7 +274,6 @@ class Render {
    */
   private render_intersections(objects: O_Scene[]): void {
     const ctx = this.ctx;
-    ctx.strokeStyle = 'rgba(80, 80, 80, 0.7)';
     ctx.lineWidth = 1;
 
     // Build world-space face data for each object: normal, offset, 4 corner positions
@@ -249,10 +313,9 @@ class Render {
 
     for (let i = 0; i < objects.length; i++) {
       for (let j = i + 1; j < objects.length; j++) {
-        if (this.shares_all_axes(objects[i], objects[j])) continue;
         for (const fA of obj_faces[i]) {
           for (const fB of obj_faces[j]) {
-            this.intersect_face_pair(ctx, fA, fB);
+            this.intersect_face_pair(ctx, fA, fB, objects[i].id, objects[j].id, objects[i].color);
           }
         }
       }
@@ -267,6 +330,9 @@ class Render {
     ctx: CanvasRenderingContext2D,
     fA: { n: vec3; d: number; corners: vec3[] },
     fB: { n: vec3; d: number; corners: vec3[] },
+    obj_id_a: string,
+    obj_id_b: string,
+    color: string,
   ): void {
     const eps = 1e-8;
 
@@ -308,7 +374,155 @@ class Render {
     const start = vec3.scaleAndAdd(vec3.create(), p0, dir, tA);
     const end = vec3.scaleAndAdd(vec3.create(), p0, dir, tB);
 
-    this.draw_seg_world(ctx, start, end);
+    const identity = mat4.create();
+    const s1 = this.project_vertex(new Point3(start[0], start[1], start[2]), identity);
+    const s2 = this.project_vertex(new Point3(end[0], end[1], end[2]), identity);
+    if (s1.w < 0 || s2.w < 0) return;
+
+    // Intersection lines: skip the two coplanar generating faces, not all faces from both objects
+    const visible = this.clip_segment_for_occlusion(
+      { x: s1.x, y: s1.y }, { x: s2.x, y: s2.y }, start, end, '', [fA, fB]
+    );
+    for (const [a, b] of visible) {
+      ctx.beginPath();
+      ctx.moveTo(Math.round(a.x) + 0.5, Math.round(a.y) + 0.5);
+      ctx.lineTo(Math.round(b.x) + 0.5, Math.round(b.y) + 0.5);
+      ctx.stroke();
+    }
+  }
+
+  /**
+   * Clip a segment against all occluding faces from other SOs.
+   * Uses world-space face normals to determine which side of the face plane
+   * each portion of the edge is on. The portion behind the face (and inside
+   * the face's screen polygon) gets hidden.
+   *
+   * w1, w2: world-space endpoints of the edge segment.
+   */
+  private clip_segment_for_occlusion(
+    p1: { x: number; y: number },
+    p2: { x: number; y: number },
+    w1: vec3,
+    w2: vec3,
+    skip_ids: string | string[],
+    skip_planes?: { n: vec3; d: number }[],
+  ): [{ x: number; y: number }, { x: number; y: number }][] {
+    // Work entirely in screen space. World space is only used for front/behind test.
+    let intervals: [number, number][] = [[0, 1]]; // screen-space t along p1→p2
+    const skip = Array.isArray(skip_ids) ? skip_ids : [skip_ids];
+    const dx = p2.x - p1.x, dy = p2.y - p1.y;
+    const identity = mat4.create();
+
+    for (const face of this.occluding_faces) {
+      if (skip.includes(face.obj_id)) continue;
+      if (skip_planes && skip_planes.some(sp => {
+        const dot = vec3.dot(sp.n, face.n);
+        return (Math.abs(dot - 1) < 1e-6 && Math.abs(sp.d - face.d) < 1e-6) ||
+               (Math.abs(dot + 1) < 1e-6 && Math.abs(sp.d + face.d) < 1e-6);
+      })) continue;
+
+      // Signed distances from edge endpoints to face plane (world space)
+      const d1 = vec3.dot(face.n, w1) - face.d;
+      const d2 = vec3.dot(face.n, w2) - face.d;
+
+      if (d1 > 0 && d2 > 0) continue;
+
+      // Find screen-space t where the segment crosses the face plane
+      // by projecting the world-space crossing point to screen
+      let s_behind_start = 0, s_behind_end = 1;
+      if (d1 > 0 && d2 <= 0) {
+        const t_cross = d1 / (d1 - d2);
+        const wc = vec3.lerp(vec3.create(), w1, w2, t_cross);
+        const pc = this.project_vertex(new Point3(wc[0], wc[1], wc[2]), identity);
+        // Find screen t of the crossing point along p1→p2
+        const cdx = pc.x - p1.x, cdy = pc.y - p1.y;
+        s_behind_start = Math.abs(dx) > Math.abs(dy) ? cdx / dx : cdy / dy;
+        s_behind_end = 1;
+      } else if (d1 <= 0 && d2 > 0) {
+        const t_cross = d1 / (d1 - d2);
+        const wc = vec3.lerp(vec3.create(), w1, w2, t_cross);
+        const pc = this.project_vertex(new Point3(wc[0], wc[1], wc[2]), identity);
+        const cdx = pc.x - p1.x, cdy = pc.y - p1.y;
+        s_behind_start = 0;
+        s_behind_end = Math.abs(dx) > Math.abs(dy) ? cdx / dx : cdy / dy;
+      }
+      // else both behind: s_behind_start=0, s_behind_end=1
+
+      // Clip the "behind" portion to the face's screen-space polygon
+      const bs = { x: p1.x + dx * s_behind_start, y: p1.y + dy * s_behind_start };
+      const be = { x: p1.x + dx * s_behind_end, y: p1.y + dy * s_behind_end };
+
+      const clip = this.clip_segment_to_polygon_2d(bs, be, face.poly);
+      if (!clip) continue;
+
+      // Map clip t values back to the full screen-space [0,1] range
+      const s_range = s_behind_end - s_behind_start;
+      const s_enter = s_behind_start + clip[0] * s_range;
+      const s_leave = s_behind_start + clip[1] * s_range;
+
+      // Remove the occluded interval
+      const new_intervals: [number, number][] = [];
+      for (const [a, b] of intervals) {
+        if (s_leave <= a || s_enter >= b) {
+          new_intervals.push([a, b]);
+          continue;
+        }
+        if (s_enter > a) new_intervals.push([a, s_enter]);
+        if (s_leave < b) new_intervals.push([s_leave, b]);
+      }
+      intervals = new_intervals;
+      if (intervals.length === 0) break;
+    }
+
+    return intervals.map(([a, b]) => [
+      { x: p1.x + dx * a, y: p1.y + dy * a },
+      { x: p1.x + dx * b, y: p1.y + dy * b },
+    ]);
+  }
+
+  /**
+   * 2D Cyrus-Beck: clip a segment (p1→p2, t in [0,1]) to a convex polygon.
+   * Returns [t_enter, t_leave] or null if fully outside.
+   */
+  private clip_segment_to_polygon_2d(
+    p1: { x: number; y: number },
+    p2: { x: number; y: number },
+    poly: { x: number; y: number }[],
+  ): [number, number] | null {
+    let t_enter = 0, t_leave = 1;
+    const dx = p2.x - p1.x, dy = p2.y - p1.y;
+
+    for (let i = 0; i < poly.length; i++) {
+      const c0 = poly[i];
+      const c1 = poly[(i + 1) % poly.length];
+
+      // Inward-pointing normal for this edge (CW winding in screen space, Y-down)
+      const ex = c1.x - c0.x, ey = c1.y - c0.y;
+      const nx = ey, ny = -ex; // rotate edge 90 degrees right = inward for CW
+
+      const denom = nx * dx + ny * dy;
+      const num = nx * (p1.x - c0.x) + ny * (p1.y - c0.y);
+
+      if (Math.abs(denom) < 1e-10) {
+        // Segment parallel to edge — if outside, reject
+        if (num < 0) return null;
+        continue;
+      }
+
+      const t = -num / denom;
+      if (denom > 0) {
+        // Entering the half-plane
+        if (t > t_enter) t_enter = t;
+      } else {
+        // Leaving the half-plane
+        if (t < t_leave) t_leave = t;
+      }
+
+      if (t_enter > t_leave) return null;
+    }
+
+    if (t_enter >= t_leave) return null;
+    return [t_enter, t_leave];
   }
 
   /**
@@ -358,15 +572,6 @@ class Render {
     }
 
     return [t_min, t_max];
-  }
-
-  /** Skip intersection lines when one is the child of the other and the child has identity orientation. */
-  private shares_all_axes(a: O_Scene, b: O_Scene): boolean {
-    const child = a.parent === b ? a : b.parent === a ? b : null;
-    if (!child) return false;
-    const q = child.so.orientation;
-    const eps = 1e-6;
-    return Math.abs(q[0]) < eps && Math.abs(q[1]) < eps && Math.abs(q[2]) < eps && Math.abs(q[3] - 1) < eps;
   }
 
   private draw_seg_world(ctx: CanvasRenderingContext2D, p1: vec3, p2: vec3): void {

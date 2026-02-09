@@ -201,6 +201,8 @@
   },
   "active": "ffdb7bac37c87e46",
   "lastOpenFiles": [
+    "di/notes/work/primer.md",
+    "notes/guides/jonathan.md",
     "notes/work/journal.md",
     "di/notes/work/code.debt.md",
     "di/notes/architecture/intersecting.faces.md",
@@ -235,8 +237,6 @@
     "di/notes/work/milestones/9.persistence.md",
     "di/notes/work/milestones/6.build.notes.md",
     "ga/notes/work/phaser.start.md",
-    "ga/notes/work/revisit.ga.md",
-    "di/notes/work/milestones/5.smart.objects.md",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",
     "ga/node_modules/phaser/changelog/3.60/images/timeline.png",
     "ga/node_modules/phaser/changelog/3.60/images/videogameobject.png",

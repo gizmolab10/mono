@@ -8,6 +8,7 @@ I am trying here to convey a way of being that persists from chat to chat. Not s
 - [Design](./design/)
 - [Develop](./develop/)
 - [Philosophy](./philosophy/)
+- [Jonathan](./jonathan.md)
 - [Pre Flight](./pre-flight/)
 - [Setup](./setup/)
 - [Test](./test/)
