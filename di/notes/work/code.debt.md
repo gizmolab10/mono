@@ -1,8 +1,16 @@
 # Code Debt
 
-- [ ] add new child -> wrong dimensions
-	- [ ] algorithm: using smallest length of parent, divide that in half, use that for all dimensions
-- [ ] hidden line clipping
+- [x] **face intersection** line segments
+	- [x] **only** for SO pairs that do not share ALL their axes
+	- [x] **ASSUME**:
+		- [x] child does not share axes
+		- [x] child extends outside parent
+		- [x] **create from reset**: add child, stretch child longer than parent, rotate child
+	- [x] compute the **dihedral** intersection line for each pair of intersecting faces (use cross product)
+	- [x] **compute the two endpoints** of each such line
+- [ ] better names for attributes (x,y,z,w,h,d) are x_max, y_ and z_ ever needed?
+- [ ] hide face label when face is nearly edge on
+- [ ] in all code files, use 4-space tabs (not 2-)
 - [ ] logarithmic scaling slider
 - [ ] ability to drag the current SO
 - [ ] ability to export/import to/from file
@@ -32,6 +40,10 @@
 	- [x] imperial: whole, 1/2, 1/4, 1/8, 1/16, 1/32, 1/64
 	- [x] others: whole, 1, 2, 3
 	- [x] constrain the SOT values accordingly
+- [x] add new child -> wrong dimensions
+	- [x] algorithm: using smallest length of parent, divide that in half, use that for all dimensions
+	- [x] assure that the child axes all align with the parent's axes
+	- [x] after adding, select the parent
 - [x] cruft
 	- [x] consolidate redundancy
 	- [x] simplify over-engineering

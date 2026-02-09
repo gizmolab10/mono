@@ -277,32 +277,32 @@ describe('add child with formulas', () => {
 		expect(child.x_min).toBeCloseTo(-500);
 	});
 
-	it('child max bounds set to parent origin + 1 default unit', () => {
-		const parent = add_so('parent', { x_min: -100, x_max: 100 });
+	it('child max bounds set to parent origin + half smallest dimension', () => {
+		const parent = add_so('parent', { x_min: -100, x_max: 100, y_min: -200, y_max: 200, z_min: -300, z_max: 300 });
 		const child = add_so('child');
 
-		// In imperial: 1 inch = 25.4 mm
-		const one_inch = units.to_mm(1, T_Unit.inch);
-		child.set_bound('x_max', parent.x_min + one_inch);
+		// Smallest parent dimension: width = 200. Half = 100.
+		const half = Math.min(parent.width, parent.height, parent.depth) / 2;
+		child.set_bound('x_max', parent.x_min + half);
 
-		expect(child.x_max).toBeCloseTo(-100 + 25.4);
+		expect(child.x_max).toBeCloseTo(-100 + 100);
 	});
 
-	it('child dimensions are 1 default unit wide', () => {
-		const parent = add_so('parent', { x_min: 0, x_max: 1000, y_min: 0, y_max: 1000, z_min: 0, z_max: 1000 });
+	it('child dimensions are half the smallest parent length', () => {
+		const parent = add_so('parent', { x_min: 0, x_max: 1000, y_min: 0, y_max: 600, z_min: 0, z_max: 800 });
 		const child = add_so('child');
 
-		// Simulate add_child_so with metric (1mm default)
+		// Simulate add_child_so: smallest parent length = 600 (height), half = 300
 		constraints.set_formula(child, 'x_min', 'parent.x_min');
 		constraints.set_formula(child, 'y_min', 'parent.y_min');
 		constraints.set_formula(child, 'z_min', 'parent.z_min');
-		const one_mm = units.to_mm(1, T_Unit.millimeter);
-		child.set_bound('x_max', parent.x_min + one_mm);
-		child.set_bound('y_max', parent.y_min + one_mm);
-		child.set_bound('z_max', parent.z_min + one_mm);
+		const half = Math.min(parent.width, parent.height, parent.depth) / 2;
+		child.set_bound('x_max', parent.x_min + half);
+		child.set_bound('y_max', parent.y_min + half);
+		child.set_bound('z_max', parent.z_min + half);
 
-		expect(child.width).toBeCloseTo(1);
-		expect(child.height).toBeCloseTo(1);
-		expect(child.depth).toBeCloseTo(1);
+		expect(child.width).toBeCloseTo(300);
+		expect(child.height).toBeCloseTo(300);
+		expect(child.depth).toBeCloseTo(300);
 	});
 });

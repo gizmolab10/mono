@@ -5,6 +5,7 @@ System structure and core concepts for Design Intuition.
 ## Contents
 
 - [Files](./files.md)
+- [Intersecting.faces](./intersecting.faces.md)
 - [Managers](./managers.md)
 - [Panel.layout](./panel.layout.md)
 - [Project](./project.md)

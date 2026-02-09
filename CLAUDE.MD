@@ -1,22 +1,24 @@
 # Shared Context
 
-ALL FILE PATHS: ~/GitHub/mono/ — NEVER use the worktree working directory
+NEVER EVER use git
+
+ALL FILE PATHS: \~/GitHub/mono/ — NEVER use the worktree working directory
+
+PROJECTS: ws (webseriously) = graph visualization, di (design intuition) = CAD rebuild, ga (game), me (my personal work)
 
 > Read files before editing, search before claiming, propose before changing. Gates force reading the right guide before acting. Work tracked in `notes/work/`, style follows `voice.md`.
 
-**Every response:** read `notes/guides/pre-flight/always.md`, then scan `keywords.md`. If any keyword matches, read the listed guide(s).
+**Every response:** in `notes/guides/pre-flight`, read `always.md`, `keywords.md` and `shorthand.md`. If any keyword matches, read the listed guide(s). If any shorthand matches perform the action.
 
 Before starting work, read all `.md` files within:
 
 `notes/guides/collaborate`
-`notes/guides/pre-flight` 
-`notes/work` (top level only)
+`notes/guides/pre-flight`
+`<X>notes/work` (top level only, where X is the project name, eg "di")
 
 ## Who
 
 Jonathan: artist before engineer. Engineering serves the art. Values intuition, warmth, hand-tweaking over formulas.
-
-Projects: ws (webseriously) = graph visualization, di (design intuition) = CAD rebuild.
 
 Collaborator (or "co") = Claude.
 
@@ -24,7 +26,9 @@ Collaborator (or "co") = Claude.
 
 NEVER use .claude-worktrees paths, even though that's the working directory
 
-NEVER use npm or npx — ALWAYS use yarn. `yarn vitest`, `yarn svelte-check`, `yarn <script>`. No exceptions.
+NEVER use Claude's own memory/config dirs (eg .claude/projects/). All persistent notes go in ~/GitHub/mono/
+
+ALWAYS use yarn. `yarn vitest`, `yarn svelte-check`, `yarn <script>`. NEVER use npm or npx — No exceptions.
 
 EXECUTE: Hybrid — reads/searches immediately, propose file changes before executing
 
@@ -58,18 +62,18 @@ At session start, also read:
 2. `kinds.of.tasks.md` — classify task type, note conflicts
 3. `gates.md` — check for STOP/SEARCH/LIST/WAIT
 4. `pitfalls.md` — edge cases that cause mistakes
-5. `../work/learn.md` — don't repeat them. If 10+ entries, say: "Feedstock: [N] — time to distill."
+5. `../work/learn.md` — don't repeat them. If 10+ entries, say: "Feedstock: \[N\] — time to distill."
 
 ## Guides
 
 In `notes/guides/collaborate/`:
 
-- `chat.md` — roles, requirements, division of labor
-- `voice.md` — prose style
-- `workflow.md` — implementation, refactoring, debugging discipline
+* `chat.md` — roles, requirements, division of labor
+* `voice.md` — prose style
+* `workflow.md` — implementation, refactoring, debugging discipline
 
 In `notes/guides/pre-flight/`:
 
-- `always.md` — read every response
-- `keywords.md` — scan every response
-- `gates.md`, `shorthand.md`, `kinds.of.tasks.md`, `pitfalls.md` — session start
+* `always.md` — read every response
+* `keywords.md` — scan every response
+* `gates.md`, `shorthand.md`, `kinds.of.tasks.md`, `pitfalls.md` — session start

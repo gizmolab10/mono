@@ -6,7 +6,7 @@ import { Size, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { hits_3d } from '../managers/Hits_3D';
 import { stores } from '../managers/Stores';
-import { mat4, vec4, quat } from 'gl-matrix';
+import { mat4, vec3, vec4, quat } from 'gl-matrix';
 import { camera } from './Camera';
 import { scene } from './Scene';
 
@@ -55,9 +55,72 @@ class Render {
   render(): void {
     this.ctx.clearRect(0, 0, this.size.width, this.size.height);
     this.dimension_rects = [];
-    for (const obj of scene.get_all()) {
-      this.render_object(obj);
+
+    const objects = scene.get_all();
+    const is_2d = stores.current_view_mode() === '2d';
+    const solid = stores.is_solid();
+
+    // Phase 1: project all vertices and update hit-test caches
+    const projected_map = new Map<string, Projected[]>();
+    for (const obj of objects) {
+      const world_matrix = this.get_world_matrix(obj);
+      const projected = obj.so.vertices.map((v) => this.project_vertex(v, world_matrix));
+      projected_map.set(obj.id, projected);
+      hits_3d.update_projected(obj.id, projected);
     }
+
+    // Phase 2: fill front-facing faces (occlusion layer)
+    // In solid mode, fill with white so rear edges are hidden.
+    // Sort all front-facing faces back-to-front by average depth.
+    if (!is_2d && solid) {
+      const face_draws: { face: number[]; projected: Projected[]; z_avg: number; fi: number }[] = [];
+      for (const obj of objects) {
+        const projected = projected_map.get(obj.id)!;
+        if (!obj.faces) continue;
+        for (let fi = 0; fi < obj.faces.length; fi++) {
+          const face = obj.faces[fi];
+          if (this.face_winding(face, projected) >= 0) continue; // skip back-facing
+          let z_sum = 0;
+          for (const vi of face) z_sum += projected[vi].z;
+          face_draws.push({ face, projected, z_avg: z_sum / face.length, fi });
+        }
+      }
+      // Back-to-front: largest z (farthest) first
+      face_draws.sort((a, b) => b.z_avg - a.z_avg);
+      for (const { face, projected } of face_draws) {
+        this.fill_face(face, projected, '#fff');
+      }
+    }
+
+    // Phase 2b: debug face fills (non-solid mode)
+    if (!is_2d && !solid) {
+      for (const obj of objects) {
+        const projected = projected_map.get(obj.id)!;
+        if (!obj.faces) continue;
+        // Back-facing first, then front-facing on top
+        for (let fi = 0; fi < obj.faces.length; fi++) {
+          if (this.face_winding(obj.faces[fi], projected) < 0) continue;
+          this.draw_debug_face(obj.faces[fi], fi, projected);
+        }
+        for (let fi = 0; fi < obj.faces.length; fi++) {
+          if (this.face_winding(obj.faces[fi], projected) >= 0) continue;
+          this.draw_debug_face(obj.faces[fi], fi, projected);
+        }
+      }
+    }
+
+    // Phase 2c: intersection lines between overlapping SOs
+    if (!is_2d && objects.length > 1) {
+      this.render_intersections(objects);
+    }
+
+    // Phase 3: draw edges
+    for (const obj of objects) {
+      const projected = projected_map.get(obj.id)!;
+      this.render_edges(obj, projected, is_2d, solid);
+      this.render_face_names(obj, projected);
+    }
+
     this.render_selection();
     if (stores.show_dimensionals()) this.render_dimensions();
     this.render_hover();
@@ -104,34 +167,23 @@ class Render {
     [191, 64, 191],   // 5: bottom - magenta
   ];
 
-  private render_object(obj: O_Scene): void {
-    const world_matrix = this.get_world_matrix(obj);
-    const projected = obj.so.vertices.map((v) => this.project_vertex(v, world_matrix));
-    hits_3d.update_projected(obj.id, projected);
-
-    // Draw faces with debug colors (back faces first, then front faces on top)
-    // In 2D mode, skip face fills entirely — edges only
-    if (obj.faces && stores.current_view_mode() !== '2d') {
-      // First pass: back-facing faces
-      for (let fi = 0; fi < obj.faces.length; fi++) {
-        const face = obj.faces[fi];
-        if (this.face_winding(face, projected) < 0) continue;
-        this.draw_debug_face(face, fi, projected);
-      }
-      // Second pass: front-facing faces
-      for (let fi = 0; fi < obj.faces.length; fi++) {
-        const face = obj.faces[fi];
-        if (this.face_winding(face, projected) >= 0) continue;
-        this.draw_debug_face(face, fi, projected);
-      }
+  private fill_face(face: number[], projected: Projected[], color: string): void {
+    this.ctx.fillStyle = color;
+    this.ctx.beginPath();
+    this.ctx.moveTo(projected[face[0]].x, projected[face[0]].y);
+    for (let i = 1; i < face.length; i++) {
+      this.ctx.lineTo(projected[face[i]].x, projected[face[i]].y);
     }
+    this.ctx.closePath();
+    this.ctx.fill();
+  }
 
-    const is_2d = stores.current_view_mode() === '2d';
+  private render_edges(obj: O_Scene, projected: Projected[], is_2d: boolean, solid: boolean): void {
     this.ctx.lineWidth = 1;
     this.ctx.lineCap = 'square';
 
     // In 2D or solid mode, only draw edges belonging to front-facing faces
-    const front_edges = (is_2d || stores.is_solid()) ? this.front_face_edges(obj, projected) : null;
+    const front_edges = (is_2d || solid) ? this.front_face_edges(obj, projected) : null;
 
     for (const [i, j] of obj.edges) {
       const a = projected[i],
@@ -148,9 +200,184 @@ class Render {
       this.ctx.lineTo(bx, by);
       this.ctx.stroke();
     }
+  }
 
-    // Draw SO name on each front-facing face
-    this.render_face_names(obj, projected);
+  /**
+   * Draw intersection lines between overlapping SOs (general case).
+   * For each pair of faces (one from each SO), compute the plane-plane
+   * intersection line, then clip it to both face quads.
+   */
+  private render_intersections(objects: O_Scene[]): void {
+    const ctx = this.ctx;
+    ctx.strokeStyle = 'rgba(80, 80, 80, 0.7)';
+    ctx.lineWidth = 1;
+
+    // Build world-space face data for each object: normal, offset, 4 corner positions
+    type WFace = { n: vec3; d: number; corners: vec3[] };
+    const obj_faces: WFace[][] = [];
+
+    for (const obj of objects) {
+      const world = this.get_world_matrix(obj);
+
+      const faces: WFace[] = [];
+      const verts = obj.so.vertices; // local space
+      const face_indices = obj.faces;
+      if (!face_indices) { obj_faces.push([]); continue; }
+
+      for (let fi = 0; fi < face_indices.length; fi++) {
+        // Transform face corners to world space
+        const corners: vec3[] = [];
+        for (const vi of face_indices[fi]) {
+          const lv = verts[vi];
+          const wv = vec4.create();
+          vec4.transformMat4(wv, [lv.x, lv.y, lv.z, 1], world);
+          corners.push(vec3.fromValues(wv[0], wv[1], wv[2]));
+        }
+
+        // Derive normal from world-space corners (accounts for all transforms)
+        const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);
+        const e2 = vec3.sub(vec3.create(), corners[3], corners[0]);
+        const n = vec3.cross(vec3.create(), e1, e2);
+        vec3.normalize(n, n);
+
+        // Plane offset: d = n · p (any corner)
+        const d = vec3.dot(n, corners[0]);
+        faces.push({ n, d, corners });
+      }
+      obj_faces.push(faces);
+    }
+
+    for (let i = 0; i < objects.length; i++) {
+      for (let j = i + 1; j < objects.length; j++) {
+        if (this.shares_all_axes(objects[i], objects[j])) continue;
+        for (const fA of obj_faces[i]) {
+          for (const fB of obj_faces[j]) {
+            this.intersect_face_pair(ctx, fA, fB);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Given two face planes in world space, compute their intersection line
+   * and clip it to both face quads. Draw the resulting segment if any.
+   */
+  private intersect_face_pair(
+    ctx: CanvasRenderingContext2D,
+    fA: { n: vec3; d: number; corners: vec3[] },
+    fB: { n: vec3; d: number; corners: vec3[] },
+  ): void {
+    const eps = 1e-8;
+
+    // Line direction = cross(nA, nB)
+    const dir = vec3.create();
+    vec3.cross(dir, fA.n, fB.n);
+    const dir_len = vec3.length(dir);
+    if (dir_len < eps) return; // parallel planes
+    vec3.scale(dir, dir, 1 / dir_len);
+
+    // Find a point on the intersection line by solving
+    // nA·p = dA, nB·p = dB as a 2×2 system.
+    // Set the coordinate along dir's largest component to 0.
+    const nA = fA.n, nB = fB.n, dA = fA.d, dB = fB.d;
+
+    const abs_dir = [Math.abs(dir[0]), Math.abs(dir[1]), Math.abs(dir[2])];
+    const max_axis = abs_dir[0] >= abs_dir[1] && abs_dir[0] >= abs_dir[2] ? 0
+                   : abs_dir[1] >= abs_dir[2] ? 1 : 2;
+    const a1 = (max_axis + 1) % 3, a2 = (max_axis + 2) % 3;
+
+    const det = nA[a1] * nB[a2] - nA[a2] * nB[a1];
+    if (Math.abs(det) < eps) return;
+
+    const p0 = vec3.create();
+    p0[a1] = (dA * nB[a2] - dB * nA[a2]) / det;
+    p0[a2] = (nA[a1] * dB - nB[a1] * dA) / det;
+    p0[max_axis] = 0;
+
+    // Clip the infinite line (p0 + t*dir) to both face quads
+    const result_a = this.clip_to_quad(p0, dir, fA.corners, fA.n, -1e6, 1e6);
+    if (!result_a) return;
+
+    const result = this.clip_to_quad(p0, dir, fB.corners, fB.n, result_a[0], result_a[1]);
+    if (!result) return;
+
+    const [tA, tB] = result;
+    if (tA >= tB - eps) return;
+
+    const start = vec3.scaleAndAdd(vec3.create(), p0, dir, tA);
+    const end = vec3.scaleAndAdd(vec3.create(), p0, dir, tB);
+
+    this.draw_seg_world(ctx, start, end);
+  }
+
+  /**
+   * Clip parameterized line (p0 + t*dir) to the interior of a convex quad.
+   * Returns [t_min, t_max] or null if fully clipped away.
+   * Uses Cyrus-Beck clipping against each edge of the quad.
+   */
+  private clip_to_quad(
+    p0: vec3, dir: vec3,
+    corners: vec3[], face_normal: vec3,
+    t_min: number, t_max: number
+  ): [number, number] | null {
+    const n_edges = corners.length;
+    for (let i = 0; i < n_edges; i++) {
+      const c0 = corners[i];
+      const c1 = corners[(i + 1) % n_edges];
+
+      // Edge vector
+      const edge = vec3.sub(vec3.create(), c1, c0);
+
+      // Inward normal of this edge (cross of face normal with edge, pointing inward)
+      const inward = vec3.cross(vec3.create(), face_normal, edge);
+
+      // For the line p0 + t*dir, compute:
+      //   dot(inward, p0 + t*dir - c0) >= 0  means "inside this edge"
+      //   dot(inward, p0 - c0) + t * dot(inward, dir) >= 0
+      const diff = vec3.sub(vec3.create(), p0, c0);
+      const numer = vec3.dot(inward, diff);
+      const alignment = vec3.dot(inward, dir);
+
+      if (Math.abs(alignment) < 1e-12) {
+        // Line parallel to edge — check which side
+        if (numer < 0) return null; // outside
+        continue;
+      }
+
+      const t = -numer / alignment;
+      if (alignment > 0) {
+        // Entering: line moves into inside half-plane
+        if (t > t_min) t_min = t;
+      } else {
+        // Leaving: line moves out of inside half-plane
+        if (t < t_max) t_max = t;
+      }
+
+      if (t_min > t_max) return null;
+    }
+
+    return [t_min, t_max];
+  }
+
+  /** Skip intersection lines when one is the child of the other and the child has identity orientation. */
+  private shares_all_axes(a: O_Scene, b: O_Scene): boolean {
+    const child = a.parent === b ? a : b.parent === a ? b : null;
+    if (!child) return false;
+    const q = child.so.orientation;
+    const eps = 1e-6;
+    return Math.abs(q[0]) < eps && Math.abs(q[1]) < eps && Math.abs(q[2]) < eps && Math.abs(q[3] - 1) < eps;
+  }
+
+  private draw_seg_world(ctx: CanvasRenderingContext2D, p1: vec3, p2: vec3): void {
+    const identity = mat4.create();
+    const s1 = this.project_vertex(new Point3(p1[0], p1[1], p1[2]), identity);
+    const s2 = this.project_vertex(new Point3(p2[0], p2[1], p2[2]), identity);
+    if (s1.w < 0 || s2.w < 0) return;
+    ctx.beginPath();
+    ctx.moveTo(Math.round(s1.x) + 0.5, Math.round(s1.y) + 0.5);
+    ctx.lineTo(Math.round(s2.x) + 0.5, Math.round(s2.y) + 0.5);
+    ctx.stroke();
   }
 
   private render_face_names(obj: O_Scene, projected: Projected[]): void {

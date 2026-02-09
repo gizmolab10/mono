@@ -58,9 +58,6 @@
 
 		// Set up click handler
 		s_hit_target.handle_s_mouse = (s_mouse: S_Mouse) => {
-			if (s_mouse.isDown) {
-				console.log('Graph clicked!');
-			}
 			return true;
 		};
 

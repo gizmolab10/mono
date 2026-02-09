@@ -27,6 +27,12 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 
 ## Raw Log
 
+### #10 2026-02-08: Wrote to Claude's own memory dir instead of ~/GitHub/mono/
+
+**What:** After fixing the Cyrus-Beck clipping bug, wrote learnings to `/Users/sand/.claude/projects/.../memory/MEMORY.md` instead of `~/GitHub/mono/notes/work/learn.md`.
+**Why:** Used Claude Code's auto-memory feature reflexively. Didn't think about the CLAUDE.md rule that all persistent notes go in `~/GitHub/mono/`.
+**Rule:** Added to CLAUDE.md: "NEVER use Claude's own memory/config dirs (eg .claude/projects/). All persistent notes go in ~/GitHub/mono/"
+
 ### #9 2026-02-07: Misread "the table here" as literal column name
 
 **What:** Jonathan said "the table here has Lines for the second column, replace the Purpose column in 13 with that." I interpreted "Lines" as the column header and wrote line counts (30, 139, 129, 268) instead of copying the description text from my chat output. Took three corrections to get it right.

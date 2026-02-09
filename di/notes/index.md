@@ -6,5 +6,6 @@ Documentation and design notes for the Design Intuition project.
 
 - [Architecture](./architecture/)
 - [Designs](./designs/)
+- [Guides](./guides/)
 - [Work](./work/)
 

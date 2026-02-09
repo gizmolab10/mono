@@ -72,6 +72,10 @@ export default defineConfig({
                       link: '/di/notes/architecture/files'
                     },
                     {
+                      text: 'Intersecting.faces',
+                      link: '/di/notes/architecture/intersecting.faces'
+                    },
+                    {
                       text: 'Managers',
                       link: '/di/notes/architecture/managers'
                     },
@@ -159,6 +163,10 @@ export default defineConfig({
                     {
                       text: 'Code.debt',
                       link: '/di/notes/work/code.debt'
+                    },
+                    {
+                      text: 'Cruft',
+                      link: '/di/notes/work/cruft'
                     },
                     {
                       text: 'Revisit.di',

@@ -1,8 +1,8 @@
 import { units, current_unit_system } from '../types/Units';
+import { hits_3d, scenes, stores } from '../managers';
 import { scene, camera, render, animation } from '.';
 import type { O_Scene } from '../types/Interfaces';
 import { T_Hit_3D } from '../types/Enumerations';
-import { hits_3d, scenes, stores } from '../managers';
 import { Smart_Object } from '../runtime';
 import { constraints } from '../algebra';
 import { quat, vec3 } from 'gl-matrix';
@@ -221,22 +221,20 @@ class Engine {
 
     const so = new Smart_Object(name);
 
-    // Copy parent orientation
-    quat.copy(so.orientation, parent_so.orientation);
+    // Child axes align with world axes (identity orientation)
+    // — parent rotation doesn't propagate to children
 
-    // Set bounds: shared origin with parent, 1 default-unit in each dimension
-    const system = current_unit_system();
-    const default_unit = units.default_unit_for_system(system);
+    // Set bounds: shared origin with parent, half its smallest dimension
     const parent_name = parent_so.name;
+    const half = Math.min(parent_so.width, parent_so.height, parent_so.depth) / 2;
 
     // Child shares parent's origin: formulas reference parent min bounds
-    // Dimensions: 1 default unit centered at parent origin
     constraints.set_formula(so, 'x_min', `${parent_name}.x_min`);
     constraints.set_formula(so, 'y_min', `${parent_name}.y_min`);
     constraints.set_formula(so, 'z_min', `${parent_name}.z_min`);
-    so.set_bound('x_max', parent_so.x_min + units.to_mm(1, default_unit));
-    so.set_bound('y_max', parent_so.y_min + units.to_mm(1, default_unit));
-    so.set_bound('z_max', parent_so.z_min + units.to_mm(1, default_unit));
+    so.set_bound('x_max', parent_so.x_min + half);
+    so.set_bound('y_max', parent_so.y_min + half);
+    so.set_bound('z_max', parent_so.z_min + half);
 
     const so_scene = scene.create({
       so,
@@ -249,11 +247,8 @@ class Engine {
     so.scene = so_scene;
     hits_3d.register(so);
 
-    this.root_scene = so_scene;
-    stores.w_scale.set(so_scene.scale);
-    stores.w_root_so.set(so);
+    // Keep parent selected after adding child
     stores.w_all_sos.update(list => [...list, so]);
-    scenes.root_name = so.name;
     scenes.save();
   }
 }
