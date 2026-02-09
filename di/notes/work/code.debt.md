@@ -1,7 +1,6 @@
 # Code Debt
 
-- [ ] hidden lines, etc
-	- [ ] i want the rendered lines to exclude anything that is "inside" any SO
+- [ ] better edge/corner dragging: default to the selected SO
 - [ ] better names for attributes (x,y,z,w,h,d) are x_max, y_ and z_ ever needed? (overlaps M13 phase 5)
 - [ ] hide face label when face is nearly edge on
 - [ ] in all code files, use 4-space tabs (not 2-)
@@ -11,7 +10,8 @@
 	- [ ] tab between dimensionals
 	- [ ] arrow-key nudging (±unit of precision)
 - [ ] screen-space spatial partitioning (tiled bins or BVH) to cull face checks per edge
-	- [ ] Occlusion is brute-force O(edges × faces) — every edge checks every front-facing face from every other object. Intersection lines add O(face_pairs × faces) on top. Fine for a handful of objects, but will choke at scale. Fix: 
+	- [ ] Occlusion is brute-force O(edges × faces) — every edge checks every front-facing face from every other object. Intersection lines add O(face_pairs × faces) on top. Fine for a handful of objects, but will choke at scale
+	- [ ] [[spatial]]
 
 ## Done
 
@@ -52,4 +52,6 @@
 		- [x] **create from reset**: add child, stretch child longer than parent, rotate child
 	- [x] compute the **dihedral** intersection line for each pair of intersecting faces (use cross product)
 	- [x] **compute the two endpoints** of each such line
+	- [x] hidden lines, etc
+		- [x] i want the rendered lines to exclude anything that is "inside" any SO
 

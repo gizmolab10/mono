@@ -11,4 +11,5 @@ Current work items and milestones.
 - [Cruft](./cruft.md)
 - [Primer](./primer.md)
 - [Revisit.di](./revisit.di.md)
+- [Spatial](./spatial.md)
 

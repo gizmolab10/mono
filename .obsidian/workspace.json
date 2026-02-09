@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/primer.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt"
+              "title": "primer"
             }
           }
         ],
@@ -171,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/primer.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of primer"
             }
           }
         ],
@@ -201,10 +201,12 @@
   },
   "active": "ffdb7bac37c87e46",
   "lastOpenFiles": [
+    "di/notes/work/spatial.md",
+    "di/notes/work/code.debt.md",
+    "di/notes/work/revisit.di.md",
     "di/notes/work/primer.md",
     "notes/guides/jonathan.md",
     "notes/work/journal.md",
-    "di/notes/work/code.debt.md",
     "di/notes/architecture/intersecting.faces.md",
     "logs/update-docs.error.di.log",
     "logs/update-docs.error.mono.log",
@@ -217,7 +219,6 @@
     "di/src/lib/ts/tests/Evaluator.test.ts",
     "di/src/lib/ts/algebra/Nodes.ts",
     "di/src/lib/ts/algebra/Evaluator.ts",
-    "di/notes/work/revisit.di.md",
     "di/src/lib/ts/managers/Stores.ts",
     "di/src/lib/ts/render/Engine.ts",
     "di/notes/work/cruft.md",
@@ -236,7 +237,6 @@
     "notes/work/worktrees.md",
     "di/notes/work/milestones/9.persistence.md",
     "di/notes/work/milestones/6.build.notes.md",
-    "ga/notes/work/phaser.start.md",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",
     "ga/node_modules/phaser/changelog/3.60/images/timeline.png",
     "ga/node_modules/phaser/changelog/3.60/images/videogameobject.png",
