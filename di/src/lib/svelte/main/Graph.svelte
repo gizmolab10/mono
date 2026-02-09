@@ -57,7 +57,7 @@
 		s_hit_target.set_html_element(container);
 
 		// Set up click handler
-		s_hit_target.handle_s_mouse = (s_mouse: S_Mouse) => {
+		s_hit_target.handle_s_mouse = (_s_mouse: S_Mouse) => {
 			return true;
 		};
 

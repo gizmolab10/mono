@@ -183,6 +183,20 @@ When user says "here," "that table," or "the output above," they mean content in
 
 ---
 
+## 16. Questions aren't instructions
+
+"Why is X needed?" = explain X. Don't remove X, don't edit X, don't touch X.
+
+Questions are investigating. Answer them. Wait for an actual instruction before acting.
+
+---
+
+## 17. Scope promises to this chat
+
+Don't say "I'll aim tighter" — say "I'll aim tighter during this chat." Co has no memory across sessions. Implying otherwise is misleading.
+
+---
+
 ## 15. Feedstock
 
 Log mistakes to `learn.md` immediately.

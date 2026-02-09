@@ -359,7 +359,7 @@ class Render {
       for (let j = i + 1; j < objects.length; j++) {
         for (const fA of obj_faces[i]) {
           for (const fB of obj_faces[j]) {
-            this.intersect_face_pair(ctx, fA, fB, objects[i].id, objects[j].id, objects[i].color);
+            this.intersect_face_pair(ctx, fA, fB);
           }
         }
       }
@@ -374,9 +374,6 @@ class Render {
     ctx: CanvasRenderingContext2D,
     fA: { n: vec3; d: number; corners: vec3[] },
     fB: { n: vec3; d: number; corners: vec3[] },
-    obj_id_a: string,
-    obj_id_b: string,
-    color: string,
   ): void {
     const eps = 1e-8;
 
@@ -626,17 +623,6 @@ class Render {
     return [t_min, t_max];
   }
 
-  private draw_seg_world(ctx: CanvasRenderingContext2D, p1: vec3, p2: vec3): void {
-    const identity = mat4.create();
-    const s1 = this.project_vertex(new Point3(p1[0], p1[1], p1[2]), identity);
-    const s2 = this.project_vertex(new Point3(p2[0], p2[1], p2[2]), identity);
-    if (s1.w < 0 || s2.w < 0) return;
-    ctx.beginPath();
-    ctx.moveTo(Math.round(s1.x) + 0.5, Math.round(s1.y) + 0.5);
-    ctx.lineTo(Math.round(s2.x) + 0.5, Math.round(s2.y) + 0.5);
-    ctx.stroke();
-  }
-
   private render_face_names(obj: O_Scene, projected: Projected[]): void {
     if (!obj.faces) return;
     const ctx = this.ctx;
@@ -647,7 +633,8 @@ class Render {
 
     for (let fi = 0; fi < obj.faces.length; fi++) {
       const face = obj.faces[fi];
-      if (this.face_winding(face, projected) >= 0) continue; // skip back-facing
+      const winding = this.face_winding(face, projected);
+      if (winding >= 0 || Math.abs(winding) < 2000) continue; // skip back-facing and edge-on
 
       // Compute centroid of face in screen space
       let cx = 0, cy = 0, behind = false;

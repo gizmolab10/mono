@@ -5,7 +5,6 @@ import { editor } from '../managers/Editor';
 import { Point, Point3 } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { camera } from '../render/Camera';
-import { orientation } from '../algebra';
 import Smart_Object from '../runtime/Smart_Object';
 
 type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point) => void;

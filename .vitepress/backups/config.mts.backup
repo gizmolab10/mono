@@ -161,6 +161,10 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
+                      text: 'Algebra',
+                      link: '/di/notes/work/algebra'
+                    },
+                    {
                       text: 'Code.debt',
                       link: '/di/notes/work/code.debt'
                     },

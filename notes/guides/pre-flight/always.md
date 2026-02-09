@@ -10,3 +10,4 @@
  8. **Read before act** — re-read the file/input before editing, claiming, or disagreeing
  9. **Exact match** — names, paths, requirements: character-by-character. \~/GitHub/mono only, never worktree
 10. **Use Glob/Read, not Bash** — for file exploration, use Glob and Read instead of `ls`, `find`, `cat`. Avoids permission prompts.
+11. **After a mistake or correction** — re-read `pitfalls.md` before responding.

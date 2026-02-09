@@ -1,9 +1,11 @@
 # Code Debt
 
-- [ ] better names for attributes (x,y,z,w,h,d) are x_max, y_ and z_ ever needed? (overlaps M13 phase 5)
+offer a proposal for the first unchecked item
+
 - [ ] hide face label when face is nearly edge on
-- [ ] in all code files, use 4-space tabs (not 2-)
+- [ ] add a slider to details for line thickness
 - [ ] ability to drag the current SO
+- [ ] in all code files, use 4-space tabs (not 2-)
 - [ ] ability to export/import to/from file
 - [ ] tweak dimensionals
 	- [ ] tab between dimensionals
@@ -23,6 +25,7 @@
 - [x] add a controls button "show/hide dimensionals" a boolean
 - [x] add button "show/hide dimensionals" a boolean that render reacts to
 - [x] make the height of units system button consistent with other buttons
+- [x] better names for attributes (x,y,z,w,h,d) are x_max, y_ and z_ ever needed? (overlaps M13 phase 5)
 - [x] bugs in controls:
 	- [x] imperial when active has a white outline around the blue border and the blue border is slightly taller than the button without the blue. metric and other
 	- [x] units should render with only 1 decimal point of precision

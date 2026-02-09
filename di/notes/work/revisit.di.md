@@ -17,6 +17,7 @@ Where we are in Design Intuition.
 - [ ] [[code.debt]] 
 - [ ] **14 details** — attributes
 	- [ ] port from ws: banners, glow buttons & details
+	- [ ] attribute algebraic expressions [[algebra]]
 - [ ] **15 what? **
 
 ## What's Working

@@ -60,3 +60,5 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 | Miscounted entries (stale read) | `pitfalls.md` #1 — already covered |
 | Ignored shorthand command (repeated) | `pitfalls.md` #8 — already covered |
 | Logged without checking existing rules | `pitfalls.md` #15 — already covered |
+| Treated question as instruction | `pitfalls.md` #16 — "Questions aren't instructions" |
+| Promised beyond this chat | `pitfalls.md` #17 — "Scope promises to this chat" |
