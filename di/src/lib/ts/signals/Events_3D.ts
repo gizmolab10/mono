@@ -124,11 +124,6 @@ class Events_3D {
     quat.multiply(obj.so.orientation, rot_y, obj.so.orientation);
     quat.multiply(obj.so.orientation, rot_x, obj.so.orientation);
     quat.normalize(obj.so.orientation, obj.so.orientation);
-
-    // Fixed child: preserve origin (min bounds), recompute max bounds from new angle + length
-    if (obj.so.fixed && obj.parent) {
-      orientation.recompute_max_bounds(obj.so);
-    }
   }
 
   // Edit the current selection by modifying SO bounds
@@ -235,9 +230,31 @@ class Events_3D {
 
   // Get world matrix for a scene object
   private get_world_matrix(obj: O_Scene): mat4 {
-    const local = mat4.create();
+    const so = obj.so;
+    const center: vec3 = [
+      (so.x_min + so.x_max) / 2,
+      (so.y_min + so.y_max) / 2,
+      (so.z_min + so.z_max) / 2,
+    ];
     const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
-    mat4.fromRotationTranslationScale(local, obj.so.orientation, obj.position, scale_vec);
+
+    // Rotate around the SO's exact 3D center: translate to center, rotate, translate back
+    const local = mat4.create();
+    mat4.fromTranslation(local, [-center[0], -center[1], -center[2]]);
+    const rot = mat4.create();
+    mat4.fromQuat(rot, so.orientation);
+    mat4.multiply(local, rot, local);
+    const from_center = mat4.create();
+    mat4.fromTranslation(from_center, center);
+    mat4.multiply(local, from_center, local);
+
+    // Apply scale and position
+    const scale_mat = mat4.create();
+    mat4.fromScaling(scale_mat, scale_vec);
+    mat4.multiply(local, scale_mat, local);
+    const pos_mat = mat4.create();
+    mat4.fromTranslation(pos_mat, obj.position);
+    mat4.multiply(local, pos_mat, local);
 
     if (obj.parent) {
       const parent_world = this.get_world_matrix(obj.parent);

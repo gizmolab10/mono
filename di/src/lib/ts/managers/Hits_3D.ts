@@ -85,26 +85,40 @@ class Hits_3D {
 	}
 
 	hit_test(point: Point): Hit_3D_Result | null {
-		for (const so of this.objects) {
-			if (!so.scene) continue;
-			const c = this.cache.get(so.scene.id);
-			if (!c) continue;
-
-			// Quick reject via bbox
-			const r = this.corner_radius;
-			const b = c.bbox;
-			if (point.x < b.minX - r || point.x > b.maxX + r ||
-				point.y < b.minY - r || point.y > b.maxY + r) continue;
-
-			const corner = this.test_corners(point, c.projected);
-			if (corner !== -1) return { so, type: T_Hit_3D.corner, index: corner };
-
-			const edge = this.test_edges(point, so, c.projected);
-			if (edge !== -1) return { so, type: T_Hit_3D.edge, index: edge };
-
-			const face = this.test_faces(point, so, c.projected);
-			if (face !== -1) return { so, type: T_Hit_3D.face, index: face };
+		// Test selected SO first so its edges/corners take priority when overlapping
+		const selected_so = this.selection?.so ?? null;
+		if (selected_so) {
+			const result = this.hit_test_so(point, selected_so);
+			if (result) return result;
 		}
+		for (const so of this.objects) {
+			if (so === selected_so) continue;
+			const result = this.hit_test_so(point, so);
+			if (result) return result;
+		}
+		return null;
+	}
+
+	private hit_test_so(point: Point, so: Smart_Object): Hit_3D_Result | null {
+		if (!so.scene) return null;
+		const c = this.cache.get(so.scene.id);
+		if (!c) return null;
+
+		// Quick reject via bbox
+		const r = this.corner_radius;
+		const b = c.bbox;
+		if (point.x < b.minX - r || point.x > b.maxX + r ||
+			point.y < b.minY - r || point.y > b.maxY + r) return null;
+
+		const corner = this.test_corners(point, c.projected);
+		if (corner !== -1) return { so, type: T_Hit_3D.corner, index: corner };
+
+		const edge = this.test_edges(point, so, c.projected);
+		if (edge !== -1) return { so, type: T_Hit_3D.edge, index: edge };
+
+		const face = this.test_faces(point, so, c.projected);
+		if (face !== -1) return { so, type: T_Hit_3D.face, index: face };
+
 		return null;
 	}
 

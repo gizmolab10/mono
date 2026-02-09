@@ -29,6 +29,13 @@ export default class Constants {
 		big:	 '::::',
 	};
 
+	threshold = {
+		autorepeat:	  150,
+		double_click: 400,
+		alteration:	  500,
+		long_click:	  800,
+	};
+
 	thickness = {
 		separator: {
 			main:	 5,

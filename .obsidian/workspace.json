@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/primer.md",
+                "file": "di/notes/work/code.debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "primer"
+              "title": "code.debt"
             }
           }
         ],
@@ -171,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/primer.md",
+                "file": "di/notes/work/code.debt.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of primer"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -201,6 +201,8 @@
   },
   "active": "ffdb7bac37c87e46",
   "lastOpenFiles": [
+    "di/notes/work/revisit.di.md",
+    "di/notes/work/primer.md",
     "logs/update-docs.error.di.log",
     "logs/update-docs.error.mono.log",
     "di/node_modules/vitefu/node_modules",
@@ -211,7 +213,6 @@
     "di/node_modules/@sveltejs/vite-plugin-svelte-inspector/src/runtime/Inspector.svelte",
     "di/node_modules/@sveltejs/vite-plugin-svelte/src/utils/sourcemaps.js",
     "di/node_modules/@sveltejs/vite-plugin-svelte/src/utils/preprocess.js",
-    "di/node_modules/@sveltejs/vite-plugin-svelte/src/utils/log.js",
     "node_modules/katex/node_modules/commander/Readme.md",
     "node_modules/flatqueue/README.md",
     "node_modules/flatbush/README.md",
@@ -221,8 +222,6 @@
     "di/node_modules/@sveltejs/vite-plugin-svelte/README.md",
     "di/notes/work/spatial.md",
     "di/notes/work/code.debt.md",
-    "di/notes/work/revisit.di.md",
-    "di/notes/work/primer.md",
     "notes/guides/jonathan.md",
     "notes/work/journal.md",
     "di/notes/architecture/intersecting.faces.md",

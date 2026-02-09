@@ -1,6 +1,5 @@
 # Code Debt
 
-- [ ] better edge/corner dragging: default to the selected SO
 - [ ] better names for attributes (x,y,z,w,h,d) are x_max, y_ and z_ ever needed? (overlaps M13 phase 5)
 - [ ] hide face label when face is nearly edge on
 - [ ] in all code files, use 4-space tabs (not 2-)
@@ -9,9 +8,6 @@
 - [ ] tweak dimensionals
 	- [ ] tab between dimensionals
 	- [ ] arrow-key nudging (±unit of precision)
-- [ ] screen-space spatial partitioning (tiled bins or BVH) to cull face checks per edge
-	- [ ] Occlusion is brute-force O(edges × faces) — every edge checks every front-facing face from every other object. Intersection lines add O(face_pairs × faces) on top. Fine for a handful of objects, but will choke at scale
-	- [ ] [[spatial]]
 
 ## Done
 
@@ -44,6 +40,9 @@
 	- [x] simplify over-engineering
 	- [x] remove inconsistencies
 	- [x] ameliorate structural risks
+- [x] better edge/corner dragging: default to the selected SO
+	- [x] it now defaults to the root SO
+	- [x] rotate a child -> it changes size — removed `recompute_max_bounds` call from `rotate_object` in `Events_3D.ts`. To restore: after `quat.normalize(obj.so.orientation, obj.so.orientation);` add `if (obj.so.fixed && obj.parent) { orientation.recompute_max_bounds(obj.so); }`
 - [x] **face intersection** line segments
 	- [x] **only** for SO pairs that do not share ALL their axes
 	- [x] **ASSUME**:
@@ -54,4 +53,6 @@
 	- [x] **compute the two endpoints** of each such line
 	- [x] hidden lines, etc
 		- [x] i want the rendered lines to exclude anything that is "inside" any SO
-
+	- [x] screen-space spatial partitioning (tiled bins or BVH) to cull face checks per edge
+		- [x] Occlusion is brute-force O(edges × faces) — every edge checks every front-facing face from every other object. Intersection lines add O(face_pairs × faces) on top. Fine for a handful of objects, but will choke at scale
+		- [x] [[spatial]]

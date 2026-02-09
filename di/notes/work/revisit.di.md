@@ -15,7 +15,6 @@ Where we are in Design Intuition.
 ## Milestones (current work)
 
 - [ ] [[code.debt]] 
-- [ ] [[spatial]]
 - [ ] **14 details** — attributes
 	- [ ] port from ws: banners, glow buttons & details
 - [ ] **15 what? **

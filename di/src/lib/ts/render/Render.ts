@@ -195,10 +195,32 @@ class Render {
   }
 
   private get_world_matrix(obj: O_Scene): mat4 {
-    const local = mat4.create();
+    const so = obj.so;
+    const center: vec3 = [
+      (so.x_min + so.x_max) / 2,
+      (so.y_min + so.y_max) / 2,
+      (so.z_min + so.z_max) / 2,
+    ];
+    const orientation = stores.current_view_mode() === '2d' ? quat.create() : so.orientation;
     const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
-    const orientation = stores.current_view_mode() === '2d' ? quat.create() : obj.so.orientation;
-    mat4.fromRotationTranslationScale(local, orientation, obj.position, scale_vec);
+
+    // Rotate around the SO's exact 3D center: translate to center, rotate, translate back
+    const local = mat4.create();
+    mat4.fromTranslation(local, [-center[0], -center[1], -center[2]]);
+    const rot = mat4.create();
+    mat4.fromQuat(rot, orientation);
+    mat4.multiply(local, rot, local);
+    const from_center = mat4.create();
+    mat4.fromTranslation(from_center, center);
+    mat4.multiply(local, from_center, local);
+
+    // Apply scale and position
+    const scale_mat = mat4.create();
+    mat4.fromScaling(scale_mat, scale_vec);
+    mat4.multiply(local, scale_mat, local);
+    const pos_mat = mat4.create();
+    mat4.fromTranslation(pos_mat, obj.position);
+    mat4.multiply(local, pos_mat, local);
 
     if (obj.parent) {
       const parent_world = this.get_world_matrix(obj.parent);
