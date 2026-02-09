@@ -27,65 +27,7 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 
 ## Raw Log
 
-### #10 2026-02-08: Wrote to Claude's own memory dir instead of ~/GitHub/mono/
-
-**What:** After fixing the Cyrus-Beck clipping bug, wrote learnings to `/Users/sand/.claude/projects/.../memory/MEMORY.md` instead of `~/GitHub/mono/notes/work/learn.md`.
-**Why:** Used Claude Code's auto-memory feature reflexively. Didn't think about the CLAUDE.md rule that all persistent notes go in `~/GitHub/mono/`.
-**Rule:** Added to CLAUDE.md: "NEVER use Claude's own memory/config dirs (eg .claude/projects/). All persistent notes go in ~/GitHub/mono/"
-
-### #9 2026-02-07: Misread "the table here" as literal column name
-
-**What:** Jonathan said "the table here has Lines for the second column, replace the Purpose column in 13 with that." I interpreted "Lines" as the column header and wrote line counts (30, 139, 129, 268) instead of copying the description text from my chat output. Took three corrections to get it right.
-**Why:** Treated "here" as pointing at the file, not at my own chat output. Didn't look at what was actually in the table I'd written in chat — jumped to a literal interpretation of the word "Lines."
-**Rule:** When the user says "here" or "that table" or "the output above," they mean the chat output, not a file. Match the actual content they're pointing at, don't reinterpret column names.
-
-### #8 2026-02-05: Used worktree paths again
-
-**What:** Read files from `/Users/sand/.claude-worktrees/mono/loving-khayyam/` instead of `~/GitHub/mono/`. Multiple reads before Jonathan caught it.
-**Why:** Defaulted to working directory paths. Didn't check pitfalls.md #7 or always.md #2 before acting.
-**Rule:** Already covered — pitfalls.md #7: "Always use ~/GitHub/mono/, never .claude-worktrees paths."
-
-### #7 2026-02-04: Used abbreviations in code names
-
-**What:** Named a property `edge_adj` and local variables `adj` instead of `edge_adjacency` and `adjacency`. Had to rename across 3 files.
-**Why:** Defaulted to terse naming habits. Didn't match Jonathan's preference for readable, unabbreviated code.
-**Rule:** Avoid abbreviations in function and property names. Spell out full words.
-
-### #6 2026-02-04: Speculated instead of reading what's visible
-
-**What:** Asked "what's wrong with this image?" showing Build Notes with title "(5 most recent)" but displaying builds 1-5 (oldest). I guessed technical causes (missing builds, server restart needed, wrong sort order) instead of noticing the visible contradiction: title claims "most recent" but data shows oldest.
-**Why:** Jumped to code-level explanations. Didn't verify the claim in the title against the visible data. Confabulated plausible-sounding technical reasons.
-**Rule:** When asked about an image, read what's visible first. Verify claims against evidence before speculating about underlying causes.
-
-### #5 2026-02-04: Did not read always.md every response
-
-**What:** CLAUDE.md says "Every response: read always.md, then scan keywords.md." I only read always.md once when reminded, not on every response.
-**Why:** Treated "every response" as "once per session" — misread the requirement.
-**Rule:** Already covered in CLAUDE.md — "Every response: read always.md"
-
-### #4 2026-02-04: Used npm instead of yarn
-
-**What:** Ran `npm run dev` and `npm run check` multiple times despite `always.md` rule 6 saying "Use yarn — never use npm".
-**Why:** Didn't read `always.md` at session start. Habit carried over from other projects.
-**Rule:** Already covered in `always.md` — "Use yarn — never use npm"
-
-### #3 2026-02-04: Miscounted raw entries
-
-**What:** Stated "Feedstock: 9 raw entries" when there was only 1.
-**Why:** Read from worktree path (stale) instead of canonical ~/GitHub/mono path. Then counted without verifying.
-**Rule:** Already covered — use ~/GitHub/mono paths, re-read before claiming.
-
-### #2 2026-02-04: Ignored shorthand command "tokens"
-
-**What:** User typed `tokens`. Shorthand.md line 20 says `tokens` = "show percentage of token content consumed". I ignored the command for multiple responses over multiple days, treating it as a vague question.
-**Why:** Didn't read shorthand.md. Even after reading it this session, didn't match `tokens` to the command table.
-**Rule:** Already covered — read shorthand.md at session start, match user input to commands.
-
-### #1 2026-02-04: Logged mistakes that already had rules
-
-**What:** Logged 6 patterns to Raw Log that already had existing rules in the guides — then during distill, marked them "Already covered."
-**Why:** When making mistakes, didn't check if there was already a rule for that pattern. Logged reflexively instead of recognizing "I broke an existing rule."
-**Rule:** Before logging a mistake, check if a rule already exists. If yes, the issue is following the rule, not creating a new one.
+(empty)
 
 ---
 
@@ -108,3 +50,13 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 | Checked off without testing | `always.md` — "Code written ≠ feature complete" |
 | Asked which task first | `always.md` — "Task lists are priority-ordered" |
 | Used Bash ls instead of Glob/Read | `always.md` — "Use Glob/Read, not Bash" |
+| Speculated instead of observing | `pitfalls.md` #12 — "Observe before speculating" |
+| Abbreviated code names | `pitfalls.md` #13 — "No abbreviations in code" |
+| Misread "here" as file reference | `pitfalls.md` #14 — "'Here' means chat output" |
+| Wrote to Claude memory dir | `CLAUDE.md` — already added |
+| Worktree paths (repeated) | `pitfalls.md` #7 — already covered |
+| npm instead of yarn (repeated) | `always.md` — already covered |
+| Skipped always.md reads (repeated) | `CLAUDE.md` — already covered |
+| Miscounted entries (stale read) | `pitfalls.md` #1 — already covered |
+| Ignored shorthand command (repeated) | `pitfalls.md` #8 — already covered |
+| Logged without checking existing rules | `pitfalls.md` #15 — already covered |

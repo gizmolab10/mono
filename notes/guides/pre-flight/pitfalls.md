@@ -151,7 +151,39 @@ Don't ask "which one first?"
 
 ---
 
-## 11. Feedstock
+## 12. Observe before speculating
+
+When asked about an image or visible output, read what's there first. Verify claims against evidence. Don't jump to code-level explanations when the answer is on screen.
+
+**Anti-pattern:** User shows screenshot with contradictory title and data → co guesses server restart, sort order bug, missing records.
+
+**Required:** State what's visible, spot the contradiction, then explain.
+
+---
+
+## 13. No abbreviations in code
+
+Spell out full words in function names, property names, and variables.
+
+- `edge_adjacency`, not `edge_adj`
+- `adjacency`, not `adj`
+- `position`, not `pos`
+
+Short names cost renames across files. Readable names cost nothing.
+
+---
+
+## 14. "Here" means chat output
+
+When user says "here," "that table," or "the output above," they mean content in the chat — not a file. Match the actual content they're pointing at.
+
+**Anti-pattern:** User says "the table here has Lines for the second column" → co interprets "Lines" as a column header and invents data.
+
+**Required:** Look at the chat output, find the table, copy the actual content.
+
+---
+
+## 15. Feedstock
 
 Log mistakes to `learn.md` immediately.
 

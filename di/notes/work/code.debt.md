@@ -1,17 +1,10 @@
 # Code Debt
 
-- [x] **face intersection** line segments
-	- [x] **only** for SO pairs that do not share ALL their axes
-	- [x] **ASSUME**:
-		- [x] child does not share axes
-		- [x] child extends outside parent
-		- [x] **create from reset**: add child, stretch child longer than parent, rotate child
-	- [x] compute the **dihedral** intersection line for each pair of intersecting faces (use cross product)
-	- [x] **compute the two endpoints** of each such line
-- [ ] better names for attributes (x,y,z,w,h,d) are x_max, y_ and z_ ever needed?
+- [ ] hidden lines, etc
+	- [ ] i want the rendered lines to exclude anything that is "inside" any SO
+- [ ] better names for attributes (x,y,z,w,h,d) are x_max, y_ and z_ ever needed? (overlaps M13 phase 5)
 - [ ] hide face label when face is nearly edge on
 - [ ] in all code files, use 4-space tabs (not 2-)
-- [ ] logarithmic scaling slider
 - [ ] ability to drag the current SO
 - [ ] ability to export/import to/from file
 - [ ] tweak dimensionals
@@ -49,4 +42,12 @@
 	- [x] simplify over-engineering
 	- [x] remove inconsistencies
 	- [x] ameliorate structural risks
+- [x] **face intersection** line segments
+	- [x] **only** for SO pairs that do not share ALL their axes
+	- [x] **ASSUME**:
+		- [x] child does not share axes
+		- [x] child extends outside parent
+		- [x] **create from reset**: add child, stretch child longer than parent, rotate child
+	- [x] compute the **dihedral** intersection line for each pair of intersecting faces (use cross product)
+	- [x] **compute the two endpoints** of each such line
 

@@ -4,10 +4,22 @@
 
 ---
 
-**February 4, 2026** (mo) Guide system refinement. Compressed `always.md` from detailed rules to 5-line checklist. Renamed `always.longer.md` → `pitfalls.md` (edge cases that cause mistakes). Created `tools.md` for tool-specific gotchas (write_file vs create_file, tool cycling on failure). Added `pitfalls.md` to session-start pre-flight and keyword triggers for "rename", "doesn't exist", "not found", "which one".
+**February 8, 2026** (di) Face intersection lines — compute dihedral intersection for SO pairs that don't share axes. Cross product for line direction, Cyrus-Beck clipping for endpoints. Cruft cleanup — converted singleton functions to singleton classes, fixed mixed bugs. (mo) Distilled learn.md — 10 raw entries cleared, 3 new pitfalls added (observe before speculating, no abbreviations in code, "here" means chat output).
 
 
-**February 3, 2026** Created `me/` project — third mono project alongside ws and di for ideas, research, creative exploration. Hub app: added `me` button (J), renamed `mono`→`mo` (M), auto-switch mode when clicking projects without config (app+mo→docs, docs+me→app), renamed md→resume button (R), consolidated all URLs into ports.json (single source of truth), simplified initConfig to build from ports.json. Cross-project links: implemented comment-based approach for Obsidian/VitePress compatibility (`[text](relative) <!-- @project/path -->`). Added `.env` config file support to dispatcher. Reorganized work files: renamed feedstock→adapt, merged guidance-journal into journal. (di) Milestone 5 complete — integrated Hits_3D into main Hits manager: RBush 2D first, 3D fallback for Smart Objects.
+**February 7, 2026** (di) **Milestone 13** — Algebra engine, phases 1–4. Recursive descent compiler: tokenizer handles unit literals (6", 5', 2.5 mm) and SO references (wall.height), parser respects operator precedence. Forward eval, reverse propagation, cycle detection. Constraints module wired into Editor — formula on an attribute triggers eval, commit triggers propagation. Phase 4: orientation — fixed vs variable children. Fixed: rotate sets quaternion, origin stays put. Variable: endpoints track parent bounds, angle recomputes from geometry. 377 tests passing.
+
+
+**February 6, 2026** (di) **Milestone 11** — Units. All dimensions stored in mm, displayed per user preference. 22 units across 4 systems (imperial, metric, marine, archaic). Imperial gets fractional display (5 1/4") and compound formatting (5' 3 1/4"). Inline dimensional editing — click a dimension label, type a value, Enter applies. Parser accepts any format regardless of current system. **Milestone 10** — Controls UI. Scale slider with logarithmic mode, compound slider (ported from ws), vertical/horizontal steppers, scale value display. Unit system switcher, precision segmented control (imperial: 1/2 through 1/64; metric: 0–3 decimals), 2D/3D toggle, straighten button. Scale SOT moved to Svelte writable store.
+
+
+**February 5, 2026** (di) **Milestone 9** — Persistence. JSON serialize SO state (bounds, orientation, scale) + camera (eye, center, up). Auto-save to localStorage on drag, restore on load, reset button. **Milestone 12** — Hierarchy. Multiple named SOs with parent/child relationships. Name input in details, SO selector buttons, face labels on front-facing faces. Add child: smallest parent dimension ÷ 2, axes aligned. Cruft audit — catalogued unused code, redundant coordinate methods, over-engineered debug logging, scattered stores. Tagged "leave alone" items.
+
+
+**February 4, 2026** (di) **Milestones 6–8**. Build Notes (M6) — structured progress tracking overlay with steppers and close button. Edit Drags (M7) — bounds-based geometry (6 values instead of 8 vertices), drag edges/corners confined to selected face plane, ray-plane projection for world-space deltas. Dimensionals (M8) — three algorithms: silhouette edge detection (A), witness plane via screen-space perpendicularity (B), crunch detection with projected text gap (C). Editable dimension text — click, type, Enter updates geometry with symmetric resize. (mo) Guide system refinement. Compressed `always.md` from detailed rules to 5-line checklist. Renamed `always.longer.md` → `pitfalls.md` (edge cases that cause mistakes). Created `tools.md` for tool-specific gotchas (write_file vs create_file, tool cycling on failure). Added `pitfalls.md` to session-start pre-flight and keyword triggers for "rename", "doesn't exist", "not found", "which one".
+
+
+**February 3, 2026** Created `me/` project — third mono project alongside ws and di for ideas, research, creative exploration. Hub app: added `me` button (J), renamed `mono`→`mo` (M), auto-switch mode when clicking projects without config (app+mo→docs, docs+me→app), renamed md→resume button (R), consolidated all URLs into ports.json (single source of truth), simplified initConfig to build from ports.json. Cross-project links: implemented comment-based approach for Obsidian/VitePress compatibility (`[text](relative) <!-- @project/path -->`). Added `.env` config file support to dispatcher. Reorganized work files: renamed feedstock→adapt, merged guidance-journal into journal. (di) **Milestone 5** complete — integrated Hits_3D into main Hits manager: RBush 2D first, 3D fallback for Smart Objects.
 
 **February 1, 2026** Hub app updates. Tests button with `;` shortcut runs both ws and di tests. Deploy status tooltip fix for missing Netlify token. Title buttons turn green while working, status dot repositioned behind "Mono" title, deploy status skips canceled builds. Button renames: localhosts → hosts, dispatcher → relay.
 
@@ -37,13 +49,13 @@
 
 **January 8, 2026** Wrote `pacing.md`. This project moves differently than webseriously — faster AND easier. The gap between thinking and seeing has collapsed. Pushed "enhanced" template to GitHub. Phase 1 of **commoditize** complete.
 
-**January 8, 2026** (di) Milestone 4 — Hits Manager. Ported the hits manager from ws. RBush-based hit detection with hover, click, long-click, and double-click handling.
+**January 8, 2026** (di) **Milestone 4** — Hits Manager. Ported the hits manager from ws. RBush-based hit detection with hover, click, long-click, and double-click handling.
 
-**January 5-8, 2026** (di) Milestone 3 — Document Publishing. Dual Netlify deployments: docs.designintuition.app (VitePress) and designintuition.app (main app) with SSL.
+**January 5-8, 2026** (di) **Milestone 3** — Document Publishing. Dual Netlify deployments: docs.designintuition.app (VitePress) and designintuition.app (main app) with SSL.
 
-**January 6-7, 2026** (di) Milestone 2 — Panel Layout. Clean panel layout with rounded-corner regions, separators, and fillets. Svelte 5 runes throughout.
+**January 6-7, 2026** (di) **Milestone 2** — Panel Layout. Clean panel layout with rounded-corner regions, separators, and fillets. Svelte 5 runes throughout.
 
-**January 4-5, 2026** (di) Milestone 1 — Solid Foundation. Created the project. Vite + TypeScript + Svelte 5 from day one. Built quaternion POC: two nested cubes rotating independently, wireframe rendering with depth-based opacity. Established the manager pattern (Scene, Camera, Render, Input, Animation). Dev environment, testing infrastructure, collaboration workflow system.
+**January 4-5, 2026** (di) **Milestone 1** — Solid Foundation. Created the project. Vite + TypeScript + Svelte 5 from day one. Built quaternion POC: two nested cubes rotating independently, wireframe rendering with depth-based opacity. Established the manager pattern (Scene, Camera, Render, Input, Animation). Dev environment, testing infrastructure, collaboration workflow system.
 
 **December 2025** (ws) Builds 182-183. Finished show children counts as numbers in reveal dots. Fully wired dynamic/static focus control. **Installed VitePress** for documentation website. Massive documentation reorganization.
 

@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/architecture/intersecting.faces.md",
+                "file": "di/notes/work/code.debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "intersecting.faces"
+              "title": "code.debt"
             }
           }
         ],
@@ -171,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/architecture/intersecting.faces.md",
+                "file": "di/notes/work/code.debt.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of intersecting.faces"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -201,13 +201,14 @@
   },
   "active": "ffdb7bac37c87e46",
   "lastOpenFiles": [
+    "notes/work/journal.md",
+    "di/notes/work/code.debt.md",
+    "di/notes/architecture/intersecting.faces.md",
     "logs/update-docs.error.di.log",
     "logs/update-docs.error.mono.log",
     "di/notes/architecture/index.md",
     "di/notes/architecture/rendering.types.md",
     "di/notes/architecture/intersection.md",
-    "di/notes/architecture/intersecting.faces.md",
-    "di/notes/work/code.debt.md",
     "CLAUDE.MD",
     "ws/vite.config.js.timestamp-1770600228658-bc34733dd0a14.mjs",
     "di/src/lib/ts/algebra/index.ts",
