@@ -269,7 +269,7 @@ class Render {
   }
 
   private render_edges(obj: O_Scene, projected: Projected[], is_2d: boolean, solid: boolean, world?: mat4): void {
-    this.ctx.lineWidth = 1;
+    this.ctx.lineWidth = stores.line_thickness();
     this.ctx.lineCap = 'square';
 
     // In 2D or solid mode, only draw edges belonging to front-facing faces
@@ -318,7 +318,7 @@ class Render {
    */
   private render_intersections(objects: O_Scene[]): void {
     const ctx = this.ctx;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = stores.line_thickness();
 
     // Build world-space face data for each object: normal, offset, 4 corner positions
     type WFace = { n: vec3; d: number; corners: vec3[] };

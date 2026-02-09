@@ -7,7 +7,7 @@
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	const { w_text_color, w_background_color } = colors;
 	const { w_selection } = hits_3d;
-	const { w_root_so, w_all_sos, w_precision, w_solid } = stores;
+	const { w_root_so, w_all_sos, w_precision, w_solid, w_line_thickness } = stores;
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
 
@@ -95,6 +95,17 @@
 			{/each}
 		</div>
 	</div>
+	<div class='slider-group'>
+		<span class='label'>line thickness</span>
+		<input
+			type    = 'range'
+			min     = {0.5}
+			max     = {4}
+			step    = {0.5}
+			value   = {$w_line_thickness}
+			oninput = {(e) => w_line_thickness.set(Number((e.target as HTMLInputElement).value))}
+		/>
+	</div>
 </div>
 
 <style>
@@ -122,7 +133,7 @@
 		opacity   : 0.6;
 	}
 
-	input {
+	input[type='text'] {
 		background    : white;
 		border        : 0.5px solid currentColor;
 		border-radius : 4px;
@@ -134,7 +145,7 @@
 		outline       : none;
 	}
 
-	input:focus {
+	input[type='text']:focus {
 		border-color : currentColor;
 		opacity      : 1;
 	}
@@ -281,5 +292,59 @@
 		outline    : none;
 		box-shadow : none;
 		border     : 0.5px solid currentColor;
+	}
+
+	.slider-group {
+		margin-top     : 1rem;
+		display        : flex;
+		align-items    : center;
+		gap            : 8px;
+	}
+
+	.slider-group input[type='range'] {
+		flex               : 1;
+		min-width          : 0;
+		height             : 14px;
+		margin-top         : 4px;
+		cursor             : pointer;
+		appearance         : none;
+		-webkit-appearance : none;
+		background         : transparent;
+	}
+
+	.slider-group input[type='range']::-webkit-slider-runnable-track {
+		background    : rgba(0, 0, 0, 0.15);
+		border-radius : 2px;
+		height        : 4px;
+		border        : none;
+	}
+
+	.slider-group input[type='range']::-webkit-slider-thumb {
+		-webkit-appearance : none;
+		width              : 14px;
+		height             : 14px;
+		border-radius      : 50%;
+		background         : #007aff;
+		border             : 1px solid rgba(0, 0, 0, 0.4);
+		margin-top         : -5.5px;
+	}
+
+	.slider-group input[type='range']::-moz-range-track {
+		background    : rgba(0, 0, 0, 0.15);
+		border-radius : 2px;
+		height        : 4px;
+		border        : none;
+	}
+
+	.slider-group input[type='range']::-moz-range-thumb {
+		width         : 14px;
+		height        : 14px;
+		border-radius : 50%;
+		background    : #007aff;
+		border        : 1px solid rgba(0, 0, 0, 0.4);
+	}
+
+	.slider-group input[type='range']:focus {
+		outline : none;
 	}
 </style>

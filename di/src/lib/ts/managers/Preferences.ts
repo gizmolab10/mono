@@ -23,6 +23,7 @@ export enum T_Preference {
 	precision        = 'precision',
 	showDimensionals = 'showDimensionals',
 	solid            = 'solid',
+	lineThickness    = 'lineThickness',
 
 	// Scenes
 	scene = 'scene',

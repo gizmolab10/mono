@@ -21,12 +21,14 @@ class Stores {
 	w_view_mode = persistent<'2d' | '3d'>(T_Preference.viewMode, '3d');
 	w_precision = persistent<number>(T_Preference.precision, 0);
 	w_solid = persistent<boolean>(T_Preference.solid, true);
+	w_line_thickness = persistent<number>(T_Preference.lineThickness, 1);
 
 	// Synchronous readers (for non-reactive contexts like Render)
 	show_dimensionals(): boolean { return get(this.w_show_dimensionals); }
 	current_view_mode(): '2d' | '3d' { return get(this.w_view_mode); }
 	current_precision(): number { return get(this.w_precision); }
 	is_solid(): boolean { return get(this.w_solid); }
+	line_thickness(): number { return get(this.w_line_thickness); }
 
 	// Toggles
 	toggle_dimensionals(): void { this.w_show_dimensionals.update(v => !v); }

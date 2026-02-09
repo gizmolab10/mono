@@ -2,8 +2,12 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] hide face label when face is nearly edge on
-- [ ] add a slider to details for line thickness
+- [ ] hide face label when face is
+	- [ ] occluded
+	- [x] nearly edge on
+- [x] add a slider to details for line thickness
+- [ ] add a color picker
+- [ ] 2D needs to be a infinite zoom projection
 - [ ] ability to drag the current SO
 - [ ] in all code files, use 4-space tabs (not 2-)
 - [ ] ability to export/import to/from file
