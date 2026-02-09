@@ -70,14 +70,22 @@ The change is surgical — three touches in `Render.ts`, nothing else:
 
 Everything downstream — skip logic, plane distance, Cyrus-Beck clipping, interval math — stays identical. The only change is *which* faces enter the loop. If flatbush returns too many candidates, worst case is same performance as now. R-trees are exact for bounding box overlap, so no rendering glitches.
 
-### Level of Effort
+### Next Bottleneck: Canvas 2D Draw Calls
 
-**Small.** ~15 lines added, 1 line changed, 1 file touched. Plus `yarn add flatbush`.
+Flatbush removes the occlusion cliff — the math won't choke as SOs grow. But the *rendering* cost shifts to Canvas 2D draw call volume. Each `beginPath`/`fill`/`stroke` cycle is a GPU state change under the hood. At 500 SOs that's roughly 1,500 `fill()` calls (white face polygons) and 6,000+ `stroke()` calls (edge segments). Canvas 2D batches poorly compared to WebGL.
 
-| Step | Time |
-|---|---|
-| Add dependency | 2 min |
-| Code changes in `Render.ts` | 15 min |
-| Manual testing (visual diff, same rendering) | 10 min |
-| Benchmark with many SOs | 15 min |
-| **Total** | **~45 min** |
+**When you'll feel it:** ~200-300 SOs. Symptoms: uniform frame rate drop across the whole render (not just during rotation like the old occlusion hitch).
+
+**Mitigations, in order of effort:**
+
+| Fix                          | What it does                                                                           | Effort                              |
+| ---------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------- |
+| **Path batching**            | Merge same-styled segments into one `beginPath`/`stroke` cycle instead of one per edge | Small — pushes ceiling to ~500+ SOs |
+| **OffscreenCanvas + Worker** | Render off the main thread so UI stays responsive                                      | Medium                              |
+| **WebGL**                    | One draw call for all geometry                                                         | Large — architecture change         |
+
+Path batching is the natural next step when canvas becomes the wall. Not urgent until scene complexity demands it.
+
+### WebGL: If We Ever Need It
+
+We can't use WebGL's depth buffer for occlusion, not where it shines best. CPU does all the math (projection, occlusion with flatbush, segment splitting). WebGL just draws the results — one buffer upload, one draw call, done. The split is natural: occlusion is geometric reasoning about intervals (CPU work), drawing 10,000 line segments fast is GPU work.

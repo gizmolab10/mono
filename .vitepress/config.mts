@@ -169,8 +169,16 @@ export default defineConfig({
                       link: '/di/notes/work/cruft'
                     },
                     {
+                      text: 'Primer',
+                      link: '/di/notes/work/primer'
+                    },
+                    {
                       text: 'Revisit.di',
                       link: '/di/notes/work/revisit.di'
+                    },
+                    {
+                      text: 'Spatial',
+                      link: '/di/notes/work/spatial'
                     },
                     {
                       text: 'Done >',
@@ -389,6 +397,10 @@ export default defineConfig({
               link: '/notes/guides/',
               collapsed: true,
               items: [
+                {
+                  text: 'Jonathan',
+                  link: '/notes/guides/jonathan'
+                },
                 {
                   text: 'Collaborate >',
                   link: '/notes/guides/collaborate/',

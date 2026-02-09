@@ -9,6 +9,7 @@ import { stores } from '../managers/Stores';
 import { mat4, vec3, vec4, quat } from 'gl-matrix';
 import { camera } from './Camera';
 import { scene } from './Scene';
+import Flatbush from 'flatbush';
 
 class Render {
   private canvas!: HTMLCanvasElement;
@@ -26,6 +27,9 @@ class Render {
     poly: { x: number; y: number }[]; // screen-space polygon
     obj_id: string;
   }[] = [];
+
+  /** Spatial index for screen-space face bounding boxes (rebuilt each frame). */
+  private occluding_index: Flatbush | null = null;
 
 
   private mvp_matrix = mat4.create();
@@ -151,6 +155,24 @@ class Render {
           const d = vec3.dot(n, corners[0]);
           this.occluding_faces.push({ n, d, corners, poly, obj_id: obj.id });
         }
+      }
+      // Build spatial index from screen-space face bounding boxes
+      if (this.occluding_faces.length > 0) {
+        const index = new Flatbush(this.occluding_faces.length);
+        for (const face of this.occluding_faces) {
+          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+          for (const p of face.poly) {
+            if (p.x < minX) minX = p.x;
+            if (p.y < minY) minY = p.y;
+            if (p.x > maxX) maxX = p.x;
+            if (p.y > maxY) maxY = p.y;
+          }
+          index.add(minX, minY, maxX, maxY);
+        }
+        index.finish();
+        this.occluding_index = index;
+      } else {
+        this.occluding_index = null;
       }
     }
 
@@ -413,7 +435,15 @@ class Render {
     const dx = p2.x - p1.x, dy = p2.y - p1.y;
     const identity = mat4.create();
 
-    for (const face of this.occluding_faces) {
+    // Query spatial index for faces whose screen-space bounding boxes overlap this edge
+    const edge_min_x = Math.min(p1.x, p2.x), edge_min_y = Math.min(p1.y, p2.y);
+    const edge_max_x = Math.max(p1.x, p2.x), edge_max_y = Math.max(p1.y, p2.y);
+    const candidates = this.occluding_index
+      ? this.occluding_index.search(edge_min_x, edge_min_y, edge_max_x, edge_max_y)
+      : this.occluding_faces.map((_, i) => i);
+
+    for (const fi of candidates) {
+      const face = this.occluding_faces[fi];
       if (skip.includes(face.obj_id)) continue;
       if (skip_planes && skip_planes.some(sp => {
         const dot = vec3.dot(sp.n, face.n);
