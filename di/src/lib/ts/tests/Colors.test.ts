@@ -2,32 +2,32 @@ import { describe, it, expect } from 'vitest';
 import { colors } from '../draw/Colors';
 
 describe('Colors', () => {
-	describe('color_fromSeriously', () => {
+	describe('color_test', () => {
 		it('parses seriously format string', () => {
-			const result = colors.color_fromSeriously('red:1,green:0,blue:0,alpha:1');
+			const result = colors.color_test('red:1,green:0,blue:0,alpha:1');
 			expect(result).toBe('#ff0000');
 		});
 
 		it('parses partial values', () => {
-			const result = colors.color_fromSeriously('red:0.5,green:0.5,blue:0.5,alpha:1');
+			const result = colors.color_test('red:0.5,green:0.5,blue:0.5,alpha:1');
 			expect(result).toBe('#808080');
 		});
 
 		it('returns default for undefined', () => {
-			expect(colors.color_fromSeriously(undefined)).toBe(colors.default_forThings);
+			expect(colors.color_test(undefined)).toBe(colors.default_forThings);
 		});
 
 		it('returns default for empty string', () => {
-			expect(colors.color_fromSeriously('')).toBe(colors.default_forThings);
+			expect(colors.color_test('')).toBe(colors.default_forThings);
 		});
 
 		it('handles blue', () => {
-			const result = colors.color_fromSeriously('red:0,green:0,blue:1,alpha:1');
+			const result = colors.color_test('red:0,green:0,blue:1,alpha:1');
 			expect(result).toBe('#0000ff');
 		});
 
 		it('handles green', () => {
-			const result = colors.color_fromSeriously('red:0,green:1,blue:0,alpha:1');
+			const result = colors.color_test('red:0,green:1,blue:0,alpha:1');
 			expect(result).toBe('#00ff00');
 		});
 	});

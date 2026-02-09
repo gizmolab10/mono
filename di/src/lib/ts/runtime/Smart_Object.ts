@@ -1,10 +1,10 @@
-import { quat } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
 import type { Dictionary } from '../types/Types';
 import { Point3 } from '../types/Coordinates';
 import Attribute from '../types/Attribute';
-import { compiler } from '../algebra';
 import Identifiable from './Identifiable';
+import { compiler } from '../algebra';
+import { quat } from 'gl-matrix';
 
 // Bounds: min/max for each axis
 export type Bound = 'x_min' | 'x_max' | 'y_min' | 'y_max' | 'z_min' | 'z_max';
@@ -13,12 +13,11 @@ export type Axis = 'x' | 'y' | 'z';
 export default class Smart_Object extends Identifiable {
 	attributes_dict_byName: Dictionary<Attribute> = {};
 	orientation: quat = quat.create();
-	/** When true (default), rotating preserves angle and length. When false (variable), orientation is recomputed from bounds after propagation. */
-	fixed: boolean = true;
+	fixed: boolean = true;	// When true (default), rotating preserves angle and length. When false (variable), orientation is recomputed from bounds after propagation
 	scene: O_Scene | null;
 	name: string;
 
-	/** Snap callback — set by Setup to snap mm values to the current precision grid. */
+	// Snap callback — set by Setup to snap mm values to the current precision grid. */
 	static snap: (mm: number) => number = (v) => v;
 
 	constructor(name: string = '', scene: O_Scene | null = null) {
@@ -247,6 +246,36 @@ export default class Smart_Object extends Identifiable {
 
 			this.set_bound(bound, Smart_Object.snap(clamped));
 		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════════
+	// HIERARCHY
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Create a child SO with bounds derived from this parent.
+	 *  Returns the child and a map of formulas to apply (caller wires via constraints). */
+	create_child(used_names: Set<string>): { child: Smart_Object; formulas: Partial<Record<Bound, string>> } {
+		let name = 'A';
+		while (used_names.has(name)) {
+			name = String.fromCharCode(name.charCodeAt(0) + 1);
+		}
+
+		const child = new Smart_Object(name);
+		const half = Math.min(this.width, this.height, this.depth) / 2;
+
+		// Max bounds: absolute values (no formula)
+		child.set_bound('x_max', this.x_min + half);
+		child.set_bound('y_max', this.y_min + half);
+		child.set_bound('z_max', this.z_min + half);
+
+		// Min bounds: formulas referencing parent origin (caller applies via constraints)
+		const formulas: Partial<Record<Bound, string>> = {
+			x_min: `${this.name}.x_min`,
+			y_min: `${this.name}.y_min`,
+			z_min: `${this.name}.z_min`,
+		};
+
+		return { child, formulas };
 	}
 
 	// ═══════════════════════════════════════════════════════════════════

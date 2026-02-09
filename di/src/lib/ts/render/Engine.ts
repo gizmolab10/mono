@@ -1,10 +1,12 @@
 import { units, current_unit_system } from '../types/Units';
 import { hits_3d, scenes, stores } from '../managers';
+import type { Bound } from '../runtime/Smart_Object';
 import { scene, camera, render, animation } from '.';
 import type { O_Scene } from '../types/Interfaces';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Smart_Object } from '../runtime';
 import { constraints } from '../algebra';
+import { colors } from '../draw/Colors';
 import { quat, vec3 } from 'gl-matrix';
 import { e3 } from '../signals';
 
@@ -38,6 +40,14 @@ class Engine {
         scenes.save();
       }
     });
+
+    // Keep all O_Scene colors in sync with the edge color preference
+    stores.w_edge_color.subscribe(() => {
+      const rgba = colors.edge_color_rgba();
+      for (const obj of scene.get_all()) {
+        obj.color = rgba;
+      }
+    });
   }
 
   // ── setup ──
@@ -69,7 +79,7 @@ class Engine {
           edges: this.edges,
           faces: this.faces,
           scale: result.scale,
-          color: 'rgba(78, 205, 196,',
+          color: colors.edge_color_rgba(),
         });
         so.scene = so_scene;
         hits_3d.register(so);
@@ -96,7 +106,7 @@ class Engine {
         edges: this.edges,
         faces: this.faces,
         scale: 8.5,
-        color: 'rgba(78, 205, 196,',
+        color: colors.edge_color_rgba(),
       });
       so.scene = so_scene;
       hits_3d.register(so);
@@ -209,46 +219,31 @@ class Engine {
   // ── hierarchy ──
 
   add_child_so(): void {
-    if (!this.root_scene) return;
-    const parent_so = this.root_scene.so;
+    const selected = stores.selection();
+    const parent_so = selected?.so ?? this.root_scene?.so;
+    if (!parent_so?.scene) return;
 
-    const all = scene.get_all();
-    const used = new Set(all.map(o => o.so.name));
-    let name = 'A';
-    while (used.has(name)) {
-      name = String.fromCharCode(name.charCodeAt(0) + 1);
+    const used = new Set(scene.get_all().map(o => o.so.name));
+    const { child, formulas } = parent_so.create_child(used);
+
+    // Apply formulas via constraints (cycle-safe)
+    for (const [bound, formula] of Object.entries(formulas)) {
+      constraints.set_formula(child, bound as Bound, formula);
     }
 
-    const so = new Smart_Object(name);
-
-    // Child axes align with world axes (identity orientation)
-    // — parent rotation doesn't propagate to children
-
-    // Set bounds: shared origin with parent, half its smallest dimension
-    const parent_name = parent_so.name;
-    const half = Math.min(parent_so.width, parent_so.height, parent_so.depth) / 2;
-
-    // Child shares parent's origin: formulas reference parent min bounds
-    constraints.set_formula(so, 'x_min', `${parent_name}.x_min`);
-    constraints.set_formula(so, 'y_min', `${parent_name}.y_min`);
-    constraints.set_formula(so, 'z_min', `${parent_name}.z_min`);
-    so.set_bound('x_max', parent_so.x_min + half);
-    so.set_bound('y_max', parent_so.y_min + half);
-    so.set_bound('z_max', parent_so.z_min + half);
-
     const so_scene = scene.create({
-      so,
+      so: child,
       edges: this.edges,
       faces: this.faces,
       scale: 1,
-      color: 'rgba(78, 205, 196,',
-      parent: this.root_scene,
+      color: colors.edge_color_rgba(),
+      parent: parent_so.scene,
     });
-    so.scene = so_scene;
-    hits_3d.register(so);
+    child.scene = so_scene;
+    hits_3d.register(child);
 
     // Keep parent selected after adding child
-    stores.w_all_sos.update(list => [...list, so]);
+    stores.w_all_sos.update(list => [...list, child]);
     scenes.save();
   }
 }

@@ -7,23 +7,24 @@
 
 export enum T_Preference {
 	// Layout
-	showDetails  = 'showDetails',
-	detailsWidth = 'detailsWidth',
+	detailsWidth 	= 'detailsWidth',
+	showDetails  	= 'showDetails',
 	
 	// Colors
-	textColor       = 'textColor',
-	separatorColor  = 'separatorColor',
 	backgroundColor = 'backgroundColor',
+	separatorColor  = 'separatorColor',
+	textColor       = 'textColor',
 
 	// Units
-	unitSystem = 'unitSystem',
+	unitSystem 		= 'unitSystem',
 
 	// View
-	viewMode         = 'viewMode',
-	precision        = 'precision',
 	showDimensionals = 'showDimensionals',
-	solid            = 'solid',
 	lineThickness    = 'lineThickness',
+	precision        = 'precision',
+	edgeColor        = 'edgeColor',
+	viewMode         = 'viewMode',
+	solid            = 'solid',
 
 	// Scenes
 	scene = 'scene',

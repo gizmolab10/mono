@@ -1,6 +1,7 @@
-import { get, writable } from 'svelte/store';
-import { parseToRgba, transparentize } from 'color2k';
 import { preferences, T_Preference } from '../managers/Preferences';
+import { parseToRgba, transparentize } from 'color2k';
+import { get, writable } from 'svelte/store';
+import { stores } from '../managers/Stores';
 
 // single source of truth for all colors
 
@@ -64,23 +65,12 @@ export class Colors {
 	opacitize(color : string, amount : number) : string { return color == '' ? '' : transparentize(color, 1 - amount); }
 	background_special_blend(color : string, opacity : number) : string { return this.special_blend(color, get(this.w_background_color), opacity) ?? color; }
 
-	color_fromSeriously(color : string | undefined) : string {
-		if (!!color) {
-			const parts = color.split(',');				// 'red:0.7,green:0,blue:0,alpha:1'
-			const rgba  = new RGBA();
-			for (const part of parts) {
-				const [key, value] = part.split(':');
-				const numValue     = parseFloat(value);
-				switch (key) {
-					case 'red':   rgba.r = Math.round(numValue * 255); break;
-					case 'blue':  rgba.b = Math.round(numValue * 255); break;
-					case 'green': rgba.g = Math.round(numValue * 255); break;
-					case 'alpha': rgba.a = numValue;                   break;
-				}
-			}
-			return this.RGBA_toHex(rgba);
-		}
-		return this.default_forThings;
+	edge_color_rgba(): string {
+		const hex = stores.edge_color();
+		const r = parseInt(hex.slice(1, 3), 16);
+		const g = parseInt(hex.slice(3, 5), 16);
+		const b = parseInt(hex.slice(5, 7), 16);
+		return `rgba(${r}, ${g}, ${b},`;
 	}
 
 	blend(color : string, background : string, saturation : number = 7) : string {
@@ -108,6 +98,25 @@ export class Colors {
 		const b     = Math.round((rgbaA.b * alpha) + (rgbaB.b * (1 - alpha)));
 		const blendedHex = this.RGBA_toHex(new RGBA(r, g, b, 1));
 		return this.multiply_saturationOf_by(blendedHex, 1 + ratio);
+	}
+
+	color_test(color : string | undefined) : string {
+		if (!!color) {
+			const parts = color.split(',');				// 'red:0.7,green:0,blue:0,alpha:1'
+			const rgba  = new RGBA();
+			for (const part of parts) {
+				const [key, value] = part.split(':');
+				const numValue     = parseFloat(value);
+				switch (key) {
+					case 'red':   rgba.r = Math.round(numValue * 255); break;
+					case 'blue':  rgba.b = Math.round(numValue * 255); break;
+					case 'green': rgba.g = Math.round(numValue * 255); break;
+					case 'alpha': rgba.a = numValue;                   break;
+				}
+			}
+			return this.RGBA_toHex(rgba);
+		}
+		return this.default_forThings;
 	}
 
 	// ═══════════════════════════════════════════════════════════════════════════

@@ -7,13 +7,13 @@ class Scene {
   private id_counter = 0;
 
   create(config: {
-    so: Smart_Object;
     edges: [number, number][];
     faces?: number[][];
+    so: Smart_Object;
+    parent?: O_Scene;
     position?: vec3;
     scale?: number;
     color?: string;
-    parent?: O_Scene;
   }): O_Scene {
     const id = `obj_${this.id_counter++}`;
     const obj: O_Scene = {

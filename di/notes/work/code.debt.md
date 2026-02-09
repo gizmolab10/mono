@@ -2,34 +2,49 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] hide face label when face is
-	- [ ] occluded
-	- [x] nearly edge on
-- [x] add a slider to details for line thickness
-- [ ] add a color picker
-- [ ] 2D needs to be a infinite zoom projection
+
+- [ ] SO should use its internal id for hierarchy/formulas
+	- [ ] it uses name in its constraint formulas
+- [x] ability to export/import to/from file
+	- [ ] SO need id separate from name (insulate hierarchy from user renaming)
 - [ ] ability to drag the current SO
+	- [x] click on a face and drag it
+	- [x] ignore drag when applied to the root SO
+	- [ ] constrain movement within the plane of the front-most facing face
+	- [ ] movement does not follow mouse
+- [ ] hover/click should hit the front most SO
+- [ ] hide occluded dimensionals
+- [ ] 2D needs to be a "infinite zoom" projection
+---
 - [ ] in all code files, use 4-space tabs (not 2-)
-- [ ] ability to export/import to/from file
 - [ ] tweak dimensionals
 	- [ ] tab between dimensionals
 	- [ ] arrow-key nudging (±unit of precision)
+- [ ] color inheritance
+	- [ ] assign the color to the selected SO
+	- [ ] make all children inherit the color of their parent
 
 ## Done
 
+- [x] add a color picker
 - [x] selecting often fails
 - [x] rename test -> hit_test
 - [x] algebra fails 1" + 2" -> 1'
 - [x] convert Stores into a class
 - [x] move precision and units to details
 - [x] new children spontaneously appear
+- [x] add a slider to details for line thickness
 - [x] steppers hop up and down in build notes
 - [x] convert Orientation functions into a class
 - [x] dimensionals sometimes do not extend outward from SO
 - [x] add a controls button "show/hide dimensionals" a boolean
+- [x] show dimensions -> intersection lines turn black and get thicker
 - [x] add button "show/hide dimensionals" a boolean that render reacts to
 - [x] make the height of units system button consistent with other buttons
 - [x] better names for attributes (x,y,z,w,h,d) are x_max, y_ and z_ ever needed? (overlaps M13 phase 5)
+- [x] hide face label when face is
+	- [x] occluded
+	- [x] nearly edge on
 - [x] bugs in controls:
 	- [x] imperial when active has a white outline around the blue border and the blue border is slightly taller than the button without the blue. metric and other
 	- [x] units should render with only 1 decimal point of precision

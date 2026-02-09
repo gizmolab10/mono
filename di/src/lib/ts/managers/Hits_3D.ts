@@ -3,6 +3,7 @@ import type { Projected } from '../types/Interfaces';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
+import { stores } from './Stores';
 
 export interface Hit_3D_Result {
 	so: Smart_Object;
@@ -23,13 +24,12 @@ class Hits_3D {
 	edge_radius = 5;
 
 	w_hover = writable<Hit_3D_Result | null>(null);
-	w_selection = writable<Hit_3D_Result | null>(null);
 
 	get hover(): Hit_3D_Result | null { return get(this.w_hover); }
-	get selection(): Hit_3D_Result | null { return get(this.w_selection); }
+	get selection(): Hit_3D_Result | null { return stores.selection(); }
 
 	set_hover(result: Hit_3D_Result | null) { this.w_hover.set(result); }
-	set_selection(result: Hit_3D_Result | null) { this.w_selection.set(result); }
+	set_selection(result: Hit_3D_Result | null) { stores.set_selection(result); }
 
 	get_projected(scene_id: string): Projected[] | undefined {
 		return this.cache.get(scene_id)?.projected;
@@ -40,7 +40,7 @@ class Hits_3D {
 		this.objects = [];
 		this.cache.clear();
 		this.w_hover.set(null);
-		this.w_selection.set(null);
+		stores.set_selection(null);
 	}
 
 	register(so: Smart_Object) {

@@ -1,13 +1,12 @@
 <script lang='ts'>
+	import { T_Hit_3D, T_Units } from '../../ts/types/Enumerations';
+	import type Smart_Object from '../../ts/runtime/Smart_Object';
+	import { hits_3d, scenes, stores } from '../../ts/managers';
+	import { w_unit_system } from '../../ts/types/Units';
 	import { colors } from '../../ts/draw/Colors';
 	import { engine } from '../../ts/render';
-	import { hits_3d, scenes, stores } from '../../ts/managers';
-	import { T_Hit_3D, T_Units } from '../../ts/types/Enumerations';
-	import { w_unit_system } from '../../ts/types/Units';
-	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	const { w_text_color, w_background_color } = colors;
-	const { w_selection } = hits_3d;
-	const { w_root_so, w_all_sos, w_precision, w_solid, w_line_thickness } = stores;
+	const { w_text_color, w_background_color, w_separator_color } = colors;
+	const { w_root_so, w_all_sos, w_precision, w_line_thickness, w_edge_color, w_selection } = stores;
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
 
@@ -75,7 +74,9 @@
 	{/if}
 	<div class='settings'>
 		<button class='action-btn' onclick={() => engine.add_child_so()}>add child</button>
-		<button class='action-btn' onclick={() => stores.toggle_solid()}>{$w_solid ? 'solid' : 'see through'}</button>
+	</div>
+	<hr style:border-color={$w_separator_color} />
+	<div class='settings'>
 		<select class='details-select' value={$w_unit_system} onchange={handle_unit_change}>
 			{#each Object.values(T_Units) as system}
 				<option value={system}>{system}</option>
@@ -95,6 +96,7 @@
 			{/each}
 		</div>
 	</div>
+	<hr style:border-color={$w_separator_color} />
 	<div class='slider-group'>
 		<span class='label'>line thickness</span>
 		<input
@@ -106,6 +108,19 @@
 			oninput = {(e) => w_line_thickness.set(Number((e.target as HTMLInputElement).value))}
 		/>
 	</div>
+	<div class='color-group'>
+		<span class='label'>edge color</span>
+		<input
+			type    = 'color'
+			value   = {$w_edge_color}
+			oninput = {(e) => w_edge_color.set((e.target as HTMLInputElement).value)}
+		/>
+	</div>
+	<hr style:border-color={$w_separator_color} />
+	<div class='settings'>
+		<button class='action-btn' onclick={() => scenes.export_to_file()}>export</button>
+		<button class='action-btn' onclick={() => scenes.import_from_file()}>import</button>
+	</div>
 </div>
 
 <style>
@@ -114,6 +129,13 @@
 		height     : 100%;
 		padding    : 1rem;
 		box-sizing : border-box;
+	}
+
+	hr {
+		border     : none;
+		border-top : 5px solid;
+		opacity    : 0.4;
+		margin     : 14px 0 5px 0;
 	}
 
 	.details h2 {
@@ -346,5 +368,38 @@
 
 	.slider-group input[type='range']:focus {
 		outline : none;
+	}
+
+	.color-group {
+		margin-top     : 1rem;
+		display        : flex;
+		align-items    : center;
+		gap            : 8px;
+	}
+
+	.color-group input[type='color'] {
+		width              : 20px;
+		height             : 20px;
+		padding            : 0;
+		border             : 0.5px solid currentColor;
+		border-radius      : 50%;
+		cursor             : pointer;
+		appearance         : none;
+		-webkit-appearance : none;
+		background         : none;
+	}
+
+	.color-group input[type='color']::-webkit-color-swatch-wrapper {
+		padding : 0;
+	}
+
+	.color-group input[type='color']::-webkit-color-swatch {
+		border        : none;
+		border-radius : 50%;
+	}
+
+	.color-group input[type='color']::-moz-color-swatch {
+		border        : none;
+		border-radius : 50%;
 	}
 </style>

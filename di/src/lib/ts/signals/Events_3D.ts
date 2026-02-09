@@ -135,14 +135,22 @@ class Events_3D {
     // Selection must be a face
     if (sel.type !== T_Hit_3D.face) return false;
 
-    // Drag target must be corner or edge (not face interior)
-    if (drag.type === T_Hit_3D.face) return false;
-
     // Drag target must belong to same SO as selection
     if (drag.so !== sel.so) return false;
 
     const scene = sel.so.scene;
     if (!scene) return false;
+
+    // Face drag: translate child SO in the plane of the front-most face
+    if (drag.type === T_Hit_3D.face) {
+      if (!scene.parent) return false; // root SO cannot be translated
+      const front = hits_3d.front_most_face(sel.so);
+      if (front < 0) return false;
+      const delta = this.get_world_delta_on_face(prev_mouse, curr_mouse, front, scene);
+      if (!delta) return false;
+      this.apply_face_drag(sel.so, delta);
+      return true;
+    }
 
     // Get world-space delta by projecting both mouse positions onto face plane
     const world_delta = this.get_world_delta_on_face(prev_mouse, curr_mouse, sel.index, scene);
@@ -297,6 +305,22 @@ class Events_3D {
     const updated = raw + amount;
     this.raw_bounds.set(key, updated);
     so.set_bound(bound as any, Smart_Object.snap(updated));
+  }
+
+  // Apply face drag: translates SO by full local-space delta (no snap).
+  // The face plane constraint is already enforced by the ray-plane projection
+  // in world space — the local delta distributes across all 3 axes due to
+  // the parent's rotation, so we apply it to all 3 axis pairs.
+  private apply_face_drag(
+    so: Smart_Object,
+    local_delta: Point3
+  ): void {
+    so.set_bound('x_min', so.x_min + local_delta.x);
+    so.set_bound('x_max', so.x_max + local_delta.x);
+    so.set_bound('y_min', so.y_min + local_delta.y);
+    so.set_bound('y_max', so.y_max + local_delta.y);
+    so.set_bound('z_min', so.z_min + local_delta.z);
+    so.set_bound('z_max', so.z_max + local_delta.z);
   }
 
   // Apply edge drag: affects 1 bound

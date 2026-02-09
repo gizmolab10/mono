@@ -3,10 +3,10 @@ import { units, current_unit_system } from '../types/Units';
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Axis } from '../runtime/Smart_Object';
 import { Size, Point3 } from '../types/Coordinates';
+import { mat4, vec3, vec4, quat } from 'gl-matrix';
 import { T_Hit_3D } from '../types/Enumerations';
 import { hits_3d } from '../managers/Hits_3D';
 import { stores } from '../managers/Stores';
-import { mat4, vec3, vec4, quat } from 'gl-matrix';
 import { camera } from './Camera';
 import { scene } from './Scene';
 import Flatbush from 'flatbush';
@@ -186,7 +186,7 @@ class Render {
       const projected = projected_map.get(obj.id)!;
       const world = (!is_2d && solid) ? this.get_world_matrix(obj) : undefined;
       this.render_edges(obj, projected, is_2d, solid, world);
-      this.render_face_names(obj, projected);
+      this.render_face_names(obj, projected, world);
     }
 
     this.render_selection();
@@ -359,7 +359,7 @@ class Render {
       for (let j = i + 1; j < objects.length; j++) {
         for (const fA of obj_faces[i]) {
           for (const fB of obj_faces[j]) {
-            this.intersect_face_pair(ctx, fA, fB);
+            this.intersect_face_pair(ctx, fA, fB, objects[j].color);
           }
         }
       }
@@ -374,6 +374,7 @@ class Render {
     ctx: CanvasRenderingContext2D,
     fA: { n: vec3; d: number; corners: vec3[] },
     fB: { n: vec3; d: number; corners: vec3[] },
+    color: string,
   ): void {
     const eps = 1e-8;
 
@@ -420,6 +421,9 @@ class Render {
     const s2 = this.project_vertex(new Point3(end[0], end[1], end[2]), identity);
     if (s1.w < 0 || s2.w < 0) return;
 
+    const alpha = 0.3 + 0.7 * (1 - (s1.z + s2.z) / 2);
+    ctx.strokeStyle = `${color}${Math.max(0.2, Math.min(1, alpha)).toFixed(2)})`;
+
     // Intersection lines: skip the two coplanar generating faces, not all faces from both objects
     const visible = this.clip_segment_for_occlusion(
       { x: s1.x, y: s1.y }, { x: s2.x, y: s2.y }, start, end, '', [fA, fB]
@@ -463,6 +467,7 @@ class Render {
 
     for (const fi of candidates) {
       const face = this.occluding_faces[fi];
+      if (!face) continue;
       if (skip.includes(face.obj_id)) continue;
       if (skip_planes && skip_planes.some(sp => {
         const dot = vec3.dot(sp.n, face.n);
@@ -623,13 +628,15 @@ class Render {
     return [t_min, t_max];
   }
 
-  private render_face_names(obj: O_Scene, projected: Projected[]): void {
+  private render_face_names(obj: O_Scene, projected: Projected[], world?: mat4): void {
     if (!obj.faces) return;
     const ctx = this.ctx;
     ctx.font = '10px sans-serif';
     ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+
+    const verts = obj.so.vertices;
 
     for (let fi = 0; fi < obj.faces.length; fi++) {
       const face = obj.faces[fi];
@@ -647,8 +654,62 @@ class Render {
       cx /= face.length;
       cy /= face.length;
 
+      // Occlusion: skip label if another SO's face is in front at this screen point
+      if (world && this.is_point_occluded(cx, cy, face, verts, world, obj.id)) continue;
+
       ctx.fillText(obj.so.name, Math.round(cx), Math.round(cy));
     }
+  }
+
+  /** Check if a screen point is occluded by any front-facing face from a different object. */
+  private is_point_occluded(
+    sx: number, sy: number,
+    face: number[], verts: Point3[], world: mat4,
+    skip_id: string,
+  ): boolean {
+    if (this.occluding_faces.length === 0) return false;
+
+    // World-space centroid of the face being labeled
+    let wx = 0, wy = 0, wz = 0;
+    for (const vi of face) {
+      const lv = verts[vi];
+      const wv = vec4.create();
+      vec4.transformMat4(wv, [lv.x, lv.y, lv.z, 1], world);
+      wx += wv[0]; wy += wv[1]; wz += wv[2];
+    }
+    wx /= face.length; wy /= face.length; wz /= face.length;
+    const world_centroid: vec3 = [wx, wy, wz];
+
+    // Query spatial index for candidate occluding faces near this screen point
+    const candidates = this.occluding_index
+      ? this.occluding_index.search(sx, sy, sx, sy)
+      : this.occluding_faces.map((_, i) => i);
+
+    for (const fi of candidates) {
+      const occ = this.occluding_faces[fi];
+      if (occ.obj_id === skip_id) continue;
+
+      // Is the label centroid behind this face's plane?
+      const dist = vec3.dot(occ.n, world_centroid) - occ.d;
+      if (dist > 0) continue; // in front of this face, not occluded by it
+
+      // Is the screen point inside this face's screen polygon?
+      if (this.point_in_polygon_2d(sx, sy, occ.poly)) return true;
+    }
+    return false;
+  }
+
+  /** Ray-casting point-in-polygon test (2D screen space). */
+  private point_in_polygon_2d(px: number, py: number, poly: { x: number; y: number }[]): boolean {
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const yi = poly[i].y, yj = poly[j].y;
+      if ((yi > py) !== (yj > py)) {
+        const xi = poly[i].x + (py - yi) / (yj - yi) * (poly[j].x - poly[i].x);
+        if (px < xi) inside = !inside;
+      }
+    }
+    return inside;
   }
 
   private draw_debug_face(face: number[], fi: number, projected: Projected[]): void {
