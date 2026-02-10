@@ -1,13 +1,13 @@
 import type { Dimension_Rect, S_Editing } from '../types/Interfaces';
+import { constraints, compiler, evaluator } from '../algebra';
 import { units, current_unit_system } from '../types/Units';
 import { T_Units } from '../types/Enumerations';
-import { stores } from './Stores';
-import { constraints, compiler, evaluator } from '../algebra';
 import { writable, get } from 'svelte/store';
-import { scenes } from './Scenes';
+import { stores } from '../managers/Stores';
+import { scenes } from '../managers/Scenes';
 import { render } from '../render/Render';
 
-class Editor {
+class Dimensions {
 	/** Reactive editing state — non-null when input is active */
 	w_editing = writable<S_Editing | null>(null);
 
@@ -94,4 +94,4 @@ class Editor {
 	}
 }
 
-export const editor = new Editor();
+export const dimensions = new Dimensions();

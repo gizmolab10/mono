@@ -7,6 +7,7 @@ import { mat4, vec3, vec4, quat } from 'gl-matrix';
 import { T_Hit_3D } from '../types/Enumerations';
 import { hits_3d } from '../managers/Hits_3D';
 import { stores } from '../managers/Stores';
+import { drag } from '../editors/Drag';
 import { camera } from './Camera';
 import { scene } from './Scene';
 import Flatbush from 'flatbush';
@@ -79,7 +80,7 @@ class Render {
       const world_matrix = this.get_world_matrix(obj);
       const projected = obj.so.vertices.map((v) => this.project_vertex(v, world_matrix));
       projected_map.set(obj.id, projected);
-      hits_3d.update_projected(obj.id, projected);
+      hits_3d.update_projected(obj.id, projected, world_matrix);
     }
 
     // Phase 2: fill front-facing faces (occlusion layer)
@@ -275,14 +276,23 @@ class Render {
     // In 2D or solid mode, only draw edges belonging to front-facing faces
     const front_edges = (is_2d || solid) ? this.front_face_edges(obj, projected) : null;
 
+    // During face drag, highlight the guidance face's edges on the parent SO
+    const guide = drag.guidance_face;
+    const guidance_edges = (guide && guide.scene === obj) ? this.face_edge_keys(obj, guide.face_index) : null;
+
     for (const [i, j] of obj.edges) {
       const a = projected[i],
         b = projected[j];
       if (a.w < 0 || b.w < 0) continue;
       if (front_edges && !front_edges.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
 
-      const alpha = is_2d ? 1 : 0.3 + 0.7 * (1 - (a.z + b.z) / 2);
-      this.ctx.strokeStyle = `${obj.color}${Math.max(0.2, Math.min(1, alpha)).toFixed(2)})`;
+      const edge_key = `${Math.min(i, j)}-${Math.max(i, j)}`;
+      if (guidance_edges?.has(edge_key)) {
+        this.ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+      } else {
+        const alpha = is_2d ? 1 : 0.3 + 0.7 * (1 - (a.z + b.z) / 2);
+        this.ctx.strokeStyle = `${obj.color}${Math.max(0.2, Math.min(1, alpha)).toFixed(2)})`;
+      }
 
       if (solid && world) {
         // Get world-space edge endpoints
@@ -994,6 +1004,18 @@ class Render {
     if (dy > eps && dx < eps && dz < eps) return 'y';
     if (dz > eps && dx < eps && dy < eps) return 'z';
     return null;
+  }
+
+  /** Collect edge keys for a specific face (for guidance highlight). */
+  private face_edge_keys(obj: O_Scene, face_index: number): Set<string> {
+    const keys = new Set<string>();
+    if (!obj.faces || face_index >= obj.faces.length) return keys;
+    const face = obj.faces[face_index];
+    for (let i = 0; i < face.length; i++) {
+      const a = face[i], b = face[(i + 1) % face.length];
+      keys.add(`${Math.min(a, b)}-${Math.max(a, b)}`);
+    }
+    return keys;
   }
 
   /** Collect edge keys belonging to front-facing faces (for 2D mode). */

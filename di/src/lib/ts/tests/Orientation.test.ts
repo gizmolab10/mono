@@ -26,6 +26,9 @@ function add_so(name: string, bounds?: Partial<Record<Bound, number>>): Smart_Ob
 	return so;
 }
 
+/** Build a formula reference using SO's internal id */
+function ref(so: Smart_Object, attr: string): string { return `${so.id}.${attr}`; }
+
 beforeEach(() => {
 	scene.clear();
 });
@@ -103,11 +106,11 @@ describe('use case S — variable staircase', () => {
 		stair.fixed = false; // variable
 
 		// Pin all 4 XY corners to room
-		constraints.set_formula(stair, 'x_min', 'R.x_min');
-		constraints.set_formula(stair, 'x_max', 'R.x_max');
-		constraints.set_formula(stair, 'y_min', 'R.y_min');
-		constraints.set_formula(stair, 'y_max', 'R.y_max');
-		constraints.set_formula(stair, 'z_min', 'R.z_min');
+		constraints.set_formula(stair, 'x_min', ref(room, 'x_min'));
+		constraints.set_formula(stair, 'x_max', ref(room, 'x_max'));
+		constraints.set_formula(stair, 'y_min', ref(room, 'y_min'));
+		constraints.set_formula(stair, 'y_max', ref(room, 'y_max'));
+		constraints.set_formula(stair, 'z_min', ref(room, 'z_min'));
 
 		// Compute initial orientation from bounds (set_formula doesn't call recompute)
 		orientation.recompute(stair);
@@ -131,11 +134,11 @@ describe('use case S — variable staircase', () => {
 		const stair = add_so('S', { z_min: 0, z_max: 10 });
 		stair.fixed = false;
 
-		constraints.set_formula(stair, 'x_min', 'R.x_min');
-		constraints.set_formula(stair, 'x_max', 'R.x_max');
-		constraints.set_formula(stair, 'y_min', 'R.y_min');
-		constraints.set_formula(stair, 'y_max', 'R.y_max');
-		constraints.set_formula(stair, 'z_min', 'R.z_min');
+		constraints.set_formula(stair, 'x_min', ref(room, 'x_min'));
+		constraints.set_formula(stair, 'x_max', ref(room, 'x_max'));
+		constraints.set_formula(stair, 'y_min', ref(room, 'y_min'));
+		constraints.set_formula(stair, 'y_max', ref(room, 'y_max'));
+		constraints.set_formula(stair, 'z_min', ref(room, 'z_min'));
 		orientation.recompute(stair);
 
 		// Stretch room taller → steeper angle
@@ -158,7 +161,7 @@ describe('use case S — variable staircase', () => {
 		quat.setAxisAngle(rot, [0, 0, 1], Math.PI / 6); // 30°
 		quat.copy(wall.orientation, rot);
 
-		constraints.set_formula(wall, 'x_min', 'R.x_min');
+		constraints.set_formula(wall, 'x_min', ref(room, 'x_min'));
 
 		// Stretch room
 		room.set_bound('x_max', 2000);
@@ -182,13 +185,13 @@ describe('use case W — fixed wall', () => {
 		wall.fixed = true;
 
 		// Pin one corner to room origin
-		constraints.set_formula(wall, 'x_min', 'R.x_min');
-		constraints.set_formula(wall, 'y_min', 'R.y_min');
-		constraints.set_formula(wall, 'z_min', 'R.z_min');
+		constraints.set_formula(wall, 'x_min', ref(room, 'x_min'));
+		constraints.set_formula(wall, 'y_min', ref(room, 'y_min'));
+		constraints.set_formula(wall, 'z_min', ref(room, 'z_min'));
 		// Max bounds are literals — don't reference room
-		constraints.set_formula(wall, 'x_max', 'R.x_min + 200');
-		constraints.set_formula(wall, 'y_max', 'R.y_min + 200');
-		constraints.set_formula(wall, 'z_max', 'R.z_min + 200');
+		constraints.set_formula(wall, 'x_max', `${ref(room, 'x_min')} + 200`);
+		constraints.set_formula(wall, 'y_max', `${ref(room, 'y_min')} + 200`);
+		constraints.set_formula(wall, 'z_max', `${ref(room, 'z_min')} + 200`);
 
 		// Stretch room
 		room.set_bound('x_max', 2000);
@@ -208,10 +211,10 @@ describe('use case W — fixed wall', () => {
 		const wall = add_so('W', { x_min: 0, x_max: 200, y_min: 0, y_max: 200, z_min: 0, z_max: 200 });
 		wall.fixed = true;
 
-		constraints.set_formula(wall, 'x_min', 'R.x_min');
-		constraints.set_formula(wall, 'y_min', 'R.y_min');
-		constraints.set_formula(wall, 'x_max', 'R.x_min + 200');
-		constraints.set_formula(wall, 'y_max', 'R.y_min + 200');
+		constraints.set_formula(wall, 'x_min', ref(room, 'x_min'));
+		constraints.set_formula(wall, 'y_min', ref(room, 'y_min'));
+		constraints.set_formula(wall, 'x_max', `${ref(room, 'x_min')} + 200`);
+		constraints.set_formula(wall, 'y_max', `${ref(room, 'y_min')} + 200`);
 
 		// Move room origin
 		room.set_bound('x_min', 500);

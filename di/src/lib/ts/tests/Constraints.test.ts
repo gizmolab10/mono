@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import Smart_Object from '../runtime/Smart_Object';
 import type { Bound } from '../runtime/Smart_Object';
+import Smart_Object from '../runtime/Smart_Object';
 import { scene } from '../render/Scene';
 import { constraints } from '../algebra';
 import { quat } from 'gl-matrix';
@@ -26,6 +26,9 @@ function add_so(name: string, bounds?: Partial<Record<Bound, number>>): Smart_Ob
 	return so;
 }
 
+/** Build a formula reference using SO's internal id: ref(so, 'x_min') → "NEWabc.x_min" */
+function ref(so: Smart_Object, attr: string): string { return `${so.id}.${attr}`; }
+
 beforeEach(() => {
 	scene.clear();
 });
@@ -37,10 +40,10 @@ beforeEach(() => {
 describe('formula on Attribute', () => {
 
 	it('sets formula and evaluates immediately', () => {
-		add_so('wall', { y_min: 0, y_max: 2438.4 });
+		const wall = add_so('wall', { y_min: 0, y_max: 2438.4 });
 		const door = add_so('door', { y_min: 0, y_max: 2000 });
 
-		const error = constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
+		const error = constraints.set_formula(door, 'y_max', `${ref(wall, 'y_max')} - 6"`);
 		expect(error).toBeNull();
 
 		// door.y_max should now be wall.y_max - 152.4 = 2438.4 - 152.4 = 2286
@@ -48,13 +51,14 @@ describe('formula on Attribute', () => {
 	});
 
 	it('stores formula text on attribute', () => {
-		add_so('wall', { y_max: 2438.4 });
+		const wall = add_so('wall', { y_max: 2438.4 });
 		const door = add_so('door');
 
-		constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
+		const formula = `${ref(wall, 'y_max')} - 6"`;
+		constraints.set_formula(door, 'y_max', formula);
 
 		const attr = door.attributes_dict_byName['y_max'];
-		expect(attr.formula).toBe('wall.y_max - 6"');
+		expect(attr.formula).toBe(formula);
 		expect(attr.has_formula).toBe(true);
 	});
 
@@ -76,16 +80,16 @@ describe('formula on Attribute', () => {
 		const a = add_so('a', { x_min: 10 });
 		const b = add_so('b', { x_min: 20 });
 
-		constraints.set_formula(a, 'x_min', 'b.x_min + 1');
-		const error = constraints.set_formula(b, 'x_min', 'a.x_min + 1');
+		constraints.set_formula(a, 'x_min', `${ref(b, 'x_min')} + 1`);
+		const error = constraints.set_formula(b, 'x_min', `${ref(a, 'x_min')} + 1`);
 		expect(error).toMatch(/Cycle detected/);
 	});
 
 	it('clear_formula removes formula, keeps value', () => {
-		add_so('wall', { y_max: 2438.4 });
+		const wall = add_so('wall', { y_max: 2438.4 });
 		const door = add_so('door');
 
-		constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
+		constraints.set_formula(door, 'y_max', `${ref(wall, 'y_max')} - 6"`);
 		const computed = door.y_max; // 2286
 
 		constraints.clear_formula(door, 'y_max');
@@ -104,15 +108,15 @@ describe('propagation', () => {
 		const wall = add_so('wall', { y_min: 0, y_max: 2438.4 });
 		const door = add_so('door', { y_min: 0, y_max: 2000 });
 
-		constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
+		constraints.set_formula(door, 'y_max', `${ref(wall, 'y_max')} - 6"`);
 		expect(door.y_max).toBeCloseTo(2286); // initial eval
 
 		// Change wall height
-		wall.set_bound('y_max', 3000);
+		wall.set_bound('y_max', 4000);
 		constraints.propagate(wall);
 
-		// door.y_max should now be 3000 - 152.4 = 2847.6
-		expect(door.y_max).toBeCloseTo(2847.6);
+		// door.y_max should now be 4000 - 152.4 = 3847.6
+		expect(door.y_max).toBeCloseTo(3847.6);
 	});
 
 	it('propagation cascades through chain', () => {
@@ -120,8 +124,8 @@ describe('propagation', () => {
 		const b = add_so('b');
 		const c = add_so('c');
 
-		constraints.set_formula(b, 'x_max', 'a.x_max * 2');    // b.x_max = 200
-		constraints.set_formula(c, 'x_max', 'b.x_max + 10');   // c.x_max = 210
+		constraints.set_formula(b, 'x_max', `${ref(a, 'x_max')} * 2`);    // b.x_max = 200
+		constraints.set_formula(c, 'x_max', `${ref(b, 'x_max')} + 10`);   // c.x_max = 210
 
 		expect(b.x_max).toBeCloseTo(200);
 		expect(c.x_max).toBeCloseTo(210);
@@ -140,7 +144,7 @@ describe('propagation', () => {
 		const door = add_so('door');
 		const table = add_so('table', { x_max: 500 });
 
-		constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
+		constraints.set_formula(door, 'y_max', `${ref(wall, 'y_max')} - 6"`);
 
 		wall.set_bound('y_max', 3000);
 		constraints.propagate(wall);
@@ -157,14 +161,15 @@ describe('propagation', () => {
 describe('serialize/deserialize formulas', () => {
 
 	it('serializes formula strings', () => {
-		add_so('wall', { y_max: 2438.4 });
+		const wall = add_so('wall', { y_max: 2438.4 });
 		const door = add_so('door');
 
-		constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
+		const formula = `${ref(wall, 'y_max')} - 6"`;
+		constraints.set_formula(door, 'y_max', formula);
 
 		const data = door.serialize();
 		expect(data.formulas).toBeDefined();
-		expect(data.formulas!['y_max']).toBe('wall.y_max - 6"');
+		expect(data.formulas!['y_max']).toBe(formula);
 	});
 
 	it('omits formulas key when no formulas exist', () => {
@@ -189,16 +194,17 @@ describe('serialize/deserialize formulas', () => {
 	});
 
 	it('round-trips: serialize → deserialize preserves formulas', () => {
-		add_so('wall', { y_max: 2438.4 });
+		const wall = add_so('wall', { y_max: 2438.4 });
 		const door = add_so('door');
 
-		constraints.set_formula(door, 'y_max', 'wall.y_max - 6"');
+		const formula = `${ref(wall, 'y_max')} - 6"`;
+		constraints.set_formula(door, 'y_max', formula);
 		const data = door.serialize();
 
 		const { so: restored } = Smart_Object.deserialize(data);
 		const attr = restored.attributes_dict_byName['y_max'];
 
-		expect(attr.formula).toBe('wall.y_max - 6"');
+		expect(attr.formula).toBe(formula);
 		expect(attr.compiled).not.toBeNull();
 		expect(attr.value).toBeCloseTo(2286);
 	});
@@ -250,13 +256,13 @@ describe('orientation', () => {
 describe('add child with formulas', () => {
 
 	it('child min bounds track parent min bounds via formula', () => {
-		add_so('parent', { x_min: -100, x_max: 100, y_min: -200, y_max: 200, z_min: -300, z_max: 300 });
+		const parent = add_so('parent', { x_min: -100, x_max: 100, y_min: -200, y_max: 200, z_min: -300, z_max: 300 });
 		const child = add_so('child');
 
 		// Simulate what add_child_so does
-		constraints.set_formula(child, 'x_min', 'parent.x_min');
-		constraints.set_formula(child, 'y_min', 'parent.y_min');
-		constraints.set_formula(child, 'z_min', 'parent.z_min');
+		constraints.set_formula(child, 'x_min', ref(parent, 'x_min'));
+		constraints.set_formula(child, 'y_min', ref(parent, 'y_min'));
+		constraints.set_formula(child, 'z_min', ref(parent, 'z_min'));
 
 		expect(child.x_min).toBeCloseTo(-100);
 		expect(child.y_min).toBeCloseTo(-200);
@@ -267,7 +273,7 @@ describe('add child with formulas', () => {
 		const parent = add_so('parent', { x_min: -100, x_max: 100 });
 		const child = add_so('child');
 
-		constraints.set_formula(child, 'x_min', 'parent.x_min');
+		constraints.set_formula(child, 'x_min', ref(parent, 'x_min'));
 
 		parent.set_bound('x_min', -500);
 		constraints.propagate(parent);
@@ -291,9 +297,9 @@ describe('add child with formulas', () => {
 		const child = add_so('child');
 
 		// Simulate add_child_so: smallest parent length = 600 (height), half = 300
-		constraints.set_formula(child, 'x_min', 'parent.x_min');
-		constraints.set_formula(child, 'y_min', 'parent.y_min');
-		constraints.set_formula(child, 'z_min', 'parent.z_min');
+		constraints.set_formula(child, 'x_min', ref(parent, 'x_min'));
+		constraints.set_formula(child, 'y_min', ref(parent, 'y_min'));
+		constraints.set_formula(child, 'z_min', ref(parent, 'z_min'));
 		const half = Math.min(parent.width, parent.height, parent.depth) / 2;
 		child.set_bound('x_max', parent.x_min + half);
 		child.set_bound('y_max', parent.y_min + half);

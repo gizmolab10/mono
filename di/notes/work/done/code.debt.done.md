@@ -1,0 +1,58 @@
+# Code Debt --- Done
+
+- [x] add a color picker
+- [x] selecting often fails
+- [x] rename test -> hit_test
+- [x] algebra fails 1" + 2" -> 1'
+- [x] convert Stores into a class
+- [x] ability to export/import to/from file
+- [x] move precision and units to details
+- [x] new children spontaneously appear
+- [x] add a slider to details for line thickness
+- [x] steppers hop up and down in build notes
+- [x] convert Orientation functions into a class
+- [x] better names for attributes (x,y,z,X,Y,Z,w,h,d)
+- [x] SO should use its internal id for hierarchy/formulas
+- [x] dimensionals sometimes do not extend outward from SO
+- [x] add a controls button "show/hide dimensionals" a boolean
+- [x] show dimensions -> intersection lines turn black and get thicker
+- [x] add button "show/hide dimensionals" a boolean that render reacts to
+- [x] make the height of units system button consistent with other buttons
+- [x] add child should apply to current selection
+	- [x] **bug:** click on button -> selects root
+- [x] hide face label when face is
+	- [x] occluded
+	- [x] nearly edge on
+- [x] bugs in controls:
+	- [x] imperial when active has a white outline around the blue border and the blue border is slightly taller than the button without the blue. metric and other
+	- [x] units should render with only 1 decimal point of precision
+	- [x] 2D should render in (ahem) 2D
+- [x] convert precision into a segmented control whose segment titles depend on the units system
+	- [x] imperial: whole, 1/2, 1/4, 1/8, 1/16, 1/32, 1/64
+	- [x] others: whole, 1, 2, 3
+	- [x] constrain the SOT values accordingly
+- [x] add new child -> wrong dimensions
+	- [x] algorithm: using smallest length of parent, divide that in half, use that for all dimensions
+	- [x] assure that the child axes all align with the parent's axes
+	- [x] after adding, select the parent
+- [x] cruft
+	- [x] consolidate redundancy
+	- [x] simplify over-engineering
+	- [x] remove inconsistencies
+	- [x] ameliorate structural risks
+- [x] better edge/corner dragging: default to the selected SO
+	- [x] it now defaults to the root SO
+	- [x] rotate a child -> it changes size — removed `recompute_max_bounds` call from `rotate_object` in `Events_3D.ts`. To restore: after `quat.normalize(obj.so.orientation, obj.so.orientation);` add `if (obj.so.fixed && obj.parent) { orientation.recompute_max_bounds(obj.so); }`
+- [x] **face intersection** line segments
+	- [x] **only** for SO pairs that do not share ALL their axes
+	- [x] **ASSUME**:
+		- [x] child does not share axes
+		- [x] child extends outside parent
+		- [x] **create from reset**: add child, stretch child longer than parent, rotate child
+	- [x] compute the **dihedral** intersection line for each pair of intersecting faces (use cross product)
+	- [x] **compute the two endpoints** of each such line
+	- [x] hidden lines, etc
+		- [x] i want the rendered lines to exclude anything that is "inside" any SO
+	- [x] screen-space spatial partitioning (tiled bins or BVH) to cull face checks per edge
+		- [x] Occlusion is brute-force O(edges × faces) — every edge checks every front-facing face from every other object. Intersection lines add O(face_pairs × faces) on top. Fine for a handful of objects, but will choke at scale
+		- [x] [[spatial]]

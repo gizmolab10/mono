@@ -4,6 +4,8 @@ import { T_Hit_3D } from '../types/Enumerations';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
 import { stores } from './Stores';
+import { camera } from '../render/Camera';
+import { mat4, vec3, vec4 } from 'gl-matrix';
 
 export interface Hit_3D_Result {
 	so: Smart_Object;
@@ -13,6 +15,7 @@ export interface Hit_3D_Result {
 
 interface Cache {
 	projected: Projected[];
+	world: mat4;
 	bbox: { minX: number; minY: number; maxX: number; maxY: number };
 }
 
@@ -57,7 +60,7 @@ class Hits_3D {
 		}
 	}
 
-	update_projected(scene_id: string, projected: Projected[]) {
+	update_projected(scene_id: string, projected: Projected[], world: mat4) {
 		let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 		for (const p of projected) {
 			if (p.w < 0) continue;
@@ -66,7 +69,7 @@ class Hits_3D {
 			maxX = Math.max(maxX, p.x);
 			maxY = Math.max(maxY, p.y);
 		}
-		this.cache.set(scene_id, { projected, bbox: { minX, minY, maxX, maxY } });
+		this.cache.set(scene_id, { projected, world, bbox: { minX, minY, maxX, maxY } });
 		this.check_face_flip(scene_id, projected);
 	}
 
@@ -85,41 +88,49 @@ class Hits_3D {
 	}
 
 	hit_test(point: Point): Hit_3D_Result | null {
-		// Test selected SO first so its edges/corners take priority when overlapping
 		const selected_so = this.selection?.so ?? null;
+
+		// Selected SO's corners/edges get priority (for resizing through overlap)
 		if (selected_so) {
-			const result = this.hit_test_so(point, selected_so);
-			if (result) return result;
+			if (!selected_so.scene) return null;
+			const c = this.cache.get(selected_so.scene.id);
+			if (c) {
+				const corner = this.test_corners(point, c.projected);
+				if (corner !== -1) return { so: selected_so, type: T_Hit_3D.corner, index: corner };
+
+				const edge = this.test_edges(point, selected_so, c.projected);
+				if (edge !== -1) return { so: selected_so, type: T_Hit_3D.edge, index: edge };
+			}
 		}
+
+		// Face hits: closest front-facing face across ALL SOs (no selection priority)
+		let best: Hit_3D_Result | null = null;
+		let best_z = Infinity;
 		for (const so of this.objects) {
-			if (so === selected_so) continue;
-			const result = this.hit_test_so(point, so);
-			if (result) return result;
+			if (!so.scene?.faces) continue;
+			const c = this.cache.get(so.scene.id);
+			if (!c) continue;
+
+			// Quick reject via bbox
+			const r = this.corner_radius;
+			const b = c.bbox;
+			if (point.x < b.minX - r || point.x > b.maxX + r ||
+				point.y < b.minY - r || point.y > b.maxY + r) continue;
+
+			for (let fi = 0; fi < so.scene.faces.length; fi++) {
+				if (this.facing_front(so.scene.faces[fi], c.projected) >= 0) continue;
+				if (!this.point_in_polygon(point, so.scene.faces[fi], c.projected)) continue;
+
+				const z = this.face_depth_at(point, so.scene.faces[fi], so, c.world);
+				if (z === null) continue;
+
+				if (z < best_z) {
+					best_z = z;
+					best = { so, type: T_Hit_3D.face, index: fi };
+				}
+			}
 		}
-		return null;
-	}
-
-	private hit_test_so(point: Point, so: Smart_Object): Hit_3D_Result | null {
-		if (!so.scene) return null;
-		const c = this.cache.get(so.scene.id);
-		if (!c) return null;
-
-		// Quick reject via bbox
-		const r = this.corner_radius;
-		const b = c.bbox;
-		if (point.x < b.minX - r || point.x > b.maxX + r ||
-			point.y < b.minY - r || point.y > b.maxY + r) return null;
-
-		const corner = this.test_corners(point, c.projected);
-		if (corner !== -1) return { so, type: T_Hit_3D.corner, index: corner };
-
-		const edge = this.test_edges(point, so, c.projected);
-		if (edge !== -1) return { so, type: T_Hit_3D.edge, index: edge };
-
-		const face = this.test_faces(point, so, c.projected);
-		if (face !== -1) return { so, type: T_Hit_3D.face, index: face };
-
-		return null;
+		return best;
 	}
 
 	// Convert corner/edge hit to best face for hover
@@ -165,23 +176,61 @@ class Hits_3D {
 	private test_edges(point: Point, so: Smart_Object, projected: Projected[]): number {
 		if (!so.scene) return -1;
 		const r2 = this.edge_radius * this.edge_radius;
+		let best = -1;
+		let best_dist = r2;
 		for (let i = 0; i < so.scene.edges.length; i++) {
 			const [a, b] = so.scene.edges[i];
 			const pa = projected[a], pb = projected[b];
 			if (pa.w < 0 || pb.w < 0) continue;
-			if (this.proximity(point, pa, pb) < r2) return i;
+			const d = this.proximity(point, pa, pb);
+			if (d < best_dist) {
+				best_dist = d;
+				best = i;
+			}
 		}
-		return -1;
+		return best;
 	}
 
-	private test_faces(point: Point, so: Smart_Object, projected: Projected[]): number {
-		if (!so.scene?.faces) return -1;
-		for (let i = 0; i < so.scene.faces.length; i++) {
-			const face = so.scene.faces[i];
-			if (this.facing_front(face, projected) >= 0) continue;
-			if (this.point_in_polygon(point, face, projected)) return i;
+	// ===== Depth =====
+
+	/** Projected z of the mouse ray's intersection with a face plane.
+	 *  Uses camera ray → world-space face plane intersection → MVP projection. */
+	private face_depth_at(point: Point, face: number[], so: Smart_Object, world: mat4): number | null {
+		const verts = so.vertices;
+
+		// Build face plane in world space from first 3 vertices
+		const corners: vec3[] = [];
+		for (const vi of face) {
+			const lv = verts[vi];
+			const wv = vec4.create();
+			vec4.transformMat4(wv, [lv.x, lv.y, lv.z, 1], world);
+			corners.push(vec3.fromValues(wv[0], wv[1], wv[2]));
 		}
-		return -1;
+		const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);
+		const e2 = vec3.sub(vec3.create(), corners[3], corners[0]);
+		const n = vec3.cross(vec3.create(), e1, e2);
+		vec3.normalize(n, n);
+
+		// Ray through mouse point
+		const ray = camera.screen_to_ray(point.x, point.y);
+		const denom = vec3.dot(ray.dir, n);
+		if (Math.abs(denom) < 0.0001) return null;
+
+		const diff = vec3.create();
+		vec3.subtract(diff, corners[0], ray.origin);
+		const t = vec3.dot(diff, n) / denom;
+		if (t < 0) return null;
+
+		// World-space intersection point
+		const hit = vec3.create();
+		vec3.scaleAndAdd(hit, ray.origin, ray.dir, t);
+
+		// Project to clip space to get z
+		const vp = mat4.create();
+		mat4.multiply(vp, camera.projection, camera.view);
+		const clip = vec4.create();
+		vec4.transformMat4(clip, [hit[0], hit[1], hit[2], 1], vp);
+		return clip[2] / clip[3]; // NDC z
 	}
 
 	// ===== Geometry helpers =====

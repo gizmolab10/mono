@@ -18,16 +18,16 @@ class Constraints {
 
 	// ── resolve / write ──
 
-	/** Resolve a reference like wall.height to its current mm value */
-	resolve(object: string, attribute: string): number {
-		const so = this.find_so(object);
+	/** Resolve a reference like NEWxxx.x_min to its current mm value */
+	resolve(id: string, attribute: string): number {
+		const so = this.find_so(id);
 		if (!so) return 0;
 		return so.get_bound(attribute as Bound);
 	}
 
 	/** Write a value to an SO attribute */
-	write(object: string, attribute: string, value: number): void {
-		const so = this.find_so(object);
+	write(id: string, attribute: string, value: number): void {
+		const so = this.find_so(id);
 		if (!so) return;
 		so.set_bound(attribute as Bound, value);
 	}
@@ -48,7 +48,7 @@ class Constraints {
 
 		// Check for cycles before accepting
 		const formulas = this.build_formula_map();
-		const key = nodes.ref_key(so.name, bound);
+		const key = nodes.ref_key(so.id, bound);
 		formulas.set(key, compiled);
 		const cycle = evaluator.detect_cycle(formulas);
 		if (cycle) {
@@ -85,7 +85,7 @@ class Constraints {
 			for (const attr of Object.values(so.attributes_dict_byName)) {
 				if (!attr.compiled) continue;
 				// Does this formula reference the changed SO?
-				if (!this.formula_references(attr.compiled, changed_so.name)) continue;
+				if (!this.formula_references(attr.compiled, changed_so.id)) continue;
 				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
 				updated = true;
 			}
@@ -111,9 +111,9 @@ class Constraints {
 
 	// ── helpers ──
 
-	private find_so(name: string): Smart_Object | null {
+	private find_so(id: string): Smart_Object | null {
 		const all = scene.get_all();
-		const match = all.find(o => o.so.name === name);
+		const match = all.find(o => o.so.id === id);
 		return match?.so ?? null;
 	}
 
@@ -123,19 +123,19 @@ class Constraints {
 		for (const o of all) {
 			for (const attr of Object.values(o.so.attributes_dict_byName)) {
 				if (attr.compiled) {
-					map.set(nodes.ref_key(o.so.name, attr.name), attr.compiled);
+					map.set(nodes.ref_key(o.so.id, attr.name), attr.compiled);
 				}
 			}
 		}
 		return map;
 	}
 
-	private formula_references(node: Node, so_name: string): boolean {
+	private formula_references(node: Node, so_id: string): boolean {
 		switch (node.type) {
 			case 'literal': return false;
-			case 'reference': return node.object === so_name;
-			case 'unary': return this.formula_references(node.operand, so_name);
-			case 'binary': return this.formula_references(node.left, so_name) || this.formula_references(node.right, so_name);
+			case 'reference': return node.object === so_id;
+			case 'unary': return this.formula_references(node.operand, so_id);
+			case 'binary': return this.formula_references(node.left, so_id) || this.formula_references(node.right, so_id);
 		}
 	}
 }

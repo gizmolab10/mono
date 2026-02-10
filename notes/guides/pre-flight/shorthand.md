@@ -38,12 +38,13 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 
 ## Abbreviations
 
-| Abbreviation | Meaning |
-|----|----|
-| `cb` | Use checkboxes for this |
-| `ex` | Execute mode — skip proposals, just do it |
-| `rs` | Reserved mode — propose before file changes |
-| `m` | Milestone |
-| `m<#>` | Milestone # |
-| `ni` | No improvement, try something different |
-| `pac` | pros and cons |
+| Abbreviation | Meaning                                     |
+| ------------ | ------------------------------------------- |
+| `cb`         | Use checkboxes for this                     |
+| `ex`         | Execute mode — skip proposals, just do it   |
+| `rs`         | Reserved mode — propose before file changes |
+| `m`          | Milestone                                   |
+| `m<#>`       | Milestone #                                 |
+| `ni`         | No improvement, try something different     |
+| `pac`        | pros and cons                               |
+| `cd`         | read code.debt.md                           |

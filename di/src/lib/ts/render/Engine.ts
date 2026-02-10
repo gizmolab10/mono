@@ -8,6 +8,7 @@ import { Smart_Object } from '../runtime';
 import { constraints } from '../algebra';
 import { colors } from '../draw/Colors';
 import { quat, vec3 } from 'gl-matrix';
+import { drag } from '../editors/Drag';
 import { e3 } from '../signals';
 
 class Engine {
@@ -80,16 +81,17 @@ class Engine {
           faces: this.faces,
           scale: result.scale,
           color: colors.edge_color_rgba(),
+          ...(data.position ? { position: vec3.fromValues(data.position[0], data.position[1], data.position[2]) } : {}),
         });
         so.scene = so_scene;
         hits_3d.register(so);
         smart_objects.push(so);
       }
-      // Restore parent refs by name
+      // Restore parent refs by id
       for (let i = 0; i < saved.smart_objects.length; i++) {
-        const parent_name = saved.smart_objects[i].parent_name;
-        if (!parent_name) continue;
-        const parent_so = smart_objects.find(so => so.name === parent_name);
+        const parent_id = saved.smart_objects[i].parent_id;
+        if (!parent_id) continue;
+        const parent_so = smart_objects.find(so => so.id === parent_id);
         if (parent_so?.scene) {
           smart_objects[i].scene!.parent = parent_so.scene;
         }
@@ -113,18 +115,19 @@ class Engine {
       smart_objects.push(so);
     }
 
-    // Restore root SO by name, or default to first
-    const saved_name = saved?.root_name ?? '';
-    const root_so = smart_objects.find(so => so.name === saved_name) ?? smart_objects[0];
+    // Restore root SO by id, or default to first
+    const saved_id = saved?.root_id ?? '';
+    const root_so = smart_objects.find(so => so.id === saved_id) ?? smart_objects[0];
     this.root_scene = root_so.scene;
     stores.w_scale.set(this.root_scene?.scale ?? 1);
     stores.w_root_so.set(root_so);
+    scenes.root_id = root_so.id;
     scenes.root_name = root_so.name;
     stores.w_all_sos.set(smart_objects);
 
-    // Restore selection (SO + face) by name
-    if (saved?.selected_name != null) {
-      const sel_so = smart_objects.find(so => so.name === saved.selected_name);
+    // Restore selection (SO + face) by id
+    if (saved?.selected_id != null) {
+      const sel_so = smart_objects.find(so => so.id === saved.selected_id);
       if (sel_so && saved.selected_face != null) {
         hits_3d.set_selection({ so: sel_so, type: T_Hit_3D.face, index: saved.selected_face });
       }
@@ -143,8 +146,8 @@ class Engine {
     e3.set_drag_handler((prev, curr) => {
       const target = hits_3d.selection?.so.scene ?? this.root_scene;
       if (!target) return;
-      if (!e3.edit_selection(prev, curr)) {
-        e3.rotate_object(target, prev, curr);
+      if (!drag.edit_selection(prev, curr)) {
+        drag.rotate_object(target, prev, curr);
       }
       scenes.save();
     });
@@ -152,7 +155,7 @@ class Engine {
     // Input: scroll wheel scales entire rendering
     e3.set_wheel_handler((delta, fine) => {
       if (!this.root_scene) return;
-      e3.scale_object(this.root_scene, delta, fine);
+      drag.scale_object(this.root_scene, delta, fine);
       stores.w_scale.set(this.root_scene.scale);
     });
 
@@ -168,13 +171,13 @@ class Engine {
 
   scale_up(): void {
     if (!this.root_scene) return;
-    e3.scale_object(this.root_scene, 1, false);
+    drag.scale_object(this.root_scene, 1, false);
     stores.w_scale.set(this.root_scene.scale);
   }
 
   scale_down(): void {
     if (!this.root_scene) return;
-    e3.scale_object(this.root_scene, -1, false);
+    drag.scale_object(this.root_scene, -1, false);
     stores.w_scale.set(this.root_scene.scale);
   }
 

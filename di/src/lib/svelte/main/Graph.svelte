@@ -4,13 +4,13 @@
 	import { colors } from '../../ts/draw/Colors';
 	import { components } from '../../ts/managers/Components';
 	import { hits } from '../../ts/managers/Hits';
-	import { editor } from '../../ts/managers/Editor';
+	import { dimensions } from '../../ts/editors/Dimension';
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import { engine } from '../../ts/render';
 
 	const { w_text_color } = colors;
-	const { w_editing } = editor;
+	const { w_editing } = dimensions;
 	const GRAPH_HID = 1;
 
 	let canvas      : HTMLCanvasElement;
@@ -40,14 +40,14 @@
 
 	function on_dim_keydown(e: KeyboardEvent) {
 		if (e.key === 'Enter') {
-			editor.commit((e.target as HTMLInputElement).value);
+			dimensions.commit((e.target as HTMLInputElement).value);
 		} else if (e.key === 'Escape') {
-			editor.cancel();
+			dimensions.cancel();
 		}
 	}
 
 	function on_dim_blur() {
-		editor.cancel();
+		dimensions.cancel();
 	}
 
 	onMount(() => {

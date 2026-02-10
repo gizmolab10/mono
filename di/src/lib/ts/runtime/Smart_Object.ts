@@ -268,11 +268,11 @@ export default class Smart_Object extends Identifiable {
 		child.set_bound('y_max', this.y_min + half);
 		child.set_bound('z_max', this.z_min + half);
 
-		// Min bounds: formulas referencing parent origin (caller applies via constraints)
+		// Min bounds: formulas referencing parent by id (caller applies via constraints)
 		const formulas: Partial<Record<Bound, string>> = {
-			x_min: `${this.name}.x_min`,
-			y_min: `${this.name}.y_min`,
-			z_min: `${this.name}.z_min`,
+			x_min: `${this.id}.x_min`,
+			y_min: `${this.id}.y_min`,
+			z_min: `${this.id}.z_min`,
 		};
 
 		return { child, formulas };
@@ -282,12 +282,13 @@ export default class Smart_Object extends Identifiable {
 	// SERIALIZATION
 	// ═══════════════════════════════════════════════════════════════════
 
-	serialize(): { name: string; bounds: Record<Bound, number>; orientation: number[]; scale: number; fixed?: boolean; formulas?: Record<string, string> } {
+	serialize(): { id: string; name: string; bounds: Record<Bound, number>; orientation: number[]; scale: number; fixed?: boolean; formulas?: Record<string, string> } {
 		const formulas: Record<string, string> = {};
 		for (const attr of Object.values(this.attributes_dict_byName)) {
 			if (attr.formula) formulas[attr.name] = attr.formula;
 		}
 		return {
+			id: this.id,
 			name: this.name,
 			bounds: {
 				x_min: this.x_min, x_max: this.x_max,
@@ -301,8 +302,9 @@ export default class Smart_Object extends Identifiable {
 		};
 	}
 
-	static deserialize(data: { name: string; bounds: Record<Bound, number>; orientation?: number[]; scale?: number; fixed?: boolean; formulas?: Record<string, string> }): { so: Smart_Object; scale: number } {
+	static deserialize(data: { id?: string; name: string; bounds: Record<Bound, number>; orientation?: number[]; scale?: number; fixed?: boolean; formulas?: Record<string, string> }): { so: Smart_Object; scale: number } {
 		const so = new Smart_Object(data.name);
+		if (data.id) so.setID(data.id);
 		for (const [key, value] of Object.entries(data.bounds)) {
 			so.set_bound(key as Bound, value);
 		}

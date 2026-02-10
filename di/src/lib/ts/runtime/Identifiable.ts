@@ -11,7 +11,7 @@ export default class Identifiable {
 		this.id = id;
 	}
 
-	static newID(prefix: string = 'NEW'): string { return prefix + Identifiable.removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
+	static newID(prefix: string = 'di'): string { return prefix + Identifiable.removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 	equals(other: Identifiable | null | undefined): boolean { return !!other && this.id == other.id; }
 
 	static removeAll(item: string, from: string): string {

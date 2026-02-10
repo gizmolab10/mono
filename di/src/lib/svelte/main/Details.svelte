@@ -1,10 +1,13 @@
 <script lang='ts'>
-	import { T_Hit_3D, T_Units } from '../../ts/types/Enumerations';
+	import { T_Hit_3D, T_Hit_Target, T_Units } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import { hits_3d, scenes, stores } from '../../ts/managers';
+	import { hits, hits_3d, scenes, stores } from '../../ts/managers';
+	import S_Hit_Target from '../../ts/state/S_Hit_Target';
 	import { w_unit_system } from '../../ts/types/Units';
+	import S_Mouse from '../../ts/state/S_Mouse';
 	import { colors } from '../../ts/draw/Colors';
 	import { engine } from '../../ts/render';
+	import { onMount } from 'svelte';
 	const { w_text_color, w_background_color, w_separator_color } = colors;
 	const { w_root_so, w_all_sos, w_precision, w_line_thickness, w_edge_color, w_selection } = stores;
 
@@ -41,6 +44,33 @@
 		}
 		scenes.save();
 	}
+
+	// ── add child button hit target ──
+
+	let add_child_element: HTMLElement | null = $state(null);
+	const add_child_target = new S_Hit_Target(T_Hit_Target.button, 'add-child');
+
+	$effect(() => {
+		if (add_child_element) {
+			// Track reactive values that shift layout above this button
+			void $w_all_sos;
+			void selected_so;
+			// Re-register after a tick so the DOM has reflowed
+			requestAnimationFrame(() => {
+				add_child_target.set_html_element(add_child_element);
+			});
+			add_child_target.handle_s_mouse = (s_mouse: S_Mouse) => {
+				if (s_mouse.isDown) engine.add_child_so();
+				return true;
+			};
+		}
+	});
+
+	onMount(() => {
+		return () => {
+			hits.delete_hit_target(add_child_target);
+		};
+	});
 </script>
 
 <div
@@ -73,7 +103,7 @@
 		<p>No object selected</p>
 	{/if}
 	<div class='settings'>
-		<button class='action-btn' onclick={() => engine.add_child_so()}>add child</button>
+		<button class='action-btn' bind:this={add_child_element}>add child</button>
 	</div>
 	<hr style:border-color={$w_separator_color} />
 	<div class='settings'>
