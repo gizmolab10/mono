@@ -290,8 +290,7 @@ class Render {
       if (guidance_edges?.has(edge_key)) {
         this.ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
       } else {
-        const alpha = is_2d ? 1 : 0.3 + 0.7 * (1 - (a.z + b.z) / 2);
-        this.ctx.strokeStyle = `${obj.color}${Math.max(0.2, Math.min(1, alpha)).toFixed(2)})`;
+        this.ctx.strokeStyle = `${obj.color}1)`;
       }
 
       if (solid && world) {
@@ -431,8 +430,7 @@ class Render {
     const s2 = this.project_vertex(new Point3(end[0], end[1], end[2]), identity);
     if (s1.w < 0 || s2.w < 0) return;
 
-    const alpha = 0.3 + 0.7 * (1 - (s1.z + s2.z) / 2);
-    ctx.strokeStyle = `${color}${Math.max(0.2, Math.min(1, alpha)).toFixed(2)})`;
+    ctx.strokeStyle = `${color}1)`;
 
     // Intersection lines: skip the two coplanar generating faces, not all faces from both objects
     const visible = this.clip_segment_for_occlusion(

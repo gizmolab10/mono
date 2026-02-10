@@ -5,6 +5,7 @@ import { hits_3d } from '../managers/Hits_3D';
 import type { Dictionary } from '../types/Types';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
+import { drag } from '../editors/Drag';
 import S_Mouse from '../state/S_Mouse';
 import RBush from 'rbush';
 
@@ -60,10 +61,11 @@ export default class Hits {
 		const matches = this.targets_atPoint(point);
 		const target = this.targetOf_highest_precedence(matches) ?? matches[0];
 
-		// If no 2D target, try 3D
+		// If no 2D target, try 3D — only on mousedown, and only if Events_3D didn't already handle it
 		if (!target) {
+			if (!s_mouse.isDown || drag.has_target) return false;
 			const hit_3d = hits_3d.hit_test(point);
-			if (hit_3d && s_mouse.isDown) {
+			if (hit_3d) {
 				hits_3d.set_selection(hit_3d);
 				return true;
 			}

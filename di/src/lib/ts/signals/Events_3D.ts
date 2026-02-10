@@ -47,7 +47,7 @@ class Events_3D {
       }
     });
 
-    window.addEventListener('mouseup', () => {
+    document.addEventListener('mouseup', () => {
       if (!this.did_drag && this.mouse_in_canvas) {
         // Click (no drag) — check dimension rects first
         const dim_hit = dimensions.hit_test(this.last_canvas_position.x, this.last_canvas_position.y);

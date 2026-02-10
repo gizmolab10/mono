@@ -57,27 +57,40 @@ class Drag {
 	/** Fixed plane + anchor for edge/corner stretch drags. */
 	private stretch_anchor: Stretch_Anchor | null = null;
 
+	/** Set on mousedown for immediate edge highlight before first drag frame. */
+	private stretch_face: { scene: O_Scene; face_index: number } | null = null;
+
 	// ── lifecycle ──
 
 	set_target(hit: Hit_3D_Result | null): void {
 		this.target = hit;
 		this.face_anchor = null;
 		this.stretch_anchor = null;
+		// Immediate highlight: if clicking an edge/corner on a selected face, store for guidance rendering
+		const sel = hits_3d.selection;
+		if (hit && sel && (hit.type === T_Hit_3D.edge || hit.type === T_Hit_3D.corner) && sel.so.scene) {
+			this.stretch_face = { scene: sel.so.scene, face_index: sel.index };
+		} else {
+			this.stretch_face = null;
+		}
 	}
 
 	clear(): void {
 		this.target = null;
 		this.face_anchor = null;
 		this.stretch_anchor = null;
+		this.stretch_face = null;
 	}
 
 	get has_target(): boolean { return this.target !== null; }
 
-	/** During a face drag, returns the parent scene + face index being used as
-	 *  the guidance plane.  null when no face drag is active. */
+	/** During a drag, returns the scene + face index whose edges should be
+	 *  highlighted.  Face drag → parent's guidance plane.  Edge/corner drag →
+	 *  selected face on the SO being stretched.  null when inactive. */
 	get guidance_face(): { scene: O_Scene; face_index: number } | null {
-		if (!this.face_anchor) return null;
-		return { scene: this.face_anchor.parent_scene, face_index: this.face_anchor.face_index };
+		if (this.face_anchor) return { scene: this.face_anchor.parent_scene, face_index: this.face_anchor.face_index };
+		if (this.stretch_anchor) return { scene: this.stretch_anchor.scene, face_index: this.stretch_anchor.face_index };
+		return this.stretch_face;
 	}
 
 	// ── object transforms ──

@@ -70,7 +70,13 @@ export class Colors {
 		const r = parseInt(hex.slice(1, 3), 16);
 		const g = parseInt(hex.slice(3, 5), 16);
 		const b = parseInt(hex.slice(5, 7), 16);
-		return `rgba(${r}, ${g}, ${b},`;
+		// Desaturate: mix toward luminance gray
+		const gray = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+		const mix = 0.4;  // 0 = full color, 1 = full gray
+		const dr = Math.round(r + (gray - r) * mix);
+		const dg = Math.round(g + (gray - g) * mix);
+		const db = Math.round(b + (gray - b) * mix);
+		return `rgba(${dr}, ${dg}, ${db},`;
 	}
 
 	blend(color : string, background : string, saturation : number = 7) : string {

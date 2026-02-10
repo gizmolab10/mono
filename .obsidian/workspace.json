@@ -50,7 +50,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/drag.md",
+                "file": "di/notes/work/code.debt.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of drag"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -213,10 +213,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "b3903cece99a45fc",
+  "active": "ffdb7bac37c87e46",
   "lastOpenFiles": [
-    "di/notes/work/code.debt.md",
     "di/notes/work/drag.md",
+    "di/notes/work/code.debt.md",
     "notes/guides/pre-flight/shorthand.md",
     "di/notes/work/done/code.debt.done.md",
     "di/notes/work/code.debt copy.md",

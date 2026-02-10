@@ -3,6 +3,7 @@
 offer a proposal for the first unchecked item
 
 
+- [ ] delete selected SO
 - [ ] hover/click should hit the front most SO
 	- [ ] performance analysis?
 - [ ] ability to drag the current SO
