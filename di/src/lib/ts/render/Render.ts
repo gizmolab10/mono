@@ -855,8 +855,10 @@ class Render {
       const so = obj.so;
       const world_matrix = this.get_world_matrix(obj);
 
-      // In 2D mode, skip depth (z) — only show width and height
-      const all_axes: Axis[] = stores.current_view_mode() === '2d' ? ['x', 'y'] : ['x', 'y', 'z'];
+      // In 2D mode, show only the two axes visible on the front face
+      const is_2d_mode = stores.current_view_mode() === '2d';
+      const front_face = is_2d_mode ? hits_3d.front_most_face(so) : -1;
+      const all_axes: Axis[] = (is_2d_mode && front_face >= 0) ? so.face_axes(front_face) : ['x', 'y', 'z'];
       for (const axis of all_axes) {
         this.render_axis_dimension(so, axis, projected, world_matrix);
       }
@@ -869,58 +871,61 @@ class Render {
     projected: Projected[],
     world_matrix: mat4
   ): void {
-    // Find the best edge for this axis
-    const edge_info = this.find_best_edge_for_axis(so, axis, projected);
-    if (!edge_info) return;
+    // Find all silhouette edge candidates for this axis (sorted best → worst)
+    const candidates = this.find_best_edge_for_axis(so, axis, projected);
+    if (!candidates || candidates.length === 0) return;
 
-    const { v1_idx, v2_idx } = edge_info;
     const value = axis === 'x' ? so.width : axis === 'y' ? so.height : so.depth;
 
-    // Get witness direction in screen space (perpendicular to edge on screen,
-    // pointing away from object center). Fixed pixel distances regardless of scale.
-    let witness_dir = this.edge_witness_direction(so, v1_idx, v2_idx, axis, projected, world_matrix);
+    // Try each candidate; stop at the first that isn't occluded
+    for (const { v1_idx, v2_idx } of candidates) {
+      // Get witness direction in screen space (perpendicular to edge on screen,
+      // pointing away from object center). Fixed pixel distances regardless of scale.
+      let witness_dir = this.edge_witness_direction(so, v1_idx, v2_idx, axis, projected, world_matrix);
 
-    // Pick direction that points away from cube center
-    const verts = so.vertices;
-    const v1 = verts[v1_idx], v2 = verts[v2_idx];
-    const edge_mid = vec3.fromValues((v1[0] + v2[0]) / 2, (v1[1] + v2[1]) / 2, (v1[2] + v2[2]) / 2);
-    // Vector from SO center to edge midpoint — determines "outward"
-    const cx = (so.x_min + so.x_max) / 2;
-    const cy = (so.y_min + so.y_max) / 2;
-    const cz = (so.z_min + so.z_max) / 2;
-    const outward = vec3.fromValues(edge_mid[0] - cx, edge_mid[1] - cy, edge_mid[2] - cz);
-    const dot = vec3.dot(witness_dir, outward);
-    if (dot < 0) {
-      witness_dir = vec3.negate(vec3.create(), witness_dir);
+      // Pick direction that points away from cube center
+      const verts = so.vertices;
+      const v1 = verts[v1_idx], v2 = verts[v2_idx];
+      const edge_mid = vec3.fromValues((v1[0] + v2[0]) / 2, (v1[1] + v2[1]) / 2, (v1[2] + v2[2]) / 2);
+      // Vector from SO center to edge midpoint — determines "outward"
+      const cx = (so.x_min + so.x_max) / 2;
+      const cy = (so.y_min + so.y_max) / 2;
+      const cz = (so.z_min + so.z_max) / 2;
+      const outward = vec3.fromValues(edge_mid[0] - cx, edge_mid[1] - cy, edge_mid[2] - cz);
+      const dot = vec3.dot(witness_dir, outward);
+      if (dot < 0) {
+        witness_dir = vec3.negate(vec3.create(), witness_dir);
+      }
+
+      // Project edge endpoints to screen
+      const p1 = projected[v1_idx], p2 = projected[v2_idx];
+      if (p1.w < 0 || p2.w < 0) continue;
+
+      // Witness direction in screen space: project witness_dir via world matrix
+      const origin_3d = vec3.create();
+      const p_origin = this.project_vertex(origin_3d, world_matrix);
+      const p_witness = this.project_vertex(witness_dir, world_matrix);
+      let wx = p_witness.x - p_origin.x, wy = p_witness.y - p_origin.y;
+      const wlen = Math.sqrt(wx * wx + wy * wy);
+      if (wlen < 0.001) continue;
+      wx /= wlen; wy /= wlen;
+
+      // Fixed pixel distances
+      const gap_px = 4;        // gap from edge to witness line start
+      const dist_px = 20;      // edge to dimension line
+      const ext_px = 8;        // extension past dimension line
+
+      // Build all 6 screen-space points
+      const pw1_start: Projected = { x: p1.x + wx * gap_px, y: p1.y + wy * gap_px, z: p1.z, w: p1.w };
+      const pw2_start: Projected = { x: p2.x + wx * gap_px, y: p2.y + wy * gap_px, z: p2.z, w: p2.w };
+      const pw1_end: Projected = { x: p1.x + wx * (dist_px + ext_px), y: p1.y + wy * (dist_px + ext_px), z: p1.z, w: p1.w };
+      const pw2_end: Projected = { x: p2.x + wx * (dist_px + ext_px), y: p2.y + wy * (dist_px + ext_px), z: p2.z, w: p2.w };
+      const pd1: Projected = { x: p1.x + wx * dist_px, y: p1.y + wy * dist_px, z: p1.z, w: p1.w };
+      const pd2: Projected = { x: p2.x + wx * dist_px, y: p2.y + wy * dist_px, z: p2.z, w: p2.w };
+
+      const drawn = this.draw_dimension_3d(pw1_start, pw1_end, pw2_start, pw2_end, pd1, pd2, value, axis, so);
+      if (drawn) break;
     }
-
-    // Project edge endpoints to screen
-    const p1 = projected[v1_idx], p2 = projected[v2_idx];
-    if (p1.w < 0 || p2.w < 0) return;
-
-    // Witness direction in screen space: project witness_dir via world matrix
-    const origin_3d = vec3.create();
-    const p_origin = this.project_vertex(origin_3d, world_matrix);
-    const p_witness = this.project_vertex(witness_dir, world_matrix);
-    let wx = p_witness.x - p_origin.x, wy = p_witness.y - p_origin.y;
-    const wlen = Math.sqrt(wx * wx + wy * wy);
-    if (wlen < 0.001) return;
-    wx /= wlen; wy /= wlen;
-
-    // Fixed pixel distances
-    const gap_px = 4;        // gap from edge to witness line start
-    const dist_px = 20;      // edge to dimension line
-    const ext_px = 8;        // extension past dimension line
-
-    // Build all 6 screen-space points
-    const pw1_start: Projected = { x: p1.x + wx * gap_px, y: p1.y + wy * gap_px, z: p1.z, w: p1.w };
-    const pw2_start: Projected = { x: p2.x + wx * gap_px, y: p2.y + wy * gap_px, z: p2.z, w: p2.w };
-    const pw1_end: Projected = { x: p1.x + wx * (dist_px + ext_px), y: p1.y + wy * (dist_px + ext_px), z: p1.z, w: p1.w };
-    const pw2_end: Projected = { x: p2.x + wx * (dist_px + ext_px), y: p2.y + wy * (dist_px + ext_px), z: p2.z, w: p2.w };
-    const pd1: Projected = { x: p1.x + wx * dist_px, y: p1.y + wy * dist_px, z: p1.z, w: p1.w };
-    const pd2: Projected = { x: p2.x + wx * dist_px, y: p2.y + wy * dist_px, z: p2.z, w: p2.w };
-
-    this.draw_dimension_3d(pw1_start, pw1_end, pw2_start, pw2_end, pd1, pd2, value, axis, so);
   }
 
   // Algorithm B: Pick the witness direction most perpendicular to the edge on screen.
@@ -968,14 +973,15 @@ class Render {
     return so.axis_vector(best_axis);
   }
 
-  // Algorithm A: Find the silhouette edge for a given axis.
+  // Algorithm A: Find silhouette edges for a given axis, sorted best → worst.
   // A silhouette edge sits on the circumference — one adjacent face is front-facing,
   // the other is back-facing. There are always exactly 2 per axis; prefer the front one.
+  // Returns all candidates so the caller can fall back if the best is occluded.
   private find_best_edge_for_axis(
     so: Smart_Object,
     axis: Axis,
     projected: Projected[]
-  ): { p1: Projected; p2: Projected; v1_idx: number; v2_idx: number } | null {
+  ): { v1_idx: number; v2_idx: number }[] | null {
     if (!so.scene?.faces) return null;
     const verts = so.vertices;
     const faces = so.scene.faces;
@@ -1033,11 +1039,7 @@ class Render {
       return wa - wb;  // most negative first
     });
 
-    const best = silhouettes[0];
-    const p1 = projected[best.v1], p2 = projected[best.v2];
-    if (p1.w < 0 || p2.w < 0) return null;
-
-    return { p1, p2, v1_idx: best.v1, v2_idx: best.v2 };
+    return silhouettes.map(s => ({ v1_idx: s.v1, v2_idx: s.v2 }));
   }
 
   // Determine which axis an edge runs along (or null if diagonal)
@@ -1130,6 +1132,7 @@ class Render {
     return false;
   }
 
+  /** Draw a dimension line. Returns true if drawn, false if skipped (occluded, clipped, etc.). */
   private draw_dimension_3d(
     w1_start: Projected, w1_end: Projected,
     w2_start: Projected, w2_end: Projected,
@@ -1137,9 +1140,9 @@ class Render {
     value: number,
     axis: Axis,
     so: Smart_Object
-  ): void {
+  ): boolean {
     // Check all points are in front of camera
-    if (w1_start.w < 0 || w1_end.w < 0 || w2_start.w < 0 || w2_end.w < 0 || d1.w < 0 || d2.w < 0) return;
+    if (w1_start.w < 0 || w1_end.w < 0 || w2_start.w < 0 || w2_end.w < 0 || d1.w < 0 || d2.w < 0) return false;
 
     const ctx = this.ctx;
 
@@ -1154,11 +1157,11 @@ class Render {
     const dim_z = (d1.z + d2.z) / 2;
 
     // Skip if occluded by a different SO's face
-    if (this.dimension_occluded(midX, midY, textWidth, textHeight, dim_z, so.id)) return;
+    if (this.dimension_occluded(midX, midY, textWidth, textHeight, dim_z, so.id)) return false;
 
     const dx = d2.x - d1.x, dy = d2.y - d1.y;
     const lineLen = Math.sqrt(dx * dx + dy * dy);
-    if (lineLen < 1) return;
+    if (lineLen < 1) return false;
     const ux = dx / lineLen, uy = dy / lineLen;
 
     // Algorithm C: compute gap as projected text bounding box onto dimension line
@@ -1169,7 +1172,7 @@ class Render {
     // Three cases based on available space
     if (lineLen < gap) {
       // Case 3: can't fit text at all — hide (including witness lines)
-      return;
+      return false;
     }
 
     // Witness lines (only drawn if dimensional is visible)
@@ -1234,6 +1237,7 @@ class Render {
       w: textWidth, h: textHeight,
       z: (d1.z + d2.z) / 2,
     });
+    return true;
   }
 
   private draw_arrow(x: number, y: number, dx: number, dy: number): void {

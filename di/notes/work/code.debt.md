@@ -8,7 +8,7 @@ offer a proposal for the first unchecked item
 	- [x] wrong face
 	- [x] wrong twist
 	- [x] child projections wrong
-	- [ ] missing some dimensionals
+	- [x] missing some dimensionals
 - [ ] add ability to edit face label
 - [ ] add angulars (eq to dimenionals but for angles)
 - [ ] remove border around edit in 3d

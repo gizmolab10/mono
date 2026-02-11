@@ -53,6 +53,14 @@ Mouse drag in 2D doesn't free-rotate. It switches which face is front-facing wit
 
 5. **Reset scratch** — after snap, `scratch_orientation` and `snapped_orientation` are set to the snap target, so subsequent drags start from the new face.
 
+### Dimensionals
+
+Two 2D-specific behaviors in the dimensional rendering:
+
+1. **Face-aware axis selection** — in 2D, only the two axes that lie in the front face's plane are shown. `so.face_axes(front_most_face(so))` returns the pair (e.g. top face → `['x', 'z']`, front face → `['x', 'y']`). The depth axis is excluded.
+
+2. **Silhouette fallback** — `find_best_edge_for_axis` returns all silhouette candidates sorted by front-face winding. `render_axis_dimension` tries each in order. If the best edge's dimensional is occluded by another SO's face (common for children sitting on a parent), the opposite silhouette edge is tried — its witness line points away from the occluding face.
+
 ## Key Decisions
 
 ### Normal alignment over winding magnitude
@@ -88,7 +96,7 @@ The snap animation uses `t += 0.15` per frame with `1 - (1-t)²` easing — fast
 ## Files
 
 - `Engine.ts` — `toggle_view_mode()`, `straighten()`, `FACE_SNAP_QUATS`, `rotate_2d()`, `tick_snap_animation()`, `scratch_orientation`, `snapped_orientation`, `snap_anim`
-- `Render.ts` — 5 guard changes enabling 3D occlusion in 2D (lines ~90, ~129, ~182, ~189, ~286)
+- `Render.ts` — 5 guard changes enabling 3D occlusion in 2D; `render_dimensions()`, `find_best_edge_for_axis()`, `render_axis_dimension()`
 - `Hits_3D.ts` — `front_most_face()`
 - `Camera.ts` — `set_ortho()`, `set_position()`
-- `Smart_Object.ts` — `face_normal()`, `FACE_NORMALS`
+- `Smart_Object.ts` — `face_normal()`, `FACE_NORMALS`, `face_axes()`, `face_fixed_axis()`
