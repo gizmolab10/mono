@@ -324,7 +324,10 @@ class Drag {
 			(so.y_min + so.y_max) / 2,
 			(so.z_min + so.z_max) / 2,
 		];
-		const orientation = stores.current_view_mode() === '2d' ? quat.create() : so.orientation;
+		// 2D: flatten SO toward camera, retaining in-plane rotation
+		const orientation = stores.current_view_mode() === '2d'
+			? this.flatten_orientation(so.orientation)
+			: so.orientation;
 		const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
 
 		// Rotate around the SO's exact 3D center: translate to center, rotate, translate back
@@ -351,6 +354,33 @@ class Drag {
 		}
 
 		return local;
+	}
+
+	/** Flatten orientation for 2D: swing-twist decomposition around the
+	 *  local axis most aligned with the camera, keeping only the twist. */
+	private flatten_orientation(q: quat): quat {
+		const cam_fwd = vec3.create();
+		vec3.subtract(cam_fwd, camera.center_pos, camera.eye);
+		vec3.normalize(cam_fwd, cam_fwd);
+
+		const inv_q = quat.create();
+		quat.invert(inv_q, q);
+		const local_fwd = vec3.create();
+		vec3.transformQuat(local_fwd, cam_fwd, inv_q);
+
+		const abs_x = Math.abs(local_fwd[0]);
+		const abs_y = Math.abs(local_fwd[1]);
+		const abs_z = Math.abs(local_fwd[2]);
+
+		let twist: quat;
+		if (abs_x >= abs_y && abs_x >= abs_z) {
+			twist = quat.normalize(quat.create(), quat.fromValues(q[0], 0, 0, q[3]));
+		} else if (abs_y >= abs_z) {
+			twist = quat.normalize(quat.create(), quat.fromValues(0, q[1], 0, q[3]));
+		} else {
+			twist = quat.normalize(quat.create(), quat.fromValues(0, 0, q[2], q[3]));
+		}
+		return twist;
 	}
 
 	// Intersect camera ray through screen point with a plane

@@ -2,8 +2,9 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] 2D needs to be a "infinite zoom" projection
-	- [ ] so rotated SO flatten but "retain their relative angle"
+- [x] 2D needs to be a "infinite zoom" projection
+	- [x] so rotated SO flatten but "retain their relative angle"
+- [ ] add details hamburger
 - [ ] pac: use hit target for ALL buttons and segments
 ---
 - [ ] pac: in all code files, use 4-space tabs (not 2-)

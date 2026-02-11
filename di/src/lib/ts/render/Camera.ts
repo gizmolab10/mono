@@ -17,6 +17,7 @@ class Camera {
   private _ortho = false;
 
   get eye(): vec3 { return this._eye; }
+  get center_pos(): vec3 { return this.center; }
 
   init(size: Size): void {
     this.resize(size);

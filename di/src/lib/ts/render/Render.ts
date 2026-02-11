@@ -202,7 +202,10 @@ class Render {
       (so.y_min + so.y_max) / 2,
       (so.z_min + so.z_max) / 2,
     ];
-    const orientation = stores.current_view_mode() === '2d' ? quat.create() : so.orientation;
+    // 2D: flatten SO toward camera, retaining in-plane rotation
+    const orientation = stores.current_view_mode() === '2d'
+      ? this.flatten_orientation(so.orientation)
+      : so.orientation;
     const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
 
     // Rotate around the SO's exact 3D center: translate to center, rotate, translate back
@@ -229,6 +232,40 @@ class Render {
     }
 
     return local;
+  }
+
+  /**
+   * Flatten a 3D orientation for 2D view: find which local axis points
+   * most toward the camera, then keep only the in-plane (twist) rotation
+   * around that axis — discarding the tilt (swing) that would show depth.
+   */
+  private flatten_orientation(q: quat): quat {
+    const cam_fwd = vec3.create();
+    vec3.subtract(cam_fwd, camera.center_pos, camera.eye);
+    vec3.normalize(cam_fwd, cam_fwd);
+
+    // Transform camera forward into SO's local space
+    const inv_q = quat.create();
+    quat.invert(inv_q, q);
+    const local_fwd = vec3.create();
+    vec3.transformQuat(local_fwd, cam_fwd, inv_q);
+
+    // Find which local axis is most aligned with camera forward
+    const abs_x = Math.abs(local_fwd[0]);
+    const abs_y = Math.abs(local_fwd[1]);
+    const abs_z = Math.abs(local_fwd[2]);
+
+    // Swing-twist decomposition: project quaternion onto the twist axis
+    // twist = normalize(qw + q_component * axis_component) for each axis
+    let twist: quat;
+    if (abs_x >= abs_y && abs_x >= abs_z) {
+      twist = quat.normalize(quat.create(), quat.fromValues(q[0], 0, 0, q[3]));
+    } else if (abs_y >= abs_z) {
+      twist = quat.normalize(quat.create(), quat.fromValues(0, q[1], 0, q[3]));
+    } else {
+      twist = quat.normalize(quat.create(), quat.fromValues(0, 0, q[2], q[3]));
+    }
+    return twist;
   }
 
   private project_vertex(v: Point3, world_matrix: mat4): Projected {
