@@ -10,9 +10,8 @@
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import { engine } from '../../ts/render';
 	import { k } from '../../ts/common/Constants';
-	import BuildNotes from './BuildNotes.svelte';
 
-	let showBuildNotes = $state(false);
+	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 
 	const { w_text_color, w_background_color } = colors;
 	const { w_editing } = dimensions;
@@ -149,12 +148,9 @@
 	<button
 		class='build-btn'
 		style:--so-light = {so_color_light}
-		onclick={() => showBuildNotes = true}>
+		onclick={() => onshowbuildnotes()}>
 		build {k.build_number}
 	</button>
-	{#if showBuildNotes}
-		<BuildNotes onclose={() => showBuildNotes = false} />
-	{/if}
 	{#if $w_editing}
 		<input
 			bind:this    = {dim_input}

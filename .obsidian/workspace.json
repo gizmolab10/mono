@@ -50,7 +50,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/done/code.debt.done.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of code.debt.done"
             }
           }
         ],
@@ -213,10 +213,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "ffdb7bac37c87e46",
+  "active": "bbc57c19fcf944de",
   "lastOpenFiles": [
-    "di/notes/work/done/code.debt.done.md",
     "di/notes/work/code.debt.md",
+    "di/notes/work/done/code.debt.done.md",
     "di/src/assets/American.di",
     "di/src/assets/American (1).di",
     "di/notes/architecture/algebra.md",

@@ -73,3 +73,7 @@
 - [x] build number button -> bottom left of canvas
 - [x] remove "Details" label from details
 - [x] background color picker -> details same row as edge color, and make it the left most
+- [x] steppers got centered in build notes, move back to top left
+	- [x] when only step down button is visible, it should leave empty space for step up, so it does not jump when the step up button appears
+- [x] when build notes overlay is visible, make entire app just one large empty div, retaining the wraparound accent gap
+- [x] move Design Intuition label in controls up 3px

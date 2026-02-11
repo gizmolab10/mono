@@ -8,7 +8,7 @@
 	const { w_scale, w_view_mode, w_show_dimensionals, w_solid } = stores;
 
 	let {
-		title = 'Design Intuition'
+		title = 'Design Intuition™'
 	} : {
 		title? : string;
 	} = $props();
@@ -49,6 +49,8 @@
 	}
 
 	.controls h1 {
+		position    : relative;
+		top         : -2px;
 		margin      : 0;
 		font-size   : 1.25rem;
 		font-weight : 300;

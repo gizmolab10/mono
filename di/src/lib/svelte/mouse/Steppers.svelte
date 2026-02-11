@@ -13,30 +13,37 @@
 		show_down = true,
 		horizontal = false,
 		size = 20,
+		gap = -5,
 		hit_closure
 	}: {
 		show_up?: boolean;
 		show_down?: boolean;
 		horizontal?: boolean;
 		size?: number;
+		gap?: number;
 		hit_closure: (pointsUp: boolean, isLong: boolean) => void;
 	} = $props();
 
 	const buttonSize = $derived(size);
 	const strokeWidth = $derived(size * 0.0375);
-	let upElement: HTMLElement | null = $state(null);
-	let downElement: HTMLElement | null = $state(null);
+	let elementA: HTMLElement | null = $state(null);
+	let elementB: HTMLElement | null = $state(null);
 
-	const upTarget = new S_Hit_Target(T_Hit_Target.button, 'stepper-up');
-	const downTarget = new S_Hit_Target(T_Hit_Target.button, 'stepper-down');
+	const uid = Math.random().toString(36).slice(2, 8);
+	const targetA = new S_Hit_Target(T_Hit_Target.button, `stepper-${uid}-up`);
+	const targetB = new S_Hit_Target(T_Hit_Target.button, `stepper-${uid}-down`);
 
-	const firstPath = $derived(svg_paths.fat_polygon(buttonSize, horizontal ? Direction.left : Direction.up));
-	const secondPath = $derived(svg_paths.fat_polygon(buttonSize, horizontal ? Direction.right : Direction.down));
+	const directionA = $derived(horizontal ? Direction.left : Direction.up);
+	const directionB = $derived(horizontal ? Direction.right : Direction.down);
+	const pathA = $derived(svg_paths.fat_polygon(buttonSize, directionA));
+	const pathB = $derived(svg_paths.fat_polygon(buttonSize, directionB));
+	const boundsA = $derived(svg_paths.fat_polygon_bounds(buttonSize, directionA));
+	const boundsB = $derived(svg_paths.fat_polygon_bounds(buttonSize, directionB));
 
 	$effect(() => {
-		if (upElement) {
-			upTarget.set_html_element(upElement);
-			upTarget.handle_s_mouse = (s_mouse: S_Mouse) => {
+		if (elementA) {
+			targetA.set_html_element(elementA);
+			targetA.handle_s_mouse = (s_mouse: S_Mouse) => {
 				if (s_mouse.isDown) hit_closure(true, s_mouse.event?.metaKey ?? false);
 				return true;
 			};
@@ -44,9 +51,9 @@
 	});
 
 	$effect(() => {
-		if (downElement) {
-			downTarget.set_html_element(downElement);
-			downTarget.handle_s_mouse = (s_mouse: S_Mouse) => {
+		if (elementB) {
+			targetB.set_html_element(elementB);
+			targetB.handle_s_mouse = (s_mouse: S_Mouse) => {
 				if (s_mouse.isDown) hit_closure(false, s_mouse.event?.metaKey ?? false);
 				return true;
 			};
@@ -55,49 +62,47 @@
 
 	onMount(() => {
 		return () => {
-			hits.delete_hit_target(upTarget);
-			hits.delete_hit_target(downTarget);
+			hits.delete_hit_target(targetA);
+			hits.delete_hit_target(targetB);
 		};
 	});
 
 	const { w_s_hover } = hits;
-	const hoverUp = $derived($w_s_hover?.id === upTarget.id);
-	const hoverDown = $derived($w_s_hover?.id === downTarget.id);
+	const hoverA = $derived($w_s_hover?.id === targetA.id);
+	const hoverB = $derived($w_s_hover?.id === targetB.id);
 </script>
 
-<div class='steppers' class:horizontal>
-	{#if show_up}
-		<div
-			class='stepper-button'
-			bind:this={upElement}
-			role="button"
-			tabindex="0">
-			<svg width={buttonSize} height={buttonSize} viewBox="0 0 {buttonSize} {buttonSize}">
-				<path
-					d={firstPath}
-					fill={hoverUp ? colors.default : 'white'}
-					stroke={colors.default}
-					stroke-width={strokeWidth}
-				/>
-			</svg>
-		</div>
-	{/if}
-	{#if show_down}
-		<div
-			class='stepper-button'
-			bind:this={downElement}
-			role="button"
-			tabindex="0">
-			<svg width={buttonSize} height={buttonSize} viewBox="0 0 {buttonSize} {buttonSize}">
-				<path
-					d={secondPath}
-					fill={hoverDown ? colors.default : 'white'}
-					stroke={colors.default}
-					stroke-width={strokeWidth}
-				/>
-			</svg>
-		</div>
-	{/if}
+<div class='steppers' class:horizontal style:--gap="{gap}px">
+	<div
+		class='stepper-button'
+		class:hidden={!show_up}
+		bind:this={elementA}
+		role="button"
+		tabindex="0">
+		<svg width={boundsA.width} height={boundsA.height} viewBox="{boundsA.minX} {boundsA.minY} {boundsA.width} {boundsA.height}">
+			<path
+				d={pathA}
+				fill={hoverA ? colors.default : 'white'}
+				stroke={colors.default}
+				stroke-width={strokeWidth}
+			/>
+		</svg>
+	</div>
+	<div
+		class='stepper-button'
+		class:hidden={!show_down}
+		bind:this={elementB}
+		role="button"
+		tabindex="0">
+		<svg width={boundsB.width} height={boundsB.height} viewBox="{boundsB.minX} {boundsB.minY} {boundsB.width} {boundsB.height}">
+			<path
+				d={pathB}
+				fill={hoverB ? colors.default : 'white'}
+				stroke={colors.default}
+				stroke-width={strokeWidth}
+			/>
+		</svg>
+	</div>
 </div>
 
 <style>
@@ -114,10 +119,13 @@
 		user-select: none;
 	}
 	.stepper-button + .stepper-button {
-		margin-top : -4px;
+		margin-top : var(--gap);
 	}
 	.horizontal > .stepper-button + .stepper-button {
 		margin-top  : 0;
-		margin-left : -4px;
+		margin-left : var(--gap);
+	}
+	.stepper-button.hidden {
+		visibility : hidden;
 	}
 </style>

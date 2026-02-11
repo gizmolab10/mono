@@ -44,6 +44,32 @@ export class SVG_Paths {
 		return 'M' + start.description + ' ' + arcs.join(' ') + 'Z';
 	}
 
+	fat_polygon_bounds(size: number, angle: number, vertices: number = 3): { minX: number; minY: number; width: number; height: number } {
+		const segmentAngle = Math.PI / vertices;
+		const offset = Point.square(size / 2);
+		const inner = Point.x(size / 3);
+		const outer = Point.x(size / 2);
+		const tweak = segmentAngle / 5;
+		const points: Point[] = [];
+		let i = 0;
+		while (i++ < vertices) {
+			const final    = angle + i * segmentAngle * 2;
+			const halfWay  = final - segmentAngle;
+			const preceder = halfWay - tweak;
+			const follower = halfWay + tweak;
+			points.push(
+				outer.rotate_by(preceder).offsetBy(offset),
+				outer.rotate_by(follower).offsetBy(offset),
+				inner.rotate_by(final).offsetBy(offset),
+			);
+		}
+		const xs   = points.map(p => p.x);
+		const ys   = points.map(p => p.y);
+		const minX = Math.min(...xs);
+		const minY = Math.min(...ys);
+		return { minX, minY, width: Math.max(...xs) - minX, height: Math.max(...ys) - minY };
+	}
+
 	fillets(center : Point, radius : number, direction : Direction) : string {
 		const baseAngle     = direction + Angle.half;
 		const leftEndAngle  = baseAngle + Angle.quarter;

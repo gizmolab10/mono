@@ -127,7 +127,7 @@
 	</div>
 	{#if show_steppers && onstep}
 		<div class='steppers-wrapper'>
-			<Steppers size={15} hit_closure={onstep} />
+			<Steppers size={15} gap={-5} hit_closure={onstep} />
 		</div>
 	{/if}
 </div>
@@ -171,7 +171,7 @@
 	.steppers-wrapper {
 		margin-left            : -1px;
 		position               : relative;
-		top                    : 1px;
+		top                    : 0.5px;
 	}
 
 	/* === Native range input styling === */
