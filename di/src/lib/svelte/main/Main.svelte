@@ -7,7 +7,7 @@
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
 
-	const { w_separator_color } = colors;
+	const { w_accent_color } = colors;
 
 	// Initialize event system
 	onMount(() => {
@@ -22,7 +22,7 @@
 	const gap    = k.thickness.separator.main;
 	const radius = gap * 3;
 
-	let controlsHeight = $derived(48);
+	let controlsHeight = $derived(36);
 	let detailsWidth   = $derived(280 - gap * 2);
 	let showDetails    = $state(true);
 
@@ -47,7 +47,7 @@
 	style:padding = '{gap}px'
 	style:--gap    = '{gap}px'
 	style:--radius = '{radius}px'
-	style:background-color = {$w_separator_color}>
+	style:background-color = {$w_accent_color}>
 	<!-- Controls region -->
 	<div
 		class        = 'region controls'

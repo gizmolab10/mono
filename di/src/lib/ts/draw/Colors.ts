@@ -21,7 +21,7 @@ export class Colors {
 	// Reactive colors (stores)
 	w_thing_color      = writable<string | null>(null);
 	w_text_color       = writable<string>('black');
-	w_separator_color  = writable<string>(this.separator);
+	w_accent_color  = writable<string>(this.separator);
 	w_background_color = writable<string>('#F9E4BE');
 
 	constructor() {
@@ -33,30 +33,38 @@ export class Colors {
 	 * Load saved color preferences from localStorage
 	 */
 	restore_preferences() : void {
-		const bg   = preferences.read<string>(T_Preference.backgroundColor);
 		const text = preferences.read<string>(T_Preference.textColor);
-		const sep  = preferences.read<string>(T_Preference.separatorColor);
+		const sep  = preferences.read<string>(T_Preference.accentColor);
 
-		if (!!bg) this.w_background_color.set(bg);
 		if (!!text) this.w_text_color.set(text);
-		if (!!sep) this.w_separator_color.set(sep);
+		if (!!sep) this.w_accent_color.set(sep);
+	}
+
+	/**
+	 * Derive background from accent: same hue, much less saturation, lighter.
+	 */
+	private accent_to_background(accent : string) : string {
+		const hsba = this.color_toHSBA(accent);
+		if (!hsba) return '#F9E4BE';
+		hsba.s = hsba.s * 0.25;   // much less saturation
+		hsba.b = Math.min(100, hsba.b * 1.3 + 20);  // push toward bright
+		const rgba = this.HSBA_toRGBA(hsba);
+		return this.RGBA_toHex(rgba);
 	}
 
 	/**
 	 * Subscribe to store changes and persist them
 	 */
 	private subscribe_to_changes() : void {
-		this.w_background_color.subscribe((color : string) => {
-			preferences.write(T_Preference.backgroundColor, color);
-			this.banner = this.ofBannerFor(color);
-		});
-
 		this.w_text_color.subscribe((color : string) => {
 			preferences.write(T_Preference.textColor, color);
 		});
 
-		this.w_separator_color.subscribe((color : string) => {
-			preferences.write(T_Preference.separatorColor, color);
+		this.w_accent_color.subscribe((color : string) => {
+			preferences.write(T_Preference.accentColor, color);
+			const bg = this.accent_to_background(color);
+			this.w_background_color.set(bg);
+			this.banner = this.ofBannerFor(bg);
 		});
 	}
 

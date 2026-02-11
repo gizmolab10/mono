@@ -12,7 +12,7 @@ export enum T_Preference {
 	
 	// Colors
 	backgroundColor = 'backgroundColor',
-	separatorColor  = 'separatorColor',
+	accentColor     = 'accentColor',
 	textColor       = 'textColor',
 
 	// Units

@@ -1,14 +1,13 @@
 <script lang='ts'>
-	import { T_Hit_3D, T_Hit_Target, T_Units } from '../../ts/types/Enumerations';
-	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import { hits, hits_3d, scenes, stores } from '../../ts/managers';
+	import { T_Hit_Target, T_Units } from '../../ts/types/Enumerations';
+	import { hits, scenes, stores } from '../../ts/managers';
 	import S_Hit_Target from '../../ts/state/S_Hit_Target';
 	import { w_unit_system } from '../../ts/types/Units';
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import { colors } from '../../ts/draw/Colors';
 	import { engine } from '../../ts/render';
 	import { onMount } from 'svelte';
-	const { w_text_color, w_background_color, w_separator_color } = colors;
+	const { w_text_color, w_background_color, w_accent_color } = colors;
 	const { w_root_so, w_all_sos, w_precision, w_line_thickness, w_edge_color, w_selection } = stores;
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
@@ -35,14 +34,6 @@
 	function handle_unit_change(e: Event) {
 		const select = e.target as HTMLSelectElement;
 		w_unit_system.set(select.value as T_Units);
-	}
-
-	function select_so(so: Smart_Object) {
-		const face = hits_3d.front_most_face(so);
-		if (face >= 0) {
-			hits_3d.set_selection({ so, type: T_Hit_3D.face, index: face });
-		}
-		scenes.save();
 	}
 
 	// ── add child button hit target ──
@@ -77,19 +68,6 @@
 	class            = 'details'
 	style:color      = {$w_text_color}
 	style:background = {$w_background_color}>
-	<h2>Details</h2>
-	{#if $w_all_sos.length > 1}
-		<div class='so-row'>
-			{#each $w_all_sos as so}
-				<button
-					class='so-btn'
-					class:selected = {selected_so === so}
-					onclick={() => select_so(so)}>
-					{so.name}
-				</button>
-			{/each}
-		</div>
-	{/if}
 	{#if selected_so}
 		<label class='field'>
 			<span class='label'>Name</span>
@@ -105,7 +83,7 @@
 	<div class='settings'>
 		<button class='action-btn' bind:this={add_child_element}>add child</button>
 	</div>
-	<hr style:border-color={$w_separator_color} />
+	<hr style:border-color={$w_accent_color} />
 	<div class='settings'>
 		<select class='details-select' value={$w_unit_system} onchange={handle_unit_change}>
 			{#each Object.values(T_Units) as system}
@@ -126,7 +104,7 @@
 			{/each}
 		</div>
 	</div>
-	<hr style:border-color={$w_separator_color} />
+	<hr style:border-color={$w_accent_color} />
 	<div class='slider-group'>
 		<span class='label'>line thickness</span>
 		<input
@@ -138,15 +116,25 @@
 			oninput = {(e) => w_line_thickness.set(Number((e.target as HTMLInputElement).value))}
 		/>
 	</div>
-	<div class='color-group'>
-		<span class='label'>edge color</span>
-		<input
-			type    = 'color'
-			value   = {$w_edge_color}
-			oninput = {(e) => w_edge_color.set((e.target as HTMLInputElement).value)}
-		/>
+	<div class='color-row'>
+		<div class='color-group'>
+			<span class='label'>accent</span>
+			<input
+				type    = 'color'
+				value   = {$w_accent_color}
+				oninput = {(e) => w_accent_color.set((e.target as HTMLInputElement).value)}
+			/>
+		</div>
+		<div class='color-group'>
+			<span class='label'>lines</span>
+			<input
+				type    = 'color'
+				value   = {$w_edge_color}
+				oninput = {(e) => w_edge_color.set((e.target as HTMLInputElement).value)}
+			/>
+		</div>
 	</div>
-	<hr style:border-color={$w_separator_color} />
+	<hr style:border-color={$w_accent_color} />
 	<div class='settings'>
 		<button class='action-btn' onclick={() => scenes.export_to_file()}>export</button>
 		<button class='action-btn' onclick={() => scenes.import_from_file()}>import</button>
@@ -166,12 +154,6 @@
 		border-top : 5px solid;
 		opacity    : 0.4;
 		margin     : 14px 0 5px 0;
-	}
-
-	.details h2 {
-		margin      : 0 0 1rem;
-		font-size   : 1rem;
-		font-weight : 500;
 	}
 
 	.field {
@@ -200,38 +182,6 @@
 	input[type='text']:focus {
 		border-color : currentColor;
 		opacity      : 1;
-	}
-
-	.so-row {
-		display   : flex;
-		gap       : 4px;
-		flex-wrap : wrap;
-		margin-bottom : 0.75rem;
-	}
-
-	.so-btn {
-		background    : white;
-		border        : 0.5px solid currentColor;
-		border-radius : 4px;
-		color         : inherit;
-		padding       : 0 8px;
-		font-size     : 11px;
-		height        : 20px;
-		box-sizing    : border-box;
-		cursor        : pointer;
-		opacity       : 0.5;
-	}
-
-	.so-btn:hover {
-		opacity    : 1;
-		background : black;
-		color      : white;
-	}
-
-	.so-btn.selected {
-		opacity    : 1;
-		background : currentColor;
-		color      : var(--bg, white);
 	}
 
 	.action-btn {
@@ -400,8 +350,14 @@
 		outline : none;
 	}
 
-	.color-group {
+	.color-row {
 		margin-top     : 1rem;
+		display        : flex;
+		align-items    : center;
+		gap            : 16px;
+	}
+
+	.color-group {
 		display        : flex;
 		align-items    : center;
 		gap            : 8px;

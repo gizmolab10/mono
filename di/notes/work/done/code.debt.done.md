@@ -66,3 +66,10 @@
 		- [x] need to project mouse movement (2d vector) onto this plane (different vector)
 		- [x] compute the new x,y,z 
 - [x] hide occluded dimensionals
+- [x] performance analysis -- app is VERY unresponsive
+- [x] row of SO buttons -> top center of canvas
+	- [x] selected SO needs a border, black text, darker background color
+	- [x] unselected need light background color
+- [x] build number button -> bottom left of canvas
+- [x] remove "Details" label from details
+- [x] background color picker -> details same row as edge color, and make it the left most

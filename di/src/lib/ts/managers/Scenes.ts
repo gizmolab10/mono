@@ -7,7 +7,7 @@
 
 import { preferences, T_Preference } from './Preferences';
 import type { Bound } from '../runtime/Smart_Object';
-import default_scene from '../../../assets/A.di?raw';
+import default_scene from '../../../assets/American.di?raw';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Identifiable } from '../runtime';
 import { camera } from '../render/Camera';

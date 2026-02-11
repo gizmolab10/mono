@@ -3,14 +3,43 @@
 	import { render } from '../../ts/render/Render';
 	import { colors } from '../../ts/draw/Colors';
 	import { components } from '../../ts/managers/Components';
-	import { hits } from '../../ts/managers/Hits';
+	import { hits, hits_3d, scenes, stores } from '../../ts/managers';
 	import { dimensions } from '../../ts/editors/Dimension';
-	import { T_Hit_Target } from '../../ts/types/Enumerations';
+	import { T_Hit_3D, T_Hit_Target } from '../../ts/types/Enumerations';
+	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import { engine } from '../../ts/render';
+	import { k } from '../../ts/common/Constants';
+	import BuildNotes from './BuildNotes.svelte';
 
-	const { w_text_color } = colors;
+	let showBuildNotes = $state(false);
+
+	const { w_text_color, w_background_color } = colors;
 	const { w_editing } = dimensions;
+	const { w_all_sos, w_selection, w_root_so } = stores;
+
+	let selected_so = $derived($w_selection?.so ?? $w_root_so);
+
+	// Derive light (desaturated) variant of background color for unselected SO buttons
+	let so_color_light = $derived.by(() => {
+		const hex = $w_background_color;
+		const r = parseInt(hex.slice(1, 3), 16);
+		const g = parseInt(hex.slice(3, 5), 16);
+		const b = parseInt(hex.slice(5, 7), 16);
+		// Mix 60% toward white
+		const lr = Math.round(r + (255 - r) * 0.6);
+		const lg = Math.round(g + (255 - g) * 0.6);
+		const lb = Math.round(b + (255 - b) * 0.6);
+		return `rgb(${lr}, ${lg}, ${lb})`;
+	});
+
+	function select_so(so: Smart_Object) {
+		const face = hits_3d.front_most_face(so);
+		if (face >= 0) {
+			hits_3d.set_selection({ so, type: T_Hit_3D.face, index: face });
+		}
+		scenes.save();
+	}
 	const GRAPH_HID = 1;
 
 	let canvas      : HTMLCanvasElement;
@@ -102,6 +131,30 @@
 	style:background = 'white'>
 	<canvas
 		bind:this = {canvas}></canvas>
+	{#if $w_all_sos.length > 1}
+		<div
+			class='so-row'
+			style:--so-light = {so_color_light}
+			style:--so-dark  = {$w_background_color}>
+			{#each $w_all_sos as so}
+				<button
+					class='so-btn'
+					class:selected = {selected_so === so}
+					onclick={() => select_so(so)}>
+					{so.name}
+				</button>
+			{/each}
+		</div>
+	{/if}
+	<button
+		class='build-btn'
+		style:--so-light = {so_color_light}
+		onclick={() => showBuildNotes = true}>
+		build {k.build_number}
+	</button>
+	{#if showBuildNotes}
+		<BuildNotes onclose={() => showBuildNotes = false} />
+	{/if}
 	{#if $w_editing}
 		<input
 			bind:this    = {dim_input}
@@ -131,6 +184,63 @@
 
 	.graph canvas:active {
 		cursor : grabbing;
+	}
+
+	.so-row {
+		position        : absolute;
+		top             : 10px;
+		left            : 50%;
+		transform       : translateX(-50%);
+		display         : flex;
+		gap             : 4px;
+		flex-wrap       : wrap;
+		justify-content : center;
+		z-index         : 5;
+	}
+
+	.so-btn {
+		background    : var(--so-light);
+		border        : 0.5px solid transparent;
+		border-radius : 4px;
+		color         : black;
+		padding       : 0 8px;
+		font-size     : 11px;
+		height        : 20px;
+		box-sizing    : border-box;
+		cursor        : pointer;
+	}
+
+	.so-btn:hover {
+		background : var(--so-dark);
+		color      : black;
+		border     : 0.5px solid rgba(0, 0, 0, 0.3);
+	}
+
+	.so-btn.selected {
+		background : var(--so-dark);
+		color      : black;
+		border     : 0.5px solid rgba(0, 0, 0, 0.5);
+	}
+
+	.build-btn {
+		position      : absolute;
+		bottom        : 10px;
+		left          : 10px;
+		background    : white;
+		border        : 0.5px solid black;
+		border-radius : 10px;
+		color         : black;
+		padding       : 0 8px;
+		font-size     : 11px;
+		height        : 20px;
+		box-sizing    : border-box;
+		cursor        : pointer;
+		z-index       : 5;
+	}
+
+	.build-btn:hover {
+		background : black;
+		color      : white;
 	}
 
 	.dim-edit {

@@ -1,17 +1,17 @@
-# Designs
+# Components
 
 Design documentation for components and managers.
 ## Layout Components
 | Component | Description |
 |-----------|-------------|
 | [Main](Main.md) | Root layout, viewport management |
-| [Controls](Controls.md) | Top bar with title |
+| [Controls](di/notes/components/Controls.md) | Top bar with title |
 | [Graph](Graph.md) | Canvas for 3D visualization |
-| [Details](Details.md) | Left sidebar for properties |
+| [Details](di/notes/components/Details.md) | Left sidebar for properties |
 ## Managers
 | Component | Description |
 |-----------|-------------|
-| [Preferences](Preferences.md) | localStorage persistence |
+| [Preferences](di/notes/components/Preferences.md) | localStorage persistence |
 | [Hits_3D](Hits_3D.md) | 3D hit testing for canvas objects |
 ## Runtime
 | Component | Description |

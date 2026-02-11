@@ -68,6 +68,14 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
+                      text: 'Algebra',
+                      link: '/di/notes/architecture/algebra'
+                    },
+                    {
+                      text: 'Drag',
+                      link: '/di/notes/architecture/drag'
+                    },
+                    {
                       text: 'Files',
                       link: '/di/notes/architecture/files'
                     },
@@ -84,6 +92,10 @@ export default defineConfig({
                       link: '/di/notes/architecture/panel.layout'
                     },
                     {
+                      text: 'Primer',
+                      link: '/di/notes/architecture/primer'
+                    },
+                    {
                       text: 'Project',
                       link: '/di/notes/architecture/project'
                     },
@@ -94,37 +106,37 @@ export default defineConfig({
                   ]
                 },
                 {
-                  text: 'Designs >',
-                  link: '/di/notes/designs/',
+                  text: 'Components >',
+                  link: '/di/notes/components/',
                   collapsed: true,
                   items: [
                     {
                       text: 'Controls',
-                      link: '/di/notes/designs/Controls'
+                      link: '/di/notes/components/Controls'
                     },
                     {
                       text: 'Details',
-                      link: '/di/notes/designs/Details'
+                      link: '/di/notes/components/Details'
                     },
                     {
                       text: 'Graph',
-                      link: '/di/notes/designs/Graph'
+                      link: '/di/notes/components/Graph'
                     },
                     {
                       text: 'Hits 3D',
-                      link: '/di/notes/designs/Hits_3D'
+                      link: '/di/notes/components/Hits_3D'
                     },
                     {
                       text: 'Main',
-                      link: '/di/notes/designs/Main'
+                      link: '/di/notes/components/Main'
                     },
                     {
                       text: 'Preferences',
-                      link: '/di/notes/designs/Preferences'
+                      link: '/di/notes/components/Preferences'
                     },
                     {
                       text: 'Smart Objects',
-                      link: '/di/notes/designs/Smart_Objects'
+                      link: '/di/notes/components/Smart_Objects'
                     }
                   ]
                 },
@@ -161,20 +173,12 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
-                      text: 'Algebra',
-                      link: '/di/notes/work/algebra'
-                    },
-                    {
                       text: 'Code.debt',
                       link: '/di/notes/work/code.debt'
                     },
                     {
                       text: 'Cruft',
                       link: '/di/notes/work/cruft'
-                    },
-                    {
-                      text: 'Primer',
-                      link: '/di/notes/work/primer'
                     },
                     {
                       text: 'Revisit.di',
@@ -192,6 +196,10 @@ export default defineConfig({
                         {
                           text: 'Article.first.draft',
                           link: '/di/notes/work/done/article.first.draft'
+                        },
+                        {
+                          text: 'Code.debt.done',
+                          link: '/di/notes/work/done/code.debt.done'
                         },
                         {
                           text: 'Layout Algorithm',

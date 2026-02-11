@@ -12,15 +12,18 @@
 		show_up = true,
 		show_down = true,
 		horizontal = false,
+		size = 20,
 		hit_closure
 	}: {
 		show_up?: boolean;
 		show_down?: boolean;
 		horizontal?: boolean;
+		size?: number;
 		hit_closure: (pointsUp: boolean, isLong: boolean) => void;
 	} = $props();
 
-	const buttonSize = 20;
+	const buttonSize = $derived(size);
+	const strokeWidth = $derived(size * 0.0375);
 	let upElement: HTMLElement | null = $state(null);
 	let downElement: HTMLElement | null = $state(null);
 
@@ -74,7 +77,7 @@
 					d={firstPath}
 					fill={hoverUp ? colors.default : 'white'}
 					stroke={colors.default}
-					stroke-width="0.75"
+					stroke-width={strokeWidth}
 				/>
 			</svg>
 		</div>
@@ -90,7 +93,7 @@
 					d={secondPath}
 					fill={hoverDown ? colors.default : 'white'}
 					stroke={colors.default}
-					stroke-width="0.75"
+					stroke-width={strokeWidth}
 				/>
 			</svg>
 		</div>
@@ -99,20 +102,22 @@
 
 <style>
 	.steppers {
-		position: absolute;
-		top: 8px;
-		left: 8px;
-		display: flex;
-		flex-direction: column;
+		display        : flex;
+		flex-direction : column;
+		align-items    : center;
 	}
 	.steppers.horizontal {
-		position: relative;
-		top: auto;
-		left: auto;
-		flex-direction: row;
+		flex-direction : row;
 	}
 	.stepper-button {
-		cursor: pointer;
+		cursor     : pointer;
 		user-select: none;
+	}
+	.stepper-button + .stepper-button {
+		margin-top : -4px;
+	}
+	.horizontal > .stepper-button + .stepper-button {
+		margin-top  : 0;
+		margin-left : -4px;
 	}
 </style>

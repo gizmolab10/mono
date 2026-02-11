@@ -55,7 +55,7 @@ class Events_3D {
     });
 
     document.addEventListener('mouseup', () => {
-      if (!this.did_drag && this.mouse_in_canvas) {
+      if (this.is_dragging && !this.did_drag && this.mouse_in_canvas) {
         const hit = hits_3d.hit_test(this.last_canvas_position);
         if (hit?.type === T_Hit_3D.dimension) {
           // Click on dimension label → begin editing

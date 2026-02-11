@@ -270,8 +270,9 @@ class Render {
   }
 
   private render_edges(obj: O_Scene, projected: Projected[], is_2d: boolean, solid: boolean, world?: mat4): void {
-    this.ctx.lineWidth = stores.line_thickness();
-    this.ctx.lineCap = 'square';
+    const ctx = this.ctx;
+    ctx.lineWidth = stores.line_thickness();
+    ctx.lineCap = 'square';
 
     // In 2D or solid mode, only draw edges belonging to front-facing faces
     const front_edges = (is_2d || solid) ? this.front_face_edges(obj, projected) : null;
@@ -280,21 +281,16 @@ class Render {
     const guide = drag.guidance_face;
     const guidance_edges = (guide && guide.scene === obj) ? this.face_edge_keys(obj, guide.face_index) : null;
 
-    for (const [i, j] of obj.edges) {
-      const a = projected[i],
-        b = projected[j];
-      if (a.w < 0 || b.w < 0) continue;
-      if (front_edges && !front_edges.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
+    if (solid && world) {
+      // Solid mode: per-edge occlusion clipping, batch clipped segments by color
+      const normal_path = new Path2D();
+      const guide_path = new Path2D();
 
-      const edge_key = `${Math.min(i, j)}-${Math.max(i, j)}`;
-      if (guidance_edges?.has(edge_key)) {
-        this.ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
-      } else {
-        this.ctx.strokeStyle = `${obj.color}1)`;
-      }
+      for (const [i, j] of obj.edges) {
+        const a = projected[i], b = projected[j];
+        if (a.w < 0 || b.w < 0) continue;
+        if (front_edges && !front_edges.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
 
-      if (solid && world) {
-        // Get world-space edge endpoints
         const vi = obj.so.vertices[i], vj = obj.so.vertices[j];
         const wi = vec4.create(), wj = vec4.create();
         vec4.transformMat4(wi, [vi.x, vi.y, vi.z, 1], world);
@@ -305,17 +301,46 @@ class Render {
         const visible = this.clip_segment_for_occlusion(
           { x: a.x, y: a.y }, { x: b.x, y: b.y }, w1, w2, obj.id
         );
+
+        const edge_key = `${Math.min(i, j)}-${Math.max(i, j)}`;
+        const path = guidance_edges?.has(edge_key) ? guide_path : normal_path;
         for (const [s, e] of visible) {
-          this.ctx.beginPath();
-          this.ctx.moveTo(Math.round(s.x) + 0.5, Math.round(s.y) + 0.5);
-          this.ctx.lineTo(Math.round(e.x) + 0.5, Math.round(e.y) + 0.5);
-          this.ctx.stroke();
+          path.moveTo(Math.round(s.x) + 0.5, Math.round(s.y) + 0.5);
+          path.lineTo(Math.round(e.x) + 0.5, Math.round(e.y) + 0.5);
         }
-      } else {
-        this.ctx.beginPath();
-        this.ctx.moveTo(Math.round(a.x) + 0.5, Math.round(a.y) + 0.5);
-        this.ctx.lineTo(Math.round(b.x) + 0.5, Math.round(b.y) + 0.5);
-        this.ctx.stroke();
+      }
+
+      ctx.strokeStyle = `${obj.color}1)`;
+      ctx.stroke(normal_path);
+      if (guidance_edges) {
+        ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+        ctx.stroke(guide_path);
+      }
+    } else {
+      // Non-solid: batch edges by color into single beginPath/stroke calls
+      const normal_path = new Path2D();
+      const guide_path = new Path2D();
+
+      for (const [i, j] of obj.edges) {
+        const a = projected[i], b = projected[j];
+        if (a.w < 0 || b.w < 0) continue;
+        if (front_edges && !front_edges.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
+
+        const ax = Math.round(a.x) + 0.5, ay = Math.round(a.y) + 0.5;
+        const bx = Math.round(b.x) + 0.5, by = Math.round(b.y) + 0.5;
+
+        const edge_key = `${Math.min(i, j)}-${Math.max(i, j)}`;
+        const path = guidance_edges?.has(edge_key) ? guide_path : normal_path;
+        path.moveTo(ax, ay);
+        path.lineTo(bx, by);
+      }
+
+      ctx.strokeStyle = `${obj.color}1)`;
+      ctx.stroke(normal_path);
+
+      if (guidance_edges) {
+        ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+        ctx.stroke(guide_path);
       }
     }
   }

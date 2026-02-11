@@ -1,11 +1,9 @@
 <script lang='ts'>
-	import S_Hit_Target from '../../ts/state/S_Hit_Target';
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
-	import { svg_paths } from '../../ts/draw/SVG_Paths';
-	import { colors } from '../../ts/draw/Colors';
-	import { Direction } from '../../ts/types/Angle';
+	import S_Hit_Target from '../../ts/state/S_Hit_Target';
 	import { hits } from '../../ts/managers/Hits';
 	import S_Mouse from '../../ts/state/S_Mouse';
+	import Steppers from './Steppers.svelte';
 	import { onMount } from 'svelte';
 
 	let {
@@ -38,16 +36,11 @@
 
 	const border = '1px solid darkgray';
 	const thumb_color_default = '#007aff';
-	const buttonSize = 15;
 
-	// Hit targets
+	// Hit target for slider thumb
 	const sliderTarget = new S_Hit_Target(T_Hit_Target.control, 'slider-thumb');
-	const upTarget = new S_Hit_Target(T_Hit_Target.button, 'slider-step-up');
-	const downTarget = new S_Hit_Target(T_Hit_Target.button, 'slider-step-down');
 
 	let slider_input: HTMLInputElement | null = $state(null);
-	let upElement: HTMLElement | null = $state(null);
-	let downElement: HTMLElement | null = $state(null);
 	let is_dragging = $state(false);
 
 	// Logarithmic: divide the log range into N divisions
@@ -83,16 +76,11 @@
 	// Hover state
 	const { w_s_hover } = hits;
 	const hoverSlider = $derived($w_s_hover?.id === sliderTarget.id);
-	const hoverUp = $derived($w_s_hover?.id === upTarget.id);
-	const hoverDown = $derived($w_s_hover?.id === downTarget.id);
 	const current_thumb_color = $derived(
 		(hoverSlider || is_dragging) ? 'black' : thumb_color_default
 	);
 
-	const upPath = $derived(svg_paths.fat_polygon(buttonSize, Direction.up));
-	const downPath = $derived(svg_paths.fat_polygon(buttonSize, Direction.down));
-
-	// Register hit targets
+	// Register slider hit target
 	$effect(() => {
 		if (slider_input) {
 			sliderTarget.set_html_element(slider_input);
@@ -104,87 +92,42 @@
 		}
 	});
 
-	$effect(() => {
-		if (upElement && onstep) {
-			upTarget.set_html_element(upElement);
-			upTarget.handle_s_mouse = (s_mouse: S_Mouse) => {
-				if (s_mouse.isDown) onstep(true, s_mouse.event?.metaKey ?? false);
-				return true;
-			};
-		}
-	});
-
-	$effect(() => {
-		if (downElement && onstep) {
-			downTarget.set_html_element(downElement);
-			downTarget.handle_s_mouse = (s_mouse: S_Mouse) => {
-				if (s_mouse.isDown) onstep(false, s_mouse.event?.metaKey ?? false);
-				return true;
-			};
-		}
-	});
-
 	onMount(() => {
 		return () => {
 			hits.delete_hit_target(sliderTarget);
-			hits.delete_hit_target(upTarget);
-			hits.delete_hit_target(downTarget);
 		};
 	});
 </script>
 
 <div class='slider-compound'>
-	<div class='slider-border'
-		class:pill={style === 'pill'}
-		class:line={style === 'line'}
-		style:width="{width}px"
-		style:--border={border}
-		style:--height="{height}px"
-		style:--thumb-color={current_thumb_color}>
-		<input class='slider-input'
-			min='0'
-			step='1'
-			type='range'
-			max={divisions}
-			value={slider_value}
-			bind:this={slider_input}
-			oninput={on_input}
-			style='flex: 1 1 auto; position: relative; min-width: 0; pointer-events: auto;'/>
-		{#if show_value}
-			<span class='value-display'>
-				{value}
-			</span>
-		{/if}
+	<div class='slider-with-label'>
+		<div class='slider-border'
+			class:pill={style === 'pill'}
+			class:line={style === 'line'}
+			style:width="{width}px"
+			style:--border={border}
+			style:--height="{height}px"
+			style:--thumb-color={current_thumb_color}>
+			<input class='slider-input'
+				min='0'
+				step='1'
+				type='range'
+				max={divisions}
+				value={slider_value}
+				bind:this={slider_input}
+				oninput={on_input}
+				style='flex: 1 1 auto; position: relative; min-width: 0; pointer-events: auto;'/>
+			{#if show_value}
+				<span class='value-display'>
+					{value}
+				</span>
+			{/if}
+		</div>
+		<span class='slider-label'>{value.toFixed(1)}</span>
 	</div>
 	{#if show_steppers && onstep}
-		<div class='steppers'>
-			<div class='stepper-button'
-				bind:this={upElement}
-				role="button"
-				tabindex="0">
-				<svg width={buttonSize} height={buttonSize} viewBox="0 0 {buttonSize} {buttonSize}">
-					<path
-						d={upPath}
-						fill={hoverUp ? colors.default : 'white'}
-						stroke={colors.default}
-						stroke-width="0.375"
-					/>
-				</svg>
-			</div>
-			<span class='stepper-value'>{value.toFixed(1)}</span>
-			<div class='stepper-button'
-				bind:this={downElement}
-				role="button"
-				tabindex="0">
-				<svg width={buttonSize} height={buttonSize} viewBox="0 0 {buttonSize} {buttonSize}">
-					<path
-						d={downPath}
-						fill={hoverDown ? colors.default : 'white'}
-						stroke={colors.default}
-						stroke-width="0.375"
-					/>
-				</svg>
-			</div>
+		<div class='steppers-wrapper'>
+			<Steppers size={15} hit_closure={onstep} />
 		</div>
 	{/if}
 </div>
@@ -196,8 +139,25 @@
 		margin-left : 6px;
 		gap         : 0;
 	}
+	.slider-with-label {
+		display        : flex;
+		flex-direction : column;
+		align-items    : center;
+	}
+	.slider-label {
+		font-size            : 8px;
+		font-weight          : bold;
+		font-variant-numeric : tabular-nums;
+		text-align           : center;
+		line-height          : 1;
+		margin-top           : 1px;
+		user-select          : none;
+		position             : relative;
+		top                  : -4px;
+	}
 	.slider-border {
 		position    : relative;
+		top         : 4px;
 		display     : flex;
 		align-items : center;
 	}
@@ -208,27 +168,10 @@
 		width        : 3em;
 		text-align   : right;
 	}
-	.steppers {
-		display                : flex;
-		flex-direction         : column;
-		align-items            : center;
+	.steppers-wrapper {
 		margin-left            : -1px;
-	}
-	.stepper-value {
-		font-size              : 8px;
-		font-weight            : bold;
-		font-variant-numeric   : tabular-nums;
-		text-align             : center;
-		width                  : 3em;
-		height                 : 8px;
-		line-height            : 8px;
-		margin                 : -3px 0;
-		user-select            : none;
-		overflow               : hidden;
-	}
-	.stepper-button {
-		cursor      : pointer;
-		user-select : none;
+		position               : relative;
+		top                    : 1px;
 	}
 
 	/* === Native range input styling === */

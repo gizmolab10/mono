@@ -5,7 +5,7 @@ Documentation and design notes for the Design Intuition project.
 ## Contents
 
 - [Architecture](./architecture/)
-- [Designs](./designs/)
+- [Components](./components/)
 - [Guides](./guides/)
 - [Work](./work/)
 

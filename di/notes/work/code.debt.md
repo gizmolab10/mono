@@ -3,12 +3,13 @@
 offer a proposal for the first unchecked item
 
 
-- [ ] performance analysis -- app is VERY unresponsive
-- [ ] row of SAO buttons -> top left of canvas
-- [ ] build number button -> bottom left of canvas
+- [ ] steppers got centered in build notes, move back to top left
+	- [ ] when only step down button is visible, it should leave empty space for step up, so it does not jump when the step up button appears
 - [ ] 2D needs to be a "infinite zoom" projection
+	- [ ] so rotated SO flatten but "retain their relative angle"
+- [ ] pac: use hit target for ALL buttons and segments
 ---
-- [ ] in all code files, use 4-space tabs (not 2-)
+- [ ] pac: in all code files, use 4-space tabs (not 2-)
 - [ ] tweak dimensionals
 	- [ ] tab between dimensionals
 	- [ ] arrow-key nudging (±unit of precision)
