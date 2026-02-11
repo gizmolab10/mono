@@ -1038,6 +1038,50 @@ class Render {
     return (p1.x - p0.x) * (p2.y - p0.y) - (p1.y - p0.y) * (p2.x - p0.x);
   }
 
+  /** Check if a dimension's text rect is fully occluded by any front-facing face
+   *  from a different SO that's closer to the camera.  Depth is computed by
+   *  intersecting the camera ray through the dimension center with the face plane. */
+  private dimension_occluded(
+    cx: number, cy: number, w: number, h: number,
+    dim_z: number, owner_id: string,
+  ): boolean {
+    const hw = w / 2 + 4, hh = h / 2 + 4;  // padding matches Dimensions.hit_test
+    const rect_corners = [
+      { x: cx - hw, y: cy - hh },
+      { x: cx + hw, y: cy - hh },
+      { x: cx + hw, y: cy + hh },
+      { x: cx - hw, y: cy + hh },
+    ];
+    const center = new Point3(cx, cy, 0);  // screen point for ray cast
+
+    for (const obj of scene.get_all()) {
+      if (obj.so.id === owner_id) continue;
+      if (!obj.faces) continue;
+      const projected = hits_3d.get_projected(obj.id);
+      if (!projected) continue;
+      const world = this.get_world_matrix(obj);
+
+      for (const face of obj.faces) {
+        if (this.face_winding(face, projected) >= 0) continue;
+
+        // Check all face vertices are in front of camera
+        if (face.some(vi => projected[vi].w < 0)) continue;
+
+        // Face polygon must contain all 4 corners of the text rect
+        const poly = face.map(vi => ({ x: projected[vi].x, y: projected[vi].y }));
+        if (!rect_corners.every(c => this.point_in_polygon_2d(c.x, c.y, poly))) continue;
+
+        // Ray through dimension center → face plane intersection depth
+        const face_z = hits_3d.face_depth_at(center, face, obj.so, world);
+        if (face_z === null) continue;
+
+        // Face is in front of the dimension → occluded
+        if (face_z < dim_z) return true;
+      }
+    }
+    return false;
+  }
+
   private draw_dimension_3d(
     w1_start: Projected, w1_end: Projected,
     w2_start: Projected, w2_end: Projected,
@@ -1059,6 +1103,11 @@ class Render {
 
     // Dimension line direction
     const midX = (d1.x + d2.x) / 2, midY = (d1.y + d2.y) / 2;
+    const dim_z = (d1.z + d2.z) / 2;
+
+    // Skip if occluded by a different SO's face
+    if (this.dimension_occluded(midX, midY, textWidth, textHeight, dim_z, so.id)) return;
+
     const dx = d2.x - d1.x, dy = d2.y - d1.y;
     const lineLen = Math.sqrt(dx * dx + dy * dy);
     if (lineLen < 1) return;
@@ -1130,11 +1179,12 @@ class Render {
     ctx.textBaseline = 'middle';
     ctx.fillText(text, midX, midY);
 
-    // Record rect for click-to-edit
+    // Record rect for click-to-edit (z = average depth of dimension line endpoints)
     this.dimension_rects.push({
       axis, so,
       x: midX, y: midY,
       w: textWidth, h: textHeight,
+      z: (d1.z + d2.z) / 2,
     });
   }
 

@@ -28,6 +28,7 @@ export interface Dimension_Rect {
   y: number;        // screen y of text center
   w: number;        // text width in pixels
   h: number;        // text height in pixels
+  z: number;        // NDC depth at text center (for occlusion)
 }
 
 export interface O_Scene {

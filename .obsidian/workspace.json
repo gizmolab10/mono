@@ -215,10 +215,10 @@
   },
   "active": "ffdb7bac37c87e46",
   "lastOpenFiles": [
-    "di/notes/work/drag.md",
-    "di/notes/work/code.debt.md",
-    "notes/guides/pre-flight/shorthand.md",
     "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/code.debt.md",
+    "di/notes/work/drag.md",
+    "notes/guides/pre-flight/shorthand.md",
     "di/notes/work/code.debt copy.md",
     "di/src/lib/ts/editors/Dimension.ts",
     "di/src/lib/ts/editors/index.ts",

@@ -221,6 +221,54 @@ class Engine {
 
   // ── hierarchy ──
 
+  delete_selected_so(): void {
+    const sel = stores.selection();
+    if (!sel) return;
+    const so = sel.so;
+    if (!so.scene?.parent) return;  // can't delete root
+
+    // Clear selection first
+    hits_3d.set_selection(null);
+
+    // Clear formulas on the deleted SO
+    for (const bound of Object.keys(so.attributes_dict_byName) as Bound[]) {
+      constraints.clear_formula(so, bound);
+    }
+
+    // Clear formulas on other SOs that reference the deleted SO
+    for (const o of scene.get_all()) {
+      if (o.so === so) continue;
+      for (const bound of Object.keys(o.so.attributes_dict_byName) as Bound[]) {
+        const attr = o.so.attributes_dict_byName[bound];
+        if (attr.compiled && this.formula_references_so(attr.compiled, so.id)) {
+          constraints.clear_formula(o.so, bound);
+        }
+      }
+    }
+
+    // Reparent any children of the deleted SO to the deleted SO's parent
+    for (const o of scene.get_all()) {
+      if (o.parent === so.scene) {
+        o.parent = so.scene.parent;
+      }
+    }
+
+    // Remove from systems
+    hits_3d.unregister(so);
+    scene.destroy(so.scene.id);
+    stores.w_all_sos.update(list => list.filter(s => s !== so));
+    scenes.save();
+  }
+
+  private formula_references_so(node: import('../algebra/Nodes').Node, so_id: string): boolean {
+    switch (node.type) {
+      case 'literal': return false;
+      case 'reference': return node.object === so_id;
+      case 'unary': return this.formula_references_so(node.operand, so_id);
+      case 'binary': return this.formula_references_so(node.left, so_id) || this.formula_references_so(node.right, so_id);
+    }
+  }
+
   add_child_so(): void {
     const selected = stores.selection();
     const parent_so = selected?.so ?? this.root_scene?.so;

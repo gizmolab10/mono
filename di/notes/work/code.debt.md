@@ -3,17 +3,9 @@
 offer a proposal for the first unchecked item
 
 
-- [ ] delete selected SO
-- [ ] hover/click should hit the front most SO
-	- [ ] performance analysis?
-- [ ] ability to drag the current SO
-	- [x] click on a face and drag it
-	- [x] ignore drag when applied to the root SO
-	- [x] constrain movement within the plane of the front-most facing face OF THE PARENT SO
-	- [ ] movement does not follow mouse
-		- [ ] need to project mouse movement (2d vector) onto this plane (different vector)
-		- [ ] compute the new x,y,z 
-- [ ] hide occluded dimensionals
+- [ ] performance analysis -- app is VERY unresponsive
+- [ ] row of SAO buttons -> top left of canvas
+- [ ] build number button -> bottom left of canvas
 - [ ] 2D needs to be a "infinite zoom" projection
 ---
 - [ ] in all code files, use 4-space tabs (not 2-)

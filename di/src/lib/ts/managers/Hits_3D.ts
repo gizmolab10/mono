@@ -1,5 +1,6 @@
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Projected } from '../types/Interfaces';
+import { dimensions } from '../editors/Dimension';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
@@ -103,6 +104,17 @@ class Hits_3D {
 			}
 		}
 
+		// Dimension labels — check before faces but compare depth
+		let dim_hit: Hit_3D_Result | null = null;
+		let dim_z = Infinity;
+		if (stores.show_dimensionals()) {
+			const dim = dimensions.hit_test(point.x, point.y);
+			if (dim) {
+				dim_hit = { so: dim.so, type: T_Hit_3D.dimension, index: 0 };
+				dim_z = dim.z;
+			}
+		}
+
 		// Face hits: closest front-facing face across ALL SOs (no selection priority)
 		let best: Hit_3D_Result | null = null;
 		let best_z = Infinity;
@@ -130,6 +142,13 @@ class Hits_3D {
 				}
 			}
 		}
+
+		// Dimension wins over face unless a different SO's face is closer
+		if (dim_hit) {
+			const occluded = best && best.so !== dim_hit.so && best_z < dim_z;
+			if (!occluded) return dim_hit;
+		}
+
 		return best;
 	}
 
@@ -195,7 +214,7 @@ class Hits_3D {
 
 	/** Projected z of the mouse ray's intersection with a face plane.
 	 *  Uses camera ray → world-space face plane intersection → MVP projection. */
-	private face_depth_at(point: Point, face: number[], so: Smart_Object, world: mat4): number | null {
+	face_depth_at(point: { x: number; y: number }, face: number[], so: Smart_Object, world: mat4): number | null {
 		const verts = so.vertices;
 
 		// Build face plane in world space from first 3 vertices

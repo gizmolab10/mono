@@ -1,3 +1,5 @@
+import { dimensions } from '../editors/Dimension';
+import { engine } from '../render/Engine';
 import { Point } from '../types/Coordinates';
 import S_Mouse from '../state/S_Mouse';
 import { hits } from '../managers/Hits';
@@ -44,6 +46,7 @@ export class Events {
 		document.addEventListener('mousedown', this.handle_mouse_down, { passive: false });
 		document.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		document.addEventListener('mouseleave', this.handle_mouse_leave, { passive: false });
+		document.addEventListener('keydown', this.handle_key_down);
 	}
 
 	// ===== EVENT HANDLERS =====
@@ -80,6 +83,14 @@ export class Events {
 	private handle_mouse_leave = (_event: MouseEvent) => {
 		// Clear hover when mouse leaves the document
 		hits.clear_hover();
+	}
+
+	private handle_key_down = (event: KeyboardEvent) => {
+		if (dimensions.editing) return;  // typing in dimension input
+		if (event.key === 'Delete' || event.key === 'Backspace') {
+			event.preventDefault();
+			engine.delete_selected_so();
+		}
 	}
 
 }

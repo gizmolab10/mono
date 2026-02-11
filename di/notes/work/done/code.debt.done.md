@@ -56,3 +56,13 @@
 	- [x] screen-space spatial partitioning (tiled bins or BVH) to cull face checks per edge
 		- [x] Occlusion is brute-force O(edges × faces) — every edge checks every front-facing face from every other object. Intersection lines add O(face_pairs × faces) on top. Fine for a handful of objects, but will choke at scale
 		- [x] [[spatial]]
+- [x] delete selected SO
+- [x] hover/click should hit the front most SO
+- [x] ability to drag the current SO
+	- [x] click on a face and drag it
+	- [x] ignore drag when applied to the root SO
+	- [x] constrain movement within the plane of the front-most facing face OF THE PARENT SO
+	- [x] movement does not follow mouse
+		- [x] need to project mouse movement (2d vector) onto this plane (different vector)
+		- [x] compute the new x,y,z 
+- [x] hide occluded dimensionals

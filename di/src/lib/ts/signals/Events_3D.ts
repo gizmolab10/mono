@@ -29,6 +29,13 @@ class Events_3D {
 
       const hit = hits_3d.hit_test(point);
 
+      // Dimension hit — don't start a drag, defer to mouseup for editing
+      if (hit?.type === T_Hit_3D.dimension) {
+        drag.set_target(null);
+        hits_3d.set_hover(null);
+        return;
+      }
+
       // Store what we're actually dragging (corner/edge/face)
       drag.set_target(hit);
 
@@ -49,10 +56,11 @@ class Events_3D {
 
     document.addEventListener('mouseup', () => {
       if (!this.did_drag && this.mouse_in_canvas) {
-        // Click (no drag) — check dimension rects first
-        const dim_hit = dimensions.hit_test(this.last_canvas_position.x, this.last_canvas_position.y);
-        if (dim_hit) {
-          dimensions.begin(dim_hit);
+        const hit = hits_3d.hit_test(this.last_canvas_position);
+        if (hit?.type === T_Hit_3D.dimension) {
+          // Click on dimension label → begin editing
+          const dim = dimensions.hit_test(this.last_canvas_position.x, this.last_canvas_position.y);
+          if (dim) dimensions.begin(dim);
         } else if (!drag.has_target) {
           // Click on background → deselect
           hits_3d.set_selection(null);

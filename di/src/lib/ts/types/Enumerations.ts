@@ -18,6 +18,7 @@ export enum T_Hit_3D {
 	corner,
 	edge,
 	face,
+	dimension,
 	none,
 }
 
