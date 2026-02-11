@@ -102,6 +102,10 @@ export default defineConfig({
                     {
                       text: 'Rendering.types',
                       link: '/di/notes/architecture/rendering.types'
+                    },
+                    {
+                      text: 'Spatial',
+                      link: '/di/notes/architecture/spatial'
                     }
                   ]
                 },
@@ -177,16 +181,8 @@ export default defineConfig({
                       link: '/di/notes/work/code.debt'
                     },
                     {
-                      text: 'Cruft',
-                      link: '/di/notes/work/cruft'
-                    },
-                    {
                       text: 'Revisit.di',
                       link: '/di/notes/work/revisit.di'
-                    },
-                    {
-                      text: 'Spatial',
-                      link: '/di/notes/work/spatial'
                     },
                     {
                       text: 'Done >',
@@ -202,12 +198,20 @@ export default defineConfig({
                           link: '/di/notes/work/done/code.debt.done'
                         },
                         {
+                          text: 'Cruft',
+                          link: '/di/notes/work/done/cruft'
+                        },
+                        {
                           text: 'Layout Algorithm',
                           link: '/di/notes/work/done/layout-algorithm'
                         },
                         {
                           text: 'Quaternions',
                           link: '/di/notes/work/done/quaternions'
+                        },
+                        {
+                          text: 'Scene.model',
+                          link: '/di/notes/work/done/scene.model'
                         },
                         {
                           text: 'Svelte',

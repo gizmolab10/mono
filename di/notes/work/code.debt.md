@@ -2,10 +2,12 @@
 
 offer a proposal for the first unchecked item
 
-- [x] 2D needs to be a "infinite zoom" projection
-	- [x] so rotated SO flatten but "retain their relative angle"
-- [ ] add details hamburger
-- [ ] pac: use hit target for ALL buttons and segments
+
+- [ ] straighten -> apply to front-most-facing face of root
+- [ ] missing dimensionals in 2D
+- [ ] add ability to edit face label
+- [ ] add angulars (eq to dimenionals but for angles)
+- [ ] remove border around edit in 3d
 ---
 - [ ] pac: in all code files, use 4-space tabs (not 2-)
 - [ ] tweak dimensionals

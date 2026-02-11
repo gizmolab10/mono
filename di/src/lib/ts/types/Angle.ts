@@ -1,3 +1,5 @@
+import '../common/Extensions';
+
 export enum T_Quadrant {
 	upperRight = 'ur',	// 				0 ... quarter
 	upperLeft  = 'ul',	//		  quarter ... half
@@ -28,6 +30,51 @@ export default class Angle {
 	static eighth = Angle.full / 8;
 
 	static radians_from_degrees(degrees: number):	   number { return Math.PI / 180 * degrees; }
+
+	/** atan2 with browser-Y flipped (y increases downward in browsers) */
+	static angle_of(x: number, y: number): number { return Math.atan2(-y, x); }
+
+	/** 2D rotation (counter-clockwise, browser-Y convention) */
+	static rotate_xy(x: number, y: number, angle: number): [number, number] {
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
+		return [
+			x * cos + y * sin,
+			y * cos - x * sin	// reverse y for browsers
+		];
+	}
+
+	/** Which screen quadrant does (x, y) fall in? */
+	static quadrant_of_xy(x: number, y: number): T_Quadrant {
+		if		  (x >= 0 && y >= 0) { return T_Quadrant.upperRight;
+		} else if (x <  0 && y >= 0) { return T_Quadrant.upperLeft;
+		} else if (x <  0 && y <  0) { return T_Quadrant.lowerLeft;
+		} else						 { return T_Quadrant.lowerRight;
+		}
+	}
+
+	/** Snap (x, y) vector to nearest cardinal orientation */
+	static orientation_of_xy(x: number, y: number): T_Orientation {
+		const a = Angle.angle_of(x, y);
+		let quadrant = new Angle(a).quadrant_ofAngle;
+		const isFirstEighth = a.normalize_between_zeroAnd(Angle.quarter) < (Math.PI / 4);
+		switch (quadrant) {
+			case T_Quadrant.upperRight: return isFirstEighth ? T_Orientation.right : T_Orientation.up;
+			case T_Quadrant.upperLeft:  return isFirstEighth ? T_Orientation.up	   : T_Orientation.left;
+			case T_Quadrant.lowerLeft:  return isFirstEighth ? T_Orientation.left  : T_Orientation.down;
+			case T_Quadrant.lowerRight: return isFirstEighth ? T_Orientation.down  : T_Orientation.right;
+		}
+	}
+
+	/** Pick a diagonal pair of corners based on which quadrant the angle falls in */
+	static corners_for_angle<T>(angle: number, origin: T, extent: T, bottomLeft: T, topRight: T): [T, T] {
+		switch (new Angle(angle).quadrant_ofAngle) {
+			case T_Quadrant.lowerRight: return [bottomLeft, topRight];
+			case T_Quadrant.upperLeft:  return [topRight, bottomLeft];
+			case T_Quadrant.lowerLeft:  return [extent, origin];
+			default:					return [origin, extent];
+		}
+	}
 
 	static angle_from_name(name: string): number | null {
 		switch (name) {
@@ -118,19 +165,6 @@ export default class Angle {
 			test_angle += Angle.eighth;
 		}
 		return 0;
-	}
-
-	get cursor_forAngle(): string {
-		if (this.angle !== undefined && this.angle !== null) {
-			const octant = this.octant_ofAngle;
-			switch (octant % 4) {
-				case 0: return 'ns-resize';
-				case 1: return 'nwse-resize';
-				case 2: return 'ew-resize';
-				case 3: return 'nesw-resize';
-			}
-		}
-		return '';
 	}
 
 }

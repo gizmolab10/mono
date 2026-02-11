@@ -13,4 +13,5 @@ System structure and core concepts for Design Intuition.
 - [Primer](./primer.md)
 - [Project](./project.md)
 - [Rendering.types](./rendering.types.md)
+- [Spatial](./spatial.md)
 

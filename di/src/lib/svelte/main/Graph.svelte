@@ -9,9 +9,6 @@
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import { engine } from '../../ts/render';
-	import { k } from '../../ts/common/Constants';
-
-	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 
 	const { w_text_color, w_background_color } = colors;
 	const { w_editing } = dimensions;
@@ -145,12 +142,6 @@
 			{/each}
 		</div>
 	{/if}
-	<button
-		class='build-btn'
-		style:--so-light = {so_color_light}
-		onclick={() => onshowbuildnotes()}>
-		build {k.build_number}
-	</button>
 	{#if $w_editing}
 		<input
 			bind:this    = {dim_input}
@@ -216,27 +207,6 @@
 		background : var(--so-dark);
 		color      : black;
 		border     : 0.5px solid rgba(0, 0, 0, 0.5);
-	}
-
-	.build-btn {
-		position      : absolute;
-		bottom        : 10px;
-		left          : 10px;
-		background    : white;
-		border        : 0.5px solid black;
-		border-radius : 10px;
-		color         : black;
-		padding       : 0 8px;
-		font-size     : 11px;
-		height        : 20px;
-		box-sizing    : border-box;
-		cursor        : pointer;
-		z-index       : 5;
-	}
-
-	.build-btn:hover {
-		background : black;
-		color      : white;
 	}
 
 	.dim-edit {

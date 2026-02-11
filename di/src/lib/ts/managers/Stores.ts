@@ -4,12 +4,6 @@ import { writable, get } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import { Smart_Object } from '../runtime';
 
-function persistent<T>(key: T_Preference, fallback: T): Writable<T> {
-	const w = writable<T>(preferences.read<T>(key) ?? fallback);
-	w.subscribe((v) => preferences.write(key, v));
-	return w;
-}
-
 class Stores {
 
 	// Session (reset on setup)
@@ -19,12 +13,19 @@ class Stores {
 	w_selection			= writable<Hit_3D_Result | null>(null);
 
 	// Persistent
-	w_show_dimensionals = persistent<boolean>(T_Preference.showDimensionals, true);
-	w_edge_color		= persistent<string>(T_Preference.edgeColor, '#874efe');
-	w_view_mode			= persistent<'2d' | '3d'>(T_Preference.viewMode, '3d');
-	w_line_thickness	= persistent<number>(T_Preference.lineThickness, 2);
-	w_solid				= persistent<boolean>(T_Preference.solid, false);
-	w_precision			= persistent<number>(T_Preference.precision, 2);
+	w_show_dimensionals = this.persistent<boolean>(T_Preference.showDimensionals, true);
+	w_edge_color		= this.persistent<string>(T_Preference.edgeColor, '#874efe');
+	w_view_mode			= this.persistent<'2d' | '3d'>(T_Preference.viewMode, '3d');
+	w_line_thickness	= this.persistent<number>(T_Preference.lineThickness, 2);
+	w_solid				= this.persistent<boolean>(T_Preference.solid, false);
+	w_precision			= this.persistent<number>(T_Preference.precision, 2);
+	w_show_details		= this.persistent<boolean>(T_Preference.showDetails, true);
+
+	private persistent<T>(key: T_Preference, fallback: T): Writable<T> {
+		const w = writable<T>(preferences.read<T>(key) ?? fallback);
+		w.subscribe((v) => preferences.write(key, v));
+		return w;
+	}
 
 	// Selection
 	selection():		   Hit_3D_Result | null  { return get(this.w_selection); }
@@ -33,6 +34,7 @@ class Stores {
 	// Toggles
 	toggle_dimensionals():					void { this.w_show_dimensionals.update(v => !v); }
 	toggle_solid():							void { this.w_solid.update(v => !v); }
+	toggle_details():						void { this.w_show_details.update(v => !v); }
 
 	// Synchronous readers (for non-reactive contexts like Render)
 	is_solid():							 boolean { return get(this.w_solid); }
@@ -41,6 +43,7 @@ class Stores {
 	current_precision():				  number { return get(this.w_precision); }
 	edge_color():						  string { return get(this.w_edge_color); }
 	current_view_mode():			 '2d' | '3d' { return get(this.w_view_mode); }
+	show_details():					 boolean { return get(this.w_show_details); }
 
 }
 

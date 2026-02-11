@@ -1,4 +1,4 @@
-import S_Hit_Target, { setHitsManager } from '../state/S_Hit_Target';
+import S_Hit_Target from '../state/S_Hit_Target';
 import Mouse_Timer, { T_Timer } from '../signals/Mouse_Timer';
 import { T_Drag, T_Hit_Target } from '../types/Enumerations';
 import { hits_3d } from '../managers/Hits_3D';
@@ -36,7 +36,7 @@ export default class Hits {
 
 	constructor() {
 		// Wire up the circular dependency
-		setHitsManager(this);
+		S_Hit_Target.setHitsManager(this);
 	}
 
 	get isHovering(): boolean { return get(this.w_s_hover) != null; }

@@ -50,7 +50,7 @@ class Parser {
 	expect_end(): void {
 		const token = this.peek();
 		if (token.type !== 'end') {
-			throw new Error(`Unexpected token '${token_label(token)}' — expected end of expression`);
+			throw new Error(`Unexpected token '${this.token_label(token)}' — expected end of expression`);
 		}
 	}
 
@@ -109,28 +109,28 @@ class Parser {
 			this.advance();
 			const node = this.expression();
 			if (!(this.peek().type === 'paren' && (this.peek() as any).value === ')')) {
-				throw new Error(`Expected ')' but got '${token_label(this.peek())}'`);
+				throw new Error(`Expected ')' but got '${this.token_label(this.peek())}'`);
 			}
 			this.advance();
 			return node;
 		}
 
-		throw new Error(`Expected number, reference, or '(' but got '${token_label(token)}'`);
+		throw new Error(`Expected number, reference, or '(' but got '${this.token_label(token)}'`);
 	}
 
 	private is_operator(op: string): boolean {
 		const t = this.peek();
 		return t.type === 'operator' && t.value === op;
 	}
-}
 
-function token_label(token: Token): string {
-	switch (token.type) {
-		case 'number': return String(token.value);
-		case 'bare_number': return String(token.value);
-		case 'reference': return `${token.object}.${token.attribute}`;
-		case 'operator': return token.value;
-		case 'paren': return token.value;
-		case 'end': return 'end';
+	private token_label(token: Token): string {
+		switch (token.type) {
+			case 'number': return String(token.value);
+			case 'bare_number': return String(token.value);
+			case 'reference': return `${token.object}.${token.attribute}`;
+			case 'operator': return token.value;
+			case 'paren': return token.value;
+			case 'end': return 'end';
+		}
 	}
 }

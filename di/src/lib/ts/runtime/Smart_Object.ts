@@ -1,10 +1,9 @@
 import type { O_Scene } from '../types/Interfaces';
 import type { Dictionary } from '../types/Types';
-import { Point3 } from '../types/Coordinates';
 import Attribute from '../types/Attribute';
 import Identifiable from './Identifiable';
 import { compiler } from '../algebra';
-import { quat } from 'gl-matrix';
+import { quat, vec3 } from 'gl-matrix';
 
 // Bounds: min/max for each axis
 export type Bound = 'x_min' | 'x_max' | 'y_min' | 'y_max' | 'z_min' | 'z_max';
@@ -80,13 +79,13 @@ export default class Smart_Object extends Identifiable {
 	//   0-3: front face (z_min), 4-7: back face (z_max)
 	//   Within each face: (x_min,y_min), (x_max,y_min), (x_max,y_max), (x_min,y_max)
 	// NOTE: Uses actual min/max to keep topology consistent even when bounds cross
-	get vertices(): Point3[] {
+	get vertices(): vec3[] {
 		const xLo = Math.min(this.x_min, this.x_max), xHi = Math.max(this.x_min, this.x_max);
 		const yLo = Math.min(this.y_min, this.y_max), yHi = Math.max(this.y_min, this.y_max);
 		const zLo = Math.min(this.z_min, this.z_max), zHi = Math.max(this.z_min, this.z_max);
 		return [
-			new Point3(xLo, yLo, zLo), new Point3(xHi, yLo, zLo), new Point3(xHi, yHi, zLo), new Point3(xLo, yHi, zLo),
-			new Point3(xLo, yLo, zHi), new Point3(xHi, yLo, zHi), new Point3(xHi, yHi, zHi), new Point3(xLo, yHi, zHi),
+			vec3.fromValues(xLo, yLo, zLo), vec3.fromValues(xHi, yLo, zLo), vec3.fromValues(xHi, yHi, zLo), vec3.fromValues(xLo, yHi, zLo),
+			vec3.fromValues(xLo, yLo, zHi), vec3.fromValues(xHi, yLo, zHi), vec3.fromValues(xHi, yHi, zHi), vec3.fromValues(xLo, yHi, zHi),
 		];
 	}
 
@@ -122,14 +121,14 @@ export default class Smart_Object extends Identifiable {
 
 	// Face normals by index (matches cube_faces in Setup.ts)
 	// 0: front (z_min), 1: back (z_max), 2: left (x_min), 3: right (x_max), 4: top (y_max), 5: bottom (y_min)
-	private static readonly FACE_NORMALS: Point3[] = [
-		new Point3(0, 0, -1), new Point3(0, 0, 1),
-		new Point3(-1, 0, 0), new Point3(1, 0, 0),
-		new Point3(0, 1, 0), new Point3(0, -1, 0),
+	private readonly FACE_NORMALS: vec3[] = [
+		vec3.fromValues(0, 0, -1), vec3.fromValues(0, 0, 1),
+		vec3.fromValues(-1, 0, 0), vec3.fromValues(1, 0, 0),
+		vec3.fromValues(0, 1, 0), vec3.fromValues(0, -1, 0),
 	];
 
-	face_normal(face_index: number): Point3 {
-		return Smart_Object.FACE_NORMALS[face_index] ?? new Point3(0, 0, 1);
+	face_normal(face_index: number): vec3 {
+		return this.FACE_NORMALS[face_index] ?? vec3.fromValues(0, 0, 1);
 	}
 
 	// Which axis is perpendicular to this face?
@@ -146,11 +145,11 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	// Unit vector for an axis
-	axis_vector(axis: Axis): Point3 {
+	axis_vector(axis: Axis): vec3 {
 		switch (axis) {
-			case 'x': return new Point3(1, 0, 0);
-			case 'y': return new Point3(0, 1, 0);
-			case 'z': return new Point3(0, 0, 1);
+			case 'x': return vec3.fromValues(1, 0, 0);
+			case 'y': return vec3.fromValues(0, 1, 0);
+			case 'z': return vec3.fromValues(0, 0, 1);
 		}
 	}
 
@@ -176,9 +175,9 @@ export default class Smart_Object extends Identifiable {
 		const [a, b] = this.edge_vertices(edge_index);
 		const verts = this.vertices;
 		const va = verts[a], vb = verts[b];
-		const dx = Math.abs(vb.x - va.x);
-		const dy = Math.abs(vb.y - va.y);
-		const dz = Math.abs(vb.z - va.z);
+		const dx = Math.abs(vb[0] - va[0]);
+		const dy = Math.abs(vb[1] - va[1]);
+		const dz = Math.abs(vb[2] - va[2]);
 		if (dx >= dy && dx >= dz) return 'x';
 		if (dy >= dx && dy >= dz) return 'y';
 		return 'z';
@@ -199,11 +198,11 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	// Apply edge drag: moves 1 bound
-	apply_edge_drag(edge_index: number, face_index: number, local_delta: Point3): void {
+	apply_edge_drag(edge_index: number, face_index: number, local_delta: vec3): void {
 		const axis = this.edge_changes_axis(edge_index, face_index);
 		const bound = this.edge_bound(edge_index, face_index);
 		const axis_vec = this.axis_vector(axis);
-		const amount = local_delta.dot(axis_vec);
+		const amount = vec3.dot(local_delta, axis_vec);
 
 		const current = this.get_bound(bound);
 		const opposite = bound.endsWith('_min')
@@ -225,13 +224,13 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	// Apply corner drag: moves 2 bounds
-	apply_corner_drag(corner_index: number, face_index: number, local_delta: Point3): void {
+	apply_corner_drag(corner_index: number, face_index: number, local_delta: vec3): void {
 		const axes = this.face_axes(face_index);
 
 		for (const axis of axes) {
 			const bound = this.vertex_bound(corner_index, axis);
 			const axis_vec = this.axis_vector(axis);
-			const amount = local_delta.dot(axis_vec);
+			const amount = vec3.dot(local_delta, axis_vec);
 
 			const current = this.get_bound(bound);
 			const opposite = bound.endsWith('_min')

@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/components/index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt"
+              "title": "index"
             }
           },
           {
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/components/index.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of index"
             }
           }
         ],
@@ -215,13 +215,17 @@
   },
   "active": "ffdb7bac37c87e46",
   "lastOpenFiles": [
-    "di/notes/work/done/code.debt.done.md",
     "di/notes/work/code.debt.md",
+    "logs/update-docs.error.mono.log",
+    "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/done/scene.model.md",
+    "di/src/lib/ts/events/Hit_Target.ts",
+    "di/src/lib/ts/events",
+    "di/notes/work/done/cruft.md",
     "di/src/assets/American.di",
     "di/src/assets/American (1).di",
     "di/notes/architecture/algebra.md",
     "logs/update-docs.error.di.log",
-    "logs/update-docs.error.mono.log",
     "di/notes/architecture/drag.md",
     "notes/guides/pre-flight/shorthand.md",
     "di/notes/work/code.debt copy.md",
@@ -229,8 +233,6 @@
     "di/src/lib/ts/editors/index.ts",
     "di/src/lib/ts/editors/Drag.ts",
     "di/src/lib/ts/editors/Dimensions.ts",
-    "di/src/lib/ts/managers/Drag.ts",
-    "di/src/lib/ts/editors",
     "di/notes/work/revisit.di.md",
     "di/notes/architecture/primer.md",
     "node_modules/katex/node_modules/commander/Readme.md",
@@ -240,7 +242,7 @@
     "di/node_modules/@sveltejs/vite-plugin-svelte-inspector/README.md",
     "node_modules/commander/History.md",
     "di/node_modules/@sveltejs/vite-plugin-svelte/README.md",
-    "di/notes/work/spatial.md",
+    "di/notes/architecture/spatial.md",
     "notes/guides/jonathan.md",
     "notes/work/journal.md",
     "di/notes/architecture/intersecting.faces.md",
@@ -248,8 +250,6 @@
     "di/notes/architecture/rendering.types.md",
     "di/notes/architecture/intersection.md",
     "CLAUDE.MD",
-    "di/notes/work/cruft.md",
-    "di/notes/guides/style.md",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",
     "ga/node_modules/phaser/changelog/3.60/images/timeline.png",
     "ga/node_modules/phaser/changelog/3.60/images/videogameobject.png",

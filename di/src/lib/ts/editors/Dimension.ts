@@ -1,6 +1,6 @@
 import type { Dimension_Rect, S_Editing } from '../types/Interfaces';
 import { constraints, compiler, evaluator } from '../algebra';
-import { units, current_unit_system } from '../types/Units';
+import { units, Units } from '../types/Units';
 import { T_Units } from '../types/Enumerations';
 import { writable, get } from 'svelte/store';
 import { stores } from '../managers/Stores';
@@ -34,7 +34,7 @@ class Dimensions {
 	begin(rect: Dimension_Rect): void {
 		const so = rect.so;
 		const value_mm = rect.axis === 'x' ? so.width : rect.axis === 'y' ? so.height : so.depth;
-		const system = current_unit_system();
+		const system = Units.current_unit_system();
 		this.w_editing.set({
 			so,
 			axis: rect.axis,
@@ -49,7 +49,7 @@ class Dimensions {
 		const state = this.editing;
 		if (!state) return false;
 
-		const system = current_unit_system();
+		const system = Units.current_unit_system();
 		const new_mm = this.parse_input(input, system);
 		if (new_mm === null || new_mm <= 0) {
 			this.cancel();

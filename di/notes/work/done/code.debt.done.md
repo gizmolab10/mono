@@ -77,3 +77,10 @@
 	- [x] when only step down button is visible, it should leave empty space for step up, so it does not jump when the step up button appears
 - [x] when build notes overlay is visible, make entire app just one large empty div, retaining the wraparound accent gap
 - [x] move Design Intuition label in controls up 3px
+- [x] 2D needs to be a "infinite zoom" projection
+	- [x] so rotated SO flatten but "retain their relative angle"
+- [x] add details hamburger (copy from ws project)
+- [x] use hit target for ALL buttons and segments
+- [x] research scene model
+- [x]  move all Angle and Polar code from Coordinates to Angle
+	- [x] including thin delegates

@@ -1,7 +1,9 @@
 import { Point } from '../types/Coordinates';
-import Angle, { Direction } from '../types/Angle';
+import Angle from '../types/Angle';
 
 export class SVG_Paths {
+
+	private rotated(p: Point, angle: number): Point { const [rx, ry] = Angle.rotate_xy(p.x, p.y, angle); return new Point(rx, ry); }
 
 	circle(center: Point, radius: number, clockwise: boolean = true): string {
 		const direction = clockwise ? 0 : 1;
@@ -34,9 +36,9 @@ export class SVG_Paths {
 			const preceder = halfWay - tweak;
 			const follower = halfWay + tweak;
 			data.push({
-				controlOne: outer.rotate_by(preceder).offsetBy(offset),
-				controlTwo: outer.rotate_by(follower).offsetBy(offset),
-				end: inner.rotate_by(final).offsetBy(offset),
+				controlOne: this.rotated(outer,preceder).offsetBy(offset),
+				controlTwo: this.rotated(outer,follower).offsetBy(offset),
+				end: this.rotated(inner,final).offsetBy(offset),
 			});
 		}
 		const start = data[vertices - 1].end;
@@ -58,9 +60,9 @@ export class SVG_Paths {
 			const preceder = halfWay - tweak;
 			const follower = halfWay + tweak;
 			points.push(
-				outer.rotate_by(preceder).offsetBy(offset),
-				outer.rotate_by(follower).offsetBy(offset),
-				inner.rotate_by(final).offsetBy(offset),
+				this.rotated(outer,preceder).offsetBy(offset),
+				this.rotated(outer,follower).offsetBy(offset),
+				this.rotated(inner,final).offsetBy(offset),
 			);
 		}
 		const xs   = points.map(p => p.x);
@@ -68,32 +70,6 @@ export class SVG_Paths {
 		const minX = Math.min(...xs);
 		const minY = Math.min(...ys);
 		return { minX, minY, width: Math.max(...xs) - minX, height: Math.max(...ys) - minY };
-	}
-
-	fillets(center : Point, radius : number, direction : Direction) : string {
-		const baseAngle     = direction + Angle.half;
-		const leftEndAngle  = baseAngle + Angle.quarter;
-		const rightEndAngle = baseAngle - Angle.quarter;
-		const a_start       = center.offsetBy(Point.fromPolar(radius, leftEndAngle));
-		const a_end         = center.offsetBy(Point.fromPolar(radius, baseAngle));
-		const b_end         = center.offsetBy(Point.fromPolar(radius, rightEndAngle));
-		const leftArc       = `A ${radius} ${radius} 0 0 0 ${a_end.x} ${a_end.y}`;
-		const rightArc      = `A ${radius} ${radius} 0 0 0 ${b_end.x} ${b_end.y}`;
-		return `M ${a_start.x} ${a_start.y} ${leftArc} ${rightArc} L ${a_start.x} ${a_start.y} Z`;
-	}
-
-	fillets_bounds(radius : number, direction : Direction) : { minX : number; minY : number; width : number; height : number } {
-		const baseAngle     = direction + Angle.half;
-		const leftEndAngle  = baseAngle + Angle.quarter;
-		const rightEndAngle = baseAngle - Angle.quarter;
-		const a_start       = Point.fromPolar(radius, leftEndAngle);
-		const a_end         = Point.fromPolar(radius, baseAngle);
-		const b_end         = Point.fromPolar(radius, rightEndAngle);
-		const minX          = Math.min(a_start.x, a_end.x, b_end.x);
-		const maxX          = Math.max(a_start.x, a_end.x, b_end.x);
-		const minY          = Math.min(a_start.y, a_end.y, b_end.y);
-		const maxY          = Math.max(a_start.y, a_end.y, b_end.y);
-		return { minX, minY, width : maxX - minX, height : maxY - minY };
 	}
 
 }

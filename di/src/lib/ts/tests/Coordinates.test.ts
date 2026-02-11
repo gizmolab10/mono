@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { Point, Size, Rect, Polar, Point3 } from '../types/Coordinates';
+import { Point, Size, Rect } from '../types/Coordinates';
+import { vec3 } from 'gl-matrix';
 import '../common/Extensions';
 
 describe('Point', () => {
@@ -64,22 +65,6 @@ describe('Point', () => {
 			const vec = p1.vector_to(p2);
 			expect(vec.x).toBe(3);
 			expect(vec.y).toBe(4);
-		});
-	});
-
-	describe('rotate_by', () => {
-		it('rotates point on x-axis by 90 degrees', () => {
-			const p = new Point(1, 0);
-			const rotated = p.rotate_by(Math.PI / 2);
-			expect(rotated.x).toBeCloseTo(0, 10);
-			expect(rotated.y).toBeCloseTo(-1, 10);  // browser coords: y inverted
-		});
-
-		it('rotates point by 180 degrees', () => {
-			const p = new Point(1, 0);
-			const rotated = p.rotate_by(Math.PI);
-			expect(rotated.x).toBeCloseTo(-1, 10);
-			expect(rotated.y).toBeCloseTo(0, 10);
 		});
 	});
 
@@ -245,56 +230,41 @@ describe('Rect', () => {
 	});
 });
 
-describe('Point3', () => {
-	it('creates 3D point', () => {
-		const p = new Point3(1, 2, 3);
-		expect(p.x).toBe(1);
-		expect(p.y).toBe(2);
-		expect(p.z).toBe(3);
+describe('vec3 (replaces Point3)', () => {
+	it('creates 3D vector', () => {
+		const v = vec3.fromValues(1, 2, 3);
+		expect(v[0]).toBe(1);
+		expect(v[1]).toBe(2);
+		expect(v[2]).toBe(3);
 	});
 
 	it('calculates magnitude', () => {
-		const p = new Point3(1, 2, 2);
-		expect(p.magnitude).toBe(3);
+		const v = vec3.fromValues(1, 2, 2);
+		expect(vec3.length(v)).toBe(3);
 	});
 
 	it('calculates cross product', () => {
-		const p1 = new Point3(1, 0, 0);
-		const p2 = new Point3(0, 1, 0);
-		const cross = p1.cross(p2);
-		expect(cross.x).toBe(0);
-		expect(cross.y).toBe(0);
-		expect(cross.z).toBe(1);
+		const v1 = vec3.fromValues(1, 0, 0);
+		const v2 = vec3.fromValues(0, 1, 0);
+		const cross = vec3.cross(vec3.create(), v1, v2);
+		expect(cross[0]).toBe(0);
+		expect(cross[1]).toBe(0);
+		expect(cross[2]).toBe(1);
 	});
 
 	it('calculates dot product', () => {
-		const p1 = new Point3(1, 2, 3);
-		const p2 = new Point3(4, 5, 6);
-		expect(p1.dot(p2)).toBe(32);  // 1*4 + 2*5 + 3*6
+		const v1 = vec3.fromValues(1, 2, 3);
+		const v2 = vec3.fromValues(4, 5, 6);
+		expect(vec3.dot(v1, v2)).toBe(32);
 	});
 
 	it('normalizes vector', () => {
-		const p = new Point3(3, 0, 4);
-		const n = p.normalized;
-		expect(n.x).toBeCloseTo(0.6, 10);
-		expect(n.y).toBe(0);
-		expect(n.z).toBeCloseTo(0.8, 10);
-		expect(n.magnitude).toBeCloseTo(1, 10);
+		const v = vec3.fromValues(3, 0, 4);
+		const n = vec3.normalize(vec3.create(), v);
+		expect(n[0]).toBeCloseTo(0.6, 5);
+		expect(n[1]).toBe(0);
+		expect(n[2]).toBeCloseTo(0.8, 5);
+		expect(vec3.length(n)).toBeCloseTo(1, 5);
 	});
 });
 
-describe('Polar', () => {
-	it('converts to Point', () => {
-		const polar = new Polar(1, 0);
-		const point = polar.asPoint;
-		expect(point.x).toBeCloseTo(1, 10);
-		expect(point.y).toBeCloseTo(0, 10);
-	});
-
-	it('converts 45 degrees', () => {
-		const polar = new Polar(Math.sqrt(2), Math.PI / 4);
-		const point = polar.asPoint;
-		expect(point.x).toBeCloseTo(1, 10);
-		expect(point.y).toBeCloseTo(-1, 10);  // browser coords
-	});
-});

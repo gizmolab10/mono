@@ -1,4 +1,5 @@
 <script lang='ts'>
+	import { stores } from '../../ts/managers/Stores';
 	import { colors } from '../../ts/draw/Colors';
 	import { k } from '../../ts/common/Constants';
 	import { e } from '../../ts/signals/Events';
@@ -9,6 +10,7 @@
 	import { onMount } from 'svelte';
 
 	const { w_accent_color, w_background_color } = colors;
+	const { w_show_details } = stores;
 
 	// Initialize event system
 	onMount(() => {
@@ -25,12 +27,11 @@
 
 	let controlsHeight = $derived(32);
 	let detailsWidth   = $derived(280 - gap * 2);
-	let showDetails    = $state(true);
 	let showBuildNotes = $state(false);
 
 	// Computed dimensions
 	let mainHeight = $derived(height - controlsHeight - gap * 3);
-	let graphWidth = $derived(width - (showDetails ? detailsWidth + gap : 0) - gap * 2);
+	let graphWidth = $derived(width - ($w_show_details ? detailsWidth + gap : 0) - gap * 2);
 
 	function handleResize() {
 		width  = window.innerWidth;
@@ -74,13 +75,13 @@
 			class         = 'main'
 			style:height  = '{mainHeight}px'
 			style:margin-top = '{gap}px'>
-			{#if showDetails}
+			{#if $w_show_details}
 				<!-- Details region -->
 				<div
 					class        = 'region details'
 					style:width  = '{detailsWidth}px'
 					style:height = '{mainHeight}px'>
-					<Details />
+					<Details onshowbuildnotes={() => showBuildNotes = true} />
 				</div>
 			{/if}
 
@@ -89,7 +90,7 @@
 				class        = 'region graph'
 				style:width  = '{graphWidth}px'
 				style:height = '{mainHeight}px'>
-				<Graph onshowbuildnotes={() => showBuildNotes = true} />
+				<Graph />
 			</div>
 		</div>
 	{/if}

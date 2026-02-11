@@ -5,13 +5,13 @@ Design documentation for components and managers.
 | Component | Description |
 |-----------|-------------|
 | [Main](Main.md) | Root layout, viewport management |
-| [Controls](di/notes/components/Controls.md) | Top bar with title |
+| [Controls](./Controls.md) | Top bar with title |
 | [Graph](Graph.md) | Canvas for 3D visualization |
-| [Details](di/notes/components/Details.md) | Left sidebar for properties |
+| [Details](./Details.md) | Left sidebar for properties |
 ## Managers
 | Component | Description |
 |-----------|-------------|
-| [Preferences](di/notes/components/Preferences.md) | localStorage persistence |
+| [Preferences](./Preferences.md) | localStorage persistence |
 | [Hits_3D](Hits_3D.md) | 3D hit testing for canvas objects |
 ## Runtime
 | Component | Description |

@@ -1,8 +1,8 @@
 import type { Projected, O_Scene, Dimension_Rect } from '../types/Interfaces';
-import { units, current_unit_system } from '../types/Units';
+import { units, Units } from '../types/Units';
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Axis } from '../runtime/Smart_Object';
-import { Size, Point3 } from '../types/Coordinates';
+import { Size } from '../types/Coordinates';
 import { mat4, vec3, vec4, quat } from 'gl-matrix';
 import { T_Hit_3D } from '../types/Enumerations';
 import { hits_3d } from '../managers/Hits_3D';
@@ -146,7 +146,7 @@ class Render {
           for (const vi of face) {
             const lv = verts[vi];
             const wv = vec4.create();
-            vec4.transformMat4(wv, [lv.x, lv.y, lv.z, 1], world);
+            vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], world);
             corners.push(vec3.fromValues(wv[0], wv[1], wv[2]));
           }
           const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);
@@ -268,8 +268,8 @@ class Render {
     return twist;
   }
 
-  private project_vertex(v: Point3, world_matrix: mat4): Projected {
-    const point = vec4.fromValues(v.x, v.y, v.z, 1);
+  private project_vertex(v: vec3, world_matrix: mat4): Projected {
+    const point = vec4.fromValues(v[0], v[1], v[2], 1);
 
     mat4.multiply(this.mvp_matrix, camera.view, world_matrix);
     mat4.multiply(this.mvp_matrix, camera.projection, this.mvp_matrix);
@@ -286,7 +286,7 @@ class Render {
 
   // Debug face colors: primary + secondary at 50% saturation
   // Face indices: 0=front(z_min), 1=back(z_max), 2=left(x_min), 3=right(x_max), 4=top(y_max), 5=bottom(y_min)
-  private static readonly FACE_RGB = [
+  private readonly FACE_RGB = [
     [191, 64, 64],    // 0: front - red (50% sat)
     [64, 191, 64],    // 1: back - green
     [64, 64, 191],    // 2: left - blue
@@ -330,8 +330,8 @@ class Render {
 
         const vi = obj.so.vertices[i], vj = obj.so.vertices[j];
         const wi = vec4.create(), wj = vec4.create();
-        vec4.transformMat4(wi, [vi.x, vi.y, vi.z, 1], world);
-        vec4.transformMat4(wj, [vj.x, vj.y, vj.z, 1], world);
+        vec4.transformMat4(wi, [vi[0], vi[1], vi[2], 1], world);
+        vec4.transformMat4(wj, [vj[0], vj[1], vj[2], 1], world);
         const w1 = vec3.fromValues(wi[0], wi[1], wi[2]);
         const w2 = vec3.fromValues(wj[0], wj[1], wj[2]);
 
@@ -409,7 +409,7 @@ class Render {
         for (const vi of face_indices[fi]) {
           const lv = verts[vi];
           const wv = vec4.create();
-          vec4.transformMat4(wv, [lv.x, lv.y, lv.z, 1], world);
+          vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], world);
           corners.push(vec3.fromValues(wv[0], wv[1], wv[2]));
         }
 
@@ -488,8 +488,8 @@ class Render {
     const end = vec3.scaleAndAdd(vec3.create(), p0, dir, tB);
 
     const identity = mat4.create();
-    const s1 = this.project_vertex(new Point3(start[0], start[1], start[2]), identity);
-    const s2 = this.project_vertex(new Point3(end[0], end[1], end[2]), identity);
+    const s1 = this.project_vertex(start, identity);
+    const s2 = this.project_vertex(end, identity);
     if (s1.w < 0 || s2.w < 0) return;
 
     ctx.strokeStyle = `${color}1)`;
@@ -557,7 +557,7 @@ class Render {
       if (d1 > 0 && d2 <= 0) {
         const t_cross = d1 / (d1 - d2);
         const wc = vec3.lerp(vec3.create(), w1, w2, t_cross);
-        const pc = this.project_vertex(new Point3(wc[0], wc[1], wc[2]), identity);
+        const pc = this.project_vertex(wc, identity);
         // Find screen t of the crossing point along p1→p2
         const cdx = pc.x - p1.x, cdy = pc.y - p1.y;
         s_behind_start = Math.abs(dx) > Math.abs(dy) ? cdx / dx : cdy / dy;
@@ -565,7 +565,7 @@ class Render {
       } else if (d1 <= 0 && d2 > 0) {
         const t_cross = d1 / (d1 - d2);
         const wc = vec3.lerp(vec3.create(), w1, w2, t_cross);
-        const pc = this.project_vertex(new Point3(wc[0], wc[1], wc[2]), identity);
+        const pc = this.project_vertex(wc, identity);
         const cdx = pc.x - p1.x, cdy = pc.y - p1.y;
         s_behind_start = 0;
         s_behind_end = Math.abs(dx) > Math.abs(dy) ? cdx / dx : cdy / dy;
@@ -734,7 +734,7 @@ class Render {
   /** Check if a screen point is occluded by any front-facing face from a different object. */
   private is_point_occluded(
     sx: number, sy: number,
-    face: number[], verts: Point3[], world: mat4,
+    face: number[], verts: vec3[], world: mat4,
     skip_id: string,
   ): boolean {
     if (this.occluding_faces.length === 0) return false;
@@ -744,7 +744,7 @@ class Render {
     for (const vi of face) {
       const lv = verts[vi];
       const wv = vec4.create();
-      vec4.transformMat4(wv, [lv.x, lv.y, lv.z, 1], world);
+      vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], world);
       wx += wv[0]; wy += wv[1]; wz += wv[2];
     }
     wx /= face.length; wy /= face.length; wz /= face.length;
@@ -783,7 +783,7 @@ class Render {
   }
 
   private draw_debug_face(face: number[], fi: number, projected: Projected[]): void {
-    const rgb = Render.FACE_RGB[fi] ?? [128, 128, 128];
+    const rgb = this.FACE_RGB[fi] ?? [128, 128, 128];
     const alpha = this.debug ? 1 : 0;
     this.ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
     this.ctx.beginPath();
@@ -895,15 +895,15 @@ class Render {
     // Pick direction that points away from cube center
     const verts = so.vertices;
     const v1 = verts[v1_idx], v2 = verts[v2_idx];
-    const edge_mid = new Point3((v1.x + v2.x) / 2, (v1.y + v2.y) / 2, (v1.z + v2.z) / 2);
+    const edge_mid = vec3.fromValues((v1[0] + v2[0]) / 2, (v1[1] + v2[1]) / 2, (v1[2] + v2[2]) / 2);
     // Vector from SO center to edge midpoint — determines "outward"
     const cx = (so.x_min + so.x_max) / 2;
     const cy = (so.y_min + so.y_max) / 2;
     const cz = (so.z_min + so.z_max) / 2;
-    const outward = new Point3(edge_mid.x - cx, edge_mid.y - cy, edge_mid.z - cz);
-    const dot = witness_dir.x * outward.x + witness_dir.y * outward.y + witness_dir.z * outward.z;
+    const outward = vec3.fromValues(edge_mid[0] - cx, edge_mid[1] - cy, edge_mid[2] - cz);
+    const dot = vec3.dot(witness_dir, outward);
     if (dot < 0) {
-      witness_dir = new Point3(-witness_dir.x, -witness_dir.y, -witness_dir.z);
+      witness_dir = vec3.negate(vec3.create(), witness_dir);
     }
 
     // Project edge endpoints to screen
@@ -911,7 +911,7 @@ class Render {
     if (p1.w < 0 || p2.w < 0) return;
 
     // Witness direction in screen space: project witness_dir via world matrix
-    const origin_3d = new Point3(0, 0, 0);
+    const origin_3d = vec3.create();
     const p_origin = this.project_vertex(origin_3d, world_matrix);
     const p_witness = this.project_vertex(witness_dir, world_matrix);
     let wx = p_witness.x - p_origin.x, wy = p_witness.y - p_origin.y;
@@ -943,7 +943,7 @@ class Render {
     edge_axis: Axis,
     projected: Projected[],
     world_matrix: mat4
-  ): Point3 {
+  ): vec3 {
 
     // Edge direction on screen
     const ep1 = projected[v1_idx], ep2 = projected[v2_idx];
@@ -957,16 +957,14 @@ class Render {
     const candidates = all_axes.filter(a => a !== edge_axis);
 
     // Project origin and each candidate unit vector to screen
-    const origin = new Point3(0, 0, 0);
+    const origin = vec3.create();
     const p0 = this.project_vertex(origin, world_matrix);
 
     let best_axis = candidates[0];
     let best_perp = -Infinity;
 
     for (const axis of candidates) {
-      const unit_vec = axis === 'x' ? new Point3(1, 0, 0)
-                     : axis === 'y' ? new Point3(0, 1, 0)
-                     : new Point3(0, 0, 1);
+      const unit_vec = so.axis_vector(axis);
       const p1 = this.project_vertex(unit_vec, world_matrix);
       const wx = p1.x - p0.x, wy = p1.y - p0.y;
 
@@ -1055,10 +1053,10 @@ class Render {
   }
 
   // Determine which axis an edge runs along (or null if diagonal)
-  private edge_axis(v1: Point3, v2: Point3): Axis | null {
-    const dx = Math.abs(v2.x - v1.x);
-    const dy = Math.abs(v2.y - v1.y);
-    const dz = Math.abs(v2.z - v1.z);
+  private edge_axis(v1: vec3, v2: vec3): Axis | null {
+    const dx = Math.abs(v2[0] - v1[0]);
+    const dy = Math.abs(v2[1] - v1[1]);
+    const dz = Math.abs(v2[2] - v1[2]);
     const eps = 0.01;
     if (dx > eps && dy < eps && dz < eps) return 'x';
     if (dy > eps && dx < eps && dz < eps) return 'y';
@@ -1114,7 +1112,7 @@ class Render {
       { x: cx + hw, y: cy + hh },
       { x: cx - hw, y: cy + hh },
     ];
-    const center = new Point3(cx, cy, 0);  // screen point for ray cast
+    const center = { x: cx, y: cy };  // screen point for ray cast
 
     for (const obj of scene.get_all()) {
       if (obj.so.id === owner_id) continue;
@@ -1159,7 +1157,7 @@ class Render {
 
     // Text setup
     ctx.font = '12px sans-serif';
-    const text = units.format_for_system(value, current_unit_system(), stores.current_precision());
+    const text = units.format_for_system(value, Units.current_unit_system(), stores.current_precision());
     const textWidth = ctx.measureText(text).width;
     const textHeight = 12; // approximate line height
 

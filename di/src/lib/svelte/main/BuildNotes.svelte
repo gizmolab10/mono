@@ -4,7 +4,7 @@
 	import Steppers from '../mouse/Steppers.svelte';
 	import { colors } from '../../ts/draw/Colors';
 	import { k } from '../../ts/common/Constants';
-	const { w_text_color, w_background_color } = colors;
+	const { w_text_color, w_background_color, w_accent_color } = colors;
 
 	let { onclose } : { onclose: () => void } = $props();
 
@@ -51,6 +51,7 @@
 	class='modal'
 	style:color={$w_text_color}
 	style:background={$w_background_color}
+	style:--accent={$w_accent_color}
 	style:width="{modalWidth}px"
 	onclick={(e) => e.stopPropagation()}
 	onkeyup={() => {}}

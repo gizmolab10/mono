@@ -222,7 +222,7 @@ class Hits_3D {
 		for (const vi of face) {
 			const lv = verts[vi];
 			const wv = vec4.create();
-			vec4.transformMat4(wv, [lv.x, lv.y, lv.z, 1], world);
+			vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], world);
 			corners.push(vec3.fromValues(wv[0], wv[1], wv[2]));
 		}
 		const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);

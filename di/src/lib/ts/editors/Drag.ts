@@ -1,7 +1,7 @@
 import { quat, vec3, mat4 } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
 import { hits_3d, type Hit_3D_Result } from '../managers/Hits_3D';
-import { Point, Point3 } from '../types/Coordinates';
+import { Point } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { stores } from '../managers/Stores';
 import { camera } from '../render/Camera';
@@ -185,7 +185,7 @@ class Drag {
 		for (const vi of face_verts) {
 			const lv = local_verts[vi];
 			const wv: vec3 = [0, 0, 0];
-			vec3.transformMat4(wv, [lv.x, lv.y, lv.z], world_matrix);
+			vec3.transformMat4(wv, lv, world_matrix);
 			corners_world.push(wv);
 		}
 
@@ -197,8 +197,8 @@ class Drag {
 		const lv0 = local_verts[face_verts[0]];
 		const lv1 = local_verts[face_verts[1]];
 		const lv3 = local_verts[face_verts[3]];
-		const e1_local: vec3 = [lv1.x - lv0.x, lv1.y - lv0.y, lv1.z - lv0.z];
-		const e2_local: vec3 = [lv3.x - lv0.x, lv3.y - lv0.y, lv3.z - lv0.z];
+		const e1_local = vec3.sub(vec3.create(), lv1, lv0);
+		const e2_local = vec3.sub(vec3.create(), lv3, lv0);
 
 		const plane_point = vec3.fromValues(
 			(corners_world[0][0] + corners_world[1][0] + corners_world[2][0] + corners_world[3][0]) / 4,
@@ -301,7 +301,7 @@ class Drag {
 	}
 
 	/** Compute bounds-space delta from the frozen stretch anchor to current mouse. */
-	private get_stretch_delta(curr_mouse: Point): Point3 | null {
+	private get_stretch_delta(curr_mouse: Point): vec3 | null {
 		const a = this.stretch_anchor;
 		if (!a) return null;
 
@@ -311,9 +311,7 @@ class Drag {
 		const delta_world = vec3.create();
 		vec3.subtract(delta_world, curr_world, a.anchor_world);
 
-		const local = this.decompose_to_local(delta_world, a.e1_world, a.e2_world, a.e1_local, a.e2_local);
-		if (!local) return null;
-		return new Point3(local[0], local[1], local[2]);
+		return this.decompose_to_local(delta_world, a.e1_world, a.e2_world, a.e1_local, a.e2_local);
 	}
 
 	// Get world matrix for a scene object (must match Render.ts exactly)
@@ -423,7 +421,7 @@ class Drag {
 	 *  For edge: affects 1 bound.  For corner: affects 2 bounds.
 	 *  Compensates for center-rotate-uncenter shift: pins the opposite side
 	 *  by adjusting O_Scene.position after the bound change. */
-	private apply_stretch_absolute(delta: Point3): void {
+	private apply_stretch_absolute(delta: vec3): void {
 		const a = this.stretch_anchor!;
 
 		// Reset all affected bounds to initial values first (absolute, not incremental)
@@ -438,7 +436,7 @@ class Drag {
 			const axis = a.so.edge_changes_axis(a.target_index, a.face_index);
 			const bound = a.so.edge_bound(a.target_index, a.face_index);
 			const axis_vec = a.so.axis_vector(axis);
-			const offset = delta.dot(axis_vec);
+			const offset = vec3.dot(delta, axis_vec);
 			const initial = a.initial_bounds.get(bound)!;
 			a.so.set_bound(bound, Smart_Object.snap(initial + offset));
 		} else {
@@ -446,7 +444,7 @@ class Drag {
 			for (const axis of axes) {
 				const bound = a.so.vertex_bound(a.target_index, axis);
 				const axis_vec = a.so.axis_vector(axis);
-				const offset = delta.dot(axis_vec);
+				const offset = vec3.dot(delta, axis_vec);
 				const initial = a.initial_bounds.get(bound)!;
 				a.so.set_bound(bound, Smart_Object.snap(initial + offset));
 			}
@@ -492,18 +490,14 @@ class Drag {
 		if (target_type === T_Hit_3D.edge) {
 			const [ea, eb] = so.edge_vertices(target_index);
 			const opp = face_verts.find(v => v !== ea && v !== eb);
-			if (opp !== undefined) {
-				const v = so.vertices[opp];
-				return [v.x, v.y, v.z];
-			}
+			if (opp !== undefined) return vec3.clone(so.vertices[opp]);
 		} else {
 			const idx = face_verts.indexOf(target_index);
 			const opp = face_verts[(idx + 2) % face_verts.length];
-			const v = so.vertices[opp];
-			return [v.x, v.y, v.z];
+			return vec3.clone(so.vertices[opp]);
 		}
 		// Fallback: center
-		return [(so.x_min + so.x_max) / 2, (so.y_min + so.y_max) / 2, (so.z_min + so.z_max) / 2];
+		return vec3.fromValues((so.x_min + so.x_max) / 2, (so.y_min + so.y_max) / 2, (so.z_min + so.z_max) / 2);
 	}
 }
 

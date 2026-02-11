@@ -8,11 +8,11 @@ import S_Mouse from './S_Mouse';
 // Forward declaration - will be set by Hits manager
 let hits: { w_s_hover: Writable<S_Hit_Target | null>; add_hit_target: (target: S_Hit_Target) => void } | null = null;
 
-export function setHitsManager(h: typeof hits) {
-	hits = h;
-}
-
 export default class S_Hit_Target {
+
+	static setHitsManager(h: typeof hits) {
+		hits = h;
+	}
 
 	// Supports hit testing for all user-interactables in the DOM
 

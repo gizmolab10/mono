@@ -1,4 +1,4 @@
-import { units, current_unit_system } from '../types/Units';
+import { units, Units } from '../types/Units';
 import { hits_3d, scenes, stores } from '../managers';
 import type { Bound } from '../runtime/Smart_Object';
 import { scene, camera, render, animation } from '.';
@@ -65,7 +65,7 @@ class Engine {
     e3.init(canvas);
 
     // Wire up precision snapping for drag operations
-    Smart_Object.snap = (mm) => units.snap_for_system(mm, current_unit_system(), stores.current_precision());
+    Smart_Object.snap = (mm) => units.snap_for_system(mm, Units.current_unit_system(), stores.current_precision());
 
     // Load saved state or create defaults
     const saved = scenes.load();
@@ -207,7 +207,7 @@ class Engine {
   set_precision(level: number): void {
     stores.w_precision.set(level);
     // Snap every non-formula bound to the precision grid
-    const system = current_unit_system();
+    const system = Units.current_unit_system();
     for (const obj of scene.get_all()) {
       const so = obj.so;
       for (const attr of Object.values(so.attributes_dict_byName)) {

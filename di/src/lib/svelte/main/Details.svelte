@@ -1,14 +1,15 @@
 <script lang='ts'>
-	import { T_Hit_Target, T_Units } from '../../ts/types/Enumerations';
-	import { hits, scenes, stores } from '../../ts/managers';
-	import S_Hit_Target from '../../ts/state/S_Hit_Target';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { T_Units } from '../../ts/types/Enumerations';
+	import { scenes, stores } from '../../ts/managers';
 	import { w_unit_system } from '../../ts/types/Units';
-	import S_Mouse from '../../ts/state/S_Mouse';
 	import { colors } from '../../ts/draw/Colors';
 	import { engine } from '../../ts/render';
-	import { onMount } from 'svelte';
+	import { k } from '../../ts/common/Constants';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
-	const { w_root_so, w_all_sos, w_precision, w_line_thickness, w_edge_color, w_selection } = stores;
+	const { w_root_so, w_precision, w_line_thickness, w_edge_color, w_selection } = stores;
+
+	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
 
@@ -35,39 +36,13 @@
 		const select = e.target as HTMLSelectElement;
 		w_unit_system.set(select.value as T_Units);
 	}
-
-	// ── add child button hit target ──
-
-	let add_child_element: HTMLElement | null = $state(null);
-	const add_child_target = new S_Hit_Target(T_Hit_Target.button, 'add-child');
-
-	$effect(() => {
-		if (add_child_element) {
-			// Track reactive values that shift layout above this button
-			void $w_all_sos;
-			void selected_so;
-			// Re-register after a tick so the DOM has reflowed
-			requestAnimationFrame(() => {
-				add_child_target.set_html_element(add_child_element);
-			});
-			add_child_target.handle_s_mouse = (s_mouse: S_Mouse) => {
-				if (s_mouse.isDown) engine.add_child_so();
-				return true;
-			};
-		}
-	});
-
-	onMount(() => {
-		return () => {
-			hits.delete_hit_target(add_child_target);
-		};
-	});
 </script>
 
 <div
 	class            = 'details'
 	style:color      = {$w_text_color}
-	style:background = {$w_background_color}>
+	style:background = {$w_background_color}
+	style:--accent   = {$w_accent_color}>
 	{#if selected_so}
 		<label class='field'>
 			<span class='label'>Name</span>
@@ -81,7 +56,7 @@
 		<p>No object selected</p>
 	{/if}
 	<div class='settings'>
-		<button class='action-btn' bind:this={add_child_element}>add child</button>
+		<button class='action-btn' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>add child</button>
 	</div>
 	<hr style:border-color={$w_accent_color} />
 	<div class='settings'>
@@ -98,7 +73,7 @@
 				<button
 					class='segment'
 					class:active={i === $w_precision}
-					onclick={() => engine.set_precision(i)}>
+					use:hit_target={{ id: `precision-${i}`, onpress: () => engine.set_precision(i) }}>
 					{label}
 				</button>
 			{/each}
@@ -136,9 +111,10 @@
 	</div>
 	<hr style:border-color={$w_accent_color} />
 	<div class='settings'>
-		<button class='action-btn' onclick={() => scenes.export_to_file()}>export</button>
-		<button class='action-btn' onclick={() => scenes.import_from_file()}>import</button>
+		<button class='action-btn' use:hit_target={{ id: 'export', onpress: () => scenes.export_to_file() }}>export</button>
+		<button class='action-btn' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file() }}>import</button>
 	</div>
+	<button class='build-btn' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
 </div>
 
 <style>
@@ -147,6 +123,7 @@
 		height     : 100%;
 		padding    : 1rem;
 		box-sizing : border-box;
+		position   : relative;
 	}
 
 	hr {
@@ -201,9 +178,29 @@
 		margin-top : 0;
 	}
 
-	.action-btn:hover {
-		background : black;
-		color      : white;
+	.action-btn:global([data-hitting]) {
+		background : var(--accent);
+		color      : black;
+	}
+
+	.build-btn {
+		position      : absolute;
+		bottom        : 1rem;
+		left          : 1rem;
+		background    : white;
+		border        : 0.5px solid currentColor;
+		border-radius : 10px;
+		color         : inherit;
+		padding       : 0 8px;
+		font-size     : 11px;
+		height        : 20px;
+		box-sizing    : border-box;
+		cursor        : pointer;
+	}
+
+	.build-btn:global([data-hitting]) {
+		background : var(--accent);
+		color      : black;
 	}
 
 	p {
@@ -254,9 +251,9 @@
 		border-right : 0.5px solid transparent;
 	}
 
-	.segment:hover {
-		background : black;
-		color      : white;
+	.segment:global([data-hitting]) {
+		background : var(--accent);
+		color      : black;
 	}
 
 	.segment.active {
@@ -284,9 +281,9 @@
 	}
 
 	.details-select:hover {
-		background       : black;
+		background       : var(--accent);
 		background-image : none;
-		color            : white;
+		color            : black;
 	}
 
 	.details-select:focus,

@@ -1,8 +1,9 @@
 <script lang='ts'>
 	import S_Hit_Target from '../../ts/state/S_Hit_Target';
-	import { T_Hit_Target } from '../../ts/types/Enumerations';
+	import { T_Hit_Target, T_Mouse_Detection } from '../../ts/types/Enumerations';
 	import { svg_paths } from '../../ts/draw/SVG_Paths';
 	import { colors } from '../../ts/draw/Colors';
+	const { w_accent_color } = colors;
 	import { Direction } from '../../ts/types/Angle';
 	import { hits } from '../../ts/managers/Hits';
 	import S_Mouse from '../../ts/state/S_Mouse';
@@ -43,6 +44,8 @@
 	$effect(() => {
 		if (elementA) {
 			targetA.set_html_element(elementA);
+			targetA.mouse_detection = T_Mouse_Detection.autorepeat;
+			targetA.autorepeat_callback = () => hit_closure(true, false);
 			targetA.handle_s_mouse = (s_mouse: S_Mouse) => {
 				if (s_mouse.isDown) hit_closure(true, s_mouse.event?.metaKey ?? false);
 				return true;
@@ -53,6 +56,8 @@
 	$effect(() => {
 		if (elementB) {
 			targetB.set_html_element(elementB);
+			targetB.mouse_detection = T_Mouse_Detection.autorepeat;
+			targetB.autorepeat_callback = () => hit_closure(false, false);
 			targetB.handle_s_mouse = (s_mouse: S_Mouse) => {
 				if (s_mouse.isDown) hit_closure(false, s_mouse.event?.metaKey ?? false);
 				return true;
@@ -82,7 +87,7 @@
 		<svg width={boundsA.width} height={boundsA.height} viewBox="{boundsA.minX} {boundsA.minY} {boundsA.width} {boundsA.height}">
 			<path
 				d={pathA}
-				fill={hoverA ? colors.default : 'white'}
+				fill={hoverA ? $w_accent_color : 'white'}
 				stroke={colors.default}
 				stroke-width={strokeWidth}
 			/>
@@ -97,7 +102,7 @@
 		<svg width={boundsB.width} height={boundsB.height} viewBox="{boundsB.minX} {boundsB.minY} {boundsB.width} {boundsB.height}">
 			<path
 				d={pathB}
-				fill={hoverB ? colors.default : 'white'}
+				fill={hoverB ? $w_accent_color : 'white'}
 				stroke={colors.default}
 				stroke-width={strokeWidth}
 			/>

@@ -83,90 +83,6 @@ const system_map: Record<T_Units, T_Unit[]> = {
 const imperial_units = new Set(system_map[T_Units.imperial]);
 
 // ═══════════════════════════════════════════════════════════════════
-// FRACTION HELPERS
-// ═══════════════════════════════════════════════════════════════════
-
-function to_fraction(decimal: number, max_denominator: number = 64): { whole: number; numerator: number; denominator: number } {
-	const whole = Math.floor(decimal);
-	const remainder = decimal - whole;
-	if (remainder < 1 / (max_denominator * 2)) {
-		return { whole, numerator: 0, denominator: 1 };
-	}
-	const raw_numerator = Math.round(remainder * max_denominator);
-	if (raw_numerator >= max_denominator) {
-		return { whole: whole + 1, numerator: 0, denominator: 1 };
-	}
-	const divisor = tu.gcd(raw_numerator, max_denominator);
-	return { whole, numerator: raw_numerator / divisor, denominator: max_denominator / divisor };
-}
-
-function format_fractional(value: number, unit_symbol: string, max_denominator: number = 64): string {
-	const { whole, numerator, denominator } = to_fraction(Math.abs(value), max_denominator);
-	const sign = value < 0 ? '-' : '';
-	if (numerator === 0) {
-		return sign + whole + unit_symbol;
-	}
-	if (whole === 0) {
-		return sign + numerator + '/' + denominator + unit_symbol;
-	}
-	return sign + whole + ' ' + numerator + '/' + denominator + unit_symbol;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// PARSE HELPERS
-// ═══════════════════════════════════════════════════════════════════
-
-function parse_fraction(input: string): number | null {
-	const trimmed = input.trim();
-	// whole and fraction: "5 1/4"
-	const whole_frac = trimmed.match(/^(-?\d+)\s+(\d+)\/(\d+)$/);
-	if (whole_frac) {
-		const w = parseInt(whole_frac[1]);
-		const n = parseInt(whole_frac[2]);
-		const d = parseInt(whole_frac[3]);
-		if (d === 0) return null;
-		const sign = w < 0 ? -1 : 1;
-		return w + sign * (n / d);
-	}
-	// fraction only: "1/4"
-	const frac = trimmed.match(/^(-?\d+)\/(\d+)$/);
-	if (frac) {
-		const n = parseInt(frac[1]);
-		const d = parseInt(frac[2]);
-		if (d === 0) return null;
-		return n / d;
-	}
-	// decimal: "5.25" or "5" (must be the entire string, not just a prefix)
-	if (!/^-?\d+(\.\d+)?$/.test(trimmed)) return null;
-	return parseFloat(trimmed);
-}
-
-function parse_compound(input: string): number | null {
-	const trimmed = input.trim();
-	// feet and inches: 5' 3 1/4" (reject if extra ' or " in inches part — that's an expression)
-	const compound = trimmed.match(/^(-?\d+)'\s*([^'"]+)"$/);
-	if (compound) {
-		const feet = parseInt(compound[1]);
-		const inches = parse_fraction(compound[2]);
-		if (inches === null) return null;
-		return feet * mm_per[T_Unit.foot] + inches * mm_per[T_Unit.inch];
-	}
-	// feet only: 5'
-	const feet_only = trimmed.match(/^(-?\d+)'$/);
-	if (feet_only) {
-		return parseInt(feet_only[1]) * mm_per[T_Unit.foot];
-	}
-	// inches only with symbol: 3 1/4" (reject if extra ' or " inside — that's an expression)
-	const inches_only = trimmed.match(/^([^'"]+)"$/);
-	if (inches_only) {
-		const inches = parse_fraction(inches_only[1]);
-		if (inches === null) return null;
-		return inches * mm_per[T_Unit.inch];
-	}
-	return null;
-}
-
-// ═══════════════════════════════════════════════════════════════════
 // UNITS CLASS
 // ═══════════════════════════════════════════════════════════════════
 
@@ -204,12 +120,12 @@ export class Units {
 
 	// Imperial precision index → max denominator.
 	// 0 = feet-only (sentinel), 1 = whole inches, 2+ = fractional inches.
-	private static readonly IMPERIAL_DENOMS = [0, 1, 2, 4, 8, 16, 32, 64];
+	private readonly IMPERIAL_DENOMS = [0, 1, 2, 4, 8, 16, 32, 64];
 
 	format(mm: number, unit: T_Unit, decimal_places: number = 1): string {
 		const value = this.from_mm(mm, unit);
 		if (this.is_imperial(unit)) {
-			return format_fractional(value, symbol[unit]);
+			return this.format_fractional(value, symbol[unit]);
 		}
 		const rounded = parseFloat(value.toFixed(decimal_places));
 		return rounded + symbol[unit];
@@ -221,11 +137,11 @@ export class Units {
 		const sign = total_inches < 0 ? '-' : '';
 		const feet = Math.floor(abs_inches / 12);
 		const remaining_inches = abs_inches - feet * 12;
-		const { whole, numerator, denominator } = to_fraction(remaining_inches, max_denominator);
+		const { whole, numerator, denominator } = this.to_fraction(remaining_inches, max_denominator);
 
 		if (feet === 0) {
 			// less than a foot — show inches only
-			return sign + format_fractional(abs_inches, '"', max_denominator);
+			return sign + this.format_fractional(abs_inches, '"', max_denominator);
 		}
 		if (whole === 0 && numerator === 0) {
 			// exact feet, no inches
@@ -253,7 +169,7 @@ export class Units {
 	 */
 	format_for_system(mm: number, system: T_Units, precision: number = 7): string {
 		if (system === T_Units.imperial) {
-			const denom = Units.IMPERIAL_DENOMS[Math.min(precision, Units.IMPERIAL_DENOMS.length - 1)];
+			const denom = this.IMPERIAL_DENOMS[Math.min(precision, this.IMPERIAL_DENOMS.length - 1)];
 			if (denom === 0) {
 				// Feet only — round to nearest foot
 				const total_inches = mm / mm_per[T_Unit.inch];
@@ -286,7 +202,7 @@ export class Units {
 	 */
 	snap_for_system(mm: number, system: T_Units, precision: number): number {
 		if (system === T_Units.imperial) {
-			const denom = Units.IMPERIAL_DENOMS[Math.min(precision, Units.IMPERIAL_DENOMS.length - 1)];
+			const denom = this.IMPERIAL_DENOMS[Math.min(precision, this.IMPERIAL_DENOMS.length - 1)];
 			if (denom === 0) {
 				// Feet — snap to nearest 12 inches
 				const inches = mm / mm_per[T_Unit.inch];
@@ -322,7 +238,7 @@ export class Units {
 
 		// try compound first (has ' and " markers)
 		if (trimmed.includes("'") || trimmed.includes('"')) {
-			const compound_result = parse_compound(trimmed);
+			const compound_result = this.parse_compound(trimmed);
 			if (compound_result !== null) return compound_result;
 		}
 
@@ -333,7 +249,7 @@ export class Units {
 			numeric_part = trimmed.slice(0, -unit_sym.length).trim();
 		}
 
-		const value = parse_fraction(numeric_part);
+		const value = this.parse_fraction(numeric_part);
 		if (value === null) return null;
 		return value * mm_per[unit];
 	}
@@ -351,7 +267,7 @@ export class Units {
 
 		// 1. Compound imperial (5' 3 1/4")
 		if (trimmed.includes("'") || trimmed.includes('"')) {
-			const compound_result = parse_compound(trimmed);
+			const compound_result = this.parse_compound(trimmed);
 			if (compound_result !== null) return compound_result;
 		}
 
@@ -361,13 +277,13 @@ export class Units {
 			if (!suffix) continue;
 			if (trimmed.toLowerCase().endsWith(suffix.toLowerCase())) {
 				const numeric_part = trimmed.slice(0, -suffix.length).trim();
-				const value = parse_fraction(numeric_part);
+				const value = this.parse_fraction(numeric_part);
 				if (value !== null) return value * mm_per[unit_key as T_Unit];
 			}
 		}
 
 		// 3. Bare number → system's default unit
-		const value = parse_fraction(trimmed);
+		const value = this.parse_fraction(trimmed);
 		if (value === null) return null;
 		const default_unit = this.default_unit_for_system(unit_system);
 		return value * mm_per[default_unit];
@@ -381,6 +297,87 @@ export class Units {
 			case T_Units.marine:   return T_Unit.fathom;
 			case T_Units.archaic:  return T_Unit.cubit;
 		}
+	}
+
+	/** Read current unit system synchronously (for non-reactive contexts like Render) */
+	static current_unit_system(): T_Units {
+		return get(w_unit_system);
+	}
+
+	private to_fraction(decimal: number, max_denominator: number = 64): { whole: number; numerator: number; denominator: number } {
+		const whole = Math.floor(decimal);
+		const remainder = decimal - whole;
+		if (remainder < 1 / (max_denominator * 2)) {
+			return { whole, numerator: 0, denominator: 1 };
+		}
+		const raw_numerator = Math.round(remainder * max_denominator);
+		if (raw_numerator >= max_denominator) {
+			return { whole: whole + 1, numerator: 0, denominator: 1 };
+		}
+		const divisor = tu.gcd(raw_numerator, max_denominator);
+		return { whole, numerator: raw_numerator / divisor, denominator: max_denominator / divisor };
+	}
+
+	private format_fractional(value: number, unit_symbol: string, max_denominator: number = 64): string {
+		const { whole, numerator, denominator } = this.to_fraction(Math.abs(value), max_denominator);
+		const sign = value < 0 ? '-' : '';
+		if (numerator === 0) {
+			return sign + whole + unit_symbol;
+		}
+		if (whole === 0) {
+			return sign + numerator + '/' + denominator + unit_symbol;
+		}
+		return sign + whole + ' ' + numerator + '/' + denominator + unit_symbol;
+	}
+
+	private parse_fraction(input: string): number | null {
+		const trimmed = input.trim();
+		// whole and fraction: "5 1/4"
+		const whole_frac = trimmed.match(/^(-?\d+)\s+(\d+)\/(\d+)$/);
+		if (whole_frac) {
+			const w = parseInt(whole_frac[1]);
+			const n = parseInt(whole_frac[2]);
+			const d = parseInt(whole_frac[3]);
+			if (d === 0) return null;
+			const sign = w < 0 ? -1 : 1;
+			return w + sign * (n / d);
+		}
+		// fraction only: "1/4"
+		const frac = trimmed.match(/^(-?\d+)\/(\d+)$/);
+		if (frac) {
+			const n = parseInt(frac[1]);
+			const d = parseInt(frac[2]);
+			if (d === 0) return null;
+			return n / d;
+		}
+		// decimal: "5.25" or "5" (must be the entire string, not just a prefix)
+		if (!/^-?\d+(\.\d+)?$/.test(trimmed)) return null;
+		return parseFloat(trimmed);
+	}
+
+	private parse_compound(input: string): number | null {
+		const trimmed = input.trim();
+		// feet and inches: 5' 3 1/4" (reject if extra ' or " in inches part — that's an expression)
+		const compound = trimmed.match(/^(-?\d+)'\s*([^'"]+)"$/);
+		if (compound) {
+			const feet = parseInt(compound[1]);
+			const inches = this.parse_fraction(compound[2]);
+			if (inches === null) return null;
+			return feet * mm_per[T_Unit.foot] + inches * mm_per[T_Unit.inch];
+		}
+		// feet only: 5'
+		const feet_only = trimmed.match(/^(-?\d+)'$/);
+		if (feet_only) {
+			return parseInt(feet_only[1]) * mm_per[T_Unit.foot];
+		}
+		// inches only with symbol: 3 1/4" (reject if extra ' or " inside — that's an expression)
+		const inches_only = trimmed.match(/^([^'"]+)"$/);
+		if (inches_only) {
+			const inches = this.parse_fraction(inches_only[1]);
+			if (inches === null) return null;
+			return inches * mm_per[T_Unit.inch];
+		}
+		return null;
 	}
 }
 
@@ -397,7 +394,3 @@ w_unit_system.subscribe((system: T_Units) => {
 	preferences.write(T_Preference.unitSystem, system);
 });
 
-/** Read current unit system synchronously (for non-reactive contexts like Render) */
-export function current_unit_system(): T_Units {
-	return get(w_unit_system);
-}

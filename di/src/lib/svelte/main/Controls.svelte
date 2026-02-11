@@ -1,11 +1,12 @@
 <script lang='ts'>
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { scenes } from '../../ts/managers/Scenes';
 	import { stores } from '../../ts/managers/Stores';
 	import { colors } from '../../ts/draw/Colors';
 	import Slider from '../mouse/Slider.svelte';
 	import { engine } from '../../ts/render';
-	const { w_text_color, w_background_color } = colors;
-	const { w_scale, w_view_mode, w_show_dimensionals, w_solid } = stores;
+	const { w_text_color, w_background_color, w_accent_color } = colors;
+	const { w_scale, w_view_mode, w_show_dimensionals, w_solid, w_show_details } = stores;
 
 	let {
 		title = 'Design Intuition™'
@@ -27,15 +28,23 @@
 <div
 	class            = 'controls'
 	style:color      = {$w_text_color}
-	style:background = {$w_background_color}>
+	style:background = {$w_background_color}
+	style:--accent   = {$w_accent_color}>
+	<button class='hamburger' class:active={$w_show_details} use:hit_target={{ id: 'details', onpress: () => stores.toggle_details() }} aria-label='toggle details'>
+		<svg class='hamburger-icon' viewBox='0 0 20 20' width='24' height='24'>
+			<rect x='2' y='4'  width='16' height='2.5' rx='1.25'/>
+			<rect x='2' y='9'  width='16' height='2.5' rx='1.25'/>
+			<rect x='2' y='14' width='16' height='2.5' rx='1.25'/>
+		</svg>
+	</button>
 	<h1>{title}</h1>
-	<button class='toolbar-btn' onclick={() => { scenes.clear(); location.reload(); }}>reset</button>
-	<button class='toolbar-btn' onclick={() => engine.straighten()}>straighten</button>
+	<button class='toolbar-btn' use:hit_target={{ id: 'reset', onpress: () => { scenes.clear(); location.reload(); } }}>reset</button>
+	<button class='toolbar-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	<span class='spacer'></span>
 	<Slider min={0.1} max={100} value={$w_scale} onchange={handle_slider} onstep={handle_scale} />
-	<button class='toolbar-btn' class:active={$w_show_dimensionals} onclick={() => stores.toggle_dimensionals()}>{$w_show_dimensionals ? 'hide' : 'show'} dimensions</button>
-	<button class='toolbar-btn' onclick={() => stores.toggle_solid()}>{$w_solid ? 'solid' : 'see through'}</button>
-	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} onclick={() => engine.toggle_view_mode()}>{$w_view_mode}</button>
+	<button class='toolbar-btn' class:active={$w_show_dimensionals} use:hit_target={{ id: 'dimensionals', onpress: () => stores.toggle_dimensionals() }}>{$w_show_dimensionals ? 'hide' : 'show'} dimensions</button>
+	<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'see through'}</button>
+	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode}</button>
 </div>
 
 <style>
@@ -60,6 +69,33 @@
 		flex : 1;
 	}
 
+	.hamburger {
+		background      : transparent;
+		border          : none;
+		color           : inherit;
+		width           : 20px;
+		height          : 20px;
+		padding         : 0;
+		cursor          : pointer;
+		display         : flex;
+		align-items     : center;
+		justify-content : center;
+		margin-right    : 6px;
+		position        : relative;
+		top             : -1px;
+	}
+
+	.hamburger-icon rect {
+		fill   : currentColor;
+		stroke : none;
+	}
+
+	.hamburger:global([data-hitting]) .hamburger-icon rect {
+		fill         : white;
+		stroke       : var(--accent);
+		stroke-width : 0.5;
+	}
+
 	.toolbar-btn {
 		background    : white;
 		border        : 0.5px solid currentColor;
@@ -78,8 +114,8 @@
 		color      : black;
 	}
 
-	.toolbar-btn:hover {
-		background : black;
-		color      : white;
+	.toolbar-btn:global([data-hitting]) {
+		background : var(--accent);
+		color      : black;
 	}
 </style>

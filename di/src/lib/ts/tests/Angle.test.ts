@@ -190,23 +190,6 @@ describe('Angle', () => {
 		});
 	});
 
-	describe('cursor_forAngle', () => {
-		it('returns ns-resize for angle 0', () => {
-			const a = new Angle(0);
-			expect(a.cursor_forAngle).toBe('ns-resize');
-		});
-
-		it('returns ew-resize for horizontal angles', () => {
-			const a = new Angle(Math.PI / 2);
-			expect(a.cursor_forAngle).toBe('ew-resize');
-		});
-
-		it('returns diagonal cursor for 45 degree angles', () => {
-			const a = new Angle(Math.PI / 4);
-			expect(a.cursor_forAngle).toBe('nwse-resize');
-		});
-	});
-
 	describe('quadrant_basis_angle', () => {
 		it('returns 0 for upperRight', () => {
 			const a = new Angle(Math.PI / 4);
@@ -265,3 +248,61 @@ describe('T_Orientation enum', () => {
 		expect(T_Orientation.down).toBe('down');
 	});
 });
+
+describe('Angle.angle_of', () => {
+	it('returns 0 for point on positive x-axis', () => {
+		expect(Angle.angle_of(1, 0)).toBeCloseTo(0, 10);
+	});
+
+	it('returns π/2 for point above (negative y in browser)', () => {
+		expect(Angle.angle_of(0, -1)).toBeCloseTo(Math.PI / 2, 10);
+	});
+
+	it('flips browser-Y convention', () => {
+		// in browser coords, positive y is down, so (0, 1) points down = -π/2
+		expect(Angle.angle_of(0, 1)).toBeCloseTo(-Math.PI / 2, 10);
+	});
+});
+
+describe('Angle.rotate_xy', () => {
+	it('rotates point on x-axis by 90 degrees', () => {
+		const [rx, ry] = Angle.rotate_xy(1, 0, Math.PI / 2);
+		expect(rx).toBeCloseTo(0, 10);
+		expect(ry).toBeCloseTo(-1, 10);  // browser coords: y inverted
+	});
+
+	it('rotates point by 180 degrees', () => {
+		const [rx, ry] = Angle.rotate_xy(1, 0, Math.PI);
+		expect(rx).toBeCloseTo(-1, 10);
+		expect(ry).toBeCloseTo(0, 10);
+	});
+});
+
+describe('Angle.quadrant_of_xy', () => {
+	it('upper right for positive x, positive y', () => {
+		expect(Angle.quadrant_of_xy(1, 1)).toBe(T_Quadrant.upperRight);
+	});
+
+	it('upper left for negative x, positive y', () => {
+		expect(Angle.quadrant_of_xy(-1, 1)).toBe(T_Quadrant.upperLeft);
+	});
+
+	it('lower left for negative x, negative y', () => {
+		expect(Angle.quadrant_of_xy(-1, -1)).toBe(T_Quadrant.lowerLeft);
+	});
+
+	it('lower right for positive x, negative y', () => {
+		expect(Angle.quadrant_of_xy(1, -1)).toBe(T_Quadrant.lowerRight);
+	});
+});
+
+describe('Angle.orientation_of_xy', () => {
+	it('returns right for vector pointing right', () => {
+		expect(Angle.orientation_of_xy(10, 0)).toBe(T_Orientation.right);
+	});
+
+	it('returns up for vector pointing up (negative y)', () => {
+		expect(Angle.orientation_of_xy(0, -10)).toBe(T_Orientation.up);
+	});
+});
+
