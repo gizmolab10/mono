@@ -85,9 +85,9 @@ class Render {
     }
 
     // Phase 2: fill front-facing faces (occlusion layer)
-    // In solid mode, fill with white so rear edges are hidden.
+    // In solid or 2D mode, fill with white so rear edges are hidden.
     // Sort all front-facing faces back-to-front by average depth.
-    if (!is_2d && solid) {
+    if (is_2d || solid) {
       const face_draws: { face: number[]; projected: Projected[]; z_avg: number; fi: number }[] = [];
       for (const obj of objects) {
         const projected = projected_map.get(obj.id)!;
@@ -124,9 +124,9 @@ class Render {
       }
     }
 
-    // Build occluding face list for edge clipping (solid mode only)
+    // Build occluding face list for edge clipping (solid or 2D mode)
     this.occluding_faces = [];
-    if (!is_2d && solid) {
+    if (is_2d || solid) {
       for (const obj of objects) {
         const projected = projected_map.get(obj.id)!;
         if (!obj.faces) continue;
@@ -179,14 +179,14 @@ class Render {
     }
 
     // Phase 2c: intersection lines between overlapping SOs
-    if (!is_2d && objects.length > 1) {
+    if (objects.length > 1) {
       this.render_intersections(objects);
     }
 
     // Phase 3: draw edges
     for (const obj of objects) {
       const projected = projected_map.get(obj.id)!;
-      const world = (!is_2d && solid) ? this.get_world_matrix(obj) : undefined;
+      const world = (is_2d || solid) ? this.get_world_matrix(obj) : undefined;
       this.render_edges(obj, projected, is_2d, solid, world);
       this.render_face_names(obj, projected, world);
     }
@@ -283,8 +283,8 @@ class Render {
     const guide = drag.guidance_face;
     const guidance_edges = (guide && guide.scene === obj) ? this.face_edge_keys(obj, guide.face_index) : null;
 
-    if (solid && world) {
-      // Solid mode: per-edge occlusion clipping, batch clipped segments by color
+    if ((is_2d || solid) && world) {
+      // Solid / 2D mode: per-edge occlusion clipping, batch clipped segments by color
       const normal_path = new Path2D();
       const guide_path = new Path2D();
 
