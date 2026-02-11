@@ -3,8 +3,12 @@
 offer a proposal for the first unchecked item
 
 
-- [ ] straighten -> apply to front-most-facing face of root
-- [ ] missing dimensionals in 2D
+- [x] straighten -> apply to front-most-facing face of root
+- [ ] switch 3D -> 2D
+	- [ ] wrong face
+	- [ ] wrong twist
+	- [ ] child projections wrong
+	- [ ] missing some dimensionals
 - [ ] add ability to edit face label
 - [ ] add angulars (eq to dimenionals but for angles)
 - [ ] remove border around edit in 3d

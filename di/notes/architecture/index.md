@@ -7,6 +7,7 @@ System structure and core concepts for Design Intuition.
 - [Algebra](./algebra.md)
 - [Drag](./drag.md)
 - [Files](./files.md)
+- [Flatten](./flatten.md)
 - [Intersecting.faces](./intersecting.faces.md)
 - [Managers](./managers.md)
 - [Panel.layout](./panel.layout.md)

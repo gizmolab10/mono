@@ -181,23 +181,74 @@ class Engine {
     stores.w_scale.set(this.root_scene.scale);
   }
 
-  /** Reset root SO orientation to identity (face-on). */
+  // Per-face snap candidates: FACE_SNAP_QUATS[face] = 4 quats (0°, 90°, 180°, 270° twist)
+  private static readonly FACE_SNAP_QUATS: quat[][] = (() => {
+    const q = (axis: vec3, angle: number) => quat.setAxisAngle(quat.create(), axis, angle);
+    const X = vec3.fromValues(1, 0, 0);
+    const Y = vec3.fromValues(0, 1, 0);
+    const Z = vec3.fromValues(0, 0, 1);
+    // Base orientation per face: rotates so face's outward normal points toward camera (+z)
+    const bases = [
+      q(Y, Math.PI),                 // 0 front  (normal [-z] → need 180° Y)
+      quat.identity(quat.create()),  // 1 back   (normal [+z] → already facing camera)
+      q(Y, Math.PI / 2),             // 2 left   (normal [-x] → +90° Y)
+      q(Y, -Math.PI / 2),            // 3 right  (normal [+x] → -90° Y)
+      q(X, Math.PI / 2),             // 4 top    (normal [+y] → +90° X)
+      q(X, -Math.PI / 2),            // 5 bottom (normal [-y] → -90° X)
+    ];
+    const twists = [0, Math.PI / 2, Math.PI, -Math.PI / 2].map(a => q(Z, a));
+    return bases.map(base => twists.map(twist => {
+      const combined = quat.create();
+      quat.multiply(combined, twist, base);
+      return quat.normalize(combined, combined);
+    }));
+  })();
+
+  /** Snap SO orientation to the nearest axis-aligned quat for the given face. */
+  private snap_to_face(so: import('../runtime/Smart_Object').default, face: number): void {
+    let best: quat = Engine.FACE_SNAP_QUATS[face][0];
+    let best_dot = -Infinity;
+    for (const candidate of Engine.FACE_SNAP_QUATS[face]) {
+      const dot = Math.abs(quat.dot(so.orientation, candidate));
+      if (dot > best_dot) { best_dot = dot; best = candidate; }
+    }
+    quat.copy(so.orientation, best);
+  }
+
+  /** Snap root SO: lock the front-most face, then pick the nearest 90° twist. */
   straighten(): void {
     if (!this.root_scene) return;
-    quat.identity(this.root_scene.so.orientation);
+    const so = this.root_scene.so;
+    const face = hits_3d.front_most_face(so);
+    if (face < 0) {
+      quat.identity(so.orientation);
+    } else {
+      this.snap_to_face(so, face);
+    }
     scenes.save();
   }
 
-  /** Toggle between 2D and 3D view. 2D = orthographic, face-on. */
+  private saved_3d_orientation: quat | null = null;
+
+  /** Toggle between 2D and 3D view. 2D snaps root face-on, 3D restores. */
   toggle_view_mode(): void {
     const mode = stores.current_view_mode() === '3d' ? '2d' : '3d';
     stores.w_view_mode.set(mode);
     if (mode === '2d') {
-      // Face-on: camera on z axis, orthographic projection
+      const so = this.root_scene?.so;
+      const face = so ? hits_3d.front_most_face(so) : -1;
+      if (so && face >= 0) {
+        this.saved_3d_orientation = quat.clone(so.orientation);
+        this.snap_to_face(so, face);
+      }
       camera.set_position(vec3.fromValues(0, 0, 2750));
       camera.set_ortho(true);
     } else {
-      // Back to perspective
+      const so = this.root_scene?.so;
+      if (so && this.saved_3d_orientation) {
+        quat.copy(so.orientation, this.saved_3d_orientation);
+        this.saved_3d_orientation = null;
+      }
       camera.set_ortho(false);
     }
     scenes.save();

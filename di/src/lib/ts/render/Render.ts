@@ -3,10 +3,12 @@ import { units, Units } from '../types/Units';
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Axis } from '../runtime/Smart_Object';
 import { Size } from '../types/Coordinates';
-import { mat4, vec3, vec4, quat } from 'gl-matrix';
+import { mat4, vec3, vec4 } from 'gl-matrix';
 import { T_Hit_3D } from '../types/Enumerations';
 import { hits_3d } from '../managers/Hits_3D';
 import { stores } from '../managers/Stores';
+import { debug } from '../common/Debug';
+import { get } from 'svelte/store';
 import { drag } from '../editors/Drag';
 import { camera } from './Camera';
 import { scene } from './Scene';
@@ -18,8 +20,7 @@ class Render {
   private size: Size = Size.zero;
   private dpr = 1;
 
-  /** When true, faces render with debug colors. When false, faces are transparent. */
-  debug = false;
+
 
   /** Per-frame list of front-facing faces for occlusion: world-space normal, offset, and screen-space polygon. */
   private occluding_faces: {
@@ -193,6 +194,7 @@ class Render {
     this.render_selection();
     if (stores.show_dimensionals()) this.render_dimensions();
     this.render_hover();
+    if (debug.enabled) this.render_front_face_label();
   }
 
   private get_world_matrix(obj: O_Scene): mat4 {
@@ -202,10 +204,7 @@ class Render {
       (so.y_min + so.y_max) / 2,
       (so.z_min + so.z_max) / 2,
     ];
-    // 2D: flatten SO toward camera, retaining in-plane rotation
-    const orientation = stores.current_view_mode() === '2d'
-      ? this.flatten_orientation(so.orientation)
-      : so.orientation;
+    const orientation = so.orientation;
     const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
 
     // Rotate around the SO's exact 3D center: translate to center, rotate, translate back
@@ -232,40 +231,6 @@ class Render {
     }
 
     return local;
-  }
-
-  /**
-   * Flatten a 3D orientation for 2D view: find which local axis points
-   * most toward the camera, then keep only the in-plane (twist) rotation
-   * around that axis — discarding the tilt (swing) that would show depth.
-   */
-  private flatten_orientation(q: quat): quat {
-    const cam_fwd = vec3.create();
-    vec3.subtract(cam_fwd, camera.center_pos, camera.eye);
-    vec3.normalize(cam_fwd, cam_fwd);
-
-    // Transform camera forward into SO's local space
-    const inv_q = quat.create();
-    quat.invert(inv_q, q);
-    const local_fwd = vec3.create();
-    vec3.transformQuat(local_fwd, cam_fwd, inv_q);
-
-    // Find which local axis is most aligned with camera forward
-    const abs_x = Math.abs(local_fwd[0]);
-    const abs_y = Math.abs(local_fwd[1]);
-    const abs_z = Math.abs(local_fwd[2]);
-
-    // Swing-twist decomposition: project quaternion onto the twist axis
-    // twist = normalize(qw + q_component * axis_component) for each axis
-    let twist: quat;
-    if (abs_x >= abs_y && abs_x >= abs_z) {
-      twist = quat.normalize(quat.create(), quat.fromValues(q[0], 0, 0, q[3]));
-    } else if (abs_y >= abs_z) {
-      twist = quat.normalize(quat.create(), quat.fromValues(0, q[1], 0, q[3]));
-    } else {
-      twist = quat.normalize(quat.create(), quat.fromValues(0, 0, q[2], q[3]));
-    }
-    return twist;
   }
 
   private project_vertex(v: vec3, world_matrix: mat4): Projected {
@@ -727,7 +692,7 @@ class Render {
       // Occlusion: skip label if another SO's face is in front at this screen point
       if (world && this.is_point_occluded(cx, cy, face, verts, world, obj.id)) continue;
 
-      ctx.fillText(obj.so.name, Math.round(cx), Math.round(cy));
+      ctx.fillText(debug.enabled ? `${obj.so.name} ${fi}` : obj.so.name, Math.round(cx), Math.round(cy));
     }
   }
 
@@ -784,7 +749,7 @@ class Render {
 
   private draw_debug_face(face: number[], fi: number, projected: Projected[]): void {
     const rgb = this.FACE_RGB[fi] ?? [128, 128, 128];
-    const alpha = this.debug ? 1 : 0;
+    const alpha = debug.enabled ? 1 : 0;
     this.ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
     this.ctx.beginPath();
     this.ctx.moveTo(projected[face[0]].x, projected[face[0]].y);
@@ -815,6 +780,29 @@ class Render {
 
     this.ctx.fillStyle = 'red';
     this.render_hit_dots(hover, projected);
+  }
+
+  private render_front_face_label(): void {
+    const root_so = get(stores.w_root_so);
+    if (!root_so || !root_so.scene?.faces) return;
+    const projected = hits_3d.get_projected(root_so.scene.id);
+    if (!projected) return;
+    const face = hits_3d.front_most_face(root_so);
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.font = '11px monospace';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'top';
+    let y = 8;
+    ctx.fillText(`front: ${face}`, this.size.width - 8, y);
+    // Show winding for each face
+    for (let i = 0; i < root_so.scene.faces.length; i++) {
+      y += 14;
+      const w = this.face_winding(root_so.scene.faces[i], projected);
+      ctx.fillText(`${i}: ${w < 0 ? '▶' : ' '} ${Math.round(w)}`, this.size.width - 8, y);
+    }
+    ctx.restore();
   }
 
   private render_hit_dots(hit: { so: { scene: O_Scene | null }, type: T_Hit_3D, index: number }, projected: Projected[]): void {

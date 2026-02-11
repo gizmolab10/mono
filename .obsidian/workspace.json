@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/components/index.md",
+                "file": "di/notes/architecture/flatten.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "flatten"
             }
           },
           {
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/components/index.md",
+                "file": "di/notes/architecture/flatten.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of index"
+              "title": "Outline of flatten"
             }
           }
         ],
@@ -215,7 +215,11 @@
   },
   "active": "ffdb7bac37c87e46",
   "lastOpenFiles": [
+    "di/src/lib/ts/common/Debug.ts",
     "di/notes/work/code.debt.md",
+    "di/notes/architecture/flatten.md",
+    "di/src/assets/American (2).di",
+    "di/notes/components/index.md",
     "logs/update-docs.error.mono.log",
     "di/notes/work/done/code.debt.done.md",
     "di/notes/work/done/scene.model.md",
@@ -232,7 +236,6 @@
     "di/src/lib/ts/editors/Dimension.ts",
     "di/src/lib/ts/editors/index.ts",
     "di/src/lib/ts/editors/Drag.ts",
-    "di/src/lib/ts/editors/Dimensions.ts",
     "di/notes/work/revisit.di.md",
     "di/notes/architecture/primer.md",
     "node_modules/katex/node_modules/commander/Readme.md",
@@ -248,8 +251,6 @@
     "di/notes/architecture/intersecting.faces.md",
     "di/notes/architecture/index.md",
     "di/notes/architecture/rendering.types.md",
-    "di/notes/architecture/intersection.md",
-    "CLAUDE.MD",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",
     "ga/node_modules/phaser/changelog/3.60/images/timeline.png",
     "ga/node_modules/phaser/changelog/3.60/images/videogameobject.png",

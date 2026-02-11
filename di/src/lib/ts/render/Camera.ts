@@ -30,9 +30,10 @@ class Camera {
     this.update_projection();
   }
 
-  set_position(eye: vec3, center?: vec3): void {
+  set_position(eye: vec3, center?: vec3, up?: vec3): void {
     vec3.copy(this._eye, eye);
     if (center) vec3.copy(this.center, center);
+    if (up) vec3.copy(this.up, up);
     this.update_view();
   }
 

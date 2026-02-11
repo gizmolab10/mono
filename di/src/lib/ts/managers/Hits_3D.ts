@@ -166,17 +166,19 @@ class Hits_3D {
 		return face_index === -1 ? null : { so: hit.so, type: T_Hit_3D.face, index: face_index };
 	}
 
-	// Find the most front-facing face for a given SO (most negative winding)
+	// Find the most front-facing face for a given SO (normal most aligned with camera)
 	front_most_face(so: Smart_Object): number {
 		if (!so.scene?.faces) return -1;
 		const projected = this.cache.get(so.scene.id)?.projected;
 		if (!projected) return -1;
-		let best = -1, best_winding = Infinity;
+		let best = -1, best_z = -Infinity;
 		for (let i = 0; i < so.scene.faces.length; i++) {
-			const w = this.facing_front(so.scene.faces[i], projected);
-			if (w < best_winding) { best_winding = w; best = i; }
+			// Only consider faces that are front-facing (negative winding)
+			if (this.facing_front(so.scene.faces[i], projected) >= 0) continue;
+			const wn = vec3.transformQuat(vec3.create(), so.face_normal(i), so.orientation);
+			if (wn[2] > best_z) { best_z = wn[2]; best = i; }
 		}
-		return best_winding < 0 ? best : -1;
+		return best;
 	}
 
 	// ===== Hit tests =====
