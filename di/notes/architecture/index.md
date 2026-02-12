@@ -11,7 +11,7 @@ System structure and core concepts for Design Intuition.
 - [Intersecting.faces](./intersecting.faces.md)
 - [Managers](./managers.md)
 - [Panel.layout](./panel.layout.md)
-- [Primer](./primer.md)
+- [Primer](3D.primer.md)
 - [Project](./project.md)
 - [Rendering.types](./rendering.types.md)
 - [Spatial](./spatial.md)

@@ -1,7 +1,8 @@
-import type { Projected, O_Scene, Dimension_Rect } from '../types/Interfaces';
+import type { Projected, O_Scene, Dimension_Rect, Label_Rect } from '../types/Interfaces';
 import { units, Units } from '../types/Units';
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Axis } from '../runtime/Smart_Object';
+import { colors } from '../draw/Colors';
 import { Size } from '../types/Coordinates';
 import { mat4, vec3, vec4 } from 'gl-matrix';
 import { T_Hit_3D } from '../types/Enumerations';
@@ -39,6 +40,9 @@ class Render {
   /** Per-frame dimension rects for click-to-edit. Cleared each render(). */
   dimension_rects: Dimension_Rect[] = [];
 
+  /** Per-frame face name rects for click-to-edit. Cleared each render(). */
+  face_name_rects: Label_Rect[] = [];
+
   /** Logical (CSS) size — for external consumers like camera init. */
   get logical_size(): Size { return this.size; }
 
@@ -70,10 +74,13 @@ class Render {
   render(): void {
     this.ctx.clearRect(0, 0, this.size.width, this.size.height);
     this.dimension_rects = [];
+    this.face_name_rects = [];
 
     const objects = scene.get_all();
     const is_2d = stores.current_view_mode() === '2d';
     const solid = stores.is_solid();
+
+    if (is_2d) this.render_grid(objects);
 
     // Phase 1: project all vertices and update hit-test caches
     const projected_map = new Map<string, Projected[]>();
@@ -195,6 +202,102 @@ class Render {
     if (stores.show_dimensionals()) this.render_dimensions();
     this.render_hover();
     if (debug.enabled) this.render_front_face_label();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // 2D GRID
+  // ═══════════════════════════════════════════════════════════════════
+
+  private render_grid(objects: O_Scene[]): void {
+    const root_so = get(stores.w_root_so);
+    if (!root_so) return;
+
+    const front_face = hits_3d.front_most_face(root_so);
+    if (front_face < 0) return;
+
+    const [axis_a, axis_b] = root_so.face_axes(front_face);
+    const fixed_axis = root_so.face_fixed_axis(front_face);
+
+    // Find root SO's scene for world matrix
+    const root_scene = objects.find(o => o.so === root_so);
+    if (!root_scene) return;
+    const world = this.get_world_matrix(root_scene);
+
+    // Grid spacing in mm
+    const system = Units.current_unit_system();
+    const precision = stores.current_precision();
+    const max_dim = Math.max(root_so.width, root_so.height, root_so.depth);
+    const spacing = units.grid_spacing_mm(system, precision, max_dim);
+    if (spacing <= 0) return;
+
+    // Axis bounds (min/max in mm) — extend well beyond SO to fill canvas
+    const bounds = (axis: Axis): [number, number] => {
+      const min = axis === 'x' ? root_so.x_min : axis === 'y' ? root_so.y_min : root_so.z_min;
+      const max = axis === 'x' ? root_so.x_max : axis === 'y' ? root_so.y_max : root_so.z_max;
+      const span = max - min;
+      return [min - span * 5, max + span * 5];
+    };
+
+    // Fixed axis value (the plane of the front face)
+    const fixed_val = fixed_axis === 'x'
+      ? (root_so.x_min + root_so.x_max) / 2
+      : fixed_axis === 'y'
+        ? (root_so.y_min + root_so.y_max) / 2
+        : (root_so.z_min + root_so.z_max) / 2;
+
+    const [a_min, a_max] = bounds(axis_a);
+    const [b_min, b_max] = bounds(axis_b);
+
+    // Snap grid origin to SO edge alignment
+    const a_origin = axis_a === 'x' ? root_so.x_min : axis_a === 'y' ? root_so.y_min : root_so.z_min;
+    const b_origin = axis_b === 'x' ? root_so.x_min : axis_b === 'y' ? root_so.y_min : root_so.z_min;
+
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.strokeStyle = get(colors.w_accent_color);
+    ctx.lineWidth = stores.line_thickness();
+    ctx.lineCap = 'round';
+    ctx.setLineDash([1, 4]);
+
+    const make_point = (a_val: number, b_val: number): vec3 => {
+      const p = vec3.create();
+      const set = (axis: Axis, val: number) => {
+        if (axis === 'x') p[0] = val;
+        else if (axis === 'y') p[1] = val;
+        else p[2] = val;
+      };
+      set(axis_a, a_val);
+      set(axis_b, b_val);
+      set(fixed_axis, fixed_val);
+      return p;
+    };
+
+    // Lines along axis_a (sweep axis_b)
+    const a_start = a_origin - Math.ceil((a_origin - a_min) / spacing) * spacing;
+    for (let a = a_start; a <= a_max; a += spacing) {
+      const p1 = this.project_vertex(make_point(a, b_min), world);
+      const p2 = this.project_vertex(make_point(a, b_max), world);
+      if (p1.w < 0 || p2.w < 0) continue;
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.stroke();
+    }
+
+    // Lines along axis_b (sweep axis_a)
+    const b_start = b_origin - Math.ceil((b_origin - b_min) / spacing) * spacing;
+    for (let b = b_start; b <= b_max; b += spacing) {
+      const p1 = this.project_vertex(make_point(a_min, b), world);
+      const p2 = this.project_vertex(make_point(a_max, b), world);
+      if (p1.w < 0 || p2.w < 0) continue;
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.stroke();
+    }
+
+    ctx.setLineDash([]);
+    ctx.restore();
   }
 
   private get_world_matrix(obj: O_Scene): mat4 {
@@ -672,6 +775,7 @@ class Render {
     ctx.textBaseline = 'middle';
 
     const verts = obj.so.vertices;
+    let recorded = false;  // only record one hit rect per SO
 
     for (let fi = 0; fi < obj.faces.length; fi++) {
       const face = obj.faces[fi];
@@ -679,20 +783,30 @@ class Render {
       if (winding >= 0 || Math.abs(winding) < 2000) continue; // skip back-facing and edge-on
 
       // Compute centroid of face in screen space
-      let cx = 0, cy = 0, behind = false;
+      let cx = 0, cy = 0, cz = 0, behind = false;
       for (const vi of face) {
         if (projected[vi].w < 0) { behind = true; break; }
         cx += projected[vi].x;
         cy += projected[vi].y;
+        cz += projected[vi].z;
       }
       if (behind) continue;
       cx /= face.length;
       cy /= face.length;
+      cz /= face.length;
 
       // Occlusion: skip label if another SO's face is in front at this screen point
       if (world && this.is_point_occluded(cx, cy, face, verts, world, obj.id)) continue;
 
-      ctx.fillText(debug.enabled ? `${obj.so.name} ${fi}` : obj.so.name, Math.round(cx), Math.round(cy));
+      const text = debug.enabled ? `${obj.so.name} ${fi}` : obj.so.name;
+      ctx.fillText(text, Math.round(cx), Math.round(cy));
+
+      // Record hit rect for the first (most prominent) face name per SO
+      if (!recorded) {
+        const tw = ctx.measureText(text).width;
+        this.face_name_rects.push({ so: obj.so, x: cx, y: cy, w: tw, h: 10, z: cz });
+        recorded = true;
+      }
     }
   }
 

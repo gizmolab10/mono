@@ -84,3 +84,11 @@
 - [x] research scene model
 - [x]  move all Angle and Polar code from Coordinates to Angle
 	- [x] including thin delegates
+- [x] straighten -> apply to front-most-facing face of root
+- [x] switch 3D -> 2D
+	- [x] wrong face
+	- [x] wrong twist
+	- [x] child projections wrong
+	- [x] missing some dimensionals
+- [x] add ability to edit face label
+- [x] pac: combine all _*Rect_ interfaces

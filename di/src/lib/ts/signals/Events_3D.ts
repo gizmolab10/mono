@@ -1,5 +1,6 @@
 import { hits_3d } from '../managers/Hits_3D';
 import { dimensions } from '../editors/Dimension';
+import { face_label } from '../editors/Face_Label';
 import { drag } from '../editors/Drag';
 import { Point } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
@@ -13,6 +14,7 @@ class Events_3D {
   private mouse_in_canvas = false;
   private last_canvas_position: Point = Point.zero;  // canvas-relative position
   private on_drag: T_Handle_Drag | null = null;
+  private on_drag_end: (() => void) | null = null;
   private on_wheel: T_Handle_Wheel | null = null;
 
   init(canvas: HTMLCanvasElement): void {
@@ -29,8 +31,8 @@ class Events_3D {
 
       const hit = hits_3d.hit_test(point);
 
-      // Dimension hit — don't start a drag, defer to mouseup for editing
-      if (hit?.type === T_Hit_3D.dimension) {
+      // Dimension or face label hit — don't start a drag, defer to mouseup for editing
+      if (hit?.type === T_Hit_3D.dimension || hit?.type === T_Hit_3D.face_label) {
         drag.set_target(null);
         hits_3d.set_hover(null);
         return;
@@ -61,11 +63,16 @@ class Events_3D {
           // Click on dimension label → begin editing
           const dim = dimensions.hit_test(this.last_canvas_position.x, this.last_canvas_position.y);
           if (dim) dimensions.begin(dim);
+        } else if (hit?.type === T_Hit_3D.face_label) {
+          // Click on face name → begin editing (begin() handles temporary selection)
+          const label = face_label.hit_test(this.last_canvas_position.x, this.last_canvas_position.y);
+          if (label) face_label.begin(label);
         } else if (!drag.has_target) {
           // Click on background → deselect
           hits_3d.set_selection(null);
         }
       }
+      if (this.did_drag && this.on_drag_end) this.on_drag_end();
       this.is_dragging = false;
       this.did_drag = false;
       drag.clear();
@@ -106,6 +113,10 @@ class Events_3D {
 
   set_drag_handler(callback: T_Handle_Drag): void {
     this.on_drag = callback;
+  }
+
+  set_drag_end_handler(callback: () => void): void {
+    this.on_drag_end = callback;
   }
 
   set_wheel_handler(callback: T_Handle_Wheel): void {

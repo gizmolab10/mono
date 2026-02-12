@@ -13,22 +13,23 @@ export interface Projected {
   w: number;
 }
 
-export interface S_Editing {
-  formatted: string;  // pre-filled text
+// S_SO = "what to edit and where" (identity + screen position).
+export interface S_SO {
   so: Smart_Object;
-  axis: Axis;
   x: number;          // screen x (center of text)
-  y: number;        // screen y (center of text)
+  y: number;          // screen y (center of text)
 }
 
-export interface Dimension_Rect {
-  so: Smart_Object;
-  axis: Axis;
-  x: number;        // screen x of text center
-  y: number;        // screen y of text center
+// w/h/z = "how big it rendered and at what depth" (render output).
+export interface Label_Rect extends S_SO {
   w: number;        // text width in pixels
   h: number;        // text height in pixels
-  z: number;        // NDC depth at text center (for occlusion)
+  z: number;        // NDC depth at text center
+}
+
+// axis = which dimension (x/y/z) this label measures.
+export interface Dimension_Rect extends Label_Rect {
+  axis: Axis;
 }
 
 export interface O_Scene {

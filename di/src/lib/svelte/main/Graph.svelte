@@ -5,13 +5,15 @@
 	import { components } from '../../ts/managers/Components';
 	import { hits, hits_3d, scenes, stores } from '../../ts/managers';
 	import { dimensions } from '../../ts/editors/Dimension';
-	import { T_Hit_3D, T_Hit_Target } from '../../ts/types/Enumerations';
+	import { face_label } from '../../ts/editors/Face_Label';
+	import { T_Editing, T_Hit_3D, T_Hit_Target } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import { engine } from '../../ts/render';
 
 	const { w_text_color, w_background_color } = colors;
-	const { w_editing } = dimensions;
+	const { w_s_dimensions } = dimensions;
+	const { w_s_face_label } = face_label;
 	const { w_all_sos, w_selection, w_root_so } = stores;
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
@@ -41,6 +43,7 @@
 	let canvas      : HTMLCanvasElement;
 	let container   : HTMLDivElement;
 	let dim_input   = $state<HTMLInputElement>();
+	let label_input = $state<HTMLInputElement>();
 	let initialized = false;
 
 	const s_hit_target = components.component_forHID_andType_createUnique(GRAPH_HID, T_Hit_Target.rubberband);
@@ -73,6 +76,35 @@
 
 	function on_dim_blur() {
 		dimensions.cancel();
+	}
+
+	// ── face label input handlers ──
+
+	function on_label_keydown(e: KeyboardEvent) {
+		if (e.key === 'Enter') {
+			face_label.commit((e.target as HTMLInputElement).value);
+		} else if (e.key === 'Escape') {
+			face_label.cancel();
+		}
+	}
+
+	function on_label_input(e: Event) {
+		face_label.sync((e.target as HTMLInputElement).value);
+	}
+
+	function on_label_focus() {
+		stores.w_editing.set(T_Editing.face_label);
+	}
+
+	function on_label_blur(e: FocusEvent) {
+		const input = e.target as HTMLInputElement;
+		face_label.cursor = { start: input.selectionStart ?? 0, end: input.selectionEnd ?? 0 };
+		// Defer so the focus handler on Details fires first
+		setTimeout(() => {
+			if (stores.editing() !== T_Editing.details_name) {
+				face_label.cancel();
+			}
+		});
 	}
 
 	onMount(() => {
@@ -113,9 +145,27 @@
 
 	// Focus the input when editing starts
 	$effect(() => {
-		if ($w_editing && dim_input) {
+		if ($w_s_dimensions && dim_input) {
 			dim_input.focus();
 			dim_input.select();
+		}
+	});
+
+	let label_focused = false;
+	$effect(() => {
+		if ($w_s_face_label && label_input) {
+			if (!label_focused) {
+				label_input.focus();
+				const cur = face_label.cursor;
+				if (cur) {
+					requestAnimationFrame(() => label_input?.setSelectionRange(cur.start, cur.end));
+				} else {
+					label_input.select();
+				}
+				label_focused = true;
+			}
+		} else {
+			label_focused = false;
 		}
 	});
 </script>
@@ -142,16 +192,30 @@
 			{/each}
 		</div>
 	{/if}
-	{#if $w_editing}
+	{#if $w_s_dimensions}
 		<input
 			bind:this    = {dim_input}
 			class        = 'dim-edit'
 			type         = 'text'
-			value        = {$w_editing.formatted}
-			style:left   = '{$w_editing.x}px'
-			style:top    = '{$w_editing.y}px'
+			value        = {$w_s_dimensions.formatted}
+			style:left   = '{$w_s_dimensions.x}px'
+			style:top    = '{$w_s_dimensions.y}px'
 			onkeydown    = {on_dim_keydown}
 			onblur       = {on_dim_blur}
+		/>
+	{/if}
+	{#if $w_s_face_label}
+		<input
+			bind:this    = {label_input}
+			class        = 'label-edit'
+			type         = 'text'
+			value        = {$w_s_face_label.current_name}
+			style:left   = '{$w_s_face_label.x}px'
+			style:top    = '{$w_s_face_label.y}px'
+			oninput      = {on_label_input}
+			onkeydown    = {on_label_keydown}
+			onfocus      = {on_label_focus}
+			onblur       = {on_label_blur}
 		/>
 	{/if}
 </div>
@@ -215,6 +279,19 @@
 		font       : 12px sans-serif;
 		text-align : center;
 		width      : 80px;
+		padding    : 2px 4px;
+		border     : 1px solid #999;
+		outline    : none;
+		background : white;
+		z-index    : 10;
+	}
+
+	.label-edit {
+		position   : absolute;
+		transform  : translate(-50%, -50%);
+		font       : 10px sans-serif;
+		text-align : center;
+		width      : 60px;
 		padding    : 2px 4px;
 		border     : 1px solid #999;
 		outline    : none;

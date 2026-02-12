@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { T_Units } from '../../ts/types/Enumerations';
+	import { T_Units, T_Editing } from '../../ts/types/Enumerations';
+	import { face_label } from '../../ts/editors/Face_Label';
 	import { scenes, stores } from '../../ts/managers';
 	import { w_unit_system } from '../../ts/types/Units';
 	import { colors } from '../../ts/draw/Colors';
@@ -11,14 +12,58 @@
 
 	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 
+	const { w_s_face_label } = face_label;
+
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
+	let display_name = $derived(
+		$w_s_face_label ? $w_s_face_label.current_name : selected_so?.name ?? ''
+	);
 
 	function handle_name(e: Event) {
 		const input = e.target as HTMLInputElement;
 		if (selected_so) {
 			selected_so.name = input.value;
 			scenes.save();
+			// Re-emit so SO button row and face names update reactively
+			stores.w_all_sos.update(sos => sos);
+			// Sync canvas label input if it's open for this SO
+			face_label.sync(input.value);
 		}
+	}
+
+	function handle_name_keydown(e: KeyboardEvent) {
+		if (e.key === 'Enter') {
+			(e.target as HTMLInputElement).blur();
+		} else if (e.key === 'Escape') {
+			if (face_label.state) face_label.cancel();
+			else stores.w_editing.set(T_Editing.none);
+			(e.target as HTMLInputElement).blur();
+		}
+	}
+
+	function handle_name_focus(e: FocusEvent) {
+		stores.w_editing.set(T_Editing.details_name);
+		const cur = face_label.cursor;
+		if (cur) {
+			const input = e.target as HTMLInputElement;
+			requestAnimationFrame(() => input.setSelectionRange(cur.start, cur.end));
+		}
+	}
+	function handle_name_blur(e: FocusEvent) {
+		const input = e.target as HTMLInputElement;
+		// Save cursor position for transfer to canvas label input
+		face_label.cursor = { start: input.selectionStart ?? 0, end: input.selectionEnd ?? 0 };
+		// Defer so the focus handler on the canvas label input fires first
+		setTimeout(() => {
+			if (stores.editing() !== T_Editing.face_label) {
+				// If face label editing is active, commit it; otherwise just clear editing state
+				if (face_label.state) {
+					face_label.commit(selected_so?.name ?? '');
+				} else {
+					stores.w_editing.set(T_Editing.none);
+				}
+			}
+		});
 	}
 
 	const imperial_ticks = ['foot', 'inch', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64'];
@@ -47,9 +92,12 @@
 		<label class='field'>
 			<span class='label'>Name</span>
 			<input
-				type     = 'text'
-				value    = {selected_so.name}
-				oninput  = {handle_name}
+				type      = 'text'
+				value     = {display_name}
+				oninput   = {handle_name}
+				onkeydown = {handle_name_keydown}
+				onfocus   = {handle_name_focus}
+				onblur    = {handle_name_blur}
 			/>
 		</label>
 	{:else}

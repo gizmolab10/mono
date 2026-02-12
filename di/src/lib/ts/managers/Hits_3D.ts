@@ -1,6 +1,7 @@
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Projected } from '../types/Interfaces';
 import { dimensions } from '../editors/Dimension';
+import { face_label } from '../editors/Face_Label';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
@@ -115,6 +116,17 @@ class Hits_3D {
 			}
 		}
 
+		// Face name labels — check before faces but compare depth
+		let label_hit: Hit_3D_Result | null = null;
+		let label_z = Infinity;
+		{
+			const label = face_label.hit_test(point.x, point.y);
+			if (label) {
+				label_hit = { so: label.so, type: T_Hit_3D.face_label, index: 0 };
+				label_z = label.z;
+			}
+		}
+
 		// Face hits: closest front-facing face across ALL SOs (no selection priority)
 		let best: Hit_3D_Result | null = null;
 		let best_z = Infinity;
@@ -147,6 +159,12 @@ class Hits_3D {
 		if (dim_hit) {
 			const occluded = best && best.so !== dim_hit.so && best_z < dim_z;
 			if (!occluded) return dim_hit;
+		}
+
+		// Face label wins over face unless a different SO's face is closer
+		if (label_hit) {
+			const occluded = best && best.so !== label_hit.so && best_z < label_z;
+			if (!occluded) return label_hit;
 		}
 
 		return best;

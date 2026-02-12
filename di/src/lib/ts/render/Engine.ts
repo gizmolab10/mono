@@ -149,12 +149,28 @@ class Engine {
       if (!target) return;
       if (!drag.edit_selection(prev, curr)) {
         if (stores.current_view_mode() === '2d') {
-          this.rotate_2d(target, prev, curr);
+          if (!this.root_scene) return;
+          this.rotate_2d(this.root_scene, prev, curr);
         } else {
           drag.rotate_object(target, prev, curr);
         }
       }
       scenes.save();
+    });
+
+    // Input: drag ended — in 2D, animate snap-back from tilt to axis-aligned
+    e3.set_drag_end_handler(() => {
+      if (this.is_tilting && this.root_scene) {
+        const so = this.root_scene.so;
+        // snapped_orientation is always the last clean axis-aligned quat
+        this.snap_anim = {
+          so,
+          from: quat.clone(so.orientation),
+          to: quat.clone(this.snapped_orientation),
+          t: 0,
+        };
+        this.is_tilting = false;
+      }
     });
 
     // Input: scroll wheel scales entire rendering
@@ -225,6 +241,8 @@ class Engine {
   private scratch_orientation = quat.create();
   /** The snapped orientation to tilt away from (reset on each snap). */
   private snapped_orientation = quat.create();
+  /** Whether a 2D tilt is active (needs snap-back on drag end). */
+  private is_tilting = false;
 
   /** Snap animation state. */
   private snap_anim: {
@@ -249,8 +267,8 @@ class Engine {
     }
   }
 
-  /** In 2D mode, rotate a virtual orientation and snap when the front face changes.
-   *  Applies a small real tilt (max ~5°) before snapping for visual feedback. */
+  /** In 2D mode, accumulate virtual rotation and snap when the front face changes.
+   *  Applies a small visual tilt for feedback; snaps back on drag release. */
   private rotate_2d(target: O_Scene, prev: Point, curr: Point): void {
     const so = target.so;
     const sensitivity = 0.01;
@@ -279,15 +297,13 @@ class Engine {
     // If the front face changed, animate the snap
     const current_face = hits_3d.front_most_face(so);
     if (best_face >= 0 && best_face !== current_face) {
-      const snap_target = quat.create();
-      // Compute snap target without mutating so.orientation
       let best_quat: quat = Engine.FACE_SNAP_QUATS[best_face][0];
       let best_dot = -Infinity;
       for (const candidate of Engine.FACE_SNAP_QUATS[best_face]) {
         const d = Math.abs(quat.dot(so.orientation, candidate));
         if (d > best_dot) { best_dot = d; best_quat = candidate; }
       }
-      quat.copy(snap_target, best_quat);
+      const snap_target = quat.clone(best_quat);
 
       this.snap_anim = {
         so,
@@ -295,15 +311,17 @@ class Engine {
         to: snap_target,
         t: 0,
       };
+      this.is_tilting = false;
       // Pre-set scratch and snapped to the target for after animation completes
       quat.copy(this.scratch_orientation, snap_target);
       quat.copy(this.snapped_orientation, snap_target);
     } else {
       // Small tilt toward scratch — slerp clamped to ~5° max
-      const max_tilt = 0.08; // ~5° in slerp t (tuned for feel)
+      const max_tilt = 0.08;
       const dot = Math.abs(quat.dot(this.snapped_orientation, this.scratch_orientation));
       const t = Math.min(1.0 - dot, max_tilt);
       quat.slerp(so.orientation, this.snapped_orientation, this.scratch_orientation, t);
+      this.is_tilting = true;
     }
   }
 

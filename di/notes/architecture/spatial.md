@@ -17,7 +17,7 @@ No drop-in JS/TS library does HLR with intersecting objects without a GPU.
 
 ### Libraries Considered
 
-| Library                | HLR?<br>[[primer]] | Intersecting objects?            | Verdict                                                        |
+| Library                | HLR?<br>[[3D.primer]] | Intersecting objects?            | Verdict                                                        |
 | ---------------------- | ------------------ | -------------------------------- | -------------------------------------------------------------- |
 | three-plotter-renderer | Yes                | No — explicitly warns against it | Pen-plotter world, skips our hard case                         |
 | three-svg-renderer     | Yes                | Unknown                          | Experimental, GPL-3, sparse docs                               |
@@ -31,7 +31,7 @@ No drop-in JS/TS library does HLR with intersecting objects without a GPU.
 | **flatbush**   | Static 2D R-tree (Mapbox). Zero-dep, tiny, battle-tested | Best candidate — project face bounding boxes into screen space, query per edge, cull 90%+ of candidates |
 | rbush          | Dynamic 2D R-tree                                        | Needed only if faces change frame-to-frame without full rebuild                                         |
 | isect          | Segment intersection detection (uses flatbush)           | Useful for edge-face boundary crossings in 2D                                                           |
-| three-mesh-bvh | 3D BVH for raycasting<br>[[primer]]                      | Fast but coupled to three.js                                                                            |
+| three-mesh-bvh | 3D BVH for raycasting<br>[[3D.primer]]                      | Fast but coupled to three.js                                                                            |
 
 ### Recommendation
 

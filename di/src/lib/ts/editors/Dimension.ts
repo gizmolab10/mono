@@ -1,17 +1,22 @@
-import type { Dimension_Rect, S_Editing } from '../types/Interfaces';
+import type { Dimension_Rect, S_SO } from '../types/Interfaces';
+import type { Axis } from '../runtime/Smart_Object';
+
+interface S_Dimensions extends S_SO {
+	axis: Axis;
+	formatted: string;
+}
 import { constraints, compiler, evaluator } from '../algebra';
 import { units, Units } from '../types/Units';
-import { T_Units } from '../types/Enumerations';
+import { T_Units, T_Editing } from '../types/Enumerations';
 import { writable, get } from 'svelte/store';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
 import { render } from '../render/Render';
 
 class Dimensions {
-	/** Reactive editing state — non-null when input is active */
-	w_editing = writable<S_Editing | null>(null);
+	w_s_dimensions = writable<S_Dimensions | null>(null);
 
-	get editing(): S_Editing | null { return get(this.w_editing); }
+	get state(): S_Dimensions | null { return get(this.w_s_dimensions); }
 
 	// ── hit testing ──
 
@@ -35,18 +40,19 @@ class Dimensions {
 		const so = rect.so;
 		const value_mm = rect.axis === 'x' ? so.width : rect.axis === 'y' ? so.height : so.depth;
 		const system = Units.current_unit_system();
-		this.w_editing.set({
+		this.w_s_dimensions.set({
 			so,
 			axis: rect.axis,
 			x: rect.x,
 			y: rect.y,
 			formatted: units.format_for_system(value_mm, system, stores.current_precision()),
 		});
+		stores.w_editing.set(T_Editing.dimension);
 	}
 
 	/** Commit a new value from the input. Returns true if value changed. */
 	commit(input: string): boolean {
-		const state = this.editing;
+		const state = this.state;
 		if (!state) return false;
 
 		const system = Units.current_unit_system();
@@ -72,7 +78,8 @@ class Dimensions {
 		constraints.propagate(state.so);
 
 		scenes.save();
-		this.w_editing.set(null);
+		this.w_s_dimensions.set(null);
+		stores.w_editing.set(T_Editing.none);
 		return true;
 	}
 
@@ -90,7 +97,8 @@ class Dimensions {
 
 	/** Cancel editing without changing anything. */
 	cancel(): void {
-		this.w_editing.set(null);
+		this.w_s_dimensions.set(null);
+		stores.w_editing.set(T_Editing.none);
 	}
 }
 

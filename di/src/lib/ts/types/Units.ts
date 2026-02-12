@@ -230,6 +230,32 @@ export class Units {
 		return snapped * mm_per[unit];
 	}
 
+	// ── grid spacing (precision → mm per grid cell) ──
+
+	/**
+	 * Grid cell size in mm for the current precision.
+	 * Imperial: 1/denom of an inch (or 1 foot at precision 0).
+	 * Others:   10^(-dp) in the best display unit for ref_mm.
+	 * @param ref_mm reference dimension (mm) for picking the display unit (metric only).
+	 */
+	grid_spacing_mm(system: T_Units, precision: number, ref_mm: number): number {
+		if (system === T_Units.imperial) {
+			const denom = this.IMPERIAL_DENOMS[Math.min(precision, this.IMPERIAL_DENOMS.length - 1)];
+			if (denom === 0) return mm_per[T_Unit.foot]; // 304.8 mm
+			return mm_per[T_Unit.inch] / denom;
+		}
+		const dp = Math.min(precision, 3);
+		const members = system_map[system];
+		let unit = members[0];
+		for (let i = members.length - 1; i >= 0; i--) {
+			if (ref_mm >= mm_per[members[i]]) {
+				unit = members[i];
+				break;
+			}
+		}
+		return mm_per[unit] / Math.pow(10, dp);
+	}
+
 	// ── parsing (string → mm) ──
 
 	parse(input: string, unit: T_Unit): number | null {

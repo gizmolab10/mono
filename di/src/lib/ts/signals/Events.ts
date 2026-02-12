@@ -1,11 +1,11 @@
-import { dimensions } from '../editors/Dimension';
-import { engine } from '../render/Engine';
-import { Point } from '../types/Coordinates';
-import S_Mouse from '../state/S_Mouse';
-import { hits } from '../managers/Hits';
 import type { Dictionary } from '../types/Types';
 import { writable, get } from 'svelte/store';
+import { Point } from '../types/Coordinates';
+import { engine } from '../render/Engine';
+import { stores } from '../managers/Stores';
+import { hits } from '../managers/Hits';
 import Mouse_Timer from './Mouse_Timer';
+import S_Mouse from '../state/S_Mouse';
 
 export class Events {
 	throttle_timers: Dictionary<ReturnType<typeof setTimeout> | null> = {};
@@ -86,7 +86,7 @@ export class Events {
 	}
 
 	private handle_key_down = (event: KeyboardEvent) => {
-		if (dimensions.editing) return;  // typing in dimension input
+		if (stores.is_editing()) return;  // typing in inline input
 		if (event.key === 'Delete' || event.key === 'Backspace') {
 			event.preventDefault();
 			engine.delete_selected_so();

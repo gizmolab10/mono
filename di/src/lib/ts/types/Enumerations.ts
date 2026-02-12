@@ -19,7 +19,15 @@ export enum T_Hit_3D {
 	edge,
 	face,
 	dimension,
+	face_label,
 	none,
+}
+
+export enum T_Editing {
+	none,
+	dimension,
+	face_label,
+	details_name,
 }
 
 export enum T_Detail {
