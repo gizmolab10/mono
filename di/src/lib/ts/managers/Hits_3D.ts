@@ -92,6 +92,18 @@ class Hits_3D {
 	hit_test(point: Point): Hit_3D_Result | null {
 		const selected_so = this.selection?.so ?? null;
 
+		// Dimension labels win over everything (corners, edges, faces)
+		if (stores.show_dimensionals()) {
+			const dim = dimensions.hit_test(point.x, point.y);
+			if (dim) return { so: dim.so, type: T_Hit_3D.dimension, index: 0 };
+		}
+
+		// Face name labels win over corners, edges, faces
+		{
+			const label = face_label.hit_test(point.x, point.y);
+			if (label) return { so: label.so, type: T_Hit_3D.face_label, index: 0 };
+		}
+
 		// Selected SO's corners/edges get priority (for resizing through overlap)
 		if (selected_so) {
 			if (!selected_so.scene) return null;
@@ -102,28 +114,6 @@ class Hits_3D {
 
 				const edge = this.test_edges(point, selected_so, c.projected);
 				if (edge !== -1) return { so: selected_so, type: T_Hit_3D.edge, index: edge };
-			}
-		}
-
-		// Dimension labels — check before faces but compare depth
-		let dim_hit: Hit_3D_Result | null = null;
-		let dim_z = Infinity;
-		if (stores.show_dimensionals()) {
-			const dim = dimensions.hit_test(point.x, point.y);
-			if (dim) {
-				dim_hit = { so: dim.so, type: T_Hit_3D.dimension, index: 0 };
-				dim_z = dim.z;
-			}
-		}
-
-		// Face name labels — check before faces but compare depth
-		let label_hit: Hit_3D_Result | null = null;
-		let label_z = Infinity;
-		{
-			const label = face_label.hit_test(point.x, point.y);
-			if (label) {
-				label_hit = { so: label.so, type: T_Hit_3D.face_label, index: 0 };
-				label_z = label.z;
 			}
 		}
 
@@ -153,18 +143,6 @@ class Hits_3D {
 					best = { so, type: T_Hit_3D.face, index: fi };
 				}
 			}
-		}
-
-		// Dimension wins over face unless a different SO's face is closer
-		if (dim_hit) {
-			const occluded = best && best.so !== dim_hit.so && best_z < dim_z;
-			if (!occluded) return dim_hit;
-		}
-
-		// Face label wins over face unless a different SO's face is closer
-		if (label_hit) {
-			const occluded = best && best.so !== label_hit.so && best_z < label_z;
-			if (!occluded) return label_hit;
 		}
 
 		return best;

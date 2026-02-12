@@ -94,6 +94,10 @@
 
 	function on_label_focus() {
 		stores.w_editing.set(T_Editing.face_label);
+		const cur = face_label.cursor;
+		if (cur && label_input) {
+			requestAnimationFrame(() => label_input?.setSelectionRange(cur.start, cur.end));
+		}
 	}
 
 	function on_label_blur(e: FocusEvent) {
@@ -210,8 +214,8 @@
 			class        = 'label-edit'
 			type         = 'text'
 			value        = {$w_s_face_label.current_name}
-			style:left   = '{$w_s_face_label.x}px'
-			style:top    = '{$w_s_face_label.y}px'
+			style:left   = '{Math.round($w_s_face_label.x)}px'
+			style:top    = '{Math.round($w_s_face_label.y) - 0.2}px'
 			oninput      = {on_label_input}
 			onkeydown    = {on_label_keydown}
 			onfocus      = {on_label_focus}
@@ -280,22 +284,26 @@
 		text-align : center;
 		width      : 80px;
 		padding    : 2px 4px;
-		border     : 1px solid #999;
+		border     : none;
 		outline    : none;
 		background : white;
 		z-index    : 10;
 	}
 
 	.label-edit {
-		position   : absolute;
-		transform  : translate(-50%, -50%);
-		font       : 10px sans-serif;
-		text-align : center;
-		width      : 60px;
-		padding    : 2px 4px;
-		border     : 1px solid #999;
-		outline    : none;
-		background : white;
-		z-index    : 10;
+		position       : absolute;
+		transform      : translate(-50%, -50%);
+		box-sizing     : border-box;
+		font           : normal 10px sans-serif;
+		-webkit-font-smoothing : antialiased;
+		text-align     : center;
+		width          : 60px;
+		padding        : 0;
+		line-height    : 1;
+		height         : 10px;
+		border         : none;
+		outline        : none;
+		background     : white;
+		z-index        : 10;
 	}
 </style>

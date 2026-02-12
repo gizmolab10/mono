@@ -25,6 +25,7 @@ export interface Label_Rect extends S_SO {
   w: number;        // text width in pixels
   h: number;        // text height in pixels
   z: number;        // NDC depth at text center
+  face_index: number;
 }
 
 // axis = which dimension (x/y/z) this label measures.

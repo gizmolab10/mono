@@ -3,6 +3,7 @@ import type { Hit_3D_Result } from '../managers/Hits_3D';
 
 interface S_Name extends S_SO {
 	current_name: string;
+	face_index: number;
 }
 import { T_Editing, T_Hit_3D } from '../types/Enumerations';
 import { writable, get } from 'svelte/store';
@@ -51,6 +52,7 @@ class Face_Label {
 			x: rect.x,
 			y: rect.y,
 			current_name: rect.so.name,
+			face_index: rect.face_index,
 		});
 		stores.w_editing.set(T_Editing.face_label);
 	}

@@ -11,6 +11,7 @@ import { stores } from '../managers/Stores';
 import { debug } from '../common/Debug';
 import { get } from 'svelte/store';
 import { drag } from '../editors/Drag';
+import { face_label } from '../editors/Face_Label';
 import { camera } from './Camera';
 import { scene } from './Scene';
 import Flatbush from 'flatbush';
@@ -223,19 +224,44 @@ class Render {
     if (!root_scene) return;
     const world = this.get_world_matrix(root_scene);
 
-    // Grid spacing in mm
+    // Grid spacing in mm — start from precision, double until lines are ≥ min_px apart
     const system = Units.current_unit_system();
     const precision = stores.current_precision();
     const max_dim = Math.max(root_so.width, root_so.height, root_so.depth);
-    const spacing = units.grid_spacing_mm(system, precision, max_dim);
-    if (spacing <= 0) return;
+    const base_spacing = units.grid_spacing_mm(system, precision, max_dim);
+    if (base_spacing <= 0) return;
 
-    // Axis bounds (min/max in mm) — extend well beyond SO to fill canvas
+    // Measure screen-space gap: project two adjacent points along axis_a
+    const a_ref = axis_a === 'x' ? root_so.x_min : axis_a === 'y' ? root_so.y_min : root_so.z_min;
+    const ref_point = (offset: number): vec3 => {
+      const p = vec3.create();
+      const set = (ax: Axis, v: number) => { if (ax === 'x') p[0] = v; else if (ax === 'y') p[1] = v; else p[2] = v; };
+      set(axis_a, a_ref + offset);
+      set(axis_b, axis_b === 'x' ? root_so.x_min : axis_b === 'y' ? root_so.y_min : root_so.z_min);
+      set(fixed_axis, fixed_axis === 'x' ? (root_so.x_min + root_so.x_max) / 2
+        : fixed_axis === 'y' ? (root_so.y_min + root_so.y_max) / 2
+        : (root_so.z_min + root_so.z_max) / 2);
+      return p;
+    };
+    const p0 = this.project_vertex(ref_point(0), world);
+    const p1 = this.project_vertex(ref_point(base_spacing), world);
+    const px_per_cell = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+
+    const min_px = 8; // minimum pixels between grid lines
+    let spacing = base_spacing;
+    if (px_per_cell > 0) {
+      while (spacing * (px_per_cell / base_spacing) < min_px) spacing *= 2;
+    }
+
+    // Axis bounds — extend enough to fill the canvas
+    const canvas_diag_mm = px_per_cell > 0
+      ? Math.hypot(this.ctx.canvas.width, this.ctx.canvas.height) / (px_per_cell / base_spacing)
+      : max_dim * 50;
     const bounds = (axis: Axis): [number, number] => {
       const min = axis === 'x' ? root_so.x_min : axis === 'y' ? root_so.y_min : root_so.z_min;
       const max = axis === 'x' ? root_so.x_max : axis === 'y' ? root_so.y_max : root_so.z_max;
-      const span = max - min;
-      return [min - span * 5, max + span * 5];
+      const mid = (min + max) / 2;
+      return [mid - canvas_diag_mm, mid + canvas_diag_mm];
     };
 
     // Fixed axis value (the plane of the front face)
@@ -775,7 +801,6 @@ class Render {
     ctx.textBaseline = 'middle';
 
     const verts = obj.so.vertices;
-    let recorded = false;  // only record one hit rect per SO
 
     for (let fi = 0; fi < obj.faces.length; fi++) {
       const face = obj.faces[fi];
@@ -799,14 +824,14 @@ class Render {
       if (world && this.is_point_occluded(cx, cy, face, verts, world, obj.id)) continue;
 
       const text = debug.enabled ? `${obj.so.name} ${fi}` : obj.so.name;
-      ctx.fillText(text, Math.round(cx), Math.round(cy));
-
-      // Record hit rect for the first (most prominent) face name per SO
-      if (!recorded) {
-        const tw = ctx.measureText(text).width;
-        this.face_name_rects.push({ so: obj.so, x: cx, y: cy, w: tw, h: 10, z: cz });
-        recorded = true;
+      const fls = face_label.state;
+      if (!fls || fls.so !== obj.so || fls.face_index !== fi) {
+        ctx.fillText(text, Math.round(cx), Math.round(cy));
       }
+
+      // Record hit rect for every visible face label (all are clickable)
+      const tw = ctx.measureText(text).width;
+      this.face_name_rects.push({ so: obj.so, x: cx, y: cy, w: tw, h: 10, z: cz, face_index: fi });
     }
   }
 
@@ -1350,6 +1375,7 @@ class Render {
       x: midX, y: midY,
       w: textWidth, h: textHeight,
       z: (d1.z + d2.z) / 2,
+      face_index: -1,
     });
     return true;
   }

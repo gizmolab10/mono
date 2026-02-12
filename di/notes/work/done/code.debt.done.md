@@ -92,3 +92,4 @@
 	- [x] missing some dimensionals
 - [x] add ability to edit face label
 - [x] pac: combine all _*Rect_ interfaces
+- [x] remove border around edit input fields in the canvas

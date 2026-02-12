@@ -3,7 +3,8 @@ import { dimensions } from '../editors/Dimension';
 import { face_label } from '../editors/Face_Label';
 import { drag } from '../editors/Drag';
 import { Point } from '../types/Coordinates';
-import { T_Hit_3D } from '../types/Enumerations';
+import { T_Hit_3D, T_Editing } from '../types/Enumerations';
+import { stores } from '../managers/Stores';
 
 type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point) => void;
 type T_Handle_Wheel = (delta: number, fine: boolean) => void;
@@ -31,8 +32,18 @@ class Events_3D {
 
       const hit = hits_3d.hit_test(point);
 
-      // Dimension or face label hit — don't start a drag, defer to mouseup for editing
-      if (hit?.type === T_Hit_3D.dimension || hit?.type === T_Hit_3D.face_label) {
+      // Dimension or face label hit — begin editing immediately
+      if (hit?.type === T_Hit_3D.dimension) {
+        e.preventDefault(); // prevent canvas from stealing focus from the input
+        const dim = dimensions.hit_test(point.x, point.y);
+        if (dim) dimensions.begin(dim);
+        drag.set_target(null);
+        hits_3d.set_hover(null);
+        return;
+      } else if (hit?.type === T_Hit_3D.face_label) {
+        e.preventDefault(); // prevent canvas from stealing focus from the input
+        const label = face_label.hit_test(point.x, point.y);
+        if (label) face_label.begin(label);
         drag.set_target(null);
         hits_3d.set_hover(null);
         return;
@@ -58,17 +69,8 @@ class Events_3D {
 
     document.addEventListener('mouseup', () => {
       if (this.is_dragging && !this.did_drag && this.mouse_in_canvas) {
-        const hit = hits_3d.hit_test(this.last_canvas_position);
-        if (hit?.type === T_Hit_3D.dimension) {
-          // Click on dimension label → begin editing
-          const dim = dimensions.hit_test(this.last_canvas_position.x, this.last_canvas_position.y);
-          if (dim) dimensions.begin(dim);
-        } else if (hit?.type === T_Hit_3D.face_label) {
-          // Click on face name → begin editing (begin() handles temporary selection)
-          const label = face_label.hit_test(this.last_canvas_position.x, this.last_canvas_position.y);
-          if (label) face_label.begin(label);
-        } else if (!drag.has_target) {
-          // Click on background → deselect
+        // Click on background → deselect (but not if editing just started)
+        if (!drag.has_target && stores.editing() === T_Editing.none) {
           hits_3d.set_selection(null);
         }
       }
@@ -84,6 +86,11 @@ class Events_3D {
 
       if (!this.is_dragging) {
         const hit = hits_3d.hit_test(point);
+
+        // Cursor: text for labels/dimensions, grab for everything else
+        const is_text = hit?.type === T_Hit_3D.dimension || hit?.type === T_Hit_3D.face_label;
+        canvas.style.cursor = is_text ? 'text' : 'grab';
+
         // Hover shows face — convert corner/edge hits to best face
         // But don't hover on already-selected face
         const face_hit = hit ? hits_3d.hit_to_face(hit) : null;
