@@ -1,5 +1,6 @@
 import { hits_3d } from '../managers/Hits_3D';
 import { dimensions } from '../editors/Dimension';
+import { angulars } from '../editors/Angular';
 import { face_label } from '../editors/Face_Label';
 import { drag } from '../editors/Drag';
 import { Point } from '../types/Coordinates';
@@ -37,6 +38,13 @@ class Events_3D {
         e.preventDefault(); // prevent canvas from stealing focus from the input
         const dim = dimensions.hit_test(point.x, point.y);
         if (dim) dimensions.begin(dim);
+        drag.set_target(null);
+        hits_3d.set_hover(null);
+        return;
+      } else if (hit?.type === T_Hit_3D.angle) {
+        e.preventDefault();
+        const ang = angulars.hit_test(point.x, point.y);
+        if (ang) angulars.begin(ang);
         drag.set_target(null);
         hits_3d.set_hover(null);
         return;
@@ -88,7 +96,7 @@ class Events_3D {
         const hit = hits_3d.hit_test(point);
 
         // Cursor: text for labels/dimensions, grab for everything else
-        const is_text = hit?.type === T_Hit_3D.dimension || hit?.type === T_Hit_3D.face_label;
+        const is_text = hit?.type === T_Hit_3D.dimension || hit?.type === T_Hit_3D.angle || hit?.type === T_Hit_3D.face_label;
         canvas.style.cursor = is_text ? 'text' : 'grab';
 
         // Hover shows face — convert corner/edge hits to best face

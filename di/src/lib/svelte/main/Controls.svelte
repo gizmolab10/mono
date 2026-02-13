@@ -3,10 +3,14 @@
 	import { scenes } from '../../ts/managers/Scenes';
 	import { stores } from '../../ts/managers/Stores';
 	import { colors } from '../../ts/draw/Colors';
+	import { T_Decorations } from '../../ts/types/Enumerations';
 	import Slider from '../mouse/Slider.svelte';
 	import { engine } from '../../ts/render';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
-	const { w_scale, w_view_mode, w_show_dimensionals, w_solid, w_show_details } = stores;
+	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details } = stores;
+
+	let show_dimensions = $derived($w_decorations === T_Decorations.dimensions || $w_decorations === T_Decorations.both);
+	let show_angles     = $derived($w_decorations === T_Decorations.angles || $w_decorations === T_Decorations.both);
 
 	let {
 		title = 'Design Intuition™'
@@ -42,7 +46,10 @@
 	<button class='toolbar-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	<span class='spacer'></span>
 	<Slider min={0.1} max={100} value={$w_scale} onchange={handle_slider} onstep={handle_scale} />
-	<button class='toolbar-btn' class:active={$w_show_dimensionals} use:hit_target={{ id: 'dimensionals', onpress: () => stores.toggle_dimensionals() }}>{$w_show_dimensionals ? 'hide' : 'show'} dimensions</button>
+	<div class='segmented'>
+		<button class='seg' class:active={show_dimensions} use:hit_target={{ id: 'dimensionals', onpress: () => stores.toggle_dimensionals() }}>dimensions</button>
+		<button class='seg' class:active={show_angles} use:hit_target={{ id: 'angulars', onpress: () => stores.toggle_angulars() }}>angles</button>
+	</div>
 	<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'see through'}</button>
 	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode}</button>
 </div>
@@ -115,6 +122,42 @@
 	}
 
 	.toolbar-btn:global([data-hitting]) {
+		background : var(--accent);
+		color      : black;
+	}
+
+	.segmented {
+		display       : flex;
+		margin-left   : 6px;
+		border        : 0.5px solid currentColor;
+		border-radius : 10px;
+		overflow      : hidden;
+		height        : 20px;
+		box-sizing    : border-box;
+	}
+
+	.seg {
+		background  : white;
+		border      : none;
+		border-right: 0.5px solid currentColor;
+		color       : rgba(0, 0, 0, 0.35);
+		padding     : 0 6px 1px 6px;
+		font-size   : 11px;
+		height      : 100%;
+		cursor      : pointer;
+		box-sizing  : border-box;
+	}
+
+	.seg:last-child {
+		border-right : none;
+	}
+
+	.seg.active {
+		background : var(--accent);
+		color      : black;
+	}
+
+	.seg:global([data-hitting]) {
 		background : var(--accent);
 		color      : black;
 	}

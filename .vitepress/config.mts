@@ -68,6 +68,10 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
+                      text: '3D.primer',
+                      link: '/di/notes/architecture/3D.primer'
+                    },
+                    {
                       text: 'Algebra',
                       link: '/di/notes/architecture/algebra'
                     },
@@ -92,10 +96,6 @@ export default defineConfig({
                       link: '/di/notes/architecture/panel.layout'
                     },
                     {
-                      text: 'Primer',
-                      link: '/di/notes/architecture/primer'
-                    },
-                    {
                       text: 'Project',
                       link: '/di/notes/architecture/project'
                     },
@@ -106,6 +106,10 @@ export default defineConfig({
                     {
                       text: 'Spatial',
                       link: '/di/notes/architecture/spatial'
+                    },
+                    {
+                      text: 'Two.dimensions',
+                      link: '/di/notes/architecture/two.dimensions'
                     }
                   ]
                 },
@@ -176,6 +180,14 @@ export default defineConfig({
                   link: '/di/notes/work/',
                   collapsed: true,
                   items: [
+                    {
+                      text: '14.details',
+                      link: '/di/notes/work/14.details'
+                    },
+                    {
+                      text: 'Angulars',
+                      link: '/di/notes/work/angulars'
+                    },
                     {
                       text: 'Code.debt',
                       link: '/di/notes/work/code.debt'

@@ -150,6 +150,7 @@ class Engine {
       if (!drag.edit_selection(prev, curr)) {
         if (stores.current_view_mode() === '2d') {
           if (!this.root_scene) return;
+          this.saved_3d_orientation = null;
           this.rotate_2d(this.root_scene, prev, curr);
         } else {
           drag.rotate_object(target, prev, curr);

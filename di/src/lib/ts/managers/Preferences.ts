@@ -19,7 +19,7 @@ export enum T_Preference {
 	unitSystem 		= 'unitSystem',
 
 	// View
-	showDimensionals = 'showDimensionals',
+	decorations      = 'decorations',
 	lineThickness    = 'lineThickness',
 	precision        = 'precision',
 	edgeColor        = 'edgeColor',

@@ -1,6 +1,7 @@
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Projected } from '../types/Interfaces';
 import { dimensions } from '../editors/Dimension';
+import { angulars } from '../editors/Angular';
 import { face_label } from '../editors/Face_Label';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Point } from '../types/Coordinates';
@@ -92,10 +93,14 @@ class Hits_3D {
 	hit_test(point: Point): Hit_3D_Result | null {
 		const selected_so = this.selection?.so ?? null;
 
-		// Dimension labels win over everything (corners, edges, faces)
+		// Dimension / angle labels win over everything (corners, edges, faces)
 		if (stores.show_dimensionals()) {
 			const dim = dimensions.hit_test(point.x, point.y);
 			if (dim) return { so: dim.so, type: T_Hit_3D.dimension, index: 0 };
+		}
+		if (stores.show_angulars()) {
+			const ang = angulars.hit_test(point.x, point.y);
+			if (ang) return { so: ang.so, type: T_Hit_3D.angle, index: 0 };
 		}
 
 		// Face name labels win over corners, edges, faces

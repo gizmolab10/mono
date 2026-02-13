@@ -306,7 +306,7 @@
 
 	.segment.active {
 		opacity    : 1;
-		background : transparent;
+		background : var(--accent);
 		color      : black;
 	}
 

@@ -33,6 +33,11 @@ export interface Dimension_Rect extends Label_Rect {
   axis: Axis;
 }
 
+export interface Angle_Rect extends Label_Rect {
+  rotation_axis: Axis;
+  angle_degrees: number;
+}
+
 export interface O_Scene {
   edges: [number, number][];
   faces?: number[][];

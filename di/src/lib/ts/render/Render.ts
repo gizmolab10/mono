@@ -1,28 +1,46 @@
-import type { Projected, O_Scene, Dimension_Rect, Label_Rect } from '../types/Interfaces';
-import { units, Units } from '../types/Units';
+import type { Projected, O_Scene, Dimension_Rect, Label_Rect, Angle_Rect } from '../types/Interfaces';
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Axis } from '../runtime/Smart_Object';
-import { colors } from '../draw/Colors';
-import { Size } from '../types/Coordinates';
-import { mat4, vec3, vec4 } from 'gl-matrix';
-import { T_Hit_3D } from '../types/Enumerations';
-import { hits_3d } from '../managers/Hits_3D';
-import { stores } from '../managers/Stores';
-import { debug } from '../common/Debug';
-import { get } from 'svelte/store';
-import { drag } from '../editors/Drag';
 import { face_label } from '../editors/Face_Label';
+import { T_Hit_3D } from '../types/Enumerations';
+import { units, Units } from '../types/Units';
+import { hits_3d } from '../managers/Hits_3D';
+import { mat4, vec3, vec4 } from 'gl-matrix';
+import { Size } from '../types/Coordinates';
+import { stores } from '../managers/Stores';
+import { colors } from '../draw/Colors';
+import { debug } from '../common/Debug';
+import { drag } from '../editors/Drag';
+import { get } from 'svelte/store';
 import { camera } from './Camera';
 import { scene } from './Scene';
 import Flatbush from 'flatbush';
 
 class Render {
-  private canvas!: HTMLCanvasElement;
+  private occluding_index: Flatbush | null = null;  /** Spatial index for screen-space face bounding boxes (rebuilt each frame). */
   private ctx!: CanvasRenderingContext2D;
+  private mvp_matrix = mat4.create();
+  private canvas!: HTMLCanvasElement;
   private size: Size = Size.zero;
   private dpr = 1;
 
+  /** Per-frame dimension rects for click-to-edit. Cleared each render(). */
+  dimension_rects: Dimension_Rect[] = [];
 
+  /** Per-frame face name rects for click-to-edit. Cleared each render(). */
+  face_name_rects: Label_Rect[] = [];
+  angular_rects: Angle_Rect[] = [];
+
+  /** Per-frame intersection segments between parent-child SOs. Collected by render_intersections, consumed by render_angulars. */
+  private intersection_segments: {
+    start: vec3; end: vec3;
+    parent_scene: O_Scene; child_scene: O_Scene;
+    parent_face_idx: number; child_face_idx: number;
+    parent_face_corners: vec3[];
+  }[] = [];
+
+  /** Per-frame visible edge segments (post-occlusion) in world space, keyed by SO id. */
+  private visible_edge_segments = new Map<string, { w1: vec3; w2: vec3 }[]>();
 
   /** Per-frame list of front-facing faces for occlusion: world-space normal, offset, and screen-space polygon. */
   private occluding_faces: {
@@ -31,18 +49,6 @@ class Render {
     poly: { x: number; y: number }[]; // screen-space polygon
     obj_id: string;
   }[] = [];
-
-  /** Spatial index for screen-space face bounding boxes (rebuilt each frame). */
-  private occluding_index: Flatbush | null = null;
-
-
-  private mvp_matrix = mat4.create();
-
-  /** Per-frame dimension rects for click-to-edit. Cleared each render(). */
-  dimension_rects: Dimension_Rect[] = [];
-
-  /** Per-frame face name rects for click-to-edit. Cleared each render(). */
-  face_name_rects: Label_Rect[] = [];
 
   /** Logical (CSS) size — for external consumers like camera init. */
   get logical_size(): Size { return this.size; }
@@ -76,6 +82,8 @@ class Render {
     this.ctx.clearRect(0, 0, this.size.width, this.size.height);
     this.dimension_rects = [];
     this.face_name_rects = [];
+    this.angular_rects = [];
+    this.visible_edge_segments.clear();
 
     const objects = scene.get_all();
     const is_2d = stores.current_view_mode() === '2d';
@@ -201,6 +209,7 @@ class Render {
 
     this.render_selection();
     if (stores.show_dimensionals()) this.render_dimensions();
+    if (stores.show_angulars()) this.render_angulars();
     this.render_hover();
     if (debug.enabled) this.render_front_face_label();
   }
@@ -435,9 +444,21 @@ class Render {
 
         const edge_key = `${Math.min(i, j)}-${Math.max(i, j)}`;
         const path = guidance_edges?.has(edge_key) ? guide_path : normal_path;
+        const sdx = b.x - a.x, sdy = b.y - a.y;
+        const s_len_sq = sdx * sdx + sdy * sdy;
         for (const [s, e] of visible) {
           path.moveTo(Math.round(s.x) + 0.5, Math.round(s.y) + 0.5);
           path.lineTo(Math.round(e.x) + 0.5, Math.round(e.y) + 0.5);
+          // Store world-space visible sub-segment for angular hinge selection
+          if (s_len_sq > 0.01) {
+            const t0 = ((s.x - a.x) * sdx + (s.y - a.y) * sdy) / s_len_sq;
+            const t1 = ((e.x - a.x) * sdx + (e.y - a.y) * sdy) / s_len_sq;
+            const ew1: vec3 = [w1[0] + t0 * (w2[0] - w1[0]), w1[1] + t0 * (w2[1] - w1[1]), w1[2] + t0 * (w2[2] - w1[2])];
+            const ew2: vec3 = [w1[0] + t1 * (w2[0] - w1[0]), w1[1] + t1 * (w2[1] - w1[1]), w1[2] + t1 * (w2[2] - w1[2])];
+            let arr = this.visible_edge_segments.get(obj.id);
+            if (!arr) { arr = []; this.visible_edge_segments.set(obj.id, arr); }
+            arr.push({ w1: ew1, w2: ew2 });
+          }
         }
       }
 
@@ -452,6 +473,7 @@ class Render {
       const normal_path = new Path2D();
       const guide_path = new Path2D();
 
+      const wire_world = this.get_world_matrix(obj);
       for (const [i, j] of obj.edges) {
         const a = projected[i], b = projected[j];
         if (a.w < 0 || b.w < 0) continue;
@@ -464,6 +486,17 @@ class Render {
         const path = guidance_edges?.has(edge_key) ? guide_path : normal_path;
         path.moveTo(ax, ay);
         path.lineTo(bx, by);
+
+        // Store world-space edge for angular hinge selection (no occlusion in wireframe)
+        if (wire_world) {
+          const vi = obj.so.vertices[i], vj = obj.so.vertices[j];
+          const wi_v = vec4.create(), wj_v = vec4.create();
+          vec4.transformMat4(wi_v, [vi[0], vi[1], vi[2], 1], wire_world);
+          vec4.transformMat4(wj_v, [vj[0], vj[1], vj[2], 1], wire_world);
+          let arr = this.visible_edge_segments.get(obj.id);
+          if (!arr) { arr = []; this.visible_edge_segments.set(obj.id, arr); }
+          arr.push({ w1: vec3.fromValues(wi_v[0], wi_v[1], wi_v[2]), w2: vec3.fromValues(wj_v[0], wj_v[1], wj_v[2]) });
+        }
       }
 
       ctx.strokeStyle = `${obj.color}1)`;
@@ -486,7 +519,7 @@ class Render {
     ctx.lineWidth = stores.line_thickness();
 
     // Build world-space face data for each object: normal, offset, 4 corner positions
-    type WFace = { n: vec3; d: number; corners: vec3[] };
+    type WFace = { n: vec3; d: number; corners: vec3[]; fi: number; obj: O_Scene };
     const obj_faces: WFace[][] = [];
 
     for (const obj of objects) {
@@ -515,16 +548,39 @@ class Render {
 
         // Plane offset: d = n · p (any corner)
         const d = vec3.dot(n, corners[0]);
-        faces.push({ n, d, corners });
+        faces.push({ n, d, corners, fi, obj });
       }
       obj_faces.push(faces);
     }
 
+    this.intersection_segments = [];
+
     for (let i = 0; i < objects.length; i++) {
       for (let j = i + 1; j < objects.length; j++) {
-        for (const fA of obj_faces[i]) {
-          for (const fB of obj_faces[j]) {
-            this.intersect_face_pair(ctx, fA, fB, objects[j].color);
+        // Determine parent/child relationship (if any)
+        const i_is_parent_of_j = objects[j].parent === objects[i];
+        const j_is_parent_of_i = objects[i].parent === objects[j];
+
+        for (let fi_a = 0; fi_a < obj_faces[i].length; fi_a++) {
+          for (let fi_b = 0; fi_b < obj_faces[j].length; fi_b++) {
+            const fA = obj_faces[i][fi_a];
+            const fB = obj_faces[j][fi_b];
+            const seg = this.intersect_face_pair(ctx, fA, fB, objects[j].color);
+
+            // Collect segment for angulars if parent-child pair
+            if (seg && (i_is_parent_of_j || j_is_parent_of_i)) {
+              const parent_scene = i_is_parent_of_j ? objects[i] : objects[j];
+              const child_scene = i_is_parent_of_j ? objects[j] : objects[i];
+              const parent_face = i_is_parent_of_j ? fA : fB;
+              const child_face = i_is_parent_of_j ? fB : fA;
+              this.intersection_segments.push({
+                start: seg.start, end: seg.end,
+                parent_scene, child_scene,
+                parent_face_idx: parent_face.fi,
+                child_face_idx: child_face.fi,
+                parent_face_corners: parent_face.corners,
+              });
+            }
           }
         }
       }
@@ -540,14 +596,14 @@ class Render {
     fA: { n: vec3; d: number; corners: vec3[] },
     fB: { n: vec3; d: number; corners: vec3[] },
     color: string,
-  ): void {
+  ): { start: vec3; end: vec3 } | null {
     const eps = 1e-8;
 
     // Line direction = cross(nA, nB)
     const dir = vec3.create();
     vec3.cross(dir, fA.n, fB.n);
     const dir_len = vec3.length(dir);
-    if (dir_len < eps) return; // parallel planes
+    if (dir_len < eps) return null; // parallel planes
     vec3.scale(dir, dir, 1 / dir_len);
 
     // Find a point on the intersection line by solving
@@ -561,7 +617,7 @@ class Render {
     const a1 = (max_axis + 1) % 3, a2 = (max_axis + 2) % 3;
 
     const det = nA[a1] * nB[a2] - nA[a2] * nB[a1];
-    if (Math.abs(det) < eps) return;
+    if (Math.abs(det) < eps) return null;
 
     const p0 = vec3.create();
     p0[a1] = (dA * nB[a2] - dB * nA[a2]) / det;
@@ -570,13 +626,13 @@ class Render {
 
     // Clip the infinite line (p0 + t*dir) to both face quads
     const result_a = this.clip_to_quad(p0, dir, fA.corners, fA.n, -1e6, 1e6);
-    if (!result_a) return;
+    if (!result_a) return null;
 
     const result = this.clip_to_quad(p0, dir, fB.corners, fB.n, result_a[0], result_a[1]);
-    if (!result) return;
+    if (!result) return null;
 
     const [tA, tB] = result;
-    if (tA >= tB - eps) return;
+    if (tA >= tB - eps) return null;
 
     const start = vec3.scaleAndAdd(vec3.create(), p0, dir, tA);
     const end = vec3.scaleAndAdd(vec3.create(), p0, dir, tB);
@@ -584,7 +640,7 @@ class Render {
     const identity = mat4.create();
     const s1 = this.project_vertex(start, identity);
     const s2 = this.project_vertex(end, identity);
-    if (s1.w < 0 || s2.w < 0) return;
+    if (s1.w < 0 || s2.w < 0) return null;
 
     ctx.strokeStyle = `${color}1)`;
 
@@ -598,6 +654,8 @@ class Render {
       ctx.lineTo(Math.round(b.x) + 0.5, Math.round(b.y) + 0.5);
       ctx.stroke();
     }
+
+    return { start, end };
   }
 
   /**
@@ -824,13 +882,16 @@ class Render {
       if (world && this.is_point_occluded(cx, cy, face, verts, world, obj.id)) continue;
 
       const text = debug.enabled ? `${obj.so.name} ${fi}` : obj.so.name;
+      const tw = ctx.measureText(text).width;
       const fls = face_label.state;
       if (!fls || fls.so !== obj.so || fls.face_index !== fi) {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(Math.round(cx) - tw / 2 - 2, Math.round(cy) - 6, tw + 4, 12);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.fillText(text, Math.round(cx), Math.round(cy));
       }
 
       // Record hit rect for every visible face label (all are clickable)
-      const tw = ctx.measureText(text).width;
       this.face_name_rects.push({ so: obj.so, x: cx, y: cy, w: tw, h: 10, z: cz, face_index: fi });
     }
   }
@@ -1364,6 +1425,8 @@ class Render {
     }
 
     // Text centered between d1 and d2
+    ctx.fillStyle = 'white';
+    ctx.fillRect(midX - textWidth / 2 - 2, midY - textHeight / 2 - 1, textWidth + 4, textHeight + 2);
     ctx.fillStyle = '#333';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -1378,6 +1441,379 @@ class Render {
       face_index: -1,
     });
     return true;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // ANGULAR RENDERING — angle annotations between parent and child
+  // ═══════════════════════════════════════════════════════════════════
+  //
+  // Built on intersection lines: the segment where a child face meets a
+  // parent face is already computed in world space by render_intersections.
+  // The hinge = where that segment meets a parent edge. One witness line
+  // runs along the intersection direction, the other along the parent edge.
+  // The arc sweeps between them in the parent face plane.
+
+  /** Target screen-space arc radius in pixels (constant for all angulars). */
+  private static readonly ANGULAR_ARC_PX = 37;
+
+  private render_angulars(): void {
+    if (this.intersection_segments.length === 0) return;
+
+    const identity = mat4.create();
+
+    // Group segments by child SO + parent face → pick best per group
+    type SegGroup = typeof this.intersection_segments[number];
+    const groups = new Map<string, SegGroup[]>();
+
+    for (const seg of this.intersection_segments) {
+      const key = `${seg.child_scene.id}:${seg.parent_face_idx}`;
+      let arr = groups.get(key);
+      if (!arr) { arr = []; groups.set(key, arr); }
+      arr.push(seg);
+    }
+
+    const claimed_hinges: vec3[] = [];  // world-space hinge points already used
+
+    for (const segs of groups.values()) {
+      // All segs share the same child + parent face. Pick longest segment.
+      let best_seg = segs[0];
+      let best_len = 0;
+      for (const seg of segs) {
+        const len = vec3.distance(seg.start, seg.end);
+        if (len > best_len) { best_len = len; best_seg = seg; }
+      }
+
+      const { start, end, parent_scene, child_scene, parent_face_idx, parent_face_corners } = best_seg;
+
+      // Too-flat check: is the parent face visible enough?
+      const parent_projected = hits_3d.get_projected(parent_scene.id);
+      if (!parent_projected || !parent_scene.faces) continue;
+      const winding = this.face_winding(parent_scene.faces[parent_face_idx], parent_projected);
+      if (winding >= 0) continue;
+      if (Math.abs(winding) < 8000) continue;
+
+      // ── Hinge: pick intersection endpoint closest to a parent FACE edge ──
+      // Use the 4 geometric edges of the parent face (from parent_face_corners),
+      // not all visible edges of the SO. This prevents hinge snapping to distant edges.
+      const fc = parent_face_corners;
+      const face_edges: { w1: vec3; w2: vec3 }[] = [];
+      for (let ei = 0; ei < fc.length; ei++) {
+        face_edges.push({ w1: fc[ei], w2: fc[(ei + 1) % fc.length] });
+      }
+
+      const seg_dir = vec3.sub(vec3.create(), end, start);
+      let hinge_w = start;
+      let edge_dir_w = vec3.create();
+
+      // Pick the endpoint closest to any parent face edge
+      let min_dist = Infinity;
+      for (const ep of [start, end]) {
+        for (const fe of face_edges) {
+          const ab = vec3.sub(vec3.create(), fe.w2, fe.w1);
+          const ap = vec3.sub(vec3.create(), ep, fe.w1);
+          const t2 = Math.max(0, Math.min(1, vec3.dot(ap, ab) / vec3.dot(ab, ab)));
+          const cp = vec3.scaleAndAdd(vec3.create(), fe.w1, ab, t2);
+          const dist = vec3.distance(ep, cp);
+          if (dist < min_dist) {
+            min_dist = dist;
+            hinge_w = ep;
+            vec3.normalize(edge_dir_w, ab);
+          }
+        }
+      }
+
+      // Validate: hinge must be close to a visible edge in screen space
+      const hinge_scr = this.project_vertex(hinge_w, identity);
+      if (hinge_scr.w < 0) continue;
+      const parent_vis = this.visible_edge_segments.get(parent_scene.id) ?? [];
+      const child_vis = this.visible_edge_segments.get(child_scene.id) ?? [];
+      let hinge_valid = false;
+      for (const vis_list of [parent_vis, child_vis]) {
+        for (const ve of vis_list) {
+          const ab = vec3.sub(vec3.create(), ve.w2, ve.w1);
+          const ap = vec3.sub(vec3.create(), hinge_w, ve.w1);
+          const t2 = Math.max(0, Math.min(1, vec3.dot(ap, ab) / vec3.dot(ab, ab)));
+          const cp = vec3.scaleAndAdd(vec3.create(), ve.w1, ab, t2);
+          const cp_scr = this.project_vertex(cp, identity);
+          if (cp_scr.w < 0) continue;
+          const sd = Math.sqrt((hinge_scr.x - cp_scr.x) ** 2 + (hinge_scr.y - cp_scr.y) ** 2);
+          if (sd <= 8) { hinge_valid = true; break; }
+        }
+        if (hinge_valid) break;
+      }
+      if (!hinge_valid) continue;
+
+      // ── Witness directions (world space) ──
+      // Witness A: along the intersection line (child's rotated direction)
+      const isect_dir_w = vec3.sub(vec3.create(), end, start);
+      vec3.normalize(isect_dir_w, isect_dir_w);
+      // Orient isect_dir_w to point away from hinge into the segment
+      const hinge_to_mid = vec3.scaleAndAdd(vec3.create(), start, seg_dir, 0.5);
+      vec3.sub(hinge_to_mid, hinge_to_mid, hinge_w);
+      if (vec3.dot(isect_dir_w, hinge_to_mid) < 0) {
+        vec3.negate(isect_dir_w, isect_dir_w);
+      }
+
+      // Witness B: along the parent edge (parent's unrotated axis)
+      // Orient edge_dir_w to point toward the interior of the parent face
+      const face_center = vec3.create();
+      for (const c of fc) vec3.add(face_center, face_center, c);
+      vec3.scale(face_center, face_center, 0.25);
+      const to_center = vec3.sub(vec3.create(), face_center, hinge_w);
+      if (vec3.dot(edge_dir_w, to_center) < 0) {
+        vec3.negate(edge_dir_w, edge_dir_w);
+      }
+
+      // ── Angle between witness lines ──
+      const dot = Math.max(-1, Math.min(1, vec3.dot(isect_dir_w, edge_dir_w)));
+      const angle = Math.acos(dot);
+      const degrees = angle * 180 / Math.PI;
+      if (degrees < 0.5 || degrees > 89.5) continue;
+
+      // ── Determine rotation axis for Angular.ts commit ──
+      // The parent face normal tells us which axis is fixed (perpendicular to the face)
+      const parent_so = parent_scene.so;
+      const face_fixed = parent_so.face_fixed_axis(parent_face_idx);
+      const rotation_axis: Axis = face_fixed; // rotation is around the axis perpendicular to the face
+
+      // ── Radius: constant screen size ──
+      const hinge_screen = this.project_vertex(hinge_w, identity);
+      if (hinge_screen.w < 0) continue;
+      const probe = vec3.scaleAndAdd(vec3.create(), hinge_w, isect_dir_w, 1.0);
+      const probe_screen = this.project_vertex(probe, identity);
+      if (probe_screen.w < 0) continue;
+      const px_per_unit = Math.sqrt(
+        (probe_screen.x - hinge_screen.x) ** 2 +
+        (probe_screen.y - hinge_screen.y) ** 2
+      );
+      if (px_per_unit < 0.001) continue;
+      const radius_w = Render.ANGULAR_ARC_PX / px_per_unit;
+
+      // Skip if another angular already claimed essentially the same hinge point
+      const hinge_radius_px = 6;
+      const collides = claimed_hinges.some(ch => {
+        const ch_scr = this.project_vertex(ch, identity);
+        if (ch_scr.w < 0) return false;
+        const dx = hinge_screen.x - ch_scr.x, dy = hinge_screen.y - ch_scr.y;
+        return (dx * dx + dy * dy) < hinge_radius_px * hinge_radius_px;
+      });
+      if (collides) continue;
+
+      claimed_hinges.push(vec3.clone(hinge_w));
+
+      this.render_angular(
+        child_scene.so, hinge_w, isect_dir_w, edge_dir_w,
+        angle, radius_w, rotation_axis, identity,
+      );
+    }
+  }
+
+  /** Render one angular. All geometry in world space, projected through identity. */
+  private render_angular(
+    so: Smart_Object,
+    hinge_w: vec3,
+    dir_a_w: vec3,   // witness A direction (intersection line = child's rotated axis)
+    dir_b_w: vec3,   // witness B direction (parent edge = unrotated axis)
+    angle: number,
+    radius_w: number,
+    rotation_axis: Axis,
+    identity: mat4,
+  ): void {
+    const degrees = angle * 180 / Math.PI;
+
+    // Project hinge to screen
+    const origin = this.project_vertex(hinge_w, identity);
+    if (origin.w < 0) return;
+
+    // Orthonormal basis in the arc plane: u = dir_b_w, v = perp toward dir_a_w
+    const v_perp = this.perp_component(dir_a_w, dir_b_w);
+    const vp_len = Math.sqrt(v_perp[0] ** 2 + v_perp[1] ** 2 + v_perp[2] ** 2);
+    if (vp_len < 1e-6) return;
+
+    // Sample the arc in world space: from dir_b_w (t=0) toward dir_a_w (t=angle)
+    const segments = 24;
+    const arc_points: Projected[] = [];
+    for (let i = 0; i <= segments; i++) {
+      const t = (i / segments) * angle;
+      const cos_t = Math.cos(t), sin_t = Math.sin(t);
+      const point: vec3 = [
+        hinge_w[0] + radius_w * (cos_t * dir_b_w[0] + sin_t * v_perp[0]),
+        hinge_w[1] + radius_w * (cos_t * dir_b_w[1] + sin_t * v_perp[1]),
+        hinge_w[2] + radius_w * (cos_t * dir_b_w[2] + sin_t * v_perp[2]),
+      ];
+      const projected = this.project_vertex(point, identity);
+      if (projected.w < 0) return;
+      arc_points.push(projected);
+    }
+
+    // Short witness lines: from hinge to 1.3 × radius along each direction
+    const witness_length = radius_w * 1.3;
+    const witness_a_end = this.project_vertex(
+      vec3.scaleAndAdd(vec3.create(), hinge_w, dir_a_w, witness_length), identity);
+    const witness_b_end = this.project_vertex(
+      vec3.scaleAndAdd(vec3.create(), hinge_w, dir_b_w, witness_length), identity);
+
+    if (witness_a_end.w < 0 || witness_b_end.w < 0) return;
+
+    // Text at arc midpoint
+    const mid_index = Math.floor(segments / 2);
+    const text_position = arc_points[mid_index];
+    const ctx = this.ctx;
+    ctx.font = '12px sans-serif';
+    const text = degrees.toFixed(1) + '°';
+    const text_width = ctx.measureText(text).width;
+    const text_height = 12;
+
+    // Compute gap in arc indices for text
+    const segment_dx = arc_points[mid_index + 1].x - arc_points[mid_index].x;
+    const segment_dy = arc_points[mid_index + 1].y - arc_points[mid_index].y;
+    const segment_length = Math.sqrt(segment_dx * segment_dx + segment_dy * segment_dy);
+    const gap_segments = segment_length > 0.5 ? Math.ceil((text_width / 2 + 6) / segment_length) : segments;
+    const gap_start = Math.max(0, mid_index - gap_segments);
+    const gap_end = Math.min(segments, mid_index + gap_segments);
+
+    // Total projected arc length
+    let total_arc_length = 0;
+    for (let i = 0; i < segments; i++) {
+      const pdx = arc_points[i + 1].x - arc_points[i].x;
+      const pdy = arc_points[i + 1].y - arc_points[i].y;
+      total_arc_length += Math.sqrt(pdx * pdx + pdy * pdy);
+    }
+    if (total_arc_length < 2) return;
+
+    // Crunch: decide normal vs inverted layout
+    const arrow_space = 20;
+    const inverted = total_arc_length < (text_width + 16 + arrow_space);
+
+    // Draw
+    ctx.strokeStyle = 'rgba(100, 100, 100, 0.7)';
+    ctx.lineWidth = 1;
+
+    // Witness lines from hinge
+    ctx.beginPath();
+    ctx.moveTo(origin.x, origin.y);
+    ctx.lineTo(witness_a_end.x, witness_a_end.y);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(origin.x, origin.y);
+    ctx.lineTo(witness_b_end.x, witness_b_end.y);
+    ctx.stroke();
+
+    if (!inverted) {
+      // Normal: arc between witness lines with gap for text
+      // Always draw at least 3 segments from each end (stub near arrowhead)
+      const min_stub = 3;
+      const draw_start = Math.max(gap_start, min_stub);
+      const draw_end = Math.min(gap_end, segments - min_stub);
+      ctx.beginPath();
+      ctx.moveTo(arc_points[0].x, arc_points[0].y);
+      for (let i = 1; i <= Math.min(draw_start, segments); i++) ctx.lineTo(arc_points[i].x, arc_points[i].y);
+      ctx.stroke();
+      if (draw_end < segments) {
+        ctx.beginPath();
+        ctx.moveTo(arc_points[Math.max(draw_end, 0)].x, arc_points[Math.max(draw_end, 0)].y);
+        for (let i = Math.max(draw_end, 0) + 1; i <= segments; i++) ctx.lineTo(arc_points[i].x, arc_points[i].y);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = 'rgba(100, 100, 100, 0.7)';
+      const a0 = arc_points[0], a1 = arc_points[Math.min(3, segments)];
+      this.draw_arrow(a0.x, a0.y, a1.x - a0.x, a1.y - a0.y);
+      const arc_end = arc_points[segments], arc_prev = arc_points[Math.max(0, segments - 3)];
+      this.draw_arrow(arc_end.x, arc_end.y, arc_prev.x - arc_end.x, arc_prev.y - arc_end.y);
+    } else {
+      // Inverted: extension arcs outside, adaptive to reach target screen-space length
+      const ext_target_px = 20;
+      const fine_step = Math.PI / 180;  // 1° increments
+      const max_steps = 90;             // cap at 90°
+
+      // Extension arc before witness B (t < 0)
+      const ext_b_pts: Projected[] = [];
+      ext_b_pts.push(arc_points[0]);
+      for (let i = 1; i <= max_steps; i++) {
+        const t = -(i * fine_step);
+        const cos_t = Math.cos(t), sin_t = Math.sin(t);
+        const pt: vec3 = [
+          hinge_w[0] + radius_w * (cos_t * dir_b_w[0] + sin_t * v_perp[0]),
+          hinge_w[1] + radius_w * (cos_t * dir_b_w[1] + sin_t * v_perp[1]),
+          hinge_w[2] + radius_w * (cos_t * dir_b_w[2] + sin_t * v_perp[2]),
+        ];
+        const p = this.project_vertex(pt, identity);
+        ext_b_pts.push(p);
+        const dx = p.x - ext_b_pts[0].x, dy = p.y - ext_b_pts[0].y;
+        if (Math.sqrt(dx * dx + dy * dy) >= ext_target_px) break;
+      }
+      ctx.beginPath();
+      ctx.moveTo(ext_b_pts[ext_b_pts.length - 1].x, ext_b_pts[ext_b_pts.length - 1].y);
+      for (let i = ext_b_pts.length - 2; i >= 0; i--) ctx.lineTo(ext_b_pts[i].x, ext_b_pts[i].y);
+      ctx.stroke();
+
+      // Extension arc after witness A (t > angle)
+      const ext_a_pts: Projected[] = [];
+      ext_a_pts.push(arc_points[segments]);
+      for (let i = 1; i <= max_steps; i++) {
+        const t = angle + i * fine_step;
+        const cos_t = Math.cos(t), sin_t = Math.sin(t);
+        const pt: vec3 = [
+          hinge_w[0] + radius_w * (cos_t * dir_b_w[0] + sin_t * v_perp[0]),
+          hinge_w[1] + radius_w * (cos_t * dir_b_w[1] + sin_t * v_perp[1]),
+          hinge_w[2] + radius_w * (cos_t * dir_b_w[2] + sin_t * v_perp[2]),
+        ];
+        const p = this.project_vertex(pt, identity);
+        ext_a_pts.push(p);
+        const dx = p.x - ext_a_pts[0].x, dy = p.y - ext_a_pts[0].y;
+        if (Math.sqrt(dx * dx + dy * dy) >= ext_target_px) break;
+      }
+      ctx.beginPath();
+      ctx.moveTo(ext_a_pts[0].x, ext_a_pts[0].y);
+      for (let i = 1; i < ext_a_pts.length; i++) ctx.lineTo(ext_a_pts[i].x, ext_a_pts[i].y);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(100, 100, 100, 0.7)';
+      const eb = ext_b_pts[Math.min(3, ext_b_pts.length - 1)];
+      this.draw_arrow(ext_b_pts[0].x, ext_b_pts[0].y, eb.x - ext_b_pts[0].x, eb.y - ext_b_pts[0].y);
+      const ea = ext_a_pts[Math.min(3, ext_a_pts.length - 1)];
+      this.draw_arrow(ext_a_pts[0].x, ext_a_pts[0].y, ea.x - ext_a_pts[0].x, ea.y - ext_a_pts[0].y);
+    }
+
+    // For very crunched angulars, push text outward so it doesn't occlude arrowheads
+    let tx = text_position.x, ty = text_position.y;
+    if (inverted && total_arc_length < arrow_space) {
+      const dx = text_position.x - origin.x;
+      const dy = text_position.y - origin.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > 0.5) {
+        const push = text_height / 2 + 10;
+        tx = text_position.x + (dx / dist) * push;
+        ty = text_position.y + (dy / dist) * push;
+      }
+    }
+
+    // Text
+    ctx.fillStyle = 'white';
+    ctx.fillRect(tx - text_width / 2 - 2, ty - text_height / 2 - 1, text_width + 4, text_height + 2);
+    ctx.fillStyle = '#333';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, tx, ty);
+
+    // Record for hit testing / click-to-edit
+    this.angular_rects.push({
+      rotation_axis, angle_degrees: degrees, so,
+      x: tx, y: ty, w: text_width, h: text_height,
+      z: origin.z, face_index: -1,
+    });
+  }
+
+  /** Get the unit vector perpendicular to u in the plane of u and v (toward v). */
+  private perp_component(v: vec3, u: vec3): vec3 {
+    // v_perp = normalize(v - (v·u)*u)
+    const dot = vec3.dot(v, u);
+    const perp: vec3 = [v[0] - dot * u[0], v[1] - dot * u[1], v[2] - dot * u[2]];
+    const len = Math.sqrt(perp[0] ** 2 + perp[1] ** 2 + perp[2] ** 2);
+    if (len < 1e-8) return [0, 0, 0];
+    return [perp[0] / len, perp[1] / len, perp[2] / len];
   }
 
   private draw_arrow(x: number, y: number, dx: number, dy: number): void {

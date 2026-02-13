@@ -5,6 +5,7 @@
 	import { components } from '../../ts/managers/Components';
 	import { hits, hits_3d, scenes, stores } from '../../ts/managers';
 	import { dimensions } from '../../ts/editors/Dimension';
+	import { angulars } from '../../ts/editors/Angular';
 	import { face_label } from '../../ts/editors/Face_Label';
 	import { T_Editing, T_Hit_3D, T_Hit_Target } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
@@ -13,6 +14,7 @@
 
 	const { w_text_color, w_background_color } = colors;
 	const { w_s_dimensions } = dimensions;
+	const { w_s_angular } = angulars;
 	const { w_s_face_label } = face_label;
 	const { w_all_sos, w_selection, w_root_so } = stores;
 
@@ -43,6 +45,7 @@
 	let canvas      : HTMLCanvasElement;
 	let container   : HTMLDivElement;
 	let dim_input   = $state<HTMLInputElement>();
+	let ang_input   = $state<HTMLInputElement>();
 	let label_input = $state<HTMLInputElement>();
 	let initialized = false;
 
@@ -76,6 +79,20 @@
 
 	function on_dim_blur() {
 		dimensions.cancel();
+	}
+
+	// ── angular input handlers ──
+
+	function on_ang_keydown(e: KeyboardEvent) {
+		if (e.key === 'Enter') {
+			angulars.commit((e.target as HTMLInputElement).value);
+		} else if (e.key === 'Escape') {
+			angulars.cancel();
+		}
+	}
+
+	function on_ang_blur() {
+		angulars.cancel();
 	}
 
 	// ── face label input handlers ──
@@ -155,6 +172,13 @@
 		}
 	});
 
+	$effect(() => {
+		if ($w_s_angular && ang_input) {
+			ang_input.focus();
+			ang_input.select();
+		}
+	});
+
 	let label_focused = false;
 	$effect(() => {
 		if ($w_s_face_label && label_input) {
@@ -206,6 +230,18 @@
 			style:top    = '{$w_s_dimensions.y}px'
 			onkeydown    = {on_dim_keydown}
 			onblur       = {on_dim_blur}
+		/>
+	{/if}
+	{#if $w_s_angular}
+		<input
+			bind:this    = {ang_input}
+			class        = 'ang-edit'
+			type         = 'text'
+			value        = {$w_s_angular.formatted}
+			style:left   = '{$w_s_angular.x}px'
+			style:top    = '{$w_s_angular.y}px'
+			onkeydown    = {on_ang_keydown}
+			onblur       = {on_ang_blur}
 		/>
 	{/if}
 	{#if $w_s_face_label}
@@ -283,6 +319,19 @@
 		font       : 12px sans-serif;
 		text-align : center;
 		width      : 80px;
+		padding    : 2px 4px;
+		border     : none;
+		outline    : none;
+		background : white;
+		z-index    : 10;
+	}
+
+	.ang-edit {
+		position   : absolute;
+		transform  : translate(-50%, -50%);
+		font       : 12px sans-serif;
+		text-align : center;
+		width      : 60px;
 		padding    : 2px 4px;
 		border     : none;
 		outline    : none;
