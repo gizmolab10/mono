@@ -3,6 +3,7 @@
 	import { render } from '../../ts/render/Render';
 	import { colors } from '../../ts/draw/Colors';
 	import { components } from '../../ts/managers/Components';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { hits, hits_3d, scenes, stores } from '../../ts/managers';
 	import { dimensions } from '../../ts/editors/Dimension';
 	import { angulars } from '../../ts/editors/Angular';
@@ -205,6 +206,10 @@
 	style:background = 'white'>
 	<canvas
 		bind:this = {canvas}></canvas>
+	<div class='canvas-actions'>
+		<button class='canvas-btn' use:hit_target={{ id: 'reset', onpress: () => { scenes.clear(); location.reload(); } }}>reset</button>
+		<button class='canvas-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
+	</div>
 	{#if $w_all_sos.length > 1}
 		<div
 			class='so-row'
@@ -275,6 +280,33 @@
 
 	.graph canvas:active {
 		cursor : grabbing;
+	}
+
+	.canvas-actions {
+		position : absolute;
+		bottom   : 10px;
+		left     : 10px;
+		display  : flex;
+		gap      : 4px;
+		z-index  : 5;
+	}
+
+	.canvas-btn {
+		background    : rgba(255, 255, 255, 0.85);
+		border        : 0.5px solid rgba(0, 0, 0, 0.25);
+		border-radius : 10px;
+		color         : rgba(0, 0, 0, 0.5);
+		padding       : 0 6px 1px 6px;
+		font-size     : 11px;
+		height        : 20px;
+		cursor        : pointer;
+		box-sizing    : border-box;
+	}
+
+	.canvas-btn:hover {
+		background : rgba(255, 255, 255, 1);
+		color      : black;
+		border     : 0.5px solid rgba(0, 0, 0, 0.4);
 	}
 
 	.so-row {

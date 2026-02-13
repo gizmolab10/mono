@@ -3,15 +3,18 @@ import type { Dictionary } from '../types/Types';
 import Attribute from '../types/Attribute';
 import Identifiable from './Identifiable';
 import { compiler } from '../algebra';
-import { quat, vec3 } from 'gl-matrix';
+import { mat3, quat, vec3 } from 'gl-matrix';
 
 // Bounds: min/max for each axis
 export type Bound = 'x_min' | 'x_max' | 'y_min' | 'y_max' | 'z_min' | 'z_max';
 export type Axis = 'x' | 'y' | 'z';
 
+export interface Rotation_Entry { axis: Axis; angle: number }
+
 export default class Smart_Object extends Identifiable {
 	attributes_dict_byName: Dictionary<Attribute> = {};
 	orientation: quat = quat.create();
+	rotations: Rotation_Entry[] = [];
 	fixed: boolean = true;	// When true (default), rotating preserves angle and length. When false (variable), orientation is recomputed from bounds after propagation
 	scene: O_Scene | null;
 	name: string;
@@ -278,10 +281,133 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
+	// ROTATION PAIRS — source of truth for angular annotations
+	// ═══════════════════════════════════════════════════════════════════
+
+	/**
+	 * Apply a rotation around a single axis.
+	 * - If axis matches an existing entry, merge (add angles).
+	 * - If new and length < 2, push a new entry.
+	 * - If new and length = 2, compact: compose into quat, decompose back.
+	 * Recomputes `this.orientation` from the rotation pair.
+	 */
+	apply_rotation(axis: Axis, delta_radians: number): void {
+		const existing = this.rotations.find(r => r.axis === axis);
+		if (existing) {
+			existing.angle += delta_radians;
+		} else if (this.rotations.length < 2) {
+			this.rotations.push({ axis, angle: delta_radians });
+		} else {
+			// Compact: compose current pair + new rotation into quat, decompose back
+			this.recompute_orientation();
+			const delta_q = quat.create();
+			quat.setAxisAngle(delta_q, this.axis_vector(axis) as [number, number, number], delta_radians);
+			quat.multiply(this.orientation, delta_q, this.orientation);
+			// Decompose back into the frozen axis pair
+			this.rotations = this.decompose_into(this.rotations[0].axis, this.rotations[1].axis);
+		}
+		this.recompute_orientation();
+	}
+
+	/**
+	 * Set a specific rotation entry by axis (for editing via angular input).
+	 * If the axis already exists, replaces its angle.
+	 * If it doesn't exist and there's room, adds it.
+	 */
+	set_rotation(axis: Axis, radians: number): void {
+		const existing = this.rotations.find(r => r.axis === axis);
+		if (existing) {
+			existing.angle = radians;
+		} else if (this.rotations.length < 2) {
+			this.rotations.push({ axis, angle: radians });
+		}
+		this.recompute_orientation();
+	}
+
+	/**
+	 * Compose the rotation pair into `this.orientation` (quat).
+	 * Applies rotations in order: first entry, then second entry.
+	 */
+	recompute_orientation(): void {
+		const q = quat.create(); // identity
+		for (const r of this.rotations) {
+			const step = quat.create();
+			quat.setAxisAngle(step, this.axis_vector(r.axis) as [number, number, number], r.angle);
+			quat.multiply(q, step, q);
+		}
+		quat.copy(this.orientation, q);
+	}
+
+	/**
+	 * Decompose a quaternion into two sequential single-axis rotations.
+	 * Given frozen axes (a1, a2), extracts angle1 around a1 then angle2 around a2
+	 * such that: rotate(a1, angle1) * rotate(a2, angle2) ≈ this.orientation.
+	 *
+	 * Uses rotation matrix extraction with atan2 for each of the 6 axis pair cases.
+	 */
+	decompose_into(a1: Axis, a2: Axis): Rotation_Entry[] {
+		const m = mat3.fromQuat(mat3.create(), this.orientation);
+		// m is column-major: m[col*3+row], so m[0]=m00, m[1]=m10, m[2]=m20, m[3]=m01, m[4]=m11, m[5]=m21, m[6]=m02, m[7]=m12, m[8]=m22
+		const key = a1 + a2;
+		let angle1: number, angle2: number;
+
+		// Convention: R_total = R(a1, angle1) * R(a2, angle2)
+		// Each case extracts angles from the composed rotation matrix.
+		switch (key) {
+			case 'xy': // Rz then Ry in extrinsic = Rx(a1)*Ry(a2)
+				// R = Rx(a1)*Ry(a2)
+				// m[6]=m02 = sin(a2),  m[7]=m12 = -sin(a1)*cos(a2),  m[8]=m22 = cos(a1)*cos(a2)
+				angle2 = Math.asin(Math.max(-1, Math.min(1, m[6])));
+				angle1 = Math.atan2(-m[7], m[8]);
+				break;
+			case 'xz':
+				// R = Rx(a1)*Rz(a2)
+				// m[3]=m01 = -sin(a2), m[4]=m11 = cos(a1)*cos(a2), m[5]=m21 = sin(a1)*cos(a2)
+				angle2 = Math.asin(Math.max(-1, Math.min(1, -m[3])));
+				angle1 = Math.atan2(m[5], m[4]);
+				break;
+			case 'yx':
+				// R = Ry(a1)*Rx(a2)
+				// m[5]=m21 = -sin(a2), m[2]=m20 = sin(a1)*cos(a2), m[8]=m22 = cos(a1)*cos(a2)
+				angle2 = Math.asin(Math.max(-1, Math.min(1, -m[5])));
+				angle1 = Math.atan2(m[2], m[8]);
+				break;
+			case 'yz':
+				// R = Ry(a1)*Rz(a2)
+				// m[3]=m01 = -cos(a1)*sin(a2), m[0]=m00 = cos(a1)*cos(a2), m[6]=m02 = -sin(a1)
+				angle1 = Math.asin(Math.max(-1, Math.min(1, -m[6])));
+				angle2 = Math.atan2(-m[3], m[0]);
+				break;
+			case 'zx':
+				// R = Rz(a1)*Rx(a2)
+				// m[1]=m10 = sin(a1)*cos(a2), m[4]=m11 = cos(a1)*cos(a2), m[7]=m12 = -sin(a2)
+				angle2 = Math.asin(Math.max(-1, Math.min(1, -m[7])));
+				angle1 = Math.atan2(m[1], m[4]);
+				break;
+			case 'zy':
+				// R = Rz(a1)*Ry(a2)
+				// m[2]=m20 = -sin(a1)*cos(a2), m[0]=m00 = cos(a1)*cos(a2), m[5]=m21 = sin(a2)
+				angle2 = Math.asin(Math.max(-1, Math.min(1, m[5])));
+				angle1 = Math.atan2(-m[2], m[0]);
+				break;
+			default:
+				// Same axis twice — collapse to single
+				angle1 = 2 * Math.acos(Math.max(-1, Math.min(1, this.orientation[3])));
+				angle2 = 0;
+		}
+
+		const result: Rotation_Entry[] = [{ axis: a1, angle: angle1 }];
+		if (Math.abs(angle2) > 1e-10) {
+			result.push({ axis: a2, angle: angle2 });
+		}
+		return result;
+	}
+
+	// ═══════════════════════════════════════════════════════════════════
 	// SERIALIZATION
 	// ═══════════════════════════════════════════════════════════════════
 
-	serialize(): { id: string; name: string; bounds: Record<Bound, number>; orientation: number[]; scale: number; fixed?: boolean; formulas?: Record<string, string> } {
+	serialize(): { id: string; name: string; bounds: Record<Bound, number>; orientation: number[]; rotations?: { axis: Axis; angle: number }[]; scale: number; fixed?: boolean; formulas?: Record<string, string> } {
 		const formulas: Record<string, string> = {};
 		for (const attr of Object.values(this.attributes_dict_byName)) {
 			if (attr.formula) formulas[attr.name] = attr.formula;
@@ -294,21 +420,35 @@ export default class Smart_Object extends Identifiable {
 				y_min: this.y_min, y_max: this.y_max,
 				z_min: this.z_min, z_max: this.z_max,
 			},
-			orientation: Array.from(this.orientation),
+			orientation: Array.from(this.orientation),  // redundant — kept for backwards compat
+			...(this.rotations.length > 0 ? { rotations: this.rotations.map(r => ({ axis: r.axis, angle: r.angle })) } : {}),
 			scale: this.scene?.scale ?? 1,
 			...(!this.fixed ? { fixed: false } : {}),
 			...(Object.keys(formulas).length > 0 ? { formulas } : {}),
 		};
 	}
 
-	static deserialize(data: { id?: string; name: string; bounds: Record<Bound, number>; orientation?: number[]; scale?: number; fixed?: boolean; formulas?: Record<string, string> }): { so: Smart_Object; scale: number } {
+	static deserialize(data: { id?: string; name: string; bounds: Record<Bound, number>; orientation?: number[]; rotations?: { axis: Axis; angle: number }[]; scale?: number; fixed?: boolean; formulas?: Record<string, string> }): { so: Smart_Object; scale: number } {
 		const so = new Smart_Object(data.name);
 		if (data.id) so.setID(data.id);
 		for (const [key, value] of Object.entries(data.bounds)) {
 			so.set_bound(key as Bound, value);
 		}
-		if (data.orientation) {
+		if (data.rotations && data.rotations.length > 0) {
+			// New format: rotations are the source of truth, derive quat
+			so.rotations = data.rotations.map(r => ({ axis: r.axis, angle: r.angle }));
+			so.recompute_orientation();
+		} else if (data.orientation) {
+			// Old format: only a quat. Synthesize single rotation entry if non-identity.
 			quat.set(so.orientation, data.orientation[0], data.orientation[1], data.orientation[2], data.orientation[3]);
+			const axis_out = vec3.create();
+			const angle = quat.getAxisAngle(axis_out, so.orientation);
+			if (angle > 1e-6) {
+				// Determine which principal axis this is closest to
+				const ax = Math.abs(axis_out[0]), ay = Math.abs(axis_out[1]), az = Math.abs(axis_out[2]);
+				const rot_axis: Axis = (ax > ay && ax > az) ? 'x' : (ay > ax && ay > az) ? 'y' : 'z';
+				so.rotations = [{ axis: rot_axis, angle }];
+			}
 		}
 		if (data.fixed === false) so.fixed = false;
 		if (data.formulas) {

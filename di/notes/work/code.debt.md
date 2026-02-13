@@ -3,12 +3,13 @@
 offer a proposal for the first unchecked item
 
 
-- [ ] angulars jumpy and too shy
-- [ ] confine rotation to the selected face
+- [ ] see through -> all, add "back"
+- [ ] rotate -> confined around 1 axis
+- [ ] rebuild SO with 2 single-axis rotations
+	- [ ] from which, quaternion is derived
 - [ ] use codegraph
-- [ ] find all the build numbers (milestones) and dates -> build notes
 ---
-- [ ] pac: in all code files, use 4-space tabs (not 2-)
+- [ ] pac: in all code files, use tabs that are 4 (not 2) spaces
 - [ ] tweak dimensionals
 	- [ ] tab between dimensionals
 	- [ ] arrow-key nudging (±unit of precision)

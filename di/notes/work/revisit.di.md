@@ -15,10 +15,10 @@ Where we are in Design Intuition.
 ## Milestones (current work)
 
 - [ ] [[code.debt]] 
-- [ ] **14 details** — attributes
+- [ ] **15 details** — attributes
 	- [ ] port from ws: banners, glow buttons & details
 	- [ ] attribute algebraic expressions [[algebra]]
-- [ ] **15 what? **
+- [ ] **16 ? **
 
 ## What's Working
 

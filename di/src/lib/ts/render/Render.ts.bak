@@ -5,7 +5,7 @@ import { face_label } from '../editors/Face_Label';
 import { T_Hit_3D } from '../types/Enumerations';
 import { units, Units } from '../types/Units';
 import { hits_3d } from '../managers/Hits_3D';
-import { mat4, quat, vec3, vec4 } from 'gl-matrix';
+import { mat4, vec3, vec4 } from 'gl-matrix';
 import { Size } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
 import { colors } from '../draw/Colors';
@@ -30,6 +30,14 @@ class Render {
   /** Per-frame face name rects for click-to-edit. Cleared each render(). */
   face_name_rects: Label_Rect[] = [];
   angular_rects: Angle_Rect[] = [];
+
+  /** Per-frame intersection segments between parent-child SOs. Collected by render_intersections, consumed by render_angulars. */
+  private intersection_segments: {
+    start: vec3; end: vec3;
+    parent_scene: O_Scene; child_scene: O_Scene;
+    parent_face_idx: number; child_face_idx: number;
+    parent_face_corners: vec3[];
+  }[] = [];
 
   /** Per-frame list of front-facing faces for occlusion: world-space normal, offset, and screen-space polygon. */
   private occluding_faces: {
@@ -516,11 +524,34 @@ class Render {
       obj_faces.push(faces);
     }
 
+    this.intersection_segments = [];
+
     for (let i = 0; i < objects.length; i++) {
       for (let j = i + 1; j < objects.length; j++) {
+        // Determine parent/child relationship (if any)
+        const i_is_parent_of_j = objects[j].parent === objects[i];
+        const j_is_parent_of_i = objects[i].parent === objects[j];
+
         for (let fi_a = 0; fi_a < obj_faces[i].length; fi_a++) {
           for (let fi_b = 0; fi_b < obj_faces[j].length; fi_b++) {
-            this.intersect_face_pair(ctx, obj_faces[i][fi_a], obj_faces[j][fi_b], objects[j].color);
+            const fA = obj_faces[i][fi_a];
+            const fB = obj_faces[j][fi_b];
+            const seg = this.intersect_face_pair(ctx, fA, fB, objects[j].color);
+
+            // Collect segment for angulars if parent-child pair
+            if (seg && (i_is_parent_of_j || j_is_parent_of_i)) {
+              const parent_scene = i_is_parent_of_j ? objects[i] : objects[j];
+              const child_scene = i_is_parent_of_j ? objects[j] : objects[i];
+              const parent_face = i_is_parent_of_j ? fA : fB;
+              const child_face = i_is_parent_of_j ? fB : fA;
+              this.intersection_segments.push({
+                start: seg.start, end: seg.end,
+                parent_scene, child_scene,
+                parent_face_idx: parent_face.fi,
+                child_face_idx: child_face.fi,
+                parent_face_corners: parent_face.corners,
+              });
+            }
           }
         }
       }
@@ -1387,159 +1418,147 @@ class Render {
   // ANGULAR RENDERING — angle annotations between parent and child
   // ═══════════════════════════════════════════════════════════════════
   //
-  // Reads from so.rotations[] directly — no intersection segments needed.
-  // For each rotation entry {axis, angle}, pick the most visible parent face
-  // perpendicular to that axis, compute hinge and witness directions from
-  // the rotation geometry, call render_angular() to draw.
+  // Built on intersection lines: the segment where a child face meets a
+  // parent face is already computed in world space by render_intersections.
+  // The hinge = where that segment meets a parent edge. One witness line
+  // runs along the intersection direction, the other along the parent edge.
+  // The arc sweeps between them in the parent face plane.
 
   /** Target screen-space arc radius in pixels (constant for all angulars). */
   private static readonly ANGULAR_ARC_PX = 37;
 
-  /** Face indices grouped by their fixed axis.
-   *  faces[0],faces[1] have normal along z; [2],[3] along x; [4],[5] along y. */
-  private static readonly AXIS_FACE_INDICES: Record<string, [number, number]> = {
-    x: [2, 3],   // left (x_min), right (x_max)
-    y: [4, 5],   // top (y_max), bottom (y_min)
-    z: [0, 1],   // front (z_min), back (z_max)
-  };
-
   private render_angulars(): void {
-    const objects = scene.get_all();
+    if (this.intersection_segments.length === 0) return;
+
     const identity = mat4.create();
-    const claimed_hinges: vec3[] = [];
 
-    for (const obj of objects) {
-      if (!obj.parent) continue;
-      const child_so = obj.so;
-      if (child_so.rotations.length === 0) continue;
+    // Group segments by child SO + parent face → pick best per group
+    type SegGroup = typeof this.intersection_segments[number];
+    const groups = new Map<string, SegGroup[]>();
 
-      const parent_obj = obj.parent;
-      const parent_so = parent_obj.so;
-      const parent_projected = hits_3d.get_projected(parent_obj.id);
-      if (!parent_projected || !parent_obj.faces) continue;
+    for (const seg of this.intersection_segments) {
+      const key = `${seg.child_scene.id}:${seg.parent_face_idx}`;
+      let arr = groups.get(key);
+      if (!arr) { arr = []; groups.set(key, arr); }
+      arr.push(seg);
+    }
 
-      const parent_world = this.get_world_matrix(parent_obj);
-      const parent_verts = parent_so.vertices;
+    const claimed_hinges: vec3[] = [];  // world-space hinge points already used
 
-      // Child's world-space center (for orienting hinge toward child)
-      const child_world = this.get_world_matrix(obj);
-      const child_center_local: vec3 = [
-        (child_so.x_min + child_so.x_max) / 2,
-        (child_so.y_min + child_so.y_max) / 2,
-        (child_so.z_min + child_so.z_max) / 2,
-      ];
-      const child_center_w = vec3.create();
-      const cc4 = vec4.fromValues(child_center_local[0], child_center_local[1], child_center_local[2], 1);
-      vec4.transformMat4(cc4, cc4, child_world);
-      vec3.set(child_center_w, cc4[0], cc4[1], cc4[2]);
+    for (const segs of groups.values()) {
+      // All segs share the same child + parent face. Pick longest segment.
+      let best_seg = segs[0];
+      let best_len = 0;
+      for (const seg of segs) {
+        const len = vec3.distance(seg.start, seg.end);
+        if (len > best_len) { best_len = len; best_seg = seg; }
+      }
 
-      for (const rot of child_so.rotations) {
-        const angle = rot.angle;
-        const degrees = Math.abs(angle) * 180 / Math.PI;
-        if (degrees < 0.5 || degrees > 89.5) continue;
+      const { start, end, parent_scene, child_scene, parent_face_idx, parent_face_corners } = best_seg;
 
-        // Pick the most visible parent face perpendicular to this rotation axis
-        const face_pair = Render.AXIS_FACE_INDICES[rot.axis];
-        let best_fi = -1;
-        let best_winding = 0;
-        for (const fi of face_pair) {
-          const winding = this.face_winding(parent_obj.faces![fi], parent_projected);
-          if (winding >= 0) continue;         // back-facing
-          if (Math.abs(winding) < 8000) continue; // too flat
-          if (best_fi < 0 || winding < best_winding) {
-            best_fi = fi;
-            best_winding = winding;
+      // Too-flat check: is the parent face visible enough?
+      const parent_projected = hits_3d.get_projected(parent_scene.id);
+      if (!parent_projected || !parent_scene.faces) continue;
+      const winding = this.face_winding(parent_scene.faces[parent_face_idx], parent_projected);
+      if (winding >= 0) continue;
+      if (Math.abs(winding) < 8000) continue;
+
+      // ── Hinge: pick intersection endpoint closest to a parent FACE edge ──
+      // Use the 4 geometric edges of the parent face (from parent_face_corners),
+      // not all visible edges of the SO. This prevents hinge snapping to distant edges.
+      const fc = parent_face_corners;
+      const face_edges: { w1: vec3; w2: vec3 }[] = [];
+      for (let ei = 0; ei < fc.length; ei++) {
+        face_edges.push({ w1: fc[ei], w2: fc[(ei + 1) % fc.length] });
+      }
+
+      const seg_dir = vec3.sub(vec3.create(), end, start);
+      let hinge_w = start;
+      let edge_dir_w = vec3.create();
+
+      // Pick the endpoint closest to any parent face edge
+      let min_dist = Infinity;
+      for (const ep of [start, end]) {
+        for (const fe of face_edges) {
+          const ab = vec3.sub(vec3.create(), fe.w2, fe.w1);
+          const ap = vec3.sub(vec3.create(), ep, fe.w1);
+          const t2 = Math.max(0, Math.min(1, vec3.dot(ap, ab) / vec3.dot(ab, ab)));
+          const cp = vec3.scaleAndAdd(vec3.create(), fe.w1, ab, t2);
+          const dist = vec3.distance(ep, cp);
+          if (dist < min_dist) {
+            min_dist = dist;
+            hinge_w = ep;
+            vec3.normalize(edge_dir_w, ab);
           }
         }
-        if (best_fi < 0) continue;
-
-        // Compute parent face corners in world space
-        const face_vertex_indices = parent_obj.faces![best_fi];
-        const fc: vec3[] = [];
-        for (const vi of face_vertex_indices) {
-          const lv = parent_verts[vi];
-          const wv = vec4.create();
-          vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], parent_world);
-          fc.push(vec3.fromValues(wv[0], wv[1], wv[2]));
-        }
-
-        // Build face edges
-        const face_edges: { w1: vec3; w2: vec3 }[] = [];
-        for (let ei = 0; ei < fc.length; ei++) {
-          face_edges.push({ w1: fc[ei], w2: fc[(ei + 1) % fc.length] });
-        }
-
-        // Pick the face edge closest to the child's center — hinge at the nearest point on that edge
-        let best_edge_idx = 0;
-        let best_dist = Infinity;
-        let best_t = 0.5;
-        for (let ei = 0; ei < face_edges.length; ei++) {
-          const fe = face_edges[ei];
-          const ab = vec3.sub(vec3.create(), fe.w2, fe.w1);
-          const ap = vec3.sub(vec3.create(), child_center_w, fe.w1);
-          const t = Math.max(0.05, Math.min(0.95, vec3.dot(ap, ab) / vec3.dot(ab, ab)));
-          const cp = vec3.scaleAndAdd(vec3.create(), fe.w1, ab, t);
-          const dist = vec3.distance(cp, child_center_w);
-          if (dist < best_dist) { best_dist = dist; best_edge_idx = ei; best_t = t; }
-        }
-        const chosen_edge = face_edges[best_edge_idx];
-        const hinge_w = vec3.create();
-        vec3.lerp(hinge_w, chosen_edge.w1, chosen_edge.w2, best_t);
-
-        const hinge_scr = this.project_vertex(hinge_w, identity);
-        if (hinge_scr.w < 0) continue;
-
-        // ── Witness directions (world space) ──
-        // Witness B (unrotated reference): along the parent face edge, toward face center
-        const edge_dir_w = vec3.sub(vec3.create(), chosen_edge.w2, chosen_edge.w1);
-        vec3.normalize(edge_dir_w, edge_dir_w);
-        const face_center = vec3.create();
-        for (const c of fc) vec3.add(face_center, face_center, c);
-        vec3.scale(face_center, face_center, 0.25);
-        const to_center = vec3.sub(vec3.create(), face_center, hinge_w);
-        if (vec3.dot(edge_dir_w, to_center) < 0) vec3.negate(edge_dir_w, edge_dir_w);
-
-        // Witness A (rotated): rotate edge_dir_w by the angle around the face normal
-        // The face normal in world space:
-        const e1 = vec3.sub(vec3.create(), fc[1], fc[0]);
-        const e2 = vec3.sub(vec3.create(), fc[3], fc[0]);
-        const face_normal = vec3.cross(vec3.create(), e1, e2);
-        vec3.normalize(face_normal, face_normal);
-
-        // Rotate edge_dir_w by `angle` around face_normal
-        const rot_q = quat.create();
-        quat.setAxisAngle(rot_q, face_normal as [number, number, number], angle);
-        const rotated_dir = vec3.create();
-        vec3.transformQuat(rotated_dir, edge_dir_w, rot_q);
-
-        // ── Radius: constant screen size ──
-        const probe = vec3.scaleAndAdd(vec3.create(), hinge_w, edge_dir_w, 1.0);
-        const probe_screen = this.project_vertex(probe, identity);
-        if (probe_screen.w < 0) continue;
-        const px_per_unit = Math.sqrt(
-          (probe_screen.x - hinge_scr.x) ** 2 +
-          (probe_screen.y - hinge_scr.y) ** 2
-        );
-        if (px_per_unit < 0.001) continue;
-        const radius_w = Render.ANGULAR_ARC_PX / px_per_unit;
-
-        // Skip if another angular already claimed essentially the same hinge point
-        const hinge_radius_px = 6;
-        const collides = claimed_hinges.some(ch => {
-          const ch_scr = this.project_vertex(ch, identity);
-          if (ch_scr.w < 0) return false;
-          const dx = hinge_scr.x - ch_scr.x, dy = hinge_scr.y - ch_scr.y;
-          return (dx * dx + dy * dy) < hinge_radius_px * hinge_radius_px;
-        });
-        if (collides) continue;
-
-        claimed_hinges.push(vec3.clone(hinge_w));
-
-        this.render_angular(
-          child_so, hinge_w, rotated_dir, edge_dir_w,
-          Math.abs(angle), radius_w, rot.axis, identity,
-        );
       }
+
+      // Hinge is geometrically on a parent face edge by construction — no floater check needed.
+      const hinge_scr = this.project_vertex(hinge_w, identity);
+      if (hinge_scr.w < 0) continue;
+
+      // ── Witness directions (world space) ──
+      // Witness A: along the intersection line (child's rotated direction)
+      const isect_dir_w = vec3.sub(vec3.create(), end, start);
+      vec3.normalize(isect_dir_w, isect_dir_w);
+      // Orient isect_dir_w to point away from hinge into the segment
+      const hinge_to_mid = vec3.scaleAndAdd(vec3.create(), start, seg_dir, 0.5);
+      vec3.sub(hinge_to_mid, hinge_to_mid, hinge_w);
+      if (vec3.dot(isect_dir_w, hinge_to_mid) < 0) {
+        vec3.negate(isect_dir_w, isect_dir_w);
+      }
+
+      // Witness B: along the parent edge (parent's unrotated axis)
+      // Orient edge_dir_w to point toward the interior of the parent face
+      const face_center = vec3.create();
+      for (const c of fc) vec3.add(face_center, face_center, c);
+      vec3.scale(face_center, face_center, 0.25);
+      const to_center = vec3.sub(vec3.create(), face_center, hinge_w);
+      if (vec3.dot(edge_dir_w, to_center) < 0) {
+        vec3.negate(edge_dir_w, edge_dir_w);
+      }
+
+      // ── Angle between witness lines ──
+      const dot = Math.max(-1, Math.min(1, vec3.dot(isect_dir_w, edge_dir_w)));
+      const angle = Math.acos(dot);
+      const degrees = angle * 180 / Math.PI;
+      if (degrees < 0.5 || degrees > 89.5) continue;
+
+      // ── Determine rotation axis for Angular.ts commit ──
+      // The parent face normal tells us which axis is fixed (perpendicular to the face)
+      const parent_so = parent_scene.so;
+      const face_fixed = parent_so.face_fixed_axis(parent_face_idx);
+      const rotation_axis: Axis = face_fixed; // rotation is around the axis perpendicular to the face
+
+      // ── Radius: constant screen size ──
+      const hinge_screen = this.project_vertex(hinge_w, identity);
+      if (hinge_screen.w < 0) continue;
+      const probe = vec3.scaleAndAdd(vec3.create(), hinge_w, isect_dir_w, 1.0);
+      const probe_screen = this.project_vertex(probe, identity);
+      if (probe_screen.w < 0) continue;
+      const px_per_unit = Math.sqrt(
+        (probe_screen.x - hinge_screen.x) ** 2 +
+        (probe_screen.y - hinge_screen.y) ** 2
+      );
+      if (px_per_unit < 0.001) continue;
+      const radius_w = Render.ANGULAR_ARC_PX / px_per_unit;
+
+      // Skip if another angular already claimed essentially the same hinge point
+      const hinge_radius_px = 6;
+      const collides = claimed_hinges.some(ch => {
+        const ch_scr = this.project_vertex(ch, identity);
+        if (ch_scr.w < 0) return false;
+        const dx = hinge_screen.x - ch_scr.x, dy = hinge_screen.y - ch_scr.y;
+        return (dx * dx + dy * dy) < hinge_radius_px * hinge_radius_px;
+      });
+      if (collides) continue;
+
+      claimed_hinges.push(vec3.clone(hinge_w));
+
+      this.render_angular(
+        child_scene.so, hinge_w, isect_dir_w, edge_dir_w,
+        angle, radius_w, rotation_axis, identity,
+      );
     }
   }
 

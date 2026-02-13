@@ -1,4 +1,5 @@
 import type Smart_Object from '../runtime/Smart_Object';
+import type { Axis } from '../runtime/Smart_Object';
 import { quat } from 'gl-matrix';
 
 // ═══════════════════════════════════════════════════════════════════
@@ -54,13 +55,37 @@ class Orientation {
 	}
 
 	/**
+	 * Determine rotation axis from bounds geometry (the "thin" axis).
+	 * Returns null if the SO is essentially a cube (no clear thin axis).
+	 */
+	axis_from_bounds(so: Smart_Object): Axis | null {
+		const adx = Math.abs(so.x_max - so.x_min);
+		const ady = Math.abs(so.y_max - so.y_min);
+		const adz = Math.abs(so.z_max - so.z_min);
+
+		if (adx <= ady && adx <= adz) return 'x';
+		if (ady <= adx && ady <= adz) return 'y';
+		return 'z';
+	}
+
+	/**
 	 * Recompute orientation for a variable (non-fixed) SO.
-	 * Mutates so.orientation in place.
+	 * Mutates so.orientation and so.rotations in place.
 	 */
 	recompute(so: Smart_Object): void {
 		if (so.fixed) return;
 		const q = this.from_bounds(so);
 		quat.copy(so.orientation, q);
+		// Sync the rotations array from the new quat
+		const axis = this.axis_from_bounds(so);
+		if (axis) {
+			const angle = 2 * Math.acos(Math.max(-1, Math.min(1, q[3])));
+			if (angle > 1e-6) {
+				so.rotations = [{ axis, angle }];
+			} else {
+				so.rotations = [];
+			}
+		}
 	}
 
 	/**

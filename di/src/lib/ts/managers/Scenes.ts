@@ -6,7 +6,7 @@
  */
 
 import { preferences, T_Preference } from './Preferences';
-import type { Bound } from '../runtime/Smart_Object';
+import type { Bound, Axis } from '../runtime/Smart_Object';
 import default_scene from '../../../assets/American.di?raw';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Identifiable } from '../runtime';
@@ -19,6 +19,7 @@ export interface Portable_SO {
 	name: string;
 	bounds: Record<Bound, number>;
 	orientation: number[];
+	rotations?: { axis: Axis; angle: number }[];
 	scale?: number;
 	fixed?: boolean;
 	position?: number[];		// O_Scene.position (defaults to [0,0,0])

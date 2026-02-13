@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/revisit.di.md",
+                "file": "di/notes/work/14.quaternions.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "revisit.di"
+              "title": "14.quaternions"
             }
           },
           {
@@ -27,16 +27,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/14.details.md",
+                "file": "di/notes/work/15.details.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "14.details"
+              "title": "15.details"
             }
           },
           {
-            "id": "9c14441f00bc4375",
+            "id": "ed6835991ce431f7",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -47,6 +47,20 @@
               },
               "icon": "lucide-file",
               "title": "code.debt"
+            }
+          },
+          {
+            "id": "9c14441f00bc4375",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/14.quaternions.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "14.quaternions"
             }
           },
           {
@@ -135,8 +149,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 316.5,
-    "collapsed": true
+    "width": 316.5
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -228,8 +241,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 291.5,
-    "collapsed": true
+    "width": 291.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -242,16 +254,17 @@
       "bases:Create new base": false
     }
   },
-  "active": "9c14441f00bc4375",
+  "active": "ed6835991ce431f7",
   "lastOpenFiles": [
-    "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/14.quaternions.md",
     "di/notes/work/code.debt.md",
+    "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/revisit.di.md",
+    "di/notes/work/15.details.md",
+    "di/src/lib/ts/render/Render.ts.bak",
     "di/src/lib/md/builds.md",
     "logs/update-docs.error.di.log",
-    "di/notes/work/angulars.md",
     "di/src/lib/ts/editors/Angular.ts",
-    "di/notes/work/revisit.di.md",
-    "di/notes/work/14.details.md",
     "di/notes/architecture/3D.primer.md",
     "di/src/lib/ts/editors/Face_Label.ts",
     "di/notes/architecture/flatten.md",
@@ -267,7 +280,6 @@
     "di/src/lib/ts/events",
     "di/notes/work/done/cruft.md",
     "di/src/assets/American.di",
-    "di/src/assets/American (1).di",
     "di/notes/architecture/algebra.md",
     "di/notes/architecture/drag.md",
     "notes/guides/pre-flight/shorthand.md",
@@ -279,7 +291,6 @@
     "di/node_modules/@sveltejs/vite-plugin-svelte-inspector/README.md",
     "node_modules/commander/History.md",
     "di/node_modules/@sveltejs/vite-plugin-svelte/README.md",
-    "di/notes/architecture/spatial.md",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",
     "ga/node_modules/phaser/changelog/3.60/images/timeline.png",
     "ga/node_modules/phaser/changelog/3.60/images/videogameobject.png",

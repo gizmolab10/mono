@@ -1,6 +1,5 @@
 <script lang='ts'>
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { scenes } from '../../ts/managers/Scenes';
 	import { stores } from '../../ts/managers/Stores';
 	import { colors } from '../../ts/draw/Colors';
 	import { T_Decorations } from '../../ts/types/Enumerations';
@@ -42,8 +41,6 @@
 		</svg>
 	</button>
 	<h1>{title}</h1>
-	<button class='toolbar-btn' use:hit_target={{ id: 'reset', onpress: () => { scenes.clear(); location.reload(); } }}>reset</button>
-	<button class='toolbar-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	<span class='spacer'></span>
 	<Slider min={0.1} max={100} value={$w_scale} onchange={handle_slider} onstep={handle_scale} />
 	<div class='segmented'>

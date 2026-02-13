@@ -6,7 +6,6 @@ import { writable, get } from 'svelte/store';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
 import { render } from '../render/Render';
-import { quat } from 'gl-matrix';
 
 interface S_Angular extends S_SO {
 	rotation_axis: Axis;
@@ -63,11 +62,8 @@ class Angulars {
 		const so = state.so;
 		const axis = state.rotation_axis;
 
-		// Set the new angle on the quaternion
-		const axis_vec: [number, number, number] =
-			axis === 'x' ? [1, 0, 0] :
-			axis === 'y' ? [0, 1, 0] : [0, 0, 1];
-		quat.setAxisAngle(so.orientation, axis_vec, radians);
+		// Set the rotation via the 2-tuple SOT — recomputes quat internally
+		so.set_rotation(axis, radians);
 
 		// Redistribute bounds to match the new angle
 		orientation.recompute_max_bounds(so);

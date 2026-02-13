@@ -94,3 +94,4 @@
 - [x] pac: combine all _*Rect_ interfaces
 - [x] remove border around edit input fields in the canvas
 - [x] add angulars (like dimenionals but for angles)
+- [x] find all the build numbers (milestones) and dates -> build notes
