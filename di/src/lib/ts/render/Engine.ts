@@ -144,7 +144,7 @@ class Engine {
     }
 
     // Input: drag edits selection OR rotates selected object, then save
-    e3.set_drag_handler((prev, curr) => {
+    e3.set_drag_handler((prev, curr, alt_key) => {
       const target = hits_3d.selection?.so.scene ?? this.root_scene;
       if (!target) return;
       if (!drag.edit_selection(prev, curr)) {
@@ -153,7 +153,7 @@ class Engine {
           this.saved_3d_orientation = null;
           this.rotate_2d(this.root_scene, prev, curr);
         } else {
-          drag.rotate_object(target, prev, curr);
+          drag.rotate_object(target, prev, curr, alt_key);
         }
       }
       scenes.save();

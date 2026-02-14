@@ -7,7 +7,7 @@ import { Point } from '../types/Coordinates';
 import { T_Hit_3D, T_Editing } from '../types/Enumerations';
 import { stores } from '../managers/Stores';
 
-type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point) => void;
+type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point, alt_key: boolean) => void;
 type T_Handle_Wheel = (delta: number, fine: boolean) => void;
 
 class Events_3D {
@@ -113,7 +113,7 @@ class Events_3D {
           this.did_drag = true;
         }
         this.last_canvas_position = curr;
-        this.on_drag(prev, curr);
+        this.on_drag(prev, curr, e.altKey);
       }
     });
 

@@ -60,6 +60,9 @@ class Drag {
 	/** Set on mousedown for immediate edge highlight before first drag frame. */
 	private stretch_face: { scene: O_Scene; face_index: number } | null = null;
 
+	/** During rotation, the face whose normal is the rotation axis. */
+	private _rotation_face: { scene: O_Scene; face_index: number } | null = null;
+
 	// ── lifecycle ──
 
 	set_target(hit: Hit_3D_Result | null): void {
@@ -80,6 +83,7 @@ class Drag {
 		this.face_anchor = null;
 		this.stretch_anchor = null;
 		this.stretch_face = null;
+		this._rotation_face = null;
 	}
 
 	get has_target(): boolean { return this.target !== null; }
@@ -93,6 +97,11 @@ class Drag {
 		return this.stretch_face;
 	}
 
+	/** During rotation, the face whose normal is the rotation axis. */
+	get rotation_face(): { scene: O_Scene; face_index: number } | null {
+		return this._rotation_face;
+	}
+
 	// ── object transforms ──
 
 	scale_object(obj: O_Scene, delta: number, fine: boolean): void {
@@ -100,35 +109,57 @@ class Drag {
 		obj.scale *= factor;
 	}
 
-	rotate_object(obj: O_Scene, prev: Point, curr: Point, sensitivity = 0.01): void {
+	rotate_object(obj: O_Scene, prev: Point, curr: Point, alt_key = false): void {
 		const sel = hits_3d.selection;
 
 		// No face selected → free rotation (root tumble)
 		if (!sel || sel.type !== T_Hit_3D.face) {
+			this._rotation_face = null;
 			const dx = curr.x - prev.x;
 			const dy = curr.y - prev.y;
 			const rot_x = quat.create();
 			const rot_y = quat.create();
-			quat.setAxisAngle(rot_x, [1, 0, 0], dy * sensitivity);
-			quat.setAxisAngle(rot_y, [0, 1, 0], dx * sensitivity);
+			quat.setAxisAngle(rot_x, [1, 0, 0], dy * 0.01);
+			quat.setAxisAngle(rot_y, [0, 1, 0], dx * 0.01);
 			quat.multiply(obj.so.orientation, rot_y, obj.so.orientation);
 			quat.multiply(obj.so.orientation, rot_x, obj.so.orientation);
 			quat.normalize(obj.so.orientation, obj.so.orientation);
 			return;
 		}
 
-		// Face selected → rotate around the face normal
 		const so = sel.so;
 		const scene = so.scene;
 		if (!scene) return;
 
-		// Face normal in local space → rotate by orientation into parent space
-		const face_normal_local = so.face_normal(sel.index);
-		const face_normal_parent = vec3.create();
-		vec3.transformQuat(face_normal_parent, face_normal_local, so.orientation);
+		// Determine which face's normal to rotate around
+		let face_normal_local: vec3;   // in the OWNING SO's local space
+		let face_normal_parent: vec3;  // in the child's parent space (= axis for setAxisAngle)
+		let rotation_target: Smart_Object;
+		let normal_scene: O_Scene;     // scene whose world matrix maps face_normal_local → world
 
-		// For screen projection: face normal in world space (through full world matrix)
-		const world_matrix = this.get_world_matrix(scene);
+		if (alt_key && scene.parent) {
+			// Option key: rotate around parent's most front-facing face normal
+			const parent_so = scene.parent.so;
+			const parent_front = hits_3d.front_most_face(parent_so);
+			if (parent_front < 0) return;
+			face_normal_local = parent_so.face_normal(parent_front);
+			// Parent's local space IS child's parent space — no transform needed
+			face_normal_parent = vec3.clone(face_normal_local);
+			rotation_target = so;
+			normal_scene = scene.parent;
+			this._rotation_face = { scene: scene.parent, face_index: parent_front };
+		} else {
+			// Normal: rotate around selected face's normal
+			face_normal_local = so.face_normal(sel.index);
+			face_normal_parent = vec3.create();
+			vec3.transformQuat(face_normal_parent, face_normal_local, so.orientation);
+			rotation_target = so;
+			normal_scene = scene;
+			this._rotation_face = { scene, face_index: sel.index };
+		}
+
+		// Face normal in world space for screen projection and camera direction check
+		const world_matrix = this.get_world_matrix(normal_scene);
 		const nw = vec4.create();
 		vec4.transformMat4(nw, vec4.fromValues(face_normal_local[0], face_normal_local[1], face_normal_local[2], 0), world_matrix);
 		const face_normal_world: vec3 = [nw[0], nw[1], nw[2]];
@@ -136,9 +167,9 @@ class Drag {
 
 		// Project SO center to screen space as pivot for theta calculation
 		const center_local: vec3 = [
-			(so.x_min + so.x_max) / 2,
-			(so.y_min + so.y_max) / 2,
-			(so.z_min + so.z_max) / 2,
+			(rotation_target.x_min + rotation_target.x_max) / 2,
+			(rotation_target.y_min + rotation_target.y_max) / 2,
+			(rotation_target.z_min + rotation_target.z_max) / 2,
 		];
 		const center_world: vec3 = [0, 0, 0];
 		vec3.transformMat4(center_world, center_local, world_matrix);
@@ -166,8 +197,8 @@ class Drag {
 		// Apply rotation in parent space around the parent-space face normal
 		const delta_q = quat.create();
 		quat.setAxisAngle(delta_q, face_normal_parent as [number, number, number], delta_theta);
-		quat.multiply(so.orientation, delta_q, so.orientation);
-		quat.normalize(so.orientation, so.orientation);
+		quat.multiply(rotation_target.orientation, delta_q, rotation_target.orientation);
+		quat.normalize(rotation_target.orientation, rotation_target.orientation);
 	}
 
 	// ── selection editing ──

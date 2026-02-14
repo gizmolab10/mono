@@ -409,10 +409,15 @@ class Render {
     const guide = drag.guidance_face;
     const guidance_edges = (guide && guide.scene === obj) ? this.face_edge_keys(obj, guide.face_index) : null;
 
+    // During rotation, highlight the face whose normal is the rotation axis
+    const rot = drag.rotation_face;
+    const rotation_edges = (rot && rot.scene === obj) ? this.face_edge_keys(obj, rot.face_index) : null;
+
     if ((is_2d || solid) && world) {
       // Solid / 2D mode: per-edge occlusion clipping, batch clipped segments by color
       const normal_path = new Path2D();
       const guide_path = new Path2D();
+      const rot_path = new Path2D();
 
       for (const [i, j] of obj.edges) {
         const a = projected[i], b = projected[j];
@@ -430,7 +435,7 @@ class Render {
         );
 
         const edge_key = `${Math.min(i, j)}-${Math.max(i, j)}`;
-        const path = guidance_edges?.has(edge_key) ? guide_path : normal_path;
+        const path = rotation_edges?.has(edge_key) ? rot_path : guidance_edges?.has(edge_key) ? guide_path : normal_path;
         for (const [s, e] of visible) {
           path.moveTo(Math.round(s.x) + 0.5, Math.round(s.y) + 0.5);
           path.lineTo(Math.round(e.x) + 0.5, Math.round(e.y) + 0.5);
@@ -441,12 +446,21 @@ class Render {
       ctx.stroke(normal_path);
       if (guidance_edges) {
         ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+        ctx.lineWidth = stores.line_thickness() * 3;
         ctx.stroke(guide_path);
+        ctx.lineWidth = stores.line_thickness();
+      }
+      if (rotation_edges) {
+        ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+        ctx.lineWidth = stores.line_thickness() * 3;
+        ctx.stroke(rot_path);
+        ctx.lineWidth = stores.line_thickness();
       }
     } else {
       // Non-solid: batch edges by color into single beginPath/stroke calls
       const normal_path = new Path2D();
       const guide_path = new Path2D();
+      const rot_path = new Path2D();
 
       for (const [i, j] of obj.edges) {
         const a = projected[i], b = projected[j];
@@ -457,7 +471,7 @@ class Render {
         const bx = Math.round(b.x) + 0.5, by = Math.round(b.y) + 0.5;
 
         const edge_key = `${Math.min(i, j)}-${Math.max(i, j)}`;
-        const path = guidance_edges?.has(edge_key) ? guide_path : normal_path;
+        const path = rotation_edges?.has(edge_key) ? rot_path : guidance_edges?.has(edge_key) ? guide_path : normal_path;
         path.moveTo(ax, ay);
         path.lineTo(bx, by);
       }
@@ -467,7 +481,15 @@ class Render {
 
       if (guidance_edges) {
         ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+        ctx.lineWidth = stores.line_thickness() * 3;
         ctx.stroke(guide_path);
+        ctx.lineWidth = stores.line_thickness();
+      }
+      if (rotation_edges) {
+        ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+        ctx.lineWidth = stores.line_thickness() * 3;
+        ctx.stroke(rot_path);
+        ctx.lineWidth = stores.line_thickness();
       }
     }
   }
