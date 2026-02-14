@@ -12,6 +12,7 @@ System structure and core concepts for Design Intuition.
 - [Managers](./managers.md)
 - [Panel.layout](./panel.layout.md)
 - [Project](./project.md)
+- [Quaternions](./quaternions.md)
 - [Rendering.types](./rendering.types.md)
 - [Spatial](./spatial.md)
 - [Two.dimensions](./two.dimensions.md)

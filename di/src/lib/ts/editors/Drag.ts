@@ -1,4 +1,4 @@
-import { quat, vec3, mat4 } from 'gl-matrix';
+import { quat, vec3, vec4, mat4 } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
 import { hits_3d, type Hit_3D_Result } from '../managers/Hits_3D';
 import { Point } from '../types/Coordinates';
@@ -101,15 +101,73 @@ class Drag {
 	}
 
 	rotate_object(obj: O_Scene, prev: Point, curr: Point, sensitivity = 0.01): void {
-		const dx = curr.x - prev.x;
-		const dy = curr.y - prev.y;
-		const rot_x = quat.create();
-		const rot_y = quat.create();
-		quat.setAxisAngle(rot_x, [1, 0, 0], dy * sensitivity);
-		quat.setAxisAngle(rot_y, [0, 1, 0], dx * sensitivity);
-		quat.multiply(obj.so.orientation, rot_y, obj.so.orientation);
-		quat.multiply(obj.so.orientation, rot_x, obj.so.orientation);
-		quat.normalize(obj.so.orientation, obj.so.orientation);
+		const sel = hits_3d.selection;
+
+		// No face selected → free rotation (root tumble)
+		if (!sel || sel.type !== T_Hit_3D.face) {
+			const dx = curr.x - prev.x;
+			const dy = curr.y - prev.y;
+			const rot_x = quat.create();
+			const rot_y = quat.create();
+			quat.setAxisAngle(rot_x, [1, 0, 0], dy * sensitivity);
+			quat.setAxisAngle(rot_y, [0, 1, 0], dx * sensitivity);
+			quat.multiply(obj.so.orientation, rot_y, obj.so.orientation);
+			quat.multiply(obj.so.orientation, rot_x, obj.so.orientation);
+			quat.normalize(obj.so.orientation, obj.so.orientation);
+			return;
+		}
+
+		// Face selected → rotate around the face normal
+		const so = sel.so;
+		const scene = so.scene;
+		if (!scene) return;
+
+		// Face normal in local space → rotate by orientation into parent space
+		const face_normal_local = so.face_normal(sel.index);
+		const face_normal_parent = vec3.create();
+		vec3.transformQuat(face_normal_parent, face_normal_local, so.orientation);
+
+		// For screen projection: face normal in world space (through full world matrix)
+		const world_matrix = this.get_world_matrix(scene);
+		const nw = vec4.create();
+		vec4.transformMat4(nw, vec4.fromValues(face_normal_local[0], face_normal_local[1], face_normal_local[2], 0), world_matrix);
+		const face_normal_world: vec3 = [nw[0], nw[1], nw[2]];
+		vec3.normalize(face_normal_world, face_normal_world);
+
+		// Project SO center to screen space as pivot for theta calculation
+		const center_local: vec3 = [
+			(so.x_min + so.x_max) / 2,
+			(so.y_min + so.y_max) / 2,
+			(so.z_min + so.z_max) / 2,
+		];
+		const center_world: vec3 = [0, 0, 0];
+		vec3.transformMat4(center_world, center_local, world_matrix);
+
+		const view_projection = mat4.create();
+		mat4.multiply(view_projection, camera.projection, camera.view);
+		const center_clip = vec4.create();
+		vec4.transformMat4(center_clip, vec4.fromValues(center_world[0], center_world[1], center_world[2], 1), view_projection);
+		if (Math.abs(center_clip[3]) < 1e-6) return;
+		const center_screen_x = ((center_clip[0] / center_clip[3]) + 1) * 0.5 * camera.size.width;
+		const center_screen_y = (1 - (center_clip[1] / center_clip[3])) * 0.5 * camera.size.height;
+
+		// Mouse angle change around projected center
+		const theta_prev = Math.atan2(prev.y - center_screen_y, prev.x - center_screen_x);
+		const theta_curr = Math.atan2(curr.y - center_screen_y, curr.x - center_screen_x);
+		let delta_theta = -(theta_curr - theta_prev);
+		if (delta_theta > Math.PI) delta_theta -= 2 * Math.PI;
+		if (delta_theta < -Math.PI) delta_theta += 2 * Math.PI;
+
+		// If face normal points away from camera, flip so rotation follows mouse
+		const camera_direction = vec3.create();
+		vec3.subtract(camera_direction, camera.center_pos, camera.eye);
+		if (vec3.dot(face_normal_world, camera_direction) > 0) delta_theta = -delta_theta;
+
+		// Apply rotation in parent space around the parent-space face normal
+		const delta_q = quat.create();
+		quat.setAxisAngle(delta_q, face_normal_parent as [number, number, number], delta_theta);
+		quat.multiply(so.orientation, delta_q, so.orientation);
+		quat.normalize(so.orientation, so.orientation);
 	}
 
 	// ── selection editing ──

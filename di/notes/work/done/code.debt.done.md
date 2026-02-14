@@ -95,3 +95,6 @@
 - [x] remove border around edit input fields in the canvas
 - [x] add angulars (like dimenionals but for angles)
 - [x] find all the build numbers (milestones) and dates -> build notes
+- [x] rebuild SO with 2 single-axis rotations
+	- [x] from which, quaternion is derived
+- [x] **ABANDON:** see through -> all, add "back"

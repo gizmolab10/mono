@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/14.quaternions.md",
+                "file": "di/notes/work/14.snap.buttons.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "14.quaternions"
+              "title": "14.snap.buttons"
             }
           },
           {
@@ -50,20 +50,6 @@
             }
           },
           {
-            "id": "9c14441f00bc4375",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/14.quaternions.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "14.quaternions"
-            }
-          },
-          {
             "id": "8db745942f707b1f",
             "type": "leaf",
             "state": {
@@ -91,8 +77,7 @@
               "title": "code.debt.done"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -227,13 +212,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/14.snap.buttons.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of 14.snap.buttons"
             }
           }
         ],
@@ -254,15 +239,18 @@
       "bases:Create new base": false
     }
   },
-  "active": "ed6835991ce431f7",
+  "active": "bf8919592ee87a19",
   "lastOpenFiles": [
-    "di/notes/work/14.quaternions.md",
-    "di/notes/work/code.debt.md",
-    "di/notes/work/done/code.debt.done.md",
     "di/notes/work/revisit.di.md",
+    "di/notes/work/14.snap.buttons.md",
     "di/notes/work/15.details.md",
-    "di/src/lib/ts/render/Render.ts.bak",
+    "di/notes/work/code.debt.md",
+    "di/notes/architecture/quaternions.md",
+    "di/notes/architecture/index.md",
+    "di/notes/work/index.md",
+    "di/notes/work/done/code.debt.done.md",
     "di/src/lib/md/builds.md",
+    "di/src/lib/ts/render/Render.ts.bak",
     "logs/update-docs.error.di.log",
     "di/src/lib/ts/editors/Angular.ts",
     "di/notes/architecture/3D.primer.md",
@@ -289,8 +277,6 @@
     "node_modules/flatbush/README.md",
     "di/node_modules/vitefu/README.md",
     "di/node_modules/@sveltejs/vite-plugin-svelte-inspector/README.md",
-    "node_modules/commander/History.md",
-    "di/node_modules/@sveltejs/vite-plugin-svelte/README.md",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",
     "ga/node_modules/phaser/changelog/3.60/images/timeline.png",
     "ga/node_modules/phaser/changelog/3.60/images/videogameobject.png",
