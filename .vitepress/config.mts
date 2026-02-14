@@ -76,6 +76,10 @@ export default defineConfig({
                       link: '/di/notes/architecture/algebra'
                     },
                     {
+                      text: 'Details',
+                      link: '/di/notes/architecture/details'
+                    },
+                    {
                       text: 'Drag',
                       link: '/di/notes/architecture/drag'
                     },
@@ -185,12 +189,8 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
-                      text: '14.snap.buttons',
-                      link: '/di/notes/work/14.snap.buttons'
-                    },
-                    {
-                      text: '15.details',
-                      link: '/di/notes/work/15.details'
+                      text: '15.attributes',
+                      link: '/di/notes/work/15.attributes'
                     },
                     {
                       text: 'Code.debt',
@@ -199,6 +199,10 @@ export default defineConfig({
                     {
                       text: 'Revisit.di',
                       link: '/di/notes/work/revisit.di'
+                    },
+                    {
+                      text: 'Separators',
+                      link: '/di/notes/work/separators'
                     },
                     {
                       text: 'Done >',
@@ -259,6 +263,10 @@ export default defineConfig({
                         {
                           text: '13.algebra',
                           link: '/di/notes/work/milestones/13.algebra'
+                        },
+                        {
+                          text: '14.details',
+                          link: '/di/notes/work/milestones/14.details'
                         },
                         {
                           text: '2.panel',

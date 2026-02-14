@@ -2,7 +2,6 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] [[14.details]]
 - [ ] [[15.attributes]]
 - [ ] use codegraph
 ---

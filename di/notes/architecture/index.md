@@ -6,6 +6,7 @@ System structure and core concepts for Design Intuition.
 
 - [3D.primer](./3D.primer.md)
 - [Algebra](./algebra.md)
+- [Details](./details.md)
 - [Drag](./drag.md)
 - [Files](./files.md)
 - [Intersecting.faces](./intersecting.faces.md)
