@@ -184,6 +184,7 @@ class Engine {
     // Render loop
     animation.on_tick(() => {
       this.tick_snap_animation();
+      this.update_front_face();
       render.render();
     });
 
@@ -337,6 +338,36 @@ class Engine {
       this.snap_to_face(so, face);
     }
     scenes.save();
+  }
+
+  /** Animate root SO to show the given face (0–5) at front. */
+  orient_to_face(face: number): void {
+    if (!this.root_scene || face < 0 || face > 5) return;
+    const so = this.root_scene.so;
+    let best: quat = Engine.FACE_SNAP_QUATS[face][0];
+    let best_dot = -Infinity;
+    for (const candidate of Engine.FACE_SNAP_QUATS[face]) {
+      const dot = Math.abs(quat.dot(so.orientation, candidate));
+      if (dot > best_dot) { best_dot = dot; best = candidate; }
+    }
+    this.snap_anim = {
+      so,
+      from: quat.clone(so.orientation),
+      to: quat.clone(best),
+      t: 0,
+    };
+    scenes.save();
+  }
+
+  /** Track which face is front-most on root SO, push to store. */
+  private _last_front_face = -1;
+  private update_front_face(): void {
+    if (!this.root_scene) return;
+    const face = hits_3d.front_most_face(this.root_scene.so);
+    if (face !== this._last_front_face) {
+      this._last_front_face = face;
+      stores.w_front_face.set(face);
+    }
   }
 
   private saved_3d_orientation: quat | null = null;

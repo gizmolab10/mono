@@ -194,11 +194,56 @@ class Drag {
 		vec3.subtract(camera_direction, camera.center_pos, camera.eye);
 		if (vec3.dot(face_normal_world, camera_direction) > 0) delta_theta = -delta_theta;
 
-		// Apply rotation in parent space around the parent-space face normal
+		// Apply rotation incrementally in parent space
 		const delta_q = quat.create();
 		quat.setAxisAngle(delta_q, face_normal_parent as [number, number, number], delta_theta);
 		quat.multiply(rotation_target.orientation, delta_q, rotation_target.orientation);
 		quat.normalize(rotation_target.orientation, rotation_target.orientation);
+
+		// Snap: extract twist angle around the STABLE local-space face normal,
+		// check if near a detent, and correct if so.
+		// face_normal_local is constant (e.g. [0,0,-1]) — safe decomposition axis.
+		const snap_axis = face_normal_local;
+		const q = rotation_target.orientation;
+		const proj = vec3.dot([q[0], q[1], q[2]], snap_axis);
+		const twist = quat.normalize(quat.create(), [snap_axis[0] * proj, snap_axis[1] * proj, snap_axis[2] * proj, q[3]]);
+		const twist_angle = 2 * Math.atan2(
+			vec3.length([twist[0], twist[1], twist[2]]) * Math.sign(proj),
+			twist[3]
+		);
+
+		// Snap to detent angles (within ±3°)
+		const SNAP_THRESHOLD = 3 * Math.PI / 180;
+		const SNAP_ANGLES = [0, 22.5, 30, 45, 60, 67.5, 90];
+		const snap_rad = SNAP_ANGLES.map(d => d * Math.PI / 180);
+		const all_snaps: number[] = [];
+		for (const a of snap_rad) {
+			for (const sign of [1, -1]) {
+				const v = sign * a;
+				for (let m = -2; m <= 2; m++) {
+					let s = v + m * Math.PI / 2;
+					while (s > Math.PI) s -= 2 * Math.PI;
+					while (s < -Math.PI) s += 2 * Math.PI;
+					all_snaps.push(s);
+				}
+			}
+		}
+
+		for (const snap of all_snaps) {
+			let diff = twist_angle - snap;
+			while (diff > Math.PI) diff -= 2 * Math.PI;
+			while (diff < -Math.PI) diff += 2 * Math.PI;
+			if (Math.abs(diff) < SNAP_THRESHOLD) {
+				// Correct: remove current twist, apply snapped twist
+				const inv_twist = quat.invert(quat.create(), twist);
+				const swing = quat.multiply(quat.create(), q, inv_twist);
+				const snapped_twist = quat.create();
+				quat.setAxisAngle(snapped_twist, snap_axis as [number, number, number], snap);
+				quat.multiply(rotation_target.orientation, swing, snapped_twist);
+				quat.normalize(rotation_target.orientation, rotation_target.orientation);
+				break;
+			}
+		}
 	}
 
 	// ── selection editing ──

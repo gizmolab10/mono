@@ -100,6 +100,10 @@ export default defineConfig({
                       link: '/di/notes/architecture/project'
                     },
                     {
+                      text: 'Quaternions',
+                      link: '/di/notes/architecture/quaternions'
+                    },
+                    {
                       text: 'Rendering.types',
                       link: '/di/notes/architecture/rendering.types'
                     },
@@ -181,12 +185,12 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
-                      text: '14.details',
-                      link: '/di/notes/work/14.details'
+                      text: '14.snap.buttons',
+                      link: '/di/notes/work/14.snap.buttons'
                     },
                     {
-                      text: 'Angulars',
-                      link: '/di/notes/work/angulars'
+                      text: '15.details',
+                      link: '/di/notes/work/15.details'
                     },
                     {
                       text: 'Code.debt',

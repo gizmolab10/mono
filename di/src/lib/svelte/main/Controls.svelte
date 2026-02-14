@@ -6,7 +6,8 @@
 	import Slider from '../mouse/Slider.svelte';
 	import { engine } from '../../ts/render';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
-	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details } = stores;
+	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details, w_front_face } = stores;
+	const face_labels = ['Fr', 'Bk', 'L', 'R', 'T', 'B'];
 
 	let show_dimensions = $derived($w_decorations === T_Decorations.dimensions || $w_decorations === T_Decorations.both);
 	let show_angles     = $derived($w_decorations === T_Decorations.angles || $w_decorations === T_Decorations.both);
@@ -43,6 +44,11 @@
 	<h1>{title}</h1>
 	<span class='spacer'></span>
 	<Slider min={0.1} max={100} value={$w_scale} onchange={handle_slider} onstep={handle_scale} />
+	<div class='segmented'>
+		{#each face_labels as label, i}
+			<button class='seg' class:front={$w_front_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
+		{/each}
+	</div>
 	<div class='segmented'>
 		<button class='seg' class:active={show_dimensions} use:hit_target={{ id: 'dimensionals', onpress: () => stores.toggle_dimensionals() }}>dimensions</button>
 		<button class='seg' class:active={show_angles} use:hit_target={{ id: 'angulars', onpress: () => stores.toggle_angulars() }}>angles</button>
@@ -147,6 +153,11 @@
 
 	.seg:last-child {
 		border-right : none;
+	}
+
+	.seg.front {
+		background : rgba(0, 0, 0, 0.12);
+		color      : black;
 	}
 
 	.seg.active {

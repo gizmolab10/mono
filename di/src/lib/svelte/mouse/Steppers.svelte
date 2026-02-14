@@ -47,7 +47,7 @@
 			targetA.mouse_detection = T_Mouse_Detection.autorepeat;
 			targetA.autorepeat_callback = () => hit_closure(true, false);
 			targetA.handle_s_mouse = (s_mouse: S_Mouse) => {
-				if (s_mouse.isDown) hit_closure(true, s_mouse.event?.metaKey ?? false);
+				if (s_mouse.isDown && s_mouse.event?.metaKey) hit_closure(true, true);
 				return true;
 			};
 		}
@@ -59,7 +59,7 @@
 			targetB.mouse_detection = T_Mouse_Detection.autorepeat;
 			targetB.autorepeat_callback = () => hit_closure(false, false);
 			targetB.handle_s_mouse = (s_mouse: S_Mouse) => {
-				if (s_mouse.isDown) hit_closure(false, s_mouse.event?.metaKey ?? false);
+				if (s_mouse.isDown && s_mouse.event?.metaKey) hit_closure(false, true);
 				return true;
 			};
 		}

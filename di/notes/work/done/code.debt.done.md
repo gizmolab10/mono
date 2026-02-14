@@ -98,3 +98,7 @@
 - [x] rebuild SO with 2 single-axis rotations
 	- [x] from which, quaternion is derived
 - [x] **ABANDON:** see through -> all, add "back"
+- [x] confine ALL rotations to one axis -> the normal of the selected face
+- [x] add a six segment control to controls, one for each face
+	- [x] darken segment corresponding to front-most-facing face of root SO
+	- [x] click on a button -> rotate root SO to orient (and straighten) that face at front

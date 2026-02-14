@@ -7,8 +7,8 @@ Current work items and milestones.
 - [Done](./done/)
 - [Milestones](./milestones/)
 - [Next](./next/)
-- [15.details](15.details.md)
-- [Angulars](di/notes/architecture/quaternions.md)
+- [14.snap.buttons](./14.snap.buttons.md)
+- [14.details](14.details.md)
 - [Code.debt](./code.debt.md)
 - [Revisit.di](./revisit.di.md)
 

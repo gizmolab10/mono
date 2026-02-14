@@ -2,8 +2,7 @@
 
 offer a proposal for the first unchecked item
 
-
-- [ ] confine ALL rotations to one axis -> the normal of the selected face
+- [ ] [[14.details]]
 - [ ] use codegraph
 ---
 - [ ] pac: in all code files, use tabs that are 4 (not 2) spaces

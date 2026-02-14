@@ -13,6 +13,7 @@ class Stores {
 	w_root_so			= writable<Smart_Object | null>(null);
 	w_editing			= writable<T_Editing>(T_Editing.none);
 	w_selection			= writable<Hit_3D_Result | null>(null);
+	w_front_face		= writable<number>(-1);
 
 	// Persistent
 	w_decorations       = this.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.both);
