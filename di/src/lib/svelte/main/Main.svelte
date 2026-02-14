@@ -5,7 +5,7 @@
 	import { e } from '../../ts/signals/Events';
 	import BuildNotes from './BuildNotes.svelte';
 	import Controls from './Controls.svelte';
-	import Details from './Details.svelte';
+	import Details from '../details/Details.svelte';
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
 
@@ -81,7 +81,7 @@
 					class        = 'region details'
 					style:width  = '{detailsWidth}px'
 					style:height = '{mainHeight}px'>
-					<Details onshowbuildnotes={() => showBuildNotes = true} />
+					<Details />
 				</div>
 			{/if}
 
@@ -90,7 +90,7 @@
 				class        = 'region graph'
 				style:width  = '{graphWidth}px'
 				style:height = '{mainHeight}px'>
-				<Graph />
+				<Graph onshowbuildnotes={() => showBuildNotes = true} />
 			</div>
 		</div>
 	{/if}

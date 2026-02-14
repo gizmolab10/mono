@@ -4,6 +4,7 @@
 	import { hits } from '../../ts/managers/Hits';
 	import type { Writable } from 'svelte/store';
 	import { tick } from 'svelte';
+	const { w_accent_color } = colors;
 
 	let {
 		title,
@@ -17,8 +18,6 @@
 		children : import('svelte').Snippet;
 	} = $props();
 
-	const { w_accent_color } = colors;
-
 	async function toggle() {
 		visible.update(v => !v);
 		await tick();
@@ -30,8 +29,8 @@
 	<button
 		class='banner'
 		class:open={$visible}
-		style:--accent={$w_accent_color}
 		style:--banner={colors.banner}
+		style:--accent={$w_accent_color}
 		use:hit_target={{ id: `hideable-${id}`, onpress: toggle }}>
 		<span class='banner-title'>{title}</span>
 	</button>
@@ -44,45 +43,39 @@
 
 <style>
 	.hideable {
-		display        : flex;
 		flex-direction : column;
+		display        : flex;
 	}
 
 	.banner {
+		color           : rgba(0, 0, 0, 1);
+		text-transform  : lowercase;
 		position        : relative;
-		display         : flex;
+		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
-		height          : 22px;
-		margin          : 2px -0.75rem;
-		border          : none;
-		border-radius   : 6px;
-		cursor          : pointer;
 		overflow        : hidden;
-		padding         : 0;
-		color           : rgba(0, 0, 0, 0.5);
-		font-size       : 10px;
-		font-weight     : 500;
+		margin          : 3px 0;
 		letter-spacing  : 0.5px;
-		text-transform  : lowercase;
+		display         : flex;
+		height          : 22px;
+		border-radius   : 11px;
+		font-size       : 12px;
+		border          : none;
+		font-weight     : 300;
 	}
 
 	.banner::before {
-		content    : '';
+		background : radial-gradient(ellipse at center, transparent 0%, var(--banner) 80%);
 		position   : absolute;
+		content    : '';
 		inset      : 0;
-		background : radial-gradient(ellipse at center, transparent 0%, var(--banner) 100%);
 		z-index    : 0;
 	}
 
-	.banner.open::before {
-		background : radial-gradient(ellipse at center, transparent 0%, var(--accent) 100%);
-		opacity    : 0.4;
-	}
-
 	.banner:global([data-hitting])::before {
-		background : var(--accent);
-		opacity    : 0.5;
+		background : var(--bg);
+		opacity    : 1;
 	}
 
 	.banner-title {
@@ -91,6 +84,10 @@
 	}
 
 	.slot {
-		padding : 0.75rem 0 0 0;
+		padding       : 0.75rem 1rem 0.75rem;
+		background    : var(--bg);
+		margin        : 0px 0 0;
+		border-radius : 11px;
 	}
+
 </style>

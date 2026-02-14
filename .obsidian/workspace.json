@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/separators.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt"
+              "title": "separators"
             }
           },
           {
@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/14.details.md",
+                "file": "di/notes/work/separators.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 14.details"
+              "title": "Outline of separators"
             }
           }
         ],
@@ -240,36 +240,39 @@
       "bases:Create new base": false
     }
   },
-  "active": "8db745942f707b1f",
+  "active": "ed6835991ce431f7",
   "lastOpenFiles": [
+    "di/src/lib/svelte/details/D_Selection.svelte",
+    "di/src/lib/svelte/details/D_Attributes.svelte",
+    "di/src/lib/svelte/details/Details.svelte",
+    "di/src/lib/svelte/details/D_Library.svelte",
+    "di/src/lib/svelte/details/D_Selection.svelte copy",
+    "di/src/lib/svelte/details/D_Preferences.svelte copy",
+    "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
+    "Screenshot 2026-02-14 at 12.12.38 PM.png",
+    "di/notes/work/code.debt.md",
+    "di/notes/work/separators.md",
+    "di/notes/work/14.details.md",
+    "di/src/lib/svelte/details/D_Preferences.svelte",
     "di/src/lib/svelte/details/Hideable.svelte",
     "di/src/lib/svelte/details",
     "di/src/lib/md/builds.md",
-    "di/notes/work/code.debt.md",
     "di/notes/work/15.attributes.md",
-    "di/notes/work/14.details.md",
     "di/notes/work/revisit.di.md",
     "di/notes/work/done/code.debt.done.md",
     "di/notes/work/14.snap.buttons.md",
     "ws/vite.config.js.timestamp-1771034910999-635d04e5244.mjs",
     "logs/update-docs.error.di.log",
-    "logs/update-docs.error.mono.log",
     "di/notes/architecture/quaternions.md",
     "di/notes/architecture/index.md",
     "di/notes/work/index.md",
-    "di/src/lib/ts/render/Render.ts.bak",
-    "di/src/lib/ts/editors/Angular.ts",
     "di/notes/architecture/3D.primer.md",
-    "di/src/lib/ts/editors/Face_Label.ts",
     "di/notes/architecture/flatten.md",
     "di/notes/architecture/two.dimensions.md",
     "di/notes/work/two.dimensions.md",
     "di/notes/work/occlusion.2D.md",
-    "di/src/lib/ts/common/Debug.ts",
-    "di/src/assets/American (2).di",
     "di/notes/components/index.md",
     "di/notes/work/done/scene.model.md",
-    "di/src/lib/ts/events/Hit_Target.ts",
     "di/notes/work/done/cruft.md",
     "di/notes/architecture/algebra.md",
     "di/notes/architecture/drag.md",
@@ -277,7 +280,6 @@
     "di/notes/work/code.debt copy.md",
     "node_modules/katex/node_modules/commander/Readme.md",
     "node_modules/flatqueue/README.md",
-    "node_modules/flatbush/README.md",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",
     "ga/node_modules/phaser/changelog/3.60/images/timeline.png",
     "ga/node_modules/phaser/changelog/3.60/images/videogameobject.png",
@@ -285,8 +287,6 @@
     "ga/node_modules/phaser/changelog/3.60/images/spine4.png",
     "ga/node_modules/phaser/changelog/3.60/images/spectorjs.png",
     "ga/node_modules/phaser/changelog/3.60/images/particles2.png",
-    "ga/node_modules/phaser/changelog/3.60/images/perf2.png",
-    "ga/node_modules/phaser/changelog/3.60/images/phaser10banner.png",
-    "ga/node_modules/phaser/changelog/3.60/images/perf1.png"
+    "ga/node_modules/phaser/changelog/3.60/images/perf2.png"
   ]
 }

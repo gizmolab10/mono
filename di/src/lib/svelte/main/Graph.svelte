@@ -12,6 +12,9 @@
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import { engine } from '../../ts/render';
+	import { k } from '../../ts/common/Constants';
+
+	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 
 	const { w_text_color, w_background_color } = colors;
 	const { w_s_dimensions } = dimensions;
@@ -207,6 +210,7 @@
 	<canvas
 		bind:this = {canvas}></canvas>
 	<div class='canvas-actions'>
+		<button class='canvas-btn' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
 		<button class='canvas-btn' use:hit_target={{ id: 'reset', onpress: () => { scenes.clear(); location.reload(); } }}>reset</button>
 		<button class='canvas-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	</div>
