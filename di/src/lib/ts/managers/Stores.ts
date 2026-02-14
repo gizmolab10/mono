@@ -24,6 +24,11 @@ class Stores {
 	w_solid				= this.persistent<boolean>(T_Preference.solid, false);
 	w_precision			= this.persistent<number>(T_Preference.precision, 2);
 
+	// Hideable sections
+	w_show_selection	= this.persistent<boolean>(T_Preference.showSelection, true);
+	w_show_preferences	= this.persistent<boolean>(T_Preference.showPreferences, true);
+	w_show_library		= this.persistent<boolean>(T_Preference.showLibrary, true);
+
 	// Selection
 	selection():		   Hit_3D_Result | null  { return get(this.w_selection); }
 	set_selection(result:  Hit_3D_Result | null) { this.w_selection.set(result); }

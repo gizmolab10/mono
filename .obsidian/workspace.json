@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/src/lib/md/builds.md",
+                "file": "di/notes/work/14.details.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "builds"
+              "title": "14.details"
             }
           },
           {
@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/15.attributes.md",
+                "file": "di/notes/work/14.details.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 15.attributes"
+              "title": "Outline of 14.details"
             }
           }
         ],
@@ -240,11 +240,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "628f70ebef9c1bfc",
+  "active": "8db745942f707b1f",
   "lastOpenFiles": [
-    "di/notes/work/14.details.md",
-    "di/notes/work/15.attributes.md",
+    "di/src/lib/svelte/details/Hideable.svelte",
+    "di/src/lib/svelte/details",
+    "di/src/lib/md/builds.md",
     "di/notes/work/code.debt.md",
+    "di/notes/work/15.attributes.md",
+    "di/notes/work/14.details.md",
     "di/notes/work/revisit.di.md",
     "di/notes/work/done/code.debt.done.md",
     "di/notes/work/14.snap.buttons.md",
@@ -254,7 +257,6 @@
     "di/notes/architecture/quaternions.md",
     "di/notes/architecture/index.md",
     "di/notes/work/index.md",
-    "di/src/lib/md/builds.md",
     "di/src/lib/ts/render/Render.ts.bak",
     "di/src/lib/ts/editors/Angular.ts",
     "di/notes/architecture/3D.primer.md",
@@ -268,7 +270,6 @@
     "di/notes/components/index.md",
     "di/notes/work/done/scene.model.md",
     "di/src/lib/ts/events/Hit_Target.ts",
-    "di/src/lib/ts/events",
     "di/notes/work/done/cruft.md",
     "di/notes/architecture/algebra.md",
     "di/notes/architecture/drag.md",
@@ -277,7 +278,6 @@
     "node_modules/katex/node_modules/commander/Readme.md",
     "node_modules/flatqueue/README.md",
     "node_modules/flatbush/README.md",
-    "di/node_modules/vitefu/README.md",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",
     "ga/node_modules/phaser/changelog/3.60/images/timeline.png",
     "ga/node_modules/phaser/changelog/3.60/images/videogameobject.png",

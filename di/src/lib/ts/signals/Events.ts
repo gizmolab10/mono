@@ -91,6 +91,10 @@ export class Events {
 			event.preventDefault();
 			engine.delete_selected_so();
 		}
+		if (event.key === ',') {
+			event.preventDefault();
+			stores.toggle_details();
+		}
 	}
 
 }

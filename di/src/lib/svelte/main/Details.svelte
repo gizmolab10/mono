@@ -4,11 +4,13 @@
 	import { face_label } from '../../ts/editors/Face_Label';
 	import { scenes, stores } from '../../ts/managers';
 	import { w_unit_system } from '../../ts/types/Units';
+	import Hideable from '../details/Hideable.svelte';
 	import { colors } from '../../ts/draw/Colors';
 	import { engine } from '../../ts/render';
 	import { k } from '../../ts/common/Constants';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
 	const { w_root_so, w_precision, w_line_thickness, w_edge_color, w_selection } = stores;
+	const { w_show_selection, w_show_preferences, w_show_library } = stores;
 
 	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 
@@ -24,9 +26,7 @@
 		if (selected_so) {
 			selected_so.name = input.value;
 			scenes.save();
-			// Re-emit so SO button row and face names update reactively
 			stores.w_all_sos.update(sos => sos);
-			// Sync canvas label input if it's open for this SO
 			face_label.sync(input.value);
 		}
 	}
@@ -51,12 +51,9 @@
 	}
 	function handle_name_blur(e: FocusEvent) {
 		const input = e.target as HTMLInputElement;
-		// Save cursor position for transfer to canvas label input
 		face_label.cursor = { start: input.selectionStart ?? 0, end: input.selectionEnd ?? 0 };
-		// Defer so the focus handler on the canvas label input fires first
 		setTimeout(() => {
 			if (stores.editing() !== T_Editing.face_label) {
-				// If face label editing is active, commit it; otherwise just clear editing state
 				if (face_label.state) {
 					face_label.commit(selected_so?.name ?? '');
 				} else {
@@ -72,7 +69,6 @@
 	let ticks = $derived($w_unit_system === T_Units.imperial ? imperial_ticks : decimal_ticks);
 	let max_tick = $derived(ticks.length - 1);
 
-	// Clamp precision when unit system changes
 	$effect(() => {
 		if ($w_precision > max_tick) engine.set_precision(max_tick);
 	});
@@ -88,80 +84,87 @@
 	style:color      = {$w_text_color}
 	style:background = {$w_background_color}
 	style:--accent   = {$w_accent_color}>
-	{#if selected_so}
-		<label class='field'>
-			<span class='label'>Name</span>
-			<input
-				type      = 'text'
-				value     = {display_name}
-				oninput   = {handle_name}
-				onkeydown = {handle_name_keydown}
-				onfocus   = {handle_name_focus}
-				onblur    = {handle_name_blur}
-			/>
-		</label>
-	{:else}
-		<p>No object selected</p>
-	{/if}
-	<div class='settings'>
-		<button class='action-btn' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>add child</button>
-	</div>
-	<hr style:border-color={$w_accent_color} />
-	<div class='settings'>
-		<select class='details-select' value={$w_unit_system} onchange={handle_unit_change}>
-			{#each Object.values(T_Units) as system}
-				<option value={system}>{system}</option>
-			{/each}
-		</select>
-	</div>
-	<div class='precision-group'>
-		<span class='label'>precision</span>
-		<div class='segmented'>
-			{#each ticks as label, i}
-				<button
-					class='segment'
-					class:active={i === $w_precision}
-					use:hit_target={{ id: `precision-${i}`, onpress: () => engine.set_precision(i) }}>
-					{label}
-				</button>
-			{/each}
+
+	<Hideable title='preferences' id='preferences' visible={w_show_preferences}>
+		<div class='settings'>
+			<select class='details-select' value={$w_unit_system} onchange={handle_unit_change}>
+				{#each Object.values(T_Units) as system}
+					<option value={system}>{system}</option>
+				{/each}
+			</select>
 		</div>
-	</div>
-	<hr style:border-color={$w_accent_color} />
-	<div class='slider-group'>
-		<span class='label'>line thickness</span>
-		<input
-			type    = 'range'
-			min     = {0.5}
-			max     = {4}
-			step    = {0.5}
-			value   = {$w_line_thickness}
-			oninput = {(e) => w_line_thickness.set(Number((e.target as HTMLInputElement).value))}
-		/>
-	</div>
-	<div class='color-row'>
-		<div class='color-group'>
-			<span class='label'>accent</span>
+		<div class='precision-group'>
+			<span class='label'>precision</span>
+			<div class='segmented'>
+				{#each ticks as label, i}
+					<button
+						class='segment'
+						class:active={i === $w_precision}
+						use:hit_target={{ id: `precision-${i}`, onpress: () => engine.set_precision(i) }}>
+						{label}
+					</button>
+				{/each}
+			</div>
+		</div>
+		<div class='slider-group'>
+			<span class='label'>line thickness</span>
 			<input
-				type    = 'color'
-				value   = {$w_accent_color}
-				oninput = {(e) => w_accent_color.set((e.target as HTMLInputElement).value)}
+				type    = 'range'
+				min     = {0.5}
+				max     = {4}
+				step    = {0.5}
+				value   = {$w_line_thickness}
+				oninput = {(e) => w_line_thickness.set(Number((e.target as HTMLInputElement).value))}
 			/>
 		</div>
-		<div class='color-group'>
-			<span class='label'>lines</span>
-			<input
-				type    = 'color'
-				value   = {$w_edge_color}
-				oninput = {(e) => w_edge_color.set((e.target as HTMLInputElement).value)}
-			/>
+		<div class='color-row'>
+			<div class='color-group'>
+				<span class='label'>accent</span>
+				<input
+					type    = 'color'
+					value   = {$w_accent_color}
+					oninput = {(e) => w_accent_color.set((e.target as HTMLInputElement).value)}
+				/>
+			</div>
+			<div class='color-group'>
+				<span class='label'>lines</span>
+				<input
+					type    = 'color'
+					value   = {$w_edge_color}
+					oninput = {(e) => w_edge_color.set((e.target as HTMLInputElement).value)}
+				/>
+			</div>
 		</div>
-	</div>
-	<hr style:border-color={$w_accent_color} />
-	<div class='settings'>
-		<button class='action-btn' use:hit_target={{ id: 'export', onpress: () => scenes.export_to_file() }}>export</button>
-		<button class='action-btn' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file() }}>import</button>
-	</div>
+	</Hideable>
+
+	<Hideable title='selection' id='selection' visible={w_show_selection}>
+		{#if selected_so}
+			<label class='field'>
+				<span class='label'>Name</span>
+				<input
+					type      = 'text'
+					value     = {display_name}
+					oninput   = {handle_name}
+					onkeydown = {handle_name_keydown}
+					onfocus   = {handle_name_focus}
+					onblur    = {handle_name_blur}
+				/>
+			</label>
+		{:else}
+			<p>No object selected</p>
+		{/if}
+		<div class='settings'>
+			<button class='action-btn' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>add child</button>
+		</div>
+	</Hideable>
+
+	<Hideable title='library' id='library' visible={w_show_library}>
+		<div class='settings'>
+			<button class='action-btn' use:hit_target={{ id: 'export', onpress: () => scenes.export_to_file() }}>export</button>
+			<button class='action-btn' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file() }}>import</button>
+		</div>
+	</Hideable>
+
 	<button class='build-btn' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
 </div>
 
@@ -169,16 +172,10 @@
 	.details {
 		width      : 100%;
 		height     : 100%;
-		padding    : 1rem;
+		padding    : 0 1rem 1rem;
 		box-sizing : border-box;
 		position   : relative;
-	}
-
-	hr {
-		border     : none;
-		border-top : 5px solid;
-		opacity    : 0.4;
-		margin     : 14px 0 5px 0;
+		overflow-y : auto;
 	}
 
 	.field {
@@ -219,11 +216,6 @@
 		height        : 20px;
 		box-sizing    : border-box;
 		cursor        : pointer;
-		margin-top    : 0.75rem;
-	}
-
-	.settings .action-btn {
-		margin-top : 0;
 	}
 
 	.action-btn:global([data-hitting]) {
@@ -258,13 +250,12 @@
 	}
 
 	.settings {
-		display    : flex;
-		gap        : 6px;
-		margin-top : 1rem;
+		display : flex;
+		gap     : 6px;
 	}
 
 	.precision-group {
-		margin-top     : 1rem;
+		margin-top     : 0.75rem;
 		display        : flex;
 		flex-direction : column;
 		gap            : 4px;
@@ -342,7 +333,7 @@
 	}
 
 	.slider-group {
-		margin-top     : 1rem;
+		margin-top     : 0.75rem;
 		display        : flex;
 		align-items    : center;
 		gap            : 8px;
@@ -396,7 +387,7 @@
 	}
 
 	.color-row {
-		margin-top     : 1rem;
+		margin-top     : 0.75rem;
 		display        : flex;
 		align-items    : center;
 		gap            : 16px;

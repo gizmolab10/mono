@@ -18,6 +18,11 @@ export enum T_Preference {
 	// Units
 	unitSystem 		= 'unitSystem',
 
+	// Hideables
+	showSelection    = 'showSelection',
+	showPreferences  = 'showPreferences',
+	showLibrary      = 'showLibrary',
+
 	// View
 	decorations      = 'decorations',
 	lineThickness    = 'lineThickness',

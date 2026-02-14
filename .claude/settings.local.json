@@ -17,7 +17,8 @@
       "Bash(npm test:*)",
       "WebSearch",
       "Write",
-      "Edit"
+      "Edit",
+      "Bash(yarn svelte-check:*)"
     ]
   }
 }
