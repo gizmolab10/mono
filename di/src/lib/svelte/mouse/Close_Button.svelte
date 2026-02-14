@@ -1,10 +1,11 @@
 <script lang='ts'>
 	import { hit_target } from '../../ts/events/Hit_Target';
+	import { T_Layer } from '../../ts/types/Enumerations';
 	import { svg_paths } from '../../ts/draw/SVG_Paths';
-	import { colors } from '../../ts/draw/Colors';
-	const { w_accent_color } = colors;
 	import { Point } from '../../ts/types/Coordinates';
+	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
+	const { w_accent_color } = colors;
 
 	let { size = 20, origin, name = 'close', onclose }: { size?: number; origin: Point; name?: string; onclose: () => void } = $props();
 
@@ -22,6 +23,7 @@
 	style:height="{size}px"
 	style:top="{origin.y}px"
 	style:right="{origin.x}px"
+	style:--z-frontmost={T_Layer.frontmost}
 	role="button"
 	tabindex="0">
 	<svg width={size} height={size} viewBox="0 0 {size} {size}">
@@ -45,6 +47,6 @@
 		position: absolute;
 		cursor: pointer;
 		user-select: none;
-		z-index: 10;
+		z-index: var(--z-frontmost);
 	}
 </style>

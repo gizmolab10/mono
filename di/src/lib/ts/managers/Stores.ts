@@ -8,26 +8,22 @@ import { Smart_Object } from '../runtime';
 class Stores {
 
 	// Session (reset on setup)
-	w_scale  			= writable<number>(22);
-	w_all_sos			= writable<Smart_Object[]>([]);
+	w_selection			= writable<Hit_3D_Result | null>(null);
 	w_root_so			= writable<Smart_Object | null>(null);
 	w_editing			= writable<T_Editing>(T_Editing.none);
-	w_selection			= writable<Hit_3D_Result | null>(null);
+	w_all_sos			= writable<Smart_Object[]>([]);
 	w_front_face		= writable<number>(-1);
+	w_scale  			= writable<number>(22);
 
 	// Persistent
 	w_decorations       = this.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.both);
 	w_edge_color		= this.persistent<string>(T_Preference.edgeColor, '#874efe');
 	w_view_mode			= this.persistent<'2d' | '3d'>(T_Preference.viewMode, '3d');
 	w_show_details		= this.persistent<boolean>(T_Preference.showDetails, true);
+	w_t_details			= this.persistent<number>(T_Preference.visibleDetails, 1);
 	w_line_thickness	= this.persistent<number>(T_Preference.lineThickness, 2);
 	w_solid				= this.persistent<boolean>(T_Preference.solid, false);
 	w_precision			= this.persistent<number>(T_Preference.precision, 2);
-
-	// Hideable sections
-	w_show_selection	= this.persistent<boolean>(T_Preference.showSelection, true);
-	w_show_preferences	= this.persistent<boolean>(T_Preference.showPreferences, true);
-	w_show_library		= this.persistent<boolean>(T_Preference.showLibrary, true);
 
 	// Selection
 	selection():		   Hit_3D_Result | null  { return get(this.w_selection); }

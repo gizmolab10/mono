@@ -1,18 +1,18 @@
 <script lang='ts'>
-	import { onMount, onDestroy } from 'svelte';
-	import { render } from '../../ts/render/Render';
-	import { colors } from '../../ts/draw/Colors';
-	import { components } from '../../ts/managers/Components';
-	import { hit_target } from '../../ts/events/Hit_Target';
+	import { T_Editing, T_Hit_3D, T_Hit_Target, T_Layer } from '../../ts/types/Enumerations';
 	import { hits, hits_3d, scenes, stores } from '../../ts/managers';
+	import type Smart_Object from '../../ts/runtime/Smart_Object';
+	import { components } from '../../ts/managers/Components';
+	import { face_label } from '../../ts/editors/Face_Label';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { dimensions } from '../../ts/editors/Dimension';
 	import { angulars } from '../../ts/editors/Angular';
-	import { face_label } from '../../ts/editors/Face_Label';
-	import { T_Editing, T_Hit_3D, T_Hit_Target } from '../../ts/types/Enumerations';
-	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import S_Mouse from '../../ts/state/S_Mouse';
-	import { engine } from '../../ts/render';
+	import { render } from '../../ts/render/Render';
+	import { colors } from '../../ts/draw/Colors';
 	import { k } from '../../ts/common/Constants';
+	import S_Mouse from '../../ts/state/S_Mouse';
+	import { onMount, onDestroy } from 'svelte';
+	import { engine } from '../../ts/render';
 
 	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 
@@ -206,7 +206,9 @@
 	class            = 'graph'
 	bind:this        = {container}
 	style:color      = {$w_text_color}
-	style:background = 'white'>
+	style:background = 'white'
+	style:--z-action = {T_Layer.action}
+	style:--z-frontmost   = {T_Layer.frontmost}>
 	<canvas
 		bind:this = {canvas}></canvas>
 	<div class='canvas-actions'>
@@ -292,7 +294,7 @@
 		left     : 10px;
 		display  : flex;
 		gap      : 4px;
-		z-index  : 5;
+		z-index  : var(--z-action);
 	}
 
 	.canvas-btn {
@@ -322,7 +324,7 @@
 		gap             : 4px;
 		flex-wrap       : wrap;
 		justify-content : center;
-		z-index         : 5;
+		z-index         : var(--z-action);
 	}
 
 	.so-btn {
@@ -359,7 +361,7 @@
 		border     : none;
 		outline    : none;
 		background : white;
-		z-index    : 10;
+		z-index    : var(--z-frontmost);
 	}
 
 	.ang-edit {
@@ -372,7 +374,7 @@
 		border     : none;
 		outline    : none;
 		background : white;
-		z-index    : 10;
+		z-index    : var(--z-frontmost);
 	}
 
 	.label-edit {
@@ -389,6 +391,6 @@
 		border         : none;
 		outline        : none;
 		background     : white;
-		z-index        : 10;
+		z-index        : var(--z-frontmost);
 	}
 </style>

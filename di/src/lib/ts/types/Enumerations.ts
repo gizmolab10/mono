@@ -7,11 +7,11 @@ export enum T_Startup {
 	ready,
 }
 
-export enum T_Search {
-	off,
-	enter,
-	results,
-	selected,
+export enum T_Layer {
+	common,
+	hideable,
+	action,
+	frontmost,
 }
 
 export enum T_Hit_3D {
@@ -24,12 +24,12 @@ export enum T_Hit_3D {
 	none,
 }
 
-export enum T_Editing {
-	none,
-	angles,
-	dimension,
-	face_label,
-	details_name,
+// the order of the following is unimportant
+
+export enum T_Details {
+	preferences = 1,
+	selection	= 2,
+	library		= 4,
 }
 
 export enum T_Decorations {
@@ -39,44 +39,19 @@ export enum T_Decorations {
 	both       = 'both',
 }
 
-export enum T_Detail {
-	header,
-	actions,
-	selection,
-	preferences,
-	data,
-}
-
-export enum T_Action {
-	browse,
-	show,
-	center,
-	add,
-	delete,
-	move,
-}
-
-export enum T_Layer {
-	common,
-	graph,
-	line,
-	dot,
-	text,
-	details,
-	stackable,
-	action,
-	hideable,
-	rubberband,
-	frontmost,
-}
-
-// the order of the following is unimportant
-
 export enum T_Units {
 	imperial = 'imperial',
 	metric   = 'metric',
 	marine   = 'marine',
 	archaic  = 'archaic',
+}
+
+export enum T_Editing {
+	details_name,
+	face_label,
+	dimension,
+	angles,
+	none,
 }
 
 export enum T_Unit {

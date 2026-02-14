@@ -19,9 +19,7 @@ export enum T_Preference {
 	unitSystem 		= 'unitSystem',
 
 	// Hideables
-	showSelection    = 'showSelection',
-	showPreferences  = 'showPreferences',
-	showLibrary      = 'showLibrary',
+	visibleDetails   = 'visibleDetails',
 
 	// View
 	decorations      = 'decorations',

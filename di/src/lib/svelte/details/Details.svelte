@@ -1,12 +1,11 @@
 <script lang='ts'>
+	import { T_Details } from '../../ts/types/Enumerations';
 	import D_Preferences from './D_Preferences.svelte';
 	import D_Selection from './D_Selection.svelte';
 	import D_Library from './D_Library.svelte';
 	import { colors } from '../../ts/draw/Colors';
-	import { stores } from '../../ts/managers';
 	import Hideable from './Hideable.svelte';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
-	const { w_show_selection, w_show_preferences, w_show_library } = stores;
 
 </script>
 
@@ -18,15 +17,15 @@
 	style:--bg       = {$w_background_color}>
 
 	<div class='banner-zone'>
-		<Hideable title='preferences' id='preferences' visible={w_show_preferences}>
+		<Hideable title='preferences' id='preferences' detail={T_Details.preferences}>
 			<D_Preferences />
 		</Hideable>
 
-		<Hideable title='selection' id='selection' visible={w_show_selection}>
+		<Hideable title='selection' id='selection' detail={T_Details.selection}>
 			<D_Selection />
 		</Hideable>
 
-		<Hideable title='library' id='library' visible={w_show_library}>
+		<Hideable title='library' id='library' detail={T_Details.library}>
 			<D_Library />
 		</Hideable>
 	</div>

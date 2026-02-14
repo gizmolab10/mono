@@ -1,40 +1,46 @@
 <script lang='ts'>
+	import { T_Details, T_Layer } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
-	import type { Writable } from 'svelte/store';
+	import { stores } from '../../ts/managers';
 	import { tick } from 'svelte';
 	const { w_accent_color } = colors;
+	const { w_t_details } = stores;
 
 	let {
 		title,
 		id,
-		visible,
+		detail,
 		children
 	} : {
 		title    : string;
 		id       : string;
-		visible  : Writable<boolean>;
+		detail   : T_Details;
 		children : import('svelte').Snippet;
 	} = $props();
 
+	let is_visible = $derived(($w_t_details & detail) !== 0);
+
 	async function toggle() {
-		visible.update(v => !v);
+		w_t_details.update(v => v ^ detail);
 		await tick();
 		hits.recalibrate();
 	}
 </script>
 
-<div class='hideable'>
+<div class='hideable'
+	style:--z-common={T_Layer.common}
+	style:--z-hideable={T_Layer.hideable}>
 	<button
 		class='banner'
-		class:open={$visible}
+		class:open={is_visible}
 		style:--banner={colors.banner}
 		style:--accent={$w_accent_color}
 		use:hit_target={{ id: `hideable-${id}`, onpress: toggle }}>
 		<span class='banner-title'>{title}</span>
 	</button>
-	{#if $visible}
+	{#if is_visible}
 		<div class='slot'>
 			{@render children()}
 		</div>
@@ -70,7 +76,7 @@
 		position   : absolute;
 		content    : '';
 		inset      : 0;
-		z-index    : 0;
+		z-index    : var(--z-common);
 	}
 
 	.banner:global([data-hitting])::before {
@@ -80,7 +86,7 @@
 
 	.banner-title {
 		position : relative;
-		z-index  : 1;
+		z-index  : var(--z-hideable);
 	}
 
 	.slot {

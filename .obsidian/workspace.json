@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/separators.md",
+                "file": "di/notes/work/14.details.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of separators"
+              "title": "Outline of 14.details"
             }
           }
         ],
@@ -240,8 +240,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "ed6835991ce431f7",
+  "active": "8db745942f707b1f",
   "lastOpenFiles": [
+    "di/notes/work/separators.md",
     "di/src/lib/svelte/details/D_Selection.svelte",
     "di/src/lib/svelte/details/D_Attributes.svelte",
     "di/src/lib/svelte/details/Details.svelte",
@@ -251,7 +252,6 @@
     "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
     "Screenshot 2026-02-14 at 12.12.38 PM.png",
     "di/notes/work/code.debt.md",
-    "di/notes/work/separators.md",
     "di/notes/work/14.details.md",
     "di/src/lib/svelte/details/D_Preferences.svelte",
     "di/src/lib/svelte/details/Hideable.svelte",
@@ -262,7 +262,6 @@
     "di/notes/work/done/code.debt.done.md",
     "di/notes/work/14.snap.buttons.md",
     "ws/vite.config.js.timestamp-1771034910999-635d04e5244.mjs",
-    "logs/update-docs.error.di.log",
     "di/notes/architecture/quaternions.md",
     "di/notes/architecture/index.md",
     "di/notes/work/index.md",
