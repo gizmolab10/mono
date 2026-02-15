@@ -68,10 +68,6 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
-                      text: '3D.primer',
-                      link: '/di/notes/architecture/3D.primer'
-                    },
-                    {
                       text: 'Algebra',
                       link: '/di/notes/architecture/algebra'
                     },
@@ -80,16 +76,8 @@ export default defineConfig({
                       link: '/di/notes/architecture/details'
                     },
                     {
-                      text: 'Drag',
-                      link: '/di/notes/architecture/drag'
-                    },
-                    {
                       text: 'Files',
                       link: '/di/notes/architecture/files'
-                    },
-                    {
-                      text: 'Intersecting.faces',
-                      link: '/di/notes/architecture/intersecting.faces'
                     },
                     {
                       text: 'Managers',
@@ -104,20 +92,43 @@ export default defineConfig({
                       link: '/di/notes/architecture/project'
                     },
                     {
-                      text: 'Quaternions',
-                      link: '/di/notes/architecture/quaternions'
-                    },
-                    {
-                      text: 'Rendering.types',
-                      link: '/di/notes/architecture/rendering.types'
-                    },
-                    {
-                      text: 'Spatial',
-                      link: '/di/notes/architecture/spatial'
-                    },
-                    {
-                      text: 'Two.dimensions',
-                      link: '/di/notes/architecture/two.dimensions'
+                      text: 'Render >',
+                      link: '/di/notes/architecture/render/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: '3D.primer',
+                          link: '/di/notes/architecture/render/3D.primer'
+                        },
+                        {
+                          text: 'Drag',
+                          link: '/di/notes/architecture/render/drag'
+                        },
+                        {
+                          text: 'Intersecting.faces',
+                          link: '/di/notes/architecture/render/intersecting.faces'
+                        },
+                        {
+                          text: 'Quaternions',
+                          link: '/di/notes/architecture/render/quaternions'
+                        },
+                        {
+                          text: 'Rendering.types',
+                          link: '/di/notes/architecture/render/rendering.types'
+                        },
+                        {
+                          text: 'Spatial',
+                          link: '/di/notes/architecture/render/spatial'
+                        },
+                        {
+                          text: 'Three.dimensions',
+                          link: '/di/notes/architecture/render/three.dimensions'
+                        },
+                        {
+                          text: 'Two.dimensions',
+                          link: '/di/notes/architecture/render/two.dimensions'
+                        }
+                      ]
                     }
                   ]
                 },
@@ -189,8 +200,8 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
-                      text: '15.attributes',
-                      link: '/di/notes/work/15.attributes'
+                      text: '16.formulas',
+                      link: '/di/notes/work/16.formulas'
                     },
                     {
                       text: 'Code.debt',
@@ -267,6 +278,10 @@ export default defineConfig({
                         {
                           text: '14.details',
                           link: '/di/notes/work/milestones/14.details'
+                        },
+                        {
+                          text: '15.attributes',
+                          link: '/di/notes/work/milestones/15.attributes'
                         },
                         {
                           text: '2.panel',

@@ -27,10 +27,6 @@ index.html
 5. Hooks up animation tick → inner cube spin + render
 6. Starts the loop
 
-## Types
-
-See [rendering.types.md](rendering.types.md).
-
 ## Scene Graph
 
 i wanted nested rotations without gimbal lock. Each `O_Scene` can have a `parent`—child transforms are relative to parent's world matrix.

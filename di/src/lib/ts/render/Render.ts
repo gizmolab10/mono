@@ -19,6 +19,8 @@ class Render {
   private occluding_index: Flatbush | null = null;  /** Spatial index for screen-space face bounding boxes (rebuilt each frame). */
   ctx!: CanvasRenderingContext2D;
   private mvp_matrix = mat4.create();
+  private cached_world: mat4 | null = null;  /** Last world matrix passed to project_vertex (by reference). */
+  private cached_mvp = mat4.create();        /** MVP computed from cached_world — reused when world matrix hasn't changed. */
   private canvas!: HTMLCanvasElement;
   private size: Size = Size.zero;
   private dpr = 1;
@@ -71,6 +73,7 @@ class Render {
     this.dimension_rects = [];
     this.face_name_rects = [];
     this.angular_rects = [];
+    this.cached_world = null;  // invalidate MVP cache (camera may have moved)
 
     const objects = scene.get_all();
     const is_2d = stores.current_view_mode() === '2d';
@@ -243,10 +246,14 @@ class Render {
   project_vertex(v: vec3, world_matrix: mat4): Projected {
     const point = vec4.fromValues(v[0], v[1], v[2], 1);
 
-    mat4.multiply(this.mvp_matrix, camera.view, world_matrix);
-    mat4.multiply(this.mvp_matrix, camera.projection, this.mvp_matrix);
+    if (world_matrix !== this.cached_world) {
+      mat4.multiply(this.mvp_matrix, camera.view, world_matrix);
+      mat4.multiply(this.mvp_matrix, camera.projection, this.mvp_matrix);
+      mat4.copy(this.cached_mvp, this.mvp_matrix);
+      this.cached_world = world_matrix;
+    }
 
-    vec4.transformMat4(point, point, this.mvp_matrix);
+    vec4.transformMat4(point, point, this.cached_mvp);
     const w = point[3];
     return {
       x: (point[0] / w + 1) * 0.5 * this.size.width,
@@ -419,8 +426,29 @@ class Render {
       obj_faces.push(faces);
     }
 
+    // AABB per object — min/max of all world-space face corners
+    const mins: vec3[] = [];
+    const maxs: vec3[] = [];
+    for (let i = 0; i < obj_faces.length; i++) {
+      const lo = vec3.fromValues(Infinity, Infinity, Infinity);
+      const hi = vec3.fromValues(-Infinity, -Infinity, -Infinity);
+      for (const face of obj_faces[i]) {
+        for (const c of face.corners) {
+          vec3.min(lo, lo, c);
+          vec3.max(hi, hi, c);
+        }
+      }
+      mins.push(lo);
+      maxs.push(hi);
+    }
+
     for (let i = 0; i < objects.length; i++) {
       for (let j = i + 1; j < objects.length; j++) {
+        // AABB early-out: skip face pairs if bounding boxes don't overlap
+        if (mins[i][0] > maxs[j][0] || mins[j][0] > maxs[i][0] ||
+            mins[i][1] > maxs[j][1] || mins[j][1] > maxs[i][1] ||
+            mins[i][2] > maxs[j][2] || mins[j][2] > maxs[i][2]) continue;
+
         for (let fi_a = 0; fi_a < obj_faces[i].length; fi_a++) {
           for (let fi_b = 0; fi_b < obj_faces[j].length; fi_b++) {
             this.intersect_face_pair(ctx, obj_faces[i][fi_a], obj_faces[j][fi_b], objects[j].color);

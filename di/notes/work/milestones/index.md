@@ -23,6 +23,7 @@ All done through 11.
 - [12.hierarchy](./12.hierarchy.md)
 - [13.algebra](./13.algebra.md)
 - [14.details](./14.details.md)
+- [15.attributes](./15.attributes.md)
 - [2.panel](./2.panel.md)
 - [3.docs](./3.docs.md)
 - [4.hits.manager](./4.hits.manager.md)

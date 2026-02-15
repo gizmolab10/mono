@@ -11,6 +11,13 @@
       "ctime": 1770353816811,
       "path": "me/notes/work/revisit.me.md",
       "title": "me"
+    },
+    {
+      "type": "file",
+      "ctime": 1771147401223,
+      "path": "di/notes/work/three.dimensions.md",
+      "subpath": "#Intersection detection (AABB early-out done)",
+      "title": "performance"
     }
   ]
 }
