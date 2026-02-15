@@ -156,6 +156,7 @@ class Engine {
           drag.rotate_object(target, prev, curr, alt_key);
         }
       }
+      stores.tick();
       scenes.save();
     });
 

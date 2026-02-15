@@ -7,7 +7,7 @@
 	import { engine } from '../../ts/render';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
 	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details, w_front_face } = stores;
-	const face_labels = ['Fr', 'Bk', 'L', 'R', 'T', 'B'];
+	const face_labels = ['front', 'back', 'left', 'right', 'top', 'bottom'];
 
 	let show_dimensions = $derived($w_decorations === T_Decorations.dimensions || $w_decorations === T_Decorations.both);
 	let show_angles     = $derived($w_decorations === T_Decorations.angles || $w_decorations === T_Decorations.both);

@@ -14,6 +14,7 @@ class Stores {
 	w_all_sos			= writable<Smart_Object[]>([]);
 	w_front_face		= writable<number>(-1);
 	w_scale  			= writable<number>(22);
+	w_tick				= writable<number>(0);
 
 	// Persistent
 	w_decorations       = this.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.both);
@@ -48,6 +49,9 @@ class Stores {
 	}
 	toggle_solid():							void { this.w_solid.update(v => !v); }
 	toggle_details():						void { this.w_show_details.update(v => !v); }
+
+	// Tick (bumped when SO properties change on canvas — triggers reactive updates)
+	tick(): void { this.w_tick.update(n => n + 1); }
 
 	// Editing
 	editing():							T_Editing { return get(this.w_editing); }

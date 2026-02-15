@@ -69,6 +69,7 @@ class Angulars {
 		orientation.recompute_max_bounds(so);
 		constraints.propagate(so);
 
+		stores.tick();
 		scenes.save();
 		this.w_s_angular.set(null);
 		stores.w_editing.set(T_Editing.none);

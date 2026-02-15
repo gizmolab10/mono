@@ -77,6 +77,7 @@ class Dimensions {
 		state.so.set_bound(max_bound, center + half);
 		constraints.propagate(state.so);
 
+		stores.tick();
 		scenes.save();
 		this.w_s_dimensions.set(null);
 		stores.w_editing.set(T_Editing.none);
