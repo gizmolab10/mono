@@ -95,3 +95,11 @@ The face-pair loop is O(faces_A × faces_B) for every pair of objects. Each pair
 
 
 The grid can also spike if zoom is extreme and spacing collapses — it doubles the spacing, but a deeply zoomed-in view could still produce thousands of grid lines before the doubling loop catches up.
+
+### Coplanar tolerance
+
+When two objects share a coplanar face, floating point drift through quaternion rotations and world matrices means "on the plane" reads as slightly in front or slightly behind, frame to frame. Three places needed a tolerance of `1e-4` to stop the flicker:
+
+- **Intersection detection** (`intersect_face_pair`): `cross(nA, nB)` produces a tiny non-zero direction for near-coplanar faces. The `eps` check on `dir_len` culls these before the 2×2 solve.
+- **Edge occlusion** (`clip_segment_for_occlusion`): signed distance from edge endpoints to a face plane hovers around zero. The `plane_eps` tolerance treats "on the plane" as "in front."
+- **Label occlusion** (`is_point_occluded`): same signed-distance flicker for face name labels. Same fix.

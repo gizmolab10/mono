@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/architecture/render/three.dimensions.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt"
+              "title": "three.dimensions"
             }
           },
           {
@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/architecture/project.md",
+                "file": "di/notes/architecture/render/three.dimensions.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of project"
+              "title": "Outline of three.dimensions"
             }
           }
         ],
@@ -241,12 +241,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "51e1a0393ee0af94",
+  "active": "8db745942f707b1f",
   "lastOpenFiles": [
+    "di/notes/work/code.debt.md",
+    "di/notes/architecture/project.md",
     "logs/update-docs.error.mono.log",
     "di/notes/architecture/render/rendering.types.md",
-    "di/notes/architecture/project.md",
-    "di/notes/work/code.debt.md",
     "di/notes/architecture/render/index.md",
     "logs/update-docs.error.di.log",
     "di/notes/architecture/render/drag.md",

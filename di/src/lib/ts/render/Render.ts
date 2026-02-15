@@ -8,6 +8,7 @@ import { mat4, vec3, vec4 } from 'gl-matrix';
 import { Size } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
 import { debug } from '../common/Debug';
+import { k } from '../common/Constants';
 import { render_grid } from './R_Grid';
 import { drag } from '../editors/Drag';
 import { get } from 'svelte/store';
@@ -468,13 +469,11 @@ class Render {
     fB: { n: vec3; d: number; corners: vec3[] },
     color: string,
   ): { start: vec3; end: vec3 } | null {
-    const eps = 1e-8;
-
     // Line direction = cross(nA, nB)
     const dir = vec3.create();
     vec3.cross(dir, fA.n, fB.n);
     const dir_len = vec3.length(dir);
-    if (dir_len < eps) return null; // parallel planes
+    if (dir_len < k.coplanar_epsilon) return null; // parallel planes
     vec3.scale(dir, dir, 1 / dir_len);
 
     // Find a point on the intersection line by solving
@@ -572,7 +571,7 @@ class Render {
       const d1 = vec3.dot(face.n, w1) - face.d;
       const d2 = vec3.dot(face.n, w2) - face.d;
 
-      if (d1 > 0 && d2 > 0) continue;
+      if (d1 > -k.coplanar_epsilon && d2 > -k.coplanar_epsilon) continue;
 
       // Find screen-space t where the segment crosses the face plane
       // by projecting the world-space crossing point to screen
@@ -797,7 +796,7 @@ class Render {
 
       // Is the label centroid behind this face's plane?
       const dist = vec3.dot(occ.n, world_centroid) - occ.d;
-      if (dist > 0) continue; // in front of this face, not occluded by it
+      if (dist > -k.coplanar_epsilon) continue; // in front of (or coplanar with) this face, not occluded by it
 
       // Is the screen point inside this face's screen polygon?
       if (this.point_in_polygon_2d(sx, sy, occ.poly)) return true;
