@@ -33,10 +33,10 @@ export enum T_Details {
 }
 
 export enum T_Decorations {
-	none,
-	dimensions,
-	angles,
-	both,
+	none       = 0,
+	dimensions = 1,
+	angles     = 2,
+	both       = 3,
 }
 
 export enum T_Units {

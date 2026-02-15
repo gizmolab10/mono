@@ -30,9 +30,11 @@ class Stores {
 
 	current_orientation():				    quat { const a = get(this.w_orientation); return quat.fromValues(a[0], a[1], a[2], a[3]); }
 	tick():									void { this.w_tick.update(n => n + 1); }	// triggers reactive updates
+	toggle_dimensionals():					void { this.w_decorations.update(v => v ^ T_Decorations.dimensions); }
+	toggle_angulars():    					void { this.w_decorations.update(v => v ^ T_Decorations.angles); }
 	set_orientation(q: quat):			    void { this.w_orientation.set([q[0], q[1], q[2], q[3]]); }
-	toggle_solid():							void { this.w_solid.update(v => !v); }
 	toggle_details():						void { this.w_show_details.update(v => !v); }
+	toggle_solid():							void { this.w_solid.update(v => !v); }
 	set_selection(result:  Hit_3D_Result | null) { this.w_selection.set(result); }
 	selection():		   Hit_3D_Result | null  { return get(this.w_selection); }
 	current_view_mode():			 '2d' | '3d' { return get(this.w_view_mode); }
@@ -44,33 +46,6 @@ class Stores {
 	is_solid():							 boolean { return get(this.w_solid); }
 	show_details():						 boolean { return get(this.w_show_details); }
 	is_editing():						 boolean { return get(this.w_editing) !== T_Editing.none; }
-
-	toggle_dimensionals(): void {
-		this.w_decorations.update(v => {
-			if (v === T_Decorations.both) return T_Decorations.angles;
-			if (v === T_Decorations.dimensions) return T_Decorations.none;
-			if (v === T_Decorations.angles) return T_Decorations.both;
-			return T_Decorations.dimensions; // none → dimensions
-		});
-	}
-	toggle_angulars(): void {
-		this.w_decorations.update(v => {
-			if (v === T_Decorations.both) return T_Decorations.dimensions;
-			if (v === T_Decorations.angles) return T_Decorations.none;
-			if (v === T_Decorations.dimensions) return T_Decorations.both;
-			return T_Decorations.angles; // none → angles
-		});
-	}
-
-	show_dimensionals(): boolean {
-		const d = get(this.w_decorations);
-		return d === T_Decorations.dimensions || d === T_Decorations.both;
-	}
-
-	show_angulars(): boolean {
-		const d = get(this.w_decorations);
-		return d === T_Decorations.angles || d === T_Decorations.both;
-	}
 
 	private persistent<T>(key: T_Preference, fallback: T): Writable<T> {
 		const w = writable<T>(preferences.read<T>(key) ?? fallback);

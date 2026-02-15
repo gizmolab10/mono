@@ -2,7 +2,6 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] organize architecture notes
 - [ ] [[16.formulas]]
 - [ ] [[separators]]
 - [ ] use codegraph

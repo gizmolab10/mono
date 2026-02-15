@@ -469,6 +469,8 @@ class Render {
     fB: { n: vec3; d: number; corners: vec3[] },
     color: string,
   ): { start: vec3; end: vec3 } | null {
+    const eps = 1e-8;
+
     // Line direction = cross(nA, nB)
     const dir = vec3.create();
     vec3.cross(dir, fA.n, fB.n);

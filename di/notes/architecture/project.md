@@ -1,6 +1,6 @@
 # Project Architecture
 
-How does the app actually run? Here's the flow.
+How does the app actually run? Here's the big picture.
 
 ## Entry Flow
 
@@ -8,56 +8,53 @@ How does the app actually run? Here's the flow.
 index.html
     └── src/main.ts
             └── App.svelte
-                    └── init(canvas)  ← from src/lib/ts/test.ts
+                    └── Main.svelte
+                            ├── Controls.svelte   (top bar)
+                            ├── Details.svelte     (left sidebar)
+                            └── Graph.svelte       (canvas → Engine.setup)
 ```
 
-**index.html** loads the module.
+**main.ts** mounts the Svelte app. **App.svelte** renders Main. **Graph.svelte** grabs the canvas element and hands it to `engine.setup()`, which wires everything: camera, scene, animation loop, input handlers, saved state restoration. [Managers](di/notes/architecture/core/managers), [components](di/notes/components/index) and data flesh out the app.
 
-**main.ts** mounts the Svelte app.
-
-**App.svelte** renders the canvas and UI, calls `init(canvas)` on mount.
-
-**Render.test.ts** wires everything together:
-
-
-1. Initializes managers with the canvas
-2. Creates scene objects
-3. Sets initial rotations
-4. Hooks up input → outer cube rotation
-5. Hooks up animation tick → inner cube spin + render
-6. Starts the loop
-
-## Scene Graph
-
-i wanted nested rotations without gimbal lock. Each `O_Scene` can have a `parent`—child transforms are relative to parent's world matrix.
+## The Core Loop
 
 ```
-outer_cube (teal)
-  └── inner_cube (red, scale 0.4, auto-rotates)
+animation.on_tick()
+    → engine updates front face
+    → render.render()
+        → Phase 1: project all vertices (MVP)
+        → Phase 2: face fills (painter's algorithm)
+        → Phase 2b: occlusion index (Flatbush)
+        → Phase 2c: intersection lines between overlapping SOs
+        → Phase 3: edges (clipped against occluding faces)
+        → Overlays: labels, dimensions, angulars, grid, debug
 ```
 
-Drag the outer cube, inner cube follows. Inner cube spins independently inside.
+Mouse/scroll input feeds through `Events_3D` → quaternion rotations on the selected SO. The render loop picks up the change next frame.
 
-## File Layout
+## Smart Objects
 
-See [files.md](files.md).
+The scene is made of `Smart_Object`s — cuboids with three axes (x, y, z), each carrying a start and end `Attribute`. Attributes hold bounds in mm. An SO wraps an `O_Scene` (the render-side record: vertices, edges, faces, parent, color). They are configured using an [[algebra]].
 
-## Pipeline
+SOs nest. Each child's world matrix multiplies through its parent's — no gimbal lock, quaternions throughout.
 
-The render pipeline, step by step:
+## Engine
 
+The boss. Engine owns:
 
-1. `render.get_world_matrix(obj)` — builds local matrix from quat + position + scale, multiplies by parent's world matrix
-2. `render.project_vertex(v, world_matrix)` — transforms through MVP, perspective divide, maps to screen
-3. `render.render_object(obj)` — projects vertices, draws edges with depth-based alpha
-4. `render.render()` — clears canvas, iterates `scene.get_all()`
+- **Cuboid topology** — the 12 edges and 6 faces every SO shares
+- **Scene lifecycle** — add child, delete SO, save/load via Scenes
+- **2D/3D mode** — in 2D, dragging accumulates a scratch orientation that snaps to face boundaries with animated transitions; in 3D, free rotation
+- **Input wiring** — mouse drag → rotation, scroll → zoom, click → hit testing
 
 ## Matrices
 
 | Matrix | Location | What it does |
-|----|----|----|
+|--------|----------|-------------|
 | `view` | `camera` | Camera transform via `mat4.lookAt` |
-| `projection` | `camera` | Perspective via `mat4.perspective` |
-| `mvp_matrix` | `render` | Combined MVP, reused per batch |
+| `projection` | `camera` | Perspective or orthographic projection |
+| `mvp_matrix` | `render` | Combined Model-View-Projection, cached per object |
 
+## Render Pipeline
 
+Detailed phase-by-phase breakdown lives in [[three.dimensions]]. The extracted overlay modules (dimensions, angulars, grid) each talk to Render through a slim host interface.

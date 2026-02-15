@@ -6,7 +6,7 @@ import Attribute from '../types/Attribute';
  *  Invariant: length = end - start. One of the three is derived from the other two. */
 export default class Axis {
 	attributes: Attribute[];
-	invariant: number = 2;
+	invariant: number = 1;
 	name: Axis_Name;
 
 	constructor(name: Axis_Name) {
