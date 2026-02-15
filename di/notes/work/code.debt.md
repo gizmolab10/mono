@@ -2,7 +2,10 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] [[15.attributes]]
+- [x] Render is gigantic. can it be simplified (eg, with helpers, factories, ...), or split into two classes? three...?
+	- extracted R_Dimensions.ts (~270 lines), R_Angulars.ts (~290 lines), R_Grid.ts (~120 lines)
+	- Render.ts: 1797 → 939 lines
+	- remaining candidates: Occlusion + Intersections (coupled)
 - [ ] use codegraph
 ---
 - [ ] pac: in all code files, use tabs that are 4 (not 2) spaces

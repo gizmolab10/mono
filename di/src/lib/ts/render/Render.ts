@@ -1,15 +1,14 @@
 import type { Projected, O_Scene, Dimension_Rect, Label_Rect, Angle_Rect } from '../types/Interfaces';
-import type Smart_Object from '../runtime/Smart_Object';
-import type { Axis_Name } from '../types/Types';
+import { render_dimensions } from './R_Dimensions';
 import { face_label } from '../editors/Face_Label';
 import { T_Hit_3D } from '../types/Enumerations';
-import { units, Units } from '../types/Units';
+import { render_angulars } from './R_Angulars';
 import { hits_3d } from '../managers/Hits_3D';
-import { mat4, quat, vec3, vec4 } from 'gl-matrix';
+import { mat4, vec3, vec4 } from 'gl-matrix';
 import { Size } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
-import { colors } from '../draw/Colors';
 import { debug } from '../common/Debug';
+import { render_grid } from './R_Grid';
 import { drag } from '../editors/Drag';
 import { get } from 'svelte/store';
 import { camera } from './Camera';
@@ -18,7 +17,7 @@ import Flatbush from 'flatbush';
 
 class Render {
   private occluding_index: Flatbush | null = null;  /** Spatial index for screen-space face bounding boxes (rebuilt each frame). */
-  private ctx!: CanvasRenderingContext2D;
+  ctx!: CanvasRenderingContext2D;
   private mvp_matrix = mat4.create();
   private canvas!: HTMLCanvasElement;
   private size: Size = Size.zero;
@@ -77,7 +76,7 @@ class Render {
     const is_2d = stores.current_view_mode() === '2d';
     const solid = stores.is_solid();
 
-    if (is_2d) this.render_grid(objects);
+    if (is_2d) render_grid(this, objects);
 
     // Phase 1: project all vertices and update hit-test caches
     const projected_map = new Map<string, Projected[]>();
@@ -196,134 +195,13 @@ class Render {
     }
 
     this.render_selection();
-    if (stores.show_dimensionals()) this.render_dimensions();
-    if (stores.show_angulars()) this.render_angulars();
+    if (stores.show_dimensionals()) render_dimensions(this);
+    if (stores.show_angulars()) render_angulars(this);
     this.render_hover();
     if (debug.enabled) this.render_front_face_label();
   }
 
-  // ═══════════════════════════════════════════════════════════════════
-  // 2D GRID
-  // ═══════════════════════════════════════════════════════════════════
-
-  private render_grid(objects: O_Scene[]): void {
-    const root_so = get(stores.w_root_so);
-    if (!root_so) return;
-
-    const front_face = hits_3d.front_most_face(root_so);
-    if (front_face < 0) return;
-
-    const [axis_a, axis_b] = root_so.face_axes(front_face);
-    const fixed_axis = root_so.face_fixed_axis(front_face);
-
-    // Find root SO's scene for world matrix
-    const root_scene = objects.find(o => o.so === root_so);
-    if (!root_scene) return;
-    const world = this.get_world_matrix(root_scene);
-
-    // Grid spacing in mm — start from precision, double until lines are ≥ min_px apart
-    const system = Units.current_unit_system();
-    const precision = stores.current_precision();
-    const max_dim = Math.max(root_so.width, root_so.height, root_so.depth);
-    const base_spacing = units.grid_spacing_mm(system, precision, max_dim);
-    if (base_spacing <= 0) return;
-
-    // Measure screen-space gap: project two adjacent points along axis_a
-    const a_ref = axis_a === 'x' ? root_so.x_min : axis_a === 'y' ? root_so.y_min : root_so.z_min;
-    const ref_point = (offset: number): vec3 => {
-      const p = vec3.create();
-      const set = (ax: Axis_Name, v: number) => { if (ax === 'x') p[0] = v; else if (ax === 'y') p[1] = v; else p[2] = v; };
-      set(axis_a, a_ref + offset);
-      set(axis_b, axis_b === 'x' ? root_so.x_min : axis_b === 'y' ? root_so.y_min : root_so.z_min);
-      set(fixed_axis, fixed_axis === 'x' ? (root_so.x_min + root_so.x_max) / 2
-        : fixed_axis === 'y' ? (root_so.y_min + root_so.y_max) / 2
-        : (root_so.z_min + root_so.z_max) / 2);
-      return p;
-    };
-    const p0 = this.project_vertex(ref_point(0), world);
-    const p1 = this.project_vertex(ref_point(base_spacing), world);
-    const px_per_cell = Math.hypot(p1.x - p0.x, p1.y - p0.y);
-
-    const min_px = 8; // minimum pixels between grid lines
-    let spacing = base_spacing;
-    if (px_per_cell > 0) {
-      while (spacing * (px_per_cell / base_spacing) < min_px) spacing *= 2;
-    }
-
-    // Axis bounds — extend enough to fill the canvas
-    const canvas_diag_mm = px_per_cell > 0
-      ? Math.hypot(this.ctx.canvas.width, this.ctx.canvas.height) / (px_per_cell / base_spacing)
-      : max_dim * 50;
-    const bounds = (axis: Axis_Name): [number, number] => {
-      const min = axis === 'x' ? root_so.x_min : axis === 'y' ? root_so.y_min : root_so.z_min;
-      const max = axis === 'x' ? root_so.x_max : axis === 'y' ? root_so.y_max : root_so.z_max;
-      const mid = (min + max) / 2;
-      return [mid - canvas_diag_mm, mid + canvas_diag_mm];
-    };
-
-    // Fixed axis value (the plane of the front face)
-    const fixed_val = fixed_axis === 'x'
-      ? (root_so.x_min + root_so.x_max) / 2
-      : fixed_axis === 'y'
-        ? (root_so.y_min + root_so.y_max) / 2
-        : (root_so.z_min + root_so.z_max) / 2;
-
-    const [a_min, a_max] = bounds(axis_a);
-    const [b_min, b_max] = bounds(axis_b);
-
-    // Snap grid origin to SO edge alignment
-    const a_origin = axis_a === 'x' ? root_so.x_min : axis_a === 'y' ? root_so.y_min : root_so.z_min;
-    const b_origin = axis_b === 'x' ? root_so.x_min : axis_b === 'y' ? root_so.y_min : root_so.z_min;
-
-    const ctx = this.ctx;
-    ctx.save();
-    ctx.strokeStyle = get(colors.w_accent_color);
-    ctx.lineWidth = stores.line_thickness();
-    ctx.lineCap = 'round';
-    ctx.setLineDash([1, 4]);
-
-    const make_point = (a_val: number, b_val: number): vec3 => {
-      const p = vec3.create();
-      const set = (axis: Axis_Name, val: number) => {
-        if (axis === 'x') p[0] = val;
-        else if (axis === 'y') p[1] = val;
-        else p[2] = val;
-      };
-      set(axis_a, a_val);
-      set(axis_b, b_val);
-      set(fixed_axis, fixed_val);
-      return p;
-    };
-
-    // Lines along axis_a (sweep axis_b)
-    const a_start = a_origin - Math.ceil((a_origin - a_min) / spacing) * spacing;
-    for (let a = a_start; a <= a_max; a += spacing) {
-      const p1 = this.project_vertex(make_point(a, b_min), world);
-      const p2 = this.project_vertex(make_point(a, b_max), world);
-      if (p1.w < 0 || p2.w < 0) continue;
-      ctx.beginPath();
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
-      ctx.stroke();
-    }
-
-    // Lines along axis_b (sweep axis_a)
-    const b_start = b_origin - Math.ceil((b_origin - b_min) / spacing) * spacing;
-    for (let b = b_start; b <= b_max; b += spacing) {
-      const p1 = this.project_vertex(make_point(a_min, b), world);
-      const p2 = this.project_vertex(make_point(a_max, b), world);
-      if (p1.w < 0 || p2.w < 0) continue;
-      ctx.beginPath();
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
-      ctx.stroke();
-    }
-
-    ctx.setLineDash([]);
-    ctx.restore();
-  }
-
-  private get_world_matrix(obj: O_Scene): mat4 {
+  get_world_matrix(obj: O_Scene): mat4 {
     const so = obj.so;
     const center: vec3 = [
       (so.x_min + so.x_max) / 2,
@@ -362,7 +240,7 @@ class Render {
     return local;
   }
 
-  private project_vertex(v: vec3, world_matrix: mat4): Projected {
+  project_vertex(v: vec3, world_matrix: mat4): Projected {
     const point = vec4.fromValues(v[0], v[1], v[2], 1);
 
     mat4.multiply(this.mvp_matrix, camera.view, world_matrix);
@@ -900,7 +778,7 @@ class Render {
   }
 
   /** Ray-casting point-in-polygon test (2D screen space). */
-  private point_in_polygon_2d(px: number, py: number, poly: { x: number; y: number }[]): boolean {
+  point_in_polygon_2d(px: number, py: number, poly: { x: number; y: number }[]): boolean {
     let inside = false;
     for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
       const yi = poly[i].y, yj = poly[j].y;
@@ -970,6 +848,7 @@ class Render {
     ctx.restore();
   }
 
+  // for hover and selection
   private render_hit_dots(hit: { so: { scene: O_Scene | null }, type: T_Hit_3D, index: number }, projected: Projected[]): void {
     if (!hit.so.scene) return;
 
@@ -1007,218 +886,6 @@ class Render {
     return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: (a.z + b.z) / 2, w: Math.min(a.w, b.w) };
   }
 
-  // ═══════════════════════════════════════════════════════════════════
-  // DIMENSION RENDERING
-  // ═══════════════════════════════════════════════════════════════════
-
-  private render_dimensions(): void {
-    // Show dimensions for all objects, regardless of selection
-    for (const obj of scene.get_all()) {
-      const projected = hits_3d.get_projected(obj.id);
-      if (!projected) continue;
-
-      const so = obj.so;
-      const world_matrix = this.get_world_matrix(obj);
-
-      // In 2D mode, show only the two axes visible on the front face
-      const is_2d_mode = stores.current_view_mode() === '2d';
-      const front_face = is_2d_mode ? hits_3d.front_most_face(so) : -1;
-      const all_axes: Axis_Name[] = (is_2d_mode && front_face >= 0) ? so.face_axes(front_face) : ['x', 'y', 'z'];
-      for (const axis of all_axes) {
-        this.render_axis_dimension(so, axis, projected, world_matrix);
-      }
-    }
-  }
-
-  private render_axis_dimension(
-    so: Smart_Object,
-    axis: Axis_Name,
-    projected: Projected[],
-    world_matrix: mat4
-  ): void {
-    // Find all silhouette edge candidates for this axis (sorted best → worst)
-    const candidates = this.find_best_edge_for_axis(so, axis, projected);
-    if (!candidates || candidates.length === 0) return;
-
-    const value = axis === 'x' ? so.width : axis === 'y' ? so.height : so.depth;
-
-    // Try each candidate; stop at the first that isn't occluded
-    for (const { v1_idx, v2_idx } of candidates) {
-      // Get witness direction in screen space (perpendicular to edge on screen,
-      // pointing away from object center). Fixed pixel distances regardless of scale.
-      let witness_dir = this.edge_witness_direction(so, v1_idx, v2_idx, axis, projected, world_matrix);
-
-      // Pick direction that points away from cube center
-      const verts = so.vertices;
-      const v1 = verts[v1_idx], v2 = verts[v2_idx];
-      const edge_mid = vec3.fromValues((v1[0] + v2[0]) / 2, (v1[1] + v2[1]) / 2, (v1[2] + v2[2]) / 2);
-      // Vector from SO center to edge midpoint — determines "outward"
-      const cx = (so.x_min + so.x_max) / 2;
-      const cy = (so.y_min + so.y_max) / 2;
-      const cz = (so.z_min + so.z_max) / 2;
-      const outward = vec3.fromValues(edge_mid[0] - cx, edge_mid[1] - cy, edge_mid[2] - cz);
-      const dot = vec3.dot(witness_dir, outward);
-      if (dot < 0) {
-        witness_dir = vec3.negate(vec3.create(), witness_dir);
-      }
-
-      // Project edge endpoints to screen
-      const p1 = projected[v1_idx], p2 = projected[v2_idx];
-      if (p1.w < 0 || p2.w < 0) continue;
-
-      // Witness direction in screen space: project witness_dir via world matrix
-      const origin_3d = vec3.create();
-      const p_origin = this.project_vertex(origin_3d, world_matrix);
-      const p_witness = this.project_vertex(witness_dir, world_matrix);
-      let wx = p_witness.x - p_origin.x, wy = p_witness.y - p_origin.y;
-      const wlen = Math.sqrt(wx * wx + wy * wy);
-      if (wlen < 0.001) continue;
-      wx /= wlen; wy /= wlen;
-
-      // Fixed pixel distances
-      const gap_px = 4;        // gap from edge to witness line start
-      const dist_px = 20;      // edge to dimension line
-      const ext_px = 8;        // extension past dimension line
-
-      // Build all 6 screen-space points
-      const pw1_start: Projected = { x: p1.x + wx * gap_px, y: p1.y + wy * gap_px, z: p1.z, w: p1.w };
-      const pw2_start: Projected = { x: p2.x + wx * gap_px, y: p2.y + wy * gap_px, z: p2.z, w: p2.w };
-      const pw1_end: Projected = { x: p1.x + wx * (dist_px + ext_px), y: p1.y + wy * (dist_px + ext_px), z: p1.z, w: p1.w };
-      const pw2_end: Projected = { x: p2.x + wx * (dist_px + ext_px), y: p2.y + wy * (dist_px + ext_px), z: p2.z, w: p2.w };
-      const pd1: Projected = { x: p1.x + wx * dist_px, y: p1.y + wy * dist_px, z: p1.z, w: p1.w };
-      const pd2: Projected = { x: p2.x + wx * dist_px, y: p2.y + wy * dist_px, z: p2.z, w: p2.w };
-
-      const drawn = this.draw_dimension_3d(pw1_start, pw1_end, pw2_start, pw2_end, pd1, pd2, value, axis, so);
-      if (drawn) break;
-    }
-  }
-
-  // Algorithm B: Pick the witness direction most perpendicular to the edge on screen.
-  // The two candidates are the axes perpendicular to the edge axis in 3D.
-  private edge_witness_direction(
-    so: Smart_Object,
-    v1_idx: number, v2_idx: number,
-    edge_axis: Axis_Name,
-    projected: Projected[],
-    world_matrix: mat4
-  ): vec3 {
-
-    // Edge direction on screen
-    const ep1 = projected[v1_idx], ep2 = projected[v2_idx];
-    const edge_dx = ep2.x - ep1.x, edge_dy = ep2.y - ep1.y;
-    const edge_len = Math.sqrt(edge_dx * edge_dx + edge_dy * edge_dy);
-    if (edge_len < 0.001) return so.axis_vector('x'); // degenerate
-    const edge_ux = edge_dx / edge_len, edge_uy = edge_dy / edge_len;
-
-    // The two candidate witness axes are perpendicular to the edge in 3D
-    const all_axes: Axis_Name[] = ['x', 'y', 'z'];
-    const candidates = all_axes.filter(a => a !== edge_axis);
-
-    // Project origin and each candidate unit vector to screen
-    const origin = vec3.create();
-    const p0 = this.project_vertex(origin, world_matrix);
-
-    let best_axis = candidates[0];
-    let best_perp = -Infinity;
-
-    for (const axis of candidates) {
-      const unit_vec = so.axis_vector(axis);
-      const p1 = this.project_vertex(unit_vec, world_matrix);
-      const wx = p1.x - p0.x, wy = p1.y - p0.y;
-
-      // Cross product magnitude = perpendicularity (scaled by witness length)
-      const cross = Math.abs(edge_ux * wy - edge_uy * wx);
-
-      if (cross > best_perp) {
-        best_perp = cross;
-        best_axis = axis;
-      }
-    }
-
-    return so.axis_vector(best_axis);
-  }
-
-  // Algorithm A: Find silhouette edges for a given axis, sorted best → worst.
-  // A silhouette edge sits on the circumference — one adjacent face is front-facing,
-  // the other is back-facing. There are always exactly 2 per axis; prefer the front one.
-  // Returns all candidates so the caller can fall back if the best is occluded.
-  private find_best_edge_for_axis(
-    so: Smart_Object,
-    axis: Axis_Name,
-    projected: Projected[]
-  ): { v1_idx: number; v2_idx: number }[] | null {
-    if (!so.scene?.faces) return null;
-    const verts = so.vertices;
-    const faces = so.scene.faces;
-    const edges = so.scene.edges;
-
-    // Build edge→face adjacency: for each edge, find which 2 faces contain it
-    const edge_faces = (v1: number, v2: number): number[] => {
-      const result: number[] = [];
-      for (let fi = 0; fi < faces.length; fi++) {
-        const face = faces[fi];
-        // Check if both vertices appear adjacent in the face
-        for (let i = 0; i < face.length; i++) {
-          const a = face[i], b = face[(i + 1) % face.length];
-          if ((a === v1 && b === v2) || (a === v2 && b === v1)) {
-            result.push(fi);
-            break;
-          }
-        }
-      }
-      return result;
-    };
-
-    type SilhouetteCandidate = {
-      v1: number; v2: number;
-      front_face: number;  // index of the front-facing adjacent face
-    };
-    const silhouettes: SilhouetteCandidate[] = [];
-
-    // Check every edge in the topology
-    for (const [v1, v2] of edges) {
-      // Only consider edges along the target axis
-      if (this.edge_axis(verts[v1], verts[v2]) !== axis) continue;
-
-      const adj = edge_faces(v1, v2);
-      if (adj.length !== 2) continue;
-
-      const w0 = this.face_winding(faces[adj[0]], projected);
-      const w1 = this.face_winding(faces[adj[1]], projected);
-
-      // Silhouette: one front-facing (negative winding), one back-facing (positive)
-      if (w0 < 0 && w1 >= 0) {
-        silhouettes.push({ v1, v2, front_face: adj[0] });
-      } else if (w1 < 0 && w0 >= 0) {
-        silhouettes.push({ v1, v2, front_face: adj[1] });
-      }
-    }
-
-    if (silhouettes.length === 0) return null;
-
-    // Prefer the silhouette edge whose front-facing face is most toward the viewer
-    // (most negative winding = most directly facing camera)
-    silhouettes.sort((a, b) => {
-      const wa = this.face_winding(faces[a.front_face], projected);
-      const wb = this.face_winding(faces[b.front_face], projected);
-      return wa - wb;  // most negative first
-    });
-
-    return silhouettes.map(s => ({ v1_idx: s.v1, v2_idx: s.v2 }));
-  }
-
-  // Determine which axis an edge runs along (or null if diagonal)
-  private edge_axis(v1: vec3, v2: vec3): Axis_Name | null {
-    const dx = Math.abs(v2[0] - v1[0]);
-    const dy = Math.abs(v2[1] - v1[1]);
-    const dz = Math.abs(v2[2] - v1[2]);
-    const eps = 0.01;
-    if (dx > eps && dy < eps && dz < eps) return 'x';
-    if (dy > eps && dx < eps && dz < eps) return 'y';
-    if (dz > eps && dx < eps && dy < eps) return 'z';
-    return null;
-  }
-
   /** Collect edge keys for a specific face (for guidance highlight). */
   private face_edge_keys(obj: O_Scene, face_index: number): Set<string> {
     const keys = new Set<string>();
@@ -1246,551 +913,27 @@ class Render {
   }
 
   // Compute face winding (negative = front-facing with CCW convention)
-  private face_winding(face: number[], projected: Projected[]): number {
+  face_winding(face: number[], projected: Projected[]): number {
     if (face.length < 3) return Infinity;
     const p0 = projected[face[0]], p1 = projected[face[1]], p2 = projected[face[2]];
     if (p0.w < 0 || p1.w < 0 || p2.w < 0) return Infinity;
     return (p1.x - p0.x) * (p2.y - p0.y) - (p1.y - p0.y) * (p2.x - p0.x);
   }
 
-  /** Check if a dimension's text rect is fully occluded by any front-facing face
-   *  from a different SO that's closer to the camera.  Depth is computed by
-   *  intersecting the camera ray through the dimension center with the face plane. */
-  private dimension_occluded(
-    cx: number, cy: number, w: number, h: number,
-    dim_z: number, owner_id: string,
-  ): boolean {
-    const hw = w / 2 + 4, hh = h / 2 + 4;  // padding matches Dimensions.hit_test
-    const rect_corners = [
-      { x: cx - hw, y: cy - hh },
-      { x: cx + hw, y: cy - hh },
-      { x: cx + hw, y: cy + hh },
-      { x: cx - hw, y: cy + hh },
-    ];
-    const center = { x: cx, y: cy };  // screen point for ray cast
-
-    for (const obj of scene.get_all()) {
-      if (obj.so.id === owner_id) continue;
-      if (!obj.faces) continue;
-      const projected = hits_3d.get_projected(obj.id);
-      if (!projected) continue;
-      const world = this.get_world_matrix(obj);
-
-      for (const face of obj.faces) {
-        if (this.face_winding(face, projected) >= 0) continue;
-
-        // Check all face vertices are in front of camera
-        if (face.some(vi => projected[vi].w < 0)) continue;
-
-        // Face polygon must contain all 4 corners of the text rect
-        const poly = face.map(vi => ({ x: projected[vi].x, y: projected[vi].y }));
-        if (!rect_corners.every(c => this.point_in_polygon_2d(c.x, c.y, poly))) continue;
-
-        // Ray through dimension center → face plane intersection depth
-        const face_z = hits_3d.face_depth_at(center, face, obj.so, world);
-        if (face_z === null) continue;
-
-        // Face is in front of the dimension → occluded
-        if (face_z < dim_z) return true;
-      }
-    }
-    return false;
-  }
-
-  /** Draw a dimension line. Returns true if drawn, false if skipped (occluded, clipped, etc.). */
-  private draw_dimension_3d(
-    w1_start: Projected, w1_end: Projected,
-    w2_start: Projected, w2_end: Projected,
-    d1: Projected, d2: Projected,
-    value: number,
-    axis: Axis_Name,
-    so: Smart_Object
-  ): boolean {
-    // Check all points are in front of camera
-    if (w1_start.w < 0 || w1_end.w < 0 || w2_start.w < 0 || w2_end.w < 0 || d1.w < 0 || d2.w < 0) return false;
-
-    const ctx = this.ctx;
-
-    // Text setup
-    ctx.font = '12px sans-serif';
-    const text = units.format_for_system(value, Units.current_unit_system(), stores.current_precision());
-    const textWidth = ctx.measureText(text).width;
-    const textHeight = 12; // approximate line height
-
-    // Dimension line direction
-    const midX = (d1.x + d2.x) / 2, midY = (d1.y + d2.y) / 2;
-    const dim_z = (d1.z + d2.z) / 2;
-
-    // Skip if occluded by a different SO's face
-    if (this.dimension_occluded(midX, midY, textWidth, textHeight, dim_z, so.id)) return false;
-
-    const dx = d2.x - d1.x, dy = d2.y - d1.y;
-    const lineLen = Math.sqrt(dx * dx + dy * dy);
-    if (lineLen < 1) return false;
-    const ux = dx / lineLen, uy = dy / lineLen;
-
-    // Algorithm C: compute gap as projected text bounding box onto dimension line
-    const padding = 8;
-    const gap = textWidth * Math.abs(ux) + textHeight * Math.abs(uy) + padding;
-    const arrowSize = 20; // space needed for arrows in normal layout
-
-    // Three cases based on available space
-    if (lineLen < gap) {
-      // Case 3: can't fit text at all — hide (including witness lines)
-      return false;
-    }
-
-    // Witness lines (only drawn if dimensional is visible)
-    ctx.strokeStyle = 'rgba(100, 100, 100, 0.7)';
-    ctx.lineWidth = 0.5;
-    ctx.beginPath();
-    ctx.moveTo(w1_start.x, w1_start.y);
-    ctx.lineTo(w1_end.x, w1_end.y);
-    ctx.moveTo(w2_start.x, w2_start.y);
-    ctx.lineTo(w2_end.x, w2_end.y);
-    ctx.stroke();
-
-    const halfGap = gap / 2;
-
-    if (lineLen >= gap + arrowSize) {
-      // Case 1: normal layout — arrows inside, pointing outward from text
-      ctx.beginPath();
-      ctx.moveTo(d1.x, d1.y);
-      ctx.lineTo(midX - ux * halfGap, midY - uy * halfGap);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(midX + ux * halfGap, midY + uy * halfGap);
-      ctx.lineTo(d2.x, d2.y);
-      ctx.stroke();
-
-      ctx.fillStyle = 'rgba(100, 100, 100, 0.7)';
-      this.draw_arrow(d1.x, d1.y, dx, dy);
-      this.draw_arrow(d2.x, d2.y, -dx, -dy);
-    } else {
-      // Case 2: inverted layout — extension lines go outward, arrows at witness lines point inward
-      const extLen = 30; // how far extension lines go past witness lines
-
-      // Extension lines go outward from d1 and d2
-      ctx.beginPath();
-      ctx.moveTo(d1.x, d1.y);
-      ctx.lineTo(d1.x - ux * extLen, d1.y - uy * extLen);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(d2.x, d2.y);
-      ctx.lineTo(d2.x + ux * extLen, d2.y + uy * extLen);
-      ctx.stroke();
-
-      // Arrows at d1/d2 (witness line positions), pointing inward toward text
-      // draw_arrow: tip at (x,y), base extends in (dx,dy) direction
-      ctx.fillStyle = 'rgba(100, 100, 100, 0.7)';
-      this.draw_arrow(d1.x, d1.y, -dx, -dy);
-      this.draw_arrow(d2.x, d2.y, dx, dy);
-    }
-
-    // Text centered between d1 and d2
-    ctx.fillStyle = 'white';
-    ctx.fillRect(midX - textWidth / 2 - 2, midY - textHeight / 2 - 1, textWidth + 4, textHeight + 2);
-    ctx.fillStyle = '#333';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, midX, midY);
-
-    // Record rect for click-to-edit (z = average depth of dimension line endpoints)
-    this.dimension_rects.push({
-      axis, so,
-      x: midX, y: midY,
-      w: textWidth, h: textHeight,
-      z: (d1.z + d2.z) / 2,
-      face_index: -1,
-    });
-    return true;
-  }
-
-  // ═══════════════════════════════════════════════════════════════════
-  // ANGULAR RENDERING — angle annotations between parent and child
-  // ═══════════════════════════════════════════════════════════════════
-  //
-  // Reads from so axis angle attributes directly — no intersection segments needed.
-  // For each non-zero axis angle, pick the most visible parent face
-  // perpendicular to that axis, compute hinge and witness directions from
-  // the rotation geometry, call render_angular() to draw.
-
-  /** Target screen-space arc radius in pixels (constant for all angulars). */
-  private static readonly ANGULAR_ARC_PX = 37;
-
-  /** Face indices grouped by their fixed axis.
-   *  faces[0],faces[1] have normal along z; [2],[3] along x; [4],[5] along y. */
-  private static readonly AXIS_FACE_INDICES: Record<string, [number, number]> = {
-    x: [2, 3],   // left (x_min), right (x_max)
-    y: [4, 5],   // top (y_max), bottom (y_min)
-    z: [0, 1],   // front (z_min), back (z_max)
-  };
-
-  private render_angulars(): void {
-    const objects = scene.get_all();
-    const identity = mat4.create();
-    const claimed_hinges: vec3[] = [];
-
-    for (const obj of objects) {
-      if (!obj.parent) continue;
-      const child_so = obj.so;
-      if (child_so.axes.every(a => Math.abs(a.angle.value) < 1e-10)) continue;
-
-      const parent_obj = obj.parent;
-      const parent_so = parent_obj.so;
-      const parent_projected = hits_3d.get_projected(parent_obj.id);
-      if (!parent_projected || !parent_obj.faces) continue;
-
-      const parent_world = this.get_world_matrix(parent_obj);
-      const parent_verts = parent_so.vertices;
-
-      // Child's world-space center (for orienting hinge toward child)
-      const child_world = this.get_world_matrix(obj);
-      const child_center_local: vec3 = [
-        (child_so.x_min + child_so.x_max) / 2,
-        (child_so.y_min + child_so.y_max) / 2,
-        (child_so.z_min + child_so.z_max) / 2,
-      ];
-      const child_center_w = vec3.create();
-      const cc4 = vec4.fromValues(child_center_local[0], child_center_local[1], child_center_local[2], 1);
-      vec4.transformMat4(cc4, cc4, child_world);
-      vec3.set(child_center_w, cc4[0], cc4[1], cc4[2]);
-
-      for (const axis of child_so.axes) {
-        const angle = axis.angle.value;
-        const degrees = Math.abs(angle) * 180 / Math.PI;
-        if (degrees < 0.5 || degrees > 89.5) continue;
-
-        // Pick the most visible parent face perpendicular to this rotation axis
-        const face_pair = Render.AXIS_FACE_INDICES[axis.name];
-        let best_fi = -1;
-        let best_winding = 0;
-        for (const fi of face_pair) {
-          const winding = this.face_winding(parent_obj.faces![fi], parent_projected);
-          if (winding >= 0) continue;         // back-facing
-          if (Math.abs(winding) < 8000) continue; // too flat
-          if (best_fi < 0 || winding < best_winding) {
-            best_fi = fi;
-            best_winding = winding;
-          }
-        }
-        if (best_fi < 0) continue;
-
-        // Compute parent face corners in world space
-        const face_vertex_indices = parent_obj.faces![best_fi];
-        const fc: vec3[] = [];
-        for (const vi of face_vertex_indices) {
-          const lv = parent_verts[vi];
-          const wv = vec4.create();
-          vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], parent_world);
-          fc.push(vec3.fromValues(wv[0], wv[1], wv[2]));
-        }
-
-        // Build face edges
-        const face_edges: { w1: vec3; w2: vec3 }[] = [];
-        for (let ei = 0; ei < fc.length; ei++) {
-          face_edges.push({ w1: fc[ei], w2: fc[(ei + 1) % fc.length] });
-        }
-
-        // Pick the face edge closest to the child's center — hinge at the nearest point on that edge
-        let best_edge_idx = 0;
-        let best_dist = Infinity;
-        let best_t = 0.5;
-        for (let ei = 0; ei < face_edges.length; ei++) {
-          const fe = face_edges[ei];
-          const ab = vec3.sub(vec3.create(), fe.w2, fe.w1);
-          const ap = vec3.sub(vec3.create(), child_center_w, fe.w1);
-          const t = Math.max(0.05, Math.min(0.95, vec3.dot(ap, ab) / vec3.dot(ab, ab)));
-          const cp = vec3.scaleAndAdd(vec3.create(), fe.w1, ab, t);
-          const dist = vec3.distance(cp, child_center_w);
-          if (dist < best_dist) { best_dist = dist; best_edge_idx = ei; best_t = t; }
-        }
-        const chosen_edge = face_edges[best_edge_idx];
-        const hinge_w = vec3.create();
-        vec3.lerp(hinge_w, chosen_edge.w1, chosen_edge.w2, best_t);
-
-        const hinge_scr = this.project_vertex(hinge_w, identity);
-        if (hinge_scr.w < 0) continue;
-
-        // ── Witness directions (world space) ──
-        // Witness B (unrotated reference): along the parent face edge, toward face center
-        const edge_dir_w = vec3.sub(vec3.create(), chosen_edge.w2, chosen_edge.w1);
-        vec3.normalize(edge_dir_w, edge_dir_w);
-        const face_center = vec3.create();
-        for (const c of fc) vec3.add(face_center, face_center, c);
-        vec3.scale(face_center, face_center, 0.25);
-        const to_center = vec3.sub(vec3.create(), face_center, hinge_w);
-        if (vec3.dot(edge_dir_w, to_center) < 0) vec3.negate(edge_dir_w, edge_dir_w);
-
-        // Witness A (rotated): rotate edge_dir_w by the angle around the face normal
-        // The face normal in world space:
-        const e1 = vec3.sub(vec3.create(), fc[1], fc[0]);
-        const e2 = vec3.sub(vec3.create(), fc[3], fc[0]);
-        const face_normal = vec3.cross(vec3.create(), e1, e2);
-        vec3.normalize(face_normal, face_normal);
-
-        // Rotate edge_dir_w by `angle` around face_normal
-        const rot_q = quat.create();
-        quat.setAxisAngle(rot_q, face_normal as [number, number, number], angle);
-        const rotated_dir = vec3.create();
-        vec3.transformQuat(rotated_dir, edge_dir_w, rot_q);
-
-        // ── Radius: constant screen size ──
-        const probe = vec3.scaleAndAdd(vec3.create(), hinge_w, edge_dir_w, 1.0);
-        const probe_screen = this.project_vertex(probe, identity);
-        if (probe_screen.w < 0) continue;
-        const px_per_unit = Math.sqrt(
-          (probe_screen.x - hinge_scr.x) ** 2 +
-          (probe_screen.y - hinge_scr.y) ** 2
-        );
-        if (px_per_unit < 0.001) continue;
-        const radius_w = Render.ANGULAR_ARC_PX / px_per_unit;
-
-        // Skip if another angular already claimed essentially the same hinge point
-        const hinge_radius_px = 6;
-        const collides = claimed_hinges.some(ch => {
-          const ch_scr = this.project_vertex(ch, identity);
-          if (ch_scr.w < 0) return false;
-          const dx = hinge_scr.x - ch_scr.x, dy = hinge_scr.y - ch_scr.y;
-          return (dx * dx + dy * dy) < hinge_radius_px * hinge_radius_px;
-        });
-        if (collides) continue;
-
-        claimed_hinges.push(vec3.clone(hinge_w));
-
-        this.render_angular(
-          child_so, hinge_w, rotated_dir, edge_dir_w,
-          Math.abs(angle), radius_w, axis.name, identity,
-        );
-      }
-    }
-  }
-
-  /** Render one angular. All geometry in world space, projected through identity. */
-  private render_angular(
-    so: Smart_Object,
-    hinge_w: vec3,
-    dir_a_w: vec3,   // witness A direction (intersection line = child's rotated axis)
-    dir_b_w: vec3,   // witness B direction (parent edge = unrotated axis)
-    angle: number,
-    radius_w: number,
-    rotation_axis: Axis_Name,
-    identity: mat4,
-  ): void {
-    const degrees = angle * 180 / Math.PI;
-
-    // Project hinge to screen
-    const origin = this.project_vertex(hinge_w, identity);
-    if (origin.w < 0) return;
-
-    // Orthonormal basis in the arc plane: u = dir_b_w, v = perp toward dir_a_w
-    const v_perp = this.perp_component(dir_a_w, dir_b_w);
-    const vp_len = Math.sqrt(v_perp[0] ** 2 + v_perp[1] ** 2 + v_perp[2] ** 2);
-    if (vp_len < 1e-6) return;
-
-    // Sample the arc in world space: from dir_b_w (t=0) toward dir_a_w (t=angle)
-    const segments = 24;
-    const arc_points: Projected[] = [];
-    for (let i = 0; i <= segments; i++) {
-      const t = (i / segments) * angle;
-      const cos_t = Math.cos(t), sin_t = Math.sin(t);
-      const point: vec3 = [
-        hinge_w[0] + radius_w * (cos_t * dir_b_w[0] + sin_t * v_perp[0]),
-        hinge_w[1] + radius_w * (cos_t * dir_b_w[1] + sin_t * v_perp[1]),
-        hinge_w[2] + radius_w * (cos_t * dir_b_w[2] + sin_t * v_perp[2]),
-      ];
-      const projected = this.project_vertex(point, identity);
-      if (projected.w < 0) return;
-      arc_points.push(projected);
-    }
-
-    // Short witness lines: from hinge to 1.3 × radius along each direction
-    const witness_length = radius_w * 1.3;
-    const witness_a_end = this.project_vertex(
-      vec3.scaleAndAdd(vec3.create(), hinge_w, dir_a_w, witness_length), identity);
-    const witness_b_end = this.project_vertex(
-      vec3.scaleAndAdd(vec3.create(), hinge_w, dir_b_w, witness_length), identity);
-
-    if (witness_a_end.w < 0 || witness_b_end.w < 0) return;
-
-    // Text at arc midpoint
-    const mid_index = Math.floor(segments / 2);
-    const text_position = arc_points[mid_index];
-    const ctx = this.ctx;
-    ctx.font = '12px sans-serif';
-    const text = degrees.toFixed(1) + '°';
-    const text_width = ctx.measureText(text).width;
-    const text_height = 12;
-
-    // Compute gap in arc indices for text
-    const segment_dx = arc_points[mid_index + 1].x - arc_points[mid_index].x;
-    const segment_dy = arc_points[mid_index + 1].y - arc_points[mid_index].y;
-    const segment_length = Math.sqrt(segment_dx * segment_dx + segment_dy * segment_dy);
-    const gap_segments = segment_length > 0.5 ? Math.ceil((text_width / 2 + 6) / segment_length) : segments;
-    const gap_start = Math.max(0, mid_index - gap_segments);
-    const gap_end = Math.min(segments, mid_index + gap_segments);
-
-    // Total projected arc length
-    let total_arc_length = 0;
-    for (let i = 0; i < segments; i++) {
-      const pdx = arc_points[i + 1].x - arc_points[i].x;
-      const pdy = arc_points[i + 1].y - arc_points[i].y;
-      total_arc_length += Math.sqrt(pdx * pdx + pdy * pdy);
-    }
-    if (total_arc_length < 2) return;
-
-    // Crunch: decide normal vs inverted layout
-    const arrow_space = 20;
-    const inverted = total_arc_length < (text_width + 16 + arrow_space);
-
-    // Draw
-    ctx.strokeStyle = 'rgba(100, 100, 100, 0.7)';
-    ctx.lineWidth = 1;
-
-    // Witness lines from hinge
-    ctx.beginPath();
-    ctx.moveTo(origin.x, origin.y);
-    ctx.lineTo(witness_a_end.x, witness_a_end.y);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(origin.x, origin.y);
-    ctx.lineTo(witness_b_end.x, witness_b_end.y);
-    ctx.stroke();
-
-    if (!inverted) {
-      // Normal: arc between witness lines with gap for text
-      // Always draw at least 3 segments from each end (stub near arrowhead)
-      const min_stub = 3;
-      const draw_start = Math.max(gap_start, min_stub);
-      const draw_end = Math.min(gap_end, segments - min_stub);
-      ctx.beginPath();
-      ctx.moveTo(arc_points[0].x, arc_points[0].y);
-      for (let i = 1; i <= Math.min(draw_start, segments); i++) ctx.lineTo(arc_points[i].x, arc_points[i].y);
-      ctx.stroke();
-      if (draw_end < segments) {
-        ctx.beginPath();
-        ctx.moveTo(arc_points[Math.max(draw_end, 0)].x, arc_points[Math.max(draw_end, 0)].y);
-        for (let i = Math.max(draw_end, 0) + 1; i <= segments; i++) ctx.lineTo(arc_points[i].x, arc_points[i].y);
-        ctx.stroke();
-      }
-
-      ctx.fillStyle = 'rgba(100, 100, 100, 0.7)';
-      const a0 = arc_points[0], a1 = arc_points[Math.min(3, segments)];
-      this.draw_arrow(a0.x, a0.y, a1.x - a0.x, a1.y - a0.y);
-      const arc_end = arc_points[segments], arc_prev = arc_points[Math.max(0, segments - 3)];
-      this.draw_arrow(arc_end.x, arc_end.y, arc_prev.x - arc_end.x, arc_prev.y - arc_end.y);
-    } else {
-      // Inverted: extension arcs outside, adaptive to reach target screen-space length
-      const ext_target_px = 20;
-      const fine_step = Math.PI / 180;  // 1° increments
-      const max_steps = 90;             // cap at 90°
-
-      // Extension arc before witness B (t < 0)
-      const ext_b_pts: Projected[] = [];
-      ext_b_pts.push(arc_points[0]);
-      for (let i = 1; i <= max_steps; i++) {
-        const t = -(i * fine_step);
-        const cos_t = Math.cos(t), sin_t = Math.sin(t);
-        const pt: vec3 = [
-          hinge_w[0] + radius_w * (cos_t * dir_b_w[0] + sin_t * v_perp[0]),
-          hinge_w[1] + radius_w * (cos_t * dir_b_w[1] + sin_t * v_perp[1]),
-          hinge_w[2] + radius_w * (cos_t * dir_b_w[2] + sin_t * v_perp[2]),
-        ];
-        const p = this.project_vertex(pt, identity);
-        ext_b_pts.push(p);
-        const dx = p.x - ext_b_pts[0].x, dy = p.y - ext_b_pts[0].y;
-        if (Math.sqrt(dx * dx + dy * dy) >= ext_target_px) break;
-      }
-      ctx.beginPath();
-      ctx.moveTo(ext_b_pts[ext_b_pts.length - 1].x, ext_b_pts[ext_b_pts.length - 1].y);
-      for (let i = ext_b_pts.length - 2; i >= 0; i--) ctx.lineTo(ext_b_pts[i].x, ext_b_pts[i].y);
-      ctx.stroke();
-
-      // Extension arc after witness A (t > angle)
-      const ext_a_pts: Projected[] = [];
-      ext_a_pts.push(arc_points[segments]);
-      for (let i = 1; i <= max_steps; i++) {
-        const t = angle + i * fine_step;
-        const cos_t = Math.cos(t), sin_t = Math.sin(t);
-        const pt: vec3 = [
-          hinge_w[0] + radius_w * (cos_t * dir_b_w[0] + sin_t * v_perp[0]),
-          hinge_w[1] + radius_w * (cos_t * dir_b_w[1] + sin_t * v_perp[1]),
-          hinge_w[2] + radius_w * (cos_t * dir_b_w[2] + sin_t * v_perp[2]),
-        ];
-        const p = this.project_vertex(pt, identity);
-        ext_a_pts.push(p);
-        const dx = p.x - ext_a_pts[0].x, dy = p.y - ext_a_pts[0].y;
-        if (Math.sqrt(dx * dx + dy * dy) >= ext_target_px) break;
-      }
-      ctx.beginPath();
-      ctx.moveTo(ext_a_pts[0].x, ext_a_pts[0].y);
-      for (let i = 1; i < ext_a_pts.length; i++) ctx.lineTo(ext_a_pts[i].x, ext_a_pts[i].y);
-      ctx.stroke();
-
-      ctx.fillStyle = 'rgba(100, 100, 100, 0.7)';
-      const eb = ext_b_pts[Math.min(3, ext_b_pts.length - 1)];
-      this.draw_arrow(ext_b_pts[0].x, ext_b_pts[0].y, eb.x - ext_b_pts[0].x, eb.y - ext_b_pts[0].y);
-      const ea = ext_a_pts[Math.min(3, ext_a_pts.length - 1)];
-      this.draw_arrow(ext_a_pts[0].x, ext_a_pts[0].y, ea.x - ext_a_pts[0].x, ea.y - ext_a_pts[0].y);
-    }
-
-    // For very crunched angulars, push text outward so it doesn't occlude arrowheads
-    let tx = text_position.x, ty = text_position.y;
-    if (inverted && total_arc_length < arrow_space) {
-      const dx = text_position.x - origin.x;
-      const dy = text_position.y - origin.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist > 0.5) {
-        const push = text_height / 2 + 10;
-        tx = text_position.x + (dx / dist) * push;
-        ty = text_position.y + (dy / dist) * push;
-      }
-    }
-
-    // Text
-    ctx.fillStyle = 'white';
-    ctx.fillRect(tx - text_width / 2 - 2, ty - text_height / 2 - 1, text_width + 4, text_height + 2);
-    ctx.fillStyle = '#333';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, tx, ty);
-
-    // Record for hit testing / click-to-edit
-    this.angular_rects.push({
-      rotation_axis, angle_degrees: degrees, so,
-      x: tx, y: ty, w: text_width, h: text_height,
-      z: origin.z, face_index: -1,
-    });
-  }
-
-  /** Get the unit vector perpendicular to u in the plane of u and v (toward v). */
-  private perp_component(v: vec3, u: vec3): vec3 {
-    // v_perp = normalize(v - (v·u)*u)
-    const dot = vec3.dot(v, u);
-    const perp: vec3 = [v[0] - dot * u[0], v[1] - dot * u[1], v[2] - dot * u[2]];
-    const len = Math.sqrt(perp[0] ** 2 + perp[1] ** 2 + perp[2] ** 2);
-    if (len < 1e-8) return [0, 0, 0];
-    return [perp[0] / len, perp[1] / len, perp[2] / len];
-  }
-
-  private draw_arrow(x: number, y: number, dx: number, dy: number): void {
+  /** Draw an arrowhead at (x, y) pointing in direction (dx, dy). */
+  draw_arrow(x: number, y: number, dx: number, dy: number): void {
     const len = Math.sqrt(dx * dx + dy * dy);
     if (len < 1) return;
 
     const ux = dx / len, uy = dy / len;
     const size = 6;
 
-    // Arrow head pointing in direction (dx, dy)
-    const ctx = this.ctx;
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + ux * size - uy * size * 0.5, y + uy * size + ux * size * 0.5);
-    ctx.lineTo(x + ux * size + uy * size * 0.5, y + uy * size - ux * size * 0.5);
-    ctx.closePath();
-    ctx.fill();
+    this.ctx.beginPath();
+    this.ctx.moveTo(x, y);
+    this.ctx.lineTo(x + ux * size - uy * size * 0.5, y + uy * size + ux * size * 0.5);
+    this.ctx.lineTo(x + ux * size + uy * size * 0.5, y + uy * size - ux * size * 0.5);
+    this.ctx.closePath();
+    this.ctx.fill();
   }
 }
 
