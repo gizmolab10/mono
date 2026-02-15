@@ -1,6 +1,6 @@
 import type { Projected, O_Scene, Dimension_Rect, Label_Rect, Angle_Rect } from '../types/Interfaces';
 import type Smart_Object from '../runtime/Smart_Object';
-import type { Axis } from '../runtime/Smart_Object';
+import type { Axis_Name } from '../runtime/Axis';
 import { face_label } from '../editors/Face_Label';
 import { T_Hit_3D } from '../types/Enumerations';
 import { units, Units } from '../types/Units';
@@ -232,7 +232,7 @@ class Render {
     const a_ref = axis_a === 'x' ? root_so.x_min : axis_a === 'y' ? root_so.y_min : root_so.z_min;
     const ref_point = (offset: number): vec3 => {
       const p = vec3.create();
-      const set = (ax: Axis, v: number) => { if (ax === 'x') p[0] = v; else if (ax === 'y') p[1] = v; else p[2] = v; };
+      const set = (ax: Axis_Name, v: number) => { if (ax === 'x') p[0] = v; else if (ax === 'y') p[1] = v; else p[2] = v; };
       set(axis_a, a_ref + offset);
       set(axis_b, axis_b === 'x' ? root_so.x_min : axis_b === 'y' ? root_so.y_min : root_so.z_min);
       set(fixed_axis, fixed_axis === 'x' ? (root_so.x_min + root_so.x_max) / 2
@@ -254,7 +254,7 @@ class Render {
     const canvas_diag_mm = px_per_cell > 0
       ? Math.hypot(this.ctx.canvas.width, this.ctx.canvas.height) / (px_per_cell / base_spacing)
       : max_dim * 50;
-    const bounds = (axis: Axis): [number, number] => {
+    const bounds = (axis: Axis_Name): [number, number] => {
       const min = axis === 'x' ? root_so.x_min : axis === 'y' ? root_so.y_min : root_so.z_min;
       const max = axis === 'x' ? root_so.x_max : axis === 'y' ? root_so.y_max : root_so.z_max;
       const mid = (min + max) / 2;
@@ -284,7 +284,7 @@ class Render {
 
     const make_point = (a_val: number, b_val: number): vec3 => {
       const p = vec3.create();
-      const set = (axis: Axis, val: number) => {
+      const set = (axis: Axis_Name, val: number) => {
         if (axis === 'x') p[0] = val;
         else if (axis === 'y') p[1] = val;
         else p[2] = val;
@@ -1020,7 +1020,7 @@ class Render {
       // In 2D mode, show only the two axes visible on the front face
       const is_2d_mode = stores.current_view_mode() === '2d';
       const front_face = is_2d_mode ? hits_3d.front_most_face(so) : -1;
-      const all_axes: Axis[] = (is_2d_mode && front_face >= 0) ? so.face_axes(front_face) : ['x', 'y', 'z'];
+      const all_axes: Axis_Name[] = (is_2d_mode && front_face >= 0) ? so.face_axes(front_face) : ['x', 'y', 'z'];
       for (const axis of all_axes) {
         this.render_axis_dimension(so, axis, projected, world_matrix);
       }
@@ -1029,7 +1029,7 @@ class Render {
 
   private render_axis_dimension(
     so: Smart_Object,
-    axis: Axis,
+    axis: Axis_Name,
     projected: Projected[],
     world_matrix: mat4
   ): void {
@@ -1095,7 +1095,7 @@ class Render {
   private edge_witness_direction(
     so: Smart_Object,
     v1_idx: number, v2_idx: number,
-    edge_axis: Axis,
+    edge_axis: Axis_Name,
     projected: Projected[],
     world_matrix: mat4
   ): vec3 {
@@ -1108,7 +1108,7 @@ class Render {
     const edge_ux = edge_dx / edge_len, edge_uy = edge_dy / edge_len;
 
     // The two candidate witness axes are perpendicular to the edge in 3D
-    const all_axes: Axis[] = ['x', 'y', 'z'];
+    const all_axes: Axis_Name[] = ['x', 'y', 'z'];
     const candidates = all_axes.filter(a => a !== edge_axis);
 
     // Project origin and each candidate unit vector to screen
@@ -1141,7 +1141,7 @@ class Render {
   // Returns all candidates so the caller can fall back if the best is occluded.
   private find_best_edge_for_axis(
     so: Smart_Object,
-    axis: Axis,
+    axis: Axis_Name,
     projected: Projected[]
   ): { v1_idx: number; v2_idx: number }[] | null {
     if (!so.scene?.faces) return null;
@@ -1205,7 +1205,7 @@ class Render {
   }
 
   // Determine which axis an edge runs along (or null if diagonal)
-  private edge_axis(v1: vec3, v2: vec3): Axis | null {
+  private edge_axis(v1: vec3, v2: vec3): Axis_Name | null {
     const dx = Math.abs(v2[0] - v1[0]);
     const dy = Math.abs(v2[1] - v1[1]);
     const dz = Math.abs(v2[2] - v1[2]);
@@ -1300,7 +1300,7 @@ class Render {
     w2_start: Projected, w2_end: Projected,
     d1: Projected, d2: Projected,
     value: number,
-    axis: Axis,
+    axis: Axis_Name,
     so: Smart_Object
   ): boolean {
     // Check all points are in front of camera
@@ -1573,7 +1573,7 @@ class Render {
     dir_b_w: vec3,   // witness B direction (parent edge = unrotated axis)
     angle: number,
     radius_w: number,
-    rotation_axis: Axis,
+    rotation_axis: Axis_Name,
     identity: mat4,
   ): void {
     const degrees = angle * 180 / Math.PI;

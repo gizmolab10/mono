@@ -1,10 +1,10 @@
 import type { Node } from '../algebra';
 
 export default class Attribute {
-	value: number;
-	name: string;
 	formula: string | null = null;
 	compiled: Node | null = null;
+	value: number;
+	name: string;
 
 	constructor(name: string, value: number = 0) {
 		this.value = value;

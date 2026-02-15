@@ -1,22 +1,33 @@
 import type { O_Scene } from '../types/Interfaces';
 import type { Dictionary } from '../types/Types';
+import Axis, { type Axis_Name } from './Axis';
+import { mat3, quat, vec3 } from 'gl-matrix';
 import Attribute from '../types/Attribute';
 import Identifiable from './Identifiable';
 import { compiler } from '../algebra';
-import { mat3, quat, vec3 } from 'gl-matrix';
 
 // Bounds: min/max for each axis
 export type Bound = 'x_min' | 'x_max' | 'y_min' | 'y_max' | 'z_min' | 'z_max';
-export type Axis = 'x' | 'y' | 'z';
 
-export interface Rotation_Entry { axis: Axis; angle: number }
+export interface Rotation_Entry { axis: Axis_Name; angle: number }
+
+/** Serialized per-axis bundle — structurally matches Portable_Axis in Scenes.ts */
+export interface Serialized_Axis {
+	start: number;
+	end: number;
+	invariant?: number;
+	rotation?: number;
+	formulas?: { start?: string; end?: string };
+}
 
 export default class Smart_Object extends Identifiable {
+	axes: Axis[] = [new Axis('x'), new Axis('y'), new Axis('z')];
 	attributes_dict_byName: Dictionary<Attribute> = {};
 	orientation: quat = quat.create();
 	rotations: Rotation_Entry[] = [];
 	fixed: boolean = true;	// When true (default), rotating preserves angle and length. When false (variable), orientation is recomputed from bounds after propagation
 	scene: O_Scene | null;
+	locked: number = 0;
 	name: string;
 
 	// Snap callback — set by Setup to snap mm values to the current precision grid. */
@@ -31,14 +42,25 @@ export default class Smart_Object extends Identifiable {
 
 	get hasScene(): boolean { return !!this.scene; }
 
+	/** Axis accessors by name */
+	get x_axis(): Axis { return this.axes[0]; }
+	get y_axis(): Axis { return this.axes[1]; }
+	get z_axis(): Axis { return this.axes[2]; }
+
+	axis_by_name(name: Axis_Name): Axis {
+		return name === 'x' ? this.axes[0] : name === 'y' ? this.axes[1] : this.axes[2];
+	}
+
 	setup() {
-		for (const name of ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max']) {
-			this.attributes_dict_byName[name] = new Attribute(name);
+		// Populate attributes_dict_byName from Axis attributes (start + end only)
+		for (const axis of this.axes) {
+			this.attributes_dict_byName[axis.start.name] = axis.start;
+			this.attributes_dict_byName[axis.end.name]   = axis.end;
 		}
 		// Default: 1"×2"×3" box centered at origin (stored in mm)
-		this.set_bound('x_min', -12.7); this.set_bound('x_max', 12.7);
-		this.set_bound('y_min', -25.4); this.set_bound('y_max', 25.4);
-		this.set_bound('z_min', -38.1); this.set_bound('z_max', 38.1);
+		// this.set_bound('x_min', -12.7); this.set_bound('x_max', 12.7);
+		// this.set_bound('y_min', -25.4); this.set_bound('y_max', 25.4);
+		// this.set_bound('z_min', -38.1); this.set_bound('z_max', 38.1);
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
@@ -135,20 +157,20 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	// Which axis is perpendicular to this face?
-	face_fixed_axis(face_index: number): Axis {
-		const axes: Axis[] = ['z', 'z', 'x', 'x', 'y', 'y'];
+	face_fixed_axis(face_index: number): Axis_Name {
+		const axes: Axis_Name[] = ['z', 'z', 'x', 'x', 'y', 'y'];
 		return axes[face_index] ?? 'z';
 	}
 
 	// Which 2 axes does this face allow editing?
-	face_axes(face_index: number): [Axis, Axis] {
+	face_axes(face_index: number): [Axis_Name, Axis_Name] {
 		const fixed = this.face_fixed_axis(face_index);
-		const all: Axis[] = ['x', 'y', 'z'];
-		return all.filter(a => a !== fixed) as [Axis, Axis];
+		const all: Axis_Name[] = ['x', 'y', 'z'];
+		return all.filter(a => a !== fixed) as [Axis_Name, Axis_Name];
 	}
 
 	// Unit vector for an axis
-	axis_vector(axis: Axis): vec3 {
+	axis_vector(axis: Axis_Name): vec3 {
 		switch (axis) {
 			case 'x': return vec3.fromValues(1, 0, 0);
 			case 'y': return vec3.fromValues(0, 1, 0);
@@ -159,7 +181,7 @@ export default class Smart_Object extends Identifiable {
 	// Which bound does this vertex touch on a given axis?
 	// Vertex layout: 0-3 at z_min, 4-7 at z_max
 	//   0,4: x_min,y_min  1,5: x_max,y_min  2,6: x_max,y_max  3,7: x_min,y_max
-	vertex_bound(vertex_index: number, axis: Axis): Bound {
+	vertex_bound(vertex_index: number, axis: Axis_Name): Bound {
 		const v = vertex_index % 4;  // 0-3 pattern repeats for front/back
 		switch (axis) {
 			case 'x': return (v === 0 || v === 3) ? 'x_min' : 'x_max';
@@ -174,7 +196,7 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	// Which axis does this edge run along?
-	edge_along_axis(edge_index: number): Axis {
+	edge_along_axis(edge_index: number): Axis_Name {
 		const [a, b] = this.edge_vertices(edge_index);
 		const verts = this.vertices;
 		const va = verts[a], vb = verts[b];
@@ -187,7 +209,7 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	// Which axis does dragging this edge change? (the face axis that's not the edge's axis)
-	edge_changes_axis(edge_index: number, face_index: number): Axis {
+	edge_changes_axis(edge_index: number, face_index: number): Axis_Name {
 		const face_axes = this.face_axes(face_index);
 		const edge_along = this.edge_along_axis(edge_index);
 		return face_axes.find(a => a !== edge_along) ?? face_axes[0];
@@ -291,7 +313,7 @@ export default class Smart_Object extends Identifiable {
 	 * - If new and length = 2, compact: compose into quat, decompose back.
 	 * Recomputes `this.orientation` from the rotation pair.
 	 */
-	apply_rotation(axis: Axis, delta_radians: number): void {
+	apply_rotation(axis: Axis_Name, delta_radians: number): void {
 		const existing = this.rotations.find(r => r.axis === axis);
 		if (existing) {
 			existing.angle += delta_radians;
@@ -314,7 +336,7 @@ export default class Smart_Object extends Identifiable {
 	 * If the axis already exists, replaces its angle.
 	 * If it doesn't exist and there's room, adds it.
 	 */
-	set_rotation(axis: Axis, radians: number): void {
+	set_rotation(axis: Axis_Name, radians: number): void {
 		const existing = this.rotations.find(r => r.axis === axis);
 		if (existing) {
 			existing.angle = radians;
@@ -345,7 +367,7 @@ export default class Smart_Object extends Identifiable {
 	 *
 	 * Uses rotation matrix extraction with atan2 for each of the 6 axis pair cases.
 	 */
-	decompose_into(a1: Axis, a2: Axis): Rotation_Entry[] {
+	decompose_into(a1: Axis_Name, a2: Axis_Name): Rotation_Entry[] {
 		const m = mat3.fromQuat(mat3.create(), this.orientation);
 		// m is column-major: m[col*3+row], so m[0]=m00, m[1]=m10, m[2]=m20, m[3]=m01, m[4]=m11, m[5]=m21, m[6]=m02, m[7]=m12, m[8]=m22
 		const key = a1 + a2;
@@ -407,59 +429,84 @@ export default class Smart_Object extends Identifiable {
 	// SERIALIZATION
 	// ═══════════════════════════════════════════════════════════════════
 
-	serialize(): { id: string; name: string; bounds: Record<Bound, number>; orientation: number[]; rotations?: { axis: Axis; angle: number }[]; scale: number; fixed?: boolean; formulas?: Record<string, string> } {
-		const formulas: Record<string, string> = {};
-		for (const attr of Object.values(this.attributes_dict_byName)) {
-			if (attr.formula) formulas[attr.name] = attr.formula;
+	/** Serialize to Portable_SO shape (per-axis bundles) */
+	serialize(): { id: string; name: string; x: Serialized_Axis; y: Serialized_Axis; z: Serialized_Axis; locked?: number; scale?: number; fixed?: boolean } {
+		const axis_names: Axis_Name[] = ['x', 'y', 'z'];
+		const axes: Record<string, Serialized_Axis> = {};
+
+		for (let i = 0; i < 3; i++) {
+			const name = axis_names[i];
+			const axis = this.axes[i];
+			const pa: Serialized_Axis = {
+				start: axis.start.value,
+				end: axis.end.value,
+			};
+			if (axis.invariant !== 2) pa.invariant = axis.invariant;
+			const rot = this.rotations.find(r => r.axis === name);
+			if (rot && Math.abs(rot.angle) > 1e-10) pa.rotation = rot.angle;
+			const start_formula = axis.start.formula;
+			const end_formula = axis.end.formula;
+			if (start_formula || end_formula) {
+				pa.formulas = {};
+				if (start_formula) pa.formulas.start = start_formula;
+				if (end_formula) pa.formulas.end = end_formula;
+			}
+			axes[name] = pa;
 		}
+
+		const scale = this.scene?.scale ?? 1;
 		return {
 			id: this.id,
 			name: this.name,
-			bounds: {
-				x_min: this.x_min, x_max: this.x_max,
-				y_min: this.y_min, y_max: this.y_max,
-				z_min: this.z_min, z_max: this.z_max,
-			},
-			orientation: Array.from(this.orientation),  // redundant — kept for backwards compat
-			...(this.rotations.length > 0 ? { rotations: this.rotations.map(r => ({ axis: r.axis, angle: r.angle })) } : {}),
-			scale: this.scene?.scale ?? 1,
+			x: axes.x, y: axes.y, z: axes.z,
+			...(this.locked !== 0 ? { locked: this.locked } : {}),
+			...(scale !== 1 ? { scale } : {}),
 			...(!this.fixed ? { fixed: false } : {}),
-			...(Object.keys(formulas).length > 0 ? { formulas } : {}),
 		};
 	}
 
-	static deserialize(data: { id?: string; name: string; bounds: Record<Bound, number>; orientation?: number[]; rotations?: { axis: Axis; angle: number }[]; scale?: number; fixed?: boolean; formulas?: Record<string, string> }): { so: Smart_Object; scale: number } {
+	/** Deserialize from Portable_SO shape (per-axis bundles) */
+	static deserialize(data: { id: string; name: string; x: Serialized_Axis; y: Serialized_Axis; z: Serialized_Axis; locked?: number; scale?: number; fixed?: boolean }): { so: Smart_Object; scale: number } {
 		const so = new Smart_Object(data.name);
-		if (data.id) so.setID(data.id);
-		for (const [key, value] of Object.entries(data.bounds)) {
-			so.set_bound(key as Bound, value);
-		}
-		if (data.rotations && data.rotations.length > 0) {
-			// New format: rotations are the source of truth, derive quat
-			so.rotations = data.rotations.map(r => ({ axis: r.axis, angle: r.angle }));
-			so.recompute_orientation();
-		} else if (data.orientation) {
-			// Old format: only a quat. Synthesize single rotation entry if non-identity.
-			quat.set(so.orientation, data.orientation[0], data.orientation[1], data.orientation[2], data.orientation[3]);
-			const axis_out = vec3.create();
-			const angle = quat.getAxisAngle(axis_out, so.orientation);
-			if (angle > 1e-6) {
-				// Determine which principal axis this is closest to
-				const ax = Math.abs(axis_out[0]), ay = Math.abs(axis_out[1]), az = Math.abs(axis_out[2]);
-				const rot_axis: Axis = (ax > ay && ax > az) ? 'x' : (ay > ax && ay > az) ? 'y' : 'z';
-				so.rotations = [{ axis: rot_axis, angle }];
+		so.setID(data.id);
+
+		const axis_names: Axis_Name[] = ['x', 'y', 'z'];
+		const axis_data = [data.x, data.y, data.z];
+
+		for (let i = 0; i < 3; i++) {
+			const name = axis_names[i];
+			const pa = axis_data[i];
+			const axis = so.axes[i];
+
+			// Bounds
+			axis.start.value = pa.start;
+			axis.end.value = pa.end;
+
+			// Invariant
+			if (pa.invariant !== undefined) axis.invariant = pa.invariant;
+
+			// Rotation
+			if (pa.rotation !== undefined && Math.abs(pa.rotation) > 1e-10) {
+				so.rotations.push({ axis: name, angle: pa.rotation });
 			}
-		}
-		if (data.fixed === false) so.fixed = false;
-		if (data.formulas) {
-			for (const [bound, formula] of Object.entries(data.formulas)) {
-				const attr = so.attributes_dict_byName[bound];
-				if (attr) {
-					attr.formula = formula;
-					try { attr.compiled = compiler.compile(formula); } catch { /* skip bad formulas */ }
+
+			// Formulas
+			if (pa.formulas) {
+				if (pa.formulas.start) {
+					axis.start.formula = pa.formulas.start;
+					try { axis.start.compiled = compiler.compile(pa.formulas.start); } catch { /* skip */ }
+				}
+				if (pa.formulas.end) {
+					axis.end.formula = pa.formulas.end;
+					try { axis.end.compiled = compiler.compile(pa.formulas.end); } catch { /* skip */ }
 				}
 			}
 		}
+
+		if (so.rotations.length > 0) so.recompute_orientation();
+		if (data.locked !== undefined) so.locked = data.locked;
+		if (data.fixed === false) so.fixed = false;
+
 		return { so, scale: data.scale ?? 1 };
 	}
 }

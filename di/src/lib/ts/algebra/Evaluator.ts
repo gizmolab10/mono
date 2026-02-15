@@ -1,10 +1,10 @@
+import type { Node } from './Nodes';
+import { nodes } from './Nodes';
+
 // ═══════════════════════════════════════════════════════════════════
 // ALGEBRA — EVALUATE
 // Forward traversal (evaluate) and reverse traversal (propagate).
 // ═══════════════════════════════════════════════════════════════════
-
-import { nodes } from './Nodes';
-import type { Node } from './Nodes';
 
 // ── types ──
 

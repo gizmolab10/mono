@@ -1,6 +1,6 @@
 import type { Angle_Rect, S_SO } from '../types/Interfaces';
 import { constraints, orientation } from '../algebra';
-import type { Axis } from '../runtime/Smart_Object';
+import type { Axis_Name } from '../runtime/Axis';
 import { T_Editing } from '../types/Enumerations';
 import { writable, get } from 'svelte/store';
 import { stores } from '../managers/Stores';
@@ -8,7 +8,7 @@ import { scenes } from '../managers/Scenes';
 import { render } from '../render/Render';
 
 interface S_Angular extends S_SO {
-	rotation_axis: Axis;
+	rotation_axis: Axis_Name;
 	formatted: string;
 }
 

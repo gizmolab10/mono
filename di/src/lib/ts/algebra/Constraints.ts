@@ -1,8 +1,8 @@
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Bound } from '../runtime/Smart_Object';
-import { evaluator } from './Evaluator';
 import type { FormulaMap } from './Evaluator';
 import { orientation } from './Orientation';
+import { evaluator } from './Evaluator';
 import { scene } from '../render/Scene';
 import { compiler } from './Compiler';
 import type { Node } from './Nodes';

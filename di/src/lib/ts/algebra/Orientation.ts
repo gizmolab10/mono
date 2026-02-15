@@ -1,5 +1,5 @@
 import type Smart_Object from '../runtime/Smart_Object';
-import type { Axis } from '../runtime/Smart_Object';
+import type { Axis_Name } from '../runtime/Axis';
 import { quat } from 'gl-matrix';
 
 // ═══════════════════════════════════════════════════════════════════
@@ -58,7 +58,7 @@ class Orientation {
 	 * Determine rotation axis from bounds geometry (the "thin" axis).
 	 * Returns null if the SO is essentially a cube (no clear thin axis).
 	 */
-	axis_from_bounds(so: Smart_Object): Axis | null {
+	axis_from_bounds(so: Smart_Object): Axis_Name | null {
 		const adx = Math.abs(so.x_max - so.x_min);
 		const ady = Math.abs(so.y_max - so.y_min);
 		const adz = Math.abs(so.z_max - so.z_min);

@@ -1,5 +1,5 @@
 import type Smart_Object from '../runtime/Smart_Object';
-import type { Axis } from '../runtime/Smart_Object';
+import type { Axis_Name } from '../runtime/Axis';
 import type { vec3 } from 'gl-matrix';
 
 // Projected stays here (not in Coordinates.ts) because it's a pipeline-specific
@@ -30,11 +30,11 @@ export interface Label_Rect extends S_SO {
 
 // axis = which dimension (x/y/z) this label measures.
 export interface Dimension_Rect extends Label_Rect {
-  axis: Axis;
+  axis: Axis_Name;
 }
 
 export interface Angle_Rect extends Label_Rect {
-  rotation_axis: Axis;
+  rotation_axis: Axis_Name;
   angle_degrees: number;
 }
 

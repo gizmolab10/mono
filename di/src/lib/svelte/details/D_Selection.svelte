@@ -12,7 +12,7 @@
 	const { w_s_face_label } = face_label;
 	const { w_root_so, w_selection, w_precision, w_tick } = stores;
 
-	type BoundsRow = { label: string; bound: Bound | null; value: string; formula: string };
+	type BoundsRow = { label: string; bound: Bound | null; value: string; formula: string; is_invariant: boolean; axis_index: number; attr_index: number };
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
 
@@ -22,16 +22,17 @@
 		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
 		const attr = (name: string) => so.attributes_dict_byName[name]?.formula ?? name;
 		const p = so.scene?.position ?? [0, 0, 0];
+		const inv = (axis_index: number, attr_index: number) => so.axes[axis_index].invariant === attr_index;
 		return [
-			{ label: 'x', bound: 'x_min' as Bound, value: fmt(p[0] + so.x_min), formula: attr('x_min') },
-			{ label: 'X', bound: 'x_max' as Bound, value: fmt(p[0] + so.x_max), formula: attr('x_max') },
-			{ label: 'w', bound: null,              value: fmt(so.width),         formula: 'X - x' },
-			{ label: 'y', bound: 'y_min' as Bound, value: fmt(p[1] + so.y_min), formula: attr('y_min') },
-			{ label: 'Y', bound: 'y_max' as Bound, value: fmt(p[1] + so.y_max), formula: attr('y_max') },
-			{ label: 'h', bound: null,              value: fmt(so.height),        formula: 'Y - y' },
-			{ label: 'z', bound: 'z_min' as Bound, value: fmt(p[2] + so.z_min), formula: attr('z_min') },
-			{ label: 'Z', bound: 'z_max' as Bound, value: fmt(p[2] + so.z_max), formula: attr('z_max') },
-			{ label: 'd', bound: null,              value: fmt(so.depth),         formula: 'Z - z' },
+			{ label: 'x', bound: 'x_min' as Bound, value: fmt(p[0] + so.x_min), formula: attr('x_min'), is_invariant: inv(0, 0), axis_index: 0, attr_index: 0 },
+			{ label: 'X', bound: 'x_max' as Bound, value: fmt(p[0] + so.x_max), formula: attr('x_max'), is_invariant: inv(0, 1), axis_index: 0, attr_index: 1 },
+			{ label: 'w', bound: null,              value: fmt(so.width),         formula: 'X - x',       is_invariant: inv(0, 2), axis_index: 0, attr_index: 2 },
+			{ label: 'y', bound: 'y_min' as Bound, value: fmt(p[1] + so.y_min), formula: attr('y_min'), is_invariant: inv(1, 0), axis_index: 1, attr_index: 0 },
+			{ label: 'Y', bound: 'y_max' as Bound, value: fmt(p[1] + so.y_max), formula: attr('y_max'), is_invariant: inv(1, 1), axis_index: 1, attr_index: 1 },
+			{ label: 'h', bound: null,              value: fmt(so.height),        formula: 'Y - y',       is_invariant: inv(1, 2), axis_index: 1, attr_index: 2 },
+			{ label: 'z', bound: 'z_min' as Bound, value: fmt(p[2] + so.z_min), formula: attr('z_min'), is_invariant: inv(2, 0), axis_index: 2, attr_index: 0 },
+			{ label: 'Z', bound: 'z_max' as Bound, value: fmt(p[2] + so.z_max), formula: attr('z_max'), is_invariant: inv(2, 1), axis_index: 2, attr_index: 1 },
+			{ label: 'd', bound: null,              value: fmt(so.depth),         formula: 'Z - z',       is_invariant: inv(2, 2), axis_index: 2, attr_index: 2 },
 		];
 	}
 
@@ -81,12 +82,26 @@
 		}
 	}
 
+	function set_invariant(row: BoundsRow) {
+		if (!selected_so) return;
+		selected_so.axes[row.axis_index].invariant = row.attr_index;
+		stores.tick();
+		scenes.save();
+	}
+
 	function commit_angle(axis: 'x' | 'y' | 'z', value: string) {
 		if (!selected_so) return;
 		const degrees = parseFloat(value.replace('°', ''));
 		if (isNaN(degrees)) return;
 		const radians = degrees * Math.PI / 180;
 		selected_so.set_rotation(axis, radians);
+		stores.tick();
+		scenes.save();
+	}
+
+	function set_locked(index: number) {
+		if (!selected_so) return;
+		selected_so.locked = index;
 		stores.tick();
 		scenes.save();
 	}
@@ -162,6 +177,7 @@
 			{#each bounds_rows as row}
 				<tr>
 					<td class='attr-name'>{row.label}</td>
+					<td class='attr-sep' class:cross={row.is_invariant} onclick={() => set_invariant(row)}></td>
 					<td class='attr-formula'>
 						<input
 							type      = 'text'
@@ -188,9 +204,10 @@
 	</table>
 	<table class='bounds rotations'>
 		<tbody>
-			{#each axes as axis}
+			{#each axes as axis, i}
 				<tr>
 					<td class='attr-name'>{axis}</td>
+					<td class='attr-sep' class:cross={selected_so?.locked === i} onclick={() => set_locked(i)}></td>
 					<td class='attr-value'>
 						<input
 							type      = 'text'
@@ -271,6 +288,19 @@
 		opacity     : 0.7;
 		text-align  : center !important;
 		background  : var(--bg);
+	}
+
+	.attr-sep {
+		width      : 12px;
+		background : white;
+		cursor     : pointer;
+	}
+
+	.attr-sep.cross {
+		background :
+			linear-gradient(to top right, transparent calc(50% - 0.25px), currentColor 50%, transparent calc(50% + 0.25px)),
+			linear-gradient(to bottom right, transparent calc(50% - 0.25px), currentColor 50%, transparent calc(50% + 0.25px)),
+			var(--bg);
 	}
 
 	.attr-formula {

@@ -242,6 +242,7 @@
   },
   "active": "628f70ebef9c1bfc",
   "lastOpenFiles": [
+    "di/src/lib/ts/runtime/Axis.ts",
     "di/notes/work/code.debt.md",
     "di/notes/work/index.md",
     "logs/update-docs.error.di.log",

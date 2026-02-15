@@ -1,8 +1,8 @@
 import type { Dimension_Rect, S_SO } from '../types/Interfaces';
-import type { Axis } from '../runtime/Smart_Object';
+import type { Axis_Name } from '../runtime/Axis';
 
 interface S_Dimensions extends S_SO {
-	axis: Axis;
+	axis: Axis_Name;
 	formatted: string;
 }
 import { constraints, compiler, evaluator } from '../algebra';

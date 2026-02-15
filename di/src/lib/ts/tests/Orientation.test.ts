@@ -295,8 +295,11 @@ describe('fixed flag serialization', () => {
 
 	it('deserialize restores fixed=false', () => {
 		const data = {
+			id: 'test1',
 			name: 'stair',
-			bounds: { x_min: 0, x_max: 100, y_min: 0, y_max: 100, z_min: 0, z_max: 10 },
+			x: { start: 0, end: 100 },
+			y: { start: 0, end: 100 },
+			z: { start: 0, end: 10 },
 			fixed: false as const,
 		};
 		const { so } = Smart_Object.deserialize(data);
@@ -305,8 +308,11 @@ describe('fixed flag serialization', () => {
 
 	it('deserialize defaults to fixed=true when omitted', () => {
 		const data = {
+			id: 'test2',
 			name: 'wall',
-			bounds: { x_min: 0, x_max: 200, y_min: 0, y_max: 200, z_min: 0, z_max: 10 },
+			x: { start: 0, end: 200 },
+			y: { start: 0, end: 200 },
+			z: { start: 0, end: 10 },
 		};
 		const { so } = Smart_Object.deserialize(data);
 		expect(so.fixed).toBe(true);

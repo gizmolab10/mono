@@ -168,21 +168,25 @@ describe('serialize/deserialize formulas', () => {
 		constraints.set_formula(door, 'y_max', formula);
 
 		const data = door.serialize();
-		expect(data.formulas).toBeDefined();
-		expect(data.formulas!['y_max']).toBe(formula);
+		expect(data.y.formulas).toBeDefined();
+		expect(data.y.formulas!.end).toBe(formula);
 	});
 
 	it('omits formulas key when no formulas exist', () => {
 		const so = add_so('box');
 		const data = so.serialize();
-		expect(data.formulas).toBeUndefined();
+		expect(data.x.formulas).toBeUndefined();
+		expect(data.y.formulas).toBeUndefined();
+		expect(data.z.formulas).toBeUndefined();
 	});
 
 	it('deserializes and recompiles formulas', () => {
 		const data = {
+			id: 'test1',
 			name: 'door',
-			bounds: { x_min: -152.4, x_max: 152.4, y_min: 0, y_max: 2286, z_min: -457.2, z_max: 457.2 },
-			formulas: { 'y_max': 'wall.y_max - 6"' },
+			x: { start: -152.4, end: 152.4 },
+			y: { start: 0, end: 2286, formulas: { end: 'wall.y_max - 6"' } },
+			z: { start: -457.2, end: 457.2 },
 		};
 
 		const { so } = Smart_Object.deserialize(data);
@@ -236,9 +240,7 @@ describe('orientation', () => {
 
 	it('orientation survives serialize/deserialize', () => {
 		const so = add_so('box');
-		const rot = quat.create();
-		quat.setAxisAngle(rot, [1, 0, 0], Math.PI / 3);
-		quat.copy(so.orientation, rot);
+		so.set_rotation('x', Math.PI / 3);
 
 		const data = so.serialize();
 		const { so: restored } = Smart_Object.deserialize(data);

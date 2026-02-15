@@ -1,3 +1,13 @@
+import default_scene from '../../../assets/American.di?raw';
+import { preferences, T_Preference } from './Preferences';
+import type { Bound } from '../runtime/Smart_Object';
+import type { Axis_Name } from '../runtime/Axis';
+import { T_Hit_3D } from '../types/Enumerations';
+import { Identifiable } from '../runtime';
+import { camera } from '../render/Camera';
+import { scene } from '../render/Scene';
+import { hits_3d } from './Hits_3D';
+
 /**
  * Scenes — save/load scene state to localStorage and filesystem
  *
@@ -5,49 +15,64 @@
  * Uses Preferences for the actual localStorage read/write.
  */
 
-import { preferences, T_Preference } from './Preferences';
-import type { Bound, Axis } from '../runtime/Smart_Object';
-import default_scene from '../../../assets/American.di?raw';
-import { T_Hit_3D } from '../types/Enumerations';
-import { Identifiable } from '../runtime';
-import { camera } from '../render/Camera';
-import { scene } from '../render/Scene';
-import { hits_3d } from './Hits_3D';
+// ── current shape (per-axis bundles) ──
 
-export interface Portable_SO {
-	id: string;
-	name: string;
-	bounds: Record<Bound, number>;
-	orientation: number[];
-	rotations?: { axis: Axis; angle: number }[];
-	scale?: number;
-	fixed?: boolean;
-	position?: number[];		// O_Scene.position (defaults to [0,0,0])
+interface Portable_Axis {
+	formulas?: { start?: string; end?: string };
+	invariant?: number;						// 0=start, 1=end, 2=length (default 2)
+	rotation?: number;						// radians (omit when 0)
+	start: number;
+	end: number;
+}
+
+interface Portable_SO {
+	position?: number[];
 	parent_id?: string;
-	parent_name?: string;		// kept for backwards-compatible export
-	formulas?: Record<string, string>;
+	x: Portable_Axis;
+	y: Portable_Axis;
+	z: Portable_Axis;
+	locked?: number;						// 0=x, 1=y, 2=z (default 0)
+	fixed?: boolean;						// default true
+	scale?: number;							// default 1
+	name: string;
+	id: string;
 }
 
 export interface Portable_Scene {
-	smart_objects: Portable_SO[];
 	camera: { eye: number[]; center: number[]; up: number[] };
-	root_id?: string;
-	root_name?: string;			// v1 compat
-	selected_id?: string;
-	selected_name?: string;		// v1 compat
+	smart_objects: Portable_SO[];
 	selected_face?: number;
+	selected_id?: string;
+	root_id: string;
 }
 
 interface Exported_File {
-	version: string;
 	scene: Portable_Scene;
+	version: string;
 }
 
-const CURRENT_VERSION = '2';
+// ── legacy v2 shape (flat bounds, orientation) ──
+
+export interface Portable_SO_v2 {
+	rotations?: { axis: Axis_Name; angle: number }[];
+	formulas?: Record<string, string>;
+	bounds: Record<Bound, number>;
+	orientation?: number[];		// kept for backwards-compatible import
+	invariants?: number[];
+	parent_name?: string;		// kept for backwards-compatible import
+	position?: number[];		// O_Scene.position (defaults to [0,0,0])
+	parent_id?: string;
+	fixed?: boolean;
+	scale?: number;
+	name: string;
+	id: string;
+}
+
+const CURRENT_VERSION = '3';
 
 class Scenes {
-	root_id: string = '';
 	root_name: string = '';
+	root_id: string = '';
 
 	clear(): void {
 		preferences.remove(T_Preference.scene);
@@ -55,13 +80,13 @@ class Scenes {
 
 	load(): Portable_Scene | null {
 		const saved = preferences.read<Portable_Scene>(T_Preference.scene);
-		if (saved) return this.ensure_v2(saved);
+		if (saved) return this.migrate(saved);
 		// Fall back to bundled default scene
 		try {
 			const parsed = JSON.parse(default_scene);
 			const validated = this.validate_import(parsed);
 			if (!validated) return null;
-			return this.ensure_v2(validated.scene);
+			return this.migrate(validated.scene);
 		} catch {
 			return null;
 		}
@@ -72,18 +97,18 @@ class Scenes {
 			const serialized = o.so.serialize();
 			const pos = o.position;
 			const has_position = pos[0] !== 0 || pos[1] !== 0 || pos[2] !== 0;
-			const with_position = has_position ? { ...serialized, position: Array.from(pos) } : serialized;
-			if (o.parent) return { ...with_position, parent_id: o.parent.so.id, parent_name: o.parent.so.name };
-			return with_position;
+			return {
+				...serialized,
+				...(has_position ? { position: Array.from(pos) } : {}),
+				...(o.parent ? { parent_id: o.parent.so.id } : {}),
+			};
 		});
 		const sel = hits_3d.selection;
 		const data: Portable_Scene = {
 			smart_objects: objects,
 			camera: camera.serialize(),
 			root_id: this.root_id,
-			root_name: this.root_name,
 			selected_id: sel?.so.id,
-			selected_name: sel?.so.name,
 			selected_face: sel?.type === T_Hit_3D.face ? sel.index : undefined,
 		};
 		preferences.write(T_Preference.scene, data);
@@ -123,7 +148,7 @@ class Scenes {
 					const parsed = JSON.parse(text);
 					const imported = this.validate_import(parsed);
 					if (!imported) return;
-					preferences.write(T_Preference.scene, this.ensure_v2(imported.scene));
+					preferences.write(T_Preference.scene, this.migrate(imported.scene));
 					location.reload();
 				} catch (error) {
 					console.error('Import failed:', error);
@@ -134,49 +159,131 @@ class Scenes {
 		input.click();
 	}
 
-	// ── v1 → v2 migration ──
-	// v1 files have no id — everything keyed by name.
-	// Mint a stable id for each SO, rewrite formulas and parent refs.
+	// ── migration ──
+	// Detect shape and convert to current Portable_Scene.
+	// Legacy: SO has `bounds` field.  Current: SO has `x`, `y`, `z` fields.
 
-	private ensure_v2(saved: Portable_Scene): Portable_Scene {
-		const needs_migration = saved.smart_objects.some(so => !so.id);
-		if (!needs_migration) return saved;
+	private migrate(raw: unknown): Portable_Scene {
+		const data = raw as Record<string, unknown>;
+		const sos = data.smart_objects as Record<string, unknown>[];
+		if (!sos?.length) return raw as Portable_Scene;
 
-		// Build name → minted id map
-		const name_to_id = new Map<string, string>();
-		for (const so of saved.smart_objects) {
-			if (!so.id) so.id = Identifiable.newID();
-			name_to_id.set(so.name, so.id);
+		// Already current shape?
+		if ('x' in sos[0] && 'y' in sos[0] && 'z' in sos[0]) {
+			return raw as Portable_Scene;
 		}
 
-		for (const so of saved.smart_objects) {
-			// Rewrite parent_name → parent_id
-			if (so.parent_name && !so.parent_id) {
-				so.parent_id = name_to_id.get(so.parent_name);
-			}
+		// Legacy shape — has `bounds`
+		if ('bounds' in sos[0]) {
+			return this.migrate_legacy(data, sos as unknown as Portable_SO_v2[]);
+		}
 
-			// Rewrite formulas: replace name.bound with id.bound
-			if (so.formulas) {
-				for (const [bound, formula] of Object.entries(so.formulas)) {
-					let rewritten = formula;
-					for (const [name, id] of name_to_id) {
-						// Replace "name." with "id." — only at word boundaries
-						rewritten = rewritten.replace(new RegExp(`\\b${this.escape_regex(name)}\\.`, 'g'), `${id}.`);
+		return raw as Portable_Scene;
+	}
+
+	private migrate_legacy(data: Record<string, unknown>, legacy_sos: Portable_SO_v2[]): Portable_Scene {
+		// v1 → v2: mint ids if missing
+		const needs_ids = legacy_sos.some(so => !so.id);
+		const name_to_id = new Map<string, string>();
+
+		if (needs_ids) {
+			for (const so of legacy_sos) {
+				if (!so.id) so.id = Identifiable.newID();
+				name_to_id.set(so.name, so.id);
+			}
+			for (const so of legacy_sos) {
+				if (so.parent_name && !so.parent_id) {
+					so.parent_id = name_to_id.get(so.parent_name);
+				}
+				if (so.formulas) {
+					for (const [bound, formula] of Object.entries(so.formulas)) {
+						let rewritten = formula;
+						for (const [name, id] of name_to_id) {
+							rewritten = rewritten.replace(new RegExp(`\\b${this.escape_regex(name)}\\.`, 'g'), `${id}.`);
+						}
+						so.formulas[bound] = rewritten;
 					}
-					so.formulas[bound] = rewritten;
 				}
 			}
 		}
 
-		// Rewrite root and selection refs
-		if (saved.root_name && !saved.root_id) {
-			saved.root_id = name_to_id.get(saved.root_name);
+		// v2 → current: convert each SO
+		const migrated: Portable_SO[] = legacy_sos.map(old => this.migrate_so(old));
+
+		// Resolve root_id and selected_id from legacy name fields if needed
+		let root_id = (data.root_id as string) ?? '';
+		let selected_id = data.selected_id as string | undefined;
+		if (!root_id && data.root_name) {
+			root_id = name_to_id.get(data.root_name as string) ?? migrated[0]?.id ?? '';
 		}
-		if (saved.selected_name && !saved.selected_id) {
-			saved.selected_id = name_to_id.get(saved.selected_name);
+		if (!selected_id && data.selected_name) {
+			selected_id = name_to_id.get(data.selected_name as string);
+		}
+		if (!root_id && migrated.length > 0) {
+			root_id = migrated[0].id;
 		}
 
-		return saved;
+		return {
+			smart_objects: migrated,
+			camera: data.camera as Portable_Scene['camera'],
+			root_id,
+			selected_id,
+			selected_face: data.selected_face as number | undefined,
+		};
+	}
+
+	/** Convert a single legacy Portable_SO_v2 → Portable_SO */
+	private migrate_so(old: Portable_SO_v2): Portable_SO {
+		const bounds = old.bounds;
+		const axis_names: Axis_Name[] = ['x', 'y', 'z'];
+		const axes: Record<string, Portable_Axis> = {};
+
+		for (let i = 0; i < 3; i++) {
+			const name = axis_names[i];
+			const min_key = `${name}_min` as Bound;
+			const max_key = `${name}_max` as Bound;
+			const pa: Portable_Axis = {
+				start: bounds[min_key],
+				end: bounds[max_key],
+			};
+			// invariant
+			if (old.invariants && old.invariants[i] !== 2) {
+				pa.invariant = old.invariants[i];
+			}
+			// rotation — find matching entry in rotations array
+			if (old.rotations) {
+				const rot = old.rotations.find(r => r.axis === name);
+				if (rot && Math.abs(rot.angle) > 1e-10) {
+					pa.rotation = rot.angle;
+				}
+			}
+			// formulas — map old flat keys to per-axis start/end
+			if (old.formulas) {
+				const start_formula = old.formulas[min_key];
+				const end_formula = old.formulas[max_key];
+				if (start_formula || end_formula) {
+					pa.formulas = {};
+					if (start_formula) pa.formulas.start = start_formula;
+					if (end_formula) pa.formulas.end = end_formula;
+				}
+			}
+			axes[name] = pa;
+		}
+
+		const result: Portable_SO = {
+			id: old.id,
+			name: old.name,
+			x: axes.x,
+			y: axes.y,
+			z: axes.z,
+		};
+
+		if (old.scale !== undefined && old.scale !== 1) result.scale = old.scale;
+		if (old.fixed === false) result.fixed = false;
+		if (old.position) result.position = old.position;
+		if (old.parent_id) result.parent_id = old.parent_id;
+
+		return result;
 	}
 
 	private escape_regex(s: string): string {

@@ -18,7 +18,8 @@
       "WebSearch",
       "Write",
       "Edit",
-      "Bash(yarn svelte-check:*)"
+      "Bash(yarn svelte-check:*)",
+      "Bash(yarn vitest run:*)"
     ]
   }
 }
