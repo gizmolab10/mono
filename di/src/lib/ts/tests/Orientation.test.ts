@@ -212,7 +212,7 @@ describe('recompute_max_bounds_from_rotation', () => {
 	it('45° around Z redistributes XY while preserving diagonal length', () => {
 		const so = add_so('wall', { x_min: 0, x_max: 100, y_min: 0, y_max: 0, z_min: 0, z_max: 10 });
 		// Set 45° around Z
-		quat.setAxisAngle(so.orientation, [0, 0, 1], Math.PI / 4);
+		so.set_rotation('z', Math.PI / 4);
 		orientation.recompute_max_bounds(so);
 
 		// Original length was 100 along x. After 45° rotation:
@@ -229,7 +229,7 @@ describe('recompute_max_bounds_from_rotation', () => {
 
 	it('30° around Z', () => {
 		const so = add_so('wall', { x_min: 0, x_max: 200, y_min: 0, y_max: 0, z_min: 0, z_max: 10 });
-		quat.setAxisAngle(so.orientation, [0, 0, 1], Math.PI / 6);
+		so.set_rotation('z', Math.PI / 6);
 		orientation.recompute_max_bounds(so);
 
 		expect(so.x_max).toBeCloseTo(200 * Math.cos(Math.PI / 6), 1);
@@ -240,7 +240,7 @@ describe('recompute_max_bounds_from_rotation', () => {
 		const so = add_so('wall', { x_min: 0, x_max: 300, y_min: 0, y_max: 100, z_min: 0, z_max: 10 });
 		const length_before = Math.sqrt(300 * 300 + 100 * 100);
 
-		quat.setAxisAngle(so.orientation, [0, 0, 1], Math.PI / 3);
+		so.set_rotation('z', Math.PI / 3);
 		orientation.recompute_max_bounds(so);
 
 		const length_after = Math.sqrt(

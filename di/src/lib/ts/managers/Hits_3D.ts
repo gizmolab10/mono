@@ -172,11 +172,13 @@ class Hits_3D {
 		if (!so.scene?.faces) return -1;
 		const projected = this.cache.get(so.scene.id)?.projected;
 		if (!projected) return -1;
+		// Root: tumble from store. Child: so.orientation getter.
+		const orientation = so.scene.parent ? so.orientation : stores.current_orientation();
 		let best = -1, best_z = -Infinity;
 		for (let i = 0; i < so.scene.faces.length; i++) {
 			// Only consider faces that are front-facing (negative winding)
 			if (this.facing_front(so.scene.faces[i], projected) >= 0) continue;
-			const wn = vec3.transformQuat(vec3.create(), so.face_normal(i), so.orientation);
+			const wn = vec3.transformQuat(vec3.create(), so.face_normal(i), orientation);
 			if (wn[2] > best_z) { best_z = wn[2]; best = i; }
 		}
 		return best;

@@ -5,7 +5,7 @@ import { Point } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { stores } from '../managers/Stores';
 import { camera } from '../render/Camera';
-import type { Bound } from '../types/Types';
+import type { Bound, Axis_Name } from '../types/Types';
 import Smart_Object from '../runtime/Smart_Object';
 
 /** Anchored plane captured at drag start — prevents frame-to-frame drift.
@@ -110,10 +110,10 @@ class Drag {
 		stores.w_scale.update(s => s * factor);
 	}
 
-	rotate_object(obj: O_Scene, prev: Point, curr: Point, alt_key = false): void {
+	rotate_object(_obj: O_Scene, prev: Point, curr: Point, alt_key = false): void {
 		const sel = hits_3d.selection;
 
-		// No face selected → free rotation (root tumble)
+		// No face selected → free rotation (root tumble via store)
 		if (!sel || sel.type !== T_Hit_3D.face) {
 			this._rotation_face = null;
 			const dx = curr.x - prev.x;
@@ -122,9 +122,11 @@ class Drag {
 			const rot_y = quat.create();
 			quat.setAxisAngle(rot_x, [1, 0, 0], dy * 0.01);
 			quat.setAxisAngle(rot_y, [0, 1, 0], dx * 0.01);
-			quat.multiply(obj.so.orientation, rot_y, obj.so.orientation);
-			quat.multiply(obj.so.orientation, rot_x, obj.so.orientation);
-			quat.normalize(obj.so.orientation, obj.so.orientation);
+			const q = stores.current_orientation();
+			quat.multiply(q, rot_y, q);
+			quat.multiply(q, rot_x, q);
+			quat.normalize(q, q);
+			stores.set_orientation(q);
 			return;
 		}
 
@@ -134,7 +136,7 @@ class Drag {
 
 		// Determine which face's normal to rotate around
 		let face_normal_local: vec3;   // in the OWNING SO's local space
-		let face_normal_parent: vec3;  // in the child's parent space (= axis for setAxisAngle)
+		let rotation_axis: Axis_Name;  // which axis to apply rotation on
 		let rotation_target: Smart_Object;
 		let normal_scene: O_Scene;     // scene whose world matrix maps face_normal_local → world
 
@@ -144,16 +146,14 @@ class Drag {
 			const parent_front = hits_3d.front_most_face(parent_so);
 			if (parent_front < 0) return;
 			face_normal_local = parent_so.face_normal(parent_front);
-			// Parent's local space IS child's parent space — no transform needed
-			face_normal_parent = vec3.clone(face_normal_local);
+			rotation_axis = parent_so.face_fixed_axis(parent_front);
 			rotation_target = so;
 			normal_scene = scene.parent;
 			this._rotation_face = { scene: scene.parent, face_index: parent_front };
 		} else {
 			// Normal: rotate around selected face's normal
 			face_normal_local = so.face_normal(sel.index);
-			face_normal_parent = vec3.create();
-			vec3.transformQuat(face_normal_parent, face_normal_local, so.orientation);
+			rotation_axis = so.face_fixed_axis(sel.index);
 			rotation_target = so;
 			normal_scene = scene;
 			this._rotation_face = { scene, face_index: sel.index };
@@ -195,25 +195,13 @@ class Drag {
 		vec3.subtract(camera_direction, camera.center_pos, camera.eye);
 		if (vec3.dot(face_normal_world, camera_direction) > 0) delta_theta = -delta_theta;
 
-		// Apply rotation incrementally in parent space
-		const delta_q = quat.create();
-		quat.setAxisAngle(delta_q, face_normal_parent as [number, number, number], delta_theta);
-		quat.multiply(rotation_target.orientation, delta_q, rotation_target.orientation);
-		quat.normalize(rotation_target.orientation, rotation_target.orientation);
+		// Apply rotation to the axis angle
+		rotation_target.apply_rotation(rotation_axis, delta_theta);
 
-		// Snap: extract twist angle around the STABLE local-space face normal,
-		// check if near a detent, and correct if so.
-		// face_normal_local is constant (e.g. [0,0,-1]) — safe decomposition axis.
-		const snap_axis = face_normal_local;
-		const q = rotation_target.orientation;
-		const proj = vec3.dot([q[0], q[1], q[2]], snap_axis);
-		const twist = quat.normalize(quat.create(), [snap_axis[0] * proj, snap_axis[1] * proj, snap_axis[2] * proj, q[3]]);
-		const twist_angle = 2 * Math.atan2(
-			vec3.length([twist[0], twist[1], twist[2]]) * Math.sign(proj),
-			twist[3]
-		);
+		// Snap: check if current angle is near a detent, snap if so
+		const axis_obj = rotation_target.axis_by_name(rotation_axis);
+		let current_angle = axis_obj.angle.value;
 
-		// Snap to detent angles (within ±3°)
 		const SNAP_THRESHOLD = 3 * Math.PI / 180;
 		const SNAP_ANGLES = [0, 22.5, 30, 45, 60, 67.5, 90];
 		const snap_rad = SNAP_ANGLES.map(d => d * Math.PI / 180);
@@ -230,18 +218,16 @@ class Drag {
 			}
 		}
 
+		// Normalize current angle to [-π, π]
+		while (current_angle > Math.PI) current_angle -= 2 * Math.PI;
+		while (current_angle < -Math.PI) current_angle += 2 * Math.PI;
+
 		for (const snap of all_snaps) {
-			let diff = twist_angle - snap;
+			let diff = current_angle - snap;
 			while (diff > Math.PI) diff -= 2 * Math.PI;
 			while (diff < -Math.PI) diff += 2 * Math.PI;
 			if (Math.abs(diff) < SNAP_THRESHOLD) {
-				// Correct: remove current twist, apply snapped twist
-				const inv_twist = quat.invert(quat.create(), twist);
-				const swing = quat.multiply(quat.create(), q, inv_twist);
-				const snapped_twist = quat.create();
-				quat.setAxisAngle(snapped_twist, snap_axis as [number, number, number], snap);
-				quat.multiply(rotation_target.orientation, swing, snapped_twist);
-				quat.normalize(rotation_target.orientation, rotation_target.orientation);
+				axis_obj.angle.value = snap;
 				break;
 			}
 		}
@@ -457,10 +443,12 @@ class Drag {
 			(so.y_min + so.y_max) / 2,
 			(so.z_min + so.z_max) / 2,
 		];
-		// 2D: flatten SO toward camera, retaining in-plane rotation
+		// Root: tumble only (from store). Child: so.orientation (tumble inherited via parent).
+		const raw_orientation = obj.parent ? so.orientation : stores.current_orientation();
+		// 2D: flatten toward camera, retaining in-plane rotation
 		const orientation = stores.current_view_mode() === '2d'
-			? this.flatten_orientation(so.orientation)
-			: so.orientation;
+			? this.flatten_orientation(raw_orientation)
+			: raw_orientation;
 
 		// Rotate around the SO's exact 3D center: translate to center, rotate, translate back
 		const local = mat4.create();

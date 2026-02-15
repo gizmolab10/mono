@@ -87,12 +87,14 @@ class Engine {
         }
       }
     } else {
-      // First run — create default SO with initial rotation
+      // First run — create default SO with initial tumble
       const so = new Smart_Object('A');
       const init_quat = quat.create();
       quat.setAxisAngle(init_quat, vec3.normalize(vec3.create(), [1, 1, 0]), 0.5);
-      quat.multiply(so.orientation, init_quat, so.orientation);
-      quat.normalize(so.orientation, so.orientation);
+      const tumble = stores.current_orientation();
+      quat.multiply(tumble, init_quat, tumble);
+      quat.normalize(tumble, tumble);
+      stores.set_orientation(tumble);
       const so_scene = scene.create({
         so,
         edges: this.edges,
@@ -151,11 +153,9 @@ class Engine {
     // Input: drag ended — in 2D, animate snap-back from tilt to axis-aligned
     e3.set_drag_end_handler(() => {
       if (this.is_tilting && this.root_scene) {
-        const so = this.root_scene.so;
         // snapped_orientation is always the last clean axis-aligned quat
         this.snap_anim = {
-          so,
-          from: quat.clone(so.orientation),
+          from: stores.current_orientation(),
           to: quat.clone(this.snapped_orientation),
           t: 0,
         };
@@ -211,15 +211,16 @@ class Engine {
     }));
   })();
 
-  /** Snap SO orientation to the nearest axis-aligned quat for the given face. */
-  private snap_to_face(so: import('../runtime/Smart_Object').default, face: number): void {
+  /** Snap tumble orientation to the nearest axis-aligned quat for the given face. */
+  private snap_to_face(face: number): void {
+    const current = stores.current_orientation();
     let best: quat = Engine.FACE_SNAP_QUATS[face][0];
     let best_dot = -Infinity;
     for (const candidate of Engine.FACE_SNAP_QUATS[face]) {
-      const dot = Math.abs(quat.dot(so.orientation, candidate));
+      const dot = Math.abs(quat.dot(current, candidate));
       if (dot > best_dot) { best_dot = dot; best = candidate; }
     }
-    quat.copy(so.orientation, best);
+    stores.set_orientation(best);
   }
 
   /** Scratch orientation for 2D rotation — accumulates mouse drag to detect face changes. */
@@ -229,9 +230,8 @@ class Engine {
   /** Whether a 2D tilt is active (needs snap-back on drag end). */
   private is_tilting = false;
 
-  /** Snap animation state. */
+  /** Snap animation state (animates the tumble store). */
   private snap_anim: {
-    so: import('../runtime/Smart_Object').default;
     from: quat;
     to: quat;
     t: number;
@@ -243,12 +243,14 @@ class Engine {
     if (!anim) return;
     anim.t += 0.15; // ~6–7 frames to complete (tuned for feel)
     if (anim.t >= 1) {
-      quat.copy(anim.so.orientation, anim.to);
+      stores.set_orientation(anim.to);
       this.snap_anim = null;
     } else {
       // Ease-out: decelerate into the snap
       const eased = 1 - (1 - anim.t) * (1 - anim.t);
-      quat.slerp(anim.so.orientation, anim.from, anim.to, eased);
+      const result = quat.create();
+      quat.slerp(result, anim.from, anim.to, eased);
+      stores.set_orientation(result);
     }
   }
 
@@ -281,18 +283,18 @@ class Engine {
 
     // If the front face changed, animate the snap
     const current_face = hits_3d.front_most_face(so);
+    const current_tumble = stores.current_orientation();
     if (best_face >= 0 && best_face !== current_face) {
       let best_quat: quat = Engine.FACE_SNAP_QUATS[best_face][0];
       let best_dot = -Infinity;
       for (const candidate of Engine.FACE_SNAP_QUATS[best_face]) {
-        const d = Math.abs(quat.dot(so.orientation, candidate));
+        const d = Math.abs(quat.dot(current_tumble, candidate));
         if (d > best_dot) { best_dot = d; best_quat = candidate; }
       }
       const snap_target = quat.clone(best_quat);
 
       this.snap_anim = {
-        so,
-        from: quat.clone(so.orientation),
+        from: quat.clone(current_tumble),
         to: snap_target,
         t: 0,
       };
@@ -305,37 +307,38 @@ class Engine {
       const max_tilt = 0.08;
       const dot = Math.abs(quat.dot(this.snapped_orientation, this.scratch_orientation));
       const t = Math.min(1.0 - dot, max_tilt);
-      quat.slerp(so.orientation, this.snapped_orientation, this.scratch_orientation, t);
+      const tilted = quat.create();
+      quat.slerp(tilted, this.snapped_orientation, this.scratch_orientation, t);
+      stores.set_orientation(tilted);
       this.is_tilting = true;
     }
   }
 
-  /** Snap root SO: lock the front-most face, then pick the nearest 90° twist. */
+  /** Snap tumble: lock the front-most face, then pick the nearest 90° twist. */
   straighten(): void {
     if (!this.root_scene) return;
     const so = this.root_scene.so;
     const face = hits_3d.front_most_face(so);
     if (face < 0) {
-      quat.identity(so.orientation);
+      stores.set_orientation(quat.create());
     } else {
-      this.snap_to_face(so, face);
+      this.snap_to_face(face);
     }
     scenes.save();
   }
 
-  /** Animate root SO to show the given face (0–5) at front. */
+  /** Animate tumble to show the given face (0–5) at front. */
   orient_to_face(face: number): void {
     if (!this.root_scene || face < 0 || face > 5) return;
-    const so = this.root_scene.so;
+    const current = stores.current_orientation();
     let best: quat = Engine.FACE_SNAP_QUATS[face][0];
     let best_dot = -Infinity;
     for (const candidate of Engine.FACE_SNAP_QUATS[face]) {
-      const dot = Math.abs(quat.dot(so.orientation, candidate));
+      const dot = Math.abs(quat.dot(current, candidate));
       if (dot > best_dot) { best_dot = dot; best = candidate; }
     }
     this.snap_anim = {
-      so,
-      from: quat.clone(so.orientation),
+      from: quat.clone(current),
       to: quat.clone(best),
       t: 0,
     };
@@ -363,17 +366,17 @@ class Engine {
       const so = this.root_scene?.so;
       const face = so ? hits_3d.front_most_face(so) : -1;
       if (so && face >= 0) {
-        this.saved_3d_orientation = quat.clone(so.orientation);
-        this.snap_to_face(so, face);
-        quat.copy(this.scratch_orientation, so.orientation);
-        quat.copy(this.snapped_orientation, so.orientation);
+        this.saved_3d_orientation = stores.current_orientation();
+        this.snap_to_face(face);
+        const snapped = stores.current_orientation();
+        quat.copy(this.scratch_orientation, snapped);
+        quat.copy(this.snapped_orientation, snapped);
       }
       camera.set_position(vec3.fromValues(0, 0, 2750));
       camera.set_ortho(true);
     } else {
-      const so = this.root_scene?.so;
-      if (so && this.saved_3d_orientation) {
-        quat.copy(so.orientation, this.saved_3d_orientation);
+      if (this.saved_3d_orientation) {
+        stores.set_orientation(this.saved_3d_orientation);
         this.saved_3d_orientation = null;
       }
       camera.set_ortho(false);

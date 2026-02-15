@@ -29,6 +29,10 @@ export enum T_Preference {
 	viewMode         = 'viewMode',
 	solid            = 'solid',
 
+	// Render
+	orientation      = 'orientation',
+	scale            = 'scale',
+
 	// Scenes
 	scene = 'scene',
 }

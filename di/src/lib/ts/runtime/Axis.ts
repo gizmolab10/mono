@@ -27,16 +27,15 @@ export default class Axis {
 	get angle():  Attribute { return this.attributes[3]; }
 
 	serialize(): Portable_Axis {
-		const pa: Portable_Axis = {
+		return {
 			attributes: [
 				this.start.serialize(),
 				this.end.serialize(),
 				this.length.serialize(),
 				this.angle.serialize(),
 			],
+			invariant: this.invariant,
 		};
-		if (this.invariant !== 2) pa.invariant = this.invariant;
-		return pa;
 	}
 
 	deserialize(data: Portable_Axis): void {
@@ -45,6 +44,6 @@ export default class Axis {
 		this.end.deserialize(end);
 		this.length.deserialize(length);
 		this.angle.deserialize(angle);
-		if (data.invariant !== undefined) this.invariant = data.invariant;
+		this.invariant = data.invariant ?? 2;
 	}
 }

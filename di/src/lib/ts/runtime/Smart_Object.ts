@@ -1,17 +1,13 @@
 import type { Dictionary, Axis_Name, Bound } from '../types/Types';
 import type { O_Scene, Portable_Axis } from '../types/Interfaces';
-import { mat3, quat, vec3 } from 'gl-matrix';
+import { quat, vec3 } from 'gl-matrix';
 import Attribute from '../types/Attribute';
 import Identifiable from './Identifiable';
 import Axis from './Axis';
 
-export interface Rotation_Entry { axis: Axis_Name; angle: number }
-
 export default class Smart_Object extends Identifiable {
 	axes: Axis[] = [new Axis('x'), new Axis('y'), new Axis('z')];
 	attributes_dict_byName: Dictionary<Attribute> = {};
-	orientation: quat = quat.create();
-	rotations: Rotation_Entry[] = [];
 	scene: O_Scene | null;
 	rotation_lock: number = 0;
 	name: string;
@@ -289,126 +285,30 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
-	// ROTATION PAIRS — source of truth for angular annotations
+	// ORIENTATION — derived from per-axis angle attributes
 	// ═══════════════════════════════════════════════════════════════════
 
-	/**
-	 * Apply a rotation around a single axis.
-	 * - If axis matches an existing entry, merge (add angles).
-	 * - If new and length < 2, push a new entry.
-	 * - If new and length = 2, compact: compose into quat, decompose back.
-	 * Recomputes `this.orientation` from the rotation pair.
-	 */
-	apply_rotation(axis: Axis_Name, delta_radians: number): void {
-		const existing = this.rotations.find(r => r.axis === axis);
-		if (existing) {
-			existing.angle += delta_radians;
-		} else if (this.rotations.length < 2) {
-			this.rotations.push({ axis, angle: delta_radians });
-		} else {
-			// Compact: compose current pair + new rotation into quat, decompose back
-			this.recompute_orientation();
-			const delta_q = quat.create();
-			quat.setAxisAngle(delta_q, this.axis_vector(axis) as [number, number, number], delta_radians);
-			quat.multiply(this.orientation, delta_q, this.orientation);
-			// Decompose back into the frozen axis pair
-			this.rotations = this.decompose_into(this.rotations[0].axis, this.rotations[1].axis);
-		}
-		this.recompute_orientation();
-	}
-
-	/**
-	 * Set a specific rotation entry by axis (for editing via angular input).
-	 * If the axis already exists, replaces its angle.
-	 * If it doesn't exist and there's room, adds it.
-	 */
-	set_rotation(axis: Axis_Name, radians: number): void {
-		const existing = this.rotations.find(r => r.axis === axis);
-		if (existing) {
-			existing.angle = radians;
-		} else if (this.rotations.length < 2) {
-			this.rotations.push({ axis, angle: radians });
-		}
-		this.recompute_orientation();
-	}
-
-	/**
-	 * Compose the rotation pair into `this.orientation` (quat).
-	 * Applies rotations in order: first entry, then second entry.
-	 */
-	recompute_orientation(): void {
-		const q = quat.create(); // identity
-		for (const r of this.rotations) {
+	/** Compose orientation quat from axis angle attributes (x, y, z order). */
+	get orientation(): quat {
+		const q = quat.create();
+		for (const axis of this.axes) {
+			const angle = axis.angle.value;
+			if (Math.abs(angle) < 1e-10) continue;
 			const step = quat.create();
-			quat.setAxisAngle(step, this.axis_vector(r.axis) as [number, number, number], r.angle);
+			quat.setAxisAngle(step, this.axis_vector(axis.name) as [number, number, number], angle);
 			quat.multiply(q, step, q);
 		}
-		quat.copy(this.orientation, q);
+		return q;
 	}
 
-	/**
-	 * Decompose a quaternion into two sequential single-axis rotations.
-	 * Given frozen axes (a1, a2), extracts angle1 around a1 then angle2 around a2
-	 * such that: rotate(a1, angle1) * rotate(a2, angle2) ≈ this.orientation.
-	 *
-	 * Uses rotation matrix extraction with atan2 for each of the 6 axis pair cases.
-	 */
-	decompose_into(a1: Axis_Name, a2: Axis_Name): Rotation_Entry[] {
-		const m = mat3.fromQuat(mat3.create(), this.orientation);
-		// m is column-major: m[col*3+row], so m[0]=m00, m[1]=m10, m[2]=m20, m[3]=m01, m[4]=m11, m[5]=m21, m[6]=m02, m[7]=m12, m[8]=m22
-		const key = a1 + a2;
-		let angle1: number, angle2: number;
+	/** Add delta to a single axis angle. */
+	apply_rotation(axis: Axis_Name, delta_radians: number): void {
+		this.axis_by_name(axis).angle.value += delta_radians;
+	}
 
-		// Convention: R_total = R(a1, angle1) * R(a2, angle2)
-		// Each case extracts angles from the composed rotation matrix.
-		switch (key) {
-			case 'xy': // Rz then Ry in extrinsic = Rx(a1)*Ry(a2)
-				// R = Rx(a1)*Ry(a2)
-				// m[6]=m02 = sin(a2),  m[7]=m12 = -sin(a1)*cos(a2),  m[8]=m22 = cos(a1)*cos(a2)
-				angle2 = Math.asin(Math.max(-1, Math.min(1, m[6])));
-				angle1 = Math.atan2(-m[7], m[8]);
-				break;
-			case 'xz':
-				// R = Rx(a1)*Rz(a2)
-				// m[3]=m01 = -sin(a2), m[4]=m11 = cos(a1)*cos(a2), m[5]=m21 = sin(a1)*cos(a2)
-				angle2 = Math.asin(Math.max(-1, Math.min(1, -m[3])));
-				angle1 = Math.atan2(m[5], m[4]);
-				break;
-			case 'yx':
-				// R = Ry(a1)*Rx(a2)
-				// m[5]=m21 = -sin(a2), m[2]=m20 = sin(a1)*cos(a2), m[8]=m22 = cos(a1)*cos(a2)
-				angle2 = Math.asin(Math.max(-1, Math.min(1, -m[5])));
-				angle1 = Math.atan2(m[2], m[8]);
-				break;
-			case 'yz':
-				// R = Ry(a1)*Rz(a2)
-				// m[3]=m01 = -cos(a1)*sin(a2), m[0]=m00 = cos(a1)*cos(a2), m[6]=m02 = -sin(a1)
-				angle1 = Math.asin(Math.max(-1, Math.min(1, -m[6])));
-				angle2 = Math.atan2(-m[3], m[0]);
-				break;
-			case 'zx':
-				// R = Rz(a1)*Rx(a2)
-				// m[1]=m10 = sin(a1)*cos(a2), m[4]=m11 = cos(a1)*cos(a2), m[7]=m12 = -sin(a2)
-				angle2 = Math.asin(Math.max(-1, Math.min(1, -m[7])));
-				angle1 = Math.atan2(m[1], m[4]);
-				break;
-			case 'zy':
-				// R = Rz(a1)*Ry(a2)
-				// m[2]=m20 = -sin(a1)*cos(a2), m[0]=m00 = cos(a1)*cos(a2), m[5]=m21 = sin(a2)
-				angle2 = Math.asin(Math.max(-1, Math.min(1, m[5])));
-				angle1 = Math.atan2(-m[2], m[0]);
-				break;
-			default:
-				// Same axis twice — collapse to single
-				angle1 = 2 * Math.acos(Math.max(-1, Math.min(1, this.orientation[3])));
-				angle2 = 0;
-		}
-
-		const result: Rotation_Entry[] = [{ axis: a1, angle: angle1 }];
-		if (Math.abs(angle2) > 1e-10) {
-			result.push({ axis: a2, angle: angle2 });
-		}
-		return result;
+	/** Set a single axis angle to an absolute value. */
+	set_rotation(axis: Axis_Name, radians: number): void {
+		this.axis_by_name(axis).angle.value = radians;
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
@@ -416,20 +316,14 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	/** Serialize to Portable_SO shape (per-axis bundles) */
-	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number } {
-		const axis_names: Axis_Name[] = ['x', 'y', 'z'];
-		const axes: Record<string, Portable_Axis> = {};
-		for (let i = 0; i < 3; i++) {
-			const name = axis_names[i];
-			const rot = this.rotations.find(r => r.axis === name);
-			if (rot) this.axes[i].angle.value = rot.angle;
-			axes[name] = this.axes[i].serialize();
-		}
+	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number } {
 		return {
 			id: this.id,
 			name: this.name,
-			x: axes.x, y: axes.y, z: axes.z,
-			...(this.rotation_lock !== 0 ? { rotation_lock: this.rotation_lock } : {}),
+			x: this.axes[0].serialize(),
+			y: this.axes[1].serialize(),
+			z: this.axes[2].serialize(),
+			rotation_lock: this.rotation_lock,
 		};
 	}
 
@@ -437,18 +331,11 @@ export default class Smart_Object extends Identifiable {
 	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number }): Smart_Object {
 		const so = new Smart_Object(data.name);
 		so.setID(data.id);
-		const axis_names: Axis_Name[] = ['x', 'y', 'z'];
 		const axis_data = [data.x, data.y, data.z];
 		for (let i = 0; i < 3; i++) {
-			const pa = axis_data[i];
-			so.axes[i].deserialize(pa);
-			const angle = pa.attributes[3].value;
-			if (Math.abs(angle) > 1e-10) {
-				so.rotations.push({ axis: axis_names[i], angle });
-			}
+			so.axes[i].deserialize(axis_data[i]);
 		}
-		if (so.rotations.length > 0) so.recompute_orientation();
-		if (data.rotation_lock !== undefined) so.rotation_lock = data.rotation_lock;
+		so.rotation_lock = data.rotation_lock ?? 0;
 		return so;
 	}
 }

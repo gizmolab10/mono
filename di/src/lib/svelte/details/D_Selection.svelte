@@ -41,22 +41,16 @@
 	const axes = ['x', 'y', 'z'] as const;
 
 	function get_angles(so: Smart_Object, _tick: number) {
-		// Extract Euler XYZ angles from orientation quaternion
-		const q = so.orientation;
-		const [qx, qy, qz, qw] = [q[0], q[1], q[2], q[3]];
-		const sinr_cosp = 2 * (qw * qx + qy * qz);
-		const cosr_cosp = 1 - 2 * (qx * qx + qy * qy);
-		const rx = Math.atan2(sinr_cosp, cosr_cosp);
-		const sinp = 2 * (qw * qy - qz * qx);
-		const ry = Math.abs(sinp) >= 1 ? Math.sign(sinp) * Math.PI / 2 : Math.asin(sinp);
-		const siny_cosp = 2 * (qw * qz + qx * qy);
-		const cosy_cosp = 1 - 2 * (qy * qy + qz * qz);
-		const rz = Math.atan2(siny_cosp, cosy_cosp);
+		// Read axis angle values directly (radians → degrees)
 		const fmt = (rad: number) => {
 			const degrees = Math.round(rad * (180 / Math.PI) * 2) / 2;
 			return (degrees % 1 === 0 ? degrees.toFixed(0) : degrees.toFixed(1)) + '°';
 		};
-		return { x: fmt(rx), y: fmt(ry), z: fmt(rz) };
+		return {
+			x: fmt(so.axes[0].angle.value),
+			y: fmt(so.axes[1].angle.value),
+			z: fmt(so.axes[2].angle.value),
+		};
 	}
 
 	let angles = $derived(selected_so ? get_angles(selected_so, tick) : { x: '0°', y: '0°', z: '0°' });

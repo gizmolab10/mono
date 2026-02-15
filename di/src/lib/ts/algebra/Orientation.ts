@@ -70,20 +70,14 @@ class Orientation {
 
 	/**
 	 * Recompute orientation from an SO's current bounds.
-	 * Mutates so.orientation and so.rotations in place.
+	 * Sets the single axis angle on the rotation axis; zeroes the others.
 	 */
 	recompute(so: Smart_Object): void {
 		const q = this.from_bounds(so);
-		quat.copy(so.orientation, q);
-		// Sync the rotations array from the new quat
-		const axis = this.axis_from_bounds(so);
-		if (axis) {
-			const angle = 2 * Math.acos(Math.max(-1, Math.min(1, q[3])));
-			if (angle > 1e-6) {
-				so.rotations = [{ axis, angle }];
-			} else {
-				so.rotations = [];
-			}
+		const rot_axis = this.axis_from_bounds(so);
+		const angle = 2 * Math.acos(Math.max(-1, Math.min(1, q[3])));
+		for (const axis of so.axes) {
+			axis.angle.value = (rot_axis && axis.name === rot_axis && angle > 1e-6) ? angle : 0;
 		}
 	}
 

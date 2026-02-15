@@ -330,7 +330,8 @@ class Render {
       (so.y_min + so.y_max) / 2,
       (so.z_min + so.z_max) / 2,
     ];
-    const orientation = so.orientation;
+    // Root: tumble only (from store). Child: so.orientation (tumble inherited via parent).
+    const orientation = obj.parent ? so.orientation : stores.current_orientation();
 
     // Rotate around the SO's exact 3D center: translate to center, rotate, translate back
     const local = mat4.create();
@@ -1411,8 +1412,8 @@ class Render {
   // ANGULAR RENDERING — angle annotations between parent and child
   // ═══════════════════════════════════════════════════════════════════
   //
-  // Reads from so.rotations[] directly — no intersection segments needed.
-  // For each rotation entry {axis, angle}, pick the most visible parent face
+  // Reads from so axis angle attributes directly — no intersection segments needed.
+  // For each non-zero axis angle, pick the most visible parent face
   // perpendicular to that axis, compute hinge and witness directions from
   // the rotation geometry, call render_angular() to draw.
 
@@ -1435,7 +1436,7 @@ class Render {
     for (const obj of objects) {
       if (!obj.parent) continue;
       const child_so = obj.so;
-      if (child_so.rotations.length === 0) continue;
+      if (child_so.axes.every(a => Math.abs(a.angle.value) < 1e-10)) continue;
 
       const parent_obj = obj.parent;
       const parent_so = parent_obj.so;
@@ -1457,13 +1458,13 @@ class Render {
       vec4.transformMat4(cc4, cc4, child_world);
       vec3.set(child_center_w, cc4[0], cc4[1], cc4[2]);
 
-      for (const rot of child_so.rotations) {
-        const angle = rot.angle;
+      for (const axis of child_so.axes) {
+        const angle = axis.angle.value;
         const degrees = Math.abs(angle) * 180 / Math.PI;
         if (degrees < 0.5 || degrees > 89.5) continue;
 
         // Pick the most visible parent face perpendicular to this rotation axis
-        const face_pair = Render.AXIS_FACE_INDICES[rot.axis];
+        const face_pair = Render.AXIS_FACE_INDICES[axis.name];
         let best_fi = -1;
         let best_winding = 0;
         for (const fi of face_pair) {
@@ -1561,7 +1562,7 @@ class Render {
 
         this.render_angular(
           child_so, hinge_w, rotated_dir, edge_dir_w,
-          Math.abs(angle), radius_w, rot.axis, identity,
+          Math.abs(angle), radius_w, axis.name, identity,
         );
       }
     }

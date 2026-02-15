@@ -3,7 +3,6 @@ import type { Bound } from '../types/Types';
 import Smart_Object from '../runtime/Smart_Object';
 import { scene } from '../render/Scene';
 import { constraints } from '../algebra';
-import { quat } from 'gl-matrix';
 
 // ═══════════════════════════════════════════════════════════════════
 // HELPERS
@@ -221,17 +220,17 @@ describe('serialize/deserialize formulas', () => {
 
 describe('orientation', () => {
 
-	it('child can copy parent orientation via quat.copy', () => {
+	it('child can copy parent orientation via axis angles', () => {
 		const parent = add_so('parent');
 		const child = add_so('child');
 
-		// Rotate parent
-		const rot = quat.create();
-		quat.setAxisAngle(rot, [0, 1, 0], Math.PI / 4);
-		quat.copy(parent.orientation, rot);
+		// Rotate parent around Y
+		parent.set_rotation('y', Math.PI / 4);
 
-		// Copy to child (as add_child_so does)
-		quat.copy(child.orientation, parent.orientation);
+		// Copy axis angles to child
+		for (let i = 0; i < 3; i++) {
+			child.axes[i].angle.value = parent.axes[i].angle.value;
+		}
 
 		expect(child.orientation[0]).toBeCloseTo(parent.orientation[0]);
 		expect(child.orientation[1]).toBeCloseTo(parent.orientation[1]);
