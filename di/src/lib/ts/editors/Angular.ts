@@ -1,6 +1,6 @@
 import type { Angle_Rect, S_SO } from '../types/Interfaces';
 import { constraints, orientation } from '../algebra';
-import type { Axis_Name } from '../runtime/Axis';
+import type { Axis_Name } from '../types/Types';
 import { T_Editing } from '../types/Enumerations';
 import { writable, get } from 'svelte/store';
 import { stores } from '../managers/Stores';

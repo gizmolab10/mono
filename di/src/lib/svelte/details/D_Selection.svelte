@@ -7,7 +7,7 @@
 	import { units } from '../../ts/types/Units';
 	import { engine } from '../../ts/render';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import type { Bound } from '../../ts/runtime/Smart_Object';
+	import type { Bound } from '../../ts/types/Types';
 
 	const { w_s_face_label } = face_label;
 	const { w_root_so, w_selection, w_precision, w_tick } = stores;
@@ -101,7 +101,7 @@
 
 	function set_locked(index: number) {
 		if (!selected_so) return;
-		selected_so.locked = index;
+		selected_so.rotation_lock = index;
 		stores.tick();
 		scenes.save();
 	}
@@ -207,7 +207,7 @@
 			{#each axes as axis, i}
 				<tr>
 					<td class='attr-name'>{axis}</td>
-					<td class='attr-sep' class:cross={selected_so?.locked === i} onclick={() => set_locked(i)}></td>
+					<td class='attr-sep' class:cross={selected_so?.rotation_lock === i} onclick={() => set_locked(i)}></td>
 					<td class='attr-value'>
 						<input
 							type      = 'text'

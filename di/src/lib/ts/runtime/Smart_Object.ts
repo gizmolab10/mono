@@ -1,33 +1,19 @@
-import type { O_Scene } from '../types/Interfaces';
-import type { Dictionary } from '../types/Types';
-import Axis, { type Axis_Name } from './Axis';
+import type { Dictionary, Axis_Name, Bound } from '../types/Types';
+import type { O_Scene, Portable_Axis } from '../types/Interfaces';
 import { mat3, quat, vec3 } from 'gl-matrix';
 import Attribute from '../types/Attribute';
 import Identifiable from './Identifiable';
-import { compiler } from '../algebra';
-
-// Bounds: min/max for each axis
-export type Bound = 'x_min' | 'x_max' | 'y_min' | 'y_max' | 'z_min' | 'z_max';
+import Axis from './Axis';
 
 export interface Rotation_Entry { axis: Axis_Name; angle: number }
-
-/** Serialized per-axis bundle — structurally matches Portable_Axis in Scenes.ts */
-export interface Serialized_Axis {
-	start: number;
-	end: number;
-	invariant?: number;
-	rotation?: number;
-	formulas?: { start?: string; end?: string };
-}
 
 export default class Smart_Object extends Identifiable {
 	axes: Axis[] = [new Axis('x'), new Axis('y'), new Axis('z')];
 	attributes_dict_byName: Dictionary<Attribute> = {};
 	orientation: quat = quat.create();
 	rotations: Rotation_Entry[] = [];
-	fixed: boolean = true;	// When true (default), rotating preserves angle and length. When false (variable), orientation is recomputed from bounds after propagation
 	scene: O_Scene | null;
-	locked: number = 0;
+	rotation_lock: number = 0;
 	name: string;
 
 	// Snap callback — set by Setup to snap mm values to the current precision grid. */
@@ -430,83 +416,39 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	/** Serialize to Portable_SO shape (per-axis bundles) */
-	serialize(): { id: string; name: string; x: Serialized_Axis; y: Serialized_Axis; z: Serialized_Axis; locked?: number; scale?: number; fixed?: boolean } {
+	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number } {
 		const axis_names: Axis_Name[] = ['x', 'y', 'z'];
-		const axes: Record<string, Serialized_Axis> = {};
-
+		const axes: Record<string, Portable_Axis> = {};
 		for (let i = 0; i < 3; i++) {
 			const name = axis_names[i];
-			const axis = this.axes[i];
-			const pa: Serialized_Axis = {
-				start: axis.start.value,
-				end: axis.end.value,
-			};
-			if (axis.invariant !== 2) pa.invariant = axis.invariant;
 			const rot = this.rotations.find(r => r.axis === name);
-			if (rot && Math.abs(rot.angle) > 1e-10) pa.rotation = rot.angle;
-			const start_formula = axis.start.formula;
-			const end_formula = axis.end.formula;
-			if (start_formula || end_formula) {
-				pa.formulas = {};
-				if (start_formula) pa.formulas.start = start_formula;
-				if (end_formula) pa.formulas.end = end_formula;
-			}
-			axes[name] = pa;
+			if (rot) this.axes[i].angle.value = rot.angle;
+			axes[name] = this.axes[i].serialize();
 		}
-
-		const scale = this.scene?.scale ?? 1;
 		return {
 			id: this.id,
 			name: this.name,
 			x: axes.x, y: axes.y, z: axes.z,
-			...(this.locked !== 0 ? { locked: this.locked } : {}),
-			...(scale !== 1 ? { scale } : {}),
-			...(!this.fixed ? { fixed: false } : {}),
+			...(this.rotation_lock !== 0 ? { rotation_lock: this.rotation_lock } : {}),
 		};
 	}
 
 	/** Deserialize from Portable_SO shape (per-axis bundles) */
-	static deserialize(data: { id: string; name: string; x: Serialized_Axis; y: Serialized_Axis; z: Serialized_Axis; locked?: number; scale?: number; fixed?: boolean }): { so: Smart_Object; scale: number } {
+	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number }): Smart_Object {
 		const so = new Smart_Object(data.name);
 		so.setID(data.id);
-
 		const axis_names: Axis_Name[] = ['x', 'y', 'z'];
 		const axis_data = [data.x, data.y, data.z];
-
 		for (let i = 0; i < 3; i++) {
-			const name = axis_names[i];
 			const pa = axis_data[i];
-			const axis = so.axes[i];
-
-			// Bounds
-			axis.start.value = pa.start;
-			axis.end.value = pa.end;
-
-			// Invariant
-			if (pa.invariant !== undefined) axis.invariant = pa.invariant;
-
-			// Rotation
-			if (pa.rotation !== undefined && Math.abs(pa.rotation) > 1e-10) {
-				so.rotations.push({ axis: name, angle: pa.rotation });
-			}
-
-			// Formulas
-			if (pa.formulas) {
-				if (pa.formulas.start) {
-					axis.start.formula = pa.formulas.start;
-					try { axis.start.compiled = compiler.compile(pa.formulas.start); } catch { /* skip */ }
-				}
-				if (pa.formulas.end) {
-					axis.end.formula = pa.formulas.end;
-					try { axis.end.compiled = compiler.compile(pa.formulas.end); } catch { /* skip */ }
-				}
+			so.axes[i].deserialize(pa);
+			const angle = pa.attributes[3].value;
+			if (Math.abs(angle) > 1e-10) {
+				so.rotations.push({ axis: axis_names[i], angle });
 			}
 		}
-
 		if (so.rotations.length > 0) so.recompute_orientation();
-		if (data.locked !== undefined) so.locked = data.locked;
-		if (data.fixed === false) so.fixed = false;
-
-		return { so, scale: data.scale ?? 1 };
+		if (data.rotation_lock !== undefined) so.rotation_lock = data.rotation_lock;
+		return so;
 	}
 }

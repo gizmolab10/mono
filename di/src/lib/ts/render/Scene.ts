@@ -12,7 +12,6 @@ class Scene {
     so: Smart_Object;
     parent?: O_Scene;
     position?: vec3;
-    scale?: number;
     color?: string;
   }): O_Scene {
     const id = `obj_${this.id_counter++}`;
@@ -22,7 +21,6 @@ class Scene {
       edges: config.edges,
       faces: config.faces,
       position: config.position ?? vec3.fromValues(0, 0, 0),
-      scale: config.scale ?? 1,
       color: config.color ?? 'rgba(255, 255, 255,',
       parent: config.parent,
     };

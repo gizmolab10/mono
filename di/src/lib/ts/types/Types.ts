@@ -2,6 +2,9 @@ import type { SignalConnection } from 'typed-signals';
 import { T_Signal } from './Enumerations';
 import S_Mouse from '../state/S_Mouse';	
 
+export type Axis_Name = 'x' | 'y' | 'z';
+export type Bound = 'x_min' | 'x_max' | 'y_min' | 'y_max' | 'z_min' | 'z_max';
+
 export type Dictionary<T = any> = Record<string, T>;
 export type T_Preview_Type = 'image' | 'text' | null;
 export type Integer = number & { __brand: 'integer' };

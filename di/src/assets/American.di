@@ -1,92 +1,170 @@
 {
-  "version": "2",
+  "version": "3",
   "scene": {
     "smart_objects": [
       {
         "id": "di4e429eaa6ca1ec",
         "name": "American",
-        "bounds": {
-          "x_min": -6.35,
-          "x_max": 6.35,
-          "y_min": -19.049999999999997,
-          "y_max": 25.4,
-          "z_min": -31.75,
-          "z_max": 19.049999999999997
+        "x": {
+          "attributes": [
+            {
+              "value": 0
+            },
+            {
+              "value": 6.35
+            },
+            {
+              "value": 12.7
+            },
+            {
+              "value": 0
+            }
+          ]
         },
-        "orientation": [
-          0.4297139644622803,
-          -0.8930495381355286,
-          0.12099117785692215,
-          -0.05629921704530716
-        ],
-        "scale": 19.8,
-        "position": [
-          100.12376403808594,
-          -16.21136474609375,
-          -13.332557678222656
-        ]
+        "y": {
+          "attributes": [
+            {
+              "value": 0
+            },
+            {
+              "value": 25.4
+            },
+            {
+              "value": 44.449999999999996
+            },
+            {
+              "value": 0
+            }
+          ]
+        },
+        "z": {
+          "attributes": [
+            {
+              "value": 0
+            },
+            {
+              "value": 19.049999999999997
+            },
+            {
+              "value": 50.8
+            },
+            {
+              "value": 0
+            }
+          ]
+        }
       },
       {
         "id": "di5148609712ff66",
         "name": "Beauty",
-        "bounds": {
-          "x_min": -12.7,
-          "x_max": 25.4,
-          "y_min": -25.4,
-          "y_max": -12.7,
-          "z_min": -38.099999999999994,
-          "z_max": 12.7
+        "x": {
+          "attributes": [
+            {
+              "value": -12.7,
+              "formula": "di4e429eaa6ca1ec.x_min"
+            },
+            {
+              "value": 25.4
+            },
+            {
+              "value": 38.099999999999994
+            },
+            {
+              "value": 0
+            }
+          ]
         },
-        "orientation": [
-          -0.024274224415421486,
-          -0.22028641402721405,
-          -0.34745314717292786,
-          0.9111316800117493
-        ],
-        "scale": 1,
-        "formulas": {
-          "x_min": "di4e429eaa6ca1ec.x_min",
-          "y_min": "di4e429eaa6ca1ec.y_min",
-          "z_min": "di4e429eaa6ca1ec.z_min"
+        "y": {
+          "attributes": [
+            {
+              "value": -25.4,
+              "formula": "di4e429eaa6ca1ec.y_min"
+            },
+            {
+              "value": -12.7
+            },
+            {
+              "value": 12.7
+            },
+            {
+              "value": 0
+            }
+          ]
         },
-        "position": [
-          -2.724144458770752,
-          29.569856643676758,
-          1.5342153310775757
-        ],
-        "parent_id": "di4e429eaa6ca1ec",
-        "parent_name": "American"
+        "z": {
+          "attributes": [
+            {
+              "value": 6.35,
+              "formula": "di4e429eaa6ca1ec.z_min"
+            },
+            {
+              "value": 12.7
+            },
+            {
+              "value": 50.8
+            },
+            {
+              "value": 0
+            }
+          ]
+        },
+        "parent_id": "di4e429eaa6ca1ec"
       },
       {
         "id": "di314ddfb8c18d38",
         "name": "Corn",
-        "bounds": {
-          "x_min": -12.7,
-          "x_max": 19.049999999999997,
-          "y_min": -31.75,
-          "y_max": -6.35,
-          "z_min": -10.610101890563964,
-          "z_max": 19.049999999999997
+        "x": {
+          "attributes": [
+            {
+              "value": 12.7,
+              "formula": "di4e429eaa6ca1ec.x_min"
+            },
+            {
+              "value": 19.049999999999997
+            },
+            {
+              "value": 31.749999999999996
+            },
+            {
+              "value": 0
+            }
+          ]
         },
-        "orientation": [
-          -0.8174030184745789,
-          -0.0231862161308527,
-          0.531051754951477,
-          0.22203315794467926
-        ],
-        "scale": 1,
-        "formulas": {
-          "x_min": "di4e429eaa6ca1ec.x_min",
-          "y_min": "di4e429eaa6ca1ec.y_min",
-          "z_min": "di4e429eaa6ca1ec.z_min"
+        "y": {
+          "attributes": [
+            {
+              "value": -12.7,
+              "formula": "di4e429eaa6ca1ec.y_min"
+            },
+            {
+              "value": -6.35
+            },
+            {
+              "value": 25.4
+            },
+            {
+              "value": 0
+            }
+          ]
         },
-        "position": [
-          1.8744336366653442,
-          14.875997543334961,
-          -17.72548484802246
-        ],
-        "parent_id": "di4e429eaa6ca1ec",
-        "parent_name": "American"
+        "z": {
+          "attributes": [
+            {
+              "value": -6.35,
+              "formula": "di4e429eaa6ca1ec.z_min"
+            },
+            {
+              "value": 19.049999999999997
+            },
+            {
+              "value": 29.66010189056396
+            },
+            {
+              "value": 0
+            }
+          ]
+        },
+        "parent_id": "di4e429eaa6ca1ec"
       }
     ],
     "camera": {
@@ -106,10 +184,6 @@
         0
       ]
     },
-    "root_id": "di4e429eaa6ca1ec",
-    "root_name": "American",
-    "selected_id": "di4e429eaa6ca1ec",
-    "selected_name": "American",
-    "selected_face": 3
+    "root_id": "di4e429eaa6ca1ec"
   }
 }

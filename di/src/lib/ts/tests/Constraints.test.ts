@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import type { Bound } from '../runtime/Smart_Object';
+import type { Bound } from '../types/Types';
 import Smart_Object from '../runtime/Smart_Object';
 import { scene } from '../render/Scene';
 import { constraints } from '../algebra';
@@ -168,28 +168,29 @@ describe('serialize/deserialize formulas', () => {
 		constraints.set_formula(door, 'y_max', formula);
 
 		const data = door.serialize();
-		expect(data.y.formulas).toBeDefined();
-		expect(data.y.formulas!.end).toBe(formula);
+		expect(data.y.attributes[1].formula).toBe(formula);
 	});
 
 	it('omits formulas key when no formulas exist', () => {
 		const so = add_so('box');
 		const data = so.serialize();
-		expect(data.x.formulas).toBeUndefined();
-		expect(data.y.formulas).toBeUndefined();
-		expect(data.z.formulas).toBeUndefined();
+		for (const axis of [data.x, data.y, data.z]) {
+			for (const attr of axis.attributes) {
+				expect(attr.formula).toBeUndefined();
+			}
+		}
 	});
 
 	it('deserializes and recompiles formulas', () => {
 		const data = {
 			id: 'test1',
 			name: 'door',
-			x: { start: -152.4, end: 152.4 },
-			y: { start: 0, end: 2286, formulas: { end: 'wall.y_max - 6"' } },
-			z: { start: -457.2, end: 457.2 },
+			x: { attributes: [{ value: -152.4 }, { value: 152.4 }, { value: 304.8 }, { value: 0 }] as [any, any, any, any] },
+			y: { attributes: [{ value: 0 }, { value: 2286, formula: 'wall.y_max - 6"' }, { value: 2286 }, { value: 0 }] as [any, any, any, any] },
+			z: { attributes: [{ value: -457.2 }, { value: 457.2 }, { value: 914.4 }, { value: 0 }] as [any, any, any, any] },
 		};
 
-		const { so } = Smart_Object.deserialize(data);
+		const so = Smart_Object.deserialize(data);
 		const attr = so.attributes_dict_byName['y_max'];
 
 		expect(attr.formula).toBe('wall.y_max - 6"');
@@ -205,7 +206,7 @@ describe('serialize/deserialize formulas', () => {
 		constraints.set_formula(door, 'y_max', formula);
 		const data = door.serialize();
 
-		const { so: restored } = Smart_Object.deserialize(data);
+		const restored = Smart_Object.deserialize(data);
 		const attr = restored.attributes_dict_byName['y_max'];
 
 		expect(attr.formula).toBe(formula);
@@ -243,7 +244,7 @@ describe('orientation', () => {
 		so.set_rotation('x', Math.PI / 3);
 
 		const data = so.serialize();
-		const { so: restored } = Smart_Object.deserialize(data);
+		const restored = Smart_Object.deserialize(data);
 
 		for (let i = 0; i < 4; i++) {
 			expect(restored.orientation[i]).toBeCloseTo(so.orientation[i]);

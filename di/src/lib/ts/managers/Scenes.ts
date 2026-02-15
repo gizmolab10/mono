@@ -1,7 +1,7 @@
+import type { Portable_Attribute, Portable_Axis } from '../types/Interfaces';
 import default_scene from '../../../assets/American.di?raw';
 import { preferences, T_Preference } from './Preferences';
-import type { Bound } from '../runtime/Smart_Object';
-import type { Axis_Name } from '../runtime/Axis';
+import type { Axis_Name, Bound } from '../types/Types';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Identifiable } from '../runtime';
 import { camera } from '../render/Camera';
@@ -15,60 +15,44 @@ import { hits_3d } from './Hits_3D';
  * Uses Preferences for the actual localStorage read/write.
  */
 
-// ── current shape (per-axis bundles) ──
+const CURRENT_VERSION = '3';
 
-interface Portable_Axis {
-	formulas?: { start?: string; end?: string };
-	invariant?: number;						// 0=start, 1=end, 2=length (default 2)
-	rotation?: number;						// radians (omit when 0)
-	start: number;
-	end: number;
-}
-
-interface Portable_SO {
-	position?: number[];
+export interface Portable_SO {
+	rotation_lock?: number;            // rotation axis: 0=x, 1=y, 2=z (default 0)
 	parent_id?: string;
 	x: Portable_Axis;
 	y: Portable_Axis;
 	z: Portable_Axis;
-	locked?: number;						// 0=x, 1=y, 2=z (default 0)
-	fixed?: boolean;						// default true
-	scale?: number;							// default 1
 	name: string;
 	id: string;
 }
 
 export interface Portable_Scene {
-	camera: { eye: number[]; center: number[]; up: number[] };
-	smart_objects: Portable_SO[];
-	selected_face?: number;
-	selected_id?: string;
-	root_id: string;
+  camera: { eye: number[]; center: number[]; up: number[] };
+  smart_objects: Portable_SO[];
+  selected_face?: number;
+  selected_id?: string;
+  root_id: string;
 }
 
-interface Exported_File {
-	scene: Portable_Scene;
-	version: string;
+export interface Exported_File {
+  scene: Portable_Scene;
+  version: string;
 }
 
-// ── legacy v2 shape (flat bounds, orientation) ──
-
+// Legacy v2 shape (flat bounds, orientation) — used only by migration code.
 export interface Portable_SO_v2 {
-	rotations?: { axis: Axis_Name; angle: number }[];
-	formulas?: Record<string, string>;
-	bounds: Record<Bound, number>;
-	orientation?: number[];		// kept for backwards-compatible import
-	invariants?: number[];
-	parent_name?: string;		// kept for backwards-compatible import
-	position?: number[];		// O_Scene.position (defaults to [0,0,0])
-	parent_id?: string;
-	fixed?: boolean;
-	scale?: number;
-	name: string;
-	id: string;
+  rotations?: { axis: Axis_Name; angle: number }[];
+  formulas?: Record<string, string>;
+  bounds: Record<Bound, number>;
+  orientation?: number[];     // kept for backwards-compatible import
+  invariants?: number[];
+  parent_name?: string;       // kept for backwards-compatible import
+  position?: number[];        // O_Scene.position (defaults to [0,0,0])
+  parent_id?: string;
+  name: string;
+  id: string;
 }
-
-const CURRENT_VERSION = '3';
 
 class Scenes {
 	root_name: string = '';
@@ -95,11 +79,8 @@ class Scenes {
 	save(): void {
 		const objects: Portable_SO[] = scene.get_all().map(o => {
 			const serialized = o.so.serialize();
-			const pos = o.position;
-			const has_position = pos[0] !== 0 || pos[1] !== 0 || pos[2] !== 0;
 			return {
 				...serialized,
-				...(has_position ? { position: Array.from(pos) } : {}),
 				...(o.parent ? { parent_id: o.parent.so.id } : {}),
 			};
 		});
@@ -242,31 +223,18 @@ class Scenes {
 			const name = axis_names[i];
 			const min_key = `${name}_min` as Bound;
 			const max_key = `${name}_max` as Bound;
-			const pa: Portable_Axis = {
-				start: bounds[min_key],
-				end: bounds[max_key],
-			};
-			// invariant
-			if (old.invariants && old.invariants[i] !== 2) {
-				pa.invariant = old.invariants[i];
-			}
-			// rotation — find matching entry in rotations array
+			const start: Portable_Attribute = { value: bounds[min_key] };
+			const end: Portable_Attribute = { value: bounds[max_key] };
+			if (old.formulas?.[min_key]) start.formula = old.formulas[min_key];
+			if (old.formulas?.[max_key]) end.formula = old.formulas[max_key];
+			const length: Portable_Attribute = { value: bounds[max_key] - bounds[min_key] };
+			let angle: Portable_Attribute = { value: 0 };
 			if (old.rotations) {
 				const rot = old.rotations.find(r => r.axis === name);
-				if (rot && Math.abs(rot.angle) > 1e-10) {
-					pa.rotation = rot.angle;
-				}
+				if (rot && Math.abs(rot.angle) > 1e-10) angle = { value: rot.angle };
 			}
-			// formulas — map old flat keys to per-axis start/end
-			if (old.formulas) {
-				const start_formula = old.formulas[min_key];
-				const end_formula = old.formulas[max_key];
-				if (start_formula || end_formula) {
-					pa.formulas = {};
-					if (start_formula) pa.formulas.start = start_formula;
-					if (end_formula) pa.formulas.end = end_formula;
-				}
-			}
+			const pa: Portable_Axis = { attributes: [start, end, length, angle] };
+			if (old.invariants && old.invariants[i] !== 2) pa.invariant = old.invariants[i];
 			axes[name] = pa;
 		}
 
@@ -278,9 +246,6 @@ class Scenes {
 			z: axes.z,
 		};
 
-		if (old.scale !== undefined && old.scale !== 1) result.scale = old.scale;
-		if (old.fixed === false) result.fixed = false;
-		if (old.position) result.position = old.position;
 		if (old.parent_id) result.parent_id = old.parent_id;
 
 		return result;

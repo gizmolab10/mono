@@ -1,6 +1,6 @@
 import { units, Units } from '../types/Units';
 import { hits_3d, scenes, stores } from '../managers';
-import type { Bound } from '../runtime/Smart_Object';
+import type { Bound } from '../types/Types';
 import { scene, camera, render, animation } from '.';
 import type { O_Scene } from '../types/Interfaces';
 import type { Point } from '../types/Coordinates';
@@ -35,14 +35,6 @@ class Engine {
   ];
 
   constructor() {
-    // Keep O_Scene.scale in sync with the store
-    stores.w_scale.subscribe((value) => {
-      if (this.root_scene && this.root_scene.scale !== value) {
-        this.root_scene.scale = value;
-        scenes.save();
-      }
-    });
-
     // Keep all O_Scene colors in sync with the edge color preference
     stores.w_edge_color.subscribe(() => {
       const rgba = colors.edge_color_rgba();
@@ -74,15 +66,12 @@ class Engine {
 
     if (saved?.smart_objects.length) {
       for (const data of saved.smart_objects) {
-        const result = Smart_Object.deserialize(data);
-        const so = result.so;
+        const so = Smart_Object.deserialize(data);
         const so_scene = scene.create({
           so,
           edges: this.edges,
           faces: this.faces,
-          scale: result.scale,
           color: colors.edge_color_rgba(),
-          ...(data.position ? { position: vec3.fromValues(data.position[0], data.position[1], data.position[2]) } : {}),
         });
         so.scene = so_scene;
         hits_3d.register(so);
@@ -108,9 +97,9 @@ class Engine {
         so,
         edges: this.edges,
         faces: this.faces,
-        scale: 8.5,
         color: colors.edge_color_rgba(),
       });
+      stores.w_scale.set(8.5);
       so.scene = so_scene;
       hits_3d.register(so);
       smart_objects.push(so);
@@ -120,7 +109,6 @@ class Engine {
     const saved_id = saved?.root_id ?? '';
     const root_so = smart_objects.find(so => so.id === saved_id) ?? smart_objects[0];
     this.root_scene = root_so.scene;
-    stores.w_scale.set(this.root_scene?.scale ?? 1);
     stores.w_root_so.set(root_so);
     scenes.root_id = root_so.id;
     scenes.root_name = root_so.name;
@@ -177,9 +165,7 @@ class Engine {
 
     // Input: scroll wheel scales entire rendering
     e3.set_wheel_handler((delta, fine) => {
-      if (!this.root_scene) return;
-      drag.scale_object(this.root_scene, delta, fine);
-      stores.w_scale.set(this.root_scene.scale);
+      drag.scale(delta, fine);
     });
 
     // Render loop
@@ -195,15 +181,11 @@ class Engine {
   // ── toolbar actions ──
 
   scale_up(): void {
-    if (!this.root_scene) return;
-    drag.scale_object(this.root_scene, 1, false);
-    stores.w_scale.set(this.root_scene.scale);
+    drag.scale(1, false);
   }
 
   scale_down(): void {
-    if (!this.root_scene) return;
-    drag.scale_object(this.root_scene, -1, false);
-    stores.w_scale.set(this.root_scene.scale);
+    drag.scale(-1, false);
   }
 
   // Per-face snap candidates: FACE_SNAP_QUATS[face] = 4 quats (0°, 90°, 180°, 270° twist)
@@ -482,7 +464,6 @@ class Engine {
       so: child,
       edges: this.edges,
       faces: this.faces,
-      scale: 1,
       color: colors.edge_color_rgba(),
       parent: parent_so.scene,
     });

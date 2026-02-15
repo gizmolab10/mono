@@ -71,6 +71,7 @@ class Stores {
 	current_precision():				  number { return get(this.w_precision); }
 	edge_color():						  string { return get(this.w_edge_color); }
 	current_view_mode():			 '2d' | '3d' { return get(this.w_view_mode); }
+	current_scale():				  number { return get(this.w_scale); }
 	show_details():					 boolean { return get(this.w_show_details); }
 
 	private persistent<T>(key: T_Preference, fallback: T): Writable<T> {

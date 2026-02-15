@@ -1,5 +1,5 @@
 import type Smart_Object from '../runtime/Smart_Object';
-import type { Axis_Name } from '../runtime/Axis';
+import type { Axis_Name } from '../types/Types';
 import { quat } from 'gl-matrix';
 
 // ═══════════════════════════════════════════════════════════════════
@@ -69,11 +69,10 @@ class Orientation {
 	}
 
 	/**
-	 * Recompute orientation for a variable (non-fixed) SO.
+	 * Recompute orientation from an SO's current bounds.
 	 * Mutates so.orientation and so.rotations in place.
 	 */
 	recompute(so: Smart_Object): void {
-		if (so.fixed) return;
 		const q = this.from_bounds(so);
 		quat.copy(so.orientation, q);
 		// Sync the rotations array from the new quat

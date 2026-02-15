@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import type { Bound } from '../types/Types';
 import Smart_Object from '../runtime/Smart_Object';
-import type { Bound } from '../runtime/Smart_Object';
 import { scene } from '../render/Scene';
 import { constraints, orientation } from '../algebra';
 import { quat } from 'gl-matrix';
@@ -98,12 +98,11 @@ describe('orientation_from_bounds', () => {
 // USE CASE S — VARIABLE (STAIRCASE)
 // ═══════════════════════════════════════════════════════════════════
 
-describe('use case S — variable staircase', () => {
+describe('use case S — staircase', () => {
 
 	it('staircase orientation updates when parent stretches', () => {
 		const room = add_so('R', { x_min: 0, x_max: 1000, y_min: 0, y_max: 1000, z_min: 0, z_max: 200 });
 		const stair = add_so('S', { z_min: 0, z_max: 10 });
-		stair.fixed = false; // variable
 
 		// Pin all 4 XY corners to room
 		constraints.set_formula(stair, 'x_min', ref(room, 'x_min'));
@@ -132,7 +131,6 @@ describe('use case S — variable staircase', () => {
 	it('staircase orientation updates when parent gets taller', () => {
 		const room = add_so('R', { x_min: 0, x_max: 1000, y_min: 0, y_max: 1000, z_min: 0, z_max: 200 });
 		const stair = add_so('S', { z_min: 0, z_max: 10 });
-		stair.fixed = false;
 
 		constraints.set_formula(stair, 'x_min', ref(room, 'x_min'));
 		constraints.set_formula(stair, 'x_max', ref(room, 'x_max'));
@@ -151,38 +149,17 @@ describe('use case S — variable staircase', () => {
 		expect(angle).toBeGreaterThan(Math.PI / 4); // steeper than 45°
 	});
 
-	it('fixed child does NOT get orientation recomputed on propagation', () => {
-		const room = add_so('R', { x_min: 0, x_max: 1000, y_min: 0, y_max: 1000, z_min: 0, z_max: 200 });
-		const wall = add_so('W');
-		wall.fixed = true; // default
-
-		// Set a known orientation
-		const rot = quat.create();
-		quat.setAxisAngle(rot, [0, 0, 1], Math.PI / 6); // 30°
-		quat.copy(wall.orientation, rot);
-
-		constraints.set_formula(wall, 'x_min', ref(room, 'x_min'));
-
-		// Stretch room
-		room.set_bound('x_max', 2000);
-		constraints.propagate(room);
-
-		// Orientation should be unchanged — still 30°
-		const angle = 2 * Math.acos(Math.abs(wall.orientation[3]));
-		expect(angle).toBeCloseTo(Math.PI / 6);
-	});
 });
 
 // ═══════════════════════════════════════════════════════════════════
 // USE CASE W — FIXED (WALL)
 // ═══════════════════════════════════════════════════════════════════
 
-describe('use case W — fixed wall', () => {
+describe('use case W — wall', () => {
 
 	it('wall keeps angle and length when parent stretches', () => {
 		const room = add_so('R', { x_min: 0, x_max: 1000, y_min: 0, y_max: 1000, z_min: 0, z_max: 200 });
 		const wall = add_so('W', { x_min: 0, x_max: 200, y_min: 0, y_max: 200, z_min: 0, z_max: 200 });
-		wall.fixed = true;
 
 		// Pin one corner to room origin
 		constraints.set_formula(wall, 'x_min', ref(room, 'x_min'));
@@ -209,7 +186,6 @@ describe('use case W — fixed wall', () => {
 	it('wall slides when parent origin moves', () => {
 		const room = add_so('R', { x_min: 0, x_max: 1000, y_min: 0, y_max: 1000, z_min: 0, z_max: 200 });
 		const wall = add_so('W', { x_min: 0, x_max: 200, y_min: 0, y_max: 200, z_min: 0, z_max: 200 });
-		wall.fixed = true;
 
 		constraints.set_formula(wall, 'x_min', ref(room, 'x_min'));
 		constraints.set_formula(wall, 'y_min', ref(room, 'y_min'));
@@ -274,47 +250,3 @@ describe('recompute_max_bounds_from_rotation', () => {
 	});
 });
 
-// ═══════════════════════════════════════════════════════════════════
-// SERIALIZE / DESERIALIZE — FIXED FLAG
-// ═══════════════════════════════════════════════════════════════════
-
-describe('fixed flag serialization', () => {
-
-	it('fixed=true (default) omits fixed from serialization', () => {
-		const so = add_so('box');
-		const data = so.serialize();
-		expect(data.fixed).toBeUndefined();
-	});
-
-	it('fixed=false serializes as fixed: false', () => {
-		const so = add_so('stair');
-		so.fixed = false;
-		const data = so.serialize();
-		expect(data.fixed).toBe(false);
-	});
-
-	it('deserialize restores fixed=false', () => {
-		const data = {
-			id: 'test1',
-			name: 'stair',
-			x: { start: 0, end: 100 },
-			y: { start: 0, end: 100 },
-			z: { start: 0, end: 10 },
-			fixed: false as const,
-		};
-		const { so } = Smart_Object.deserialize(data);
-		expect(so.fixed).toBe(false);
-	});
-
-	it('deserialize defaults to fixed=true when omitted', () => {
-		const data = {
-			id: 'test2',
-			name: 'wall',
-			x: { start: 0, end: 200 },
-			y: { start: 0, end: 200 },
-			z: { start: 0, end: 10 },
-		};
-		const { so } = Smart_Object.deserialize(data);
-		expect(so.fixed).toBe(true);
-	});
-});

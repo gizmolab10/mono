@@ -5,7 +5,8 @@ import { Point } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { stores } from '../managers/Stores';
 import { camera } from '../render/Camera';
-import Smart_Object, { type Bound } from '../runtime/Smart_Object';
+import type { Bound } from '../types/Types';
+import Smart_Object from '../runtime/Smart_Object';
 
 /** Anchored plane captured at drag start — prevents frame-to-frame drift.
  *  Uses parent-face geometry: the face's two edge vectors (e1, e2) form
@@ -104,9 +105,9 @@ class Drag {
 
 	// ── object transforms ──
 
-	scale_object(obj: O_Scene, delta: number, fine: boolean): void {
+	scale(delta: number, fine: boolean): void {
 		const factor = fine ? (delta > 0 ? 1.02 : 0.98) : (delta > 0 ? 1.1 : 0.9);
-		obj.scale *= factor;
+		stores.w_scale.update(s => s * factor);
 	}
 
 	rotate_object(obj: O_Scene, prev: Point, curr: Point, alt_key = false): void {
@@ -460,7 +461,6 @@ class Drag {
 		const orientation = stores.current_view_mode() === '2d'
 			? this.flatten_orientation(so.orientation)
 			: so.orientation;
-		const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
 
 		// Rotate around the SO's exact 3D center: translate to center, rotate, translate back
 		const local = mat4.create();
@@ -472,10 +472,13 @@ class Drag {
 		mat4.fromTranslation(from_center, center);
 		mat4.multiply(local, from_center, local);
 
-		// Apply scale and position
-		const scale_mat = mat4.create();
-		mat4.fromScaling(scale_mat, scale_vec);
-		mat4.multiply(local, scale_mat, local);
+		// Apply scale (root only — zoom is a render-time concept) and position
+		if (!obj.parent) {
+			const s = stores.current_scale();
+			const scale_mat = mat4.create();
+			mat4.fromScaling(scale_mat, [s, s, s]);
+			mat4.multiply(local, scale_mat, local);
+		}
 		const pos_mat = mat4.create();
 		mat4.fromTranslation(pos_mat, obj.position);
 		mat4.multiply(local, pos_mat, local);

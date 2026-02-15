@@ -1,5 +1,5 @@
+import type { Axis_Name } from './Types';
 import type Smart_Object from '../runtime/Smart_Object';
-import type { Axis_Name } from '../runtime/Axis';
 import type { vec3 } from 'gl-matrix';
 
 // Projected stays here (not in Coordinates.ts) because it's a pipeline-specific
@@ -38,13 +38,23 @@ export interface Angle_Rect extends Label_Rect {
   angle_degrees: number;
 }
 
+export interface Portable_Attribute {
+  formula?: string;
+  value: number;
+}
+
+// [start, end, length, angle] — mirrors Axis.attributes
+export interface Portable_Axis {
+  attributes: [Portable_Attribute, Portable_Attribute, Portable_Attribute, Portable_Attribute];
+  invariant?: number;           // 0=start, 1=end, 2=length (default 2)
+}
+
 export interface O_Scene {
   edges: [number, number][];
   faces?: number[][];
   parent?: O_Scene;
   so: Smart_Object;             // back-reference: vertices + orientation come from SO
   position: vec3;
-  scale: number;
   color: string;
   id: string;
 }

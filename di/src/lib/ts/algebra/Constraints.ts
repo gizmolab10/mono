@@ -1,5 +1,5 @@
 import type Smart_Object from '../runtime/Smart_Object';
-import type { Bound } from '../runtime/Smart_Object';
+import type { Bound } from '../types/Types';
 import type { FormulaMap } from './Evaluator';
 import { orientation } from './Orientation';
 import { evaluator } from './Evaluator';

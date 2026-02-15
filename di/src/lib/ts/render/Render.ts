@@ -1,6 +1,6 @@
 import type { Projected, O_Scene, Dimension_Rect, Label_Rect, Angle_Rect } from '../types/Interfaces';
 import type Smart_Object from '../runtime/Smart_Object';
-import type { Axis_Name } from '../runtime/Axis';
+import type { Axis_Name } from '../types/Types';
 import { face_label } from '../editors/Face_Label';
 import { T_Hit_3D } from '../types/Enumerations';
 import { units, Units } from '../types/Units';
@@ -331,7 +331,6 @@ class Render {
       (so.z_min + so.z_max) / 2,
     ];
     const orientation = so.orientation;
-    const scale_vec = [obj.scale, obj.scale, obj.scale] as [number, number, number];
 
     // Rotate around the SO's exact 3D center: translate to center, rotate, translate back
     const local = mat4.create();
@@ -343,10 +342,13 @@ class Render {
     mat4.fromTranslation(from_center, center);
     mat4.multiply(local, from_center, local);
 
-    // Apply scale and position
-    const scale_mat = mat4.create();
-    mat4.fromScaling(scale_mat, scale_vec);
-    mat4.multiply(local, scale_mat, local);
+    // Apply scale (root only — zoom is a render-time concept) and position
+    if (!obj.parent) {
+      const s = stores.current_scale();
+      const scale_mat = mat4.create();
+      mat4.fromScaling(scale_mat, [s, s, s]);
+      mat4.multiply(local, scale_mat, local);
+    }
     const pos_mat = mat4.create();
     mat4.fromTranslation(pos_mat, obj.position);
     mat4.multiply(local, pos_mat, local);

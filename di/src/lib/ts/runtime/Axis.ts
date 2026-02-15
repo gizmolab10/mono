@@ -1,6 +1,6 @@
+import type { Portable_Axis } from '../types/Interfaces';
+import type { Axis_Name } from '../types/Types';
 import Attribute from '../types/Attribute';
-
-export type Axis_Name = 'x' | 'y' | 'z';
 
 /** One dimension of a Smart_Object — bundles start, end, length, and angle.
  *  Invariant: length = end - start. One of the three is derived from the other two. */
@@ -25,4 +25,26 @@ export default class Axis {
 	get end():    Attribute { return this.attributes[1]; }
 	get length(): Attribute { return this.attributes[2]; }
 	get angle():  Attribute { return this.attributes[3]; }
+
+	serialize(): Portable_Axis {
+		const pa: Portable_Axis = {
+			attributes: [
+				this.start.serialize(),
+				this.end.serialize(),
+				this.length.serialize(),
+				this.angle.serialize(),
+			],
+		};
+		if (this.invariant !== 2) pa.invariant = this.invariant;
+		return pa;
+	}
+
+	deserialize(data: Portable_Axis): void {
+		const [start, end, length, angle] = data.attributes;
+		this.start.deserialize(start);
+		this.end.deserialize(end);
+		this.length.deserialize(length);
+		this.angle.deserialize(angle);
+		if (data.invariant !== undefined) this.invariant = data.invariant;
+	}
 }

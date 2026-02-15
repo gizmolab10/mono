@@ -1,5 +1,5 @@
 import type { Dimension_Rect, S_SO } from '../types/Interfaces';
-import type { Axis_Name } from '../runtime/Axis';
+import type { Axis_Name } from '../types/Types';
 
 interface S_Dimensions extends S_SO {
 	axis: Axis_Name;
