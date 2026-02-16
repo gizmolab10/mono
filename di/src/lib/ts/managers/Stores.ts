@@ -46,6 +46,8 @@ class Stores {
 	is_solid():							 boolean { return get(this.w_solid); }
 	show_details():						 boolean { return get(this.w_show_details); }
 	is_editing():						 boolean { return get(this.w_editing) !== T_Editing.none; }
+	show_dimensionals():  				 boolean { return (get(this.w_decorations) & T_Decorations.dimensions) !== 0; }
+	show_angulars():      				 boolean { return (get(this.w_decorations) & T_Decorations.angles) !== 0; }
 
 	private persistent<T>(key: T_Preference, fallback: T): Writable<T> {
 		const w = writable<T>(preferences.read<T>(key) ?? fallback);

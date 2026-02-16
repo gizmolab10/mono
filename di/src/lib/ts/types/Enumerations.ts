@@ -47,11 +47,13 @@ export enum T_Units {
 }
 
 export enum T_Editing {
-	details_name,
-	face_label,
-	dimension,
-	angles,
 	none,
+	value,
+	angles,
+	formula,
+	dimension,
+	face_label,
+	details_name,
 }
 
 export enum T_Unit {

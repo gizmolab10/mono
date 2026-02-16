@@ -120,16 +120,17 @@ class Tokenizer {
 				continue;
 			}
 
-			// reference or identifier (wall.height)
+			// reference: A.x (explicit SO) or bare attribute: x (parent SO)
 			if (is_alpha(ch)) {
-				const object = read_identifier();
+				const name = read_identifier();
 				if (peek() === '.') {
 					pos++; // skip dot
 					const attribute = read_identifier();
-					if (!attribute) throw new Error(`Expected attribute name after '${object}.' at position ${pos}`);
-					tokens.push({ type: 'reference', object, attribute });
+					if (!attribute) throw new Error(`Expected attribute name after '${name}.' at position ${pos}`);
+					tokens.push({ type: 'reference', object: name, attribute });
 				} else {
-					throw new Error(`Expected '.' after object name '${object}' at position ${pos}`);
+					// bare attribute — object '' means "parent" (resolved by Constraints)
+					tokens.push({ type: 'reference', object: '', attribute: name });
 				}
 				continue;
 			}

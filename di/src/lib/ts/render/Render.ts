@@ -215,23 +215,28 @@ class Render {
     // Root: tumble only (from store). Child: so.orientation (tumble inherited via parent).
     const orientation = obj.parent ? so.orientation : stores.current_orientation();
 
-    // Rotate around the SO's exact 3D center: translate to center, rotate, translate back
+    // Move SO center to origin, rotate, then:
+    //   Root: scale + position (center stays at origin for screen centering)
+    //   Child: translate back (rotate around own center in parent space)
     const local = mat4.create();
     mat4.fromTranslation(local, [-center[0], -center[1], -center[2]]);
     const rot = mat4.create();
     mat4.fromQuat(rot, orientation);
     mat4.multiply(local, rot, local);
-    const from_center = mat4.create();
-    mat4.fromTranslation(from_center, center);
-    mat4.multiply(local, from_center, local);
 
-    // Apply scale (root only — zoom is a render-time concept) and position
-    if (!obj.parent) {
+    if (obj.parent) {
+      // Child: uncenter so rotation is around own center within parent space
+      const from_center = mat4.create();
+      mat4.fromTranslation(from_center, center);
+      mat4.multiply(local, from_center, local);
+    } else {
+      // Root: keep center at origin → scale around origin → position (for pan)
       const s = stores.current_scale();
       const scale_mat = mat4.create();
       mat4.fromScaling(scale_mat, [s, s, s]);
       mat4.multiply(local, scale_mat, local);
     }
+
     const pos_mat = mat4.create();
     mat4.fromTranslation(pos_mat, obj.position);
     mat4.multiply(local, pos_mat, local);

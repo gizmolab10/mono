@@ -18,7 +18,7 @@ export default class Constants {
 	empty = '';
 	tab = '\t';
 
-	coplanar_epsilon = 1e-4;
+	coplanar_epsilon = 1e-3;
 
 	ratio = {
 		zoom_out: 0.9,

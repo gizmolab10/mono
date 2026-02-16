@@ -52,8 +52,10 @@ export class Events {
 	// ===== EVENT HANDLERS =====
 
 	private handle_mouse_down = (event: MouseEvent) => {
+		const target = event.target as HTMLElement;
+		const in_graph = !!target.closest('.graph');
 		const location = new Point(event.clientX, event.clientY);
-		hits.handle_s_mouse_at(location, S_Mouse.down(event, null));
+		hits.handle_s_mouse_at(location, S_Mouse.down(event, null), in_graph);
 		hits.disable_hover = true;
 		this.w_count_mouse_down.update(n => n + 1);
 		this.w_scaled_movement.set(Point.zero);

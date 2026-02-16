@@ -3,15 +3,15 @@
   "scene": {
     "smart_objects": [
       {
-        "id": "di4e429eaa6ca1ec",
-        "name": "American",
+        "id": "dicb460b903642b9",
+        "name": "A",
         "x": {
           "attributes": [
             {
               "value": 0
             },
             {
-              "value": 6.35
+              "value": 25.4
             },
             {
               "value": 12.7
@@ -28,10 +28,10 @@
               "value": 0
             },
             {
-              "value": 25.4
+              "value": 12.7
             },
             {
-              "value": 44.449999999999996
+              "value": 50.8
             },
             {
               "value": 0
@@ -45,10 +45,10 @@
               "value": 0
             },
             {
-              "value": 19.049999999999997
+              "value": 25.4
             },
             {
-              "value": 50.8
+              "value": 63.49999999999999
             },
             {
               "value": 0
@@ -59,19 +59,18 @@
         "rotation_lock": 0
       },
       {
-        "id": "di5148609712ff66",
-        "name": "Beauty",
+        "id": "di4b4804a2257d24",
+        "name": "B",
         "x": {
           "attributes": [
             {
-              "value": -12.7,
-              "formula": "di4e429eaa6ca1ec.x_min"
+              "value": 0
+            },
+            {
+              "value": 12.7
             },
             {
               "value": 25.4
-            },
-            {
-              "value": 38.099999999999994
             },
             {
               "value": 0
@@ -82,14 +81,13 @@
         "y": {
           "attributes": [
             {
-              "value": -25.4,
-              "formula": "di4e429eaa6ca1ec.y_min"
+              "value": 0
             },
             {
-              "value": -12.7
+              "value": 50.8
             },
             {
-              "value": 12.7
+              "value": 25.4
             },
             {
               "value": 0
@@ -100,8 +98,7 @@
         "z": {
           "attributes": [
             {
-              "value": 6.35,
-              "formula": "di4e429eaa6ca1ec.z_min"
+              "value": 0
             },
             {
               "value": 12.7
@@ -116,25 +113,24 @@
           "invariant": 1
         },
         "rotation_lock": 0,
-        "parent_id": "di4e429eaa6ca1ec"
+        "parent_id": "dicb460b903642b9"
       },
       {
-        "id": "di314ddfb8c18d38",
-        "name": "Corn",
+        "id": "di13424da785088c",
+        "name": "C",
         "x": {
           "attributes": [
             {
-              "value": 12.7,
-              "formula": "di4e429eaa6ca1ec.x_min"
-            },
-            {
-              "value": 19.049999999999997
-            },
-            {
-              "value": 31.749999999999996
-            },
-            {
               "value": 0
+            },
+            {
+              "value": 25.3999942779541
+            },
+            {
+              "value": 38.099999999999994
+            },
+            {
+              "value": 2.748893571891069
             }
           ],
           "invariant": 1
@@ -142,14 +138,13 @@
         "y": {
           "attributes": [
             {
-              "value": -12.7,
-              "formula": "di4e429eaa6ca1ec.y_min"
-            },
-            {
-              "value": -6.35
+              "value": 0
             },
             {
               "value": 25.4
+            },
+            {
+              "value": 63.49999999999999
             },
             {
               "value": 0
@@ -160,14 +155,13 @@
         "z": {
           "attributes": [
             {
-              "value": -6.35,
-              "formula": "di4e429eaa6ca1ec.z_min"
+              "value": 0
             },
             {
-              "value": 19.049999999999997
+              "value": 14.789898109436034
             },
             {
-              "value": 29.66010189056396
+              "value": 25.4
             },
             {
               "value": 0
@@ -176,7 +170,7 @@
           "invariant": 1
         },
         "rotation_lock": 0,
-        "parent_id": "di4e429eaa6ca1ec"
+        "parent_id": "dicb460b903642b9"
       }
     ],
     "camera": {
@@ -196,6 +190,6 @@
         0
       ]
     },
-    "root_id": "di4e429eaa6ca1ec"
+    "root_id": "dicb460b903642b9"
   }
 }

@@ -83,8 +83,22 @@ describe('Tokenizer', () => {
 		expect(() => tokenizer.tokenize('1 & 2')).toThrow();
 	});
 
-	it('throws on bare identifier without dot', () => {
-		expect(() => tokenizer.tokenize('wall')).toThrow(/Expected '.' after/);
+	it('tokenizes bare attribute as parent reference', () => {
+		const tokens = tokenizer.tokenize('x');
+		expect(tokens[0]).toEqual({ type: 'reference', object: '', attribute: 'x' });
+	});
+
+	it('tokenizes bare attribute in expression', () => {
+		const tokens = tokenizer.tokenize('x * 2');
+		expect(tokens[0]).toEqual({ type: 'reference', object: '', attribute: 'x' });
+		expect(tokens[1]).toEqual({ type: 'operator', value: '*' });
+		expect(tokens[2]).toEqual({ type: 'bare_number', value: 2 });
+	});
+
+	it('tokenizes mixed bare and dotted references', () => {
+		const tokens = tokenizer.tokenize('x + A.y');
+		expect(tokens[0]).toEqual({ type: 'reference', object: '', attribute: 'x' });
+		expect(tokens[2]).toEqual({ type: 'reference', object: 'A', attribute: 'y' });
 	});
 
 	it('throws on reference with missing attribute', () => {
@@ -132,6 +146,29 @@ describe('Compiler', () => {
 	it('compiles a reference with underscores', () => {
 		const node = compiler.compile('door.x_min');
 		expect(node).toEqual({ type: 'reference', object: 'door', attribute: 'x_min' });
+	});
+
+	it('compiles a bare attribute as parent reference', () => {
+		const node = compiler.compile('x');
+		expect(node).toEqual({ type: 'reference', object: '', attribute: 'x' });
+	});
+
+	it('compiles bare attribute in expression: x * 2', () => {
+		const node = compiler.compile('x * 2');
+		expect(node).toEqual({
+			type: 'binary', operator: '*',
+			left: { type: 'reference', object: '', attribute: 'x' },
+			right: { type: 'literal', value: 2 },
+		});
+	});
+
+	it('compiles mixed bare + dotted: x + A.y', () => {
+		const node = compiler.compile('x + A.y');
+		expect(node).toEqual({
+			type: 'binary', operator: '+',
+			left: { type: 'reference', object: '', attribute: 'x' },
+			right: { type: 'reference', object: 'A', attribute: 'y' },
+		});
 	});
 
 	// ── precedence ──

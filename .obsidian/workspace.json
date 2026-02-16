@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/16.formulas.md",
+                "file": "di/notes/architecture/core/algebra.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 16.formulas"
+              "title": "Outline of algebra"
             }
           }
         ],
@@ -241,10 +241,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "51e1a0393ee0af94",
+  "active": "ccce82b75099353e",
   "lastOpenFiles": [
-    "di/notes/architecture/core/algebra.md",
     "di/notes/work/16.formulas.md",
+    "di/src/assets/A.di",
+    "di/notes/architecture/core/algebra.md",
     "di/notes/work/code.debt.md",
     "di/notes/architecture/ui/details.md",
     "di/notes/work/done/code.debt.done.md",
@@ -273,12 +274,10 @@
     "logs/update-docs.error.di.log",
     "di/notes/architecture/render/drag.md",
     "di/notes/architecture/render/spatial.md",
-    "di/notes/architecture/render/intersecting.faces.md",
     "di/notes/architecture/render",
     "di/src/lib/ts/render/R_Grid.ts",
     "di/src/lib/ts/render/R_Dimensions.ts",
     "di/src/lib/ts/render/R_Angulars.ts",
-    "di/src/lib/ts/render/Angulars.ts",
     "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
     "Screenshot 2026-02-14 at 12.12.38 PM.png",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",

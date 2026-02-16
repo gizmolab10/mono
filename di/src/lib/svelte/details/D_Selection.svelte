@@ -7,6 +7,7 @@
 	import { units } from '../../ts/types/Units';
 	import { engine } from '../../ts/render';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
+	import { constraints } from '../../ts/algebra';
 	import type { Bound } from '../../ts/types/Types';
 
 	const { w_s_face_label } = face_label;
@@ -20,19 +21,27 @@
 
 	function get_bounds(so: Smart_Object, _tick: number) {
 		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
-		const attr = (name: string) => so.attributes_dict_byName[name]?.formula ?? name;
 		const p = so.scene?.position ?? [0, 0, 0];
 		const inv = (axis_index: number, attr_index: number) => so.axes[axis_index].invariant === attr_index;
+		// Formula for a row: stored formula first, then invariant derivation if marked, else empty
+		const fml = (label: string, bound: string | null, axis_index: number, attr_index: number) => {
+			if (bound) {
+				const stored = so.attributes_dict_byName[bound]?.formula;
+				if (stored) return stored;
+			}
+			if (inv(axis_index, attr_index)) return constraints.invariant_formula_for(label) ?? '';
+			return '';
+		};
 		return [
-			{ label: 'x', bound: 'x_min' as Bound, value: fmt(p[0] + so.x_min), formula: attr('x_min'), is_invariant: inv(0, 0), axis_index: 0, attr_index: 0 },
-			{ label: 'X', bound: 'x_max' as Bound, value: fmt(p[0] + so.x_max), formula: attr('x_max'), is_invariant: inv(0, 1), axis_index: 0, attr_index: 1 },
-			{ label: 'w', bound: null,              value: fmt(so.width),         formula: 'X - x',       is_invariant: inv(0, 2), axis_index: 0, attr_index: 2 },
-			{ label: 'y', bound: 'y_min' as Bound, value: fmt(p[1] + so.y_min), formula: attr('y_min'), is_invariant: inv(1, 0), axis_index: 1, attr_index: 0 },
-			{ label: 'Y', bound: 'y_max' as Bound, value: fmt(p[1] + so.y_max), formula: attr('y_max'), is_invariant: inv(1, 1), axis_index: 1, attr_index: 1 },
-			{ label: 'h', bound: null,              value: fmt(so.height),        formula: 'Y - y',       is_invariant: inv(1, 2), axis_index: 1, attr_index: 2 },
-			{ label: 'z', bound: 'z_min' as Bound, value: fmt(p[2] + so.z_min), formula: attr('z_min'), is_invariant: inv(2, 0), axis_index: 2, attr_index: 0 },
-			{ label: 'Z', bound: 'z_max' as Bound, value: fmt(p[2] + so.z_max), formula: attr('z_max'), is_invariant: inv(2, 1), axis_index: 2, attr_index: 1 },
-			{ label: 'd', bound: null,              value: fmt(so.depth),         formula: 'Z - z',       is_invariant: inv(2, 2), axis_index: 2, attr_index: 2 },
+			{ label: 'x', bound: 'x_min' as Bound, value: fmt(p[0] + so.x_min), formula: fml('x', 'x_min', 0, 0), is_invariant: inv(0, 0), axis_index: 0, attr_index: 0 },
+			{ label: 'X', bound: 'x_max' as Bound, value: fmt(p[0] + so.x_max), formula: fml('X', 'x_max', 0, 1), is_invariant: inv(0, 1), axis_index: 0, attr_index: 1 },
+			{ label: 'w', bound: null,              value: fmt(so.width),         formula: fml('w', null,    0, 2), is_invariant: inv(0, 2), axis_index: 0, attr_index: 2 },
+			{ label: 'y', bound: 'y_min' as Bound, value: fmt(p[1] + so.y_min), formula: fml('y', 'y_min', 1, 0), is_invariant: inv(1, 0), axis_index: 1, attr_index: 0 },
+			{ label: 'Y', bound: 'y_max' as Bound, value: fmt(p[1] + so.y_max), formula: fml('Y', 'y_max', 1, 1), is_invariant: inv(1, 1), axis_index: 1, attr_index: 1 },
+			{ label: 'h', bound: null,              value: fmt(so.height),        formula: fml('h', null,    1, 2), is_invariant: inv(1, 2), axis_index: 1, attr_index: 2 },
+			{ label: 'z', bound: 'z_min' as Bound, value: fmt(p[2] + so.z_min), formula: fml('z', 'z_min', 2, 0), is_invariant: inv(2, 0), axis_index: 2, attr_index: 0 },
+			{ label: 'Z', bound: 'z_max' as Bound, value: fmt(p[2] + so.z_max), formula: fml('Z', 'z_max', 2, 1), is_invariant: inv(2, 1), axis_index: 2, attr_index: 1 },
+			{ label: 'd', bound: null,              value: fmt(so.depth),         formula: fml('d', null,    2, 2), is_invariant: inv(2, 2), axis_index: 2, attr_index: 2 },
 		];
 	}
 
@@ -56,24 +65,33 @@
 	let angles = $derived(selected_so ? get_angles(selected_so, tick) : { x: '0°', y: '0°', z: '0°' });
 
 	function commit_formula(row: BoundsRow, value: string) {
-		if (!selected_so || !row.bound) return;
-		const attr = selected_so.attributes_dict_byName[row.bound];
-		if (attr) {
-			attr.formula = value.trim() || null;
-			scenes.save();
+		if (!selected_so) return;
+		const trimmed = value.trim();
+		if (row.bound) {
+			if (trimmed) {
+				constraints.set_formula(selected_so, row.bound, trimmed);
+			} else {
+				constraints.clear_formula(selected_so, row.bound);
+			}
 		}
+		stores.tick();
+		scenes.save();
 	}
 
 	function commit_value(row: BoundsRow, value: string) {
-		if (!selected_so || !row.bound) return;
+		if (!selected_so) return;
 		const mm = units.parse_for_system(value, $w_unit_system);
-		if (mm !== null) {
+		if (mm === null) return;
+		if (row.bound) {
 			const p = selected_so.scene?.position ?? [0, 0, 0];
 			const axis_index = row.bound[0] === 'x' ? 0 : row.bound[0] === 'y' ? 1 : 2;
 			selected_so.set_bound(row.bound, mm - p[axis_index]);
-			stores.tick();
-			scenes.save();
+		} else {
+			constraints.write(selected_so.id, row.label, mm);
 		}
+		constraints.propagate(selected_so);
+		stores.tick();
+		scenes.save();
 	}
 
 	function set_invariant(row: BoundsRow) {
@@ -169,7 +187,7 @@
 	<table class='bounds'>
 		<tbody>
 			{#each bounds_rows as row}
-				<tr>
+				<tr class:invariant={row.is_invariant}>
 					<td class='attr-name'>{row.label}</td>
 					<td class='attr-sep' class:cross={row.is_invariant} onclick={() => set_invariant(row)}></td>
 					<td class='attr-formula'>
@@ -177,8 +195,9 @@
 							type      = 'text'
 							class     = 'cell-input'
 							value     = {row.formula}
-							disabled  = {!row.bound}
-							onblur    = {(e) => commit_formula(row, (e.target as HTMLInputElement).value)}
+							disabled  = {row.is_invariant}
+							onfocus   = {() => stores.w_editing.set(T_Editing.formula)}
+							onblur    = {(e) => { commit_formula(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
 							onkeydown = {cell_keydown}
 						/>
 					</td>
@@ -187,8 +206,9 @@
 							type      = 'text'
 							class     = 'cell-input right'
 							value     = {row.value}
-							disabled  = {!row.bound}
-							onblur    = {(e) => commit_value(row, (e.target as HTMLInputElement).value)}
+							disabled  = {row.is_invariant}
+							onfocus   = {() => stores.w_editing.set(T_Editing.value)}
+							onblur    = {(e) => { commit_value(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
 							onkeydown = {cell_keydown}
 						/>
 					</td>
@@ -326,8 +346,12 @@
 	}
 
 	.cell-input:disabled {
-		opacity    : 0.5;
 		cursor     : default;
+	}
+
+	tr.invariant .cell-input {
+		background : var(--bg);
+		opacity    : 0.7;
 	}
 
 	.cell-input.right {

@@ -14,28 +14,99 @@ import { nodes } from './Nodes';
 // Holds formulas, resolves references, triggers propagation.
 // ═══════════════════════════════════════════════════════════════════
 
+// ── alias map ──
+// Customer-facing names → internal bounds.
+// Simple aliases map 1:1. Derived aliases (w, h, d) compute from two bounds.
+
+type AliasEntry =
+	| { kind: 'simple'; bound: Bound }
+	| { kind: 'derived'; max: Bound; min: Bound };
+
+const alias_map: Record<string, AliasEntry> = {
+	x:   { kind: 'simple',  bound: 'x_min' },
+	y:   { kind: 'simple',  bound: 'y_min' },
+	z:   { kind: 'simple',  bound: 'z_min' },
+	X:   { kind: 'simple',  bound: 'x_max' },
+	Y:   { kind: 'simple',  bound: 'y_max' },
+	Z:   { kind: 'simple',  bound: 'z_max' },
+	w:   { kind: 'derived', max: 'x_max', min: 'x_min' },
+	h:   { kind: 'derived', max: 'y_max', min: 'y_min' },
+	d:   { kind: 'derived', max: 'z_max', min: 'z_min' },
+};
+
+// Invariant derivation formulas — when an attribute is invariant,
+// its value comes from the other two in its axis.
+const invariant_formulas: Record<string, string> = {
+	x: 'X - w',
+	y: 'Y - h',
+	z: 'Z - d',
+	w: 'X - x',
+	h: 'Y - y',
+	d: 'Z - z',
+	X: 'x + w',
+	Y: 'y + h',
+	Z: 'z + d',
+};
+
 class Constraints {
 
 	// ── resolve / write ──
 
-	/** Resolve a reference like NEWxxx.x_min to its current mm value */
+	/** Resolve a reference to its current mm value.
+	 *  Handles both internal names (x_min) and customer aliases (x, w, etc). */
 	resolve(id: string, attribute: string): number {
 		const so = this.find_so(id);
 		if (!so) return 0;
-		return so.get_bound(attribute as Bound);
+
+		const entry = alias_map[attribute];
+		if (!entry) return so.get_bound(attribute as Bound);
+
+		if (entry.kind === 'simple') return so.get_bound(entry.bound);
+
+		// derived: max - min
+		return so.get_bound(entry.max) - so.get_bound(entry.min);
 	}
 
-	/** Write a value to an SO attribute */
+	/** Write a value to an SO attribute.
+	 *  Handles aliases: writing w = 300 sets x_max = x_min + 300. */
 	write(id: string, attribute: string, value: number): void {
 		const so = this.find_so(id);
 		if (!so) return;
-		so.set_bound(attribute as Bound, value);
+
+		const entry = alias_map[attribute];
+		if (!entry) { so.set_bound(attribute as Bound, value); return; }
+
+		if (entry.kind === 'simple') { so.set_bound(entry.bound, value); return; }
+
+		// derived: set max = min + value
+		so.set_bound(entry.max, so.get_bound(entry.min) + value);
+	}
+
+	// ── formula expansion ──
+
+	/** Resolve bare references (object === '') to a concrete parent id in the AST. */
+	private bind_parent(node: Node, parent_id: string): Node {
+		switch (node.type) {
+			case 'literal': return node;
+			case 'reference':
+				return node.object === '' ? nodes.reference(parent_id, node.attribute) : node;
+			case 'unary':
+				return nodes.unary(this.bind_parent(node.operand, parent_id));
+			case 'binary':
+				return nodes.binary(node.operator, this.bind_parent(node.left, parent_id), this.bind_parent(node.right, parent_id));
+		}
+	}
+
+	/** Get the invariant derivation formula for an alias (e.g. 'x' → 'X - w'). */
+	invariant_formula_for(alias: string): string | null {
+		return invariant_formulas[alias] ?? null;
 	}
 
 	// ── formula management ──
 
-	/** Set a formula on an SO attribute. Compiles and caches. Returns error string or null. */
-	set_formula(so: Smart_Object, bound: Bound, formula: string): string | null {
+	/** Set a formula on an SO attribute. Compiles and caches. Returns error string or null.
+	 *  parent_id: if provided, bare attributes (x, w, etc.) resolve to this SO. */
+	set_formula(so: Smart_Object, bound: Bound, formula: string, parent_id?: string): string | null {
 		const attr = so.attributes_dict_byName[bound];
 		if (!attr) return `Unknown attribute: ${bound}`;
 
@@ -45,6 +116,9 @@ class Constraints {
 		} catch (e: any) {
 			return `Compile error: ${e.message}`;
 		}
+
+		// Bind bare references to parent
+		if (parent_id) compiled = this.bind_parent(compiled, parent_id);
 
 		// Check for cycles before accepting
 		const formulas = this.build_formula_map();

@@ -57,13 +57,13 @@ export default class Hits {
 
 	// ===== CLICKS =====
 
-	handle_s_mouse_at(point: Point, s_mouse: S_Mouse): boolean {
+	handle_s_mouse_at(point: Point, s_mouse: S_Mouse, allow_3d: boolean = true): boolean {
 		const matches = this.targets_atPoint(point);
 		const target = this.targetOf_highest_precedence(matches) ?? matches[0];
 
-		// If no 2D target, try 3D — only on mousedown, and only if Events_3D didn't already handle it
+		// If no 2D target, try 3D — only on mousedown, only inside graph, and only if Events_3D didn't already handle it
 		if (!target) {
-			if (!s_mouse.isDown || drag.has_target) return false;
+			if (!allow_3d || !s_mouse.isDown || drag.has_target) return false;
 			const hit_3d = hits_3d.hit_test(point);
 			if (hit_3d) {
 				hits_3d.set_selection(hit_3d);
