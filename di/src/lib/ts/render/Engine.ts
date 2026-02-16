@@ -24,14 +24,14 @@ class Engine {
   ];
 
   // Faces: CCW winding when viewed from outside (normal points outward)
-  // Vertices: 0-3 front face (-z), 4-7 back face (+z)
+  // Vertices: 0-3 bottom face (-z), 4-7 top face (+z)
   private readonly faces: number[][] = [
-    [3, 2, 1, 0],  // front  (-z) — looking at front, CCW is 3→2→1→0
-    [4, 5, 6, 7],  // back   (+z)
+    [3, 2, 1, 0],  // bottom (-z) — looking at bottom, CCW is 3→2→1→0
+    [4, 5, 6, 7],  // top    (+z)
     [0, 4, 7, 3],  // left   (-x)
     [2, 6, 5, 1],  // right  (+x)
-    [7, 6, 2, 3],  // top    (+y)
-    [0, 1, 5, 4],  // bottom (-y)
+    [7, 6, 2, 3],  // front  (+y)
+    [0, 1, 5, 4],  // back   (-y)
   ];
 
   constructor() {
@@ -196,12 +196,12 @@ class Engine {
     const Z = vec3.fromValues(0, 0, 1);
     // Base orientation per face: rotates so face's outward normal points toward camera (+z)
     const bases = [
-      q(Y, Math.PI),                 // 0 front  (normal [-z] → need 180° Y)
-      quat.identity(quat.create()),  // 1 back   (normal [+z] → already facing camera)
+      q(Y, Math.PI),                 // 0 bottom (normal [-z] → need 180° Y)
+      quat.identity(quat.create()),  // 1 top    (normal [+z] → already facing camera)
       q(Y, Math.PI / 2),             // 2 left   (normal [-x] → +90° Y)
       q(Y, -Math.PI / 2),            // 3 right  (normal [+x] → -90° Y)
-      q(X, Math.PI / 2),             // 4 top    (normal [+y] → +90° X)
-      q(X, -Math.PI / 2),            // 5 bottom (normal [-y] → -90° X)
+      q(X, Math.PI / 2),             // 4 front  (normal [+y] → +90° X)
+      q(X, -Math.PI / 2),            // 5 back   (normal [-y] → -90° X)
     ];
     const twists = [0, Math.PI / 2, Math.PI, -Math.PI / 2].map(a => q(Z, a));
     return bases.map(base => twists.map(twist => {

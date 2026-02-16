@@ -83,7 +83,7 @@ export default class Smart_Object extends Identifiable {
 
 	// Generate cube vertices directly from bounds
 	// Vertex order:
-	//   0-3: front face (z_min), 4-7: back face (z_max)
+	//   0-3: bottom face (z_min), 4-7: top face (z_max)
 	//   Within each face: (x_min,y_min), (x_max,y_min), (x_max,y_max), (x_min,y_max)
 	// NOTE: Uses actual min/max to keep topology consistent even when bounds cross
 	get vertices(): vec3[] {
@@ -127,7 +127,7 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	// Face normals by index (matches cube_faces in Setup.ts)
-	// 0: front (z_min), 1: back (z_max), 2: left (x_min), 3: right (x_max), 4: top (y_max), 5: bottom (y_min)
+	// 0: bottom (z_min), 1: top (z_max), 2: left (x_min), 3: right (x_max), 4: front (y_max), 5: back (y_min)
 	private readonly FACE_NORMALS: vec3[] = [
 		vec3.fromValues(0, 0, -1), vec3.fromValues(0, 0, 1),
 		vec3.fromValues(-1, 0, 0), vec3.fromValues(1, 0, 0),

@@ -270,14 +270,14 @@ class Render {
   }
 
   // Debug face colors: primary + secondary at 50% saturation
-  // Face indices: 0=front(z_min), 1=back(z_max), 2=left(x_min), 3=right(x_max), 4=top(y_max), 5=bottom(y_min)
+  // Face indices: 0=bottom(z_min), 1=top(z_max), 2=left(x_min), 3=right(x_max), 4=front(y_max), 5=back(y_min)
   private readonly FACE_RGB = [
-    [191, 64, 64],    // 0: front - red (50% sat)
-    [64, 191, 64],    // 1: back - green
+    [191, 64, 64],    // 0: bottom - red (50% sat)
+    [64, 191, 64],    // 1: top - green
     [64, 64, 191],    // 2: left - blue
     [191, 191, 64],   // 3: right - yellow
-    [64, 191, 191],   // 4: top - cyan
-    [191, 64, 191],   // 5: bottom - magenta
+    [64, 191, 191],   // 4: front - cyan
+    [191, 64, 191],   // 5: back - magenta
   ];
 
   private fill_face(face: number[], projected: Projected[], color: string): void {

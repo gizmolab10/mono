@@ -27,7 +27,7 @@ export interface AngularHost {
 const ANGULAR_ARC_PX = 37;
 
 /** Face indices grouped by their fixed axis.
- *  faces[0],faces[1] have normal along z; [2],[3] along x; [4],[5] along y. */
+ *  [0],[1] bottom/top (normal along z); [2],[3] left/right (along x); [4],[5] front/back (along y). */
 const AXIS_FACE_INDICES: Record<string, [number, number]> = {
 	x: [2, 3],
 	y: [4, 5],

@@ -83,7 +83,7 @@ class Hits_3D {
 
 		if (this.facing_front(sel.so.scene.faces[sel.index], projected) < 0) return;
 
-		// Switch to opposite face (paired: 0↔1, 2↔3, 4↔5)
+		// Switch to opposite face (paired: 0↔1 bottom/top, 2↔3 left/right, 4↔5 front/back)
 		const opp = sel.index ^ 1;
 		if (opp < sel.so.scene.faces.length && this.facing_front(sel.so.scene.faces[opp], projected) < 0) {
 			this.set_selection({ so: sel.so, type: T_Hit_3D.face, index: opp });
