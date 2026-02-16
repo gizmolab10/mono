@@ -20,7 +20,8 @@
       "Edit",
       "Bash(yarn svelte-check:*)",
       "Bash(yarn vitest run:*)",
-      "Bash(yarn vitest:*)"
+      "Bash(yarn vitest:*)",
+      "Bash(node -e:*)"
     ]
   }
 }

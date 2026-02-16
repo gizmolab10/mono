@@ -77,15 +77,18 @@ class Engine {
         hits_3d.register(so);
         smart_objects.push(so);
       }
-      // Restore parent refs by id
+      // Restore parent refs by id and rebind bare-ref formulas
       for (let i = 0; i < saved.smart_objects.length; i++) {
         const parent_id = saved.smart_objects[i].parent_id;
         if (!parent_id) continue;
         const parent_so = smart_objects.find(so => so.id === parent_id);
         if (parent_so?.scene) {
           smart_objects[i].scene!.parent = parent_so.scene;
+          constraints.rebind_formulas(smart_objects[i], parent_id);
         }
       }
+      // Evaluate all formulas now that refs are bound and scene is populated
+      constraints.propagate_all();
     } else {
       // First run — create default SO with initial tumble
       const so = new Smart_Object('A');
@@ -111,6 +114,10 @@ class Engine {
     const saved_id = saved?.root_id ?? '';
     const root_so = smart_objects.find(so => so.id === saved_id) ?? smart_objects[0];
     this.root_scene = root_so.scene;
+    // Root start bounds are always zero
+    root_so.set_bound('x_min', 0);
+    root_so.set_bound('y_min', 0);
+    root_so.set_bound('z_min', 0);
     stores.w_root_so.set(root_so);
     scenes.root_id = root_so.id;
     scenes.root_name = root_so.name;
@@ -137,7 +144,10 @@ class Engine {
     e3.set_drag_handler((prev, curr, alt_key) => {
       const target = hits_3d.selection?.so.scene ?? this.root_scene;
       if (!target) return;
-      if (!drag.edit_selection(prev, curr)) {
+      if (drag.edit_selection(prev, curr)) {
+        const changed = hits_3d.selection?.so;
+        if (changed) constraints.propagate(changed);
+      } else {
         if (stores.current_view_mode() === '2d') {
           if (!this.root_scene) return;
           this.saved_3d_orientation = null;

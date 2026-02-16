@@ -83,20 +83,38 @@ describe('Tokenizer', () => {
 		expect(() => tokenizer.tokenize('1 & 2')).toThrow();
 	});
 
-	it('tokenizes bare attribute as parent reference', () => {
+	it('tokenizes bare attribute as self reference', () => {
 		const tokens = tokenizer.tokenize('x');
-		expect(tokens[0]).toEqual({ type: 'reference', object: '', attribute: 'x' });
+		expect(tokens[0]).toEqual({ type: 'reference', object: 'self', attribute: 'x' });
 	});
 
 	it('tokenizes bare attribute in expression', () => {
 		const tokens = tokenizer.tokenize('x * 2');
-		expect(tokens[0]).toEqual({ type: 'reference', object: '', attribute: 'x' });
+		expect(tokens[0]).toEqual({ type: 'reference', object: 'self', attribute: 'x' });
 		expect(tokens[1]).toEqual({ type: 'operator', value: '*' });
 		expect(tokens[2]).toEqual({ type: 'bare_number', value: 2 });
 	});
 
-	it('tokenizes mixed bare and dotted references', () => {
+	it('tokenizes dot-prefixed attribute as parent reference', () => {
+		const tokens = tokenizer.tokenize('.x');
+		expect(tokens[0]).toEqual({ type: 'reference', object: '', attribute: 'x' });
+	});
+
+	it('tokenizes dot-prefixed attribute in expression', () => {
+		const tokens = tokenizer.tokenize('.w / 4');
+		expect(tokens[0]).toEqual({ type: 'reference', object: '', attribute: 'w' });
+		expect(tokens[1]).toEqual({ type: 'operator', value: '/' });
+		expect(tokens[2]).toEqual({ type: 'bare_number', value: 4 });
+	});
+
+	it('tokenizes mixed bare (self) and dotted (named SO) references', () => {
 		const tokens = tokenizer.tokenize('x + A.y');
+		expect(tokens[0]).toEqual({ type: 'reference', object: 'self', attribute: 'x' });
+		expect(tokens[2]).toEqual({ type: 'reference', object: 'A', attribute: 'y' });
+	});
+
+	it('tokenizes mixed dot-prefix (parent) and named SO', () => {
+		const tokens = tokenizer.tokenize('.x + A.y');
 		expect(tokens[0]).toEqual({ type: 'reference', object: '', attribute: 'x' });
 		expect(tokens[2]).toEqual({ type: 'reference', object: 'A', attribute: 'y' });
 	});
@@ -148,25 +166,39 @@ describe('Compiler', () => {
 		expect(node).toEqual({ type: 'reference', object: 'door', attribute: 'x_min' });
 	});
 
-	it('compiles a bare attribute as parent reference', () => {
+	it('compiles a bare attribute as self reference', () => {
 		const node = compiler.compile('x');
-		expect(node).toEqual({ type: 'reference', object: '', attribute: 'x' });
+		expect(node).toEqual({ type: 'reference', object: 'self', attribute: 'x' });
 	});
 
 	it('compiles bare attribute in expression: x * 2', () => {
 		const node = compiler.compile('x * 2');
 		expect(node).toEqual({
 			type: 'binary', operator: '*',
-			left: { type: 'reference', object: '', attribute: 'x' },
+			left: { type: 'reference', object: 'self', attribute: 'x' },
 			right: { type: 'literal', value: 2 },
 		});
 	});
 
-	it('compiles mixed bare + dotted: x + A.y', () => {
+	it('compiles dot-prefix as parent reference: .x', () => {
+		const node = compiler.compile('.x');
+		expect(node).toEqual({ type: 'reference', object: '', attribute: 'x' });
+	});
+
+	it('compiles dot-prefix in expression: .w / 4', () => {
+		const node = compiler.compile('.w / 4');
+		expect(node).toEqual({
+			type: 'binary', operator: '/',
+			left: { type: 'reference', object: '', attribute: 'w' },
+			right: { type: 'literal', value: 4 },
+		});
+	});
+
+	it('compiles mixed bare (self) + dotted: x + A.y', () => {
 		const node = compiler.compile('x + A.y');
 		expect(node).toEqual({
 			type: 'binary', operator: '+',
-			left: { type: 'reference', object: '', attribute: 'x' },
+			left: { type: 'reference', object: 'self', attribute: 'x' },
 			right: { type: 'reference', object: 'A', attribute: 'y' },
 		});
 	});

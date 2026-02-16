@@ -107,6 +107,16 @@ class Tokenizer {
 				continue;
 			}
 
+			// .x = parent reference (dot with no name = parent SO)
+			// Must come before number check so ".x" isn't parsed as decimal
+			if (ch === '.' && pos + 1 < src.length && is_alpha(src[pos + 1])) {
+				pos++; // skip dot
+				const attribute = read_identifier();
+				// object '' means "parent" (resolved by Constraints.bind_refs)
+				tokens.push({ type: 'reference', object: '', attribute });
+				continue;
+			}
+
 			// number (possibly with unit suffix)
 			if ((ch >= '0' && ch <= '9') || ch === '.') {
 				const value = read_number();
@@ -120,7 +130,7 @@ class Tokenizer {
 				continue;
 			}
 
-			// reference: A.x (explicit SO) or bare attribute: x (parent SO)
+			// reference: A.x (explicit SO), bare attribute: x (self SO)
 			if (is_alpha(ch)) {
 				const name = read_identifier();
 				if (peek() === '.') {
@@ -129,8 +139,8 @@ class Tokenizer {
 					if (!attribute) throw new Error(`Expected attribute name after '${name}.' at position ${pos}`);
 					tokens.push({ type: 'reference', object: name, attribute });
 				} else {
-					// bare attribute — object '' means "parent" (resolved by Constraints)
-					tokens.push({ type: 'reference', object: '', attribute: name });
+					// bare attribute — object 'self' means "this SO" (resolved by Constraints)
+					tokens.push({ type: 'reference', object: 'self', attribute: name });
 				}
 				continue;
 			}

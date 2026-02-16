@@ -38,7 +38,7 @@ class Dimensions {
 	/** Start editing a dimensional. Called on click when hit_test() hits. */
 	begin(rect: Dimension_Rect): void {
 		const so = rect.so;
-		const value_mm = rect.axis === 'x' ? so.width : rect.axis === 'y' ? so.height : so.depth;
+		const value_mm = rect.axis === 'x' ? so.width : rect.axis === 'y' ? so.depth : so.height;
 		const system = Units.current_unit_system();
 		this.w_s_dimensions.set({
 			so,

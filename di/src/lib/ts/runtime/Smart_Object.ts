@@ -34,10 +34,11 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	setup() {
-		// Populate attributes_dict_byName from Axis attributes (start + end only)
+		// Populate attributes_dict_byName from Axis attributes (start, end, length)
 		for (const axis of this.axes) {
-			this.attributes_dict_byName[axis.start.name] = axis.start;
-			this.attributes_dict_byName[axis.end.name]   = axis.end;
+			this.attributes_dict_byName[axis.start.name]  = axis.start;
+			this.attributes_dict_byName[axis.end.name]    = axis.end;
+			this.attributes_dict_byName[axis.length.name] = axis.length;
 		}
 		// Default: 1"×2"×3" box centered at origin (stored in mm)
 		// this.set_bound('x_min', -12.7); this.set_bound('x_max', 12.7);
@@ -55,7 +56,19 @@ export default class Smart_Object extends Identifiable {
 
 	set_bound(bound: Bound, value: number): void {
 		const attr = this.attributes_dict_byName[bound];
-		if (attr) attr.value = value;
+		if (!attr) return;
+		attr.value = value;
+		// Update offset from parent (for empty-formula default)
+		if (!attr.compiled && this.scene?.parent) {
+			const parent_val = this.scene.parent.so.get_bound(bound);
+			attr.offset = value - parent_val;
+		}
+		// Keep length in sync when an endpoint changes (and length has no formula)
+		for (const axis of this.axes) {
+			if ((attr === axis.start || attr === axis.end) && !axis.length.compiled) {
+				axis.length.value = axis.end.value - axis.start.value;
+			}
+		}
 	}
 
 	get x_min(): number { return this.get_bound('x_min'); }
@@ -74,8 +87,8 @@ export default class Smart_Object extends Identifiable {
 
 	// Derived dimensions (for convenience)
 	get width(): number { return this.x_max - this.x_min; }
-	get height(): number { return this.y_max - this.y_min; }
-	get depth(): number { return this.z_max - this.z_min; }
+	get depth(): number { return this.y_max - this.y_min; }
+	get height(): number { return this.z_max - this.z_min; }
 
 	// ═══════════════════════════════════════════════════════════════════
 	// VERTEX GENERATION
@@ -269,19 +282,29 @@ export default class Smart_Object extends Identifiable {
 		const child = new Smart_Object(name);
 		const half = Math.min(this.width, this.height, this.depth) / 2;
 
-		// Max bounds: absolute values (no formula)
+		// Position: absolute values with offset from parent (empty-formula default)
+		child.set_bound('x_min', this.x_min);
+		child.set_bound('y_min', this.y_min);
+		child.set_bound('z_min', this.z_min);
 		child.set_bound('x_max', this.x_min + half);
 		child.set_bound('y_max', this.y_min + half);
 		child.set_bound('z_max', this.z_min + half);
 
-		// Min bounds: formulas referencing parent by id (caller applies via constraints)
-		const formulas: Partial<Record<Bound, string>> = {
-			x_min: `${this.id}.x_min`,
-			y_min: `${this.id}.y_min`,
-			z_min: `${this.id}.z_min`,
-		};
+		// Offsets: min = 0 (at parent origin), max = offset from parent's max
+		const bounds: [string, number, number][] = [
+			['x_min', this.x_min, this.x_min],  // offset 0
+			['y_min', this.y_min, this.y_min],
+			['z_min', this.z_min, this.z_min],
+			['x_max', this.x_min + half, this.x_max],  // offset from parent's max
+			['y_max', this.y_min + half, this.y_max],
+			['z_max', this.z_min + half, this.z_max],
+		];
+		for (const [bound, child_val, parent_val] of bounds) {
+			child.attributes_dict_byName[bound].offset = child_val - parent_val;
+		}
 
-		return { child, formulas };
+		// No formulas — empty-formula default handles parent tracking
+		return { child, formulas: {} };
 	}
 
 	// ═══════════════════════════════════════════════════════════════════

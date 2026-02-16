@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/architecture/core/algebra.md",
+                "file": "di/notes/work/16.formulas.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of algebra"
+              "title": "Outline of 16.formulas"
             }
           }
         ],
@@ -241,12 +241,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "ccce82b75099353e",
+  "active": "51e1a0393ee0af94",
   "lastOpenFiles": [
-    "di/notes/work/16.formulas.md",
-    "di/src/assets/A.di",
-    "di/notes/architecture/core/algebra.md",
+    "di/src/assets/drawer.di",
+    "di/src/lib/ts/algebra/Constraints.ts.tmp.35175.1771277152795",
     "di/notes/work/code.debt.md",
+    "di/notes/work/16.formulas.md",
+    "di/notes/architecture/core/algebra.md",
+    "di/src/assets/A.di",
     "di/notes/architecture/ui/details.md",
     "di/notes/work/done/code.debt.done.md",
     "di/notes/components/Smart_Objects.md",
@@ -277,7 +279,6 @@
     "di/notes/architecture/render",
     "di/src/lib/ts/render/R_Grid.ts",
     "di/src/lib/ts/render/R_Dimensions.ts",
-    "di/src/lib/ts/render/R_Angulars.ts",
     "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
     "Screenshot 2026-02-14 at 12.12.38 PM.png",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",

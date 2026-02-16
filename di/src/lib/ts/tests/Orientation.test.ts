@@ -100,53 +100,27 @@ describe('orientation_from_bounds', () => {
 
 describe('use case S — staircase', () => {
 
-	it('staircase orientation updates when parent stretches', () => {
+	it('staircase orientation does NOT change when parent stretches', () => {
 		const room = add_so('R', { x_min: 0, x_max: 1000, y_min: 0, y_max: 1000, z_min: 0, z_max: 200 });
 		const stair = add_so('S', { z_min: 0, z_max: 10 });
 
-		// Pin all 4 XY corners to room
 		constraints.set_formula(stair, 'x_min', ref(room, 'x_min'));
 		constraints.set_formula(stair, 'x_max', ref(room, 'x_max'));
 		constraints.set_formula(stair, 'y_min', ref(room, 'y_min'));
 		constraints.set_formula(stair, 'y_max', ref(room, 'y_max'));
 		constraints.set_formula(stair, 'z_min', ref(room, 'z_min'));
 
-		// Compute initial orientation from bounds (set_formula doesn't call recompute)
-		orientation.recompute(stair);
+		// Record angles before stretch
+		const angles_before = stair.axes.map(a => a.angle.value);
 
-		// Initially square → 45°
-		const angle_before = 2 * Math.acos(Math.abs(stair.orientation[3]));
-		expect(angle_before).toBeCloseTo(Math.PI / 4);
-
-		// Stretch room wider → shallower angle
+		// Stretch room wider
 		room.set_bound('x_max', 2000);
 		constraints.propagate(room);
 
-		// Now x=2000, y=1000 → atan2(1000, 2000) ≈ 26.57°
-		const angle_after = 2 * Math.acos(Math.abs(stair.orientation[3]));
-		expect(angle_after).toBeCloseTo(Math.atan2(1000, 2000));
-		expect(angle_after).toBeLessThan(angle_before);
-	});
-
-	it('staircase orientation updates when parent gets taller', () => {
-		const room = add_so('R', { x_min: 0, x_max: 1000, y_min: 0, y_max: 1000, z_min: 0, z_max: 200 });
-		const stair = add_so('S', { z_min: 0, z_max: 10 });
-
-		constraints.set_formula(stair, 'x_min', ref(room, 'x_min'));
-		constraints.set_formula(stair, 'x_max', ref(room, 'x_max'));
-		constraints.set_formula(stair, 'y_min', ref(room, 'y_min'));
-		constraints.set_formula(stair, 'y_max', ref(room, 'y_max'));
-		constraints.set_formula(stair, 'z_min', ref(room, 'z_min'));
-		orientation.recompute(stair);
-
-		// Stretch room taller → steeper angle
-		room.set_bound('y_max', 2000);
-		constraints.propagate(room);
-
-		// Now x=1000, y=2000 → atan2(2000, 1000) ≈ 63.43°
-		const angle = 2 * Math.acos(Math.abs(stair.orientation[3]));
-		expect(angle).toBeCloseTo(Math.atan2(2000, 1000));
-		expect(angle).toBeGreaterThan(Math.PI / 4); // steeper than 45°
+		// Angles must NOT change — propagation does not recompute orientation
+		for (let i = 0; i < 3; i++) {
+			expect(stair.axes[i].angle.value).toBe(angles_before[i]);
+		}
 	});
 
 });

@@ -19,7 +19,7 @@ export default class Axis {
 		];
 	}
 
-	get length_name(): string { return this.name === 'x' ? 'width' : this.name === 'y' ? 'height' : 'depth'; }
+	get length_name(): string { return this.name === 'x' ? 'width' : this.name === 'y' ? 'depth' : 'height'; }
 
 	get start():  Attribute { return this.attributes[0]; }
 	get end():    Attribute { return this.attributes[1]; }

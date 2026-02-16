@@ -21,6 +21,10 @@ function add_so(name: string, bounds?: Partial<Record<Bound, number>>): Smart_Ob
 			so.set_bound(key as Bound, value);
 		}
 	}
+	// Sync length attributes (width/depth/height) from geometry
+	for (const axis of so.axes) {
+		axis.length.value = axis.end.value - axis.start.value;
+	}
 	scene.create({ so, edges: cube_edges });
 	return so;
 }
@@ -205,7 +209,13 @@ describe('serialize/deserialize formulas', () => {
 		constraints.set_formula(door, 'y_max', formula);
 		const data = door.serialize();
 
+		// Formula pre-empts value: only formula is serialized
+		expect(data.y.attributes[1].formula).toBe(formula);
+		expect(data.y.attributes[1].value).toBeUndefined();
+
 		const restored = Smart_Object.deserialize(data);
+		scene.create({ so: restored, edges: cube_edges });
+		constraints.propagate_all();
 		const attr = restored.attributes_dict_byName['y_max'];
 
 		expect(attr.formula).toBe(formula);
@@ -334,14 +344,14 @@ describe('alias resolution', () => {
 		expect(constraints.resolve(wall.id, 'w')).toBeCloseTo(400);
 	});
 
-	it('resolve: h → height (y_max - y_min)', () => {
+	it('resolve: d → depth (y_max - y_min)', () => {
 		const wall = add_so('wall', { y_min: 0, y_max: 2438.4 });
-		expect(constraints.resolve(wall.id, 'h')).toBeCloseTo(2438.4);
+		expect(constraints.resolve(wall.id, 'd')).toBeCloseTo(2438.4);
 	});
 
-	it('resolve: d → depth (z_max - z_min)', () => {
+	it('resolve: h → height (z_max - z_min)', () => {
 		const box = add_so('box', { z_min: -300, z_max: 300 });
-		expect(constraints.resolve(box.id, 'd')).toBeCloseTo(600);
+		expect(constraints.resolve(box.id, 'h')).toBeCloseTo(600);
 	});
 
 	it('resolve: falls through to internal bound name', () => {
@@ -369,16 +379,16 @@ describe('alias resolution', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
-// BARE ATTRIBUTE → PARENT REFERENCE
+// DOT-PREFIX → PARENT REFERENCE (.x = parent)
 // ═══════════════════════════════════════════════════════════════════
 
-describe('bare attribute with parent binding', () => {
+describe('dot-prefix attribute with parent binding', () => {
 
-	it('x * 2 with parent_id resolves to parent.x_min * 2', () => {
+	it('.x * 2 with parent_id resolves to parent.x_min * 2', () => {
 		const parent = add_so('parent', { x_min: 100, x_max: 500 });
 		const child = add_so('child');
 
-		const error = constraints.set_formula(child, 'x_min', 'x * 2', parent.id);
+		const error = constraints.set_formula(child, 'x_min', '.x * 2', parent.id);
 		expect(error).toBeNull();
 		// parent.x_min = 100, so child.x_min = 200
 		expect(child.x_min).toBeCloseTo(200);
@@ -393,45 +403,130 @@ describe('bare attribute with parent binding', () => {
 		expect(child.x_min).toBeCloseTo(300);
 	});
 
-	it('mixed: x + A.X resolves bare to parent, dotted to named SO', () => {
+	it('mixed: .x + A.X resolves dot-prefix to parent, dotted to named SO', () => {
 		const parent = add_so('parent', { x_min: 100, x_max: 500 });
 		const a = add_so('A', { x_max: 800 });
 		const child = add_so('child');
 
-		const error = constraints.set_formula(child, 'x_min', `x + ${a.id}.X`, parent.id);
+		const error = constraints.set_formula(child, 'x_min', `.x + ${a.id}.X`, parent.id);
 		expect(error).toBeNull();
 		// parent.x_min(100) + A.x_max(800) = 900
 		expect(child.x_min).toBeCloseTo(900);
 	});
 
-	it('w alias through formula: w * 2 with parent', () => {
+	it('.w alias through formula: .w * 2 with parent', () => {
 		const parent = add_so('parent', { x_min: 100, x_max: 500 });
 		const child = add_so('child');
 
-		const error = constraints.set_formula(child, 'x_min', 'w * 2', parent.id);
+		const error = constraints.set_formula(child, 'x_min', '.w * 2', parent.id);
 		expect(error).toBeNull();
 		// parent width = 400, so child.x_min = 800
 		expect(child.x_min).toBeCloseTo(800);
 	});
 
-	it('bare attribute without parent_id compiles but object stays empty', () => {
+	it('dot-prefix attribute without parent_id compiles but object stays empty', () => {
 		const child = add_so('child');
-		// No parent_id → bare ref object is '' → resolve('', 'x') → find_so('') → null → 0
-		const error = constraints.set_formula(child, 'x_min', 'x * 2');
+		// No parent_id → dot-prefix ref object is '' → resolve('', 'x') → find_so('') → null → 0
+		const error = constraints.set_formula(child, 'x_min', '.x * 2');
 		expect(error).toBeNull();
 		expect(child.x_min).toBeCloseTo(0); // can't resolve '' SO
 	});
 
-	it('propagates through bare-attribute formula', () => {
+	it('propagates through dot-prefix formula', () => {
 		const parent = add_so('parent', { x_min: 100, x_max: 500 });
 		const child = add_so('child');
 
-		constraints.set_formula(child, 'x_min', 'x * 2', parent.id);
+		constraints.set_formula(child, 'x_min', '.x * 2', parent.id);
 		expect(child.x_min).toBeCloseTo(200);
 
 		parent.set_bound('x_min', 250);
 		constraints.propagate(parent);
 		expect(child.x_min).toBeCloseTo(500);
+	});
+
+	it('.w on X row gives parent width, not self width', () => {
+		const parent = add_so('parent', { x_min: 0, x_max: 1000, y_min: 0, y_max: 600 });
+		const child = add_so('child', { x_min: 0, x_max: 200, y_min: 0, y_max: 100 });
+
+		// child.x_max = .w → parent's width (1000), not child's width (200)
+		const error = constraints.set_formula(child, 'x_max', '.w', parent.id);
+		expect(error).toBeNull();
+		expect(child.x_max).toBeCloseTo(1000); // parent's width
+	});
+
+	it('.w on X row after add_child_so flow gives parent width', () => {
+		// Simulate full add_child_so: parent 2' wide, child 3/4" wide
+		const parent = add_so('parent', { x_min: 0, x_max: 609.6 });  // 2 feet
+		const child = add_so('child', { x_min: 0, x_max: 19.05 });     // 3/4 inch
+
+		// Wire child min bound formula (like add_child_so does)
+		constraints.set_formula(child, 'x_min', `${parent.id}.x_min`);
+
+		// Now user types .w in the X formula cell → commit_formula flow
+		const parent_id = parent.id;  // simulates selected_so.scene?.parent?.so.id
+		const error = constraints.set_formula(child, 'x_max', '.w', parent_id);
+		expect(error).toBeNull();
+
+		// Should be parent width (609.6 = 2'), NOT child width (19.05 = 3/4")
+		expect(child.x_max).toBeCloseTo(609.6);
+
+		// After propagation, value should persist
+		constraints.propagate(child);
+		expect(child.x_max).toBeCloseTo(609.6);
+	});
+
+	it('use case 2: X = .w → self X should equal parent width exactly', () => {
+		// Parent is 2' wide (x_min=0, x_max=609.6)
+		// Child starts at parent origin with some small size
+		const parent = add_so('parent', { x_min: 0, x_max: 609.6 });
+		const child = add_so('child', { x_min: 0, x_max: 57.15 }); // 2 1/4"
+
+		// Wire child x_min to parent (like add_child_so)
+		constraints.set_formula(child, 'x_min', `${parent.id}.x_min`);
+
+		// User types .w in the X row → commit_formula('x_max', '.w')
+		const error = constraints.set_formula(child, 'x_max', '.w', parent.id);
+		expect(error).toBeNull();
+
+		// x_max should be EXACTLY parent width = 609.6 (2'), NOT 609.6 + 57.15
+		expect(child.x_max).toBeCloseTo(609.6);
+
+		// After propagation (as commit_formula does), still 609.6
+		constraints.propagate(child);
+		expect(child.x_max).toBeCloseTo(609.6);
+	});
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// BARE ATTRIBUTE → SELF REFERENCE (x = self)
+// ═══════════════════════════════════════════════════════════════════
+
+describe('bare attribute (self reference)', () => {
+
+	it('x * 2 resolves to self.x_min * 2', () => {
+		const so = add_so('box', { x_min: 150 });
+		const error = constraints.set_formula(so, 'x_max', 'x * 2');
+		expect(error).toBeNull();
+		expect(so.x_max).toBeCloseTo(300);
+	});
+
+	it('w resolves to self width', () => {
+		add_so('box', { x_min: 100, x_max: 500 });
+		const child = add_so('child', { x_min: 0, x_max: 200 });
+		// bare w in child's formula → self.width (child's width)
+		const error = constraints.set_formula(child, 'y_max', 'w');
+		expect(error).toBeNull();
+		expect(child.y_max).toBeCloseTo(200); // child's width
+	});
+
+	it('mixed: .x + x resolves dot-prefix to parent, bare to self', () => {
+		const parent = add_so('parent', { x_min: 100, x_max: 500 });
+		const child = add_so('child', { x_min: 50, x_max: 200 });
+
+		// .x → parent.x_min (100), x → self.x_min (50)
+		const error = constraints.set_formula(child, 'y_max', '.x + x', parent.id);
+		expect(error).toBeNull();
+		expect(child.y_max).toBeCloseTo(150); // 100 + 50
 	});
 });
 
@@ -457,10 +552,10 @@ describe('invariant formulas', () => {
 		expect(constraints.invariant_formula_for('foo')).toBeNull();
 	});
 
-	it('invariant formula for x (X - w) evaluates correctly with parent binding', () => {
+	it('invariant formula for x (X - w) evaluates correctly with self binding', () => {
 		const so = add_so('box', { x_min: 100, x_max: 500 });
 
-		// Set invariant formula: x = X - w → should resolve to x_max - width
+		// Set invariant formula: x = X - w → should resolve to self.x_max - self.width
 		// X = 500, w = 400, so x = 500 - 400 = 100
 		const formula = constraints.invariant_formula_for('x')!;
 		const error = constraints.set_formula(so, 'x_min', formula, so.id);
@@ -471,21 +566,122 @@ describe('invariant formulas', () => {
 	it('invariant formula recomputes when siblings change', () => {
 		const so = add_so('box', { x_min: 100, x_max: 500 });
 
-		// x is invariant: x = X - w (self-referencing)
+		// x is invariant: x = X - w (self-referencing via bare aliases)
 		const formula = constraints.invariant_formula_for('x')!;
 		constraints.set_formula(so, 'x_min', formula, so.id);
 
 		// Change x_max → x_min should recompute
 		so.set_bound('x_max', 700);
 		constraints.propagate(so);
-		// X = 700, w = 700 - 100 = 600... but wait, x_min has a formula
-		// Actually: after propagate, x_min = X - w = 700 - (700 - x_min)
-		// This is self-referential through the derived alias w.
-		// w depends on x_min, and x_min depends on w → conceptual cycle.
-		// But since w is derived (not a stored formula), it resolves live:
+		// X = 700, w = 700 - 100 = 600
 		// evaluate: resolve(so.id, 'X') - resolve(so.id, 'w')
 		// = so.x_max - (so.x_max - so.x_min) = so.x_min
 		// So x_min stays at 100 — the identity holds.
 		expect(so.x_min).toBeCloseTo(100);
+	});
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// INVARIANT ENFORCEMENT (enforce_invariants)
+// ═══════════════════════════════════════════════════════════════════
+
+describe('enforce_invariants', () => {
+
+	it('invariant=0 (start): start = end - length', () => {
+		const so = add_so('box', { x_min: 0, x_max: 500 });
+		// Set width attribute to 200
+		so.axes[0].length.value = 200;
+		// Mark start as invariant
+		so.axes[0].invariant = 0;
+		constraints.enforce_invariants(so);
+		// start = end(500) - length(200) = 300
+		expect(so.x_min).toBeCloseTo(300);
+	});
+
+	it('invariant=1 (end): end = start + length', () => {
+		const so = add_so('box', { x_min: 100, x_max: 500 });
+		so.axes[0].length.value = 300;
+		so.axes[0].invariant = 1;
+		constraints.enforce_invariants(so);
+		// end = start(100) + length(300) = 400
+		expect(so.x_max).toBeCloseTo(400);
+	});
+
+	it('invariant=2 (length): length = end - start', () => {
+		const so = add_so('box', { x_min: 100, x_max: 500 });
+		so.axes[0].length.value = 999; // stale
+		so.axes[0].invariant = 2;
+		constraints.enforce_invariants(so);
+		// length = end(500) - start(100) = 400
+		expect(so.axes[0].length.value).toBeCloseTo(400);
+	});
+
+	it('does not override attribute with explicit user formula', () => {
+		const parent = add_so('parent', { x_min: 0, x_max: 1000 });
+		const child = add_so('child', { x_min: 0, x_max: 200 });
+		// User sets explicit formula on x_min
+		constraints.set_formula(child, 'x_min', `${parent.id}.x`, parent.id);
+		// Mark start as invariant — should NOT override the formula
+		child.axes[0].invariant = 0;
+		constraints.enforce_invariants(child);
+		// x_min should still be from formula: parent.x_min = 0
+		expect(child.x_min).toBeCloseTo(0);
+	});
+
+	it('set_formula triggers enforce_invariants: x invariant recomputes after X formula set', () => {
+		const parent = add_so('parent', { x_min: 0, x_max: 609.6 });  // 2 feet
+		const child = add_so('child', { x_min: 0, x_max: 19.05 });     // 3/4 inch
+		// width attr = 19.05
+		child.axes[0].length.value = 19.05;
+		// Mark x (start) as invariant
+		child.axes[0].invariant = 0;
+
+		// User sets X = .w (parent width)
+		const error = constraints.set_formula(child, 'x_max', '.w', parent.id);
+		expect(error).toBeNull();
+		// X should be parent width = 609.6
+		expect(child.x_max).toBeCloseTo(609.6);
+		// x = X - w = 609.6 - 19.05 = 590.55 (invariant enforcement)
+		expect(child.x_min).toBeCloseTo(590.55);
+	});
+
+	it('propagate enforces invariants on changed SO', () => {
+		const so = add_so('box', { x_min: 0, x_max: 200 });
+		so.axes[0].invariant = 0; // start is invariant
+		// Directly change x_max (simulates drag) — set_bound syncs length
+		so.set_bound('x_max', 500);
+		// Manually set length to 200 AFTER set_bound to test enforcement
+		so.axes[0].length.value = 200;
+		constraints.propagate(so);
+		// start = end(500) - length(200) = 300
+		expect(so.x_min).toBeCloseTo(300);
+	});
+
+	it('enforces invariants on all three axes independently', () => {
+		const so = add_so('box', {
+			x_min: 0, x_max: 100,
+			y_min: 0, y_max: 200,
+			z_min: 0, z_max: 300,
+		});
+		// x: invariant=0, y: invariant=1, z: invariant=2
+		so.axes[0].invariant = 0;
+		so.axes[1].invariant = 1;
+		so.axes[2].invariant = 2;
+		// Change endpoints (set_bound syncs length automatically)
+		so.set_bound('x_max', 500);
+		so.set_bound('y_min', 50);
+		so.set_bound('z_min', 10);
+		so.set_bound('z_max', 400);
+		// Set length values AFTER set_bound to test enforcement
+		so.axes[0].length.value = 100;
+		so.axes[1].length.value = 200;
+		// z: invariant=2, length will be computed by enforce_invariants
+		constraints.enforce_invariants(so);
+		// x: start = end(500) - length(100) = 400
+		expect(so.x_min).toBeCloseTo(400);
+		// y: end = start(50) + length(200) = 250
+		expect(so.y_max).toBeCloseTo(250);
+		// z: length = end(400) - start(10) = 390
+		expect(so.axes[2].length.value).toBeCloseTo(390);
 	});
 });

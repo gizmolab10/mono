@@ -13,11 +13,12 @@
 	const { w_s_face_label } = face_label;
 	const { w_root_so, w_selection, w_precision, w_tick } = stores;
 
-	type BoundsRow = { label: string; bound: Bound | null; value: string; formula: string; is_invariant: boolean; axis_index: number; attr_index: number };
+	type BoundsRow = { label: string; bound: string | null; value: string; formula: string; has_formula: boolean; is_invariant: boolean; axis_index: number; attr_index: number };
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
+	let is_root = $derived(!selected_so?.scene?.parent);
 
-	let tick = $derived($w_tick);
+	let tick = $derived(stores.is_editing() ? 0 : $w_tick);
 
 	function get_bounds(so: Smart_Object, _tick: number) {
 		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
@@ -32,16 +33,17 @@
 			if (inv(axis_index, attr_index)) return constraints.invariant_formula_for(label) ?? '';
 			return '';
 		};
+		const has = (bound: string | null) => bound ? !!so.attributes_dict_byName[bound]?.compiled : false;
 		return [
-			{ label: 'x', bound: 'x_min' as Bound, value: fmt(p[0] + so.x_min), formula: fml('x', 'x_min', 0, 0), is_invariant: inv(0, 0), axis_index: 0, attr_index: 0 },
-			{ label: 'X', bound: 'x_max' as Bound, value: fmt(p[0] + so.x_max), formula: fml('X', 'x_max', 0, 1), is_invariant: inv(0, 1), axis_index: 0, attr_index: 1 },
-			{ label: 'w', bound: null,              value: fmt(so.width),         formula: fml('w', null,    0, 2), is_invariant: inv(0, 2), axis_index: 0, attr_index: 2 },
-			{ label: 'y', bound: 'y_min' as Bound, value: fmt(p[1] + so.y_min), formula: fml('y', 'y_min', 1, 0), is_invariant: inv(1, 0), axis_index: 1, attr_index: 0 },
-			{ label: 'Y', bound: 'y_max' as Bound, value: fmt(p[1] + so.y_max), formula: fml('Y', 'y_max', 1, 1), is_invariant: inv(1, 1), axis_index: 1, attr_index: 1 },
-			{ label: 'h', bound: null,              value: fmt(so.height),        formula: fml('h', null,    1, 2), is_invariant: inv(1, 2), axis_index: 1, attr_index: 2 },
-			{ label: 'z', bound: 'z_min' as Bound, value: fmt(p[2] + so.z_min), formula: fml('z', 'z_min', 2, 0), is_invariant: inv(2, 0), axis_index: 2, attr_index: 0 },
-			{ label: 'Z', bound: 'z_max' as Bound, value: fmt(p[2] + so.z_max), formula: fml('Z', 'z_max', 2, 1), is_invariant: inv(2, 1), axis_index: 2, attr_index: 1 },
-			{ label: 'd', bound: null,              value: fmt(so.depth),         formula: fml('d', null,    2, 2), is_invariant: inv(2, 2), axis_index: 2, attr_index: 2 },
+			{ label: 'x', bound: 'x_min' as Bound, value: fmt(p[0] + so.x_min), formula: fml('x', 'x_min', 0, 0), has_formula: has('x_min'), is_invariant: inv(0, 0), axis_index: 0, attr_index: 0 },
+			{ label: 'y', bound: 'y_min' as Bound, value: fmt(p[1] + so.y_min), formula: fml('y', 'y_min', 1, 0), has_formula: has('y_min'), is_invariant: inv(1, 0), axis_index: 1, attr_index: 0 },
+			{ label: 'z', bound: 'z_min' as Bound, value: fmt(p[2] + so.z_min), formula: fml('z', 'z_min', 2, 0), has_formula: has('z_min'), is_invariant: inv(2, 0), axis_index: 2, attr_index: 0 },
+			{ label: 'w', bound: 'width',           value: fmt(so.width),         formula: fml('w', 'width', 0, 2), has_formula: has('width'), is_invariant: inv(0, 2), axis_index: 0, attr_index: 2 },
+			{ label: 'd', bound: 'depth',           value: fmt(so.depth),         formula: fml('d', 'depth', 1, 2), has_formula: has('depth'), is_invariant: inv(1, 2), axis_index: 1, attr_index: 2 },
+			{ label: 'h', bound: 'height',          value: fmt(so.height),        formula: fml('h', 'height',2, 2), has_formula: has('height'), is_invariant: inv(2, 2), axis_index: 2, attr_index: 2 },
+			{ label: 'X', bound: 'x_max' as Bound, value: fmt(p[0] + so.x_max), formula: fml('X', 'x_max', 0, 1), has_formula: has('x_max'), is_invariant: inv(0, 1), axis_index: 0, attr_index: 1 },
+			{ label: 'Y', bound: 'y_max' as Bound, value: fmt(p[1] + so.y_max), formula: fml('Y', 'y_max', 1, 1), has_formula: has('y_max'), is_invariant: inv(1, 1), axis_index: 1, attr_index: 1 },
+			{ label: 'Z', bound: 'z_max' as Bound, value: fmt(p[2] + so.z_max), formula: fml('Z', 'z_max', 2, 1), has_formula: has('z_max'), is_invariant: inv(2, 1), axis_index: 2, attr_index: 1 },
 		];
 	}
 
@@ -65,29 +67,31 @@
 	let angles = $derived(selected_so ? get_angles(selected_so, tick) : { x: '0°', y: '0°', z: '0°' });
 
 	function commit_formula(row: BoundsRow, value: string) {
-		if (!selected_so) return;
+		if (!selected_so || !row.bound) return;
 		const trimmed = value.trim();
-		if (row.bound) {
-			if (trimmed) {
-				constraints.set_formula(selected_so, row.bound, trimmed);
-			} else {
-				constraints.clear_formula(selected_so, row.bound);
-			}
+		const parent_id = selected_so.scene?.parent?.so.id;
+		if (trimmed) {
+			constraints.set_formula(selected_so, row.bound, trimmed, parent_id);
+		} else {
+			constraints.clear_formula(selected_so, row.bound);
 		}
+		constraints.propagate(selected_so);
 		stores.tick();
 		scenes.save();
 	}
 
+	const length_bounds = new Set(['width', 'depth', 'height']);
+
 	function commit_value(row: BoundsRow, value: string) {
-		if (!selected_so) return;
+		if (!selected_so || !row.bound) return;
 		const mm = units.parse_for_system(value, $w_unit_system);
 		if (mm === null) return;
-		if (row.bound) {
+		if (length_bounds.has(row.bound)) {
+			constraints.write(selected_so.id, row.label, mm);
+		} else {
 			const p = selected_so.scene?.position ?? [0, 0, 0];
 			const axis_index = row.bound[0] === 'x' ? 0 : row.bound[0] === 'y' ? 1 : 2;
-			selected_so.set_bound(row.bound, mm - p[axis_index]);
-		} else {
-			constraints.write(selected_so.id, row.label, mm);
+			selected_so.set_bound(row.bound as Bound, mm - p[axis_index]);
 		}
 		constraints.propagate(selected_so);
 		stores.tick();
@@ -95,8 +99,14 @@
 	}
 
 	function set_invariant(row: BoundsRow) {
-		if (!selected_so) return;
-		selected_so.axes[row.axis_index].invariant = row.attr_index;
+		if (!selected_so || is_root) return;
+		const axis = selected_so.axes[row.axis_index];
+		// Before changing invariant, sync length from geometry so it's never stale
+		if (!axis.length.compiled) {
+			axis.length.value = axis.end.value - axis.start.value;
+		}
+		axis.invariant = row.attr_index;
+		constraints.enforce_invariants(selected_so);
 		stores.tick();
 		scenes.save();
 	}
@@ -122,6 +132,7 @@
 		if (e.key === 'Enter' || e.key === 'Escape') {
 			(e.target as HTMLInputElement).blur();
 		}
+		e.stopPropagation();
 	}
 
 	let display_name = $derived(
@@ -186,16 +197,17 @@
 	</div>
 	<table class='bounds'>
 		<tbody>
-			{#each bounds_rows as row}
-				<tr class:invariant={row.is_invariant}>
+			{#each bounds_rows as row (selected_so?.id + row.label)}
+				{@const row_disabled = is_root ? row.attr_index !== 2 : (row.is_invariant || row.has_formula)}
+				<tr>
 					<td class='attr-name'>{row.label}</td>
-					<td class='attr-sep' class:cross={row.is_invariant} onclick={() => set_invariant(row)}></td>
+					<td class='attr-sep' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
 					<td class='attr-formula'>
 						<input
 							type      = 'text'
 							class     = 'cell-input'
 							value     = {row.formula}
-							disabled  = {row.is_invariant}
+							disabled  = {is_root || row.is_invariant}
 							onfocus   = {() => stores.w_editing.set(T_Editing.formula)}
 							onblur    = {(e) => { commit_formula(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
 							onkeydown = {cell_keydown}
@@ -206,7 +218,7 @@
 							type      = 'text'
 							class     = 'cell-input right'
 							value     = {row.value}
-							disabled  = {row.is_invariant}
+							disabled  = {row_disabled}
 							onfocus   = {() => stores.w_editing.set(T_Editing.value)}
 							onblur    = {(e) => { commit_value(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
 							onkeydown = {cell_keydown}
@@ -221,12 +233,13 @@
 			{#each axes as axis, i}
 				<tr>
 					<td class='attr-name'>{axis}</td>
-					<td class='attr-sep' class:cross={selected_so?.rotation_lock === i} onclick={() => set_locked(i)}></td>
+					<td class='attr-sep' class:cross={is_root || selected_so?.rotation_lock === i} class:disabled={is_root} onclick={() => set_locked(i)}></td>
 					<td class='attr-value'>
 						<input
 							type      = 'text'
 							class     = 'cell-input right'
 							value     = {angles[axis]}
+							disabled  = {is_root || selected_so?.rotation_lock === i}
 							onblur    = {(e) => commit_angle(axis, (e.target as HTMLInputElement).value)}
 							onkeydown = {cell_keydown}
 						/>
@@ -310,6 +323,12 @@
 		cursor     : pointer;
 	}
 
+	.attr-sep.disabled {
+		background    : var(--bg);
+		cursor        : default;
+		pointer-events: none;
+	}
+
 	.attr-sep.cross {
 		background :
 			linear-gradient(to top right, transparent calc(50% - 0.25px), currentColor 50%, transparent calc(50% + 0.25px)),
@@ -324,6 +343,7 @@
 	.attr-value {
 		text-align           : right !important;
 		font-variant-numeric : tabular-nums;
+		min-width            : 80px;
 	}
 
 	.cell-input {
@@ -347,9 +367,6 @@
 
 	.cell-input:disabled {
 		cursor     : default;
-	}
-
-	tr.invariant .cell-input {
 		background : var(--bg);
 		opacity    : 0.7;
 	}

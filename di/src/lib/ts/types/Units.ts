@@ -135,9 +135,11 @@ export class Units {
 		const total_inches = mm / mm_per[T_Unit.inch];
 		const abs_inches = Math.abs(total_inches);
 		const sign = total_inches < 0 ? '-' : '';
-		const feet = Math.floor(abs_inches / 12);
+		let feet = Math.floor(abs_inches / 12);
 		const remaining_inches = abs_inches - feet * 12;
-		const { whole, numerator, denominator } = this.to_fraction(remaining_inches, max_denominator);
+		let { whole, numerator, denominator } = this.to_fraction(remaining_inches, max_denominator);
+		// Carry: rounding can push inches to 12 → roll into feet
+		if (whole >= 12) { feet += Math.floor(whole / 12); whole = whole % 12; }
 
 		if (feet === 0) {
 			// less than a foot — show inches only

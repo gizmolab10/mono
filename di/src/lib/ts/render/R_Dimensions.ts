@@ -54,7 +54,7 @@ function render_axis_dimension(
 	const candidates = find_best_edge_for_axis(host, so, axis, projected);
 	if (!candidates || candidates.length === 0) return;
 
-	const value = axis === 'x' ? so.width : axis === 'y' ? so.height : so.depth;
+	const value = axis === 'x' ? so.width : axis === 'y' ? so.depth : so.height;
 
 	for (const { v1_idx, v2_idx } of candidates) {
 		let witness_dir = edge_witness_direction(host, so, v1_idx, v2_idx, axis, projected, world_matrix);

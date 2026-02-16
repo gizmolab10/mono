@@ -6,6 +6,7 @@ export default class Attribute {
 	formula: string | null = null;
 	compiled: Node | null = null;
 	value: number;
+	offset: number = 0;   // offset from parent's corresponding attribute (empty-formula default)
 	name: string;
 
 	constructor(name: string, value: number = 0) {
@@ -16,16 +17,20 @@ export default class Attribute {
 	get has_formula(): boolean { return this.formula !== null; }
 
 	serialize(): Portable_Attribute {
-		const pa: Portable_Attribute = { value: this.value };
-		if (this.formula) pa.formula = this.formula;
-		return pa;
+		if (this.formula) return { formula: this.formula };
+		const out: Portable_Attribute = { value: this.value };
+		if (this.offset !== 0) out.offset = this.offset;
+		return out;
 	}
 
 	deserialize(data: Portable_Attribute): void {
-		this.value = data.value;
 		if (data.formula) {
 			this.formula = data.formula;
+			this.value = 0;
 			try { this.compiled = compiler.compile(data.formula); } catch { /* skip */ }
+		} else {
+			this.value = data.value ?? 0;
 		}
+		this.offset = data.offset ?? 0;
 	}
 }
