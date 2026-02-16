@@ -68,13 +68,21 @@ class Dimensions {
 		// snap unevenly, shrinking the dimension.)
 		const precision = stores.current_precision();
 		const snapped_mm = units.snap_for_system(new_mm, system, precision);
-		const half = snapped_mm / 2;
 		const axis = state.axis;
 		const min_bound = `${axis}_min` as const;
 		const max_bound = `${axis}_max` as const;
-		const center = (state.so.get_bound(min_bound) + state.so.get_bound(max_bound)) / 2;
-		state.so.set_bound(min_bound, center - half);
-		state.so.set_bound(max_bound, center + half);
+		const is_root = !state.so.scene?.parent;
+		if (is_root) {
+			// Root: anchor at 0, only move max
+			state.so.set_bound(min_bound, 0);
+			state.so.set_bound(max_bound, snapped_mm);
+		} else {
+			// Children: resize symmetrically around center
+			const half = snapped_mm / 2;
+			const center = (state.so.get_bound(min_bound) + state.so.get_bound(max_bound)) / 2;
+			state.so.set_bound(min_bound, center - half);
+			state.so.set_bound(max_bound, center + half);
+		}
 		constraints.propagate(state.so);
 
 		stores.tick();

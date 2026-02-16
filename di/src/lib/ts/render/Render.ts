@@ -76,15 +76,16 @@ class Render {
     this.angular_rects = [];
     this.cached_world = null;  // invalidate MVP cache (camera may have moved)
 
-    const objects = scene.get_all();
+    const all_objects = scene.get_all();
+    const objects = all_objects.filter(o => o.so.visible);
     const is_2d = stores.current_view_mode() === '2d';
     const solid = stores.is_solid();
 
     if (is_2d) render_grid(this, objects);
 
-    // Phase 1: project all vertices and update hit-test caches
+    // Phase 1: project ALL vertices (including hidden) for hit-test caches
     const projected_map = new Map<string, Projected[]>();
-    for (const obj of objects) {
+    for (const obj of all_objects) {
       const world_matrix = this.get_world_matrix(obj);
       const projected = obj.so.vertices.map((v) => this.project_vertex(v, world_matrix));
       projected_map.set(obj.id, projected);

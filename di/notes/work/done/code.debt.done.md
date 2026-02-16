@@ -103,3 +103,4 @@
 	- [x] darken segment corresponding to front-most-facing face of root SO
 	- [x] click on a button -> rotate root SO to orient (and straighten) that face at front
 - [x] organize architecture notes
+- [x] move [[16.formulas]] to milestones

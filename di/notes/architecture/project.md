@@ -14,8 +14,7 @@ index.html
                             └── Graph.svelte       (canvas → Engine.setup)
 ```
 
-**main.ts** mounts the Svelte app. **App.svelte** renders Main. **Graph.svelte** grabs the canvas element and hands it to `engine.setup()`, which wires everything: camera, scene, animation loop, input handlers, saved state restoration. [Managers](di/notes/architecture/core/managers), [components](di/notes/components/index) and data flesh out the app.
-
+**main.ts** mounts the Svelte app. **App.svelte** renders Main. **Graph.svelte** grabs the canvas element and hands it to `engine.setup()`, which wires everything: camera, scene, animation loop, input handlers, saved state restoration.
 ## The Core Loop
 
 ```

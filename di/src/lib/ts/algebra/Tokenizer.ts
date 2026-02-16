@@ -87,6 +87,33 @@ class Tokenizer {
 			return src.slice(start, pos);
 		}
 
+		// Try compound imperial: after reading N', look for inches part ending with "
+		// Matches: 5' 3", 5' 3 1/2", 5' 1/2"
+		function try_compound_feet(feet: number): number | null {
+			const save = pos;
+			// expect optional space then digits or fraction then "
+			const remaining = src.slice(pos);
+			const m = remaining.match(/^\s+(\d+(?:\s+\d+\/\d+)?|\d+\/\d+)"/);
+			if (!m) return null;
+			pos += m[0].length;
+			const inches = units.parse_fraction(m[1]);
+			if (inches === null) { pos = save; return null; }
+			return units.to_mm(feet, T_Unit.foot) + units.to_mm(inches, T_Unit.inch);
+		}
+
+		// Try compound inches: after reading N (no suffix), look for space + fraction + "
+		// Matches: 1 1/2" (whole + fraction inches)
+		function try_compound_inches(whole: number): number | null {
+			const save = pos;
+			const remaining = src.slice(pos);
+			const m = remaining.match(/^\s+(\d+\/\d+)"/);
+			if (!m) return null;
+			pos += m[0].length;
+			const frac = units.parse_fraction(m[1]);
+			if (frac === null) { pos = save; return null; }
+			return units.to_mm(whole + frac, T_Unit.inch);
+		}
+
 		while (true) {
 			skip_whitespace();
 			if (at_end()) break;
@@ -117,15 +144,29 @@ class Tokenizer {
 				continue;
 			}
 
-			// number (possibly with unit suffix)
+			// number (possibly with unit suffix or compound imperial)
 			if ((ch >= '0' && ch <= '9') || ch === '.') {
 				const value = read_number();
 				if (isNaN(value)) throw new Error(`Invalid number at position ${pos}`);
 				const unit = try_unit_suffix();
-				if (unit) {
+				if (unit === T_Unit.foot) {
+					// Try compound: N' [inches part]"
+					const compound_mm = try_compound_feet(value);
+					if (compound_mm !== null) {
+						tokens.push({ type: 'number', value: compound_mm });
+					} else {
+						tokens.push({ type: 'number', value: units.to_mm(value, T_Unit.foot) });
+					}
+				} else if (unit) {
 					tokens.push({ type: 'number', value: units.to_mm(value, unit) });
 				} else {
-					tokens.push({ type: 'bare_number', value });
+					// No unit — try compound inches: N N/D" (e.g. "1 1/2")
+					const compound_mm = try_compound_inches(value);
+					if (compound_mm !== null) {
+						tokens.push({ type: 'number', value: compound_mm });
+					} else {
+						tokens.push({ type: 'bare_number', value });
+					}
 				}
 				continue;
 			}

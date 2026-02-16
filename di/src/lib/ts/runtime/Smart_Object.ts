@@ -10,6 +10,7 @@ export default class Smart_Object extends Identifiable {
 	attributes_dict_byName: Dictionary<Attribute> = {};
 	scene: O_Scene | null;
 	rotation_lock: number = 0;
+	visible: boolean = true;
 	name: string;
 
 	// Snap callback — set by Setup to snap mm values to the current precision grid. */
@@ -339,8 +340,8 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	/** Serialize to Portable_SO shape (per-axis bundles) */
-	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number } {
-		return {
+	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean } {
+		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean } = {
 			id: this.id,
 			name: this.name,
 			x: this.axes[0].serialize(),
@@ -348,10 +349,12 @@ export default class Smart_Object extends Identifiable {
 			z: this.axes[2].serialize(),
 			rotation_lock: this.rotation_lock,
 		};
+		if (!this.visible) out.visible = false;
+		return out;
 	}
 
 	/** Deserialize from Portable_SO shape (per-axis bundles) */
-	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number }): Smart_Object {
+	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number; visible?: boolean }): Smart_Object {
 		const so = new Smart_Object(data.name);
 		so.setID(data.id);
 		const axis_data = [data.x, data.y, data.z];
@@ -359,6 +362,7 @@ export default class Smart_Object extends Identifiable {
 			so.axes[i].deserialize(axis_data[i]);
 		}
 		so.rotation_lock = data.rotation_lock ?? 0;
+		so.visible = data.visible ?? true;
 		return so;
 	}
 }

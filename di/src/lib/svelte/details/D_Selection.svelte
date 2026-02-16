@@ -19,6 +19,8 @@
 	let is_root = $derived(!selected_so?.scene?.parent);
 
 	let tick = $derived(stores.is_editing() ? 0 : $w_tick);
+	function get_visible_label(_tick: number) { return selected_so?.visible === false ? 'show' : 'hide'; }
+	let visible_label = $derived(get_visible_label($w_tick));
 
 	function get_bounds(so: Smart_Object, _tick: number) {
 		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
@@ -105,6 +107,12 @@
 		if (!axis.length.compiled) {
 			axis.length.value = axis.end.value - axis.start.value;
 		}
+		// Clear any existing formula on the attribute being marked as invariant —
+		// invariant values come from enforce_invariants, not user formulas
+		const inv_attr = axis.attributes[row.attr_index];
+		if (inv_attr.compiled) {
+			constraints.clear_formula(selected_so, inv_attr.name);
+		}
 		axis.invariant = row.attr_index;
 		constraints.enforce_invariants(selected_so);
 		stores.tick();
@@ -124,6 +132,13 @@
 	function set_locked(index: number) {
 		if (!selected_so) return;
 		selected_so.rotation_lock = index;
+		stores.tick();
+		scenes.save();
+	}
+
+	function toggle_visible() {
+		if (!selected_so) return;
+		selected_so.visible = !selected_so.visible;
 		stores.tick();
 		scenes.save();
 	}
@@ -193,6 +208,7 @@
 			onfocus   = {handle_name_focus}
 			onblur    = {handle_name_blur}
 		/>
+		<button class='action-btn' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>{visible_label}</button>
 		<button class='action-btn' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>add child</button>
 	</div>
 	<table class='bounds'>
@@ -254,13 +270,16 @@
 
 <style>
 	.name-row {
-		display     : flex;
-		gap         : 6px;
-		align-items : center;
+		display      : flex;
+		gap          : 6px;
+		align-items  : center;
+		margin-left  : -8px;
+		margin-right : -8px;
 	}
 
 	.name-row input {
 		flex          : 1;
+		min-width     : 0;
 		border        : 0.5px solid currentColor;
 		box-sizing    : border-box;
 		font-size     : 0.875rem;
@@ -287,6 +306,7 @@
 		border-radius : 10px;
 		font-size     : 11px;
 		height        : 20px;
+		white-space   : nowrap;
 	}
 
 	.action-btn:global([data-hitting]) {
@@ -295,9 +315,9 @@
 	}
 
 	.bounds {
-		width           : calc(100% + 2rem);
-		margin-left     : -1rem;
-		margin-right    : -1rem;
+		width           : calc(100% + 2rem - 16px);
+		margin-left     : calc(-1rem + 8px);
+		margin-right    : calc(-1rem + 8px);
 		border-collapse : collapse;
 		margin-top      : 6px;
 		font-size       : 11px;
@@ -310,7 +330,8 @@
 	}
 
 	.attr-name {
-		width       : 20px;
+		width       : 16px;
+		min-width   : 16px;
 		font-weight : 600;
 		opacity     : 0.7;
 		text-align  : center !important;
@@ -319,6 +340,7 @@
 
 	.attr-sep {
 		width      : 12px;
+		min-width  : 12px;
 		background : white;
 		cursor     : pointer;
 	}

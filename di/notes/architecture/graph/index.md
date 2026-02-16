@@ -1,4 +1,4 @@
-# Render
+# Graph
 
 ## Contents
 

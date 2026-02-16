@@ -358,7 +358,7 @@ export class Units {
 		return sign + whole + ' ' + numerator + '/' + denominator + unit_symbol;
 	}
 
-	private parse_fraction(input: string): number | null {
+	parse_fraction(input: string): number | null {
 		const trimmed = input.trim();
 		// whole and fraction: "5 1/4"
 		const whole_frac = trimmed.match(/^(-?\d+)\s+(\d+)\/(\d+)$/);

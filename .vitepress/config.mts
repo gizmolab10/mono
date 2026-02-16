@@ -68,65 +68,79 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
-                      text: 'Algebra',
-                      link: '/di/notes/architecture/algebra'
-                    },
-                    {
-                      text: 'Details',
-                      link: '/di/notes/architecture/details'
-                    },
-                    {
                       text: 'Files',
                       link: '/di/notes/architecture/files'
-                    },
-                    {
-                      text: 'Managers',
-                      link: '/di/notes/architecture/managers'
-                    },
-                    {
-                      text: 'Panel.layout',
-                      link: '/di/notes/architecture/panel.layout'
                     },
                     {
                       text: 'Project',
                       link: '/di/notes/architecture/project'
                     },
                     {
-                      text: 'Render >',
-                      link: '/di/notes/architecture/render/',
+                      text: 'Core >',
+                      link: '/di/notes/architecture/core/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Algebra',
+                          link: '/di/notes/architecture/core/algebra'
+                        },
+                        {
+                          text: 'Managers',
+                          link: '/di/notes/architecture/core/managers'
+                        }
+                      ]
+                    },
+                    {
+                      text: 'Graph >',
+                      link: '/di/notes/architecture/graph/',
                       collapsed: true,
                       items: [
                         {
                           text: '3D.primer',
-                          link: '/di/notes/architecture/render/3D.primer'
+                          link: '/di/notes/architecture/graph/3D.primer'
                         },
                         {
                           text: 'Drag',
-                          link: '/di/notes/architecture/render/drag'
+                          link: '/di/notes/architecture/graph/drag'
                         },
                         {
                           text: 'Intersecting.faces',
-                          link: '/di/notes/architecture/render/intersecting.faces'
+                          link: '/di/notes/architecture/graph/intersecting.faces'
                         },
                         {
                           text: 'Quaternions',
-                          link: '/di/notes/architecture/render/quaternions'
+                          link: '/di/notes/architecture/graph/quaternions'
                         },
                         {
                           text: 'Rendering.types',
-                          link: '/di/notes/architecture/render/rendering.types'
+                          link: '/di/notes/architecture/graph/rendering.types'
                         },
                         {
                           text: 'Spatial',
-                          link: '/di/notes/architecture/render/spatial'
+                          link: '/di/notes/architecture/graph/spatial'
                         },
                         {
                           text: 'Three.dimensions',
-                          link: '/di/notes/architecture/render/three.dimensions'
+                          link: '/di/notes/architecture/graph/three.dimensions'
                         },
                         {
                           text: 'Two.dimensions',
-                          link: '/di/notes/architecture/render/two.dimensions'
+                          link: '/di/notes/architecture/graph/two.dimensions'
+                        }
+                      ]
+                    },
+                    {
+                      text: 'UI >',
+                      link: '/di/notes/architecture/ui/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Details',
+                          link: '/di/notes/architecture/ui/details'
+                        },
+                        {
+                          text: 'Panel.layout',
+                          link: '/di/notes/architecture/ui/panel.layout'
                         }
                       ]
                     }
@@ -199,10 +213,6 @@ export default defineConfig({
                   link: '/di/notes/work/',
                   collapsed: true,
                   items: [
-                    {
-                      text: '16.formulas',
-                      link: '/di/notes/work/16.formulas'
-                    },
                     {
                       text: 'Code.debt',
                       link: '/di/notes/work/code.debt'
@@ -282,6 +292,10 @@ export default defineConfig({
                         {
                           text: '15.attributes',
                           link: '/di/notes/work/milestones/15.attributes'
+                        },
+                        {
+                          text: '16.formulas',
+                          link: '/di/notes/work/milestones/16.formulas'
                         },
                         {
                           text: '2.panel',

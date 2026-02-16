@@ -14,6 +14,11 @@ All done through 11.
 | 9 | [Persistence](./9.persistence.md) | Feb 5 |
 | 10 | [Controls](./10.controls.md) | Feb 6 |
 | 11 | [Units](./11.units.md) | Feb 6 |
+| 12 | [Hierarchy](./12.hierarchy.md) | |
+| 13 | [Algebra](./13.algebra.md) | |
+| 14 | [Details](./14.details.md) | |
+| 15 | [Attributes](./15.attributes.md) | |
+| 16 | [Formulas](./16.formulas.md) | Feb 16 |
 
 ## Contents
 
@@ -24,6 +29,7 @@ All done through 11.
 - [13.algebra](./13.algebra.md)
 - [14.details](./14.details.md)
 - [15.attributes](./15.attributes.md)
+- [16.formulas](./16.formulas.md)
 - [2.panel](./2.panel.md)
 - [3.docs](./3.docs.md)
 - [4.hits.manager](./4.hits.manager.md)

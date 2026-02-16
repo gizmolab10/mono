@@ -130,6 +130,16 @@ class Constraints {
 
 	/** After deserialization, rebind bare/self refs in all formulas of an SO. */
 	rebind_formulas(so: Smart_Object, parent_id: string): void {
+		// Clear formulas on invariant attributes — invariants are computed, not user-driven
+		for (const axis of so.axes) {
+			const inv = axis.invariant;
+			if (inv < 0 || inv > 2) continue;
+			const attr = axis.attributes[inv];
+			if (attr.compiled) {
+				attr.formula = null;
+				attr.compiled = null;
+			}
+		}
 		for (const attr of Object.values(so.attributes_dict_byName)) {
 			if (!attr.compiled) continue;
 			attr.compiled = this.bind_refs(attr.compiled, so.id, parent_id);

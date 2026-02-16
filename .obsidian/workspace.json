@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/architecture/project.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt"
+              "title": "project"
             }
           },
           {
@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/16.formulas.md",
+                "file": "di/notes/architecture/ui/details.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "16.formulas"
+              "title": "details"
             }
           },
           {
@@ -77,8 +77,7 @@
               "title": "algebra"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "vertical"
@@ -213,13 +212,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/16.formulas.md",
+                "file": "di/notes/architecture/project.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 16.formulas"
+              "title": "Outline of project"
             }
           }
         ],
@@ -241,16 +240,21 @@
       "bases:Create new base": false
     }
   },
-  "active": "51e1a0393ee0af94",
+  "active": "bf8919592ee87a19",
   "lastOpenFiles": [
+    "logs/update-docs.error.mono.log",
+    "di/notes/work/code.debt.md",
+    "di/notes/architecture/ui/index.md",
+    "di/notes/architecture/core/index.md",
+    "logs/update-docs.error.di.log",
+    "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/milestones/16.formulas.md",
+    "di/notes/work/16.formulas.md",
     "di/src/assets/drawer.di",
     "di/src/lib/ts/algebra/Constraints.ts.tmp.35175.1771277152795",
-    "di/notes/work/code.debt.md",
-    "di/notes/work/16.formulas.md",
     "di/notes/architecture/core/algebra.md",
     "di/src/assets/A.di",
     "di/notes/architecture/ui/details.md",
-    "di/notes/work/done/code.debt.done.md",
     "di/notes/components/Smart_Objects.md",
     "di/notes/architecture/project.md",
     "di/notes/architecture/files.md",
@@ -270,15 +274,9 @@
     "di/notes/architecture/ui",
     "di/notes/architecture/algebra.md",
     "di/notes/architecture/render/three.dimensions.md",
-    "logs/update-docs.error.mono.log",
     "di/notes/architecture/render/rendering.types.md",
-    "di/notes/architecture/render/index.md",
-    "logs/update-docs.error.di.log",
-    "di/notes/architecture/render/drag.md",
-    "di/notes/architecture/render/spatial.md",
     "di/notes/architecture/render",
     "di/src/lib/ts/render/R_Grid.ts",
-    "di/src/lib/ts/render/R_Dimensions.ts",
     "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
     "Screenshot 2026-02-14 at 12.12.38 PM.png",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",
