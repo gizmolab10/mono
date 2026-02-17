@@ -1,4 +1,4 @@
-import type { Portable_Attribute, Portable_Axis } from '../types/Interfaces';
+import type { Compact_Attribute, Portable_Attribute, Portable_Axis } from '../types/Interfaces';
 import default_scene from '../../../assets/drawer.di?raw';
 import { preferences, T_Preference } from './Preferences';
 import type { Axis_Name, Bound } from '../types/Types';
@@ -15,7 +15,7 @@ import { hits_3d } from './Hits_3D';
  * Uses Preferences for the actual localStorage read/write.
  */
 
-const CURRENT_VERSION = '3';
+const CURRENT_VERSION = '4';
 
 export interface Portable_SO {
 	rotation_lock?: number;            // rotation axis: 0=x, 1=y, 2=z (default 0)
@@ -149,17 +149,67 @@ class Scenes {
 		const sos = data.smart_objects as Record<string, unknown>[];
 		if (!sos?.length) return raw as Portable_Scene;
 
-		// Already current shape?
-		if ('x' in sos[0] && 'y' in sos[0] && 'z' in sos[0]) {
-			return raw as Portable_Scene;
-		}
-
 		// Legacy shape — has `bounds`
 		if ('bounds' in sos[0]) {
-			return this.migrate_legacy(data, sos as unknown as Portable_SO_v2[]);
+			return this.migrate_to_offsets(this.migrate_legacy(data, sos as unknown as Portable_SO_v2[]));
 		}
 
-		return raw as Portable_Scene;
+		// v3 shape — attributes is an array, convert to v4 keyed object
+		if ('x' in sos[0] && 'y' in sos[0] && 'z' in sos[0]) {
+			const first_axis = (sos[0] as Record<string, unknown>).x as Record<string, unknown>;
+			if (Array.isArray(first_axis?.attributes)) {
+				for (const so of sos) {
+					for (const axis_name of ['x', 'y', 'z']) {
+						const axis = (so as Record<string, Record<string, unknown>>)[axis_name];
+						const arr = axis.attributes as Portable_Attribute[];
+						axis.attributes = { origin: arr[0], extent: arr[1], length: arr[2], angle: arr[3] };
+					}
+				}
+			}
+		}
+
+		// v4 → v5: convert absolute child values to offsets from parent
+		return this.migrate_to_offsets(raw as Portable_Scene);
+	}
+
+	/** v4 → v5: child position values become offsets from parent.
+	 *  Old format stored absolute values + optional offset field.
+	 *  New format: value IS the offset. */
+	private migrate_to_offsets(scene_data: Portable_Scene): Portable_Scene {
+		const sos = scene_data.smart_objects;
+		if (!sos?.length) return scene_data;
+
+		const has_children = sos.some(so => so.parent_id);
+		if (!has_children) return scene_data;
+
+		const by_id = new Map(sos.map(so => [so.id, so]));
+
+		const read_value = (attr: Compact_Attribute): number =>
+			typeof attr === 'number' ? attr : (attr.value ?? 0);
+
+		for (const so of sos) {
+			if (!so.parent_id) continue;
+			const parent = by_id.get(so.parent_id);
+			if (!parent) continue;
+			for (const axis_name of ['x', 'y', 'z'] as const) {
+				const child_attrs = so[axis_name].attributes;
+				const parent_attrs = parent[axis_name].attributes;
+				for (const key of ['origin', 'extent'] as const) {
+					const child_attr = child_attrs[key];
+					// Skip formula attrs — they produce absolute values at runtime
+					if (typeof child_attr === 'object' && child_attr.formula) continue;
+					// Old data with explicit offset field (pre-v5): use the offset directly
+					const legacy = child_attr as Record<string, unknown>;
+					if (typeof child_attr === 'object' && legacy.offset !== undefined) {
+						child_attrs[key] = legacy.offset as number;
+						continue;
+					}
+					// Otherwise compute offset: child_absolute - parent_absolute
+					child_attrs[key] = read_value(child_attr) - read_value(parent_attrs[key]);
+				}
+			}
+		}
+		return scene_data;
 	}
 
 	private migrate_legacy(data: Record<string, unknown>, legacy_sos: Portable_SO_v2[]): Portable_Scene {
@@ -233,7 +283,7 @@ class Scenes {
 				const rot = old.rotations.find(r => r.axis === name);
 				if (rot && Math.abs(rot.angle) > 1e-10) angle = { value: rot.angle };
 			}
-			const pa: Portable_Axis = { attributes: [start, end, length, angle] };
+			const pa: Portable_Axis = { attributes: { origin: start, extent: end, length, angle } };
 			if (old.invariants && old.invariants[i] !== 2) pa.invariant = old.invariants[i];
 			axes[name] = pa;
 		}

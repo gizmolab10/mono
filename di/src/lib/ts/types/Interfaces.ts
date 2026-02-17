@@ -41,12 +41,18 @@ export interface Angle_Rect extends Label_Rect {
 export interface Portable_Attribute {
   formula?: string;
   value?: number;
-  offset?: number;
 }
 
-// [start, end, length, angle] — mirrors Axis.attributes
+// number = just a value, object = formula/offset/etc.
+export type Compact_Attribute = number | Portable_Attribute;
+
 export interface Portable_Axis {
-  attributes: [Portable_Attribute, Portable_Attribute, Portable_Attribute, Portable_Attribute];
+  attributes: {
+    origin: Compact_Attribute;
+    extent: Compact_Attribute;
+    length: Compact_Attribute;
+    angle: Compact_Attribute;
+  };
   invariant?: number;           // 0=start, 1=end, 2=length (default 2)
 }
 

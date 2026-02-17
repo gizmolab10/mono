@@ -196,7 +196,7 @@ class Render {
       const projected = projected_map.get(obj.id)!;
       const world = (is_2d || solid) ? this.get_world_matrix(obj) : undefined;
       this.render_edges(obj, projected, is_2d, solid, world);
-      this.render_face_names(obj, projected, world);
+      if (stores.show_names()) this.render_face_names(obj, projected, world);
     }
 
     this.render_selection();

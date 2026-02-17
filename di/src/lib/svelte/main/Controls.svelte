@@ -11,6 +11,7 @@
 
 	let show_dimensions = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
 	let show_angles     = $derived(($w_decorations & T_Decorations.angles) !== 0);
+	let show_names      = $derived(($w_decorations & T_Decorations.names) !== 0);
 
 	let {
 		title = 'Design Intuition™'
@@ -43,7 +44,7 @@
 	</button>
 	<h1>{title}</h1>
 	<span class='spacer'></span>
-	<Slider min={0.1} max={100} value={$w_scale} logarithmic onchange={handle_slider} onstep={handle_scale} />
+	<Slider min={0.01} max={10000} value={$w_scale} logarithmic onchange={handle_slider} onstep={handle_scale} />
 	<button class='toolbar-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	<div class='segmented'>
 		{#each face_labels as label, i}
@@ -53,6 +54,7 @@
 	<div class='segmented'>
 		<button class='seg' class:active={show_dimensions} use:hit_target={{ id: 'dimensionals', onpress: () => stores.toggle_dimensionals() }}>dimensions</button>
 		<button class='seg' class:active={show_angles} use:hit_target={{ id: 'angulars', onpress: () => stores.toggle_angulars() }}>angles</button>
+		<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>
 	</div>
 	<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'see through'}</button>
 	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode}</button>

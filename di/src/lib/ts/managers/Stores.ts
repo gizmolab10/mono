@@ -17,7 +17,7 @@ class Stores {
 	w_tick				= writable<number>(0);
 
 	// Persistent
-	w_decorations       = this.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.dimensions);
+	w_decorations       = this.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.dimensions | T_Decorations.names);
 	w_orientation		= this.persistent<number[]>(T_Preference.orientation, [0, 0, 0, 1]);
 	w_edge_color		= this.persistent<string>(T_Preference.edgeColor, '#874efe');
 	w_view_mode			= this.persistent<'2d' | '3d'>(T_Preference.viewMode, '3d');
@@ -32,6 +32,7 @@ class Stores {
 	tick():									void { this.w_tick.update(n => n + 1); }	// triggers reactive updates
 	toggle_dimensionals():					void { this.w_decorations.update(v => v ^ T_Decorations.dimensions); }
 	toggle_angulars():    					void { this.w_decorations.update(v => v ^ T_Decorations.angles); }
+	toggle_names():							void { this.w_decorations.update(v => v ^ T_Decorations.names); }
 	set_orientation(q: quat):			    void { this.w_orientation.set([q[0], q[1], q[2], q[3]]); }
 	toggle_details():						void { this.w_show_details.update(v => !v); }
 	toggle_solid():							void { this.w_solid.update(v => !v); }
@@ -48,6 +49,7 @@ class Stores {
 	is_editing():						 boolean { return get(this.w_editing) !== T_Editing.none; }
 	show_dimensionals():  				 boolean { return (get(this.w_decorations) & T_Decorations.dimensions) !== 0; }
 	show_angulars():      				 boolean { return (get(this.w_decorations) & T_Decorations.angles) !== 0; }
+	show_names():						 boolean { return (get(this.w_decorations) & T_Decorations.names) !== 0; }
 
 	private persistent<T>(key: T_Preference, fallback: T): Writable<T> {
 		const w = writable<T>(preferences.read<T>(key) ?? fallback);

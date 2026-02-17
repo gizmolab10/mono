@@ -47,9 +47,6 @@ const alias_axis_attr: Record<string, [number, number]> = {
 	z: [2, 0], Z: [2, 1], h: [2, 2],
 };
 
-// Position bounds (start/end) — these get the empty-formula default
-const position_bounds = ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max'];
-
 const invariant_formulas: Record<string, string> = {
 	x: 'X - w',
 	y: 'Y - d',
@@ -76,7 +73,11 @@ class Constraints {
 		const aa = alias_axis_attr[attribute];
 		if (aa) {
 			const [axis_idx, attr_idx] = aa;
-			return so.axes[axis_idx].attributes[attr_idx].value;
+			const attr = so.axes[axis_idx].attributes[attr_idx];
+			// Length attributes (index 2) are dimensions, not positions — raw value is absolute
+			if (attr_idx === 2) return attr.value;
+			// Position attributes need parent offset
+			return so.get_bound(attr.name as Bound);
 		}
 
 		return so.get_bound(attribute as Bound);
@@ -229,20 +230,6 @@ class Constraints {
 				updated = true;
 			}
 
-			// Empty-formula default: child position attrs follow parent (offset model)
-			if (so.scene?.parent?.so === changed_so) {
-				for (const name of position_bounds) {
-					const attr = so.attributes_dict_byName[name];
-					if (!attr || attr.compiled) continue;
-					const parent_val = changed_so.get_bound(name as Bound);
-					const new_val = parent_val + attr.offset;
-					if (new_val !== attr.value) {
-						attr.value = new_val;
-						updated = true;
-					}
-				}
-			}
-
 			if (updated) {
 				this.enforce_invariants(so);
 			}
@@ -262,20 +249,6 @@ class Constraints {
 				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
 				this.sync_length(so, attr.name, attr.value);
 				updated = true;
-			}
-
-			// Empty-formula default: child position attrs follow parent
-			const parent_so = so.scene?.parent?.so;
-			if (parent_so) {
-				for (const name of position_bounds) {
-					const attr = so.attributes_dict_byName[name];
-					if (!attr || attr.compiled) continue;
-					const new_val = parent_so.get_bound(name as Bound) + attr.offset;
-					if (new_val !== attr.value) {
-						attr.value = new_val;
-						updated = true;
-					}
-				}
 			}
 
 			if (updated) {
@@ -304,15 +277,20 @@ class Constraints {
 			const attr = axis.attributes[inv];
 			// Don't override explicit user formulas
 			if (attr.compiled) continue;
+			// Use absolute values via get_bound/set_bound — child offsets are relative
+			// to different parent bounds (origin from parent origin, extent from parent extent),
+			// so raw .value subtraction doesn't give the right dimension.
+			const start_abs = so.get_bound(axis.start.name as Bound);
+			const end_abs = so.get_bound(axis.end.name as Bound);
 			switch (inv) {
 				case 0: // start = end - length
-					attr.value = axis.end.value - axis.length.value;
+					so.set_bound(axis.start.name as Bound, end_abs - axis.length.value);
 					break;
 				case 1: // end = start + length
-					attr.value = axis.start.value + axis.length.value;
+					so.set_bound(axis.end.name as Bound, start_abs + axis.length.value);
 					break;
 				case 2: // length = end - start
-					attr.value = axis.end.value - axis.start.value;
+					axis.length.value = end_abs - start_abs;
 					break;
 			}
 		}

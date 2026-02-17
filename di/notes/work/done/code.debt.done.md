@@ -109,3 +109,8 @@
 - [x] 3' - 1/4" -> does not work in value cells
 - [x] move reset button -> D_Library
 - [x] move "straighten" button to controls, between scaling and face orientation segmented control
+- [x] scale
+	- [x] continuous / not steps
+	- [x] powers of 10 of the scale
+	- [x] tick marks and labels
+	- [x] needs larger range

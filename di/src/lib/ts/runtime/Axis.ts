@@ -28,20 +28,20 @@ export default class Axis {
 
 	serialize(): Portable_Axis {
 		return {
-			attributes: [
-				this.start.serialize(),
-				this.end.serialize(),
-				this.length.serialize(),
-				this.angle.serialize(),
-			],
+			attributes: {
+				origin: this.start.serialize(),
+				extent: this.end.serialize(),
+				length: this.length.serialize(),
+				angle: this.angle.serialize(),
+			},
 			invariant: this.invariant,
 		};
 	}
 
 	deserialize(data: Portable_Axis): void {
-		const [start, end, length, angle] = data.attributes;
-		this.start.deserialize(start);
-		this.end.deserialize(end);
+		const { origin, extent, length, angle } = data.attributes;
+		this.start.deserialize(origin);
+		this.end.deserialize(extent);
 		this.length.deserialize(length);
 		this.angle.deserialize(angle);
 		this.invariant = data.invariant ?? 2;

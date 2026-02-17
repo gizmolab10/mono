@@ -2,12 +2,7 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] scale
-	- [ ] continuous / not steps
-	- [x] powers of 10 of the scale
-	- [ ] tick marks and labels
-	- [ ] needs larger range
-- [ ] attr serial -> orig, ext, len, angle
+- [ ] version 4: attr serial -> orig, ext, len, angle
 - [ ] stop, interpretation -> wait until approved
 - [ ] trig rise and run
 - [ ] [[separators]]

@@ -36,7 +36,7 @@ export enum T_Decorations {
 	none       = 0,
 	dimensions = 1,
 	angles     = 2,
-	both       = 3,
+	names      = 4,
 }
 
 export enum T_Units {

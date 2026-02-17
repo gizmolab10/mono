@@ -77,8 +77,7 @@
               "title": "code.debt"
             }
           }
-        ],
-        "currentTab": 4
+        ]
       }
     ],
     "direction": "vertical"
@@ -241,15 +240,16 @@
       "bases:Create new base": false
     }
   },
-  "active": "ccce82b75099353e",
+  "active": "bf8919592ee87a19",
   "lastOpenFiles": [
+    "di/src/assets/drawer.di",
+    "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/code.debt.md",
     "di/notes/work/versions.md",
     "di/notes/architecture/core/versions.md",
-    "di/notes/work/code.debt.md",
     "di/notes/work/roots.md",
     "di/notes/architecture/core/algebra.md",
     "di/notes/work/competition.md",
-    "di/notes/work/done/code.debt.done.md",
     "di/notes/architecture/ui/details.md",
     "di/notes/architecture/project.md",
     "logs/update-docs.error.mono.log",
@@ -258,7 +258,6 @@
     "logs/update-docs.error.di.log",
     "di/notes/work/milestones/16.formulas.md",
     "di/notes/work/16.formulas.md",
-    "di/src/assets/drawer.di",
     "di/src/lib/ts/algebra/Constraints.ts.tmp.35175.1771277152795",
     "di/src/assets/A.di",
     "di/notes/components/Smart_Objects.md",
@@ -274,7 +273,6 @@
     "di/notes/architecture/graph/drag.md",
     "di/notes/architecture/graph/3D.primer.md",
     "di/notes/architecture/graph",
-    "di/notes/architecture/ui/panel.layout.md",
     "di/notes/architecture/core",
     "di/notes/architecture/ui",
     "di/notes/architecture/render",

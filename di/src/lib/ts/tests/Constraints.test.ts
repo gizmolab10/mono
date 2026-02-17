@@ -171,15 +171,17 @@ describe('serialize/deserialize formulas', () => {
 		constraints.set_formula(door, 'y_max', formula);
 
 		const data = door.serialize();
-		expect(data.y.attributes[1].formula).toBe(formula);
+		const extent = data.y.attributes.extent;
+		expect(typeof extent === 'object' && extent.formula).toBe(formula);
 	});
 
-	it('omits formulas key when no formulas exist', () => {
+	it('simple attributes serialize as plain numbers', () => {
 		const so = add_so('box');
 		const data = so.serialize();
 		for (const axis of [data.x, data.y, data.z]) {
-			for (const attr of axis.attributes) {
-				expect(attr.formula).toBeUndefined();
+			const { origin, extent, length, angle } = axis.attributes;
+			for (const attr of [origin, extent, length, angle]) {
+				expect(typeof attr).toBe('number');
 			}
 		}
 	});
@@ -188,9 +190,9 @@ describe('serialize/deserialize formulas', () => {
 		const data = {
 			id: 'test1',
 			name: 'door',
-			x: { attributes: [{ value: -152.4 }, { value: 152.4 }, { value: 304.8 }, { value: 0 }] as [any, any, any, any] },
-			y: { attributes: [{ value: 0 }, { value: 2286, formula: 'wall.y_max - 6"' }, { value: 2286 }, { value: 0 }] as [any, any, any, any] },
-			z: { attributes: [{ value: -457.2 }, { value: 457.2 }, { value: 914.4 }, { value: 0 }] as [any, any, any, any] },
+			x: { attributes: { origin: -152.4, extent: 152.4, length: 304.8, angle: 0 } },
+			y: { attributes: { origin: 0, extent: { value: 2286, formula: 'wall.y_max - 6"' }, length: 2286, angle: 0 } },
+			z: { attributes: { origin: -457.2, extent: 457.2, length: 914.4, angle: 0 } },
 		};
 
 		const so = Smart_Object.deserialize(data);
@@ -210,8 +212,9 @@ describe('serialize/deserialize formulas', () => {
 		const data = door.serialize();
 
 		// Formula pre-empts value: only formula is serialized
-		expect(data.y.attributes[1].formula).toBe(formula);
-		expect(data.y.attributes[1].value).toBeUndefined();
+		const extent = data.y.attributes.extent;
+		expect(typeof extent === 'object' && extent.formula).toBe(formula);
+		expect(typeof extent === 'object' && extent.value).toBeUndefined();
 
 		const restored = Smart_Object.deserialize(data);
 		scene.create({ so: restored, edges: cube_edges });

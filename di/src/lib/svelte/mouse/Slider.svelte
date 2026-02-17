@@ -11,7 +11,7 @@
 		max = 10,
 		value = 1,
 		logarithmic = false,
-		divisions = 100,
+		divisions = 200,
 		width = 120,
 		height = 20,
 		show_value = false,
@@ -43,21 +43,24 @@
 	let slider_input: HTMLInputElement | null = $state(null);
 	let is_dragging = $state(false);
 
-	// Logarithmic: divide the log range into N divisions
-	// Linear: divide the value range into N divisions
+	// Logarithmic: map [0..divisions] to [log10(min)..log10(max)]
+	// Linear: map [0..divisions] to [0..max]
+	const log_min_val = $derived(logarithmic ? Math.log10(min) : 0);
+	const log_max_val = $derived(logarithmic ? Math.log10(max) : 0);
+	const log_range = $derived(log_max_val - log_min_val);
 	const step_size = $derived(
-		logarithmic ? Math.log10(max) / divisions : max / divisions
+		logarithmic ? log_range / divisions : max / divisions
 	);
 
 	// Value → slider position (0..divisions)
 	let slider_value = $derived(
-		value <= min ? 0 : (logarithmic ? Math.log10(value) / step_size : value / step_size)
+		value <= min ? 0 : (logarithmic ? (Math.log10(value) - log_min_val) / step_size : value / step_size)
 	);
 
 	// Slider position → value
 	function position_to_value(pos: number): number {
 		if (logarithmic) {
-			return Math.max(min, Math.pow(10, pos * step_size));
+			return Math.max(min, Math.pow(10, log_min_val + pos * step_size));
 		}
 		// For linear: round to 2 decimal places
 		const raw = pos * step_size;
@@ -76,13 +79,15 @@
 	// Power-of-10 tick marks for logarithmic sliders
 	const log_ticks = $derived.by(() => {
 		if (!logarithmic) return [];
-		const log_max = Math.log10(max);
-		const log_min = Math.floor(Math.log10(min));
 		const ticks: { pct: number; label: string }[] = [];
-		for (let exp = log_min; exp <= Math.ceil(log_max); exp++) {
+		const exp_min = Math.ceil(Math.log10(min));
+		const exp_max = Math.floor(Math.log10(max));
+		const total = exp_max - exp_min + 1;
+		const step = total > 5 ? 2 : 1; // skip every other when crowded
+		for (let exp = exp_min; exp <= exp_max; exp += step) {
 			const val = Math.pow(10, exp);
-			if (val <= min || val > max) continue;
-			const pct = (Math.log10(val) / log_max) * 100;
+			const pct = (exp - log_min_val) / log_range * 100;
+			if (pct <= 2 || pct >= 98) continue;
 			ticks.push({ pct, label: val < 1 ? val.toString() : val.toFixed(0) });
 		}
 		return ticks;
@@ -117,7 +122,7 @@
 <div class='slider-compound'>
 	<div class='slider-with-label'>
 		{#if logarithmic}
-			<span class='current-value'>{Math.abs(value - Math.round(value)) < 0.05 ? Math.round(value) : value.toFixed(1)}</span>
+			<span class='current-value'>{Math.log10(value).toFixed(1)}</span>
 		{/if}
 		<div class='slider-border'
 			class:pill={style === 'pill'}
@@ -232,7 +237,7 @@
 		font-size   : 6px;
 		line-height : 1;
 		text-align  : center;
-		color       : rgba(0, 0, 0, 1);
+		color       : black;
 		user-select : none;
 		white-space : nowrap;
 	}
