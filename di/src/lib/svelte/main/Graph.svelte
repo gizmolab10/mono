@@ -213,8 +213,6 @@
 		bind:this = {canvas}></canvas>
 	<div class='canvas-actions'>
 		<button class='canvas-btn' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
-		<button class='canvas-btn' use:hit_target={{ id: 'reset', onpress: () => { scenes.clear(); location.reload(); } }}>reset</button>
-		<button class='canvas-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	</div>
 	{#if $w_all_sos.length > 1}
 		<div

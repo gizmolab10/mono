@@ -6,6 +6,7 @@
 <div class='settings'>
 	<button class='action-btn' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file() }}>import</button>
 	<button class='action-btn' use:hit_target={{ id: 'export', onpress: () => scenes.export_to_file() }}>export</button>
+	<button class='action-btn' use:hit_target={{ id: 'reset', onpress: () => { scenes.clear(); location.reload(); } }}>reset</button>
 </div>
 
 <style>

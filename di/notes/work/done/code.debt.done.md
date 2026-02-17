@@ -104,3 +104,8 @@
 	- [x] click on a button -> rotate root SO to orient (and straighten) that face at front
 - [x] organize architecture notes
 - [x] move [[16.formulas]] to milestones
+- [x] add a toggle button to D_Selection titled "hide" / "show" -- hide means do not draw the SO or its decorations
+- [x] add a margin 8px at right and left of both D_Selection tables
+- [x] 3' - 1/4" -> does not work in value cells
+- [x] move reset button -> D_Library
+- [x] move "straighten" button to controls, between scaling and face orientation segmented control

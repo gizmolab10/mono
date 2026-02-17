@@ -119,6 +119,26 @@ describe('Tokenizer', () => {
 		expect(tokens[2]).toEqual({ type: 'reference', object: 'A', attribute: 'y' });
 	});
 
+	it('tokenizes bare fractional inches 3/4"', () => {
+		const tokens = tokenizer.tokenize('3/4"');
+		expect(tokens[0].type).toBe('number');
+		expect((tokens[0] as any).value).toBeCloseTo(19.05); // 0.75 * 25.4
+	});
+
+	it('tokenizes fractional inches in subtraction .d - 3/4"', () => {
+		const tokens = tokenizer.tokenize('.d - 3/4"');
+		expect(tokens[0]).toEqual({ type: 'reference', object: '', attribute: 'd' });
+		expect(tokens[1]).toEqual({ type: 'operator', value: '-' });
+		expect(tokens[2].type).toBe('number');
+		expect((tokens[2] as any).value).toBeCloseTo(19.05);
+	});
+
+	it('tokenizes 1/2" as fractional inches', () => {
+		const tokens = tokenizer.tokenize('1/2"');
+		expect(tokens[0].type).toBe('number');
+		expect((tokens[0] as any).value).toBeCloseTo(12.7); // 0.5 * 25.4
+	});
+
 	it('throws on reference with missing attribute', () => {
 		expect(() => tokenizer.tokenize('wall.')).toThrow(/Expected attribute name/);
 	});

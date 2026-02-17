@@ -10,6 +10,7 @@ Where things live, what they do.
 - [Core](./core/) — singletons and systems
   - [Managers](./core/managers.md) — who owns what
   - [Algebra](./core/algebra.md) — constraints, expressions, reverse propagation
+  - [Versions](./core/versions.md) — library object versioning (future)
 - [UI](./ui/) — what the user sees
   - [Panel layout](./ui/panel.layout.md) — three regions, CSS, separators
   - [Details](./ui/details.md) — sidebar: preferences, selection, library

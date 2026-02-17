@@ -114,6 +114,19 @@ class Tokenizer {
 			return units.to_mm(whole + frac, T_Unit.inch);
 		}
 
+		// Try bare fractional inches: N/D" (e.g. 3/4")
+		// Called after reading the numerator as a bare number
+		function try_fractional_inches(numerator: number): number | null {
+			const save = pos;
+			const remaining = src.slice(pos);
+			const m = remaining.match(/^\/(\d+)"/);
+			if (!m) return null;
+			const denominator = parseFloat(m[1]);
+			if (denominator === 0) { pos = save; return null; }
+			pos += m[0].length;
+			return units.to_mm(numerator / denominator, T_Unit.inch);
+		}
+
 		while (true) {
 			skip_whitespace();
 			if (at_end()) break;
@@ -165,7 +178,13 @@ class Tokenizer {
 					if (compound_mm !== null) {
 						tokens.push({ type: 'number', value: compound_mm });
 					} else {
-						tokens.push({ type: 'bare_number', value });
+						// Try bare fractional inches: N/D" (e.g. "3/4")
+						const frac_mm = try_fractional_inches(value);
+						if (frac_mm !== null) {
+							tokens.push({ type: 'number', value: frac_mm });
+						} else {
+							tokens.push({ type: 'bare_number', value });
+						}
 					}
 				}
 				continue;

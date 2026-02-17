@@ -86,7 +86,7 @@
 
 	function commit_value(row: BoundsRow, value: string) {
 		if (!selected_so || !row.bound) return;
-		const mm = units.parse_for_system(value, $w_unit_system);
+		const mm = units.parse_for_system(value, $w_unit_system) ?? constraints.evaluate_formula(value);
 		if (mm === null) return;
 		if (length_bounds.has(row.bound)) {
 			constraints.write(selected_so.id, row.label, mm);

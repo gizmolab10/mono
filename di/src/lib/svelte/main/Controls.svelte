@@ -43,7 +43,8 @@
 	</button>
 	<h1>{title}</h1>
 	<span class='spacer'></span>
-	<Slider min={0.1} max={100} value={$w_scale} onchange={handle_slider} onstep={handle_scale} />
+	<Slider min={0.1} max={100} value={$w_scale} logarithmic onchange={handle_slider} onstep={handle_scale} />
+	<button class='toolbar-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	<div class='segmented'>
 		{#each face_labels as label, i}
 			<button class='seg' class:front={$w_front_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
@@ -65,6 +66,7 @@
 		padding     : 0 1rem;
 		align-items : center;
 		box-sizing  : border-box;
+		overflow    : visible;
 	}
 
 	.controls h1 {

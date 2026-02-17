@@ -316,10 +316,11 @@ class Constraints {
 					break;
 			}
 		}
-		// Root start bounds are always zero (only for SOs in the scene graph with no parent)
+		// Root: start is always 0, length always equals end
 		if (so.scene && !so.scene.parent) {
 			for (const axis of so.axes) {
 				axis.start.value = 0;
+				axis.length.value = axis.end.value;
 			}
 		}
 	}

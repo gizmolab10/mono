@@ -605,10 +605,9 @@ class Drag {
 			const drift_parent: vec3 = [0, 0, 0];
 			vec3.subtract(drift_parent, drift_end, origin_in_parent);
 			vec3.add(a.scene.position, a.scene.position, drift_parent);
-		} else {
-			// Root SO: position IS world space
-			vec3.add(a.scene.position, a.scene.position, drift_world);
 		}
+		// Root: position is always origin — no drift compensation
+		// (stretching root only moves max bounds, start stays at 0)
 	}
 
 	/** Find a local-space vertex on the opposite side of the drag target.

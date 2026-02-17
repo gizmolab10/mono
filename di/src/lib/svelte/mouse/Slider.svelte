@@ -57,7 +57,7 @@
 	// Slider position → value
 	function position_to_value(pos: number): number {
 		if (logarithmic) {
-			return Math.max(min, Math.round(Math.pow(10, pos * step_size)));
+			return Math.max(min, Math.pow(10, pos * step_size));
 		}
 		// For linear: round to 2 decimal places
 		const raw = pos * step_size;
@@ -72,6 +72,21 @@
 			onchange(new_value);
 		}
 	}
+
+	// Power-of-10 tick marks for logarithmic sliders
+	const log_ticks = $derived.by(() => {
+		if (!logarithmic) return [];
+		const log_max = Math.log10(max);
+		const log_min = Math.floor(Math.log10(min));
+		const ticks: { pct: number; label: string }[] = [];
+		for (let exp = log_min; exp <= Math.ceil(log_max); exp++) {
+			const val = Math.pow(10, exp);
+			if (val <= min || val > max) continue;
+			const pct = (Math.log10(val) / log_max) * 100;
+			ticks.push({ pct, label: val < 1 ? val.toString() : val.toFixed(0) });
+		}
+		return ticks;
+	});
 
 	// Hover state
 	const { w_s_hover } = hits;
@@ -101,6 +116,9 @@
 
 <div class='slider-compound'>
 	<div class='slider-with-label'>
+		{#if logarithmic}
+			<span class='current-value'>{Math.abs(value - Math.round(value)) < 0.05 ? Math.round(value) : value.toFixed(1)}</span>
+		{/if}
 		<div class='slider-border'
 			class:pill={style === 'pill'}
 			class:line={style === 'line'}
@@ -110,20 +128,32 @@
 			style:--thumb-color={current_thumb_color}>
 			<input class='slider-input'
 				min='0'
-				step='1'
+				step='any'
 				type='range'
 				max={divisions}
 				value={slider_value}
 				bind:this={slider_input}
 				oninput={on_input}
 				style='flex: 1 1 auto; position: relative; min-width: 0; pointer-events: auto;'/>
+			{#if logarithmic}
+				<div class='tick-overlay'>
+					{#each log_ticks as tick}
+						<div class='tick' style:left="{tick.pct}%">
+							<div class='tick-line'></div>
+							<span class='tick-label'>{tick.label}</span>
+						</div>
+					{/each}
+				</div>
+			{/if}
 			{#if show_value}
 				<span class='value-display'>
 					{value}
 				</span>
 			{/if}
 		</div>
-		<span class='slider-label'>{value.toFixed(1)}</span>
+		{#if !logarithmic}
+			<span class='slider-label'>{Math.log10(value).toFixed(1)}</span>
+		{/if}
 	</div>
 	{#if show_steppers && onstep}
 		<div class='steppers-wrapper'>
@@ -138,11 +168,25 @@
 		align-items : center;
 		margin-left : 6px;
 		gap         : 0;
+		overflow    : visible;
 	}
 	.slider-with-label {
 		display        : flex;
 		flex-direction : column;
 		align-items    : center;
+		overflow       : visible;
+		position       : relative;
+		top            : -2px;
+	}
+	.current-value {
+		font-size            : 9px;
+		font-weight          : bold;
+		font-variant-numeric : tabular-nums;
+		text-align           : center;
+		line-height          : 1;
+		user-select          : none;
+		margin-top           : 0;
+		margin-bottom        : -6px;
 	}
 	.slider-label {
 		font-size            : 8px;
@@ -153,13 +197,44 @@
 		margin-top           : 1px;
 		user-select          : none;
 		position             : relative;
-		top                  : -4px;
+		top                  : 4px;
 	}
 	.slider-border {
 		position    : relative;
-		top         : 4px;
 		display     : flex;
 		align-items : center;
+		overflow    : visible;
+	}
+	.tick-overlay {
+		position       : absolute;
+		top            : 50%;
+		left           : 7px;
+		right          : 7px;
+		height         : 0;
+		overflow       : visible;
+		pointer-events : none;
+	}
+	.tick {
+		position  : absolute;
+		transform : translateX(-50%);
+	}
+	.tick-line {
+		width      : 1px;
+		height     : 4px;
+		margin-top : -2px;
+		background : rgba(0, 0, 0, 0.3);
+	}
+	.tick-label {
+		position    : absolute;
+		top         : 4px;
+		left        : 50%;
+		transform   : translateX(-50%);
+		font-size   : 6px;
+		line-height : 1;
+		text-align  : center;
+		color       : rgba(0, 0, 0, 1);
+		user-select : none;
+		white-space : nowrap;
 	}
 	.value-display {
 		font-size    : 11px;
@@ -169,9 +244,7 @@
 		text-align   : right;
 	}
 	.steppers-wrapper {
-		margin-left            : -1px;
-		position               : relative;
-		top                    : 0.5px;
+		margin-left : -1px;
 	}
 
 	/* === Native range input styling === */

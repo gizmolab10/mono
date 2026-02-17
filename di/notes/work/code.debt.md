@@ -2,8 +2,14 @@
 
 offer a proposal for the first unchecked item
 
-- [x] add a toggle button to D_Selection titled "hide" / "show" -- hide means do not draw the SO or its decorations
-- [x] add a margin 8px at right and left of both D_Selection tables
+- [ ] scale
+	- [ ] continuous / not steps
+	- [x] powers of 10 of the scale
+	- [ ] tick marks and labels
+	- [ ] needs larger range
+- [ ] attr serial -> orig, ext, len, angle
+- [ ] stop, interpretation -> wait until approved
+- [ ] trig rise and run
 - [ ] [[separators]]
 - [ ] use codegraph
 ---
