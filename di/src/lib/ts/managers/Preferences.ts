@@ -35,6 +35,9 @@ export enum T_Preference {
 
 	// Scenes
 	scene = 'scene',
+
+	// Library
+	library = 'library',
 }
 
 const STORAGE_PREFIX = 'di:';

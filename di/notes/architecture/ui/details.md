@@ -51,7 +51,7 @@ The meat of the sidebar. Shows details for the selected SO (or root if nothing s
 
 ### D_Library.svelte
 
-Two buttons: import and export. Calls `scenes.import_from_file()` and `scenes.export_to_file()`.
+Buttons: import, save, clear. Save calls `scenes.add_to_library()` (IDB + download).
 
 ### Banner-zone styling
 

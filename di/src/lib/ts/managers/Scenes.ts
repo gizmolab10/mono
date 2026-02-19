@@ -97,7 +97,78 @@ class Scenes {
 
 	// ── file export/import ──
 
-	export_to_file(): void {
+	// ── IndexedDB library storage ──
+
+	private static readonly IDB_NAME = 'di_library';
+	private static readonly IDB_STORE = 'files';
+
+	private open_idb(): Promise<IDBDatabase> {
+		return new Promise((resolve, reject) => {
+			const request = indexedDB.open(Scenes.IDB_NAME, 2);
+			request.onupgradeneeded = () => {
+				const db = request.result;
+				// Delete old 'handles' store from previous schema
+				if (db.objectStoreNames.contains('handles')) db.deleteObjectStore('handles');
+				if (!db.objectStoreNames.contains(Scenes.IDB_STORE)) db.createObjectStore(Scenes.IDB_STORE);
+			};
+			request.onsuccess = () => resolve(request.result);
+			request.onerror = () => reject(request.error);
+		});
+	}
+
+	/** Save a .di file's JSON into IndexedDB, keyed by name. */
+	private async save_to_idb(name: string, json: string): Promise<void> {
+		try {
+			const database = await this.open_idb();
+			const transaction = database.transaction(Scenes.IDB_STORE, 'readwrite');
+			transaction.objectStore(Scenes.IDB_STORE).put(json, name);
+		} catch {
+			// silent
+		}
+	}
+
+	/** Load all user-saved .di files from IndexedDB. */
+	private async load_all_from_idb(): Promise<{ name: string; raw: string }[]> {
+		try {
+			const database = await this.open_idb();
+			return new Promise((resolve) => {
+				const transaction = database.transaction(Scenes.IDB_STORE, 'readonly');
+				const store = transaction.objectStore(Scenes.IDB_STORE);
+				const keys_req = store.getAllKeys();
+				const vals_req = store.getAll();
+				transaction.oncomplete = () => {
+					const keys = keys_req.result as string[];
+					const vals = vals_req.result as string[];
+					resolve(keys.map((name, i) => ({ name, raw: vals[i] })));
+				};
+				transaction.onerror = () => resolve([]);
+			});
+		} catch {
+			return [];
+		}
+	}
+
+	/** List library: bundled defaults + user-saved files from IDB. */
+	async list_library(): Promise<{ name: string; raw: string }[]> {
+		const bundled = this.list_bundled();
+		const user_files = await this.load_all_from_idb();
+		// Merge: user files override bundled defaults with same name
+		const by_name = new Map(bundled.map(f => [f.name, f]));
+		for (const f of user_files) by_name.set(f.name, f);
+		return [...by_name.values()].sort((a, b) => a.name.localeCompare(b.name));
+	}
+
+	/** Return bundled defaults from src/assets. */
+	private list_bundled(): { name: string; raw: string }[] {
+		const modules = import.meta.glob('../../../assets/*.di', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+		return Object.entries(modules).map(([path, raw]) => ({
+			name: path.split('/').pop()?.replace('.di', '') ?? path,
+			raw,
+		})).sort((a, b) => a.name.localeCompare(b.name));
+	}
+
+	/** Add current scene to library: save to IDB + download to disk. */
+	async add_to_library(): Promise<void> {
 		this.save();
 		const saved = this.load();
 		if (!saved) return;
@@ -106,11 +177,18 @@ class Scenes {
 			scene: saved,
 		};
 		const json = JSON.stringify(exported, null, 2);
-		const blob = new Blob([json], { type: 'application/json' });
+		const name = this.root_name || 'scene';
+		await this.save_to_idb(name, json);
+		this.download_file(`${name}.di`, json);
+	}
+
+	/** Trigger a browser download via anchor tag. */
+	private download_file(filename: string, content: string): void {
+		const blob = new Blob([content], { type: 'application/json' });
 		const url = URL.createObjectURL(blob);
 		const anchor = document.createElement('a');
 		anchor.href = url;
-		anchor.download = `${this.root_name || 'scene'}.di`;
+		anchor.download = filename;
 		document.body.appendChild(anchor);
 		anchor.click();
 		document.body.removeChild(anchor);
@@ -138,6 +216,31 @@ class Scenes {
 			});
 		};
 		input.click();
+	}
+
+	/** Load a scene from raw JSON text (used by library panel). */
+	load_from_text(text: string): void {
+		try {
+			const parsed = JSON.parse(text);
+			const imported = this.validate_import(parsed);
+			if (!imported) return;
+			preferences.write(T_Preference.scene, this.migrate(imported.scene));
+			location.reload();
+		} catch (error) {
+			console.error('Load failed:', error);
+		}
+	}
+
+	/** Parse raw JSON text into a migrated Portable_Scene (no save/reload). */
+	parse_text(text: string): Portable_Scene | null {
+		try {
+			const parsed = JSON.parse(text);
+			const imported = this.validate_import(parsed);
+			if (!imported) return null;
+			return this.migrate(imported.scene);
+		} catch {
+			return null;
+		}
 	}
 
 	// ── migration ──

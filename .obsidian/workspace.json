@@ -22,20 +22,6 @@
             }
           },
           {
-            "id": "9da70dc3298817cf",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/roots.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "roots"
-            }
-          },
-          {
             "id": "ed6835991ce431f7",
             "type": "leaf",
             "state": {
@@ -64,20 +50,21 @@
             }
           },
           {
-            "id": "ccce82b75099353e",
+            "id": "9da70dc3298817cf",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/17.library.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt"
+              "title": "17.library"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -109,7 +96,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:short",
+                "query": "file:always",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -212,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/17.library.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of 17.library"
             }
           }
         ],
@@ -240,16 +227,29 @@
       "bases:Create new base": false
     }
   },
-  "active": "bf8919592ee87a19",
+  "active": "9da70dc3298817cf",
   "lastOpenFiles": [
-    "di/src/assets/drawer.di",
-    "di/notes/work/done/code.debt.done.md",
+    "di/src/assets/three drawer cabinet.di",
+    "di/src/assets/cabinet.di",
     "di/notes/work/code.debt.md",
+    "di/notes/work/17.library.md",
+    "di/notes/work/21.marketing.md",
+    "notes/guides/pre-flight/always.md",
+    "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/revisit.di.md",
+    "di/CLAUDE.MD",
+    "CLAUDE.MD",
+    "notes/guides/pre-flight/keywords.md",
+    "notes/guides/pre-flight/shorthand.md",
+    "di/notes/work/20.licensing.md",
+    "di/notes/work/19.cut.lists.md",
+    "di/notes/work/18.repeaters.md",
+    "di/notes/work/roots.md",
+    "ws/notes/work/deliverables.md",
+    "di/src/assets/drawer.di",
     "di/notes/work/versions.md",
     "di/notes/architecture/core/versions.md",
-    "di/notes/work/roots.md",
     "di/notes/architecture/core/algebra.md",
-    "di/notes/work/competition.md",
     "di/notes/architecture/ui/details.md",
     "di/notes/architecture/project.md",
     "logs/update-docs.error.mono.log",
@@ -261,22 +261,10 @@
     "di/src/lib/ts/algebra/Constraints.ts.tmp.35175.1771277152795",
     "di/src/assets/A.di",
     "di/notes/components/Smart_Objects.md",
-    "di/notes/architecture/files.md",
-    "di/notes/architecture/core/managers.md",
-    "di/notes/architecture/graph/two.dimensions.md",
-    "di/notes/architecture/graph/three.dimensions.md",
-    "di/notes/architecture/graph/spatial.md",
-    "di/notes/architecture/graph/intersecting.faces.md",
-    "di/notes/architecture/graph/rendering.types.md",
-    "di/notes/architecture/graph/quaternions.md",
-    "di/notes/architecture/graph/index.md",
-    "di/notes/architecture/graph/drag.md",
-    "di/notes/architecture/graph/3D.primer.md",
     "di/notes/architecture/graph",
     "di/notes/architecture/core",
     "di/notes/architecture/ui",
     "di/notes/architecture/render",
-    "di/src/lib/ts/render/R_Grid.ts",
     "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
     "Screenshot 2026-02-14 at 12.12.38 PM.png",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",

@@ -460,6 +460,97 @@ class Engine {
     }
   }
 
+  /** Insert an SO subtree from a .di file as children of the selected (or root) SO. */
+  insert_child_from_text(text: string): void {
+    const target_so = stores.selection()?.so ?? this.root_scene?.so;
+    if (!target_so?.scene) return;
+
+    const parsed = scenes.parse_text(text);
+    if (!parsed?.smart_objects.length) return;
+
+    const old_to_new = new Map<string, string>();
+    const deserialized: { so: Smart_Object; old_parent_id?: string }[] = [];
+
+    // Deserialize all SOs with fresh IDs, keep original names
+    for (const data of parsed.smart_objects) {
+      const so = Smart_Object.deserialize(data);
+      const old_id = so.id;
+      so.setID();
+      old_to_new.set(old_id, so.id);
+      deserialized.push({ so, old_parent_id: data.parent_id });
+    }
+
+    const imported_root_id = parsed.root_id;
+    const new_sos: Smart_Object[] = [];
+
+    // Wire scene hierarchy — values and formulas stay as-is from the file
+    for (const { so, old_parent_id } of deserialized) {
+      const is_imported_root = old_to_new.get(imported_root_id) === so.id
+        || (!old_parent_id && deserialized[0].so === so);
+
+      let parent_scene: O_Scene;
+
+      if (is_imported_root) {
+        // Imported root was absolute in its file — convert to offsets from target parent
+        for (const axis of so.axes) {
+          if (!axis.start.compiled) {
+            axis.start.value = axis.start.value - target_so.get_bound(axis.start.name as Bound);
+          }
+          if (!axis.end.compiled) {
+            axis.end.value = axis.end.value - target_so.get_bound(axis.end.name as Bound);
+          }
+        }
+        parent_scene = target_so.scene!;
+      } else if (old_parent_id) {
+        const new_parent_id = old_to_new.get(old_parent_id);
+        const parent = new_sos.find(s => s.id === new_parent_id);
+        if (!parent?.scene) continue;
+        parent_scene = parent.scene;
+      } else {
+        continue;
+      }
+
+      const so_scene = scene.create({
+        so,
+        edges: this.edges,
+        faces: this.faces,
+        color: colors.edge_color_rgba(),
+        parent: parent_scene,
+      });
+      so.scene = so_scene;
+      hits_3d.register(so);
+      new_sos.push(so);
+    }
+
+    if (new_sos.length) {
+      stores.w_all_sos.update(list => [...list, ...new_sos]);
+      scenes.save();
+    }
+  }
+
+  /** Remove all children from the root SO. */
+  remove_all_children(): void {
+    const root = this.root_scene?.so;
+    if (!root) return;
+
+    const all = scene.get_all();
+    const children = all.filter(o => o.parent);
+
+    for (const child of children) {
+      hits_3d.unregister(child.so);
+      scene.destroy(child.id);
+    }
+
+    // Clear selection if it was a child
+    const sel = hits_3d.selection;
+    if (sel && children.some(c => c.so === sel.so)) {
+      hits_3d.set_selection(null);
+    }
+
+    stores.w_all_sos.set([root]);
+    scenes.save();
+  }
+
   add_child_so(): void {
     const selected = stores.selection();
     const parent_so = selected?.so ?? this.root_scene?.so;

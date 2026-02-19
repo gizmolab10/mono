@@ -21,7 +21,8 @@
       "Bash(yarn svelte-check:*)",
       "Bash(yarn vitest run:*)",
       "Bash(yarn vitest:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(wc:*)"
     ]
   }
 }

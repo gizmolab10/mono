@@ -9,7 +9,7 @@ Current work items and milestones.
 - [Next](./next/)
 - [Code.debt](./code.debt.md)
 - [Revisit.di](./revisit.di.md)
-- [Competition](./competition.md)
+- [Competition](21.marketing.md)
 - [Roots](./roots.md)
 - [Separators](./separators.md)
 

@@ -1,5 +1,6 @@
 declare const __BUILD_NOTES__: Array<{ build: number; date: string; note: string }>;
 declare const __BUILD_NUMBER__: number;
+declare const __ASSETS_DIR__: string;
 
 
 export default class Constants {
@@ -48,6 +49,7 @@ export default class Constants {
 
 	build_notes = __BUILD_NOTES__;
 	build_number = __BUILD_NUMBER__;
+	assets_directory = __ASSETS_DIR__;
 
 }
 

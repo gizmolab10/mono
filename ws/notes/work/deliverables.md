@@ -24,7 +24,7 @@ urls for review and feedback
 
 ### Bugs
 
-- [x] always change focus for click on reveal dot → to unhide children
+- [ ] click on collapse ignored
 
 ### Future Tasks
 

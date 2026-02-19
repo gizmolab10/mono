@@ -15,7 +15,6 @@ Where we are in Design Intuition.
 ## Milestones (current work)
 
 - [ ] [[code.debt]] 
-- [ ] attribute algebraic expressions [[algebra]]
 
 ## What's Working
 

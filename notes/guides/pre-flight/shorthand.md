@@ -40,7 +40,6 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 
 | Abbreviation | Meaning                                     |
 | ------------ | ------------------------------------------- |
-| `cb`         | Use checkboxes for this                     |
 | `ex`         | Execute mode — skip proposals, just do it   |
 | `rs`         | Reserved mode — propose before file changes |
 | `m`          | Milestone                                   |
@@ -48,3 +47,6 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `ni`         | No improvement, try something different     |
 | `pac`        | pros and cons                               |
 | `cd`         | read code.debt.md                           |
+| `di`         | revisit di                                  |
+| `ws`         | revisit ws                                  |
+

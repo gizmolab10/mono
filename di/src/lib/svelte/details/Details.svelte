@@ -2,10 +2,18 @@
 	import { T_Details } from '../../ts/types/Enumerations';
 	import D_Preferences from './D_Preferences.svelte';
 	import D_Selection from './D_Selection.svelte';
-	import D_Library from './D_Library.svelte';
 	import { colors } from '../../ts/draw/Colors';
+	import { hits } from '../../ts/managers/Hits';
+	import D_Library from './D_Library.svelte';
 	import Hideable from './Hideable.svelte';
+	import { tick, onMount } from 'svelte';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
+
+	onMount( async () => {
+		setTimeout(() => {
+			hits.recalibrate();
+		}, 10);
+	});
 
 </script>
 

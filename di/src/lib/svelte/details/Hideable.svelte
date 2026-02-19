@@ -5,8 +5,8 @@
 	import { hits } from '../../ts/managers/Hits';
 	import { stores } from '../../ts/managers';
 	import { tick } from 'svelte';
-	const { w_accent_color } = colors;
 	const { w_t_details } = stores;
+	const { w_accent_color } = colors;
 
 	let {
 		title,

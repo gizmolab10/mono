@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import ports from '../notes/tools/hub/ports.json';
 
 function parseBuildNotes() {
@@ -22,6 +23,7 @@ export default defineConfig({
   },
   define: {
     __BUILD_NOTES__: JSON.stringify(buildNotes),
-    __BUILD_NUMBER__: buildNumber
+    __BUILD_NUMBER__: buildNumber,
+    __ASSETS_DIR__: JSON.stringify(resolve(process.cwd(), 'src/assets'))
   }
 });

@@ -114,3 +114,5 @@
 	- [x] powers of 10 of the scale
 	- [x] tick marks and labels
 	- [x] needs larger range
+- [x] version 4: attr serial -> orig, ext, len, angle
+- [x] interpretation -> wait until approved

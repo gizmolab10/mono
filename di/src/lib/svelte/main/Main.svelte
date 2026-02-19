@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { stores } from '../../ts/managers/Stores';
+	import Details from '../details/Details.svelte';
 	import { colors } from '../../ts/draw/Colors';
 	import { k } from '../../ts/common/Constants';
-	import { e } from '../../ts/signals/Events';
 	import BuildNotes from './BuildNotes.svelte';
+	import { e } from '../../ts/signals/Events';
 	import Controls from './Controls.svelte';
-	import Details from '../details/Details.svelte';
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
 

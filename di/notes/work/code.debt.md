@@ -2,8 +2,11 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] version 4: attr serial -> orig, ext, len, angle
-- [ ] stop, interpretation -> wait until approved
+- [ ] [[17.library]]
+- [ ] [[18.repeaters]]
+- [ ] [[19.cut.lists]]
+- [ ] [[20.licensing]]
+- [ ] [[21.marketing]]
 - [ ] trig rise and run
 - [ ] [[separators]]
 - [ ] use codegraph
