@@ -6,7 +6,7 @@ Start here. One page, whole app.
 - [Project](./project.md) — entry flow, core loop, Smart Objects, Engine, managers, algebra
 ## 2. Understand
 Where things live, what they do.
-- [Files](./files.md) — file layout, every module in a table
+- [Files](file%20layout.md) — file layout, every module in a table
 - [Core](./core/) — singletons and systems
   - [Managers](./core/managers.md) — who owns what
   - [Algebra](./core/algebra.md) — constraints, expressions, reverse propagation
@@ -31,6 +31,6 @@ The render pipeline — projection, occlusion, intersections, overlays.
 - [Core](./core/)
 - [Graph](./graph/)
 - [Ui](./ui/)
-- [Files](./files.md)
+- [File Layout](./file layout.md)
 - [Project](./project.md)
 

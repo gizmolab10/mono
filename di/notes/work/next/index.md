@@ -2,7 +2,8 @@
 
 ## Contents
 
-- [Muice](./muice.md)
 - [Pacing](./pacing.md)
-- [Simplicity](./simplicity.md)
+- [Punch List](./punch list.md)
+- [Roots](./roots.md)
+- [Separators](./separators.md)
 

@@ -421,33 +421,48 @@ class Engine {
     // Clear selection first
     hits_3d.set_selection(null);
 
-    // Clear formulas on the deleted SO
-    for (const bound of Object.keys(so.attributes_dict_byName) as Bound[]) {
-      constraints.clear_formula(so, bound);
+    // Collect the entire subtree: selected SO + all descendants
+    const to_remove = new Set<O_Scene>([so.scene]);
+    for (const obj of scene.get_all()) {
+      let p = obj.parent;
+      while (p) {
+        if (p === so.scene) { to_remove.add(obj); break; }
+        p = p.parent;
+      }
     }
 
-    // Clear formulas on other SOs that reference the deleted SO
+    // Clear formulas on every SO in the subtree
+    for (const obj of to_remove) {
+      for (const bound of Object.keys(obj.so.attributes_dict_byName) as Bound[]) {
+        constraints.clear_formula(obj.so, bound);
+      }
+    }
+
+    // Clear formulas on surviving SOs that reference any deleted SO
     for (const o of scene.get_all()) {
-      if (o.so === so) continue;
+      if (to_remove.has(o)) continue;
       for (const bound of Object.keys(o.so.attributes_dict_byName) as Bound[]) {
         const attr = o.so.attributes_dict_byName[bound];
-        if (attr.compiled && this.formula_references_so(attr.compiled, so.id)) {
-          constraints.clear_formula(o.so, bound);
+        if (attr.compiled) {
+          for (const obj of to_remove) {
+            if (this.formula_references_so(attr.compiled, obj.so.id)) {
+              constraints.clear_formula(o.so, bound);
+              break;
+            }
+          }
         }
       }
     }
 
-    // Reparent any children of the deleted SO to the deleted SO's parent
-    for (const o of scene.get_all()) {
-      if (o.parent === so.scene) {
-        o.parent = so.scene.parent;
-      }
+    // Destroy entire subtree
+    for (const obj of to_remove) {
+      hits_3d.unregister(obj.so);
+      scene.destroy(obj.id);
     }
 
-    // Remove from systems
-    hits_3d.unregister(so);
-    scene.destroy(so.scene.id);
-    stores.w_all_sos.update(list => list.filter(s => s !== so));
+    const remaining = scene.get_all().map(o => o.so);
+    stores.w_all_sos.set(remaining);
+    stores.tick();
     scenes.save();
   }
 
@@ -523,31 +538,47 @@ class Engine {
     }
 
     if (new_sos.length) {
+      // Re-evaluate formulas now that hierarchy is wired
+      for (const so of new_sos) {
+        constraints.propagate(so);
+      }
       stores.w_all_sos.update(list => [...list, ...new_sos]);
+      stores.tick();
       scenes.save();
     }
   }
 
-  /** Remove all children from the root SO. */
+  /** Remove all children (and their subtrees) of the selected SO. */
   remove_all_children(): void {
-    const root = this.root_scene?.so;
-    if (!root) return;
+    const target = stores.selection()?.so ?? this.root_scene?.so;
+    if (!target?.scene) return;
 
     const all = scene.get_all();
-    const children = all.filter(o => o.parent);
+    // Collect descendants: any O_Scene whose ancestor chain includes target.scene
+    const to_remove: O_Scene[] = [];
+    for (const obj of all) {
+      let p = obj.parent;
+      while (p) {
+        if (p === target.scene) { to_remove.push(obj); break; }
+        p = p.parent;
+      }
+    }
+    if (!to_remove.length) return;
 
-    for (const child of children) {
-      hits_3d.unregister(child.so);
-      scene.destroy(child.id);
+    for (const obj of to_remove) {
+      hits_3d.unregister(obj.so);
+      scene.destroy(obj.id);
     }
 
-    // Clear selection if it was a child
+    // Clear selection if it was in the removed subtree
     const sel = hits_3d.selection;
-    if (sel && children.some(c => c.so === sel.so)) {
+    if (sel && to_remove.some(o => o.so === sel.so)) {
       hits_3d.set_selection(null);
     }
 
-    stores.w_all_sos.set([root]);
+    const remaining = scene.get_all().map(o => o.so);
+    stores.w_all_sos.set(remaining);
+    stores.tick();
     scenes.save();
   }
 
@@ -576,6 +607,7 @@ class Engine {
 
     // Keep parent selected after adding child
     stores.w_all_sos.update(list => [...list, child]);
+    stores.tick();
     scenes.save();
   }
 }

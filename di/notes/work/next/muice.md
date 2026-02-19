@@ -1,4 +1,0 @@
-- [ ] cabinet making
-- [ ] furniture
-- [ ] architecture
-- [ ] hits manager USES 3d, if it fails

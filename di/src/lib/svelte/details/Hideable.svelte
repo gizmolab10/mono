@@ -90,7 +90,7 @@
 	}
 
 	.slot {
-		padding       : 0.75rem 1rem 0.75rem;
+		padding       : 8px;
 		background    : var(--bg);
 		margin        : 0px 0 0;
 		border-radius : 11px;

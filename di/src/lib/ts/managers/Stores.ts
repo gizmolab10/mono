@@ -17,16 +17,16 @@ class Stores {
 	w_tick				= writable<number>(0);
 
 	// Persistent
-	w_decorations       = this.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.dimensions | T_Decorations.names);
-	w_orientation		= this.persistent<number[]>(T_Preference.orientation, [0, 0, 0, 1]);
+	w_decorations       = this.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.dimensions);
+	w_orientation		= this.persistent<number[]>(T_Preference.orientation, [-0.49, -0.28, -0.1, 0.8]);
 	w_edge_color		= this.persistent<string>(T_Preference.edgeColor, '#874efe');
 	w_view_mode			= this.persistent<'2d' | '3d'>(T_Preference.viewMode, '3d');
 	w_show_details		= this.persistent<boolean>(T_Preference.showDetails, true);
 	w_t_details			= this.persistent<number>(T_Preference.visibleDetails, 1);
 	w_line_thickness	= this.persistent<number>(T_Preference.lineThickness, 2);
-	w_solid				= this.persistent<boolean>(T_Preference.solid, false);
+	w_solid				= this.persistent<boolean>(T_Preference.solid, true);
 	w_precision			= this.persistent<number>(T_Preference.precision, 2);
-	w_scale				= this.persistent<number>(T_Preference.scale, 22);
+	w_scale				= this.persistent<number>(T_Preference.scale, 2.5);
 
 	current_orientation():				    quat { const a = get(this.w_orientation); return quat.fromValues(a[0], a[1], a[2], a[3]); }
 	tick():									void { this.w_tick.update(n => n + 1); }	// triggers reactive updates

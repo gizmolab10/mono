@@ -40,7 +40,6 @@
 <div class='settings'>
 	<button class='action-btn' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file() }}>import</button>
 	<button class='action-btn' use:hit_target={{ id: 'add-to-lib', onpress: () => add_to_library() }}>save</button>
-	<button class='action-btn' use:hit_target={{ id: 'reset', onpress: () => engine.remove_all_children() }}>clear</button>
 </div>
 
 <table class='library'><tbody>
@@ -91,12 +90,12 @@
 	}
 
 	.lib-name {
-		padding    : 2px 6px;
+		padding    : 2px 0;
 		text-align : left;
 	}
 
 	.lib-size {
-		padding    : 2px 6px;
+		padding    : 2px 0;
 		text-align : right;
 		opacity    : 0.5;
 	}

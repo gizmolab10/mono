@@ -4,7 +4,7 @@
     "smart_objects": [
       {
         "id": "dicb460b903642b9",
-        "name": "cabinet",
+        "name": "empty cabinet",
         "x": {
           "attributes": {
             "origin": 0,

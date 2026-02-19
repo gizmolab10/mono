@@ -2,11 +2,9 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] [[17.library]]
-- [ ] [[18.repeaters]]
-- [ ] [[19.cut.lists]]
-- [ ] [[20.licensing]]
-- [ ] [[21.marketing]]
+- [ ] default accent color -> glow too faint
+- [ ] integrate [[simplicity]]
+- [ ] [[more milestones]] milestones
 - [ ] trig rise and run
 - [ ] [[separators]]
 - [ ] use codegraph

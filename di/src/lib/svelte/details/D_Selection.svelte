@@ -11,12 +11,13 @@
 	import type { Bound } from '../../ts/types/Types';
 
 	const { w_s_face_label } = face_label;
-	const { w_root_so, w_selection, w_precision, w_tick } = stores;
+	const { w_root_so, w_selection, w_precision, w_tick, w_all_sos } = stores;
 
 	type BoundsRow = { label: string; bound: string | null; value: string; formula: string; has_formula: boolean; is_invariant: boolean; axis_index: number; attr_index: number };
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
 	let is_root = $derived(!selected_so?.scene?.parent);
+	let has_children = $derived($w_all_sos.some(so => so.scene?.parent?.so === selected_so));
 
 	let tick = $derived(stores.is_editing() ? 0 : $w_tick);
 	function get_visible_label(_tick: number) { return selected_so?.visible === false ? 'show' : 'hide'; }
@@ -209,7 +210,6 @@
 			onblur    = {handle_name_blur}
 		/>
 		<button class='action-btn' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>{visible_label}</button>
-		<button class='action-btn' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>add child</button>
 	</div>
 	<table class='bounds'>
 		<tbody>
@@ -264,6 +264,10 @@
 			{/each}
 		</tbody>
 	</table>
+	<div class='actions-row'>
+		<button class='action-btn' disabled={!has_children} use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>delete all children</button>
+		<button class='action-btn right' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>add child</button>
+	</div>
 {:else}
 	<p>No object selected</p>
 {/if}
@@ -273,8 +277,6 @@
 		display      : flex;
 		gap          : 6px;
 		align-items  : center;
-		margin-left  : -8px;
-		margin-right : -8px;
 	}
 
 	.name-row input {
@@ -296,6 +298,16 @@
 		opacity      : 1;
 	}
 
+	.actions-row {
+		display    : flex;
+		gap        : 6px;
+		margin-top : 8px;
+	}
+
+	.actions-row .right {
+		margin-left : auto;
+	}
+
 	.action-btn {
 		border        : 0.5px solid currentColor;
 		box-sizing    : border-box;
@@ -309,17 +321,21 @@
 		white-space   : nowrap;
 	}
 
+	.action-btn:disabled {
+		opacity        : 0.3;
+		cursor         : default;
+		pointer-events : none;
+	}
+
 	.action-btn:global([data-hitting]) {
 		background : var(--accent);
 		color      : black;
 	}
 
 	.bounds {
-		width           : calc(100% + 2rem - 16px);
-		margin-left     : calc(-1rem + 8px);
-		margin-right    : calc(-1rem + 8px);
+		width           : 100%;
 		border-collapse : collapse;
-		margin-top      : 6px;
+		margin-top      : 8px;
 		font-size       : 11px;
 	}
 
@@ -389,7 +405,7 @@
 
 	.cell-input:disabled {
 		cursor     : default;
-		background : var(--bg);
+		background : var(--accent);
 		opacity    : 0.7;
 	}
 

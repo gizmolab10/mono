@@ -1,21 +1,8 @@
 # Revisit
 
-Where we are in Design Intuition.
+Where we are in Design Intuition? Read [[code.debt]]. Keep the table below up to date.
 
 ---
-## Quick Links
-
-- [docs](http://docs.designintuition.app)
-- [app](http://designintuition.app)
-- [Milestones](./milestones/)
-- [Architecture](../architecture/)
-- [Guides](../guides/)
-
----
-## Milestones (current work)
-
-- [ ] [[code.debt]] 
-
 ## What's Working
 
 | Layer       | Status                                     |
@@ -32,4 +19,13 @@ Where we are in Design Intuition.
 | Scenes      | SO, camera orientation, scale              |
 | Algebra     | Compiler, eval, reverse propagation, constraints |
 | Orientation | Fixed/variable, derived from bounds, trig redistribution |
+
+---
+## Quick Links
+
+- [docs](http://docs.designintuition.app)
+- [app](http://designintuition.app)
+- [Milestones](./milestones/)
+- [Architecture](../architecture/)
+- [Guides](../guides/)
 

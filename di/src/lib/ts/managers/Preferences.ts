@@ -89,6 +89,16 @@ class Preferences {
 	}
 
 	/**
+	 * Reset preferences to defaults (preserves scene and library data)
+	 */
+	reset() : void {
+		const preserve = new Set([T_Preference.scene, T_Preference.library]);
+		for (const key of Object.values(T_Preference)) {
+			if (!preserve.has(key)) this.remove(key);
+		}
+	}
+
+	/**
 	 * Debug: dump all di preferences to console
 	 */
 	dump() : void {

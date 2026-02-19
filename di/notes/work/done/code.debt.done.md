@@ -116,3 +116,6 @@
 	- [x] needs larger range
 - [x] version 4: attr serial -> orig, ext, len, angle
 - [x] interpretation -> wait until approved
+- [x] remove "design intuition" from controls
+- [x] "reset preferences" button
+- [x] delete -> delete selected AND its entire subtree of SO

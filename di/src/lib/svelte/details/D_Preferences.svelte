@@ -2,6 +2,7 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Units } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
+	import { preferences } from '../../ts/managers/Preferences';
 	import { stores } from '../../ts/managers';
 	import { colors } from '../../ts/draw/Colors';
 	import { engine } from '../../ts/render';
@@ -23,10 +24,16 @@
 		const select = e.target as HTMLSelectElement;
 		w_unit_system.set(select.value as T_Units);
 	}
+
+	function reset() {
+		preferences.reset();
+		location.reload();
+	}
 </script>
 
 <div class='settings'>
-	<select class='details-select' value={$w_unit_system} onchange={handle_unit_change}>
+	<button class='action-btn' use:hit_target={{ id: 'reset-prefs', onpress: reset }}>reset</button>
+	<select class='details-select right' value={$w_unit_system} onchange={handle_unit_change}>
 		{#each Object.values(T_Units) as system}
 			<option value={system}>{system}</option>
 		{/each}
@@ -79,6 +86,28 @@
 	.settings {
 		display : flex;
 		gap     : 6px;
+	}
+
+	.action-btn {
+		border        : 0.5px solid currentColor;
+		box-sizing    : border-box;
+		cursor        : pointer;
+		color         : inherit;
+		background    : white;
+		padding       : 0 8px;
+		border-radius : 10px;
+		font-size     : 11px;
+		height        : 20px;
+		white-space   : nowrap;
+	}
+
+	.action-btn:global([data-hitting]) {
+		background : var(--accent);
+		color      : black;
+	}
+
+	.right {
+		margin-left : auto;
 	}
 
 	.label {

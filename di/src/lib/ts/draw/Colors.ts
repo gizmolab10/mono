@@ -11,7 +11,6 @@ export class Colors {
 	default                   = 'black';
 	banner                    = '#f8f8f8';
 	disabled                  = 'lightGray';
-	separator                 = '#c55622ff';
 	background                = 'white';
 	rubberband                = '#4a90e2';
 	graph_background          = 'white';
@@ -21,8 +20,8 @@ export class Colors {
 	// Reactive colors (stores)
 	w_thing_color      = writable<string | null>(null);
 	w_text_color       = writable<string>('black');
-	w_accent_color  = writable<string>(this.separator);
-	w_background_color = writable<string>('#F9E4BE');
+	w_accent_color	   = writable<string>('rgb(200, 200, 200)');
+	w_background_color = writable<string>('rgb(135, 135, 135)');
 
 	constructor() {
 		this.restore_preferences();
@@ -33,11 +32,11 @@ export class Colors {
 	 * Load saved color preferences from localStorage
 	 */
 	restore_preferences() : void {
-		const text = preferences.read<string>(T_Preference.textColor);
-		const sep  = preferences.read<string>(T_Preference.accentColor);
+		const text = preferences.read<string>(T_Preference.textColor) ?? 'black';
+		const acc  = preferences.read<string>(T_Preference.accentColor) ?? 'rgb(219, 219, 219)';
 
 		if (!!text) this.w_text_color.set(text);
-		if (!!sep) this.w_accent_color.set(sep);
+		if (!!acc) this.w_accent_color.set(acc);
 	}
 
 	/**

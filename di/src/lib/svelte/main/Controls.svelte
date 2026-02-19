@@ -1,23 +1,17 @@
 <script lang='ts'>
+	import { T_Decorations } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { stores } from '../../ts/managers/Stores';
 	import { colors } from '../../ts/draw/Colors';
-	import { T_Decorations } from '../../ts/types/Enumerations';
 	import Slider from '../mouse/Slider.svelte';
 	import { engine } from '../../ts/render';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
-	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details, w_front_face } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
+	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details, w_front_face } = stores;
 
 	let show_dimensions = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
 	let show_angles     = $derived(($w_decorations & T_Decorations.angles) !== 0);
 	let show_names      = $derived(($w_decorations & T_Decorations.names) !== 0);
-
-	let {
-		title = 'Design Intuition™'
-	} : {
-		title? : string;
-	} = $props();
 
 	function handle_scale(pointsUp: boolean, _isLong: boolean) {
 		if (pointsUp) engine.scale_up();
@@ -42,22 +36,21 @@
 			<rect x='2' y='14' width='16' height='2.5' rx='1.25'/>
 		</svg>
 	</button>
-	<h1>{title}</h1>
 	<span class='spacer'></span>
-	<Slider min={0.01} max={10000} value={$w_scale} logarithmic onchange={handle_slider} onstep={handle_scale} />
 	<button class='toolbar-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	<div class='segmented'>
 		{#each face_labels as label, i}
 			<button class='seg' class:front={$w_front_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
 		{/each}
 	</div>
-	<div class='segmented'>
-		<button class='seg' class:active={show_dimensions} use:hit_target={{ id: 'dimensionals', onpress: () => stores.toggle_dimensionals() }}>dimensions</button>
-		<button class='seg' class:active={show_angles} use:hit_target={{ id: 'angulars', onpress: () => stores.toggle_angulars() }}>angles</button>
-		<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>
-	</div>
+	<Slider min={0.01} max={10000} value={$w_scale} logarithmic onchange={handle_slider} onstep={handle_scale} />
 	<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'see through'}</button>
 	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode}</button>
+	<div class='segmented'>
+		<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>
+		<button class='seg' class:active={show_dimensions} use:hit_target={{ id: 'dimensionals', onpress: () => stores.toggle_dimensionals() }}>dimensions</button>
+		<button class='seg' class:active={show_angles} use:hit_target={{ id: 'angulars', onpress: () => stores.toggle_angulars() }}>angles</button>
+	</div>
 </div>
 
 <style>

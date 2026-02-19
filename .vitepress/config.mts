@@ -68,8 +68,8 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
-                      text: 'Files',
-                      link: '/di/notes/architecture/files'
+                      text: 'File Layout',
+                      link: '/di/notes/architecture/file layout'
                     },
                     {
                       text: 'Project',
@@ -87,6 +87,10 @@ export default defineConfig({
                         {
                           text: 'Managers',
                           link: '/di/notes/architecture/core/managers'
+                        },
+                        {
+                          text: 'Versions',
+                          link: '/di/notes/architecture/core/versions'
                         }
                       ]
                     },
@@ -218,12 +222,12 @@ export default defineConfig({
                       link: '/di/notes/work/code.debt'
                     },
                     {
-                      text: 'Revisit.di',
-                      link: '/di/notes/work/revisit.di'
+                      text: 'More Milestones',
+                      link: '/di/notes/work/more milestones'
                     },
                     {
-                      text: 'Separators',
-                      link: '/di/notes/work/separators'
+                      text: 'Revisit.di',
+                      link: '/di/notes/work/revisit.di'
                     },
                     {
                       text: 'Done >',
@@ -298,8 +302,28 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/16.formulas'
                         },
                         {
+                          text: '17.library',
+                          link: '/di/notes/work/milestones/17.library'
+                        },
+                        {
+                          text: '18.repeaters',
+                          link: '/di/notes/work/milestones/18.repeaters'
+                        },
+                        {
+                          text: '19.cut.lists',
+                          link: '/di/notes/work/milestones/19.cut.lists'
+                        },
+                        {
                           text: '2.panel',
                           link: '/di/notes/work/milestones/2.panel'
+                        },
+                        {
+                          text: '20.licensing',
+                          link: '/di/notes/work/milestones/20.licensing'
+                        },
+                        {
+                          text: '21.marketing',
+                          link: '/di/notes/work/milestones/21.marketing'
                         },
                         {
                           text: '3.docs',
@@ -337,16 +361,20 @@ export default defineConfig({
                       collapsed: true,
                       items: [
                         {
-                          text: 'Muice',
-                          link: '/di/notes/work/next/muice'
-                        },
-                        {
                           text: 'Pacing',
                           link: '/di/notes/work/next/pacing'
                         },
                         {
-                          text: 'Simplicity',
-                          link: '/di/notes/work/next/simplicity'
+                          text: 'Punch List',
+                          link: '/di/notes/work/next/punch list'
+                        },
+                        {
+                          text: 'Roots',
+                          link: '/di/notes/work/next/roots'
+                        },
+                        {
+                          text: 'Separators',
+                          link: '/di/notes/work/next/separators'
                         }
                       ]
                     }
@@ -551,6 +579,10 @@ export default defineConfig({
                     {
                       text: 'Motive',
                       link: '/notes/guides/philosophy/motive'
+                    },
+                    {
+                      text: 'Simplicity',
+                      link: '/notes/guides/philosophy/simplicity'
                     }
                   ]
                 },
