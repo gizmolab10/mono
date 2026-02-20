@@ -4,7 +4,7 @@ Task-specific checkpoints. BEFORE the task, read the guide.
 
 | Task | Gate |
 |------|------|
-| Refactoring (remove/rename symbols) | Read workflow.md#refactoring-discipline, then STOP/SEARCH/LIST/WAIT |
+| Refactoring (remove/rename symbols) | Read chat.md#refactoring-discipline, then STOP/SEARCH/LIST/WAIT |
 | Writing prose for guides | Read voice.md |
 | Updating journal | Read journals.md |
 | Creating new md files | Read markdown.md |

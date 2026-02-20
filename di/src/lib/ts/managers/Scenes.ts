@@ -1,4 +1,5 @@
 import type { Compact_Attribute, Portable_Attribute, Portable_Axis } from '../types/Interfaces';
+import { standard_dimensions, type StandardDimensionEntry } from '../algebra/Standard_Dimensions';
 import default_scene from '../../../assets/drawer.di?raw';
 import { preferences, T_Preference } from './Preferences';
 import type { Axis_Name, Bound } from '../types/Types';
@@ -15,7 +16,7 @@ import { hits_3d } from './Hits_3D';
  * Uses Preferences for the actual localStorage read/write.
  */
 
-const CURRENT_VERSION = '4';
+const CURRENT_VERSION = '5';
 
 export interface Portable_SO {
 	rotation_lock?: number;            // rotation axis: 0=x, 1=y, 2=z (default 0)
@@ -30,6 +31,7 @@ export interface Portable_SO {
 export interface Portable_Scene {
   camera: { eye: number[]; center: number[]; up: number[] };
   smart_objects: Portable_SO[];
+  standard_dimensions?: StandardDimensionEntry[];
   selected_face?: number;
   selected_id?: string;
   root_id: string;
@@ -64,15 +66,31 @@ class Scenes {
 
 	load(): Portable_Scene | null {
 		const saved = preferences.read<Portable_Scene>(T_Preference.scene);
-		if (saved) return this.migrate(saved);
+		if (saved) {
+			const migrated = this.migrate(saved);
+			this.restore_standard_dimensions(migrated);
+			return migrated;
+		}
 		// Fall back to bundled default scene
 		try {
 			const parsed = JSON.parse(default_scene);
 			const validated = this.validate_import(parsed);
 			if (!validated) return null;
-			return this.migrate(validated.scene);
+			const migrated = this.migrate(validated.scene);
+			this.restore_standard_dimensions(migrated);
+			return migrated;
 		} catch {
 			return null;
+		}
+	}
+
+	/** Restore standard dimensions from scene data into the global SD store.
+	 *  Always clears first — no field means no SDs. */
+	private restore_standard_dimensions(scene_data: Portable_Scene): void {
+		standard_dimensions.clear();
+		if (!scene_data.standard_dimensions?.length) return;
+		for (const entry of scene_data.standard_dimensions) {
+			if (entry.name) standard_dimensions.set(entry.name, entry.value_mm);
 		}
 	}
 
@@ -85,8 +103,10 @@ class Scenes {
 			};
 		});
 		const sel = hits_3d.selection;
+		const sds = standard_dimensions.get_all();
 		const data: Portable_Scene = {
 			smart_objects: objects,
+			standard_dimensions: sds.length ? sds : undefined,
 			camera: camera.serialize(),
 			root_id: this.root_id,
 			selected_id: sel?.so.id,

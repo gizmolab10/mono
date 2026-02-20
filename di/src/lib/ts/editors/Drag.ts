@@ -113,8 +113,9 @@ class Drag {
 	rotate_object(_obj: O_Scene, prev: Point, curr: Point, alt_key = false): void {
 		const sel = hits_3d.selection;
 
-		// No face selected → free rotation (root tumble via store)
-		if (!sel || sel.type !== T_Hit_3D.face) {
+		// No alt key → always tumble root (free rotation via store)
+		// Alt key but no face selected → also tumble root
+		if (!alt_key || !sel || sel.type !== T_Hit_3D.face) {
 			this._rotation_face = null;
 			const dx = curr.x - prev.x;
 			const dy = curr.y - prev.y;
@@ -130,34 +131,17 @@ class Drag {
 			return;
 		}
 
+		// Alt key + face selected → constrained rotation on the selected face
 		const so = sel.so;
 		const scene = so.scene;
 		if (!scene) return;
 
-		// Determine which face's normal to rotate around
-		let face_normal_local: vec3;   // in the OWNING SO's local space
-		let rotation_axis: Axis_Name;  // which axis to apply rotation on
-		let rotation_target: Smart_Object;
-		let normal_scene: O_Scene;     // scene whose world matrix maps face_normal_local → world
-
-		if (alt_key && scene.parent) {
-			// Option key: rotate around parent's most front-facing face normal
-			const parent_so = scene.parent.so;
-			const parent_front = hits_3d.front_most_face(parent_so);
-			if (parent_front < 0) return;
-			face_normal_local = parent_so.face_normal(parent_front);
-			rotation_axis = parent_so.face_fixed_axis(parent_front);
-			rotation_target = so;
-			normal_scene = scene.parent;
-			this._rotation_face = { scene: scene.parent, face_index: parent_front };
-		} else {
-			// Normal: rotate around selected face's normal
-			face_normal_local = so.face_normal(sel.index);
-			rotation_axis = so.face_fixed_axis(sel.index);
-			rotation_target = so;
-			normal_scene = scene;
-			this._rotation_face = { scene, face_index: sel.index };
-		}
+		// Rotate around selected face's normal
+		const face_normal_local: vec3 = so.face_normal(sel.index);
+		const rotation_axis: Axis_Name = so.face_fixed_axis(sel.index);
+		const rotation_target: Smart_Object = so;
+		const normal_scene: O_Scene = scene;
+		this._rotation_face = { scene, face_index: sel.index };
 
 		// Face normal in world space for screen projection and camera direction check
 		const world_matrix = this.get_world_matrix(normal_scene);

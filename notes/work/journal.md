@@ -4,6 +4,21 @@
 
 ---
 
+**February 18-19, 2026** (di) **Milestone 17** — SO Library. Library panel in details: bundled defaults via glob import, user-created files in IndexedDB. Click loads, option-click inserts as child. Save writes IDB + downloads backup file. Reorganized details UX — unified slot padding, disabled cells use accent color, moved add-child to far right, moved show/hide back to name-row. Reset preferences button (clears localStorage except scene/library). (mo) Guide reorganization — absorbed `simplicity.md` into `workflow.md` and `motive.md`, moved co discipline rules (approval gate, implementation, debugging, refactoring, file ops) from `workflow.md` to `chat.md`, moved origin story and philosophy to `motive.md`. Updated cross-references in `gates.md` and `kinds.of.tasks.md`.
+
+
+**February 15-17, 2026** (di) **Milestone 16** — Formulas. Alias resolution (`x` → `x_min`, `w` → width), bare attributes reference self, dot-prefix references parent (`.x`), cross-SO references (`A.x`). Empty formula defaults to `parent.attribute + value`. Invariant attributes derive from other two in axis (`x = X - w`). Fixed compound imperial parsing (`1 1/2"`), value display, invariant persistence bugs. Simplified serialization encoding. Improved slider UX.
+
+
+**February 14, 2026** (di) **Milestone 15** — Attributes. Nine-row attribute table (x, X, w, y, Y, h, z, Z, d) with formula and value columns. Three-row orientation table (axis angles). New `Axis` class. File encoding v3. Invariant column and locked rotation. Major cleanup — simplified encoding/storage, removed cruft. Details cosmetic tweaks, enumerations for T_Details and T_Layers.
+
+
+**February 11-13, 2026** (di) **Milestone 14** — Details and editing polish. Segmented control for face selection. Rotation confined to single axis, composited quaternions. Pixel-perfect canvas editing — 2D snap, rotation snap, face labels, improved dimensional occlusion. Better 2D mode.
+
+
+**February 9-10, 2026** (di) Import/export. Accent color picker. Better selection UX — drag corners/edges and rotate working well. Improved 2D mode, simplified Coordinates.
+
+
 **February 8, 2026** (di) Face intersection lines — compute dihedral intersection for SO pairs that don't share axes. Cross product for line direction, Cyrus-Beck clipping for endpoints. Cruft cleanup — converted singleton functions to singleton classes, fixed mixed bugs. (mo) Distilled learn.md — 10 raw entries cleared, 3 new pitfalls added (observe before speculating, no abbreviations in code, "here" means chat output).
 
 

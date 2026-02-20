@@ -8,8 +8,8 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 609.5999999999999,
-            "length": 609.5999999999999,
+            "extent": 863.5999999999999,
+            "length": 863.5999999999999,
             "angle": 0
           },
           "invariant": 1
@@ -26,8 +26,8 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 469.9,
-            "length": 469.9,
+            "extent": 469.8999999999999,
+            "length": 469.8999999999999,
             "angle": 0
           },
           "invariant": 1
@@ -40,8 +40,10 @@
         "name": "top drawer",
         "x": {
           "attributes": {
-            "origin": 0,
-            "extent": -609.5999999999999,
+            "origin": {
+              "formula": ".x"
+            },
+            "extent": -863.5999999999999,
             "length": {
               "formula": ".w"
             },
@@ -51,7 +53,9 @@
         },
         "y": {
           "attributes": {
-            "origin": 0,
+            "origin": {
+              "formula": ".y"
+            },
             "extent": -660.4,
             "length": {
               "formula": ".d"
@@ -65,7 +69,7 @@
             "origin": {
               "formula": ".h-h"
             },
-            "extent": -469.9,
+            "extent": -469.8999999999999,
             "length": 152.39999999999998,
             "angle": 0
           },
@@ -118,7 +122,7 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 609.5999999999999,
+            "extent": 863.5999999999999,
             "length": {
               "formula": ".w"
             },
@@ -138,7 +142,7 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 469.9,
+            "extent": 469.8999999999999,
             "length": {
               "formula": ".h"
             },
@@ -154,7 +158,7 @@
         "name": "right",
         "x": {
           "attributes": {
-            "origin": 565.15,
+            "origin": 819.15,
             "extent": {
               "formula": ".w-1\""
             },
@@ -194,7 +198,7 @@
         "x": {
           "attributes": {
             "origin": 19.049999999999997,
-            "extent": 577.8499999999999,
+            "extent": 831.8499999999999,
             "length": {
               "formula": ".w - 2\""
             },
@@ -233,7 +237,7 @@
         "x": {
           "attributes": {
             "origin": 25.4,
-            "extent": 571.4999999999999,
+            "extent": 825.4999999999999,
             "length": {
               "formula": ".w-2 1/2\""
             },
@@ -255,7 +259,7 @@
         "z": {
           "attributes": {
             "origin": 25.4,
-            "extent": 355.59999999999997,
+            "extent": 355.5999999999999,
             "length": 12.699999999999989,
             "angle": 0
           },
@@ -269,8 +273,10 @@
         "name": "bottom drawer",
         "x": {
           "attributes": {
-            "origin": 0,
-            "extent": -609.5999999999999,
+            "origin": {
+              "formula": ".x"
+            },
+            "extent": -863.5999999999999,
             "length": {
               "formula": ".w"
             },
@@ -280,7 +286,9 @@
         },
         "y": {
           "attributes": {
-            "origin": 0,
+            "origin": {
+              "formula": ".y"
+            },
             "extent": -660.4,
             "length": {
               "formula": ".d"
@@ -291,8 +299,10 @@
         },
         "z": {
           "attributes": {
-            "origin": 0,
-            "extent": -622.3,
+            "origin": {
+              "formula": ".z"
+            },
+            "extent": -622.2999999999998,
             "length": 317.5,
             "angle": 0
           },
@@ -345,7 +355,7 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 609.5999999999999,
+            "extent": 863.5999999999999,
             "length": {
               "formula": ".w"
             },
@@ -365,7 +375,7 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 622.3,
+            "extent": 622.2999999999998,
             "length": {
               "formula": ".h"
             },
@@ -381,7 +391,7 @@
         "name": "right",
         "x": {
           "attributes": {
-            "origin": 565.15,
+            "origin": 819.15,
             "extent": {
               "formula": ".w-1\""
             },
@@ -421,7 +431,7 @@
         "x": {
           "attributes": {
             "origin": 19.049999999999997,
-            "extent": 577.8499999999999,
+            "extent": 831.8499999999999,
             "length": {
               "formula": ".w - 2\""
             },
@@ -460,7 +470,7 @@
         "x": {
           "attributes": {
             "origin": 25.4,
-            "extent": 571.4999999999999,
+            "extent": 825.4999999999999,
             "length": {
               "formula": ".w-2 1/2\""
             },
@@ -482,7 +492,7 @@
         "z": {
           "attributes": {
             "origin": 25.4,
-            "extent": 342.8999999999999,
+            "extent": 342.8999999999998,
             "length": 12.699999999999967,
             "angle": 0
           },

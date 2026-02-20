@@ -119,3 +119,8 @@
 - [x] remove "design intuition" from controls
 - [x] "reset preferences" button
 - [x] delete -> delete selected AND its entire subtree of SO
+- [x] default accent color -> glow too faint
+- [x] integrate [[simplicity]] -> [[workflow]]
+- [x] [[17.library]]
+- [x] get claude vscode == plugin
+

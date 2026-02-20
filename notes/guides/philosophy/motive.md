@@ -1,45 +1,4 @@
-# Motivation for Collaboration Workflow Design
-
-Reflections on why this workflow works and how it differs from typical AI interactions.
-
-## Why This Works
-
-This workflow is a good use of AI capabilities.
-
-**What's working:**
-- Guides encode decisions once, Claude applies them forever — no re-explaining, no drift
-- Work tracking survives sessions — read the file, know exactly where we are
-- "Execute without asking" removes friction — trust Claude to act, course-correct when needed
-- Documentation is dual-purpose — helps future-you *and* brings Claude up to speed instantly
-- Bulk consistency — Claude fixes all path references when you restructure
-- Pattern application — milestone template → actual milestone files
-- Drafting content you can massage rather than starting from blank
-
-**What you're still doing:**
-- Taste. You know when something's "too gappy" — Claude doesn't feel that, just follows rules once you articulate them.
-- Creative direction. Origin story, milestone names, what matters — that's yours.
-- Judgment calls. When to deviate from the template, when to restructure.
-
-**The result:** Most AI interactions are one-off Q&A. This is collaborative project work with accumulated context. That's a different game.
-
-## Is This Approach Common?
-
-Not really. Individual pieces exist:
-
-- **Custom instructions / system prompts** — common, but usually static personality tweaks, not project-specific bootstrapping
-- **README-driven development** — some people include AI context in READMEs, but usually for one-off use
-- **Cursor/Copilot rules files** — `.cursorrules`, similar idea but more focused on code style than workflow
-- **Claude Projects** — Anthropic's feature encourages persistent instructions, but most people use it for persona, not this level of structure
-
-What's less common:
-- The guides-as-accumulated-wisdom pattern (gotchas.md, debugging.md evolving from actual pain)
-- Work tracking that explicitly survives sessions with resume points
-- The "massage it, then tell Claude the pattern" loop for template discovery
-- Treating documentation as *shared context* rather than just human reference
-
-This feels more like pair programming methodology than prompt engineering. An institutional memory system that happens to include an AI.
-
-The pieces are obvious in hindsight, but rarely assembled this way.
+# Motive
 
 ## The Philosophy Underneath
 
@@ -55,8 +14,32 @@ Documentation has two audiences: me, a lot later and rather forgetful, and AI th
 
 Work tracking is the other side of the coin. Focus, details, decisions. Later, read the file, know exactly where we are. My brain feels better just saying this.
 
+### Small, composable pieces
+
+Files stay focused. It might be a class, it might be a concern. When something grows too big, split it. And, jeez, the fewer the better. Shrink, evaporate, snip. Some lessons are universal — they get promoted to shared.
+
 ### Friction into feature
 
 We describe our process, too. Like, "ugh, this thing is badly broken." Pause and scratch noggin. Often enough something cool settles into play.
 
 Patterns come from pain — why else remember them?
+
+## How It Started
+
+My first uses for AI were one-off: gee, how do you do such-and-such? I'd take the advice, often asking for more. Over time, I noticed I was asking the same things repeatedly because I wouldn't remember the answers. So I started asking AI to write concise descriptions of what we did together, in markdown.
+
+The pile grew unmanageable. I asked AI to help: find redundancies, tighten the writing, make it easy to use. What I have now: clean separation of purpose.
+
+Then I asked if these markdown files could be published as a static website. BOOM — up-to-date documentation, something I have NEVER before encountered. And more: a shared context that lets AI pick up exactly where we left off.
+
+## Why This Works
+
+Guides encode decisions once — no re-explaining, no drift. Work tracking survives sessions. Documentation is dual-purpose: helps future-me *and* brings co up to speed instantly. Most AI interactions are one-off Q&A. This is collaborative project work with accumulated context. A different game.
+
+What i still own: taste, creative direction, judgment calls. Co doesn't feel when something's "too gappy" — co follows rules once i articulate them.
+
+## Is This Approach Common?
+
+Not really. Custom instructions, `.cursorrules`, Claude Projects — similar pieces exist, but usually static personality tweaks or code style, not project-specific workflow with accumulated wisdom. What's less common: guides that evolve from actual pain, work tracking with resume points, treating documentation as shared context rather than just human reference.
+
+This feels more like pair programming methodology than prompt engineering. An institutional memory system that happens to include an AI.

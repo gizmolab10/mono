@@ -178,6 +178,9 @@ class Engine {
       drag.scale(delta, fine);
     });
 
+    // Signal that setup is complete (syncs reactive UI like SD table)
+    stores.tick();
+
     // Render loop
     animation.on_tick(() => {
       this.tick_snap_animation();

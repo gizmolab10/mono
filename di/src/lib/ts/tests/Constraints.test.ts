@@ -53,7 +53,7 @@ describe('formula on Attribute', () => {
 		expect(door.y_max).toBeCloseTo(2286);
 	});
 
-	it('stores formula text on attribute', () => {
+	it('stores formula tokens on attribute', () => {
 		const wall = add_so('wall', { y_max: 2438.4 });
 		const door = add_so('door');
 
@@ -61,7 +61,7 @@ describe('formula on Attribute', () => {
 		constraints.set_formula(door, 'y_max', formula);
 
 		const attr = door.attributes_dict_byName['y_max'];
-		expect(attr.formula).toBe(formula);
+		expect(attr.formula_display).toBe(`${ref(wall, 'y_max')}-6"`);
 		expect(attr.has_formula).toBe(true);
 	});
 
@@ -163,16 +163,17 @@ describe('propagation', () => {
 
 describe('serialize/deserialize formulas', () => {
 
-	it('serializes formula strings', () => {
+	it('serializes formula strings (untokenized)', () => {
 		const wall = add_so('wall', { y_max: 2438.4 });
 		const door = add_so('door');
 
 		const formula = `${ref(wall, 'y_max')} - 6"`;
+		const untokenized = `${ref(wall, 'y_max')}-6"`;
 		constraints.set_formula(door, 'y_max', formula);
 
 		const data = door.serialize();
 		const extent = data.y.attributes.extent;
-		expect(typeof extent === 'object' && extent.formula).toBe(formula);
+		expect(typeof extent === 'object' && extent.formula).toBe(untokenized);
 	});
 
 	it('simple attributes serialize as plain numbers', () => {
@@ -198,7 +199,7 @@ describe('serialize/deserialize formulas', () => {
 		const so = Smart_Object.deserialize(data);
 		const attr = so.attributes_dict_byName['y_max'];
 
-		expect(attr.formula).toBe('wall.y_max - 6"');
+		expect(attr.formula_display).toBe('wall.y_max-6"');
 		expect(attr.compiled).not.toBeNull();
 		expect(attr.compiled!.type).toBe('binary');
 	});
@@ -208,12 +209,13 @@ describe('serialize/deserialize formulas', () => {
 		const door = add_so('door');
 
 		const formula = `${ref(wall, 'y_max')} - 6"`;
+		const untokenized = `${ref(wall, 'y_max')}-6"`;
 		constraints.set_formula(door, 'y_max', formula);
 		const data = door.serialize();
 
-		// Formula pre-empts value: only formula is serialized
+		// Formula pre-empts value: only formula is serialized (untokenized string)
 		const extent = data.y.attributes.extent;
-		expect(typeof extent === 'object' && extent.formula).toBe(formula);
+		expect(typeof extent === 'object' && extent.formula).toBe(untokenized);
 		expect(typeof extent === 'object' && extent.value).toBeUndefined();
 
 		const restored = Smart_Object.deserialize(data);
@@ -221,7 +223,7 @@ describe('serialize/deserialize formulas', () => {
 		constraints.propagate_all();
 		const attr = restored.attributes_dict_byName['y_max'];
 
-		expect(attr.formula).toBe(formula);
+		expect(attr.formula_display).toBe(untokenized);
 		expect(attr.compiled).not.toBeNull();
 		expect(attr.value).toBeCloseTo(2286);
 	});

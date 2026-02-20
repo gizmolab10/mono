@@ -13,5 +13,5 @@ Task types and which guides to read before starting. Collaborator will declare o
 | prose | voice.md | first person, casual, punchy | docs wants structure; prose wants flow — favor flow, add structure only if needed |
 | journal | journals.md | chronological, bold dates | tidy removes clutter; journal preserves history — don't tidy the journal |
 | tidy | workflow.md#tidying-up | reduce duplication, find homes | |
-| implement | workflow.md#implementation-discipline | quote plan, one change at a time | |
+| implement | chat.md#implementation-discipline | quote plan, one change at a time | |
 | multi-file | chat.md | search ALL files first, list scope | |

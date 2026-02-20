@@ -1,9 +1,10 @@
 import type { Compact_Attribute } from './Interfaces';
 import type { Node } from '../algebra';
-import { compiler } from '../algebra';
+import type { Token } from '../algebra';
+import { compiler, tokenizer } from '../algebra';
 
 export default class Attribute {
-	formula: string | null = null;
+	formula: Token[] | null = null;
 	compiled: Node | null = null;
 	value: number;
 	name: string;
@@ -15,8 +16,13 @@ export default class Attribute {
 
 	get has_formula(): boolean { return this.formula !== null; }
 
+	/** Display string: untokenize the stored tokens. */
+	get formula_display(): string | null {
+		return this.formula ? tokenizer.untokenize(this.formula) : null;
+	}
+
 	serialize(): Compact_Attribute {
-		if (this.formula) return { formula: this.formula };
+		if (this.formula) return { formula: tokenizer.untokenize(this.formula) };
 		return this.value;
 	}
 
@@ -26,7 +32,7 @@ export default class Attribute {
 			return;
 		}
 		if (data.formula) {
-			this.formula = data.formula;
+			this.formula = tokenizer.tokenize(data.formula);
 			this.value = 0;
 			try { this.compiled = compiler.compile(data.formula); } catch { /* skip */ }
 		} else {

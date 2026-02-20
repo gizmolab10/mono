@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/guides/philosophy/simplicity.md",
+                "file": "di/notes/work/milestones/18.constants <--.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "simplicity"
+              "title": "18.constants <--"
             }
           },
           {
@@ -69,12 +69,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/18.constants.md",
+                "file": "notes/work/journal.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "18.constants"
+              "title": "journal"
             }
           }
         ],
@@ -244,40 +244,41 @@
   "active": "bf8919592ee87a19",
   "lastOpenFiles": [
     "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/milestones/17.library.md",
     "di/notes/work/code.debt.md",
-    "di/src/assets/empty cabinet.di",
-    "di/notes/work/milestones/18.constants.md",
+    "di/notes/work/milestones/18.constants <--.md",
+    "notes/guides/pre-flight/gates.md",
+    "notes/guides/jonathan.md",
+    "di/notes/work/Agent Skills.md",
+    "notes/guides/pre-flight/keywords.md",
+    "notes/guides/pre-flight/shorthand.md",
+    "notes/guides/pre-flight/always.md",
+    "CLAUDE.MD",
     "di/notes/work/more milestones.md",
+    "di/src/lib/ts/algebra/Standard_Dimensions.ts",
+    "di/src/lib/svelte/details/D_Standard_Dimensions.svelte",
+    "di/notes/work/next/pacing.md",
+    "notes/work/journal.md",
+    "logs/update-docs.error.di.log",
+    "logs/update-docs.error.ws.log",
+    "logs/update-docs.error.mono.log",
+    "notes/guides/philosophy/motive.md",
+    "notes/guides/collaborate/workflow.md",
+    "notes/guides/philosophy/simplicity.md",
+    "di/src/assets/empty cabinet.di",
     "di/notes/work/milestones/23.hierarchy.md",
     "di/notes/work/milestones/19.cut.lists.md",
     "di/notes/work/milestones/22.marketing.md",
     "di/notes/work/milestones/21.licensing.md",
     "di/notes/work/milestones/20.repeaters.md",
-    "di/notes/work/milestones/17.library.md",
     "di/notes/work/revisit.di.md",
-    "notes/guides/philosophy/simplicity.md",
-    "logs/update-docs.error.di.log",
     "di/notes/architecture/file layout.md",
     "di/notes/work/next/punch list.md",
-    "di/notes/work/next/pacing.md",
     "di/notes/work/next/roots.md",
-    "di/notes/work/bugs.md",
     "di/src/assets/two drawer cabinet.di",
     "di/src/assets/three drawer cabinet.di",
     "di/src/assets/cabinet.di",
-    "notes/guides/pre-flight/always.md",
-    "di/CLAUDE.MD",
-    "CLAUDE.MD",
-    "notes/guides/pre-flight/keywords.md",
-    "notes/guides/pre-flight/shorthand.md",
-    "ws/notes/work/deliverables.md",
     "di/src/assets/drawer.di",
-    "di/notes/work/versions.md",
-    "di/notes/architecture/core/versions.md",
-    "logs/update-docs.error.mono.log",
-    "di/src/lib/ts/algebra/Constraints.ts.tmp.35175.1771277152795",
-    "di/src/assets/A.di",
-    "di/notes/architecture/graph",
     "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
     "Screenshot 2026-02-14 at 12.12.38 PM.png",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",

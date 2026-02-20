@@ -7,3 +7,5 @@ export { evaluator } from './Evaluator';
 export type { Resolver, Writer, FormulaMap } from './Evaluator';
 export { constraints } from './Constraints';
 export { orientation } from './Orientation';
+export { standard_dimensions, STANDARD_DIMENSIONS_ID } from './Standard_Dimensions';
+export type { StandardDimensionEntry } from './Standard_Dimensions';

@@ -2,6 +2,8 @@ import type Smart_Object from '../runtime/Smart_Object';
 import type { Bound } from '../types/Types';
 import type { FormulaMap } from './Evaluator';
 
+import { standard_dimensions, STANDARD_DIMENSIONS_ID } from './Standard_Dimensions';
+import { tokenizer } from './Tokenizer';
 import { evaluator } from './Evaluator';
 import { scene } from '../render/Scene';
 import { compiler } from './Compiler';
@@ -67,6 +69,8 @@ class Constraints {
 	 *  Handles both internal names (x_min) and customer aliases (x, w, etc).
 	 *  Always reads stored value — invariance of the referenced SO is irrelevant. */
 	resolve(id: string, attribute: string): number {
+		if (id === STANDARD_DIMENSIONS_ID) return standard_dimensions.get(attribute);
+
 		const so = this.find_so(id);
 		if (!so) return 0;
 
@@ -101,12 +105,15 @@ class Constraints {
 	// ── formula expansion ──
 
 	/** Resolve placeholder references in the AST:
-	 *  '' (dot-prefix .x) → parent_id, 'self' (bare x) → self_id. */
+	 *  '' (dot-prefix .x) → parent_id, 'self' (bare x) → self_id or $std. */
 	private bind_refs(node: Node, self_id: string, parent_id?: string): Node {
 		switch (node.type) {
 			case 'literal': return node;
 			case 'reference':
-				if (node.object === 'self') return nodes.reference(self_id, node.attribute);
+				if (node.object === 'self') {
+					if (standard_dimensions.has(node.attribute)) return nodes.reference(STANDARD_DIMENSIONS_ID, node.attribute);
+					return nodes.reference(self_id, node.attribute);
+				}
 				if (node.object === '' && parent_id) return nodes.reference(parent_id, node.attribute);
 				return node;
 			case 'unary':
@@ -190,7 +197,7 @@ class Constraints {
 			return `Cycle detected: ${cycle.join(' → ')}`;
 		}
 
-		attr.formula = formula;
+		attr.formula = tokenizer.tokenize(formula);
 		attr.compiled = compiled;
 
 		// Evaluate immediately
@@ -336,6 +343,29 @@ class Constraints {
 			case 'reference': return node.object === so_id;
 			case 'unary': return this.formula_references(node.operand, so_id);
 			case 'binary': return this.formula_references(node.left, so_id) || this.formula_references(node.right, so_id);
+		}
+	}
+
+	/** Rename a standard dimension across all formulas in the scene.
+	 *  Updates both stored tokens and compiled AST nodes. */
+	rename_sd_in_formulas(old_name: string, new_name: string): void {
+		const all_objects = scene.get_all();
+		for (const o of all_objects) {
+			for (const attr of Object.values(o.so.attributes_dict_byName)) {
+				if (!attr.formula) continue;
+				// Rename in stored tokens (bare references: object = 'self')
+				const changed = tokenizer.rename_reference(attr.formula, 'self', old_name, new_name);
+				if (changed) {
+					// Recompile from updated tokens
+					const source = tokenizer.untokenize(attr.formula);
+					try {
+						let compiled = compiler.compile(source);
+						const parent_id = o.parent?.so.id;
+						compiled = this.bind_refs(compiled, o.so.id, parent_id);
+						attr.compiled = compiled;
+					} catch { /* skip — formula might be temporarily invalid */ }
+				}
+			}
 		}
 	}
 }

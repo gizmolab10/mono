@@ -10,19 +10,19 @@ describe('Tokenizer', () => {
 
 	it('tokenizes bare numbers', () => {
 		const tokens = tokenizer.tokenize('42');
-		expect(tokens[0]).toEqual({ type: 'bare_number', value: 42 });
+		expect(tokens[0]).toEqual({ type: 'bare_number', value: 42, source: '42' });
 	});
 
 	it('tokenizes decimals', () => {
 		const tokens = tokenizer.tokenize('3.5');
-		expect(tokens[0]).toEqual({ type: 'bare_number', value: 3.5 });
+		expect(tokens[0]).toEqual({ type: 'bare_number', value: 3.5, source: '3.5' });
 	});
 
 	it('tokenizes operators', () => {
 		const tokens = tokenizer.tokenize('1 + 2');
-		expect(tokens[0]).toEqual({ type: 'bare_number', value: 1 });
+		expect(tokens[0]).toEqual({ type: 'bare_number', value: 1, source: '1' });
 		expect(tokens[1]).toEqual({ type: 'operator', value: '+' });
-		expect(tokens[2]).toEqual({ type: 'bare_number', value: 2 });
+		expect(tokens[2]).toEqual({ type: 'bare_number', value: 2, source: '2' });
 	});
 
 	it('tokenizes all four operators', () => {
@@ -92,7 +92,7 @@ describe('Tokenizer', () => {
 		const tokens = tokenizer.tokenize('x * 2');
 		expect(tokens[0]).toEqual({ type: 'reference', object: 'self', attribute: 'x' });
 		expect(tokens[1]).toEqual({ type: 'operator', value: '*' });
-		expect(tokens[2]).toEqual({ type: 'bare_number', value: 2 });
+		expect(tokens[2]).toEqual({ type: 'bare_number', value: 2, source: '2' });
 	});
 
 	it('tokenizes dot-prefixed attribute as parent reference', () => {
@@ -104,7 +104,7 @@ describe('Tokenizer', () => {
 		const tokens = tokenizer.tokenize('.w / 4');
 		expect(tokens[0]).toEqual({ type: 'reference', object: '', attribute: 'w' });
 		expect(tokens[1]).toEqual({ type: 'operator', value: '/' });
-		expect(tokens[2]).toEqual({ type: 'bare_number', value: 4 });
+		expect(tokens[2]).toEqual({ type: 'bare_number', value: 4, source: '4' });
 	});
 
 	it('tokenizes mixed bare (self) and dotted (named SO) references', () => {

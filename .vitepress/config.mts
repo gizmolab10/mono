@@ -306,8 +306,8 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/17.library'
                         },
                         {
-                          text: '18.repeaters',
-                          link: '/di/notes/work/milestones/18.repeaters'
+                          text: '18.constants',
+                          link: '/di/notes/work/milestones/18.constants'
                         },
                         {
                           text: '19.cut.lists',
@@ -318,12 +318,20 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/2.panel'
                         },
                         {
-                          text: '20.licensing',
-                          link: '/di/notes/work/milestones/20.licensing'
+                          text: '20.repeaters',
+                          link: '/di/notes/work/milestones/20.repeaters'
                         },
                         {
-                          text: '21.marketing',
-                          link: '/di/notes/work/milestones/21.marketing'
+                          text: '21.licensing',
+                          link: '/di/notes/work/milestones/21.licensing'
+                        },
+                        {
+                          text: '22.marketing',
+                          link: '/di/notes/work/milestones/22.marketing'
+                        },
+                        {
+                          text: '23.hierarchy',
+                          link: '/di/notes/work/milestones/23.hierarchy'
                         },
                         {
                           text: '3.docs',
@@ -579,10 +587,6 @@ export default defineConfig({
                     {
                       text: 'Motive',
                       link: '/notes/guides/philosophy/motive'
-                    },
-                    {
-                      text: 'Simplicity',
-                      link: '/notes/guides/philosophy/simplicity'
                     }
                   ]
                 },

@@ -8,7 +8,7 @@ import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
 import { stores } from './Stores';
 import { camera } from '../render/Camera';
-import { mat4, vec3, vec4 } from 'gl-matrix';
+import { mat4, quat, vec3, vec4 } from 'gl-matrix';
 
 export interface Hit_3D_Result {
 	so: Smart_Object;
@@ -76,17 +76,15 @@ class Hits_3D {
 		this.check_face_flip(scene_id, projected);
 	}
 
-	private check_face_flip(scene_id: string, projected: Projected[]): void {
+	private check_face_flip(scene_id: string, _projected: Projected[]): void {
 		const sel = this.selection;
 		if (!sel || sel.type !== T_Hit_3D.face || !sel.so.scene?.faces) return;
 		if (sel.so.scene.id !== scene_id) return;
 
-		if (this.facing_front(sel.so.scene.faces[sel.index], projected) < 0) return;
-
-		// Switch to opposite face (paired: 0↔1 bottom/top, 2↔3 left/right, 4↔5 front/back)
-		const opp = sel.index ^ 1;
-		if (opp < sel.so.scene.faces.length && this.facing_front(sel.so.scene.faces[opp], projected) < 0) {
-			this.set_selection({ so: sel.so, type: T_Hit_3D.face, index: opp });
+		// Always track most front-facing face (6 quat transforms, scratch buffers, no allocs)
+		const best = this.front_most_face(sel.so);
+		if (best >= 0 && best !== sel.index) {
+			this.set_selection({ so: sel.so, type: T_Hit_3D.face, index: best });
 		}
 	}
 
@@ -167,21 +165,34 @@ class Hits_3D {
 		return face_index === -1 ? null : { so: hit.so, type: T_Hit_3D.face, index: face_index };
 	}
 
+	// Scratch allocations for front_most_face (avoid per-frame GC pressure)
+	private readonly _scratch_quat = quat.create();
+	private readonly _scratch_vec = vec3.create();
+
 	// Find the most front-facing face for a given SO (normal most aligned with camera)
 	front_most_face(so: Smart_Object): number {
 		if (!so.scene?.faces) return -1;
 		const projected = this.cache.get(so.scene.id)?.projected;
 		if (!projected) return -1;
-		// Root: tumble from store. Child: so.orientation getter.
-		const orientation = so.scene.parent ? so.orientation : stores.current_orientation();
+		// Compose full orientation: child's own rotation × all ancestor rotations up to root tumble
+		const orientation = this.effective_orientation(so, this._scratch_quat);
 		let best = -1, best_z = -Infinity;
 		for (let i = 0; i < so.scene.faces.length; i++) {
 			// Only consider faces that are front-facing (negative winding)
 			if (this.facing_front(so.scene.faces[i], projected) >= 0) continue;
-			const wn = vec3.transformQuat(vec3.create(), so.face_normal(i), orientation);
-			if (wn[2] > best_z) { best_z = wn[2]; best = i; }
+			vec3.transformQuat(this._scratch_vec, so.face_normal(i), orientation);
+			if (this._scratch_vec[2] > best_z) { best_z = this._scratch_vec[2]; best = i; }
 		}
 		return best;
+	}
+
+	/** Compose effective orientation into `out`: walk up parent chain, composing each SO's
+	 *  orientation, with root tumble (from store) at the top. */
+	private effective_orientation(so: Smart_Object, out: quat): quat {
+		if (!so.scene?.parent) return stores.current_orientation();
+		const parent_orient = this.effective_orientation(so.scene.parent.so, out);
+		quat.multiply(out, parent_orient, so.orientation);
+		return out;
 	}
 
 	// ===== Hit tests =====

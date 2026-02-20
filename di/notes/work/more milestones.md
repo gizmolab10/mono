@@ -2,8 +2,7 @@
 
 Read the first unchecked item and propose.
 
-- [ ] [[17.library]]
-- [ ] [[18.constants]]
+- [ ] [[18.constants <--]]
 - [ ] [[19.cut.lists]]
 - [ ] [[20.repeaters]]
 - [ ] [[21.licensing]]

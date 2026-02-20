@@ -182,3 +182,83 @@ Use yarn, not npm. When giving commands or examples, always use yarn equivalents
 ### Paths and Locations
 
 Always specify the working directory when referencing files. Use paths relative to `~/GitHub` (e.g., `mono/notes/guides/chat.md` not the full path).
+
+## Discipline
+
+### Approval Gate
+
+When Jonathan says "y" (or similar approval), collaborator must **output the verification step before any action**:
+
+| Task type | Output before acting |
+|-----------|---------------------|
+| Refactoring/migration | grep results + full file list |
+| Implementation | Quote the relevant plan section |
+| Debugging | State hypotheses being tested |
+
+The output is the gate. Jonathan sees it. If it's missing or thin, the step was skipped.
+
+**Why this exists:** Knowing the discipline isn't enough. The gap between knowledge and execution is where failures happen. This gate makes the verification visible—skipping it becomes obvious immediately, not after the build breaks.
+
+### Implementation Discipline
+
+Before writing code:
+
+1. **Quote the plan.** If there's a work doc or migration plan, QUOTE the relevant section in your response before writing any code. This proves you read it.
+
+2. **Re-read before editing.** See File Freshness above.
+
+3. **One change at a time.** Make one fix, test it, then move on. Don't stack multiple speculative changes.
+
+4. **Say "let me re-read" out loud.** If you're about to implement something from a plan, say "Let me re-read [file]" and actually do it. This is a forcing function.
+
+**When working on a migration or multi-phase plan:**
+- State which phase you're in
+- Quote what the plan says to do for that phase
+- Do exactly that, nothing more
+- Don't take shortcuts that "should work" — follow the plan
+
+**The trap:** Optimizing for appearing helpful by producing code quickly. The fix: slow down, verify, quote sources.
+
+**"relearn"** — Stop. Re-read CLAUDE.MD, `notes/guides/collaborate/*.md`, and the active work doc. Quote the relevant section before continuing.
+
+### Debugging Discipline
+
+See [debugging.md](../test/debugging.md) for the full guide.
+
+**Key principles:**
+
+1. **Verify source first** — check where it comes from before assuming usage is wrong
+2. **Be systematic** — form multiple hypotheses, test the complete pipeline
+
+**Anti-patterns:**
+- Scattering `console.log` everywhere hoping to spot something
+- Jumping to assumptions instead of testing hypotheses
+- Making multiple speculative fixes at once
+
+### Refactoring Discipline
+
+See [refactoring.md](../develop/refactoring.md) for the full guide with examples.
+
+**MANDATORY.** Before ANY change that removes, renames, or changes the signature of functions, properties, stores, imports, or type definitions:
+
+#### The Rule: Search FIRST, Change NEVER Until Scope Is Known
+
+1. **STOP.** Do not write any code yet.
+2. **SEARCH.** Run grep/find for ALL usages.
+3. **LIST.** Present EVERY file that needs changes.
+4. **WAIT.** Get user acknowledgment of scope.
+5. **CHANGE ALL.** Update every file in one pass.
+6. **THEN TEST.**
+
+#### Enforcement
+
+If collaborator produces a fix and user reports "still broken" or "new error in different file":
+- This is a REFACTORING DISCIPLINE FAILURE
+- Collaborator must STOP, apologize, and run the search that should have happened first
+- Do not make another point fix
+
+### File Operations
+
+**Rename with `mv`, then search.** On rename or move: use `mv old new`, then search for all references (index.md, CLAUDE.MD, imports, links). Update everything in one pass.
+
+**Remove, don't swap.** When removing project-specific content from shared docs, remove entirely — don't replace ws examples with di examples or vice versa.

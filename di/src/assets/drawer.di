@@ -1,5 +1,5 @@
 {
-  "version": "4",
+  "version": "5",
   "scene": {
     "smart_objects": [
       {
@@ -40,19 +40,25 @@
         "name": "left",
         "x": {
           "attributes": {
-            "origin": 12.7,
-            "extent": -1187.45,
-            "length": 19.05,
+            "origin": {
+              "formula": "side_th"
+            },
+            "extent": -1193.8000000000002,
+            "length": {
+              "formula": "side_th"
+            },
             "angle": 0
           },
           "invariant": 1
         },
         "y": {
           "attributes": {
-            "origin": 12.7,
-            "extent": -622.3,
+            "origin": {
+              "formula": "front_th-dado"
+            },
+            "extent": -609.5999999999999,
             "length": {
-              "formula": ".d-1\""
+              "formula": ".d-front_th+dado"
             },
             "angle": 0
           },
@@ -60,10 +66,12 @@
         },
         "z": {
           "attributes": {
-            "origin": 12.7,
-            "extent": -165.1,
+            "origin": {
+              "formula": "inset"
+            },
+            "extent": -158.74999999999997,
             "length": {
-              "formula": ".h-1\""
+              "formula": ".h-inset*2"
             },
             "angle": 0
           },
@@ -114,21 +122,25 @@
         "name": "right",
         "x": {
           "attributes": {
-            "origin": 565.1500000000001,
+            "origin": 584.1999999999999,
             "extent": {
-              "formula": ".w-1\""
+              "formula": ".w-inset*2"
             },
-            "length": 19.049999999999955,
+            "length": {
+              "formula": "side_th"
+            },
             "angle": 0
           },
           "invariant": 0
         },
         "y": {
           "attributes": {
-            "origin": 12.7,
-            "extent": -622.3,
+            "origin": {
+              "formula": "front_th-dado"
+            },
+            "extent": -609.5999999999999,
             "length": {
-              "formula": ".d-1\""
+              "formula": ".d-front_th+dado"
             },
             "angle": 0
           },
@@ -136,10 +148,12 @@
         },
         "z": {
           "attributes": {
-            "origin": 12.7,
-            "extent": -165.1,
+            "origin": {
+              "formula": "inset"
+            },
+            "extent": -158.74999999999997,
             "length": {
-              "formula": ".h-1\""
+              "formula": ".h-inset*2"
             },
             "angle": 0
           },
@@ -153,10 +167,12 @@
         "name": "back",
         "x": {
           "attributes": {
-            "origin": 19.049999999999997,
-            "extent": -641.35,
+            "origin": {
+              "formula": "side_th+inset"
+            },
+            "extent": -628.6500000000001,
             "length": {
-              "formula": ".w - 2\""
+              "formula": ".w-(side_th+inset)*2"
             },
             "angle": 0
           },
@@ -164,21 +180,25 @@
         },
         "y": {
           "attributes": {
-            "origin": 577.8499999999999,
+            "origin": 596.9,
             "extent": {
-              "formula": ".d - 1/2\""
+              "formula": ".d"
             },
-            "length": 19.050000000000068,
+            "length": {
+              "formula": "side_th"
+            },
             "angle": 0
           },
           "invariant": 0
         },
         "z": {
           "attributes": {
-            "origin": 12.7,
-            "extent": -165.1,
+            "origin": {
+              "formula": "inset"
+            },
+            "extent": -158.74999999999997,
             "length": {
-              "formula": ".h - 1\""
+              "formula": ".h-inset*2"
             },
             "angle": 0
           },
@@ -192,10 +212,12 @@
         "name": "bottom",
         "x": {
           "attributes": {
-            "origin": 25.4,
-            "extent": -647.7,
+            "origin": {
+              "formula": "side_th+inset"
+            },
+            "extent": -628.6500000000001,
             "length": {
-              "formula": ".w-2 1/2\""
+              "formula": ".w-(side_th+inset)*2"
             },
             "angle": 0
           },
@@ -203,10 +225,12 @@
         },
         "y": {
           "attributes": {
-            "origin": 6.35,
-            "extent": -635,
+            "origin": {
+              "formula": "front_th-dado"
+            },
+            "extent": -615.9499999999999,
             "length": {
-              "formula": ".d-1 1/4\""
+              "formula": ".d-inset*3"
             },
             "angle": 0
           },
@@ -214,15 +238,61 @@
         },
         "z": {
           "attributes": {
-            "origin": 25.4,
-            "extent": -266.69999999999993,
-            "length": 12.699999999999996,
+            "origin": {
+              "formula": "inset*2"
+            },
+            "extent": -285.74999999999994,
+            "length": {
+              "formula": "bottom_th"
+            },
             "angle": 0
           },
           "invariant": 1
         },
         "rotation_lock": 0,
         "parent_id": "dicb460b903642b9"
+      }
+    ],
+    "standard_dimensions": [
+      {
+        "name": "inset",
+        "value_mm": 6.35
+      },
+      {
+        "name": "dado",
+        "value_mm": 6.35
+      },
+      {
+        "name": "top_h",
+        "value_mm": 101.6
+      },
+      {
+        "name": "middle_h",
+        "value_mm": 152.39999999999998
+      },
+      {
+        "name": "bottom_h",
+        "value_mm": 215.89999999999998
+      },
+      {
+        "name": "bottom_Inset",
+        "value_mm": 19.049999999999997
+      },
+      {
+        "name": "side_th",
+        "value_mm": 12.7
+      },
+      {
+        "name": "front_th",
+        "value_mm": 19.049999999999997
+      },
+      {
+        "name": "back_th",
+        "value_mm": 12.7
+      },
+      {
+        "name": "bottom_th",
+        "value_mm": 6.35
       }
     ],
     "camera": {
@@ -242,6 +312,8 @@
         0
       ]
     },
-    "root_id": "dicb460b903642b9"
+    "root_id": "dicb460b903642b9",
+    "selected_id": "di2c4bcd860b5f48",
+    "selected_face": 3
   }
 }

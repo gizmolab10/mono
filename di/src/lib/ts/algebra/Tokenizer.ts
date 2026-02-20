@@ -9,9 +9,9 @@ import { units } from '../types/Units';
 export type Token =
 	| { type: 'reference'; object: string; attribute: string }
 	| { type: 'operator'; value: '+' | '-' | '*' | '/' }
-	| { type: 'bare_number'; value: number }      // no unit suffix — raw numeric
+	| { type: 'bare_number'; value: number; source: string }
 	| { type: 'paren'; value: '(' | ')' }
-	| { type: 'number'; value: number }          // already in mm
+	| { type: 'number'; value: number; source: string }
 	| { type: 'end' };
 
 class Tokenizer {
@@ -159,6 +159,7 @@ class Tokenizer {
 
 			// number (possibly with unit suffix or compound imperial)
 			if ((ch >= '0' && ch <= '9') || ch === '.') {
+				const span_start = pos;
 				const value = read_number();
 				if (isNaN(value)) throw new Error(`Invalid number at position ${pos}`);
 				const unit = try_unit_suffix();
@@ -166,24 +167,24 @@ class Tokenizer {
 					// Try compound: N' [inches part]"
 					const compound_mm = try_compound_feet(value);
 					if (compound_mm !== null) {
-						tokens.push({ type: 'number', value: compound_mm });
+						tokens.push({ type: 'number', value: compound_mm, source: src.slice(span_start, pos) });
 					} else {
-						tokens.push({ type: 'number', value: units.to_mm(value, T_Unit.foot) });
+						tokens.push({ type: 'number', value: units.to_mm(value, T_Unit.foot), source: src.slice(span_start, pos) });
 					}
 				} else if (unit) {
-					tokens.push({ type: 'number', value: units.to_mm(value, unit) });
+					tokens.push({ type: 'number', value: units.to_mm(value, unit), source: src.slice(span_start, pos) });
 				} else {
 					// No unit — try compound inches: N N/D" (e.g. "1 1/2")
 					const compound_mm = try_compound_inches(value);
 					if (compound_mm !== null) {
-						tokens.push({ type: 'number', value: compound_mm });
+						tokens.push({ type: 'number', value: compound_mm, source: src.slice(span_start, pos) });
 					} else {
 						// Try bare fractional inches: N/D" (e.g. "3/4")
 						const frac_mm = try_fractional_inches(value);
 						if (frac_mm !== null) {
-							tokens.push({ type: 'number', value: frac_mm });
+							tokens.push({ type: 'number', value: frac_mm, source: src.slice(span_start, pos) });
 						} else {
-							tokens.push({ type: 'bare_number', value });
+							tokens.push({ type: 'bare_number', value, source: src.slice(span_start, pos) });
 						}
 					}
 				}
@@ -210,6 +211,48 @@ class Tokenizer {
 
 		tokens.push({ type: 'end' });
 		return tokens;
+	}
+
+	/** Rename a reference attribute in a token array. Returns true if any token was changed. */
+	rename_reference(tokens: Token[], object: string, old_attr: string, new_attr: string): boolean {
+		let changed = false;
+		for (const token of tokens) {
+			if (token.type === 'reference' && token.object === object && token.attribute === old_attr) {
+				token.attribute = new_attr;
+				changed = true;
+			}
+		}
+		return changed;
+	}
+
+	/** Reconstruct a formula string from tokens.
+	 *  No spaces between tokens except compound imperial (preserved in source). */
+	untokenize(tokens: Token[]): string {
+		let result = '';
+		for (const token of tokens) {
+			switch (token.type) {
+				case 'number':
+					result += token.source;
+					break;
+				case 'bare_number':
+					result += token.source;
+					break;
+				case 'operator':
+					result += token.value;
+					break;
+				case 'paren':
+					result += token.value;
+					break;
+				case 'reference':
+					if (token.object === '' ) result += '.' + token.attribute;
+					else if (token.object === 'self') result += token.attribute;
+					else result += token.object + '.' + token.attribute;
+					break;
+				case 'end':
+					break;
+			}
+		}
+		return result;
 	}
 }
 

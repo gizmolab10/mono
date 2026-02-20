@@ -4,6 +4,7 @@
 	import D_Selection from './D_Selection.svelte';
 	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
+	import D_Standard_Dimensions from './D_Standard_Dimensions.svelte';
 	import D_Library from './D_Library.svelte';
 	import Hideable from './Hideable.svelte';
 	import { tick, onMount } from 'svelte';
@@ -31,6 +32,10 @@
 
 		<Hideable title='selection' id='selection' detail={T_Details.selection}>
 			<D_Selection />
+		</Hideable>
+
+		<Hideable title='standard dimensions' id='standard-dimensions' detail={T_Details.standard_dimensions}>
+			<D_Standard_Dimensions />
 		</Hideable>
 
 		<Hideable title='library' id='library' detail={T_Details.library}>

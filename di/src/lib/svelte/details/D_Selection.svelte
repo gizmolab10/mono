@@ -25,12 +25,18 @@
 
 	function get_bounds(so: Smart_Object, _tick: number) {
 		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
-		const p = so.scene?.position ?? [0, 0, 0];
 		const inv = (axis_index: number, attr_index: number) => so.axes[axis_index].invariant === attr_index;
+		// For children, show raw attr.value (offset from parent's origin).
+		// For root, show absolute (attr.value is absolute since root has no parent).
+		const val = (bound: string, axis_index: number, attr_index: number) => {
+			// Dimensions (w, d, h) are always absolute
+			if (attr_index === 2) return fmt(so.axes[axis_index].length.value);
+			return fmt(so.attributes_dict_byName[bound]?.value ?? 0);
+		};
 		// Formula for a row: stored formula first, then invariant derivation if marked, else empty
 		const fml = (label: string, bound: string | null, axis_index: number, attr_index: number) => {
 			if (bound) {
-				const stored = so.attributes_dict_byName[bound]?.formula;
+				const stored = so.attributes_dict_byName[bound]?.formula_display;
 				if (stored) return stored;
 			}
 			if (inv(axis_index, attr_index)) return constraints.invariant_formula_for(label) ?? '';
@@ -38,15 +44,15 @@
 		};
 		const has = (bound: string | null) => bound ? !!so.attributes_dict_byName[bound]?.compiled : false;
 		return [
-			{ label: 'x', bound: 'x_min' as Bound, value: fmt(p[0] + so.x_min), formula: fml('x', 'x_min', 0, 0), has_formula: has('x_min'), is_invariant: inv(0, 0), axis_index: 0, attr_index: 0 },
-			{ label: 'y', bound: 'y_min' as Bound, value: fmt(p[1] + so.y_min), formula: fml('y', 'y_min', 1, 0), has_formula: has('y_min'), is_invariant: inv(1, 0), axis_index: 1, attr_index: 0 },
-			{ label: 'z', bound: 'z_min' as Bound, value: fmt(p[2] + so.z_min), formula: fml('z', 'z_min', 2, 0), has_formula: has('z_min'), is_invariant: inv(2, 0), axis_index: 2, attr_index: 0 },
-			{ label: 'w', bound: 'width',           value: fmt(so.width),         formula: fml('w', 'width', 0, 2), has_formula: has('width'), is_invariant: inv(0, 2), axis_index: 0, attr_index: 2 },
-			{ label: 'd', bound: 'depth',           value: fmt(so.depth),         formula: fml('d', 'depth', 1, 2), has_formula: has('depth'), is_invariant: inv(1, 2), axis_index: 1, attr_index: 2 },
-			{ label: 'h', bound: 'height',          value: fmt(so.height),        formula: fml('h', 'height',2, 2), has_formula: has('height'), is_invariant: inv(2, 2), axis_index: 2, attr_index: 2 },
-			{ label: 'X', bound: 'x_max' as Bound, value: fmt(p[0] + so.x_max), formula: fml('X', 'x_max', 0, 1), has_formula: has('x_max'), is_invariant: inv(0, 1), axis_index: 0, attr_index: 1 },
-			{ label: 'Y', bound: 'y_max' as Bound, value: fmt(p[1] + so.y_max), formula: fml('Y', 'y_max', 1, 1), has_formula: has('y_max'), is_invariant: inv(1, 1), axis_index: 1, attr_index: 1 },
-			{ label: 'Z', bound: 'z_max' as Bound, value: fmt(p[2] + so.z_max), formula: fml('Z', 'z_max', 2, 1), has_formula: has('z_max'), is_invariant: inv(2, 1), axis_index: 2, attr_index: 1 },
+			{ label: 'x', bound: 'x_min' as Bound, value: val('x_min', 0, 0), formula: fml('x', 'x_min', 0, 0), has_formula: has('x_min'), is_invariant: inv(0, 0), axis_index: 0, attr_index: 0 },
+			{ label: 'y', bound: 'y_min' as Bound, value: val('y_min', 1, 0), formula: fml('y', 'y_min', 1, 0), has_formula: has('y_min'), is_invariant: inv(1, 0), axis_index: 1, attr_index: 0 },
+			{ label: 'z', bound: 'z_min' as Bound, value: val('z_min', 2, 0), formula: fml('z', 'z_min', 2, 0), has_formula: has('z_min'), is_invariant: inv(2, 0), axis_index: 2, attr_index: 0 },
+			{ label: 'w', bound: 'width',           value: val('width',  0, 2), formula: fml('w', 'width', 0, 2), has_formula: has('width'), is_invariant: inv(0, 2), axis_index: 0, attr_index: 2 },
+			{ label: 'd', bound: 'depth',           value: val('depth',  1, 2), formula: fml('d', 'depth', 1, 2), has_formula: has('depth'), is_invariant: inv(1, 2), axis_index: 1, attr_index: 2 },
+			{ label: 'h', bound: 'height',          value: val('height', 2, 2), formula: fml('h', 'height',2, 2), has_formula: has('height'), is_invariant: inv(2, 2), axis_index: 2, attr_index: 2 },
+			{ label: 'X', bound: 'x_max' as Bound, value: val('x_max', 0, 1), formula: fml('X', 'x_max', 0, 1), has_formula: has('x_max'), is_invariant: inv(0, 1), axis_index: 0, attr_index: 1 },
+			{ label: 'Y', bound: 'y_max' as Bound, value: val('y_max', 1, 1), formula: fml('Y', 'y_max', 1, 1), has_formula: has('y_max'), is_invariant: inv(1, 1), axis_index: 1, attr_index: 1 },
+			{ label: 'Z', bound: 'z_max' as Bound, value: val('z_max', 2, 1), formula: fml('Z', 'z_max', 2, 1), has_formula: has('z_max'), is_invariant: inv(2, 1), axis_index: 2, attr_index: 1 },
 		];
 	}
 
@@ -92,9 +98,16 @@
 		if (length_bounds.has(row.bound)) {
 			constraints.write(selected_so.id, row.label, mm);
 		} else {
-			const p = selected_so.scene?.position ?? [0, 0, 0];
-			const axis_index = row.bound[0] === 'x' ? 0 : row.bound[0] === 'y' ? 1 : 2;
-			selected_so.set_bound(row.bound as Bound, mm - p[axis_index]);
+			// Write raw offset directly — table displays attr.value (offset from parent's origin)
+			const attr = selected_so.attributes_dict_byName[row.bound];
+			if (attr) {
+				attr.value = mm;
+				// Sync length when an endpoint changes
+				const axis = selected_so.axes[row.axis_index];
+				if (!axis.length.compiled) {
+					axis.length.value = selected_so.get_bound(axis.end.name as Bound) - selected_so.get_bound(axis.start.name as Bound);
+				}
+			}
 		}
 		constraints.propagate(selected_so);
 		stores.tick();

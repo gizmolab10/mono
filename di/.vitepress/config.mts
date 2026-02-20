@@ -127,10 +127,6 @@ export default defineConfig({
               link: '/work/pacing'
             },
             {
-              text: 'Simplicity',
-              link: '/work/simplicity'
-            },
-            {
               text: 'Done >',
               link: '/work/done/',
               collapsed: true,

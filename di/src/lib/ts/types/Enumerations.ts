@@ -27,9 +27,10 @@ export enum T_Hit_3D {
 // the order of the following is unimportant
 
 export enum T_Details {
-	preferences = 1,
-	selection	= 2,
-	library		= 4,
+	preferences          = 1,
+	selection            = 2,
+	library              = 4,
+	standard_dimensions  = 8,
 }
 
 export enum T_Decorations {

@@ -72,7 +72,7 @@
 	}
 
 	.banner::before {
-		background : radial-gradient(ellipse at center, transparent 0%, var(--banner) 80%);
+		background : radial-gradient(ellipse at center, transparent 20%, var(--banner) 100%);
 		position   : absolute;
 		content    : '';
 		inset      : 0;

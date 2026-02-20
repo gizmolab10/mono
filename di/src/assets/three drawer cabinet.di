@@ -40,7 +40,9 @@
         "name": "top drawer",
         "x": {
           "attributes": {
-            "origin": 0,
+            "origin": {
+              "formula": ".x"
+            },
             "extent": -609.5999999999999,
             "length": {
               "formula": ".w"
@@ -51,7 +53,9 @@
         },
         "y": {
           "attributes": {
-            "origin": 0,
+            "origin": {
+              "formula": ".y"
+            },
             "extent": -660.4,
             "length": {
               "formula": ".d"
@@ -269,7 +273,9 @@
         "name": "middle drawer",
         "x": {
           "attributes": {
-            "origin": 0,
+            "origin": {
+              "formula": ".x"
+            },
             "extent": -609.5999999999999,
             "length": {
               "formula": ".w"
@@ -280,7 +286,9 @@
         },
         "y": {
           "attributes": {
-            "origin": 0,
+            "origin": {
+              "formula": ".y"
+            },
             "extent": -660.4,
             "length": {
               "formula": ".d"
@@ -498,7 +506,9 @@
         "name": "bottom drawer",
         "x": {
           "attributes": {
-            "origin": 0,
+            "origin": {
+              "formula": ".x"
+            },
             "extent": -609.5999999999999,
             "length": {
               "formula": ".w"
@@ -509,7 +519,9 @@
         },
         "y": {
           "attributes": {
-            "origin": 0,
+            "origin": {
+              "formula": ".y"
+            },
             "extent": -660.4,
             "length": {
               "formula": ".d"
@@ -520,7 +532,9 @@
         },
         "z": {
           "attributes": {
-            "origin": 0,
+            "origin": {
+              "formula": ".z"
+            },
             "extent": -723.9,
             "length": 215.89999999999998,
             "angle": 0
