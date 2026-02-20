@@ -20,21 +20,20 @@
 	const { w_s_dimensions } = dimensions;
 	const { w_s_angular } = angulars;
 	const { w_s_face_label } = face_label;
-	const { w_all_sos, w_selection, w_root_so } = stores;
+	const { w_selection, w_root_so } = stores;
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
 
-	// Derive light (desaturated) variant of background color for unselected SO buttons
-	let so_color_light = $derived.by(() => {
-		const hex = $w_background_color;
-		const r = parseInt(hex.slice(1, 3), 16);
-		const g = parseInt(hex.slice(3, 5), 16);
-		const b = parseInt(hex.slice(5, 7), 16);
-		// Mix 60% toward white
-		const lr = Math.round(r + (255 - r) * 0.6);
-		const lg = Math.round(g + (255 - g) * 0.6);
-		const lb = Math.round(b + (255 - b) * 0.6);
-		return `rgb(${lr}, ${lg}, ${lb})`;
+	// Walk from selected SO up to root — returns [root, ..., parent, selected]
+	let breadcrumbs = $derived.by(() => {
+		const trail: Smart_Object[] = [];
+		let current = selected_so;
+		while (current) {
+			trail.push(current);
+			current = current.scene?.parent?.so ?? null;
+		}
+		trail.reverse();
+		return trail;
 	});
 
 	function select_so(so: Smart_Object) {
@@ -214,15 +213,15 @@
 	<div class='canvas-actions'>
 		<button class='canvas-btn' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
 	</div>
-	{#if $w_all_sos.length > 1}
+	{#if breadcrumbs.length > 1}
 		<div
-			class='so-row'
-			style:--so-light = {so_color_light}
-			style:--so-dark  = {$w_background_color}>
-			{#each $w_all_sos as so}
+			class='breadcrumbs'
+			style:--crumb-bg = {$w_background_color}>
+			{#each breadcrumbs as so, index (so.id)}
+				{#if index > 0}<span class='separator'>›</span>{/if}
 				<button
-					class='so-btn'
-					class:selected = {selected_so === so}
+					class='crumb'
+					class:current={index === breadcrumbs.length - 1}
 					onclick={() => select_so(so)}>
 					{so.name}
 				</button>
@@ -313,23 +312,28 @@
 		border     : 0.5px solid rgba(0, 0, 0, 0.4);
 	}
 
-	.so-row {
-		position        : absolute;
-		top             : 10px;
-		left            : 50%;
-		transform       : translateX(-50%);
-		display         : flex;
-		gap             : 4px;
-		flex-wrap       : wrap;
-		justify-content : center;
-		z-index         : var(--z-action);
+	.breadcrumbs {
+		position    : absolute;
+		top         : 10px;
+		left        : 50%;
+		transform   : translateX(-50%);
+		display     : flex;
+		align-items : center;
+		gap         : 2px;
+		z-index     : var(--z-action);
 	}
 
-	.so-btn {
-		background    : var(--so-light);
+	.separator {
+		font-size : 11px;
+		opacity   : 0.4;
+		padding   : 0 1px;
+	}
+
+	.crumb {
+		background    : rgba(255, 255, 255, 0.7);
 		border        : 0.5px solid transparent;
 		border-radius : 4px;
-		color         : black;
+		color         : rgba(0, 0, 0, 0.45);
 		padding       : 0 8px;
 		font-size     : 11px;
 		height        : 20px;
@@ -337,16 +341,17 @@
 		cursor        : pointer;
 	}
 
-	.so-btn:hover {
-		background : var(--so-dark);
+	.crumb:hover {
+		background : var(--crumb-bg);
 		color      : black;
 		border     : 0.5px solid rgba(0, 0, 0, 0.3);
 	}
 
-	.so-btn.selected {
-		background : var(--so-dark);
-		color      : black;
-		border     : 0.5px solid rgba(0, 0, 0, 0.5);
+	.crumb.current {
+		background  : var(--crumb-bg);
+		color       : black;
+		font-weight : 600;
+		border      : 0.5px solid rgba(0, 0, 0, 0.5);
 	}
 
 	.dim-edit {

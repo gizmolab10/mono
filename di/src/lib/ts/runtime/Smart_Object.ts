@@ -51,15 +51,31 @@ export default class Smart_Object extends Identifiable {
 	// BOUND ACCESSORS
 	// ═══════════════════════════════════════════════════════════════════
 
-	/** Read absolute position. For children without formulas, value is offset from parent. */
+	/** Map any bound to its axis origin (min bound).
+	 *  Formula values are parent-local from origin, not offsets from the same-named bound. */
+	private static readonly AXIS_ORIGIN: Record<string, Bound> = {
+		x_min: 'x_min', x_max: 'x_min', width:  'x_min',
+		y_min: 'y_min', y_max: 'y_min', depth:  'y_min',
+		z_min: 'z_min', z_max: 'z_min', height: 'z_min',
+	};
+
+	/** Read a bound as a scene-absolute value.
+	 *  Plain values: offset from parent's same-named bound → recurse through same bound.
+	 *  Formula values: parent-local from origin → recurse through axis origin bound. */
 	get_bound(bound: Bound): number {
 		const attr = this.attributes_dict_byName[bound];
 		if (!attr) return 0;
-		if (attr.compiled || !this.scene?.parent) return attr.value;
+		if (!this.scene?.parent) return attr.value;
+		if (attr.compiled) {
+			const origin = Smart_Object.AXIS_ORIGIN[bound] ?? bound;
+			return this.scene.parent.so.get_bound(origin) + attr.value;
+		}
 		return this.scene.parent.so.get_bound(bound) + attr.value;
 	}
 
-	/** Store a bound as absolute position. For children without formulas, stores as offset from parent. */
+	/** Store a bound.
+	 *  Plain values: stored as offset from parent's same-named bound.
+	 *  Formula values: stored directly (formula system manages these). */
 	set_bound(bound: Bound, value: number): void {
 		const attr = this.attributes_dict_byName[bound];
 		if (!attr) return;

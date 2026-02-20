@@ -122,13 +122,13 @@ export class Units {
 	// 0 = feet-only (sentinel), 1 = whole inches, 2+ = fractional inches.
 	private readonly IMPERIAL_DENOMS = [0, 1, 2, 4, 8, 16, 32, 64];
 
-	format(mm: number, unit: T_Unit, decimal_places: number = 1): string {
+	format(mm: number, unit: T_Unit, decimal_places: number = 1, show_units: boolean = true): string {
 		const value = this.from_mm(mm, unit);
 		if (this.is_imperial(unit)) {
-			return this.format_fractional(value, symbol[unit]);
+			return this.format_fractional(value, show_units ? symbol[unit] : '');
 		}
 		const rounded = parseFloat(value.toFixed(decimal_places));
-		return rounded + symbol[unit];
+		return rounded + (show_units ? symbol[unit] : '');
 	}
 
 	format_compound(mm: number, max_denominator: number = 64): string {
@@ -169,14 +169,19 @@ export class Units {
 	 *   Imperial: 0=feet, 1=inch, 2=1/2, … 7=1/64
 	 *   Others:   0=whole, 1=1dp, 2=2dp, 3=3dp
 	 */
-	format_for_system(mm: number, system: T_Units, precision: number = 7): string {
+	format_for_system(mm: number, system: T_Units, precision: number = 7, show_units: boolean = true): string {
 		if (system === T_Units.imperial) {
 			const denom = this.IMPERIAL_DENOMS[Math.min(precision, this.IMPERIAL_DENOMS.length - 1)];
 			if (denom === 0) {
 				// Feet only — round to nearest foot
 				const total_inches = mm / mm_per[T_Unit.inch];
 				const feet = Math.round(total_inches / 12);
-				return (feet === 0 ? '0' : String(feet)) + "'";
+				return (feet === 0 ? '0' : String(feet)) + (show_units ? "'" : '');
+			}
+			if (!show_units) {
+				// Total inches, fractional, no symbol
+				const total_inches = mm / mm_per[T_Unit.inch];
+				return this.format_fractional(total_inches, '', denom);
 			}
 			return this.format_compound(mm, denom);
 		}
@@ -188,11 +193,11 @@ export class Units {
 		for (let i = members.length - 1; i >= 0; i--) {
 			const unit = members[i];
 			if (abs_mm >= mm_per[unit]) {
-				return this.format(mm, unit, dp);
+				return this.format(mm, unit, dp, show_units);
 			}
 		}
 		// Fallback: smallest unit in the system
-		return this.format(mm, members[0], dp);
+		return this.format(mm, members[0], dp, show_units);
 	}
 
 	// ── snapping (mm → nearest grid point in mm) ──

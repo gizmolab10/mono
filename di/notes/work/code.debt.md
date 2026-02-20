@@ -2,11 +2,9 @@
 
 offer a proposal for the first unchecked item
 
-- [x] tumble ALWAYS applies to root SO
-	- [x] OPTION tumble -> applies to selected SO
-- [x] values in attr tables should be offsets, not absolutes
-- [x] choose an SO (buttons at top of graph) -> select most front facing face
-	- [x] as root tumbles -> update selection to select (possibly different) most front facing face
+- [x] save button should use SO's name for file name
+- [ ] remove all children button should also remove all sd constants that are no longer referenced
+- [ ] rename standard dimensions -> constants
 - [ ] hover -> enabled cells
 ---
 - [ ] vivaldi <- chrome

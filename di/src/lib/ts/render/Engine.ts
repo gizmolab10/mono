@@ -6,7 +6,7 @@ import type { O_Scene } from '../types/Interfaces';
 import type { Point } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Smart_Object } from '../runtime';
-import { constraints } from '../algebra';
+import { constraints, standard_dimensions } from '../algebra';
 import { colors } from '../draw/Colors';
 import { quat, vec3 } from 'gl-matrix';
 import { drag } from '../editors/Drag';
@@ -485,6 +485,15 @@ class Engine {
 
     const parsed = scenes.parse_text(text);
     if (!parsed?.smart_objects.length) return;
+
+    // Merge standard dimensions from the imported item (don't overwrite existing)
+    if (parsed.standard_dimensions?.length) {
+      for (const entry of parsed.standard_dimensions) {
+        if (entry.name && !standard_dimensions.has(entry.name)) {
+          standard_dimensions.set(entry.name, entry.value_mm);
+        }
+      }
+    }
 
     const old_to_new = new Map<string, string>();
     const deserialized: { so: Smart_Object; old_parent_id?: string }[] = [];

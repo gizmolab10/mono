@@ -6,6 +6,7 @@
 	import { hits } from '../../ts/managers/Hits';
 	import D_Standard_Dimensions from './D_Standard_Dimensions.svelte';
 	import D_Library from './D_Library.svelte';
+	import D_List from './D_List.svelte';
 	import Hideable from './Hideable.svelte';
 	import { tick, onMount } from 'svelte';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
@@ -36,6 +37,10 @@
 
 		<Hideable title='standard dimensions' id='standard-dimensions' detail={T_Details.standard_dimensions}>
 			<D_Standard_Dimensions />
+		</Hideable>
+
+		<Hideable title='list' id='list' detail={T_Details.list}>
+			<D_List />
 		</Hideable>
 
 		<Hideable title='library' id='library' detail={T_Details.library}>

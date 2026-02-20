@@ -197,7 +197,8 @@ class Scenes {
 			scene: saved,
 		};
 		const json = JSON.stringify(exported, null, 2);
-		const name = this.root_name || 'scene';
+		const root = saved.smart_objects.find(so => so.id === saved.root_id);
+		const name = root?.name || 'scene';
 		await this.save_to_idb(name, json);
 		this.download_file(`${name}.di`, json);
 	}
@@ -288,11 +289,13 @@ class Scenes {
 						axis.attributes = { origin: arr[0], extent: arr[1], length: arr[2], angle: arr[3] };
 					}
 				}
+				// v4 → v5: convert absolute child values to offsets from parent
+				return this.migrate_to_offsets(raw as Portable_Scene);
 			}
 		}
 
-		// v4 → v5: convert absolute child values to offsets from parent
-		return this.migrate_to_offsets(raw as Portable_Scene);
+		// v5+: values are already offsets — no conversion needed
+		return raw as Portable_Scene;
 	}
 
 	/** v4 → v5: child position values become offsets from parent.

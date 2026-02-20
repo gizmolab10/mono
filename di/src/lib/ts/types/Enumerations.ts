@@ -31,6 +31,7 @@ export enum T_Details {
 	selection            = 2,
 	library              = 4,
 	standard_dimensions  = 8,
+	list                 = 16,
 }
 
 export enum T_Decorations {

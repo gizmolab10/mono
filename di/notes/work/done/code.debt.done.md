@@ -123,4 +123,11 @@
 - [x] integrate [[simplicity]] -> [[workflow]]
 - [x] [[17.library]]
 - [x] get claude vscode == plugin
+- [x] tumble ALWAYS applies to root SO
+	- [x] OPTION tumble -> applies to selected SO
+- [x] values in attr tables should be offsets, not absolutes
+- [x] choose an SO (buttons at top of graph) -> select most front facing face
+	- [x] as root tumbles -> update selection to select (possibly different) most front facing face
+- [x] in D List, remove ALL the inches signifiers (just show raw number)
+	- [x] positions are all NaN
 
