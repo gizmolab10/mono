@@ -2,9 +2,9 @@
 
 offer a proposal for the first unchecked item
 
-- [x] save button should use SO's name for file name
-- [ ] remove all children button should also remove all sd constants that are no longer referenced
-- [ ] rename standard dimensions -> constants
+- [ ] not all user constants got removed by delete all children
+	- [ ] verify that those that remain are NOT referenced !!! but do NOT remove them
+	- [ ] debug delete all children
 - [ ] hover -> enabled cells
 ---
 - [ ] vivaldi <- chrome

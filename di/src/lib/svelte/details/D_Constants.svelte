@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { standard_dimensions } from '../../ts/algebra/Standard_Dimensions';
+	import { constants } from '../../ts/algebra/User_Constants';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { w_unit_system } from '../../ts/types/Units';
 	import { units } from '../../ts/types/Units';
@@ -11,12 +11,12 @@
 
 	type Row = { name: string; value_mm: number };
 
-	let rows: Row[] = $state(standard_dimensions.get_all());
+	let rows: Row[] = $state(constants.get_all());
 
-	// Re-sync rows when scene reloads (restore_standard_dimensions replaces the SD store)
+	// Re-sync rows when scene reloads (restore_constants replaces the SD store)
 	$effect(() => {
 		$w_tick;
-		rows = standard_dimensions.get_all();
+		rows = constants.get_all();
 	});
 
 	function sync_and_propagate(): void {
@@ -30,14 +30,14 @@
 	}
 
 	function add_dimension(): void {
-		standard_dimensions.add('', 0);
-		rows = standard_dimensions.get_all();
+		constants.add('', 0);
+		rows = constants.get_all();
 	}
 
 	function remove_dimension(index: number): void {
 		const name = rows[index].name;
-		standard_dimensions.remove(name);
-		rows = standard_dimensions.get_all();
+		constants.remove(name);
+		rows = constants.get_all();
 		sync_and_propagate();
 	}
 
@@ -45,10 +45,10 @@
 		const old_name = rows[index].name;
 		const new_name = value.trim();
 		if (old_name === new_name) return;
-		// Rename in SD store FIRST — bind_refs checks standard_dimensions.has(new_name)
-		standard_dimensions.rename(old_name, new_name);
+		// Rename in SD store FIRST — bind_refs checks constants.has(new_name)
+		constants.rename(old_name, new_name);
 		if (old_name && new_name) constraints.rename_sd_in_formulas(old_name, new_name);
-		rows = standard_dimensions.get_all();
+		rows = constants.get_all();
 		sync_and_propagate();
 	}
 
@@ -57,8 +57,8 @@
 		if (mm === null) return;
 		const name = rows[index].name;
 		if (!name) return;
-		standard_dimensions.set(name, mm);
-		rows = standard_dimensions.get_all();
+		constants.set(name, mm);
+		rows = constants.get_all();
 		sync_and_propagate();
 	}
 

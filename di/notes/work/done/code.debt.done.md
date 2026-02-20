@@ -130,4 +130,8 @@
 	- [x] as root tumbles -> update selection to select (possibly different) most front facing face
 - [x] in D List, remove ALL the inches signifiers (just show raw number)
 	- [x] positions are all NaN
+- [x] save button should use SO's name for file name
+- [x] remove all children button should also remove all sd constants that are no longer referenced
+- [x] rename standard dimensions -> user constants
+- [x] move library up -> between preferences and selection
 

@@ -33,7 +33,7 @@
           "invariant": 1
         },
         "rotation_lock": 0,
-        "visible": false
+        "visible": true
       }
     ],
     "camera": {

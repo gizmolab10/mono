@@ -1,5 +1,5 @@
 import type { Compact_Attribute, Portable_Attribute, Portable_Axis } from '../types/Interfaces';
-import { standard_dimensions, type StandardDimensionEntry } from '../algebra/Standard_Dimensions';
+import { constants, type ConstantEntry } from '../algebra/User_Constants';
 import default_scene from '../../../assets/drawer.di?raw';
 import { preferences, T_Preference } from './Preferences';
 import type { Axis_Name, Bound } from '../types/Types';
@@ -16,7 +16,7 @@ import { hits_3d } from './Hits_3D';
  * Uses Preferences for the actual localStorage read/write.
  */
 
-const CURRENT_VERSION = '5';
+const CURRENT_VERSION = '6';
 
 export interface Portable_SO {
 	rotation_lock?: number;            // rotation axis: 0=x, 1=y, 2=z (default 0)
@@ -31,7 +31,7 @@ export interface Portable_SO {
 export interface Portable_Scene {
   camera: { eye: number[]; center: number[]; up: number[] };
   smart_objects: Portable_SO[];
-  standard_dimensions?: StandardDimensionEntry[];
+  constants?: ConstantEntry[];
   selected_face?: number;
   selected_id?: string;
   root_id: string;
@@ -68,7 +68,7 @@ class Scenes {
 		const saved = preferences.read<Portable_Scene>(T_Preference.scene);
 		if (saved) {
 			const migrated = this.migrate(saved);
-			this.restore_standard_dimensions(migrated);
+			this.restore_constants(migrated);
 			return migrated;
 		}
 		// Fall back to bundled default scene
@@ -77,20 +77,20 @@ class Scenes {
 			const validated = this.validate_import(parsed);
 			if (!validated) return null;
 			const migrated = this.migrate(validated.scene);
-			this.restore_standard_dimensions(migrated);
+			this.restore_constants(migrated);
 			return migrated;
 		} catch {
 			return null;
 		}
 	}
 
-	/** Restore standard dimensions from scene data into the global SD store.
-	 *  Always clears first — no field means no SDs. */
-	private restore_standard_dimensions(scene_data: Portable_Scene): void {
-		standard_dimensions.clear();
-		if (!scene_data.standard_dimensions?.length) return;
-		for (const entry of scene_data.standard_dimensions) {
-			if (entry.name) standard_dimensions.set(entry.name, entry.value_mm);
+	/** Restore constants from scene data into the global store.
+	 *  Always clears first — no field means no constants. */
+	private restore_constants(scene_data: Portable_Scene): void {
+		constants.clear();
+		if (!scene_data.constants?.length) return;
+		for (const entry of scene_data.constants) {
+			if (entry.name) constants.set(entry.name, entry.value_mm);
 		}
 	}
 
@@ -103,10 +103,10 @@ class Scenes {
 			};
 		});
 		const sel = hits_3d.selection;
-		const sds = standard_dimensions.get_all();
+		const user_constants = constants.get_all();
 		const data: Portable_Scene = {
 			smart_objects: objects,
-			standard_dimensions: sds.length ? sds : undefined,
+			constants: user_constants.length ? user_constants : undefined,
 			camera: camera.serialize(),
 			root_id: this.root_id,
 			selected_id: sel?.so.id,
@@ -294,7 +294,12 @@ class Scenes {
 			}
 		}
 
-		// v5+: values are already offsets — no conversion needed
+		// v5 → v6: rename standard_dimensions → constants
+		if ('standard_dimensions' in data && !('constants' in data)) {
+			data.constants = data.standard_dimensions;
+			delete data.standard_dimensions;
+		}
+
 		return raw as Portable_Scene;
 	}
 

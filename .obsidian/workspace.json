@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/done/code.debt.done.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of code.debt.done"
             }
           }
         ],
@@ -241,10 +241,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "bf8919592ee87a19",
+  "active": "bbc57c19fcf944de",
   "lastOpenFiles": [
-    "di/notes/work/done/code.debt.done.md",
     "di/notes/work/code.debt.md",
+    "di/notes/work/done/code.debt.done.md",
+    "di/src/lib/svelte/details/D_Constants.svelte",
+    "di/src/lib/ts/algebra/User_Constants.ts",
+    "di/src/lib/ts/algebra/User.ts",
+    "di/src/lib/ts/algebra/Constants.ts",
     "di/notes/work/milestones/18.constants <--.md",
     "di/src/lib/svelte/details/D_List.svelte",
     "di/notes/work/revisit.di.md",
@@ -267,7 +271,6 @@
     "notes/guides/philosophy/motive.md",
     "notes/guides/collaborate/workflow.md",
     "notes/guides/philosophy/simplicity.md",
-    "di/src/assets/empty cabinet.di",
     "di/notes/work/milestones/23.hierarchy.md",
     "di/notes/work/milestones/19.cut.lists.md",
     "di/notes/work/milestones/22.marketing.md",
@@ -275,9 +278,6 @@
     "di/notes/work/milestones/20.repeaters.md",
     "di/notes/architecture/file layout.md",
     "di/notes/work/next/punch list.md",
-    "di/src/assets/two drawer cabinet.di",
-    "di/src/assets/three drawer cabinet.di",
-    "di/src/assets/cabinet.di",
     "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
     "Screenshot 2026-02-14 at 12.12.38 PM.png",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",

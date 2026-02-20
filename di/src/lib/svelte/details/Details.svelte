@@ -4,7 +4,7 @@
 	import D_Selection from './D_Selection.svelte';
 	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
-	import D_Standard_Dimensions from './D_Standard_Dimensions.svelte';
+	import D_Constants from './D_Constants.svelte';
 	import D_Library from './D_Library.svelte';
 	import D_List from './D_List.svelte';
 	import Hideable from './Hideable.svelte';
@@ -31,20 +31,20 @@
 			<D_Preferences />
 		</Hideable>
 
+		<Hideable title='library' id='library' detail={T_Details.library}>
+			<D_Library />
+		</Hideable>
+
 		<Hideable title='selection' id='selection' detail={T_Details.selection}>
 			<D_Selection />
 		</Hideable>
 
-		<Hideable title='standard dimensions' id='standard-dimensions' detail={T_Details.standard_dimensions}>
-			<D_Standard_Dimensions />
+		<Hideable title='constants' id='constants' detail={T_Details.constants}>
+			<D_Constants />
 		</Hideable>
 
 		<Hideable title='list' id='list' detail={T_Details.list}>
 			<D_List />
-		</Hideable>
-
-		<Hideable title='library' id='library' detail={T_Details.library}>
-			<D_Library />
 		</Hideable>
 	</div>
 </div>

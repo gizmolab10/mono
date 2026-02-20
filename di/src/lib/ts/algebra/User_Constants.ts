@@ -1,17 +1,17 @@
 // ═══════════════════════════════════════════════════════════════════
-// ALGEBRA — STANDARD DIMENSIONS
+// ALGEBRA — USER CONSTANTS
 // Global named values usable in any formula across all SOs.
 // Stored in localStorage, keyed by name, values in mm.
 // ═══════════════════════════════════════════════════════════════════
 
 const STORAGE_KEY = 'di:standardDimensions';
 
-/** Reserved object id for standard dimension references in the AST. */
-export const STANDARD_DIMENSIONS_ID = '$std';
+/** Reserved object id for constant references in the AST. */
+export const CONSTANTS_ID = '$std';
 
-export type StandardDimensionEntry = { name: string; value_mm: number };
+export type ConstantEntry = { name: string; value_mm: number };
 
-class Standard_Dimensions {
+class Constants {
 
 	private dimensions: Map<string, number> = new Map();
 
@@ -29,7 +29,7 @@ class Standard_Dimensions {
 		return this.dimensions.get(name) ?? 0;
 	}
 
-	get_all(): StandardDimensionEntry[] {
+	get_all(): ConstantEntry[] {
 		return Array.from(this.dimensions.entries()).map(([name, value_mm]) => ({ name, value_mm }));
 	}
 
@@ -69,7 +69,7 @@ class Standard_Dimensions {
 		try {
 			const raw = localStorage.getItem(STORAGE_KEY);
 			if (!raw) return;
-			const entries: StandardDimensionEntry[] = JSON.parse(raw);
+			const entries: ConstantEntry[] = JSON.parse(raw);
 			for (const entry of entries) {
 				if (entry.name) this.dimensions.set(entry.name, entry.value_mm);
 			}
@@ -77,9 +77,9 @@ class Standard_Dimensions {
 	}
 
 	private save(): void {
-		const entries: StandardDimensionEntry[] = this.get_all();
+		const entries: ConstantEntry[] = this.get_all();
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
 	}
 }
 
-export const standard_dimensions = new Standard_Dimensions();
+export const constants = new Constants();

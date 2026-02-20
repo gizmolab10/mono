@@ -6,7 +6,7 @@ import type { O_Scene } from '../types/Interfaces';
 import type { Point } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Smart_Object } from '../runtime';
-import { constraints, standard_dimensions } from '../algebra';
+import { constraints, constants, evaluator } from '../algebra';
 import { colors } from '../draw/Colors';
 import { quat, vec3 } from 'gl-matrix';
 import { drag } from '../editors/Drag';
@@ -486,11 +486,11 @@ class Engine {
     const parsed = scenes.parse_text(text);
     if (!parsed?.smart_objects.length) return;
 
-    // Merge standard dimensions from the imported item (don't overwrite existing)
-    if (parsed.standard_dimensions?.length) {
-      for (const entry of parsed.standard_dimensions) {
-        if (entry.name && !standard_dimensions.has(entry.name)) {
-          standard_dimensions.set(entry.name, entry.value_mm);
+    // Merge constants from the imported item (don't overwrite existing)
+    if (parsed.constants?.length) {
+      for (const entry of parsed.constants) {
+        if (entry.name && !constants.has(entry.name)) {
+          constants.set(entry.name, entry.value_mm);
         }
       }
     }
@@ -588,7 +588,19 @@ class Engine {
       hits_3d.set_selection(null);
     }
 
+    // Prune constants no longer referenced by any remaining formula
+    const previously_referenced = new Set(constraints.referenced_constants);
+    constraints.referenced_constants.clear();
     const remaining = scene.get_all().map(o => o.so);
+    for (const so of remaining) {
+      for (const attr of Object.values(so.attributes_dict_byName)) {
+        if (attr.compiled) evaluator.evaluate(attr.compiled, (obj, a) => constraints.resolve(obj, a));
+      }
+    }
+    for (const name of previously_referenced) {
+      if (!constraints.referenced_constants.has(name)) constants.remove(name);
+    }
+
     stores.w_all_sos.set(remaining);
     stores.tick();
     scenes.save();

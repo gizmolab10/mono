@@ -37,11 +37,6 @@
 	}
 </script>
 
-<div class='settings'>
-	<button class='action-btn' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file() }}>import</button>
-	<button class='action-btn' use:hit_target={{ id: 'add-to-lib', onpress: () => add_to_library() }}>save</button>
-</div>
-
 <table class='library'><tbody>
 	{#each entries as entry}
 		<tr class='lib-row' onclick={(e) => on_click(entry, e)}>
@@ -51,7 +46,21 @@
 	{/each}
 </tbody></table>
 
+<hr />
+
+<div class='settings'>
+	<button class='action-btn' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file() }}>import</button>
+	<button class='action-btn save' use:hit_target={{ id: 'add-to-lib', onpress: () => add_to_library() }}>save</button>
+</div>
+
 <style>
+	hr {
+		border     : none;
+		border-top : 0.5px solid currentColor;
+		opacity    : 0.3;
+		margin     : 8px 0;
+	}
+
 	.settings {
 		display : flex;
 		gap     : 6px;
@@ -74,10 +83,13 @@
 		color      : black;
 	}
 
+	.save {
+		margin-left : auto;
+	}
+
 	.library {
 		width           : 100%;
 		border-collapse : collapse;
-		margin-top      : 8px;
 		font-size       : 11px;
 	}
 

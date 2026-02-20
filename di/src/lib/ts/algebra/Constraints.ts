@@ -2,7 +2,7 @@ import type Smart_Object from '../runtime/Smart_Object';
 import type { Bound } from '../types/Types';
 import type { FormulaMap } from './Evaluator';
 
-import { standard_dimensions, STANDARD_DIMENSIONS_ID } from './Standard_Dimensions';
+import { constants, CONSTANTS_ID } from './User_Constants';
 import { tokenizer } from './Tokenizer';
 import { evaluator } from './Evaluator';
 import { scene } from '../render/Scene';
@@ -63,13 +63,18 @@ const invariant_formulas: Record<string, string> = {
 
 class Constraints {
 
+	referenced_constants = new Set<string>();
+
 	// ── resolve / write ──
 
 	/** Resolve a reference to its current mm value.
 	 *  Handles both internal names (x_min) and customer aliases (x, w, etc).
 	 *  Always reads stored value — invariance of the referenced SO is irrelevant. */
 	resolve(id: string, attribute: string): number {
-		if (id === STANDARD_DIMENSIONS_ID) return standard_dimensions.get(attribute);
+		if (id === CONSTANTS_ID) {
+			this.referenced_constants.add(attribute);
+			return constants.get(attribute);
+		}
 
 		const so = this.find_so(id);
 		if (!so) return 0;
@@ -111,7 +116,7 @@ class Constraints {
 			case 'literal': return node;
 			case 'reference':
 				if (node.object === 'self') {
-					if (standard_dimensions.has(node.attribute)) return nodes.reference(STANDARD_DIMENSIONS_ID, node.attribute);
+					if (constants.has(node.attribute)) return nodes.reference(CONSTANTS_ID, node.attribute);
 					return nodes.reference(self_id, node.attribute);
 				}
 				if (node.object === '' && parent_id) return nodes.reference(parent_id, node.attribute);

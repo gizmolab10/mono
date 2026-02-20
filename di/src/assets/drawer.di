@@ -253,7 +253,7 @@
         "parent_id": "dicb460b903642b9"
       }
     ],
-    "standard_dimensions": [
+    "constants": [
       {
         "name": "inset",
         "value_mm": 6.35
