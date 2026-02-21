@@ -64,6 +64,13 @@ const invariant_formulas: Record<string, string> = {
 class Constraints {
 
 	referenced_constants = new Set<string>();
+	private post_propagate_hook: (() => void) | null = null;
+
+	/** Register a callback invoked after every propagate / propagate_all.
+	 *  Used by Engine to sync repeater SOs without creating a circular dependency. */
+	register_post_propagate(fn: () => void): void {
+		this.post_propagate_hook = fn;
+	}
 
 	// ── resolve / write ──
 
@@ -246,6 +253,7 @@ class Constraints {
 				this.enforce_invariants(so);
 			}
 		}
+		this.post_propagate_hook?.();
 	}
 
 	/** Re-evaluate all formulas across all SOs. Used after bulk changes like precision snapping. */
@@ -267,6 +275,7 @@ class Constraints {
 				this.enforce_invariants(so);
 			}
 		}
+		this.post_propagate_hook?.();
 	}
 
 	// ── invariant enforcement ──

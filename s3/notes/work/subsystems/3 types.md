@@ -1,4 +1,4 @@
-# Types, Enumerations, and Global Imports — Design Spec
+3 # Types, Enumerations, and Global Imports — Design Spec
 
 Source files documented here:
 - `ws/src/lib/ts/common/Global_Imports.ts`

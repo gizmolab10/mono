@@ -63,30 +63,30 @@ Spec: [rendering.md](./rendering.md) §main, §tree, §widget, [geometry.md](./g
 
 ### UI shell
 
-- [ ] `SeriouslyApp.svelte` — top level
-- [ ] `Panel.svelte` — outer div, `background-color` = separator color, `padding` = gap
-- [ ] Three flex children: graph region, details region, controls bar — all `border-radius: var(--radius)`, `overflow: hidden`
-- [ ] `Colors` — `$state` for background/separator/thing color, hardcode defaults for now
-- [ ] `yarn dev` → three colored regions visible
+- [x] `SeriouslyApp.svelte` — top level
+- [x] `Panel.svelte` — outer div, `background-color` = separator color, `padding` = gap
+- [x] Three flex children: graph region, details region, controls bar — all `border-radius: var(--radius)`, `overflow: hidden`
+- [x] `Colors` — `$state` for background/separator/thing color, hardcode defaults for now
+- [x] `yarn dev` → three colored regions visible
 
 ### Minimal Ancestry (no cache, no HID yet)
 
-- [ ] `Ancestry` — id = joined relationship-ID path string, `thing` lookup from store, `depth` = path length, `parentAncestry` = strip last ID, `branchAncestries` = children from store
-- [ ] `rootAncestry` = empty path
+- [x] `Ancestry` — id = joined relationship-ID path string, `thing` lookup from store, `depth` = path length, `parentAncestry` = strip last ID, `branchAncestries` = children from store
+- [x] `rootAncestry` = empty path
 
 ### Minimal Geometry
 
-- [ ] `G_Widget` — `center: Point`, hardcoded `width=120`, `height=16`, `center_ofReveal` = center + right offset
-- [ ] `G_TreeBranches` — stack children vertically at `k.height.row`, no curves
+- [x] `G_Widget` — `center: Point`, hardcoded `width=120`, `height=16`, `center_ofReveal` = center + right offset
+- [x] `G_TreeBranches` — stack children vertically at `k.height.row`, no curves
 
 ### Tree render
 
-- [ ] `Tree_Graph.svelte` — renders focus Widget + `Tree_Branches`, re-mounts on `$state` change
-- [ ] `Tree_Branches.svelte` — `{#each ancestry.branchAncestries as branch}` → `Widget` + recurse `depth - 1`, stop at `depth == 0`
-- [ ] `Widget.svelte` — title label only, positioned absolutely via `G_Widget.center`
-- [ ] `Widget_Title.svelte` — plain text, no editing yet
-- [ ] Focus hardcoded to `rootAncestry`
-- [ ] ✦ **Tree renders. Seed data visible as a positioned node tree.**
+- [x] `Tree_Graph.svelte` — renders focus Widget + `Tree_Branches`, re-mounts on `$state` change
+- [x] `Tree_Branches.svelte` — `{#each ancestry.branchAncestries as branch}` → `Widget` + recurse `depth - 1`, stop at `depth == 0`
+- [x] `Widget.svelte` — title label only, positioned absolutely via `G_Widget.center`
+- [x] `Widget_Title.svelte` — plain text, no editing yet
+- [x] Focus hardcoded to `rootAncestry`
+- [x] ✦ **Tree renders. Seed data visible as a positioned node tree.**
 
 ---
 

@@ -1,4 +1,4 @@
-# Hierarchy.ts — Design Spec
+5 # Hierarchy.ts — Design Spec
 
 File: `ws/src/lib/ts/managers/Hierarchy.ts`
 Lines: 1753

@@ -43,31 +43,21 @@ The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling 
 
 The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
 
-(!) Some chunks are larger than 500 kB after minification. Consider:
-- Using dynamic import() to code-split the application
-- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
-- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
 
-The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+(!) Found dead link ./../../../w2/notes/work/index in file work/s3.md
+(!) Found dead link ./w2/index in file work/s3.md
 
-The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+If this is expected, you can disable this check via config. Refer: https://vitepress.dev/reference/site-config#ignoredeadlinks
 
-The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-
-The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
-[32m✓[0m building client + server bundles...
-- rendering pages...
-[32m✓[0m rendering pages...
-build complete in 24.25s.
+x Build failed in 17.52s
+[31m✖[0m building client + server bundles...
+build error:
+[vitepress] 2 dead link(s) found.
+[vitepress] 2 dead link(s) found.
+    at Object.renderStart (file:///Users/sand/GitHub/mono/node_modules/vitepress/dist/node/chunk-D3CUZ4fa.js:45027:15)
+    at file:///Users/sand/GitHub/mono/node_modules/vitepress/node_modules/rollup/dist/es/shared/node-entry.js:22527:40
+    at async Promise.all (index 0)
+    at async PluginDriver.hookParallel (file:///Users/sand/GitHub/mono/node_modules/vitepress/node_modules/rollup/dist/es/shared/node-entry.js:22437:9)
+    at async Bundle.generate (file:///Users/sand/GitHub/mono/node_modules/vitepress/node_modules/rollup/dist/es/shared/node-entry.js:20599:13)
+    at async file:///Users/sand/GitHub/mono/node_modules/vitepress/node_modules/rollup/dist/es/shared/node-entry.js:23514:27
+    at async catchUnfinishedHookActions (file:///Users/sand/GitHub/mono/node_modules/vitepress/node_modules/rollup/dist/es/shared/node-entry.js:22881:16)

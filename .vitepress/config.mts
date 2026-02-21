@@ -306,12 +306,12 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/17.library'
                         },
                         {
-                          text: '18.constants',
-                          link: '/di/notes/work/milestones/18.constants'
+                          text: '18.user.constants',
+                          link: '/di/notes/work/milestones/18.user.constants'
                         },
                         {
-                          text: '19.cut.lists',
-                          link: '/di/notes/work/milestones/19.cut.lists'
+                          text: '19.skills',
+                          link: '/di/notes/work/milestones/19.skills'
                         },
                         {
                           text: '2.panel',
@@ -322,16 +322,20 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/20.repeaters'
                         },
                         {
-                          text: '21.licensing',
-                          link: '/di/notes/work/milestones/21.licensing'
+                          text: '21.cut.lists',
+                          link: '/di/notes/work/milestones/21.cut.lists'
                         },
                         {
-                          text: '22.marketing',
-                          link: '/di/notes/work/milestones/22.marketing'
+                          text: '22.licensing',
+                          link: '/di/notes/work/milestones/22.licensing'
                         },
                         {
-                          text: '23.hierarchy',
-                          link: '/di/notes/work/milestones/23.hierarchy'
+                          text: '23.marketing',
+                          link: '/di/notes/work/milestones/23.marketing'
+                        },
+                        {
+                          text: '24.hierarchy',
+                          link: '/di/notes/work/milestones/24.hierarchy'
                         },
                         {
                           text: '3.docs',
@@ -656,6 +660,10 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
+                  text: 'Agent Skills',
+                  link: '/notes/work/Agent Skills'
+                },
+                {
                   text: 'Faster',
                   link: '/notes/work/faster'
                 },
@@ -853,6 +861,87 @@ export default defineConfig({
                     {
                       text: 'Retention Test',
                       link: '/notes/work/next/retention-test'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          text: 'S3 >',
+          collapsed: true,
+          items: [
+            {
+              text: 'Notes >',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Work >',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Fresh.build',
+                      link: '/s3/notes/work/fresh.build'
+                    },
+                    {
+                      text: 'Revisit.s3',
+                      link: '/s3/notes/work/revisit.s3'
+                    },
+                    {
+                      text: 'Phases >',
+                      link: '/s3/notes/work/phases/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Ancestry',
+                          link: '/s3/notes/work/phases/ancestry'
+                        },
+                        {
+                          text: 'Database',
+                          link: '/s3/notes/work/phases/database'
+                        },
+                        {
+                          text: 'Entities',
+                          link: '/s3/notes/work/phases/entities'
+                        },
+                        {
+                          text: 'Geometry',
+                          link: '/s3/notes/work/phases/geometry'
+                        },
+                        {
+                          text: 'Hierarchy',
+                          link: '/s3/notes/work/phases/hierarchy'
+                        },
+                        {
+                          text: 'Managers',
+                          link: '/s3/notes/work/phases/managers'
+                        },
+                        {
+                          text: 'Rendering',
+                          link: '/s3/notes/work/phases/rendering'
+                        },
+                        {
+                          text: 'Signals',
+                          link: '/s3/notes/work/phases/signals'
+                        },
+                        {
+                          text: 'Spec',
+                          link: '/s3/notes/work/phases/spec'
+                        },
+                        {
+                          text: 'Types',
+                          link: '/s3/notes/work/phases/types'
+                        },
+                        {
+                          text: 'Utilities',
+                          link: '/s3/notes/work/phases/utilities'
+                        },
+                        {
+                          text: 'UX',
+                          link: '/s3/notes/work/phases/ux'
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1163,8 +1252,8 @@ export default defineConfig({
                       link: '/ws/notes/work/revisit.ws'
                     },
                     {
-                      text: 'W2',
-                      link: '/ws/notes/work/w2'
+                      text: 'S3',
+                      link: '/ws/notes/work/s3'
                     },
                     {
                       text: 'Done >',

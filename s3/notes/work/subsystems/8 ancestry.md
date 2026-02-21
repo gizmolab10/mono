@@ -1,4 +1,4 @@
-# Ancestry — Design Spec
+8 # Ancestry — Design Spec
 
 Source: `ws/src/lib/ts/runtime/Ancestry.ts` (~966 lines)
 

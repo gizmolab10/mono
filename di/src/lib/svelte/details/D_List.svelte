@@ -7,6 +7,8 @@
 
 	const { w_all_sos, w_selection, w_tick, w_precision } = stores;
 
+	let show_position = true;
+
 	function select(so: Smart_Object): void {
 		hits_3d.set_selection({ so, type: T_Hit_3D.face, index: 0 });
 	}
@@ -19,24 +21,55 @@
 		return units.format_for_system(mm, $w_unit_system, $w_precision, false);
 	}
 
-	function position(so: Smart_Object, _tick: number): string {
-		return `${fmt(so.x_min)}, ${fmt(so.y_min)}, ${fmt(so.z_min)}`;
+	function position(so: Smart_Object, _tick: number): [string, string, string] {
+		return [fmt(so.x_min), fmt(so.y_min), fmt(so.z_min)];
 	}
 
-	function size(so: Smart_Object, _tick: number): string {
-		return `${fmt(so.axes[0].length.value)}, ${fmt(so.axes[1].length.value)}, ${fmt(so.axes[2].length.value)}`;
+	function size(so: Smart_Object, _tick: number): [string, string, string] {
+		return [fmt(so.axes[0].length.value), fmt(so.axes[1].length.value), fmt(so.axes[2].length.value)];
+	}
+
+	function repeat_count(so: Smart_Object, sos: Smart_Object[], _tick: number): number {
+		if (!so.is_template) return 0;
+		const parent = so.scene?.parent?.so;
+		if (!parent?.repeater) return 0;
+		return sos.filter(s => s.scene?.parent?.so === parent).length;
+	}
+
+	function is_clone(so: Smart_Object, _tick: number): boolean {
+		return !so.is_template && !!so.scene?.parent?.so.repeater;
+	}
+
+	function depth(so: Smart_Object): number {
+		let d = 0;
+		let scene = so.scene;
+		while (scene?.parent) { d++; scene = scene.parent; }
+		return d;
 	}
 </script>
 
-<table class='list'><tbody>
+<table class='list'>
+	<thead><tr>
+		<th class='list-header'></th>
+		<th class='list-toggle' colspan='3' onclick={() => show_position = !show_position}>
+			{show_position ? 'position' : 'size'} ⇄
+		</th>
+	</tr></thead>
+	<tbody>
 	{#each $w_all_sos as so (so.id)}
+		{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
+		{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
 		<tr
 			class='list-row'
 			class:selected={is_selected(so, $w_tick)}
+			class:clone={is_clone(so, $w_tick)}
 			onclick={() => select(so)}>
-			<td class='list-name'>{so.name}</td>
-			<td class='list-position'>{position(so, $w_tick)}</td>
-			<td class='list-size'>{size(so, $w_tick)}</td>
+			<td class='list-name' style:padding-left='{depth(so) * 12}px'>
+				{so.name}{#if n_rpt > 0}<span class='repeat-badge'>×{n_rpt}</span>{/if}
+			</td>
+			<td class='list-data'>{values[0]}</td>
+			<td class='list-data'>{values[1]}</td>
+			<td class='list-data'>{values[2]}</td>
 		</tr>
 	{/each}
 </tbody></table>
@@ -46,6 +79,7 @@
 		width           : 100%;
 		border-collapse : collapse;
 		font-size       : 9px;
+		margin-top      : -4px;
 	}
 
 	.list-row {
@@ -66,12 +100,38 @@
 		text-align : left;
 	}
 
-	.list-position,
-	.list-size {
+	.clone {
+		opacity : 0.35;
+	}
+
+	.repeat-badge {
+		margin-left : 4px;
+		opacity     : 0.5;
+		font-size   : 8px;
+	}
+
+	.list-header {
+		/* empty name column header */
+	}
+
+	.list-toggle {
+		text-align   : center;
+		font-weight  : normal;
+		color        : rgba(0, 0, 0, 0.8);
+		cursor       : pointer;
+		padding      : 0;
+		user-select  : none;
+	}
+
+	.list-toggle:hover {
+		color : rgba(0, 0, 0, 1.0);
+	}
+
+	.list-data {
 		padding              : 2px 0 2px 6px;
 		text-align           : right;
 		font-variant-numeric : tabular-nums;
-		opacity              : 0.6;
+		color                : black;
 		white-space          : nowrap;
 	}
 </style>

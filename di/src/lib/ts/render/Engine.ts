@@ -42,6 +42,15 @@ class Engine {
 				obj.color = rgba;
 			}
 		});
+
+		// After any propagation, sync repeater SOs so clone count/positions stay current
+		constraints.register_post_propagate(() => {
+			let any = false;
+			for (const o of scene.get_all()) {
+				if (o.so.repeater) { this.sync_repeater(o.so); any = true; }
+			}
+			if (any) stores.w_all_sos.set(scene.get_all().map(o => o.so));
+		});
 	}
 
 	// ── setup ──

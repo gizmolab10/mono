@@ -142,3 +142,7 @@
 - [x] vivaldi <- chrome
 - [x] pac: in all code files, use tabs that are 4 (not 2) spaces
 - [x] pac: in all code files, use tabs that are 4 (not 2) spaces
+- [x] lists
+	- [x] indent children
+	- [x] add toggle button: position/size
+	- [x] only show position OR size

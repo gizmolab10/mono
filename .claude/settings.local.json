@@ -28,7 +28,12 @@
       "Bash(yarn test:run:*)",
       "Bash(node --version:*)",
       "Bash(xargs -I{} sh -c 'echo \"\"=== {} ===\"\"; python3 -c \"\"import json; d=json.load\\(open\\(\\\\\"\"{}\\\\\"\"\\\\\\)\\); print\\(d[\\\\\"\"version\\\\\"\"]\\)\"\"')",
-      "Bash(yarn install:*)"
+      "Bash(yarn install:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(yarn build:*)",
+      "Bash(yarn workspace designintuition test:run:*)",
+      "Bash(yarn workspace:*)",
+      "Bash(node_modules/.bin/svelte-check:*)"
     ]
   }
 }

@@ -19,6 +19,26 @@
 	let is_root = $derived(!selected_so?.scene?.parent);
 	let has_children = $derived($w_all_sos.some(so => so.scene?.parent?.so === selected_so));
 
+	// Repeater state
+	let repeater_editing = $state(false);
+	let _so_key = $derived(selected_so?.id ?? '');
+	$effect(() => { _so_key; repeater_editing = false; });
+	function get_repeater_formula(_tick: number): string | null { return selected_so?.repeater?.count_formula ?? null; }
+	let repeater_formula = $derived(get_repeater_formula($w_tick));
+	let is_repeater = $derived(repeater_formula !== null);
+
+	function commit_repeater(formula: string) {
+		repeater_editing = false;
+		if (!selected_so) return;
+		const trimmed = formula.trim();
+		if (!trimmed) return;
+		engine.set_repeater(selected_so, trimmed);
+	}
+	function repeater_keydown(e: KeyboardEvent) {
+		if (e.key === 'Enter' || e.key === 'Escape') (e.target as HTMLInputElement).blur();
+		e.stopPropagation();
+	}
+
 	let tick = $derived(stores.is_editing() ? 0 : $w_tick);
 	function get_visible_label(_tick: number) { return selected_so?.visible === false ? 'show' : 'hide'; }
 	let visible_label = $derived(get_visible_label($w_tick));
@@ -279,8 +299,25 @@
 	</table>
 	<div class='actions-row'>
 		<button class='action-btn' disabled={!has_children} use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>delete all children</button>
+		{#if !is_repeater && !repeater_editing}
+			<button class='action-btn' onclick={() => repeater_editing = true}>repeat</button>
+		{/if}
 		<button class='action-btn right' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>add child</button>
 	</div>
+	{#if is_repeater || repeater_editing}
+		<div class='repeater-row'>
+			<span class='repeater-x'>×</span>
+			<input
+				type        = 'text'
+				class       = 'repeater-input'
+				placeholder = 'count formula'
+				value       = {repeater_formula ?? ''}
+				onfocus     = {() => stores.w_editing.set(T_Editing.formula)}
+				onblur      = {(e) => { commit_repeater((e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
+				onkeydown   = {repeater_keydown}
+			/>
+		</div>
+	{/if}
 {:else}
 	<p>No object selected</p>
 {/if}
@@ -441,5 +478,41 @@
 		font-size : 0.875rem;
 		opacity   : 0.6;
 		margin    : 0;
+	}
+
+	.repeater-row {
+		display     : flex;
+		align-items : center;
+		gap         : 4px;
+		margin-top  : 6px;
+	}
+
+	.repeater-x {
+		font-weight : 600;
+		font-size   : 12px;
+		opacity     : 0.7;
+		width       : 12px;
+		text-align  : center;
+		flex-shrink : 0;
+	}
+
+	.repeater-input {
+		flex          : 1;
+		min-width     : 0;
+		border        : 0.5px solid currentColor;
+		border-radius : 4px;
+		background    : white;
+		color         : inherit;
+		font-size     : 11px;
+		font-family   : inherit;
+		height        : 20px;
+		padding       : 0 6px;
+		outline       : none;
+		box-sizing    : border-box;
+	}
+
+	.repeater-input:focus {
+		outline        : 1.5px solid cornflowerblue;
+		outline-offset : -1.5px;
 	}
 </style>

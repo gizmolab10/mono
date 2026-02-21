@@ -1,10 +1,10 @@
-# UX State Design Spec
+9 # UX State Design Spec
 
 Source files: `ws/src/lib/ts/managers/UX.ts`, `ws/src/lib/ts/state/S_Items.ts`, and all state objects listed below.
 
 ---
 
-## S_Items<T> — Generic Paged Collection
+## `S_Items<T>` — Generic Paged Collection
 
 File: `ws/src/lib/ts/state/S_Items.ts`
 

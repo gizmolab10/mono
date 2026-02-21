@@ -1,4 +1,4 @@
-# Persistable Entities — Design Spec
+4 # Persistable Entities — Design Spec
 
 Source: `ws/src/lib/ts/persistable/`
 

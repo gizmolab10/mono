@@ -1,4 +1,4 @@
-# Signals, Events, Mouse, and Hit Detection — Design Spec
+12 # Signals, Events, Mouse, and Hit Detection — Design Spec
 
 Sources read: `Signals.ts`, `Events.ts`, `Mouse_Timer.ts`, `S_Component.ts`, `S_Mouse.ts`, `S_Hit_Target.ts`, `Hits.ts`, `Enumerations.ts`, `Constants.ts`, `Types.ts`.
 
