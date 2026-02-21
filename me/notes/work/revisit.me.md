@@ -1,1 +1,2 @@
-- [ ] [game](/me/notes/civilization2) 
+- [ ] investigate AI
+- [ ] \

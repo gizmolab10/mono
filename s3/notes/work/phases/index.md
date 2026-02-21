@@ -16,6 +16,10 @@ Design spec for the Svelte 5 port of ws. One file per subsystem.
 - [utilities.md](./utilities.md) — SVG_Paths, Colors, Utilities, Extensions, Constants, Debug, Print
 - [types.md](./types.md) — Global_Imports (every `h`/`x`/`g` alias), all T_* enums, type aliases, Coordinates API
 
+## Build plan
+
+- [fresh.build.md](./fresh.build.md) — 14 phases, ~21 sessions, vertical slice first
+
 ## Architecture decisions
 
 Option 3 + A + di CSS:
@@ -23,4 +27,4 @@ Option 3 + A + di CSS:
 - **Reactivity**: Svelte 5 runes only (`$state`, `$derived`, `$effect`), no typed-signals
 - **Layout**: flex + gap + border-radius, no SVG draw components
 
-See [../w2.md](../w2.md) for full rationale.
+See [ws/notes/work/w2.md](../../../ws/notes/work/w2.md) for full rationale.

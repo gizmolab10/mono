@@ -2,7 +2,7 @@
 
 COMMON: Read `../../CLAUDE.MD`
 
-REPO: `~/GitHub/mono/ws`
+REPO: `~/GitHub/mono/s3`
 
 GUIDES: Read all `.md` files in `notes/guides/`
 

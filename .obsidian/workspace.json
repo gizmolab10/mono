@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/done/code.debt.done.md",
+                "file": "di/notes/work/milestones/19.skills.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt.done"
+              "title": "19.skills"
             }
           },
           {
@@ -199,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/done/code.debt.done.md",
+                "file": "di/notes/work/milestones/19.skills.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt.done"
+              "title": "Outline of 19.skills"
             }
           }
         ],
@@ -252,30 +252,15 @@
                   "icon": "lucide-file",
                   "title": "revisit.ws"
                 }
-              },
-              {
-                "id": "3ebae7a548a632b2",
-                "type": "leaf",
-                "state": {
-                  "type": "markdown",
-                  "state": {
-                    "file": "ws/notes/work/w2/spec.md",
-                    "mode": "source",
-                    "source": false
-                  },
-                  "icon": "lucide-file",
-                  "title": "spec"
-                }
               }
-            ],
-            "currentTab": 1
+            ]
           }
         ],
         "direction": "vertical",
-        "x": 1182,
+        "x": 231,
         "y": 25,
-        "width": 600,
-        "height": 675,
+        "width": 1103,
+        "height": 797,
         "maximize": false,
         "zoom": 0.5
       }
@@ -283,42 +268,43 @@
   },
   "active": "bbc57c19fcf944de",
   "lastOpenFiles": [
-    "di/notes/work/code.debt.md",
-    "di/notes/work/revisit.di.md",
-    "ws/notes/work/w2/spec.md",
-    "ws/notes/work/revisit.ws.md",
-    "ws/notes/work/w2/index.md",
-    "ws/notes/work/w2/rendering.md",
-    "ws/notes/work/w2/managers.md",
-    "ws/notes/work/w2/utilities.md",
-    "ws/notes/work/w2/types.md",
-    "ws/notes/work/w2/geometry.md",
-    "ws/notes/work/w2/ux.md",
-    "ws/notes/work/w2/hierarchy.md",
-    "ws/notes/work/w2/signals.md",
-    "ws/notes/work/w2/ancestry.md",
-    "ws/notes/work/w2/database.md",
-    "ws/notes/work/w2/entities.md",
-    "ws/notes/work/w2",
-    "ws/notes/work/index.md",
-    "ws/notes/work/w2.md",
-    "di/notes/work/milestones/19.skills.md",
-    "di/notes/work/Agent Skills.md",
-    "di/notes/work/more milestones.md",
-    "di/notes/work/done/code.debt.done.md",
-    "di/notes/work/milestones/20.repeaters.md",
-    "notes/work/journal.md",
-    "di/notes/work/milestones/24.hierarchy.md",
-    "di/notes/work/milestones/23.marketing.md",
-    "di/src/lib/svelte/details/D_Constants.svelte",
-    "di/src/lib/ts/algebra/User_Constants.ts",
-    "di/src/lib/ts/algebra/User.ts",
-    "di/src/lib/ts/algebra/Constants.ts",
-    "di/src/lib/svelte/details/D_List.svelte",
-    "di/src/lib/ts/algebra/Standard_Dimensions.ts",
-    "di/src/lib/svelte/details/D_Standard_Dimensions.svelte",
-    "logs/update-docs.error.di.log",
-    "logs/update-docs.error.ws.log",
+    "s3/notes/work/revisit.s3.md",
+    "ws/notes/work/s3.md",
+    "s3/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/utils.js",
+    "s3/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/element.js",
+    "s3/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/component.js",
+    "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/special_element.js",
+    "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/utils.js",
+    "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/function.js",
+    "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/fragment.js",
+    "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/events.js",
+    "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/element.js",
+    "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/declarations.js",
+    "s3/node_modules/@esbuild/darwin-x64/README.md",
+    "s3/node_modules/@jridgewell/gen-mapping/README.md",
+    "s3/node_modules/@tsconfig/svelte/README.md",
+    "s3/node_modules/@types/estree/README.md",
+    "s3/node_modules/@sveltejs/acorn-typescript/README.md",
+    "s3/node_modules/@sveltejs/acorn-typescript/LICENSE.md",
+    "s3/node_modules/@jridgewell/trace-mapping/README.md",
+    "s3/node_modules/@jridgewell/sourcemap-codec/README.md",
+    "s3/node_modules/@jridgewell/resolve-uri/README.md",
+    "s3/node_modules/@jridgewell/remapping/README.md",
+    "s3/notes/work/phases/ux.md",
+    "s3/notes/work/phases/utilities.md",
+    "s3/notes/work/phases/types.md",
+    "s3/notes/work/phases/spec.md",
+    "s3/notes/work/phases/signals.md",
+    "s3/notes/work/phases/rendering.md",
+    "s3/notes/work/phases/managers.md",
+    "s3/notes/work/phases/index.md",
+    "s3/notes/work/phases/hierarchy.md",
+    "s3/notes/work/phases/geometry.md",
+    "s3/notes/work/phases/entities.md",
+    "s3/notes/work/phases/database.md",
+    "s3/notes/work/phases/ancestry.md",
+    "s3/node_modules/vite/LICENSE.md",
+    "ws/notes/work/Untitled.canvas",
     "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
     "Screenshot 2026-02-14 at 12.12.38 PM.png",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",

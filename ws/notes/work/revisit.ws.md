@@ -1,7 +1,6 @@
 # Revisit
 
-- [x] click on reveal dot when it shows big inner dot -> change focus to show children
-- [ ] 
+- [ ] add w2 to the hub app
 
 ## Future
 
