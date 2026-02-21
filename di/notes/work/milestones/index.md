@@ -19,6 +19,14 @@ All done through 11.
 | 14 | [Details](./14.details.md) | |
 | 15 | [Attributes](./15.attributes.md) | |
 | 16 | [Formulas](./16.formulas.md) | Feb 16 |
+| 17 | [Library](./17.library.md) | |
+| 18 | [User Constants](./18.user.constants.md) | |
+| 19 | [Skills](./19.skills.md) | |
+| 20 | [Repeaters](./20.repeaters.md) | |
+| 21 | [Cut Lists](./21.cut.lists.md) | |
+| 22 | [Licensing](./22.licensing.md) | |
+| 23 | [Marketing](./23.marketing.md) | |
+| 24 | [Hierarchy](./24.hierarchy.md) | |
 
 ## Contents
 

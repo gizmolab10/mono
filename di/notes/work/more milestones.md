@@ -1,8 +1,7 @@
 # Milestones
 
-Read the first unchecked item and propose.
+Read the first unchecked item and offer a proposal.
 
-- [ ] [[19.skills]]
 - [ ] [[20.repeaters]]
 - [ ] [[21.cut.lists]]
 - [ ] [[22.licensing]]

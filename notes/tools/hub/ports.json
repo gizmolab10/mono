@@ -41,7 +41,6 @@
     "repo": "https://github.com/gizmolab10/mono/ga"
   },
   "s3": {
-    "docs": 5184,
     "port": 5185,
     "repo": "https://github.com/gizmolab10/mono/s3"
   },

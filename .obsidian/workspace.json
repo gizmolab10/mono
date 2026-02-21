@@ -8,6 +8,20 @@
         "type": "tabs",
         "children": [
           {
+            "id": "119daed0ad4718de",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/more milestones.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "more milestones"
+            }
+          },
+          {
             "id": "bf8919592ee87a19",
             "type": "leaf",
             "state": {
@@ -41,30 +55,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/19.skills.md",
+                "file": "di/notes/work/done/code.debt.done.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "19.skills"
-            }
-          },
-          {
-            "id": "9da70dc3298817cf",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/Agent Skills.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Agent Skills"
+              "title": "code.debt.done"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -199,13 +198,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/19.skills.md",
+                "file": "di/notes/work/more milestones.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 19.skills"
+              "title": "Outline of more milestones"
             }
           }
         ],
@@ -266,8 +265,21 @@
       }
     ]
   },
-  "active": "bbc57c19fcf944de",
+  "active": "119daed0ad4718de",
   "lastOpenFiles": [
+    "di/notes/work/code.debt.md",
+    "di/notes/work/more milestones.md",
+    "di/notes/work/revisit.di.md",
+    "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/milestones/14.details.md",
+    "di/notes/work/milestones/20.repeaters.md",
+    "di/notes/work/milestones/19.skills.md",
+    "di/notes/work/milestones/18.user.constants.md",
+    "notes/work/Agent Skills.md",
+    "ws/vite.config.js.timestamp-1771652507281-8612cc98835f9.mjs",
+    "ws/vite.config.js.timestamp-1771652405578-5820532886705.mjs",
+    "logs/s3.log",
+    "ws/vite.config.js.timestamp-1771651858426-5316154c46644.mjs",
     "s3/notes/work/revisit.s3.md",
     "ws/notes/work/s3.md",
     "s3/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/utils.js",
@@ -276,10 +288,6 @@
     "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/special_element.js",
     "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/utils.js",
     "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/function.js",
-    "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/fragment.js",
-    "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/events.js",
-    "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/element.js",
-    "s3/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/declarations.js",
     "s3/node_modules/@esbuild/darwin-x64/README.md",
     "s3/node_modules/@jridgewell/gen-mapping/README.md",
     "s3/node_modules/@tsconfig/svelte/README.md",
@@ -295,15 +303,6 @@
     "s3/notes/work/phases/types.md",
     "s3/notes/work/phases/spec.md",
     "s3/notes/work/phases/signals.md",
-    "s3/notes/work/phases/rendering.md",
-    "s3/notes/work/phases/managers.md",
-    "s3/notes/work/phases/index.md",
-    "s3/notes/work/phases/hierarchy.md",
-    "s3/notes/work/phases/geometry.md",
-    "s3/notes/work/phases/entities.md",
-    "s3/notes/work/phases/database.md",
-    "s3/notes/work/phases/ancestry.md",
-    "s3/node_modules/vite/LICENSE.md",
     "ws/notes/work/Untitled.canvas",
     "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
     "Screenshot 2026-02-14 at 12.12.38 PM.png",

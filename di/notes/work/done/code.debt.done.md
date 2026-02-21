@@ -19,125 +19,126 @@
 - [x] add button "show/hide dimensionals" a boolean that render reacts to
 - [x] make the height of units system button consistent with other buttons
 - [x] add child should apply to current selection
-	- [x] **bug:** click on button -> selects root
+  - [x] **bug:** click on button -> selects root
 - [x] hide face label when face is
-	- [x] occluded
-	- [x] nearly edge on
+  - [x] occluded
+  - [x] nearly edge on
 - [x] bugs in controls:
-	- [x] imperial when active has a white outline around the blue border and the blue border is slightly taller than the button without the blue. metric and other
-	- [x] units should render with only 1 decimal point of precision
-	- [x] 2D should render in (ahem) 2D
+  - [x] imperial when active has a white outline around the blue border and the blue border is slightly taller than the button without the blue. metric and other
+  - [x] units should render with only 1 decimal point of precision
+  - [x] 2D should render in (ahem) 2D
 - [x] convert precision into a segmented control whose segment titles depend on the units system
-	- [x] imperial: whole, 1/2, 1/4, 1/8, 1/16, 1/32, 1/64
-	- [x] others: whole, 1, 2, 3
-	- [x] constrain the SOT values accordingly
+  - [x] imperial: whole, 1/2, 1/4, 1/8, 1/16, 1/32, 1/64
+  - [x] others: whole, 1, 2, 3
+  - [x] constrain the SOT values accordingly
 - [x] add new child -> wrong dimensions
-	- [x] algorithm: using smallest length of parent, divide that in half, use that for all dimensions
-	- [x] assure that the child axes all align with the parent's axes
-	- [x] after adding, select the parent
+  - [x] algorithm: using smallest length of parent, divide that in half, use that for all dimensions
+  - [x] assure that the child axes all align with the parent's axes
+  - [x] after adding, select the parent
 - [x] cruft
-	- [x] consolidate redundancy
-	- [x] simplify over-engineering
-	- [x] remove inconsistencies
-	- [x] ameliorate structural risks
+  - [x] consolidate redundancy
+  - [x] simplify over-engineering
+  - [x] remove inconsistencies
+  - [x] ameliorate structural risks
 - [x] better edge/corner dragging: default to the selected SO
-	- [x] it now defaults to the root SO
-	- [x] rotate a child -> it changes size — removed `recompute_max_bounds` call from `rotate_object` in `Events_3D.ts`. To restore: after `quat.normalize(obj.so.orientation, obj.so.orientation);` add `if (obj.so.fixed && obj.parent) { orientation.recompute_max_bounds(obj.so); }`
+  - [x] it now defaults to the root SO
+  - [x] rotate a child -> it changes size — removed `recompute_max_bounds` call from `rotate_object` in `Events_3D.ts`. To restore: after `quat.normalize(obj.so.orientation, obj.so.orientation);` add `if (obj.so.fixed && obj.parent) { orientation.recompute_max_bounds(obj.so); }`
 - [x] **face intersection** line segments
-	- [x] **only** for SO pairs that do not share ALL their axes
-	- [x] **ASSUME**:
-		- [x] child does not share axes
-		- [x] child extends outside parent
-		- [x] **create from reset**: add child, stretch child longer than parent, rotate child
-	- [x] compute the **dihedral** intersection line for each pair of intersecting faces (use cross product)
-	- [x] **compute the two endpoints** of each such line
-	- [x] hidden lines, etc
-		- [x] i want the rendered lines to exclude anything that is "inside" any SO
-	- [x] screen-space spatial partitioning (tiled bins or BVH) to cull face checks per edge
-		- [x] Occlusion is brute-force O(edges × faces) — every edge checks every front-facing face from every other object. Intersection lines add O(face_pairs × faces) on top. Fine for a handful of objects, but will choke at scale
-		- [x] [[spatial]]
+  - [x] **only** for SO pairs that do not share ALL their axes
+  - [x] **ASSUME**:
+    - [x] child does not share axes
+    - [x] child extends outside parent
+    - [x] **create from reset**: add child, stretch child longer than parent, rotate child
+  - [x] compute the **dihedral** intersection line for each pair of intersecting faces (use cross product)
+  - [x] **compute the two endpoints** of each such line
+  - [x] hidden lines, etc
+    - [x] i want the rendered lines to exclude anything that is "inside" any SO
+  - [x] screen-space spatial partitioning (tiled bins or BVH) to cull face checks per edge
+    - [x] Occlusion is brute-force O(edges × faces) — every edge checks every front-facing face from every other object. Intersection lines add O(face_pairs × faces) on top. Fine for a handful of objects, but will choke at scale
+    - [x] \[\[spatial\]\]
 - [x] delete selected SO
 - [x] hover/click should hit the front most SO
 - [x] ability to drag the current SO
-	- [x] click on a face and drag it
-	- [x] ignore drag when applied to the root SO
-	- [x] constrain movement within the plane of the front-most facing face OF THE PARENT SO
-	- [x] movement does not follow mouse
-		- [x] need to project mouse movement (2d vector) onto this plane (different vector)
-		- [x] compute the new x,y,z 
+  - [x] click on a face and drag it
+  - [x] ignore drag when applied to the root SO
+  - [x] constrain movement within the plane of the front-most facing face OF THE PARENT SO
+  - [x] movement does not follow mouse
+    - [x] need to project mouse movement (2d vector) onto this plane (different vector)
+    - [x] compute the new x,y,z
 - [x] hide occluded dimensionals
 - [x] performance analysis -- app is VERY unresponsive
 - [x] row of SO buttons -> top center of canvas
-	- [x] selected SO needs a border, black text, darker background color
-	- [x] unselected need light background color
+  - [x] selected SO needs a border, black text, darker background color
+  - [x] unselected need light background color
 - [x] build number button -> bottom left of canvas
 - [x] remove "Details" label from details
 - [x] background color picker -> details same row as edge color, and make it the left most
 - [x] steppers got centered in build notes, move back to top left
-	- [x] when only step down button is visible, it should leave empty space for step up, so it does not jump when the step up button appears
+  - [x] when only step down button is visible, it should leave empty space for step up, so it does not jump when the step up button appears
 - [x] when build notes overlay is visible, make entire app just one large empty div, retaining the wraparound accent gap
 - [x] move Design Intuition label in controls up 3px
 - [x] 2D needs to be a "infinite zoom" projection
-	- [x] so rotated SO flatten but "retain their relative angle"
+  - [x] so rotated SO flatten but "retain their relative angle"
 - [x] add details hamburger (copy from ws project)
 - [x] use hit target for ALL buttons and segments
 - [x] research scene model
 - [x]  move all Angle and Polar code from Coordinates to Angle
-	- [x] including thin delegates
+  - [x] including thin delegates
 - [x] straighten -> apply to front-most-facing face of root
 - [x] switch 3D -> 2D
-	- [x] wrong face
-	- [x] wrong twist
-	- [x] child projections wrong
-	- [x] missing some dimensionals
+  - [x] wrong face
+  - [x] wrong twist
+  - [x] child projections wrong
+  - [x] missing some dimensionals
 - [x] add ability to edit face label
-- [x] pac: combine all _*Rect_ interfaces
+- [x] pac: combine all *\*Rect* interfaces
 - [x] remove border around edit input fields in the canvas
 - [x] add angulars (like dimenionals but for angles)
 - [x] find all the build numbers (milestones) and dates -> build notes
 - [x] rebuild SO with 2 single-axis rotations
-	- [x] from which, quaternion is derived
+  - [x] from which, quaternion is derived
 - [x] **ABANDON:** see through -> all, add "back"
 - [x] confine ALL rotations to one axis -> the normal of the selected face
 - [x] add a six segment control to controls, one for each face
-	- [x] darken segment corresponding to front-most-facing face of root SO
-	- [x] click on a button -> rotate root SO to orient (and straighten) that face at front
+  - [x] darken segment corresponding to front-most-facing face of root SO
+  - [x] click on a button -> rotate root SO to orient (and straighten) that face at front
 - [x] organize architecture notes
-- [x] move [[16.formulas]] to milestones
+- [x] move \[\[16.formulas\]\] to milestones
 - [x] add a toggle button to D_Selection titled "hide" / "show" -- hide means do not draw the SO or its decorations
 - [x] add a margin 8px at right and left of both D_Selection tables
 - [x] 3' - 1/4" -> does not work in value cells
 - [x] move reset button -> D_Library
 - [x] move "straighten" button to controls, between scaling and face orientation segmented control
 - [x] scale
-	- [x] continuous / not steps
-	- [x] powers of 10 of the scale
-	- [x] tick marks and labels
-	- [x] needs larger range
+  - [x] continuous / not steps
+  - [x] powers of 10 of the scale
+  - [x] tick marks and labels
+  - [x] needs larger range
 - [x] version 4: attr serial -> orig, ext, len, angle
 - [x] interpretation -> wait until approved
 - [x] remove "design intuition" from controls
 - [x] "reset preferences" button
 - [x] delete -> delete selected AND its entire subtree of SO
 - [x] default accent color -> glow too faint
-- [x] integrate [[simplicity]] -> [[workflow]]
-- [x] [[17.library]]
+- [x] integrate \[\[simplicity\]\] -> \[\[workflow\]\]
+- [x] \[\[17.library\]\]
 - [x] get claude vscode == plugin
 - [x] tumble ALWAYS applies to root SO
-	- [x] OPTION tumble -> applies to selected SO
+  - [x] OPTION tumble -> applies to selected SO
 - [x] values in attr tables should be offsets, not absolutes
 - [x] choose an SO (buttons at top of graph) -> select most front facing face
-	- [x] as root tumbles -> update selection to select (possibly different) most front facing face
+  - [x] as root tumbles -> update selection to select (possibly different) most front facing face
 - [x] in D List, remove ALL the inches signifiers (just show raw number)
-	- [x] positions are all NaN
+  - [x] positions are all NaN
 - [x] save button should use SO's name for file name
 - [x] remove all children button should also remove all sd constants that are no longer referenced
 - [x] rename standard dimensions -> user constants
 - [x] move library up -> between preferences and selection
 - [x] not all user constants got removed by delete all children
-	- [x] verify that those that remain are NOT referenced !!! but do NOT remove them
-	- [x] debug delete all children
+  - [x] verify that those that remain are NOT referenced !!! but do NOT remove them
+  - [x] debug delete all children
 - [x] hover -> enabled cells
 - [x] reverse order of all controls (leave order within segmented controls as is)
 - [x] vivaldi <- chrome
-
+- [x] pac: in all code files, use tabs that are 4 (not 2) spaces
+- [x] pac: in all code files, use tabs that are 4 (not 2) spaces

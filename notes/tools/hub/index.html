@@ -482,6 +482,7 @@
       <div class="project-group side-a">
         <button class="project" data-project="me">me<span class="badge">J</span></button>
         <button class="project" data-project="ga">ga<span class="badge">G</span></button>
+        <button class="project" data-project="s3">s3<span class="badge">S</span></button>
         <button class="project" data-project="mo">mo<span class="badge">M</span></button>
         <button class="project" data-project="di">di<span class="badge">I</span></button>
         <button class="project active" data-project="ws">ws<span class="badge">W</span></button>
@@ -533,11 +534,9 @@
     let config = {};
     let mode = localStorage.getItem('hub-mode') || 'app';
     let project = localStorage.getItem('hub-project') || 'ws';
-    // Migration: rename mono -> mo
-    if (project === 'mono') {
-      project = 'mo';
-      localStorage.setItem('hub-project', 'mo');
-    }
+    // Migrations
+    if (project === 'mono') { project = 'mo'; localStorage.setItem('hub-project', 'mo'); }
+    if (project === 'w2') { project = 's3'; localStorage.setItem('hub-project', 's3'); }
     let hoveredActionId = null;
     let hoveredAction = null;
     let previewMode = null;
@@ -594,14 +593,16 @@
           di: buildProjectConfig('di', 'app'),
           mo: buildProjectConfig('mo', 'app'),
           me: buildProjectConfig('me', 'app'),
-          ga: buildProjectConfig('ga', 'app')
+          ga: buildProjectConfig('ga', 'app'),
+          s3: buildProjectConfig('s3', 'app')
         },
         docs: {
           ws: buildProjectConfig('ws', 'docs'),
           di: buildProjectConfig('di', 'docs'),
           mo: buildProjectConfig('mo', 'docs'),
           me: buildProjectConfig('me', 'docs'),
-          ga: buildProjectConfig('ga', 'docs')
+          ga: buildProjectConfig('ga', 'docs'),
+          s3: buildProjectConfig('s3', 'docs')
         }
       };
     }
@@ -881,7 +882,8 @@
         di: 'di/notes/work/revisit.di.md',
         mo: 'notes/work/revisit.mo.md',
         me: 'me/notes/work/revisit.me.md',
-        ga: 'ga/notes/work/revisit.ga.md'
+        ga: 'ga/notes/work/revisit.ga.md',
+        s3: 's3/notes/work/revisit.s3.md'
       };
       const path = revisitPaths[project] || 'notes/work/revisit.mo.md';
       fetch(`http://localhost:${ports.dispatcher.port}/obsidian/${path}`)
@@ -1454,6 +1456,7 @@
         case 'w': previewProject = 'ws'; highlightProjectButton('ws'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'i': previewProject = 'di'; highlightProjectButton('di'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'g': { const m = getDisplayMode(); if (config[m]?.['ga'] !== null) { previewProject = 'ga'; highlightProjectButton('ga'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
+        case 's': { const m = getDisplayMode(); if (config[m]?.['s3'] !== null) { previewProject = 's3'; highlightProjectButton('s3'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } } break;
         case 'm': { const m = getDisplayMode(); if (config[m]?.['mo'] !== null) { previewProject = 'mo'; highlightProjectButton('mo'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'j': { const m = getDisplayMode(); if (config[m]?.['me'] !== null) { previewProject = 'me'; highlightProjectButton('me'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
@@ -1497,7 +1500,7 @@
     localStorage.removeItem('hub-console-restart');
     localStorage.removeItem('hub-console-docs');
 
-    fetch('./ports.json')
+    fetch('./ports.json?v=' + Date.now())
       .then(res => res.json())
       .then(data => {
         ports = data;
