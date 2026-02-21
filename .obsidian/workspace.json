@@ -8,20 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "f74a2d3b92f5b1c8",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/milestones/18.constants <--.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "18.constants <--"
-            }
-          },
-          {
             "id": "bf8919592ee87a19",
             "type": "leaf",
             "state": {
@@ -69,16 +55,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/journal.md",
+                "file": "di/notes/work/Agent Skills.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "journal"
+              "title": "Agent Skills"
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -241,43 +227,98 @@
       "bases:Create new base": false
     }
   },
+  "floating": {
+    "id": "02c11dcae26f89e4",
+    "type": "floating",
+    "children": [
+      {
+        "id": "9328e2e7b76a3d8b",
+        "type": "window",
+        "children": [
+          {
+            "id": "2762329285cdfb0d",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "c4b07a81be77bebc",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "ws/notes/work/revisit.ws.md",
+                    "mode": "source",
+                    "source": false
+                  },
+                  "icon": "lucide-file",
+                  "title": "revisit.ws"
+                }
+              },
+              {
+                "id": "3ebae7a548a632b2",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "ws/notes/work/w2/spec.md",
+                    "mode": "source",
+                    "source": false
+                  },
+                  "icon": "lucide-file",
+                  "title": "spec"
+                }
+              }
+            ],
+            "currentTab": 1
+          }
+        ],
+        "direction": "vertical",
+        "x": 1182,
+        "y": 25,
+        "width": 600,
+        "height": 675,
+        "maximize": false,
+        "zoom": 0.5
+      }
+    ]
+  },
   "active": "bbc57c19fcf944de",
   "lastOpenFiles": [
     "di/notes/work/code.debt.md",
+    "di/notes/work/revisit.di.md",
+    "ws/notes/work/w2/spec.md",
+    "ws/notes/work/revisit.ws.md",
+    "ws/notes/work/w2/index.md",
+    "ws/notes/work/w2/rendering.md",
+    "ws/notes/work/w2/managers.md",
+    "ws/notes/work/w2/utilities.md",
+    "ws/notes/work/w2/types.md",
+    "ws/notes/work/w2/geometry.md",
+    "ws/notes/work/w2/ux.md",
+    "ws/notes/work/w2/hierarchy.md",
+    "ws/notes/work/w2/signals.md",
+    "ws/notes/work/w2/ancestry.md",
+    "ws/notes/work/w2/database.md",
+    "ws/notes/work/w2/entities.md",
+    "ws/notes/work/w2",
+    "ws/notes/work/index.md",
+    "ws/notes/work/w2.md",
+    "di/notes/work/milestones/19.skills.md",
+    "di/notes/work/Agent Skills.md",
+    "di/notes/work/more milestones.md",
     "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/milestones/20.repeaters.md",
+    "notes/work/journal.md",
+    "di/notes/work/milestones/24.hierarchy.md",
+    "di/notes/work/milestones/23.marketing.md",
     "di/src/lib/svelte/details/D_Constants.svelte",
     "di/src/lib/ts/algebra/User_Constants.ts",
     "di/src/lib/ts/algebra/User.ts",
     "di/src/lib/ts/algebra/Constants.ts",
-    "di/notes/work/milestones/18.constants <--.md",
     "di/src/lib/svelte/details/D_List.svelte",
-    "di/notes/work/revisit.di.md",
-    "di/notes/work/milestones/17.library.md",
-    "notes/guides/pre-flight/gates.md",
-    "notes/guides/jonathan.md",
-    "di/notes/work/Agent Skills.md",
-    "notes/guides/pre-flight/keywords.md",
-    "notes/guides/pre-flight/shorthand.md",
-    "notes/guides/pre-flight/always.md",
-    "CLAUDE.MD",
-    "di/notes/work/more milestones.md",
     "di/src/lib/ts/algebra/Standard_Dimensions.ts",
     "di/src/lib/svelte/details/D_Standard_Dimensions.svelte",
-    "di/notes/work/next/pacing.md",
-    "notes/work/journal.md",
     "logs/update-docs.error.di.log",
     "logs/update-docs.error.ws.log",
-    "logs/update-docs.error.mono.log",
-    "notes/guides/philosophy/motive.md",
-    "notes/guides/collaborate/workflow.md",
-    "notes/guides/philosophy/simplicity.md",
-    "di/notes/work/milestones/23.hierarchy.md",
-    "di/notes/work/milestones/19.cut.lists.md",
-    "di/notes/work/milestones/22.marketing.md",
-    "di/notes/work/milestones/21.licensing.md",
-    "di/notes/work/milestones/20.repeaters.md",
-    "di/notes/architecture/file layout.md",
-    "di/notes/work/next/punch list.md",
     "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
     "Screenshot 2026-02-14 at 12.12.38 PM.png",
     "ga/node_modules/phaser/changelog/3.60/images/plane.png",

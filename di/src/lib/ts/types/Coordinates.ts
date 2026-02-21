@@ -193,20 +193,20 @@ export class Rect {
 	intersects(rect: Rect): boolean {
 		// handle zero-width/height cases by using origin instead of extent
 		// for a zero dimension, treat the rectangle as a line by using the origin point
-        const thisExtentX = this.size.width  === 0 ? this.origin.x : this.extent.x;
-        const thisExtentY = this.size.height === 0 ? this.origin.y : this.extent.y;
-        const rectExtentX = rect.size.width  === 0 ? rect.origin.x : rect.extent.x;
-        const rectExtentY = rect.size.height === 0 ? rect.origin.y : rect.extent.y;
+				const thisExtentX = this.size.width  === 0 ? this.origin.x : this.extent.x;
+				const thisExtentY = this.size.height === 0 ? this.origin.y : this.extent.y;
+				const rectExtentX = rect.size.width  === 0 ? rect.origin.x : rect.extent.x;
+				const rectExtentY = rect.size.height === 0 ? rect.origin.y : rect.extent.y;
 
 		// check for non-intersection using the separating axis theorem
 		// two rectangles do NOT intersect if:
 		// - the left edge of one is right of the right edge of the other OR
 		// - the top edge of one is below the bottom edge of the other
-        return !(this.origin.x > rectExtentX || 
+				return !(this.origin.x > rectExtentX || 
 				 this.origin.y > rectExtentY ||
-                 rect.origin.x > thisExtentX || 
-                 rect.origin.y > thisExtentY);
-    }
+								 rect.origin.x > thisExtentX || 
+								 rect.origin.y > thisExtentY);
+		}
 
 	clippedTo(bounds: Rect): Rect {
 		// Clip this rect to the bounds, returning the intersection

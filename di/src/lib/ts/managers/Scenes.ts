@@ -29,31 +29,31 @@ export interface Portable_SO {
 }
 
 export interface Portable_Scene {
-  camera: { eye: number[]; center: number[]; up: number[] };
-  smart_objects: Portable_SO[];
-  constants?: ConstantEntry[];
-  selected_face?: number;
-  selected_id?: string;
-  root_id: string;
+	camera: { eye: number[]; center: number[]; up: number[] };
+	smart_objects: Portable_SO[];
+	constants?: ConstantEntry[];
+	selected_face?: number;
+	selected_id?: string;
+	root_id: string;
 }
 
 export interface Exported_File {
-  scene: Portable_Scene;
-  version: string;
+	scene: Portable_Scene;
+	version: string;
 }
 
 // Legacy v2 shape (flat bounds, orientation) — used only by migration code.
 export interface Portable_SO_v2 {
-  rotations?: { axis: Axis_Name; angle: number }[];
-  formulas?: Record<string, string>;
-  bounds: Record<Bound, number>;
-  orientation?: number[];     // kept for backwards-compatible import
-  invariants?: number[];
-  parent_name?: string;       // kept for backwards-compatible import
-  position?: number[];        // O_Scene.position (defaults to [0,0,0])
-  parent_id?: string;
-  name: string;
-  id: string;
+	rotations?: { axis: Axis_Name; angle: number }[];
+	formulas?: Record<string, string>;
+	bounds: Record<Bound, number>;
+	orientation?: number[];     // kept for backwards-compatible import
+	invariants?: number[];
+	parent_name?: string;       // kept for backwards-compatible import
+	position?: number[];        // O_Scene.position (defaults to [0,0,0])
+	parent_id?: string;
+	name: string;
+	id: string;
 }
 
 class Scenes {

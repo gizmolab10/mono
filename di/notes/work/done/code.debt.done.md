@@ -134,4 +134,10 @@
 - [x] remove all children button should also remove all sd constants that are no longer referenced
 - [x] rename standard dimensions -> user constants
 - [x] move library up -> between preferences and selection
+- [x] not all user constants got removed by delete all children
+	- [x] verify that those that remain are NOT referenced !!! but do NOT remove them
+	- [x] debug delete all children
+- [x] hover -> enabled cells
+- [x] reverse order of all controls (leave order within segmented controls as is)
+- [x] vivaldi <- chrome
 

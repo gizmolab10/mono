@@ -1,6 +1,7 @@
 # Revisit
 
-- [ ] click on reveal dot when it shows big inner dot -> change focus to show children
+- [x] click on reveal dot when it shows big inner dot -> change focus to show children
+- [ ] 
 
 ## Future
 

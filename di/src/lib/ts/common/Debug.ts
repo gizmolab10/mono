@@ -1,5 +1,5 @@
 class Debug {
-  enabled = false;
+	enabled = false;
 }
 
 export const debug = new Debug();

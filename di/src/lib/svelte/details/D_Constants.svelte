@@ -70,10 +70,6 @@
 	}
 </script>
 
-<div class='settings'>
-	<button class='action-btn' use:hit_target={{ id: 'add-standard', onpress: add_dimension }}>add</button>
-</div>
-
 {#if rows.length > 0}
 	<table class='standards'><tbody>
 		{#each rows as row, index}
@@ -107,10 +103,16 @@
 	</tbody></table>
 {/if}
 
+<div class='settings'>
+	<button class='action-btn' use:hit_target={{ id: 'add-standard', onpress: add_dimension }}>add</button>
+</div>
+
 <style>
 	.settings {
-		display : flex;
-		gap     : 6px;
+		display         : flex;
+		gap             : 6px;
+		justify-content : flex-end;
+		margin-top      : 8px;
 	}
 
 	.action-btn {
@@ -134,7 +136,6 @@
 	.standards {
 		width           : 100%;
 		border-collapse : collapse;
-		margin-top      : 8px;
 		font-size       : 11px;
 	}
 
@@ -152,10 +153,14 @@
 	}
 
 	.std-remove {
-		width      : 20px;
-		min-width  : 20px;
+		width      : 1lh;
+		min-width  : 1lh;
 		text-align : center;
 		background : var(--bg);
+	}
+
+	.std-remove:hover {
+		background : var(--accent);
 	}
 
 	.remove-btn {
@@ -187,9 +192,15 @@
 		box-sizing  : border-box;
 	}
 
+	.cell-input:not(:focus):hover {
+		background : var(--accent);
+	}
+
 	.cell-input:focus {
-		background : white;
-		color      : black;
+		background     : white;
+		color          : black;
+		outline        : 1.5px solid cornflowerblue;
+		outline-offset : -1.5px;
 	}
 
 	.cell-input.right {

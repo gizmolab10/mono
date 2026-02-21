@@ -52,10 +52,12 @@
 				if (show.inRadialMode) {
 					focus_ancestry = ancestry;
 				} else if (ancestry.hasChildren || ancestry.thing.isBulkAlias) {
-					if (ancestry.hasChildren && !ancestry.isExpanded) {
+					if (ancestry.hasChildren) {
 						h.ancestry_toggle_expansion(ancestry);
 					}
-					if (ancestry.children_hidden_by_depth_limit) {
+					if (ancestry.hidden_by_depth_limit) {
+						focus_ancestry = ancestry;
+					} else if (ancestry.children_hidden_by_depth_limit) {
 						focus_ancestry = ancestry.ancestry_createUnique_byStrippingBack(ancestry.global_depth_limit - 1);
 					}
 				}

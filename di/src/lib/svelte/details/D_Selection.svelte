@@ -374,6 +374,10 @@
 		cursor     : pointer;
 	}
 
+	.attr-sep:not(.disabled):hover {
+		background : var(--accent);
+	}
+
 	.attr-sep.disabled {
 		background    : var(--bg);
 		cursor        : default;
@@ -411,9 +415,15 @@
 		box-sizing    : border-box;
 	}
 
+	.cell-input:not(:disabled):not(:focus):hover {
+		background : var(--accent);
+	}
+
 	.cell-input:focus {
-		background : white;
-		color      : black;
+		background     : white;
+		color          : black;
+		outline        : 1.5px solid cornflowerblue;
+		outline-offset : -1.5px;
 	}
 
 	.cell-input:disabled {
