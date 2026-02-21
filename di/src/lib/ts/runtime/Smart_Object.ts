@@ -11,6 +11,8 @@ export default class Smart_Object extends Identifiable {
 	scene: O_Scene | null;
 	rotation_lock: number = 0;
 	visible: boolean = true;
+	repeater: { count_formula: string } | null = null;
+	is_template: boolean = false;
 	name: string;
 
 	// Snap callback — set by Setup to snap mm values to the current precision grid. */
@@ -353,8 +355,8 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	/** Serialize to Portable_SO shape (per-axis bundles) */
-	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean } {
-		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean } = {
+	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean; repeater?: { count_formula: string }; is_template?: boolean } {
+		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean; repeater?: { count_formula: string }; is_template?: boolean } = {
 			id: this.id,
 			name: this.name,
 			x: this.axes[0].serialize(),
@@ -363,11 +365,13 @@ export default class Smart_Object extends Identifiable {
 			rotation_lock: this.rotation_lock,
 		};
 		if (!this.visible) out.visible = false;
+		if (this.repeater) out.repeater = this.repeater;
+		if (this.is_template) out.is_template = true;
 		return out;
 	}
 
 	/** Deserialize from Portable_SO shape (per-axis bundles) */
-	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number; visible?: boolean }): Smart_Object {
+	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number; visible?: boolean; repeater?: { count_formula: string }; is_template?: boolean }): Smart_Object {
 		const so = new Smart_Object(data.name);
 		so.setID(data.id);
 		const axis_data = [data.x, data.y, data.z];
@@ -376,6 +380,8 @@ export default class Smart_Object extends Identifiable {
 		}
 		so.rotation_lock = data.rotation_lock ?? 0;
 		so.visible = data.visible ?? true;
+		so.repeater = data.repeater ?? null;
+		so.is_template = data.is_template ?? false;
 		return so;
 	}
 }

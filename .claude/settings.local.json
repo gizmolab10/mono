@@ -23,7 +23,12 @@
       "Bash(yarn vitest:*)",
       "Bash(node -e:*)",
       "Bash(wc:*)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(yarn workspace designintuition svelte-check:*)",
+      "Bash(yarn test:run:*)",
+      "Bash(node --version:*)",
+      "Bash(xargs -I{} sh -c 'echo \"\"=== {} ===\"\"; python3 -c \"\"import json; d=json.load\\(open\\(\\\\\"\"{}\\\\\"\"\\\\\\)\\); print\\(d[\\\\\"\"version\\\\\"\"]\\)\"\"')",
+      "Bash(yarn install:*)"
     ]
   }
 }

@@ -26,6 +26,8 @@ export interface Portable_SO {
 	z: Portable_Axis;
 	name: string;
 	id: string;
+	repeater?: { count_formula: string };
+	is_template?: boolean;
 }
 
 export interface Portable_Scene {

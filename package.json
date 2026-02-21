@@ -12,6 +12,14 @@
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview"
   },
+  "resolutions": {
+    "@vitest/utils": "^4.0.0",
+    "@vitest/spy": "^4.0.0",
+    "@vitest/snapshot": "^4.0.0",
+    "@vitest/expect": "^4.0.0",
+    "@vitest/runner": "^4.0.0",
+    "@vitest/mocker": "^4.0.0"
+  },
   "devDependencies": {
     "markdown-it-task-lists": "^2.1.1",
     "mermaid": "^11.4.0",

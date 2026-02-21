@@ -636,6 +636,110 @@ class Engine {
 		stores.tick();
 		scenes.save();
 	}
+
+	// ── repeaters ──
+
+	/** Mark an SO as a repeater with the given count formula.
+	 *  The first child (if any) is marked as the template (is_template = true).
+	 *  Returns null on success, an error string on failure. */
+	set_repeater(so: Smart_Object, count_formula: string): string | null {
+		const val = constraints.evaluate_formula(count_formula, so.id, so.scene?.parent?.so.id);
+		if (val === null) return 'Invalid formula';
+
+		so.repeater = { count_formula };
+
+		// Mark first child as template (only if none already flagged)
+		const children = scene.get_all().filter(o => o.parent === so.scene);
+		if (children.length > 0 && !children.some(o => o.so.is_template)) {
+			children[0].so.is_template = true;
+		}
+
+		this.sync_repeater(so);
+		stores.w_all_sos.set(scene.get_all().map(o => o.so));
+		stores.tick();
+		scenes.save();
+		return null;
+	}
+
+	/** Evaluate the repeater's count formula and sync children to match.
+	 *  Adds or removes clone children; updates clone positions from template size.
+	 *  Clone i (1-indexed) is offset by template_dim × i along the template's largest axis. */
+	sync_repeater(so: Smart_Object): void {
+		if (!so.repeater || !so.scene) return;
+
+		const count_raw = constraints.evaluate_formula(so.repeater.count_formula, so.id, so.scene.parent?.so.id);
+		const count = Math.max(1, Math.round(count_raw ?? 1));
+
+		const all_children = scene.get_all().filter(o => o.parent === so.scene);
+		const template_entry = all_children.find(o => o.so.is_template);
+		if (!template_entry) return;
+
+		const t = template_entry.so;
+		const w = t.width, d = t.depth, h = t.height;
+		const repeat_ai = (w >= d && w >= h) ? 0 : (d >= h ? 1 : 2);
+		const template_dim = [w, d, h][repeat_ai];
+		if (template_dim <= 0) return;
+
+		const clones = all_children.filter(o => !o.so.is_template);
+		const needed = count - 1; // template is instance 0
+
+		// Remove excess clones
+		for (const clone of clones.slice(needed)) {
+			hits_3d.unregister(clone.so);
+			scene.destroy(clone.id);
+		}
+
+		// Update positions of surviving clones from current template
+		const surviving = clones.slice(0, needed);
+		for (let i = 0; i < surviving.length; i++) {
+			const c = surviving[i].so;
+			for (let ai = 0; ai < 3; ai++) {
+				c.axes[ai].start.value  = t.axes[ai].start.value;
+				c.axes[ai].end.value    = t.axes[ai].end.value;
+				c.axes[ai].length.value = t.axes[ai].length.value;
+				c.axes[ai].angle.value  = t.axes[ai].angle.value;
+			}
+			c.axes[repeat_ai].start.value += template_dim * (i + 1);
+			c.axes[repeat_ai].end.value   += template_dim * (i + 1);
+		}
+
+		// Add missing clones
+		const used = new Set(scene.get_all().map(o => o.so.name));
+		for (let i = surviving.length; i < needed; i++) {
+			const clone = this.clone_so_from_template(t, used);
+			clone.axes[repeat_ai].start.value += template_dim * (i + 1);
+			clone.axes[repeat_ai].end.value   += template_dim * (i + 1);
+			const clone_scene = scene.create({
+				so: clone,
+				edges: this.edges,
+				faces: this.faces,
+				color: colors.edge_color_rgba(),
+				parent: so.scene,
+			});
+			clone.scene = clone_scene;
+			hits_3d.register(clone);
+		}
+	}
+
+	private clone_so_from_template(t: Smart_Object, used_names: Set<string>): Smart_Object {
+		let name = 'A';
+		while (used_names.has(name)) {
+			name = String.fromCharCode(name.charCodeAt(0) + 1);
+		}
+		used_names.add(name);
+
+		const clone = new Smart_Object(name);
+		for (let ai = 0; ai < 3; ai++) {
+			const ta = t.axes[ai];
+			const ca = clone.axes[ai];
+			ca.start.value  = ta.start.value;
+			ca.end.value    = ta.end.value;
+			ca.length.value = ta.length.value;
+			ca.angle.value  = ta.angle.value;
+			ca.invariant    = ta.invariant;
+		}
+		return clone;
+	}
 }
 
 export const engine = new Engine();

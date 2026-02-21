@@ -44,14 +44,14 @@ Spec refs: see [index.md](./index.md) for the full design spec.
 
 Spec: [entities.md](./entities.md), [hierarchy.md](./hierarchy.md) §Entity Store
 
-- [ ] Lean entity classes — `Thing`, `Relationship`, `Predicate`, `Trait`, `Tag` as plain TS classes with data only (no navigation, no `h.*` calls)
-- [ ] Normalized store: one `$state(new Map<string, T>())` per entity type
-- [ ] Mutations per type: `remember(entity)`, `forget(hid)`, `forget_all()`
-- [ ] Derived indexes: `children_of(parentId)`, `parents_of(childId)` from relationships table
-- [ ] Hardcoded seed: ~15 Things + Relationships forming a small graph
-- [ ] `store.load_seed()` called at startup
-- [ ] Unit test: add thing → `children_of` updates → passes
-- [ ] No UI yet, `yarn test` green
+- [x] Lean entity classes — `Thing`, `Relationship`, `Predicate`, `Trait`, `Tag` as plain TS classes with data only (no navigation, no `h.*` calls)
+- [x] Normalized store: one `$state(new Map<string, T>())` per entity type
+- [x] Mutations per type: `remember(entity)`, `forget(hid)`, `forget_all()`
+- [x] Derived indexes: `children_of(parentId)`, `parents_of(childId)` from relationships table
+- [x] Hardcoded seed: ~15 Things + Relationships forming a small graph
+- [x] `store.load_seed()` called at startup
+- [x] Unit test: add thing → `children_of` updates → passes
+- [x] No UI yet, `yarn test` green
 
 ---
 

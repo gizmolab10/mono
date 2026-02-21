@@ -1,4 +1,6 @@
 <script lang='ts'>
+	import { store } from './lib/store/store.svelte';
+	store.load_seed();
 </script>
 
 <style>

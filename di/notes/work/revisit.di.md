@@ -1,6 +1,6 @@
 # Revisit
 
-Where we are in Design Intuition? Read \[\[code.debt\]\]. Keep the table below up to date.
+Where we are in Design Intuition? Read [[code.debt]]. Keep the table below up to date.
 
 ---
 
