@@ -1,4 +1,5 @@
 import { DB_Common, T_Database } from './DB_Common';
+import { DB_Firebase }           from './DB_Firebase';
 import { DB_Test }               from './DB_Test';
 
 class S_Databases {
@@ -9,7 +10,7 @@ class S_Databases {
 	// ————————————————————————————————————————— Query string routing
 
 	apply_queryStrings(queryStrings: URLSearchParams): void {
-		const type = queryStrings.get('db') ?? T_Database.test;
+		const type = queryStrings.get('db') ?? T_Database.firebase;
 		this.db = this.db_forType(type);
 	}
 
@@ -21,9 +22,9 @@ class S_Databases {
 
 		let db: DB_Common;
 		switch (type) {
-			case T_Database.test: db = new DB_Test(); break;
-			// Phase 7: case T_Database.firebase: db = new DB_Firebase(); break;
-			default:              db = new DB_Test(); break;
+			case T_Database.firebase: db = new DB_Firebase(); break;
+			case T_Database.test:     db = new DB_Test();     break;
+			default:                  db = new DB_Test();     break;
 		}
 
 		this.cache[type] = db;

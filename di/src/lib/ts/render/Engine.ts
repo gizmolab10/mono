@@ -681,7 +681,7 @@ class Engine {
 
 	/** Sync repeater children to match the constraint-derived count.
 	 *  Count determined by: gap range → spacing → 1 (fallback).
-	 *  When gap_axis differs from repeat_axis (e.g. stairs), clones offset along both axes.
+	 *  When parent has rotation (stairs), rise = parent_length × sin(angle); clones counter-rotate to stay level.
 	 *  Clone i is offset by step × (i+1) along repeat_axis (or auto-detected largest axis). */
 	sync_repeater(so: Smart_Object): void {
 		if (!so.repeater || !so.scene) return;
@@ -703,22 +703,24 @@ class Engine {
 		const template_dim = [w, d, h][repeat_ai];
 		if (template_dim <= 0) return;
 
-		// gap_axis: which dimension gap_min/gap_max constrain (defaults to repeat_axis)
-		const gap_ai = so.repeater.gap_axis ?? repeat_ai;
 		const parent_dims = [so.width, so.depth, so.height];
 		const parent_length = parent_dims[repeat_ai];
-		const gap_length = parent_dims[gap_ai];
+
+		// Stair detection: parent angle tilts the repeat axis, rise = parent_length × sin(angle)
+		const rise_ai = repeat_ai === 0 ? 1 : 0;
+		const parent_angle = so.axes[rise_ai].angle.value;
+		const is_stair = Math.abs(parent_angle) > 1e-10;
 
 		// Determine count and step distances
 		const { gap_min, gap_max, spacing } = so.repeater;
 		let count: number;
 		let step: number;
-		let gap_step = 0; // secondary axis offset (nonzero when gap_axis !== repeat_axis)
 
-		if (gap_min != null && gap_max != null && gap_length > 0) {
+		if (gap_min != null && gap_max != null) {
+			const gap_length = is_stair ? parent_length * Math.abs(Math.sin(parent_angle)) : parent_length;
+			if (gap_length <= 0) return;
 			count = this.resolve_gap(gap_length, gap_min, gap_max);
 			step = parent_length / count;
-			if (gap_ai !== repeat_ai) gap_step = gap_length / count;
 		} else if (spacing != null && spacing > 0 && parent_length > 0) {
 			count = Math.floor((parent_length - template_dim) / spacing);
 			step = spacing;
@@ -730,7 +732,7 @@ class Engine {
 		// Bookend: for spacing repeaters, place a final clone flush at parent's far edge
 		let has_bookend = false;
 		let bookend_offset = 0;
-		if (!gap_step && spacing != null && spacing > 0 && parent_length > 0) {
+		if (!is_stair && spacing != null && spacing > 0 && parent_length > 0) {
 			const t_start = t.axes[repeat_ai].start.value;
 			bookend_offset = parent_length - template_dim - t_start;
 			const last_offset = count > 0 ? count * step : 0;
@@ -739,13 +741,13 @@ class Engine {
 
 		const clones = all_children.filter(o => !o.so.is_template);
 		// Template is instance 0; clones fill positions 1..count-1 (top position is the landing, not a tread)
-		const needed_studs = Math.max(0, count - (gap_step ? 2 : 0)) + (has_bookend ? 1 : 0);
+		const needed_studs = Math.max(0, count - (is_stair ? 2 : 0)) + (has_bookend ? 1 : 0);
 
 		// Firewall blocking: horizontal members between studs — one per bay including bookend bay
 		const regular_bay = step - template_dim;
 		const bookend_bay = has_bookend ? bookend_offset - template_dim - step * count : 0;
 		const has_bookend_fireblock = bookend_bay > 50.8; // only if gap > 2"
-		const needed_firewall = (so.repeater.firewall && !gap_step && needed_studs > 0) ? count + (has_bookend_fireblock ? 1 : 0) : 0;
+		const needed_firewall = (so.repeater.firewall && !is_stair && needed_studs > 0) ? count + (has_bookend_fireblock ? 1 : 0) : 0;
 		const total_needed = needed_studs + needed_firewall;
 
 		// Firewall geometry: find the height axis (tallest non-repeat axis of template)
@@ -756,7 +758,7 @@ class Engine {
 		}
 
 		// Stairs: adjust step so last visible tread ends exactly at parent boundary
-		if (gap_step && needed_studs > 0) {
+		if (is_stair && needed_studs > 0) {
 			const t_start = t.axes[repeat_ai].start.value;
 			step = (parent_length - t_start - template_dim) / needed_studs;
 		}
@@ -781,10 +783,7 @@ class Engine {
 			const offset = (has_bookend && i === needed_studs - 1) ? bookend_offset : step * (i + 1);
 			c.axes[repeat_ai].start.value += offset;
 			c.axes[repeat_ai].end.value   += offset;
-			if (gap_step) {
-				c.axes[gap_ai].start.value += gap_step * (i + 1);
-				c.axes[gap_ai].end.value   += gap_step * (i + 1);
-			}
+			if (is_stair) c.axes[rise_ai].angle.value = -parent_angle;
 		}
 
 		// Update positions of surviving firewall clones
@@ -802,10 +801,7 @@ class Engine {
 				const offset = (has_bookend && i === needed_studs - 1) ? bookend_offset : step * (i + 1);
 				clone.axes[repeat_ai].start.value += offset;
 				clone.axes[repeat_ai].end.value   += offset;
-				if (gap_step) {
-					clone.axes[gap_ai].start.value += gap_step * (i + 1);
-					clone.axes[gap_ai].end.value   += gap_step * (i + 1);
-				}
+				if (is_stair) clone.axes[rise_ai].angle.value = -parent_angle;
 			} else {
 				const fi = i - needed_studs;
 				const bay = (has_bookend_fireblock && fi === count) ? bookend_bay : regular_bay;

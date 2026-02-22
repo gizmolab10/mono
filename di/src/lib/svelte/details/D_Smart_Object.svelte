@@ -96,14 +96,6 @@
 		scenes.save();
 	}
 
-	function set_gap_axis(axis: 0 | 1 | 2 | undefined) {
-		if (!selected_so?.repeater) return;
-		selected_so.repeater = { ...selected_so.repeater, gap_axis: axis };
-		engine.sync_repeater(selected_so);
-		stores.tick();
-		scenes.save();
-	}
-
 	function toggle_firewall() {
 		if (!selected_so?.repeater) return;
 		selected_so.repeater = { ...selected_so.repeater, firewall: !selected_so.repeater.firewall };
@@ -118,8 +110,8 @@
 		if (!so?.repeater) return null;
 		const r = so.repeater;
 		const repeat_ai = r.repeat_axis ?? 0;
-		const gap_ai = r.gap_axis ?? repeat_ai;
 		const parent_dims = [so.width, so.depth, so.height];
+		const parent_length = parent_dims[repeat_ai];
 		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
 
 		// Count actual children placed by the engine (template + clones)
@@ -127,12 +119,16 @@
 		if (count === 0) return null;
 
 		if (r.gap_min != null && r.gap_max != null) {
-			const gap_length = parent_dims[gap_ai];
+			const rise_ai = repeat_ai === 0 ? 1 : 0;
+			const parent_angle = so.axes[rise_ai].angle.value;
+			const is_stair = Math.abs(parent_angle) > 1e-10;
+			const gap_length = is_stair ? parent_length * Math.abs(Math.sin(parent_angle)) : parent_length;
 			if (gap_length <= 0) return null;
-			return { count, gap: fmt(gap_length / count), total: fmt(gap_length), label: axis_labels[gap_ai] };
+			const label = is_stair ? 'rise' : axis_labels[repeat_ai];
+			return { count, gap: fmt(gap_length / count), total: fmt(gap_length), label };
 		}
 		if (r.spacing != null && r.spacing > 0) {
-			return { count, gap: fmt(r.spacing), total: fmt(parent_dims[repeat_ai]), label: axis_labels[repeat_ai] };
+			return { count, gap: fmt(r.spacing), total: fmt(parent_length), label: axis_labels[repeat_ai] };
 		}
 		return null;
 	}
@@ -434,13 +430,6 @@
 				</div>
 			</div>
 			{#if selected_so?.repeater?.gap_min != null && selected_so?.repeater?.gap_max != null}
-				<div class='repeater-option-row'>
-					<span class='option-label'>gap along</span>
-					<div class='segmented'>
-						<button class:active={selected_so?.repeater?.gap_axis == null || selected_so?.repeater?.gap_axis === selected_so?.repeater?.repeat_axis} onclick={() => set_gap_axis(undefined)}>repeat</button>
-						<button class:active={selected_so?.repeater?.gap_axis === 2} onclick={() => set_gap_axis(2)}>z</button>
-					</div>
-				</div>
 				<div class='repeater-option-row'>
 					<span class='option-label'>min</span>
 					<input

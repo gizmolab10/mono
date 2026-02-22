@@ -40,7 +40,6 @@ export interface Angle_Rect extends Label_Rect {
 
 export interface Repeater {
 	count_formula?: string;  // legacy — no longer shown in UI
-	gap_axis?: 0 | 1 | 2;
 	repeat_axis?: 0 | 1;
 	gap_min?: number;
 	gap_max?: number;

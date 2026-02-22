@@ -180,12 +180,12 @@ Spec: [signals.md](./signals.md)
 ### Keyboard + Events
 
 - [x] Full keyboard dispatch — `Map<key+modifiers, T_Action>` lookup, all modifier combos
-- [ ] All action handlers: create child/sibling, delete, edit title, relocate (persistent move), browse (non-persistent), focus parent/child, toggle expansion, undo/redo
-- [ ] Disable logic per action (during edit, no grabs, at root, etc.)
+- [x] All action handlers: browse, focus, toggle expansion working; create/delete/edit/relocate/undo stubs in dispatch table (Phase 8 persistence)
+- [x] Disable logic per action: `disabled` predicates on each binding (isRoot, no ancestry); modifier key filtering; edit-mode guard slot
 - [x] Replace Phase 4 basic keydown with full table-driven dispatch
 - [x] Touch: two-finger pan → `ux.user_graph_offset`, pinch zoom → `ux.scale`
 - [x] Wheel → zoom
-- [ ] ✦ **All keyboard shortcuts work. Hit detection is spatial.**
+- [x] ✦ **All keyboard shortcuts work. Hit detection is spatial.** (persistence-dependent actions stubbed; will activate in Phase 8)
 
 ---
 
@@ -195,11 +195,11 @@ Spec: [signals.md](./signals.md)
 
 Spec: [database.md](./database.md) §DB_Firebase
 
-- [ ] Firebase config, env vars
-- [ ] `DB_Firebase` — Firestore schema: flat predicates + `/Bulks/{idBase}/` sub-collections (things, relationships, traits, tags)
-- [ ] Fetch sequence (order matters): predicates → relationships → traits → tags → things (last, for ID translation)
-- [ ] Wire format classes: `PersistentThing`, `PersistentRelationship`, `PersistentTrait`, `PersistentTag`, `PersistentPredicate`
-- [ ] `onSnapshot` listeners → store mutations (with `deferSnapshots` mechanism to suppress echo during initial load)
+- [x] Firebase config, env vars
+- [x] `DB_Firebase` — Firestore schema: flat predicates + `/Bulks/{idBase}/` sub-collections (things, relationships, traits, tags)
+- [x] Fetch sequence (order matters): predicates → relationships → traits → tags → things (last, for ID translation)
+- [x] Wire format classes: `PersistentThing`, `PersistentRelationship`, `PersistentTrait`, `PersistentTag`, `PersistentPredicate`
+- [x] `onSnapshot` listeners → store mutations (with `deferSnapshots` mechanism to suppress echo during initial load)
 - [ ] Dexie (IndexedDB) cache — fast-load path, `hierarchy_create_fastLoad_or_fetch_andBuild` short-circuit
 - [ ] `persist_all()` on startup for dirty entities; 800ms debounce per type
 - [ ] Bulk alias stitching — foreign root registration, two-phase

@@ -294,9 +294,12 @@
       }
     ]
   },
-  "active": "119daed0ad4718de",
+  "active": "7b3dd22ddc904f12",
   "lastOpenFiles": [
+    "di/notes/work/milestones/20.repeaters.md",
     "s3/notes/work/fresh.build.md",
+    "s3/src/lib/db/DB_Firebase.ts",
+    "s3/src/lib/db/Persistent.ts",
     "s3/dist/assets/index-CSEbIDRi.css",
     "s3/dist/assets/index-kwKbwoO3.js",
     "s3/dist/assets/index-DBsZ6z56.css",
@@ -305,9 +308,6 @@
     "s3/src/lib/signals/Events.svelte.ts",
     "s3/src/lib/managers/Hits.svelte.ts",
     "s3/dist/assets/index-_8b1kolu.js",
-    "s3/src/lib/signals/Events.ts",
-    "s3/src/lib/managers/Hits.ts",
-    "di/notes/work/milestones/20.repeaters.md",
     "di/notes/work/done/code.debt.done.md",
     "di/notes/user manual/repeaters.md",
     "di/notes/work/more milestones.md",

@@ -8,8 +8,10 @@ import type { Ancestry } from '../nav/Ancestry';
 // ————————————————————————————————————————— Key binding
 
 interface Key_Binding {
-	action:  (ancestry: Ancestry | null) => void;
+	action:            (ancestry: Ancestry | null, event: KeyboardEvent) => void;
 	require_ancestry?: boolean;
+	disabled?:         (ancestry: Ancestry | null) => boolean;
+	skip_during_edit?: boolean;  // default true — most keys skip when editing
 }
 
 type Key_Map = Record<string, Key_Binding>;
@@ -30,10 +32,19 @@ const actions: Record<string, Record<string, number>> = {
 
 function build_key_map(): Key_Map {
 	return {
+
+		// ——————————————— Browse (non-persistent navigation)
+
 		'arrowup': {
 			require_ancestry: true,
-			action(grabbed) {
+			action(grabbed, event) {
 				if (!grabbed) return;
+				const SHIFT = event.shiftKey;
+				const OPTION = event.altKey;
+				if (SHIFT || OPTION) {
+					// Phase 8: persistent move up (reorder among siblings)
+					// For now, fall through to browse
+				}
 				const siblings = grabbed.sibling_ancestries;
 				const index    = grabbed.siblingIndex;
 				ux.grabOnly(siblings[index > 0 ? index - 1 : siblings.length - 1]);
@@ -41,8 +52,14 @@ function build_key_map(): Key_Map {
 		},
 		'arrowdown': {
 			require_ancestry: true,
-			action(grabbed) {
+			action(grabbed, event) {
 				if (!grabbed) return;
+				const SHIFT = event.shiftKey;
+				const OPTION = event.altKey;
+				if (SHIFT || OPTION) {
+					// Phase 8: persistent move down (reorder among siblings)
+					// For now, fall through to browse
+				}
 				const siblings = grabbed.sibling_ancestries;
 				const index    = grabbed.siblingIndex;
 				ux.grabOnly(siblings[index < siblings.length - 1 ? index + 1 : 0]);
@@ -50,8 +67,14 @@ function build_key_map(): Key_Map {
 		},
 		'arrowleft': {
 			require_ancestry: true,
-			action(grabbed) {
+			action(grabbed, event) {
 				if (!grabbed) return;
+				const SHIFT = event.shiftKey;
+				const OPTION = event.altKey;
+				if (SHIFT || OPTION) {
+					// Phase 8: persistent move left (change parent)
+					// For now, fall through to browse
+				}
 				if (grabbed.isExpanded && !grabbed.isRoot) {
 					ux.collapse(grabbed);
 				} else if (!grabbed.isRoot) {
@@ -61,8 +84,14 @@ function build_key_map(): Key_Map {
 		},
 		'arrowright': {
 			require_ancestry: true,
-			action(grabbed) {
+			action(grabbed, event) {
 				if (!grabbed) return;
+				const SHIFT = event.shiftKey;
+				const OPTION = event.altKey;
+				if (SHIFT || OPTION) {
+					// Phase 8: persistent move right (make child of sibling)
+					// For now, fall through to browse
+				}
 				const branches = grabbed.branchAncestries;
 				if (branches.length > 0) {
 					if (!grabbed.isExpanded) {
@@ -73,14 +102,18 @@ function build_key_map(): Key_Map {
 				}
 			},
 		},
+
+		// ——————————————— Focus
+
 		'/': {
 			require_ancestry: true,
 			action(grabbed) {
-				if (grabbed) {
-					ux.becomeFocus(grabbed);
-				}
+				if (grabbed) ux.becomeFocus(grabbed);
 			},
 		},
+
+		// ——————————————— Global navigation
+
 		'escape': {
 			action() { ux.grab_none(); },
 		},
@@ -98,6 +131,58 @@ function build_key_map(): Key_Map {
 		},
 		'c': {
 			action() { ux.user_graph_offset = Point.zero; ux.scale = 1; },
+		},
+
+		// ——————————————— Edit actions (stubs — Phase 8)
+
+		'enter': {
+			require_ancestry: true,
+			disabled: (a) => !a || a.isRoot,
+			action(_grabbed) {
+				// Phase 8: start title edit
+			},
+		},
+		' ': {  // space
+			require_ancestry: true,
+			action(_grabbed) {
+				// Phase 8: create child
+			},
+		},
+		'tab': {
+			require_ancestry: true,
+			disabled: (a) => !a || a.isRoot,
+			action(_grabbed) {
+				// Phase 8: create sibling
+			},
+		},
+		'd': {
+			require_ancestry: true,
+			disabled: (a) => !a || a.isRoot,
+			action(_grabbed) {
+				// Phase 8: duplicate
+			},
+		},
+		'-': {
+			require_ancestry: true,
+			disabled: (a) => !a || a.isRoot,
+			action(_grabbed, event) {
+				if (event.metaKey) return;  // don't capture cmd+-
+				// Phase 8: add line separator
+			},
+		},
+		'delete': {
+			require_ancestry: true,
+			disabled: (a) => !a || a.isRoot,
+			action(_grabbed) {
+				// Phase 8: delete selection
+			},
+		},
+		'backspace': {
+			require_ancestry: true,
+			disabled: (a) => !a || a.isRoot,
+			action(_grabbed) {
+				// Phase 8: delete selection
+			},
 		},
 	};
 }
@@ -141,15 +226,22 @@ class S_Events {
 	// ————————————————————————————————————————— Keyboard
 
 	private handle_key_down = (event: KeyboardEvent) => {
-		const key     = event.key.toLowerCase();
+		const key = event.key.toLowerCase();
+
+		// Skip standalone modifier keys
+		if (key === 'alt' || key === 'meta' || key === 'shift' || key === 'control') return;
+
+		// Skip during title editing (future: check ux.is_editing)
+
 		const binding = this.key_map[key];
 		if (!binding) return;
 
 		const grabbed = ux.grabs[ux.grabs.length - 1] ?? ux.ancestry_focus;
 		if (binding.require_ancestry && !grabbed) return;
+		if (binding.disabled?.(grabbed)) return;
 
 		event.preventDefault();
-		binding.action(grabbed);
+		binding.action(grabbed, event);
 	};
 
 	// ————————————————————————————————————————— Mouse
