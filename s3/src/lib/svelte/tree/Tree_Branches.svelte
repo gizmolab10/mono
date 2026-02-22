@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import type { Ancestry }    from '../../nav/Ancestry';
 	import { G_TreeBranches }   from '../../geometry/G_TreeBranches';
-	import { g_treeGraph }      from '../../geometry/G_TreeGraph';
+	import { g_treeGraph }      from '../../geometry/G_TreeGraph.svelte';
 	import type { Point }       from '../../types/Coordinates';
 	import Widget               from './Widget.svelte';
 	import Tree_Line            from './Tree_Line.svelte';

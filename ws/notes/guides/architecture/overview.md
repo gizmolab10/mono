@@ -2,49 +2,19 @@
 
 Start here. This is how the pieces fit together.
 
-```mermaid
-flowchart TB
-    subgraph User["User Interaction"]
-        Mouse["Mouse/Touch"]
-        Keyboard["Keyboard"]
-    end
+```text
+User Interaction ─── Mouse/Touch ──→ Hits
+                 └── Keyboard ─────→ UX
 
-    subgraph UI["UI Layer"]
-        Svelte["Svelte Components"]
-        Stores["w_* Stores"]
-    end
+Manager Layer ────── Hits ──→ UX ──→ Stores ──→ Svelte
+                     UX ──→ Hierarchy
+                     Geometry ──→ S_Objects ──→ Stores
+                     Styles ──→ Svelte
+                     Search ──→ Hierarchy
 
-    subgraph Managers["Manager Layer"]
-        UX["UX<br/>focus, grabs, edit"]
-        Hits["Hits<br/>mouse dispatch"]
-        Geometry["Geometry<br/>layout"]
-        Styles["Styles<br/>colors"]
-        Search["Search<br/>find things"]
-    end
+State Layer ──────── S_Objects, Hierarchy
 
-    subgraph State["State Layer"]
-        S_Objects["S_* Objects<br/>persist across re-renders"]
-        Hierarchy["Hierarchy<br/>thing tree"]
-    end
-
-    subgraph Data["Data Layer"]
-        Persistable["Persistable<br/>Thing, Trait, Tag, Relationship"]
-        DB["Databases<br/>Firebase / Airtable / Local"]
-    end
-
-    Mouse --> Hits
-    Keyboard --> UX
-    Hits --> UX
-    UX --> Stores
-    Stores --> Svelte
-    Svelte --> Geometry
-    Geometry --> S_Objects
-    S_Objects --> Stores
-    UX --> Hierarchy
-    Hierarchy --> Persistable
-    Persistable --> DB
-    Styles --> Svelte
-    Search --> Hierarchy
+Data Layer ────────  Hierarchy ──→ Persistable ──→ DB
 ```
 
 ## The Layers

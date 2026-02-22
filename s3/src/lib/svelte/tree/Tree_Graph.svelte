@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { rootAncestry } from '../../nav/Ancestry';
-	import { g_treeGraph }  from '../../geometry/G_TreeGraph';
+	import { g_treeGraph }  from '../../geometry/G_TreeGraph.svelte';
 	import { ux }           from '../../state/ux.svelte';
 	import Tree_Branches    from './Tree_Branches.svelte';
 	import Widget           from './Widget.svelte';

@@ -1,7 +1,10 @@
 <script lang='ts'>
 	import type { Ancestry } from '../../nav/Ancestry';
+	import { svgPaths }      from '../../geometry/SVG_Paths';
 	import { ux }            from '../../state/ux.svelte';
 	import { colors }        from '../../colors/Colors.svelte';
+	import { Point }         from '../../types/Coordinates';
+	import Angle             from '../../types/Angle';
 
 	let { ancestry, left, top }: {
 		ancestry: Ancestry;
@@ -22,11 +25,10 @@
 		}
 	}
 
-	const size    = 14;
-	const half    = size / 2;
-	const chevron_right = `M ${half - 3} ${half - 4} L ${half + 3} ${half} L ${half - 3} ${half + 4}`;
-	const chevron_left  = `M ${half + 3} ${half - 4} L ${half - 3} ${half} L ${half + 3} ${half + 4}`;
-	const circle_path   = `M ${half} ${half - 4} A 4 4 0 1 1 ${half} ${half + 4} A 4 4 0 1 1 ${half} ${half - 4}`;
+	const size         = 14;
+	const chevron_right = svgPaths.fat_polygon(size, Angle.angle_from_name('>') ?? Math.PI);
+	const chevron_left  = svgPaths.fat_polygon(size, Angle.angle_from_name('<') ?? 0);
+	const circle_path   = svgPaths.circle(new Point(size / 2, size / 2), 4);
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -46,10 +48,9 @@
 			<path d={circle_path} fill={colors.thing} stroke='none' />
 		{:else}
 			<path
-				d            = {isExpanded ? chevron_left : chevron_right}
-				fill         = 'none'
-				stroke       = {colors.thing}
-				stroke-width = '1.5' />
+				d      = {isExpanded ? chevron_left : chevron_right}
+				fill   = {colors.thing}
+				stroke = 'none' />
 		{/if}
 	</svg>
 </div>

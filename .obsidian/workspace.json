@@ -295,8 +295,11 @@
       }
     ]
   },
-  "active": "b83881fed1d1049c",
+  "active": "7b3dd22ddc904f12",
   "lastOpenFiles": [
+    "s3/src/lib/geometry/G_TreeGraph.svelte.ts",
+    "s3/src/lib/geometry/SVG_Paths.ts",
+    "ws/notes/work/index.md",
     "logs/update-docs.error.di.log",
     "logs/update-docs.error.mono.log",
     "s3/notes/work/s3.md",
@@ -321,8 +324,6 @@
     "di/notes/map.md",
     "notes/guides/collaborate/exclude.md",
     "s3/notes/work/revisit.s3.md",
-    "s3/src/lib/svelte/tree/Tree_Line.svelte",
-    "s3/src/lib/geometry/G_TreeLine.ts",
     "ws/notes/work/revisit.ws.md",
     "di/notes/work/revisit.di.md",
     "s3/notes/work/subsystems/index.md",
@@ -332,7 +333,6 @@
     "s3/notes/work/subsystems/11 database.md",
     "s3/notes/work/subsystems/10 utilities.md",
     "s3/notes/work/subsystems/9 ux.md",
-    "s3/notes/work/subsystems/8 ancestry.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",
