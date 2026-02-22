@@ -720,17 +720,26 @@ class Engine {
 			step = parent_length / count;
 			if (gap_ai !== repeat_ai) gap_step = gap_length / count;
 		} else if (spacing != null && spacing > 0 && parent_length > 0) {
-			count = Math.max(1, Math.round(parent_length / spacing));
+			count = Math.floor((parent_length - template_dim) / spacing);
 			step = spacing;
 		} else {
 			count = 1;
 			step = template_dim;
 		}
 
+		// Bookend: for spacing repeaters, place a final clone flush at parent's far edge
+		let has_bookend = false;
+		let bookend_offset = 0;
+		if (!gap_step && spacing != null && spacing > 0 && parent_length > 0) {
+			const t_start = t.axes[repeat_ai].start.value;
+			bookend_offset = parent_length - template_dim - t_start;
+			const last_offset = count > 0 ? count * step : 0;
+			has_bookend = bookend_offset >= last_offset + template_dim;
+		}
 
 		const clones = all_children.filter(o => !o.so.is_template);
-		// Stairs (gap_step > 0): last position is the landing, not a tread → one fewer clone
-		const needed = Math.max(0, count - 1 - (gap_step ? 1 : 0));
+		// Template is instance 0; clones fill positions 1..count (minus landing for stairs)
+		const needed = Math.max(0, count - (gap_step ? 1 : 0)) + (has_bookend ? 1 : 0);
 
 		// Stairs: adjust step so last visible tread ends exactly at parent boundary
 		if (gap_step && needed > 0) {
@@ -755,8 +764,9 @@ class Engine {
 				c.axes[ai].length.value = t.axes[ai].length.value;
 				c.axes[ai].angle.value  = t.axes[ai].angle.value;
 			}
-			c.axes[repeat_ai].start.value += step * (i + 1);
-			c.axes[repeat_ai].end.value   += step * (i + 1);
+			const offset = (has_bookend && i === needed - 1) ? bookend_offset : step * (i + 1);
+			c.axes[repeat_ai].start.value += offset;
+			c.axes[repeat_ai].end.value   += offset;
 			if (gap_step) {
 				c.axes[gap_ai].start.value += gap_step * (i + 1);
 				c.axes[gap_ai].end.value   += gap_step * (i + 1);
@@ -767,8 +777,9 @@ class Engine {
 		const used = new Set(scene.get_all().map(o => o.so.name));
 		for (let i = surviving.length; i < needed; i++) {
 			const clone = this.clone_so_from_template(t, used);
-			clone.axes[repeat_ai].start.value += step * (i + 1);
-			clone.axes[repeat_ai].end.value   += step * (i + 1);
+			const offset = (has_bookend && i === needed - 1) ? bookend_offset : step * (i + 1);
+			clone.axes[repeat_ai].start.value += offset;
+			clone.axes[repeat_ai].end.value   += offset;
 			if (gap_step) {
 				clone.axes[gap_ai].start.value += gap_step * (i + 1);
 				clone.axes[gap_ai].end.value   += gap_step * (i + 1);

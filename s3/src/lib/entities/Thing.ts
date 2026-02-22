@@ -1,8 +1,7 @@
-import { Identifiable } from './Identifiable';
-import { T_Thing }       from '../common/Enumerations';
+import { Persistable }      from './Persistable';
+import { T_Thing, T_Persistable } from '../common/Enumerations';
 
-export class Thing extends Identifiable {
-	idBase:  string;
+export class Thing extends Persistable {
 	title:   string;
 	color:   string;
 	t_thing: T_Thing;
@@ -15,8 +14,7 @@ export class Thing extends Identifiable {
 		t_thing:           T_Thing  = T_Thing.generic,
 		already_persisted: boolean  = false,
 	) {
-		super(id);
-		this.idBase  = idBase;
+		super(idBase, idBase, T_Persistable.things, id, already_persisted);
 		this.title   = title;
 		this.color   = color;
 		this.t_thing = t_thing;

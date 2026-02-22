@@ -1,8 +1,8 @@
-import { Identifiable } from './Identifiable';
-import type { Integer } from '../types/Types';
+import { Persistable }    from './Persistable';
+import { T_Persistable } from '../common/Enumerations';
+import type { Integer }   from '../types/Types';
 
-export class Relationship extends Identifiable {
-	idBase:     string;
+export class Relationship extends Persistable {
 	kind:       string;
 	idParent:   string;
 	idChild:    string;
@@ -20,8 +20,7 @@ export class Relationship extends Identifiable {
 		orders:            number[],
 		already_persisted: boolean = false,
 	) {
-		super(id);
-		this.idBase     = idBase;
+		super(idBase, idBase, T_Persistable.relationships, id, already_persisted);
 		this.kind       = kind;
 		this.idParent   = idParent;
 		this.idChild    = idChild;

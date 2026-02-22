@@ -1,8 +1,8 @@
-import { Identifiable } from './Identifiable';
-import type { Integer } from '../types/Types';
+import { Persistable }    from './Persistable';
+import { T_Persistable } from '../common/Enumerations';
+import type { Integer }   from '../types/Types';
 
-export class Tag extends Identifiable {
-	idBase:    string;
+export class Tag extends Persistable {
 	type:      string;
 	thingHIDs: Integer[];
 
@@ -13,8 +13,7 @@ export class Tag extends Identifiable {
 		thingHIDs:         Integer[],
 		already_persisted: boolean = false,
 	) {
-		super(id);
-		this.idBase    = idBase;
+		super(idBase, idBase, T_Persistable.tags, id, already_persisted);
 		this.type      = type;
 		this.thingHIDs = thingHIDs;
 	}

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/20.repeaters.md",
+                "file": "di/notes/work/milestones/21.rubberband.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "20.repeaters"
+              "title": "21.rubberband"
             }
           },
           {
@@ -294,26 +294,30 @@
       }
     ]
   },
-  "active": "7b3dd22ddc904f12",
+  "active": "119daed0ad4718de",
   "lastOpenFiles": [
-    "s3/src/lib/geometry/G_TreeGraph.ts",
+    "di/src/assets/stretch.di",
+    "di/notes/work/milestones/24.marketing.md",
+    "di/notes/work/milestones/23.licensing.md",
+    "di/notes/work/milestones/22.cut.lists.md",
+    "di/notes/work/milestones/21.rubberband.md",
     "di/notes/work/milestones/20.repeaters.md",
+    "di/src/assets/wall.di",
+    "di/src/assets/stairs.di",
+    "s3/notes/work/fresh.build.md",
+    "s3/src/lib/entities/Persistable.ts",
+    "s3/src/lib/state/S_Persistence.ts",
+    "s3/src/lib/geometry/G_TreeGraph.ts",
     "di/notes/map.md",
     "notes/guides/collaborate/exclude.md",
     "di/notes/work/more milestones.md",
-    "s3/notes/work/fresh.build.md",
     "s3/notes/work/revisit.s3.md",
     "s3/src/lib/svelte/tree/Tree_Line.svelte",
     "s3/src/lib/geometry/G_TreeLine.ts",
     "s3/dist/assets/index-CZvGMDth.js",
     "s3/dist/assets/index-NBj4YezD.css",
     "s3/dist/assets/index-CSFYSSaN.js",
-    "s3/src/lib/svelte/draw/SVG_D3.svelte",
-    "s3/src/lib/svelte/draw",
-    "s3/src/lib/svelte/tree/Widget_Reveal.svelte",
     "di/notes/work/code.debt.md",
-    "ws/vite.config.js.timestamp-1771720967171-7b0d5fd44a19d.mjs",
-    "s3/dist/assets/index-Bx8sC9VF.js",
     "di/notes/work/done/code.debt.done.md",
     "ws/notes/work/revisit.ws.md",
     "di/notes/work/revisit.di.md",
@@ -328,10 +332,6 @@
     "s3/notes/work/subsystems/7 geometry.md",
     "s3/notes/work/subsystems/6 rendering.md",
     "s3/notes/work/subsystems/5 hierarchy.md",
-    "s3/notes/work/subsystems/4 entities.md",
-    "s3/notes/work/subsystems/3 types.md",
-    "s3/notes/work/phases/ux.md",
-    "node_modules/es-module-lexer/CHANGELOG.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",

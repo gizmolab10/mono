@@ -1,7 +1,7 @@
-import { Identifiable } from './Identifiable';
-import { T_Predicate }   from '../common/Enumerations';
+import { Persistable }                 from './Persistable';
+import { T_Predicate, T_Persistable } from '../common/Enumerations';
 
-export class Predicate extends Identifiable {
+export class Predicate extends Persistable {
 	kind:            string;
 	isBidirectional: boolean;
 
@@ -11,7 +11,7 @@ export class Predicate extends Identifiable {
 		isBidirectional:   boolean,
 		already_persisted: boolean = false,
 	) {
-		super(id);
+		super('', '', T_Persistable.predicates, id, already_persisted);
 		this.kind            = kind;
 		this.isBidirectional = isBidirectional;
 	}

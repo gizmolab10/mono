@@ -23,10 +23,10 @@ All done through 11.
 | 18 | [User Constants](./18.user.constants.md) | |
 | 19 | [Skills](./19.skills.md) | |
 | 20 | [Repeaters](./20.repeaters.md) | |
-| 21 | [Cut Lists](./21.cut.lists.md) | |
-| 22 | [Licensing](./22.licensing.md) | |
-| 23 | [Marketing](./23.marketing.md) | |
-| 24 | [Hierarchy](./24.hierarchy.md) | |
+| 21 | [Cut Lists](22.cut.lists.md) | |
+| 22 | [Licensing](23.licensing.md) | |
+| 23 | [Marketing](24.marketing.md) | |
+| 24 | [Hierarchy](21.rubberband.md) | |
 
 ## Contents
 
@@ -40,12 +40,12 @@ All done through 11.
 - [16.formulas](./16.formulas.md)
 - [17.library](./17.library.md)
 - [18.user.constants](18.user.constants.md)
-- [21.cut.lists](21.cut.lists.md)
+- [22.cut.lists](22.cut.lists.md)
 - [2.panel](./2.panel.md)
 - [20.repeaters](20.repeaters.md)
-- [22.licensing](22.licensing.md)
-- [23.marketing](23.marketing.md)
-- [24.hierarchy](24.hierarchy.md)
+- [23.licensing](23.licensing.md)
+- [24.marketing](24.marketing.md)
+- [21.rubberband](21.rubberband.md)
 - [3.docs](./3.docs.md)
 - [4.hits.manager](./4.hits.manager.md)
 - [5.smart.objects](./5.smart.objects.md)

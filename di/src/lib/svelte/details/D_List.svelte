@@ -56,13 +56,12 @@
 		</th>
 	</tr></thead>
 	<tbody>
-	{#each $w_all_sos as so (so.id)}
+	{#each $w_all_sos.filter(s => !is_clone(s, $w_tick)) as so (so.id)}
 		{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
 		{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
 		<tr
 			class='list-row'
 			class:selected={is_selected(so, $w_tick)}
-			class:clone={is_clone(so, $w_tick)}
 			onclick={() => select(so)}>
 			<td class='list-name' style:padding-left='{depth(so) * 12}px'>
 				{so.name}{#if n_rpt > 0}<span class='repeat-badge'>×{n_rpt}</span>{/if}
