@@ -186,6 +186,7 @@ Spec: [signals.md](./signals.md)
 - [x] Touch: two-finger pan → `ux.user_graph_offset`, pinch zoom → `ux.scale`
 - [x] Wheel → zoom
 - [x] ✦ **All keyboard shortcuts work. Hit detection is spatial.** (persistence-dependent actions stubbed; will activate in Phase 8)
+- [ ] `Text_Editor.svelte` — inline title editing, `T_Edit` state machine (idle → active → confirming), cursor restore via `Seriously_Range`
 
 ---
 
@@ -216,13 +217,12 @@ Spec: [rendering.md](./rendering.md) §details, [ux.md](./ux.md) §Details
 - [x] `Details.svelte` — outer shell, routes by `T_Detail`
 - [x] `D_Header.svelte` — thing title (large), ancestry breadcrumb path
 - [x] `D_Actions.svelte` — create child, delete, duplicate, export buttons (stubs)
-- [ ] `D_Data.svelte` — traits as editable key-value table
-- [ ] `D_Tags.svelte` — tag chips, add/remove
-- [ ] `D_Traits.svelte` — structured trait display
 - [x] `D_Selection.svelte` — multi-grab summary (N items selected)
 - [x] `D_Preferences.svelte` — depth limit slider, dot count mode, theme
 - [x] `Banner_Hideable.svelte` — collapsible section header
-- [ ] `Text_Editor.svelte` — inline title editing, `T_Edit` state machine (idle → active → confirming), cursor restore via `Seriously_Range`
+- [ ] `D_Data.svelte` — traits as editable key-value table
+- [ ] `D_Tags.svelte` — tag chips, add/remove
+- [ ] `D_Traits.svelte` — structured trait display
 - [ ] ✦ **Details panel fully functional.**
 
 ---

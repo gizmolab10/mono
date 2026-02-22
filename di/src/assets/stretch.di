@@ -77,7 +77,6 @@
           "invariant": 1
         },
         "rotation_lock": 0,
-        "is_template": true,
         "parent_id": "di8a2f4c6e1b3d5a"
       }
     ],

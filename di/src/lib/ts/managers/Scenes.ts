@@ -20,14 +20,13 @@ const CURRENT_VERSION = '7';
 
 export interface Portable_SO {
 	rotation_lock?: number;            // rotation axis: 0=x, 1=y, 2=z (default 0)
+	repeater?: Repeater;
 	parent_id?: string;
 	x: Portable_Axis;
 	y: Portable_Axis;
 	z: Portable_Axis;
 	name: string;
 	id: string;
-	repeater?: Repeater;
-	is_template?: boolean;
 }
 
 export interface Portable_Scene {

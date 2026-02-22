@@ -30,14 +30,18 @@
 	}
 
 	function repeat_count(so: Smart_Object, sos: Smart_Object[], _tick: number): number {
-		if (!so.is_template) return 0;
 		const parent = so.scene?.parent?.so;
 		if (!parent?.repeater) return 0;
-		return sos.filter(s => s.scene?.parent?.so === parent).length;
+		const siblings = sos.filter(s => s.scene?.parent?.so === parent);
+		if (siblings[0] !== so) return 0; // only first child shows count
+		return siblings.length;
 	}
 
-	function is_clone(so: Smart_Object, _tick: number): boolean {
-		return !so.is_template && !!so.scene?.parent?.so.repeater;
+	function is_clone(so: Smart_Object, sos: Smart_Object[], _tick: number): boolean {
+		const parent = so.scene?.parent?.so;
+		if (!parent?.repeater) return false;
+		const siblings = sos.filter(s => s.scene?.parent?.so === parent);
+		return siblings[0] !== so;
 	}
 
 	function depth(so: Smart_Object): number {
@@ -56,7 +60,7 @@
 		</th>
 	</tr></thead>
 	<tbody>
-	{#each $w_all_sos.filter(s => !is_clone(s, $w_tick)) as so (so.id)}
+	{#each $w_all_sos.filter(s => !is_clone(s, $w_all_sos, $w_tick)) as so (so.id)}
 		{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
 		{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
 		<tr

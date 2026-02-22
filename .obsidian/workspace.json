@@ -77,7 +77,8 @@
               "title": "more milestones"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -294,8 +295,13 @@
       }
     ]
   },
-  "active": "7b3dd22ddc904f12",
+  "active": "b83881fed1d1049c",
   "lastOpenFiles": [
+    "di/notes/work/revisit.di.md",
+    "di/notes/work/milestones/20.repeaters.md",
+    "s3/notes/work/fresh.build.md",
+    "ws/vite.config.js.timestamp-1771800615625-67f627356372e.mjs",
+    "di/src/assets/stairs.di",
     "s3/src/lib/svelte/details/Details.svelte",
     "s3/src/lib/svelte/details/D_Preferences.svelte",
     "s3/src/lib/svelte/details/D_Actions.svelte",
@@ -304,18 +310,12 @@
     "s3/src/lib/svelte/details/Banner_Hideable.svelte",
     "s3/src/lib/svelte/details",
     "s3/notes/work/revisit.s3.md",
-    "di/notes/work/milestones/20.repeaters.md",
-    "s3/notes/work/fresh.build.md",
     "s3/src/lib/db/DB_Firebase.ts",
-    "s3/src/lib/db/Persistent.ts",
-    "s3/dist/assets/index-CSEbIDRi.css",
-    "s3/dist/assets/index-kwKbwoO3.js",
     "di/notes/work/done/code.debt.done.md",
     "di/notes/user manual/repeaters.md",
     "di/notes/work/more milestones.md",
     "di/notes/work/code.debt.md",
     "di/src/lib/md/builds.md",
-    "di/notes/work/revisit.di.md",
     "s3/notes/work/s3.md",
     "ws/notes/work/index.md",
     "node_modules/commander/History.md",

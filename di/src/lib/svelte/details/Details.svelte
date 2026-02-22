@@ -49,6 +49,10 @@
 			<D_Library />
 		</Hideable>
 
+		<Hideable title='list' id='list' detail={T_Details.list}>
+			<D_List />
+		</Hideable>
+
 		<Hideable title='smart object' id='so' detail={T_Details.so}>
 			{#snippet actions()}
 				<button class='banner-add' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>+</button>
@@ -61,10 +65,6 @@
 				<button class='banner-add' use:hit_target={{ id: 'add-constant', onpress: () => handle_add() }}>+</button>
 			{/snippet}
 			<D_Constants />
-		</Hideable>
-
-		<Hideable title='list' id='list' detail={T_Details.list}>
-			<D_List />
 		</Hideable>
 	</div>
 </div>

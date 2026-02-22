@@ -8,7 +8,7 @@
 
 	let { onclose } : { onclose: () => void } = $props();
 
-	const pageSize = 7;
+	const pageSize = 10;
 	const modalWidth = 600;
 	const allNotes = k.build_notes;
 	const notesLimit = allNotes.length;
