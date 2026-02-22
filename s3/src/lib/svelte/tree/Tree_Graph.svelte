@@ -19,12 +19,6 @@
 		observer.observe(graphElement);
 		return () => observer.disconnect();
 	});
-
-	$effect(() => {
-		void focus;
-		void depth;
-		g_treeGraph.reset_attached_branches();
-	});
 </script>
 
 <div class='tree-graph' bind:this={graphElement}>

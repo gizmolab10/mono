@@ -44,7 +44,7 @@ export class G_TreeBranches {
 	get origin_ofLine(): Point {
 		const parentTitle     = this.ancestry.thing?.title ?? '';
 		const parentHalfWidth = G_Widget.widthFor(parentTitle) / 2;
-		return this.parentCenter.offsetByX(parentHalfWidth + 5);
+		return this.parentCenter.offsetByX(parentHalfWidth);
 	}
 
 	get branchItems(): Array<{ branch: Ancestry; center: Point; line: G_TreeLine }> {

@@ -16,7 +16,7 @@
 	const thing_color    = $derived(ancestry.thing?.color ?? colors.thing);
 	const isGrabbed      = $derived(ux.isGrabbed(ancestry));
 	const isFocus        = $derived(ancestry.equals(ux.ancestry_focus));
-	const showing_reveal = $derived(!isFocus && ancestry.hasChildren);
+	const showing_reveal = $derived(ancestry.hasChildren);
 	const g_widget       = $derived(new G_Widget(center, title, showing_reveal));
 
 	function handle_click(event: MouseEvent) {
@@ -50,7 +50,7 @@
 	onclick={handle_click}>
 	<Widget_Title {title} left={g_widget.origin_ofTitle.x} />
 	{#if showing_reveal}
-		<Widget_Reveal {ancestry} left={g_widget.width + 4} top={(g_widget.height - 14) / 2} />
+		<Widget_Reveal {ancestry} left={g_widget.width - 14} top={(g_widget.height - 14) / 2 - (ancestry.isRoot ? 2 : 0)} />
 	{/if}
 </div>
 

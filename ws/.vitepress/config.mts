@@ -1,10 +1,8 @@
 import { defineConfig } from 'vitepress'
-import { withMermaid } from 'vitepress-plugin-mermaid'
 import taskLists from 'markdown-it-task-lists'
 import taskListPlusPlugin from '../../.vitepress/markdown-it-task-list-plus.mts'
 
-export default withMermaid(
-  defineConfig({
+export default defineConfig({
     srcDir: './notes',
     title: "Webseriously Inside Peak",
     srcExclude: ['archives/**'],
@@ -357,4 +355,3 @@ export default withMermaid(
       }
     }
   })
-)

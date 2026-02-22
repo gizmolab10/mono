@@ -22,13 +22,37 @@
 	// Repeater state
 	function get_repeater(_tick: number) { return selected_so?.repeater ?? null; }
 	let is_repeater = $derived(get_repeater($w_tick) !== null);
+	let view_mode = $state<'attributes' | 'repeater'>('attributes');
+	let tracked_id = $state('');
+	$effect(() => {
+		const id = selected_so?.id ?? '';
+		if (id !== tracked_id) {
+			tracked_id = id;
+			view_mode = selected_so?.repeater ? 'repeater' : 'attributes';
+		}
+	});
 
 	function init_repeater() {
 		if (!selected_so) return;
 		selected_so.repeater = {};
 		engine.mark_template(selected_so);
+		view_mode = 'repeater';
 		stores.tick();
 		scenes.save();
+	}
+
+	function is_default_repeater(): boolean {
+		const r = selected_so?.repeater;
+		return !!r && r.repeat_axis == null && r.spacing == null && r.gap_min == null && r.gap_max == null;
+	}
+
+	function show_attributes() {
+		if (is_default_repeater() && selected_so) {
+			selected_so.repeater = undefined;
+			stores.tick();
+			scenes.save();
+		}
+		view_mode = 'attributes';
 	}
 
 	function repeater_keydown(e: KeyboardEvent) {
@@ -81,39 +105,30 @@
 
 	const axis_labels = ['x', 'y', 'z'] as const;
 
-	function get_repeater_display(so: Smart_Object | undefined, _tick: number) {
+	function get_repeater_display(so: Smart_Object | undefined, all_sos: Smart_Object[], _tick: number) {
 		if (!so?.repeater) return null;
 		const r = so.repeater;
 		const repeat_ai = r.repeat_axis ?? 0;
 		const gap_ai = r.gap_axis ?? repeat_ai;
 		const parent_dims = [so.width, so.depth, so.height];
-		const gap_length = parent_dims[gap_ai];
 		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
 
-		if (r.gap_min != null && r.gap_max != null && gap_length > 0) {
-			const count_lo = Math.max(1, Math.floor(gap_length / r.gap_max));
-			const count_hi = Math.max(1, Math.ceil(gap_length / r.gap_min));
-			const mid = (r.gap_min + r.gap_max) / 2;
-			let best = count_lo, best_d = Infinity;
-			for (let n = count_lo; n <= count_hi; n++) {
-				const g = gap_length / n;
-				if (g >= r.gap_min && g <= r.gap_max) {
-					const d = Math.abs(g - mid);
-					if (d < best_d) { best_d = d; best = n; }
-				}
-			}
-			const label = axis_labels[gap_ai];
-			return { count: best, gap: fmt(gap_length / best), total: fmt(gap_length), label };
+		// Count actual children placed by the engine (template + clones)
+		const count = all_sos.filter(s => s.scene?.parent?.so === so).length;
+		if (count === 0) return null;
+
+		if (r.gap_min != null && r.gap_max != null) {
+			const gap_length = parent_dims[gap_ai];
+			if (gap_length <= 0) return null;
+			return { count, gap: fmt(gap_length / count), total: fmt(gap_length), label: axis_labels[gap_ai] };
 		}
-		const parent_length = parent_dims[repeat_ai];
-		if (r.spacing != null && r.spacing > 0 && parent_length > 0) {
-			const count = Math.max(1, Math.round(parent_length / r.spacing));
-			return { count, gap: fmt(r.spacing), total: fmt(parent_length), label: axis_labels[repeat_ai] };
+		if (r.spacing != null && r.spacing > 0) {
+			return { count, gap: fmt(r.spacing), total: fmt(parent_dims[repeat_ai]), label: axis_labels[repeat_ai] };
 		}
 		return null;
 	}
 
-	let repeater_display = $derived(get_repeater_display(selected_so ?? undefined, $w_tick));
+	let repeater_display = $derived(get_repeater_display(selected_so ?? undefined, $w_all_sos, $w_tick));
 
 	let tick = $derived(stores.is_editing() ? 0 : $w_tick);
 	function get_visible_label(_tick: number) { return selected_so?.visible === false ? 'show' : 'hide'; }
@@ -320,117 +335,126 @@
 		/>
 		<button class='action-btn' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>{visible_label}</button>
 	</div>
-	<table class='bounds'>
-		<tbody>
-			{#each bounds_rows as row (selected_so?.id + row.label)}
-				{@const row_disabled = is_root ? row.attr_index !== 2 : (row.is_invariant || row.has_formula)}
-				<tr>
-					<td class='attr-name'>{row.label}</td>
-					<td class='attr-sep' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
-					<td class='attr-formula'>
-						<input
-							type      = 'text'
-							class     = 'cell-input'
-							value     = {row.formula}
-							disabled  = {is_root || row.is_invariant}
-							onfocus   = {() => stores.w_editing.set(T_Editing.formula)}
-							onblur    = {(e) => { commit_formula(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
-							onkeydown = {cell_keydown}
-						/>
-					</td>
-					<td class='attr-value'>
-						<input
-							type      = 'text'
-							class     = 'cell-input right'
-							value     = {row.value}
-							disabled  = {row_disabled}
-							onfocus   = {() => stores.w_editing.set(T_Editing.value)}
-							onblur    = {(e) => { commit_value(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
-							onkeydown = {cell_keydown}
-						/>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-	<table class='bounds rotations'>
-		<tbody>
-			{#each axes as axis, i}
-				<tr>
-					<td class='attr-name'>{axis}</td>
-					<td class='attr-sep' class:cross={is_root || selected_so?.rotation_lock === i} class:disabled={is_root} onclick={() => set_locked(i)}></td>
-					<td class='attr-value'>
-						<input
-							type      = 'text'
-							class     = 'cell-input right'
-							value     = {angles[axis]}
-							disabled  = {is_root || selected_so?.rotation_lock === i}
-							onblur    = {(e) => commit_angle(axis, (e.target as HTMLInputElement).value)}
-							onkeydown = {cell_keydown}
-						/>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-	<div class='actions-row'>
-		<button class='action-btn' disabled={!has_children} use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>delete all children</button>
-		{#if !is_repeater}
-			<button class='action-btn' use:hit_target={{ id: 'repeat', onpress: init_repeater }}>repeat</button>
-		{/if}
-	</div>
 	{#if is_repeater}
-		<div class='repeater-options'>
-				<div class='repeater-option-row'>
-					<span class='option-label'>axis</span>
-					<div class='segmented'>
-						<button class:active={selected_so?.repeater?.repeat_axis === 0} onclick={() => set_repeat_axis(0)}>x</button>
-						<button class:active={selected_so?.repeater?.repeat_axis === 1} onclick={() => set_repeat_axis(1)}>y</button>
-					</div>
-				</div>
-				<div class='repeater-option-row'>
-					<span class='option-label'>constraint</span>
-					<div class='segmented'>
-						<button class:active={selected_so?.repeater?.gap_min != null} onclick={enable_gap_range}>range</button>
-						<button class:active={selected_so?.repeater?.spacing === 304.8} onclick={() => set_spacing(304.8)}>12"</button>
-						<button class:active={selected_so?.repeater?.spacing === 406.4} onclick={() => set_spacing(406.4)}>16"</button>
-						<button class:active={selected_so?.repeater?.spacing === 609.6} onclick={() => set_spacing(609.6)}>24"</button>
-					</div>
-				</div>
-				{#if selected_so?.repeater?.gap_min != null && selected_so?.repeater?.gap_max != null}
-					<div class='repeater-option-row'>
-						<span class='option-label'>gap along</span>
-						<div class='segmented'>
-							<button class:active={selected_so?.repeater?.gap_axis == null || selected_so?.repeater?.gap_axis === selected_so?.repeater?.repeat_axis} onclick={() => set_gap_axis(undefined)}>repeat</button>
-							<button class:active={selected_so?.repeater?.gap_axis === 2} onclick={() => set_gap_axis(2)}>z</button>
-						</div>
-					</div>
-					<div class='repeater-option-row'>
-						<span class='option-label'>min</span>
-						<input
-							type      = 'text'
-							class     = 'repeater-input'
-							value     = {units.format_for_system(selected_so.repeater.gap_min, $w_unit_system, $w_precision)}
-							onblur    = {(e) => set_gap('gap_min', (e.target as HTMLInputElement).value)}
-							onkeydown = {repeater_keydown}
-						/>
-						<span class='option-label'>max</span>
-						<input
-							type      = 'text'
-							class     = 'repeater-input'
-							value     = {units.format_for_system(selected_so.repeater.gap_max, $w_unit_system, $w_precision)}
-							onblur    = {(e) => set_gap('gap_max', (e.target as HTMLInputElement).value)}
-							onkeydown = {repeater_keydown}
-						/>
-					</div>
-				{/if}
-				{#if repeater_display}
-					<div class='repeater-display'>
-						<span>{repeater_display.count} × {repeater_display.gap} ({repeater_display.label})</span>
-						<span class='dim'>= {repeater_display.total}</span>
-					</div>
-				{/if}
+		<div class='view-toggle'>
+			<button class='action-btn' disabled={!has_children} use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>delete all children</button>
+			<div class='segmented'>
+				<button class:active={view_mode === 'repeater'} onclick={() => view_mode = 'repeater'}>repeater</button>
+				<button class:active={view_mode === 'attributes'} onclick={show_attributes}>attributes</button>
 			</div>
+		</div>
+	{:else}
+		<div class='actions-row'>
+			<button class='action-btn' disabled={!has_children} use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>delete all children</button>
+			<button class='action-btn right' use:hit_target={{ id: 'repeat', onpress: init_repeater }}>repeat</button>
+		</div>
+	{/if}
+	{#if view_mode === 'attributes' || !is_repeater}
+		<table class='bounds'>
+			<tbody>
+				{#each bounds_rows as row (selected_so?.id + row.label)}
+					{@const row_disabled = is_root ? row.attr_index !== 2 : (row.is_invariant || row.has_formula)}
+					<tr>
+						<td class='attr-name'>{row.label}</td>
+						<td class='attr-sep' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
+						<td class='attr-formula'>
+							<input
+								type      = 'text'
+								class     = 'cell-input'
+								value     = {row.formula}
+								disabled  = {is_root || row.is_invariant}
+								onfocus   = {() => stores.w_editing.set(T_Editing.formula)}
+								onblur    = {(e) => { commit_formula(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
+								onkeydown = {cell_keydown}
+							/>
+						</td>
+						<td class='attr-value'>
+							<input
+								type      = 'text'
+								class     = 'cell-input right'
+								value     = {row.value}
+								disabled  = {row_disabled}
+								onfocus   = {() => stores.w_editing.set(T_Editing.value)}
+								onblur    = {(e) => { commit_value(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
+								onkeydown = {cell_keydown}
+							/>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+		<table class='bounds rotations'>
+			<tbody>
+				{#each axes as axis, i}
+					<tr>
+						<td class='attr-name'>{axis}</td>
+						<td class='attr-sep' class:cross={is_root || selected_so?.rotation_lock === i} class:disabled={is_root} onclick={() => set_locked(i)}></td>
+						<td class='attr-value'>
+							<input
+								type      = 'text'
+								class     = 'cell-input right'
+								value     = {angles[axis]}
+								disabled  = {is_root || selected_so?.rotation_lock === i}
+								onblur    = {(e) => commit_angle(axis, (e.target as HTMLInputElement).value)}
+								onkeydown = {cell_keydown}
+							/>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	{:else}
+		<div class='repeater-options'>
+			<div class='repeater-option-row'>
+				<span class='option-label'>axis</span>
+				<div class='segmented'>
+					<button class:active={selected_so?.repeater?.repeat_axis === 0} onclick={() => set_repeat_axis(0)}>x</button>
+					<button class:active={selected_so?.repeater?.repeat_axis === 1} onclick={() => set_repeat_axis(1)}>y</button>
+				</div>
+			</div>
+			<div class='repeater-option-row'>
+				<span class='option-label'>constraint</span>
+				<div class='segmented'>
+					<button class:active={selected_so?.repeater?.gap_min != null} onclick={enable_gap_range}>range</button>
+					<button class:active={selected_so?.repeater?.spacing === 304.8} onclick={() => set_spacing(304.8)}>12"</button>
+					<button class:active={selected_so?.repeater?.spacing === 406.4} onclick={() => set_spacing(406.4)}>16"</button>
+					<button class:active={selected_so?.repeater?.spacing === 609.6} onclick={() => set_spacing(609.6)}>24"</button>
+				</div>
+			</div>
+			{#if selected_so?.repeater?.gap_min != null && selected_so?.repeater?.gap_max != null}
+				<div class='repeater-option-row'>
+					<span class='option-label'>gap along</span>
+					<div class='segmented'>
+						<button class:active={selected_so?.repeater?.gap_axis == null || selected_so?.repeater?.gap_axis === selected_so?.repeater?.repeat_axis} onclick={() => set_gap_axis(undefined)}>repeat</button>
+						<button class:active={selected_so?.repeater?.gap_axis === 2} onclick={() => set_gap_axis(2)}>z</button>
+					</div>
+				</div>
+				<div class='repeater-option-row'>
+					<span class='option-label'>min</span>
+					<input
+						type      = 'text'
+						class     = 'repeater-input'
+						value     = {units.format_for_system(selected_so.repeater.gap_min, $w_unit_system, $w_precision)}
+						onblur    = {(e) => set_gap('gap_min', (e.target as HTMLInputElement).value)}
+						onkeydown = {repeater_keydown}
+					/>
+					<span class='option-label'>max</span>
+					<input
+						type      = 'text'
+						class     = 'repeater-input'
+						value     = {units.format_for_system(selected_so.repeater.gap_max, $w_unit_system, $w_precision)}
+						onblur    = {(e) => set_gap('gap_max', (e.target as HTMLInputElement).value)}
+						onkeydown = {repeater_keydown}
+					/>
+				</div>
+			{/if}
+			{#if repeater_display}
+				<div class='repeater-display'>
+					<span>{repeater_display.count} × {repeater_display.gap} ({repeater_display.label})</span>
+					<span class='dim'>= {repeater_display.total}</span>
+				</div>
+			{/if}
+		</div>
 	{/if}
 {:else}
 	<p>No object selected</p>
@@ -612,6 +636,17 @@
 	.repeater-input:focus {
 		outline        : 1.5px solid cornflowerblue;
 		outline-offset : -1.5px;
+	}
+
+	.view-toggle {
+		display         : flex;
+		align-items     : center;
+		gap             : 6px;
+		margin-top      : 8px;
+	}
+
+	.view-toggle .segmented {
+		margin-left : auto;
 	}
 
 	.repeater-options {

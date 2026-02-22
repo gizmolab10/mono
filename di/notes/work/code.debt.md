@@ -2,7 +2,6 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] build notes
 - [ ] when resizing root change = 2 times mouse drag
 - [ ] [[more milestones]]
 

@@ -272,6 +272,7 @@ class Drag {
 			// Every frame: compute absolute delta from anchor, apply as offset from initial bounds
 			const delta = this.get_stretch_delta(curr_mouse);
 			if (!delta) return false;
+			if (!scene.parent) vec3.scale(delta, delta, 2);
 			this.apply_stretch_absolute(delta);
 			return true;
 		}

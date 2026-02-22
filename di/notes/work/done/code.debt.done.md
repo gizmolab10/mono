@@ -150,3 +150,5 @@
 	- [x] stack them vertically
 - [x] move add button to glow banner as a +
 	- [x] move add child (same)
+- [x] show computed count (not funky equation)
+- [x] segmented control attributes / repeater (only appears for repeaters or on clicking repeat)

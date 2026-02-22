@@ -12,8 +12,9 @@
 		top     : number;
 	} = $props();
 
-	const isExpanded = $derived(ancestry.isExpanded);
-	const hidden     = $derived(ancestry.hidden_by_depth_limit);
+	const thing_color = $derived(ancestry.thing?.color ?? colors.thing);
+	const isExpanded  = $derived(ancestry.isExpanded);
+	const hidden      = $derived(ancestry.hidden_by_depth_limit);
 
 	function handle_click(event: MouseEvent) {
 		event.stopPropagation();
@@ -45,12 +46,12 @@
 		height = {size}
 		viewBox = '0 0 {size} {size}'>
 		{#if hidden}
-			<path d={circle_path} fill={colors.thing} stroke='none' />
+			<path d={circle_path} fill={thing_color} stroke='none' />
 		{:else}
 			<path
 				d      = {isExpanded ? chevron_left : chevron_right}
-				fill   = {colors.thing}
-				stroke = 'none' />
+				fill   = 'white'
+				stroke = {thing_color} />
 		{/if}
 	</svg>
 </div>
