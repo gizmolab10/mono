@@ -3,8 +3,15 @@ import { store }        from './store.svelte';
 import { Thing }        from '../entities/Thing';
 import { Relationship } from '../entities/Relationship';
 import { T_Predicate }  from '../common/Enumerations';
+import { DB_Test }       from '../db/DB_Test';
 
 const BASE = 'test';
+const db_test = new DB_Test();
+
+async function load_test_data() {
+	store.forget_all();
+	await db_test.fetch_all();
+}
 
 describe('store', () => {
 	beforeEach(() => store.forget_all());
@@ -69,19 +76,19 @@ describe('store', () => {
 		expect(store.things.has('x')).toBe(false);
 	});
 
-	test('load_seed builds 15 things and 14 relationships', () => {
-		store.load_seed();
+	test('DB_Test.fetch_all builds 15 things and 14 relationships', async () => {
+		await load_test_data();
 		expect(store.things.size).toBe(15);
 		expect(store.relationships.size).toBe(14);
 	});
 
-	test('load_seed: root has 4 children', () => {
-		store.load_seed();
+	test('DB_Test.fetch_all: root has 4 children', async () => {
+		await load_test_data();
 		expect(store.children_of('root')).toHaveLength(4);
 	});
 
-	test('load_seed: Concepts has 3 children', () => {
-		store.load_seed();
+	test('DB_Test.fetch_all: Concepts has 3 children', async () => {
+		await load_test_data();
 		expect(store.children_of('a')).toHaveLength(3);
 	});
 });

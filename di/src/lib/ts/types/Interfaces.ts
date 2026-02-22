@@ -45,6 +45,7 @@ export interface Repeater {
 	gap_min?: number;
 	gap_max?: number;
 	spacing?: number;
+	firewall?: boolean;
 }
 
 export interface Portable_Attribute {

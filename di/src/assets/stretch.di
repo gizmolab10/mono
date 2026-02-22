@@ -36,7 +36,8 @@
         "visible": false,
         "repeater": {
           "repeat_axis": 0,
-          "spacing": 406.4
+          "spacing": 406.4,
+          "firewall": true
         }
       },
       {

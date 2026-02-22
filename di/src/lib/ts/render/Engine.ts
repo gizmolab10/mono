@@ -739,24 +739,35 @@ class Engine {
 
 		const clones = all_children.filter(o => !o.so.is_template);
 		// Template is instance 0; clones fill positions 1..count-1 (top position is the landing, not a tread)
-		const needed = Math.max(0, count - (gap_step ? 2 : 0)) + (has_bookend ? 1 : 0);
+		const needed_studs = Math.max(0, count - (gap_step ? 2 : 0)) + (has_bookend ? 1 : 0);
+
+		// Firewall blocking: horizontal members between studs (count = studs - 1)
+		const needed_firewall = (so.repeater.firewall && !gap_step && needed_studs > 0) ? count : 0;
+		const total_needed = needed_studs + needed_firewall;
+
+		// Firewall geometry: find the height axis (tallest non-repeat axis of template)
+		const dims = [w, d, h];
+		let height_ai = repeat_ai === 0 ? 1 : 0;
+		for (let i = 0; i < 3; i++) {
+			if (i !== repeat_ai && dims[i] > dims[height_ai]) height_ai = i;
+		}
 
 		// Stairs: adjust step so last visible tread ends exactly at parent boundary
-		if (gap_step && needed > 0) {
+		if (gap_step && needed_studs > 0) {
 			const t_start = t.axes[repeat_ai].start.value;
-			step = (parent_length - t_start - template_dim) / needed;
+			step = (parent_length - t_start - template_dim) / needed_studs;
 		}
-		const changed = clones.length !== needed;
+		const changed = clones.length !== total_needed;
 
 		// Remove excess clones
-		for (const clone of clones.slice(needed)) {
+		for (const clone of clones.slice(total_needed)) {
 			hits_3d.unregister(clone.so);
 			scene.destroy(clone.id);
 		}
 
-		// Update positions of surviving clones from current template
-		const surviving = clones.slice(0, needed);
-		for (let i = 0; i < surviving.length; i++) {
+		// Update positions of surviving stud clones from current template
+		const surviving = clones.slice(0, total_needed);
+		for (let i = 0; i < Math.min(surviving.length, needed_studs); i++) {
 			const c = surviving[i].so;
 			for (let ai = 0; ai < 3; ai++) {
 				c.axes[ai].start.value  = t.axes[ai].start.value;
@@ -764,7 +775,7 @@ class Engine {
 				c.axes[ai].length.value = t.axes[ai].length.value;
 				c.axes[ai].angle.value  = t.axes[ai].angle.value;
 			}
-			const offset = (has_bookend && i === needed - 1) ? bookend_offset : step * (i + 1);
+			const offset = (has_bookend && i === needed_studs - 1) ? bookend_offset : step * (i + 1);
 			c.axes[repeat_ai].start.value += offset;
 			c.axes[repeat_ai].end.value   += offset;
 			if (gap_step) {
@@ -773,16 +784,25 @@ class Engine {
 			}
 		}
 
+		// Update positions of surviving firewall clones
+		for (let i = needed_studs; i < Math.min(surviving.length, total_needed); i++) {
+			this.apply_firewall_position(surviving[i].so, t, i - needed_studs, repeat_ai, height_ai, step, template_dim, parent_dims);
+		}
+
 		// Add missing clones
 		const used = new Set(scene.get_all().map(o => o.so.name));
-		for (let i = surviving.length; i < needed; i++) {
+		for (let i = surviving.length; i < total_needed; i++) {
 			const clone = this.clone_so_from_template(t, used);
-			const offset = (has_bookend && i === needed - 1) ? bookend_offset : step * (i + 1);
-			clone.axes[repeat_ai].start.value += offset;
-			clone.axes[repeat_ai].end.value   += offset;
-			if (gap_step) {
-				clone.axes[gap_ai].start.value += gap_step * (i + 1);
-				clone.axes[gap_ai].end.value   += gap_step * (i + 1);
+			if (i < needed_studs) {
+				const offset = (has_bookend && i === needed_studs - 1) ? bookend_offset : step * (i + 1);
+				clone.axes[repeat_ai].start.value += offset;
+				clone.axes[repeat_ai].end.value   += offset;
+				if (gap_step) {
+					clone.axes[gap_ai].start.value += gap_step * (i + 1);
+					clone.axes[gap_ai].end.value   += gap_step * (i + 1);
+				}
+			} else {
+				this.apply_firewall_position(clone, t, i - needed_studs, repeat_ai, height_ai, step, template_dim, parent_dims);
 			}
 			const clone_scene = scene.create({
 				so: clone,
@@ -797,6 +817,30 @@ class Engine {
 
 		// Notify Svelte when clone count changed so rendering picks them up
 		if (changed) stores.w_all_sos.set(scene.get_all().map(o => o.so));
+	}
+
+	/** Position a fire block clone: template rotated 90° (swap repeat/height lengths), shortened to fit between studs, at mid-height. */
+	private apply_firewall_position(clone: Smart_Object, t: Smart_Object, index: number, repeat_ai: number, height_ai: number, step: number, template_dim: number, parent_dims: number[]): void {
+		// Start from template axes for the "other" axis (depth), then override repeat and height
+		for (let ai = 0; ai < 3; ai++) {
+			clone.axes[ai].start.value  = t.axes[ai].start.value;
+			clone.axes[ai].end.value    = t.axes[ai].end.value;
+			clone.axes[ai].length.value = t.axes[ai].length.value;
+			clone.axes[ai].angle.value  = t.axes[ai].angle.value;
+		}
+
+		// Repeat axis: shortened to fit between studs, positioned after the stud at this bay
+		const block_length = step - template_dim;
+		const block_start = t.axes[repeat_ai].start.value + template_dim + step * index;
+		clone.axes[repeat_ai].start.value  = block_start;
+		clone.axes[repeat_ai].end.value    = block_start + block_length;
+		clone.axes[repeat_ai].length.value = block_length;
+
+		// Height axis: swapped to template_dim (stud width), centered at mid-height of parent
+		const mid_start = parent_dims[height_ai] / 2 - template_dim / 2;
+		clone.axes[height_ai].start.value  = mid_start;
+		clone.axes[height_ai].end.value    = mid_start + template_dim;
+		clone.axes[height_ai].length.value = template_dim;
 	}
 
 	private clone_so_from_template(t: Smart_Object, used_names: Set<string>): Smart_Object {

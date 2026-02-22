@@ -1,11 +1,8 @@
 <script lang='ts'>
-	import { store }        from './lib/store/store.svelte';
-	import { ux }           from './lib/state/ux.svelte';
-	import { rootAncestry } from './lib/nav/Ancestry';
+	import { databases }    from './lib/db/Databases';
 	import SeriouslyApp     from './lib/svelte/main/SeriouslyApp.svelte';
 
-	store.load_seed();
-	ux.becomeFocus(rootAncestry);
+	databases.setup();
 </script>
 
 <SeriouslyApp />

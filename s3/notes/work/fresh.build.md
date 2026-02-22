@@ -152,12 +152,12 @@ Spec: [geometry.md](./geometry.md)
 
 Spec: [database.md](./database.md)
 
-- [ ] `DB_Common` abstract class — method signatures: `fetch_all`, `persist`, `delete` per entity type, `hierarchy_setup_fetch_andBuild` sequence
-- [ ] `T_Startup` states + `w_t_startup` (`$state`); `SeriouslyApp` gates render on `T_Startup.ready`
-- [ ] `Databases` singleton — `db` reference, `apply_queryStrings` URL param routing, `db_forType()`
-- [ ] `DB_Test` — ws seed data as structured entities; `fetch_all` → store mutations
-- [ ] Replace Phase 2 hardcoded seed with `DB_Test` load through `DB_Common`
-- [ ] `yarn dev?db=test` → loads test graph via abstraction layer
+- [x] `DB_Common` abstract class — method signatures: `fetch_all`, `persist`, `delete` per entity type, `hierarchy_setup_fetch_andBuild` sequence
+- [x] `T_Startup` states + `w_t_startup` (`$state`); `SeriouslyApp` gates render on `T_Startup.ready`
+- [x] `Databases` singleton — `db` reference, `apply_queryStrings` URL param routing, `db_forType()`
+- [x] `DB_Test` — ws seed data as structured entities; `fetch_all` → store mutations
+- [x] Replace Phase 2 hardcoded seed with `DB_Test` load through `DB_Common`
+- [x] `yarn dev?db=test` → loads test graph via abstraction layer
 
 ---
 
