@@ -201,8 +201,6 @@ Spec: [database.md](./database.md) §DB_Firebase
 - [x] Wire format classes: `PersistentThing`, `PersistentRelationship`, `PersistentTrait`, `PersistentTag`, `PersistentPredicate`
 - [x] `onSnapshot` listeners → store mutations (with `deferSnapshots` mechanism to suppress echo during initial load)
 - [x] `persist_all()` on startup for dirty entities; 800ms debounce per type
-- ~~Dexie cache~~ → Phase 12
-- ~~Bulk alias stitching~~ → Phase 12
 - [x] Anonymous auth
 - [x] ✦ **Real user data loads. Changes persist to Firestore.**
 
@@ -214,16 +212,16 @@ Spec: [database.md](./database.md) §DB_Firebase
 
 Spec: [rendering.md](./rendering.md) §details, [ux.md](./ux.md) §Details
 
-- [ ] `w_ancestry_forDetails` — `$derived`: latest grab, else focus
-- [ ] `Details.svelte` — outer shell, routes by `T_Detail`
-- [ ] `D_Header.svelte` — thing title (large), ancestry breadcrumb path
-- [ ] `D_Actions.svelte` — create child, delete, duplicate, export buttons
+- [x] `w_ancestry_forDetails` — `$derived`: latest grab, else focus
+- [x] `Details.svelte` — outer shell, routes by `T_Detail`
+- [x] `D_Header.svelte` — thing title (large), ancestry breadcrumb path
+- [x] `D_Actions.svelte` — create child, delete, duplicate, export buttons (stubs)
 - [ ] `D_Data.svelte` — traits as editable key-value table
 - [ ] `D_Tags.svelte` — tag chips, add/remove
 - [ ] `D_Traits.svelte` — structured trait display
-- [ ] `D_Selection.svelte` — multi-grab summary (N items selected)
-- [ ] `D_Preferences.svelte` — depth limit slider, dot count mode, theme
-- [ ] `Banner_Hideable.svelte` — collapsible section header
+- [x] `D_Selection.svelte` — multi-grab summary (N items selected)
+- [x] `D_Preferences.svelte` — depth limit slider, dot count mode, theme
+- [x] `Banner_Hideable.svelte` — collapsible section header
 - [ ] `Text_Editor.svelte` — inline title editing, `T_Edit` state machine (idle → active → confirming), cursor restore via `Seriously_Range`
 - [ ] ✦ **Details panel fully functional.**
 

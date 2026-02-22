@@ -34,6 +34,12 @@ class S_UX {
 		return this.current_recent?.grabs ?? [];
 	}
 
+	get ancestry_forDetails(): Ancestry | null {
+		const grabs = this.grabs;
+		if (grabs.length > 0) return grabs[grabs.length - 1];
+		return this.ancestry_focus;
+	}
+
 	// ————————————————————————————————————————— Focus
 
 	becomeFocus(ancestry: Ancestry): boolean {

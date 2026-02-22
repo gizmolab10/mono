@@ -88,7 +88,7 @@ export class DB_Firebase extends DB_Common {
 	// ————————————————————————————————————————— Fetch
 
 	async fetch_all(): Promise<void> {
-		await signInAnonymously(this.auth);
+		try { await signInAnonymously(this.auth); } catch { /* auth not enabled in console */ }
 		await this.recordLoginIP();
 		await this.documents_fetch_ofType(T_Persistable.predicates);
 		await this.hierarchy_fetch_forID(this.idBase);

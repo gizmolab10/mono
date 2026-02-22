@@ -2,6 +2,7 @@
 	import { colors }    from '../../colors/Colors.svelte';
 	import { k }         from '../../common/Constants';
 	import Tree_Graph    from '../tree/Tree_Graph.svelte';
+	import Details       from '../details/Details.svelte';
 
 	let width  = $state(window.innerWidth);
 	let height = $state(window.innerHeight);
@@ -27,6 +28,7 @@
 	style:padding          = '{gap}px'
 	style:--gap            = '{gap}px'
 	style:--radius         = '{radius}px'
+	style:--details-width  = '{k.width.details}px'
 	style:background-color = {colors.separator}>
 
 	<!-- Controls bar -->
@@ -38,6 +40,13 @@
 
 	<!-- Main area -->
 	<div class='main' style:height='{mainHeight}px' style:margin-top='{gap}px'>
+		<!-- Details region -->
+		<div
+			class                  = 'region details'
+			style:background-color = {colors.background}>
+			<Details />
+		</div>
+
 		<!-- Graph region -->
 		<div
 			class                  = 'region graph'
@@ -70,6 +79,11 @@
 
 	.controls {
 		width : 100%;
+	}
+
+	.details {
+		width     : var(--details-width);
+		min-width : var(--details-width);
 	}
 
 	.graph {
