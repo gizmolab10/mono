@@ -280,7 +280,8 @@
                   "title": "fresh.build"
                 }
               }
-            ]
+            ],
+            "currentTab": 1
           }
         ],
         "direction": "vertical",
@@ -295,25 +296,26 @@
   },
   "active": "119daed0ad4718de",
   "lastOpenFiles": [
+    "di/notes/map.md",
+    "notes/guides/collaborate/exclude.md",
+    "di/notes/work/more milestones.md",
+    "di/notes/work/milestones/20.repeaters.md",
+    "s3/notes/work/fresh.build.md",
+    "s3/notes/work/revisit.s3.md",
+    "s3/src/lib/svelte/tree/Tree_Line.svelte",
+    "s3/src/lib/geometry/G_TreeLine.ts",
     "s3/dist/assets/index-CZvGMDth.js",
     "s3/dist/assets/index-NBj4YezD.css",
     "s3/dist/assets/index-CSFYSSaN.js",
     "s3/src/lib/svelte/draw/SVG_D3.svelte",
     "s3/src/lib/svelte/draw",
     "s3/src/lib/svelte/tree/Widget_Reveal.svelte",
-    "di/notes/work/more milestones.md",
-    "di/notes/work/milestones/20.repeaters.md",
     "di/notes/work/code.debt.md",
     "ws/vite.config.js.timestamp-1771720967171-7b0d5fd44a19d.mjs",
     "s3/dist/assets/index-Bx8sC9VF.js",
-    "s3/dist/assets/index-fzmjP2rT.js",
-    "s3/dist/assets/index-4oQNeLoS.css",
-    "s3/src/lib/state/ux.svelte.ts",
     "di/notes/work/done/code.debt.done.md",
     "ws/notes/work/revisit.ws.md",
     "di/notes/work/revisit.di.md",
-    "s3/notes/work/revisit.s3.md",
-    "s3/notes/work/fresh.build.md",
     "s3/notes/work/subsystems/index.md",
     "s3/notes/work/specifications/2 spec.md",
     "s3/notes/work/subsystems/13 managers.md",
@@ -332,7 +334,6 @@
     "node_modules/vitest/node_modules/es-module-lexer/README.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
-    "ws/node_modules/xmlchars/README.md",
     "ws/notes/work/Untitled.canvas",
     "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
     "Screenshot 2026-02-14 at 12.12.38 PM.png",

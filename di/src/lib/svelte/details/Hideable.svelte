@@ -26,12 +26,21 @@
 
 	async function toggle() {
 		w_t_details.update(v => v ^ detail);
-		await tick();
-		hits.recalibrate();
+		await hits.defer_recalibrate();
 	}
+
+	let hideable_el: HTMLDivElement;
+	const observer = new ResizeObserver( async () => await hits.defer_recalibrate());
+	$effect(() => {
+		if (hideable_el) {
+			observer.observe(hideable_el);
+			return () => observer.disconnect();
+		}
+	});
 </script>
 
 <div class='hideable'
+	bind:this={hideable_el}
 	style:--z-common={T_Layer.common}
 	style:--z-hideable={T_Layer.hideable}>
 	<button

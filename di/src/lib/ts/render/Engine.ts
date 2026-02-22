@@ -648,26 +648,13 @@ class Engine {
 
 	// ── repeaters ──
 
-	/** Mark an SO as a repeater with the given count formula.
-	 *  The first child (if any) is marked as the template (is_template = true).
-	 *  Returns null on success, an error string on failure. */
-	set_repeater(so: Smart_Object, count_formula: string): string | null {
-		const val = constraints.evaluate_formula(count_formula, so.id, so.scene?.parent?.so.id);
-		if (val === null) return 'Invalid formula';
-
-		so.repeater = { ...so.repeater, count_formula };
-
-		// Mark first child as template (only if none already flagged)
+	/** Mark the first child of a repeater SO as the template (is_template = true). */
+	mark_template(so: Smart_Object): void {
+		if (!so.repeater || !so.scene) return;
 		const children = scene.get_all().filter(o => o.parent === so.scene);
 		if (children.length > 0 && !children.some(o => o.so.is_template)) {
 			children[0].so.is_template = true;
 		}
-
-		this.sync_repeater(so);
-		stores.w_all_sos.set(scene.get_all().map(o => o.so));
-		stores.tick();
-		scenes.save();
-		return null;
 	}
 
 	/** Find a count where total_length / count falls within [gap_min, gap_max].
@@ -692,8 +679,9 @@ class Engine {
 		return best_count;
 	}
 
-	/** Evaluate the repeater's count and sync children to match.
-	 *  Count determined by: gap range → spacing → formula (priority order).
+	/** Sync repeater children to match the constraint-derived count.
+	 *  Count determined by: gap range → spacing → 1 (fallback).
+	 *  When gap_axis differs from repeat_axis (e.g. stairs), clones offset along both axes.
 	 *  Clone i is offset by step × (i+1) along repeat_axis (or auto-detected largest axis). */
 	sync_repeater(so: Smart_Object): void {
 		if (!so.repeater || !so.scene) return;
@@ -709,21 +697,27 @@ class Engine {
 		const template_dim = [w, d, h][repeat_ai];
 		if (template_dim <= 0) return;
 
-		// Determine count and step distance
+		// gap_axis: which dimension gap_min/gap_max constrain (defaults to repeat_axis)
+		const gap_ai = so.repeater.gap_axis ?? repeat_ai;
+		const parent_dims = [so.width, so.depth, so.height];
+		const parent_length = parent_dims[repeat_ai];
+		const gap_length = parent_dims[gap_ai];
+
+		// Determine count and step distances
 		const { gap_min, gap_max, spacing } = so.repeater;
-		const parent_length = [so.width, so.depth, so.height][repeat_ai];
 		let count: number;
 		let step: number;
+		let gap_step = 0; // secondary axis offset (nonzero when gap_axis !== repeat_axis)
 
-		if (gap_min != null && gap_max != null && parent_length > 0) {
-			count = this.resolve_gap(parent_length, gap_min, gap_max);
+		if (gap_min != null && gap_max != null && gap_length > 0) {
+			count = this.resolve_gap(gap_length, gap_min, gap_max);
 			step = parent_length / count;
+			if (gap_ai !== repeat_ai) gap_step = gap_length / count;
 		} else if (spacing != null && spacing > 0 && parent_length > 0) {
 			count = Math.max(1, Math.round(parent_length / spacing));
 			step = spacing;
 		} else {
-			const count_raw = constraints.evaluate_formula(so.repeater.count_formula, so.id, so.scene.parent?.so.id);
-			count = Math.max(1, Math.round(count_raw ?? 1));
+			count = 1;
 			step = template_dim;
 		}
 
@@ -748,6 +742,10 @@ class Engine {
 			}
 			c.axes[repeat_ai].start.value += step * (i + 1);
 			c.axes[repeat_ai].end.value   += step * (i + 1);
+			if (gap_step) {
+				c.axes[gap_ai].start.value += gap_step * (i + 1);
+				c.axes[gap_ai].end.value   += gap_step * (i + 1);
+			}
 		}
 
 		// Add missing clones
@@ -756,6 +754,10 @@ class Engine {
 			const clone = this.clone_so_from_template(t, used);
 			clone.axes[repeat_ai].start.value += step * (i + 1);
 			clone.axes[repeat_ai].end.value   += step * (i + 1);
+			if (gap_step) {
+				clone.axes[gap_ai].start.value += gap_step * (i + 1);
+				clone.axes[gap_ai].end.value   += gap_step * (i + 1);
+			}
 			const clone_scene = scene.create({
 				so: clone,
 				edges: this.edges,

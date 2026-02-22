@@ -1,7 +1,9 @@
 <script lang='ts'>
 	import { hit_target } from '../../ts/events/Hit_Target';
+	import { hits } from '../../ts/managers/Hits';
 	import { scenes } from '../../ts/managers';
 	import { engine } from '../../ts/render';
+	import { tick } from 'svelte';
 
 	type LibEntry = { name: string; size: string; raw: string };
 
@@ -19,6 +21,8 @@
 			size: format_size(new Blob([f.raw]).size),
 			raw: f.raw,
 		}));
+		await tick();
+		hits.recalibrate();
 	}
 
 	refresh();

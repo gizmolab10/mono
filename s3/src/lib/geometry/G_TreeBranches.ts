@@ -1,5 +1,7 @@
-import { Point }    from '../types/Coordinates';
-import { k }        from '../common/Constants';
+import { Point }       from '../types/Coordinates';
+import { k }           from '../common/Constants';
+import { G_TreeLine }  from './G_TreeLine';
+import { G_Widget }    from './G_Widget';
 import type { Ancestry } from '../nav/Ancestry';
 
 export class G_TreeBranches {
@@ -39,9 +41,24 @@ export class G_TreeBranches {
 		});
 	}
 
-	get branchItems(): Array<{ branch: Ancestry; center: Point }> {
+	get origin_ofLine(): Point {
+		const parentTitle     = this.ancestry.thing?.title ?? '';
+		const parentHalfWidth = G_Widget.widthFor(parentTitle) / 2;
+		return this.parentCenter.offsetByX(parentHalfWidth + 5);
+	}
+
+	get branchItems(): Array<{ branch: Ancestry; center: Point; line: G_TreeLine }> {
 		const branches = this.ancestry.branchAncestries;
 		const centers  = this.centers;
-		return branches.map((branch, i) => ({ branch, center: centers[i] }));
+		const trunk    = this.origin_ofLine;
+		return branches.map((branch, i) => {
+			const childTitle     = branch.thing?.title ?? '';
+			const childHalfWidth = G_Widget.widthFor(childTitle) / 2;
+			return {
+				branch,
+				center: centers[i],
+				line:   new G_TreeLine(trunk, new Point(centers[i].x - childHalfWidth, centers[i].y)),
+			};
+		});
 	}
 }

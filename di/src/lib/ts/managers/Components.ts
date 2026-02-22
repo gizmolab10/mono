@@ -34,7 +34,7 @@ export class Components {
 		return s_hit_target;
 	}
 
-	private components_byHID_forType(type: string): { [hid: number]: S_Hit_Target } {
+	private components_byHID_forType(type: T_Hit_Target): { [hid: number]: S_Hit_Target } {
 		let dict = this.components_dict_byType_andHID[type];
 		if (!dict) {
 			dict = {};

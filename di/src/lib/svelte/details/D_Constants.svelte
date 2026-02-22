@@ -29,11 +29,6 @@
 		return units.format_for_system(mm, $w_unit_system, $w_precision);
 	}
 
-	function add_dimension(): void {
-		constants.add('', 0);
-		rows = constants.get_all();
-	}
-
 	function remove_dimension(index: number): void {
 		const name = rows[index].name;
 		constants.remove(name);

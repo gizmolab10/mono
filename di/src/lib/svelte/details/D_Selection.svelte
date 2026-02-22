@@ -20,24 +20,99 @@
 	let has_children = $derived($w_all_sos.some(so => so.scene?.parent?.so === selected_so));
 
 	// Repeater state
-	let repeater_editing = $state(false);
-	let _so_key = $derived(selected_so?.id ?? '');
-	$effect(() => { _so_key; repeater_editing = false; });
-	function get_repeater_formula(_tick: number): string | null { return selected_so?.repeater?.count_formula ?? null; }
-	let repeater_formula = $derived(get_repeater_formula($w_tick));
-	let is_repeater = $derived(repeater_formula !== null);
+	function get_repeater(_tick: number) { return selected_so?.repeater ?? null; }
+	let is_repeater = $derived(get_repeater($w_tick) !== null);
 
-	function commit_repeater(formula: string) {
-		repeater_editing = false;
+	function init_repeater() {
 		if (!selected_so) return;
-		const trimmed = formula.trim();
-		if (!trimmed) return;
-		engine.set_repeater(selected_so, trimmed);
+		selected_so.repeater = {};
+		engine.mark_template(selected_so);
+		stores.tick();
 	}
+
 	function repeater_keydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === 'Escape') (e.target as HTMLInputElement).blur();
 		e.stopPropagation();
 	}
+
+	// Repeater expansion fields
+	function set_repeat_axis(axis: 0 | 1) {
+		if (!selected_so?.repeater) return;
+		selected_so.repeater = { ...selected_so.repeater, repeat_axis: axis };
+		engine.sync_repeater(selected_so);
+		stores.tick();
+		scenes.save();
+	}
+
+	function set_gap(field: 'gap_min' | 'gap_max', value: string) {
+		if (!selected_so?.repeater) return;
+		const mm = units.parse_for_system(value, $w_unit_system);
+		if (mm === null) return;
+		selected_so.repeater = { ...selected_so.repeater, [field]: mm };
+		engine.sync_repeater(selected_so);
+		stores.tick();
+		scenes.save();
+	}
+
+	function set_spacing(mm: number) {
+		if (!selected_so?.repeater) return;
+		selected_so.repeater = { ...selected_so.repeater, spacing: mm, gap_min: undefined, gap_max: undefined };
+		engine.sync_repeater(selected_so);
+		stores.tick();
+		scenes.save();
+	}
+
+	function enable_gap_range() {
+		if (!selected_so?.repeater) return;
+		selected_so.repeater = { ...selected_so.repeater, gap_min: 152.4, gap_max: 203.2, spacing: undefined };
+		engine.sync_repeater(selected_so);
+		stores.tick();
+		scenes.save();
+	}
+
+	function set_gap_axis(axis: 0 | 1 | 2 | undefined) {
+		if (!selected_so?.repeater) return;
+		selected_so.repeater = { ...selected_so.repeater, gap_axis: axis };
+		engine.sync_repeater(selected_so);
+		stores.tick();
+		scenes.save();
+	}
+
+	const axis_labels = ['x', 'y', 'z'] as const;
+
+	function get_repeater_display(so: Smart_Object | undefined, _tick: number) {
+		if (!so?.repeater) return null;
+		const r = so.repeater;
+		const repeat_ai = r.repeat_axis ?? 0;
+		const gap_ai = r.gap_axis ?? repeat_ai;
+		const parent_dims = [so.width, so.depth, so.height];
+		const gap_length = parent_dims[gap_ai];
+		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
+
+		if (r.gap_min != null && r.gap_max != null && gap_length > 0) {
+			const count_lo = Math.max(1, Math.floor(gap_length / r.gap_max));
+			const count_hi = Math.max(1, Math.ceil(gap_length / r.gap_min));
+			const mid = (r.gap_min + r.gap_max) / 2;
+			let best = count_lo, best_d = Infinity;
+			for (let n = count_lo; n <= count_hi; n++) {
+				const g = gap_length / n;
+				if (g >= r.gap_min && g <= r.gap_max) {
+					const d = Math.abs(g - mid);
+					if (d < best_d) { best_d = d; best = n; }
+				}
+			}
+			const label = axis_labels[gap_ai];
+			return { count: best, gap: fmt(gap_length / best), total: fmt(gap_length), label };
+		}
+		const parent_length = parent_dims[repeat_ai];
+		if (r.spacing != null && r.spacing > 0 && parent_length > 0) {
+			const count = Math.max(1, Math.round(parent_length / r.spacing));
+			return { count, gap: fmt(r.spacing), total: fmt(parent_length), label: axis_labels[repeat_ai] };
+		}
+		return null;
+	}
+
+	let repeater_display = $derived(get_repeater_display(selected_so ?? undefined, $w_tick));
 
 	let tick = $derived(stores.is_editing() ? 0 : $w_tick);
 	function get_visible_label(_tick: number) { return selected_so?.visible === false ? 'show' : 'hide'; }
@@ -299,23 +374,62 @@
 	</table>
 	<div class='actions-row'>
 		<button class='action-btn' disabled={!has_children} use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>delete all children</button>
-		{#if !is_repeater && !repeater_editing}
-			<button class='action-btn' onclick={() => repeater_editing = true}>repeat</button>
+		{#if !is_repeater}
+			<button class='action-btn' use:hit_target={{ id: 'repeat', onpress: init_repeater }}>repeat</button>
 		{/if}
 	</div>
-	{#if is_repeater || repeater_editing}
-		<div class='repeater-row'>
-			<span class='repeater-x'>×</span>
-			<input
-				type        = 'text'
-				class       = 'repeater-input'
-				placeholder = 'count formula'
-				value       = {repeater_formula ?? ''}
-				onfocus     = {() => stores.w_editing.set(T_Editing.formula)}
-				onblur      = {(e) => { commit_repeater((e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
-				onkeydown   = {repeater_keydown}
-			/>
-		</div>
+	{#if is_repeater}
+		<div class='repeater-options'>
+				<div class='repeater-option-row'>
+					<span class='option-label'>axis</span>
+					<div class='segmented'>
+						<button class:active={selected_so?.repeater?.repeat_axis === 0} onclick={() => set_repeat_axis(0)}>x</button>
+						<button class:active={selected_so?.repeater?.repeat_axis === 1} onclick={() => set_repeat_axis(1)}>y</button>
+					</div>
+				</div>
+				<div class='repeater-option-row'>
+					<span class='option-label'>constraint</span>
+					<div class='segmented'>
+						<button class:active={selected_so?.repeater?.gap_min != null} onclick={enable_gap_range}>range</button>
+						<button class:active={selected_so?.repeater?.spacing === 304.8} onclick={() => set_spacing(304.8)}>12"</button>
+						<button class:active={selected_so?.repeater?.spacing === 406.4} onclick={() => set_spacing(406.4)}>16"</button>
+						<button class:active={selected_so?.repeater?.spacing === 609.6} onclick={() => set_spacing(609.6)}>24"</button>
+					</div>
+				</div>
+				{#if selected_so?.repeater?.gap_min != null && selected_so?.repeater?.gap_max != null}
+					<div class='repeater-option-row'>
+						<span class='option-label'>gap along</span>
+						<div class='segmented'>
+							<button class:active={selected_so?.repeater?.gap_axis == null || selected_so?.repeater?.gap_axis === selected_so?.repeater?.repeat_axis} onclick={() => set_gap_axis(undefined)}>repeat</button>
+							<button class:active={selected_so?.repeater?.gap_axis === 2} onclick={() => set_gap_axis(2)}>z</button>
+						</div>
+					</div>
+					<div class='repeater-option-row'>
+						<span class='option-label'>min</span>
+						<input
+							type      = 'text'
+							class     = 'repeater-input'
+							value     = {units.format_for_system(selected_so.repeater.gap_min, $w_unit_system, $w_precision)}
+							onblur    = {(e) => set_gap('gap_min', (e.target as HTMLInputElement).value)}
+							onkeydown = {repeater_keydown}
+						/>
+						<span class='option-label'>max</span>
+						<input
+							type      = 'text'
+							class     = 'repeater-input'
+							value     = {units.format_for_system(selected_so.repeater.gap_max, $w_unit_system, $w_precision)}
+							onblur    = {(e) => set_gap('gap_max', (e.target as HTMLInputElement).value)}
+							onkeydown = {repeater_keydown}
+						/>
+					</div>
+				{/if}
+				{#if repeater_display}
+					<div class='repeater-display'>
+						<span>{repeater_display.count} × {repeater_display.gap} ({repeater_display.label})</span>
+						<span class='dim'>= {repeater_display.total}</span>
+					</div>
+				{/if}
+			</div>
 	{/if}
 {:else}
 	<p>No object selected</p>
@@ -479,22 +593,6 @@
 		margin    : 0;
 	}
 
-	.repeater-row {
-		display     : flex;
-		align-items : center;
-		gap         : 4px;
-		margin-top  : 6px;
-	}
-
-	.repeater-x {
-		font-weight : 600;
-		font-size   : 12px;
-		opacity     : 0.7;
-		width       : 12px;
-		text-align  : center;
-		flex-shrink : 0;
-	}
-
 	.repeater-input {
 		flex          : 1;
 		min-width     : 0;
@@ -513,5 +611,72 @@
 	.repeater-input:focus {
 		outline        : 1.5px solid cornflowerblue;
 		outline-offset : -1.5px;
+	}
+
+	.repeater-options {
+		margin-top : 4px;
+		display    : flex;
+		flex-direction : column;
+		gap        : 4px;
+	}
+
+	.repeater-option-row {
+		display     : flex;
+		align-items : center;
+		gap         : 6px;
+	}
+
+	.option-label {
+		font-size  : 11px;
+		opacity    : 0.6;
+		min-width  : 28px;
+		flex-shrink: 0;
+	}
+
+	.segmented {
+		display : flex;
+		gap     : 0;
+	}
+
+	.segmented button {
+		border        : 0.5px solid currentColor;
+		background    : white;
+		color         : inherit;
+		font-size     : 11px;
+		height        : 20px;
+		padding       : 0 8px;
+		cursor        : pointer;
+		white-space   : nowrap;
+	}
+
+	.segmented button:first-child {
+		border-radius : 10px 0 0 10px;
+	}
+
+	.segmented button:last-child {
+		border-radius : 0 10px 10px 0;
+	}
+
+	.segmented button:not(:first-child) {
+		border-left : none;
+	}
+
+	.segmented button.active {
+		background : var(--accent);
+		font-weight: 600;
+	}
+
+	.segmented button:hover:not(.active) {
+		background : var(--bg);
+	}
+
+	.repeater-display {
+		font-size   : 11px;
+		opacity     : 0.8;
+		padding-left: 34px;
+	}
+
+	.repeater-display .dim {
+		opacity : 0.5;
 	}
 </style>

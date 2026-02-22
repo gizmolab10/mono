@@ -241,6 +241,27 @@ class Scenes {
 		input.click();
 	}
 
+	/** Create a fresh empty scene with a single root SO. */
+	new_scene(): void {
+		const id = Identifiable.newID();
+		const empty: Exported_File = {
+			version: CURRENT_VERSION,
+			scene: {
+				smart_objects: [{
+					id,
+					name: 'new',
+					x: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 } },
+					y: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 } },
+					z: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 } },
+					rotation_lock: 0,
+				}],
+				camera: { eye: [0, 0, 2750], center: [0, 0, 0], up: [0, 1, 0] },
+				root_id: id,
+			},
+		};
+		this.load_from_text(JSON.stringify(empty));
+	}
+
 	/** Load a scene from raw JSON text (used by library panel). */
 	load_from_text(text: string): void {
 		try {

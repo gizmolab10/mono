@@ -52,7 +52,7 @@
 	let label_input = $state<HTMLInputElement>();
 	let initialized = false;
 
-	const s_hit_target = components.component_forHID_andType_createUnique(GRAPH_HID, T_Hit_Target.rubberband);
+	const s_hit_target = components.component_forHID_andType_createUnique(GRAPH_HID, T_Hit_Target.graph);
 
 	function initCanvas(width : number, height : number) {
 		if (!canvas || initialized) return;
@@ -142,7 +142,7 @@
 			return true;
 		};
 
-		const observer = new ResizeObserver((entries) => {
+		const observer = new ResizeObserver( async (entries) => {
 			const entry = entries[0];
 			if (!entry) return;
 
@@ -151,9 +151,7 @@
 
 			resizeCanvas(Math.floor(width), Math.floor(height));
 
-			// Update hit target rect after resize
-			s_hit_target.update_rect();
-			hits.recalibrate();
+			await hits.defer_recalibrate();
 		});
 
 		observer.observe(container);

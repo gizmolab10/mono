@@ -1,12 +1,13 @@
-import S_Hit_Target from '../state/S_Hit_Target';
 import Mouse_Timer, { T_Timer } from '../signals/Mouse_Timer';
 import { T_Drag, T_Hit_Target } from '../types/Enumerations';
-import { hits_3d } from '../managers/Hits_3D';
 import type { Dictionary } from '../types/Types';
+import S_Hit_Target from '../state/S_Hit_Target';
+import { hits_3d } from '../managers/Hits_3D';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
 import { drag } from '../editors/Drag';
 import S_Mouse from '../state/S_Mouse';
+import { tick } from 'svelte';
 import RBush from 'rbush';
 
 type Target_RBRect = {
@@ -138,6 +139,11 @@ export default class Hits {
 		this.targets_dict_byID = {};
 		this.longClick_fired = false;
 		this.targets_dict_byType = {};
+	}
+
+	async defer_recalibrate() {
+		await tick();
+		this.recalibrate();
 	}
 
 	recalibrate() {

@@ -4,9 +4,9 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
-	import { stores } from '../../ts/managers';
+	import { stores, scenes } from '../../ts/managers';
 	import { engine } from '../../ts/render';
-	import { tick, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import Hideable from './Hideable.svelte';
 	import D_List from './D_List.svelte';
 	import D_Library from './D_Library.svelte';
@@ -17,8 +17,8 @@
 	const { w_t_details } = stores;
 
 	onMount( async () => {
-		setTimeout(() => {
-			hits.recalibrate();
+		setTimeout( async () => {
+			await hits.defer_recalibrate();
 		}, 10);
 	});
 
@@ -43,6 +43,9 @@
 		</Hideable>
 
 		<Hideable title='library' id='library' detail={T_Details.library}>
+			{#snippet actions()}
+				<button class='banner-add' use:hit_target={{ id: 'new-scene', onpress: () => scenes.new_scene() }}>+</button>
+			{/snippet}
 			<D_Library />
 		</Hideable>
 

@@ -63,6 +63,7 @@ At session start, also read:
 3. `gates.md` — check for STOP/SEARCH/LIST/WAIT
 4. `pitfalls.md` — edge cases that cause mistakes
 5. `../work/learn.md` — don't repeat them. If 10+ entries, say: "Feedstock: \[N\] — time to distill."
+6. `<X>/notes/map.md` — file map for the active project. Read instead of globbing. Update when files are added/moved/removed. Exclude folders listed in `notes/guides/collaborate/exclude.md`.
 
 ## Guides
 
@@ -71,6 +72,7 @@ In `notes/guides/collaborate/`:
 * `chat.md` — roles, requirements, division of labor
 * `voice.md` — prose style
 * `workflow.md` — implementation, refactoring, debugging discipline
+* `exclude.md` — folders to skip when building map files (not general searching)
 
 In `notes/guides/pre-flight/`:
 

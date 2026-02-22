@@ -12,7 +12,8 @@
 		center  : Point;
 	} = $props();
 
-	const g_widget       = $derived(new G_Widget(center));
+	const title          = $derived(ancestry.thing?.title ?? '');
+	const g_widget       = $derived(new G_Widget(center, title));
 	const isGrabbed      = $derived(ux.isGrabbed(ancestry));
 	const isFocus        = $derived(ancestry.equals(ux.ancestry_focus));
 	const showing_reveal = $derived(!isFocus && ancestry.hasChildren);
@@ -45,7 +46,7 @@
 	style:border = {border_style}
 	style:border-radius = '4px'
 	onclick={handle_click}>
-	<Widget_Title title={ancestry.thing?.title ?? ''} />
+	<Widget_Title {title} />
 	{#if showing_reveal}
 		<Widget_Reveal {ancestry} left={g_widget.width + 4} top={(g_widget.height - 14) / 2} />
 	{/if}

@@ -3,6 +3,7 @@
 	import { G_TreeBranches }   from '../../geometry/G_TreeBranches';
 	import type { Point }       from '../../types/Coordinates';
 	import Widget               from './Widget.svelte';
+	import Tree_Line            from './Tree_Line.svelte';
 	import Tree_Branches        from './Tree_Branches.svelte';
 
 	let { ancestry, parentCenter, depth }: {
@@ -16,7 +17,8 @@
 </script>
 
 {#if depth > 0}
-	{#each branchItems as { branch, center }}
+	{#each branchItems as { branch, center, line }}
+		<Tree_Line {line} />
 		<Widget ancestry={branch} {center} />
 		{#if branch.shows_branches}
 			<Tree_Branches ancestry={branch} parentCenter={center} depth={depth - 1} />

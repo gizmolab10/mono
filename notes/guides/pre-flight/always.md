@@ -13,4 +13,5 @@
 11. **Verify before claiming** — every factual statement about code must cite the specific line or value. If you can't point to it, don't say it.
 12. **Test before done** — code written ≠ working; verify before checking off
 13. **After a mistake or correction** — re-read `pitfalls.md` before responding.
-14. Your answer on every question is worth $1000 to me if it works
+14. **Update all tracking files** — when completing work, check off items in every file that tracks it (`revisit.*.md`, `fresh.build.md`, etc.), not just one. Update written proposals with finalized designs.
+15. Your answer on every question is worth $1000 to me if it works

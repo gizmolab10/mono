@@ -98,30 +98,30 @@ Spec: [ancestry.md](./ancestry.md), [ux.md](./ux.md)
 
 ### Full Ancestry
 
-- [ ] Ancestry cache: `ancestry_remember_createUnique(path)` — one instance per path string, keyed by HID
-- [ ] Full getters: `isRoot`, `isExpanded` (from `$state` expanded set), `hasChildren`, `shows_children`, `shows_branches`, `siblingIndex`, `sibling_ancestries`
-- [ ] Depth limit: `depth_within_focus_subtree`, `global_depth_limit` (`$state` default 5), `hidden_by_depth_limit`, `children_hidden_by_depth_limit`, `isVisible_accordingTo_depth_within_focus_subtree`
-- [ ] `ancestry_createUnique_byStrippingBack(n)`, `incorporates(focus)`, `equals(other)`
+- [x] Ancestry cache: `ancestry_remember_createUnique(path)` — one instance per path string, keyed by HID
+- [x] Full getters: `isRoot`, `isExpanded` (from `$state` expanded set), `hasChildren`, `shows_children`, `shows_branches`, `siblingIndex`, `sibling_ancestries`
+- [x] Depth limit: `depth_within_focus_subtree`, `global_depth_limit` (`$state` default 5), `hidden_by_depth_limit`, `children_hidden_by_depth_limit`, `isVisible_accordingTo_depth_within_focus_subtree`
+- [x] `ancestry_createUnique_byStrippingBack(n)`, `incorporates(focus)`, `equals(other)`
 
 ### Focus / Grabs / Recents
 
-- [ ] `si_recents` — `$state` array of `S_Recent {focus, grabs, depth}` with current index
-- [ ] `w_ancestry_focus` — `$derived` from `si_recents[index].focus`
-- [ ] `becomeFocus(ancestry)` — push S_Recent to recents, call `expand()`
-- [ ] `si_grabs` — `$state` array of grabbed ancestries
-- [ ] `grab(ancestry)`, `grabOnly(ancestry)`, `grab_none()`, `ungrab_invisible_grabs()`
-- [ ] `si_expanded` — `$state` Set of expanded ancestry HIDs
-- [ ] `ancestry_toggle_expansion(ancestry)`
-- [ ] `recents_go(delta)` — navigate history (undo/redo focus)
+- [x] `si_recents` — `$state` array of `S_Recent {focus, grabs, depth}` with current index
+- [x] `w_ancestry_focus` — `$derived` from `si_recents[index].focus`
+- [x] `becomeFocus(ancestry)` — push S_Recent to recents, call `expand()`
+- [x] `si_grabs` — `$state` array of grabbed ancestries
+- [x] `grab(ancestry)`, `grabOnly(ancestry)`, `grab_none()`, `ungrab_invisible_grabs()`
+- [x] `si_expanded` — `$state` Set of expanded ancestry HIDs
+- [x] `ancestry_toggle_expansion(ancestry)`
+- [x] `recents_go(delta)` — navigate history (undo/redo focus)
 
 ### Interaction
 
-- [ ] Click Widget title → `grabOnly(ancestry)`
-- [ ] `Widget_Reveal.svelte` — reveal dot: fat center dot when `hidden_by_depth_limit`, chevron otherwise; click → `becomeFocus` or `toggle_expansion` — spec: [rendering.md](./rendering.md) §Widget_Reveal
-- [ ] `SVG_D3.svelte` — generic SVG path renderer (stub: just renders the `d` attribute)
-- [ ] Global `keydown`: arrows → navigate, `/` → becomeFocus, Escape → grab_none, `[`/`]` → recents_go
-- [ ] Tree re-renders reactively on focus/expand changes
-- [ ] ✦ **Click to focus, expand/collapse, arrow navigation all work.**
+- [x] Click Widget title → `grabOnly(ancestry)`
+- [x] `Widget_Reveal.svelte` — reveal dot: fat center dot when `hidden_by_depth_limit`, chevron otherwise; click → `becomeFocus` or `toggle_expansion`
+- [x] `SVG_D3.svelte` — generic SVG path renderer (stub: just renders the `d` attribute)
+- [x] Global `keydown`: arrows → navigate, `/` → becomeFocus, Escape → grab_none, `[`/`]` → recents_go
+- [x] Tree re-renders reactively on focus/expand changes
+- [x] ✦ **Click to focus, expand/collapse, arrow navigation all work.**
 
 ---
 
@@ -132,9 +132,9 @@ Spec: [ancestry.md](./ancestry.md), [ux.md](./ux.md)
 Spec: [geometry.md](./geometry.md)
 
 - [ ] `G_Widget` full — proper `width` (DOM text measurement + dot sizes), `center_ofReveal`, `center_ofDrag`, `origin_ofTitle`, bounding rect
-- [ ] `G_TreeBranches` full — `height_ofVisibleSubtree`, vertical distribution, `origin_ofLine`
-- [ ] `G_TreeLine` — start/end points, three curve types (flat, up-arc, down-arc), SVG arc formula with `(-118.5, 1.5)` offset
-- [ ] `Tree_Line.svelte` — renders actual curved connecting lines via SVG
+- [x] `G_TreeBranches` full — vertical distribution, `origin_ofLine`, line geometry per branch
+- [x] `G_TreeLine` — start/end points, three curve types (flat, up-arc, down-arc), SVG arc paths
+- [x] `Tree_Line.svelte` — renders curved connecting lines via absolutely-positioned SVG
 - [ ] `G_TreeGraph` — `layout()` top-down, `branch_isAlready_attached` dedup, `grand_sweep()` entry point
 - [ ] `SVG_Paths.ts` full — `fat_polygon` (chevron), `circle_atOffset` (fat center dot), tiny outer dots (digit-decomposition sizing), `fillets`, `annulus`
 - [ ] `Widget_Drag.svelte` — drag handle stub (wired in Phase 8)
