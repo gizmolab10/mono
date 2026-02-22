@@ -11,4 +11,4 @@
 - [x] Phase 4 — Ancestry + Navigation (click, expand/collapse, arrows, recents)
 - [x] Phase 5 — Geometry (colors, drag dots, reveal alignment, tree lines)
 - [x] Phase 6 — DB_Test + DB_Common (fresh.build.md)
-- [ ] Phase 7 — Firebase (fresh.build.md)
+- [ ] Phase 7 — Hit Detection + Full Input (fresh.build.md)

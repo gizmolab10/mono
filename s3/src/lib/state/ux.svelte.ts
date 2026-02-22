@@ -1,5 +1,6 @@
 import type { Ancestry } from '../nav/Ancestry';
 import type { Integer }  from '../types/Types';
+import { Point }         from '../types/Coordinates';
 
 // ————————————————————————————————————————— Types
 
@@ -16,6 +17,8 @@ class S_UX {
 	recents_index      = $state(0);
 	global_depth_limit = $state(5);
 	expanded_hids      = $state(new Set<Integer>());
+	scale              = $state(1);
+	user_graph_offset  = $state(Point.zero);
 
 	// ————————————————————————————————————————— Derived from recents
 

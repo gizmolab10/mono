@@ -1,6 +1,13 @@
 <script lang='ts'>
 	import { startup } from '../../state/startup.svelte';
+	import { events }  from '../../signals/Events.svelte';
+	import { onMount }  from 'svelte';
 	import Panel from './Panel.svelte';
+
+	onMount(() => {
+		events.setup();
+		return () => events.teardown();
+	});
 </script>
 
 {#if startup.isReady}

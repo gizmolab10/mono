@@ -22,14 +22,26 @@
 </script>
 
 <div class='tree-graph' bind:this={graphElement}>
-	{#if g_treeGraph.graph_width > 0}
-		<Widget ancestry={focus} center={focusCenter} />
-		<Tree_Branches ancestry={focus} parentCenter={focusCenter} {depth} />
-	{/if}
+	<div
+		class            = 'tree-content'
+		style:transform  = 'scale({ux.scale}) translate({ux.user_graph_offset.x}px, {ux.user_graph_offset.y}px)'
+		style:transform-origin = 'center center'>
+		{#if g_treeGraph.graph_width > 0}
+			<Widget ancestry={focus} center={focusCenter} />
+			<Tree_Branches ancestry={focus} parentCenter={focusCenter} {depth} />
+		{/if}
+	</div>
 </div>
 
 <style>
 	.tree-graph {
+		position : relative;
+		width    : 100%;
+		height   : 100%;
+		overflow : hidden;
+	}
+
+	.tree-content {
 		position : relative;
 		width    : 100%;
 		height   : 100%;

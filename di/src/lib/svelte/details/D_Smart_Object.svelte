@@ -22,6 +22,7 @@
 	// Repeater state
 	function get_repeater(_tick: number) { return selected_so?.repeater ?? null; }
 	let is_repeater = $derived(get_repeater($w_tick) !== null);
+	let has_firewall = $derived(get_repeater($w_tick)?.firewall ?? false);
 	let view_mode = $state<'attributes' | 'repeater'>('attributes');
 	let tracked_id = $state('');
 	$effect(() => {
@@ -98,6 +99,14 @@
 	function set_gap_axis(axis: 0 | 1 | 2 | undefined) {
 		if (!selected_so?.repeater) return;
 		selected_so.repeater = { ...selected_so.repeater, gap_axis: axis };
+		engine.sync_repeater(selected_so);
+		stores.tick();
+		scenes.save();
+	}
+
+	function toggle_firewall() {
+		if (!selected_so?.repeater) return;
+		selected_so.repeater = { ...selected_so.repeater, firewall: !selected_so.repeater.firewall };
 		engine.sync_repeater(selected_so);
 		stores.tick();
 		scenes.save();
@@ -411,6 +420,9 @@
 					<button class:active={selected_so?.repeater?.repeat_axis === 0} onclick={() => set_repeat_axis(0)}>x</button>
 					<button class:active={selected_so?.repeater?.repeat_axis === 1} onclick={() => set_repeat_axis(1)}>y</button>
 				</div>
+				<button class='action-btn' class:active={has_firewall} onclick={toggle_firewall} style='margin-left:auto'>
+					{has_firewall ? 'has fireblocks' : 'no fireblocks'}
+				</button>
 			</div>
 			<div class='repeater-option-row'>
 				<span class='option-label'>constraint</span>

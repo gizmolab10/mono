@@ -741,8 +741,11 @@ class Engine {
 		// Template is instance 0; clones fill positions 1..count-1 (top position is the landing, not a tread)
 		const needed_studs = Math.max(0, count - (gap_step ? 2 : 0)) + (has_bookend ? 1 : 0);
 
-		// Firewall blocking: horizontal members between studs (count = studs - 1)
-		const needed_firewall = (so.repeater.firewall && !gap_step && needed_studs > 0) ? count : 0;
+		// Firewall blocking: horizontal members between studs — one per bay including bookend bay
+		const regular_bay = step - template_dim;
+		const bookend_bay = has_bookend ? bookend_offset - template_dim - step * count : 0;
+		const has_bookend_fireblock = bookend_bay > 50.8; // only if gap > 2"
+		const needed_firewall = (so.repeater.firewall && !gap_step && needed_studs > 0) ? count + (has_bookend_fireblock ? 1 : 0) : 0;
 		const total_needed = needed_studs + needed_firewall;
 
 		// Firewall geometry: find the height axis (tallest non-repeat axis of template)
@@ -786,7 +789,9 @@ class Engine {
 
 		// Update positions of surviving firewall clones
 		for (let i = needed_studs; i < Math.min(surviving.length, total_needed); i++) {
-			this.apply_firewall_position(surviving[i].so, t, i - needed_studs, repeat_ai, height_ai, step, template_dim, parent_dims);
+			const fi = i - needed_studs;
+			const bay = (has_bookend_fireblock && fi === count) ? bookend_bay : regular_bay;
+			this.apply_firewall_position(surviving[i].so, t, fi, repeat_ai, height_ai, step, template_dim, parent_dims, bay);
 		}
 
 		// Add missing clones
@@ -802,7 +807,9 @@ class Engine {
 					clone.axes[gap_ai].end.value   += gap_step * (i + 1);
 				}
 			} else {
-				this.apply_firewall_position(clone, t, i - needed_studs, repeat_ai, height_ai, step, template_dim, parent_dims);
+				const fi = i - needed_studs;
+				const bay = (has_bookend_fireblock && fi === count) ? bookend_bay : regular_bay;
+				this.apply_firewall_position(clone, t, fi, repeat_ai, height_ai, step, template_dim, parent_dims, bay);
 			}
 			const clone_scene = scene.create({
 				so: clone,
@@ -819,8 +826,9 @@ class Engine {
 		if (changed) stores.w_all_sos.set(scene.get_all().map(o => o.so));
 	}
 
-	/** Position a fire block clone: template rotated 90° (swap repeat/height lengths), shortened to fit between studs, at mid-height. */
-	private apply_firewall_position(clone: Smart_Object, t: Smart_Object, index: number, repeat_ai: number, height_ai: number, step: number, template_dim: number, parent_dims: number[]): void {
+	/** Position a fire block clone: template rotated 90° (swap repeat/height lengths), shortened to fit between studs, at mid-height.
+	 *  Values are offsets: start.value = offset from parent's min, end.value = offset from parent's max. */
+	private apply_firewall_position(clone: Smart_Object, t: Smart_Object, index: number, repeat_ai: number, height_ai: number, step: number, template_dim: number, parent_dims: number[], bay_length: number): void {
 		// Start from template axes for the "other" axis (depth), then override repeat and height
 		for (let ai = 0; ai < 3; ai++) {
 			clone.axes[ai].start.value  = t.axes[ai].start.value;
@@ -830,16 +838,16 @@ class Engine {
 		}
 
 		// Repeat axis: shortened to fit between studs, positioned after the stud at this bay
-		const block_length = step - template_dim;
+		const block_length = bay_length;
 		const block_start = t.axes[repeat_ai].start.value + template_dim + step * index;
 		clone.axes[repeat_ai].start.value  = block_start;
-		clone.axes[repeat_ai].end.value    = block_start + block_length;
+		clone.axes[repeat_ai].end.value    = block_start + block_length - parent_dims[repeat_ai];
 		clone.axes[repeat_ai].length.value = block_length;
 
 		// Height axis: swapped to template_dim (stud width), centered at mid-height of parent
 		const mid_start = parent_dims[height_ai] / 2 - template_dim / 2;
 		clone.axes[height_ai].start.value  = mid_start;
-		clone.axes[height_ai].end.value    = mid_start + template_dim;
+		clone.axes[height_ai].end.value    = mid_start + template_dim - parent_dims[height_ai];
 		clone.axes[height_ai].length.value = template_dim;
 	}
 

@@ -161,7 +161,35 @@ Spec: [database.md](./database.md)
 
 ---
 
-## Phase 7 — Firebase ✦ FIREBASE
+## Phase 7 — Hit Detection + Full Input ✦ FULL INPUT
+
+2 sessions. rbush spatial index, full mouse pipeline, complete keyboard dispatch. Replaces the Events.ts god object with a clean table-driven system.
+
+Spec: [signals.md](./signals.md)
+
+### Hit detection
+
+- [x] `S_Hit_Target` — rect, `T_Mouse_Detection` bitmask, `handle_s_mouse` callback slot
+- [x] `Hits` — rbush tree keyed by `Target_RBRect {minX, minY, maxX, maxY, target}`; `add_hit_target`, `delete_hit_target`, pointer-event → ancestry resolution via precedence order
+- [x] `S_Mouse` — static factories: `empty`, `up`, `down`, `long`, `repeat`, `double` with flag values
+- [x] `Mouse_Timer` — autorepeat (150ms period, 800ms delay), double-click (400ms), long-click (800ms), alteration blink (500ms)
+- [x] Click state machine: down → start timers → up (short → normal click, long → long-click, rapid → double-click, held → autorepeat)
+- [x] Register widgets + reveal dots + drag handles as hit targets on mount; deregister on destroy
+- [x] Replace Phase 4 simple click handlers with hit-target callbacks
+
+### Keyboard + Events
+
+- [x] Full keyboard dispatch — `Map<key+modifiers, T_Action>` lookup, all modifier combos
+- [ ] All action handlers: create child/sibling, delete, edit title, relocate (persistent move), browse (non-persistent), focus parent/child, toggle expansion, undo/redo
+- [ ] Disable logic per action (during edit, no grabs, at root, etc.)
+- [x] Replace Phase 4 basic keydown with full table-driven dispatch
+- [x] Touch: two-finger pan → `ux.user_graph_offset`, pinch zoom → `ux.scale`
+- [x] Wheel → zoom
+- [ ] ✦ **All keyboard shortcuts work. Hit detection is spatial.**
+
+---
+
+## Phase 8 — Firebase ✦ FIREBASE
 
 2 sessions. Real user data. Persist changes.
 
@@ -177,34 +205,6 @@ Spec: [database.md](./database.md) §DB_Firebase
 - [ ] Bulk alias stitching — foreign root registration, two-phase
 - [ ] Anonymous auth
 - [ ] ✦ **Real user data loads. Changes persist to Firestore.**
-
----
-
-## Phase 8 — Hit Detection + Full Input ✦ FULL INPUT
-
-2 sessions. rbush spatial index, full mouse pipeline, complete keyboard dispatch. Replaces the Events.ts god object with a clean table-driven system.
-
-Spec: [signals.md](./signals.md)
-
-### Hit detection
-
-- [ ] `S_Hit_Target` — rect, `T_Mouse_Detection` bitmask, `handle_s_mouse` callback slot
-- [ ] `Hits` — rbush tree keyed by `Target_RBRect {minX, minY, maxX, maxY, target}`; `add_hit_target`, `delete_hit_target`, pointer-event → ancestry resolution via precedence order
-- [ ] `S_Mouse` — static factories: `empty`, `up`, `down`, `long`, `repeat`, `double` with flag values
-- [ ] `Mouse_Timer` — autorepeat (150ms period, 800ms delay), double-click (400ms), long-click (800ms), alteration blink (500ms)
-- [ ] Click state machine: down → start timers → up (short → normal click, long → long-click, rapid → double-click, held → autorepeat)
-- [ ] Register widgets + reveal dots + drag handles as hit targets on mount; deregister on destroy
-- [ ] Replace Phase 4 simple click handlers with hit-target callbacks
-
-### Keyboard + Events
-
-- [ ] Full keyboard dispatch — `Map<key+modifiers, T_Action>` lookup, all modifier combos
-- [ ] All action handlers: create child/sibling, delete, edit title, relocate (persistent move), browse (non-persistent), focus parent/child, toggle expansion, undo/redo
-- [ ] Disable logic per action (during edit, no grabs, at root, etc.)
-- [ ] Replace Phase 4 basic keydown with full table-driven dispatch
-- [ ] Touch: two-finger pan → `w_user_graph_offset`, pinch zoom → `w_scale_factor`
-- [ ] Wheel → zoom
-- [ ] ✦ **All keyboard shortcuts work. Hit detection is spatial.**
 
 ---
 
