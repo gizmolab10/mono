@@ -30,7 +30,8 @@ export class G_TreeBranches {
 		const x       = this.parentCenter.x + 150;
 		const heights = branches.map(b => G_TreeBranches.subtreeHeight(b, this.depth - 1));
 		const total   = heights.reduce((sum, h) => sum + h, 0);
-		let y         = this.parentCenter.y - total / 2;
+		const delta   = (heights[heights.length - 1] - heights[0]) / 4;
+		let y         = this.parentCenter.y - total / 2 + delta;
 		return heights.map(h => {
 			const center = new Point(x, y + h / 2);
 			y += h;

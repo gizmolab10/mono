@@ -1,5 +1,5 @@
 import type { Dictionary, Axis_Name, Bound } from '../types/Types';
-import type { O_Scene, Portable_Axis } from '../types/Interfaces';
+import type { O_Scene, Portable_Axis, Repeater } from '../types/Interfaces';
 import { quat, vec3 } from 'gl-matrix';
 import Attribute from '../types/Attribute';
 import Identifiable from './Identifiable';
@@ -8,11 +8,11 @@ import Axis from './Axis';
 export default class Smart_Object extends Identifiable {
 	axes: Axis[] = [new Axis('x'), new Axis('y'), new Axis('z')];
 	attributes_dict_byName: Dictionary<Attribute> = {};
-	scene: O_Scene | null;
+	repeater: Repeater | null = null;
+	is_template: boolean = false;
 	rotation_lock: number = 0;
 	visible: boolean = true;
-	repeater: { count_formula: string } | null = null;
-	is_template: boolean = false;
+	scene: O_Scene | null;
 	name: string;
 
 	// Snap callback — set by Setup to snap mm values to the current precision grid. */
@@ -355,8 +355,8 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	/** Serialize to Portable_SO shape (per-axis bundles) */
-	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean; repeater?: { count_formula: string }; is_template?: boolean } {
-		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean; repeater?: { count_formula: string }; is_template?: boolean } = {
+	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean; repeater?: Repeater; is_template?: boolean } {
+		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean; repeater?: Repeater; is_template?: boolean } = {
 			id: this.id,
 			name: this.name,
 			x: this.axes[0].serialize(),
@@ -371,7 +371,7 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	/** Deserialize from Portable_SO shape (per-axis bundles) */
-	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number; visible?: boolean; repeater?: { count_formula: string }; is_template?: boolean }): Smart_Object {
+	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number; visible?: boolean; repeater?: Repeater; is_template?: boolean }): Smart_Object {
 		const so = new Smart_Object(data.name);
 		so.setID(data.id);
 		const axis_data = [data.x, data.y, data.z];

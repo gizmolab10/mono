@@ -1,4 +1,4 @@
-import type { Compact_Attribute, Portable_Attribute, Portable_Axis } from '../types/Interfaces';
+import type { Compact_Attribute, Portable_Attribute, Portable_Axis, Repeater } from '../types/Interfaces';
 import { constants, type ConstantEntry } from '../algebra/User_Constants';
 import default_scene from '../../../assets/drawer.di?raw';
 import { preferences, T_Preference } from './Preferences';
@@ -16,7 +16,7 @@ import { hits_3d } from './Hits_3D';
  * Uses Preferences for the actual localStorage read/write.
  */
 
-const CURRENT_VERSION = '6';
+const CURRENT_VERSION = '7';
 
 export interface Portable_SO {
 	rotation_lock?: number;            // rotation axis: 0=x, 1=y, 2=z (default 0)
@@ -26,7 +26,7 @@ export interface Portable_SO {
 	z: Portable_Axis;
 	name: string;
 	id: string;
-	repeater?: { count_formula: string };
+	repeater?: Repeater;
 	is_template?: boolean;
 }
 

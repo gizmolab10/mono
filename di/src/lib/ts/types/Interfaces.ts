@@ -38,6 +38,14 @@ export interface Angle_Rect extends Label_Rect {
 	angle_degrees: number;
 }
 
+export interface Repeater {
+	count_formula: string;
+	repeat_axis?: 0 | 1;
+	gap_min?: number;
+	gap_max?: number;
+	spacing?: number;
+}
+
 export interface Portable_Attribute {
 	formula?: string;
 	value?: number;

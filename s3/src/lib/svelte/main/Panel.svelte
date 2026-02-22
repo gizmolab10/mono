@@ -27,20 +27,23 @@
 				event.preventDefault();
 				const siblings = grabbed.sibling_ancestries;
 				const index    = grabbed.siblingIndex;
-				if (index > 0) ux.grabOnly(siblings[index - 1]);
+				ux.grabOnly(siblings[index > 0 ? index - 1 : siblings.length - 1]);
 				break;
 			}
 			case 'ArrowDown': {
 				event.preventDefault();
 				const siblings = grabbed.sibling_ancestries;
 				const index    = grabbed.siblingIndex;
-				if (index < siblings.length - 1) ux.grabOnly(siblings[index + 1]);
+				ux.grabOnly(siblings[index < siblings.length - 1 ? index + 1 : 0]);
 				break;
 			}
 			case 'ArrowLeft': {
 				event.preventDefault();
-				const parent = grabbed.parentAncestry;
-				if (!parent.isRoot || grabbed.depth > 1) ux.grabOnly(parent);
+				if (grabbed.isExpanded && !grabbed.isRoot) {
+					ux.collapse(grabbed);
+				} else if (!grabbed.isRoot) {
+					ux.grabOnly(grabbed.parentAncestry);
+				}
 				break;
 			}
 			case 'ArrowRight': {
@@ -49,8 +52,9 @@
 				if (branches.length > 0) {
 					if (!grabbed.isExpanded) {
 						ux.expand(grabbed);
+					} else {
+						ux.grabOnly(branches[0]);
 					}
-					ux.grabOnly(branches[0]);
 				}
 				break;
 			}

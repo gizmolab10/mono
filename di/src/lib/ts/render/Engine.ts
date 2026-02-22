@@ -655,7 +655,7 @@ class Engine {
 		const val = constraints.evaluate_formula(count_formula, so.id, so.scene?.parent?.so.id);
 		if (val === null) return 'Invalid formula';
 
-		so.repeater = { count_formula };
+		so.repeater = { ...so.repeater, count_formula };
 
 		// Mark first child as template (only if none already flagged)
 		const children = scene.get_all().filter(o => o.parent === so.scene);
@@ -670,14 +670,33 @@ class Engine {
 		return null;
 	}
 
-	/** Evaluate the repeater's count formula and sync children to match.
-	 *  Adds or removes clone children; updates clone positions from template size.
-	 *  Clone i (1-indexed) is offset by template_dim × i along the template's largest axis. */
+	/** Find a count where total_length / count falls within [gap_min, gap_max].
+	 *  Prefers even division; falls back to the count whose gap is closest to range midpoint. */
+	private resolve_gap(total_length: number, gap_min: number, gap_max: number): number {
+		if (gap_max <= 0 || gap_min > gap_max || total_length <= 0) return 1;
+		const count_lo = Math.max(1, Math.floor(total_length / gap_max));
+		const count_hi = Math.max(1, Math.ceil(total_length / gap_min));
+		const mid = (gap_min + gap_max) / 2;
+		let best_count = count_lo;
+		let best_distance = Infinity;
+		for (let n = count_lo; n <= count_hi; n++) {
+			const gap = total_length / n;
+			if (gap >= gap_min && gap <= gap_max) {
+				const distance = Math.abs(gap - mid);
+				if (distance < best_distance) {
+					best_distance = distance;
+					best_count = n;
+				}
+			}
+		}
+		return best_count;
+	}
+
+	/** Evaluate the repeater's count and sync children to match.
+	 *  Count determined by: gap range → spacing → formula (priority order).
+	 *  Clone i is offset by step × (i+1) along repeat_axis (or auto-detected largest axis). */
 	sync_repeater(so: Smart_Object): void {
 		if (!so.repeater || !so.scene) return;
-
-		const count_raw = constraints.evaluate_formula(so.repeater.count_formula, so.id, so.scene.parent?.so.id);
-		const count = Math.max(1, Math.round(count_raw ?? 1));
 
 		const all_children = scene.get_all().filter(o => o.parent === so.scene);
 		const template_entry = all_children.find(o => o.so.is_template);
@@ -685,9 +704,28 @@ class Engine {
 
 		const t = template_entry.so;
 		const w = t.width, d = t.depth, h = t.height;
-		const repeat_ai = (w >= d && w >= h) ? 0 : (d >= h ? 1 : 2);
+		const auto_ai = (w >= d && w >= h) ? 0 : (d >= h ? 1 : 2);
+		const repeat_ai = so.repeater.repeat_axis ?? auto_ai;
 		const template_dim = [w, d, h][repeat_ai];
 		if (template_dim <= 0) return;
+
+		// Determine count and step distance
+		const { gap_min, gap_max, spacing } = so.repeater;
+		const parent_length = [so.width, so.depth, so.height][repeat_ai];
+		let count: number;
+		let step: number;
+
+		if (gap_min != null && gap_max != null && parent_length > 0) {
+			count = this.resolve_gap(parent_length, gap_min, gap_max);
+			step = parent_length / count;
+		} else if (spacing != null && spacing > 0 && parent_length > 0) {
+			count = Math.max(1, Math.round(parent_length / spacing));
+			step = spacing;
+		} else {
+			const count_raw = constraints.evaluate_formula(so.repeater.count_formula, so.id, so.scene.parent?.so.id);
+			count = Math.max(1, Math.round(count_raw ?? 1));
+			step = template_dim;
+		}
 
 		const clones = all_children.filter(o => !o.so.is_template);
 		const needed = count - 1; // template is instance 0
@@ -708,16 +746,16 @@ class Engine {
 				c.axes[ai].length.value = t.axes[ai].length.value;
 				c.axes[ai].angle.value  = t.axes[ai].angle.value;
 			}
-			c.axes[repeat_ai].start.value += template_dim * (i + 1);
-			c.axes[repeat_ai].end.value   += template_dim * (i + 1);
+			c.axes[repeat_ai].start.value += step * (i + 1);
+			c.axes[repeat_ai].end.value   += step * (i + 1);
 		}
 
 		// Add missing clones
 		const used = new Set(scene.get_all().map(o => o.so.name));
 		for (let i = surviving.length; i < needed; i++) {
 			const clone = this.clone_so_from_template(t, used);
-			clone.axes[repeat_ai].start.value += template_dim * (i + 1);
-			clone.axes[repeat_ai].end.value   += template_dim * (i + 1);
+			clone.axes[repeat_ai].start.value += step * (i + 1);
+			clone.axes[repeat_ai].end.value   += step * (i + 1);
 			const clone_scene = scene.create({
 				so: clone,
 				edges: this.edges,
