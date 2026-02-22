@@ -650,16 +650,10 @@ class Engine {
 
 	/** Mark the first child of a repeater SO as the template (is_template = true). */
 	mark_template(so: Smart_Object): void {
-		if (!so.repeater || !so.scene) { console.warn('[mark_template] early return — repeater:', !!so.repeater, 'scene:', !!so.scene); return; }
-		const all = scene.get_all();
-		const children = all.filter(o => o.parent === so.scene);
-		console.warn('[mark_template]', so.name, '— all scene objects:', all.length, 'children:', children.length, 'so.scene id:', so.scene.id);
-		if (children.length === 0) {
-			console.warn('[mark_template] no children found. parent ids in scene:', all.map(o => o.parent?.id ?? 'root').join(', '), 'looking for:', so.scene.id);
-		}
+		if (!so.repeater || !so.scene) return;
+		const children = scene.get_all().filter(o => o.parent === so.scene);
 		if (children.length > 0 && !children.some(o => o.so.is_template)) {
 			children[0].so.is_template = true;
-			console.warn('[mark_template] marked', children[0].so.name, 'as template');
 		}
 	}
 
@@ -690,18 +684,24 @@ class Engine {
 	 *  When gap_axis differs from repeat_axis (e.g. stairs), clones offset along both axes.
 	 *  Clone i is offset by step × (i+1) along repeat_axis (or auto-detected largest axis). */
 	sync_repeater(so: Smart_Object): void {
-		if (!so.repeater || !so.scene) { console.warn('[sync_repeater] early return — repeater:', !!so.repeater, 'scene:', !!so.scene); return; }
+		if (!so.repeater || !so.scene) return;
 
 		const all_children = scene.get_all().filter(o => o.parent === so.scene);
-		const template_entry = all_children.find(o => o.so.is_template);
-		if (!template_entry) { console.warn('[sync_repeater] no template found among', all_children.length, 'children. is_template flags:', all_children.map(o => o.so.is_template)); return; }
+		if (all_children.length === 0) return;
+
+		// Auto-mark first child as template if none is marked (handles save/load gaps)
+		let template_entry = all_children.find(o => o.so.is_template);
+		if (!template_entry) {
+			all_children[0].so.is_template = true;
+			template_entry = all_children[0];
+		}
 
 		const t = template_entry.so;
 		const w = t.width, d = t.depth, h = t.height;
 		const auto_ai = (w >= d && w >= h) ? 0 : (d >= h ? 1 : 2);
 		const repeat_ai = so.repeater.repeat_axis ?? auto_ai;
 		const template_dim = [w, d, h][repeat_ai];
-		if (template_dim <= 0) { console.warn('[sync_repeater] template_dim <= 0:', template_dim, 'repeat_ai:', repeat_ai, 'dims:', w, d, h); return; }
+		if (template_dim <= 0) return;
 
 		// gap_axis: which dimension gap_min/gap_max constrain (defaults to repeat_axis)
 		const gap_ai = so.repeater.gap_axis ?? repeat_ai;
@@ -727,10 +727,17 @@ class Engine {
 			step = template_dim;
 		}
 
+
 		const clones = all_children.filter(o => !o.so.is_template);
-		const needed = count - 1; // template is instance 0
+		// Stairs (gap_step > 0): last position is the landing, not a tread → one fewer clone
+		const needed = Math.max(0, count - 1 - (gap_step ? 1 : 0));
+
+		// Stairs: adjust step so last visible tread ends exactly at parent boundary
+		if (gap_step && needed > 0) {
+			const t_start = t.axes[repeat_ai].start.value;
+			step = (parent_length - t_start - template_dim) / needed;
+		}
 		const changed = clones.length !== needed;
-		console.warn('[sync_repeater]', so.name, '— count:', count, 'needed:', needed, 'existing clones:', clones.length, 'step:', step, 'gap_step:', gap_step, 'total scene objects:', scene.get_all().length);
 
 		// Remove excess clones
 		for (const clone of clones.slice(needed)) {
@@ -778,11 +785,7 @@ class Engine {
 		}
 
 		// Notify Svelte when clone count changed so rendering picks them up
-		if (changed) {
-			const all_after = scene.get_all();
-			console.warn('[sync_repeater] clone count changed. scene now has', all_after.length, 'objects. Clone positions:', all_after.filter(o => o.parent === so.scene && !o.so.is_template).map(o => `${o.so.name}(${o.so.x_min.toFixed(0)},${o.so.y_min.toFixed(0)},${o.so.z_min.toFixed(0)})`));
-			stores.w_all_sos.set(all_after.map(o => o.so));
-		}
+		if (changed) stores.w_all_sos.set(scene.get_all().map(o => o.so));
 	}
 
 	private clone_so_from_template(t: Smart_Object, used_names: Set<string>): Smart_Object {

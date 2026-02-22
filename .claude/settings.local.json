@@ -34,7 +34,9 @@
       "Bash(yarn workspace designintuition test:run:*)",
       "Bash(yarn workspace:*)",
       "Bash(node_modules/.bin/svelte-check:*)",
-      "Bash(yarn vite build:*)"
+      "Bash(yarn vite build:*)",
+      "Bash(yarn --cwd s3 svelte-check:*)",
+      "Bash(yarn --cwd s3 vitest run:*)"
     ]
   }
 }

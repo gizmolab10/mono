@@ -29,7 +29,7 @@ export class G_TreeBranches {
 	get centers(): Point[] {
 		const branches = this.ancestry.branchAncestries;
 		if (branches.length === 0) return [];
-		const x       = this.parentCenter.x + 80;
+		const x       = this.parentCenter.x + 100;
 		const heights = branches.map(b => G_TreeBranches.subtreeHeight(b, this.depth - 1));
 		const total   = heights.reduce((sum, h) => sum + h, 0);
 		const delta   = (heights[heights.length - 1] - heights[0]) / 4;

@@ -28,6 +28,7 @@
 		selected_so.repeater = {};
 		engine.mark_template(selected_so);
 		stores.tick();
+		scenes.save();
 	}
 
 	function repeater_keydown(e: KeyboardEvent) {

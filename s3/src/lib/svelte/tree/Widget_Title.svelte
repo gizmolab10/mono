@@ -1,8 +1,8 @@
 <script lang='ts'>
-	let { title }: { title: string } = $props();
+	let { title, left }: { title: string; left: number } = $props();
 </script>
 
-<span class='title'>{title}</span>
+<span class='title' style:margin-left='{left}px'>{title}</span>
 
 <style>
 	.title {

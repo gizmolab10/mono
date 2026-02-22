@@ -1,5 +1,5 @@
-import { Point } from '../types/Coordinates';
-import { k }     from '../common/Constants';
+import { Point, Size, Rect } from '../types/Coordinates';
+import { k }                from '../common/Constants';
 
 let _ctx: CanvasRenderingContext2D | null = null;
 
@@ -10,14 +10,29 @@ function getContext(): CanvasRenderingContext2D | null {
 	return _ctx;
 }
 
+const dot_size      = k.height.dot;
+const width_ofDrag  = dot_size * 2 - 4;
+
 export class G_Widget {
-	center: Point;
+	center:          Point;
 	readonly width:  number;
 	readonly height = k.height.row;
 
-	constructor(center: Point, title: string) {
-		this.center = center;
-		this.width  = G_Widget.widthFor(title);
+	readonly width_ofTitle:   number;
+	readonly center_ofDrag:   Point;
+	readonly origin_ofTitle:  Point;
+	readonly boundingRect:    Rect;
+
+	constructor(center: Point, title: string, showingReveal: boolean = false) {
+		this.center        = center;
+		this.width_ofTitle = G_Widget.measureTitleWidth(title);
+
+		const width_ofReveal = showingReveal ? dot_size : 0;
+		this.width = this.width_ofTitle + width_ofDrag + width_ofReveal - 1;
+
+		this.center_ofDrag  = new Point(dot_size / 2 + 2, this.height / 2);
+		this.origin_ofTitle = Point.x(dot_size + 5);
+		this.boundingRect   = new Rect(this.origin, new Size(this.width, this.height));
 	}
 
 	static measureTitleWidth(title: string): number {
@@ -28,7 +43,7 @@ export class G_Widget {
 	}
 
 	static widthFor(title: string): number {
-		return G_Widget.measureTitleWidth(title) + 10;
+		return G_Widget.measureTitleWidth(title) + width_ofDrag - 1;
 	}
 
 	get origin(): Point {

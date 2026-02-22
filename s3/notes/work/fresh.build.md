@@ -131,14 +131,15 @@ Spec: [ancestry.md](./ancestry.md), [ux.md](./ux.md)
 
 Spec: [geometry.md](./geometry.md)
 
-- [ ] `G_Widget` full — proper `width` (DOM text measurement + dot sizes), `center_ofReveal`, `center_ofDrag`, `origin_ofTitle`, bounding rect
-- [x] `G_TreeBranches` full — vertical distribution, `origin_ofLine`, line geometry per branch
+- [x] `G_Widget` full — proper `width` (DOM text measurement + dot sizes), `center_ofReveal`, `center_ofDrag`, `origin_ofTitle`, bounding rect
+- [x] `G_TreeBranches` full — vertical distribution, `origin_ofLine`, line geometry per branch (column spacing = 100)
 - [x] `G_TreeLine` — start/end points, three curve types (flat, up-arc, down-arc), SVG arc paths
 - [x] `Tree_Line.svelte` — renders curved connecting lines via absolutely-positioned SVG
 - [ ] `G_TreeGraph` — `layout()` top-down, `branch_isAlready_attached` dedup, `grand_sweep()` entry point
 - [ ] `SVG_Paths.ts` full — `fat_polygon` (chevron), `circle_atOffset` (fat center dot), tiny outer dots (digit-decomposition sizing), `fillets`, `annulus`
 - [ ] `Widget_Drag.svelte` — drag handle stub (wired in Phase 8)
 - [ ] `Colors.ts` full — luminance pipeline, WCAG blend logic, RGBA↔HSBA, `w_thing_color` / `w_background_color` reactive
+- [x] Per-thing colors in seed data; Widget: white background + thing-colored text/borders; graph background white; `colors.thing` = `#333333`
 - [ ] Tree looks visually correct: proper spacing, curved connecting lines, styled reveal dots
 
 ---

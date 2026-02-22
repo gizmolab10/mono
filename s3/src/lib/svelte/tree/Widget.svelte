@@ -14,10 +14,10 @@
 
 	const title          = $derived(ancestry.thing?.title ?? '');
 	const thing_color    = $derived(ancestry.thing?.color ?? colors.thing);
-	const g_widget       = $derived(new G_Widget(center, title));
 	const isGrabbed      = $derived(ux.isGrabbed(ancestry));
 	const isFocus        = $derived(ancestry.equals(ux.ancestry_focus));
 	const showing_reveal = $derived(!isFocus && ancestry.hasChildren);
+	const g_widget       = $derived(new G_Widget(center, title, showing_reveal));
 
 	function handle_click(event: MouseEvent) {
 		event.stopPropagation();
@@ -48,7 +48,7 @@
 	style:border = {border_style}
 	style:border-radius = '4px'
 	onclick={handle_click}>
-	<Widget_Title {title} />
+	<Widget_Title {title} left={g_widget.origin_ofTitle.x} />
 	{#if showing_reveal}
 		<Widget_Reveal {ancestry} left={g_widget.width + 4} top={(g_widget.height - 14) / 2} />
 	{/if}
