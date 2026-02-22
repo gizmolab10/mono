@@ -4,6 +4,7 @@
 	import type { Point }    from '../../types/Coordinates';
 	import { colors }        from '../../colors/Colors.svelte';
 	import { ux }            from '../../state/ux.svelte';
+	import Widget_Drag       from './Widget_Drag.svelte';
 	import Widget_Title      from './Widget_Title.svelte';
 	import Widget_Reveal     from './Widget_Reveal.svelte';
 
@@ -48,9 +49,10 @@
 	style:border = {border_style}
 	style:border-radius = '4px'
 	onclick={handle_click}>
+	<Widget_Drag color={thing_color} center={ancestry.isRoot ? g_widget.center_ofDrag.offsetByY(-1) : g_widget.center_ofDrag} />
 	<Widget_Title {title} left={g_widget.origin_ofTitle.x} />
 	{#if showing_reveal}
-		<Widget_Reveal {ancestry} left={g_widget.width - 14} top={(g_widget.height - 14) / 2 - (ancestry.isRoot ? 2 : 0)} />
+		<Widget_Reveal {ancestry} left={g_widget.width - 14} top={(g_widget.height - 14) / 2 - 0.3 - (ancestry.isRoot ? 1 : 0)} />
 	{/if}
 </div>
 

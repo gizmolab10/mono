@@ -738,8 +738,8 @@ class Engine {
 		}
 
 		const clones = all_children.filter(o => !o.so.is_template);
-		// Template is instance 0; clones fill positions 1..count (minus landing for stairs)
-		const needed = Math.max(0, count - (gap_step ? 1 : 0)) + (has_bookend ? 1 : 0);
+		// Template is instance 0; clones fill positions 1..count-1 (top position is the landing, not a tread)
+		const needed = Math.max(0, count - (gap_step ? 2 : 0)) + (has_bookend ? 1 : 0);
 
 		// Stairs: adjust step so last visible tread ends exactly at parent boundary
 		if (gap_step && needed > 0) {

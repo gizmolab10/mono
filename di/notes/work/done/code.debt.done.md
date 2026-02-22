@@ -152,3 +152,6 @@
 	- [x] move add child (same)
 - [x] show computed count (not funky equation)
 - [x] segmented control attributes / repeater (only appears for repeaters or on clicking repeat)
+- [x] when resizing root change = 2 times mouse drag
+- [x] change "selection" to "smart object" and D_Selection -> D_Smart_Object
+- [x] move instructions (above) for configuring repeaters -> mono/di/notes/user manual/repeaters.md

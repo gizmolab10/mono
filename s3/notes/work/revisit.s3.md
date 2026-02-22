@@ -1,6 +1,6 @@
 # s3 current work
 
-## CURRENT PHASE is 5
+## CURRENT PHASE is 6
 
 - [x] rename w2 → s3
 - [x] add s3 to the hub app
@@ -9,4 +9,5 @@
 - [x] Phase 2 — Store + Entities + Seed (9 tests green)
 - [x] Phase 3 — UI Shell + Static Tree (build compiles, tree renders)
 - [x] Phase 4 — Ancestry + Navigation (click, expand/collapse, arrows, recents)
-- [ ] Phase 5 — Geometry (fresh.build.md)
+- [x] Phase 5 — Geometry (colors, drag dots, reveal alignment, tree lines)
+- [ ] Phase 6 — DB_Test + DB_Common (fresh.build.md)

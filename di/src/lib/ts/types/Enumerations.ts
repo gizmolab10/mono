@@ -78,7 +78,7 @@ export enum T_Mouse_Detection {
 
 export enum T_Details {
 	preferences = 1,
-	selection   = 2,
+	so          = 2,
 	library     = 4,
 	constants   = 8,
 	list        = 16,

@@ -77,8 +77,7 @@
               "title": "more milestones"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "vertical"
@@ -295,15 +294,21 @@
       }
     ]
   },
-  "active": "b83881fed1d1049c",
+  "active": "119daed0ad4718de",
   "lastOpenFiles": [
+    "di/notes/work/done/code.debt.done.md",
+    "di/notes/user manual/repeaters.md",
+    "di/notes/work/milestones/20.repeaters.md",
+    "di/notes/user manual",
+    "di/notes/work/more milestones.md",
+    "s3/src/lib/svelte/tree/Widget_Drag.svelte",
+    "di/src/lib/svelte/details/D_Smart_Object.svelte",
+    "di/notes/work/code.debt.md",
     "logs/update-docs.error.di.log",
     "logs/update-docs.error.mono.log",
     "logs/update-docs.error.ws.log",
     "di/src/lib/md/builds.md",
     "di/notes/work/revisit.di.md",
-    "di/notes/work/milestones/20.repeaters.md",
-    "di/notes/work/done/code.debt.done.md",
     "s3/notes/work/s3.md",
     "ws/notes/work/index.md",
     "s3/notes/work/fresh.build.md",
@@ -312,17 +317,11 @@
     "s3/src/lib/geometry/SVG_Paths.ts",
     "s3/s3.md",
     "di/src/lib/md/builds.md.sb-525dabe2-Iel9Lf",
-    "di/notes/work/code.debt.md",
     "di/notes/work/milestones/21.rubberband.md",
-    "di/notes/work/more milestones.md",
     "di/src/assets/stretch.di",
     "di/notes/work/milestones/24.marketing.md",
     "di/notes/work/milestones/23.licensing.md",
     "di/notes/work/milestones/22.cut.lists.md",
-    "di/src/assets/wall.di",
-    "di/src/assets/stairs.di",
-    "s3/src/lib/entities/Persistable.ts",
-    "s3/src/lib/state/S_Persistence.ts",
     "di/notes/map.md",
     "notes/guides/collaborate/exclude.md",
     "s3/notes/work/revisit.s3.md",

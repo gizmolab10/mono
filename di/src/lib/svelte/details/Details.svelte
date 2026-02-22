@@ -10,7 +10,7 @@
 	import Hideable from './Hideable.svelte';
 	import D_List from './D_List.svelte';
 	import D_Library from './D_Library.svelte';
-	import D_Selection from './D_Selection.svelte';
+	import D_Smart_Object from './D_Smart_Object.svelte';
 	import D_Constants from './D_Constants.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
@@ -49,11 +49,11 @@
 			<D_Library />
 		</Hideable>
 
-		<Hideable title='selection' id='selection' detail={T_Details.selection}>
+		<Hideable title='smart object' id='so' detail={T_Details.so}>
 			{#snippet actions()}
 				<button class='banner-add' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>+</button>
 			{/snippet}
-			<D_Selection />
+			<D_Smart_Object />
 		</Hideable>
 
 		<Hideable title='constants' id='constants' detail={T_Details.constants}>

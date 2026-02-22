@@ -138,11 +138,11 @@ Spec: [geometry.md](./geometry.md)
 - [x] `G_TreeGraph` — `layout()` top-down, `branch_isAlready_attached` dedup, `grand_sweep()` entry point
 - [x] `Persistable` + `S_Persistence` — ported from ws; entity hierarchy: Identifiable → Persistable → entities
 - [x] `SVG_Paths.ts` full — `fat_polygon` (chevron), `circle_atOffset` (fat center dot), tiny outer dots (digit-decomposition sizing), `fillets`, `annulus`; Widget_Reveal wired up
-- [ ] `fat polygon` background color -> white
-- [ ] `Widget_Drag.svelte` — drag handle stub (wired in Phase 8)
-- [ ] `Colors.ts` full — luminance pipeline, WCAG blend logic, RGBA↔HSBA, `w_thing_color` / `w_background_color` reactive
+- [x] `fat polygon` background color -> white
+- [x] `Widget_Drag.svelte` — drag handle stub (wired in Phase 8)
+- [x] `Colors.ts` full — luminance pipeline, WCAG blend logic, RGBA↔HSBA, `w_thing_color` / `w_background_color` reactive
 - [x] Per-thing colors in seed data; Widget: white background + thing-colored text/borders; graph background white; `colors.thing` = `#333333`
-- [ ] Tree looks visually correct: proper spacing, curved connecting lines, styled reveal dots
+- [x] Tree looks visually correct: proper spacing, curved connecting lines, styled reveal dots
 
 ---
 
