@@ -1,5 +1,5 @@
-import { Persistable }                 from './Persistable';
-import { T_Predicate, T_Persistable } from '../common/Enumerations';
+import { Persistable }                                from './Persistable';
+import { T_Persistence, T_Predicate, T_Persistable } from '../common/Enumerations';
 
 export class Predicate extends Persistable {
 	kind:            string;
@@ -9,9 +9,10 @@ export class Predicate extends Persistable {
 		id:                string,
 		kind:              string,
 		isBidirectional:   boolean,
-		already_persisted: boolean = false,
+		already_persisted: boolean        = false,
+		t_persistence:     T_Persistence  = T_Persistence.none,
 	) {
-		super('', '', T_Persistable.predicates, id, already_persisted);
+		super('', '', T_Persistable.predicates, id, already_persisted, t_persistence);
 		this.kind            = kind;
 		this.isBidirectional = isBidirectional;
 	}

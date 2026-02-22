@@ -1,5 +1,5 @@
-import { Persistable }      from './Persistable';
-import { T_Thing, T_Persistable } from '../common/Enumerations';
+import { Persistable }                              from './Persistable';
+import { T_Persistence, T_Thing, T_Persistable }   from '../common/Enumerations';
 
 export class Thing extends Persistable {
 	title:   string;
@@ -9,12 +9,13 @@ export class Thing extends Persistable {
 	constructor(
 		idBase:            string,
 		id:                string,
-		title:             string   = 'Please, enter a title',
-		color:             string   = '#b4b4b4',
-		t_thing:           T_Thing  = T_Thing.generic,
-		already_persisted: boolean  = false,
+		title:             string         = 'Please, enter a title',
+		color:             string         = '#b4b4b4',
+		t_thing:           T_Thing        = T_Thing.generic,
+		already_persisted: boolean        = false,
+		t_persistence:     T_Persistence  = T_Persistence.none,
 	) {
-		super(idBase, idBase, T_Persistable.things, id, already_persisted);
+		super(idBase, idBase, T_Persistable.things, id, already_persisted, t_persistence);
 		this.title   = title;
 		this.color   = color;
 		this.t_thing = t_thing;

@@ -15,21 +15,24 @@ a repeater automagically adds/removes repeated elements — stairs (rise range),
 
 ### Setup
 
-1. **Create the stair envelope** — a parent SO sized to the full staircase. Width = tread width, one horizontal axis = total run, the other = total rise. Example: `w=2', d=8', h=10'`.
-2. **Add one child** — the template step. Size it to one tread: `w=2', d=10", h=7"`. The repeater overrides positioning, so rough is fine.
-3. **Click "repeat"** on the parent. Count is determined by the constraint — no formula needed.
+1. **Create a block** representing the staircase, with one end at the starting position.
+2. **Pin that end** (start of stairs).
+3. **Drag the other end** to the destination — this sets the staircase angle naturally. The block becomes the hypotenuse.
+4. **Add one child** — the template step. Size it to one tread: `w=3', d=8", h=1.5"`. The repeater overrides positioning, so rough is fine.
+5. **Click "repeat"** on the parent.
 
 ### Repeater settings
 
-4. **Axis** — set repeat_axis to the direction steps march along (x or y). This is the run direction.
-5. **Constraint → range** — activates gap_min / gap_max. Defaults: 6" (152.4 mm) min, 8" (203.2 mm) max — standard residential rise range.
-6. **Gap along** — set to `z` if rise is vertical, or leave on `repeat` if the constraint dimension matches the march direction. For stairs where steps go horizontally but rise vertically, pick `z`.
+1. **Axis** — set repeat_axis to the direction steps march along (x or y). This is the hypotenuse direction.
+2. **Constraint → range** — activates gap_min / gap_max. Defaults: 6" (152.4 mm) min, 9" (228.6 mm) max — standard residential rise range.
+
+No "gap along" selector needed — the engine derives rise from the parent's rotation angle.
 
 ### How it resolves
 
-The engine calls `resolve_gap(parent_dim_along_gap_axis, gap_min, gap_max)` to find a count where each gap falls in range, preferring the midpoint. Each clone offsets by `parent_run / count` along repeat_axis **and** `parent_height / count` along gap_axis — producing the diagonal stair pattern. No rotation needed.
+The engine detects the parent's axis angle. Rise = `parent_length × sin(angle)`. It calls `resolve_gap(total_rise, gap_min, gap_max)` to find a count where each rise falls in range. Steps repeat linearly along the hypotenuse. Each clone counter-rotates by `-parent_angle` to keep treads level.
 
-The readout shows: `count × gap (axis) = total`. Example: `14 × 6 3/4" (y) = 8'` — 14 steps, 6 3/4" rise each, spanning 8' total along y.
+The readout shows: `count × rise (rise) = total`. Example: `16 × 7½" (rise) = 10'` — 16 risers, 7½" each, spanning 10' total rise.
 
 ## Validation — phantom stairs
 

@@ -200,11 +200,11 @@ Spec: [database.md](./database.md) §DB_Firebase
 - [x] Fetch sequence (order matters): predicates → relationships → traits → tags → things (last, for ID translation)
 - [x] Wire format classes: `PersistentThing`, `PersistentRelationship`, `PersistentTrait`, `PersistentTag`, `PersistentPredicate`
 - [x] `onSnapshot` listeners → store mutations (with `deferSnapshots` mechanism to suppress echo during initial load)
-- [ ] Dexie (IndexedDB) cache — fast-load path, `hierarchy_create_fastLoad_or_fetch_andBuild` short-circuit
-- [ ] `persist_all()` on startup for dirty entities; 800ms debounce per type
-- [ ] Bulk alias stitching — foreign root registration, two-phase
-- [ ] Anonymous auth
-- [ ] ✦ **Real user data loads. Changes persist to Firestore.**
+- [x] `persist_all()` on startup for dirty entities; 800ms debounce per type
+- ~~Dexie cache~~ → Phase 12
+- ~~Bulk alias stitching~~ → Phase 12
+- [x] Anonymous auth
+- [x] ✦ **Real user data loads. Changes persist to Firestore.**
 
 ---
 
@@ -280,6 +280,8 @@ Spec: [database.md](./database.md)
 - [ ] `Pivot` — Airtable-format adapter; `assure_small_families()` chunks nodes with >35 children into numbered sub-groups (while loop until stable)
 - [ ] `Files` — import/export: JSON, CSV, `.seriously` format; blob + anchor click write path; CSV in-quote comma handling
 - [ ] `apply_queryStrings` routing to all DB types
+- [ ] Dexie (IndexedDB) cache — fast-load path, `hierarchy_create_fastLoad_or_fetch_andBuild` short-circuit *(from Phase 8)*
+- [ ] Bulk alias stitching — foreign root registration, two-phase *(from Phase 8)*
 
 ---
 

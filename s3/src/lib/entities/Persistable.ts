@@ -1,6 +1,6 @@
-import { T_Persistable }   from '../common/Enumerations';
-import { S_Persistence }   from '../state/S_Persistence';
-import { Identifiable }    from './Identifiable';
+import { T_Persistence, T_Persistable } from '../common/Enumerations';
+import { S_Persistence }                from '../state/S_Persistence';
+import { Identifiable }                 from './Identifiable';
 
 export class Persistable extends Identifiable {
 	t_persistable: T_Persistable;
@@ -12,10 +12,11 @@ export class Persistable extends Identifiable {
 		idBase:            string,
 		t_persistable:     T_Persistable,
 		id:                string,
-		already_persisted: boolean = false,
+		already_persisted: boolean        = false,
+		t_persistence:     T_Persistence  = T_Persistence.none,
 	) {
 		super(id);
-		this.persistence   = new S_Persistence(t_database, t_persistable, id, already_persisted, false);
+		this.persistence   = new S_Persistence(t_database, t_persistable, id, already_persisted, false, t_persistence);
 		this.t_persistable = t_persistable;
 		this.idBase        = idBase;
 	}

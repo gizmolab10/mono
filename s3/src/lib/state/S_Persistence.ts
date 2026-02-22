@@ -1,5 +1,5 @@
 import type { Async_Handle_Boolean } from '../types/Types';
-import { T_Persistable }             from '../common/Enumerations';
+import { T_Persistence, T_Persistable } from '../common/Enumerations';
 
 export class S_Persistence {
 	awaiting_remoteCreation = false;
@@ -7,23 +7,26 @@ export class S_Persistence {
 	lastModifyDate = new Date();
 	already_persisted = false;
 	needsBulkFetch = false;
+	t_persistence:   T_Persistence;
 	t_database:      string;
 	isDirty =        false;
 	id:              string;
 
-	get isPersistent(): boolean { return false; }  // stub until Phase 6 wires up databases
+	get isPersistent(): boolean { return this.t_persistence !== T_Persistence.none; }
 	updateModifyDate() { this.lastModifyDate = new Date(); }
 
 	constructor(
 		t_database:              string,
 		t_persistable:           T_Persistable,
 		id:                      string,
-		already_persisted:       boolean = false,
-		awaiting_remoteCreation: boolean = false,
+		already_persisted:       boolean        = false,
+		awaiting_remoteCreation: boolean        = false,
+		t_persistence:           T_Persistence  = T_Persistence.none,
 	) {
 		this.awaiting_remoteCreation = awaiting_remoteCreation;
 		this.already_persisted       = already_persisted;
 		this.t_persistable           = t_persistable;
+		this.t_persistence           = t_persistence;
 		this.t_database              = t_database;
 		this.isDirty                 = this.isPersistent && !already_persisted;
 		this.id                      = id;

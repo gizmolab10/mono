@@ -1,6 +1,6 @@
-import { Persistable }    from './Persistable';
-import { T_Persistable } from '../common/Enumerations';
-import type { Integer }   from '../types/Types';
+import { Persistable }                   from './Persistable';
+import { T_Persistence, T_Persistable } from '../common/Enumerations';
+import type { Integer }                  from '../types/Types';
 
 export class Relationship extends Persistable {
 	kind:       string;
@@ -18,9 +18,10 @@ export class Relationship extends Persistable {
 		idParent:          string,
 		idChild:           string,
 		orders:            number[],
-		already_persisted: boolean = false,
+		already_persisted: boolean        = false,
+		t_persistence:     T_Persistence  = T_Persistence.none,
 	) {
-		super(idBase, idBase, T_Persistable.relationships, id, already_persisted);
+		super(idBase, idBase, T_Persistable.relationships, id, already_persisted, t_persistence);
 		this.kind       = kind;
 		this.idParent   = idParent;
 		this.idChild    = idChild;

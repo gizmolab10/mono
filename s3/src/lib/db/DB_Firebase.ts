@@ -3,6 +3,7 @@ import { getFirestore, serverTimestamp }                                    from
 import type { DocumentData, DocumentChange, CollectionReference }          from 'firebase/firestore';
 import type { QuerySnapshot }                                              from 'firebase/firestore';
 import { initializeApp }                                                   from 'firebase/app';
+import { getAuth, signInAnonymously }                                      from 'firebase/auth';
 import { T_Persistence, T_Persistable, T_Thing, T_Predicate }             from '../common/Enumerations';
 import { DB_Common, T_Database }                                           from './DB_Common';
 import { PersistentThing, PersistentTrait, PersistentTag }                 from './Persistent';
@@ -44,8 +45,10 @@ class SnapshotDeferal {
 
 // ————————————————————————————————————————— DB_Firebase
 
+const REMOTE = T_Persistence.remote;
+
 export class DB_Firebase extends DB_Common {
-	t_persistence = T_Persistence.remote;
+	t_persistence = REMOTE;
 	t_database    = T_Database.firebase;
 	idBase        = 'Public';
 
@@ -61,6 +64,7 @@ export class DB_Firebase extends DB_Common {
 
 	private app       = initializeApp(this.config);
 	private firestore = getFirestore(this.app);
+	private auth      = getAuth(this.app);
 	private bulksName = 'Bulks';
 
 	private bulks:               Dictionary<Bulk> = {};
@@ -84,6 +88,7 @@ export class DB_Firebase extends DB_Common {
 	// ————————————————————————————————————————— Fetch
 
 	async fetch_all(): Promise<void> {
+		await signInAnonymously(this.auth);
 		await this.recordLoginIP();
 		await this.documents_fetch_ofType(T_Persistable.predicates);
 		await this.hierarchy_fetch_forID(this.idBase);
@@ -126,19 +131,19 @@ export class DB_Firebase extends DB_Common {
 
 		switch (t_persistable) {
 			case T_Persistable.predicates:
-				store.remember_predicate(new Predicate(id, data.kind, data.isBidirectional));
+				store.remember_predicate(new Predicate(id, data.kind, data.isBidirectional, true, REMOTE));
 				break;
 			case T_Persistable.things:
-				store.remember_thing(new Thing(idBase, id, data.title, data.color, data.t_thing ?? T_Thing.generic, true));
+				store.remember_thing(new Thing(idBase, id, data.title, data.color, data.t_thing ?? T_Thing.generic, true, REMOTE));
 				break;
 			case T_Persistable.relationships:
-				store.remember_relationship(new Relationship(idBase, id, data.kind ?? data.predicate?.id, data.parent.id, data.child.id, data.orders ?? [0, 0], true));
+				store.remember_relationship(new Relationship(idBase, id, data.kind ?? data.predicate?.id, data.parent.id, data.child.id, data.orders ?? [0, 0], true, REMOTE));
 				break;
 			case T_Persistable.traits:
-				store.remember_trait(new Trait(idBase, id, data.ownerID, data.t_trait, data.text ?? '', true));
+				store.remember_trait(new Trait(idBase, id, data.ownerID, data.t_trait, data.text ?? '', true, REMOTE));
 				break;
 			case T_Persistable.tags:
-				store.remember_tag(new Tag(idBase, id, data.type, data.thingHIDs ?? [], true));
+				store.remember_tag(new Tag(idBase, id, data.type, data.thingHIDs ?? [], true, REMOTE));
 				break;
 		}
 	}
@@ -172,12 +177,12 @@ export class DB_Firebase extends DB_Common {
 			[T_Predicate.supportedBy, true],
 		];
 		for (const [kind, bidir] of kinds) {
-			store.remember_predicate(new Predicate(kind, kind, bidir));
+			store.remember_predicate(new Predicate(kind, kind, bidir, false, REMOTE));
 		}
 	}
 
 	private async root_default_remember_persistentCreateIn(collectionRef: CollectionReference): Promise<void> {
-		const root = new Thing(this.idBase, Identifiable.newID(), this.idBase, 'coral', T_Thing.root, true);
+		const root = new Thing(this.idBase, Identifiable.newID(), this.idBase, 'coral', T_Thing.root, true, REMOTE);
 		const rootRef = await addDoc(collectionRef, { title: root.title, color: root.color, t_thing: root.t_thing });
 		root.setID(rootRef.id);
 		store.remember_thing(root);
@@ -300,7 +305,7 @@ export class DB_Firebase extends DB_Common {
 				if (thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.t_thing === T_Thing.root) {
 					return false;
 				}
-				store.remember_thing(new Thing(idBase, id, remoteThing.title, remoteThing.color, remoteThing.t_thing, true));
+				store.remember_thing(new Thing(idBase, id, remoteThing.title, remoteThing.color, remoteThing.t_thing, true, REMOTE));
 				break;
 			case 'removed':
 				if (thing) {
@@ -338,7 +343,7 @@ export class DB_Firebase extends DB_Common {
 		switch (change.type) {
 			case 'added':
 				if (trait || remoteTrait.isEqualTo(this.addedTrait)) return false;
-				store.remember_trait(new Trait(idBase, id, remoteTrait.ownerID, remoteTrait.t_trait, remoteTrait.text, true));
+				store.remember_trait(new Trait(idBase, id, remoteTrait.ownerID, remoteTrait.t_trait, remoteTrait.text, true, REMOTE));
 				break;
 			case 'removed':
 				if (trait) store.traits.delete(id);
@@ -370,7 +375,7 @@ export class DB_Firebase extends DB_Common {
 		switch (change.type) {
 			case 'added':
 				if (tag || remoteTag.isEqualTo(this.addedTag)) return false;
-				store.remember_tag(new Tag(idBase, id, remoteTag.type, remoteTag.thingHIDs, true));
+				store.remember_tag(new Tag(idBase, id, remoteTag.type, remoteTag.thingHIDs, true, REMOTE));
 				break;
 			case 'removed':
 				if (tag) store.tags.delete(id);
@@ -404,7 +409,7 @@ export class DB_Firebase extends DB_Common {
 				store.remember_relationship(new Relationship(
 					idBase, id, remote.kind ?? remote.predicate?.id,
 					remote.parent?.id, remote.child?.id,
-					remote.orders, true
+					remote.orders, true, REMOTE
 				));
 				break;
 			case 'removed':
