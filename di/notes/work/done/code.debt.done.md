@@ -146,3 +146,7 @@
 	- [x] indent children
 	- [x] add toggle button: position/size
 	- [x] only show position OR size
+- [x] move breadcrumbs -> graph left corner
+	- [x] stack them vertically
+- [x] move add button to glow banner as a +
+	- [x] move add child (same)

@@ -2,21 +2,22 @@
 
 offer a proposal for the first unchecked item
 
-- [x] move breadcrumbs -> graph left corner
-	- [x] stack them vertically
-- [x] move add button to glow banner as a +
-	- [x] move add child (same)
+- [ ] build notes
+- [ ] when resizing root change = 2 times mouse drag
 - [ ] [[more milestones]]
-- [ ] color inheritance
-  - [ ] assign the color to the selected SO
-  - [ ] make all children inherit the color of their parent
-- [ ] trig rise and run
 
 ---
 
+- [ ] color inheritance
+	- [ ] assign the color to the selected SO
+	- [ ] make all children inherit the color of their parent
+- [ ] trig rise and run
 - [ ] tweak dimensionals
-  - [ ] tab between dimensionals
-  - [ ] arrow-key nudging (±unit of precision)
+	- [ ] tab between dimensionals
+	- [ ] arrow-key nudging (±unit of precision)
+- [ ] tweak repeaters
+	- [ ] diagonal bracing: angled member across stud bay
+	- [ ] diagonal stud lengths (rake walls)
 - [ ] [[three.dimensions]] revisit Intersection detection when object count grows
 
 ---

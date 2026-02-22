@@ -63,6 +63,10 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
+                  text: 'Map',
+                  link: '/di/notes/map'
+                },
+                {
                   text: 'Architecture >',
                   link: '/di/notes/architecture/',
                   collapsed: true,
@@ -322,20 +326,20 @@ export default defineConfig({
                           link: '/di/notes/work/milestones/20.repeaters'
                         },
                         {
-                          text: '21.cut.lists',
-                          link: '/di/notes/work/milestones/21.cut.lists'
+                          text: '21.rubberband',
+                          link: '/di/notes/work/milestones/21.rubberband'
                         },
                         {
-                          text: '22.licensing',
-                          link: '/di/notes/work/milestones/22.licensing'
+                          text: '22.cut.lists',
+                          link: '/di/notes/work/milestones/22.cut.lists'
                         },
                         {
-                          text: '23.marketing',
-                          link: '/di/notes/work/milestones/23.marketing'
+                          text: '23.licensing',
+                          link: '/di/notes/work/milestones/23.licensing'
                         },
                         {
-                          text: '24.hierarchy',
-                          link: '/di/notes/work/milestones/24.hierarchy'
+                          text: '24.marketing',
+                          link: '/di/notes/work/milestones/24.marketing'
                         },
                         {
                           text: '3.docs',
@@ -518,6 +522,10 @@ export default defineConfig({
                     {
                       text: 'Chat',
                       link: '/notes/guides/collaborate/chat'
+                    },
+                    {
+                      text: 'Exclude',
+                      link: '/notes/guides/collaborate/exclude'
                     },
                     {
                       text: 'Journals',
@@ -889,57 +897,57 @@ export default defineConfig({
                       link: '/s3/notes/work/revisit.s3'
                     },
                     {
-                      text: 'Phases >',
-                      link: '/s3/notes/work/phases/',
+                      text: 'S3',
+                      link: '/s3/notes/work/s3'
+                    },
+                    {
+                      text: 'Subsystems >',
+                      link: '/s3/notes/work/subsystems/',
                       collapsed: true,
                       items: [
                         {
-                          text: 'Ancestry',
-                          link: '/s3/notes/work/phases/ancestry'
+                          text: '10 Utilities',
+                          link: '/s3/notes/work/subsystems/10 utilities'
                         },
                         {
-                          text: 'Database',
-                          link: '/s3/notes/work/phases/database'
+                          text: '11 Database',
+                          link: '/s3/notes/work/subsystems/11 database'
                         },
                         {
-                          text: 'Entities',
-                          link: '/s3/notes/work/phases/entities'
+                          text: '12 Signals',
+                          link: '/s3/notes/work/subsystems/12 signals'
                         },
                         {
-                          text: 'Geometry',
-                          link: '/s3/notes/work/phases/geometry'
+                          text: '13 Managers',
+                          link: '/s3/notes/work/subsystems/13 managers'
                         },
                         {
-                          text: 'Hierarchy',
-                          link: '/s3/notes/work/phases/hierarchy'
+                          text: '3 Types',
+                          link: '/s3/notes/work/subsystems/3 types'
                         },
                         {
-                          text: 'Managers',
-                          link: '/s3/notes/work/phases/managers'
+                          text: '4 Entities',
+                          link: '/s3/notes/work/subsystems/4 entities'
                         },
                         {
-                          text: 'Rendering',
-                          link: '/s3/notes/work/phases/rendering'
+                          text: '5 Hierarchy',
+                          link: '/s3/notes/work/subsystems/5 hierarchy'
                         },
                         {
-                          text: 'Signals',
-                          link: '/s3/notes/work/phases/signals'
+                          text: '6 Rendering',
+                          link: '/s3/notes/work/subsystems/6 rendering'
                         },
                         {
-                          text: 'Spec',
-                          link: '/s3/notes/work/phases/spec'
+                          text: '7 Geometry',
+                          link: '/s3/notes/work/subsystems/7 geometry'
                         },
                         {
-                          text: 'Types',
-                          link: '/s3/notes/work/phases/types'
+                          text: '8 Ancestry',
+                          link: '/s3/notes/work/subsystems/8 ancestry'
                         },
                         {
-                          text: 'Utilities',
-                          link: '/s3/notes/work/phases/utilities'
-                        },
-                        {
-                          text: 'UX',
-                          link: '/s3/notes/work/phases/ux'
+                          text: '9 Ux',
+                          link: '/s3/notes/work/subsystems/9 ux'
                         }
                       ]
                     }
@@ -1250,10 +1258,6 @@ export default defineConfig({
                     {
                       text: 'Revisit.ws',
                       link: '/ws/notes/work/revisit.ws'
-                    },
-                    {
-                      text: 'S3',
-                      link: '/ws/notes/work/s3'
                     },
                     {
                       text: 'Done >',
