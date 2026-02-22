@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { colors }    from '../../colors/Colors.svelte';
 	import { k }         from '../../common/Constants';
+	import { ux }        from '../../state/ux.svelte';
 	import Tree_Graph    from '../tree/Tree_Graph.svelte';
 
 	let width  = $state(window.innerWidth);
@@ -16,9 +17,68 @@
 		width  = window.innerWidth;
 		height = window.innerHeight;
 	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		const grabbed = ux.grabs[ux.grabs.length - 1] ?? ux.ancestry_focus;
+		if (!grabbed) return;
+
+		switch (event.key) {
+			case 'ArrowUp': {
+				event.preventDefault();
+				const siblings = grabbed.sibling_ancestries;
+				const index    = grabbed.siblingIndex;
+				if (index > 0) ux.grabOnly(siblings[index - 1]);
+				break;
+			}
+			case 'ArrowDown': {
+				event.preventDefault();
+				const siblings = grabbed.sibling_ancestries;
+				const index    = grabbed.siblingIndex;
+				if (index < siblings.length - 1) ux.grabOnly(siblings[index + 1]);
+				break;
+			}
+			case 'ArrowLeft': {
+				event.preventDefault();
+				const parent = grabbed.parentAncestry;
+				if (!parent.isRoot || grabbed.depth > 1) ux.grabOnly(parent);
+				break;
+			}
+			case 'ArrowRight': {
+				event.preventDefault();
+				const branches = grabbed.branchAncestries;
+				if (branches.length > 0) {
+					if (!grabbed.isExpanded) {
+						ux.expand(grabbed);
+					}
+					ux.grabOnly(branches[0]);
+				}
+				break;
+			}
+			case '/': {
+				event.preventDefault();
+				ux.becomeFocus(grabbed);
+				break;
+			}
+			case 'Escape': {
+				event.preventDefault();
+				ux.grab_none();
+				break;
+			}
+			case '[': {
+				event.preventDefault();
+				ux.recents_go(false);
+				break;
+			}
+			case ']': {
+				event.preventDefault();
+				ux.recents_go(true);
+				break;
+			}
+		}
+	}
 </script>
 
-<svelte:window onresize={handleResize} />
+<svelte:window onresize={handleResize} onkeydown={handleKeydown} />
 
 <div
 	class                  = 'panel'

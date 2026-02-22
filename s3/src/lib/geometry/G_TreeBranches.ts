@@ -14,8 +14,9 @@ export class G_TreeBranches {
 	}
 
 	static subtreeHeight(ancestry: Ancestry, depth: number): number {
+		if (!ancestry.shows_branches || depth <= 0) return k.height.row;
 		const branches = ancestry.branchAncestries;
-		if (branches.length === 0 || depth <= 0) return k.height.row;
+		if (branches.length === 0) return k.height.row;
 		let total = 0;
 		for (const branch of branches) {
 			total += G_TreeBranches.subtreeHeight(branch, depth - 1);
