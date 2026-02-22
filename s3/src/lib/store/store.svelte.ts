@@ -115,26 +115,26 @@ class S_Store {
 		this.forget_all();
 
 		// Things
-		const things: [string, string, T_Thing?][] = [
-			['root',  'Root',       T_Thing.root],
-			['a',     'Concepts'],
-			['a1',    'Ideas'],
-			['a2',    'Principles'],
-			['a3',    'Models'],
-			['b',     'Projects'],
-			['b1',    'Alpha'],
-			['b2',    'Beta'],
-			['c',     'People'],
-			['c1',    'Alice'],
-			['c2',    'Bob'],
-			['d',     'Resources'],
-			['d1',    'Books'],
-			['d2',    'Tools'],
-			['d3',    'Notes'],
+		const things: [string, string, string, T_Thing?][] = [
+			['root',  'Root',       '#b4b4b4', T_Thing.root],
+			['a',     'Concepts',   '#6ea8d9'],
+			['a1',    'Ideas',      '#6ea8d9'],
+			['a2',    'Principles', '#6ea8d9'],
+			['a3',    'Models',     '#6ea8d9'],
+			['b',     'Projects',   '#7bc47f'],
+			['b1',    'Alpha',      '#7bc47f'],
+			['b2',    'Beta',       '#7bc47f'],
+			['c',     'People',     '#e8a86e'],
+			['c1',    'Alice',      '#e8a86e'],
+			['c2',    'Bob',        '#e8a86e'],
+			['d',     'Resources',  '#b98fd9'],
+			['d1',    'Books',      '#b98fd9'],
+			['d2',    'Tools',      '#b98fd9'],
+			['d3',    'Notes',      '#b98fd9'],
 		];
 
-		for (const [id, title, t_thing] of things) {
-			this.remember_thing(new Thing(BASE, id, title, '#b4b4b4', t_thing ?? T_Thing.generic));
+		for (const [id, title, color, t_thing] of things) {
+			this.remember_thing(new Thing(BASE, id, title, color, t_thing ?? T_Thing.generic));
 		}
 
 		// Relationships (parentId → childId)

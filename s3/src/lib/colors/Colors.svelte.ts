@@ -1,7 +1,7 @@
 class S_Colors {
-	background = $state('#2d2d2d');
+	background = $state('#ffffff');
 	separator  = $state('#505050');
-	thing      = $state('#e0e0e0');
+	thing      = $state('#333333');
 }
 
 export const colors = new S_Colors();

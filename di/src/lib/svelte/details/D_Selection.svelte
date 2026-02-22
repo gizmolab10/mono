@@ -1,14 +1,14 @@
 <script lang='ts'>
+	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { face_label } from '../../ts/editors/Face_Label';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Editing } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import { scenes, stores } from '../../ts/managers';
+	import type { Bound } from '../../ts/types/Types';
+	import { constraints } from '../../ts/algebra';
 	import { units } from '../../ts/types/Units';
 	import { engine } from '../../ts/render';
-	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import { constraints } from '../../ts/algebra';
-	import type { Bound } from '../../ts/types/Types';
 
 	const { w_s_face_label } = face_label;
 	const { w_root_so, w_selection, w_precision, w_tick, w_all_sos } = stores;

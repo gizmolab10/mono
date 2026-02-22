@@ -13,6 +13,7 @@
 	} = $props();
 
 	const title          = $derived(ancestry.thing?.title ?? '');
+	const thing_color    = $derived(ancestry.thing?.color ?? colors.thing);
 	const g_widget       = $derived(new G_Widget(center, title));
 	const isGrabbed      = $derived(ux.isGrabbed(ancestry));
 	const isFocus        = $derived(ancestry.equals(ux.ancestry_focus));
@@ -28,8 +29,8 @@
 	}
 
 	const border_style = $derived(
-		isFocus   ? `2px solid ${colors.thing}` :
-		isGrabbed ? `1px solid ${colors.thing}` :
+		isFocus   ? `2px solid ${thing_color}` :
+		isGrabbed ? `1px solid ${thing_color}` :
 		            '1px solid transparent'
 	);
 </script>
@@ -42,7 +43,8 @@
 	style:top  = '{g_widget.origin.y}px'
 	style:width  = '{g_widget.width}px'
 	style:height = '{g_widget.height}px'
-	style:color  = {colors.thing}
+	style:color  = {thing_color}
+	style:background = 'white'
 	style:border = {border_style}
 	style:border-radius = '4px'
 	onclick={handle_click}>
