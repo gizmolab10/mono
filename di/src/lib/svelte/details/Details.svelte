@@ -1,21 +1,32 @@
 <script lang='ts'>
+	import { constants } from '../../ts/algebra/User_Constants';
 	import { T_Details } from '../../ts/types/Enumerations';
-	import D_Preferences from './D_Preferences.svelte';
-	import D_Selection from './D_Selection.svelte';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
-	import D_Constants from './D_Constants.svelte';
-	import D_Library from './D_Library.svelte';
-	import D_List from './D_List.svelte';
-	import Hideable from './Hideable.svelte';
+	import { stores } from '../../ts/managers';
+	import { engine } from '../../ts/render';
 	import { tick, onMount } from 'svelte';
+	import Hideable from './Hideable.svelte';
+	import D_List from './D_List.svelte';
+	import D_Library from './D_Library.svelte';
+	import D_Selection from './D_Selection.svelte';
+	import D_Constants from './D_Constants.svelte';
+	import D_Preferences from './D_Preferences.svelte';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
+	const { w_t_details } = stores;
 
 	onMount( async () => {
 		setTimeout(() => {
 			hits.recalibrate();
 		}, 10);
 	});
+
+	function handle_add() {
+		w_t_details.update(v => v | T_Details.constants);
+		constants.add('', 0);
+		stores.tick();
+	}
 
 </script>
 
@@ -36,10 +47,16 @@
 		</Hideable>
 
 		<Hideable title='selection' id='selection' detail={T_Details.selection}>
+			{#snippet actions()}
+				<button class='banner-add' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>+</button>
+			{/snippet}
 			<D_Selection />
 		</Hideable>
 
 		<Hideable title='constants' id='constants' detail={T_Details.constants}>
+			{#snippet actions()}
+				<button class='banner-add' use:hit_target={{ id: 'add-constant', onpress: () => handle_add() }}>+</button>
+			{/snippet}
 			<D_Constants />
 		</Hideable>
 
@@ -50,6 +67,28 @@
 </div>
 
 <style>
+	.banner-zone :global(.hideable:last-child .slot) {
+		border-bottom : 3px solid var(--accent);
+	}
+
+	.banner-zone {
+		background : var(--accent);
+		position   : relative;
+	}
+
+	.banner-add:hover {
+		background : var(--bg);
+		color      : black;
+	}
+
+	.banner-zone::after {
+		background    : var(--bg);
+		border-radius : 11px 11px 0 0;
+		display       : block;
+		height        : 11px;
+		content       : '';
+	}
+
 	.details {
 		box-sizing : border-box;
 		position   : relative;
@@ -59,22 +98,21 @@
 		height     : 100%;
 	}
 
-	.banner-zone {
-		background : var(--accent);
-		position   : relative;
-	}
-
-
-	.banner-zone :global(.hideable:last-child .slot) {
-		border-bottom : 3px solid var(--accent);
-	}
-
-	.banner-zone::after {
-		background    : var(--bg);
-		border-radius : 11px 11px 0 0;
-		display       : block;
-		height        : 11px;
-		content       : '';
+	.banner-add {
+		background    : var(--accent);
+		border        : 0.5px solid rgba(0, 0, 0, 0.3);
+		border-radius : 50%;
+		color         : rgba(0, 0, 0, 0.5);
+		font-size     : 14px;
+		font-weight   : 300;
+		line-height   : 1;
+		width         : 18px;
+		height        : 18px;
+		padding       : 0;
+		cursor        : pointer;
+		display       : flex;
+		align-items   : center;
+		justify-content : center;
 	}
 
 </style>

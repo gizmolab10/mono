@@ -218,7 +218,6 @@
 			class='breadcrumbs'
 			style:--crumb-bg = {$w_background_color}>
 			{#each breadcrumbs as so, index (so.id)}
-				{#if index > 0}<span class='separator'>›</span>{/if}
 				<button
 					class='crumb'
 					class:current={index === breadcrumbs.length - 1}
@@ -313,20 +312,14 @@
 	}
 
 	.breadcrumbs {
-		position    : absolute;
-		top         : 10px;
-		left        : 50%;
-		transform   : translateX(-50%);
-		display     : flex;
-		align-items : center;
-		gap         : 2px;
-		z-index     : var(--z-action);
-	}
-
-	.separator {
-		font-size : 11px;
-		opacity   : 0.4;
-		padding   : 0 1px;
+		position        : absolute;
+		top             : 10px;
+		left            : 10px;
+		display         : flex;
+		flex-direction  : column-reverse;
+		align-items     : flex-start;
+		gap             : 2px;
+		z-index         : var(--z-action);
 	}
 
 	.crumb {

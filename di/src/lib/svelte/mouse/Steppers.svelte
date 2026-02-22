@@ -31,8 +31,8 @@
 	let elementB: HTMLElement | null = $state(null);
 
 	const uid = Math.random().toString(36).slice(2, 8);
-	const targetA = new S_Hit_Target(T_Hit_Target.button, `stepper-${uid}-up`);
-	const targetB = new S_Hit_Target(T_Hit_Target.button, `stepper-${uid}-down`);
+	const targetA = new S_Hit_Target(T_Hit_Target.control, `stepper-${uid}-up`);
+	const targetB = new S_Hit_Target(T_Hit_Target.control, `stepper-${uid}-down`);
 
 	const directionA = $derived(horizontal ? Direction.left : Direction.up);
 	const directionB = $derived(horizontal ? Direction.right : Direction.down);

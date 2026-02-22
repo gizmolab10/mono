@@ -4,18 +4,18 @@ import { hits } from '../managers/Hits';
 import S_Mouse from '../state/S_Mouse';
 
 export type Hit_Target_Options = {
-	type?:          T_Hit_Target;
-	id:             string;
-	onpress?:       () => void;
-	onrelease?:     () => void;
 	onlong?:        (s_mouse: S_Mouse) => void;
 	ondouble?:      (s_mouse: S_Mouse) => void;
+	type?:          T_Hit_Target;
+	onpress?:       () => void;
+	onrelease?:     () => void;
 	onautorepeat?:  () => void;
 	hoverCursor?:   string;
+	id:             string;
 };
 
 export function hit_target(element: HTMLElement, options: Hit_Target_Options) {
-	const type = options.type ?? T_Hit_Target.button;
+	const type = options.type ?? T_Hit_Target.control;
 	const target = new S_Hit_Target(type, options.id);
 
 	wire(target, options);

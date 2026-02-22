@@ -200,10 +200,9 @@ export default class Hits {
 	}
 
 	private targetOf_highest_precedence(matches: Array<S_Hit_Target>): S_Hit_Target | null {
-		return matches.find(s => s.isADot)
-			?? matches.find(s => s.isAWidget)
-			?? matches.find(s => s.isRing)
-			?? matches.find(s => s.isAControl)
+		return matches.find(s => s.type == T_Hit_Target.control)
+			?? matches.find(s => s.type == T_Hit_Target.banner)
+			?? matches.find(s => s.type == T_Hit_Target.graph)
 			?? matches[0];
 	}
 

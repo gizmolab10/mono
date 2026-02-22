@@ -2,8 +2,8 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] move breadcrumbs -> graph left corner
-	- [ ] stack them vertically
+- [x] move breadcrumbs -> graph left corner
+	- [x] stack them vertically
 - [ ] move add button to glow banner as a +
 	- [ ] move add child (same)
 - [ ] [[more milestones]]

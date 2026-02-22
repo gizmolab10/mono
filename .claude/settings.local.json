@@ -33,7 +33,8 @@
       "Bash(yarn build:*)",
       "Bash(yarn workspace designintuition test:run:*)",
       "Bash(yarn workspace:*)",
-      "Bash(node_modules/.bin/svelte-check:*)"
+      "Bash(node_modules/.bin/svelte-check:*)",
+      "Bash(yarn vite build:*)"
     ]
   }
 }

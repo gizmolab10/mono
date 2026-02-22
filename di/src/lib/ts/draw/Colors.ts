@@ -12,7 +12,6 @@ export class Colors {
 	banner                    = '#f8f8f8';
 	disabled                  = 'lightGray';
 	background                = 'white';
-	rubberband                = '#4a90e2';
 	graph_background          = 'white';
 	default_forThings         = 'blue';
 	thin_separator_line_color = '#999999';

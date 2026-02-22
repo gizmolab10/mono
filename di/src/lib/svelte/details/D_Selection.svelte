@@ -302,7 +302,6 @@
 		{#if !is_repeater && !repeater_editing}
 			<button class='action-btn' onclick={() => repeater_editing = true}>repeat</button>
 		{/if}
-		<button class='action-btn right' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>add child</button>
 	</div>
 	{#if is_repeater || repeater_editing}
 		<div class='repeater-row'>

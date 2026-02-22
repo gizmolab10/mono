@@ -103,9 +103,6 @@
 	</tbody></table>
 {/if}
 
-<div class='settings'>
-	<button class='action-btn' use:hit_target={{ id: 'add-standard', onpress: add_dimension }}>add</button>
-</div>
 
 <style>
 	.settings {

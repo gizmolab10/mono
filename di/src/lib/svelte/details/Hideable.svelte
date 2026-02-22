@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Details, T_Layer } from '../../ts/types/Enumerations';
+	import { T_Details, T_Layer, T_Hit_Target } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
@@ -12,12 +12,14 @@
 		title,
 		id,
 		detail,
-		children
+		children,
+		actions
 	} : {
 		title    : string;
 		id       : string;
 		detail   : T_Details;
 		children : import('svelte').Snippet;
+		actions? : import('svelte').Snippet;
 	} = $props();
 
 	let is_visible = $derived(($w_t_details & detail) !== 0);
@@ -37,8 +39,10 @@
 		class:open={is_visible}
 		style:--banner={colors.banner}
 		style:--accent={$w_accent_color}
-		use:hit_target={{ id: `hideable-${id}`, onpress: toggle }}>
+		style:--z-action={T_Layer.action}
+		use:hit_target={{ type: T_Hit_Target.banner, id: `hideable-${id}`, onpress: toggle }}>
 		<span class='banner-title'>{title}</span>
+		{#if actions}<span class='banner-actions'>{@render actions()}</span>{/if}
 	</button>
 	{#if is_visible}
 		<div class='slot'>
@@ -87,6 +91,14 @@
 	.banner-title {
 		position : relative;
 		z-index  : var(--z-hideable);
+	}
+
+	.banner-actions {
+		position  : absolute;
+		right     : 6px;
+		z-index   : var(--z-action);
+		display   : flex;
+		gap       : 2px;
 	}
 
 	.slot {
