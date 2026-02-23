@@ -1,5 +1,6 @@
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Bound } from '../types/Types';
+import type { Compact_Attribute } from '../types/Interfaces';
 import type { FormulaMap } from './Evaluator';
 
 import { constants, CONSTANTS_ID } from './User_Constants';
@@ -372,6 +373,44 @@ class Constraints {
 			case 'unary': return this.formula_references(node.operand, so_id);
 			case 'binary': return this.formula_references(node.left, so_id) || this.formula_references(node.right, so_id);
 		}
+	}
+
+	/** Swap axis aliases in a Compact_Attribute's formula string.
+	 *  Returns the attribute unchanged if it has no formula. */
+	swap_formula_aliases(data: Compact_Attribute, a: number, b: number): Compact_Attribute {
+		if (typeof data === 'number') return data;
+		if (!data.formula) return data;
+		const swap_map = this.build_alias_swap_map(a, b);
+		const tokens = tokenizer.tokenize(data.formula);
+		let changed = false;
+		for (const token of tokens) {
+			if (token.type === 'reference') {
+				const swapped = swap_map[token.attribute];
+				if (swapped) {
+					token.attribute = swapped;
+					changed = true;
+				}
+			}
+		}
+		if (!changed) return data;
+		return { formula: tokenizer.untokenize(tokens) };
+	}
+
+	private build_alias_swap_map(a: number, b: number): Record<string, string> {
+		const axis_aliases: Record<number, string[]> = {
+			0: ['x', 'X', 'w', 'x_min', 'x_max', 'width'],
+			1: ['y', 'Y', 'd', 'y_min', 'y_max', 'depth'],
+			2: ['z', 'Z', 'h', 'z_min', 'z_max', 'height'],
+		};
+		const a_names = axis_aliases[a];
+		const b_names = axis_aliases[b];
+		if (!a_names || !b_names) return {};
+		const map: Record<string, string> = {};
+		for (let i = 0; i < a_names.length; i++) {
+			map[a_names[i]] = b_names[i];
+			map[b_names[i]] = a_names[i];
+		}
+		return map;
 	}
 
 	/** Rename a standard dimension across all formulas in the scene.

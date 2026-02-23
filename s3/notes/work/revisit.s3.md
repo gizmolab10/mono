@@ -14,3 +14,9 @@
 - [x] Phase 7 — Hit Detection + Full Input (fresh.build.md)
 - [x] Phase 8 — Firebase (fresh.build.md) *(Dexie cache + bulk aliases → Phase 12)*
 - [ ] Phase 9 — Details Panel (fresh.build.md)
+
+---
+## Future work
+
+- [ ] `D_Tags.svelte` — tag chips, add/remove
+- [ ] `D_Traits.svelte` — structured trait display

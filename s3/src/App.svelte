@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { databases }    from './lib/db/Databases';
+	import { databases }    from './lib/db/Databases.svelte';
 	import SeriouslyApp     from './lib/svelte/main/SeriouslyApp.svelte';
 
 	databases.setup();

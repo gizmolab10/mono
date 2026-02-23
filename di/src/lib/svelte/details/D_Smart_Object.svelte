@@ -103,6 +103,13 @@
 		scenes.save();
 	}
 
+	function swap_xy() {
+		if (!selected_so) return;
+		engine.swap_axes(selected_so, 0, 1);
+		stores.tick();
+		scenes.save();
+	}
+
 	function toggle_firewall() {
 		if (!selected_so?.repeater) return;
 		selected_so.repeater = { ...selected_so.repeater, firewall: !selected_so.repeater.firewall };
@@ -419,6 +426,7 @@
 					<button class:active={selected_so?.repeater?.repeat_axis === 0} onclick={() => set_repeat_axis(0)}>x</button>
 					<button class:active={selected_so?.repeater?.repeat_axis === 1} onclick={() => set_repeat_axis(1)}>y</button>
 				</div>
+				<button class='action-btn' onclick={swap_xy}>swap x↔y</button>
 				<button class='action-btn' class:active={has_firewall} onclick={toggle_firewall} style='margin-left:auto'>
 					{has_firewall ? 'has fireblocks' : 'no fireblocks'}
 				</button>

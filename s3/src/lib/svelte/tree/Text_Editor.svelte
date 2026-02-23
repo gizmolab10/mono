@@ -3,7 +3,7 @@
 	import { G_Widget }        from '../../geometry/G_Widget';
 	import { k }               from '../../common/Constants';
 	import { ux }              from '../../state/ux.svelte';
-	import { databases }       from '../../db/Databases';
+	import { databases }       from '../../db/Databases.svelte';
 	import type { Ancestry }   from '../../nav/Ancestry';
 	import { onMount }         from 'svelte';
 

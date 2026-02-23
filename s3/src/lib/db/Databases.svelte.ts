@@ -3,7 +3,7 @@ import { DB_Firebase }           from './DB_Firebase';
 import { DB_Test }               from './DB_Test';
 
 class S_Databases {
-	db: DB_Common = new DB_Test();
+	db = $state<DB_Common>(new DB_Test());
 
 	private cache: Record<string, DB_Common> = {};
 
@@ -37,6 +37,14 @@ class S_Databases {
 		const queryStrings = new URLSearchParams(window.location.search);
 		this.apply_queryStrings(queryStrings);
 		this.db.apply_queryStrings(queryStrings);
+		await this.db.hierarchy_setup_fetch_andBuild();
+	}
+
+	// ————————————————————————————————————————— Switch database
+
+	async change_database(t_database: T_Database): Promise<void> {
+		if (this.db.t_database === t_database) return;
+		this.db = this.db_forType(t_database);
 		await this.db.hierarchy_setup_fetch_andBuild();
 	}
 }

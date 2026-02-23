@@ -5,6 +5,7 @@
 	import D_Actions          from './D_Actions.svelte';
 	import D_Selection        from './D_Selection.svelte';
 	import D_Preferences      from './D_Preferences.svelte';
+	import D_Data             from './D_Data.svelte';
 </script>
 
 <div class='details-stack'>
@@ -22,6 +23,10 @@
 
 	<Banner_Hideable t_detail={T_Detail.preferences}>
 		<D_Preferences />
+	</Banner_Hideable>
+
+	<Banner_Hideable t_detail={T_Detail.data}>
+		<D_Data />
 	</Banner_Hideable>
 </div>
 

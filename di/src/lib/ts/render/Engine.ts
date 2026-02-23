@@ -649,6 +649,60 @@ class Engine {
 	// ── repeaters ──
 
 
+	/** Swap two axes on a repeater SO and its template child.
+	 *  Serializes, rewrites formula aliases, deserializes into swapped positions.
+	 *  Updates repeater config (repeat_axis, gap_axis) to match. */
+	swap_axes(so: Smart_Object, a: number, b: number): void {
+		const targets = [so];
+		const children = scene.get_all().filter(o => o.parent === so.scene);
+		if (children.length > 0) targets.push(children[0].so);
+
+		for (const target of targets) {
+			const a_data = target.axes[a].serialize();
+			const b_data = target.axes[b].serialize();
+
+			for (const key of ['origin', 'extent', 'length', 'angle'] as const) {
+				a_data.attributes[key] = constraints.swap_formula_aliases(a_data.attributes[key], a, b);
+				b_data.attributes[key] = constraints.swap_formula_aliases(b_data.attributes[key], a, b);
+			}
+
+			// Clear existing formulas before deserializing
+			// (Attribute.deserialize doesn't clear formula/compiled when data is a plain number)
+			for (const attr of target.axes[a].attributes) {
+				attr.formula = null;
+				attr.compiled = null;
+			}
+			for (const attr of target.axes[b].attributes) {
+				attr.formula = null;
+				attr.compiled = null;
+			}
+
+			target.axes[a].deserialize(b_data);
+			target.axes[b].deserialize(a_data);
+		}
+
+		// Update repeater config
+		if (so.repeater) {
+			const r = { ...so.repeater };
+			if (r.repeat_axis === a) r.repeat_axis = b as 0 | 1;
+			else if (r.repeat_axis === b) r.repeat_axis = a as 0 | 1;
+			if (r.gap_axis === a) r.gap_axis = b as 0 | 1 | 2;
+			else if (r.gap_axis === b) r.gap_axis = a as 0 | 1 | 2;
+			so.repeater = r;
+		}
+
+		// Enforce invariants on parent so template formulas see correct values
+		constraints.enforce_invariants(so);
+
+		// Rebind template formulas (converts placeholders to IDs, evaluates, enforces invariants)
+		if (children.length > 0) {
+			constraints.rebind_formulas(children[0].so, so.id);
+		}
+
+		// Cascade changes and trigger sync_repeater via post_propagate_hook
+		constraints.propagate(so);
+	}
+
 	/** Find a count where total_length / count falls within [gap_min, gap_max].
 	 *  Prefers even division; falls back to the count whose gap is closest to range midpoint. */
 	private resolve_gap(total_length: number, gap_min: number, gap_max: number): number {

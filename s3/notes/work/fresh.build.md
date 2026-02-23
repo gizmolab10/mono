@@ -220,9 +220,12 @@ Spec: [rendering.md](./rendering.md) §details, [ux.md](./ux.md) §Details
 - [x] `D_Selection.svelte` — multi-grab summary (N items selected)
 - [x] `D_Preferences.svelte` — depth limit slider, dot count mode, theme
 - [x] `Banner_Hideable.svelte` — collapsible section header
-- [ ] `D_Data.svelte` — traits as editable key-value table
-- [ ] `D_Tags.svelte` — tag chips, add/remove
-- [ ] `D_Traits.svelte` — structured trait display
+- [x] `D_Data.svelte` — segmented control for choosing db, data description (counts of things, relationships, depth, etc.)
+- [ ] persist -> which details are open
+- [ ] actions buttons ignored
+- [ ] add html standard color picker
+	- [ ] make sure banners are obvious
+	- [ ] remove triangle (stupid, redundant)
 - [ ] ✦ **Details panel fully functional.**
 
 ---
