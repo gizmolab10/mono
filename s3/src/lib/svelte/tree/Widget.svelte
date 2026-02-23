@@ -35,6 +35,11 @@
 				const shiftKey = s_mouse.event?.shiftKey ?? false;
 				if (shiftKey) {
 					ux.grab(ancestry);
+				} else if (ux.isGrabbed(ancestry) && !ancestry.isRoot) {
+					if (!ux.isEditing_ancestry(ancestry)) {
+						s_mouse.event?.preventDefault();
+						ux.startEdit(ancestry);
+					}
 				} else {
 					ux.grabOnly(ancestry);
 				}
@@ -50,6 +55,7 @@
 	});
 
 	const border_style = $derived(
+		ux.isEditing_ancestry(ancestry) ? `1px dashed ${thing_color}` :
 		isFocus    ? `2px solid ${thing_color}` :
 		isGrabbed  ? `1px solid ${thing_color}` :
 		isHovering ? `1px solid ${thing_color}66` :
@@ -73,7 +79,7 @@
 	style:border = {border_style}
 	style:border-radius = '4px'>
 	<Widget_Drag {ancestry} color={thing_color} center={ancestry.isRoot ? g_widget.center_ofDrag.offsetByY(-1) : g_widget.center_ofDrag} />
-	<Widget_Title {title} left={g_widget.origin_ofTitle.x} />
+	<Widget_Title {ancestry} left={g_widget.origin_ofTitle.x} />
 	{#if showing_reveal}
 		<Widget_Reveal {ancestry} left={g_widget.width - 14} top={(g_widget.height - 14) / 2 - 0.3 - (ancestry.isRoot ? 1 : 0)} />
 	{/if}

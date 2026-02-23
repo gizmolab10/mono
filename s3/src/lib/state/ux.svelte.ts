@@ -1,6 +1,8 @@
-import type { Ancestry } from '../nav/Ancestry';
-import type { Integer }  from '../types/Types';
-import { Point }         from '../types/Coordinates';
+import type { Ancestry }     from '../nav/Ancestry';
+import type { Integer }      from '../types/Types';
+import { Seriously_Range }   from '../types/Seriously_Range';
+import { T_Edit }            from '../common/Enumerations';
+import { Point }             from '../types/Coordinates';
 
 // ————————————————————————————————————————— Types
 
@@ -122,6 +124,41 @@ class S_UX {
 
 	toggle_expansion(ancestry: Ancestry): boolean {
 		return this.isExpanded(ancestry) ? this.collapse(ancestry) : this.expand(ancestry);
+	}
+
+	// ————————————————————————————————————————— Title editing
+
+	title_edit_ancestry = $state<Ancestry | null>(null);
+	title_edit_state    = $state<T_Edit>(T_Edit.idle);
+	selection_range     = $state<Seriously_Range | null>(null);
+
+	get is_editing(): boolean {
+		return this.title_edit_state === T_Edit.active;
+	}
+
+	isEditing_ancestry(ancestry: Ancestry): boolean {
+		return this.is_editing && !!this.title_edit_ancestry?.equals(ancestry);
+	}
+
+	startEdit(ancestry: Ancestry): void {
+		this.title_edit_ancestry = ancestry;
+		this.title_edit_state    = T_Edit.active;
+	}
+
+	confirmEdit(): void {
+		const thing = this.title_edit_ancestry?.thing;
+		if (thing) {
+			thing.set_isDirty();
+		}
+		this.title_edit_state    = T_Edit.idle;
+		this.title_edit_ancestry = null;
+		this.selection_range     = null;
+	}
+
+	cancelEdit(): void {
+		this.title_edit_state    = T_Edit.idle;
+		this.title_edit_ancestry = null;
+		this.selection_range     = null;
 	}
 
 	// ————————————————————————————————————————— Recents navigation

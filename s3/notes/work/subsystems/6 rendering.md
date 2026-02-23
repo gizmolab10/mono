@@ -433,49 +433,19 @@ Popup overlays (mounted inside Panel, keyed on `w_id_popupView`):
 
 ### Widget_Title.svelte
 
-**Purpose:** Inline editable title for a widget. Manages text input focus, selection range persistence, live width measurement via ghost span.
+**Purpose:** Title display for a widget. Shows a read-only `<span>` when idle; embeds `Text_Editor` when editing. Delegates all editing concerns (focus, keys, ghost width, selection range) to `Text_Editor`.
 
 **Props:**
-- `s_title: S_Element` — element state for the title hit target
-- `fontSize: string` — default `${k.font_size.common}px`
+- `ancestry: Ancestry` — the ancestry this title represents
+- `left: number` — horizontal offset for positioning
 
-**Stores read:**
-- `hits.w_s_hover` — style update
-- `colors.w_thing_color` — color update
-- `x.w_ancestry_focus` — style update
-- `x.w_grabs` — style update (grabbed state adjusts top/left)
-- `x.si_expanded.w_items` — style update
-- `x.w_s_title_edit` — edit state machine
-- `x.w_thing_title` — propagated title during live edit
-- `x.w_thing_fontFamily` — font
-- `e.w_mouse_location` — cursor offset calculation
-- `e.w_mouse_button_down` — style trigger
-- `databases.w_t_database` — filesystem mode routing
+**Reactive state:**
+- `title` — `$derived` from `ancestry.thing?.title`
+- `isEditing` — `$derived` from `ux.isEditing_ancestry(ancestry)`
 
-**Key reactive state:**
-- `title_width` — measured from ghost span
-- `top`, `left` — small positional adjustments based on grab/focus/radial state
-- `color` — `s_widget.color`
-- `title_binded` — bound to input value
-
-**Signal handling:**
-- `signals.handle_anySignal_atPriority(0, ancestry, T_Hit_Target.title, ...)` → `updateInputWidth()`
-
-**Event handlers on `<input>`:**
-- `on:blur` → `handle_blur` — stops edit, persists
-- `on:focus` → `handle_focus` — immediate blur if not in editing state
-- `on:input` → `handle_input` — updates `thing.title`, triggers layout after 400ms debounce
-- `on:keydown` → `handle_key_down`:
-  - `Enter` → `stop_andPersist()`
-  - `Tab` → `stop_andPersist()`, then `h.ancestry_edit_persistentCreateChildOf`
-- `on:cut`, `on:paste` → `extractRange_fromInput_toThing()`
-- `on:mouseover` → consumed
-
-**Mouse handler (`handle_s_mouse`):**
-- Down in filesystem mode → `ancestry.grabOnly()`; optionally `files.show_previewOf_file`
-- Down while editing → extract range
-- Down with Shift → toggle grab
-- Down on grabbed+editable (not deferred double-click) → `ancestry.startEdit()`
+**Renders:**
+- When not editing: `<span class='title'>` with ellipsis overflow
+- When editing: `<Text_Editor>` with same `ancestry` and `left` props
 
 **Renders:**
 - `.title-wrapper` div — absolute, `width: title_width`, `height: k.height.row`
@@ -1803,33 +1773,36 @@ Popup overlays (mounted inside Panel, keyed on `w_id_popupView`):
 
 ### Text_Editor.svelte
 
-**Purpose:** Textarea with a label below it. Used in `D_Traits`. Handles focus, blur, and key events. Enter stops editing; Shift+Enter inserts newline.
+**Purpose:** Reusable inline text editor. Handles focus, key events, ghost-span width measurement, selection range persistence via `Seriously_Range`. Used by `Widget_Title` for title editing; will be used by `D_Traits` for trait editing.
 
 **Props:**
-- `label: string`
-- `original_text: string`
-- `color: string`
-- `width: number`, `height: number`
-- `top: number`, `left: number`
-- `label_color: string`
-- `label_underline: boolean`
-- `handle_textChange: (label, text) => void`
-- `handleClick_onLabel: (event) => {}` — passed to `Clickable_Label`
 
-**Stores read:**
-- `x.w_thing_fontFamily`
-- `x.w_s_title_edit` — set to editing on focus, stopped on blur
+- `ancestry: Ancestry` — the ancestry being edited
+- `left: number` — horizontal offset
 
-**Event handlers:**
-- `on:focus` → `handle_focus` — sets editing state
-- `on:blur` → `handle_blur` — `handle_textChange(label, null)`; stops `w_s_title_edit`
-- `on:keydown` → `handle_key_down` — Enter (non-shift) → blur
-- `on:keyup` → `handle_key_up` — non-exit key → calls `handle_textChange`
+**Reactive state:**
+
+- `text` — `$state`, initialized from `thing.title`, bound to `<input>`
+- `input_width` — `$state`, updated from ghost span on input
+
+**Lifecycle:**
+
+- `onMount` — focuses input, restores selection from `ux.selection_range` (or selects all)
+
+**Key handlers:**
+
+- `Enter` → confirm (persist + stop editing)
+- `Escape` → cancel (revert title + stop editing)
+- `Tab` → confirm
+
+**On blur:** confirms if still in editing state.
+
+**On input:** updates `thing.title` live, recalculates ghost width.
 
 **Renders:**
-- `.{label}` div
-  - `<textarea>` — resize none, border changes on focus
-  - `.clickable-label` div → `Clickable_Label`
+
+- Ghost `<span>` (offscreen, for width measurement)
+- `<input type='text'>` — transparent background, inherits color/font
 
 ---
 

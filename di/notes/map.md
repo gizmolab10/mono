@@ -28,7 +28,7 @@
 - di/src/lib/svelte/details/Hideable.svelte
 - di/src/lib/svelte/details/D_Constants.svelte
 - di/src/lib/svelte/details/D_Library.svelte
-- di/src/lib/svelte/details/D_List.svelte
+- di/src/lib/svelte/details/D_Hierarchy.svelte
 - di/src/lib/svelte/details/D_Preferences.svelte
 - di/src/lib/svelte/details/D_Selection.svelte
 

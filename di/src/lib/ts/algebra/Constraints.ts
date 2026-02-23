@@ -231,49 +231,63 @@ class Constraints {
 
 	/**
 	 * After an SO's bounds change, re-evaluate all formulas that
-	 * reference that SO. Single synchronous pass.
+	 * reference that SO.  Cascades through the scene hierarchy:
+	 * children whose parent changed get enforce_invariants (their
+	 * stored offsets are relative to parent bounds), and any SO
+	 * with formulas referencing a changed SO gets re-evaluated.
 	 */
 	propagate(changed_so: Smart_Object): void {
 		this.enforce_invariants(changed_so);
 		const all_objects = scene.get_all();
+		const changed = new Set<string>([changed_so.id]);
+
 		for (const o of all_objects) {
 			const so = o.so;
-			let updated = false;
+			if (changed.has(so.id)) continue;
 
-			// Explicit formulas
-			for (const attr of Object.values(so.attributes_dict_byName)) {
-				if (!attr.compiled) continue;
-				if (!this.formula_references(attr.compiled, changed_so.id)) continue;
-				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
-				this.sync_length(so, attr.name, attr.value);
-				updated = true;
+			let dominated = false;
+
+			// Parent offset cascade: parent changed → child offsets stale
+			if (o.parent && changed.has(o.parent.so.id)) {
+				dominated = true;
 			}
 
-			if (updated) {
+			// Explicit formulas referencing any changed SO
+			for (const attr of Object.values(so.attributes_dict_byName)) {
+				if (!attr.compiled) continue;
+				let refs_changed = false;
+				for (const cid of changed) {
+					if (this.formula_references(attr.compiled, cid)) { refs_changed = true; break; }
+				}
+				if (refs_changed) {
+					attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
+					this.sync_length(so, attr.name, attr.value);
+					dominated = true;
+				}
+			}
+
+			if (dominated) {
 				this.enforce_invariants(so);
+				changed.add(so.id);
 			}
 		}
 		this.post_propagate_hook?.();
 	}
 
-	/** Re-evaluate all formulas across all SOs. Used after bulk changes like precision snapping. */
+	/** Re-evaluate all formulas across all SOs. Used after bulk changes like precision snapping.
+	 *  Enforces invariants on every SO (not just those with formulas) so parent offsets stay correct. */
 	propagate_all(): void {
 		const all_objects = scene.get_all();
 		for (const o of all_objects) {
 			const so = o.so;
-			let updated = false;
 
-			// Explicit formulas
 			for (const attr of Object.values(so.attributes_dict_byName)) {
 				if (!attr.compiled) continue;
 				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
 				this.sync_length(so, attr.name, attr.value);
-				updated = true;
 			}
 
-			if (updated) {
-				this.enforce_invariants(so);
-			}
+			this.enforce_invariants(so);
 		}
 		this.post_propagate_hook?.();
 	}

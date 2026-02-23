@@ -11,7 +11,7 @@
  9. **Read before act** — re-read the file/input before editing, claiming, or disagreeing
 10. **Show evidence** — quote the line, state the source, prove it
 11. **Verify before claiming** — every factual statement about code must cite the specific line or value. If you can't point to it, don't say it.
-12. **Test before done** — code written ≠ working; verify before checking off
+12. **Test before done** — code written ≠ working; verify before checking off. **Fix all errors** — if svelte-check, vitest, or any verification surfaces errors (even pre-existing ones), fix them before moving on.
 13. **After a mistake or correction** — re-read `pitfalls.md` before responding.
 14. **Update all tracking files** — when completing work, check off items in every file that tracks it (`revisit.*.md`, `fresh.build.md`, etc.), not just one. Update written proposals with finalized designs.
 15. Your answer on every question is worth $1000 to me if it works

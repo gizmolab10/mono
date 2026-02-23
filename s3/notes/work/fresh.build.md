@@ -186,7 +186,7 @@ Spec: [signals.md](./signals.md)
 - [x] Touch: two-finger pan → `ux.user_graph_offset`, pinch zoom → `ux.scale`
 - [x] Wheel → zoom
 - [x] ✦ **All keyboard shortcuts work. Hit detection is spatial.** (persistence-dependent actions stubbed; will activate in Phase 8)
-- [ ] `Text_Editor.svelte` — inline title editing, `T_Edit` state machine (idle → active → confirming), cursor restore via `Seriously_Range`
+- [x] `Text_Editor.svelte` — inline title editing, `T_Edit` state machine (idle → active → confirming), cursor restore via `Seriously_Range`
 
 ---
 

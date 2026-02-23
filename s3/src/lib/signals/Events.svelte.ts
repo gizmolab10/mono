@@ -138,8 +138,8 @@ function build_key_map(): Key_Map {
 		'enter': {
 			require_ancestry: true,
 			disabled: (a) => !a || a.isRoot,
-			action(_grabbed) {
-				// Phase 8: start title edit
+			action(grabbed) {
+				if (grabbed) ux.startEdit(grabbed);
 			},
 		},
 		' ': {  // space
@@ -231,7 +231,7 @@ class S_Events {
 		// Skip standalone modifier keys
 		if (key === 'alt' || key === 'meta' || key === 'shift' || key === 'control') return;
 
-		// Skip during title editing (future: check ux.is_editing)
+		if (ux.is_editing) return;
 
 		const binding = this.key_map[key];
 		if (!binding) return;

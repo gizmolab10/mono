@@ -2,7 +2,7 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] rename list -> hierarchy
+- [x] rename list -> hierarchy
 - [ ] [[more milestones]]
 
 ---

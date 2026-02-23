@@ -8,7 +8,7 @@
 	import { engine } from '../../ts/render';
 	import { onMount } from 'svelte';
 	import Hideable from './Hideable.svelte';
-	import D_List from './D_List.svelte';
+	import D_Hierarchy from './D_Hierarchy.svelte';
 	import D_Library from './D_Library.svelte';
 	import D_Smart_Object from './D_Smart_Object.svelte';
 	import D_Constants from './D_Constants.svelte';
@@ -49,8 +49,8 @@
 			<D_Library />
 		</Hideable>
 
-		<Hideable title='list' id='list' detail={T_Details.list}>
-			<D_List />
+		<Hideable title='hierarchy' id='hierarchy' detail={T_Details.hierarchy}>
+			<D_Hierarchy />
 		</Hideable>
 
 		<Hideable title='smart object' id='so' detail={T_Details.so}>

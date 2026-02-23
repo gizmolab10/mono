@@ -81,7 +81,7 @@ export enum T_Details {
 	so          = 2,
 	library     = 4,
 	constants   = 8,
-	list        = 16,
+	hierarchy   = 16,
 }
 
 export enum T_Editing {

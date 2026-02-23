@@ -29,7 +29,7 @@
 		const id = selected_so?.id ?? '';
 		if (id !== tracked_id) {
 			tracked_id = id;
-			view_mode = selected_so?.repeater ? 'repeater' : 'attributes';
+			view_mode = 'attributes';
 		}
 	});
 
@@ -48,7 +48,7 @@
 
 	function show_attributes() {
 		if (is_default_repeater() && selected_so) {
-			selected_so.repeater = undefined;
+			selected_so.repeater = null;
 			stores.tick();
 			scenes.save();
 		}

@@ -52,10 +52,10 @@
 	}
 </script>
 
-<table class='list'>
+<table class='hierarchy'>
 	<thead><tr>
-		<th class='list-header'></th>
-		<th class='list-toggle' colspan='3' onclick={() => show_position = !show_position}>
+		<th class='hierarchy-header'></th>
+		<th class='hierarchy-toggle' colspan='3' onclick={() => show_position = !show_position}>
 			{show_position ? 'position' : 'size'} ⇄
 		</th>
 	</tr></thead>
@@ -64,41 +64,41 @@
 		{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
 		{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
 		<tr
-			class='list-row'
+			class='hierarchy-row'
 			class:selected={is_selected(so, $w_tick)}
 			onclick={() => select(so)}>
-			<td class='list-name' style:padding-left='{depth(so) * 12}px'>
+			<td class='hierarchy-name' style:padding-left='{depth(so) * 12}px'>
 				{so.name}{#if n_rpt > 0}<span class='repeat-badge'>×{n_rpt}</span>{/if}
 			</td>
-			<td class='list-data'>{values[0]}</td>
-			<td class='list-data'>{values[1]}</td>
-			<td class='list-data'>{values[2]}</td>
+			<td class='hierarchy-data'>{values[0]}</td>
+			<td class='hierarchy-data'>{values[1]}</td>
+			<td class='hierarchy-data'>{values[2]}</td>
 		</tr>
 	{/each}
 </tbody></table>
 
 <style>
-	.list {
+	.hierarchy {
 		width           : 100%;
 		border-collapse : collapse;
 		font-size       : 9px;
 		margin-top      : -4px;
 	}
 
-	.list-row {
+	.hierarchy-row {
 		cursor : pointer;
 	}
 
-	.list-row:hover {
+	.hierarchy-row:hover {
 		background : var(--accent);
 	}
 
-	.list-row.selected {
+	.hierarchy-row.selected {
 		background  : var(--accent);
 		font-weight : 600;
 	}
 
-	.list-name {
+	.hierarchy-name {
 		padding    : 2px 0;
 		text-align : left;
 	}
@@ -113,11 +113,11 @@
 		font-size   : 8px;
 	}
 
-	.list-header {
+	.hierarchy-header {
 		/* empty name column header */
 	}
 
-	.list-toggle {
+	.hierarchy-toggle {
 		text-align   : center;
 		font-weight  : normal;
 		color        : rgba(0, 0, 0, 0.8);
@@ -126,11 +126,11 @@
 		user-select  : none;
 	}
 
-	.list-toggle:hover {
+	.hierarchy-toggle:hover {
 		color : rgba(0, 0, 0, 1.0);
 	}
 
-	.list-data {
+	.hierarchy-data {
 		padding              : 2px 0 2px 6px;
 		text-align           : right;
 		font-variant-numeric : tabular-nums;

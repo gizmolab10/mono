@@ -12,6 +12,12 @@ export enum T_Startup {
 	ready,
 }
 
+export enum T_Edit {
+	idle        = 'idle',
+	active      = 'active',
+	confirming  = 'confirming',
+}
+
 export enum T_Search {
 	off,
 	enter,
