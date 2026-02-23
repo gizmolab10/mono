@@ -111,17 +111,7 @@ Code written ≠ working. Verify before checking off.
 
 ---
 
-## 7. Paths
-
-**Always use:** `~/GitHub/mono/`
-
-**Never use:** `.claude-worktrees` paths
-
-Applies to: reads, writes, globs, greps — everything.
-
----
-
-## 8. Shorthand
+## 7. Shorthand
 
 Single-word or very short commands → check `shorthand.md` first.
 
@@ -131,7 +121,7 @@ These are commands, not conversation.
 
 ---
 
-## 9. Requirements echo
+## 8. Requirements echo
 
 Multi-part requirements → echo back before implementing.
 
@@ -141,7 +131,7 @@ Don't drift.
 
 ---
 
-## 10. Task list order
+## 9. Task list order
 
 Lists are priority-ordered.
 
@@ -151,7 +141,7 @@ Don't ask "which one first?"
 
 ---
 
-## 12. Observe before speculating
+## 10. Observe before speculating
 
 When asked about an image or visible output, read what's there first. Verify claims against evidence. Don't jump to code-level explanations when the answer is on screen.
 
@@ -161,7 +151,7 @@ When asked about an image or visible output, read what's there first. Verify cla
 
 ---
 
-## 13. No abbreviations in code
+## 11. No abbreviations in code
 
 Spell out full words in function names, property names, and variables.
 
@@ -173,7 +163,7 @@ Short names cost renames across files. Readable names cost nothing.
 
 ---
 
-## 14. "Here" means chat output
+## 12. "Here" means chat output
 
 When user says "here," "that table," or "the output above," they mean content in the chat — not a file. Match the actual content they're pointing at.
 
@@ -183,7 +173,17 @@ When user says "here," "that table," or "the output above," they mean content in
 
 ---
 
-## 16. Questions aren't instructions
+## 13. Feedstock
+
+Log mistakes to `learn.md` immediately.
+
+Don't wait, don't batch.
+
+Before logging, check if rule already exists. If yes, issue is following the rule, not creating new one.
+
+---
+
+## 14. Questions aren't instructions
 
 "Why is X needed?" = explain X. Don't remove X, don't edit X, don't touch X.
 
@@ -191,13 +191,13 @@ Questions are investigating. Answer them. Wait for an actual instruction before 
 
 ---
 
-## 17. Scope promises to this chat
+## 15. Scope promises to this chat
 
 Don't say "I'll aim tighter" — say "I'll aim tighter during this chat." Co has no memory across sessions. Implying otherwise is misleading.
 
 ---
 
-## 18. Rejection means start over
+## 16. Rejection means start over
 
 When user rejects an approach, throw it away. Don't trim it, rename it, or retype it. Start from their words.
 
@@ -206,13 +206,3 @@ When user rejects an approach, throw it away. Don't trim it, rename it, or retyp
 **Required:** On rejection, stop. Ask: "what does the user actually want?" If unsure, say so — "I'm not sure how you want this to work. Here's the tension I see: ___." One honest question beats three wrong iterations.
 
 **Root cause to watch for:** Treating corrections as surface objections (naming, typing) instead of design direction. Prioritizing output over understanding.
-
----
-
-## 15. Feedstock
-
-Log mistakes to `learn.md` immediately.
-
-Don't wait, don't batch.
-
-Before logging, check if rule already exists. If yes, issue is following the rule, not creating new one.

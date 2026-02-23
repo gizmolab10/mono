@@ -26,17 +26,23 @@ export class G_TreeBranches {
 		return total;
 	}
 
+	private static readonly lineGap = 20;
+
 	get centers(): Point[] {
 		const branches = this.ancestry.branchAncestries;
 		if (branches.length === 0) return [];
-		const x       = this.parentCenter.x + 100;
+		const parentTitle     = this.ancestry.thing?.title ?? '';
+		const parentHalfWidth = G_Widget.widthFor(parentTitle) / 2;
+		const leftEdgeX       = this.parentCenter.x + parentHalfWidth + G_TreeBranches.lineGap;
 		const heights = branches.map(b => G_TreeBranches.subtreeHeight(b, this.depth - 1));
 		const total   = heights.reduce((sum, h) => sum + h, 0);
 		const delta   = (heights[heights.length - 1] - heights[0]) / 4;
 		let y         = this.parentCenter.y - total / 2 + delta;
-		return heights.map(h => {
-			const center = new Point(x, y + h / 2);
-			y += h;
+		return branches.map((branch, i) => {
+			const childTitle     = branch.thing?.title ?? '';
+			const childHalfWidth = G_Widget.widthFor(childTitle, branch.hasChildren) / 2;
+			const center = new Point(leftEdgeX + childHalfWidth, y + heights[i] / 2);
+			y += heights[i];
 			return center;
 		});
 	}
@@ -53,7 +59,7 @@ export class G_TreeBranches {
 		const trunk    = this.origin_ofLine;
 		return branches.map((branch, i) => {
 			const childTitle     = branch.thing?.title ?? '';
-			const childHalfWidth = G_Widget.widthFor(childTitle) / 2;
+			const childHalfWidth = G_Widget.widthFor(childTitle, branch.hasChildren) / 2;
 			return {
 				branch,
 				center: centers[i],

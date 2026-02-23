@@ -1,6 +1,6 @@
 # Always
 
- 1. NEVER use a worktree
+ 1. **All file paths: `~/GitHub/mono/`** — NEVER use the worktree working directory
  2. NEVER use `npm — Use yarn`
  3. NEVER preview — do not use preview_\* tools or start preview servers UNLESS Jonathan approves it (ask then WAIT for approval)
  4. **Exact match** — names, paths, requirements: character-by-character

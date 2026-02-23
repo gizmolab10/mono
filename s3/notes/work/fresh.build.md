@@ -243,11 +243,10 @@ Each DB owns its Hierarchy. Single pointer swap on DB switch. Firebase snapshots
 
 ### Phase 9.1 -- code debt
 
-- [ ] children -> left align
-- [ ] actions buttons ignored
 - [ ] add html standard color picker
 	- [ ] make sure banners are obvious
 	- [ ] remove triangle (stupid, redundant)
+- [ ] actions buttons ignored
 - [ ] ✦ **Details panel fully functional.**
 
 ---

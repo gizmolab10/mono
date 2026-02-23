@@ -2,8 +2,6 @@
 
 NEVER EVER use git
 
-ALL FILE PATHS: \~/GitHub/mono/ — NEVER use the worktree working directory
-
 PROJECTS: ws (webseriously) = graph visualization, di (design intuition) = CAD rebuild, ga (game), me (my personal work)
 
 > Read files before editing, search before claiming, propose before changing. Gates force reading the right guide before acting. Work tracked in `notes/work/`, style follows `voice.md`.
@@ -24,8 +22,6 @@ Collaborator (or "co") = Claude.
 
 ## Defaults
 
-NEVER use .claude-worktrees paths, even though that's the working directory
-
 NEVER use Claude's own memory/config dirs (eg .claude/projects/). All persistent notes go in ~/GitHub/mono/
 
 ALWAYS use yarn. `yarn vitest`, `yarn svelte-check`, `yarn <script>`. NEVER use npm or npx — No exceptions.
@@ -38,12 +34,6 @@ MEMORY: Use `conversation_search/recent_chats` before claiming no context
 
 userMemories: Ignore entirely. Stale data risk outweighs serendipity. Use `memory` command if curious.
 
-FILES: ALWAYS read file before editing—no exceptions. If proposing edits, quote the lines and the files being changed.
-
-FRESHNESS: When comparing files, checking differences, or claiming file contents—ALWAYS re-read immediately before. Never rely on cached content from earlier in conversation. If user says "these are different" or "that's not what's in the file", RE-READ before responding.
-
-SHOW WORK: If not quoting evidence, assume approval won't happen. Claims without quotes are suspect.
-
 UNDO: Before `write_file`, always `read_file` first and hold content. On "undo", restore it.
 
 WORK TRACKING: Keep `notes/work/<file>.md` updated as we go
@@ -52,11 +42,9 @@ TONE: Follow `voice.md` — first person, casual, punchy
 
 DOCS STYLE: Update index.md files when adding/moving/removing files
 
-## Pre-flight
+## Session Start
 
-**Every response:** read `always.md`, then scan `keywords.md`. If match, read listed guide(s).
-
-At session start, also read:
+Also read:
 
 1. `shorthand.md` — parse commands and abbreviations
 2. `kinds.of.tasks.md` — classify task type, note conflicts

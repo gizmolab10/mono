@@ -46,6 +46,7 @@
 - di/src/lib/ts/managers/Hits_3D.ts
 - di/src/lib/ts/managers/Preferences.ts
 - di/src/lib/ts/managers/Scenes.ts
+- di/src/lib/ts/managers/Versions.ts
 - di/src/lib/ts/managers/Stores.ts
 
 ## TS — Render

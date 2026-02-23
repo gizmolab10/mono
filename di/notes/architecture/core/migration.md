@@ -2,11 +2,11 @@
 
 How a v1 `.di` file becomes a v7 scene at runtime.
 
-All migration lives in `Scenes.ts` (the `migrate()` method).
+All migration lives in `Scenes.ts` (the `migrate()` method). Dispatch is version-number-based — `migrate(raw, version)` parses the version string to an integer and runs each step whose threshold exceeds it: `if (v < 3)`, `if (v < 4)`, etc.
 
-## **ALARM**
+## RESOLVED
 
-I hope this statement is wrong. Detection is shape-based, not version-number-based — the code inspects the first SO's fields to decide which path to take. We agreed back in version 1 or 2 to use a version number to determine migration operations. I feel fucked over that this agreement has not been met, and for a long while.
+Was shape-based (inspecting SO fields). We agreed in v1/v2 to use version numbers. Now it does — `validate_import()` extracts the version from `Exported_File`, and `migrate()` dispatches on it. Bare scenes (old localStorage without wrapper) get `CURRENT_VERSION` as fallback.
 
 ## Current version
 
@@ -14,39 +14,49 @@ I hope this statement is wrong. Detection is shape-based, not version-number-bas
 
 ## Entry points
 
-- `load()` — reads localStorage, falls back to bundled `drawer.di`
+- `load()` — reads localStorage (wrapped as `Exported_File`), falls back to bundled `drawer.di`
 - `parse_text()` — parses a `.di` file string (library insertion, import)
-- Both call `validate_import()` → `migrate()` → `restore_constants()`
+- `load_from_text()` — loads from JSON text (library panel)
+- `import_from_file()` — file picker import
+- All call `validate_import()` → `migrate(scene, version)` → (optional) `restore_constants()`
+
+## Version flow
+
+```
+raw data → validate_import() → { version, scene }
+                                      ↓
+                              migrate(scene, version)
+                                      ↓
+                              Portable_Scene (v7)
+```
+
+`validate_import()` handles two shapes:
+- **Wrapped** (`Exported_File`): has `version` + `scene` fields. Version extracted directly.
+- **Bare** (`Portable_Scene`): has `smart_objects` at top level. Assigned `CURRENT_VERSION` as fallback. Only fires for old localStorage data written before `save()` started wrapping.
 
 ## The chain
 
-### v1 → v2: mint IDs, rewrite references
+### v1/v2 → v3: mint IDs, rewrite references, bounds → axes
 
-**Trigger:** SOs have no `id` field.
+**Gate:** `v < 3`
 
-SOs originally used `parent_name` for hierarchy and name-based references in formulas. Migration generates UUIDs, rewrites `parent_name` → `parent_id`, and regex-replaces `"name."` → `"uuid."` in all formula strings.
-
-### v2 → v3: bounds → axes
-
-**Trigger:** SO has a `bounds` field (flat `Record<Bound, number>`).
-
-The `migrate_legacy()` → `migrate_so()` path converts each SO's six bounds into three `Portable_Axis` objects. Each axis gets `origin` (min), `extent` (max), `length` (max − min), and `angle` (from `rotations` array if present). Formulas and invariants carry over.
+`migrate_legacy()` handles both v1 and v2. v1 SOs lack `id` fields — migration generates UUIDs, rewrites `parent_name` → `parent_id`, and regex-replaces `"name."` → `"uuid."` in formula strings. Then `migrate_so()` converts each SO's six bounds into three `Portable_Axis` objects: `origin` (min), `extent` (max), `length` (max − min), `angle` (from `rotations` array if present). Formulas and invariants carry over.
 
 ### v3 → v4: array attributes → keyed object
 
-**Trigger:** `x.attributes` is an `Array`.
+**Gate:** `v < 4`
 
 Old format: `attributes: [origin, extent, length, angle]`. New format: `attributes: { origin, extent, length, angle }`.
 
 ### v4 → v5: absolute values → parent-relative offsets
 
-**Trigger:** detected as part of the v2→v4 migration path. Any scene that went through the earlier conversions also gets offset migration.
+**Gate:** `v < 5`
 
 Child `origin` and `extent` values shift from absolute coordinates to offsets from the parent's same-named bound. Formula attributes are skipped (they produce absolute values at runtime). Old `offset` fields (pre-v5 explicit offsets) are used directly if present.
 
 ### v5 → v6: rename standard_dimensions → constants
 
-**Trigger:** scene has `standard_dimensions` but not `constants`.
+**Gate:** `v < 6`
 
 Pure field rename. No data transformation.
 
@@ -57,28 +67,29 @@ No migration needed. The `repeater` field on Portable_SO is optional — existin
 ## What happens to a v1 file today
 
 ```
-v1 file → migrate_legacy()  [mint IDs, rewrite refs]
-        → migrate_so()      [bounds → axes, for each SO]
-        → migrate_to_offsets() [absolute → parent-relative]
+v1 file → validate_import()   [extract version: '1']
+        → migrate(scene, '1')
+          → v < 3: migrate_legacy()  [mint IDs, bounds → axes]
+          → v < 4: no-op            [legacy already produces keyed objects]
+          → v < 5: migrate_to_offsets() [absolute → parent-relative]
+          → v < 6: no-op            [no standard_dimensions field]
         → Portable_Scene (v7)
 ```
 
-All geometry, formulas, hierarchy, and camera state survive the migration. The SO IDs change (newly generated), so re-saving produces a file that won't match the original byte-for-byte, but the scene is identical.
+All geometry, formulas, hierarchy, and camera state survive. SO IDs change (newly generated), so re-saving produces a file that won't match byte-for-byte, but the scene is identical.
 
-## File shape
+## Storage
 
-```
-Exported_File = { version: string, scene: Portable_Scene }
-```
-
-`validate_import()` accepts both the wrapped shape and a bare `Portable_Scene` (from localStorage). Bare scenes get `CURRENT_VERSION` as a fallback.
+`save()` writes `{ version: CURRENT_VERSION, scene: Portable_Scene }` to localStorage. `add_to_library()` writes the same `Exported_File` shape to IndexedDB and disk.
 
 ## Where the code lives
 
-| Function | Lines | Does |
+Migration lives in `Versions.ts`. Scenes.ts calls `versions.migrate()` and keeps `validate_import()`.
+
+| Function | File | Does |
 |---|---|---|
-| `migrate()` | 293–326 | shape detection, dispatches to sub-migrations |
-| `migrate_legacy()` | 368–417 | v1→v2 ID minting + v2→current axis conversion |
-| `migrate_so()` | 420–455 | single SO: bounds → axes |
-| `migrate_to_offsets()` | 331–366 | v4→v5 absolute → relative offsets |
-| `validate_import()` | 461–478 | unwrap Exported_File, accept bare scene |
+| `versions.migrate()` | Versions.ts | version-based dispatch, runs the chain |
+| `migrate_legacy()` | Versions.ts | v1→v2 ID minting + v2→v3 axis conversion |
+| `migrate_so()` | Versions.ts | single SO: bounds → axes |
+| `migrate_to_offsets()` | Versions.ts | v4→v5 absolute → relative offsets |
+| `validate_import()` | Scenes.ts | unwrap Exported_File, extract version, accept bare scene |
