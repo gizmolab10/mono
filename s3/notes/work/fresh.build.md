@@ -221,7 +221,28 @@ Spec: [rendering.md](./rendering.md) §details, [ux.md](./ux.md) §Details
 - [x] `D_Preferences.svelte` — depth limit slider, dot count mode, theme
 - [x] `Banner_Hideable.svelte` — collapsible section header
 - [x] `D_Data.svelte` — segmented control for choosing db, data description (counts of things, relationships, depth, etc.)
-- [ ] persist -> which details are open
+- [x] persist -> which details are open
+- [x] persist db choice
+- [x] db switcher should swap hierarchy (includes its db cache). save load time switching back!!!
+
+### Phase 9.05 — DB owns Hierarchy
+
+Spec: [5.1 hierarchy.md](./subsystems/5.1%20hierarchy.md), [11 database.md](./subsystems/11%20database.md) §grand_change_database
+
+Each DB owns its Hierarchy. Single pointer swap on DB switch. Firebase snapshots write to their own Hierarchy, not a global store.
+
+- [ ] Create `hierarchy/Hierarchy.svelte.ts` — rename `S_Store` → `Hierarchy`, class export only (no singleton)
+- [ ] `DB_Common`: add `hierarchy = new Hierarchy()`, drop 5 duplicate plain Maps, drop `assign_to_store()`
+- [ ] `Databases.svelte.ts`: add `get hierarchy()` shorthand, simplify `change_database` to pointer swap + `becomeFocus`
+- [ ] `DB_Firebase.ts`: all `store.*` → `this.hierarchy.*` (~40 refs)
+- [ ] `DB_Test.ts`: `store.*` → `this.hierarchy.*`
+- [ ] Consumers (`Ancestry.ts`, `D_Data.svelte`, `Events.svelte.ts`): `store.*` → `databases.hierarchy.*`
+- [ ] Delete `store/store.svelte.ts`
+- [ ] Move `store/store.test.ts` → `hierarchy/Hierarchy.test.ts`, instantiate per test
+- [ ] Verify: `yarn svelte-check && yarn vitest`
+
+### Phase 9.1 -- code debt
+
 - [ ] actions buttons ignored
 - [ ] add html standard color picker
 	- [ ] make sure banners are obvious

@@ -13,7 +13,8 @@
 - [x] Phase 6 — DB_Test + DB_Common (fresh.build.md)
 - [x] Phase 7 — Hit Detection + Full Input (fresh.build.md)
 - [x] Phase 8 — Firebase (fresh.build.md) *(Dexie cache + bulk aliases → Phase 12)*
-- [ ] Phase 9 — Details Panel (fresh.build.md)
+- [x] Phase 9 — Details Panel (fresh.build.md)
+- [ ] Phase 9.1 -- code debt
 
 ---
 ## Future work

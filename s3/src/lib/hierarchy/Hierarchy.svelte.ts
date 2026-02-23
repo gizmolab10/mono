@@ -6,7 +6,7 @@ import { Tag }          from '../entities/Tag';
 import { T_Predicate }  from '../common/Enumerations';
 import type { Integer } from '../types/Types';
 
-class S_Store {
+export class Hierarchy {
 	things        = $state(new Map<string, Thing>());
 	relationships = $state(new Map<string, Relationship>());
 	predicates    = $state(new Map<string, Predicate>());
@@ -108,5 +108,3 @@ class S_Store {
 	}
 
 }
-
-export const store = new S_Store();

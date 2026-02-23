@@ -2,7 +2,9 @@
 
 offer a proposal for the first unchecked item
 
-- [x] rename list -> hierarchy
+- [ ] backward compatibility -- describe current design reading a file that is v1 → [migration.md](../architecture/core/migration.md)
+- [ ] migrate to {s, e, l} from {x, X, w}
+- [ ] save to local storage,  export to fs
 - [ ] [[more milestones]]
 
 ---

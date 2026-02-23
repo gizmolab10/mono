@@ -1,5 +1,5 @@
 import '../common/Extensions';
-import { store }                 from '../store/store.svelte';
+import { databases }             from '../db/Databases.svelte';
 import { ux }                    from '../state/ux.svelte';
 import { T_Thing, T_Predicate }  from '../common/Enumerations';
 import type { Thing }            from '../entities/Thing';
@@ -49,16 +49,16 @@ export class Ancestry {
 
 	get thing(): Thing | undefined {
 		if (this.isRoot) {
-			for (const t of store.things.values()) {
+			for (const t of databases.hierarchy.things.values()) {
 				if (t.t_thing === T_Thing.root) return t;
 			}
 			return undefined;
 		}
 		const parts     = this.id.split('/');
 		const lastRelId = parts[parts.length - 1];
-		const rel       = store.relationships.get(lastRelId);
+		const rel       = databases.hierarchy.relationships.get(lastRelId);
 		if (!rel) return undefined;
-		return store.things.get(rel.idChild);
+		return databases.hierarchy.things.get(rel.idChild);
 	}
 
 	// ————————————————————————————————————————— Structure
@@ -71,7 +71,7 @@ export class Ancestry {
 	get hasChildren(): boolean {
 		const t = this.thing;
 		if (!t) return false;
-		return store.children_of(t.id).length > 0;
+		return databases.hierarchy.children_of(t.id).length > 0;
 	}
 
 	get parentAncestry(): Ancestry {
@@ -84,10 +84,10 @@ export class Ancestry {
 	get branchAncestries(): Ancestry[] {
 		const t = this.thing;
 		if (!t) return [];
-		const children = store.children_of(t.id);
+		const children = databases.hierarchy.children_of(t.id);
 		const result: Ancestry[] = [];
 		for (const child of children) {
-			for (const rel of store.relationships.values()) {
+			for (const rel of databases.hierarchy.relationships.values()) {
 				if (rel.idParent === t.id && rel.idChild === child.id && rel.kind === T_Predicate.contains) {
 					const childPath = this.isRoot ? rel.id : `${this.id}/${rel.id}`;
 					result.push(ancestry_remember_createUnique(childPath));

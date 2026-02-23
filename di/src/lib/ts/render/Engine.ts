@@ -563,7 +563,7 @@ class Engine {
 			for (const so of new_sos) {
 				constraints.propagate(so);
 			}
-			stores.w_all_sos.update(list => [...list, ...new_sos]);
+			stores.w_all_sos.set(scene.get_all().map(o => o.so));
 			stores.tick();
 			scenes.save();
 		}
@@ -658,8 +658,19 @@ class Engine {
 		if (children.length > 0) targets.push(children[0].so);
 
 		for (const target of targets) {
-			const a_data = target.axes[a].serialize();
-			const b_data = target.axes[b].serialize();
+			const ax_a = target.axes[a];
+			const ax_b = target.axes[b];
+
+			// Save absolute positions BEFORE swapping.
+			// Position attributes (start, end) are stored as offsets from parent's same-named bound.
+			// After swapping, offsets land under a different parent bound, so we need to recompute.
+			const a_start_abs = target.get_bound(ax_a.start.name as Bound);
+			const a_end_abs   = target.get_bound(ax_a.end.name as Bound);
+			const b_start_abs = target.get_bound(ax_b.start.name as Bound);
+			const b_end_abs   = target.get_bound(ax_b.end.name as Bound);
+
+			const a_data = ax_a.serialize();
+			const b_data = ax_b.serialize();
 
 			for (const key of ['origin', 'extent', 'length', 'angle'] as const) {
 				a_data.attributes[key] = constraints.swap_formula_aliases(a_data.attributes[key], a, b);
@@ -668,17 +679,28 @@ class Engine {
 
 			// Clear existing formulas before deserializing
 			// (Attribute.deserialize doesn't clear formula/compiled when data is a plain number)
-			for (const attr of target.axes[a].attributes) {
+			for (const attr of ax_a.attributes) {
 				attr.formula = null;
 				attr.compiled = null;
 			}
-			for (const attr of target.axes[b].attributes) {
+			for (const attr of ax_b.attributes) {
 				attr.formula = null;
 				attr.compiled = null;
 			}
 
-			target.axes[a].deserialize(b_data);
-			target.axes[b].deserialize(a_data);
+			ax_a.deserialize(b_data);
+			ax_b.deserialize(a_data);
+
+			// Fix position offsets for non-formula attributes.
+			// Deserialize wrote raw offsets from the other axis's serialization, but those offsets
+			// were relative to the old axis's parent bound. Recompute from saved absolute values.
+			const parent = target.scene?.parent?.so;
+			if (parent) {
+				if (!ax_a.start.compiled) ax_a.start.value = b_start_abs - parent.get_bound(ax_a.start.name as Bound);
+				if (!ax_a.end.compiled)   ax_a.end.value   = b_end_abs   - parent.get_bound(ax_a.end.name as Bound);
+				if (!ax_b.start.compiled) ax_b.start.value = a_start_abs - parent.get_bound(ax_b.start.name as Bound);
+				if (!ax_b.end.compiled)   ax_b.end.value   = a_end_abs   - parent.get_bound(ax_b.end.name as Bound);
+			}
 		}
 
 		// Update repeater config

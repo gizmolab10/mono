@@ -2,7 +2,6 @@
 	import '../../common/Extensions';
 	import { T_Database }  from '../../db/DB_Common';
 	import { databases }   from '../../db/Databases.svelte';
-	import { store }       from '../../store/store.svelte';
 
 	const db_options: T_Database[] = [T_Database.test, T_Database.firebase];
 
@@ -10,20 +9,20 @@
 
 	let dirty_count = $derived(() => {
 		let count = 0;
-		for (const t of store.things.values())        { if (t.persistence.isDirty) count++; }
-		for (const r of store.relationships.values()) { if (r.persistence.isDirty) count++; }
-		for (const t of store.traits.values())        { if (t.persistence.isDirty) count++; }
-		for (const g of store.tags.values())          { if (g.persistence.isDirty) count++; }
+		for (const t of databases.hierarchy.things.values())        { if (t.persistence.isDirty) count++; }
+		for (const r of databases.hierarchy.relationships.values()) { if (r.persistence.isDirty) count++; }
+		for (const t of databases.hierarchy.traits.values())        { if (t.persistence.isDirty) count++; }
+		for (const g of databases.hierarchy.tags.values())          { if (g.persistence.isDirty) count++; }
 		return count;
 	});
 
 	let stats = $derived([
 		['database',      databases.db.t_database],
-		['things',        store.things.size.supressZero()],
-		['relationships', store.relationships.size.supressZero()],
-		['predicates',    store.predicates.size.supressZero()],
-		['traits',        store.traits.size.supressZero()],
-		['tags',          store.tags.size.supressZero()],
+		['things',        databases.hierarchy.things.size.supressZero()],
+		['relationships', databases.hierarchy.relationships.size.supressZero()],
+		['predicates',    databases.hierarchy.predicates.size.supressZero()],
+		['traits',        databases.hierarchy.traits.size.supressZero()],
+		['tags',          databases.hierarchy.tags.size.supressZero()],
 		['must save',     dirty_count().supressZero()],
 	]);
 

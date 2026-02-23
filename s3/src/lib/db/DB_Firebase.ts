@@ -14,7 +14,6 @@ import { Predicate }                                                       from 
 import { Trait }                                                           from '../entities/Trait';
 import { Tag }                                                             from '../entities/Tag';
 import { Identifiable }                                                    from '../entities/Identifiable';
-import { store }                                                           from '../store/store.svelte';
 import type { Dictionary }                                                 from '../types/Types';
 
 // ————————————————————————————————————————— Bulk
@@ -124,26 +123,26 @@ export class DB_Firebase extends DB_Common {
 		}
 	}
 
-	// ————————————————————————————————————————— Document → Store
+	// ————————————————————————————————————————— Document → Hierarchy
 
 	private document_ofType_remember_validated(t_persistable: T_Persistable, id: string, data: DocumentData, idBase: string): void {
 		if (!data_isValidOfKind(t_persistable, data)) return;
 
 		switch (t_persistable) {
 			case T_Persistable.predicates:
-				store.remember_predicate(new Predicate(id, data.kind, data.isBidirectional, true, REMOTE));
+				this.hierarchy.remember_predicate(new Predicate(id, data.kind, data.isBidirectional, true, REMOTE));
 				break;
 			case T_Persistable.things:
-				store.remember_thing(new Thing(idBase, id, data.title, data.color, data.t_thing ?? T_Thing.generic, true, REMOTE));
+				this.hierarchy.remember_thing(new Thing(idBase, id, data.title, data.color, data.t_thing ?? T_Thing.generic, true, REMOTE));
 				break;
 			case T_Persistable.relationships:
-				store.remember_relationship(new Relationship(idBase, id, data.kind ?? data.predicate?.id, data.parent.id, data.child.id, data.orders ?? [0, 0], true, REMOTE));
+				this.hierarchy.remember_relationship(new Relationship(idBase, id, data.kind ?? data.predicate?.id, data.parent.id, data.child.id, data.orders ?? [0, 0], true, REMOTE));
 				break;
 			case T_Persistable.traits:
-				store.remember_trait(new Trait(idBase, id, data.ownerID, data.t_trait, data.text ?? '', true, REMOTE));
+				this.hierarchy.remember_trait(new Trait(idBase, id, data.ownerID, data.t_trait, data.text ?? '', true, REMOTE));
 				break;
 			case T_Persistable.tags:
-				store.remember_tag(new Tag(idBase, id, data.type, data.thingHIDs ?? [], true, REMOTE));
+				this.hierarchy.remember_tag(new Tag(idBase, id, data.type, data.thingHIDs ?? [], true, REMOTE));
 				break;
 		}
 	}
@@ -177,7 +176,7 @@ export class DB_Firebase extends DB_Common {
 			[T_Predicate.supportedBy, true],
 		];
 		for (const [kind, bidir] of kinds) {
-			store.remember_predicate(new Predicate(kind, kind, bidir, false, REMOTE));
+			this.hierarchy.remember_predicate(new Predicate(kind, kind, bidir, false, REMOTE));
 		}
 	}
 
@@ -185,7 +184,7 @@ export class DB_Firebase extends DB_Common {
 		const root = new Thing(this.idBase, Identifiable.newID(), this.idBase, 'coral', T_Thing.root, true, REMOTE);
 		const rootRef = await addDoc(collectionRef, { title: root.title, color: root.color, t_thing: root.t_thing });
 		root.setID(rootRef.id);
-		store.remember_thing(root);
+		this.hierarchy.remember_thing(root);
 	}
 
 	// ————————————————————————————————————————— Bulks
@@ -298,14 +297,14 @@ export class DB_Firebase extends DB_Common {
 
 	private thing_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData): boolean {
 		const remoteThing = new PersistentThing(data);
-		const thing       = store.things.get(id) ?? null;
+		const thing       = this.hierarchy.things.get(id) ?? null;
 
 		switch (change.type) {
 			case 'added':
 				if (thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.t_thing === T_Thing.root) {
 					return false;
 				}
-				store.remember_thing(new Thing(idBase, id, remoteThing.title, remoteThing.color, remoteThing.t_thing, true, REMOTE));
+				this.hierarchy.remember_thing(new Thing(idBase, id, remoteThing.title, remoteThing.color, remoteThing.t_thing, true, REMOTE));
 				break;
 			case 'removed':
 				if (thing) {
@@ -313,7 +312,7 @@ export class DB_Firebase extends DB_Common {
 						thing.set_isDirty();
 						return false;
 					}
-					store.things.delete(id);
+					this.hierarchy.things.delete(id);
 				}
 				break;
 			case 'modified':
@@ -338,15 +337,15 @@ export class DB_Firebase extends DB_Common {
 
 	private trait_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData): boolean {
 		const remoteTrait = new PersistentTrait(data);
-		const trait       = store.traits.get(id) ?? null;
+		const trait       = this.hierarchy.traits.get(id) ?? null;
 
 		switch (change.type) {
 			case 'added':
 				if (trait || remoteTrait.isEqualTo(this.addedTrait)) return false;
-				store.remember_trait(new Trait(idBase, id, remoteTrait.ownerID, remoteTrait.t_trait, remoteTrait.text, true, REMOTE));
+				this.hierarchy.remember_trait(new Trait(idBase, id, remoteTrait.ownerID, remoteTrait.t_trait, remoteTrait.text, true, REMOTE));
 				break;
 			case 'removed':
-				if (trait) store.traits.delete(id);
+				if (trait) this.hierarchy.traits.delete(id);
 				break;
 			case 'modified':
 				if (!trait || trait.persistence.wasModifiedWithinMS(800)) return false;
@@ -370,15 +369,15 @@ export class DB_Firebase extends DB_Common {
 
 	private tag_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData): boolean {
 		const remoteTag = new PersistentTag(data);
-		const tag       = store.tags.get(id) ?? null;
+		const tag       = this.hierarchy.tags.get(id) ?? null;
 
 		switch (change.type) {
 			case 'added':
 				if (tag || remoteTag.isEqualTo(this.addedTag)) return false;
-				store.remember_tag(new Tag(idBase, id, remoteTag.type, remoteTag.thingHIDs, true, REMOTE));
+				this.hierarchy.remember_tag(new Tag(idBase, id, remoteTag.type, remoteTag.thingHIDs, true, REMOTE));
 				break;
 			case 'removed':
-				if (tag) store.tags.delete(id);
+				if (tag) this.hierarchy.tags.delete(id);
 				break;
 			case 'modified':
 				if (!tag || tag.persistence.wasModifiedWithinMS(800)) return false;
@@ -401,19 +400,19 @@ export class DB_Firebase extends DB_Common {
 
 	private relationship_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData): boolean {
 		const remote       = new PersistentRelationship(data);
-		const relationship = store.relationships.get(id) ?? null;
+		const relationship = this.hierarchy.relationships.get(id) ?? null;
 
 		switch (change.type) {
 			case 'added':
 				if (relationship) return false;
-				store.remember_relationship(new Relationship(
+				this.hierarchy.remember_relationship(new Relationship(
 					idBase, id, remote.kind ?? remote.predicate?.id,
 					remote.parent?.id, remote.child?.id,
 					remote.orders, true, REMOTE
 				));
 				break;
 			case 'removed':
-				if (relationship) store.relationships.delete(id);
+				if (relationship) this.hierarchy.relationships.delete(id);
 				break;
 			case 'modified':
 				if (!relationship || relationship.persistence.wasModifiedWithinMS(800)) return false;
@@ -442,7 +441,7 @@ export class DB_Firebase extends DB_Common {
 	// ————————————————————————————————————————— CRUD: Thing
 
 	async persistent_create_thing(id: string): Promise<void> {
-		const thing = store.things.get(id);
+		const thing = this.hierarchy.things.get(id);
 		if (!thing) return;
 		const thingsCollection = this.bulk_forID(thing.idBase)?.thingsCollection;
 		if (!thingsCollection) return;
@@ -453,9 +452,9 @@ export class DB_Firebase extends DB_Common {
 		thing.persistence.awaiting_remoteCreation = true;
 		try {
 			const ref = await addDoc(thingsCollection, { ...remoteThing });
-			store.things.delete(thing.id);
+			this.hierarchy.things.delete(thing.id);
 			thing.setID(ref.id);
-			store.things.set(thing.id, thing);
+			this.hierarchy.things.set(thing.id, thing);
 		} catch (error) {
 			console.error('DB_Firebase create thing error:', error);
 		}
@@ -465,7 +464,7 @@ export class DB_Firebase extends DB_Common {
 	}
 
 	async persistent_update_thing(id: string): Promise<void> {
-		const thing = store.things.get(id);
+		const thing = this.hierarchy.things.get(id);
 		if (!thing) return;
 		const thingsCollection = this.bulk_forID(thing.idBase)?.thingsCollection;
 		if (!thingsCollection) return;
@@ -480,7 +479,7 @@ export class DB_Firebase extends DB_Common {
 	}
 
 	async persistent_delete_thing(id: string): Promise<void> {
-		const thing = store.things.get(id);
+		const thing = this.hierarchy.things.get(id);
 		if (!thing) return;
 		const thingsCollection = this.bulk_forID(thing.idBase)?.thingsCollection;
 		if (!thingsCollection) return;
@@ -495,7 +494,7 @@ export class DB_Firebase extends DB_Common {
 	// ————————————————————————————————————————— CRUD: Trait
 
 	async persistent_create_trait(id: string): Promise<void> {
-		const trait = store.traits.get(id);
+		const trait = this.hierarchy.traits.get(id);
 		if (!trait) return;
 		const traitsCollection = this.bulk_forID(trait.idBase)?.traitsCollection;
 		if (!traitsCollection) return;
@@ -506,9 +505,9 @@ export class DB_Firebase extends DB_Common {
 		trait.persistence.awaiting_remoteCreation = true;
 		try {
 			const ref = await addDoc(traitsCollection, { ...remoteTrait });
-			store.traits.delete(trait.id);
+			this.hierarchy.traits.delete(trait.id);
 			trait.setID(ref.id);
-			store.traits.set(trait.id, trait);
+			this.hierarchy.traits.set(trait.id, trait);
 		} catch (error) {
 			console.error('DB_Firebase create trait error:', error);
 		}
@@ -518,7 +517,7 @@ export class DB_Firebase extends DB_Common {
 	}
 
 	async persistent_update_trait(id: string): Promise<void> {
-		const trait = store.traits.get(id);
+		const trait = this.hierarchy.traits.get(id);
 		if (!trait) return;
 		const traitsCollection = this.bulk_forID(trait.idBase)?.traitsCollection;
 		if (!traitsCollection) return;
@@ -531,7 +530,7 @@ export class DB_Firebase extends DB_Common {
 	}
 
 	async persistent_delete_trait(id: string): Promise<void> {
-		const trait = store.traits.get(id);
+		const trait = this.hierarchy.traits.get(id);
 		if (!trait) return;
 		const traitsCollection = this.bulk_forID(trait.idBase)?.traitsCollection;
 		if (!traitsCollection) return;
@@ -546,7 +545,7 @@ export class DB_Firebase extends DB_Common {
 	// ————————————————————————————————————————— CRUD: Tag
 
 	async persistent_create_tag(id: string): Promise<void> {
-		const tag = store.tags.get(id);
+		const tag = this.hierarchy.tags.get(id);
 		if (!tag) return;
 		const tagsCollection = this.bulk_forID(tag.idBase)?.tagsCollection;
 		if (!tagsCollection) return;
@@ -557,9 +556,9 @@ export class DB_Firebase extends DB_Common {
 		tag.persistence.awaiting_remoteCreation = true;
 		try {
 			const ref = await addDoc(tagsCollection, { ...remoteTag });
-			store.tags.delete(tag.id);
+			this.hierarchy.tags.delete(tag.id);
 			tag.setID(ref.id);
-			store.tags.set(tag.id, tag);
+			this.hierarchy.tags.set(tag.id, tag);
 		} catch (error) {
 			console.error('DB_Firebase create tag error:', error);
 		}
@@ -569,7 +568,7 @@ export class DB_Firebase extends DB_Common {
 	}
 
 	async persistent_update_tag(id: string): Promise<void> {
-		const tag = store.tags.get(id);
+		const tag = this.hierarchy.tags.get(id);
 		if (!tag) return;
 		const tagsCollection = this.bulk_forID(tag.idBase)?.tagsCollection;
 		if (!tagsCollection) return;
@@ -582,7 +581,7 @@ export class DB_Firebase extends DB_Common {
 	}
 
 	async persistent_delete_tag(id: string): Promise<void> {
-		const tag = store.tags.get(id);
+		const tag = this.hierarchy.tags.get(id);
 		if (!tag) return;
 		const tagsCollection = this.bulk_forID(tag.idBase)?.tagsCollection;
 		if (!tagsCollection) return;
@@ -597,7 +596,7 @@ export class DB_Firebase extends DB_Common {
 	// ————————————————————————————————————————— CRUD: Predicate
 
 	async persistent_create_predicate(id: string): Promise<void> {
-		const predicate = store.predicates.get(id);
+		const predicate = this.hierarchy.predicates.get(id);
 		if (!predicate) return;
 		if (!this.predicatesCollection) return;
 
@@ -606,9 +605,9 @@ export class DB_Firebase extends DB_Common {
 		predicate.persistence.awaiting_remoteCreation = true;
 		try {
 			const ref = await addDoc(this.predicatesCollection, { ...remotePredicate });
-			store.predicates.delete(predicate.id);
+			this.hierarchy.predicates.delete(predicate.id);
 			predicate.setID(ref.id);
-			store.predicates.set(predicate.id, predicate);
+			this.hierarchy.predicates.set(predicate.id, predicate);
 		} catch (error) {
 			console.error('DB_Firebase create predicate error:', error);
 		}
@@ -620,7 +619,7 @@ export class DB_Firebase extends DB_Common {
 	// ————————————————————————————————————————— CRUD: Relationship
 
 	async persistent_create_relationship(id: string): Promise<void> {
-		const relationship = store.relationships.get(id);
+		const relationship = this.hierarchy.relationships.get(id);
 		if (!relationship) return;
 		const relationshipsCollection = this.bulk_forID(relationship.idBase)?.relationshipsCollection;
 		if (!relationshipsCollection) return;
@@ -640,9 +639,9 @@ export class DB_Firebase extends DB_Common {
 		relationship.persistence.awaiting_remoteCreation = true;
 		try {
 			const ref = await addDoc(relationshipsCollection, jsRelationship);
-			store.relationships.delete(relationship.id);
+			this.hierarchy.relationships.delete(relationship.id);
 			relationship.setID(ref.id);
-			store.relationships.set(relationship.id, relationship);
+			this.hierarchy.relationships.set(relationship.id, relationship);
 		} catch (error) {
 			console.error('DB_Firebase create relationship error:', error);
 		}
@@ -652,7 +651,7 @@ export class DB_Firebase extends DB_Common {
 	}
 
 	async persistent_update_relationship(id: string): Promise<void> {
-		const relationship = store.relationships.get(id);
+		const relationship = this.hierarchy.relationships.get(id);
 		if (!relationship) return;
 		const relationshipsCollection = this.bulk_forID(relationship.idBase)?.relationshipsCollection;
 		if (!relationshipsCollection) return;
@@ -673,7 +672,7 @@ export class DB_Firebase extends DB_Common {
 	}
 
 	async persistent_delete_relationship(id: string): Promise<void> {
-		const relationship = store.relationships.get(id);
+		const relationship = this.hierarchy.relationships.get(id);
 		if (!relationship) return;
 		const relationshipsCollection = this.bulk_forID(relationship.idBase)?.relationshipsCollection;
 		if (!relationshipsCollection) return;

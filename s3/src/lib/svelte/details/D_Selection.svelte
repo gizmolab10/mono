@@ -1,14 +1,14 @@
 <script lang='ts'>
-	import { ux }    from '../../state/ux.svelte';
-	import { store } from '../../store/store.svelte';
-	import { k }     from '../../common/Constants';
+	import { ux }        from '../../state/ux.svelte';
+	import { databases } from '../../db/Databases.svelte';
+	import { k }         from '../../common/Constants';
 
 	let ancestry  = $derived(ux.ancestry_forDetails);
 	let thing     = $derived(ancestry?.thing ?? null);
 	let grabs     = $derived(ux.grabs);
 
-	let children_count = $derived(thing ? store.children_of(thing.id).length : 0);
-	let parents_count  = $derived(thing ? store.parents_of(thing.id).length : 0);
+	let children_count = $derived(thing ? databases.hierarchy.children_of(thing.id).length : 0);
+	let parents_count  = $derived(thing ? databases.hierarchy.parents_of(thing.id).length : 0);
 
 	let characteristics = $derived(thing ? [
 		['title',    thing.title],

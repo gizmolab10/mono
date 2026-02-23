@@ -1,8 +1,7 @@
 import { T_Persistence, T_Startup } from '../common/Enumerations';
-import { startup }                  from '../state/startup.svelte';
-import { store }                    from '../store/store.svelte';
-import { ux }                       from '../state/ux.svelte';
-import { rootAncestry }             from '../nav/Ancestry';
+import { Hierarchy }               from '../hierarchy/Hierarchy.svelte';
+import { startup }                 from '../state/startup.svelte';
+import { ux }                      from '../state/ux.svelte';
 
 export enum T_Database {
 	test      = 'test',
@@ -16,6 +15,8 @@ export abstract class DB_Common {
 	abstract t_database:    T_Database;
 	abstract idBase:        string;
 
+	has_fetched = false;
+	hierarchy   = new Hierarchy();
 	private persistTimer: ReturnType<typeof setTimeout> | null = null;
 
 	// ————————————————————————————————————————— Fetch
@@ -49,27 +50,28 @@ export abstract class DB_Common {
 	}
 
 	async persist_all(): Promise<void> {
-		for (const t of store.things.values()) {
+		const h = this.hierarchy;
+		for (const t of h.things.values()) {
 			if (!t.persistence.isDirty) continue;
 			await (t.already_persisted ? this.persistent_update_thing(t.id) : this.persistent_create_thing(t.id));
 			t.set_isDirty(false);
 		}
-		for (const r of store.relationships.values()) {
+		for (const r of h.relationships.values()) {
 			if (!r.persistence.isDirty) continue;
 			await (r.already_persisted ? this.persistent_update_relationship(r.id) : this.persistent_create_relationship(r.id));
 			r.set_isDirty(false);
 		}
-		for (const p of store.predicates.values()) {
+		for (const p of h.predicates.values()) {
 			if (!p.persistence.isDirty) continue;
 			await this.persistent_create_predicate(p.id);
 			p.set_isDirty(false);
 		}
-		for (const t of store.traits.values()) {
+		for (const t of h.traits.values()) {
 			if (!t.persistence.isDirty) continue;
 			await (t.already_persisted ? this.persistent_update_trait(t.id) : this.persistent_create_trait(t.id));
 			t.set_isDirty(false);
 		}
-		for (const g of store.tags.values()) {
+		for (const g of h.tags.values()) {
 			if (!g.persistence.isDirty) continue;
 			await (g.already_persisted ? this.persistent_update_tag(g.id) : this.persistent_create_tag(g.id));
 			g.set_isDirty(false);
@@ -84,15 +86,16 @@ export abstract class DB_Common {
 
 	async hierarchy_setup_fetch_andBuild(): Promise<void> {
 		startup.t_startup = T_Startup.fetch;
-		store.forget_all();
 		await this.fetch_all();
 
-		if (store.things.size === 0) {
+		if (this.hierarchy.things.size === 0) {
 			startup.t_startup = T_Startup.empty;
 		} else {
 			await this.persist_all();
+			const { rootAncestry } = await import('../nav/Ancestry');
 			ux.becomeFocus(rootAncestry);
 			startup.t_startup = T_Startup.ready;
+			this.has_fetched = true;
 		}
 	}
 }

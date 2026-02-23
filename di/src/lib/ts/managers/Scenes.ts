@@ -66,9 +66,11 @@ class Scenes {
 	}
 
 	load(): Portable_Scene | null {
-		const saved = preferences.read<Portable_Scene>(T_Preference.scene);
+		const saved = preferences.read<unknown>(T_Preference.scene);
 		if (saved) {
-			const migrated = this.migrate(saved);
+			const validated = this.validate_import(saved);
+			if (!validated) return null;
+			const migrated = this.migrate(validated.scene, validated.version);
 			this.restore_constants(migrated);
 			return migrated;
 		}
@@ -77,7 +79,7 @@ class Scenes {
 			const parsed = JSON.parse(default_scene);
 			const validated = this.validate_import(parsed);
 			if (!validated) return null;
-			const migrated = this.migrate(validated.scene);
+			const migrated = this.migrate(validated.scene, validated.version);
 			this.restore_constants(migrated);
 			return migrated;
 		} catch {
@@ -113,7 +115,7 @@ class Scenes {
 			selected_id: sel?.so.id,
 			selected_face: sel?.type === T_Hit_3D.face ? sel.index : undefined,
 		};
-		preferences.write(T_Preference.scene, data);
+		preferences.write(T_Preference.scene, { version: CURRENT_VERSION, scene: data } as Exported_File);
 	}
 
 	// ── file export/import ──
@@ -229,7 +231,8 @@ class Scenes {
 					const parsed = JSON.parse(text);
 					const imported = this.validate_import(parsed);
 					if (!imported) return;
-					preferences.write(T_Preference.scene, this.migrate(imported.scene));
+					const migrated = this.migrate(imported.scene, imported.version);
+					preferences.write(T_Preference.scene, { version: CURRENT_VERSION, scene: migrated } as Exported_File);
 					location.reload();
 				} catch (error) {
 					console.error('Import failed:', error);
@@ -267,7 +270,8 @@ class Scenes {
 			const parsed = JSON.parse(text);
 			const imported = this.validate_import(parsed);
 			if (!imported) return;
-			preferences.write(T_Preference.scene, this.migrate(imported.scene));
+			const migrated = this.migrate(imported.scene, imported.version);
+			preferences.write(T_Preference.scene, { version: CURRENT_VERSION, scene: migrated } as Exported_File);
 			location.reload();
 		} catch (error) {
 			console.error('Load failed:', error);
@@ -280,49 +284,60 @@ class Scenes {
 			const parsed = JSON.parse(text);
 			const imported = this.validate_import(parsed);
 			if (!imported) return null;
-			return this.migrate(imported.scene);
+			return this.migrate(imported.scene, imported.version);
 		} catch {
 			return null;
 		}
 	}
 
 	// ── migration ──
-	// Detect shape and convert to current Portable_Scene.
-	// Legacy: SO has `bounds` field.  Current: SO has `x`, `y`, `z` fields.
+	// Version-based chain. Each step upgrades from version N to N+1.
+	// Version comes from Exported_File wrapper (files) or CURRENT_VERSION fallback (bare localStorage).
 
-	private migrate(raw: unknown): Portable_Scene {
-		const data = raw as Record<string, unknown>;
-		const sos = data.smart_objects as Record<string, unknown>[];
+	private migrate(raw: unknown, version: string): Portable_Scene {
+		const v = parseInt(version) || 0;
+		if (v >= parseInt(CURRENT_VERSION)) return raw as Portable_Scene;
+
+		let data = raw as Record<string, unknown>;
+		let sos = data.smart_objects as Record<string, unknown>[];
 		if (!sos?.length) return raw as Portable_Scene;
 
-		// Legacy shape — has `bounds`
-		if ('bounds' in sos[0]) {
-			return this.migrate_to_offsets(this.migrate_legacy(data, sos as unknown as Portable_SO_v2[]));
+		// v1/v2 → v3: legacy bounds → axis format (includes ID minting for v1)
+		if (v < 3) {
+			const result = this.migrate_legacy(data, sos as unknown as Portable_SO_v2[]);
+			data = result as unknown as Record<string, unknown>;
+			sos = data.smart_objects as unknown as Record<string, unknown>[];
 		}
 
-		// v3 shape — attributes is an array, convert to v4 keyed object
-		if ('x' in sos[0] && 'y' in sos[0] && 'z' in sos[0]) {
-			const first_axis = (sos[0] as Record<string, unknown>).x as Record<string, unknown>;
-			if (Array.isArray(first_axis?.attributes)) {
-				for (const so of sos) {
-					for (const axis_name of ['x', 'y', 'z']) {
-						const axis = (so as Record<string, Record<string, unknown>>)[axis_name];
+		// v3 → v4: array attributes → keyed object
+		if (v < 4) {
+			for (const so of sos) {
+				for (const axis_name of ['x', 'y', 'z']) {
+					const axis = (so as Record<string, Record<string, unknown>>)[axis_name];
+					if (axis && Array.isArray(axis.attributes)) {
 						const arr = axis.attributes as Portable_Attribute[];
 						axis.attributes = { origin: arr[0], extent: arr[1], length: arr[2], angle: arr[3] };
 					}
 				}
-				// v4 → v5: convert absolute child values to offsets from parent
-				return this.migrate_to_offsets(raw as Portable_Scene);
 			}
 		}
 
-		// v5 → v6: rename standard_dimensions → constants
-		if ('standard_dimensions' in data && !('constants' in data)) {
-			data.constants = data.standard_dimensions;
-			delete data.standard_dimensions;
+		// v4 → v5: absolute child values → parent-relative offsets
+		if (v < 5) {
+			this.migrate_to_offsets(data as unknown as Portable_Scene);
 		}
 
-		return raw as Portable_Scene;
+		// v5 → v6: rename standard_dimensions → constants
+		if (v < 6) {
+			if ('standard_dimensions' in data) {
+				data.constants = data.standard_dimensions;
+				delete data.standard_dimensions;
+			}
+		}
+
+		// v6 → v7: repeater support — no data transformation needed
+
+		return data as unknown as Portable_Scene;
 	}
 
 	/** v4 → v5: child position values become offsets from parent.

@@ -2,6 +2,13 @@
 	import { T_Detail }  from '../../common/Enumerations';
 	import { colors }    from '../../colors/Colors.svelte';
 
+	const STORAGE_KEY = 's3-detail-visibility';
+
+	function load_visibility(): Record<string, boolean> {
+		try   { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}'); }
+		catch { return {}; }
+	}
+
 	let {
 		t_detail,
 		children,
@@ -13,10 +20,13 @@
 	let hasBanner = $derived(t_detail !== T_Detail.header);
 	let title     = $derived(T_Detail[t_detail]);
 
-	let isVisible = $state(true);
+	let isVisible = $state(load_visibility()[T_Detail[t_detail]] ?? true);
 
 	function toggle() {
 		isVisible = !isVisible;
+		const saved = load_visibility();
+		saved[T_Detail[t_detail]] = isVisible;
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
 	}
 </script>
 

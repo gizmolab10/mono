@@ -196,6 +196,7 @@
 - di/notes/architecture/core/algebra.md
 - di/notes/architecture/core/managers.md
 - di/notes/architecture/core/versions.md
+- di/notes/architecture/core/migration.md
 - di/notes/architecture/graph/index.md
 - di/notes/architecture/graph/3D.primer.md
 - di/notes/architecture/graph/drag.md

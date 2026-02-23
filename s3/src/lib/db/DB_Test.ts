@@ -3,7 +3,6 @@ import { T_Persistence, T_Predicate, T_Thing }   from '../common/Enumerations';
 import { Thing }                                  from '../entities/Thing';
 import { Relationship }                           from '../entities/Relationship';
 import { Predicate }                              from '../entities/Predicate';
-import { store }                                  from '../store/store.svelte';
 
 const BASE = 'test';
 
@@ -35,7 +34,7 @@ export class DB_Test extends DB_Common {
 		];
 
 		for (const [id, title, color, t_thing] of things) {
-			store.remember_thing(new Thing(BASE, id, title, color, t_thing ?? T_Thing.generic));
+			this.hierarchy.remember_thing(new Thing(BASE, id, title, color, t_thing ?? T_Thing.generic));
 		}
 
 		// ————————————————————————————————————————— Relationships
@@ -58,7 +57,7 @@ export class DB_Test extends DB_Common {
 		];
 
 		for (const [id, parent, child] of edges) {
-			store.remember_relationship(new Relationship(BASE, id, T_Predicate.contains, parent, child, [0, 0]));
+			this.hierarchy.remember_relationship(new Relationship(BASE, id, T_Predicate.contains, parent, child, [0, 0]));
 		}
 
 		// ————————————————————————————————————————— Predicates
@@ -75,7 +74,7 @@ export class DB_Test extends DB_Common {
 		];
 
 		for (const [kind, bidir] of predicateKinds) {
-			store.remember_predicate(new Predicate(kind, kind, bidir));
+			this.hierarchy.remember_predicate(new Predicate(kind, kind, bidir));
 		}
 	}
 }

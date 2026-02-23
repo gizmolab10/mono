@@ -155,3 +155,4 @@
 - [x] when resizing root change = 2 times mouse drag
 - [x] change "selection" to "smart object" and D_Selection -> D_Smart_Object
 - [x] move instructions (above) for configuring repeaters -> mono/di/notes/user manual/repeaters.md
+- [x] rename list -> hierarchy
