@@ -231,18 +231,19 @@ Spec: [5.1 hierarchy.md](./subsystems/5.1%20hierarchy.md), [11 database.md](./su
 
 Each DB owns its Hierarchy. Single pointer swap on DB switch. Firebase snapshots write to their own Hierarchy, not a global store.
 
-- [ ] Create `hierarchy/Hierarchy.svelte.ts` — rename `S_Store` → `Hierarchy`, class export only (no singleton)
-- [ ] `DB_Common`: add `hierarchy = new Hierarchy()`, drop 5 duplicate plain Maps, drop `assign_to_store()`
-- [ ] `Databases.svelte.ts`: add `get hierarchy()` shorthand, simplify `change_database` to pointer swap + `becomeFocus`
-- [ ] `DB_Firebase.ts`: all `store.*` → `this.hierarchy.*` (~40 refs)
-- [ ] `DB_Test.ts`: `store.*` → `this.hierarchy.*`
-- [ ] Consumers (`Ancestry.ts`, `D_Data.svelte`, `Events.svelte.ts`): `store.*` → `databases.hierarchy.*`
-- [ ] Delete `store/store.svelte.ts`
-- [ ] Move `store/store.test.ts` → `hierarchy/Hierarchy.test.ts`, instantiate per test
-- [ ] Verify: `yarn svelte-check && yarn vitest`
+- [x] Create `hierarchy/Hierarchy.svelte.ts` — rename `S_Store` → `Hierarchy`, class export only (no singleton)
+- [x] `DB_Common`: add `hierarchy = new Hierarchy()`, drop 5 duplicate plain Maps, drop `assign_to_store()`
+- [x] `Databases.svelte.ts`: add `get hierarchy()` shorthand, simplify `change_database` to pointer swap + `becomeFocus`
+- [x] `DB_Firebase.ts`: all `store.*` → `this.hierarchy.*` (~40 refs)
+- [x] `DB_Test.ts`: `store.*` → `this.hierarchy.*`
+- [x] Consumers (`Ancestry.ts`, `D_Data.svelte`, `D_Selection.svelte`): `store.*` → `databases.hierarchy.*`
+- [x] Delete `store/store.svelte.ts`
+- [x] Move `store/store.test.ts` → `hierarchy/Hierarchy.test.ts`, instantiate per test
+- [x] Verify: `yarn svelte-check && yarn vitest`
 
 ### Phase 9.1 -- code debt
 
+- [ ] children -> left align
 - [ ] actions buttons ignored
 - [ ] add html standard color picker
 	- [ ] make sure banners are obvious

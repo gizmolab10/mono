@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { rootAncestry } from '../../nav/Ancestry';
+	import { Ancestry }     from '../../nav/Ancestry';
 	import { g_treeGraph }  from '../../geometry/G_TreeGraph.svelte';
 	import { ux }           from '../../state/ux.svelte';
 	import Tree_Branches    from './Tree_Branches.svelte';
@@ -7,7 +7,7 @@
 
 	let graphElement: HTMLDivElement;
 
-	const focus       = $derived(ux.ancestry_focus ?? rootAncestry);
+	const focus       = $derived(ux.ancestry_focus ?? Ancestry.root);
 	const depth       = $derived(ux.global_depth_limit);
 	const focusCenter = $derived(g_treeGraph.focus_center);
 

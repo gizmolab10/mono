@@ -1,9 +1,9 @@
-import type { DocumentData, DocumentReference } from 'firebase/firestore';
 import { T_Thing, T_Trait, T_Predicate, T_Persistable } from '../common/Enumerations';
+import type { DocumentData, DocumentReference } from 'firebase/firestore';
+import type { Predicate }    from '../entities/Predicate';
 import type { Thing }        from '../entities/Thing';
 import type { Trait }        from '../entities/Trait';
 import type { Tag }          from '../entities/Tag';
-import type { Predicate }    from '../entities/Predicate';
 import type { Integer }      from '../types/Types';
 
 // ————————————————————————————————————————— PersistentThing

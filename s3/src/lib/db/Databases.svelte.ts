@@ -55,8 +55,8 @@ class S_Databases {
 		localStorage.setItem(DB_STORAGE_KEY, t_database);
 		this.db = this.db_forType(t_database);
 		if (this.db.has_fetched) {
-			const { rootAncestry } = await import('../nav/Ancestry');
-			ux.becomeFocus(rootAncestry);
+			const { Ancestry } = await import('../nav/Ancestry');
+			ux.becomeFocus(Ancestry.root);
 		} else {
 			await this.db.hierarchy_setup_fetch_andBuild();
 		}

@@ -1,32 +1,9 @@
-import '../common/Extensions';
+import { T_Thing, T_Predicate }  from '../common/Enumerations';
 import { databases }             from '../db/Databases.svelte';
 import { ux }                    from '../state/ux.svelte';
-import { T_Thing, T_Predicate }  from '../common/Enumerations';
 import type { Thing }            from '../entities/Thing';
 import type { Integer }          from '../types/Types';
-
-// ————————————————————————————————————————— Cache
-
-const cache = new Map<Integer, Ancestry>();
-
-export function ancestry_remember_createUnique(path: string = ''): Ancestry {
-	const hid      = path.hash();
-	const existing = cache.get(hid);
-	if (existing) return existing;
-	const ancestry = new Ancestry(path);
-	cache.set(hid, ancestry);
-	return ancestry;
-}
-
-export function ancestry_forget(ancestry: Ancestry): void {
-	cache.delete(ancestry.hid);
-}
-
-export function ancestry_forget_all(): void {
-	cache.clear();
-}
-
-// ————————————————————————————————————————— Class
+import '../common/Extensions';
 
 export class Ancestry {
 	readonly id:  string;
@@ -36,6 +13,29 @@ export class Ancestry {
 		this.id  = id;
 		this.hid = id.hash();
 	}
+
+	// ————————————————————————————————————————— Cache (static)
+
+	private static cache = new Map<Integer, Ancestry>();
+
+	static remember_createUnique(path: string = ''): Ancestry {
+		const hid      = path.hash();
+		const existing = Ancestry.cache.get(hid);
+		if (existing) return existing;
+		const ancestry = new Ancestry(path);
+		Ancestry.cache.set(hid, ancestry);
+		return ancestry;
+	}
+
+	static forget(ancestry: Ancestry): void {
+		Ancestry.cache.delete(ancestry.hid);
+	}
+
+	static forget_all(): void {
+		Ancestry.cache.clear();
+	}
+
+	static readonly root = Ancestry.remember_createUnique('');
 
 	// ————————————————————————————————————————— Identity
 
@@ -78,7 +78,7 @@ export class Ancestry {
 		if (this.isRoot) return this;
 		const parts = this.id.split('/');
 		parts.pop();
-		return ancestry_remember_createUnique(parts.join('/'));
+		return Ancestry.remember_createUnique(parts.join('/'));
 	}
 
 	get branchAncestries(): Ancestry[] {
@@ -90,7 +90,7 @@ export class Ancestry {
 			for (const rel of databases.hierarchy.relationships.values()) {
 				if (rel.idParent === t.id && rel.idChild === child.id && rel.kind === T_Predicate.contains) {
 					const childPath = this.isRoot ? rel.id : `${this.id}/${rel.id}`;
-					result.push(ancestry_remember_createUnique(childPath));
+					result.push(Ancestry.remember_createUnique(childPath));
 					break;
 				}
 			}
@@ -111,8 +111,8 @@ export class Ancestry {
 	ancestry_createUnique_byStrippingBack(back: number): Ancestry {
 		if (back === 0) return this;
 		const parts = this.id.split('/');
-		if (back >= parts.length) return ancestry_remember_createUnique('');
-		return ancestry_remember_createUnique(parts.slice(0, parts.length - back).join('/'));
+		if (back >= parts.length) return Ancestry.remember_createUnique('');
+		return Ancestry.remember_createUnique(parts.slice(0, parts.length - back).join('/'));
 	}
 
 	incorporates(other: Ancestry | null): boolean {
@@ -159,5 +159,3 @@ export class Ancestry {
 		return this.shows_children;
 	}
 }
-
-export const rootAncestry = ancestry_remember_createUnique('');

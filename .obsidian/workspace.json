@@ -323,12 +323,13 @@
       }
     ]
   },
-  "active": "9dbe779e15477a75",
+  "active": "7b3dd22ddc904f12",
   "lastOpenFiles": [
-    "di/notes/work/code.debt.md",
-    "di/notes/work/collaboration priorities.md",
-    "di/notes/architecture/core/migration.md",
+    "s3/notes/work/revisit.s3.md",
     "s3/notes/work/fresh.build.md",
+    "di/notes/work/collaboration priorities.md",
+    "di/notes/work/code.debt.md",
+    "di/notes/architecture/core/migration.md",
     "s3/src/lib/hierarchy/Hierarchy.test.ts",
     "s3/src/lib/hierarchy/Hierarchy.svelte.ts",
     "s3/src/lib/hierarchy",
@@ -336,7 +337,6 @@
     "s3/notes/work/subsystems/11 database.md",
     "di/notes/work/milestones/20.repeaters.md",
     "di/notes/work/more milestones.md",
-    "s3/notes/work/revisit.s3.md",
     "s3/notes/work/subsystems/5 hierarchy.md",
     "di/notes/work/done/code.debt.done.md",
     "s3/src/lib/db/DB_Common.ts.tmp.45250.1771812644471",

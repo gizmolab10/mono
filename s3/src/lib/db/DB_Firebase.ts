@@ -1,20 +1,20 @@
 import { doc, addDoc, setDoc, getDocs, deleteDoc, collection, onSnapshot } from 'firebase/firestore';
-import { getFirestore, serverTimestamp }                                    from 'firebase/firestore';
-import type { DocumentData, DocumentChange, CollectionReference }          from 'firebase/firestore';
-import type { QuerySnapshot }                                              from 'firebase/firestore';
-import { initializeApp }                                                   from 'firebase/app';
-import { getAuth, signInAnonymously }                                      from 'firebase/auth';
-import { T_Persistence, T_Persistable, T_Thing, T_Predicate }             from '../common/Enumerations';
-import { DB_Common, T_Database }                                           from './DB_Common';
-import { PersistentThing, PersistentTrait, PersistentTag }                 from './Persistent';
 import { PersistentPredicate, PersistentRelationship, data_isValidOfKind } from './Persistent';
-import { Thing }                                                           from '../entities/Thing';
+import type { DocumentData, DocumentChange, CollectionReference }          from 'firebase/firestore';
+import { T_Persistence, T_Persistable, T_Thing, T_Predicate }              from '../common/Enumerations';
+import { PersistentThing, PersistentTrait, PersistentTag }                 from './Persistent';
+import { getFirestore, serverTimestamp }                                   from 'firebase/firestore';
+import { getAuth, signInAnonymously }                                      from 'firebase/auth';
+import { DB_Common, T_Database }                                           from './DB_Common';
+import type { QuerySnapshot }                                              from 'firebase/firestore';
+import type { Dictionary }                                                 from '../types/Types';
+import { initializeApp }                                                   from 'firebase/app';
 import { Relationship }                                                    from '../entities/Relationship';
+import { Identifiable }                                                    from '../entities/Identifiable';
 import { Predicate }                                                       from '../entities/Predicate';
 import { Trait }                                                           from '../entities/Trait';
+import { Thing }                                                           from '../entities/Thing';
 import { Tag }                                                             from '../entities/Tag';
-import { Identifiable }                                                    from '../entities/Identifiable';
-import type { Dictionary }                                                 from '../types/Types';
 
 // ————————————————————————————————————————— Bulk
 
@@ -56,9 +56,9 @@ export class DB_Firebase extends DB_Common {
 		apiKey:            'AIzaSyAFy4H3Ej5zfI46fvCJpBfUxmyQco-dx9U',
 		authDomain:        'seriously-4536d.firebaseapp.com',
 		storageBucket:     'seriously-4536d.appspot.com',
+		projectId:         'seriously-4536d',
 		messagingSenderId: '224721814373',
 		measurementId:     'G-9PY9LVK813',
-		projectId:         'seriously-4536d',
 	};
 
 	private app       = initializeApp(this.config);

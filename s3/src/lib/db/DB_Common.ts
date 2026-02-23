@@ -92,8 +92,8 @@ export abstract class DB_Common {
 			startup.t_startup = T_Startup.empty;
 		} else {
 			await this.persist_all();
-			const { rootAncestry } = await import('../nav/Ancestry');
-			ux.becomeFocus(rootAncestry);
+			const { Ancestry } = await import('../nav/Ancestry');
+			ux.becomeFocus(Ancestry.root);
 			startup.t_startup = T_Startup.ready;
 			this.has_fetched = true;
 		}
