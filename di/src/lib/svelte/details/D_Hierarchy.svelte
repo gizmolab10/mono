@@ -1,11 +1,25 @@
 <script lang='ts'>
 	import { T_Hit_3D } from '../../ts/types/Enumerations';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { w_unit_system } from '../../ts/types/Units';
-	import { hits_3d, stores } from '../../ts/managers';
+	import { hits_3d, scenes, stores } from '../../ts/managers';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { units } from '../../ts/types/Units';
+	import { engine } from '../../ts/render';
 
-	const { w_all_sos, w_selection, w_tick, w_precision } = stores;
+	const { w_all_sos, w_selection, w_tick, w_precision, w_root_so } = stores;
+
+	let selected_so = $derived($w_selection?.so ?? $w_root_so);
+	let is_root = $derived(!selected_so?.scene?.parent);
+	let has_children = $derived($w_all_sos.some(so => so.scene?.parent?.so === selected_so));
+	let visible_label = $derived(selected_so?.visible === false ? 'show' : 'hide');
+
+	function toggle_visible() {
+		if (!selected_so) return;
+		selected_so.visible = !selected_so.visible;
+		stores.tick();
+		scenes.save();
+	}
 
 	let show_position = true;
 
@@ -77,6 +91,12 @@
 	{/each}
 </tbody></table>
 
+<div class='actions-row'>
+	<button class='action-btn' disabled={!has_children} use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>delete all children</button>
+	<button class='action-btn' disabled={is_root} use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_selected() }}>duplicate</button>
+	<button class='action-btn' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>{visible_label}</button>
+</div>
+
 <style>
 	.hierarchy {
 		width           : 100%;
@@ -136,5 +156,35 @@
 		font-variant-numeric : tabular-nums;
 		color                : black;
 		white-space          : nowrap;
+	}
+
+	.actions-row {
+		display    : flex;
+		gap        : 6px;
+		margin-top : 8px;
+	}
+
+	.action-btn {
+		border        : 0.5px solid currentColor;
+		box-sizing    : border-box;
+		cursor        : pointer;
+		color         : inherit;
+		background    : white;
+		padding       : 0 8px;
+		border-radius : 10px;
+		font-size     : 11px;
+		height        : 20px;
+		white-space   : nowrap;
+	}
+
+	.action-btn:disabled {
+		opacity        : 0.3;
+		cursor         : default;
+		pointer-events : none;
+	}
+
+	.action-btn:global([data-hitting]) {
+		background : var(--accent);
+		color      : black;
 	}
 </style>

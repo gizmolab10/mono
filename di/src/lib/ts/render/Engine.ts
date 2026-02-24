@@ -646,8 +646,118 @@ class Engine {
 		scenes.save();
 	}
 
-	// ── repeaters ──
+	/** Duplicate the selected SO (and its entire subtree) as a sibling under the same parent.
+	 *  Fresh IDs, offset along the largest axis so the clone is visible. */
+	duplicate_selected(): void {
+		const sel = stores.selection();
+		if (!sel) return;
+		const so = sel.so;
+		const parent_scene = so.scene?.parent;
+		if (!parent_scene) return;  // can't duplicate root
 
+		// Collect subtree: selected SO + all descendants
+		const all = scene.get_all();
+		const subtree: Smart_Object[] = [so];
+		for (const obj of all) {
+			let p = obj.parent;
+			while (p) {
+				if (p === so.scene) { subtree.push(obj.so); break; }
+				p = p.parent;
+			}
+		}
+
+		// Serialize each SO, mint fresh IDs
+		const old_to_new = new Map<string, string>();
+		const serialized: { data: ReturnType<Smart_Object['serialize']>; old_parent_id?: string }[] = [];
+		for (const s of subtree) {
+			const data = s.serialize();
+			const old_id = data.id;
+			const new_id = Smart_Object.newID();
+			old_to_new.set(old_id, new_id);
+			data.id = new_id;
+			const old_parent_id = s === so ? parent_scene.so.id : s.scene?.parent?.so.id;
+			serialized.push({ data, old_parent_id });
+		}
+
+		// Rename clone root to avoid collision
+		const used = new Set(all.map(o => o.so.name));
+		let name = serialized[0].data.name;
+		while (used.has(name)) name = name + "'";
+		serialized[0].data.name = name;
+
+		// Deserialize and wire hierarchy
+		const new_sos: Smart_Object[] = [];
+		for (const { data, old_parent_id } of serialized) {
+			const clone = Smart_Object.deserialize(data);
+			let clone_parent: O_Scene;
+			if (clone.id === old_to_new.get(so.id)) {
+				// Clone root — sibling of original, same parent
+				clone_parent = parent_scene;
+			} else {
+				// Descendant — find its new parent among already-created clones
+				const new_parent_id = old_parent_id ? old_to_new.get(old_parent_id) : undefined;
+				const parent = new_sos.find(s => s.id === new_parent_id);
+				if (!parent?.scene) continue;
+				clone_parent = parent.scene;
+			}
+
+			const clone_scene = scene.create({
+				so: clone,
+				edges: this.edges,
+				faces: this.faces,
+				color: colors.edge_color_rgba(),
+				parent: clone_parent,
+			});
+			clone.scene = clone_scene;
+			hits_3d.register(clone);
+			new_sos.push(clone);
+		}
+
+		// Offset clone root along its largest axis
+		if (new_sos.length) {
+			const clone_root = new_sos[0];
+			const dims = [clone_root.width, clone_root.depth, clone_root.height];
+			const largest = dims[0] >= dims[1] && dims[0] >= dims[2] ? 0 : dims[1] >= dims[2] ? 1 : 2;
+			clone_root.axes[largest].start.value += dims[largest];
+			clone_root.axes[largest].end.value += dims[largest];
+
+			// Rebind formulas (replace old IDs with new IDs in compiled refs and tokens)
+			for (const clone of new_sos) {
+				for (const attr of Object.values(clone.attributes_dict_byName)) {
+					if (attr.compiled) {
+						for (const [old_id, new_id] of old_to_new) {
+							attr.compiled = this.replace_reference_ids(attr.compiled, old_id, new_id);
+						}
+					}
+					if (attr.formula) {
+						for (const token of attr.formula) {
+							if (token.type === 'reference') {
+								const new_id = old_to_new.get(token.object);
+								if (new_id) token.object = new_id;
+							}
+						}
+					}
+				}
+				constraints.propagate(clone);
+			}
+
+			stores.w_all_sos.set(scene.get_all().map(o => o.so));
+			stores.tick();
+			scenes.save();
+		}
+	}
+
+	/** Replace all references to old_id with new_id in a compiled formula node. */
+	private replace_reference_ids(node: import('../algebra/Nodes').Node, old_id: string, new_id: string): import('../algebra/Nodes').Node {
+		switch (node.type) {
+			case 'literal': return node;
+			case 'reference': return node.object === old_id ? { ...node, object: new_id } : node;
+			case 'unary': return { ...node, operand: this.replace_reference_ids(node.operand, old_id, new_id) };
+			case 'binary': return { ...node, left: this.replace_reference_ids(node.left, old_id, new_id), right: this.replace_reference_ids(node.right, old_id, new_id) };
+		}
+	}
+
+	// ── repeaters ──
 
 	/** Swap two axes on a repeater SO and its template child.
 	 *  Serializes, rewrites formula aliases, deserializes into swapped positions.

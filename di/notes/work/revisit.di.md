@@ -2,7 +2,7 @@
 
 - [ ] Assume i have approved these:
 	- [ ] Keep the table below up to date
-	- [ ] Read [[code.debt]]
+	- [ ] Read [[di/notes/work/code.debt]]
 
 ---
 

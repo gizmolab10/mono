@@ -2,9 +2,12 @@
 	import { T_Decorations } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { stores } from '../../ts/managers/Stores';
+	import { scenes } from '../../ts/managers/Scenes';
 	import { colors } from '../../ts/draw/Colors';
 	import Slider from '../mouse/Slider.svelte';
 	import { engine } from '../../ts/render';
+
+	async function save() { await scenes.add_to_library(); }
 	const { w_text_color, w_background_color, w_accent_color } = colors;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details, w_front_face } = stores;
@@ -36,6 +39,7 @@
 			<rect x='2' y='14' width='16' height='2.5' rx='1.25'/>
 		</svg>
 	</button>
+	<button class='toolbar-btn' use:hit_target={{ id: 'save', onpress: save }}>save</button>
 	<span class='spacer'></span>
 	<div class='segmented'>
 		<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>

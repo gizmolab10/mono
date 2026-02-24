@@ -1,6 +1,8 @@
 <script lang='ts'>
+	import { tick }         from 'svelte';
 	import { Ancestry }     from '../../nav/Ancestry';
 	import { g_treeGraph }  from '../../geometry/G_TreeGraph.svelte';
+	import { hits }         from '../../managers/Hits.svelte';
 	import { ux }           from '../../state/ux.svelte';
 	import Tree_Branches    from './Tree_Branches.svelte';
 	import Widget           from './Widget.svelte';
@@ -10,6 +12,11 @@
 	const focus       = $derived(ux.ancestry_focus ?? Ancestry.root);
 	const depth       = $derived(ux.global_depth_limit);
 	const focusCenter = $derived(g_treeGraph.focus_center);
+
+	$effect(() => {
+		ux.expanded_hids;
+		tick().then(() => hits.recalibrate());
+	});
 
 	$effect(() => {
 		if (!graphElement) return;

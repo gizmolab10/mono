@@ -36,7 +36,8 @@
       "Bash(node_modules/.bin/svelte-check:*)",
       "Bash(yarn vite build:*)",
       "Bash(yarn --cwd s3 svelte-check:*)",
-      "Bash(yarn --cwd s3 vitest run:*)"
+      "Bash(yarn --cwd s3 vitest run:*)",
+      "Bash(yarn --cwd s3 vitest:*)"
     ]
   }
 }

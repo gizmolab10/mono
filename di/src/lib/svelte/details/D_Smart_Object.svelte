@@ -17,8 +17,6 @@
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
 	let is_root = $derived(!selected_so?.scene?.parent);
-	let has_children = $derived($w_all_sos.some(so => so.scene?.parent?.so === selected_so));
-
 	// Repeater state
 	function get_repeater(_tick: number) { return selected_so?.repeater ?? null; }
 	let is_repeater = $derived(get_repeater($w_tick) !== null);
@@ -146,8 +144,6 @@
 	let repeater_display = $derived(get_repeater_display(selected_so ?? undefined, $w_all_sos, $w_tick));
 
 	let tick = $derived(stores.is_editing() ? 0 : $w_tick);
-	function get_visible_label(_tick: number) { return selected_so?.visible === false ? 'show' : 'hide'; }
-	let visible_label = $derived(get_visible_label($w_tick));
 
 	function get_bounds(so: Smart_Object, _tick: number) {
 		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
@@ -276,13 +272,6 @@
 		scenes.save();
 	}
 
-	function toggle_visible() {
-		if (!selected_so) return;
-		selected_so.visible = !selected_so.visible;
-		stores.tick();
-		scenes.save();
-	}
-
 	function cell_keydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === 'Escape') {
 			(e.target as HTMLInputElement).blur();
@@ -348,11 +337,9 @@
 			onfocus   = {handle_name_focus}
 			onblur    = {handle_name_blur}
 		/>
-		<button class='action-btn' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>{visible_label}</button>
 	</div>
 	{#if is_repeater}
 		<div class='view-toggle'>
-			<button class='action-btn' disabled={!has_children} use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>delete all children</button>
 			<div class='segmented'>
 				<button class:active={view_mode === 'repeater'} onclick={() => view_mode = 'repeater'}>repeater</button>
 				<button class:active={view_mode === 'attributes'} onclick={show_attributes}>attributes</button>
@@ -360,7 +347,6 @@
 		</div>
 	{:else}
 		<div class='actions-row'>
-			<button class='action-btn' disabled={!has_children} use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>delete all children</button>
 			<button class='action-btn right' use:hit_target={{ id: 'repeat', onpress: init_repeater }}>repeat</button>
 		</div>
 	{/if}

@@ -8,8 +8,8 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 3860.7999999999997,
-            "length": 3860.7999999999997,
+            "extent": 2438.4,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 2
@@ -17,8 +17,8 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 3213.1,
-            "length": 3213.1,
+            "extent": 2438.4,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 2
@@ -26,8 +26,8 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 3632.2,
-            "length": 3632.2,
+            "extent": 2438.4,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 2
@@ -56,7 +56,7 @@
             "origin": {
               "formula": ".y"
             },
-            "extent": -3124.2,
+            "extent": -2349.5,
             "length": {
               "formula": "template_w"
             },
@@ -92,7 +92,7 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": -3822.7,
+            "extent": -2400.3,
             "length": {
               "formula": "tread_th"
             },
@@ -143,7 +143,7 @@
         },
         "y": {
           "attributes": {
-            "origin": 3124.2,
+            "origin": 2349.5,
             "extent": {
               "formula": ".d"
             },
@@ -182,7 +182,7 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": -3822.7,
+            "extent": -2400.3,
             "length": {
               "formula": "tread_th"
             },
@@ -223,7 +223,7 @@
             "origin": {
               "formula": ".x"
             },
-            "extent": -3771.8999999999996,
+            "extent": -2349.5,
             "length": {
               "formula": "template_w"
             },
@@ -283,7 +283,7 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": -3175,
+            "extent": -2400.3,
             "length": {
               "formula": "tread_th"
             },
@@ -320,7 +320,7 @@
         "y": {
           "attributes": {
             "origin": 406.4,
-            "extent": -2768.6,
+            "extent": -1993.9,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -330,7 +330,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -353,7 +353,7 @@
         "y": {
           "attributes": {
             "origin": 812.8,
-            "extent": -2362.2,
+            "extent": -1587.5000000000002,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -363,73 +363,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di554d5ca12a0ac8"
-      },
-      {
-        "id": "di194e07b22f9a79",
-        "name": "[",
-        "x": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 1219.1999999999998,
-            "extent": -1955.8000000000002,
-            "length": 38.099999999999994,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 3632.2,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di554d5ca12a0ac8"
-      },
-      {
-        "id": "di624ad5b2464fcb",
-        "name": "\\",
-        "x": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 1625.6,
-            "extent": -1549.4,
-            "length": 38.099999999999994,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -443,7 +377,7 @@
         "x": {
           "attributes": {
             "origin": 406.4,
-            "extent": -3416.2999999999997,
+            "extent": -1993.9,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -462,7 +396,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -476,7 +410,7 @@
         "x": {
           "attributes": {
             "origin": 812.8,
-            "extent": -3009.8999999999996,
+            "extent": -1587.5000000000002,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -495,7 +429,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -509,7 +443,7 @@
         "x": {
           "attributes": {
             "origin": 406.4,
-            "extent": -3416.2999999999997,
+            "extent": -1993.9,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -528,7 +462,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -542,7 +476,7 @@
         "x": {
           "attributes": {
             "origin": 812.8,
-            "extent": -3009.8999999999996,
+            "extent": -1587.5000000000002,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -561,7 +495,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -575,7 +509,7 @@
         "x": {
           "attributes": {
             "origin": 1219.1999999999998,
-            "extent": -2603.5,
+            "extent": -1181.1000000000004,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -594,7 +528,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -608,7 +542,7 @@
         "x": {
           "attributes": {
             "origin": 1625.6,
-            "extent": -2197.1,
+            "extent": -774.7000000000003,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -627,7 +561,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -641,7 +575,7 @@
         "x": {
           "attributes": {
             "origin": 1219.1999999999998,
-            "extent": -2603.5,
+            "extent": -1181.1000000000004,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -660,7 +594,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -674,7 +608,7 @@
         "x": {
           "attributes": {
             "origin": 1625.6,
-            "extent": -2197.1,
+            "extent": -774.7000000000003,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -693,7 +627,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -707,7 +641,7 @@
         "x": {
           "attributes": {
             "origin": 2032,
-            "extent": -1790.6999999999998,
+            "extent": -368.3000000000002,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -726,7 +660,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -739,8 +673,8 @@
         "name": "J",
         "x": {
           "attributes": {
-            "origin": 2438.3999999999996,
-            "extent": -1384.3000000000002,
+            "origin": 2400.3,
+            "extent": 0,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -759,7 +693,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -773,7 +707,7 @@
         "x": {
           "attributes": {
             "origin": 2032,
-            "extent": -1790.6999999999998,
+            "extent": -368.3000000000002,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -792,7 +726,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -805,8 +739,8 @@
         "name": "L",
         "x": {
           "attributes": {
-            "origin": 2438.3999999999996,
-            "extent": -1384.3000000000002,
+            "origin": 2400.3,
+            "extent": 0,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -825,7 +759,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -838,9 +772,9 @@
         "name": "M",
         "x": {
           "attributes": {
-            "origin": 2844.7999999999997,
-            "extent": -977.9000000000001,
-            "length": 38.099999999999994,
+            "origin": 38.09999999999991,
+            "extent": -2032,
+            "length": 368.30000000000007,
             "angle": 0
           },
           "invariant": 1
@@ -856,9 +790,9 @@
         },
         "z": {
           "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 3632.2,
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
@@ -871,9 +805,9 @@
         "name": "N",
         "x": {
           "attributes": {
-            "origin": 3251.2,
-            "extent": -571.5,
-            "length": 38.099999999999994,
+            "origin": 444.4999999999999,
+            "extent": -1625.6000000000001,
+            "length": 368.30000000000007,
             "angle": 0
           },
           "invariant": 1
@@ -889,9 +823,9 @@
         },
         "z": {
           "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 3632.2,
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
@@ -904,9 +838,9 @@
         "name": "O",
         "x": {
           "attributes": {
-            "origin": 2844.7999999999997,
-            "extent": -977.9000000000001,
-            "length": 38.099999999999994,
+            "origin": 38.09999999999991,
+            "extent": -2032,
+            "length": 368.30000000000007,
             "angle": 0
           },
           "invariant": 1
@@ -922,9 +856,9 @@
         },
         "z": {
           "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 3632.2,
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
@@ -937,9 +871,9 @@
         "name": "P",
         "x": {
           "attributes": {
-            "origin": 3251.2,
-            "extent": -571.5,
-            "length": 38.099999999999994,
+            "origin": 444.4999999999999,
+            "extent": -1625.6000000000001,
+            "length": 368.30000000000007,
             "angle": 0
           },
           "invariant": 1
@@ -955,9 +889,9 @@
         },
         "z": {
           "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 3632.2,
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
@@ -970,9 +904,9 @@
         "name": "Q",
         "x": {
           "attributes": {
-            "origin": 3657.6,
-            "extent": -165.0999999999999,
-            "length": 38.099999999999994,
+            "origin": 850.8999999999999,
+            "extent": -1219.2000000000003,
+            "length": 368.30000000000007,
             "angle": 0
           },
           "invariant": 1
@@ -988,9 +922,9 @@
         },
         "z": {
           "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 3632.2,
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
@@ -1003,9 +937,9 @@
         "name": "R",
         "x": {
           "attributes": {
-            "origin": 3657.6,
-            "extent": -165.0999999999999,
-            "length": 38.099999999999994,
+            "origin": 850.8999999999999,
+            "extent": -1219.2000000000003,
+            "length": 368.30000000000007,
             "angle": 0
           },
           "invariant": 1
@@ -1021,9 +955,9 @@
         },
         "z": {
           "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 3632.2,
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
@@ -1036,9 +970,9 @@
         "name": "S",
         "x": {
           "attributes": {
-            "origin": 3822.7,
-            "extent": 0,
-            "length": 38.099999999999994,
+            "origin": 1257.2999999999997,
+            "extent": -812.8000000000002,
+            "length": 368.30000000000007,
             "angle": 0
           },
           "invariant": 1
@@ -1054,9 +988,9 @@
         },
         "z": {
           "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 3632.2,
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
@@ -1069,9 +1003,9 @@
         "name": "T",
         "x": {
           "attributes": {
-            "origin": 3822.7,
-            "extent": 0,
-            "length": 38.099999999999994,
+            "origin": 1257.2999999999997,
+            "extent": -812.8000000000002,
+            "length": 368.30000000000007,
             "angle": 0
           },
           "invariant": 1
@@ -1087,9 +1021,9 @@
         },
         "z": {
           "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 3632.2,
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
@@ -1098,12 +1032,366 @@
         "parent_id": "di054cd08083f98b"
       },
       {
-        "id": "difc4362bee6448b",
+        "id": "di8d49a5a2c20a5f",
+        "name": "V",
+        "x": {
+          "attributes": {
+            "origin": 1663.6999999999998,
+            "extent": -406.4000000000001,
+            "length": 368.30000000000007,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di054cd08083f98b"
+      },
+      {
+        "id": "di98405d8567e836",
+        "name": "X",
+        "x": {
+          "attributes": {
+            "origin": 2070.1,
+            "extent": -38.09999999999991,
+            "length": 330.2000000000003,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di054cd08083f98b"
+      },
+      {
+        "id": "di95447689f689bc",
+        "name": "U",
+        "x": {
+          "attributes": {
+            "origin": 1663.6999999999998,
+            "extent": -406.4000000000001,
+            "length": 368.30000000000007,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 0,
+            "extent": -9.947598300641403e-14,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "dic2446386a18cc9"
+      },
+      {
+        "id": "di274a159594a070",
+        "name": "W",
+        "x": {
+          "attributes": {
+            "origin": 2070.1,
+            "extent": -38.09999999999991,
+            "length": 330.2000000000003,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 0,
+            "extent": -9.947598300641403e-14,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "dic2446386a18cc9"
+      },
+      {
+        "id": "di704981885fc630",
+        "name": "right",
+        "x": {
+          "attributes": {
+            "origin": 2349.5,
+            "extent": {
+              "formula": ".w"
+            },
+            "length": {
+              "formula": "template_w"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".y"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".d"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".z"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".h"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "visible": false,
+        "repeater": {
+          "repeat_axis": 1,
+          "spacing": 406.4,
+          "firewall": true
+        },
+        "parent_id": "diad4140a0c7f386"
+      },
+      {
+        "id": "di524d56922ff639",
+        "name": "template",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": {
+              "formula": ".w"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 0,
+            "extent": -2400.3,
+            "length": {
+              "formula": "tread_th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": {
+              "formula": ".h"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di704981885fc630"
+      },
+      {
+        "id": "dicb48bb9e8a2155",
+        "name": "Y",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 406.4,
+            "extent": -1993.9,
+            "length": 38.099999999999994,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 2438.4,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di704981885fc630"
+      },
+      {
+        "id": "di724383a8ffc3c3",
+        "name": "Z",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 812.8,
+            "extent": -1587.5000000000002,
+            "length": 38.099999999999994,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 2438.4,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di704981885fc630"
+      },
+      {
+        "id": "dib347a6ba99f424",
+        "name": "[",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": -9.947598300641403e-14,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 1219.1999999999998,
+            "extent": -1181.1000000000004,
+            "length": 38.099999999999994,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 2438.4,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di554d5ca12a0ac8"
+      },
+      {
+        "id": "di9e40c583b2c79e",
+        "name": "\\",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": -9.947598300641403e-14,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 1625.6,
+            "extent": -774.7000000000003,
+            "length": 38.099999999999994,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 2438.4,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di554d5ca12a0ac8"
+      },
+      {
+        "id": "diea4fcfacc8cfa6",
         "name": "]",
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": -9.947598300641403e-14,
+            "extent": 0,
             "length": 88.89999999999999,
             "angle": 0
           },
@@ -1111,8 +1399,8 @@
         },
         "y": {
           "attributes": {
-            "origin": 2032,
-            "extent": -1143,
+            "origin": 1219.1999999999998,
+            "extent": -1181.1000000000004,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -1122,21 +1410,21 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
         },
         "rotation_lock": 0,
-        "parent_id": "di554d5ca12a0ac8"
+        "parent_id": "di704981885fc630"
       },
       {
-        "id": "diab479c803d994b",
+        "id": "dic74d2eb22cc7b1",
         "name": "^",
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": -9.947598300641403e-14,
+            "extent": 0,
             "length": 88.89999999999999,
             "angle": 0
           },
@@ -1144,8 +1432,8 @@
         },
         "y": {
           "attributes": {
-            "origin": 2438.3999999999996,
-            "extent": -736.6000000000004,
+            "origin": 1625.6,
+            "extent": -774.7000000000003,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -1155,16 +1443,16 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
         },
         "rotation_lock": 0,
-        "parent_id": "di554d5ca12a0ac8"
+        "parent_id": "di704981885fc630"
       },
       {
-        "id": "diba41cda51dcadf",
+        "id": "die248f1b8f930dd",
         "name": "_",
         "x": {
           "attributes": {
@@ -1177,8 +1465,8 @@
         },
         "y": {
           "attributes": {
-            "origin": 2844.7999999999997,
-            "extent": -330.2000000000003,
+            "origin": 2032,
+            "extent": -368.3000000000002,
             "length": 38.099999999999994,
             "angle": 0
           },
@@ -1188,7 +1476,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -1197,7 +1485,7 @@
         "parent_id": "di554d5ca12a0ac8"
       },
       {
-        "id": "di44488596245870",
+        "id": "di134f8da8e64f14",
         "name": "`",
         "x": {
           "attributes": {
@@ -1210,7 +1498,7 @@
         },
         "y": {
           "attributes": {
-            "origin": 3175,
+            "origin": 2400.3,
             "extent": 0,
             "length": 38.099999999999994,
             "angle": 0
@@ -1221,7 +1509,7 @@
           "attributes": {
             "origin": 0,
             "extent": 0,
-            "length": 3632.2,
+            "length": 2438.4,
             "angle": 0
           },
           "invariant": 1
@@ -1230,8 +1518,74 @@
         "parent_id": "di554d5ca12a0ac8"
       },
       {
-        "id": "di4d4e139ef7b289",
+        "id": "die64b44a80cf540",
         "name": "a",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 2032,
+            "extent": -368.3000000000002,
+            "length": 38.099999999999994,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 2438.4,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di704981885fc630"
+      },
+      {
+        "id": "di2947f5880155a7",
+        "name": "b",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 2400.3,
+            "extent": 0,
+            "length": 38.099999999999994,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 2438.4,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di704981885fc630"
+      },
+      {
+        "id": "di86406c899dc466",
+        "name": "i",
         "x": {
           "attributes": {
             "origin": 0,
@@ -1244,7 +1598,7 @@
         "y": {
           "attributes": {
             "origin": 38.09999999999991,
-            "extent": -2806.7,
+            "extent": -2032,
             "length": 368.30000000000007,
             "angle": 0
           },
@@ -1252,8 +1606,8 @@
         },
         "z": {
           "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
+            "origin": 1200.15,
+            "extent": -1200.15,
             "length": 38.09999999999991,
             "angle": 0
           },
@@ -1263,8 +1617,8 @@
         "parent_id": "di554d5ca12a0ac8"
       },
       {
-        "id": "di314ffb8f311df9",
-        "name": "b",
+        "id": "di2543c4b2586b69",
+        "name": "n",
         "x": {
           "attributes": {
             "origin": 0,
@@ -1277,7 +1631,7 @@
         "y": {
           "attributes": {
             "origin": 444.4999999999999,
-            "extent": -2400.3,
+            "extent": -1625.6000000000001,
             "length": 368.30000000000007,
             "angle": 0
           },
@@ -1285,8 +1639,8 @@
         },
         "z": {
           "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
+            "origin": 1200.15,
+            "extent": -1200.15,
             "length": 38.09999999999991,
             "angle": 0
           },
@@ -1296,7 +1650,73 @@
         "parent_id": "di554d5ca12a0ac8"
       },
       {
-        "id": "di90486a85a654a1",
+        "id": "di484bc1aa4503e3",
+        "name": "q",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 38.09999999999991,
+            "extent": -2032,
+            "length": 368.30000000000007,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di704981885fc630"
+      },
+      {
+        "id": "dicc4a8c99522073",
+        "name": "z",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 444.4999999999999,
+            "extent": -1625.6000000000001,
+            "length": 368.30000000000007,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di704981885fc630"
+      },
+      {
+        "id": "dib34582a21032e2",
         "name": "c",
         "x": {
           "attributes": {
@@ -1310,7 +1730,7 @@
         "y": {
           "attributes": {
             "origin": 850.8999999999999,
-            "extent": -1993.9,
+            "extent": -1219.2000000000003,
             "length": 368.30000000000007,
             "angle": 0
           },
@@ -1318,8 +1738,8 @@
         },
         "z": {
           "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
+            "origin": 1200.15,
+            "extent": -1200.15,
             "length": 38.09999999999991,
             "angle": 0
           },
@@ -1329,615 +1749,21 @@
         "parent_id": "di554d5ca12a0ac8"
       },
       {
-        "id": "di0f458ab899c3cb",
+        "id": "diec43d6873adf88",
         "name": "d",
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 1257.2999999999997,
-            "extent": -1587.5,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di554d5ca12a0ac8"
-      },
-      {
-        "id": "di6f4e1ea65f0e63",
-        "name": "i",
-        "x": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 1663.6999999999998,
-            "extent": -1181.1,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di554d5ca12a0ac8"
-      },
-      {
-        "id": "di9c49859fa0c7a6",
-        "name": "U",
-        "x": {
-          "attributes": {
-            "origin": 38.09999999999991,
-            "extent": -3454.3999999999996,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "dic2446386a18cc9"
-      },
-      {
-        "id": "di8d49a5a2c20a5f",
-        "name": "V",
-        "x": {
-          "attributes": {
-            "origin": 38.09999999999991,
-            "extent": -3454.3999999999996,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
             "extent": 0,
             "length": 88.89999999999999,
             "angle": 0
           },
           "invariant": 1
         },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di054cd08083f98b"
-      },
-      {
-        "id": "di034576b04aa413",
-        "name": "W",
-        "x": {
-          "attributes": {
-            "origin": 444.4999999999999,
-            "extent": -3048,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
         "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "dic2446386a18cc9"
-      },
-      {
-        "id": "di98405d8567e836",
-        "name": "X",
-        "x": {
-          "attributes": {
-            "origin": 444.4999999999999,
-            "extent": -3048,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di054cd08083f98b"
-      },
-      {
-        "id": "di804681a8f9b6fb",
-        "name": "e",
-        "x": {
           "attributes": {
             "origin": 850.8999999999999,
-            "extent": -2641.6,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "dic2446386a18cc9"
-      },
-      {
-        "id": "di1f45dab45fc86c",
-        "name": "f",
-        "x": {
-          "attributes": {
-            "origin": 1257.2999999999997,
-            "extent": -2235.2,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "dic2446386a18cc9"
-      },
-      {
-        "id": "di1f4d48a4d4dfbc",
-        "name": "g",
-        "x": {
-          "attributes": {
-            "origin": 850.8999999999999,
-            "extent": -2641.6,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di054cd08083f98b"
-      },
-      {
-        "id": "di0c413aad500b1d",
-        "name": "h",
-        "x": {
-          "attributes": {
-            "origin": 1257.2999999999997,
-            "extent": -2235.2,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di054cd08083f98b"
-      },
-      {
-        "id": "didb4966831d515d",
-        "name": "l",
-        "x": {
-          "attributes": {
-            "origin": 1663.6999999999998,
-            "extent": -1828.7999999999997,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "dic2446386a18cc9"
-      },
-      {
-        "id": "didd44ba80f1b468",
-        "name": "m",
-        "x": {
-          "attributes": {
-            "origin": 1663.6999999999998,
-            "extent": -1828.7999999999997,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di054cd08083f98b"
-      },
-      {
-        "id": "di4d4f9083526625",
-        "name": "n",
-        "x": {
-          "attributes": {
-            "origin": 2070.1,
-            "extent": -1422.3999999999996,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "dic2446386a18cc9"
-      },
-      {
-        "id": "di414f28b3e3cf2f",
-        "name": "o",
-        "x": {
-          "attributes": {
-            "origin": 2070.1,
-            "extent": -1422.3999999999996,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di054cd08083f98b"
-      },
-      {
-        "id": "di9d4008a7634407",
-        "name": "k",
-        "x": {
-          "attributes": {
-            "origin": 2476.4999999999995,
-            "extent": -1016,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "dic2446386a18cc9"
-      },
-      {
-        "id": "di434ea198595611",
-        "name": "p",
-        "x": {
-          "attributes": {
-            "origin": 2882.8999999999996,
-            "extent": -609.5999999999999,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "dic2446386a18cc9"
-      },
-      {
-        "id": "di584ae29c4a2c35",
-        "name": "q",
-        "x": {
-          "attributes": {
-            "origin": 2476.4999999999995,
-            "extent": -1016,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di054cd08083f98b"
-      },
-      {
-        "id": "di2448d09972e1f7",
-        "name": "r",
-        "x": {
-          "attributes": {
-            "origin": 2882.8999999999996,
-            "extent": -609.5999999999999,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di054cd08083f98b"
-      },
-      {
-        "id": "difd45389279bca5",
-        "name": "z",
-        "x": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 2070.1,
-            "extent": -774.6999999999998,
+            "extent": -1219.2000000000003,
             "length": 368.30000000000007,
             "angle": 0
           },
@@ -1945,95 +1771,53 @@
         },
         "z": {
           "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
+            "origin": 1200.15,
+            "extent": -1200.15,
             "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
         },
         "rotation_lock": 0,
-        "parent_id": "di554d5ca12a0ac8"
+        "parent_id": "di704981885fc630"
       },
       {
-        "id": "die94bb9a5880b53",
-        "name": "",
-        "x": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 2476.4999999999995,
-            "extent": -368.3000000000002,
-            "length": 368.30000000000007,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di554d5ca12a0ac8"
-      },
-      {
-        "id": "did54c80b75f1b50",
-        "name": "",
-        "x": {
-          "attributes": {
-            "origin": 0,
-            "extent": -9.947598300641403e-14,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 2882.8999999999996,
-            "extent": -38.09999999999991,
-            "length": 292.10000000000036,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "di554d5ca12a0ac8"
-      },
-      {
-        "id": "die34def8386af9b",
+        "id": "di15480bb5d2611a",
         "name": "j",
         "x": {
           "attributes": {
-            "origin": 3289.2999999999997,
-            "extent": -203.19999999999982,
-            "length": 368.30000000000007,
+            "origin": 0,
+            "extent": -9.947598300641403e-14,
+            "length": 88.89999999999999,
             "angle": 0
           },
           "invariant": 1
         },
         "y": {
+          "attributes": {
+            "origin": 1257.2999999999997,
+            "extent": -812.8000000000002,
+            "length": 368.30000000000007,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di554d5ca12a0ac8"
+      },
+      {
+        "id": "di404f4289f01f76",
+        "name": "k",
+        "x": {
           "attributes": {
             "origin": 0,
             "extent": -9.947598300641403e-14,
@@ -2042,64 +1826,31 @@
           },
           "invariant": 1
         },
-        "z": {
+        "y": {
           "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
-            "length": 38.09999999999991,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "rotation_lock": 0,
-        "parent_id": "dic2446386a18cc9"
-      },
-      {
-        "id": "dif34917a528ce3b",
-        "name": "s",
-        "x": {
-          "attributes": {
-            "origin": 3289.2999999999997,
-            "extent": -203.19999999999982,
+            "origin": 1663.6999999999998,
+            "extent": -406.4000000000001,
             "length": 368.30000000000007,
             "angle": 0
           },
           "invariant": 1
         },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": 0,
-            "length": 88.89999999999999,
-            "angle": 0
-          },
-          "invariant": 1
-        },
         "z": {
           "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
+            "origin": 1200.15,
+            "extent": -1200.15,
             "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
         },
         "rotation_lock": 0,
-        "parent_id": "di054cd08083f98b"
+        "parent_id": "di554d5ca12a0ac8"
       },
       {
-        "id": "di0749dc9cf19475",
-        "name": "t",
+        "id": "di364854a731f51f",
+        "name": "l",
         "x": {
-          "attributes": {
-            "origin": 3695.7,
-            "extent": -38.09999999999991,
-            "length": 127,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
           "attributes": {
             "origin": 0,
             "extent": -9.947598300641403e-14,
@@ -2108,31 +1859,31 @@
           },
           "invariant": 1
         },
+        "y": {
+          "attributes": {
+            "origin": 2070.1,
+            "extent": -38.09999999999991,
+            "length": 330.2000000000003,
+            "angle": 0
+          },
+          "invariant": 1
+        },
         "z": {
           "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
+            "origin": 1200.15,
+            "extent": -1200.15,
             "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
         },
         "rotation_lock": 0,
-        "parent_id": "dic2446386a18cc9"
+        "parent_id": "di554d5ca12a0ac8"
       },
       {
-        "id": "dide4a4b9aac35be",
-        "name": "u",
+        "id": "di3e4e929f0e9923",
+        "name": "m",
         "x": {
-          "attributes": {
-            "origin": 3695.7,
-            "extent": -38.09999999999991,
-            "length": 127,
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
           "attributes": {
             "origin": 0,
             "extent": 0,
@@ -2141,17 +1892,92 @@
           },
           "invariant": 1
         },
+        "y": {
+          "attributes": {
+            "origin": 1257.2999999999997,
+            "extent": -812.8000000000002,
+            "length": 368.30000000000007,
+            "angle": 0
+          },
+          "invariant": 1
+        },
         "z": {
           "attributes": {
-            "origin": 1797.05,
-            "extent": -1797.05,
+            "origin": 1200.15,
+            "extent": -1200.15,
             "length": 38.09999999999991,
             "angle": 0
           },
           "invariant": 1
         },
         "rotation_lock": 0,
-        "parent_id": "di054cd08083f98b"
+        "parent_id": "di704981885fc630"
+      },
+      {
+        "id": "diac4a7686c21522",
+        "name": "o",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 1663.6999999999998,
+            "extent": -406.4000000000001,
+            "length": 368.30000000000007,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di704981885fc630"
+      },
+      {
+        "id": "dia942949901dc2c",
+        "name": "p",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 88.89999999999999,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 2070.1,
+            "extent": -38.09999999999991,
+            "length": 330.2000000000003,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 1200.15,
+            "extent": -1200.15,
+            "length": 38.09999999999991,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "rotation_lock": 0,
+        "parent_id": "di704981885fc630"
       }
     ],
     "constants": [

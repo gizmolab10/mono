@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "notes/work/co.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt"
+              "title": "co"
             }
           },
           {
@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/revisit.di.md",
+                "file": "di/notes/work/code.debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "revisit.di"
+              "title": "code.debt"
             }
           },
           {
@@ -50,20 +50,6 @@
             }
           },
           {
-            "id": "119daed0ad4718de",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/milestones/20.repeaters.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "20.repeaters"
-            }
-          },
-          {
             "id": "d57536340926b9c3",
             "type": "leaf",
             "state": {
@@ -75,6 +61,20 @@
               },
               "icon": "lucide-file",
               "title": "more milestones"
+            }
+          },
+          {
+            "id": "4f832791caa3f148",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/milestones/20.repeaters.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "20.repeaters"
             }
           }
         ]
@@ -150,7 +150,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "notes/work/class-lists.md",
+                "file": "s3/notes/work/weak.spots.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -160,7 +160,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for class-lists"
+              "title": "Backlinks for weak.spots"
             }
           },
           {
@@ -212,13 +212,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "s3/notes/work/weak.spots.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of weak.spots"
             }
           }
         ],
@@ -226,8 +226,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 291.5,
-    "collapsed": true
+    "width": 291.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -251,6 +250,7 @@
           {
             "id": "1f29404a9f80d8a5",
             "type": "tabs",
+            "dimension": 72.88888888888889,
             "children": [
               {
                 "id": "9dbe779e15477a75",
@@ -258,12 +258,12 @@
                 "state": {
                   "type": "markdown",
                   "state": {
-                    "file": "s3/notes/work/code debt.md",
+                    "file": "s3/notes/work/code.debt.md",
                     "mode": "source",
                     "source": false
                   },
                   "icon": "lucide-file",
-                  "title": "code debt"
+                  "title": "code.debt"
                 }
               },
               {
@@ -293,29 +293,98 @@
                   "icon": "lucide-file",
                   "title": "revisit.s3"
                 }
+              },
+              {
+                "id": "a5d28c13329a4e85",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "s3/notes/work/s3.md",
+                    "mode": "source",
+                    "source": true,
+                    "backlinks": true,
+                    "backlinkOpts": {
+                      "collapseAll": false,
+                      "extraContext": true,
+                      "sortOrder": "alphabetical",
+                      "showSearch": false,
+                      "searchQuery": "",
+                      "backlinkCollapsed": false,
+                      "unlinkedCollapsed": true
+                    }
+                  },
+                  "icon": "lucide-file",
+                  "title": "s3"
+                },
+                "group": "742f4c1660b93bc1"
+              },
+              {
+                "id": "086d25442300ae8d",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "s3/notes/work/weak.spots.md",
+                    "mode": "source",
+                    "source": false
+                  },
+                  "icon": "lucide-file",
+                  "title": "weak.spots"
+                }
+              }
+            ],
+            "currentTab": 4
+          },
+          {
+            "id": "50047ad9e07c62f5",
+            "type": "tabs",
+            "dimension": 27.111111111111114,
+            "children": [
+              {
+                "id": "2ab5c8d0dce56cd4",
+                "type": "leaf",
+                "state": {
+                  "type": "outline",
+                  "state": {
+                    "file": "s3/notes/work/s3.md",
+                    "followCursor": false,
+                    "showSearch": false,
+                    "searchQuery": ""
+                  },
+                  "icon": "lucide-list",
+                  "title": "Outline of s3"
+                },
+                "group": "742f4c1660b93bc1"
               }
             ]
           }
         ],
         "direction": "vertical",
-        "x": 1117,
-        "y": 25,
-        "width": 786,
+        "x": 347,
+        "y": 49,
+        "width": 1479,
         "height": 675,
         "maximize": false,
         "zoom": 0.5
       }
     ]
   },
-  "active": "a7456ab5d2d1a817",
+  "active": "086d25442300ae8d",
   "lastOpenFiles": [
-    "di/src/lib/ts/managers/Versions.ts",
-    "di/notes/work/revisit.di.md",
-    "s3/notes/work/code debt.md",
-    "s3/notes/work/fresh.build.md",
+    "s3/notes/work/s3.md",
+    "notes/work/co.md",
+    "s3/notes/work/code.debt.md",
+    "s3/notes/work/weak.spots.md",
+    "notes/work/Agent Skills.md",
+    "notes/work/revisit.mo.md",
     "di/notes/work/code.debt.md",
-    "di/notes/work/more milestones.md",
+    "di/notes/work/revisit.di.md",
     "di/notes/work/milestones/20.repeaters.md",
+    "di/notes/work/more milestones.md",
+    "di/notes/work/done/code.debt.done.md",
+    "di/src/lib/ts/managers/Versions.ts",
+    "s3/notes/work/fresh.build.md",
     "s3/notes/work/revisit.s3.md",
     "di/src/assets/room.di",
     "di/notes/work/collaboration priorities.md",
@@ -326,25 +395,19 @@
     "s3/notes/work/subsystems/5.1 hierarchy.md",
     "s3/notes/work/subsystems/11 database.md",
     "s3/notes/work/subsystems/5 hierarchy.md",
-    "di/notes/work/done/code.debt.done.md",
     "s3/src/lib/db/DB_Common.ts.tmp.45250.1771812644471",
     "s3/src/lib/svelte/details/D_Data.svelte",
     "s3/src/lib/db/Databases.svelte.ts",
     "di/src/lib/svelte/details/D_Hierarchy.svelte",
     "s3/src/lib/signals/Events.svelte.ts.tmp.39973.1771802153799",
-    "s3/src/lib/svelte/tree/Text_Editor.svelte",
     "di/notes/user manual/repeaters.md",
     "di/src/lib/md/builds.md",
-    "s3/notes/work/s3.md",
     "ws/notes/work/index.md",
     "node_modules/commander/History.md",
     "s3/s3.md",
     "di/notes/work/milestones/21.rubberband.md",
     "di/notes/work/milestones/24.marketing.md",
     "di/notes/work/milestones/23.licensing.md",
-    "di/notes/work/milestones/22.cut.lists.md",
-    "di/notes/map.md",
-    "notes/guides/collaborate/exclude.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",

@@ -5,17 +5,17 @@ export enum T_Order {
 	other,
 }
 
+export enum T_Edit {
+	idle        = 'idle',
+	active      = 'active',
+	confirming  = 'confirming',
+}
+
 export enum T_Startup {
 	start,
 	fetch,
 	empty,
 	ready,
-}
-
-export enum T_Edit {
-	idle        = 'idle',
-	active      = 'active',
-	confirming  = 'confirming',
 }
 
 export enum T_Search {

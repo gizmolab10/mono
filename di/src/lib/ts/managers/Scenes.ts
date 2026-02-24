@@ -109,6 +109,17 @@ class Scenes {
 		}
 	}
 
+	/** Clear all user-saved files from IndexedDB, restoring library to bundled defaults. */
+	async clear_idb(): Promise<void> {
+		try {
+			const database = await this.open_idb();
+			const transaction = database.transaction(Scenes.IDB_STORE, 'readwrite');
+			transaction.objectStore(Scenes.IDB_STORE).clear();
+		} catch {
+			// silent
+		}
+	}
+
 	/** Load all user-saved .di files from IndexedDB. */
 	private async load_all_from_idb(): Promise<{ name: string; raw: string }[]> {
 		try {

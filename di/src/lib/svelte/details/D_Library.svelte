@@ -27,6 +27,11 @@
 
 	refresh();
 
+	async function reset_library(): Promise<void> {
+		await scenes.clear_idb();
+		refresh();
+	}
+
 	function on_click(entry: LibEntry, e: MouseEvent): void {
 		if (e.altKey) {
 			engine.insert_child_from_text(entry.raw);
@@ -35,10 +40,6 @@
 		scenes.load_from_text(entry.raw);
 	}
 
-	async function add_to_library(): Promise<void> {
-		await scenes.add_to_library();
-		refresh();
-	}
 </script>
 
 <table class='library'><tbody>
@@ -54,7 +55,7 @@
 
 <div class='settings'>
 	<button class='action-btn' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file() }}>import</button>
-	<button class='action-btn save' use:hit_target={{ id: 'add-to-lib', onpress: () => add_to_library() }}>save</button>
+	<button class='action-btn' use:hit_target={{ id: 'reset-library', onpress: reset_library }}>reset</button>
 </div>
 
 <style>
@@ -85,10 +86,6 @@
 	.action-btn:global([data-hitting]) {
 		background : var(--accent);
 		color      : black;
-	}
-
-	.save {
-		margin-left : auto;
 	}
 
 	.library {

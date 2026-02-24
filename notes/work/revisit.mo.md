@@ -11,10 +11,12 @@
 ---
 ### Ideas
 
+- [x] i know what the fuck i am doing. do not volunteer competing ideas without asking
+- [x] proposal: create a product to create ai collaborator
+	- [ ] current: work/co.md
+		- [x] draw from guides
 - [x] add game to hub app
-	- [ ] localhost fails
-	- [ ] manually test to make sure it works
-- [ ] hierarchy of docs
-- [ ] ask it the right qs -> lean i nto learning
-	- [ ] are you leading me d own the garden path?
+	- [x] localhost fails
+	- [x] manually test to make sure it works
+- [x] hierarchy of docs
 
