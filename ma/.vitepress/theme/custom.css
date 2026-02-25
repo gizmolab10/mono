@@ -37,3 +37,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+/* Broken wikilinks */
+.broken-wikilink {
+  color: #e53e3e;
+  text-decoration: underline wavy;
+  cursor: help;
+}

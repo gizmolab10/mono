@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitepress'
+import { resolve } from 'path'
 import taskLists from 'markdown-it-task-lists'
+import wikilinkPlugin from './markdown-it-wikilinks.mts'
 
 export default defineConfig({
   srcDir: './notes',
@@ -9,6 +11,7 @@ export default defineConfig({
   markdown: {
     config: (md) => {
       md.use(taskLists)
+      md.use(wikilinkPlugin, { srcDir: resolve(__dirname, '../notes') })
     }
   },
 

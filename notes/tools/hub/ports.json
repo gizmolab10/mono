@@ -5,9 +5,16 @@
   "dispatcher": {
     "port": 5171
   },
+  "mono": {
+    "docs": 5172,
+    "docsPublic": "https://docs.gizmolab.com",
+    "repo": "https://github.com/gizmolab10/mono",
+    "docsNetlify": "https://monorepo-documentation.netlify.app",
+    "docsDeploy": "https://app.netlify.com/projects/monorepo-documentation/deploys"
+  },
   "ws": {
-    "port": 5172,
-    "docs": 5173,
+    "port": 5173,
+    "docs": 5174,
     "public": "https://webseriously.org",
     "bubble": "https://bubble.io/home/plugins",
     "docsPublic": "https://docs.webseriously.org",
@@ -18,8 +25,8 @@
     "docsDeploy": "https://app.netlify.com/projects/webseriously-documentation/deploys"
   },
   "di": {
-    "port": 5174,
-    "docs": 5175,
+    "port": 5175,
+    "docs": 5176,
     "public": "https://designintuition.app",
     "repo": "https://github.com/gizmolab10/mono/di",
     "docsPublic": "https://docs.designintuition.app",
@@ -28,27 +35,26 @@
     "deploy": "https://app.netlify.com/projects/designintuition/deploys",
     "docsDeploy": "https://app.netlify.com/projects/designintuition-documentation/deploys"
   },
-  "mono": {
-    "docs": 5180,
-    "docsPublic": "https://docs.gizmolab.com",
-    "repo": "https://github.com/gizmolab10/mono",
-    "docsNetlify": "https://monorepo-documentation.netlify.app",
-    "docsDeploy": "https://app.netlify.com/projects/monorepo-documentation/deploys"
-  },
-  "ga": {
-    "port": 5182,
-    "docs": 5183,
-    "repo": "https://github.com/gizmolab10/mono/ga"
+  "ma": {
+    "port": 5177,
+    "docs": 5178,
+    "public": "https://mg.civilization2.org",
+    "repo": "https://github.com/gizmolab10/mono/ma",
+    "docsPublic": "https://mgdocs.civilization2.org",
+    "netlify": "https://maturity-guidance.netlify.app",
+    "docsNetlify": "https://docs-maturity-guidance.netlify.app",
+    "deploy": "https://app.netlify.com/projects/maturity-guidance/deploys",
+    "docsDeploy": "https://app.netlify.com/projects/docs-maturity-guidance/deploys"
   },
   "s3": {
-    "port": 5184,
-    "docs": 5185,
+    "port": 5179,
+    "docs": 5180,
     "repo": "https://github.com/gizmolab10/mono/s3"
   },
-  "ma": {
-    "port": 5186,
-    "docs": 5187,
-    "repo": "https://github.com/gizmolab10/mono/ma"
+  "ga": {
+    "port": 5181,
+    "docs": 5182,
+    "repo": "https://github.com/gizmolab10/mono/ga"
   },
   "me": {
     "public": "https://jonathansand.me",
