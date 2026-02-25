@@ -6,6 +6,7 @@
 - [Jeff](./jeff/)
 - [Next](./next/)
 - [Agent Skills](./Agent Skills.md)
+- [Co](./co.md)
 - [Faster](./faster.md)
 - [Journal](./journal.md)
 - [Learn](./learn.md)

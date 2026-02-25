@@ -13,7 +13,7 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 GITHUB_DIR="$HOME/GitHub"
-ALL_PROJECTS=("mono" "mono/ws" "mono/di")
+ALL_PROJECTS=("mono" "mono/ws" "mono/di" "mono/ma")
 ERROR_LOG=""
 VERBOSE=false
 CURRENT_STEP=0

@@ -480,11 +480,11 @@
 
     <div class="project-row">
       <div class="project-group side-a">
-        <button class="project" data-project="me">me<span class="badge">J</span></button>
-        <button class="project" data-project="ga">ga<span class="badge">G</span></button>
-        <button class="project" data-project="s3">s3<span class="badge">S</span></button>
         <button class="project" data-project="mo">mo<span class="badge">M</span></button>
+        <button class="project" data-project="me">me<span class="badge">J</span></button>
+        <button class="project" data-project="ma">ma<span class="badge">T</span></button>
         <button class="project" data-project="di">di<span class="badge">I</span></button>
+        <button class="project" data-project="s3">s3<span class="badge">S</span></button>
         <button class="project active" data-project="ws">ws<span class="badge">W</span></button>
       </div>
       <div class="mode-group side-b">
@@ -593,6 +593,7 @@
           di: buildProjectConfig('di', 'app'),
           mo: buildProjectConfig('mo', 'app'),
           me: buildProjectConfig('me', 'app'),
+          ma: buildProjectConfig('ma', 'app'),
           ga: buildProjectConfig('ga', 'app'),
           s3: buildProjectConfig('s3', 'app')
         },
@@ -601,6 +602,7 @@
           di: buildProjectConfig('di', 'docs'),
           mo: buildProjectConfig('mo', 'docs'),
           me: buildProjectConfig('me', 'docs'),
+          ma: buildProjectConfig('ma', 'docs'),
           ga: buildProjectConfig('ga', 'docs'),
           s3: buildProjectConfig('s3', 'docs')
         }
@@ -708,7 +710,7 @@
       });
 
       if (config[mode][project] === null) {
-        for (const p of ['me', 'ga', 'mo', 'di', 'ws']) {
+        for (const p of ['me', 'ma', 'ga', 'mo', 'di', 'ws']) {
           if (config[mode][p] !== null) {
             project = p;
             break;
@@ -1460,6 +1462,7 @@
         case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } } break;
         case 'm': { const m = getDisplayMode(); if (config[m]?.['mo'] !== null) { previewProject = 'mo'; highlightProjectButton('mo'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'j': { const m = getDisplayMode(); if (config[m]?.['me'] !== null) { previewProject = 'me'; highlightProjectButton('me'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
+        case 't': { const m = getDisplayMode(); if (config[m]?.['ma'] !== null) { previewProject = 'ma'; highlightProjectButton('ma'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'escape': doStart(); break;
         case 'enter': if (hoveredAction) { window.open(hoveredAction, '_blank'); } break;
         case 'delete':

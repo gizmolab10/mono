@@ -1,0 +1,39 @@
+/* Task list checkboxes */
+.contains-task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.task-list-item {
+  list-style: none;
+}
+
+.task-list-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  margin-right: 0.5em;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #555;
+  border-radius: 3px;
+  background: #fff;
+  cursor: default;
+  vertical-align: middle;
+  position: relative;
+}
+
+.task-list-item input[type="checkbox"]:checked {
+  background: #22863a;
+  border-color: #22863a;
+}
+
+.task-list-item input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

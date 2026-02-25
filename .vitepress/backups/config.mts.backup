@@ -93,6 +93,10 @@ export default defineConfig({
                           link: '/di/notes/architecture/core/managers'
                         },
                         {
+                          text: 'Migration',
+                          link: '/di/notes/architecture/core/migration'
+                        },
+                        {
                           text: 'Versions',
                           link: '/di/notes/architecture/core/versions'
                         }
@@ -217,6 +221,17 @@ export default defineConfig({
                   ]
                 },
                 {
+                  text: 'User Manual >',
+                  link: '/di/notes/user manual/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Repeaters',
+                      link: '/di/notes/user manual/repeaters'
+                    }
+                  ]
+                },
+                {
                   text: 'Work >',
                   link: '/di/notes/work/',
                   collapsed: true,
@@ -224,6 +239,10 @@ export default defineConfig({
                     {
                       text: 'Code.debt',
                       link: '/di/notes/work/code.debt'
+                    },
+                    {
+                      text: 'Collaboration Priorities',
+                      link: '/di/notes/work/collaboration priorities'
                     },
                     {
                       text: 'More Milestones',
@@ -465,6 +484,45 @@ export default defineConfig({
           ]
         },
         {
+          text: 'Ma >',
+          collapsed: true,
+          items: [
+            {
+              text: 'Notes >',
+              link: '/ma/notes/',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Guides >',
+                  link: '/ma/notes/guides/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Describe',
+                      link: '/ma/notes/guides/describe'
+                    },
+                    {
+                      text: 'Wendy',
+                      link: '/ma/notes/guides/wendy'
+                    }
+                  ]
+                },
+                {
+                  text: 'Work >',
+                  link: '/ma/notes/work/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Revisit.ma',
+                      link: '/ma/notes/work/revisit.ma'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           text: 'Me >',
           collapsed: true,
           items: [
@@ -670,6 +728,10 @@ export default defineConfig({
                 {
                   text: 'Agent Skills',
                   link: '/notes/work/Agent Skills'
+                },
+                {
+                  text: 'Co',
+                  link: '/notes/work/co'
                 },
                 {
                   text: 'Faster',
@@ -889,6 +951,10 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
+                      text: 'Code.debt',
+                      link: '/s3/notes/work/code.debt'
+                    },
+                    {
                       text: 'Fresh.build',
                       link: '/s3/notes/work/fresh.build'
                     },
@@ -899,6 +965,10 @@ export default defineConfig({
                     {
                       text: 'S3',
                       link: '/s3/notes/work/s3'
+                    },
+                    {
+                      text: 'Weak.spots',
+                      link: '/s3/notes/work/weak.spots'
                     },
                     {
                       text: 'Subsystems >',
@@ -932,6 +1002,10 @@ export default defineConfig({
                         {
                           text: '5 Hierarchy',
                           link: '/s3/notes/work/subsystems/5 hierarchy'
+                        },
+                        {
+                          text: '5.1 Hierarchy',
+                          link: '/s3/notes/work/subsystems/5.1 hierarchy'
                         },
                         {
                           text: '6 Rendering',

@@ -37,7 +37,8 @@
       "Bash(yarn vite build:*)",
       "Bash(yarn --cwd s3 svelte-check:*)",
       "Bash(yarn --cwd s3 vitest run:*)",
-      "Bash(yarn --cwd s3 vitest:*)"
+      "Bash(yarn --cwd s3 vitest:*)",
+      "Bash(xargs kill:*)"
     ]
   }
 }

@@ -28,13 +28,19 @@ Defined in `notes/tools/hub/ports.json`:
 
 | Site | Port | Purpose |
 |------|------|---------|
-| dispatch | 5170 | Hub UI (static server) |
+| hub | 5170 | Hub UI (static server) |
 | dispatcher | 5171 | API for hub actions |
 | ws app | 5172 | WebSeriously app |
-| di app | 5173 | Design Intuition app |
-| ws docs | 5174 | WebSeriously docs |
+| ws docs | 5173 | WebSeriously docs |
+| di app | 5174 | Design Intuition app |
 | di docs | 5175 | Design Intuition docs |
-| mono docs | 5176 | Monorepo docs |
+| mono docs | 5180 | Monorepo docs |
+| ga app | 5182 | Game app |
+| ga docs | 5183 | Game docs |
+| s3 app | 5184 | Seriously app |
+| s3 docs | 5185 | Seriously docs |
+| ma app | 5186 | Ma app |
+| ma docs | 5187 | Ma docs |
 
 ### Key Files
 

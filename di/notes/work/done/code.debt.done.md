@@ -156,4 +156,4 @@
 - [x] change "selection" to "smart object" and D_Selection -> D_Smart_Object
 - [x] move instructions (above) for configuring repeaters -> mono/di/notes/user manual/repeaters.md
 - [x] rename list -> hierarchy
-- [x] backward compatibility -- describe current design reading a file that is v1 → [migration.md](../architecture/core/migration.md)
+- [x] backward compatibility -- describe current design reading a file that is v1 → [[di/notes/architecture/core/migration|migration]]
