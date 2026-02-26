@@ -1,12 +1,16 @@
 # Code Debt
 
+
+BUG: i opened the drawer from the library. selected the front SO. clicked the invariant x for the d row. the correct formula appeared (Y - y) with the formula for Y blanked, the values unchanged. the drawing looked fine. THEN, i checked the cross in row Y, and the value for y changed (to a large negative number, and the value for Y to an even larger negative number) and the drawing not so nice. explain
+
 offer a proposal for the first unchecked item
 
 - [x] expand algebra with {s, e, l} contextual aliases
 	- [x] s/e/l expand to concrete axis aliases based on owning attribute's axis
 	- [ ] translate button bottom of attributes
-		- [ ] between current and axis agnostic
+		- [ ] between explicit and agnostic
 - [ ] disallow algebraic names in constants
+- [ ] user-friendly error popup
 - [ ] ability to rotate around an axis
 	- [ ] swap xy -> corrupted
 	- [ ] rotate 90° (+,-) (x,y,z)

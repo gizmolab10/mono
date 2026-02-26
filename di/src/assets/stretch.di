@@ -59,7 +59,7 @@
             "origin": 0,
             "extent": 0,
             "length": {
-              "formula": ".d"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -70,7 +70,7 @@
             "origin": 0,
             "extent": 0,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -87,9 +87,21 @@
       }
     ],
     "camera": {
-      "eye": [0, 0, 2750],
-      "center": [0, 0, 0],
-      "up": [0, 1, 0]
+      "eye": [
+        0,
+        0,
+        2750
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ]
     },
     "root_id": "di8a2f4c6e1b3d5a",
     "selected_id": "di8a2f4c6e1b3d5a",

@@ -3,7 +3,9 @@ import default_scene from '../../../assets/drawer.di?raw';
 import { preferences, T_Preference } from './Preferences';
 import { CURRENT_VERSION, versions } from './Versions';
 import { constants } from '../algebra/User_Constants';
+import { constraints } from '../algebra/Constraints';
 import { T_Hit_3D } from '../types/Enumerations';
+import Smart_Object from '../runtime/Smart_Object';
 import { Identifiable } from '../runtime';
 import { camera } from '../render/Camera';
 import { scene } from '../render/Scene';
@@ -264,6 +266,25 @@ class Scenes {
 			return versions.migrate(imported.scene, imported.version);
 		} catch {
 			return null;
+		}
+	}
+
+	/** DEV MIGRATION: translate all library files to agnostic and download each. */
+	async translate_library(): Promise<void> {
+		const files = await this.list_library();
+		for (const file of files) {
+			const scene_data = this.parse_text(file.raw);
+			if (!scene_data) continue;
+			for (const so_data of scene_data.smart_objects) {
+				const so = Smart_Object.deserialize(so_data);
+				constraints.translate_formulas(so, 'agnostic');
+				const re = so.serialize();
+				so_data.x = re.x;
+				so_data.y = re.y;
+				so_data.z = re.z;
+			}
+			const exported: Exported_File = { version: CURRENT_VERSION, scene: scene_data };
+			this.download_file(`${file.name}.di`, JSON.stringify(exported, null, 2));
 		}
 	}
 

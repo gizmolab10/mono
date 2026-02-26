@@ -50,7 +50,7 @@
             "origin": 0,
             "extent": 0,
             "length": {
-              "formula": ".w"
+              "formula": ".l"
             },
             "angle": 0
           },

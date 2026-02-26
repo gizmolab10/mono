@@ -41,11 +41,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".x"
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".w"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -54,7 +54,7 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".y"
+              "formula": ".s"
             },
             "extent": -1422.3999999999999,
             "length": {
@@ -67,11 +67,11 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": ".z"
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -105,7 +105,7 @@
             "origin": 0,
             "extent": -9.947598300641403e-14,
             "length": {
-              "formula": ".d"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -116,7 +116,7 @@
             "origin": 0,
             "extent": 0,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -131,11 +131,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".x"
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".w"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -145,7 +145,7 @@
           "attributes": {
             "origin": 1422.3999999999999,
             "extent": {
-              "formula": ".d"
+              "formula": ".l"
             },
             "length": {
               "formula": "stud_w"
@@ -157,11 +157,11 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": ".z"
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -195,7 +195,7 @@
             "origin": 0,
             "extent": 0,
             "length": {
-              "formula": ".d"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -206,7 +206,7 @@
             "origin": 0,
             "extent": 0,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -221,7 +221,7 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".x"
+              "formula": ".s"
             },
             "extent": -2235.2,
             "length": {
@@ -238,7 +238,7 @@
             },
             "extent": -88.89999999999986,
             "length": {
-              "formula": ".d-stud_w*2"
+              "formula": ".l-stud_w*2"
             },
             "angle": 0
           },
@@ -247,11 +247,11 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": ".z"
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -274,7 +274,7 @@
             "origin": 0,
             "extent": -9.947598300641403e-14,
             "length": {
-              "formula": ".w"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -296,7 +296,7 @@
             "origin": 0,
             "extent": 0,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -510,7 +510,7 @@
           "attributes": {
             "origin": 2235.2,
             "extent": {
-              "formula": ".w"
+              "formula": ".l"
             },
             "length": {
               "formula": "stud_w"
@@ -526,7 +526,7 @@
             },
             "extent": -88.89999999999986,
             "length": {
-              "formula": ".d-stud_w*2"
+              "formula": ".l-stud_w*2"
             },
             "angle": 0
           },
@@ -535,11 +535,11 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": ".z"
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -562,7 +562,7 @@
             "origin": 0,
             "extent": 0,
             "length": {
-              "formula": ".w"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -584,7 +584,7 @@
             "origin": 0,
             "extent": 0,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },

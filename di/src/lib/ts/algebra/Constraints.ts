@@ -83,6 +83,33 @@ const invariant_formulas: Record<string, string> = {
 	Z: 'z + h',
 };
 
+// Translation maps: concrete ↔ agnostic per owning axis
+// to_agnostic[axis]['x'] = 's' (same-axis bare), to_agnostic[axis]['d'] = 'y.l' (cross-axis qualified)
+// to_explicit[axis]['s'] = 'x' (bare → concrete), to_explicit[axis]['y.l'] = 'd' (qualified → concrete)
+const axis_letters = ['x', 'y', 'z'];
+const contextual_names = ['s', 'e', 'l'];
+const to_agnostic: Record<string, string>[] = [];
+const to_explicit: Record<string, string>[] = [];
+for (let owner = 0; owner < 3; owner++) {
+	const ag: Record<string, string> = {};
+	const ex: Record<string, string> = {};
+	for (let axis = 0; axis < 3; axis++) {
+		for (let attr = 0; attr < 3; attr++) {
+			const concrete = axis_concrete[axis][attr];
+			if (axis === owner) {
+				ag[concrete] = contextual_names[attr];
+				ex[contextual_names[attr]] = concrete;
+			} else {
+				const qualified = axis_letters[axis] + '.' + contextual_names[attr];
+				ag[concrete] = qualified;
+				ex[qualified] = concrete;
+			}
+		}
+	}
+	to_agnostic.push(ag);
+	to_explicit.push(ex);
+}
+
 class Constraints {
 
 	referenced_constants = new Set<string>();
@@ -185,9 +212,81 @@ class Constraints {
 		return index !== undefined ? axis_concrete[owner_axis][index] : attribute;
 	}
 
-	/** Get the invariant derivation formula for an alias (e.g. 'x' → 'X - w'). */
-	invariant_formula_for(alias: string): string | null {
-		return invariant_formulas[alias] ?? null;
+	/** Get the invariant derivation formula for an alias.
+	 *  'explicit': axis-specific (e.g. 'x' → 'X - w').
+	 *  'agnostic': universal (start → 'e - l', end → 's + l', length → 'e - s'). */
+	invariant_formula_for(alias: string, mode: 'explicit' | 'agnostic' = 'explicit'): string | null {
+		if (mode === 'explicit') return invariant_formulas[alias] ?? null;
+		const aa = alias_axis_attr[alias];
+		if (!aa) return null;
+		const [, attr_index] = aa;
+		if (attr_index === 0) return 'e - l';
+		if (attr_index === 1) return 's + l';
+		return 'e - s';
+	}
+
+	/** Rewrite stored formula tokens between axis-explicit and axis-agnostic forms.
+	 *  Mutates attr.formula in place. No recompile, no propagation. */
+	translate_formulas(so: Smart_Object, direction: 'agnostic' | 'explicit'): void {
+		for (const attr of Object.values(so.attributes_dict_byName)) {
+			if (!attr.formula) continue;
+			const owner = attribute_to_axis[attr.name];
+			if (owner === undefined) continue;
+			const map = direction === 'agnostic' ? to_agnostic[owner] : to_explicit[owner];
+			for (const token of attr.formula) {
+				if (token.type !== 'reference') continue;
+				if (direction === 'agnostic') {
+					const mapped = map[token.attribute];
+					if (!mapped) continue;
+					const dot = mapped.indexOf('.');
+					if (dot === -1) {
+						token.attribute = mapped;
+					} else {
+						const axis_letter = mapped.slice(0, dot);
+						const ctx_attr = mapped.slice(dot + 1);
+						if (token.object === 'self') { token.object = axis_letter; token.attribute = ctx_attr; }
+						else if (token.object === '') { token.object = '.' + axis_letter; token.attribute = ctx_attr; }
+					}
+				} else {
+					let key: string;
+					let was_cross = false;
+					if (axis_name_to_index[token.object] !== undefined) {
+						key = token.object + '.' + token.attribute; was_cross = true;
+					} else if (token.object.length === 2 && token.object[0] === '.' && axis_name_to_index[token.object[1]] !== undefined) {
+						key = token.object[1] + '.' + token.attribute; was_cross = true;
+					} else {
+						key = token.attribute;
+					}
+					const mapped = map[key];
+					if (!mapped) continue;
+					if (was_cross) {
+						token.object = token.object[0] === '.' ? '' : 'self';
+						token.attribute = mapped;
+					} else {
+						token.attribute = mapped;
+					}
+				}
+			}
+		}
+	}
+
+	/** Detect whether an SO's formulas are in explicit or agnostic mode.
+	 *  Returns 'agnostic' only if formulas exist and NONE use concrete aliases.
+	 *  Mixed (some agnostic, some concrete) counts as explicit — button normalizes to agnostic. */
+	detect_formula_mode(so: Smart_Object): 'explicit' | 'agnostic' | 'none' {
+		let has_refs = false;
+		for (const attr of Object.values(so.attributes_dict_byName)) {
+			if (!attr.formula) continue;
+			const owner = attribute_to_axis[attr.name];
+			if (owner === undefined) continue;
+			const ag = to_agnostic[owner];
+			for (const token of attr.formula) {
+				if (token.type !== 'reference') continue;
+				has_refs = true;
+				if (ag[token.attribute]) return 'explicit';
+			}
+		}
+		return has_refs ? 'agnostic' : 'none';
 	}
 
 	/** For derived aliases (w, h, d), return the max bound they map to.

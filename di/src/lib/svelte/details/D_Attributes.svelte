@@ -13,6 +13,8 @@
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
 	let is_root = $derived(!selected_so?.scene?.parent);
+	let prev_so_id: string | undefined;
+	$effect(() => { if (selected_so?.id !== prev_so_id) { prev_so_id = selected_so?.id; display_mode_override = null; } });
 
 	let tick = $derived(stores.is_editing() ? 0 : $w_tick);
 
@@ -32,7 +34,7 @@
 				const stored = so.attributes_dict_byName[bound]?.formula_display;
 				if (stored) return stored;
 			}
-			if (inv(axis_index, attr_index)) return constraints.invariant_formula_for(label) ?? '';
+			if (inv(axis_index, attr_index)) return constraints.invariant_formula_for(label, formula_mode) ?? '';
 			return '';
 		};
 		const has = (bound: string | null) => bound ? !!so.attributes_dict_byName[bound]?.compiled : false;
@@ -150,27 +152,58 @@
 		e.stopPropagation();
 	}
 
+	let display_mode_override: 'explicit' | 'agnostic' | null = $state(null);
+	let formula_mode = $derived.by(() => {
+		if (tick === undefined || !selected_so) return 'agnostic' as const;
+		const detected = constraints.detect_formula_mode(selected_so);
+		if (detected === 'agnostic') return 'agnostic' as const;
+		if (detected === 'explicit') return display_mode_override ?? 'explicit' as const;
+		return display_mode_override ?? 'agnostic' as const;
+	});
+
+	function translate() {
+		if (!selected_so) return;
+		const direction = formula_mode === 'explicit' ? 'agnostic' : 'explicit';
+		constraints.translate_formulas(selected_so, direction);
+		display_mode_override = direction;
+		stores.tick();
+		scenes.save();
+	}
+
 </script>
 
 {#if selected_so}
 	<table class='bounds'>
 		<tbody>
-			{#each bounds_rows as row (selected_so?.id + row.label)}
+			{#each bounds_rows as row, i (selected_so?.id + row.label)}
 				{@const row_disabled = is_root ? row.attr_index !== 2 : (row.is_invariant || row.has_formula)}
-				<tr>
-					<td class='attr-name'>{row.label}</td>
-					<td class='attr-sep' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
-					<td class='attr-formula'>
-						<input
-							type      = 'text'
-							class     = 'cell-input'
-							value     = {row.formula}
-							disabled  = {is_root || row.is_invariant}
-							onfocus   = {() => stores.w_editing.set(T_Editing.formula)}
-							onblur    = {(e) => { commit_formula(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
-							onkeydown = {cell_keydown}
-						/>
+				{@const gpos = i % 3}
+				{@const prev_inv = gpos > 0 && bounds_rows[i - 1].is_invariant}
+				{@const next_inv = gpos < 2 && bounds_rows[i + 1].is_invariant}
+				{@const next2_inv = gpos === 0 && bounds_rows[i + 2]?.is_invariant}
+				{@const merge_span = formula_mode === 'agnostic' && row.is_invariant && !prev_inv && next_inv ? (next2_inv ? 3 : 2) : 0}
+				{@const is_merge_cont = formula_mode === 'agnostic' && row.is_invariant && prev_inv}
+				<tr class:merge-cont={is_merge_cont}>
+					<td class='attr-name'>
+						{#if formula_mode === 'agnostic' && row.axis_index === 1}
+							<span class='ctx' class:ctx-l={row.attr_index === 2}>{['s', 'e', 'l'][row.attr_index]}</span>
+						{/if}
+						{row.label}
 					</td>
+					<td class='attr-sep' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
+					{#if !is_merge_cont}
+						<td class='attr-formula' class:merged={merge_span >= 2} rowspan={merge_span || undefined}>
+							<input
+								type      = 'text'
+								class     = 'cell-input'
+								value     = {row.formula}
+								disabled  = {is_root || row.is_invariant}
+								onfocus   = {() => stores.w_editing.set(T_Editing.formula)}
+								onblur    = {(e) => { commit_formula(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
+								onkeydown = {cell_keydown}
+							/>
+						</td>
+					{/if}
 					<td class='attr-value'>
 						<input
 							type      = 'text'
@@ -186,6 +219,11 @@
 			{/each}
 		</tbody>
 	</table>
+	<div class='translate-row'>
+		<button class='translate-btn' onclick={translate}>
+			&harr; {formula_mode === 'explicit' ? 'agnostic' : 'explicit'}
+		</button>
+	</div>
 	<table class='bounds rotations'>
 		<tbody>
 			{#each axes as axis, i}
@@ -230,6 +268,18 @@
 		opacity     : 0.7;
 		text-align  : center !important;
 		background  : var(--bg);
+		position    : relative;
+	}
+
+	.ctx {
+		position    : absolute;
+		right       : calc(100% + 2px);
+		opacity     : 0.5;
+		font-weight : 600;
+	}
+
+	.ctx-l {
+		right : calc(100% + 3px);
 	}
 
 	.attr-sep {
@@ -256,8 +306,23 @@
 			var(--bg);
 	}
 
+	.merge-cont td {
+		border-top : none !important;
+	}
+
 	.attr-formula {
-		width   : 70%;
+		width          : 70%;
+		vertical-align : middle;
+	}
+
+	.attr-formula.merged {
+		padding : 0;
+		height  : 1px;
+	}
+
+	.attr-formula.merged .cell-input {
+		height     : 100%;
+		display    : block;
 	}
 
 	.attr-value {
@@ -300,6 +365,29 @@
 	.cell-input.right {
 		text-align           : right;
 		font-variant-numeric : tabular-nums;
+	}
+
+	.translate-row {
+		display     : flex;
+		justify-content : flex-end;
+		padding         : 4px 0;
+	}
+
+	.translate-btn {
+		padding       : 1px 8px;
+		font-size     : 10px;
+		font-family   : inherit;
+		border        : 0.5px solid currentColor;
+		border-radius : 9px;
+		background    : var(--bg);
+		color         : inherit;
+		cursor        : pointer;
+		opacity       : 0.7;
+	}
+
+	.translate-btn:hover {
+		background : var(--accent);
+		opacity    : 1;
 	}
 
 	p {

@@ -876,3 +876,144 @@ describe('axis-qualified references', () => {
 		expect(child.x_max).toBeCloseTo(700);
 	});
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// TRANSLATE FORMULAS
+// ═══════════════════════════════════════════════════════════════════
+
+describe('translate_formulas', () => {
+
+	// ── same-axis bare ──
+
+	it('x-axis: X - x → e - s round-trips', () => {
+		const so = add_so('box', { x_min: 100, x_max: 500 });
+		constraints.set_formula(so, 'width', 'X - x');
+		constraints.translate_formulas(so, 'agnostic');
+		expect(so.attributes_dict_byName['width'].formula_display).toBe('e-s');
+		constraints.translate_formulas(so, 'explicit');
+		expect(so.attributes_dict_byName['width'].formula_display).toBe('X-x');
+	});
+
+	it('y-axis: Y - y → e - s round-trips', () => {
+		const so = add_so('box', { y_min: 50, y_max: 400 });
+		constraints.set_formula(so, 'depth', 'Y - y');
+		constraints.translate_formulas(so, 'agnostic');
+		expect(so.attributes_dict_byName['depth'].formula_display).toBe('e-s');
+		constraints.translate_formulas(so, 'explicit');
+		expect(so.attributes_dict_byName['depth'].formula_display).toBe('Y-y');
+	});
+
+	it('z-axis: z + h → s + l round-trips', () => {
+		const so = add_so('box', { z_min: 0, z_max: 300 });
+		constraints.set_formula(so, 'z_max', 'z + h');
+		constraints.translate_formulas(so, 'agnostic');
+		expect(so.attributes_dict_byName['z_max'].formula_display).toBe('s+l');
+		constraints.translate_formulas(so, 'explicit');
+		expect(so.attributes_dict_byName['z_max'].formula_display).toBe('z+h');
+	});
+
+	// ── cross-axis ──
+
+	it('cross-axis: d on x-axis → y.l round-trips', () => {
+		const so = add_so('box', { x_min: 0, x_max: 200, y_min: 0, y_max: 600 });
+		constraints.set_formula(so, 'x_max', 'd');
+		constraints.translate_formulas(so, 'agnostic');
+		expect(so.attributes_dict_byName['x_max'].formula_display).toBe('y.l');
+		constraints.translate_formulas(so, 'explicit');
+		expect(so.attributes_dict_byName['x_max'].formula_display).toBe('d');
+	});
+
+	it('cross-axis: Z on y-axis → z.e round-trips', () => {
+		const so = add_so('box', { y_min: 0, y_max: 200, z_min: 0, z_max: 800 });
+		constraints.set_formula(so, 'y_max', 'Z');
+		constraints.translate_formulas(so, 'agnostic');
+		expect(so.attributes_dict_byName['y_max'].formula_display).toBe('z.e');
+		constraints.translate_formulas(so, 'explicit');
+		expect(so.attributes_dict_byName['y_max'].formula_display).toBe('Z');
+	});
+
+	// ── dot-prefix ──
+
+	it('parent same-axis: .x on x-axis → .s round-trips', () => {
+		const parent = add_so('parent', { x_min: 100, x_max: 500 });
+		const child = add_so('child');
+		constraints.set_formula(child, 'x_min', '.x', parent.id);
+		constraints.translate_formulas(child, 'agnostic');
+		expect(child.attributes_dict_byName['x_min'].formula_display).toBe('.s');
+		constraints.translate_formulas(child, 'explicit');
+		expect(child.attributes_dict_byName['x_min'].formula_display).toBe('.x');
+	});
+
+	it('parent cross-axis: .d on x-axis → .y.l round-trips', () => {
+		const parent = add_so('parent', { y_min: 0, y_max: 300 });
+		const child = add_so('child');
+		constraints.set_formula(child, 'x_max', '.d', parent.id);
+		constraints.translate_formulas(child, 'agnostic');
+		expect(child.attributes_dict_byName['x_max'].formula_display).toBe('.y.l');
+		constraints.translate_formulas(child, 'explicit');
+		expect(child.attributes_dict_byName['x_max'].formula_display).toBe('.d');
+	});
+
+	// ── explicit SO refs ──
+
+	it('explicit SO ref same-axis: SOID.x on x-axis → SOID.s round-trips', () => {
+		const other = add_so('other', { x_min: 200, x_max: 800 });
+		const so = add_so('box');
+		constraints.set_formula(so, 'x_min', other.id + '.x');
+		constraints.translate_formulas(so, 'agnostic');
+		expect(so.attributes_dict_byName['x_min'].formula_display).toBe(other.id + '.s');
+		constraints.translate_formulas(so, 'explicit');
+		expect(so.attributes_dict_byName['x_min'].formula_display).toBe(other.id + '.x');
+	});
+
+	it('explicit SO ref cross-axis: SOID.d on x-axis stays (no 3-part form)', () => {
+		const other = add_so('other', { y_min: 0, y_max: 600 });
+		const so = add_so('box');
+		constraints.set_formula(so, 'x_max', other.id + '.d');
+		constraints.translate_formulas(so, 'agnostic');
+		// can't represent SOID.y.l — stays as SOID.d
+		expect(so.attributes_dict_byName['x_max'].formula_display).toBe(other.id + '.d');
+	});
+
+	// ── invariant agnostic ──
+
+	it('invariant_formula_for returns agnostic forms', () => {
+		expect(constraints.invariant_formula_for('x', 'agnostic')).toBe('e - l');
+		expect(constraints.invariant_formula_for('y', 'agnostic')).toBe('e - l');
+		expect(constraints.invariant_formula_for('z', 'agnostic')).toBe('e - l');
+		expect(constraints.invariant_formula_for('X', 'agnostic')).toBe('s + l');
+		expect(constraints.invariant_formula_for('Y', 'agnostic')).toBe('s + l');
+		expect(constraints.invariant_formula_for('Z', 'agnostic')).toBe('s + l');
+		expect(constraints.invariant_formula_for('w', 'agnostic')).toBe('e - s');
+		expect(constraints.invariant_formula_for('d', 'agnostic')).toBe('e - s');
+		expect(constraints.invariant_formula_for('h', 'agnostic')).toBe('e - s');
+	});
+
+	it('invariant_formula_for explicit mode unchanged', () => {
+		expect(constraints.invariant_formula_for('x')).toBe('X - w');
+		expect(constraints.invariant_formula_for('w')).toBe('X - x');
+		expect(constraints.invariant_formula_for('X')).toBe('x + w');
+	});
+
+	// ── mixed mode normalization ──
+
+	it('mixed explicit+agnostic normalizes to agnostic', () => {
+		const so = add_so('box', { x_min: 0, x_max: 400, y_min: 0, y_max: 200 });
+		// Set one formula explicit, one agnostic
+		constraints.set_formula(so, 'width', 'X - x');  // explicit
+		constraints.set_formula(so, 'depth', 'e - s');   // already agnostic
+		constraints.translate_formulas(so, 'agnostic');
+		expect(so.attributes_dict_byName['width'].formula_display).toBe('e-s');
+		expect(so.attributes_dict_byName['depth'].formula_display).toBe('e-s'); // untouched
+	});
+
+	// ── values unchanged ──
+
+	it('values unchanged after translate', () => {
+		const so = add_so('box', { x_min: 100, x_max: 500 });
+		constraints.set_formula(so, 'width', 'X - x');
+		const before = so.width;
+		constraints.translate_formulas(so, 'agnostic');
+		expect(so.width).toBe(before);
+	});
+});

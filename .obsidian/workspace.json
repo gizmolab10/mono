@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -151,7 +151,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/translate.md",
+                "file": "di/notes/work/code.debt.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -161,7 +161,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for translate"
+              "title": "Backlinks for code.debt"
             }
           },
           {
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/translate.md",
+                "file": "di/notes/work/code.debt.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of translate"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -240,10 +240,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "ed6835991ce431f7",
+  "active": "6e8629c5169567b1",
   "lastOpenFiles": [
-    "di/notes/work/code.debt.md",
     "di/notes/work/translate.md",
+    "di/notes/work/code.debt.md",
     "di/notes/work/done/code.debt.done.md",
     "di/notes/work/milestones/20.repeaters.md",
     "di/notes/work/revisit.di.md",

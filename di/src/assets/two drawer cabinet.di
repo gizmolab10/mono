@@ -1,5 +1,5 @@
 {
-  "version": "4",
+  "version": "7",
   "scene": {
     "smart_objects": [
       {
@@ -41,11 +41,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".x"
+              "formula": ".s"
             },
-            "extent": -863.5999999999999,
+            "extent": -1727.1999999999998,
             "length": {
-              "formula": ".w"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -54,11 +54,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".y"
+              "formula": ".s"
             },
-            "extent": -660.4,
+            "extent": -1320.8,
             "length": {
-              "formula": ".d"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -67,9 +67,9 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": ".h-h"
+              "formula": ".l-l"
             },
-            "extent": -469.8999999999999,
+            "extent": -939.7999999999998,
             "length": 152.39999999999998,
             "angle": 0
           },
@@ -85,7 +85,7 @@
         "x": {
           "attributes": {
             "origin": 12.7,
-            "extent": 31.75,
+            "extent": 1758.9499999999998,
             "length": 19.05,
             "angle": 0
           },
@@ -94,9 +94,9 @@
         "y": {
           "attributes": {
             "origin": 12.7,
-            "extent": 647.7,
+            "extent": 1968.5,
             "length": {
-              "formula": ".d-1\""
+              "formula": ".l-1\""
             },
             "angle": 0
           },
@@ -105,9 +105,9 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 457.19999999999993,
+            "extent": 1396.9999999999998,
             "length": {
-              "formula": ".h-1\""
+              "formula": ".l-1\""
             },
             "angle": 0
           },
@@ -122,9 +122,9 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 863.5999999999999,
+            "extent": 2590.7999999999997,
             "length": {
-              "formula": ".w"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -133,7 +133,7 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 19.049999999999955,
+            "extent": 1339.85,
             "length": 19.049999999999955,
             "angle": 0
           },
@@ -142,9 +142,9 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 469.8999999999999,
+            "extent": 1409.6999999999998,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -160,7 +160,7 @@
           "attributes": {
             "origin": 819.15,
             "extent": {
-              "formula": ".w-1\""
+              "formula": ".l-1\""
             },
             "length": 19.049999999999955,
             "angle": 0
@@ -170,9 +170,9 @@
         "y": {
           "attributes": {
             "origin": 12.7,
-            "extent": 647.7,
+            "extent": 1968.5,
             "length": {
-              "formula": ".d-1\""
+              "formula": ".l-1\""
             },
             "angle": 0
           },
@@ -181,9 +181,9 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 457.19999999999993,
+            "extent": 1396.9999999999998,
             "length": {
-              "formula": ".h-1\""
+              "formula": ".l-1\""
             },
             "angle": 0
           },
@@ -198,9 +198,9 @@
         "x": {
           "attributes": {
             "origin": 19.049999999999997,
-            "extent": 831.8499999999999,
+            "extent": 2559.0499999999997,
             "length": {
-              "formula": ".w - 2\""
+              "formula": ".l-2\""
             },
             "angle": 0
           },
@@ -210,7 +210,7 @@
           "attributes": {
             "origin": 628.6499999999999,
             "extent": {
-              "formula": ".d - 1/2\""
+              "formula": ".l-1/2\""
             },
             "length": 19.050000000000068,
             "angle": 0
@@ -220,9 +220,9 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 457.19999999999993,
+            "extent": 1396.9999999999998,
             "length": {
-              "formula": ".h - 1\""
+              "formula": ".l-1\""
             },
             "angle": 0
           },
@@ -237,9 +237,9 @@
         "x": {
           "attributes": {
             "origin": 25.4,
-            "extent": 825.4999999999999,
+            "extent": 2552.7,
             "length": {
-              "formula": ".w-2 1/2\""
+              "formula": ".l-2 1/2\""
             },
             "angle": 0
           },
@@ -248,9 +248,9 @@
         "y": {
           "attributes": {
             "origin": 6.35,
-            "extent": 635,
+            "extent": 1955.8,
             "length": {
-              "formula": ".d-1 1/4\""
+              "formula": ".l-1 1/4\""
             },
             "angle": 0
           },
@@ -259,7 +259,7 @@
         "z": {
           "attributes": {
             "origin": 25.4,
-            "extent": 355.5999999999999,
+            "extent": 1295.3999999999996,
             "length": 12.699999999999989,
             "angle": 0
           },
@@ -274,11 +274,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".x"
+              "formula": ".s"
             },
-            "extent": -863.5999999999999,
+            "extent": -1727.1999999999998,
             "length": {
-              "formula": ".w"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -287,11 +287,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".y"
+              "formula": ".s"
             },
-            "extent": -660.4,
+            "extent": -1320.8,
             "length": {
-              "formula": ".d"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -300,9 +300,9 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": ".z"
+              "formula": ".s"
             },
-            "extent": -622.2999999999998,
+            "extent": -1092.1999999999998,
             "length": 317.5,
             "angle": 0
           },
@@ -318,7 +318,7 @@
         "x": {
           "attributes": {
             "origin": 12.7,
-            "extent": 31.75,
+            "extent": 1758.9499999999998,
             "length": 19.05,
             "angle": 0
           },
@@ -327,9 +327,9 @@
         "y": {
           "attributes": {
             "origin": 12.7,
-            "extent": 647.7,
+            "extent": 1968.5,
             "length": {
-              "formula": ".d-1\""
+              "formula": ".l-1\""
             },
             "angle": 0
           },
@@ -338,9 +338,9 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 609.5999999999999,
+            "extent": 1701.7999999999997,
             "length": {
-              "formula": ".h-1\""
+              "formula": ".l-1\""
             },
             "angle": 0
           },
@@ -355,9 +355,9 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 863.5999999999999,
+            "extent": 2590.7999999999997,
             "length": {
-              "formula": ".w"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -366,7 +366,7 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 19.049999999999955,
+            "extent": 1339.85,
             "length": 19.049999999999955,
             "angle": 0
           },
@@ -375,9 +375,9 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 622.2999999999998,
+            "extent": 1714.4999999999995,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -393,7 +393,7 @@
           "attributes": {
             "origin": 819.15,
             "extent": {
-              "formula": ".w-1\""
+              "formula": ".l-1\""
             },
             "length": 19.049999999999955,
             "angle": 0
@@ -403,9 +403,9 @@
         "y": {
           "attributes": {
             "origin": 12.7,
-            "extent": 647.7,
+            "extent": 1968.5,
             "length": {
-              "formula": ".d-1\""
+              "formula": ".l-1\""
             },
             "angle": 0
           },
@@ -414,9 +414,9 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 609.5999999999999,
+            "extent": 1701.7999999999997,
             "length": {
-              "formula": ".h-1\""
+              "formula": ".l-1\""
             },
             "angle": 0
           },
@@ -431,9 +431,9 @@
         "x": {
           "attributes": {
             "origin": 19.049999999999997,
-            "extent": 831.8499999999999,
+            "extent": 2559.0499999999997,
             "length": {
-              "formula": ".w - 2\""
+              "formula": ".l-2\""
             },
             "angle": 0
           },
@@ -443,7 +443,7 @@
           "attributes": {
             "origin": 628.6499999999999,
             "extent": {
-              "formula": ".d - 1/2\""
+              "formula": ".l-1/2\""
             },
             "length": 19.050000000000068,
             "angle": 0
@@ -453,9 +453,9 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 609.5999999999999,
+            "extent": 1701.7999999999997,
             "length": {
-              "formula": ".h - 1\""
+              "formula": ".l-1\""
             },
             "angle": 0
           },
@@ -470,9 +470,9 @@
         "x": {
           "attributes": {
             "origin": 25.4,
-            "extent": 825.4999999999999,
+            "extent": 2552.7,
             "length": {
-              "formula": ".w-2 1/2\""
+              "formula": ".l-2 1/2\""
             },
             "angle": 0
           },
@@ -481,9 +481,9 @@
         "y": {
           "attributes": {
             "origin": 6.35,
-            "extent": 635,
+            "extent": 1955.8,
             "length": {
-              "formula": ".d-1 1/4\""
+              "formula": ".l-1 1/4\""
             },
             "angle": 0
           },
@@ -492,7 +492,7 @@
         "z": {
           "attributes": {
             "origin": 25.4,
-            "extent": 342.8999999999998,
+            "extent": 1435.0999999999997,
             "length": 12.699999999999967,
             "angle": 0
           },

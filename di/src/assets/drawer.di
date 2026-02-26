@@ -1,5 +1,5 @@
 {
-  "version": "5",
+  "version": "7",
   "scene": {
     "smart_objects": [
       {
@@ -58,7 +58,7 @@
             },
             "extent": -609.5999999999999,
             "length": {
-              "formula": ".d-front_th+dado"
+              "formula": ".l-front_th+dado"
             },
             "angle": 0
           },
@@ -71,7 +71,7 @@
             },
             "extent": -158.74999999999997,
             "length": {
-              "formula": ".h-inset*2"
+              "formula": ".l-inset*2"
             },
             "angle": 0
           },
@@ -88,7 +88,7 @@
             "origin": 0,
             "extent": -609.6,
             "length": {
-              "formula": ".w"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -108,7 +108,7 @@
             "origin": 0,
             "extent": -152.39999999999998,
             "length": {
-              "formula": ".h"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -124,7 +124,7 @@
           "attributes": {
             "origin": 584.1999999999999,
             "extent": {
-              "formula": ".w-inset*2"
+              "formula": ".l-inset*2"
             },
             "length": {
               "formula": "side_th"
@@ -140,7 +140,7 @@
             },
             "extent": -609.5999999999999,
             "length": {
-              "formula": ".d-front_th+dado"
+              "formula": ".l-front_th+dado"
             },
             "angle": 0
           },
@@ -153,7 +153,7 @@
             },
             "extent": -158.74999999999997,
             "length": {
-              "formula": ".h-inset*2"
+              "formula": ".l-inset*2"
             },
             "angle": 0
           },
@@ -172,7 +172,7 @@
             },
             "extent": -628.6500000000001,
             "length": {
-              "formula": ".w-(side_th+inset)*2"
+              "formula": ".l-(side_th+inset)*2"
             },
             "angle": 0
           },
@@ -182,7 +182,7 @@
           "attributes": {
             "origin": 596.9,
             "extent": {
-              "formula": ".d"
+              "formula": ".l"
             },
             "length": {
               "formula": "side_th"
@@ -198,7 +198,7 @@
             },
             "extent": -158.74999999999997,
             "length": {
-              "formula": ".h-inset*2"
+              "formula": ".l-inset*2"
             },
             "angle": 0
           },
@@ -217,7 +217,7 @@
             },
             "extent": -628.6500000000001,
             "length": {
-              "formula": ".w-(side_th+inset)*2"
+              "formula": ".l-(side_th+inset)*2"
             },
             "angle": 0
           },
@@ -230,7 +230,7 @@
             },
             "extent": -615.9499999999999,
             "length": {
-              "formula": ".d-inset*3"
+              "formula": ".l-inset*3"
             },
             "angle": 0
           },
