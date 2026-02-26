@@ -40,7 +40,8 @@
       "Bash(yarn --cwd s3 vitest:*)",
       "Bash(xargs kill:*)",
       "Bash(yarn docs:build)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(xxd:*)"
     ]
   }
 }

@@ -163,6 +163,7 @@
 - di/notes/work/next/punch list.md
 - di/notes/work/next/roots.md
 - di/notes/work/next/separators.md
+- di/notes/work/translate.md
 - di/notes/work/milestones/index.md
 - di/notes/work/milestones/1.solid.foundation.md
 - di/notes/work/milestones/2.panel.md

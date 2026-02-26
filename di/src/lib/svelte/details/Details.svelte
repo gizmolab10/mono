@@ -51,6 +51,9 @@
 		</Hideable>
 
 		<Hideable title='assembly' id='assembly' detail={T_Details.assembly}>
+			{#snippet actions()}
+				<button class='banner-add' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>+</button>
+			{/snippet}
 			<D_Assembly />
 		</Hideable>
 
@@ -59,9 +62,6 @@
 		</Hideable>
 
 		<Hideable title='attributes' id='so' detail={T_Details.attributes}>
-			{#snippet actions()}
-				<button class='banner-add' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>+</button>
-			{/snippet}
 			<D_Attributes />
 		</Hideable>
 

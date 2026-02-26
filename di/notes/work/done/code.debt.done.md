@@ -174,3 +174,7 @@
 - [x] rename editor -> selection
 - [x] open library -> 1/2 second hesitation (unnecessary! file io?)
 - [x] replace hr in library with separator
+- [x] assembly: convert position/size (clickable label into a button) with "<->" decoration -- same as in the swap x <-> y button
+- [x] add a "<->" to the 2D/3D and to the solid/see through buttons
+- [x] add a "<->" to the "no/has" fireblocks and remove the "has"
+- [x] move + button from attributes banner -> assembly

@@ -13,14 +13,14 @@
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
 	let is_root = $derived(!selected_so?.scene?.parent);
 	let has_children = $derived($w_all_sos.some(so => so.scene?.parent?.so === selected_so));
-	let visible_label = $derived(selected_so?.visible === false ? 'show' : 'hide');
+	function get_visible_label(_tick: number) { return selected_so?.visible === false ? 'hidden' : 'visible'; }
+	let visible_label = $derived(get_visible_label($w_tick));
 
 	// Repeater state
 	function get_repeater(_tick: number) { return selected_so?.repeater ?? null; }
 	let is_repeater = $derived(get_repeater($w_tick) !== null);
 	let has_firewall = $derived(get_repeater($w_tick)?.firewall ?? false);
 
-	const axis_labels = ['x', 'y', 'z'] as const;
 
 	function repeater_keydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === 'Escape') (e.target as HTMLInputElement).blur();
@@ -86,24 +86,11 @@
 
 	function get_repeater_display(so: Smart_Object | undefined, all_sos: Smart_Object[], _tick: number) {
 		if (!so?.repeater) return null;
-		const r = so.repeater;
-		const repeat_ai = r.repeat_axis ?? 0;
-		const gap_ai = r.gap_axis ?? repeat_ai;
-		const parent_dims = [so.width, so.depth, so.height];
-		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
-
-		const count = all_sos.filter(s => s.scene?.parent?.so === so).length;
-		if (count === 0) return null;
-
-		if (r.gap_min != null && r.gap_max != null) {
-			const gap_length = parent_dims[gap_ai];
-			if (gap_length <= 0) return null;
-			return { count, gap: fmt(gap_length / count), total: fmt(gap_length), label: axis_labels[gap_ai] };
-		}
-		if (r.spacing != null && r.spacing > 0) {
-			return { count, gap: fmt(r.spacing), total: fmt(parent_dims[repeat_ai]), label: axis_labels[repeat_ai] };
-		}
-		return null;
+		const total = all_sos.filter(s => s.scene?.parent?.so === so).length;
+		if (total === 0) return null;
+		const clones = so.repeater.firewall ? (total + 1) / 2 : total;
+		const fireblocks = so.repeater.firewall ? clones - 1 : 0;
+		return { count: clones, fireblocks };
 	}
 
 	let repeater_display = $derived(get_repeater_display(selected_so ?? undefined, $w_all_sos, $w_tick));
@@ -198,7 +185,7 @@
 	<button class='action-btn' disabled={!has_children} use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>empty</button>
 	<button class='action-btn' disabled={is_root} use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_selected() }}>duplicate</button>
 	<button class='action-btn' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>{is_repeater ? 'unrepeat' : 'repeat'}</button>
-	<button class='action-btn action-far-right' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>{visible_label}</button>
+	<button class='action-btn action-far-right' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>↔ {visible_label}</button>
 </div>
 
 {#if is_repeater && selected_so}
@@ -212,7 +199,7 @@
 			</div>
 			<button class='action-btn' onclick={swap_xy}>swap x↔y</button>
 			<button class='action-btn' class:active={has_firewall} onclick={toggle_firewall} style='margin-left:auto'>
-				{has_firewall ? 'has fireblocks' : 'no fireblocks'}
+				{has_firewall ? '↔ fireblocks' : '↔ no fireblocks'}
 			</button>
 		</div>
 		<div class='repeater-option-row'>
@@ -253,8 +240,7 @@
 		{/if}
 		{#if repeater_display}
 			<div class='repeater-display'>
-				<span>{repeater_display.count} × {repeater_display.gap} ({repeater_display.label})</span>
-				<span class='dim'>= {repeater_display.total}</span>
+				<span>{repeater_display.count} clones{#if repeater_display.fireblocks > 0}, {repeater_display.fireblocks} fire blocks{/if}</span>
 			</div>
 		{/if}
 	</div>

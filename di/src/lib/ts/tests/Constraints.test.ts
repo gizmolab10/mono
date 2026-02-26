@@ -690,3 +690,189 @@ describe('enforce_invariants', () => {
 		expect(so.axes[2].length.value).toBeCloseTo(390);
 	});
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// CONTEXTUAL ALIASES (s, e, l)
+// ═══════════════════════════════════════════════════════════════════
+
+describe('contextual aliases (s, e, l)', () => {
+
+	it('s on x-axis attribute resolves to x_min (self start)', () => {
+		const so = add_so('box', { x_min: 100, x_max: 500 });
+		// Formula on x_max: s → self.x (x_min) → 100
+		const error = constraints.set_formula(so, 'x_max', 's * 3');
+		expect(error).toBeNull();
+		expect(so.x_max).toBeCloseTo(300);
+	});
+
+	it('e on y-axis attribute resolves to y_max (self end)', () => {
+		const so = add_so('box', { x_min: 0, x_max: 200, y_min: 0, y_max: 600 });
+		// Formula on y_min: e → self.Y (y_max) → 600
+		const error = constraints.set_formula(so, 'y_min', 'e - 100');
+		expect(error).toBeNull();
+		expect(so.y_min).toBeCloseTo(500);
+	});
+
+	it('l on z-axis attribute resolves to height (self length)', () => {
+		const so = add_so('box', { z_min: 0, z_max: 400 });
+		// Formula on z_min: l → self.h (height) → 400
+		const error = constraints.set_formula(so, 'z_min', 'l / 2');
+		expect(error).toBeNull();
+		expect(so.z_min).toBeCloseTo(200);
+	});
+
+	it('.l on x-axis attribute resolves to parent width', () => {
+		const parent = add_so('parent', { x_min: 0, x_max: 1000 });
+		const child = add_so('child', { x_min: 0, x_max: 100 });
+		// Formula on x_max: .l → parent.w (width) → 1000
+		const error = constraints.set_formula(child, 'x_max', '.l', parent.id);
+		expect(error).toBeNull();
+		expect(child.x_max).toBeCloseTo(1000);
+	});
+
+	it('.s on y-axis attribute resolves to parent y_min', () => {
+		const parent = add_so('parent', { y_min: 50, y_max: 800 });
+		const child = add_so('child');
+		// Formula on y_max: .s → parent.y (y_min) → 50
+		const error = constraints.set_formula(child, 'y_max', '.s + 200', parent.id);
+		expect(error).toBeNull();
+		expect(child.y_max).toBeCloseTo(250);
+	});
+
+	it('.e on z-axis attribute resolves to parent z_max', () => {
+		const parent = add_so('parent', { z_min: 0, z_max: 900 });
+		const child = add_so('child');
+		// Formula on z_max: .e → parent.Z (z_max) → 900
+		const error = constraints.set_formula(child, 'z_max', '.e', parent.id);
+		expect(error).toBeNull();
+		expect(child.z_max).toBeCloseTo(900);
+	});
+
+	it('l on width attribute resolves to self width (same axis)', () => {
+		const so = add_so('box', { x_min: 0, x_max: 300 });
+		// Formula on width: l → self.w (width) → 300
+		const error = constraints.set_formula(so, 'width', 'l + 50');
+		expect(error).toBeNull();
+		expect(so.axes[0].length.value).toBeCloseTo(350);
+	});
+
+	it('.l - 2 is axis-agnostic: same formula works on x, y, z', () => {
+		const parent = add_so('parent', { x_min: 0, x_max: 500, y_min: 0, y_max: 300, z_min: 0, z_max: 800 });
+		const child = add_so('child');
+
+		// Same formula ".l - 50" applied to different axes → each gets parent's length for that axis
+		constraints.set_formula(child, 'width',  '.l - 50', parent.id);
+		constraints.set_formula(child, 'depth',  '.l - 50', parent.id);
+		constraints.set_formula(child, 'height', '.l - 50', parent.id);
+
+		expect(child.axes[0].length.value).toBeCloseTo(450);  // parent width 500 - 50
+		expect(child.axes[1].length.value).toBeCloseTo(250);  // parent depth 300 - 50
+		expect(child.axes[2].length.value).toBeCloseTo(750);  // parent height 800 - 50
+	});
+
+	it('existing aliases still work alongside contextual aliases', () => {
+		const so = add_so('box', { x_min: 100, x_max: 500 });
+		// Mix old alias (w) with contextual alias (s) on same x-axis attribute
+		const error = constraints.set_formula(so, 'x_max', 's + w');
+		expect(error).toBeNull();
+		// s → x (100), w → width (400), so x_max = 500
+		expect(so.x_max).toBeCloseTo(500);
+	});
+
+	it('propagation works through contextual aliases', () => {
+		const parent = add_so('parent', { x_min: 0, x_max: 600 });
+		const child = add_so('child');
+
+		constraints.set_formula(child, 'x_max', '.l', parent.id);
+		expect(child.x_max).toBeCloseTo(600);
+
+		// Change parent width
+		parent.set_bound('x_max', 1000);
+		constraints.propagate(parent);
+		expect(child.x_max).toBeCloseTo(1000);
+	});
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// AXIS-QUALIFIED REFERENCES (y.l, .z.s)
+// ═══════════════════════════════════════════════════════════════════
+
+describe('axis-qualified references', () => {
+
+	it('y.l on x-axis attribute resolves to self depth (cross-axis)', () => {
+		const so = add_so('box', { x_min: 0, x_max: 200, y_min: 0, y_max: 600 });
+		// Formula on x_max: y.l → self.d (depth) → 600
+		const error = constraints.set_formula(so, 'x_max', 'y.l');
+		expect(error).toBeNull();
+		expect(so.x_max).toBeCloseTo(600);
+	});
+
+	it('z.s on x-axis attribute resolves to self z_min (cross-axis)', () => {
+		const so = add_so('box', { x_min: 0, x_max: 200, z_min: 50, z_max: 400 });
+		// Formula on x_max: z.s → self.z (z_min) → 50
+		const error = constraints.set_formula(so, 'x_max', 'z.s + 100');
+		expect(error).toBeNull();
+		expect(so.x_max).toBeCloseTo(150);
+	});
+
+	it('x.e on z-axis attribute resolves to self x_max (cross-axis)', () => {
+		const so = add_so('box', { x_min: 0, x_max: 800, z_min: 0, z_max: 100 });
+		// Formula on z_max: x.e → self.X (x_max) → 800
+		const error = constraints.set_formula(so, 'z_max', 'x.e / 2');
+		expect(error).toBeNull();
+		expect(so.z_max).toBeCloseTo(400);
+	});
+
+	it('.y.l on x-axis attribute resolves to parent depth (cross-axis parent)', () => {
+		const parent = add_so('parent', { x_min: 0, x_max: 500, y_min: 0, y_max: 300 });
+		const child = add_so('child');
+		// Formula on x_max: .y.l → parent.d (depth) → 300
+		const error = constraints.set_formula(child, 'x_max', '.y.l', parent.id);
+		expect(error).toBeNull();
+		expect(child.x_max).toBeCloseTo(300);
+	});
+
+	it('.z.e on y-axis attribute resolves to parent z_max (cross-axis parent)', () => {
+		const parent = add_so('parent', { z_min: 0, z_max: 900 });
+		const child = add_so('child');
+		// Formula on y_max: .z.e → parent.Z (z_max) → 900
+		const error = constraints.set_formula(child, 'y_max', '.z.e', parent.id);
+		expect(error).toBeNull();
+		expect(child.y_max).toBeCloseTo(900);
+	});
+
+	it('.x.s on z-axis attribute resolves to parent x_min (cross-axis parent)', () => {
+		const parent = add_so('parent', { x_min: 100, x_max: 500 });
+		const child = add_so('child');
+		// Formula on z_min: .x.s → parent.x (x_min) → 100
+		const error = constraints.set_formula(child, 'z_min', '.x.s + 50', parent.id);
+		expect(error).toBeNull();
+		expect(child.z_min).toBeCloseTo(150);
+	});
+
+	it('tokenizer round-trips .y.l correctly', () => {
+		const parent = add_so('parent', { y_min: 0, y_max: 400 });
+		const child = add_so('child');
+		constraints.set_formula(child, 'x_max', '.y.l - 50', parent.id);
+		const attr = child.attributes_dict_byName['x_max'];
+		expect(attr.formula_display).toBe('.y.l-50');
+	});
+
+	it('tokenizer round-trips y.l correctly', () => {
+		const so = add_so('box', { y_min: 0, y_max: 600 });
+		constraints.set_formula(so, 'x_max', 'y.l * 2');
+		const attr = so.attributes_dict_byName['x_max'];
+		expect(attr.formula_display).toBe('y.l*2');
+	});
+
+	it('propagation works through axis-qualified parent reference', () => {
+		const parent = add_so('parent', { y_min: 0, y_max: 400 });
+		const child = add_so('child');
+		constraints.set_formula(child, 'x_max', '.y.l', parent.id);
+		expect(child.x_max).toBeCloseTo(400);
+
+		parent.set_bound('y_max', 700);
+		constraints.propagate(parent);
+		expect(child.x_max).toBeCloseTo(700);
+	});
+});

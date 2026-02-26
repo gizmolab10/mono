@@ -148,12 +148,20 @@ class Tokenizer {
 			}
 
 			// .x = parent reference (dot with no name = parent SO)
+			// .y.l = axis-qualified parent reference (parent, y-axis, length)
 			// Must come before number check so ".x" isn't parsed as decimal
 			if (ch === '.' && pos + 1 < src.length && is_alpha(src[pos + 1])) {
-				pos++; // skip dot
-				const attribute = read_identifier();
-				// object '' means "parent" (resolved by Constraints.bind_refs)
-				tokens.push({ type: 'reference', object: '', attribute });
+				pos++; // skip first dot
+				const first = read_identifier();
+				if (peek() === '.' && pos + 1 < src.length && is_alpha(src[pos + 1])) {
+					// .axis.attr — axis-qualified parent reference
+					pos++; // skip second dot
+					const attribute = read_identifier();
+					tokens.push({ type: 'reference', object: '.' + first, attribute });
+				} else {
+					// .attr — simple parent reference
+					tokens.push({ type: 'reference', object: '', attribute: first });
+				}
 				continue;
 			}
 

@@ -50,6 +50,27 @@ const alias_axis_attr: Record<string, [number, number]> = {
 	z: [2, 0], Z: [2, 1], h: [2, 2],
 };
 
+// Attribute name → axis index (for contextual alias expansion)
+const attribute_to_axis: Record<string, number> = {
+	x_min: 0, x_max: 0, width: 0,
+	y_min: 1, y_max: 1, depth: 1,
+	z_min: 2, z_max: 2, height: 2,
+};
+
+// Axis letter → axis index (for axis-qualified references: y.l, .z.s)
+const axis_name_to_index: Record<string, number> = { x: 0, y: 1, z: 2 };
+
+// Contextual aliases: axis-agnostic names → attr_index within axis
+// s = start, e = end, l = length — resolved based on owning attribute's axis
+const contextual_aliases: Record<string, number> = { s: 0, e: 1, l: 2 };
+
+// Axis index → [start_alias, end_alias, length_alias]
+const axis_concrete: string[][] = [
+	['x', 'X', 'w'],
+	['y', 'Y', 'd'],
+	['z', 'Z', 'h'],
+];
+
 const invariant_formulas: Record<string, string> = {
 	x: 'X - w',
 	y: 'Y - d',
@@ -118,22 +139,50 @@ class Constraints {
 	// ── formula expansion ──
 
 	/** Resolve placeholder references in the AST:
-	 *  '' (dot-prefix .x) → parent_id, 'self' (bare x) → self_id or $std. */
-	private bind_refs(node: Node, self_id: string, parent_id?: string): Node {
+	 *  '' (dot-prefix .x) → parent_id, 'self' (bare x) → self_id or $std.
+	 *  '.y' (axis-qualified parent .y.l) → parent_id, expand using axis y.
+	 *  'y' (axis-qualified self y.l) → self_id, expand using axis y.
+	 *  owner_axis: axis index of the attribute being compiled — enables bare s/e/l expansion. */
+	private bind_refs(node: Node, self_id: string, parent_id?: string, owner_axis?: number): Node {
 		switch (node.type) {
 			case 'literal': return node;
-			case 'reference':
-				if (node.object === 'self') {
-					if (constants.has(node.attribute)) return nodes.reference(CONSTANTS_ID, node.attribute);
-					return nodes.reference(self_id, node.attribute);
+			case 'reference': {
+				const obj = node.object;
+
+				// Axis-qualified parent: .y.l → expand using specified axis, bind to parent
+				if (obj.length === 2 && obj[0] === '.' && axis_name_to_index[obj[1]] !== undefined) {
+					const attr = this.expand_contextual(node.attribute, axis_name_to_index[obj[1]]);
+					if (parent_id) return nodes.reference(parent_id, attr);
+					return nodes.reference(obj, attr);
 				}
-				if (node.object === '' && parent_id) return nodes.reference(parent_id, node.attribute);
-				return node;
+
+				// Axis-qualified self: y.l → expand using specified axis, bind to self
+				if (axis_name_to_index[obj] !== undefined) {
+					const attr = this.expand_contextual(node.attribute, axis_name_to_index[obj]);
+					return nodes.reference(self_id, attr);
+				}
+
+				// Standard: expand bare s/e/l using owning axis
+				const attr = this.expand_contextual(node.attribute, owner_axis);
+				if (obj === 'self') {
+					if (constants.has(node.attribute)) return nodes.reference(CONSTANTS_ID, node.attribute);
+					return nodes.reference(self_id, attr);
+				}
+				if (obj === '' && parent_id) return nodes.reference(parent_id, attr);
+				return attr !== node.attribute ? nodes.reference(obj, attr) : node;
+			}
 			case 'unary':
-				return nodes.unary(this.bind_refs(node.operand, self_id, parent_id));
+				return nodes.unary(this.bind_refs(node.operand, self_id, parent_id, owner_axis));
 			case 'binary':
-				return nodes.binary(node.operator, this.bind_refs(node.left, self_id, parent_id), this.bind_refs(node.right, self_id, parent_id));
+				return nodes.binary(node.operator, this.bind_refs(node.left, self_id, parent_id, owner_axis), this.bind_refs(node.right, self_id, parent_id, owner_axis));
 		}
+	}
+
+	/** Expand contextual alias (s/e/l) to concrete axis alias based on owner axis. */
+	private expand_contextual(attribute: string, owner_axis?: number): string {
+		if (owner_axis === undefined) return attribute;
+		const index = contextual_aliases[attribute];
+		return index !== undefined ? axis_concrete[owner_axis][index] : attribute;
 	}
 
 	/** Get the invariant derivation formula for an alias (e.g. 'x' → 'X - w'). */
@@ -163,7 +212,8 @@ class Constraints {
 		}
 		for (const attr of Object.values(so.attributes_dict_byName)) {
 			if (!attr.compiled) continue;
-			attr.compiled = this.bind_refs(attr.compiled, so.id, parent_id);
+			const owner_axis = attribute_to_axis[attr.name];
+			attr.compiled = this.bind_refs(attr.compiled, so.id, parent_id, owner_axis);
 			attr.value = evaluator.evaluate(attr.compiled, (o, a) => this.resolve(o, a));
 			this.sync_length(so, attr.name, attr.value);
 		}
@@ -199,7 +249,8 @@ class Constraints {
 		}
 
 		// Bind placeholder references: 'self' (bare x) → this SO, '' (.x) → parent SO
-		compiled = this.bind_refs(compiled, so.id, parent_id);
+		const owner_axis = attribute_to_axis[attr_name];
+		compiled = this.bind_refs(compiled, so.id, parent_id, owner_axis);
 
 		// Check for cycles before accepting
 		const formulas = this.build_formula_map();
@@ -428,7 +479,8 @@ class Constraints {
 					try {
 						let compiled = compiler.compile(source);
 						const parent_id = o.parent?.so.id;
-						compiled = this.bind_refs(compiled, o.so.id, parent_id);
+						const owner_axis = attribute_to_axis[attr.name];
+						compiled = this.bind_refs(compiled, o.so.id, parent_id, owner_axis);
 						attr.compiled = compiled;
 					} catch { /* skip — formula might be temporarily invalid */ }
 				}
