@@ -895,34 +895,55 @@
 
     function doErrors() {
       if (btnErrors.classList.contains('disabled')) return;
-      errorsPopup.innerHTML = '<div class="errors-title">Doc Build Errors</div><div class="errors-loading">analyzing...</div>';
+      errorsPopup.innerHTML = '<div class="errors-title">Errors</div><div class="errors-loading">analyzing...</div>';
       errorsOverlay.classList.add('visible');
 
       fetch(`http://localhost:${ports.dispatcher.port}/doc-errors-analysis`)
         .then(res => res.json())
         .then(data => {
-          let html = '<div class="errors-title">Doc Build Errors</div>';
+          let html = '<div class="errors-title">Errors</div>';
 
-          if (data.has_errors === false) {
-            html += '<div class="errors-none">✓ No errors</div>';
-          } else if (data.analysis) {
-            html += data.analysis;
-          } else if (data.raw) {
-            // No analysis available — show raw errors
-            if (data.error) html += `${data.error}\n\n`;
-            for (const [proj, text] of Object.entries(data.raw)) {
-              if (text) html += `── ${proj} ──\n${text}\n\n`;
+          // Netlify deploy errors
+          const netlifyErrors = getNetlifyErrors();
+          if (netlifyErrors.length > 0) {
+            html += '<div style="margin-bottom:8px"><b>Netlify</b></div>';
+            for (const { site, message } of netlifyErrors) {
+              html += `── ${site} ──\n${message}\n\n`;
             }
-          } else if (data.error) {
-            html += `Error: ${data.error}`;
-          } else {
-            html += 'No analysis available';
+          }
+
+          // Local doc build errors
+          if (data.has_errors === false && netlifyErrors.length === 0) {
+            html += '<div class="errors-none">✓ No errors</div>';
+          } else if (data.has_errors !== false) {
+            if (netlifyErrors.length > 0) html += '<div style="margin:8px 0"><b>Local build</b></div>';
+            if (data.analysis) {
+              html += data.analysis;
+            } else if (data.raw) {
+              if (data.error) html += `${data.error}\n\n`;
+              for (const [proj, text] of Object.entries(data.raw)) {
+                if (text) html += `── ${proj} ──\n${text}\n\n`;
+              }
+            } else if (data.error) {
+              html += `Error: ${data.error}`;
+            }
           }
 
           errorsPopup.innerHTML = html;
         })
         .catch(err => {
-          errorsPopup.innerHTML = `<div class="errors-title">Doc Build Errors</div>API error: ${err.message}`;
+          // Still show Netlify errors even if doc-errors-analysis fails
+          const netlifyErrors = getNetlifyErrors();
+          let html = '<div class="errors-title">Errors</div>';
+          if (netlifyErrors.length > 0) {
+            html += '<div style="margin-bottom:8px"><b>Netlify</b></div>';
+            for (const { site, message } of netlifyErrors) {
+              html += `── ${site} ──\n${message}\n\n`;
+            }
+          } else {
+            html += `API error: ${err.message}`;
+          }
+          errorsPopup.innerHTML = html;
         });
     }
 
@@ -930,11 +951,24 @@
       errorsOverlay.classList.remove('visible');
     }
 
+    function getNetlifyErrors() {
+      if (!cachedDeployData) return [];
+      const errors = [];
+      for (const [site, status] of Object.entries(cachedDeployData)) {
+        if (status.state === 'error' && !status.error_message?.includes('no content change')) {
+          errors.push({ site, message: status.error_message || 'unknown error' });
+        }
+      }
+      return errors;
+    }
+
     function checkErrorsStatus() {
       fetch(`http://localhost:${ports.dispatcher.port}/doc-errors`)
         .then(res => res.json())
         .then(data => {
-          btnErrors.classList.toggle('disabled', !data.has_errors);
+          const hasDocErrors = data.has_errors;
+          const hasDeployErrors = getNetlifyErrors().length > 0;
+          btnErrors.classList.toggle('disabled', !hasDocErrors && !hasDeployErrors);
         })
         .catch(() => {
           // On error, keep button enabled
@@ -1052,6 +1086,7 @@
             btnDocs.innerHTML = 'docs<span class="badge">⌫</span>';
             clearTitleButtonsWorking();
             matchRowWidths();
+            checkErrorsStatus();
 
             // Enable console clear on mouseleave after 1 second
             setTimeout(() => {

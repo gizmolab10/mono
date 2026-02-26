@@ -300,7 +300,7 @@ if [ "$PROJECT_ARG" = "all" ]; then
   
   clear_progress
   echo "Updating all projects..."
-  echo "all 0/3 starting" > "$STATUS_FILE"
+  echo "all 0/${#ALL_PROJECTS[@]} starting" > "$STATUS_FILE"
   echo ""
   
   PROJ_COUNT=${#ALL_PROJECTS[@]}
@@ -325,8 +325,8 @@ if [ "$PROJECT_ARG" = "all" ]; then
     echo ""
   done
   
-  echo "✓ mono, ws, di"
-  echo "✓ mono, ws, di" > "$STATUS_FILE"
+  echo "✓ mono, ws, di, ma"
+  echo "✓ mono, ws, di, ma" > "$STATUS_FILE"
   exit 0
 fi
 

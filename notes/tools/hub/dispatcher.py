@@ -37,6 +37,7 @@ PROJECT_PATHS = {
     'mono': GITHUB_DIR,
     'ws': os.path.join(GITHUB_DIR, 'ws'),
     'di': os.path.join(GITHUB_DIR, 'di'),
+    'ma': os.path.join(GITHUB_DIR, 'ma'),
 }
 
 # Status file for rebuild progress (single file, Option C)
@@ -60,6 +61,8 @@ NETLIFY_SITES = {
     'di': 'designintuition',
     'di-docs': 'designintuition-documentation',
     'mono-docs': 'monorepo-documentation',
+    'ma': 'maturity-guidance',
+    'ma-docs': 'docs-maturity-guidance',
 }
 
 NETLIFY_TOKEN = os.environ.get('NETLIFY_ACCESS_TOKEN', '')
@@ -70,6 +73,7 @@ DOC_ERROR_LOGS = {
     'mono': os.path.join(GITHUB_DIR, 'logs', 'update-docs.error.mono.log'),
     'ws': os.path.join(GITHUB_DIR, 'logs', 'update-docs.error.ws.log'),
     'di': os.path.join(GITHUB_DIR, 'logs', 'update-docs.error.di.log'),
+    'ma': os.path.join(GITHUB_DIR, 'logs', 'update-docs.error.ma.log'),
 }
 
 def read_doc_errors():
