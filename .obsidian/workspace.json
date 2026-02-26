@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/architecture/core/enlarged.algebra.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt"
+              "title": "enlarged.algebra"
             }
           },
           {
@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/translate.md",
+                "file": "di/notes/work/enlarged algebra.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "translate"
+              "title": "enlarged algebra"
             }
           },
           {
@@ -151,7 +151,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/architecture/core/enlarged.algebra.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -161,7 +161,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for code.debt"
+              "title": "Backlinks for enlarged.algebra"
             }
           },
           {
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/architecture/core/enlarged.algebra.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of enlarged.algebra"
             }
           }
         ],
@@ -242,7 +242,9 @@
   },
   "active": "6e8629c5169567b1",
   "lastOpenFiles": [
-    "di/notes/work/translate.md",
+    "di/notes/architecture/core/algebra.md",
+    "di/notes/architecture/core/enlarged.algebra.md",
+    "di/notes/work/enlarged algebra.md",
     "di/notes/work/code.debt.md",
     "di/notes/work/done/code.debt.done.md",
     "di/notes/work/milestones/20.repeaters.md",
@@ -276,8 +278,6 @@
     "logs/update-docs.error.ga.log",
     "ga/node_modules/vue/node_modules",
     "ga/node_modules/markdown-it-task-lists/test/fixtures/ordered.md",
-    "ga/node_modules/markdown-it-task-lists/test/fixtures/dirty.md",
-    "ga/node_modules/markdown-it-task-lists/test/fixtures/mixed-nested.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",

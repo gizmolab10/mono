@@ -4,19 +4,19 @@ Customers shouldn't have to type `x_min` or `x_max`. They think in position + le
 
 ## Customer-facing attributes
 
-| Customer | Meaning    | Internal | For Invariant |
-| -------- | ---------- | -------- | ------------- |
-| `A.x`    | position x | `x_min`  | X - w         |
-| `A.y`    | position y | `y_min`  | Y - d         |
-| `A.z`    | position z | `z_min`  | Z - h         |
-| `A.w`    | width      | `width`  | X - x         |
-| `A.d`    | depth      | `depth`  | Y - y         |
-| `A.h`    | height     | `height` | Z - z         |
-| `A.X`    | far edge x | `x_max`  | x + w         |
-| `A.Y`    | far edge y | `y_max`  | y + d         |
-| `A.Z`    | far edge z | `z_max`  | z + h         |
+| Customer | Meaning    | Internal | Invariant | Agnostic |
+| -------- | ---------- | -------- | --------- | -------- |
+| `A.x`    | position x | `x_min`  | X - w     | e - l    |
+| `A.y`    | position y | `y_min`  | Y - d     | e - l    |
+| `A.z`    | position z | `z_min`  | Z - h     | e - l    |
+| `A.w`    | width      | `width`  | X - x     | e - s    |
+| `A.d`    | depth      | `depth`  | Y - y     | e - s    |
+| `A.h`    | height     | `height` | Z - z     | e - s    |
+| `A.X`    | far edge x | `x_max`  | x + w     | s + l    |
+| `A.Y`    | far edge y | `y_max`  | y + d     | s + l    |
+| `A.Z`    | far edge z | `z_max`  | z + h     | s + l    |
 
-Nine aliases, six SOTs, three derived.
+Nine aliases, six SOTs, three derived. See [Enlarged Algebra](./enlarged.algebra.md) for the axis-agnostic notation (`s`/`l`/`e`).
 
 ## Reference conventions
 
@@ -92,13 +92,13 @@ Without this, a persisted formula on an invariant attribute would prevent `enfor
 
 ## Tests
 
-4 files, 119 tests.
+4 files, 154 tests.
 
 | File | Tests | Covers |
 | ---- | ----: | ------ |
 | `Compiler.test.ts` | 36 | Tokenizer (18): bare numbers, decimals, operators, parens, references, unit suffixes (in/ft/mm/cm), mixed expressions, end token, errors, bare self-refs, dot-prefix parent-refs. Compiler (18): AST shape for literals, refs, precedence, parens, unary minus, unit expressions, bare+dotted+dot-prefix, errors. |
 | `Evaluator.test.ts` | 20 | Forward eval (10): literal, ref, four ops, div-by-zero → 0, unary minus, precedence, parens. Reverse propagation (8): solve for single unknown through each op, nested, throws on zero/multiple refs. Cycle detection (5+): acyclic, direct, indirect, self-ref, isolation. |
-| `Constraints.test.ts` | 50 | Formula on Attribute (6): set+eval, store, null compiled, bad formula error, cycle error, clear keeps value. Propagation (3): source→dependent, chain cascade, unrelated untouched. Serialize (5): round-trip, omit when absent, deserialize recompiles AST. Orientation (2): copy angles, survives serialize. Add child (4): min bounds track parent, update on move, max bounds, half-smallest-dimension cube. Alias resolution (8): resolve x/X/w/h/d + fallthrough, write x/w + fallthrough. Dot-prefix parent (11): .x binding, explicit SO, mixed, .w alias, no parent → 0, propagation, .w→parent width, add_child_so flow. Bare self (3): x self-ref, w self-width, mixed .x+x. Invariant formulas (5): lookup x/w/X, null for unknown, eval with self. Enforce invariants (8): inv=0/1/2, no override formulas, set_formula triggers, propagate triggers, multi-axis. |
+| `Constraints.test.ts` | 85 | Formula on Attribute (6): set+eval, store, null compiled, bad formula error, cycle error, clear keeps value. Propagation (3): source→dependent, chain cascade, unrelated untouched. Serialize (5): round-trip, omit when absent, deserialize recompiles AST. Orientation (2): copy angles, survives serialize. Add child (4): min bounds track parent, update on move, max bounds, half-smallest-dimension cube. Alias resolution (8): resolve x/X/w/h/d + fallthrough, write x/w + fallthrough. Dot-prefix parent (11): .x binding, explicit SO, mixed, .w alias, no parent → 0, propagation, .w→parent width, add_child_so flow. Bare self (3): x self-ref, w self-width, mixed .x+x. Invariant formulas (5): lookup x/w/X, null for unknown, eval with self. Enforce invariants (8): inv=0/1/2, no override formulas, set_formula triggers, propagate triggers, multi-axis. Contextual aliases (9): self cross-axis, parent cross-axis, tokenizer round-trips, propagation. Translate formulas (21): same-axis bare (all 3 axes), cross-axis, parent dot-prefix, explicit SO refs, invariant agnostic/explicit, mixed mode normalization, values unchanged. |
 | `Orientation.test.ts` | 13 | from_bounds (6): flat→identity, non-square angle, 45° around each axis, 30° staircase. Use case S (1): staircase orientation stable on stretch. Use case W (2): fixed dimensions, slides with origin. recompute_max_bounds (3): 45°/30° redistribution, diagonal preserved. |
 
 ## Face–Axis Mapping

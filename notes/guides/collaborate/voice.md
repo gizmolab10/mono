@@ -130,6 +130,18 @@ When naming sections or concepts, favor warmth over mechanics:
 >
 > I asked AI to investigate, resolve and then summarize.
 
+### Before/After — Technical Prose
+
+Claude's draft (explaining why cross-axis named refs don't use agnostic notation):
+
+> cross-axis named refs are the one limitation. the tokenizer only supports a two-part reference token (`object.attribute`) — there's no third slot for an axis qualifier, so `A.y.l` can't be expressed. cross-axis named refs stay explicit (`A.d`) and are left as-is during translation.
+
+Jonathan's rewrite:
+
+> when an attribute is on one axis, and its formula grabs a value on a different axis, it could use something like `A.y.l` (length on the y axis of A). we've decided not to bulk out our compiler. `A.d` is fine, so we keep the explicit tokens around.
+
+the difference: Claude catalogues constraints ("the tokenizer only supports…", "there's no third slot…"). Jonathan states the situation, makes a judgment call, and moves on. the reasoning is a decision, not a spec.
+
 ### Anti-Examples
 
 ❌ "The paging system provides support for displaying large numbers of widgets in manageable batches through a three-class architecture consisting of G_Pages, G_Paging, and G_Cluster_Pager."
