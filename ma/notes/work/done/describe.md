@@ -2,7 +2,7 @@
 
 ## Goal
 
-It's noticeable, we reinvent the wheel and why? What if we cobble together [a way](ma/notes/index.md) to do things once and give ourselves greater reach? What pieces are needed for this?
+It's noticeable, we reinvent the wheel and why? What if we cobble together [a way](../../index.md) to do things once and give ourselves greater reach? What pieces are needed for this?
 
 ## Need
 

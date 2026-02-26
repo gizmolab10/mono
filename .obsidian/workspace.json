@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ma/notes/work/done/describe.md",
+                "file": "di/notes/work/done/code.debt.done.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "describe"
+              "title": "code.debt.done"
             }
           },
           {
@@ -373,15 +373,19 @@
   },
   "active": "bbc57c19fcf944de",
   "lastOpenFiles": [
-    "ma/notes/work/plan.md",
+    "logs/update-docs.error.di.log",
+    "di/notes/work/code.debt.md",
+    "di/notes/work/done/code.debt.done.md",
+    "di/notes/architecture/core/migration.md",
+    "ma/notes/work/done/describe.md",
     "ma/notes/index.md",
+    "ma/notes/work/plan.md",
     "ma/notes/work/done/index.md",
     "logs/update-docs.error.mono.log",
     "ma/notes/work/index.md",
     "ma/notes/work/done",
     "ma/notes/work/done/next steps.md",
     "ma/notes/work/done/proposal.md",
-    "ma/notes/work/done/describe.md",
     "ma/notes/work/wendy.md",
     "ma/notes/work/done/jonathan.md",
     "s3/notes/work/weak.spots.md",
@@ -401,13 +405,10 @@
     "ma/node_modules/markdown-it-task-lists/test/fixtures/bullet.md",
     "ma/node_modules/markdown-it-task-lists/README.md",
     "ma/node_modules/markdown-it-task-lists/CHANGELOG.md",
-    "di/notes/work/done/code.debt.done.md",
     "ma/node_modules/vitepress/template/api-examples.md",
     "ma/node_modules/vitepress/template/index.md",
     "ma/node_modules/vitepress/template/markdown-examples.md",
     "ma/node_modules/vitepress/node_modules/@esbuild/darwin-x64/README.md",
-    "ma/node_modules/vitepress/node_modules/vite/LICENSE.md",
-    "ma/node_modules/vitepress/node_modules/vite/README.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",

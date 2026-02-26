@@ -2,12 +2,7 @@
 
 offer a proposal for the first unchecked item
 
-- [x] move save to controls (after hamburger)
-- [x] move to bottom row of hierarchy
-	- [x] delete all children
-	- [x] duplicate
-	- [x] show
-- [x] add reset button to bottom row of library -> delete all and restore from src/assets
+- [ ] rename constants -> values
 - [ ] migrate to {o, e, l} from {x, X, w}
 	- [ ] Axis -> rename gets (start -> origin and end -> extent)
 	- [ ] regarding algebra, for the x axis, we have x, X and w. i am thinking of using axis-agnostic algebra: origin, extent, and length (o, e, l). propose version 8 migration

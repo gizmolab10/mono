@@ -157,3 +157,9 @@
 - [x] move instructions (above) for configuring repeaters -> mono/di/notes/user manual/repeaters.md
 - [x] rename list -> hierarchy
 - [x] backward compatibility -- describe current design reading a file that is v1 → [[di/notes/architecture/core/migration|migration]]
+- [x] move save to controls (after hamburger)
+- [x] move to bottom row of hierarchy
+	- [x] delete all children
+	- [x] duplicate
+	- [x] show
+- [x] add reset button to bottom row of library -> delete all and restore from src/assets

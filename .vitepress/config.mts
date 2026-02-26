@@ -493,28 +493,44 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
-                  text: 'Guides >',
-                  link: '/ma/notes/guides/',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Describe',
-                      link: '/ma/notes/guides/describe'
-                    },
-                    {
-                      text: 'Wendy',
-                      link: '/ma/notes/guides/wendy'
-                    }
-                  ]
-                },
-                {
                   text: 'Work >',
                   link: '/ma/notes/work/',
                   collapsed: true,
                   items: [
                     {
+                      text: 'Plan',
+                      link: '/ma/notes/work/plan'
+                    },
+                    {
                       text: 'Revisit.ma',
                       link: '/ma/notes/work/revisit.ma'
+                    },
+                    {
+                      text: 'Wendy',
+                      link: '/ma/notes/work/wendy'
+                    },
+                    {
+                      text: 'Done >',
+                      link: '/ma/notes/work/done/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Describe',
+                          link: '/ma/notes/work/done/describe'
+                        },
+                        {
+                          text: 'Jonathan',
+                          link: '/ma/notes/work/done/jonathan'
+                        },
+                        {
+                          text: 'Next Steps',
+                          link: '/ma/notes/work/done/next steps'
+                        },
+                        {
+                          text: 'Proposal',
+                          link: '/ma/notes/work/done/proposal'
+                        }
+                      ]
                     }
                   ]
                 }
