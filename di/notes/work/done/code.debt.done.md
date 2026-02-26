@@ -183,3 +183,5 @@
 	- [x] translate button bottom of attributes
 		- [x] between explicit and agnostic
 - [x] red dots for occluded and disabled
+- [x] set_invariant synced length from raw .value instead of get_bound(), corrupting child SO geometry
+	- [x] BUG: open the drawer from the library. selected the front SO. click the cross box in row d. the correct formula appeared (Y - y) with the formula for Y blanked, the values unchanged. the drawing looked fine. THEN, check the cross box in row Y. the value for y changed (to a large negative number, and the value for Y to an even larger negative number) and the drawing not so nice. explain

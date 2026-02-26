@@ -3,17 +3,18 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] BUG: open the drawer from the library. selected the front SO. click the cross box in row d. the correct formula appeared (Y - y) with the formula for Y blanked, the values unchanged. the drawing looked fine. THEN, check the cross box in row Y. the value for y changed (to a large negative number, and the value for Y to an even larger negative number) and the drawing not so nice. explain
 
 - [ ] disallow algebraic names in constants
-- [ ] drag -> disallow making the length negative
-- [ ] user-friendly error popup
+- [ ] occluded dimensions !!!!!!!
+- [ ] user-friendly formula error popup
 - [ ] ability to rotate around an axis
 	- [ ] swap xy -> corrupted
 	- [ ] rotate 90° (+,-) (x,y,z)
 - [ ] double height controls
 - [ ] dark accent -> **selected** button state change text to **white**
+- [ ] click on a selected SO in assembly -> unselects
 - [ ] library -- save to local storage, export to fs
+- [ ] drag -> disallow making the length negative
 - [ ] ability to stretch origins of root
 	- [ ] do all children origins must be adjusted?
 - [ ] [[more milestones]]

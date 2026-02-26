@@ -114,7 +114,7 @@
 		const axis = selected_so.axes[row.axis_index];
 		// Before changing invariant, sync length from geometry so it's never stale
 		if (!axis.length.compiled) {
-			axis.length.value = axis.end.value - axis.start.value;
+			axis.length.value = selected_so.get_bound(axis.end.name as Bound) - selected_so.get_bound(axis.start.name as Bound);
 		}
 		// Clear any existing formula on the attribute being marked as invariant —
 		// invariant values come from enforce_invariants, not user formulas
