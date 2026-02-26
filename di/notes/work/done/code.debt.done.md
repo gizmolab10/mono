@@ -178,3 +178,7 @@
 - [x] add a "<->" to the 2D/3D and to the solid/see through buttons
 - [x] add a "<->" to the "no/has" fireblocks and remove the "has"
 - [x] move + button from attributes banner -> assembly
+- [x] expand algebra with {s, e, l} contextual aliases
+	- [x] s/e/l expand to concrete axis aliases based on owning attribute's axis
+	- [x] translate button bottom of attributes
+		- [x] between explicit and agnostic
