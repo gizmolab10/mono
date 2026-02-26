@@ -2,13 +2,17 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] rename smart object -> attributes, constants -> values
-- [ ] new banner -> alter
+- [x] rename d smart object -> d attributes
+- [x] d parts -> d assembly
+- [x] new banner -> editor
+- [x] assembly table -> v arrow keys change selection
+- [ ] open library -> hesitation
 - [ ] migrate to {o, e, l} from {x, X, w}
 	- [ ] Axis -> rename gets (start -> origin and end -> extent)
 	- [ ] regarding algebra, for the x axis, we have x, X and w. i am thinking of using axis-agnostic algebra: origin, extent, and length (o, e, l). propose version 8 migration
 - [ ] save to local storage,  export to fs
-- [ ] repeated repeater: four (six?) walls
+- [ ] swap xy -> corrupted
+- [ ] rotate 90° (+,-) (x,y,z)
 - [ ] double height controls
 - [ ] [[more milestones]]
 

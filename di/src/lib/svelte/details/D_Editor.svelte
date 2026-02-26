@@ -1,9 +1,10 @@
 <script lang='ts'>
-	import { T_Hit_3D } from '../../ts/types/Enumerations';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { w_unit_system } from '../../ts/types/Units';
-	import { hits_3d, scenes, stores } from '../../ts/managers';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
+	import { scenes, stores } from '../../ts/managers';
+	import { face_label } from '../../ts/editors/Face_Label';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { T_Editing } from '../../ts/types/Enumerations';
+	import { w_unit_system } from '../../ts/types/Units';
 	import { units } from '../../ts/types/Units';
 	import { engine } from '../../ts/render';
 
@@ -131,84 +132,77 @@
 		scenes.save();
 	}
 
-	let show_position = true;
+	// Name editing
+	const { w_s_face_label } = face_label;
 
-	function select(so: Smart_Object): void {
-		hits_3d.set_selection({ so, type: T_Hit_3D.face, index: 0 });
+	let display_name = $derived(
+		$w_s_face_label ? $w_s_face_label.current_name : selected_so?.name ?? ''
+	);
+
+	function handle_name(e: Event) {
+		const input = e.target as HTMLInputElement;
+		if (selected_so) {
+			selected_so.name = input.value;
+			scenes.save();
+			stores.w_all_sos.update(sos => sos);
+			face_label.sync(input.value);
+		}
 	}
 
-	function is_selected(so: Smart_Object, _tick: number): boolean {
-		return $w_selection?.so === so;
+	function handle_name_keydown(e: KeyboardEvent) {
+		if (e.key === 'Enter') {
+			(e.target as HTMLInputElement).blur();
+		} else if (e.key === 'Escape') {
+			if (face_label.state) face_label.cancel();
+			else stores.w_editing.set(T_Editing.none);
+			(e.target as HTMLInputElement).blur();
+		}
 	}
 
-	function fmt(mm: number): string {
-		return units.format_for_system(mm, $w_unit_system, $w_precision, false);
+	function handle_name_focus(e: FocusEvent) {
+		stores.w_editing.set(T_Editing.details_name);
+		const cur = face_label.cursor;
+		if (cur) {
+			const input = e.target as HTMLInputElement;
+			requestAnimationFrame(() => input.setSelectionRange(cur.start, cur.end));
+		}
 	}
 
-	function position(so: Smart_Object, _tick: number): [string, string, string] {
-		return [fmt(so.x_min), fmt(so.y_min), fmt(so.z_min)];
-	}
-
-	function size(so: Smart_Object, _tick: number): [string, string, string] {
-		return [fmt(so.axes[0].length.value), fmt(so.axes[1].length.value), fmt(so.axes[2].length.value)];
-	}
-
-	function repeat_count(so: Smart_Object, sos: Smart_Object[], _tick: number): number {
-		const parent = so.scene?.parent?.so;
-		if (!parent?.repeater) return 0;
-		const siblings = sos.filter(s => s.scene?.parent?.so === parent);
-		if (siblings[0] !== so) return 0; // only first child shows count
-		return siblings.length;
-	}
-
-	function is_clone(so: Smart_Object, sos: Smart_Object[], _tick: number): boolean {
-		const parent = so.scene?.parent?.so;
-		if (!parent?.repeater) return false;
-		const siblings = sos.filter(s => s.scene?.parent?.so === parent);
-		return siblings[0] !== so;
-	}
-
-	function depth(so: Smart_Object): number {
-		let d = 0;
-		let scene = so.scene;
-		while (scene?.parent) { d++; scene = scene.parent; }
-		return d;
+	function handle_name_blur(e: FocusEvent) {
+		const input = e.target as HTMLInputElement;
+		face_label.cursor = { start: input.selectionStart ?? 0, end: input.selectionEnd ?? 0 };
+		setTimeout(() => {
+			if (stores.editing() !== T_Editing.face_label) {
+				if (face_label.state) {
+					face_label.commit(selected_so?.name ?? '');
+				} else {
+					stores.w_editing.set(T_Editing.none);
+				}
+			}
+		});
 	}
 </script>
 
-<table class='hierarchy'>
-	<thead><tr>
-		<th class='hierarchy-header'></th>
-		<th class='hierarchy-toggle' colspan='3' onclick={() => show_position = !show_position}>
-			{show_position ? 'position' : 'size'} ⇄
-		</th>
-	</tr></thead>
-	<tbody>
-	{#each $w_all_sos.filter(s => !is_clone(s, $w_all_sos, $w_tick)) as so (so.id)}
-		{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
-		{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
-		<tr
-			class='hierarchy-row'
-			class:selected={is_selected(so, $w_tick)}
-			onclick={() => select(so)}>
-			<td class='hierarchy-name' style:padding-left='{depth(so) * 12}px'>
-				{so.name}{#if n_rpt > 0}<span class='repeat-badge'>×{n_rpt}</span>{/if}
-			</td>
-			<td class='hierarchy-data'>{values[0]}</td>
-			<td class='hierarchy-data'>{values[1]}</td>
-			<td class='hierarchy-data'>{values[2]}</td>
-		</tr>
-	{/each}
-</tbody></table>
+<div class='name-row'>
+	<input
+		type      = 'text'
+		value     = {display_name}
+		oninput   = {handle_name}
+		onkeydown = {handle_name_keydown}
+		onfocus   = {handle_name_focus}
+		onblur    = {handle_name_blur}
+	/>
+</div>
 
 <div class='actions-row'>
 	<button class='action-btn' disabled={!has_children} use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>empty</button>
 	<button class='action-btn' disabled={is_root} use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_selected() }}>duplicate</button>
 	<button class='action-btn' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>{is_repeater ? 'unrepeat' : 'repeat'}</button>
-	<button class='action-btn' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>{visible_label}</button>
+	<button class='action-btn action-far-right' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>{visible_label}</button>
 </div>
 
 {#if is_repeater && selected_so}
+<div class='separator'></div>
 	<div class='repeater-options'>
 		<div class='repeater-option-row'>
 			<span class='option-label'>axis</span>
@@ -267,64 +261,54 @@
 {/if}
 
 <style>
-	.hierarchy {
-		width           : 100%;
-		border-collapse : collapse;
-		font-size       : 9px;
-		margin-top      : -4px;
+	.name-row {
+		display      : flex;
+		gap          : 6px;
+		align-items  : center;
 	}
 
-	.hierarchy-row {
-		cursor : pointer;
+	.name-row input {
+		flex          : 1;
+		min-width     : 0;
+		border        : 0.5px solid currentColor;
+		box-sizing    : border-box;
+		font-size     : 0.875rem;
+		color         : inherit;
+		background    : white;
+		padding       : 0 6px;
+		height        : 20px;
+		outline       : none;
+		border-radius : 4px;
 	}
 
-	.hierarchy-row:hover {
-		background : var(--accent);
+	.name-row input:focus {
+		border-color : currentColor;
+		opacity      : 1;
 	}
 
-	.hierarchy-row.selected {
-		background  : var(--accent);
-		font-weight : 600;
+	.separator {
+		background     : var(--accent);
+		margin         : 0 -8px;
+		display        : flex;
+		flex-direction : column;
+		gap            : 2px;
 	}
 
-	.hierarchy-name {
-		padding    : 2px 0;
-		text-align : left;
+	.separator::before,
+	.separator::after {
+		content       : '';
+		display       : block;
+		background    : var(--bg);
 	}
 
-	.clone {
-		opacity : 0.35;
+	.separator::before {
+		height        : 8px;
+		border-radius : 0 0 8px 8px;
 	}
 
-	.repeat-badge {
-		margin-left : 4px;
-		opacity     : 0.5;
-		font-size   : 8px;
-	}
-
-	.hierarchy-header {
-		/* empty name column header */
-	}
-
-	.hierarchy-toggle {
-		text-align   : center;
-		font-weight  : normal;
-		color        : rgba(0, 0, 0, 0.8);
-		cursor       : pointer;
-		padding      : 0;
-		user-select  : none;
-	}
-
-	.hierarchy-toggle:hover {
-		color : rgba(0, 0, 0, 1.0);
-	}
-
-	.hierarchy-data {
-		padding              : 2px 0 2px 6px;
-		text-align           : right;
-		font-variant-numeric : tabular-nums;
-		color                : black;
-		white-space          : nowrap;
+	.separator::after {
+		height        : 8px;
+		border-radius : 8px 8px 0 0;
 	}
 
 	.actions-row {
@@ -346,6 +330,10 @@
 		white-space   : nowrap;
 	}
 
+	.action-far-right {
+		margin-left : auto;
+	}
+
 	.action-btn:disabled {
 		opacity        : 0.3;
 		cursor         : default;
@@ -363,7 +351,7 @@
 	}
 
 	.repeater-options {
-		margin-top     : 8px;
+		margin-top     : 0px;
 		display        : flex;
 		flex-direction : column;
 		gap            : 4px;

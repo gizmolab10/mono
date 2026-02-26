@@ -78,10 +78,11 @@ export enum T_Mouse_Detection {
 
 export enum T_Details {
 	preferences = 1,
-	so          = 2,
+	attributes  = 2,
 	library     = 4,
 	constants   = 8,
-	hierarchy   = 16,
+	assembly    = 16,
+	editor		= 32,
 }
 
 export enum T_Editing {

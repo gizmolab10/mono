@@ -1,6 +1,7 @@
 import type { Dictionary } from '../types/Types';
 import { writable, get } from 'svelte/store';
 import { Point } from '../types/Coordinates';
+import { T_Details, T_Hit_3D } from '../types/Enumerations';
 import { engine } from '../render/Engine';
 import { stores } from '../managers/Stores';
 import { hits } from '../managers/Hits';
@@ -97,6 +98,28 @@ export class Events {
 			event.preventDefault();
 			stores.toggle_details();
 		}
+		if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+			if ((get(stores.w_t_details) & T_Details.assembly) === 0) return;
+			event.preventDefault();
+			this.navigate_assembly(event.key === 'ArrowUp' ? -1 : 1);
+		}
+	}
+
+	private navigate_assembly(direction: number): void {
+		const all_sos = get(stores.w_all_sos);
+		const visible = all_sos.filter(so => {
+			const parent = so.scene?.parent?.so;
+			if (!parent?.repeater) return true;
+			const siblings = all_sos.filter(s => s.scene?.parent?.so === parent);
+			return siblings[0] === so;
+		});
+		if (visible.length === 0) return;
+		const selected = stores.selection()?.so;
+		const current_index = selected ? visible.indexOf(selected) : -1;
+		let next_index = current_index + direction;
+		if (next_index < 0) next_index = visible.length - 1;
+		if (next_index >= visible.length) next_index = 0;
+		stores.set_selection({ so: visible[next_index], type: T_Hit_3D.face, index: 0 });
 	}
 
 }

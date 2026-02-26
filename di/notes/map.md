@@ -28,9 +28,10 @@
 - di/src/lib/svelte/details/Hideable.svelte
 - di/src/lib/svelte/details/D_Constants.svelte
 - di/src/lib/svelte/details/D_Library.svelte
-- di/src/lib/svelte/details/D_Hierarchy.svelte
+- di/src/lib/svelte/details/D_Assembly.svelte
+- di/src/lib/svelte/details/D_Attributes.svelte
+- di/src/lib/svelte/details/D_Editor.svelte
 - di/src/lib/svelte/details/D_Preferences.svelte
-- di/src/lib/svelte/details/D_Selection.svelte
 
 ## Svelte — Mouse
 

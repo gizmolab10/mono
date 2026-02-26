@@ -8,9 +8,10 @@
 	import { engine } from '../../ts/render';
 	import { onMount } from 'svelte';
 	import Hideable from './Hideable.svelte';
-	import D_Hierarchy from './D_Hierarchy.svelte';
+	import D_Assembly from './D_Assembly.svelte';
+	import D_Editor from './D_Editor.svelte';
 	import D_Library from './D_Library.svelte';
-	import D_Smart_Object from './D_Smart_Object.svelte';
+	import D_Attributes from './D_Attributes.svelte';
 	import D_Constants from './D_Constants.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
@@ -49,15 +50,19 @@
 			<D_Library />
 		</Hideable>
 
-		<Hideable title='hierarchy' id='hierarchy' detail={T_Details.hierarchy}>
-			<D_Hierarchy />
+		<Hideable title='assembly' id='assembly' detail={T_Details.assembly}>
+			<D_Assembly />
 		</Hideable>
 
-		<Hideable title='smart object' id='so' detail={T_Details.so}>
+		<Hideable title='editor' id='editor' detail={T_Details.editor}>
+			<D_Editor />
+		</Hideable>
+
+		<Hideable title='attributes' id='so' detail={T_Details.attributes}>
 			{#snippet actions()}
 				<button class='banner-add' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>+</button>
 			{/snippet}
-			<D_Smart_Object />
+			<D_Attributes />
 		</Hideable>
 
 		<Hideable title='constants' id='constants' detail={T_Details.constants}>
@@ -75,47 +80,47 @@
 	}
 
 	.banner-zone {
-		background : var(--accent);
 		position   : relative;
+		background : var(--accent);
 	}
 
 	.banner-add:hover {
-		background : var(--bg);
 		color      : black;
+		background : var(--bg);
 	}
 
 	.banner-zone::after {
+		content       : '';
+		height        : 11px;
+		display       : block;
 		background    : var(--bg);
 		border-radius : 11px 11px 0 0;
-		display       : block;
-		height        : 11px;
-		content       : '';
 	}
 
 	.details {
-		box-sizing : border-box;
-		position   : relative;
-		padding    : 0 0 1rem;
 		overflow-y : auto;
 		width      : 100%;
 		height     : 100%;
+		position   : relative;
+		padding    : 0 0 1rem;
+		box-sizing : border-box;
 	}
 
 	.banner-add {
-		background    : var(--accent);
-		border        : 0.5px solid rgba(0, 0, 0, 0.3);
-		border-radius : 50%;
-		color         : rgba(0, 0, 0, 0.5);
-		font-size     : 14px;
-		font-weight   : 300;
-		line-height   : 1;
-		width         : 18px;
-		height        : 18px;
-		padding       : 0;
-		cursor        : pointer;
-		display       : flex;
-		align-items   : center;
+		line-height     : 1;
+		padding         : 0;
+		border-radius   : 50%;
+		font-weight     : 300;
+		font-size       : 14px;
+		width           : 18px;
+		height          : 18px;
+		display         : flex;
+		align-items     : center;
 		justify-content : center;
+		cursor          : pointer;
+		background      : var(--accent);
+		color           : rgba(0, 0, 0, 0.5);
+		border          : 0.5px solid rgba(0, 0, 0, 0.3);
 	}
 
 </style>
