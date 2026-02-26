@@ -31,9 +31,8 @@
 	}
 </script>
 
-<div class='settings'>
-	<button class='action-btn' use:hit_target={{ id: 'reset-prefs', onpress: reset }}>reset</button>
-	<select class='details-select right' value={$w_unit_system} onchange={handle_unit_change}>
+<div class='unit-system'>
+	<select class='units-select' value={$w_unit_system} onchange={handle_unit_change}>
 		{#each Object.values(T_Units) as system}
 			<option value={system}>{system}</option>
 		{/each}
@@ -52,6 +51,7 @@
 		{/each}
 	</div>
 </div>
+<div class='separator'></div>
 <div class='slider-group'>
 	<span class='label'>line thickness</span>
 	<input
@@ -80,30 +80,32 @@
 			oninput = {(e) => w_edge_color.set((e.target as HTMLInputElement).value)}
 		/>
 	</div>
+	<button class='action-btn right' use:hit_target={{ id: 'reset-prefs', onpress: reset }}>reset</button>
 </div>
 
 <style>
-	.settings {
-		display : flex;
-		gap     : 6px;
+	.unit-system {
+		gap             : 6px;
+		display         : flex;
+		justify-content : flex-end;
 	}
 
 	.action-btn {
-		border        : 0.5px solid currentColor;
-		box-sizing    : border-box;
-		cursor        : pointer;
-		color         : inherit;
-		background    : white;
-		padding       : 0 8px;
 		border-radius : 10px;
 		font-size     : 11px;
 		height        : 20px;
+		padding       : 0 8px;
+		background    : white;
 		white-space   : nowrap;
+		cursor        : pointer;
+		color         : inherit;
+		box-sizing    : border-box;
+		border        : 0.5px solid currentColor;
 	}
 
 	.action-btn:global([data-hitting]) {
-		background : var(--accent);
 		color      : black;
+		background : var(--accent);
 	}
 
 	.right {
@@ -111,40 +113,40 @@
 	}
 
 	.label {
-		font-size : 0.75rem;
-		opacity   : 0.6;
+		opacity   : 0.8;
+		font-size : 0.7rem;
 	}
 
 	.precision-group {
-		margin-top     : 0.75rem;
-		display        : flex;
-		flex-direction : column;
 		gap            : 4px;
+		display        : flex;
+		margin-top     : -8px;
+		flex-direction : column;
 	}
 
 	.segmented {
-		display        : flex;
-		border         : 0.5px solid currentColor;
 		border-radius  : 6px;
-		overflow       : hidden;
 		height         : 20px;
+		display        : flex;
+		overflow       : hidden;
 		box-sizing     : border-box;
+		border         : 0.5px solid currentColor;
 	}
 
 	.segment {
-		flex           : 1 1 auto;
-		background     : white;
-		border         : none;
-		border-right   : 0.5px solid currentColor;
-		color          : rgba(0, 0, 0, 0.5);
-		font-size      : 9px;
 		padding        : 0;
-		cursor         : pointer;
-		text-align     : center;
-		white-space    : nowrap;
+		font-size      : 9px;
+		border         : none;
 		display        : flex;
+		background     : white;
+		white-space    : nowrap;
+		text-align     : center;
 		align-items    : center;
 		justify-content: center;
+		cursor         : pointer;
+		flex           : 1 1 auto;
+		color          : rgba(0, 0, 0, 0.5);
+		border-right   : 0.5px solid currentColor;
 	}
 
 	.segment:last-child {
@@ -152,93 +154,117 @@
 	}
 
 	.segment:global([data-hitting]) {
-		background : var(--accent);
 		color      : black;
+		background : var(--accent);
 	}
 
 	.segment.active {
 		opacity    : 1;
-		background : var(--accent);
 		color      : black;
+		background : var(--accent);
 	}
 
-	.details-select {
-		background         : white;
-		background-image   : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23999'/%3E%3C/svg%3E");
-		background-repeat  : no-repeat;
-		background-position: right 6px center;
-		border             : 0.5px solid currentColor;
+	.units-select {
 		border-radius      : 10px;
-		color              : inherit;
-		padding            : 0 18px 0 8px;
 		font-size          : 11px;
 		height             : 20px;
-		box-sizing         : border-box;
-		cursor             : pointer;
 		outline            : none;
 		appearance         : none;
 		-webkit-appearance : none;
+		background         : white;
+		color              : inherit;
+		cursor             : pointer;
+		background-repeat  : no-repeat;
+		box-sizing         : border-box;
+		padding            : 0 18px 0 8px;
+		background-position: right 6px center;
+		border             : 0.5px solid currentColor;
+		background-image   : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23999'/%3E%3C/svg%3E");
 	}
 
-	.details-select:hover {
-		background       : var(--accent);
+	.units-select:hover {
 		background-image : none;
 		color            : black;
+		background       : var(--accent);
 	}
 
-	.details-select:focus,
-	.details-select:focus-visible {
+	.units-select:focus,
+	.units-select:focus-visible {
 		outline    : none;
 		box-shadow : none;
 		border     : 0.5px solid currentColor;
 	}
 
+	.separator {
+		gap            : 2px;
+		display        : flex;
+		margin         : 0 -8px;
+		flex-direction : column;
+		background     : var(--accent);
+	}
+
+	.separator::before,
+	.separator::after {
+		content       : '';
+		display       : block;
+		background    : var(--bg);
+	}
+
+	.separator::before {
+		height        : 8px;
+		border-radius : 0 0 8px 8px;
+	}
+
+	.separator::after {
+		height        : 8px;
+		border-radius : 8px 8px 0 0;
+	}
+
 	.slider-group {
-		margin-top     : 0.75rem;
+		gap            : 8px;
 		display        : flex;
 		align-items    : center;
-		gap            : 8px;
 	}
 
 	.slider-group input[type='range'] {
 		flex               : 1;
 		min-width          : 0;
+		margin-top         : 0px;
 		height             : 14px;
-		margin-top         : 4px;
-		cursor             : pointer;
 		appearance         : none;
 		-webkit-appearance : none;
+		cursor             : pointer;
 		background         : transparent;
 	}
 
 	.slider-group input[type='range']::-webkit-slider-runnable-track {
-		background    : rgba(0, 0, 0, 0.15);
 		border-radius : 2px;
 		height        : 4px;
 		border        : none;
+		background    : rgba(0, 0, 0, 0.15);
 	}
 
 	.slider-group input[type='range']::-webkit-slider-thumb {
+		border-radius      : 50%;
 		-webkit-appearance : none;
 		width              : 14px;
 		height             : 14px;
-		border-radius      : 50%;
+		margin-top         : -5.5px;
 		background         : #007aff;
 		border             : 1px solid rgba(0, 0, 0, 0.4);
-		margin-top         : -5.5px;
 	}
 
 	.slider-group input[type='range']::-moz-range-track {
-		background    : rgba(0, 0, 0, 0.15);
 		border-radius : 2px;
 		height        : 4px;
 		border        : none;
+		background    : rgba(0, 0, 0, 0.15);
 	}
 
 	.slider-group input[type='range']::-moz-range-thumb {
+		border-radius : 50%;
 		width         : 14px;
 		height        : 14px;
-		border-radius : 50%;
 		background    : #007aff;
 		border        : 1px solid rgba(0, 0, 0, 0.4);
 	}
@@ -248,10 +274,10 @@
 	}
 
 	.color-row {
-		margin-top     : 0.75rem;
+		gap            : 16px;
 		display        : flex;
 		align-items    : center;
-		gap            : 16px;
+		margin-top     : 0.3rem;
 	}
 
 	.color-group {

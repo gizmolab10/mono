@@ -163,3 +163,14 @@
 	- [x] duplicate
 	- [x] show
 - [x] add reset button to bottom row of library -> delete all and restore from src/assets
+- [x] rename d smart object -> d attributes
+- [x] d parts -> d assembly
+- [x] new banner -> editor
+- [x] assembly table -> v arrow keys change selection
+- [x] preferences
+	- [x] move units system button to top far right
+	- [x] move reset button to bottom right
+	- [x] separator directly above line thickness slider
+- [x] rename editor -> selection
+- [x] open library -> 1/2 second hesitation (unnecessary! file io?)
+- [x] replace hr in library with separator

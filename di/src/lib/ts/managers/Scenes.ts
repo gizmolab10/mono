@@ -83,8 +83,11 @@ class Scenes {
 
 	private static readonly IDB_NAME = 'di_library';
 	private static readonly IDB_STORE = 'files';
+	private idb_cache: IDBDatabase | null = null;
+	private library_cache: { name: string; raw: string }[] | null = null;
 
 	private open_idb(): Promise<IDBDatabase> {
+		if (this.idb_cache) return Promise.resolve(this.idb_cache);
 		return new Promise((resolve, reject) => {
 			const request = indexedDB.open(Scenes.IDB_NAME, 2);
 			request.onupgradeneeded = () => {
@@ -93,7 +96,7 @@ class Scenes {
 				if (db.objectStoreNames.contains('handles')) db.deleteObjectStore('handles');
 				if (!db.objectStoreNames.contains(Scenes.IDB_STORE)) db.createObjectStore(Scenes.IDB_STORE);
 			};
-			request.onsuccess = () => resolve(request.result);
+			request.onsuccess = () => { this.idb_cache = request.result; resolve(request.result); };
 			request.onerror = () => reject(request.error);
 		});
 	}
@@ -104,6 +107,7 @@ class Scenes {
 			const database = await this.open_idb();
 			const transaction = database.transaction(Scenes.IDB_STORE, 'readwrite');
 			transaction.objectStore(Scenes.IDB_STORE).put(json, name);
+			this.library_cache = null;
 		} catch {
 			// silent
 		}
@@ -115,6 +119,7 @@ class Scenes {
 			const database = await this.open_idb();
 			const transaction = database.transaction(Scenes.IDB_STORE, 'readwrite');
 			transaction.objectStore(Scenes.IDB_STORE).clear();
+			this.library_cache = null;
 		} catch {
 			// silent
 		}
@@ -143,12 +148,14 @@ class Scenes {
 
 	/** List library: bundled defaults + user-saved files from IDB. */
 	async list_library(): Promise<{ name: string; raw: string }[]> {
+		if (this.library_cache) return this.library_cache;
 		const bundled = this.list_bundled();
 		const user_files = await this.load_all_from_idb();
 		// Merge: user files override bundled defaults with same name
 		const by_name = new Map(bundled.map(f => [f.name, f]));
 		for (const f of user_files) by_name.set(f.name, f);
-		return [...by_name.values()].sort((a, b) => a.name.localeCompare(b.name));
+		this.library_cache = [...by_name.values()].sort((a, b) => a.name.localeCompare(b.name));
+		return this.library_cache;
 	}
 
 	/** Return bundled defaults from src/assets. */
@@ -281,3 +288,4 @@ class Scenes {
 }
 
 export const scenes = new Scenes();
+scenes.list_library();

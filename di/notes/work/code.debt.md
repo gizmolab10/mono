@@ -2,11 +2,7 @@
 
 offer a proposal for the first unchecked item
 
-- [x] rename d smart object -> d attributes
-- [x] d parts -> d assembly
-- [x] new banner -> editor
-- [x] assembly table -> v arrow keys change selection
-- [ ] open library -> hesitation
+- [ ] assembly position/size -> button with "<-> decoration"
 - [ ] migrate to {o, e, l} from {x, X, w}
 	- [ ] Axis -> rename gets (start -> origin and end -> extent)
 	- [ ] regarding algebra, for the x axis, we have x, X and w. i am thinking of using axis-agnostic algebra: origin, extent, and length (o, e, l). propose version 8 migration

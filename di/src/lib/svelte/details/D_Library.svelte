@@ -51,19 +51,37 @@
 	{/each}
 </tbody></table>
 
-<hr />
+<div class='separator'></div>
 
 <div class='settings'>
-	<button class='action-btn' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file() }}>import</button>
 	<button class='action-btn' use:hit_target={{ id: 'reset-library', onpress: reset_library }}>reset</button>
+	<button class='action-btn far-right' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file() }}>import</button>
 </div>
 
 <style>
-	hr {
-		border     : none;
-		border-top : 0.5px solid currentColor;
-		opacity    : 0.3;
-		margin     : 8px 0;
+	.separator {
+		background     : var(--accent);
+		margin         : 0 -8px;
+		display        : flex;
+		flex-direction : column;
+		gap            : 2px;
+	}
+
+	.separator::before,
+	.separator::after {
+		content       : '';
+		display       : block;
+		background    : var(--bg);
+	}
+
+	.separator::before {
+		height        : 8px;
+		border-radius : 0 0 8px 8px;
+	}
+
+	.separator::after {
+		height        : 8px;
+		border-radius : 8px 8px 0 0;
 	}
 
 	.settings {
@@ -86,6 +104,10 @@
 	.action-btn:global([data-hitting]) {
 		background : var(--accent);
 		color      : black;
+	}
+
+	.far-right {
+		margin-left : auto;
 	}
 
 	.library {

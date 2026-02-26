@@ -82,7 +82,7 @@ export enum T_Details {
 	library     = 4,
 	constants   = 8,
 	assembly    = 16,
-	editor		= 32,
+	selection	= 32,
 }
 
 export enum T_Editing {

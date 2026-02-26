@@ -30,7 +30,7 @@
 - di/src/lib/svelte/details/D_Library.svelte
 - di/src/lib/svelte/details/D_Assembly.svelte
 - di/src/lib/svelte/details/D_Attributes.svelte
-- di/src/lib/svelte/details/D_Editor.svelte
+- di/src/lib/svelte/details/D_Selection.svelte
 - di/src/lib/svelte/details/D_Preferences.svelte
 
 ## Svelte — Mouse

@@ -9,7 +9,7 @@
 	import { onMount } from 'svelte';
 	import Hideable from './Hideable.svelte';
 	import D_Assembly from './D_Assembly.svelte';
-	import D_Editor from './D_Editor.svelte';
+	import D_Selection from './D_Selection.svelte';
 	import D_Library from './D_Library.svelte';
 	import D_Attributes from './D_Attributes.svelte';
 	import D_Constants from './D_Constants.svelte';
@@ -54,8 +54,8 @@
 			<D_Assembly />
 		</Hideable>
 
-		<Hideable title='editor' id='editor' detail={T_Details.editor}>
-			<D_Editor />
+		<Hideable title='selection' id='selection' detail={T_Details.selection}>
+			<D_Selection />
 		</Hideable>
 
 		<Hideable title='attributes' id='so' detail={T_Details.attributes}>
