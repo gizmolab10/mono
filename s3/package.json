@@ -9,7 +9,10 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
   },
   "dependencies": {
     "@types/rbush": "^4.0.0",
@@ -26,6 +29,8 @@
     "svelte-check": "^4.0.0",
     "typescript": "^5.3.3",
     "vite": "^6.0.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "vitepress": "^1.6.4",
     "vitest": "^4.0.0"
   }
 }

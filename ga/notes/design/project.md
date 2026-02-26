@@ -22,4 +22,4 @@ Goal: something to _feel_ and react to, then iterate toward guilds, opinions, ho
 
 `mono/ga/`
 
-See also: [vision.md](../guides/design/vision.md) for stable design docs.
+See also: [vision.md](./vision.md) for stable design docs.

@@ -19,6 +19,10 @@ DEV_SERVERS = os.path.join(SCRIPT_DIR, 'servers.sh')
 GITHUB_DIR = os.path.expanduser('~/GitHub/mono')
 UPDATE_DOCS = os.path.join(GITHUB_DIR, 'notes/tools/docs/update-project-docs.sh')
 
+# Load ports.json — single source of truth
+with open(os.path.join(SCRIPT_DIR, 'ports.json'), 'r') as f:
+    PORTS = json.load(f)
+
 # Load .env file if it exists (for secrets like NETLIFY_ACCESS_TOKEN)
 def load_env_file():
     env_path = os.path.join(SCRIPT_DIR, '.env')
@@ -32,13 +36,12 @@ def load_env_file():
 
 load_env_file()
 
-# Project paths for rebuild-docs
-PROJECT_PATHS = {
-    'mono': GITHUB_DIR,
-    'ws': os.path.join(GITHUB_DIR, 'ws'),
-    'di': os.path.join(GITHUB_DIR, 'di'),
-    'ma': os.path.join(GITHUB_DIR, 'ma'),
-}
+# Derive project paths from ports.json (projects with docs port = buildable docs)
+PROJECT_PATHS = {}
+for _key, _val in PORTS.items():
+    if isinstance(_val, dict) and 'docs' in _val:
+        _name = 'mono' if _key == 'mono' else _key
+        PROJECT_PATHS[_name] = GITHUB_DIR if _key == 'mono' else os.path.join(GITHUB_DIR, _key)
 
 # Status file for rebuild progress (single file, Option C)
 REBUILD_STATUS_FILE = os.path.join(GITHUB_DIR, 'logs', 'rebuild-status.txt')
@@ -54,26 +57,27 @@ rebuild_running = False
 restart_running = False
 tests_running = False
 
-# Netlify site IDs (from Netlify dashboard)
-NETLIFY_SITES = {
-    'ws': 'webseriously',
-    'ws-docs': 'webseriously-documentation',
-    'di': 'designintuition',
-    'di-docs': 'designintuition-documentation',
-    'mono-docs': 'monorepo-documentation',
-    'ma': 'maturity-guidance',
-    'ma-docs': 'docs-maturity-guidance',
-}
+# Derive Netlify sites from ports.json URLs
+def _netlify_name(url):
+    """Extract site name from https://xxx.netlify.app"""
+    return url.split('//')[1].split('.')[0]
+
+NETLIFY_SITES = {}
+for _key, _val in PORTS.items():
+    if isinstance(_val, dict):
+        if 'netlify' in _val:
+            NETLIFY_SITES[_key] = _netlify_name(_val['netlify'])
+        if 'docsNetlify' in _val:
+            _doc_key = 'mono-docs' if _key == 'mono' else f'{_key}-docs'
+            NETLIFY_SITES[_doc_key] = _netlify_name(_val['docsNetlify'])
 
 NETLIFY_TOKEN = os.environ.get('NETLIFY_ACCESS_TOKEN', '')
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 
-# Per-project error log paths
+# Derive error log paths from projects with docs
 DOC_ERROR_LOGS = {
-    'mono': os.path.join(GITHUB_DIR, 'logs', 'update-docs.error.mono.log'),
-    'ws': os.path.join(GITHUB_DIR, 'logs', 'update-docs.error.ws.log'),
-    'di': os.path.join(GITHUB_DIR, 'logs', 'update-docs.error.di.log'),
-    'ma': os.path.join(GITHUB_DIR, 'logs', 'update-docs.error.ma.log'),
+    proj: os.path.join(GITHUB_DIR, 'logs', f'update-docs.error.{proj}.log')
+    for proj in PROJECT_PATHS
 }
 
 def read_doc_errors():
@@ -587,11 +591,7 @@ if __name__ == '__main__':
     import socket
     import signal
 
-    # Load port from ports.json
-    ports_path = os.path.join(SCRIPT_DIR, 'ports.json')
-    with open(ports_path, 'r') as f:
-        ports = json.load(f)
-    PORT = ports['dispatcher']['port']
+    PORT = PORTS['dispatcher']['port']
 
     # Kill any existing process on the port
     result = subprocess.run(['lsof', '-ti', f':{PORT}'], capture_output=True, text=True)

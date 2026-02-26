@@ -425,10 +425,12 @@ export default defineConfig({
           items: [
             {
               text: 'Notes >',
+              link: '/ga/notes/',
               collapsed: true,
               items: [
                 {
                   text: 'Design >',
+                  link: '/ga/notes/design/',
                   collapsed: true,
                   items: [
                     {
@@ -459,6 +461,7 @@ export default defineConfig({
                 },
                 {
                   text: 'Work >',
+                  link: '/ga/notes/work/',
                   collapsed: true,
                   items: [
                     {
@@ -960,10 +963,12 @@ export default defineConfig({
           items: [
             {
               text: 'Notes >',
+              link: '/s3/notes/',
               collapsed: true,
               items: [
                 {
                   text: 'Work >',
+                  link: '/s3/notes/work/',
                   collapsed: true,
                   items: [
                     {

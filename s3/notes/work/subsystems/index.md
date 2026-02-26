@@ -1,9 +1,8 @@
+# Subsystems
+
 1 # s3 Design Spec
-
 Design spec for the Svelte 5 port of ws. One file per subsystem.
-
 ## Files
-
 * [3 types.md](3%20types.md) — Global_Imports (every `h`/`x`/`g` alias), all T_\* enums, type aliases, Coordinates API
 * [4 entities.md](4%20entities.md) — Thing, Relationship, Predicate, Trait, Tag, User, Access, Persistable base
 * [5 hierarchy.md](5%20hierarchy.md) — Hierarchy god object: all 8 responsibilities, every method
@@ -15,17 +14,27 @@ Design spec for the Svelte 5 port of ws. One file per subsystem.
 * [11 database.md](11%20database.md) — DB_Common interface, Firebase, Filesystem, Local, Bubble, Airtable, Test, Docs
 * [12 signals.md](12%20signals.md) — Signals pub/sub, Events (keyboard + mouse dispatch), Hits, Mouse_Timer
 * [13 managers.md](13%20managers.md) — Core, Configuration, Files, Preferences, Search, Radial, Controls, Details, Components, Elements, Features, Styles
-
 ## Build plan
-
-* [fresh.build.md](./fresh.build.md) — 14 phases, \~21 sessions, vertical slice first
-
+* [fresh.build.md](../fresh.build.md) — 14 phases, \~21 sessions, vertical slice first
 ## Architecture decisions
-
 Option 3 + A + di CSS:
-
 * **Store**: normalized reactive tables (`$state`), no god-object Hierarchy
 * **Reactivity**: Svelte 5 runes only (`$state`, `$derived`, `$effect`), no typed-signals
 * **Layout**: flex + gap + border-radius, no SVG draw components
+See ws/notes/work/w2.md for full rationale.
 
-See [ws/notes/work/w2.md](../../../ws/notes/work/w2.md) for full rationale.
+## Contents
+
+- [10 Utilities](./10 utilities.md)
+- [11 Database](./11 database.md)
+- [12 Signals](./12 signals.md)
+- [13 Managers](./13 managers.md)
+- [3 Types](./3 types.md)
+- [4 Entities](./4 entities.md)
+- [5 Hierarchy](./5 hierarchy.md)
+- [5.1 Hierarchy](./5.1 hierarchy.md)
+- [6 Rendering](./6 rendering.md)
+- [7 Geometry](./7 geometry.md)
+- [8 Ancestry](./8 ancestry.md)
+- [9 Ux](./9 ux.md)
+

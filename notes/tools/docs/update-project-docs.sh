@@ -13,7 +13,16 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 GITHUB_DIR="$HOME/GitHub"
-ALL_PROJECTS=("mono" "mono/ws" "mono/di" "mono/ma")
+PORTS_JSON="$SCRIPT_DIR/../hub/ports.json"
+# Derive ALL_PROJECTS from ports.json (entries with docs port = buildable docs)
+ALL_PROJECTS=($(python3 -c "
+import json
+with open('$PORTS_JSON') as f:
+    ports = json.load(f)
+for k, v in ports.items():
+    if isinstance(v, dict) and 'docs' in v:
+        print('mono' if k == 'mono' else f'mono/{k}')
+"))
 ERROR_LOG=""
 VERBOSE=false
 CURRENT_STEP=0
@@ -325,8 +334,9 @@ if [ "$PROJECT_ARG" = "all" ]; then
     echo ""
   done
   
-  echo "✓ mono, ws, di, ma"
-  echo "✓ mono, ws, di, ma" > "$STATUS_FILE"
+  PROJ_NAMES=$(printf ", %s" "${ALL_PROJECTS[@]##*/}")
+  echo "✓ ${PROJ_NAMES:2}"
+  echo "✓ ${PROJ_NAMES:2}" > "$STATUS_FILE"
   exit 0
 fi
 

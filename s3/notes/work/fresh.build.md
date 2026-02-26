@@ -29,7 +29,7 @@ Spec refs: see [index.md](./index.md) for the full design spec.
 - [x] Establish `src/lib/` layout: `store/`, `entities/`, `db/`, `nav/`, `geometry/`, `svelte/`
 - [x] Drop dead deps: React, Framework7, Two.js, rxdb/rxjs, typed-signals
 - [x] Keep: Firebase, Dexie, rbush
-- [x] Port all `T_*` enums from `Enumerations.ts` — every member, names unchanged — spec: [types.md](./types.md)
+- [x] Port all `T_*` enums from `Enumerations.ts` — every member, names unchanged — spec: [types.md](./subsystems/3%20types.md)
 - [x] `Coordinates.ts` — `Point`, `Size`, `Rect`, `Polar` with full API
 - [x] `Angle.ts` — `Angle`, `Direction`, `T_Quadrant`
 - [x] `Constants.ts` — all `k.*` constants (dot_size=14, row_height=16, font sizes, etc.)
@@ -42,7 +42,7 @@ Spec refs: see [index.md](./index.md) for the full design spec.
 
 1 session. The normalized store is simple: just `$state` Maps + mutations. Build it now, load hardcoded seed, prove data flows before touching UI.
 
-Spec: [entities.md](./entities.md), [hierarchy.md](./hierarchy.md) §Entity Store
+Spec: [entities.md](./subsystems/4%20entities.md), [hierarchy.md](./subsystems/5%20hierarchy.md) §Entity Store
 
 - [x] Lean entity classes — `Thing`, `Relationship`, `Predicate`, `Trait`, `Tag` as plain TS classes with data only (no navigation, no `h.*` calls)
 - [x] Normalized store: one `$state(new Map<string, T>())` per entity type
@@ -59,7 +59,7 @@ Spec: [entities.md](./entities.md), [hierarchy.md](./hierarchy.md) §Entity Stor
 
 1 session. Something on screen. Static render from seed, no clicks yet.
 
-Spec: [rendering.md](./rendering.md) §main, §tree, §widget, [geometry.md](./geometry.md) §G_Widget
+Spec: [rendering.md](./subsystems/6%20rendering.md) §main, §tree, §widget, [geometry.md](./subsystems/7%20geometry.md) §G_Widget
 
 ### UI shell
 
@@ -94,7 +94,7 @@ Spec: [rendering.md](./rendering.md) §main, §tree, §widget, [geometry.md](./g
 
 2 sessions. Click things. Move focus. Expand/collapse. Depth limit.
 
-Spec: [ancestry.md](./ancestry.md), [ux.md](./ux.md)
+Spec: [ancestry.md](./subsystems/8%20ancestry.md), [ux.md](./subsystems/9%20ux.md)
 
 ### Full Ancestry
 
@@ -129,7 +129,7 @@ Spec: [ancestry.md](./ancestry.md), [ux.md](./ux.md)
 
 2 sessions. Replace stub layout with real math. Tree looks right.
 
-Spec: [geometry.md](./geometry.md)
+Spec: [geometry.md](./subsystems/7%20geometry.md)
 
 - [x] `G_Widget` full — proper `width` (DOM text measurement + dot sizes), `center_ofReveal`, `center_ofDrag`, `origin_ofTitle`, bounding rect
 - [x] `G_TreeBranches` full — vertical distribution, `origin_ofLine`, line geometry per branch (column spacing = 100)
@@ -150,7 +150,7 @@ Spec: [geometry.md](./geometry.md)
 
 1 session. Replace hardcoded seed with the DB abstraction. Startup state machine.
 
-Spec: [database.md](./database.md)
+Spec: [database.md](./subsystems/11%20database.md)
 
 - [x] `DB_Common` abstract class — method signatures: `fetch_all`, `persist`, `delete` per entity type, `hierarchy_setup_fetch_andBuild` sequence
 - [x] `T_Startup` states + `w_t_startup` (`$state`); `SeriouslyApp` gates render on `T_Startup.ready`
@@ -165,7 +165,7 @@ Spec: [database.md](./database.md)
 
 2 sessions. rbush spatial index, full mouse pipeline, complete keyboard dispatch. Replaces the Events.ts god object with a clean table-driven system.
 
-Spec: [signals.md](./signals.md)
+Spec: [signals.md](./subsystems/12%20signals.md)
 
 ### Hit detection
 
@@ -194,7 +194,7 @@ Spec: [signals.md](./signals.md)
 
 2 sessions. Real user data. Persist changes.
 
-Spec: [database.md](./database.md) §DB_Firebase
+Spec: [database.md](./subsystems/11%20database.md) §DB_Firebase
 
 - [x] Firebase config, env vars
 - [x] `DB_Firebase` — Firestore schema: flat predicates + `/Bulks/{idBase}/` sub-collections (things, relationships, traits, tags)
@@ -211,7 +211,7 @@ Spec: [database.md](./database.md) §DB_Firebase
 
 2 sessions.
 
-Spec: [rendering.md](./rendering.md) §details, [ux.md](./ux.md) §Details
+Spec: [rendering.md](./subsystems/6%20rendering.md) §details, [ux.md](./subsystems/9%20ux.md) §Details
 
 - [x] `w_ancestry_forDetails` — `$derived`: latest grab, else focus
 - [x] `Details.svelte` — outer shell, routes by `T_Detail`
@@ -255,7 +255,7 @@ Each DB owns its Hierarchy. Single pointer swap on DB switch. Firebase snapshots
 
 1 session.
 
-Spec: [rendering.md](./rendering.md) §controls, §search
+Spec: [rendering.md](./subsystems/6%20rendering.md) §controls, §search
 
 - [ ] `Primary_Controls.svelte` — graph mode toggle, depth slider, add/delete buttons
 - [ ] `Secondary_Controls.svelte` — secondary actions
@@ -272,7 +272,7 @@ Spec: [rendering.md](./rendering.md) §controls, §search
 
 2 sessions.
 
-Spec: [rendering.md](./rendering.md) §radial, [geometry.md](./geometry.md) §radial
+Spec: [rendering.md](./subsystems/6%20rendering.md) §radial, [geometry.md](./subsystems/7%20geometry.md) §radial
 
 - [ ] `G_Cluster` — three-cluster equilateral layout, `angle_at_index` with wrapping
 - [ ] `G_Pages / G_Paging` — `index_isVisible`, `update_index_toShow`, wrap-around
@@ -292,7 +292,7 @@ Spec: [rendering.md](./rendering.md) §radial, [geometry.md](./geometry.md) §ra
 
 2 sessions.
 
-Spec: [database.md](./database.md)
+Spec: [database.md](./subsystems/11%20database.md)
 
 - [ ] `DB_Filesystem` — File System Access API, depth-5 directory scan, IndexedDB handle persistence (`webseriously-files` DB, `last-folder` key), permission re-check on restore
 - [ ] `DB_Local` — localStorage via preferences helpers
@@ -311,7 +311,7 @@ Spec: [database.md](./database.md)
 
 1 session.
 
-Spec: [managers.md](./managers.md)
+Spec: [managers.md](./subsystems/13%20managers.md)
 
 - [ ] `Preferences` — localStorage with DB-type namespacing, 20+ keys, `$effect` write-back, enum validation with fallback to defaults
 - [ ] `Configuration` — startup sequencer; `?erase=data|recents|settings`, `?disable=`, `?theme=bubble`; `eraseDB` countdown (4 → 0 across subsystems)

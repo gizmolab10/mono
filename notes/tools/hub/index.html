@@ -121,36 +121,22 @@
       margin-top: -7px;
     }
 
-    .feedback-row {
-      display: flex;
-      gap: var(--button-gap);
-      margin-bottom: var(--gap-vertical);
-    }
-
     .feedback-btn {
       height: 24px;
-      background: var(--bg-page);
+      background: transparent;
       border: none;
       border-radius: 6px;
       color: var(--text-feedback);
       font-size: var(--font-feedback);
       cursor: default;
-    }
-
-    #btn-mode {
       text-align: center;
-      width: 40px;
-    }
-
-    #btn-project {
-      text-align: center;
-      width: 40px;
-    }
-
-    #btn-destination {
-      text-align: left;
-      padding-left: 8px;
-      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      direction: rtl;
+      text-overflow: ellipsis;
+      margin-top: 13px;
+      padding-left: 0;
+      padding-right: 0;
     }
 
     .title-box {
@@ -479,7 +465,7 @@
     </div>
 
     <div class="project-row">
-      <div class="project-group side-a">
+      <div class="project-group">
         <button class="project" data-project="mo">mo<span class="badge">M</span></button>
         <button class="project" data-project="me">me<span class="badge">J</span></button>
         <button class="project" data-project="ma">ma<span class="badge">T</span></button>
@@ -487,17 +473,17 @@
         <button class="project" data-project="s3">s3<span class="badge">S</span></button>
         <button class="project active" data-project="ws">ws<span class="badge">W</span></button>
       </div>
+    </div>
+
+    <div class="actions-row" style="display: flex; width: 100%;">
+      <div class="tools-group side-a">
+        <button class="action" id="btn-errors">Errors<span class="badge">E</span></button>
+        <button class="action" id="btn-revisit">revisit<span class="badge">R</span></button>
+      </div>
+      <button class="feedback-btn" id="btn-destination" style="flex: 1;"></button>
       <div class="mode-group side-b">
         <button class="project active" data-mode="app">App<span class="badge">A</span></button>
         <button class="project" data-mode="docs">Docs<span class="badge">X</span></button>
-      </div>
-    </div>
-
-    <div class="feedback-row" id="feedback-row">
-      <button class="feedback-btn side-a" id="btn-destination"></button>
-      <div class="side-b">
-        <button class="feedback-btn" id="btn-project"></button>
-        <button class="feedback-btn" id="btn-mode"></button>
       </div>
     </div>
 
@@ -511,13 +497,6 @@
         <button class="action" id="btn-local">Local<span class="badge">L</span></button>
         <button class="action" id="btn-netlify">Netlify<span class="badge">N</span></button>
         <button class="action" id="btn-public">Public<span class="badge">P</span></button>
-      </div>
-    </div>
-
-    <div class="actions-row">
-      <div class="tools-group">
-        <button class="action" id="btn-errors">Errors<span class="badge">E</span></button>
-        <button class="action" id="btn-revisit">revisit<span class="badge">R</span></button>
       </div>
     </div>
 
@@ -621,17 +600,13 @@
     function matchRowWidths() {
       const actionsRow = document.querySelector('.actions-row');
       const titleBox = document.querySelector('.title-box');
-      const feedbackRow = document.querySelector('.feedback-row');
       const consoleBox = document.querySelector('.console-box');
       const width = actionsRow.offsetWidth + 'px';
       titleBox.style.width = width;
-      feedbackRow.style.width = width;
       consoleBox.style.width = width;
     }
 
     function prePublishFeedbackRow() {
-      document.getElementById('btn-mode').textContent = getDisplayMode();
-      document.getElementById('btn-project').textContent = getDisplayProject();
       document.getElementById('btn-destination').textContent = hoveredAction || '';
     }
 
@@ -1203,7 +1178,15 @@
       if (!tooltip || !data) return;
 
       const lines = [];
-      const order = ['ws', 'di', 'ws-docs', 'di-docs', 'mono-docs'];
+      // Derive order from ports.json: apps first, then docs
+      const order = [];
+      const docsOrder = [];
+      for (const [key, val] of Object.entries(ports)) {
+        if (key === 'hub' || key === 'dispatcher') continue;
+        if (val.netlify) order.push(key);
+        if (val.docsNetlify) docsOrder.push(key === 'mono' ? 'mono-docs' : `${key}-docs`);
+      }
+      order.push(...docsOrder);
 
       for (const site of order) {
         const status = data[site];
