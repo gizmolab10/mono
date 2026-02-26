@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ma/notes/index.md",
+                "file": "di/notes/work/revisit.di.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "revisit.di"
             }
           },
           {
@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -151,7 +151,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ma/notes/index.md",
+                "file": "di/notes/work/code.debt.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -161,7 +161,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for index"
+              "title": "Backlinks for code.debt"
             }
           },
           {
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ma/notes/index.md",
+                "file": "di/notes/work/code.debt.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of index"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -371,8 +371,20 @@
       }
     ]
   },
-  "active": "26b78cd156d15e82",
+  "active": "ed6835991ce431f7",
   "lastOpenFiles": [
+    "di/notes/work/milestones/20.repeaters.md",
+    "di/notes/work/code.debt.md",
+    "di/notes/work/revisit.di.md",
+    "ma/notes/work/done/jonathan.md",
+    "ma/notes/work/index.md",
+    "ma/notes/index.md",
+    "ma/notes/work/done/describe.md",
+    "ma/notes/work/revisit.ma.md",
+    "ma/notes/work/done/proposal.md",
+    "ma/notes/work/done/next steps.md",
+    "ma/notes/work/plan.md",
+    "ma/notes/work/done/index.md",
     "logs/update-docs.error.s3.log",
     "ga/vitepress.build.txt",
     "ga/notes/work/index.md",
@@ -385,7 +397,6 @@
     "ga/node_modules/@vitejs/plugin-vue/node_modules/vite/node_modules",
     "ga/node_modules/@algolia/autocomplete-shared/dist/esm/core/index.d.ts",
     "ga/node_modules/@algolia/autocomplete-shared/dist/esm/core/index.js",
-    "ga/node_modules/@algolia/autocomplete-shared/dist/esm/core/AutocompleteState.js",
     "ga/node_modules/markdown-it-task-lists/test/fixtures/ordered.md",
     "ga/node_modules/markdown-it-task-lists/test/fixtures/dirty.md",
     "ga/node_modules/markdown-it-task-lists/test/fixtures/mixed-nested.md",
@@ -398,17 +409,6 @@
     "ga/node_modules/vitepress/node_modules/@esbuild/darwin-x64/README.md",
     "ga/node_modules/vitepress/node_modules/vite/LICENSE.md",
     "ga/node_modules/vitepress/node_modules/esbuild/README.md",
-    "ga/node_modules/vitepress/node_modules/vite/README.md",
-    "ga/node_modules/vitepress/node_modules/rollup/LICENSE.md",
-    "ga/node_modules/vitepress/node_modules/rollup/README.md",
-    "ga/node_modules/zwitch/readme.md",
-    "ga/node_modules/vue/README.md",
-    "ga/node_modules/unist-util-visit-parents/readme.md",
-    "ga/node_modules/unist-util-visit/readme.md",
-    "ga/node_modules/vitepress/README.md",
-    "ga/node_modules/vfile-message/readme.md",
-    "ga/node_modules/vfile/readme.md",
-    "ga/node_modules/unist-util-stringify-position/readme.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",

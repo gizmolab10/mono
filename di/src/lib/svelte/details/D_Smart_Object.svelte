@@ -1,147 +1,20 @@
 <script lang='ts'>
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { face_label } from '../../ts/editors/Face_Label';
-	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Editing } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import { scenes, stores } from '../../ts/managers';
 	import type { Bound } from '../../ts/types/Types';
 	import { constraints } from '../../ts/algebra';
 	import { units } from '../../ts/types/Units';
-	import { engine } from '../../ts/render';
 
 	const { w_s_face_label } = face_label;
-	const { w_root_so, w_selection, w_precision, w_tick, w_all_sos } = stores;
+	const { w_root_so, w_selection, w_precision, w_tick } = stores;
 
 	type BoundsRow = { label: string; bound: string | null; value: string; formula: string; has_formula: boolean; is_invariant: boolean; axis_index: number; attr_index: number };
 
 	let selected_so = $derived($w_selection?.so ?? $w_root_so);
 	let is_root = $derived(!selected_so?.scene?.parent);
-	// Repeater state
-	function get_repeater(_tick: number) { return selected_so?.repeater ?? null; }
-	let is_repeater = $derived(get_repeater($w_tick) !== null);
-	let has_firewall = $derived(get_repeater($w_tick)?.firewall ?? false);
-	let view_mode = $state<'attributes' | 'repeater'>('attributes');
-	let tracked_id = $state('');
-	$effect(() => {
-		const id = selected_so?.id ?? '';
-		if (id !== tracked_id) {
-			tracked_id = id;
-			view_mode = 'attributes';
-		}
-	});
-
-	function init_repeater() {
-		if (!selected_so) return;
-		selected_so.repeater = {};
-		view_mode = 'repeater';
-		stores.tick();
-		scenes.save();
-	}
-
-	function is_default_repeater(): boolean {
-		const r = selected_so?.repeater;
-		return !!r && r.repeat_axis == null && r.spacing == null && r.gap_min == null && r.gap_max == null;
-	}
-
-	function show_attributes() {
-		if (is_default_repeater() && selected_so) {
-			selected_so.repeater = null;
-			stores.tick();
-			scenes.save();
-		}
-		view_mode = 'attributes';
-	}
-
-	function repeater_keydown(e: KeyboardEvent) {
-		if (e.key === 'Enter' || e.key === 'Escape') (e.target as HTMLInputElement).blur();
-		e.stopPropagation();
-	}
-
-	// Repeater expansion fields
-	function set_repeat_axis(axis: 0 | 1) {
-		if (!selected_so?.repeater) return;
-		selected_so.repeater = { ...selected_so.repeater, repeat_axis: axis };
-		engine.sync_repeater(selected_so);
-		stores.tick();
-		scenes.save();
-	}
-
-	function set_gap(field: 'gap_min' | 'gap_max', value: string) {
-		if (!selected_so?.repeater) return;
-		const mm = units.parse_for_system(value, $w_unit_system);
-		if (mm === null) return;
-		selected_so.repeater = { ...selected_so.repeater, [field]: mm };
-		engine.sync_repeater(selected_so);
-		stores.tick();
-		scenes.save();
-	}
-
-	function set_spacing(mm: number) {
-		if (!selected_so?.repeater) return;
-		selected_so.repeater = { ...selected_so.repeater, spacing: mm, gap_min: undefined, gap_max: undefined };
-		engine.sync_repeater(selected_so);
-		stores.tick();
-		scenes.save();
-	}
-
-	function enable_gap_range() {
-		if (!selected_so?.repeater) return;
-		selected_so.repeater = { ...selected_so.repeater, gap_min: 152.4, gap_max: 203.2, spacing: undefined };
-		engine.sync_repeater(selected_so);
-		stores.tick();
-		scenes.save();
-	}
-
-	function set_gap_axis(axis: 0 | 1 | 2 | undefined) {
-		if (!selected_so?.repeater) return;
-		selected_so.repeater = { ...selected_so.repeater, gap_axis: axis };
-		engine.sync_repeater(selected_so);
-		stores.tick();
-		scenes.save();
-	}
-
-	function swap_xy() {
-		if (!selected_so) return;
-		engine.swap_axes(selected_so, 0, 1);
-		stores.tick();
-		scenes.save();
-	}
-
-	function toggle_firewall() {
-		if (!selected_so?.repeater) return;
-		selected_so.repeater = { ...selected_so.repeater, firewall: !selected_so.repeater.firewall };
-		engine.sync_repeater(selected_so);
-		stores.tick();
-		scenes.save();
-	}
-
-	const axis_labels = ['x', 'y', 'z'] as const;
-
-	function get_repeater_display(so: Smart_Object | undefined, all_sos: Smart_Object[], _tick: number) {
-		if (!so?.repeater) return null;
-		const r = so.repeater;
-		const repeat_ai = r.repeat_axis ?? 0;
-		const gap_ai = r.gap_axis ?? repeat_ai;
-		const parent_dims = [so.width, so.depth, so.height];
-		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
-
-		// Count actual children placed by the engine (template + clones)
-		const count = all_sos.filter(s => s.scene?.parent?.so === so).length;
-		if (count === 0) return null;
-
-		if (r.gap_min != null && r.gap_max != null) {
-			const gap_length = parent_dims[gap_ai];
-			if (gap_length <= 0) return null;
-			return { count, gap: fmt(gap_length / count), total: fmt(gap_length), label: axis_labels[gap_ai] };
-		}
-		if (r.spacing != null && r.spacing > 0) {
-			return { count, gap: fmt(r.spacing), total: fmt(parent_dims[repeat_ai]), label: axis_labels[repeat_ai] };
-		}
-		return null;
-	}
-
-	let repeater_display = $derived(get_repeater_display(selected_so ?? undefined, $w_all_sos, $w_tick));
 
 	let tick = $derived(stores.is_editing() ? 0 : $w_tick);
 
@@ -338,129 +211,59 @@
 			onblur    = {handle_name_blur}
 		/>
 	</div>
-	{#if is_repeater}
-		<div class='view-toggle'>
-			<div class='segmented'>
-				<button class:active={view_mode === 'repeater'} onclick={() => view_mode = 'repeater'}>repeater</button>
-				<button class:active={view_mode === 'attributes'} onclick={show_attributes}>attributes</button>
-			</div>
-		</div>
-	{:else}
-		<div class='actions-row'>
-			<button class='action-btn right' use:hit_target={{ id: 'repeat', onpress: init_repeater }}>repeat</button>
-		</div>
-	{/if}
-	{#if view_mode === 'attributes' || !is_repeater}
-		<table class='bounds'>
-			<tbody>
-				{#each bounds_rows as row (selected_so?.id + row.label)}
-					{@const row_disabled = is_root ? row.attr_index !== 2 : (row.is_invariant || row.has_formula)}
-					<tr>
-						<td class='attr-name'>{row.label}</td>
-						<td class='attr-sep' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
-						<td class='attr-formula'>
-							<input
-								type      = 'text'
-								class     = 'cell-input'
-								value     = {row.formula}
-								disabled  = {is_root || row.is_invariant}
-								onfocus   = {() => stores.w_editing.set(T_Editing.formula)}
-								onblur    = {(e) => { commit_formula(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
-								onkeydown = {cell_keydown}
-							/>
-						</td>
-						<td class='attr-value'>
-							<input
-								type      = 'text'
-								class     = 'cell-input right'
-								value     = {row.value}
-								disabled  = {row_disabled}
-								onfocus   = {() => stores.w_editing.set(T_Editing.value)}
-								onblur    = {(e) => { commit_value(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
-								onkeydown = {cell_keydown}
-							/>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-		<table class='bounds rotations'>
-			<tbody>
-				{#each axes as axis, i}
-					<tr>
-						<td class='attr-name'>{axis}</td>
-						<td class='attr-sep' class:cross={is_root || selected_so?.rotation_lock === i} class:disabled={is_root} onclick={() => set_locked(i)}></td>
-						<td class='attr-value'>
-							<input
-								type      = 'text'
-								class     = 'cell-input right'
-								value     = {angles[axis]}
-								disabled  = {is_root || selected_so?.rotation_lock === i}
-								onblur    = {(e) => commit_angle(axis, (e.target as HTMLInputElement).value)}
-								onkeydown = {cell_keydown}
-							/>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	{:else}
-		<div class='repeater-options'>
-			<div class='repeater-option-row'>
-				<span class='option-label'>axis</span>
-				<div class='segmented'>
-					<button class:active={selected_so?.repeater?.repeat_axis === 0} onclick={() => set_repeat_axis(0)}>x</button>
-					<button class:active={selected_so?.repeater?.repeat_axis === 1} onclick={() => set_repeat_axis(1)}>y</button>
-				</div>
-				<button class='action-btn' onclick={swap_xy}>swap x↔y</button>
-				<button class='action-btn' class:active={has_firewall} onclick={toggle_firewall} style='margin-left:auto'>
-					{has_firewall ? 'has fireblocks' : 'no fireblocks'}
-				</button>
-			</div>
-			<div class='repeater-option-row'>
-				<span class='option-label'>constraint</span>
-				<div class='segmented'>
-					<button class:active={selected_so?.repeater?.gap_min != null} onclick={enable_gap_range}>range</button>
-					<button class:active={selected_so?.repeater?.spacing === 304.8} onclick={() => set_spacing(304.8)}>12"</button>
-					<button class:active={selected_so?.repeater?.spacing === 406.4} onclick={() => set_spacing(406.4)}>16"</button>
-					<button class:active={selected_so?.repeater?.spacing === 609.6} onclick={() => set_spacing(609.6)}>24"</button>
-				</div>
-			</div>
-			{#if selected_so?.repeater?.gap_min != null && selected_so?.repeater?.gap_max != null}
-				<div class='repeater-option-row'>
-					<span class='option-label'>gap along</span>
-					<div class='segmented'>
-						<button class:active={selected_so?.repeater?.gap_axis == null || selected_so?.repeater?.gap_axis === selected_so?.repeater?.repeat_axis} onclick={() => set_gap_axis(undefined)}>repeat</button>
-						<button class:active={selected_so?.repeater?.gap_axis === 2} onclick={() => set_gap_axis(2)}>z</button>
-					</div>
-				</div>
-				<div class='repeater-option-row'>
-					<span class='option-label'>min</span>
-					<input
-						type      = 'text'
-						class     = 'repeater-input'
-						value     = {units.format_for_system(selected_so.repeater.gap_min, $w_unit_system, $w_precision)}
-						onblur    = {(e) => set_gap('gap_min', (e.target as HTMLInputElement).value)}
-						onkeydown = {repeater_keydown}
-					/>
-					<span class='option-label'>max</span>
-					<input
-						type      = 'text'
-						class     = 'repeater-input'
-						value     = {units.format_for_system(selected_so.repeater.gap_max, $w_unit_system, $w_precision)}
-						onblur    = {(e) => set_gap('gap_max', (e.target as HTMLInputElement).value)}
-						onkeydown = {repeater_keydown}
-					/>
-				</div>
-			{/if}
-			{#if repeater_display}
-				<div class='repeater-display'>
-					<span>{repeater_display.count} × {repeater_display.gap} ({repeater_display.label})</span>
-					<span class='dim'>= {repeater_display.total}</span>
-				</div>
-			{/if}
-		</div>
-	{/if}
+	<table class='bounds'>
+		<tbody>
+			{#each bounds_rows as row (selected_so?.id + row.label)}
+				{@const row_disabled = is_root ? row.attr_index !== 2 : (row.is_invariant || row.has_formula)}
+				<tr>
+					<td class='attr-name'>{row.label}</td>
+					<td class='attr-sep' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
+					<td class='attr-formula'>
+						<input
+							type      = 'text'
+							class     = 'cell-input'
+							value     = {row.formula}
+							disabled  = {is_root || row.is_invariant}
+							onfocus   = {() => stores.w_editing.set(T_Editing.formula)}
+							onblur    = {(e) => { commit_formula(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
+							onkeydown = {cell_keydown}
+						/>
+					</td>
+					<td class='attr-value'>
+						<input
+							type      = 'text'
+							class     = 'cell-input right'
+							value     = {row.value}
+							disabled  = {row_disabled}
+							onfocus   = {() => stores.w_editing.set(T_Editing.value)}
+							onblur    = {(e) => { commit_value(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
+							onkeydown = {cell_keydown}
+						/>
+					</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
+	<table class='bounds rotations'>
+		<tbody>
+			{#each axes as axis, i}
+				<tr>
+					<td class='attr-name'>{axis}</td>
+					<td class='attr-sep' class:cross={is_root || selected_so?.rotation_lock === i} class:disabled={is_root} onclick={() => set_locked(i)}></td>
+					<td class='attr-value'>
+						<input
+							type      = 'text'
+							class     = 'cell-input right'
+							value     = {angles[axis]}
+							disabled  = {is_root || selected_so?.rotation_lock === i}
+							onblur    = {(e) => commit_angle(axis, (e.target as HTMLInputElement).value)}
+							onkeydown = {cell_keydown}
+						/>
+					</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
 {:else}
 	<p>No object selected</p>
 {/if}
@@ -489,40 +292,6 @@
 	.name-row input:focus {
 		border-color : currentColor;
 		opacity      : 1;
-	}
-
-	.actions-row {
-		display    : flex;
-		gap        : 6px;
-		margin-top : 8px;
-	}
-
-	.actions-row .right {
-		margin-left : auto;
-	}
-
-	.action-btn {
-		border        : 0.5px solid currentColor;
-		box-sizing    : border-box;
-		cursor        : pointer;
-		color         : inherit;
-		background    : white;
-		padding       : 0 8px;
-		border-radius : 10px;
-		font-size     : 11px;
-		height        : 20px;
-		white-space   : nowrap;
-	}
-
-	.action-btn:disabled {
-		opacity        : 0.3;
-		cursor         : default;
-		pointer-events : none;
-	}
-
-	.action-btn:global([data-hitting]) {
-		background : var(--accent);
-		color      : black;
 	}
 
 	.bounds {
@@ -623,101 +392,4 @@
 		margin    : 0;
 	}
 
-	.repeater-input {
-		flex          : 1;
-		min-width     : 0;
-		border        : 0.5px solid currentColor;
-		border-radius : 4px;
-		background    : white;
-		color         : inherit;
-		font-size     : 11px;
-		font-family   : inherit;
-		height        : 20px;
-		padding       : 0 6px;
-		outline       : none;
-		box-sizing    : border-box;
-	}
-
-	.repeater-input:focus {
-		outline        : 1.5px solid cornflowerblue;
-		outline-offset : -1.5px;
-	}
-
-	.view-toggle {
-		display         : flex;
-		align-items     : center;
-		gap             : 6px;
-		margin-top      : 8px;
-	}
-
-	.view-toggle .segmented {
-		margin-left : auto;
-	}
-
-	.repeater-options {
-		margin-top : 4px;
-		display    : flex;
-		flex-direction : column;
-		gap        : 4px;
-	}
-
-	.repeater-option-row {
-		display     : flex;
-		align-items : center;
-		gap         : 6px;
-	}
-
-	.option-label {
-		font-size  : 11px;
-		opacity    : 0.6;
-		min-width  : 28px;
-		flex-shrink: 0;
-	}
-
-	.segmented {
-		display : flex;
-		gap     : 0;
-	}
-
-	.segmented button {
-		border        : 0.5px solid currentColor;
-		background    : white;
-		color         : inherit;
-		font-size     : 11px;
-		height        : 20px;
-		padding       : 0 8px;
-		cursor        : pointer;
-		white-space   : nowrap;
-	}
-
-	.segmented button:first-child {
-		border-radius : 10px 0 0 10px;
-	}
-
-	.segmented button:last-child {
-		border-radius : 0 10px 10px 0;
-	}
-
-	.segmented button:not(:first-child) {
-		border-left : none;
-	}
-
-	.segmented button.active {
-		background : var(--accent);
-		font-weight: 600;
-	}
-
-	.segmented button:hover:not(.active) {
-		background : var(--bg);
-	}
-
-	.repeater-display {
-		font-size   : 11px;
-		opacity     : 0.8;
-		padding-left: 34px;
-	}
-
-	.repeater-display .dim {
-		opacity : 0.5;
-	}
 </style>

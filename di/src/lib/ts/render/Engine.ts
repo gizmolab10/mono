@@ -771,9 +771,6 @@ class Engine {
 			const ax_a = target.axes[a];
 			const ax_b = target.axes[b];
 
-			// Save absolute positions BEFORE swapping.
-			// Position attributes (start, end) are stored as offsets from parent's same-named bound.
-			// After swapping, offsets land under a different parent bound, so we need to recompute.
 			const a_start_abs = target.get_bound(ax_a.start.name as Bound);
 			const a_end_abs   = target.get_bound(ax_a.end.name as Bound);
 			const b_start_abs = target.get_bound(ax_b.start.name as Bound);
@@ -823,8 +820,14 @@ class Engine {
 			so.repeater = r;
 		}
 
-		// Enforce invariants on parent so template formulas see correct values
-		constraints.enforce_invariants(so);
+		// Rebind parent formulas — deserialize compiles but doesn't bind refs or evaluate,
+		// so formula attributes have value=0.  rebind_formulas binds, evaluates, and enforces invariants.
+		const parent_so = so.scene?.parent?.so;
+		if (parent_so) {
+			constraints.rebind_formulas(so, parent_so.id);
+		} else {
+			constraints.enforce_invariants(so);
+		}
 
 		// Rebind template formulas (converts placeholders to IDs, evaluates, enforces invariants)
 		if (children.length > 0) {
@@ -855,6 +858,17 @@ class Engine {
 			}
 		}
 		return best_count;
+	}
+
+	/** Remove all children except the first (template) from a repeater parent. */
+	strip_clones(so: Smart_Object): void {
+		if (!so.scene) return;
+		const children = scene.get_all().filter(o => o.parent === so.scene);
+		for (const clone of children.slice(1)) {
+			hits_3d.unregister(clone.so);
+			scene.destroy(clone.id);
+		}
+		stores.w_all_sos.set(scene.get_all().map(o => o.so));
 	}
 
 	/** Sync repeater children to match the constraint-derived count.
