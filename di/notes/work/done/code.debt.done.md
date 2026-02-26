@@ -182,3 +182,4 @@
 	- [x] s/e/l expand to concrete axis aliases based on owning attribute's axis
 	- [x] translate button bottom of attributes
 		- [x] between explicit and agnostic
+- [x] red dots for occluded and disabled

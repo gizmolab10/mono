@@ -63,8 +63,7 @@
               "title": "revisit.di"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -137,7 +136,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/done/code.debt.done.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -147,7 +146,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for code.debt"
+              "title": "Backlinks for code.debt.done"
             }
           },
           {
@@ -199,13 +198,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/done/code.debt.done.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of code.debt.done"
             }
           }
         ],
@@ -226,11 +225,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "ed6835991ce431f7",
+  "active": "a7456ab5d2d1a817",
   "lastOpenFiles": [
+    "di/notes/work/code.debt.md",
     "di/notes/work/milestones/20.repeaters.md",
     "di/notes/work/done/code.debt.done.md",
-    "di/notes/work/code.debt.md",
     "di/notes/architecture/core/enlarged.algebra.md",
     "di/notes/architecture/core/algebra.md",
     "di/notes/work/done/enlarged algebra.md",

@@ -1,6 +1,7 @@
 import type { Projected, O_Scene, Dimension_Rect, Label_Rect, Angle_Rect } from '../types/Interfaces';
 import { render_dimensions } from './R_Dimensions';
 import { face_label } from '../editors/Face_Label';
+import Smart_Object from '../runtime/Smart_Object';
 import { T_Hit_3D } from '../types/Enumerations';
 import { render_angulars } from './R_Angulars';
 import { hits_3d } from '../managers/Hits_3D';
@@ -199,10 +200,10 @@ class Render {
 			if (stores.show_names()) this.render_face_names(obj, projected, world);
 		}
 
+		this.render_hover();
 		this.render_selection();
 		if (stores.show_dimensionals()) render_dimensions(this);
 		if (stores.show_angulars()) render_angulars(this);
-		this.render_hover();
 		if (debug.enabled) this.render_front_face_label();
 	}
 
@@ -845,19 +846,23 @@ class Render {
 		const projected = hits_3d.get_projected(sel.so.scene.id);
 		if (!projected) return;
 
-		this.ctx.fillStyle = 'blue';
-		this.render_hit_dots(sel, projected);
+		const world = this.get_world_matrix(sel.so.scene);
+		const is_root = !sel.so.scene.parent;
+		this.render_hit_dots(sel, projected, 'blue', world, is_root);
 	}
 
 	private render_hover(): void {
 		const hover = hits_3d.hover;
 		if (!hover || !hover.so.scene) return;
+		// Don't draw hover dots when hovering sub-elements of the selected face
+		const sel = hits_3d.selection;
+		if (sel && sel.so === hover.so && sel.type === T_Hit_3D.face) return;
 
 		const projected = hits_3d.get_projected(hover.so.scene.id);
 		if (!projected) return;
 
 		this.ctx.fillStyle = 'red';
-		this.render_hit_dots(hover, projected);
+		this.render_hit_dots(hover, projected, 'red');
 	}
 
 	private render_front_face_label(): void {
@@ -884,37 +889,106 @@ class Render {
 	}
 
 	// for hover and selection
-	private render_hit_dots(hit: { so: { scene: O_Scene | null }, type: T_Hit_3D, index: number }, projected: Projected[]): void {
+	private render_hit_dots(
+		hit: { so: Smart_Object, type: T_Hit_3D, index: number },
+		projected: Projected[],
+		color: string,
+		world?: mat4,
+		is_root?: boolean,
+	): void {
 		if (!hit.so.scene) return;
+		const so = hit.so;
+		const scene_obj = so.scene!;
+
+		// For root face selection: which vertices/edges are disabled?
+		// Vertex: dead if ALL face-axis bounds are _min (can't move at all)
+		// Edge midpoint: dead if both endpoints share a _min bound on any face axis
+		let dead_verts: Set<number> | null = null;
+		let face_axes: [string, string] | null = null;
+		if (is_root && hit.type === T_Hit_3D.face) {
+			face_axes = so.face_axes(hit.index) as [string, string];
+			dead_verts = new Set();
+			const face = scene_obj.faces![hit.index];
+			for (const vi of face) {
+				if (face_axes.every(axis => so.vertex_bound(vi, axis as any).endsWith('_min'))) {
+					dead_verts.add(vi);
+				}
+			}
+		}
+
+		// Compute world-space position for a vertex (for occlusion checks)
+		const world_pos = (vi: number): vec3 => {
+			const lv = so.vertices[vi];
+			const wv = vec4.create();
+			vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], world!);
+			return vec3.fromValues(wv[0], wv[1], wv[2]);
+		};
+
+		const draw = (p: Projected, disabled: boolean, vi?: number, vi2?: number) => {
+			if (p.w < 0) return;
+			let occluded = false;
+			if (world && this.occluding_faces.length > 0) {
+				if (vi !== undefined && vi2 !== undefined) {
+					// Midpoint: average of two vertex world positions
+					const w1 = world_pos(vi), w2 = world_pos(vi2);
+					const mid: vec3 = [(w1[0]+w2[0])/2, (w1[1]+w2[1])/2, (w1[2]+w2[2])/2];
+					occluded = this.is_dot_occluded(p.x, p.y, mid);
+				} else if (vi !== undefined) {
+					occluded = this.is_dot_occluded(p.x, p.y, world_pos(vi));
+				}
+			}
+			this.ctx.fillStyle = (disabled || occluded) ? 'red' : color;
+			this.ctx.beginPath();
+			this.ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+			this.ctx.fill();
+		};
 
 		switch (hit.type) {
 			case T_Hit_3D.corner:
-				this.draw_dot(projected[hit.index]);
+				draw(projected[hit.index], false, hit.index);
 				break;
-			case T_Hit_3D.edge:
-				const [a, b] = hit.so.scene.edges[hit.index];
-				const pa = projected[a], pb = projected[b];
-				this.draw_dot(pa);
-				this.draw_dot(pb);
-				this.draw_dot(this.midpoint(pa, pb));
+			case T_Hit_3D.edge: {
+				const [a, b] = scene_obj.edges[hit.index];
+				draw(projected[a], false, a);
+				draw(projected[b], false, b);
+				const mid_dead = face_axes
+					? face_axes.some(axis => so.vertex_bound(a, axis as any).endsWith('_min') && so.vertex_bound(b, axis as any).endsWith('_min'))
+					: false;
+				draw(this.midpoint(projected[a], projected[b]), mid_dead, a, b);
 				break;
-			case T_Hit_3D.face:
-				const face = hit.so.scene.faces![hit.index];
+			}
+			case T_Hit_3D.face: {
+				const face = scene_obj.faces![hit.index];
 				for (let i = 0; i < face.length; i++) {
-					const p1 = projected[face[i]];
-					const p2 = projected[face[(i + 1) % face.length]];
-					this.draw_dot(p1);
-					this.draw_dot(this.midpoint(p1, p2));
+					const vi = face[i];
+					const vi2 = face[(i + 1) % face.length];
+					draw(projected[vi], dead_verts?.has(vi) ?? false, vi);
+					// Edge is dead if both endpoints share a _min bound on any face axis
+					const mid_dead = face_axes
+						? face_axes.some(axis => so.vertex_bound(vi, axis as any).endsWith('_min') && so.vertex_bound(vi2, axis as any).endsWith('_min'))
+						: false;
+					draw(this.midpoint(projected[vi], projected[vi2]), mid_dead, vi, vi2);
 				}
 				break;
+			}
 		}
 	}
 
-	private draw_dot(p: Projected): void {
-		if (p.w < 0) return;
-		this.ctx.beginPath();
-		this.ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
-		this.ctx.fill();
+	/** Check if a screen-space dot is occluded by any front-facing face.
+	 *  Unlike edge occlusion, does NOT skip same-object faces — a dot on the
+	 *  back face of a box should be red when the front face hides it.
+	 *  Coplanar vertices (on the occluding face itself) pass through naturally. */
+	private is_dot_occluded(sx: number, sy: number, world_pos: vec3): boolean {
+		const candidates = this.occluding_index
+			? this.occluding_index.search(sx, sy, sx, sy)
+			: this.occluding_faces.map((_, i) => i);
+		for (const fi of candidates) {
+			const occ = this.occluding_faces[fi];
+			const dist = vec3.dot(occ.n, world_pos) - occ.d;
+			if (dist > -k.coplanar_epsilon) continue;
+			if (this.point_in_polygon_2d(sx, sy, occ.poly)) return true;
+		}
+		return false;
 	}
 
 	private midpoint(a: Projected, b: Projected): Projected {
