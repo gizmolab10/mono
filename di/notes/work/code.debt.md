@@ -4,9 +4,10 @@
 offer a proposal for the first unchecked item
 
 
-- [ ] re-enable stretching origin (for any given axis) of root
-	- [ ] -> by adjusting length such that end remains fixed (for that axis)
-	- [ ] dragging the end point -- disallow making the length negative -> at the moment of length == 0, switch to dragging the start point
+- [x] re-enable stretching origin (for any given axis) of root
+	- [x] -> by adjusting length such that end remains fixed (for that axis)
+	- [x] dragging the end point -- disallow making the length negative -> at the moment of length == 0, switch to dragging the start point
+- [ ] the root face selection dots that are red -> blue
 - [ ] ability to rotate around an axis
 	- [ ] swap xy -> corrupted
 	- [ ] rotate 90° (+,-) (x,y,z)

@@ -272,7 +272,6 @@ class Drag {
 			// Every frame: compute absolute delta from anchor, apply as offset from initial bounds
 			const delta = this.get_stretch_delta(curr_mouse);
 			if (!delta) return false;
-			if (!scene.parent) vec3.scale(delta, delta, 2);
 			this.apply_stretch_absolute(delta);
 			return true;
 		}
@@ -386,13 +385,23 @@ class Drag {
 
 		// Snapshot affected bounds
 		const initial_bounds = new Map<Bound, number>();
+		const is_root = !scene.parent;
 		if (target_type === T_Hit_3D.edge) {
 			const bound = so.edge_bound(target_index, face_index);
 			initial_bounds.set(bound, so.get_bound(bound));
+			// Root min: will redirect to opposite max — snapshot it too
+			if (is_root && bound.endsWith('_min')) {
+				const opposite = bound.replace('_min', '_max') as Bound;
+				initial_bounds.set(opposite, so.get_bound(opposite));
+			}
 		} else {
 			for (const axis of so.face_axes(face_index)) {
 				const bound = so.vertex_bound(target_index, axis);
 				initial_bounds.set(bound, so.get_bound(bound));
+				if (is_root && bound.endsWith('_min')) {
+					const opposite = bound.replace('_min', '_max') as Bound;
+					initial_bounds.set(opposite, so.get_bound(opposite));
+				}
 			}
 		}
 
@@ -546,22 +555,43 @@ class Drag {
 		// Reset position to initial
 		vec3.copy(a.scene.position, a.initial_position);
 
+		// Root: symmetric stretch (both sides move, center stays fixed)
+		const is_root = !a.scene.parent;
+		if (is_root) vec3.scale(delta, delta, 2);
+
 		// Apply bound changes from initial
 		if (a.target_type === T_Hit_3D.edge) {
 			const axis = a.so.edge_changes_axis(a.target_index, a.face_index);
 			const bound = a.so.edge_bound(a.target_index, a.face_index);
 			const axis_vec = a.so.axis_vector(axis);
 			const offset = vec3.dot(delta, axis_vec);
-			const initial = a.initial_bounds.get(bound)!;
-			a.so.set_bound(bound, Smart_Object.snap(initial + offset));
+			// Root min: invariant clamps start to 0 — redirect to opposite max
+			if (is_root && bound.endsWith('_min')) {
+				const opposite = bound.replace('_min', '_max') as Bound;
+				const opp_initial = a.initial_bounds.get(opposite)!;
+				// Math.abs: at length=0, reflect — seamlessly switch to growing from other side
+				a.so.set_bound(opposite, Smart_Object.snap(Math.abs(opp_initial - offset)));
+			} else {
+				const initial = a.initial_bounds.get(bound)!;
+				const raw = initial + offset;
+				a.so.set_bound(bound, Smart_Object.snap(is_root ? Math.abs(raw) : raw));
+			}
 		} else {
 			const axes = a.so.face_axes(a.face_index);
 			for (const axis of axes) {
 				const bound = a.so.vertex_bound(a.target_index, axis);
 				const axis_vec = a.so.axis_vector(axis);
 				const offset = vec3.dot(delta, axis_vec);
-				const initial = a.initial_bounds.get(bound)!;
-				a.so.set_bound(bound, Smart_Object.snap(initial + offset));
+				// Root min: redirect to opposite max
+				if (is_root && bound.endsWith('_min')) {
+					const opposite = bound.replace('_min', '_max') as Bound;
+					const opp_initial = a.initial_bounds.get(opposite)!;
+					a.so.set_bound(opposite, Smart_Object.snap(Math.abs(opp_initial - offset)));
+				} else {
+					const initial = a.initial_bounds.get(bound)!;
+					const raw = initial + offset;
+					a.so.set_bound(bound, Smart_Object.snap(is_root ? Math.abs(raw) : raw));
+				}
 			}
 		}
 
@@ -591,8 +621,7 @@ class Drag {
 			vec3.subtract(drift_parent, drift_end, origin_in_parent);
 			vec3.add(a.scene.position, a.scene.position, drift_parent);
 		}
-		// Root: position is always origin — no drift compensation
-		// (stretching root only moves max bounds, start stays at 0)
+		// Root: no drift compensation — symmetric stretch keeps center fixed
 	}
 
 	/** Find a local-space vertex on the opposite side of the drag target.

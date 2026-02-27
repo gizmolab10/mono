@@ -900,12 +900,13 @@ class Render {
 		const so = hit.so;
 		const scene_obj = so.scene!;
 
-		// For root face selection: which vertices/edges are disabled?
+		// For non-root face selection: which vertices/edges are disabled?
+		// (Root min-bound drags redirect to opposite max, so all root dots are active.)
 		// Vertex: dead if ALL face-axis bounds are _min (can't move at all)
 		// Edge midpoint: dead if both endpoints share a _min bound on any face axis
 		let dead_verts: Set<number> | null = null;
 		let face_axes: [string, string] | null = null;
-		if (is_root && hit.type === T_Hit_3D.face) {
+		if (!is_root && hit.type === T_Hit_3D.face) {
 			face_axes = so.face_axes(hit.index) as [string, string];
 			dead_verts = new Set();
 			const face = scene_obj.faces![hit.index];
