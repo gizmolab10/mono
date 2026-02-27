@@ -183,7 +183,9 @@
 				{@const next2_inv = gpos === 0 && bounds_rows[i + 2]?.is_invariant}
 				{@const merge_span = formula_mode === 'agnostic' && row.is_invariant && !prev_inv && next_inv ? (next2_inv ? 3 : 2) : 0}
 				{@const is_merge_cont = formula_mode === 'agnostic' && row.is_invariant && prev_inv}
-				<tr class:merge-cont={is_merge_cont}>
+				{@const root_formula_cont = is_root && i > 0 && i < 6}
+				{@const root_start_cont = is_root && row.attr_index === 0 && gpos > 0}
+				<tr class:merge-cont={is_merge_cont || root_formula_cont || root_start_cont}>
 					<td class='attr-name'>
 						{#if formula_mode === 'agnostic' && row.axis_index === 1}
 							<span class='ctx' class:ctx-l={row.attr_index === 2}>{['s', 'e', 'l'][row.attr_index]}</span>
@@ -191,30 +193,35 @@
 						{row.label}
 					</td>
 					<td class='attr-sep' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
-					{#if !is_merge_cont}
-						<td class='attr-formula' class:merged={merge_span >= 2} rowspan={merge_span || undefined}>
+					{#if !(is_merge_cont || root_formula_cont)}
+						{@const formula_disabled = is_root || row.is_invariant}
+						<td class='attr-formula' class:merged={is_root || merge_span >= 2} class:cell-disabled={formula_disabled} rowspan={is_root ? (i === 0 ? 6 : 3) : merge_span || undefined}>
 							<input
 								type      = 'text'
 								class     = 'cell-input'
 								value     = {row.formula}
-								disabled  = {is_root || row.is_invariant}
+								disabled  = {formula_disabled}
 								onfocus   = {() => stores.w_editing.set(T_Editing.formula)}
 								onblur    = {(e) => { commit_formula(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
 								onkeydown = {cell_keydown}
 							/>
 						</td>
 					{/if}
-					<td class='attr-value'>
-						<input
-							type      = 'text'
-							class     = 'cell-input right'
-							value     = {row.value}
-							disabled  = {row_disabled}
-							onfocus   = {() => stores.w_editing.set(T_Editing.value)}
-							onblur    = {(e) => { commit_value(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
-							onkeydown = {cell_keydown}
-						/>
-					</td>
+					{#if root_start_cont}
+						<!-- spanned by first start row -->
+					{:else}
+						<td class='attr-value' class:cell-disabled={row_disabled} rowspan={is_root && row.attr_index === 0 && gpos === 0 ? 3 : undefined}>
+							<input
+								type      = 'text'
+								class     = 'cell-input right'
+								value     = {is_root && row.attr_index === 0 ? '0' : row.value}
+								disabled  = {row_disabled}
+								onfocus   = {() => stores.w_editing.set(T_Editing.value)}
+								onblur    = {(e) => { commit_value(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
+								onkeydown = {cell_keydown}
+							/>
+						</td>
+					{/if}
 				</tr>
 			{/each}
 		</tbody>
@@ -354,6 +361,10 @@
 		color          : black;
 		outline        : 1.5px solid cornflowerblue;
 		outline-offset : -1.5px;
+	}
+
+	.cell-disabled {
+		background : var(--accent);
 	}
 
 	.cell-input:disabled {

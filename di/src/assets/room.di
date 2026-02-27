@@ -12,7 +12,7 @@
             "length": 2324.1,
             "angle": 0
           },
-          "invariant": 2
+          "invariant": 1
         },
         "y": {
           "attributes": {
@@ -21,7 +21,7 @@
             "length": 1511.3,
             "angle": 0
           },
-          "invariant": 2
+          "invariant": 1
         },
         "z": {
           "attributes": {
@@ -30,7 +30,7 @@
             "length": 1409.6999999999998,
             "angle": 0
           },
-          "invariant": 2
+          "invariant": 1
         },
         "rotation_lock": 0,
         "visible": false

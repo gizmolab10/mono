@@ -8,8 +8,8 @@
 	import { engine } from '../../ts/render';
 	import { onMount } from 'svelte';
 	import Hideable from './Hideable.svelte';
-	import D_Assembly from './D_Assembly.svelte';
-	import D_Selection from './D_Selection.svelte';
+	import D_Parts from './D_Parts.svelte';
+	import D_Selected_Part from './D_Selected_Part.svelte';
 	import D_Library from './D_Library.svelte';
 	import D_Attributes from './D_Attributes.svelte';
 	import D_Constants from './D_Constants.svelte';
@@ -50,15 +50,15 @@
 			<D_Library />
 		</Hideable>
 
-		<Hideable title='assembly' id='assembly' detail={T_Details.assembly}>
+		<Hideable title='parts' id='parts' detail={T_Details.parts}>
 			{#snippet actions()}
 				<button class='banner-add' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>+</button>
 			{/snippet}
-			<D_Assembly />
+			<D_Parts />
 		</Hideable>
 
-		<Hideable title='selection' id='selection' detail={T_Details.selection}>
-			<D_Selection />
+		<Hideable title='selected part' id='selected-part' detail={T_Details.selected_part}>
+			<D_Selected_Part />
 		</Hideable>
 
 		<Hideable title='attributes' id='so' detail={T_Details.attributes}>

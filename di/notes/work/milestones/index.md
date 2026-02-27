@@ -1,12 +1,12 @@
 # Milestones
 
-| # | Name | Timeline |
-|---|------|----------|
-| 20 | [Repeaters](20.repeaters.md) | |
-| 21 | [Cut Lists](23.cut.lists.md) | |
-| 22 | [Licensing](25.licensing.md) | |
-| 23 | [Marketing](26.marketing.md) | |
-| 24 | [Hierarchy](22.rubberband.md) | |
+| #   | Name                          | Timeline |
+| --- | ----------------------------- | -------- |
+| 20  | [Repeaters](20.repeaters.md)  |          |
+| 21  | [Cut Lists](23.cut.lists.md)  |          |
+| 22  | [Licensing](25.licensing.md)  |          |
+| 23  | [Marketing](26.marketing.md)  |          |
+| 24  | [Hierarchy](22.rubberband.md) |          |
 
 ## Contents
 

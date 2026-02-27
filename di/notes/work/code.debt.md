@@ -4,22 +4,21 @@
 offer a proposal for the first unchecked item
 
 
-- [ ] display formulas with spaces between tokens (eg. ".l - front_th + dado")
-- [ ] row span for root disallowed formulas and "s" values (they are always 0)
-- [ ] drag -> disallow making the length negative
-- [ ] ability to stretch origins of root
-	- [ ] do all children origins must be adjusted?
+- [ ] re-enable stretching origin (for any given axis) of root
+	- [ ] -> by adjusting length such that end remains fixed (for that axis)
+	- [ ] dragging the end point -- disallow making the length negative -> at the moment of length == 0, switch to dragging the start point
 - [ ] ability to rotate around an axis
 	- [ ] swap xy -> corrupted
 	- [ ] rotate 90° (+,-) (x,y,z)
 - [ ] disallow algebraic names in constants
 - [ ] occluded dimensions !!!!!!!
-- [ ] user-friendly formula error popup
-- [ ] double height controls
+- [ ] darker banners
 - [ ] dark accent -> **selected** button state change text to **white**
 - [ ] click on a selected SO in assembly -> unselects
+---
+- [ ] user-friendly formula error popup
+- [ ] double height controls
 - [ ] library -- save to local storage, export to fs
-- [ ] bring user manual up to date
 - [ ] [[more milestones]]
 
 ---

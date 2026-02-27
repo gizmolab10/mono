@@ -81,8 +81,8 @@ export enum T_Details {
 	attributes  = 2,
 	library     = 4,
 	constants   = 8,
-	assembly    = 16,
-	selection	= 32,
+	parts          = 16,
+	selected_part  = 32,
 }
 
 export enum T_Editing {

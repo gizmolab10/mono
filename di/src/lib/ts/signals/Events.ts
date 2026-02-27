@@ -99,13 +99,13 @@ export class Events {
 			stores.toggle_details();
 		}
 		if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-			if ((get(stores.w_t_details) & T_Details.assembly) === 0) return;
+			if ((get(stores.w_t_details) & T_Details.parts) === 0) return;
 			event.preventDefault();
-			this.navigate_assembly(event.key === 'ArrowUp' ? -1 : 1);
+			this.navigate_parts(event.key === 'ArrowUp' ? -1 : 1);
 		}
 	}
 
-	private navigate_assembly(direction: number): void {
+	private navigate_parts(direction: number): void {
 		const all_sos = get(stores.w_all_sos);
 		const visible = all_sos.filter(so => {
 			const parent = so.scene?.parent?.so;

@@ -1,7 +1,7 @@
 # Revisit
 
 - [ ] Assume i have approved these:
-	- [x] Keep the table below up to date
+	- [ ] Keep the table below up to date
 	- [ ] Read [[di/notes/work/code.debt]]
 
 ---
