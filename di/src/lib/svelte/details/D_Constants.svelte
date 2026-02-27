@@ -100,31 +100,6 @@
 
 
 <style>
-	.settings {
-		display         : flex;
-		gap             : 6px;
-		justify-content : flex-end;
-		margin-top      : 8px;
-	}
-
-	.action-btn {
-		border        : 0.5px solid currentColor;
-		box-sizing    : border-box;
-		cursor        : pointer;
-		color         : inherit;
-		background    : white;
-		padding       : 0 8px;
-		border-radius : 10px;
-		font-size     : 11px;
-		height        : 20px;
-		white-space   : nowrap;
-	}
-
-	.action-btn:global([data-hitting]) {
-		background : var(--accent);
-		color      : black;
-	}
-
 	.standards {
 		width           : 100%;
 		border-collapse : collapse;

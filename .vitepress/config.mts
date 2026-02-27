@@ -89,6 +89,10 @@ export default defineConfig({
                           link: '/di/notes/architecture/core/algebra'
                         },
                         {
+                          text: 'Enlarged.algebra',
+                          link: '/di/notes/architecture/core/enlarged.algebra'
+                        },
+                        {
                           text: 'Managers',
                           link: '/di/notes/architecture/core/managers'
                         },
@@ -270,6 +274,10 @@ export default defineConfig({
                           link: '/di/notes/work/done/cruft'
                         },
                         {
+                          text: 'Enlarged Algebra',
+                          link: '/di/notes/work/done/enlarged algebra'
+                        },
+                        {
                           text: 'Layout Algorithm',
                           link: '/di/notes/work/done/layout-algorithm'
                         },
@@ -293,100 +301,115 @@ export default defineConfig({
                       collapsed: true,
                       items: [
                         {
-                          text: '1.solid.foundation',
-                          link: '/di/notes/work/milestones/1.solid.foundation'
-                        },
-                        {
-                          text: '10.controls',
-                          link: '/di/notes/work/milestones/10.controls'
-                        },
-                        {
-                          text: '11.units',
-                          link: '/di/notes/work/milestones/11.units'
-                        },
-                        {
-                          text: '12.hierarchy',
-                          link: '/di/notes/work/milestones/12.hierarchy'
-                        },
-                        {
-                          text: '13.algebra',
-                          link: '/di/notes/work/milestones/13.algebra'
-                        },
-                        {
-                          text: '14.details',
-                          link: '/di/notes/work/milestones/14.details'
-                        },
-                        {
-                          text: '15.attributes',
-                          link: '/di/notes/work/milestones/15.attributes'
-                        },
-                        {
-                          text: '16.formulas',
-                          link: '/di/notes/work/milestones/16.formulas'
-                        },
-                        {
-                          text: '17.library',
-                          link: '/di/notes/work/milestones/17.library'
-                        },
-                        {
-                          text: '18.user.constants',
-                          link: '/di/notes/work/milestones/18.user.constants'
-                        },
-                        {
-                          text: '19.skills',
-                          link: '/di/notes/work/milestones/19.skills'
-                        },
-                        {
-                          text: '2.panel',
-                          link: '/di/notes/work/milestones/2.panel'
-                        },
-                        {
                           text: '20.repeaters',
                           link: '/di/notes/work/milestones/20.repeaters'
                         },
                         {
-                          text: '21.rubberband',
-                          link: '/di/notes/work/milestones/21.rubberband'
+                          text: '21.selection Algorithm',
+                          link: '/di/notes/work/milestones/21.selection algorithm'
                         },
                         {
-                          text: '22.cut.lists',
-                          link: '/di/notes/work/milestones/22.cut.lists'
+                          text: '22.rubberband',
+                          link: '/di/notes/work/milestones/22.rubberband'
                         },
                         {
-                          text: '23.licensing',
-                          link: '/di/notes/work/milestones/23.licensing'
+                          text: '23.cut.lists',
+                          link: '/di/notes/work/milestones/23.cut.lists'
                         },
                         {
-                          text: '24.marketing',
-                          link: '/di/notes/work/milestones/24.marketing'
+                          text: '24.user.manual',
+                          link: '/di/notes/work/milestones/24.user.manual'
                         },
                         {
-                          text: '3.docs',
-                          link: '/di/notes/work/milestones/3.docs'
+                          text: '25.licensing',
+                          link: '/di/notes/work/milestones/25.licensing'
                         },
                         {
-                          text: '4.hits.manager',
-                          link: '/di/notes/work/milestones/4.hits.manager'
+                          text: '26.marketing',
+                          link: '/di/notes/work/milestones/26.marketing'
                         },
                         {
-                          text: '5.smart.objects',
-                          link: '/di/notes/work/milestones/5.smart.objects'
-                        },
-                        {
-                          text: '6.build.notes',
-                          link: '/di/notes/work/milestones/6.build.notes'
-                        },
-                        {
-                          text: '7.edit.drags',
-                          link: '/di/notes/work/milestones/7.edit.drags'
-                        },
-                        {
-                          text: '8.dimensionals',
-                          link: '/di/notes/work/milestones/8.dimensionals'
-                        },
-                        {
-                          text: '9.persistence',
-                          link: '/di/notes/work/milestones/9.persistence'
+                          text: 'Done >',
+                          link: '/di/notes/work/milestones/done/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: '1.solid.foundation',
+                              link: '/di/notes/work/milestones/done/1.solid.foundation'
+                            },
+                            {
+                              text: '10.controls',
+                              link: '/di/notes/work/milestones/done/10.controls'
+                            },
+                            {
+                              text: '11.units',
+                              link: '/di/notes/work/milestones/done/11.units'
+                            },
+                            {
+                              text: '12.hierarchy',
+                              link: '/di/notes/work/milestones/done/12.hierarchy'
+                            },
+                            {
+                              text: '13.algebra',
+                              link: '/di/notes/work/milestones/done/13.algebra'
+                            },
+                            {
+                              text: '14.details',
+                              link: '/di/notes/work/milestones/done/14.details'
+                            },
+                            {
+                              text: '15.attributes',
+                              link: '/di/notes/work/milestones/done/15.attributes'
+                            },
+                            {
+                              text: '16.formulas',
+                              link: '/di/notes/work/milestones/done/16.formulas'
+                            },
+                            {
+                              text: '17.library',
+                              link: '/di/notes/work/milestones/done/17.library'
+                            },
+                            {
+                              text: '18.user.constants',
+                              link: '/di/notes/work/milestones/done/18.user.constants'
+                            },
+                            {
+                              text: '19.skills',
+                              link: '/di/notes/work/milestones/done/19.skills'
+                            },
+                            {
+                              text: '2.panel',
+                              link: '/di/notes/work/milestones/done/2.panel'
+                            },
+                            {
+                              text: '3.docs',
+                              link: '/di/notes/work/milestones/done/3.docs'
+                            },
+                            {
+                              text: '4.hits.manager',
+                              link: '/di/notes/work/milestones/done/4.hits.manager'
+                            },
+                            {
+                              text: '5.smart.objects',
+                              link: '/di/notes/work/milestones/done/5.smart.objects'
+                            },
+                            {
+                              text: '6.build.notes',
+                              link: '/di/notes/work/milestones/done/6.build.notes'
+                            },
+                            {
+                              text: '7.edit.drags',
+                              link: '/di/notes/work/milestones/done/7.edit.drags'
+                            },
+                            {
+                              text: '8.dimensionals',
+                              link: '/di/notes/work/milestones/done/8.dimensionals'
+                            },
+                            {
+                              text: '9.persistence',
+                              link: '/di/notes/work/milestones/done/9.persistence'
+                            }
+                          ]
                         }
                       ]
                     },

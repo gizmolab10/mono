@@ -61,7 +61,7 @@ describe('formula on Attribute', () => {
 		constraints.set_formula(door, 'y_max', formula);
 
 		const attr = door.attributes_dict_byName['y_max'];
-		expect(attr.formula_display).toBe(`${ref(wall, 'y_max')}-6"`);
+		expect(attr.formula_display).toBe(`${ref(wall, 'y_max')} - 6"`);
 		expect(attr.has_formula).toBe(true);
 	});
 
@@ -168,7 +168,7 @@ describe('serialize/deserialize formulas', () => {
 		const door = add_so('door');
 
 		const formula = `${ref(wall, 'y_max')} - 6"`;
-		const untokenized = `${ref(wall, 'y_max')}-6"`;
+		const untokenized = `${ref(wall, 'y_max')} - 6"`;
 		constraints.set_formula(door, 'y_max', formula);
 
 		const data = door.serialize();
@@ -199,7 +199,7 @@ describe('serialize/deserialize formulas', () => {
 		const so = Smart_Object.deserialize(data);
 		const attr = so.attributes_dict_byName['y_max'];
 
-		expect(attr.formula_display).toBe('wall.y_max-6"');
+		expect(attr.formula_display).toBe('wall.y_max - 6"');
 		expect(attr.compiled).not.toBeNull();
 		expect(attr.compiled!.type).toBe('binary');
 	});
@@ -209,7 +209,7 @@ describe('serialize/deserialize formulas', () => {
 		const door = add_so('door');
 
 		const formula = `${ref(wall, 'y_max')} - 6"`;
-		const untokenized = `${ref(wall, 'y_max')}-6"`;
+		const untokenized = `${ref(wall, 'y_max')} - 6"`;
 		constraints.set_formula(door, 'y_max', formula);
 		const data = door.serialize();
 
@@ -855,14 +855,14 @@ describe('axis-qualified references', () => {
 		const child = add_so('child');
 		constraints.set_formula(child, 'x_max', '.y.l - 50', parent.id);
 		const attr = child.attributes_dict_byName['x_max'];
-		expect(attr.formula_display).toBe('.y.l-50');
+		expect(attr.formula_display).toBe('.y.l - 50');
 	});
 
 	it('tokenizer round-trips y.l correctly', () => {
 		const so = add_so('box', { y_min: 0, y_max: 600 });
 		constraints.set_formula(so, 'x_max', 'y.l * 2');
 		const attr = so.attributes_dict_byName['x_max'];
-		expect(attr.formula_display).toBe('y.l*2');
+		expect(attr.formula_display).toBe('y.l * 2');
 	});
 
 	it('propagation works through axis-qualified parent reference', () => {
@@ -889,27 +889,27 @@ describe('translate_formulas', () => {
 		const so = add_so('box', { x_min: 100, x_max: 500 });
 		constraints.set_formula(so, 'width', 'X - x');
 		constraints.translate_formulas(so, 'agnostic');
-		expect(so.attributes_dict_byName['width'].formula_display).toBe('e-s');
+		expect(so.attributes_dict_byName['width'].formula_display).toBe('e - s');
 		constraints.translate_formulas(so, 'explicit');
-		expect(so.attributes_dict_byName['width'].formula_display).toBe('X-x');
+		expect(so.attributes_dict_byName['width'].formula_display).toBe('X - x');
 	});
 
 	it('y-axis: Y - y → e - s round-trips', () => {
 		const so = add_so('box', { y_min: 50, y_max: 400 });
 		constraints.set_formula(so, 'depth', 'Y - y');
 		constraints.translate_formulas(so, 'agnostic');
-		expect(so.attributes_dict_byName['depth'].formula_display).toBe('e-s');
+		expect(so.attributes_dict_byName['depth'].formula_display).toBe('e - s');
 		constraints.translate_formulas(so, 'explicit');
-		expect(so.attributes_dict_byName['depth'].formula_display).toBe('Y-y');
+		expect(so.attributes_dict_byName['depth'].formula_display).toBe('Y - y');
 	});
 
 	it('z-axis: z + h → s + l round-trips', () => {
 		const so = add_so('box', { z_min: 0, z_max: 300 });
 		constraints.set_formula(so, 'z_max', 'z + h');
 		constraints.translate_formulas(so, 'agnostic');
-		expect(so.attributes_dict_byName['z_max'].formula_display).toBe('s+l');
+		expect(so.attributes_dict_byName['z_max'].formula_display).toBe('s + l');
 		constraints.translate_formulas(so, 'explicit');
-		expect(so.attributes_dict_byName['z_max'].formula_display).toBe('z+h');
+		expect(so.attributes_dict_byName['z_max'].formula_display).toBe('z + h');
 	});
 
 	// ── cross-axis ──
@@ -1003,8 +1003,8 @@ describe('translate_formulas', () => {
 		constraints.set_formula(so, 'width', 'X - x');  // explicit
 		constraints.set_formula(so, 'depth', 'e - s');   // already agnostic
 		constraints.translate_formulas(so, 'agnostic');
-		expect(so.attributes_dict_byName['width'].formula_display).toBe('e-s');
-		expect(so.attributes_dict_byName['depth'].formula_display).toBe('e-s'); // untouched
+		expect(so.attributes_dict_byName['width'].formula_display).toBe('e - s');
+		expect(so.attributes_dict_byName['depth'].formula_display).toBe('e - s'); // untouched
 	});
 
 	// ── values unchanged ──

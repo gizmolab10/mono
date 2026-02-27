@@ -68,14 +68,6 @@
 		overflow    : visible;
 	}
 
-	.controls h1 {
-		position    : relative;
-		top         : -2px;
-		margin      : 0;
-		font-size   : 1.25rem;
-		font-weight : 300;
-	}
-
 	.spacer {
 		flex : 1;
 	}

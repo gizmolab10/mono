@@ -419,7 +419,4 @@
 		padding-left : 34px;
 	}
 
-	.repeater-display .dim {
-		opacity : 0.5;
-	}
 </style>

@@ -105,18 +105,10 @@
 		text-align : left;
 	}
 
-	.clone {
-		opacity : 0.35;
-	}
-
 	.repeat-badge {
 		margin-left : 4px;
 		opacity     : 0.5;
 		font-size   : 8px;
-	}
-
-	.hierarchy-header {
-		/* empty name column header */
 	}
 
 	.toggle-btn {

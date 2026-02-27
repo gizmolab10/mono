@@ -3,7 +3,7 @@
 Read the first unchecked item and offer a proposal.
 
 - [ ] [[20.repeaters]]
-- [ ] [[21.rubberband]]
-- [ ] [[22.cut.lists]]
-- [ ] [[23.licensing]]
-- [ ] [[24.marketing]]
+- [ ] [[22.rubberband]]
+- [ ] [[23.cut.lists]]
+- [ ] [[25.licensing]]
+- [ ] [[26.marketing]]

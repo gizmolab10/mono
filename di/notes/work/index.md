@@ -11,5 +11,4 @@ Current work items and milestones.
 - [Collaboration Priorities](./collaboration priorities.md)
 - [More Milestones](./more milestones.md)
 - [Revisit.di](./revisit.di.md)
-- [Translate](enlarged%20algebra.md)
 

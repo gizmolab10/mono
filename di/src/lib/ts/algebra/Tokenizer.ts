@@ -234,7 +234,7 @@ class Tokenizer {
 	}
 
 	/** Reconstruct a formula string from tokens.
-	 *  No spaces between tokens except compound imperial (preserved in source). */
+	 *  Spaces around operators; compound imperial spacing preserved in source. */
 	untokenize(tokens: Token[]): string {
 		let result = '';
 		for (const token of tokens) {
@@ -246,7 +246,7 @@ class Tokenizer {
 					result += token.source;
 					break;
 				case 'operator':
-					result += token.value;
+					result += ' ' + token.value + ' ';
 					break;
 				case 'paren':
 					result += token.value;
