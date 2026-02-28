@@ -319,7 +319,7 @@ export function render_back_grid(host: GridHost): void {
 					ctx.moveTo(hull[0].x, hull[0].y);
 					for (let i = 1; i < hull.length; i++) ctx.lineTo(hull[i].x, hull[i].y);
 					ctx.closePath();
-					ctx.fillStyle = `rgba(${shadow_r}, ${shadow_g}, ${shadow_b}, 0.05)`;
+					ctx.fillStyle = `rgba(${shadow_r}, ${shadow_g}, ${shadow_b}, 0.08)`;
 					ctx.fill();
 					ctx.strokeStyle = `rgba(${shadow_r}, ${shadow_g}, ${shadow_b}, 0.5)`;
 					ctx.lineWidth = 1;
