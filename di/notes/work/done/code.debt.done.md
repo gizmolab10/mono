@@ -14,7 +14,6 @@
 - [x] better names for attributes (x,y,z,X,Y,Z,w,h,d)
 - [x] SO should use its internal id for hierarchy/formulas
 - [x] dimensionals sometimes do not extend outward from SO
-- [x] add a controls button "show/hide dimensionals" a boolean
 - [x] show dimensions -> intersection lines turn black and get thicker
 - [x] add button "show/hide dimensionals" a boolean that render reacts to
 - [x] make the height of units system button consistent with other buttons
@@ -23,10 +22,6 @@
 - [x] hide face label when face is
   - [x] occluded
   - [x] nearly edge on
-- [x] bugs in controls:
-  - [x] imperial when active has a white outline around the blue border and the blue border is slightly taller than the button without the blue. metric and other
-  - [x] units should render with only 1 decimal point of precision
-  - [x] 2D should render in (ahem) 2D
 - [x] convert precision into a segmented control whose segment titles depend on the units system
   - [x] imperial: whole, 1/2, 1/4, 1/8, 1/16, 1/32, 1/64
   - [x] others: whole, 1, 2, 3
@@ -76,7 +71,6 @@
 - [x] steppers got centered in build notes, move back to top left
   - [x] when only step down button is visible, it should leave empty space for step up, so it does not jump when the step up button appears
 - [x] when build notes overlay is visible, make entire app just one large empty div, retaining the wraparound accent gap
-- [x] move Design Intuition label in controls up 3px
 - [x] 2D needs to be a "infinite zoom" projection
   - [x] so rotated SO flatten but "retain their relative angle"
 - [x] add details hamburger (copy from ws project)
@@ -99,24 +93,14 @@
   - [x] from which, quaternion is derived
 - [x] **ABANDON:** see through -> all, add "back"
 - [x] confine ALL rotations to one axis -> the normal of the selected face
-- [x] add a six segment control to controls, one for each face
-  - [x] darken segment corresponding to front-most-facing face of root SO
-  - [x] click on a button -> rotate root SO to orient (and straighten) that face at front
 - [x] organize architecture notes
 - [x] move \[\[16.formulas\]\] to milestones
 - [x] add a toggle button to D_Selection titled "hide" / "show" -- hide means do not draw the SO or its decorations
 - [x] add a margin 8px at right and left of both D_Selection tables
 - [x] 3' - 1/4" -> does not work in value cells
 - [x] move reset button -> D_Library
-- [x] move "straighten" button to controls, between scaling and face orientation segmented control
-- [x] scale
-  - [x] continuous / not steps
-  - [x] powers of 10 of the scale
-  - [x] tick marks and labels
-  - [x] needs larger range
 - [x] version 4: attr serial -> orig, ext, len, angle
 - [x] interpretation -> wait until approved
-- [x] remove "design intuition" from controls
 - [x] "reset preferences" button
 - [x] delete -> delete selected AND its entire subtree of SO
 - [x] default accent color -> glow too faint
@@ -138,7 +122,6 @@
   - [x] verify that those that remain are NOT referenced !!! but do NOT remove them
   - [x] debug delete all children
 - [x] hover -> enabled cells
-- [x] reverse order of all controls (leave order within segmented controls as is)
 - [x] vivaldi <- chrome
 - [x] pac: in all code files, use tabs that are 4 (not 2) spaces
 - [x] pac: in all code files, use tabs that are 4 (not 2) spaces
@@ -156,8 +139,7 @@
 - [x] change "selection" to "smart object" and D_Selection -> D_Smart_Object
 - [x] move instructions (above) for configuring repeaters -> mono/di/notes/user manual/repeaters.md
 - [x] rename list -> hierarchy
-- [x] backward compatibility -- describe current design reading a file that is v1 → [[di/notes/architecture/core/migration|migration]]
-- [x] move save to controls (after hamburger)
+- [x] backward compatibility -- describe current design reading a file that is v1 → [[di/notes/architecture/core/migration|migration
 - [x] move to bottom row of hierarchy
 	- [x] delete all children
 	- [x] duplicate

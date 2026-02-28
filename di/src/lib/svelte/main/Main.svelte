@@ -25,7 +25,7 @@
 	const gap    = k.thickness.separator.main;
 	const radius = gap * 3;
 
-	let controlsHeight = $derived(32);
+	let controlsHeight = $state(32);
 	let detailsWidth   = $derived(280 - gap * 2);
 	let showBuildNotes = $state(false);
 
@@ -65,8 +65,8 @@
 	{:else}
 		<!-- Controls region -->
 		<div
-			class        = 'region controls'
-			style:height = '{controlsHeight}px'>
+			class = 'region controls'
+			bind:clientHeight={controlsHeight}>
 			<Controls />
 		</div>
 

@@ -71,7 +71,7 @@
 	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>↔ {$w_view_mode}</button>
 	<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>↔ {$w_solid ? 'solid' : 'see through'}</button>
 	<button class='toolbar-btn' use:hit_target={{ id: 'grid', onpress: () => stores.toggle_grid() }}>↔ {$w_show_grid ? 'grid' : 'no grid'}</button>
-	<Slider min={0.01} max={10000} value={$w_scale} logarithmic onchange={handle_slider} onstep={handle_scale} />
+	<Slider min={0.01} max={10000} value={$w_scale} logarithmic width={90} onchange={handle_slider} onstep={handle_scale} />
 	<div class='segmented'>
 		{#each face_labels as label, i}
 			<button class='seg' class:front={$w_front_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
@@ -82,17 +82,20 @@
 
 <style>
 	.controls {
-		width       : 100%;
-		height      : 100%;
-		display     : flex;
-		padding     : 0 1rem;
-		align-items : center;
-		box-sizing  : border-box;
-		overflow    : visible;
+		width           : 100%;
+		display         : flex;
+		flex-wrap       : wrap;
+		padding         : 4px 1rem;
+		row-gap         : 4px;
+		align-items     : center;
+		justify-content : flex-end;
+		box-sizing      : border-box;
+		overflow        : visible;
 	}
 
 	.spacer {
-		flex : 1;
+		flex      : 1 1 0px;
+		min-width : 0;
 	}
 
 	.hamburger {

@@ -19,11 +19,17 @@ import Flatbush from 'flatbush';
 
 class Render {
 	private occluding_index: Flatbush | null = null;  /** Spatial index for screen-space face bounding boxes (rebuilt each frame). */
+	/** Selection-dot occlusion: includes ALL non-root objects (visible + invisible). */
+	private sel_occluding_faces: { n: vec3; d: number; corners: vec3[]; poly: { x: number; y: number }[]; obj_id: string }[] = [];
+	private sel_occluding_index: Flatbush | null = null;
 	ctx!: CanvasRenderingContext2D;
 	private mvp_matrix = mat4.create();
 	private cached_world: mat4 | null = null;  /** Last world matrix passed to project_vertex (by reference). */
 	private cached_mvp = mat4.create();        /** MVP computed from cached_world — reused when world matrix hasn't changed. */
 	private canvas!: HTMLCanvasElement;
+	private snap: HTMLCanvasElement | null = null;
+	private resize_timer = 0;
+	private resizing = false;
 	private size: Size = Size.zero;
 	private dpr = 1;
 
@@ -59,18 +65,48 @@ class Render {
 		this.size = new Size(width, height);
 		this.apply_dpr(width, height);
 		camera.resize(this.size);
+		// Suppress render() during resize drag; snapshot carries visuals
+		this.resizing = true;
+		clearTimeout(this.resize_timer);
+		this.resize_timer = window.setTimeout(() => { this.resizing = false; }, 150);
 	}
 
-	/** Set canvas buffer to physical pixels, CSS size to logical pixels. */
+	/** Set canvas buffer to physical pixels, CSS size to logical pixels.
+	 *  Snapshots old content and paints it back offset so the buffer is never visibly blank. */
 	private apply_dpr(w: number, h: number): void {
-		this.canvas.width = w * this.dpr;
-		this.canvas.height = h * this.dpr;
+		const old_w = this.canvas.width;
+		const old_h = this.canvas.height;
+		const new_w = w * this.dpr;
+		const new_h = h * this.dpr;
+
+		// Snapshot current pixels before resize clears the buffer
+		if (old_w > 0 && old_h > 0) {
+			if (!this.snap) {
+				this.snap = document.createElement('canvas');
+			}
+			this.snap.width = old_w;
+			this.snap.height = old_h;
+			this.snap.getContext('2d')!.drawImage(this.canvas, 0, 0);
+		}
+
+		// Resize buffer (clears it)
+		this.canvas.width = new_w;
+		this.canvas.height = new_h;
 		this.canvas.style.width = w + 'px';
 		this.canvas.style.height = h + 'px';
+
+		// Paint snapshot back, centered at new size
+		if (this.snap && old_w > 0 && old_h > 0) {
+			const dx = (new_w - old_w) / 2;
+			const dy = (new_h - old_h) / 2;
+			this.ctx.drawImage(this.snap, dx, dy);
+		}
+
 		this.ctx.scale(this.dpr, this.dpr);
 	}
 
 	render(): void {
+		if (this.resizing) return;
 		this.ctx.clearRect(0, 0, this.size.width, this.size.height);
 		this.dimension_rects = [];
 		this.face_name_rects = [];
@@ -140,6 +176,7 @@ class Render {
 		this.occluding_faces = [];
 		if (is_2d || solid) {
 			for (const obj of objects) {
+				if (!obj.parent) continue;
 				const projected = projected_map.get(obj.id)!;
 				if (!obj.faces) continue;
 				const world = this.get_world_matrix(obj);
@@ -187,6 +224,58 @@ class Render {
 				this.occluding_index = index;
 			} else {
 				this.occluding_index = null;
+			}
+		}
+
+		// Build selection-dot occlusion: ALL non-root objects (visible + invisible)
+		this.sel_occluding_faces = [];
+		if (is_2d || solid) {
+			for (const obj of all_objects) {
+				if (!obj.parent) continue;
+				const projected = projected_map.get(obj.id)!;
+				if (!obj.faces) continue;
+				const world = this.get_world_matrix(obj);
+				const verts = obj.so.vertices;
+				for (const face of obj.faces) {
+					if (this.face_winding(face, projected) >= 0) continue;
+					const poly: { x: number; y: number }[] = [];
+					let cam_behind = false;
+					for (const vi of face) {
+						if (projected[vi].w < 0) { cam_behind = true; break; }
+						poly.push({ x: projected[vi].x, y: projected[vi].y });
+					}
+					if (cam_behind) continue;
+					const corners: vec3[] = [];
+					for (const vi of face) {
+						const lv = verts[vi];
+						const wv = vec4.create();
+						vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], world);
+						corners.push(vec3.fromValues(wv[0], wv[1], wv[2]));
+					}
+					const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);
+					const e2 = vec3.sub(vec3.create(), corners[3], corners[0]);
+					const n = vec3.cross(vec3.create(), e1, e2);
+					vec3.normalize(n, n);
+					const d = vec3.dot(n, corners[0]);
+					this.sel_occluding_faces.push({ n, d, corners, poly, obj_id: obj.id });
+				}
+			}
+			if (this.sel_occluding_faces.length > 0) {
+				const index = new Flatbush(this.sel_occluding_faces.length);
+				for (const face of this.sel_occluding_faces) {
+					let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+					for (const p of face.poly) {
+						if (p.x < minX) minX = p.x;
+						if (p.y < minY) minY = p.y;
+						if (p.x > maxX) maxX = p.x;
+						if (p.y > maxY) maxY = p.y;
+					}
+					index.add(minX, minY, maxX, maxY);
+				}
+				index.finish();
+				this.sel_occluding_index = index;
+			} else {
+				this.sel_occluding_index = null;
 			}
 		}
 
@@ -850,8 +939,7 @@ class Render {
 		if (!projected) return;
 
 		const world = this.get_world_matrix(sel.so.scene);
-		const is_root = !sel.so.scene.parent;
-		this.render_hit_dots(sel, projected, 'blue', world, is_root);
+		this.render_hit_dots(sel, projected, 'blue', world, true);
 	}
 
 	private render_hover(): void {
@@ -897,28 +985,11 @@ class Render {
 		projected: Projected[],
 		color: string,
 		world?: mat4,
-		is_root?: boolean,
+		for_selection?: boolean,
 	): void {
 		if (!hit.so.scene) return;
 		const so = hit.so;
 		const scene_obj = so.scene!;
-
-		// For non-root face selection: which vertices/edges are disabled?
-		// (Root min-bound drags redirect to opposite max, so all root dots are active.)
-		// Vertex: dead if ALL face-axis bounds are _min (can't move at all)
-		// Edge midpoint: dead if both endpoints share a _min bound on any face axis
-		let dead_verts: Set<number> | null = null;
-		let face_axes: [string, string] | null = null;
-		if (!is_root && hit.type === T_Hit_3D.face) {
-			face_axes = so.face_axes(hit.index) as [string, string];
-			dead_verts = new Set();
-			const face = scene_obj.faces![hit.index];
-			for (const vi of face) {
-				if (face_axes.every(axis => so.vertex_bound(vi, axis as any).endsWith('_min'))) {
-					dead_verts.add(vi);
-				}
-			}
-		}
 
 		// Compute world-space position for a vertex (for occlusion checks)
 		const world_pos = (vi: number): vec3 => {
@@ -928,20 +999,22 @@ class Render {
 			return vec3.fromValues(wv[0], wv[1], wv[2]);
 		};
 
-		const draw = (p: Projected, disabled: boolean, vi?: number, vi2?: number) => {
+		const skip_id = scene_obj.id;
+		const occ_faces = for_selection ? this.sel_occluding_faces : this.occluding_faces;
+		const occ_index = for_selection ? this.sel_occluding_index : this.occluding_index;
+		const draw = (p: Projected, vi?: number, vi2?: number) => {
 			if (p.w < 0) return;
 			let occluded = false;
-			if (world && this.occluding_faces.length > 0) {
+			if (world && occ_faces.length > 0) {
 				if (vi !== undefined && vi2 !== undefined) {
-					// Midpoint: average of two vertex world positions
 					const w1 = world_pos(vi), w2 = world_pos(vi2);
 					const mid: vec3 = [(w1[0]+w2[0])/2, (w1[1]+w2[1])/2, (w1[2]+w2[2])/2];
-					occluded = this.is_dot_occluded(p.x, p.y, mid);
+					occluded = this.is_dot_occluded(p.x, p.y, mid, skip_id, occ_faces, occ_index);
 				} else if (vi !== undefined) {
-					occluded = this.is_dot_occluded(p.x, p.y, world_pos(vi));
+					occluded = this.is_dot_occluded(p.x, p.y, world_pos(vi), skip_id, occ_faces, occ_index);
 				}
 			}
-			this.ctx.fillStyle = (disabled || occluded) ? 'red' : color;
+			this.ctx.fillStyle = occluded ? 'red' : color;
 			this.ctx.beginPath();
 			this.ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
 			this.ctx.fill();
@@ -949,16 +1022,13 @@ class Render {
 
 		switch (hit.type) {
 			case T_Hit_3D.corner:
-				draw(projected[hit.index], false, hit.index);
+				draw(projected[hit.index], hit.index);
 				break;
 			case T_Hit_3D.edge: {
 				const [a, b] = scene_obj.edges[hit.index];
-				draw(projected[a], false, a);
-				draw(projected[b], false, b);
-				const mid_dead = face_axes
-					? face_axes.some(axis => so.vertex_bound(a, axis as any).endsWith('_min') && so.vertex_bound(b, axis as any).endsWith('_min'))
-					: false;
-				draw(this.midpoint(projected[a], projected[b]), mid_dead, a, b);
+				draw(projected[a], a);
+				draw(projected[b], b);
+				draw(this.midpoint(projected[a], projected[b]), a, b);
 				break;
 			}
 			case T_Hit_3D.face: {
@@ -966,12 +1036,8 @@ class Render {
 				for (let i = 0; i < face.length; i++) {
 					const vi = face[i];
 					const vi2 = face[(i + 1) % face.length];
-					draw(projected[vi], dead_verts?.has(vi) ?? false, vi);
-					// Edge is dead if both endpoints share a _min bound on any face axis
-					const mid_dead = face_axes
-						? face_axes.some(axis => so.vertex_bound(vi, axis as any).endsWith('_min') && so.vertex_bound(vi2, axis as any).endsWith('_min'))
-						: false;
-					draw(this.midpoint(projected[vi], projected[vi2]), mid_dead, vi, vi2);
+					draw(projected[vi], vi);
+					draw(this.midpoint(projected[vi], projected[vi2]), vi, vi2);
 				}
 				break;
 			}
@@ -982,12 +1048,18 @@ class Render {
 	 *  Unlike edge occlusion, does NOT skip same-object faces — a dot on the
 	 *  back face of a box should be red when the front face hides it.
 	 *  Coplanar vertices (on the occluding face itself) pass through naturally. */
-	private is_dot_occluded(sx: number, sy: number, world_pos: vec3): boolean {
-		const candidates = this.occluding_index
-			? this.occluding_index.search(sx, sy, sx, sy)
-			: this.occluding_faces.map((_, i) => i);
+	private is_dot_occluded(
+		sx: number, sy: number, world_pos: vec3, skip_id?: string,
+		faces?: typeof this.occluding_faces, index?: Flatbush | null,
+	): boolean {
+		const occ_faces = faces ?? this.occluding_faces;
+		const occ_index = index !== undefined ? index : this.occluding_index;
+		const candidates = occ_index
+			? occ_index.search(sx, sy, sx, sy)
+			: occ_faces.map((_, i) => i);
 		for (const fi of candidates) {
-			const occ = this.occluding_faces[fi];
+			const occ = occ_faces[fi];
+			if (skip_id && occ.obj_id === skip_id) continue;
 			const dist = vec3.dot(occ.n, world_pos) - occ.d;
 			if (dist > -k.coplanar_epsilon) continue;
 			if (this.point_in_polygon_2d(sx, sy, occ.poly)) return true;

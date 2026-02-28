@@ -22,20 +22,6 @@
             }
           },
           {
-            "id": "5efa28eafc635a29",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/milestones/7.edit.drags.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "7.edit.drags"
-            }
-          },
-          {
             "id": "a7456ab5d2d1a817",
             "type": "leaf",
             "state": {
@@ -83,16 +69,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/20.repeaters.md",
+                "file": "di/notes/work/milestones/7.edit.drags.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "20.repeaters"
+              "title": "7.edit.drags"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -165,7 +150,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/milestones/7.edit.drags.md",
+                "file": "di/notes/work/code.debt.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -175,7 +160,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 7.edit.drags"
+              "title": "Backlinks for code.debt"
             }
           },
           {
@@ -227,13 +212,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/7.edit.drags.md",
+                "file": "di/notes/work/code.debt.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 7.edit.drags"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -241,7 +226,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 291.5
+    "width": 335.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -254,13 +239,15 @@
       "bases:Create new base": false
     }
   },
-  "active": "5efa28eafc635a29",
+  "active": "96c1273160eda1a8",
   "lastOpenFiles": [
+    "di/notes/work/milestones/7.edit.drags.md",
+    "di/notes/work/revisit.di.md",
+    "di/notes/work/milestones/done/10.controls.md",
+    "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/code.debt.md",
     "di/notes/work/milestones/20.repeaters.md",
     "di/notes/work/milestones/21.selection algorithm.md",
-    "di/notes/work/code.debt.md",
-    "di/notes/work/milestones/7.edit.drags.md",
-    "di/notes/work/done/code.debt.done.md",
     "di/notes/work/invisible.root.md",
     "di/notes/work/index.md",
     "di/notes/work/rotation.md",
@@ -269,7 +256,6 @@
     "di/src/lib/svelte/details/D_Selected_Part.svelte",
     "di/src/lib/svelte/details/D_Selected_Parts.svelte",
     "di/src/lib/svelte/details/D_Parts.svelte",
-    "di/notes/work/revisit.di.md",
     "di/notes/work/milestones/done/index.md",
     "di/notes/work/milestones/index.md",
     "logs/update-docs.error.ga.log",
@@ -288,7 +274,6 @@
     "di/notes/guides/testing.md",
     "di/notes/user manual/repeaters.md",
     "di/notes/architecture/core/enlarged.algebra.md",
-    "di/notes/architecture/core/algebra.md",
     "di/src/lib/svelte/details/D_Selection.svelte",
     "di/src/lib/svelte/details/D_Assembly.svelte",
     "di/src/lib/svelte/details/D_Editor.svelte",
