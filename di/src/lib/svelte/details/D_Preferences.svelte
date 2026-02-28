@@ -8,7 +8,7 @@
 	import { engine } from '../../ts/render';
 
 	const { w_accent_color } = colors;
-	const { w_precision, w_line_thickness, w_edge_color } = stores;
+	const { w_precision, w_line_thickness, w_grid_opacity, w_edge_color } = stores;
 
 	const imperial_ticks = ['foot', 'inch', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64'];
 	const decimal_ticks  = ['whole', '1', '2', '3'];
@@ -61,6 +61,17 @@
 		step    = {0.5}
 		value   = {$w_line_thickness}
 		oninput = {(e) => w_line_thickness.set(Number((e.target as HTMLInputElement).value))}
+	/>
+</div>
+<div class='slider-group'>
+	<span class='label'>grid opacity</span>
+	<input
+		type    = 'range'
+		min     = {0}
+		max     = {1}
+		step    = {0.05}
+		value   = {$w_grid_opacity}
+		oninput = {(e) => w_grid_opacity.set(Number((e.target as HTMLInputElement).value))}
 	/>
 </div>
 <div class='color-row'>

@@ -28,6 +28,8 @@ export enum T_Preference {
 	edgeColor        = 'edgeColor',
 	viewMode         = 'viewMode',
 	solid            = 'solid',
+	showGrid         = 'showGrid',
+	gridOpacity      = 'gridOpacity',
 
 	// Render
 	orientation      = 'orientation',

@@ -10,7 +10,28 @@
 	async function save() { await scenes.add_to_library(); }
 	const { w_text_color, w_background_color, w_accent_color } = colors;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
-	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details, w_front_face } = stores;
+	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details, w_show_grid, w_front_face, w_all_sos, w_tick } = stores;
+
+	let needs_fit = $derived.by(() => {
+		void $w_tick;
+		const all = $w_all_sos;
+		const root = all.find(so => !so.scene?.parent);
+		if (!root || root.repeater) return false;
+		if (!all.some(so => so.scene?.parent?.so === root)) return false;
+		const rb = [root.x_min, root.x_max, root.y_min, root.y_max, root.z_min, root.z_max];
+		for (const so of all) {
+			let p = so.scene?.parent;
+			let is_desc = false;
+			while (p) { if (p.so === root) { is_desc = true; break; } p = p.parent; }
+			if (!is_desc) continue;
+			const db = [so.x_min, so.x_max, so.y_min, so.y_max, so.z_min, so.z_max];
+			for (let ai = 0; ai < 3; ai++) {
+				if (db[ai * 2] < rb[ai * 2]) return true;
+				if (db[ai * 2 + 1] > rb[ai * 2 + 1]) return true;
+			}
+		}
+		return false;
+	});
 
 	let show_dimensions = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
 	let show_angles     = $derived(($w_decorations & T_Decorations.angles) !== 0);
@@ -40,6 +61,7 @@
 		</svg>
 	</button>
 	<button class='toolbar-btn' use:hit_target={{ id: 'save', onpress: save }}>save</button>
+	{#if needs_fit}<button class='toolbar-btn' use:hit_target={{ id: 'shrink-to-fit', onpress: () => engine.shrink_to_fit() }}>fit</button>{/if}
 	<span class='spacer'></span>
 	<div class='segmented'>
 		<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>
@@ -48,6 +70,7 @@
 	</div>
 	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>↔ {$w_view_mode}</button>
 	<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>↔ {$w_solid ? 'solid' : 'see through'}</button>
+	<button class='toolbar-btn' use:hit_target={{ id: 'grid', onpress: () => stores.toggle_grid() }}>↔ {$w_show_grid ? 'grid' : 'no grid'}</button>
 	<Slider min={0.01} max={10000} value={$w_scale} logarithmic onchange={handle_slider} onstep={handle_scale} />
 	<div class='segmented'>
 		{#each face_labels as label, i}

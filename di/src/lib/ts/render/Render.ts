@@ -11,7 +11,7 @@ import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
 import { debug } from '../common/Debug';
 import { k } from '../common/Constants';
-import { render_grid, render_back_grid } from './R_Grid';
+import { render_grid, render_back_grid, render_root_bottom } from './R_Grid';
 import { drag } from '../editors/Drag';
 import { camera } from './Camera';
 import { scene } from './Scene';
@@ -82,7 +82,7 @@ class Render {
 		const is_2d = stores.current_view_mode() === '2d';
 		const solid = stores.is_solid();
 
-		if (is_2d) render_grid(this);
+		if (is_2d && stores.show_grid()) render_grid(this);
 
 		// Phase 1: project ALL vertices (including hidden) for hit-test caches
 		const projected_map = new Map<string, Projected[]>();
@@ -93,7 +93,8 @@ class Render {
 			hits_3d.update_projected(obj.id, projected, world_matrix);
 		}
 
-		render_back_grid(this);
+		if (!is_2d && stores.show_grid()) render_back_grid(this);
+		if (!is_2d) render_root_bottom(this);
 
 		// Phase 2: fill front-facing faces (occlusion layer)
 		// In solid or 2D mode, fill with white so rear edges are hidden.

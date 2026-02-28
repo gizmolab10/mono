@@ -24,6 +24,8 @@ class Stores {
 	w_t_details			= this.persistent<number>(T_Preference.visibleDetails, 1);
 	w_line_thickness	= this.persistent<number>(T_Preference.lineThickness, 2);
 	w_solid				= this.persistent<boolean>(T_Preference.solid, true);
+	w_show_grid			= this.persistent<boolean>(T_Preference.showGrid, true);
+	w_grid_opacity		= this.persistent<number>(T_Preference.gridOpacity, 0.5);
 	w_precision			= this.persistent<number>(T_Preference.precision, 2);
 	w_scale				= this.persistent<number>(T_Preference.scale, 2.5);
 
@@ -35,6 +37,7 @@ class Stores {
 	set_orientation(q: quat):			    void { this.w_orientation.set([q[0], q[1], q[2], q[3]]); }
 	toggle_details():						void { this.w_show_details.update(v => !v); }
 	toggle_solid():							void { this.w_solid.update(v => !v); }
+	toggle_grid():							void { this.w_show_grid.update(v => !v); }
 	set_selection(result:  Hit_3D_Result | null) { this.w_selection.set(result); }
 	selection():		   Hit_3D_Result | null  { return get(this.w_selection); }
 	current_view_mode():			 '2d' | '3d' { return get(this.w_view_mode); }
@@ -44,6 +47,8 @@ class Stores {
 	current_precision():				  number { return get(this.w_precision); }
 	edge_color():						  string { return get(this.w_edge_color); }
 	is_solid():							 boolean { return get(this.w_solid); }
+	show_grid():						 boolean { return get(this.w_show_grid); }
+	grid_opacity():						  number { return get(this.w_grid_opacity); }
 	show_details():						 boolean { return get(this.w_show_details); }
 	is_editing():						 boolean { return get(this.w_editing) !== T_Editing.none; }
 	show_dimensionals():  				 boolean { return (get(this.w_decorations) & T_Decorations.dimensions) !== 0; }

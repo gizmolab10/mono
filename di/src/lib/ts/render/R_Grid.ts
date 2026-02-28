@@ -38,38 +38,14 @@ export function render_grid(host: GridHost): void {
 
 	const world = host.get_world_matrix(root_so.scene);
 
-	// Grid spacing in mm — start from precision, double until lines are ≥ min_px apart
-	const system = Units.current_unit_system();
-	const precision = stores.current_precision();
-	const max_dim = Math.max(root_so.width, root_so.height, root_so.depth);
-	const base_spacing = units.grid_spacing_mm(system, precision, max_dim);
-	if (base_spacing <= 0) return;
-
-	// Measure screen-space gap: project two adjacent points along axis_a
-	const a_ref = axis_a === 'x' ? root_so.x_min : axis_a === 'y' ? root_so.y_min : root_so.z_min;
-	const ref_point = (offset: number): vec3 => {
-		const p = vec3.create();
-		const set = (ax: Axis_Name, v: number) => { if (ax === 'x') p[0] = v; else if (ax === 'y') p[1] = v; else p[2] = v; };
-		set(axis_a, a_ref + offset);
-		set(axis_b, axis_b === 'x' ? root_so.x_min : axis_b === 'y' ? root_so.y_min : root_so.z_min);
-		set(fixed_axis, fixed_axis === 'x' ? (root_so.x_min + root_so.x_max) / 2
-			: fixed_axis === 'y' ? (root_so.y_min + root_so.y_max) / 2
-			: (root_so.z_min + root_so.z_max) / 2);
-		return p;
-	};
-	const p0 = host.project_vertex(ref_point(0), world);
-	const p1 = host.project_vertex(ref_point(base_spacing), world);
-	const px_per_cell = Math.hypot(p1.x - p0.x, p1.y - p0.y);
-
-	const min_px = 8; // minimum pixels between grid lines
-	let spacing = base_spacing;
-	if (px_per_cell > 0) {
-		while (spacing * (px_per_cell / base_spacing) < min_px) spacing *= 2;
-	}
+	// Grid spacing — tumble-independent
+	const { spacing, px_per_mm } = stable_spacing(host, root_so);
+	if (spacing <= 0) return;
 
 	// Axis bounds — extend enough to fill the canvas
-	const canvas_diag_mm = px_per_cell > 0
-		? Math.hypot(host.ctx.canvas.width, host.ctx.canvas.height) / (px_per_cell / base_spacing)
+	const max_dim = Math.max(root_so.width, root_so.height, root_so.depth);
+	const canvas_diag_mm = px_per_mm > 0
+		? Math.hypot(host.ctx.canvas.width, host.ctx.canvas.height) / px_per_mm
 		: max_dim * 50;
 	const bounds = (axis: Axis_Name): [number, number] => {
 		const min = axis === 'x' ? root_so.x_min : axis === 'y' ? root_so.y_min : root_so.z_min;
@@ -94,6 +70,7 @@ export function render_grid(host: GridHost): void {
 
 	const ctx = host.ctx;
 	ctx.save();
+	ctx.globalAlpha = stores.grid_opacity();
 	ctx.strokeStyle = get(colors.w_accent_color);
 	ctx.lineWidth = stores.line_thickness();
 	ctx.lineCap = 'round';
@@ -165,29 +142,27 @@ function face_fixed_value(so: Smart_Object, face_index: number): number {
 	}
 }
 
-/** Compute grid spacing in mm (same logic as render_grid). */
-function grid_spacing(host: GridHost, so: Smart_Object, world: mat4, axis_a: Axis_Name): number {
+/** Tumble-independent grid spacing. Projects through scale-only (no rotation) for stable px/mm. */
+function stable_spacing(host: GridHost, so: Smart_Object): { spacing: number; px_per_mm: number } {
 	const system = Units.current_unit_system();
 	const precision = stores.current_precision();
 	const max_dim = Math.max(so.width, so.height, so.depth);
-	const base_spacing = units.grid_spacing_mm(system, precision, max_dim);
-	if (base_spacing <= 0) return 0;
+	const base = units.grid_spacing_mm(system, precision, max_dim);
+	if (base <= 0) return { spacing: 0, px_per_mm: 0 };
 
-	const a_min = axis_bounds(so, axis_a)[0];
-	const set_axis = (v: vec3, ax: Axis_Name, val: number) => {
-		if (ax === 'x') v[0] = val; else if (ax === 'y') v[1] = val; else v[2] = val;
-	};
-	const p0_pt = vec3.create(); set_axis(p0_pt, axis_a, a_min);
-	const p1_pt = vec3.create(); set_axis(p1_pt, axis_a, a_min + base_spacing);
-	const p0 = host.project_vertex(p0_pt, world);
-	const p1 = host.project_vertex(p1_pt, world);
-	const px_per_cell = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+	const s = stores.current_scale();
+	const scale_mat = mat4.create();
+	mat4.fromScaling(scale_mat, [s, s, s]);
+	const p0 = host.project_vertex(vec3.fromValues(0, 0, 0), scale_mat);
+	const p1 = host.project_vertex(vec3.fromValues(base, 0, 0), scale_mat);
+	const px = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+	const px_per_mm = px > 0 ? px / base : 0;
 
-	let spacing = base_spacing;
-	if (px_per_cell > 0) {
-		while (spacing * (px_per_cell / base_spacing) < 8) spacing *= 2;
+	let spacing = base;
+	if (px_per_mm > 0) {
+		while (spacing * px_per_mm < 8) spacing *= 2;
 	}
-	return spacing;
+	return { spacing, px_per_mm };
 }
 
 /** Graham scan convex hull for 2D points. Returns vertices in winding order. */
@@ -212,6 +187,37 @@ function convex_hull_2d(pts: { x: number; y: number }[]): { x: number; y: number
 	return lower.concat(upper);
 }
 
+// ── root bottom rect ──
+
+/** Always-visible faint outline of the root's bottom face (z_min plane). */
+export function render_root_bottom(host: GridHost): void {
+	const root_so = scenes.root_so;
+	if (!root_so?.scene) return;
+
+	const world = host.get_world_matrix(root_so.scene);
+	const z = root_so.z_min;
+	const corners = [
+		vec3.fromValues(root_so.x_min, root_so.y_min, z),
+		vec3.fromValues(root_so.x_max, root_so.y_min, z),
+		vec3.fromValues(root_so.x_max, root_so.y_max, z),
+		vec3.fromValues(root_so.x_min, root_so.y_max, z),
+	];
+	const pts = corners.map(c => host.project_vertex(c, world));
+	if (pts.some(p => p.w < 0)) return;
+
+	const [r, g, b] = parseToRgba(get(colors.w_accent_color));
+	const ctx = host.ctx;
+	ctx.save();
+	ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.5)`;
+	ctx.lineWidth = 1;
+	ctx.beginPath();
+	ctx.moveTo(pts[0].x, pts[0].y);
+	for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+	ctx.closePath();
+	ctx.stroke();
+	ctx.restore();
+}
+
 // ── back grid ──
 
 /** Render faint grids on back-facing root faces (spatial reference). */
@@ -223,10 +229,8 @@ export function render_back_grid(host: GridHost): void {
 	const orientation = stores.current_orientation();
 	const rotated = vec3.create();
 
-	// Compute spacing once — measure along front face's axis (stable across tumble)
-	const front_face = hits_3d.front_most_face(root_so);
-	const [front_axis] = root_so.face_axes(front_face >= 0 ? front_face : 0);
-	const spacing = grid_spacing(host, root_so, world, front_axis);
+	// Grid spacing — tumble-independent
+	const { spacing } = stable_spacing(host, root_so);
 	if (spacing <= 0) return;
 
 	// Shadow setup: selected non-root SO's vertices in root-local space
@@ -251,6 +255,7 @@ export function render_back_grid(host: GridHost): void {
 
 	const ctx = host.ctx;
 	ctx.save();
+	ctx.globalAlpha = stores.grid_opacity();
 	ctx.strokeStyle = 'rgba(128, 128, 128, 0.12)';
 	ctx.lineWidth = 1;
 	ctx.lineCap = 'round';
@@ -319,12 +324,14 @@ export function render_back_grid(host: GridHost): void {
 					ctx.moveTo(hull[0].x, hull[0].y);
 					for (let i = 1; i < hull.length; i++) ctx.lineTo(hull[i].x, hull[i].y);
 					ctx.closePath();
-					ctx.fillStyle = `rgba(${shadow_r}, ${shadow_g}, ${shadow_b}, 0.08)`;
+					ctx.globalAlpha = 1;
+					ctx.fillStyle = `rgba(${shadow_r}, ${shadow_g}, ${shadow_b}, 0.3)`;
 					ctx.fill();
-					ctx.strokeStyle = `rgba(${shadow_r}, ${shadow_g}, ${shadow_b}, 0.5)`;
+					ctx.strokeStyle = `rgba(${shadow_r}, ${shadow_g}, ${shadow_b}, 0.8)`;
 					ctx.lineWidth = 1;
 					ctx.stroke();
 					// Restore grid style for next face
+					ctx.globalAlpha = stores.grid_opacity();
 					ctx.strokeStyle = 'rgba(128, 128, 128, 0.12)';
 				}
 			}

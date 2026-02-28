@@ -220,6 +220,13 @@ class Engine {
 		drag.scale(-1, false);
 	}
 
+	// Preferred twist index per face: bottom-at-bottom for sides, front-at-bottom for top/bottom
+	//   twists: [0°, 90°, 180°, -90°] around Z
+	//   face 0 bottom → twist 2 (π)     face 1 top    → twist 2 (π)
+	//   face 2 left   → twist 1 (π/2)   face 3 right  → twist 3 (-π/2)
+	//   face 4 front  → twist 2 (π)     face 5 back   → twist 0 (identity)
+	private static readonly PREFERRED_TWIST = [2, 2, 1, 3, 2, 0];
+
 	// Per-face snap candidates: FACE_SNAP_QUATS[face] = 4 quats (0°, 90°, 180°, 270° twist)
 	private static readonly FACE_SNAP_QUATS: quat[][] = (() => {
 		const q = (axis: vec3, angle: number) => quat.setAxisAngle(quat.create(), axis, angle);
@@ -243,16 +250,9 @@ class Engine {
 		}));
 	})();
 
-	/** Snap tumble orientation to the nearest axis-aligned quat for the given face. */
+	/** Snap tumble orientation to the preferred axis-aligned quat for the given face. */
 	private snap_to_face(face: number): void {
-		const current = stores.current_orientation();
-		let best: quat = Engine.FACE_SNAP_QUATS[face][0];
-		let best_dot = -Infinity;
-		for (const candidate of Engine.FACE_SNAP_QUATS[face]) {
-			const dot = Math.abs(quat.dot(current, candidate));
-			if (dot > best_dot) { best_dot = dot; best = candidate; }
-		}
-		stores.set_orientation(best);
+		stores.set_orientation(Engine.FACE_SNAP_QUATS[face][Engine.PREFERRED_TWIST[face]]);
 	}
 
 	/** Scratch orientation for 2D rotation — accumulates mouse drag to detect face changes. */
@@ -359,19 +359,14 @@ class Engine {
 		scenes.save();
 	}
 
-	/** Animate tumble to show the given face (0–5) at front. */
+	/** Animate tumble to show the given face (0–5) at front, using preferred twist. */
 	orient_to_face(face: number): void {
 		if (!this.root_scene || face < 0 || face > 5) return;
 		const current = stores.current_orientation();
-		let best: quat = Engine.FACE_SNAP_QUATS[face][0];
-		let best_dot = -Infinity;
-		for (const candidate of Engine.FACE_SNAP_QUATS[face]) {
-			const dot = Math.abs(quat.dot(current, candidate));
-			if (dot > best_dot) { best_dot = dot; best = candidate; }
-		}
+		const target = Engine.FACE_SNAP_QUATS[face][Engine.PREFERRED_TWIST[face]];
 		this.snap_anim = {
 			from: quat.clone(current),
-			to: quat.clone(best),
+			to: quat.clone(target),
 			t: 0,
 		};
 		scenes.save();
@@ -666,7 +661,7 @@ class Engine {
 
 	/** Shrink the selected SO to tightly wrap its direct children on all three axes. */
 	shrink_to_fit(): void {
-		const target = stores.selection()?.so ?? this.root_scene?.so;
+		const target = this.root_scene?.so;
 		if (!target?.scene) return;
 
 		const all = scene.get_all();
@@ -1012,8 +1007,14 @@ class Engine {
 
 		if (gap_min != null && gap_max != null && gap_length > 0) {
 			count = this.resolve_gap(gap_length, gap_min, gap_max);
-			step = parent_length / count;
-			if (gap_ai !== repeat_ai) gap_step = gap_length / count;
+			if (gap_ai !== repeat_ai) {
+				// Stairs: subtract tread dimensions so each phantom gap = exactly 1 step
+				const gap_dim = [w, d, h][gap_ai];
+				step = (parent_length - template_dim) / (count - 1);
+				gap_step = (gap_length - gap_dim) / count;
+			} else {
+				step = parent_length / count;
+			}
 		} else if (spacing != null && spacing > 0 && parent_length > 0) {
 			count = Math.floor((parent_length - template_dim) / spacing);
 			step = spacing;
@@ -1050,11 +1051,13 @@ class Engine {
 			if (i !== repeat_ai && dims[i] > dims[height_ai]) height_ai = i;
 		}
 
-		// Stairs: adjust step so last visible tread ends exactly at parent boundary
-		if (gap_step && needed_studs > 0) {
-			const t_start = t.axes[repeat_ai].start.value;
-			step = (parent_length - t_start - template_dim) / needed_studs;
+		// Stairs: position template 1 gap_step from parent edge on rise axis (bottom phantom)
+		if (gap_step) {
+			const gap_delta = gap_step - t.axes[gap_ai].start.value;
+			t.axes[gap_ai].start.value += gap_delta;
+			t.axes[gap_ai].end.value += gap_delta;
 		}
+
 		const changed = clones.length !== total_needed;
 
 		// Remove excess clones

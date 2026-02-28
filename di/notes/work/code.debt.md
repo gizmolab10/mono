@@ -4,14 +4,16 @@
 offer a proposal for the first unchecked item
 
 
-
+- [x] move fit to controls
+- [x] add "`<-> [no] grid`" toggle button to controls
+- [x] always draw the root's bottom rect (faint stroke = grid's selected SO stroke)
+- [x] straighten & orientation controls -> favor bottom at bottom OR front at bottom
 - [x] select root SO on click a library item (replaces the root) AND on launch if nothing is currently selected
 - [x] shrink to fit broken
 	- [x] relaunch increases depth much farther than farthest SO
 		- [x] fix: `set_bound` on compiled attrs stored absolute value; `get_bound` added parent offset again (double-count)
 	- [ ] enhancements moved to [[7.edit.drags]] § Enhancements
 - [ ] soda stream
-- [ ] move fit to controls
 - [ ] move all code debt done items to appropriate milestone
 	- [ ] add it to an end section called work done
 		- [ ] convert checkboxes to numbered bullet points

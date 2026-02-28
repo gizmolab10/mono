@@ -13,25 +13,6 @@
 	let selected_so = $derived($w_selection?.so ?? null);
 	let is_root = $derived(!selected_so?.scene?.parent);
 	let has_children = $derived($w_all_sos.some(so => so.scene?.parent?.so === selected_so));
-	let needs_fit = $derived.by(() => {
-		if (!is_root || !has_children || !selected_so || is_repeater) return false;
-		void $w_tick;
-		const root = selected_so!;
-		const root_bounds = [root.x_min, root.x_max, root.y_min, root.y_max, root.z_min, root.z_max];
-		// Check ALL descendants (including repeater clones) using absolute bounds
-		for (const so of $w_all_sos) {
-			let p = so.scene?.parent;
-			let is_desc = false;
-			while (p) { if (p.so === root) { is_desc = true; break; } p = p.parent; }
-			if (!is_desc) continue;
-			const desc_bounds = [so.x_min, so.x_max, so.y_min, so.y_max, so.z_min, so.z_max];
-			for (let ai = 0; ai < 3; ai++) {
-				if (desc_bounds[ai * 2] < root_bounds[ai * 2]) return true;      // protrudes past min
-				if (desc_bounds[ai * 2 + 1] > root_bounds[ai * 2 + 1]) return true; // protrudes past max
-			}
-		}
-		return false;
-	});
 	function get_visible_label(_tick: number) { return selected_so?.visible === false ? 'hidden' : 'visible'; }
 	let visible_label = $derived(get_visible_label($w_tick));
 
@@ -203,7 +184,6 @@
 
 <div class='actions-row'>
 	{#if has_children}<button class='action-btn' use:hit_target={{ id: 'remove-children', onpress: () => engine.remove_all_children() }}>empty</button>{/if}
-	{#if needs_fit}<button class='action-btn' use:hit_target={{ id: 'shrink-to-fit', onpress: () => engine.shrink_to_fit() }}>fit</button>{/if}
 	{#if !is_root}<button class='action-btn' use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_selected() }}>duplicate</button>{/if}
 	<button class='action-btn' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>{is_repeater ? 'unrepeat' : 'repeat'}</button>
 	<button class='action-btn action-far-right' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>↔ {visible_label}</button>
