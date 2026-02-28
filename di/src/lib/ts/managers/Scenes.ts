@@ -19,6 +19,7 @@ import { hits_3d } from './Hits_3D';
  */
 
 class Scenes {
+	root_so: Smart_Object | null = null;
 	root_name: string = '';
 	root_id: string = '';
 
@@ -231,9 +232,9 @@ class Scenes {
 				smart_objects: [{
 					id,
 					name: 'new',
-					x: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 } },
-					y: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 } },
-					z: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 } },
+					x: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 }, invariant: 1 },
+					y: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 }, invariant: 1 },
+					z: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 }, invariant: 1 },
 					rotation_lock: 0,
 				}],
 				camera: { eye: [0, 0, 2750], center: [0, 0, 0], up: [0, 1, 0] },

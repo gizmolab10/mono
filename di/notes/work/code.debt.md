@@ -4,13 +4,24 @@
 offer a proposal for the first unchecked item
 
 
-- [x] re-enable stretching origin (for any given axis) of root
-	- [x] -> by adjusting length such that end remains fixed (for that axis)
-	- [x] dragging the end point -- disallow making the length negative -> at the moment of length == 0, switch to dragging the start point
-- [ ] the root face selection dots that are red -> blue
-- [ ] ability to rotate around an axis
-	- [ ] swap xy -> corrupted
-	- [ ] rotate 90° (+,-) (x,y,z)
+
+- [x] select root SO on click a library item (replaces the root) AND on launch if nothing is currently selected
+- [x] shrink to fit broken
+	- [x] relaunch increases depth much farther than farthest SO
+		- [x] fix: `set_bound` on compiled attrs stored absolute value; `get_bound` added parent offset again (double-count)
+	- [ ] enhancements moved to [[7.edit.drags]] § Enhancements
+- [ ] soda stream
+- [ ] move fit to controls
+- [ ] move all code debt done items to appropriate milestone
+	- [ ] add it to an end section called work done
+		- [ ] convert checkboxes to numbered bullet points
+- [ ] work on [[rotation]]
+	- [ ] manual test -- wacka.di
+	- [ ] 24 straighten choices
+- [ ] what went wrong with [[s3]]?
+- [ ] write a claude forum article
+- [ ] stairs have no fire blocks (button in selected part)
+- [ ] design flaw: saving working project in a file -> cross talk
 - [ ] disallow algebraic names in constants
 - [ ] occluded dimensions !!!!!!!
 - [ ] darker banners

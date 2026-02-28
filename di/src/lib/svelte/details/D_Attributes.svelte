@@ -7,11 +7,11 @@
 	import { constraints } from '../../ts/algebra';
 	import { units } from '../../ts/types/Units';
 
-	const { w_root_so, w_selection, w_precision, w_tick } = stores;
+	const { w_selection, w_precision, w_tick } = stores;
 
 	type BoundsRow = { label: string; bound: string | null; value: string; formula: string; has_formula: boolean; is_invariant: boolean; axis_index: number; attr_index: number };
 
-	let selected_so = $derived($w_selection?.so ?? $w_root_so);
+	let selected_so = $derived($w_selection?.so ?? null);
 	let is_root = $derived(!selected_so?.scene?.parent);
 	let prev_so_id: string | undefined;
 	$effect(() => { if (selected_so?.id !== prev_so_id) { prev_so_id = selected_so?.id; display_mode_override = null; } });
@@ -183,7 +183,7 @@
 				{@const next2_inv = gpos === 0 && bounds_rows[i + 2]?.is_invariant}
 				{@const merge_span = formula_mode === 'agnostic' && row.is_invariant && !prev_inv && next_inv ? (next2_inv ? 3 : 2) : 0}
 				{@const is_merge_cont = formula_mode === 'agnostic' && row.is_invariant && prev_inv}
-				{@const root_formula_cont = is_root && i > 0 && i < 6}
+				{@const root_formula_cont = is_root && i !== 0 && i !== 6}
 				{@const root_start_cont = is_root && row.attr_index === 0 && gpos > 0}
 				<tr class:merge-cont={is_merge_cont || root_formula_cont || root_start_cont}>
 					<td class='attr-name'>
@@ -231,18 +231,19 @@
 			&harr; {formula_mode === 'explicit' ? 'agnostic' : 'explicit'}
 		</button>
 	</div>
+	{#if !is_root}
 	<table class='bounds rotations'>
 		<tbody>
 			{#each axes as axis, i}
 				<tr>
 					<td class='attr-name'>{axis}</td>
-					<td class='attr-sep' class:cross={is_root || selected_so?.rotation_lock === i} class:disabled={is_root} onclick={() => set_locked(i)}></td>
+					<td class='attr-sep' class:cross={selected_so?.rotation_lock === i} onclick={() => set_locked(i)}></td>
 					<td class='attr-value'>
 						<input
 							type      = 'text'
 							class     = 'cell-input right'
 							value     = {angles[axis]}
-							disabled  = {is_root || selected_so?.rotation_lock === i}
+							disabled  = {selected_so?.rotation_lock === i}
 							onblur    = {(e) => commit_angle(axis, (e.target as HTMLInputElement).value)}
 							onkeydown = {cell_keydown}
 						/>
@@ -251,6 +252,7 @@
 			{/each}
 		</tbody>
 	</table>
+	{/if}
 {:else}
 	<p>No object selected</p>
 {/if}

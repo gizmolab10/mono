@@ -7,7 +7,6 @@ import Axis from './Axis';
 
 export default class Smart_Object extends Identifiable {
 	axes: Axis[] = [new Axis('x'), new Axis('y'), new Axis('z')];
-	attributes_dict_byName: Dictionary<Attribute> = {};
 	repeater: Repeater | null = null;
 	rotation_lock: number = 0;
 	visible: boolean = true;
@@ -21,7 +20,6 @@ export default class Smart_Object extends Identifiable {
 		super();
 		this.name = name;
 		this.scene = scene;
-		this.setup();
 	}
 
 	get hasScene(): boolean { return !!this.scene; }
@@ -35,17 +33,14 @@ export default class Smart_Object extends Identifiable {
 		return name === 'x' ? this.axes[0] : name === 'y' ? this.axes[1] : this.axes[2];
 	}
 
-	setup() {
-		// Populate attributes_dict_byName from Axis attributes (start, end, length)
+	get attributes_dict_byName(): Dictionary<Attribute> {
+		const dict: Dictionary<Attribute> = {};
 		for (const axis of this.axes) {
-			this.attributes_dict_byName[axis.start.name]  = axis.start;
-			this.attributes_dict_byName[axis.end.name]    = axis.end;
-			this.attributes_dict_byName[axis.length.name] = axis.length;
+			dict[axis.start.name]  = axis.start;
+			dict[axis.end.name]    = axis.end;
+			dict[axis.length.name] = axis.length;
 		}
-		// Default: 1"×2"×3" box centered at origin (stored in mm)
-		// this.set_bound('x_min', -12.7); this.set_bound('x_max', 12.7);
-		// this.set_bound('y_min', -25.4); this.set_bound('y_max', 25.4);
-		// this.set_bound('z_min', -38.1); this.set_bound('z_max', 38.1);
+		return dict;
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
@@ -74,14 +69,19 @@ export default class Smart_Object extends Identifiable {
 		return this.scene.parent.so.get_bound(bound) + attr.value;
 	}
 
-	/** Store a bound.
+	/** Store a bound (absolute world-space value).
+	 *  No parent / root: stored directly.
 	 *  Plain values: stored as offset from parent's same-named bound.
-	 *  Formula values: stored directly (formula system manages these). */
+	 *  Formula values: stored as offset from parent's axis origin bound
+	 *    (matching get_bound's resolution path for compiled attributes). */
 	set_bound(bound: Bound, value: number): void {
 		const attr = this.attributes_dict_byName[bound];
 		if (!attr) return;
-		if (attr.compiled || !this.scene?.parent) {
+		if (!this.scene?.parent) {
 			attr.value = value;
+		} else if (attr.compiled) {
+			const origin = Smart_Object.AXIS_ORIGIN[bound] ?? bound;
+			attr.value = value - this.scene.parent.so.get_bound(origin);
 		} else {
 			attr.value = value - this.scene.parent.so.get_bound(bound);
 		}
@@ -363,7 +363,7 @@ export default class Smart_Object extends Identifiable {
 			z: this.axes[2].serialize(),
 			rotation_lock: this.rotation_lock,
 		};
-		if (!this.visible) out.visible = false;
+		out.visible = this.visible;
 		if (this.repeater) out.repeater = this.repeater;
 		return out;
 	}

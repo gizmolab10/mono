@@ -228,7 +228,7 @@ class Constraints {
 	/** Rewrite stored formula tokens between axis-explicit and axis-agnostic forms.
 	 *  Mutates attr.formula in place. No recompile, no propagation. */
 	translate_formulas(so: Smart_Object, direction: 'agnostic' | 'explicit'): void {
-		for (const attr of Object.values(so.attributes_dict_byName)) {
+		for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 			if (!attr.formula) continue;
 			const owner = attribute_to_axis[attr.name];
 			if (owner === undefined) continue;
@@ -275,7 +275,7 @@ class Constraints {
 	 *  Mixed (some agnostic, some concrete) counts as explicit — button normalizes to agnostic. */
 	detect_formula_mode(so: Smart_Object): 'explicit' | 'agnostic' | 'none' {
 		let has_refs = false;
-		for (const attr of Object.values(so.attributes_dict_byName)) {
+		for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 			if (!attr.formula) continue;
 			const owner = attribute_to_axis[attr.name];
 			if (owner === undefined) continue;
@@ -309,7 +309,7 @@ class Constraints {
 				attr.compiled = null;
 			}
 		}
-		for (const attr of Object.values(so.attributes_dict_byName)) {
+		for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 			if (!attr.compiled) continue;
 			const owner_axis = attribute_to_axis[attr.name];
 			attr.compiled = this.bind_refs(attr.compiled, so.id, parent_id, owner_axis);
@@ -404,7 +404,7 @@ class Constraints {
 			}
 
 			// Explicit formulas referencing any changed SO
-			for (const attr of Object.values(so.attributes_dict_byName)) {
+			for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (!attr.compiled) continue;
 				let refs_changed = false;
 				for (const cid of changed) {
@@ -432,7 +432,7 @@ class Constraints {
 		for (const o of all_objects) {
 			const so = o.so;
 
-			for (const attr of Object.values(so.attributes_dict_byName)) {
+			for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (!attr.compiled) continue;
 				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
 				this.sync_length(so, attr.name, attr.value);
@@ -507,7 +507,7 @@ class Constraints {
 		const map: FormulaMap = new Map();
 		const all = scene.get_all();
 		for (const o of all) {
-			for (const attr of Object.values(o.so.attributes_dict_byName)) {
+			for (const axis of o.so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (attr.compiled) {
 					map.set(nodes.ref_key(o.so.id, attr.name), attr.compiled);
 				}
@@ -568,7 +568,7 @@ class Constraints {
 	rename_sd_in_formulas(old_name: string, new_name: string): void {
 		const all_objects = scene.get_all();
 		for (const o of all_objects) {
-			for (const attr of Object.values(o.so.attributes_dict_byName)) {
+			for (const axis of o.so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (!attr.formula) continue;
 				// Rename in stored tokens (bare references: object = 'self')
 				const changed = tokenizer.rename_reference(attr.formula, 'self', old_name, new_name);

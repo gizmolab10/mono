@@ -6,6 +6,7 @@ import { drag } from '../editors/Drag';
 import { Point } from '../types/Coordinates';
 import { T_Hit_3D, T_Editing } from '../types/Enumerations';
 import { stores } from '../managers/Stores';
+import { scenes } from '../managers/Scenes';
 
 type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point, alt_key: boolean) => void;
 type T_Handle_Wheel = (delta: number, fine: boolean) => void;
@@ -79,7 +80,12 @@ class Events_3D {
 			if (this.is_dragging && !this.did_drag && this.mouse_in_canvas) {
 				// Click on background → deselect (but not if editing just started)
 				if (!drag.has_target && stores.editing() === T_Editing.none) {
-					hits_3d.set_selection(null);
+					const root = scenes.root_so;
+					if (root && stores.selection()?.so !== root) {
+						hits_3d.set_selection({ so: root, type: T_Hit_3D.face, index: 0 });
+					} else {
+						hits_3d.set_selection(null);
+					}
 				}
 			}
 			if (this.did_drag && this.on_drag_end) this.on_drag_end();

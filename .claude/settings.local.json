@@ -41,7 +41,8 @@
       "Bash(xargs kill:*)",
       "Bash(yarn docs:build)",
       "Bash(git rm:*)",
-      "Bash(xxd:*)"
+      "Bash(xxd:*)",
+      "Bash(git grep -i \"fit\" --include=\"*.ts\" --include=\"*.svelte\")"
     ]
   }
 }

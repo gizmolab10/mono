@@ -14,4 +14,5 @@
 12. **Test before done** — code written ≠ working; verify before checking off. **Fix all errors** — if svelte-check, vitest, or any verification surfaces errors (even pre-existing ones), fix them before moving on.
 13. **After a mistake or correction** — re-read `pitfalls.md` before responding.
 14. **Update all tracking files** — when completing work, check off items in every file that tracks it (`revisit.*.md`, `fresh.build.md`, etc.), not just one. Update written proposals with finalized designs.
-15. Your answer on every question is worth $1000 to me if it works
+15. **Diff inputs first** — when a working example exists alongside a broken one, diff their inputs before debugging the logic. The bug is usually in the data, not the renderer.
+16. Your answer on every question is worth $1000 to me if it works

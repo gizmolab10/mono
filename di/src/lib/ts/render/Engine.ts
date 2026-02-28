@@ -127,17 +127,27 @@ class Engine {
 		root_so.set_bound('x_min', 0);
 		root_so.set_bound('y_min', 0);
 		root_so.set_bound('z_min', 0);
-		stores.w_root_so.set(root_so);
+		if (!saved) root_so.visible = false;
+
+		scenes.root_so = root_so;
 		scenes.root_id = root_so.id;
 		scenes.root_name = root_so.name;
 		stores.w_all_sos.set(smart_objects);
 
-		// Restore selection (SO + face) by id
+		// Fit-normalize root if any SO has negative start/end/length (skip if root is a repeater)
+		if (!root_so.repeater && smart_objects.some(so => so.axes.some(a => a.start.value < 0 || a.end.value < 0 || a.length.value < 0))) {
+			this.shrink_to_fit();
+		}
+
+		// Restore selection (SO + face) by id, fallback to root
 		if (saved?.selected_id != null) {
 			const sel_so = smart_objects.find(so => so.id === saved.selected_id);
 			if (sel_so && saved.selected_face != null) {
 				hits_3d.set_selection({ so: sel_so, type: T_Hit_3D.face, index: saved.selected_face });
 			}
+		}
+		if (!stores.selection()) {
+			hits_3d.set_selection({ so: root_so, type: T_Hit_3D.face, index: 0 });
 		}
 
 		if (saved?.camera) {
@@ -413,7 +423,7 @@ class Engine {
 		const system = Units.current_unit_system();
 		for (const obj of scene.get_all()) {
 			const so = obj.so;
-			for (const attr of Object.values(so.attributes_dict_byName)) {
+			for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (attr.has_formula) continue;
 				attr.value = units.snap_for_system(attr.value, system, level);
 			}
@@ -445,20 +455,19 @@ class Engine {
 
 		// Clear formulas on every SO in the subtree
 		for (const obj of to_remove) {
-			for (const bound of Object.keys(obj.so.attributes_dict_byName) as Bound[]) {
-				constraints.clear_formula(obj.so, bound);
+			for (const axis of obj.so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
+				constraints.clear_formula(obj.so, attr.name);
 			}
 		}
 
 		// Clear formulas on surviving SOs that reference any deleted SO
 		for (const o of scene.get_all()) {
 			if (to_remove.has(o)) continue;
-			for (const bound of Object.keys(o.so.attributes_dict_byName) as Bound[]) {
-				const attr = o.so.attributes_dict_byName[bound];
+			for (const axis of o.so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (attr.compiled) {
 					for (const obj of to_remove) {
 						if (this.formula_references_so(attr.compiled, obj.so.id)) {
-							constraints.clear_formula(o.so, bound);
+							constraints.clear_formula(o.so, attr.name);
 							break;
 						}
 					}
@@ -558,11 +567,20 @@ class Engine {
 			new_sos.push(so);
 		}
 
-		if (new_sos.length) {
-			// Re-evaluate formulas now that hierarchy is wired
-			for (const so of new_sos) {
-				constraints.propagate(so);
+		// Rebind formulas: deserialize compiles but leaves placeholder refs ('' = parent,
+		// 'self' = this SO). rebind resolves them to actual IDs and evaluates.
+		for (const so of new_sos) {
+			const parent_id = so.scene?.parent?.so.id;
+			if (parent_id) {
+				constraints.rebind_formulas(so, parent_id);
+			} else {
+				constraints.enforce_invariants(so);
 			}
+		}
+
+		if (new_sos.length) {
+			// Cascade and trigger sync_repeater via post_propagate_hook
+			constraints.propagate_all();
 			stores.w_all_sos.set(scene.get_all().map(o => o.so));
 			stores.tick();
 			scenes.save();
@@ -601,7 +619,7 @@ class Engine {
 		constraints.referenced_constants.clear();
 		const remaining = scene.get_all().map(o => o.so);
 		for (const so of remaining) {
-			for (const attr of Object.values(so.attributes_dict_byName)) {
+			for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (attr.compiled) evaluator.evaluate(attr.compiled, (obj, a) => constraints.resolve(obj, a));
 			}
 		}
@@ -642,6 +660,96 @@ class Engine {
 
 		// Keep parent selected after adding child
 		stores.w_all_sos.update(list => [...list, child]);
+		stores.tick();
+		scenes.save();
+	}
+
+	/** Shrink the selected SO to tightly wrap its direct children on all three axes. */
+	shrink_to_fit(): void {
+		const target = stores.selection()?.so ?? this.root_scene?.so;
+		if (!target?.scene) return;
+
+		const all = scene.get_all();
+		const children = all.filter(o => o.parent === target.scene);
+		if (children.length === 0) return;
+
+		const bounds: Bound[] = ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max'];
+
+		// Snapshot direct children's absolute bounds (for shifting later)
+		const snapshots = children.map(c => bounds.map(b => c.so.get_bound(b)));
+
+		// Collect ALL descendants (not just direct children) for bounding box
+		const descendants: typeof children = [];
+		const collect = (parent: typeof target.scene) => {
+			for (const obj of all) {
+				if (obj.parent === parent) {
+					descendants.push(obj);
+					collect(obj);
+				}
+			}
+		};
+		collect(target.scene);
+
+		// Compute bounding box of all descendants
+		const origin = [0, 0, 0];
+		const extent = [0, 0, 0];
+		for (let ai = 0; ai < 3; ai++) {
+			let min_val = Infinity;
+			let max_val = -Infinity;
+			for (const desc of descendants) {
+				const d_min = desc.so.get_bound(bounds[ai * 2]);
+				const d_max = desc.so.get_bound(bounds[ai * 2 + 1]);
+				if (d_min < min_val) min_val = d_min;
+				if (d_max > max_val) max_val = d_max;
+			}
+			origin[ai] = min_val;
+			extent[ai] = max_val - min_val;
+		}
+
+		// Resize parent: start at current position, size = children's extent
+		for (let ai = 0; ai < 3; ai++) {
+			const min_bound = bounds[ai * 2] as Bound;
+			const max_bound = bounds[ai * 2 + 1] as Bound;
+			const parent_min = target.get_bound(min_bound);
+			target.set_bound(max_bound, parent_min + extent[ai]);
+		}
+
+		// Shift children so their positions are relative to new parent origin
+		// (child was at absolute `origin[ai]`, parent_min stays the same, so offset = origin[ai] - parent_min)
+		for (let ci = 0; ci < children.length; ci++) {
+			for (let ai = 0; ai < 3; ai++) {
+				const parent_min = target.get_bound(bounds[ai * 2] as Bound);
+				for (const bi of [ai * 2, ai * 2 + 1]) {
+					const attr = children[ci].so.attributes_dict_byName[bounds[bi]];
+					if (attr?.compiled) continue;
+					children[ci].so.set_bound(bounds[bi], snapshots[ci][bi] - origin[ai] + parent_min);
+				}
+			}
+		}
+
+		constraints.propagate(target);
+
+		// Post-propagation pass: sync_repeater may have repositioned clones outside root.
+		// Expand root to cover any still-protruding descendants (no re-propagation to avoid cycles).
+		const all_after = scene.get_all();
+		for (let ai = 0; ai < 3; ai++) {
+			const min_b = bounds[ai * 2] as Bound;
+			const max_b = bounds[ai * 2 + 1] as Bound;
+			let root_min = target.get_bound(min_b);
+			let root_max = target.get_bound(max_b);
+			for (const obj of all_after) {
+				let p = obj.parent; let is_desc = false;
+				while (p) { if (p === target.scene) { is_desc = true; break; } p = p.parent; }
+				if (!is_desc) continue;
+				const d_min = obj.so.get_bound(min_b);
+				const d_max = obj.so.get_bound(max_b);
+				if (d_min < root_min) root_min = d_min;
+				if (d_max > root_max) root_max = d_max;
+			}
+			if (root_min < target.get_bound(min_b)) target.set_bound(min_b, root_min);
+			if (root_max > target.get_bound(max_b)) target.set_bound(max_b, root_max);
+		}
+
 		stores.tick();
 		scenes.save();
 	}
@@ -723,7 +831,7 @@ class Engine {
 
 			// Rebind formulas (replace old IDs with new IDs in compiled refs and tokens)
 			for (const clone of new_sos) {
-				for (const attr of Object.values(clone.attributes_dict_byName)) {
+				for (const axis of clone.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 					if (attr.compiled) {
 						for (const [old_id, new_id] of old_to_new) {
 							attr.compiled = this.replace_reference_ids(attr.compiled, old_id, new_id);

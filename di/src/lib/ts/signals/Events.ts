@@ -38,7 +38,11 @@ export class Events {
 
 	// ===== SETUP =====
 
+	private wired = false;
+
 	setup() {
+		if (this.wired) return;
+		this.wired = true;
 		this.subscribeTo_events();
 	}
 

@@ -10,5 +10,6 @@ Current work items and milestones.
 - [Code.debt](./code.debt.md)
 - [Collaboration Priorities](./collaboration priorities.md)
 - [More Milestones](./more milestones.md)
+- [Rotation](./rotation.md)
 - [Revisit.di](./revisit.di.md)
 

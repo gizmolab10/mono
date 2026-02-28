@@ -10,7 +10,6 @@ class Stores {
 
 	// Session (reset on setup)
 	w_selection			= writable<Hit_3D_Result | null>(null);
-	w_root_so			= writable<Smart_Object | null>(null);
 	w_editing			= writable<T_Editing>(T_Editing.none);
 	w_all_sos			= writable<Smart_Object[]>([]);
 	w_front_face		= writable<number>(-1);

@@ -21,8 +21,9 @@ interface Face_Anchor {
 	e2_world: vec3;              // world-space edge vector 2 (corners[3] - corners[0])
 	e1_local: vec3;              // parent-local edge vector 1 (raw vertex diff)
 	e2_local: vec3;              // parent-local edge vector 2 (raw vertex diff)
-	initial_position: vec3;      // child's O_Scene.position at drag start
-	child_scene: O_Scene;        // reference to child scene (to set position)
+	initial_bounds: Map<Bound, number>;  // child's absolute bounds at drag start
+	so: Smart_Object;            // child SO being translated
+	child_scene: O_Scene;        // reference to child scene
 	parent_scene: O_Scene;       // reference to parent scene (for guidance rendering)
 	face_index: number;          // which parent face is the guidance plane
 }
@@ -239,10 +240,11 @@ class Drag {
 		if (target.type === T_Hit_3D.face) {
 			if (!scene.parent) return false; // root SO cannot be translated
 
-			// First frame: capture anchor from PARENT's front face
+			// First frame: capture anchor from PARENT's face (back face for root, front face otherwise)
 			if (!this.face_anchor) {
 				const parent_so = scene.parent.so;
-				const front = hits_3d.front_most_face(parent_so);
+				const is_parent_root = !scene.parent.parent;
+				const front = is_parent_root ? hits_3d.back_most_face(parent_so) : hits_3d.front_most_face(parent_so);
 				if (front < 0) return false;
 				const anchor = this.init_face_anchor(prev_mouse, front, scene.parent, scene);
 				if (!anchor) return false;
@@ -336,7 +338,7 @@ class Drag {
 
 	/** Capture a fixed plane + anchor at drag start for face translation.
 	 *  Plane comes from the PARENT SO's front face (stable — parent doesn't move).
-	 *  Moves O_Scene.position (not bounds), so grandchildren maintain relative position. */
+	 *  Snapshots child SO bounds for absolute offset application. */
 	private init_face_anchor(
 		mouse: Point,
 		face_index: number,
@@ -348,7 +350,12 @@ class Drag {
 		const anchor_world = this.ray_plane_intersect(mouse, plane.plane_point, plane.plane_normal);
 		if (!anchor_world) return null;
 
-		return { ...plane, anchor_world, initial_position: vec3.clone(child_scene.position), child_scene, parent_scene, face_index };
+		const so = child_scene.so;
+		const bound_names: Bound[] = ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max'];
+		const initial_bounds = new Map<Bound, number>();
+		for (const b of bound_names) initial_bounds.set(b, so.get_bound(b));
+
+		return { ...plane, anchor_world, initial_bounds, so, child_scene, parent_scene, face_index };
 	}
 
 	/** Compute position delta from the fixed anchor to the current mouse position.
@@ -532,12 +539,16 @@ class Drag {
 		return result;
 	}
 
-	// Apply face drag as absolute offset from initial position (no drift).
-	// delta is the total position-space displacement since drag start.
-	// Moves O_Scene.position — bounds unchanged, so grandchildren stay put.
+	// Apply face drag as absolute offset from initial bounds (no drift).
+	// delta is the total bounds-space displacement since drag start.
 	private apply_face_drag_absolute(delta: vec3): void {
 		const a = this.face_anchor!;
-		vec3.add(a.child_scene.position, a.initial_position, delta);
+		const axes: [Bound, Bound][] = [['x_min', 'x_max'], ['y_min', 'y_max'], ['z_min', 'z_max']];
+		for (let i = 0; i < 3; i++) {
+			const [min_b, max_b] = axes[i];
+			a.so.set_bound(min_b, a.initial_bounds.get(min_b)! + delta[i]);
+			a.so.set_bound(max_b, a.initial_bounds.get(max_b)! + delta[i]);
+		}
 	}
 
 	/** Apply stretch drag as absolute offset from initial bounds.

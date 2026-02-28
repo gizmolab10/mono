@@ -156,6 +156,8 @@
 
 - di/notes/work/revisit.di.md
 - di/notes/work/code.debt.md
+- di/notes/work/invisible.root.md
+- di/notes/work/rotation.md
 - di/notes/work/more milestones.md
 - di/notes/work/index.md
 - di/notes/work/next/index.md

@@ -8,11 +8,11 @@ import { hits_3d } from '../managers/Hits_3D';
 import { mat4, vec3, vec4 } from 'gl-matrix';
 import { Size } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
+import { scenes } from '../managers/Scenes';
 import { debug } from '../common/Debug';
 import { k } from '../common/Constants';
-import { render_grid } from './R_Grid';
+import { render_grid, render_back_grid } from './R_Grid';
 import { drag } from '../editors/Drag';
-import { get } from 'svelte/store';
 import { camera } from './Camera';
 import { scene } from './Scene';
 import Flatbush from 'flatbush';
@@ -82,7 +82,7 @@ class Render {
 		const is_2d = stores.current_view_mode() === '2d';
 		const solid = stores.is_solid();
 
-		if (is_2d) render_grid(this, objects);
+		if (is_2d) render_grid(this);
 
 		// Phase 1: project ALL vertices (including hidden) for hit-test caches
 		const projected_map = new Map<string, Projected[]>();
@@ -92,6 +92,8 @@ class Render {
 			projected_map.set(obj.id, projected);
 			hits_3d.update_projected(obj.id, projected, world_matrix);
 		}
+
+		render_back_grid(this);
 
 		// Phase 2: fill front-facing faces (occlusion layer)
 		// In solid or 2D mode, fill with white so rear edges are hidden.
@@ -866,7 +868,7 @@ class Render {
 	}
 
 	private render_front_face_label(): void {
-		const root_so = get(stores.w_root_so);
+		const root_so = scenes.root_so;
 		if (!root_so || !root_so.scene?.faces) return;
 		const projected = hits_3d.get_projected(root_so.scene.id);
 		if (!projected) return;

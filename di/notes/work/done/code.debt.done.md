@@ -188,3 +188,13 @@
 - [x] display formulas with spaces between tokens (eg. ".l - front_th + dado")
 - [x] row span for root disallowed formulas and "s" values (they are always 0)
 - [x] details rename banners -> parts, selected parts (from assembly and selection)
+- [x] re-enable stretching origin (for any given axis) of root
+	- [x] -> by adjusting length such that end remains fixed (for that axis)
+	- [x] dragging the end point -- disallow making the length negative -> at the moment of length == 0, switch to dragging the start point
+- [x] the root face selection dots that are red -> blue
+- [x] cannot insert stretch into a new SO
+	- [x] was working
+	- [x] click + in library banner
+	- [x] option click on stretch in library
+	- [x] red dots appear on hover over nothing
+	- [x] relaunch stretch appears

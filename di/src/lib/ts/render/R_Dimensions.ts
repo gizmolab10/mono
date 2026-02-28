@@ -29,6 +29,7 @@ export interface DimensionHost {
 /** Render dimensions for all scene objects. */
 export function render_dimensions(host: DimensionHost): void {
 	for (const obj of scene.get_all()) {
+		if (!obj.parent) continue; // root is invisible — no dimensions
 		const projected = hits_3d.get_projected(obj.id);
 		if (!projected) continue;
 

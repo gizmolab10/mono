@@ -125,6 +125,7 @@ class Hits_3D {
 		let best_z = Infinity;
 		for (const so of this.objects) {
 			if (!so.scene?.faces) continue;
+			if (!so.scene.parent) continue; // root is non-interactive
 			const c = this.cache.get(so.scene.id);
 			if (!c) continue;
 
@@ -184,6 +185,12 @@ class Hits_3D {
 			if (this._scratch_vec[2] > best_z) { best_z = this._scratch_vec[2]; best = i; }
 		}
 		return best;
+	}
+
+	// Opposite face from front_most_face (face pairs: 0/1, 2/3, 4/5)
+	back_most_face(so: Smart_Object): number {
+		const front = this.front_most_face(so);
+		return front < 0 ? -1 : front ^ 1;
 	}
 
 	/** Compose effective orientation into `out`: walk up parent chain, composing each SO's

@@ -20,9 +20,9 @@
 	const { w_s_dimensions } = dimensions;
 	const { w_s_angular } = angulars;
 	const { w_s_face_label } = face_label;
-	const { w_selection, w_root_so } = stores;
+	const { w_selection } = stores;
 
-	let selected_so = $derived($w_selection?.so ?? $w_root_so);
+	let selected_so = $derived($w_selection?.so ?? scenes.root_so);
 
 	// Walk from selected SO up to root — returns [root, ..., parent, selected]
 	let breadcrumbs = $derived.by(() => {

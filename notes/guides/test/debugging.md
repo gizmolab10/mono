@@ -102,6 +102,10 @@ For visual/rendering issues:
 - [ ] Compare working vs non-working cases
 - [ ] Browser dev tools for actual rendered values
 
+
+## Binary fizz
+
+isolating the cause of a bug is not easy to do by just a careful examination of the code. often the culprit code is deep and subtle. the best approach is running the app with some "does it fail here at A?" debug logs scattered about, A, B, C, etc. One of them will report true. remove all but that one and the one before it and scatter some more debug logs in between those two. repeat, repeat, until the debug logs are one either side of one line of code -> the cause
 ## Tools
 
 - **grep**: `grep -r "pattern" src/` - Find definitions
