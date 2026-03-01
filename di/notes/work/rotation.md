@@ -1,4 +1,21 @@
 
+# Rotation
+
+I want users to be able to **rotate** an SO to an arbitrary angle (0 - 90) and rotate some more. quats let di do this without gl. The UI needs:
+
+- [x] a slider from 0 - 90 with detents at 22.5, 30, 45, 60, 67.5
+- [ ] +/- 90 buttons **rotate** (not swap)
+- [ ] an input box for entering an angle (return or blur-input -> applies it)
+- [ ] root expansion to account for rotations that protrude
+- [ ] remove rotation controls when root SO is selected
+- [ ] axis default -> z
+
+## Expanding the root
+
+`recompute_max_bounds` grows the child's AABB but the root doesn't expand to contain it. extract the post-propagation root expansion from `insert_child_from_text` into a reusable `expand_root_to_fit()`, call it after Angular commit and slider set_angle. low risk: only expands max bounds, root is invisible, preserves origin. medium risk: if any SO has formulas referencing root dimensions (`.l`, `.w`), expanding root changes those values.
+
+# Swap
+
 i want to be able to rotate an SO. use case: to create a room, i need to 
 - insert one stretch (front wall)
 - dup the stretch

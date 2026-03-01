@@ -1,12 +1,15 @@
 # Code Debt
 
 
-offer a proposal for the first unchecked item
+offer a proposal for the first unchecked item (do not wait for approval)
 
-
+- [ ] rewrite rotation code
+	- [ ] add proposal to [[rotation]] for rotating (leave swapping alone)
+	- [ ] manual test fails: rotate drawer -> dreadful
+		- [ ] only some of the children of the rotated SO actually rotate
 - [ ] duplication should exclude repeater clones from the new subtree. for each repeater, keep only its first child (the template)
-- [ ] work on [[rotation]]
-	- [ ] manual test fails: rotate drawer -> gawdawful
+- [ ] merge extended algebra into notes/architecture/core/algebra
+	- [ ] remove cruft
 - [ ] work on [[14.details]]
 - [ ] work on [[21.undo]]
 - [ ] parts: position/size button -> convert into a colspan th above last three cols

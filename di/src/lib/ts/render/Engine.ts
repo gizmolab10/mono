@@ -682,6 +682,33 @@ class Engine {
 		scenes.save();
 	}
 
+	/** Expand root to cover any descendants that protrude outside its bounds.
+	 *  Structural bounds only — rotation is a visual transform and does not
+	 *  affect the root envelope. No re-propagation to avoid cycles. */
+	expand_root_to_fit(): void {
+		const root = this.root_scene?.so;
+		if (!root?.scene) return;
+		const bounds: Bound[] = ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max'];
+		const all = scene.get_all();
+		for (let ai = 0; ai < 3; ai++) {
+			const min_b = bounds[ai * 2] as Bound;
+			const max_b = bounds[ai * 2 + 1] as Bound;
+			let root_min = root.get_bound(min_b);
+			let root_max = root.get_bound(max_b);
+			for (const obj of all) {
+				let p = obj.parent; let is_desc = false;
+				while (p) { if (p === root.scene) { is_desc = true; break; } p = p.parent; }
+				if (!is_desc) continue;
+				const d_min = obj.so.get_bound(min_b);
+				const d_max = obj.so.get_bound(max_b);
+				if (d_min < root_min) root_min = d_min;
+				if (d_max > root_max) root_max = d_max;
+			}
+			if (root_min < root.get_bound(min_b)) root.set_bound(min_b, root_min);
+			if (root_max > root.get_bound(max_b)) root.set_bound(max_b, root_max);
+		}
+	}
+
 	/** Shrink the selected SO to tightly wrap its direct children on all three axes. */
 	shrink_to_fit(): void {
 		const target = this.root_scene?.so;
@@ -747,26 +774,8 @@ class Engine {
 
 		constraints.propagate(target);
 
-		// Post-propagation pass: sync_repeater may have repositioned clones outside root.
-		// Expand root to cover any still-protruding descendants (no re-propagation to avoid cycles).
-		const all_after = scene.get_all();
-		for (let ai = 0; ai < 3; ai++) {
-			const min_b = bounds[ai * 2] as Bound;
-			const max_b = bounds[ai * 2 + 1] as Bound;
-			let root_min = target.get_bound(min_b);
-			let root_max = target.get_bound(max_b);
-			for (const obj of all_after) {
-				let p = obj.parent; let is_desc = false;
-				while (p) { if (p === target.scene) { is_desc = true; break; } p = p.parent; }
-				if (!is_desc) continue;
-				const d_min = obj.so.get_bound(min_b);
-				const d_max = obj.so.get_bound(max_b);
-				if (d_min < root_min) root_min = d_min;
-				if (d_max > root_max) root_max = d_max;
-			}
-			if (root_min < target.get_bound(min_b)) target.set_bound(min_b, root_min);
-			if (root_max > target.get_bound(max_b)) target.set_bound(max_b, root_max);
-		}
+		// Post-propagation: sync_repeater may have repositioned clones outside root
+		this.expand_root_to_fit();
 
 		stores.tick();
 		scenes.save();
@@ -861,10 +870,19 @@ class Engine {
 	 *  Updates repeater config (repeat_axis, gap_axis) to match. */
 	swap_axes(so: Smart_Object, a: number, b: number): void {
 		const AXIS_NAMES: Axis_Name[] = ['x', 'y', 'z'];
-		const targets = [so];
-		const children = scene.get_all().filter(o => o.parent === so.scene);
-		if (children.length > 0) targets.push(children[0].so);
 
+		// Collect all descendants (parent-first order so offset fixup reads post-swap parent bounds)
+		const targets: Smart_Object[] = [so];
+		const all = scene.get_all();
+		for (const obj of all) {
+			let p = obj.parent;
+			while (p) {
+				if (p === so.scene) { targets.push(obj.so); break; }
+				p = p.parent;
+			}
+		}
+
+		// Phase 1: swap axes on every target
 		for (const target of targets) {
 			// Cache absolute positions before anything moves
 			const abs_a = [target.get_bound(target.axes[a].start.name as Bound),
@@ -896,31 +914,28 @@ class Engine {
 				if (!ax_b.start.compiled) ax_b.start.value = abs_a[0] - parent.get_bound(ax_b.start.name as Bound);
 				if (!ax_b.end.compiled)   ax_b.end.value   = abs_a[1] - parent.get_bound(ax_b.end.name as Bound);
 			}
+
+			// Update repeater config if this target has one
+			if (target.repeater) {
+				const r = { ...target.repeater };
+				if (r.repeat_axis === a) r.repeat_axis = b as 0 | 1;
+				else if (r.repeat_axis === b) r.repeat_axis = a as 0 | 1;
+				if (r.gap_axis === a) r.gap_axis = b as 0 | 1 | 2;
+				else if (r.gap_axis === b) r.gap_axis = a as 0 | 1 | 2;
+				target.repeater = r;
+			}
 		}
 
-		// Update repeater config
-		if (so.repeater) {
-			const r = { ...so.repeater };
-			if (r.repeat_axis === a) r.repeat_axis = b as 0 | 1;
-			else if (r.repeat_axis === b) r.repeat_axis = a as 0 | 1;
-			if (r.gap_axis === a) r.gap_axis = b as 0 | 1 | 2;
-			else if (r.gap_axis === b) r.gap_axis = a as 0 | 1 | 2;
-			so.repeater = r;
+		// Phase 2: rebind all targets, then cascade once (launch.md two-phase rule)
+		for (const target of targets) {
+			const parent_id = target.scene?.parent?.so.id;
+			if (parent_id) {
+				constraints.rebind_formulas(target, parent_id);
+			} else {
+				constraints.enforce_invariants(target);
+			}
 		}
-
-		// Rebind — binds refs, evaluates, enforces invariants
-		const parent_so = so.scene?.parent?.so;
-		if (parent_so) {
-			constraints.rebind_formulas(so, parent_so.id);
-		} else {
-			constraints.enforce_invariants(so);
-		}
-		if (children.length > 0) {
-			constraints.rebind_formulas(children[0].so, so.id);
-		}
-
-		// Cascade changes and trigger sync_repeater via post_propagate_hook
-		constraints.propagate(so);
+		constraints.propagate_all();
 	}
 
 	/** Find a count where total_length / count falls within [gap_min, gap_max].
