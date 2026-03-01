@@ -682,9 +682,10 @@ class Engine {
 		scenes.save();
 	}
 
-	/** Expand root to cover any descendants that protrude outside its bounds.
-	 *  Rotation-aware: for rotated direct children, rotates their AABB corners
-	 *  into root space. Only grows, never shrinks. */
+	/** Expand root to cover any descendants that structurally protrude outside its bounds.
+	 *  Does NOT expand for rotation — rotation is visual only. Expanding root bounds
+	 *  inflates all descendants (get_bound resolves through parent offsets), so root
+	 *  expansion must be limited to structural protrusions from propagation/repeaters. */
 	expand_root_to_fit(): void {
 		const root = this.root_scene?.so;
 		if (!root?.scene) return;
@@ -698,8 +699,6 @@ class Engine {
 			let p = obj.parent; let is_desc = false;
 			while (p) { if (p === root.scene) { is_desc = true; break; } p = p.parent; }
 			if (!is_desc) continue;
-
-			// Structural: check stored bounds of every descendant
 			const so = obj.so;
 			if (so.x_min < x_lo) x_lo = so.x_min;
 			if (so.x_max > x_hi) x_hi = so.x_max;
@@ -707,29 +706,6 @@ class Engine {
 			if (so.y_max > y_hi) y_hi = so.y_max;
 			if (so.z_min < z_lo) z_lo = so.z_min;
 			if (so.z_max > z_hi) z_hi = so.z_max;
-		}
-
-		// Rotation: for rotated direct children, rotate 8 corners into root space
-		for (const obj of all) {
-			if (obj.parent !== root.scene) continue;
-			const so = obj.so;
-			const q = so.orientation;
-			if (Math.abs(q[3]) >= 1 - 1e-6) continue;
-
-			const cx = (so.x_min + so.x_max) / 2;
-			const cy = (so.y_min + so.y_max) / 2;
-			const cz = (so.z_min + so.z_max) / 2;
-			for (const v of so.vertices) {
-				v[0] -= cx; v[1] -= cy; v[2] -= cz;
-				vec3.transformQuat(v, v, q);
-				v[0] += cx; v[1] += cy; v[2] += cz;
-				if (v[0] < x_lo) x_lo = v[0];
-				if (v[0] > x_hi) x_hi = v[0];
-				if (v[1] < y_lo) y_lo = v[1];
-				if (v[1] > y_hi) y_hi = v[1];
-				if (v[2] < z_lo) z_lo = v[2];
-				if (v[2] > z_hi) z_hi = v[2];
-			}
 		}
 
 		if (x_lo < root.x_min) root.set_bound('x_min', x_lo);
@@ -744,6 +720,8 @@ class Engine {
 	shrink_to_fit(): void {
 		const target = this.root_scene?.so;
 		if (!target?.scene) return;
+
+
 
 		const all = scene.get_all();
 		const children = all.filter(o => o.parent === target.scene);

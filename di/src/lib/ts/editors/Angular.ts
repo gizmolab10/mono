@@ -6,7 +6,7 @@ import { writable, get } from 'svelte/store';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
 import { render } from '../render/Render';
-import { engine } from '../render';
+
 
 interface S_Angular extends S_SO {
 	rotation_axis: Axis_Name;
@@ -69,7 +69,6 @@ class Angulars {
 		// Redistribute bounds to match the new angle
 		orientation.recompute_max_bounds(so);
 		constraints.propagate(so);
-		engine.expand_root_to_fit();
 
 		stores.tick();
 		scenes.save();

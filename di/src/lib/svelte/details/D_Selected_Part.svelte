@@ -157,7 +157,6 @@
 		}
 		const axis = selected_so.axis_by_name(rot_axis);
 		axis.angle.value = deg * Math.PI / 180;
-		// engine.expand_root_to_fit();
 		stores.tick();
 		scenes.save();
 	}
