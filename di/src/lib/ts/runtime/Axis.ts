@@ -26,6 +26,15 @@ export default class Axis {
 	get length(): Attribute { return this.attributes[2]; }
 	get angle():  Attribute { return this.attributes[3]; }
 
+	/** Rename this axis in-place — updates name and all attribute names. */
+	relabel(name: Axis_Name): void {
+		this.name = name;
+		this.attributes[0].name = `${name}_min`;
+		this.attributes[1].name = `${name}_max`;
+		this.attributes[2].name = this.length_name;
+		this.attributes[3].name = `${name}_angle`;
+	}
+
 	serialize(): Portable_Axis {
 		return {
 			attributes: {

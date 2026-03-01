@@ -1,7 +1,7 @@
+import { T_Details, T_Hit_3D } from '../types/Enumerations';
 import type { Dictionary } from '../types/Types';
 import { writable, get } from 'svelte/store';
 import { Point } from '../types/Coordinates';
-import { T_Details, T_Hit_3D } from '../types/Enumerations';
 import { engine } from '../render/Engine';
 import { stores } from '../managers/Stores';
 import { hits } from '../managers/Hits';
@@ -93,7 +93,13 @@ export class Events {
 	}
 
 	private handle_key_down = (event: KeyboardEvent) => {
-		if (stores.is_editing()) return;  // typing in inline input
+		if (stores.is_editing()) {
+			if (event.key === 'Enter' || event.key === 'Tab') {
+				event.preventDefault();
+				this.navigate_table_cell(event.key, event.shiftKey);
+			}
+			return;
+		}
 		if (event.key === 'Delete' || event.key === 'Backspace') {
 			event.preventDefault();
 			engine.delete_selected_so();
@@ -106,6 +112,49 @@ export class Events {
 			if ((get(stores.w_t_details) & T_Details.parts) === 0) return;
 			event.preventDefault();
 			this.navigate_parts(event.key === 'ArrowUp' ? -1 : 1);
+		}
+		if (event.key === 'Tab') {
+			if ((get(stores.w_t_details) & T_Details.parts) === 0) return;
+			event.preventDefault();
+			this.navigate_parts(event.shiftKey ? -1 : 1);
+		}
+	}
+
+	private navigate_table_cell(key: 'Enter' | 'Tab', shift: boolean): void {
+		const active = document.activeElement as HTMLInputElement;
+		if (!active || active.tagName !== 'INPUT') return;
+
+		const td = active.closest('td');
+		const table = active.closest('table');
+		if (!td || !table) return;
+
+		const inputs = Array.from(table.querySelectorAll<HTMLInputElement>('input:not(:disabled)'));
+		const idx = inputs.indexOf(active);
+		if (idx === -1) return;
+
+		let target: HTMLInputElement | null = null;
+
+		if (key === 'Tab') {
+			const next = idx + (shift ? -1 : 1);
+			if (next >= 0 && next < inputs.length) target = inputs[next];
+		} else {
+			// Enter: same column, next/prev row
+			const col_class = Array.from(td.classList).find(c => c.startsWith('attr-') || c.startsWith('std-'));
+			if (col_class) {
+				const step = shift ? -1 : 1;
+				for (let i = idx + step; i >= 0 && i < inputs.length; i += step) {
+					if (inputs[i].closest('td')?.classList.contains(col_class)) {
+						target = inputs[i];
+						break;
+					}
+				}
+			}
+		}
+
+		active.blur();
+		if (target) {
+			target.focus();
+			target.select();
 		}
 	}
 

@@ -10,11 +10,14 @@ i want to be able to rotate an SO. use case: to create a room, i need to
 Thus:
 
 - [x] compare rotate and swap, should we support both?
-- [ ] ability to rotate around an axis (x,y,z)
-	- [ ] applies to selected SO
-	- [ ] axis is determined by the tumble orientation of the SO
-		- [ ] eg, if front faces is front-most-facing, show y as the rotation axis
-	- [ ] rotate 90° (+,-)
+- [ ] add to **selected part**: ability to rotate around an axis (x,y,z)
+	- [x] applies to selected SO
+	- [ ] segmented control for axes (x,y,z)
+		- [ ] two buttons to rotate by 90° (+,-)
+		- [ ] axis is determined by the tumble orientation of the SO
+		- [ ] eg, if front face is front-most-facing, show y as the rotation axis
+	- [ ] slider to rotate by degrees (0 - 90)
+		- [ ] sticky at 22.5, 30, 45, 60, 75.5
 
 ## rotate vs swap (settled)
 

@@ -7,6 +7,7 @@ export const CURRENT_VERSION = '7';
 
 export interface Portable_SO {
 	rotation_lock?: number;            // rotation axis: 0=x, 1=y, 2=z (default 0)
+	visible?: boolean;
 	repeater?: Repeater;
 	parent_id?: string;
 	x: Portable_Axis;

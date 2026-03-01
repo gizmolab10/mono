@@ -146,10 +146,12 @@
 	}
 
 	function cell_keydown(e: KeyboardEvent) {
-		if (e.key === 'Enter' || e.key === 'Escape') {
+		if (e.key === 'Escape') {
 			(e.target as HTMLInputElement).blur();
 		}
-		e.stopPropagation();
+		if (e.key !== 'Enter' && e.key !== 'Tab') {
+			e.stopPropagation();
+		}
 	}
 
 	let display_mode_override: 'explicit' | 'agnostic' | null = $state(null);

@@ -28,8 +28,6 @@ class Render {
 	private cached_mvp = mat4.create();        /** MVP computed from cached_world — reused when world matrix hasn't changed. */
 	private canvas!: HTMLCanvasElement;
 	private snap: HTMLCanvasElement | null = null;
-	private resize_timer = 0;
-	private resizing = false;
 	private size: Size = Size.zero;
 	private dpr = 1;
 
@@ -65,10 +63,6 @@ class Render {
 		this.size = new Size(width, height);
 		this.apply_dpr(width, height);
 		camera.resize(this.size);
-		// Suppress render() during resize drag; snapshot carries visuals
-		this.resizing = true;
-		clearTimeout(this.resize_timer);
-		this.resize_timer = window.setTimeout(() => { this.resizing = false; }, 150);
 	}
 
 	/** Set canvas buffer to physical pixels, CSS size to logical pixels.
@@ -106,7 +100,6 @@ class Render {
 	}
 
 	render(): void {
-		if (this.resizing) return;
 		this.ctx.clearRect(0, 0, this.size.width, this.size.height);
 		this.dimension_rects = [];
 		this.face_name_rects = [];

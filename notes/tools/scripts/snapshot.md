@@ -20537,7 +20537,7 @@ Before writing code:
 
 1. **Quote the plan.** If there's a work doc or migration plan, QUOTE the relevant section in your response before writing any code. This proves you read it.
 
-2. **Re-read before editing.** See File Freshness in [chat.md](chat.md).
+2. **Re-read before editing.** See File Freshness in [chat.md](notes/guides/collaborate/chat.md).
 
 3. **One change at a time.** Make one fix, test it, then move on. Don't stack multiple speculative changes.
 

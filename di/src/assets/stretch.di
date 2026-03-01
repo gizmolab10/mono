@@ -48,7 +48,7 @@
             "origin": 0,
             "extent": -2400.3,
             "length": {
-              "formula": "template_w"
+              "formula": "template_th"
             },
             "angle": 0
           },
@@ -83,6 +83,10 @@
     "constants": [
       {
         "name": "template_w",
+        "value_mm": 88.9
+      },
+      {
+        "name": "template_th",
         "value_mm": 38.1
       }
     ],

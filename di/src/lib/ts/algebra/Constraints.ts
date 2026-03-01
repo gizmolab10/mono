@@ -1,6 +1,7 @@
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Bound } from '../types/Types';
 import type { Compact_Attribute } from '../types/Interfaces';
+import type Attribute from '../types/Attribute';
 import type { FormulaMap } from './Evaluator';
 
 import { constants, CONSTANTS_ID } from './User_Constants';
@@ -544,6 +545,22 @@ class Constraints {
 		}
 		if (!changed) return data;
 		return { formula: tokenizer.untokenize(tokens) };
+	}
+
+	/** Swap axis aliases in a live Attribute's stored tokens and recompile.
+	 *  Always recompiles — even if no tokens changed, the axis moved so
+	 *  the compiled AST has stale bound refs that need fresh placeholders. */
+	swap_attr_aliases(attr: Attribute, a: number, b: number): void {
+		if (!attr.formula) return;
+		const swap_map = this.build_alias_swap_map(a, b);
+		for (const token of attr.formula) {
+			if (token.type === 'reference') {
+				const swapped = swap_map[token.attribute];
+				if (swapped) token.attribute = swapped;
+			}
+		}
+		const formula_str = tokenizer.untokenize(attr.formula);
+		try { attr.compiled = compiler.compile(formula_str); } catch { /* skip */ }
 	}
 
 	private build_alias_swap_map(a: number, b: number): Record<string, string> {

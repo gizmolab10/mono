@@ -199,7 +199,7 @@ class Scenes {
 		setTimeout(() => URL.revokeObjectURL(url), 1000);
 	}
 
-	import_from_file(): void {
+	import_from_file(on_loaded: (scene: Portable_Scene) => void): void {
 		const input = document.createElement('input');
 		input.type = 'file';
 		input.accept = '.di,.json';
@@ -208,12 +208,8 @@ class Scenes {
 			if (!file) return;
 			file.text().then(text => {
 				try {
-					const parsed = JSON.parse(text);
-					const imported = this.validate_import(parsed);
-					if (!imported) return;
-					const migrated = versions.migrate(imported.scene, imported.version);
-					preferences.write(T_Preference.scene, { version: CURRENT_VERSION, scene: migrated } as Exported_File);
-					location.reload();
+					const scene = this.parse_text(text);
+					if (scene) on_loaded(scene);
 				} catch (error) {
 					console.error('Import failed:', error);
 					alert('Could not read file — invalid format.');
@@ -223,42 +219,25 @@ class Scenes {
 		input.click();
 	}
 
-	/** Create a fresh empty scene with a single root SO. */
-	new_scene(): void {
+	/** Create a fresh empty scene. */
+	new_scene(): Portable_Scene {
 		const id = Identifiable.newID();
-		const empty: Exported_File = {
-			version: CURRENT_VERSION,
-			scene: {
-				smart_objects: [{
-					id,
-					name: 'new',
-					x: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 }, invariant: 1 },
-					y: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 }, invariant: 1 },
-					z: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 }, invariant: 1 },
-					rotation_lock: 0,
-				}],
-				camera: { eye: [0, 0, 2750], center: [0, 0, 0], up: [0, 1, 0] },
-				root_id: id,
-			},
+		return {
+			smart_objects: [{
+				id,
+				name: 'new',
+				x: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 }, invariant: 1 },
+				y: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 }, invariant: 1 },
+				z: { attributes: { origin: 0, extent: 609.6, length: 609.6, angle: 0 }, invariant: 1 },
+				rotation_lock: 0,
+				visible: false,
+			}],
+			camera: { eye: [0, 0, 2750], center: [0, 0, 0], up: [0, 1, 0] },
+			root_id: id,
 		};
-		this.load_from_text(JSON.stringify(empty));
 	}
 
-	/** Load a scene from raw JSON text (used by library panel). */
-	load_from_text(text: string): void {
-		try {
-			const parsed = JSON.parse(text);
-			const imported = this.validate_import(parsed);
-			if (!imported) return;
-			const migrated = versions.migrate(imported.scene, imported.version);
-			preferences.write(T_Preference.scene, { version: CURRENT_VERSION, scene: migrated } as Exported_File);
-			location.reload();
-		} catch (error) {
-			console.error('Load failed:', error);
-		}
-	}
-
-	/** Parse raw JSON text into a migrated Portable_Scene (no save/reload). */
+	/** Parse raw JSON text into a migrated Portable_Scene. */
 	parse_text(text: string): Portable_Scene | null {
 		try {
 			const parsed = JSON.parse(text);

@@ -4,20 +4,17 @@
 offer a proposal for the first unchecked item
 
 
-- [x] always draw the root's bottom rect (faint stroke = grid's selected SO stroke)
-- [ ] resizing the window makes the drawing blink a lot. surely it does NOT need to re-render, only shift what is already rendered?
-- [x] straighten & orientation controls -> favor bottom at bottom OR front at bottom
-- [x] select root SO on click a library item (replaces the root) AND on launch if nothing is currently selected
-- [x] shrink to fit broken
-	- [x] relaunch increases depth much farther than farthest SO
-		- [x] fix: `set_bound` on compiled attrs stored absolute value; `get_bound` added parent offset again (double-count)
-	- [ ] enhancements moved to [[7.edit.drags]] § Enhancements
-- [ ] move all code debt done items to appropriate milestone
-	- [ ] add it to an end section called work done
-		- [ ] convert checkboxes to numbered bullet points
+- [ ] duplication should exclude repeater clones from the new subtree. for each repeater, keep only its first child (the template)
 - [ ] work on [[rotation]]
-	- [ ] manual test -- wacka.di
-	- [ ] 24 straighten choices
+	- [ ] manual test fails: rotate drawer -> gawdawful
+- [ ] work on [[14.details]]
+- [ ] work on [[21.undo]]
+- [ ] parts: position/size button -> convert into a colspan th above last three cols
+- [ ] work on [[17.library]]
+- [ ] work on [[22.aesthetics]]
+- [ ] proposal to move all code debt done items to appropriate milestone
+	- [ ] add it to a first section called work remaining
+- [ ] work on [[20.repeaters]]
 - [ ] what went wrong with [[s3]]?
 - [ ] write a claude forum article
 - [ ] soda stream

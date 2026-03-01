@@ -1,6 +1,7 @@
 import { units, Units } from '../types/Units';
 import { hits_3d, scenes, stores } from '../managers';
-import type { Bound } from '../types/Types';
+import type { Portable_Scene } from '../managers/Versions';
+import type { Bound, Axis_Name } from '../types/Types';
 import { scene, camera, render, animation } from '.';
 import type { O_Scene } from '../types/Interfaces';
 import type { Point } from '../types/Coordinates';
@@ -69,11 +70,80 @@ class Engine {
 		// Wire up precision snapping for drag operations
 		Smart_Object.snap = (mm) => units.snap_for_system(mm, Units.current_unit_system(), stores.current_precision());
 
-		// Load saved state or create defaults
-		const saved = scenes.load();
+		// Load scene
+		this.load_scene(scenes.load());
+
+		// Input: drag edits selection OR rotates selected object, then save
+		e3.set_drag_handler((prev, curr, alt_key) => {
+			const target = hits_3d.selection?.so.scene ?? this.root_scene;
+			if (!target) return;
+			if (drag.edit_selection(prev, curr)) {
+				const changed = hits_3d.selection?.so;
+				if (changed) constraints.propagate(changed);
+			} else {
+				if (stores.current_view_mode() === '2d') {
+					if (!this.root_scene) return;
+					this.saved_3d_orientation = null;
+					this.rotate_2d(this.root_scene, prev, curr);
+				} else {
+					drag.rotate_object(target, prev, curr, alt_key);
+				}
+			}
+			stores.tick();
+			scenes.save();
+		});
+
+		// Input: drag ended — in 2D, animate snap-back from tilt to axis-aligned
+		e3.set_drag_end_handler(() => {
+			if (this.is_tilting && this.root_scene) {
+				// snapped_orientation is always the last clean axis-aligned quat
+				this.snap_anim = {
+					from: stores.current_orientation(),
+					to: quat.clone(this.snapped_orientation),
+					t: 0,
+				};
+				this.is_tilting = false;
+			}
+		});
+
+		// Input: scroll wheel scales entire rendering
+		e3.set_wheel_handler((delta, fine) => {
+			drag.scale(delta, fine);
+		});
+
+		// Signal that setup is complete (syncs reactive UI like SD table)
+		stores.tick();
+
+		// Render loop
+		animation.on_tick(() => {
+			this.tick_snap_animation();
+			this.update_front_face();
+			render.render();
+		});
+
+		animation.start();
+	}
+
+	// ── load scene ──
+
+	/** Load a Portable_Scene in-place: teardown old state, rebuild, restore camera/selection.
+	 *  Called by setup() on init and by library panel for scene switching (no page reload). */
+	load_scene(saved: Portable_Scene | null): void {
+		// Teardown
+		scene.clear();
+		hits_3d.clear();
+		constants.clear();
+		stores.w_editing.set(0);  // T_Editing.none
+
 		const smart_objects: Smart_Object[] = [];
 
 		if (saved?.smart_objects.length) {
+			// Restore constants before deserialization (formulas may reference them during rebind)
+			if (saved.constants?.length) {
+				for (const entry of saved.constants) {
+					if (entry.name) constants.set(entry.name, entry.value_mm);
+				}
+			}
 			for (const data of saved.smart_objects) {
 				const so = Smart_Object.deserialize(data);
 				const so_scene = scene.create({
@@ -159,55 +229,8 @@ class Engine {
 			camera.set_ortho(true);
 		}
 
-		// Input: drag edits selection OR rotates selected object, then save
-		e3.set_drag_handler((prev, curr, alt_key) => {
-			const target = hits_3d.selection?.so.scene ?? this.root_scene;
-			if (!target) return;
-			if (drag.edit_selection(prev, curr)) {
-				const changed = hits_3d.selection?.so;
-				if (changed) constraints.propagate(changed);
-			} else {
-				if (stores.current_view_mode() === '2d') {
-					if (!this.root_scene) return;
-					this.saved_3d_orientation = null;
-					this.rotate_2d(this.root_scene, prev, curr);
-				} else {
-					drag.rotate_object(target, prev, curr, alt_key);
-				}
-			}
-			stores.tick();
-			scenes.save();
-		});
-
-		// Input: drag ended — in 2D, animate snap-back from tilt to axis-aligned
-		e3.set_drag_end_handler(() => {
-			if (this.is_tilting && this.root_scene) {
-				// snapped_orientation is always the last clean axis-aligned quat
-				this.snap_anim = {
-					from: stores.current_orientation(),
-					to: quat.clone(this.snapped_orientation),
-					t: 0,
-				};
-				this.is_tilting = false;
-			}
-		});
-
-		// Input: scroll wheel scales entire rendering
-		e3.set_wheel_handler((delta, fine) => {
-			drag.scale(delta, fine);
-		});
-
-		// Signal that setup is complete (syncs reactive UI like SD table)
 		stores.tick();
-
-		// Render loop
-		animation.on_tick(() => {
-			this.tick_snap_animation();
-			this.update_front_face();
-			render.render();
-		});
-
-		animation.start();
+		scenes.save();
 	}
 
 	// ── toolbar actions ──
@@ -782,7 +805,7 @@ class Engine {
 			serialized.push({ data, old_parent_id });
 		}
 
-		// Rename clone root to avoid collision
+		// Rename clone root to avoid collision in lookup dict
 		const used = new Set(all.map(o => o.so.name));
 		let name = serialized[0].data.name;
 		while (used.has(name)) name = name + "'";
@@ -816,100 +839,62 @@ class Engine {
 			new_sos.push(clone);
 		}
 
-		// Offset clone root along its largest axis
 		if (new_sos.length) {
-			const clone_root = new_sos[0];
-			const dims = [clone_root.width, clone_root.depth, clone_root.height];
-			const largest = dims[0] >= dims[1] && dims[0] >= dims[2] ? 0 : dims[1] >= dims[2] ? 1 : 2;
-			clone_root.axes[largest].start.value += dims[largest];
-			clone_root.axes[largest].end.value += dims[largest];
-
-			// Rebind formulas (replace old IDs with new IDs in compiled refs and tokens)
+			// Rebind all clones first — resolves placeholder refs and evaluates formulas
 			for (const clone of new_sos) {
-				for (const axis of clone.axes) for (const attr of [axis.start, axis.end, axis.length]) {
-					if (attr.compiled) {
-						for (const [old_id, new_id] of old_to_new) {
-							attr.compiled = this.replace_reference_ids(attr.compiled, old_id, new_id);
-						}
-					}
-					if (attr.formula) {
-						for (const token of attr.formula) {
-							if (token.type === 'reference') {
-								const new_id = old_to_new.get(token.object);
-								if (new_id) token.object = new_id;
-							}
-						}
-					}
-				}
-				constraints.propagate(clone);
+				const parent_id = clone.scene?.parent?.so.id;
+				if (parent_id) constraints.rebind_formulas(clone, parent_id);
 			}
 
+			// Single propagation pass after all formulas are bound
+			constraints.propagate_all();
 			stores.w_all_sos.set(scene.get_all().map(o => o.so));
 			stores.tick();
 			scenes.save();
 		}
 	}
 
-	/** Replace all references to old_id with new_id in a compiled formula node. */
-	private replace_reference_ids(node: import('../algebra/Nodes').Node, old_id: string, new_id: string): import('../algebra/Nodes').Node {
-		switch (node.type) {
-			case 'literal': return node;
-			case 'reference': return node.object === old_id ? { ...node, object: new_id } : node;
-			case 'unary': return { ...node, operand: this.replace_reference_ids(node.operand, old_id, new_id) };
-			case 'binary': return { ...node, left: this.replace_reference_ids(node.left, old_id, new_id), right: this.replace_reference_ids(node.right, old_id, new_id) };
-		}
-	}
-
 	// ── repeaters ──
 
-	/** Swap two axes on a repeater SO and its template child.
-	 *  Serializes, rewrites formula aliases, deserializes into swapped positions.
+	/** Swap two axes on an SO and its template child.
+	 *  Swaps Axis objects in-place, relabels, rewrites formula aliases.
 	 *  Updates repeater config (repeat_axis, gap_axis) to match. */
 	swap_axes(so: Smart_Object, a: number, b: number): void {
+		const AXIS_NAMES: Axis_Name[] = ['x', 'y', 'z'];
 		const targets = [so];
 		const children = scene.get_all().filter(o => o.parent === so.scene);
 		if (children.length > 0) targets.push(children[0].so);
 
 		for (const target of targets) {
-			const ax_a = target.axes[a];
-			const ax_b = target.axes[b];
+			// Cache absolute positions before anything moves
+			const abs_a = [target.get_bound(target.axes[a].start.name as Bound),
+			               target.get_bound(target.axes[a].end.name as Bound)];
+			const abs_b = [target.get_bound(target.axes[b].start.name as Bound),
+			               target.get_bound(target.axes[b].end.name as Bound)];
 
-			const a_start_abs = target.get_bound(ax_a.start.name as Bound);
-			const a_end_abs   = target.get_bound(ax_a.end.name as Bound);
-			const b_start_abs = target.get_bound(ax_b.start.name as Bound);
-			const b_end_abs   = target.get_bound(ax_b.end.name as Bound);
+			// 1. Swap axis objects — values, invariants, formulas travel with them
+			[target.axes[a], target.axes[b]] = [target.axes[b], target.axes[a]];
 
-			const a_data = ax_a.serialize();
-			const b_data = ax_b.serialize();
+			// 2. Relabel — update axis name + attribute names to match new position
+			target.axes[a].relabel(AXIS_NAMES[a]);
+			target.axes[b].relabel(AXIS_NAMES[b]);
 
-			for (const key of ['origin', 'extent', 'length', 'angle'] as const) {
-				a_data.attributes[key] = constraints.swap_formula_aliases(a_data.attributes[key], a, b);
-				b_data.attributes[key] = constraints.swap_formula_aliases(b_data.attributes[key], a, b);
+			// 3. Swap formula aliases — rewrite axis-specific refs in tokens, recompile
+			for (const i of [a, b]) {
+				for (const attr of target.axes[i].attributes) {
+					constraints.swap_attr_aliases(attr, a, b);
+				}
 			}
 
-			// Clear existing formulas before deserializing
-			// (Attribute.deserialize doesn't clear formula/compiled when data is a plain number)
-			for (const attr of ax_a.attributes) {
-				attr.formula = null;
-				attr.compiled = null;
-			}
-			for (const attr of ax_b.attributes) {
-				attr.formula = null;
-				attr.compiled = null;
-			}
-
-			ax_a.deserialize(b_data);
-			ax_b.deserialize(a_data);
-
-			// Fix position offsets for non-formula attributes.
-			// Deserialize wrote raw offsets from the other axis's serialization, but those offsets
-			// were relative to the old axis's parent bound. Recompute from saved absolute values.
+			// 4. Fix offsets — stored values are parent-relative; parent bounds differ per axis
 			const parent = target.scene?.parent?.so;
 			if (parent) {
-				if (!ax_a.start.compiled) ax_a.start.value = b_start_abs - parent.get_bound(ax_a.start.name as Bound);
-				if (!ax_a.end.compiled)   ax_a.end.value   = b_end_abs   - parent.get_bound(ax_a.end.name as Bound);
-				if (!ax_b.start.compiled) ax_b.start.value = a_start_abs - parent.get_bound(ax_b.start.name as Bound);
-				if (!ax_b.end.compiled)   ax_b.end.value   = a_end_abs   - parent.get_bound(ax_b.end.name as Bound);
+				const ax_a = target.axes[a]; // was at position b
+				const ax_b = target.axes[b]; // was at position a
+				if (!ax_a.start.compiled) ax_a.start.value = abs_b[0] - parent.get_bound(ax_a.start.name as Bound);
+				if (!ax_a.end.compiled)   ax_a.end.value   = abs_b[1] - parent.get_bound(ax_a.end.name as Bound);
+				if (!ax_b.start.compiled) ax_b.start.value = abs_a[0] - parent.get_bound(ax_b.start.name as Bound);
+				if (!ax_b.end.compiled)   ax_b.end.value   = abs_a[1] - parent.get_bound(ax_b.end.name as Bound);
 			}
 		}
 
@@ -923,16 +908,13 @@ class Engine {
 			so.repeater = r;
 		}
 
-		// Rebind parent formulas — deserialize compiles but doesn't bind refs or evaluate,
-		// so formula attributes have value=0.  rebind_formulas binds, evaluates, and enforces invariants.
+		// Rebind — binds refs, evaluates, enforces invariants
 		const parent_so = so.scene?.parent?.so;
 		if (parent_so) {
 			constraints.rebind_formulas(so, parent_so.id);
 		} else {
 			constraints.enforce_invariants(so);
 		}
-
-		// Rebind template formulas (converts placeholders to IDs, evaluates, enforces invariants)
 		if (children.length > 0) {
 			constraints.rebind_formulas(children[0].so, so.id);
 		}

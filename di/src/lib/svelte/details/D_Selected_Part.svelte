@@ -7,6 +7,8 @@
 	import { w_unit_system } from '../../ts/types/Units';
 	import { units } from '../../ts/types/Units';
 	import { engine } from '../../ts/render';
+	import { orientation } from '../../ts/algebra';
+	import type { Axis_Name } from '../../ts/types/Types';
 
 	const { w_all_sos, w_selection, w_tick, w_precision } = stores;
 
@@ -119,6 +121,46 @@
 		scenes.save();
 	}
 
+	// Rotation state
+	let rot_axis: Axis_Name = $state('z');
+
+	// When selection changes, pick default rotation axis from geometry
+	$effect(() => {
+		if (selected_so) rot_axis = orientation.axis_from_bounds(selected_so) ?? 'z';
+	});
+
+	const SWAP_PAIRS: Record<Axis_Name, [number, number]> = { x: [1, 2], y: [0, 2], z: [0, 1] };
+	const STICKY_ANGLES = [22.5, 30, 45, 60, 75.5];
+	const STICKY_THRESHOLD = 2;
+
+	function rotate_90(sign: 1 | -1) {
+		if (!selected_so) return;
+		const [a, b] = SWAP_PAIRS[rot_axis];
+		if (sign > 0) engine.swap_axes(selected_so, a, b);
+		else engine.swap_axes(selected_so, b, a);
+		stores.tick();
+		scenes.save();
+	}
+
+	function get_angle_deg(_tick: number): number {
+		if (!selected_so) return 0;
+		const axis = selected_so.axis_by_name(rot_axis);
+		return axis.angle.value * 180 / Math.PI;
+	}
+	let angle_deg = $derived(get_angle_deg($w_tick));
+
+	function set_angle(deg: number) {
+		if (!selected_so) return;
+		// Snap to sticky detents
+		for (const sticky of STICKY_ANGLES) {
+			if (Math.abs(deg - sticky) < STICKY_THRESHOLD) { deg = sticky; break; }
+		}
+		const axis = selected_so.axis_by_name(rot_axis);
+		axis.angle.value = deg * Math.PI / 180;
+		stores.tick();
+		scenes.save();
+	}
+
 	// Name editing
 	const { w_s_face_label } = face_label;
 
@@ -187,6 +229,32 @@
 	{#if !is_root}<button class='action-btn' use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_selected() }}>duplicate</button>{/if}
 	<button class='action-btn' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>{is_repeater ? 'unrepeat' : 'repeat'}</button>
 	<button class='action-btn action-far-right' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>↔ {visible_label}</button>
+</div>
+
+<div class='rotation-section'>
+	<div class='rotation-row'>
+		<span class='option-label'>axis</span>
+		<div class='segmented'>
+			<button class:active={rot_axis === 'x'} onclick={() => rot_axis = 'x'}>x</button>
+			<button class:active={rot_axis === 'y'} onclick={() => rot_axis = 'y'}>y</button>
+			<button class:active={rot_axis === 'z'} onclick={() => rot_axis = 'z'}>z</button>
+		</div>
+		<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
+		<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
+	</div>
+	<div class='rotation-row'>
+		<span class='option-label'>angle</span>
+		<input
+			type='range'
+			class='rotation-slider'
+			min='0'
+			max='90'
+			step='0.5'
+			value={angle_deg}
+			oninput={(e) => set_angle(Number((e.target as HTMLInputElement).value))}
+		/>
+		<span class='angle-display'>{angle_deg.toFixed(1)}°</span>
+	</div>
 </div>
 
 {#if is_repeater && selected_so}
@@ -336,6 +404,34 @@
 	.action-btn:global([data-hitting]) {
 		background : var(--accent);
 		color      : black;
+	}
+
+	.rotation-section {
+		margin-top     : 8px;
+		display        : flex;
+		flex-direction : column;
+		gap            : 4px;
+	}
+
+	.rotation-row {
+		display     : flex;
+		align-items : center;
+		gap         : 6px;
+	}
+
+	.rotation-slider {
+		flex       : 1;
+		min-width  : 0;
+		height     : 4px;
+		cursor     : pointer;
+		accent-color : var(--accent);
+	}
+
+	.angle-display {
+		font-size  : 11px;
+		min-width  : 32px;
+		text-align : right;
+		opacity    : 0.8;
 	}
 
 	.repeater-options {

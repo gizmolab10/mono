@@ -45,7 +45,7 @@
 
 		<Hideable title='library' id='library' detail={T_Details.library}>
 			{#snippet actions()}
-				<button class='banner-add' use:hit_target={{ id: 'new-scene', onpress: () => scenes.new_scene() }}>+</button>
+				<button class='banner-add' use:hit_target={{ id: 'new-scene', onpress: () => engine.load_scene(scenes.new_scene()) }}>+</button>
 			{/snippet}
 			<D_Library />
 		</Hideable>

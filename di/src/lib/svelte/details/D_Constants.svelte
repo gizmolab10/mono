@@ -58,10 +58,12 @@
 	}
 
 	function cell_keydown(e: KeyboardEvent): void {
-		if (e.key === 'Enter' || e.key === 'Escape') {
+		if (e.key === 'Escape') {
 			(e.target as HTMLInputElement).blur();
 		}
-		e.stopPropagation();
+		if (e.key !== 'Enter' && e.key !== 'Tab') {
+			e.stopPropagation();
+		}
 	}
 </script>
 
