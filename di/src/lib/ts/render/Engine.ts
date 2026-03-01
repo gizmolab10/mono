@@ -682,10 +682,10 @@ class Engine {
 		scenes.save();
 	}
 
-	/** Expand root to cover any descendants that structurally protrude outside its bounds.
-	 *  Does NOT expand for rotation — rotation is visual only. Expanding root bounds
-	 *  inflates all descendants (get_bound resolves through parent offsets), so root
-	 *  expansion must be limited to structural protrusions from propagation/repeaters. */
+	/** Expand root to cover any descendants that structurally protrude.
+	 *  Only grows, never shrinks — exact fit is shrink_to_fit's job (it
+	 *  compensates children's offsets). This is a post-propagation safety
+	 *  net for repeater clones placed outside root. */
 	expand_root_to_fit(): void {
 		const root = this.root_scene?.so;
 		if (!root?.scene) return;
@@ -717,11 +717,11 @@ class Engine {
 	}
 
 	/** Shrink the selected SO to tightly wrap its direct children on all three axes. */
-	shrink_to_fit(): void {
+	/** Lightweight root fit: rotation-aware bbox, resize, compensate children.
+	 *  No propagation, no repeater sync — safe to call on every geometry tick. */
+	fit_root(): void {
 		const target = this.root_scene?.so;
 		if (!target?.scene) return;
-
-
 
 		const all = scene.get_all();
 		const children = all.filter(o => o.parent === target.scene);
@@ -732,44 +732,94 @@ class Engine {
 		// Snapshot direct children's absolute bounds (for shifting later)
 		const snapshots = children.map(c => bounds.map(b => c.so.get_bound(b)));
 
-		// Collect ALL descendants (not just direct children) for bounding box
-		const descendants: typeof children = [];
-		const collect = (parent: typeof target.scene) => {
+		// Identify rotated direct children
+		const rotated_set = new Set<typeof children[0]>();
+		for (const child of children) {
+			const q = child.so.orientation;
+			if (Math.abs(q[3]) < 1 - 1e-6) rotated_set.add(child);
+		}
+
+		// Collect descendants, excluding rotated subtrees (handled by projection)
+		const structural: typeof children = [];
+		const collect = (parent: typeof target.scene, skip: boolean) => {
 			for (const obj of all) {
 				if (obj.parent === parent) {
-					descendants.push(obj);
-					collect(obj);
+					const is_rot = rotated_set.has(obj);
+					if (!skip && !is_rot) structural.push(obj);
+					collect(obj, skip || is_rot);
 				}
 			}
 		};
-		collect(target.scene);
+		collect(target.scene, false);
 
-		// Compute bounding box of all descendants
-		const origin = [0, 0, 0];
-		const extent = [0, 0, 0];
-		for (let ai = 0; ai < 3; ai++) {
-			let min_val = Infinity;
-			let max_val = -Infinity;
-			for (const desc of descendants) {
-				const d_min = desc.so.get_bound(bounds[ai * 2]);
-				const d_max = desc.so.get_bound(bounds[ai * 2 + 1]);
-				if (d_min < min_val) min_val = d_min;
-				if (d_max > max_val) max_val = d_max;
+		// Structural bbox from unrotated subtrees only
+		let min_x = Infinity, max_x = -Infinity;
+		let min_y = Infinity, max_y = -Infinity;
+		let min_z = Infinity, max_z = -Infinity;
+		for (const desc of structural) {
+			const so = desc.so;
+			if (so.x_min < min_x) min_x = so.x_min;
+			if (so.x_max > max_x) max_x = so.x_max;
+			if (so.y_min < min_y) min_y = so.y_min;
+			if (so.y_max > max_y) max_y = so.y_max;
+			if (so.z_min < min_z) min_z = so.z_min;
+			if (so.z_max > max_z) max_z = so.z_max;
+		}
+
+		// Rotated subtrees: compute full subtree AABB then project through rotation
+		for (const child of rotated_set) {
+			const so = child.so;
+			const q = so.orientation;
+
+			// Subtree AABB (unrotated, absolute space) — start from child's own bounds
+			let sx0 = so.x_min, sx1 = so.x_max;
+			let sy0 = so.y_min, sy1 = so.y_max;
+			let sz0 = so.z_min, sz1 = so.z_max;
+			const collect_sub = (parent: typeof target.scene) => {
+				for (const obj of all) {
+					if (obj.parent === parent) {
+						const s = obj.so;
+						if (s.x_min < sx0) sx0 = s.x_min;
+						if (s.x_max > sx1) sx1 = s.x_max;
+						if (s.y_min < sy0) sy0 = s.y_min;
+						if (s.y_max > sy1) sy1 = s.y_max;
+						if (s.z_min < sz0) sz0 = s.z_min;
+						if (s.z_max > sz1) sz1 = s.z_max;
+						collect_sub(obj);
+					}
+				}
+			};
+			collect_sub(child);
+
+			// Rotation center = child's own center (matches get_world_matrix)
+			const cx = (so.x_min + so.x_max) / 2;
+			const cy = (so.y_min + so.y_max) / 2;
+			const cz = (so.z_min + so.z_max) / 2;
+
+			// Project subtree AABB corners through rotation
+			for (let i = 0; i < 8; i++) {
+				const vx = (i & 4) ? sx1 : sx0;
+				const vy = (i & 2) ? sy1 : sy0;
+				const vz = (i & 1) ? sz1 : sz0;
+				const rv = vec3.fromValues(vx - cx, vy - cy, vz - cz);
+				vec3.transformQuat(rv, rv, q);
+				const px = cx + rv[0], py = cy + rv[1], pz = cz + rv[2];
+				if (px < min_x) min_x = px; if (px > max_x) max_x = px;
+				if (py < min_y) min_y = py; if (py > max_y) max_y = py;
+				if (pz < min_z) min_z = pz; if (pz > max_z) max_z = pz;
 			}
-			origin[ai] = min_val;
-			extent[ai] = max_val - min_val;
 		}
 
-		// Resize parent: start at current position, size = children's extent
+		const origin = [min_x, min_y, min_z];
+		const extent = [max_x - min_x, max_y - min_y, max_z - min_z];
+
+		// Resize root to match bbox
 		for (let ai = 0; ai < 3; ai++) {
-			const min_bound = bounds[ai * 2] as Bound;
-			const max_bound = bounds[ai * 2 + 1] as Bound;
-			const parent_min = target.get_bound(min_bound);
-			target.set_bound(max_bound, parent_min + extent[ai]);
+			target.set_bound(bounds[ai * 2] as Bound, origin[ai]);
+			target.set_bound(bounds[ai * 2 + 1] as Bound, origin[ai] + extent[ai]);
 		}
 
-		// Shift children so their positions are relative to new parent origin
-		// (child was at absolute `origin[ai]`, parent_min stays the same, so offset = origin[ai] - parent_min)
+		// Compensate children so their absolute positions are preserved
 		for (let ci = 0; ci < children.length; ci++) {
 			for (let ai = 0; ai < 3; ai++) {
 				const parent_min = target.get_bound(bounds[ai * 2] as Bound);
@@ -780,10 +830,15 @@ class Engine {
 				}
 			}
 		}
+	}
 
+	/** Full fit: fit_root + propagate + safety net. For fit button / refresh. */
+	shrink_to_fit(): void {
+		this.fit_root();
+
+		const target = this.root_scene?.so;
+		if (!target) return;
 		constraints.propagate(target);
-
-		// Post-propagation: sync_repeater may have repositioned clones outside root
 		this.expand_root_to_fit();
 
 		stores.tick();

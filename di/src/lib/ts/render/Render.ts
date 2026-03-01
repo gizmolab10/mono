@@ -285,6 +285,25 @@ class Render {
 			if (stores.show_names()) this.render_face_names(obj, projected, world);
 		}
 
+		// Debug: 3D wireframe for invisible SOs
+		for (const obj of all_objects) {
+			if (obj.so.visible) continue;
+			const projected = projected_map.get(obj.id)!;
+			this.ctx.save();
+			this.ctx.setLineDash([4, 4]);
+			this.ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+			this.ctx.lineWidth = 1;
+			for (const [i, j] of obj.edges) {
+				const a = projected[i], b = projected[j];
+				if (a.w < 0 || b.w < 0) continue;
+				this.ctx.beginPath();
+				this.ctx.moveTo(a.x, a.y);
+				this.ctx.lineTo(b.x, b.y);
+				this.ctx.stroke();
+			}
+			this.ctx.restore();
+		}
+
 		this.render_hover();
 		this.render_selection();
 		if (stores.show_dimensionals()) render_dimensions(this);
