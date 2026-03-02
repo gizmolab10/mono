@@ -9,7 +9,7 @@
 
 	let rot_axis: Axis_Name = $state('z');
 
-	const STICKY_ANGLES = [22.5, 30, 45, 60, 75.5];
+	const STICKY_ANGLES = [-30, -22.5, 0, 22.5, 30];
 	const STICKY_THRESHOLD = 2;
 	const ALL_AXES = ['x', 'y', 'z'] as const;
 
@@ -42,16 +42,21 @@
 		if (e.key !== 'Tab') e.stopPropagation();
 	}
 
+	function nearest_base(total: number): number {
+		// Round toward zero at ±45 boundary to prevent base flip at slider extremes
+		const q = total / 90;
+		return (q >= 0 ? Math.floor(q + 0.5 - 1e-9) : Math.ceil(q - 0.5 + 1e-9)) * 90;
+	}
 	function read_angle_deg(_tick: number): number {
 		if (!selected_so) return 0;
 		const total = selected_so.axis_by_name(rot_axis).angle.value * 180 / Math.PI;
-		return ((total % 90) + 90) % 90;
+		return total - nearest_base(total);
 	}
 	let angle_deg = $derived(read_angle_deg($w_tick));
 	function base_deg(): number {
 		if (!selected_so) return 0;
 		const total = selected_so.axis_by_name(rot_axis).angle.value * 180 / Math.PI;
-		return Math.floor(total / 90) * 90;
+		return nearest_base(total);
 	}
 
 	function rotate_90(sign: 1 | -1) {
@@ -91,8 +96,8 @@
 		<input
 			type='range'
 			class='rotation-slider'
-			min='0'
-			max='90'
+			min='-45'
+			max='45'
 			step='0.5'
 			value={angle_deg}
 			oninput={(e) => set_angle(Number((e.target as HTMLInputElement).value))}

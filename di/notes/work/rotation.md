@@ -86,32 +86,29 @@ Track a **sliding-window pair**: the 2 most recently touched axes. The pair is t
 When a 3rd axis C arrives and the pair is `[A, B]`:
 
 1. Compute current quat: `q = R(B, β) · R(A, α)`
-2. Swing-twist decompose `q` around C → `twist_C` (angle `γ_residual`) + `swing`
-3. Swing-twist decompose `swing` around B → `twist_B` (angle `β'`) + `remainder`
-4. `remainder` is lost — the component that lived on A and can't be expressed as B or C. This is the fidelity cost.
-5. Set `B.angle = β'`, `C.angle = γ_residual`
-6. Pair becomes `[B, C]`
+2. Find `(β', γ)` that minimize angular distance between `q` and `R(C, γ) · R(B, β')`
+3. Set `B.angle = β'`, `C.angle = γ_residual`
+4. Pair becomes `[B, C]`
 
 For **drag** (nudge): C.angle = `γ_residual + delta` (preserves implicit C-rotation from old quat).
 For **editor** (set absolute): C.angle = `user_value` (replaces residual — user typed a specific number, they mean it).
 
-### Swing-twist for cardinal axes
+### Alternating projection (closest 2-axis approximation)
 
-Given quat `q = [x, y, z, w]` and twist axis A:
+Sequential swing-twist loses too much — extracting axes independently ignores cross-terms that a composed quaternion carries. A 30° x-rotation composed with a 45° y-rotation has "implicit" z-content that pure twist extraction misses entirely.
+
+Instead: **alternating projection** finds the (β', γ) pair that minimizes `angle(q, R(C,γ)·R(B,β'))`:
 
 ```
-twist_A = normalize(0, ..., q[A], ..., w)    // keep only A-component and w
-swing   = q · inverse(twist_A)
-angle_A = 2 · atan2(twist_A[A], twist_A.w)
+i_angle = twist_extract(q, B)    // initial guess
+for 5 iterations:
+    stripped = q · R(B, -i_angle)       // remove inner, find optimal outer
+    o_angle = 2 · atan2(stripped[C], stripped.w)
+    stripped = R(C, -o_angle) · q       // remove outer, find optimal inner
+    i_angle = 2 · atan2(stripped[B], stripped.w)
 ```
 
-For axis-aligned cases, it's just extracting the right quaternion component. No trig tables, no iterative solvers.
-
-### Fidelity
-
-Dropping the oldest axis loses information. By design. The `remainder` from double swing-twist is the un-expressible residual — the rotation component that lived on the evicted axis and can't be projected onto the surviving two.
-
-Negligible at typical angles (0–45°). Visible drift only at extreme combos (80°+ on all three), which is outside di's use. The user stopped caring about that axis — they're editing the other two.
+Each iteration is one quat multiply + one atan2. Converges rapidly — the cross-terms that sequential swing-twist discards are captured by the iterative refinement.
 
 ### Not in scope
 

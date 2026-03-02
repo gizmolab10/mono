@@ -1,6 +1,5 @@
 import type { Dictionary, Axis_Name, Bound } from '../types/Types';
 import type { O_Scene, Portable_Axis, Repeater } from '../types/Interfaces';
-import { swing_twist } from '../algebra/Orientation';
 import { quat, vec3 } from 'gl-matrix';
 import Attribute from '../types/Attribute';
 import Identifiable from './Identifiable';
@@ -8,7 +7,6 @@ import Axis from './Axis';
 
 export default class Smart_Object extends Identifiable {
 	axes: Axis[] = [new Axis('x'), new Axis('y'), new Axis('z')];
-	rotation_pair: [Axis_Name, Axis_Name] | [Axis_Name] | null = null;
 	repeater: Repeater | null = null;
 	rotation_lock: number = 0;
 	visible: boolean = true;
@@ -325,88 +323,29 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
-	// ORIENTATION — sliding-window pair (see rotation.md § sliding-window)
+	// ORIENTATION — compose all non-zero axes in fixed XYZ order
 	// ═══════════════════════════════════════════════════════════════════
 
-	/** Compose orientation quat from the rotation pair.
-	 *  Pair [A, B] → q = R(B, β) · R(A, α). Left-multiply: newer on the left. */
 	get orientation(): quat {
-		if (!this.rotation_pair) return quat.create();
 		const q = quat.create();
-		for (const axis_name of this.rotation_pair) {
-			const angle = this.axis_by_name(axis_name).angle.value;
+		for (const axis of this.axes) {
+			const angle = axis.angle.value;
 			if (Math.abs(angle) < 1e-10) continue;
 			const step = quat.create();
-			quat.setAxisAngle(step, this.axis_vector(axis_name) as [number, number, number], angle);
+			quat.setAxisAngle(step, this.axis_vector(axis.name) as [number, number, number], angle);
 			quat.multiply(q, step, q);
 		}
 		return q;
 	}
 
-	/** Set an axis to an absolute angle. Manages pair transitions; evicts oldest on 3rd axis. */
+	/** Set an axis to an absolute angle. */
 	touch_axis(axis: Axis_Name, radians: number): void {
-		if (!this.rotation_pair) {
-			this.rotation_pair = [axis];
-			this.axis_by_name(axis).angle.value = radians;
-		} else if (this.rotation_pair.length === 1) {
-			if (this.rotation_pair[0] === axis) {
-				this.axis_by_name(axis).angle.value = radians;
-			} else {
-				this.rotation_pair = [this.rotation_pair[0], axis];
-				this.axis_by_name(axis).angle.value = radians;
-			}
-		} else {
-			const [A, B] = this.rotation_pair;
-			if (axis === A || axis === B) {
-				this.axis_by_name(axis).angle.value = radians;
-			} else {
-				this._evict(axis, B, radians, false);
-			}
-		}
+		this.axis_by_name(axis).angle.value = radians;
 	}
 
-	/** Add a delta to an axis angle. Manages pair transitions; evicts oldest on 3rd axis. */
+	/** Add a delta to an axis angle. */
 	nudge_axis(axis: Axis_Name, delta: number): void {
-		if (!this.rotation_pair) {
-			this.rotation_pair = [axis];
-			this.axis_by_name(axis).angle.value = delta;
-		} else if (this.rotation_pair.length === 1) {
-			if (this.rotation_pair[0] === axis) {
-				this.axis_by_name(axis).angle.value += delta;
-			} else {
-				this.rotation_pair = [this.rotation_pair[0], axis];
-				this.axis_by_name(axis).angle.value += delta;
-			}
-		} else {
-			const [A, B] = this.rotation_pair;
-			if (axis === A || axis === B) {
-				this.axis_by_name(axis).angle.value += delta;
-			} else {
-				this._evict(axis, B, delta, true);
-			}
-		}
-	}
-
-	/** Evict the oldest pair entry. Decompose current quat into [kept, new_axis].
-	 *  Fidelity cost: the component on the evicted axis that can't be expressed
-	 *  as kept or new_axis is lost (see rotation.md § fidelity). */
-	private _evict(new_axis: Axis_Name, kept: Axis_Name, value: number, is_delta: boolean): void {
-		const [evicted] = this.rotation_pair as [Axis_Name, Axis_Name];
-		const q = this.orientation;
-
-		// Decompose q into new_axis twist + remainder
-		const { twist_angle: gamma_residual, swing } = swing_twist(q, new_axis);
-		// Decompose remainder into kept twist + lost
-		const { twist_angle: beta_prime } = swing_twist(swing, kept);
-
-		// Zero the evicted axis
-		this.axis_by_name(evicted).angle.value = 0;
-		// Set kept to decomposed value
-		this.axis_by_name(kept).angle.value = beta_prime;
-		// Set new axis
-		this.axis_by_name(new_axis).angle.value = is_delta ? gamma_residual + value : value;
-
-		this.rotation_pair = [kept, new_axis];
+		this.axis_by_name(axis).angle.value += delta;
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
@@ -414,8 +353,8 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	/** Serialize to Portable_SO shape (per-axis bundles) */
-	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; rotation_pair?: Axis_Name[]; visible?: boolean; repeater?: Repeater } {
-		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; rotation_pair?: Axis_Name[]; visible?: boolean; repeater?: Repeater } = {
+	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean; repeater?: Repeater } {
+		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean; repeater?: Repeater } = {
 			id: this.id,
 			name: this.name,
 			x: this.axes[0].serialize(),
@@ -423,14 +362,13 @@ export default class Smart_Object extends Identifiable {
 			z: this.axes[2].serialize(),
 			rotation_lock: this.rotation_lock,
 		};
-		if (this.rotation_pair) out.rotation_pair = [...this.rotation_pair];
 		out.visible = this.visible;
 		if (this.repeater) out.repeater = this.repeater;
 		return out;
 	}
 
 	/** Deserialize from Portable_SO shape (per-axis bundles) */
-	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number; rotation_pair?: Axis_Name[]; visible?: boolean; repeater?: Repeater }): Smart_Object {
+	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number; visible?: boolean; repeater?: Repeater }): Smart_Object {
 		const so = new Smart_Object(data.name);
 		so.setID(data.id);
 		const axis_data = [data.x, data.y, data.z];
@@ -440,14 +378,6 @@ export default class Smart_Object extends Identifiable {
 		so.rotation_lock = data.rotation_lock ?? 0;
 		so.visible = data.visible ?? true;
 		so.repeater = data.repeater ?? null;
-
-		// Restore rotation_pair (v8+ data has it; v7 migration infers it)
-		if (data.rotation_pair && data.rotation_pair.length > 0) {
-			so.rotation_pair = data.rotation_pair.length === 1
-				? [data.rotation_pair[0]]
-				: [data.rotation_pair[0], data.rotation_pair[1]];
-		}
-
 		return so;
 	}
 }
