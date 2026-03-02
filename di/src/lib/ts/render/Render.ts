@@ -31,6 +31,10 @@ class Render {
 	private size: Size = Size.zero;
 	private dpr = 1;
 
+	/** Camera-view extent: rotation-aware AABB for grid/shadow rendering.
+	 *  Recomputed each frame — never touches stored root bounds. */
+	camera_view_extent = { x_min: 0, x_max: 0, y_min: 0, y_max: 0, z_min: 0, z_max: 0 };
+
 	/** Per-frame dimension rects for click-to-edit. Cleared each render(). */
 	dimension_rects: Dimension_Rect[] = [];
 
@@ -107,6 +111,7 @@ class Render {
 		this.cached_world = null;  // invalidate MVP cache (camera may have moved)
 
 		const all_objects = scene.get_all();
+		this.update_camera_view_extent(all_objects);
 		const objects = all_objects.filter(o => o.so.visible);
 		const is_2d = stores.current_view_mode() === '2d';
 		const solid = stores.is_solid();
@@ -285,10 +290,14 @@ class Render {
 			if (stores.show_names()) this.render_face_names(obj, projected, world);
 		}
 
-		// Debug: 3D wireframe for invisible SOs
+		// 2D: camera_view_extent front-face outline (after edges so it renders on top of white fill)
+		if (is_2d) render_root_bottom(this, true);
+
+		// 3D wireframe for invisible SOs (occluded by visible children in solid/2D)
 		for (const obj of all_objects) {
 			if (obj.so.visible) continue;
 			const projected = projected_map.get(obj.id)!;
+			const world = (is_2d || solid) ? this.get_world_matrix(obj) : undefined;
 			this.ctx.save();
 			this.ctx.setLineDash([1, 1]);
 			this.ctx.strokeStyle = 'rgba(128, 128, 128, 1)';
@@ -297,10 +306,27 @@ class Render {
 			for (const [i, j] of obj.edges) {
 				const a = projected[i], b = projected[j];
 				if (a.w < 0 || b.w < 0) continue;
-				this.ctx.beginPath();
-				this.ctx.moveTo(a.x, a.y);
-				this.ctx.lineTo(b.x, b.y);
-				this.ctx.stroke();
+				if (world) {
+					const vi = obj.so.vertices[i], vj = obj.so.vertices[j];
+					const wi = vec4.create(), wj = vec4.create();
+					vec4.transformMat4(wi, [vi[0], vi[1], vi[2], 1], world);
+					vec4.transformMat4(wj, [vj[0], vj[1], vj[2], 1], world);
+					const segments = this.clip_segment_for_occlusion(
+						{ x: a.x, y: a.y }, { x: b.x, y: b.y },
+						vec3.fromValues(wi[0], wi[1], wi[2]), vec3.fromValues(wj[0], wj[1], wj[2]), obj.id
+					);
+					for (const [s, e] of segments) {
+						this.ctx.beginPath();
+						this.ctx.moveTo(s.x, s.y);
+						this.ctx.lineTo(e.x, e.y);
+						this.ctx.stroke();
+					}
+				} else {
+					this.ctx.beginPath();
+					this.ctx.moveTo(a.x, a.y);
+					this.ctx.lineTo(b.x, b.y);
+					this.ctx.stroke();
+				}
 			}
 			this.ctx.restore();
 		}
@@ -311,6 +337,122 @@ class Render {
 		if (stores.show_angulars()) render_angulars(this);
 		if (debug.enabled) this.render_front_face_label();
 	}
+
+	/** Recompute camera-view extent from world coordinates + rotation projections.
+	 *  Pure read — never touches stored bounds. */
+	private update_camera_view_extent(all: O_Scene[]): void {
+		const root_obj = all.find(o => !o.parent);
+		if (!root_obj) return;
+		const root = root_obj.so;
+
+		let min_x = Math.min(root.x_min, root.x_max), max_x = Math.max(root.x_min, root.x_max);
+		let min_y = Math.min(root.y_min, root.y_max), max_y = Math.max(root.y_min, root.y_max);
+		let min_z = Math.min(root.z_min, root.z_max), max_z = Math.max(root.z_min, root.z_max);
+
+		const children = all.filter(o => o.parent === root_obj);
+
+		// Expand for all descendants (world-coordinate bounds).
+		// Uses Math.min/max to handle potentially inverted bounds (matches Smart_Object.vertices).
+		for (const obj of all) {
+			if (!obj.parent) continue;
+			const so = obj.so;
+			const xLo = Math.min(so.x_min, so.x_max), xHi = Math.max(so.x_min, so.x_max);
+			const yLo = Math.min(so.y_min, so.y_max), yHi = Math.max(so.y_min, so.y_max);
+			const zLo = Math.min(so.z_min, so.z_max), zHi = Math.max(so.z_min, so.z_max);
+			if (xLo < min_x) min_x = xLo; if (xHi > max_x) max_x = xHi;
+			if (yLo < min_y) min_y = yLo; if (yHi > max_y) max_y = yHi;
+			if (zLo < min_z) min_z = zLo; if (zHi > max_z) max_z = zHi;
+		}
+
+		// Expand for rotated direct children's projected AABB
+		for (const child of children) {
+			const so = child.so;
+			const q = so.orientation;
+			if (Math.abs(q[3]) >= 1 - 1e-6) continue;
+
+			let sx0 = Math.min(so.x_min, so.x_max), sx1 = Math.max(so.x_min, so.x_max);
+			let sy0 = Math.min(so.y_min, so.y_max), sy1 = Math.max(so.y_min, so.y_max);
+			let sz0 = Math.min(so.z_min, so.z_max), sz1 = Math.max(so.z_min, so.z_max);
+			const collect_sub = (parent: O_Scene) => {
+				for (const obj of all) {
+					if (obj.parent === parent) {
+						const s = obj.so;
+						const xl = Math.min(s.x_min, s.x_max), xh = Math.max(s.x_min, s.x_max);
+						const yl = Math.min(s.y_min, s.y_max), yh = Math.max(s.y_min, s.y_max);
+						const zl = Math.min(s.z_min, s.z_max), zh = Math.max(s.z_min, s.z_max);
+						if (xl < sx0) sx0 = xl; if (xh > sx1) sx1 = xh;
+						if (yl < sy0) sy0 = yl; if (yh > sy1) sy1 = yh;
+						if (zl < sz0) sz0 = zl; if (zh > sz1) sz1 = zh;
+						collect_sub(obj);
+					}
+				}
+			};
+			collect_sub(child);
+
+			const cx = (so.x_min + so.x_max) / 2;
+			const cy = (so.y_min + so.y_max) / 2;
+			const cz = (so.z_min + so.z_max) / 2;
+
+			for (let i = 0; i < 8; i++) {
+				const vx = (i & 4) ? sx1 : sx0;
+				const vy = (i & 2) ? sy1 : sy0;
+				const vz = (i & 1) ? sz1 : sz0;
+				const rv = vec3.fromValues(vx - cx, vy - cy, vz - cz);
+				vec3.transformQuat(rv, rv, q);
+				const px = cx + rv[0], py = cy + rv[1], pz = cz + rv[2];
+				if (px < min_x) min_x = px; if (px > max_x) max_x = px;
+				if (py < min_y) min_y = py; if (py > max_y) max_y = py;
+				if (pz < min_z) min_z = pz; if (pz > max_z) max_z = pz;
+			}
+		}
+
+		this.camera_view_extent = { x_min: min_x, x_max: max_x, y_min: min_y, y_max: max_y, z_min: min_z, z_max: max_z };
+
+		// DEBUG — remove after diagnosing protrusion (logs every 180 frames)
+		this._cve_count++;
+		if (this._cve_count % 180 === 1) {
+			const rc = children.filter(c => Math.abs(c.so.orientation[3]) < 1 - 1e-6);
+			console.log('[CVE] frame', this._cve_count, '| all:', all.length, 'children:', children.length, 'rotated:', rc.length);
+			console.log('[CVE] root:', root.x_min.toFixed(1), root.x_max.toFixed(1), '|', root.y_min.toFixed(1), root.y_max.toFixed(1), '|', root.z_min.toFixed(1), root.z_max.toFixed(1));
+			const ve = this.camera_view_extent;
+			console.log('[CVE] extent:', ve.x_min.toFixed(1), ve.x_max.toFixed(1), '|', ve.y_min.toFixed(1), ve.y_max.toFixed(1), '|', ve.z_min.toFixed(1), ve.z_max.toFixed(1));
+			for (const c of rc) {
+				const so = c.so;
+				const q = so.orientation;
+				console.log('[CVE] child', so.name, 'q:', q[0].toFixed(4), q[1].toFixed(4), q[2].toFixed(4), q[3].toFixed(4));
+				// Subtree AABB (before rotation)
+				let sx0 = Math.min(so.x_min, so.x_max), sx1 = Math.max(so.x_min, so.x_max);
+				let sy0 = Math.min(so.y_min, so.y_max), sy1 = Math.max(so.y_min, so.y_max);
+				let sz0 = Math.min(so.z_min, so.z_max), sz1 = Math.max(so.z_min, so.z_max);
+				const walk = (parent: O_Scene) => {
+					for (const obj of all) {
+						if (obj.parent === parent) {
+							const s = obj.so;
+							const xl = Math.min(s.x_min, s.x_max), xh = Math.max(s.x_min, s.x_max);
+							const yl = Math.min(s.y_min, s.y_max), yh = Math.max(s.y_min, s.y_max);
+							const zl = Math.min(s.z_min, s.z_max), zh = Math.max(s.z_min, s.z_max);
+							if (xl < sx0) sx0 = xl; if (xh > sx1) sx1 = xh;
+							if (yl < sy0) sy0 = yl; if (yh > sy1) sy1 = yh;
+							if (zl < sz0) sz0 = zl; if (zh > sz1) sz1 = zh;
+							walk(obj);
+						}
+					}
+				};
+				walk(c);
+				console.log('[CVE] subtree AABB:', sx0.toFixed(1), sx1.toFixed(1), '|', sy0.toFixed(1), sy1.toFixed(1), '|', sz0.toFixed(1), sz1.toFixed(1));
+				// Rotated corners
+				const cx = (so.x_min + so.x_max) / 2, cy = (so.y_min + so.y_max) / 2, cz = (so.z_min + so.z_max) / 2;
+				console.log('[CVE] rot center:', cx.toFixed(1), cy.toFixed(1), cz.toFixed(1));
+				for (let i = 0; i < 8; i++) {
+					const vx = (i & 4) ? sx1 : sx0, vy = (i & 2) ? sy1 : sy0, vz = (i & 1) ? sz1 : sz0;
+					const rv = vec3.fromValues(vx - cx, vy - cy, vz - cz);
+					vec3.transformQuat(rv, rv, q);
+					console.log('[CVE] corner', i, '→', (cx + rv[0]).toFixed(1), (cy + rv[1]).toFixed(1), (cz + rv[2]).toFixed(1));
+				}
+			}
+		}
+	}
+	private _cve_count = 0;
 
 	get_world_matrix(obj: O_Scene): mat4 {
 		const so = obj.so;

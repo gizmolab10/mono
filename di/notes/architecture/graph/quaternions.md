@@ -2,13 +2,18 @@
 
 A quat stores rotation but doesn't tell you which angles the user is thinking in. Decomposition is the heart of it: break a rotation into angles that feel intuitive, map to on-screen angulars, and can be clicked and edited.
 
-## Answer
+## Model
 
-Each SO stores a `rotations` array: max 2 entries of `{axis, angle}`, axes frozen on first use. The 2-tuple is the source of truth; the quat is derived from it.
+Each SO tracks a sliding-window pair: the 2 most recently touched axes, each with an angle. The pair is the source of truth; the quat is derived from it (`q = R(B, β) · R(A, α)`).
 
-### Compaction
+- If the new axis is already in the pair, update its angle.
+- If it's new, it replaces the older entry. Compose into quat, decompose back into the new pair (swing-twist).
 
-Only two entries needed. Rotate around X, then Y — that's two. Rotate around X again: compose into quat, decompose back into the frozen X-then-Y pair. Rotate around Z after that: still decomposes into X and Y. Axes lock on first use, order never changes.
+Fidelity loss hits the oldest axis — the one the user stopped caring about. Negligible at 0-45°; visible drift only at extreme combinations (80°+ on all three), outside di's typical use.
+
+### Storage
+
+`rotation_pair: [Axis_Name, Axis_Name] | [Axis_Name] | null` — evolves with user actions. Serialize the pair + two angles.
 
 ### Capacity rule
 
@@ -30,7 +35,7 @@ All angular geometry in **world space**, projected through `identity`. Never pro
 
 ## Existing infrastructure
 
-- **`Angle_Rect`** (`Interfaces.ts`): extends `Label_Rect` with `rotation_axis` and `angle_degrees`
-- **`Angular.ts`** (`editors/Angular.ts`): hit test, begin/commit/cancel editing cycle
-- **`Render.ts`**: `angular_rects[]` cleared each frame, `render_angulars()` + `render_angular()`
-- **Hit testing + events**: wired through `Hits_3D`, `Events_3D`, `Graph.svelte`
+* `Angle_Rect` (`Interfaces.ts`): extends `Label_Rect` with `rotation_axis` and `angle_degrees`
+* `Angular.ts` (`editors/Angular.ts`): hit test, begin/commit/cancel editing cycle
+* `Render.ts`: `angular_rects[]` cleared each frame, `render_angulars()` + `render_angular()`
+* **Hit testing + events**: wired through `Hits_3D`, `Events_3D`, `Graph.svelte`

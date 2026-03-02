@@ -141,7 +141,6 @@
 - di/src/lib/ts/tests/Evaluator.test.ts
 - di/src/lib/ts/tests/Extensions.test.ts
 - di/src/lib/ts/tests/hits_3d.test.ts
-- di/src/lib/ts/tests/Orientation.test.ts
 - di/src/lib/ts/tests/Testworthy_Utilities.test.ts
 - di/src/lib/ts/tests/Units.test.ts
 
@@ -192,6 +191,10 @@
 - di/notes/work/milestones/23.marketing.md
 - di/notes/work/milestones/24.hierarchy.md
 
+## Notes — Archives
+
+- di/notes/archives/rotation.md
+
 ## Notes — Architecture
 
 - di/notes/architecture/index.md
@@ -206,6 +209,7 @@
 - di/notes/architecture/graph/3D.primer.md
 - di/notes/architecture/graph/drag.md
 - di/notes/architecture/graph/intersecting.faces.md
+- di/notes/architecture/graph/projection.md
 - di/notes/architecture/graph/quaternions.md
 - di/notes/architecture/graph/rendering.types.md
 - di/notes/architecture/graph/spatial.md

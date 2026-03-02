@@ -17,9 +17,9 @@ Where things live, what they do.
 ## 3. Deep Dive
 The render pipeline — projection, occlusion, intersections, overlays.
 - [Graph](./graph/) — start with [Three Dimensions](./graph/three.dimensions.md), then explore:
-  - [3D Primer](./graph/3D.primer.md) — basics of 3D on a flat screen
+  - [3D Primer](3D.primer.md) — basics of 3D on a flat screen
   - [Quaternions](./graph/quaternions.md) — rotation without gimbal lock
-  - [Spatial](./graph/spatial.md) — coordinate systems, transforms
+  - [Spatial](spatial.md) — coordinate systems, transforms
   - [Two Dimensions](./graph/two.dimensions.md) — 2D mode, face snapping
   - [Three Dimensions](./graph/three.dimensions.md) — the full render pipeline
   - [Intersecting Faces](./graph/intersecting.faces.md) — face-pair clipping

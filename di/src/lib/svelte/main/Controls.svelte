@@ -10,7 +10,7 @@
 	async function save() { await scenes.add_to_library(); }
 	const { w_text_color, w_background_color, w_accent_color } = colors;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
-	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details, w_front_face, w_all_sos, w_tick } = stores;
+	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details, w_front_face } = stores;
 
 
 	let show_dimensions = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
@@ -41,6 +41,7 @@
 		</svg>
 	</button>
 	<button class='toolbar-btn' use:hit_target={{ id: 'save', onpress: save }}>save</button>
+	<button class='toolbar-btn' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 	<span class='spacer'></span>
 	<div class='segmented'>
 		<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>

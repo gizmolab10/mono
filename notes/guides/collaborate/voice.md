@@ -166,6 +166,15 @@ the difference: Claude catalogues constraints ("the tokenizer only supports…",
 
 The voice is for prose, not for code or formal structures.
 
+### Naming the Two Coordinate Worlds
+
+**World coordinates** — (rather than **structural**) the model. Inches, feet, millimeters. The building. Stored bounds, algebra, formulas, constraints. Doesn't change because you tilted your head.
+
+**Camera view** — (rather than **visual**) rendering. Tumble, scale, pan, grid extent, virtual bounds. Everything the camera controls to frame the scene.
+
+* ✅ "world coordinates" / "camera view"
+* ❌ "structural" / "visual"
+
 ### Describing UI/UX Work
 
 When documenting interface evolution, favor sensory and experiential language:

@@ -7,7 +7,6 @@
 	import { w_unit_system } from '../../ts/types/Units';
 	import { units } from '../../ts/types/Units';
 	import { engine } from '../../ts/render';
-	import { orientation } from '../../ts/algebra';
 	import type { Axis_Name } from '../../ts/types/Types';
 
 	const { w_all_sos, w_selection, w_tick, w_precision } = stores;
@@ -124,40 +123,34 @@
 	// Rotation state
 	let rot_axis: Axis_Name = $state('z');
 
-	// When selection changes, pick default rotation axis from geometry
-	$effect(() => {
-		if (selected_so) rot_axis = orientation.axis_from_bounds(selected_so) ?? 'z';
-	});
-
-	const SWAP_PAIRS: Record<Axis_Name, [number, number]> = { x: [1, 2], y: [0, 2], z: [0, 1] };
 	const STICKY_ANGLES = [22.5, 30, 45, 60, 75.5];
 	const STICKY_THRESHOLD = 2;
 
+	function read_total(_tick: number): number {
+		if (!selected_so) return 0;
+		return selected_so.axis_by_name(rot_axis).angle.value * 180 / Math.PI;
+	}
+	let total_deg = $derived(read_total($w_tick));
+	let angle_deg = $derived(((total_deg % 90) + 90) % 90);
+	function base_deg(): number { return Math.floor(total_deg / 90) * 90; }
+
 	function rotate_90(sign: 1 | -1) {
 		if (!selected_so) return;
-		const [a, b] = SWAP_PAIRS[rot_axis];
-		if (sign > 0) engine.swap_axes(selected_so, a, b);
-		else engine.swap_axes(selected_so, b, a);
+		const axis = selected_so.axis_by_name(rot_axis);
+		const current = Math.round(axis.angle.value * 180 / Math.PI);
+		const next = current + sign * 90;
+		axis.angle.value = next * Math.PI / 180;
 		stores.tick();
 		scenes.save();
 	}
 
-	function get_angle_deg(_tick: number): number {
-		if (!selected_so) return 0;
-		const axis = selected_so.axis_by_name(rot_axis);
-		return axis.angle.value * 180 / Math.PI;
-	}
-	let angle_deg = $derived(get_angle_deg($w_tick));
-
 	function set_angle(deg: number) {
 		if (!selected_so) return;
-		// Snap to sticky detents
 		for (const sticky of STICKY_ANGLES) {
 			if (Math.abs(deg - sticky) < STICKY_THRESHOLD) { deg = sticky; break; }
 		}
 		const axis = selected_so.axis_by_name(rot_axis);
-		axis.angle.value = deg * Math.PI / 180;
-		engine.fit_root();
+		axis.angle.value = (base_deg() + deg) * Math.PI / 180;
 		stores.tick();
 		scenes.save();
 	}
@@ -232,6 +225,7 @@
 	<button class='action-btn action-far-right' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>↔ {visible_label}</button>
 </div>
 
+{#if !is_root}
 <div class='rotation-section'>
 	<div class='rotation-row'>
 		<span class='option-label'>axis</span>
@@ -254,9 +248,24 @@
 			value={angle_deg}
 			oninput={(e) => set_angle(Number((e.target as HTMLInputElement).value))}
 		/>
-		<span class='angle-display'>{angle_deg.toFixed(1)}°</span>
+		<input
+			type='number'
+			class='angle-input'
+			value={total_deg.toFixed(1)}
+			onkeydown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+			onblur={(e) => {
+				const v = Number((e.target as HTMLInputElement).value);
+				if (!isNaN(v)) {
+					const axis = selected_so!.axis_by_name(rot_axis);
+					axis.angle.value = v * Math.PI / 180;
+								stores.tick();
+					scenes.save();
+				}
+			}}
+		/>
 	</div>
 </div>
+{/if}
 
 {#if is_repeater && selected_so}
 <div class='separator'></div>
@@ -428,11 +437,15 @@
 		accent-color : var(--accent);
 	}
 
-	.angle-display {
-		font-size  : 11px;
-		min-width  : 32px;
-		text-align : right;
-		opacity    : 0.8;
+	.angle-input {
+		font-size    : 11px;
+		width        : 48px;
+		text-align   : right;
+		border       : 1px solid var(--accent, #ccc);
+		border-radius: 3px;
+		padding      : 1px 4px;
+		background   : transparent;
+		color        : inherit;
 	}
 
 	.repeater-options {

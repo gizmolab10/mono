@@ -1,22 +1,29 @@
-
 # Rotation
 
 I want users to be able to **rotate** an SO to an arbitrary angle (0 - 90) and rotate some more. quats let di do this without gl. The UI needs:
 
 - [x] a slider from 0 - 90 with detents at 22.5, 30, 45, 60, 67.5
-- [ ] +/- 90 buttons **rotate** (not swap)
-- [ ] an input box for entering an angle (return or blur-input -> applies it)
-- [ ] root expansion to account for rotations that protrude
-- [ ] remove rotation controls when root SO is selected
-- [ ] axis default -> z
+- [x] +/- 90 buttons **rotate** (not swap)
+- [x] convert the label -> input box for entering an angle (return or blur-input -> applies it)
+- [x] root expansion to account for rotations that protrude
+- [x] remove rotation controls when root SO is selected
+- [x] axis default -> z
+- [x] i want to solve the 2D use case first. image with a root protrusion
+- [x] research: how resolve a quat to into the 2 axes, with specified order of rotation
+	- [x] not-disabled axes (in the angles table)
+	- [x] allow selecting any angle for rotation
+		- [x] make that the 2nd of the two
+	- [x] disallow third axis to "combine into the other two"?
+- [ ] rewrite the rotation model
 
-## Expanding the root
+### Expanding the root
 
 `recompute_max_bounds` grows the child's AABB but the root doesn't expand to contain it. extract the post-propagation root expansion from `insert_child_from_text` into a reusable `expand_root_to_fit()`, call it after Angular commit and slider set_angle. low risk: only expands max bounds, root is invisible, preserves origin. medium risk: if any SO has formulas referencing root dimensions (`.l`, `.w`), expanding root changes those values.
 
-# Swap
+## Swap
 
-i want to be able to rotate an SO. use case: to create a room, i need to 
+i want to be able to rotate an SO. use case: to create a room, i need to
+
 - insert one stretch (front wall)
 - dup the stretch
 - rotate the dup (right wall) by 90°
@@ -28,22 +35,22 @@ Thus:
 
 - [x] compare rotate and swap, should we support both?
 - [ ] add to **selected part**: ability to rotate around an axis (x,y,z)
-	- [x] applies to selected SO
-	- [ ] segmented control for axes (x,y,z)
-		- [ ] two buttons to rotate by 90° (+,-)
-		- [ ] axis is determined by the tumble orientation of the SO
-		- [ ] eg, if front face is front-most-facing, show y as the rotation axis
-	- [ ] slider to rotate by degrees (0 - 90)
-		- [ ] sticky at 22.5, 30, 45, 60, 75.5
+  - [x] applies to selected SO
+  - [ ] segmented control for axes (x,y,z)
+    - [ ] two buttons to rotate by 90° (+,-)
+    - [ ] axis is determined by the tumble orientation of the SO
+    - [ ] eg, if front face is front-most-facing, show y as the rotation axis
+  - [ ] slider to rotate by degrees (0 - 90)
+    - [ ] sticky at 22.5, 30, 45, 60, 75.5
 
-## rotate vs swap (settled)
+### rotate vs swap (settled)
 
 **swap** = exchange actual axis data (bounds, formulas, invariants, aliases). a 120×4×96 wall swapped x↔y becomes 4×120×96. already exists in `swap_axes` (Engine.ts), built for repeaters.
 
 **rotate** = set angle attributes, compose into quaternion for rendering. bounds stay the same — visual-only.
 
-| | swap | rotate |
-|---|---|---|
+|    | swap | rotate |
+|----|----|----|
 | what changes | actual bound data, formulas, invariants | visual orientation only |
 | algebra system | stays consistent | disconnected — "x" axis points in y visually |
 | children | formulas rewritten (alias swap) | children don't know parent rotated |
@@ -53,19 +60,95 @@ Thus:
 
 **catch:** swap xy currently corrupts. `swap_axes` was built for repeaters, may not handle general cases (deep children, formulas referencing parent axes). next step: dig into why it corrupts and fix.
 
-## implementation approach (swap rewrite)
+## Sliding-window pair — rotation model rewrite
 
-current `swap_axes` serializes data, swaps it across, fixes offsets — 75 lines, fragile. the fix is simpler: work agnostically.
+### The problem
 
-**rule:** axis data is stored and accessed agnostically (start/end/length/angle, by index). explicit names (`x_min`, `width`) are the public API — used by the formula language and `attributes_dict_byName` lookups. the swap operates at the agnostic level (swap Axis objects, then relabel to keep the public API consistent). only touch formulas for cross-axis named SO references.
+Three independent angle slots work for single-axis rotation. But when a user rotates around x, then y, then goes back to tweak x, there's no record of *which two* they care about. The code stores 3 numbers and composes them in fixed order (x→y→z). That order is arbitrary — it doesn't reflect intent.
 
-**steps:**
-1. swap the Axis objects in the array (`axes[a] ↔ axes[b]`)
-2. relabel: update `axis.name`, rename the four attributes (`attributes_dict_byName` is now a getter — rebuilds automatically from axes)
-3. only touch formulas where a cross-axis named reference exists — `swap_formula_aliases` scoped to external SOs that reference the swapped one by explicit name
+All 3 nonzero at once? Editing one feels like it fights the other two. The user thinks "i rotated x, then y" — two steps, in order. Three independent slots can't capture that.
 
-values, invariants, offsets all travel with the Axis object. no serialize round-trip, no offset fixup. current 75-line swap collapses to ~15.
+### The model
 
-### manual test
+Track a **sliding-window pair**: the 2 most recently touched axes. The pair is the source of truth; the quat is derived from it: `q = R(B, β) · R(A, α)` (A = older, B = newer).
 
-wacka.di
+| Before | User touches | After | Action |
+|---|---|---|---|
+| `null` | A at α | `[A]` | set A.angle = α |
+| `[A]` | A at α' | `[A]` | update A.angle = α' |
+| `[A]` | B at β | `[A, B]` | add B, set B.angle = β |
+| `[A, B]` | A at α' | `[A, B]` | update A.angle = α' |
+| `[A, B]` | B at β' | `[A, B]` | update B.angle = β' |
+| `[A, B]` | C at γ | `[B, C]` | **evict A** — decompose, then set C |
+
+### Eviction
+
+When a 3rd axis C arrives and the pair is `[A, B]`:
+
+1. Compute current quat: `q = R(B, β) · R(A, α)`
+2. Swing-twist decompose `q` around C → `twist_C` (angle `γ_residual`) + `swing`
+3. Swing-twist decompose `swing` around B → `twist_B` (angle `β'`) + `remainder`
+4. `remainder` is lost — the component that lived on A and can't be expressed as B or C. This is the fidelity cost.
+5. Set `B.angle = β'`, `C.angle = γ_residual`
+6. Pair becomes `[B, C]`
+
+For **drag** (nudge): C.angle = `γ_residual + delta` (preserves implicit C-rotation from old quat).
+For **editor** (set absolute): C.angle = `user_value` (replaces residual — user typed a specific number, they mean it).
+
+### Swing-twist for cardinal axes
+
+Given quat `q = [x, y, z, w]` and twist axis A:
+
+```
+twist_A = normalize(0, ..., q[A], ..., w)    // keep only A-component and w
+swing   = q · inverse(twist_A)
+angle_A = 2 · atan2(twist_A[A], twist_A.w)
+```
+
+For axis-aligned cases, it's just extracting the right quaternion component. No trig tables, no iterative solvers.
+
+### Files that change
+
+**Smart_Object.ts** — the core
+- Add: `rotation_pair: [Axis_Name, Axis_Name] | [Axis_Name] | null`
+- Add: `touch_axis(axis, radians)` — manages pair transitions + eviction
+- Add: `nudge_axis(axis, delta)` — additive variant for drag
+- Rewrite: `get orientation()` — compose from pair only (skip non-pair axes)
+- Remove: `set_rotation()`, `apply_rotation()` — replaced by touch/nudge
+- Serialize: add `rotation_pair` to output
+
+**Orientation.ts** — new math
+- Add: `swing_twist(q, axis)` → `{ twist_angle, swing }` — the decomposition
+- Currently gutted (just a comment) — becomes the home for this
+
+**Angular.ts** — trivial
+- `commit()`: `so.touch_axis(axis, radians)` replaces `so.set_rotation(axis, radians)`
+
+**Drag.ts** — trivial
+- `rotate_object()`: `so.nudge_axis(axis, delta)` replaces `so.apply_rotation(axis, delta)` + snap logic stays
+
+**Serialization (Interfaces.ts, Smart_Object.ts)** — small addition
+- Add `rotation_pair?: [Axis_Name, Axis_Name] | [Axis_Name]` to Portable_SO
+- Migration: if absent on load, infer pair from which axes have non-zero angles. Two non-zero? Alphabetical order (ambiguous but best-effort). One non-zero? Single-entry pair. All zero? null.
+
+**R_Angulars.ts** — no change needed
+- Already iterates all 3 axes, skips near-zero. Evicted axis has angle = 0, so it's naturally excluded.
+
+### What stays the same
+
+- `get orientation()` still returns a `quat` — renderer doesn't know or care
+- `get_world_matrix()` unchanged
+- Axis class structure unchanged (angle attribute stays on all 3 axes)
+- Camera view extent, fit button, projection boundary — all unchanged
+
+### Fidelity
+
+Dropping the oldest axis loses information. By design. The `remainder` from double swing-twist is the un-expressible residual — the rotation component that lived on the evicted axis and can't be projected onto the surviving two.
+
+Negligible at typical angles (0–45°). Visible drift only at extreme combos (80°+ on all three), which is outside di's use. The user stopped caring about that axis — they're editing the other two.
+
+### Not in scope
+
+- **Swap** — independent mechanism, orthogonal to this
+- **Formula-driven angles** — angle attributes on Axis still support formulas, but pair logic only applies to user-driven angles. Punt for now.
+- **Rotation lock** — `rotation_lock` field exists but is unused. Leave it.

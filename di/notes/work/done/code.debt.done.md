@@ -90,3 +90,7 @@
 	- [x] relaunch increases depth much farther than farthest SO
 		- [x] fix: `set_bound` on compiled attrs stored absolute value; `get_bound` added parent offset again (double-count)
 	- [x] enhancements moved to [[7.edit.drags]] § Enhancements
+- [x] rewrite rotation code
+	- [x] add proposal to [[rotation]] for rotating (leave swapping alone)
+	- [x] manual test fails: rotate drawer -> dreadful
+		- [x] only some of the children of the rotated SO actually rotate

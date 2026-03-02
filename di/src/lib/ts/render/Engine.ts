@@ -206,7 +206,7 @@ class Engine {
 
 		// Fit-normalize root if any SO has negative start/end/length (skip if root is a repeater)
 		if (!root_so.repeater && smart_objects.some(so => so.axes.some(a => a.start.value < 0 || a.end.value < 0 || a.length.value < 0))) {
-			this.shrink_to_fit();
+			this.fit_to_children();
 		}
 
 		// Restore selection (SO + face) by id, fallback to root
@@ -599,7 +599,6 @@ class Engine {
 		if (new_sos.length) {
 			// Cascade and trigger sync_repeater via post_propagate_hook
 			constraints.propagate_all();
-			this.fit_root();
 			stores.w_all_sos.set(scene.get_all().map(o => o.so));
 			stores.tick();
 			scenes.save();
@@ -679,28 +678,32 @@ class Engine {
 
 		// Keep parent selected after adding child
 		stores.w_all_sos.update(list => [...list, child]);
-		this.fit_root();
 		stores.tick();
 		scenes.save();
 	}
 
-	/** Expand root to cover any descendants that structurally protrude.
-	 *  Only grows, never shrinks — exact fit is shrink_to_fit's job (it
-	 *  compensates children's offsets). This is a post-propagation safety
-	 *  net for repeater clones placed outside root. */
-	expand_root_to_fit(): void {
+	/** Resize root to exactly fit its children. User-initiated — never automatic.
+	 *  Snapshots direct children's absolute positions, resizes root to the union
+	 *  AABB of all descendants, then restores direct children (recalculates their
+	 *  offsets against the new root). Grandchildren stay correct because they're
+	 *  relative to their parent, not root. */
+	fit_to_children(): void {
 		const root = this.root_scene?.so;
 		if (!root?.scene) return;
 
 		const all = scene.get_all();
-		let x_lo = root.x_min, x_hi = root.x_max;
-		let y_lo = root.y_min, y_hi = root.y_max;
-		let z_lo = root.z_min, z_hi = root.z_max;
+		const direct_children: O_Scene[] = [];
+		let x_lo = Infinity, x_hi = -Infinity;
+		let y_lo = Infinity, y_hi = -Infinity;
+		let z_lo = Infinity, z_hi = -Infinity;
+		let has_desc = false;
 
 		for (const obj of all) {
-			let p = obj.parent; let is_desc = false;
+			if (obj.parent === root.scene) direct_children.push(obj);
+			let p: O_Scene | undefined = obj.parent; let is_desc = false;
 			while (p) { if (p === root.scene) { is_desc = true; break; } p = p.parent; }
 			if (!is_desc) continue;
+			has_desc = true;
 			const so = obj.so;
 			if (so.x_min < x_lo) x_lo = so.x_min;
 			if (so.x_max > x_hi) x_hi = so.x_max;
@@ -710,139 +713,35 @@ class Engine {
 			if (so.z_max > z_hi) z_hi = so.z_max;
 		}
 
-		if (x_lo < root.x_min) root.set_bound('x_min', x_lo);
-		if (x_hi > root.x_max) root.set_bound('x_max', x_hi);
-		if (y_lo < root.y_min) root.set_bound('y_min', y_lo);
-		if (y_hi > root.y_max) root.set_bound('y_max', y_hi);
-		if (z_lo < root.z_min) root.set_bound('z_min', z_lo);
-		if (z_hi > root.z_max) root.set_bound('z_max', z_hi);
-	}
+		if (!has_desc) return;
 
-	/** Shrink the selected SO to tightly wrap its direct children on all three axes. */
-	/** Lightweight root fit: rotation-aware bbox, resize, compensate children.
-	 *  No propagation, no repeater sync — safe to call on every geometry tick. */
-	fit_root(): void {
-		const target = this.root_scene?.so;
-		if (!target?.scene) return;
+		// Snapshot direct children's absolute positions
+		const snaps = direct_children.map(obj => ({
+			so: obj.so,
+			x_min: obj.so.x_min, x_max: obj.so.x_max,
+			y_min: obj.so.y_min, y_max: obj.so.y_max,
+			z_min: obj.so.z_min, z_max: obj.so.z_max,
+		}));
 
-		const all = scene.get_all();
-		const children = all.filter(o => o.parent === target.scene);
-		if (children.length === 0) return;
+		// Resize root to union AABB
+		root.set_bound('x_min', x_lo);
+		root.set_bound('x_max', x_hi);
+		root.set_bound('y_min', y_lo);
+		root.set_bound('y_max', y_hi);
+		root.set_bound('z_min', z_lo);
+		root.set_bound('z_max', z_hi);
 
-		const bounds: Bound[] = ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max'];
-
-		// Snapshot direct children's absolute bounds (for shifting later)
-		const snapshots = children.map(c => bounds.map(b => c.so.get_bound(b)));
-
-		// Identify rotated direct children
-		const rotated_set = new Set<typeof children[0]>();
-		for (const child of children) {
-			const q = child.so.orientation;
-			if (Math.abs(q[3]) < 1 - 1e-6) rotated_set.add(child);
+		// Restore direct children (recalculates offsets against new root)
+		for (const snap of snaps) {
+			snap.so.set_bound('x_min', snap.x_min);
+			snap.so.set_bound('x_max', snap.x_max);
+			snap.so.set_bound('y_min', snap.y_min);
+			snap.so.set_bound('y_max', snap.y_max);
+			snap.so.set_bound('z_min', snap.z_min);
+			snap.so.set_bound('z_max', snap.z_max);
 		}
 
-		// Collect descendants, excluding rotated subtrees (handled by projection)
-		const structural: typeof children = [];
-		const collect = (parent: typeof target.scene, skip: boolean) => {
-			for (const obj of all) {
-				if (obj.parent === parent) {
-					const is_rot = rotated_set.has(obj);
-					if (!skip && !is_rot) structural.push(obj);
-					collect(obj, skip || is_rot);
-				}
-			}
-		};
-		collect(target.scene, false);
-
-		// Structural bbox from unrotated subtrees only
-		let min_x = Infinity, max_x = -Infinity;
-		let min_y = Infinity, max_y = -Infinity;
-		let min_z = Infinity, max_z = -Infinity;
-		for (const desc of structural) {
-			const so = desc.so;
-			if (so.x_min < min_x) min_x = so.x_min;
-			if (so.x_max > max_x) max_x = so.x_max;
-			if (so.y_min < min_y) min_y = so.y_min;
-			if (so.y_max > max_y) max_y = so.y_max;
-			if (so.z_min < min_z) min_z = so.z_min;
-			if (so.z_max > max_z) max_z = so.z_max;
-		}
-
-		// Rotated subtrees: compute full subtree AABB then project through rotation
-		for (const child of rotated_set) {
-			const so = child.so;
-			const q = so.orientation;
-
-			// Subtree AABB (unrotated, absolute space) — start from child's own bounds
-			let sx0 = so.x_min, sx1 = so.x_max;
-			let sy0 = so.y_min, sy1 = so.y_max;
-			let sz0 = so.z_min, sz1 = so.z_max;
-			const collect_sub = (parent: typeof target.scene) => {
-				for (const obj of all) {
-					if (obj.parent === parent) {
-						const s = obj.so;
-						if (s.x_min < sx0) sx0 = s.x_min;
-						if (s.x_max > sx1) sx1 = s.x_max;
-						if (s.y_min < sy0) sy0 = s.y_min;
-						if (s.y_max > sy1) sy1 = s.y_max;
-						if (s.z_min < sz0) sz0 = s.z_min;
-						if (s.z_max > sz1) sz1 = s.z_max;
-						collect_sub(obj);
-					}
-				}
-			};
-			collect_sub(child);
-
-			// Rotation center = child's own center (matches get_world_matrix)
-			const cx = (so.x_min + so.x_max) / 2;
-			const cy = (so.y_min + so.y_max) / 2;
-			const cz = (so.z_min + so.z_max) / 2;
-
-			// Project subtree AABB corners through rotation
-			for (let i = 0; i < 8; i++) {
-				const vx = (i & 4) ? sx1 : sx0;
-				const vy = (i & 2) ? sy1 : sy0;
-				const vz = (i & 1) ? sz1 : sz0;
-				const rv = vec3.fromValues(vx - cx, vy - cy, vz - cz);
-				vec3.transformQuat(rv, rv, q);
-				const px = cx + rv[0], py = cy + rv[1], pz = cz + rv[2];
-				if (px < min_x) min_x = px; if (px > max_x) max_x = px;
-				if (py < min_y) min_y = py; if (py > max_y) max_y = py;
-				if (pz < min_z) min_z = pz; if (pz > max_z) max_z = pz;
-			}
-		}
-
-		const origin = [min_x, min_y, min_z];
-		const extent = [max_x - min_x, max_y - min_y, max_z - min_z];
-
-		// Resize root to match bbox
-		for (let ai = 0; ai < 3; ai++) {
-			target.set_bound(bounds[ai * 2] as Bound, origin[ai]);
-			target.set_bound(bounds[ai * 2 + 1] as Bound, origin[ai] + extent[ai]);
-		}
-
-		// Compensate children so their absolute positions are preserved
-		for (let ci = 0; ci < children.length; ci++) {
-			for (let ai = 0; ai < 3; ai++) {
-				const parent_min = target.get_bound(bounds[ai * 2] as Bound);
-				for (const bi of [ai * 2, ai * 2 + 1]) {
-					const attr = children[ci].so.attributes_dict_byName[bounds[bi]];
-					if (attr?.compiled) continue;
-					children[ci].so.set_bound(bounds[bi], snapshots[ci][bi] - origin[ai] + parent_min);
-				}
-			}
-		}
-	}
-
-	/** Full fit: fit_root + propagate + safety net. For fit button / refresh. */
-	shrink_to_fit(): void {
-		this.fit_root();
-
-		const target = this.root_scene?.so;
-		if (!target) return;
-		constraints.propagate(target);
-		this.expand_root_to_fit();
-
+		constraints.propagate(root);
 		stores.tick();
 		scenes.save();
 	}

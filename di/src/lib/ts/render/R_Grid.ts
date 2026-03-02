@@ -18,11 +18,15 @@ import { vec3 } from 'gl-matrix';
 import { mat4 } from 'gl-matrix';
 import { get } from 'svelte/store';
 
+/** Camera-view AABB — rotation-aware extent computed each frame. */
+export type Camera_View_Extent = { x_min: number; x_max: number; y_min: number; y_max: number; z_min: number; z_max: number };
+
 /** Subset of Render that Grid needs. Avoids circular import. */
 export interface GridHost {
 	ctx: CanvasRenderingContext2D;
 	project_vertex(v: vec3, world_matrix: mat4): Projected;
 	get_world_matrix(obj: O_Scene): mat4;
+	camera_view_extent: Camera_View_Extent;
 }
 
 /** Render 2D front-face grid (dashed, accent color). */
@@ -119,25 +123,25 @@ export function render_grid(host: GridHost): void {
 
 // ── helpers ──
 
-/** Axis min/max for a given axis name on the root SO. */
-function axis_bounds(so: Smart_Object, axis: Axis_Name): [number, number] {
+/** Axis min/max from the camera-view extent. */
+function ve_axis_bounds(ve: Camera_View_Extent, axis: Axis_Name): [number, number] {
 	switch (axis) {
-		case 'x': return [so.x_min, so.x_max];
-		case 'y': return [so.y_min, so.y_max];
-		case 'z': return [so.z_min, so.z_max];
+		case 'x': return [ve.x_min, ve.x_max];
+		case 'y': return [ve.y_min, ve.y_max];
+		case 'z': return [ve.z_min, ve.z_max];
 	}
 }
 
-/** The fixed-axis value for a given face index (which plane the face sits on). */
-function face_fixed_value(so: Smart_Object, face_index: number): number {
+/** The fixed-axis value for a given face index from camera-view extent. */
+function ve_face_fixed_value(ve: Camera_View_Extent, face_index: number): number {
 	// 0: z_min, 1: z_max, 2: x_min, 3: x_max, 4: y_max, 5: y_min
 	switch (face_index) {
-		case 0: return so.z_min;
-		case 1: return so.z_max;
-		case 2: return so.x_min;
-		case 3: return so.x_max;
-		case 4: return so.y_max;
-		case 5: return so.y_min;
+		case 0: return ve.z_min;
+		case 1: return ve.z_max;
+		case 2: return ve.x_min;
+		case 3: return ve.x_max;
+		case 4: return ve.y_max;
+		case 5: return ve.y_min;
 		default: return 0;
 	}
 }
@@ -187,35 +191,82 @@ function convex_hull_2d(pts: { x: number; y: number }[]): { x: number; y: number
 	return lower.concat(upper);
 }
 
-// ── root bottom rect ──
+// ── camera view extent wireframe ──
 
-/** Always-visible faint outline of the root's bottom face (z_min plane). */
-export function render_root_bottom(host: GridHost): void {
+/** Camera_view_extent outline.
+ *  3D: faint 12-edge wireframe box.
+ *  2D: front-face rectangle at camera_view_extent dimensions (expanded root boundary). */
+export function render_root_bottom(host: GridHost, is_2d = false): void {
 	const root_so = scenes.root_so;
 	if (!root_so?.scene) return;
 
 	const world = host.get_world_matrix(root_so.scene);
-	const z = root_so.z_min;
-	const corners = [
-		vec3.fromValues(root_so.x_min, root_so.y_min, z),
-		vec3.fromValues(root_so.x_max, root_so.y_min, z),
-		vec3.fromValues(root_so.x_max, root_so.y_max, z),
-		vec3.fromValues(root_so.x_min, root_so.y_max, z),
+	const ve = host.camera_view_extent;
+
+	// 8 corners of the camera_view_extent box
+	const verts = [
+		vec3.fromValues(ve.x_min, ve.y_min, ve.z_min), // 0
+		vec3.fromValues(ve.x_max, ve.y_min, ve.z_min), // 1
+		vec3.fromValues(ve.x_max, ve.y_max, ve.z_min), // 2
+		vec3.fromValues(ve.x_min, ve.y_max, ve.z_min), // 3
+		vec3.fromValues(ve.x_min, ve.y_min, ve.z_max), // 4
+		vec3.fromValues(ve.x_max, ve.y_min, ve.z_max), // 5
+		vec3.fromValues(ve.x_max, ve.y_max, ve.z_max), // 6
+		vec3.fromValues(ve.x_min, ve.y_max, ve.z_max), // 7
 	];
-	const pts = corners.map(c => host.project_vertex(c, world));
-	if (pts.some(p => p.w < 0)) return;
+	const pts = verts.map(v => host.project_vertex(v, world));
 
 	const [r, g, b] = parseToRgba(get(colors.w_accent_color));
 	const ctx = host.ctx;
-	ctx.save();
-	ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.5)`;
-	ctx.lineWidth = 1;
-	ctx.beginPath();
-	ctx.moveTo(pts[0].x, pts[0].y);
-	for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-	ctx.closePath();
-	ctx.stroke();
-	ctx.restore();
+
+	if (is_2d) {
+		// 2D: draw only the front face edges of camera_view_extent
+		const front_face = hits_3d.front_most_face(root_so);
+		if (front_face < 0) return;
+		// Vertex indices per face: 0=z_min, 1=z_max, 2=x_min, 3=x_max, 4=y_max, 5=y_min
+		const face_vertex_indices: number[][] = [
+			[0, 1, 2, 3], // 0: z_min (bottom)
+			[4, 5, 6, 7], // 1: z_max (top)
+			[0, 4, 7, 3], // 2: x_min (left)
+			[1, 5, 6, 2], // 3: x_max (right)
+			[3, 7, 6, 2], // 4: y_max (front)
+			[0, 4, 5, 1], // 5: y_min (back)
+		];
+		const face = face_vertex_indices[front_face];
+		if (!face) return;
+		ctx.save();
+		ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.5)`;
+		ctx.lineWidth = 1;
+		ctx.setLineDash([4, 4]);
+		for (let i = 0; i < face.length; i++) {
+			const a = pts[face[i]], bp = pts[face[(i + 1) % face.length]];
+			if (a.w < 0 || bp.w < 0) continue;
+			ctx.beginPath();
+			ctx.moveTo(a.x, a.y);
+			ctx.lineTo(bp.x, bp.y);
+			ctx.stroke();
+		}
+		ctx.restore();
+	} else {
+		// 3D: full 12-edge wireframe
+		const edges: [number, number][] = [
+			[0,1],[1,2],[2,3],[3,0],
+			[4,5],[5,6],[6,7],[7,4],
+			[0,4],[1,5],[2,6],[3,7],
+		];
+		ctx.save();
+		ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.35)`;
+		ctx.lineWidth = 0.5;
+		for (const [i, j] of edges) {
+			const a = pts[i], bp = pts[j];
+			if (a.w < 0 || bp.w < 0) continue;
+			ctx.beginPath();
+			ctx.moveTo(a.x, a.y);
+			ctx.lineTo(bp.x, bp.y);
+			ctx.stroke();
+		}
+		ctx.restore();
+	}
 }
 
 // ── back grid ──
@@ -267,10 +318,10 @@ export function render_back_grid(host: GridHost): void {
 
 		const [axis_a, axis_b] = root_so.face_axes(fi);
 		const fixed_axis = root_so.face_fixed_axis(fi);
-		const fixed_val = face_fixed_value(root_so, fi);
-
-		const [a_min, a_max] = axis_bounds(root_so, axis_a);
-		const [b_min, b_max] = axis_bounds(root_so, axis_b);
+		const ve = host.camera_view_extent;
+		const fixed_val = ve_face_fixed_value(ve, fi);
+		const [a_min, a_max] = ve_axis_bounds(ve, axis_a);
+		const [b_min, b_max] = ve_axis_bounds(ve, axis_b);
 		const a_origin = a_min;
 		const b_origin = b_min;
 

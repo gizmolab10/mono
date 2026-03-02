@@ -1,5 +1,5 @@
 import type { Angle_Rect, S_SO } from '../types/Interfaces';
-import { constraints, orientation } from '../algebra';
+import { constraints } from '../algebra';
 import { T_Editing } from '../types/Enumerations';
 import type { Axis_Name } from '../types/Types';
 import { writable, get } from 'svelte/store';
@@ -63,11 +63,8 @@ class Angulars {
 		const so = state.so;
 		const axis = state.rotation_axis;
 
-		// Set the rotation via the 2-tuple SOT — recomputes quat internally
+		// Set the angle — bounds stay untouched (see projection.md)
 		so.set_rotation(axis, radians);
-
-		// Redistribute bounds to match the new angle
-		orientation.recompute_max_bounds(so);
 		constraints.propagate(so);
 
 		stores.tick();
