@@ -235,17 +235,15 @@ describe('serialize/deserialize formulas', () => {
 
 describe('orientation', () => {
 
-	it('child can copy parent orientation via axis angles', () => {
+	it('child can copy parent orientation via touch_axis', () => {
 		const parent = add_so('parent');
 		const child = add_so('child');
 
 		// Rotate parent around Y
-		parent.set_rotation('y', Math.PI / 4);
+		parent.touch_axis('y', Math.PI / 4);
 
-		// Copy axis angles to child
-		for (let i = 0; i < 3; i++) {
-			child.axes[i].angle.value = parent.axes[i].angle.value;
-		}
+		// Copy: touch same axis with same angle
+		child.touch_axis('y', Math.PI / 4);
 
 		expect(child.orientation[0]).toBeCloseTo(parent.orientation[0]);
 		expect(child.orientation[1]).toBeCloseTo(parent.orientation[1]);
@@ -255,7 +253,7 @@ describe('orientation', () => {
 
 	it('orientation survives serialize/deserialize', () => {
 		const so = add_so('box');
-		so.set_rotation('x', Math.PI / 3);
+		so.touch_axis('x', Math.PI / 3);
 
 		const data = so.serialize();
 		const restored = Smart_Object.deserialize(data);

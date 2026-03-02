@@ -83,6 +83,7 @@ export enum T_Details {
 	constants   = 8,
 	parts          = 16,
 	selected_part  = 32,
+	rotation       = 64,
 }
 
 export enum T_Editing {

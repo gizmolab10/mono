@@ -53,23 +53,6 @@
 
 	let bounds_rows = $derived(selected_so ? get_bounds(selected_so, tick) : []);
 
-	const axes = ['x', 'y', 'z'] as const;
-
-	function get_angles(so: Smart_Object, _tick: number) {
-		// Read axis angle values directly (radians → degrees)
-		const fmt = (rad: number) => {
-			const degrees = Math.round(rad * (180 / Math.PI) * 2) / 2;
-			return (degrees % 1 === 0 ? degrees.toFixed(0) : degrees.toFixed(1)) + '°';
-		};
-		return {
-			x: fmt(so.axes[0].angle.value),
-			y: fmt(so.axes[1].angle.value),
-			z: fmt(so.axes[2].angle.value),
-		};
-	}
-
-	let angles = $derived(selected_so ? get_angles(selected_so, tick) : { x: '0°', y: '0°', z: '0°' });
-
 	function commit_formula(row: BoundsRow, value: string) {
 		if (!selected_so || !row.bound) return;
 		const trimmed = value.trim();
@@ -124,23 +107,6 @@
 		}
 		axis.invariant = row.attr_index;
 		constraints.enforce_invariants(selected_so);
-		stores.tick();
-		scenes.save();
-	}
-
-	function commit_angle(axis: 'x' | 'y' | 'z', value: string) {
-		if (!selected_so) return;
-		const degrees = parseFloat(value.replace('°', ''));
-		if (isNaN(degrees)) return;
-		const radians = degrees * Math.PI / 180;
-		selected_so.set_rotation(axis, radians);
-		stores.tick();
-		scenes.save();
-	}
-
-	function set_locked(index: number) {
-		if (!selected_so) return;
-		selected_so.rotation_lock = index;
 		stores.tick();
 		scenes.save();
 	}
@@ -233,28 +199,6 @@
 			&harr; {formula_mode === 'explicit' ? 'agnostic' : 'explicit'}
 		</button>
 	</div>
-	{#if !is_root}
-	<table class='bounds rotations'>
-		<tbody>
-			{#each axes as axis, i}
-				<tr>
-					<td class='attr-name'>{axis}</td>
-					<td class='attr-sep' class:cross={selected_so?.rotation_lock === i} onclick={() => set_locked(i)}></td>
-					<td class='attr-value'>
-						<input
-							type      = 'text'
-							class     = 'cell-input right'
-							value     = {angles[axis]}
-							disabled  = {selected_so?.rotation_lock === i}
-							onblur    = {(e) => commit_angle(axis, (e.target as HTMLInputElement).value)}
-							onkeydown = {cell_keydown}
-						/>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-	{/if}
 {:else}
 	<p>No object selected</p>
 {/if}

@@ -181,7 +181,7 @@ class Drag {
 		if (vec3.dot(face_normal_world, camera_direction) > 0) delta_theta = -delta_theta;
 
 		// Apply rotation to the axis angle
-		rotation_target.apply_rotation(rotation_axis, delta_theta);
+		rotation_target.nudge_axis(rotation_axis, delta_theta);
 
 		// Snap: check if current angle is near a detent, snap if so
 		const axis_obj = rotation_target.axis_by_name(rotation_axis);

@@ -3,12 +3,13 @@
 
 offer a proposal for the first unchecked item
 
+- [ ] work on [[rotation]]
+- [ ] work on [[14.details]]
 - [ ] merge
 	- [ ] migration -> versions
 	- [ ] extended algebra into notes/architecture/core/algebra
 		- [ ] remove cruft
 - [ ] duplication should exclude repeater clones from the new subtree. for each repeater, keep only its first child (the template)
-- [ ] work on [[14.details]]
 - [ ] work on [[21.undo]]
 - [ ] parts: position/size button -> convert into a colspan th above last three cols
 - [ ] work on [[17.library]]

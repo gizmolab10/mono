@@ -12,6 +12,7 @@
 	import D_Selected_Part from './D_Selected_Part.svelte';
 	import D_Library from './D_Library.svelte';
 	import D_Attributes from './D_Attributes.svelte';
+	import D_Rotation from './D_Rotation.svelte';
 	import D_Constants from './D_Constants.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
@@ -59,6 +60,10 @@
 
 		<Hideable title='selected part' id='selected-part' detail={T_Details.selected_part}>
 			<D_Selected_Part />
+		</Hideable>
+
+		<Hideable title='rotation' id='rotation' detail={T_Details.rotation}>
+			<D_Rotation />
 		</Hideable>
 
 		<Hideable title='attributes' id='so' detail={T_Details.attributes}>

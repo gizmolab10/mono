@@ -3,10 +3,11 @@ import type { ConstantEntry } from '../algebra/User_Constants';
 import type { Axis_Name, Bound } from '../types/Types';
 import { Identifiable } from '../runtime';
 
-export const CURRENT_VERSION = '7';
+export const CURRENT_VERSION = '8';
 
 export interface Portable_SO {
 	rotation_lock?: number;            // rotation axis: 0=x, 1=y, 2=z (default 0)
+	rotation_pair?: Axis_Name[];       // sliding-window pair: [older, newer] axis names
 	visible?: boolean;
 	repeater?: Repeater;
 	parent_id?: string;
@@ -94,6 +95,21 @@ class Versions {
 		}
 
 		// v6 → v7: repeater support — no data transformation needed
+
+		// v7 → v8: infer rotation_pair from non-zero axis angles
+		if (v < 8) {
+			const axis_names: Axis_Name[] = ['x', 'y', 'z'];
+			for (const so of sos) {
+				const typed = so as unknown as Portable_SO;
+				const nonzero: Axis_Name[] = [];
+				for (const name of axis_names) {
+					const attr = typed[name].attributes.angle;
+					const val = typeof attr === 'number' ? attr : (attr?.value ?? 0);
+					if (Math.abs(val) > 1e-10) nonzero.push(name);
+				}
+				if (nonzero.length > 0) typed.rotation_pair = nonzero.slice(0, 2);
+			}
+		}
 
 		return data as unknown as Portable_Scene;
 	}

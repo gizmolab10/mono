@@ -7,7 +7,6 @@
 	import { w_unit_system } from '../../ts/types/Units';
 	import { units } from '../../ts/types/Units';
 	import { engine } from '../../ts/render';
-	import type { Axis_Name } from '../../ts/types/Types';
 
 	const { w_all_sos, w_selection, w_tick, w_precision } = stores;
 
@@ -120,41 +119,6 @@
 		scenes.save();
 	}
 
-	// Rotation state
-	let rot_axis: Axis_Name = $state('z');
-
-	const STICKY_ANGLES = [22.5, 30, 45, 60, 75.5];
-	const STICKY_THRESHOLD = 2;
-
-	function read_total(_tick: number): number {
-		if (!selected_so) return 0;
-		return selected_so.axis_by_name(rot_axis).angle.value * 180 / Math.PI;
-	}
-	let total_deg = $derived(read_total($w_tick));
-	let angle_deg = $derived(((total_deg % 90) + 90) % 90);
-	function base_deg(): number { return Math.floor(total_deg / 90) * 90; }
-
-	function rotate_90(sign: 1 | -1) {
-		if (!selected_so) return;
-		const axis = selected_so.axis_by_name(rot_axis);
-		const current = Math.round(axis.angle.value * 180 / Math.PI);
-		const next = current + sign * 90;
-		axis.angle.value = next * Math.PI / 180;
-		stores.tick();
-		scenes.save();
-	}
-
-	function set_angle(deg: number) {
-		if (!selected_so) return;
-		for (const sticky of STICKY_ANGLES) {
-			if (Math.abs(deg - sticky) < STICKY_THRESHOLD) { deg = sticky; break; }
-		}
-		const axis = selected_so.axis_by_name(rot_axis);
-		axis.angle.value = (base_deg() + deg) * Math.PI / 180;
-		stores.tick();
-		scenes.save();
-	}
-
 	// Name editing
 	const { w_s_face_label } = face_label;
 
@@ -224,48 +188,6 @@
 	<button class='action-btn' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>{is_repeater ? 'unrepeat' : 'repeat'}</button>
 	<button class='action-btn action-far-right' use:hit_target={{ id: 'toggle-visible', onpress: toggle_visible }}>↔ {visible_label}</button>
 </div>
-
-{#if !is_root}
-<div class='rotation-section'>
-	<div class='rotation-row'>
-		<span class='option-label'>axis</span>
-		<div class='segmented'>
-			<button class:active={rot_axis === 'x'} onclick={() => rot_axis = 'x'}>x</button>
-			<button class:active={rot_axis === 'y'} onclick={() => rot_axis = 'y'}>y</button>
-			<button class:active={rot_axis === 'z'} onclick={() => rot_axis = 'z'}>z</button>
-		</div>
-		<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
-		<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
-	</div>
-	<div class='rotation-row'>
-		<span class='option-label'>angle</span>
-		<input
-			type='range'
-			class='rotation-slider'
-			min='0'
-			max='90'
-			step='0.5'
-			value={angle_deg}
-			oninput={(e) => set_angle(Number((e.target as HTMLInputElement).value))}
-		/>
-		<input
-			type='number'
-			class='angle-input'
-			value={total_deg.toFixed(1)}
-			onkeydown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
-			onblur={(e) => {
-				const v = Number((e.target as HTMLInputElement).value);
-				if (!isNaN(v)) {
-					const axis = selected_so!.axis_by_name(rot_axis);
-					axis.angle.value = v * Math.PI / 180;
-								stores.tick();
-					scenes.save();
-				}
-			}}
-		/>
-	</div>
-</div>
-{/if}
 
 {#if is_repeater && selected_so}
 <div class='separator'></div>
@@ -414,38 +336,6 @@
 	.action-btn:global([data-hitting]) {
 		background : var(--accent);
 		color      : black;
-	}
-
-	.rotation-section {
-		margin-top     : 8px;
-		display        : flex;
-		flex-direction : column;
-		gap            : 4px;
-	}
-
-	.rotation-row {
-		display     : flex;
-		align-items : center;
-		gap         : 6px;
-	}
-
-	.rotation-slider {
-		flex       : 1;
-		min-width  : 0;
-		height     : 4px;
-		cursor     : pointer;
-		accent-color : var(--accent);
-	}
-
-	.angle-input {
-		font-size    : 11px;
-		width        : 48px;
-		text-align   : right;
-		border       : 1px solid var(--accent, #ccc);
-		border-radius: 3px;
-		padding      : 1px 4px;
-		background   : transparent;
-		color        : inherit;
 	}
 
 	.repeater-options {

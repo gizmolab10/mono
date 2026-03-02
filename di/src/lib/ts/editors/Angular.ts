@@ -64,7 +64,7 @@ class Angulars {
 		const axis = state.rotation_axis;
 
 		// Set the angle — bounds stay untouched (see projection.md)
-		so.set_rotation(axis, radians);
+		so.touch_axis(axis, radians);
 		constraints.propagate(so);
 
 		stores.tick();

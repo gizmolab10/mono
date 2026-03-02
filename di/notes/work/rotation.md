@@ -14,12 +14,12 @@ I want users to be able to **rotate** an SO to an arbitrary angle (0 - 90) and r
 	- [x] allow selecting any angle for rotation
 		- [x] make that the 2nd of the two
 	- [x] disallow third axis to "combine into the other two"?
-- [ ] rewrite the rotation model
-
-### Expanding the root
-
-`recompute_max_bounds` grows the child's AABB but the root doesn't expand to contain it. extract the post-propagation root expansion from `insert_child_from_text` into a reusable `expand_root_to_fit()`, call it after Angular commit and slider set_angle. low risk: only expands max bounds, root is invisible, preserves origin. medium risk: if any SO has formulas referencing root dimensions (`.l`, `.w`), expanding root changes those values.
-
+- [x] rewrite the rotation model
+- [x] move the angles table to d selected part
+	- [x] remove the separator column (it has the cross indicator)
+- [x] create a new details banner hideable: "rotation"
+	- [x] move all the angle UX from d selected part into it
+	- [x] remove the angle input field (redundant wrt angles table)
 ## Swap
 
 i want to be able to rotate an SO. use case: to create a room, i need to
@@ -106,40 +106,6 @@ angle_A = 2 · atan2(twist_A[A], twist_A.w)
 ```
 
 For axis-aligned cases, it's just extracting the right quaternion component. No trig tables, no iterative solvers.
-
-### Files that change
-
-**Smart_Object.ts** — the core
-- Add: `rotation_pair: [Axis_Name, Axis_Name] | [Axis_Name] | null`
-- Add: `touch_axis(axis, radians)` — manages pair transitions + eviction
-- Add: `nudge_axis(axis, delta)` — additive variant for drag
-- Rewrite: `get orientation()` — compose from pair only (skip non-pair axes)
-- Remove: `set_rotation()`, `apply_rotation()` — replaced by touch/nudge
-- Serialize: add `rotation_pair` to output
-
-**Orientation.ts** — new math
-- Add: `swing_twist(q, axis)` → `{ twist_angle, swing }` — the decomposition
-- Currently gutted (just a comment) — becomes the home for this
-
-**Angular.ts** — trivial
-- `commit()`: `so.touch_axis(axis, radians)` replaces `so.set_rotation(axis, radians)`
-
-**Drag.ts** — trivial
-- `rotate_object()`: `so.nudge_axis(axis, delta)` replaces `so.apply_rotation(axis, delta)` + snap logic stays
-
-**Serialization (Interfaces.ts, Smart_Object.ts)** — small addition
-- Add `rotation_pair?: [Axis_Name, Axis_Name] | [Axis_Name]` to Portable_SO
-- Migration: if absent on load, infer pair from which axes have non-zero angles. Two non-zero? Alphabetical order (ambiguous but best-effort). One non-zero? Single-entry pair. All zero? null.
-
-**R_Angulars.ts** — no change needed
-- Already iterates all 3 axes, skips near-zero. Evicted axis has angle = 0, so it's naturally excluded.
-
-### What stays the same
-
-- `get orientation()` still returns a `quat` — renderer doesn't know or care
-- `get_world_matrix()` unchanged
-- Axis class structure unchanged (angle attribute stays on all 3 axes)
-- Camera view extent, fit button, projection boundary — all unchanged
 
 ### Fidelity
 

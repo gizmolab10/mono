@@ -1038,6 +1038,7 @@ class Engine {
 				c.axes[ai].length.value = t.axes[ai].length.value;
 				c.axes[ai].angle.value  = t.axes[ai].angle.value;
 			}
+			c.rotation_pair = t.rotation_pair ? [...t.rotation_pair] as typeof t.rotation_pair : null;
 			const offset = (has_bookend && i === needed_studs - 1) ? bookend_offset : step * (i + 1);
 			c.axes[repeat_ai].start.value += offset;
 			c.axes[repeat_ai].end.value   += offset;
@@ -1096,6 +1097,7 @@ class Engine {
 			clone.axes[ai].length.value = t.axes[ai].length.value;
 			clone.axes[ai].angle.value  = t.axes[ai].angle.value;
 		}
+		clone.rotation_pair = t.rotation_pair ? [...t.rotation_pair] as typeof t.rotation_pair : null;
 
 		// Repeat axis: shortened to fit between studs, positioned after the stud at this bay
 		const block_length = bay_length;
@@ -1128,6 +1130,7 @@ class Engine {
 			ca.angle.value  = ta.angle.value;
 			ca.invariant    = ta.invariant;
 		}
+		clone.rotation_pair = t.rotation_pair ? [...t.rotation_pair] as typeof t.rotation_pair : null;
 		return clone;
 	}
 }
