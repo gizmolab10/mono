@@ -599,6 +599,7 @@ class Engine {
 		if (new_sos.length) {
 			// Cascade and trigger sync_repeater via post_propagate_hook
 			constraints.propagate_all();
+			this.fit_root();
 			stores.w_all_sos.set(scene.get_all().map(o => o.so));
 			stores.tick();
 			scenes.save();
@@ -678,6 +679,7 @@ class Engine {
 
 		// Keep parent selected after adding child
 		stores.w_all_sos.update(list => [...list, child]);
+		this.fit_root();
 		stores.tick();
 		scenes.save();
 	}

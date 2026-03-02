@@ -111,7 +111,7 @@ class Render {
 		const is_2d = stores.current_view_mode() === '2d';
 		const solid = stores.is_solid();
 
-		if (is_2d && stores.show_grid()) render_grid(this);
+		if (is_2d && stores.grid_opacity() > 0) render_grid(this);
 
 		// Phase 1: project ALL vertices (including hidden) for hit-test caches
 		const projected_map = new Map<string, Projected[]>();
@@ -122,7 +122,7 @@ class Render {
 			hits_3d.update_projected(obj.id, projected, world_matrix);
 		}
 
-		if (!is_2d && stores.show_grid()) render_back_grid(this);
+		if (!is_2d && stores.grid_opacity() > 0) render_back_grid(this);
 		if (!is_2d) render_root_bottom(this);
 
 		// Phase 2: fill front-facing faces (occlusion layer)
@@ -290,9 +290,10 @@ class Render {
 			if (obj.so.visible) continue;
 			const projected = projected_map.get(obj.id)!;
 			this.ctx.save();
-			this.ctx.setLineDash([4, 4]);
-			this.ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
-			this.ctx.lineWidth = 1;
+			this.ctx.setLineDash([1, 1]);
+			this.ctx.strokeStyle = 'rgba(128, 128, 128, 1)';
+			this.ctx.globalAlpha = stores.grid_opacity();
+			this.ctx.lineWidth = 0.5;
 			for (const [i, j] of obj.edges) {
 				const a = projected[i], b = projected[j];
 				if (a.w < 0 || b.w < 0) continue;

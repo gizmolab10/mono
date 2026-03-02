@@ -7,5 +7,6 @@
 - [Launch](./launch.md)
 - [Managers](./managers.md)
 - [Migration](./migration.md)
+- [Rotation](./rotation.md)
 - [Versions](./versions.md)
 
