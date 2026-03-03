@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { scenes, stores } from '../../ts/managers';
+	import { engine } from '../../ts/render';
 	import type { Axis_Name } from '../../ts/types/Types';
 
 	const { w_selection, w_tick } = stores;
@@ -68,6 +69,17 @@
 		scenes.save();
 	}
 
+	const SWAP_INDICES: Record<Axis_Name, [number, number]> = { z: [0, 1], x: [1, 2], y: [0, 2] };
+	const SWAP_LABELS:  Record<Axis_Name, string>          = { z: 'x↔y', x: 'y↔z', y: 'x↔z' };
+
+	function swap() {
+		if (!selected_so) return;
+		const [a, b] = SWAP_INDICES[rot_axis];
+		engine.swap_axes(selected_so, a, b);
+		stores.tick();
+		scenes.save();
+	}
+
 	function set_angle(deg: number) {
 		if (!selected_so) return;
 		for (const sticky of STICKY_ANGLES) {
@@ -90,6 +102,7 @@
 		</div>
 		<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
 		<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
+		<button class='action-btn' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
 	</div>
 	<div class='rotation-row'>
 		<span class='option-label'>angle</span>

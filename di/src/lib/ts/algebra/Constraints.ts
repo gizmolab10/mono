@@ -548,15 +548,19 @@ class Constraints {
 	}
 
 	/** Swap axis aliases in a live Attribute's stored tokens and recompile.
-	 *  Always recompiles — even if no tokens changed, the axis moved so
-	 *  the compiled AST has stale bound refs that need fresh placeholders. */
+	 *  Rewrites both attribute names (x_min↔y_min) and axis-qualified object
+	 *  refs (.x↔.y, x↔y) so formulas track the correct axis after swap.
+	 *  Always recompiles — the compiled AST has stale bound refs. */
 	swap_attr_aliases(attr: Attribute, a: number, b: number): void {
 		if (!attr.formula) return;
 		const swap_map = this.build_alias_swap_map(a, b);
+		const obj_swap = this.build_object_swap_map(a, b);
 		for (const token of attr.formula) {
 			if (token.type === 'reference') {
-				const swapped = swap_map[token.attribute];
-				if (swapped) token.attribute = swapped;
+				const swapped_attr = swap_map[token.attribute];
+				if (swapped_attr) token.attribute = swapped_attr;
+				const swapped_obj = obj_swap[token.object];
+				if (swapped_obj) token.object = swapped_obj;
 			}
 		}
 		const formula_str = tokenizer.untokenize(attr.formula);
@@ -578,6 +582,13 @@ class Constraints {
 			map[b_names[i]] = a_names[i];
 		}
 		return map;
+	}
+
+	private build_object_swap_map(a: number, b: number): Record<string, string> {
+		const names: Record<number, string> = { 0: 'x', 1: 'y', 2: 'z' };
+		const na = names[a], nb = names[b];
+		if (!na || !nb) return {};
+		return { [na]: nb, [nb]: na, [`.${na}`]: `.${nb}`, [`.${nb}`]: `.${na}` };
 	}
 
 	/** Rename a standard dimension across all formulas in the scene.

@@ -847,13 +847,19 @@ class Engine {
 			}
 		}
 
+		// Pre-cache absolute positions for ALL targets before any swaps
+		// (get_bound walks the parent chain — if parent already swapped, values are wrong)
+		const cached = targets.map(target => ({
+			abs_a: [target.get_bound(target.axes[a].start.name as Bound),
+			        target.get_bound(target.axes[a].end.name as Bound)],
+			abs_b: [target.get_bound(target.axes[b].start.name as Bound),
+			        target.get_bound(target.axes[b].end.name as Bound)],
+		}));
+
 		// Phase 1: swap axes on every target
-		for (const target of targets) {
-			// Cache absolute positions before anything moves
-			const abs_a = [target.get_bound(target.axes[a].start.name as Bound),
-			               target.get_bound(target.axes[a].end.name as Bound)];
-			const abs_b = [target.get_bound(target.axes[b].start.name as Bound),
-			               target.get_bound(target.axes[b].end.name as Bound)];
+		for (let idx = 0; idx < targets.length; idx++) {
+			const target = targets[idx];
+			const { abs_a, abs_b } = cached[idx];
 
 			// 1. Swap axis objects — values, invariants, formulas travel with them
 			[target.axes[a], target.axes[b]] = [target.axes[b], target.axes[a]];
@@ -863,8 +869,9 @@ class Engine {
 			target.axes[b].relabel(AXIS_NAMES[b]);
 
 			// 3. Swap formula aliases — rewrite axis-specific refs in tokens, recompile
-			for (const i of [a, b]) {
-				for (const attr of target.axes[i].attributes) {
+			//    All axes, not just the two being swapped (the 3rd may reference swapped names)
+			for (const axis of target.axes) {
+				for (const attr of axis.attributes) {
 					constraints.swap_attr_aliases(attr, a, b);
 				}
 			}

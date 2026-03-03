@@ -1,117 +1,78 @@
 # Rotation
 
-I want users to be able to **rotate** an SO to an arbitrary angle (0 - 90) and rotate some more. quats let di do this without gl. The UI needs:
+Rotate an SO to an arbitrary angle around any axis. Quats let di do this without gl.
 
-- [x] a slider from 0 - 90 with detents at 22.5, 30, 45, 60, 67.5
-- [x] +/- 90 buttons **rotate** (not swap)
-- [x] convert the label -> input box for entering an angle (return or blur-input -> applies it)
+## Not in scope (yet)
+
+- Formula-driven angles — angle attributes support formulas, but punt for now
+
+## Todo
+
+- [x] remove `closest_pair_angles` from Orientation.ts
+
+## Done
+
+- [x] slider (-45..+45, step 0.5) with detents at 0, ±22.5, ±30
+- [x] +/- 90 buttons
+- [x] per-axis angle input (type a value, blur or enter to apply)
+- [x] axis selector: segmented x/y/z, default z
 - [x] root expansion to account for rotations that protrude
-- [x] remove rotation controls when root SO is selected
-- [x] axis default -> z
-- [x] i want to solve the 2D use case first. image with a root protrusion
-- [x] research: how resolve a quat to into the 2 axes, with specified order of rotation
-	- [x] not-disabled axes (in the angles table)
-	- [x] allow selecting any angle for rotation
-		- [x] make that the 2nd of the two
-	- [x] disallow third axis to "combine into the other two"?
-- [x] rewrite the rotation model
-- [x] move the angles table to d selected part
-	- [x] remove the separator column (it has the cross indicator)
-- [x] create a new details banner hideable: "rotation"
-	- [x] move all the angle UX from d selected part into it
-	- [x] remove the angle input field (redundant wrt angles table)
-## Swap
+- [x] hide rotation controls when root SO is selected
+- [x] angles table in D_Selected_Part
+- [x] dedicated "rotation" details banner (D_Rotation.svelte)
 
-i want to be able to rotate an SO. use case: to create a room, i need to
+## Rotation model
 
+Fixed XYZ composition. Three independent angle slots, always composed in order:
+
+```
+q = R(z, γ) · R(y, β) · R(x, α)
+```
+
+Each axis stores its angle as an attribute. `touch_axis` sets the angle directly. No pair tracking, no eviction, no decomposition.
+
+### Slider
+
+Range -45..+45 centered on the nearest 90-degree multiple. The base is derived, not stored:
+
+```
+base = nearest_base(total_degrees)    // nearest 90° multiple, ties toward zero
+offset = total - base                 // what the slider shows
+```
+
+Dragging the slider sets `base + offset`. The ±90 buttons add/subtract 90 to the total. Typing in the angle table sets the total directly.
+
+---
+# Swap
+
+Swap = exchange actual axis data (bounds, formulas, invariants, aliases). A 120x4x96 wall swapped x<->y becomes 4x120x96. Structural, not visual.
+
+## Use case
+
+To create a room:
 - insert one stretch (front wall)
-- dup the stretch
-- rotate the dup (right wall) by 90°
-- again for left wall and back wall
-- again for floor
-- again for ceiling
+- dup, swap to make right wall
+- again for left, back, floor, ceiling
 
-Thus:
+## Todo
 
-- [x] compare rotate and swap, should we support both?
-- [ ] add to **selected part**: ability to rotate around an axis (x,y,z)
-  - [x] applies to selected SO
-  - [ ] segmented control for axes (x,y,z)
-    - [ ] two buttons to rotate by 90° (+,-)
-    - [ ] axis is determined by the tumble orientation of the SO
-    - [ ] eg, if front face is front-most-facing, show y as the rotation axis
-  - [ ] slider to rotate by degrees (0 - 90)
-    - [ ] sticky at 22.5, 30, 45, 60, 75.5
+- [ ] add a swap button after the +90 button (swaps the two unselected axes)
+- [ ] fix swap_axes for general cases (deep children, formulas referencing parent axes — currently corrupts)
+## Done
 
-### rotate vs swap (settled)
+- [x] compare rotate vs swap — both needed (see below)
 
-**swap** = exchange actual axis data (bounds, formulas, invariants, aliases). a 120×4×96 wall swapped x↔y becomes 4×120×96. already exists in `swap_axes` (Engine.ts), built for repeaters.
+## Rotate vs swap (settled)
 
-**rotate** = set angle attributes, compose into quaternion for rendering. bounds stay the same — visual-only.
+**swap** = exchange actual axis data. Algebra stays consistent. Children inherit correct bounds, formulas resolve.
 
-|    | swap | rotate |
-|----|----|----|
-| what changes | actual bound data, formulas, invariants | visual orientation only |
-| algebra system | stays consistent | disconnected — "x" axis points in y visually |
-| children | formulas rewritten (alias swap) | children don't know parent rotated |
-| constraint propagation | works naturally | needs transform layer between visual and logical coords |
+**rotate** = set angle attributes, compose into quat for rendering. Bounds unchanged — visual only.
 
-**verdict:** swap is the right primitive for ±90° structural reorientation (the room use case). children inherit correct bounds, formulas resolve correctly, dimension labels make sense. rotate (angle-based) is useful for arbitrary angles later but swap comes first.
+|            | swap                            | rotate                          |
+| ---------- | ------------------------------- | ------------------------------- |
+| changes    | bound data, formulas, invariants | visual orientation only         |
+| algebra    | stays consistent                | "x" axis points in y visually  |
+| children   | formulas rewritten (alias swap) | children unaware of rotation    |
+| propagation | works naturally                | needs transform layer           |
 
-**catch:** swap xy currently corrupts. `swap_axes` was built for repeaters, may not handle general cases (deep children, formulas referencing parent axes). next step: dig into why it corrupts and fix.
-
-## Sliding-window pair — rotation model rewrite
-
-### The problem
-
-Three independent angle slots work for single-axis rotation. But when a user rotates around x, then y, then goes back to tweak x, there's no record of *which two* they care about. The code stores 3 numbers and composes them in fixed order (x→y→z). That order is arbitrary — it doesn't reflect intent.
-
-All 3 nonzero at once? Editing one feels like it fights the other two. The user thinks "i rotated x, then y" — two steps, in order. Three independent slots can't capture that.
-
-### The model
-
-Track a **sliding-window pair**: the 2 most recently touched axes. The pair is the source of truth; the quat is derived from it: `q = R(B, β) · R(A, α)` (A = older, B = newer).
-
-| Before | User touches | After | Action |
-|---|---|---|---|
-| `null` | A at α | `[A]` | set A.angle = α |
-| `[A]` | A at α' | `[A]` | update A.angle = α' |
-| `[A]` | B at β | `[A, B]` | add B, set B.angle = β |
-| `[A, B]` | A at α' | `[A, B]` | update A.angle = α' |
-| `[A, B]` | B at β' | `[A, B]` | update B.angle = β' |
-| `[A, B]` | C at γ | `[B, C]` | **evict A** — decompose, then set C |
-
-### Eviction
-
-When a 3rd axis C arrives and the pair is `[A, B]`:
-
-1. Compute current quat: `q = R(B, β) · R(A, α)`
-2. Find `(β', γ)` that minimize angular distance between `q` and `R(C, γ) · R(B, β')`
-3. Set `B.angle = β'`, `C.angle = γ_residual`
-4. Pair becomes `[B, C]`
-
-For **drag** (nudge): C.angle = `γ_residual + delta` (preserves implicit C-rotation from old quat).
-For **editor** (set absolute): C.angle = `user_value` (replaces residual — user typed a specific number, they mean it).
-
-### Alternating projection (closest 2-axis approximation)
-
-Sequential swing-twist loses too much — extracting axes independently ignores cross-terms that a composed quaternion carries. A 30° x-rotation composed with a 45° y-rotation has "implicit" z-content that pure twist extraction misses entirely.
-
-Instead: **alternating projection** finds the (β', γ) pair that minimizes `angle(q, R(C,γ)·R(B,β'))`:
-
-```
-i_angle = twist_extract(q, B)    // initial guess
-for 5 iterations:
-    stripped = q · R(B, -i_angle)       // remove inner, find optimal outer
-    o_angle = 2 · atan2(stripped[C], stripped.w)
-    stripped = R(C, -o_angle) · q       // remove outer, find optimal inner
-    i_angle = 2 · atan2(stripped[B], stripped.w)
-```
-
-Each iteration is one quat multiply + one atan2. Converges rapidly — the cross-terms that sequential swing-twist discards are captured by the iterative refinement.
-
-### Not in scope
-
-- **Swap** — independent mechanism, orthogonal to this
-- **Formula-driven angles** — angle attributes on Axis still support formulas, but pair logic only applies to user-driven angles. Punt for now.
-- **Rotation lock** — `rotation_lock` field exists but is unused. Leave it.
+**verdict:** swap is right for ±90 structural reorientation. Rotate is right for arbitrary visual angles. Both needed.

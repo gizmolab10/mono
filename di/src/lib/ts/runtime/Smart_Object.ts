@@ -8,7 +8,6 @@ import Axis from './Axis';
 export default class Smart_Object extends Identifiable {
 	axes: Axis[] = [new Axis('x'), new Axis('y'), new Axis('z')];
 	repeater: Repeater | null = null;
-	rotation_lock: number = 0;
 	visible: boolean = true;
 	scene: O_Scene | null;
 	name: string;
@@ -353,14 +352,13 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	/** Serialize to Portable_SO shape (per-axis bundles) */
-	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean; repeater?: Repeater } {
-		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock: number; visible?: boolean; repeater?: Repeater } = {
+	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; repeater?: Repeater } {
+		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; repeater?: Repeater } = {
 			id: this.id,
 			name: this.name,
 			x: this.axes[0].serialize(),
 			y: this.axes[1].serialize(),
 			z: this.axes[2].serialize(),
-			rotation_lock: this.rotation_lock,
 		};
 		out.visible = this.visible;
 		if (this.repeater) out.repeater = this.repeater;
@@ -368,14 +366,13 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	/** Deserialize from Portable_SO shape (per-axis bundles) */
-	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; rotation_lock?: number; visible?: boolean; repeater?: Repeater }): Smart_Object {
+	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; repeater?: Repeater }): Smart_Object {
 		const so = new Smart_Object(data.name);
 		so.setID(data.id);
 		const axis_data = [data.x, data.y, data.z];
 		for (let i = 0; i < 3; i++) {
 			so.axes[i].deserialize(axis_data[i]);
 		}
-		so.rotation_lock = data.rotation_lock ?? 0;
 		so.visible = data.visible ?? true;
 		so.repeater = data.repeater ?? null;
 		return so;
