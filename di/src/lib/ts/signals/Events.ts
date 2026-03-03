@@ -113,6 +113,16 @@ export class Events {
 			event.preventDefault();
 			this.navigate_parts(event.key === 'ArrowUp' ? -1 : 1);
 		}
+		if (event.key === 'ArrowLeft') {
+			if ((get(stores.w_t_details) & T_Details.parts) === 0) return;
+			event.preventDefault();
+			this.collapse_selected();
+		}
+		if (event.key === 'ArrowRight') {
+			if ((get(stores.w_t_details) & T_Details.parts) === 0) return;
+			event.preventDefault();
+			this.expand_selected();
+		}
 		if (event.key === 'Tab') {
 			if ((get(stores.w_t_details) & T_Details.parts) === 0) return;
 			event.preventDefault();
@@ -158,21 +168,64 @@ export class Events {
 		}
 	}
 
-	private navigate_parts(direction: number): void {
-		const all_sos = get(stores.w_all_sos);
-		const visible = all_sos.filter(so => {
+	private visible_parts(): Smart_Object[] {
+		const all_sos = stores.tree_order(get(stores.w_all_sos));
+		return all_sos.filter(so => {
+			if (stores.is_ancestor_collapsed(so)) return false;
 			const parent = so.scene?.parent?.so;
 			if (!parent?.repeater) return true;
 			const siblings = all_sos.filter(s => s.scene?.parent?.so === parent);
 			return siblings[0] === so;
 		});
+	}
+
+	private navigate_parts(direction: number): void {
+		const visible = this.visible_parts();
 		if (visible.length === 0) return;
 		const selected = stores.selection()?.so;
 		const current_index = selected ? visible.indexOf(selected) : -1;
 		let next_index = current_index + direction;
 		if (next_index < 0) next_index = visible.length - 1;
 		if (next_index >= visible.length) next_index = 0;
-		stores.set_selection({ so: visible[next_index], type: T_Hit_3D.face, index: 0 });
+		const next_so = visible[next_index];
+		stores.reveal_so(next_so);
+		stores.set_selection({ so: next_so, type: T_Hit_3D.face, index: 0 });
+	}
+
+	private collapse_selected(): void {
+		const so = stores.selection()?.so;
+		if (!so) return;
+		const ids = get(stores.w_collapsed_ids);
+		const visible = this.visible_parts();
+		const has_kids = visible.some(s => s.scene?.parent?.so === so);
+		if (has_kids && !ids.has(so.id)) {
+			ids.add(so.id);
+			stores.w_collapsed_ids.set(new Set(ids));
+		} else {
+			const parent = so.scene?.parent?.so;
+			if (parent) {
+				ids.add(parent.id);
+				stores.w_collapsed_ids.set(new Set(ids));
+				stores.set_selection({ so: parent, type: T_Hit_3D.face, index: 0 });
+			}
+		}
+	}
+
+	private expand_selected(): void {
+		const so = stores.selection()?.so;
+		if (!so) return;
+		const ids = get(stores.w_collapsed_ids);
+		if (ids.has(so.id)) {
+			ids.delete(so.id);
+			stores.w_collapsed_ids.set(new Set(ids));
+		} else {
+			const visible = this.visible_parts();
+			const first_child = visible.find(s => s.scene?.parent?.so === so);
+			if (first_child) {
+				stores.reveal_so(first_child);
+				stores.set_selection({ so: first_child, type: T_Hit_3D.face, index: 0 });
+			}
+		}
 	}
 
 }

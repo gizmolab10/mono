@@ -1,28 +1,54 @@
 <script lang='ts'>
+import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import { hits_3d, stores, scenes } from '../../ts/managers';
-	import { T_Hit_3D } from '../../ts/types/Enumerations';
-	import { w_unit_system } from '../../ts/types/Units';
-	import { units } from '../../ts/types/Units';
 	import { constants } from '../../ts/algebra/User_Constants';
-	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { hits_3d, stores, scenes } from '../../ts/managers';
 	import { hit_target } from '../../ts/events/Hit_Target';
+	import { T_Hit_3D } from '../../ts/types/Enumerations';
 	import D_Selected_Part from './D_Selected_Part.svelte';
+	import { w_unit_system } from '../../ts/types/Units';
 	import D_Attributes from './D_Attributes.svelte';
+	import D_Constants from './D_Constants.svelte';
+	import { units } from '../../ts/types/Units';
 	import D_Rotation from './D_Rotation.svelte';
 	import D_Repeater from './D_Repeater.svelte';
-	import D_Constants from './D_Constants.svelte';
 
-	const { w_all_sos, w_selection, w_tick, w_precision, w_parts_tab } = stores;
+	const { w_all_sos, w_selection, w_tick, w_precision, w_parts_tab, w_collapsed_ids } = stores;
 
+	let show_constants = $state(preferences.read<boolean>(T_Preference.showConstants) ?? true);
 	let show_position = $state(preferences.read<boolean>(T_Preference.showPosition) ?? true);
 	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
-	let show_constants = $state(preferences.read<boolean>(T_Preference.showConstants) ?? true);
 
-	function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
 	function toggle_show_constants() { show_constants = !show_constants; preferences.write(T_Preference.showConstants, show_constants); }
+	function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
 	let editing_id: string | null = $state(null);
 	let editing_original: string = '';
+
+	function toggle_collapse(e: MouseEvent, so: Smart_Object) {
+		e.stopPropagation();
+		const ids = $w_collapsed_ids;
+		if (ids.has(so.id)) { ids.delete(so.id); }
+		else {
+			ids.add(so.id);
+			const sel = $w_selection?.so;
+			if (sel && is_ancestor_collapsed(sel, ids)) select(so);
+		}
+		w_collapsed_ids.set(new Set(ids));
+	}
+
+	function is_ancestor_collapsed(so: Smart_Object, ids: Set<string>): boolean {
+		let scene = so.scene?.parent;
+		while (scene) {
+			if (ids.has(scene.so.id)) return true;
+			scene = scene.parent;
+		}
+		return false;
+	}
+
+	$effect(() => {
+		const so = $w_selection?.so;
+		if (so && is_ancestor_collapsed(so, $w_collapsed_ids)) stores.reveal_so(so);
+	});
 
 	function select(so: Smart_Object): void {
 		hits_3d.set_selection({ so, type: T_Hit_3D.face, index: 0 });
@@ -130,22 +156,25 @@
 
 <table class='hierarchy'>
 	<thead><tr>
-		<th class='toggle-header' onclick={toggle_show_parts}>
+		<th class='toggle-header gap-r' onclick={toggle_show_parts}>
 			{show_parts ? 'hide parts' : 'show parts'}
 		</th>
-		{#if show_parts}<th class='hierarchy-eye static'>👁</th><th class='toggle-header' colspan='3' onclick={() => { show_position = !show_position; preferences.write(T_Preference.showPosition, show_position); }}>
-			↔ {show_position ? 'position' : 'size'}
-		</th>{/if}
+		{#if show_parts}
+			<th class='hierarchy-eye static'>👁</th>
+			<th class='toggle-header gap-l' colspan='3' onclick={() => { show_position = !show_position; preferences.write(T_Preference.showPosition, show_position); }}>
+				↔ {show_position ? 'position' : 'size'}
+			</th>
+		{/if}
 	</tr></thead>
 	{#if show_parts}<tbody><tr style:height='4px'></tr>
-	{#each $w_all_sos.filter(s => !is_clone(s, $w_all_sos, $w_tick)) as so (so.id)}
+	{#each stores.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !is_ancestor_collapsed(s, $w_collapsed_ids)) as so (so.id)}
 		{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
 		{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
 		<tr
 			class='hierarchy-row'
 			class:selected={is_selected(so, $w_tick)}
 			onclick={() => select(so)}>
-			<td class='hierarchy-name' style:padding-left='{depth(so) * 12}px'
+			<td class='hierarchy-name' style:padding-left='{depth(so) * 8}px'
 				onclick={(e) => handle_name_click(e, so)}>
 				{#if editing_id === so.id}
 					<!-- svelte-ignore element_invalid_self_closing_tag -->
@@ -158,7 +187,21 @@
 						use:autofocus
 					/>
 				{:else}
-					{so.name}{#if n_rpt > 0}<span class='repeat-badge'>×{n_rpt}</span>{/if}
+					{#if has_children(so, $w_all_sos)}
+						<span class='collapse-tri' onclick={(e) => toggle_collapse(e, so)}>
+							{$w_collapsed_ids.has(so.id) ? '▸' : '▾'}
+						</span>
+					{:else}
+						<span class='collapse-tri spacer'>
+							▸
+						</span>
+					{/if}
+					{so.name}
+					{#if n_rpt > 0}
+						<span class='repeat-badge'>
+							×{n_rpt}
+						</span>
+					{/if}
 				{/if}
 			</td>
 			<td class='hierarchy-eye' onclick={(e) => toggle_visible(e, so)}>
@@ -284,6 +327,25 @@
 		box-sizing  : border-box;
 	}
 
+	.collapse-tri {
+		cursor           : pointer;
+		margin-right     : 1px;
+		opacity          : 0.4;
+		font-size        : 18px;
+		line-height      : 0;
+		vertical-align   : middle;
+		position         : relative;
+		top              : -2px;
+	}
+
+	.collapse-tri:not(.spacer):hover {
+		opacity : 1;
+	}
+
+	.collapse-tri.spacer {
+		visibility : hidden;
+	}
+
 	.repeat-badge {
 		margin-left : 4px;
 		opacity     : 0.5;
@@ -315,11 +377,16 @@
 	.toggle-header {
 		cursor        : pointer;
 		text-align    : center;
-		font-size     : 12px;
-		height        : 14px;
-		border        : 0.25px solid currentColor;
+		font-size     : 11px;
+		font-weight   : normal;
+		height        : 12px;
+		border        : 0 solid transparent;
 		border-radius : 3px;
+		box-shadow    : inset 0 0 0 0.25px currentColor;
 	}
+
+	.toggle-header.gap-r { border-right-width : 3px; }
+	.toggle-header.gap-l { border-left-width  : 3px; }
 
 	.toggle-header:hover {
 		background : var(--accent);
@@ -357,8 +424,8 @@
 		flex          : 1;
 		cursor        : pointer;
 		text-align    : center;
-		font-size     : 12px;
-		font-weight   : 600;
+		font-size     : 11px;
+		font-weight   : normal;
 		height        : 16px;
 		border        : 0.25px solid currentColor;
 		border-radius : 3px;

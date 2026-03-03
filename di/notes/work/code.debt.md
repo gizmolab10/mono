@@ -3,9 +3,10 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] border only on bottom face of root
-- [ ] grid opacity -> canvas, vertical, top left
 - [ ] work on [[12.parts]]
+- [ ] border only on bottom face of root
+- [ ] remove translate all button from d library
+- [ ] grid opacity -> canvas, vertical, top left
 - [ ] work on separator div
 - [ ] put all "<->" on right side of buttons
 - [ ] work on [[14.details]]

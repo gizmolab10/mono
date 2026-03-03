@@ -14,6 +14,7 @@ class Stores {
 	w_all_sos			= writable<Smart_Object[]>([]);
 	w_front_face		= writable<number>(-1);
 	w_tick				= writable<number>(0);
+	w_collapsed_ids		= writable<Set<string>>(new Set());
 
 	// Persistent
 	w_decorations       = this.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.dimensions);
@@ -55,6 +56,53 @@ class Stores {
 	show_names():						 boolean { return (get(this.w_decorations) & T_Decorations.names) !== 0; }
 	show_angulars():      				 boolean { return (get(this.w_decorations) & T_Decorations.angles) !== 0; }
 	show_dimensionals():  				 boolean { return (get(this.w_decorations) & T_Decorations.dimensions) !== 0; }
+
+	tree_order(sos: Smart_Object[]): Smart_Object[] {
+		const result: Smart_Object[] = [];
+		const by_parent = new Map<Smart_Object | undefined, Smart_Object[]>();
+		for (const so of sos) {
+			const p = so.scene?.parent?.so;
+			let list = by_parent.get(p);
+			if (!list) { list = []; by_parent.set(p, list); }
+			list.push(so);
+		}
+		const walk = (parent: Smart_Object | undefined) => {
+			const children = by_parent.get(parent);
+			if (!children) return;
+			for (const so of children) {
+				result.push(so);
+				walk(so);
+			}
+		};
+		walk(undefined);
+		// include any orphans not reached by the tree walk
+		if (result.length < sos.length) {
+			const seen = new Set(result);
+			for (const so of sos) { if (!seen.has(so)) result.push(so); }
+		}
+		return result;
+	}
+
+	is_ancestor_collapsed(so: Smart_Object): boolean {
+		const ids = get(this.w_collapsed_ids);
+		let scene = so.scene?.parent;
+		while (scene) {
+			if (ids.has(scene.so.id)) return true;
+			scene = scene.parent;
+		}
+		return false;
+	}
+
+	reveal_so(so: Smart_Object): void {
+		const ids = get(this.w_collapsed_ids);
+		let changed = false;
+		let scene = so.scene?.parent;
+		while (scene) {
+			if (ids.has(scene.so.id)) { ids.delete(scene.so.id); changed = true; }
+			scene = scene.parent;
+		}
+		if (changed) this.w_collapsed_ids.set(new Set(ids));
+	}
 
 	private persistent<T>(key: T_Preference, fallback: T): Writable<T> {
 		const w = writable<T>(preferences.read<T>(key) ?? fallback);
