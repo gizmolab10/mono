@@ -91,10 +91,8 @@
 <table class='hierarchy'>
 	<thead><tr>
 		<th class='hierarchy-header'></th>
-		<th colspan='3'>
-			<button class='toggle-btn' onclick={() => show_position = !show_position}>
-				↔ {show_position ? 'position' : 'size'}
-			</button>
+		<th class='toggle-header' colspan='3' onclick={() => show_position = !show_position}>
+			↔ {show_position ? 'position' : 'size'}
 		</th>
 	</tr></thead>
 	<tbody>
@@ -159,7 +157,8 @@
 
 	.hierarchy {
 		width           : 100%;
-		border-collapse : collapse;
+		border-collapse : separate;
+		border-spacing  : 0;
 		font-size       : 9px;
 		margin-top      : -4px;
 	}
@@ -202,20 +201,15 @@
 		font-size   : 8px;
 	}
 
-	.toggle-btn {
-		border        : 0.5px solid currentColor;
-		box-sizing    : border-box;
+	.toggle-header {
 		cursor        : pointer;
-		color         : inherit;
-		background    : white;
-		padding       : 0 8px;
-		border-radius : 10px;
+		text-align    : center;
 		font-size     : 9px;
-		height        : 16px;
-		float         : right;
+		border        : 0.25px solid currentColor;
+		border-radius : 3px;
 	}
 
-	.toggle-btn:hover {
+	.toggle-header:hover {
 		background : var(--accent);
 	}
 
