@@ -77,13 +77,19 @@ export enum T_Mouse_Detection {
 }
 
 export enum T_Details {
-	preferences = 1,
-	attributes  = 2,
-	library     = 4,
-	constants   = 8,
+	preferences    = 1,
+	attributes     = 2,	// legacy -- absorbed into parts tab
+	library        = 4,
+	constants      = 8,
 	parts          = 16,
 	selected_part  = 32,
-	rotation       = 64,
+	rotation       = 64,	// legacy -- absorbed into parts tab
+}
+
+export enum T_Parts_Tab {
+	attributes = 'attributes',
+	rotation   = 'rotation',
+	repeater   = 'repeater',
 }
 
 export enum T_Editing {

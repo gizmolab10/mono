@@ -1,33 +1,22 @@
 <script lang='ts'>
-	import { constants } from '../../ts/algebra/User_Constants';
 	import { T_Details } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
-	import { stores, scenes } from '../../ts/managers';
+	import { scenes } from '../../ts/managers';
 	import { engine } from '../../ts/render';
 	import { onMount } from 'svelte';
 	import Hideable from './Hideable.svelte';
 	import D_Parts from './D_Parts.svelte';
 	import D_Library from './D_Library.svelte';
-	import D_Attributes from './D_Attributes.svelte';
-	import D_Rotation from './D_Rotation.svelte';
-	import D_Constants from './D_Constants.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	const { w_text_color, w_background_color, w_accent_color } = colors;
-	const { w_t_details } = stores;
 
 	onMount( async () => {
 		setTimeout( async () => {
 			await hits.defer_recalibrate();
 		}, 10);
 	});
-
-	function handle_add() {
-		w_t_details.update(v => v | T_Details.constants);
-		constants.add('', 0);
-		stores.tick();
-	}
 
 </script>
 
@@ -57,20 +46,6 @@
 			<D_Parts />
 		</Hideable>
 
-		<Hideable title='rotation' id='rotation' detail={T_Details.rotation}>
-			<D_Rotation />
-		</Hideable>
-
-		<Hideable title='attributes' id='so' detail={T_Details.attributes}>
-			<D_Attributes />
-		</Hideable>
-
-		<Hideable title='constants' id='constants' detail={T_Details.constants}>
-			{#snippet actions()}
-				<button class='banner-add' use:hit_target={{ id: 'add-constant', onpress: () => handle_add() }}>+</button>
-			{/snippet}
-			<D_Constants />
-		</Hideable>
 	</div>
 </div>
 

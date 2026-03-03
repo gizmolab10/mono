@@ -4,10 +4,17 @@
 	import { T_Hit_3D } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import { units } from '../../ts/types/Units';
+	import { constants } from '../../ts/algebra/User_Constants';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import D_Selected_Part from './D_Selected_Part.svelte';
+	import D_Attributes from './D_Attributes.svelte';
+	import D_Rotation from './D_Rotation.svelte';
+	import D_Repeater from './D_Repeater.svelte';
+	import D_Constants from './D_Constants.svelte';
 
-	const { w_all_sos, w_selection, w_tick, w_precision } = stores;
+	const { w_all_sos, w_selection, w_tick, w_precision, w_parts_tab } = stores;
 
+	let show_parts = $state(true);
 	let show_position = $state(true);
 	let editing_id: string | null = $state(null);
 	let editing_original: string = '';
@@ -86,16 +93,23 @@
 		while (scene?.parent) { d++; scene = scene.parent; }
 		return d;
 	}
+
+	function add_constant() {
+		constants.add('', 0);
+		stores.tick();
+	}
 </script>
 
 <table class='hierarchy'>
 	<thead><tr>
-		<th class='hierarchy-header'></th>
-		<th class='toggle-header' colspan='3' onclick={() => show_position = !show_position}>
-			↔ {show_position ? 'position' : 'size'}
+		<th class='toggle-header' onclick={() => show_parts = !show_parts}>
+			{show_parts ? 'hide' : 'show'}
 		</th>
+		{#if show_parts}<th class='toggle-header' colspan='3' onclick={() => show_position = !show_position}>
+			↔ {show_position ? 'position' : 'size'}
+		</th>{/if}
 	</tr></thead>
-	<tbody>
+	{#if show_parts}<tbody>
 	{#each $w_all_sos.filter(s => !is_clone(s, $w_all_sos, $w_tick)) as so (so.id)}
 		{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
 		{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
@@ -124,10 +138,25 @@
 			<td class='hierarchy-data'>{values[2]}</td>
 		</tr>
 	{/each}
-</tbody></table>
+</tbody>{/if}</table>
 
 <div class='separator'></div>
 <D_Selected_Part />
+
+<div class='tab-content'>
+	{#if $w_parts_tab === 'attributes'}
+		<D_Attributes />
+		<div class='constants-header'>
+			<span class='constants-label'>constants</span>
+			<button class='add-btn' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>+</button>
+		</div>
+		<D_Constants />
+	{:else if $w_parts_tab === 'rotation'}
+		<D_Rotation />
+	{:else}
+		<D_Repeater />
+	{/if}
+</div>
 
 <style>
 	.separator {
@@ -219,5 +248,44 @@
 		font-variant-numeric : tabular-nums;
 		color                : black;
 		white-space          : nowrap;
+	}
+
+	.tab-content {
+		padding-top : 4px;
+	}
+
+	.constants-header {
+		display     : flex;
+		align-items : center;
+		gap         : 6px;
+		margin-top  : 8px;
+		margin-bottom : 2px;
+	}
+
+	.constants-label {
+		font-size   : 11px;
+		opacity     : 0.5;
+		font-weight : 600;
+	}
+
+	.add-btn {
+		width           : 16px;
+		height          : 16px;
+		border-radius   : 50%;
+		border          : 0.5px solid currentColor;
+		background      : white;
+		color           : inherit;
+		font-size       : 12px;
+		font-weight     : 300;
+		line-height     : 1;
+		padding         : 0;
+		cursor          : pointer;
+		display         : flex;
+		align-items     : center;
+		justify-content : center;
+	}
+
+	.add-btn:hover {
+		background : var(--accent);
 	}
 </style>

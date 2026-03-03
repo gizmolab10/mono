@@ -30,6 +30,8 @@
 - di/src/lib/svelte/details/D_Library.svelte
 - di/src/lib/svelte/details/D_Parts.svelte
 - di/src/lib/svelte/details/D_Attributes.svelte
+- di/src/lib/svelte/details/D_Rotation.svelte
+- di/src/lib/svelte/details/D_Repeater.svelte
 - di/src/lib/svelte/details/D_Selected_Part.svelte
 - di/src/lib/svelte/details/D_Preferences.svelte
 

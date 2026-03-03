@@ -35,6 +35,9 @@ export enum T_Preference {
 	orientation      = 'orientation',
 	scale            = 'scale',
 
+	// Parts
+	partsTab         = 'partsTab',
+
 	// Scenes
 	scene = 'scene',
 

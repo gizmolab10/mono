@@ -3,7 +3,11 @@
 
 offer a proposal for the first unchecked item
 
+- [ ] border only on bottom face of root
+- [ ] grid opacity -> canvas, vertical, top left
 - [ ] work on [[12.parts]]
+- [ ] work on separator div
+- [ ] put all "<->" on right side of buttons
 - [ ] work on [[14.details]]
 - [ ] merge
 	- [ ] migration -> versions

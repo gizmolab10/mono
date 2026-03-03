@@ -1,4 +1,4 @@
-import { T_Editing, T_Decorations } from '../types/Enumerations';
+import { T_Editing, T_Decorations, T_Parts_Tab } from '../types/Enumerations';
 import { preferences, T_Preference } from './Preferences';
 import type { Hit_3D_Result } from './Hits_3D';
 import { writable, get } from 'svelte/store';
@@ -28,6 +28,7 @@ class Stores {
 	w_grid_opacity		= this.persistent<number>(T_Preference.gridOpacity, 0.5);
 	w_precision			= this.persistent<number>(T_Preference.precision, 2);
 	w_scale				= this.persistent<number>(T_Preference.scale, 2.5);
+	w_parts_tab			= this.persistent<T_Parts_Tab>(T_Preference.partsTab, T_Parts_Tab.attributes);
 
 	current_orientation():				    quat { const a = get(this.w_orientation); return quat.fromValues(a[0], a[1], a[2], a[3]); }
 	tick():									void { this.w_tick.update(n => n + 1); }	// triggers reactive updates
