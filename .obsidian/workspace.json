@@ -242,6 +242,8 @@
   },
   "active": "21473b589220a2b3",
   "lastOpenFiles": [
+    "di/src/assets/rotated.di",
+    "di/src/assets/empty.di",
     "di/notes/work/code.debt.md",
     "di/notes/work/milestones/done/12.parts.md",
     "di/src/lib/svelte/details/D_Repeater.svelte",
@@ -276,7 +278,6 @@
     "di/src/lib/svelte/details/D_Selected_Part.svelte",
     "di/src/lib/svelte/details/D_Selected_Parts.svelte",
     "di/src/lib/svelte/details/D_Parts.svelte",
-    "logs/update-docs.error.ga.log",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",

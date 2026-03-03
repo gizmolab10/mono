@@ -37,6 +37,9 @@ export enum T_Preference {
 
 	// Parts
 	partsTab         = 'partsTab',
+	showParts        = 'showParts',
+	showConstants    = 'showConstants',
+	showPosition     = 'showPosition',
 
 	// Scenes
 	scene = 'scene',

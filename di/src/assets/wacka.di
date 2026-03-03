@@ -32,7 +32,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": false
       },
       {
@@ -77,7 +76,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": false,
         "repeater": {
           "repeat_axis": 1,
@@ -122,7 +120,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -156,7 +153,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -190,7 +186,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -224,7 +219,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -258,7 +252,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -292,7 +285,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -326,7 +318,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -360,7 +351,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -394,7 +384,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -438,7 +427,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": false,
         "repeater": {
           "count_formula": "h/rise",
@@ -485,7 +473,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -519,7 +506,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -553,7 +539,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -587,7 +572,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -621,7 +605,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -655,7 +638,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -689,7 +671,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -723,7 +704,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -757,7 +737,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -791,7 +770,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -825,7 +803,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -859,7 +836,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -893,7 +869,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -927,7 +902,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -961,7 +935,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -995,7 +968,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di184d6393a54051"
       },
@@ -1029,7 +1001,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1063,7 +1034,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1097,7 +1067,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1131,7 +1100,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1165,7 +1133,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1199,7 +1166,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1233,7 +1199,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1267,7 +1232,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1301,7 +1265,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1335,7 +1298,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1369,7 +1331,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1403,7 +1364,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "dic446a6ac236257"
       },
@@ -1412,8 +1372,8 @@
         "name": "drawer",
         "x": {
           "attributes": {
-            "origin": 2309.6937866210938,
-            "extent": -1398.7062133789063,
+            "origin": 2214.3662433624268,
+            "extent": -1494.0337566375733,
             "length": 609.5999999999999,
             "angle": 0
           },
@@ -1421,9 +1381,9 @@
         },
         "y": {
           "attributes": {
-            "origin": 2060.755615234375,
-            "extent": -1469.844384765625,
-            "length": 609.5999999999999,
+            "origin": 3524.1970443725586,
+            "extent": -6.4029556274408606,
+            "length": 609.6000000000004,
             "angle": 0
           },
           "invariant": 1
@@ -1437,7 +1397,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": false,
         "parent_id": "didc4131a9e6d366"
       },
@@ -1483,7 +1442,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 1,
         "visible": true,
         "parent_id": "di3f44698ca78e56"
       },
@@ -1504,7 +1462,7 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": -590.5499999999997,
+            "extent": -590.5500000000002,
             "length": 19.050000000000182,
             "angle": 0
           },
@@ -1521,7 +1479,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 2,
         "visible": true,
         "parent_id": "di3f44698ca78e56"
       },
@@ -1567,7 +1524,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 1,
         "visible": true,
         "parent_id": "di3f44698ca78e56"
       },
@@ -1589,7 +1545,7 @@
         },
         "y": {
           "attributes": {
-            "origin": 596.9000000000001,
+            "origin": 596.9000000000005,
             "extent": {
               "formula": ".l"
             },
@@ -1613,7 +1569,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di3f44698ca78e56"
       },
@@ -1638,7 +1593,7 @@
             "origin": {
               "formula": "front_th - dado"
             },
-            "extent": -6.349999999999909,
+            "extent": -6.350000000000364,
             "length": {
               "formula": ".l - inset * 3"
             },
@@ -1659,7 +1614,6 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": true,
         "parent_id": "di3f44698ca78e56"
       }
@@ -1739,8 +1693,6 @@
         0
       ]
     },
-    "root_id": "didc4131a9e6d366",
-    "selected_id": "di3f44698ca78e56",
-    "selected_face": 4
+    "root_id": "didc4131a9e6d366"
   }
 }

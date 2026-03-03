@@ -5,6 +5,7 @@
 	import { w_unit_system } from '../../ts/types/Units';
 	import { units } from '../../ts/types/Units';
 	import { constants } from '../../ts/algebra/User_Constants';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import D_Selected_Part from './D_Selected_Part.svelte';
 	import D_Attributes from './D_Attributes.svelte';
@@ -14,8 +15,12 @@
 
 	const { w_all_sos, w_selection, w_tick, w_precision, w_parts_tab } = stores;
 
-	let show_parts = $state(true);
-	let show_position = $state(true);
+	let show_position = $state(preferences.read<boolean>(T_Preference.showPosition) ?? true);
+	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
+	let show_constants = $state(preferences.read<boolean>(T_Preference.showConstants) ?? true);
+
+	function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
+	function toggle_show_constants() { show_constants = !show_constants; preferences.write(T_Preference.showConstants, show_constants); }
 	let editing_id: string | null = $state(null);
 	let editing_original: string = '';
 
@@ -60,15 +65,27 @@
 		requestAnimationFrame(() => { node.focus(); node.select(); });
 	}
 
-	function fmt(mm: number): string {
-		return units.format_for_system(mm, $w_unit_system, $w_precision, false);
+	type Fmt_V = { whole: string; plus: boolean };
+
+	function fmt(mm: number): Fmt_V {
+		const full = units.format_for_system(mm, $w_unit_system, $w_precision, false);
+		if (full.includes('/')) {
+			const space = full.lastIndexOf(' ');
+			return space === -1
+				? { whole: '0', plus: true }
+				: { whole: full.slice(0, space), plus: true };
+		}
+		const dot = full.indexOf('.');
+		if (dot === -1) return { whole: full, plus: false };
+		if (/^0+$/.test(full.slice(dot + 1))) return { whole: full.slice(0, dot), plus: false };
+		return { whole: full.slice(0, dot), plus: true };
 	}
 
-	function position(so: Smart_Object, _tick: number): [string, string, string] {
+	function position(so: Smart_Object, _tick: number): [Fmt_V, Fmt_V, Fmt_V] {
 		return [fmt(so.x_min), fmt(so.y_min), fmt(so.z_min)];
 	}
 
-	function size(so: Smart_Object, _tick: number): [string, string, string] {
+	function size(so: Smart_Object, _tick: number): [Fmt_V, Fmt_V, Fmt_V] {
 		return [fmt(so.axes[0].length.value), fmt(so.axes[1].length.value), fmt(so.axes[2].length.value)];
 	}
 
@@ -87,6 +104,17 @@
 		return siblings[0] !== so;
 	}
 
+	function has_children(so: Smart_Object, sos: Smart_Object[]): boolean {
+		return sos.some(s => s.scene?.parent?.so === so);
+	}
+
+	function toggle_visible(e: MouseEvent, so: Smart_Object) {
+		e.stopPropagation();
+		so.visible = !so.visible;
+		stores.tick();
+		scenes.save();
+	}
+
 	function depth(so: Smart_Object): number {
 		let d = 0;
 		let scene = so.scene;
@@ -102,14 +130,14 @@
 
 <table class='hierarchy'>
 	<thead><tr>
-		<th class='toggle-header' onclick={() => show_parts = !show_parts}>
-			{show_parts ? 'hide' : 'show'}
+		<th class='toggle-header' onclick={toggle_show_parts}>
+			{show_parts ? 'hide parts' : 'show parts'}
 		</th>
-		{#if show_parts}<th class='toggle-header' colspan='3' onclick={() => show_position = !show_position}>
+		{#if show_parts}<th class='hierarchy-eye static'>👁</th><th class='toggle-header' colspan='3' onclick={() => { show_position = !show_position; preferences.write(T_Preference.showPosition, show_position); }}>
 			↔ {show_position ? 'position' : 'size'}
 		</th>{/if}
 	</tr></thead>
-	{#if show_parts}<tbody>
+	{#if show_parts}<tbody><tr style:height='4px'></tr>
 	{#each $w_all_sos.filter(s => !is_clone(s, $w_all_sos, $w_tick)) as so (so.id)}
 		{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
 		{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
@@ -133,24 +161,38 @@
 					{so.name}{#if n_rpt > 0}<span class='repeat-badge'>×{n_rpt}</span>{/if}
 				{/if}
 			</td>
-			<td class='hierarchy-data'>{values[0]}</td>
-			<td class='hierarchy-data'>{values[1]}</td>
-			<td class='hierarchy-data'>{values[2]}</td>
+			<td class='hierarchy-eye' onclick={(e) => toggle_visible(e, so)}>
+				{#if has_children(so, $w_all_sos)}{so.visible !== false ? '👁' : '–'}{/if}
+			</td>
+			<td class='hierarchy-data'>{values[0].whole}<span class='faint' class:hidden={!values[0].plus}>+</span></td>
+			<td class='hierarchy-data'>{values[1].whole}<span class='faint' class:hidden={!values[1].plus}>+</span></td>
+			<td class='hierarchy-data'>{values[2].whole}<span class='faint' class:hidden={!values[2].plus}>+</span></td>
 		</tr>
 	{/each}
 </tbody>{/if}</table>
 
-<div class='separator'></div>
+{#if show_parts}<div class='separator'></div>{:else}
+	{#if $w_selection}<input
+		class     = 'collapsed-name'
+		type      = 'text'
+		value     = {$w_selection.so.name}
+		onblur    = {(e) => commit_name($w_selection!.so, (e.target as HTMLInputElement).value)}
+		onkeydown = {(e) => name_keydown(e, $w_selection!.so)}
+	/>{/if}
+	<div style:height='8px'></div>
+{/if}
 <D_Selected_Part />
 
 <div class='tab-content'>
 	{#if $w_parts_tab === 'attributes'}
 		<D_Attributes />
 		<div class='constants-header'>
-			<span class='constants-label'>constants</span>
-			<button class='add-btn' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>+</button>
+			<button class='constants-toggle' onclick={toggle_show_constants}>
+				{show_constants ? 'hide' : 'show'} constants
+			</button>
+			{#if show_constants}<button class='add-btn' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>+</button>{/if}
 		</div>
-		<D_Constants />
+		{#if show_constants}<D_Constants />{/if}
 	{:else if $w_parts_tab === 'rotation'}
 		<D_Rotation />
 	{:else}
@@ -175,7 +217,7 @@
 	}
 
 	.separator::before {
-		height        : 8px;
+		height        : 5px;
 		border-radius : 0 0 8px 8px;
 	}
 
@@ -189,7 +231,7 @@
 		border-collapse : separate;
 		border-spacing  : 0;
 		font-size       : 9px;
-		margin-top      : -4px;
+		margin-top      : 1px;
 	}
 
 	.hierarchy-row {
@@ -208,6 +250,24 @@
 	.hierarchy-name {
 		padding    : 2px 0;
 		text-align : left;
+	}
+
+	.hierarchy-eye {
+		width      : 1em;
+		text-align : center;
+		font-size  : 7px;
+		opacity    : 0.4;
+		cursor     : pointer;
+		padding    : 0;
+	}
+
+	.hierarchy-eye:not(.static):hover {
+		opacity : 1;
+	}
+
+	.hierarchy-eye.static {
+		opacity : 1;
+		cursor  : default;
 	}
 
 	.name-input {
@@ -230,10 +290,33 @@
 		font-size   : 8px;
 	}
 
+	.collapsed-name {
+		width         : 100%;
+		border        : 0.5px solid rgba(0, 0, 0, 0.2);
+		border-radius : 3px;
+		background    : transparent;
+		color         : inherit;
+		font-size     : 12px;
+		font-family   : inherit;
+		padding       : 0 4px;
+		margin        : 0;
+		outline       : none;
+		box-sizing    : border-box;
+		text-align    : left;
+		height        : 14px;
+	}
+
+	.collapsed-name:focus {
+		background     : white;
+		outline        : 1.5px solid cornflowerblue;
+		outline-offset : -1.5px;
+	}
+
 	.toggle-header {
 		cursor        : pointer;
 		text-align    : center;
-		font-size     : 9px;
+		font-size     : 12px;
+		height        : 14px;
 		border        : 0.25px solid currentColor;
 		border-radius : 3px;
 	}
@@ -250,22 +333,42 @@
 		white-space          : nowrap;
 	}
 
+	.faint {
+		opacity : 0.3;
+	}
+
+	.faint.hidden {
+		visibility : hidden;
+	}
+
 	.tab-content {
 		padding-top : 4px;
 	}
 
 	.constants-header {
-		display     : flex;
-		align-items : center;
-		gap         : 6px;
-		margin-top  : 8px;
+		display       : flex;
+		align-items   : center;
+		gap           : 6px;
+		margin-top    : 0;
 		margin-bottom : 2px;
 	}
 
-	.constants-label {
-		font-size   : 11px;
-		opacity     : 0.5;
-		font-weight : 600;
+	.constants-toggle {
+		flex          : 1;
+		cursor        : pointer;
+		text-align    : center;
+		font-size     : 12px;
+		font-weight   : 600;
+		height        : 16px;
+		border        : 0.25px solid currentColor;
+		border-radius : 3px;
+		background    : white;
+		color         : inherit;
+		padding       : 0;
+	}
+
+	.constants-toggle:hover {
+		background : var(--accent);
 	}
 
 	.add-btn {
