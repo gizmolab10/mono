@@ -70,7 +70,7 @@
 	}
 
 	const SWAP_INDICES: Record<Axis_Name, [number, number]> = { z: [0, 1], x: [1, 2], y: [0, 2] };
-	const SWAP_LABELS:  Record<Axis_Name, string>          = { z: 'x↔y', x: 'y↔z', y: 'x↔z' };
+	const SWAP_LABELS:  Record<Axis_Name, string>          = { z: 'swap x | y', x: 'swap y | z', y: 'swap x | z' };
 
 	function swap() {
 		if (!selected_so) return;

@@ -9,7 +9,6 @@
 	import { onMount } from 'svelte';
 	import Hideable from './Hideable.svelte';
 	import D_Parts from './D_Parts.svelte';
-	import D_Selected_Part from './D_Selected_Part.svelte';
 	import D_Library from './D_Library.svelte';
 	import D_Attributes from './D_Attributes.svelte';
 	import D_Rotation from './D_Rotation.svelte';
@@ -56,10 +55,6 @@
 				<button class='banner-add' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>+</button>
 			{/snippet}
 			<D_Parts />
-		</Hideable>
-
-		<Hideable title='selected part' id='selected-part' detail={T_Details.selected_part}>
-			<D_Selected_Part />
 		</Hideable>
 
 		<Hideable title='rotation' id='rotation' detail={T_Details.rotation}>

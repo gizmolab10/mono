@@ -3,7 +3,7 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] work on [[rotation]]
+- [ ] work on [[12.parts]]
 - [ ] work on [[14.details]]
 - [ ] merge
 	- [ ] migration -> versions

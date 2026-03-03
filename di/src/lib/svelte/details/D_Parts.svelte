@@ -1,13 +1,16 @@
 <script lang='ts'>
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import { hits_3d, stores } from '../../ts/managers';
+	import { hits_3d, stores, scenes } from '../../ts/managers';
 	import { T_Hit_3D } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import { units } from '../../ts/types/Units';
+	import D_Selected_Part from './D_Selected_Part.svelte';
 
 	const { w_all_sos, w_selection, w_tick, w_precision } = stores;
 
-	let show_position = true;
+	let show_position = $state(true);
+	let editing_id: string | null = $state(null);
+	let editing_original: string = '';
 
 	function select(so: Smart_Object): void {
 		hits_3d.set_selection({ so, type: T_Hit_3D.face, index: 0 });
@@ -15,6 +18,39 @@
 
 	function is_selected(so: Smart_Object, _tick: number): boolean {
 		return $w_selection?.so === so;
+	}
+
+	function handle_name_click(e: MouseEvent, so: Smart_Object) {
+		if (is_selected(so, 0)) {
+			e.stopPropagation();
+			editing_id = so.id;
+			editing_original = so.name;
+		}
+	}
+
+	function commit_name(so: Smart_Object, value: string) {
+		const trimmed = value.trim();
+		if (trimmed.length > 0) {
+			so.name = trimmed;
+			scenes.save();
+			stores.w_all_sos.update(sos => sos);
+		}
+		editing_id = null;
+	}
+
+	function cancel_name(so: Smart_Object) {
+		so.name = editing_original;
+		editing_id = null;
+	}
+
+	function name_keydown(e: KeyboardEvent, so: Smart_Object) {
+		if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+		else if (e.key === 'Escape') { cancel_name(so); }
+		e.stopPropagation();
+	}
+
+	function autofocus(node: HTMLInputElement) {
+		requestAnimationFrame(() => { node.focus(); node.select(); });
 	}
 
 	function fmt(mm: number): string {
@@ -69,8 +105,21 @@
 			class='hierarchy-row'
 			class:selected={is_selected(so, $w_tick)}
 			onclick={() => select(so)}>
-			<td class='hierarchy-name' style:padding-left='{depth(so) * 12}px'>
-				{so.name}{#if n_rpt > 0}<span class='repeat-badge'>×{n_rpt}</span>{/if}
+			<td class='hierarchy-name' style:padding-left='{depth(so) * 12}px'
+				onclick={(e) => handle_name_click(e, so)}>
+				{#if editing_id === so.id}
+					<!-- svelte-ignore element_invalid_self_closing_tag -->
+					<input
+						class     = 'name-input'
+						type      = 'text'
+						value     = {so.name}
+						onblur    = {(e) => commit_name(so, (e.target as HTMLInputElement).value)}
+						onkeydown = {(e) => name_keydown(e, so)}
+						use:autofocus
+					/>
+				{:else}
+					{so.name}{#if n_rpt > 0}<span class='repeat-badge'>×{n_rpt}</span>{/if}
+				{/if}
 			</td>
 			<td class='hierarchy-data'>{values[0]}</td>
 			<td class='hierarchy-data'>{values[1]}</td>
@@ -79,7 +128,35 @@
 	{/each}
 </tbody></table>
 
+<div class='separator'></div>
+<D_Selected_Part />
+
 <style>
+	.separator {
+		background     : var(--accent);
+		margin         : 0 -8px;
+		display        : flex;
+		flex-direction : column;
+		gap            : 2px;
+	}
+
+	.separator::before,
+	.separator::after {
+		content       : '';
+		display       : block;
+		background    : var(--bg);
+	}
+
+	.separator::before {
+		height        : 8px;
+		border-radius : 0 0 8px 8px;
+	}
+
+	.separator::after {
+		height        : 8px;
+		border-radius : 8px 8px 0 0;
+	}
+
 	.hierarchy {
 		width           : 100%;
 		border-collapse : collapse;
@@ -103,6 +180,20 @@
 	.hierarchy-name {
 		padding    : 2px 0;
 		text-align : left;
+	}
+
+	.name-input {
+		width       : 100%;
+		border      : none;
+		background  : white;
+		color       : inherit;
+		font-size   : inherit;
+		font-family : inherit;
+		font-weight : inherit;
+		padding     : 0;
+		margin      : 0;
+		outline     : 1.5px solid cornflowerblue;
+		box-sizing  : border-box;
 	}
 
 	.repeat-badge {
