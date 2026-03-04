@@ -91,10 +91,12 @@
 	}
 </script>
 
-{#if selected_so && !is_root}
+{#if selected_so && is_root}
+<div class='root-note'>root has no angles</div>
+{:else if selected_so}
 <div class='rotation-section'>
 	<div class='rotation-row'>
-		<span class='option-label'>axis</span>
+		<span class='option-label' style:margin-right='-8px'>axis</span>
 		<div class='segmented'>
 			<button class:active={rot_axis === 'x'} onclick={() => rot_axis = 'x'}>x</button>
 			<button class:active={rot_axis === 'y'} onclick={() => rot_axis = 'y'}>y</button>
@@ -134,6 +136,7 @@
 			{/each}
 		</tbody>
 	</table>
+	<div style:height='0px'></div>
 </div>
 {/if}
 
@@ -153,8 +156,8 @@
 	.option-label {
 		font-size   : 11px;
 		opacity     : 0.6;
-		min-width   : 28px;
-		flex-shrink : 0;
+		min-width    : 28px;
+		flex-shrink  : 0;
 	}
 
 	.segmented {
@@ -265,5 +268,13 @@
 		color          : black;
 		outline        : 1.5px solid cornflowerblue;
 		outline-offset : -1.5px;
+	}
+
+	.root-note {
+		font-size   : 11px;
+		opacity     : 0.5;
+		text-align  : center;
+		padding     : 0;
+		line-height : 1;
 	}
 </style>

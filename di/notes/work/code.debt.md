@@ -4,12 +4,11 @@
 offer a proposal for the first unchecked item
 
 - [ ] work on [[12.parts]]
+- [ ] ability to drag on mobile (ipad, iphone)
 - [ ] border only on bottom face of root
-- [ ] remove translate all button from d library
 - [ ] grid opacity -> canvas, vertical, top left
 - [ ] work on separator div
 - [ ] put all "<->" on right side of buttons
-- [ ] work on [[14.details]]
 - [ ] merge
 	- [ ] migration -> versions
 	- [ ] extended algebra into notes/architecture/core/algebra

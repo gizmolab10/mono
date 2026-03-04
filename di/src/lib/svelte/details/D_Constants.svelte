@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { constants } from '../../ts/algebra/User_Constants';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { w_unit_system } from '../../ts/types/Units';
-	import { units } from '../../ts/types/Units';
 	import { T_Editing } from '../../ts/types/Enumerations';
-	import { constraints } from '../../ts/algebra';
+	import { w_unit_system } from '../../ts/types/Units';
 	import { scenes, stores } from '../../ts/managers';
+	import { constraints } from '../../ts/algebra';
+	import { units } from '../../ts/types/Units';
 
 	const { w_precision, w_tick } = stores;
 
@@ -74,26 +74,30 @@
 				<td class='std-name'>
 					<input
 						type      = 'text'
-						class     = 'cell-input'
-						value     = {row.name}
 						placeholder = 'name'
+						value     = {row.name}
+						class     = 'cell-input'
+						onkeydown = {cell_keydown}
 						onfocus   = {() => stores.w_editing.set(T_Editing.value)}
 						onblur    = {(e) => { commit_name(index, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
-						onkeydown = {cell_keydown}
 					/>
 				</td>
 				<td class='std-value'>
 					<input
 						type      = 'text'
+						onkeydown = {cell_keydown}
 						class     = 'cell-input right'
 						value     = {format_value(row.value_mm)}
 						onfocus   = {() => stores.w_editing.set(T_Editing.value)}
 						onblur    = {(e) => { commit_value(index, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
-						onkeydown = {cell_keydown}
 					/>
 				</td>
 				<td class='std-remove'>
-					<button class='remove-btn' use:hit_target={{ id: `remove-std-${index}`, onpress: () => remove_dimension(index) }}>×</button>
+					<button
+						class='remove-btn'
+						use:hit_target={{ id: `remove-std-${index}`, onpress: () => remove_dimension(index) }}>
+						×
+					</button>
 				</td>
 			</tr>
 		{/each}
@@ -103,9 +107,10 @@
 
 <style>
 	.standards {
+		top: 8px;
 		width           : 100%;
-		border-collapse : collapse;
 		font-size       : 11px;
+		border-collapse : collapse;
 	}
 
 	.standards td {
@@ -133,14 +138,14 @@
 	}
 
 	.remove-btn {
-		border     : none;
-		background : transparent;
-		color      : inherit;
-		cursor     : pointer;
-		font-size  : 13px;
 		padding    : 0;
 		line-height: 1;
 		opacity    : 0.5;
+		font-size  : 13px;
+		border     : none;
+		color      : inherit;
+		cursor     : pointer;
+		background : transparent;
 	}
 
 	.remove-btn:hover {
@@ -148,16 +153,16 @@
 	}
 
 	.cell-input {
+		margin      : 0;
+		outline     : none;
+		border      : none;
 		width       : 100%;
 		height      : 100%;
-		border      : none;
+		padding     : 0 4px;
 		background  : white;
 		color       : inherit;
 		font-size   : inherit;
 		font-family : inherit;
-		padding     : 0 4px;
-		margin      : 0;
-		outline     : none;
 		box-sizing  : border-box;
 	}
 
@@ -168,8 +173,8 @@
 	.cell-input:focus {
 		background     : white;
 		color          : black;
-		outline        : 1.5px solid cornflowerblue;
 		outline-offset : -1.5px;
+		outline        : 1.5px solid cornflowerblue;
 	}
 
 	.cell-input.right {

@@ -110,7 +110,7 @@
 				<button class:active={selected_so?.repeater?.repeat_axis === 1} onclick={() => set_repeat_axis(1)}>y</button>
 			</div>
 			<button class='action-btn' class:active={has_firewall} onclick={toggle_firewall} style='margin-left:auto'>
-				{has_firewall ? '↔ fireblocks' : '↔ no fireblocks'}
+				{has_firewall ? 'fireblocks ↔' : 'no fireblocks ↔'}
 			</button>
 		</div>
 		<div class='repeater-option-row'>

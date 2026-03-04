@@ -1,4 +1,5 @@
 import { T_Details, T_Hit_3D } from '../types/Enumerations';
+import type Smart_Object from '../runtime/Smart_Object';
 import type { Dictionary } from '../types/Types';
 import { writable, get } from 'svelte/store';
 import { Point } from '../types/Coordinates';

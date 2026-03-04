@@ -155,77 +155,89 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 </script>
 
 <table class='hierarchy'>
-	<thead><tr>
-		<th class='toggle-header gap-r' onclick={toggle_show_parts}>
-			{show_parts ? 'hide parts' : 'show parts'}
-		</th>
-		{#if show_parts}
-			<th class='hierarchy-eye static'>👁</th>
-			<th class='toggle-header gap-l' colspan='3' onclick={() => { show_position = !show_position; preferences.write(T_Preference.showPosition, show_position); }}>
-				↔ {show_position ? 'position' : 'size'}
+	<thead>
+		<tr>
+			<th class='toggle-header gap-r' onclick={toggle_show_parts}>
+				{show_parts ? 'hide parts' : 'show parts'}
 			</th>
-		{/if}
-	</tr></thead>
-	{#if show_parts}<tbody><tr style:height='4px'></tr>
-	{#each stores.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !is_ancestor_collapsed(s, $w_collapsed_ids)) as so (so.id)}
-		{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
-		{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
-		<tr
-			class='hierarchy-row'
-			class:selected={is_selected(so, $w_tick)}
-			onclick={() => select(so)}>
-			<td class='hierarchy-name' style:padding-left='{depth(so) * 8}px'
-				onclick={(e) => handle_name_click(e, so)}>
-				{#if editing_id === so.id}
-					<!-- svelte-ignore element_invalid_self_closing_tag -->
-					<input
-						class     = 'name-input'
-						type      = 'text'
-						value     = {so.name}
-						onblur    = {(e) => commit_name(so, (e.target as HTMLInputElement).value)}
-						onkeydown = {(e) => name_keydown(e, so)}
-						use:autofocus
-					/>
-				{:else}
-					{#if has_children(so, $w_all_sos)}
-						<span class='collapse-tri' onclick={(e) => toggle_collapse(e, so)}>
-							{$w_collapsed_ids.has(so.id) ? '▸' : '▾'}
-						</span>
-					{:else}
-						<span class='collapse-tri spacer'>
-							▸
-						</span>
-					{/if}
-					{so.name}
-					{#if n_rpt > 0}
-						<span class='repeat-badge'>
-							×{n_rpt}
-						</span>
-					{/if}
-				{/if}
-			</td>
-			<td class='hierarchy-eye' onclick={(e) => toggle_visible(e, so)}>
-				{#if has_children(so, $w_all_sos)}{so.visible !== false ? '👁' : '–'}{/if}
-			</td>
-			<td class='hierarchy-data'>{values[0].whole}<span class='faint' class:hidden={!values[0].plus}>+</span></td>
-			<td class='hierarchy-data'>{values[1].whole}<span class='faint' class:hidden={!values[1].plus}>+</span></td>
-			<td class='hierarchy-data'>{values[2].whole}<span class='faint' class:hidden={!values[2].plus}>+</span></td>
+			{#if show_parts}
+				<th class='hierarchy-eye static'>👁</th>
+				<th class='toggle-header gap-l' colspan='3' onclick={() => { show_position = !show_position; preferences.write(T_Preference.showPosition, show_position); }}>
+					{show_position ? 'position' : 'size'} ↔
+				</th>
+			{/if}
 		</tr>
-	{/each}
-</tbody>{/if}</table>
-
-{#if show_parts}<div class='separator'></div>{:else}
-	{#if $w_selection}<input
-		class     = 'collapsed-name'
-		type      = 'text'
-		value     = {$w_selection.so.name}
-		onblur    = {(e) => commit_name($w_selection!.so, (e.target as HTMLInputElement).value)}
-		onkeydown = {(e) => name_keydown(e, $w_selection!.so)}
-	/>{/if}
-	<div style:height='8px'></div>
+	</thead>
+	{#if show_parts}
+		<tbody>
+			<tr style:height='4px'/>
+			{#each stores.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !is_ancestor_collapsed(s, $w_collapsed_ids)) as so (so.id)}
+				{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
+				{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
+				<tr
+					class='hierarchy-row'
+					class:selected={is_selected(so, $w_tick)}
+					onclick={() => select(so)}>
+					<td class='hierarchy-name' style:padding-left='{depth(so) * 8}px'
+						onclick={(e) => handle_name_click(e, so)}>
+						{#if editing_id === so.id}
+							<!-- svelte-ignore element_invalid_self_closing_tag -->
+							<input
+								class     = 'name-input'
+								type      = 'text'
+								value     = {so.name}
+								onblur    = {(e) => commit_name(so, (e.target as HTMLInputElement).value)}
+								onkeydown = {(e) => name_keydown(e, so)}
+								use:autofocus
+							/>
+						{:else}
+							{#if has_children(so, $w_all_sos)}
+								<span class='collapse-tri' onclick={(e) => toggle_collapse(e, so)}>
+									{$w_collapsed_ids.has(so.id) ? '▸' : '▾'}
+								</span>
+							{:else}
+								<span class='collapse-tri spacer'>
+									▸
+								</span>
+							{/if}
+							{so.name}
+							{#if n_rpt > 0}
+								<span class='repeat-badge'>
+									×{n_rpt}
+								</span>
+							{/if}
+						{/if}
+					</td>
+					<td class='hierarchy-eye' onclick={(e) => toggle_visible(e, so)}>
+						{#if has_children(so, $w_all_sos)}{so.visible !== false ? '👁' : '–'}{/if}
+					</td>
+					<td class='hierarchy-data'>{values[0].whole}<span class='faint' class:hidden={!values[0].plus}>+</span></td>
+					<td class='hierarchy-data'>{values[1].whole}<span class='faint' class:hidden={!values[1].plus}>+</span></td>
+					<td class='hierarchy-data'>{values[2].whole}<span class='faint' class:hidden={!values[2].plus}>+</span></td>
+				</tr>
+			{/each}
+		</tbody>
+	{/if}
+</table>
+{#if show_parts}
+	{#if $w_selection}
+		<div class='separator'/>
+	{:else}
+		<div style:height='5px'/>
+	{/if}
+{:else}
+	{#if $w_selection}
+		<input
+			type      = 'text'
+			class     = 'collapsed-name'
+			value     = {$w_selection.so.name}
+			onkeydown = {(e) => name_keydown(e, $w_selection!.so)}
+			onblur    = {(e) => commit_name($w_selection!.so, (e.target as HTMLInputElement).value)}
+		/>
+	{/if}
 {/if}
+<div style:height='6px'/>
 <D_Selected_Part />
-
 <div class='tab-content'>
 	{#if $w_parts_tab === 'attributes'}
 		<D_Attributes />
@@ -233,9 +245,13 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 			<button class='constants-toggle' onclick={toggle_show_constants}>
 				{show_constants ? 'hide' : 'show'} constants
 			</button>
-			{#if show_constants}<button class='add-btn' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>+</button>{/if}
+			{#if show_constants}
+				<button class='add-btn' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>
+					+
+				</button>
+			{/if}
 		</div>
-		{#if show_constants}<D_Constants />{/if}
+		{#if show_constants}<D_Constants /><div style:height='3px'></div>{/if}
 	{:else if $w_parts_tab === 'rotation'}
 		<D_Rotation />
 	{:else}
@@ -265,7 +281,7 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	}
 
 	.separator::after {
-		height        : 8px;
+		height        : 4px;
 		border-radius : 8px 8px 0 0;
 	}
 
@@ -327,7 +343,7 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 		box-sizing  : border-box;
 	}
 
-	.collapse-tri {
+	.collapse-tri {about:blank#blocked
 		cursor           : pointer;
 		margin-right     : 1px;
 		opacity          : 0.4;
@@ -353,25 +369,25 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	}
 
 	.collapsed-name {
-		width         : 100%;
-		border        : 0.5px solid rgba(0, 0, 0, 0.2);
 		border-radius : 3px;
-		background    : transparent;
-		color         : inherit;
+		margin-bottom : 3px;
 		font-size     : 12px;
-		font-family   : inherit;
-		padding       : 0 4px;
-		margin        : 0;
+		width         : 100%;
 		outline       : none;
-		box-sizing    : border-box;
 		text-align    : left;
 		height        : 14px;
+		padding       : 0 4px;
+		background    : white;
+		color         : inherit;
+		font-family   : inherit;
+		box-sizing    : border-box;
+		border        : 0.5px solid rgba(0, 0, 0, 0.6);
 	}
 
 	.collapsed-name:focus {
 		background     : white;
-		outline        : 1.5px solid cornflowerblue;
 		outline-offset : -1.5px;
+		outline        : 1.5px solid cornflowerblue;
 	}
 
 	.toggle-header {
@@ -380,8 +396,9 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 		font-size     : 11px;
 		font-weight   : normal;
 		height        : 12px;
+		background    : white;
 		border        : 0 solid transparent;
-		border-radius : 3px;
+		border-radius : 8px;
 		box-shadow    : inset 0 0 0 0.25px currentColor;
 	}
 
@@ -409,29 +426,30 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	}
 
 	.tab-content {
-		padding-top : 4px;
+		padding-top    : 4px;
+		margin-bottom  : -4px;
 	}
 
 	.constants-header {
+		gap           : 6px;
+		margin-top    : 6px;
+		margin-bottom : 6px;
 		display       : flex;
 		align-items   : center;
-		gap           : 6px;
-		margin-top    : 0;
-		margin-bottom : 2px;
 	}
 
 	.constants-toggle {
 		flex          : 1;
-		cursor        : pointer;
-		text-align    : center;
-		font-size     : 11px;
-		font-weight   : normal;
-		height        : 16px;
-		border        : 0.25px solid currentColor;
-		border-radius : 3px;
-		background    : white;
-		color         : inherit;
 		padding       : 0;
+		border-radius : 8px;
+		font-size     : 11px;
+		height        : 16px;
+		background    : white;
+		text-align    : center;
+		font-weight   : normal;
+		cursor        : pointer;
+		color         : inherit;
+		border        : 0.25px solid currentColor;
 	}
 
 	.constants-toggle:hover {
@@ -439,20 +457,20 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	}
 
 	.add-btn {
-		width           : 16px;
-		height          : 16px;
-		border-radius   : 50%;
-		border          : 0.5px solid currentColor;
-		background      : white;
-		color           : inherit;
-		font-size       : 12px;
-		font-weight     : 300;
 		line-height     : 1;
 		padding         : 0;
-		cursor          : pointer;
+		border-radius   : 50%;
+		font-weight     : 300;
+		width           : 16px;
+		height          : 16px;
+		font-size       : 12px;
 		display         : flex;
+		background      : white;
 		align-items     : center;
 		justify-content : center;
+		color           : inherit;
+		cursor          : pointer;
+		border          : 0.5px solid currentColor;
 	}
 
 	.add-btn:hover {

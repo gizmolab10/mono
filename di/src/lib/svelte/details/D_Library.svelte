@@ -56,7 +56,6 @@
 
 <div class='settings'>
 	<button class='action-btn' use:hit_target={{ id: 'reset-library', onpress: reset_library }}>reset</button>
-	<button class='action-btn' use:hit_target={{ id: 'translate-all', onpress: () => scenes.translate_library() }}>translate all</button>
 	<button class='action-btn far-right' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file((s) => engine.load_scene(s)) }}>import</button>
 </div>
 

@@ -13,9 +13,6 @@
 
 	let selected_so = $derived($w_selection?.so ?? null);
 	let is_root = $derived(!selected_so?.scene?.parent);
-	let prev_so_id: string | undefined;
-	$effect(() => { if (selected_so?.id !== prev_so_id) { prev_so_id = selected_so?.id; display_mode_override = null; } });
-
 	let tick = $derived(stores.is_editing() ? 0 : $w_tick);
 
 	function get_bounds(so: Smart_Object, _tick: number) {
@@ -120,23 +117,10 @@
 		}
 	}
 
-	let display_mode_override: 'explicit' | 'agnostic' | null = $state(null);
 	let formula_mode = $derived.by(() => {
 		if (tick === undefined || !selected_so) return 'agnostic' as const;
-		const detected = constraints.detect_formula_mode(selected_so);
-		if (detected === 'agnostic') return 'agnostic' as const;
-		if (detected === 'explicit') return display_mode_override ?? 'explicit' as const;
-		return display_mode_override ?? 'agnostic' as const;
+		return constraints.detect_formula_mode(selected_so) === 'explicit' ? 'explicit' as const : 'agnostic' as const;
 	});
-
-	function translate() {
-		if (!selected_so) return;
-		const direction = formula_mode === 'explicit' ? 'agnostic' : 'explicit';
-		constraints.translate_formulas(selected_so, direction);
-		display_mode_override = direction;
-		stores.tick();
-		scenes.save();
-	}
 
 </script>
 
@@ -194,11 +178,6 @@
 			{/each}
 		</tbody>
 	</table>
-	<div class='translate-row'>
-		<button class='translate-btn' onclick={translate}>
-			&harr; {formula_mode === 'explicit' ? 'agnostic' : 'explicit'}
-		</button>
-	</div>
 {:else}
 	<p>No object selected</p>
 {/if}
@@ -324,29 +303,6 @@
 	.cell-input.right {
 		text-align           : right;
 		font-variant-numeric : tabular-nums;
-	}
-
-	.translate-row {
-		display     : flex;
-		justify-content : flex-end;
-		padding         : 4px 0;
-	}
-
-	.translate-btn {
-		padding       : 1px 8px;
-		font-size     : 10px;
-		font-family   : inherit;
-		border        : 0.5px solid currentColor;
-		border-radius : 9px;
-		background    : var(--bg);
-		color         : inherit;
-		cursor        : pointer;
-		opacity       : 0.7;
-	}
-
-	.translate-btn:hover {
-		background : var(--accent);
-		opacity    : 1;
 	}
 
 	p {
