@@ -7,6 +7,7 @@
 	import { engine } from '../../ts/render';
 	import { get } from 'svelte/store';
 	import { tick } from 'svelte';
+	import Separator from '../mouse/Separator.svelte';
 
 	const { w_library } = stores;
 
@@ -117,7 +118,7 @@
 	{/each}
 </tbody></table>
 
-<div class='separator'></div>
+<Separator />
 
 <div class='settings'>
 	<button class='action-btn' disabled={!selected} use:hit_target={{ id: 'lib-replace', onpress: do_replace }}>replace</button>
@@ -165,30 +166,6 @@
 		background : var(--bg);
 	}
 
-	.separator {
-		background     : var(--accent);
-		margin         : 0 -8px;
-		display        : flex;
-		flex-direction : column;
-		gap            : 2px;
-	}
-
-	.separator::before,
-	.separator::after {
-		content       : '';
-		display       : block;
-		background    : var(--bg);
-	}
-
-	.separator::before {
-		height        : 8px;
-		border-radius : 0 0 8px 8px;
-	}
-
-	.separator::after {
-		height        : 8px;
-		border-radius : 8px 8px 0 0;
-	}
 
 	.settings {
 		display   : flex;

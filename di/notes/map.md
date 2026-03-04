@@ -39,6 +39,7 @@
 
 - di/src/lib/svelte/mouse/Close_Button.svelte
 - di/src/lib/svelte/mouse/Slider.svelte
+- di/src/lib/svelte/mouse/Separator.svelte
 - di/src/lib/svelte/mouse/Steppers.svelte
 
 ## TS — Managers
@@ -205,8 +206,8 @@
 - di/notes/architecture/core/index.md
 - di/notes/architecture/core/algebra.md
 - di/notes/architecture/core/managers.md
-- di/notes/architecture/core/versions.md
-- di/notes/architecture/core/migration.md
+- di/notes/architecture/core/versions.md (was migration.md)
+- di/notes/architecture/core/references.md (was versions.md)
 - di/notes/architecture/graph/index.md
 - di/notes/architecture/graph/3D.primer.md
 - di/notes/architecture/graph/drag.md

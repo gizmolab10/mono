@@ -412,14 +412,10 @@ class Render {
 		this._cve_count++;
 		if (this._cve_count % 180 === 1) {
 			const rc = children.filter(c => Math.abs(c.so.orientation[3]) < 1 - 1e-6);
-			console.log('[CVE] frame', this._cve_count, '| all:', all.length, 'children:', children.length, 'rotated:', rc.length);
-			console.log('[CVE] root:', root.x_min.toFixed(1), root.x_max.toFixed(1), '|', root.y_min.toFixed(1), root.y_max.toFixed(1), '|', root.z_min.toFixed(1), root.z_max.toFixed(1));
 			const ve = this.camera_view_extent;
-			console.log('[CVE] extent:', ve.x_min.toFixed(1), ve.x_max.toFixed(1), '|', ve.y_min.toFixed(1), ve.y_max.toFixed(1), '|', ve.z_min.toFixed(1), ve.z_max.toFixed(1));
 			for (const c of rc) {
 				const so = c.so;
 				const q = so.orientation;
-				console.log('[CVE] child', so.name, 'q:', q[0].toFixed(4), q[1].toFixed(4), q[2].toFixed(4), q[3].toFixed(4));
 				// Subtree AABB (before rotation)
 				let sx0 = Math.min(so.x_min, so.x_max), sx1 = Math.max(so.x_min, so.x_max);
 				let sy0 = Math.min(so.y_min, so.y_max), sy1 = Math.max(so.y_min, so.y_max);
@@ -439,15 +435,12 @@ class Render {
 					}
 				};
 				walk(c);
-				console.log('[CVE] subtree AABB:', sx0.toFixed(1), sx1.toFixed(1), '|', sy0.toFixed(1), sy1.toFixed(1), '|', sz0.toFixed(1), sz1.toFixed(1));
 				// Rotated corners
 				const cx = (so.x_min + so.x_max) / 2, cy = (so.y_min + so.y_max) / 2, cz = (so.z_min + so.z_max) / 2;
-				console.log('[CVE] rot center:', cx.toFixed(1), cy.toFixed(1), cz.toFixed(1));
 				for (let i = 0; i < 8; i++) {
 					const vx = (i & 4) ? sx1 : sx0, vy = (i & 2) ? sy1 : sy0, vz = (i & 1) ? sz1 : sz0;
 					const rv = vec3.fromValues(vx - cx, vy - cy, vz - cz);
 					vec3.transformQuat(rv, rv, q);
-					console.log('[CVE] corner', i, '→', (cx + rv[0]).toFixed(1), (cy + rv[1]).toFixed(1), (cz + rv[2]).toFixed(1));
 				}
 			}
 		}

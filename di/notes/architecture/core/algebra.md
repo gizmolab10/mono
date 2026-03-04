@@ -16,7 +16,48 @@ Customers shouldn't have to type `x_min` or `x_max`. They think in position + le
 | `A.Y`    | far edge y | `y_max`  | y + d     | s + l    |
 | `A.Z`    | far edge z | `z_max`  | z + h     | s + l    |
 
-Nine aliases, six SOTs, three derived. See [Enlarged Algebra](./enlarged.algebra.md) for the axis-agnostic notation (`s`/`l`/`e`).
+Nine aliases, six SOTs, three derived.
+
+## Axis-agnostic notation
+
+The algebra supports two notations. **Explicit** names each axis directly (`x`, `w`, `X`). **Agnostic** uses positional roles (`s`, `l`, `e`) that mean the same thing on every axis.
+
+| Role   | Agnostic | x-axis | y-axis | z-axis |
+|--------|----------|--------|--------|--------|
+| start  | `s`      | `x`    | `y`    | `z`    |
+| length | `l`      | `w`    | `d`    | `h`    |
+| end    | `e`      | `X`    | `Y`    | `Z`    |
+
+In explicit notation, `X - w` means "far edge minus width" on the x-axis. In agnostic notation, the same relationship is `e - l` — an expression that works on any axis.
+
+### Cross-axis references
+
+Bare `s`/`l`/`e` are contextual — they refer to the owning attribute's axis. To reference a different axis, prefix with the axis letter and a dot:
+
+| In x-axis formula | Meaning             | Explicit equiv |
+|--------------------|---------------------|----------------|
+| `s`                | x-axis start        | `x`            |
+| `l`                | x-axis length       | `w`            |
+| `y.l`              | y-axis length       | `d`            |
+| `z.e`              | z-axis end          | `Z`            |
+| `.l`               | parent's x-axis length | `.w`        |
+| `.y.l`             | parent's y-axis length | `.d`        |
+
+### Translation
+
+The translate button (`↔ agnostic` / `↔ explicit`) rewrites every formula on the selected object using the opposite notation. Each axis has its own translation maps.
+
+### Mode detection
+
+To detect whether an object's formulas are explicit or agnostic, stored tokens are scanned. If all reference tokens use agnostic aliases, mode is agnostic. If any use explicit aliases, mode is explicit. Objects with no formula tokens default to agnostic. The detected mode is displayed in the translate button.
+
+### Agnostic display
+
+In agnostic mode, floating labels (`s`, `l`, `e`) appear to the left of the middle row in each attribute group, reinforcing which role each group represents.
+
+### Batch migration
+
+A dev-only tool translates all library files at once: deserializes each object headlessly, rewrites its tokens to agnostic, re-serializes, and downloads the translated `.di` files.
 
 ## Reference conventions
 
@@ -27,6 +68,8 @@ Nine aliases, six SOTs, three derived. See [Enlarged Algebra](./enlarged.algebra
 | `A.x`  | named SO's x  | `A.x + 10`       |
 
 Bare letter = self. Dot-prefix = parent (like `A.x` with name omitted). Dot notation = explicit SO.
+
+Cross-axis named references use explicit tokens only — `A.d` not `A.y.l` — keeping the compiler simpler.
 
 ## Where it lives
 
@@ -87,7 +130,7 @@ Without this, a persisted formula on an invariant attribute would prevent `enfor
 | `algebra/Tokenizer.ts` | String → token stream, unit suffixes, compound imperial |
 | `algebra/Compiler.ts` | Recursive descent parser — expression/term/factor/atom |
 | `algebra/Evaluator.ts` | Forward eval, reverse propagation, cycle detection |
-| `algebra/Constraints.ts` | Glue — formula management, resolve/write, propagation, invariant enforcement |
+| `algebra/Constraints.ts` | Glue — formula management, resolve/write, propagation, invariant enforcement, translation maps, `translate_formulas()`, `detect_formula_mode()` |
 | `algebra/Orientation.ts` | Compute orientation from bounds, recompute max bounds from rotation |
 
 ## Tests
@@ -101,9 +144,9 @@ Without this, a persisted formula on an invariant attribute would prevent `enfor
 | `Constraints.test.ts` | 85 | Formula on Attribute (6): set+eval, store, null compiled, bad formula error, cycle error, clear keeps value. Propagation (3): source→dependent, chain cascade, unrelated untouched. Serialize (5): round-trip, omit when absent, deserialize recompiles AST. Orientation (2): copy angles, survives serialize. Add child (4): min bounds track parent, update on move, max bounds, half-smallest-dimension cube. Alias resolution (8): resolve x/X/w/h/d + fallthrough, write x/w + fallthrough. Dot-prefix parent (11): .x binding, explicit SO, mixed, .w alias, no parent → 0, propagation, .w→parent width, add_child_so flow. Bare self (3): x self-ref, w self-width, mixed .x+x. Invariant formulas (5): lookup x/w/X, null for unknown, eval with self. Enforce invariants (8): inv=0/1/2, no override formulas, set_formula triggers, propagate triggers, multi-axis. Contextual aliases (9): self cross-axis, parent cross-axis, tokenizer round-trips, propagation. Translate formulas (21): same-axis bare (all 3 axes), cross-axis, parent dot-prefix, explicit SO refs, invariant agnostic/explicit, mixed mode normalization, values unchanged. |
 | `Orientation.test.ts` | 13 | from_bounds (6): flat→identity, non-square angle, 45° around each axis, 30° staircase. Use case S (1): staircase orientation stable on stretch. Use case W (2): fixed dimensions, slides with origin. recompute_max_bounds (3): 45°/30° redistribution, diagonal preserved. |
 
-## Face–Axis Mapping
+## Face-Axis Mapping
 
-Faces are indexed 0–5. Each pair shares an axis normal. XY = bottom/top, XZ = front/back, YZ = left/right.
+Faces are indexed 0-5. Each pair shares an axis normal. XY = bottom/top, XZ = front/back, YZ = left/right.
 
 | Index | Name | Normal | Fixed Axis | Editable Axes | Opposite |
 |-------|--------|--------|-----------|---------------|----------|
@@ -114,4 +157,4 @@ Faces are indexed 0–5. Each pair shares an axis normal. XY = bottom/top, XZ = 
 | 4 | front | (0,+1,0) | y | x, z | 5 (back) |
 | 5 | back | (0,-1,0) | y | x, z | 4 (front) |
 
-Vertices 0–3 sit at z_min (bottom face), 4–7 at z_max (top face). Within each quad: (x_min,y_min), (x_max,y_min), (x_max,y_max), (x_min,y_max). Opposite faces pair via XOR: `index ^ 1`.
+Vertices 0-3 sit at z_min (bottom face), 4-7 at z_max (top face). Within each quad: (x_min,y_min), (x_max,y_min), (x_max,y_max), (x_min,y_max). Opposite faces pair via XOR: `index ^ 1`.

@@ -121,7 +121,7 @@
 
 <div class='slider-compound'>
 	<div class='slider-with-label'>
-		{#if logarithmic}
+		{#if logarithmic && show_value}
 			<span class='current-value'>{Math.log10(value).toFixed(1)}</span>
 		{/if}
 		<div class='slider-border'
@@ -156,7 +156,7 @@
 				</span>
 			{/if}
 		</div>
-		{#if !logarithmic}
+		{#if !logarithmic && show_value}
 			<span class='slider-label'>{Math.log10(value).toFixed(1)}</span>
 		{/if}
 	</div>
@@ -174,6 +174,7 @@
 		margin-left : 6px;
 		gap         : 0;
 		overflow    : visible;
+		z-index     : var(--z-action);
 	}
 	.slider-with-label {
 		display        : flex;

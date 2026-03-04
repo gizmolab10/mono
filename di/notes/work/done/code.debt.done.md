@@ -94,3 +94,9 @@
 	- [x] add proposal to [[rotation]] for rotating (leave swapping alone)
 	- [x] manual test fails: rotate drawer -> dreadful
 		- [x] only some of the children of the rotated SO actually rotate
+- [x] put all "<->" on right side of buttons
+- [x] guide files:
+	- [x] rename versions.md -> references.md
+	- [x] rename migration.md -> versions.md
+	- [x] merge enlarged.algebra.md into notes/architecture/core/algebra.md
+		- [x] remove cruft

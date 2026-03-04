@@ -1,30 +1,22 @@
 <script lang='ts'>
-	import { T_Decorations } from '../../ts/types/Enumerations';
+	import { T_Decorations, T_Layer } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { stores } from '../../ts/managers/Stores';
 	import { scenes } from '../../ts/managers/Scenes';
+	import Separator from '../mouse/Separator.svelte';
 	import { colors } from '../../ts/draw/Colors';
-	import Slider from '../mouse/Slider.svelte';
+
 	import { engine } from '../../ts/render';
 
 	async function save() { await scenes.add_to_library(); }
 	const { w_text_color, w_background_color, w_accent_color } = colors;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
-	const { w_scale, w_view_mode, w_decorations, w_solid, w_show_details, w_front_face } = stores;
+	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face } = stores;
 
 
 	let show_dimensions = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
 	let show_angles     = $derived(($w_decorations & T_Decorations.angles) !== 0);
 	let show_names      = $derived(($w_decorations & T_Decorations.names) !== 0);
-
-	function handle_scale(pointsUp: boolean, _isLong: boolean) {
-		if (pointsUp) engine.scale_up();
-		else engine.scale_down();
-	}
-
-	function handle_slider(value: number) {
-		w_scale.set(value);
-	}
 
 </script>
 
@@ -32,7 +24,9 @@
 	class            = 'controls'
 	style:color      = {$w_text_color}
 	style:background = {$w_background_color}
-	style:--accent   = {$w_accent_color}>
+	style:--accent   = {$w_accent_color}
+	style:--bg       = {$w_background_color}
+	style:--z-action = {T_Layer.action}>
 	<button class='hamburger' class:active={$w_show_details} use:hit_target={{ id: 'details', onpress: () => stores.toggle_details() }} aria-label='toggle details'>
 		<svg class='hamburger-icon' viewBox='0 0 20 20' width='24' height='24'>
 			<rect x='2' y='4'  width='16' height='2.5' rx='1.25'/>
@@ -42,6 +36,7 @@
 	</button>
 	<button class='toolbar-btn' use:hit_target={{ id: 'save', onpress: save }}>save</button>
 	<button class='toolbar-btn' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
+	<Separator vertical thickness={5} />
 	<span class='spacer'></span>
 	<div class='segmented'>
 		<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>
@@ -50,7 +45,7 @@
 	</div>
 	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ↔</button>
 	<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ↔</button>
-	<Slider min={0.01} max={10000} value={$w_scale} logarithmic width={90} onchange={handle_slider} onstep={handle_scale} />
+	<Separator vertical thickness={5} />
 	<div class='segmented'>
 		{#each face_labels as label, i}
 			<button class='seg' class:front={$w_front_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
@@ -61,15 +56,15 @@
 
 <style>
 	.controls {
+		row-gap         : 4px;
 		width           : 100%;
 		display         : flex;
 		flex-wrap       : wrap;
-		padding         : 4px 1rem;
-		row-gap         : 4px;
 		align-items     : center;
+		overflow        : visible;
+		padding         : 4px 1rem;
 		justify-content : flex-end;
 		box-sizing      : border-box;
-		overflow        : visible;
 	}
 
 	.spacer {
@@ -91,6 +86,7 @@
 		margin-right    : 6px;
 		position        : relative;
 		top             : -1px;
+		z-index         : var(--z-action);
 	}
 
 	.hamburger-icon rect {
@@ -109,6 +105,7 @@
 		border        : 0.5px solid currentColor;
 		border-radius : 10px;
 		color         : inherit;
+		z-index       : var(--z-action);
 		padding       : 0 6px 1px 6px;
 		font-size     : 11px;
 		height        : 20px;
@@ -135,6 +132,7 @@
 		overflow      : hidden;
 		height        : 20px;
 		box-sizing    : border-box;
+		z-index       : var(--z-action);
 	}
 
 	.seg {

@@ -6,9 +6,10 @@
 	import { stores } from '../../ts/managers';
 	import { colors } from '../../ts/draw/Colors';
 	import { engine } from '../../ts/render';
+	import Separator from '../mouse/Separator.svelte';
 
 	const { w_accent_color } = colors;
-	const { w_precision, w_line_thickness, w_grid_opacity, w_edge_color } = stores;
+	const { w_precision, w_line_thickness, w_edge_color } = stores;
 
 	const imperial_ticks = ['foot', 'inch', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64'];
 	const decimal_ticks  = ['whole', '1', '2', '3'];
@@ -51,7 +52,7 @@
 		{/each}
 	</div>
 </div>
-<div class='separator'></div>
+<Separator />
 <div class='slider-group'>
 	<span class='label'>line thickness</span>
 	<input
@@ -61,17 +62,6 @@
 		step    = {0.5}
 		value   = {$w_line_thickness}
 		oninput = {(e) => w_line_thickness.set(Number((e.target as HTMLInputElement).value))}
-	/>
-</div>
-<div class='slider-group'>
-	<span class='label'>grid opacity</span>
-	<input
-		type    = 'range'
-		min     = {0}
-		max     = {1}
-		step    = {0.05}
-		value   = {$w_grid_opacity}
-		oninput = {(e) => w_grid_opacity.set(Number((e.target as HTMLInputElement).value))}
 	/>
 </div>
 <div class='color-row'>
@@ -206,30 +196,6 @@
 		border     : 0.5px solid currentColor;
 	}
 
-	.separator {
-		gap            : 2px;
-		display        : flex;
-		margin         : 0 -8px;
-		flex-direction : column;
-		background     : var(--accent);
-	}
-
-	.separator::before,
-	.separator::after {
-		content       : '';
-		display       : block;
-		background    : var(--bg);
-	}
-
-	.separator::before {
-		height        : 8px;
-		border-radius : 0 0 8px 8px;
-	}
-
-	.separator::after {
-		height        : 8px;
-		border-radius : 8px 8px 0 0;
-	}
 
 	.slider-group {
 		gap            : 8px;

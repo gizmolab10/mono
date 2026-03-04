@@ -3,10 +3,9 @@
 ## Contents
 
 - [Algebra](./algebra.md)
-- [Enlarged.algebra](./enlarged.algebra.md)
 - [Launch](./launch.md)
 - [Managers](./managers.md)
-- [Migration](./migration.md)
+- [References](./references.md)
 - [Rotation](./rotation.md)
 - [Versions](./versions.md)
 

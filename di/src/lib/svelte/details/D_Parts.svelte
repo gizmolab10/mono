@@ -1,14 +1,15 @@
 <script lang='ts'>
-import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { constants } from '../../ts/algebra/User_Constants';
 	import { hits_3d, stores, scenes } from '../../ts/managers';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Hit_3D } from '../../ts/types/Enumerations';
-	import P_Selected from './P_Selected.svelte';
 	import { w_unit_system } from '../../ts/types/Units';
+	import Separator from '../mouse/Separator.svelte';
 	import P_Attributes from './P_Attributes.svelte';
 	import P_Constants from './P_Constants.svelte';
+	import P_Selected from './P_Selected.svelte';
 	import { units } from '../../ts/types/Units';
 	import P_Angles from './P_Angles.svelte';
 	import P_Repeat from './P_Repeat.svelte';
@@ -221,7 +222,7 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 </table>
 {#if show_parts}
 	{#if $w_selection}
-		<div class='separator'/>
+		<Separator />
 	{:else}
 		<div style:height='5px'/>
 	{/if}
@@ -260,30 +261,6 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 </div>
 
 <style>
-	.separator {
-		background     : var(--accent);
-		margin         : 0 -8px;
-		display        : flex;
-		flex-direction : column;
-		gap            : 2px;
-	}
-
-	.separator::before,
-	.separator::after {
-		content       : '';
-		display       : block;
-		background    : var(--bg);
-	}
-
-	.separator::before {
-		height        : 5px;
-		border-radius : 0 0 8px 8px;
-	}
-
-	.separator::after {
-		height        : 4px;
-		border-radius : 8px 8px 0 0;
-	}
 
 	.hierarchy {
 		width           : 100%;
