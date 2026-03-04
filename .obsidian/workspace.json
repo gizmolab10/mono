@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/done/17.library.md",
+                "file": "di/notes/work/milestones/done/19.angles.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "17.library"
+              "title": "19.angles"
             }
           },
           {
@@ -64,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -137,7 +137,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/milestones/20.repeaters.md",
+                "file": "di/notes/work/milestones/done/19.angles.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -147,7 +147,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 20.repeaters"
+              "title": "Backlinks for 19.angles"
             }
           },
           {
@@ -199,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/20.repeaters.md",
+                "file": "di/notes/work/milestones/done/19.angles.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 20.repeaters"
+              "title": "Outline of 19.angles"
             }
           }
         ],
@@ -226,15 +226,16 @@
       "bases:Create new base": false
     }
   },
-  "active": "21473b589220a2b3",
+  "active": "8bcec8ed5a6a118b",
   "lastOpenFiles": [
     "di/notes/work/milestones/done/17.library.md",
+    "di/notes/work/milestones/20.repeaters.md",
+    "di/src/assets/debug/sfarik.di",
     "di/notes/work/code.debt.md",
     "di/notes/work/milestones/done/19.angles.md",
     "di/notes/architecture/graph/drag.md",
     "di/notes/work/skills.md",
     "di/src/assets/debug/engulia.di",
-    "di/notes/work/milestones/20.repeaters.md",
     "di/notes/work/milestones/done/12.parts.md",
     "di/notes/work/milestones/done/18.user.constants.md",
     "di/notes/work/milestones/done/16.formulas.md",
@@ -248,7 +249,6 @@
     "di/src/assets/debug/wacka.di",
     "di/src/assets/debug",
     "di/src/assets/untitled folder",
-    "di/src/assets/home/stretch.di",
     "di/notes/work/milestones/done/14.details.md",
     "di/notes/work/milestones/done/13.algebra.md",
     "di/notes/work/milestones/done/11.units.md",
@@ -263,7 +263,6 @@
     "di/notes/architecture/graph/axes.md",
     "di/notes/work/milestones/done/index.md",
     "di/notes/architecture/graph/projection.md",
-    "di/notes/work/done/quaternions.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",
