@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { scenes, stores } from '../../ts/managers';
+	import { scenes, stores, hits_3d } from '../../ts/managers';
 	import { engine } from '../../ts/render';
 	import type { Axis_Name } from '../../ts/types/Types';
 
@@ -10,8 +10,15 @@
 
 	let rot_axis: Axis_Name = $state('z');
 
-	const STICKY_ANGLES = [-30, -22.5, 0, 22.5, 30];
-	const STICKY_THRESHOLD = 2;
+	$effect(() => {
+		$w_tick;
+		if (!selected_so) return;
+		const face = hits_3d.front_most_face(selected_so);
+		if (face >= 0) rot_axis = ALL_AXES[Math.floor(face / 2)];
+	});
+
+	const STICKY_ANGLES = [-45, -30, -22.5, 0, 22.5, 30, 45];
+	const STICKY_THRESHOLD = 1;
 	const ALL_AXES = ['x', 'y', 'z'] as const;
 
 	function get_angles(_tick: number) {
@@ -54,6 +61,7 @@
 		return total - nearest_base(total);
 	}
 	let angle_deg = $derived(read_angle_deg($w_tick));
+	let is_sticky = $derived(STICKY_ANGLES.some(s => Math.abs(angle_deg - s) < 0.01));
 	function base_deg(): number {
 		if (!selected_so) return 0;
 		const total = selected_so.axis_by_name(rot_axis).angle.value * 180 / Math.PI;
@@ -80,11 +88,14 @@
 		scenes.save();
 	}
 
-	function set_angle(deg: number) {
+	function set_angle(e: Event) {
 		if (!selected_so) return;
+		const input = e.target as HTMLInputElement;
+		let deg = Number(input.value);
 		for (const sticky of STICKY_ANGLES) {
 			if (Math.abs(deg - sticky) < STICKY_THRESHOLD) { deg = sticky; break; }
 		}
+		input.value = String(deg);
 		selected_so.touch_axis(rot_axis, (base_deg() + deg) * Math.PI / 180);
 		stores.tick();
 		scenes.save();
@@ -95,33 +106,10 @@
 <div class='root-note'>root has no angles</div>
 {:else if selected_so}
 <div class='rotation-section'>
-	<div class='rotation-row'>
-		<span class='option-label' style:margin-right='-8px'>axis</span>
-		<div class='segmented'>
-			<button class:active={rot_axis === 'x'} onclick={() => rot_axis = 'x'}>x</button>
-			<button class:active={rot_axis === 'y'} onclick={() => rot_axis = 'y'}>y</button>
-			<button class:active={rot_axis === 'z'} onclick={() => rot_axis = 'z'}>z</button>
-		</div>
-		<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
-		<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
-		<button class='action-btn' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
-	</div>
-	<div class='rotation-row'>
-		<span class='option-label'>angle</span>
-		<input
-			type='range'
-			class='rotation-slider'
-			min='-45'
-			max='45'
-			step='0.5'
-			value={angle_deg}
-			oninput={(e) => set_angle(Number((e.target as HTMLInputElement).value))}
-		/>
-	</div>
 	<table class='angles'>
 		<tbody>
 			{#each ALL_AXES as axis}
-				<tr>
+				<tr class:active-axis={axis === rot_axis} onclick={() => rot_axis = axis}>
 					<td class='angle-name'>{axis}</td>
 					<td class='angle-val'>
 						<input
@@ -136,6 +124,32 @@
 			{/each}
 		</tbody>
 	</table>
+	<div class='rotation-row'>
+		<span class='slider-label'>-45°</span>
+		<div class='slider-wrap'>
+			<input
+				type='range'
+				class='rotation-slider'
+				class:sticky={is_sticky}
+				min='-45'
+				max='45'
+				step='0.5'
+				value={angle_deg}
+				oninput={set_angle}
+			/>
+			{#each STICKY_ANGLES as a}
+				<span class='tick' style:left='calc(7px + {(a + 45) / 90} * (100% - 14px))'></span>
+			{/each}
+		</div>
+		<span class='slider-label'>+45°</span>
+	</div>
+	<div class='rotation-row'>
+		<button class='action-btn' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
+		<span class='far-right'>
+			<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
+			<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
+		</span>
+	</div>
 	<div style:height='0px'></div>
 </div>
 {/if}
@@ -153,48 +167,16 @@
 		gap         : 6px;
 	}
 
-	.option-label {
+	.slider-label {
 		font-size   : 11px;
-		opacity     : 0.6;
-		min-width    : 28px;
-		flex-shrink  : 0;
+		opacity     : 0.5;
+		flex-shrink : 0;
 	}
 
-	.segmented {
-		display : flex;
-		gap     : 0;
-	}
-
-	.segmented button {
-		border        : 0.5px solid currentColor;
-		background    : white;
-		color         : inherit;
-		font-size     : 11px;
-		height        : 20px;
-		padding       : 0 8px;
-		cursor        : pointer;
-		white-space   : nowrap;
-	}
-
-	.segmented button:first-child {
-		border-radius : 10px 0 0 10px;
-	}
-
-	.segmented button:last-child {
-		border-radius : 0 10px 10px 0;
-	}
-
-	.segmented button:not(:first-child) {
-		border-left : none;
-	}
-
-	.segmented button.active {
-		background  : var(--accent);
-		font-weight : 600;
-	}
-
-	.segmented button:hover:not(.active) {
-		background : var(--bg);
+	.far-right {
+		margin-left : auto;
+		display     : flex;
+		gap         : 6px;
 	}
 
 	.action-btn {
@@ -210,12 +192,66 @@
 		white-space   : nowrap;
 	}
 
+	.slider-wrap {
+		flex           : 1;
+		position       : relative;
+		min-width      : 0;
+		height         : 16px;
+		display        : flex;
+		align-items    : center;
+	}
+
 	.rotation-slider {
-		flex         : 1;
-		min-width    : 0;
-		height       : 4px;
-		cursor       : pointer;
-		accent-color : var(--accent);
+		width              : 100%;
+		height             : 4px;
+		margin             : 0;
+		padding            : 0;
+		cursor             : pointer;
+		accent-color       : var(--accent);
+		-webkit-appearance : none;
+		appearance         : none;
+		background         : #ccc;
+		border-radius      : 2px;
+	}
+
+	.rotation-slider::-webkit-slider-thumb {
+		-webkit-appearance : none;
+		width              : 14px;
+		height             : 14px;
+		border-radius      : 50%;
+		background         : var(--accent);
+		border             : none;
+		cursor             : pointer;
+	}
+
+	.rotation-slider::-moz-range-thumb {
+		width         : 14px;
+		height        : 14px;
+		border-radius : 50%;
+		background    : var(--accent);
+		border        : none;
+		cursor        : pointer;
+	}
+
+	.rotation-slider.sticky::-webkit-slider-thumb {
+		background : white;
+		border     : 0.5px solid black;
+	}
+
+	.rotation-slider.sticky::-moz-range-thumb {
+		background : white;
+		border     : 0.5px solid black;
+	}
+
+	.tick {
+		position       : absolute;
+		top            : 50%;
+		width          : 1px;
+		height         : 8px;
+		background     : currentColor;
+		opacity        : 0.6;
+		transform      : translate(-0.5px, -50%);
+		pointer-events : none;
 	}
 
 	.angles {
@@ -237,6 +273,12 @@
 		opacity     : 0.7;
 		text-align  : center;
 		background  : var(--bg);
+		cursor      : pointer;
+	}
+
+	.active-axis .angle-name {
+		background  : var(--accent);
+		opacity     : 1;
 	}
 
 	.angle-val {
