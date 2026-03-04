@@ -91,7 +91,7 @@
 			oninput = {(e) => w_edge_color.set((e.target as HTMLInputElement).value)}
 		/>
 	</div>
-	<button class='action-btn right' use:hit_target={{ id: 'reset-prefs', onpress: reset }}>reset</button>
+	<button class='action-btn right' use:hit_target={{ id: 'reset-prefs', onpress: reset }}>factory reset</button>
 </div>
 
 <style>

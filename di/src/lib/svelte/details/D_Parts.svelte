@@ -5,13 +5,13 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { hits_3d, stores, scenes } from '../../ts/managers';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Hit_3D } from '../../ts/types/Enumerations';
-	import D_Selected_Part from './D_Selected_Part.svelte';
+	import P_Selected from './P_Selected.svelte';
 	import { w_unit_system } from '../../ts/types/Units';
-	import D_Attributes from './D_Attributes.svelte';
-	import D_Constants from './D_Constants.svelte';
+	import P_Attributes from './P_Attributes.svelte';
+	import P_Constants from './P_Constants.svelte';
 	import { units } from '../../ts/types/Units';
-	import D_Rotation from './D_Rotation.svelte';
-	import D_Repeater from './D_Repeater.svelte';
+	import P_Angles from './P_Angles.svelte';
+	import P_Repeat from './P_Repeat.svelte';
 
 	const { w_all_sos, w_selection, w_tick, w_precision, w_parts_tab, w_collapsed_ids } = stores;
 
@@ -237,10 +237,10 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	{/if}
 {/if}
 <div style:height='6px'/>
-<D_Selected_Part />
+<P_Selected />
 <div class='tab-content'>
 	{#if $w_parts_tab === 'attributes'}
-		<D_Attributes />
+		<P_Attributes />
 		<div class='constants-header'>
 			<button class='constants-toggle' onclick={toggle_show_constants}>
 				{show_constants ? 'hide' : 'show'} constants
@@ -251,11 +251,11 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 				</button>
 			{/if}
 		</div>
-		{#if show_constants}<D_Constants /><div style:height='3px'></div>{/if}
+		{#if show_constants}<P_Constants /><div style:height='3px'></div>{/if}
 	{:else if $w_parts_tab === 'rotation'}
-		<D_Rotation />
+		<P_Angles />
 	{:else}
-		<D_Repeater />
+		<P_Repeat />
 	{/if}
 </div>
 
@@ -343,7 +343,7 @@ import { preferences, T_Preference } from '../../ts/managers/Preferences';
 		box-sizing  : border-box;
 	}
 
-	.collapse-tri {about:blank#blocked
+	.collapse-tri {
 		cursor           : pointer;
 		margin-right     : 1px;
 		opacity          : 0.4;

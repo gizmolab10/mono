@@ -3,7 +3,6 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] work on [[12.parts]]
 - [ ] ability to drag on mobile (ipad, iphone)
 - [ ] border only on bottom face of root
 - [ ] grid opacity -> canvas, vertical, top left
@@ -17,6 +16,7 @@ offer a proposal for the first unchecked item
 - [ ] work on [[21.undo]]
 - [ ] parts: position/size button -> convert into a colspan th above last three cols
 - [ ] work on [[17.library]]
+- [ ] work on [[12.parts]]
 - [ ] work on [[22.aesthetics]]
 - [ ] proposal to move all code debt done items to appropriate milestone
 	- [ ] add it to a first section called work remaining

@@ -46,6 +46,7 @@ export enum T_Preference {
 
 	// Library
 	library = 'library',
+	libraryFolder = 'libraryFolder',
 }
 
 const STORAGE_PREFIX = 'di:';

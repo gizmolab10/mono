@@ -1,5 +1,5 @@
 import type { Portable_Scene, Portable_SO, Exported_File } from './Versions';
-import default_scene from '../../../assets/drawer.di?raw';
+import default_scene from '../../../assets/cabinetry/drawer.di?raw';
 import { preferences, T_Preference } from './Preferences';
 import { CURRENT_VERSION, versions } from './Versions';
 import { constants } from '../algebra/User_Constants';
@@ -8,6 +8,7 @@ import { T_Hit_3D } from '../types/Enumerations';
 import Smart_Object from '../runtime/Smart_Object';
 import { Identifiable } from '../runtime';
 import { camera } from '../render/Camera';
+import { stores } from './Stores';
 import { scene } from '../render/Scene';
 import { hits_3d } from './Hits_3D';
 
@@ -87,7 +88,7 @@ class Scenes {
 	private static readonly IDB_NAME = 'di_library';
 	private static readonly IDB_STORE = 'files';
 	private idb_cache: IDBDatabase | null = null;
-	private library_cache: { name: string; raw: string }[] | null = null;
+	private library_cache: string[] | null = null;
 
 	private open_idb(): Promise<IDBDatabase> {
 		if (this.idb_cache) return Promise.resolve(this.idb_cache);
@@ -128,20 +129,14 @@ class Scenes {
 		}
 	}
 
-	/** Load all user-saved .di files from IndexedDB. */
-	private async load_all_from_idb(): Promise<{ name: string; raw: string }[]> {
+	/** List user-saved file names from IndexedDB (keys only, fast). */
+	private async list_idb_names(): Promise<string[]> {
 		try {
 			const database = await this.open_idb();
 			return new Promise((resolve) => {
 				const transaction = database.transaction(Scenes.IDB_STORE, 'readonly');
-				const store = transaction.objectStore(Scenes.IDB_STORE);
-				const keys_req = store.getAllKeys();
-				const vals_req = store.getAll();
-				transaction.oncomplete = () => {
-					const keys = keys_req.result as string[];
-					const vals = vals_req.result as string[];
-					resolve(keys.map((name, i) => ({ name, raw: vals[i] })));
-				};
+				const req = transaction.objectStore(Scenes.IDB_STORE).getAllKeys();
+				transaction.oncomplete = () => resolve(req.result as string[]);
 				transaction.onerror = () => resolve([]);
 			});
 		} catch {
@@ -149,25 +144,54 @@ class Scenes {
 		}
 	}
 
-	/** List library: bundled defaults + user-saved files from IDB. */
-	async list_library(): Promise<{ name: string; raw: string }[]> {
+	/** Load a single user-saved file from IndexedDB by name. */
+	private async load_from_idb(name: string): Promise<string | null> {
+		try {
+			const database = await this.open_idb();
+			return new Promise((resolve) => {
+				const transaction = database.transaction(Scenes.IDB_STORE, 'readonly');
+				const req = transaction.objectStore(Scenes.IDB_STORE).get(name);
+				transaction.oncomplete = () => resolve(req.result as string ?? null);
+				transaction.onerror = () => resolve(null);
+			});
+		} catch {
+			return null;
+		}
+	}
+
+	/** List bundled library names (sync, instant). */
+	list_bundled(): string[] {
+		return this.list_bundled_names();
+	}
+
+	/** List all library names: bundled + user-saved from IDB. */
+	async list_library(): Promise<string[]> {
 		if (this.library_cache) return this.library_cache;
-		const bundled = this.list_bundled();
-		const user_files = await this.load_all_from_idb();
-		// Merge: user files override bundled defaults with same name
-		const by_name = new Map(bundled.map(f => [f.name, f]));
-		for (const f of user_files) by_name.set(f.name, f);
-		this.library_cache = [...by_name.values()].sort((a, b) => a.name.localeCompare(b.name));
+		const bundled = this.list_bundled_names();
+		const user_names = await this.list_idb_names();
+		const names = new Set(bundled);
+		for (const n of user_names) names.add(n);
+		this.library_cache = [...names].sort((a, b) => a.localeCompare(b));
 		return this.library_cache;
 	}
 
+	/** Load a single library file by name. Checks IDB first, then bundled. */
+	async load_library_file(name: string): Promise<string | null> {
+		const idb = await this.load_from_idb(name);
+		if (idb) return idb;
+		const loader = Scenes.bundled_loaders[Scenes.ASSETS_PREFIX + name + '.di'];
+		if (loader) return loader();
+		return null;
+	}
+
 	/** Return bundled defaults from src/assets. */
-	private list_bundled(): { name: string; raw: string }[] {
-		const modules = import.meta.glob('../../../assets/*.di', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
-		return Object.entries(modules).map(([path, raw]) => ({
-			name: path.split('/').pop()?.replace('.di', '') ?? path,
-			raw,
-		})).sort((a, b) => a.name.localeCompare(b.name));
+	private static readonly ASSETS_PREFIX = '../../../assets/';
+	private static bundled_loaders = import.meta.glob('../../../assets/**/*.di', { query: '?raw', import: 'default' }) as Record<string, () => Promise<string>>;
+
+	private list_bundled_names(): string[] {
+		return Object.keys(Scenes.bundled_loaders).map(path =>
+			path.slice(Scenes.ASSETS_PREFIX.length).replace('.di', '')
+		);
 	}
 
 	/** Add current scene to library: save to IDB + download to disk. */
@@ -184,6 +208,7 @@ class Scenes {
 		const name = root?.name || 'scene';
 		await this.save_to_idb(name, json);
 		this.download_file(`${name}.di`, json);
+		stores.w_library.update(n => n + 1);
 	}
 
 	/** Trigger a browser download via anchor tag. */
@@ -250,9 +275,11 @@ class Scenes {
 
 	/** DEV MIGRATION: translate all library files to agnostic and download each. */
 	async translate_library(): Promise<void> {
-		const files = await this.list_library();
-		for (const file of files) {
-			const scene_data = this.parse_text(file.raw);
+		const names = await this.list_library();
+		for (const name of names) {
+			const raw = await this.load_library_file(name);
+			if (!raw) continue;
+			const scene_data = this.parse_text(raw);
 			if (!scene_data) continue;
 			for (const so_data of scene_data.smart_objects) {
 				const so = Smart_Object.deserialize(so_data);
@@ -263,7 +290,7 @@ class Scenes {
 				so_data.z = re.z;
 			}
 			const exported: Exported_File = { version: CURRENT_VERSION, scene: scene_data };
-			this.download_file(`${file.name}.di`, JSON.stringify(exported, null, 2));
+			this.download_file(`${name}.di`, JSON.stringify(exported, null, 2));
 		}
 	}
 

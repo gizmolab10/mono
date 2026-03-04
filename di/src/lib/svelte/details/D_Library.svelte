@@ -1,53 +1,85 @@
 <script lang='ts'>
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/managers/Hits';
-	import { scenes } from '../../ts/managers';
+	import { scenes, stores } from '../../ts/managers';
 	import { engine } from '../../ts/render';
 	import { tick } from 'svelte';
 
-	type LibEntry = { name: string; size: string; raw: string };
+	const { w_library } = stores;
 
-	function format_size(bytes: number): string {
-		if (bytes < 1024) return `${bytes} B`;
-		return `${(bytes / 1024).toFixed(1)} KB`;
+	type LibEntry = { name: string; folder: string; display: string };
+
+	let active_folder: string = $state(preferences.read<string>(T_Preference.libraryFolder) ?? '');
+
+	function parse_names(names: string[]): LibEntry[] {
+		return names.map(name => {
+			const slash = name.indexOf('/');
+			return {
+				name,
+				folder: slash === -1 ? '' : name.slice(0, slash),
+				display: slash === -1 ? name : name.slice(slash + 1),
+			};
+		});
 	}
 
-	let entries: LibEntry[] = $state([]);
+	// instant: bundled names are synchronous
+	let entries: LibEntry[] = $state(parse_names(scenes.list_bundled()));
 
-	async function refresh(): Promise<void> {
-		const files = await scenes.list_library();
-		entries = files.map(f => ({
-			name: f.name,
-			size: format_size(new Blob([f.raw]).size),
-			raw: f.raw,
-		}));
+	let folders: string[] = $derived([...new Set(entries.map(e => e.folder))].sort((a, b) => a === '' ? 1 : b === '' ? -1 : a.localeCompare(b)));
+	let visible: LibEntry[] = $derived(entries.filter(e => e.folder === active_folder));
+
+	// async: merge IDB user files, then validate active_folder
+	async function merge_idb(): Promise<void> {
+		const all = await scenes.list_library();
+		entries = parse_names(all);
+		if (!entries.some(e => e.folder === active_folder)) {
+			active_folder = folders[0] ?? '';
+		}
 		await tick();
 		hits.recalibrate();
 	}
 
-	refresh();
+	merge_idb();
+
+	// react to library changes (e.g. save from Controls)
+	$effect(() => { $w_library; merge_idb(); });
 
 	async function reset_library(): Promise<void> {
 		await scenes.clear_idb();
-		refresh();
+		entries = parse_names(scenes.list_bundled());
+		await merge_idb();
 	}
 
-	function on_click(entry: LibEntry, e: MouseEvent): void {
+	async function on_click(entry: LibEntry, e: MouseEvent): Promise<void> {
+		const raw = await scenes.load_library_file(entry.name);
+		if (!raw) return;
 		if (e.altKey) {
-			engine.insert_child_from_text(entry.raw);
+			engine.insert_child_from_text(raw);
 			return;
 		}
-		const parsed = scenes.parse_text(entry.raw);
+		const parsed = scenes.parse_text(raw);
 		if (parsed) engine.load_scene(parsed);
 	}
 
 </script>
 
+{#if folders.length > 1}
+	<div class='segmented'>
+		{#each folders as folder}
+			<button
+				class:active={active_folder === folder}
+				onclick={() => { active_folder = folder; preferences.write(T_Preference.libraryFolder, folder); }}>
+				{folder || 'mine'}
+			</button>
+		{/each}
+	</div>
+{/if}
+
 <table class='library'><tbody>
-	{#each entries as entry}
+	{#each visible as entry}
 		<tr class='lib-row' onclick={(e) => on_click(entry, e)}>
-			<td class='lib-name'>{entry.name}</td>
-			<td class='lib-size'>{entry.size}</td>
+			<td class='lib-name'>{entry.display}</td>
 		</tr>
 	{/each}
 </tbody></table>
@@ -55,11 +87,49 @@
 <div class='separator'></div>
 
 <div class='settings'>
-	<button class='action-btn' use:hit_target={{ id: 'reset-library', onpress: reset_library }}>reset</button>
-	<button class='action-btn far-right' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file((s) => engine.load_scene(s)) }}>import</button>
+	<button class='action-btn' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file((s) => engine.load_scene(s)) }}>import</button>
+	<button class='action-btn far-right' use:hit_target={{ id: 'reset-library', onpress: reset_library }}>reinstall</button>
 </div>
 
 <style>
+	.segmented {
+		display         : flex;
+		justify-content : center;
+		margin-bottom   : 4px;
+	}
+
+	.segmented button {
+		font-size     : 11px;
+		height        : 16px;
+		padding       : 0 8px;
+		background    : white;
+		white-space   : nowrap;
+		color         : inherit;
+		cursor        : pointer;
+		border        : 0.5px solid currentColor;
+	}
+
+	.segmented button:first-child {
+		border-radius : 10px 0 0 10px;
+	}
+
+	.segmented button:last-child {
+		border-radius : 0 10px 10px 0;
+	}
+
+	.segmented button:not(:first-child) {
+		border-left : none;
+	}
+
+	.segmented button.active {
+		font-weight : 600;
+		background  : var(--accent);
+	}
+
+	.segmented button:hover:not(.active) {
+		background : var(--bg);
+	}
+
 	.separator {
 		background     : var(--accent);
 		margin         : 0 -8px;
@@ -128,11 +198,5 @@
 	.lib-name {
 		padding    : 2px 0;
 		text-align : left;
-	}
-
-	.lib-size {
-		padding    : 2px 0;
-		text-align : right;
-		opacity    : 0.5;
 	}
 </style>

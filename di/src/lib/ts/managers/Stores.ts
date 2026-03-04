@@ -14,6 +14,7 @@ class Stores {
 	w_all_sos			= writable<Smart_Object[]>([]);
 	w_front_face		= writable<number>(-1);
 	w_tick				= writable<number>(0);
+	w_library			= writable<number>(0);
 	w_collapsed_ids		= writable<Set<string>>(new Set());
 
 	// Persistent

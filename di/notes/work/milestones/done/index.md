@@ -20,4 +20,4 @@
 | 16  | [Formulas](16.formulas.md)                | Feb 16         |
 | 17  | [Library](17.library.md)                  |                |
 | 18  | [User Constants](18.user.constants.md)    |                |
-| 19  | [Skills](19.skills.md)                    |                |
+| 19  | [Skills](19.angles.md)                    |                |
