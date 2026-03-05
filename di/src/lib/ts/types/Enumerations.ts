@@ -15,7 +15,7 @@ export enum T_Startup {
 
 export enum T_Layer {
 	common,
-	hideable,
+	layout,
 	action,
 	frontmost,
 }

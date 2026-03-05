@@ -116,6 +116,12 @@ Systems fail. People fail. The ecosystem absorbs that gracefully, not punishes i
 
 ---
 
+## Examples
+
+- [ ] [decentralized tools](https://cryptpad.fr/sheet/#/2/sheet/view/NOHIQYDsvQIkGpJJsvQfmXzixQjn0obMv1-ufUIyGT8/) 
+
+---
+
 ## What's next
 
 - [ ] share this with Steve and Pete — in person, this week, while the Wendy meeting is fresh

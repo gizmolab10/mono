@@ -56,10 +56,10 @@
 <div class='slider-group'>
 	<span class='label'>line thickness</span>
 	<input
-		type    = 'range'
-		min     = {0.5}
 		max     = {4}
+		min     = {0.5}
 		step    = {0.5}
+		type    = 'range'
 		value   = {$w_line_thickness}
 		oninput = {(e) => w_line_thickness.set(Number((e.target as HTMLInputElement).value))}
 	/>
@@ -101,6 +101,7 @@
 		cursor        : pointer;
 		color         : inherit;
 		box-sizing    : border-box;
+		z-index       : var(--z-action);
 		border        : 0.5px solid currentColor;
 	}
 
@@ -123,6 +124,8 @@
 		display        : flex;
 		margin-top     : -8px;
 		flex-direction : column;
+		position       : relative;
+		z-index        : var(--z-action);
 	}
 
 	.segmented {
@@ -146,6 +149,7 @@
 		justify-content: center;
 		cursor         : pointer;
 		flex           : 1 1 auto;
+		z-index        : var(--z-action);
 		color          : rgba(0, 0, 0, 0.5);
 		border-right   : 0.5px solid currentColor;
 	}
@@ -166,6 +170,7 @@
 	}
 
 	.units-select {
+		z-index            : var(--z-action);
 		border-radius      : 10px;
 		font-size          : 11px;
 		height             : 20px;
@@ -198,6 +203,8 @@
 
 
 	.slider-group {
+		z-index        : var(--z-action);
+		position       : relative;
 		gap            : 8px;
 		display        : flex;
 		align-items    : center;
@@ -264,6 +271,7 @@
 	}
 
 	.color-group input[type='color'] {
+		z-index            : var(--z-action);
 		width              : 20px;
 		height             : 20px;
 		padding            : 0;

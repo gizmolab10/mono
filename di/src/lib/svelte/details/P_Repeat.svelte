@@ -185,6 +185,7 @@
 	}
 
 	.segmented button {
+		z-index       : var(--z-action);
 		border        : 0.5px solid currentColor;
 		background    : white;
 		color         : inherit;
@@ -221,12 +222,13 @@
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
+		white-space   : nowrap;
 		background    : white;
 		padding       : 0 8px;
 		border-radius : 10px;
 		font-size     : 11px;
 		height        : 20px;
-		white-space   : nowrap;
+		z-index       : var(--z-action);
 	}
 
 	.action-btn.active {
@@ -235,6 +237,7 @@
 	}
 
 	.repeater-input {
+		z-index       : var(--z-action);
 		flex          : 1;
 		min-width     : 0;
 		border        : 0.5px solid currentColor;

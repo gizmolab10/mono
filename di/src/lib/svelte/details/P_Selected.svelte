@@ -21,12 +21,13 @@
 <style>
 	.actions-row {
 		gap           : 6px;
-		margin-top    : -4px;
 		margin-bottom : 2px;
+		margin-top    : -4px;
 		display       : flex;
 	}
 
 	.segmented {
+		z-index : var(--z-action);
 		display : flex;
 		margin  : 0 auto;
 	}

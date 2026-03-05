@@ -153,6 +153,7 @@
 	}
 
 	.cell-input {
+		z-index     : var(--z-action);
 		margin      : 0;
 		outline     : none;
 		border      : none;

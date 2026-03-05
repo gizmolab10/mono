@@ -135,6 +135,7 @@
 	}
 
 	.segmented button {
+		z-index       : var(--z-action);
 		font-size     : 11px;
 		height        : 16px;
 		padding       : 0 8px;
@@ -168,9 +169,9 @@
 
 
 	.settings {
+		flex-wrap : wrap;
 		display   : flex;
 		gap       : 6px;
-		flex-wrap : wrap;
 	}
 
 	.action-btn {
@@ -183,6 +184,7 @@
 		border-radius : 10px;
 		font-size     : 11px;
 		height        : 20px;
+		z-index       : var(--z-action);
 	}
 
 	.action-btn:global([data-hitting]) {

@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { T_Details, T_Layer, T_Hit_Target } from '../../ts/types/Enumerations';
+	import { T_Details, T_Hit_Target } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
 	import { stores } from '../../ts/managers';
 	const { w_t_details } = stores;
-	const { w_accent_color } = colors;
+
 
 	let {
 		title,
@@ -39,15 +39,11 @@
 </script>
 
 <div class='hideable'
-	bind:this={hideable_el}
-	style:--z-common={T_Layer.common}
-	style:--z-hideable={T_Layer.hideable}>
+	bind:this={hideable_el}>
 	<button
 		class='banner'
 		class:open={is_visible}
 		style:--banner={colors.banner}
-		style:--accent={$w_accent_color}
-		style:--z-action={T_Layer.action}
 		use:hit_target={{ type: T_Hit_Target.banner, id: `hideable-${id}`, onpress: toggle }}>
 		<span class='banner-title'>{title}</span>
 		{#if actions}<span class='banner-actions'>{@render actions()}</span>{/if}
@@ -66,6 +62,7 @@
 	}
 
 	.banner {
+		z-index         : var(--z-action);
 		color           : rgba(0, 0, 0, 1);
 		text-transform  : lowercase;
 		position        : relative;
@@ -98,7 +95,7 @@
 
 	.banner-title {
 		position : relative;
-		z-index  : var(--z-hideable);
+		z-index  : var(--z-layout);
 	}
 
 	.banner-actions {

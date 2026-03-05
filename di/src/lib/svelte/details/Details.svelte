@@ -10,7 +10,7 @@
 	import D_Parts from './D_Parts.svelte';
 	import D_Library from './D_Library.svelte';
 	import D_Preferences from './D_Preferences.svelte';
-	const { w_text_color, w_background_color, w_accent_color } = colors;
+	const { w_text_color, w_background_color } = colors;
 
 	onMount( async () => {
 		setTimeout( async () => {
@@ -23,9 +23,7 @@
 <div
 	class            = 'details'
 	style:color      = '{$w_text_color}'
-	style:--accent   = {$w_accent_color}
-	style:background = {$w_background_color}
-	style:--bg       = {$w_background_color}>
+	style:background = {$w_background_color}>
 
 	<div class='banner-zone'>
 		<Hideable title='preferences' id='preferences' detail={T_Details.preferences}>
@@ -82,6 +80,7 @@
 	}
 
 	.banner-add {
+		z-index         : var(--z-action);
 		line-height     : 1;
 		padding         : 0;
 		border-radius   : 50%;

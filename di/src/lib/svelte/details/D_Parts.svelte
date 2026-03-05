@@ -279,22 +279,22 @@
 	}
 
 	.hierarchy-row.selected {
-		background  : var(--accent);
 		font-weight : 600;
+		background  : var(--accent);
 	}
 
 	.hierarchy-name {
-		padding    : 2px 0;
 		text-align : left;
+		padding    : 2px 0;
 	}
 
 	.hierarchy-eye {
+		padding    : 0;
 		width      : 1em;
-		text-align : center;
 		font-size  : 7px;
 		opacity    : 0.4;
+		text-align : center;
 		cursor     : pointer;
-		padding    : 0;
 	}
 
 	.hierarchy-eye:not(.static):hover {
@@ -307,6 +307,7 @@
 	}
 
 	.name-input {
+		z-index     : var(--z-action);
 		width       : 100%;
 		border      : none;
 		background  : white;
@@ -346,6 +347,7 @@
 	}
 
 	.collapsed-name {
+		z-index       : var(--z-action);
 		border-radius : 3px;
 		margin-bottom : 3px;
 		font-size     : 12px;
@@ -368,14 +370,14 @@
 	}
 
 	.toggle-header {
-		cursor        : pointer;
-		text-align    : center;
+		border-radius : 8px;
 		font-size     : 11px;
-		font-weight   : normal;
 		height        : 12px;
 		background    : white;
+		text-align    : center;
+		font-weight   : normal;
+		cursor        : pointer;
 		border        : 0 solid transparent;
-		border-radius : 8px;
 		box-shadow    : inset 0 0 0 0.25px currentColor;
 	}
 
@@ -416,6 +418,7 @@
 	}
 
 	.constants-toggle {
+		z-index       : var(--z-action);
 		flex          : 1;
 		padding       : 0;
 		border-radius : 8px;
@@ -434,6 +437,7 @@
 	}
 
 	.add-btn {
+		z-index         : var(--z-action);
 		line-height     : 1;
 		padding         : 0;
 		border-radius   : 50%;

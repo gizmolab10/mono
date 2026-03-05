@@ -184,12 +184,13 @@
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
+		white-space   : nowrap;
 		background    : white;
 		padding       : 0 8px;
 		border-radius : 10px;
 		font-size     : 11px;
 		height        : 20px;
-		white-space   : nowrap;
+		z-index       : var(--z-action);
 	}
 
 	.slider-wrap {

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Editing, T_Hit_3D, T_Hit_Target, T_Layer } from '../../ts/types/Enumerations';
+	import { T_Editing, T_Hit_3D, T_Hit_Target } from '../../ts/types/Enumerations';
 	import { hits, hits_3d, scenes, stores } from '../../ts/managers';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { components } from '../../ts/managers/Components';
@@ -217,9 +217,7 @@
 	class            = 'graph'
 	bind:this        = {container}
 	style:color      = {$w_text_color}
-	style:background = 'white'
-	style:--z-action = {T_Layer.action}
-	style:--z-frontmost   = {T_Layer.frontmost}>
+	style:background = 'white'>
 	<canvas
 		bind:this = {canvas}></canvas>
 	<div class='canvas-actions'>
@@ -243,7 +241,7 @@
 		<div class='assist-slider'>
 			<Slider min={0} max={1} value={$w_grid_opacity} width={81} show_steppers={false} onchange={handle_grid_opacity} />
 		</div>
-		<span class='assist-label'>guides</span>
+		<span class='assist-label'>grid</span>
 	</div>
 	<div class='zoom'>
 		<Slider min={0.01} max={10000} value={$w_scale} logarithmic width={270} onchange={handle_zoom_slide} onstep={handle_zoom_step} />
