@@ -13,6 +13,8 @@ offer a proposal for the first unchecked item
 	- [ ] [[21.undo]]
 - [ ] proposal to move all code debt done items to appropriate milestone
 	- [ ] add it to a first section called work remaining
+- [ ] pac: extract "hierarchy pattern" as a component
+	- [ ] use in library, constants?
 - [ ] what went wrong with [[s3]]?
 - [ ] write a claude forum article
 - [ ] design flaw: saving working project in a file -> cross talk

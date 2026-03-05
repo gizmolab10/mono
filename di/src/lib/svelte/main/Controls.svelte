@@ -16,13 +16,13 @@
 	let show_angles     = $derived(($w_decorations & T_Decorations.angles) !== 0);
 	let show_names      = $derived(($w_decorations & T_Decorations.names) !== 0);
 
-	let controls_width = $state(Infinity);
-	let wrapped = $derived(controls_width < 670);
+	let controls_width  = $state(Infinity);
+	let wrapped         = $derived(controls_width < 650);
 </script>
 
 {#snippet hamburger_button()}
 	<button class='hamburger' class:active={$w_show_details} use:hit_target={{ id: 'details', onpress: () => stores.toggle_details() }} aria-label='toggle details'>
-		<svg class='hamburger-icon' viewBox='0 0 20 20' width='20' height='20'>
+		<svg class='hamburger-icon' viewBox='-2 -1 20 20' width='20' height='20'>
 			<rect x='2' y='4'  width='16' height='2.5' rx='1.25'/>
 			<rect x='2' y='9'  width='16' height='2.5' rx='1.25'/>
 			<rect x='2' y='14' width='16' height='2.5' rx='1.25'/>
@@ -74,52 +74,52 @@
 	{:else}
 		<div class='group'>
 			{@render left_buttons()}
-			<Separator vertical thickness={5} length={32} margin={0} />
+			<Separator vertical thickness={5} length={28} margin={0} />
 		</div>
 		<span class='spacer'></span>
 		<div class='group'>{@render face_buttons()}</div>
 		<span class='spacer'></span>
-		<Separator vertical thickness={5} length={32} margin={0} />
+		<Separator vertical thickness={5} length={28} margin={0} />
 		<div class='group'>{@render mode_buttons()}</div>
 	{/if}
 </div>
 
 <style>
 	.controls {
+		box-sizing      : border-box;
+		justify-content : flex-end;
+		overflow        : visible;
+		align-items     : center;
+		padding         : 0 6px;
 		width           : 100%;
 		display         : flex;
-		align-items     : center;
-		overflow        : visible;
-		padding         : 0 6px;
-		justify-content : flex-end;
-		box-sizing      : border-box;
 	}
 
 	.group {
-		display     : flex;
 		align-items : center;
+		display     : flex;
 		flex-shrink : 0;
 	}
 
 	.left-col {
-		display     : flex;
 		align-items : center;
+		display     : flex;
 		flex-shrink : 0;
 	}
 
 	.right-col {
-		display        : flex;
 		flex-direction : column;
-		flex           : 1;
-		min-width      : 0;
+		padding        : 6px 0;
+		display        : flex;
 		gap            : 2px;
-		padding        : 9px 0;
+		min-width      : 0;
+		flex           : 1;
 	}
 
 	.right-row {
-		display         : flex;
-		align-items     : center;
 		justify-content : center;
+		align-items     : center;
+		display         : flex;
 	}
 
 	.spacer {
@@ -128,20 +128,19 @@
 	}
 
 	.hamburger {
+		z-index         : var(--z-action);
 		background      : transparent;
-		border          : none;
-		color           : inherit;
-		width           : 16px;
-		height          : 16px;
-		padding         : 0;
+		position        : relative;
 		cursor          : pointer;
-		display         : flex;
+		color           : inherit;
 		align-items     : center;
 		justify-content : center;
-		margin-right    : 2px;
-		position        : relative;
+		display         : flex;
+		border          : none;
+		height          : 16px;
+		width           : 16px;
 		top             : -1px;
-		z-index         : var(--z-action);
+		padding         : 0;
 	}
 
 	.hamburger-icon rect {
@@ -150,23 +149,23 @@
 	}
 
 	.hamburger:global([data-hitting]) .hamburger-icon rect {
-		fill         : white;
 		stroke       : var(--accent);
+		fill         : white;
 		stroke-width : 0.5;
 	}
 
 	.toolbar-btn {
-		background    : white;
 		border        : 0.5px solid currentColor;
-		border-radius : 10px;
-		color         : inherit;
 		z-index       : var(--z-action);
 		padding       : 0 6px 1px 6px;
+		box-sizing    : border-box;
+		cursor        : pointer;
+		color         : inherit;
+		background    : white;
+		border-radius : 10px;
 		font-size     : 11px;
 		height        : 16px;
-		cursor        : pointer;
-		margin-left   : 6px;
-		box-sizing    : border-box;
+		margin-left   : 4px;
 	}
 
 	.toolbar-btn.active {
@@ -180,26 +179,26 @@
 	}
 
 	.segmented {
-		display       : flex;
-		margin-left   : 6px;
 		border        : 0.5px solid currentColor;
-		border-radius : 10px;
-		overflow      : hidden;
-		height        : 16px;
-		box-sizing    : border-box;
 		z-index       : var(--z-action);
+		box-sizing    : border-box;
+		overflow      : hidden;
+		display       : flex;
+		border-radius : 10px;
+		height        : 16px;
+		margin-left   : 2px;
 	}
 
 	.seg {
-		background  : white;
-		border      : none;
 		border-right: 0.5px solid currentColor;
 		color       : rgba(0, 0, 0, 0.35);
 		padding     : 0 6px 1px 6px;
+		box-sizing  : border-box;
+		cursor      : pointer;
+		background  : white;
+		border      : none;
 		font-size   : 11px;
 		height      : 100%;
-		cursor      : pointer;
-		box-sizing  : border-box;
 	}
 
 	.seg:last-child {
