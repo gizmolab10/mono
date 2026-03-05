@@ -4,7 +4,11 @@
 	import { w_unit_system } from '../../ts/types/Units';
 	import { scenes, stores } from '../../ts/managers';
 	import type { Bound } from '../../ts/types/Types';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { constants } from '../../ts/algebra/User_Constants';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { constraints } from '../../ts/algebra';
+	import P_Constants from './P_Constants.svelte';
 	import { units } from '../../ts/types/Units';
 
 	const { w_selection, w_precision, w_tick } = stores;
@@ -117,6 +121,15 @@
 		}
 	}
 
+	let show_constants = $state(preferences.read<boolean>(T_Preference.showConstants) ?? true);
+
+	function toggle_show_constants() { show_constants = !show_constants; preferences.write(T_Preference.showConstants, show_constants); }
+
+	function add_constant() {
+		constants.add('', 0);
+		stores.tick();
+	}
+
 	let formula_mode = $derived.by(() => {
 		if (tick === undefined || !selected_so) return 'agnostic' as const;
 		return constraints.detect_formula_mode(selected_so) === 'explicit' ? 'explicit' as const : 'agnostic' as const;
@@ -178,14 +191,25 @@
 			{/each}
 		</tbody>
 	</table>
+	<div class='constants-header'>
+		<button class='constants-toggle' onclick={toggle_show_constants}>
+			{show_constants ? 'hide' : 'show'} constants
+		</button>
+		{#if show_constants}
+			<button class='add-btn' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>
+				+
+			</button>
+		{/if}
+	</div>
+	{#if show_constants}<P_Constants /><div style:height='3px'></div>{/if}
 {:else}
-	<p>No object selected</p>
+	<p>-- no object selected --</p>
 {/if}
 
 <style>
 	.bounds {
-		width           : 100%;
 		border-collapse : collapse;
+		width           : 100%;
 		font-size       : 11px;
 	}
 
@@ -196,18 +220,18 @@
 	}
 
 	.attr-name {
+		text-align  : center !important;
+		background  : var(--bg);
+		position    : relative;
 		width       : 16px;
 		min-width   : 16px;
 		font-weight : 600;
 		opacity     : 0.7;
-		text-align  : center !important;
-		background  : var(--bg);
-		position    : relative;
 	}
 
 	.ctx {
-		position    : absolute;
 		right       : calc(100% + 2px);
+		position    : absolute;
 		opacity     : 0.5;
 		font-weight : 600;
 	}
@@ -217,10 +241,10 @@
 	}
 
 	.attr-sep {
+		cursor     : pointer;
+		background : white;
 		width      : 12px;
 		min-width  : 12px;
-		background : white;
-		cursor     : pointer;
 	}
 
 	.attr-sep:not(.disabled):hover {
@@ -245,8 +269,8 @@
 	}
 
 	.attr-formula {
-		width          : 70%;
 		vertical-align : middle;
+		width          : 70%;
 	}
 
 	.attr-formula.merged {
@@ -267,17 +291,17 @@
 
 	.cell-input {
 		z-index       : var(--z-action);
-		width         : 100%;
-		height        : 100%;
-		border        : none;
-		background    : white;
+		box-sizing    : border-box;
 		color         : inherit;
 		font-size     : inherit;
 		font-family   : inherit;
+		background    : white;
 		padding       : 0 4px;
-		margin        : 0;
+		width         : 100%;
+		height        : 100%;
+		border        : none;
 		outline       : none;
-		box-sizing    : border-box;
+		margin        : 0;
 	}
 
 	.cell-input:not(:disabled):not(:focus):hover {
@@ -285,10 +309,10 @@
 	}
 
 	.cell-input:focus {
-		background     : white;
-		color          : black;
 		outline        : 1.5px solid cornflowerblue;
 		outline-offset : -1.5px;
+		background     : white;
+		color          : black;
 	}
 
 	.cell-disabled {
@@ -296,20 +320,70 @@
 	}
 
 	.cell-input:disabled {
-		cursor     : default;
 		background : var(--accent);
+		cursor     : default;
 		opacity    : 0.7;
 	}
 
 	.cell-input.right {
-		text-align           : right;
 		font-variant-numeric : tabular-nums;
+		text-align           : right;
 	}
 
 	p {
-		font-size : 0.875rem;
-		opacity   : 0.6;
-		margin    : 0;
+		margin     : -5px 0 3px;
+		font-size  : 0.6rem;
+		text-align : center;
+		opacity    : 0.6;
+	}
+
+	.constants-header {
+		gap           : 6px;
+		margin-top    : 6px;
+		margin-bottom : 6px;
+		display       : flex;
+		align-items   : center;
+	}
+
+	.constants-toggle {
+		z-index       : var(--z-action);
+		flex          : 1;
+		padding       : 0;
+		border-radius : 8px;
+		font-size     : 11px;
+		height        : 16px;
+		background    : white;
+		text-align    : center;
+		font-weight   : normal;
+		cursor        : pointer;
+		color         : inherit;
+		border        : 0.25px solid currentColor;
+	}
+
+	.constants-toggle:hover {
+		background : var(--accent);
+	}
+
+	.add-btn {
+		z-index         : var(--z-action);
+		line-height     : 1;
+		padding         : 0;
+		border-radius   : 50%;
+		font-weight     : 300;
+		width           : 16px;
+		height          : 16px;
+		font-size       : 12px;
+		display         : flex;
+		background      : white;
+		align-items     : center;
+		justify-content : center;
+		color           : inherit;
+		cursor          : pointer;
+		border          : 0.5px solid currentColor;
+	}
+
+	.add-btn:hover {
+		background : var(--accent);
 	}
 
 </style>

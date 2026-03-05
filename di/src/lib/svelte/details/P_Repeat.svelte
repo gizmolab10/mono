@@ -13,6 +13,7 @@
 	function get_repeater(_tick: number) { return selected_so?.repeater ?? null; }
 	let is_repeater = $derived(get_repeater($w_tick) !== null);
 	let has_firewall = $derived(get_repeater($w_tick)?.firewall ?? false);
+	let is_stair_mode = $derived.by(() => { const r = get_repeater($w_tick); return r?.gap_axis != null && r.gap_axis !== r.repeat_axis; });
 
 	function repeater_keydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === 'Escape') (e.target as HTMLInputElement).blur();
@@ -100,7 +101,7 @@
 
 {#if is_repeater && selected_so}
 	<div class='repeater-options'>
-		<div class='repeater-option-row'>
+		<div class='repeater-option-row' style:justify-content='center'>
 			<button class='action-btn' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>unrepeat</button>
 		</div>
 		<div class='repeater-option-row'>
@@ -109,9 +110,11 @@
 				<button class:active={selected_so?.repeater?.repeat_axis === 0} onclick={() => set_repeat_axis(0)}>x</button>
 				<button class:active={selected_so?.repeater?.repeat_axis === 1} onclick={() => set_repeat_axis(1)}>y</button>
 			</div>
-			<button class='action-btn' class:active={has_firewall} onclick={toggle_firewall} style='margin-left:auto'>
-				{has_firewall ? 'fireblocks ↔' : 'no fireblocks ↔'}
-			</button>
+			{#if !is_stair_mode}
+				<button class='action-btn' class:active={has_firewall} onclick={toggle_firewall} style='margin-left:auto'>
+					{has_firewall ? 'fireblocks ↔' : 'no fireblocks ↔'}
+				</button>
+			{/if}
 		</div>
 		<div class='repeater-option-row'>
 			<span class='option-label'>constraint</span>
@@ -156,7 +159,9 @@
 		{/if}
 	</div>
 {:else}
-	<button class='action-btn' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>repeat</button>
+	<div style:text-align='center'>
+		<button class='action-btn' style:position='relative' style:top='-2px' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>repeat</button>
+	</div>
 {/if}
 
 <style>

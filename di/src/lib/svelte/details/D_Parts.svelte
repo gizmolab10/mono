@@ -1,14 +1,11 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import { constants } from '../../ts/algebra/User_Constants';
 	import { hits_3d, stores, scenes } from '../../ts/managers';
-	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Hit_3D } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import Separator from '../mouse/Separator.svelte';
 	import P_Attributes from './P_Attributes.svelte';
-	import P_Constants from './P_Constants.svelte';
 	import P_Selected from './P_Selected.svelte';
 	import { units } from '../../ts/types/Units';
 	import P_Angles from './P_Angles.svelte';
@@ -16,11 +13,9 @@
 
 	const { w_all_sos, w_selection, w_tick, w_precision, w_parts_tab, w_collapsed_ids } = stores;
 
-	let show_constants = $state(preferences.read<boolean>(T_Preference.showConstants) ?? true);
 	let show_position = $state(preferences.read<boolean>(T_Preference.showPosition) ?? true);
 	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
 
-	function toggle_show_constants() { show_constants = !show_constants; preferences.write(T_Preference.showConstants, show_constants); }
 	function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
 	let editing_id: string | null = $state(null);
 	let editing_original: string = '';
@@ -137,7 +132,15 @@
 
 	function toggle_visible(e: MouseEvent, so: Smart_Object) {
 		e.stopPropagation();
-		so.visible = !so.visible;
+		const v = !so.visible;
+		so.visible = v;
+		// repeater group: sync visibility across template + clones
+		const parent = so.scene?.parent?.so;
+		if (parent?.repeater) {
+			for (const s of $w_all_sos) {
+				if (s.scene?.parent?.so === parent) s.visible = v;
+			}
+		}
 		stores.tick();
 		scenes.save();
 	}
@@ -149,10 +152,6 @@
 		return d;
 	}
 
-	function add_constant() {
-		constants.add('', 0);
-		stores.tick();
-	}
 </script>
 
 <table class='hierarchy'>
@@ -210,7 +209,7 @@
 						{/if}
 					</td>
 					<td class='hierarchy-eye' onclick={(e) => toggle_visible(e, so)}>
-						{#if has_children(so, $w_all_sos)}{so.visible !== false ? '👁' : '–'}{/if}
+						{so.visible !== false ? '👁' : '–'}
 					</td>
 					<td class='hierarchy-data'>{values[0].whole}<span class='faint' class:hidden={!values[0].plus}>+</span></td>
 					<td class='hierarchy-data'>{values[1].whole}<span class='faint' class:hidden={!values[1].plus}>+</span></td>
@@ -237,22 +236,10 @@
 		/>
 	{/if}
 {/if}
-<div style:height='6px'/>
 <P_Selected />
 <div class='tab-content'>
 	{#if $w_parts_tab === 'attributes'}
 		<P_Attributes />
-		<div class='constants-header'>
-			<button class='constants-toggle' onclick={toggle_show_constants}>
-				{show_constants ? 'hide' : 'show'} constants
-			</button>
-			{#if show_constants}
-				<button class='add-btn' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>
-					+
-				</button>
-			{/if}
-		</div>
-		{#if show_constants}<P_Constants /><div style:height='3px'></div>{/if}
 	{:else if $w_parts_tab === 'rotation'}
 		<P_Angles />
 	{:else}
@@ -263,11 +250,11 @@
 <style>
 
 	.hierarchy {
-		width           : 100%;
 		border-collapse : separate;
-		border-spacing  : 0;
+		width           : 100%;
 		font-size       : 9px;
 		margin-top      : 1px;
+		border-spacing  : 0;
 	}
 
 	.hierarchy-row {
@@ -279,22 +266,22 @@
 	}
 
 	.hierarchy-row.selected {
-		font-weight : 600;
 		background  : var(--accent);
+		font-weight : 600;
 	}
 
 	.hierarchy-name {
-		text-align : left;
 		padding    : 2px 0;
+		text-align : left;
 	}
 
 	.hierarchy-eye {
-		padding    : 0;
+		text-align : center;
+		cursor     : pointer;
 		width      : 1em;
 		font-size  : 7px;
 		opacity    : 0.4;
-		text-align : center;
-		cursor     : pointer;
+		padding    : 0;
 	}
 
 	.hierarchy-eye:not(.static):hover {
@@ -307,29 +294,29 @@
 	}
 
 	.name-input {
+		outline     : 1.5px solid cornflowerblue;
 		z-index     : var(--z-action);
-		width       : 100%;
-		border      : none;
-		background  : white;
-		color       : inherit;
-		font-size   : inherit;
+		box-sizing  : border-box;
 		font-family : inherit;
 		font-weight : inherit;
+		font-size   : inherit;
+		color       : inherit;
+		background  : white;
+		width       : 100%;
+		border      : none;
 		padding     : 0;
 		margin      : 0;
-		outline     : 1.5px solid cornflowerblue;
-		box-sizing  : border-box;
 	}
 
 	.collapse-tri {
-		cursor           : pointer;
-		margin-right     : 1px;
-		opacity          : 0.4;
-		font-size        : 18px;
-		line-height      : 0;
-		vertical-align   : middle;
 		position         : relative;
+		cursor           : pointer;
+		vertical-align   : middle;
+		margin-right     : 1px;
+		font-size        : 18px;
 		top              : -2px;
+		opacity          : 0.4;
+		line-height      : 0;
 	}
 
 	.collapse-tri:not(.spacer):hover {
@@ -409,52 +396,4 @@
 		margin-bottom  : -4px;
 	}
 
-	.constants-header {
-		gap           : 6px;
-		margin-top    : 6px;
-		margin-bottom : 6px;
-		display       : flex;
-		align-items   : center;
-	}
-
-	.constants-toggle {
-		z-index       : var(--z-action);
-		flex          : 1;
-		padding       : 0;
-		border-radius : 8px;
-		font-size     : 11px;
-		height        : 16px;
-		background    : white;
-		text-align    : center;
-		font-weight   : normal;
-		cursor        : pointer;
-		color         : inherit;
-		border        : 0.25px solid currentColor;
-	}
-
-	.constants-toggle:hover {
-		background : var(--accent);
-	}
-
-	.add-btn {
-		z-index         : var(--z-action);
-		line-height     : 1;
-		padding         : 0;
-		border-radius   : 50%;
-		font-weight     : 300;
-		width           : 16px;
-		height          : 16px;
-		font-size       : 12px;
-		display         : flex;
-		background      : white;
-		align-items     : center;
-		justify-content : center;
-		color           : inherit;
-		cursor          : pointer;
-		border          : 0.5px solid currentColor;
-	}
-
-	.add-btn:hover {
-		background : var(--accent);
-	}
 </style>

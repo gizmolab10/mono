@@ -746,88 +746,6 @@ class Engine {
 		scenes.save();
 	}
 
-	/** Duplicate the selected SO (and its entire subtree) as a sibling under the same parent.
-	 *  Fresh IDs, offset along the largest axis so the clone is visible. */
-	duplicate_selected(): void {
-		const sel = stores.selection();
-		if (!sel) return;
-		const so = sel.so;
-		const parent_scene = so.scene?.parent;
-		if (!parent_scene) return;  // can't duplicate root
-
-		// Collect subtree: selected SO + all descendants
-		const all = scene.get_all();
-		const subtree: Smart_Object[] = [so];
-		for (const obj of all) {
-			let p = obj.parent;
-			while (p) {
-				if (p === so.scene) { subtree.push(obj.so); break; }
-				p = p.parent;
-			}
-		}
-
-		// Serialize each SO, mint fresh IDs
-		const old_to_new = new Map<string, string>();
-		const serialized: { data: ReturnType<Smart_Object['serialize']>; old_parent_id?: string }[] = [];
-		for (const s of subtree) {
-			const data = s.serialize();
-			const old_id = data.id;
-			const new_id = Smart_Object.newID();
-			old_to_new.set(old_id, new_id);
-			data.id = new_id;
-			const old_parent_id = s === so ? parent_scene.so.id : s.scene?.parent?.so.id;
-			serialized.push({ data, old_parent_id });
-		}
-
-		// Rename clone root to avoid collision in lookup dict
-		const used = new Set(all.map(o => o.so.name));
-		let name = serialized[0].data.name;
-		while (used.has(name)) name = name + "'";
-		serialized[0].data.name = name;
-
-		// Deserialize and wire hierarchy
-		const new_sos: Smart_Object[] = [];
-		for (const { data, old_parent_id } of serialized) {
-			const clone = Smart_Object.deserialize(data);
-			let clone_parent: O_Scene;
-			if (clone.id === old_to_new.get(so.id)) {
-				// Clone root — sibling of original, same parent
-				clone_parent = parent_scene;
-			} else {
-				// Descendant — find its new parent among already-created clones
-				const new_parent_id = old_parent_id ? old_to_new.get(old_parent_id) : undefined;
-				const parent = new_sos.find(s => s.id === new_parent_id);
-				if (!parent?.scene) continue;
-				clone_parent = parent.scene;
-			}
-
-			const clone_scene = scene.create({
-				so: clone,
-				edges: this.edges,
-				faces: this.faces,
-				color: colors.edge_color_rgba(),
-				parent: clone_parent,
-			});
-			clone.scene = clone_scene;
-			hits_3d.register(clone);
-			new_sos.push(clone);
-		}
-
-		if (new_sos.length) {
-			// Rebind all clones first — resolves placeholder refs and evaluates formulas
-			for (const clone of new_sos) {
-				const parent_id = clone.scene?.parent?.so.id;
-				if (parent_id) constraints.rebind_formulas(clone, parent_id);
-			}
-
-			// Single propagation pass after all formulas are bound
-			constraints.propagate_all();
-			stores.w_all_sos.set(scene.get_all().map(o => o.so));
-			stores.tick();
-			scenes.save();
-		}
-	}
-
 	// ── repeaters ──
 
 	/** Swap two axes on an SO and its template child.
@@ -977,9 +895,9 @@ class Engine {
 		if (gap_min != null && gap_max != null && gap_length > 0) {
 			count = this.resolve_gap(gap_length, gap_min, gap_max);
 			if (gap_ai !== repeat_ai) {
-				// Stairs: subtract tread dimensions so each phantom gap = exactly 1 step
+				// Stairs: tread depth = 1.25 × run, all fitting within envelope
 				const gap_dim = [w, d, h][gap_ai];
-				step = (parent_length - template_dim) / (count - 1);
+				step = parent_length / (count - 0.75);
 				gap_step = (gap_length - gap_dim) / count;
 			} else {
 				step = parent_length / count;
@@ -1021,10 +939,15 @@ class Engine {
 		}
 
 		// Stairs: position template 1 gap_step from parent edge on rise axis (bottom phantom)
+		// and set tread depth to 1.25 × run so nosing fits within envelope
 		if (gap_step) {
 			const gap_delta = gap_step - t.axes[gap_ai].start.value;
 			t.axes[gap_ai].start.value += gap_delta;
 			t.axes[gap_ai].end.value += gap_delta;
+			const tread_depth = step * 1.25;
+			const length_delta = tread_depth - t.axes[repeat_ai].length.value;
+			t.axes[repeat_ai].length.value += length_delta;
+			t.axes[repeat_ai].end.value += length_delta;
 		}
 
 		const changed = clones.length !== total_needed;
@@ -1135,6 +1058,7 @@ class Engine {
 			ca.angle.value  = ta.angle.value;
 			ca.invariant    = ta.invariant;
 		}
+		clone.visible = t.visible;
 		return clone;
 	}
 }

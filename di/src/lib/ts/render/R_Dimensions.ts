@@ -29,7 +29,27 @@ export interface DimensionHost {
 /** Render dimensions for all scene objects. */
 export function render_dimensions(host: DimensionHost): void {
 	for (const obj of scene.get_all()) {
-		if (!obj.parent) continue; // root is invisible — no dimensions
+		if (!obj.parent) {
+			// root: skip unless it has projected geometry
+			const root_projected = hits_3d.get_projected(obj.id);
+			if (!root_projected) continue;
+			const root_so = obj.so;
+			const root_world = host.get_world_matrix(obj);
+			const is_2d = stores.current_view_mode() === '2d';
+			const root_front = is_2d ? hits_3d.front_most_face(root_so) : -1;
+			const root_axes: Axis_Name[] = (is_2d && root_front >= 0) ? root_so.face_axes(root_front) : ['x', 'y', 'z'];
+			for (const axis of root_axes) {
+				render_axis_dimension(host, root_so, axis, root_projected, root_world);
+			}
+			continue;
+		}
+
+		// repeater clones: only show dimensionals on the template (first child)
+		if (obj.parent.so.repeater) {
+			const siblings = scene.get_all().filter(o => o.parent === obj.parent);
+			if (siblings[0] !== obj) continue;
+		}
+
 		const projected = hits_3d.get_projected(obj.id);
 		if (!projected) continue;
 

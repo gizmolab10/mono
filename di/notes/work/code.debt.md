@@ -4,12 +4,10 @@
 offer a proposal for the first unchecked item
 
 - [ ] resume
-	- [ ] [[22.aesthetics]]
-	- [ ] [[18.user.constants]]
 	- [ ] [[20.repeaters]]
-	- [ ] [[12.parts]]
 	- [ ] [[14.details]]
 	- [ ] [[8.dimensionals]]
+	- [ ] [[18.user.constants]]
 	- [ ] [[21.undo]]
 - [ ] proposal to move all code debt done items to appropriate milestone
 	- [ ] add it to a first section called work remaining

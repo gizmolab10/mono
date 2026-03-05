@@ -408,44 +408,7 @@ class Render {
 
 		this.camera_view_extent = { x_min: min_x, x_max: max_x, y_min: min_y, y_max: max_y, z_min: min_z, z_max: max_z };
 
-		// DEBUG — remove after diagnosing protrusion (logs every 180 frames)
-		this._cve_count++;
-		if (this._cve_count % 180 === 1) {
-			const rc = children.filter(c => Math.abs(c.so.orientation[3]) < 1 - 1e-6);
-			const ve = this.camera_view_extent;
-			for (const c of rc) {
-				const so = c.so;
-				const q = so.orientation;
-				// Subtree AABB (before rotation)
-				let sx0 = Math.min(so.x_min, so.x_max), sx1 = Math.max(so.x_min, so.x_max);
-				let sy0 = Math.min(so.y_min, so.y_max), sy1 = Math.max(so.y_min, so.y_max);
-				let sz0 = Math.min(so.z_min, so.z_max), sz1 = Math.max(so.z_min, so.z_max);
-				const walk = (parent: O_Scene) => {
-					for (const obj of all) {
-						if (obj.parent === parent) {
-							const s = obj.so;
-							const xl = Math.min(s.x_min, s.x_max), xh = Math.max(s.x_min, s.x_max);
-							const yl = Math.min(s.y_min, s.y_max), yh = Math.max(s.y_min, s.y_max);
-							const zl = Math.min(s.z_min, s.z_max), zh = Math.max(s.z_min, s.z_max);
-							if (xl < sx0) sx0 = xl; if (xh > sx1) sx1 = xh;
-							if (yl < sy0) sy0 = yl; if (yh > sy1) sy1 = yh;
-							if (zl < sz0) sz0 = zl; if (zh > sz1) sz1 = zh;
-							walk(obj);
-						}
-					}
-				};
-				walk(c);
-				// Rotated corners
-				const cx = (so.x_min + so.x_max) / 2, cy = (so.y_min + so.y_max) / 2, cz = (so.z_min + so.z_max) / 2;
-				for (let i = 0; i < 8; i++) {
-					const vx = (i & 4) ? sx1 : sx0, vy = (i & 2) ? sy1 : sy0, vz = (i & 1) ? sz1 : sz0;
-					const rv = vec3.fromValues(vx - cx, vy - cy, vz - cz);
-					vec3.transformQuat(rv, rv, q);
-				}
-			}
-		}
 	}
-	private _cve_count = 0;
 
 	get_world_matrix(obj: O_Scene): mat4 {
 		const so = obj.so;

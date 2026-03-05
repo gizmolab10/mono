@@ -1,20 +1,24 @@
 <script lang='ts'>
 	import { scenes, stores, hits_3d } from '../../ts/managers';
+	import { constraints } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
 	import type { Axis_Name } from '../../ts/types/Types';
 
-	const { w_selection, w_tick } = stores;
+	const { w_selection, w_tick, w_front_face } = stores;
 
 	let selected_so = $derived($w_selection?.so ?? null);
 	let is_root = $derived(!selected_so?.scene?.parent);
 
 	let rot_axis: Axis_Name = $state('z');
 
+	const FACE_TO_AXIS: Axis_Name[] = ['z', 'z', 'x', 'x', 'y', 'y'];
+
 	$effect(() => {
 		$w_tick;
+		$w_front_face;
 		if (!selected_so) return;
 		const face = hits_3d.front_most_face(selected_so);
-		if (face >= 0) rot_axis = ALL_AXES[Math.floor(face / 2)];
+		if (face >= 0) rot_axis = FACE_TO_AXIS[face];
 	});
 
 	const STICKY_ANGLES = [-45, -30, -22.5, 0, 22.5, 30, 45];
@@ -36,11 +40,18 @@
 
 	let angles = $derived(get_angles($w_tick));
 
+	function sync_parent_repeater() {
+		const parent = selected_so?.scene?.parent?.so;
+		if (parent?.repeater) engine.sync_repeater(parent);
+	}
+
 	function commit_angle(axis: 'x' | 'y' | 'z', value: string) {
 		if (!selected_so) return;
 		const degrees = parseFloat(value.replace('°', ''));
 		if (isNaN(degrees)) return;
 		selected_so.touch_axis(axis, degrees * Math.PI / 180);
+		constraints.propagate(selected_so);
+		sync_parent_repeater();
 		stores.tick();
 		scenes.save();
 	}
@@ -73,6 +84,8 @@
 		const current = Math.round(selected_so.axis_by_name(rot_axis).angle.value * 180 / Math.PI);
 		const next = current + sign * 90;
 		selected_so.touch_axis(rot_axis, next * Math.PI / 180);
+		constraints.propagate(selected_so);
+		sync_parent_repeater();
 		stores.tick();
 		scenes.save();
 	}
@@ -84,6 +97,8 @@
 		if (!selected_so) return;
 		const [a, b] = SWAP_INDICES[rot_axis];
 		engine.swap_axes(selected_so, a, b);
+		constraints.propagate(selected_so);
+		sync_parent_repeater();
 		stores.tick();
 		scenes.save();
 	}
@@ -97,6 +112,8 @@
 		}
 		input.value = String(deg);
 		selected_so.touch_axis(rot_axis, (base_deg() + deg) * Math.PI / 180);
+		constraints.propagate(selected_so);
+		sync_parent_repeater();
 		stores.tick();
 		scenes.save();
 	}

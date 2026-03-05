@@ -9,6 +9,7 @@
 </script>
 
 {#if selected_so}
+	<div style:height='6px'/>
 	<div class='actions-row'>
 		<div class='segmented'>
 			<button class:active={$w_parts_tab === 'attributes'} onclick={() => w_parts_tab.set(T_Parts_Tab.attributes)}>attributes</button>
@@ -20,27 +21,27 @@
 
 <style>
 	.actions-row {
+		display       : flex;
+		margin-top    : -4px;
 		gap           : 6px;
 		margin-bottom : 2px;
-		margin-top    : -4px;
-		display       : flex;
 	}
 
 	.segmented {
 		z-index : var(--z-action);
-		display : flex;
 		margin  : 0 auto;
+		display : flex;
 	}
 
 	.segmented button {
+		border        : 0.5px solid currentColor;
+		cursor        : pointer;
+		color         : inherit;
+		white-space   : nowrap;
+		background    : white;
+		padding       : 0 8px;
 		font-size     : 11px;
 		height        : 16px;
-		padding       : 0 8px;
-		background    : white;
-		white-space   : nowrap;
-		color         : inherit;
-		cursor        : pointer;
-		border        : 0.5px solid currentColor;
 	}
 
 	.segmented button:first-child {
@@ -56,8 +57,8 @@
 	}
 
 	.segmented button.active {
-		font-weight : 600;
 		background  : var(--accent);
+		font-weight : 600;
 	}
 
 	.segmented button:hover:not(.active) {
