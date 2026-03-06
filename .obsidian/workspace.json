@@ -50,6 +50,20 @@
             }
           },
           {
+            "id": "45c2f801c30abdba",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/milestones/22.aesthetics.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "22.aesthetics"
+            }
+          },
+          {
             "id": "65248370d971c3f6",
             "type": "leaf",
             "state": {
@@ -64,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -228,13 +242,14 @@
   },
   "active": "65248370d971c3f6",
   "lastOpenFiles": [
+    "di/src/assets/debug/sfikar.di",
+    "di/notes/work/milestones/22.aesthetics.md",
+    "di/notes/work/milestones/20.repeaters.md",
+    "di/notes/work/milestones/done/18.user.constants.md",
     "di/notes/work/milestones/done/12.parts.md",
     "di/notes/work/code.debt.md",
-    "di/notes/work/milestones/done/18.user.constants.md",
-    "di/notes/work/milestones/22.aesthetics.md",
     "di/notes/work/milestones/done/10.controls.md",
     "di/notes/work/done/code.debt.done.md",
-    "di/notes/work/milestones/20.repeaters.md",
     "ma/notes/work/plan.md",
     "di/notes/work/milestones/done/14.details.md",
     "di/src/lib/svelte/mouse/Separator.svelte",
@@ -247,7 +262,6 @@
     "di/notes/work/milestones/done/15.attributes.md",
     "di/notes/work/milestones/done/19.angles.md",
     "di/src/assets/debug/sfiar.di",
-    "di/src/assets/debug/sfikar.di",
     "di/src/assets/debug/sfarik.di",
     "di/notes/architecture/graph/drag.md",
     "di/notes/work/skills.md",
@@ -263,7 +277,6 @@
     "di/notes/work/milestones/done/7.edit.drags.md",
     "di/notes/work/revisit.di.md",
     "di/notes/work/rotation.md",
-    "di/notes/work/done/rotation.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",

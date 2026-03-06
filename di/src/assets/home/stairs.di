@@ -60,9 +60,7 @@
           "attributes": {
             "origin": 0,
             "extent": -2235.2,
-            "length": {
-              "formula": "tread_d"
-            },
+            "length": 203.2,
             "angle": 0
           },
           "invariant": 1
@@ -545,10 +543,6 @@
       }
     ],
     "constants": [
-      {
-        "name": "tread_d",
-        "value_mm": 203.2
-      },
       {
         "name": "tread_th",
         "value_mm": 38.099999999999994

@@ -241,7 +241,7 @@
 		<div class='assist-slider'>
 			<Slider min={0} max={1} value={$w_grid_opacity} width={81} show_steppers={false} onchange={handle_grid_opacity} />
 		</div>
-		<span class='assist-label'>grid</span>
+		<span class='assist-label'>guides</span>
 	</div>
 	<div class='zoom'>
 		<Slider min={0.01} max={10000} value={$w_scale} logarithmic width={270} onchange={handle_zoom_slide} onstep={handle_zoom_step} />

@@ -61,13 +61,22 @@ class Scenes {
 	}
 
 	save(): void {
-		const objects: Portable_SO[] = scene.get_all().map(o => {
-			const serialized = o.so.serialize();
-			return {
-				...serialized,
-				...(o.parent ? { parent_id: o.parent.so.id } : {}),
-			};
-		});
+		// Collect IDs of repeater clone children (skip on save — regenerated on load)
+		const clone_ids = new Set<string>();
+		for (const o of scene.get_all()) {
+			if (!o.so.repeater?.is_repeating) continue;
+			const children = scene.get_all().filter(c => c.parent === o.so.scene);
+			for (const c of children.slice(1)) clone_ids.add(c.so.id);
+		}
+		const objects: Portable_SO[] = scene.get_all()
+			.filter(o => !clone_ids.has(o.so.id))
+			.map(o => {
+				const serialized = o.so.serialize();
+				return {
+					...serialized,
+					...(o.parent ? { parent_id: o.parent.so.id } : {}),
+				};
+			});
 		const sel = hits_3d.selection;
 		const user_constants = constants.get_all();
 		const data: Portable_Scene = {

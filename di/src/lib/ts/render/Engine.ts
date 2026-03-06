@@ -202,7 +202,7 @@ class Engine {
 		scenes.root_so = root_so;
 		scenes.root_id = root_so.id;
 		scenes.root_name = root_so.name;
-		stores.w_all_sos.set(smart_objects);
+		stores.w_all_sos.set(scene.get_all().map(o => o.so));
 
 		// Fit-normalize root if any SO has negative start/end/length (skip if root is a repeater)
 		if (!root_so.repeater && smart_objects.some(so => so.axes.some(a => a.start.value < 0 || a.end.value < 0 || a.length.value < 0))) {
@@ -750,7 +750,7 @@ class Engine {
 
 	/** Swap two axes on an SO and its template child.
 	 *  Swaps Axis objects in-place, relabels, rewrites formula aliases.
-	 *  Updates repeater config (repeat_axis, gap_axis) to match. */
+	 *  Updates repeater config (run_axis, rise_axis) to match. */
 	swap_axes(so: Smart_Object, a: number, b: number): void {
 		const AXIS_NAMES: Axis_Name[] = ['x', 'y', 'z'];
 
@@ -808,10 +808,10 @@ class Engine {
 			// Update repeater config if this target has one
 			if (target.repeater) {
 				const r = { ...target.repeater };
-				if (r.repeat_axis === a) r.repeat_axis = b as 0 | 1;
-				else if (r.repeat_axis === b) r.repeat_axis = a as 0 | 1;
-				if (r.gap_axis === a) r.gap_axis = b as 0 | 1 | 2;
-				else if (r.gap_axis === b) r.gap_axis = a as 0 | 1 | 2;
+				if (r.run_axis === a) r.run_axis = b as 0 | 1 | 2;
+				else if (r.run_axis === b) r.run_axis = a as 0 | 1 | 2;
+				if (r.rise_axis === a) r.rise_axis = b as 0 | 1 | 2;
+				else if (r.rise_axis === b) r.rise_axis = a as 0 | 1 | 2;
 				target.repeater = r;
 			}
 		}
@@ -863,10 +863,10 @@ class Engine {
 
 	/** Sync repeater children to match the constraint-derived count.
 	 *  Count determined by: gap range → spacing → 1 (fallback).
-	 *  When gap_axis differs from repeat_axis (e.g. stairs), clones offset along both axes.
-	 *  Clone i is offset by step × (i+1) along repeat_axis (or auto-detected largest axis). */
+	 *  When rise_axis differs from run_axis (ie, diagonal), clones offset along both axes.
+	 *  Clone i is offset by step × (i+1) along run_axis (or auto-detected largest axis). */
 	sync_repeater(so: Smart_Object): void {
-		if (!so.repeater || !so.scene) return;
+		if (!so.repeater || !so.scene || so.repeater.is_repeating === false) return;
 
 		const all_children = scene.get_all().filter(o => o.parent === so.scene);
 		if (all_children.length === 0) return;
@@ -876,34 +876,36 @@ class Engine {
 		const t = template_entry.so;
 		const w = t.width, d = t.depth, h = t.height;
 		const auto_ai = (w >= d && w >= h) ? 0 : (d >= h ? 1 : 2);
-		const repeat_ai = so.repeater.repeat_axis ?? auto_ai;
+		const repeat_ai = so.repeater.run_axis ?? auto_ai;
 		const template_dim = [w, d, h][repeat_ai];
 		if (template_dim <= 0) return;
 
-		// gap_axis: which dimension gap_min/gap_max constrain (defaults to repeat_axis)
-		const gap_ai = so.repeater.gap_axis ?? repeat_ai;
+		// rise_axis: which dimension gap_min/gap_max constrain (defaults to run_axis)
+		const gap_ai = so.repeater.rise_axis ?? repeat_ai;
 		const parent_dims = [so.width, so.depth, so.height];
 		const parent_length = parent_dims[repeat_ai];
 		const gap_length = parent_dims[gap_ai];
 
 		// Determine count and step distances
-		const { gap_min, gap_max, spacing } = so.repeater;
+		const { gap_min, gap_max, spacing, is_diagonal } = so.repeater;
 		let count: number;
 		let step: number;
-		let gap_step = 0; // secondary axis offset (nonzero when gap_axis !== repeat_axis)
+		let gap_step = 0; // secondary axis offset (nonzero for diagonal)
 
-		if (gap_min != null && gap_max != null && gap_length > 0) {
+		const diagonal = is_diagonal === true || (is_diagonal == null && gap_ai !== repeat_ai);
+		if (diagonal && gap_min != null && gap_max != null && gap_length > 0) {
 			count = this.resolve_gap(gap_length, gap_min, gap_max);
 			if (gap_ai !== repeat_ai) {
 				// Stairs: tread depth = 1.25 × run, all fitting within envelope
 				const gap_dim = [w, d, h][gap_ai];
-				step = parent_length / (count - 0.75);
-				gap_step = (gap_length - gap_dim) / count;
+				step = count > 1 ? parent_length / (count - 0.75) : parent_length;
+				step = Math.min(step, parent_length);
+				gap_step = count > 0 ? (gap_length - gap_dim) / count : 0;
 			} else {
 				step = parent_length / count;
 			}
 		} else if (spacing != null && spacing > 0 && parent_length > 0) {
-			count = Math.floor((parent_length - template_dim) / spacing);
+			count = Math.floor((parent_length - template_dim) / spacing) + 1;
 			step = spacing;
 		} else {
 			count = 1;
@@ -944,7 +946,7 @@ class Engine {
 			const gap_delta = gap_step - t.axes[gap_ai].start.value;
 			t.axes[gap_ai].start.value += gap_delta;
 			t.axes[gap_ai].end.value += gap_delta;
-			const tread_depth = step * 1.25;
+			const tread_depth = Math.min(step * 1.25, parent_length);
 			const length_delta = tread_depth - t.axes[repeat_ai].length.value;
 			t.axes[repeat_ai].length.value += length_delta;
 			t.axes[repeat_ai].end.value += length_delta;

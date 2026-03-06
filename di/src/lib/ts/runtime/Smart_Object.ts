@@ -1,8 +1,8 @@
-import type { Dictionary, Axis_Name, Bound } from '../types/Types';
 import type { O_Scene, Portable_Axis, Repeater } from '../types/Interfaces';
-import { quat, vec3 } from 'gl-matrix';
+import type { Dictionary, Axis_Name, Bound } from '../types/Types';
 import Attribute from '../types/Attribute';
 import Identifiable from './Identifiable';
+import { quat, vec3 } from 'gl-matrix';
 import Axis from './Axis';
 
 export default class Smart_Object extends Identifiable {

@@ -3,12 +3,12 @@ import type { ConstantEntry } from '../algebra/User_Constants';
 import type { Axis_Name, Bound } from '../types/Types';
 import { Identifiable } from '../runtime';
 
-export const CURRENT_VERSION = '7';
+export const CURRENT_VERSION = '8';
 
 export interface Portable_SO {
-	visible?: boolean;
 	repeater?: Repeater;
 	parent_id?: string;
+	visible?: boolean;
 	x: Portable_Axis;
 	y: Portable_Axis;
 	z: Portable_Axis;
@@ -92,7 +92,19 @@ class Versions {
 			}
 		}
 
-		// v6 → v7: repeater support — no data transformation needed
+		// v6,7 → v8: repeater support, is_diagonal/is_repeating
+		// rename repeat_axis → run_axis / gap_axis → rise_axis
+		if (v < 8) {
+			for (const so of sos) {
+				const r = (so as Record<string, unknown>).repeater as Record<string, unknown> | undefined;
+				if (!r) continue;
+				if (r.is_repeating == null) r.is_repeating = true;
+				if ('repeat_axis' in r) { r.run_axis = r.repeat_axis; delete r.repeat_axis; }
+				if ('gap_axis' in r) { r.rise_axis = r.gap_axis; delete r.gap_axis; }
+				r.is_diagonal = (r.rise_axis != null);
+				delete r.count_formula;
+			}
+		}
 
 		return data as unknown as Portable_Scene;
 	}

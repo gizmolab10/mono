@@ -22,10 +22,10 @@ export interface S_SO {
 
 // w/h/z = "how big it rendered and at what depth" (render output).
 export interface Label_Rect extends S_SO {
+	face_index: number;
 	w: number;        // text width in pixels
 	h: number;        // text height in pixels
 	z: number;        // NDC depth at text center
-	face_index: number;
 }
 
 // axis = which dimension (x/y/z) this label measures.
@@ -39,13 +39,14 @@ export interface Angle_Rect extends Label_Rect {
 }
 
 export interface Repeater {
-	count_formula?: string;  // legacy — no longer shown in UI
-	gap_axis?: 0 | 1 | 2;
-	repeat_axis?: 0 | 1;
+	is_diagonal?: boolean | null;
+	is_repeating?: boolean;
+	rise_axis?: 0 | 1 | 2;
+	run_axis?: 0 | 1 | 2;
+	firewall?: boolean;
 	gap_min?: number;
 	gap_max?: number;
 	spacing?: number;
-	firewall?: boolean;
 }
 
 export interface Portable_Attribute {

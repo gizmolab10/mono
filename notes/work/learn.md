@@ -27,6 +27,7 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 
 ## Raw Log
 
+- 2026-03-06 scope creep on fix: user fixed a bug (is_diagonal derived + migration). I then edited 5 .di data files that the user never asked me to touch. When the user fixes something, don't cascade changes into other files unless explicitly asked. The user's fix (migration + version bump) was self-contained — the .di files would go through migration on load. Altering data files introduced a new bug and wasted time.
 - 2026-02-23 competing ideas: user knows what they're doing. Don't volunteer competing ideas or alternative approaches without being asked. If the user states a direction, follow it — don't second-guess.
 - 2026-02-13 back render mode: got lost in sign conventions. Repeatedly got the "in front of" / "behind" logic wrong for back-facing faces (normals point away from camera, so signed distance signs are inverted vs front faces). Added then removed flip_depth. Core lesson: before writing code, write down the sign convention on paper — what does d>0 mean, what does d<0 mean, for this specific face orientation. Don't guess.
 - 2026-02-13 back render mode: user had to say "explain, not do" and "STOP" twice. When stuck on a hard geometry problem, explain your understanding first instead of immediately coding a fix. The user knows the domain better.
