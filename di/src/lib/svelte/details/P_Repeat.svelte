@@ -149,9 +149,9 @@
 		if (!so?.repeater) return null;
 		const total = all_sos.filter(s => s.scene?.parent?.so === so).length;
 		if (total === 0) return null;
-		const clones = so.repeater.firewall ? Math.ceil(total / 2) : total;
 		const fireblocks = so.repeater.firewall ? Math.floor(total / 2) : 0;
-		return { count: clones, fireblocks };
+		const studs = total - fireblocks;
+		return { count: studs, fireblocks };
 	}
 
 	let repeater_display = $derived(get_repeater_display(selected_so ?? undefined, $w_all_sos, $w_tick));

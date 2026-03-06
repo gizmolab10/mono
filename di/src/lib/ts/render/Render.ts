@@ -1,4 +1,5 @@
 import type { Projected, O_Scene, Dimension_Rect, Label_Rect, Angle_Rect } from '../types/Interfaces';
+import { render_grid, render_back_grid, render_root_bottom } from './R_Grid';
 import { render_dimensions } from './R_Dimensions';
 import { face_label } from '../editors/Face_Label';
 import Smart_Object from '../runtime/Smart_Object';
@@ -11,7 +12,6 @@ import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
 import { debug } from '../common/Debug';
 import { k } from '../common/Constants';
-import { render_grid, render_back_grid, render_root_bottom } from './R_Grid';
 import { drag } from '../editors/Drag';
 import { camera } from './Camera';
 import { scene } from './Scene';

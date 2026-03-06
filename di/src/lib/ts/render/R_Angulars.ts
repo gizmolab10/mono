@@ -1,17 +1,17 @@
+import type { Projected, Angle_Rect } from '../types/Interfaces';
+import type Smart_Object from '../runtime/Smart_Object';
+import type { O_Scene } from '../types/Interfaces';
+import { mat4, quat, vec3, vec4 } from 'gl-matrix';
+import type { Axis_Name } from '../types/Types';
+import { hits_3d } from '../managers/Hits_3D';
+import { scene } from './Scene';
+
 /**
  * Angular annotations: arc visualizations for rotation angles between
  * parent and child scene objects.
  *
  * Extracted from Render.ts — all geometry logic preserved verbatim.
  */
-
-import type { Projected, Angle_Rect } from '../types/Interfaces';
-import type Smart_Object from '../runtime/Smart_Object';
-import type { Axis_Name } from '../types/Types';
-import type { O_Scene } from '../types/Interfaces';
-import { hits_3d } from '../managers/Hits_3D';
-import { mat4, quat, vec3, vec4 } from 'gl-matrix';
-import { scene } from './Scene';
 
 /** Subset of Render that Angulars needs. Avoids circular import. */
 export interface AngularHost {

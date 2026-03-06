@@ -7,17 +7,18 @@
 	import { colors } from '../../ts/draw/Colors';
 	import { engine } from '../../ts/render';
 
-	async function save() { await scenes.add_to_library(); }
-	const { w_text_color, w_background_color } = colors;
-	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face } = stores;
-
-	let show_dimensions = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
-	let show_angles     = $derived(($w_decorations & T_Decorations.angles) !== 0);
-	let show_names      = $derived(($w_decorations & T_Decorations.names) !== 0);
+	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
+	const { w_text_color, w_background_color } = colors;
 
 	let controls_width  = $state(Infinity);
 	let wrapped         = $derived(controls_width < 650);
+	let show_names      = $derived(($w_decorations & T_Decorations.names) !== 0);
+	let show_angles     = $derived(($w_decorations & T_Decorations.angles) !== 0);
+	let show_dimensions = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
+
+	async function save() { await scenes.add_to_library(); }
+
 </script>
 
 {#snippet hamburger_button()}

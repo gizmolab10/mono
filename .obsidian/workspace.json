@@ -76,9 +76,23 @@
               "icon": "lucide-file",
               "title": "20.repeaters"
             }
+          },
+          {
+            "id": "0bbae65617dfbf25",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/architecture/graph/repeaters.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "repeaters"
+            }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -151,7 +165,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/milestones/20.repeaters.md",
+                "file": "di/notes/work/milestones/22.aesthetics.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -161,7 +175,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 20.repeaters"
+              "title": "Backlinks for 22.aesthetics"
             }
           },
           {
@@ -213,13 +227,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/20.repeaters.md",
+                "file": "di/notes/work/milestones/22.aesthetics.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 20.repeaters"
+              "title": "Outline of 22.aesthetics"
             }
           }
         ],
@@ -240,12 +254,18 @@
       "bases:Create new base": false
     }
   },
-  "active": "65248370d971c3f6",
+  "active": "45c2f801c30abdba",
   "lastOpenFiles": [
-    "di/src/assets/debug/sfikar.di",
-    "di/notes/work/milestones/22.aesthetics.md",
+    "di/notes/architecture/graph/repeaters.md",
+    "di/notes/architecture/graph/projection.md",
+    "di/notes/architecture/graph/two.dimensions.md",
+    "di/notes/architecture/graph/three.dimensions.md",
+    "di/notes/architecture/graph/dimensionals.md",
+    "di/notes/work/milestones/done/8.dimensionals.md",
     "di/notes/work/milestones/20.repeaters.md",
     "di/notes/work/milestones/done/18.user.constants.md",
+    "di/notes/work/milestones/22.aesthetics.md",
+    "di/src/assets/debug/sfikar.di",
     "di/notes/work/milestones/done/12.parts.md",
     "di/notes/work/code.debt.md",
     "di/notes/work/milestones/done/10.controls.md",
@@ -254,7 +274,6 @@
     "di/notes/work/milestones/done/14.details.md",
     "di/src/lib/svelte/mouse/Separator.svelte",
     "di/notes/architecture/core/algebra.md",
-    "di/notes/work/milestones/done/8.dimensionals.md",
     "di/notes/work/milestones/done/17.library.md",
     "di/notes/architecture/core/versions.md",
     "di/notes/architecture/core/references.md",
@@ -273,10 +292,6 @@
     "di/src/assets/debug/rotated.di",
     "di/notes/work/milestones/done/13.algebra.md",
     "di/notes/work/milestones/done/11.units.md",
-    "di/notes/work/milestones/done/9.persistence.md",
-    "di/notes/work/milestones/done/7.edit.drags.md",
-    "di/notes/work/revisit.di.md",
-    "di/notes/work/rotation.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",

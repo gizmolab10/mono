@@ -1,3 +1,14 @@
+import type { Projected, Dimension_Rect } from '../types/Interfaces';
+import type Smart_Object from '../runtime/Smart_Object';
+import type { O_Scene } from '../types/Interfaces';
+import type { Axis_Name } from '../types/Types';
+import { units, Units } from '../types/Units';
+import { hits_3d } from '../managers/Hits_3D';
+import { stores } from '../managers/Stores';
+import { scene } from './Scene';
+import { vec3 } from 'gl-matrix';
+import { mat4 } from 'gl-matrix';
+
 /**
  * Dimension annotations: silhouette edge detection, witness lines, and
  * dimension labels for each axis of every scene object.
@@ -5,16 +16,6 @@
  * Extracted from Render.ts — all geometry logic preserved verbatim.
  */
 
-import type { Projected, Dimension_Rect } from '../types/Interfaces';
-import type Smart_Object from '../runtime/Smart_Object';
-import type { Axis_Name } from '../types/Types';
-import type { O_Scene } from '../types/Interfaces';
-import { units, Units } from '../types/Units';
-import { hits_3d } from '../managers/Hits_3D';
-import { stores } from '../managers/Stores';
-import { scene } from './Scene';
-import { vec3 } from 'gl-matrix';
-import { mat4 } from 'gl-matrix';
 /** Subset of Render that Dimensions needs. Avoids circular import. */
 export interface DimensionHost {
 	ctx: CanvasRenderingContext2D;
@@ -44,10 +45,35 @@ export function render_dimensions(host: DimensionHost): void {
 			continue;
 		}
 
-		// repeater clones: only show dimensionals on the template (first child)
+		// repeater: template gets all axes; first fireblock gets repeat-axis only;
+		// last fireblock also gets repeat-axis if its length differs from the first
 		if (obj.parent.so.repeater) {
 			const siblings = scene.get_all().filter(o => o.parent === obj.parent);
-			if (siblings[0] !== obj) continue;
+			if (siblings[0] !== obj) {
+				const repeater = obj.parent.so.repeater;
+				if (!repeater.firewall) continue;
+
+				const repeat_ai = repeater.run_axis ?? 0;
+				const template_len = siblings[0].so.axes[repeat_ai].length.value;
+				const this_len = obj.so.axes[repeat_ai].length.value;
+				if (Math.abs(this_len - template_len) < 0.1) continue;
+
+				const fireblocks = siblings.filter(s =>
+					Math.abs(s.so.axes[repeat_ai].length.value - template_len) > 0.1
+				);
+				const is_first = fireblocks[0] === obj;
+				const is_last = fireblocks.length > 1 && fireblocks[fireblocks.length - 1] === obj;
+				const last_shortened = is_last &&
+					Math.abs(obj.so.axes[repeat_ai].length.value -
+						fireblocks[0].so.axes[repeat_ai].length.value) > 0.1;
+				if (!is_first && !last_shortened) continue;
+
+				const fb_proj = hits_3d.get_projected(obj.id);
+				if (!fb_proj) continue;
+				const axis_name: Axis_Name = (['x', 'y', 'z'] as const)[repeat_ai];
+				render_axis_dimension(host, obj.so, axis_name, fb_proj, host.get_world_matrix(obj));
+				continue;
+			}
 		}
 
 		const projected = hits_3d.get_projected(obj.id);
@@ -95,24 +121,33 @@ function render_axis_dimension(
 		const p1 = projected[v1_idx], p2 = projected[v2_idx];
 		if (p1.w < 0 || p2.w < 0) continue;
 
-		const origin_3d = vec3.create();
-		const p_origin = host.project_vertex(origin_3d, world_matrix);
-		const p_witness = host.project_vertex(witness_dir, world_matrix);
-		let wx = p_witness.x - p_origin.x, wy = p_witness.y - p_origin.y;
-		const wlen = Math.sqrt(wx * wx + wy * wy);
-		if (wlen < 0.001) continue;
-		wx /= wlen; wy /= wlen;
+		// Compute pixel-to-3D scale from per-vertex witness projections
+		const v1_plus_w = vec3.add(vec3.create(), v1, witness_dir);
+		const v2_plus_w = vec3.add(vec3.create(), v2, witness_dir);
+		const p_v1w = host.project_vertex(v1_plus_w, world_matrix);
+		const p_v2w = host.project_vertex(v2_plus_w, world_matrix);
+		if (p_v1w.w < 0 || p_v2w.w < 0) continue;
 
+		const wlen1 = Math.sqrt((p_v1w.x - p1.x) ** 2 + (p_v1w.y - p1.y) ** 2);
+		const wlen2 = Math.sqrt((p_v2w.x - p2.x) ** 2 + (p_v2w.y - p2.y) ** 2);
+		if (wlen1 < 0.001 || wlen2 < 0.001) continue;
+
+		// All offsets in 3D — witness lines diverge in perspective,
+		// dimension line stays parallel to edge (same 3D translation)
 		const gap_px = 4;
 		const dist_px = 20;
 		const ext_px = 8;
+		const avg_wlen = (wlen1 + wlen2) / 2;
+		const gap_3d = gap_px / avg_wlen;
+		const dist_3d = dist_px / avg_wlen;
+		const ext_3d = ext_px / avg_wlen;
 
-		const pw1_start: Projected = { x: p1.x + wx * gap_px, y: p1.y + wy * gap_px, z: p1.z, w: p1.w };
-		const pw2_start: Projected = { x: p2.x + wx * gap_px, y: p2.y + wy * gap_px, z: p2.z, w: p2.w };
-		const pw1_end: Projected = { x: p1.x + wx * (dist_px + ext_px), y: p1.y + wy * (dist_px + ext_px), z: p1.z, w: p1.w };
-		const pw2_end: Projected = { x: p2.x + wx * (dist_px + ext_px), y: p2.y + wy * (dist_px + ext_px), z: p2.z, w: p2.w };
-		const pd1: Projected = { x: p1.x + wx * dist_px, y: p1.y + wy * dist_px, z: p1.z, w: p1.w };
-		const pd2: Projected = { x: p2.x + wx * dist_px, y: p2.y + wy * dist_px, z: p2.z, w: p2.w };
+		const pw1_start = host.project_vertex(vec3.scaleAndAdd(vec3.create(), v1, witness_dir, gap_3d), world_matrix);
+		const pw2_start = host.project_vertex(vec3.scaleAndAdd(vec3.create(), v2, witness_dir, gap_3d), world_matrix);
+		const pw1_end = host.project_vertex(vec3.scaleAndAdd(vec3.create(), v1, witness_dir, dist_3d + ext_3d), world_matrix);
+		const pw2_end = host.project_vertex(vec3.scaleAndAdd(vec3.create(), v2, witness_dir, dist_3d + ext_3d), world_matrix);
+		const pd1 = host.project_vertex(vec3.scaleAndAdd(vec3.create(), v1, witness_dir, dist_3d), world_matrix);
+		const pd2 = host.project_vertex(vec3.scaleAndAdd(vec3.create(), v2, witness_dir, dist_3d), world_matrix);
 
 		const drawn = draw_dimension_3d(host, pw1_start, pw1_end, pw2_start, pw2_end, pd1, pd2, value, axis, so);
 		if (drawn) break;

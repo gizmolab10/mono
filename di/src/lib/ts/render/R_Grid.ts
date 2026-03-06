@@ -1,22 +1,22 @@
-/**
- * Grid overlays for the root Smart_Object:
- *   render_grid      — 2D front-face grid (dashed, accent color)
- *   render_back_grid — faint grid on back-facing root faces (spatial reference)
- */
-
+import type Smart_Object from '../runtime/Smart_Object';
 import type { Projected } from '../types/Interfaces';
 import type { O_Scene } from '../types/Interfaces';
 import type { Axis_Name } from '../types/Types';
-import type Smart_Object from '../runtime/Smart_Object';
 import { units, Units } from '../types/Units';
 import { hits_3d } from '../managers/Hits_3D';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
 import { colors } from '../draw/Colors';
 import { parseToRgba } from 'color2k';
+import { get } from 'svelte/store';
 import { vec3 } from 'gl-matrix';
 import { mat4 } from 'gl-matrix';
-import { get } from 'svelte/store';
+
+/**
+ * Grid overlays for the root Smart_Object:
+ *   render_grid      — 2D front-face grid (dashed, accent color)
+ *   render_back_grid — faint grid on back-facing root faces (spatial reference)
+ */
 
 /** Camera-view AABB — rotation-aware extent computed each frame. */
 export type Camera_View_Extent = { x_min: number; x_max: number; y_min: number; y_max: number; z_min: number; z_max: number };

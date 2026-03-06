@@ -1,13 +1,13 @@
-import { units, Units } from '../types/Units';
-import { hits_3d, scenes, stores } from '../managers';
+import { constraints, constants, evaluator } from '../algebra';
 import type { Portable_Scene } from '../managers/Versions';
 import type { Bound, Axis_Name } from '../types/Types';
+import { hits_3d, scenes, stores } from '../managers';
 import { scene, camera, render, animation } from '.';
 import type { O_Scene } from '../types/Interfaces';
 import type { Point } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
+import { units, Units } from '../types/Units';
 import { Smart_Object } from '../runtime';
-import { constraints, constants, evaluator } from '../algebra';
 import { colors } from '../draw/Colors';
 import { quat, vec3 } from 'gl-matrix';
 import { drag } from '../editors/Drag';
@@ -905,7 +905,7 @@ class Engine {
 				step = parent_length / count;
 			}
 		} else if (spacing != null && spacing > 0 && parent_length > 0) {
-			count = Math.floor((parent_length - template_dim) / spacing) + 1;
+			count = Math.floor((parent_length - template_dim) / spacing);
 			step = spacing;
 		} else {
 			count = 1;
@@ -915,11 +915,25 @@ class Engine {
 		// Bookend: for spacing repeaters, place a final clone flush at parent's far edge
 		let has_bookend = false;
 		let bookend_offset = 0;
+		let shoved_last = false;
+		let shoved_offset = 0;
+		let shoved_bay = 0;
 		if (!gap_step && spacing != null && spacing > 0 && parent_length > 0) {
 			const t_start = t.axes[repeat_ai].start.value;
 			bookend_offset = parent_length - template_dim - t_start;
 			const last_offset = count > 0 ? count * step : 0;
 			has_bookend = bookend_offset >= last_offset + template_dim;
+			// Tight bookend: envelope extends past last clone by less than template_dim —
+			// shove the last clone back to make room for one more at the end
+			if (!has_bookend && count > 0) {
+				const remaining = bookend_offset - last_offset;
+				if (remaining > 0 && remaining < template_dim) {
+					has_bookend = true;
+					shoved_last = true;
+					shoved_offset = bookend_offset - template_dim;
+					shoved_bay = shoved_offset - (count - 1) * step - template_dim;
+				}
+			}
 		}
 
 		const clones = all_children.slice(1);
@@ -928,8 +942,8 @@ class Engine {
 
 		// Firewall blocking: horizontal members between studs — one per bay including bookend bay
 		const regular_bay = step - template_dim;
-		const bookend_bay = has_bookend ? bookend_offset - template_dim - step * count : 0;
-		const has_bookend_fireblock = bookend_bay > 50.8; // only if gap > 2"
+		const bookend_bay = has_bookend ? (shoved_last ? 0 : bookend_offset - template_dim - step * count) : 0;
+		const has_bookend_fireblock = bookend_bay > 0;
 		const needed_firewall = (so.repeater.firewall && !gap_step && needed_studs > 0) ? count + (has_bookend_fireblock ? 1 : 0) : 0;
 		const total_needed = needed_studs + needed_firewall;
 
@@ -970,7 +984,9 @@ class Engine {
 				c.axes[ai].length.value = t.axes[ai].length.value;
 				c.axes[ai].angle.value  = t.axes[ai].angle.value;
 			}
-			const offset = (has_bookend && i === needed_studs - 1) ? bookend_offset : step * (i + 1);
+			const offset = (has_bookend && i === needed_studs - 1) ? bookend_offset
+				: (shoved_last && i === needed_studs - 2) ? shoved_offset
+				: step * (i + 1);
 			c.axes[repeat_ai].start.value += offset;
 			c.axes[repeat_ai].end.value   += offset;
 			if (gap_step) {
@@ -982,7 +998,9 @@ class Engine {
 		// Update positions of surviving firewall clones
 		for (let i = needed_studs; i < Math.min(surviving.length, total_needed); i++) {
 			const fi = i - needed_studs;
-			const bay = (has_bookend_fireblock && fi === count) ? bookend_bay : regular_bay;
+			const bay = (has_bookend_fireblock && fi === count) ? bookend_bay
+				: (shoved_last && fi === count - 1) ? shoved_bay
+				: regular_bay;
 			this.apply_firewall_position(surviving[i].so, t, fi, repeat_ai, height_ai, step, template_dim, parent_dims, bay);
 		}
 
@@ -991,7 +1009,9 @@ class Engine {
 		for (let i = surviving.length; i < total_needed; i++) {
 			const clone = this.clone_so_from_template(t, used);
 			if (i < needed_studs) {
-				const offset = (has_bookend && i === needed_studs - 1) ? bookend_offset : step * (i + 1);
+				const offset = (has_bookend && i === needed_studs - 1) ? bookend_offset
+					: (shoved_last && i === needed_studs - 2) ? shoved_offset
+					: step * (i + 1);
 				clone.axes[repeat_ai].start.value += offset;
 				clone.axes[repeat_ai].end.value   += offset;
 				if (gap_step) {
@@ -1000,7 +1020,9 @@ class Engine {
 				}
 			} else {
 				const fi = i - needed_studs;
-				const bay = (has_bookend_fireblock && fi === count) ? bookend_bay : regular_bay;
+				const bay = (has_bookend_fireblock && fi === count) ? bookend_bay
+					: (shoved_last && fi === count - 1) ? shoved_bay
+					: regular_bay;
 				this.apply_firewall_position(clone, t, fi, repeat_ai, height_ai, step, template_dim, parent_dims, bay);
 			}
 			const clone_scene = scene.create({

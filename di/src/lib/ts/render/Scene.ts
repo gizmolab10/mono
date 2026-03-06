@@ -1,6 +1,6 @@
-import { vec3 } from 'gl-matrix';
-import type { O_Scene } from '../types/Interfaces';
 import type Smart_Object from '../runtime/Smart_Object';
+import type { O_Scene } from '../types/Interfaces';
+import { vec3 } from 'gl-matrix';
 
 class Scene {
 	private objects: Map<string, O_Scene> = new Map();
