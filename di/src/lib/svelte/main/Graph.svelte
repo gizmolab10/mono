@@ -294,9 +294,10 @@
 	}
 
 	.graph canvas {
-		cursor     : grab;
-		display    : block;
-		background : inherit;
+		cursor       : grab;
+		display      : block;
+		background   : inherit;
+		touch-action : none;
 	}
 
 	.graph canvas:active {

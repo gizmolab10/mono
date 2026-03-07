@@ -9,7 +9,7 @@
 </script>
 
 {#if selected_so}
-	<div style:height='6px'/>
+	<div style:height='6px'></div>
 	<div class='actions-row'>
 		<div class='segmented'>
 			<button class:active={$w_parts_tab === 'attributes'} onclick={() => w_parts_tab.set(T_Parts_Tab.attributes)}>attributes</button>

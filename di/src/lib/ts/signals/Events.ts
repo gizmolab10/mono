@@ -53,6 +53,11 @@ export class Events {
 		document.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		document.addEventListener('mouseleave', this.handle_mouse_leave, { passive: false });
 		document.addEventListener('keydown', this.handle_key_down);
+
+		// Touch events for iPad/iPhone — mirror mouse events for UI controls
+		document.addEventListener('touchstart', this.handle_touch_start, { passive: false });
+		document.addEventListener('touchend', this.handle_touch_end, { passive: false });
+		document.addEventListener('touchmove', this.handle_touch_move, { passive: false });
 	}
 
 	// ===== EVENT HANDLERS =====
@@ -91,6 +96,46 @@ export class Events {
 	private handle_mouse_leave = (_event: MouseEvent) => {
 		// Clear hover when mouse leaves the document
 		hits.clear_hover();
+	}
+
+	// ── Touch handlers (iPad/iPhone) ──
+
+	private handle_touch_start = (event: TouchEvent) => {
+		if (event.touches.length !== 1) return;
+		const t = event.touches[0];
+		const target = t.target as HTMLElement;
+		// Only handle non-canvas touches (canvas has its own touch handling in Events_3D)
+		if (target.closest('canvas')) return;
+		const location = new Point(t.clientX, t.clientY);
+		hits.handle_s_mouse_at(location, S_Mouse.down(null, null), false);
+		hits.disable_hover = true;
+		this.w_count_mouse_down.update(n => n + 1);
+		this.w_scaled_movement.set(Point.zero);
+		this.w_mouse_button_down.set(true);
+	}
+
+	private handle_touch_end = (_event: TouchEvent) => {
+		const location = get(this.w_mouse_location) ?? new Point(0, 0);
+		hits.handle_s_mouse_at(location, S_Mouse.up(null, null));
+		hits.disable_hover = false;
+		this.w_scaled_movement.set(null);
+		this.w_count_mouse_up.update(n => n + 1);
+		this.w_mouse_button_down.set(false);
+	}
+
+	private handle_touch_move = (event: TouchEvent) => {
+		if (event.touches.length !== 1) return;
+		const t = event.touches[0];
+		const target = t.target as HTMLElement;
+		if (target.closest('canvas')) return;
+		const location = new Point(t.clientX, t.clientY);
+		const prior = get(this.w_mouse_location);
+		const delta = prior?.vector_to(location) ?? null;
+		if (!!delta && delta.magnitude > 1) {
+			this.w_scaled_movement.set(delta);
+		}
+		this.w_mouse_location.set(location);
+		hits.handle_mouse_movement_at(location);
 	}
 
 	private handle_key_down = (event: KeyboardEvent) => {

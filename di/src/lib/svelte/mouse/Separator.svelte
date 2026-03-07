@@ -1,4 +1,10 @@
 <script lang='ts'>
+	import S_Hit_Target from '../../ts/state/S_Hit_Target';
+	import { T_Hit_Target } from '../../ts/types/Enumerations';
+	import { hits } from '../../ts/managers/Hits';
+	import S_Mouse from '../../ts/state/S_Mouse';
+	import { onMount } from 'svelte';
+
 	let {
 		title,
 		onclick,
@@ -19,12 +25,31 @@
 
 	let radius = $derived(thickness * 3.2);
 	let rpx    = $derived(`${radius}px`);
+
+	// ── Hits system ──
+
+	let element: HTMLElement | null = $state(null);
+	const uid = Math.random().toString(36).slice(2, 8);
+	const target = new S_Hit_Target(T_Hit_Target.control, `sep-${uid}`);
+
+	$effect(() => {
+		if (element && onclick) {
+			target.set_html_element(element);
+			target.handle_s_mouse = (s_mouse: S_Mouse) => {
+				if (s_mouse.isUp) onclick();
+				return true;
+			};
+		}
+	});
+
+	onMount(() => {
+		return () => hits.delete_hit_target(target);
+	});
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 {#if vertical}
-	<div
-		onclick={onclick}
+	<button
+		bind:this={element}
 		style:--r='{radius}px'
 		style:--m='{margin}px'
 		style:--e='{margin + end}px'
@@ -35,10 +60,10 @@
 		<div class='flare left' style:width={rpx} style:border-radius='0 {rpx} {rpx} 0'></div>
 		{#if title}<span class='title'>{title}</span>{/if}
 		<div class='flare right' style:width={rpx} style:border-radius='{rpx} 0 0 {rpx}'></div>
-	</div>
+	</button>
 {:else}
-	<div
-		onclick={onclick}
+	<button
+		bind:this={element}
 		style:--r='{radius}px'
 		style:--m='{margin}px'
 		style:--e='{margin + end}px'
@@ -48,11 +73,12 @@
 		<div class='flare top' style:height={rpx} style:border-radius='0 0 {rpx} {rpx}'></div>
 		{#if title}<span class='title'>{title}</span>{/if}
 		<div class='flare bottom' style:height={rpx} style:border-radius='{rpx} {rpx} 0 0'></div>
-	</div>
+	</button>
 {/if}
 
 <style>
 	.separator {
+		all        : unset;
 		overflow   : visible;
 		position   : relative;
 		background : var(--accent);

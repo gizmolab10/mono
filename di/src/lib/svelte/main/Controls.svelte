@@ -105,12 +105,6 @@
 		flex-shrink : 0;
 	}
 
-	.left-col {
-		align-items : center;
-		display     : flex;
-		flex-shrink : 0;
-	}
-
 	.right-col {
 		flex-direction : column;
 		padding        : 6px 0;

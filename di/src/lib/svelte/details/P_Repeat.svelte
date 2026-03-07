@@ -14,7 +14,7 @@
 	let is_repeater = $derived.by(() => { $w_tick; return selected_so?.repeater?.is_repeating !== false && selected_so?.repeater != null; });
 	let has_firewall = $derived(get_repeater($w_tick)?.firewall ?? false);
 	let has_children = $derived($w_all_sos.some(s => s.scene?.parent?.so === selected_so));
-	let is_diagonal = $derived.by((): boolean | null => {
+	let is_diagonal = $derived.by((): boolean | null | undefined => {
 		$w_tick;
 		const r = selected_so?.repeater;
 		if (!r) return null;
@@ -85,14 +85,6 @@
 		if (!SP_TICK_MM.includes(val)) val = Math.round(val / INCH) * INCH;
 		val = Math.max(SP_MIN_MM, Math.min(SP_MAX_MM, val));
 		set_spacing(val);
-	}
-
-	function enable_gap_range() {
-		if (!selected_so?.repeater) return;
-		selected_so.repeater = { ...selected_so.repeater, gap_min: 6 * INCH, gap_max: 9 * INCH, spacing: undefined };
-		engine.sync_repeater(selected_so);
-		stores.tick();
-		scenes.save();
 	}
 
 	function mm_to_pct(mm: number): number { return (mm - GAP_MIN_MM) / GAP_RANGE_MM * 100; }
@@ -375,23 +367,6 @@
 		position  : relative;
 		min-width : 0;
 		flex      : 1;
-	}
-
-	.slider-row {
-		align-items : center;
-		display     : flex;
-		gap         : 0;
-	}
-
-	.slider-label {
-		margin      : 0 -3px 0 0;
-		font-size   : 9px;
-		opacity     : 0.5;
-		flex-shrink : 0;
-	}
-
-	.slider-label:last-child {
-		margin : 0 0 0 -3px;
 	}
 
 	.rise-row {

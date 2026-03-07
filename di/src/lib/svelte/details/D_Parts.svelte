@@ -170,7 +170,7 @@
 	</thead>
 	{#if show_parts}
 		<tbody>
-			<tr style:height='4px'/>
+			<tr style:height='4px'></tr>
 			{#each stores.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !is_ancestor_collapsed(s, $w_collapsed_ids)) as so (so.id)}
 				{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
 				{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
@@ -181,7 +181,6 @@
 					<td class='hierarchy-name' style:padding-left='{depth(so) * 8}px'
 						onclick={(e) => handle_name_click(e, so)}>
 						{#if editing_id === so.id}
-							<!-- svelte-ignore element_invalid_self_closing_tag -->
 							<input
 								class     = 'name-input'
 								type      = 'text'
@@ -192,13 +191,13 @@
 							/>
 						{:else}
 							{#if has_children(so, $w_all_sos)}
-								<span class='collapse-tri' onclick={(e) => toggle_collapse(e, so)}>
+								<button class='collapse-tri' onclick={(e) => toggle_collapse(e, so)}>
 									{$w_collapsed_ids.has(so.id) ? '▸' : '▾'}
-								</span>
+								</button>
 							{:else}
-								<span class='collapse-tri spacer'>
+								<button class='collapse-tri spacer'>
 									▸
-								</span>
+								</button>
 							{/if}
 							{so.name}
 							{#if n_rpt > 0}
@@ -223,7 +222,7 @@
 	{#if $w_selection}
 		<Separator />
 	{:else}
-		<div style:height='5px'/>
+		<div style:height='5px'></div>
 	{/if}
 {:else}
 	{#if $w_selection}
@@ -309,6 +308,7 @@
 	}
 
 	.collapse-tri {
+		all              : unset;
 		position         : relative;
 		cursor           : pointer;
 		vertical-align   : middle;

@@ -120,7 +120,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -193,7 +193,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/milestones/21.undo.md",
+                "file": "di/notes/work/milestones/22.aesthetics.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -203,7 +203,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 21.undo"
+              "title": "Backlinks for 22.aesthetics"
             }
           },
           {
@@ -255,13 +255,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/21.undo.md",
+                "file": "di/notes/work/milestones/22.aesthetics.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 21.undo"
+              "title": "Outline of 22.aesthetics"
             }
           }
         ],
@@ -282,8 +282,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "5998b7cd160c25d1",
+  "active": "45c2f801c30abdba",
   "lastOpenFiles": [
+    "di/notes/work/milestones/21.undo.md",
     "di/notes/work/milestones/22.aesthetics.md",
     "di/src/assets/debug/sfior.di",
     "di/notes/work/milestones/done/8.dimensionals.md",

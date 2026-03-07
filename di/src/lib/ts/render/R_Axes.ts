@@ -4,11 +4,11 @@ import type { O_Scene } from '../types/Interfaces';
 import type { Axis_Name } from '../types/Types';
 import { hits_3d } from '../managers/Hits_3D';
 import { scenes } from '../managers/Scenes';
-import { scene } from './Scene';
-import { camera } from './Camera';
 import { stores } from '../managers/Stores';
+import { mat4, vec4 } from 'gl-matrix';
+import { camera } from './Camera';
 import { vec3 } from 'gl-matrix';
-import { mat4, vec4, quat } from 'gl-matrix';
+import { scene } from './Scene';
 
 /**
  * Axis decoration arrows on the root SO's bottom silhouette edges.
