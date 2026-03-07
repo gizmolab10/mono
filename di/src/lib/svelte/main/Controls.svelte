@@ -7,7 +7,7 @@
 	import { colors } from '../../ts/draw/Colors';
 	import { engine } from '../../ts/render';
 
-	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face } = stores;
+	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face, w_rotation_snap } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 	const { w_text_color, w_background_color } = colors;
 
@@ -58,6 +58,9 @@
 		{/each}
 	</div>
 	<button class='toolbar-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
+	{#if $w_view_mode === '2d'}
+		<button class='toolbar-btn snap-btn' use:hit_target={{ id: 'rotation-snap', onpress: () => stores.toggle_rotation_snap() }}>{$w_rotation_snap ? '🧲' : '○'}</button>
+	{/if}
 {/snippet}
 
 <div
@@ -177,6 +180,12 @@
 	.toolbar-btn:global([data-hitting]) {
 		background : var(--accent);
 		color      : black;
+	}
+
+	.snap-btn {
+		font-size : 10px;
+		width     : 20px;
+		padding   : 0;
 	}
 
 	.segmented {

@@ -31,6 +31,9 @@ export enum T_Preference {
 	showGrid         = 'showGrid',
 	gridOpacity      = 'gridOpacity',
 
+	// Rotation
+	rotationSnap     = 'rotationSnap',
+
 	// Render
 	orientation      = 'orientation',
 	scale            = 'scale',

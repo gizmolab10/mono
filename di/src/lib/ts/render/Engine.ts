@@ -299,6 +299,8 @@ class Engine {
 		anim.t += 0.15; // ~6–7 frames to complete (tuned for feel)
 		if (anim.t >= 1) {
 			stores.set_orientation(anim.to);
+			quat.copy(this.scratch_orientation, anim.to);
+			quat.copy(this.snapped_orientation, anim.to);
 			this.snap_anim = null;
 		} else {
 			// Ease-out: decelerate into the snap
@@ -325,6 +327,12 @@ class Engine {
 		quat.multiply(this.scratch_orientation, rot_y, this.scratch_orientation);
 		quat.multiply(this.scratch_orientation, rot_x, this.scratch_orientation);
 		quat.normalize(this.scratch_orientation, this.scratch_orientation);
+
+		// Free rotation (no snap) — just apply scratch directly
+		if (!stores.rotation_snap()) {
+			stores.set_orientation(this.scratch_orientation);
+			return;
+		}
 
 		// During snap animation, only accumulate scratch — don't tilt or re-trigger
 		if (this.snap_anim) return;
@@ -379,6 +387,9 @@ class Engine {
 		} else {
 			this.snap_to_face(face);
 		}
+		const q = stores.current_orientation();
+		quat.copy(this.scratch_orientation, q);
+		quat.copy(this.snapped_orientation, q);
 		scenes.save();
 	}
 
@@ -408,19 +419,25 @@ class Engine {
 
 	private saved_3d_orientation: quat | null = null;
 
-	/** Toggle between 2D and 3D view. 2D snaps root face-on, 3D restores. */
+	/** Toggle between 2D and 3D view. 2D snaps root face-on (if snap enabled), 3D restores. */
 	toggle_view_mode(): void {
 		const mode = stores.current_view_mode() === '3d' ? '2d' : '3d';
 		stores.w_view_mode.set(mode);
 		if (mode === '2d') {
-			const so = this.root_scene?.so;
-			const face = so ? hits_3d.front_most_face(so) : -1;
-			if (so && face >= 0) {
-				this.saved_3d_orientation = stores.current_orientation();
-				this.snap_to_face(face);
-				const snapped = stores.current_orientation();
-				quat.copy(this.scratch_orientation, snapped);
-				quat.copy(this.snapped_orientation, snapped);
+			if (stores.rotation_snap()) {
+				const so = this.root_scene?.so;
+				const face = so ? hits_3d.front_most_face(so) : -1;
+				if (so && face >= 0) {
+					this.saved_3d_orientation = stores.current_orientation();
+					this.snap_to_face(face);
+					const snapped = stores.current_orientation();
+					quat.copy(this.scratch_orientation, snapped);
+					quat.copy(this.snapped_orientation, snapped);
+				}
+			} else {
+				const q = stores.current_orientation();
+				quat.copy(this.scratch_orientation, q);
+				quat.copy(this.snapped_orientation, q);
 			}
 			camera.set_position(vec3.fromValues(0, 0, 2750));
 			camera.set_ortho(true);

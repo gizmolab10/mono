@@ -64,6 +64,20 @@
             }
           },
           {
+            "id": "5998b7cd160c25d1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/milestones/21.undo.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "21.undo"
+            }
+          },
+          {
             "id": "65248370d971c3f6",
             "type": "leaf",
             "state": {
@@ -75,6 +89,20 @@
               },
               "icon": "lucide-file",
               "title": "20.repeaters"
+            }
+          },
+          {
+            "id": "001c3ebf595624aa",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/milestones/done/8.dimensionals.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "8.dimensionals"
             }
           },
           {
@@ -92,7 +120,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -165,7 +193,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/milestones/22.aesthetics.md",
+                "file": "di/notes/work/milestones/21.undo.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -175,7 +203,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 22.aesthetics"
+              "title": "Backlinks for 21.undo"
             }
           },
           {
@@ -227,13 +255,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/22.aesthetics.md",
+                "file": "di/notes/work/milestones/21.undo.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 22.aesthetics"
+              "title": "Outline of 21.undo"
             }
           }
         ],
@@ -254,17 +282,19 @@
       "bases:Create new base": false
     }
   },
-  "active": "45c2f801c30abdba",
+  "active": "5998b7cd160c25d1",
   "lastOpenFiles": [
+    "di/notes/work/milestones/22.aesthetics.md",
+    "di/src/assets/debug/sfior.di",
+    "di/notes/work/milestones/done/8.dimensionals.md",
     "di/notes/architecture/graph/repeaters.md",
+    "di/src/lib/ts/render/R_Axes.ts",
     "di/notes/architecture/graph/projection.md",
     "di/notes/architecture/graph/two.dimensions.md",
     "di/notes/architecture/graph/three.dimensions.md",
     "di/notes/architecture/graph/dimensionals.md",
-    "di/notes/work/milestones/done/8.dimensionals.md",
     "di/notes/work/milestones/20.repeaters.md",
     "di/notes/work/milestones/done/18.user.constants.md",
-    "di/notes/work/milestones/22.aesthetics.md",
     "di/src/assets/debug/sfikar.di",
     "di/notes/work/milestones/done/12.parts.md",
     "di/notes/work/code.debt.md",
@@ -288,10 +318,7 @@
     "di/src/assets/debug/empty.di",
     "di/src/assets/cabinetry/drawer.di",
     "di/src/assets/drawer.di",
-    "di/src/assets/debug/enguliar.di",
-    "di/src/assets/debug/rotated.di",
     "di/notes/work/milestones/done/13.algebra.md",
-    "di/notes/work/milestones/done/11.units.md",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",

@@ -1,6 +1,7 @@
 import type { Projected, O_Scene, Dimension_Rect, Label_Rect, Angle_Rect } from '../types/Interfaces';
 import { render_grid, render_back_grid, render_root_bottom } from './R_Grid';
 import { render_dimensions } from './R_Dimensions';
+import { render_axes, render_orientation_cube } from './R_Axes';
 import { face_label } from '../editors/Face_Label';
 import Smart_Object from '../runtime/Smart_Object';
 import { T_Hit_3D } from '../types/Enumerations';
@@ -131,9 +132,9 @@ class Render {
 		if (!is_2d) render_root_bottom(this);
 
 		// Phase 2: fill front-facing faces (occlusion layer)
-		// In solid or 2D mode, fill with white so rear edges are hidden.
+		// In solid mode, fill with white so rear edges are hidden.
 		// Sort all front-facing faces back-to-front by average depth.
-		if (is_2d || solid) {
+		if (solid) {
 			const face_draws: { face: number[]; projected: Projected[]; z_avg: number; fi: number }[] = [];
 			for (const obj of objects) {
 				const projected = projected_map.get(obj.id)!;
@@ -154,7 +155,7 @@ class Render {
 		}
 
 		// Phase 2b: debug face fills (non-solid mode)
-		if (!is_2d && !solid) {
+		if (!solid) {
 			for (const obj of objects) {
 				const projected = projected_map.get(obj.id)!;
 				if (!obj.faces) continue;
@@ -172,7 +173,7 @@ class Render {
 
 		// Build occluding face list for edge clipping (solid or 2D mode)
 		this.occluding_faces = [];
-		if (is_2d || solid) {
+		if (solid) {
 			for (const obj of objects) {
 				if (!obj.parent) continue;
 				const projected = projected_map.get(obj.id)!;
@@ -227,7 +228,7 @@ class Render {
 
 		// Build selection-dot occlusion: ALL non-root objects (visible + invisible)
 		this.sel_occluding_faces = [];
-		if (is_2d || solid) {
+		if (solid) {
 			for (const obj of all_objects) {
 				if (!obj.parent) continue;
 				const projected = projected_map.get(obj.id)!;
@@ -285,8 +286,8 @@ class Render {
 		// Phase 3: draw edges
 		for (const obj of objects) {
 			const projected = projected_map.get(obj.id)!;
-			const world = (is_2d || solid) ? this.get_world_matrix(obj) : undefined;
-			this.render_edges(obj, projected, is_2d, solid, world);
+			const world = (solid) ? this.get_world_matrix(obj) : undefined;
+			this.render_edges(obj, projected, solid, world);
 			if (stores.show_names()) this.render_face_names(obj, projected, world);
 		}
 
@@ -297,7 +298,7 @@ class Render {
 		for (const obj of all_objects) {
 			if (obj.so.visible) continue;
 			const projected = projected_map.get(obj.id)!;
-			const world = (is_2d || solid) ? this.get_world_matrix(obj) : undefined;
+			const world = (solid) ? this.get_world_matrix(obj) : undefined;
 			this.ctx.save();
 			this.ctx.setLineDash([1, 1]);
 			this.ctx.strokeStyle = 'rgba(128, 128, 128, 1)';
@@ -331,6 +332,12 @@ class Render {
 			this.ctx.restore();
 		}
 
+		if (!is_2d && stores.grid_opacity() > 0) {
+			this.ctx.globalAlpha = stores.grid_opacity();
+			render_axes(this);
+			render_orientation_cube(this.ctx);
+			this.ctx.globalAlpha = 1;
+		}
 		this.render_hover();
 		this.render_selection();
 		if (stores.show_dimensionals()) render_dimensions(this);
@@ -496,13 +503,13 @@ class Render {
 		this.ctx.fill();
 	}
 
-	private render_edges(obj: O_Scene, projected: Projected[], is_2d: boolean, solid: boolean, world?: mat4): void {
+	private render_edges(obj: O_Scene, projected: Projected[], solid: boolean, world?: mat4): void {
 		const ctx = this.ctx;
 		ctx.lineWidth = stores.line_thickness();
 		ctx.lineCap = 'square';
 
 		// In 2D or solid mode, only draw edges belonging to front-facing faces
-		const front_edges = (is_2d || solid) ? this.front_face_edges(obj, projected) : null;
+		const front_edges = (solid) ? this.front_face_edges(obj, projected) : null;
 
 		// During face drag, highlight the guidance face's edges on the parent SO
 		const guide = drag.guidance_face;
@@ -512,7 +519,7 @@ class Render {
 		const rot = drag.rotation_face;
 		const rotation_edges = (rot && rot.scene === obj) ? this.face_edge_keys(obj, rot.face_index) : null;
 
-		if ((is_2d || solid) && world) {
+		if ((solid) && world) {
 			// Solid / 2D mode: per-edge occlusion clipping, batch clipped segments by color
 			const normal_path = new Path2D();
 			const guide_path = new Path2D();
