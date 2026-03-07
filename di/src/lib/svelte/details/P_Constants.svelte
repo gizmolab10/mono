@@ -109,7 +109,7 @@
 	.standards {
 		top: 8px;
 		width           : 100%;
-		font-size       : 11px;
+		font-size       : var(--h-font-common);
 		border-collapse : collapse;
 	}
 

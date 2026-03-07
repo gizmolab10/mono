@@ -4,12 +4,10 @@
 	import { stores } from '../../ts/managers/Stores';
 	import { scenes } from '../../ts/managers/Scenes';
 	import Separator from '../mouse/Separator.svelte';
-	import { colors } from '../../ts/draw/Colors';
 	import { engine } from '../../ts/render';
 
 	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face, w_rotation_snap } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
-	const { w_text_color, w_background_color } = colors;
 
 	let controls_width  = $state(Infinity);
 	let wrapped         = $derived(controls_width < 650);
@@ -67,8 +65,8 @@
 	class            = 'controls'
 	class:wrapped
 	bind:clientWidth = {controls_width}
-	style:color      = {$w_text_color}
-	style:background = {$w_background_color}>
+	style:color      = 'var(--text)'
+	style:background = 'var(--bg)'>
 	{#if wrapped}
 		<div class='right-col'>
 			<div class='right-row'>{@render hamburger_button()}{@render face_buttons()}</div>
@@ -126,6 +124,7 @@
 	}
 
 	.hamburger {
+		height          : var(--h-button-common);
 		z-index         : var(--z-action);
 		background      : transparent;
 		position        : relative;
@@ -135,7 +134,6 @@
 		justify-content : center;
 		display         : flex;
 		border          : none;
-		height          : 16px;
 		width           : 16px;
 		top             : -1px;
 		padding         : 0;
@@ -153,17 +151,17 @@
 	}
 
 	.toolbar-btn {
+		padding       : 0 var(--l-padding) 1px var(--l-padding);
 		border        : 0.5px solid currentColor;
+		height        : var(--h-button-common);
+		font-size     : var(--h-font-common);
+		border-radius : var(--corner-common);
 		z-index       : var(--z-action);
-		padding       : 0 6px 1px 6px;
+		margin-left   : var(--l-gap);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
 		background    : white;
-		border-radius : 10px;
-		font-size     : 11px;
-		height        : 16px;
-		margin-left   : 4px;
 	}
 
 	.toolbar-btn.active {
@@ -179,7 +177,7 @@
 	.snap-btn {
 		font-size     : 10px;
 		width         : 18px;
-		height        : 18px;
+		height        : var(--h-button-common);
 		padding       : 0;
 		position      : relative;
 		border-radius : 50%;
@@ -202,20 +200,20 @@
 		box-sizing    : border-box;
 		overflow      : hidden;
 		display       : flex;
-		border-radius : 10px;
-		height        : 16px;
+		border-radius : var(--corner-common);
+		height        : var(--h-button-segment);
 		margin-left   : 2px;
 	}
 
 	.seg {
+		padding     : 0 var(--l-padding) 1px var(--l-padding);
 		border-right: 0.5px solid currentColor;
 		color       : rgba(0, 0, 0, 0.35);
-		padding     : 0 6px 1px 6px;
+		font-size   : var(--h-font-common);
 		box-sizing  : border-box;
 		cursor      : pointer;
 		background  : white;
 		border      : none;
-		font-size   : 11px;
 		height      : 100%;
 	}
 

@@ -2,14 +2,14 @@ declare const __BUILD_NOTES__: Array<{ build: number; date: string; note: string
 declare const __BUILD_NUMBER__: number;
 declare const __ASSETS_DIR__: string;
 
+const common_height = 20;
 
 export default class Constants {
 
-	details_margin = 0;
 	halfIncrement = 0.5;
+	coplanar_epsilon = 1e-3;
 	printer_aspect_ratio = 11.69 / 8.27;
 	cursor_default = 'default';
-	corrupted = 'corrupted';
 	unknown = 'unknown';
 	newLine = '\n';
 	wildcard = '*';
@@ -19,17 +19,9 @@ export default class Constants {
 	empty = '';
 	tab = '\t';
 
-	coplanar_epsilon = 1e-3;
-
 	ratio = {
 		zoom_out: 0.9,
 		zoom_in:  1.1
-	};
-
-	separator = {
-		generic: '::',
-		small:	 ':::',
-		big:	 '::::',
 	};
 
 	threshold = {
@@ -42,21 +34,42 @@ export default class Constants {
 	thickness = {
 		separator: {
 			main:	 5,
-			banners: 2.5,
-			details: 0.75,
+			banners: 3,
+			content: 2,
 		},
+		tick:        1,
+		track:       4,
+	};
+
+	z = {
+		common:    0,
+		layout:    1,
+		action:    2,
+		frontmost: 3,
+	};
+
+	layout = {
+		gap:     4,
+		margin:  8,
+		padding: 7,
 	};
 
 	height = {
-		button: {
-			common:  18,
-			small:   16,
-			segment: 16,
-		},
-		banner:      28,
-		controls:    32,
-		slider:      14,
-		cell:        10,
+		controls:       common_height + 12,
+		banner:         common_height,
+		button_common:  common_height,
+		button_segment: 16,
+		font_common:    11,
+		collapse:       12,
+		slider:         14,
+		thumb:           8,
+		cell:           10,
+	};
+
+	corner = {
+		common: common_height / 2,
+		banner: common_height / 2,
+		box:     4,
 	};
 
 	build_notes = __BUILD_NOTES__;

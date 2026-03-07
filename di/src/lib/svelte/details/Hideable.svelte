@@ -64,6 +64,7 @@
 	.banner {
 		z-index         : var(--z-action);
 		color           : rgba(0, 0, 0, 1);
+		height          : var(--h-banner);
 		text-transform  : lowercase;
 		position        : relative;
 		cursor          : pointer;
@@ -73,8 +74,7 @@
 		margin          : 3px 0;
 		letter-spacing  : 0.5px;
 		display         : flex;
-		height          : 22px;
-		border-radius   : 11px;
+		border-radius   : var(--corner-banner);
 		font-size       : 12px;
 		border          : none;
 		font-weight     : 300;
@@ -107,10 +107,10 @@
 	}
 
 	.slot {
-		padding       : 8px;
+		padding       : var(--l-margin);
 		background    : var(--bg);
 		margin        : 0px 0 0;
-		border-radius : 11px;
+		border-radius : var(--corner-banner);
 	}
 
 </style>

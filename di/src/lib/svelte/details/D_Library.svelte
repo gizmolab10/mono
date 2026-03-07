@@ -131,13 +131,13 @@
 	.segmented {
 		display         : flex;
 		justify-content : center;
-		margin-bottom   : 4px;
+		margin-bottom   : var(--l-gap);
 	}
 
 	.segmented button {
 		z-index       : var(--z-action);
-		font-size     : 11px;
-		height        : 16px;
+		font-size     : var(--h-font-common);
+		height        : var(--h-button-segment);
 		padding       : 0 8px;
 		background    : white;
 		white-space   : nowrap;
@@ -147,11 +147,11 @@
 	}
 
 	.segmented button:first-child {
-		border-radius : 10px 0 0 10px;
+		border-radius : var(--corner-common) 0 0 var(--corner-common);
 	}
 
 	.segmented button:last-child {
-		border-radius : 0 10px 10px 0;
+		border-radius : 0 var(--corner-common) var(--corner-common) 0;
 	}
 
 	.segmented button:not(:first-child) {
@@ -181,9 +181,9 @@
 		color         : inherit;
 		background    : white;
 		padding       : 0 8px;
-		border-radius : 10px;
-		font-size     : 11px;
-		height        : 20px;
+		border-radius : var(--corner-common);
+		font-size     : var(--h-font-common);
+		height        : var(--h-button-common);
 		z-index       : var(--z-action);
 	}
 
@@ -204,7 +204,7 @@
 	.library {
 		width           : 100%;
 		border-collapse : collapse;
-		font-size       : 11px;
+		font-size       : var(--h-font-common);
 	}
 
 	.lib-row {

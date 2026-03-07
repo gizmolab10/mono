@@ -77,7 +77,7 @@
 	const hoverB = $derived($w_s_hover?.id === targetB.id);
 </script>
 
-<div class='steppers' class:horizontal style:--gap="{gap}px">
+<div class='steppers' class:horizontal style:--l-gap="{gap}px">
 	<div
 		class='stepper-button'
 		class:hidden={!show_up}
@@ -124,11 +124,11 @@
 		user-select: none;
 	}
 	.stepper-button + .stepper-button {
-		margin-top : var(--gap);
+		margin-top : var(--l-gap);
 	}
 	.horizontal > .stepper-button + .stepper-button {
 		margin-top  : 0;
-		margin-left : var(--gap);
+		margin-left : var(--l-gap);
 	}
 	.stepper-button.hidden {
 		visibility : hidden;

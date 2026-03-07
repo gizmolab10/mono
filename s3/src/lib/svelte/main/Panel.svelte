@@ -26,7 +26,7 @@
 	style:width            = '{width}px'
 	style:height           = '{height}px'
 	style:padding          = '{gap}px'
-	style:--gap            = '{gap}px'
+	style:--l-gap            = '{gap}px'
 	style:--radius         = '{radius}px'
 	style:--details-width  = '{k.width.details}px'
 	style:background-color = {colors.separator}>
@@ -68,7 +68,7 @@
 	.main {
 		display  : flex;
 		overflow : hidden;
-		gap      : var(--gap);
+		gap      : var(--l-gap);
 	}
 
 	.region {

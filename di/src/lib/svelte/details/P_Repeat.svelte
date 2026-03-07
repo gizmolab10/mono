@@ -283,18 +283,18 @@
 		flex-direction : column;
 		display        : flex;
 		padding-bottom : 2px;
-		gap            : 4px;
+		gap            : var(--l-gap);
 	}
 
 	.repeater-option-row {
 		align-items : center;
 		display     : flex;
-		min-height  : 18px;
+		min-height  : var(--h-button-common);
 		gap         : 6px;
 	}
 
 	.option-label {
-		font-size   : 11px;
+		font-size   : var(--h-font-common);
 		min-width   : 25px;
 		opacity     : 0.6;
 		flex-shrink : 0;
@@ -312,17 +312,17 @@
 		cursor        : pointer;
 		white-space   : nowrap;
 		background    : white;
-		padding       : 0 5px;
+		padding       : 0 var(--l-padding);
 		font-size     : 10px;
-		height        : 18px;
+		height        : var(--h-button-common);
 	}
 
 	.segmented button:first-child {
-		border-radius : 10px 0 0 10px;
+		border-radius : var(--corner-common) 0 0 var(--corner-common);
 	}
 
 	.segmented button:last-child {
-		border-radius : 0 10px 10px 0;
+		border-radius : 0 var(--corner-common) var(--corner-common) 0;
 	}
 
 	.segmented button:not(:first-child) {
@@ -347,9 +347,9 @@
 		white-space   : nowrap;
 		background    : white;
 		padding       : 0 8px;
-		border-radius : 10px;
-		font-size     : 11px;
-		height        : 18px;
+		border-radius : var(--corner-common);
+		font-size     : var(--h-font-common);
+		height        : var(--h-button-common);
 	}
 
 	.repeat-btn {
@@ -401,7 +401,7 @@
 	.slider-wrap {
 		position    : relative;
 		align-items : center;
-		height      : 16px;
+		height      : var(--h-button-common);
 		display     : flex;
 		flex        : 1;
 		min-width   : 0;
@@ -411,7 +411,7 @@
 		background    : rgba(0, 0, 0, 0.15);
 		position      : absolute;
 		margin-top    : -2px;
-		height        : 4px;
+		height        : var(--th-track);
 		right         : 7px;
 		left          : 7px;
 		top           : 50%;
@@ -441,7 +441,7 @@
 		position       : absolute;
 		pointer-events : none;
 		opacity        : 0.6;
-		height         : 8px;
+		height         : var(--h-thumb);
 		width          : 1px;
 		top            : 50%;
 	}
@@ -453,7 +453,7 @@
 		appearance         : none;
 		-webkit-appearance : none;
 		pointer-events     : none;
-		height             : 16px;
+		height             : var(--h-button-common);
 		width              : 100%;
 		top                : 0;
 		left               : 0;
@@ -467,7 +467,7 @@
 		-webkit-appearance : none;
 		pointer-events     : auto;
 		width              : 14px;
-		height             : 14px;
+		height             : var(--h-slider);
 		margin-top         : -5px;
 		border-radius      : 50%;
 	}
@@ -478,20 +478,20 @@
 		cursor         : pointer;
 		pointer-events : auto;
 		width          : 14px;
-		height         : 14px;
+		height         : var(--h-slider);
 		border-radius  : 50%;
 	}
 
 	:is(.range-slider, .spacing-slider) input[type='range']::-webkit-slider-runnable-track {
 		background : transparent;
 		border     : none;
-		height     : 4px;
+		height     : var(--th-track);
 	}
 
 	:is(.range-slider, .spacing-slider) input[type='range']::-moz-range-track {
 		background : transparent;
 		border     : none;
-		height     : 4px;
+		height     : var(--th-track);
 	}
 
 	:is(.range-slider, .spacing-slider) input[type='range']:focus {
@@ -501,7 +501,7 @@
 	.clone-count {
 		position  : absolute;
 		right     : 0;
-		font-size : 11px;
+		font-size : var(--h-font-common);
 		opacity   : 0.6;
 	}
 
@@ -511,7 +511,7 @@
 	}
 
 	.hint {
-		font-size   : 11px;
+		font-size   : var(--h-font-common);
 		opacity     : 0.5;
 		text-align  : center;
 		line-height : 1;

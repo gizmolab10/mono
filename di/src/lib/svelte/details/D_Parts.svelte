@@ -328,7 +328,7 @@
 	}
 
 	.repeat-badge {
-		margin-left : 4px;
+		margin-left : var(--l-gap);
 		opacity     : 0.5;
 		font-size   : 8px;
 	}
@@ -341,7 +341,7 @@
 		width         : 100%;
 		outline       : none;
 		text-align    : left;
-		height        : 14px;
+		height        : var(--h-slider);
 		padding       : 0 4px;
 		background    : white;
 		color         : inherit;
@@ -358,8 +358,8 @@
 
 	.toggle-header {
 		border-radius : 8px;
-		font-size     : 11px;
-		height        : 12px;
+		font-size     : var(--h-font-common);
+		height        : var(--h-collapse);
 		background    : white;
 		text-align    : center;
 		font-weight   : normal;

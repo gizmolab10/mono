@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { T_Details } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
 	import { scenes } from '../../ts/managers';
 	import { engine } from '../../ts/render';
@@ -10,8 +9,6 @@
 	import D_Parts from './D_Parts.svelte';
 	import D_Library from './D_Library.svelte';
 	import D_Preferences from './D_Preferences.svelte';
-	const { w_text_color, w_background_color } = colors;
-
 	onMount( async () => {
 		setTimeout( async () => {
 			await hits.defer_recalibrate();
@@ -22,8 +19,8 @@
 
 <div
 	class            = 'details'
-	style:color      = '{$w_text_color}'
-	style:background = {$w_background_color}>
+	style:color      = 'var(--text)'
+	style:background = 'var(--bg)'>
 
 	<div class='banner-zone'>
 		<Hideable title='preferences' id='preferences' detail={T_Details.preferences}>
@@ -64,10 +61,10 @@
 
 	.banner-zone::after {
 		content       : '';
-		height        : 11px;
+		height        : var(--corner-banner);
 		display       : block;
 		background    : var(--bg);
-		border-radius : 11px 11px 0 0;
+		border-radius : var(--corner-banner) var(--corner-banner) 0 0;
 	}
 
 	.details {
@@ -87,7 +84,7 @@
 		font-weight     : 300;
 		font-size       : 14px;
 		width           : 18px;
-		height          : 18px;
+		height          : var(--h-button-common);
 		display         : flex;
 		align-items     : center;
 		justify-content : center;

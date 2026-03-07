@@ -8,7 +8,6 @@
 	import { dimensions } from '../../ts/editors/Dimension';
 	import { angulars } from '../../ts/editors/Angular';
 	import { render } from '../../ts/render/Render';
-	import { colors } from '../../ts/draw/Colors';
 	import { k } from '../../ts/common/Constants';
 	import Slider from '../mouse/Slider.svelte';
 	import S_Mouse from '../../ts/state/S_Mouse';
@@ -17,7 +16,6 @@
 
 	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 
-	const { w_text_color, w_background_color } = colors;
 	const { w_s_dimensions } = dimensions;
 	const { w_s_angular } = angulars;
 	const { w_s_face_label } = face_label;
@@ -216,7 +214,7 @@
 <div
 	class            = 'graph'
 	bind:this        = {container}
-	style:color      = {$w_text_color}
+	style:color      = 'var(--text)'
 	style:background = 'white'>
 	<canvas
 		bind:this = {canvas}></canvas>
@@ -226,7 +224,7 @@
 	{#if breadcrumbs.length > 1}
 		<div
 			class='breadcrumbs'
-			style:--crumb-bg = {$w_background_color}>
+			style:--crumb-bg = 'var(--bg)'>
 			{#each breadcrumbs as so, index (so.id)}
 				<button
 					class='crumb'
@@ -316,7 +314,7 @@
 	}
 
 	.assist-label {
-		font-size      : 11px;
+		font-size      : var(--h-font-common);
 		color          : rgba(0, 0, 0, 0.35);
 		letter-spacing : 0.5px;
 	}
@@ -347,18 +345,18 @@
 		bottom   : 10px;
 		left     : 10px;
 		display  : flex;
-		gap      : 4px;
+		gap      : var(--l-gap);
 		z-index  : var(--z-action);
 	}
 
 	.canvas-btn {
 		background    : rgba(255, 255, 255, 0.85);
 		border        : 0.5px solid rgba(0, 0, 0, 0.25);
-		border-radius : 10px;
+		border-radius : var(--corner-common);
 		color         : rgba(0, 0, 0, 0.5);
-		padding       : 0 6px 1px 6px;
-		font-size     : 11px;
-		height        : 20px;
+		padding       : 0 var(--l-padding) 1px var(--l-padding);
+		font-size     : var(--h-font-common);
+		height        : var(--h-button-common);
 		cursor        : pointer;
 		box-sizing    : border-box;
 	}
@@ -383,11 +381,11 @@
 	.crumb {
 		background    : rgba(255, 255, 255, 0.7);
 		border        : 0.5px solid transparent;
-		border-radius : 4px;
+		border-radius : var(--corner-box);
 		color         : rgba(0, 0, 0, 0.45);
 		padding       : 0 8px;
-		font-size     : 11px;
-		height        : 20px;
+		font-size     : var(--h-font-common);
+		height        : var(--h-button-common);
 		box-sizing    : border-box;
 		cursor        : pointer;
 	}
@@ -441,7 +439,7 @@
 		width          : 60px;
 		padding        : 0;
 		line-height    : 1;
-		height         : 10px;
+		height         : var(--h-cell);
 		border         : none;
 		outline        : none;
 		background     : white;

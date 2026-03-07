@@ -92,9 +92,9 @@
 	}
 
 	.action-btn {
-		border-radius : 10px;
-		font-size     : 11px;
-		height        : 20px;
+		border-radius : var(--corner-common);
+		font-size     : var(--h-font-common);
+		height        : var(--h-button-common);
 		padding       : 0 8px;
 		background    : white;
 		white-space   : nowrap;
@@ -120,7 +120,7 @@
 	}
 
 	.precision-group {
-		gap            : 4px;
+		gap            : var(--l-gap);
 		display        : flex;
 		margin-top     : -8px;
 		flex-direction : column;
@@ -129,8 +129,8 @@
 	}
 
 	.segmented {
-		border-radius  : 6px;
-		height         : 20px;
+		border-radius  : var(--corner-common);
+		height         : var(--h-button-common);
 		display        : flex;
 		overflow       : hidden;
 		box-sizing     : border-box;
@@ -171,9 +171,9 @@
 
 	.units-select {
 		z-index            : var(--z-action);
-		border-radius      : 10px;
-		font-size          : 11px;
-		height             : 20px;
+		border-radius      : var(--corner-common);
+		font-size          : var(--h-font-common);
+		height             : var(--h-button-common);
 		outline            : none;
 		appearance         : none;
 		-webkit-appearance : none;
@@ -214,7 +214,7 @@
 		flex               : 1;
 		min-width          : 0;
 		margin-top         : 0px;
-		height             : 14px;
+		height             : var(--h-slider);
 		appearance         : none;
 		-webkit-appearance : none;
 		cursor             : pointer;
@@ -223,7 +223,7 @@
 
 	.slider-group input[type='range']::-webkit-slider-runnable-track {
 		border-radius : 2px;
-		height        : 4px;
+		height        : var(--th-track);
 		border        : none;
 		background    : rgba(0, 0, 0, 0.15);
 	}
@@ -232,7 +232,7 @@
 		border-radius      : 50%;
 		-webkit-appearance : none;
 		width              : 14px;
-		height             : 14px;
+		height             : var(--h-slider);
 		margin-top         : -5.5px;
 		background         : #007aff;
 		border             : 1px solid rgba(0, 0, 0, 0.4);
@@ -240,7 +240,7 @@
 
 	.slider-group input[type='range']::-moz-range-track {
 		border-radius : 2px;
-		height        : 4px;
+		height        : var(--th-track);
 		border        : none;
 		background    : rgba(0, 0, 0, 0.15);
 	}
@@ -248,7 +248,7 @@
 	.slider-group input[type='range']::-moz-range-thumb {
 		border-radius : 50%;
 		width         : 14px;
-		height        : 14px;
+		height        : var(--h-slider);
 		background    : #007aff;
 		border        : 1px solid rgba(0, 0, 0, 0.4);
 	}
@@ -272,8 +272,8 @@
 
 	.color-group input[type='color'] {
 		z-index            : var(--z-action);
-		width              : 20px;
-		height             : 20px;
+		width              : var(--h-button-common);
+		height             : var(--h-button-common);
 		padding            : 0;
 		border             : 0.5px solid currentColor;
 		border-radius      : 50%;

@@ -2,9 +2,7 @@
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import { Point } from '../../ts/types/Coordinates';
 	import Steppers from '../mouse/Steppers.svelte';
-	import { colors } from '../../ts/draw/Colors';
 	import { k } from '../../ts/common/Constants';
-	const { w_text_color, w_background_color } = colors;
 
 	let { onclose } : { onclose: () => void } = $props();
 
@@ -49,8 +47,8 @@
 
 <div
 	class='modal'
-	style:color={$w_text_color}
-	style:background={$w_background_color}
+	style:color='var(--text)'
+	style:background='var(--bg)'
 	style:width="{modalWidth}px"
 	onclick={(e) => e.stopPropagation()}
 	onkeyup={() => {}}

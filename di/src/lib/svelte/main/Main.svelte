@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { stores } from '../../ts/managers/Stores';
 	import Details from '../details/Details.svelte';
-	import { colors } from '../../ts/draw/Colors';
 	import { k } from '../../ts/common/Constants';
 	import BuildNotes from './BuildNotes.svelte';
 	import { e } from '../../ts/signals/Events';
@@ -9,7 +8,6 @@
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
 
-	const { w_accent_color, w_background_color } = colors;
 	const { w_show_details } = stores;
 
 	// Initialize event system
@@ -48,14 +46,14 @@
 	style:width  = '{width}px'
 	style:height = '{height}px'
 	style:padding = '{gap}px'
-	style:--gap    = '{gap}px'
+	style:--l-gap    = '{gap}px'
 	style:--radius = '{radius}px'
-	style:background-color = {$w_accent_color}>
+	style:background-color = 'var(--accent)'>
 	{#if showBuildNotes}
 		<!-- Build notes: single empty region fills entire space -->
 		<div
 			class='region build-notes-region'
-			style:background="color-mix(in srgb, {$w_background_color} 95%, black)"
+			style:background="color-mix(in srgb, var(--bg) 95%, black)"
 			onclick={() => showBuildNotes = false}
 			onkeyup={() => {}}
 			role="button"
@@ -108,7 +106,7 @@
 	.main {
 		display  : flex;
 		overflow : hidden;
-		gap      : var(--gap);
+		gap      : var(--l-gap);
 	}
 
 	.region {

@@ -57,5 +57,15 @@ Background rule: everything is **white** by default. The active/selected state i
 - **Font sizes**: 9px (segments), 11px (buttons/select), 0.875rem (input)
 - **Active = stands out by simplicity** — selected segment is transparent/black while unselected ones are white/dimmed. No heavy highlight colors
 - **hover** -- always black with white text
-- **height** of all controls identical (including text input) -- 20px, box-sizing: border-box
+- **controls** -- box-sizing: border-box
 - **CSS specificity**: hover rules declared after active rules so hover always wins
+- **heights**
+	- **buttons** are only one of two sizes
+		- **common** -- all buttons for now
+		- **small** -- i may want some to "feel less important"
+	- **segments** use button constants
+	- **table cells** all have the same height
+- **layout**
+	- **margins** around groups and content of details
+	- **padding** around text in buttons
+	- **gaps** between controls in the same group

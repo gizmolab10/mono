@@ -175,7 +175,7 @@
 	.rotation-section {
 		display        : flex;
 		flex-direction : column;
-		gap            : 4px;
+		gap            : var(--l-gap);
 	}
 
 	.rotation-row {
@@ -185,7 +185,7 @@
 	}
 
 	.slider-label {
-		font-size   : 11px;
+		font-size   : var(--h-font-common);
 		opacity     : 0.5;
 		flex-shrink : 0;
 	}
@@ -204,9 +204,9 @@
 		white-space   : nowrap;
 		background    : white;
 		padding       : 0 8px;
-		border-radius : 10px;
-		font-size     : 11px;
-		height        : 20px;
+		border-radius : var(--corner-common);
+		font-size     : var(--h-font-common);
+		height        : var(--h-button-common);
 		z-index       : var(--z-action);
 	}
 
@@ -214,14 +214,14 @@
 		flex           : 1;
 		position       : relative;
 		min-width      : 0;
-		height         : 16px;
+		height         : var(--h-button-common);
 		display        : flex;
 		align-items    : center;
 	}
 
 	.rotation-slider {
 		width              : 100%;
-		height             : 4px;
+		height             : var(--th-track);
 		margin             : 0;
 		padding            : 0;
 		cursor             : pointer;
@@ -235,7 +235,7 @@
 	.rotation-slider::-webkit-slider-thumb {
 		-webkit-appearance : none;
 		width              : 14px;
-		height             : 14px;
+		height             : var(--h-slider);
 		border-radius      : 50%;
 		background         : var(--accent);
 		border             : none;
@@ -244,7 +244,7 @@
 
 	.rotation-slider::-moz-range-thumb {
 		width         : 14px;
-		height        : 14px;
+		height        : var(--h-slider);
 		border-radius : 50%;
 		background    : var(--accent);
 		border        : none;
@@ -265,7 +265,7 @@
 		position       : absolute;
 		top            : 50%;
 		width          : 1px;
-		height         : 8px;
+		height         : var(--h-thumb);
 		background     : currentColor;
 		opacity        : 0.6;
 		transform      : translate(-0.5px, -50%);
@@ -275,8 +275,8 @@
 	.angles {
 		width           : 100%;
 		border-collapse : collapse;
-		font-size       : 11px;
-		margin-top      : 4px;
+		font-size       : var(--h-font-common);
+		margin-top      : var(--l-gap);
 	}
 
 	.angles td {
@@ -331,7 +331,7 @@
 	}
 
 	.root-note {
-		font-size   : 11px;
+		font-size   : var(--h-font-common);
 		opacity     : 0.5;
 		text-align  : center;
 		padding     : 0;

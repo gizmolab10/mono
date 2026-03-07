@@ -210,7 +210,7 @@
 	.bounds {
 		border-collapse : collapse;
 		width           : 100%;
-		font-size       : 11px;
+		font-size       : var(--h-font-common);
 	}
 
 	.bounds td {
@@ -275,7 +275,7 @@
 
 	.attr-formula.merged {
 		padding : 0;
-		height  : 1px;
+		height  : var(--th-tick);
 	}
 
 	.attr-formula.merged .cell-input {
@@ -350,8 +350,8 @@
 		flex          : 1;
 		padding       : 0;
 		border-radius : 8px;
-		font-size     : 11px;
-		height        : 16px;
+		font-size     : var(--h-font-common);
+		height        : var(--h-button-common);
 		background    : white;
 		text-align    : center;
 		font-weight   : normal;
@@ -371,7 +371,7 @@
 		border-radius   : 50%;
 		font-weight     : 300;
 		width           : 16px;
-		height          : 16px;
+		height          : var(--h-button-common);
 		font-size       : 12px;
 		display         : flex;
 		background      : white;

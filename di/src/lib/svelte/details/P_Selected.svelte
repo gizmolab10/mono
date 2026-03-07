@@ -40,16 +40,16 @@
 		white-space   : nowrap;
 		background    : white;
 		padding       : 0 8px;
-		font-size     : 11px;
-		height        : 16px;
+		font-size     : var(--h-font-common);
+		height        : var(--h-button-segment);
 	}
 
 	.segmented button:first-child {
-		border-radius : 10px 0 0 10px;
+		border-radius : var(--corner-common) 0 0 var(--corner-common);
 	}
 
 	.segmented button:last-child {
-		border-radius : 0 10px 10px 0;
+		border-radius : 0 var(--corner-common) var(--corner-common) 0;
 	}
 
 	.segmented button:not(:first-child) {

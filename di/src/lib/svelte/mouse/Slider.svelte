@@ -226,7 +226,7 @@
 	}
 	.tick-line {
 		width      : 1px;
-		height     : 4px;
+		height     : var(--th-track);
 		margin-top : -2px;
 		background : rgba(0, 0, 0, 0.3);
 	}
@@ -243,8 +243,8 @@
 		white-space : nowrap;
 	}
 	.value-display {
-		font-size    : 11px;
-		margin-left  : 4px;
+		font-size    : var(--h-font-common);
+		margin-left  : var(--l-gap);
 		display      : inline-block;
 		width        : 3em;
 		text-align   : right;
@@ -311,12 +311,12 @@
 	.line input[type='range']::-webkit-slider-runnable-track {
 		background    : rgba(0, 0, 0, 0.15);
 		border-radius : 2px;
-		height        : 4px;
+		height        : var(--th-track);
 		border        : none;
 	}
 	.line input[type='range']::-webkit-slider-thumb {
 		width      : 14px;
-		height     : 14px;
+		height     : var(--h-slider);
 		margin-top : -5.5px;
 		background : var(--thumb-color);
 		border     : 1px solid rgba(0, 0, 0, 0.4);
@@ -324,12 +324,12 @@
 	.line input[type='range']::-moz-range-track {
 		background    : rgba(0, 0, 0, 0.15);
 		border-radius : 2px;
-		height        : 4px;
+		height        : var(--th-track);
 		border        : none;
 	}
 	.line input[type='range']::-moz-range-thumb {
 		width      : 14px;
-		height     : 14px;
+		height     : var(--h-slider);
 		background : var(--thumb-color);
 		border     : 1px solid rgba(0, 0, 0, 0.4);
 	}
@@ -341,7 +341,7 @@
 	}
 	.line input[type='range']::-ms-thumb {
 		width      : 14px;
-		height     : 14px;
+		height     : var(--h-slider);
 		background : var(--thumb-color);
 		border     : 1px solid rgba(0, 0, 0, 0.4);
 	}
