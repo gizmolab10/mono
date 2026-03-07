@@ -59,7 +59,7 @@
 	</div>
 	<button class='toolbar-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	{#if $w_view_mode === '2d'}
-		<button class='toolbar-btn snap-btn' use:hit_target={{ id: 'rotation-snap', onpress: () => stores.toggle_rotation_snap() }}>{$w_rotation_snap ? '🧲' : '○'}</button>
+		<button class='toolbar-btn snap-btn' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
 	{/if}
 {/snippet}
 
@@ -177,9 +177,23 @@
 	}
 
 	.snap-btn {
-		font-size : 10px;
-		width     : 20px;
-		padding   : 0;
+		font-size     : 10px;
+		width         : 18px;
+		height        : 18px;
+		padding       : 0;
+		position      : relative;
+		border-radius : 50%;
+	}
+
+	.snap-off::after {
+		content    : '';
+		position   : absolute;
+		top        : 50%;
+		left       : 50%;
+		width      : 14px;
+		height     : 1.5px;
+		background : currentColor;
+		transform  : translate(-50%, -50%) rotate(-45deg);
 	}
 
 	.segmented {

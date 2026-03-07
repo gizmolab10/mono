@@ -47,6 +47,18 @@ export default class Constants {
 		},
 	};
 
+	height = {
+		button: {
+			common:  18,
+			small:   16,
+			segment: 16,
+		},
+		banner:      28,
+		controls:    32,
+		slider:      14,
+		cell:        10,
+	};
+
 	build_notes = __BUILD_NOTES__;
 	build_number = __BUILD_NUMBER__;
 	assets_directory = __ASSETS_DIR__;

@@ -84,8 +84,10 @@ class Engine {
 				if (stores.current_view_mode() === '2d') {
 					if (!this.root_scene) return;
 					this.saved_3d_orientation = null;
+					this.saved_pre_snap_orientation = null;
 					this.rotate_2d(this.root_scene, prev, curr);
 				} else {
+					this.saved_pre_snap_orientation = null;
 					drag.rotate_object(target, prev, curr, alt_key);
 				}
 			}
@@ -393,6 +395,29 @@ class Engine {
 		scenes.save();
 	}
 
+	/** Toggle rotation snap. Snap on = straighten + save prior orientation. Snap off = restore prior. */
+	toggle_rotation_snap(): void {
+		const was_snapped = stores.rotation_snap();
+		stores.toggle_rotation_snap();
+		if (!was_snapped) {
+			// Turning snap ON — save current orientation, then straighten
+			this.saved_pre_snap_orientation = stores.current_orientation();
+			this.straighten();
+		} else {
+			// Turning snap OFF — restore prior orientation if we have one
+			if (this.saved_pre_snap_orientation) {
+				const current = stores.current_orientation();
+				const target = this.saved_pre_snap_orientation;
+				this.saved_pre_snap_orientation = null;
+				this.snap_anim = {
+					from: quat.clone(current),
+					to: quat.clone(target),
+					t: 0,
+				};
+			}
+		}
+	}
+
 	/** Animate tumble to show the given face (0–5) at front, using preferred twist. */
 	orient_to_face(face: number): void {
 		if (!this.root_scene || face < 0 || face > 5) return;
@@ -418,6 +443,7 @@ class Engine {
 	}
 
 	private saved_3d_orientation: quat | null = null;
+	private saved_pre_snap_orientation: quat | null = null;
 
 	/** Toggle between 2D and 3D view. 2D snaps root face-on (if snap enabled), 3D restores. */
 	toggle_view_mode(): void {
