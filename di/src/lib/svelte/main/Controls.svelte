@@ -4,13 +4,15 @@
 	import { stores } from '../../ts/managers/Stores';
 	import { scenes } from '../../ts/managers/Scenes';
 	import Separator from '../mouse/Separator.svelte';
+	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 
 	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face, w_rotation_snap } = stores;
+	const separator_length = k.height.controls;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 
 	let controls_width  = $state(Infinity);
-	let wrapped         = $derived(controls_width < 650);
+	let wrapped         = $derived(controls_width < (k.width.groups));
 	let show_names      = $derived(($w_decorations & T_Decorations.names) !== 0);
 	let show_angles     = $derived(($w_decorations & T_Decorations.angles) !== 0);
 	let show_dimensions = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
@@ -70,18 +72,18 @@
 	{#if wrapped}
 		<div class='right-col'>
 			<div class='right-row'>{@render hamburger_button()}{@render face_buttons()}</div>
-			<Separator thickness={5} margin={6} />
+			<Separator thickness={k.thickness.separator.main} margin={6} />
 			<div class='right-row'>{@render other_buttons()}{@render mode_buttons()}</div>
 		</div>
 	{:else}
 		<div class='group'>
 			{@render left_buttons()}
-			<Separator vertical thickness={5} length={28} margin={0} />
+			<Separator vertical thickness={k.thickness.separator.main} length={separator_length} margin={0} />
 		</div>
 		<span class='spacer'></span>
 		<div class='group'>{@render face_buttons()}</div>
 		<span class='spacer'></span>
-		<Separator vertical thickness={5} length={28} margin={0} />
+		<Separator vertical thickness={k.thickness.separator.main} length={separator_length} margin={0} />
 		<div class='group'>{@render mode_buttons()}</div>
 	{/if}
 </div>
@@ -95,6 +97,10 @@
 		padding         : 0 6px;
 		width           : 100%;
 		display         : flex;
+	}
+
+	.controls:not(.wrapped) {
+		height : var(--h-controls);
 	}
 
 	.group {
@@ -145,7 +151,7 @@
 	}
 
 	.hamburger:global([data-hitting]) .hamburger-icon rect {
-		stroke       : var(--accent);
+		stroke       : var(--selected);
 		fill         : white;
 		stroke-width : 0.5;
 	}
@@ -170,38 +176,38 @@
 	}
 
 	.toolbar-btn:global([data-hitting]) {
-		background : var(--accent);
+		background : var(--selected);
 		color      : black;
 	}
 
 	.snap-btn {
-		font-size     : 10px;
-		width         : 18px;
+		width         : var(--h-button-common);
 		height        : var(--h-button-common);
-		padding       : 0;
+		font-size     : var(--h-font-large);
 		position      : relative;
 		border-radius : 50%;
+		padding       : 0;
 	}
 
 	.snap-off::after {
-		content    : '';
+		transform  : translate(-50%, -50%) rotate(-45deg);
+		background : currentColor;
 		position   : absolute;
+		height     : 1.5px;
+		width      : 14px;
 		top        : 50%;
 		left       : 50%;
-		width      : 14px;
-		height     : 1.5px;
-		background : currentColor;
-		transform  : translate(-50%, -50%) rotate(-45deg);
+		content    : '';
 	}
 
 	.segmented {
 		border        : 0.5px solid currentColor;
+		height        : var(--h-button-segment);
+		border-radius : var(--corner-common);
 		z-index       : var(--z-action);
 		box-sizing    : border-box;
 		overflow      : hidden;
 		display       : flex;
-		border-radius : var(--corner-common);
-		height        : var(--h-button-segment);
 		margin-left   : 2px;
 	}
 
@@ -222,17 +228,17 @@
 	}
 
 	.seg.front {
-		background : rgba(0, 0, 0, 0.12);
+		background : var(--selected);
 		color      : black;
 	}
 
 	.seg.active {
-		background : var(--accent);
+		background : var(--selected);
 		color      : black;
 	}
 
 	.seg:global([data-hitting]) {
-		background : var(--accent);
+		background : var(--selected);
 		color      : black;
 	}
 </style>

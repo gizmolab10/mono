@@ -23,8 +23,8 @@
 	const gap    = k.thickness.separator.main;
 	const radius = gap * 3;
 
-	let controlsHeight = $state(32);
-	let detailsWidth   = $derived(280 - gap * 2);
+	let controlsHeight = $state(k.height.controls);
+	let detailsWidth   = $derived(k.width.details - gap * 2);
 	let showBuildNotes = $state(false);
 
 	// Computed dimensions
@@ -42,19 +42,19 @@
 />
 
 <div
-	class        = 'panel'
-	style:width  = '{width}px'
-	style:height = '{height}px'
-	style:padding = '{gap}px'
-	style:--l-gap    = '{gap}px'
-	style:--radius = '{radius}px'
+	class                  = 'panel'
+	style:padding          = '{gap}px'
+	style:--l-gap          = '{gap}px'
+	style:width            = '{width}px'
+	style:height           = '{height}px'
+	style:--radius         = '{radius}px'
 	style:background-color = 'var(--accent)'>
 	{#if showBuildNotes}
 		<!-- Build notes: single empty region fills entire space -->
 		<div
-			class='region build-notes-region'
 			style:background="color-mix(in srgb, var(--bg) 95%, black)"
 			onclick={() => showBuildNotes = false}
+			class='region build-notes-region'
 			onkeyup={() => {}}
 			role="button"
 			tabindex="-1">
@@ -63,8 +63,8 @@
 	{:else}
 		<!-- Controls region -->
 		<div
-			class = 'region controls'
-			bind:clientHeight={controlsHeight}>
+			bind:clientHeight={controlsHeight}
+			class = 'region controls'>
 			<Controls />
 		</div>
 

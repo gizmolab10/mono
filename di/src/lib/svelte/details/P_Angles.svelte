@@ -225,7 +225,7 @@
 		margin             : 0;
 		padding            : 0;
 		cursor             : pointer;
-		accent-color       : var(--accent);
+		accent-color       : var(--selected);
 		-webkit-appearance : none;
 		appearance         : none;
 		background         : #ccc;
@@ -234,19 +234,20 @@
 
 	.rotation-slider::-webkit-slider-thumb {
 		-webkit-appearance : none;
-		width              : 14px;
+		width              : var(--h-slider);
 		height             : var(--h-slider);
+		margin-top         : calc((var(--th-track) - var(--h-slider)) / 2);
 		border-radius      : 50%;
-		background         : var(--accent);
+		background         : var(--selected);
 		border             : none;
 		cursor             : pointer;
 	}
 
 	.rotation-slider::-moz-range-thumb {
-		width         : 14px;
+		width         : var(--h-slider);
 		height        : var(--h-slider);
 		border-radius : 50%;
-		background    : var(--accent);
+		background    : var(--selected);
 		border        : none;
 		cursor        : pointer;
 	}
@@ -265,7 +266,7 @@
 		position       : absolute;
 		top            : 50%;
 		width          : 1px;
-		height         : var(--h-thumb);
+		height         : var(--th-thumb);
 		background     : currentColor;
 		opacity        : 0.6;
 		transform      : translate(-0.5px, -50%);
@@ -295,7 +296,7 @@
 	}
 
 	.active-axis .angle-name {
-		background  : var(--accent);
+		background  : var(--selected);
 		opacity     : 1;
 	}
 
@@ -320,7 +321,7 @@
 	}
 
 	.angle-cell:not(:focus):hover {
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 	.angle-cell:focus {

@@ -2,9 +2,13 @@ declare const __BUILD_NOTES__: Array<{ build: number; date: string; note: string
 declare const __BUILD_NUMBER__: number;
 declare const __ASSETS_DIR__: string;
 
-const common_height = 20;
+const common_size = 33;
 
 export default class Constants {
+
+	assets_directory = __ASSETS_DIR__;
+	build_number = __BUILD_NUMBER__;
+	build_notes = __BUILD_NOTES__;
 
 	halfIncrement = 0.5;
 	coplanar_epsilon = 1e-3;
@@ -24,21 +28,21 @@ export default class Constants {
 		zoom_in:  1.1
 	};
 
-	threshold = {
-		autorepeat:	  150,
-		double_click: 400,
-		alteration:	  500,
-		long_click:	  800,
+	width = {
+		details: common_size * 10,
+		groups:  common_size * 31,
 	};
 
-	thickness = {
-		separator: {
-			main:	 5,
-			banners: 3,
-			content: 2,
-		},
-		tick:        1,
-		track:       4,
+	corner = {
+		common: common_size / 2,
+		banner: common_size / 2,
+		box:    4,
+	};
+
+	layout = {
+		gap:     common_size / 5,
+		padding: common_size / 3,
+		margin:  common_size / 3.2,
 	};
 
 	z = {
@@ -48,33 +52,41 @@ export default class Constants {
 		frontmost: 3,
 	};
 
-	layout = {
-		gap:     4,
-		margin:  8,
-		padding: 7,
+	threshold = {
+		autorepeat:	  150,
+		double_click: 400,
+		alteration:	  500,
+		long_click:	  800,
+	};
+
+	thickness = {
+		separator: {
+			content: common_size / 10,
+			banners: common_size / 6,
+			main:	 common_size / 5,
+		},
+		tick:        1,
+		track:       4,
+		thumb:       common_size / 4,
 	};
 
 	height = {
-		controls:       common_height + 12,
-		banner:         common_height,
-		button_common:  common_height,
-		button_segment: 16,
-		font_common:    11,
-		collapse:       12,
-		slider:         14,
-		thumb:           8,
-		cell:           10,
+		collapse:    common_size / 2 + 2,
+		controls:    common_size + 8,
+		slider:      common_size - 6,
+		cell:        common_size / 2,
+		banner:      common_size,
+		font: {
+			small:   common_size / 2.5,
+			large:   common_size / 1.5,
+			common:  common_size / 2,
+		},
+		button: {
+			small:   common_size - 6,
+			segment: common_size,
+			common:  common_size,
+		},
 	};
-
-	corner = {
-		common: common_height / 2,
-		banner: common_height / 2,
-		box:     4,
-	};
-
-	build_notes = __BUILD_NOTES__;
-	build_number = __BUILD_NUMBER__;
-	assets_directory = __ASSETS_DIR__;
 
 }
 

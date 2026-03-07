@@ -7,7 +7,6 @@
 
 export enum T_Preference {
 	// Layout
-	detailsWidth 	= 'detailsWidth',
 	showDetails  	= 'showDetails',
 	
 	// Colors

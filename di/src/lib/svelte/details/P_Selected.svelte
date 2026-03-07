@@ -57,7 +57,7 @@
 	}
 
 	.segmented button.active {
-		background  : var(--accent);
+		background  : var(--selected);
 		font-weight : 600;
 	}
 

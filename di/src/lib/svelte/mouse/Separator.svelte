@@ -1,6 +1,7 @@
 <script lang='ts'>
-	import S_Hit_Target from '../../ts/state/S_Hit_Target';
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
+	import S_Hit_Target from '../../ts/state/S_Hit_Target';
+	import { k } from '../../ts/common/Constants';
 	import { hits } from '../../ts/managers/Hits';
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import { onMount } from 'svelte';
@@ -10,17 +11,17 @@
 		onclick,
 		end       = 0,
 		length    = 0,
-		margin    = 8,
-		thickness = 2,
+		margin    = 11,
 		vertical  = false,
+		thickness = k.thickness.separator.content,
 	}: {
 		title?     : string;
-		onclick?   : () => void;
 		end?       : number;
 		length?    : number;
 		margin?    : number;
 		thickness? : number;
 		vertical?  : boolean;
+		onclick?   : () => void;
 	} = $props();
 
 	let radius = $derived(thickness * 3.2);
@@ -52,10 +53,10 @@
 		bind:this={element}
 		style:--r='{radius}px'
 		style:--m='{margin}px'
-		style:--e='{margin + end}px'
 		class='separator vertical'
 		style:width='{thickness}px'
 		class:clickable={!!onclick}
+		style:--e='{margin + end}px'
 		style:height={length ? `${length}px` : undefined}>
 		<div class='flare left' style:width={rpx} style:border-radius='0 {rpx} {rpx} 0'></div>
 		{#if title}<span class='title'>{title}</span>{/if}
@@ -78,30 +79,30 @@
 
 <style>
 	.separator {
-		all        : unset;
-		overflow   : visible;
-		position   : relative;
-		background : var(--accent);
 		z-index    : var(--z-layout);
+		background : var(--accent);
+		position   : relative;
+		overflow   : visible;
+		all        : unset;
 	}
 
 	/* Accent backdrop extending behind the flares */
 	.separator::before {
-		content    : '';
-		background : inherit;
 		position   : absolute;
+		background : inherit;
+		content    : '';
 	}
 
 	.horizontal {
-		width  : calc(100% + var(--m) + var(--e));
 		margin : 4px calc(-1 * var(--e)) 4px calc(-1 * var(--m));
+		width  : calc(100% + var(--m) + var(--e));
 	}
 
 	.horizontal::before {
-		left  : 0;
-		right : 0;
 		top   : calc(-1 * var(--r));
 		bottom: calc(-1 * var(--r));
+		right : 0;
+		left  : 0;
 	}
 
 	.vertical {
@@ -110,22 +111,22 @@
 	}
 
 	.vertical::before {
-		top   : 0;
-		bottom: 0;
-		left  : calc(-1 * var(--r));
 		right : calc(-1 * var(--r));
+		left  : calc(-1 * var(--r));
+		bottom: 0;
+		top   : 0;
 	}
 
 	.flare {
-		position   : absolute;
-		background : var(--bg);
 		z-index    : var(--z-layout);
+		background : var(--bg);
+		position   : absolute;
 	}
 
-	.flare.top    { bottom: 100%; left: 0; right: 0; }
-	.flare.bottom { top: 100%;    left: 0; right: 0; }
 	.flare.left   { right: 100%;  top: 0;  bottom: 0; }
 	.flare.right  { left: 100%;   top: 0;  bottom: 0; }
+	.flare.top    { bottom: 100%; left: 0; right: 0; }
+	.flare.bottom { top: 100%;    left: 0; right: 0; }
 
 	.clickable {
 		cursor : pointer;
@@ -136,16 +137,16 @@
 	}
 
 	.title {
-		top            : 50%;
-		left           : 50%;
-		opacity        : 0.6;
-		font-size      : 10px;
-		padding        : 0 4px;
-		letter-spacing : 0.5px;
+		transform      : translate(-50%, -50%);
+		font-size      : var(--h-font-small);
+		z-index        : var(--z-layout);
+		position       : absolute;
 		text-align     : center;
 		white-space    : nowrap;
-		position       : absolute;
-		z-index        : var(--z-layout);
-		transform      : translate(-50%, -50%);
+		letter-spacing : 0.5px;
+		padding        : 0 4px;
+		opacity        : 0.6;
+		top            : 50%;
+		left           : 50%;
 	}
 </style>

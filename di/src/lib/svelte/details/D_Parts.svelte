@@ -9,6 +9,7 @@
 	import P_Selected from './P_Selected.svelte';
 	import { units } from '../../ts/types/Units';
 	import P_Angles from './P_Angles.svelte';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import P_Repeat from './P_Repeat.svelte';
 
 	const { w_all_sos, w_selection, w_tick, w_precision, w_parts_tab, w_collapsed_ids } = stores;
@@ -157,12 +158,12 @@
 <table class='hierarchy'>
 	<thead>
 		<tr>
-			<th class='toggle-header gap-r' onclick={toggle_show_parts}>
+			<th class='toggle-header gap-r' use:hit_target={{ id: 'toggle-parts', onpress: toggle_show_parts }}>
 				{show_parts ? 'hide parts' : 'show parts'}
 			</th>
 			{#if show_parts}
 				<th class='hierarchy-eye static'>👁</th>
-				<th class='toggle-header gap-l' colspan='3' onclick={() => { show_position = !show_position; preferences.write(T_Preference.showPosition, show_position); }}>
+				<th class='toggle-header gap-l' colspan='3' use:hit_target={{ id: 'toggle-position', onpress: () => { show_position = !show_position; preferences.write(T_Preference.showPosition, show_position); } }}>
 					{show_position ? 'position' : 'size'} ↔
 				</th>
 			{/if}
@@ -249,9 +250,9 @@
 <style>
 
 	.hierarchy {
+		font-size       : var(--h-font-small);
 		border-collapse : separate;
 		width           : 100%;
-		font-size       : 9px;
 		margin-top      : 1px;
 		border-spacing  : 0;
 	}
@@ -261,11 +262,11 @@
 	}
 
 	.hierarchy-row:hover {
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 	.hierarchy-row.selected {
-		background  : var(--accent);
+		background  : var(--selected);
 		font-weight : 600;
 	}
 
@@ -275,10 +276,10 @@
 	}
 
 	.hierarchy-eye {
-		text-align : center;
+		font-size  : var(--h-font-common);
 		cursor     : pointer;
+		text-align : center;
 		width      : 1em;
-		font-size  : 7px;
 		opacity    : 0.4;
 		padding    : 0;
 	}
@@ -308,13 +309,13 @@
 	}
 
 	.collapse-tri {
-		all              : unset;
+		font-size        : var(--h-font-common);
 		position         : relative;
 		cursor           : pointer;
 		vertical-align   : middle;
-		margin-right     : 1px;
-		font-size        : 18px;
+		all              : unset;
 		top              : -2px;
+		margin-right     : 1px;
 		opacity          : 0.4;
 		line-height      : 0;
 	}
@@ -328,59 +329,59 @@
 	}
 
 	.repeat-badge {
+		font-size   : var(--h-font-small);
 		margin-left : var(--l-gap);
 		opacity     : 0.5;
-		font-size   : 8px;
 	}
 
 	.collapsed-name {
+		border        : 0.5px solid rgba(0, 0, 0, 0.6);
+		font-size     : var(--h-font-small);
 		z-index       : var(--z-action);
-		border-radius : 3px;
-		margin-bottom : 3px;
-		font-size     : 12px;
+		height        : var(--h-slider);
+		box-sizing    : border-box;
+		color         : inherit;
+		font-family   : inherit;
+		padding       : 0 4px;
+		background    : white;
 		width         : 100%;
 		outline       : none;
 		text-align    : left;
-		height        : var(--h-slider);
-		padding       : 0 4px;
-		background    : white;
-		color         : inherit;
-		font-family   : inherit;
-		box-sizing    : border-box;
-		border        : 0.5px solid rgba(0, 0, 0, 0.6);
+		border-radius : 3px;
+		margin-bottom : 3px;
 	}
 
 	.collapsed-name:focus {
-		background     : white;
-		outline-offset : -1.5px;
 		outline        : 1.5px solid cornflowerblue;
+		outline-offset : -1.5px;
+		background     : white;
 	}
 
 	.toggle-header {
-		border-radius : 8px;
+		box-shadow    : inset 0 0 0 0.25px currentColor;
 		font-size     : var(--h-font-common);
+		border        : 0 solid transparent;
 		height        : var(--h-collapse);
-		background    : white;
+		cursor        : pointer;
 		text-align    : center;
 		font-weight   : normal;
-		cursor        : pointer;
-		border        : 0 solid transparent;
-		box-shadow    : inset 0 0 0 0.25px currentColor;
+		background    : white;
+		border-radius : 8px;
 	}
 
 	.toggle-header.gap-r { border-right-width : 3px; }
 	.toggle-header.gap-l { border-left-width  : 3px; }
 
 	.toggle-header:hover {
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 	.hierarchy-data {
 		padding              : 2px 0 2px 6px;
-		text-align           : right;
 		font-variant-numeric : tabular-nums;
-		color                : black;
 		white-space          : nowrap;
+		text-align           : right;
+		color                : black;
 	}
 
 	.faint {
@@ -392,8 +393,8 @@
 	}
 
 	.tab-content {
-		padding-top    : 4px;
 		margin-bottom  : -4px;
+		padding-top    : 4px;
 	}
 
 </style>

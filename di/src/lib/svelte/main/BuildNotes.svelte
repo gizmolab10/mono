@@ -85,7 +85,7 @@
 	.modal {
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 		border-radius: 12px;
-		font-size: 0.85em;
+		font-size: var(--h-font-small);
 		padding: 16px 20px;
 		position: relative;
 	}
@@ -104,7 +104,7 @@
 	}
 
 	.title {
-		font-size: 1.25em;
+		font-size: var(--h-font-common);
 		font-weight: 300;
 	}
 

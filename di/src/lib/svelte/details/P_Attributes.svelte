@@ -157,7 +157,7 @@
 						{/if}
 						{row.label}
 					</td>
-					<td class='attr-sep' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
+					<td class='attr-invariant' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
 					{#if !(is_merge_cont || root_formula_cont)}
 						{@const formula_disabled = is_root || row.is_invariant}
 						<td class='attr-formula' class:merged={is_root || merge_span >= 2} class:cell-disabled={formula_disabled} rowspan={is_root ? (i === 0 ? 6 : 3) : merge_span || undefined}>
@@ -208,9 +208,9 @@
 
 <style>
 	.bounds {
+		font-size       : var(--h-font-small);
 		border-collapse : collapse;
 		width           : 100%;
-		font-size       : var(--h-font-common);
 	}
 
 	.bounds td {
@@ -240,24 +240,24 @@
 		right : calc(100% + 3px);
 	}
 
-	.attr-sep {
+	.attr-invariant {
 		cursor     : pointer;
 		background : white;
 		width      : 12px;
 		min-width  : 12px;
 	}
 
-	.attr-sep:not(.disabled):hover {
-		background : var(--accent);
+	.attr-invariant:not(.disabled):hover {
+		background : var(--selected);
 	}
 
-	.attr-sep.disabled {
+	.attr-invariant.disabled {
 		background    : var(--bg);
 		cursor        : default;
 		pointer-events: none;
 	}
 
-	.attr-sep.cross {
+	.attr-invariant.cross {
 		background :
 			linear-gradient(to top right, transparent calc(50% - 0.25px), currentColor 50%, transparent calc(50% + 0.25px)),
 			linear-gradient(to bottom right, transparent calc(50% - 0.25px), currentColor 50%, transparent calc(50% + 0.25px)),
@@ -305,7 +305,7 @@
 	}
 
 	.cell-input:not(:disabled):not(:focus):hover {
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 	.cell-input:focus {
@@ -316,11 +316,11 @@
 	}
 
 	.cell-disabled {
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 	.cell-input:disabled {
-		background : var(--accent);
+		background : var(--selected);
 		cursor     : default;
 		opacity    : 0.7;
 	}
@@ -331,59 +331,59 @@
 	}
 
 	p {
+		font-size  : var(--h-font-small);
 		margin     : -5px 0 3px;
-		font-size  : 0.6rem;
 		text-align : center;
 		opacity    : 0.6;
 	}
 
 	.constants-header {
+		align-items   : center;
+		display       : flex;
 		gap           : 6px;
 		margin-top    : 6px;
 		margin-bottom : 6px;
-		display       : flex;
-		align-items   : center;
 	}
 
 	.constants-toggle {
-		z-index       : var(--z-action);
-		flex          : 1;
-		padding       : 0;
-		border-radius : 8px;
-		font-size     : var(--h-font-common);
+		border        : 0.25px solid currentColor;
 		height        : var(--h-button-common);
-		background    : white;
-		text-align    : center;
-		font-weight   : normal;
+		font-size     : var(--h-font-common);
+		border-radius : var(--corner-common);
+		z-index       : var(--z-action);
 		cursor        : pointer;
 		color         : inherit;
-		border        : 0.25px solid currentColor;
+		text-align    : center;
+		font-weight   : normal;
+		background    : white;
+		flex          : 1;
+		padding       : 0;
 	}
 
 	.constants-toggle:hover {
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 	.add-btn {
-		z-index         : var(--z-action);
-		line-height     : 1;
-		padding         : 0;
-		border-radius   : 50%;
-		font-weight     : 300;
-		width           : 16px;
+		border          : 0.5px solid currentColor;
+		width           : var(--h-button-common);
 		height          : var(--h-button-common);
-		font-size       : 12px;
-		display         : flex;
-		background      : white;
-		align-items     : center;
-		justify-content : center;
+		font-size       : var(--h-font-large);
+		z-index         : var(--z-action);
 		color           : inherit;
 		cursor          : pointer;
-		border          : 0.5px solid currentColor;
+		align-items     : center;
+		justify-content : center;
+		background      : white;
+		display         : flex;
+		font-weight     : 300;
+		border-radius   : 50%;
+		line-height     : 1;
+		padding         : 0;
 	}
 
 	.add-btn:hover {
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 </style>

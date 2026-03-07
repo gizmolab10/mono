@@ -107,10 +107,10 @@
 
 <style>
 	.standards {
-		top: 8px;
-		width           : 100%;
-		font-size       : var(--h-font-common);
+		font-size       : var(--h-font-small);
 		border-collapse : collapse;
+		width           : 100%;
+		top             : 8px;
 	}
 
 	.standards td {
@@ -127,25 +127,25 @@
 	}
 
 	.std-remove {
-		width      : 1lh;
-		min-width  : 1lh;
-		text-align : center;
 		background : var(--bg);
+		text-align : center;
+		min-width  : 1lh;
+		width      : 1lh;
 	}
 
 	.std-remove:hover {
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 	.remove-btn {
-		padding    : 0;
-		line-height: 1;
-		opacity    : 0.5;
-		font-size  : 13px;
-		border     : none;
-		color      : inherit;
-		cursor     : pointer;
-		background : transparent;
+		font-size   : var(--h-font-common);
+		background  : transparent;
+		color       : inherit;
+		cursor      : pointer;
+		border      : none;
+		opacity     : 0.5;
+		line-height : 1;
+		padding     : 0;
 	}
 
 	.remove-btn:hover {
@@ -154,32 +154,32 @@
 
 	.cell-input {
 		z-index     : var(--z-action);
-		margin      : 0;
-		outline     : none;
-		border      : none;
-		width       : 100%;
-		height      : 100%;
+		box-sizing  : border-box;
+		font-family : inherit;
+		font-size   : inherit;
+		color       : inherit;
 		padding     : 0 4px;
 		background  : white;
-		color       : inherit;
-		font-size   : inherit;
-		font-family : inherit;
-		box-sizing  : border-box;
+		outline     : none;
+		border      : none;
+		height      : 100%;
+		width       : 100%;
+		margin      : 0;
 	}
 
 	.cell-input:not(:focus):hover {
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 	.cell-input:focus {
+		outline        : 1.5px solid cornflowerblue;
+		outline-offset : -1.5px;
 		background     : white;
 		color          : black;
-		outline-offset : -1.5px;
-		outline        : 1.5px solid cornflowerblue;
 	}
 
 	.cell-input.right {
-		text-align           : right;
 		font-variant-numeric : tabular-nums;
+		text-align           : right;
 	}
 </style>

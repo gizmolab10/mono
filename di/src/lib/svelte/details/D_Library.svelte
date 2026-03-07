@@ -129,21 +129,21 @@
 
 <style>
 	.segmented {
-		display         : flex;
-		justify-content : center;
 		margin-bottom   : var(--l-gap);
+		justify-content : center;
+		display         : flex;
 	}
 
 	.segmented button {
-		z-index       : var(--z-action);
-		font-size     : var(--h-font-common);
+		border        : 0.5px solid currentColor;
 		height        : var(--h-button-segment);
-		padding       : 0 8px;
-		background    : white;
-		white-space   : nowrap;
+		font-size     : var(--h-font-common);
+		z-index       : var(--z-action);
 		color         : inherit;
 		cursor        : pointer;
-		border        : 0.5px solid currentColor;
+		white-space   : nowrap;
+		background    : white;
+		padding       : 0 8px;
 	}
 
 	.segmented button:first-child {
@@ -159,8 +159,8 @@
 	}
 
 	.segmented button.active {
+		background  : var(--selected);
 		font-weight : 600;
-		background  : var(--accent);
 	}
 
 	.segmented button:hover:not(.active) {
@@ -176,25 +176,25 @@
 
 	.action-btn {
 		border        : 0.5px solid currentColor;
+		height        : var(--h-button-common);
+		border-radius : var(--corner-common);
+		font-size     : var(--h-font-common);
+		z-index       : var(--z-action);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
 		background    : white;
 		padding       : 0 8px;
-		border-radius : var(--corner-common);
-		font-size     : var(--h-font-common);
-		height        : var(--h-button-common);
-		z-index       : var(--z-action);
 	}
 
 	.action-btn:global([data-hitting]) {
-		background : var(--accent);
+		background : var(--selected);
 		color      : black;
 	}
 
 	.action-btn:disabled {
-		opacity : 0.3;
 		cursor  : default;
+		opacity : 0.3;
 	}
 
 	.far-right {
@@ -202,9 +202,9 @@
 	}
 
 	.library {
-		width           : 100%;
+		font-size       : var(--h-font-small);
 		border-collapse : collapse;
-		font-size       : var(--h-font-common);
+		width           : 100%;
 	}
 
 	.lib-row {
@@ -212,11 +212,11 @@
 	}
 
 	.lib-row:hover {
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 	.lib-row.selected {
-		background  : var(--accent);
+		background  : var(--selected);
 		font-weight : 600;
 	}
 

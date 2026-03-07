@@ -62,8 +62,10 @@
 	}
 
 	.banner {
-		z-index         : var(--z-action);
+		border-radius   : var(--corner-banner);
+		font-size       : var(--h-font-common);
 		color           : rgba(0, 0, 0, 1);
+		z-index         : var(--z-action);
 		height          : var(--h-banner);
 		text-transform  : lowercase;
 		position        : relative;
@@ -74,18 +76,16 @@
 		margin          : 3px 0;
 		letter-spacing  : 0.5px;
 		display         : flex;
-		border-radius   : var(--corner-banner);
-		font-size       : 12px;
 		border          : none;
 		font-weight     : 300;
 	}
 
 	.banner::before {
 		background : radial-gradient(ellipse at center, transparent 20%, var(--banner) 100%);
+		z-index    : var(--z-common);
 		position   : absolute;
 		content    : '';
 		inset      : 0;
-		z-index    : var(--z-common);
 	}
 
 	.banner:global([data-hitting])::before {
@@ -94,23 +94,23 @@
 	}
 
 	.banner-title {
-		position : relative;
 		z-index  : var(--z-layout);
+		position : relative;
 	}
 
 	.banner-actions {
-		position  : absolute;
-		right     : 6px;
-		z-index   : var(--z-action);
-		display   : flex;
-		gap       : 2px;
+		z-index  : var(--z-action);
+		position : absolute;
+		right    : 6px;
+		display  : flex;
+		gap      : 2px;
 	}
 
 	.slot {
+		border-radius : var(--corner-banner);
 		padding       : var(--l-margin);
 		background    : var(--bg);
 		margin        : 0px 0 0;
-		border-radius : var(--corner-banner);
 	}
 
 </style>

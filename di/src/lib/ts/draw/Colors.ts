@@ -1,6 +1,6 @@
 import { preferences, T_Preference } from '../managers/Preferences';
 import { parseToRgba, transparentize } from 'color2k';
-import { get, writable } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 import { stores } from '../managers/Stores';
 
 // single source of truth for all colors
@@ -21,6 +21,7 @@ export class Colors {
 	w_text_color       = writable<string>('black');
 	w_accent_color	   = writable<string>('rgb(200, 200, 200)');
 	w_background_color = writable<string>('rgb(135, 135, 135)');
+	w_selected_color   = derived(this.w_background_color, bg => this.special_blend('black', bg, 0.12) ?? bg);
 
 	constructor() {
 		this.restore_preferences();

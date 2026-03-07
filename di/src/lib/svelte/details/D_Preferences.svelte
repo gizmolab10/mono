@@ -86,28 +86,28 @@
 
 <style>
 	.unit-system {
-		gap             : 6px;
-		display         : flex;
 		justify-content : flex-end;
+		display         : flex;
+		gap             : 6px;
 	}
 
 	.action-btn {
+		border        : 0.5px solid currentColor;
+		height        : var(--h-button-common);
 		border-radius : var(--corner-common);
 		font-size     : var(--h-font-common);
-		height        : var(--h-button-common);
-		padding       : 0 8px;
-		background    : white;
-		white-space   : nowrap;
+		z-index       : var(--z-action);
+		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
-		box-sizing    : border-box;
-		z-index       : var(--z-action);
-		border        : 0.5px solid currentColor;
+		white-space   : nowrap;
+		padding       : 0 8px;
+		background    : white;
 	}
 
 	.action-btn:global([data-hitting]) {
+		background : var(--selected);
 		color      : black;
-		background : var(--accent);
 	}
 
 	.right {
@@ -115,43 +115,43 @@
 	}
 
 	.label {
+		font-size : var(--h-font-small);
 		opacity   : 0.8;
-		font-size : 0.7rem;
 	}
 
 	.precision-group {
-		gap            : var(--l-gap);
-		display        : flex;
-		margin-top     : -8px;
-		flex-direction : column;
-		position       : relative;
 		z-index        : var(--z-action);
+		gap            : var(--l-gap);
+		position       : relative;
+		flex-direction : column;
+		margin-top     : -8px;
+		display        : flex;
 	}
 
 	.segmented {
-		border-radius  : var(--corner-common);
-		height         : var(--h-button-common);
-		display        : flex;
-		overflow       : hidden;
-		box-sizing     : border-box;
 		border         : 0.5px solid currentColor;
+		height         : var(--h-button-common);
+		border-radius  : var(--corner-common);
+		box-sizing     : border-box;
+		overflow       : hidden;
+		display        : flex;
 	}
 
 	.segment {
-		padding        : 0;
-		font-size      : 9px;
-		border         : none;
-		display        : flex;
-		background     : white;
+		border-right   : 0.5px solid currentColor;
+		color          : rgba(0, 0, 0, 0.5);
+		font-size      : var(--h-font-small);
+		z-index        : var(--z-action);
+		cursor         : pointer;
+		flex           : 1 1 auto;
 		white-space    : nowrap;
 		text-align     : center;
 		align-items    : center;
 		justify-content: center;
-		cursor         : pointer;
-		flex           : 1 1 auto;
-		z-index        : var(--z-action);
-		color          : rgba(0, 0, 0, 0.5);
-		border-right   : 0.5px solid currentColor;
+		border         : none;
+		background     : white;
+		display        : flex;
+		padding        : 0;
 	}
 
 	.segment:last-child {
@@ -160,97 +160,97 @@
 
 	.segment:global([data-hitting]) {
 		color      : black;
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 	.segment.active {
 		opacity    : 1;
 		color      : black;
-		background : var(--accent);
+		background : var(--selected);
 	}
 
 	.units-select {
-		z-index            : var(--z-action);
+		background-image   : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23999'/%3E%3C/svg%3E");
+		border             : 0.5px solid currentColor;
+		height             : var(--h-button-common);
 		border-radius      : var(--corner-common);
 		font-size          : var(--h-font-common);
-		height             : var(--h-button-common);
+		background-position: right 6px center;
+		z-index            : var(--z-action);
+		padding            : 0 18px 0 8px;
+		box-sizing         : border-box;
+		background-repeat  : no-repeat;
+		color              : inherit;
+		cursor             : pointer;
+		background         : white;
 		outline            : none;
 		appearance         : none;
 		-webkit-appearance : none;
-		background         : white;
-		color              : inherit;
-		cursor             : pointer;
-		background-repeat  : no-repeat;
-		box-sizing         : border-box;
-		padding            : 0 18px 0 8px;
-		background-position: right 6px center;
-		border             : 0.5px solid currentColor;
-		background-image   : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23999'/%3E%3C/svg%3E");
 	}
 
 	.units-select:hover {
-		background-image : none;
+		background       : var(--selected);
 		color            : black;
-		background       : var(--accent);
+		background-image : none;
 	}
 
 	.units-select:focus,
 	.units-select:focus-visible {
-		outline    : none;
-		box-shadow : none;
 		border     : 0.5px solid currentColor;
+		box-shadow : none;
+		outline    : none;
 	}
 
 
 	.slider-group {
 		z-index        : var(--z-action);
 		position       : relative;
-		gap            : 8px;
-		display        : flex;
 		align-items    : center;
+		display        : flex;
+		gap            : 8px;
 	}
 
 	.slider-group input[type='range'] {
-		flex               : 1;
-		min-width          : 0;
-		margin-top         : 0px;
 		height             : var(--h-slider);
+		background         : transparent;
+		cursor             : pointer;
 		appearance         : none;
 		-webkit-appearance : none;
-		cursor             : pointer;
-		background         : transparent;
+		margin-top         : 0px;
+		min-width          : 0;
+		flex               : 1;
 	}
 
 	.slider-group input[type='range']::-webkit-slider-runnable-track {
-		border-radius : 2px;
+		background    : rgba(0, 0, 0, 0.15);
 		height        : var(--th-track);
 		border        : none;
-		background    : rgba(0, 0, 0, 0.15);
+		border-radius : 2px;
 	}
 
 	.slider-group input[type='range']::-webkit-slider-thumb {
-		border-radius      : 50%;
-		-webkit-appearance : none;
-		width              : 14px;
-		height             : var(--h-slider);
-		margin-top         : -5.5px;
-		background         : #007aff;
+		margin-top         : calc((var(--th-track) - var(--h-slider)) / 2);
 		border             : 1px solid rgba(0, 0, 0, 0.4);
+		width              : var(--h-slider);
+		height             : var(--h-slider);
+		background         : #007aff;
+		-webkit-appearance : none;
+		border-radius      : 50%;
 	}
 
 	.slider-group input[type='range']::-moz-range-track {
-		border-radius : 2px;
+		background    : rgba(0, 0, 0, 0.15);
 		height        : var(--th-track);
 		border        : none;
-		background    : rgba(0, 0, 0, 0.15);
+		border-radius : 2px;
 	}
 
 	.slider-group input[type='range']::-moz-range-thumb {
-		border-radius : 50%;
-		width         : 14px;
+		border        : 1px solid rgba(0, 0, 0, 0.4);
+		width         : var(--h-slider);
 		height        : var(--h-slider);
 		background    : #007aff;
-		border        : 1px solid rgba(0, 0, 0, 0.4);
+		border-radius : 50%;
 	}
 
 	.slider-group input[type='range']:focus {
@@ -258,29 +258,29 @@
 	}
 
 	.color-row {
-		gap            : 16px;
-		display        : flex;
 		align-items    : center;
 		margin-top     : 0.3rem;
+		display        : flex;
+		gap            : 16px;
 	}
 
 	.color-group {
-		display        : flex;
 		align-items    : center;
+		display        : flex;
 		gap            : 8px;
 	}
 
 	.color-group input[type='color'] {
-		z-index            : var(--z-action);
+		border             : 0.5px solid currentColor;
 		width              : var(--h-button-common);
 		height             : var(--h-button-common);
-		padding            : 0;
-		border             : 0.5px solid currentColor;
-		border-radius      : 50%;
+		z-index            : var(--z-action);
 		cursor             : pointer;
 		appearance         : none;
 		-webkit-appearance : none;
 		background         : none;
+		border-radius      : 50%;
+		padding            : 0;
 	}
 
 	.color-group input[type='color']::-webkit-color-swatch-wrapper {

@@ -307,14 +307,14 @@
 
 	.segmented button {
 		border        : 0.5px solid currentColor;
+		height        : var(--h-button-common);
+		font-size     : var(--h-font-small);
+		padding       : 0 var(--l-padding);
 		z-index       : var(--z-action);
 		color         : inherit;
 		cursor        : pointer;
 		white-space   : nowrap;
 		background    : white;
-		padding       : 0 var(--l-padding);
-		font-size     : 10px;
-		height        : var(--h-button-common);
 	}
 
 	.segmented button:first-child {
@@ -330,7 +330,7 @@
 	}
 
 	.segmented button.active {
-		background  : var(--accent);
+		background  : var(--selected);
 		font-weight : 600;
 	}
 
@@ -340,6 +340,9 @@
 
 	.action-btn {
 		border        : 0.5px solid currentColor;
+		height        : var(--h-button-common);
+		font-size     : var(--h-font-common);
+		border-radius : var(--corner-common);
 		z-index       : var(--z-action);
 		box-sizing    : border-box;
 		cursor        : pointer;
@@ -347,9 +350,6 @@
 		white-space   : nowrap;
 		background    : white;
 		padding       : 0 8px;
-		border-radius : var(--corner-common);
-		font-size     : var(--h-font-common);
-		height        : var(--h-button-common);
 	}
 
 	.repeat-btn {
@@ -359,7 +359,7 @@
 	}
 
 	.action-btn.active {
-		background  : var(--accent);
+		background  : var(--selected);
 		font-weight : 600;
 	}
 
@@ -380,7 +380,7 @@
 	}
 
 	.rise-endpoint {
-		font-size : 9px;
+		font-size : var(--h-font-small);
 		opacity   : 0.5;
 	}
 
@@ -391,17 +391,17 @@
 	}
 
 	.slider-caption {
+		font-size  : var(--h-font-small);
 		text-align : center;
 		display    : block;
 		margin-top : 0px;
-		font-size  : 9px;
 		opacity    : 0.5;
 	}
 
 	.slider-wrap {
+		height      : var(--h-button-common);
 		position    : relative;
 		align-items : center;
-		height      : var(--h-button-common);
 		display     : flex;
 		flex        : 1;
 		min-width   : 0;
@@ -409,9 +409,9 @@
 
 	.range-track {
 		background    : rgba(0, 0, 0, 0.15);
+		height        : var(--th-track);
 		position      : absolute;
 		margin-top    : -2px;
-		height        : var(--th-track);
 		right         : 7px;
 		left          : 7px;
 		top           : 50%;
@@ -426,34 +426,34 @@
 	}
 
 	.range-label {
+		font-size            : var(--h-font-small);
 		transform            : translateY(+50%);
 		font-variant-numeric : tabular-nums;
 		position             : absolute;
 		white-space          : nowrap;
 		user-select          : none;
-		font-size            : 7px;
 		top                  : 0;
 	}
 
 	.tick {
 		transform      : translate(-0.5px, -50%);
+		height         : var(--th-thumb);
 		background     : currentColor;
 		position       : absolute;
 		pointer-events : none;
 		opacity        : 0.6;
-		height         : var(--h-thumb);
 		width          : 1px;
 		top            : 50%;
 	}
 
 	:is(.range-slider, .spacing-slider) input[type='range'] {
+		height             : var(--h-button-common);
 		z-index            : var(--z-action);
 		background         : transparent;
 		position           : absolute;
 		appearance         : none;
 		-webkit-appearance : none;
 		pointer-events     : none;
-		height             : var(--h-button-common);
 		width              : 100%;
 		top                : 0;
 		left               : 0;
@@ -461,37 +461,37 @@
 	}
 
 	:is(.range-slider, .spacing-slider) input[type='range']::-webkit-slider-thumb {
+		margin-top         : calc((var(--th-track) - var(--h-slider)) / 2);
 		background         : var(--thumb-bg, #007aff);
 		border             : var(--thumb-border, none);
+		width              : var(--h-slider);
+		height             : var(--h-slider);
 		cursor             : pointer;
 		-webkit-appearance : none;
 		pointer-events     : auto;
-		width              : 14px;
-		height             : var(--h-slider);
-		margin-top         : -5px;
 		border-radius      : 50%;
 	}
 
 	:is(.range-slider, .spacing-slider) input[type='range']::-moz-range-thumb {
 		background     : var(--thumb-bg, #007aff);
 		border         : var(--thumb-border, none);
+		width          : var(--h-slider);
+		height         : var(--h-slider);
 		cursor         : pointer;
 		pointer-events : auto;
-		width          : 14px;
-		height         : var(--h-slider);
 		border-radius  : 50%;
 	}
 
 	:is(.range-slider, .spacing-slider) input[type='range']::-webkit-slider-runnable-track {
+		height     : var(--th-track);
 		background : transparent;
 		border     : none;
-		height     : var(--th-track);
 	}
 
 	:is(.range-slider, .spacing-slider) input[type='range']::-moz-range-track {
+		height     : var(--th-track);
 		background : transparent;
 		border     : none;
-		height     : var(--th-track);
 	}
 
 	:is(.range-slider, .spacing-slider) input[type='range']:focus {
@@ -499,21 +499,21 @@
 	}
 
 	.clone-count {
-		position  : absolute;
-		right     : 0;
 		font-size : var(--h-font-common);
+		position  : absolute;
 		opacity   : 0.6;
+		right     : 0;
 	}
 
 	.action-btn:global([data-hitting]) {
-		background : var(--accent);
+		background : var(--selected);
 		color      : black;
 	}
 
 	.hint {
 		font-size   : var(--h-font-common);
-		opacity     : 0.5;
 		text-align  : center;
+		opacity     : 0.5;
 		line-height : 1;
 	}
 </style>

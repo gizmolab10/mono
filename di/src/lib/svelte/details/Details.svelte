@@ -1,14 +1,15 @@
 <script lang='ts'>
 	import { T_Details } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
+	import D_Preferences from './D_Preferences.svelte';
 	import { hits } from '../../ts/managers/Hits';
 	import { scenes } from '../../ts/managers';
-	import { engine } from '../../ts/render';
-	import { onMount } from 'svelte';
-	import Hideable from './Hideable.svelte';
-	import D_Parts from './D_Parts.svelte';
 	import D_Library from './D_Library.svelte';
-	import D_Preferences from './D_Preferences.svelte';
+	import Hideable from './Hideable.svelte';
+	import { engine } from '../../ts/render';
+	import D_Parts from './D_Parts.svelte';
+	import { onMount } from 'svelte';
+
 	onMount( async () => {
 		setTimeout( async () => {
 			await hits.defer_recalibrate();
@@ -50,48 +51,48 @@
 	}
 
 	.banner-zone {
-		position   : relative;
 		background : var(--accent);
+		position   : relative;
 	}
 
 	.banner-add:hover {
-		color      : black;
 		background : var(--bg);
+		color      : black;
 	}
 
 	.banner-zone::after {
-		content       : '';
-		height        : var(--corner-banner);
-		display       : block;
-		background    : var(--bg);
 		border-radius : var(--corner-banner) var(--corner-banner) 0 0;
+		height        : var(--corner-banner);
+		background    : var(--bg);
+		display       : block;
+		content       : '';
 	}
 
 	.details {
-		overflow-y : auto;
-		width      : 100%;
-		height     : 100%;
+		box-sizing : border-box;
 		position   : relative;
 		padding    : 0 0 1rem;
-		box-sizing : border-box;
+		overflow-y : auto;
+		height     : 100%;
+		width      : 100%;
 	}
 
 	.banner-add {
+		border          : 0.5px solid rgba(0, 0, 0, 0.3);
+		height          : var(--h-button-small);
+		width           : var(--h-button-small);
+		color           : rgba(0, 0, 0, 0.5);
+		font-size       : var(--h-font-large);
 		z-index         : var(--z-action);
-		line-height     : 1;
-		padding         : 0;
-		border-radius   : 50%;
-		font-weight     : 300;
-		font-size       : 14px;
-		width           : 18px;
-		height          : var(--h-button-common);
-		display         : flex;
+		background      : var(--selected);
+		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
-		cursor          : pointer;
-		background      : var(--accent);
-		color           : rgba(0, 0, 0, 0.5);
-		border          : 0.5px solid rgba(0, 0, 0, 0.3);
+		display         : flex;
+		border-radius   : 50%;
+		font-weight     : 300;
+		line-height     : 1;
+		padding         : 0;
 	}
 
 </style>
