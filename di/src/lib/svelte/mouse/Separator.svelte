@@ -54,8 +54,8 @@
 		style:--r='{radius}px'
 		style:--m='{margin}px'
 		class='separator vertical'
-		style:width='{thickness}px'
 		class:clickable={!!onclick}
+		style:width='{thickness}px'
 		style:--e='{margin + end}px'
 		style:height={length ? `${length}px` : undefined}>
 		<div class='flare left' style:width={rpx} style:border-radius='0 {rpx} {rpx} 0'></div>
@@ -67,8 +67,8 @@
 		bind:this={element}
 		style:--r='{radius}px'
 		style:--m='{margin}px'
-		style:--e='{margin + end}px'
 		class:clickable={!!onclick}
+		style:--e='{margin + end}px'
 		class='separator horizontal'
 		style:height='{thickness}px'>
 		<div class='flare top' style:height={rpx} style:border-radius='0 0 {rpx} {rpx}'></div>
@@ -79,11 +79,12 @@
 
 <style>
 	.separator {
-		z-index    : var(--z-layout);
-		background : var(--accent);
-		position   : relative;
-		overflow   : visible;
 		all        : unset;
+		display    : block;
+		overflow   : visible;
+		position   : relative;
+		background : var(--accent);
+		z-index    : var(--z-layout);
 	}
 
 	/* Accent backdrop extending behind the flares */

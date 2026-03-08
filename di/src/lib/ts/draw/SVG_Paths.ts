@@ -46,6 +46,25 @@ export class SVG_Paths {
 		return 'M' + start.description + ' ' + arcs.join(' ') + 'Z';
 	}
 
+	hamburger(size: number): string {
+		const w   = size * 0.8;
+		const h   = size * 0.125;
+		const r   = h / 2;
+		const x   = (size - w) / 2;
+		const gap = (size - 3 * h) / 4;
+		let d = '';
+		for (let i = 0; i < 3; i++) {
+			const y = gap + i * (h + gap);
+			d += `M${x + r},${y}H${x + w - r}`
+			   + `A${r},${r},0,0,1,${x + w},${y + r}`
+			   + `A${r},${r},0,0,1,${x + w - r},${y + h}`
+			   + `H${x + r}`
+			   + `A${r},${r},0,0,1,${x},${y + h - r}`
+			   + `A${r},${r},0,0,1,${x + r},${y}Z`;
+		}
+		return d;
+	}
+
 	fat_polygon_bounds(size: number, angle: number, vertices: number = 3): { minX: number; minY: number; width: number; height: number } {
 		const segmentAngle = Math.PI / vertices;
 		const offset = Point.square(size / 2);

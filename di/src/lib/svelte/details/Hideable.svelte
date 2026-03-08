@@ -110,6 +110,7 @@
 		border-radius : var(--corner-banner);
 		padding       : var(--l-margin);
 		background    : var(--bg);
+		position      : relative;
 		margin        : 0px 0 0;
 	}
 

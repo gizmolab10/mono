@@ -169,9 +169,10 @@
 
 
 	.settings {
-		flex-wrap : wrap;
-		display   : flex;
-		gap       : 6px;
+		margin-top : var(--l-gap);
+		flex-wrap  : wrap;
+		display    : flex;
+		gap        : 6px;
 	}
 
 	.action-btn {
@@ -203,7 +204,9 @@
 
 	.library {
 		font-size       : var(--h-font-small);
+		z-index         : var(--z-action);
 		border-collapse : collapse;
+		position        : relative;
 		width           : 100%;
 	}
 

@@ -125,6 +125,7 @@
 		position       : relative;
 		flex-direction : column;
 		margin-top     : -8px;
+		margin-bottom  : var(--l-gap);
 		display        : flex;
 	}
 
@@ -206,6 +207,7 @@
 		z-index        : var(--z-action);
 		position       : relative;
 		align-items    : center;
+		margin-top     : var(--l-gap);
 		display        : flex;
 		gap            : 8px;
 	}

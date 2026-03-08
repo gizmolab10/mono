@@ -158,7 +158,7 @@
 <table class='hierarchy'>
 	<thead>
 		<tr>
-			<th class='toggle-header gap-r' use:hit_target={{ id: 'toggle-parts', onpress: toggle_show_parts }}>
+			<th class='toggle-header' class:gap-r={show_parts} colspan={show_parts ? 1 : 5} use:hit_target={{ id: 'toggle-parts', onpress: toggle_show_parts }}>
 				{show_parts ? 'hide parts' : 'show parts'}
 			</th>
 			{#if show_parts}
@@ -251,7 +251,9 @@
 
 	.hierarchy {
 		font-size       : var(--h-font-small);
+		z-index         : var(--z-action);
 		border-collapse : separate;
+		position        : relative;
 		width           : 100%;
 		margin-top      : 1px;
 		border-spacing  : 0;
@@ -289,8 +291,8 @@
 	}
 
 	.hierarchy-eye.static {
-		opacity : 1;
 		cursor  : default;
+		opacity : 1;
 	}
 
 	.name-input {
@@ -309,11 +311,11 @@
 	}
 
 	.collapse-tri {
+		all              : unset;
 		font-size        : var(--h-font-common);
 		position         : relative;
 		cursor           : pointer;
 		vertical-align   : middle;
-		all              : unset;
 		top              : -2px;
 		margin-right     : 1px;
 		opacity          : 0.4;
@@ -348,7 +350,8 @@
 		outline       : none;
 		text-align    : left;
 		border-radius : 3px;
-		margin-bottom : 3px;
+		margin-top    : var(--l-gap);
+		margin-bottom : var(--l-gap);
 	}
 
 	.collapsed-name:focus {
@@ -394,7 +397,7 @@
 
 	.tab-content {
 		margin-bottom  : -4px;
-		padding-top    : 4px;
+		padding-top    : var(--l-gap);
 	}
 
 </style>

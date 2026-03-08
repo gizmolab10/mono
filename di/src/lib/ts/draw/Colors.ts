@@ -1,6 +1,6 @@
 import { preferences, T_Preference } from '../managers/Preferences';
 import { parseToRgba, transparentize } from 'color2k';
-import { derived, get, writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import { stores } from '../managers/Stores';
 
 // single source of truth for all colors
@@ -21,7 +21,7 @@ export class Colors {
 	w_text_color       = writable<string>('black');
 	w_accent_color	   = writable<string>('rgb(200, 200, 200)');
 	w_background_color = writable<string>('rgb(135, 135, 135)');
-	w_selected_color   = derived(this.w_background_color, bg => this.special_blend('black', bg, 0.12) ?? bg);
+	w_selected_color   = writable<string>('rgb(120, 120, 120)');
 
 	constructor() {
 		this.restore_preferences();
@@ -63,6 +63,7 @@ export class Colors {
 			preferences.write(T_Preference.accentColor, color);
 			const bg = this.accent_to_background(color);
 			this.w_background_color.set(bg);
+			this.w_selected_color.set(this.special_blend('black', bg, 0.12) ?? bg);
 			this.banner = this.ofBannerFor(bg);
 		});
 	}

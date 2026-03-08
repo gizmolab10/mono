@@ -4,6 +4,7 @@
 	import { stores } from '../../ts/managers/Stores';
 	import { scenes } from '../../ts/managers/Scenes';
 	import Separator from '../mouse/Separator.svelte';
+	import { svg_paths } from '../../ts/draw/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 
@@ -23,17 +24,15 @@
 
 {#snippet hamburger_button()}
 	<button class='hamburger' class:active={$w_show_details} use:hit_target={{ id: 'details', onpress: () => stores.toggle_details() }} aria-label='toggle details'>
-		<svg class='hamburger-icon' viewBox='-2 -1 20 20' width='20' height='20'>
-			<rect x='2' y='4'  width='16' height='2.5' rx='1.25'/>
-			<rect x='2' y='9'  width='16' height='2.5' rx='1.25'/>
-			<rect x='2' y='14' width='16' height='2.5' rx='1.25'/>
+		<svg class='hamburger-icon' viewBox='0 0 {k.height.button.common} {k.height.button.common}' width={k.height.button.common} height={k.height.button.common}>
+			<path d={svg_paths.hamburger(k.height.button.common)}/>
 		</svg>
 	</button>
 {/snippet}
 
 {#snippet other_buttons()}
 	<button class='toolbar-btn' use:hit_target={{ id: 'save', onpress: save }}>save</button>
-	<button class='toolbar-btn' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
+	<button class='toolbar-btn gap-after' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 {/snippet}
 
 {#snippet left_buttons()}
@@ -48,7 +47,7 @@
 		<button class='seg' class:active={show_angles} use:hit_target={{ id: 'angulars', onpress: () => stores.toggle_angulars() }}>angles</button>
 	</div>
 	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ↔</button>
-	<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ↔</button>
+	<button class='toolbar-btn gap-after' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ↔</button>
 {/snippet}
 
 {#snippet face_buttons()}
@@ -64,16 +63,24 @@
 {/snippet}
 
 <div
-	class            = 'controls'
 	class:wrapped
+	class            = 'controls'
 	bind:clientWidth = {controls_width}
 	style:color      = 'var(--text)'
 	style:background = 'var(--bg)'>
 	{#if wrapped}
 		<div class='right-col'>
-			<div class='right-row'>{@render hamburger_button()}{@render face_buttons()}</div>
+			<div class='right-row'>
+				{@render hamburger_button()}
+				<span class='spacer'></span>
+					{@render face_buttons()}
+				<span class='spacer'></span>
+			</div>
 			<Separator thickness={k.thickness.separator.main} margin={6} />
-			<div class='right-row'>{@render other_buttons()}{@render mode_buttons()}</div>
+			<div class='right-row'>
+				{@render other_buttons()}
+				{@render mode_buttons()}
+			</div>
 		</div>
 	{:else}
 		<div class='group'>
@@ -110,8 +117,8 @@
 	}
 
 	.right-col {
+		padding        : var(--l-gap) 0;
 		flex-direction : column;
-		padding        : 6px 0;
 		display        : flex;
 		gap            : 2px;
 		min-width      : 0;
@@ -140,20 +147,29 @@
 		justify-content : center;
 		display         : flex;
 		border          : none;
-		width           : 16px;
-		top             : -1px;
+		width           : var(--h-button-common);
+		top             : 0px;
+		left            : 1px;
 		padding         : 0;
 	}
 
-	.hamburger-icon rect {
+	.wrapped .right-row .hamburger {
+		margin-right : auto;
+	}
+
+	.hamburger-icon path {
 		fill   : currentColor;
 		stroke : none;
 	}
 
-	.hamburger:global([data-hitting]) .hamburger-icon rect {
+	.hamburger:global([data-hitting]) .hamburger-icon path {
 		stroke       : var(--selected);
 		fill         : white;
 		stroke-width : 0.5;
+	}
+
+	.gap-after {
+		margin-right : var(--l-gap);
 	}
 
 	.toolbar-btn {
@@ -208,7 +224,7 @@
 		box-sizing    : border-box;
 		overflow      : hidden;
 		display       : flex;
-		margin-left   : 2px;
+		margin-left   : var(--l-margin);
 	}
 
 	.seg {

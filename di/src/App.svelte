@@ -50,9 +50,9 @@
 	// Reactive color stores
 	$effect(() => {
 		const root = document.documentElement.style;
-		root.setProperty('--bg',                $w_background_color);
-		root.setProperty('--accent',            $w_accent_color);
 		root.setProperty('--text',              $w_text_color);
+		root.setProperty('--accent',            $w_accent_color);
+		root.setProperty('--bg',                $w_background_color);
 		root.setProperty('--selected',          $w_selected_color);
 	});
 </script>

@@ -29,7 +29,7 @@ export default class Constants {
 	};
 
 	width = {
-		details: common_size * 10,
+		details: common_size * 10.5,
 		groups:  common_size * 31,
 	};
 
@@ -72,7 +72,7 @@ export default class Constants {
 
 	height = {
 		collapse:    common_size / 2 + 2,
-		controls:    common_size + 8,
+		controls:    common_size * 1.4,		// add two gaps
 		slider:      common_size - 6,
 		cell:        common_size / 2,
 		banner:      common_size,
