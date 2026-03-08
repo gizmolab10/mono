@@ -7,9 +7,10 @@ Current work items and milestones.
 - [Done](./done/)
 - [Milestones](./milestones/)
 - [Next](./next/)
+- [Chat](./chat.md)
 - [Code.debt](./code.debt.md)
 - [Collaboration Priorities](./collaboration priorities.md)
 - [More Milestones](./more milestones.md)
-- [Rotation](./rotation.md)
 - [Revisit.di](./revisit.di.md)
+- [Skills](./skills.md)
 

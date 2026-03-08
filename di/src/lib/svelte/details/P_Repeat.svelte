@@ -505,7 +505,7 @@
 		right     : 0;
 	}
 
-	.action-btn:global([data-hitting]) {
+	.action-btn:global([data-hit]) {
 		background : var(--selected);
 		color      : black;
 	}

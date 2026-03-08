@@ -4,4 +4,5 @@
 
 - [Details](./details.md)
 - [Panel.layout](./panel.layout.md)
+- [Style](./style.md)
 

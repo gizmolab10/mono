@@ -43,6 +43,9 @@ export enum T_Preference {
 	showConstants    = 'showConstants',
 	showPosition     = 'showPosition',
 
+	// Mode
+	allowEditing     = 'allowEditing',
+
 	// Scenes
 	scene = 'scene',
 

@@ -1,14 +1,14 @@
 <script lang='ts'>
 	import { T_Decorations } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
+	import { svg_paths } from '../../ts/draw/SVG_Paths';
 	import { stores } from '../../ts/managers/Stores';
 	import { scenes } from '../../ts/managers/Scenes';
 	import Separator from '../mouse/Separator.svelte';
-	import { svg_paths } from '../../ts/draw/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 
-	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face, w_rotation_snap } = stores;
+	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face, w_rotation_snap, w_allow_editing } = stores;
 	const separator_length = k.height.controls;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 
@@ -23,7 +23,8 @@
 </script>
 
 {#snippet hamburger_button()}
-	<button class='hamburger' class:active={$w_show_details} use:hit_target={{ id: 'details', onpress: () => stores.toggle_details() }} aria-label='toggle details'>
+	<button class='hamburger' class:active={$w_show_details}
+		use:hit_target={{ id: 'details', onpress: () => stores.toggle_details() }} aria-label='toggle details'>
 		<svg class='hamburger-icon' viewBox='0 0 {k.height.button.common} {k.height.button.common}' width={k.height.button.common} height={k.height.button.common}>
 			<path d={svg_paths.hamburger(k.height.button.common)}/>
 		</svg>
@@ -57,6 +58,7 @@
 		{/each}
 	</div>
 	<button class='toolbar-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
+	<button class='toolbar-btn' class:active={$w_allow_editing} use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ↔</button>
 	{#if $w_view_mode === '2d'}
 		<button class='toolbar-btn snap-btn' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
 	{/if}
@@ -153,19 +155,13 @@
 		padding         : 0;
 	}
 
-	.wrapped .right-row .hamburger {
-		margin-right : auto;
-	}
-
 	.hamburger-icon path {
 		fill   : currentColor;
 		stroke : none;
 	}
 
-	.hamburger:global([data-hitting]) .hamburger-icon path {
-		stroke       : var(--selected);
-		fill         : white;
-		stroke-width : 0.5;
+	.hamburger:global([data-hit]) .hamburger-icon path {
+		fill : lightgray;
 	}
 
 	.gap-after {
@@ -191,7 +187,7 @@
 		color      : black;
 	}
 
-	.toolbar-btn:global([data-hitting]) {
+	.toolbar-btn:global([data-hit]) {
 		background : var(--selected);
 		color      : black;
 	}
@@ -253,7 +249,7 @@
 		color      : black;
 	}
 
-	.seg:global([data-hitting]) {
+	.seg:global([data-hit]) {
 		background : var(--selected);
 		color      : black;
 	}

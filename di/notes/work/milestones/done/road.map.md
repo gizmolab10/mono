@@ -11,6 +11,21 @@ Project history lives in my head. No quick way to see how we got here or what th
 A living roadmap: origin story, major milestones with context and outcomes, template pattern for other projects.
 
 
+## Routine
+
+- [ ] Reread this file, do not check this item off
+- [ ] in milestones and done
+	- [ ] bring the index up to date
+
+## Cleanup
+
+- [ ] for each file -> create two files
+	- [ ] design details
+	- [ ] working notes
+- [ ] an intro page
+	- [ ] briefly -- overall principles
+	- [ ] why this order?
+
 
 ---
 

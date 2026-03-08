@@ -1,0 +1,4 @@
+.task-list-item.is-checked {
+  text-decoration: none !important;
+  color: inherit;
+}

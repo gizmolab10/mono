@@ -105,7 +105,7 @@
 		background    : white;
 	}
 
-	.action-btn:global([data-hitting]) {
+	.action-btn:global([data-hit]) {
 		background : var(--selected);
 		color      : black;
 	}
@@ -159,7 +159,7 @@
 		border-right : 0.5px solid transparent;
 	}
 
-	.segment:global([data-hitting]) {
+	.segment:global([data-hit]) {
 		color      : black;
 		background : var(--selected);
 	}

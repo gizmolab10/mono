@@ -40,19 +40,24 @@ class Events_3D {
 			const point = new Point(e.clientX - rect.left, e.clientY - rect.top);
 
 			if (!this.is_dragging) {
-				const hit = hits_3d.hit_test(point);
+				if (!stores.allow_editing()) {
+					canvas.style.cursor = 'grab';
+					hits_3d.set_hover(null);
+				} else {
+					const hit = hits_3d.hit_test(point);
 
-				// Cursor: text for labels/dimensions, grab for everything else
-				const is_text = hit?.type === T_Hit_3D.dimension || hit?.type === T_Hit_3D.angle || hit?.type === T_Hit_3D.face_label;
-				canvas.style.cursor = is_text ? 'text' : 'grab';
+					// Cursor: text for labels/dimensions, grab for everything else
+					const is_text = hit?.type === T_Hit_3D.dimension || hit?.type === T_Hit_3D.angle || hit?.type === T_Hit_3D.face_label;
+					canvas.style.cursor = is_text ? 'text' : 'grab';
 
-				// Hover shows face — convert corner/edge hits to best face
-				// But don't hover on already-selected face
-				const face_hit = hit ? hits_3d.hit_to_face(hit) : null;
-				const sel = hits_3d.selection;
-				const is_selected = face_hit && sel &&
-					face_hit.so === sel.so && face_hit.index === sel.index;
-				hits_3d.set_hover(is_selected ? null : face_hit);
+					// Hover shows face — convert corner/edge hits to best face
+					// But don't hover on already-selected face
+					const face_hit = hit ? hits_3d.hit_to_face(hit) : null;
+					const sel = hits_3d.selection;
+					const is_selected = face_hit && sel &&
+						face_hit.so === sel.so && face_hit.index === sel.index;
+					hits_3d.set_hover(is_selected ? null : face_hit);
+				}
 			} else if (this.on_drag) {
 				this.continue_drag(canvas, e.clientX, e.clientY, e.altKey);
 			}
@@ -126,6 +131,13 @@ class Events_3D {
 		const rect = canvas.getBoundingClientRect();
 		const point = new Point(clientX - rect.left, clientY - rect.top);
 		this.last_canvas_position = point;
+
+		// Read-only mode: only allow tumble (no editing, no drag, no selection)
+		if (!stores.allow_editing()) {
+			drag.set_target(null);
+			hits_3d.set_hover(null);
+			return;
+		}
 
 		const hit = hits_3d.hit_test(point);
 

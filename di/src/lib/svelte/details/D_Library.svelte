@@ -188,7 +188,7 @@
 		padding       : 0 8px;
 	}
 
-	.action-btn:global([data-hitting]) {
+	.action-btn:global([data-hit]) {
 		background : var(--selected);
 		color      : black;
 	}

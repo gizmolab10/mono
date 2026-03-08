@@ -30,6 +30,7 @@ class Stores {
 	w_show_grid			= this.persistent<boolean>(T_Preference.showGrid, true);
 	w_solid				= this.persistent<boolean>(T_Preference.solid, true);
 	w_rotation_snap		= this.persistent<boolean>(T_Preference.rotationSnap, true);
+	w_allow_editing		= this.persistent<boolean>(T_Preference.allowEditing, false);
 	w_precision			= this.persistent<number>(T_Preference.precision, 2);
 	w_scale				= this.persistent<number>(T_Preference.scale, 2.5);
 
@@ -42,6 +43,7 @@ class Stores {
 	toggle_details():						void { this.w_show_details.update(v => !v); }
 	toggle_solid():							void { this.w_solid.update(v => !v); }
 	toggle_rotation_snap():					void { this.w_rotation_snap.update(v => !v); }
+	toggle_allow_editing():					void { this.w_allow_editing.update(v => !v); }
 	toggle_grid():							void { this.w_show_grid.update(v => !v); }
 	set_selection(result:  Hit_3D_Result | null) { this.w_selection.set(result); }
 	selection():		   Hit_3D_Result | null  { return get(this.w_selection); }
@@ -54,6 +56,7 @@ class Stores {
 	edge_color():						  string { return get(this.w_edge_color); }
 	is_solid():							 boolean { return get(this.w_solid); }
 	rotation_snap():					 boolean { return get(this.w_rotation_snap); }
+	allow_editing():					 boolean { return get(this.w_allow_editing); }
 	show_grid():						 boolean { return get(this.w_show_grid); }
 	show_details():						 boolean { return get(this.w_show_details); }
 	is_editing():						 boolean { return get(this.w_editing) !== T_Editing.none; }

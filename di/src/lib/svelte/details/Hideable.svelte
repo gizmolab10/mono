@@ -88,7 +88,7 @@
 		inset      : 0;
 	}
 
-	.banner:global([data-hitting])::before {
+	.banner:global([data-hit])::before {
 		background : var(--bg);
 		opacity    : 1;
 	}

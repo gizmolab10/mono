@@ -23,9 +23,9 @@ export function hit_target(element: HTMLElement, options: Hit_Target_Options) {
 
 	const unsubscribe = hits.w_s_hover.subscribe(hovering => {
 		if (hovering?.id === target.id) {
-			element.setAttribute('data-hitting', '');
+			element.setAttribute('data-hit', '');
 		} else {
-			element.removeAttribute('data-hitting');
+			element.removeAttribute('data-hit');
 		}
 	});
 

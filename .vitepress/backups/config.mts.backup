@@ -89,16 +89,16 @@ export default defineConfig({
                           link: '/di/notes/architecture/core/algebra'
                         },
                         {
-                          text: 'Enlarged.algebra',
-                          link: '/di/notes/architecture/core/enlarged.algebra'
+                          text: 'Launch',
+                          link: '/di/notes/architecture/core/launch'
                         },
                         {
                           text: 'Managers',
                           link: '/di/notes/architecture/core/managers'
                         },
                         {
-                          text: 'Migration',
-                          link: '/di/notes/architecture/core/migration'
+                          text: 'References',
+                          link: '/di/notes/architecture/core/references'
                         },
                         {
                           text: 'Versions',
@@ -112,8 +112,12 @@ export default defineConfig({
                       collapsed: true,
                       items: [
                         {
-                          text: '3D.primer',
-                          link: '/di/notes/architecture/graph/3D.primer'
+                          text: 'Axes',
+                          link: '/di/notes/architecture/graph/axes'
+                        },
+                        {
+                          text: 'Dimensionals',
+                          link: '/di/notes/architecture/graph/dimensionals'
                         },
                         {
                           text: 'Drag',
@@ -124,6 +128,10 @@ export default defineConfig({
                           link: '/di/notes/architecture/graph/intersecting.faces'
                         },
                         {
+                          text: 'Projection',
+                          link: '/di/notes/architecture/graph/projection'
+                        },
+                        {
                           text: 'Quaternions',
                           link: '/di/notes/architecture/graph/quaternions'
                         },
@@ -132,8 +140,8 @@ export default defineConfig({
                           link: '/di/notes/architecture/graph/rendering.types'
                         },
                         {
-                          text: 'Spatial',
-                          link: '/di/notes/architecture/graph/spatial'
+                          text: 'Repeaters',
+                          link: '/di/notes/architecture/graph/repeaters'
                         },
                         {
                           text: 'Three.dimensions',
@@ -142,6 +150,21 @@ export default defineConfig({
                         {
                           text: 'Two.dimensions',
                           link: '/di/notes/architecture/graph/two.dimensions'
+                        }
+                      ]
+                    },
+                    {
+                      text: 'Theory >',
+                      link: '/di/notes/architecture/theory/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: '3D.primer',
+                          link: '/di/notes/architecture/theory/3D.primer'
+                        },
+                        {
+                          text: 'Spatial',
+                          link: '/di/notes/architecture/theory/spatial'
                         }
                       ]
                     },
@@ -157,8 +180,22 @@ export default defineConfig({
                         {
                           text: 'Panel.layout',
                           link: '/di/notes/architecture/ui/panel.layout'
+                        },
+                        {
+                          text: 'Style',
+                          link: '/di/notes/architecture/ui/style'
                         }
                       ]
+                    }
+                  ]
+                },
+                {
+                  text: 'Archives >',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Rotation',
+                      link: '/di/notes/archives/rotation'
                     }
                   ]
                 },
@@ -211,14 +248,6 @@ export default defineConfig({
                       link: '/di/notes/guides/gotchas'
                     },
                     {
-                      text: 'Road.map',
-                      link: '/di/notes/guides/road.map'
-                    },
-                    {
-                      text: 'Style',
-                      link: '/di/notes/guides/style'
-                    },
-                    {
                       text: 'Testing',
                       link: '/di/notes/guides/testing'
                     }
@@ -241,6 +270,10 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
+                      text: 'Chat',
+                      link: '/di/notes/work/chat'
+                    },
+                    {
                       text: 'Code.debt',
                       link: '/di/notes/work/code.debt'
                     },
@@ -255,6 +288,10 @@ export default defineConfig({
                     {
                       text: 'Revisit.di',
                       link: '/di/notes/work/revisit.di'
+                    },
+                    {
+                      text: 'Skills',
+                      link: '/di/notes/work/skills'
                     },
                     {
                       text: 'Done >',
@@ -274,8 +311,8 @@ export default defineConfig({
                           link: '/di/notes/work/done/cruft'
                         },
                         {
-                          text: 'Enlarged Algebra',
-                          link: '/di/notes/work/done/enlarged algebra'
+                          text: 'Invisible.root',
+                          link: '/di/notes/work/done/invisible.root'
                         },
                         {
                           text: 'Layout Algorithm',
@@ -284,6 +321,10 @@ export default defineConfig({
                         {
                           text: 'Quaternions',
                           link: '/di/notes/work/done/quaternions'
+                        },
+                        {
+                          text: 'Rotation',
+                          link: '/di/notes/work/done/rotation'
                         },
                         {
                           text: 'Scene.model',
@@ -301,32 +342,44 @@ export default defineConfig({
                       collapsed: true,
                       items: [
                         {
-                          text: '20.repeaters',
-                          link: '/di/notes/work/milestones/20.repeaters'
+                          text: '21.undo',
+                          link: '/di/notes/work/milestones/21.undo'
                         },
                         {
-                          text: '21.selection Algorithm',
-                          link: '/di/notes/work/milestones/21.selection algorithm'
+                          text: '22.aesthetics',
+                          link: '/di/notes/work/milestones/22.aesthetics'
                         },
                         {
-                          text: '22.rubberband',
-                          link: '/di/notes/work/milestones/22.rubberband'
+                          text: '23.selection.algorithm',
+                          link: '/di/notes/work/milestones/23.selection.algorithm'
                         },
                         {
-                          text: '23.cut.lists',
-                          link: '/di/notes/work/milestones/23.cut.lists'
+                          text: '24.rubberband',
+                          link: '/di/notes/work/milestones/24.rubberband'
                         },
                         {
-                          text: '24.user.manual',
-                          link: '/di/notes/work/milestones/24.user.manual'
+                          text: '25.cut.lists',
+                          link: '/di/notes/work/milestones/25.cut.lists'
                         },
                         {
-                          text: '25.licensing',
-                          link: '/di/notes/work/milestones/25.licensing'
+                          text: '26.user.manual',
+                          link: '/di/notes/work/milestones/26.user.manual'
                         },
                         {
-                          text: '26.marketing',
-                          link: '/di/notes/work/milestones/26.marketing'
+                          text: '27.licensing',
+                          link: '/di/notes/work/milestones/27.licensing'
+                        },
+                        {
+                          text: '28.marketing',
+                          link: '/di/notes/work/milestones/28.marketing'
+                        },
+                        {
+                          text: '29.css.engine',
+                          link: '/di/notes/work/milestones/29.css.engine'
+                        },
+                        {
+                          text: '30.mobile.devices',
+                          link: '/di/notes/work/milestones/30.mobile.devices'
                         },
                         {
                           text: 'Done >',
@@ -346,8 +399,8 @@ export default defineConfig({
                               link: '/di/notes/work/milestones/done/11.units'
                             },
                             {
-                              text: '12.hierarchy',
-                              link: '/di/notes/work/milestones/done/12.hierarchy'
+                              text: '12.parts',
+                              link: '/di/notes/work/milestones/done/12.parts'
                             },
                             {
                               text: '13.algebra',
@@ -374,12 +427,16 @@ export default defineConfig({
                               link: '/di/notes/work/milestones/done/18.user.constants'
                             },
                             {
-                              text: '19.skills',
-                              link: '/di/notes/work/milestones/done/19.skills'
+                              text: '19.angles',
+                              link: '/di/notes/work/milestones/done/19.angles'
                             },
                             {
                               text: '2.panel',
                               link: '/di/notes/work/milestones/done/2.panel'
+                            },
+                            {
+                              text: '20.repeaters',
+                              link: '/di/notes/work/milestones/done/20.repeaters'
                             },
                             {
                               text: '3.docs',
@@ -408,6 +465,10 @@ export default defineConfig({
                             {
                               text: '9.persistence',
                               link: '/di/notes/work/milestones/done/9.persistence'
+                            },
+                            {
+                              text: 'Road.map',
+                              link: '/di/notes/work/milestones/done/road.map'
                             }
                           ]
                         }
