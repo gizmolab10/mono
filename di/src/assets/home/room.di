@@ -1678,7 +1678,6 @@
       ]
     },
     "root_id": "diad4140a0c7f386",
-    "selected_id": "diad4140a0c7f386",
     "selected_face": 2
   }
 }

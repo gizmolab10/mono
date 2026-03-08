@@ -313,7 +313,6 @@
       ]
     },
     "root_id": "dicb460b903642b9",
-    "selected_id": "di2c4bcd860b5f48",
     "selected_face": 3
   }
 }

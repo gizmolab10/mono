@@ -566,7 +566,6 @@
       ]
     },
     "root_id": "dicb460b903642b9",
-    "selected_id": "dicb460b903642b9",
     "selected_face": 3
   }
 }

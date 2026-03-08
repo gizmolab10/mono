@@ -95,16 +95,38 @@ class Engine {
 			scenes.save();
 		});
 
-		// Input: drag ended — in 2D, animate snap-back from tilt to axis-aligned
+		// Input: drag ended — snap to nearest face-aligned orientation
 		e3.set_drag_end_handler(() => {
 			if (this.is_tilting && this.root_scene) {
-				// snapped_orientation is always the last clean axis-aligned quat
+				// 2D tilt snap-back
 				this.snap_anim = {
 					from: stores.current_orientation(),
 					to: quat.clone(this.snapped_orientation),
 					t: 0,
 				};
 				this.is_tilting = false;
+			} else if (stores.current_view_mode() === '3d' && stores.rotation_snap() && this.root_scene) {
+				// 3D snap: animate to nearest face-aligned orientation on drag end
+				const so = this.root_scene.so;
+				const face = hits_3d.front_most_face(so);
+				if (face >= 0) {
+					const current = stores.current_orientation();
+					let best_quat: quat = Engine.FACE_SNAP_QUATS[face][0];
+					let best_dot = -Infinity;
+					for (const candidate of Engine.FACE_SNAP_QUATS[face]) {
+						const d = Math.abs(quat.dot(current, candidate));
+						if (d > best_dot) { best_dot = d; best_quat = candidate; }
+					}
+					const target = quat.clone(best_quat);
+	
+					this.snap_anim = {
+						from: quat.clone(current),
+						to: target,
+						t: 0,
+					};
+					quat.copy(this.scratch_orientation, target);
+					quat.copy(this.snapped_orientation, target);
+				}
 			}
 		});
 
@@ -211,15 +233,12 @@ class Engine {
 			this.fit_to_children();
 		}
 
-		// Restore selection (SO + face) by id, fallback to root
+		// Restore selection only if previously saved
 		if (saved?.selected_id != null) {
 			const sel_so = smart_objects.find(so => so.id === saved.selected_id);
 			if (sel_so && saved.selected_face != null) {
 				hits_3d.set_selection({ so: sel_so, type: T_Hit_3D.face, index: saved.selected_face });
 			}
-		}
-		if (!stores.selection()) {
-			hits_3d.set_selection({ so: root_so, type: T_Hit_3D.face, index: 0 });
 		}
 
 		if (saved?.camera) {
@@ -233,6 +252,19 @@ class Engine {
 
 		stores.tick();
 		scenes.save();
+	}
+
+	/** Check if current orientation is already snapped to a face-aligned position. */
+	is_straightened(): boolean {
+		const root_so = this.root_scene?.so;
+		if (!root_so) return false;
+		const current = stores.current_orientation();
+		const face = hits_3d.front_most_face(root_so);
+		if (face < 0) return false;
+		for (const candidate of Engine.FACE_SNAP_QUATS[face]) {
+			if (Math.abs(quat.dot(current, candidate)) > 0.999) return true;
+		}
+		return false;
 	}
 
 	// ── toolbar actions ──
@@ -357,6 +389,7 @@ class Engine {
 				if (d > best_dot) { best_dot = d; best_quat = candidate; }
 			}
 			const snap_target = quat.clone(best_quat);
+
 
 			this.snap_anim = {
 				from: quat.clone(current_tumble),
@@ -730,6 +763,39 @@ class Engine {
 	 *  AABB of all descendants, then restores direct children (recalculates their
 	 *  offsets against the new root). Grandchildren stay correct because they're
 	 *  relative to their parent, not root. */
+	/** Check if root bounds already exactly match the union AABB of all descendants. */
+	root_fits(): boolean {
+		const root = this.root_scene?.so;
+		if (!root?.scene) return true;
+
+		const all = scene.get_all();
+		let x_lo = Infinity, x_hi = -Infinity;
+		let y_lo = Infinity, y_hi = -Infinity;
+		let z_lo = Infinity, z_hi = -Infinity;
+		let has_desc = false;
+
+		for (const obj of all) {
+			let p: O_Scene | undefined = obj.parent; let is_desc = false;
+			while (p) { if (p === root.scene) { is_desc = true; break; } p = p.parent; }
+			if (!is_desc) continue;
+			has_desc = true;
+			const so = obj.so;
+			if (so.x_min < x_lo) x_lo = so.x_min;
+			if (so.x_max > x_hi) x_hi = so.x_max;
+			if (so.y_min < y_lo) y_lo = so.y_min;
+			if (so.y_max > y_hi) y_hi = so.y_max;
+			if (so.z_min < z_lo) z_lo = so.z_min;
+			if (so.z_max > z_hi) z_hi = so.z_max;
+		}
+
+		if (!has_desc) return true;
+
+		const eps = 0.01;
+		return Math.abs(root.x_min - x_lo) < eps && Math.abs(root.x_max - x_hi) < eps
+			&& Math.abs(root.y_min - y_lo) < eps && Math.abs(root.y_max - y_hi) < eps
+			&& Math.abs(root.z_min - z_lo) < eps && Math.abs(root.z_max - z_hi) < eps;
+	}
+
 	fit_to_children(): void {
 		const root = this.root_scene?.so;
 		if (!root?.scene) return;

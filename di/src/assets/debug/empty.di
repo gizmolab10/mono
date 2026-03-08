@@ -54,7 +54,6 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "dia2480ebef32cfd",
     "selected_face": 2
   }
 }

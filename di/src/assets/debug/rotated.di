@@ -604,7 +604,6 @@
       ]
     },
     "root_id": "di99473d8a68cd57",
-    "selected_id": "di99473d8a68cd57",
     "selected_face": 5
   }
 }

@@ -217,7 +217,6 @@
       ]
     },
     "root_id": "die2470f99a91fb7",
-    "selected_id": "die2470f99a91fb7",
     "selected_face": 1
   }
 }

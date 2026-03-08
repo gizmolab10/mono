@@ -1,7 +1,7 @@
 import type { Projected, O_Scene, Dimension_Rect, Label_Rect, Angle_Rect } from '../types/Interfaces';
 import { render_grid, render_back_grid, render_root_bottom } from './R_Grid';
 import { render_dimensions } from './R_Dimensions';
-import { render_axes, render_orientation_cube } from './R_Axes';
+import { render_axes } from './R_Axes';
 import { face_label } from '../editors/Face_Label';
 import Smart_Object from '../runtime/Smart_Object';
 import { T_Hit_3D } from '../types/Enumerations';
@@ -332,10 +332,9 @@ class Render {
 			this.ctx.restore();
 		}
 
-		if (!is_2d && stores.grid_opacity() > 0) {
+		if (stores.grid_opacity() > 0) {
 			this.ctx.globalAlpha = stores.grid_opacity();
 			render_axes(this);
-			render_orientation_cube(this.ctx);
 			this.ctx.globalAlpha = 1;
 		}
 		this.render_hover();

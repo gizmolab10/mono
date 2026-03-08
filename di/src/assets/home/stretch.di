@@ -108,7 +108,6 @@
       ]
     },
     "root_id": "di8a2f4c6e1b3d5a",
-    "selected_id": "di8a2f4c6e1b3d5a",
     "selected_face": 3
   }
 }

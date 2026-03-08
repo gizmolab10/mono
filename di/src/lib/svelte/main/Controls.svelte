@@ -8,15 +8,17 @@
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 
-	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face, w_rotation_snap, w_allow_editing } = stores;
+	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
 	const separator_length = k.height.controls;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 
-	let controls_width  = $state(Infinity);
-	let wrapped         = $derived(controls_width < (k.width.groups));
-	let show_names      = $derived(($w_decorations & T_Decorations.names) !== 0);
-	let show_angles     = $derived(($w_decorations & T_Decorations.angles) !== 0);
-	let show_dimensions = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
+	let controls_width   = $state(Infinity);
+	let wrapped          = $derived(controls_width < (k.width.groups));
+	let show_names       = $derived(($w_decorations & T_Decorations.names) !== 0);
+	let show_angles      = $derived(($w_decorations & T_Decorations.angles) !== 0);
+	let show_dimensions  = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
+	let root_fits        = $derived.by(() => { $w_tick; return engine.root_fits(); });
+	let is_straightened  = $derived.by(() => { $w_orientation; $w_tick; return engine.is_straightened(); });
 
 	async function save() { await scenes.add_to_library(); }
 
@@ -33,7 +35,7 @@
 
 {#snippet other_buttons()}
 	<button class='toolbar-btn' use:hit_target={{ id: 'save', onpress: save }}>save</button>
-	<button class='toolbar-btn gap-after' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
+	<button class='toolbar-btn gap-after' disabled={root_fits} use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 {/snippet}
 
 {#snippet left_buttons()}
@@ -57,11 +59,9 @@
 			<button class='seg' class:front={$w_front_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
 		{/each}
 	</div>
-	<button class='toolbar-btn' use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
+	<button class='toolbar-btn' disabled={is_straightened} use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
+	<button class='toolbar-btn snap-btn' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
 	<button class='toolbar-btn' class:active={$w_allow_editing} use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ↔</button>
-	{#if $w_view_mode === '2d'}
-		<button class='toolbar-btn snap-btn' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
-	{/if}
 {/snippet}
 
 <div
@@ -185,6 +185,11 @@
 	.toolbar-btn.active {
 		background : white;
 		color      : black;
+	}
+
+	.toolbar-btn:disabled {
+		opacity : 0.35;
+		cursor  : default;
 	}
 
 	.toolbar-btn:global([data-hit]) {
