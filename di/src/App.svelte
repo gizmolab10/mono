@@ -67,9 +67,11 @@
 
 	@media (max-width: 429px) {
 		:global(:root) {
-			--l-gap: 2px !important;
 			--l-margin: 4px !important;
-			--l-padding: 4px !important;
+			--l-gap: 2px !important;
+			--th-sep: 3px !important;
+			--th-thin-sep: 1px !important;
+			--th-content-sep: 1px !important;
 		}
 	}
 </style>

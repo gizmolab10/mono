@@ -9,8 +9,8 @@
 	import { engine } from '../../ts/render';
 
 	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
-	const separator_length = k.height.controls;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
+	const separator_length = k.height.controls;
 
 	let controls_width   = $state(Infinity);
 	let wrap_phone       = $derived(controls_width < (k.width.wrap_phone));
@@ -42,7 +42,7 @@
 
 {#snippet ham_sep_other()}
 	{@render hamburger_button()}
-	<Separator vertical thickness={k.thickness.separator.main} margin={7} z_layer={T_Layer.cheat} />
+	<Separator vertical kind="main" margin={7} z_layer={T_Layer.cheat} />
 	{@render other_buttons()}
 {/snippet}
 
@@ -74,11 +74,32 @@
 	style:background = 'var(--bg)'>
 	{#if wrap_phone}
 		<div class='right-col'>
-			<div class='right-row'>{@render ham_sep_other()}</div>
-			<Separator thickness={k.thickness.separator.main} margin={6} />
-			<div class='right-row'>{@render face_buttons()}</div>
-			<Separator thickness={k.thickness.separator.main} margin={6} />
-			<div class='right-row'>{@render mode_buttons()}</div>
+			<div class='right-row'>
+				{@render hamburger_button()}
+				<Separator vertical kind="main" margin={7} z_layer={T_Layer.cheat} />
+				<span class='spacer'></span>
+				<button class='toolbar-btn' disabled={is_straightened} use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
+				<button class='toolbar-btn snap-btn' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
+				<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ↔</button>
+				<span class='spacer'></span>
+			</div>
+			<Separator kind="main" margin={6} />
+			<div class='right-row'>
+				<div class='segmented'>
+					{#each face_labels as label, i}
+						<button class='seg' class:front={$w_front_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
+					{/each}
+				</div>
+			</div>
+			<Separator kind="main" margin={6} />
+			<div class='right-row'>
+				<div class='segmented'>
+					<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>
+					<button class='seg' class:active={show_dimensions} use:hit_target={{ id: 'dimensionals', onpress: () => stores.toggle_dimensionals() }}>dimensions</button>
+					<button class='seg' class:active={show_angles} use:hit_target={{ id: 'angulars', onpress: () => stores.toggle_angulars() }}>angles</button>
+				</div>
+				<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ↔</button>
+			</div>
 		</div>
 	{:else if wrap_mobile}
 		<div class='right-col'>
@@ -88,20 +109,20 @@
 				{@render face_buttons()}
 				<span class='spacer'></span>
 			</div>
-			<Separator thickness={k.thickness.separator.main} margin={6} />
+			<Separator kind="main" margin={6} />
 			<div class='right-row'>
 				{@render mode_buttons()}
 			</div>
 		</div>
 	{:else}
 		{@render hamburger_button()}
-		<Separator vertical thickness={k.thickness.separator.main} length={k.height.button.common + 14} margin={-9} z_layer={T_Layer.cheat} />
+		<Separator vertical kind="main" length={k.height.button.common + 14} margin={-9} z_layer={T_Layer.cheat} />
 		{@render other_buttons()}
-		<Separator vertical thickness={k.thickness.separator.main} length={separator_length} margin={0} />
+		<Separator vertical kind="main" length={separator_length} margin={0} />
 		<span class='spacer'></span>
 		{@render face_buttons()}
 		<span class='spacer'></span>
-		<Separator vertical thickness={k.thickness.separator.main} length={separator_length} margin={0} />
+		<Separator vertical kind="main" length={separator_length} margin={0} />
 		{@render mode_buttons()}
 	{/if}
 </div>

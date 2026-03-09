@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { T_Hit_Target, T_Layer } from '../../ts/types/Enumerations';
 	import S_Hit_Target from '../../ts/state/S_Hit_Target';
-	import { k } from '../../ts/common/Constants';
 	import { hits } from '../../ts/managers/Hits';
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import { onMount } from 'svelte';
@@ -13,21 +12,24 @@
 		length    = 0,
 		margin    = 11,
 		vertical  = false,
-		thickness = k.thickness.separator.content,
+		kind      = 'content' as 'content' | 'banners' | 'main',
 		z_layer   = T_Layer.layout,
 	}: {
 		title?     : string;
 		end?       : number;
 		length?    : number;
 		margin?    : number;
-		thickness? : number;
+		kind?      : 'content' | 'banners' | 'main';
 		vertical?  : boolean;
 		onclick?   : () => void;
 		z_layer?   : T_Layer;
 	} = $props();
 
-	let radius = $derived(thickness * 3.2);
-	let rpx    = $derived(`${radius}px`);
+	const css_var: Record<string, string> = {
+		content: '--th-content-sep',
+		banners: '--th-thin-sep',
+		main:    '--th-sep',
+	};
 
 	// ── Hits system ──
 
@@ -53,37 +55,36 @@
 {#if vertical}
 	<button
 		bind:this={element}
-		style:--r='{radius}px'
+		style:--th='var({css_var[kind]})'
 		style:--m='{margin}px'
 		style:z-index={z_layer}
 		class='separator vertical'
 		class:clickable={!!onclick}
-		style:width='{thickness}px'
 		style:--e='{margin + end}px'
 		style:height={length ? `${length}px` : undefined}
 		style:align-self={length ? undefined : 'stretch'}>
-		<div class='flare left' style:width={rpx} style:border-radius='0 {rpx} {rpx} 0'></div>
+		<div class='flare left'></div>
 		{#if title}<span class='title'>{title}</span>{/if}
-		<div class='flare right' style:width={rpx} style:border-radius='{rpx} 0 0 {rpx}'></div>
+		<div class='flare right'></div>
 	</button>
 {:else}
 	<button
 		bind:this={element}
-		style:--r='{radius}px'
+		style:--th='var({css_var[kind]})'
 		style:--m='{margin}px'
 		style:z-index={z_layer}
 		class:clickable={!!onclick}
 		style:--e='{margin + end}px'
-		class='separator horizontal'
-		style:height='{thickness}px'>
-		<div class='flare top' style:height={rpx} style:border-radius='0 0 {rpx} {rpx}'></div>
+		class='separator horizontal'>
+		<div class='flare top'></div>
 		{#if title}<span class='title'>{title}</span>{/if}
-		<div class='flare bottom' style:height={rpx} style:border-radius='{rpx} {rpx} 0 0'></div>
+		<div class='flare bottom'></div>
 	</button>
 {/if}
 
 <style>
 	.separator {
+		--r        : calc(var(--th) * 3.2);
 		all        : unset;
 		display    : block;
 		overflow   : visible;
@@ -101,6 +102,7 @@
 	.horizontal {
 		margin : 4px calc(-1 * var(--e)) 4px calc(-1 * var(--m));
 		width  : calc(100% + var(--m) + var(--e));
+		height : var(--th);
 	}
 
 	.horizontal::before {
@@ -112,6 +114,7 @@
 
 	.vertical {
 		margin : calc(-1 * var(--m)) 4px calc(-1 * var(--e));
+		width  : var(--th);
 	}
 
 	.vertical::before {
@@ -127,10 +130,10 @@
 		position   : absolute;
 	}
 
-	.flare.left   { right: 100%;  top: 0;  bottom: 0; }
-	.flare.right  { left: 100%;   top: 0;  bottom: 0; }
-	.flare.top    { bottom: 100%; left: 0; right: 0; }
-	.flare.bottom { top: 100%;    left: 0; right: 0; }
+	.flare.left   { right: 100%;  top: 0;  bottom: 0; width: var(--r); border-radius: 0 var(--r) var(--r) 0; }
+	.flare.right  { left: 100%;   top: 0;  bottom: 0; width: var(--r); border-radius: var(--r) 0 0 var(--r); }
+	.flare.top    { bottom: 100%; left: 0; right: 0; height: var(--r); border-radius: 0 0 var(--r) var(--r); }
+	.flare.bottom { top: 100%;    left: 0; right: 0; height: var(--r); border-radius: var(--r) var(--r) 0 0; }
 
 	.clickable {
 		cursor : pointer;
