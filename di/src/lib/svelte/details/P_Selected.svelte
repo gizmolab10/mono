@@ -1,23 +1,31 @@
 <script lang='ts'>
 	import { T_Parts_Tab } from '../../ts/types/Enumerations';
+	import P_Attributes from './P_Attributes.svelte';
 	import { stores } from '../../ts/managers';
+	import P_Angles from './P_Angles.svelte';
+	import P_Repeat from './P_Repeat.svelte';
 
-	const { w_selection, w_parts_tab } = stores;
-
-	let selected_so = $derived($w_selection?.so ?? null);
+	const { w_parts_tab } = stores;
 
 </script>
 
-{#if selected_so}
-	<div style:height='6px'></div>
-	<div class='actions-row'>
-		<div class='segmented'>
-			<button class:active={$w_parts_tab === 'attributes'} onclick={() => w_parts_tab.set(T_Parts_Tab.attributes)}>attributes</button>
-			<button class:active={$w_parts_tab === 'rotation'} onclick={() => w_parts_tab.set(T_Parts_Tab.rotation)}>angles</button>
-			<button class:active={$w_parts_tab === 'repeater'} onclick={() => w_parts_tab.set(T_Parts_Tab.repeater)}>repeats</button>
-		</div>
+<div style:height='6px'></div>
+<div class='actions-row'>
+	<div class='segmented'>
+		<button class:active={$w_parts_tab === 'attributes'} onclick={() => w_parts_tab.set(T_Parts_Tab.attributes)}>attributes</button>
+		<button class:active={$w_parts_tab === 'rotation'} onclick={() => w_parts_tab.set(T_Parts_Tab.rotation)}>angles</button>
+		<button class:active={$w_parts_tab === 'repeater'} onclick={() => w_parts_tab.set(T_Parts_Tab.repeater)}>repeats</button>
 	</div>
-{/if}
+</div>
+<div class='tab-content'>
+	{#if $w_parts_tab === 'attributes'}
+		<P_Attributes />
+	{:else if $w_parts_tab === 'rotation'}
+		<P_Angles />
+	{:else}
+		<P_Repeat />
+	{/if}
+</div>
 
 <style>
 	.actions-row {
@@ -63,5 +71,9 @@
 
 	.segmented button:hover:not(.active) {
 		background : var(--bg);
+	}
+
+	.tab-content {
+		padding-top    : var(--l-gap);
 	}
 </style>

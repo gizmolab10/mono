@@ -119,56 +119,56 @@
 	}
 </script>
 
-{#if selected_so && is_root}
-<div class='root-note'>root has no angles</div>
-{:else if selected_so}
-<div class='rotation-section'>
-	<table class='angles'>
-		<tbody>
-			{#each ALL_AXES as axis}
-				<tr class:active-axis={axis === rot_axis} onclick={() => rot_axis = axis}>
-					<td class='angle-name'>{axis}</td>
-					<td class='angle-val'>
-						<input
-							type      = 'text'
-							class     = 'angle-cell'
-							value     = {angles[axis]}
-							onblur    = {(e) => commit_angle(axis, (e.target as HTMLInputElement).value)}
-							onkeydown = {angle_keydown}
-						/>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-	<div class='rotation-row'>
-		<span class='slider-label'>-45°</span>
-		<div class='slider-wrap'>
-			<input
-				type='range'
-				class='rotation-slider'
-				class:sticky={is_sticky}
-				min='-45'
-				max='45'
-				step='0.5'
-				value={angle_deg}
-				oninput={set_angle}
-			/>
-			{#each STICKY_ANGLES as a}
-				<span class='tick' style:left='calc(7px + {(a + 45) / 90} * (100% - 14px))'></span>
-			{/each}
+{#if is_root}
+	<div class='root-note'>root has no angles</div>
+{:else}
+	<div class='rotation-section'>
+		<table class='angles'>
+			<tbody>
+				{#each ALL_AXES as axis}
+					<tr class:active-axis={axis === rot_axis} onclick={() => rot_axis = axis}>
+						<td class='angle-name'>{axis}</td>
+						<td class='angle-val'>
+							<input
+								type      = 'text'
+								class     = 'angle-cell'
+								value     = {angles[axis]}
+								onblur    = {(e) => commit_angle(axis, (e.target as HTMLInputElement).value)}
+								onkeydown = {angle_keydown}
+							/>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+		<div class='rotation-row'>
+			<span class='slider-label'>-45°</span>
+			<div class='slider-wrap'>
+				<input
+					type='range'
+					class='rotation-slider'
+					class:sticky={is_sticky}
+					min='-45'
+					max='45'
+					step='0.5'
+					value={angle_deg}
+					oninput={set_angle}
+				/>
+				{#each STICKY_ANGLES as a}
+					<span class='tick' style:left='calc(7px + {(a + 45) / 90} * (100% - 14px))'></span>
+				{/each}
+			</div>
+			<span class='slider-label'>+45°</span>
 		</div>
-		<span class='slider-label'>+45°</span>
+		<div class='rotation-row'>
+			<button class='action-btn' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
+			<span class='far-right'>
+				<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
+				<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
+			</span>
+		</div>
+		<div style:height='0px'></div>
 	</div>
-	<div class='rotation-row'>
-		<button class='action-btn' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
-		<span class='far-right'>
-			<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
-			<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
-		</span>
-	</div>
-	<div style:height='0px'></div>
-</div>
 {/if}
 
 <style>
@@ -332,6 +332,7 @@
 	}
 
 	.root-note {
+		padding-top    : var(--l-gap);
 		font-size   : var(--h-font-common);
 		opacity     : 0.5;
 		text-align  : center;

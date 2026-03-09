@@ -2,20 +2,18 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { hits_3d, stores, scenes } from '../../ts/managers';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Hit_3D } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import Separator from '../mouse/Separator.svelte';
-	import P_Attributes from './P_Attributes.svelte';
 	import P_Selected from './P_Selected.svelte';
 	import { units } from '../../ts/types/Units';
-	import P_Angles from './P_Angles.svelte';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import P_Repeat from './P_Repeat.svelte';
 
-	const { w_all_sos, w_selection, w_tick, w_precision, w_parts_tab, w_collapsed_ids } = stores;
+	const { w_all_sos, w_selection, w_tick, w_precision, w_collapsed_ids } = stores;
 
 	let show_position = $state(preferences.read<boolean>(T_Preference.showPosition) ?? true);
 	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
+	let selected_so = $derived($w_selection?.so ?? null);
 
 	function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
 	let editing_id: string | null = $state(null);
@@ -27,7 +25,7 @@
 		if (ids.has(so.id)) { ids.delete(so.id); }
 		else {
 			ids.add(so.id);
-			const sel = $w_selection?.so;
+			const sel = selected_so;
 			if (sel && is_ancestor_collapsed(sel, ids)) select(so);
 		}
 		w_collapsed_ids.set(new Set(ids));
@@ -43,7 +41,7 @@
 	}
 
 	$effect(() => {
-		const so = $w_selection?.so;
+		const so = selected_so;
 		if (so && is_ancestor_collapsed(so, $w_collapsed_ids)) stores.reveal_so(so);
 	});
 
@@ -52,7 +50,7 @@
 	}
 
 	function is_selected(so: Smart_Object, _tick: number): boolean {
-		return $w_selection?.so === so;
+		return selected_so === so;
 	}
 
 	function handle_name_click(e: MouseEvent, so: Smart_Object) {
@@ -223,7 +221,7 @@
 	{#if $w_selection}
 		<Separator />
 	{:else}
-		<div style:height='5px'></div>
+		<div style:height='1px'></div>
 	{/if}
 {:else}
 	{#if $w_selection}
@@ -235,17 +233,13 @@
 			onblur    = {(e) => commit_name($w_selection!.so, (e.target as HTMLInputElement).value)}
 		/>
 	{/if}
-{/if}
-<P_Selected />
-<div class='tab-content'>
-	{#if $w_parts_tab === 'attributes'}
-		<P_Attributes />
-	{:else if $w_parts_tab === 'rotation'}
-		<P_Angles />
-	{:else}
-		<P_Repeat />
+	{#if $w_selection}
+		<Separator />
 	{/if}
-</div>
+{/if}
+{#if selected_so}
+	<P_Selected />
+{/if}
 
 <style>
 
@@ -344,7 +338,7 @@
 		box-sizing    : border-box;
 		color         : inherit;
 		font-family   : inherit;
-		padding       : 0 4px;
+		padding       : 0 1px;
 		background    : white;
 		width         : 100%;
 		outline       : none;
@@ -395,9 +389,5 @@
 		visibility : hidden;
 	}
 
-	.tab-content {
-		margin-bottom  : -4px;
-		padding-top    : var(--l-gap);
-	}
 
 </style>
