@@ -959,10 +959,32 @@ class Engine {
 		return best_count;
 	}
 
-	/** Remove all children except the first (template) from a repeater parent. */
+	/** Remove all children except the first (template) from a repeater parent.
+	 *  Resets the template back to parent origin and restores original run-axis
+	 *  length if it was modified by diagonal layout. */
 	strip_clones(so: Smart_Object): void {
 		if (!so.scene) return;
 		const children = scene.get_all().filter(o => o.parent === so.scene);
+
+		// Reset template to parent origin and restore original dimensions
+		if (children.length > 0) {
+			const t = children[0].so;
+			for (let ai = 0; ai < 3; ai++) {
+				const delta = -t.axes[ai].start.value;
+				t.axes[ai].start.value = 0;
+				t.axes[ai].end.value += delta;
+			}
+			// Restore run-axis length if diagonal modified it
+			if (so.repeater?._orig_run_length != null) {
+				const repeat_ai = so.repeater.run_axis ?? 0;
+				const orig = so.repeater._orig_run_length;
+				const length_delta = orig - t.axes[repeat_ai].length.value;
+				t.axes[repeat_ai].length.value = orig;
+				t.axes[repeat_ai].end.value += length_delta;
+				delete so.repeater._orig_run_length;
+			}
+		}
+
 		for (const clone of children.slice(1)) {
 			hits_3d.unregister(clone.so);
 			scene.destroy(clone.id);
@@ -1002,8 +1024,10 @@ class Engine {
 		let gap_step = 0; // secondary axis offset (nonzero for diagonal)
 
 		const diagonal = is_diagonal === true || (is_diagonal == null && gap_ai !== repeat_ai);
-		if (diagonal && gap_min != null && gap_max != null && gap_length > 0) {
-			count = this.resolve_gap(gap_length, gap_min, gap_max);
+		if (diagonal) {
+			const g_min = gap_min ?? 6 * 25.4;
+			const g_max = gap_max ?? 9 * 25.4;
+			count = gap_length > 0 ? this.resolve_gap(gap_length, g_min, g_max) : 1;
 			if (gap_ai !== repeat_ai) {
 				// Stairs: tread depth = 1.25 × run, all fitting within envelope
 				const gap_dim = [w, d, h][gap_ai];
@@ -1013,12 +1037,15 @@ class Engine {
 			} else {
 				step = parent_length / count;
 			}
-		} else if (spacing != null && spacing > 0 && parent_length > 0) {
-			count = Math.floor((parent_length - template_dim) / spacing);
-			step = spacing;
 		} else {
-			count = 1;
-			step = template_dim;
+			const sp = spacing ?? 16 * 25.4;
+			if (sp > 0 && parent_length > 0) {
+				count = Math.floor((parent_length - template_dim) / sp);
+				step = sp;
+			} else {
+				count = 1;
+				step = template_dim;
+			}
 		}
 
 		// Bookend: for spacing repeaters, place a final clone flush at parent's far edge
@@ -1066,6 +1093,9 @@ class Engine {
 		// Stairs: position template 1 gap_step from parent edge on rise axis (bottom phantom)
 		// and set tread depth to 1.25 × run so nosing fits within envelope
 		if (gap_step) {
+			if (so.repeater._orig_run_length == null) {
+				so.repeater._orig_run_length = t.axes[repeat_ai].length.value;
+			}
 			const gap_delta = gap_step - t.axes[gap_ai].start.value;
 			t.axes[gap_ai].start.value += gap_delta;
 			t.axes[gap_ai].end.value += gap_delta;

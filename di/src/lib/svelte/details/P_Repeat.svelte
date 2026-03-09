@@ -42,7 +42,7 @@
 
 	function set_spacing(mm: number) {
 		if (!selected_so?.repeater) return;
-		selected_so.repeater = { ...selected_so.repeater, spacing: mm, gap_min: undefined, gap_max: undefined };
+		selected_so.repeater = { ...selected_so.repeater, spacing: mm };
 		engine.sync_repeater(selected_so);
 		stores.tick();
 		scenes.save();
@@ -73,7 +73,7 @@
 		return units.format_for_system(mm, $w_unit_system, $w_precision);
 	}
 
-	let spacing_mm = $derived.by(() => { $w_tick; return selected_so?.repeater?.spacing ?? 16 * INCH; });
+	let spacing_mm = $derived.by(() => { $w_tick; return selected_so?.repeater?.spacing ?? GAP_MAX_MM; });
 	let sp_sticky = $derived(is_on_sp_tick(spacing_mm));
 
 	function set_spacing_slider(raw_mm: number) {
@@ -114,8 +114,8 @@
 		}
 		val = Math.max(GAP_MIN_MM, Math.min(GAP_MAX_MM, val));
 
-		let gap_min = field === 'gap_min' ? val : (selected_so.repeater.gap_min ?? val);
-		let gap_max = field === 'gap_max' ? val : (selected_so.repeater.gap_max ?? val);
+		let gap_min = field === 'gap_min' ? val : selected_so.repeater.gap_min!;
+		let gap_max = field === 'gap_max' ? val : selected_so.repeater.gap_max!;
 		if (gap_min > gap_max) { if (field === 'gap_min') gap_max = gap_min; else gap_min = gap_max; }
 
 		selected_so.repeater = { ...selected_so.repeater, gap_min, gap_max };
@@ -124,8 +124,8 @@
 		scenes.save();
 	}
 
-	let gap_min_mm = $derived.by(() => { $w_tick; const r = selected_so?.repeater; return r?.gap_min ?? 6 * INCH; });
-	let gap_max_mm = $derived.by(() => { $w_tick; const r = selected_so?.repeater; return r?.gap_max ?? 9 * INCH; });
+	let gap_min_mm = $derived.by(() => { $w_tick; const r = selected_so?.repeater; return r?.gap_min ?? GAP_MIN_MM; });
+	let gap_max_mm = $derived.by(() => { $w_tick; const r = selected_so?.repeater; return r?.gap_max ?? GAP_MAX_MM; });
 	let min_sticky = $derived(is_on_tick(gap_min_mm));
 	let max_sticky = $derived(is_on_tick(gap_max_mm));
 
@@ -164,7 +164,8 @@
 
 	function repeat_straight() {
 		if (!selected_so) return;
-		const existing = selected_so.repeater ?? { run_axis: 0 as const, spacing: 16 * INCH };
+		engine.strip_clones(selected_so);
+		const existing = selected_so.repeater ?? { run_axis: 0 as const, rise_axis: 1 as const, spacing: 16 * INCH, gap_min: GAP_MIN_MM, gap_max: GAP_MAX_MM };
 		selected_so.repeater = { ...existing, is_diagonal: false, is_repeating: true };
 		engine.sync_repeater(selected_so);
 		stores.tick();
@@ -173,7 +174,8 @@
 
 	function repeat_diagonal() {
 		if (!selected_so) return;
-		const existing = selected_so.repeater ?? { run_axis: 0 as const, rise_axis: 1 as const, gap_min: 6 * INCH, gap_max: 9 * INCH };
+		engine.strip_clones(selected_so);
+		const existing = selected_so.repeater ?? { run_axis: 0 as const, rise_axis: 1 as const, spacing: 16 * INCH, gap_min: GAP_MIN_MM, gap_max: GAP_MAX_MM };
 		selected_so.repeater = { ...existing, is_diagonal: true, is_repeating: true };
 		engine.sync_repeater(selected_so);
 		stores.tick();
@@ -184,13 +186,15 @@
 {#if is_repeater && selected_so}
 	<div class='repeater-options'>
 		<div class='repeater-option-row' style:position='relative'>
-			<span class='option-label' style:margin-right='-7px'>run</span>
+			<span class='option-label'>run</span>
 			<div class='segmented'>
 				<button class:active={repeat_axis === 0} onclick={() => set_repeat_axis(0)}>x</button>
 				<button class:active={repeat_axis === 1} onclick={() => set_repeat_axis(1)}>y</button>
 				<button class:active={repeat_axis === 2} onclick={() => set_repeat_axis(2)}>z</button>
 			</div>
-			<button class='action-btn repeat-btn' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>unrepeat</button>
+			<span class='flex-spacer'></span>
+			<button class='action-btn' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>unrepeat</button>
+			<span class='flex-spacer'></span>
 			{#if repeater_display}
 				<span class='clone-count'>{repeater_display.count} repeats</span>
 			{/if}
@@ -201,7 +205,7 @@
 					<div class='slider-wrap'>
 						<div class='range-track'></div>
 						{#each SP_TICK_MM as tick}
-							<span class='tick' style:left="calc(7px + {sp_to_pct(tick)} * (100% - 14px) / 100)"></span>
+							<span class='tick' style:left="calc(var(--h-slider) / 2 + {sp_to_pct(tick)} * (100% - var(--h-slider)) / 100)"></span>
 						{/each}
 						<input type='range'
 							min={SP_MIN_MM} max={SP_MAX_MM} step='any'
@@ -224,24 +228,24 @@
 			</div>
 		{:else}
 			<div class='repeater-option-row rise-row'>
-				<span class='option-label' style:margin-right='-7px'>rise</span>
+				<span class='option-label'>rise</span>
 				<div class='segmented'>
 					{#each rise_choices as a}
 						<button class:active={rise_axis === a} onclick={() => set_rise_axis(a)}>{['x','y','z'][a]}</button>
 					{/each}
 				</div>
 				<div class='range-slider' style:flex='1'>
-					<span class='range-label' style:left="calc(7px + {mm_to_pct(gap_min_mm)} * (100% - 14px) / 100)">{format_gap(gap_min_mm)}</span>
-					<span class='range-label' style:left="calc(7px + {mm_to_pct(gap_max_mm)} * (100% - 14px) / 100)">{format_gap(gap_max_mm)}</span>
+					<span class='range-label' style:left="calc(var(--h-slider) / 2 + 2px + {mm_to_pct(gap_min_mm)} * (100% - var(--h-slider)) / 100)">{format_gap(gap_min_mm)}</span>
+					<span class='range-label' style:left="calc(var(--h-slider) / 2 + 2px + {mm_to_pct(gap_max_mm)} * (100% - var(--h-slider)) / 100)">{format_gap(gap_max_mm)}</span>
 					<div class='slider-wrap'>
 						<div class='range-track'>
 							<div class='range-fill'
-								style:left="calc(7px + {mm_to_pct(gap_min_mm)} * (100% - 14px) / 100)"
-								style:right="calc(7px + {100 - mm_to_pct(gap_max_mm)} * (100% - 14px) / 100)"
+								style:left="calc(var(--h-slider) / 2 + 2px + {mm_to_pct(gap_min_mm)} * (100% - var(--h-slider)) / 100)"
+								style:right="calc(var(--h-slider) / 2 + {100 - mm_to_pct(gap_max_mm)} * (100% - var(--h-slider)) / 100)"
 							></div>
 						</div>
 						{#each TICK_MM as tick}
-							<span class='tick' style:left="calc(7px + {mm_to_pct(tick)} * (100% - 14px) / 100)"></span>
+							<span class='tick' style:left="calc(var(--h-slider) / 2 + {mm_to_pct(tick)} * (100% - var(--h-slider)) / 100)"></span>
 						{/each}
 						<input type='range'
 							min={GAP_MIN_MM} max={GAP_MAX_MM} step='any'
@@ -290,12 +294,12 @@
 		align-items : center;
 		display     : flex;
 		min-height  : var(--h-button-common);
-		gap         : 6px;
+		gap         : var(--l-gap);
 	}
 
 	.option-label {
-		font-size   : var(--h-font-common);
-		min-width   : 25px;
+		font-size   : var(--h-font-small);
+		min-width   : 20px;
 		opacity     : 0.6;
 		flex-shrink : 0;
 	}
@@ -308,7 +312,7 @@
 	.segmented button {
 		border        : 0.5px solid currentColor;
 		height        : var(--h-button-common);
-		font-size     : var(--h-font-small);
+		font-size     : var(--h-font-common);
 		padding       : 0 var(--l-padding);
 		z-index       : var(--z-action);
 		color         : inherit;
@@ -349,13 +353,11 @@
 		color         : inherit;
 		white-space   : nowrap;
 		background    : white;
-		padding       : 0 8px;
+		padding       : 0 var(--l-padding);
 	}
 
-	.repeat-btn {
-		transform : translateX(-50%);
-		position  : absolute;
-		left      : 50%;
+	.flex-spacer {
+		flex : 1;
 	}
 
 	.action-btn.active {
@@ -377,6 +379,7 @@
 		justify-content : space-between;
 		align-items     : center;
 		display         : flex;
+		margin-top      : -2px;
 	}
 
 	.rise-endpoint {
@@ -387,7 +390,7 @@
 	.range-slider {
 		position       : relative;
 		margin         : -2px 0 0;
-		padding-top    : 14px;
+		padding-top    : 15px;
 	}
 
 	.slider-caption {
@@ -412,8 +415,8 @@
 		height        : var(--th-track);
 		position      : absolute;
 		margin-top    : -2px;
-		right         : 7px;
-		left          : 7px;
+		right         : calc(var(--h-slider) / 2);
+		left          : calc(var(--h-slider) / 2);
 		top           : 50%;
 	}
 
@@ -427,11 +430,13 @@
 
 	.range-label {
 		font-size            : var(--h-font-small);
-		transform            : translateY(+50%);
+		font-weight          : normal;
+		transform            : translate(-50%, calc(50% - 0.5em));
 		font-variant-numeric : tabular-nums;
 		position             : absolute;
 		white-space          : nowrap;
 		user-select          : none;
+		text-align           : center;
 		top                  : 0;
 	}
 
@@ -499,10 +504,9 @@
 	}
 
 	.clone-count {
-		font-size : var(--h-font-common);
-		position  : absolute;
-		opacity   : 0.6;
-		right     : 0;
+		font-size   : var(--h-font-small);
+		opacity     : 0.6;
+		flex-shrink : 0;
 	}
 
 	.action-btn:global([data-hit]) {

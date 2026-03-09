@@ -167,9 +167,9 @@ export function render_axes(host: AxesHost): void {
 			if (pa1.w >= 0 && pa2.w >= 0) {
 				const d1 = (pa1.x - p_back.x) ** 2 + (pa1.y - p_back.y) ** 2;
 				const d2 = (pa2.x - p_back.x) ** 2 + (pa2.y - p_back.y) ** 2;
-				// Pick the end furthest from back corner, inset by 1 grid spacing
+				// Pick the end furthest from back corner, inset enough to avoid overlap
 				const far_val = d1 > d2 ? a_min : a_max;
-				const inset = spacing > 0 ? spacing : (a_max - a_min) * 0.15;
+				const inset = spacing > 0 ? spacing * 7 : (a_max - a_min) * 0.2;
 				a_pos = far_val === a_min ? a_min + inset : a_max - inset;
 			}
 		}
@@ -233,6 +233,8 @@ function draw_arrow(
 		ctx.lineTo(screen[i].x, screen[i].y);
 	}
 	ctx.closePath();
+	ctx.fillStyle = 'white';
+	ctx.fill();
 	ctx.stroke();
 
 	// Label past the tip
