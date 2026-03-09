@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Hit_Target } from '../../ts/types/Enumerations';
+	import { T_Hit_Target, T_Layer } from '../../ts/types/Enumerations';
 	import S_Hit_Target from '../../ts/state/S_Hit_Target';
 	import { k } from '../../ts/common/Constants';
 	import { hits } from '../../ts/managers/Hits';
@@ -14,6 +14,7 @@
 		margin    = 11,
 		vertical  = false,
 		thickness = k.thickness.separator.content,
+		z_layer   = T_Layer.layout,
 	}: {
 		title?     : string;
 		end?       : number;
@@ -22,6 +23,7 @@
 		thickness? : number;
 		vertical?  : boolean;
 		onclick?   : () => void;
+		z_layer?   : T_Layer;
 	} = $props();
 
 	let radius = $derived(thickness * 3.2);
@@ -53,11 +55,13 @@
 		bind:this={element}
 		style:--r='{radius}px'
 		style:--m='{margin}px'
+		style:z-index={z_layer}
 		class='separator vertical'
 		class:clickable={!!onclick}
 		style:width='{thickness}px'
 		style:--e='{margin + end}px'
-		style:height={length ? `${length}px` : undefined}>
+		style:height={length ? `${length}px` : undefined}
+		style:align-self={length ? undefined : 'stretch'}>
 		<div class='flare left' style:width={rpx} style:border-radius='0 {rpx} {rpx} 0'></div>
 		{#if title}<span class='title'>{title}</span>{/if}
 		<div class='flare right' style:width={rpx} style:border-radius='{rpx} 0 0 {rpx}'></div>
@@ -67,6 +71,7 @@
 		bind:this={element}
 		style:--r='{radius}px'
 		style:--m='{margin}px'
+		style:z-index={z_layer}
 		class:clickable={!!onclick}
 		style:--e='{margin + end}px'
 		class='separator horizontal'
@@ -84,7 +89,6 @@
 		overflow   : visible;
 		position   : relative;
 		background : var(--accent);
-		z-index    : var(--z-layout);
 	}
 
 	/* Accent backdrop extending behind the flares */
@@ -107,8 +111,7 @@
 	}
 
 	.vertical {
-		margin     : calc(-1 * var(--m)) 4px calc(-1 * var(--e));
-		align-self : stretch;
+		margin : calc(-1 * var(--m)) 4px calc(-1 * var(--e));
 	}
 
 	.vertical::before {
@@ -119,7 +122,7 @@
 	}
 
 	.flare {
-		z-index    : var(--z-layout);
+		z-index    : inherit;
 		background : var(--bg);
 		position   : absolute;
 	}
@@ -140,7 +143,7 @@
 	.title {
 		transform      : translate(-50%, -50%);
 		font-size      : var(--h-font-small);
-		z-index        : var(--z-layout);
+		z-index        : inherit;
 		position       : absolute;
 		text-align     : center;
 		white-space    : nowrap;

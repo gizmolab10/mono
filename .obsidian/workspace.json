@@ -8,48 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "45c2f801c30abdba",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/milestones/done/road.map.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "road.map"
-            }
-          },
-          {
-            "id": "254c2ad934c6ce48",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/milestones/index.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "index"
-            }
-          },
-          {
-            "id": "efdbdc3b71695259",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/milestones/29.css.engine.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "29.css.engine"
-            }
-          },
-          {
             "id": "b6ffba988cb8e463",
             "type": "leaf",
             "state": {
@@ -106,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -163,7 +121,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 316.5
+    "width": 337.5
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -241,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/done/10.controls.md",
+                "file": "di/notes/work/milestones/22.aesthetics.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 10.controls"
+              "title": "Outline of 22.aesthetics"
             }
           }
         ],
@@ -255,8 +213,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 335.5,
-    "collapsed": true
+    "width": 335.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -269,11 +226,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "e848e8095994d6cb",
+  "active": "161d2194ea1a1659",
   "lastOpenFiles": [
-    "di/notes/work/milestones/22.aesthetics.md",
     "di/notes/work/milestones/done/10.controls.md",
+    "di/src/lib/svelte/main/Controls.svelte copy",
     "di/notes/work/milestones/29.css.engine.md",
+    "CLAUDE.MD",
+    "di/notes/work/milestones/22.aesthetics.md",
     "logs/update-docs.error.mono.log",
     "di/notes/work/milestones/done/15.attributes.md",
     "logs/update-docs.error.di.log",
@@ -302,10 +261,8 @@
     "di/notes/architecture/graph/dimensionals.md",
     "di/notes/work/milestones/done/18.user.constants.md",
     "di/src/assets/debug/sfikar.di",
-    "di/notes/work/milestones/done/12.parts.md",
     "di/src/lib/svelte/mouse/Separator.svelte",
     "di/src/assets/debug/sfiar.di",
-    "di/src/assets/debug/sfarik.di",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Decorations } from '../../ts/types/Enumerations';
+	import { T_Layer, T_Decorations } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { svg_paths } from '../../ts/draw/SVG_Paths';
 	import { stores } from '../../ts/managers/Stores';
@@ -13,7 +13,8 @@
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 
 	let controls_width   = $state(Infinity);
-	let wrapped          = $derived(controls_width < (k.width.groups));
+	let wrap_phone       = $derived(controls_width < (k.width.wrap_phone));
+	let wrap_mobile      = $derived(controls_width < (k.width.wrap_mobile));
 	let show_names       = $derived(($w_decorations & T_Decorations.names) !== 0);
 	let show_angles      = $derived(($w_decorations & T_Decorations.angles) !== 0);
 	let show_dimensions  = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
@@ -25,7 +26,7 @@
 </script>
 
 {#snippet hamburger_button()}
-	<button class='hamburger' class:active={$w_show_details}
+	<button class='hamburger' class:active={$w_show_details} style:z-index={T_Layer.action}
 		use:hit_target={{ id: 'details', onpress: () => stores.toggle_details() }} aria-label='toggle details'>
 		<svg class='hamburger-icon' viewBox='0 0 {k.height.button.common} {k.height.button.common}' width={k.height.button.common} height={k.height.button.common}>
 			<path d={svg_paths.hamburger(k.height.button.common)}/>
@@ -35,11 +36,13 @@
 
 {#snippet other_buttons()}
 	<button class='toolbar-btn' use:hit_target={{ id: 'save', onpress: save }}>save</button>
-	<button class='toolbar-btn gap-after' disabled={root_fits} use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
+	<button class='toolbar-btn' disabled={root_fits} use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
+	<button class='toolbar-btn gap-after' class:active={$w_allow_editing} use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ↔</button>
 {/snippet}
 
-{#snippet left_buttons()}
+{#snippet ham_sep_other()}
 	{@render hamburger_button()}
+	<Separator vertical thickness={k.thickness.separator.main} margin={7} z_layer={T_Layer.cheat} />
 	{@render other_buttons()}
 {/snippet}
 
@@ -61,39 +64,45 @@
 	</div>
 	<button class='toolbar-btn' disabled={is_straightened} use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	<button class='toolbar-btn snap-btn' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
-	<button class='toolbar-btn' class:active={$w_allow_editing} use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ↔</button>
 {/snippet}
 
 <div
-	class:wrapped
+	class:wrap_mobile
 	class            = 'controls'
 	bind:clientWidth = {controls_width}
 	style:color      = 'var(--text)'
 	style:background = 'var(--bg)'>
-	{#if wrapped}
+	{#if wrap_phone}
+		<div class='right-col'>
+			<div class='right-row'>{@render ham_sep_other()}</div>
+			<Separator thickness={k.thickness.separator.main} margin={6} />
+			<div class='right-row'>{@render face_buttons()}</div>
+			<Separator thickness={k.thickness.separator.main} margin={6} />
+			<div class='right-row'>{@render mode_buttons()}</div>
+		</div>
+	{:else if wrap_mobile}
 		<div class='right-col'>
 			<div class='right-row'>
-				{@render hamburger_button()}
+				{@render ham_sep_other()}
 				<span class='spacer'></span>
-					{@render face_buttons()}
+				{@render face_buttons()}
 				<span class='spacer'></span>
 			</div>
 			<Separator thickness={k.thickness.separator.main} margin={6} />
 			<div class='right-row'>
-				{@render other_buttons()}
 				{@render mode_buttons()}
 			</div>
 		</div>
 	{:else}
-		<div class='group'>
-			{@render left_buttons()}
-			<Separator vertical thickness={k.thickness.separator.main} length={separator_length} margin={0} />
-		</div>
+		{@render hamburger_button()}
+		<Separator vertical thickness={k.thickness.separator.main} length={k.height.button.common + 14} margin={-9} z_layer={T_Layer.cheat} />
+		{@render other_buttons()}
+		<Separator vertical thickness={k.thickness.separator.main} length={separator_length} margin={0} />
 		<span class='spacer'></span>
-		<div class='group'>{@render face_buttons()}</div>
+		{@render face_buttons()}
 		<span class='spacer'></span>
 		<Separator vertical thickness={k.thickness.separator.main} length={separator_length} margin={0} />
-		<div class='group'>{@render mode_buttons()}</div>
+		{@render mode_buttons()}
 	{/if}
 </div>
 
@@ -108,7 +117,7 @@
 		display         : flex;
 	}
 
-	.controls:not(.wrapped) {
+	.controls:not(.wrap_mobile) {
 		height : var(--h-controls);
 	}
 
@@ -130,6 +139,7 @@
 	.right-row {
 		justify-content : center;
 		align-items     : center;
+		overflow        : visible;
 		display         : flex;
 	}
 
@@ -140,7 +150,6 @@
 
 	.hamburger {
 		height          : var(--h-button-common);
-		z-index         : var(--z-action);
 		background      : transparent;
 		position        : relative;
 		cursor          : pointer;
@@ -150,6 +159,7 @@
 		display         : flex;
 		border          : none;
 		width           : var(--h-button-common);
+		margin-right    : calc(var(--l-gap) - 2px);
 		top             : 0px;
 		left            : 1px;
 		padding         : 0;

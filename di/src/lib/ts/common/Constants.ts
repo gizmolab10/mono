@@ -29,8 +29,9 @@ export default class Constants {
 	};
 
 	width = {
-		details: common_size * 10.5,
-		groups:  common_size * 31,
+		wrap_mobile : 1190,
+		wrap_phone  : 770,
+		details     : 350,
 	};
 
 	corner = {

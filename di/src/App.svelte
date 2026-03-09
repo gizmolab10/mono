@@ -64,4 +64,12 @@
 		margin: 0;
 		font-family: system-ui, sans-serif;
 	}
+
+	@media (max-width: 429px) {
+		:global(:root) {
+			--l-gap: 2px !important;
+			--l-margin: 4px !important;
+			--l-padding: 4px !important;
+		}
+	}
 </style>

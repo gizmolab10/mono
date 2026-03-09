@@ -16,6 +16,7 @@ export enum T_Startup {
 export enum T_Layer {
 	common,
 	layout,
+	cheat,
 	action,
 	frontmost,
 }
