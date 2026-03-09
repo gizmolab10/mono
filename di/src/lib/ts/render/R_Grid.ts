@@ -147,7 +147,7 @@ function ve_face_fixed_value(ve: Camera_View_Extent, face_index: number): number
 }
 
 /** Tumble-independent grid spacing. Projects through scale-only (no rotation) for stable px/mm. */
-function stable_spacing(host: GridHost, so: Smart_Object): { spacing: number; px_per_mm: number } {
+export function stable_spacing(host: GridHost, so: Smart_Object): { spacing: number; px_per_mm: number } {
 	const system = Units.current_unit_system();
 	const precision = stores.current_precision();
 	const max_dim = Math.max(so.width, so.height, so.depth);

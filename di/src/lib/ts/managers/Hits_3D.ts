@@ -41,6 +41,10 @@ class Hits_3D {
 		return this.cache.get(scene_id)?.projected;
 	}
 
+	get_bbox(scene_id: string): { minX: number; minY: number; maxX: number; maxY: number } | undefined {
+		return this.cache.get(scene_id)?.bbox;
+	}
+
 	/** Clear all registrations and caches (for HMR re-mount). */
 	clear() {
 		this.objects = [];

@@ -333,9 +333,7 @@ class Render {
 		}
 
 		if (stores.grid_opacity() > 0) {
-			this.ctx.globalAlpha = stores.grid_opacity();
 			render_axes(this);
-			this.ctx.globalAlpha = 1;
 		}
 		this.render_hover();
 		this.render_selection();

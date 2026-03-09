@@ -1,19 +1,16 @@
-import type Smart_Object from '../runtime/Smart_Object';
 import type { Projected } from '../types/Interfaces';
 import type { O_Scene } from '../types/Interfaces';
 import type { Axis_Name } from '../types/Types';
-import { hits_3d } from '../managers/Hits_3D';
+import { type Camera_View_Extent, stable_spacing } from './R_Grid';
 import { scenes } from '../managers/Scenes';
 import { stores } from '../managers/Stores';
 import { mat4 } from 'gl-matrix';
-import { camera } from './Camera';
 import { vec3 } from 'gl-matrix';
-import { scene } from './Scene';
 
 /**
- * Axis decoration arrows on the root SO's bottom silhouette edges.
+ * Axis decoration arrows on the back-grid planes.
  * Each arrow is a 7-sided polygon (rectangle stem + triangle head)
- * lying in the plane of the face it references, 1" outward from the edge.
+ * lying in the plane of a back-facing grid face, offset from the outer edge.
  * Stroke only — no fill.
  */
 
@@ -22,7 +19,7 @@ export interface AxesHost {
 	ctx: CanvasRenderingContext2D;
 	project_vertex(v: vec3, world_matrix: mat4): Projected;
 	get_world_matrix(obj: O_Scene): mat4;
-	face_winding(face: number[], projected: Projected[]): number;
+	camera_view_extent: Camera_View_Extent;
 }
 
 const AXIS_COLORS: Record<Axis_Name, string> = {
@@ -32,124 +29,165 @@ const AXIS_COLORS: Record<Axis_Name, string> = {
 };
 
 // Arrow dimensions in pixels (converted to 3D per-edge)
-const OFFSET_PX = 40;       // visual distance from edge
+const OFFSET_PX = 0;        // arrow sits on the grid edge
 const STEM_LEN_PX = 20;
 const STEM_W_PX = 3;        // half-width of stem
 const HEAD_LEN_PX = 12;
 const HEAD_W_PX = 8;        // half-width of head
 
+// Axis unit vectors
+const AXIS_VECTORS: Record<Axis_Name, vec3> = {
+	x: vec3.fromValues(1, 0, 0),
+	y: vec3.fromValues(0, 1, 0),
+	z: vec3.fromValues(0, 0, 1),
+};
+
+// Face definitions: [face_index, fixed_axis, axis_a, axis_b]
+// face_fixed_value returns the position on fixed_axis from camera_view_extent
+const FACE_AXES: [number, Axis_Name, Axis_Name, Axis_Name][] = [
+	[0, 'z', 'x', 'y'], // bottom (z_min)
+	[1, 'z', 'x', 'y'], // top (z_max)
+	[2, 'x', 'y', 'z'], // left (x_min)
+	[3, 'x', 'y', 'z'], // right (x_max)
+	[4, 'y', 'x', 'z'], // front (y_max)
+	[5, 'y', 'x', 'z'], // back (y_min)
+];
+
 export function render_axes(host: AxesHost): void {
 	const root_so = scenes.root_so;
 	if (!root_so?.scene) return;
 
-	const root_obj = scene.get_all().find(o => !o.parent);
-	if (!root_obj) return;
+	const world = host.get_world_matrix(root_so.scene);
+	const orientation = stores.current_orientation();
+	const ve = host.camera_view_extent;
+	const rotated = vec3.create();
+	const { spacing } = stable_spacing(host, root_so);
 
-	const projected = hits_3d.get_projected(root_obj.id);
-	if (!projected) return;
+	const all_axes: Axis_Name[] = ['x', 'y', 'z'];
 
-	const world = host.get_world_matrix(root_obj);
-	const faces = root_obj.so.scene?.faces;
-	const edges = root_obj.so.scene?.edges;
-	if (!faces || !edges) return;
-	const verts = root_obj.so.vertices;
+	// Find the back-most corner: where all 3 back-facing grid planes meet
+	const back_corner = vec3.create();
+	for (const [fi, fixed, ,] of FACE_AXES) {
+		vec3.transformQuat(rotated, root_so.face_normal(fi), orientation);
+		if (rotated[2] < 0) {
+			// This face is back-facing — its fixed value contributes to the back corner
+			set_axis(back_corner, fixed, ve_fixed_value(ve, fi));
+		}
+	}
+	const p_back = host.project_vertex(back_corner, world);
 
-	const axes: Axis_Name[] = ['x', 'y', 'z'];
+	// For each axis, find the best back-facing grid face to draw on
+	for (const axis of all_axes) {
+		let best_face = -1;
+		let best_visibility = -Infinity;
 
-	for (const axis of axes) {
-		// Find silhouette edges along this axis, scored by arrow readability
-		const candidates: { v1: number; v2: number; face: number; mid_y: number; perp_wlen: number }[] = [];
+		for (const [fi, fixed, a, b] of FACE_AXES) {
+			// Only faces that contain this axis
+			if (a !== axis && b !== axis) continue;
 
-		for (const [v1, v2] of edges) {
-			if (edge_axis(verts[v1], verts[v2]) !== axis) continue;
+			// Must be back-facing
+			vec3.transformQuat(rotated, root_so.face_normal(fi), orientation);
+			if (rotated[2] >= 0) continue;
 
-			const adj = edge_faces(v1, v2, faces);
-			if (adj.length !== 2) continue;
-
-			const w0 = host.face_winding(faces[adj[0]], projected);
-			const w1 = host.face_winding(faces[adj[1]], projected);
-
-			// Must be a silhouette edge (one front, one back)
-			if (!((w0 < 0 && w1 >= 0) || (w1 < 0 && w0 >= 0))) continue;
-
-			const p1 = projected[v1], p2 = projected[v2];
-			if (p1.w < 0 || p2.w < 0) continue;
-
-			const em = vec3.fromValues(
-				(verts[v1][0] + verts[v2][0]) / 2,
-				(verts[v1][1] + verts[v2][1]) / 2,
-				(verts[v1][2] + verts[v2][2]) / 2,
-			);
-
-			// Try both adjacent faces — pick the one with better perp visibility
-			for (const fi of adj) {
-				const face_ax = root_obj.so.face_axes(fi);
-				const perp_axis = face_ax.find(a => a !== axis);
-				if (!perp_axis) continue;
-				const perp = root_obj.so.axis_vector(perp_axis);
-
-				const em_plus_perp = vec3.add(vec3.create(), em, perp);
-				const p_em = host.project_vertex(em, world);
-				const p_ep = host.project_vertex(em_plus_perp, world);
-				if (p_em.w < 0 || p_ep.w < 0) continue;
-
-				const perp_wlen = Math.sqrt((p_ep.x - p_em.x) ** 2 + (p_ep.y - p_em.y) ** 2);
-				if (perp_wlen < 0.001) continue;
-
-				const mid_y = (p1.y + p2.y) / 2;
-				candidates.push({ v1, v2, face: fi, mid_y, perp_wlen });
+			const visibility = -rotated[2];
+			if (visibility > best_visibility) {
+				best_visibility = visibility;
+				best_face = fi;
 			}
 		}
 
-		if (candidates.length === 0) continue;
+		if (best_face < 0) continue;
 
-		// Pick the candidate with the most readable arrow (largest perp screen extent)
-		candidates.sort((a, b) => b.perp_wlen - a.perp_wlen || b.mid_y - a.mid_y);
-		const best = candidates[0];
+		const face_def = FACE_AXES[best_face];
+		const [, fixed_axis, face_a, face_b] = face_def;
+		const perp_axis = (face_a === axis) ? face_b : face_a;
 
-		draw_axis_arrow(host, root_obj.so, best.v1, best.v2, best.face, axis, projected, world);
+		// Fixed value from camera_view_extent
+		const fixed_val = ve_fixed_value(ve, best_face);
+
+		// Bounds along the arrow axis and perpendicular axis
+		const [a_min, a_max] = ve_bounds(ve, axis);
+		const [p_min, p_max] = ve_bounds(ve, perp_axis);
+
+		// Build edge endpoints for both possible perp positions
+		const make_point = (a_val: number, p_val: number): vec3 => {
+			const pt = vec3.create();
+			set_axis(pt, axis, a_val);
+			set_axis(pt, perp_axis, p_val);
+			set_axis(pt, fixed_axis, fixed_val);
+			return pt;
+		};
+
+		// Pick the outer edge: furthest from the projected center of the face
+		const face_center = make_point((a_min + a_max) / 2, (p_min + p_max) / 2);
+		const p_center = host.project_vertex(face_center, world);
+		let best_perp = p_min;
+		let best_dist = -Infinity;
+		for (const p_val of [p_min, p_max]) {
+			const e1 = host.project_vertex(make_point(a_min, p_val), world);
+			const e2 = host.project_vertex(make_point(a_max, p_val), world);
+			if (e1.w < 0 || e2.w < 0 || p_center.w < 0) continue;
+			const mid_x = (e1.x + e2.x) / 2;
+			const mid_y = (e1.y + e2.y) / 2;
+			const dist = Math.sqrt((mid_x - p_center.x) ** 2 + (mid_y - p_center.y) ** 2);
+			if (dist > best_dist) {
+				best_dist = dist;
+				best_perp = p_val;
+			}
+		}
+
+		// Inset by one grid unit from the outer edge
+		if (spacing > 0) {
+			const center_perp = (p_min + p_max) / 2;
+			best_perp += (best_perp < center_perp) ? spacing : -spacing;
+		}
+
+		// Check edge screen length — skip if too foreshortened
+		const e1 = host.project_vertex(make_point(a_min, best_perp), world);
+		const e2 = host.project_vertex(make_point(a_max, best_perp), world);
+		if (e1.w < 0 || e2.w < 0) continue;
+		const edge_len = Math.sqrt((e2.x - e1.x) ** 2 + (e2.y - e1.y) ** 2);
+		if (edge_len < 20) continue;
+
+		// Arrow direction and perpendicular
+		const along = AXIS_VECTORS[axis];
+		let perp = AXIS_VECTORS[perp_axis];
+
+		// Orient perp outward (away from center of face)
+		const center_perp = (p_min + p_max) / 2;
+		if (best_perp < center_perp) {
+			perp = vec3.negate(vec3.create(), perp);
+		}
+
+		// Position near the corner furthest from the back-most corner
+		let a_pos = (a_min + a_max) / 2; // fallback: midpoint
+		if (p_back.w >= 0) {
+			const pa1 = host.project_vertex(make_point(a_min, best_perp), world);
+			const pa2 = host.project_vertex(make_point(a_max, best_perp), world);
+			if (pa1.w >= 0 && pa2.w >= 0) {
+				const d1 = (pa1.x - p_back.x) ** 2 + (pa1.y - p_back.y) ** 2;
+				const d2 = (pa2.x - p_back.x) ** 2 + (pa2.y - p_back.y) ** 2;
+				// Pick the end furthest from back corner, inset by 1 grid spacing
+				const far_val = d1 > d2 ? a_min : a_max;
+				const inset = spacing > 0 ? spacing : (a_max - a_min) * 0.15;
+				a_pos = far_val === a_min ? a_min + inset : a_max - inset;
+			}
+		}
+		const em = make_point(a_pos, best_perp);
+
+		draw_arrow(host, em, along, perp, axis, world);
 	}
 }
 
-function draw_axis_arrow(
+function draw_arrow(
 	host: AxesHost,
-	so: Smart_Object,
-	v1: number, v2: number,
-	front_face: number,
+	em: vec3,
+	along: vec3,
+	perp: vec3,
 	axis: Axis_Name,
-	_projected: Projected[],
 	world: mat4,
 ): void {
-	const verts = so.vertices;
-	const faces = so.scene?.faces;
-	if (!faces) return;
-
-	// Arrow direction: positive axis
-	const along = so.axis_vector(axis);
-
-	// Perpendicular direction within the face plane
-	const face_ax = so.face_axes(front_face);
-	const perp_axis = face_ax.find(a => a !== axis)!;
-	let perp = so.axis_vector(perp_axis);
-
-	// Orient perp outward (away from face center, toward outside of SO)
-	const face_vi = faces[front_face];
-	const fc = vec3.create();
-	for (const vi of face_vi) vec3.add(fc, fc, verts[vi]);
-	vec3.scale(fc, fc, 1 / face_vi.length);
-
-	const em = vec3.fromValues(
-		(verts[v1][0] + verts[v2][0]) / 2,
-		(verts[v1][1] + verts[v2][1]) / 2,
-		(verts[v1][2] + verts[v2][2]) / 2,
-	);
-
-	const to_edge = vec3.sub(vec3.create(), em, fc);
-	if (vec3.dot(to_edge, perp) < 0) {
-		perp = vec3.negate(vec3.create(), perp);
-	}
-
-	// Compute pixel-to-3D scale at this edge's depth
+	// Compute pixel-to-3D scale
 	const em_plus_perp = vec3.add(vec3.create(), em, perp);
 	const p_em = host.project_vertex(em, world);
 	const p_em_perp = host.project_vertex(em_plus_perp, world);
@@ -168,17 +206,16 @@ function draw_axis_arrow(
 	// Base center: edge midpoint offset outward
 	const base = vec3.scaleAndAdd(vec3.create(), em, perp, off_3d);
 
-	// 7 arrow vertices in 3D, lying on the face plane
-	// along = arrow direction (positive axis), perp = width direction (outward)
+	// 7 arrow vertices in 3D
 	const total = stem_len + head_len;
 	const pts: vec3[] = [
-		offset(base, along, -total / 2, perp, -stem_w),               // 0: stem bottom-left
-		offset(base, along, -total / 2, perp, +stem_w),               // 1: stem bottom-right
-		offset(base, along, -total / 2 + stem_len, perp, +stem_w),    // 2: stem top-right (right shoulder inner)
-		offset(base, along, -total / 2 + stem_len, perp, +head_w),    // 3: head right base (right shoulder outer)
-		offset(base, along, +total / 2, perp, 0),                      // 4: tip
-		offset(base, along, -total / 2 + stem_len, perp, -head_w),    // 5: head left base (left shoulder outer)
-		offset(base, along, -total / 2 + stem_len, perp, -stem_w),    // 6: stem top-left (left shoulder inner)
+		offset(base, along, -total / 2, perp, -stem_w),
+		offset(base, along, -total / 2, perp, +stem_w),
+		offset(base, along, -total / 2 + stem_len, perp, +stem_w),
+		offset(base, along, -total / 2 + stem_len, perp, +head_w),
+		offset(base, along, +total / 2, perp, 0),
+		offset(base, along, -total / 2 + stem_len, perp, -head_w),
+		offset(base, along, -total / 2 + stem_len, perp, -stem_w),
 	];
 
 	// Project all 7 points
@@ -223,32 +260,28 @@ function offset(base: vec3, u: vec3, u_scale: number, v: vec3, v_scale: number):
 	return result;
 }
 
-// ═══════════════════════════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════════════════════════
-
-function edge_axis(v1: vec3, v2: vec3): Axis_Name | null {
-	const dx = Math.abs(v2[0] - v1[0]);
-	const dy = Math.abs(v2[1] - v1[1]);
-	const dz = Math.abs(v2[2] - v1[2]);
-	const eps = 0.01;
-	if (dx > eps && dy < eps && dz < eps) return 'x';
-	if (dy > eps && dx < eps && dz < eps) return 'y';
-	if (dz > eps && dx < eps && dy < eps) return 'z';
-	return null;
+function set_axis(pt: vec3, axis: Axis_Name, val: number): void {
+	if (axis === 'x') pt[0] = val;
+	else if (axis === 'y') pt[1] = val;
+	else pt[2] = val;
 }
 
-function edge_faces(v1: number, v2: number, faces: number[][]): number[] {
-	const result: number[] = [];
-	for (let fi = 0; fi < faces.length; fi++) {
-		const face = faces[fi];
-		for (let i = 0; i < face.length; i++) {
-			const a = face[i], b = face[(i + 1) % face.length];
-			if ((a === v1 && b === v2) || (a === v2 && b === v1)) {
-				result.push(fi);
-				break;
-			}
-		}
+function ve_bounds(ve: Camera_View_Extent, axis: Axis_Name): [number, number] {
+	switch (axis) {
+		case 'x': return [ve.x_min, ve.x_max];
+		case 'y': return [ve.y_min, ve.y_max];
+		case 'z': return [ve.z_min, ve.z_max];
 	}
-	return result;
+}
+
+function ve_fixed_value(ve: Camera_View_Extent, face_index: number): number {
+	switch (face_index) {
+		case 0: return ve.z_min;
+		case 1: return ve.z_max;
+		case 2: return ve.x_min;
+		case 3: return ve.x_max;
+		case 4: return ve.y_max;
+		case 5: return ve.y_min;
+		default: return 0;
+	}
 }
