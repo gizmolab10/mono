@@ -26,7 +26,7 @@
 </script>
 
 {#snippet hamburger_button()}
-	<button class='hamburger' class:active={$w_show_details} style:z-index={T_Layer.action}
+	<button class='hamburger' class:active={$w_show_details}
 		use:hit_target={{ id: 'details', onpress: () => stores.toggle_details() }} aria-label='toggle details'>
 		<svg class='hamburger-icon' viewBox='0 0 {k.height.button.common} {k.height.button.common}' width={k.height.button.common} height={k.height.button.common}>
 			<path d={svg_paths.hamburger(k.height.button.common)}/>
@@ -170,6 +170,7 @@
 	}
 
 	.hamburger {
+		z-index         : var(--z-action);
 		height          : var(--h-button-common);
 		background      : transparent;
 		position        : relative;

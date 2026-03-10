@@ -1,4 +1,6 @@
 {
   "baseFontSize": 12,
-  "cssTheme": "Wikipedia"
+  "cssTheme": "Prime",
+  "accentColor": "#c77a66",
+  "theme": "moonstone"
 }

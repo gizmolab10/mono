@@ -223,8 +223,7 @@
 	</div>
 	{#if breadcrumbs.length > 1}
 		<div
-			class='breadcrumbs'
-			style:--crumb-bg = 'var(--bg)'>
+			class='breadcrumbs'>
 			{#each breadcrumbs as so, index (so.id)}
 				<button
 					class='crumb'
@@ -391,7 +390,7 @@
 	}
 
 	.crumb:hover {
-		background : var(--crumb-bg);
+		background : var(--bg);
 		color      : var(--c-black);
 		border     : var(--th-border) solid rgba(0, 0, 0, 0.3);
 	}

@@ -210,6 +210,10 @@
 		z-index       : var(--z-action);
 	}
 
+	.action-btn:hover {
+		background : var(--selected);
+	}
+
 	.slider-wrap {
 		flex           : 1;
 		position       : relative;

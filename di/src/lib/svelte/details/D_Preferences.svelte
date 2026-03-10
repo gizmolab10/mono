@@ -259,6 +259,14 @@
 		outline : none;
 	}
 
+	.slider-group input[type='range']::-webkit-slider-thumb:hover {
+		background : var(--c-black);
+	}
+
+	.slider-group input[type='range']::-moz-range-thumb:hover {
+		background : var(--c-black);
+	}
+
 	.color-row {
 		align-items    : center;
 		margin-top     : 0.3rem;

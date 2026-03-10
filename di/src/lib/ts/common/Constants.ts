@@ -2,6 +2,23 @@ declare const __BUILD_NOTES__: Array<{ build: number; date: string; note: string
 declare const __BUILD_NUMBER__: number;
 declare const __ASSETS_DIR__: string;
 
+// ─── Design token source of truth ────────────────────────────────────────────
+//
+// Constants is the single origin for all layout measurements, z-index values,
+// timing thresholds, and structural geometry. Everything derives from
+// `common_size` so the whole UI scales from one number.
+//
+// Pipeline:
+//   Constants.ts (k.*)
+//     → App.svelte onMount: root.setProperty('--x', k.x)
+//       → scoped <style> blocks: var(--x)
+//         + inline style: only for values that change at runtime
+//
+// Rule: if it's a static design token, it lives here and flows through CSS vars.
+//       if it changes at runtime (computed from JS state), it stays inline.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+
 const common_size = 33;
 
 export default class Constants {

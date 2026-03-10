@@ -3,7 +3,25 @@ import { parseToRgba, transparentize } from 'color2k';
 import { get, writable } from 'svelte/store';
 import { stores } from '../managers/Stores';
 
-// single source of truth for all colors
+// ─── Color source of truth ────────────────────────────────────────────────────
+//
+// Colors owns two tiers of color:
+//
+//   Static properties  — fixed design values (border, thumb, track, focus…).
+//                        Injected once in App.svelte onMount as CSS vars
+//                        (--c-white, --c-black, --c-thumb, --c-focus, etc.)
+//                        and then consumed in scoped <style> blocks.
+//
+//   Reactive stores    — user-editable / theme-derived values (accent, bg,
+//                        text, selected). Watched in App.svelte via $effect;
+//                        each change calls root.setProperty('--accent', …)
+//                        so components only ever see CSS vars, never JS values.
+//
+// Rule: components must not import `colors` for CSS values — use var(--x).
+//       Valid JS consumers: App.svelte (injection) and canvas drawing code
+//       (CanvasRenderingContext2D cannot use CSS vars).
+//
+// ─────────────────────────────────────────────────────────────────────────────
 
 export class Colors {
 	// Static colors (non-reactive)

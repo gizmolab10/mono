@@ -185,7 +185,7 @@
 
 {#if is_repeater && selected_so}
 	<div class='repeater-options'>
-		<div class='repeater-option-row' style:position='relative'>
+		<div class='repeater-option-row'>
 			<span class='option-label'>run</span>
 			<div class='segmented'>
 				<button class:active={repeat_axis === 0} onclick={() => set_repeat_axis(0)}>x</button>
@@ -208,9 +208,9 @@
 							<span class='tick' style:left="calc(var(--h-slider) / 2 + {sp_to_pct(tick)} * (100% - var(--h-slider)) / 100)"></span>
 						{/each}
 						<input type='range'
+							class='sp-input'
 							min={SP_MIN_MM} max={SP_MAX_MM} step='any'
 							value={spacing_mm}
-							style:pointer-events='auto'
 							style:--thumb-bg={sp_sticky ? 'var(--c-white)' : 'var(--c-thumb)'}
 							style:--thumb-border={sp_sticky ? '0.5px solid black' : 'none'}
 							oninput={(e) => set_spacing_slider(parseFloat((e.target as HTMLInputElement).value))}
@@ -222,7 +222,7 @@
 						<span class='rise-endpoint' style:margin-right='3px'>3'</span>
 					</div>
 				</div>
-				<button class='action-btn' class:active={has_firewall} onclick={toggle_firewall} style:flex-shrink='0' style:position='relative' style:top='-5.5px'>
+				<button class='action-btn fireblocks-btn' class:active={has_firewall} onclick={toggle_firewall}>
 					{has_firewall ? 'fireblocks ↔' : 'no fireblocks ↔'}
 				</button>
 			</div>
@@ -234,7 +234,7 @@
 						<button class:active={rise_axis === a} onclick={() => set_rise_axis(a)}>{['x','y','z'][a]}</button>
 					{/each}
 				</div>
-				<div class='range-slider' style:flex='1'>
+				<div class='range-slider'>
 					<span class='range-label' style:left="calc(var(--h-slider) / 2 + 2px + {mm_to_pct(gap_min_mm)} * (100% - var(--h-slider)) / 100)">{format_gap(gap_min_mm)}</span>
 					<span class='range-label' style:left="calc(var(--h-slider) / 2 + 2px + {mm_to_pct(gap_max_mm)} * (100% - var(--h-slider)) / 100)">{format_gap(gap_max_mm)}</span>
 					<div class='slider-wrap'>
@@ -294,6 +294,7 @@
 		align-items : center;
 		display     : flex;
 		min-height  : var(--h-button-common);
+		position    : relative;
 		gap         : var(--l-gap);
 	}
 
@@ -360,6 +361,13 @@
 		flex : 1;
 	}
 
+	/* sits in a flex row alongside a grow-able slider; nudged up to optical center */
+	.fireblocks-btn {
+		flex-shrink : 0;
+		position    : relative;
+		top         : -5.5px;
+	}
+
 	.action-btn.active {
 		background  : var(--selected);
 		font-weight : 600;
@@ -391,6 +399,7 @@
 		position       : relative;
 		margin         : -2px 0 0;
 		padding-top    : 15px;
+		flex           : 1;
 	}
 
 	.slider-caption {
@@ -465,6 +474,8 @@
 		margin             : 0;
 	}
 
+	.sp-input { pointer-events : auto; }
+
 	:is(.range-slider, .spacing-slider) input[type='range']::-webkit-slider-thumb {
 		margin-top         : calc((var(--th-track) - var(--h-slider)) / 2);
 		background         : var(--thumb-bg, var(--c-thumb));
@@ -501,6 +512,14 @@
 
 	:is(.range-slider, .spacing-slider) input[type='range']:focus {
 		outline : none;
+	}
+
+	:is(.range-slider, .spacing-slider) input[type='range']::-webkit-slider-thumb:hover {
+		background : var(--c-black);
+	}
+
+	:is(.range-slider, .spacing-slider) input[type='range']::-moz-range-thumb:hover {
+		background : var(--c-black);
 	}
 
 	.clone-count {
