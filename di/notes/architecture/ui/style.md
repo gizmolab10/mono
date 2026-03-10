@@ -23,7 +23,7 @@ Every interactive control shares this core:
 
 - hover → `background: var(--selected)`, `color: var(--c-black)`
 - active (pressed/selected) → same colors, kept on
-- inactive → `opacity: 0.5` or `color: rgba(0,0,0,0.5)`
+- inactive → `opacity: 0.5`
 - active = stands out by simplicity — no heavy highlight colors, just `var(--selected)` vs plain white
 - hit target system (`[data-hit]`) drives most of these; native `:hover` only where hit system isn't wired
 
@@ -102,55 +102,10 @@ ts -> svelte -> style -> css -> UX
 ### style
 
 - **scoped `<style>` blocks** — `var(--x)` for all design tokens
-- **`inline style:`** — only for values that change at runtime (computed dimensions, reactive colors)
+- **`inline style:`** — for values that change at runtime (computed dimensions, reactive colors), or to protect static values from shorthand overrides
 
 ### css
 
 - **`[data-hit]` attribute** — set by hit target system; CSS responds with attribute selectors for hover/press
 
 No external `.css` files. Everything scoped inside `.svelte` components.
-
-## Exceptions
-
-### Buttons (Controls toolbar)
-
-Button base pattern + hover/active. Exceptions:
-
-- Active (toggled on, e.g. "hide dimensions") looks the same as default — distinguished only by label change
-
-### Unit system select (dropdown)
-
-Button base pattern + hover. Exceptions:
-
-- SVG chevron as `background-image`, positioned `right 6px center`, with `18px` right padding for clearance
-- Native appearance stripped (`appearance: none`)
-- Hover hides chevron: `background-image: none`
-
-### Segmented control (precision)
-
-Button base pattern + hover/active. Exceptions:
-
-- **Container**: `overflow: hidden` clips segment edges
-- **Segments**: `flex: 1 1 auto`, `font-size: var(--h-font-small)`
-- **Unselected text**: `color: rgba(0,0,0,0.5)` — dimmed
-- **Dividers**: `border-right: var(--th-border) solid currentColor`; last segment uses `transparent` to keep equal sizing
-
-### SO selector buttons
-
-Button base pattern. Exceptions:
-
-- `border-radius: var(--corner-input)` (box)
-- Unselected: `opacity: 0.5` (element-level fade)
-- Selected inverts: `background: currentColor`, `color: var(--bg)`
-
-### Details layout
-
-- Settings row: `display: flex; gap: var(--l-gap-small)` — add child, solid/see-through, and unit select sit horizontally
-- Action buttons inside settings row have `margin-top: 0` (overrides the default `0.75rem`)
-
-### Canvas rendering
-
-- **DPR scaling**: canvas buffer = logical size x `devicePixelRatio`, context scaled by dpr, CSS `width`/`height` set to logical pixels
-- **SO edges**: `lineWidth: 1`, `lineCap: square`, coordinates snapped to half-pixel grid (`Math.round(x) + 0.5`) for crisp 1px lines
-- **Dimensional lines**: `lineWidth: 0.5` (1 physical pixel on 2x Retina)
-- **Text**: coordinates rounded to integers for crisp glyph placement

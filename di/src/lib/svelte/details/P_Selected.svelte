@@ -70,7 +70,7 @@
 	}
 
 	.segmented button:hover:not(.active) {
-		background : var(--bg);
+		background : var(--selected);
 	}
 
 	.tab-content {

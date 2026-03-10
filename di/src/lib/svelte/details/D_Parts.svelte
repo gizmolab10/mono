@@ -162,7 +162,7 @@
 			{#if show_parts}
 				<th class='hierarchy-eye static'>👁</th>
 				<th class='toggle-header gap-l' colspan='3' use:hit_target={{ id: 'toggle-position', onpress: () => { show_position = !show_position; preferences.write(T_Preference.showPosition, show_position); } }}>
-					{show_position ? 'position' : 'size'} ↔
+					{show_position ? 'position' : 'size'} ⟳
 				</th>
 			{/if}
 		</tr>

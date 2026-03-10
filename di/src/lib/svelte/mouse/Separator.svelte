@@ -33,7 +33,7 @@
 		main:    '--th-sep',
 	};
 
-	const r = k.thickness.separator[kind] * 3.2;
+	const r = k.thickness.separator[kind] * 3;
 	const w = r * 7 / 3;
 
 	// ── Hits system ──
@@ -69,13 +69,13 @@
 		style:align-self={length ? undefined : 'stretch'}
 		style:height={length ? `${length + 1}px` : undefined}>
 		<svg
-			style='position:absolute; left:calc(50% - {w/2}px); top:0; overflow:visible; pointer-events:none'
+			style='position:absolute; left:calc(50% - {w/2}px); top:0.9; overflow:visible; pointer-events:none'
 			width={w} height={r}>
 			<path d={svg_paths.flares(r)} fill='var(--accent)' />
 		</svg>
 		{#if title}<span class='title'>{title}</span>{/if}
 		<svg
-			style='position:absolute; left:calc(50% - {w/2}px); bottom:0; overflow:visible; pointer-events:none'
+			style='position:absolute; left:calc(50% - {w/2}px); bottom:0.5; overflow:visible; pointer-events:none'
 			width={w} height={r}>
 			<path d={svg_paths.flares(r)} transform='rotate(180 {w/2} {r/2})' fill='var(--accent)' />
 		</svg>

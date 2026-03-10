@@ -10,7 +10,7 @@
 
 	const { w_accent_color } = colors;
 	const { w_precision, w_line_thickness, w_edge_color } = stores;
-
+	const chevron_url = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23999'/%3E%3C/svg%3E\")";
 	const imperial_ticks = ['foot', 'inch', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64'];
 	const decimal_ticks  = ['whole', '1', '2', '3'];
 
@@ -33,7 +33,7 @@
 </script>
 
 <div class='unit-system'>
-	<select class='units-select' value={$w_unit_system} onchange={handle_unit_change}>
+	<select class='units-select' style:background-image={chevron_url} value={$w_unit_system} onchange={handle_unit_change}>
 		{#each Object.values(T_Units) as system}
 			<option value={system}>{system}</option>
 		{/each}
@@ -86,9 +86,9 @@
 
 <style>
 	.unit-system {
+		gap             : var(--l-gap-small);
 		justify-content : flex-end;
 		display         : flex;
-		gap             : var(--l-gap-small);
 	}
 
 	.action-btn {
@@ -97,12 +97,12 @@
 		border-radius : var(--corner-common);
 		font-size     : var(--h-font-common);
 		z-index       : var(--z-action);
+		background    : var(--c-white);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
 		white-space   : nowrap;
 		padding       : 0 8px;
-		background    : var(--c-white);
 	}
 
 	.action-btn:global([data-hit]) {
@@ -122,10 +122,10 @@
 	.precision-group {
 		z-index        : var(--z-action);
 		gap            : var(--l-gap);
+		margin-bottom  : var(--l-gap);
 		position       : relative;
 		flex-direction : column;
 		margin-top     : -8px;
-		margin-bottom  : var(--l-gap);
 		display        : flex;
 	}
 
@@ -133,25 +133,26 @@
 		border         : var(--th-border) solid currentColor;
 		height         : var(--h-button-common);
 		border-radius  : var(--corner-common);
+		background     : var(--c-white);
 		box-sizing     : border-box;
 		overflow       : hidden;
 		display        : flex;
 	}
 
 	.segment {
+		border         : none;
+		background     : var(--c-white);
 		border-right   : var(--th-border) solid currentColor;
-		color          : rgba(0, 0, 0, 0.5);
 		font-size      : var(--h-font-small);
 		z-index        : var(--z-action);
-		cursor         : pointer;
 		flex           : 1 1 auto;
+		cursor         : pointer;
 		white-space    : nowrap;
 		text-align     : center;
 		align-items    : center;
 		justify-content: center;
-		border         : none;
-		background     : var(--c-white);
 		display        : flex;
+		opacity        : 0.5;
 		padding        : 0;
 	}
 
@@ -160,18 +161,19 @@
 	}
 
 	.segment:global([data-hit]) {
-		color      : var(--c-black);
 		background : var(--selected);
+		color      : var(--c-black);
+		opacity    : 1;
 	}
 
 	.segment.active {
-		opacity    : 1;
-		color      : var(--c-black);
 		background : var(--selected);
+		color      : var(--c-black);
+		opacity    : 1;
 	}
 
 	.units-select {
-		background-image   : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23999'/%3E%3C/svg%3E");
+		background         : var(--c-white);
 		border             : var(--th-border) solid currentColor;
 		height             : var(--h-button-common);
 		border-radius      : var(--corner-common);
@@ -183,16 +185,12 @@
 		background-repeat  : no-repeat;
 		color              : inherit;
 		cursor             : pointer;
-		background         : var(--c-white);
-		outline            : none;
-		appearance         : none;
 		-webkit-appearance : none;
 	}
 
 	.units-select:hover {
-		background       : var(--selected);
+		background-color : var(--selected);
 		color            : var(--c-black);
-		background-image : none;
 	}
 
 	.units-select:focus,
@@ -205,9 +203,9 @@
 
 	.slider-group {
 		z-index        : var(--z-action);
+		margin-top     : var(--l-gap);
 		position       : relative;
 		align-items    : center;
-		margin-top     : var(--l-gap);
 		display        : flex;
 		gap            : 8px;
 	}
@@ -225,9 +223,9 @@
 
 	.slider-group input[type='range']::-webkit-slider-runnable-track {
 		background    : rgba(0, 0, 0, 0.15);
+		border-radius : var(--corner-input);
 		height        : var(--th-track);
 		border        : none;
-		border-radius : var(--corner-input);
 	}
 
 	.slider-group input[type='range']::-webkit-slider-thumb {
@@ -242,9 +240,9 @@
 
 	.slider-group input[type='range']::-moz-range-track {
 		background    : rgba(0, 0, 0, 0.15);
+		border-radius : var(--corner-input);
 		height        : var(--th-track);
 		border        : none;
-		border-radius : var(--corner-input);
 	}
 
 	.slider-group input[type='range']::-moz-range-thumb {

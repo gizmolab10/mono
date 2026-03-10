@@ -82,7 +82,7 @@
 		child_so.visible = true;
 
 		// Write .s and .l formulas on the two non-forward axes
-		const forward_face = get(stores.w_front_face);
+		const forward_face = get(stores.w_forward_face);
 		if (forward_face < 0) return;
 		const forward_axis = Math.floor(forward_face / 2);
 		const parent_id = child_so.scene?.parent?.so.id;
@@ -164,15 +164,15 @@
 	}
 
 	.segmented button:hover:not(.active) {
-		background : var(--bg);
+		background : var(--selected);
 	}
 
 
 	.settings {
+		gap        : var(--l-gap-small);
 		margin-top : var(--l-gap);
 		flex-wrap  : wrap;
 		display    : flex;
-		gap        : var(--l-gap-small);
 	}
 
 	.action-btn {
@@ -181,10 +181,10 @@
 		border-radius : var(--corner-common);
 		font-size     : var(--h-font-common);
 		z-index       : var(--z-action);
+		background    : var(--c-white);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
-		background    : var(--c-white);
 		padding       : 0 8px;
 	}
 

@@ -81,3 +81,14 @@ Note: `position` stays as `vec3` because it's passed directly to gl-matrix funct
 | Scene | `Point3[]` | `create({ vertices })` |
 
 `Point` and `Size` have useful methods (`offsetBy`, `vector_to`, `dividedInHalf`, etc.) that simplify coordinate math. The 3D equivalents follow the same patterns.
+
+---
+
+## Canvas setup
+
+Gotchas for crisp rendering on Retina displays.
+
+- **DPR scaling** — canvas buffer = logical size × `devicePixelRatio`, context scaled by dpr, CSS `width`/`height` set to logical pixels
+- **SO edges** — `lineWidth: 1`, `lineCap: square`, coordinates snapped to half-pixel grid (`Math.round(x) + 0.5`)
+- **Dimensional lines** — `lineWidth: 0.5` (1 physical pixel on 2× Retina)
+- **Text** — coordinates rounded to integers for crisp glyph placement

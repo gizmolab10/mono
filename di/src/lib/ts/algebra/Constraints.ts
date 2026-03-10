@@ -84,7 +84,7 @@ const invariant_formulas: Record<string, string> = {
 	Z: 'z + h',
 };
 
-// Translation maps: concrete ↔ agnostic per owning axis
+// Translation maps: concrete ⟳ agnostic per owning axis
 // to_agnostic[axis]['x'] = 's' (same-axis bare), to_agnostic[axis]['d'] = 'y.l' (cross-axis qualified)
 // to_explicit[axis]['s'] = 'x' (bare → concrete), to_explicit[axis]['y.l'] = 'd' (qualified → concrete)
 const axis_letters = ['x', 'y', 'z'];

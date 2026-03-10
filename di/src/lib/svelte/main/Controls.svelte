@@ -8,7 +8,7 @@
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 
-	const { w_view_mode, w_decorations, w_solid, w_show_details, w_front_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
+	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 	const separator_length = k.height.controls;
 
@@ -34,18 +34,6 @@
 	</button>
 {/snippet}
 
-{#snippet other_buttons()}
-	<button class='toolbar-btn' use:hit_target={{ id: 'save', onpress: save }}>save</button>
-	<button class='toolbar-btn' disabled={root_fits} use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
-	<button class='toolbar-btn gap-after' class:active={$w_allow_editing} use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ↔</button>
-{/snippet}
-
-{#snippet ham_sep_other()}
-	{@render hamburger_button()}
-	<Separator vertical kind="main" margin={7} z_layer={T_Layer.cheat} />
-	{@render other_buttons()}
-{/snippet}
-
 {#snippet decoration_buttons()}
 	<div class='segmented'>
 		<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>
@@ -56,16 +44,20 @@
 
 {#snippet mode_buttons()}
 	{@render decoration_buttons()}
-	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ↔</button>
-	<button class='toolbar-btn gap-after' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ↔</button>
+	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
+	<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 {/snippet}
 
 {#snippet face_buttons()}
 	<div class='segmented'>
 		{#each face_labels as label, i}
-			<button class='seg' class:front={$w_front_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
+			<button class='seg' class:forward={$w_forward_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
 		{/each}
 	</div>
+	{@render face_accessory_buttons()}
+{/snippet}
+
+{#snippet face_accessory_buttons()}
 	<button class='toolbar-btn' disabled={is_straightened} use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	<button class='toolbar-btn snap-btn' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
 {/snippet}
@@ -80,60 +72,66 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
-				<Separator vertical kind="main" margin={7} z_layer={T_Layer.cheat} />
+				<Separator vertical kind="main" margin={7.5} z_layer={T_Layer.cheat} />
 				<span class='spacer'></span>
-				<button class='toolbar-btn' disabled={is_straightened} use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
-				<button class='toolbar-btn snap-btn' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
-				<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ↔</button>
+				{@render face_accessory_buttons()}
+				<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" margin={7} />
+			<Separator kind="main" margin={7.5} />
 			<div class='right-row'>
 				<div class='segmented'>
 					{#each face_labels as label, i}
-						<button class='seg' class:front={$w_front_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
+						<button class='seg' class:forward={$w_forward_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
 					{/each}
 				</div>
 			</div>
-			<Separator kind="main" margin={7} />
+			<Separator kind="main" margin={7.5} />
 			<div class='right-row'>
 				{@render decoration_buttons()}
-				<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ↔</button>
+				<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
 			</div>
 		</div>
 	{:else if wrap_mobile}
 		<div class='right-col'>
 			<div class='right-row'>
-				{@render ham_sep_other()}
+				{@render hamburger_button()}
+				<Separator vertical kind="main" margin={7.5} z_layer={T_Layer.cheat} />
 				<span class='spacer'></span>
-				{@render face_buttons()}
+				{@render mode_buttons()}
 				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" margin={7} />
+			<Separator kind="main" margin={7.5} />
 			<div class='right-row'>
-				{@render mode_buttons()}
+				{@render face_buttons()}
 			</div>
 		</div>
 	{:else}
 		{@render hamburger_button()}
 		<Separator vertical kind="main" length={k.height.button.common + 14} margin={-9} z_layer={T_Layer.cheat} />
-		{@render other_buttons()}
+		<button class='toolbar-btn' use:hit_target={{ id: 'save', onpress: save }}>save</button>
+		<button class='toolbar-btn' class:active={$w_allow_editing} use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
+		{#if $w_allow_editing && !root_fits}
+			<button class='toolbar-btn' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
+		{/if}
+		<div style:width='var(--l-gap)'></div>
 		<Separator vertical kind="main" length={separator_length} margin={0} />
 		<span class='spacer'></span>
 		{@render face_buttons()}
 		<span class='spacer'></span>
 		<Separator vertical kind="main" length={separator_length} margin={0} />
 		{@render mode_buttons()}
+		<div style:width='var(--l-gap-small)'></div>
 	{/if}
 </div>
 
 <style>
 	.controls {
+		padding         : 0 var(--l-gap-small);
 		box-sizing      : border-box;
 		justify-content : flex-end;
 		overflow        : visible;
 		align-items     : center;
-		padding         : 0 6px;
 		width           : 100%;
 		display         : flex;
 	}
@@ -215,7 +213,7 @@
 	}
 
 	.toolbar-btn.active {
-		background : var(--c-white);
+		background : var(--selected);
 		color      : var(--c-black);
 	}
 
@@ -254,21 +252,21 @@
 		height        : var(--h-button-segment);
 		border-radius : var(--corner-common);
 		z-index       : var(--z-action);
+		margin-left   : var(--l-gap);
 		box-sizing    : border-box;
 		overflow      : hidden;
 		display       : flex;
-		margin-left   : var(--l-margin);
 	}
 
 	.seg {
+		border      : none;
 		padding     : 0 var(--l-padding) 1px var(--l-padding);
 		border-right: var(--th-border) solid currentColor;
 		color       : rgba(0, 0, 0, 0.35);
 		font-size   : var(--h-font-common);
+		background  : var(--c-white);
 		box-sizing  : border-box;
 		cursor      : pointer;
-		background  : var(--c-white);
-		border      : none;
 		height      : 100%;
 	}
 
@@ -276,7 +274,7 @@
 		border-right : none;
 	}
 
-	.seg.front {
+	.seg.forward {
 		background : var(--selected);
 		color      : var(--c-black);
 	}

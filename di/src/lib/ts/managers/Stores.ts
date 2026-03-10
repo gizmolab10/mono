@@ -12,9 +12,9 @@ class Stores {
 	w_selection			= writable<Hit_3D_Result | null>(null);
 	w_editing			= writable<T_Editing>(T_Editing.none);
 	w_all_sos			= writable<Smart_Object[]>([]);
-	w_front_face		= writable<number>(-1);
 	w_tick				= writable<number>(0);
 	w_library			= writable<number>(0);
+	w_forward_face		= writable<number>(-1);
 	w_collapsed_ids		= writable<Set<string>>(new Set());
 
 	// Persistent

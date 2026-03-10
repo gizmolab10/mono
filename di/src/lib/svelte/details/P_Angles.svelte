@@ -4,7 +4,7 @@
 	import { engine } from '../../ts/render';
 	import type { Axis_Name } from '../../ts/types/Types';
 
-	const { w_selection, w_tick, w_front_face } = stores;
+	const { w_selection, w_tick, w_forward_face } = stores;
 
 	let selected_so = $derived($w_selection?.so ?? null);
 	let is_root = $derived(!selected_so?.scene?.parent);
@@ -15,7 +15,7 @@
 
 	$effect(() => {
 		$w_tick;
-		$w_front_face;
+		$w_forward_face;
 		if (!selected_so) return;
 		const face = hits_3d.front_most_face(selected_so);
 		if (face >= 0) rot_axis = FACE_TO_AXIS[face];

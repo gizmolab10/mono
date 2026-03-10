@@ -471,7 +471,7 @@ class Engine {
 		const face = hits_3d.front_most_face(this.root_scene.so);
 		if (face !== this._last_front_face) {
 			this._last_front_face = face;
-			stores.w_front_face.set(face);
+			stores.w_forward_face.set(face);
 		}
 	}
 

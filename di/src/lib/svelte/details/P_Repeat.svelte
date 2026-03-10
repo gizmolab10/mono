@@ -223,7 +223,7 @@
 					</div>
 				</div>
 				<button class='action-btn fireblocks-btn' class:active={has_firewall} onclick={toggle_firewall}>
-					{has_firewall ? 'fireblocks ↔' : 'no fireblocks ↔'}
+					{has_firewall ? 'fireblocks ⟳' : 'no fireblocks ⟳'}
 				</button>
 			</div>
 		{:else}
