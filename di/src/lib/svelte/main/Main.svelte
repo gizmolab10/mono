@@ -24,7 +24,8 @@
 	const radius = gap * 3;
 
 	let controlsHeight = $state(k.height.controls);
-	let detailsWidth   = $derived(k.width.details - gap * 2);
+	let wrap_phone     = $derived(width < k.width.wrap_phone);
+	let detailsWidth   = $derived(wrap_phone ? width - gap * 2 : k.width.details - gap * 2);
 	let showBuildNotes = $state(false);
 
 	// Computed dimensions
@@ -34,6 +35,19 @@
 	function handleResize() {
 		width  = window.innerWidth;
 		height = window.innerHeight;
+	}
+
+	// Swipe gesture → toggle details
+	let touch_x = 0;
+	let touch_y = 0;
+	function ontouchstart(e: TouchEvent) { touch_x = e.touches[0].clientX; touch_y = e.touches[0].clientY; }
+	function ontouchend(e: TouchEvent) {
+		const dx = e.changedTouches[0].clientX - touch_x;
+		const dy = e.changedTouches[0].clientY - touch_y;
+		if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 2) {
+			if (dx > 0 && !$w_show_details) stores.toggle_details();
+			if (dx < 0 && $w_show_details) stores.toggle_details();
+		}
 	}
 </script>
 
@@ -48,7 +62,9 @@
 	style:width            = '{width}px'
 	style:height           = '{height}px'
 	style:--radius         = '{radius}px'
-	style:background-color = 'var(--accent)'>
+	style:background-color = 'var(--accent)'
+	{ontouchstart}
+	{ontouchend}>
 	{#if showBuildNotes}
 		<!-- Build notes: single empty region fills entire space -->
 		<div

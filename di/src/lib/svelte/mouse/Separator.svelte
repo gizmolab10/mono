@@ -1,7 +1,9 @@
 <script lang='ts'>
 	import { T_Hit_Target, T_Layer } from '../../ts/types/Enumerations';
 	import S_Hit_Target from '../../ts/state/S_Hit_Target';
+	import { svg_paths } from '../../ts/draw/SVG_Paths';
 	import { hits } from '../../ts/managers/Hits';
+	import { k } from '../../ts/common/Constants';
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import { onMount } from 'svelte';
 
@@ -12,17 +14,17 @@
 		length    = 0,
 		margin    = 11,
 		vertical  = false,
-		kind      = 'content' as 'content' | 'banners' | 'main',
 		z_layer   = T_Layer.layout,
+		kind      = 'content' as 'content' | 'banners' | 'main',
 	}: {
 		title?     : string;
 		end?       : number;
 		length?    : number;
 		margin?    : number;
-		kind?      : 'content' | 'banners' | 'main';
 		vertical?  : boolean;
-		onclick?   : () => void;
 		z_layer?   : T_Layer;
+		onclick?   : () => void;
+		kind?      : 'content' | 'banners' | 'main';
 	} = $props();
 
 	const css_var: Record<string, string> = {
@@ -30,6 +32,9 @@
 		banners: '--th-thin-sep',
 		main:    '--th-sep',
 	};
+
+	const r = k.thickness.separator[kind] * 3.2;
+	const w = r * 7 / 3;
 
 	// ── Hits system ──
 
@@ -55,17 +60,25 @@
 {#if vertical}
 	<button
 		bind:this={element}
-		style:--th='var({css_var[kind]})'
 		style:--m='{margin}px'
 		style:z-index={z_layer}
 		class='separator vertical'
 		class:clickable={!!onclick}
 		style:--e='{margin + end}px'
-		style:height={length ? `${length}px` : undefined}
-		style:align-self={length ? undefined : 'stretch'}>
-		<div class='flare left'></div>
+		style:--th='var({css_var[kind]})'
+		style:align-self={length ? undefined : 'stretch'}
+		style:height={length ? `${length + 1}px` : undefined}>
+		<svg
+			style='position:absolute; left:calc(50% - {w/2}px); top:0; overflow:visible; pointer-events:none'
+			width={w} height={r}>
+			<path d={svg_paths.flares(r)} fill='var(--accent)' />
+		</svg>
 		{#if title}<span class='title'>{title}</span>{/if}
-		<div class='flare right'></div>
+		<svg
+			style='position:absolute; left:calc(50% - {w/2}px); bottom:0; overflow:visible; pointer-events:none'
+			width={w} height={r}>
+			<path d={svg_paths.flares(r)} transform='rotate(180 {w/2} {r/2})' fill='var(--accent)' />
+		</svg>
 	</button>
 {:else}
 	<button
@@ -76,9 +89,17 @@
 		class:clickable={!!onclick}
 		style:--e='{margin + end}px'
 		class='separator horizontal'>
-		<div class='flare top'></div>
+		<svg
+			style='position:absolute; left:{-w/4 - 1}px; top:calc(50% - {r/2}px); overflow:visible; pointer-events:none'
+			width={w} height={r}>
+			<path d={svg_paths.flares(r)} transform='rotate(-90 {w/2} {r/2})' fill='var(--accent)' />
+		</svg>
 		{#if title}<span class='title'>{title}</span>{/if}
-		<div class='flare bottom'></div>
+		<svg
+			style='position:absolute; right:{-w/4 - 1}px; top:calc(50% - {r/2}px); overflow:visible; pointer-events:none'
+			width={w} height={r}>
+			<path d={svg_paths.flares(r)} transform='rotate(90 {w/2} {r/2})' fill='var(--accent)' />
+		</svg>
 	</button>
 {/if}
 
@@ -106,10 +127,10 @@
 	}
 
 	.horizontal::before {
-		top   : calc(-1 * var(--r));
-		bottom: calc(-1 * var(--r));
-		right : 0;
-		left  : 0;
+		left  : calc(-1 * var(--r));
+		right : calc(-1 * var(--r));
+		top   : 0;
+		bottom: 0;
 	}
 
 	.vertical {
@@ -118,22 +139,11 @@
 	}
 
 	.vertical::before {
-		right : calc(-1 * var(--r));
-		left  : calc(-1 * var(--r));
-		bottom: 0;
 		top   : 0;
+		bottom: 0;
+		left  : 0;
+		right : 0;
 	}
-
-	.flare {
-		z-index    : inherit;
-		background : var(--bg);
-		position   : absolute;
-	}
-
-	.flare.left   { right: 100%;  top: 0;  bottom: 0; width: var(--r); border-radius: 0 var(--r) var(--r) 0; }
-	.flare.right  { left: 100%;   top: 0;  bottom: 0; width: var(--r); border-radius: var(--r) 0 0 var(--r); }
-	.flare.top    { bottom: 100%; left: 0; right: 0; height: var(--r); border-radius: 0 0 var(--r) var(--r); }
-	.flare.bottom { top: 100%;    left: 0; right: 0; height: var(--r); border-radius: var(--r) var(--r) 0 0; }
 
 	.clickable {
 		cursor : pointer;

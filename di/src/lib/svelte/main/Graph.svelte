@@ -268,7 +268,7 @@
 			onblur       = {on_ang_blur}
 		/>
 	{/if}
-	{#if $w_s_face_label}
+{#if $w_s_face_label}
 		<input
 			bind:this    = {label_input}
 			class        = 'label-edit'

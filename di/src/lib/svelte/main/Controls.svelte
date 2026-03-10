@@ -46,12 +46,16 @@
 	{@render other_buttons()}
 {/snippet}
 
-{#snippet mode_buttons()}
+{#snippet decoration_buttons()}
 	<div class='segmented'>
 		<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>
 		<button class='seg' class:active={show_dimensions} use:hit_target={{ id: 'dimensionals', onpress: () => stores.toggle_dimensionals() }}>dimensions</button>
 		<button class='seg' class:active={show_angles} use:hit_target={{ id: 'angulars', onpress: () => stores.toggle_angulars() }}>angles</button>
 	</div>
+{/snippet}
+
+{#snippet mode_buttons()}
+	{@render decoration_buttons()}
 	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ↔</button>
 	<button class='toolbar-btn gap-after' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ↔</button>
 {/snippet}
@@ -69,9 +73,9 @@
 <div
 	class:wrap_mobile
 	class            = 'controls'
-	bind:clientWidth = {controls_width}
+	style:background = 'var(--bg)'
 	style:color      = 'var(--text)'
-	style:background = 'var(--bg)'>
+	bind:clientWidth = {controls_width}>
 	{#if wrap_phone}
 		<div class='right-col'>
 			<div class='right-row'>
@@ -83,7 +87,7 @@
 				<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ↔</button>
 				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" margin={6} />
+			<Separator kind="main" margin={7} />
 			<div class='right-row'>
 				<div class='segmented'>
 					{#each face_labels as label, i}
@@ -91,13 +95,9 @@
 					{/each}
 				</div>
 			</div>
-			<Separator kind="main" margin={6} />
+			<Separator kind="main" margin={7} />
 			<div class='right-row'>
-				<div class='segmented'>
-					<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>
-					<button class='seg' class:active={show_dimensions} use:hit_target={{ id: 'dimensionals', onpress: () => stores.toggle_dimensionals() }}>dimensions</button>
-					<button class='seg' class:active={show_angles} use:hit_target={{ id: 'angulars', onpress: () => stores.toggle_angulars() }}>angles</button>
-				</div>
+				{@render decoration_buttons()}
 				<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ↔</button>
 			</div>
 		</div>
@@ -109,7 +109,7 @@
 				{@render face_buttons()}
 				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" margin={6} />
+			<Separator kind="main" margin={7} />
 			<div class='right-row'>
 				{@render mode_buttons()}
 			</div>

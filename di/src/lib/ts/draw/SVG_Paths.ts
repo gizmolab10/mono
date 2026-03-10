@@ -5,6 +5,11 @@ export class SVG_Paths {
 
 	private rotated(p: Point, angle: number): Point { const [rx, ry] = Angle.rotate_xy(p.x, p.y, angle); return new Point(rx, ry); }
 
+	flares(r: number) {
+		const w = r * 7 / 3
+		return `M 0 0 H ${w} A ${r} ${r} 0 0 0 ${w - r} ${r} H ${r} A ${r} ${r} 0 0 0 0 0 Z`
+	}
+
 	circle(center: Point, radius: number, clockwise: boolean = true): string {
 		const direction = clockwise ? 0 : 1;
 		const diametric_move = radius * 2 * (clockwise ? 1 : -1);
