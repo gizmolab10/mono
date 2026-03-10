@@ -87,10 +87,10 @@ export default class Constants {
 			banners: common_size / 6,
 			main:	 common_size / 5,
 		},
-		tick:        1,
-		track:       4,
+		thumb:       common_size / 6,
+		track:       common_size / 8,
 		border:      0.5,
-		thumb:       common_size / 4,
+		tick:        1,
 	};
 
 	height = {

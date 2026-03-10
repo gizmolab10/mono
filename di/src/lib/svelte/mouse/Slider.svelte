@@ -1,61 +1,78 @@
 <script lang='ts'>
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
 	import S_Hit_Target from '../../ts/state/S_Hit_Target';
+	import { Identifiable } from '../../ts/runtime';
+	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import Steppers from './Steppers.svelte';
-	import { colors } from '../../ts/draw/Colors';
 	import { onMount } from 'svelte';
 
 	let {
-		min = 0.1,
-		max = 10,
-		value = 1,
-		logarithmic = false,
-		divisions = 200,
-		width = 120,
-		height = 20,
-		show_value = false,
-		show_steppers = true,
-		style = 'line',
+		sticky,
 		onstep,
 		onchange,
+		max = 10,
+		min = 0.1,
+		value = 1,
+		width = 120,
+		height = 20,
+		fill = false,
+		style = 'line',
+		divisions = 200,
+		show_value = false,
+		logarithmic = false,
+		show_steppers = true,
+		sticky_threshold = 1,
 	}: {
 		min?: number;
 		max?: number;
 		value?: number;
-		logarithmic?: boolean;
-		divisions?: number;
 		width?: number;
+		fill?: boolean;
 		height?: number;
+		sticky?: number[];
+		divisions?: number;
 		show_value?: boolean;
+		logarithmic?: boolean;
 		show_steppers?: boolean;
 		style?: 'pill' | 'line';
-		onstep?: (pointsUp: boolean, isLong: boolean) => void;
+		sticky_threshold?: number;
 		onchange: (value: number) => void;
+		onstep?: (pointsUp: boolean, isLong: boolean) => void;
 	} = $props();
 
+	const { w_accent_color } = colors;
 	const border = `1px solid ${colors.border}`;
-	const thumb_color_default = colors.thumb;
 
-	// Hit target for slider thumb
-	const sliderTarget = new S_Hit_Target(T_Hit_Target.control, 'slider-thumb');
-
-	let slider_input: HTMLInputElement | null = $state(null);
-	let is_dragging = $state(false);
+	// Hit target for slider thumb — unique ID per instance to avoid RBush collision
+	const sliderTarget = new S_Hit_Target(T_Hit_Target.control, `slider-${Identifiable.newID()}`);
 
 	// Logarithmic: map [0..divisions] to [log10(min)..log10(max)]
-	// Linear: map [0..divisions] to [0..max]
+	// Linear: map [0..divisions] to [min..max]
 	const log_min_val = $derived(logarithmic ? Math.log10(min) : 0);
 	const log_max_val = $derived(logarithmic ? Math.log10(max) : 0);
 	const log_range = $derived(log_max_val - log_min_val);
 	const step_size = $derived(
-		logarithmic ? log_range / divisions : max / divisions
+		logarithmic ? log_range / divisions : (max - min) / divisions
 	);
+
+	// Hover / sticky state
+	const { w_s_hover } = hits;
+	const hoverSlider = $derived($w_s_hover?.id === sliderTarget.id);
+	const is_sticky = $derived(!!sticky?.some(s => Math.abs(value - s) < 0.01));
+	const current_thumb_color = $derived(
+		(hoverSlider && !is_dragging) ? 'var(--selected)' : is_sticky ? 'var(--c-white)' : $w_accent_color
+	);
+
+	let slider_input: HTMLInputElement | null = $state(null);
+	let is_dragging = $state(false);
 
 	// Value → slider position (0..divisions)
 	let slider_value = $derived(
-		value <= min ? 0 : (logarithmic ? (Math.log10(value) - log_min_val) / step_size : value / step_size)
+		logarithmic
+			? (value <= min ? 0 : (Math.log10(value) - log_min_val) / step_size)
+			: Math.max(0, Math.min(divisions, (value - min) / step_size))
 	);
 
 	// Slider position → value
@@ -63,15 +80,27 @@
 		if (logarithmic) {
 			return Math.max(min, Math.pow(10, log_min_val + pos * step_size));
 		}
-		// For linear: round to 2 decimal places
-		const raw = pos * step_size;
-		return Math.max(min, Math.round(raw * 100) / 100);
+		const raw = min + pos * step_size;
+		return Math.max(min, Math.min(max, Math.round(raw * 100) / 100));
 	}
 
 	function on_input(e: Event) {
 		const target = e.target as HTMLInputElement;
 		const pos = parseFloat(target.value);
-		const new_value = position_to_value(pos);
+		let new_value = position_to_value(pos);
+		if (sticky) {
+			for (const s of sticky) {
+				if (Math.abs(new_value - s) < sticky_threshold) {
+					new_value = s;
+					// Force thumb to snapped position
+					const snapped_pos = logarithmic
+						? (Math.log10(new_value) - log_min_val) / step_size
+						: (new_value - min) / step_size;
+					target.value = String(snapped_pos);
+					break;
+				}
+			}
+		}
 		if (new_value !== value) {
 			onchange(new_value);
 		}
@@ -94,12 +123,12 @@
 		return ticks;
 	});
 
-	// Hover state
-	const { w_s_hover } = hits;
-	const hoverSlider = $derived($w_s_hover?.id === sliderTarget.id);
-	const current_thumb_color = $derived(
-		(hoverSlider || is_dragging) ? 'black' : thumb_color_default
-	);
+	// Tick marks for sticky values
+	const sticky_ticks = $derived.by(() => {
+		if (!sticky?.length) return [];
+		const range = max - min;
+		return sticky.map(s => ({ pct: (s - min) / range * 100 }));
+	});
 
 	// Register slider hit target
 	$effect(() => {
@@ -120,7 +149,7 @@
 	});
 </script>
 
-<div class='slider-compound'>
+<div class='slider-compound' class:fill>
 	<div class='slider-with-label'>
 		{#if logarithmic && show_value}
 			<span class='current-value'>{Math.log10(value).toFixed(1)}</span>
@@ -128,9 +157,10 @@
 		<div class='slider-border'
 			class:pill={style === 'pill'}
 			class:line={style === 'line'}
-			style:width="{width}px"
+			style:width={fill ? '100%' : `${width}px`}
 			style:--border={border}
 			style:--height="{height}px"
+			style:--thumb-height="{height * 0.8}px"
 			style:--thumb-color={current_thumb_color}>
 			<input class='slider-input'
 				min='0'
@@ -141,12 +171,17 @@
 				bind:this={slider_input}
 				oninput={on_input}
 				style='flex: 1 1 auto; position: relative; min-width: 0; pointer-events: auto;'/>
-			{#if logarithmic}
+			{#if logarithmic || sticky_ticks.length > 0}
 				<div class='tick-overlay'>
 					{#each log_ticks as tick}
 						<div class='tick' style:left="{tick.pct}%">
 							<div class='tick-line'></div>
 							<span class='tick-label'>{tick.label}</span>
+						</div>
+					{/each}
+					{#each sticky_ticks as tick}
+						<div class='tick' style:left="{tick.pct}%">
+							<div class='tick-line'></div>
 						</div>
 					{/each}
 				</div>
@@ -163,12 +198,13 @@
 	</div>
 	{#if show_steppers && onstep}
 		<div class='steppers-wrapper'>
-			<Steppers size={15} gap={-5} hit_closure={onstep} />
+			<Steppers size={20} gap={0} hit_closure={onstep} />
 		</div>
 	{/if}
 </div>
 
 <style>
+
 	.slider-compound {
 		display     : flex;
 		align-items : center;
@@ -177,6 +213,19 @@
 		overflow    : visible;
 		z-index     : var(--z-action);
 	}
+
+	.fill {
+		flex        : 1;
+		min-width   : 0;
+		margin-left : 0;
+	}
+
+	.fill .slider-with-label {
+		flex      : 1;
+		min-width : 0;
+		width     : 100%;
+	}
+
 	.slider-with-label {
 		display        : flex;
 		flex-direction : column;
@@ -185,6 +234,7 @@
 		position       : relative;
 		top            : -2px;
 	}
+
 	.current-value {
 		font-size            : var(--h-font-small);
 		font-weight          : bold;
@@ -195,6 +245,7 @@
 		margin-top           : 0;
 		margin-bottom        : -6px;
 	}
+
 	.slider-label {
 		font-size            : var(--h-font-small);
 		font-weight          : bold;
@@ -206,50 +257,57 @@
 		position             : relative;
 		top                  : 4px;
 	}
+
 	.slider-border {
 		position    : relative;
 		display     : flex;
 		align-items : center;
 		overflow    : visible;
 	}
+
 	.tick-overlay {
+		left           : calc(var(--h-slider) / 1.8);
+		right          : calc(var(--h-slider) / 1.8);
 		position       : absolute;
-		top            : 50%;
-		left           : 7px;
-		right          : 7px;
-		height         : 0;
 		overflow       : visible;
 		pointer-events : none;
+		top            : 50%;
+		height         : 0;
 	}
+
 	.tick {
 		position  : absolute;
 		transform : translateX(-50%);
 	}
+
 	.tick-line {
+		margin-top : calc(-1 * var(--th-track));
+		height     : calc(var(--th-track) * 2);
+		background : rgba(0, 0, 0, 0.5);
 		width      : 1px;
-		height     : var(--th-track);
-		margin-top : -2px;
-		background : rgba(0, 0, 0, 0.3);
 	}
+
 	.tick-label {
+		font-size   : var(--h-font-small);
+		transform   : translateX(-50%);
+		color       : var(--c-black);
 		position    : absolute;
+		text-align  : center;
+		white-space : nowrap;
+		user-select : none;
 		top         : 4px;
 		left        : 50%;
-		transform   : translateX(-50%);
-		font-size   : var(--h-font-small);
 		line-height : 1;
-		text-align  : center;
-		color       : var(--c-black);
-		user-select : none;
-		white-space : nowrap;
 	}
+
 	.value-display {
 		font-size    : var(--h-font-common);
 		margin-left  : var(--l-gap);
 		display      : inline-block;
-		width        : 3em;
 		text-align   : right;
+		width        : 3em;
 	}
+
 	.steppers-wrapper {
 		margin-left : -1px;
 	}
@@ -257,52 +315,59 @@
 	/* === Native range input styling === */
 
 	input[type='range'] {
-		appearance         : none;
 		height             : var(--height);
 		background         : transparent;
 		-webkit-appearance : none;
+		appearance         : none;
 	}
+
 	input[type='range']::-webkit-slider-runnable-track {
 		background    : var(--c-white);
-		border-radius : 16px;
 		height        : var(--height);
 		border        : var(--border);
+		border-radius : 16px;
 	}
+
 	input[type='range']::-webkit-slider-thumb {
-		border-radius      : 50%;
-		margin-top         : -1.1px;
+		background         : var(--thumb-color);
 		width              : var(--height);
 		height             : var(--height);
 		border             : var(--border);
+		margin-top         : -1.1px;
 		-webkit-appearance : none;
-		background         : var(--thumb-color);
+		border-radius      : 50%;
 	}
+
 	input[type='range']::-moz-range-thumb {
-		border-radius : 50%;
+		background    : var(--thumb-color);
 		width         : var(--height);
 		height        : var(--height);
 		border        : var(--border);
-		background    : var(--thumb-color);
+		border-radius : 50%;
 	}
+
 	input[type='range']::-moz-range-track {
 		background    : var(--c-white);
-		border-radius : 16px;
 		height        : var(--height);
 		border        : var(--border);
+		border-radius : 16px;
 	}
+
 	input[type='range']::-ms-fill-lower,
 	input[type='range']::-ms-fill-upper {
 		background    : var(--c-white);
-		border-radius : 16px;
 		border        : var(--border);
+		border-radius : 16px;
 	}
+
 	input[type='range']::-ms-thumb {
-		border-radius : 50%;
+		background    : var(--thumb-color);
 		width         : var(--height);
 		height        : var(--height);
 		border        : var(--border);
-		background    : var(--thumb-color);
+		border-radius : 50%;
 	}
+
 	input[type='range']:focus {
 		outline : none;
 	}
@@ -315,35 +380,41 @@
 		height        : var(--th-track);
 		border        : none;
 	}
+
 	.line input[type='range']::-webkit-slider-thumb {
+		margin-top : calc((var(--th-track) - var(--h-slider)) / 2);
+		border     : 1px solid rgba(0, 0, 0, 0.4);
+		background : var(--thumb-color);
 		width      : var(--h-slider);
 		height     : var(--h-slider);
-		margin-top : calc((var(--th-track) - var(--h-slider)) / 2);
-		background : var(--thumb-color);
-		border     : 1px solid rgba(0, 0, 0, 0.4);
 	}
+
 	.line input[type='range']::-moz-range-track {
 		background    : rgba(0, 0, 0, 0.15);
 		border-radius : var(--corner-input);
 		height        : var(--th-track);
 		border        : none;
 	}
+
 	.line input[type='range']::-moz-range-thumb {
+		border     : 1px solid rgba(0, 0, 0, 0.4);
+		background : var(--thumb-color);
 		width      : var(--h-slider);
 		height     : var(--h-slider);
-		background : var(--thumb-color);
-		border     : 1px solid rgba(0, 0, 0, 0.4);
 	}
+
 	.line input[type='range']::-ms-fill-lower,
 	.line input[type='range']::-ms-fill-upper {
 		background    : rgba(0, 0, 0, 0.15);
 		border-radius : var(--corner-input);
 		border        : none;
 	}
+
 	.line input[type='range']::-ms-thumb {
+		border     : 1px solid rgba(0, 0, 0, 0.4);
+		background : var(--thumb-color);
 		width      : var(--h-slider);
 		height     : var(--h-slider);
-		background : var(--thumb-color);
-		border     : 1px solid rgba(0, 0, 0, 0.4);
 	}
+
 </style>

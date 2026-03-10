@@ -4,13 +4,13 @@ import { preferences, T_Preference } from './Preferences';
 import { CURRENT_VERSION, versions } from './Versions';
 import { constants } from '../algebra/User_Constants';
 import { constraints } from '../algebra/Constraints';
-import { T_Hit_3D } from '../types/Enumerations';
 import Smart_Object from '../runtime/Smart_Object';
+import { T_Hit_3D } from '../types/Enumerations';
 import { Identifiable } from '../runtime';
 import { camera } from '../render/Camera';
-import { stores } from './Stores';
 import { scene } from '../render/Scene';
 import { hits_3d } from './Hits_3D';
+import { stores } from './Stores';
 
 /**
  * Scenes — save/load scene state to localStorage and filesystem

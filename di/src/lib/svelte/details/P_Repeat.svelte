@@ -5,6 +5,7 @@
 	import { w_unit_system, units } from '../../ts/types/Units';
 	import { T_Units } from '../../ts/types/Enumerations';
 	import { engine } from '../../ts/render';
+	import Slider from '../mouse/Slider.svelte';
 
 	const { w_all_sos, w_selection, w_tick, w_precision } = stores;
 
@@ -59,12 +60,8 @@
 	// Spacing slider constants
 	const SP_MIN_MM = 6 * INCH;
 	const SP_MAX_MM = 36 * INCH;
-	const SP_RANGE_MM = SP_MAX_MM - SP_MIN_MM;
 	const SP_TICK_MM = [6, 12, 16, 24, 36].map(i => i * INCH);
 	const SP_STICKY_MM = 0.5 * INCH;
-
-	function sp_to_pct(mm: number): number { return (mm - SP_MIN_MM) / SP_RANGE_MM * 100; }
-	function is_on_sp_tick(mm: number): boolean { return SP_TICK_MM.some(t => Math.abs(mm - t) < 0.5); }
 
 	function format_spacing(mm: number): string {
 		const inches = mm / INCH;
@@ -74,17 +71,12 @@
 	}
 
 	let spacing_mm = $derived.by(() => { $w_tick; return selected_so?.repeater?.spacing ?? GAP_MAX_MM; });
-	let sp_sticky = $derived(is_on_sp_tick(spacing_mm));
 
-	function set_spacing_slider(raw_mm: number) {
-		if (!selected_so?.repeater) return;
-		let val = raw_mm;
-		for (const t of SP_TICK_MM) {
-			if (Math.abs(val - t) < SP_STICKY_MM) { val = t; break; }
-		}
-		if (!SP_TICK_MM.includes(val)) val = Math.round(val / INCH) * INCH;
-		val = Math.max(SP_MIN_MM, Math.min(SP_MAX_MM, val));
-		set_spacing(val);
+	function handle_spacing(mm: number) {
+		// Slider already did sticky snap; round non-tick values to nearest inch
+		const is_tick = SP_TICK_MM.some(t => Math.abs(mm - t) < 0.01);
+		const val = is_tick ? mm : Math.round(mm / INCH) * INCH;
+		set_spacing(Math.max(SP_MIN_MM, Math.min(SP_MAX_MM, val)));
 	}
 
 	function mm_to_pct(mm: number): number { return (mm - GAP_MIN_MM) / GAP_RANGE_MM * 100; }
@@ -202,20 +194,15 @@
 		{#if !is_diagonal}
 			<div class='repeater-option-row'>
 				<div class='spacing-slider'>
-					<div class='slider-wrap'>
-						<div class='range-track'></div>
-						{#each SP_TICK_MM as tick}
-							<span class='tick' style:left="calc(var(--h-slider) / 2 + {sp_to_pct(tick)} * (100% - var(--h-slider)) / 100)"></span>
-						{/each}
-						<input type='range'
-							class='sp-input'
-							min={SP_MIN_MM} max={SP_MAX_MM} step='any'
-							value={spacing_mm}
-							style:--thumb-bg={sp_sticky ? 'var(--c-white)' : 'var(--c-thumb)'}
-							style:--thumb-border={sp_sticky ? '0.5px solid black' : 'none'}
-							oninput={(e) => set_spacing_slider(parseFloat((e.target as HTMLInputElement).value))}
-						/>
-					</div>
+					<Slider
+						min={SP_MIN_MM} max={SP_MAX_MM}
+						divisions={200}
+						value={spacing_mm}
+						fill style='line'
+						sticky={SP_TICK_MM}
+						sticky_threshold={SP_STICKY_MM}
+						onchange={handle_spacing}
+					/>
 					<div class='rise-endpoints'>
 						<span class='rise-endpoint' style:margin-left='2px'>6"</span>
 						<span class='slider-caption'>{format_spacing(spacing_mm)} spacing</span>
@@ -340,7 +327,7 @@
 	}
 
 	.segmented button:hover:not(.active) {
-		background : var(--bg);
+		background : var(--selected);
 	}
 
 	.action-btn {
@@ -396,10 +383,10 @@
 	}
 
 	.range-slider {
-		position       : relative;
-		margin         : -2px 0 0;
-		padding-top    : 15px;
-		flex           : 1;
+		position    : relative;
+		margin      : -2px 0 0;
+		padding-top : 15px;
+		flex        : 1;
 	}
 
 	.slider-caption {
@@ -460,7 +447,7 @@
 		top            : 50%;
 	}
 
-	:is(.range-slider, .spacing-slider) input[type='range'] {
+	.range-slider input[type='range'] {
 		height             : var(--h-button-common);
 		z-index            : var(--z-action);
 		background         : transparent;
@@ -474,9 +461,7 @@
 		margin             : 0;
 	}
 
-	.sp-input { pointer-events : auto; }
-
-	:is(.range-slider, .spacing-slider) input[type='range']::-webkit-slider-thumb {
+	.range-slider input[type='range']::-webkit-slider-thumb {
 		margin-top         : calc((var(--th-track) - var(--h-slider)) / 2);
 		background         : var(--thumb-bg, var(--c-thumb));
 		border             : var(--thumb-border, none);
@@ -488,7 +473,7 @@
 		border-radius      : 50%;
 	}
 
-	:is(.range-slider, .spacing-slider) input[type='range']::-moz-range-thumb {
+	.range-slider input[type='range']::-moz-range-thumb {
 		background     : var(--thumb-bg, var(--c-thumb));
 		border         : var(--thumb-border, none);
 		width          : var(--h-slider);
@@ -498,27 +483,27 @@
 		border-radius  : 50%;
 	}
 
-	:is(.range-slider, .spacing-slider) input[type='range']::-webkit-slider-runnable-track {
+	.range-slider input[type='range']::-webkit-slider-runnable-track {
 		height     : var(--th-track);
 		background : transparent;
 		border     : none;
 	}
 
-	:is(.range-slider, .spacing-slider) input[type='range']::-moz-range-track {
+	.range-slider input[type='range']::-moz-range-track {
 		height     : var(--th-track);
 		background : transparent;
 		border     : none;
 	}
 
-	:is(.range-slider, .spacing-slider) input[type='range']:focus {
+	.range-slider input[type='range']:focus {
 		outline : none;
 	}
 
-	:is(.range-slider, .spacing-slider) input[type='range']::-webkit-slider-thumb:hover {
+	.range-slider input[type='range']::-webkit-slider-thumb:hover {
 		background : var(--c-black);
 	}
 
-	:is(.range-slider, .spacing-slider) input[type='range']::-moz-range-thumb:hover {
+	.range-slider input[type='range']::-moz-range-thumb:hover {
 		background : var(--c-black);
 	}
 

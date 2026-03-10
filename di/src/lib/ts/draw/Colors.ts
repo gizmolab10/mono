@@ -25,17 +25,17 @@ import { stores } from '../managers/Stores';
 
 export class Colors {
 	// Static colors (non-reactive)
-	border                    = 'darkgray';
+	default_forThings         = 'blue';
 	default                   = 'black';
-	banner                    = '#f8f8f8';
-	disabled                  = 'lightGray';
 	background                = 'white';
 	graph_background          = 'white';
-	default_forThings         = 'blue';
-	thin_separator_line_color = '#999999';
-	focus                     = 'cornflowerblue';
-	thumb                     = '#007aff';
 	track                     = '#ccc';
+	border                    = 'darkgray';
+	banner                    = '#f8f8f8';
+	disabled                  = 'lightGray';
+	thin_separator_line_color = '#999999';
+	thumb                     = '#007aff';
+	focus                     = 'cornflowerblue';
 
 	// Reactive colors (stores)
 	w_thing_color      = writable<string | null>(null);
