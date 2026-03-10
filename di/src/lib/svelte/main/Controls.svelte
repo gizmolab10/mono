@@ -201,7 +201,7 @@
 
 	.toolbar-btn {
 		padding       : 0 var(--l-padding) 1px var(--l-padding);
-		border        : 0.5px solid currentColor;
+		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		font-size     : var(--h-font-common);
 		border-radius : var(--corner-common);
@@ -210,12 +210,12 @@
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
-		background    : white;
+		background    : var(--c-white);
 	}
 
 	.toolbar-btn.active {
-		background : white;
-		color      : black;
+		background : var(--c-white);
+		color      : var(--c-black);
 	}
 
 	.toolbar-btn:disabled {
@@ -225,7 +225,7 @@
 
 	.toolbar-btn:global([data-hit]) {
 		background : var(--selected);
-		color      : black;
+		color      : var(--c-black);
 	}
 
 	.snap-btn {
@@ -249,7 +249,7 @@
 	}
 
 	.segmented {
-		border        : 0.5px solid currentColor;
+		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-segment);
 		border-radius : var(--corner-common);
 		z-index       : var(--z-action);
@@ -261,12 +261,12 @@
 
 	.seg {
 		padding     : 0 var(--l-padding) 1px var(--l-padding);
-		border-right: 0.5px solid currentColor;
+		border-right: var(--th-border) solid currentColor;
 		color       : rgba(0, 0, 0, 0.35);
 		font-size   : var(--h-font-common);
 		box-sizing  : border-box;
 		cursor      : pointer;
-		background  : white;
+		background  : var(--c-white);
 		border      : none;
 		height      : 100%;
 	}
@@ -277,16 +277,16 @@
 
 	.seg.front {
 		background : var(--selected);
-		color      : black;
+		color      : var(--c-black);
 	}
 
 	.seg.active {
 		background : var(--selected);
-		color      : black;
+		color      : var(--c-black);
 	}
 
 	.seg:global([data-hit]) {
 		background : var(--selected);
-		color      : black;
+		color      : var(--c-black);
 	}
 </style>

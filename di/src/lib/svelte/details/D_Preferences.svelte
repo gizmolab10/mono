@@ -88,11 +88,11 @@
 	.unit-system {
 		justify-content : flex-end;
 		display         : flex;
-		gap             : 6px;
+		gap             : var(--l-gap-small);
 	}
 
 	.action-btn {
-		border        : 0.5px solid currentColor;
+		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		border-radius : var(--corner-common);
 		font-size     : var(--h-font-common);
@@ -102,12 +102,12 @@
 		color         : inherit;
 		white-space   : nowrap;
 		padding       : 0 8px;
-		background    : white;
+		background    : var(--c-white);
 	}
 
 	.action-btn:global([data-hit]) {
 		background : var(--selected);
-		color      : black;
+		color      : var(--c-black);
 	}
 
 	.right {
@@ -130,7 +130,7 @@
 	}
 
 	.segmented {
-		border         : 0.5px solid currentColor;
+		border         : var(--th-border) solid currentColor;
 		height         : var(--h-button-common);
 		border-radius  : var(--corner-common);
 		box-sizing     : border-box;
@@ -139,7 +139,7 @@
 	}
 
 	.segment {
-		border-right   : 0.5px solid currentColor;
+		border-right   : var(--th-border) solid currentColor;
 		color          : rgba(0, 0, 0, 0.5);
 		font-size      : var(--h-font-small);
 		z-index        : var(--z-action);
@@ -150,29 +150,29 @@
 		align-items    : center;
 		justify-content: center;
 		border         : none;
-		background     : white;
+		background     : var(--c-white);
 		display        : flex;
 		padding        : 0;
 	}
 
 	.segment:last-child {
-		border-right : 0.5px solid transparent;
+		border-right : var(--th-border) solid transparent;
 	}
 
 	.segment:global([data-hit]) {
-		color      : black;
+		color      : var(--c-black);
 		background : var(--selected);
 	}
 
 	.segment.active {
 		opacity    : 1;
-		color      : black;
+		color      : var(--c-black);
 		background : var(--selected);
 	}
 
 	.units-select {
 		background-image   : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23999'/%3E%3C/svg%3E");
-		border             : 0.5px solid currentColor;
+		border             : var(--th-border) solid currentColor;
 		height             : var(--h-button-common);
 		border-radius      : var(--corner-common);
 		font-size          : var(--h-font-common);
@@ -183,7 +183,7 @@
 		background-repeat  : no-repeat;
 		color              : inherit;
 		cursor             : pointer;
-		background         : white;
+		background         : var(--c-white);
 		outline            : none;
 		appearance         : none;
 		-webkit-appearance : none;
@@ -191,13 +191,13 @@
 
 	.units-select:hover {
 		background       : var(--selected);
-		color            : black;
+		color            : var(--c-black);
 		background-image : none;
 	}
 
 	.units-select:focus,
 	.units-select:focus-visible {
-		border     : 0.5px solid currentColor;
+		border     : var(--th-border) solid currentColor;
 		box-shadow : none;
 		outline    : none;
 	}
@@ -227,7 +227,7 @@
 		background    : rgba(0, 0, 0, 0.15);
 		height        : var(--th-track);
 		border        : none;
-		border-radius : 2px;
+		border-radius : var(--corner-input);
 	}
 
 	.slider-group input[type='range']::-webkit-slider-thumb {
@@ -235,7 +235,7 @@
 		border             : 1px solid rgba(0, 0, 0, 0.4);
 		width              : var(--h-slider);
 		height             : var(--h-slider);
-		background         : #007aff;
+		background         : var(--c-thumb);
 		-webkit-appearance : none;
 		border-radius      : 50%;
 	}
@@ -244,14 +244,14 @@
 		background    : rgba(0, 0, 0, 0.15);
 		height        : var(--th-track);
 		border        : none;
-		border-radius : 2px;
+		border-radius : var(--corner-input);
 	}
 
 	.slider-group input[type='range']::-moz-range-thumb {
 		border        : 1px solid rgba(0, 0, 0, 0.4);
 		width         : var(--h-slider);
 		height        : var(--h-slider);
-		background    : #007aff;
+		background    : var(--c-thumb);
 		border-radius : 50%;
 	}
 
@@ -273,7 +273,7 @@
 	}
 
 	.color-group input[type='color'] {
-		border             : 0.5px solid currentColor;
+		border             : var(--th-border) solid currentColor;
 		width              : var(--h-button-common);
 		height             : var(--h-button-common);
 		z-index            : var(--z-action);

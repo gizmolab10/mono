@@ -160,7 +160,7 @@
 		position       : absolute;
 		text-align     : center;
 		white-space    : nowrap;
-		letter-spacing : 0.5px;
+		letter-spacing : var(--l-letter-spacing);
 		padding        : 0 4px;
 		opacity        : 0.6;
 		top            : 50%;

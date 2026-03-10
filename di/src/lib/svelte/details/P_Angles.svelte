@@ -181,7 +181,7 @@
 	.rotation-row {
 		display     : flex;
 		align-items : center;
-		gap         : 6px;
+		gap         : var(--l-gap-small);
 	}
 
 	.slider-label {
@@ -193,16 +193,16 @@
 	.far-right {
 		margin-left : auto;
 		display     : flex;
-		gap         : 6px;
+		gap         : var(--l-gap-small);
 	}
 
 	.action-btn {
-		border        : 0.5px solid currentColor;
+		border        : var(--th-border) solid currentColor;
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
 		white-space   : nowrap;
-		background    : white;
+		background    : var(--c-white);
 		padding       : 0 8px;
 		border-radius : var(--corner-common);
 		font-size     : var(--h-font-common);
@@ -228,8 +228,8 @@
 		accent-color       : var(--selected);
 		-webkit-appearance : none;
 		appearance         : none;
-		background         : #ccc;
-		border-radius      : 2px;
+		background         : var(--c-track);
+		border-radius      : var(--corner-input);
 	}
 
 	.rotation-slider::-webkit-slider-thumb {
@@ -253,13 +253,13 @@
 	}
 
 	.rotation-slider.sticky::-webkit-slider-thumb {
-		background : white;
-		border     : 0.5px solid black;
+		background : var(--c-white);
+		border     : var(--th-border) solid var(--c-black);
 	}
 
 	.rotation-slider.sticky::-moz-range-thumb {
-		background : white;
-		border     : 0.5px solid black;
+		background : var(--c-white);
+		border     : var(--th-border) solid var(--c-black);
 	}
 
 	.tick {
@@ -281,7 +281,7 @@
 	}
 
 	.angles td {
-		border  : 0.5px solid currentColor;
+		border  : var(--th-border) solid currentColor;
 		padding : 0;
 	}
 
@@ -308,7 +308,7 @@
 	.angle-cell {
 		width                : 100%;
 		border               : none;
-		background           : white;
+		background           : var(--c-white);
 		color                : inherit;
 		font-size            : inherit;
 		font-family          : inherit;
@@ -325,9 +325,9 @@
 	}
 
 	.angle-cell:focus {
-		background     : white;
-		color          : black;
-		outline        : 1.5px solid cornflowerblue;
+		background     : var(--c-white);
+		color          : var(--c-black);
+		outline        : var(--focus-outline);
 		outline-offset : -1.5px;
 	}
 

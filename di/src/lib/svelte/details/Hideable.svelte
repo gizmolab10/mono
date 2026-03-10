@@ -74,7 +74,7 @@
 		justify-content : center;
 		overflow        : hidden;
 		margin          : 3px 0;
-		letter-spacing  : 0.5px;
+		letter-spacing  : var(--l-letter-spacing);
 		display         : flex;
 		border          : none;
 		font-weight     : 300;

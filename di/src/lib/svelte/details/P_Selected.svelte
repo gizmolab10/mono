@@ -42,11 +42,11 @@
 	}
 
 	.segmented button {
-		border        : 0.5px solid currentColor;
+		border        : var(--th-border) solid currentColor;
 		cursor        : pointer;
 		color         : inherit;
 		white-space   : nowrap;
-		background    : white;
+		background    : var(--c-white);
 		padding       : 0 8px;
 		font-size     : var(--h-font-common);
 		height        : var(--h-button-segment);

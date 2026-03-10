@@ -57,7 +57,7 @@
 
 	.banner-add:hover {
 		background : var(--bg);
-		color      : black;
+		color      : var(--c-black);
 	}
 
 	.banner-zone::after {
@@ -78,7 +78,7 @@
 	}
 
 	.banner-add {
-		border          : 0.5px solid rgba(0, 0, 0, 0.3);
+		border          : var(--th-border) solid rgba(0, 0, 0, 0.3);
 		height          : var(--h-button-small);
 		width           : var(--h-button-small);
 		color           : rgba(0, 0, 0, 0.5);

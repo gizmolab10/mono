@@ -29,7 +29,7 @@ export default class Constants {
 	};
 
 	width = {
-		wrap_mobile : 1190,
+		wrap_mobile : 1200,
 		wrap_phone  : 770,
 		details     : 350,
 	};
@@ -37,13 +37,17 @@ export default class Constants {
 	corner = {
 		common: common_size / 2,
 		banner: common_size / 2,
+		input:  2,
 		box:    4,
 	};
 
 	layout = {
-		gap:     common_size / 5,
-		padding: common_size / 3,
-		margin:  common_size / 3.2,
+		margin:         common_size / 3.2,
+		padding:        common_size / 3,
+		padding_small:  common_size / 4,
+		gap:            common_size / 5,
+		gap_small:      common_size / 5.5,
+		letter_spacing: 0.5,
 	};
 
 	z = {
@@ -68,6 +72,7 @@ export default class Constants {
 		},
 		tick:        1,
 		track:       4,
+		border:      0.5,
 		thumb:       common_size / 4,
 	};
 
@@ -78,6 +83,7 @@ export default class Constants {
 		cell:        common_size / 2,
 		banner:      common_size,
 		font: {
+			edit:    common_size / 2.75,
 			small:   common_size / 2.5,
 			large:   common_size / 1.5,
 			common:  common_size / 2,

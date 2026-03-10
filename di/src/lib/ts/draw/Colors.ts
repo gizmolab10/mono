@@ -15,6 +15,9 @@ export class Colors {
 	graph_background          = 'white';
 	default_forThings         = 'blue';
 	thin_separator_line_color = '#999999';
+	focus                     = 'cornflowerblue';
+	thumb                     = '#007aff';
+	track                     = '#ccc';
 
 	// Reactive colors (stores)
 	w_thing_color      = writable<string | null>(null);

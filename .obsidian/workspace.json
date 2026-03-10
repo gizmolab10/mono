@@ -36,20 +36,6 @@
             }
           },
           {
-            "id": "90d3f68df7fb4fd0",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/components/Separators.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Separators"
-            }
-          },
-          {
             "id": "6c0c11236d1f13d7",
             "type": "leaf",
             "state": {
@@ -62,9 +48,23 @@
               "icon": "lucide-file",
               "title": "29.css.engine"
             }
+          },
+          {
+            "id": "976376d1ad191399",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/milestones/22.aesthetics.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "22.aesthetics"
+            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -228,16 +228,16 @@
   },
   "active": "6c0c11236d1f13d7",
   "lastOpenFiles": [
-    "di/notes/work/milestones/done/10.controls.md",
     "di/notes/work/milestones/22.aesthetics.md",
-    "di/notes/components/Separators.md",
+    "di/notes/work/milestones/29.css.engine.md",
     "di/notes/work/code.debt.md",
+    "di/notes/work/milestones/done/10.controls.md",
+    "di/notes/components/Separators.md",
     "di/notes/work/separators.md",
     "di/notes/components/separators.md",
     "di/notes/components/open?vault=mono&file=di:notes:work:separators.inetloc",
     "ws/vite.config.js.timestamp-1773084241728-1f4d4a23c7fd1.mjs",
     "di/src/lib/svelte/main/Controls.svelte copy",
-    "di/notes/work/milestones/29.css.engine.md",
     "CLAUDE.MD",
     "logs/update-docs.error.mono.log",
     "di/notes/work/milestones/done/15.attributes.md",

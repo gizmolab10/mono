@@ -211,7 +211,7 @@
 							min={SP_MIN_MM} max={SP_MAX_MM} step='any'
 							value={spacing_mm}
 							style:pointer-events='auto'
-							style:--thumb-bg={sp_sticky ? 'white' : '#007aff'}
+							style:--thumb-bg={sp_sticky ? 'var(--c-white)' : 'var(--c-thumb)'}
 							style:--thumb-border={sp_sticky ? '0.5px solid black' : 'none'}
 							oninput={(e) => set_spacing_slider(parseFloat((e.target as HTMLInputElement).value))}
 						/>
@@ -250,14 +250,14 @@
 						<input type='range'
 							min={GAP_MIN_MM} max={GAP_MAX_MM} step='any'
 							value={gap_min_mm}
-							style:--thumb-bg={min_sticky ? 'white' : '#007aff'}
+							style:--thumb-bg={min_sticky ? 'var(--c-white)' : 'var(--c-thumb)'}
 							style:--thumb-border={min_sticky ? '0.5px solid black' : 'none'}
 							oninput={(e) => set_gap_slider('gap_min', parseFloat((e.target as HTMLInputElement).value))}
 						/>
 						<input type='range'
 							min={GAP_MIN_MM} max={GAP_MAX_MM} step='any'
 							value={gap_max_mm}
-							style:--thumb-bg={max_sticky ? 'white' : '#007aff'}
+							style:--thumb-bg={max_sticky ? 'var(--c-white)' : 'var(--c-thumb)'}
 							style:--thumb-border={max_sticky ? '0.5px solid black' : 'none'}
 							oninput={(e) => set_gap_slider('gap_max', parseFloat((e.target as HTMLInputElement).value))}
 						/>
@@ -310,7 +310,7 @@
 	}
 
 	.segmented button {
-		border        : 0.5px solid currentColor;
+		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		font-size     : var(--h-font-common);
 		padding       : 0 var(--l-padding);
@@ -318,7 +318,7 @@
 		color         : inherit;
 		cursor        : pointer;
 		white-space   : nowrap;
-		background    : white;
+		background    : var(--c-white);
 	}
 
 	.segmented button:first-child {
@@ -343,7 +343,7 @@
 	}
 
 	.action-btn {
-		border        : 0.5px solid currentColor;
+		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		font-size     : var(--h-font-common);
 		border-radius : var(--corner-common);
@@ -352,7 +352,7 @@
 		cursor        : pointer;
 		color         : inherit;
 		white-space   : nowrap;
-		background    : white;
+		background    : var(--c-white);
 		padding       : 0 var(--l-padding);
 	}
 
@@ -421,10 +421,10 @@
 	}
 
 	.range-fill {
-		background    : var(--accent, cornflowerblue);
+		background    : var(--accent, var(--c-focus));
 		position      : absolute;
 		height        : 100%;
-		border-radius : 2px;
+		border-radius : var(--corner-input);
 		top           : 0;
 	}
 
@@ -467,7 +467,7 @@
 
 	:is(.range-slider, .spacing-slider) input[type='range']::-webkit-slider-thumb {
 		margin-top         : calc((var(--th-track) - var(--h-slider)) / 2);
-		background         : var(--thumb-bg, #007aff);
+		background         : var(--thumb-bg, var(--c-thumb));
 		border             : var(--thumb-border, none);
 		width              : var(--h-slider);
 		height             : var(--h-slider);
@@ -478,7 +478,7 @@
 	}
 
 	:is(.range-slider, .spacing-slider) input[type='range']::-moz-range-thumb {
-		background     : var(--thumb-bg, #007aff);
+		background     : var(--thumb-bg, var(--c-thumb));
 		border         : var(--thumb-border, none);
 		width          : var(--h-slider);
 		height         : var(--h-slider);
@@ -511,7 +511,7 @@
 
 	.action-btn:global([data-hit]) {
 		background : var(--selected);
-		color      : black;
+		color      : var(--c-black);
 	}
 
 	.hint {

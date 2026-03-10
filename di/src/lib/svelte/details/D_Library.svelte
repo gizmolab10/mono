@@ -135,14 +135,14 @@
 	}
 
 	.segmented button {
-		border        : 0.5px solid currentColor;
+		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-segment);
 		font-size     : var(--h-font-common);
 		z-index       : var(--z-action);
 		color         : inherit;
 		cursor        : pointer;
 		white-space   : nowrap;
-		background    : white;
+		background    : var(--c-white);
 		padding       : 0 8px;
 	}
 
@@ -172,11 +172,11 @@
 		margin-top : var(--l-gap);
 		flex-wrap  : wrap;
 		display    : flex;
-		gap        : 6px;
+		gap        : var(--l-gap-small);
 	}
 
 	.action-btn {
-		border        : 0.5px solid currentColor;
+		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		border-radius : var(--corner-common);
 		font-size     : var(--h-font-common);
@@ -184,13 +184,13 @@
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
-		background    : white;
+		background    : var(--c-white);
 		padding       : 0 8px;
 	}
 
 	.action-btn:global([data-hit]) {
 		background : var(--selected);
-		color      : black;
+		color      : var(--c-black);
 	}
 
 	.action-btn:disabled {

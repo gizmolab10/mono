@@ -114,7 +114,7 @@
 	}
 
 	.standards td {
-		border  : 0.5px solid currentColor;
+		border  : var(--th-border) solid currentColor;
 		padding : 0;
 	}
 
@@ -159,7 +159,7 @@
 		font-size   : inherit;
 		color       : inherit;
 		padding     : 0 4px;
-		background  : white;
+		background  : var(--c-white);
 		outline     : none;
 		border      : none;
 		height      : 100%;
@@ -172,10 +172,10 @@
 	}
 
 	.cell-input:focus {
-		outline        : 1.5px solid cornflowerblue;
+		outline        : var(--focus-outline);
 		outline-offset : -1.5px;
-		background     : white;
-		color          : black;
+		background     : var(--c-white);
+		color          : var(--c-black);
 	}
 
 	.cell-input.right {

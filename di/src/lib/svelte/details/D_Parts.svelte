@@ -290,14 +290,14 @@
 	}
 
 	.name-input {
-		outline     : 1.5px solid cornflowerblue;
+		outline     : var(--focus-outline);
 		z-index     : var(--z-action);
 		box-sizing  : border-box;
 		font-family : inherit;
 		font-weight : inherit;
 		font-size   : inherit;
 		color       : inherit;
-		background  : white;
+		background  : var(--c-white);
 		width       : 100%;
 		border      : none;
 		padding     : 0;
@@ -339,7 +339,7 @@
 		color         : inherit;
 		font-family   : inherit;
 		padding       : 0 1px;
-		background    : white;
+		background    : var(--c-white);
 		width         : 100%;
 		outline       : none;
 		text-align    : left;
@@ -349,9 +349,9 @@
 	}
 
 	.collapsed-name:focus {
-		outline        : 1.5px solid cornflowerblue;
+		outline        : var(--focus-outline);
 		outline-offset : -1.5px;
-		background     : white;
+		background     : var(--c-white);
 	}
 
 	.toggle-header {
@@ -362,7 +362,7 @@
 		cursor        : pointer;
 		text-align    : center;
 		font-weight   : normal;
-		background    : white;
+		background    : var(--c-white);
 		border-radius : 8px;
 	}
 
@@ -378,7 +378,7 @@
 		font-variant-numeric : tabular-nums;
 		white-space          : nowrap;
 		text-align           : right;
-		color                : black;
+		color                : var(--c-black);
 	}
 
 	.faint {

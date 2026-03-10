@@ -4,6 +4,7 @@
 	import { hits } from '../../ts/managers/Hits';
 	import S_Mouse from '../../ts/state/S_Mouse';
 	import Steppers from './Steppers.svelte';
+	import { colors } from '../../ts/draw/Colors';
 	import { onMount } from 'svelte';
 
 	let {
@@ -34,8 +35,8 @@
 		onchange: (value: number) => void;
 	} = $props();
 
-	const border = '1px solid darkgray';
-	const thumb_color_default = '#007aff';
+	const border = `1px solid ${colors.border}`;
+	const thumb_color_default = colors.thumb;
 
 	// Hit target for slider thumb
 	const sliderTarget = new S_Hit_Target(T_Hit_Target.control, 'slider-thumb');
@@ -238,7 +239,7 @@
 		font-size   : var(--h-font-small);
 		line-height : 1;
 		text-align  : center;
-		color       : black;
+		color       : var(--c-black);
 		user-select : none;
 		white-space : nowrap;
 	}
@@ -262,7 +263,7 @@
 		-webkit-appearance : none;
 	}
 	input[type='range']::-webkit-slider-runnable-track {
-		background    : white;
+		background    : var(--c-white);
 		border-radius : 16px;
 		height        : var(--height);
 		border        : var(--border);
@@ -284,14 +285,14 @@
 		background    : var(--thumb-color);
 	}
 	input[type='range']::-moz-range-track {
-		background    : white;
+		background    : var(--c-white);
 		border-radius : 16px;
 		height        : var(--height);
 		border        : var(--border);
 	}
 	input[type='range']::-ms-fill-lower,
 	input[type='range']::-ms-fill-upper {
-		background    : white;
+		background    : var(--c-white);
 		border-radius : 16px;
 		border        : var(--border);
 	}
@@ -310,7 +311,7 @@
 
 	.line input[type='range']::-webkit-slider-runnable-track {
 		background    : rgba(0, 0, 0, 0.15);
-		border-radius : 2px;
+		border-radius : var(--corner-input);
 		height        : var(--th-track);
 		border        : none;
 	}
@@ -323,7 +324,7 @@
 	}
 	.line input[type='range']::-moz-range-track {
 		background    : rgba(0, 0, 0, 0.15);
-		border-radius : 2px;
+		border-radius : var(--corner-input);
 		height        : var(--th-track);
 		border        : none;
 	}
@@ -336,7 +337,7 @@
 	.line input[type='range']::-ms-fill-lower,
 	.line input[type='range']::-ms-fill-upper {
 		background    : rgba(0, 0, 0, 0.15);
-		border-radius : 2px;
+		border-radius : var(--corner-input);
 		border        : none;
 	}
 	.line input[type='range']::-ms-thumb {

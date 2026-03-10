@@ -215,7 +215,7 @@
 	class            = 'graph'
 	bind:this        = {container}
 	style:color      = 'var(--text)'
-	style:background = 'white'>
+	style:background = 'var(--c-white)'>
 	<canvas
 		bind:this = {canvas}></canvas>
 	<div class='canvas-actions'>
@@ -316,7 +316,7 @@
 	.assist-label {
 		font-size      : var(--h-font-common);
 		color          : rgba(0, 0, 0, 0.35);
-		letter-spacing : 0.5px;
+		letter-spacing : var(--l-letter-spacing);
 	}
 
 	.assist-slider {
@@ -351,7 +351,7 @@
 
 	.canvas-btn {
 		background    : rgba(255, 255, 255, 0.85);
-		border        : 0.5px solid rgba(0, 0, 0, 0.25);
+		border        : var(--th-border) solid rgba(0, 0, 0, 0.25);
 		border-radius : var(--corner-common);
 		color         : rgba(0, 0, 0, 0.5);
 		padding       : 0 var(--l-padding) 1px var(--l-padding);
@@ -363,8 +363,8 @@
 
 	.canvas-btn:hover {
 		background : rgba(255, 255, 255, 1);
-		color      : black;
-		border     : 0.5px solid rgba(0, 0, 0, 0.4);
+		color      : var(--c-black);
+		border     : var(--th-border) solid rgba(0, 0, 0, 0.4);
 	}
 
 	.breadcrumbs {
@@ -380,7 +380,7 @@
 
 	.crumb {
 		background    : rgba(255, 255, 255, 0.7);
-		border        : 0.5px solid transparent;
+		border        : var(--th-border) solid transparent;
 		border-radius : var(--corner-box);
 		color         : rgba(0, 0, 0, 0.45);
 		padding       : 0 8px;
@@ -392,40 +392,40 @@
 
 	.crumb:hover {
 		background : var(--crumb-bg);
-		color      : black;
-		border     : 0.5px solid rgba(0, 0, 0, 0.3);
+		color      : var(--c-black);
+		border     : var(--th-border) solid rgba(0, 0, 0, 0.3);
 	}
 
 	.crumb.current {
 		background  : var(--crumb-bg);
-		color       : black;
+		color       : var(--c-black);
 		font-weight : 600;
-		border      : 0.5px solid rgba(0, 0, 0, 0.5);
+		border      : var(--th-border) solid rgba(0, 0, 0, 0.5);
 	}
 
 	.dim-edit {
 		position   : absolute;
 		transform  : translate(-50%, -50%);
-		font       : 12px sans-serif;
+		font       : var(--font-edit);
 		text-align : center;
 		width      : 80px;
 		padding    : 2px 4px;
 		border     : none;
 		outline    : none;
-		background : white;
+		background : var(--c-white);
 		z-index    : var(--z-frontmost);
 	}
 
 	.ang-edit {
 		position   : absolute;
 		transform  : translate(-50%, -50%);
-		font       : 12px sans-serif;
+		font       : var(--font-edit);
 		text-align : center;
 		width      : 60px;
 		padding    : 2px 4px;
 		border     : none;
 		outline    : none;
-		background : white;
+		background : var(--c-white);
 		z-index    : var(--z-frontmost);
 	}
 
@@ -442,7 +442,7 @@
 		height         : var(--h-cell);
 		border         : none;
 		outline        : none;
-		background     : white;
+		background     : var(--c-white);
 		z-index        : var(--z-frontmost);
 	}
 </style>

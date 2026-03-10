@@ -214,7 +214,7 @@
 	}
 
 	.bounds td {
-		border     : 0.5px solid currentColor;
+		border     : var(--th-border) solid currentColor;
 		text-align : left;
 		padding    : 0;
 	}
@@ -242,7 +242,7 @@
 
 	.attr-invariant {
 		cursor     : pointer;
-		background : white;
+		background : var(--c-white);
 		width      : 12px;
 		min-width  : 12px;
 	}
@@ -295,7 +295,7 @@
 		color         : inherit;
 		font-size     : inherit;
 		font-family   : inherit;
-		background    : white;
+		background    : var(--c-white);
 		padding       : 0 4px;
 		width         : 100%;
 		height        : 100%;
@@ -309,10 +309,10 @@
 	}
 
 	.cell-input:focus {
-		outline        : 1.5px solid cornflowerblue;
+		outline        : var(--focus-outline);
 		outline-offset : -1.5px;
-		background     : white;
-		color          : black;
+		background     : var(--c-white);
+		color          : var(--c-black);
 	}
 
 	.cell-disabled {
@@ -355,7 +355,7 @@
 		color         : inherit;
 		text-align    : center;
 		font-weight   : normal;
-		background    : white;
+		background    : var(--c-white);
 		flex          : 1;
 		padding       : 0;
 	}
@@ -365,7 +365,7 @@
 	}
 
 	.add-btn {
-		border          : 0.5px solid currentColor;
+		border          : var(--th-border) solid currentColor;
 		width           : var(--h-button-common);
 		height          : var(--h-button-common);
 		font-size       : var(--h-font-large);
@@ -374,7 +374,7 @@
 		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
-		background      : white;
+		background      : var(--c-white);
 		display         : flex;
 		font-weight     : 300;
 		border-radius   : 50%;

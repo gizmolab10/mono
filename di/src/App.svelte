@@ -10,9 +10,22 @@
 	onMount(() => {
 		const root = document.documentElement.style;
 
-		root.setProperty('--font-small',       `${k.height.font.small}px`);
-		root.setProperty('--font-common',      `${k.height.font.common}px`);
+		root.setProperty('--c-white',           colors.background);
+		root.setProperty('--c-black',           colors.default);
+		root.setProperty('--c-slider-border',   colors.border);
+		root.setProperty('--c-focus',           colors.focus);
+		root.setProperty('--c-thumb',           colors.thumb);
+		root.setProperty('--c-track',           colors.track);
 
+		root.setProperty('--focus-outline',    `1.5px solid ${colors.focus}`);
+
+		root.setProperty('--font-edit',        `${k.height.font.edit}px sans-serif`);
+		root.setProperty('--font-common',      `${k.height.font.common}px`);
+		root.setProperty('--font-small',       `${k.height.font.small}px`);
+
+		root.setProperty('--l-letter-spacing', `${k.layout.letter_spacing}px`);
+		root.setProperty('--l-padding-small',  `${k.layout.padding_small}px`);
+		root.setProperty('--l-gap-small',      `${k.layout.gap_small}px`);
 		root.setProperty('--l-padding',        `${k.layout.padding}px`);
 		root.setProperty('--l-margin',         `${k.layout.margin}px`);
 		root.setProperty('--l-gap',            `${k.layout.gap}px`);
@@ -20,12 +33,14 @@
 		root.setProperty('--th-tick',          `${k.thickness.tick}px`);
 		root.setProperty('--th-track',         `${k.thickness.track}px`);
 		root.setProperty('--th-thumb',         `${k.thickness.thumb}px`);
+		root.setProperty('--th-border',        `${k.thickness.border}px`);
 		root.setProperty('--th-sep',           `${k.thickness.separator.main}px`);
 		root.setProperty('--th-thin-sep',      `${k.thickness.separator.banners}px`);
 		root.setProperty('--th-content-sep',   `${k.thickness.separator.content}px`);
 
 		root.setProperty('--corner-common',    `${k.corner.common}px`);
 		root.setProperty('--corner-banner',    `${k.corner.banner}px`);
+		root.setProperty('--corner-input',     `${k.corner.input}px`);
 		root.setProperty('--corner-box',       `${k.corner.box}px`);
 
 		root.setProperty('--z-common',         `${k.z.common}`);
