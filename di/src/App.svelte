@@ -48,9 +48,10 @@
 		root.setProperty('--z-action',         `${k.z.action}`);
 		root.setProperty('--z-frontmost',      `${k.z.frontmost}`);
 
-		root.setProperty('--h-button-segment', `${k.height.button.segment}px`);
-		root.setProperty('--h-button-common',  `${k.height.button.common}px`);
+		root.setProperty('--h-button-tiny',   `${k.height.button.tiny}px`);
 		root.setProperty('--h-button-small',   `${k.height.button.small}px`);
+		root.setProperty('--h-button-common',  `${k.height.button.common}px`);
+		root.setProperty('--h-button-segment', `${k.height.button.segment}px`);
 		root.setProperty('--h-font-common',    `${k.height.font.common}px`);
 		root.setProperty('--h-font-large',     `${k.height.font.large}px`);
 		root.setProperty('--h-font-small',     `${k.height.font.small}px`);

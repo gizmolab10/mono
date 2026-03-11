@@ -207,7 +207,7 @@
       },
       {
         "id": "di0447e5812b5d13",
-        "name": "front wall",
+        "name": "back wall",
         "x": {
           "attributes": {
             "origin": {
@@ -243,7 +243,7 @@
           },
           "invariant": 1
         },
-        "visible": false,
+        "visible": true,
         "repeater": {
           "spacing": 406.4,
           "firewall": true,
@@ -255,7 +255,7 @@
       },
       {
         "id": "di4a4e0baeeae628",
-        "name": "template",
+        "name": "stud",
         "x": {
           "attributes": {
             "origin": 0,
@@ -289,7 +289,7 @@
           },
           "invariant": 1
         },
-        "visible": true,
+        "visible": false,
         "parent_id": "di0447e5812b5d13"
       }
     ],
@@ -373,7 +373,7 @@
       ]
     },
     "root_id": "didc4131a9e6d366",
-    "selected_id": "di0447e5812b5d13",
+    "selected_id": "didc4131a9e6d366",
     "selected_face": 1
   }
 }

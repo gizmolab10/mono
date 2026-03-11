@@ -19,7 +19,7 @@ declare const __ASSETS_DIR__: string;
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
-const common_size = 33;
+const common_size = 33;		// minimum fingertip touch size
 
 export default class Constants {
 
@@ -59,11 +59,11 @@ export default class Constants {
 	};
 
 	layout = {
-		margin:         common_size / 3.2,
-		padding:        common_size / 3,
-		padding_small:  common_size / 4,
-		gap:            common_size / 5,
 		gap_small:      common_size / 5.5,
+		gap:            common_size / 5,
+		padding_small:  common_size / 4,
+		padding:        common_size / 3,
+		margin:         common_size / 3.2,
 		letter_spacing: 0.5,
 	};
 
@@ -94,10 +94,10 @@ export default class Constants {
 	};
 
 	height = {
-		collapse:    common_size / 2 + 2,
 		controls:    common_size * 1.4,		// add two gaps
-		slider:      common_size - 6,
-		cell:        common_size / 2,
+		slider:      common_size * 0.8,
+		collapse:    common_size * 0.56,
+		cell:        common_size * 0.5,
 		banner:      common_size,
 		font: {
 			edit:    common_size / 2.75,
@@ -106,7 +106,8 @@ export default class Constants {
 			common:  common_size / 2,
 		},
 		button: {
-			small:   common_size - 6,
+			small:   common_size * 0.8,
+			tiny:    common_size * 0.7,
 			segment: common_size,
 			common:  common_size,
 		},

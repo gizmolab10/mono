@@ -206,3 +206,5 @@ When user rejects an approach, throw it away. Don't trim it, rename it, or retyp
 **Required:** On rejection, stop. Ask: "what does the user actually want?" If unsure, say so — "I'm not sure how you want this to work. Here's the tension I see: ___." One honest question beats three wrong iterations.
 
 **Root cause to watch for:** Treating corrections as surface objections (naming, typing) instead of design direction. Prioritizing output over understanding.
+
+**Context compaction trap:** After conversation compaction, the summary may downplay or lose the emotional weight of a rejection. "User rejected tumble approach" reads mild — the actual message was "fuck no! revert that." Treat every rejected approach in the summary as DEAD with maximum conviction, same as if the user just said it.

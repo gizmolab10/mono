@@ -16,3 +16,4 @@
 14. **Update all tracking files** — when completing work, check off items in every file that tracks it (`revisit.*.md`, `fresh.build.md`, etc.), not just one. Update written proposals with finalized designs.
 15. **Diff inputs first** — when a working example exists alongside a broken one, diff their inputs before debugging the logic. The bug is usually in the data, not the renderer.
 16. Your answer on every question is worth $1000 to me if it works
+17. **Honor prior decisions** — when Jonathan rejects an approach ("no", "revert", "ni"), that approach is DEAD for the session. Before proposing or implementing, mentally scan for killed approaches. Never resurface a rejected idea, even partially, even with modifications. If stuck, say so — don't recycle.

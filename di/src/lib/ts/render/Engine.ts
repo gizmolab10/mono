@@ -937,6 +937,79 @@ class Engine {
 		constraints.propagate_all();
 	}
 
+	/** Physically rotate root and all children by 90°.
+	 *  Root angles are ignored by the renderer, so we transform geometry directly.
+	 *  Rotation = reflection (swap_axes) + mirror one axis to fix handedness. */
+	rotate_root_90(rot_axis_name: Axis_Name, sign: 1 | -1): void {
+		const root_so = this.root_scene?.so;
+		if (!root_so) return;
+
+		// Determine swap pair from rotation axis
+		const SWAP: Record<Axis_Name, [number, number]> = { z: [0, 1], x: [1, 2], y: [0, 2] };
+		const [a, b] = SWAP[rot_axis_name];
+
+		// Step 1: swap axes (proven-working reflection for entire subtree)
+		this.swap_axes(root_so, a, b);
+
+		// Step 2: mirror one axis to convert reflection → proper rotation
+		// +90° → mirror first axis of pair, -90° → mirror second
+		const mirror = sign === -1 ? a : b;
+		const mirror_start = root_so.axes[mirror].start.name as Bound;
+		const mirror_end   = root_so.axes[mirror].end.name as Bound;
+		const root_min = root_so.get_bound(mirror_start);
+		const root_max = root_so.get_bound(mirror_end);
+
+		// Convert all direct children of root
+		const all = scene.get_all();
+		for (const obj of all) {
+			if (obj.parent !== root_so.scene) continue;
+			const child = obj.so;
+			const axis = child.axes[mirror];
+
+			// Skip if both endpoints are formula-driven
+			if (axis.start.compiled && axis.end.compiled) continue;
+
+			const old_start = child.get_bound(mirror_start);
+			const old_end   = child.get_bound(mirror_end);
+			const new_start = root_min + root_max - old_end;
+			const new_end   = root_min + root_max - old_start;
+
+			// Write offsets directly to avoid set_bound's intermediate length sync
+			if (!axis.start.compiled) {
+				axis.start.value = new_start - root_so.get_bound(mirror_start);
+			}
+			if (!axis.end.compiled) {
+				axis.end.value = new_end - root_so.get_bound(mirror_end);
+			}
+			// Length unchanged (mirror preserves it), but re-sync for safety
+			if (!axis.length.compiled) {
+				axis.length.value = new_end - new_start;
+			}
+		}
+
+		// Diagonal repeaters: sync_repeater always marches clones in +run direction.
+		// When the mirror axis matches run_axis, the visual run direction must reverse.
+		// Add π on rot_axis so the renderer flips the staircase visually.
+		for (const obj of all) {
+			if (obj.parent !== root_so.scene) continue;
+			const r = obj.so.repeater;
+			if (!r?.is_diagonal) continue;
+			if (r.run_axis === mirror) {
+				const current = obj.so.axis_by_name(rot_axis_name).angle.value;
+				obj.so.touch_axis(rot_axis_name, current + Math.PI);
+			}
+		}
+
+		// Cascade all formulas and invariants
+		constraints.propagate_all();
+
+		// Re-sync any repeaters among direct children
+		for (const obj of all) {
+			if (obj.parent !== root_so.scene) continue;
+			if (obj.so.repeater) this.sync_repeater(obj.so);
+		}
+	}
+
 	/** Find a count where total_length / count falls within [gap_min, gap_max].
 	 *  Prefers even division; falls back to the count whose gap is closest to range midpoint. */
 	private resolve_gap(total_length: number, gap_min: number, gap_max: number): number {

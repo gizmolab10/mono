@@ -82,6 +82,12 @@
 
 	function rotate_90(sign: 1 | -1) {
 		if (!selected_so) return;
+		if (is_root) {
+			engine.rotate_root_90(rot_axis, sign);
+			stores.tick();
+			scenes.save();
+			return;
+		}
 		const current = Math.round(selected_so.axis_by_name(rot_axis).angle.value * 180 / Math.PI);
 		const next = current + sign * 90;
 		selected_so.touch_axis(rot_axis, next * Math.PI / 180);
@@ -112,9 +118,7 @@
 
 </script>
 
-{#if is_root}
-	<div class='root-note'>root has no angles</div>
-{:else}
+{#if !is_root}
 	<div class='rotation-section'>
 		<table class='angles'>
 			<tbody>
@@ -139,15 +143,15 @@
 			<Slider min={-45} max={45} divisions={180} style='line' fill sticky={STICKY_ANGLES} sticky_threshold={STICKY_THRESHOLD} onchange={handle_angle} value={angle_deg} />
 			<span class='slider-label'>+45°</span>
 		</div>
-		<div class='rotation-row'>
-			<button class='action-btn' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
-			<span class='far-right'>
-				<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
-				<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
-			</span>
-		</div>
 	</div>
 {/if}
+<div class='rotation-row'>
+	<button class='action-btn' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
+	<span class='far-right'>
+		<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
+		<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
+	</span>
+</div>
 
 <style>
 	.rotation-section {

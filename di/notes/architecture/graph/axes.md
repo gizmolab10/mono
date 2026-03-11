@@ -53,6 +53,22 @@ All three axes get their formulas rewritten, not just the two being swapped.
 
 Swap is right for +/-90 structural reorientation. Rotate is right for arbitrary visual angles. Both needed.
 
+## Root rotation
+
+Root's SO angles are ignored by the renderer (it uses the tumble orientation instead). So `rotate_root_90` transforms geometry physically:
+
+1. **swap_axes** — structural reflection across the swap pair (proven, handles formulas/invariants/aliases/repeater config for entire subtree)
+2. **mirror** — reposition direct children of root on one axis to convert reflection → proper rotation. Writes `.value` directly (avoids `set_bound` intermediate length-sync side effects).
+3. **diagonal repeater fix** — `sync_repeater` always marches clones in the +run direction. When the mirror axis matches a diagonal repeater's `run_axis`, the visual run direction must reverse. Instead of modifying sync_repeater, add π to the stairs' angle on `rot_axis_name`. The renderer rotates the staircase 180° around that axis, visually reversing the run direction while preserving the rise direction. sync_repeater keeps working normally in local space.
+
+### Mirror axis selection
+
+`const mirror = sign === -1 ? a : b` (where `[a, b]` is the swap pair). P_Angles negates the sign before calling, so +90° button → engine sign=-1 → mirror=a.
+
+### Why not modify sync_repeater?
+
+Tried: `run_sign` field, template repositioning, negative clone offsets. All failed — interactions between template positioning, tread depth adjustment, and gap_step made the staircase layout break. The π-angle approach is simpler: zero sync_repeater changes, the renderer handles the visual flip naturally.
+
 ## Angular rendering
 
 ### Key insight: reuse intersection lines

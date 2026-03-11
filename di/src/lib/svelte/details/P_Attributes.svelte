@@ -347,15 +347,15 @@
 
 	.constants-toggle {
 		border        : 0.25px solid currentColor;
-		height        : var(--h-button-common);
+		height        : var(--h-button-tiny);
 		font-size     : var(--h-font-common);
 		border-radius : var(--corner-common);
 		z-index       : var(--z-action);
+		background    : var(--c-white);
 		cursor        : pointer;
 		color         : inherit;
 		text-align    : center;
 		font-weight   : normal;
-		background    : var(--c-white);
 		flex          : 1;
 		padding       : 0;
 	}
@@ -366,15 +366,15 @@
 
 	.add-btn {
 		border          : var(--th-border) solid currentColor;
-		width           : var(--h-button-common);
-		height          : var(--h-button-common);
+		width           : var(--h-button-tiny);
+		height          : var(--h-button-tiny);
 		font-size       : var(--h-font-large);
 		z-index         : var(--z-action);
+		background      : var(--c-white);
 		color           : inherit;
 		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
-		background      : var(--c-white);
 		display         : flex;
 		font-weight     : 300;
 		border-radius   : 50%;
