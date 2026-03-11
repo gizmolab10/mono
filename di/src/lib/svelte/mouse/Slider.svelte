@@ -74,11 +74,12 @@
 	const hoverSlider2 = $derived($w_s_hover?.id === sliderTarget2.id);
 	const is_sticky  = $derived(!!sticky?.some(s => Math.abs(value - s) < 0.01));
 	const is_sticky2 = $derived(!!sticky?.some(s => Math.abs((value_alt ?? 0) - s) < 0.01));
+	const sticky_dot = 'radial-gradient(circle, rgba(0,0,0,0.25) 4px, var(--c-white) 5px)';
 	const current_thumb_color = $derived(
-		(hoverSlider && !is_dragging) ? 'var(--selected)' : is_sticky ? 'var(--c-white)' : $w_accent_color
+		(hoverSlider && !is_dragging) ? 'var(--selected)' : is_sticky ? sticky_dot : $w_accent_color
 	);
 	const current_thumb_color2 = $derived(
-		(hoverSlider2 && !is_dragging_alt) ? 'var(--selected)' : is_sticky2 ? 'var(--c-white)' : $w_accent_color
+		(hoverSlider2 && !is_dragging_alt) ? 'var(--selected)' : is_sticky2 ? sticky_dot : $w_accent_color
 	);
 
 	// Value → slider position (0..divisions)

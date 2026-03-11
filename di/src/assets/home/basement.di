@@ -8,8 +8,8 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 5439.631494140625,
-            "length": 5439.631494140625,
+            "extent": 8839.2,
+            "length": 8839.2,
             "angle": 0
           },
           "invariant": 1
@@ -17,8 +17,8 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 8839.2,
-            "length": 8839.2,
+            "extent": 5439.631494140625,
+            "length": 5439.631494140625,
             "angle": 0
           },
           "invariant": 1
@@ -39,20 +39,20 @@
         "name": "interior wall",
         "x": {
           "attributes": {
-            "origin": 5350.731494140626,
+            "origin": 4267.2,
             "extent": 0,
-            "length": {
-              "formula": "stud_w"
-            },
+            "length": 4572.000000000001,
             "angle": 0
           },
           "invariant": 1
         },
         "y": {
           "attributes": {
-            "origin": 4267.2,
-            "extent": 0,
-            "length": 4572.000000000001,
+            "origin": 0,
+            "extent": -5350.731494140626,
+            "length": {
+              "formula": "stud_w"
+            },
             "angle": 0
           },
           "invariant": 1
@@ -75,7 +75,7 @@
           "spacing": 406.4,
           "firewall": true,
           "is_repeating": true,
-          "run_axis": 1,
+          "run_axis": 0,
           "is_diagonal": false,
           "gap_min": 228.6
         },
@@ -87,9 +87,9 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 0,
+            "extent": -4533.900000000001,
             "length": {
-              "formula": ".l"
+              "formula": "template_w"
             },
             "angle": 0
           },
@@ -98,9 +98,9 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": -4533.900000000001,
+            "extent": 3.552713678800501e-13,
             "length": {
-              "formula": "template_w"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -125,18 +125,18 @@
         "name": "stairs",
         "x": {
           "attributes": {
-            "origin": 3048,
-            "extent": -1477.2314941406253,
-            "length": 914.4000000000001,
+            "origin": 1219.1999999999998,
+            "extent": -4572.000000000001,
+            "length": 3048,
             "angle": 0
           },
           "invariant": 1
         },
         "y": {
           "attributes": {
-            "origin": 1219.2,
-            "extent": -4572.000000000001,
-            "length": 3048,
+            "origin": 1477.2314941406253,
+            "extent": -3048,
+            "length": 914.4000000000001,
             "angle": 0
           },
           "invariant": 1
@@ -150,7 +150,7 @@
             "length": {
               "formula": ".l"
             },
-            "angle": 0
+            "angle": 37.69911184307752
           },
           "invariant": 1
         },
@@ -159,7 +159,7 @@
           "gap_min": 177.79999999999998,
           "gap_max": 254,
           "is_repeating": true,
-          "run_axis": 1,
+          "run_axis": 0,
           "rise_axis": 2,
           "is_diagonal": true,
           "_orig_run_length": 203.2
@@ -172,9 +172,9 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 0,
+            "extent": -2780.631578947369,
             "length": {
-              "formula": ".l"
+              "formula": "tread_d"
             },
             "angle": 0
           },
@@ -183,9 +183,9 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": -2780.6315789473683,
+            "extent": 0,
             "length": {
-              "formula": "tread_d"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -210,6 +210,15 @@
         "name": "back wall",
         "x": {
           "attributes": {
+            "origin": 0,
+            "extent": -8750.300000000001,
+            "length": 88.89999999999964,
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "y": {
+          "attributes": {
             "origin": {
               "formula": ".s"
             },
@@ -220,15 +229,6 @@
             "angle": 0
           },
           "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": 0,
-            "extent": -8750.300000000001,
-            "length": 88.89999999999964,
-            "angle": 0
-          },
-          "invariant": 0
         },
         "z": {
           "attributes": {
@@ -248,7 +248,7 @@
           "spacing": 406.4,
           "firewall": true,
           "is_repeating": true,
-          "run_axis": 0,
+          "run_axis": 1,
           "is_diagonal": false
         },
         "parent_id": "didc4131a9e6d366"
@@ -259,9 +259,9 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": -5401.531494140625,
+            "extent": 0,
             "length": {
-              "formula": "template_th"
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -270,9 +270,9 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 0,
+            "extent": -5401.531494140625,
             "length": {
-              "formula": ".l"
+              "formula": "template_th"
             },
             "angle": 0
           },
@@ -374,6 +374,6 @@
     },
     "root_id": "didc4131a9e6d366",
     "selected_id": "didc4131a9e6d366",
-    "selected_face": 1
+    "selected_face": 5
   }
 }

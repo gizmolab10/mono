@@ -279,10 +279,10 @@ class Engine {
 
 	// Preferred twist index per face: bottom-at-bottom for sides, front-at-bottom for top/bottom
 	//   twists: [0°, 90°, 180°, -90°] around Z
-	//   face 0 bottom → twist 2 (π)     face 1 top    → twist 2 (π)
+	//   face 0 bottom → twist 0 (0)     face 1 top    → twist 0 (0)
 	//   face 2 left   → twist 1 (π/2)   face 3 right  → twist 3 (-π/2)
 	//   face 4 front  → twist 2 (π)     face 5 back   → twist 0 (identity)
-	private static readonly PREFERRED_TWIST = [2, 2, 1, 3, 2, 0];
+	private static readonly PREFERRED_TWIST = [0, 0, 1, 3, 2, 0];
 
 	// Per-face snap candidates: FACE_SNAP_QUATS[face] = 4 quats (0°, 90°, 180°, 270° twist)
 	private static readonly FACE_SNAP_QUATS: quat[][] = (() => {

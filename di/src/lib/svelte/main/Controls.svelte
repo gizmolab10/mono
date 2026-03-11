@@ -54,7 +54,6 @@
 			<button class='seg' class:forward={$w_forward_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
 		{/each}
 	</div>
-	{@render face_accessory_buttons()}
 {/snippet}
 
 {#snippet face_accessory_buttons()}
@@ -80,11 +79,7 @@
 			</div>
 			<Separator kind="main" margin={7.5} />
 			<div class='right-row'>
-				<div class='segmented'>
-					{#each face_labels as label, i}
-						<button class='seg' class:forward={$w_forward_face === i} use:hit_target={{ id: `face-${i}`, onpress: () => engine.orient_to_face(i) }}>{label}</button>
-					{/each}
-				</div>
+				{@render face_buttons()}
 			</div>
 			<Separator kind="main" margin={7.5} />
 			<div class='right-row'>
@@ -104,6 +99,7 @@
 			<Separator kind="main" margin={7.5} />
 			<div class='right-row'>
 				{@render face_buttons()}
+				{@render face_accessory_buttons()}
 			</div>
 		</div>
 	{:else}
@@ -118,6 +114,7 @@
 		<Separator vertical kind="main" length={separator_length} margin={0} />
 		<span class='spacer'></span>
 		{@render face_buttons()}
+		{@render face_accessory_buttons()}
 		<span class='spacer'></span>
 		<Separator vertical kind="main" length={separator_length} margin={0} />
 		{@render mode_buttons()}
