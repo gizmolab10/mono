@@ -53,8 +53,7 @@
 	const IMPERIAL_DENOMS = [0, 1, 2, 4, 8, 16, 32, 64];
 	const GAP_MIN_MM = 4 * INCH;
 	const GAP_MAX_MM = 12 * INCH;
-	const GAP_RANGE_MM = GAP_MAX_MM - GAP_MIN_MM;
-	const STICKY_THRESHOLD_MM = 0.15 * INCH;
+const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	const TICK_MM = [4, 5, 6, 7, 8, 9, 10, 11, 12].map(i => i * INCH);
 
 	// Spacing slider constants
@@ -79,8 +78,6 @@
 		set_spacing(Math.max(SP_MIN_MM, Math.min(SP_MAX_MM, val)));
 	}
 
-	function mm_to_pct(mm: number): number { return (mm - GAP_MIN_MM) / GAP_RANGE_MM * 100; }
-	function is_on_tick(mm: number): boolean { return TICK_MM.some(t => Math.abs(mm - t) < 0.1); }
 
 	function format_gap(mm: number): string {
 		if ($w_unit_system === T_Units.imperial) {
@@ -118,8 +115,6 @@
 
 	let gap_min_mm = $derived.by(() => { $w_tick; const r = selected_so?.repeater; return r?.gap_min ?? GAP_MIN_MM; });
 	let gap_max_mm = $derived.by(() => { $w_tick; const r = selected_so?.repeater; return r?.gap_max ?? GAP_MAX_MM; });
-	let min_sticky = $derived(is_on_tick(gap_min_mm));
-	let max_sticky = $derived(is_on_tick(gap_max_mm));
 
 	function toggle_firewall() {
 		if (!selected_so?.repeater) return;
@@ -210,7 +205,7 @@
 					</div>
 				</div>
 				<button class='action-btn fireblocks-btn' class:active={has_firewall} onclick={toggle_firewall}>
-					{has_firewall ? 'fireblocks ⟳' : 'no fireblocks ⟳'}
+					{has_firewall ? 'blocks ⟳' : 'no blocks ⟳'}
 				</button>
 			</div>
 		{:else}
@@ -221,34 +216,19 @@
 						<button class:active={rise_axis === a} onclick={() => set_rise_axis(a)}>{['x','y','z'][a]}</button>
 					{/each}
 				</div>
-				<div class='range-slider'>
-					<span class='range-label' style:left="calc(var(--h-slider) / 2 + 2px + {mm_to_pct(gap_min_mm)} * (100% - var(--h-slider)) / 100)">{format_gap(gap_min_mm)}</span>
-					<span class='range-label' style:left="calc(var(--h-slider) / 2 + 2px + {mm_to_pct(gap_max_mm)} * (100% - var(--h-slider)) / 100)">{format_gap(gap_max_mm)}</span>
-					<div class='slider-wrap'>
-						<div class='range-track'>
-							<div class='range-fill'
-								style:left="calc(var(--h-slider) / 2 + 2px + {mm_to_pct(gap_min_mm)} * (100% - var(--h-slider)) / 100)"
-								style:right="calc(var(--h-slider) / 2 + {100 - mm_to_pct(gap_max_mm)} * (100% - var(--h-slider)) / 100)"
-							></div>
-						</div>
-						{#each TICK_MM as tick}
-							<span class='tick' style:left="calc(var(--h-slider) / 2 + {mm_to_pct(tick)} * (100% - var(--h-slider)) / 100)"></span>
-						{/each}
-						<input type='range'
-							min={GAP_MIN_MM} max={GAP_MAX_MM} step='any'
-							value={gap_min_mm}
-							style:--thumb-bg={min_sticky ? 'var(--c-white)' : 'var(--c-thumb)'}
-							style:--thumb-border={min_sticky ? '0.5px solid black' : 'none'}
-							oninput={(e) => set_gap_slider('gap_min', parseFloat((e.target as HTMLInputElement).value))}
-						/>
-						<input type='range'
-							min={GAP_MIN_MM} max={GAP_MAX_MM} step='any'
-							value={gap_max_mm}
-							style:--thumb-bg={max_sticky ? 'var(--c-white)' : 'var(--c-thumb)'}
-							style:--thumb-border={max_sticky ? '0.5px solid black' : 'none'}
-							oninput={(e) => set_gap_slider('gap_max', parseFloat((e.target as HTMLInputElement).value))}
-						/>
-					</div>
+				<div class='gap-slider-wrap'>
+					<Slider
+						fill
+						divisions={200}
+						sticky={TICK_MM}
+						value={gap_min_mm}
+						value_alt={gap_max_mm}
+						format_label={format_gap}
+						min={GAP_MIN_MM} max={GAP_MAX_MM}
+						sticky_threshold={STICKY_THRESHOLD_MM}
+						onchange={(mm) => set_gap_slider('gap_min', mm)}
+						onchange_alt={(mm) => set_gap_slider('gap_max', mm)}
+					/>
 					<div class='rise-endpoints'>
 						<span class='rise-endpoint' style:margin-left='2px'>4"</span>
 						<span class='slider-caption'>rise range</span>
@@ -367,7 +347,13 @@
 	}
 
 	.rise-row {
-		margin-top : -3px;
+		margin-top : -1px;
+	}
+
+	.rise-row .option-label,
+	.rise-row .segmented {
+		position : relative;
+		top      : -1px;
 	}
 
 	.rise-endpoints {
@@ -382,11 +368,11 @@
 		opacity   : 0.5;
 	}
 
-	.range-slider {
+	.gap-slider-wrap {
 		position    : relative;
 		margin      : -2px 0 0;
-		padding-top : 15px;
 		flex        : 1;
+		min-width   : 0;
 	}
 
 	.slider-caption {
@@ -397,117 +383,8 @@
 		opacity    : 0.5;
 	}
 
-	.slider-wrap {
-		height      : var(--h-button-common);
-		position    : relative;
-		align-items : center;
-		display     : flex;
-		flex        : 1;
-		min-width   : 0;
-	}
 
-	.range-track {
-		background    : rgba(0, 0, 0, 0.15);
-		height        : var(--th-track);
-		position      : absolute;
-		margin-top    : -2px;
-		right         : calc(var(--h-slider) / 2);
-		left          : calc(var(--h-slider) / 2);
-		top           : 50%;
-	}
-
-	.range-fill {
-		background    : var(--accent, var(--c-focus));
-		position      : absolute;
-		height        : 100%;
-		border-radius : var(--corner-input);
-		top           : 0;
-	}
-
-	.range-label {
-		font-size            : var(--h-font-small);
-		font-weight          : normal;
-		transform            : translate(-50%, calc(50% - 0.5em));
-		font-variant-numeric : tabular-nums;
-		position             : absolute;
-		white-space          : nowrap;
-		user-select          : none;
-		text-align           : center;
-		top                  : 0;
-	}
-
-	.tick {
-		transform      : translate(-0.5px, -50%);
-		height         : var(--th-thumb);
-		background     : currentColor;
-		position       : absolute;
-		pointer-events : none;
-		opacity        : 0.6;
-		width          : 1px;
-		top            : 50%;
-	}
-
-	.range-slider input[type='range'] {
-		height             : var(--h-button-common);
-		z-index            : var(--z-action);
-		background         : transparent;
-		position           : absolute;
-		appearance         : none;
-		-webkit-appearance : none;
-		pointer-events     : none;
-		width              : 100%;
-		top                : 0;
-		left               : 0;
-		margin             : 0;
-	}
-
-	.range-slider input[type='range']::-webkit-slider-thumb {
-		margin-top         : calc((var(--th-track) - var(--h-slider)) / 2);
-		background         : var(--thumb-bg, var(--c-thumb));
-		border             : var(--thumb-border, none);
-		width              : var(--h-slider);
-		height             : var(--h-slider);
-		cursor             : pointer;
-		-webkit-appearance : none;
-		pointer-events     : auto;
-		border-radius      : 50%;
-	}
-
-	.range-slider input[type='range']::-moz-range-thumb {
-		background     : var(--thumb-bg, var(--c-thumb));
-		border         : var(--thumb-border, none);
-		width          : var(--h-slider);
-		height         : var(--h-slider);
-		cursor         : pointer;
-		pointer-events : auto;
-		border-radius  : 50%;
-	}
-
-	.range-slider input[type='range']::-webkit-slider-runnable-track {
-		height     : var(--th-track);
-		background : transparent;
-		border     : none;
-	}
-
-	.range-slider input[type='range']::-moz-range-track {
-		height     : var(--th-track);
-		background : transparent;
-		border     : none;
-	}
-
-	.range-slider input[type='range']:focus {
-		outline : none;
-	}
-
-	.range-slider input[type='range']::-webkit-slider-thumb:hover {
-		background : var(--c-black);
-	}
-
-	.range-slider input[type='range']::-moz-range-thumb:hover {
-		background : var(--c-black);
-	}
-
-	.clone-count {
+.clone-count {
 		font-size   : var(--h-font-small);
 		opacity     : 0.6;
 		flex-shrink : 0;

@@ -181,11 +181,11 @@
 						onclick={(e) => handle_name_click(e, so)}>
 						{#if editing_id === so.id}
 							<input
-								class     = 'name-input'
 								type      = 'text'
 								value     = {so.name}
-								onblur    = {(e) => commit_name(so, (e.target as HTMLInputElement).value)}
+								class     = 'name-input'
 								onkeydown = {(e) => name_keydown(e, so)}
+								onblur    = {(e) => commit_name(so, (e.target as HTMLInputElement).value)}
 								use:autofocus
 							/>
 						{:else}
@@ -292,15 +292,15 @@
 	.name-input {
 		outline     : var(--focus-outline);
 		z-index     : var(--z-action);
+		background  : var(--c-white);
 		box-sizing  : border-box;
 		font-family : inherit;
 		font-weight : inherit;
 		font-size   : inherit;
 		color       : inherit;
-		background  : var(--c-white);
 		width       : 100%;
 		border      : none;
-		padding     : 0;
+		padding     : 4;
 		margin      : 0;
 	}
 
@@ -335,17 +335,17 @@
 		font-size     : var(--h-font-small);
 		z-index       : var(--z-action);
 		height        : var(--h-slider);
+		background    : var(--c-white);
+		margin-top    : var(--l-gap);
+		margin-bottom : var(--l-gap);
 		box-sizing    : border-box;
 		color         : inherit;
 		font-family   : inherit;
-		padding       : 0 1px;
-		background    : var(--c-white);
+		padding       : 0 6px;
 		width         : 100%;
 		outline       : none;
 		text-align    : left;
 		border-radius : 3px;
-		margin-top    : var(--l-gap);
-		margin-bottom : var(--l-gap);
 	}
 
 	.collapsed-name:focus {
