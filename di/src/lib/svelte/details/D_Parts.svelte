@@ -8,6 +8,7 @@
 	import Separator from '../mouse/Separator.svelte';
 	import P_Selected from './P_Selected.svelte';
 	import { units } from '../../ts/types/Units';
+	import { engine } from '../../ts/render';
 
 	const { w_all_sos, w_selection, w_tick, w_precision, w_collapsed_ids } = stores;
 
@@ -217,14 +218,8 @@
 		</tbody>
 	{/if}
 </table>
-{#if show_parts}
-	{#if $w_selection}
-		<Separator />
-	{:else}
-		<div style:height='1px'></div>
-	{/if}
-{:else}
-	{#if $w_selection}
+{#if $w_selection}
+	{#if !show_parts}
 		<input
 			type      = 'text'
 			class     = 'collapsed-name'
@@ -233,12 +228,15 @@
 			onblur    = {(e) => commit_name($w_selection!.so, (e.target as HTMLInputElement).value)}
 		/>
 	{/if}
-	{#if $w_selection}
-		<Separator />
+	{#if $w_selection.so.scene?.parent}
+		<div class='duplicate-row'>
+			<button class='action-btn' use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_so() }}>duplicate</button>
+		</div>
 	{/if}
-{/if}
-{#if selected_so}
+	<Separator />
 	<P_Selected />
+{:else}
+	<div style:height='1px'></div>
 {/if}
 
 <style>
@@ -389,5 +387,26 @@
 		visibility : hidden;
 	}
 
+	.duplicate-row {
+		justify-content : center;
+		display         : flex;
+	}
+
+	.action-btn {
+		border        : var(--th-border) solid currentColor;
+		height        : var(--h-button-tiny);
+		border-radius : var(--corner-common);
+		font-size     : var(--h-font-common);
+		z-index       : var(--z-action);
+		background    : var(--c-white);
+		box-sizing    : border-box;
+		cursor        : pointer;
+		color         : inherit;
+		padding       : 0 8px;
+	}
+
+	.action-btn:hover {
+		background : var(--selected);
+	}
 
 </style>

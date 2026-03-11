@@ -78,6 +78,7 @@
 		display         : flex;
 		border          : none;
 		font-weight     : 300;
+		outline         : none;
 	}
 
 	.banner::before {

@@ -29,14 +29,20 @@
 
 	// instant: bundled names are synchronous
 	let entries: LibEntry[] = $state(parse_names(scenes.list_bundled()));
+	let sizes: Map<string, number> = $state(new Map());
 
 	let folders: string[] = $derived([...new Set(entries.map(e => e.folder))].sort((a, b) => a === '' ? 1 : b === '' ? -1 : a.localeCompare(b)));
 	let visible: LibEntry[] = $derived(entries.filter(e => e.folder === active_folder));
 
+	function format_size(bytes: number): string {
+		return bytes < 1000 ? `${bytes} B` : `${(bytes / 1000).toFixed(1)} kB`;
+	}
+
 	// async: merge IDB user files, then validate active_folder
 	async function merge_idb(): Promise<void> {
-		const all = await scenes.list_library();
+		const [all, size_map] = await Promise.all([scenes.list_library(), scenes.library_sizes()]);
 		entries = parse_names(all);
+		sizes = size_map;
 		if (!entries.some(e => e.folder === active_folder)) {
 			active_folder = folders[0] ?? '';
 		}
@@ -112,8 +118,9 @@
 
 <table class='library'><tbody>
 	{#each visible as entry}
-		<tr class='lib-row' class:selected={selected === entry} onclick={() => selected = entry}>
+		<tr class='lib-row' class:selected={selected === entry} onclick={() => selected = entry} ondblclick={() => { selected = entry; do_replace(); }}>
 			<td class='lib-name'>{entry.display}</td>
+			<td class='lib-size'>{sizes.has(entry.name) ? format_size(sizes.get(entry.name)!) : ''}</td>
 		</tr>
 	{/each}
 </tbody></table>
@@ -226,5 +233,12 @@
 	.lib-name {
 		padding    : 2px 0;
 		text-align : left;
+	}
+
+	.lib-size {
+		padding    : 2px 4px;
+		text-align : right;
+		opacity    : 0.4;
+		white-space: nowrap;
 	}
 </style>

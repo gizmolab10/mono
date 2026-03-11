@@ -107,6 +107,15 @@
 		scenes.save();
 	}
 
+	function reset_angle() {
+		if (!selected_so) return;
+		selected_so.touch_axis(rot_axis, 0);
+		constraints.propagate(selected_so);
+		sync_parent_repeater();
+		stores.tick();
+		scenes.save();
+	}
+
 	function handle_angle(deg: number) {
 		if (!selected_so) return;
 		selected_so.touch_axis(rot_axis, (base_deg() + deg) * Math.PI / 180);
@@ -147,6 +156,7 @@
 {/if}
 <div class='rotation-row'>
 	<button class='action-btn' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
+	{#if !is_root}<span class='spacer'></span><button class='action-btn' onclick={reset_angle}>reset</button><span class='spacer'></span>{/if}
 	<span class='far-right'>
 		<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
 		<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
@@ -164,6 +174,11 @@
 		gap         : var(--l-gap-small);
 		align-items : center;
 		display     : flex;
+	}
+
+	.spacer {
+		flex      : 1 1 0px;
+		min-width : 0;
 	}
 
 	.slider-label {

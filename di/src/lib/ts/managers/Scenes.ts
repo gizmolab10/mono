@@ -96,30 +96,33 @@ class Scenes {
 
 	private static readonly IDB_NAME = 'di_library';
 	private static readonly IDB_STORE = 'files';
+	private static readonly IDB_META = 'meta';
 	private idb_cache: IDBDatabase | null = null;
 	private library_cache: string[] | null = null;
 
 	private open_idb(): Promise<IDBDatabase> {
 		if (this.idb_cache) return Promise.resolve(this.idb_cache);
 		return new Promise((resolve, reject) => {
-			const request = indexedDB.open(Scenes.IDB_NAME, 2);
+			const request = indexedDB.open(Scenes.IDB_NAME, 3);
 			request.onupgradeneeded = () => {
 				const db = request.result;
 				// Delete old 'handles' store from previous schema
 				if (db.objectStoreNames.contains('handles')) db.deleteObjectStore('handles');
 				if (!db.objectStoreNames.contains(Scenes.IDB_STORE)) db.createObjectStore(Scenes.IDB_STORE);
+				if (!db.objectStoreNames.contains(Scenes.IDB_META)) db.createObjectStore(Scenes.IDB_META);
 			};
 			request.onsuccess = () => { this.idb_cache = request.result; resolve(request.result); };
 			request.onerror = () => reject(request.error);
 		});
 	}
 
-	/** Save a .di file's JSON into IndexedDB, keyed by name. */
+	/** Save a .di file's JSON into IndexedDB, keyed by name. Stores size in meta. */
 	private async save_to_idb(name: string, json: string): Promise<void> {
 		try {
 			const database = await this.open_idb();
-			const transaction = database.transaction(Scenes.IDB_STORE, 'readwrite');
+			const transaction = database.transaction([Scenes.IDB_STORE, Scenes.IDB_META], 'readwrite');
 			transaction.objectStore(Scenes.IDB_STORE).put(json, name);
+			transaction.objectStore(Scenes.IDB_META).put(json.length, name);
 			this.library_cache = null;
 		} catch {
 			// silent
@@ -130,8 +133,9 @@ class Scenes {
 	async clear_idb(): Promise<void> {
 		try {
 			const database = await this.open_idb();
-			const transaction = database.transaction(Scenes.IDB_STORE, 'readwrite');
+			const transaction = database.transaction([Scenes.IDB_STORE, Scenes.IDB_META], 'readwrite');
 			transaction.objectStore(Scenes.IDB_STORE).clear();
+			transaction.objectStore(Scenes.IDB_META).clear();
 			this.library_cache = null;
 		} catch {
 			// silent
@@ -196,11 +200,36 @@ class Scenes {
 	/** Return bundled defaults from src/assets. */
 	private static readonly ASSETS_PREFIX = '../../../assets/';
 	private static bundled_loaders = import.meta.glob('../../../assets/**/*.di', { query: '?raw', import: 'default' }) as Record<string, () => Promise<string>>;
+	private static bundled_eager = import.meta.glob('../../../assets/**/*.di', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 
 	private list_bundled_names(): string[] {
 		return Object.keys(Scenes.bundled_loaders).map(path =>
 			path.slice(Scenes.ASSETS_PREFIX.length).replace('.di', '')
 		);
+	}
+
+	/** Get file sizes for all library entries (bundled + IDB meta). No file content is loaded. */
+	async library_sizes(): Promise<Map<string, number>> {
+		const sizes = new Map<string, number>();
+		for (const [path, content] of Object.entries(Scenes.bundled_eager)) {
+			sizes.set(path.slice(Scenes.ASSETS_PREFIX.length).replace('.di', ''), content.length);
+		}
+		try {
+			const database = await this.open_idb();
+			await new Promise<void>((resolve) => {
+				const transaction = database.transaction(Scenes.IDB_META, 'readonly');
+				const req = transaction.objectStore(Scenes.IDB_META).getAll();
+				const keys_req = transaction.objectStore(Scenes.IDB_META).getAllKeys();
+				transaction.oncomplete = () => {
+					const keys = keys_req.result as string[];
+					const vals = req.result as number[];
+					for (let i = 0; i < keys.length; i++) sizes.set(keys[i], vals[i]);
+					resolve();
+				};
+				transaction.onerror = () => resolve();
+			});
+		} catch { /* silent */ }
+		return sizes;
 	}
 
 	/** Add current scene to library: save to IDB + download to disk. */

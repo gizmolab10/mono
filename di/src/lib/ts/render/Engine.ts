@@ -758,6 +758,58 @@ class Engine {
 		scenes.save();
 	}
 
+	/** Duplicate the selected SO as a sibling with the same dimensions, angles, and formulas. */
+	duplicate_so(): void {
+		const selected = stores.selection();
+		if (!selected?.so) return;
+		const src = selected.so;
+		const parent_scene = src.scene?.parent;
+		if (!parent_scene) return; // can't duplicate root
+
+		const used = new Set(scene.get_all().map(o => o.so.name));
+		const serialized = src.serialize();
+
+		// Fresh name
+		let name = src.name;
+		while (used.has(name)) {
+			const m = name.match(/^(.*?)(\d+)$/);
+			name = m ? m[1] + (parseInt(m[2]) + 1) : name + '2';
+		}
+
+		serialized.name = name;
+		const clone = Smart_Object.deserialize(serialized);
+		clone.setID();
+
+		// Recompile formulas from source tokens onto the clone
+		for (let ai = 0; ai < 3; ai++) {
+			for (const attr_name of ['start', 'end', 'length'] as const) {
+				const src_attr = src.axes[ai][attr_name];
+				if (src_attr.formula) {
+					const formula_str = src_attr.formula_display;
+					if (formula_str) {
+						constraints.set_formula(clone, clone.axes[ai][attr_name].name, formula_str, parent_scene.so.id);
+					}
+				}
+			}
+		}
+
+		const so_scene = scene.create({
+			so: clone,
+			edges: this.edges,
+			faces: this.faces,
+			color: colors.edge_color_rgba(),
+			parent: parent_scene,
+		});
+		clone.scene = so_scene;
+		hits_3d.register(clone);
+
+		constraints.propagate(clone);
+		stores.w_all_sos.update(list => [...list, clone]);
+		hits_3d.set_selection({ so: clone, type: T_Hit_3D.face, index: 0 });
+		stores.tick();
+		scenes.save();
+	}
+
 	/** Resize root to exactly fit its children. User-initiated — never automatic.
 	 *  Snapshots direct children's absolute positions, resizes root to the union
 	 *  AABB of all descendants, then restores direct children (recalculates their
