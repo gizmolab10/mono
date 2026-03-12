@@ -1,17 +1,17 @@
 import { constraints, constants, evaluator } from '../algebra';
 import type { Portable_Scene } from '../managers/Versions';
 import type { Bound, Axis_Name } from '../types/Types';
-import { hits_3d, scenes, stores, history } from '../managers';
+import { scenes, stores, history } from '../managers';
 import { scene, camera, render, animation } from '.';
 import type { O_Scene } from '../types/Interfaces';
 import type { Point } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { units, Units } from '../types/Units';
 import { Smart_Object } from '../runtime';
-import { colors } from '../draw/Colors';
+import { colors } from '../utilities/Colors';
 import { quat, vec3 } from 'gl-matrix';
 import { drag } from '../editors/Drag';
-import { e3 } from '../signals';
+import { e3, hits_3d } from '../events';
 
 class Engine {
 	private root_scene: O_Scene | null = null;
@@ -759,7 +759,7 @@ class Engine {
 
 		// Apply formulas via constraints (cycle-safe)
 		for (const [bound, formula] of Object.entries(formulas)) {
-			constraints.set_formula(child, bound as Bound, formula);
+			constraints.set_formula(child, bound as Bound, formula as string);
 		}
 
 		const so_scene = scene.create({

@@ -3,7 +3,7 @@
 	import Details from '../details/Details.svelte';
 	import { k } from '../../ts/common/Constants';
 	import BuildNotes from './BuildNotes.svelte';
-	import { e } from '../../ts/signals/Events';
+	import { e } from '../../ts/events/Events';
 	import Controls from './Controls.svelte';
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';

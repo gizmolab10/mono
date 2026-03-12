@@ -1,7 +1,8 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import { hits_3d, stores, scenes, history } from '../../ts/managers';
+	import { stores, scenes, history } from '../../ts/managers';
+	import { hits_3d } from '../../ts/events';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Hit_3D } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';

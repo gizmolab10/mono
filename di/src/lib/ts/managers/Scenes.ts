@@ -9,7 +9,7 @@ import { T_Hit_3D } from '../types/Enumerations';
 import { Identifiable } from '../runtime';
 import { camera } from '../render/Camera';
 import { scene } from '../render/Scene';
-import { hits_3d } from './Hits_3D';
+import { hits_3d } from '../events/Hits_3D';
 import { stores } from './Stores';
 
 /**

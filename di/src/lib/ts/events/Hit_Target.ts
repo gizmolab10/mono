@@ -1,8 +1,8 @@
-import S_Hit_Target from '../state/S_Hit_Target';
+import S_Hit_Target from './S_Hit_Target';
 import { T_Hit_Target, T_Mouse_Detection } from '../types/Enumerations';
 import { Point } from '../types/Coordinates';
-import { hits } from '../managers/Hits';
-import S_Mouse from '../state/S_Mouse';
+import { hits } from './Hits';
+import S_Mouse from './S_Mouse';
 
 export type Hit_Target_Options = {
 	onlong?:          (s_mouse: S_Mouse) => void;

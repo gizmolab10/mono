@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { scenes, stores, hits_3d, history } from '../../ts/managers';
+	import { scenes, stores, history } from '../../ts/managers';
 	import type { Axis_Name } from '../../ts/types/Types';
 	import { constraints } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
-	import { e } from '../../ts/signals';
+	import { e, hits_3d } from '../../ts/events';
 	import Slider from '../mouse/Slider.svelte';
 
 	const { w_mouse_button_down } = e;

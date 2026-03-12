@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Layer, T_Decorations } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { svg_paths } from '../../ts/draw/SVG_Paths';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { stores } from '../../ts/managers/Stores';
 	import { scenes } from '../../ts/managers/Scenes';
 	import Separator from '../mouse/Separator.svelte';

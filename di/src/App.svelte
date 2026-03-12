@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import Main from './lib/svelte/main/Main.svelte';
-	import { colors } from './lib/ts/draw/Colors';
+	import { colors } from './lib/ts/utilities/Colors';
 	import { k } from './lib/ts/common/Constants';
 	import { onMount } from 'svelte';
 

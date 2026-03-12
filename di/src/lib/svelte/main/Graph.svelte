@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { T_Editing, T_Hit_3D, T_Hit_Target } from '../../ts/types/Enumerations';
-	import { hits, hits_3d, scenes, stores } from '../../ts/managers';
+	import { hits, hits_3d } from '../../ts/events';
+	import { scenes, stores } from '../../ts/managers';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 
 	import { face_label } from '../../ts/editors/Face_Label';

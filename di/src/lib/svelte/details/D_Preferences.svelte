@@ -4,7 +4,7 @@
 	import { w_unit_system } from '../../ts/types/Units';
 	import { preferences } from '../../ts/managers/Preferences';
 	import { stores } from '../../ts/managers';
-	import { colors } from '../../ts/draw/Colors';
+	import { colors } from '../../ts/utilities/Colors';
 	import { engine } from '../../ts/render';
 	import Separator from '../mouse/Separator.svelte';
 

@@ -1,6 +1,6 @@
 import { T_Editing, T_Decorations, T_Parts_Tab } from '../types/Enumerations';
 import { preferences, T_Preference } from './Preferences';
-import type { Hit_3D_Result } from './Hits_3D';
+import type { Hit_3D_Result } from '../events/Hits_3D';
 import { writable, get } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import { Smart_Object } from '../runtime';

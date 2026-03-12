@@ -3,7 +3,7 @@ import type Smart_Object from '../runtime/Smart_Object';
 import type { O_Scene } from '../types/Interfaces';
 import type { Axis_Name } from '../types/Types';
 import { units, Units } from '../types/Units';
-import { hits_3d } from '../managers/Hits_3D';
+import { hits_3d } from '../events/Hits_3D';
 import { stores } from '../managers/Stores';
 import { scene } from './Scene';
 import { vec3 } from 'gl-matrix';

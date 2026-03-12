@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { hits } from '../../ts/managers/Hits';
+	import { hits } from '../../ts/events/Hits';
 	import { scenes, stores } from '../../ts/managers';
 	import { constraints } from '../../ts/algebra/Constraints';
 	import { engine } from '../../ts/render';

@@ -2,8 +2,8 @@
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { Identifiable } from '../../ts/runtime';
-	import { colors } from '../../ts/draw/Colors';
-	import { hits } from '../../ts/managers/Hits';
+	import { colors } from '../../ts/utilities/Colors';
+	import { hits } from '../../ts/events/Hits';
 	import { k } from '../../ts/common/Constants';
 	import Steppers from './Steppers.svelte';
 

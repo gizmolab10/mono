@@ -1,5 +1,5 @@
 import type { Label_Rect, S_SO } from '../types/Interfaces';
-import type { Hit_3D_Result } from '../managers/Hits_3D';
+import type { Hit_3D_Result } from '../events/Hits_3D';
 
 interface S_Name extends S_SO {
 	current_name: string;
@@ -8,7 +8,7 @@ interface S_Name extends S_SO {
 import { T_Editing, T_Hit_3D } from '../types/Enumerations';
 import { history } from '../managers/History';
 import { writable, get } from 'svelte/store';
-import { hits_3d } from '../managers/Hits_3D';
+import { hits_3d } from '../events/Hits_3D';
 import { scenes } from '../managers/Scenes';
 import { stores } from '../managers/Stores';
 import { render } from '../render/Render';

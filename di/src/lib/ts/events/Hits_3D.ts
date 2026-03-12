@@ -6,7 +6,7 @@ import { face_label } from '../editors/Face_Label';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
-import { stores } from './Stores';
+import { stores } from '../managers/Stores';
 import { camera } from '../render/Camera';
 import { mat4, quat, vec3, vec4 } from 'gl-matrix';
 

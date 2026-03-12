@@ -6,7 +6,7 @@ import { face_label } from '../editors/Face_Label';
 import Smart_Object from '../runtime/Smart_Object';
 import { T_Hit_3D } from '../types/Enumerations';
 import { render_angulars } from './R_Angulars';
-import { hits_3d } from '../managers/Hits_3D';
+import { hits_3d } from '../events/Hits_3D';
 import { mat4, vec3, vec4 } from 'gl-matrix';
 import { Size } from '../types/Coordinates';
 import { stores } from '../managers/Stores';

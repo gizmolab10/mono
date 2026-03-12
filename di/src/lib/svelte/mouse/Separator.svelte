@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Layer } from '../../ts/types/Enumerations';
-	import { svg_paths } from '../../ts/draw/SVG_Paths';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
 
 	let {

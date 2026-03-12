@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { svg_paths } from '../../ts/draw/SVG_Paths';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { Direction } from '../../ts/types/Angle';
 	import { Identifiable } from '../../ts/runtime';
-	import { colors } from '../../ts/draw/Colors';
-	import { hits } from '../../ts/managers/Hits';
+	import { colors } from '../../ts/utilities/Colors';
+	import { hits } from '../../ts/events/Hits';
 
 	let {
 		gap = -5,

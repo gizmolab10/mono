@@ -1,4 +1,4 @@
-import S_Mouse from '../state/S_Mouse';	
+import S_Mouse from '../events/S_Mouse';	
 
 export type Axis_Name = 'x' | 'y' | 'z';
 export type Dictionary<T = any> = Record<string, T>;

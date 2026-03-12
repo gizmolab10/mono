@@ -47,8 +47,6 @@
 - di/src/lib/ts/managers/index.ts
 - di/src/lib/ts/managers/Components.ts
 - di/src/lib/ts/managers/History.ts
-- di/src/lib/ts/managers/Hits.ts
-- di/src/lib/ts/managers/Hits_3D.ts
 - di/src/lib/ts/managers/Preferences.ts
 - di/src/lib/ts/managers/Scenes.ts
 - di/src/lib/ts/managers/Versions.ts
@@ -101,7 +99,6 @@
 - di/src/lib/ts/common/Constants.ts
 - di/src/lib/ts/common/Debug.ts
 - di/src/lib/ts/common/Extensions.ts
-- di/src/lib/ts/common/Testworthy_Utilities.ts
 
 ## TS — Editors
 
@@ -111,28 +108,25 @@
 - di/src/lib/ts/editors/Drag.ts
 - di/src/lib/ts/editors/Face_Label.ts
 
+## TS — Utilities
+
+- di/src/lib/ts/utilities/index.ts
+- di/src/lib/ts/utilities/Colors.ts
+- di/src/lib/ts/utilities/SVG_Paths.ts
+- di/src/lib/ts/utilities/Testworthy_Utilities.ts
+
 ## TS — Events
 
+- di/src/lib/ts/events/index.ts
+- di/src/lib/ts/events/Events.ts
+- di/src/lib/ts/events/Events_3D.ts
+- di/src/lib/ts/events/Mouse_Timer.ts
+- di/src/lib/ts/events/Hits.ts
+- di/src/lib/ts/events/Hits_3D.ts
 - di/src/lib/ts/events/Hit_Target.ts
+- di/src/lib/ts/events/S_Hit_Target.ts
+- di/src/lib/ts/events/S_Mouse.ts
 
-## TS — Signals
-
-- di/src/lib/ts/signals/index.ts
-- di/src/lib/ts/signals/Events.ts
-- di/src/lib/ts/signals/Events_3D.ts
-- di/src/lib/ts/signals/Mouse_Timer.ts
-
-## TS — State
-
-- di/src/lib/ts/state/index.ts
-- di/src/lib/ts/state/S_Hit_Target.ts
-- di/src/lib/ts/state/S_Mouse.ts
-
-## TS — Draw
-
-- di/src/lib/ts/draw/index.ts
-- di/src/lib/ts/draw/Colors.ts
-- di/src/lib/ts/draw/SVG_Paths.ts
 
 ## Tests
 

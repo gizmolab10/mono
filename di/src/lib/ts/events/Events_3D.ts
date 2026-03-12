@@ -1,4 +1,4 @@
-import { hits_3d } from '../managers/Hits_3D';
+import { hits_3d } from './Hits_3D';
 import { dimensions } from '../editors/Dimension';
 import { angulars } from '../editors/Angular';
 import { face_label } from '../editors/Face_Label';

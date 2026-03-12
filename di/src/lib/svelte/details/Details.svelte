@@ -2,7 +2,7 @@
 	import { T_Details } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import D_Preferences from './D_Preferences.svelte';
-	import { hits } from '../../ts/managers/Hits';
+	import { hits } from '../../ts/events/Hits';
 	import { scenes } from '../../ts/managers';
 	import D_Library from './D_Library.svelte';
 	import Hideable from './Hideable.svelte';

@@ -1,6 +1,6 @@
 import { quat, vec3, vec4, mat4 } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
-import { hits_3d, type Hit_3D_Result } from '../managers/Hits_3D';
+import { hits_3d, type Hit_3D_Result } from '../events/Hits_3D';
 import { Point } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { stores } from '../managers/Stores';

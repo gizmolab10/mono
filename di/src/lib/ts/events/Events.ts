@@ -5,9 +5,9 @@ import { writable, get } from 'svelte/store';
 import { Point } from '../types/Coordinates';
 import { engine } from '../render/Engine';
 import { stores } from '../managers/Stores';
-import { hits } from '../managers/Hits';
+import { hits } from './Hits';
 import Mouse_Timer from './Mouse_Timer';
-import S_Mouse from '../state/S_Mouse';
+import S_Mouse from './S_Mouse';
 
 export class Events {
 	throttle_timers: Dictionary<ReturnType<typeof setTimeout> | null> = {};

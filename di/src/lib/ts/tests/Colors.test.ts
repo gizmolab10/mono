@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { colors } from '../draw/Colors';
+import { colors } from '../utilities/Colors';
 
 describe('Colors', () => {
 	describe('color_test', () => {
