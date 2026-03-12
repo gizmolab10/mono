@@ -3,7 +3,7 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Editing } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
-	import { scenes, stores } from '../../ts/managers';
+	import { scenes, stores, history } from '../../ts/managers';
 	import { constraints } from '../../ts/algebra';
 	import { units } from '../../ts/types/Units';
 
@@ -30,6 +30,7 @@
 	}
 
 	function remove_dimension(index: number): void {
+		history.snapshot();
 		const name = rows[index].name;
 		constants.remove(name);
 		rows = constants.get_all();
@@ -40,6 +41,7 @@
 		const old_name = rows[index].name;
 		const new_name = value.trim();
 		if (old_name === new_name) return;
+		history.snapshot();
 		// Rename in SD store FIRST — bind_refs checks constants.has(new_name)
 		constants.rename(old_name, new_name);
 		if (old_name && new_name) constraints.rename_sd_in_formulas(old_name, new_name);
@@ -48,6 +50,7 @@
 	}
 
 	function commit_value(index: number, value: string): void {
+		history.snapshot();
 		const mm = units.parse_for_system(value, $w_unit_system);
 		if (mm === null) return;
 		const name = rows[index].name;

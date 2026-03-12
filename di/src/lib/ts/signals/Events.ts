@@ -146,6 +146,12 @@ export class Events {
 			}
 			return;
 		}
+		if (event.key === 'z' && (event.metaKey || event.ctrlKey)) {
+			event.preventDefault();
+			if (event.shiftKey) engine.redo();
+			else engine.undo();
+			return;
+		}
 		if (event.key === 'Delete' || event.key === 'Backspace') {
 			event.preventDefault();
 			engine.delete_selected_so();

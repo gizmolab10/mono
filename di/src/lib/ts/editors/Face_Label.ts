@@ -6,6 +6,7 @@ interface S_Name extends S_SO {
 	face_index: number;
 }
 import { T_Editing, T_Hit_3D } from '../types/Enumerations';
+import { history } from '../managers/History';
 import { writable, get } from 'svelte/store';
 import { hits_3d } from '../managers/Hits_3D';
 import { scenes } from '../managers/Scenes';
@@ -61,6 +62,7 @@ class Face_Label {
 	commit(input: string): boolean {
 		const state = this.state;
 		if (!state) return false;
+		history.snapshot();
 
 		const trimmed = input.trim();
 		if (trimmed.length === 0) {

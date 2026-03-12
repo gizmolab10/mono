@@ -1,7 +1,7 @@
 import { constraints, constants, evaluator } from '../algebra';
 import type { Portable_Scene } from '../managers/Versions';
 import type { Bound, Axis_Name } from '../types/Types';
-import { hits_3d, scenes, stores } from '../managers';
+import { hits_3d, scenes, stores, history } from '../managers';
 import { scene, camera, render, animation } from '.';
 import type { O_Scene } from '../types/Interfaces';
 import type { Point } from '../types/Coordinates';
@@ -151,8 +151,10 @@ class Engine {
 	// ── load scene ──
 
 	/** Load a Portable_Scene in-place: teardown old state, rebuild, restore camera/selection.
-	 *  Called by setup() on init and by library panel for scene switching (no page reload). */
-	load_scene(saved: Portable_Scene | null): void {
+	 *  Called by setup() on init and by library panel for scene switching (no page reload).
+	 *  When restore_camera is false, camera stays at current position (used by undo/redo). */
+	load_scene(saved: Portable_Scene | null, restore_camera = true): void {
+		if (restore_camera) history.clear();
 		// Teardown
 		scene.clear();
 		hits_3d.clear();
@@ -241,7 +243,7 @@ class Engine {
 			}
 		}
 
-		if (saved?.camera) {
+		if (restore_camera && saved?.camera) {
 			camera.deserialize(saved.camera);
 		}
 
@@ -252,6 +254,20 @@ class Engine {
 
 		stores.tick();
 		scenes.save();
+	}
+
+	// ── undo / redo ──
+
+	undo(): void {
+		const saved = history.undo();
+		if (!saved) return;
+		this.load_scene(saved, false);
+	}
+
+	redo(): void {
+		const saved = history.redo();
+		if (!saved) return;
+		this.load_scene(saved, false);
 	}
 
 	/** Check if current orientation is already snapped to a face-aligned position. */
@@ -512,6 +528,7 @@ class Engine {
 
 	/** Set precision level (index into tick array). Snaps all SO bounds to the new grid. */
 	set_precision(level: number): void {
+		history.snapshot();
 		stores.w_precision.set(level);
 		// Snap every non-formula bound to the precision grid
 		const system = Units.current_unit_system();
@@ -529,6 +546,7 @@ class Engine {
 	// ── hierarchy ──
 
 	delete_selected_so(): void {
+		history.snapshot();
 		const sel = stores.selection();
 		if (!sel) return;
 		const so = sel.so;
@@ -592,6 +610,7 @@ class Engine {
 
 	/** Insert an SO subtree from a .di file as children of the selected (or root) SO. */
 	insert_child_from_text(text: string): void {
+		history.snapshot();
 		const target_so = stores.selection()?.so ?? this.root_scene?.so;
 		if (!target_so?.scene) return;
 
@@ -730,6 +749,7 @@ class Engine {
 	}
 
 	add_child_so(): void {
+		history.snapshot();
 		const selected = stores.selection();
 		const parent_so = selected?.so ?? this.root_scene?.so;
 		if (!parent_so?.scene) return;
@@ -760,6 +780,7 @@ class Engine {
 
 	/** Duplicate the selected SO as a sibling with the same dimensions, angles, and formulas. */
 	duplicate_so(): void {
+		history.snapshot();
 		const selected = stores.selection();
 		if (!selected?.so) return;
 		const src = selected.so;

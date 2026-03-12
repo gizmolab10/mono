@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { scenes, stores } from '../../ts/managers';
+	import { scenes, stores, history } from '../../ts/managers';
 	import { w_unit_system, units } from '../../ts/types/Units';
 	import { T_Units } from '../../ts/types/Enumerations';
 	import { engine } from '../../ts/render';
@@ -27,6 +27,7 @@
 
 	function set_repeat_axis(axis: 0 | 1 | 2) {
 		if (!selected_so?.repeater) return;
+		history.snapshot();
 		selected_so.repeater = { ...selected_so.repeater, run_axis: axis };
 		engine.sync_repeater(selected_so);
 		stores.tick();
@@ -35,6 +36,7 @@
 
 	function set_rise_axis(axis: 0 | 1 | 2) {
 		if (!selected_so?.repeater) return;
+		history.snapshot();
 		selected_so.repeater = { ...selected_so.repeater, rise_axis: axis };
 		engine.sync_repeater(selected_so);
 		stores.tick();
@@ -43,6 +45,7 @@
 
 	function set_spacing(mm: number) {
 		if (!selected_so?.repeater) return;
+		history.snapshot();
 		selected_so.repeater = { ...selected_so.repeater, spacing: mm };
 		engine.sync_repeater(selected_so);
 		stores.tick();
@@ -118,6 +121,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 
 	function toggle_firewall() {
 		if (!selected_so?.repeater) return;
+		history.snapshot();
 		selected_so.repeater = { ...selected_so.repeater, firewall: !selected_so.repeater.firewall };
 		engine.sync_repeater(selected_so);
 		stores.tick();
@@ -137,6 +141,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 
 	function toggle_repeater() {
 		if (!selected_so) return;
+		history.snapshot();
 		if (is_repeater) {
 			selected_so.repeater = { ...selected_so.repeater, is_repeating: false };
 			engine.strip_clones(selected_so);
@@ -151,6 +156,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 
 	function repeat_straight() {
 		if (!selected_so) return;
+		history.snapshot();
 		engine.strip_clones(selected_so);
 		const existing = selected_so.repeater ?? { run_axis: 0 as const, rise_axis: 1 as const, spacing: 16 * INCH, gap_min: GAP_MIN_MM, gap_max: GAP_MAX_MM };
 		selected_so.repeater = { ...existing, is_diagonal: false, is_repeating: true };
@@ -161,6 +167,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 
 	function repeat_diagonal() {
 		if (!selected_so) return;
+		history.snapshot();
 		engine.strip_clones(selected_so);
 		const existing = selected_so.repeater ?? { run_axis: 0 as const, rise_axis: 1 as const, spacing: 16 * INCH, gap_min: GAP_MIN_MM, gap_max: GAP_MAX_MM };
 		selected_so.repeater = { ...existing, is_diagonal: true, is_repeating: true };

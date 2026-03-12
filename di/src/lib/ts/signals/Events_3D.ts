@@ -2,6 +2,7 @@ import { hits_3d } from '../managers/Hits_3D';
 import { dimensions } from '../editors/Dimension';
 import { angulars } from '../editors/Angular';
 import { face_label } from '../editors/Face_Label';
+import { history } from '../managers/History';
 import { drag } from '../editors/Drag';
 import { Point } from '../types/Coordinates';
 import { T_Hit_3D, T_Editing } from '../types/Enumerations';
@@ -164,6 +165,9 @@ class Events_3D {
 			hits_3d.set_hover(null);
 			return;
 		}
+
+		// Snapshot for undo before any drag mutation
+		if (hit) history.snapshot();
 
 		// Store what we're actually dragging (corner/edge/face)
 		drag.set_target(hit);

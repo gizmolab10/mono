@@ -2,7 +2,6 @@
 
 | #   | Name                                             |
 | --- | ------------------------------------------------ |
-| 23  | [Undo](23.undo.md)                               |
 | 24  | [Mobile Devices](24.mobile.devices.md)           |
 | 25  | [Selection Algorithm](25.selection.algorithm.md) |
 | 26  | [Cut Lists](26.cut.lists.md)                     |

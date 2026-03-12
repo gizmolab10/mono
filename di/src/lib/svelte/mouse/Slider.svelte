@@ -47,7 +47,6 @@
 		onstep?: (pointsUp: boolean) => void;
 	} = $props();
 
-	const { w_accent_color } = colors;
 	const border = `1px solid ${colors.border}`;
 
 	// Hit target IDs — unique per instance to avoid RBush collision

@@ -2,7 +2,7 @@
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { T_Editing } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
-	import { scenes, stores } from '../../ts/managers';
+	import { scenes, stores, history } from '../../ts/managers';
 	import type { Bound } from '../../ts/types/Types';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { constants } from '../../ts/algebra/User_Constants';
@@ -56,6 +56,7 @@
 
 	function commit_formula(row: BoundsRow, value: string) {
 		if (!selected_so || !row.bound) return;
+		history.snapshot();
 		const trimmed = value.trim();
 		const parent_id = selected_so.scene?.parent?.so.id;
 		if (trimmed) {
@@ -72,6 +73,7 @@
 
 	function commit_value(row: BoundsRow, value: string) {
 		if (!selected_so || !row.bound) return;
+		history.snapshot();
 		const mm = units.parse_for_system(value, $w_unit_system) ?? constraints.evaluate_formula(value);
 		if (mm === null) return;
 		if (length_bounds.has(row.bound)) {
@@ -95,6 +97,7 @@
 
 	function set_invariant(row: BoundsRow) {
 		if (!selected_so || is_root) return;
+		history.snapshot();
 		const axis = selected_so.axes[row.axis_index];
 		// Before changing invariant, sync length from geometry so it's never stale
 		if (!axis.length.compiled) {

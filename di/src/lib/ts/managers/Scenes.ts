@@ -60,8 +60,8 @@ class Scenes {
 		}
 	}
 
-	save(): void {
-		// Collect IDs of repeater clone children (skip on save — regenerated on load)
+	/** Capture current scene state as a Portable_Scene (no side effects). */
+	capture(): Portable_Scene {
 		const clone_ids = new Set<string>();
 		for (const o of scene.get_all()) {
 			if (!o.so.repeater?.is_repeating) continue;
@@ -79,7 +79,7 @@ class Scenes {
 			});
 		const sel = hits_3d.selection;
 		const user_constants = constants.get_all();
-		const data: Portable_Scene = {
+		return {
 			smart_objects: objects,
 			constants: user_constants.length ? user_constants : undefined,
 			camera: camera.serialize(),
@@ -87,7 +87,10 @@ class Scenes {
 			selected_id: sel?.so.id,
 			selected_face: sel?.type === T_Hit_3D.face ? sel.index : undefined,
 		};
-		preferences.write(T_Preference.scene, { version: CURRENT_VERSION, scene: data } as Exported_File);
+	}
+
+	save(): void {
+		preferences.write(T_Preference.scene, { version: CURRENT_VERSION, scene: this.capture() } as Exported_File);
 	}
 
 	// ── file export/import ──

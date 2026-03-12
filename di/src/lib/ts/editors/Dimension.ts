@@ -6,6 +6,7 @@ interface S_Dimensions extends S_SO {
 	formatted: string;
 }
 import { constraints, compiler, evaluator } from '../algebra';
+import { history } from '../managers/History';
 import { units, Units } from '../types/Units';
 import { T_Units, T_Editing } from '../types/Enumerations';
 import { writable, get } from 'svelte/store';
@@ -54,6 +55,7 @@ class Dimensions {
 	commit(input: string): boolean {
 		const state = this.state;
 		if (!state) return false;
+		history.snapshot();
 
 		const system = Units.current_unit_system();
 		const new_mm = this.parse_input(input, system);

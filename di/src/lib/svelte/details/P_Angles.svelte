@@ -1,10 +1,12 @@
 <script lang='ts'>
-	import { scenes, stores, hits_3d } from '../../ts/managers';
+	import { scenes, stores, hits_3d, history } from '../../ts/managers';
 	import type { Axis_Name } from '../../ts/types/Types';
 	import { constraints } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
+	import { e } from '../../ts/signals';
 	import Slider from '../mouse/Slider.svelte';
 
+	const { w_mouse_button_down } = e;
 	const { w_selection, w_tick, w_forward_face } = stores;
 
 	const SWAP_LABELS:  Record<Axis_Name, string>           = { z: 'swap x | y', x: 'swap y | z', y: 'swap x | z' };
@@ -42,6 +44,9 @@
 		};
 	}
 
+	let slider_snapshotted = false;
+	$effect(() => { if (!$w_mouse_button_down) slider_snapshotted = false; });
+
 	function sync_parent_repeater() {
 		const parent = selected_so?.scene?.parent?.so;
 		if (parent?.repeater) engine.sync_repeater(parent);
@@ -49,6 +54,7 @@
 
 	function commit_angle(axis: 'x' | 'y' | 'z', value: string) {
 		if (!selected_so) return;
+		history.snapshot();
 		const degrees = parseFloat(value.replace('°', ''));
 		if (isNaN(degrees)) return;
 		selected_so.touch_axis(axis, degrees * Math.PI / 180);
@@ -83,6 +89,7 @@
 
 	function rotate_90(sign: 1 | -1) {
 		if (!selected_so) return;
+		history.snapshot();
 		if (is_root) {
 			engine.rotate_root_90(rot_axis, sign);
 			stores.tick();
@@ -100,6 +107,7 @@
 
 	function swap() {
 		if (!selected_so) return;
+		history.snapshot();
 		const [a, b] = SWAP_INDICES[rot_axis];
 		engine.swap_axes(selected_so, a, b);
 		constraints.propagate(selected_so);
@@ -110,6 +118,7 @@
 
 	function reset_angle() {
 		if (!selected_so) return;
+		history.snapshot();
 		selected_so.touch_axis(rot_axis, 0);
 		constraints.propagate(selected_so);
 		sync_parent_repeater();
@@ -119,6 +128,7 @@
 
 	function handle_angle(deg: number) {
 		if (!selected_so) return;
+		if (!slider_snapshotted) { history.snapshot(); slider_snapshotted = true; }
 		selected_so.touch_axis(rot_axis, (base_deg() + deg) * Math.PI / 180);
 		constraints.propagate(selected_so);
 		sync_parent_repeater();

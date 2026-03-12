@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import { hits_3d, stores, scenes } from '../../ts/managers';
+	import { hits_3d, stores, scenes, history } from '../../ts/managers';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Hit_3D } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
@@ -65,6 +65,7 @@
 	function commit_name(so: Smart_Object, value: string) {
 		const trimmed = value.trim();
 		if (trimmed.length > 0) {
+			history.snapshot();
 			so.name = trimmed;
 			scenes.save();
 			stores.w_all_sos.update(sos => sos);

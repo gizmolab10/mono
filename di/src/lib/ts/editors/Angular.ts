@@ -1,5 +1,6 @@
 import type { Angle_Rect, S_SO } from '../types/Interfaces';
 import { constraints } from '../algebra';
+import { history } from '../managers/History';
 import { T_Editing } from '../types/Enumerations';
 import type { Axis_Name } from '../types/Types';
 import { writable, get } from 'svelte/store';
@@ -52,6 +53,7 @@ class Angulars {
 	commit(input: string): boolean {
 		const state = this.state;
 		if (!state) return false;
+		history.snapshot();
 
 		const degrees = this.parse_input(input);
 		if (degrees === null || degrees <= 0 || degrees >= 90) {

@@ -46,6 +46,7 @@
 
 - di/src/lib/ts/managers/index.ts
 - di/src/lib/ts/managers/Components.ts
+- di/src/lib/ts/managers/History.ts
 - di/src/lib/ts/managers/Hits.ts
 - di/src/lib/ts/managers/Hits_3D.ts
 - di/src/lib/ts/managers/Preferences.ts

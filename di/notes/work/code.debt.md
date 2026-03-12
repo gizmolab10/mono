@@ -16,7 +16,7 @@ offer a proposal for the first unchecked item
 - [ ] [[8.dimensionals]]
 - [ ] [[18.user.constants]]
 - [ ] bring the [[working features]] table up to date
-- [ ] [[23.undo]]
+- [x] [[23.undo]]
 - [ ] with neighbor SO
     - [ ] snap to
     - [ ] resolve overlap

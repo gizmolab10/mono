@@ -81,7 +81,7 @@ export function render_axes(host: AxesHost): void {
 		let best_face = -1;
 		let best_visibility = -Infinity;
 
-		for (const [fi, fixed, a, b] of FACE_AXES) {
+		for (const [fi, _fixed, a, b] of FACE_AXES) {
 			// Only faces that contain this axis
 			if (a !== axis && b !== axis) continue;
 
