@@ -2,7 +2,7 @@
 	import { T_Editing, T_Hit_3D, T_Hit_Target } from '../../ts/types/Enumerations';
 	import { hits, hits_3d, scenes, stores } from '../../ts/managers';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import { components } from '../../ts/managers/Components';
+
 	import { face_label } from '../../ts/editors/Face_Label';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { dimensions } from '../../ts/editors/Dimension';
@@ -10,16 +10,13 @@
 	import { render } from '../../ts/render/Render';
 	import { k } from '../../ts/common/Constants';
 	import Slider from '../mouse/Slider.svelte';
-	import S_Mouse from '../../ts/state/S_Mouse';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { engine } from '../../ts/render';
 
-	const GRAPH_HID = 1;
 	const { w_s_angular } = angulars;
 	const { w_s_dimensions } = dimensions;
 	const { w_s_face_label } = face_label;
 	const { w_selection, w_scale, w_grid_opacity } = stores;
-	const s_hit_target = components.component_forHID_andType_createUnique(GRAPH_HID, T_Hit_Target.graph);
 
 	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 	let dim_input   = $state<HTMLInputElement>();
@@ -30,7 +27,7 @@
 	let label_focused = false;
 	let initialized = false;
 
-	function handle_zoom_step(pointsUp: boolean, _isLong: boolean) {
+	function handle_zoom_step(pointsUp: boolean) {
 		if (pointsUp) engine.scale_up();
 		else engine.scale_down();
 	}
@@ -145,14 +142,6 @@
 	onMount(() => {
 		if (!container) return;
 
-		// Register the container as a hit target
-		s_hit_target.set_html_element(container);
-
-		// Set up click handler
-		s_hit_target.handle_s_mouse = (_s_mouse: S_Mouse) => {
-			return true;
-		};
-
 		const observer = new ResizeObserver( async (entries) => {
 			const entry = entries[0];
 			if (!entry) return;
@@ -170,10 +159,6 @@
 		return () => {
 			observer.disconnect();
 		};
-	});
-
-	onDestroy(() => {
-		components.component_remove(s_hit_target);
 	});
 
 	// Focus the input when editing starts
@@ -213,7 +198,8 @@
 	class            = 'graph'
 	bind:this        = {container}
 	style:color      = 'var(--text)'
-	style:background = 'var(--c-white)'>
+	style:background = 'var(--c-white)'
+	use:hit_target   = {{ id: 'graph', type: T_Hit_Target.graph }}>
 	<canvas
 		bind:this = {canvas}></canvas>
 	<div class='canvas-actions'>

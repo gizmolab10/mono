@@ -25,13 +25,9 @@
 		show_down = notesIndex < notesLimit - pageSize;
 	}
 
-	function hit_closure(pointsUp: boolean, isLong: boolean) {
-		if (isLong) {
-			notesIndex = pointsUp ? 0 : Math.max(0, notesLimit - pageSize);
-		} else {
-			const nextIndex = notesIndex + (pageSize * (pointsUp ? -1 : 1));
-			notesIndex = Math.max(0, Math.min(nextIndex, notesLimit - pageSize));
-		}
+	function hit_closure(pointsUp: boolean) {
+		const nextIndex = notesIndex + (pageSize * (pointsUp ? -1 : 1));
+		notesIndex = Math.max(0, Math.min(nextIndex, notesLimit - pageSize));
 		updateNotes();
 	}
 

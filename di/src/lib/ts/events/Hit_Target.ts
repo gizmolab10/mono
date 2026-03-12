@@ -1,17 +1,19 @@
 import S_Hit_Target from '../state/S_Hit_Target';
 import { T_Hit_Target, T_Mouse_Detection } from '../types/Enumerations';
+import { Point } from '../types/Coordinates';
 import { hits } from '../managers/Hits';
 import S_Mouse from '../state/S_Mouse';
 
 export type Hit_Target_Options = {
-	onlong?:        (s_mouse: S_Mouse) => void;
-	ondouble?:      (s_mouse: S_Mouse) => void;
-	type?:          T_Hit_Target;
-	onpress?:       () => void;
-	onrelease?:     () => void;
-	onautorepeat?:  () => void;
-	hoverCursor?:   string;
-	id:             string;
+	onlong?:          (s_mouse: S_Mouse) => void;
+	ondouble?:        (s_mouse: S_Mouse) => void;
+	contains_point?:  (point: Point | null) => boolean;
+	type?:            T_Hit_Target;
+	onpress?:         () => void;
+	onrelease?:       () => void;
+	onautorepeat?:    () => void;
+	hoverCursor?:     string;
+	id:               string;
 };
 
 export function hit_target(element: HTMLElement, options: Hit_Target_Options) {
@@ -51,7 +53,8 @@ export function hit_target(element: HTMLElement, options: Hit_Target_Options) {
 		if (options.ondouble)     target.doubleClick_callback = options.ondouble;
 		if (options.onlong)       target.longClick_callback = options.onlong;
 		if (options.onautorepeat) target.autorepeat_callback = options.onautorepeat;
-		if (options.hoverCursor)  target.hoverCursor = options.hoverCursor;
+		if (options.hoverCursor)   target.hoverCursor = options.hoverCursor;
+		if (options.contains_point) target.contains_point = options.contains_point;
 
 		target.handle_s_mouse = (s_mouse: S_Mouse) => {
 			if (s_mouse.isDown) options.onpress?.();

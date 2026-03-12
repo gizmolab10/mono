@@ -1,13 +1,11 @@
 <script lang='ts'>
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
-	import S_Hit_Target from '../../ts/state/S_Hit_Target';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { Identifiable } from '../../ts/runtime';
 	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
-	import S_Mouse from '../../ts/state/S_Mouse';
-	import Steppers from './Steppers.svelte';
-	import { onMount } from 'svelte';
 	import { k } from '../../ts/common/Constants';
+	import Steppers from './Steppers.svelte';
 
 	let {
 		sticky,
@@ -46,15 +44,17 @@
 		onchange: (value: number) => void;
 		format_label?: (v: number) => string;
 		onchange_alt?: (value: number) => void;
-		onstep?: (pointsUp: boolean, isLong: boolean) => void;
+		onstep?: (pointsUp: boolean) => void;
 	} = $props();
 
 	const { w_accent_color } = colors;
 	const border = `1px solid ${colors.border}`;
 
-	// Hit targets — unique IDs per instance to avoid RBush collision
-	const sliderTarget  = new S_Hit_Target(T_Hit_Target.control, `slider-${Identifiable.newID()}`);
-	const sliderTarget2 = new S_Hit_Target(T_Hit_Target.control, `slider2-${Identifiable.newID()}`);
+	// Hit target IDs — unique per instance to avoid RBush collision
+	const slider_id     = `slider-${Identifiable.newID()}`;
+	const slider_id_alt = `slider2-${Identifiable.newID()}`;
+	const slider_hit_id     = T_Hit_Target.control + '-' + slider_id;
+	const slider_hit_id_alt = T_Hit_Target.control + '-' + slider_id_alt;
 
 	// Logarithmic: map [0..divisions] to [log10(min)..log10(max)]
 	// Linear: map [0..divisions] to [min..max]
@@ -70,16 +70,16 @@
 
 	// Hover / sticky state
 	const { w_s_hover } = hits;
-	const hover_slider  = $derived($w_s_hover?.id === sliderTarget.id);
-	const hover_slider_alt = $derived($w_s_hover?.id === sliderTarget2.id);
+	const isHoveringOn_slider  = $derived($w_s_hover?.id === slider_hit_id);
+	const isHoveringOn_slider_alt = $derived($w_s_hover?.id === slider_hit_id_alt);
 	const is_sticky  = $derived(!!sticky?.some(s => Math.abs(value - s) < 0.01));
 	const is_sticky_alt = $derived(!!sticky?.some(s => Math.abs((value_alt ?? 0) - s) < 0.01));
 	const sticky_dot = 'radial-gradient(circle, rgba(0,0,0,0.25) 4px, var(--c-white) 5px)';
 	const current_thumb_color = $derived(
-		(hover_slider && !is_dragging) ? 'var(--hover)' : is_sticky ? sticky_dot : $w_accent_color
+		(isHoveringOn_slider && !is_dragging) ? 'var(--hover)' : is_sticky ? sticky_dot : 'var(--selected)'
 	);
-	const current_thumb_color2 = $derived(
-		(hover_slider_alt && !is_dragging_alt) ? 'var(--hover)' : is_sticky_alt ? sticky_dot : $w_accent_color
+	const current_thumb_color_alt = $derived(
+		(isHoveringOn_slider_alt && !is_dragging_alt) ? 'var(--hover)' : is_sticky_alt ? sticky_dot : 'var(--selected)'
 	);
 
 	// Value → slider position (0..divisions)
@@ -100,41 +100,6 @@
 	const fill_left_pct         = $derived(slider_value  / divisions * 100);
 	const fill_left_alt_pct     = $derived(value_alt !== undefined ? slider_value_alt / divisions * 100 : 100);
 	const fill_right_from_right = $derived(value_alt !== undefined ? (1 - slider_value_alt / divisions) * 100 : 0);
-
-	onMount(() => {
-		return () => {
-			hits.delete_hit_target(sliderTarget);
-			hits.delete_hit_target(sliderTarget2);
-		};
-	});
-
-	// Register slider hit targets
-	$effect(() => {
-		if (slider_input) {
-			sliderTarget.set_html_element(slider_input);
-			sliderTarget.handle_s_mouse = (s_mouse: S_Mouse) => {
-				if (s_mouse.isDown) is_dragging = true;
-				else if (s_mouse.isUp) is_dragging = false;
-				return false;
-			};
-		}
-	});
-
-	$effect(() => {
-		if (slider_input_alt && value_alt !== undefined) {
-			// Two-thumb mode: add proximity to both thumbs so they disambiguate correctly
-			sliderTarget.contains_point = (point) =>
-				!!point && near_thumb(sliderTarget, slider_value, point);
-			sliderTarget2.set_html_element(slider_input_alt);
-			sliderTarget2.handle_s_mouse = (s_mouse: S_Mouse) => {
-				if (s_mouse.isDown) is_dragging_alt = true;
-				else if (s_mouse.isUp) is_dragging_alt = false;
-				return false;
-			};
-			sliderTarget2.contains_point = (point) =>
-				!!point && near_thumb(sliderTarget2, slider_value_alt, point);
-		}
-	});
 
 	// Slider position → value
 	function position_to_value(pos: number): number {
@@ -212,9 +177,9 @@
 		return sticky.map(s => ({ pct: (s - min) / range * 100 }));
 	});
 
-	function near_thumb(target: S_Hit_Target, sv: number, point: { x: number; y: number }): boolean {
-		const rect = target.element_rect;
-		if (!rect) return false;
+	function near_thumb(element: HTMLElement | null, sv: number, point: { x: number; y: number }): boolean {
+		if (!element) return false;
+		const rect = element.getBoundingClientRect();
 		const h = k.height.slider;
 		let cx: number, cy: number;
 		if (rect.height > rect.width) {
@@ -253,20 +218,34 @@
 						<span class='range-tick' style:left="calc(var(--h-slider) / 2 + {tick.pct} * (100% - var(--h-slider)) / 100)"></span>
 					{/each}
 					<input type='range' class='range-input'
-						id={sliderTarget.id}
+						id={slider_hit_id}
 						min='0' step='any' max={divisions}
 						value={slider_value}
 						style:--thumb-color={current_thumb_color}
 						bind:this={slider_input}
 						oninput={on_input}
+						use:hit_target={{
+							id: slider_id,
+							onpress: () => is_dragging = true,
+							onrelease: () => is_dragging = false,
+							contains_point: value_alt !== undefined
+								? (point) => !!point && near_thumb(slider_input, slider_value, point)
+								: undefined
+						}}
 					/>
 					<input type='range' class='range-input'
-						id={sliderTarget2.id}
+						id={slider_hit_id_alt}
 						min='0' step='any' max={divisions}
 						value={slider_value_alt}
-						style:--thumb-color={current_thumb_color2}
+						style:--thumb-color={current_thumb_color_alt}
 						bind:this={slider_input_alt}
 						oninput={on_input_alt}
+						use:hit_target={{
+							id: slider_id_alt,
+							onpress: () => is_dragging_alt = true,
+							onrelease: () => is_dragging_alt = false,
+							contains_point: (point) => !!point && near_thumb(slider_input_alt, slider_value_alt, point)
+						}}
 					/>
 				</div>
 			</div>
@@ -288,6 +267,11 @@
 					value={slider_value}
 					bind:this={slider_input}
 					oninput={on_input}
+					use:hit_target={{
+						id: slider_id,
+						onpress: () => is_dragging = true,
+						onrelease: () => is_dragging = false,
+					}}
 					style='flex: 1 1 auto; position: relative; min-width: 0; pointer-events: auto;'/>
 				{#if logarithmic || sticky_ticks.length > 0}
 					<div class='tick-overlay'>
@@ -325,12 +309,12 @@
 <style>
 
 	.slider-compound {
-		display     : flex;
+		z-index     : var(--z-action);
+		overflow    : visible;
 		align-items : center;
+		display     : flex;
 		margin-left : 6px;
 		gap         : 0;
-		overflow    : visible;
-		z-index     : var(--z-action);
 	}
 
 	.fill {
@@ -340,48 +324,48 @@
 	}
 
 	.fill .slider-with-label {
+		width     : 100%;
 		flex      : 1;
 		min-width : 0;
-		width     : 100%;
 	}
 
 	.slider-with-label {
-		display        : flex;
+		position       : relative;
+		overflow       : visible;
 		flex-direction : column;
 		align-items    : center;
-		overflow       : visible;
-		position       : relative;
+		display        : flex;
 		top            : -2px;
 	}
 
 	.current-value {
 		font-size            : var(--h-font-small);
-		font-weight          : bold;
 		font-variant-numeric : tabular-nums;
 		text-align           : center;
-		line-height          : 1;
+		font-weight          : bold;
 		user-select          : none;
-		margin-top           : 0;
 		margin-bottom        : -6px;
+		line-height          : 1;
+		margin-top           : 0;
 	}
 
 	.slider-label {
 		font-size            : var(--h-font-small);
-		font-weight          : bold;
 		font-variant-numeric : tabular-nums;
-		text-align           : center;
-		line-height          : 1;
-		margin-top           : 1px;
-		user-select          : none;
 		position             : relative;
+		text-align           : center;
+		font-weight          : bold;
+		user-select          : none;
 		top                  : 4px;
+		margin-top           : 1px;
+		line-height          : 1;
 	}
 
 	.slider-border {
 		position    : relative;
-		display     : flex;
-		align-items : center;
 		overflow    : visible;
+		align-items : center;
+		display     : flex;
 	}
 
 	.tick-overlay {
@@ -552,13 +536,13 @@
 	}
 
 	.range-track {
+		right      : calc(var(--h-slider) / 2);
+		left       : calc(var(--h-slider) / 2);
 		background : rgba(0, 0, 0, 0.15);
 		height     : var(--th-track);
 		position   : absolute;
-		right      : calc(var(--h-slider) / 2);
-		left       : calc(var(--h-slider) / 2);
-		top        : 50%;
 		margin-top : -2px;
+		top        : 50%;
 	}
 
 	.range-fill {
@@ -581,8 +565,8 @@
 	}
 
 	.range-label {
-		font-size            : var(--h-font-small);
 		transform            : translate(-50%, calc(50% - 0.5em));
+		font-size            : var(--h-font-small);
 		font-variant-numeric : tabular-nums;
 		position             : absolute;
 		white-space          : nowrap;
@@ -593,13 +577,13 @@
 
 	.range-input {
 		height             : var(--h-button-common);
+		z-index            : var(--z-action);
 		background         : transparent;
+		position           : absolute;
 		-webkit-appearance : none;
 		appearance         : none;
 		pointer-events     : none;
-		position           : absolute;
 		width              : 100%;
-		z-index            : var(--z-action);
 		left               : 0;
 		top                : 0;
 		margin             : 0;
@@ -610,37 +594,37 @@
 	}
 
 	.range-input::-webkit-slider-runnable-track {
-		background : transparent;
 		height     : var(--th-track);
+		background : transparent;
 		border     : none;
 	}
 
 	.range-input::-moz-range-track {
-		background : transparent;
 		height     : var(--th-track);
+		background : transparent;
 		border     : none;
 	}
 
 	.range-input::-webkit-slider-thumb {
 		margin-top         : calc((var(--th-track) - var(--h-slider)) / 2);
-		background         : var(--thumb-color);
 		border             : 1px solid rgba(0, 0, 0, 0.4);
+		background         : var(--thumb-color);
 		width              : var(--h-slider);
 		height             : var(--h-slider);
+		cursor             : pointer;
 		-webkit-appearance : none;
 		pointer-events     : auto;
 		border-radius      : 50%;
-		cursor             : pointer;
 	}
 
 	.range-input::-moz-range-thumb {
-		background     : var(--thumb-color);
 		border         : 1px solid rgba(0, 0, 0, 0.4);
+		background     : var(--thumb-color);
 		width          : var(--h-slider);
 		height         : var(--h-slider);
+		cursor         : pointer;
 		pointer-events : auto;
 		border-radius  : 50%;
-		cursor         : pointer;
 	}
 
 

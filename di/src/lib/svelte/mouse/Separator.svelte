@@ -1,11 +1,8 @@
 <script lang='ts'>
-	import { T_Hit_Target, T_Layer } from '../../ts/types/Enumerations';
-	import S_Hit_Target from '../../ts/state/S_Hit_Target';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { T_Layer } from '../../ts/types/Enumerations';
 	import { svg_paths } from '../../ts/draw/SVG_Paths';
-	import { hits } from '../../ts/managers/Hits';
 	import { k } from '../../ts/common/Constants';
-	import S_Mouse from '../../ts/state/S_Mouse';
-	import { onMount } from 'svelte';
 
 	let {
 		title,
@@ -35,37 +32,18 @@
 
 	const r = k.thickness.separator[kind] * 3;
 	const w = r * 7 / 3;
-
-	// ── Hits system ──
-
-	let element: HTMLElement | null = $state(null);
 	const uid = Math.random().toString(36).slice(2, 8);
-	const target = new S_Hit_Target(T_Hit_Target.control, `sep-${uid}`);
-
-	$effect(() => {
-		if (element && onclick) {
-			target.set_html_element(element);
-			target.handle_s_mouse = (s_mouse: S_Mouse) => {
-				if (s_mouse.isUp) onclick();
-				return true;
-			};
-		}
-	});
-
-	onMount(() => {
-		return () => hits.delete_hit_target(target);
-	});
 </script>
 
 {#if vertical}
 	<button
-		bind:this={element}
 		style:--m='{margin}px'
 		style:z-index={z_layer}
 		class='separator vertical'
 		class:clickable={!!onclick}
 		style:--e='{margin + end}px'
 		style:--th='var({css_var[kind]})'
+		use:hit_target={{ id: `sep-${uid}`, onrelease: onclick }}
 		style:align-self={length ? undefined : 'stretch'}
 		style:height={length ? `${length + 1}px` : undefined}>
 		<svg
@@ -82,13 +60,13 @@
 	</button>
 {:else}
 	<button
-		bind:this={element}
 		style:--th='var({css_var[kind]})'
 		style:--m='{margin}px'
 		style:z-index={z_layer}
 		class:clickable={!!onclick}
 		style:--e='{margin + end}px'
-		class='separator horizontal'>
+		class='separator horizontal'
+		use:hit_target={{ id: `sep-${uid}`, onrelease: onclick }}>
 		<svg
 			style='position:absolute; left:{-w/4 - 1}px; top:calc(50% - {r/2}px); overflow:visible; pointer-events:none'
 			width={w} height={r}>

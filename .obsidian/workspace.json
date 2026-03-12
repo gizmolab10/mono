@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/22.aesthetics.md",
+                "file": "ws/notes/guides/architecture/core/hits.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "22.aesthetics"
+              "title": "hits"
             }
           },
           {
@@ -67,7 +67,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "#",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -108,7 +108,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/milestones/22.aesthetics.md",
+                "file": "ws/notes/guides/architecture/core/hits.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +118,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 22.aesthetics"
+              "title": "Backlinks for hits"
             }
           },
           {
@@ -170,13 +170,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/22.aesthetics.md",
+                "file": "ws/notes/guides/architecture/core/hits.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 22.aesthetics"
+              "title": "Outline of hits"
             }
           }
         ]
@@ -196,12 +196,15 @@
       "bases:Create new base": false
     }
   },
-  "active": "976376d1ad191399",
+  "active": "26b78cd156d15e82",
   "lastOpenFiles": [
+    "di/notes/architecture/ui/hits.md",
+    "di/notes/work/milestones/done/4.hits.manager.md",
+    "di/notes/work/milestones/22.aesthetics.md",
+    "ws/notes/guides/architecture/core/hits.md",
     "di/notes/work/milestones/23.undo.md",
     "di/notes/work/milestones/25.selection.algorithm.md",
     "di/notes/work/milestones/24.mobile.devices.md",
-    "di/notes/work/milestones/22.aesthetics.md",
     "di/notes/work/revisit.di.md",
     "di/notes/work/code.debt.md",
     "di/notes/work/working features.md",
@@ -218,14 +221,11 @@
     "ws/vite.config.js.timestamp-1773271414514-750f68b4db075.mjs",
     "di/notes/components/Separators.md",
     "di/notes/work/milestones/done/20.repeaters.md",
-    "di/notes/work/milestones/done/4.hits.manager.md",
     "di/src/assets/home/basement.di",
     "di/notes/architecture/graph/two.dimensions.md",
     "di/notes/architecture/ui/style.md",
     "di/notes/architecture/graph/three.dimensions.md",
     "di/notes/architecture/graph/projection.md",
-    "di/notes/work/milestones/?.29.css.engine.md",
-    "di/notes/work/milestones/done/10.controls.md",
     "di/notes/components/open?vault=mono&file=di:notes:work:separators.inetloc",
     "ws/vite.config.js.timestamp-1773084241728-1f4d4a23c7fd1.mjs",
     "di/src/lib/svelte/main/Controls.svelte copy",
