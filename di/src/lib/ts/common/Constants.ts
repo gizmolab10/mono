@@ -95,7 +95,7 @@ export default class Constants {
 	};
 
 	height = {
-		controls:    common_size * 1.4,		// add two gaps
+		controls:    common_size * 1.4,		// adds two gaps
 		slider:      common_size * 0.8,
 		collapse:    common_size * 0.56,
 		cell:        common_size * 0.5,

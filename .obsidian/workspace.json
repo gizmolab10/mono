@@ -20,6 +20,20 @@
               "icon": "lucide-file",
               "title": "22.aesthetics"
             }
+          },
+          {
+            "id": "07686de312fec143",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/code.debt.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "code.debt"
+            }
           }
         ]
       }
@@ -94,7 +108,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/milestones/29.css.engine.md",
+                "file": "di/notes/work/milestones/22.aesthetics.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +118,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 29.css.engine"
+              "title": "Backlinks for 22.aesthetics"
             }
           },
           {
@@ -165,8 +179,7 @@
               "title": "Outline of 22.aesthetics"
             }
           }
-        ],
-        "currentTab": 4
+        ]
       }
     ],
     "direction": "horizontal",
@@ -185,9 +198,25 @@
   },
   "active": "976376d1ad191399",
   "lastOpenFiles": [
+    "di/notes/work/milestones/23.undo.md",
+    "di/notes/work/milestones/25.selection.algorithm.md",
+    "di/notes/work/milestones/24.mobile.devices.md",
+    "di/notes/work/milestones/22.aesthetics.md",
+    "di/notes/work/revisit.di.md",
+    "di/notes/work/code.debt.md",
+    "di/notes/work/working features.md",
+    "di/notes/work/milestones/done/12.parts.md",
+    "di/notes/work/more milestones.md",
+    "di/notes/work/milestones/index.md",
+    "di/notes/work/milestones/done/index.md",
+    "di/notes/work/milestones/29.marketing.md",
+    "di/notes/work/milestones/28.licensing.md",
+    "di/notes/work/milestones/27.user.manual.md",
+    "di/notes/work/milestones/26.cut.lists.md",
+    "di/notes/work/milestones/24.rubberband.md",
+    "di/notes/work/milestones/done/21.css.engine.md",
     "ws/vite.config.js.timestamp-1773271414514-750f68b4db075.mjs",
     "di/notes/components/Separators.md",
-    "di/notes/work/milestones/22.aesthetics.md",
     "di/notes/work/milestones/done/20.repeaters.md",
     "di/notes/work/milestones/done/4.hits.manager.md",
     "di/src/assets/home/basement.di",
@@ -195,32 +224,16 @@
     "di/notes/architecture/ui/style.md",
     "di/notes/architecture/graph/three.dimensions.md",
     "di/notes/architecture/graph/projection.md",
-    "di/notes/work/milestones/29.css.engine.md",
     "di/notes/work/milestones/?.29.css.engine.md",
-    "di/notes/work/code.debt.md",
     "di/notes/work/milestones/done/10.controls.md",
-    "di/notes/work/separators.md",
-    "di/notes/components/separators.md",
     "di/notes/components/open?vault=mono&file=di:notes:work:separators.inetloc",
     "ws/vite.config.js.timestamp-1773084241728-1f4d4a23c7fd1.mjs",
     "di/src/lib/svelte/main/Controls.svelte copy",
-    "CLAUDE.MD",
     "logs/update-docs.error.mono.log",
-    "di/notes/work/milestones/done/15.attributes.md",
     "logs/update-docs.error.di.log",
-    "di/notes/work/milestones/index.md",
-    "di/notes/work/milestones/23.selection.algorithm.md",
-    "di/notes/work/milestones/27.licensing.md",
-    "di/notes/work/milestones/done/index.md",
-    "di/notes/architecture/ui/index.md",
-    "di/notes/work/milestones/done/road.map.md",
-    "di/notes/guides/index.md",
-    "di/notes/guides/gotchas.md",
-    "di/notes/work/milestones/30.mobile.devices.md",
     "di/src/lib/css/app.css",
     "di/src/lib/css",
     "di/src/assets/debug/sfior.di",
-    "di/src/lib/ts/render/R_Axes.ts",
     "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
     "ws/node_modules/@vitest/ui/dist/client/bg.png",
     "ws/notes/work/Untitled.canvas",
