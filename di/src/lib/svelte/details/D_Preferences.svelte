@@ -81,7 +81,7 @@
 			oninput = {(e) => w_edge_color.set((e.target as HTMLInputElement).value)}
 		/>
 	</div>
-	<button class='action-btn right' use:hit_target={{ id: 'reset-prefs', onpress: reset }}>factory reset</button>
+	<button class='action-button right' use:hit_target={{ id: 'reset-prefs', onpress: reset }}>factory reset</button>
 </div>
 
 <style>
@@ -91,7 +91,7 @@
 		display         : flex;
 	}
 
-	.action-btn {
+	.action-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		border-radius : var(--corner-common);
@@ -105,7 +105,7 @@
 		padding       : 0 8px;
 	}
 
-	.action-btn:global([data-hit]) {
+	.action-button:global([data-hit]) {
 		color      : var(--c-black);
 		background : var(--hover);
 	}

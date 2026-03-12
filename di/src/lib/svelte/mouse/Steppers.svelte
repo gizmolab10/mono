@@ -3,6 +3,7 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { svg_paths } from '../../ts/draw/SVG_Paths';
 	import { Direction } from '../../ts/types/Angle';
+	import { Identifiable } from '../../ts/runtime';
 	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
 
@@ -23,10 +24,10 @@
 	} = $props();
 
 	const { w_s_hover } = hits;
+	const uid = Identifiable.newID();
 	const { w_accent_color } = colors;
 	const buttonSize = $derived(size);
 	const strokeWidth = $derived(size * 0.0375);
-	const uid = Math.random().toString(36).slice(2, 8);
 	const direction_A = $derived(horizontal ? Direction.left : Direction.up);
 	const direction_B = $derived(horizontal ? Direction.right : Direction.down);
 	const bounds_A = $derived(svg_paths.fat_polygon_bounds(buttonSize, direction_A));
@@ -40,32 +41,32 @@
 
 <div class='steppers' class:horizontal style:--l-gap="{gap}px">
 	<div
+		tabindex="0"
+		role="button"
 		class='stepper-button'
 		class:hidden={!show_up}
-		role="button"
-		tabindex="0"
 		use:hit_target={{ id: `stepper-${uid}-up`, onautorepeat: () => hit_closure(true) }}>
-		<svg width={bounds_A.width} height={bounds_A.height} view_Box="{bounds_A.minX} {bounds_A.minY} {bounds_A.width} {bounds_A.height}">
+		<svg overflow='visible' width={bounds_A.width} height={bounds_A.height} viewBox="{bounds_A.minX} {bounds_A.minY} {bounds_A.width} {bounds_A.height}">
 			<path
 				d={path_A}
-				fill={hover_A ? $w_accent_color : 'white'}
 				stroke={colors.default}
 				stroke-width={strokeWidth}
+				fill={hover_A ? $w_accent_color : 'white'}
 			/>
 		</svg>
 	</div>
 	<div
+		tabindex="0"
+		role="button"
 		class='stepper-button'
 		class:hidden={!show_down}
-		role="button"
-		tabindex="0"
 		use:hit_target={{ id: `stepper-${uid}-down`, onautorepeat: () => hit_closure(false) }}>
-		<svg width={bounds_B.width} height={bounds_B.height} view_Box="{bounds_B.minX} {bounds_B.minY} {bounds_B.width} {bounds_B.height}">
+		<svg overflow='visible' width={bounds_B.width} height={bounds_B.height} viewBox="{bounds_B.minX} {bounds_B.minY} {bounds_B.width} {bounds_B.height}">
 			<path
 				d={path_B}
 				stroke={colors.default}
-				fill={hover_B ? $w_accent_color : 'white'}
 				stroke-width={strokeWidth}
+				fill={hover_B ? $w_accent_color : 'white'}
 			/>
 		</svg>
 	</div>
@@ -74,9 +75,10 @@
 <style>
 
 	.steppers {
-		display        : flex;
+		overflow       : visible;
 		flex-direction : column;
 		align-items    : center;
+		display        : flex;
 	}
 
 	.steppers.horizontal {
@@ -84,8 +86,8 @@
 	}
 
 	.stepper-button {
-		cursor     : pointer;
-		user-select: none;
+		cursor      : pointer;
+		overflow    : visible;
 	}
 
 	.stepper-button + .stepper-button {
@@ -93,8 +95,8 @@
 	}
 
 	.horizontal > .stepper-button + .stepper-button {
-		margin-top  : 0;
 		margin-left : var(--l-gap);
+		margin-top  : 0;
 	}
 
 	.stepper-button.hidden {

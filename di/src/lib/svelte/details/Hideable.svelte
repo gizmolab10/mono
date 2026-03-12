@@ -6,16 +6,15 @@
 	import { stores } from '../../ts/managers';
 	const { w_t_details } = stores;
 
-
 	let {
-		title,
 		id,
+		title,
 		detail,
+		actions,
 		children,
-		actions
 	} : {
-		title    : string;
 		id       : string;
+		title    : string;
 		detail   : T_Details;
 		children : import('svelte').Snippet;
 		actions? : import('svelte').Snippet;
@@ -62,6 +61,7 @@
 	}
 
 	.banner {
+		letter-spacing  : var(--l-letter-spacing);
 		border-radius   : var(--corner-banner);
 		font-size       : var(--h-font-common);
 		color           : rgba(0, 0, 0, 1);
@@ -74,15 +74,15 @@
 		justify-content : center;
 		overflow        : hidden;
 		margin          : 3px 0;
-		letter-spacing  : var(--l-letter-spacing);
 		display         : flex;
 		border          : none;
+		background      : var(--bg);
 		font-weight     : 300;
 		outline         : none;
 	}
 
 	.banner::before {
-		background : radial-gradient(ellipse at center, transparent 20%, var(--banner) 100%);
+		background : radial-gradient(ellipse at center, transparent 20%, var(--accent) 100%);
 		z-index    : var(--z-common);
 		position   : absolute;
 		content    : '';

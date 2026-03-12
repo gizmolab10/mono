@@ -283,11 +283,12 @@ class Render {
 			this.render_intersections(objects);
 		}
 
-		// Phase 3: draw edges
+		// Phase 3: draw edges (root: bottom face only)
 		for (const obj of objects) {
 			const projected = projected_map.get(obj.id)!;
 			const world = (solid) ? this.get_world_matrix(obj) : undefined;
-			this.render_edges(obj, projected, solid, world);
+			const bottom_only = !obj.parent && !is_2d;
+			this.render_edges(obj, projected, solid, world, bottom_only ? 0 : undefined);
 			if (stores.show_names()) this.render_face_names(obj, projected, world);
 		}
 
@@ -299,12 +300,14 @@ class Render {
 			if (obj.so.visible) continue;
 			const projected = projected_map.get(obj.id)!;
 			const world = (solid) ? this.get_world_matrix(obj) : undefined;
+			const root_bottom = (!obj.parent && !is_2d) ? this.face_edge_keys(obj, 0) : null;
 			this.ctx.save();
 			this.ctx.setLineDash([1, 1]);
 			this.ctx.strokeStyle = 'rgba(128, 128, 128, 1)';
 			this.ctx.globalAlpha = stores.grid_opacity();
 			this.ctx.lineWidth = 0.5;
 			for (const [i, j] of obj.edges) {
+				if (root_bottom && !root_bottom.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
 				const a = projected[i], b = projected[j];
 				if (a.w < 0 || b.w < 0) continue;
 				if (world) {
@@ -500,12 +503,13 @@ class Render {
 		this.ctx.fill();
 	}
 
-	private render_edges(obj: O_Scene, projected: Projected[], solid: boolean, world?: mat4): void {
+	private render_edges(obj: O_Scene, projected: Projected[], solid: boolean, world?: mat4, restrict_face?: number): void {
 		const ctx = this.ctx;
 		ctx.lineWidth = stores.line_thickness();
 		ctx.lineCap = 'square';
 
 		// In 2D or solid mode, only draw edges belonging to front-facing faces
+		const face_filter = (restrict_face !== undefined) ? this.face_edge_keys(obj, restrict_face) : null;
 		const front_edges = (solid) ? this.front_face_edges(obj, projected) : null;
 
 		// During face drag, highlight the guidance face's edges on the parent SO
@@ -525,7 +529,9 @@ class Render {
 			for (const [i, j] of obj.edges) {
 				const a = projected[i], b = projected[j];
 				if (a.w < 0 || b.w < 0) continue;
-				if (front_edges && !front_edges.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
+				const ek = `${Math.min(i, j)}-${Math.max(i, j)}`;
+				if (face_filter && !face_filter.has(ek)) continue;
+				if (front_edges && !front_edges.has(ek)) continue;
 
 				const vi = obj.so.vertices[i], vj = obj.so.vertices[j];
 				const wi = vec4.create(), wj = vec4.create();
@@ -568,7 +574,9 @@ class Render {
 			for (const [i, j] of obj.edges) {
 				const a = projected[i], b = projected[j];
 				if (a.w < 0 || b.w < 0) continue;
-				if (front_edges && !front_edges.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
+				const ek = `${Math.min(i, j)}-${Math.max(i, j)}`;
+				if (face_filter && !face_filter.has(ek)) continue;
+				if (front_edges && !front_edges.has(ek)) continue;
 
 				const ax = Math.round(a.x) + 0.5, ay = Math.round(a.y) + 0.5;
 				const bx = Math.round(b.x) + 0.5, by = Math.round(b.y) + 0.5;

@@ -156,11 +156,11 @@
 	</div>
 {/if}
 <div class='rotation-row' style:margin-top='var(--l-gap-tiny)'>
-	<button class='action-btn' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
-	{#if !is_root && !angle_is_zero}<span class='spacer'></span><button class='action-btn' onclick={reset_angle}>reset</button><span class='spacer'></span>{/if}
+	<button class='action-button' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
+	{#if !is_root && !angle_is_zero}<span class='spacer'></span><button class='action-button' onclick={reset_angle}>reset</button><span class='spacer'></span>{/if}
 	<span class='far-right'>
-		<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
-		<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
+		<button class='action-button' onclick={() => rotate_90(-1)}>-90°</button>
+		<button class='action-button' onclick={() => rotate_90(1)}>+90°</button>
 	</span>
 </div>
 
@@ -194,7 +194,7 @@
 		display     : flex;
 	}
 
-	.action-btn {
+	.action-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		border-radius : var(--corner-common);
@@ -208,7 +208,7 @@
 		padding       : 0 8px;
 	}
 
-	.action-btn:hover {
+	.action-button:hover {
 		background : var(--hover);
 	}
 

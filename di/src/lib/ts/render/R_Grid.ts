@@ -248,11 +248,9 @@ export function render_root_bottom(host: GridHost, is_2d = false): void {
 		}
 		ctx.restore();
 	} else {
-		// 3D: full 12-edge wireframe
+		// 3D: bottom face only (z_min: verts 0-1-2-3)
 		const edges: [number, number][] = [
 			[0,1],[1,2],[2,3],[3,0],
-			[4,5],[5,6],[6,7],[7,4],
-			[0,4],[1,5],[2,6],[3,7],
 		];
 		ctx.save();
 		ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.35)`;
@@ -355,6 +353,21 @@ export function render_back_grid(host: GridHost): void {
 			ctx.beginPath();
 			ctx.moveTo(p1.x, p1.y);
 			ctx.lineTo(p2.x, p2.y);
+			ctx.stroke();
+		}
+
+		// Face border (4 edges)
+		const c0 = host.project_vertex(make_point(a_min, b_min), world);
+		const c1 = host.project_vertex(make_point(a_max, b_min), world);
+		const c2 = host.project_vertex(make_point(a_max, b_max), world);
+		const c3 = host.project_vertex(make_point(a_min, b_max), world);
+		if (c0.w > 0 && c1.w > 0 && c2.w > 0 && c3.w > 0) {
+			ctx.beginPath();
+			ctx.moveTo(c0.x, c0.y);
+			ctx.lineTo(c1.x, c1.y);
+			ctx.lineTo(c2.x, c2.y);
+			ctx.lineTo(c3.x, c3.y);
+			ctx.closePath();
 			ctx.stroke();
 		}
 

@@ -2,12 +2,12 @@
 
 | #   | Name                                             |
 | --- | ------------------------------------------------ |
-| 22  | [Aesthetics](22.aesthetics.md)                   |
-| 23  | [Mobile Devices](24.mobile.devices.md)           |
-| 24  | [Selection Algorithm](25.selection.algorithm.md) |
-| 25  | [Undo](23.undo.md)                               |
+| 23  | [Undo](23.undo.md)                               |
+| 24  | [Mobile Devices](24.mobile.devices.md)           |
+| 25  | [Selection Algorithm](25.selection.algorithm.md) |
 | 26  | [Cut Lists](26.cut.lists.md)                     |
-| 27  | [User Manual](27.user.manual.md)                 |
-| 28  | [Licensing](28.licensing.md)                     |
-| 29  | [Marketing](29.marketing.md)                     |
+| 27  | [Colors](27.colors)                              |
+| 28  | [User Manual](28.user.manual.md)                 |
+| 29  | [Licensing](29.licensing.md)                     |
+| 30  | [Marketing](30.marketing.md)                     |
 

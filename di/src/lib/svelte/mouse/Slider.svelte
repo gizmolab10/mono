@@ -74,12 +74,17 @@
 	const isHoveringOn_slider_alt = $derived($w_s_hover?.id === slider_hit_id_alt);
 	const is_sticky  = $derived(!!sticky?.some(s => Math.abs(value - s) < 0.01));
 	const is_sticky_alt = $derived(!!sticky?.some(s => Math.abs((value_alt ?? 0) - s) < 0.01));
-	const sticky_dot = 'radial-gradient(circle, rgba(0,0,0,0.25) 4px, var(--c-white) 5px)';
+	const sticky_dot       = 'radial-gradient(circle, rgba(0,0,0,0.25) 4px, var(--c-white) 5px)';
+	const sticky_dot_hover = 'radial-gradient(circle, white 4px, var(--hover) 5px)';
 	const current_thumb_color = $derived(
-		(isHoveringOn_slider && !is_dragging) ? 'var(--hover)' : is_sticky ? sticky_dot : 'var(--selected)'
+		is_sticky
+			? (isHoveringOn_slider && !is_dragging) ? sticky_dot_hover : sticky_dot
+			: (isHoveringOn_slider && !is_dragging) ? 'var(--hover)' : 'var(--selected)'
 	);
 	const current_thumb_color_alt = $derived(
-		(isHoveringOn_slider_alt && !is_dragging_alt) ? 'var(--hover)' : is_sticky_alt ? sticky_dot : 'var(--selected)'
+		is_sticky_alt
+			? (isHoveringOn_slider_alt && !is_dragging_alt) ? sticky_dot_hover : sticky_dot
+			: (isHoveringOn_slider_alt && !is_dragging_alt) ? 'var(--hover)' : 'var(--selected)'
 	);
 
 	// Value → slider position (0..divisions)
@@ -343,7 +348,6 @@
 		font-variant-numeric : tabular-nums;
 		text-align           : center;
 		font-weight          : bold;
-		user-select          : none;
 		margin-bottom        : -6px;
 		line-height          : 1;
 		margin-top           : 0;
@@ -355,7 +359,6 @@
 		position             : relative;
 		text-align           : center;
 		font-weight          : bold;
-		user-select          : none;
 		top                  : 4px;
 		margin-top           : 1px;
 		line-height          : 1;
@@ -397,7 +400,6 @@
 		position    : absolute;
 		text-align  : center;
 		white-space : nowrap;
-		user-select : none;
 		top         : 4px;
 		left        : 50%;
 		line-height : 1;
@@ -570,7 +572,6 @@
 		font-variant-numeric : tabular-nums;
 		position             : absolute;
 		white-space          : nowrap;
-		user-select          : none;
 		text-align           : center;
 		top                  : 0;
 	}

@@ -44,7 +44,6 @@
 	.close-button {
 		z-index: var(--z-action);
 		position: absolute;
-		user-select: none;
 		cursor: pointer;
 	}
 

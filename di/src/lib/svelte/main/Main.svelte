@@ -16,7 +16,7 @@
 	});
 
 	// Reactive state for window dimensions
-	let width  = $state(window.innerWidth);
+	let width  = $state(Math.max(360, window.innerWidth));
 	let height = $state(window.innerHeight);
 
 	// Layout constants
@@ -33,7 +33,7 @@
 	let graphWidth = $derived(width - ($w_show_details ? detailsWidth + gap : 0) - gap * 2);
 
 	function handleResize() {
-		width  = window.innerWidth;
+		width  = Math.max(360, window.innerWidth);
 		height = window.innerHeight;
 	}
 
@@ -93,8 +93,8 @@
 				<!-- Details region -->
 				<div
 					class        = 'region details'
-					style:width  = '{detailsWidth}px'
-					style:height = '{mainHeight}px'>
+					style:height = '{mainHeight}px'
+					style:width  = '{detailsWidth}px'>
 					<Details />
 				</div>
 			{/if}
@@ -115,8 +115,9 @@
 		top         : 0;
 		left        : 0;
 		position    : fixed;
-		font-family : system-ui, sans-serif;
+		min-width   : 360px;
 		box-sizing  : border-box;
+		font-family : system-ui, sans-serif;
 	}
 
 	.main {

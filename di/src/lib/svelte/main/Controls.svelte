@@ -44,8 +44,8 @@
 
 {#snippet mode_buttons()}
 	{@render decoration_buttons()}
-	<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
-	<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
+	<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
+	<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 {/snippet}
 
 {#snippet face_buttons()}
@@ -57,8 +57,8 @@
 {/snippet}
 
 {#snippet face_accessory_buttons()}
-	<button class='toolbar-btn' disabled={is_straightened} use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
-	<button class='toolbar-btn snap-btn' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
+	<button class='toolbar-button' disabled={is_straightened} use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
+	<button class='toolbar-button snap-button' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
 {/snippet}
 
 <div
@@ -74,7 +74,7 @@
 				<Separator vertical kind="main" margin={7.5} z_layer={T_Layer.cheat} />
 				<span class='spacer'></span>
 				{@render face_accessory_buttons()}
-				<button class='toolbar-btn' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
+				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 				<span class='spacer'></span>
 			</div>
 			<Separator kind="main" margin={7.5} />
@@ -84,7 +84,7 @@
 			<Separator kind="main" margin={7.5} />
 			<div class='right-row'>
 				{@render decoration_buttons()}
-				<button class='toolbar-btn' class:active={$w_view_mode === '2d'} use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
+				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
 			</div>
 		</div>
 	{:else if wrap_mobile}
@@ -105,26 +105,26 @@
 	{:else}
 		{@render hamburger_button()}
 		<Separator vertical kind="main" length={separator_length} margin={-9} z_layer={T_Layer.cheat} />
-		<button class='toolbar-btn' use:hit_target={{ id: 'save', onpress: save }}>save</button>
-		<button class='toolbar-btn' class:active={$w_allow_editing} use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
+		<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
+		<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
 		{#if $w_allow_editing && !root_fits}
-			<button class='toolbar-btn' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
+			<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 		{/if}
-		<div style:width='var(--l-gap)'></div>
-		<Separator vertical kind="main" length={separator_length} margin={0} />
+		<Separator vertical kind="main" length={separator_length} />
 		<span class='spacer'></span>
 		{@render face_buttons()}
 		{@render face_accessory_buttons()}
 		<span class='spacer'></span>
-		<Separator vertical kind="main" length={separator_length} margin={0} />
+		<Separator vertical kind="main" length={separator_length} />
 		{@render mode_buttons()}
-		<div style:width='var(--l-gap-small)'></div>
 	{/if}
 </div>
 
 <style>
+
 	.controls {
-		padding         : 0 var(--l-gap-small);
+		padding         : 0 var(--l-gap-large) 0 var(--l-gap-small);
+		gap             : var(--l-gap);
 		box-sizing      : border-box;
 		justify-content : flex-end;
 		overflow        : visible;
@@ -157,6 +157,7 @@
 		justify-content : center;
 		align-items     : center;
 		display         : flex;
+		gap             : var(--l-gap);
 	}
 
 	.spacer {
@@ -166,7 +167,6 @@
 
 	.hamburger {
 		border          : none;
-		margin-right    : calc(var(--l-gap) - 2px);
 		height          : var(--h-button-common);
 		width           : var(--h-button-common);
 		z-index         : var(--z-action);
@@ -195,7 +195,7 @@
 		margin-right : var(--l-gap);
 	}
 
-	.toolbar-btn {
+	.toolbar-button {
 		padding       : 0 var(--l-padding) 1px var(--l-padding);
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
@@ -203,28 +203,27 @@
 		border-radius : var(--corner-common);
 		z-index       : var(--z-action);
 		background    : var(--c-white);
-		margin-left   : var(--l-gap);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
 	}
 
-	.toolbar-btn.active {
+	.toolbar-button.active {
 		background : var(--selected);
 		color      : var(--c-black);
 	}
 
-	.toolbar-btn:disabled {
+	.toolbar-button:disabled {
 		cursor  : default;
 		opacity : 0.35;
 	}
 
-	.toolbar-btn:global([data-hit]) {
+	.toolbar-button:global([data-hit]) {
 		color      : var(--c-black);
 		background : var(--hover);
 	}
 
-	.snap-btn {
+	.snap-button {
 		width         : var(--h-button-common);
 		height        : var(--h-button-common);
 		font-size     : var(--h-font-large);
@@ -249,7 +248,6 @@
 		height        : var(--h-button-segment);
 		border-radius : var(--corner-common);
 		z-index       : var(--z-action);
-		margin-left   : var(--l-gap);
 		box-sizing    : border-box;
 		overflow      : hidden;
 		display       : flex;
@@ -285,4 +283,6 @@
 		color      : var(--c-black);
 		background : var(--hover);
 	}
+
 </style>
+

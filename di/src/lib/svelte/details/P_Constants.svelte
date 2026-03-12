@@ -94,7 +94,7 @@
 				</td>
 				<td class='std-remove'>
 					<button
-						class='remove-btn'
+						class='remove-button'
 						use:hit_target={{ id: `remove-std-${index}`, onpress: () => remove_dimension(index) }}>
 						×
 					</button>
@@ -137,7 +137,7 @@
 		background : var(--hover);
 	}
 
-	.remove-btn {
+	.remove-button {
 		font-size   : var(--h-font-common);
 		background  : transparent;
 		color       : inherit;
@@ -148,7 +148,7 @@
 		padding     : 0;
 	}
 
-	.remove-btn:hover {
+	.remove-button:hover {
 		opacity : 1;
 	}
 

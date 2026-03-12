@@ -62,6 +62,7 @@ export default class Constants {
 		gap_tiny:       common_size / 7,
 		gap_small:      common_size / 5.5,
 		gap:            common_size / 5,
+		gap_large:      common_size / 5 * 1.5,
 		padding_small:  common_size / 4,
 		padding:        common_size / 3,
 		margin:         common_size / 3.2,

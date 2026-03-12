@@ -25,6 +25,7 @@
 
 		root.setProperty('--l-letter-spacing', `${k.layout.letter_spacing}px`);
 		root.setProperty('--l-padding-small',  `${k.layout.padding_small}px`);
+		root.setProperty('--l-gap-large',      `${k.layout.gap_large}px`);
 		root.setProperty('--l-gap-small',      `${k.layout.gap_small}px`);
 		root.setProperty('--l-gap-tiny',       `${k.layout.gap_tiny}px`);
 		root.setProperty('--l-padding',        `${k.layout.padding}px`);
@@ -82,6 +83,11 @@
 	:global(body) {
 		margin: 0;
 		font-family: system-ui, sans-serif;
+		user-select: none;
+	}
+
+	:global(input:focus, textarea:focus) {
+		user-select: text;
 	}
 
 	@media (max-width: 429px) {

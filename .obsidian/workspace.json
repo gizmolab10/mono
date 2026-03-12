@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ws/notes/guides/architecture/core/hits.md",
+                "file": "di/notes/work/milestones/index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "hits"
+              "title": "index"
             }
           },
           {
@@ -108,7 +108,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ws/notes/guides/architecture/core/hits.md",
+                "file": "di/notes/work/milestones/index.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +118,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for hits"
+              "title": "Backlinks for index"
             }
           },
           {
@@ -170,13 +170,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ws/notes/guides/architecture/core/hits.md",
+                "file": "di/notes/work/milestones/index.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of hits"
+              "title": "Outline of index"
             }
           }
         ]
@@ -196,54 +196,54 @@
       "bases:Create new base": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "976376d1ad191399",
   "lastOpenFiles": [
-    "di/notes/architecture/ui/hits.md",
-    "di/notes/work/milestones/done/4.hits.manager.md",
-    "di/notes/work/milestones/22.aesthetics.md",
-    "ws/notes/guides/architecture/core/hits.md",
-    "di/notes/work/milestones/23.undo.md",
-    "di/notes/work/milestones/25.selection.algorithm.md",
-    "di/notes/work/milestones/24.mobile.devices.md",
-    "di/notes/work/revisit.di.md",
-    "di/notes/work/code.debt.md",
-    "di/notes/work/working features.md",
-    "di/notes/work/milestones/done/12.parts.md",
-    "di/notes/work/more milestones.md",
-    "di/notes/work/milestones/index.md",
     "di/notes/work/milestones/done/index.md",
-    "di/notes/work/milestones/29.marketing.md",
-    "di/notes/work/milestones/28.licensing.md",
-    "di/notes/work/milestones/27.user.manual.md",
-    "di/notes/work/milestones/26.cut.lists.md",
-    "di/notes/work/milestones/24.rubberband.md",
-    "di/notes/work/milestones/done/21.css.engine.md",
-    "ws/vite.config.js.timestamp-1773271414514-750f68b4db075.mjs",
-    "di/notes/components/Separators.md",
-    "di/notes/work/milestones/done/20.repeaters.md",
-    "di/src/assets/home/basement.di",
-    "di/notes/architecture/graph/two.dimensions.md",
-    "di/notes/architecture/ui/style.md",
-    "di/notes/architecture/graph/three.dimensions.md",
-    "di/notes/architecture/graph/projection.md",
-    "di/notes/components/open?vault=mono&file=di:notes:work:separators.inetloc",
-    "ws/vite.config.js.timestamp-1773084241728-1f4d4a23c7fd1.mjs",
-    "di/src/lib/svelte/main/Controls.svelte copy",
-    "logs/update-docs.error.mono.log",
-    "logs/update-docs.error.di.log",
-    "di/src/lib/css/app.css",
-    "di/src/lib/css",
-    "di/src/assets/debug/sfior.di",
-    "ws/node_modules/@vitest/ui/dist/client/favicon.svg",
-    "ws/node_modules/@vitest/ui/dist/client/bg.png",
-    "ws/notes/work/Untitled.canvas",
-    "Screenshot 2026-02-14 at 12.12.38 PM 1.png",
-    "Screenshot 2026-02-14 at 12.12.38 PM.png",
-    "ga/node_modules/phaser/changelog/3.60/images/plane.png",
-    "ga/node_modules/phaser/changelog/3.60/images/timeline.png",
-    "ga/node_modules/phaser/changelog/3.60/images/videogameobject.png",
-    "ga/node_modules/phaser/changelog/3.60/images/tweens.png",
-    "ga/node_modules/phaser/changelog/3.60/images/spine4.png",
-    "ga/node_modules/phaser/changelog/3.60/images/spectorjs.png"
+    "di/notes/work/milestones/30.marketing.md",
+    "di/notes/work/milestones/22.aesthetics.md",
+    "di/notes/work/milestones/done/22.aesthetics.md",
+    "di/dist-electron/preload.cjs",
+    "di/electron/preload.cjs",
+    "di/dist-electron/preload.js",
+    "di/dist-electron/main.js",
+    "di/dist-electron",
+    "node_modules/electron/path.txt",
+    "node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Resources/zh_TW.lproj/locale.pak",
+    "node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Resources/zh_CN.lproj/locale.pak",
+    "node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Resources/vi.lproj/locale.pak",
+    "node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Resources/ur.lproj/locale.pak",
+    "node_modules/concurrently/docs/cli/prefixing.md",
+    "node_modules/concurrently/docs/cli/success.md",
+    "node_modules/concurrently/docs/cli/terminating.md",
+    "node_modules/concurrently/docs/cli/shortcuts.md",
+    "node_modules/concurrently/docs/cli/configuration.md",
+    "node_modules/concurrently/docs/cli/restarting.md",
+    "node_modules/concurrently/docs/cli/passthrough-arguments.md",
+    "node_modules/concurrently/docs/cli/output-control.md",
+    "node_modules/concurrently/docs/cli/input-handling.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/tools/README.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/value.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/working_with_javascript_values.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/version_management.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/typed_array.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/typed_array_of.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/threadsafe_function.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/type_error.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/symbol.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/setup.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/string.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/range_error.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/reference.md",
+    "node_modules/concurrently/docs/demo.gif",
+    "node_modules/app-builder-lib/templates/icons/proton-native/linux/64x64.png",
+    "node_modules/app-builder-lib/templates/icons/proton-native/linux/512x512.png",
+    "node_modules/app-builder-lib/templates/icons/proton-native/linux/48x48.png",
+    "node_modules/app-builder-lib/templates/icons/proton-native/linux/32x32.png",
+    "node_modules/app-builder-lib/templates/icons/proton-native/linux/256x256.png",
+    "node_modules/app-builder-lib/templates/icons/proton-native/linux/128x128.png",
+    "node_modules/app-builder-lib/templates/icons/proton-native/linux/16x16.png",
+    "node_modules/app-builder-lib/templates/icons/proton-native/linux/1024x1024.png",
+    "node_modules/app-builder-lib/templates/icons/proton-native/proton-native.svg",
+    "ws/notes/work/Untitled.canvas"
   ]
 }

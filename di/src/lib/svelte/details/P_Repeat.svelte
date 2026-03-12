@@ -180,7 +180,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 				<button class:active={repeat_axis === 2} onclick={() => set_repeat_axis(2)}>z</button>
 			</div>
 			<span class='flex-spacer'></span>
-			<button class='action-btn' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>unrepeat</button>
+			<button class='action-button' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>unrepeat</button>
 			<span class='flex-spacer'></span>
 			{#if repeater_display}
 				<span class='clone-count'>{repeater_display.count} repeats</span>
@@ -204,7 +204,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 						<span class='rise-endpoint' style:margin-right='3px'>3'</span>
 					</div>
 				</div>
-				<button class='action-btn fireblocks-btn' class:active={has_firewall} onclick={toggle_firewall}>
+				<button class='action-button fireblocks-button' class:active={has_firewall} onclick={toggle_firewall}>
 					{has_firewall ? 'blocks ⟳' : 'no blocks ⟳'}
 				</button>
 			</div>
@@ -310,7 +310,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 		background : var(--hover);
 	}
 
-	.action-btn {
+	.action-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		font-size     : var(--h-font-common);
@@ -329,13 +329,13 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	}
 
 	/* sits in a flex row alongside a grow-able slider; nudged up to optical center */
-	.fireblocks-btn {
+	.fireblocks-button {
 		flex-shrink : 0;
 		position    : relative;
 		top         : -5.5px;
 	}
 
-	.action-btn.active {
+	.action-button.active {
 		background  : var(--selected);
 		font-weight : 600;
 	}
@@ -390,7 +390,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 		flex-shrink : 0;
 	}
 
-	.action-btn:global([data-hit]) {
+	.action-button:global([data-hit]) {
 		color      : var(--c-black);
 		background : var(--hover);
 	}

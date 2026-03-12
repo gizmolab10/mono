@@ -820,17 +820,18 @@ class Engine {
 		const root = this.root_scene?.so;
 		if (!root?.scene) return true;
 
-		const all = scene.get_all();
+		// Repeater parents manage child layout — fit is meaningless
+		if (root.repeater?.is_repeating) return true;
+
+		// Only check direct children — repeater clones create feedback loops
+		const children = scene.get_all().filter(o => o.parent === root.scene);
+		if (children.length === 0) return true;
+
 		let x_lo = Infinity, x_hi = -Infinity;
 		let y_lo = Infinity, y_hi = -Infinity;
 		let z_lo = Infinity, z_hi = -Infinity;
-		let has_desc = false;
 
-		for (const obj of all) {
-			let p: O_Scene | undefined = obj.parent; let is_desc = false;
-			while (p) { if (p === root.scene) { is_desc = true; break; } p = p.parent; }
-			if (!is_desc) continue;
-			has_desc = true;
+		for (const obj of children) {
 			const so = obj.so;
 			if (so.x_min < x_lo) x_lo = so.x_min;
 			if (so.x_max > x_hi) x_hi = so.x_max;
@@ -839,8 +840,6 @@ class Engine {
 			if (so.z_min < z_lo) z_lo = so.z_min;
 			if (so.z_max > z_hi) z_hi = so.z_max;
 		}
-
-		if (!has_desc) return true;
 
 		const eps = 0.01;
 		return Math.abs(root.x_min - x_lo) < eps && Math.abs(root.x_max - x_hi) < eps

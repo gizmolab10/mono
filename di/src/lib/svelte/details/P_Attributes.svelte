@@ -196,7 +196,7 @@
 			{show_constants ? 'hide' : 'show'} constants
 		</button>
 		{#if show_constants}
-			<button class='add-btn' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>
+			<button class='add-button' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>
 				+
 			</button>
 		{/if}
@@ -364,7 +364,7 @@
 		background : var(--hover);
 	}
 
-	.add-btn {
+	.add-button {
 		border          : var(--th-border) solid currentColor;
 		width           : var(--h-button-tiny);
 		height          : var(--h-button-tiny);
@@ -382,7 +382,7 @@
 		padding         : 0;
 	}
 
-	.add-btn:hover {
+	.add-button:hover {
 		background : var(--hover);
 	}
 

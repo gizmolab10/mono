@@ -225,7 +225,7 @@
 		<span class='assist-label'>guides</span>
 	</div>
 	<div class='zoom'>
-		<Slider min={0.01} max={10000} value={$w_scale} logarithmic width={270} onchange={handle_zoom_slide} onstep={handle_zoom_step} />
+		<Slider min={0.01} max={10000} value={$w_scale} logarithmic fill onchange={handle_zoom_slide} onstep={handle_zoom_step} />
 	</div>
 	{#if $w_s_dimensions}
 		<input
@@ -322,6 +322,7 @@
 		position : absolute;
 		right    : 10px;
 		top      : 2px;
+		width    : 50%;
 	}
 
 	.canvas-actions {

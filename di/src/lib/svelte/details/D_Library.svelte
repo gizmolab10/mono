@@ -128,10 +128,10 @@
 <Separator />
 
 <div class='settings'>
-	<button class='action-btn' disabled={!selected} use:hit_target={{ id: 'lib-replace', onpress: do_replace }}>replace</button>
-	<button class='action-btn' disabled={!selected} use:hit_target={{ id: 'lib-insert', onpress: do_insert }}>insert</button>
-	<button class='action-btn far-right' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file((s) => engine.load_scene(s)) }}>import</button>
-	<button class='action-btn far-right' use:hit_target={{ id: 'reset-library', onpress: reset_library }}>reinstall</button>
+	<button class='action-button' disabled={!selected} use:hit_target={{ id: 'lib-replace', onpress: do_replace }}>replace</button>
+	<button class='action-button' disabled={!selected} use:hit_target={{ id: 'lib-insert', onpress: do_insert }}>insert</button>
+	<button class='action-button far-right' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file((s) => engine.load_scene(s)) }}>import</button>
+	<button class='action-button far-right' use:hit_target={{ id: 'reset-library', onpress: reset_library }}>reinstall</button>
 </div>
 
 <style>
@@ -182,7 +182,7 @@
 		display    : flex;
 	}
 
-	.action-btn {
+	.action-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		border-radius : var(--corner-common);
@@ -195,12 +195,12 @@
 		padding       : 0 8px;
 	}
 
-	.action-btn:global([data-hit]) {
+	.action-button:global([data-hit]) {
 		color      : var(--c-black);
 		background : var(--hover);
 	}
 
-	.action-btn:disabled {
+	.action-button:disabled {
 		cursor  : default;
 		opacity : 0.3;
 	}

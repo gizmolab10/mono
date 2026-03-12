@@ -230,7 +230,7 @@
 	{/if}
 	{#if $w_selection.so.scene?.parent}
 		<div class='duplicate-row'>
-			<button class='action-btn' use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_so() }}>duplicate</button>
+			<button class='action-button' use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_so() }}>duplicate</button>
 		</div>
 	{/if}
 	<Separator />
@@ -348,20 +348,22 @@
 
 	.collapsed-name:focus {
 		outline        : var(--focus-outline);
-		outline-offset : -1.5px;
 		background     : var(--c-white);
+		outline-offset : -1.5px;
 	}
 
 	.toggle-header {
-		box-shadow    : inset 0 0 0 0.25px currentColor;
-		font-size     : var(--h-font-common);
-		border        : 0 solid transparent;
-		height        : var(--h-collapse);
-		cursor        : pointer;
-		text-align    : center;
-		font-weight   : normal;
-		background    : var(--c-white);
-		border-radius : 8px;
+		box-shadow      : inset 0 0 0 0.25px currentColor;
+		line-height     : calc(var(--h-collapse) - 1px);
+		font-size       : var(--h-font-common);
+		border          : 0 solid transparent;
+		height          : var(--h-collapse);
+		background      : var(--c-white);
+		cursor          : pointer;
+		text-align      : center;
+		font-weight     : normal;
+		vertical-align  : middle;
+		border-radius   : 8px;
 	}
 
 	.toggle-header.gap-r { border-right-width : 3px; }
@@ -372,11 +374,11 @@
 	}
 
 	.hierarchy-data {
+		color                : var(--c-black);
 		padding              : 2px 0 2px 6px;
 		font-variant-numeric : tabular-nums;
 		white-space          : nowrap;
 		text-align           : right;
-		color                : var(--c-black);
 	}
 
 	.faint {
@@ -392,7 +394,7 @@
 		display         : flex;
 	}
 
-	.action-btn {
+	.action-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-tiny);
 		border-radius : var(--corner-common);
@@ -405,7 +407,7 @@
 		padding       : 0 8px;
 	}
 
-	.action-btn:hover {
+	.action-button:hover {
 		background : var(--hover);
 	}
 
