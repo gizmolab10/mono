@@ -248,7 +248,7 @@
 	}
 
 	.attr-invariant:not(.disabled):hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 	.attr-invariant.disabled {
@@ -305,7 +305,7 @@
 	}
 
 	.cell-input:not(:disabled):not(:focus):hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 	.cell-input:focus {
@@ -361,7 +361,7 @@
 	}
 
 	.constants-toggle:hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 	.add-btn {
@@ -383,7 +383,7 @@
 	}
 
 	.add-btn:hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 </style>

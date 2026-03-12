@@ -104,13 +104,14 @@
 {/if}
 
 <style>
+
 	.separator {
-		--r        : calc(var(--th) * 3.2);
 		all        : unset;
-		display    : block;
-		overflow   : visible;
-		position   : relative;
+		--r        : calc(var(--th) * 3.2);
 		background : var(--accent);
+		position   : relative;
+		overflow   : visible;
+		display    : block;
 	}
 
 	/* Accent backdrop extending behind the flares */
@@ -154,13 +155,13 @@
 	}
 
 	.title {
+		letter-spacing : var(--l-letter-spacing);
 		transform      : translate(-50%, -50%);
 		font-size      : var(--h-font-small);
-		z-index        : inherit;
 		position       : absolute;
+		z-index        : inherit;
 		text-align     : center;
 		white-space    : nowrap;
-		letter-spacing : var(--l-letter-spacing);
 		padding        : 0 4px;
 		opacity        : 0.6;
 		top            : 50%;

@@ -10,7 +10,7 @@
 
 	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
-	const separator_length = k.height.controls;
+	const separator_length = k.height.controls + 1;
 
 	let controls_width   = $state(Infinity);
 	let wrap_phone       = $derived(controls_width < (k.width.wrap_phone));
@@ -104,7 +104,7 @@
 		</div>
 	{:else}
 		{@render hamburger_button()}
-		<Separator vertical kind="main" length={k.height.button.common + 14} margin={-9} z_layer={T_Layer.cheat} />
+		<Separator vertical kind="main" length={separator_length} margin={-9} z_layer={T_Layer.cheat} />
 		<button class='toolbar-btn' use:hit_target={{ id: 'save', onpress: save }}>save</button>
 		<button class='toolbar-btn' class:active={$w_allow_editing} use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
 		{#if $w_allow_editing && !root_fits}
@@ -153,9 +153,9 @@
 	}
 
 	.right-row {
+		overflow        : visible;
 		justify-content : center;
 		align-items     : center;
-		overflow        : visible;
 		display         : flex;
 	}
 
@@ -165,8 +165,11 @@
 	}
 
 	.hamburger {
-		z-index         : var(--z-action);
+		border          : none;
+		margin-right    : calc(var(--l-gap) - 2px);
 		height          : var(--h-button-common);
+		width           : var(--h-button-common);
+		z-index         : var(--z-action);
 		background      : transparent;
 		position        : relative;
 		cursor          : pointer;
@@ -174,9 +177,6 @@
 		align-items     : center;
 		justify-content : center;
 		display         : flex;
-		border          : none;
-		width           : var(--h-button-common);
-		margin-right    : calc(var(--l-gap) - 2px);
 		top             : 0px;
 		left            : 1px;
 		padding         : 0;
@@ -202,11 +202,11 @@
 		font-size     : var(--h-font-common);
 		border-radius : var(--corner-common);
 		z-index       : var(--z-action);
+		background    : var(--c-white);
 		margin-left   : var(--l-gap);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
-		background    : var(--c-white);
 	}
 
 	.toolbar-btn.active {
@@ -215,13 +215,13 @@
 	}
 
 	.toolbar-btn:disabled {
-		opacity : 0.35;
 		cursor  : default;
+		opacity : 0.35;
 	}
 
 	.toolbar-btn:global([data-hit]) {
-		background : var(--selected);
 		color      : var(--c-black);
+		background : var(--hover);
 	}
 
 	.snap-btn {
@@ -282,7 +282,7 @@
 	}
 
 	.seg:global([data-hit]) {
-		background : var(--selected);
 		color      : var(--c-black);
+		background : var(--hover);
 	}
 </style>

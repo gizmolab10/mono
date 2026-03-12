@@ -59,6 +59,7 @@ export default class Constants {
 	};
 
 	layout = {
+		gap_tiny:       common_size / 7,
 		gap_small:      common_size / 5.5,
 		gap:            common_size / 5,
 		padding_small:  common_size / 4,

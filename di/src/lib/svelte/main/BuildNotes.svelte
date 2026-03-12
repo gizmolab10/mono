@@ -4,14 +4,13 @@
 	import Steppers from '../mouse/Steppers.svelte';
 	import { k } from '../../ts/common/Constants';
 
-	let { onclose } : { onclose: () => void } = $props();
-
 	const pageSize = 10;
 	const modalWidth = 600;
 	const allNotes = k.build_notes;
 	const notesLimit = allNotes.length;
 	const isNewestFirst = allNotes.length > 1 && allNotes[0].build > allNotes[1].build;
 	let title = $state(isNewestFirst ? `Build Notes (${pageSize} most recent)` : 'Build Notes');
+	let { onclose } : { onclose: () => void } = $props();
 	let notes = $state(allNotes.slice(0, pageSize));
 	let show_down = $state(notesLimit > pageSize);
 	let show_up = $state(false);
@@ -47,11 +46,11 @@
 
 <div
 	class='modal'
-	style:width="{modalWidth}px"
-	onclick={(e) => e.stopPropagation()}
-	onkeyup={() => {}}
 	role="dialog"
-	tabindex="-1">
+	tabindex="-1"
+	onkeyup={() => {}}
+	style:width="{modalWidth}px"
+	onclick={(e) => e.stopPropagation()}>
 	<div class='steppers-position'>
 		<Steppers {show_up} {show_down} gap={0} {hit_closure} />
 	</div>

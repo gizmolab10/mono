@@ -134,7 +134,7 @@
 	}
 
 	.std-remove:hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 	.remove-btn {
@@ -168,7 +168,7 @@
 	}
 
 	.cell-input:not(:focus):hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 	.cell-input:focus {

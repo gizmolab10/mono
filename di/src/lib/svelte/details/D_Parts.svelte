@@ -256,7 +256,7 @@
 	}
 
 	.hierarchy-row:hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 	.hierarchy-row.selected {
@@ -368,7 +368,7 @@
 	.toggle-header.gap-l { border-left-width  : 3px; }
 
 	.toggle-header:hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 	.hierarchy-data {
@@ -406,7 +406,7 @@
 	}
 
 	.action-btn:hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 </style>

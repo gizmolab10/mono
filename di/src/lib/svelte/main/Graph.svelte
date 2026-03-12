@@ -14,12 +14,21 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { engine } from '../../ts/render';
 
-	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
-
-	const { w_s_dimensions } = dimensions;
+	const GRAPH_HID = 1;
 	const { w_s_angular } = angulars;
+	const { w_s_dimensions } = dimensions;
 	const { w_s_face_label } = face_label;
 	const { w_selection, w_scale, w_grid_opacity } = stores;
+	const s_hit_target = components.component_forHID_andType_createUnique(GRAPH_HID, T_Hit_Target.graph);
+
+	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
+	let dim_input   = $state<HTMLInputElement>();
+	let ang_input   = $state<HTMLInputElement>();
+	let label_input = $state<HTMLInputElement>();
+	let canvas      : HTMLCanvasElement;
+	let container   : HTMLDivElement;
+	let label_focused = false;
+	let initialized = false;
 
 	function handle_zoom_step(pointsUp: boolean, _isLong: boolean) {
 		if (pointsUp) engine.scale_up();
@@ -55,16 +64,6 @@
 		}
 		scenes.save();
 	}
-	const GRAPH_HID = 1;
-
-	let canvas      : HTMLCanvasElement;
-	let container   : HTMLDivElement;
-	let dim_input   = $state<HTMLInputElement>();
-	let ang_input   = $state<HTMLInputElement>();
-	let label_input = $state<HTMLInputElement>();
-	let initialized = false;
-
-	const s_hit_target = components.component_forHID_andType_createUnique(GRAPH_HID, T_Hit_Target.graph);
 
 	function initCanvas(width : number, height : number) {
 		if (!canvas || initialized) return;
@@ -192,7 +191,6 @@
 		}
 	});
 
-	let label_focused = false;
 	$effect(() => {
 		if ($w_s_face_label && label_input) {
 			if (!label_focused) {
@@ -219,7 +217,7 @@
 	<canvas
 		bind:this = {canvas}></canvas>
 	<div class='canvas-actions'>
-		<button class='canvas-btn' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
+		<button class='build-button' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
 	</div>
 	{#if breadcrumbs.length > 1}
 		<div
@@ -245,55 +243,56 @@
 	</div>
 	{#if $w_s_dimensions}
 		<input
-			bind:this    = {dim_input}
-			class        = 'dim-edit'
-			type         = 'text'
 			value        = {$w_s_dimensions.formatted}
 			style:left   = '{$w_s_dimensions.x}px'
 			style:top    = '{$w_s_dimensions.y}px'
 			onkeydown    = {on_dim_keydown}
 			onblur       = {on_dim_blur}
+			bind:this    = {dim_input}
+			class        = 'dim-edit'
+			type         = 'text'
 		/>
 	{/if}
 	{#if $w_s_angular}
 		<input
-			bind:this    = {ang_input}
-			class        = 'ang-edit'
-			type         = 'text'
 			value        = {$w_s_angular.formatted}
 			style:left   = '{$w_s_angular.x}px'
 			style:top    = '{$w_s_angular.y}px'
 			onkeydown    = {on_ang_keydown}
 			onblur       = {on_ang_blur}
+			bind:this    = {ang_input}
+			class        = 'ang-edit'
+			type         = 'text'
 		/>
 	{/if}
 {#if $w_s_face_label}
 		<input
+			style:top    = '{Math.round($w_s_face_label.y) - 0.2}px'
+			style:left   = '{Math.round($w_s_face_label.x)}px'
+			value        = {$w_s_face_label.current_name}
+			onkeydown    = {on_label_keydown}
+			oninput      = {on_label_input}
+			onfocus      = {on_label_focus}
+			onblur       = {on_label_blur}
 			bind:this    = {label_input}
 			class        = 'label-edit'
 			type         = 'text'
-			value        = {$w_s_face_label.current_name}
-			style:left   = '{Math.round($w_s_face_label.x)}px'
-			style:top    = '{Math.round($w_s_face_label.y) - 0.2}px'
-			oninput      = {on_label_input}
-			onkeydown    = {on_label_keydown}
-			onfocus      = {on_label_focus}
-			onblur       = {on_label_blur}
 		/>
 	{/if}
 </div>
 
 <style>
+
 	.graph {
+		position : relative;
 		width    : 100%;
 		height   : 100%;
-		position : relative;
 	}
 
 	.graph canvas {
-		cursor       : grab;
-		display      : block;
 		background   : inherit;
+		display      : block;
+		cursor       : grab;
 		touch-action : none;
 	}
 
@@ -302,20 +301,20 @@
 	}
 
 	.assist {
-		position       : absolute;
-		bottom         : 14px;
-		right          : 3px;
 		z-index        : var(--z-action);
-		display        : flex;
+		position       : absolute;
 		flex-direction : column;
 		align-items    : center;
+		display        : flex;
+		bottom         : 14px;
 		gap            : 12px;
+		right          : 3px;
 	}
 
 	.assist-label {
-		font-size      : var(--h-font-common);
-		color          : rgba(0, 0, 0, 0.35);
 		letter-spacing : var(--l-letter-spacing);
+		color          : rgba(0, 0, 0, 0.35);
+		font-size      : var(--h-font-common);
 	}
 
 	.assist-slider {
@@ -325,123 +324,125 @@
 	}
 
 	.assist-slider :global(.slider-compound) {
+		transform : translate(-50%, -50%) rotate(-90deg);
 		position  : absolute;
 		width     : 100cqh;
 		top       : 50%;
 		left      : 50%;
-		transform : translate(-50%, -50%) rotate(-90deg);
 	}
 
 	.zoom {
-		position : absolute;
-		top      : 2px;
-		right    : 10px;
 		z-index  : var(--z-action);
+		position : absolute;
+		right    : 10px;
+		top      : 2px;
 	}
 
 	.canvas-actions {
+		z-index  : var(--z-action);
+		gap      : var(--l-gap);
 		position : absolute;
+		display  : flex;
 		bottom   : 10px;
 		left     : 10px;
-		display  : flex;
-		gap      : var(--l-gap);
-		z-index  : var(--z-action);
 	}
 
-	.canvas-btn {
-		background    : rgba(255, 255, 255, 0.85);
+	.build-button {
 		border        : var(--th-border) solid rgba(0, 0, 0, 0.25);
-		border-radius : var(--corner-common);
-		color         : rgba(0, 0, 0, 0.5);
 		padding       : 0 var(--l-padding) 1px var(--l-padding);
-		font-size     : var(--h-font-common);
+		background    : rgba(255, 255, 255, 0.85);
 		height        : var(--h-button-common);
-		cursor        : pointer;
+		border-radius : var(--corner-common);
+		font-size     : var(--h-font-common);
+		color         : rgba(0, 0, 0, 0.5);
 		box-sizing    : border-box;
+		cursor        : pointer;
 	}
 
-	.canvas-btn:hover {
-		background : rgba(255, 255, 255, 1);
-		color      : var(--c-black);
+	.build-button:hover,
+	.build-button:global([data-hit]) {
 		border     : var(--th-border) solid rgba(0, 0, 0, 0.4);
+		color      : var(--c-black);
+		background : var(--hover);
 	}
 
 	.breadcrumbs {
+		z-index         : var(--z-action);
+		flex-direction  : column-reverse;
+		align-items     : flex-start;
 		position        : absolute;
 		top             : 10px;
 		left            : 10px;
 		display         : flex;
-		flex-direction  : column-reverse;
-		align-items     : flex-start;
 		gap             : 2px;
-		z-index         : var(--z-action);
 	}
 
 	.crumb {
-		background    : rgba(255, 255, 255, 0.7);
 		border        : var(--th-border) solid transparent;
-		border-radius : var(--corner-box);
-		color         : rgba(0, 0, 0, 0.45);
-		padding       : 0 8px;
-		font-size     : var(--h-font-common);
+		background    : rgba(255, 255, 255, 0.7);
 		height        : var(--h-button-common);
+		color         : rgba(0, 0, 0, 0.45);
+		font-size     : var(--h-font-common);
+		border-radius : var(--corner-box);
 		box-sizing    : border-box;
 		cursor        : pointer;
+		padding       : 0 8px;
 	}
 
 	.crumb:hover {
-		background : var(--bg);
-		color      : var(--c-black);
 		border     : var(--th-border) solid rgba(0, 0, 0, 0.3);
+		color      : var(--c-black);
+		background : var(--hover);
 	}
 
 	.crumb.current {
+		border      : var(--th-border) solid rgba(0, 0, 0, 0.5);
 		background  : var(--crumb-bg);
 		color       : var(--c-black);
 		font-weight : 600;
-		border      : var(--th-border) solid rgba(0, 0, 0, 0.5);
 	}
 
 	.dim-edit {
-		position   : absolute;
 		transform  : translate(-50%, -50%);
+		z-index    : var(--z-frontmost);
 		font       : var(--font-edit);
+		background : var(--c-white);
+		position   : absolute;
 		text-align : center;
-		width      : 80px;
 		padding    : 2px 4px;
+		width      : 80px;
 		border     : none;
 		outline    : none;
-		background : var(--c-white);
-		z-index    : var(--z-frontmost);
 	}
 
 	.ang-edit {
-		position   : absolute;
 		transform  : translate(-50%, -50%);
+		z-index    : var(--z-frontmost);
 		font       : var(--font-edit);
+		background : var(--c-white);
+		position   : absolute;
+		padding    : 2px 4px;
 		text-align : center;
 		width      : 60px;
-		padding    : 2px 4px;
 		border     : none;
 		outline    : none;
-		background : var(--c-white);
-		z-index    : var(--z-frontmost);
 	}
 
 	.label-edit {
-		position       : absolute;
-		transform      : translate(-50%, -50%);
-		box-sizing     : border-box;
-		font           : normal 10px sans-serif;
+		font                   : normal 10px sans-serif;
+		transform              : translate(-50%, -50%);
+		z-index                : var(--z-frontmost);
+		background             : var(--c-white);
+		height                 : var(--h-cell);
 		-webkit-font-smoothing : antialiased;
-		text-align     : center;
-		width          : 60px;
-		padding        : 0;
-		line-height    : 1;
-		height         : var(--h-cell);
-		border         : none;
-		outline        : none;
-		background     : var(--c-white);
-		z-index        : var(--z-frontmost);
+		box-sizing             : border-box;
+		position               : absolute;
+		text-align             : center;
+		width                  : 60px;
+		border                 : none;
+		outline                : none;
+		line-height            : 1;
+		padding                : 0;
 	}
+
 </style>

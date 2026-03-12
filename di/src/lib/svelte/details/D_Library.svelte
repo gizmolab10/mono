@@ -130,7 +130,7 @@
 <div class='settings'>
 	<button class='action-btn' disabled={!selected} use:hit_target={{ id: 'lib-replace', onpress: do_replace }}>replace</button>
 	<button class='action-btn' disabled={!selected} use:hit_target={{ id: 'lib-insert', onpress: do_insert }}>insert</button>
-	<button class='action-btn' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file((s) => engine.load_scene(s)) }}>import</button>
+	<button class='action-btn far-right' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file((s) => engine.load_scene(s)) }}>import</button>
 	<button class='action-btn far-right' use:hit_target={{ id: 'reset-library', onpress: reset_library }}>reinstall</button>
 </div>
 
@@ -146,10 +146,10 @@
 		height        : var(--h-button-segment);
 		font-size     : var(--h-font-common);
 		z-index       : var(--z-action);
+		background    : var(--c-white);
 		color         : inherit;
 		cursor        : pointer;
 		white-space   : nowrap;
-		background    : var(--c-white);
 		padding       : 0 8px;
 	}
 
@@ -171,7 +171,7 @@
 	}
 
 	.segmented button:hover:not(.active) {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 
@@ -196,8 +196,8 @@
 	}
 
 	.action-btn:global([data-hit]) {
-		background : var(--selected);
 		color      : var(--c-black);
+		background : var(--hover);
 	}
 
 	.action-btn:disabled {
@@ -222,7 +222,7 @@
 	}
 
 	.lib-row:hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 	.lib-row.selected {
@@ -237,8 +237,8 @@
 
 	.lib-size {
 		padding    : 2px 4px;
+		white-space: nowrap;
 		text-align : right;
 		opacity    : 0.4;
-		white-space: nowrap;
 	}
 </style>

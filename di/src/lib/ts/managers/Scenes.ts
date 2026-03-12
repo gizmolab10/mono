@@ -99,6 +99,7 @@ class Scenes {
 	private static readonly IDB_META = 'meta';
 	private idb_cache: IDBDatabase | null = null;
 	private library_cache: string[] | null = null;
+	private sizes_cache: Map<string, number> | null = null;
 
 	private open_idb(): Promise<IDBDatabase> {
 		if (this.idb_cache) return Promise.resolve(this.idb_cache);
@@ -124,6 +125,7 @@ class Scenes {
 			transaction.objectStore(Scenes.IDB_STORE).put(json, name);
 			transaction.objectStore(Scenes.IDB_META).put(json.length, name);
 			this.library_cache = null;
+			this.sizes_cache = null;
 		} catch {
 			// silent
 		}
@@ -137,6 +139,7 @@ class Scenes {
 			transaction.objectStore(Scenes.IDB_STORE).clear();
 			transaction.objectStore(Scenes.IDB_META).clear();
 			this.library_cache = null;
+			this.sizes_cache = null;
 		} catch {
 			// silent
 		}
@@ -210,6 +213,7 @@ class Scenes {
 
 	/** Get file sizes for all library entries (bundled + IDB meta). No file content is loaded. */
 	async library_sizes(): Promise<Map<string, number>> {
+		if (this.sizes_cache) return this.sizes_cache;
 		const sizes = new Map<string, number>();
 		for (const [path, content] of Object.entries(Scenes.bundled_eager)) {
 			sizes.set(path.slice(Scenes.ASSETS_PREFIX.length).replace('.di', ''), content.length);
@@ -229,6 +233,7 @@ class Scenes {
 				transaction.onerror = () => resolve();
 			});
 		} catch { /* silent */ }
+		this.sizes_cache = sizes;
 		return sizes;
 	}
 

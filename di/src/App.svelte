@@ -26,6 +26,7 @@
 		root.setProperty('--l-letter-spacing', `${k.layout.letter_spacing}px`);
 		root.setProperty('--l-padding-small',  `${k.layout.padding_small}px`);
 		root.setProperty('--l-gap-small',      `${k.layout.gap_small}px`);
+		root.setProperty('--l-gap-tiny',       `${k.layout.gap_tiny}px`);
 		root.setProperty('--l-padding',        `${k.layout.padding}px`);
 		root.setProperty('--l-margin',         `${k.layout.margin}px`);
 		root.setProperty('--l-gap',            `${k.layout.gap}px`);
@@ -48,7 +49,7 @@
 		root.setProperty('--z-action',         `${k.z.action}`);
 		root.setProperty('--z-frontmost',      `${k.z.frontmost}`);
 
-		root.setProperty('--h-button-tiny',   `${k.height.button.tiny}px`);
+		root.setProperty('--h-button-tiny',    `${k.height.button.tiny}px`);
 		root.setProperty('--h-button-small',   `${k.height.button.small}px`);
 		root.setProperty('--h-button-common',  `${k.height.button.common}px`);
 		root.setProperty('--h-button-segment', `${k.height.button.segment}px`);
@@ -68,9 +69,11 @@
 		const root = document.documentElement.style;
 		root.setProperty('--text',              $w_text_color);
 		root.setProperty('--accent',            $w_accent_color);
-		root.setProperty('--bg',                $w_background_color);
+		root.setProperty('--hover',             $w_accent_color);
 		root.setProperty('--selected',          $w_selected_color);
+		root.setProperty('--bg',                $w_background_color);
 	});
+
 </script>
 
 <Main />

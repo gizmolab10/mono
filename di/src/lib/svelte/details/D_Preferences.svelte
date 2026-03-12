@@ -106,8 +106,8 @@
 	}
 
 	.action-btn:global([data-hit]) {
-		background : var(--selected);
 		color      : var(--c-black);
+		background : var(--hover);
 	}
 
 	.right {
@@ -161,8 +161,8 @@
 	}
 
 	.segment:global([data-hit]) {
-		background : var(--selected);
 		color      : var(--c-black);
+		background : var(--hover);
 		opacity    : 1;
 	}
 
@@ -189,8 +189,8 @@
 	}
 
 	.units-select:hover {
-		background-color : var(--selected);
 		color            : var(--c-black);
+		background-color : var(--hover);
 	}
 
 	.units-select:focus,
@@ -258,11 +258,11 @@
 	}
 
 	.slider-group input[type='range']::-webkit-slider-thumb:hover {
-		background : var(--c-black);
+		background : var(--hover);
 	}
 
 	.slider-group input[type='range']::-moz-range-thumb:hover {
-		background : var(--c-black);
+		background : var(--hover);
 	}
 
 	.color-row {

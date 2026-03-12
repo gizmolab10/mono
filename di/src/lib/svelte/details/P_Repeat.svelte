@@ -307,7 +307,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	}
 
 	.segmented button:hover:not(.active) {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 	.action-btn {
@@ -391,8 +391,8 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	}
 
 	.action-btn:global([data-hit]) {
-		background : var(--selected);
 		color      : var(--c-black);
+		background : var(--hover);
 	}
 
 	.hint {

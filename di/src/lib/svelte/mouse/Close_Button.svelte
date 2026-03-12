@@ -4,15 +4,14 @@
 	import { Point } from '../../ts/types/Coordinates';
 	import { colors } from '../../ts/draw/Colors';
 	import { hits } from '../../ts/managers/Hits';
-	const { w_accent_color } = colors;
+	const { w_selected_color } = colors;
+	const { w_s_hover } = hits;
 
-	let { size = 20, origin, name = 'close', onclose }: { size?: number; origin: Point; name?: string; onclose: () => void } = $props();
-
+	const { size = 20, origin, name = 'close-button', onclose }: { size?: number; origin: Point; name?: string; onclose: () => void } = $props();
 	const circlePath = $derived(svg_paths.circle_atOffset(size, size - 2));
 	const crossPath = $derived(svg_paths.x_cross(size, size / 6));
+	const isHovering = $derived($w_s_hover?.id === name);
 
-	const { w_s_hover } = hits;
-	const isHovering = $derived($w_s_hover?.id === `button-${name}`);
 </script>
 
 <div
@@ -29,7 +28,7 @@
 			d={circlePath}
 			stroke-width="0.75"
 			stroke={colors.default}
-			fill={isHovering ? $w_accent_color : 'white'}
+			fill={isHovering ? $w_selected_color : 'white'}
 		/>
 		<path
 			fill="none"

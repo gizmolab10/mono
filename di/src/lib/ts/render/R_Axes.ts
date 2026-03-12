@@ -29,7 +29,7 @@ const AXIS_COLORS: Record<Axis_Name, string> = {
 };
 
 // Arrow dimensions in pixels (converted to 3D per-edge)
-const OFFSET_PX = 0;        // arrow sits on the grid edge
+const OFFSET_PX = -10;      // arrow inset 10px from grid edge
 const STEM_LEN_PX = 20;
 const STEM_W_PX = 3;        // half-width of stem
 const HEAD_LEN_PX = 12;

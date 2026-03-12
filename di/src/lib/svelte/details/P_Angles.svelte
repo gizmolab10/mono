@@ -17,6 +17,7 @@
 	let selected_so = $derived($w_selection?.so ?? null);
 	let is_root = $derived(!selected_so?.scene?.parent);
 	let angle_deg = $derived(read_angle_deg($w_tick));
+	let angle_is_zero = $derived.by(() => { $w_tick; return !selected_so || Math.abs(selected_so.axis_by_name(rot_axis).angle.value) < 1e-6; });
 	let angles = $derived(get_angles($w_tick));
 	let rot_axis: Axis_Name = $state('z');
 
@@ -154,9 +155,9 @@
 		</div>
 	</div>
 {/if}
-<div class='rotation-row'>
+<div class='rotation-row' style:margin-top='var(--l-gap-tiny)'>
 	<button class='action-btn' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
-	{#if !is_root}<span class='spacer'></span><button class='action-btn' onclick={reset_angle}>reset</button><span class='spacer'></span>{/if}
+	{#if !is_root && !angle_is_zero}<span class='spacer'></span><button class='action-btn' onclick={reset_angle}>reset</button><span class='spacer'></span>{/if}
 	<span class='far-right'>
 		<button class='action-btn' onclick={() => rotate_90(-1)}>-90°</button>
 		<button class='action-btn' onclick={() => rotate_90(1)}>+90°</button>
@@ -208,7 +209,7 @@
 	}
 
 	.action-btn:hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 	.angles {
@@ -259,7 +260,7 @@
 	}
 
 	.angle-cell:not(:focus):hover {
-		background : var(--selected);
+		background : var(--hover);
 	}
 
 	.angle-cell:focus {
