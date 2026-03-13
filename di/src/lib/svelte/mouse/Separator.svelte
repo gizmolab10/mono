@@ -1,7 +1,8 @@
 <script lang='ts'>
+	import Identifiable from '../../ts/runtime/Identifiable';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Layer } from '../../ts/types/Enumerations';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
 
 	let {
@@ -31,8 +32,9 @@
 	};
 
 	const r = k.thickness.separator[kind] * 3;
+	const uid = Identifiable.newID();
 	const w = r * 7 / 3;
-	const uid = Math.random().toString(36).slice(2, 8);
+
 </script>
 
 {#if vertical}
@@ -53,7 +55,7 @@
 		</svg>
 		{#if title}<span class='title'>{title}</span>{/if}
 		<svg
-			style='position:absolute; left:calc(50% - {w/2}px); bottom:0.5; overflow:visible; pointer-events:none'
+			style='position:absolute; left:calc(50% - {w/2}px); bottom:1.9; overflow:visible; pointer-events:none'
 			width={w} height={r}>
 			<path d={svg_paths.flares(r)} transform='rotate(180 {w/2} {r/2})' fill='var(--accent)' />
 		</svg>
@@ -68,13 +70,13 @@
 		style:--th='var({css_var[kind]})'
 		use:hit_target={{ id: `sep-${uid}`, onrelease: onclick }}>
 		<svg
-			style='position:absolute; left:{-w/4 -1}px; top:calc(50% - {r/2}px); overflow:visible; pointer-events:none'
+			style='position:absolute; left:{-w/4}px; top:calc(50% - {r/2}px); overflow:visible; pointer-events:none'
 			width={w} height={r}>
 			<path d={svg_paths.flares(r)} transform='rotate(-90 {w/2} {r/2})' fill='var(--accent)' />
 		</svg>
 		{#if title}<span class='title'>{title}</span>{/if}
 		<svg
-			style='position:absolute; right:{-w/4 + 6}px; top:calc(50% - {r/2}px); overflow:visible; pointer-events:none'
+			style='position:absolute; right:{-w/4}px; top:calc(50% - {r/2}px); overflow:visible; pointer-events:none'
 			width={w} height={r}>
 			<path d={svg_paths.flares(r)} transform='rotate(90 {w/2} {r/2})' fill='var(--accent)' />
 		</svg>

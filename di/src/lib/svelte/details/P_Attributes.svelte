@@ -8,6 +8,7 @@
 	import { constants } from '../../ts/algebra/User_Constants';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { constraints } from '../../ts/algebra';
+	import Separator from '../mouse/Separator.svelte';
 	import P_Constants from './P_Constants.svelte';
 	import { units } from '../../ts/types/Units';
 
@@ -194,6 +195,7 @@
 			{/each}
 		</tbody>
 	</table>
+	<Separator />
 	<div class='constants-header'>
 		<button class='constants-toggle' onclick={toggle_show_constants}>
 			{show_constants ? 'hide' : 'show'} constants

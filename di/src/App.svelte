@@ -10,14 +10,16 @@
 	onMount(() => {
 		const root = document.documentElement.style;
 
+		root.setProperty('--focus-outline',    `1.5px solid ${colors.focus}`);
+
+		root.setProperty('--window-min-width', `${k.width.window_min}`);
+
 		root.setProperty('--c-white',           colors.background);
 		root.setProperty('--c-black',           colors.default);
 		root.setProperty('--c-slider-border',   colors.border);
 		root.setProperty('--c-focus',           colors.focus);
 		root.setProperty('--c-thumb',           colors.thumb);
 		root.setProperty('--c-track',           colors.track);
-
-		root.setProperty('--focus-outline',    `1.5px solid ${colors.focus}`);
 
 		root.setProperty('--font-edit',        `${k.height.font.edit}px sans-serif`);
 		root.setProperty('--font-common',      `${k.height.font.common}px`);

@@ -3,6 +3,7 @@
 	import P_Attributes from './P_Attributes.svelte';
 	import { stores } from '../../ts/managers';
 	import P_Angles from './P_Angles.svelte';
+	import Separator from '../mouse/Separator.svelte';
 	import P_Repeat from './P_Repeat.svelte';
 
 	const { w_parts_tab } = stores;
@@ -17,6 +18,7 @@
 		<button class:active={$w_parts_tab === 'repeater'} onclick={() => w_parts_tab.set(T_Parts_Tab.repeater)}>repeats</button>
 	</div>
 </div>
+<Separator />
 <div class='tab-content'>
 	{#if $w_parts_tab === 'attributes'}
 		<P_Attributes />

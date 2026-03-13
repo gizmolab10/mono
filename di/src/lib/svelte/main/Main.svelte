@@ -16,7 +16,7 @@
 	});
 
 	// Reactive state for window dimensions
-	let width  = $state(Math.max(360, window.innerWidth));
+	let width  = $state(Math.max(k.width.window_min, window.innerWidth));
 	let height = $state(window.innerHeight);
 
 	// Layout constants
@@ -33,7 +33,7 @@
 	let graphWidth = $derived(width - ($w_show_details ? detailsWidth + gap : 0) - gap * 2);
 
 	function handleResize() {
-		width  = Math.max(360, window.innerWidth);
+		width  = Math.max(k.width.window_min, window.innerWidth);
 		height = window.innerHeight;
 	}
 
@@ -102,9 +102,9 @@
 		top         : 0;
 		left        : 0;
 		position    : fixed;
-		min-width   : 360px;
 		box-sizing  : border-box;
 		font-family : system-ui, sans-serif;
+		min-width   : var(--window-min-width);
 	}
 
 	.main {
@@ -132,12 +132,12 @@
 	}
 
 	.build-notes-region {
+		padding-top     : 20%;
 		width           : 100%;
 		height          : 100%;
 		display         : flex;
 		justify-content : center;
 		align-items     : flex-start;
-		padding-top     : 20%;
 		box-sizing      : border-box;
 	}
 </style>

@@ -3,8 +3,8 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] bring the [[working features]] table up to date
-- [ ] add a sep
+- [x] bring the [[working features]] table up to date
+- [x] add a sep
     - [ ] below att/ang/rep set control in p selected
     - [ ] above show constants
 - [ ] insert -> not write .l into inserted child's l formulas
