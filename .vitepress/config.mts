@@ -178,6 +178,10 @@ export default defineConfig({
                           link: '/di/notes/architecture/ui/details'
                         },
                         {
+                          text: 'Hits',
+                          link: '/di/notes/architecture/ui/hits'
+                        },
+                        {
                           text: 'Panel.layout',
                           link: '/di/notes/architecture/ui/panel.layout'
                         },
@@ -227,6 +231,10 @@ export default defineConfig({
                     {
                       text: 'Preferences',
                       link: '/di/notes/components/Preferences'
+                    },
+                    {
+                      text: 'Separators',
+                      link: '/di/notes/components/Separators'
                     },
                     {
                       text: 'Smart Objects',
@@ -282,16 +290,16 @@ export default defineConfig({
                       link: '/di/notes/work/collaboration priorities'
                     },
                     {
-                      text: 'More Milestones',
-                      link: '/di/notes/work/more milestones'
-                    },
-                    {
                       text: 'Revisit.di',
                       link: '/di/notes/work/revisit.di'
                     },
                     {
                       text: 'Skills',
                       link: '/di/notes/work/skills'
+                    },
+                    {
+                      text: 'Working Features',
+                      link: '/di/notes/work/working features'
                     },
                     {
                       text: 'Done >',
@@ -342,44 +350,28 @@ export default defineConfig({
                       collapsed: true,
                       items: [
                         {
-                          text: '21.undo',
-                          link: '/di/notes/work/milestones/21.undo'
+                          text: '25.selection.algorithm',
+                          link: '/di/notes/work/milestones/25.selection.algorithm'
                         },
                         {
-                          text: '22.aesthetics',
-                          link: '/di/notes/work/milestones/22.aesthetics'
+                          text: '26.cut.lists',
+                          link: '/di/notes/work/milestones/26.cut.lists'
                         },
                         {
-                          text: '23.selection.algorithm',
-                          link: '/di/notes/work/milestones/23.selection.algorithm'
+                          text: '27.colors',
+                          link: '/di/notes/work/milestones/27.colors'
                         },
                         {
-                          text: '24.rubberband',
-                          link: '/di/notes/work/milestones/24.rubberband'
+                          text: '28.user.manual',
+                          link: '/di/notes/work/milestones/28.user.manual'
                         },
                         {
-                          text: '25.cut.lists',
-                          link: '/di/notes/work/milestones/25.cut.lists'
+                          text: '29.licensing',
+                          link: '/di/notes/work/milestones/29.licensing'
                         },
                         {
-                          text: '26.user.manual',
-                          link: '/di/notes/work/milestones/26.user.manual'
-                        },
-                        {
-                          text: '27.licensing',
-                          link: '/di/notes/work/milestones/27.licensing'
-                        },
-                        {
-                          text: '28.marketing',
-                          link: '/di/notes/work/milestones/28.marketing'
-                        },
-                        {
-                          text: '29.css.engine',
-                          link: '/di/notes/work/milestones/29.css.engine'
-                        },
-                        {
-                          text: '30.mobile.devices',
-                          link: '/di/notes/work/milestones/30.mobile.devices'
+                          text: '30.marketing',
+                          link: '/di/notes/work/milestones/30.marketing'
                         },
                         {
                           text: 'Done >',
@@ -437,6 +429,22 @@ export default defineConfig({
                             {
                               text: '20.repeaters',
                               link: '/di/notes/work/milestones/done/20.repeaters'
+                            },
+                            {
+                              text: '21.css.engine',
+                              link: '/di/notes/work/milestones/done/21.css.engine'
+                            },
+                            {
+                              text: '22.aesthetics',
+                              link: '/di/notes/work/milestones/done/22.aesthetics'
+                            },
+                            {
+                              text: '23.undo',
+                              link: '/di/notes/work/milestones/done/23.undo'
+                            },
+                            {
+                              text: '24.mobile.devices',
+                              link: '/di/notes/work/milestones/done/24.mobile.devices'
                             },
                             {
                               text: '3.docs',

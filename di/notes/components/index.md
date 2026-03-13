@@ -36,5 +36,6 @@ These files exist but lack design docs:
 - [Hits_3D](./Hits_3D.md)
 - [Main](./Main.md)
 - [Preferences](./Preferences.md)
+- [Separators](./Separators.md)
 - [Smart_Objects](./Smart_Objects.md)
 
