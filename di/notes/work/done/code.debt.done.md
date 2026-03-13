@@ -1,5 +1,11 @@
 # Code Debt --- Done
 
+- [x] insert -> not write .l into inserted child's l formulas
+    - [x] test: add a 2-drawar cabinet to wacka
+- [x] bring the [[working features]] table up to date
+- [x] add a sep
+    - [x] below att/ang/rep set control in p selected
+    - [x] above show constants
 - [x] selecting often fails
 - [x] rename test -> hit_test
 - [x] convert Stores into a class

@@ -8,7 +8,7 @@
 	let {
 		title,
 		onclick,
-		end       = 0,
+		end       = 1,
 		length    = 0,
 		margin    = 11,
 		vertical  = false,

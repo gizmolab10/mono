@@ -246,9 +246,7 @@ class Drag {
 				const is_parent_root = !scene.parent.parent;
 				const front = is_parent_root ? hits_3d.back_most_face(parent_so) : hits_3d.front_most_face(parent_so);
 				if (front < 0) return false;
-				const anchor = this.init_face_anchor(prev_mouse, front, scene.parent, scene);
-				if (!anchor) return false;
-				this.face_anchor = anchor;
+				this.face_anchor = this.init_face_anchor(prev_mouse, front, scene.parent, scene);
 			}
 
 			// Every frame: intersect curr_mouse with the FIXED plane, compute total delta
@@ -344,11 +342,10 @@ class Drag {
 		face_index: number,
 		parent_scene: O_Scene,
 		child_scene: O_Scene
-	): Face_Anchor | null {
+	): Face_Anchor {
 		const world = this.get_world_matrix(parent_scene);
 		const plane = this.compute_face_plane(parent_scene.so, face_index, world);
 		const anchor_world = this.ray_plane_intersect(mouse, plane.plane_point, plane.plane_normal);
-		if (!anchor_world) return null;
 
 		const so = child_scene.so;
 		const bound_names: Bound[] = ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max'];
@@ -365,8 +362,6 @@ class Drag {
 		if (!a) return null;
 
 		const curr_world = this.ray_plane_intersect(curr_mouse, a.plane_point, a.plane_normal);
-		if (!curr_world) return null;
-
 		const delta_world = vec3.create();
 		vec3.subtract(delta_world, curr_world, a.anchor_world);
 
@@ -445,11 +440,7 @@ class Drag {
 			(so.z_min + so.z_max) / 2,
 		];
 		// Root: tumble only (from store). Child: so.orientation (tumble inherited via parent).
-		const raw_orientation = obj.parent ? so.orientation : stores.current_orientation();
-		// 2D: flatten toward camera, retaining in-plane rotation
-		const orientation = stores.current_view_mode() === '2d'
-			? this.flatten_orientation(raw_orientation)
-			: raw_orientation;
+		const orientation = obj.parent ? so.orientation : stores.current_orientation();
 
 		// Move SO center to origin, rotate, then:
 		//   Root: scale + position (center stays at origin for screen centering)
@@ -485,55 +476,17 @@ class Drag {
 		return local;
 	}
 
-	/** Flatten orientation for 2D: swing-twist decomposition around the
-	 *  local axis most aligned with the camera, keeping only the twist. */
-	private flatten_orientation(q: quat): quat {
-		const cam_fwd = vec3.create();
-		vec3.subtract(cam_fwd, camera.center_pos, camera.eye);
-		vec3.normalize(cam_fwd, cam_fwd);
-
-		const inv_q = quat.create();
-		quat.invert(inv_q, q);
-		const local_fwd = vec3.create();
-		vec3.transformQuat(local_fwd, cam_fwd, inv_q);
-
-		const abs_x = Math.abs(local_fwd[0]);
-		const abs_y = Math.abs(local_fwd[1]);
-		const abs_z = Math.abs(local_fwd[2]);
-
-		let twist: quat;
-		if (abs_x >= abs_y && abs_x >= abs_z) {
-			twist = quat.normalize(quat.create(), quat.fromValues(q[0], 0, 0, q[3]));
-		} else if (abs_y >= abs_z) {
-			twist = quat.normalize(quat.create(), quat.fromValues(0, q[1], 0, q[3]));
-		} else {
-			twist = quat.normalize(quat.create(), quat.fromValues(0, 0, q[2], q[3]));
-		}
-		return twist;
-	}
-
 	// Intersect camera ray through screen point with a plane
 	private ray_plane_intersect(
 		screen: Point,
 		plane_point: vec3,
 		plane_normal: vec3
-	): vec3 | null {
+	): vec3 {
 		const ray = camera.screen_to_ray(screen.x, screen.y);
-
-		// Ray: P = origin + t * dir
-		// Plane: dot(P - plane_point, normal) = 0
-		// Solve: dot(origin + t*dir - plane_point, normal) = 0
-		// t = dot(plane_point - origin, normal) / dot(dir, normal)
-
 		const denom = vec3.dot(ray.dir, plane_normal);
-		if (Math.abs(denom) < 0.0001) return null;  // Ray parallel to plane
-
 		const diff = vec3.create();
 		vec3.subtract(diff, plane_point, ray.origin);
-		const t = vec3.dot(diff, plane_normal) / denom;
-
-		if (t < 0) return null;  // Intersection behind camera
-
+		const t = denom !== 0 ? vec3.dot(diff, plane_normal) / denom : 0;
 		const result = vec3.create();
 		vec3.scaleAndAdd(result, ray.origin, ray.dir, t);
 		return result;

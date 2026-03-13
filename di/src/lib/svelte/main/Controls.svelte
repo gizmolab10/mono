@@ -11,6 +11,7 @@
 	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 	const separator_length = k.height.controls + 2;
+	const margin = 8.5;
 
 	let controls_width   = $state(Infinity);
 	let wrap_phone       = $derived(controls_width < (k.width.wrap_phone));
@@ -71,17 +72,17 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
-				<Separator vertical kind="main" margin={7.5} z_layer={T_Layer.cheat} />
+				<Separator vertical kind="main" margin={margin} z_layer={T_Layer.layout} />
 				<span class='spacer'></span>
 				{@render face_accessory_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" margin={7.5} end={k.layout.gap_small} />
+			<Separator kind="main" margin={margin} end={k.layout.gap_small} />
 			<div class='right-row'>
 				{@render face_buttons()}
 			</div>
-			<Separator kind="main" margin={7.5} end={k.layout.gap_small} />
+			<Separator kind="main" margin={margin} end={k.layout.gap_small} />
 			<div class='right-row'>
 				{@render decoration_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
@@ -91,12 +92,12 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
-				<Separator vertical kind="main" margin={7.5} z_layer={T_Layer.cheat} />
+				<Separator vertical kind="main" margin={margin} z_layer={T_Layer.layout} />
 				<span class='spacer'></span>
 				{@render mode_buttons()}
 				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" margin={7.5} end={k.layout.gap_small} />
+			<Separator kind="main" margin={margin * 0.9} end={k.layout.gap_tiny} />
 			<div class='right-row'>
 				{@render face_buttons()}
 				{@render face_accessory_buttons()}
@@ -104,7 +105,7 @@
 		</div>
 	{:else}
 		{@render hamburger_button()}
-		<Separator vertical kind="main" length={separator_length} margin={-9} z_layer={T_Layer.cheat} />
+		<Separator vertical kind="main" length={separator_length} margin={-5} z_layer={T_Layer.layout} />
 		<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
 		<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
 		{#if $w_allow_editing && !root_fits}
@@ -234,10 +235,10 @@
 
 	.snap-off::after {
 		transform  : translate(-50%, -50%) rotate(-45deg);
-		background : currentColor;
+		width      : var(--h-button-common);
+		background : var(--c-black);
 		position   : absolute;
 		height     : 1.5px;
-		width      : 14px;
 		top        : 50%;
 		left       : 50%;
 		content    : '';

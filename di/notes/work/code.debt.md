@@ -3,26 +3,31 @@
 
 offer a proposal for the first unchecked item
 
-- [x] bring the [[working features]] table up to date
-- [x] add a sep
-    - [ ] below att/ang/rep set control in p selected
-    - [ ] above show constants
-- [ ] insert -> not write .l into inserted child's l formulas
-    - [ ] test: add a 2-drawar cabinet to wacka
+- [x] cannot edit Z in 2D
+    - [x] movement in the z axis seems to be disabled
+        - [x] i can adjust position in x or in y, but not z
+- [x] scene tumble in 2D is very very very slow
+    - [x] grid!
+- [ ] add glow to + buttons
+- [ ] algebra cannot parse ".l - top_drawer.l"
+- [ ] add a sep -> graph (for sliders, build notes)
+    - [ ] eliminate crumbs
 - [ ] add to library items
     - [ ] add stringers to stairs
     - [ ] add big beams to basement
-- [ ] [[14.details]]
 - [ ] [[8.dimensionals]]
+    - [ ] dimensionals blink a lot
+    - [ ] hide occluded dimensions !!!!!!!
+    - [ ] tab between dimensionals
+    - [ ] arrow-key nudging (±unit of precision)
 - [ ] [[18.user.constants]]
+    - [ ] disallow algebraic keywords for constant names
+    - [ ] user-friendly name error popup
 - [ ] bring the [[working features]] table up to date
-- [x] [[23.undo]]
 - [ ] with neighbor SO
     - [ ] snap to
     - [ ] resolve overlap
 - [ ] user-friendly formula error popup
-- [ ] pac: extract "hierarchy pattern" as a component
-	- [ ] use in library, constants?
 
 ---
 

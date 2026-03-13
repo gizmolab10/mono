@@ -90,13 +90,6 @@
 		// Write .s and .l formulas on the two non-forward axes
 		const forward_face = get(stores.w_forward_face);
 		if (forward_face < 0) return;
-		const forward_axis = Math.floor(forward_face / 2);
-		const parent_id = child_so.scene?.parent?.so.id;
-		for (let i = 0; i < 3; i++) {
-			if (i === forward_axis) continue;
-			constraints.set_formula(child_so, axis_start[i], '.s', parent_id);
-			constraints.set_formula(child_so, axis_length[i], '.l', parent_id);
-		}
 		constraints.propagate_all();
 		stores.tick();
 		scenes.save();
@@ -125,7 +118,7 @@
 	{/each}
 </tbody></table>
 
-<Separator />
+<Separator/>
 
 <div class='settings'>
 	<button class='action-button' disabled={!selected} use:hit_target={{ id: 'lib-replace', onpress: do_replace }}>replace</button>

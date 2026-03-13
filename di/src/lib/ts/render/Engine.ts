@@ -4,7 +4,6 @@ import type { Bound, Axis_Name } from '../types/Types';
 import { scenes, stores, history } from '../managers';
 import { scene, camera, render, animation } from '.';
 import type { O_Scene } from '../types/Interfaces';
-import type { Point } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { units, Units } from '../types/Units';
 import { Smart_Object } from '../runtime';
@@ -80,16 +79,9 @@ class Engine {
 			if (drag.edit_selection(prev, curr)) {
 				const changed = hits_3d.selection?.so;
 				if (changed) constraints.propagate(changed);
-			} else {
-				if (stores.current_view_mode() === '2d') {
-					if (!this.root_scene) return;
-					this.saved_3d_orientation = null;
-					this.saved_pre_snap_orientation = null;
-					this.rotate_2d(this.root_scene, prev, curr);
-				} else {
-					this.saved_pre_snap_orientation = null;
-					drag.rotate_object(target, prev, curr, alt_key);
-				}
+			} else if (!drag.has_target) {
+				this.saved_pre_snap_orientation = null;
+				drag.rotate_object(target, prev, curr, alt_key);
 			}
 			stores.tick();
 			scenes.save();
@@ -353,73 +345,6 @@ class Engine {
 			const result = quat.create();
 			quat.slerp(result, anim.from, anim.to, eased);
 			stores.set_orientation(result);
-		}
-	}
-
-	/** In 2D mode, accumulate virtual rotation and snap when the front face changes.
-	 *  Applies a small visual tilt for feedback; snaps back on drag release. */
-	private rotate_2d(target: O_Scene, prev: Point, curr: Point): void {
-		const so = target.so;
-		const sensitivity = 0.01;
-		const dx = curr.x - prev.x;
-		const dy = curr.y - prev.y;
-
-		// Accumulate rotation on scratch orientation
-		const rot_x = quat.create();
-		const rot_y = quat.create();
-		quat.setAxisAngle(rot_x, [1, 0, 0], dy * sensitivity);
-		quat.setAxisAngle(rot_y, [0, 1, 0], dx * sensitivity);
-		quat.multiply(this.scratch_orientation, rot_y, this.scratch_orientation);
-		quat.multiply(this.scratch_orientation, rot_x, this.scratch_orientation);
-		quat.normalize(this.scratch_orientation, this.scratch_orientation);
-
-		// Free rotation (no snap) — just apply scratch directly
-		if (!stores.rotation_snap()) {
-			stores.set_orientation(this.scratch_orientation);
-			return;
-		}
-
-		// During snap animation, only accumulate scratch — don't tilt or re-trigger
-		if (this.snap_anim) return;
-
-		// Find which face is front-most under the scratch orientation (max world-normal z)
-		let best_face = -1, best_z = -Infinity;
-		for (let i = 0; i < 6; i++) {
-			const wn = vec3.transformQuat(vec3.create(), so.face_normal(i), this.scratch_orientation);
-			if (wn[2] > best_z) { best_z = wn[2]; best_face = i; }
-		}
-
-		// If the front face changed, animate the snap
-		const current_face = hits_3d.front_most_face(so);
-		const current_tumble = stores.current_orientation();
-		if (best_face >= 0 && best_face !== current_face) {
-			let best_quat: quat = Engine.FACE_SNAP_QUATS[best_face][0];
-			let best_dot = -Infinity;
-			for (const candidate of Engine.FACE_SNAP_QUATS[best_face]) {
-				const d = Math.abs(quat.dot(current_tumble, candidate));
-				if (d > best_dot) { best_dot = d; best_quat = candidate; }
-			}
-			const snap_target = quat.clone(best_quat);
-
-
-			this.snap_anim = {
-				from: quat.clone(current_tumble),
-				to: snap_target,
-				t: 0,
-			};
-			this.is_tilting = false;
-			// Pre-set scratch and snapped to the target for after animation completes
-			quat.copy(this.scratch_orientation, snap_target);
-			quat.copy(this.snapped_orientation, snap_target);
-		} else {
-			// Small tilt toward scratch — slerp clamped to ~5° max
-			const max_tilt = 0.08;
-			const dot = Math.abs(quat.dot(this.snapped_orientation, this.scratch_orientation));
-			const t = Math.min(1.0 - dot, max_tilt);
-			const tilted = quat.create();
-			quat.slerp(tilted, this.snapped_orientation, this.scratch_orientation, t);
-			stores.set_orientation(tilted);
-			this.is_tilting = true;
 		}
 	}
 

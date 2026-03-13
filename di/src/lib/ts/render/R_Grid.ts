@@ -46,17 +46,9 @@ export function render_grid(host: GridHost): void {
 	const { spacing, px_per_mm } = stable_spacing(host, root_so);
 	if (spacing <= 0) return;
 
-	// Axis bounds — extend enough to fill the canvas
-	const max_dim = Math.max(root_so.width, root_so.height, root_so.depth);
-	const canvas_diag_mm = px_per_mm > 0
-		? Math.hypot(host.ctx.canvas.width, host.ctx.canvas.height) / px_per_mm
-		: max_dim * 50;
-	const bounds = (axis: Axis_Name): [number, number] => {
-		const min = axis === 'x' ? root_so.x_min : axis === 'y' ? root_so.y_min : root_so.z_min;
-		const max = axis === 'x' ? root_so.x_max : axis === 'y' ? root_so.y_max : root_so.z_max;
-		const mid = (min + max) / 2;
-		return [mid - canvas_diag_mm, mid + canvas_diag_mm];
-	};
+	// Axis bounds — scene-bounded (matches render_back_grid)
+	const ve = host.camera_view_extent;
+	const bounds = (axis: Axis_Name): [number, number] => ve_axis_bounds(ve, axis);
 
 	// Fixed axis value (the plane of the front face)
 	const fixed_val = fixed_axis === 'x'

@@ -117,8 +117,6 @@ class Render {
 		const is_2d = stores.current_view_mode() === '2d';
 		const solid = stores.is_solid();
 
-		if (is_2d && stores.grid_opacity() > 0) render_grid(this);
-
 		// Phase 1: project ALL vertices (including hidden) for hit-test caches
 		const projected_map = new Map<string, Projected[]>();
 		for (const obj of all_objects) {
@@ -128,7 +126,7 @@ class Render {
 			hits_3d.update_projected(obj.id, projected, world_matrix);
 		}
 
-		if (!is_2d && stores.grid_opacity() > 0) render_back_grid(this);
+		if (stores.grid_opacity() > 0) render_back_grid(this);
 		if (!is_2d) render_root_bottom(this);
 
 		// Phase 2: fill front-facing faces (occlusion layer)

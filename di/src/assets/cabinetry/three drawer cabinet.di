@@ -40,9 +40,7 @@
         "name": "top drawer",
         "x": {
           "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
+            "origin": 0,
             "extent": -1219.1999999999998,
             "length": {
               "formula": ".l"
@@ -53,9 +51,7 @@
         },
         "y": {
           "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
+            "origin": 0,
             "extent": -1320.8,
             "length": {
               "formula": ".l"
@@ -273,9 +269,7 @@
         "name": "middle drawer",
         "x": {
           "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
+            "origin": 0,
             "extent": -1219.1999999999998,
             "length": {
               "formula": ".l"
@@ -286,9 +280,7 @@
         },
         "y": {
           "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
+            "origin": 0,
             "extent": -1320.8,
             "length": {
               "formula": ".l"
@@ -506,9 +498,7 @@
         "name": "bottom drawer",
         "x": {
           "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
+            "origin": 0,
             "extent": -1219.1999999999998,
             "length": {
               "formula": ".l"
@@ -519,9 +509,7 @@
         },
         "y": {
           "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
+            "origin": 0,
             "extent": -1320.8,
             "length": {
               "formula": ".l"
@@ -532,9 +520,7 @@
         },
         "z": {
           "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
+            "origin": 0,
             "extent": -1193.8,
             "length": 215.89999999999998,
             "angle": 0
