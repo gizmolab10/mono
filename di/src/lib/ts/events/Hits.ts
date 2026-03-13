@@ -73,15 +73,15 @@ export default class Hits {
 			return false;
 		}
 
-		if (!!s_mouse.event && !!target) {
-			if (s_mouse.isDown && s_mouse.event) {
+		if (!!target) {
+			if (s_mouse.isDown) {
 				target.clicks += 1;
 				if (target.respondsTo_autorepeat) {
 					target.handle_s_mouse?.(s_mouse);
 					this.start_autorepeat(target);
-				} else if (target.respondsTo_longClick) {
+				} else if (s_mouse.event && target.respondsTo_longClick) {
 					this.start_longClick(target, s_mouse.event);
-				} else if (target.respondsTo_doubleClick) {
+				} else if (s_mouse.event && target.respondsTo_doubleClick) {
 					if (target.clicks == 2) {
 						target.clicks = 0;
 						this.click_timer.reset();
@@ -103,8 +103,8 @@ export default class Hits {
 					this.longClick_fired = false;
 					target.clicks = 0;
 				} else {
-					const waitingForDoubleClick = target.respondsTo_doubleClick && 
-						this.click_timer.hasTimer_forID(T_Timer.double) && 
+					const waitingForDoubleClick = target.respondsTo_doubleClick &&
+						this.click_timer.hasTimer_forID(T_Timer.double) &&
 						this.pending_singleClick_target === target;
 					if (!waitingForDoubleClick) {
 						target.clicks = 0;

@@ -3,13 +3,15 @@ import type Smart_Object from '../runtime/Smart_Object';
 import type { Dictionary } from '../types/Types';
 import { writable, get } from 'svelte/store';
 import { Point } from '../types/Coordinates';
-import { engine } from '../render/Engine';
 import { stores } from '../managers/Stores';
-import { hits } from './Hits';
+import { engine } from '../render/Engine';
 import Mouse_Timer from './Mouse_Timer';
+import { e3 } from './Events_3D';
 import S_Mouse from './S_Mouse';
+import { hits } from './Hits';
 
 export class Events {
+	is_touch_device = false;
 	throttle_timers: Dictionary<ReturnType<typeof setTimeout> | null> = {};
 	mouse_timer_dict_byName: Dictionary<Mouse_Timer> = {};
 
@@ -44,20 +46,23 @@ export class Events {
 	setup() {
 		if (this.wired) return;
 		this.wired = true;
+		this.is_touch_device = 'ontouchstart' in window;
 		this.subscribeTo_events();
 	}
 
 	private subscribeTo_events() {
-		document.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
-		document.addEventListener('mousedown', this.handle_mouse_down, { passive: false });
-		document.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
-		document.addEventListener('mouseleave', this.handle_mouse_leave, { passive: false });
 		document.addEventListener('keydown', this.handle_key_down);
 
-		// Touch events for iPad/iPhone — mirror mouse events for UI controls
-		document.addEventListener('touchstart', this.handle_touch_start, { passive: false });
-		document.addEventListener('touchend', this.handle_touch_end, { passive: false });
-		document.addEventListener('touchmove', this.handle_touch_move, { passive: false });
+		if (this.is_touch_device) {
+			document.addEventListener('touchstart', this.handle_touch_start, { passive: false });
+			document.addEventListener('touchend', this.handle_touch_end, { passive: false });
+			document.addEventListener('touchmove', this.handle_touch_move, { passive: false });
+		} else {
+			document.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
+			document.addEventListener('mousedown', this.handle_mouse_down, { passive: false });
+			document.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
+			document.addEventListener('mouseleave', this.handle_mouse_leave, { passive: false });
+		}
 	}
 
 	// ===== EVENT HANDLERS =====
@@ -101,11 +106,27 @@ export class Events {
 	// ── Touch handlers (iPad/iPhone) ──
 
 	private handle_touch_start = (event: TouchEvent) => {
-		if (event.touches.length !== 1) return;
 		const t = event.touches[0];
 		const target = t.target as HTMLElement;
-		// Only handle non-canvas touches (canvas has its own touch handling in Events_3D)
-		if (target.closest('canvas')) return;
+		const on_canvas = !!target.closest('canvas');
+		const canvas = e3.canvas;
+
+		if (on_canvas && canvas) {
+			if (event.touches.length === 3) {
+				event.preventDefault();
+				e3.end_drag();
+				stores.toggle_details();
+			} else if (event.touches.length === 1) {
+				event.preventDefault();
+				e3.mouse_in_canvas = true;
+				e3.begin_drag(canvas, t.clientX, t.clientY);
+			}
+			// 2-finger: let browser handle (zoom)
+			return;
+		}
+
+		// UI controls — single finger only
+		if (event.touches.length !== 1) return;
 		const location = new Point(t.clientX, t.clientY);
 		hits.handle_s_mouse_at(location, S_Mouse.down(null, null), false);
 		hits.disable_hover = true;
@@ -114,7 +135,16 @@ export class Events {
 		this.w_mouse_button_down.set(true);
 	}
 
-	private handle_touch_end = (_event: TouchEvent) => {
+	private handle_touch_end = (event: TouchEvent) => {
+		const canvas = e3.canvas;
+		if (canvas && event.target && (event.target as HTMLElement).closest?.('canvas')) {
+			if (event.touches.length === 0) {
+				e3.end_drag();
+				e3.mouse_in_canvas = false;
+			}
+			return;
+		}
+
 		const location = get(this.w_mouse_location) ?? new Point(0, 0);
 		hits.handle_s_mouse_at(location, S_Mouse.up(null, null));
 		hits.disable_hover = false;
@@ -124,10 +154,21 @@ export class Events {
 	}
 
 	private handle_touch_move = (event: TouchEvent) => {
-		if (event.touches.length !== 1) return;
 		const t = event.touches[0];
 		const target = t.target as HTMLElement;
-		if (target.closest('canvas')) return;
+		const canvas = e3.canvas;
+
+		if (target.closest('canvas') && canvas) {
+			if (event.touches.length === 1) {
+				event.preventDefault();
+				e3.continue_drag(canvas, t.clientX, t.clientY, false);
+			}
+			// 2-finger: let browser handle (zoom)
+			return;
+		}
+
+		// UI controls
+		if (event.touches.length !== 1) return;
 		const location = new Point(t.clientX, t.clientY);
 		const prior = get(this.w_mouse_location);
 		const delta = prior?.vector_to(location) ?? null;

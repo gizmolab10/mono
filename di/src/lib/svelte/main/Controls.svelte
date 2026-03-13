@@ -77,11 +77,11 @@
 				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" margin={7.5} />
+			<Separator kind="main" margin={7.5} end={k.layout.gap_large} />
 			<div class='right-row'>
 				{@render face_buttons()}
 			</div>
-			<Separator kind="main" margin={7.5} />
+			<Separator kind="main" margin={7.5} end={k.layout.gap_large} />
 			<div class='right-row'>
 				{@render decoration_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
@@ -96,7 +96,7 @@
 				{@render mode_buttons()}
 				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" margin={7.5} />
+			<Separator kind="main" margin={7.5} end={k.layout.gap_large} />
 			<div class='right-row'>
 				{@render face_buttons()}
 				{@render face_accessory_buttons()}

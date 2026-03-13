@@ -1,30 +1,30 @@
-import { hits_3d } from './Hits_3D';
+import { T_Hit_3D, T_Editing } from '../types/Enumerations';
+import { face_label } from '../editors/Face_Label';
 import { dimensions } from '../editors/Dimension';
 import { angulars } from '../editors/Angular';
-import { face_label } from '../editors/Face_Label';
 import { history } from '../managers/History';
-import { drag } from '../editors/Drag';
 import { Point } from '../types/Coordinates';
-import { T_Hit_3D, T_Editing } from '../types/Enumerations';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
+import { drag } from '../editors/Drag';
+import { hits_3d } from './Hits_3D';
 
 type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point, alt_key: boolean) => void;
-type T_Handle_Wheel = (delta: number, fine: boolean) => void;
-
 class Events_3D {
+	mouse_in_canvas = false;
 	private did_drag = false;  // true if mouse moved while dragging
 	private is_dragging = false;
-	private mouse_in_canvas = false;
-	private last_canvas_position: Point = Point.zero;  // canvas-relative position
 	private on_drag: T_Handle_Drag | null = null;
 	private on_drag_end: (() => void) | null = null;
-	private on_wheel: T_Handle_Wheel | null = null;
+	private last_canvas_position: Point = Point.zero;  // canvas-relative position
 
-	// Touch pinch-to-zoom state
-	private pinch_distance: number | null = null;
+	canvas: HTMLCanvasElement | null = null;
 
 	init(canvas: HTMLCanvasElement): void {
+		this.canvas = canvas;
+
+		if ('ontouchstart' in window) return;
+
 		canvas.addEventListener('mouseenter', () => { this.mouse_in_canvas = true; });
 		canvas.addEventListener('mouseleave', () => { this.mouse_in_canvas = false; });
 
@@ -64,68 +64,11 @@ class Events_3D {
 			}
 		});
 
-		canvas.addEventListener('wheel', (e) => {
-			e.preventDefault();
-			if (this.on_wheel) {
-				const delta = e.deltaY > 0 ? -1 : 1;  // scroll up = grow, down = shrink
-				this.on_wheel(delta, e.shiftKey);
-			}
-		}, { passive: false });
-
-		// ── Touch events (iPad / iPhone) ──
-
-		canvas.addEventListener('touchstart', (e) => {
-			e.preventDefault();
-			if (e.touches.length === 1) {
-				const t = e.touches[0];
-				this.mouse_in_canvas = true;
-				this.begin_drag(canvas, t.clientX, t.clientY);
-			} else if (e.touches.length === 2) {
-				this.pinch_distance = this.touch_distance(e.touches[0], e.touches[1]);
-			}
-		}, { passive: false });
-
-		canvas.addEventListener('touchmove', (e) => {
-			e.preventDefault();
-			if (e.touches.length === 1 && this.is_dragging) {
-				const t = e.touches[0];
-				this.continue_drag(canvas, t.clientX, t.clientY, false);
-			} else if (e.touches.length === 2 && this.pinch_distance !== null && this.on_wheel) {
-				const dist = this.touch_distance(e.touches[0], e.touches[1]);
-				const ratio = dist / this.pinch_distance;
-				if (ratio > 1.03) {
-					this.on_wheel(1, false);
-					this.pinch_distance = dist;
-				} else if (ratio < 0.97) {
-					this.on_wheel(-1, false);
-					this.pinch_distance = dist;
-				}
-			}
-		}, { passive: false });
-
-		canvas.addEventListener('touchend', (e) => {
-			if (e.touches.length === 0) {
-				this.end_drag();
-				this.pinch_distance = null;
-				this.mouse_in_canvas = false;
-			} else if (e.touches.length === 1) {
-				// Went from 2 fingers to 1 — start a new single-finger drag
-				this.pinch_distance = null;
-				const t = e.touches[0];
-				this.begin_drag(canvas, t.clientX, t.clientY);
-			}
-		});
-
-		canvas.addEventListener('touchcancel', () => {
-			this.end_drag();
-			this.pinch_distance = null;
-			this.mouse_in_canvas = false;
-		});
 	}
 
 	// ── Shared drag logic ──
 
-	private begin_drag(canvas: HTMLCanvasElement, clientX: number, clientY: number, e?: MouseEvent): void {
+	begin_drag(canvas: HTMLCanvasElement, clientX: number, clientY: number, e?: MouseEvent): void {
 		this.is_dragging = true;
 		this.did_drag = false;
 
@@ -187,7 +130,7 @@ class Events_3D {
 		}
 	}
 
-	private continue_drag(canvas: HTMLCanvasElement, clientX: number, clientY: number, altKey: boolean): void {
+	continue_drag(canvas: HTMLCanvasElement, clientX: number, clientY: number, altKey: boolean): void {
 		const rect = canvas.getBoundingClientRect();
 		const prev = this.last_canvas_position;
 		const curr = new Point(clientX - rect.left, clientY - rect.top);
@@ -198,7 +141,7 @@ class Events_3D {
 		if (this.on_drag) this.on_drag(prev, curr, altKey);
 	}
 
-	private end_drag(): void {
+	end_drag(): void {
 		if (this.is_dragging && !this.did_drag && this.mouse_in_canvas) {
 			// Click/tap on background → deselect (but not if editing just started)
 			if (!drag.has_target && stores.editing() === T_Editing.none) {
@@ -216,12 +159,6 @@ class Events_3D {
 		drag.clear();
 	}
 
-	private touch_distance(a: Touch, b: Touch): number {
-		const dx = a.clientX - b.clientX;
-		const dy = a.clientY - b.clientY;
-		return Math.sqrt(dx * dx + dy * dy);
-	}
-
 	set_drag_handler(callback: T_Handle_Drag): void {
 		this.on_drag = callback;
 	}
@@ -230,9 +167,6 @@ class Events_3D {
 		this.on_drag_end = callback;
 	}
 
-	set_wheel_handler(callback: T_Handle_Wheel): void {
-		this.on_wheel = callback;
-	}
 }
 
 export const e3 = new Events_3D();

@@ -37,18 +37,6 @@
 		height = window.innerHeight;
 	}
 
-	// Swipe gesture → toggle details
-	let touch_x = 0;
-	let touch_y = 0;
-	function ontouchstart(e: TouchEvent) { touch_x = e.touches[0].clientX; touch_y = e.touches[0].clientY; }
-	function ontouchend(e: TouchEvent) {
-		const dx = e.changedTouches[0].clientX - touch_x;
-		const dy = e.changedTouches[0].clientY - touch_y;
-		if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 2) {
-			if (dx > 0 && !$w_show_details) stores.toggle_details();
-			if (dx < 0 && $w_show_details) stores.toggle_details();
-		}
-	}
 </script>
 
 <svelte:window
@@ -63,8 +51,7 @@
 	style:height           = '{height}px'
 	style:--radius         = '{radius}px'
 	style:background-color = 'var(--accent)'
-	{ontouchstart}
-	{ontouchend}>
+	>
 	{#if showBuildNotes}
 		<!-- Build notes: single empty region fills entire space -->
 		<div

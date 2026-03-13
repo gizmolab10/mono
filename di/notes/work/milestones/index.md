@@ -2,7 +2,6 @@
 
 | #   | Name                                             |
 | --- | ------------------------------------------------ |
-| 24  | [Mobile Devices](24.mobile.devices.md)           |
 | 25  | [Selection Algorithm](25.selection.algorithm.md) |
 | 26  | [Cut Lists](26.cut.lists.md)                     |
 | 27  | [Colors](27.colors)                              |

@@ -60,21 +60,21 @@
 	</button>
 {:else}
 	<button
-		style:--th='var({css_var[kind]})'
 		style:--m='{margin}px'
 		style:z-index={z_layer}
 		class:clickable={!!onclick}
 		style:--e='{margin + end}px'
 		class='separator horizontal'
+		style:--th='var({css_var[kind]})'
 		use:hit_target={{ id: `sep-${uid}`, onrelease: onclick }}>
 		<svg
-			style='position:absolute; left:{-w/4 - 1}px; top:calc(50% - {r/2}px); overflow:visible; pointer-events:none'
+			style='position:absolute; left:{-w/4 -1}px; top:calc(50% - {r/2}px); overflow:visible; pointer-events:none'
 			width={w} height={r}>
 			<path d={svg_paths.flares(r)} transform='rotate(-90 {w/2} {r/2})' fill='var(--accent)' />
 		</svg>
 		{#if title}<span class='title'>{title}</span>{/if}
 		<svg
-			style='position:absolute; right:{-w/4 - 1}px; top:calc(50% - {r/2}px); overflow:visible; pointer-events:none'
+			style='position:absolute; right:{-w/4 + 6}px; top:calc(50% - {r/2}px); overflow:visible; pointer-events:none'
 			width={w} height={r}>
 			<path d={svg_paths.flares(r)} transform='rotate(90 {w/2} {r/2})' fill='var(--accent)' />
 		</svg>

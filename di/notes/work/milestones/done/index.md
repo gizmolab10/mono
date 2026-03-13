@@ -28,3 +28,4 @@
 | 21  | [CSS Engine](21.css.engine.md)            |                |
 | 22  | [Aesthetics](22.aesthetics.md)            |                |
 | 23  | [Undo](23.undo.md)                        | Mar 12         |
+| 24  | [Mobile Devices](24.mobile.devices.md)    | Mar 12         |

@@ -130,11 +130,6 @@ class Engine {
 			}
 		});
 
-		// Input: scroll wheel scales entire rendering
-		e3.set_wheel_handler((delta, fine) => {
-			drag.scale(delta, fine);
-		});
-
 		// Signal that setup is complete (syncs reactive UI like SD table)
 		stores.tick();
 
