@@ -119,6 +119,21 @@ describe('Tokenizer', () => {
 		expect(tokens[2]).toEqual({ type: 'reference', object: 'A', attribute: 'y' });
 	});
 
+	it('tolerates whitespace after dot in parent ref: . x', () => {
+		const tokens = tokenizer.tokenize('. x');
+		expect(tokens[0]).toEqual({ type: 'reference', object: '', attribute: 'x' });
+	});
+
+	it('tolerates whitespace after dot in SO ref: wall. height', () => {
+		const tokens = tokenizer.tokenize('wall. height');
+		expect(tokens[0]).toEqual({ type: 'reference', object: 'wall', attribute: 'height' });
+	});
+
+	it('tolerates whitespace after dot in path ref: A. B. x', () => {
+		const tokens = tokenizer.tokenize('A. B. x');
+		expect(tokens[0]).toEqual({ type: 'reference', object: 'A.B', attribute: 'x' });
+	});
+
 	it('tokenizes bare fractional inches 3/4"', () => {
 		const tokens = tokenizer.tokenize('3/4"');
 		expect(tokens[0].type).toBe('number');
@@ -140,7 +155,7 @@ describe('Tokenizer', () => {
 	});
 
 	it('throws on reference with missing attribute', () => {
-		expect(() => tokenizer.tokenize('wall.')).toThrow(/Expected attribute name/);
+		expect(() => tokenizer.tokenize('wall.')).toThrow(/Invalid number at position/);
 	});
 });
 
@@ -342,8 +357,12 @@ describe('Compiler', () => {
 		expect(() => compiler.compile('(1 + 2')).toThrow(/Expected '\)'/);
 	});
 
-	it('throws on trailing operator', () => {
-		expect(() => compiler.compile('1 +')).toThrow();
+	it('throws on trailing operator with end-of-input message', () => {
+		expect(() => compiler.compile('1 +')).toThrow(/got 'end'/);
+	});
+
+	it('throws on trailing minus with end-of-input message', () => {
+		expect(() => compiler.compile('wall.x -')).toThrow(/got 'end'/);
 	});
 
 	it('throws on double operator', () => {

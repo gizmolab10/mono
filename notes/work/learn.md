@@ -66,3 +66,4 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 | Treated question as instruction | `pitfalls.md` #16 — "Questions aren't instructions" |
 | Promised beyond this chat | `pitfalls.md` #17 — "Scope promises to this chat" |
 | Trimmed rejected idea instead of restarting | `pitfalls.md` #18 — "Rejection means start over" |
+| Treated analysis shorthand as action | `pitfalls.md` #19 — "Analysis shorthands are not action requests" |

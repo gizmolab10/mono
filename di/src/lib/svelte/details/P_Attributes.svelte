@@ -58,10 +58,18 @@
 	// Error overlay state
 	let error_state = $state({ saved_formula: '', active_bound: '', show_overlay: false });
 
-	function get_active_error() {
+	let active_error = $derived.by(() => {
+		void tick; // re-derive when errors change (tick fires after errors.set)
 		if (!selected_so || !error_state.active_bound) return null;
 		return errors.get(selected_so.id, error_state.active_bound);
-	}
+	});
+
+	/** Index in bounds_rows of the error row, or -1 if no overlay. */
+	let error_row_idx = $derived(
+		error_state.show_overlay && error_state.active_bound
+			? bounds_rows.findIndex(r => r.bound === error_state.active_bound)
+			: -1
+	);
 
 	function dismiss_overlay() { error_state.show_overlay = false; }
 
@@ -75,13 +83,19 @@
 		return axis !== undefined && axis_hints[axis].includes(label);
 	}
 
-	function apply_suggestion(suggestion: string) {
+	function apply_suggestion(suggestion: string, commit: boolean) {
 		const input = document.querySelector('input.cell-error') as HTMLInputElement | null;
 		if (!input) return;
 		input.value = suggestion;
-		error_state.show_overlay = false;
-		input.focus();
-		input.setSelectionRange(suggestion.length, suggestion.length);
+		if (commit) {
+			const row = bounds_rows.find(r => r.bound === error_state.active_bound);
+			if (row) commit_formula(row, suggestion, input);
+			// commit_formula sets overlay state: show on new error, hide on success
+		} else {
+			error_state.show_overlay = false;
+			input.focus();
+			input.setSelectionRange(suggestion.length, suggestion.length);
+		}
 	}
 
 	function commit_formula(row: BoundsRow, value: string, input?: HTMLInputElement) {
@@ -90,8 +104,21 @@
 		const trimmed = value.trim();
 		const parent_id = selected_so.scene?.parent?.so.id;
 		if (trimmed) {
-			const tokens = tokenizer.merge_refs(tokenizer.tokenize(trimmed));
-			const normalized = tokenizer.untokenize(tokens);
+			let normalized: string;
+			try {
+				const tokens = tokenizer.merge_refs(tokenizer.tokenize(trimmed));
+				normalized = tokenizer.untokenize(tokens);
+			} catch (e: any) {
+				const pos = e.message?.match(/at position (\d+)/);
+				const span: [number, number] = pos ? [parseInt(pos[1]), 1] : [0, trimmed.length];
+				const err = errors.bad_syntax(trimmed, span, e);
+				errors.set(selected_so.id, row.bound, err);
+				error_state.active_bound = row.bound;
+				error_state.show_overlay = true;
+				if (input) { input.focus(); input.setSelectionRange(err.span[0], err.span[0] + err.span[1]); }
+				stores.tick();
+				return;
+			}
 			if (input) input.value = normalized;
 			const err = constraints.set_formula(selected_so, row.bound, normalized, parent_id);
 			if (err) {
@@ -105,6 +132,7 @@
 			constraints.clear_formula(selected_so, row.bound);
 			errors.clear(selected_so.id, row.bound);
 		}
+		error_state.show_overlay = false;
 		constraints.propagate(selected_so);
 		stores.tick();
 		scenes.save();
@@ -157,14 +185,31 @@
 	}
 
 	function cell_keydown(e: KeyboardEvent) {
-		if (error_state.show_overlay) error_state.show_overlay = false;
-		if (e.key === 'Escape') {
-			(e.target as HTMLInputElement).blur();
-		}
+		const passive = e.key.startsWith('Arrow') || ['Shift', 'Control', 'Alt', 'Meta', 'CapsLock'].includes(e.key);
 		if (e.key === 'Enter') {
 			e.preventDefault();
+			const err = error_state.show_overlay && selected_so && error_state.active_bound
+				? errors.get(selected_so.id, error_state.active_bound) : null;
+			if (err?.suggestions.length === 1) {
+				const s = err.suggestions[0];
+				const btn = document.querySelector('.error-suggestion') as HTMLElement | null;
+				if (btn) {
+					btn.classList.add('blink');
+					setTimeout(() => {
+						btn.classList.remove('blink');
+						apply_suggestion(s.formula, s.commit !== false);
+					}, 120);
+				} else {
+					apply_suggestion(s.formula, s.commit !== false);
+				}
+				return;
+			}
 			(e.target as HTMLInputElement).blur();
 			return;
+		}
+		if (error_state.show_overlay && !passive) error_state.show_overlay = false;
+		if (e.key === 'Escape') {
+			(e.target as HTMLInputElement).blur();
 		}
 		if (e.key !== 'Tab') {
 			e.stopPropagation();
@@ -189,80 +234,94 @@
 
 </script>
 
+{#snippet attr_row(row: typeof bounds_rows[0], i: number)}
+	{@const row_disabled = is_root ? row.attr_index !== 2 : (row.is_invariant || row.has_formula)}
+	{@const gpos = i % 3}
+	{@const prev_inv = gpos > 0 && bounds_rows[i - 1].is_invariant}
+	{@const next_inv = gpos < 2 && bounds_rows[i + 1].is_invariant}
+	{@const next2_inv = gpos === 0 && bounds_rows[i + 2]?.is_invariant}
+	{@const merge_span = formula_mode === 'agnostic' && row.is_invariant && !prev_inv && next_inv ? (next2_inv ? 3 : 2) : 0}
+	{@const is_merge_cont = formula_mode === 'agnostic' && row.is_invariant && prev_inv}
+	{@const root_formula_cont = is_root && i !== 0 && i !== 6}
+	{@const root_start_cont = is_root && row.attr_index === 0 && gpos > 0}
+	<tr class:merge-cont={is_merge_cont || root_formula_cont || root_start_cont}>
+		<td class='attr-name'>
+			{#if formula_mode === 'agnostic' && row.axis_index === 1}
+				<span class='ctx' class:ctx-l={row.attr_index === 2}>{['s', 'e', 'l'][row.attr_index]}</span>
+			{/if}
+			{row.label}
+		</td>
+		<td class='attr-invariant' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
+		{#if !(is_merge_cont || root_formula_cont)}
+			{@const formula_disabled = is_root || row.is_invariant}
+			{@const has_error = !!(selected_so && row.bound && errors.get(selected_so.id, row.bound))}
+			<td class='attr-formula' class:merged={is_root || merge_span >= 2} class:cell-disabled={formula_disabled} rowspan={is_root ? (i === 0 ? 6 : 3) : merge_span || undefined}>
+				<input
+					type      = 'text'
+					class     = 'cell-input'
+					class:cell-error={has_error}
+					value     = {row.formula}
+					disabled  = {formula_disabled}
+					onfocus   = {(e) => { error_state.saved_formula = (e.target as HTMLInputElement).value; stores.w_editing.set(T_Editing.formula); }}
+					onblur    = {(e) => { const input = e.target as HTMLInputElement; commit_formula(row, input.value, input); stores.w_editing.set(T_Editing.none); }}
+					onkeydown = {cell_keydown}
+				/>
+			</td>
+		{/if}
+		{#if root_start_cont}
+			<!-- spanned by first start row -->
+		{:else}
+			<td class='attr-value' class:cell-disabled={row_disabled} rowspan={is_root && row.attr_index === 0 && gpos === 0 ? 3 : undefined}>
+				<input
+					type      = 'text'
+					class     = 'cell-input right'
+					value     = {is_root && row.attr_index === 0 ? '0' : row.value}
+					disabled  = {row_disabled}
+					onfocus   = {() => stores.w_editing.set(T_Editing.value)}
+					onblur    = {(e) => { commit_value(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
+					onkeydown = {cell_keydown}
+				/>
+			</td>
+		{/if}
+	</tr>
+{/snippet}
+
+{#snippet error_overlay()}
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class='error-backdrop' onclick={dismiss_overlay}></div>
+	<div class='error-overlay'>
+		<div class='error-message'>{@html active_error!.message.replace(/'([^']+)'/g, "&#39;<span class='error-quoted'>$1</span>&#39;")}</div>
+		{#if active_error!.suggestions.length > 0}
+			<div class='error-suggestions' class:single={active_error!.suggestions.length === 1}>
+				{#each [...active_error!.suggestions].sort((a, b) => (is_good_hint(b.label) ? 1 : 0) - (is_good_hint(a.label) ? 1 : 0)) as suggestion}
+					<button class='error-suggestion' class:hint={is_good_hint(suggestion.label)} onclick={() => apply_suggestion(suggestion.formula, suggestion.commit !== false)}>{suggestion.label}</button>
+				{/each}
+			</div>
+		{/if}
+	</div>
+{/snippet}
+
 {#if selected_so}
+	{@const split = error_row_idx >= 0 && error_row_idx < bounds_rows.length - 1 && active_error}
 	<table class='bounds'>
 		<tbody>
-			{#each bounds_rows as row, i (selected_so?.id + row.label)}
-				{@const row_disabled = is_root ? row.attr_index !== 2 : (row.is_invariant || row.has_formula)}
-				{@const gpos = i % 3}
-				{@const prev_inv = gpos > 0 && bounds_rows[i - 1].is_invariant}
-				{@const next_inv = gpos < 2 && bounds_rows[i + 1].is_invariant}
-				{@const next2_inv = gpos === 0 && bounds_rows[i + 2]?.is_invariant}
-				{@const merge_span = formula_mode === 'agnostic' && row.is_invariant && !prev_inv && next_inv ? (next2_inv ? 3 : 2) : 0}
-				{@const is_merge_cont = formula_mode === 'agnostic' && row.is_invariant && prev_inv}
-				{@const root_formula_cont = is_root && i !== 0 && i !== 6}
-				{@const root_start_cont = is_root && row.attr_index === 0 && gpos > 0}
-				<tr class:merge-cont={is_merge_cont || root_formula_cont || root_start_cont}>
-					<td class='attr-name'>
-						{#if formula_mode === 'agnostic' && row.axis_index === 1}
-							<span class='ctx' class:ctx-l={row.attr_index === 2}>{['s', 'e', 'l'][row.attr_index]}</span>
-						{/if}
-						{row.label}
-					</td>
-					<td class='attr-invariant' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
-					{#if !(is_merge_cont || root_formula_cont)}
-						{@const formula_disabled = is_root || row.is_invariant}
-						{@const has_error = !!(selected_so && row.bound && errors.get(selected_so.id, row.bound))}
-						<td class='attr-formula' class:merged={is_root || merge_span >= 2} class:cell-disabled={formula_disabled} rowspan={is_root ? (i === 0 ? 6 : 3) : merge_span || undefined}>
-							<input
-								type      = 'text'
-								class     = 'cell-input'
-								class:cell-error={has_error}
-								value     = {row.formula}
-								disabled  = {formula_disabled}
-								onfocus   = {(e) => { error_state.saved_formula = (e.target as HTMLInputElement).value; stores.w_editing.set(T_Editing.formula); }}
-								onblur    = {(e) => { const input = e.target as HTMLInputElement; commit_formula(row, input.value, input); stores.w_editing.set(T_Editing.none); }}
-								onkeydown = {cell_keydown}
-							/>
-						</td>
-					{/if}
-					{#if root_start_cont}
-						<!-- spanned by first start row -->
-					{:else}
-						<td class='attr-value' class:cell-disabled={row_disabled} rowspan={is_root && row.attr_index === 0 && gpos === 0 ? 3 : undefined}>
-							<input
-								type      = 'text'
-								class     = 'cell-input right'
-								value     = {is_root && row.attr_index === 0 ? '0' : row.value}
-								disabled  = {row_disabled}
-								onfocus   = {() => stores.w_editing.set(T_Editing.value)}
-								onblur    = {(e) => { commit_value(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
-								onkeydown = {cell_keydown}
-							/>
-						</td>
-					{/if}
-				</tr>
+			{#each (split ? bounds_rows.slice(0, error_row_idx + 1) : bounds_rows) as row, i (selected_so?.id + row.label)}
+				{@render attr_row(row, i)}
 			{/each}
 		</tbody>
 	</table>
-	{#if error_state.show_overlay}
-		{@const err = get_active_error()}
-		{#if err}
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div class='error-backdrop' onclick={dismiss_overlay}></div>
-			<div class='error-overlay'>
-				<div class='error-message'>{@html err.message.replace(/\.$/, ',').replace(/'([^']+)'/g, "&#39;<span class='error-quoted'>$1</span>&#39;")} did you mean:</div>
-				{#if err.suggestions.length > 0}
-					<div class='error-suggestions'>
-						{#each err.suggestions as suggestion}
-							{@const label = suggestion.slice(err.span[0], suggestion.length - (err.input.length - err.span[0] - err.span[1]))}
-							<button class='error-suggestion' class:hint={is_good_hint(label)} onclick={() => apply_suggestion(suggestion)}>{label}</button>
-						{/each}
-					</div>
-				{/if}
-			</div>
-		{/if}
+	{#if split}
+		{@render error_overlay()}
+		<table class='bounds'>
+			<tbody>
+				{#each bounds_rows.slice(error_row_idx + 1) as row, j (selected_so?.id + row.label)}
+					{@render attr_row(row, error_row_idx + 1 + j)}
+				{/each}
+			</tbody>
+		</table>
+	{:else if error_state.show_overlay && active_error}
+		{@render error_overlay()}
 	{/if}
 	<Separator />
 	<div class='constants-header'>
@@ -474,12 +533,13 @@
 	.error-overlay {
 		position      : relative;
 		z-index       : 1000;
-		border        : 2px solid var(--accent);
+		border        : 2px solid darkred;
 		border-radius : 8px;
 		background    : var(--c-white);
 		padding       : 6px 8px;
 		font-size     : var(--h-font-small);
-		margin-top    : 2px;
+		margin-top    : 8px;
+		margin-bottom : 8px;
 		box-sizing    : border-box;
 		width         : 100%;
 	}
@@ -496,9 +556,13 @@
 	.error-suggestions {
 		display         : flex;
 		flex-wrap       : wrap;
-		justify-content : space-evenly;
+		justify-content : space-between;
 		margin-bottom   : 4px;
 		gap             : 3.95px;
+	}
+
+	.error-suggestions.single {
+		justify-content : center;
 	}
 
 	.error-suggestion {
@@ -523,6 +587,11 @@
 
 	.error-suggestion.hint:hover {
 		background : var(--bg);
+		outline    : 2px solid var(--accent);
+	}
+
+	.error-suggestion:global(.blink) {
+		background : var(--selected);
 		outline    : 2px solid var(--accent);
 	}
 

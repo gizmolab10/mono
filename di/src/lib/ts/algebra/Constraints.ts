@@ -5,7 +5,7 @@ import type Attribute from '../types/Attribute';
 import type { FormulaMap } from './Evaluator';
 
 import { constants, CONSTANTS_ID } from './User_Constants';
-import { errors, FormulaError, type S_Error } from './Errors';
+import { errors, AlgebraError, type S_Error } from './Errors';
 import { tokenizer } from './Tokenizer';
 import { evaluator } from './Evaluator';
 import { scene } from '../render/Scene';
@@ -185,6 +185,22 @@ class Constraints {
 					return nodes.reference(obj, attr);
 				}
 
+				// Leading dot with non-axis name: .bottom_drawer.e or .xbottom_drawer.e → accidental dot
+				if (obj.length > 2 && obj[0] === '.') {
+					const without_dot = obj.slice(1);
+					const parts = without_dot.split('.');
+					// .x.bottom_drawer.e → axis prefix + extra segments: unexpected dot after axis
+					if (parts.length >= 2 && axis_name_to_index[parts[0]] !== undefined) {
+						const axis_ref = '.' + parts[0];
+						const dot_pos = (input ?? '').indexOf(axis_ref) + axis_ref.length;
+						throw new AlgebraError(errors.unexpected_dot(input ?? '', [dot_pos, 1], '.' + without_dot + '.' + node.attribute));
+					}
+					// .bottom_drawer.e or .xbottom_drawer.e → leading dot is the mistake
+					const full_token = '.' + without_dot;
+					const span_start = (input ?? '').indexOf(full_token);
+					throw new AlgebraError(errors.leading_dot(input ?? '', [span_start >= 0 ? span_start : 0, 1]));
+				}
+
 				// Axis-qualified self: y.l → expand using specified axis, bind to self
 				if (axis_name_to_index[obj] !== undefined) {
 					const attr = this.expand_contextual(node.attribute, axis_name_to_index[obj]);
@@ -195,24 +211,52 @@ class Constraints {
 				const attr = this.expand_contextual(node.attribute, owner_axis);
 				if (obj === 'self') {
 					if (constants.has(node.attribute)) return nodes.reference(CONSTANTS_ID, node.attribute);
+					if (!this.is_valid_attr(attr)) {
+						const name_span = this.find_name_span(input ?? '', node.attribute);
+						// Is this an SO name used without an attribute?
+						if (this.resolve_name(node.attribute, self_id)) {
+							throw new AlgebraError(errors.bare_so(input ?? '', node.attribute, name_span));
+						}
+						// Fuzzy-match against SO names — catches typos like "bottom" for "bottom_drawer"
+						const nearby = errors.nearby_names(self_id);
+						const fragment_match = nearby.find((n: string) => n.includes(node.attribute) || node.attribute.includes(n));
+						if (fragment_match && input) {
+							// Expand span to cover fragmented name: "bottom / drawer" → covers up to end of "drawer"
+							const suffix = fragment_match.slice(fragment_match.indexOf(node.attribute) + node.attribute.length).replace(/_/g, '');
+							let expanded_span = name_span;
+							if (suffix) {
+								const after_idx = input.indexOf(suffix, name_span[0] + name_span[1]);
+								if (after_idx >= 0) {
+									expanded_span = [name_span[0], after_idx + suffix.length - name_span[0]];
+								}
+							}
+							throw new AlgebraError(errors.unknown_so(input, expanded_span, input.slice(expanded_span[0], expanded_span[0] + expanded_span[1]), self_id));
+						}
+						throw new AlgebraError(errors.unknown_attr(input ?? '', name_span, node.attribute, 'self'));
+					}
 					return nodes.reference(self_id, attr);
 				}
-				if (obj === '' && parent_id) return nodes.reference(parent_id, attr);
-				if (obj === '') return node; // dot-prefix without parent — pass through
+				if (obj === '') {
+					if (!this.is_valid_attr(attr)) throw new AlgebraError(errors.unknown_attr(input ?? '', this.find_name_span(input ?? '', node.attribute), node.attribute, 'parent'));
+					if (parent_id) return nodes.reference(parent_id, attr);
+					return node; // dot-prefix without parent — pass through
+				}
 
 				// Already a known SO id? Pass through as-is
 				if (this.find_so(obj)) {
-					if (!this.is_valid_attr(attr)) throw new FormulaError(errors.unknown_attr(input ?? '', this.find_name_span(input ?? '', node.attribute), node.attribute, obj));
+					if (!this.is_valid_attr(attr)) throw new AlgebraError(errors.unknown_attr(input ?? '', this.find_name_span(input ?? '', node.attribute), node.attribute, obj));
 					return nodes.reference(obj, attr);
 				}
 
-				// Named SO reference: walk up parent chain, checking siblings at each level
-				const resolved_id = this.resolve_name(obj, self_id);
+				// Named SO reference: single name walks parent chain, dotted path walks children
+				const resolved_id = obj.includes('.')
+					? this.resolve_path(obj, self_id, input ?? '')  // throws on failure with correct segment
+					: this.resolve_name(obj, self_id);
 				if (resolved_id) {
-					if (!this.is_valid_attr(attr)) throw new FormulaError(errors.unknown_attr(input ?? '', this.find_name_span(input ?? '', node.attribute), node.attribute, obj));
+					if (!this.is_valid_attr(attr)) throw new AlgebraError(errors.unknown_attr(input ?? '', this.find_name_span(input ?? '', node.attribute), node.attribute, obj));
 					return nodes.reference(resolved_id, attr);
 				}
-				throw new FormulaError(errors.unknown_so(input ?? '', this.find_name_span(input ?? '', obj), obj, self_id));
+				throw new AlgebraError(errors.unknown_so(input ?? '', this.find_name_span(input ?? '', obj), obj, self_id));
 			}
 			case 'unary': {
 				const operand = this.bind_refs(node.operand, self_id, parent_id, owner_axis, input);
@@ -344,7 +388,7 @@ class Constraints {
 				attr.compiled = this.bind_refs(attr.compiled, so.id, parent_id, owner_axis);
 				attr.value = evaluator.evaluate(attr.compiled, (o, a) => this.resolve(o, a));
 				this.sync_length(so, attr.name, attr.value);
-			} catch (e) { if (!(e instanceof FormulaError)) throw e; } // skip — formula references something invalid
+			} catch (e) { if (!(e instanceof AlgebraError)) throw e; } // skip — formula references something invalid
 		}
 		this.enforce_invariants(so);
 	}
@@ -380,7 +424,9 @@ class Constraints {
 			compiled = compiler.compile(formula);
 		} catch (e: any) {
 			const span = this.extract_span(e, formula);
-			const err = errors.bad_syntax(formula, span, e);
+			const err = e.message?.includes("got 'end'")
+				? errors.incomplete(formula, span)
+				: errors.bad_syntax(formula, span, e);
 			errors.set(so.id, attr_name, err);
 			return err;
 		}
@@ -390,7 +436,7 @@ class Constraints {
 		try {
 			compiled = this.bind_refs(compiled, so.id, parent_id, owner_axis, formula);
 		} catch (e) {
-			if (!(e instanceof FormulaError)) throw e;
+			if (!(e instanceof AlgebraError)) throw e;
 			errors.set(so.id, attr_name, e.s_error);
 			return e.s_error;
 		}
@@ -545,6 +591,11 @@ class Constraints {
 			const pos = parseInt(m[1]);
 			return [pos, Math.min(1, input.length - pos)];
 		}
+		// "got 'end'" means error is at the trailing edge — highlight last non-space char
+		if (error.message.includes("got 'end'")) {
+			const trimmed = input.trimEnd();
+			if (trimmed.length > 0) return [trimmed.length - 1, 1];
+		}
 		return [0, input.length];
 	}
 
@@ -584,6 +635,33 @@ class Constraints {
 		// Check top-level (no parent) — siblings of root
 		const match = all.find(o => !o.parent && o.so.name === name);
 		return match?.so.id ?? null;
+	}
+
+	/** Resolve a dotted path like "bottom_drawer.front" to an SO id.
+	 *  First segment resolved via resolve_name, remaining segments walk children. */
+	private resolve_path(path: string, self_id: string, input: string): string {
+		const parts = path.split('.');
+		const path_start = input.indexOf(path);
+		let current_id = this.resolve_name(parts[0], self_id);
+		if (!current_id) {
+			throw new AlgebraError(errors.unknown_so(input, this.find_name_span(input, parts[0]), parts[0], self_id));
+		}
+
+		const all = scene.get_all();
+		let offset = parts[0].length + 1; // past first segment and its dot
+		for (let i = 1; i < parts.length; i++) {
+			const match = all.find(o => o.parent?.so.id === current_id && o.so.name === parts[i]);
+			if (!match) {
+				const children = all.filter(o => o.parent?.so.id === current_id).map(o => o.so.name);
+				const span: [number, number] = path_start >= 0
+					? [path_start + offset, parts[i].length]
+					: this.find_name_span(input, parts[i]);
+				throw new AlgebraError(errors.unknown_so(input, span, parts[i], self_id, children));
+			}
+			current_id = match.so.id;
+			offset += parts[i].length + 1;
+		}
+		return current_id;
 	}
 
 	private build_formula_map(): FormulaMap {

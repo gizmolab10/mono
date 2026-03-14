@@ -80,6 +80,40 @@ describe('formula on Attribute', () => {
 		expect(error!.message).toMatch(/Unexpected/);
 	});
 
+	it('returns error with labeled suggestions on bad syntax', () => {
+		const so = add_so('box');
+		const error = constraints.set_formula(so, 'x_min', '1 & 2');
+		expect(error).not.toBeNull();
+		expect(error!.suggestions.length).toBeGreaterThan(0);
+		expect(error!.suggestions[0]).toHaveProperty('label');
+		expect(error!.suggestions[0]).toHaveProperty('formula');
+	});
+
+	it('returns incomplete error on trailing operator', () => {
+		const wall = add_so('wall', { x_min: 100, x_max: 500 });
+		const so = add_so('box');
+		const formula = `${ref(wall, 'x_min')} -`;
+		const error = constraints.set_formula(so, 'x_min', formula);
+		expect(error).not.toBeNull();
+		expect(error!.message).toMatch(/incomplete/);
+		expect(error!.suggestions).toHaveLength(2);
+		expect(error!.suggestions[0].label).toMatch(/delete/);
+		expect(error!.suggestions[1].label).toBe('add more');
+		// "delete" suggestion removes the trailing operator
+		expect(error!.suggestions[0].formula).not.toContain('-');
+		// "add more" suggestion preserves the original formula
+		expect(error!.suggestions[1].formula).toBe(formula);
+	});
+
+	it('returns incomplete error on trailing operator with space', () => {
+		const so = add_so('box', { x_min: 100, x_max: 500 });
+		const error = constraints.set_formula(so, 'x_max', 'x + ');
+		expect(error).not.toBeNull();
+		expect(error!.message).toMatch(/incomplete/);
+		// span should point at the '+', not the whole formula
+		expect(error!.span[1]).toBe(1);
+	});
+
 	it('returns error on cycle', () => {
 		const a = add_so('a', { x_min: 10 });
 		const b = add_so('b', { x_min: 20 });
@@ -88,6 +122,71 @@ describe('formula on Attribute', () => {
 		const error = constraints.set_formula(b, 'x_min', `${ref(a, 'x_min')} + 1`);
 		expect(error).not.toBeNull();
 		expect(error!.message).toMatch(/loop/);
+	});
+
+	it('path error targets first failing segment', () => {
+		const parent = add_so('bottom_drawer');
+		const child_so = add_so('front');
+		// Wire front as child of bottom_drawer in scene
+		const all = scene.get_all();
+		const parent_scene = all.find(o => o.so.id === parent.id)!;
+		const child_scene = all.find(o => o.so.id === child_so.id)!;
+		child_scene.parent = parent_scene;
+
+		const other = add_so('other');
+		// "bottom_draweewawar" doesn't exist — error should name "bottom_draweewawar", not the full path
+		const error = constraints.set_formula(other, 'x_min', 'bottom_draweewawar.front.e');
+		expect(error).not.toBeNull();
+		expect(error!.message).toContain('bottom_draweewawar');
+		expect(error!.message).not.toContain('bottom_draweewawar.front');
+	});
+
+	it('path error on child segment suggests children of resolved parent', () => {
+		const parent = add_so('bottom_drawer');
+		const child_so = add_so('front');
+		const all = scene.get_all();
+		const parent_scene = all.find(o => o.so.id === parent.id)!;
+		const child_scene = all.find(o => o.so.id === child_so.id)!;
+		child_scene.parent = parent_scene;
+
+		const other = add_so('other');
+		// "frontg" doesn't exist — suggestions should include "front" (child of bottom_drawer)
+		const error = constraints.set_formula(other, 'x_min', 'bottom_drawer.frontg.e');
+		expect(error).not.toBeNull();
+		expect(error!.message).toContain('frontg');
+		const labels = error!.suggestions.map(s => s.label);
+		expect(labels).toContain('front');
+	});
+
+	it('delete suggestion is dot-aware for mid-path segments', () => {
+		const parent = add_so('bottom_drawer');
+		const child_so = add_so('front');
+		const all = scene.get_all();
+		const parent_scene = all.find(o => o.so.id === parent.id)!;
+		const child_scene = all.find(o => o.so.id === child_so.id)!;
+		child_scene.parent = parent_scene;
+
+		const other = add_so('other');
+		const error = constraints.set_formula(other, 'x_min', 'bottom_drawer.frontg.e');
+		expect(error).not.toBeNull();
+		const del = error!.suggestions.find(s => s.label === 'delete it');
+		expect(del).toBeDefined();
+		// Should collapse double dot: "bottom_drawer.e" not "bottom_drawer..e"
+		expect(del!.formula).toBe('bottom_drawer.e');
+	});
+
+	it('fuzzy fragment expands span to cover fragmented SO name', () => {
+		add_so('bottom_drawer');
+		const self = add_so('other');
+		const error = constraints.set_formula(self, 'x_min', 'bottom / drawer.e');
+		expect(error).not.toBeNull();
+		// Span should cover "bottom / drawer", not just "bottom"
+		const highlighted = error!.input.slice(error!.span[0], error!.span[0] + error!.span[1]);
+		expect(highlighted).toBe('bottom / drawer');
+		// Suggestion should replace fragment with full SO name
+		const fix = error!.suggestions.find(s => s.label === 'bottom_drawer');
+		expect(fix).toBeDefined();
+		expect(fix!.formula).toBe('bottom_drawer.e');
 	});
 
 	it('clear_formula removes formula, keeps value', () => {

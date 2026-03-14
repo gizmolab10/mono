@@ -208,3 +208,13 @@ When user rejects an approach, throw it away. Don't trim it, rename it, or retyp
 **Root cause to watch for:** Treating corrections as surface objections (naming, typing) instead of design direction. Prioritizing output over understanding.
 
 **Context compaction trap:** After conversation compaction, the summary may downplay or lose the emotional weight of a rejection. "User rejected tumble approach" reads mild — the actual message was "fuck no! revert that." Treat every rejected approach in the summary as DEAD with maximum conviction, same as if the user just said it.
+
+---
+
+## 19. Analysis shorthands are not action requests
+
+`pac`, `explain`, `describe` = produce analysis. Don't touch code.
+
+**Anti-pattern:** User says "pac rename FormulaError -> AlgebraError." Co executes the rename. The user wanted pros and cons, not a code change.
+
+**Required:** When the command is an analysis shorthand, STOP. Produce the analysis. Wait for a decision. The arguments after the shorthand are the *subject* of analysis, not instructions to execute.

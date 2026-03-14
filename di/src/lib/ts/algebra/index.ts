@@ -2,7 +2,7 @@ export type { Resolver, Writer, FormulaMap } from './Evaluator';
 export { constants, CONSTANTS_ID } from './User_Constants';
 export type { ConstantEntry } from './User_Constants';
 export { constraints } from './Constraints';
-export type { S_Error } from './Errors';
+export type { S_Error, Suggestion } from './Errors';
 export type { Node, Operator } from './Nodes';
 export type { Token } from './Tokenizer';
 export { evaluator } from './Evaluator';

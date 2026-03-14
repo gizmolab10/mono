@@ -42,6 +42,12 @@ class Tokenizer {
 			while (pos < src.length && src[pos] === ' ') pos++;
 		}
 
+		/** Check if an alpha char exists at or after position p (skipping spaces). */
+		function peek_past_spaces(p: number): boolean {
+			while (p < src.length && src[p] === ' ') p++;
+			return p < src.length && is_alpha(src[p]);
+		}
+
 		function read_number(): number {
 			const start = pos;
 			while (pos < src.length && (src[pos] >= '0' && src[pos] <= '9')) pos++;
@@ -150,14 +156,21 @@ class Tokenizer {
 			// .x = parent reference (dot with no name = parent SO)
 			// .y.l = axis-qualified parent reference (parent, y-axis, length)
 			// Must come before number check so ".x" isn't parsed as decimal
-			if (ch === '.' && pos + 1 < src.length && is_alpha(src[pos + 1])) {
+			if (ch === '.' && peek_past_spaces(pos + 1)) {
 				pos++; // skip first dot
+				skip_whitespace();
 				const first = read_identifier();
-				if (peek() === '.' && pos + 1 < src.length && is_alpha(src[pos + 1])) {
-					// .axis.attr — axis-qualified parent reference
-					pos++; // skip second dot
-					const attribute = read_identifier();
-					tokens.push({ type: 'reference', object: '.' + first, attribute });
+				if (peek() === '.' && peek_past_spaces(pos + 1)) {
+					// .axis.attr — axis-qualified parent reference (greedy: consume all segments)
+					const parts = [first];
+					while (peek() === '.' && peek_past_spaces(pos + 1)) {
+						pos++; // skip dot
+						skip_whitespace();
+						parts.push(read_identifier());
+					}
+					const attribute = parts.pop()!;
+					const object = '.' + parts.join('.');
+					tokens.push({ type: 'reference', object, attribute });
 				} else {
 					// .attr — simple parent reference
 					tokens.push({ type: 'reference', object: '', attribute: first });
@@ -199,17 +212,22 @@ class Tokenizer {
 				continue;
 			}
 
-			// reference: A.x (explicit SO), bare attribute: x (self SO)
+			// reference: A.x (explicit SO), A.B.x (path traversal), bare attribute: x (self SO)
 			if (is_alpha(ch)) {
-				const name = read_identifier();
-				if (peek() === '.') {
+				const parts = [read_identifier()];
+				while (peek() === '.' && peek_past_spaces(pos + 1)) {
 					pos++; // skip dot
-					const attribute = read_identifier();
-					if (!attribute) throw new Error(`Expected attribute name after '${name}.' at position ${pos}`);
-					tokens.push({ type: 'reference', object: name, attribute });
-				} else {
+					skip_whitespace();
+					parts.push(read_identifier());
+				}
+				if (parts.length === 1) {
 					// bare attribute — object 'self' means "this SO" (resolved by Constraints)
-					tokens.push({ type: 'reference', object: 'self', attribute: name });
+					tokens.push({ type: 'reference', object: 'self', attribute: parts[0] });
+				} else {
+					// last segment is attribute, rest is object path
+					const attribute = parts.pop()!;
+					const object = parts.join('.');
+					tokens.push({ type: 'reference', object, attribute });
 				}
 				continue;
 			}
