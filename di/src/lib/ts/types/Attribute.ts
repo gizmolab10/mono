@@ -27,6 +27,7 @@ export default class Attribute {
 	}
 
 	deserialize(data: Compact_Attribute): void {
+		if (data == null) { this.value = 0; return; }
 		if (typeof data === 'number') {
 			this.value = data;
 			return;

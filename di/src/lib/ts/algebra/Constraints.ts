@@ -5,6 +5,7 @@ import type Attribute from '../types/Attribute';
 import type { FormulaMap } from './Evaluator';
 
 import { constants, CONSTANTS_ID } from './User_Constants';
+import { errors, FormulaError, type S_Error } from './Errors';
 import { tokenizer } from './Tokenizer';
 import { evaluator } from './Evaluator';
 import { scene } from '../render/Scene';
@@ -171,7 +172,7 @@ class Constraints {
 	 *  '.y' (axis-qualified parent .y.l) → parent_id, expand using axis y.
 	 *  'y' (axis-qualified self y.l) → self_id, expand using axis y.
 	 *  owner_axis: axis index of the attribute being compiled — enables bare s/e/l expansion. */
-	private bind_refs(node: Node, self_id: string, parent_id?: string, owner_axis?: number): Node {
+	private bind_refs(node: Node, self_id: string, parent_id?: string, owner_axis?: number, input?: string): Node {
 		switch (node.type) {
 			case 'literal': return node;
 			case 'reference': {
@@ -197,17 +198,39 @@ class Constraints {
 					return nodes.reference(self_id, attr);
 				}
 				if (obj === '' && parent_id) return nodes.reference(parent_id, attr);
+				if (obj === '') return node; // dot-prefix without parent — pass through
+
+				// Already a known SO id? Pass through as-is
+				if (this.find_so(obj)) {
+					if (!this.is_valid_attr(attr)) throw new FormulaError(errors.unknown_attr(input ?? '', this.find_name_span(input ?? '', node.attribute), node.attribute, obj));
+					return nodes.reference(obj, attr);
+				}
 
 				// Named SO reference: walk up parent chain, checking siblings at each level
 				const resolved_id = this.resolve_name(obj, self_id);
-				if (resolved_id) return nodes.reference(resolved_id, attr);
-				return attr !== node.attribute ? nodes.reference(obj, attr) : node;
+				if (resolved_id) {
+					if (!this.is_valid_attr(attr)) throw new FormulaError(errors.unknown_attr(input ?? '', this.find_name_span(input ?? '', node.attribute), node.attribute, obj));
+					return nodes.reference(resolved_id, attr);
+				}
+				throw new FormulaError(errors.unknown_so(input ?? '', this.find_name_span(input ?? '', obj), obj, self_id));
 			}
-			case 'unary':
-				return nodes.unary(this.bind_refs(node.operand, self_id, parent_id, owner_axis));
-			case 'binary':
-				return nodes.binary(node.operator, this.bind_refs(node.left, self_id, parent_id, owner_axis), this.bind_refs(node.right, self_id, parent_id, owner_axis));
+			case 'unary': {
+				const operand = this.bind_refs(node.operand, self_id, parent_id, owner_axis, input);
+				return nodes.unary(operand);
+			}
+			case 'binary': {
+				const left = this.bind_refs(node.left, self_id, parent_id, owner_axis, input);
+				const right = this.bind_refs(node.right, self_id, parent_id, owner_axis, input);
+				return nodes.binary(node.operator, left, right);
+			}
 		}
+	}
+
+	/** Check if attr is a recognized attribute alias or bound name. */
+	private is_valid_attr(attr: string): boolean {
+		return !!alias_axis_attr[attr]                       // x, y, z, X, Y, Z, w, d, h
+			|| contextual_aliases[attr] !== undefined        // s, e, l
+			|| attribute_to_axis[attr] !== undefined;        // x_min, x_max, width, etc.
 	}
 
 	/** Expand contextual alias (s/e/l) to concrete axis alias based on owner axis. */
@@ -317,9 +340,11 @@ class Constraints {
 		for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 			if (!attr.compiled) continue;
 			const owner_axis = attribute_to_axis[attr.name];
-			attr.compiled = this.bind_refs(attr.compiled, so.id, parent_id, owner_axis);
-			attr.value = evaluator.evaluate(attr.compiled, (o, a) => this.resolve(o, a));
-			this.sync_length(so, attr.name, attr.value);
+			try {
+				attr.compiled = this.bind_refs(attr.compiled, so.id, parent_id, owner_axis);
+				attr.value = evaluator.evaluate(attr.compiled, (o, a) => this.resolve(o, a));
+				this.sync_length(so, attr.name, attr.value);
+			} catch (e) { if (!(e instanceof FormulaError)) throw e; } // skip — formula references something invalid
 		}
 		this.enforce_invariants(so);
 	}
@@ -329,7 +354,7 @@ class Constraints {
 	 *  parent_id: the parent SO (for dot-prefixed attributes like .x). */
 	evaluate_formula(formula: string, self_id?: string, parent_id?: string): number | null {
 		try {
-			let compiled = compiler.compile(formula);
+			let compiled: Node = compiler.compile(formula);
 			if (self_id) compiled = this.bind_refs(compiled, self_id, parent_id);
 			return evaluator.evaluate(compiled, (o, a) => this.resolve(o, a));
 		} catch {
@@ -339,22 +364,36 @@ class Constraints {
 
 	// ── formula management ──
 
-	/** Set a formula on an SO attribute. Compiles and caches. Returns error string or null.
+	/** Set a formula on an SO attribute. Compiles, binds, checks cycles.
+	 *  Returns S_Error on failure (stored in Errors singleton), null on success.
 	 *  parent_id: if provided, dot-prefixed attributes (.x, .w, etc.) resolve to this SO. */
-	set_formula(so: Smart_Object, attr_name: string, formula: string, parent_id?: string): string | null {
+	set_formula(so: Smart_Object, attr_name: string, formula: string, parent_id?: string): S_Error | null {
 		const attr = so.attributes_dict_byName[attr_name];
-		if (!attr) return `Unknown attribute: ${attr_name}`;
+		if (!attr) {
+			const err = errors.bad_syntax(formula, [0, formula.length], new Error(`Unknown attribute: ${attr_name}`));
+			errors.set(so.id, attr_name, err);
+			return err;
+		}
 
 		let compiled: Node;
 		try {
 			compiled = compiler.compile(formula);
 		} catch (e: any) {
-			return `Compile error: ${e.message}`;
+			const span = this.extract_span(e, formula);
+			const err = errors.bad_syntax(formula, span, e);
+			errors.set(so.id, attr_name, err);
+			return err;
 		}
 
 		// Bind placeholder references: 'self' (bare x) → this SO, '' (.x) → parent SO
 		const owner_axis = attribute_to_axis[attr_name];
-		compiled = this.bind_refs(compiled, so.id, parent_id, owner_axis);
+		try {
+			compiled = this.bind_refs(compiled, so.id, parent_id, owner_axis, formula);
+		} catch (e) {
+			if (!(e instanceof FormulaError)) throw e;
+			errors.set(so.id, attr_name, e.s_error);
+			return e.s_error;
+		}
 
 		// Check for cycles before accepting
 		const formulas = this.build_formula_map();
@@ -362,7 +401,9 @@ class Constraints {
 		formulas.set(key, compiled);
 		const cycle = evaluator.detect_cycle(formulas);
 		if (cycle) {
-			return `Cycle detected: ${cycle.join(' → ')}`;
+			const err = errors.cycle(formula, cycle);
+			errors.set(so.id, attr_name, err);
+			return err;
 		}
 
 		attr.formula = tokenizer.tokenize(formula);
@@ -372,6 +413,7 @@ class Constraints {
 		attr.value = evaluator.evaluate(compiled, (o, a) => this.resolve(o, a));
 		this.sync_length(so, attr_name, attr.value);
 		this.enforce_invariants(so);
+		errors.clear(so.id, attr_name);
 		return null;
 	}
 
@@ -495,6 +537,22 @@ class Constraints {
 	}
 
 	// ── helpers ──
+
+	/** Extract [start, length] span from an error message containing "at position N". */
+	private extract_span(error: Error, input: string): [number, number] {
+		const m = error.message.match(/at position (\d+)/);
+		if (m) {
+			const pos = parseInt(m[1]);
+			return [pos, Math.min(1, input.length - pos)];
+		}
+		return [0, input.length];
+	}
+
+	/** Find the span of a name in the formula input string. */
+	private find_name_span(input: string, name: string): [number, number] {
+		const idx = input.indexOf(name);
+		return idx >= 0 ? [idx, name.length] : [0, input.length];
+	}
 
 	/** If attr is a length attribute (width/depth/height), sync its value to geometry. */
 	private sync_length(so: Smart_Object, attr_name: string, value: number): void {
@@ -628,11 +686,10 @@ class Constraints {
 					// Recompile from updated tokens
 					const source = tokenizer.untokenize(attr.formula);
 					try {
-						let compiled = compiler.compile(source);
+						const compiled = compiler.compile(source);
 						const parent_id = o.parent?.so.id;
 						const owner_axis = attribute_to_axis[attr.name];
-						compiled = this.bind_refs(compiled, o.so.id, parent_id, owner_axis);
-						attr.compiled = compiled;
+						attr.compiled = this.bind_refs(compiled, o.so.id, parent_id, owner_axis);
 					} catch { /* skip — formula might be temporarily invalid */ }
 				}
 			}

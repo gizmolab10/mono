@@ -194,7 +194,8 @@
               "title": "Outline of 25.errors"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
@@ -213,15 +214,18 @@
   },
   "active": "12070b246182dd7b",
   "lastOpenFiles": [
-    "di/notes/work/code.debt.md",
+    "di/notes/work/milestones/25.errors 1.md",
     "di/notes/work/milestones/25.errors.md",
+    "di/notes/work/code.debt.md",
+    "foo.md",
+    "di/notes/work/done/code.debt.done.md",
+    "di/src/lib/ts/algebra/Errors.ts",
     "di/notes/work/milestones/26.selection.algorithm.md",
     "di/notes/work/milestones/27.cut.lists.md",
     "di/notes/work/milestones/28.colors.md",
     "di/notes/work/milestones/29.user.manual.md",
     "di/notes/work/milestones/30.licensing.md",
     "di/notes/work/milestones/31.marketing.md",
-    "di/notes/work/done/code.debt.done.md",
     "di/notes/work/milestones/done/8.dimensionals.md",
     "di/notes/work/milestones/done/18.user.constants.md",
     "di/notes/work/milestones/done/14.details.md",
@@ -238,7 +242,6 @@
     "di/src/lib/ts/utilities/Colors.ts",
     "di/src/lib/ts/utilities",
     "di/src/lib/ts/events/Hit_Target.ts",
-    "di/src/lib/ts/events/S_Mouse.ts",
     "di/notes/work/milestones/23.undo.md",
     "di/notes/work/milestones/done/23.undo.md",
     "di/notes/work/milestones/done/index.md",
@@ -247,8 +250,6 @@
     "di/notes/work/milestones/done/22.aesthetics.md",
     "node_modules/concurrently/docs/cli/prefixing.md",
     "node_modules/concurrently/docs/cli/success.md",
-    "node_modules/concurrently/docs/cli/terminating.md",
-    "node_modules/concurrently/docs/cli/shortcuts.md",
     "node_modules/concurrently/docs/demo.gif",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/64x64.png",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/512x512.png",

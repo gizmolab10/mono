@@ -185,6 +185,7 @@
 		background-repeat  : no-repeat;
 		color              : inherit;
 		cursor             : pointer;
+		appearance         : none;
 		-webkit-appearance : none;
 	}
 
@@ -234,6 +235,7 @@
 		width              : var(--h-slider);
 		height             : var(--h-slider);
 		background         : var(--c-thumb);
+		appearance         : none;
 		-webkit-appearance : none;
 		border-radius      : 50%;
 	}

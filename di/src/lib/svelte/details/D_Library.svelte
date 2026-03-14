@@ -62,10 +62,6 @@
 		await merge_idb();
 	}
 
-	// axis start/length attribute names per axis index
-	const axis_start = ['x_min', 'y_min', 'z_min'];
-	const axis_length = ['width', 'depth', 'height'];
-
 	async function do_replace(): Promise<void> {
 		if (!selected) return;
 		const raw = await scenes.load_library_file(selected.name);

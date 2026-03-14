@@ -138,12 +138,6 @@
 		height : var(--h-controls);
 	}
 
-	.group {
-		align-items : center;
-		display     : flex;
-		flex-shrink : 0;
-	}
-
 	.right-col {
 		padding        : var(--l-gap) 0;
 		flex-direction : column;
@@ -192,10 +186,6 @@
 		fill : lightgray;
 	}
 
-	.gap-after {
-		margin-right : var(--l-gap);
-	}
-
 	.toolbar-button {
 		padding       : 0 var(--l-padding) 1px var(--l-padding);
 		border        : var(--th-border) solid currentColor;
@@ -207,11 +197,6 @@
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
-	}
-
-	.toolbar-button.active {
-		background : var(--selected);
-		color      : var(--c-black);
 	}
 
 	.toolbar-button:disabled {

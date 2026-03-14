@@ -280,12 +280,4 @@
 		outline-offset : -1.5px;
 	}
 
-	.root-note {
-		font-size   : var(--h-font-common);
-		padding-top : var(--l-gap);
-		text-align  : center;
-		opacity     : 0.5;
-		padding     : 0;
-		line-height : 1;
-	}
 </style>

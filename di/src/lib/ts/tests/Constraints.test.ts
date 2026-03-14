@@ -76,7 +76,8 @@ describe('formula on Attribute', () => {
 	it('returns error on bad formula', () => {
 		const so = add_so('box');
 		const error = constraints.set_formula(so, 'x_min', '+ +');
-		expect(error).toMatch(/Compile error/);
+		expect(error).not.toBeNull();
+		expect(error!.message).toMatch(/Unexpected/);
 	});
 
 	it('returns error on cycle', () => {
@@ -85,7 +86,8 @@ describe('formula on Attribute', () => {
 
 		constraints.set_formula(a, 'x_min', `${ref(b, 'x_min')} + 1`);
 		const error = constraints.set_formula(b, 'x_min', `${ref(a, 'x_min')} + 1`);
-		expect(error).toMatch(/Cycle detected/);
+		expect(error).not.toBeNull();
+		expect(error!.message).toMatch(/loop/);
 	});
 
 	it('clear_formula removes formula, keeps value', () => {

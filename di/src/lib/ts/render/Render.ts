@@ -1,5 +1,5 @@
 import type { Projected, O_Scene, Dimension_Rect, Label_Rect, Angle_Rect } from '../types/Interfaces';
-import { render_grid, render_back_grid, render_root_bottom } from './R_Grid';
+import { render_back_grid, render_root_bottom } from './R_Grid';
 import { render_dimensions } from './R_Dimensions';
 import { render_axes } from './R_Axes';
 import { face_label } from '../editors/Face_Label';

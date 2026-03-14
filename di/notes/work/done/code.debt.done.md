@@ -1,5 +1,13 @@
 # Code Debt --- Done
 
+- [x] cannot edit Z in 2D
+    - [x] movement in the z axis seems to be disabled
+        - [x] i can adjust position in x or in y, but not z
+- [x] scene tumble in 2D is very very very slow
+    - [x] grid!
+- [x] add glow to + buttons
+- [x] v scroll appears a bit too early (everything still fits)
+- [x] replace _ with space in UI, restore it internally
 - [x] insert -> not write .l into inserted child's l formulas
     - [x] test: add a 2-drawar cabinet to wacka
 - [x] bring the [[working features]] table up to date

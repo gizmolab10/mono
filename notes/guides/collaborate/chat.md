@@ -262,3 +262,9 @@ If collaborator produces a fix and user reports "still broken" or "new error in 
 **Rename with `mv`, then search.** On rename or move: use `mv old new`, then search for all references (index.md, CLAUDE.MD, imports, links). Update everything in one pass.
 
 **Remove, don't swap.** When removing project-specific content from shared docs, remove entirely — don't replace ws examples with di examples or vice versa.
+
+### Instruction Conflicts
+
+Co receives instructions from multiple layers: Anthropic's system prompt, CLAUDE.md, guides, and conversation. These can contradict each other.
+
+**Rule:** When co spots a conflict between instruction layers, flag it to Jonathan instead of silently picking a side. Jonathan resolves the conflict. This is how we stay aligned.

@@ -59,3 +59,13 @@ Refining documentation by removing duplication, sharpening purpose, and finding 
 5. Trim dated material and work-in-progress hedging
 
 **The goal:** Fewer files, clearer purposes, easier to find things, easier to maintain. Less confusion for both co and Jonathan.
+
+## Safe Updating
+
+When updating a work doc (milestones, notes, plans):
+
+1. **Reorder, don't remove.** Move sections around to improve flow — never delete material.
+2. **"Propose a rewrite" means propose.** Present the plan, wait for approval before touching the file.
+3. **Summarize by adding, not replacing.** If a synopsis or summary would help, add it alongside the original — don't compress the original into it.
+4. **Design notes are not clutter.** Type definitions, rationale, lifecycle rules, error source mappings — these are decisions, not noise. They stay.
+5. **When in doubt, add a section.** A new "synopsis" or "open items" section at the top costs nothing. Gutting the middle to make room costs everything.

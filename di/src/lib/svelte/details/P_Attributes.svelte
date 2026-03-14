@@ -7,7 +7,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { constants } from '../../ts/algebra/User_Constants';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { constraints, tokenizer } from '../../ts/algebra';
+	import { constraints, tokenizer, errors } from '../../ts/algebra';
 	import Separator from '../mouse/Separator.svelte';
 	import P_Constants from './P_Constants.svelte';
 	import { units } from '../../ts/types/Units';
@@ -55,6 +55,35 @@
 
 	let bounds_rows = $derived(selected_so ? get_bounds(selected_so, tick) : []);
 
+	// Error overlay state
+	let error_state = $state({ saved_formula: '', active_bound: '', show_overlay: false });
+
+	function get_active_error() {
+		if (!selected_so || !error_state.active_bound) return null;
+		return errors.get(selected_so.id, error_state.active_bound);
+	}
+
+	function dismiss_overlay() { error_state.show_overlay = false; }
+
+	const bound_to_axis: Record<string, number> = { x_min: 0, x_max: 0, width: 0, y_min: 1, y_max: 1, depth: 1, z_min: 2, z_max: 2, height: 2 };
+	const axis_hints: string[][] = [['x', 'X', 'w'], ['y', 'Y', 'd'], ['z', 'Z', 'h']];
+	const context_hints = new Set(['s', 'e', 'l']);
+
+	function is_good_hint(label: string): boolean {
+		if (context_hints.has(label)) return true;
+		const axis = bound_to_axis[error_state.active_bound];
+		return axis !== undefined && axis_hints[axis].includes(label);
+	}
+
+	function apply_suggestion(suggestion: string) {
+		const input = document.querySelector('input.cell-error') as HTMLInputElement | null;
+		if (!input) return;
+		input.value = suggestion;
+		error_state.show_overlay = false;
+		input.focus();
+		input.setSelectionRange(suggestion.length, suggestion.length);
+	}
+
 	function commit_formula(row: BoundsRow, value: string, input?: HTMLInputElement) {
 		if (!selected_so || !row.bound) return;
 		history.snapshot();
@@ -64,9 +93,17 @@
 			const tokens = tokenizer.merge_refs(tokenizer.tokenize(trimmed));
 			const normalized = tokenizer.untokenize(tokens);
 			if (input) input.value = normalized;
-			constraints.set_formula(selected_so, row.bound, normalized, parent_id);
+			const err = constraints.set_formula(selected_so, row.bound, normalized, parent_id);
+			if (err) {
+				error_state.active_bound = row.bound;
+				error_state.show_overlay = true;
+				if (input) { input.focus(); input.setSelectionRange(err.span[0], err.span[0] + err.span[1]); }
+				stores.tick();
+				return;
+			}
 		} else {
 			constraints.clear_formula(selected_so, row.bound);
+			errors.clear(selected_so.id, row.bound);
 		}
 		constraints.propagate(selected_so);
 		stores.tick();
@@ -120,11 +157,19 @@
 	}
 
 	function cell_keydown(e: KeyboardEvent) {
+		if (error_state.show_overlay) error_state.show_overlay = false;
 		if (e.key === 'Escape') {
 			(e.target as HTMLInputElement).blur();
 		}
-		if (e.key !== 'Enter' && e.key !== 'Tab') {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			(e.target as HTMLInputElement).blur();
+			return;
+		}
+		if (e.key !== 'Tab') {
 			e.stopPropagation();
+		} else if (error_state.show_overlay) {
+			dismiss_overlay();
 		}
 	}
 
@@ -167,13 +212,15 @@
 					<td class='attr-invariant' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
 					{#if !(is_merge_cont || root_formula_cont)}
 						{@const formula_disabled = is_root || row.is_invariant}
+						{@const has_error = !!(selected_so && row.bound && errors.get(selected_so.id, row.bound))}
 						<td class='attr-formula' class:merged={is_root || merge_span >= 2} class:cell-disabled={formula_disabled} rowspan={is_root ? (i === 0 ? 6 : 3) : merge_span || undefined}>
 							<input
 								type      = 'text'
 								class     = 'cell-input'
+								class:cell-error={has_error}
 								value     = {row.formula}
 								disabled  = {formula_disabled}
-								onfocus   = {() => stores.w_editing.set(T_Editing.formula)}
+								onfocus   = {(e) => { error_state.saved_formula = (e.target as HTMLInputElement).value; stores.w_editing.set(T_Editing.formula); }}
 								onblur    = {(e) => { const input = e.target as HTMLInputElement; commit_formula(row, input.value, input); stores.w_editing.set(T_Editing.none); }}
 								onkeydown = {cell_keydown}
 							/>
@@ -198,6 +245,25 @@
 			{/each}
 		</tbody>
 	</table>
+	{#if error_state.show_overlay}
+		{@const err = get_active_error()}
+		{#if err}
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div class='error-backdrop' onclick={dismiss_overlay}></div>
+			<div class='error-overlay'>
+				<div class='error-message'>{@html err.message.replace(/\.$/, ',').replace(/'([^']+)'/g, "&#39;<span class='error-quoted'>$1</span>&#39;")} did you mean:</div>
+				{#if err.suggestions.length > 0}
+					<div class='error-suggestions'>
+						{#each err.suggestions as suggestion}
+							{@const label = suggestion.slice(err.span[0], suggestion.length - (err.input.length - err.span[0] - err.span[1]))}
+							<button class='error-suggestion' class:hint={is_good_hint(label)} onclick={() => apply_suggestion(suggestion)}>{label}</button>
+						{/each}
+					</div>
+				{/if}
+			</div>
+		{/if}
+	{/if}
 	<Separator />
 	<div class='constants-header'>
 		<button class='constants-toggle' onclick={toggle_show_constants}>
@@ -323,6 +389,11 @@
 		color          : var(--c-black);
 	}
 
+	.cell-error {
+		outline        : 1.25px solid darkred;
+		outline-offset : -1.25px;
+	}
+
 	.cell-disabled {
 		background : var(--selected);
 	}
@@ -393,5 +464,67 @@
 	.add-button:hover {
 		background : var(--hover);
 	}
+
+	.error-backdrop {
+		position : fixed;
+		inset    : 0;
+		z-index  : 999;
+	}
+
+	.error-overlay {
+		position      : relative;
+		z-index       : 1000;
+		border        : 2px solid var(--accent);
+		border-radius : 8px;
+		background    : var(--c-white);
+		padding       : 6px 8px;
+		font-size     : var(--h-font-small);
+		margin-top    : 2px;
+		box-sizing    : border-box;
+		width         : 100%;
+	}
+
+	.error-message :global(.error-quoted) {
+		color : darkred;
+	}
+
+	.error-message {
+		text-align    : center;
+		margin-bottom : 8px;
+	}
+
+	.error-suggestions {
+		display         : flex;
+		flex-wrap       : wrap;
+		justify-content : space-evenly;
+		margin-bottom   : 4px;
+		gap             : 3.95px;
+	}
+
+	.error-suggestion {
+		background    : white;
+		padding       : 2px 5px;
+		border-radius : 5px;
+		font-size     : var(--h-font-small);
+		border        : var(--th-border) solid currentColor;
+		cursor        : pointer;
+		color         : inherit;
+		line-height   : 1;
+	}
+
+	.error-suggestion.hint {
+		background : #ddd;
+	}
+
+	.error-suggestion:hover {
+		background : var(--selected);
+		outline    : 2px solid var(--accent);
+	}
+
+	.error-suggestion.hint:hover {
+		background : var(--bg);
+		outline    : 2px solid var(--accent);
+	}
+
 
 </style>

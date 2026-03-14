@@ -3,17 +3,22 @@
 
 offer a proposal for the first unchecked item
 
-- [x] cannot edit Z in 2D
-    - [x] movement in the z axis seems to be disabled
-        - [x] i can adjust position in x or in y, but not z
-- [x] scene tumble in 2D is very very very slow
-    - [x] grid!
-- [x] add glow to + buttons
-- [x] v scroll appears a bit too early (everything still fits)
-- [x] replace _ with space in UI, restore it internally
+- [ ] revise Separator simplify its css footprint
+- [ ] pac a global / centralized css that implements styles.md
+    - [ ] gather css patterns of use
+- [ ] negative attributes on drag (clamp vs prevent — undecided)
+- [ ] the invariant formulas are distracting. hide them
+- [ ] so & portable so -> add a hide children boolean
+    - [ ] very different than what the triangle does
+    - [ ] true overrides each child's isVisible
+- [ ] larger fatter separators, play with over doing it
+    - [ ] bottom of details
+        - [ ] a. lot when all closed
+    - [ ] around the centered groups
 - [ ] algebra cannot parse ".l - top_drawer.l"
 - [ ] constants -> values
 - [ ] eliminate the need for end and gap in separator
+- [ ] shrink two drawer from button -> shrink bottom drawer
 - [ ] add a sep -> graph (for sliders, build notes)
     - [ ] eliminate crumbs
 - [ ] add to library items
@@ -31,6 +36,7 @@ offer a proposal for the first unchecked item
 - [ ] with neighbor SO
     - [ ] snap to
     - [ ] resolve overlap
+    - [ ] dado/piercing -> slider?
 - [ ] user-friendly formula error popup
 
 ---

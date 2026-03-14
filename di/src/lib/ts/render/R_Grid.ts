@@ -43,7 +43,7 @@ export function render_grid(host: GridHost): void {
 	const world = host.get_world_matrix(root_so.scene);
 
 	// Grid spacing — tumble-independent
-	const { spacing, px_per_mm } = stable_spacing(host, root_so);
+	const { spacing } = stable_spacing(host, root_so);
 	if (spacing <= 0) return;
 
 	// Axis bounds — scene-bounded (matches render_back_grid)

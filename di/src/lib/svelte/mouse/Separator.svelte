@@ -31,9 +31,9 @@
 		main:    '--th-sep',
 	};
 
-	const r = k.thickness.separator[kind] * 3;
+	const r = $derived(k.thickness.separator[kind] * 3);
 	const uid = Identifiable.newID();
-	const w = r * 7 / 3;
+	const w = $derived(r * 7 / 3);
 
 </script>
 
