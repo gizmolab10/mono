@@ -7,7 +7,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { constants } from '../../ts/algebra/User_Constants';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { constraints } from '../../ts/algebra';
+	import { constraints, tokenizer } from '../../ts/algebra';
 	import Separator from '../mouse/Separator.svelte';
 	import P_Constants from './P_Constants.svelte';
 	import { units } from '../../ts/types/Units';
@@ -55,13 +55,16 @@
 
 	let bounds_rows = $derived(selected_so ? get_bounds(selected_so, tick) : []);
 
-	function commit_formula(row: BoundsRow, value: string) {
+	function commit_formula(row: BoundsRow, value: string, input?: HTMLInputElement) {
 		if (!selected_so || !row.bound) return;
 		history.snapshot();
 		const trimmed = value.trim();
 		const parent_id = selected_so.scene?.parent?.so.id;
 		if (trimmed) {
-			constraints.set_formula(selected_so, row.bound, trimmed, parent_id);
+			const tokens = tokenizer.merge_refs(tokenizer.tokenize(trimmed));
+			const normalized = tokenizer.untokenize(tokens);
+			if (input) input.value = normalized;
+			constraints.set_formula(selected_so, row.bound, normalized, parent_id);
 		} else {
 			constraints.clear_formula(selected_so, row.bound);
 		}
@@ -171,7 +174,7 @@
 								value     = {row.formula}
 								disabled  = {formula_disabled}
 								onfocus   = {() => stores.w_editing.set(T_Editing.formula)}
-								onblur    = {(e) => { commit_formula(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
+								onblur    = {(e) => { const input = e.target as HTMLInputElement; commit_formula(row, input.value, input); stores.w_editing.set(T_Editing.none); }}
 								onkeydown = {cell_keydown}
 							/>
 						</td>

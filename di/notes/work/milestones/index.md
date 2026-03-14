@@ -2,20 +2,22 @@
 
 | #   | Name                                             |
 | --- | ------------------------------------------------ |
-| 25  | [Selection Algorithm](25.selection.algorithm.md) |
-| 26  | [Cut Lists](26.cut.lists.md)                     |
-| 27  | [Colors](27.colors)                              |
-| 28  | [User Manual](28.user.manual.md)                 |
-| 29  | [Licensing](29.licensing.md)                     |
-| 30  | [Marketing](30.marketing.md)                     |
+| 25  | [Errors](25.errors.md)                           |
+| 26  | [Selection Algorithm](26.selection.algorithm.md) |
+| 27  | [Cut Lists](27.cut.lists.md)                     |
+| 28  | [Colors](28.colors.md)                           |
+| 29  | [User Manual](29.user.manual.md)                 |
+| 30  | [Licensing](30.licensing.md)                     |
+| 31  | [Marketing](31.marketing.md)                     |
 
 ## Contents
 
 - [Done](./done/)
-- [25.selection.algorithm](./25.selection.algorithm.md)
-- [26.cut.lists](./26.cut.lists.md)
-- [27.colors](./27.colors.md)
-- [28.user.manual](./28.user.manual.md)
-- [29.licensing](./29.licensing.md)
-- [30.marketing](./30.marketing.md)
+- [25.errors](./25.errors.md)
+- [26.selection.algorithm](./26.selection.algorithm.md)
+- [27.cut.lists](./27.cut.lists.md)
+- [28.colors](./28.colors.md)
+- [29.user.manual](./29.user.manual.md)
+- [30.licensing](./30.licensing.md)
+- [31.marketing](./31.marketing.md)
 

@@ -39,7 +39,7 @@
 
 	function commit_name(index: number, value: string): void {
 		const old_name = rows[index].name;
-		const new_name = value.trim();
+		const new_name = value.replace(/ /g, '_').trim();
 		if (old_name === new_name) return;
 		history.snapshot();
 		// Rename in SD store FIRST — bind_refs checks constants.has(new_name)
@@ -82,7 +82,7 @@
 						class     = 'cell-input'
 						onkeydown = {cell_keydown}
 						onfocus   = {() => stores.w_editing.set(T_Editing.value)}
-						onblur    = {(e) => { commit_name(index, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
+						onblur    = {(e) => { const input = e.target as HTMLInputElement; input.value = input.value.replace(/ /g, '_'); commit_name(index, input.value); stores.w_editing.set(T_Editing.none); }}
 					/>
 				</td>
 				<td class='std-value'>

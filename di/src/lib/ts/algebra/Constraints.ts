@@ -197,6 +197,10 @@ class Constraints {
 					return nodes.reference(self_id, attr);
 				}
 				if (obj === '' && parent_id) return nodes.reference(parent_id, attr);
+
+				// Named SO reference: walk up parent chain, checking siblings at each level
+				const resolved_id = this.resolve_name(obj, self_id);
+				if (resolved_id) return nodes.reference(resolved_id, attr);
 				return attr !== node.attribute ? nodes.reference(obj, attr) : node;
 			}
 			case 'unary':
@@ -502,6 +506,26 @@ class Constraints {
 		const all = scene.get_all();
 		const match = all.find(o => o.so.id === id);
 		return match?.so ?? null;
+	}
+
+	/** Resolve an SO name to its id by walking up the parent chain from self.
+	 *  At each level, checks siblings (children of the same parent). */
+	private resolve_name(name: string, self_id: string): string | null {
+		const all = scene.get_all();
+		const self_scene = all.find(o => o.so.id === self_id);
+		if (!self_scene) return null;
+
+		let cursor = self_scene.parent;
+		while (cursor) {
+			// Check children of this parent
+			const match = all.find(o => o.parent === cursor && o.so.name === name);
+			if (match) return match.so.id;
+			cursor = cursor.parent;
+		}
+
+		// Check top-level (no parent) — siblings of root
+		const match = all.find(o => !o.parent && o.so.name === name);
+		return match?.so.id ?? null;
 	}
 
 	private build_formula_map(): FormulaMap {

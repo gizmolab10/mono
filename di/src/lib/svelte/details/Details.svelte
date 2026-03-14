@@ -55,7 +55,8 @@
 		position   : relative;
 	}
 
-	.banner-add:hover {
+	.banner-add:hover,
+	.banner-add:active {
 		background : var(--bg);
 		color      : var(--c-black);
 	}
@@ -71,7 +72,7 @@
 	.details {
 		box-sizing : border-box;
 		position   : relative;
-		padding    : 0 0 1rem;
+		padding    : 0;
 		overflow-x : hidden;
 		overflow-y : auto;
 		height     : 100%;
@@ -79,13 +80,13 @@
 	}
 
 	.banner-add {
+		background      : radial-gradient(circle at center, var(--bg) 0%, var(--accent) 100%);
 		border          : var(--th-border) solid rgba(0, 0, 0, 0.3);
 		height          : var(--h-button-small);
 		width           : var(--h-button-small);
 		color           : rgba(0, 0, 0, 0.5);
 		font-size       : var(--h-font-large);
 		z-index         : var(--z-action);
-		background      : var(--selected);
 		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;

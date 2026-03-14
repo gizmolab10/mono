@@ -8,8 +8,12 @@ offer a proposal for the first unchecked item
         - [x] i can adjust position in x or in y, but not z
 - [x] scene tumble in 2D is very very very slow
     - [x] grid!
-- [ ] add glow to + buttons
+- [x] add glow to + buttons
+- [x] v scroll appears a bit too early (everything still fits)
+- [x] replace _ with space in UI, restore it internally
 - [ ] algebra cannot parse ".l - top_drawer.l"
+- [ ] constants -> values
+- [ ] eliminate the need for end and gap in separator
 - [ ] add a sep -> graph (for sliders, build notes)
     - [ ] eliminate crumbs
 - [ ] add to library items

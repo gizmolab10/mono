@@ -221,6 +221,30 @@ class Tokenizer {
 		return tokens;
 	}
 
+	/** Merge consecutive bare references: "foo bar.e" → ref("foo_bar", "e") */
+	merge_refs(tokens: Token[]): Token[] {
+		const out: Token[] = [];
+		for (let i = 0; i < tokens.length; i++) {
+			const t = tokens[i];
+			if (t.type !== 'reference' || t.object !== 'self') { out.push(t); continue; }
+
+			let name = t.attribute;
+			while (i + 1 < tokens.length && tokens[i + 1].type === 'reference' && (tokens[i + 1] as any).object === 'self') {
+				i++;
+				name += '_' + (tokens[i] as any).attribute;
+			}
+
+			const next = tokens[i + 1];
+			if (next && next.type === 'reference' && next.object !== '' && next.object !== 'self') {
+				out.push({ type: 'reference', object: name + '_' + next.object, attribute: next.attribute });
+				i++;
+			} else {
+				out.push({ type: 'reference', object: 'self', attribute: name });
+			}
+		}
+		return out;
+	}
+
 	/** Rename a reference attribute in a token array. Returns true if any token was changed. */
 	rename_reference(tokens: Token[], object: string, old_attr: string, new_attr: string): boolean {
 		let changed = false;

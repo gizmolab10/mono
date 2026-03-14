@@ -159,6 +159,7 @@ class Engine {
 			}
 			for (const data of saved.smart_objects) {
 				const so = Smart_Object.deserialize(data);
+				so.name = so.name.replace(/ /g, '_');
 				const so_scene = scene.create({
 					so,
 					edges: this.edges,
@@ -552,6 +553,7 @@ class Engine {
 		// Deserialize all SOs with fresh IDs, keep original names
 		for (const data of parsed.smart_objects) {
 			const so = Smart_Object.deserialize(data);
+			so.name = so.name.replace(/ /g, '_');
 			const old_id = so.id;
 			so.setID();
 			old_to_new.set(old_id, so.id);
