@@ -117,3 +117,94 @@ describe('validate_name', () => {
 		expect(errors.validate_name('bracket')).toContain('already in use');
 	});
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// EXTRACT_SPAN
+// ═══════════════════════════════════════════════════════════════════
+
+describe('extract_span', () => {
+
+	it('finds position from "at position N" errors', () => {
+		const err = new Error('Unexpected character at position 5');
+		expect(errors.extract_span(err, 'abc + @def')).toEqual([5, 1]);
+	});
+
+	it('finds token from "got \'X\'" errors', () => {
+		const err = new Error("Expected number, reference, or '(' but got '*'");
+		const span = errors.extract_span(err, 'a.e + * 3');
+		expect(span[0]).toBe(6);
+		expect(span[1]).toBe(1);
+	});
+
+	it('finds token from "token \'X\'" errors', () => {
+		const err = new Error("Unexpected token '+' — expected end of expression");
+		const span = errors.extract_span(err, 'a.e 3 + 1');
+		expect(span[0]).toBe(6);
+	});
+
+	it('highlights last char for "got end" errors', () => {
+		const err = new Error("Expected number but got 'end'");
+		const span = errors.extract_span(err, 'a.e + ');
+		expect(span).toEqual([4, 1]);
+	});
+
+	it('falls back to full input when nothing matches', () => {
+		const err = new Error('something went wrong');
+		expect(errors.extract_span(err, 'abc')).toEqual([0, 3]);
+	});
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// BAD_SYNTAX — suggestions
+// ═══════════════════════════════════════════════════════════════════
+
+describe('bad_syntax', () => {
+
+	it('offers only delete when bad token is an operator', () => {
+		const err = errors.bad_syntax('a.e + * 3', [5, 1], new Error('bad'));
+		expect(err.suggestions).toHaveLength(1);
+		expect(err.suggestions[0].label).toBe('delete it');
+	});
+
+	it('offers only delete when junk is adjacent to an operator', () => {
+		const err = errors.bad_syntax('a.e - @!#@ 3', [6, 4], new Error('bad'));
+		expect(err.suggestions).toHaveLength(1);
+		expect(err.suggestions[0].label).toBe('delete it');
+	});
+
+	it('offers only delete when junk precedes an operator', () => {
+		const err = errors.bad_syntax('a.e @!#@ + 3', [4, 4], new Error('bad'));
+		expect(err.suggestions).toHaveLength(1);
+		expect(err.suggestions[0].label).toBe('delete it');
+	});
+
+	it('offers operator replacements when not adjacent to an operator', () => {
+		const err = errors.bad_syntax('a.e @!# b.e', [4, 3], new Error('bad'));
+		expect(err.suggestions.length).toBeGreaterThan(1);
+		expect(err.suggestions.map(s => s.label)).toContain('+');
+		expect(err.suggestions.map(s => s.label)).toContain('delete it');
+	});
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// CLASSIFY
+// ═══════════════════════════════════════════════════════════════════
+
+describe('classify', () => {
+
+	it('routes "got end" errors to incomplete', () => {
+		const err = errors.classify('a.e +', [4, 1], new Error("Expected number but got 'end'"));
+		expect(err.message).toContain('incomplete');
+	});
+
+	it('routes tail junk to incomplete with widened span', () => {
+		const err = errors.classify('a.e./', [4, 1], new Error('bad'));
+		expect(err.message).toContain('incomplete');
+		expect(err.span).toEqual([3, 2]); // covers "./"
+	});
+
+	it('routes mid-formula errors to bad_syntax', () => {
+		const err = errors.classify('a.e + @@ + b.e', [6, 2], new Error('bad'));
+		expect(err.message).toContain('unexpected');
+	});
+});

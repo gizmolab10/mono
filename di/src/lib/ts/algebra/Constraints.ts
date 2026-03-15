@@ -424,9 +424,7 @@ class Constraints {
 			compiled = compiler.compile(formula);
 		} catch (e: any) {
 			const span = errors.extract_span(e, formula);
-			const err = e.message?.includes("got 'end'")
-				? errors.incomplete(formula, span)
-				: errors.bad_syntax(formula, span, e);
+			const err = errors.classify(formula, span, e);
 			errors.set(so.id, attr_name, err);
 			return err;
 		}

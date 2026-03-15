@@ -34,14 +34,32 @@ class Errors {
 			: error.message;
 		const before = input.slice(0, span[0]);
 		const after = input.slice(span[0] + span[1]);
-		const suggestions: Suggestion[] = [
-			{ label: '+', formula: before + ' + ' + after },
-			{ label: '-', formula: before + ' - ' + after },
-			{ label: '*', formula: before + ' * ' + after },
-			{ label: '/', formula: before + ' / ' + after },
-			{ label: 'delete it', formula: (before + after).trim() },
-		];
+		const is_op = /^[+\-*/]+$/.test(bad);
+		const adjacent_op = /[+\-*/]\s*$/.test(before) || /^\s*[+\-*/]/.test(after);
+		const suggestions: Suggestion[] = is_op || adjacent_op
+			? [{ label: 'delete it', formula: (before + after).trim() }]
+			: [
+				{ label: '+', formula: before + ' + ' + after },
+				{ label: '-', formula: before + ' - ' + after },
+				{ label: '*', formula: before + ' * ' + after },
+				{ label: '/', formula: before + ' / ' + after },
+				{ label: 'delete it', formula: (before + after).trim() },
+			];
 		return this.make(input, span, error, message, suggestions);
+	}
+
+	/** Route a compile/tokenize error to the right factory method. */
+	classify(input: string, span: [number, number], error: Error): S_Error {
+		if (error.message?.includes("got 'end'")) return this.incomplete(input, span);
+		// Tail junk: error is near the end and everything from span onward is non-value chars
+		const tail = span[0] + span[1] >= input.trimEnd().length
+			|| span[0] >= input.length / 2 && /^[^a-zA-Z0-9_"']+$/.test(input.slice(span[0]).trimEnd());
+		if (tail) {
+			let start = span[0];
+			while (start > 0 && /[+\-*/.\s]/.test(input[start - 1])) start--;
+			return this.incomplete(input, [start, input.trimEnd().length - start]);
+		}
+		return this.bad_syntax(input, span, error);
 	}
 
 	incomplete(input: string, span: [number, number]): S_Error {
@@ -247,7 +265,7 @@ class Errors {
 			const trimmed = input.trimEnd();
 			if (trimmed.length > 0) return [trimmed.length - 1, 1];
 		}
-		const t = error.message.match(/token '([^']+)'/);
+		const t = error.message.match(/(?:token|got) '([^']+)'/);
 		if (t) {
 			const label = t[1].startsWith('self.') ? t[1].slice(5) : t[1];
 			const idx = input.lastIndexOf(label);

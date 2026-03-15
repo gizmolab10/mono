@@ -49,7 +49,8 @@
               "title": "code.debt.done"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -122,7 +123,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/milestones/25.errors.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -132,7 +133,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for code.debt"
+              "title": "Backlinks for 25.errors"
             }
           },
           {
@@ -184,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/milestones/25.errors.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of 25.errors"
             }
           }
         ],
@@ -211,12 +212,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "07686de312fec143",
+  "active": "12070b246182dd7b",
   "lastOpenFiles": [
+    "di/notes/work/code.debt.md",
     "notes/guides/collaborate/framing_filters.md",
     "di/notes/work/milestones/25.errors.md",
     "di/src/lib/ts/tests/Errors.test.ts",
-    "di/notes/work/code.debt.md",
     "di/notes/work/milestones/done/21.css.engine.md",
     "Screenshot 2026-03-14 at 12.48.11 PM.png",
     "di/notes/work/done/code.debt.done.md",

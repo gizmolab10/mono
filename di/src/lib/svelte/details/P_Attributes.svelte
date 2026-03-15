@@ -113,16 +113,17 @@
 	function commit_formula(row: BoundsRow, value: string, input?: HTMLInputElement) {
 		if (!selected_so || !row.bound) return;
 		history.snapshot();
-		const trimmed = value.trim().replace(/\.{2,}/g, '.');
+		const trimmed = value.trim().replace(/\.(\s*\.)+/g, '.').replace(/\.(\s*[+\-*/])/g, '$1').replace(/\.+$/, '');
 		const parent_id = selected_so.scene?.parent?.so.id;
 		if (trimmed) {
 			let normalized: string;
 			try {
 				const tokens = tokenizer.merge_refs(tokenizer.tokenize(trimmed));
-				normalized = tokenizer.untokenize(tokens);
+				normalized = tokenizer.untokenize(tokens).replace(/\s*\+\s*-\s*/g, ' - ').replace(/\s*-\s*\+\s*/g, ' - ').replace(/(?<=^|[+\-*/(])(\s*)- (?=[\d.a-zA-Z_])/g, '$1-');
 			} catch (e: any) {
+				if (input) input.value = trimmed;
 				const span = errors.extract_span(e, trimmed);
-				const err = errors.bad_syntax(trimmed, span, e);
+				const err = errors.classify(trimmed, span, e);
 				errors.set(selected_so.id, row.bound, err);
 				error_state.active_bound = row.bound;
 				error_state.active_error = err;
