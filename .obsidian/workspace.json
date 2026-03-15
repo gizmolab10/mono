@@ -49,8 +49,7 @@
               "title": "code.debt.done"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -123,7 +122,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/milestones/25.errors.md",
+                "file": "di/notes/work/code.debt.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -133,7 +132,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 25.errors"
+              "title": "Backlinks for code.debt"
             }
           },
           {
@@ -185,13 +184,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/25.errors.md",
+                "file": "di/notes/work/code.debt.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 25.errors"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -212,13 +211,16 @@
       "bases:Create new base": false
     }
   },
-  "active": "12070b246182dd7b",
+  "active": "07686de312fec143",
   "lastOpenFiles": [
+    "notes/guides/collaborate/framing_filters.md",
+    "di/notes/work/milestones/25.errors.md",
+    "di/src/lib/ts/tests/Errors.test.ts",
+    "di/notes/work/code.debt.md",
+    "di/notes/work/milestones/done/21.css.engine.md",
     "Screenshot 2026-03-14 at 12.48.11 PM.png",
     "di/notes/work/done/code.debt.done.md",
-    "di/notes/work/milestones/25.errors.md",
     "di/notes/work/milestones/25.errors 1.md",
-    "di/notes/work/code.debt.md",
     "foo.md",
     "di/src/lib/ts/algebra/Errors.ts",
     "di/notes/work/milestones/26.selection.algorithm.md",
@@ -232,7 +234,6 @@
     "di/notes/work/milestones/done/14.details.md",
     "logs/update-docs.error.ma.log",
     "logs/update-docs.error.mono.log",
-    "di/notes/work/milestones/done/21.css.engine.md",
     "di/notes/work/milestones/index.md",
     "logs/update-docs.error.di.log",
     "di/notes/work/milestones/24.mobile.devices.md",
@@ -242,7 +243,6 @@
     "di/src/lib/ts/utilities/SVG_Paths.ts",
     "di/src/lib/ts/utilities/Colors.ts",
     "di/src/lib/ts/utilities",
-    "di/src/lib/ts/events/Hit_Target.ts",
     "di/notes/work/milestones/23.undo.md",
     "di/notes/work/milestones/done/23.undo.md",
     "di/notes/work/milestones/done/index.md",
@@ -259,7 +259,6 @@
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/128x128.png",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/16x16.png",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/1024x1024.png",
-    "node_modules/app-builder-lib/templates/icons/proton-native/proton-native.svg",
     "ws/notes/work/Untitled.canvas"
   ]
 }

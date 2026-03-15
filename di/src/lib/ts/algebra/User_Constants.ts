@@ -77,8 +77,10 @@ class Constants {
 	}
 
 	private save(): void {
-		const entries: ConstantEntry[] = this.get_all();
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+		try {
+			const entries: ConstantEntry[] = this.get_all();
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+		} catch { /* no localStorage in test/SSR */ }
 	}
 }
 

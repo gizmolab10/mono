@@ -4,7 +4,7 @@
 	import { T_Editing } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import { scenes, stores, history } from '../../ts/managers';
-	import { constraints } from '../../ts/algebra';
+	import { constraints, errors } from '../../ts/algebra';
 	import { units } from '../../ts/types/Units';
 
 	const { w_precision, w_tick } = stores;
@@ -12,6 +12,8 @@
 	type Row = { name: string; value_mm: number };
 
 	let rows: Row[] = $state(constants.get_all());
+	let naming_error: string | null = $state(null);
+	let naming_input: HTMLInputElement | null = null;
 
 	// Re-sync rows when scene reloads (restore_constants replaces the SD store)
 	$effect(() => {
@@ -37,16 +39,32 @@
 		sync_and_propagate();
 	}
 
-	function commit_name(index: number, value: string): void {
+	function commit_name(index: number, value: string, input?: HTMLInputElement): void {
+		if (naming_error) return;
 		const old_name = rows[index].name;
 		const new_name = value.replace(/ /g, '_').trim();
-		if (old_name === new_name) return;
+		if (old_name === new_name) { naming_error = null; return; }
+		if (!new_name) return;
+		if (new_name) {
+			const err = errors.validate_name(new_name, undefined, old_name);
+			if (err) {
+				naming_error = err;
+				naming_input = input ?? null;
+				return;
+			}
+		}
+		naming_error = null;
 		history.snapshot();
 		// Rename in SD store FIRST — bind_refs checks constants.has(new_name)
 		constants.rename(old_name, new_name);
 		if (old_name && new_name) constraints.rename_sd_in_formulas(old_name, new_name);
 		rows = constants.get_all();
 		sync_and_propagate();
+	}
+
+	function dismiss_naming(): void {
+		naming_error = null;
+		if (naming_input) { naming_input.value = ''; naming_input = null; }
 	}
 
 	function commit_value(index: number, value: string): void {
@@ -60,9 +78,40 @@
 		sync_and_propagate();
 	}
 
-	function cell_keydown(e: KeyboardEvent): void {
+	function cell_keydown(e: KeyboardEvent, index?: number): void {
 		if (e.key === 'Escape') {
 			(e.target as HTMLInputElement).blur();
+		}
+		if (naming_error && (e.key === 'Enter' || e.key === 'Delete' || e.key === 'Backspace')) {
+			const inp = e.target as HTMLInputElement;
+			naming_error = null;
+			naming_input = null;
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				const pos = inp.selectionStart ?? 0;
+				inp.value = inp.value.slice(0, pos) + inp.value.slice(inp.selectionEnd ?? inp.value.length);
+				inp.setSelectionRange(pos, pos);
+			}
+			e.stopPropagation();
+			return;
+		}
+		if (e.key === 'Enter' && index !== undefined) {
+			const inp = e.target as HTMLInputElement;
+			const new_name = inp.value.replace(/ /g, '_').trim();
+			const old_name = rows[index].name;
+			if (new_name && new_name !== old_name) {
+				const err = errors.validate_name(new_name, undefined, old_name);
+				if (err) {
+					naming_error = err;
+					naming_input = inp;
+					const m = new_name.match(/[^a-zA-Z0-9_ ]+/);
+					if (m) inp.setSelectionRange(m.index!, m.index! + m[0].length);
+					else inp.select();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+			}
 		}
 		if (e.key !== 'Enter' && e.key !== 'Tab') {
 			e.stopPropagation();
@@ -80,9 +129,9 @@
 						placeholder = 'name'
 						value     = {row.name}
 						class     = 'cell-input'
-						onkeydown = {cell_keydown}
+						onkeydown = {(e) => cell_keydown(e, index)}
 						onfocus   = {() => stores.w_editing.set(T_Editing.value)}
-						onblur    = {(e) => { const input = e.target as HTMLInputElement; input.value = input.value.replace(/ /g, '_'); commit_name(index, input.value); stores.w_editing.set(T_Editing.none); }}
+						onblur    = {(e) => { const inp = e.target as HTMLInputElement; inp.value = inp.value.replace(/ /g, '_'); commit_name(index, inp.value, inp); if (!naming_error) stores.w_editing.set(T_Editing.none); }}
 					/>
 				</td>
 				<td class='std-value'>
@@ -105,6 +154,17 @@
 			</tr>
 		{/each}
 	</tbody></table>
+	{#if naming_error}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class='naming-backdrop' onmousedown={(e) => { e.preventDefault(); dismiss_naming(); }}></div>
+		<div class='naming-overlay'>
+			<div class='naming-message'>{@html naming_error.replace(/'([^']+)'/g, "&#39;<span class='naming-quoted'>$1</span>&#39;")}</div>
+			<div class='naming-suggestions'>
+				<button class='naming-suggestion' onmousedown={(e) => { e.preventDefault(); dismiss_naming(); }}>delete it</button>
+			</div>
+		</div>
+	{/if}
 {/if}
 
 
@@ -184,5 +244,52 @@
 	.cell-input.right {
 		font-variant-numeric : tabular-nums;
 		text-align           : right;
+	}
+
+	.naming-backdrop {
+		position : fixed;
+		inset    : 0;
+		z-index  : 999;
+	}
+
+	.naming-overlay {
+		position      : relative;
+		z-index       : 1000;
+		border        : 2px solid darkred;
+		border-radius : 8px;
+		background    : var(--c-white);
+		padding       : 6px 8px;
+		font-size     : var(--h-font-small);
+		margin-top    : 8px;
+		margin-bottom : 8px;
+		box-sizing    : border-box;
+		width         : 100%;
+		text-align    : center;
+	}
+
+	.naming-message :global(.naming-quoted) {
+		color : darkred;
+	}
+
+	.naming-suggestions {
+		justify-content : center;
+		display         : flex;
+		margin-top      : 8px;
+	}
+
+	.naming-suggestion {
+		background    : white;
+		padding       : 2px 5px;
+		border-radius : 5px;
+		font-size     : var(--h-font-small);
+		border        : var(--th-border) solid currentColor;
+		cursor        : pointer;
+		color         : inherit;
+		line-height   : 1;
+	}
+
+	.naming-suggestion:hover {
+		background : var(--selected);
+		outline    : 2px solid var(--accent);
 	}
 </style>

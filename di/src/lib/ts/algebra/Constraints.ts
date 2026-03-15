@@ -232,12 +232,12 @@ class Constraints {
 							}
 							throw new AlgebraError(errors.unknown_so(input, expanded_span, input.slice(expanded_span[0], expanded_span[0] + expanded_span[1]), self_id));
 						}
-						throw new AlgebraError(errors.unknown_attr(input ?? '', name_span, node.attribute, 'self'));
+						throw new AlgebraError(errors.unknown_attr(input ?? '', name_span, node.attribute, this.find_so(self_id)?.name ?? 'self'));
 					}
 					return nodes.reference(self_id, attr);
 				}
 				if (obj === '') {
-					if (!this.is_valid_attr(attr)) throw new AlgebraError(errors.unknown_attr(input ?? '', this.find_name_span(input ?? '', node.attribute), node.attribute, 'parent'));
+					if (!this.is_valid_attr(attr)) throw new AlgebraError(errors.unknown_attr(input ?? '', this.find_name_span(input ?? '', node.attribute), node.attribute, (parent_id ? this.find_so(parent_id)?.name : null) ?? 'parent'));
 					if (parent_id) return nodes.reference(parent_id, attr);
 					return node; // dot-prefix without parent — pass through
 				}
@@ -423,7 +423,7 @@ class Constraints {
 		try {
 			compiled = compiler.compile(formula);
 		} catch (e: any) {
-			const span = this.extract_span(e, formula);
+			const span = errors.extract_span(e, formula);
 			const err = e.message?.includes("got 'end'")
 				? errors.incomplete(formula, span)
 				: errors.bad_syntax(formula, span, e);
@@ -584,24 +584,11 @@ class Constraints {
 
 	// ── helpers ──
 
-	/** Extract [start, length] span from an error message containing "at position N". */
-	private extract_span(error: Error, input: string): [number, number] {
-		const m = error.message.match(/at position (\d+)/);
-		if (m) {
-			const pos = parseInt(m[1]);
-			return [pos, Math.min(1, input.length - pos)];
-		}
-		// "got 'end'" means error is at the trailing edge — highlight last non-space char
-		if (error.message.includes("got 'end'")) {
-			const trimmed = input.trimEnd();
-			if (trimmed.length > 0) return [trimmed.length - 1, 1];
-		}
-		return [0, input.length];
-	}
+
 
 	/** Find the span of a name in the formula input string. */
 	private find_name_span(input: string, name: string): [number, number] {
-		const idx = input.indexOf(name);
+		const idx = input.lastIndexOf(name);
 		return idx >= 0 ? [idx, name.length] : [0, input.length];
 	}
 

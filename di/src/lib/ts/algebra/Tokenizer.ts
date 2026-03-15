@@ -282,10 +282,10 @@ class Tokenizer {
 		for (const token of tokens) {
 			switch (token.type) {
 				case 'number':
-					result += token.source;
+					result += token.source.replace(/\.$/, '');
 					break;
 				case 'bare_number':
-					result += token.source;
+					result += token.source.replace(/\.$/, '');
 					break;
 				case 'operator':
 					result += ' ' + token.value + ' ';

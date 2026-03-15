@@ -4,11 +4,12 @@
 	import { stores, scenes, history } from '../../ts/managers';
 	import { hits_3d } from '../../ts/events';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { T_Hit_3D } from '../../ts/types/Enumerations';
+	import { T_Hit_3D, T_Editing } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import Separator from '../mouse/Separator.svelte';
 	import P_Selected from './P_Selected.svelte';
 	import { units } from '../../ts/types/Units';
+	import { errors } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
 
 	const { w_all_sos, w_selection, w_tick, w_precision, w_collapsed_ids } = stores;
@@ -20,6 +21,8 @@
 	function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
 	let editing_id: string | null = $state(null);
 	let editing_original: string = '';
+	let naming_error: string | null = $state(null);
+	let naming_input: HTMLInputElement | null = null;
 
 	function toggle_collapse(e: MouseEvent, so: Smart_Object) {
 		e.stopPropagation();
@@ -56,6 +59,7 @@
 	}
 
 	function handle_name_click(e: MouseEvent, so: Smart_Object) {
+		naming_error = null;
 		if (is_selected(so, 0)) {
 			e.stopPropagation();
 			editing_id = so.id;
@@ -63,15 +67,28 @@
 		}
 	}
 
-	function commit_name(so: Smart_Object, value: string) {
+	function commit_name(so: Smart_Object, value: string, input?: HTMLInputElement) {
+		if (naming_error) return;
 		const trimmed = value.trim();
-		if (trimmed.length > 0) {
+		if (trimmed.length > 0 && trimmed !== editing_original) {
+			const err = errors.validate_name(trimmed, so.id);
+			if (err) {
+				naming_error = err;
+				naming_input = input ?? null;
+				return;
+			}
 			history.snapshot();
 			so.name = trimmed;
 			scenes.save();
 			stores.w_all_sos.update(sos => sos);
 		}
+		naming_error = null;
 		editing_id = null;
+	}
+
+	function dismiss_naming(_so: Smart_Object) {
+		naming_error = null;
+		if (naming_input) { naming_input.value = ''; naming_input = null; }
 	}
 
 	function cancel_name(so: Smart_Object) {
@@ -80,8 +97,19 @@
 	}
 
 	function name_keydown(e: KeyboardEvent, so: Smart_Object) {
-		if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-		else if (e.key === 'Escape') { cancel_name(so); }
+		if (naming_error && (e.key === 'Enter' || e.key === 'Delete' || e.key === 'Backspace')) {
+			const inp = e.target as HTMLInputElement;
+			naming_error = null;
+			naming_input = null;
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				const pos = inp.selectionStart ?? 0;
+				inp.value = inp.value.slice(0, pos) + inp.value.slice(inp.selectionEnd ?? inp.value.length);
+				inp.setSelectionRange(pos, pos);
+			}
+		} else if (e.key === 'Enter') {
+			(e.target as HTMLInputElement).blur();
+		} else if (e.key === 'Escape') { cancel_name(so); }
 		e.stopPropagation();
 	}
 
@@ -188,7 +216,8 @@
 								value     = {so.name}
 								class     = 'name-input'
 								onkeydown = {(e) => name_keydown(e, so)}
-								onblur    = {(e) => commit_name(so, (e.target as HTMLInputElement).value)}
+								onfocus   = {() => stores.w_editing.set(T_Editing.value)}
+								onblur    = {(e) => { const inp = e.target as HTMLInputElement; commit_name(so, inp.value, inp); if (!naming_error) stores.w_editing.set(T_Editing.none); }}
 								use:autofocus
 							/>
 						{:else}
@@ -220,6 +249,17 @@
 		</tbody>
 	{/if}
 </table>
+{#if naming_error}
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class='naming-backdrop' onmousedown={(e) => { e.preventDefault(); if (selected_so) dismiss_naming(selected_so); }}></div>
+	<div class='naming-overlay'>
+		<div class='naming-message'>{@html naming_error.replace(/'([^']+)'/g, "&#39;<span class='naming-quoted'>$1</span>&#39;")}</div>
+		<div class='naming-suggestions'>
+			<button class='naming-suggestion' onmousedown={(e) => { e.preventDefault(); if (selected_so) dismiss_naming(selected_so); }}>delete it</button>
+		</div>
+	</div>
+{/if}
 {#if $w_selection}
 	{#if !show_parts}
 		<input
@@ -227,7 +267,7 @@
 			class     = 'collapsed-name'
 			value     = {$w_selection.so.name}
 			onkeydown = {(e) => name_keydown(e, $w_selection!.so)}
-			onblur    = {(e) => commit_name($w_selection!.so, (e.target as HTMLInputElement).value)}
+			onblur    = {(e) => { const inp = e.target as HTMLInputElement; commit_name($w_selection!.so, inp.value, inp); }}
 		/>
 	{/if}
 	{#if $w_selection.so.scene?.parent}
@@ -411,6 +451,53 @@
 
 	.action-button:hover {
 		background : var(--hover);
+	}
+
+	.naming-backdrop {
+		position : fixed;
+		inset    : 0;
+		z-index  : 999;
+	}
+
+	.naming-overlay {
+		position      : relative;
+		z-index       : 1000;
+		border        : 2px solid darkred;
+		border-radius : 8px;
+		background    : var(--c-white);
+		padding       : 6px 8px;
+		font-size     : var(--h-font-small);
+		margin-top    : 8px;
+		margin-bottom : 8px;
+		box-sizing    : border-box;
+		width         : 100%;
+		text-align    : center;
+	}
+
+	.naming-message :global(.naming-quoted) {
+		color : darkred;
+	}
+
+	.naming-suggestions {
+		justify-content : center;
+		display         : flex;
+		margin-top      : 8px;
+	}
+
+	.naming-suggestion {
+		background    : white;
+		padding       : 2px 5px;
+		border-radius : 5px;
+		font-size     : var(--h-font-small);
+		border        : var(--th-border) solid currentColor;
+		cursor        : pointer;
+		color         : inherit;
+		line-height   : 1;
+	}
+
+	.naming-suggestion:hover {
+		background : var(--selected);
+		outline    : 2px solid var(--accent);
 	}
 
 </style>

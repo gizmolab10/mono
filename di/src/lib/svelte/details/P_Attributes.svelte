@@ -7,7 +7,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { constants } from '../../ts/algebra/User_Constants';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { constraints, tokenizer, errors } from '../../ts/algebra';
+	import { constraints, tokenizer, errors, type S_Error } from '../../ts/algebra';
 	import Separator from '../mouse/Separator.svelte';
 	import P_Constants from './P_Constants.svelte';
 	import { units } from '../../ts/types/Units';
@@ -56,12 +56,22 @@
 	let bounds_rows = $derived(selected_so ? get_bounds(selected_so, tick) : []);
 
 	// Error overlay state
-	let error_state = $state({ saved_formula: '', active_bound: '', show_overlay: false });
+	let error_state: { saved_formula: string; active_bound: string; show_overlay: boolean; active_error: S_Error | null } =
+		$state({ saved_formula: '', active_bound: '', show_overlay: false, active_error: null });
 
-	let active_error = $derived.by(() => {
-		void tick; // re-derive when errors change (tick fires after errors.set)
-		if (!selected_so || !error_state.active_bound) return null;
-		return errors.get(selected_so.id, error_state.active_bound);
+	// Auto-show overlay when navigating back to an SO with a stored error
+	$effect(() => {
+		if (!selected_so) return;
+		void tick;
+		for (const row of bounds_rows) {
+			const err = row.bound ? errors.get(selected_so.id, row.bound) : null;
+			if (err) {
+				error_state.active_bound = row.bound!;
+				error_state.active_error = err;
+				error_state.show_overlay = true;
+				return;
+			}
+		}
 	});
 
 	/** Index in bounds_rows of the error row, or -1 if no overlay. */
@@ -71,7 +81,9 @@
 			: -1
 	);
 
-	function dismiss_overlay() { error_state.show_overlay = false; }
+	function dismiss_overlay() {
+		error_state.show_overlay = false;
+	}
 
 	const bound_to_axis: Record<string, number> = { x_min: 0, x_max: 0, width: 0, y_min: 1, y_max: 1, depth: 1, z_min: 2, z_max: 2, height: 2 };
 	const axis_hints: string[][] = [['x', 'X', 'w'], ['y', 'Y', 'd'], ['z', 'Z', 'h']];
@@ -101,7 +113,7 @@
 	function commit_formula(row: BoundsRow, value: string, input?: HTMLInputElement) {
 		if (!selected_so || !row.bound) return;
 		history.snapshot();
-		const trimmed = value.trim();
+		const trimmed = value.trim().replace(/\.{2,}/g, '.');
 		const parent_id = selected_so.scene?.parent?.so.id;
 		if (trimmed) {
 			let normalized: string;
@@ -109,13 +121,13 @@
 				const tokens = tokenizer.merge_refs(tokenizer.tokenize(trimmed));
 				normalized = tokenizer.untokenize(tokens);
 			} catch (e: any) {
-				const pos = e.message?.match(/at position (\d+)/);
-				const span: [number, number] = pos ? [parseInt(pos[1]), 1] : [0, trimmed.length];
+				const span = errors.extract_span(e, trimmed);
 				const err = errors.bad_syntax(trimmed, span, e);
 				errors.set(selected_so.id, row.bound, err);
 				error_state.active_bound = row.bound;
+				error_state.active_error = err;
 				error_state.show_overlay = true;
-				if (input) { input.focus(); input.setSelectionRange(err.span[0], err.span[0] + err.span[1]); }
+				if (input) input.setSelectionRange(err.span[0], err.span[0] + err.span[1]);
 				stores.tick();
 				return;
 			}
@@ -123,8 +135,9 @@
 			const err = constraints.set_formula(selected_so, row.bound, normalized, parent_id);
 			if (err) {
 				error_state.active_bound = row.bound;
+				error_state.active_error = err;
 				error_state.show_overlay = true;
-				if (input) { input.focus(); input.setSelectionRange(err.span[0], err.span[0] + err.span[1]); }
+				if (input) input.setSelectionRange(err.span[0], err.span[0] + err.span[1]);
 				stores.tick();
 				return;
 			}
@@ -132,6 +145,7 @@
 			constraints.clear_formula(selected_so, row.bound);
 			errors.clear(selected_so.id, row.bound);
 		}
+		error_state.active_error = null;
 		error_state.show_overlay = false;
 		constraints.propagate(selected_so);
 		stores.tick();
@@ -184,7 +198,9 @@
 		scenes.save();
 	}
 
-	function cell_keydown(e: KeyboardEvent) {
+	let skip_blur_commit = false;
+
+	function cell_keydown(e: KeyboardEvent, row?: BoundsRow) {
 		const passive = e.key.startsWith('Arrow') || ['Shift', 'Control', 'Alt', 'Meta', 'CapsLock'].includes(e.key);
 		if (e.key === 'Enter') {
 			e.preventDefault();
@@ -204,10 +220,21 @@
 				}
 				return;
 			}
+			if (row) {
+				const input = e.target as HTMLInputElement;
+				skip_blur_commit = true;
+				commit_formula(row, input.value, input);
+				if (error_state.show_overlay) {
+					e.stopPropagation();
+					return;
+				}
+			}
 			(e.target as HTMLInputElement).blur();
 			return;
 		}
-		if (error_state.show_overlay && !passive) error_state.show_overlay = false;
+		if (error_state.show_overlay && !passive) {
+			error_state.show_overlay = false;
+		}
 		if (e.key === 'Escape') {
 			(e.target as HTMLInputElement).blur();
 		}
@@ -254,7 +281,7 @@
 		<td class='attr-invariant' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
 		{#if !(is_merge_cont || root_formula_cont)}
 			{@const formula_disabled = is_root || row.is_invariant}
-			{@const has_error = !!(selected_so && row.bound && errors.get(selected_so.id, row.bound))}
+			{@const has_error = !!(selected_so && row.bound && error_state.active_error && error_state.active_bound === row.bound)}
 			<td class='attr-formula' class:merged={is_root || merge_span >= 2} class:cell-disabled={formula_disabled} rowspan={is_root ? (i === 0 ? 6 : 3) : merge_span || undefined}>
 				<input
 					type      = 'text'
@@ -263,8 +290,8 @@
 					value     = {row.formula}
 					disabled  = {formula_disabled}
 					onfocus   = {(e) => { error_state.saved_formula = (e.target as HTMLInputElement).value; stores.w_editing.set(T_Editing.formula); }}
-					onblur    = {(e) => { const input = e.target as HTMLInputElement; commit_formula(row, input.value, input); stores.w_editing.set(T_Editing.none); }}
-					onkeydown = {cell_keydown}
+					onblur    = {(e) => { const input = e.target as HTMLInputElement; if (!skip_blur_commit) commit_formula(row, input.value, input); skip_blur_commit = false; stores.w_editing.set(T_Editing.none); }}
+					onkeydown = {(e) => cell_keydown(e, row)}
 				/>
 			</td>
 		{/if}
@@ -289,13 +316,13 @@
 {#snippet error_overlay()}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class='error-backdrop' onclick={dismiss_overlay}></div>
+	<div class='error-backdrop' onmousedown={(e) => { e.preventDefault(); dismiss_overlay(); }}></div>
 	<div class='error-overlay'>
-		<div class='error-message'>{@html active_error!.message.replace(/'([^']+)'/g, "&#39;<span class='error-quoted'>$1</span>&#39;")}</div>
-		{#if active_error!.suggestions.length > 0}
-			<div class='error-suggestions' class:single={active_error!.suggestions.length === 1}>
-				{#each [...active_error!.suggestions].sort((a, b) => (is_good_hint(b.label) ? 1 : 0) - (is_good_hint(a.label) ? 1 : 0)) as suggestion}
-					<button class='error-suggestion' class:hint={is_good_hint(suggestion.label)} onclick={() => apply_suggestion(suggestion.formula, suggestion.commit !== false)}>{suggestion.label}</button>
+		<div class='error-message'>{@html error_state.active_error!.message.replace(/'([^']+)'/g, "&#39;<span class='error-quoted'>$1</span>&#39;")}</div>
+		{#if error_state.active_error!.suggestions.length > 0}
+			<div class='error-suggestions' class:single={error_state.active_error!.suggestions.length === 1}>
+				{#each [...error_state.active_error!.suggestions].sort((a, b) => (is_good_hint(b.label) ? 1 : 0) - (is_good_hint(a.label) ? 1 : 0)) as suggestion}
+					<button class='error-suggestion' class:hint={is_good_hint(suggestion.label)} onmousedown={(e) => { e.preventDefault(); apply_suggestion(suggestion.formula, suggestion.commit !== false); }}>{suggestion.label}</button>
 				{/each}
 			</div>
 		{/if}
@@ -303,7 +330,7 @@
 {/snippet}
 
 {#if selected_so}
-	{@const split = error_row_idx >= 0 && error_row_idx < bounds_rows.length - 1 && active_error}
+	{@const split = error_row_idx >= 0 && error_row_idx < bounds_rows.length - 1 && error_state.active_error}
 	<table class='bounds'>
 		<tbody>
 			{#each (split ? bounds_rows.slice(0, error_row_idx + 1) : bounds_rows) as row, i (selected_so?.id + row.label)}
@@ -320,7 +347,7 @@
 				{/each}
 			</tbody>
 		</table>
-	{:else if error_state.show_overlay && active_error}
+	{:else if error_state.show_overlay && error_state.active_error}
 		{@render error_overlay()}
 	{/if}
 	<Separator />

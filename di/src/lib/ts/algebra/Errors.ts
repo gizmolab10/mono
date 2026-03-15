@@ -1,4 +1,5 @@
 import { scene } from '../render/Scene';
+import { constants } from './User_Constants';
 
 // ═══════════════════════════════════════════════════════════════════
 // ALGEBRA — ERRORS
@@ -29,7 +30,7 @@ class Errors {
 	bad_syntax(input: string, span: [number, number], error: Error): S_Error {
 		const bad = input.slice(span[0], span[0] + span[1]);
 		const message = bad
-			? `Unexpected '${bad}', did you mean:`
+			? `'${bad}' is unexpected here, did&nbsp;you&nbsp;mean:`
 			: error.message;
 		const before = input.slice(0, span[0]);
 		const after = input.slice(span[0] + span[1]);
@@ -45,7 +46,7 @@ class Errors {
 
 	incomplete(input: string, span: [number, number]): S_Error {
 		const bad = input.slice(span[0], span[0] + span[1]);
-		const message = 'Formula is incomplete, did you want to:';
+		const message = 'Formula is incomplete, did&nbsp;you&nbsp;want&nbsp;to:';
 		const without = (input.slice(0, span[0]) + input.slice(span[0] + span[1])).trim();
 		const suggestions: Suggestion[] = [
 			{ label: `delete the '${bad}'`, formula: without },
@@ -59,8 +60,8 @@ class Errors {
 		const fuzzy = this.fuzzy_match(name, nearby);
 		const matches = fuzzy.length > 0 ? fuzzy : nearby;
 		const message = matches.length
-			? `No object named '${name}', did you mean:`
-			: `No object named '${name}'.`;
+			? `'${name}' is an unknown object, did&nbsp;you&nbsp;mean:`
+			: `'${name}' is an unknown object.`;
 		const suggestions: Suggestion[] = matches.map(n => ({
 			label: n,
 			formula: input.slice(0, span[0]) + n + input.slice(span[0] + span[1]),
@@ -73,8 +74,8 @@ class Errors {
 		return this.make(input, span, new Error(message), message, suggestions);
 	}
 
-	unknown_attr(input: string, span: [number, number], attr: string, _object: string): S_Error {
-		const message = `Unknown attribute '${attr}', did you mean:`;
+	unknown_attr(input: string, span: [number, number], attr: string, object: string): S_Error {
+		const message = `'${attr}' does not exist on '${object}', did&nbsp;you&nbsp;mean:`;
 		const suggestions: Suggestion[] = valid_attrs.map(a => ({
 			label: a,
 			formula: input.slice(0, span[0]) + a + input.slice(span[0] + span[1]),
@@ -91,7 +92,7 @@ class Errors {
 			const op_len = op_match[1].length;
 			const op_char = op_match[2];
 			const without = input.slice(0, op_start) + input.slice(op_start + op_len);
-			const message = `The operator '${op_char}' cannot be applied to an object.`;
+			const message = `'${op_char}' cannot be applied to an object.`;
 			return this.make(input, [op_start, op_len], new Error(message), message, [
 				{ label: 'delete it', formula: without },
 			]);
@@ -104,7 +105,7 @@ class Errors {
 			const op_len = pre_match[1].length;
 			const op_char = pre_match[2];
 			const without = input.slice(0, op_start) + input.slice(op_start + op_len);
-			const message = `The operator '${op_char}' cannot be applied to an object.`;
+			const message = `'${op_char}' cannot be applied to an object.`;
 			return this.make(input, [op_start, op_len], new Error(message), message, [
 				{ label: 'delete it', formula: without },
 			]);
@@ -115,7 +116,7 @@ class Errors {
 	}
 
 	leading_dot(input: string, dot_span: [number, number]): S_Error {
-		const message = "Did you add '.' by mistake?";
+		const message = "'.' looks like a mistake, did&nbsp;you&nbsp;mean:";
 		const without = input.slice(0, dot_span[0]) + input.slice(dot_span[0] + dot_span[1]);
 		return this.make(input, dot_span, new Error(message), message, [
 			{ label: 'delete it', formula: without.trim() },
@@ -123,7 +124,7 @@ class Errors {
 	}
 
 	unexpected_dot(input: string, dot_span: [number, number], _full_ref: string): S_Error {
-		const message = "Unexpected '.' here.";
+		const message = "'.' is unexpected here.";
 		const without = input.slice(0, dot_span[0]) + input.slice(dot_span[0] + dot_span[1]);
 		return this.make(input, dot_span, new Error(message), message, [
 			{ label: 'delete it', formula: without.trim() },
@@ -213,6 +214,46 @@ class Errors {
 			prev = curr;
 		}
 		return prev[a.length];
+	}
+
+	/** Validate a proposed name for an SO or constant. Returns error message or null. */
+	validate_name(name: string, exclude_so_id?: string, exclude_constant_name?: string): string | null {
+		if (/[^a-zA-Z0-9_ ]/.test(name)) {
+			const bad = name.match(/[^a-zA-Z0-9_ ]+/)![0];
+			return `'${bad}' will cause problems in formulas`;
+		}
+		if (valid_attrs.includes(name)) return `'${name}' is a reserved attribute name.`;
+		const all = scene.get_all();
+		for (const o of all) {
+			if (o.so.id !== exclude_so_id && o.so.name === name) {
+				return `'${name}' is already in use.`;
+			}
+		}
+		if (name !== exclude_constant_name && constants.has(name)) {
+			return `'${name}' is already in use.`;
+		}
+		return null;
+	}
+
+	/** Extract error span from an Error message. Expands to cover consecutive bad characters. */
+	extract_span(error: Error, input: string): [number, number] {
+		const m = error.message.match(/at position (\d+)/);
+		if (m) {
+			const pos = parseInt(m[1]);
+			const run = (input.slice(pos).match(/^[^a-zA-Z0-9_. ]+/) ?? [''])[0].length || 1;
+			return [pos, Math.min(run, input.length - pos)];
+		}
+		if (error.message.includes("got 'end'")) {
+			const trimmed = input.trimEnd();
+			if (trimmed.length > 0) return [trimmed.length - 1, 1];
+		}
+		const t = error.message.match(/token '([^']+)'/);
+		if (t) {
+			const label = t[1].startsWith('self.') ? t[1].slice(5) : t[1];
+			const idx = input.lastIndexOf(label);
+			if (idx >= 0) return [idx, label.length];
+		}
+		return [0, input.length];
 	}
 
 	private make(input: string, span: [number, number], error: Error, message: string, suggestions: Suggestion[]): S_Error {

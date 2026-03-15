@@ -3,9 +3,11 @@
 
 offer a proposal for the first unchecked item
 
+- [ ] invert the order of the breadcrumb buttons
+- [ ] type ahead -> formula editor
 - [ ] revise Separator simplify its css footprint
-- [ ] pac a global / centralized css that implements styles.md
-    - [ ] gather css patterns of use
+- [ ] [[21.css.engine]]
+- [ ] asbility t0o dsrlrvy s vco
 - [ ] negative attributes on drag (clamp vs prevent — undecided)
 - [ ] the invariant formulas are distracting. hide them
 - [ ] so & portable so -> add a hide children boolean
