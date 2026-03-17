@@ -4,7 +4,7 @@
     "smart_objects": [
       {
         "id": "di99473d8a68cd57",
-        "name": "rotated",
+        "name": "rotated stairs",
         "x": {
           "attributes": {
             "origin": 0,

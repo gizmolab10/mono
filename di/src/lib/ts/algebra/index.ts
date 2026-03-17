@@ -1,9 +1,9 @@
 export type { Resolver, Writer, FormulaMap } from './Evaluator';
-export { constants, CONSTANTS_ID } from './User_Constants';
-export type { ConstantEntry } from './User_Constants';
-export { constraints } from './Constraints';
 export type { S_Error, Suggestion } from './Errors';
+export type { Portable_Given } from './Givens';
 export type { Node, Operator } from './Nodes';
+export { givens, GIVENS_ID } from './Givens';
+export { constraints } from './Constraints';
 export type { Token } from './Tokenizer';
 export { evaluator } from './Evaluator';
 export { tokenizer } from './Tokenizer';

@@ -1,11 +1,12 @@
 import type { Compact_Attribute, Portable_Attribute, Portable_Axis, Repeater } from '../types/Interfaces';
-import type { ConstantEntry } from '../algebra/User_Constants';
 import type { Axis_Name, Bound } from '../types/Types';
+import type { Portable_Given } from '../algebra/Givens';
 import { Identifiable } from '../runtime';
 
-export const CURRENT_VERSION = '8';
+export const CURRENT_VERSION = '9';
 
 export interface Portable_SO {
+	hide_children?: boolean;
 	repeater?: Repeater;
 	parent_id?: string;
 	visible?: boolean;
@@ -19,7 +20,7 @@ export interface Portable_SO {
 export interface Portable_Scene {
 	camera: { eye: number[]; center: number[]; up: number[] };
 	smart_objects: Portable_SO[];
-	constants?: ConstantEntry[];
+	givens?: Portable_Given[];
 	selected_face?: number;
 	selected_id?: string;
 	root_id: string;
@@ -53,11 +54,34 @@ class Versions {
 
 	migrate(raw: unknown, version: string): Portable_Scene {
 		const v = parseInt(version) || 0;
-		if (v >= parseInt(CURRENT_VERSION)) return raw as Portable_Scene;
 
 		let data = raw as Record<string, unknown>;
 		let sos = data.smart_objects as Record<string, unknown>[];
 		if (!sos?.length) return raw as Portable_Scene;
+
+		// Underscore → space in names and formulas: idempotent, always runs
+		for (const so of sos) {
+			const rec = so as Record<string, unknown>;
+			if (typeof rec.name === 'string') rec.name = (rec.name as string).replace(/_/g, ' ');
+			for (const axis_name of ['x', 'y', 'z']) {
+				const axis = rec[axis_name] as Record<string, Record<string, unknown>> | undefined;
+				if (!axis?.attributes) continue;
+				for (const key of ['origin', 'extent', 'length', 'angle']) {
+					const attr = axis.attributes[key];
+					if (attr && typeof attr === 'object' && typeof (attr as any).formula === 'string') {
+						(attr as any).formula = (attr as any).formula.replace(/_/g, ' ');
+					}
+				}
+			}
+		}
+		const givens_arr = (data.givens ?? data.constants) as { name: string }[] | undefined;
+		if (givens_arr?.length) {
+			for (const entry of givens_arr) {
+				if (entry.name) entry.name = entry.name.replace(/_/g, ' ');
+			}
+		}
+
+		if (v >= parseInt(CURRENT_VERSION)) return data as unknown as Portable_Scene;
 
 		// v1/v2 → v3: legacy bounds → axis format (includes ID minting for v1)
 		if (v < 3) {
@@ -89,6 +113,14 @@ class Versions {
 			if ('standard_dimensions' in data) {
 				data.constants = data.standard_dimensions;
 				delete data.standard_dimensions;
+			}
+		}
+
+		// v8 → v9: rename constants → givens
+		if (v < 9) {
+			if ('constants' in data) {
+				data.givens = data.constants;
+				delete data.constants;
 			}
 		}
 

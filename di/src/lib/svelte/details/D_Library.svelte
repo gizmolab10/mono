@@ -67,7 +67,10 @@
 		const raw = await scenes.load_library_file(selected.name);
 		if (!raw) return;
 		const parsed = scenes.parse_text(raw);
-		if (parsed) engine.load_scene(parsed);
+		if (parsed) {
+			engine.load_scene(parsed);
+			if (scenes.root_so) scenes.root_so.name = selected.display.replace(/_/g, ' ');
+		}
 	}
 
 	async function do_insert(): Promise<void> {

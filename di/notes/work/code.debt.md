@@ -3,13 +3,24 @@
 
 offer a proposal for the first unchecked item
 
+- [ ] [[version.9]] portable format
+- [x] file name
+    - [x] take root object name it
+    - [x] no underscore (-> space) in them
+- [ ] cannot rotate basement around z axis
+    - [ ] rear wall funky location
+- [ ] rename user constants -> givens
+- [ ] cyclic formula refs -> default to 0
+    - [ ] want: "capture the last user choice"
+    - [ ] a new kind of idea: "these two are the same"
+        - [ ] ref a constant
+            - [ ] drag does not update the constant
+- [ ] add another col to attr table: s, l, e
 - [ ] invert the order of the breadcrumb buttons
 - [ ] type ahead -> formula editor
-- [ ] revise Separator simplify its css footprint
 - [ ] [[21.css.engine]]
-- [ ] asbility t0o dsrlrvy s vco
+    - [ ] revise Separator simplify its css footprint
 - [ ] negative attributes on drag (clamp vs prevent — undecided)
-- [ ] the invariant formulas are distracting. hide them
 - [ ] so & portable so -> add a hide children boolean
     - [ ] very different than what the triangle does
     - [ ] true overrides each child's isVisible

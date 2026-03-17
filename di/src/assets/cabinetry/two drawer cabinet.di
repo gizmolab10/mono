@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "9",
   "scene": {
     "smart_objects": [
       {
@@ -8,8 +8,8 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 863.5999999999999,
-            "length": 863.5999999999999,
+            "extent": 666.75,
+            "length": 666.75,
             "angle": 0
           },
           "invariant": 1
@@ -26,14 +26,14 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 469.8999999999999,
-            "length": 469.8999999999999,
+            "extent": 590.55,
+            "length": 590.55,
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
-        "visible": false
+        "visible": false,
+        "hide_children": false
       },
       {
         "id": "di9d4d6d8626f83f",
@@ -43,7 +43,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -1727.1999999999998,
+            "extent": 0,
             "length": {
               "formula": ".l"
             },
@@ -56,7 +56,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -1320.8,
+            "extent": 0,
             "length": {
               "formula": ".l"
             },
@@ -67,16 +67,18 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": ".l-l"
+              "formula": "bottom drawer height"
             },
-            "extent": -939.7999999999998,
-            "length": 152.39999999999998,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 215.89999999999998,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
-        "rotation_lock": 0,
         "visible": false,
+        "hide_children": false,
         "parent_id": "dicb460b903642b9"
       },
       {
@@ -85,7 +87,7 @@
         "x": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1758.9499999999998,
+            "extent": -635,
             "length": 19.05,
             "angle": 0
           },
@@ -94,9 +96,9 @@
         "y": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1968.5,
+            "extent": -12.699999999999932,
             "length": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "angle": 0
           },
@@ -105,15 +107,16 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1396.9999999999998,
+            "extent": -12.700000000000045,
             "length": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 1,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "di9d4d6d8626f83f"
       },
       {
@@ -122,7 +125,7 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 2590.7999999999997,
+            "extent": 0,
             "length": {
               "formula": ".l"
             },
@@ -133,7 +136,7 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 1339.85,
+            "extent": -641.35,
             "length": 19.049999999999955,
             "angle": 0
           },
@@ -142,7 +145,7 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 1409.6999999999998,
+            "extent": 0,
             "length": {
               "formula": ".l"
             },
@@ -150,7 +153,8 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 2,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "di9d4d6d8626f83f"
       },
       {
@@ -158,9 +162,9 @@
         "name": "right",
         "x": {
           "attributes": {
-            "origin": 819.15,
+            "origin": 622.3000000000001,
             "extent": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "length": 19.049999999999955,
             "angle": 0
@@ -170,9 +174,9 @@
         "y": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1968.5,
+            "extent": -12.699999999999932,
             "length": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "angle": 0
           },
@@ -181,15 +185,16 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1396.9999999999998,
+            "extent": -12.700000000000045,
             "length": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 1,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "di9d4d6d8626f83f"
       },
       {
@@ -198,9 +203,9 @@
         "x": {
           "attributes": {
             "origin": 19.049999999999997,
-            "extent": 2559.0499999999997,
+            "extent": -31.75,
             "length": {
-              "formula": ".l-2\""
+              "formula": ".l - 2\""
             },
             "angle": 0
           },
@@ -210,7 +215,7 @@
           "attributes": {
             "origin": 628.6499999999999,
             "extent": {
-              "formula": ".l-1/2\""
+              "formula": ".l - 1/2\""
             },
             "length": 19.050000000000068,
             "angle": 0
@@ -220,15 +225,16 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1396.9999999999998,
+            "extent": -12.700000000000045,
             "length": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "di9d4d6d8626f83f"
       },
       {
@@ -237,9 +243,9 @@
         "x": {
           "attributes": {
             "origin": 25.4,
-            "extent": 2552.7,
+            "extent": -38.10000000000002,
             "length": {
-              "formula": ".l-2 1/2\""
+              "formula": ".l - 2 1/2\""
             },
             "angle": 0
           },
@@ -248,9 +254,9 @@
         "y": {
           "attributes": {
             "origin": 6.35,
-            "extent": 1955.8,
+            "extent": -25.399999999999977,
             "length": {
-              "formula": ".l-1 1/4\""
+              "formula": ".l - 1 1/4\""
             },
             "angle": 0
           },
@@ -259,13 +265,14 @@
         "z": {
           "attributes": {
             "origin": 25.4,
-            "extent": 1295.3999999999996,
-            "length": 12.699999999999989,
+            "extent": -177.80000000000013,
+            "length": 12.699999999999875,
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "di9d4d6d8626f83f"
       },
       {
@@ -276,7 +283,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -1727.1999999999998,
+            "extent": 0,
             "length": {
               "formula": ".l"
             },
@@ -289,7 +296,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -1320.8,
+            "extent": 0,
             "length": {
               "formula": ".l"
             },
@@ -302,14 +309,16 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -1092.1999999999998,
-            "length": 317.5,
+            "extent": -215.89999999999998,
+            "length": {
+              "formula": "bottom drawer height"
+            },
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": false,
+        "hide_children": false,
         "parent_id": "dicb460b903642b9"
       },
       {
@@ -318,7 +327,7 @@
         "x": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1758.9499999999998,
+            "extent": -635,
             "length": 19.05,
             "angle": 0
           },
@@ -327,9 +336,9 @@
         "y": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1968.5,
+            "extent": -12.699999999999932,
             "length": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "angle": 0
           },
@@ -338,15 +347,16 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1701.7999999999997,
+            "extent": -12.699999999999989,
             "length": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 1,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "dic045a2b5f5b992"
       },
       {
@@ -355,7 +365,7 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 2590.7999999999997,
+            "extent": 0,
             "length": {
               "formula": ".l"
             },
@@ -366,7 +376,7 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 1339.85,
+            "extent": -641.35,
             "length": 19.049999999999955,
             "angle": 0
           },
@@ -375,7 +385,7 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 1714.4999999999995,
+            "extent": 0,
             "length": {
               "formula": ".l"
             },
@@ -383,7 +393,8 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 2,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "dic045a2b5f5b992"
       },
       {
@@ -391,9 +402,9 @@
         "name": "right",
         "x": {
           "attributes": {
-            "origin": 819.15,
+            "origin": 622.3000000000001,
             "extent": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "length": 19.049999999999955,
             "angle": 0
@@ -403,9 +414,9 @@
         "y": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1968.5,
+            "extent": -12.699999999999932,
             "length": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "angle": 0
           },
@@ -414,15 +425,16 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1701.7999999999997,
+            "extent": -12.699999999999989,
             "length": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 1,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "dic045a2b5f5b992"
       },
       {
@@ -431,9 +443,9 @@
         "x": {
           "attributes": {
             "origin": 19.049999999999997,
-            "extent": 2559.0499999999997,
+            "extent": -31.75,
             "length": {
-              "formula": ".l-2\""
+              "formula": ".l - 2\""
             },
             "angle": 0
           },
@@ -443,7 +455,7 @@
           "attributes": {
             "origin": 628.6499999999999,
             "extent": {
-              "formula": ".l-1/2\""
+              "formula": ".l - 1/2\""
             },
             "length": 19.050000000000068,
             "angle": 0
@@ -453,15 +465,16 @@
         "z": {
           "attributes": {
             "origin": 12.7,
-            "extent": 1701.7999999999997,
+            "extent": -12.699999999999989,
             "length": {
-              "formula": ".l-1\""
+              "formula": ".l - 1\""
             },
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "dic045a2b5f5b992"
       },
       {
@@ -470,9 +483,9 @@
         "x": {
           "attributes": {
             "origin": 25.4,
-            "extent": 2552.7,
+            "extent": -38.10000000000002,
             "length": {
-              "formula": ".l-2 1/2\""
+              "formula": ".l - 2 1/2\""
             },
             "angle": 0
           },
@@ -481,9 +494,9 @@
         "y": {
           "attributes": {
             "origin": 6.35,
-            "extent": 1955.8,
+            "extent": -25.399999999999977,
             "length": {
-              "formula": ".l-1 1/4\""
+              "formula": ".l - 1 1/4\""
             },
             "angle": 0
           },
@@ -492,14 +505,22 @@
         "z": {
           "attributes": {
             "origin": 25.4,
-            "extent": 1435.0999999999997,
-            "length": 12.699999999999967,
+            "extent": -336.54999999999995,
+            "length": 12.700000000000024,
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "dic045a2b5f5b992"
+      }
+    ],
+    "givens": [
+      {
+        "name": "bottom drawer height",
+        "value_mm": 374.65,
+        "locked": false
       }
     ],
     "camera": {
@@ -519,6 +540,8 @@
         0
       ]
     },
-    "root_id": "dicb460b903642b9"
+    "root_id": "dicb460b903642b9",
+    "selected_id": "dic045a2b5f5b992",
+    "selected_face": 5
   }
 }

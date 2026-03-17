@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "9",
   "scene": {
     "smart_objects": [
       {
@@ -17,8 +17,8 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 609.6,
-            "length": 609.6,
+            "extent": 609.6000000000001,
+            "length": 609.6000000000001,
             "angle": 0
           },
           "invariant": 1
@@ -32,8 +32,8 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
-        "visible": false
+        "visible": false,
+        "hide_children": false
       },
       {
         "id": "di4b4804a2257d24",
@@ -41,11 +41,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": "side_th"
+              "formula": "side th"
             },
-            "extent": -1193.8000000000002,
+            "extent": -584.2,
             "length": {
-              "formula": "side_th"
+              "formula": "side th"
             },
             "angle": 0
           },
@@ -54,11 +54,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": "front_th-dado"
+              "formula": "front th - dado"
             },
-            "extent": -609.5999999999999,
+            "extent": 1.1368683772161603e-13,
             "length": {
-              "formula": ".l-front_th+dado"
+              "formula": ".l - front th + dado"
             },
             "angle": 0
           },
@@ -69,15 +69,16 @@
             "origin": {
               "formula": "inset"
             },
-            "extent": -158.74999999999997,
+            "extent": -6.349999999999994,
             "length": {
-              "formula": ".l-inset*2"
+              "formula": ".l - inset * 2"
             },
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 1,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "dicb460b903642b9"
       },
       {
@@ -86,7 +87,7 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": -609.6,
+            "extent": 0,
             "length": {
               "formula": ".l"
             },
@@ -97,7 +98,7 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": -1200.15,
+            "extent": -590.5500000000002,
             "length": 19.049999999999955,
             "angle": 0
           },
@@ -106,7 +107,7 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": -152.39999999999998,
+            "extent": 0,
             "length": {
               "formula": ".l"
             },
@@ -114,7 +115,8 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 2,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "dicb460b903642b9"
       },
       {
@@ -124,10 +126,10 @@
           "attributes": {
             "origin": 584.1999999999999,
             "extent": {
-              "formula": ".l-inset*2"
+              "formula": ".l - inset * 2"
             },
             "length": {
-              "formula": "side_th"
+              "formula": "side th"
             },
             "angle": 0
           },
@@ -136,11 +138,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": "front_th-dado"
+              "formula": "front th - dado"
             },
-            "extent": -609.5999999999999,
+            "extent": 1.1368683772161603e-13,
             "length": {
-              "formula": ".l-front_th+dado"
+              "formula": ".l - front th + dado"
             },
             "angle": 0
           },
@@ -151,15 +153,16 @@
             "origin": {
               "formula": "inset"
             },
-            "extent": -158.74999999999997,
+            "extent": -6.349999999999994,
             "length": {
-              "formula": ".l-inset*2"
+              "formula": ".l - inset * 2"
             },
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 1,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "dicb460b903642b9"
       },
       {
@@ -168,11 +171,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": "side_th+inset"
+              "formula": "side th + inset"
             },
-            "extent": -628.6500000000001,
+            "extent": -19.050000000000068,
             "length": {
-              "formula": ".l-(side_th+inset)*2"
+              "formula": ".l - (side th + inset) * 2"
             },
             "angle": 0
           },
@@ -180,12 +183,12 @@
         },
         "y": {
           "attributes": {
-            "origin": 596.9,
+            "origin": 596.9000000000001,
             "extent": {
               "formula": ".l"
             },
             "length": {
-              "formula": "side_th"
+              "formula": "side th"
             },
             "angle": 0
           },
@@ -196,15 +199,16 @@
             "origin": {
               "formula": "inset"
             },
-            "extent": -158.74999999999997,
+            "extent": -6.349999999999994,
             "length": {
-              "formula": ".l-inset*2"
+              "formula": ".l - inset * 2"
             },
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "dicb460b903642b9"
       },
       {
@@ -213,11 +217,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": "side_th+inset"
+              "formula": "side th + inset"
             },
-            "extent": -628.6500000000001,
+            "extent": -19.050000000000068,
             "length": {
-              "formula": ".l-(side_th+inset)*2"
+              "formula": ".l - (side th + inset) * 2"
             },
             "angle": 0
           },
@@ -226,11 +230,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": "front_th-dado"
+              "formula": "front th - dado"
             },
-            "extent": -615.9499999999999,
+            "extent": -6.349999999999909,
             "length": {
-              "formula": ".l-inset*3"
+              "formula": ".l - inset * 3"
             },
             "angle": 0
           },
@@ -239,60 +243,71 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": "inset*2"
+              "formula": "inset * 2"
             },
-            "extent": -285.74999999999994,
+            "extent": -133.34999999999997,
             "length": {
-              "formula": "bottom_th"
+              "formula": "bottom th"
             },
             "angle": 0
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "dicb460b903642b9"
       }
     ],
-    "constants": [
+    "givens": [
       {
         "name": "inset",
-        "value_mm": 6.35
+        "value_mm": 6.35,
+        "locked": true
       },
       {
         "name": "dado",
-        "value_mm": 6.35
+        "value_mm": 6.35,
+        "locked": true
       },
       {
-        "name": "top_h",
-        "value_mm": 101.6
+        "name": "top h",
+        "value_mm": 101.6,
+        "locked": false
       },
       {
-        "name": "middle_h",
-        "value_mm": 152.39999999999998
+        "name": "middle h",
+        "value_mm": 152.39999999999998,
+        "locked": false
       },
       {
-        "name": "bottom_h",
-        "value_mm": 215.89999999999998
+        "name": "bottom h",
+        "value_mm": 215.89999999999998,
+        "locked": false
       },
       {
-        "name": "bottom_Inset",
-        "value_mm": 19.049999999999997
+        "name": "bottom Inset",
+        "value_mm": 19.049999999999997,
+        "locked": true
       },
       {
-        "name": "side_th",
-        "value_mm": 12.7
+        "name": "side th",
+        "value_mm": 12.7,
+        "locked": true
       },
       {
-        "name": "front_th",
-        "value_mm": 19.049999999999997
+        "name": "front th",
+        "value_mm": 19.049999999999997,
+        "locked": true
       },
       {
-        "name": "back_th",
-        "value_mm": 12.7
+        "name": "back th",
+        "value_mm": 12.7,
+        "locked": true
       },
       {
-        "name": "bottom_th",
-        "value_mm": 6.35
+        "name": "bottom th",
+        "value_mm": 6.35,
+        "locked": true
       }
     ],
     "camera": {
@@ -313,6 +328,7 @@
       ]
     },
     "root_id": "dicb460b903642b9",
-    "selected_face": 3
+    "selected_id": "dicb460b903642b9",
+    "selected_face": 1
   }
 }

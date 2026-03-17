@@ -5,11 +5,11 @@
 	import { scenes, stores, history } from '../../ts/managers';
 	import type { Bound } from '../../ts/types/Types';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { constants } from '../../ts/algebra/User_Constants';
+	import { givens } from '../../ts/algebra/Givens';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { constraints, tokenizer, errors, type S_Error } from '../../ts/algebra';
 	import Separator from '../mouse/Separator.svelte';
-	import P_Constants from './P_Constants.svelte';
+	import P_Givens from './P_Givens.svelte';
 	import { units } from '../../ts/types/Units';
 
 	const { w_selection, w_precision, w_tick } = stores;
@@ -31,33 +31,32 @@
 			return fmt(so.attributes_dict_byName[bound]?.value ?? 0);
 		};
 		// Formula for a row: stored formula first, then invariant derivation if marked, else empty
-		const fml = (label: string, bound: string | null, axis_index: number, attr_index: number) => {
+		const fml = (bound: string | null) => {
 			if (bound) {
 				const stored = so.attributes_dict_byName[bound]?.formula_display;
 				if (stored) return stored;
 			}
-			if (inv(axis_index, attr_index)) return constraints.invariant_formula_for(label, formula_mode) ?? '';
 			return '';
 		};
 		const has = (bound: string | null) => bound ? !!so.attributes_dict_byName[bound]?.compiled : false;
 		return [
-			{ label: 'x', bound: 'x_min' as Bound, value: val('x_min', 0, 0), formula: fml('x', 'x_min', 0, 0), has_formula: has('x_min'), is_invariant: inv(0, 0), axis_index: 0, attr_index: 0 },
-			{ label: 'y', bound: 'y_min' as Bound, value: val('y_min', 1, 0), formula: fml('y', 'y_min', 1, 0), has_formula: has('y_min'), is_invariant: inv(1, 0), axis_index: 1, attr_index: 0 },
-			{ label: 'z', bound: 'z_min' as Bound, value: val('z_min', 2, 0), formula: fml('z', 'z_min', 2, 0), has_formula: has('z_min'), is_invariant: inv(2, 0), axis_index: 2, attr_index: 0 },
-			{ label: 'w', bound: 'width',           value: val('width',  0, 2), formula: fml('w', 'width', 0, 2), has_formula: has('width'), is_invariant: inv(0, 2), axis_index: 0, attr_index: 2 },
-			{ label: 'd', bound: 'depth',           value: val('depth',  1, 2), formula: fml('d', 'depth', 1, 2), has_formula: has('depth'), is_invariant: inv(1, 2), axis_index: 1, attr_index: 2 },
-			{ label: 'h', bound: 'height',          value: val('height', 2, 2), formula: fml('h', 'height',2, 2), has_formula: has('height'), is_invariant: inv(2, 2), axis_index: 2, attr_index: 2 },
-			{ label: 'X', bound: 'x_max' as Bound, value: val('x_max', 0, 1), formula: fml('X', 'x_max', 0, 1), has_formula: has('x_max'), is_invariant: inv(0, 1), axis_index: 0, attr_index: 1 },
-			{ label: 'Y', bound: 'y_max' as Bound, value: val('y_max', 1, 1), formula: fml('Y', 'y_max', 1, 1), has_formula: has('y_max'), is_invariant: inv(1, 1), axis_index: 1, attr_index: 1 },
-			{ label: 'Z', bound: 'z_max' as Bound, value: val('z_max', 2, 1), formula: fml('Z', 'z_max', 2, 1), has_formula: has('z_max'), is_invariant: inv(2, 1), axis_index: 2, attr_index: 1 },
+			{ label: 'x', bound: 'x_min' as Bound, value: val('x_min', 0, 0), formula: fml('x_min'), has_formula: has('x_min'), is_invariant: inv(0, 0), axis_index: 0, attr_index: 0 },
+			{ label: 'y', bound: 'y_min' as Bound, value: val('y_min', 1, 0), formula: fml('y_min'), has_formula: has('y_min'), is_invariant: inv(1, 0), axis_index: 1, attr_index: 0 },
+			{ label: 'z', bound: 'z_min' as Bound, value: val('z_min', 2, 0), formula: fml('z_min'), has_formula: has('z_min'), is_invariant: inv(2, 0), axis_index: 2, attr_index: 0 },
+			{ label: 'w', bound: 'width',           value: val('width',  0, 2), formula: fml('width'), has_formula: has('width'), is_invariant: inv(0, 2), axis_index: 0, attr_index: 2 },
+			{ label: 'd', bound: 'depth',           value: val('depth',  1, 2), formula: fml('depth'), has_formula: has('depth'), is_invariant: inv(1, 2), axis_index: 1, attr_index: 2 },
+			{ label: 'h', bound: 'height',          value: val('height', 2, 2), formula: fml('height'), has_formula: has('height'), is_invariant: inv(2, 2), axis_index: 2, attr_index: 2 },
+			{ label: 'X', bound: 'x_max' as Bound, value: val('x_max', 0, 1), formula: fml('x_max'), has_formula: has('x_max'), is_invariant: inv(0, 1), axis_index: 0, attr_index: 1 },
+			{ label: 'Y', bound: 'y_max' as Bound, value: val('y_max', 1, 1), formula: fml('y_max'), has_formula: has('y_max'), is_invariant: inv(1, 1), axis_index: 1, attr_index: 1 },
+			{ label: 'Z', bound: 'z_max' as Bound, value: val('z_max', 2, 1), formula: fml('z_max'), has_formula: has('z_max'), is_invariant: inv(2, 1), axis_index: 2, attr_index: 1 },
 		];
 	}
 
 	let bounds_rows = $derived(selected_so ? get_bounds(selected_so, tick) : []);
 
 	// Error overlay state
-	let error_state: { saved_formula: string; active_bound: string; show_overlay: boolean; active_error: S_Error | null } =
-		$state({ saved_formula: '', active_bound: '', show_overlay: false, active_error: null });
+	let error_state: { saved_formula: string; active_bound: string; show_overlay: boolean; active_error: S_Error | null; source: 'formula' | 'value'; input: HTMLInputElement | null } =
+		$state({ saved_formula: '', active_bound: '', show_overlay: false, active_error: null, source: 'formula', input: null });
 
 	// Auto-show overlay when navigating back to an SO with a stored error
 	$effect(() => {
@@ -69,6 +68,8 @@
 				error_state.active_bound = row.bound!;
 				error_state.active_error = err;
 				error_state.show_overlay = true;
+				error_state.source = err.message.includes('Negative') ? 'value' : 'formula';
+				error_state.input = null;
 				return;
 			}
 		}
@@ -96,13 +97,18 @@
 	}
 
 	function apply_suggestion(suggestion: string, commit: boolean) {
-		const input = document.querySelector('input.cell-error') as HTMLInputElement | null;
+		const input = error_state.input ?? document.querySelector('input.cell-error') as HTMLInputElement | null;
 		if (!input) return;
 		input.value = suggestion;
 		if (commit) {
 			const row = bounds_rows.find(r => r.bound === error_state.active_bound);
-			if (row) commit_formula(row, suggestion, input);
-			// commit_formula sets overlay state: show on new error, hide on success
+			if (row) {
+				if (error_state.source === 'value') {
+					commit_value(row, suggestion, input);
+				} else {
+					commit_formula(row, suggestion, input);
+				}
+			}
 		} else {
 			error_state.show_overlay = false;
 			input.focus();
@@ -128,6 +134,8 @@
 				error_state.active_bound = row.bound;
 				error_state.active_error = err;
 				error_state.show_overlay = true;
+				error_state.source = 'formula';
+				error_state.input = input ?? null;
 				if (input) input.setSelectionRange(err.span[0], err.span[0] + err.span[1]);
 				stores.tick();
 				return;
@@ -138,6 +146,8 @@
 				error_state.active_bound = row.bound;
 				error_state.active_error = err;
 				error_state.show_overlay = true;
+				error_state.source = 'formula';
+				error_state.input = input ?? null;
 				if (input) input.setSelectionRange(err.span[0], err.span[0] + err.span[1]);
 				stores.tick();
 				return;
@@ -155,11 +165,43 @@
 
 	const length_bounds = new Set(['width', 'depth', 'height']);
 
-	function commit_value(row: BoundsRow, value: string) {
+	function commit_value(row: BoundsRow, value: string, input?: HTMLInputElement) {
 		if (!selected_so || !row.bound) return;
 		history.snapshot();
-		const mm = units.parse_for_system(value, $w_unit_system) ?? constraints.evaluate_formula(value);
-		if (mm === null) return;
+		let mm = units.parse_for_system(value, $w_unit_system);
+		if (mm === null) {
+			// Before trying formula evaluation, check for obvious non-value junk
+			const junk_err = errors.not_a_value(value);
+			if (junk_err && selected_so) {
+				errors.set(selected_so.id, row.bound, junk_err);
+				error_state.active_bound = row.bound;
+				error_state.active_error = junk_err;
+				error_state.show_overlay = true;
+				error_state.source = 'value';
+				error_state.input = input ?? null;
+				if (input) { input.focus(); input.setSelectionRange(junk_err.span[0], junk_err.span[0] + junk_err.span[1]); }
+				stores.tick();
+				return;
+			}
+			// No junk detected — try evaluating as a constant formula (e.g. "20 + 5")
+			mm = constraints.evaluate_formula(value);
+			if (mm === null) return;
+		}
+		if (mm < 0) {
+			const err = errors.negative_value(value);
+			errors.set(selected_so.id, row.bound, err);
+			error_state.active_bound = row.bound;
+			error_state.active_error = err;
+			error_state.show_overlay = true;
+			error_state.source = 'value';
+			error_state.input = input ?? null;
+			if (input) { input.focus(); input.setSelectionRange(err.span[0], err.span[0] + err.span[1]); }
+			stores.tick();
+			return;
+		}
+		errors.clear(selected_so.id, row.bound);
+		error_state.active_error = null;
+		error_state.show_overlay = false;
 		if (length_bounds.has(row.bound)) {
 			constraints.write(selected_so.id, row.label, mm);
 		} else {
@@ -181,6 +223,8 @@
 
 	function set_invariant(row: BoundsRow) {
 		if (!selected_so || is_root) return;
+		stores.w_editing.set(T_Editing.none);
+		if (error_state.show_overlay) dismiss_overlay();
 		history.snapshot();
 		const axis = selected_so.axes[row.axis_index];
 		// Before changing invariant, sync length from geometry so it's never stale
@@ -246,12 +290,12 @@
 		}
 	}
 
-	let show_constants = $state(preferences.read<boolean>(T_Preference.showConstants) ?? true);
+	let show_givens = $state(preferences.read<boolean>(T_Preference.showGivens) ?? true);
 
-	function toggle_show_constants() { show_constants = !show_constants; preferences.write(T_Preference.showConstants, show_constants); }
+	function toggle_show_givens() { show_givens = !show_givens; preferences.write(T_Preference.showGivens, show_givens); }
 
-	function add_constant() {
-		constants.add('', 0);
+	function add_given() {
+		givens.add('', 0);
 		stores.tick();
 	}
 
@@ -265,13 +309,14 @@
 {#snippet attr_row(row: typeof bounds_rows[0], i: number)}
 	{@const row_disabled = is_root ? row.attr_index !== 2 : (row.is_invariant || row.has_formula)}
 	{@const gpos = i % 3}
-	{@const prev_inv = gpos > 0 && bounds_rows[i - 1].is_invariant}
-	{@const next_inv = gpos < 2 && bounds_rows[i + 1].is_invariant}
-	{@const next2_inv = gpos === 0 && bounds_rows[i + 2]?.is_invariant}
-	{@const merge_span = formula_mode === 'agnostic' && row.is_invariant && !prev_inv && next_inv ? (next2_inv ? 3 : 2) : 0}
-	{@const is_merge_cont = formula_mode === 'agnostic' && row.is_invariant && prev_inv}
+	{@const prev_inv = i > 0 && bounds_rows[i - 1]?.is_invariant}
+	{@const is_merge_cont = row.is_invariant && prev_inv}
+	{@const merge_span = row.is_invariant && !prev_inv ? (() => { let n = 1; while (i + n < bounds_rows.length && bounds_rows[i + n].is_invariant) n++; return n > 1 ? n : 0; })() : 0}
 	{@const root_formula_cont = is_root && i !== 0 && i !== 6}
 	{@const root_start_cont = is_root && row.attr_index === 0 && gpos > 0}
+	{@const has_error_base = !!(selected_so && row.bound && error_state.active_error && error_state.active_bound === row.bound)}
+	{@const has_formula_error = has_error_base && error_state.source === 'formula'}
+	{@const has_value_error = has_error_base && error_state.source === 'value'}
 	<tr class:merge-cont={is_merge_cont || root_formula_cont || root_start_cont}>
 		<td class='attr-name'>
 			{#if formula_mode === 'agnostic' && row.axis_index === 1}
@@ -282,12 +327,11 @@
 		<td class='attr-invariant' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
 		{#if !(is_merge_cont || root_formula_cont)}
 			{@const formula_disabled = is_root || row.is_invariant}
-			{@const has_error = !!(selected_so && row.bound && error_state.active_error && error_state.active_bound === row.bound)}
 			<td class='attr-formula' class:merged={is_root || merge_span >= 2} class:cell-disabled={formula_disabled} rowspan={is_root ? (i === 0 ? 6 : 3) : merge_span || undefined}>
 				<input
 					type      = 'text'
 					class     = 'cell-input'
-					class:cell-error={has_error}
+					class:cell-error={has_formula_error}
 					value     = {row.formula}
 					disabled  = {formula_disabled}
 					onfocus   = {(e) => { error_state.saved_formula = (e.target as HTMLInputElement).value; stores.w_editing.set(T_Editing.formula); }}
@@ -303,10 +347,11 @@
 				<input
 					type      = 'text'
 					class     = 'cell-input right'
+					class:cell-error={has_value_error}
 					value     = {is_root && row.attr_index === 0 ? '0' : row.value}
 					disabled  = {row_disabled}
 					onfocus   = {() => stores.w_editing.set(T_Editing.value)}
-					onblur    = {(e) => { commit_value(row, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
+					onblur    = {(e) => { const input = e.target as HTMLInputElement; commit_value(row, input.value, input); stores.w_editing.set(T_Editing.none); }}
 					onkeydown = {cell_keydown}
 				/>
 			</td>
@@ -352,17 +397,17 @@
 		{@render error_overlay()}
 	{/if}
 	<Separator />
-	<div class='constants-header'>
-		<button class='constants-toggle' onclick={toggle_show_constants}>
-			{show_constants ? 'hide' : 'show'} constants
+	<div class='givens-header'>
+		<button class='givens-toggle' onclick={toggle_show_givens}>
+			{show_givens ? 'hide' : 'show'} givens
 		</button>
-		{#if show_constants}
-			<button class='add-button' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>
+		{#if show_givens}
+			<button class='add-button' use:hit_target={{ id: 'add-given', onpress: add_given }}>
 				+
 			</button>
 		{/if}
 	</div>
-	{#if show_constants}<P_Constants /><div style:height='3px'></div>{/if}
+	{#if show_givens}<P_Givens /><div style:height='3px'></div>{/if}
 {:else}
 	<p>-- no object selected --</p>
 {/if}
@@ -503,7 +548,7 @@
 		opacity    : 0.6;
 	}
 
-	.constants-header {
+	.givens-header {
 		align-items   : center;
 		display       : flex;
 		gap           : 6px;
@@ -511,7 +556,7 @@
 		margin-bottom : 6px;
 	}
 
-	.constants-toggle {
+	.givens-toggle {
 		border        : 0.25px solid currentColor;
 		height        : var(--h-button-tiny);
 		font-size     : var(--h-font-common);
@@ -526,7 +571,7 @@
 		padding       : 0;
 	}
 
-	.constants-toggle:hover {
+	.givens-toggle:hover {
 		background : var(--hover);
 	}
 

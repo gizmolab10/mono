@@ -2,7 +2,7 @@ import type { Portable_Scene, Portable_SO, Exported_File } from './Versions';
 import default_scene from '../../../assets/cabinetry/drawer.di?raw';
 import { preferences, T_Preference } from './Preferences';
 import { CURRENT_VERSION, versions } from './Versions';
-import { constants } from '../algebra/User_Constants';
+import { givens } from '../algebra/Givens';
 import { constraints } from '../algebra/Constraints';
 import Smart_Object from '../runtime/Smart_Object';
 import { T_Hit_3D } from '../types/Enumerations';
@@ -34,7 +34,7 @@ class Scenes {
 			const validated = this.validate_import(saved);
 			if (!validated) return null;
 			const migrated = versions.migrate(validated.scene, validated.version);
-			this.restore_constants(migrated);
+			this.restore_givens(migrated);
 			return migrated;
 		}
 		// Fall back to bundled default scene
@@ -43,20 +43,20 @@ class Scenes {
 			const validated = this.validate_import(parsed);
 			if (!validated) return null;
 			const migrated = versions.migrate(validated.scene, validated.version);
-			this.restore_constants(migrated);
+			this.restore_givens(migrated);
 			return migrated;
 		} catch {
 			return null;
 		}
 	}
 
-	/** Restore constants from scene data into the global store.
-	 *  Always clears first — no field means no constants. */
-	private restore_constants(scene_data: Portable_Scene): void {
-		constants.clear();
-		if (!scene_data.constants?.length) return;
-		for (const entry of scene_data.constants) {
-			if (entry.name) constants.set(entry.name, entry.value_mm);
+	/** Restore givens from scene data into the global store.
+	 *  Always clears first — no field means no givens. */
+	private restore_givens(scene_data: Portable_Scene): void {
+		givens.clear();
+		if (!scene_data.givens?.length) return;
+		for (const entry of scene_data.givens) {
+			if (entry.name) { givens.set(entry.name, entry.value_mm); givens.set_locked(entry.name, entry.locked ?? true); }
 		}
 	}
 
@@ -78,10 +78,10 @@ class Scenes {
 				};
 			});
 		const sel = hits_3d.selection;
-		const user_constants = constants.get_all();
+		const user_givens = givens.get_all();
 		return {
 			smart_objects: objects,
-			constants: user_constants.length ? user_constants : undefined,
+			givens: user_givens.length ? user_givens : undefined,
 			camera: camera.serialize(),
 			root_id: this.root_id,
 			selected_id: sel?.so.id,

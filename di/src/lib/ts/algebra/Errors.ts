@@ -1,5 +1,5 @@
 import { scene } from '../render/Scene';
-import { constants } from './User_Constants';
+import { givens } from './Givens';
 
 // ═══════════════════════════════════════════════════════════════════
 // ALGEBRA — ERRORS
@@ -149,6 +149,66 @@ class Errors {
 		]);
 	}
 
+	negative_value(input: string): S_Error {
+		const message = 'Negative values are problematic, did&nbsp;you&nbsp;mean:';
+
+		// Find the last top-level '-' (paren depth 0) — that's the main subtraction
+		let main_minus = -1;
+		let depth = 0;
+		for (let i = 0; i < input.length; i++) {
+			if (input[i] === '(') depth++;
+			else if (input[i] === ')') depth--;
+			else if (input[i] === '-' && depth === 0) main_minus = i;
+		}
+
+		// Check if this is a binary minus (has non-whitespace before it) vs unary
+		const before = input.slice(0, main_minus).trim();
+		const after = input.slice(main_minus + 1).trim();
+		const is_binary = main_minus > 0 && before.length > 0;
+
+		if (is_binary) {
+			// Swap operands: if left side has top-level +/-, wrap in parens
+			let left_has_additive = false;
+			let d = 0;
+			for (const ch of before) {
+				if (ch === '(') d++;
+				else if (ch === ')') d--;
+				else if ((ch === '+' || ch === '-') && d === 0) { left_has_additive = true; break; }
+			}
+			const swapped_right = left_has_additive ? `(${before})` : before;
+			const swapped = `${after} - ${swapped_right}`;
+			const span: [number, number] = [0, input.length];
+			return this.make(input, span, new Error(message), message, [
+				{ label: `swap ${before} and ${after}`, formula: swapped },
+			]);
+		}
+
+		// Unary minus: offer to delete it
+		const span: [number, number] = main_minus >= 0 ? [main_minus, 1] : [0, input.length];
+		const without = main_minus >= 0
+			? (input.slice(0, main_minus) + input.slice(main_minus + 1)).trim()
+			: input;
+		return this.make(input, span, new Error(message), message, [
+			{ label: 'delete it', formula: without },
+		]);
+	}
+
+	not_a_value(input: string): S_Error | null {
+		// Find a trailing number (with optional unit suffix) — everything before it is junk
+		const m = input.match(/(\d+\.?\d*\s*(?:["']|[a-z]{1,3})?)\s*$/i);
+		if (!m || !m[1].trim()) return null;
+		const numeric = m[1].trim();
+		const junk_end = m.index!;
+		if (junk_end === 0) return null; // no junk, just a number
+		const junk = input.slice(0, junk_end).trim();
+		if (!junk) return null;
+		const span: [number, number] = [0, junk_end];
+		const message = `'${junk}' does not belong here, did&nbsp;you&nbsp;mean:`;
+		return this.make(input, span, new Error(message), message, [
+			{ label: 'delete it', formula: numeric },
+		]);
+	}
+
 	cycle(input: string, chain: string[]): S_Error {
 		const message = `This formula creates a loop: ${chain.join(' \u2192 ')}`;
 		return this.make(input, [0, input.length], new Error(message), message, []);
@@ -234,8 +294,8 @@ class Errors {
 		return prev[a.length];
 	}
 
-	/** Validate a proposed name for an SO or constant. Returns error message or null. */
-	validate_name(name: string, exclude_so_id?: string, exclude_constant_name?: string): string | null {
+	/** Validate a proposed name for an SO or given. Returns error message or null. */
+	validate_name(name: string, exclude_so_id?: string, exclude_given_name?: string): string | null {
 		if (/[^a-zA-Z0-9_ ]/.test(name)) {
 			const bad = name.match(/[^a-zA-Z0-9_ ]+/)![0];
 			return `'${bad}' will cause problems in formulas`;
@@ -247,7 +307,7 @@ class Errors {
 				return `'${name}' is already in use.`;
 			}
 		}
-		if (name !== exclude_constant_name && constants.has(name)) {
+		if (name !== exclude_given_name && givens.has(name)) {
 			return `'${name}' is already in use.`;
 		}
 		return null;

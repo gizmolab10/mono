@@ -6,6 +6,7 @@ import { T_Hit_3D } from '../types/Enumerations';
 import { stores } from '../managers/Stores';
 import { camera } from '../render/Camera';
 import type { Bound, Axis_Name } from '../types/Types';
+import { constraints } from '../algebra/Constraints';
 import Smart_Object from '../runtime/Smart_Object';
 
 /** Anchored plane captured at drag start — prevents frame-to-frame drift.
@@ -523,6 +524,16 @@ class Drag {
 		const is_root = !a.scene.parent;
 		if (is_root) vec3.scale(delta, delta, 2);
 
+		// Try solve-for-given first, fall back to set_bound
+		const stretch = (bound: Bound, value: number) => {
+			const snapped = Smart_Object.snap(value);
+			if (constraints.try_solve_given(a.so, bound, snapped)) {
+				constraints.propagate_all();
+			} else {
+				a.so.set_bound(bound, snapped);
+			}
+		};
+
 		// Apply bound changes from initial
 		if (a.target_type === T_Hit_3D.edge) {
 			const axis = a.so.edge_changes_axis(a.target_index, a.face_index);
@@ -534,11 +545,11 @@ class Drag {
 				const opposite = bound.replace('_min', '_max') as Bound;
 				const opp_initial = a.initial_bounds.get(opposite)!;
 				// Math.abs: at length=0, reflect — seamlessly switch to growing from other side
-				a.so.set_bound(opposite, Smart_Object.snap(Math.abs(opp_initial - offset)));
+				stretch(opposite, Math.abs(opp_initial - offset));
 			} else {
 				const initial = a.initial_bounds.get(bound)!;
 				const raw = initial + offset;
-				a.so.set_bound(bound, Smart_Object.snap(is_root ? Math.abs(raw) : raw));
+				stretch(bound, is_root ? Math.abs(raw) : raw);
 			}
 		} else {
 			const axes = a.so.face_axes(a.face_index);
@@ -550,11 +561,11 @@ class Drag {
 				if (is_root && bound.endsWith('_min')) {
 					const opposite = bound.replace('_min', '_max') as Bound;
 					const opp_initial = a.initial_bounds.get(opposite)!;
-					a.so.set_bound(opposite, Smart_Object.snap(Math.abs(opp_initial - offset)));
+					stretch(opposite, Math.abs(opp_initial - offset));
 				} else {
 					const initial = a.initial_bounds.get(bound)!;
 					const raw = initial + offset;
-					a.so.set_bound(bound, Smart_Object.snap(is_root ? Math.abs(raw) : raw));
+					stretch(bound, is_root ? Math.abs(raw) : raw);
 				}
 			}
 		}

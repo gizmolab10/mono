@@ -4,7 +4,7 @@ import type { Compact_Attribute } from '../types/Interfaces';
 import type Attribute from '../types/Attribute';
 import type { FormulaMap } from './Evaluator';
 
-import { constants, CONSTANTS_ID } from './User_Constants';
+import { givens, GIVENS_ID } from './Givens';
 import { errors, AlgebraError, type S_Error } from './Errors';
 import { tokenizer } from './Tokenizer';
 import { evaluator } from './Evaluator';
@@ -114,7 +114,7 @@ for (let owner = 0; owner < 3; owner++) {
 
 class Constraints {
 
-	referenced_constants = new Set<string>();
+	referenced_givens = new Set<string>();
 	private post_propagate_hook: (() => void) | null = null;
 
 	/** Register a callback invoked after every propagate / propagate_all.
@@ -129,9 +129,9 @@ class Constraints {
 	 *  Handles both internal names (x_min) and customer aliases (x, w, etc).
 	 *  Always reads stored value — invariance of the referenced SO is irrelevant. */
 	resolve(id: string, attribute: string): number {
-		if (id === CONSTANTS_ID) {
-			this.referenced_constants.add(attribute);
-			return constants.get(attribute);
+		if (id === GIVENS_ID) {
+			this.referenced_givens.add(attribute);
+			return givens.get(attribute);
 		}
 
 		const so = this.find_so(id);
@@ -210,7 +210,7 @@ class Constraints {
 				// Standard: expand bare s/e/l using owning axis
 				const attr = this.expand_contextual(node.attribute, owner_axis);
 				if (obj === 'self') {
-					if (constants.has(node.attribute)) return nodes.reference(CONSTANTS_ID, node.attribute);
+					if (givens.has(node.attribute)) return nodes.reference(GIVENS_ID, node.attribute);
 					if (!this.is_valid_attr(attr)) {
 						const name_span = this.find_name_span(input ?? '', node.attribute);
 						// Is this an SO name used without an attribute?
@@ -450,7 +450,7 @@ class Constraints {
 			return err;
 		}
 
-		attr.formula = tokenizer.tokenize(formula);
+		attr.formula = tokenizer.merge_refs(tokenizer.tokenize(formula));
 		attr.compiled = compiled;
 
 		// Evaluate immediately
@@ -467,6 +467,79 @@ class Constraints {
 		if (!attr) return;
 		attr.formula = null;
 		attr.compiled = null;
+	}
+
+	/** Try to solve a formula-bound attribute for its single given reference.
+	 *  Checks the direct bound attribute first, then sibling attributes on the same axis.
+	 *  For sibling attributes, computes the appropriate target (e.g. target length from target max - current min).
+	 *  Returns true if the given was updated, false otherwise (caller should fall back to set_bound). */
+	try_solve_given(so: Smart_Object, bound: Bound, target_value: number): boolean {
+		// Direct: the stretched bound itself has a formula
+		const attr = so.attributes_dict_byName[bound];
+		if (attr?.compiled && this.solve_given_attr(attr, target_value)) return true;
+
+		// Indirect: find the axis and check sibling attributes
+		const axis = so.axes.find(a => a.start.name === bound || a.end.name === bound || a.length.name === bound);
+		if (!axis) return false;
+
+		for (const sibling of [axis.start, axis.end, axis.length]) {
+			if (sibling === attr || !sibling.compiled) continue;
+
+			// Compute the target value this sibling would need
+			let sibling_target: number;
+			if (sibling === axis.length) {
+				// Stretching an endpoint → target length
+				const start_val = so.get_bound(axis.start.name as Bound);
+				const end_val = so.get_bound(axis.end.name as Bound);
+				if (bound === axis.start.name) sibling_target = end_val - target_value;
+				else sibling_target = target_value - start_val;
+			} else if (sibling === axis.start) {
+				// Stretching end or length → target start = end - length
+				const end_val = bound === axis.end.name ? target_value : so.get_bound(axis.end.name as Bound);
+				const len_val = bound === axis.length.name ? target_value : so.get_bound(axis.end.name as Bound) - so.get_bound(axis.start.name as Bound);
+				sibling_target = end_val - len_val;
+			} else {
+				// Stretching start or length → target end = start + length
+				const start_val = bound === axis.start.name ? target_value : so.get_bound(axis.start.name as Bound);
+				const len_val = bound === axis.length.name ? target_value : so.get_bound(axis.end.name as Bound) - so.get_bound(axis.start.name as Bound);
+				sibling_target = start_val + len_val;
+			}
+
+			if (this.solve_given_attr(sibling, sibling_target)) return true;
+		}
+
+		return false;
+	}
+
+	/** Solve a single attribute's formula for its given reference. */
+	private solve_given_attr(attr: Attribute, target_value: number): boolean {
+		if (!attr.compiled) return false;
+		const simplified = this.freeze_non_givens(attr.compiled);
+		try {
+			const resolve = (o: string, a: string) => this.resolve(o, a);
+			evaluator.propagate(simplified, target_value, resolve, (_obj, attr_name, value) => {
+				if (givens.is_locked(attr_name)) return;
+				givens.set(attr_name, value);
+			});
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	/** Replace non-given references in a node tree with literal values.
+	 *  Given references (object === GIVENS_ID) are kept as-is. */
+	private freeze_non_givens(node: Node): Node {
+		switch (node.type) {
+			case 'literal': return node;
+			case 'reference':
+				if (node.object === GIVENS_ID) return node;
+				return nodes.literal(this.resolve(node.object, node.attribute));
+			case 'unary':
+				return { type: 'unary', operator: '-', operand: this.freeze_non_givens(node.operand) };
+			case 'binary':
+				return { type: 'binary', operator: node.operator, left: this.freeze_non_givens(node.left), right: this.freeze_non_givens(node.right) };
+		}
 	}
 
 	// ── propagation ──

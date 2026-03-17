@@ -33,7 +33,7 @@ export default class Attribute {
 			return;
 		}
 		if (data.formula) {
-			this.formula = tokenizer.tokenize(data.formula);
+			this.formula = tokenizer.merge_refs(tokenizer.tokenize(data.formula));
 			this.value = 0;
 			try { this.compiled = compiler.compile(data.formula); } catch { /* skip */ }
 		} else {

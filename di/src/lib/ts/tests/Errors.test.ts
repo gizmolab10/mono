@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { errors } from '../algebra';
-import { constants } from '../algebra/User_Constants';
+import { givens } from '../algebra/Givens';
 import { scene } from '../render/Scene';
 import Smart_Object from '../runtime/Smart_Object';
 
@@ -18,7 +18,7 @@ function add_so(name: string): Smart_Object {
 
 beforeEach(() => {
 	scene.clear();
-	constants.clear();
+	givens.clear();
 });
 
 // ═══════════════════════════════════════════════════════════════════
@@ -93,26 +93,26 @@ describe('validate_name', () => {
 		expect(errors.validate_name('drawer', so.id)).toBeNull();
 	});
 
-	// ── duplicate constant names ──
+	// ── duplicate given names ──
 
-	it('rejects names already used by a constant', () => {
-		constants.add('gap', 10);
+	it('rejects names already used by a given', () => {
+		givens.add('gap', 10);
 		expect(errors.validate_name('gap')).toContain('already in use');
 	});
 
-	it('allows the same name when excluded by constant name', () => {
-		constants.add('gap', 10);
+	it('allows the same name when excluded by given name', () => {
+		givens.add('gap', 10);
 		expect(errors.validate_name('gap', undefined, 'gap')).toBeNull();
 	});
 
 	// ── cross-pool collisions ──
 
-	it('rejects SO name that matches a constant', () => {
-		constants.add('spacer', 5);
+	it('rejects SO name that matches a given', () => {
+		givens.add('spacer', 5);
 		expect(errors.validate_name('spacer')).toContain('already in use');
 	});
 
-	it('rejects constant name that matches an SO', () => {
+	it('rejects given name that matches an SO', () => {
 		add_so('bracket');
 		expect(errors.validate_name('bracket')).toContain('already in use');
 	});

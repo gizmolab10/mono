@@ -78,7 +78,7 @@
 				return;
 			}
 			history.snapshot();
-			so.name = trimmed;
+			so.name = trimmed.replace(/_/g, ' ');
 			scenes.save();
 			stores.w_all_sos.update(sos => sos);
 		}

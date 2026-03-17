@@ -22,6 +22,20 @@
             }
           },
           {
+            "id": "d0274eee0814b78c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/version.9.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "version.9"
+            }
+          },
+          {
             "id": "12070b246182dd7b",
             "type": "leaf",
             "state": {
@@ -123,7 +137,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/milestones/25.errors.md",
+                "file": "di/notes/work/version.9.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -133,7 +147,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 25.errors"
+              "title": "Backlinks for version.9"
             }
           },
           {
@@ -185,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/25.errors.md",
+                "file": "di/notes/work/version.9.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 25.errors"
+              "title": "Outline of version.9"
             }
           }
         ],
@@ -212,18 +226,27 @@
       "bases:Create new base": false
     }
   },
-  "active": "12070b246182dd7b",
+  "active": "d0274eee0814b78c",
   "lastOpenFiles": [
-    "di/notes/work/code.debt.md",
-    "notes/guides/collaborate/framing_filters.md",
     "di/notes/work/milestones/25.errors.md",
-    "di/src/lib/ts/tests/Errors.test.ts",
+    "di/notes/work/done/code.debt.done.md",
+    "di/notes/work/code.debt.md",
+    "di/src/assets/debug/sphere three.di",
+    "di/src/assets/debug/sphere two.di",
+    "di/src/assets/debug/sphere one.di",
+    "di/src/assets/debug/sphere four.di",
+    "di/src/assets/debug/sphere one copy.di",
+    "di/src/assets/debug/sphere one.di alias",
+    "di/src/assets/debug/sphere 2.di",
+    "di/src/assets/debug/rotated stairs.di",
+    "di/notes/work/version.9.md",
+    "di/src/assets/debug/rotated.stairs.di",
+    "di/src/assets/debug/sphere.2.di",
+    "notes/guides/collaborate/framing_filters.md",
     "di/notes/work/milestones/done/21.css.engine.md",
     "Screenshot 2026-03-14 at 12.48.11 PM.png",
-    "di/notes/work/done/code.debt.done.md",
     "di/notes/work/milestones/25.errors 1.md",
     "foo.md",
-    "di/src/lib/ts/algebra/Errors.ts",
     "di/notes/work/milestones/26.selection.algorithm.md",
     "di/notes/work/milestones/27.cut.lists.md",
     "di/notes/work/milestones/28.colors.md",
@@ -233,24 +256,14 @@
     "di/notes/work/milestones/done/8.dimensionals.md",
     "di/notes/work/milestones/done/18.user.constants.md",
     "di/notes/work/milestones/done/14.details.md",
-    "logs/update-docs.error.ma.log",
-    "logs/update-docs.error.mono.log",
     "di/notes/work/milestones/index.md",
-    "logs/update-docs.error.di.log",
     "di/notes/work/milestones/24.mobile.devices.md",
     "di/notes/work/milestones/done/24.mobile.devices.md",
-    "di/src/lib/ts/utilities/index.ts",
-    "di/src/lib/ts/utilities/Testworthy_Utilities.ts",
-    "di/src/lib/ts/utilities/SVG_Paths.ts",
-    "di/src/lib/ts/utilities/Colors.ts",
-    "di/src/lib/ts/utilities",
     "di/notes/work/milestones/23.undo.md",
     "di/notes/work/milestones/done/23.undo.md",
     "di/notes/work/milestones/done/index.md",
     "di/notes/work/milestones/30.marketing.md",
     "di/notes/work/milestones/22.aesthetics.md",
-    "di/notes/work/milestones/done/22.aesthetics.md",
-    "node_modules/concurrently/docs/cli/prefixing.md",
     "node_modules/concurrently/docs/demo.gif",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/64x64.png",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/512x512.png",

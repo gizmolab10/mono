@@ -4,7 +4,7 @@
     "smart_objects": [
       {
         "id": "die2470f99a91fb7",
-        "name": "sfior",
+        "name": "sphere two",
         "x": {
           "attributes": {
             "origin": 0,

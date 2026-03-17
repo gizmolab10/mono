@@ -77,7 +77,7 @@ describe('formula on Attribute', () => {
 		const so = add_so('box');
 		const error = constraints.set_formula(so, 'x_min', '+ +');
 		expect(error).not.toBeNull();
-		expect(error!.message).toMatch(/Unexpected/);
+		expect(error!.message).toMatch(/incomplete/);
 	});
 
 	it('returns error with labeled suggestions on bad syntax', () => {

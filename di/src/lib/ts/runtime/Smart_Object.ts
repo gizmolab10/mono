@@ -8,6 +8,7 @@ import Axis from './Axis';
 export default class Smart_Object extends Identifiable {
 	axes: Axis[] = [new Axis('x'), new Axis('y'), new Axis('z')];
 	repeater: Repeater | null = null;
+	hide_children: boolean = false;
 	visible: boolean = true;
 	scene: O_Scene | null;
 	name: string;
@@ -352,21 +353,22 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	/** Serialize to Portable_SO shape (per-axis bundles) */
-	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; repeater?: Repeater } {
-		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; repeater?: Repeater } = {
+	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater } {
+		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater } = {
 			id: this.id,
 			name: this.name,
 			x: this.axes[0].serialize(),
 			y: this.axes[1].serialize(),
 			z: this.axes[2].serialize(),
 		};
-		out.visible = this.visible;
+		out.visible = this.visible ?? false;
+		out.hide_children = this.hide_children ?? false;
 		if (this.repeater) out.repeater = this.repeater;
 		return out;
 	}
 
 	/** Deserialize from Portable_SO shape (per-axis bundles) */
-	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; repeater?: Repeater }): Smart_Object {
+	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater }): Smart_Object {
 		const so = new Smart_Object(data.name);
 		so.setID(data.id);
 		const axis_data = [data.x, data.y, data.z];
@@ -375,6 +377,7 @@ export default class Smart_Object extends Identifiable {
 		}
 		so.visible = data.visible ?? true;
 		so.repeater = data.repeater ?? null;
+		so.hide_children = data.hide_children ?? false;
 		return so;
 	}
 }

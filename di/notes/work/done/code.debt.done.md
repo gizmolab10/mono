@@ -114,3 +114,4 @@
 	- [x] rename migration.md -> versions.md
 	- [x] merge enlarged.algebra.md into notes/architecture/core/algebra.md
 		- [x] remove cruft
+- [x] the invariant formulas are distracting. hide them

@@ -40,7 +40,7 @@ export enum T_Preference {
 	// Parts
 	partsTab         = 'partsTab',
 	showParts        = 'showParts',
-	showConstants    = 'showConstants',
+	showGivens       = 'showConstants',
 	showPosition     = 'showPosition',
 
 	// Mode

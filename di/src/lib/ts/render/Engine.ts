@@ -1,4 +1,4 @@
-import { constraints, constants, evaluator } from '../algebra';
+import { constraints, givens, evaluator } from '../algebra';
 import type { Portable_Scene } from '../managers/Versions';
 import type { Bound, Axis_Name } from '../types/Types';
 import { scenes, stores, history } from '../managers';
@@ -145,21 +145,20 @@ class Engine {
 		// Teardown
 		scene.clear();
 		hits_3d.clear();
-		constants.clear();
+		givens.clear();
 		stores.w_editing.set(0);  // T_Editing.none
 
 		const smart_objects: Smart_Object[] = [];
 
 		if (saved?.smart_objects.length) {
-			// Restore constants before deserialization (formulas may reference them during rebind)
-			if (saved.constants?.length) {
-				for (const entry of saved.constants) {
-					if (entry.name) constants.set(entry.name, entry.value_mm);
+			// Restore givens before deserialization (formulas may reference them during rebind)
+			if (saved.givens?.length) {
+				for (const entry of saved.givens) {
+					if (entry.name) { givens.set(entry.name, entry.value_mm); givens.set_locked(entry.name, entry.locked ?? true); }
 				}
 			}
 			for (const data of saved.smart_objects) {
 				const so = Smart_Object.deserialize(data);
-				so.name = so.name.replace(/ /g, '_');
 				const so_scene = scene.create({
 					so,
 					edges: this.edges,
@@ -538,11 +537,12 @@ class Engine {
 		const parsed = scenes.parse_text(text);
 		if (!parsed?.smart_objects.length) return;
 
-		// Merge constants from the imported item (don't overwrite existing)
-		if (parsed.constants?.length) {
-			for (const entry of parsed.constants) {
-				if (entry.name && !constants.has(entry.name)) {
-					constants.set(entry.name, entry.value_mm);
+		// Merge givens from the imported item (don't overwrite existing)
+		if (parsed.givens?.length) {
+			for (const entry of parsed.givens) {
+				if (entry.name && !givens.has(entry.name)) {
+					givens.set(entry.name, entry.value_mm);
+					givens.set_locked(entry.name, entry.locked ?? true);
 				}
 			}
 		}
@@ -553,7 +553,6 @@ class Engine {
 		// Deserialize all SOs with fresh IDs, keep original names
 		for (const data of parsed.smart_objects) {
 			const so = Smart_Object.deserialize(data);
-			so.name = so.name.replace(/ /g, '_');
 			const old_id = so.id;
 			so.setID();
 			old_to_new.set(old_id, so.id);
@@ -650,18 +649,18 @@ class Engine {
 			hits_3d.set_selection(null);
 		}
 
-		// Prune constants no longer referenced by any remaining formula
-		constraints.referenced_constants.clear();
+		// Prune givens no longer referenced by any remaining formula
+		constraints.referenced_givens.clear();
 		const remaining = scene.get_all().map(o => o.so);
 		for (const so of remaining) {
 			for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (attr.compiled) evaluator.evaluate(attr.compiled, (obj, a) => constraints.resolve(obj, a));
 			}
 		}
-		for (const entry of constants.get_all()) {
-			if (!constraints.referenced_constants.has(entry.name)) {
-				console.warn(`[remove_all_children] pruning unreferenced constant: "${entry.name}"`);
-				constants.remove(entry.name);
+		for (const entry of givens.get_all()) {
+			if (!constraints.referenced_givens.has(entry.name)) {
+				console.warn(`[remove_all_children] pruning unreferenced given: "${entry.name}"`);
+				givens.remove(entry.name);
 			}
 		}
 
