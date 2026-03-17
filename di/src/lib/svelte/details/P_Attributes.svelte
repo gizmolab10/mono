@@ -14,11 +14,11 @@
 
 	const { w_selection, w_precision, w_tick } = stores;
 
-	type BoundsRow = { label: string; bound: string | null; value: string; formula: string; has_formula: boolean; is_invariant: boolean; axis_index: number; attr_index: number };
+	type BoundsRow = { label: string; bound: string | null; value: string; formula: string; has_formula: boolean; is_attached: boolean; is_invariant: boolean; axis_index: number; attr_index: number };
 
 	let selected_so = $derived($w_selection?.so ?? null);
 	let is_root = $derived(!selected_so?.scene?.parent);
-	let tick = $derived(stores.is_editing() ? 0 : $w_tick);
+	let tick = $derived.by(() => { const t = $w_tick; return stores.is_editing() ? 0 : t; });
 
 	function get_bounds(so: Smart_Object, _tick: number) {
 		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);
@@ -39,16 +39,17 @@
 			return '';
 		};
 		const has = (bound: string | null) => bound ? !!so.attributes_dict_byName[bound]?.compiled : false;
+		const att = (bound: string | null) => bound ? (so.attributes_dict_byName[bound]?.attached ?? false) : false;
 		return [
-			{ label: 'x', bound: 'x_min' as Bound, value: val('x_min', 0, 0), formula: fml('x_min'), has_formula: has('x_min'), is_invariant: inv(0, 0), axis_index: 0, attr_index: 0 },
-			{ label: 'y', bound: 'y_min' as Bound, value: val('y_min', 1, 0), formula: fml('y_min'), has_formula: has('y_min'), is_invariant: inv(1, 0), axis_index: 1, attr_index: 0 },
-			{ label: 'z', bound: 'z_min' as Bound, value: val('z_min', 2, 0), formula: fml('z_min'), has_formula: has('z_min'), is_invariant: inv(2, 0), axis_index: 2, attr_index: 0 },
-			{ label: 'w', bound: 'width',           value: val('width',  0, 2), formula: fml('width'), has_formula: has('width'), is_invariant: inv(0, 2), axis_index: 0, attr_index: 2 },
-			{ label: 'd', bound: 'depth',           value: val('depth',  1, 2), formula: fml('depth'), has_formula: has('depth'), is_invariant: inv(1, 2), axis_index: 1, attr_index: 2 },
-			{ label: 'h', bound: 'height',          value: val('height', 2, 2), formula: fml('height'), has_formula: has('height'), is_invariant: inv(2, 2), axis_index: 2, attr_index: 2 },
-			{ label: 'X', bound: 'x_max' as Bound, value: val('x_max', 0, 1), formula: fml('x_max'), has_formula: has('x_max'), is_invariant: inv(0, 1), axis_index: 0, attr_index: 1 },
-			{ label: 'Y', bound: 'y_max' as Bound, value: val('y_max', 1, 1), formula: fml('y_max'), has_formula: has('y_max'), is_invariant: inv(1, 1), axis_index: 1, attr_index: 1 },
-			{ label: 'Z', bound: 'z_max' as Bound, value: val('z_max', 2, 1), formula: fml('z_max'), has_formula: has('z_max'), is_invariant: inv(2, 1), axis_index: 2, attr_index: 1 },
+			{ label: 'x', bound: 'x_min' as Bound, value: val('x_min', 0, 0), formula: fml('x_min'), has_formula: has('x_min'), is_attached: att('x_min'), is_invariant: inv(0, 0), axis_index: 0, attr_index: 0 },
+			{ label: 'y', bound: 'y_min' as Bound, value: val('y_min', 1, 0), formula: fml('y_min'), has_formula: has('y_min'), is_attached: att('y_min'), is_invariant: inv(1, 0), axis_index: 1, attr_index: 0 },
+			{ label: 'z', bound: 'z_min' as Bound, value: val('z_min', 2, 0), formula: fml('z_min'), has_formula: has('z_min'), is_attached: att('z_min'), is_invariant: inv(2, 0), axis_index: 2, attr_index: 0 },
+			{ label: 'w', bound: 'width',           value: val('width',  0, 2), formula: fml('width'), has_formula: has('width'), is_attached: att('width'), is_invariant: inv(0, 2), axis_index: 0, attr_index: 2 },
+			{ label: 'd', bound: 'depth',           value: val('depth',  1, 2), formula: fml('depth'), has_formula: has('depth'), is_attached: att('depth'), is_invariant: inv(1, 2), axis_index: 1, attr_index: 2 },
+			{ label: 'h', bound: 'height',          value: val('height', 2, 2), formula: fml('height'), has_formula: has('height'), is_attached: att('height'), is_invariant: inv(2, 2), axis_index: 2, attr_index: 2 },
+			{ label: 'X', bound: 'x_max' as Bound, value: val('x_max', 0, 1), formula: fml('x_max'), has_formula: has('x_max'), is_attached: att('x_max'), is_invariant: inv(0, 1), axis_index: 0, attr_index: 1 },
+			{ label: 'Y', bound: 'y_max' as Bound, value: val('y_max', 1, 1), formula: fml('y_max'), has_formula: has('y_max'), is_attached: att('y_max'), is_invariant: inv(1, 1), axis_index: 1, attr_index: 1 },
+			{ label: 'Z', bound: 'z_max' as Bound, value: val('z_max', 2, 1), formula: fml('z_max'), has_formula: has('z_max'), is_attached: att('z_max'), is_invariant: inv(2, 1), axis_index: 2, attr_index: 1 },
 		];
 	}
 
@@ -340,6 +341,7 @@
 				/>
 			</td>
 		{/if}
+		<td class='attr-attached' class:invariant-bg={row.is_invariant}>{row.is_invariant || !row.has_formula ? '' : row.is_attached ? '🔗' : '–'}</td>
 		{#if root_start_cont}
 			<!-- spanned by first start row -->
 		{:else}
@@ -493,6 +495,21 @@
 		text-align           : right !important;
 		font-variant-numeric : tabular-nums;
 		min-width            : 80px;
+	}
+
+	.attr-attached {
+		background      : var(--c-white);
+		text-align      : center !important;
+		vertical-align  : middle;
+		font-size       : 8px;
+		width           : 14px;
+		min-width       : 14px;
+		line-height     : 1;
+		padding         : 0 !important;
+	}
+
+	.attr-attached.invariant-bg {
+		background : var(--selected);
 	}
 
 	.cell-input {

@@ -17,8 +17,8 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 6838.949999999999,
-            "length": 6838.949999999999,
+            "extent": 6826.249999999999,
+            "length": 6826.249999999999,
             "angle": 0
           },
           "invariant": 1
@@ -26,8 +26,8 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 3187.7,
-            "length": 3187.7,
+            "extent": 3207.7481243133543,
+            "length": 3207.7481243133543,
             "angle": 0
           },
           "invariant": 1
@@ -52,9 +52,9 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": -6750.049999999999,
+            "extent": -6737.349999999999,
             "length": {
-              "formula": "stud w"
+              "formula": "stud width"
             },
             "angle": 0
           },
@@ -93,7 +93,7 @@
             "origin": 0,
             "extent": -4533.9,
             "length": {
-              "formula": "template w"
+              "formula": "template width"
             },
             "angle": 0
           },
@@ -140,7 +140,7 @@
         "y": {
           "attributes": {
             "origin": 1477.9970497608188,
-            "extent": -4446.55295023918,
+            "extent": -4433.85295023918,
             "length": 914.4000000000001,
             "angle": 0
           },
@@ -180,7 +180,7 @@
             "origin": 0,
             "extent": -2780.6315789473692,
             "length": {
-              "formula": "tread d"
+              "formula": "tread depth"
             },
             "angle": 0
           },
@@ -199,10 +199,10 @@
         },
         "z": {
           "attributes": {
-            "origin": 209.97333333333333,
-            "extent": -2939.6266666666666,
+            "origin": 211.30987495422363,
+            "extent": -2958.3382493591307,
             "length": {
-              "formula": "tread th"
+              "formula": "tread thickness"
             },
             "angle": 0
           },
@@ -219,7 +219,7 @@
           "attributes": {
             "origin": 9537.7,
             "extent": {
-              "formula": ".l"
+              "formula": ".e"
             },
             "length": 88.89999999999964,
             "angle": 0
@@ -228,11 +228,11 @@
         },
         "y": {
           "attributes": {
-            "origin": 1219.2,
+            "origin": 1219.1999999999998,
             "extent": {
-              "formula": ".l - 6'"
+              "formula": "desk wall.s"
             },
-            "length": 3790.949999999999,
+            "length": 3778.249999999999,
             "angle": 0
           },
           "invariant": 2
@@ -278,9 +278,9 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": -3752.8499999999985,
+            "extent": -3740.149999999999,
             "length": {
-              "formula": "template th"
+              "formula": "template thickness"
             },
             "angle": 0
           },
@@ -354,7 +354,7 @@
       },
       {
         "id": "did740fd9e1b883d",
-        "name": "street wall",
+        "name": "desk wall",
         "x": {
           "attributes": {
             "origin": 5359.4,
@@ -373,7 +373,7 @@
             },
             "extent": -1739.9000000000005,
             "length": {
-              "formula": "stud w"
+              "formula": "stud width"
             },
             "angle": 0
           },
@@ -408,27 +408,31 @@
         "name": "south beam",
         "x": {
           "attributes": {
-            "origin": 80.5831527709961,
-            "extent": -4489.450000000001,
-            "length": 5056.5668472290035,
+            "origin": 82.31835079193115,
+            "extent": {
+              "formula": "center beam.s"
+            },
+            "length": 5092.93164920807,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
         "y": {
           "attributes": {
-            "origin": 1339.85,
-            "extent": -5410.199999999999,
+            "origin": 1389.0970497608187,
+            "extent": {
+              "formula": "stairs.s"
+            },
             "length": {
               "formula": "beam thickness"
             },
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 0
         },
         "z": {
           "attributes": {
-            "origin": 2901.95,
+            "origin": 2921.9981243133543,
             "extent": {
               "formula": ".l"
             },
@@ -449,16 +453,20 @@
         "x": {
           "attributes": {
             "origin": 93.76544570922852,
-            "extent": -4490.395083618165,
-            "length": 5042.439470672607,
+            "extent": {
+              "formula": "center beam.s"
+            },
+            "length": 5081.484554290772,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
         "y": {
           "attributes": {
-            "origin": 2401.3068877959327,
-            "extent": -4348.743112204066,
+            "origin": {
+              "formula": "stairs.e"
+            },
+            "extent": -4344.95295023918,
             "length": {
               "formula": "beam thickness"
             },
@@ -468,7 +476,7 @@
         },
         "z": {
           "attributes": {
-            "origin": 2901.95,
+            "origin": 2921.9981243133543,
             "extent": {
               "formula": ".l"
             },
@@ -490,7 +498,7 @@
           "attributes": {
             "origin": 5175.250000000001,
             "extent": {
-              "formula": ".l - 14'"
+              "formula": "outer street wall.e"
             },
             "length": {
               "formula": "big beam thickness"
@@ -504,17 +512,17 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
-            "length": {
-              "formula": ".l"
+            "extent": {
+              "formula": "outer street wall.s"
             },
+            "length": 6737.349999999999,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
         "z": {
           "attributes": {
-            "origin": 2901.95,
+            "origin": 2921.9981243133543,
             "extent": {
               "formula": ".l"
             },
@@ -535,12 +543,14 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s"
+              "formula": "back wall.e"
             },
             "extent": {
-              "formula": ".l - 14'"
+              "formula": "jog wall.x",
+              "value": 5359.400000000001,
+              "attached": true
             },
-            "length": 5359.400000000001,
+            "length": 5270.500000000001,
             "angle": 0
           },
           "invariant": 2
@@ -548,11 +558,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".l"
+              "formula": ".e - stud width"
             },
-            "extent": 88.89999999999964,
+            "extent": 0,
             "length": {
-              "formula": "stud w"
+              "formula": "stud width"
             },
             "angle": 0
           },
@@ -563,13 +573,13 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
-            "length": {
-              "formula": ".l"
+            "extent": {
+              "formula": ".e"
             },
+            "length": 3207.7481243133543,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
         "visible": true,
         "hide_children": false,
@@ -581,24 +591,55 @@
           "is_diagonal": false
         },
         "parent_id": "didc4131a9e6d366"
+      },
+      {
+        "id": "di554bc1a8679e8f",
+        "name": "jog wall",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "outer street wall.e"
+            },
+            "extent": -4178.3,
+            "length": {
+              "formula": "stud width"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "desk wall.e"
+            },
+            "extent": {
+              "formula": "outer street wall.e"
+            },
+            "length": 1739.9000000000005,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 3207.7481243133543,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "didc4131a9e6d366"
       }
     ],
     "givens": [
-      {
-        "name": "template w",
-        "value_mm": 38.1,
-        "locked": true
-      },
-      {
-        "name": "tread d",
-        "value_mm": 203.2,
-        "locked": true
-      },
-      {
-        "name": "tread th",
-        "value_mm": 38.099999999999994,
-        "locked": true
-      },
       {
         "name": "inset",
         "value_mm": 6.35,
@@ -610,53 +651,8 @@
         "locked": true
       },
       {
-        "name": "top h",
-        "value_mm": 101.6,
-        "locked": true
-      },
-      {
-        "name": "middle h",
-        "value_mm": 152.39999999999998,
-        "locked": true
-      },
-      {
-        "name": "bottom h",
-        "value_mm": 215.89999999999998,
-        "locked": true
-      },
-      {
         "name": "bottom Inset",
         "value_mm": 19.049999999999997,
-        "locked": true
-      },
-      {
-        "name": "side th",
-        "value_mm": 12.7,
-        "locked": true
-      },
-      {
-        "name": "front th",
-        "value_mm": 19.049999999999997,
-        "locked": true
-      },
-      {
-        "name": "back th",
-        "value_mm": 12.7,
-        "locked": true
-      },
-      {
-        "name": "bottom th",
-        "value_mm": 6.35,
-        "locked": true
-      },
-      {
-        "name": "stud w",
-        "value_mm": 88.89999999999999,
-        "locked": true
-      },
-      {
-        "name": "template th",
-        "value_mm": 38.1,
         "locked": true
       },
       {
@@ -672,6 +668,66 @@
       {
         "name": "big beam thickness",
         "value_mm": 184.14999999999998,
+        "locked": true
+      },
+      {
+        "name": "middle height",
+        "value_mm": 152.39999999999998,
+        "locked": true
+      },
+      {
+        "name": "bottom height",
+        "value_mm": 215.89999999999998,
+        "locked": true
+      },
+      {
+        "name": "stud width",
+        "value_mm": 88.89999999999999,
+        "locked": true
+      },
+      {
+        "name": "template width",
+        "value_mm": 38.1,
+        "locked": true
+      },
+      {
+        "name": "tread depth",
+        "value_mm": 203.2,
+        "locked": true
+      },
+      {
+        "name": "top height",
+        "value_mm": 101.6,
+        "locked": true
+      },
+      {
+        "name": "tread thickness",
+        "value_mm": 38.099999999999994,
+        "locked": true
+      },
+      {
+        "name": "side thickness",
+        "value_mm": 12.7,
+        "locked": true
+      },
+      {
+        "name": "front thickness",
+        "value_mm": 19.049999999999997,
+        "locked": true
+      },
+      {
+        "name": "bottom thickness",
+        "value_mm": 6.35,
+        "locked": true
+      },
+      {
+        "name": "back thickness",
+        "value_mm": 12.7,
+        "locked": true
+      },
+      {
+        "name": "template thickness",
+        "value_mm": 38.1,
         "locked": true
       }
     ],
@@ -693,7 +749,7 @@
       ]
     },
     "root_id": "didc4131a9e6d366",
-    "selected_id": "di824b7894ad2203",
-    "selected_face": 1
+    "selected_id": "di944d0a87f8fb7c",
+    "selected_face": 5
   }
 }

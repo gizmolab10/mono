@@ -89,6 +89,11 @@ class Engine {
 
 		// Input: drag ended — snap to nearest face-aligned orientation
 		e3.set_drag_end_handler(() => {
+			// Pin offer for edge snaps (must run before drag.clear)
+			if (drag.snap_results.length > 0) {
+				drag.compute_pin_offer();
+			}
+
 			if (this.is_tilting && this.root_scene) {
 				// 2D tilt snap-back
 				this.snap_anim = {

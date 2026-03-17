@@ -17,8 +17,8 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 2438.3999999999996,
-            "length": 2438.3999999999996,
+            "extent": 2320.135397338867,
+            "length": 2320.135397338867,
             "angle": 0
           },
           "invariant": 1
@@ -26,8 +26,8 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 3803.0329681396483,
-            "length": 3803.0329681396483,
+            "extent": 4010.427941894531,
+            "length": 4010.427941894531,
             "angle": 0
           },
           "invariant": 1
@@ -49,8 +49,8 @@
         },
         "y": {
           "attributes": {
-            "origin": -118.26460266113281,
-            "extent": -118.26460266113281,
+            "origin": 0,
+            "extent": 118.26460266113281,
             "length": 2438.3999999999996,
             "angle": 0
           },
@@ -59,7 +59,7 @@
         "z": {
           "attributes": {
             "origin": 529.840690612793,
-            "extent": -225.19227752685538,
+            "extent": -432.5872512817382,
             "length": 3048,
             "angle": 0
           },
@@ -121,19 +121,21 @@
         "name": "left stringer",
         "x": {
           "attributes": {
-            "origin": 0,
-            "extent": -943.7692403793335,
+            "origin": -3.5225557327270565,
+            "extent": {
+              "formula": "stairs.s"
+            },
             "length": {
               "formula": "tread thickness"
             },
             "angle": -0.7068583470577035
           },
-          "invariant": 1
+          "invariant": 0
         },
         "y": {
           "attributes": {
-            "origin": 1055.1417546272278,
-            "extent": -1097.5082453727719,
+            "origin": 1173.4063572883606,
+            "extent": -860.9790400505062,
             "length": {
               "formula": "stringer width"
             },
@@ -144,7 +146,7 @@
         "z": {
           "attributes": {
             "origin": 5.457133483886707,
-            "extent": 207.3949737548828,
+            "extent": 0,
             "length": 4004.9708084106446,
             "angle": 0
           },
@@ -159,8 +161,10 @@
         "name": "right stringer",
         "x": {
           "attributes": {
-            "origin": 943.7692403793335,
-            "extent": 0,
+            "origin": {
+              "formula": "stairs.e"
+            },
+            "extent": 5.2082038879395895,
             "length": {
               "formula": "tread thickness"
             },
@@ -170,8 +174,8 @@
         },
         "y": {
           "attributes": {
-            "origin": 1046.2703475952148,
-            "extent": -1106.3796524047848,
+            "origin": 1164.5349502563477,
+            "extent": -869.8504470825192,
             "length": {
               "formula": "stringer width"
             },
@@ -182,7 +186,7 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 201.6620056152342,
+            "extent": -5.732968139648619,
             "length": 4004.6949737548825,
             "angle": 0
           },
@@ -222,6 +226,8 @@
         0
       ]
     },
-    "root_id": "die2463eb347311e"
+    "root_id": "die2463eb347311e",
+    "selected_id": "di2142dda47b00ed",
+    "selected_face": 5
   }
 }

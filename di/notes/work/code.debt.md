@@ -3,18 +3,10 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] [[26.snap.pin]]
-- [ ] separators
-    - [ ] eliminate the need for end and gap in separator
-    - [ ] revise Separator simplify its css footprint
-    - [ ] larger fatter separators, play with over doing it
-        - [ ] bottom of details
-            - [ ] a. lot when all closed
-        - [ ] around the centered groups
-    - [ ] add a sep -> graph (for sliders, build notes)
-        - [ ] eliminate crumbs
 - [ ] cannot rotate basement around z axis
     - [ ] rear wall -> funky location
+- [ ] stretch top drawer up -> fubar!
+- [ ] [[26.snap.pin]]
 - [ ] so & portable so -> add a hide children boolean
     - [ ] very different than what the triangle does
     - [ ] true overrides each child's isVisible

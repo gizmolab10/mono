@@ -386,8 +386,11 @@ class Constraints {
 			const owner_axis = attribute_to_axis[attr.name];
 			try {
 				attr.compiled = this.bind_refs(attr.compiled, so.id, parent_id, owner_axis);
-				attr.value = evaluator.evaluate(attr.compiled, (o, a) => this.resolve(o, a));
-				this.sync_length(so, attr.name, attr.value);
+				// Attached attrs keep their stored value as seed — skip evaluation
+				if (!attr.attached) {
+					attr.value = evaluator.evaluate(attr.compiled, (o, a) => this.resolve(o, a));
+					this.sync_length(so, attr.name, attr.value);
+				}
 			} catch (e) { if (!(e instanceof AlgebraError)) throw e; } // skip — formula references something invalid
 		}
 		this.enforce_invariants(so);
@@ -410,8 +413,10 @@ class Constraints {
 
 	/** Set a formula on an SO attribute. Compiles, binds, checks cycles.
 	 *  Returns S_Error on failure (stored in Errors singleton), null on success.
-	 *  parent_id: if provided, dot-prefixed attributes (.x, .w, etc.) resolve to this SO. */
-	set_formula(so: Smart_Object, attr_name: string, formula: string, parent_id?: string): S_Error | null {
+	 *  parent_id: if provided, dot-prefixed attributes (.x, .w, etc.) resolve to this SO.
+	 *  attached: if true, marks the attr as attached (mutual cross-reference),
+	 *    skips cycle detection, and preserves current value as seed. */
+	set_formula(so: Smart_Object, attr_name: string, formula: string, parent_id?: string, attached?: boolean): S_Error | null {
 		const attr = so.attributes_dict_byName[attr_name];
 		if (!attr) {
 			const err = errors.bad_syntax(formula, [0, formula.length], new Error(`Unknown attribute: ${attr_name}`));
@@ -439,23 +444,31 @@ class Constraints {
 			return e.s_error;
 		}
 
-		// Check for cycles before accepting
-		const formulas = this.build_formula_map();
-		const key = nodes.ref_key(so.id, attr_name);
-		formulas.set(key, compiled);
-		const cycle = evaluator.detect_cycle(formulas);
-		if (cycle) {
-			const err = errors.cycle(formula, cycle);
-			errors.set(so.id, attr_name, err);
-			return err;
+		// Attached formulas intentionally cross-reference — skip cycle detection
+		if (!attached) {
+			const formulas = this.build_formula_map();
+			const key = nodes.ref_key(so.id, attr_name);
+			formulas.set(key, compiled);
+			const cycle = evaluator.detect_cycle(formulas);
+			if (cycle) {
+				const err = errors.cycle(formula, cycle);
+				errors.set(so.id, attr_name, err);
+				return err;
+			}
 		}
 
 		attr.formula = tokenizer.merge_refs(tokenizer.tokenize(formula));
 		attr.compiled = compiled;
+		attr.attached = attached ?? false;
 
-		// Evaluate immediately
-		attr.value = evaluator.evaluate(compiled, (o, a) => this.resolve(o, a));
-		this.sync_length(so, attr_name, attr.value);
+		if (attached) {
+			// Attached: keep current value as seed — don't evaluate
+			this.sync_length(so, attr_name, attr.value);
+		} else {
+			// Normal: evaluate immediately
+			attr.value = evaluator.evaluate(compiled, (o, a) => this.resolve(o, a));
+			this.sync_length(so, attr_name, attr.value);
+		}
 		this.enforce_invariants(so);
 		errors.clear(so.id, attr_name);
 		return null;

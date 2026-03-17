@@ -8,6 +8,9 @@ import { camera } from '../render/Camera';
 import type { Bound, Axis_Name } from '../types/Types';
 import { constraints } from '../algebra/Constraints';
 import Smart_Object from '../runtime/Smart_Object';
+import { scene as scene_graph } from '../render/Scene';
+import { scenes } from '../managers/Scenes';
+import { writable, get } from 'svelte/store';
 
 /** Anchored plane captured at drag start — prevents frame-to-frame drift.
  *  Uses parent-face geometry: the face's two edge vectors (e1, e2) form
@@ -51,6 +54,32 @@ interface Stretch_Anchor {
 	target_index: number;        // which edge or corner
 }
 
+/** Record of an edge snap during face drag — used for pin offer on drag end. */
+interface Snap_Result {
+	dragged_bound: Bound;
+	sibling_so: Smart_Object;
+	sibling_bound: Bound;
+	value: number;
+}
+
+/** Distance threshold in mm for edge-to-edge snapping during face drag. */
+const SNAP_THRESHOLD_MM = 5;
+
+/** Pin offer shown after a drag ends with active snaps. */
+export interface Pin_Offer {
+	screen_x: number;
+	screen_y: number;
+	snaps: Snap_Result[];
+	dragged_so: Smart_Object;
+}
+
+/** Bound name → formula alias for cross-references. */
+const bound_to_alias: Record<string, string> = {
+	x_min: 'x', x_max: 'X',
+	y_min: 'y', y_max: 'Y',
+	z_min: 'z', z_max: 'Z',
+};
+
 class Drag {
 	private target: Hit_3D_Result | null = null;
 
@@ -66,12 +95,20 @@ class Drag {
 	/** During rotation, the face whose normal is the rotation axis. */
 	private _rotation_face: { scene: O_Scene; face_index: number } | null = null;
 
+	/** Active edge snaps from the most recent face drag frame. */
+	private _snap_results: Snap_Result[] = [];
+
+	/** Pin offer shown after drag ends with active snaps. */
+	w_pin_offer = writable<Pin_Offer | null>(null);
+
 	// ── lifecycle ──
 
 	set_target(hit: Hit_3D_Result | null): void {
 		this.target = hit;
 		this.face_anchor = null;
 		this.stretch_anchor = null;
+		this._snap_results = [];
+		this.w_pin_offer.set(null);
 		// Immediate highlight: if clicking an edge/corner on a selected face, store for guidance rendering
 		const sel = hits_3d.selection;
 		if (hit && sel && (hit.type === T_Hit_3D.edge || hit.type === T_Hit_3D.corner) && sel.so.scene) {
@@ -103,6 +140,86 @@ class Drag {
 	/** During rotation, the face whose normal is the rotation axis. */
 	get rotation_face(): { scene: O_Scene; face_index: number } | null {
 		return this._rotation_face;
+	}
+
+	/** Edge snaps from the current/most-recent face drag. */
+	get snap_results(): Snap_Result[] { return this._snap_results; }
+
+	/** Clear snap results — called when pin offer is accepted or dismissed. */
+	clear_snap_results(): void { this._snap_results = []; }
+
+	/** After drag ends with active snaps, compute screen position and populate pin offer. */
+	compute_pin_offer(): void {
+		const a = this.face_anchor;
+		if (!a || this._snap_results.length === 0) return;
+
+		const so = a.so;
+		const world_matrix = this.get_world_matrix(a.child_scene);
+		const view_projection = mat4.create();
+		mat4.multiply(view_projection, camera.projection, camera.view);
+
+		let total_x = 0, total_y = 0;
+		for (const snap of this._snap_results) {
+			// Midpoint of the snapped edge on the child SO
+			const mid: vec3 = [
+				(so.x_min + so.x_max) / 2,
+				(so.y_min + so.y_max) / 2,
+				(so.z_min + so.z_max) / 2,
+			];
+			// Place on the snapped bound's axis
+			const axis = snap.dragged_bound.startsWith('x') ? 0
+				: snap.dragged_bound.startsWith('y') ? 1 : 2;
+			mid[axis] = snap.value;
+
+			const world: vec3 = [0, 0, 0];
+			vec3.transformMat4(world, mid, world_matrix);
+
+			const clip = vec4.create();
+			vec4.transformMat4(clip, vec4.fromValues(world[0], world[1], world[2], 1), view_projection);
+			if (Math.abs(clip[3]) < 1e-6) continue;
+
+			total_x += ((clip[0] / clip[3]) + 1) * 0.5 * camera.size.width;
+			total_y += (1 - (clip[1] / clip[3])) * 0.5 * camera.size.height;
+		}
+
+		const n = this._snap_results.length;
+		this.w_pin_offer.set({
+			screen_x: total_x / n,
+			screen_y: total_y / n,
+			snaps: [...this._snap_results],
+			dragged_so: so,
+		});
+	}
+
+	/** Accept pin offer: set attached cross-referencing formulas on both SOs. */
+	accept_pin(): void {
+		const offer = get(this.w_pin_offer);
+		if (!offer) return;
+
+		const parent_id = offer.dragged_so.scene?.parent?.so.id;
+		for (const snap of offer.snaps) {
+			const dragged_alias = bound_to_alias[snap.dragged_bound];
+			const sibling_alias = bound_to_alias[snap.sibling_bound];
+			if (!dragged_alias || !sibling_alias) continue;
+
+			// Dragged SO's bound → references sibling
+			constraints.set_formula(
+				offer.dragged_so, snap.dragged_bound,
+				`${snap.sibling_so.name}.${sibling_alias}`,
+				parent_id, true
+			);
+			// Sibling's bound → references dragged SO
+			constraints.set_formula(
+				snap.sibling_so, snap.sibling_bound,
+				`${offer.dragged_so.name}.${dragged_alias}`,
+				parent_id, true
+			);
+		}
+
+		this.w_pin_offer.set(null);
+		constraints.propagate(offer.dragged_so);
+		stores.tick();
+		scenes.save();
 	}
 
 	// ── object transforms ──
@@ -502,6 +619,68 @@ class Drag {
 			const [min_b, max_b] = axes[i];
 			a.so.set_bound(min_b, a.initial_bounds.get(min_b)! + delta[i]);
 			a.so.set_bound(max_b, a.initial_bounds.get(max_b)! + delta[i]);
+		}
+		this.detect_edge_snap();
+	}
+
+	/** During face drag, detect if the dragged SO's edges are near a sibling's edges.
+	 *  Snaps to zero gap when within threshold. Updates _snap_results for pin offer. */
+	private detect_edge_snap(): void {
+		const a = this.face_anchor;
+		if (!a) return;
+		this._snap_results = [];
+
+		// Movement axes — skip the axis perpendicular to the drag plane
+		const move_axes = a.parent_scene.so.face_axes(a.face_index);
+
+		// Find sibling scenes (same parent, different SO)
+		const siblings = scene_graph.get_all().filter(
+			o => o.parent === a.parent_scene && o !== a.child_scene
+		);
+		if (siblings.length === 0) return;
+
+		const axis_bounds: Record<Axis_Name, [Bound, Bound]> = {
+			x: ['x_min', 'x_max'], y: ['y_min', 'y_max'], z: ['z_min', 'z_max'],
+		};
+
+		for (const axis of move_axes) {
+			const [min_b, max_b] = axis_bounds[axis];
+			const dragged_min = a.so.get_bound(min_b);
+			const dragged_max = a.so.get_bound(max_b);
+
+			let best: { dragged_bound: Bound; sibling_so: Smart_Object; sibling_bound: Bound; value: number; distance: number } | null = null;
+
+			for (const sibling of siblings) {
+				const sibling_min = sibling.so.get_bound(min_b);
+				const sibling_max = sibling.so.get_bound(max_b);
+
+				for (const [dv, db, sv, sb] of [
+					[dragged_min, min_b, sibling_min, min_b],
+					[dragged_min, min_b, sibling_max, max_b],
+					[dragged_max, max_b, sibling_min, min_b],
+					[dragged_max, max_b, sibling_max, max_b],
+				] as [number, Bound, number, Bound][]) {
+					const distance = Math.abs(dv - sv);
+					if (distance < SNAP_THRESHOLD_MM && (!best || distance < best.distance)) {
+						best = { dragged_bound: db, sibling_so: sibling.so, sibling_bound: sb, value: sv, distance };
+					}
+				}
+			}
+
+			if (best) {
+				// Shift entire SO on this axis so edges align
+				const current = a.so.get_bound(best.dragged_bound);
+				const shift = best.value - current;
+				a.so.set_bound(min_b, a.so.get_bound(min_b) + shift);
+				a.so.set_bound(max_b, a.so.get_bound(max_b) + shift);
+
+				this._snap_results.push({
+					dragged_bound: best.dragged_bound,
+					sibling_so: best.sibling_so,
+					sibling_bound: best.sibling_bound,
+					value: best.value,
+				});
+			}
 		}
 	}
 

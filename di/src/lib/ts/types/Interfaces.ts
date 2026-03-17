@@ -53,6 +53,7 @@ export interface Repeater {
 export interface Portable_Attribute {
 	formula?: string;
 	value?: number;
+	attached?: boolean;
 }
 
 // number = just a value, object = formula/offset/etc.

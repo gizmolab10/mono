@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/milestones/26.snap.pin.md",
+                "file": "di/notes/work/separators.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "26.snap.pin"
+              "title": "separators"
             }
           },
           {
@@ -123,7 +123,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/milestones/26.snap.pin.md",
+                "file": "di/notes/work/separators.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -133,7 +133,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 26.snap.pin"
+              "title": "Backlinks for separators"
             }
           },
           {
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/26.snap.pin.md",
+                "file": "di/notes/work/separators.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 26.snap.pin"
+              "title": "Outline of separators"
             }
           }
         ],
@@ -214,9 +214,15 @@
   },
   "active": "a283699e03a14538",
   "lastOpenFiles": [
-    "di/notes/work/milestones/done/7.edit.drags.md",
     "di/notes/work/milestones/26.snap.pin.md",
     "di/notes/work/code.debt.md",
+    "di/notes/work/separators.md",
+    "di/notes/work/milestones/done/3.docs.md",
+    "di/notes/work/milestones/done/2.panel.md",
+    "di/dist/assets/index-n3V0qM8L.js",
+    "di/dist/assets/index-CSZIf2OE.css",
+    "di/dist/assets",
+    "di/notes/work/milestones/done/7.edit.drags.md",
     "di/notes/work/milestones/done/16.formulas.md",
     "di/notes/work/milestones/done/19.angles.md",
     "di/notes/work/milestones/28.colors.md",
@@ -238,9 +244,6 @@
     "di/src/assets/debug/sphere one.di",
     "di/src/assets/debug/sphere four.di",
     "di/src/assets/debug/sphere one copy.di",
-    "di/src/assets/debug/sphere one.di alias",
-    "di/src/assets/debug/sphere 2.di",
-    "di/src/assets/debug/rotated stairs.di",
     "notes/guides/collaborate/framing_filters.md",
     "di/notes/work/milestones/done/21.css.engine.md",
     "Screenshot 2026-03-14 at 12.48.11 PM.png",
@@ -248,9 +251,6 @@
     "foo.md",
     "di/notes/work/milestones/done/14.details.md",
     "di/notes/work/milestones/index.md",
-    "di/notes/work/milestones/24.mobile.devices.md",
-    "di/notes/work/milestones/done/24.mobile.devices.md",
-    "di/notes/work/milestones/23.undo.md",
     "node_modules/concurrently/docs/demo.gif",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/64x64.png",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/512x512.png",
