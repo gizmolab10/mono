@@ -1,13 +1,10 @@
 # version 9
 
-## open
-
-- [ ] locked givens (read-only flag, lock/unlock toggle in UI)
-    - [ ] test with bottom drawer height in two drawer cabinet
-- [ ] hide children boolean
-
 ## done
 
+- [x] locked givens (read-only flag, lock/unlock toggle in UI)
+    - [x] test with bottom drawer height in two drawer cabinet
+- [x] hide children boolean
 - [x] rename GivenEntry as Portable_Given
 - [x] rename serialized field `constants` → `givens` in Portable_Scene
 - [x] bump CURRENT_VERSION to '9'

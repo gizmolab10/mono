@@ -114,4 +114,18 @@
 	- [x] rename migration.md -> versions.md
 	- [x] merge enlarged.algebra.md into notes/architecture/core/algebra.md
 		- [x] remove cruft
+- [x] algebra cannot parse ".l - top_drawer.l"
+- [x] constants -> values
 - [x] the invariant formulas are distracting. hide them
+- [x] rename user constants -> givens
+- [x] [[version.9]] portable format
+- [x] file name
+    - [x] take root object name it
+    - [x] no underscore (-> space) in them
+- [x] cyclic formula refs -> default to 0
+    - [x] want: "capture the last user choice"
+    - [x] a new kind of idea: "these two are the same"
+        - [x] ref a constant
+            - [x] drag does not update the constant
+- [x] invert the order of the breadcrumb buttons
+- [x] add another col to attr table before first col: s, l, e

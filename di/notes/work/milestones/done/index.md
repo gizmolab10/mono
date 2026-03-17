@@ -22,7 +22,7 @@
 | 15  | [Attributes](15.attributes.md)            |                |
 | 16  | [Formulas](16.formulas.md)                | Feb 16         |
 | 17  | [Library](17.library.md)                  |                |
-| 18  | [User Constants](18.user.constants.md)    |                |
+| 18  | [User Constants](18.givens.md)    |                |
 | 19  | [Skills](19.angles.md)                    |                |
 | 20  | [Repeaters](20.repeaters.md)              |                |
 | 21  | [CSS Engine](21.css.engine.md)            |                |

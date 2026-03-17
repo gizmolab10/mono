@@ -318,10 +318,10 @@
 	{@const has_formula_error = has_error_base && error_state.source === 'formula'}
 	{@const has_value_error = has_error_base && error_state.source === 'value'}
 	<tr class:merge-cont={is_merge_cont || root_formula_cont || root_start_cont}>
+		{#if formula_mode === 'agnostic' && i % 3 === 0}
+			<td class='attr-key' rowspan={3}>{['s', 'l', 'e'][Math.floor(i / 3)]}</td>
+		{/if}
 		<td class='attr-name'>
-			{#if formula_mode === 'agnostic' && row.axis_index === 1}
-				<span class='ctx' class:ctx-l={row.attr_index === 2}>{['s', 'e', 'l'][row.attr_index]}</span>
-			{/if}
 			{row.label}
 		</td>
 		<td class='attr-invariant' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
@@ -435,15 +435,15 @@
 		opacity     : 0.7;
 	}
 
-	.ctx {
-		right       : calc(100% + 2px);
-		position    : absolute;
-		opacity     : 0.5;
-		font-weight : 600;
-	}
-
-	.ctx-l {
-		right : calc(100% + 3px);
+	.attr-key {
+		text-align     : center !important;
+		vertical-align : middle;
+		background     : var(--bg);
+		opacity        : 0.5;
+		font-weight    : 600;
+		min-width      : 1lh;
+		width          : 1lh;
+		padding        : 0;
 	}
 
 	.attr-invariant {

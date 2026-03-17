@@ -356,7 +356,7 @@
 
 	.breadcrumbs {
 		z-index         : var(--z-action);
-		flex-direction  : column-reverse;
+		flex-direction  : column;
 		align-items     : flex-start;
 		position        : absolute;
 		top             : 10px;
