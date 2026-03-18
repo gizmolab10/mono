@@ -68,6 +68,10 @@ export default class Constants {
 		padding:        common_size / 3,
 		margin:         common_size / 3.2,
 		letter_spacing: 0.5,
+		extra: {
+			main:       common_size / 5,    // same as gap
+			content:    common_size / 3.2,	// same as margin
+		}
 	};
 
 	z = {
@@ -87,7 +91,6 @@ export default class Constants {
 	thickness = {
 		separator: {
 			content: common_size / 10,
-			banners: common_size / 6,
 			main:	 common_size / 5,
 		},
 		thumb:       common_size / 6,
@@ -97,8 +100,7 @@ export default class Constants {
 	};
 
 	radius = {
-		content: 9,
-		banners: 16,
+		content: common_size / 3,
 		main:	 common_size * 0.6
 	};
 

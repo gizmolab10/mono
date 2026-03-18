@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Layer, T_Decorations } from '../../ts/types/Enumerations';
-	import { hit_target } from '../../ts/events/Hit_Target';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { stores } from '../../ts/managers/Stores';
 	import { scenes } from '../../ts/managers/Scenes';
 	import Separator from '../mouse/Separator.svelte';
@@ -70,11 +70,10 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
-				<Separator vertical kind="main" z_layer={T_Layer.layout} />
-				<span class='spacer'></span>
+				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
 				{@render face_accessory_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
-				<span class='spacer'></span>
+				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
 			</div>
 			<Separator kind="main" />
 			<div class='right-row'>
@@ -84,37 +83,37 @@
 			<div class='right-row'>
 				{@render decoration_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
+				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
 			</div>
 		</div>
 	{:else if wrap_mobile}
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
-				<Separator vertical kind="main" z_layer={T_Layer.layout} />
-				<span class='spacer'></span>
+				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
 				{@render mode_buttons()}
-				<span class='spacer'></span>
+				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
 			</div>
 			<Separator kind="main" />
 			<div class='right-row'>
+				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
 				{@render face_buttons()}
 				{@render face_accessory_buttons()}
+				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
 			</div>
 		</div>
 	{:else}
 		{@render hamburger_button()}
-		<Separator vertical kind="main" z_layer={T_Layer.layout} />
+		<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
 		<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
 		<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
 		{#if $w_allow_editing && !root_fits}
 			<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 		{/if}
-		<Separator vertical kind="main" />
-		<span class='spacer'></span>
+		<Separator vertical spacer kind="main" />
 		{@render face_buttons()}
 		{@render face_accessory_buttons()}
-		<span class='spacer'></span>
-		<Separator vertical kind="main" />
+		<Separator vertical spacer kind="main" />
 		{@render mode_buttons()}
 	{/if}
 </div>
@@ -122,7 +121,7 @@
 <style>
 
 	.controls {
-		padding         : 0 var(--l-gap-large) 0 var(--l-gap-small);
+		padding         : 0 var(--l-gap-small);
 		gap             : var(--l-gap);
 		box-sizing      : border-box;
 		justify-content : flex-end;

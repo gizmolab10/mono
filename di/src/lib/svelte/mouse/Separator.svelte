@@ -1,75 +1,106 @@
 <script lang='ts'>
 	import { T_Layer } from '../../ts/types/Enumerations';
+	import { colors } from '../../ts/utilities/Colors';
 	import { k } from '../../ts/common/Constants';
 
 	let {
 		vertical = false,
+		spacer   = false,
 		z_layer  = T_Layer.layout,
-		kind     = 'content' as 'content' | 'banners' | 'main',
+		kind     = 'content' as 'content' | 'main',
 	}: {
 		vertical? : boolean;
+		spacer?   : boolean;
 		z_layer?  : T_Layer;
-		kind?     : 'content' | 'banners' | 'main';
+		kind?     : 'content' | 'main';
 	} = $props();
 
-	const thickness = $derived(k.thickness.separator[kind]);
+
+	const { w_accent_color } = colors;
 	const r = $derived(k.radius[kind]);
-	const hw = $derived(r * 7 / 6);
-	const bleed = k.layout.margin;
-	const flare_down = $derived(`M ${-hw} 0 H ${hw} A ${r} ${r} 0 0 0 ${hw - r} ${r} H ${r - hw} A ${r} ${r} 0 0 0 ${-hw} 0 Z`);
-	const flare_up   = $derived(`M ${-hw} 0 H ${hw} A ${r} ${r} 0 0 1 ${hw - r} ${-r} H ${r - hw} A ${r} ${r} 0 0 1 ${-hw} 0 Z`);
+	const fill = $derived($w_accent_color);
+	const extra_length = $derived(k.layout.extra[kind]);
+	const thickness = $derived(k.thickness.separator[kind]);
+	const fillet_tr = $derived(`M ${r} 0 A ${r} ${r} 0 0 0 0 ${r} L 0 0 Z`);
+	const fillet_tl = $derived(`M ${-r} 0 A ${r} ${r} 0 0 1 0 ${r} L 0 0 Z`);
+	const fillet_br = $derived(`M ${r} 0 A ${r} ${r} 0 0 1 0 ${-r} L 0 0 Z`);
+	const fillet_bl = $derived(`M ${-r} 0 A ${r} ${r} 0 0 0 0 ${-r} L 0 0 Z`);
 
 </script>
 
 {#if vertical}
 	<div
 		class='separator vertical'
+		class:spacer
 		style:z-index={z_layer}
-		style:width='{thickness}px'>
-		<svg
-			viewBox='{-hw} 0 {hw * 2} {r}'
-			width={hw * 2} height={r}
-			style='position:absolute; left:calc(50% - {hw}px); top:0; pointer-events:none'>
-			<path d={flare_down} fill='var(--accent)' />
+		style:width={spacer ? undefined : `${thickness}px`}>
+		<svg viewBox='{-r} 0 {r} {r}' width={r} height={r}
+			style='position:absolute; left:{-r}px; top:0; pointer-events:none'>
+			<path d={fillet_tl} fill={fill} />
 		</svg>
-		<svg
-			viewBox='{-hw} {-r} {hw * 2} {r}'
-			width={hw * 2} height={r}
-			style='position:absolute; left:calc(50% - {hw}px); bottom:0; pointer-events:none'>
-			<path d={flare_up} fill='var(--accent)' />
+		<svg viewBox='0 0 {r} {r}' width={r} height={r}
+			style='position:absolute; left:100%; top:0; pointer-events:none'>
+			<path d={fillet_tr} fill={fill} />
+		</svg>
+		<svg viewBox='{-r} {-r} {r} {r}' width={r} height={r}
+			style='position:absolute; left:{-r}px; bottom:0; pointer-events:none'>
+			<path d={fillet_bl} fill={fill} />
+		</svg>
+		<svg viewBox='0 {-r} {r} {r}' width={r} height={r}
+			style='position:absolute; left:100%; bottom:0; pointer-events:none'>
+			<path d={fillet_br} fill={fill} />
 		</svg>
 	</div>
 {:else}
 	<div
-		class='separator horizontal'
 		style:z-index={z_layer}
+		class='separator horizontal'
 		style:height='{thickness}px'
-		style:margin='0 -{bleed}px'
-		style:width='calc(100% + {bleed * 2}px)'>
-		<svg
-			viewBox='0 {-hw} {r} {hw * 2}'
-			width={r} height={hw * 2}
-			style='position:absolute; left:0; top:calc(50% - {hw}px); pointer-events:none'>
-			<path d={flare_down} transform='rotate(-90)' fill='var(--accent)' />
+		style:margin='0 -{extra_length}px'
+		style:width='calc(100% + {extra_length * 2}px)'>
+		<svg viewBox='0 {-r} {r} {r}' width={r} height={r}
+			style='position:absolute; left:0; top:{-r}px; pointer-events:none'>
+			<path d={fillet_br} fill={fill} />
 		</svg>
-		<svg
-			viewBox='{-r} {-hw} {r} {hw * 2}'
-			width={r} height={hw * 2}
-			style='position:absolute; right:0; top:calc(50% - {hw}px); pointer-events:none'>
-			<path d={flare_up} transform='rotate(-90)' fill='var(--accent)' />
+		<svg viewBox='0 0 {r} {r}' width={r} height={r}
+			style='position:absolute; left:0; bottom:{-r}px; pointer-events:none'>
+			<path d={fillet_tr} fill={fill} />
+		</svg>
+		<svg viewBox='{-r} {-r} {r} {r}' width={r} height={r}
+			style='position:absolute; right:0; top:{-r}px; pointer-events:none'>
+			<path d={fillet_bl} fill={fill} />
+		</svg>
+		<svg viewBox='{-r} 0 {r} {r}' width={r} height={r}
+			style='position:absolute; right:0; bottom:{-r}px; pointer-events:none'>
+			<path d={fillet_tl} fill={fill} />
 		</svg>
 	</div>
 {/if}
 
 <style>
 	.separator {
-		background  : var(--accent);
 		flex-shrink : 0;
-		position    : relative;
 		overflow    : visible;
+		position    : relative;
+		background  : var(--accent);
 	}
 
 	.vertical {
 		align-self : stretch;
+	}
+
+	.vertical.spacer {
+		min-width : 0;
+		flex      : 1 1 0px;
+	}
+
+	.vertical.spacer:first-child {
+		margin-left  : calc(-1 * var(--l-padding));
+		padding-left : var(--l-padding);
+	}
+
+	.vertical.spacer:last-child {
+		margin-right  : calc(-1 * var(--l-padding));
+		padding-right : var(--l-padding);
 	}
 </style>

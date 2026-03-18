@@ -1,12 +1,12 @@
 <script lang='ts'>
+	import { preferences } from '../../ts/managers/Preferences';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Units } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
-	import { preferences } from '../../ts/managers/Preferences';
-	import { stores } from '../../ts/managers';
 	import { colors } from '../../ts/utilities/Colors';
-	import { engine } from '../../ts/render';
 	import Separator from '../mouse/Separator.svelte';
+	import { stores } from '../../ts/managers';
+	import { engine } from '../../ts/render';
 
 	const { w_accent_color } = colors;
 	const { w_precision, w_line_thickness, w_edge_color } = stores;
