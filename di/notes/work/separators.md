@@ -3,14 +3,14 @@
 Separator is cumbersome to use, this is not acceptable
 
 - [x] describe current design of Separator.svelte
-- [ ] eliminate the need for end and gap in separator
+- [x] eliminate the need for end and gap in separator
 - [ ] add radius (flare) and thickness (bar) to props
 - [ ] auto compute thickness to behave like a spacer
     - [ ] larger fatter separators, play with over doing it
         - [ ] bottom of details
             - [ ] a. lot when all closed
         - [ ] around the centered groups
-- [ ] revise Separator simplify its css footprint
+- [x] revise Separator simplify its css footprint
 
 ---
 

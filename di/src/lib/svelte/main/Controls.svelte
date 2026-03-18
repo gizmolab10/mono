@@ -10,8 +10,6 @@
 
 	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
-	const separator_length = k.height.controls + 2;
-	const margin = 8.5;
 
 	let controls_width   = $state(Infinity);
 	let wrap_phone       = $derived(controls_width < (k.width.wrap_phone));
@@ -29,8 +27,8 @@
 {#snippet hamburger_button()}
 	<button class='hamburger' class:active={$w_show_details}
 		use:hit_target={{ id: 'details', onpress: () => stores.toggle_details() }} aria-label='toggle details'>
-		<svg class='hamburger-icon' viewBox='0 0 {k.height.button.common} {k.height.button.common}' width={k.height.button.common} height={k.height.button.common}>
-			<path d={svg_paths.hamburger(k.height.button.common)}/>
+		<svg class='hamburger-icon' viewBox='0 0 {k.height.button.common} {k.height.button.common}' width={k.height.button.common + 20} height={k.height.button.common}>
+			<path d={svg_paths.hamburger(k.height.button.common + 2)}/>
 		</svg>
 	</button>
 {/snippet}
@@ -72,17 +70,17 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
-				<Separator vertical kind="main" margin={margin} z_layer={T_Layer.layout} />
+				<Separator vertical kind="main" z_layer={T_Layer.layout} />
 				<span class='spacer'></span>
 				{@render face_accessory_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" margin={margin} end={k.layout.gap_small} />
+			<Separator kind="main" />
 			<div class='right-row'>
 				{@render face_buttons()}
 			</div>
-			<Separator kind="main" margin={margin} end={k.layout.gap_small} />
+			<Separator kind="main" />
 			<div class='right-row'>
 				{@render decoration_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
@@ -92,12 +90,12 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
-				<Separator vertical kind="main" margin={margin} z_layer={T_Layer.layout} />
+				<Separator vertical kind="main" z_layer={T_Layer.layout} />
 				<span class='spacer'></span>
 				{@render mode_buttons()}
 				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" margin={margin * 0.9} end={k.layout.gap_tiny} />
+			<Separator kind="main" />
 			<div class='right-row'>
 				{@render face_buttons()}
 				{@render face_accessory_buttons()}
@@ -105,18 +103,18 @@
 		</div>
 	{:else}
 		{@render hamburger_button()}
-		<Separator vertical kind="main" length={separator_length} margin={-5} z_layer={T_Layer.layout} />
+		<Separator vertical kind="main" z_layer={T_Layer.layout} />
 		<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
 		<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
 		{#if $w_allow_editing && !root_fits}
 			<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 		{/if}
-		<Separator vertical kind="main" length={separator_length} />
+		<Separator vertical kind="main" />
 		<span class='spacer'></span>
 		{@render face_buttons()}
 		{@render face_accessory_buttons()}
 		<span class='spacer'></span>
-		<Separator vertical kind="main" length={separator_length} />
+		<Separator vertical kind="main" />
 		{@render mode_buttons()}
 	{/if}
 </div>
@@ -139,20 +137,19 @@
 	}
 
 	.right-col {
-		padding        : var(--l-gap) 0;
 		flex-direction : column;
 		display        : flex;
-		gap            : 2px;
 		min-width      : 0;
 		flex           : 1;
 	}
 
 	.right-row {
+		height          : var(--h-controls);
+		gap             : var(--l-gap);
 		overflow        : visible;
 		justify-content : center;
 		align-items     : center;
 		display         : flex;
-		gap             : var(--l-gap);
 	}
 
 	.spacer {
@@ -172,8 +169,8 @@
 		align-items     : center;
 		justify-content : center;
 		display         : flex;
-		top             : 0px;
 		left            : 1px;
+		margin-right    : 4px;
 		padding         : 0;
 	}
 

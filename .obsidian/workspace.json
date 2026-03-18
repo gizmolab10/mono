@@ -49,8 +49,7 @@
               "title": "code.debt.done"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -123,7 +122,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/separators.md",
+                "file": "di/notes/work/code.debt.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -133,7 +132,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for separators"
+              "title": "Backlinks for code.debt"
             }
           },
           {
@@ -185,13 +184,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/separators.md",
+                "file": "di/notes/work/code.debt.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of separators"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -212,11 +211,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "a283699e03a14538",
+  "active": "07686de312fec143",
   "lastOpenFiles": [
+    "di/notes/work/separators.md",
+    "di/src/lib/svelte/mouse/Separator.svelte",
+    "di/src/lib/svelte/mouse/old.Separator.svelte",
     "di/notes/work/milestones/26.snap.pin.md",
     "di/notes/work/code.debt.md",
-    "di/notes/work/separators.md",
     "di/notes/work/milestones/done/3.docs.md",
     "di/notes/work/milestones/done/2.panel.md",
     "di/dist/assets/index-n3V0qM8L.js",
@@ -242,15 +243,12 @@
     "di/src/assets/debug/sphere three.di",
     "di/src/assets/debug/sphere two.di",
     "di/src/assets/debug/sphere one.di",
-    "di/src/assets/debug/sphere four.di",
-    "di/src/assets/debug/sphere one copy.di",
     "notes/guides/collaborate/framing_filters.md",
     "di/notes/work/milestones/done/21.css.engine.md",
     "Screenshot 2026-03-14 at 12.48.11 PM.png",
     "di/notes/work/milestones/25.errors 1.md",
     "foo.md",
     "di/notes/work/milestones/done/14.details.md",
-    "di/notes/work/milestones/index.md",
     "node_modules/concurrently/docs/demo.gif",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/64x64.png",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/512x512.png",

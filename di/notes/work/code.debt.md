@@ -3,6 +3,7 @@
 
 offer a proposal for the first unchecked item
 
+- [ ] eliminate t layer cheat
 - [ ] cannot rotate basement around z axis
     - [ ] rear wall -> funky location
 - [ ] stretch top drawer up -> fubar!

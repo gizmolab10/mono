@@ -96,8 +96,14 @@ export default class Constants {
 		tick:        1,
 	};
 
+	radius = {
+		content: 9,
+		banners: 16,
+		main:	 common_size * 0.6
+	};
+
 	height = {
-		controls:    common_size * 1.4,		// adds two gaps
+		controls:    common_size * 1.4,
 		slider:      common_size * 0.8,
 		collapse:    common_size * 0.56,
 		cell:        common_size * 0.5,
