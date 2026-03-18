@@ -4,8 +4,7 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { stores } from '../../ts/managers/Stores';
 	import { scenes } from '../../ts/managers/Scenes';
-	import Separator from '../mouse/Separator.svelte';
-	import { k } from '../../ts/common/Constants';
+import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 
 	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
@@ -63,57 +62,54 @@
 <div
 	class:wrap_mobile
 	class            = 'controls'
-	style:background = 'var(--bg)'
 	style:color      = 'var(--text)'
 	bind:clientWidth = {controls_width}>
 	{#if wrap_phone}
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
-				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
+				<span class='spacer'></span>
 				{@render face_accessory_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
-				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
+				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" />
 			<div class='right-row'>
 				{@render face_buttons()}
 			</div>
-			<Separator kind="main" />
 			<div class='right-row'>
+				<span class='spacer'></span>
 				{@render decoration_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
-				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
+				<span class='spacer'></span>
 			</div>
 		</div>
 	{:else if wrap_mobile}
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
-				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
+				<span class='spacer'></span>
 				{@render mode_buttons()}
-				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
+				<span class='spacer'></span>
 			</div>
-			<Separator kind="main" />
 			<div class='right-row'>
-				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
+				<span class='spacer'></span>
 				{@render face_buttons()}
 				{@render face_accessory_buttons()}
-				<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
+				<span class='spacer'></span>
 			</div>
 		</div>
 	{:else}
 		{@render hamburger_button()}
-		<Separator vertical spacer kind="main" z_layer={T_Layer.layout} />
+		<span class='spacer'></span>
 		<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
 		<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
 		{#if $w_allow_editing && !root_fits}
 			<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 		{/if}
-		<Separator vertical spacer kind="main" />
+		<span class='spacer'></span>
 		{@render face_buttons()}
 		{@render face_accessory_buttons()}
-		<Separator vertical spacer kind="main" />
+		<span class='spacer'></span>
 		{@render mode_buttons()}
 	{/if}
 </div>
@@ -122,6 +118,7 @@
 
 	.controls {
 		padding         : 0 var(--l-gap-small);
+		background      : var(--accent);
 		gap             : var(--l-gap);
 		box-sizing      : border-box;
 		justify-content : flex-end;
@@ -144,6 +141,7 @@
 
 	.right-row {
 		height          : var(--h-controls);
+		background      : var(--accent);
 		gap             : var(--l-gap);
 		overflow        : visible;
 		justify-content : center;
@@ -175,11 +173,11 @@
 
 	.hamburger-icon path {
 		fill   : currentColor;
-		stroke : none;
+		stroke : currentColor;
 	}
 
 	.hamburger:global([data-hit]) .hamburger-icon path {
-		fill : lightgray;
+		fill : var(--c-white);
 	}
 
 	.toolbar-button {

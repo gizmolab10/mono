@@ -187,6 +187,22 @@ export class Colors {
 		}));
 	}
 
+	clamp_luminance(color : string, min : number) : string {
+		const lume = this.luminance_ofColor(color);
+		if (lume >= min) return color;
+		if (lume === 0) {
+			const gray = Math.round(Math.pow(min, 1 / 2.4) * 1.055 * 255 - 0.055 * 255);
+			const g = Math.max(0, Math.min(255, gray));
+			return this.RGBA_toHex(new RGBA(g, g, g, 1));
+		}
+		const target_darkness = 1 - min;
+		const rgba = this.color_toRGBA(color);
+		if (!!rgba) {
+			return this.set_darkness_toRGBA(rgba, target_darkness);
+		}
+		return color;
+	}
+
 	luminance_driven_desaturation(color : string) : string {
 		const lume = this.luminance_ofColor(color);
 		if (lume > 0.5) {

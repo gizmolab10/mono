@@ -70,7 +70,7 @@
 		<input
 			type    = 'color'
 			value   = {$w_accent_color}
-			oninput = {(e) => w_accent_color.set((e.target as HTMLInputElement).value)}
+			oninput = {(e) => w_accent_color.set(colors.clamp_luminance((e.target as HTMLInputElement).value, 0.2))}
 		/>
 	</div>
 	<div class='color-group'>
