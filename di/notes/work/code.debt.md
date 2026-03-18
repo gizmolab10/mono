@@ -3,11 +3,9 @@
 
 offer a proposal for the first unchecked item
 
-- [ ] eliminate t layer cheat
 - [ ] cannot rotate basement around z axis
     - [ ] rear wall -> funky location
 - [ ] stretch top drawer up -> fubar!
-- [ ] [[26.snap.pin]]
 - [ ] so & portable so -> add a hide children boolean
     - [ ] very different than what the triangle does
     - [ ] true overrides each child's isVisible
@@ -18,6 +16,7 @@ offer a proposal for the first unchecked item
     - [ ] [[25.errors]]
     - [ ] [[8.dimensionals]]
     - [ ] [[18.givens]]
+    - [ ] [[26.snap.pin]]
 - [ ] bring the [[working features]] table up to date
 
 ---

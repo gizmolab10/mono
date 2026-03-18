@@ -24,8 +24,8 @@ export default class Attribute {
 
 	serialize(): Compact_Attribute {
 		if (this.formula) {
-			const result: { formula: string; value?: number; attached?: boolean } = { formula: tokenizer.untokenize(this.formula) };
-			if (this.attached) { result.value = this.value; result.attached = true; }
+			const result: { formula: string; value?: number; attached?: boolean } = { formula: tokenizer.untokenize(this.formula), value: this.value };
+			if (this.attached) { result.attached = true; }
 			return result;
 		}
 		return this.value;
@@ -40,7 +40,7 @@ export default class Attribute {
 		if (data.formula) {
 			this.formula = tokenizer.merge_refs(tokenizer.tokenize(data.formula));
 			this.attached = data.attached ?? false;
-			this.value = this.attached ? (data.value ?? 0) : 0;
+			this.value = data.value ?? 0;
 			try { this.compiled = compiler.compile(data.formula); } catch { /* skip */ }
 		} else {
 			this.value = data.value ?? 0;

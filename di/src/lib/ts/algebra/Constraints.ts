@@ -370,7 +370,7 @@ class Constraints {
 	}
 
 	/** After deserialization, rebind bare/self refs in all formulas of an SO. */
-	rebind_formulas(so: Smart_Object, parent_id: string): void {
+	rebind_formulas(so: Smart_Object, parent_id: string, skip_eval = false): void {
 		// Clear formulas on invariant attributes — invariants are computed, not user-driven
 		for (const axis of so.axes) {
 			const inv = axis.invariant;
@@ -386,14 +386,14 @@ class Constraints {
 			const owner_axis = attribute_to_axis[attr.name];
 			try {
 				attr.compiled = this.bind_refs(attr.compiled, so.id, parent_id, owner_axis);
-				// Attached attrs keep their stored value as seed — skip evaluation
-				if (!attr.attached) {
+				// During undo/redo, keep serialized values — formulas don't need re-evaluation
+				if (!skip_eval && !attr.attached) {
 					attr.value = evaluator.evaluate(attr.compiled, (o, a) => this.resolve(o, a));
 					this.sync_length(so, attr.name, attr.value);
 				}
 			} catch (e) { if (!(e instanceof AlgebraError)) throw e; } // skip — formula references something invalid
 		}
-		this.enforce_invariants(so);
+		if (!skip_eval) this.enforce_invariants(so);
 	}
 
 	/** Compile and evaluate a formula string, returning the mm value (or null on error).

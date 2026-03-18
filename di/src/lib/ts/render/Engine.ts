@@ -144,9 +144,9 @@ class Engine {
 
 	/** Load a Portable_Scene in-place: teardown old state, rebuild, restore camera/selection.
 	 *  Called by setup() on init and by library panel for scene switching (no page reload).
-	 *  When restore_camera is false, camera stays at current position (used by undo/redo). */
-	load_scene(saved: Portable_Scene | null, restore_camera = true): void {
-		if (restore_camera) history.clear();
+	 *  When recompute is false, camera stays at current position (used by undo/redo). */
+	load_scene(saved: Portable_Scene | null, recompute = true): void {
+		if (recompute) history.clear();
 		// Teardown
 		scene.clear();
 		hits_3d.clear();
@@ -181,11 +181,12 @@ class Engine {
 				const parent_so = smart_objects.find(so => so.id === parent_id);
 				if (parent_so?.scene) {
 					smart_objects[i].scene!.parent = parent_so.scene;
-					constraints.rebind_formulas(smart_objects[i], parent_id);
+					constraints.rebind_formulas(smart_objects[i], parent_id, !recompute);
 				}
 			}
 			// Evaluate all formulas now that refs are bound and scene is populated
-			constraints.propagate_all();
+			// Skip during undo/redo — serialized values already reflect the correct state
+			if (recompute) constraints.propagate_all();
 		} else {
 			// First run — create default SO with initial tumble
 			const so = new Smart_Object('A');
@@ -223,7 +224,8 @@ class Engine {
 		stores.w_all_sos.set(scene.get_all().map(o => o.so));
 
 		// Fit-normalize root if any SO has negative start/end/length (skip if root is a repeater)
-		if (!root_so.repeater && smart_objects.some(so => so.axes.some(a => a.start.value < 0 || a.end.value < 0 || a.length.value < 0))) {
+		// Skip during undo/redo — serialized values are the complete truth
+		if (recompute && !root_so.repeater && smart_objects.some(so => so.axes.some(a => a.start.value < 0 || a.end.value < 0 || a.length.value < 0))) {
 			this.fit_to_children();
 		}
 
@@ -235,7 +237,7 @@ class Engine {
 			}
 		}
 
-		if (restore_camera && saved?.camera) {
+		if (recompute && saved?.camera) {
 			camera.deserialize(saved.camera);
 		}
 
