@@ -122,6 +122,61 @@ Two sites handle this:
 
 Without this, a persisted formula on an invariant attribute would prevent `enforce_invariants` from computing the correct value (it skips attributes with `attr.compiled`).
 
+## AST
+
+### Node Types
+
+Four node types in `Nodes.ts`, discriminated on `type`:
+
+| Type | Fields | Example source | Example tree |
+|------|--------|----------------|--------------|
+| `literal` | `value: number` | `42` | `{ type: 'literal', value: 42 }` |
+| `reference` | `object: string, attribute: string` | `.w` | `{ type: 'reference', object: 'parent_id', attribute: 'width' }` |
+| `unary` | `operator: '-', operand: Node` | `-x` | `{ type: 'unary', operator: '-', operand: <ref> }` |
+| `binary` | `operator: + - * /, left: Node, right: Node` | `.w / 4` | `{ type: 'binary', operator: '/', left: <ref>, right: <literal> }` |
+
+`object` in a reference is resolved during `bind_refs`: `'self'` → the SO's own id, `''` → parent id, anything else → a named SO's id. After binding, `object` is always a concrete id (or the givens sentinel).
+
+### Pipeline
+
+```
+formula string
+  → Tokenizer.tokenize()         → Token[]
+  → Tokenizer.fuse_name_tokens() → Token[] (adjacent tokens collapsed into single token)
+  → Compiler.compile()           → Node (recursive descent)
+  → Constraints.bind_refs()      → Node (self/parent/bare refs → concrete ids)
+  → stored on Attribute.compiled
+```
+
+### Grammar
+
+```
+expression  →  term (('+' | '-') term)*
+term        →  factor (('*' | '/') factor)*
+factor      →  '-' factor | atom
+atom        →  NUMBER | BARE_NUMBER | REFERENCE | '(' expression ')'
+```
+
+Precedence: unary minus > multiply/divide > add/subtract. Parentheses override.
+
+### Forward Evaluation
+
+`Evaluator.evaluate(node, resolve)` — recursive tree walk. References call `resolve(object, attribute)` which reads `attr.value` via `Constraints.resolve`. Literals return their value. Binary/unary apply the operator. Division by zero returns 0.
+
+### Reverse Propagation
+
+`Evaluator.propagate(node, target, resolve, write)` — solves for a single unknown reference. Collects all references in the tree; throws if zero or more than one. Inverts the expression algebraically: walks the tree from root, at each binary node determines which child contains the reference, solves for that child's value, recurses. Writes the solved value via `write(object, attribute, value)`.
+
+Used by `try_solve_given` to adjust a given so a formula evaluates to a target value.
+
+### Cycle Detection
+
+`Evaluator.detect_cycle(formulas)` — DFS over the formula dependency graph. Each formula's references point to other `object.attribute` keys. Returns the cycle path (e.g. `["wall.height", "door.height", "wall.height"]`) or null. Run before accepting a new formula in `set_formula`.
+
+### Freeze
+
+`Constraints.freeze_non_givens(node)` — replaces all non-given references with their current literal values. The result is a simplified tree with only given references remaining. Used before reverse propagation so the solver only sees the given as the unknown.
+
 ## Files
 
 | File | Role |

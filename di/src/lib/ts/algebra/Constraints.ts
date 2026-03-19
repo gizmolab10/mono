@@ -457,7 +457,7 @@ class Constraints {
 			}
 		}
 
-		attr.formula = tokenizer.merge_refs(tokenizer.tokenize(formula));
+		attr.formula = tokenizer.fuse_name_tokens(tokenizer.tokenize(formula));
 		attr.compiled = compiled;
 		attr.attached = attached ?? false;
 

@@ -17,7 +17,7 @@ import { tokenizer } from './Tokenizer';
 class Compiler {
 
 	compile(input: string): Node {
-		const tokens = tokenizer.merge_refs(tokenizer.tokenize(input));
+		const tokens = tokenizer.fuse_name_tokens(tokenizer.tokenize(input));
 		const parser = new Parser(tokens);
 		const node = parser.expression();
 		parser.expect_end();

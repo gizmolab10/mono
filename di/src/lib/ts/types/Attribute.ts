@@ -38,7 +38,7 @@ export default class Attribute {
 			return;
 		}
 		if (data.formula) {
-			this.formula = tokenizer.merge_refs(tokenizer.tokenize(data.formula));
+			this.formula = tokenizer.fuse_name_tokens(tokenizer.tokenize(data.formula));
 			this.attached = data.attached ?? false;
 			this.value = data.value ?? 0;
 			try { this.compiled = compiler.compile(data.formula); } catch { /* skip */ }

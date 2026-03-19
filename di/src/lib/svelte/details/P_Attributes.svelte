@@ -125,7 +125,7 @@
 		if (trimmed) {
 			let normalized: string;
 			try {
-				const tokens = tokenizer.merge_refs(tokenizer.tokenize(trimmed));
+				const tokens = tokenizer.fuse_name_tokens(tokenizer.tokenize(trimmed));
 				normalized = tokenizer.untokenize(tokens).replace(/\s*\+\s*-\s*/g, ' - ').replace(/\s*-\s*\+\s*/g, ' - ').replace(/(?<=^|[+\-*/(])(\s*)- (?=[\d.a-zA-Z_])/g, '$1-');
 			} catch (e: any) {
 				if (input) input.value = trimmed;

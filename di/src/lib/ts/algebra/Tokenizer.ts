@@ -240,7 +240,7 @@ class Tokenizer {
 	}
 
 	/** Merge consecutive bare references: "foo bar.e" → ref("foo bar", "e") */
-	merge_refs(tokens: Token[]): Token[] {
+	fuse_name_tokens(tokens: Token[]): Token[] {
 		const out: Token[] = [];
 		for (let i = 0; i < tokens.length; i++) {
 			const t = tokens[i];
