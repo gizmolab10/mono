@@ -33,5 +33,6 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `ni`         | No improvement, try something different     |
 | `pac`        | pros and cons                               |
 | `cd`         | read code.debt.md                           |
+| `s`          | "that's speculation, label it" — re-state with evidence or say "I don't know" |
 
 

@@ -27,6 +27,8 @@ export default class Constants {
 	build_number = __BUILD_NUMBER__;
 	build_notes = __BUILD_NOTES__;
 
+	debug = false;
+
 	halfIncrement = 0.5;
 	coplanar_epsilon = 1e-3;
 	printer_aspect_ratio = 11.69 / 8.27;

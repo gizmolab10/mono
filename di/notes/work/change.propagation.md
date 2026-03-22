@@ -1,209 +1,188 @@
 # Change Propagation
 
-Bug analysis and design discussion for how bound changes propagate through the constraint system.
+## Core Idea
 
-i think this bug can be solved by reversing the role of independent and dependent. normal propagation computes all the value fields in attributes. start at the root, traverse it all, done. that's where the parent is the "default independent variable" in the sense of x in the equation y = ax + b. y here is the derived value, x is fixed. that's normal propagation: derive all the values.
-
-reverse propagation starts from an x, NOT the root. it is how x SHOULD respond to a change in value. It traverses backwards. This traversal also derives values, for those without formulas and for givens.
-## Proposal
-
-Implement reverse propagation. Two modes of the same system:
+Two modes of the same system, distinguished by traversal direction:
 
 - **Forward** (existing): x is fixed (parent bounds, givens). Derive y (child values). "Given the world, compute where everything is." Starts at root, traverses down.
-- **Reverse** (new): y is fixed (drag target). Derive x (parent bounds, givens). "Given where the user wants this, compute what the world must become." Starts at the dragged attribute, traverses up through references, across through invariants.
+- **Reverse** (new, inside `set_bound`): y is fixed (the target value). Derive x (parent bounds, givens). "Given where the user wants this, compute what the world must become." Starts at the target attribute, traverses up through references, across through invariants.
 
-In forward mode, formulas and givens are independent — they drive values. In reverse mode, they're dependent — they adjust to satisfy the user's intent. Attributes without formulas and givens become the free variables.
+In forward mode, formulas and givens are independent — they drive values. In reverse mode, they're dependent — they adjust to satisfy the user's intent. Each operator is inverted along the way.
 
-This replaces `try_solve_given`, `freeze_non_givens`, `solve_given_attr`, `grow_to_children`, and `to_relative` (~130 lines) with a single reverse traversal that handles root expansion and given adjustment atomically. See "Backwards Propagation" section below for the full trace through the drawer bug.
+### Reversed traversal
 
-## The Bug: Stretch Drag on Formula-Locked Bounds
-
-**Scenario:** Two drawer cabinet. Bottom drawer's z_min = `parent.z_min` (formula, no given). z_length = `drawer_height` (given). Invariant = 1 (end derived: z_max = z_min + z_length).
-
-**Expected:** Drag bottom edge of bottom child down → drawer grows taller (z_min moves down, z_max stays, length increases). Root grows to accommodate.
-
-**Actual symptoms (in sequence of attempted fixes):**
-
-1. **Original code:** Bottom edge doesn't move, top edge accelerates upward, destroys layout.
-   - Cause: `try_solve_given` indirect path finds z_length's given, solves it with wrong target (absolute/relative mismatch), given changes dramatically, `propagate_all` re-evaluates everything wrong.
-
-2. **After blocking indirect path when direct is formula-locked:** Root grows, but drawer translates instead of enlarging.
-   - Cause: `set_bound` moves z_min, `grow_to_children` expands root, but z_length (given) stays the same. Invariant: z_max = z_min + same_length → whole drawer shifts down.
-
-## Root Cause
-
-Three systems interact during stretch drag:
-
-1. **Formula evaluation** — z_min is locked to `parent.z_min`, can't be directly changed
-2. **Invariant enforcement** — z_max = z_min + z_length, so length is preserved
-3. **Root expansion** — `grow_to_children` expands root when child exceeds bounds
-
-The problem is **ordering**: the length given needs to increase by the same amount the root expands, but root expansion happens after the solve attempt.
-
-## `try_solve_given` Absolute/Relative Mismatch
-
-`try_solve_given` receives absolute values from `stretch()`. But `solve_given_attr` needs formula-space values:
-- For start/end: formula-space is parent-relative (offset from parent origin)
-- For length: formula-space is intrinsic (the actual length value)
-
-For direct children of root (parent origin = 0), the conversion is a no-op. For deeper children, the mismatch causes wrong given values.
-
-A `to_formula_space` helper was added to `try_solve_given` that converts absolute → relative for start/end and passes length through unchanged. This fixes the direct path but the indirect path also needs correct conversion at the `solve_given_attr` boundary.
-
-## Proposed Solutions (Unresolved)
-
-**Option A: Reorder — grow root first, then indirect solve**
-
-Expand root before trying to solve length givens. With root expanded, z_min's formula evaluates to the new (lower) root z_min. Then the indirect solve computes the correct target length.
-
-- Pro: Uses existing solve machinery
-- Con: Requires restructuring the drag pipeline; indirect solve still has abs/rel complexity
-
-**Option B: After grow, increase length given by growth amount**
-
-After `grow_to_children`, directly increase the length given by the amount root expanded.
-
-- Pro: Simple, predictable
-- Con: Only works for plain given references (not complex formulas like `drawer_height * 2`); couples grow logic to given system
-
-## Backwards Propagation
-
-The bug is a multi-hop constraint problem. The current `try_solve_given` is a flat, single-hop search — it looks at the dragged attribute and its axis siblings. It can't trace through a reference to the parent and also adjust a sibling's given in the same operation.
-
-### The two paths
-
-Dragging z_min down requires two things to change simultaneously:
-
-1. **Up through references** — z_min is `parent.z_min`, so trace up: root.z_min must decrease. This is root expansion.
-2. **Across through the invariant** — z_max must stay fixed (stretch semantics). z_max = z_min + z_length, so z_length must increase. z_length = `drawer_height` (given), so solve: `drawer_height = z_max_original - new_z_min`.
+For y = ax + b, the forward AST:
 
 ```
-desired: z_min_abs = target
-  → z_min formula = parent.z_min
-    → propagate UP: need parent.z_min = target
-      → parent is root: expand root.z_min ✓
-
-constraint: z_max_abs stays fixed (stretch)
-  → z_max = z_min + z_length
-    → z_length = z_max_original - target
-      → z_length formula = drawer_height (given)
-        → propagate THROUGH given: drawer_height = z_max_original - target ✓
+    +
+   / \
+  *    b
+ / \
+a    x
 ```
 
-### Why the current system can't do this
+Reverse propagation starts from x, NOT the root. Beginning at **`x`**, we go up and encounter **`*`**. We invert that to **`/`**. But we need the other operand first — so we go up again to **`+`**, invert that to **`-`**, and grab its sibling: **`b`**. Now we can compute **`y - b`**. Back down at the **`*`** level, we grab its sibling **`a`** and apply the inverted **`/`**: **`(y - b) / a`**.
 
-`try_solve_given` operates on a single SO. It checks one attribute and its axis siblings. It can't:
-- Follow a reference to a parent SO (the upward path)
-- Coordinate changes across two different targets (root expansion + given adjustment)
-- Know that "stretch" means hold the opposite edge fixed
+The reversed AST — the order of computation:
 
-Each attempted fix addressed one path but broke the other. The indirect solve adjusted the given but didn't expand root. The grow_to_children expanded root but didn't adjust the given.
+```
+    /
+   / \
+  -    a
+ / \
+y    b
+```
 
-### Bidirectional constraint propagation
+`Evaluator.propagate` already does this within a single formula. The new part is the multi-hop, cross-SO version: following the chain of formulas across multiple attributes and multiple SOs, delegating to `Evaluator.propagate` for the algebra at each step.
 
-The solution: parent pointers on AST nodes, enabling traversal from any node upward through the dependency chain. From the drag intent, a single traversal walks:
+## Proposal
 
-- **Up** through formula references to the root — discovering what parent bounds must change
-- **Across** through the axis invariant — discovering what given must change to preserve the opposite edge
+Reverse propagation lives inside `set_bound` itself. Every call to `set_bound(bound, value)` becomes: "make this bound reach this absolute value by tracing the formula chain and adjusting whatever free variables are necessary." No formula: set directly. Has formula: reverse propagate.
 
-Both changes are computed from the same drag delta and applied atomically. No ordering problem, no feedback loop.
+Every drag type — face drag, stretch drag, corner drag, dimension editor — calls `set_bound`. Stretch vs move intent is implicit in which bounds the caller sets. For stretch, the caller sets both the dragged edge and the derived dimension (e.g., `set_bound(z_length, opposite - target)` then `set_bound(z_min, target)`); each call does reverse prop independently. Face drag sets all six bounds. Calling order: **dimensions before positions** — reverse prop on a dimension adjusts givens, reverse prop on a position adjusts parent bounds, forward prop then settles everything.
 
-This is classic parametric CAD constraint solving. The AST becomes a constraint graph. Dragging a point sends a ripple both up (through references) and across (through invariants) to find the minimal set of changes.
+Invariants become system formulas (`e - s`, `s + l`, `e - l`) so forward prop handles them uniformly — no separate `enforce_invariants` step. Reconstruct from `axis.invariant` during deserialization; don't serialize. Important: the invariant attribute is never the target of `set_bound` — only of forward prop. Invariant formulas have two self-references (`e - s`), which `Evaluator.propagate` can't solve (requires one unknown). The caller sets the dimension and the edge; the invariant is always computed, never set.
 
-### Implementation sketch
+Root start bounds are always 0. This is the one special case `set_bound` must handle: root start has no formula (plain value), so "no formula -> set directly" would allow negative values. Instead, `set_bound` on a root start bound redirects to the corresponding end bound and shifts children's offsets to preserve absolute positions.
 
-1. Add optional `parent` pointer to `Node` type (set during compile or bind_refs)
-2. New `solve_stretch(so, bound, target_abs)` in Constraints:
-   - Walk the dragged bound's formula upward through references to find the root ancestor
-   - Compute the required root expansion (delta between target and current)
-   - Walk across the axis to the length attribute, compute the required given adjustment
-   - Apply both: expand root, set given
-3. Call `solve_stretch` from `stretch()` in Drag.ts instead of `try_solve_given`
-4. `propagate_all` after — all formulas re-evaluate with new root bounds and new given
+### Implementation
 
-Parent pointers aren't strictly necessary (could build an adjacency map or trace references via the resolver), but they make upward traversal natural.
+1. Convert invariants to system formulas so all constraints are in the AST
+2. Add optional `parent` pointer to `Node` type (set during compile or bind_refs)
+3. Rewrite `set_bound` in Smart_Object: no formula -> set directly; has formula -> reverse propagate
+4. Forward propagation runs after as usual to cascade changes to dependents
 
-### Dead code
+Replaces ~175 lines: `try_solve_given`, `solve_given_attr`, `freeze_non_givens`, `enforce_invariants` (+ 6 call sites), invariant clearing in `rebind_formulas`, `stretch` lambda complexity, root-specific stretch logic in Drag.ts.
 
-Reverse propagation replaces ~130 lines:
+Survives: `Evaluator.propagate` / `solve_for_reference` (core inverse algebra), `apply_stretch_absolute` (delta + reset), `propagate_all` (forward cascade).
 
-| Code | Lines | File |
-|------|------:|------|
-| `try_solve_given` | 50 | Constraints.ts |
-| `solve_given_attr` | 15 | Constraints.ts |
-| `freeze_non_givens` | 15 | Constraints.ts |
-| `to_formula_space` | 5 | Constraints.ts |
-| `grow_to_children` | 40 | Engine.ts |
-| `to_relative` | 6 | Smart_Object.ts |
-| `stretch` lambda complexity | 5 | Drag.ts |
+### Tests
 
-The `stretch` lambda in Drag.ts simplifies to calling the new reverse propagation instead of the try/else pattern.
+**Reverse propagation:**
 
-What survives and gets reused:
+- No formula -> sets value directly
+- Formula referencing a given -> solves for the given
+- Formula referencing parent -> adjusts parent bound
+- Formula `parent.z_min`, parent is root -> expands root
+- Root start bound -> redirects to end, children preserve absolute positions
+- Two-hop chain: child refs parent, parent refs given -> solves given
+- No solvable free variable -> no-op or error
+- Complex formula (`given * 2 + 5`) -> solves via `Evaluator.propagate`
+- Multiple calls (face drag: all 6) -> all move, no invariant conflict
+- Dimensions-before-positions ordering -> opposite edge stays fixed
 
-- `Evaluator.propagate` / `solve_for_reference` — core inverse algebra, reverse prop builds on it
-- `apply_stretch_absolute` — still computes delta and resets to initial
-- `propagate_all` — still needed after reverse prop applies changes
-- `enforce_invariants` — eliminated if invariants become formulas (see below)
+**Invariants as formulas:**
 
-### Invariants as formulas
+- Setting invariant 0/1/2 writes correct system formula
+- Changing invariant clears old, writes new
+- Evaluates correctly in forward propagation
+- Not serialized -- reconstructed on deserialize
+- User formula replaces system formula
+- Reverse prop through invariant -> adjusts sibling attributes
 
-Currently `enforce_invariants` is a separate post-evaluation step that recomputes the invariant attribute from the other two. It exists because invariants aren't expressed as formulas — they're a hardcoded rule (`length = end - start`, etc.) that runs after formula evaluation. This creates problems:
+**Regression:** all 85 Constraints tests, all 20 Evaluator tests, undo/redo round-trip.
 
-- Reverse propagation needs special "walk across invariant" logic — it can't just follow formulas
-- `enforce_invariants` has 6 call sites and interacts badly with undo (we had to skip it during restore)
-- Invariants are invisible in the formula system — they're a parallel constraint mechanism
+## Maybe
 
-**Proposal:** When the user sets an invariant, write an actual formula on that attribute:
+**`is_root` flag on Smart_Object** -- ~20 places check `!so.scene?.parent`. A boolean set during scene construction would be clearer. Not serialized.
 
-| Invariant | Attribute | System formula |
-|-----------|-----------|----------------|
-| 0 (start) | start | `e - l` |
-| 1 (end) | end | `s + l` |
-| 2 (length) | length | `e - s` |
+**Mouse delta compensation** -- root symmetric stretch doubles the delta (mouse moves n, edge moves 2n). With reverse prop redirecting start->end, the cursor drifts from the pinned edge. Detect and apply 2x in Drag.ts -- UX concern, not constraint concern.
 
-Self-referencing formulas using agnostic aliases. The formula system already handles self-references.
+## Phase 2 Bugs
 
-**What changes:**
+### Bug 1: Top edge moves opposite to mouse
 
-- `enforce_invariants` disappears (~30 lines, 6 call sites). Forward propagation evaluates invariant formulas like any other.
-- Reverse propagation follows invariant formulas naturally — no special case.
-- `rebind_formulas` no longer needs to clear formulas on invariant attributes (lines 374-383) — the invariant IS the formula.
+Dragging z_max on bottom drawer. The DFS takes the invariant path (z_max = z_min + length). Tries z_min first (fails at root), then height (succeeds, sets given). But the given value keeps growing each frame (374, 387, 400...) while z_max_target stays constant at 285.8. The visual effect is the opposite edge moving or no movement. Root cause: interaction between `apply_stretch_absolute`'s per-frame reset to initial bounds and the DFS solving against stale/reset state. The given persists between frames but bounds are reset, creating a mismatch.
 
-**What needs care:**
+### Bug 2: Root doesn't grow when child stretches
 
-- **System vs user formulas.** Invariant formulas are generated, not user-written. `axis.invariant` already identifies which attribute is derived — the UI already uses this to show it as non-editable. No new flag needed. When the user writes their own formula on an invariant attribute, it replaces the system formula.
-- **Serialization.** Don't serialize invariant formulas — reconstruct them from `axis.invariant` during deserialization. Keeps file format unchanged. Only user formulas are persisted.
-- **Evaluation order.** The two source attributes must evaluate before the invariant. Forward propagation already handles this — `propagate_all` evaluates formulas per-SO, and the invariant formula references siblings that were just set by `set_bound` or other formulas.
-- **Cycle detection.** Only one invariant per axis, and it references the other two. No cycle possible within one axis. Cross-axis invariant formulas don't reference each other.
+Dragging z_min (bottom edge, formula-locked to root). DFS fails at root start (immovable). Length fallback adjusts the given — drawer resizes. But root stays the same size. The child can exceed root bounds. Root expansion needs to happen alongside the given adjustment.
 
-**When the user changes the invariant:**
+### Bug (resolved): Root Start Redirect
 
-1. Clear the old invariant formula
-2. Write the new invariant formula (system-generated)
+Child edge locked to root start (e.g., `z_min = parent.z_min`). Dragging it down: `reverse_set_bound` recurses to root z_min, tries to set it negative. Root redirect fires: grows root end, shifts children. But `clamp_root` resets root start to 0, and the dragged child's formula re-evaluates to 0 + same offset = original position. Nothing moved.
 
-No explicit propagation needed — `stores.tick()` after the UI click triggers re-render, which evaluates the new formula naturally. The stale value between click and tick is never visible.
+The problem: the redirect shifts ALL children equally, including the one being dragged. The dragged child ends up back where it started.
 
-**Additional dead code from this change:**
+Correct behavior for dragging a root-start-locked child downward by delta D:
+1. Root end grows by D (root gets bigger)
+2. All children EXCEPT the dragged one shift up by D (their offsets increase by D)
+3. The dragged child's offset stays the same (it stays at root start = 0)
+4. Net effect: root is D taller, dragged child is at the bottom, everything else shifted up
 
-| Code | Lines | File |
-|------|------:|------|
-| `enforce_invariants` | 30 | Constraints.ts |
-| 6 call sites | ~6 | Constraints.ts |
-| invariant clearing in `rebind_formulas` | 8 | Constraints.ts |
+This requires `reverse_set_bound` to know WHICH child triggered the recursion, so it can exclude it from the shift. Or: don't shift in `reverse_set_bound` at all — let `propagate_all` handle it, but make sure children's absolute positions are preserved through a snapshot/restore pattern (like `fit_to_children` does).
 
-Combined with the reverse propagation dead code (~130 lines), total elimination is ~175 lines replaced by uniform formula handling.
+## Completed
 
-## Related Fixes (Completed)
+**Undo/Redo** -- `serialize()` always includes value alongside formula; `rebind_formulas` skips eval during undo; `load_scene` gates propagation on `recompute` flag.
 
-### Undo/Redo
+## Implementation Phases
 
-Undo was broken because formula-bearing attributes didn't serialize their runtime values. Three fixes:
+### 1: Invariants as formulas
 
-1. **Attribute.ts** — `serialize()` always includes `value` alongside formula text
-2. **Constraints.ts** — `rebind_formulas(so, parent_id, skip_eval)` skips formula evaluation and invariant enforcement during undo
-3. **Engine.ts** — `load_scene(saved, recompute)` gates `propagate_all`, `rebind_formulas` eval, and `fit_to_children` on the `recompute` flag (true for file load, false for undo/redo)
+First attempt replaced `enforce_invariants` in one shot. Failed: system formulas evaluate to absolute values but `attr.value` stores relative; `set_bound`'s length sync skipped when `compiled` was set; evaluation order within an SO was wrong.
 
-### Root Expansion During Drag
+Incremental approach:
 
-`grow_to_children()` added to Engine — runs after `propagate(changed)` in drag handler. Scans direct children, expands root bounds where children exceed, snapshots/restores children's absolute positions to prevent offset drift.
+#### **1a: Infrastructure (no behavior change)** -- DONE
+
+`axis.invariant_node` stores the pre-built AST separately from `attr.compiled` (avoids interfering with the many places that check `compiled`). `axis.apply_invariant_formula(id)` builds it using concrete SO id -- no `bind_refs` needed. Called from Smart_Object constructor, deserialize, and `clone_so_from_template`. `enforce_invariants` untouched, forward prop skips these nodes. `is_system` flag was tried on `attr.compiled` but caused cascading bugs (length sync, get_bound/set_bound offset paths, repeater clones) -- removed in favor of the separate `invariant_node` field.
+
+#### **1b: Shadow mode**
+
+In `propagate_all`, after `enforce_invariants`, also evaluate system formulas via `set_bound` and compare results to what `enforce_invariants` computed. Log mismatches (should be zero). No behavior change -- validates the formulas are correct before relying on them.
+
+#### **1c: Swap**
+
+Remove `enforce_invariants` call sites one at a time, letting system formula evaluation take over. Extract `clamp_root` from `enforce_invariants` as a standalone step (root start=0 is a hard constraint, not an invariant formula). Update `set_bound`'s length sync to check `is_system` instead of `!compiled`. Test after each removal.
+
+#### **1d: Clean up**
+
+Remove `enforce_invariants` method. Remove invariant clearing from `rebind_formulas` (system formulas don't need clearing -- they're rebuilt by `apply_invariant_formula`). Update P_Attributes `set_invariant`. Update tests.
+
+### 2: Reverse propagation in `set_bound`
+
+- Add the root start redirect (the one special case)
+- When `set_bound` encounters a formula, trace the reference chain and call `set_bound` recursively on the referenced SO's attribute
+- For formulas with a solvable given, delegate to `Evaluator.propagate`
+
+### 3: Dead code removal
+
+- Remove `try_solve_given`, `solve_given_attr`, `freeze_non_givens` from Constraints.ts
+- Simplify `stretch` lambda in Drag.ts to just `set_bound` calls
+- Remove root-specific stretch logic in Drag.ts
+
+### 4: Tests
+
+- Add the test cases from the doc
+
+## Circular Dependency
+
+When a cycle, self-reference, or unresolvable formula is detected, navigate to the problem and show it inline.
+
+**Self-reference:** A formula that references its own attribute (e.g., `l + 50` on the width attribute expands to `width + 50` — width references itself). Detected in `set_formula` before cycle detection. Message: "this formula references itself". Suggestion: "remove this formula". Previously this was accidentally allowed because alias expansion (`l` → `w`) didn't match the internal name (`width`) in the formula map. Now that aliases expand to internal names, the self-reference is visible.
+
+### **Detection points:**
+
+1. **Formula entry** -- `set_formula` → `detect_cycle`. Caught immediately. User is already looking at the attribute.
+2. **File load** -- scan for cycles after `rebind_formulas` + `propagate_all`. Catches legacy files with cycles.
+3. **Drag** -- safety net. `reverse_set_bound` visited set catches cycles that slipped through 1 and 2. Drag returns false.
+
+### **How to show it:**
+
+1. Select the offending SO (`hits_3d.set_selection`)
+2. Details panel shows that SO's attributes; the offending row gets the error overlay
+3. Error message: "the formula `{formula_display}` for `{attr_alias}` of `{so_name}` cannot resolve"
+4. Suggestion: "remove this formula" -- clears the formula on that attribute, keeps the current value
+
+The user is now looking at the problem. They can accept the suggestion or manually edit the formula.
+
+For drag-time detection: the drag is interrupted (returns false), the view switches to the offending SO, the error appears on the attribute. The user fixes it before resuming.
+
+**Rule:** never modify an attribute that isn't currently visible. The error always navigates TO the problem first, then offers a fix on what's now on screen.
+
+### **Risk assessment:**
+
+- Low: detection at formula entry (detect_cycle already exists, extend to cover invariant paths), error message format (string template), "remove this formula" suggestion (clear_formula exists)
+- Medium: selecting offending SO during drag (interrupts drag state machine — need clean abort before switching selection), file load detection (scan after scene load without slowing startup)
+- High: none

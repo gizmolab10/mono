@@ -7,6 +7,7 @@ import Axis from './Axis';
 
 export default class Smart_Object extends Identifiable {
 	axes: Axis[] = [new Axis('x'), new Axis('y'), new Axis('z')];
+	rotation_order: [number, number, number] = [0, 1, 2];
 	repeater: Repeater | null = null;
 	hide_children: boolean = false;
 	visible: boolean = true;
@@ -323,12 +324,13 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
-	// ORIENTATION — compose all non-zero axes in fixed XYZ order
+	// ORIENTATION — compose non-zero axes in rotation_order
 	// ═══════════════════════════════════════════════════════════════════
 
 	get orientation(): quat {
 		const q = quat.create();
-		for (const axis of this.axes) {
+		for (const i of this.rotation_order) {
+			const axis = this.axes[i];
 			const angle = axis.angle.value;
 			if (Math.abs(angle) < 1e-10) continue;
 			const step = quat.create();
@@ -353,8 +355,8 @@ export default class Smart_Object extends Identifiable {
 	// ═══════════════════════════════════════════════════════════════════
 
 	/** Serialize to Portable_SO shape (per-axis bundles) */
-	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater } {
-		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater } = {
+	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater; rotation_order?: [number, number, number] } {
+		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater; rotation_order?: [number, number, number] } = {
 			id: this.id,
 			name: this.name,
 			x: this.axes[0].serialize(),
@@ -364,11 +366,13 @@ export default class Smart_Object extends Identifiable {
 		out.visible = this.visible ?? false;
 		out.hide_children = this.hide_children ?? false;
 		if (this.repeater) out.repeater = this.repeater;
+		const ro = this.rotation_order;
+		if (ro[0] !== 0 || ro[1] !== 1 || ro[2] !== 2) out.rotation_order = ro;
 		return out;
 	}
 
 	/** Deserialize from Portable_SO shape (per-axis bundles) */
-	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater }): Smart_Object {
+	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater; rotation_order?: [number, number, number] }): Smart_Object {
 		const so = new Smart_Object(data.name);
 		so.setID(data.id);
 		const axis_data = [data.x, data.y, data.z];
@@ -378,6 +382,7 @@ export default class Smart_Object extends Identifiable {
 		so.visible = data.visible ?? true;
 		so.repeater = data.repeater ?? null;
 		so.hide_children = data.hide_children ?? false;
+		if (data.rotation_order) so.rotation_order = data.rotation_order;
 		return so;
 	}
 }

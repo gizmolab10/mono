@@ -13,11 +13,12 @@
 	const SWAP_INDICES: Record<Axis_Name, [number, number]> = { z: [0, 1], x: [1, 2], y: [0, 2] };
 	const FACE_TO_AXIS: Axis_Name[] = ['z', 'z', 'x', 'x', 'y', 'y'];
 	const STICKY_ANGLES = [-45, -30, -22.5, 0, 22.5, 30, 45];
-	const ALL_AXES = ['x', 'y', 'z'] as const;
+	const ALL_AXES: Axis_Name[] = ['x', 'y', 'z'];
 	const STICKY_THRESHOLD = 1;
 
 	let selected_so = $derived($w_selection?.so ?? null);
 	let is_root = $derived(!selected_so?.scene?.parent);
+	let ordered_axes = $derived.by(() => { $w_tick; return selected_so ? selected_so.rotation_order.map(i => ALL_AXES[i]) : ALL_AXES; });
 	let angle_deg = $derived(read_angle_deg($w_tick));
 	let angle_is_zero = $derived.by(() => { $w_tick; return !selected_so || Math.abs(selected_so.axis_by_name(rot_axis).angle.value) < 1e-6; });
 	let angles = $derived(get_angles($w_tick));
@@ -126,6 +127,24 @@
 		scenes.save();
 	}
 
+	function demote_axis(axis: Axis_Name) {
+		if (!selected_so) return;
+		const idx = ALL_AXES.indexOf(axis);
+		const ro = selected_so.rotation_order;
+		const pos = ro.indexOf(idx);
+		history.snapshot();
+		let updated: [number, number, number];
+		if (pos >= ro.length - 1) {
+			// Already last — wrap to top
+			updated = [idx, ...ro.slice(0, pos)] as [number, number, number];
+		} else {
+			updated = [...ro.slice(0, pos), ...ro.slice(pos + 1), idx] as [number, number, number];
+		}
+		selected_so.rotation_order = updated;
+		stores.tick();
+		scenes.save();
+	}
+
 	function handle_angle(deg: number) {
 		if (!selected_so) return;
 		if (!slider_snapshotted) { history.snapshot(); slider_snapshotted = true; }
@@ -142,8 +161,9 @@
 	<div class='rotation-section'>
 		<table class='angles'>
 			<tbody>
-				{#each ALL_AXES as axis}
+				{#each ordered_axes as axis}
 					<tr class:active-axis={axis === rot_axis} onclick={() => rot_axis = axis}>
+						<td class='angle-arrow' onclick={(e) => { e.stopPropagation(); demote_axis(axis); }}>{selected_so && Math.abs(selected_so.axis_by_name(axis).angle.value) > 1e-6 ? '▼' : ''}</td>
 						<td class='angle-name'>{axis}</td>
 						<td class='angle-val'>
 							<input
@@ -232,6 +252,19 @@
 	.angles td {
 		border  : var(--th-border) solid currentColor;
 		padding : 0;
+	}
+
+	.angle-arrow {
+		background  : var(--c-white);
+		text-align  : center;
+		width       : 16px;
+		min-width   : 16px;
+		cursor      : pointer;
+		opacity     : 0.7;
+	}
+
+	.angle-arrow:hover {
+		background : var(--hover);
 	}
 
 	.angle-name {

@@ -17,3 +17,4 @@
 15. **Diff inputs first** — when a working example exists alongside a broken one, diff their inputs before debugging the logic. The bug is usually in the data, not the renderer.
 16. Your answer on every question is worth $1000 to me if it works
 17. **Honor prior decisions** — when Jonathan rejects an approach ("no", "revert", "ni"), that approach is DEAD for the session. Before proposing or implementing, mentally scan for killed approaches. Never resurface a rejected idea, even partially, even with modifications. If stuck, say so — don't recycle.
+18. **Evidence or speculation — no third option** — every explanation of WHY something happens must be labeled. Before explaining, show the evidence (code line, log output, data). If you can't point to evidence, say "I don't know" and propose how to gather it. NEVER present a guess as a conclusion. NEVER propose a fix based on unverified speculation.

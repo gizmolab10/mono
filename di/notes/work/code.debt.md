@@ -1,14 +1,30 @@
 # Code Debt
 
+Running a project according to code debt changes the dynamic. It can be used to aim for tackling that debt. It's a combination of refactoring and of get the fucking final sign off.
 
 offer a proposal for the first unchecked item
 
-- [ ] cannot rotate basement around z axis
-    - [ ] rear wall -> funky location
-- [ ] stretch top drawer up -> fubar!
-- [ ] so & portable so -> add a hide children boolean
-    - [ ] very different than what the triangle does
-    - [ ] true overrides each child's isVisible
+- [ ] change the order of axis rotations (eg y then x)
+    - [ ] sphere symmetry bug
+    - [ ] UX to reorder axes
+        - [ ] show the current rotation order
+        - [x] new column with a down pointing triangle
+        - [ ] add action to click ->
+        - [x] buttons with the order
+            - [ ] swap first two
+            - [ ] swap last two
+            - [ ] swap first and last
+        - [x] permutation
+            - [ ] three things taken three at a time
+            - [ ] nine buttons, ick
+- [ ] [wendy](data schema for wendy)
+- [ ] [[change.propagation]]
+- [ ] can period be a spacer?
+
+---
+
+## leftovers
+
 - [ ] leftovers
     - [ ] [[21.css.engine]]
     - [ ] [[16.formulas]]
@@ -17,9 +33,18 @@ offer a proposal for the first unchecked item
     - [ ] [[8.dimensionals]]
     - [ ] [[18.givens]]
     - [ ] [[26.snap.pin]]
+- [ ] investigate claude tools, bill larson
+- [ ] cannot rotate basement around z axis
+    - [ ] rear wall -> funky location
+- [ ] stretch top drawer up -> fubar!
+- [ ] so & portable so -> add a hide children boolean
+    - [ ] very different than what the triangle does
+    - [ ] true overrides each child's isVisible
 - [ ] bring the [[working features]] table up to date
 
 ---
+
+## later
 
 - [ ] [[three.dimensions]] revisit Intersection detection when object count grows
 - [ ] what went wrong with [[s3]]?

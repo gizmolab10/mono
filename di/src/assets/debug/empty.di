@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "9",
   "scene": {
     "smart_objects": [
       {
@@ -32,8 +32,8 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
-        "visible": false
+        "visible": true,
+        "hide_children": false
       }
     ],
     "camera": {
@@ -53,7 +53,6 @@
         0
       ]
     },
-    "root_id": "dia2480ebef32cfd",
-    "selected_face": 2
+    "root_id": "dia2480ebef32cfd"
   }
 }

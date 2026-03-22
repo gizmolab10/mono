@@ -1,0 +1,4 @@
+- [ ] relationships
+    - [ ] kind
+    - [ ] weighting, authenticity
+    - [ ] who with

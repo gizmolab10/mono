@@ -27,12 +27,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/change.propagation.md",
+                "file": "di/notes/work/code.debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "change.propagation"
+              "title": "code.debt"
+            }
+          },
+          {
+            "id": "d169d4bddaafc3b2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/highlight selected SO.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "highlight selected SO"
             }
           },
           {
@@ -50,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -82,7 +96,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:algebr",
+                "query": "type ahead",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -107,7 +121,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 337.5
+    "width": 337.5,
+    "collapsed": true
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -123,7 +138,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/change.propagation.md",
+                "file": "di/notes/work/highlight selected SO.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -133,7 +148,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for change.propagation"
+              "title": "Backlinks for highlight selected SO"
             }
           },
           {
@@ -185,13 +200,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/change.propagation.md",
+                "file": "di/notes/work/highlight selected SO.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of change.propagation"
+              "title": "Outline of highlight selected SO"
             }
           }
         ],
@@ -212,12 +227,18 @@
       "bases:Create new base": false
     }
   },
-  "active": "a283699e03a14538",
+  "active": "d169d4bddaafc3b2",
   "lastOpenFiles": [
-    "di/notes/work/separators.md",
-    "di/notes/architecture/core/algebra.md",
     "di/notes/work/change.propagation.md",
     "di/notes/work/code.debt.md",
+    "di/src/assets/debug/sphere four.di",
+    "di/src/assets/debug/kubes.di",
+    "di/src/assets/debug/dead simple.di",
+    "di/notes/work/highlight selected SO.md",
+    "di/notes/work/data schema for wendy.md",
+    "di/notes/work/milestones/done/16.formulas.md",
+    "di/notes/work/separators.md",
+    "di/notes/architecture/core/algebra.md",
     "di/src/lib/svelte/mouse/Separator.svelte",
     "di/src/lib/svelte/mouse/old.Separator.svelte",
     "di/notes/work/milestones/26.snap.pin.md",
@@ -227,7 +248,6 @@
     "di/dist/assets/index-CSZIf2OE.css",
     "di/dist/assets",
     "di/notes/work/milestones/done/7.edit.drags.md",
-    "di/notes/work/milestones/done/16.formulas.md",
     "di/notes/work/milestones/done/19.angles.md",
     "di/notes/work/milestones/28.colors.md",
     "di/notes/work/milestones/27.selection.algorithm.md",
@@ -243,14 +263,8 @@
     "di/notes/work/milestones/done/8.dimensionals.md",
     "di/notes/work/done/version.9.md",
     "di/notes/work/done/chat.md",
-    "di/src/assets/debug/sphere three.di",
-    "di/src/assets/debug/sphere two.di",
-    "di/src/assets/debug/sphere one.di",
     "notes/guides/collaborate/framing_filters.md",
-    "di/notes/work/milestones/done/21.css.engine.md",
     "Screenshot 2026-03-14 at 12.48.11 PM.png",
-    "di/notes/work/milestones/25.errors 1.md",
-    "foo.md",
     "node_modules/concurrently/docs/demo.gif",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/64x64.png",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/512x512.png",
