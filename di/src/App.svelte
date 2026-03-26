@@ -39,7 +39,7 @@
 		root.setProperty('--th-thumb',         `${k.thickness.thumb}px`);
 		root.setProperty('--th-border',        `${k.thickness.border}px`);
 		root.setProperty('--th-sep',           `${k.thickness.separator.main}px`);
-		root.setProperty('--th-thin-sep',      `${k.thickness.separator.banners}px`);
+		root.setProperty('--th-thin-sep',      `${k.thickness.separator.content}px`);
 		root.setProperty('--th-content-sep',   `${k.thickness.separator.content}px`);
 
 		root.setProperty('--corner-common',    `${k.corner.common}px`);

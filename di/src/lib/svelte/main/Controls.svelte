@@ -1,10 +1,11 @@
 <script lang='ts'>
-	import { T_Layer, T_Decorations } from '../../ts/types/Enumerations';
+	import { T_Decorations } from '../../ts/types/Enumerations';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { stores } from '../../ts/managers/Stores';
 	import { scenes } from '../../ts/managers/Scenes';
-import { k } from '../../ts/common/Constants';
+	import { c } from '../../ts/common/Configuration'
+	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 
 	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
@@ -30,6 +31,10 @@ import { k } from '../../ts/common/Constants';
 			<path d={svg_paths.hamburger(k.height.button.common + 2)}/>
 		</svg>
 	</button>
+	{#if !c.device_isMobile}
+		<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
+		<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
+	{/if}
 {/snippet}
 
 {#snippet decoration_buttons()}
@@ -100,9 +105,6 @@ import { k } from '../../ts/common/Constants';
 		</div>
 	{:else}
 		{@render hamburger_button()}
-		<span class='spacer'></span>
-		<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
-		<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
 		{#if $w_allow_editing && !root_fits}
 			<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 		{/if}

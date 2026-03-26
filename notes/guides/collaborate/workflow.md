@@ -69,3 +69,7 @@ When updating a work doc (milestones, notes, plans):
 3. **Summarize by adding, not replacing.** If a synopsis or summary would help, add it alongside the original — don't compress the original into it.
 4. **Design notes are not clutter.** Type definitions, rationale, lifecycle rules, error source mappings — these are decisions, not noise. They stay.
 5. **When in doubt, add a section.** A new "synopsis" or "open items" section at the top costs nothing. Gutting the middle to make room costs everything.
+
+## Writing Design Documents
+
+See [design.md](creating%20a%20design.md).

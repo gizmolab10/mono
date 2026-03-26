@@ -8,17 +8,31 @@
         "type": "tabs",
         "children": [
           {
+            "id": "d169d4bddaafc3b2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "notes/guides/pre-flight/always.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "always"
+            }
+          },
+          {
             "id": "07686de312fec143",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/architecture/core/algebra.md",
+                "file": "di/notes/architecture/graph/three.dimensions.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "algebra"
+              "title": "three.dimensions"
             }
           },
           {
@@ -27,26 +41,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/code.debt.md",
+                "file": "di/notes/work/facets-session-summary.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt"
+              "title": "facets-session-summary"
             }
           },
           {
-            "id": "d169d4bddaafc3b2",
+            "id": "4a4a856dc73b1fdc",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/highlight selected SO.md",
+                "file": "di/notes/work/facets.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "highlight selected SO"
+              "title": "facets"
             }
           },
           {
@@ -96,7 +110,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "type ahead",
+                "query": "file:pitfalls",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -121,8 +135,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 337.5,
-    "collapsed": true
+    "width": 337.5
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -138,7 +151,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "di/notes/work/highlight selected SO.md",
+                "file": "di/notes/work/facets.md",
                 "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -148,7 +161,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for highlight selected SO"
+              "title": "Backlinks for facets"
             }
           },
           {
@@ -200,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/highlight selected SO.md",
+                "file": "di/notes/work/facets-session-summary.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of highlight selected SO"
+              "title": "Outline of facets-session-summary"
             }
           }
         ],
@@ -227,43 +240,44 @@
       "bases:Create new base": false
     }
   },
-  "active": "d169d4bddaafc3b2",
+  "active": "a283699e03a14538",
   "lastOpenFiles": [
-    "di/notes/work/change.propagation.md",
+    "di/notes/work/facets.md",
+    "di/notes/work/facets-session-summary.md",
     "di/notes/work/code.debt.md",
+    "notes/guides/pre-flight/always.md",
+    "notes/guides/pre-flight/pitfalls.md",
+    "notes/guides/develop/style.md",
+    "notes/guides/collaborate/exclude.md",
+    "notes/guides/pre-flight/tools.md",
+    "notes/guides/pre-flight/kinds.of.tasks.md",
+    "notes/guides/pre-flight/keywords.md",
+    "notes/guides/collaborate/expectations.md",
+    "ws/vite.config.js.timestamp-1774384340947-5c2e14a472024.mjs",
+    "di/notes/architecture/graph/three.dimensions.md",
+    "di/notes/architecture/core/algebra.md",
+    "di/notes/work/done/code.debt.done.md",
+    "di/src/lib/ts/common/Configuration.ts",
+    "di/notes/work/change.propagation.md",
+    "notes/guides/collaborate/creating a design.md",
+    "notes/guides/collaborate/index.md",
+    "notes/guides/collaborate/framing filters.md",
+    "di/src/lib/ts/render/Facets.ts",
+    "di/src/lib/ts/render/Highlight.ts",
+    "di/notes/work/highlight selected SO.md",
     "di/src/assets/debug/sphere four.di",
     "di/src/assets/debug/kubes.di",
     "di/src/assets/debug/dead simple.di",
-    "di/notes/work/highlight selected SO.md",
     "di/notes/work/data schema for wendy.md",
     "di/notes/work/milestones/done/16.formulas.md",
     "di/notes/work/separators.md",
-    "di/notes/architecture/core/algebra.md",
     "di/src/lib/svelte/mouse/Separator.svelte",
     "di/src/lib/svelte/mouse/old.Separator.svelte",
     "di/notes/work/milestones/26.snap.pin.md",
     "di/notes/work/milestones/done/3.docs.md",
     "di/notes/work/milestones/done/2.panel.md",
     "di/dist/assets/index-n3V0qM8L.js",
-    "di/dist/assets/index-CSZIf2OE.css",
-    "di/dist/assets",
     "di/notes/work/milestones/done/7.edit.drags.md",
-    "di/notes/work/milestones/done/19.angles.md",
-    "di/notes/work/milestones/28.colors.md",
-    "di/notes/work/milestones/27.selection.algorithm.md",
-    "di/notes/work/milestones/29.cut.lists.md",
-    "di/notes/work/milestones/30.user.manual.md",
-    "di/notes/work/milestones/31.licensing.md",
-    "di/notes/work/milestones/32.marketing.md",
-    "di/notes/work/milestones/done/25.errors.md",
-    "di/src/assets/home/stairs with stringers.di",
-    "di/src/assets/home/floor.di",
-    "di/notes/work/done/code.debt.done.md",
-    "di/notes/work/milestones/done/18.givens.md",
-    "di/notes/work/milestones/done/8.dimensionals.md",
-    "di/notes/work/done/version.9.md",
-    "di/notes/work/done/chat.md",
-    "notes/guides/collaborate/framing_filters.md",
     "Screenshot 2026-03-14 at 12.48.11 PM.png",
     "node_modules/concurrently/docs/demo.gif",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/64x64.png",

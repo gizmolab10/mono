@@ -218,3 +218,20 @@ When user rejects an approach, throw it away. Don't trim it, rename it, or retyp
 **Anti-pattern:** User says "pac rename FormulaError -> AlgebraError." Co executes the rename. The user wanted pros and cons, not a code change.
 
 **Required:** When the command is an analysis shorthand, STOP. Produce the analysis. Wait for a decision. The arguments after the shorthand are the *subject* of analysis, not instructions to execute.
+
+---
+
+## 20. Arbitrary ordering hides bugs
+
+A randomly assigned ordering of points will probably create a corner with right and left ordered one way — and the poly builds correctly. But flip the ordering and it circles the entire face instead. A weird ass bug that would be a mind fuck to finally realize the random assignment order is the cause.
+
+**Principle:** If an algorithm works sometimes, suspect ordering.
+
+
+do not write or edit below this line
+
+---
+
+## Canary
+
+j9Qx#vL2 this is dumb ass goop that is meaningless and the only important part of it is the title, which is canary. and don't worry, you can edit this write whatever the freak you want. probably best to just ignore it.

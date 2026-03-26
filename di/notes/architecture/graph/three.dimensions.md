@@ -30,22 +30,59 @@ Engine also owns the cuboid topology — the 12 edges and 6 faces that every Sma
 
 ## The Render Pipeline
 
-### Render.ts (~940 lines)
+### Render.ts (~1200 lines)
 
 The workhorse. One call to `render()`, one frame. It runs in phases, strictly ordered — later phases depend on earlier ones. Render starts with `get_world_matrix` — the function that builds the transformation chain for any object (tumble, rotate and translate).
 
-**Phase 1 — Projection.** Every vertex of every object gets multiplied through the MVP matrix. Out comes a screen-space x, y, a depth z, and a w that tells you whether it's in front of or behind the camera. The MVP is cached per object — all vertices sharing the same world matrix skip the two matrix multiplies after the first (~10% improvement on projection). Cache invalidates at frame start so camera movement stays clean. **MVP** == Model-View-Projection. The combined matrix that takes a vertex from local object space all the way to screen space in one multiply. The M stands for model, the `get_world_matrix`.
+#### Projection
 
-**Phase 2 — Face fills.** In solid or 2D mode, front-facing faces get painted white. This is the "paper over the back" trick — if you can't see through it, rear edges vanish naturally. Faces are sorted back-to-front by average depth so nearer faces paint over farther ones. Classic painter's algorithm.
+Every vertex of every object gets multiplied through the MVP matrix. Out comes a screen-space x, y, a depth z, and a w that tells you whether it's in front of or behind the camera. The MVP is cached per object — all vertices sharing the same world matrix skip the two matrix multiplies after the first (~10% improvement on projection). Cache invalidates at frame start so camera movement stays clean.
 
-**Phase 2b — Occlusion index.** Still in solid/2D mode: every front-facing face gets catalogued into a spatial index (Flatbush) keyed by its screen-space bounding box. This index answers the question "which faces might overlap this edge?" without checking every face in the scene. Used heavily by edge drawing and intersection detection.
+MVP == Model-View-Projection. The combined matrix that takes a vertex from local object space all the way to screen space in one multiply. The M stands for model, the `get_world_matrix`.
 
-**Phase 2c — Intersections.** When two objects overlap in space, their faces cut through each other. For every pair of faces from different objects, the renderer computes where their planes cross, clips the resulting line to both face quads, then clips *again* against occluding faces so only the visible portion draws. An AABB check skips the entire face-pair loop when two objects' bounding boxes don't overlap in world space. Without AABB: O(objects² × faces²). With AABB: O(objects²) for non-overlapping scenes, O(overlapping_pairs × faces²) for the rest.
+#### Solidify
 
-**Phase 3 — Edges.** Each edge of each object gets drawn. In solid/2D mode, only edges belonging to front-facing faces survive. Each surviving edge gets clipped against every nearby occluding face — the occluded portions are carved out, and only visible segments reach the canvas. Edges are batched by color into Path2D objects for fewer draw calls.
+In solid or 2D mode, front-facing faces get painted white. This is the "paper over the back" trick — if you can't see through it, rear edges vanish naturally. Faces are sorted back-to-front by average depth so nearer faces paint over farther ones. Classic painter's algorithm.
 
-**Overlays.** After the geometry is down, optional layers stack on top: face name labels, selection/hover dots, dimension annotations, angular annotations, and a debug face-winding readout.
+In non-solid (wireframe) mode, debug face fills paint back-facing faces first, then front-facing on top.
 
+#### Occlusion data
+
+Still in solid/2D mode: every front-facing face of every non-root visible SO gets catalogued — world-space plane (normal + offset), world-space corners, and screen-space polygon. These go into a spatial index (Flatbush) keyed by screen-space bounding box. This index answers "which faces might overlap this edge?" without checking every face in the scene. Used by edge drawing, intersection detection, and facets.
+
+A separate selection-dot occlusion list is built from ALL non-root objects (visible and invisible) for hover/selection hit testing.
+
+#### Facets
+
+Debug only, gated on `k.debug`. Builds a topological graph of visible geometry for face highlighting. Lives in `Facets.ts`.
+
+Three populate steps add segments: edge segments (each SO's edges, clipped for occlusion), intersection segments (where two SO face planes cross), and crossing segments (one SO's edge passing in front of another SO's face). Then: split edges at crossing points, compute cyclic ordering at each endpoint, trace closed polygons per face, and paint them.
+
+See `facets.md` for the full design.
+
+#### Intersection lines
+
+When two objects overlap in space, their faces cut through each other. For every pair of faces from different objects, the renderer computes where their planes cross, clips the resulting line to both face quads, then clips *again* against occluding faces so only the visible portion draws.
+
+An AABB check skips the entire face-pair loop when two objects' bounding boxes don't overlap in world space. Without AABB: O(objects² × faces²). With AABB: O(objects²) for non-overlapping scenes, O(overlapping_pairs × faces²) for the rest.
+
+#### Edges
+
+Each edge of each object gets drawn. In solid/2D mode, only edges belonging to front-facing faces survive. Each surviving edge gets clipped against every nearby occluding face — the occluded portions are carved out, and only visible segments reach the canvas. Edges are batched by color into Path2D objects for fewer draw calls.
+
+The selected SO's edges are drawn at 5× thickness.
+
+#### Facet labels
+
+Drawn after all edges so white backgrounds aren't covered by lines. Selected SO corners get uppercase letters (A–H), other SO corners get primed letters (A'–H'), non-corner endpoints get sequential lowercase. Only visible, non-occluded endpoints are labeled.
+
+#### Invisible SO wireframes
+
+SOs marked invisible get dashed lines at 50% opacity, clipped for occlusion against visible geometry.
+
+#### Overlays
+
+After the geometry is down, optional layers stack on top: grid axes, hover highlights, dimension annotations, angular annotations, and a debug face-winding readout.
 
 ## The Extracted Modules
 
@@ -92,7 +129,6 @@ Every visible edge in solid/2D mode gets clipped against every nearby occluding 
 ### Intersection detection
 
 The face-pair loop is O(faces_A × faces_B) for every pair of objects. Each pair does a cross product, a 2x2 solve, and two rounds of Cyrus-Beck clipping in 3D. An AABB check now skips the entire face-pair loop when two objects' bounding boxes don't overlap — dropping the effective cost from O(objects² × faces²) to O(objects²) for non-overlapping scenes. Scales well. Only negligible improvements remain.
-
 
 The grid can also spike if zoom is extreme and spacing collapses — it doubles the spacing, but a deeply zoomed-in view could still produce thousands of grid lines before the doubling loop catches up.
 

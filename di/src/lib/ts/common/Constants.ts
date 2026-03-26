@@ -27,7 +27,7 @@ export default class Constants {
 	build_number = __BUILD_NUMBER__;
 	build_notes = __BUILD_NOTES__;
 
-	debug = false;
+	debug = true;
 
 	halfIncrement = 0.5;
 	coplanar_epsilon = 1e-3;
