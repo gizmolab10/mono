@@ -16,7 +16,7 @@ import { k } from '../common/Constants';
 import { drag } from '../editors/Drag';
 import { camera } from './Camera';
 import { scene } from './Scene';
-import { Facets, T_Endpoint, endpoint_key, type EndpointID } from './Facets';
+import { Facets, T_Endpoint, endpoint_key, vtx, type EndpointID } from './Facets';
 import Flatbush from 'flatbush';
 
 type Pt = { x: number; y: number };
@@ -26,6 +26,8 @@ interface ClipInterval {
 	start: Pt; end: Pt;
 	start_cause: OccFaceRef;  // null = original endpoint (corner)
 	end_cause: OccFaceRef;    // null = original endpoint (corner)
+	start_poly_edge?: number; // polygon edge index where visibility starts
+	end_poly_edge?: number;   // polygon edge index where visibility ends
 }
 
 interface ComputedEdgeSeg {
@@ -90,9 +92,9 @@ class Render {
 	private computed_endpoints = new Map<string, ComputedEndpoint>();
 
 	/** Map from edge+occluder to face_intersection identity.
-	 *  Key: "so:edge_key:occ_obj:occ_face" → EndpointID of type face_intersection.
+	 *  Key: "so:edge_key:occ_obj:occ_face" → array of EndpointIDs of type face_intersection.
 	 *  Built during intersection compute, consumed during edge compute. */
-	private intersection_exit_map = new Map<string, EndpointID>();
+	private intersection_clip_map = new Map<string, EndpointID[]>();
 
 	/** Precomputed occluding edge segments — edges that pass in front of another SO's face. */
 	private computed_occluding_segments: {
@@ -110,6 +112,7 @@ class Render {
 		obj_id: string;
 		face_index?: number;
 		face_verts?: number[];
+		silhouette_edges?: boolean[]; // per polygon edge: true = silhouette (body ends), false = internal (body continues)
 	}[] = [];
 	/** Logical (CSS) size — for external consumers like camera init. */
 	get logical_size(): Size { return this.size; }
@@ -238,9 +241,14 @@ class Render {
 				if (!obj.faces) continue;
 				const world = this.get_world_matrix(obj);
 				const verts = obj.so.vertices;
+				// First pass: determine which faces are front-facing
+				const front_facing = new Set<number>();
 				for (let fi = 0; fi < obj.faces.length; fi++) {
+					if (this.face_winding(obj.faces[fi], projected) < 0) front_facing.add(fi);
+				}
+				for (let fi = 0; fi < obj.faces.length; fi++) {
+					if (!front_facing.has(fi)) continue;
 					const face = obj.faces[fi];
-					if (this.face_winding(face, projected) >= 0) continue;
 					// Screen-space polygon
 					const poly: { x: number; y: number }[] = [];
 					let cam_behind = false;
@@ -249,6 +257,22 @@ class Render {
 						poly.push({ x: projected[vi].x, y: projected[vi].y });
 					}
 					if (cam_behind) continue;
+					// Tag each polygon edge as silhouette or internal
+					const silhouette_edges: boolean[] = [];
+					for (let ei = 0; ei < face.length; ei++) {
+						const vi = face[ei], vj = face[(ei + 1) % face.length];
+						// Find the adjacent face sharing this edge
+						let adj_front = false;
+						for (let fi2 = 0; fi2 < obj.faces.length; fi2++) {
+							if (fi2 === fi) continue;
+							const f2 = obj.faces[fi2];
+							if (f2.includes(vi) && f2.includes(vj)) {
+								adj_front = front_facing.has(fi2);
+								break;
+							}
+						}
+						silhouette_edges.push(!adj_front); // silhouette if adjacent is NOT front-facing
+					}
 					// World-space corners and plane
 					const corners: vec3[] = [];
 					for (const vi of face) {
@@ -262,7 +286,7 @@ class Render {
 					const n = vec3.cross(vec3.create(), e1, e2);
 					vec3.normalize(n, n);
 					const d = vec3.dot(n, corners[0]);
-					this.occluding_faces.push({ n, d, corners, poly, obj_id: obj.id, face_index: fi, face_verts: face });
+					this.occluding_faces.push({ n, d, corners, poly, obj_id: obj.id, face_index: fi, face_verts: face, silhouette_edges });
 				}
 			}
 			// Build spatial index from screen-space face bounding boxes
@@ -344,9 +368,11 @@ class Render {
 			} else {
 				this.computed_intersection_segments = [];
 			}
-			this.compute_visible_edge_segments(objects, projected_map);
+			if (!Render._facets_logged) {
+				}
+				this.compute_visible_edge_segments(objects, projected_map);
 			if (objects.length > 1) {
-				// this.filter_occluded_intersection_endpoints(objects, projected_map); // TEMP disabled
+				this.filter_occluded_intersection_endpoints(objects, projected_map);
 				this.compute_occluding_edge_segments();
 			} else {
 				this.computed_occluding_segments = [];
@@ -474,7 +500,7 @@ class Render {
 				: '';
 			if (path_str !== Render._last_facet_log || !Render._facets_logged) {
 				Render._last_facet_log = path_str;
-				console.log(`facets: ${path_str || '(none)'} sel=${!!sel_scene} faces=${!!sel_scene?.faces} ref=${!!_facets_ref}`);
+				console.log(`facets: ${path_str || '(none)'}`);
 			}
 			Render._facets_logged = true;
 		}
@@ -710,6 +736,19 @@ class Render {
 	/** Compute visible edge segments for all objects (clip for occlusion once, store results). */
 	private compute_visible_edge_segments(objects: O_Scene[], projected_map: Map<string, Projected[]>): void {
 		this.computed_edge_segments.clear();
+		// Save intersection-referenced endpoints before clearing
+		const ix_referenced = new Set<string>();
+		for (const iseg of this.computed_intersection_segments) {
+			for (const [sk, ek] of iseg.endpoint_keys) {
+				ix_referenced.add(sk);
+				ix_referenced.add(ek);
+			}
+		}
+		const saved_ix_eps = new Map<string, ComputedEndpoint>();
+		for (const key of ix_referenced) {
+			const ep = this.computed_endpoints.get(key);
+			if (ep) saved_ix_eps.set(key, ep);
+		}
 		this.computed_endpoints.clear();
 		const CORNER_T = 0.01;  // t threshold for corner detection
 
@@ -764,9 +803,11 @@ class Render {
 					const edge_id = `${obj.id}:${ek}`;
 
 
+	
 					// Helper: tag an endpoint from t value and clip cause
-					// is_start_of_visible: only check exit-map at start of visible intervals
-					const tag_endpoint = (t: number, screen: Pt, cause: OccFaceRef, is_start_of_visible: boolean): string => {
+					// is_start_of_visible: determines clip direction for clip-map lookup
+					const tag_endpoint = (t: number, screen: Pt, cause: OccFaceRef, is_start_of_visible: boolean, poly_edge_idx?: number): string => {
+	
 						const w = vec3.lerp(vec3.create(), w1, w2, Math.max(0, Math.min(1, t)));
 						let id: EndpointID;
 						if (!cause && t < CORNER_T) {
@@ -774,76 +815,154 @@ class Render {
 						} else if (!cause && t > 1 - CORNER_T) {
 							id = { type: T_Endpoint.corner, so: obj.id, vertex: j };
 						} else if (cause) {
-							const exit_key = `${obj.id}:${ek}:${cause.obj_id}:${cause.face_index ?? -1}`;
-							const fi_id = is_start_of_visible ? this.intersection_exit_map.get(exit_key) : undefined;
-							id = fi_id ?? { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: `${cause.obj_id}:${cause.face_index ?? -1}` };
+							const clip_key = `${obj.id}:${ek}:${cause.obj_id}:${cause.face_index ?? -1}`;
+							const fi_list = this.intersection_clip_map.get(clip_key);
+							let fi_id: EndpointID | undefined;
+							if (fi_list && fi_list.length === 1) {
+								fi_id = fi_list[0];
+							} else if (fi_list && fi_list.length > 1 && obj.faces) {
+								// Multiple fi endpoints on same edge+face — match by which face of this edge's object is involved
+								const edge_faces = new Set<number>();
+								for (let fi2 = 0; fi2 < obj.faces.length; fi2++) {
+									const fv = obj.faces[fi2];
+									if (fv.includes(i) && fv.includes(j)) edge_faces.add(fi2);
+								}
+								const obj_face_key = (fi2: number) => `${obj.id}:${fi2}`;
+								for (const candidate of fi_list) {
+									if (candidate.type !== T_Endpoint.face_intersection) continue;
+									const ckey = endpoint_key(candidate);
+									if (used_fi_keys.has(ckey)) continue; // already used on this edge
+									for (const efi of edge_faces) {
+										const k = obj_face_key(efi);
+										if (candidate.faceA === k || candidate.faceB === k) {
+											fi_id = candidate;
+											break;
+										}
+									}
+									if (fi_id) break;
+								}
+							}
+							const occ_edge = (poly_edge_idx != null && poly_edge_idx >= 0 && cause.face_verts)
+							? (() => { const vi = cause.face_verts![poly_edge_idx]; const vj = cause.face_verts![(poly_edge_idx + 1) % cause.face_verts!.length]; return `${cause.obj_id}:${Math.min(vi, vj)}-${Math.max(vi, vj)}`; })()
+							: undefined;
+							// Don't reuse the same fi key twice on the same edge
+							if (fi_id) {
+								const fi_key_check = endpoint_key(fi_id);
+								if (used_fi_keys.has(fi_key_check)) fi_id = undefined;
+								else used_fi_keys.add(fi_key_check);
+							}
+							id = fi_id ?? { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: `${cause.obj_id}:${cause.face_index ?? -1}`, end: is_start_of_visible ? 'exit' : 'enter', occluder_edge: occ_edge };
 						} else {
-							id = { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: '' };
+							id = { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: '', end: is_start_of_visible ? 'exit' : 'enter' };
 						}
 						return this.register_endpoint(id, screen, w);
 					};
 
-					let behind_face: string | null = null;
-					if (!Render._facets_logged && clips.length > 1) {
-						console.log(`CLIPS ${obj.so.name}:${ek} intervals=${clips.length}`);
-						for (let ci_idx = 0; ci_idx < clips.length; ci_idx++) {
-							const c = clips[ci_idx];
-							const sc = c.start_cause ? `${c.start_cause.obj_id}:${c.start_cause.face_index}` : 'none';
-							const ec = c.end_cause ? `${c.end_cause.obj_id}:${c.end_cause.face_index}` : 'none';
-							console.log(`  [${ci_idx}] start=(${c.start.x.toFixed(0)},${c.start.y.toFixed(0)}) end=(${c.end.x.toFixed(0)},${c.end.y.toFixed(0)}) start_cause=${sc} end_cause=${ec}`);
-							// Log transition (hidden gap) after this interval
-							if (ci_idx < clips.length - 1 && c.end_cause) {
-								const next = clips[ci_idx + 1];
-								// Midpoint of hidden gap
-								const mid_t = 0.5;
-								const mx = c.end.x + (next.start.x - c.end.x) * mid_t;
-								const my = c.end.y + (next.start.y - c.end.y) * mid_t;
-								const mw = vec3.lerp(vec3.create(), w1, w2,
-									Render.screen_t(a, b, { x: mx, y: my }));
-								// Check depth against the end_cause face and next start_cause face
-								const d_end = vec3.dot(c.end_cause.n, mw) - c.end_cause.d;
-								const d_next = next.start_cause
-									? vec3.dot(next.start_cause.n, mw) - next.start_cause.d
-									: 0;
-								const end_name = c.end_cause.obj_id;
-								const next_name = next.start_cause?.obj_id ?? 'none';
-								console.log(`  HIDDEN gap: end_face=${end_name}:${c.end_cause.face_index} depth=${d_end.toFixed(1)} next_face=${next_name}:${next.start_cause?.face_index ?? '?'} depth=${d_next.toFixed(1)} ${d_end < d_next ? 'end_face IN FRONT' : 'next_face IN FRONT'}`);
-							}
-						}
-					}
+					const used_fi_keys = new Set<string>();
 					for (const ci of clips) {
-						if (behind_face && ci.start_cause) {
-							const cause_face = `${ci.start_cause.obj_id}:${ci.start_cause.face_index}`;
-							if (cause_face === behind_face) {
-								if (!Render._facets_logged) console.log(`GATE skip ${obj.so.name}:${ek} behind=${behind_face}`);
-								continue;
-							}
-						}
 
 						const t_s = Render.screen_t(a, b, ci.start);
 						const t_e = Render.screen_t(a, b, ci.end);
 
-						const sk = tag_endpoint(t_s, ci.start, ci.start_cause, true);
-						const ek2 = tag_endpoint(t_e, ci.end, ci.end_cause, false);
+						const sk = tag_endpoint(t_s, ci.start, ci.start_cause, true, ci.start_poly_edge);
+						const ek2 = tag_endpoint(t_e, ci.end, ci.end_cause, false, ci.end_poly_edge);
 						vis.push([ci.start, ci.end]);
 						ep_keys.push([sk, ek2]);
-
-						behind_face = ci.end_cause
-							? `${ci.end_cause.obj_id}:${ci.end_cause.face_index}`
-							: null;
 					}
 
 					segments.push({ edge_key: ek, so: obj.id, visible: vis, endpoint_keys: ep_keys });
 				}
 			}
+			if (!Render._facets_logged) {
+				const pretty = (s: string) => {
+					for (const o of objects) {
+						s = s.split(o.id).join(o.so.name);
+						if (o.faces) {
+							const p = o === objects[1] ? "'" : '';
+							for (let fi2 = 0; fi2 < o.faces.length; fi2++) {
+								const corners = o.faces[fi2].map((v: number) => vtx(v) + p).join('');
+								s = s.split(`${o.so.name}:${fi2}`).join(`${o.so.name}:${corners}`);
+							}
+						}
+					}
+					return s;
+				};
+				for (const seg of segments) {
+					const keys = seg.endpoint_keys.flat();
+					const has_non_corner = keys.some(k => k && !k.startsWith('c:'));
+					if (!has_non_corner) continue;
+					const eps = keys.map(k => k ? pretty(k.slice(0, 50)) : '(NULL)');
+					const [ev1, ev2] = seg.edge_key.split('-').map(Number);
+					const prime = obj === objects[1] ? "'" : '';
+					console.log(`EDGE ${obj.so.name}:${vtx(ev1)}${prime}-${vtx(ev2)}${prime} vis=${seg.visible.length} eps=[${eps.join(', ')}]`);
+				}
+			}
 			this.computed_edge_segments.set(obj.id, segments);
+		}
+
+		// Re-add intersection-referenced fi/corner endpoints that weren't re-registered
+		// Only re-add if at least one intersection clip interval has both endpoints available
+		for (const [key, ep] of saved_ix_eps) {
+			if (this.computed_endpoints.has(key)) continue;
+			if (ep.id.type !== T_Endpoint.face_intersection && ep.id.type !== T_Endpoint.corner) continue;
+			// Check: does this endpoint participate in a clip interval where the OTHER endpoint also exists?
+			let has_complete_segment = false;
+			for (const iseg of this.computed_intersection_segments) {
+				for (const [sk, ek] of iseg.endpoint_keys) {
+					if (sk === key) {
+						const other = this.computed_endpoints.has(ek) || (saved_ix_eps.has(ek) && saved_ix_eps.get(ek)!.id.type === T_Endpoint.face_intersection);
+						if (other) { has_complete_segment = true; break; }
+					}
+					if (ek === key) {
+						const other = this.computed_endpoints.has(sk) || (saved_ix_eps.has(sk) && saved_ix_eps.get(sk)!.id.type === T_Endpoint.face_intersection);
+						if (other) { has_complete_segment = true; break; }
+					}
+				}
+				if (has_complete_segment) break;
+			}
+			if (has_complete_segment) {
+				// Check if the endpoint is in a visible portion of its edge
+				let on_visible_edge = true;
+				if (ep.id.type === T_Endpoint.face_intersection) {
+					for (const iseg of this.computed_intersection_segments) {
+						// Find which edge this endpoint is on
+						const on_edge = (iseg.endpoint_keys[0]?.[0] === key) ? iseg.start_on_edge
+							: (iseg.endpoint_keys[iseg.endpoint_keys.length - 1]?.[1] === key) ? iseg.end_on_edge
+							: null;
+						if (!on_edge) continue;
+						const edge_segs = this.computed_edge_segments.get(on_edge.so);
+						if (!edge_segs) { on_visible_edge = false; break; }
+						const seg = edge_segs.find(s => s.edge_key === on_edge.edge_key);
+						if (!seg) { on_visible_edge = false; break; }
+						// Check if ep.screen falls within a visible interval of this edge
+						const projected = projected_map.get(on_edge.so);
+						if (!projected) { on_visible_edge = false; break; }
+						const [vi, vj] = on_edge.edge_key.split('-').map(Number);
+						const a = projected[vi], b = projected[vj];
+						const pt_t = Render.screen_t(a, b, ep.screen);
+						let in_visible = false;
+						for (const [vs, ve] of seg.visible) {
+							const t_s = Render.screen_t(a, b, vs);
+							const t_e = Render.screen_t(a, b, ve);
+							const t_min = Math.min(t_s, t_e);
+							const t_max = Math.max(t_s, t_e);
+							if (pt_t >= t_min - 0.01 && pt_t <= t_max + 0.01) { in_visible = true; break; }
+						}
+						on_visible_edge = in_visible;
+						break;
+					}
+				}
+				if (on_visible_edge) {
+					this.computed_endpoints.set(key, ep);
+				}
+			}
 		}
 	}
 
 	/** Compute visible intersection segments for all SO pairs (clip for occlusion once, store results). */
 	private compute_visible_intersection_segments(objects: O_Scene[]): void {
 		this.computed_intersection_segments = [];
-		this.intersection_exit_map.clear();
+		this.intersection_clip_map.clear();
 		// Build world-space face data for each object
 		type WFace = { n: vec3; d: number; corners: vec3[]; fi: number; obj: O_Scene };
 		const obj_faces: WFace[][] = [];
@@ -856,11 +975,9 @@ class Render {
 			if (!face_indices) { obj_faces.push([]); continue; }
 
 			for (let fi = 0; fi < face_indices.length; fi++) {
-				// Skip back-facing faces
+				// Only use faces that are in the occluding_faces list (front-facing)
+				if (!this.occluding_faces.some(f => f.obj_id === obj.id && f.face_index === fi)) continue;
 				const face_vi = face_indices[fi];
-				const pf: Projected[] = [];
-				for (const vi of face_vi) pf[vi] = this.project_vertex(verts[vi], world);
-				if (this.face_winding(face_vi, pf) >= 0) continue;
 
 				const corners: vec3[] = [];
 				for (const vi of face_vi) {
@@ -918,6 +1035,7 @@ class Render {
 						const clips = this.clip_segment_for_occlusion_rich(
 							p1, p2, geom.start, geom.end, '', [fA, fB]
 						);
+						if (clips.length === 0) continue;
 						const visible: [Pt, Pt][] = clips.map(ci => [ci.start, ci.end]);
 
 						const face_key_a = `${fA.obj.id}:${fA.fi}`;
@@ -953,7 +1071,7 @@ class Render {
 								s_id = { type: T_Endpoint.face_intersection, faceA: face_key_a, faceB: face_key_b, end: 'start' };
 							} else {
 								const occ_id = `${ci.start_cause.obj_id}:${ci.start_cause.face_index ?? -1}`;
-								s_id = { type: T_Endpoint.occlusion_clip, edge: ix_edge_id, occluder_face: occ_id };
+								s_id = { type: T_Endpoint.occlusion_clip, edge: ix_edge_id, occluder_face: occ_id, end: 'exit' };
 							}
 							const t_s = Render.screen_t(p1, p2, ci.start);
 							const w_s = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_s)));
@@ -967,7 +1085,7 @@ class Render {
 								e_id = { type: T_Endpoint.face_intersection, faceA: face_key_a, faceB: face_key_b, end: 'end' };
 							} else {
 								const occ_id = `${ci.end_cause.obj_id}:${ci.end_cause.face_index ?? -1}`;
-								e_id = { type: T_Endpoint.occlusion_clip, edge: ix_edge_id, occluder_face: occ_id };
+								e_id = { type: T_Endpoint.occlusion_clip, edge: ix_edge_id, occluder_face: occ_id, end: 'enter' };
 							}
 							const t_e = Render.screen_t(p1, p2, ci.end);
 							const w_e = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_e)));
@@ -996,7 +1114,7 @@ class Render {
 						const se = edge_info(geom.start_edge, geom.start);
 						const ee = edge_info(geom.end_edge, geom.end);
 
-						// Use actual registered keys for exit_map and splits
+						// Use actual registered keys for clip_map
 						const first_s_key = ep_keys.length > 0 ? ep_keys[0][0] : null;
 						const last_e_key = ep_keys.length > 0 ? ep_keys[ep_keys.length - 1][1] : null;
 						const first_s_id = first_s_key ? this.computed_endpoints.get(first_s_key)?.id : null;
@@ -1007,19 +1125,18 @@ class Render {
 						const is_edge_exit = (id: EndpointID | null) =>
 							id?.type === T_Endpoint.face_intersection || id?.type === T_Endpoint.corner;
 
+						const add_clip = (key: string, id: EndpointID) => {
+							let list = this.intersection_clip_map.get(key);
+							if (!list) { list = []; this.intersection_clip_map.set(key, list); }
+							list.push(id);
+						};
 						if (first_s_key && first_s_id && is_edge_exit(first_s_id)) {
 							const other_face = geom.start_edge.face === 'A' ? fB : fA;
-							this.intersection_exit_map.set(
-								`${se.so}:${se.edge_key}:${other_face.obj.id}:${other_face.fi}`,
-								first_s_id
-							);
+							add_clip(`${se.so}:${se.edge_key}:${other_face.obj.id}:${other_face.fi}`, first_s_id);
 						}
 						if (last_e_key && last_e_id && is_edge_exit(last_e_id)) {
 							const other_face = geom.end_edge.face === 'A' ? fB : fA;
-							this.intersection_exit_map.set(
-								`${ee.so}:${ee.edge_key}:${other_face.obj.id}:${other_face.fi}`,
-								last_e_id
-							);
+							add_clip(`${ee.so}:${ee.edge_key}:${other_face.obj.id}:${other_face.fi}`, last_e_id);
 						}
 
 						this.computed_intersection_segments.push({
@@ -1079,7 +1196,18 @@ class Render {
 			return false;
 		};
 
-		// Check intersection endpoints
+		// Build set of keys referenced by edge segments — these are at pierce points
+		const edge_referenced = new Set<string>();
+		for (const [, segs] of this.computed_edge_segments) {
+			for (const seg of segs) {
+				for (const [sk, ek] of seg.endpoint_keys) {
+					edge_referenced.add(sk);
+					edge_referenced.add(ek);
+				}
+			}
+		}
+
+		// Check intersection endpoints — don't delete if referenced by an edge segment
 		for (const iseg of this.computed_intersection_segments) {
 			if (iseg.endpoint_keys.length === 0) continue;
 
@@ -1091,6 +1219,7 @@ class Render {
 			];
 
 			for (const [ep_key, so_id, face_idx] of checks) {
+				if (edge_referenced.has(ep_key)) continue; // at a pierce point — keep
 				const ep = this.computed_endpoints.get(ep_key);
 				if (!ep) continue;
 				if (is_occluded_on_face(so_id, face_idx, ep.screen)) {
@@ -1103,7 +1232,7 @@ class Render {
 		// Check occlusion_clip endpoints — edge belongs to faces of its SO
 		for (const [key, ep] of this.computed_endpoints) {
 			if (ep.id.type !== T_Endpoint.occlusion_clip) continue;
-			const oc = ep.id as { type: T_Endpoint.occlusion_clip; edge: string; occluder_face: string };
+			const oc = ep.id as { type: T_Endpoint.occlusion_clip; edge: string; occluder_face: string; end: 'enter' | 'exit' };
 			// edge format: "so_id:edge_key"
 			const colon = oc.edge.indexOf(':');
 			if (colon < 0) continue;
@@ -1131,6 +1260,17 @@ class Render {
 	 *  and are in front of SO_B's face plane. These form occlusion boundaries on SO_B's face. */
 	private compute_occluding_edge_segments(): void {
 		this.computed_occluding_segments = [];
+
+		// Build lookup: occluder_edge → list of oc endpoints that lie on that edge
+		const oc_on_edge = new Map<string, { key: string; screen: Pt; world: vec3 }[]>();
+		for (const [key, ep] of this.computed_endpoints) {
+			if (ep.id.type !== T_Endpoint.occlusion_clip) continue;
+			const oc = ep.id as { type: T_Endpoint.occlusion_clip; occluder_edge?: string };
+			if (!oc.occluder_edge) continue;
+			let list = oc_on_edge.get(oc.occluder_edge);
+			if (!list) { list = []; oc_on_edge.set(oc.occluder_edge, list); }
+			list.push({ key, screen: ep.screen, world: ep.world });
+		}
 
 		for (const [so_a_id, segs] of this.computed_edge_segments) {
 			for (const seg of segs) {
@@ -1171,13 +1311,29 @@ class Render {
 						const w_cs = vec3.lerp(vec3.create(), ep_s.world, ep_e.world, t_enter);
 						const w_ce = vec3.lerp(vec3.create(), ep_s.world, ep_e.world, t_leave);
 
-						// Tag endpoints as edge_crossing
+						// Tag endpoints — reuse oc endpoints at T-junctions
 						const edge_a = `${so_a_id}:${seg.edge_key}`;
+						const oc_list = oc_on_edge.get(edge_a);
 
-						const cs_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}` };
-						const ce_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}:e` };
-						const cs_key = this.register_endpoint(cs_id, cs, w_cs);
-						const ce_key = this.register_endpoint(ce_id, ce, w_ce);
+						// Check if an oc endpoint matches at start or end
+						let cs_key: string | undefined;
+						let ce_key: string | undefined;
+						if (oc_list) {
+							for (const sp of oc_list) {
+								const t = Render.screen_t(cs, ce, sp.screen);
+								if (t < 0.01) cs_key = sp.key;
+								if (t > 0.99) ce_key = sp.key;
+							}
+						}
+						// Fall back to edge_crossing for endpoints without oc match
+						if (!cs_key) {
+							const cs_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}` };
+							cs_key = this.register_endpoint(cs_id, cs, w_cs);
+						}
+						if (!ce_key) {
+							const ce_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}:e` };
+							ce_key = this.register_endpoint(ce_id, ce, w_ce);
+						}
 
 						this.computed_occluding_segments.push({
 							so: face.obj_id,
@@ -1391,8 +1547,8 @@ class Render {
 		skip_ids: string | string[],
 		skip_planes?: { n: vec3; d: number }[],
 	): ClipInterval[] {
-		type RichInterval = { a: number; b: number; a_cause: OccFaceRef; b_cause: OccFaceRef };
-		let intervals: RichInterval[] = [{ a: 0, b: 1, a_cause: null, b_cause: null }];
+		type RichInterval = { a: number; b: number; a_cause: OccFaceRef; b_cause: OccFaceRef; a_poly_edge: number; b_poly_edge: number };
+		let intervals: RichInterval[] = [{ a: 0, b: 1, a_cause: null, b_cause: null, a_poly_edge: -1, b_poly_edge: -1 }];
 		const skip = Array.isArray(skip_ids) ? skip_ids : [skip_ids];
 		const dx = p2.x - p1.x, dy = p2.y - p1.y;
 		const identity = mat4.create();
@@ -1445,36 +1601,30 @@ class Render {
 			const s_enter = s_behind_start + clip[0] * s_range;
 			const s_leave = s_behind_start + clip[1] * s_range;
 
-			// Find adjacent faces for the enter/leave polygon edges
-			const adj_face_for_edge = (poly_edge_idx: number): OccFaceRef => {
-				if (poly_edge_idx < 0 || !face.face_verts) return face;
-				const vi = face.face_verts[poly_edge_idx];
-				const vj = face.face_verts[(poly_edge_idx + 1) % face.face_verts.length];
-				// Find another occluding face of the same object that shares this edge
-				for (const other of this.occluding_faces) {
-					if (other === face) continue;
-					if (other.obj_id !== face.obj_id) continue;
-					if (!other.face_verts) continue;
-					const has_vi = other.face_verts.includes(vi);
-					const has_vj = other.face_verts.includes(vj);
-					if (has_vi && has_vj) return other;
-				}
-				return null; // no adjacent front-facing face — real emergence
-			};
-			const enter_cause = adj_face_for_edge(clip[2]);
-			const leave_cause = adj_face_for_edge(clip[3]);
-
 			const new_intervals: RichInterval[] = [];
 			for (const iv of intervals) {
 				if (s_leave <= iv.a || s_enter >= iv.b) {
 					new_intervals.push(iv);
 					continue;
 				}
-				if (s_enter > iv.a) new_intervals.push({ a: iv.a, b: s_enter, a_cause: iv.a_cause, b_cause: enter_cause });
-				if (s_leave < iv.b) new_intervals.push({ a: s_leave, b: iv.b, a_cause: leave_cause, b_cause: iv.b_cause });
+				if (s_enter > iv.a) new_intervals.push({ a: iv.a, b: s_enter, a_cause: iv.a_cause, b_cause: face, a_poly_edge: iv.a_poly_edge, b_poly_edge: clip[2] });
+				if (s_leave < iv.b) new_intervals.push({ a: s_leave, b: iv.b, a_cause: face, b_cause: iv.b_cause, a_poly_edge: clip[3], b_poly_edge: iv.b_poly_edge });
 			}
 			intervals = new_intervals;
 			if (intervals.length === 0) break;
+		}
+
+		// Remove fake visible intervals: if both boundaries of a visible interval
+		// are from the same object at non-silhouette polygon edges, the body
+		// continues through this interval — it's not really visible
+		if (intervals.length >= 1) {
+			intervals = intervals.filter(iv => {
+				if (!iv.a_cause || !iv.b_cause) return true; // corner boundary — real
+				if (iv.a_cause.obj_id !== iv.b_cause.obj_id) return true; // different objects — real
+				const a_sil = iv.a_cause.silhouette_edges?.[iv.a_poly_edge] ?? true;
+				const b_sil = iv.b_cause.silhouette_edges?.[iv.b_poly_edge] ?? true;
+				return a_sil || b_sil; // keep if either boundary is silhouette
+			});
 		}
 
 		return intervals.map(iv => ({
@@ -1482,6 +1632,8 @@ class Render {
 			end:   { x: p1.x + dx * iv.b, y: p1.y + dy * iv.b },
 			start_cause: iv.a_cause,
 			end_cause:   iv.b_cause,
+			start_poly_edge: iv.a_poly_edge,
+			end_poly_edge: iv.b_poly_edge,
 		}));
 	}
 
@@ -1509,6 +1661,7 @@ class Render {
 		const dx = p2.x - p1.x, dy = p2.y - p1.y;
 
 		for (let i = 0; i < poly.length; i++) {
+
 			const c0 = poly[i];
 			const c1 = poly[(i + 1) % poly.length];
 
@@ -1852,6 +2005,7 @@ class Render {
 	face_winding(face: number[], projected: Projected[]): number {
 		if (face.length < 3) return Infinity;
 		const p0 = projected[face[0]], p1 = projected[face[1]], p2 = projected[face[2]];
+		if (!p0 || !p1 || !p2) return Infinity;
 		if (p0.w < 0 || p1.w < 0 || p2.w < 0) return Infinity;
 		return (p1.x - p0.x) * (p2.y - p0.y) - (p1.y - p0.y) * (p2.x - p0.x);
 	}

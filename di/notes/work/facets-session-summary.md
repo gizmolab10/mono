@@ -23,6 +23,7 @@ Paint visible faces of the selected SO with a highlight color. Faces of differen
 - **Exit map only at start-of-visible** — edge clips at end-of-visible boundaries skip the exit_map lookup (prevents phantom labels in hidden zones).
 - **Mid-interval splits REMOVED** — they were redundant with exit_map and caused phantom labels. The `intersection_splits` map is gone.
 - **Visibility gate** — when walking an edge's visible intervals, track which face hid the edge. If the next interval starts with an emergence from the same face, skip it — the edge is still behind that face's plane but outside its polygon. Don't update the tracked face when skipping (prevents chaining). Only real emergences (different face) create endpoints.
+- **Adjacent face attribution** — `clip_segment_to_polygon_2d` returns which polygon edge caused each clip boundary. `clip_segment_for_occlusion_rich` maps that polygon edge to the adjacent face (the face sharing that edge). Clip boundaries are attributed to the adjacent face, not the clipping face. When the exit edge leads to a back-facing face (not in occluding_faces), the cause is null — a real emergence. This lets the visibility gate distinguish fake gaps (same front-facing face on both sides) from real in-and-out clips (exit toward back-facing face = null cause).
 
 ### Graph (in Facets.ts)
 
@@ -79,3 +80,4 @@ Console logs `facets: A→B→C→A` with display labels, updates when path chan
 - **Never guess without labeling it as a guess**
 - **Phantom root cause** — when an edge goes behind a face, the face's polygon may not fully cover the behind-portion. The clip function sees a fake "visible" interval where the edge is behind the plane but outside the polygon. The visibility gate fixes this by tracking which face hid the edge and suppressing fake emergences from the same face.
 - **Don't chain state through skipped intervals** — updating tracked state from skipped data poisons downstream checks
+- **Attribute clip boundaries to adjacent faces** — a polygon edge is shared by two faces. The clip boundary should be attributed to the face on the OTHER side, not the clipping face. When the other face is back-facing (not an occluder), the cause is null — meaning the edge genuinely exits the object's visible silhouette

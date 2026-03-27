@@ -49,7 +49,7 @@ export default class Constants {
 
 	width = {
 		wrap_mobile : 1100,
-		wrap_phone  : 500,
+		wrap_phone  : 610,
 		window_min  : 360,
 		details     : 350,
 	};

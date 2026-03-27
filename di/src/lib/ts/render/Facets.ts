@@ -12,7 +12,7 @@ export enum T_Endpoint {
 
 export type EndpointID =
 	| { type: T_Endpoint.face_intersection; faceA: string; faceB: string; end: 'start' | 'end' }
-	| { type: T_Endpoint.occlusion_clip; edge: string; occluder_face: string }
+	| { type: T_Endpoint.occlusion_clip; edge: string; occluder_face: string; end: 'enter' | 'exit'; occluder_edge?: string }
 	| { type: T_Endpoint.edge_crossing; edgeA: string; edgeB: string }
 	| { type: T_Endpoint.corner; so: string; vertex: number };
 
@@ -32,7 +32,7 @@ function edge_letters(ek: string): string {
 export function endpoint_key(id: EndpointID): string {
 	switch (id.type) {
 		case T_Endpoint.face_intersection: return `fi:${id.faceA}:${id.faceB}:${id.end}`;
-		case T_Endpoint.occlusion_clip:    return `oc:${edge_letters(id.edge)}:${id.occluder_face}`;
+		case T_Endpoint.occlusion_clip:    return `oc:${edge_letters(id.edge)}:${id.occluder_face}:${id.end}`;
 		case T_Endpoint.edge_crossing:     return `ex:${edge_letters(id.edgeA)}:${edge_letters(id.edgeB)}`;
 		case T_Endpoint.corner:            return `c:${id.so}:${vtx(id.vertex)}`;
 	}
@@ -80,9 +80,11 @@ export class Facets {
 	segments = new Map<string, Segment>();
 	endpoints = new Map<string, Endpoint>();
 	private id_to_name = new Map<string, string>();
-	/** Replace obj IDs with SO names in a display string */
+	private face_labels = new Map<string, string>(); // "obj_id:face_idx" → "ABFE" etc
+	/** Replace obj IDs and face indices with readable names */
 	private pretty(s: string): string {
 		for (const [id, name] of this.id_to_name) s = s.split(id).join(name);
+		for (const [face_key, label] of this.face_labels) s = s.split(face_key).join(label);
 		return s;
 	}
 
@@ -208,7 +210,20 @@ export class Facets {
 		face_winding: (face: number[], projected: Projected[]) => number,
 	): void {
 		this.id_to_name.clear();
-		for (const obj of objects) this.id_to_name.set(obj.id, obj.so.name);
+		this.face_labels.clear();
+		for (const obj of objects) {
+			this.id_to_name.set(obj.id, obj.so.name);
+			if (obj.faces) {
+				const p = obj === objects[1] ? "'" : '';
+				for (let fi = 0; fi < obj.faces.length; fi++) {
+					const corners = obj.faces[fi].map(v => vtx(v) + p).join('');
+					this.face_labels.set(`${obj.so.name}:${fi}`, `${obj.so.name}:${corners}`);
+					// Also handle edge_letters format: face:D (where D = vtx(3))
+					this.face_labels.set(`face:${vtx(fi)}:`, `face:${corners}:`);
+					this.face_labels.set(`face:${vtx(fi)}`, `face:${corners}`);
+				}
+			}
+		}
 		// Import endpoints
 		for (const [key, cep] of computed_endpoints) {
 			if (!this.endpoints.has(key)) {
@@ -574,6 +589,21 @@ export class Facets {
 			ep.label = label;
 			all_labels.push({ label, key: ep.key, ep });
 			draw(ep.screen.x, ep.screen.y, label);
+		}
+		if (!Facets._trace_logged) {
+			Facets._trace_logged = true;
+			for (const { label, key, ep } of all_labels) {
+				if (label === 'f') {
+					const others = ep.segments.map(sid => {
+						const seg = this.segments.get(sid);
+						if (!seg) return '?';
+						const ok = seg.endpoints[0] === key ? seg.endpoints[1] : seg.endpoints[0];
+						const oep = this.endpoints.get(ok);
+						return `${oep?.label || '?'}(${this.pretty(ok).slice(0,40)})`;
+					});
+					console.log(`F_DEBUG ${this.pretty(key).slice(0,50)} segs=${ep.segments.length} connects=[${others.join(', ')}]`);
+				}
+			}
 		}
 	}
 
