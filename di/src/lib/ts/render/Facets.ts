@@ -326,13 +326,29 @@ export class Facets {
 	 *  6. Repeat until set empty */
 	trace_facets(only_so?: string, only_face?: number, objects?: O_Scene[]): Facet[] {
 		const facets: Facet[] = [];
+		const log = !Facets._trace_logged;
+		const ep_label = (key: string) => {
+			const ep = this.endpoints.get(key);
+			return ep?.label || this.pretty(key);
+		};
+		const seg_desc = (s: Segment) => `${s.type[0]}:${ep_label(s.endpoints[0])}→${ep_label(s.endpoints[1])}`;
 
-		// Group segments by (so, face)
+		// Directed half-edge key: "seg_id>>from_ep_key" — encodes traversal direction
+		const SEP = '>>';
+		const half = (seg_id: string, from_ep: string) => `${seg_id}${SEP}${from_ep}`;
+
+		// Group directed half-edges by (so, face)
 		const by_face = new Map<string, Set<string>>();
+		// Also track which segment IDs belong to each face (for logging and start selection)
+		const face_segs = new Map<string, Set<string>>();
 		for (const seg of this.segments.values()) {
 			const key = `${seg.so}:${seg.face}`;
 			if (!by_face.has(key)) by_face.set(key, new Set());
-			by_face.get(key)!.add(seg.id);
+			if (!face_segs.has(key)) face_segs.set(key, new Set());
+			// Two directed half-edges per segment
+			by_face.get(key)!.add(half(seg.id, seg.endpoints[0]));
+			by_face.get(key)!.add(half(seg.id, seg.endpoints[1]));
+			face_segs.get(key)!.add(seg.id);
 		}
 
 		for (const [face_key, remaining] of by_face) {
@@ -340,61 +356,145 @@ export class Facets {
 			const face = parseInt(face_str);
 			if (only_so !== undefined && so !== only_so) continue;
 			if (only_face !== undefined && face !== only_face) continue;
-			while (remaining.size > 0) {
-				// Step 2: prefer an edge-type segment to start
-				let start_id = '';
-				for (const sid of remaining) {
-					const s = this.segments.get(sid);
-					if (s?.type === 'edge') { start_id = sid; break; }
-				}
-				if (!start_id) start_id = remaining.values().next().value!;
 
-				remaining.delete(start_id);
-				const start_seg = this.segments.get(start_id)!;
+			const seg_ids = face_segs.get(face_key)!;
+
+			if (log) {
+				const segs = [...seg_ids].map(sid => this.segments.get(sid)!);
+				const ec = segs.filter(s => s.type === 'edge').length;
+				const ic = segs.filter(s => s.type === 'intersection').length;
+				const xc = segs.filter(s => s.type === 'crossing').length;
+				console.log(`\ntrace: ${this.pretty(face_key)} — ${seg_ids.size} segs (${ec}e ${ic}i ${xc}x)`);
+				for (const s of segs) console.log(`  ${seg_desc(s)}`);
+			}
+
+			let trace_num = 0;
+			const facet_halves = new Set<string>();  // half-edges used by completed facets
+			while (remaining.size > 0) {
+				trace_num++;
+				// Pick a start half-edge: prefer edge-type, skip if reverse already used by a facet
+				let start_half = '';
+				let start_seg: Segment | undefined;
+				let go_left_ep = '';
+
+				// Try to find an edge-type segment with a remaining half-edge
+				for (const h of remaining) {
+					const seg_id = h.slice(0, h.indexOf(SEP));
+					const from_ep = h.slice(h.indexOf(SEP) + SEP.length);
+					const s = this.segments.get(seg_id);
+					if (!s) continue;
+					// Skip if reverse half was used by a completed facet (would trace the same polygon backwards)
+					const other = s.endpoints[0] === from_ep ? s.endpoints[1] : s.endpoints[0];
+					if (facet_halves.has(half(seg_id, other))) continue;
+					if (s.type === 'edge') {
+						start_half = h;
+						start_seg = s;
+						break;
+					}
+				}
+				if (!start_seg) {
+					// Fall back to any remaining half-edge (skip reverse-used)
+					for (const h of remaining) {
+						const seg_id = h.slice(0, h.indexOf(SEP));
+						const from_ep = h.slice(h.indexOf(SEP) + SEP.length);
+						const s = this.segments.get(seg_id);
+						if (!s) continue;
+						const other = s.endpoints[0] === from_ep ? s.endpoints[1] : s.endpoints[0];
+						if (facet_halves.has(half(seg_id, other))) continue;
+						start_half = h;
+						start_seg = s;
+						break;
+					}
+				}
+				if (!start_seg) {
+					// All remaining are reverse-halves of completed facets — done
+					break;
+				}
+
 				const so = start_seg.so;
 				const face = start_seg.face;
 
-				// Orient: go LEFT (counter-clockwise around face), then always RIGHT (clockwise)
-				// Determine which direction is "left" by checking if the edge follows face winding
-				let go_left_ep = start_seg.endpoints[1]; // default
+				// Determine go_left_ep from the half-edge's from_ep
+				const start_from_ep = start_half.slice(start_half.indexOf(SEP) + SEP.length);
+				// For edge-type segments with two corners, use face winding to pick direction
 				if (objects && start_seg.type === 'edge') {
 					const obj = objects.find(o => o.id === so);
 					if (obj?.faces) {
 						const face_verts = obj.faces[face];
 						if (face_verts) {
-							// Check if endpoints[0]→endpoints[1] follows face winding (clockwise = right)
-							// If so, go left = start at endpoints[1]. If reversed, start at endpoints[0].
 							const ep0 = this.endpoints.get(start_seg.endpoints[0]);
 							const ep1 = this.endpoints.get(start_seg.endpoints[1]);
 							if (ep0?.id.type === T_Endpoint.corner && ep1?.id.type === T_Endpoint.corner) {
 								const v0 = ep0.id.vertex;
 								const v1 = ep1.id.vertex;
-								// Find these vertices in the face's winding order
 								const idx0 = face_verts.indexOf(v0);
 								const idx1 = face_verts.indexOf(v1);
 								if (idx0 >= 0 && idx1 >= 0) {
 									const follows_winding = (idx0 + 1) % face_verts.length === idx1;
-									// Go LEFT from the corner (against face winding), then always RIGHT
 									go_left_ep = follows_winding ? start_seg.endpoints[1] : start_seg.endpoints[0];
 								}
 							}
 						}
 					}
 				}
+				// If winding didn't determine it, use the half-edge's implied direction
+				if (!go_left_ep) {
+					// The half-edge "seg:from_ep" means we enter from from_ep, so go_left_ep = from_ep
+					// (we walk from from_ep toward the other end)
+					go_left_ep = start_from_ep;
+				}
+
+				// Pick the half-edge matching our chosen direction
+				start_half = half(start_seg.id, go_left_ep);
+				if (!remaining.has(start_half)) {
+					// That direction already consumed, try the other
+					const other_ep = start_seg.endpoints[0] === go_left_ep ? start_seg.endpoints[1] : start_seg.endpoints[0];
+					start_half = half(start_seg.id, other_ep);
+					if (!remaining.has(start_half)) {
+						// Both consumed — remove stale entries and continue
+						remaining.delete(half(start_seg.id, start_seg.endpoints[0]));
+						remaining.delete(half(start_seg.id, start_seg.endpoints[1]));
+						continue;
+					}
+					go_left_ep = other_ep;
+				}
+
+				remaining.delete(start_half);
+				const trace_used: string[] = [start_half];  // half-edges consumed by this trace
+				// Block the reverse half-edge for this trace (can't use both sides in one facet)
+				const blocked = new Set<string>();
+				const reverse_start = half(start_seg.id, start_seg.endpoints[0] === go_left_ep ? start_seg.endpoints[1] : start_seg.endpoints[0]);
+				if (remaining.has(reverse_start)) {
+					remaining.delete(reverse_start);
+					blocked.add(reverse_start);
+				}
+
+				if (log) {
+					// console.log(`  #${trace_num}: start=${seg_desc(start_seg)} go=${ep_label(go_left_ep)} rem=${remaining.size}`);
+				}
+
 				const loop: string[] = [];
 				let cur_seg = start_seg;
 				let cur_ep_key = go_left_ep;
 				let dud = false;
+				let dud_reason = '';
 				let safe = 0;
 
 				while (safe++ < 200) {
 					const other_ep_key = cur_seg.endpoints[0] === cur_ep_key ? cur_seg.endpoints[1] : cur_seg.endpoints[0];
 					loop.push(other_ep_key);
 
-					if (other_ep_key === go_left_ep && loop.length >= 3) break;
+					if (other_ep_key === go_left_ep && loop.length >= 3) {
+						// if (log) console.log(`    ${safe}: ${ep_label(other_ep_key)} CLOSED`);
+						break;
+					}
 
 					const other_ep = this.endpoints.get(other_ep_key);
-					if (!other_ep || other_ep.ordering.length < 2) { dud = true; break; }
+					if (!other_ep || other_ep.ordering.length < 2) {
+						dud = true;
+						dud_reason = !other_ep ? `missing ${ep_label(other_ep_key)}` : `dead-end ${ep_label(other_ep_key)} (${other_ep.ordering.length} seg)`;
+						break;
+					}
 
 					const face_order = other_ep.ordering.filter(sid => {
 						const s = this.segments.get(sid);
@@ -402,22 +502,60 @@ export class Facets {
 					});
 
 					const idx = face_order.indexOf(cur_seg.id);
-					if (idx < 0) { dud = true; break; }
+					if (idx < 0) {
+						dud = true;
+						const choices = face_order.map(sid => { const s = this.segments.get(sid); return s ? seg_desc(s) : '?'; });
+						dud_reason = `${ep_label(other_ep_key)}: cur not in order [${choices.join(' | ')}]`;
+						break;
+					}
 
 					const next_id = face_order[(idx + 1) % face_order.length];
-					if (!remaining.has(next_id)) { dud = true; break; }
+					// Check if the directed half-edge is available (entering from other_ep_key)
+					const next_half = half(next_id, other_ep_key);
+					if (!remaining.has(next_half)) {
+						dud = true;
+						const next_seg = this.segments.get(next_id);
+						dud_reason = `${ep_label(other_ep_key)}: next consumed ${next_seg ? seg_desc(next_seg) : next_id}`;
+						break;
+					}
 
-					remaining.delete(next_id);
-					cur_seg = this.segments.get(next_id)!;
+					if (log) {
+						const next_seg = this.segments.get(next_id)!;
+						const choices = face_order.map(sid => { const s = this.segments.get(sid); return s ? seg_desc(s) : '?'; });
+						// console.log(`    ${safe}: ${ep_label(other_ep_key)} [${choices.join(' | ')}] →${idx + 1 < choices.length ? idx + 1 : 0}→ ${seg_desc(next_seg)}`);
+					}
+
+					remaining.delete(next_half);
+					trace_used.push(next_half);
+					// Block the reverse half-edge for this trace
+					const next_seg_obj = this.segments.get(next_id)!;
+					const reverse_next = half(next_id, next_seg_obj.endpoints[0] === other_ep_key ? next_seg_obj.endpoints[1] : next_seg_obj.endpoints[0]);
+					if (remaining.has(reverse_next)) {
+						remaining.delete(reverse_next);
+						blocked.add(reverse_next);
+					}
+
+					cur_seg = next_seg_obj;
 					cur_ep_key = other_ep_key;
 				}
 
+				// Restore blocked reverse half-edges for use by subsequent traces
+				for (const b of blocked) remaining.add(b);
+
 				if (!dud && loop.length >= 3) {
 					facets.push({ endpoints: loop, so, face });
+					for (const h of trace_used) facet_halves.add(h);
+					if (log) console.log(`  #${trace_num}: FACET ${loop.map(ep_label).join('→')}`);
+				} else {
+					if (log) console.log(`  #${trace_num}: DUD ${dud_reason} | ${loop.map(ep_label).join('→')}`);
 				}
 			}
 		}
 
+		if (log) {
+			console.log(`trace_facets: ${facets.length} facets total`);
+			Facets._trace_logged = true;
+		}
 		return facets;
 	}
 
@@ -510,25 +648,24 @@ export class Facets {
 				const occ = occluding_faces[fi];
 				const dist = vec3.dot(occ.n, world_pt) - occ.d;
 				const in_poly = point_in_polygon_2d(sx, sy, occ.poly);
-				if (label && !Facets._occlusion_logged) {
-					if (in_poly) {
-						console.log(`  occlusion check "${label}": occ=${this.pretty(occ.obj_id)} dist=${dist.toFixed(4)} in_poly=true → ${dist > 0 ? 'NOT occluded' : 'OCCLUDED'}`);
-					} else {
-						// Log polygon bounds for non-matching candidates
-						let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-						for (const p of occ.poly) {
-							if (p.x < minX) minX = p.x; if (p.y < minY) minY = p.y;
-							if (p.x > maxX) maxX = p.x; if (p.y > maxY) maxY = p.y;
-						}
-						console.log(`  occlusion check "${label}": occ=${this.pretty(occ.obj_id)} dist=${dist.toFixed(4)} in_poly=false pt=(${sx.toFixed(0)},${sy.toFixed(0)}) bbox=(${minX.toFixed(0)},${minY.toFixed(0)})-(${maxX.toFixed(0)},${maxY.toFixed(0)})`);
-					}
-				}
+				// if (label && !Facets._occlusion_logged) {
+				// 	if (in_poly) {
+				// 		console.log(`  occlusion check "${label}": occ=${this.pretty(occ.obj_id)} dist=${dist.toFixed(4)} in_poly=true → ${dist > 0 ? 'NOT occluded' : 'OCCLUDED'}`);
+				// 	} else {
+				// 		let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+				// 		for (const p of occ.poly) {
+				// 			if (p.x < minX) minX = p.x; if (p.y < minY) minY = p.y;
+				// 			if (p.x > maxX) maxX = p.x; if (p.y > maxY) maxY = p.y;
+				// 		}
+				// 		console.log(`  occlusion check "${label}": occ=${this.pretty(occ.obj_id)} dist=${dist.toFixed(4)} in_poly=false pt=(${sx.toFixed(0)},${sy.toFixed(0)}) bbox=(${minX.toFixed(0)},${minY.toFixed(0)})-(${maxX.toFixed(0)},${maxY.toFixed(0)})`);
+				// 	}
+				// }
 				if (dist > 0) continue;
 				if (in_poly) { dominated = true; break; }
 			}
-			if (label && !Facets._occlusion_logged && !dominated) {
-				console.log(`  occlusion check "${label}": NOT occluded (${candidates.length} candidates)`);
-			}
+			// if (label && !Facets._occlusion_logged && !dominated) {
+			// 	console.log(`  occlusion check "${label}": NOT occluded (${candidates.length} candidates)`);
+			// }
 			return dominated;
 		};
 

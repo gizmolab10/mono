@@ -214,3 +214,19 @@ Both phantoms and missing endpoints share the same root cause: the polygon seam 
 fi endpoints on edges existed but only had 1 segment (edge) instead of 2 (edge + intersection). The intersection segment was missing because its partner `occlusion_clip` endpoint on the intersection line was wiped by `computed_endpoints.clear()` in `compute_visible_edge_segments`. The save/restore only recovered `face_intersection` and `corner` types, not `occlusion_clip`.
 
 **Fix:** moved `computed_endpoints.clear()` from inside `compute_visible_edge_segments` to the start of the compute pipeline (before `compute_visible_intersection_segments`). Removed the save/restore entirely. Now all endpoint types from intersection compute survive through edge compute.
+
+## Postmortem
+
+The `computed_endpoints.clear()` was placed inside `compute_visible_edge_segments` when that function was first written — it was designed as self-contained, clearing and rebuilding its own state. When `compute_visible_intersection_segments` was later added to run before it, the clear destroyed intersection data that downstream code needed. A save/restore workaround was added, but it only recovered fi and corner types, silently dropping oc endpoints. This one misplaced clear caused both the phantom endpoints and the missing pierce points — two symptoms of the same bug. It took a full week of investigation to trace back to this root cause. The fix was moving one line. The lesson: data created by one phase and consumed by another should never be cleared by a middle phase.
+
+## All faces on + fi priority fix (2026-03-28)
+
+**All faces:** Changed facet painting from best-face-only to all front-facing faces. The old code picked the single most forward-facing face; new code loops all faces with negative winding and adds each to `face_screen_polys`.
+
+**Floating fi endpoint:** fi:EFGH:E'F'G'H':start was disconnected on face EFGH — no edge or crossing segments connected it to the face boundary. It sits on BETA edge G'-H' (interior to EFGH), so no edge split was registered.
+
+**Root cause:** `compute_occluding_edge_segments` correctly detected BETA:G'-H' crossing EFGH and created a crossing segment. But the `oc_at_occluder_edge` matching loop iterated all entries for BETA:G'-H', and an `occlusion_clip` endpoint (oc:G-H:E'F'G'H':exit) inserted later in the list overwrote the `face_intersection` match (fi:EFGH:E'F'G'H':start) at the same screen position. The crossing connected oc→oc instead of something→fi, leaving fi floating.
+
+**Fix:** In the oc_list matching loop, prefer `face_intersection` over other types — don't let an oc overwrite an fi match.
+
+**Remaining:** facet bEHmab on AEHD not tracing — need to investigate.

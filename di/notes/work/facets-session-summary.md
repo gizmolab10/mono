@@ -1,89 +1,71 @@
-# Facets Session Summary — 2026-03-25
+# Facets Session Summary — 2026-03-28
 
-## What we're building
+i want to be able to paint each SO a different color. for that, the painter algorithm won't work, it only paints whole faces in order back to front. Two SOs intersect, part of each is in front of the other, last one wins, looks bad.
 
-Paint visible faces of the selected SO with a highlight color. Faces of different SOs intersect and occlude each other, so the visible region of a face is a complex shape — a facet. Design doc: `di/notes/work/facets.md`.
+Facets solve this: each facet is a region that's entirely on one face, entirely visible. You can paint each facet with its SO's color, a 2D mosaic.
 
-## Architecture (implemented)
+## What we did
 
-### Compute pipeline (in Render.ts)
+Built infrastructure to connect crossing segments to the face graph, introduced directed half-edge tracing, fixed false same-SO occlusion of intersection lines, and got 5 facets tracing across multiple faces. Built on the 2026-03-25 session.
 
-1. **Occlusion data** — `occluding_faces` list with face planes, screen polygons, spatial index. Now includes `face_index`.
-2. **`compute_visible_intersection_segments()`** — runs FIRST. Computes all face-pair intersection lines, clips for occlusion via `clip_segment_for_occlusion_rich()`. Registers endpoints per visible clip interval (fi, corner, or oc identity). Populates `intersection_exit_map`. Only processes front-facing faces.
-3. **`compute_visible_edge_segments()`** — runs SECOND. Clips each SO edge for occlusion via `clip_segment_for_occlusion_rich()`. Tags endpoints as corner (t≈0/1), face_intersection (via exit_map at start-of-visible boundaries only), or occlusion_clip. Gap merge for micro-gaps between clip intervals. **Visibility gate** filters fake visible intervals (see below).
-4. **`filter_occluded_intersection_endpoints()`** — runs after edge segments. Removes intersection endpoints that fall on occluded portions of face edges.
-5. **`compute_occluding_edge_segments()`** — detects edges passing in front of other SO's faces.
+## Current state — what's working
 
-### Key design decisions
+- **5 facets trace** on ABFE: j→h→A, B→F→c→i→k, b→e→E. On AEHD: A→h→g. On EFGH: F→G→l→d→c.
+- **Edges render correctly** with apply_crossing_splits re-enabled (interpolated screen fix)
+- **Intersection lines unbroken** — skip both SOs for intersection occlusion eliminates false oc:ix dead-ends
+- **Fi coincidence merge** — two intersections meeting at a shared edge share one endpoint key
+- **Directed half-edge tracing** with reverse blocking and duplicate prevention
+- Painting limited: only best (most forward-facing) face
 
-- **`clip_segment_for_occlusion_rich()`** — returns which occluding face caused each clip boundary (`start_cause`, `end_cause`). Backward-compat wrapper `clip_segment_for_occlusion()` strips the cause.
-- **`register_endpoint()`** — pure key lookup, NO world-space proximity merge (removed — it caused cross-contamination between different intersections).
-- **Intersection segments use per-clip-interval endpoints** — no phantom geometric endpoints. Each visible interval gets its own start/end identity.
-- **Corner detection at intersection exits** — `corner_for_geom()` checks if intersection exits at a vertex (CORNER_EDGE_T=0.005).
-- **Exit map only at start-of-visible** — edge clips at end-of-visible boundaries skip the exit_map lookup (prevents phantom labels in hidden zones).
-- **Mid-interval splits REMOVED** — they were redundant with exit_map and caused phantom labels. The `intersection_splits` map is gone.
-- **Visibility gate** — when walking an edge's visible intervals, track which face hid the edge. If the next interval starts with an emergence from the same face, skip it — the edge is still behind that face's plane but outside its polygon. Don't update the tracked face when skipping (prevents chaining). Only real emergences (different face) create endpoints.
-- **Adjacent face attribution** — `clip_segment_to_polygon_2d` returns which polygon edge caused each clip boundary. `clip_segment_for_occlusion_rich` maps that polygon edge to the adjacent face (the face sharing that edge). Clip boundaries are attributed to the adjacent face, not the clipping face. When the exit edge leads to a back-facing face (not in occluding_faces), the cause is null — a real emergence. This lets the visibility gate distinguish fake gaps (same front-facing face on both sides) from real in-and-out clips (exit toward back-facing face = null cause).
+## Current state — what's broken
 
-### Graph (in Facets.ts)
+### apply_crossing_splits screen interpolation (just fixed — needs testing)
+Split points now interpolate screen position along the edge segment (`s + (e-s)*t`) instead of using registered screen from intersection compute. This was causing edge rendering corruption.
 
-- **`ingest_precomputed()`** — imports endpoints, edge segments (per face), intersection segments (per face pair, per clip interval), and occluding edge segments from Render's compute phase.
-- **`compute_cyclic_ordering()`** — tangent-plane atan2 sorting. No collinear dedup (removed — it collapsed needed connections).
-- **`trace_facets()`** — go LEFT first (against face winding), then always RIGHT (idx+1). Determines face winding from the SO's face vertex order. Successfully traces closed polygons.
-- **`paint_labels()`** — labels: uppercase for selected SO corners, A' for other SO corners, lowercase a-z then aa-az for non-corner endpoints. Filter: `ep.segments.length < 2` (dead-end filter). Occlusion check disabled (too many false positives).
-- **Endpoint.label** — debug prop on Endpoint, assigned during paint_labels.
-- **`pretty()`** — resolves obj IDs to SO names in display strings. `id_to_name` map populated during `ingest_precomputed`.
-- **`edge_letters()`** — only letterizes vertex indices, not digits in SO id prefix.
+### Missing facets
+- **enHEe on EFGH** — fi:EFGH:E'F'G'H':start is a dead-end. The split for the other face's edge (dual-face split) may not be working, OR the fi endpoint sits on an edge that wasn't found by the dual-face edge search.
+- **Central polygon on ABFE** — the large region bounded by all three intersection lines. Needs the intersection segments to connect through crossing/oc endpoints. Currently duds because intersection fi endpoints are dead-ends on some faces.
 
-### Facet log
+### Painting only best face
+Back faces' facets overlap front faces on screen. Painting all faces looks wrong without per-facet occlusion culling. Currently limited to best face only — other faces' facets trace but don't paint.
 
-Console logs `facets: A→B→C→A` with display labels, updates when path changes. Gated by `Render._last_facet_log` change detection. Fires on first frame via `!Render._facets_logged` check. `_facets_logged` set after the log, not before.
+### Same-SO crossings reverted
+The same-SO crossing logic in compute_occluding_edge_segments (testing edges against faces of the same SO they don't belong to) created false crossings due to the depth test. Reverted to cross-SO only. Same-SO face boundaries on the graph remain unconnected.
 
-## Current state
+### `ex:` dead-end crossing endpoints
+Some crossing segment endpoints still fall back to `ex:` type — no match in the reverse map. These are dead-ends with 1 segment.
 
-### Working
+## Architecture
 
-- Compute pipeline produces correct visible edge and intersection segments
-- Labels appear at real junction points
-- Facet tracing successfully closes polygons on uncut faces
-- Go-left-first traces inner facets instead of full face boundary
-- No more phantom labels from mid-splits or world-space merge
-- **Phantom h/g fixed** — visibility gate eliminates fake visible intervals; intersection endpoint filter catches remaining phantoms
-- Canary check in always.md for post-compaction recovery
-- Think-mode-default in always.md (rule 20)
-- Expectations guide for collaboration
+### Render.ts compute pipeline (in order)
+1. `compute_visible_intersection_segments()` — intersection lines between face pairs, clipped for occlusion (skipping both SOs). Registers fi/oc:ix endpoints. Populates `intersection_edge_splits`, `fi_on_edge`, `oc_at_occluder_edge`.
+2. `compute_visible_edge_segments()` — SO edges clipped for occlusion. Tags endpoints as corner/fi/oc. Populates `oc_at_occluder_edge`.
+3. `filter_occluded_intersection_endpoints()` — removes phantom fi endpoints on occluded edge portions.
+4. `compute_occluding_edge_segments()` — cross-SO edges passing in front of faces. Reuses oc/fi endpoints via reverse map. Falls back to `ex:` endpoints. Populates `crossing_splits`.
+5. `apply_crossing_splits()` — splits edge segments at intersection exits and crossing points. Interpolates screen position along edge (not from registered screen).
 
-### Active bugs
+### Key data structures
+- `oc_at_occluder_edge` — reverse map: occluder edge → list of oc/fi endpoints at that edge's crossings
+- `fi_on_edge` — fi endpoints by edge for coincidence merging at shared edges
+- `intersection_edge_splits` — fi/oc:ix endpoints that need to split face edges (both faces)
+- `crossing_splits` — crossing endpoint split points on target face edges
 
-1. **Facet tracing on cut faces** — the go-left-first algorithm is implemented but not yet tested on faces cut by intersection lines. The uncut face traces correctly. Cut faces need the intersection segments to provide the boundary for inner facets.
+### Facets.ts trace
+- Directed half-edges (`seg_id>>ep_key`) in `remaining` set
+- Reverse blocking during trace, restored after
+- `facet_halves` prevents reverse re-tracing
+- Simplified log: `type:label→label`, compact dud reasons
 
-### Debug infrastructure in place
+## Key decisions this session
 
-- `Render._facets_logged` / `Facets._trace_logged` / `Facets._occlusion_logged` — static flags reset on page load
-- Facet path log with display labels (change-detected, fires on first frame)
-- `pretty()` on Facets for resolving obj IDs to SO names in display
+1. **Skip both SOs for intersection occlusion** — intersection lines are on both surfaces of convex solids. No face of either SO can occlude them. Only third-party objects could.
+2. **Fi coincidence merge** — two intersections at a shared edge share one endpoint via `fi_on_edge` world-position matching (1e-4 threshold).
+3. **Fi disambiguation by distance** — when multiple fi endpoints match the same clip_map key, pick closest by world position.
+4. **Dual-face intersection exit splits** — register splits on both faces' edges at intersection exits, not just the face geom.start_edge points to.
+5. **Interpolate split screen positions** — use `s + (e-s)*t` along the edge, not registered screen from intersection compute. Prevents rendering artifacts.
+6. **Same-SO crossings don't work** — depth test fails for adjacent faces of convex boxes. Reverted.
 
-### Files modified this session
-
-- `di/src/lib/ts/render/Render.ts` — visibility gate in edge clip loop, `filter_occluded_intersection_endpoints()`, removed `debug_label` from clip function, cleaned up diagnostic logs
-- `di/src/lib/ts/render/Facets.ts` — `edge_letters()` fix, `id_to_name`/`pretty()`, removed label log
-- `di/notes/work/facets-session-summary.md` — updated
-
-### Key lessons from this session
-
-- **Stale logs** cost us hours — static flags preserved first-frame output through code changes
-- **World-space merge** in register_endpoint caused cross-contamination — removed
-- **Mid-interval splits** were redundant with exit_map — removed
-- **Go LEFT first** at trace start, then always RIGHT — the starting direction determines inner vs outer polygon
-- **Think mode default** — don't edit code unless user says solve/go/impl/proceed/create/rewrite
-- **Be an open book** — show thinking, don't hide it behind action
-- **Never guess without labeling it as a guess**
-- **Phantom root cause** — when an edge goes behind a face, the face's polygon may not fully cover the behind-portion. The clip function sees a fake "visible" interval where the edge is behind the plane but outside the polygon. The visibility gate fixes this by tracking which face hid the edge and suppressing fake emergences from the same face.
-- **Don't chain state through skipped intervals** — updating tracked state from skipped data poisons downstream checks
-- **Attribute clip boundaries to adjacent faces** — a polygon edge is shared by two faces. The clip boundary should be attributed to the face on the OTHER side, not the clipping face. When the other face is back-facing (not an occluder), the cause is null — meaning the edge genuinely exits the object's visible silhouette
-
-## work
-
-project P. we have our edge. it has two faces, call them our faces and call them forward and swings. our edge pierces two faces of SECOND, lets call them their faces. P states that the labels for our edge piercing their faces only appear when our swings face faces forward. those labels disappear when swings faces backwards
-
-forward has two intersection lines that end on our edge.
+## Files modified
+- `di/src/lib/ts/render/Render.ts` — all compute pipeline changes
+- `di/src/lib/ts/render/Facets.ts` — directed half-edge tracing, logging
+- `di/notes/work/facets-session-summary.md` — this file

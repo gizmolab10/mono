@@ -4,6 +4,7 @@ Running a project according to code debt changes the dynamic. It can be used to 
 
 offer a proposal for the first unchecked item
 
+- [ ] add a button above the build notes button in graph debug
 - [ ] change the order of axis rotations (eg y then x)
     - [ ] sphere symmetry bug
     - [ ] UX to reorder axes

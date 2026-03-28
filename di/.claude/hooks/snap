@@ -1,0 +1,173 @@
+#!/bin/bash
+# snap - browse and restore Claude Code file snapshots
+SNAP_DIR="$TMPDIR/claude-snapshots"
+
+usage() {
+  cat <<'EOF'
+snap - browse and restore Claude Code file snapshots
+
+Usage:
+  snap list [filter]          List snapshots, optionally filtered by filename
+  snap revert [file] [n]      Revert to snapshot (n=1 most recent, default)
+  snap unrevert [file]        Undo the last revert
+  snap diff [file] [n]        Diff snapshot n against current file
+  snap clean                  Delete all snapshots
+
+When file is omitted:
+  - If only one file has snapshots → use it
+  - If multiple → list them and exit
+EOF
+}
+
+# Snapshot filenames: TIMESTAMP__FULLPATH (slashes encoded as __)
+# e.g. 20260328_141523__Users__sand__GitHub__mono__di__src__lib__ts__render__Render.ts
+
+decode_path() {
+  # Strip timestamp prefix (first __ after YYYYMMDD_HHMMSS), then convert __ back to /
+  local name="$1"
+  local path_part="${name#*__}"  # remove YYYYMMDD_HHMMSS__
+  echo "/$path_part" | sed 's/__/\//g'
+}
+
+basename_of() {
+  local path
+  path=$(decode_path "$1")
+  basename "$path"
+}
+
+# Get unique filenames (basenames) from snapshots
+unique_files() {
+  local filter="${1:-}"
+  ls -t "$SNAP_DIR" 2>/dev/null | while read -r f; do
+    basename_of "$f"
+  done | sort -u | { if [ -n "$filter" ]; then grep -i "$filter"; else cat; fi; }
+}
+
+# Get snapshots for a given basename filter, newest first
+snapshots_for() {
+  local filter="$1"
+  ls -t "$SNAP_DIR" 2>/dev/null | while read -r f; do
+    local bn
+    bn=$(basename_of "$f")
+    if echo "$bn" | grep -qi "$filter"; then
+      echo "$f"
+    fi
+  done
+}
+
+# Resolve file arg: if omitted, auto-pick if unambiguous
+resolve_file() {
+  local file="$1"
+  if [ -n "$file" ]; then
+    echo "$file"
+    return 0
+  fi
+  local files
+  files=$(unique_files)
+  local count
+  count=$(echo "$files" | grep -c .)
+  if [ "$count" -eq 0 ]; then
+    echo "No snapshots found." >&2
+    return 1
+  elif [ "$count" -eq 1 ]; then
+    echo "$files"
+    return 0
+  else
+    echo "Multiple files — specify one:" >&2
+    echo "$files" >&2
+    return 1
+  fi
+}
+
+cmd_list() {
+  local filter="${1:-}"
+  if [ ! -d "$SNAP_DIR" ] || [ -z "$(ls "$SNAP_DIR" 2>/dev/null)" ]; then
+    echo "No snapshots."
+    return
+  fi
+  ls -t "$SNAP_DIR" | while read -r f; do
+    local bn path ts
+    bn=$(basename_of "$f")
+    path=$(decode_path "$f")
+    ts="${f%%__*}"
+    if [ -z "$filter" ] || echo "$bn" | grep -qi "$filter"; then
+      printf "%s  %s  %s\n" "$ts" "$bn" "$path"
+    fi
+  done
+}
+
+cmd_revert() {
+  local file n
+  file=$(resolve_file "$1") || return 1
+  n="${2:-1}"
+  local snap
+  snap=$(snapshots_for "$file" | sed -n "${n}p")
+  if [ -z "$snap" ]; then
+    echo "No snapshot #$n for '$file'." >&2
+    return 1
+  fi
+  local orig
+  orig=$(decode_path "$snap")
+  if [ ! -f "$orig" ]; then
+    echo "Original path doesn't exist: $orig" >&2
+    return 1
+  fi
+  # Save current as .unrevert
+  cp "$orig" "$SNAP_DIR/.unrevert__$(echo "$orig" | sed 's/\//__/g')"
+  cp "$SNAP_DIR/$snap" "$orig"
+  echo "Reverted $orig to snapshot #$n ($(echo "$snap" | cut -d_ -f1-3))"
+}
+
+cmd_unrevert() {
+  local file
+  file=$(resolve_file "$1") || return 1
+  # Find the unrevert file
+  local match
+  match=$(ls "$SNAP_DIR"/.unrevert__* 2>/dev/null | while read -r f; do
+    local bn
+    bn=$(basename "$(echo "${f##*.unrevert__}" | sed 's/__/\//g')")
+    if echo "$bn" | grep -qi "$file"; then
+      echo "$f"
+    fi
+  done | head -1)
+  if [ -z "$match" ]; then
+    echo "No unrevert data for '$file'." >&2
+    return 1
+  fi
+  local orig
+  orig=$(echo "${match##*/.unrevert__}" | sed 's/__/\//g')
+  orig="/$orig"
+  cp "$match" "$orig"
+  rm "$match"
+  echo "Unreverted $orig"
+}
+
+cmd_diff() {
+  local file n
+  file=$(resolve_file "$1") || return 1
+  n="${2:-1}"
+  local snap
+  snap=$(snapshots_for "$file" | sed -n "${n}p")
+  if [ -z "$snap" ]; then
+    echo "No snapshot #$n for '$file'." >&2
+    return 1
+  fi
+  local orig
+  orig=$(decode_path "$snap")
+  diff -u "$SNAP_DIR/$snap" "$orig" || true
+}
+
+cmd_clean() {
+  rm -rf "$SNAP_DIR"
+  echo "Snapshots cleared."
+}
+
+case "${1:-}" in
+  list)      cmd_list "$2" ;;
+  revert)    cmd_revert "$2" "$3" ;;
+  unrevert)  cmd_unrevert "$2" ;;
+  diff)      cmd_diff "$2" "$3" ;;
+  clean)     cmd_clean ;;
+  -h|--help) usage ;;
+  *)         usage ;;
+esac
