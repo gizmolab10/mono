@@ -58,6 +58,7 @@ interface ComputedEndpoint {
 class Render {
 	private static _facets_logged = false;
 	private static _last_facet_log = '';
+	// static _clip_debug = false;
 	private occluding_index: Flatbush | null = null;  /** Spatial index for screen-space face bounding boxes (rebuilt each frame). */
 	/** Selection-dot occlusion: includes ALL non-root objects (visible + invisible). */
 	private sel_occluding_faces: { n: vec3; d: number; corners: vec3[]; poly: { x: number; y: number }[]; obj_id: string }[] = [];
@@ -363,6 +364,7 @@ class Render {
 
 		// Compute visible segments (single source of truth for edges, intersections + facets)
 		if (solid) {
+			this.computed_endpoints.clear();
 			if (objects.length > 1) {
 				this.compute_visible_intersection_segments(objects);
 			} else {
@@ -736,20 +738,6 @@ class Render {
 	/** Compute visible edge segments for all objects (clip for occlusion once, store results). */
 	private compute_visible_edge_segments(objects: O_Scene[], projected_map: Map<string, Projected[]>): void {
 		this.computed_edge_segments.clear();
-		// Save intersection-referenced endpoints before clearing
-		const ix_referenced = new Set<string>();
-		for (const iseg of this.computed_intersection_segments) {
-			for (const [sk, ek] of iseg.endpoint_keys) {
-				ix_referenced.add(sk);
-				ix_referenced.add(ek);
-			}
-		}
-		const saved_ix_eps = new Map<string, ComputedEndpoint>();
-		for (const key of ix_referenced) {
-			const ep = this.computed_endpoints.get(key);
-			if (ep) saved_ix_eps.set(key, ep);
-		}
-		this.computed_endpoints.clear();
 		const CORNER_T = 0.01;  // t threshold for corner detection
 
 		for (const obj of objects) {
@@ -900,63 +888,6 @@ class Render {
 			this.computed_edge_segments.set(obj.id, segments);
 		}
 
-		// Re-add intersection-referenced fi/corner endpoints that weren't re-registered
-		// Only re-add if at least one intersection clip interval has both endpoints available
-		for (const [key, ep] of saved_ix_eps) {
-			if (this.computed_endpoints.has(key)) continue;
-			if (ep.id.type !== T_Endpoint.face_intersection && ep.id.type !== T_Endpoint.corner) continue;
-			// Check: does this endpoint participate in a clip interval where the OTHER endpoint also exists?
-			let has_complete_segment = false;
-			for (const iseg of this.computed_intersection_segments) {
-				for (const [sk, ek] of iseg.endpoint_keys) {
-					if (sk === key) {
-						const other = this.computed_endpoints.has(ek) || (saved_ix_eps.has(ek) && saved_ix_eps.get(ek)!.id.type === T_Endpoint.face_intersection);
-						if (other) { has_complete_segment = true; break; }
-					}
-					if (ek === key) {
-						const other = this.computed_endpoints.has(sk) || (saved_ix_eps.has(sk) && saved_ix_eps.get(sk)!.id.type === T_Endpoint.face_intersection);
-						if (other) { has_complete_segment = true; break; }
-					}
-				}
-				if (has_complete_segment) break;
-			}
-			if (has_complete_segment) {
-				// Check if the endpoint is in a visible portion of its edge
-				let on_visible_edge = true;
-				if (ep.id.type === T_Endpoint.face_intersection) {
-					for (const iseg of this.computed_intersection_segments) {
-						// Find which edge this endpoint is on
-						const on_edge = (iseg.endpoint_keys[0]?.[0] === key) ? iseg.start_on_edge
-							: (iseg.endpoint_keys[iseg.endpoint_keys.length - 1]?.[1] === key) ? iseg.end_on_edge
-							: null;
-						if (!on_edge) continue;
-						const edge_segs = this.computed_edge_segments.get(on_edge.so);
-						if (!edge_segs) { on_visible_edge = false; break; }
-						const seg = edge_segs.find(s => s.edge_key === on_edge.edge_key);
-						if (!seg) { on_visible_edge = false; break; }
-						// Check if ep.screen falls within a visible interval of this edge
-						const projected = projected_map.get(on_edge.so);
-						if (!projected) { on_visible_edge = false; break; }
-						const [vi, vj] = on_edge.edge_key.split('-').map(Number);
-						const a = projected[vi], b = projected[vj];
-						const pt_t = Render.screen_t(a, b, ep.screen);
-						let in_visible = false;
-						for (const [vs, ve] of seg.visible) {
-							const t_s = Render.screen_t(a, b, vs);
-							const t_e = Render.screen_t(a, b, ve);
-							const t_min = Math.min(t_s, t_e);
-							const t_max = Math.max(t_s, t_e);
-							if (pt_t >= t_min - 0.01 && pt_t <= t_max + 0.01) { in_visible = true; break; }
-						}
-						on_visible_edge = in_visible;
-						break;
-					}
-				}
-				if (on_visible_edge) {
-					this.computed_endpoints.set(key, ep);
-				}
-			}
-		}
 	}
 
 	/** Compute visible intersection segments for all SO pairs (clip for occlusion once, store results). */
@@ -1571,9 +1502,9 @@ class Render {
 
 			const d1 = vec3.dot(face.n, w1) - face.d;
 			const d2 = vec3.dot(face.n, w2) - face.d;
-			if (d1 > -k.coplanar_epsilon && d2 > -k.coplanar_epsilon) continue;
-
-
+			if (d1 > -k.coplanar_epsilon && d2 > -k.coplanar_epsilon) {
+				continue;
+			}
 
 			let s_behind_start = 0, s_behind_end = 1;
 			if (d1 > 0 && d2 <= 0) {
@@ -2003,7 +1934,7 @@ class Render {
 
 	// Compute face winding (negative = front-facing with CCW convention)
 	face_winding(face: number[], projected: Projected[]): number {
-		if (face.length < 3) return Infinity;
+		if (face.length < 3 || !projected) return Infinity;
 		const p0 = projected[face[0]], p1 = projected[face[1]], p2 = projected[face[2]];
 		if (!p0 || !p1 || !p2) return Infinity;
 		if (p0.w < 0 || p1.w < 0 || p2.w < 0) return Infinity;

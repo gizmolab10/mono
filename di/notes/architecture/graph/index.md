@@ -8,6 +8,7 @@
 - [Intersecting.faces](./intersecting.faces.md)
 - [Projection](./projection.md)
 - [Quaternions](./quaternions.md)
+- [Render](./render.md)
 - [Rendering.types](./rendering.types.md)
 - [Repeaters](./repeaters.md)
 - [Three.dimensions](./three.dimensions.md)

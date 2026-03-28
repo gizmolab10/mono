@@ -172,8 +172,45 @@ not all polys should be painted. for each poly: is it on the selected SO's visib
 - **Clip-canvas with plane tests** — "is the occluder in front" tests were all too permissive or too aggressive.
 - **Centroid-based occlusion** — `is_point_occluded` uses the face centroid, not the query point. Don't trust it for per-polygon tests.
 
-## Investigating phantoms (pick up here)
+## Phantom investigation (2026-03-27, paused)
 
-two phantom labels remain: h and k.
+Spent two sessions on phantom endpoints. Identified the root cause but couldn't fix without breaking real endpoints.
 
-**h** = `fi:obj_1:0:obj_2:0:start`. the intersection line between face 0 of both SOs is behind 3 occluding faces (d values all negative) but all 3 faces' screen polygons MISS the line (`poly miss`). the line is inside the SOs' volume — hidden in 3D — but no single face polygon covers its screen position. the clip function correctly checks all candidates; the polygon test correctly reports no overlap. the issue is that the line genuinely isn't covered by any one face on screen, even though it's hidden in 3D. this is a gap in single-face occlusion testing.
+### Root cause
+
+Phantoms are `face_intersection` endpoints from `compute_visible_intersection_segments` where face planes mathematically cross within both quads, but the edges at that point don't actually meet in 3D. The intersection is visual only — two edges cross on screen at different depths.
+
+### What we tried
+
+1. **Clear-and-rebuild in edge compute** — `computed_endpoints.clear()` was wiping intersection endpoints, then a lossy save/restore tried to recover them. Changed `register_endpoint` to overwrite instead of skip-if-exists. Removed the save/restore. Didn't fix phantoms.
+
+2. **Facets filter: no intersection segments** — delete non-corner endpoints with no intersection-type segments. Didn't catch phantoms because `compute_visible_intersection_segments` creates intersection segments for visual-only crossings too.
+
+3. **Cascading filter** — delete endpoints whose intersection segments have orphaned other ends. Works mechanically but the classification of real vs phantom was never precise enough.
+
+4. **`edge_cross` endpoint type** — tag visual-only fi endpoints with a new type, delete them in Facets. The exit-edge-crosses-plane check (`d0 * d1 < 0`) correctly identifies some phantoms but: (a) `continue` on a clip interval kills valid endpoints on the other end, and (b) the edge can cross the plane far from where the objects actually overlap.
+
+5. **Edge distance checks** — screen-space and world-space distance between the two edges at the crossing point. Perspective projection makes screen-to-world interpolation imprecise. Thresholds either too tight (kills real) or too loose (misses phantoms).
+
+### Key findings
+
+- The clip_map face-index mismatch (occluder reports face X, intersection registered face Y) was partially fixed with an adjacent-face fallback, but some misses remain on edges with no intersection line.
+- `compute_occluding_edge_segments` creates crossing segments at visual crossings. Adding `Math.abs(dist) > coplanar_epsilon` removes these, but the fi endpoints survive via intersection segments from the separate intersection compute.
+- The distinction between face piercing (real) and edge crossing (can be visual) maps to `start_edge.face === end_edge.face` (same quad = piercing) vs `!==` (different quads = could be either). But real piercings also exit through different quads, so this test is insufficient.
+- The edge-crosses-plane test is necessary but not sufficient — need to also verify the crossing happens within the other face's polygon, not just on the infinite plane.
+
+### Why it's hard
+
+The phantom fix and real endpoint preservation fight each other. Every filter that removes phantoms also removes some real endpoints, because the data structures don't distinguish visual-only intersection lines from real ones at the point where endpoints are created. The intersection compute works with face planes (mathematical), while the visual/real distinction requires edge-level geometry (physical).
+
+### Pick up here (phantoms)
+
+The promising direction: check `d0 * d1 < 0` on the exit edge vertices against the other quad's plane, AND verify the crossing point is within the other face's polygon. This would correctly classify all cases but wasn't implemented.
+
+Both phantoms and missing endpoints share the same root cause: the polygon seam gap at face boundaries. The clipper misses occlusion at the seam between two adjacent faces' screen polygons. The behind range and polygon coverage don't overlap — each face's plane is crossed at a screen location where that face's polygon doesn't reach.
+
+## Problem P — missing pierce points (fixed 2026-03-28)
+
+fi endpoints on edges existed but only had 1 segment (edge) instead of 2 (edge + intersection). The intersection segment was missing because its partner `occlusion_clip` endpoint on the intersection line was wiped by `computed_endpoints.clear()` in `compute_visible_edge_segments`. The save/restore only recovered `face_intersection` and `corner` types, not `occlusion_clip`.
+
+**Fix:** moved `computed_endpoints.clear()` from inside `compute_visible_edge_segments` to the start of the compute pipeline (before `compute_visible_intersection_segments`). Removed the save/restore entirely. Now all endpoint types from intersection compute survive through edge compute.

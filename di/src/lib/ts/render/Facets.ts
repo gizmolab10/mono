@@ -590,21 +590,7 @@ export class Facets {
 			all_labels.push({ label, key: ep.key, ep });
 			draw(ep.screen.x, ep.screen.y, label);
 		}
-		if (!Facets._trace_logged) {
-			Facets._trace_logged = true;
-			for (const { label, key, ep } of all_labels) {
-				if (label === 'f') {
-					const others = ep.segments.map(sid => {
-						const seg = this.segments.get(sid);
-						if (!seg) return '?';
-						const ok = seg.endpoints[0] === key ? seg.endpoints[1] : seg.endpoints[0];
-						const oep = this.endpoints.get(ok);
-						return `${oep?.label || '?'}(${this.pretty(ok).slice(0,40)})`;
-					});
-					console.log(`F_DEBUG ${this.pretty(key).slice(0,50)} segs=${ep.segments.length} connects=[${others.join(', ')}]`);
-				}
-			}
 		}
-	}
+
 
 }

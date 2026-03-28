@@ -81,3 +81,9 @@ Console logs `facets: A→B→C→A` with display labels, updates when path chan
 - **Phantom root cause** — when an edge goes behind a face, the face's polygon may not fully cover the behind-portion. The clip function sees a fake "visible" interval where the edge is behind the plane but outside the polygon. The visibility gate fixes this by tracking which face hid the edge and suppressing fake emergences from the same face.
 - **Don't chain state through skipped intervals** — updating tracked state from skipped data poisons downstream checks
 - **Attribute clip boundaries to adjacent faces** — a polygon edge is shared by two faces. The clip boundary should be attributed to the face on the OTHER side, not the clipping face. When the other face is back-facing (not an occluder), the cause is null — meaning the edge genuinely exits the object's visible silhouette
+
+## work
+
+project P. we have our edge. it has two faces, call them our faces and call them forward and swings. our edge pierces two faces of SECOND, lets call them their faces. P states that the labels for our edge piercing their faces only appear when our swings face faces forward. those labels disappear when swings faces backwards
+
+forward has two intersection lines that end on our edge.
