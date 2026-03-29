@@ -16,7 +16,8 @@ import { k } from '../common/Constants';
 import { drag } from '../editors/Drag';
 import { camera } from './Camera';
 import { scene } from './Scene';
-import { Facets, T_Endpoint, endpoint_key, vtx, type EndpointID } from './Facets';
+import { Facets, T_Endpoint, endpoint_key, /* vtx, */ type EndpointID } from './Facets';
+import { Topology } from './Topology';
 import Flatbush from 'flatbush';
 
 type Pt = { x: number; y: number };
@@ -58,6 +59,11 @@ interface ComputedEndpoint {
 class Render {
 	private static _facets_logged = false;
 	private static _last_facet_log = '';
+	private topology = new Topology();
+	private topology_endpoints = new Map<string, { key: string; id: EndpointID; screen: { x: number; y: number }; world: vec3 }>();
+	private topology_edge_segments = new Map<string, { edge_key: string; so: string; visible: [{ x: number; y: number }, { x: number; y: number }][]; endpoint_keys: [string, string][] }[]>();
+	private topology_intersection_segments: { visible: [{ x: number; y: number }, { x: number; y: number }][]; endpoint_keys: [string, string][]; color: string; so_a: string; face_a: number; so_b: string; face_b: number }[] = [];
+	private topology_occluding_segments: { so: string; face: number; screen: [{ x: number; y: number }, { x: number; y: number }]; endpoint_keys: [string, string] }[] = [];
 	// static _clip_debug = false;
 	private occluding_index: Flatbush | null = null;  /** Spatial index for screen-space face bounding boxes (rebuilt each frame). */
 	/** Selection-dot occlusion: includes ALL non-root objects (visible + invisible). */
@@ -397,6 +403,40 @@ class Render {
 			} else {
 				this.computed_occluding_segments = [];
 			}
+
+			// Run Topology alongside old code
+			{
+				const topo = this.topology.compute({
+					objects, projected_map,
+					occluding_faces: this.occluding_faces,
+					occluding_index: this.occluding_index,
+					face_winding: (f: number[], p: Projected[]) => this.face_winding(f, p),
+					get_world_matrix: (o: O_Scene) => this.get_world_matrix(o),
+					project_vertex: (v: vec3, w: mat4) => this.project_vertex(v, w),
+					front_face_edges: (o: O_Scene, p: Projected[]) => this.front_face_edges(o, p),
+				});
+				// Store Topology output for Facets
+				this.topology_endpoints = topo.endpoints;
+				this.topology_edge_segments = topo.edge_segments;
+				this.topology_intersection_segments = topo.intersection_segments;
+				this.topology_occluding_segments = topo.occluding_segments;
+				// Diff logging (once)
+				if (!Render._facets_logged) {
+					const old_keys = new Set(this.computed_endpoints.keys());
+					const new_keys = new Set(topo.endpoints.keys());
+					const only_old = [...old_keys].filter(k => !new_keys.has(k));
+					const only_new = [...new_keys].filter(k => !old_keys.has(k));
+					console.log(`PIPELINE DIFF: endpoints old=${old_keys.size} new=${new_keys.size} only_old=${only_old.length} only_new=${only_new.length}`);
+					if (only_old.length > 0) console.log(`  only in old:`, only_old);
+					if (only_new.length > 0) console.log(`  only in new:`, only_new);
+					let old_edge_count = 0, new_edge_count = 0;
+					for (const [, segs] of this.computed_edge_segments) for (const seg of segs) old_edge_count += seg.visible.length;
+					for (const [, segs] of topo.edge_segments) for (const seg of segs) new_edge_count += seg.visible.length;
+					console.log(`PIPELINE DIFF: edge clips old=${old_edge_count} new=${new_edge_count}`);
+					console.log(`PIPELINE DIFF: intersections old=${this.computed_intersection_segments.reduce((n, s) => n + s.endpoint_keys.length, 0)} new=${topo.intersection_segments.reduce((n, s) => n + s.endpoint_keys.length, 0)}`);
+					console.log(`PIPELINE DIFF: crossings old=${this.computed_occluding_segments.length} new=${topo.occluding_segments.length}`);
+				}
+			}
 		}
 
 		// Facets: build graph, trace polys, paint
@@ -410,12 +450,13 @@ class Render {
 				Facets._trace_logged = false;
 				Facets._occlusion_logged = false;
 			}
+			const use_topology_facets = true;  // flip to false for old code facets
 			const facets = new Facets();
 			facets.ingest_precomputed(
-				this.computed_endpoints,
-				this.computed_edge_segments,
-				this.computed_intersection_segments,
-				this.computed_occluding_segments,
+				use_topology_facets ? this.topology_endpoints : this.computed_endpoints,
+				use_topology_facets ? this.topology_edge_segments : this.computed_edge_segments,
+				use_topology_facets ? this.topology_intersection_segments : this.computed_intersection_segments,
+				use_topology_facets ? this.topology_occluding_segments : this.computed_occluding_segments,
 				objects, projected_map,
 				(face, proj) => this.face_winding(face, proj),
 			);
@@ -872,30 +913,8 @@ class Render {
 					segments.push({ edge_key: ek, so: obj.id, visible: vis, endpoint_keys: ep_keys });
 				}
 			}
-			if (!Render._facets_logged) {
-				const pretty = (s: string) => {
-					for (const o of objects) {
-						s = s.split(o.id).join(o.so.name);
-						if (o.faces) {
-							const p = o === objects[1] ? "'" : '';
-							for (let fi2 = 0; fi2 < o.faces.length; fi2++) {
-								const corners = o.faces[fi2].map((v: number) => vtx(v) + p).join('');
-								s = s.split(`${o.so.name}:${fi2}`).join(`${o.so.name}:${corners}`);
-							}
-						}
-					}
-					return s;
-				};
-				for (const seg of segments) {
-					const keys = seg.endpoint_keys.flat();
-					const has_non_corner = keys.some(k => k && !k.startsWith('c:'));
-					if (!has_non_corner) continue;
-					const _eps = keys.map(k => k ? pretty(k.slice(0, 50)) : '(NULL)');
-					const [_ev1, _ev2] = seg.edge_key.split('-').map(Number);
-					const _prime = obj === objects[1] ? "'" : '';
-					// console.log(`EDGE ${obj.so.name}:${vtx(_ev1)}${_prime}-${vtx(_ev2)}${_prime} vis=${seg.visible.length} eps=[${_eps.join(', ')}]`);
-				}
-			}
+			// EDGE debug logging — commented out
+			// if (!Render._facets_logged) { ... }
 			this.computed_edge_segments.set(obj.id, segments);
 		}
 

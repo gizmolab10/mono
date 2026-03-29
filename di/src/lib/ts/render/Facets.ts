@@ -304,6 +304,10 @@ export class Facets {
 		for (const oseg of occluding_segments) {
 			const [sk, ek] = oseg.endpoint_keys;
 			const [s, e] = oseg.screen;
+			// DEBUG: check if crossing endpoints exist
+			if (!this.endpoints.has(sk) || !this.endpoints.has(ek)) {
+				console.log(`FACETS CROSS ORPHAN: sk=${this.pretty(sk)} exists=${this.endpoints.has(sk)} ek=${this.pretty(ek)} exists=${this.endpoints.has(ek)} so=${oseg.so} face=${oseg.face}`);
+			}
 			const sid = 'seg:' + this._seg_counter++;
 			const segment: Segment = {
 				id: sid,
@@ -519,11 +523,11 @@ export class Facets {
 						break;
 					}
 
-					if (log) {
-						const next_seg = this.segments.get(next_id)!;
-						const choices = face_order.map(sid => { const s = this.segments.get(sid); return s ? seg_desc(s) : '?'; });
-						// console.log(`    ${safe}: ${ep_label(other_ep_key)} [${choices.join(' | ')}] →${idx + 1 < choices.length ? idx + 1 : 0}→ ${seg_desc(next_seg)}`);
-					}
+					// if (log) {
+					// 	const next_seg = this.segments.get(next_id)!;
+					// 	const choices = face_order.map(sid => { const s = this.segments.get(sid); return s ? seg_desc(s) : '?'; });
+					// 	console.log(`    ${safe}: ${ep_label(other_ep_key)} [${choices.join(' | ')}] →${idx + 1 < choices.length ? idx + 1 : 0}→ ${seg_desc(next_seg)}`);
+					// }
 
 					remaining.delete(next_half);
 					trace_used.push(next_half);
@@ -638,7 +642,7 @@ export class Facets {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
-		const is_occluded = (sx: number, sy: number, world_pt: vec3, label?: string): boolean => {
+		const is_occluded = (sx: number, sy: number, world_pt: vec3, _label?: string): boolean => {
 			if (!occluding_faces || !point_in_polygon_2d) return false;
 			const candidates = occluding_index
 				? occluding_index.search(sx, sy, sx, sy)

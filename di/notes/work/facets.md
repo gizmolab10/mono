@@ -229,4 +229,19 @@ The `computed_endpoints.clear()` was placed inside `compute_visible_edge_segment
 
 **Fix:** In the oc_list matching loop, prefer `face_intersection` over other types — don't let an oc overwrite an fi match.
 
-**Remaining:** facet bEHmab on AEHD not tracing — need to investigate.
+**Remaining:** facet bEHmab on AEHD — fixed by t-range tightening (t > 0.99 && t < 1.01).
+
+## Pipeline.ts (2026-03-28)
+
+New file: identity-based compute pipeline to replace Render.ts's proximity-matching plumbing. Old code stays in Render.ts; Pipeline runs alongside for comparison via `PIPELINE DIFF` logging.
+
+**Design:** Single `edge_points` registry keyed by `so:edge_key`, with `clip_identity` map keyed by `clipped_so:occluder_so:occluder_edge` for topological fi→oc matching. Cross-registration in `compute_intersections` puts each fi on both the edge it sits on AND the other face's edges (via `cross_register`).
+
+**Status (end of session):** Edge clips match (16/16), intersections match (5/5), crossings match (10/10). Endpoints diverge: old=29, new=25, 13 only-old, 9 only-new. 3 facets trace (vs 7 with old code).
+
+**Root causes of divergence:**
+1. Pipeline creates `oc:` where old code creates `ex:` — `clip_identity` matches an fi, so Pipeline reuses it as oc, while old code's proximity miss falls through to edge_crossing (ex). Different identity, same point.
+2. Missing `fi:obj_1:2:obj_2:1:end` — Pipeline's `find_coincident_on_edge` (1e-6 epsilon) may be too tight, or the coincident fi lives on a different edge than expected.
+3. `ex:` face indices differ between old and new (e.g., `face:C` vs `face:D`) — the occluding_faces loop index `fi` depends on iteration order, which may differ if Flatbush returns candidates differently.
+
+**Next:** Fix the oc-vs-ex identity mismatch. When `clip_identity` finds a match, the crossing should reuse the fi key (not create an oc). When it doesn't match, the ex face index must be deterministic.

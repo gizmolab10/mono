@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty'); if [ -n \"$FILE\" ] && echo \"$FILE\" | grep -qE '\\.(ts|svelte)$'; then cd /Users/sand/GitHub/mono/di && yarn svelte-check --output human 2>&1 | tail -20; fi"
+            "command": "di/.claude/hooks/check-ts.sh"
           }
         ]
       }

@@ -8,7 +8,7 @@ declare const __ASSETS_DIR__: string;
 // timing thresholds, and structural geometry. Everything derives from
 // `common_size` so the whole UI scales from one number.
 //
-// Pipeline:
+// Topology:
 //   Constants.ts (k.*)
 //     → App.svelte onMount: root.setProperty('--x', k.x)
 //       → scoped <style> blocks: var(--x)
