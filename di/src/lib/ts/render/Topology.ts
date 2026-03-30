@@ -759,12 +759,12 @@ export class Topology {
 							}
 						}
 						// DEBUG: log unmatched crossings
-						if (!cs_key || !ce_key) {
-							console.log(`TOPO CROSS MISS: ${so_a_id}:${seg.edge_key} → ${face.obj_id}:face:${face.face_index}`,
-								`cs=${cs_key ?? 'MISS'} ce=${ce_key ?? 'MISS'}`,
-								`ep_list=${ep_list?.length ?? 0}`,
-								ep_list?.map(sp => `${sp.key}@t=${Topology.screen_t(cs, ce, sp.screen).toFixed(3)}`));
-						}
+						// if (!cs_key || !ce_key) {
+						// 	console.log(`TOPO CROSS MISS: ${so_a_id}:${seg.edge_key} → ${face.obj_id}:face:${face.face_index}`,
+						// 		`cs=${cs_key ?? 'MISS'} ce=${ce_key ?? 'MISS'}`,
+						// 		`ep_list=${ep_list?.length ?? 0}`,
+						// 		ep_list?.map(sp => `${sp.key}@t=${Topology.screen_t(cs, ce, sp.screen).toFixed(3)}`));
+						// }
 
 						// If both ends resolved to the same point, discard — can't be a valid crossing
 						if (cs_key && ce_key && cs_key === ce_key) { cs_key = undefined; ce_key = undefined; }
