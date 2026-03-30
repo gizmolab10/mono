@@ -1,4 +1,24 @@
 {
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.user_prompt' | grep -qiE '\\b(bug|debug|phantom|fix|wrong|broken|fails|crash|log|trace|why|check|look|egads|fuck)\\b' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"DEBUGGING REMINDER: The code is the suspect — read log data FIRST. Do not reason from code structure about what should happen. Reason from evidence about what did happen.\"}}' || true"
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.user_prompt' | grep -qiE '(PIPELINE DIFF|PHANTOM|UNLABELED|trace:|Facets\\.ts|Topology\\.ts|Render\\.ts|segs=|console\\.log)' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"LOG DATA PRESENT: The user just pasted log output. READ IT YOURSELF. Do not ask the user to look at it or interpret it for you. Extract the answer from the data.\"}}' || true"
+          },
+          {
+            "type": "command",
+            "command": "FLAG=~/.claude/geometric-mode; PROMPT=$(jq -r '.user_prompt'); if echo \"$PROMPT\" | grep -qiE '\\bnot geometric\\b'; then rm -f $FLAG; elif echo \"$PROMPT\" | grep -qiE '\\bgeometric\\b'; then touch $FLAG; fi; [ -f $FLAG ] && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"GEOMETRIC MODE: You are terrible at visualizing geometry. Do NOT assume spatial relationships. Ask specific questions to verify: which edge is in front? which corner is inside? what direction is clockwise? State your geometric assumption explicitly and ask Jonathan to confirm before acting on it. Also, ask questions to gain data you need in order to do a precision analysis.\"}}' || true"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "Read",

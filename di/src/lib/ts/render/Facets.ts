@@ -81,11 +81,24 @@ export class Facets {
 	endpoints = new Map<string, Endpoint>();
 	private id_to_name = new Map<string, string>();
 	private face_labels = new Map<string, string>(); // "obj_id:face_idx" → "ABFE" etc
+	private face_polys = new Map<string, { x: number; y: number }[]>(); // "so:face" → screen polygon
 	/** Replace obj IDs and face indices with readable names */
 	private pretty(s: string): string {
 		for (const [id, name] of this.id_to_name) s = s.split(id).join(name);
 		for (const [face_key, label] of this.face_labels) s = s.split(face_key).join(label);
 		return s;
+	}
+
+	private static pip(px: number, py: number, poly: { x: number; y: number }[]): boolean {
+		let inside = false;
+		for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+			const yi = poly[i].y, yj = poly[j].y;
+			if ((yi > py) !== (yj > py) &&
+				px < (poly[j].x - poly[i].x) * (py - yi) / (yj - yi) + poly[i].x) {
+				inside = !inside;
+			}
+		}
+		return inside;
 	}
 
 	add_segment(seg: Segment): void {
@@ -151,34 +164,32 @@ export class Facets {
 			}
 		}
 
-		// For each endpoint, compute ordering
+		// For each endpoint, compute ordering per face.
+		// Each segment belongs to a (so, face). The cyclic ordering must use
+		// that face's tangent plane — not the first segment's. An endpoint
+		// shared by segments on different faces gets one combined ordering,
+		// but each segment's angle is computed on its own face's plane.
 		for (const ep of this.endpoints.values()) {
 			if (ep.segments.length < 2) {
 				ep.ordering = [...ep.segments];
 				continue;
 			}
 
-			// Find a tangent plane — use the first segment's face
-			const first_seg = this.segments.get(ep.segments[0]);
-			if (!first_seg) continue;
-			const plane = planes.get(`${first_seg.so}:${first_seg.face}`);
-			if (!plane) continue;
-
-			// Compute angle for each segment's outgoing direction
+			// Compute angle for each segment using its own face's tangent plane
 			const angles: { seg_id: string; angle: number }[] = [];
 			for (const seg_id of ep.segments) {
 				const seg = this.segments.get(seg_id);
 				if (!seg) continue;
 
-				// Find the other endpoint
 				const other_key = seg.endpoints[0] === ep.key ? seg.endpoints[1] : seg.endpoints[0];
 				const other_ep = this.endpoints.get(other_key);
 				if (!other_ep) continue;
 
-				// Direction from this endpoint to the other
-				const dir = vec3.sub(vec3.create(), other_ep.world, ep.world);
+				// Use the segment's own face plane for projection
+				const plane = planes.get(`${seg.so}:${seg.face}`);
+				if (!plane) continue;
 
-				// Project onto tangent plane
+				const dir = vec3.sub(vec3.create(), other_ep.world, ep.world);
 				const du = vec3.dot(dir, plane.u);
 				const dv = vec3.dot(dir, plane.v);
 
@@ -214,7 +225,7 @@ export class Facets {
 		for (const obj of objects) {
 			this.id_to_name.set(obj.id, obj.so.name);
 			if (obj.faces) {
-				const p = obj === objects[1] ? "'" : '';
+				const p = obj === objects[0] ? "'" : '';
 				for (let fi = 0; fi < obj.faces.length; fi++) {
 					const corners = obj.faces[fi].map(v => vtx(v) + p).join('');
 					this.face_labels.set(`${obj.so.name}:${fi}`, `${obj.so.name}:${corners}`);
@@ -236,6 +247,19 @@ export class Facets {
 					world: cep.world,
 					label: '',
 				});
+			}
+		}
+
+		// Build face screen polygons for geometric checks
+		this.face_polys.clear();
+		for (const obj of objects) {
+			if (!obj.faces) continue;
+			const projected = projected_map.get(obj.id);
+			if (!projected) continue;
+			for (let fi = 0; fi < obj.faces.length; fi++) {
+				if (face_winding(obj.faces[fi], projected) >= 0) continue;
+				const poly = obj.faces[fi].map(vi => ({ x: projected[vi].x, y: projected[vi].y }));
+				this.face_polys.set(`${obj.id}:${fi}`, poly);
 			}
 		}
 
@@ -304,10 +328,6 @@ export class Facets {
 		for (const oseg of occluding_segments) {
 			const [sk, ek] = oseg.endpoint_keys;
 			const [s, e] = oseg.screen;
-			// DEBUG: check if crossing endpoints exist
-			if (!this.endpoints.has(sk) || !this.endpoints.has(ek)) {
-				console.log(`FACETS CROSS ORPHAN: sk=${this.pretty(sk)} exists=${this.endpoints.has(sk)} ek=${this.pretty(ek)} exists=${this.endpoints.has(ek)} so=${oseg.so} face=${oseg.face}`);
-			}
 			const sid = 'seg:' + this._seg_counter++;
 			const segment: Segment = {
 				id: sid,
@@ -318,6 +338,115 @@ export class Facets {
 				screen: [s, e],
 			};
 			this.add_segment(segment);
+		}
+
+		// Bridge: import other-SO segments onto a face when they share
+		// an endpoint with a segment already on that face. Pure graph
+		// connectivity — no screen polygon tests.
+		{
+			// Collect endpoint keys per (so, face) from existing segments
+			const face_ep_keys = new Map<string, Set<string>>();
+			for (const seg of this.segments.values()) {
+				const key = `${seg.so}:${seg.face}`;
+				let set = face_ep_keys.get(key);
+				if (!set) { set = new Set(); face_ep_keys.set(key, set); }
+				set.add(seg.endpoints[0]);
+				set.add(seg.endpoints[1]);
+			}
+
+			// For each face, import other-SO edge segments that share an endpoint
+			const imported = new Set<string>();
+			let changed = true;
+			while (changed) {
+				changed = false;
+				for (const [face_key, ep_keys] of face_ep_keys) {
+					const [tso, tfi_str] = face_key.split(':');
+					const tfi = parseInt(tfi_str);
+
+					for (const [so_id, segs] of edge_segments) {
+						if (so_id === tso) continue;
+						for (const seg of segs) {
+							for (let ci = 0; ci < seg.visible.length; ci++) {
+								const [s, e] = seg.visible[ci];
+								const [sk, ek] = seg.endpoint_keys[ci];
+								// Both endpoints must already be on this face
+								if (!ep_keys.has(sk) || !ep_keys.has(ek)) continue;
+								// Skip segments connecting a corner to an oc endpoint of a different SO
+								// (these are edge-reaches-boundary segments, not face decomposition segments)
+								const sk_ep = this.endpoints.get(sk);
+								const ek_ep = this.endpoints.get(ek);
+								if (sk_ep && ek_ep) {
+									const sk_is_corner = sk_ep.id.type === T_Endpoint.corner;
+									const ek_is_corner = ek_ep.id.type === T_Endpoint.corner;
+									const sk_is_oc = sk_ep.id.type === T_Endpoint.occlusion_clip;
+									const ek_is_oc = ek_ep.id.type === T_Endpoint.occlusion_clip;
+									if ((sk_is_corner && ek_is_oc) || (ek_is_corner && sk_is_oc)) continue;
+								}
+								const import_id = `${face_key}:${so_id}:${seg.edge_key}:${ci}`;
+								if (imported.has(import_id)) continue;
+								imported.add(import_id);
+								const sid2 = 'seg:' + this._seg_counter++;
+								this.add_segment({
+									id: sid2, so: tso, face: tfi,
+									type: 'crossing', endpoints: [sk, ek], screen: [s, e],
+								});
+							}
+						}
+					}
+
+					// Also synthesize ex:→corner segments, but only for ex: endpoints
+					// whose identity references THIS face (not crossings from other faces)
+					for (const epk of [...ep_keys]) {
+						const ep = this.endpoints.get(epk);
+						if (!ep || ep.id.type !== T_Endpoint.edge_crossing) continue;
+						const ex_id = ep.id as { type: T_Endpoint.edge_crossing; edgeA: string; edgeB: string };
+						// edgeB = "so:face:N" or "so:face:N:e" — check face index matches
+						if (!ex_id.edgeB.includes(`:face:${tfi}`) && !ex_id.edgeB.includes(`:face:${tfi}:`)) continue;
+						const colon = ex_id.edgeA.indexOf(':');
+						if (colon < 0) continue;
+						const so_a = ex_id.edgeA.slice(0, colon);
+						const edge_key = ex_id.edgeA.slice(colon + 1);
+						const [vi, vj] = edge_key.split('-').map(Number);
+						// Only synthesize to the corner that connects to other
+						// endpoints already on this face (interior corner).
+						// The exterior corner has no connections on this face.
+						const face_poly = this.face_polys.get(`${tso}:${tfi}`);
+						for (const v of [vi, vj]) {
+							const ck = endpoint_key({ type: T_Endpoint.corner, so: so_a, vertex: v });
+							const cep = this.endpoints.get(ck);
+							if (!cep || ck === epk) continue;
+							// Corner must be geometrically inside the face polygon
+							if (face_poly && !Facets.pip(cep.screen.x, cep.screen.y, face_poly)) continue;
+							// Check if this corner connects to any OTHER endpoint
+							// already on this face (via edge segments from its SO)
+							let connects_to_face = false;
+							const so_segs = edge_segments.get(so_a);
+							if (so_segs) {
+								for (const seg2 of so_segs) {
+									for (let ci2 = 0; ci2 < seg2.visible.length; ci2++) {
+										const [sk2, ek2] = seg2.endpoint_keys[ci2];
+										if (sk2 === ck && ep_keys.has(ek2)) { connects_to_face = true; break; }
+										if (ek2 === ck && ep_keys.has(sk2)) { connects_to_face = true; break; }
+									}
+									if (connects_to_face) break;
+								}
+							}
+							if (!connects_to_face) continue;
+							const synth_id = `${face_key}:synth:${epk}:${ck}`;
+							if (imported.has(synth_id)) continue;
+							imported.add(synth_id);
+							const sid2 = 'seg:' + this._seg_counter++;
+							this.add_segment({
+								id: sid2, so: tso, face: tfi,
+								type: 'crossing',
+								endpoints: [epk, ck],
+								screen: [ep.screen, cep.screen],
+							});
+							if (!ep_keys.has(ck)) { ep_keys.add(ck); changed = true; }
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -354,6 +483,7 @@ export class Facets {
 			by_face.get(key)!.add(half(seg.id, seg.endpoints[1]));
 			face_segs.get(key)!.add(seg.id);
 		}
+
 
 		for (const [face_key, remaining] of by_face) {
 			const [so, face_str] = face_key.split(':');
@@ -546,6 +676,16 @@ export class Facets {
 				// Restore blocked reverse half-edges for use by subsequent traces
 				for (const b of blocked) remaining.add(b);
 
+				// Check signed area to reject degenerate line facets
+				if (!dud && loop.length >= 3) {
+					let area2 = 0;
+					for (let li = 0; li < loop.length; li++) {
+						const a = this.endpoints.get(loop[li])?.screen;
+						const b = this.endpoints.get(loop[(li + 1) % loop.length])?.screen;
+						if (a && b) area2 += a.x * b.y - b.x * a.y;
+					}
+					if (Math.abs(area2) < 1) dud = true;
+				}
 				if (!dud && loop.length >= 3) {
 					facets.push({ endpoints: loop, so, face });
 					for (const h of trace_used) facet_halves.add(h);
@@ -697,17 +837,18 @@ export class Facets {
 		// 2. All other endpoints (skip selected SO corners — already labeled above)
 		const labeled = new Set<string>();
 		const all_labels: { label: string; key: string; ep: Endpoint }[] = [];
+		const unlabeled: string[] = [];
 		let next_lower = 0;
 		for (const ep of this.endpoints.values()) {
 			if (ep.id.type === T_Endpoint.corner && ep.id.so === so_id) continue;
-			if (ep.segments.length < 2) continue;
+			if (ep.segments.length < 2) { unlabeled.push(`${this.pretty(ep.key)}:segs=${ep.segments.length}`); continue; }
 			// Skip fi/ex endpoints with no edge segments — phantom intersection exits
 			if (ep.id.type === T_Endpoint.face_intersection || ep.id.type === T_Endpoint.edge_crossing) {
 				const has_edge = ep.segments.some(sid => {
 					const s = this.segments.get(sid);
 					return s?.type === 'edge';
 				});
-				if (!has_edge) continue;
+				if (!has_edge) { unlabeled.push(`${this.pretty(ep.key)}:no-edge-seg`); continue; }
 			}
 			if (labeled.has(ep.key)) continue;
 
@@ -731,7 +872,10 @@ export class Facets {
 			all_labels.push({ label, key: ep.key, ep });
 			draw(ep.screen.x, ep.screen.y, label);
 		}
-		}
+		// if (!Facets._occlusion_logged && unlabeled.length > 0) {
+		// 	console.log(`UNLABELED (${unlabeled.length}): ${unlabeled.join(', ')}`);
+		// }
+	}
 
 
 }

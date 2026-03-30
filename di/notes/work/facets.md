@@ -245,3 +245,21 @@ New file: identity-based compute pipeline to replace Render.ts's proximity-match
 3. `ex:` face indices differ between old and new (e.g., `face:C` vs `face:D`) — the occluding_faces loop index `fi` depends on iteration order, which may differ if Flatbush returns candidates differently.
 
 **Next:** Fix the oc-vs-ex identity mismatch. When `clip_identity` finds a match, the crossing should reuse the fi key (not create an oc). When it doesn't match, the ex face index must be deterministic.
+
+## Duplicate labels & phantom ex endpoints (fixed 2026-03-29)
+
+**Symptom:** Two labels (g and k) rendered at the same screen position — the intersection of edges CD and C'G'. Facet tracing produced wrong paths and degenerate line facets.
+
+**Root causes (three bugs, one fix each):**
+
+1. **Duplicate oc/ex endpoints at same point.** When edge A of SO_1 crosses a face of SO_2, and edge B of SO_2 crosses a face of SO_1, the crossing code created separate endpoints for each direction. The existing `oc_at_occluder_edge` match only checked edge_a's oc list. Fix: also check the **face's edges'** oc lists (`oc_at_occluder_edge` keyed by the occluder face's edges). This catches the reverse-direction oc endpoint and reuses it. *(Topology.ts, crossing phase)*
+
+2. **Phantom ex endpoints at corners.** When `clip_segment_to_polygon_2d` returns `clip[2]=-1` (edge starts inside the face polygon), `t_enter=0`, so `cs` is the edge's start vertex — which already has a corner endpoint. The code created a redundant `ex:` endpoint at the same screen position. These phantom junctions confused the cyclic ordering in the tracer. Fix: when `clip[2]=-1`, reuse the existing corner endpoint (`T_Endpoint.corner`) instead of creating a new `ex:`. Same for `clip[3]=-1` at exit. *(Topology.ts, crossing phase)*
+
+3. **Exterior corners imported onto wrong face.** Corner synthesis in the bridge import added ALPHA corners G' and F' (geometrically outside BETA's face) because the `connects_to_face` graph check counted oc-endpoint connections as evidence of interior position. This created degenerate line facets and wrong trace paths. Fix: added point-in-polygon check — corner must be geometrically inside the face polygon before synthesis. Also added signed-area check in `trace_facets` to reject zero-area facets. *(Facets.ts, bridge import + trace)*
+
+4. **Phantom crossings where edge_a is invisible.** The crossing code checked if edge_a's visible clips *overlapped* the crossing range [t_enter, t_leave], but didn't check if edge_a was visible *at* the specific endpoint positions. An edge visible in the middle of the range but occluded at the entry/exit still created endpoints there. Fix: check that edge_a is visible at both t_enter AND t_leave (not just overlapping the range). `!cs_visible || !ce_visible` → skip. *(Topology.ts, crossing phase)*
+
+5. **Bridge import of corner-to-oc segments.** The bridge import added segments from ALPHA corners to oc endpoints on BETA's face, creating graph shortcuts that consumed half-edges before the main facet trace could use them. Fix: skip importing edge segments where one endpoint is a corner and the other is an oc endpoint of a different SO. *(Facets.ts, bridge import)*
+
+**Key insight:** When an edge starts inside a face polygon, the crossing "entry" is the edge's own vertex — not a new geometric event. Creating a new endpoint there adds a junction with identical coordinates to an existing corner, doubling the choices at that point and breaking the tracer's clockwise selection. And: a crossing between two edges is only real if BOTH edges are visible at the crossing point — checking one edge against the other's face is necessary but not sufficient.

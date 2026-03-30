@@ -7,4 +7,5 @@ Scripts and utilities for development workflow.
 - [Git](./git.md)
 - [Hub App](./hub-app.md)
 - [Single Line](./single-line.md)
+- [Hooks](./hooks.md)
 

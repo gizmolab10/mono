@@ -227,6 +227,7 @@
   },
   "active": "07686de312fec143",
   "lastOpenFiles": [
+    "notes/guides/tools/hooks.md",
     "di/src/lib/ts/render/Topology.ts",
     "di/src/lib/ts/render/Pipeline.ts",
     "di/src/lib/ts/render/Render.tmp",
@@ -258,7 +259,6 @@
     "notes/guides/collaborate/creating a design.md",
     "notes/guides/collaborate/index.md",
     "notes/guides/collaborate/framing filters.md",
-    "di/src/lib/ts/render/Facets.ts",
     "di/notes/work/highlight selected SO.md",
     "di/notes/work/data schema for wendy.md",
     "di/notes/work/milestones/done/16.formulas.md",
