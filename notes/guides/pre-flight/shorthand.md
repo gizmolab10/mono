@@ -21,6 +21,8 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `journal`     | move (synopsis of) content from (delete the content) `revisit.*.md` → `journal`. Execute ALL parts.                                        |
 | `learn`       | summarize the mistake you just made, add it to learn, and report number of pending entries                                                 |
 | `shorthand`   | read this file (`shorthand.md`)                                                                                                            |
+| `update`      | read `di/notes/work/handoff.md`, check if anything changed, update the **Next** line and any relevant section                              |
+| `hands on`    | read `di/notes/work/handoff.md`, follow the instructions                                                                                   |
 
 ## Abbreviations
 

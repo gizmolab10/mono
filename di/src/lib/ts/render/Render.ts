@@ -18,6 +18,7 @@ import { camera } from './Camera';
 import { scene } from './Scene';
 import { Facets, T_Endpoint, endpoint_key, /* vtx, */ type EndpointID } from './Facets';
 import { Topology } from './Topology';
+import { Topology_Simple } from './Topology_Simple';
 import Flatbush from 'flatbush';
 
 type Pt = { x: number; y: number };
@@ -60,6 +61,8 @@ class Render {
 	private static _facets_logged = false;
 	private static _last_facet_log = '';
 	private topology = new Topology();
+	private topology_simple = new Topology_Simple();
+	private static use_simple_topology = true; // flip to true to use the new 3-pass pipeline
 	private topology_endpoints = new Map<string, { key: string; id: EndpointID; screen: { x: number; y: number }; world: vec3 }>();
 	private topology_edge_segments = new Map<string, { edge_key: string; so: string; visible: [{ x: number; y: number }, { x: number; y: number }][]; endpoint_keys: [string, string][] }[]>();
 	private topology_intersection_segments: { visible: [{ x: number; y: number }, { x: number; y: number }][]; endpoint_keys: [string, string][]; color: string; so_a: string; face_a: number; so_b: string; face_b: number }[] = [];
@@ -404,9 +407,9 @@ class Render {
 				this.computed_occluding_segments = [];
 			}
 
-			// Run Topology alongside old code
+			// Run topology pipeline — old or simple, selected by flag
 			{
-				const topo = this.topology.compute({
+				const topo_input = {
 					objects, projected_map,
 					occluding_faces: this.occluding_faces,
 					occluding_index: this.occluding_index,
@@ -414,15 +417,20 @@ class Render {
 					get_world_matrix: (o: O_Scene) => this.get_world_matrix(o),
 					project_vertex: (v: vec3, w: mat4) => this.project_vertex(v, w),
 					front_face_edges: (o: O_Scene, p: Projected[]) => this.front_face_edges(o, p),
-				});
-				// Store Topology output for Facets
+				};
+				const topo = Render.use_simple_topology
+					? this.topology_simple.compute(topo_input)
+					: this.topology.compute(topo_input);
+
+				// Store output for Facets
 				this.topology_endpoints = topo.endpoints;
 				this.topology_edge_segments = topo.edge_segments;
 				this.topology_intersection_segments = topo.intersection_segments;
 				this.topology_occluding_segments = topo.occluding_segments;
-				// Diff logging (once)
+
+				// Diff logging: compare old pipeline against whichever topology is active (once)
 				if (!Render._facets_logged) {
-					// Build name map for readable output
+					const label = Render.use_simple_topology ? 'SIMPLE' : 'TOPOLOGY';
 					const _names = new Map<string, string>();
 					for (const obj of objects) _names.set(obj.id, obj.so.name);
 					const _pretty = (s: string) => { for (const [id, name] of _names) s = s.split(id).join(name); return s; };
@@ -431,15 +439,15 @@ class Render {
 					const new_keys = new Set(topo.endpoints.keys());
 					const only_old = [...old_keys].filter(k => !new_keys.has(k));
 					const only_new = [...new_keys].filter(k => !old_keys.has(k));
-					console.log(`PIPELINE DIFF: endpoints old=${old_keys.size} new=${new_keys.size} only_old=${only_old.length} only_new=${only_new.length}`);
+					console.log(`${label} DIFF: endpoints old=${old_keys.size} new=${new_keys.size} only_old=${only_old.length} only_new=${only_new.length}`);
 					if (only_old.length > 0) console.log(`  only in old:`, only_old.map(_pretty));
 					if (only_new.length > 0) console.log(`  only in new:`, only_new.map(_pretty));
 					let old_edge_count = 0, new_edge_count = 0;
 					for (const [, segs] of this.computed_edge_segments) for (const seg of segs) old_edge_count += seg.visible.length;
 					for (const [, segs] of topo.edge_segments) for (const seg of segs) new_edge_count += seg.visible.length;
-					console.log(`PIPELINE DIFF: edge clips old=${old_edge_count} new=${new_edge_count}`);
-					console.log(`PIPELINE DIFF: intersections old=${this.computed_intersection_segments.reduce((n, s) => n + s.endpoint_keys.length, 0)} new=${topo.intersection_segments.reduce((n, s) => n + s.endpoint_keys.length, 0)}`);
-					console.log(`PIPELINE DIFF: crossings old=${this.computed_occluding_segments.length} new=${topo.occluding_segments.length}`);
+					console.log(`${label} DIFF: edge clips old=${old_edge_count} new=${new_edge_count}`);
+					console.log(`${label} DIFF: intersections old=${this.computed_intersection_segments.reduce((n, s) => n + s.endpoint_keys.length, 0)} new=${topo.intersection_segments.reduce((n, s) => n + s.endpoint_keys.length, 0)}`);
+					console.log(`${label} DIFF: crossings old=${this.computed_occluding_segments.length} new=${topo.occluding_segments.length}`);
 				}
 			}
 		}

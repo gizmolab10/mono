@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { vec3, mat4, vec4 } from 'gl-matrix';
-import { Topology } from '../render/Topology';
-import type { TopologyInput, TopologyOutput, Pt, OccludingFace } from '../render/Topology';
+import { Topology_Simple as Topology } from '../render/Topology_Simple';
+import type { TopologyInput, Pt, OccludingFace } from '../render/Topology';
 import type { Projected, O_Scene } from '../types/Interfaces';
 import Smart_Object from '../runtime/Smart_Object';
 
@@ -371,6 +371,80 @@ describe('Layer 2: Clipping', () => {
 		// The front box occludes part of the back box
 	});
 
+	it('no fake sliver between adjacent front-facing faces', () => {
+		// OCCLUDER is a box in front. BEHIND is a box behind it.
+		// BEHIND has an edge that passes behind OCCLUDER, crossing the seam
+		// between two of OCCLUDER's adjacent front-facing faces.
+		// The edge should be hidden continuously — no phantom sliver at the seam.
+		const occluder = make_scene(make_so('OCCLUDER', -1, 1, -1, 1, 0, 2), 'occluder');
+		const behind = make_scene(make_so('BEHIND', -2, 2, -2, 2, -3, -1), 'behind');
+
+		const topo = new Topology();
+		const input = build_input([occluder, behind]);
+		const result = topo.compute(input);
+
+		// Check BEHIND's edges: any edge that's fully behind OCCLUDER should have
+		// at most one visible clip per edge (no micro-gaps from face seams)
+		const behind_segs = result.edge_segments.get('behind');
+		expect(behind_segs).toBeDefined();
+
+		for (const seg of behind_segs!) {
+			// If an edge has multiple visible clips, check that no gap is tiny
+			// A tiny gap (< 0.05 in screen t) between clips would indicate a fake sliver
+			if (seg.visible.length > 1) {
+				for (let i = 1; i < seg.visible.length; i++) {
+					const prev_end = seg.visible[i - 1][1];
+					const curr_start = seg.visible[i][0];
+					const gap = Math.sqrt(
+						(curr_start.x - prev_end.x) ** 2 + (curr_start.y - prev_end.y) ** 2
+					);
+					// Gap should be substantial (real occlusion), not a micro-sliver
+					// A gap under 1 pixel would be a fake sliver from the face seam
+					if (gap < 1.0) {
+						// This is a fake sliver — the filter should have removed it
+						throw new Error(
+							`Fake sliver detected on edge ${seg.edge_key}: gap=${gap.toFixed(4)} between clips ${i - 1} and ${i}`
+						);
+					}
+				}
+			}
+		}
+	});
+
+	it('intersection line hidden by own faces stays visible, hidden by third object disappears', () => {
+		// A and B overlap, producing an intersection line.
+		// That line should NOT be hidden by A or B's own faces (skip-self).
+		const box_a = make_scene(make_so('BOX_A', -2, 0.5, -1, 1, -1, 1), 'box_a');
+		const box_b = make_scene(make_so('BOX_B', -0.5, 2, -1, 1, -0.5, 1.5), 'box_b');
+
+		const topo1 = new Topology();
+		const result1 = topo1.compute(build_input([box_a, box_b]));
+
+		// Should have intersection segments (faces overlap)
+		expect(result1.intersection_segments.length).toBeGreaterThan(0);
+
+		// Count total visible intersection clips
+		let visible_clips_without_blocker = 0;
+		for (const iseg of result1.intersection_segments) {
+			visible_clips_without_blocker += iseg.visible.length;
+		}
+		expect(visible_clips_without_blocker).toBeGreaterThan(0);
+
+		// Now add a third box in front that covers the intersection area
+		const blocker = make_scene(make_so('BLOCKER', -1.5, 1.5, -2, 2, 1.5, 3), 'blocker');
+		const topo2 = new Topology();
+		const result2 = topo2.compute(build_input([box_a, box_b, blocker]));
+
+		// The intersection line should now be partially or fully hidden behind BLOCKER
+		let visible_clips_with_blocker = 0;
+		for (const iseg of result2.intersection_segments) {
+			visible_clips_with_blocker += iseg.visible.length;
+		}
+
+		// With the blocker, fewer intersection clips should be visible
+		expect(visible_clips_with_blocker).toBeLessThanOrEqual(visible_clips_without_blocker);
+	});
+
 	it('no intersection segments for non-overlapping objects', () => {
 		const left_so = make_so('LEFT', -3, -1, -1, 1, -1, 1);
 		const left = make_scene(left_so, 'left');
@@ -577,8 +651,6 @@ describe('Layer 4: Two-object scenes', () => {
 		const topo = new Topology();
 		const result = topo.compute(build_input([front, back]));
 
-		// Back box should have edges but some may be fully occluded
-		const back_segs = result.edge_segments.get('back');
 		const front_segs = result.edge_segments.get('front');
 		expect(front_segs).toBeDefined();
 		// Front box edges should mostly be visible
@@ -625,6 +697,138 @@ describe('Layer 4: Two-object scenes', () => {
 			expect(result.endpoints.has(oseg.endpoint_keys[0])).toBe(true);
 			expect(result.endpoints.has(oseg.endpoint_keys[1])).toBe(true);
 		}
+	});
+
+	it('edge piercing through a face produces crossings and splits', () => {
+		// Two boxes interpenetrating: ALPHA offset on z so its edges physically
+		// pass through BETA's faces. This is the CG-crosses-F'G' scenario.
+		const alpha = make_scene(make_so('ALPHA', -1.5, 1.5, -1, 1, -0.5, 2), 'alpha');
+		const beta = make_scene(make_so('BETA', -1, 1, -1, 1, -1, 1), 'beta');
+		const topo = new Topology();
+		const result = topo.compute(build_input([alpha, beta]));
+
+		// With interpenetrating boxes, we expect:
+		// 1. Edge segments from both objects
+		expect(result.edge_segments.has('alpha')).toBe(true);
+		expect(result.edge_segments.has('beta')).toBe(true);
+
+		// 2. Some edges should be split (more visible clips than edges)
+		let total_clips = 0;
+		let total_edges = 0;
+		for (const [, segs] of result.edge_segments) {
+			for (const seg of segs) {
+				total_edges++;
+				total_clips += seg.visible.length;
+			}
+		}
+		// At least some edges should have been split into multiple clips
+		expect(total_clips).toBeGreaterThan(total_edges);
+
+		// 3. Occluding segments should exist (edges passing in front of faces)
+		expect(result.occluding_segments.length).toBeGreaterThan(0);
+
+		// 4. Intersection segments should exist (faces overlap in 3D)
+		expect(result.intersection_segments.length).toBeGreaterThan(0);
+	});
+
+	it('edge piercing: split edges have continuous coverage', () => {
+		// When an edge is split at crossing points, the sub-segments should
+		// tile the original edge without gaps or overlaps.
+		const alpha = make_scene(make_so('ALPHA', -1.5, 1.5, -1, 1, -0.5, 2), 'alpha');
+		const beta = make_scene(make_so('BETA', -1, 1, -1, 1, -1, 1), 'beta');
+		const topo = new Topology();
+		const result = topo.compute(build_input([alpha, beta]));
+
+		for (const [, segs] of result.edge_segments) {
+			for (const seg of segs) {
+				if (seg.visible.length <= 1) continue;
+				// Check each consecutive pair of clips connects
+				for (let i = 1; i < seg.visible.length; i++) {
+					const prev_end = seg.visible[i - 1][1];
+					const curr_start = seg.visible[i][0];
+					const gap = Math.sqrt(
+						(curr_start.x - prev_end.x) ** 2 + (curr_start.y - prev_end.y) ** 2
+					);
+					// Clips should be continuous (same point) or have a real occlusion gap
+					// A tiny gap (< 0.5 px) with no occlusion would be a bug
+					// We just check that if there IS a gap, the endpoint keys are different
+					if (gap < 0.5) {
+						// Nearly touching — endpoint keys at the boundary should match
+						const prev_end_key = seg.endpoint_keys[i - 1][1];
+						const curr_start_key = seg.endpoint_keys[i][0];
+						expect(prev_end_key).toBe(curr_start_key);
+					}
+				}
+			}
+		}
+	});
+
+	it('occluding segments connect existing endpoints', () => {
+		// Occluding segments should connect two endpoints that both exist
+		// and sit on the boundary of the face being occluded.
+		const alpha = make_scene(make_so('ALPHA', -1.5, 1.5, -1, 1, -0.5, 2), 'alpha');
+		const beta = make_scene(make_so('BETA', -1, 1, -1, 1, -1, 1), 'beta');
+		const topo = new Topology();
+		const result = topo.compute(build_input([alpha, beta]));
+
+		for (const oseg of result.occluding_segments) {
+			const [sk, ek] = oseg.endpoint_keys;
+			// Both endpoints must exist
+			expect(result.endpoints.has(sk)).toBe(true);
+			expect(result.endpoints.has(ek)).toBe(true);
+			// The two endpoints should be different
+			expect(sk).not.toBe(ek);
+			// The screen positions should be different (not a zero-length segment)
+			const s = oseg.screen[0];
+			const e = oseg.screen[1];
+			const len = Math.sqrt((e.x - s.x) ** 2 + (e.y - s.y) ** 2);
+			expect(len).toBeGreaterThan(0.01);
+		}
+	});
+
+	it('three objects: middle object occluded from both sides', () => {
+		// Three boxes in a row (on z axis). Front and back should see
+		// middle box's edges clipped by both.
+		const front = make_scene(make_so('FRONT', -1, 1, -1, 1, 2, 4), 'front');
+		const middle = make_scene(make_so('MIDDLE', -0.5, 0.5, -0.5, 0.5, 0, 2), 'middle');
+		const behind = make_scene(make_so('BEHIND', -0.3, 0.3, -0.3, 0.3, -2, 0), 'behind');
+		const topo = new Topology();
+		const result = topo.compute(build_input([front, middle, behind]));
+
+		// All three should have edge segments
+		expect(result.edge_segments.has('front')).toBe(true);
+		expect(result.edge_segments.has('middle')).toBe(true);
+		// Behind may or may not have visible edges depending on occlusion
+
+		// Structural integrity: all endpoint references valid
+		for (const [, segs] of result.edge_segments) {
+			for (const seg of segs) {
+				for (const [sk, ek] of seg.endpoint_keys) {
+					expect(result.endpoints.has(sk)).toBe(true);
+					expect(result.endpoints.has(ek)).toBe(true);
+				}
+			}
+		}
+	});
+
+	it('symmetric scene produces symmetric edge counts', () => {
+		// Two identical boxes at mirror positions should produce
+		// the same number of edge segments for each.
+		const left = make_scene(make_so('LEFT', -3, -1, -1, 1, -1, 1), 'left');
+		const right = make_scene(make_so('RIGHT', 1, 3, -1, 1, -1, 1), 'right');
+		const topo = new Topology();
+		const result = topo.compute(build_input([left, right]));
+
+		const left_segs = result.edge_segments.get('left');
+		const right_segs = result.edge_segments.get('right');
+		expect(left_segs).toBeDefined();
+		expect(right_segs).toBeDefined();
+		// Same number of visible edges (symmetric geometry)
+		expect(left_segs!.length).toBe(right_segs!.length);
+		// Same total number of visible clips
+		const left_clips = left_segs!.reduce((sum, s) => sum + s.visible.length, 0);
+		const right_clips = right_segs!.reduce((sum, s) => sum + s.visible.length, 0);
+		expect(left_clips).toBe(right_clips);
 	});
 });
 

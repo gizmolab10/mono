@@ -4,13 +4,13 @@ Current work items and milestones.
 
 ## Contents
 
-- [Done](./done/)
+- [Handoff](./handoff.md) — current session plan for milestone 27
 - [Milestones](./milestones/)
+- [Facets](./facets/) — lessons, history, designs
 - [Next](./next/)
-- [Chat](di/notes/work/done/chat.md)
-- [Code.debt](./code.debt.md)
-- [Collaboration Priorities](./collaboration priorities.md)
-- [Revisit.di](./revisit.di.md)
-- [Skills](skills.md)
-- [Change Propagation](propagating%20value%20changes.md)
-- [Working Features](./working features.md)
+- [Done](./done/)
+- [Code Debt](./code.debt.md)
+- [Collaboration Priorities](./collaboration%20priorities.md)
+- [Revisit](./revisit.di.md)
+- [What](./what.md)
+- [Working Features](./working%20features.md)
