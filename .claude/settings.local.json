@@ -13,7 +13,11 @@
           },
           {
             "type": "command",
-            "command": "FLAG=~/.claude/geometric-mode; PROMPT=$(jq -r '.user_prompt'); if echo \"$PROMPT\" | grep -qiE '\\bnot geometric\\b'; then rm -f $FLAG; elif echo \"$PROMPT\" | grep -qiE '\\bgeometric\\b'; then touch $FLAG; fi; [ -f $FLAG ] && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"GEOMETRIC MODE: You are terrible at visualizing geometry. Do NOT assume spatial relationships. Ask specific questions to verify: which edge is in front? which corner is inside? what direction is clockwise? State your geometric assumption explicitly and ask Jonathan to confirm before acting on it. Also, ask questions to gain data you need in order to do a precision analysis.\"}}' || true"
+            "command": "FLAG=~/.claude/geometric-mode; PROMPT=$(jq -r '.user_prompt'); if echo \"$PROMPT\" | grep -qiE '\\bnot geometric\\b'; then rm -f $FLAG; elif echo \"$PROMPT\" | grep -qiE '\\bgeometric\\b'; then touch $FLAG; fi; [ -f $FLAG ] && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"GEOMETRIC MODE: You are terrible at visualizing geometry. Do NOT assume spatial relationships. Ask specific questions to verify: which edge is in front? which corner is inside? what direction is clockwise? State your geometric assumption explicitly and ask Jonathan to confirm before acting on it. Also, ask questions to gain data you need in order to do a precision analysis. LOGGING: Never use obj_X identifiers in logs — always use the SO name (the human-readable solid name). Never number edge-pairs (ep1, ep2, etc.) — use ep labels or edge/edge notation (e.g. CG/F'G'). Use ep labels for faces too (e.g. ABCD), not face indices.\"}}' || true"
+          },
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"PLAIN ENGLISH RULE: All explanations, answers to questions, and console.log messages must use plain English. No jargon, no code references, no variable names, no type names in explanations. Say what things DO, not what they are CALLED. If you must reference a specific line or file for evidence, do it in a separate line after the plain English explanation. Console logs you write must also be readable by a human who does not know the codebase — use real names (ALPHA, BETA), descriptive labels (edge CG, face ABCD), and short sentences, not key dumps.\"}}'"
           }
         ]
       }

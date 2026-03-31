@@ -19,7 +19,7 @@ offer a proposal for the first unchecked item
             - [ ] three things taken three at a time
             - [ ] nine buttons, ick
 - [ ] [wendy](data schema for wendy)
-- [ ] [[change.propagation]]
+- [ ] [[propagating value changes]]
 - [ ] can period be a spacer?
 
 ---

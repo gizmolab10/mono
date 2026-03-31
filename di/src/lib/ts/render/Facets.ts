@@ -304,20 +304,41 @@ export class Facets {
 		for (const oseg of occluding_segments) {
 			const [sk, ek] = oseg.endpoint_keys;
 			const [s, e] = oseg.screen;
-			// DEBUG: check if crossing endpoints exist
-			if (!this.endpoints.has(sk) || !this.endpoints.has(ek)) {
-				console.log(`FACETS CROSS ORPHAN: sk=${this.pretty(sk)} exists=${this.endpoints.has(sk)} ek=${this.pretty(ek)} exists=${this.endpoints.has(ek)} so=${oseg.so} face=${oseg.face}`);
+			if (!this.endpoints.has(sk) || !this.endpoints.has(ek)) continue;
+
+			if (oseg.face >= 0) {
+				// Known face — import directly
+				const sid = 'seg:' + this._seg_counter++;
+				this.add_segment({
+					id: sid, so: oseg.so, face: oseg.face,
+					type: 'crossing', endpoints: [sk, ek], screen: [s, e],
+				});
+			} else {
+				// face=-1: find faces by checking which faces already have both endpoints
+				// (via existing edge segments on those faces)
+				const obj = objects.find(o => o.id === oseg.so);
+				if (!obj?.faces) continue;
+				const projected = projected_map.get(oseg.so);
+				if (!projected) continue;
+				for (let fi = 0; fi < obj.faces.length; fi++) {
+					if (face_winding(obj.faces[fi], projected) >= 0) continue;
+					// Check if both endpoints appear on segments of this face
+					let has_sk = false, has_ek = false;
+					for (const seg of this.segments.values()) {
+						if (seg.so !== oseg.so || seg.face !== fi) continue;
+						if (seg.endpoints.includes(sk)) has_sk = true;
+						if (seg.endpoints.includes(ek)) has_ek = true;
+						if (has_sk && has_ek) break;
+					}
+					if (has_sk && has_ek) {
+						const sid = 'seg:' + this._seg_counter++;
+						this.add_segment({
+							id: sid, so: oseg.so, face: fi,
+							type: 'crossing', endpoints: [sk, ek], screen: [s, e],
+						});
+					}
+				}
 			}
-			const sid = 'seg:' + this._seg_counter++;
-			const segment: Segment = {
-				id: sid,
-				so: oseg.so,
-				face: oseg.face,
-				type: 'crossing',
-				endpoints: [sk, ek],
-				screen: [s, e],
-			};
-			this.add_segment(segment);
 		}
 	}
 

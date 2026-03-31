@@ -12,5 +12,5 @@ Current work items and milestones.
 - [Collaboration Priorities](./collaboration priorities.md)
 - [Revisit.di](./revisit.di.md)
 - [Skills](skills.md)
-- [Change Propagation](./change.propagation.md)
+- [Change Propagation](propagating%20value%20changes.md)
 - [Working Features](./working features.md)

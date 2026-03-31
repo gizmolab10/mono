@@ -1,4 +1,4 @@
-import { T_Endpoint, endpoint_key, type EndpointID } from './Facets';
+import { T_Endpoint, endpoint_key, vtx, type EndpointID } from './Facets';
 import { vec3, vec4, mat4 } from 'gl-matrix';
 import type { Projected, O_Scene } from '../types/Interfaces';
 import type Flatbush from 'flatbush';
@@ -120,9 +120,33 @@ export class Topology {
 	// Same key format as old code's intersection_clip_map.
 	private clip_identity = new Map<string, EdgePoint[]>();
 
+	// Reverse map: occluder edge → oc/fi endpoints registered on it by OTHER edges' clipping.
+	// Used by Phase 4 Part 2 to match crossing boundaries (equivalent to old oc_at_occluder_edge).
+	private oc_at_occluder_edge = new Map<string, { key: string; screen: Pt; world: vec3 }[]>();
+
 	// Split tracking
 	private intersection_edge_splits: SplitInfo[] = [];
 	private crossing_splits: (SplitInfo & { poly_edge_idx: number })[] = [];
+
+	// Debug: name map for readable logging (obj_id → SO name)
+	private _names = new Map<string, string>();
+	private _logged = false;
+
+	/** Replace obj_X with SO names, vertex indices with letters */
+	private pretty(s: string): string {
+		for (const [id, name] of this._names) s = s.split(id).join(name);
+		return s;
+	}
+
+	/** Is this one of the target edges (CG=2-6 or FG=5-6)? */
+	private static isTarget(ek: string): boolean { return ek === '2-6' || ek === '5-6'; }
+
+	/** Pretty edge label: "2-6" → "CG", with SO name prefix */
+	private prettyEdge(so: string, ek: string): string {
+		const [a, b] = ek.split('-').map(Number);
+		const name = this._names.get(so) ?? so;
+		return `${name}:${vtx(a)}${vtx(b)}`;
+	}
 
 	// ─── Public API ──────────────────────────────────────────────────────────
 
@@ -134,8 +158,13 @@ export class Topology {
 		this.occluding_segments = [];
 		this.edge_points = new Map();
 		this.clip_identity = new Map();
+		this.oc_at_occluder_edge = new Map();
 		this.intersection_edge_splits = [];
 		this.crossing_splits = [];
+
+		// Build name map for readable logging
+		this._names.clear();
+		for (const obj of input.objects) this._names.set(obj.id, obj.so.name);
 
 		if (input.objects.length > 1) {
 			this.compute_intersections(input);
@@ -146,6 +175,7 @@ export class Topology {
 			this.compute_crossings(input);
 			this.apply_splits();
 		}
+		this._logged = true;
 		return {
 			endpoints: this.endpoints,
 			edge_segments: this.edge_segments,
@@ -552,15 +582,20 @@ export class Topology {
 								// Try topological lookup first (same-SO fi on this edge)
 								let known = this.find_clip_identity(obj.id, ek, cause.obj_id, cause.face_index ?? -1, w);
 								// Fallback: fi may sit on the occluder's edge (cross-SO case)
+								// Only accept fi endpoints — oc endpoints from other edges are
+								// different topological events and reusing them prevents this edge
+								// from getting its own oc endpoint.
 								if (!known && cause.face_verts) {
 									for (let ei = 0; ei < cause.face_verts.length && !known; ei++) {
 										const vi = cause.face_verts[ei], vj = cause.face_verts[(ei + 1) % cause.face_verts.length];
-										known = this.find_edge_point(cause.obj_id, `${Math.min(vi, vj)}-${Math.max(vi, vj)}`, w);
+										const candidate = this.find_edge_point(cause.obj_id, `${Math.min(vi, vj)}-${Math.max(vi, vj)}`, w);
+										if (candidate?.key.startsWith('fi:')) known = candidate;
 									}
 								}
 								if (known) {
 									const known_ep = this.endpoints.get(known.key);
-									if (known_ep && !used_fi_keys.has(known.key)) {
+									const blocked = used_fi_keys.has(known.key) && known.key !== prev_clip_end_key;
+									if (known_ep && !blocked) {
 										fi_id = known_ep.id;
 									}
 								}
@@ -568,11 +603,17 @@ export class Topology {
 
 							if (fi_id) {
 								const fi_key_check = endpoint_key(fi_id);
-								if (used_fi_keys.has(fi_key_check)) fi_id = undefined;
+								if (used_fi_keys.has(fi_key_check) && fi_key_check !== prev_clip_end_key) fi_id = undefined;
 								else used_fi_keys.add(fi_key_check);
 							}
 							id = fi_id ?? { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: `${cause.obj_id}:${cause.face_index ?? -1}`, end: is_start_of_visible ? 'exit' : 'enter', occluder_edge: occ_edge };
 							const ep_key = this.register_endpoint(id, screen, w);
+
+							// Focused CG/F'G' logging
+							if (!this._logged && Topology.isTarget(ek)) {
+								const path = fi_id ? 'fi-reuse' : (occ_edge ? 'oc+edge' : 'oc');
+								console.log(`[CG×F'G'] Phase2 ${this.prettyEdge(obj.id, ek)} t=${t.toFixed(3)} → ${this.pretty(ep_key)} (${path})${occ_edge ? ` occ_edge=${this.pretty(occ_edge)}` : ''}`);
+							}
 
 							// Register on this edge (the clipped edge)
 							this.add_edge_point(obj.id, ek, ep_key, w, screen, t);
@@ -582,6 +623,12 @@ export class Topology {
 								const occ_so = occ_edge.slice(0, colon);
 								const occ_ek = occ_edge.slice(colon + 1);
 								this.add_edge_point(occ_so, occ_ek, ep_key, w, screen, 0);
+								// Register in oc_at_occluder_edge for Phase 4 Part 2
+								let list = this.oc_at_occluder_edge.get(occ_edge);
+								if (!list) { list = []; this.oc_at_occluder_edge.set(occ_edge, list); }
+								if (!list.some(e => e.key === ep_key)) {
+									list.push({ key: ep_key, screen, world: w });
+								}
 							}
 							return ep_key;
 						} else {
@@ -595,13 +642,20 @@ export class Topology {
 						return ep_key;
 					};
 
+					let prev_clip_end_key = '';
+					let prev_clip_end_t = -Infinity;
 					for (const ci of clips) {
 						const t_s = Topology.screen_t(a, b, ci.start);
 						const t_e = Topology.screen_t(a, b, ci.end);
+						// Only allow prev_clip_end_key reuse for zero-length gaps
+						const gap = t_s - prev_clip_end_t;
+						if (gap > 0.02) prev_clip_end_key = '';
 						const sk = tag_endpoint(t_s, ci.start, ci.start_cause, true, ci.start_poly_edge);
 						const ek2 = tag_endpoint(t_e, ci.end, ci.end_cause, false, ci.end_poly_edge);
 						vis.push([ci.start, ci.end]);
 						ep_keys.push([sk, ek2]);
+						prev_clip_end_key = ek2;
+						prev_clip_end_t = t_e;
 					}
 
 					segments.push({ edge_key: ek, so: obj.id, visible: vis, endpoint_keys: ep_keys });
@@ -610,6 +664,10 @@ export class Topology {
 			this.edge_segments.set(obj.id, segments);
 		}
 	}
+
+	// ─── Phase 2b: Connect oc enter/exit pairs ────────────────────────────────
+
+	// connect_oc_pairs removed — gap segments created in Facets.ingest_precomputed
 
 	// ─── Phase 3: Filter phantom endpoints ───────────────────────────────────
 
@@ -677,6 +735,8 @@ export class Topology {
 				const ep = this.endpoints.get(ep_key);
 				if (!ep) continue;
 				if (is_occluded_on_face(so_id, face_idx, ep.screen)) {
+					if (!this._logged && (ep_key.includes('2-6') || ep_key.includes('5-6') || ep_key.includes('C-G') || ep_key.includes('F-G')))
+						console.log(`[CG×F'G'] Phase3 DELETE intersection ep ${this.pretty(ep_key)} (occluded on ${this._names.get(so_id) ?? so_id}:face${face_idx})`);
 					this.endpoints.delete(ep_key);
 					break;
 				}
@@ -701,6 +761,8 @@ export class Topology {
 				const fv = obj.faces[fi];
 				if (!fv.includes(evi) || !fv.includes(evj)) continue;
 				if (is_occluded_on_face(so_id, fi, ep.screen)) {
+					if (!this._logged && Topology.isTarget(edge_key))
+						console.log(`[CG×F'G'] Phase3 DELETE oc ep ${this.pretty(key)} on ${this.prettyEdge(so_id, edge_key)} (occluded on face${fi})`);
 					this.endpoints.delete(key);
 					break;
 				}
@@ -708,16 +770,118 @@ export class Topology {
 		}
 	}
 
-	// ─── Phase 4: Crossings ──────────────────────────────────────────────────
+	// ─── Phase 4: Crossings (edge-vs-edge) ──────────────────────────────────
+
+	/** 2D line intersection. Returns t along segment a1→a2 where it crosses b1→b2, or null. */
+	private static intersect_2d(a1: Pt, a2: Pt, b1: Pt, b2: Pt): { ta: number; tb: number } | null {
+		const dax = a2.x - a1.x, day = a2.y - a1.y;
+		const dbx = b2.x - b1.x, dby = b2.y - b1.y;
+		const denom = dax * dby - day * dbx;
+		if (Math.abs(denom) < 1e-10) return null; // parallel
+		const t = ((b1.x - a1.x) * dby - (b1.y - a1.y) * dbx) / denom;
+		const u = ((b1.x - a1.x) * day - (b1.y - a1.y) * dax) / denom;
+		return { ta: t, tb: u };
+	}
 
 	private compute_crossings(input: TopologyInput): void {
 		this.occluding_segments = [];
 		this.crossing_splits = [];
 
+		// ── Part 1: Edge-edge crossings for split points ──
+		// Collect all visible edge clips across all SOs
+		const all_clips: {
+			so: string; edge_key: string; ci: number;
+			s: Pt; e: Pt; sk: string; ek: string;
+		}[] = [];
+		for (const [so_id, segs] of this.edge_segments) {
+			for (const seg of segs) {
+				for (let ci = 0; ci < seg.visible.length; ci++) {
+					const [s, e] = seg.visible[ci];
+					const [sk, ek] = seg.endpoint_keys[ci];
+					all_clips.push({ so: so_id, edge_key: seg.edge_key, ci, s, e, sk, ek });
+				}
+			}
+		}
+
+		const processed = new Set<string>();
+
+		for (let i = 0; i < all_clips.length; i++) {
+			const a = all_clips[i];
+			for (let j = i + 1; j < all_clips.length; j++) {
+				const b = all_clips[j];
+				if (a.so === b.so) continue;
+
+				const pair_key = a.so < b.so
+					? `${a.so}:${a.edge_key}:${a.ci}|${b.so}:${b.edge_key}:${b.ci}`
+					: `${b.so}:${b.edge_key}:${b.ci}|${a.so}:${a.edge_key}:${a.ci}`;
+				if (processed.has(pair_key)) continue;
+				processed.add(pair_key);
+
+				const ix = Topology.intersect_2d(a.s, a.e, b.s, b.e);
+				if (!ix) continue;
+				if (ix.ta < -0.01 || ix.ta > 1.01 || ix.tb < -0.01 || ix.tb > 1.01) continue;
+
+				const screen: Pt = {
+					x: a.s.x + (a.e.x - a.s.x) * ix.ta,
+					y: a.s.y + (a.e.y - a.s.y) * ix.ta,
+				};
+
+				const ep_a_s = this.endpoints.get(a.sk);
+				const ep_a_e = this.endpoints.get(a.ek);
+				const ep_b_s = this.endpoints.get(b.sk);
+				const ep_b_e = this.endpoints.get(b.ek);
+				if (!ep_a_s || !ep_a_e || !ep_b_s || !ep_b_e) continue;
+
+				const w_a = vec3.lerp(vec3.create(), ep_a_s.world, ep_a_e.world, ix.ta);
+				const w_b = vec3.lerp(vec3.create(), ep_b_s.world, ep_b_e.world, ix.tb);
+				const w_mid = vec3.lerp(vec3.create(), w_a, w_b, 0.5);
+
+				// Reuse existing oc/fi endpoint on either edge if present
+				let ep_key: string | undefined;
+				const existing_a = this.find_edge_point(a.so, a.edge_key, w_a);
+				const existing_b = this.find_edge_point(b.so, b.edge_key, w_b);
+				if (existing_a?.key.startsWith('fi:')) ep_key = existing_a.key;
+				else if (existing_b?.key.startsWith('fi:')) ep_key = existing_b.key;
+				else if (existing_a) ep_key = existing_a.key;
+				else if (existing_b) ep_key = existing_b.key;
+
+				if (!ep_key) {
+					const edge_a_full = `${a.so}:${a.edge_key}`;
+					const edge_b_full = `${b.so}:${b.edge_key}`;
+					const [eA, eB] = edge_a_full < edge_b_full ? [edge_a_full, edge_b_full] : [edge_b_full, edge_a_full];
+					const ex_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+					ep_key = this.register_endpoint(ex_id, screen, w_mid);
+				}
+
+				this.add_edge_point(a.so, a.edge_key, ep_key, w_a, screen, ix.ta);
+				this.add_edge_point(b.so, b.edge_key, ep_key, w_b, screen, ix.tb);
+
+				if (!this._logged && (Topology.isTarget(a.edge_key) || Topology.isTarget(b.edge_key))) {
+					const reused = existing_a?.key.startsWith('fi:') ? `fi-reuse(${this.pretty(existing_a.key)})` :
+						existing_b?.key.startsWith('fi:') ? `fi-reuse(${this.pretty(existing_b.key)})` :
+						existing_a ? `reuse-a(${this.pretty(existing_a.key)})` :
+						existing_b ? `reuse-b(${this.pretty(existing_b.key)})` : 'new-ex';
+					console.log(`[CG×F'G'] Phase4.1 crossing ${this.prettyEdge(a.so, a.edge_key)}×${this.prettyEdge(b.so, b.edge_key)} ta=${ix.ta.toFixed(3)} tb=${ix.tb.toFixed(3)} → ${this.pretty(ep_key)} (${reused})`);
+				}
+
+				// Split both crossing edges at the crossing point
+				this.crossing_splits.push({ so: a.so, edge_key: a.edge_key, screen, world: w_a, ep_key, poly_edge_idx: -1 });
+				this.crossing_splits.push({ so: b.so, edge_key: b.edge_key, screen, world: w_b, ep_key, poly_edge_idx: -1 });
+			}
+		}
+
+		// ── Part 2: Face-polygon clipping for occluding segments ──
+		// For each visible edge, clip against each behind face polygon.
+		// Reuse oc/fi endpoints from edge_points when they match the clip boundaries.
+		// Create new ex endpoints and face-boundary splits when no match exists.
 		for (const [so_a_id, segs] of this.edge_segments) {
 			for (const seg of segs) {
 				for (let ci = 0; ci < seg.visible.length; ci++) {
 					const [s, e] = seg.visible[ci];
+					const [sk, ek] = seg.endpoint_keys[ci];
+					const ep_s = this.endpoints.get(sk);
+					const ep_e = this.endpoints.get(ek);
+					if (!ep_s || !ep_e) continue;
 
 					for (let fi = 0; fi < input.occluding_faces.length; fi++) {
 						const face = input.occluding_faces[fi];
@@ -727,77 +891,65 @@ export class Topology {
 						if (!clip) continue;
 						const [t_enter, t_leave] = clip;
 
-						const [sk, ek] = seg.endpoint_keys[ci];
-						const ep_s = this.endpoints.get(sk);
-						const ep_e = this.endpoints.get(ek);
-						if (!ep_s || !ep_e) continue;
-
+						// Depth check: edge must be in front of face
 						const w_mid = vec3.lerp(vec3.create(), ep_s.world, ep_e.world, (t_enter + t_leave) / 2);
 						const dist = vec3.dot(face.n, w_mid) - face.d;
-						if (dist < -k.coplanar_epsilon) continue;
+if (dist < -0.001) continue;
 
 						const cs: Pt = { x: s.x + (e.x - s.x) * t_enter, y: s.y + (e.y - s.y) * t_enter };
 						const ce: Pt = { x: s.x + (e.x - s.x) * t_leave, y: s.y + (e.y - s.y) * t_leave };
 						const w_cs = vec3.lerp(vec3.create(), ep_s.world, ep_e.world, t_enter);
 						const w_ce = vec3.lerp(vec3.create(), ep_s.world, ep_e.world, t_leave);
 
-						// IDENTITY-BASED: look up clip_identity + edge_points
+						// Tag endpoints — check oc_at_occluder_edge on the front edge
+						// (oc/fi endpoints registered by OTHER edges' Phase 2 clipping)
 						const edge_a = `${so_a_id}:${seg.edge_key}`;
+						const oc_list = this.oc_at_occluder_edge.get(edge_a);
+
 						let cs_key: string | undefined;
 						let ce_key: string | undefined;
-
-						// Match crossing endpoints to existing oc/fi endpoints.
-						// Mirror old code: search edge_points on the crossing edge only,
-						// match by screen_t projection onto the crossing segment.
-						const ep_list = this.edge_points.get(`${so_a_id}:${seg.edge_key}`);
-						if (ep_list) {
-							for (const sp of ep_list) {
+						if (oc_list) {
+							for (const sp of oc_list) {
 								const t = Topology.screen_t(cs, ce, sp.screen);
 								const is_fi = sp.key.startsWith('fi:');
 								if (t > -0.01 && t < 0.01 && (!cs_key || is_fi)) cs_key = sp.key;
 								if (t > 0.99 && t < 1.01 && (!ce_key || is_fi)) ce_key = sp.key;
 							}
 						}
-						// DEBUG: log unmatched crossings
-						// if (!cs_key || !ce_key) {
-						// 	console.log(`TOPO CROSS MISS: ${so_a_id}:${seg.edge_key} → ${face.obj_id}:face:${face.face_index}`,
-						// 		`cs=${cs_key ?? 'MISS'} ce=${ce_key ?? 'MISS'}`,
-						// 		`ep_list=${ep_list?.length ?? 0}`,
-						// 		ep_list?.map(sp => `${sp.key}@t=${Topology.screen_t(cs, ce, sp.screen).toFixed(3)}`));
-						// }
 
-						// If both ends resolved to the same point, discard — can't be a valid crossing
-						if (cs_key && ce_key && cs_key === ce_key) { cs_key = undefined; ce_key = undefined; }
-
-						// Fall back to edge_crossing for endpoints without identity match
+						// Fall back: create ex endpoints and split the face boundary edges
+						// Use occluding_faces array index (fi) to match old code's key format
 						const face_verts = face.face_verts;
 						if (!cs_key) {
 							const cs_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}` };
 							cs_key = this.register_endpoint(cs_id, cs, w_cs);
-							this.add_edge_point(so_a_id, seg.edge_key, cs_key, w_cs, cs, t_enter);
 							if (face_verts && clip[2] >= 0) {
 								const vi = face_verts[clip[2]], vj = face_verts[(clip[2] + 1) % face_verts.length];
-								const face_ek = `${Math.min(vi, vj)}-${Math.max(vi, vj)}`;
-								this.crossing_splits.push({ so: face.obj_id, edge_key: face_ek, screen: cs, world: w_cs, ep_key: cs_key, poly_edge_idx: clip[2] });
+								this.crossing_splits.push({ so: face.obj_id, edge_key: `${Math.min(vi, vj)}-${Math.max(vi, vj)}`, screen: cs, world: w_cs, ep_key: cs_key, poly_edge_idx: clip[2] });
 							}
 						}
 						if (!ce_key) {
 							const ce_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}:e` };
 							ce_key = this.register_endpoint(ce_id, ce, w_ce);
-							this.add_edge_point(so_a_id, seg.edge_key, ce_key, w_ce, ce, t_leave);
 							if (face_verts && clip[3] >= 0) {
 								const vi = face_verts[clip[3]], vj = face_verts[(clip[3] + 1) % face_verts.length];
-								const face_ek = `${Math.min(vi, vj)}-${Math.max(vi, vj)}`;
-								this.crossing_splits.push({ so: face.obj_id, edge_key: face_ek, screen: ce, world: w_ce, ep_key: ce_key, poly_edge_idx: clip[3] });
+								this.crossing_splits.push({ so: face.obj_id, edge_key: `${Math.min(vi, vj)}-${Math.max(vi, vj)}`, screen: ce, world: w_ce, ep_key: ce_key, poly_edge_idx: clip[3] });
 							}
 						}
 
-						this.occluding_segments.push({
-							so: face.obj_id,
-							face: face.face_index ?? -1,
-							screen: [cs, ce],
-							endpoint_keys: [cs_key, ce_key],
-						});
+
+						if (!this._logged && Topology.isTarget(seg.edge_key)) {
+								const cs_src = oc_list?.find(sp => { const t = Topology.screen_t(cs, ce, sp.screen); return t > -0.01 && t < 0.01; }) ? 'matched' : 'new-ex';
+								const ce_src = oc_list?.find(sp => { const t = Topology.screen_t(cs, ce, sp.screen); return t > 0.99 && t < 1.01; }) ? 'matched' : 'new-ex';
+								console.log(`[CG×F'G'] Phase4.2 ${this.prettyEdge(so_a_id, seg.edge_key)} vs ${this._names.get(face.obj_id) ?? face.obj_id}:face${face.face_index} enter=${cs_src}:${this.pretty(cs_key)} exit=${ce_src}:${this.pretty(ce_key)} face_idx=${face.face_index}`);
+							}
+
+							this.occluding_segments.push({
+								so: face.obj_id,
+								face: face.face_index ?? -1,
+								screen: [cs, ce],
+								endpoint_keys: [cs_key, ce_key],
+							});
 					}
 				}
 			}
@@ -805,6 +957,7 @@ export class Topology {
 	}
 
 	// ─── Phase 5: Split edges at crossing/intersection exit points ───────────
+
 
 	private apply_splits(): void {
 		const all_splits: SplitInfo[] = [
@@ -839,8 +992,12 @@ export class Topology {
 					const [sk, ek] = seg.endpoint_keys[ci];
 
 					const interval_splits: { t: number; sp: SplitInfo }[] = [];
+					const _isTarget = edge_key === '2-6' || edge_key === '5-6';
 					for (const sp of splits) {
 						const t = Topology.screen_t(s, e, sp.screen);
+						if (_isTarget && !this._logged) {
+							console.log(`[CG×F'G'] Phase5 ${this.prettyEdge(so_id, edge_key)}[${ci}] split t=${t.toFixed(4)} ep=${this.pretty(sp.ep_key)} ${t > 0.01 && t < 0.99 ? 'ACCEPTED' : 'REJECTED'} [${this.pretty(sk)}→${this.pretty(ek)}]`);
+						}
 						if (t > 0.01 && t < 0.99) {
 							interval_splits.push({ t, sp });
 						}
