@@ -1,6 +1,31 @@
 # Simpler Topology
 
-**Next:** Visual testing confirmed — pierce-point labels now appear. All 42 tests passing, svelte-check clean. `use_simple_topology` is `true`. Design spec: [simpler design.md](facets/designs/simpler%20design.md).
+**Next:** Fix phantom segments in Pass 1d. Details below. All 42 tests passing, svelte-check clean. `use_simple_topology` is `true`. Design spec: [simpler design.md](facets/designs/simpler%20design.md).
+
+## Current bug: phantom segments from wrong endpoint matching
+
+When an edge passes in front of another object's face, Pass 1d creates a segment connecting the entry and exit points. It searches nearby endpoints to reuse. The 5-pixel screen search grabs unrelated endpoints that happen to be close, creating false connections. Example: an intersection line endpoint got connected to an occlusion exit — two different events that have nothing to do with each other.
+
+**Fix:** Replace the screen-distance search with topological matching. The clipper says which boundary edge of the face was crossed. Look for an existing endpoint on that specific boundary edge. No screen distance — just "which boundary edge?" and "is there already an endpoint on it?"
+
+**Also fixed this session:**
+- Wrong-SO facets: tracer now rejects traces that reach a corner or occlusion endpoint belonging to a different object than the one being painted.
+
+**Also added:**
+- PostToolUse hook checking for jargon in logs, comments, and markdown files.
+
+## Paused: fi at vertex not labeled as corner
+
+When an intersection line ends exactly at a mesh vertex, the fi endpoint should be a corner (uppercase label). Currently stays as fi (lowercase). Cosmetic — may not affect facet tracing.
+
+### What we learned
+
+- An fi endpoint sits on zero edges (interior), one edge (mid-edge), or two edges (vertex). The clipper only reports one edge, even at a vertex.
+- "Double oc match on same fi" detection doesn't work — each fi is matched by only one oc from one edge. The second adjacent face clips a different edge with a different fi.
+- The fi and corner are created by unrelated computations (Pass 1a and 1b). No topological link between them unless we register the fi on both edges at a vertex.
+- ALL existing corner detection uses t-threshold proximity (`t < 0.01`), not topology. A fully topological approach: "an endpoint with no occlusion cause, appearing in 2+ edge segments of the same face, is a corner." But fi endpoints have a "cause" (intersection), so this rule doesn't catch them.
+- The topological fix: make the quad clipper report when it clips at a vertex (enter_edge and leave_edge are adjacent). Register the fi on both edges at that vertex. Then the multi-edge detection works. Not yet implemented.
+- Alternative: check the fi's t along its edge (already computed in edge_info). If near 0 or 1, it's at a vertex. Same proximity approach all other corners use. Simplest fix but conflicts with the no-proximity goal.
 
 ### Solved: missing labels at pierce points
 

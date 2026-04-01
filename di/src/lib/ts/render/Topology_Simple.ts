@@ -64,6 +64,8 @@ export class Topology_Simple {
 		const clips: VisibleClip[] = [];
 		// Lookup: which fi endpoints sit on which edges (built by 1a, used by 1b)
 		const fi_on_edge = new Map<string, { key: string; face_a: string; face_b: string }[]>();
+		// Track which fi keys were matched and from which edges (for vertex detection post-pass)
+		const fi_matched_edges = new Map<string, Set<string>>();
 
 		// 1a: Intersection lines (before edges — builds fi_on_edge lookup)
 		if (input.objects.length > 1) {
@@ -71,11 +73,64 @@ export class Topology_Simple {
 		}
 
 		// 1b: Edge visibility (uses fi_on_edge to reuse fi keys at pierce points)
-		this.compute_edge_visibility(input, clips, endpoints, edge_segments, fi_on_edge);
+		this.compute_edge_visibility(input, clips, endpoints, edge_segments, fi_on_edge, intersection_segments, fi_matched_edges);
+
+		// ── Pass 1c: Collapse fi endpoints that coincide with corners ──
+		// An fi that sits exactly at a mesh vertex should be a corner.
+		// Check: does a corner endpoint exist at either vertex of the fi's edge?
+		// If the corner and fi have the same screen position, collapse.
+		for (const [fi_key, matched_edges] of fi_matched_edges) {
+			const fi_ep = endpoints.get(fi_key);
+			if (!fi_ep) continue;
+
+			let corner_key = '';
+			for (const edge_full of matched_edges) {
+				const colon = edge_full.indexOf(':');
+				const so = edge_full.slice(0, colon);
+				const ek = edge_full.slice(colon + 1);
+				const [va, vb] = ek.split('-').map(Number);
+				for (const v of [va, vb]) {
+					const ck = endpoint_key({ type: T_Endpoint.corner, so, vertex: v });
+					const corner_ep = endpoints.get(ck);
+					if (corner_ep) {
+						const d = Math.sqrt((fi_ep.screen.x - corner_ep.screen.x) ** 2 + (fi_ep.screen.y - corner_ep.screen.y) ** 2);
+						if (d < 2) {
+							corner_key = ck;
+							break;
+						}
+					}
+				}
+				if (corner_key) break;
+			}
+			if (!corner_key || corner_key === fi_key) continue;
+
+			// Rewrite all segment references from fi key to corner key
+			for (const [, segs] of edge_segments) {
+				for (const seg of segs) {
+					for (const ep_pair of seg.endpoint_keys) {
+						if (ep_pair[0] === fi_key) ep_pair[0] = corner_key;
+						if (ep_pair[1] === fi_key) ep_pair[1] = corner_key;
+					}
+				}
+			}
+			for (const iseg of intersection_segments) {
+				for (const ep_pair of iseg.endpoint_keys) {
+					if (ep_pair[0] === fi_key) ep_pair[0] = corner_key;
+					if (ep_pair[1] === fi_key) ep_pair[1] = corner_key;
+				}
+			}
+			// Also update fi_on_edge so Pass 1d finds the corner key, not the deleted fi key
+			for (const [, fi_list] of fi_on_edge) {
+				for (const fi of fi_list) {
+					if (fi.key === fi_key) fi.key = corner_key;
+				}
+			}
+			endpoints.delete(fi_key);
+		}
 
 		// ── Pass 1d: Harvest face-boundary crossings from clip data ──
 		if (input.objects.length > 1) {
-			this.harvest_face_crossings(input, clips, endpoints, edge_segments, occluding_segments);
+			this.harvest_face_crossings(input, clips, endpoints, edge_segments, occluding_segments, fi_on_edge);
 		}
 
 		// ── Pass 2: Arrangement ──
@@ -94,6 +149,8 @@ export class Topology_Simple {
 		endpoints: Map<string, ComputedEndpoint>,
 		edge_segments: Map<string, ComputedEdgeSeg[]>,
 		fi_on_edge: Map<string, { key: string; face_a: string; face_b: string }[]>,
+		_intersection_segments: ComputedIntersectionSeg[],
+		fi_matched_edges: Map<string, Set<string>>,
 	): void {
 		const CORNER_T = 0.01;
 
@@ -155,15 +212,16 @@ export class Topology_Simple {
 						const find_fi = (cause: OccFaceRef): string | undefined => {
 							if (!cause) return undefined;
 							const occ_face_key = `${cause.obj_id}:${cause.face_index ?? -1}`;
-							// Check if an fi endpoint on THIS edge involves the occluding face
 							const edge_full = `${obj.id}:${ek}`;
 							const fi_list = fi_on_edge.get(edge_full);
 							if (!fi_list) return undefined;
 							for (const fi of fi_list) {
-								// The fi involves two faces. The occluding face should be one of them.
-								if (fi.face_a === occ_face_key || fi.face_b === occ_face_key) {
-									return fi.key;
-								}
+								if (fi.face_a !== occ_face_key && fi.face_b !== occ_face_key) continue;
+								// Record this match for vertex detection post-pass
+								let edges = fi_matched_edges.get(fi.key);
+								if (!edges) { edges = new Set(); fi_matched_edges.set(fi.key, edges); }
+								edges.add(edge_full);
+								return fi.key;
 							}
 							return undefined;
 						};
@@ -405,6 +463,7 @@ export class Topology_Simple {
 		endpoints: Map<string, ComputedEndpoint>,
 		edge_segments: Map<string, ComputedEdgeSeg[]>,
 		occluding_segments: ComputedOccludingSeg[],
+		fi_on_edge: Map<string, { key: string; face_a: string; face_b: string }[]>,
 	): void {
 		// For each visible edge, clip against each other-SO face polygon.
 		// If the edge is IN FRONT of the face (depth check), create an occluding
@@ -437,43 +496,30 @@ export class Topology_Simple {
 						const w_cs = vec3.lerp(vec3.create(), ep_s.world, ep_e.world, t_enter);
 						const w_ce = vec3.lerp(vec3.create(), ep_s.world, ep_e.world, t_leave);
 
-						// Try to match existing oc/fi endpoints at entry/exit points.
-						// These are computed from different clipping paths, so screen positions
-						// may differ by several pixels. Search with a generous threshold.
-						// Priority: fi > oc > corner > ex (fi is most specific)
+						// Match existing endpoints by boundary edge identity.
+						// The clipper tells us which boundary edge was crossed (enter/leave).
+						// Look for an existing endpoint on that specific boundary edge.
 						let cs_key: string | undefined;
 						let ce_key: string | undefined;
-						let cs_dist = Infinity;
-						let ce_dist = Infinity;
-						const MATCH_RADIUS = 5.0;
 
-						const priority = (key: string) => {
-							if (key.startsWith('fi:')) return 3;
-							if (key.startsWith('oc:')) return 2;
-							if (key.startsWith('c:')) return 1;
-							return 0;
+						const find_on_boundary = (poly_edge_idx: number): string | undefined => {
+							if (poly_edge_idx < 0 || !face.face_verts) return undefined;
+							const vi = face.face_verts[poly_edge_idx];
+							const vj = face.face_verts[(poly_edge_idx + 1) % face.face_verts.length];
+							const boundary_ek = `${Math.min(vi, vj)}-${Math.max(vi, vj)}`;
+							const boundary_full = `${face.obj_id}:${boundary_ek}`;
+							// Check the lookup table for an intersection endpoint on this boundary edge
+							const fi_list = fi_on_edge.get(boundary_full);
+							if (fi_list) {
+								for (const fi of fi_list) {
+									return fi.key;
+								}
+							}
+							return undefined;
 						};
 
-						for (const [key, ep] of endpoints) {
-							const ds = Math.sqrt((ep.screen.x - cs.x) ** 2 + (ep.screen.y - cs.y) ** 2);
-							if (ds < MATCH_RADIUS) {
-								const p = priority(key);
-								const cp = cs_key ? priority(cs_key) : -1;
-								if (p > cp || (p === cp && ds < cs_dist)) {
-									cs_key = key;
-									cs_dist = ds;
-								}
-							}
-							const de = Math.sqrt((ep.screen.x - ce.x) ** 2 + (ep.screen.y - ce.y) ** 2);
-							if (de < MATCH_RADIUS) {
-								const p = priority(key);
-								const ep_p = ce_key ? priority(ce_key) : -1;
-								if (p > ep_p || (p === ep_p && de < ce_dist)) {
-									ce_key = key;
-									ce_dist = de;
-								}
-							}
-						}
+						cs_key = find_on_boundary(clip[2]);
+						ce_key = find_on_boundary(clip[3]);
 
 						// Fall back: create ex endpoints
 						const edge_a = `${so_a_id}:${seg.edge_key}`;

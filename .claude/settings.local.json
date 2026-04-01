@@ -21,6 +21,18 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/GitHub/mono/.claude/hooks/plain-english-check.sh",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "permissions": {

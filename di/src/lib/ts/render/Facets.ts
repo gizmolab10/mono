@@ -520,6 +520,22 @@ export class Facets {
 						dud_reason = !other_ep ? `missing ${ep_label(other_ep_key)}` : `dead-end ${ep_label(other_ep_key)} (${other_ep.ordering.length} seg)`;
 						break;
 					}
+					// SO check: corner and oc endpoints have a single SO.
+					// If it doesn't match the SO being traced, this facet crosses into another object.
+					if (other_ep.id.type === T_Endpoint.corner && other_ep.id.so !== so) {
+						dud = true;
+						dud_reason = `${ep_label(other_ep_key)}: wrong SO (${other_ep.id.so} != ${so})`;
+						break;
+					}
+					if (other_ep.id.type === T_Endpoint.occlusion_clip) {
+						// oc edge format: "so_id:edge_key" — extract the SO
+						const oc_so = other_ep.id.edge.slice(0, other_ep.id.edge.indexOf(':'));
+						if (oc_so !== so) {
+							dud = true;
+							dud_reason = `${ep_label(other_ep_key)}: wrong SO oc (${oc_so} != ${so})`;
+							break;
+						}
+					}
 
 					const face_order = other_ep.ordering.filter(sid => {
 						const s = this.segments.get(sid);
