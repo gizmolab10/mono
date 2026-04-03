@@ -428,27 +428,8 @@ class Render {
 				this.topology_intersection_segments = topo.intersection_segments;
 				this.topology_occluding_segments = topo.occluding_segments;
 
-				// Diff logging: compare old pipeline against whichever topology is active (once)
-				if (!Render._facets_logged) {
-					const label = Render.use_simple_topology ? 'SIMPLE' : 'TOPOLOGY';
-					const _names = new Map<string, string>();
-					for (const obj of objects) _names.set(obj.id, obj.so.name);
-					const _pretty = (s: string) => { for (const [id, name] of _names) s = s.split(id).join(name); return s; };
-
-					const old_keys = new Set(this.computed_endpoints.keys());
-					const new_keys = new Set(topo.endpoints.keys());
-					const only_old = [...old_keys].filter(k => !new_keys.has(k));
-					const only_new = [...new_keys].filter(k => !old_keys.has(k));
-					console.log(`${label} DIFF: endpoints old=${old_keys.size} new=${new_keys.size} only_old=${only_old.length} only_new=${only_new.length}`);
-					if (only_old.length > 0) console.log(`  only in old:`, only_old.map(_pretty));
-					if (only_new.length > 0) console.log(`  only in new:`, only_new.map(_pretty));
-					let old_edge_count = 0, new_edge_count = 0;
-					for (const [, segs] of this.computed_edge_segments) for (const seg of segs) old_edge_count += seg.visible.length;
-					for (const [, segs] of topo.edge_segments) for (const seg of segs) new_edge_count += seg.visible.length;
-					console.log(`${label} DIFF: edge clips old=${old_edge_count} new=${new_edge_count}`);
-					console.log(`${label} DIFF: intersections old=${this.computed_intersection_segments.reduce((n, s) => n + s.endpoint_keys.length, 0)} new=${topo.intersection_segments.reduce((n, s) => n + s.endpoint_keys.length, 0)}`);
-					console.log(`${label} DIFF: crossings old=${this.computed_occluding_segments.length} new=${topo.occluding_segments.length}`);
-				}
+				// Diff logging disabled — new pipeline is active, old comparison no longer useful
+				// if (!Render._facets_logged) { ... }
 			}
 		}
 

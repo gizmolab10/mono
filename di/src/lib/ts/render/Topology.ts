@@ -1,8 +1,8 @@
 import { T_Endpoint, endpoint_key, vtx, type EndpointID } from './Facets';
-import { vec3, vec4, mat4 } from 'gl-matrix';
 import type { Projected, O_Scene } from '../types/Interfaces';
-import type Flatbush from 'flatbush';
+import { vec3, vec4, mat4 } from 'gl-matrix';
 import { k } from '../common/Constants';
+import type Flatbush from 'flatbush';
 
 /**
  * Topology.ts — Identity-based endpoint matching for the faceted 3D renderer.

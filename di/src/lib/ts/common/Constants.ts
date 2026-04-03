@@ -23,11 +23,19 @@ const common_size = 33;		// minimum fingertip touch size
 
 export default class Constants {
 
+	debug = {
+		last_label_log   : '',
+		last_facet_log   : '',
+		occlusion_logged : false,
+		facets_logged    : false,
+		merge_logged     : false,
+		trace_logged     : false,
+		clip_debug       : false,
+	};
+
 	assets_directory = __ASSETS_DIR__;
 	build_number = __BUILD_NUMBER__;
 	build_notes = __BUILD_NOTES__;
-
-	debug = true;
 
 	halfIncrement = 0.5;
 	coplanar_epsilon = 1e-3;

@@ -200,6 +200,81 @@ describe('Layer 1: 2D geometry', () => {
 			expect(r).toBeNull();
 		});
 	});
+
+	describe('intersect_face_pair vertex detection', () => {
+		const topo = new Topology();
+
+		it('detects when intersection line ends at a face corner', () => {
+			// Face A: horizontal quad in z=0 plane (wound CCW when viewed from +z)
+			// Corners: 0=(0,0,0), 1=(4,0,0), 2=(4,4,0), 3=(0,4,0)
+			const fA = {
+				n: vec3.fromValues(0, 0, 1),
+				d: 0,
+				corners: [
+					vec3.fromValues(0, 0, 0),
+					vec3.fromValues(4, 0, 0),
+					vec3.fromValues(4, 4, 0),
+					vec3.fromValues(0, 4, 0),
+				],
+			};
+			// Face B: vertical plane y=x. Normal (-1,1,0)/sqrt(2), d=0.
+			// The intersection of z=0 and y=x is the line y=x, z=0.
+			// On face A, this line goes from corner 0=(0,0,0) to corner 2=(4,4,0).
+			// Both endpoints are at vertices of face A → vertex hits.
+			// Face B must be large enough to fully contain this segment.
+			// Wound CCW when viewed from normal direction (-1,1,0).
+			const n = vec3.normalize(vec3.create(), vec3.fromValues(-1, 1, 0));
+			const fB = {
+				n,
+				d: 0,
+				corners: [
+					vec3.fromValues(10, 10, 5),
+					vec3.fromValues(10, 10, -5),
+					vec3.fromValues(-1, -1, -5),
+					vec3.fromValues(-1, -1, 5),
+				],
+			};
+			const result = (topo as any).intersect_face_pair(fA, fB);
+			expect(result).not.toBeNull();
+			if (result) {
+				// Both endpoints are at corners of face A (0 and 2)
+				const has_vertex = result.start_vertex >= 0 || result.end_vertex >= 0;
+				expect(has_vertex).toBe(true);
+			}
+		});
+
+		it('reports no vertex hit when intersection line crosses mid-edge', () => {
+			// Face A: horizontal quad in z=0 plane
+			const fA = {
+				n: vec3.fromValues(0, 0, 1),
+				d: 0,
+				corners: [
+					vec3.fromValues(-5, -5, 0),
+					vec3.fromValues(5, -5, 0),
+					vec3.fromValues(5, 5, 0),
+					vec3.fromValues(-5, 5, 0),
+				],
+			};
+			// Face B: vertical quad in y=1 plane, crossing face A in the middle.
+			// Intersection line: y=1, z=0, x varies. Enters and exits mid-edge on face A.
+			const fB = {
+				n: vec3.fromValues(0, 1, 0),
+				d: 1,
+				corners: [
+					vec3.fromValues(-3, 1, 5),
+					vec3.fromValues(3, 1, 5),
+					vec3.fromValues(3, 1, -5),
+					vec3.fromValues(-3, 1, -5),
+				],
+			};
+			const result = (topo as any).intersect_face_pair(fA, fB);
+			expect(result).not.toBeNull();
+			if (result) {
+				expect(result.start_vertex).toBe(-1);
+				expect(result.end_vertex).toBe(-1);
+			}
+		});
+	});
 });
 
 // ═══════════════════════════════════════════════════════════════════

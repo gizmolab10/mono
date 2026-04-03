@@ -16,13 +16,13 @@ Before starting work, read all `.md` files within:
 
 ## Who
 
-Jonathan: artist before engineer. Engineering serves the art. Values intuition, warmth, hand-tweaking over formulas.
+Jonathan: artist before engineer. Engineering serves the art. Values intuition, warmth, hand-tweaking over formulas. he is the visual observer, trust his statements far more than the code.
 
 Collaborator (or "co") = Claude.
 
 ## Defaults
 
-NEVER use Claude's own memory/config dirs (eg .claude/projects/). All persistent notes go in ~/GitHub/mono/
+NEVER use Claude's own memory/config dirs (eg .claude/projects/). All persistent notes go in \~/GitHub/mono/
 
 ALWAYS use yarn. `yarn vitest`, `yarn svelte-check`, `yarn <script>`. NEVER use npm or npx — No exceptions.
 

@@ -352,9 +352,27 @@ export class Facets {
 	trace_facets(only_so?: string, only_face?: number, objects?: O_Scene[]): Facet[] {
 		const facets: Facet[] = [];
 		const log = !Facets._trace_logged;
+
+		// Assign temporary labels for readable logging (before paint_labels runs)
+		if (log) {
+			let next_lower = 0;
+			for (const ep of this.endpoints.values()) {
+				if (ep.label) continue; // already labeled
+				if (ep.id.type === T_Endpoint.corner) {
+					const p = (only_so && ep.id.so !== only_so) ? "'" : '';
+					ep.label = vtx(ep.id.vertex) + p;
+				} else {
+					ep.label = next_lower < 26
+						? String.fromCharCode(97 + next_lower)
+						: String.fromCharCode(97 + Math.floor((next_lower - 26) / 26)) + String.fromCharCode(97 + (next_lower - 26) % 26);
+					next_lower++;
+				}
+			}
+		}
+
 		const ep_label = (key: string) => {
 			const ep = this.endpoints.get(key);
-			return ep?.label || this.pretty(key);
+			return ep?.label || '?';
 		};
 		const seg_desc = (s: Segment) => `${s.type[0]}:${ep_label(s.endpoints[0])}→${ep_label(s.endpoints[1])}`;
 
@@ -517,7 +535,21 @@ export class Facets {
 					const other_ep = this.endpoints.get(other_ep_key);
 					if (!other_ep || other_ep.ordering.length < 2) {
 						dud = true;
-						dud_reason = !other_ep ? `missing ${ep_label(other_ep_key)}` : `dead-end ${ep_label(other_ep_key)} (${other_ep.ordering.length} seg)`;
+						if (!other_ep) {
+							dud_reason = `missing ${ep_label(other_ep_key)}`;
+						} else {
+							// Show ALL segments connected to this endpoint across all faces
+							const all_segs = other_ep.segments.map(sid => {
+								const s = this.segments.get(sid);
+								if (!s) return '?';
+								return `${seg_desc(s)} on ${this.pretty(`${s.so}:${s.face}`)}`;
+							});
+							const on_this_face = other_ep.segments.filter(sid => {
+								const s = this.segments.get(sid);
+								return s && s.so === so && s.face === face;
+							}).length;
+							dud_reason = `dead-end ${ep_label(other_ep_key)}: ${on_this_face} seg on this face, ${other_ep.segments.length} total across all faces [${all_segs.join(', ')}]`;
+						}
 						break;
 					}
 					// SO check: corner and oc endpoints have a single SO.
@@ -593,8 +625,66 @@ export class Facets {
 			}
 		}
 
+		// Investigation: for each dead-end endpoint, show what connects and what's missing
 		if (log) {
-			console.log(`trace_facets: ${facets.length} facets total`);
+			console.log(`\n--- dead-end investigation ---`);
+			for (const [face_key] of by_face) {
+				const [so, face_str] = face_key.split(':');
+				const face = parseInt(face_str);
+				if (only_so !== undefined && so !== only_so) continue;
+				if (only_face !== undefined && face !== only_face) continue;
+
+				// Find all endpoints on this face and classify them
+				const face_ep_keys = new Set<string>();
+				for (const seg of this.segments.values()) {
+					if (seg.so !== so || seg.face !== face) continue;
+					face_ep_keys.add(seg.endpoints[0]);
+					face_ep_keys.add(seg.endpoints[1]);
+				}
+
+				const dead_ends: Endpoint[] = [];
+				for (const ek of face_ep_keys) {
+					const ep = this.endpoints.get(ek);
+					if (!ep) continue;
+					const face_seg_count = ep.segments.filter(sid => {
+						const s = this.segments.get(sid);
+						return s && s.so === so && s.face === face;
+					}).length;
+					if (face_seg_count < 2) dead_ends.push(ep);
+				}
+
+				if (dead_ends.length === 0) continue;
+
+				const face_label = this.pretty(face_key);
+				console.log(`\n${face_label}: ${dead_ends.length} dead ends`);
+
+				for (const dep of dead_ends) {
+					const type_name = dep.id.type === T_Endpoint.corner ? 'corner'
+						: dep.id.type === T_Endpoint.occlusion_clip ? 'occlusion clip'
+						: dep.id.type === T_Endpoint.edge_crossing ? 'crossing'
+						: dep.id.type === T_Endpoint.face_intersection ? 'intersection'
+						: 'unknown';
+
+					// What segments connect HERE on this face?
+					const here_segs = dep.segments
+						.map(sid => this.segments.get(sid))
+						.filter(s => s && s.so === so && s.face === face)
+						.map(s => `${s!.type[0]}:${ep_label(s!.endpoints[0])}→${ep_label(s!.endpoints[1])}`);
+
+					// What's in the cyclic ordering?
+					const ordering_descs = dep.ordering.map(sid => {
+						const s = this.segments.get(sid);
+						if (!s) return '?';
+						return `${s.type[0]}:${ep_label(s.endpoints[0])}→${ep_label(s.endpoints[1])} on ${this.pretty(`${s.so}:${s.face}`)}`;
+					});
+
+					console.log(`  ${ep_label(dep.key)} (${type_name}): ${dep.segments.length} total segs, ${here_segs.length} on this face [${here_segs.join(', ')}], ordering has ${dep.ordering.length} [${ordering_descs.join(', ')}]`);
+				}
+			}
+		}
+
+		if (log) {
+			console.log(`\ntrace_facets: ${facets.length} facets total`);
 			Facets._trace_logged = true;
 		}
 		return facets;
