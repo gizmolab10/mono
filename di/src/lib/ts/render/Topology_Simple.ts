@@ -85,6 +85,44 @@ interface SplitPoint {
 	t: number; screen: Pt; world: vec3; crossing_idx: number;
 }
 
+/** Convert a face's vertex indices to letters: [7,6,2,3] → "HGCD" */
+function face_name(obj: O_Scene, face_index: number): string {
+	const verts = obj.faces?.[face_index];
+	if (!verts) return String(face_index);
+	return verts.map((v: number) => String.fromCharCode(65 + v)).join('');
+}
+
+/** Build a face key using vertex letters: "obj_1:HGCD" instead of "obj_1:4" */
+function face_key(obj: O_Scene, face_index: number): string {
+	return `${obj.id}:${face_name(obj, face_index)}`;
+}
+
+/** Build a face key by looking up the object by id */
+function face_key_by_id(so_id: string, face_index: number, input: TopologyInput): string {
+	const obj = input.objects.find(o => o.id === so_id);
+	if (!obj) return `${so_id}:${face_index}`;
+	return face_key(obj, face_index);
+}
+
+/** Convert a polygon edge index to an edge string: "obj_id:min_vertex-max_vertex" */
+function boundary_edge_str(obj_id: string, face_verts: number[], poly_edge_idx: number): string | undefined {
+	if (poly_edge_idx < 0) return undefined; // not caused by occlusion — corner or pierce
+	if (!face_verts || poly_edge_idx >= face_verts.length) {
+		console.warn(`boundary_edge_str: face vertex data missing for ${obj_id} at edge index ${poly_edge_idx}`);
+		return undefined;
+	}
+	const vi = face_verts[poly_edge_idx];
+	const vj = face_verts[(poly_edge_idx + 1) % face_verts.length];
+	return `${obj_id}:${Math.min(vi, vj)}-${Math.max(vi, vj)}`;
+}
+
+/** Make a key string readable: obj_1→ALPHA, obj_2→BETA, vertex numbers→letters */
+function pretty_key(key: string): string {
+	return key
+		.replace(/obj_1/g, 'ALPHA').replace(/obj_2/g, 'BETA').replace(/obj_3/g, 'GAMMA')
+		.replace(/:(\d+)-(\d+)/g, (_, a, b) => ':' + String.fromCharCode(65+Number(a)) + String.fromCharCode(65+Number(b)));
+}
+
 // ─── Topology_Simple ─────────────────────────────────────────────────────────
 
 export class Topology_Simple {
@@ -283,7 +321,7 @@ export class Topology_Simple {
 						// Tag endpoints — check pierce_on_edge before creating oc
 						const find_pierce = (cause: OccFaceRef): string | undefined => {
 							if (!cause) return undefined;
-							const hiding_face = `${cause.obj_id}:${cause.face_index ?? -1}`;
+							const hiding_face = face_key_by_id(cause.obj_id, cause.face_index ?? -1, input);
 							const this_edge = `${obj.id}:${ek}`;
 							const pierce_list = pierce_on_edge.get(this_edge);
 							if (!pierce_list) {
@@ -309,9 +347,20 @@ export class Topology_Simple {
 								sk = pierce_key;
 							} else {
 								const edge_id = `${obj.id}:${ek}`;
-								const occ_face = ci.start_cause ? `${ci.start_cause.obj_id}:${ci.start_cause.face_index ?? -1}` : '';
-								const id: EndpointID = { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: occ_face, end: 'exit' };
-								sk = this.register_endpoint(endpoints, id, ci.start, w_s);
+								const hiding_edge = ci.start_cause && ci.start_poly_edge != null
+									? boundary_edge_str(ci.start_cause.obj_id, ci.start_cause.face_verts!, ci.start_poly_edge)
+									: undefined;
+								if (hiding_edge) {
+									// Cross key: this edge meets the hiding face's boundary edge
+									const [eA, eB] = edge_id < hiding_edge ? [edge_id, hiding_edge] : [hiding_edge, edge_id];
+									const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+									sk = this.register_endpoint(endpoints, id, ci.start, w_s);
+								} else {
+									// Fallback: no boundary edge available
+									const occ_face = ci.start_cause ? face_key_by_id(ci.start_cause.obj_id, ci.start_cause.face_index ?? -1, input) : '';
+									const id: EndpointID = { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: occ_face, end: 'exit' };
+									sk = this.register_endpoint(endpoints, id, ci.start, w_s);
+								}
 							}
 						}
 
@@ -326,9 +375,20 @@ export class Topology_Simple {
 								ek2 = pierce_key;
 							} else {
 								const edge_id = `${obj.id}:${ek}`;
-								const occ_face = ci.end_cause ? `${ci.end_cause.obj_id}:${ci.end_cause.face_index ?? -1}` : '';
-								const id: EndpointID = { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: occ_face, end: 'enter' };
-								ek2 = this.register_endpoint(endpoints, id, ci.end, w_e);
+								const hiding_edge = ci.end_cause && ci.end_poly_edge != null
+									? boundary_edge_str(ci.end_cause.obj_id, ci.end_cause.face_verts!, ci.end_poly_edge)
+									: undefined;
+								if (hiding_edge) {
+									// Cross key: this edge meets the hiding face's boundary edge
+									const [eA, eB] = edge_id < hiding_edge ? [edge_id, hiding_edge] : [hiding_edge, edge_id];
+									const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+									ek2 = this.register_endpoint(endpoints, id, ci.end, w_e);
+								} else {
+									// Fallback: no boundary edge available
+									const occ_face = ci.end_cause ? face_key_by_id(ci.end_cause.obj_id, ci.end_cause.face_index ?? -1, input) : '';
+									const id: EndpointID = { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: occ_face, end: 'enter' };
+									ek2 = this.register_endpoint(endpoints, id, ci.end, w_e);
+								}
 							}
 						}
 
@@ -441,8 +501,8 @@ export class Topology_Simple {
 						if (intervals.length === 0) continue;
 
 						const visible: [Pt, Pt][] = intervals.map(ci => [ci.start, ci.end]);
-						const face_key_a = `${fA.obj.id}:${fA.fi}`;
-						const face_key_b = `${fB.obj.id}:${fB.fi}`;
+						const face_key_a = face_key(fA.obj, fA.fi);
+						const face_key_b = face_key(fB.obj, fB.fi);
 
 						// Compute edge info for both endpoints — from the constraining face
 						const edge_info = (e: { face: 'A' | 'B'; edge_idx: number }, world_pt: vec3) => {
@@ -499,7 +559,7 @@ export class Topology_Simple {
 							if (!ci.start_cause) {
 								s_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'start' };
 							} else {
-								const occ_id = `${ci.start_cause.obj_id}:${ci.start_cause.face_index ?? -1}`;
+								const occ_id = face_key_by_id(ci.start_cause.obj_id, ci.start_cause.face_index ?? -1, input);
 								s_id = { type: T_Endpoint.occlusion_clip, edge: `ix:${face_key_a}:${face_key_b}`, occluder_face: occ_id, end: 'exit' };
 							}
 							const s_key = this.register_endpoint(endpoints, s_id, ci.start, w_s);
@@ -510,7 +570,7 @@ export class Topology_Simple {
 							if (!ci.end_cause) {
 								e_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'end' };
 							} else {
-								const occ_id = `${ci.end_cause.obj_id}:${ci.end_cause.face_index ?? -1}`;
+								const occ_id = face_key_by_id(ci.end_cause.obj_id, ci.end_cause.face_index ?? -1, input);
 								e_id = { type: T_Endpoint.occlusion_clip, edge: `ix:${face_key_a}:${face_key_b}`, occluder_face: occ_id, end: 'enter' };
 							}
 							const e_key = this.register_endpoint(endpoints, e_id, ci.end, w_e);
@@ -988,7 +1048,7 @@ export class Topology_Simple {
 				const pair_a = a.edge_full < a.other_edge ? `${a.edge_full}|${a.other_edge}` : `${a.other_edge}|${a.edge_full}`;
 				const pair_b = b.edge_full < b.other_edge ? `${b.edge_full}|${b.other_edge}` : `${b.other_edge}|${b.edge_full}`;
 				if (pair_a !== pair_b) continue;
-				if (!k.debug.merge_logged) console.log(`tier1: ${b.key} → ${a.key}`);
+				if (!k.debug.merge_logged) console.log(`pierce merge (same edge pair): ${pretty_key(b.key)} → ${pretty_key(a.key)}`);
 				endpoints.delete(b.key);
 				key_rewrites.set(b.key, a.key);
 				b.key = a.key;
@@ -1010,7 +1070,7 @@ export class Topology_Simple {
 				if (!shared) continue;
 				const shared_obj = shared.split(':')[0];
 				if (shared_obj === edge_obj) continue; // shared face must be from the other object
-				if (!k.debug.merge_logged) console.log(`tier2: ${b.key} → ${a.key}`);
+				if (!k.debug.merge_logged) console.log(`pierce merge (same edge + shared face): ${pretty_key(b.key)} → ${pretty_key(a.key)}`);
 				endpoints.delete(b.key);
 				key_rewrites.set(b.key, a.key);
 				b.key = a.key;
@@ -1037,7 +1097,7 @@ export class Topology_Simple {
 				// Verify they're the same physical point — not just on the same edge
 				const oc_ep = endpoints.get(oc.key);
 				if (oc_ep && vec3.distance(pierce_ep.world, oc_ep.world) > 5) continue;
-				if (!k.debug.merge_logged) console.log(`pierce-oc: ${oc.key} → ${p.key}`);
+				if (!k.debug.merge_logged) console.log(`pierce-oc merge: ${pretty_key(oc.key)} → ${pretty_key(p.key)}`);
 				endpoints.delete(oc.key);
 				key_rewrites.set(oc.key, p.key);
 			}
@@ -1059,7 +1119,7 @@ export class Topology_Simple {
 					end };
 				const pierce_key = endpoint_key(pierce_id);
 				if (endpoints.has(pierce_key) && endpoints.has(corner_key)) {
-						if (!k.debug.merge_logged) console.log('corner merge');
+						if (!k.debug.merge_logged) console.log(`pierce at vertex → corner merge`);
 					endpoints.delete(pierce_key);
 					key_rewrites.set(pierce_key, corner_key);
 				}
@@ -1130,8 +1190,8 @@ export class Topology_Simple {
 				for (const p of pierce_edge_map) {
 					if (p.edge_full !== boundary_full) continue;
 					// Check that the intersection involves the face being crossed
-					const face_key = `${fbc.face_so}:${fbc.face_index}`;
-					if (p.face_a === face_key || p.face_b === face_key) {
+					const fk = face_key_by_id(fbc.face_so, fbc.face_index, input);
+					if (p.face_a === fk || p.face_b === fk) {
 						return p.key;
 					}
 				}
@@ -1141,7 +1201,7 @@ export class Topology_Simple {
 			// Helper: search all boundary edges of this face for any matching intersection endpoint
 			const find_pierce_any_boundary = (): string | undefined => {
 				if (!fbc.face_verts) return undefined;
-				const face_key = `${fbc.face_so}:${fbc.face_index}`;
+				const fk = face_key_by_id(fbc.face_so, fbc.face_index, input);
 				const candidates: string[] = [];
 				for (let ei = 0; ei < fbc.face_verts.length; ei++) {
 					const vi = fbc.face_verts[ei];
@@ -1150,7 +1210,7 @@ export class Topology_Simple {
 					const boundary_full = `${fbc.face_so}:${boundary_ek}`;
 					for (const p of pierce_edge_map) {
 						if (p.edge_full !== boundary_full) continue;
-						if (p.face_a === face_key || p.face_b === face_key) {
+						if (p.face_a === fk || p.face_b === fk) {
 							candidates.push(p.key);
 						}
 					}
@@ -1258,9 +1318,18 @@ export class Topology_Simple {
 			if (!cause && t > 1 - CORNER_T) {
 				return this.register_corner(endpoints, part.so, j, screen, world);
 			}
-			// Occlusion endpoint
+			// Occlusion endpoint — try cross key first
 			const edge_id = `${part.so}:${part.edge_key}`;
-			const occ_face = cause ? `${cause.obj_id}:${cause.face_index ?? -1}` : '';
+			const poly_edge = end === 'start' ? part.start_poly_edge : part.end_poly_edge;
+			const hiding_edge = cause && poly_edge != null
+				? boundary_edge_str(cause.obj_id, cause.face_verts!, poly_edge)
+				: undefined;
+			if (hiding_edge) {
+				const [eA, eB] = edge_id < hiding_edge ? [edge_id, hiding_edge] : [hiding_edge, edge_id];
+				const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+				return this.register_endpoint(endpoints, id, screen, world);
+			}
+			const occ_face = cause ? face_key_by_id(cause.obj_id, cause.face_index ?? -1, input) : '';
 			const id: EndpointID = {
 				type: T_Endpoint.occlusion_clip,
 				edge: edge_id,
@@ -1272,8 +1341,8 @@ export class Topology_Simple {
 
 		// Intersection endpoint
 		const fp = part.face_pair!;
-		const face_key_a = `${fp.so_a}:${fp.face_a}`;
-		const face_key_b = `${fp.so_b}:${fp.face_b}`;
+		const face_key_a = face_key_by_id(fp.so_a, fp.face_a, input);
+		const face_key_b = face_key_by_id(fp.so_b, fp.face_b, input);
 
 		if (!cause) {
 			// Check for vertex hit first
@@ -1293,7 +1362,7 @@ export class Topology_Simple {
 			return key;
 		}
 		// Occluded intersection endpoint
-		const occ_id = `${cause.obj_id}:${cause.face_index ?? -1}`;
+		const occ_id = face_key_by_id(cause.obj_id, cause.face_index ?? -1, input);
 		const id: EndpointID = {
 			type: T_Endpoint.occlusion_clip,
 			edge: `ix:${face_key_a}:${face_key_b}`,

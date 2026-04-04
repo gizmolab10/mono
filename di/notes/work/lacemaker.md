@@ -57,7 +57,7 @@ Four facets paint: B→e→f→C on CGFB, a→b→B→C on DCBA, t→G→g→h o
 ---
 ## Steps
 
-### Phase A: Renames (no logic changes)
+### Phase A: Renames DONE (no logic changes)
 
 Run tests after each step.
 
@@ -78,11 +78,11 @@ Rename in variable names and comments. Keep "clip" as a verb in method names —
 
 Run tests after each step.
 
-#### **3. Define canonical key ordering**
+#### **3. DONE (Define canonical key ordering)**
 All four sites must produce edges in the same order in the key string. Pick a rule (e.g., alphabetical) and apply everywhere. Without this, one site produces `cross:GH:G'H'` and another produces `cross:G'H':GH` — same point, different key, silent failure.
 **Risk: low.** Step 7 is a safety net.
 
-#### **4. Pass 1b: edge parts**
+#### **4. DONE (Pass 1b: edge parts)**
 Plumb boundary edge index from the clipper into the endpoint key. Create `cross:clipped_edge:hiding_edge` instead of `oc:edge:face:enter/exit`. Modify 2 endpoint creation sites. Three sub-tasks:
 
 - 4a. Copy the boundary-edge-to-string converter from the older pipeline (~5 lines). The boundary edge index already comes out of the clipper — it just isn't used yet.
