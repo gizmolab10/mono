@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/handoff.md",
+                "file": "di/notes/work/lacemaker.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "handoff"
+              "title": "lacemaker"
             }
           },
           {
@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 301.5026054382324
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -170,13 +170,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/handoff.md",
+                "file": "di/notes/work/lacemaker.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of lacemaker"
             }
           }
         ],
@@ -199,9 +199,17 @@
   },
   "active": "4a4a856dc73b1fdc",
   "lastOpenFiles": [
+    "di/notes/work/handoff.md",
+    "di/notes/work/lacemaker.md",
+    "di/notes/work/facets/designs/simpler design.md",
+    "di/notes/work/facets/designs/3D sweep algorithm.md",
+    "di/src/assets/best.ico",
+    "di/src/assets/icon.svg",
+    "di/src/assets/darker-icon.svg",
+    "di/src/assets/darker.icon.png",
+    "di/src/assets/darker icon.png",
     "di/notes/work/technique.md",
     "notes/guides/pre-flight/shorthand.md",
-    "di/notes/work/handoff.md",
     "Screenshot 2026-04-03 at 11.41.13 AM.png",
     "di/src/assets/icon.png",
     "di/src/assets/seriously-icon.png",
@@ -212,13 +220,11 @@
     "di/notes/work/done/what.md",
     "di/notes/work/code.debt.md",
     "di/src/lib/ts/render/Topology_Simple.ts",
-    "di/notes/work/facets/designs/simpler design.md",
     "di/notes/work/milestones/27.facets.md",
     "di/notes/work/facets/simpler topology.md",
     "di/notes/work/facets/facets-session-summary.md",
     "di/notes/work/facets/facets.md",
     "di/notes/work/done/topology.md",
-    "di/notes/work/facets/designs/3D sweep algorithm.md",
     "di/notes/work/facets/designs",
     "di/notes/work/next/data schema for wendy.md",
     "di/notes/work/designs/simpler design.md",
@@ -236,14 +242,9 @@
     "di/notes/work/facets",
     "di/notes/work/New Folder With Items/done",
     "di/src/lib/ts/tests/Topology.test.ts",
-    "di/src/lib/ts/render/Topology.ts",
     "Screenshot 2026-03-14 at 12.48.11 PM.png",
     "node_modules/concurrently/docs/demo.gif",
     "node_modules/app-builder-lib/templates/icons/proton-native/linux/64x64.png",
-    "node_modules/app-builder-lib/templates/icons/proton-native/linux/512x512.png",
-    "node_modules/app-builder-lib/templates/icons/proton-native/linux/48x48.png",
-    "node_modules/app-builder-lib/templates/icons/proton-native/linux/32x32.png",
-    "node_modules/app-builder-lib/templates/icons/proton-native/linux/256x256.png",
     "ws/notes/work/Untitled.canvas"
   ]
 }

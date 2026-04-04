@@ -1,0 +1,154 @@
+# Lacemaker Plan
+
+**Goal:** One key per point, no reconciliation after the fact.
+
+The object's edges and intersection lines are projected onto a lacework of knots. Lay threads, knot them at depth, name the knots. The holes in the lace are the facets.
+
+**Status:** All 44 tests passing, svelte-check clean. 4 facets painting (was 0).
+**Test case:** facet #5 m→j→g→G→m on face HGCD paints correctly.
+**Design spec:** [simpler design.md](facets/designs/simpler%20design.md)
+
+---
+## Names
+
+| Old         | New          | What it means                                                      |
+| ----------- | ------------ | ------------------------------------------------------------------ |
+| clip        | part         | a visible piece of a line after hidden portions are removed        |
+| fi          | pierce       | where a line goes through a face's interior                        |
+| oc, ex      | cross        | where two lines from different objects meet on screen              |
+| arrangement | knots depths | Pass 2: find crossings, tie parts together, note which is in front |
+
+Any line meeting any face is either a **cross** (at the face's boundary edge) or a **pierce** (through the face's interior). Four cases, two types.
+
+## Why this matters
+
+Today, the same physical point gets discovered by different passes that don't talk to each other. One pass finds "two face planes meet here" and calls it pierce. Another finds "this edge disappears behind a face here" and calls it oc. A third finds "these two lines cross on screen" and calls it ex. A merge step in Pass 3 reconciles them after the fact. That merge was the source of the j/m collapse bug, and it's fragile.
+
+One key per point, no need for merge.
+
+## Sites in the code that must agree
+
+Each site creates a key from its own context, its role in the pipeline. One wrongly built key creates a discontinuity, which breaks the trace.
+
+**Cross keys** (four sites — where two lines meet on screen):
+
+1. **Pass 1a** (line 571/582) — intersection line hidden by a face
+2. **Pass 1b** (line 313/330) — edge hidden by a face
+3. **Pass 2** (line 797) — two lines cross on screen
+4. **Pass 3g** (line 1286-1295) — fallback for unmatched face-boundary crossings
+
+**Pierce keys** (one site, but multiple intersection lines can end at the same point):
+
+1. **Pass 1a** (line 568/579) — unoccluded intersection line endpoint. Today keyed by face pair + start/end. Two intersection lines ending at the same physical point produce different keys. Rekeyed by piercing edge + pierced face so they match automatically.
+
+---
+## Use case
+
+![[Screenshot 2026-04-03 at 11.41.13 AM.png]]
+
+Four facets paint: B→e→f→C on CGFB, a→b→B→C on DCBA, t→G→g→h on CGFB, a→f→C on HGCD. The unpainted facet m→j→g→G→m on HGCD is the test case.
+
+- `g` and `j` are the two endpoints of the intersection line between ALPHA face HGCD and BETA face H'G'C'D'. `g` is on ALPHA edge CG. `j` is on BETA edge G'H'.
+- `m` is a crossing: where ALPHA edge GH meets BETA edge G'H'. Not on any intersection line.
+- Both `j` and `m` are on BETA edge G'H', at different positions.
+- `j→m` is a visible edge segment (part of BETA edge G'H').
+- `g→j` is the visible intersection line.
+
+---
+## Steps
+
+### Phase A: Renames (no logic changes)
+
+Run tests after each step.
+
+#### **1. fi → pierce.**
+Rename across Topology_Simple.ts and Facets.ts. ~43 references in 5 files. Mechanical find-and-replace.
+**Risk: low.** Breakage is immediate and obvious.
+
+#### **2. clip → part.**
+Rename in variable names and comments. Keep "clip" as a verb in method names — the methods do clipping, the results are parts. ~170+ references in Topology_Simple.ts. Approach:
+
+- 2a. Rename the type definitions first. The compiler will flag every place that uses them.
+- 2b. Rename properties and variables (the nouns). Compiler catches these too.
+- 2c. Rename in comments and log messages. Search for "clip" case-insensitive, skip method names that use it as a verb (the methods do clipping — that's still correct).
+- 2d. Run tests, confirm green.
+**Risk: low.**
+
+### Phase B: Cross key logic
+
+Run tests after each step.
+
+#### **3. Define canonical key ordering.**
+All four sites must produce edges in the same order in the key string. Pick a rule (e.g., alphabetical) and apply everywhere. Without this, one site produces `cross:GH:G'H'` and another produces `cross:G'H':GH` — same point, different key, silent failure.
+**Risk: low.** Step 7 is a safety net.
+
+#### **4. Pass 1b: edge parts.**
+Plumb boundary edge index from the clipper into the endpoint key. Create `cross:clipped_edge:hiding_edge` instead of `oc:edge:face:enter/exit`. Modify 2 endpoint creation sites. Three sub-tasks:
+
+- 4a. Copy the boundary-edge-to-string converter from the older pipeline (~5 lines). The boundary edge index already comes out of the clipper — it just isn't used yet.
+- 4b. If boundary edge index is -1, nothing hid this endpoint — it's a corner or pierce, not a cross. Skip cross key creation.
+- 4c. Assert that face vertex data exists when the index is valid. This is the only failure mode — without the assertion it would produce a wrong key silently.
+**Risk: low.**
+
+#### **5. Pass 1a: intersection line parts.**
+Same treatment at lines 571/582. When an intersection line is hidden by a face, the endpoint gets a cross key using the hiding face's boundary edge.
+**Risk: same as step 4.**
+
+#### **6. Pass 2 + Pass 3g: screen crossings.**
+Create `cross:edgeA:edgeB` instead of `ex:edgeA:edgeB` at line 797 and the Pass 3g fallback at line 1286-1295. Already keyed by edge pair — just change the prefix, using canonical ordering from step 3.
+
+- 6a. Verify that the anonymous crossing data from Pass 1d carries the boundary edge index. If not, plumb it through from the harvest step — otherwise Pass 3g can't build the right cross key.
+
+**Risk: low.**
+
+#### **7. Pierce key unification.**
+Today a pierce key is `pierce:faceA:faceB:start/end` — unique per intersection line. But the physical point is where a specific edge pierces a specific face. Two intersection lines that end at the same point get different keys, and a merge reconciles them after.
+Rekey as `pierce:edge:face`. The boundary edge is the one the intersection line ends at. The pierced face is the other face in the pair. Apply canonical ordering from step 3. Then two intersection lines ending at the same point produce the same key automatically.
+This eliminates the pierce-pierce merges (tier 1 and tier 2) the same way cross unification eliminates the pierce-occlusion merge.
+
+- 7a. Update the pierce-at-vertex-corner merge to match the new pierce key format. That merge stays in the pipeline — it looks up pierce keys to replace them with corner keys. If it still uses the old format, it won't find them.
+
+**Known limitation:** `pierce:edge:face` only works when the intersection line ends at a boundary edge. When three faces meet at a single point, each intersection line pierces the third face's interior — no boundary edge involved. That case doesn't exist in the current scene but will appear in future use cases.
+
+**Future-proof key:** `pierce:edge:face` for the two-face case (edge pierces face). For the three-face case, use `pierce:soIDA:soIDB:soIDC` (three object IDs in canonical order). Since every object is convex, three objects can only produce one visible triple-intersection point — so object IDs alone are unique. Both formats start with `pierce:` so the rest of the pipeline doesn't care which variant it is.
+
+As the number of intersecting SO's increases, the length of keys will likely also increase. The code must determine this number first. Future approach: build an overlap graph from 3D bounding-box tests (already done in Pass 1a's broad phase). The maximum group size tells you the pierce key format before any keys are built. No proximity, no reconciliation.
+
+**Risk: low.** — step 8 must catch every mismatch.
+
+### Phase C: Prove all merges are dead, then remove them
+
+#### **8. Pin keys + verify all merges are idle.** GATE.
+Add one test to the existing golden test (Layer 5 in Topology.test.ts):
+
+- No legacy keys — nothing starts with `oc:`, `ex:`, or `fi:`.
+- Every non-corner key starts with `cross:` or `pierce:`.
+- Specific known points match expected keys (e.g., `m` is `cross:GH:G'H'`, `d` is `pierce:edge:face`).
+Log every key rewrite all three merges produce (pierce-occlusion, pierce-pierce tier 1, pierce-pierce tier 2). If unification worked, all three should produce zero rewrites. Any remaining rewrites reveal which points don't match yet — fix before proceeding.
+Also verify that all four cross sites and the pierce site are exercised by the golden test scene. Log which site produced each key. If any site has zero keys, the scene doesn't cover it — add a configuration that triggers it.
+**Risk: low.** This is a safety gate, not a logic change.
+
+#### **9. Remove all three merges.**
+Delete the pierce-occlusion merge, pierce-pierce tier 1, and pierce-pierce tier 2. All proven dead by step 8. The pierce-at-vertex-corner merge stays — it solves a different problem (intersection line landing exactly on a mesh vertex).
+**Visual check:** hidden-line segments still draw. If any are missing, edges will stop abruptly instead of going behind faces.
+**Rollback:** If anything breaks unexpectedly, re-enable the merges. They're self-contained — restoring the deleted lines restores the old behavior. The new cross and pierce keys still work with the merges active; they just produce zero rewrites.
+**Risk: low** (step 8 must prove all merges are dead before we delete them).
+
+#### **10. Update Facets.ts.**
+Update endpoint type checks. Only two types remain: pierce and cross (plus corner). ~10 branch sites. Enum shrinks from 4 to 3.
+**Visual check:** all 4 facets still paint. Missing a branch could un-paint.
+**Risk: low.**
+
+#### **11. Final verify.**
+Run all tests.
+**Visual check:** the whole picture — 4 painted facets, all hidden lines, no phantom segments, no new artifacts. Bonus points: did facet #5 appear?
+**Risk: low.**
+
+### Phase D: If facet #5 doesn't paint
+
+Cross unification may not be enough — `j` is a pierce endpoint (intersection line meets face interior), not a cross endpoint. If the facet still doesn't close:
+
+When an intersection line and an edge meet, let the edge use the intersection line's key for that point. Don't do this when two edges meet — that creates phantom connections.
+
+See [handoff.md](handoff.md) for dead ends, and solved items.
+
