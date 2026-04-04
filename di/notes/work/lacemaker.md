@@ -90,7 +90,7 @@ Plumb boundary edge index from the clipper into the endpoint key. Create `cross:
 - 4c. Assert that face vertex data exists when the index is valid. This is the only failure mode — without the assertion it would produce a wrong key silently.
 **Risk: low.**
 
-#### **5. Pass 1a: intersection line parts**
+#### **5. DONE (Pass 1a: intersection line parts)**
 Same treatment at lines 571/582. When an intersection line is hidden by a face, the endpoint gets a cross key using the hiding face's boundary edge.
 **Risk: same as step 4.**
 

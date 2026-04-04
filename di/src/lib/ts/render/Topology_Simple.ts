@@ -559,8 +559,17 @@ export class Topology_Simple {
 							if (!ci.start_cause) {
 								s_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'start' };
 							} else {
-								const occ_id = face_key_by_id(ci.start_cause.obj_id, ci.start_cause.face_index ?? -1, input);
-								s_id = { type: T_Endpoint.occlusion_clip, edge: `ix:${face_key_a}:${face_key_b}`, occluder_face: occ_id, end: 'exit' };
+								const ix_edge = `ix:${face_key_a}:${face_key_b}`;
+								const hiding_edge = ci.start_poly_edge != null
+									? boundary_edge_str(ci.start_cause.obj_id, ci.start_cause.face_verts!, ci.start_poly_edge)
+									: undefined;
+								if (hiding_edge) {
+									const [eA, eB] = ix_edge < hiding_edge ? [ix_edge, hiding_edge] : [hiding_edge, ix_edge];
+									s_id = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+								} else {
+									const occ_id = face_key_by_id(ci.start_cause.obj_id, ci.start_cause.face_index ?? -1, input);
+									s_id = { type: T_Endpoint.occlusion_clip, edge: ix_edge, occluder_face: occ_id, end: 'exit' };
+								}
 							}
 							const s_key = this.register_endpoint(endpoints, s_id, ci.start, w_s);
 
@@ -570,8 +579,17 @@ export class Topology_Simple {
 							if (!ci.end_cause) {
 								e_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'end' };
 							} else {
-								const occ_id = face_key_by_id(ci.end_cause.obj_id, ci.end_cause.face_index ?? -1, input);
-								e_id = { type: T_Endpoint.occlusion_clip, edge: `ix:${face_key_a}:${face_key_b}`, occluder_face: occ_id, end: 'enter' };
+								const ix_edge = `ix:${face_key_a}:${face_key_b}`;
+								const hiding_edge = ci.end_poly_edge != null
+									? boundary_edge_str(ci.end_cause.obj_id, ci.end_cause.face_verts!, ci.end_poly_edge)
+									: undefined;
+								if (hiding_edge) {
+									const [eA, eB] = ix_edge < hiding_edge ? [ix_edge, hiding_edge] : [hiding_edge, ix_edge];
+									e_id = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+								} else {
+									const occ_id = face_key_by_id(ci.end_cause.obj_id, ci.end_cause.face_index ?? -1, input);
+									e_id = { type: T_Endpoint.occlusion_clip, edge: ix_edge, occluder_face: occ_id, end: 'enter' };
+								}
 							}
 							const e_key = this.register_endpoint(endpoints, e_id, ci.end, w_e);
 
@@ -1361,11 +1379,21 @@ export class Topology_Simple {
 			}
 			return key;
 		}
-		// Occluded intersection endpoint
+		// Occluded intersection endpoint — try cross key first
+		const ix_edge = `ix:${face_key_a}:${face_key_b}`;
+		const poly_edge = end === 'start' ? part.start_poly_edge : part.end_poly_edge;
+		const hiding_edge = poly_edge != null
+			? boundary_edge_str(cause.obj_id, cause.face_verts!, poly_edge)
+			: undefined;
+		if (hiding_edge) {
+			const [eA, eB] = ix_edge < hiding_edge ? [ix_edge, hiding_edge] : [hiding_edge, ix_edge];
+			const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+			return this.register_endpoint(endpoints, id, screen, world);
+		}
 		const occ_id = face_key_by_id(cause.obj_id, cause.face_index ?? -1, input);
 		const id: EndpointID = {
 			type: T_Endpoint.occlusion_clip,
-			edge: `ix:${face_key_a}:${face_key_b}`,
+			edge: ix_edge,
 			occluder_face: occ_id,
 			end: end === 'start' ? 'exit' : 'enter',
 		};
