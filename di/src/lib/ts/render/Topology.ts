@@ -849,7 +849,7 @@ export class Topology {
 					const edge_a_full = `${a.so}:${a.edge_key}`;
 					const edge_b_full = `${b.so}:${b.edge_key}`;
 					const [eA, eB] = edge_a_full < edge_b_full ? [edge_a_full, edge_b_full] : [edge_b_full, edge_a_full];
-					const ex_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+					const ex_id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 					ep_key = this.register_endpoint(ex_id, screen, w_mid);
 				}
 
@@ -921,7 +921,7 @@ if (dist < -0.001) continue;
 						// Use occluding_faces array index (face index) to match old code's key format
 						const face_verts = face.face_verts;
 						if (!cs_key) {
-							const cs_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}` };
+							const cs_id: EndpointID = { type: T_Endpoint.cross, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}` };
 							cs_key = this.register_endpoint(cs_id, cs, w_cs);
 							if (face_verts && clip[2] >= 0) {
 								const vi = face_verts[clip[2]], vj = face_verts[(clip[2] + 1) % face_verts.length];
@@ -929,7 +929,7 @@ if (dist < -0.001) continue;
 							}
 						}
 						if (!ce_key) {
-							const ce_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}:e` };
+							const ce_id: EndpointID = { type: T_Endpoint.cross, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}:e` };
 							ce_key = this.register_endpoint(ce_id, ce, w_ce);
 							if (face_verts && clip[3] >= 0) {
 								const vi = face_verts[clip[3]], vj = face_verts[(clip[3] + 1) % face_verts.length];

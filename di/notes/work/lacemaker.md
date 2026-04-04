@@ -94,7 +94,7 @@ Plumb boundary edge index from the clipper into the endpoint key. Create `cross:
 Same treatment at lines 571/582. When an intersection line is hidden by a face, the endpoint gets a cross key using the hiding face's boundary edge.
 **Risk: same as step 4.**
 
-#### **6. Pass 2 + Pass 3g: screen crossings**
+#### **6. DONE (Pass 2 + Pass 3g: screen crossings)**
 Create `cross:edgeA:edgeB` instead of `ex:edgeA:edgeB` at line 797 and the Pass 3g fallback at line 1286-1295. Already keyed by edge pair — just change the prefix, using canonical ordering from step 3.
 
 - 6a. Verify that the anonymous crossing data from Pass 1d carries the boundary edge index. If not, plumb it through from the harvest step — otherwise Pass 3g can't build the right cross key.

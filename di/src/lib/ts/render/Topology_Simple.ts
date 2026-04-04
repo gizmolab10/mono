@@ -241,7 +241,7 @@ export class Topology_Simple {
 				endpoints.set(key, ep);
 			}
 			for (const key of [...endpoints.keys()]) {
-				if (key.startsWith('ex:') && !v2.endpoints.has(key)) {
+				if (key.startsWith('cross:') && !v2.endpoints.has(key)) {
 					endpoints.delete(key);
 				}
 			}
@@ -353,7 +353,7 @@ export class Topology_Simple {
 								if (hiding_edge) {
 									// Cross key: this edge meets the hiding face's boundary edge
 									const [eA, eB] = edge_id < hiding_edge ? [edge_id, hiding_edge] : [hiding_edge, edge_id];
-									const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+									const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 									sk = this.register_endpoint(endpoints, id, ci.start, w_s);
 								} else {
 									// Fallback: no boundary edge available
@@ -381,7 +381,7 @@ export class Topology_Simple {
 								if (hiding_edge) {
 									// Cross key: this edge meets the hiding face's boundary edge
 									const [eA, eB] = edge_id < hiding_edge ? [edge_id, hiding_edge] : [hiding_edge, edge_id];
-									const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+									const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 									ek2 = this.register_endpoint(endpoints, id, ci.end, w_e);
 								} else {
 									// Fallback: no boundary edge available
@@ -565,7 +565,7 @@ export class Topology_Simple {
 									: undefined;
 								if (hiding_edge) {
 									const [eA, eB] = ix_edge < hiding_edge ? [ix_edge, hiding_edge] : [hiding_edge, ix_edge];
-									s_id = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+									s_id = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 								} else {
 									const occ_id = face_key_by_id(ci.start_cause.obj_id, ci.start_cause.face_index ?? -1, input);
 									s_id = { type: T_Endpoint.occlusion_clip, edge: ix_edge, occluder_face: occ_id, end: 'exit' };
@@ -585,7 +585,7 @@ export class Topology_Simple {
 									: undefined;
 								if (hiding_edge) {
 									const [eA, eB] = ix_edge < hiding_edge ? [ix_edge, hiding_edge] : [hiding_edge, ix_edge];
-									e_id = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+									e_id = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 								} else {
 									const occ_id = face_key_by_id(ci.end_cause.obj_id, ci.end_cause.face_index ?? -1, input);
 									e_id = { type: T_Endpoint.occlusion_clip, edge: ix_edge, occluder_face: occ_id, end: 'enter' };
@@ -788,7 +788,7 @@ export class Topology_Simple {
 			const edge_a = a.type === 'edge' ? `${a.so}:${a.edge_key}` : `ix:${a.so}`;
 			const edge_b = b.type === 'edge' ? `${b.so}:${b.edge_key}` : `ix:${b.so}`;
 			const [eA, eB] = edge_a < edge_b ? [edge_a, edge_b] : [edge_b, edge_a];
-			const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+			const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 			const world_mid = vec3.lerp(vec3.create(), c.world_a, c.world_b, 0.5);
 			const key = this.register_endpoint(endpoints, id, c.screen, world_mid);
 			crossing_keys.push(key);
@@ -1040,7 +1040,7 @@ export class Topology_Simple {
 				const edge_a = part_a.type === 'edge' ? `${part_a.so}:${part_a.edge_key}` : `ix:${part_a.so}`;
 				const edge_b = part_b.type === 'edge' ? `${part_b.so}:${part_b.edge_key}` : `ix:${part_b.so}`;
 				const [eA, eB] = edge_a < edge_b ? [edge_a, edge_b] : [edge_b, edge_a];
-				const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+				const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 				const world_mid = vec3.lerp(vec3.create(), cx.world_a, cx.world_b, 0.5);
 				this.register_endpoint(endpoints, id, sp.screen, world_mid);
 			}
@@ -1263,12 +1263,30 @@ export class Topology_Simple {
 				// Last resort: create crossing endpoints for any still-unmatched ends
 				const edge_a = `${fbc.edge_so}:${fbc.edge_key}`;
 				if (!enter_key) {
-					const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${fbc.face_so}:face:${fbc.face_index}` };
-					enter_key = this.register_endpoint(endpoints, id, fbc.screen_enter, fbc.world_enter);
+					const hiding_edge = fbc.face_verts
+						? boundary_edge_str(fbc.face_so, fbc.face_verts, fbc.enter_boundary_edge)
+						: undefined;
+					if (hiding_edge) {
+						const [eA, eB] = edge_a < hiding_edge ? [edge_a, hiding_edge] : [hiding_edge, edge_a];
+						const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
+						enter_key = this.register_endpoint(endpoints, id, fbc.screen_enter, fbc.world_enter);
+					} else {
+						const id: EndpointID = { type: T_Endpoint.cross, edgeA: edge_a, edgeB: `${fbc.face_so}:face:${fbc.face_index}` };
+						enter_key = this.register_endpoint(endpoints, id, fbc.screen_enter, fbc.world_enter);
+					}
 				}
 				if (!leave_key || leave_key === enter_key) {
-					const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${fbc.face_so}:face:${fbc.face_index}:e` };
-					leave_key = this.register_endpoint(endpoints, id, fbc.screen_leave, fbc.world_leave);
+					const hiding_edge = fbc.face_verts
+						? boundary_edge_str(fbc.face_so, fbc.face_verts, fbc.leave_boundary_edge)
+						: undefined;
+					if (hiding_edge) {
+						const [eA, eB] = edge_a < hiding_edge ? [edge_a, hiding_edge] : [hiding_edge, edge_a];
+						const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
+						leave_key = this.register_endpoint(endpoints, id, fbc.screen_leave, fbc.world_leave);
+					} else {
+						const id: EndpointID = { type: T_Endpoint.cross, edgeA: edge_a, edgeB: `${fbc.face_so}:face:${fbc.face_index}:e` };
+						leave_key = this.register_endpoint(endpoints, id, fbc.screen_leave, fbc.world_leave);
+					}
 				}
 			}
 
@@ -1344,7 +1362,7 @@ export class Topology_Simple {
 				: undefined;
 			if (hiding_edge) {
 				const [eA, eB] = edge_id < hiding_edge ? [edge_id, hiding_edge] : [hiding_edge, edge_id];
-				const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+				const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 				return this.register_endpoint(endpoints, id, screen, world);
 			}
 			const occ_face = cause ? face_key_by_id(cause.obj_id, cause.face_index ?? -1, input) : '';
@@ -1387,7 +1405,7 @@ export class Topology_Simple {
 			: undefined;
 		if (hiding_edge) {
 			const [eA, eB] = ix_edge < hiding_edge ? [ix_edge, hiding_edge] : [hiding_edge, ix_edge];
-			const id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: eA, edgeB: eB };
+			const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 			return this.register_endpoint(endpoints, id, screen, world);
 		}
 		const occ_id = face_key_by_id(cause.obj_id, cause.face_index ?? -1, input);

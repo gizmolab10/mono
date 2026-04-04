@@ -1361,7 +1361,7 @@ class Render {
 						// Also record split points on the target face's edges
 						const face_verts = face.face_verts;
 						if (!cs_key) {
-							const cs_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}` };
+							const cs_id: EndpointID = { type: T_Endpoint.cross, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}` };
 							cs_key = this.register_endpoint(cs_id, cs, w_cs);
 							if (face_verts && clip[2] >= 0) {
 								const vi = face_verts[clip[2]], vj = face_verts[(clip[2] + 1) % face_verts.length];
@@ -1369,7 +1369,7 @@ class Render {
 							}
 						}
 						if (!ce_key) {
-							const ce_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}:e` };
+							const ce_id: EndpointID = { type: T_Endpoint.cross, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}:e` };
 							ce_key = this.register_endpoint(ce_id, ce, w_ce);
 							if (face_verts && clip[3] >= 0) {
 								const vi = face_verts[clip[3]], vj = face_verts[(clip[3] + 1) % face_verts.length];
