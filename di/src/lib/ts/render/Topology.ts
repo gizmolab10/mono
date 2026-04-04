@@ -7,7 +7,7 @@ import type Flatbush from 'flatbush';
 /**
  * Topology.ts — Identity-based endpoint matching for the faceted 3D renderer.
  *
- * Replaces the three proximity-based maps (intersection_clip_map, oc_at_occluder_edge, fi_on_edge)
+ * Replaces the three proximity-based maps (intersection_clip_map, oc_at_occluder_edge, pierce_on_edge)
  * with a single deterministic registry: edge_points. Every endpoint gets ONE identity from birth.
  * Later phases look up by world-space distance on the same edge, not screen-space t.
  */
@@ -111,16 +111,16 @@ export class Topology {
 	private intersection_segments: ComputedIntersectionSeg[] = [];
 	private occluding_segments: ComputedOccludingSeg[] = [];
 
-	// Identity registry: known endpoints on each edge (for edge splitting + coincident fi)
+	// Identity registry: known endpoints on each edge (for edge splitting + coincident pierce)
 	// Key: "so_id:edge_key" → list of known endpoints on that edge
 	private edge_points = new Map<string, EdgePoint[]>();
 
-	// Clip identity: fi endpoints indexed for the edge clipper
-	// Key: "clipped_so:clipped_edge:occluder_so:occluder_face" → fi endpoint list
+	// Clip identity: pierce endpoints indexed for the edge clipper
+	// Key: "clipped_so:clipped_edge:occluder_so:occluder_face" → pierce endpoint list
 	// Same key format as old code's intersection_clip_map.
 	private clip_identity = new Map<string, EdgePoint[]>();
 
-	// Reverse map: occluder edge → oc/fi endpoints registered on it by OTHER edges' clipping.
+	// Reverse map: occluder edge → oc/pierce endpoints registered on it by OTHER edges' clipping.
 	// Used by Phase 4 Part 2 to match crossing boundaries (equivalent to old oc_at_occluder_edge).
 	private oc_at_occluder_edge = new Map<string, { key: string; screen: Pt; world: vec3 }[]>();
 
@@ -219,11 +219,11 @@ export class Topology {
 	}
 
 
-	/** Register an fi endpoint for the edge clipper to find.
-	 *  Key format matches old code's intersection_clip_map: "fi_so:fi_edge:other_so:other_face"
-	 *  fi_so:fi_edge = edge the fi sits on. other_so:other_face = the other face in the pair. */
-	private add_clip_identity(fi_so: string, fi_edge: string, other_so: string, other_face: number, ep_key: string, world: vec3, screen: Pt): void {
-		const key = `${fi_so}:${fi_edge}:${other_so}:${other_face}`;
+	/** Register an pierce endpoint for the edge clipper to find.
+	 *  Key format matches old code's intersection_clip_map: "pierce_so:pierce_edge:other_so:other_face"
+	 *  pierce_so:pierce_edge = edge the pierce sits on. other_so:other_face = the other face in the pair. */
+	private add_clip_identity(pierce_so: string, pierce_edge: string, other_so: string, other_face: number, ep_key: string, world: vec3, screen: Pt): void {
+		const key = `${pierce_so}:${pierce_edge}:${other_so}:${other_face}`;
 		let list = this.clip_identity.get(key);
 		if (!list) { list = []; this.clip_identity.set(key, list); }
 		if (!list.some(p => p.key === ep_key)) {
@@ -231,7 +231,7 @@ export class Topology {
 		}
 	}
 
-	/** Find an fi endpoint registered for this clip context.
+	/** Find an pierce endpoint registered for this clip context.
 	 *  Called by the edge clipper: clipped_so:clipped_edge is the edge being clipped,
 	 *  occluder_so:occluder_face is the face doing the clipping. */
 	private find_clip_identity(clipped_so: string, clipped_edge: string, occluder_so: string, occluder_face: number, world: vec3): EdgePoint | null {
@@ -391,12 +391,12 @@ export class Topology {
 							if (!ci.start_cause && start_corner) {
 								s_id = start_corner;
 							} else if (!ci.start_cause) {
-								// Check registry for coincident fi on the same edge
+								// Check registry for coincident pierce on the same edge
 								const existing = this.find_edge_point(se.so, se.edge_key, geom.start);
 								if (existing) {
 									s_id = this.endpoints.get(existing.key)!.id;
 								} else {
-									s_id = { type: T_Endpoint.face_intersection, faceA: face_key_a, faceB: face_key_b, end: 'start' };
+									s_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'start' };
 								}
 							} else {
 								const occ_id = `${ci.start_cause.obj_id}:${ci.start_cause.face_index ?? -1}`;
@@ -409,8 +409,8 @@ export class Topology {
 							const w_s = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_s)));
 							const s_key = this.register_endpoint(s_id, ci.start, w_s);
 
-							// Register fi on edge in identity registry
-							if (s_id.type === T_Endpoint.face_intersection) {
+							// Register pierce on edge in identity registry
+							if (s_id.type === T_Endpoint.pierce) {
 								this.add_edge_point(se.so, se.edge_key, s_key, w_s, ci.start, se.t);
 							}
 							// Register oc endpoints on their occluder edge + record edge split
@@ -431,7 +431,7 @@ export class Topology {
 								if (existing_e) {
 									e_id = this.endpoints.get(existing_e.key)!.id;
 								} else {
-									e_id = { type: T_Endpoint.face_intersection, faceA: face_key_a, faceB: face_key_b, end: 'end' };
+									e_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'end' };
 								}
 							} else {
 								const occ_id = `${ci.end_cause.obj_id}:${ci.end_cause.face_index ?? -1}`;
@@ -444,8 +444,8 @@ export class Topology {
 							const w_e = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_e)));
 							const e_key = this.register_endpoint(e_id, ci.end, w_e);
 
-							// Register fi on edge in identity registry
-							if (e_id.type === T_Endpoint.face_intersection) {
+							// Register pierce on edge in identity registry
+							if (e_id.type === T_Endpoint.pierce) {
 								this.add_edge_point(ee.so, ee.edge_key, e_key, w_e, ci.end, ee.t);
 							}
 							// Register oc endpoints on their occluder edge + record edge split
@@ -460,7 +460,7 @@ export class Topology {
 							ep_keys.push([s_key, e_key]);
 						}
 
-						// Register fi/corner endpoints on their source edges for identity lookup
+						// Register pierce/corner endpoints on their source edges for identity lookup
 						{
 							const first_s_key = ep_keys.length > 0 ? ep_keys[0][0] : null;
 							const last_e_key = ep_keys.length > 0 ? ep_keys[ep_keys.length - 1][1] : null;
@@ -468,17 +468,17 @@ export class Topology {
 							const last_e_id = last_e_key ? this.endpoints.get(last_e_key)?.id : null;
 
 							const is_edge_exit = (id: EndpointID | null) =>
-								id?.type === T_Endpoint.face_intersection || id?.type === T_Endpoint.corner;
+								id?.type === T_Endpoint.pierce || id?.type === T_Endpoint.corner;
 
 							if (first_s_key && first_s_id && is_edge_exit(first_s_id)) {
 								const se_ep = this.endpoints.get(first_s_key)!;
 								// Register on the edge it sits on
 								this.add_edge_point(se.so, se.edge_key, first_s_key, se_ep.world, se_ep.screen, se.t);
-								// Cross-register: the other SO's edge clipper needs to find this fi
+								// Cross-register: the other SO's edge clipper needs to find this pierce
 								// Key: (other_so, occluding_face) — any edge of other_so clipped by this face
 								const other_s = geom.start_edge.face === 'A' ? fB : fA;
 								this.add_clip_identity(se.so, se.edge_key, other_s.obj.id, other_s.fi, first_s_key, se_ep.world, se_ep.screen);
-								if (first_s_id.type === T_Endpoint.face_intersection) {
+								if (first_s_id.type === T_Endpoint.pierce) {
 									this.intersection_edge_splits.push({ so: se.so, edge_key: se.edge_key, screen: se_ep.screen, world: se_ep.world, ep_key: first_s_key });
 								}
 							}
@@ -487,7 +487,7 @@ export class Topology {
 								this.add_edge_point(ee.so, ee.edge_key, last_e_key, ee_ep.world, ee_ep.screen, ee.t);
 								const other_e = geom.end_edge.face === 'A' ? fB : fA;
 								this.add_clip_identity(ee.so, ee.edge_key, other_e.obj.id, other_e.fi, last_e_key, ee_ep.world, ee_ep.screen);
-								if (last_e_id.type === T_Endpoint.face_intersection) {
+								if (last_e_id.type === T_Endpoint.pierce) {
 									this.intersection_edge_splits.push({ so: ee.so, edge_key: ee.edge_key, screen: ee_ep.screen, world: ee_ep.world, ep_key: last_e_key });
 								}
 							}
@@ -560,7 +560,7 @@ export class Topology {
 					const ep_keys: [string, string][] = [];
 					const edge_id = `${obj.id}:${ek}`;
 
-					const used_fi_keys = new Set<string>();
+					const used_pierce_keys = new Set<string>();
 
 					// Helper: tag an endpoint from t value and clip cause
 					const tag_endpoint = (t: number, screen: Pt, cause: OccFaceRef, is_start_of_visible: boolean, poly_edge_idx?: number): string => {
@@ -572,46 +572,46 @@ export class Topology {
 						} else if (!cause && t > 1 - CORNER_T) {
 							id = { type: T_Endpoint.corner, so: obj.id, vertex: j_idx };
 						} else if (cause) {
-							// IDENTITY-BASED: look up clip_identity for a known fi at this clip context
+							// IDENTITY-BASED: look up clip_identity for a known pierce at this clip context
 							const occ_edge = (poly_edge_idx != null && poly_edge_idx >= 0 && cause.face_verts)
 								? Topology.occ_edge_str(cause.obj_id, cause.face_verts, poly_edge_idx)
 								: undefined;
 
-							let fi_id: EndpointID | undefined;
+							let pierce_id: EndpointID | undefined;
 							{
-								// Try topological lookup first (same-SO fi on this edge)
+								// Try topological lookup first (same-SO pierce on this edge)
 								let known = this.find_clip_identity(obj.id, ek, cause.obj_id, cause.face_index ?? -1, w);
-								// Fallback: fi may sit on the occluder's edge (cross-SO case)
-								// Only accept fi endpoints — oc endpoints from other edges are
+								// Fallback: pierce may sit on the occluder's edge (cross-SO case)
+								// Only accept pierce endpoints — oc endpoints from other edges are
 								// different topological events and reusing them prevents this edge
 								// from getting its own oc endpoint.
 								if (!known && cause.face_verts) {
 									for (let ei = 0; ei < cause.face_verts.length && !known; ei++) {
 										const vi = cause.face_verts[ei], vj = cause.face_verts[(ei + 1) % cause.face_verts.length];
 										const candidate = this.find_edge_point(cause.obj_id, `${Math.min(vi, vj)}-${Math.max(vi, vj)}`, w);
-										if (candidate?.key.startsWith('fi:')) known = candidate;
+										if (candidate?.key.startsWith('pierce:')) known = candidate;
 									}
 								}
 								if (known) {
 									const known_ep = this.endpoints.get(known.key);
-									const blocked = used_fi_keys.has(known.key) && known.key !== prev_clip_end_key;
+									const blocked = used_pierce_keys.has(known.key) && known.key !== prev_clip_end_key;
 									if (known_ep && !blocked) {
-										fi_id = known_ep.id;
+										pierce_id = known_ep.id;
 									}
 								}
 							}
 
-							if (fi_id) {
-								const fi_key_check = endpoint_key(fi_id);
-								if (used_fi_keys.has(fi_key_check) && fi_key_check !== prev_clip_end_key) fi_id = undefined;
-								else used_fi_keys.add(fi_key_check);
+							if (pierce_id) {
+								const pierce_key_check = endpoint_key(pierce_id);
+								if (used_pierce_keys.has(pierce_key_check) && pierce_key_check !== prev_clip_end_key) pierce_id = undefined;
+								else used_pierce_keys.add(pierce_key_check);
 							}
-							id = fi_id ?? { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: `${cause.obj_id}:${cause.face_index ?? -1}`, end: is_start_of_visible ? 'exit' : 'enter', occluder_edge: occ_edge };
+							id = pierce_id ?? { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: `${cause.obj_id}:${cause.face_index ?? -1}`, end: is_start_of_visible ? 'exit' : 'enter', occluder_edge: occ_edge };
 							const ep_key = this.register_endpoint(id, screen, w);
 
 							// Focused CG/F'G' logging
 							if (!this._logged && Topology.isTarget(ek)) {
-								const path = fi_id ? 'fi-reuse' : (occ_edge ? 'oc+edge' : 'oc');
+								const path = pierce_id ? 'pierce-reuse' : (occ_edge ? 'oc+edge' : 'oc');
 								console.log(`[CG×F'G'] Phase2 ${this.prettyEdge(obj.id, ek)} t=${t.toFixed(3)} → ${this.pretty(ep_key)} (${path})${occ_edge ? ` occ_edge=${this.pretty(occ_edge)}` : ''}`);
 							}
 
@@ -836,12 +836,12 @@ export class Topology {
 				const w_b = vec3.lerp(vec3.create(), ep_b_s.world, ep_b_e.world, ix.tb);
 				const w_mid = vec3.lerp(vec3.create(), w_a, w_b, 0.5);
 
-				// Reuse existing oc/fi endpoint on either edge if present
+				// Reuse existing oc/pierce endpoint on either edge if present
 				let ep_key: string | undefined;
 				const existing_a = this.find_edge_point(a.so, a.edge_key, w_a);
 				const existing_b = this.find_edge_point(b.so, b.edge_key, w_b);
-				if (existing_a?.key.startsWith('fi:')) ep_key = existing_a.key;
-				else if (existing_b?.key.startsWith('fi:')) ep_key = existing_b.key;
+				if (existing_a?.key.startsWith('pierce:')) ep_key = existing_a.key;
+				else if (existing_b?.key.startsWith('pierce:')) ep_key = existing_b.key;
 				else if (existing_a) ep_key = existing_a.key;
 				else if (existing_b) ep_key = existing_b.key;
 
@@ -857,8 +857,8 @@ export class Topology {
 				this.add_edge_point(b.so, b.edge_key, ep_key, w_b, screen, ix.tb);
 
 				if (!this._logged && (Topology.isTarget(a.edge_key) || Topology.isTarget(b.edge_key))) {
-					const reused = existing_a?.key.startsWith('fi:') ? `fi-reuse(${this.pretty(existing_a.key)})` :
-						existing_b?.key.startsWith('fi:') ? `fi-reuse(${this.pretty(existing_b.key)})` :
+					const reused = existing_a?.key.startsWith('pierce:') ? `pierce-reuse(${this.pretty(existing_a.key)})` :
+						existing_b?.key.startsWith('pierce:') ? `pierce-reuse(${this.pretty(existing_b.key)})` :
 						existing_a ? `reuse-a(${this.pretty(existing_a.key)})` :
 						existing_b ? `reuse-b(${this.pretty(existing_b.key)})` : 'new-ex';
 					console.log(`[CG×F'G'] Phase4.1 crossing ${this.prettyEdge(a.so, a.edge_key)}×${this.prettyEdge(b.so, b.edge_key)} ta=${ix.ta.toFixed(3)} tb=${ix.tb.toFixed(3)} → ${this.pretty(ep_key)} (${reused})`);
@@ -872,7 +872,7 @@ export class Topology {
 
 		// ── Part 2: Face-polygon clipping for occluding segments ──
 		// For each visible edge, clip against each behind face polygon.
-		// Reuse oc/fi endpoints from edge_points when they match the clip boundaries.
+		// Reuse oc/pierce endpoints from edge_points when they match the clip boundaries.
 		// Create new ex endpoints and face-boundary splits when no match exists.
 		for (const [so_a_id, segs] of this.edge_segments) {
 			for (const seg of segs) {
@@ -902,7 +902,7 @@ if (dist < -0.001) continue;
 						const w_ce = vec3.lerp(vec3.create(), ep_s.world, ep_e.world, t_leave);
 
 						// Tag endpoints — check oc_at_occluder_edge on the front edge
-						// (oc/fi endpoints registered by OTHER edges' Phase 2 clipping)
+						// (oc/pierce endpoints registered by OTHER edges' Phase 2 clipping)
 						const edge_a = `${so_a_id}:${seg.edge_key}`;
 						const oc_list = this.oc_at_occluder_edge.get(edge_a);
 
@@ -911,14 +911,14 @@ if (dist < -0.001) continue;
 						if (oc_list) {
 							for (const sp of oc_list) {
 								const t = Topology.screen_t(cs, ce, sp.screen);
-								const is_fi = sp.key.startsWith('fi:');
-								if (t > -0.01 && t < 0.01 && (!cs_key || is_fi)) cs_key = sp.key;
-								if (t > 0.99 && t < 1.01 && (!ce_key || is_fi)) ce_key = sp.key;
+								const is_pierce = sp.key.startsWith('pierce:');
+								if (t > -0.01 && t < 0.01 && (!cs_key || is_pierce)) cs_key = sp.key;
+								if (t > 0.99 && t < 1.01 && (!ce_key || is_pierce)) ce_key = sp.key;
 							}
 						}
 
 						// Fall back: create ex endpoints and split the face boundary edges
-						// Use occluding_faces array index (fi) to match old code's key format
+						// Use occluding_faces array index (face index) to match old code's key format
 						const face_verts = face.face_verts;
 						if (!cs_key) {
 							const cs_id: EndpointID = { type: T_Endpoint.edge_crossing, edgeA: edge_a, edgeB: `${face.obj_id}:face:${fi}` };

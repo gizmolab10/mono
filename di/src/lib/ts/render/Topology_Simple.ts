@@ -37,7 +37,7 @@ interface VisibleClip {
 	face_pair?: { so_a: string; face_a: number; so_b: string; face_b: number; color: string }; // for intersections
 	start_on_edge?: { so: string; edge_key: string; t: number };
 	end_on_edge?: { so: string; edge_key: string; t: number };
-	start_other_edge?: string;  // edge from the OTHER face at the start point (for fi-fi merge)
+	start_other_edge?: string;  // edge from the OTHER face at the start point (for pierce-pierce merge)
 	end_other_edge?: string;    // edge from the OTHER face at the end point
 	screen: [Pt, Pt];
 	world: [vec3, vec3];
@@ -108,17 +108,17 @@ export class Topology_Simple {
 
 		// ── Pass 1: Visibility ──
 		const clips: VisibleClip[] = [];
-		// Lookup: which fi endpoints sit on which edges (built by 1a, used by 1b)
-		const fi_on_edge = new Map<string, { key: string; face_a: string; face_b: string }[]>();
-		// 1a: Intersection lines (before edges — builds fi_on_edge lookup)
+		// Lookup: which pierce endpoints sit on which edges (built by 1a, used by 1b)
+		const pierce_on_edge = new Map<string, { key: string; face_a: string; face_b: string }[]>();
+		// 1a: Intersection lines (before edges — builds pierce_on_edge lookup)
 		if (input.objects.length > 1) {
-			this.compute_intersection_visibility(input, clips, endpoints, intersection_segments, fi_on_edge);
+			this.compute_intersection_visibility(input, clips, endpoints, intersection_segments, pierce_on_edge);
 		}
 
-		// 1b: Edge visibility (uses fi_on_edge to reuse fi keys at pierce points)
-		this.compute_edge_visibility(input, clips, endpoints, edge_segments, fi_on_edge, intersection_segments);
+		// 1b: Edge visibility (uses pierce_on_edge to reuse pierce keys at pierce points)
+		this.compute_edge_visibility(input, clips, endpoints, edge_segments, pierce_on_edge, intersection_segments);
 
-		// (Pass 1c deleted — fi-corner collapse now handled by Pass 3's vertex-hit merge)
+		// (Pass 1c deleted — pierce-corner collapse now handled by Pass 3's vertex-hit merge)
 
 		// ── Pass 1e: Split edge clips at intersection line endpoints ──
 		// Each intersection line endpoint sits on a face boundary edge (on_edge data).
@@ -134,9 +134,9 @@ export class Topology_Simple {
 					const screen_pt = end === 'start' ? clip.screen[0] : clip.screen[1];
 					const world_pt = end === 'start' ? clip.world[0] : clip.world[1];
 					const fp = clip.face_pair!;
-					const fi_id: EndpointID = { type: T_Endpoint.face_intersection,
+					const pierce_id: EndpointID = { type: T_Endpoint.pierce,
 						faceA: `${fp.so_a}:${fp.face_a}`, faceB: `${fp.so_b}:${fp.face_b}`, end };
-					const fi_key = endpoint_key(fi_id);
+					const pierce_key = endpoint_key(pierce_id);
 
 					// Find the edge segment that contains this point
 					const segs = edge_segments.get(on_edge.so);
@@ -151,13 +151,13 @@ export class Topology_Simple {
 							if (t < 0.01 || t > 0.99) continue;
 							// Split this visible interval at the intersection point
 							const mid: Pt = { x: s.x + (e.x - s.x) * t, y: s.y + (e.y - s.y) * t };
-							// Ensure the fi endpoint exists
-							if (!endpoints.has(fi_key)) {
-								this.register_endpoint(endpoints, fi_id, screen_pt, world_pt);
+							// Ensure the pierce endpoint exists
+							if (!endpoints.has(pierce_key)) {
+								this.register_endpoint(endpoints, pierce_id, screen_pt, world_pt);
 							}
 							// Replace the single interval with two
 							seg.visible.splice(vi, 1, [s, mid], [mid, e]);
-							seg.endpoint_keys.splice(vi, 1, [sk, fi_key], [fi_key, ek]);
+							seg.endpoint_keys.splice(vi, 1, [sk, pierce_key], [pierce_key, ek]);
 							// Also split the corresponding clip in the clips array
 							const clip_idx = clips.findIndex(c =>
 								c.type === 'edge' && c.so === on_edge.so && c.edge_key === on_edge.edge_key &&
@@ -221,7 +221,7 @@ export class Topology_Simple {
 		clips: VisibleClip[],
 		endpoints: Map<string, ComputedEndpoint>,
 		edge_segments: Map<string, ComputedEdgeSeg[]>,
-		fi_on_edge: Map<string, { key: string; face_a: string; face_b: string }[]>,
+		pierce_on_edge: Map<string, { key: string; face_a: string; face_b: string }[]>,
 		_intersection_segments: ComputedIntersectionSeg[],
 	): void {
 		const CORNER_T = 0.01;
@@ -280,20 +280,20 @@ export class Topology_Simple {
 						const w_s = vec3.lerp(vec3.create(), w1, w2, Math.max(0, Math.min(1, t_s)));
 						const w_e = vec3.lerp(vec3.create(), w1, w2, Math.max(0, Math.min(1, t_e)));
 
-						// Tag endpoints — check fi_on_edge before creating oc
-						const find_fi = (cause: OccFaceRef): string | undefined => {
+						// Tag endpoints — check pierce_on_edge before creating oc
+						const find_pierce = (cause: OccFaceRef): string | undefined => {
 							if (!cause) return undefined;
 							const hiding_face = `${cause.obj_id}:${cause.face_index ?? -1}`;
 							const this_edge = `${obj.id}:${ek}`;
-							const fi_list = fi_on_edge.get(this_edge);
-							if (!fi_list) {
+							const pierce_list = pierce_on_edge.get(this_edge);
+							if (!pierce_list) {
 								return undefined;
 							}
-							for (const fi of fi_list) {
-								if (fi.face_a !== hiding_face && fi.face_b !== hiding_face) {
+							for (const p of pierce_list) {
+								if (p.face_a !== hiding_face && p.face_b !== hiding_face) {
 									continue;
 								}
-								return fi.key;
+								return p.key;
 							}
 							return undefined;
 						};
@@ -304,9 +304,9 @@ export class Topology_Simple {
 						} else if (!ci.start_cause && t_s > 1 - CORNER_T) {
 							sk = this.register_corner(endpoints, obj.id, j_idx, ci.start, w_s);
 						} else {
-							const fi_key = find_fi(ci.start_cause);
-							if (fi_key) {
-								sk = fi_key;
+							const pierce_key = find_pierce(ci.start_cause);
+							if (pierce_key) {
+								sk = pierce_key;
 							} else {
 								const edge_id = `${obj.id}:${ek}`;
 								const occ_face = ci.start_cause ? `${ci.start_cause.obj_id}:${ci.start_cause.face_index ?? -1}` : '';
@@ -321,9 +321,9 @@ export class Topology_Simple {
 						} else if (!ci.end_cause && t_e < CORNER_T) {
 							ek2 = this.register_corner(endpoints, obj.id, i, ci.end, w_e);
 						} else {
-							const fi_key = find_fi(ci.end_cause);
-							if (fi_key) {
-								ek2 = fi_key;
+							const pierce_key = find_pierce(ci.end_cause);
+							if (pierce_key) {
+								ek2 = pierce_key;
 							} else {
 								const edge_id = `${obj.id}:${ek}`;
 								const occ_face = ci.end_cause ? `${ci.end_cause.obj_id}:${ci.end_cause.face_index ?? -1}` : '';
@@ -359,7 +359,7 @@ export class Topology_Simple {
 		clips: VisibleClip[],
 		endpoints: Map<string, ComputedEndpoint>,
 		intersection_segments: ComputedIntersectionSeg[],
-		fi_on_edge: Map<string, { key: string; face_a: string; face_b: string }[]>,
+		pierce_on_edge: Map<string, { key: string; face_a: string; face_b: string }[]>,
 	): void {
 		const { objects, occluding_faces } = input;
 
@@ -424,74 +424,6 @@ export class Topology_Simple {
 						const geom = this.intersect_face_pair(fA, fB);
 						if (!geom) continue;
 
-						// One-shot: log edge indices for face pair involving ALPHA face 4 and BETA face 4
-						if (!k.debug.merge_logged && fA.fi === 4 && fB.fi === 4) {
-							// Plane distance checks
-							console.warn(`PLANE: start on ALPHA=${(vec3.dot(fA.n, geom.start) - fA.d).toFixed(2)}, BETA=${(vec3.dot(fB.n, geom.start) - fB.d).toFixed(2)}`);
-							console.warn(`PLANE: oc 'm' on ALPHA=${(vec3.dot(fA.n, vec3.fromValues(462, -319, -26)) - fA.d).toFixed(2)}, BETA=${(vec3.dot(fB.n, vec3.fromValues(462, -319, -26)) - fB.d).toFixed(2)}`);
-							// Log per-edge constraints on BETA face
-							{
-								const _d = vec3.create();
-								vec3.cross(_d, fA.n, fB.n); vec3.normalize(_d, _d);
-								const _ad = [Math.abs(_d[0]), Math.abs(_d[1]), Math.abs(_d[2])];
-								const _mx = _ad[0] >= _ad[1] && _ad[0] >= _ad[2] ? 0 : _ad[1] >= _ad[2] ? 1 : 2;
-								const _a1 = (_mx + 1) % 3, _a2 = (_mx + 2) % 3;
-								const _det = fA.n[_a1] * fB.n[_a2] - fA.n[_a2] * fB.n[_a1];
-								const _p = vec3.create();
-								_p[_a1] = (fA.d * fB.n[_a2] - fB.d * fA.n[_a2]) / _det;
-								_p[_a2] = (fA.n[_a1] * fB.d - fB.n[_a1] * fA.d) / _det;
-								const fvb = fB.obj.faces![fB.fi];
-								console.log(`BETA edge constraints:`);
-								for (let ei = 0; ei < fB.corners.length; ei++) {
-									const c0 = fB.corners[ei], c1 = fB.corners[(ei + 1) % fB.corners.length];
-									const ev = vec3.sub(vec3.create(), c1, c0);
-									const inw = vec3.cross(vec3.create(), fB.n, ev);
-									const diff = vec3.sub(vec3.create(), _p, c0);
-									const num = vec3.dot(inw, diff);
-									const align = vec3.dot(inw, _d);
-									const vi = fvb[ei], vj = fvb[(ei + 1) % fvb.length];
-									const en = `${String.fromCharCode(65+vi)}'${String.fromCharCode(65+vj)}'`;
-									if (Math.abs(align) < 1e-12) {
-										console.log(`  ${en}: parallel, offset=${num.toFixed(1)}`);
-									} else {
-										const t = -num / align;
-										console.log(`  ${en}: t=${t.toFixed(1)}, ${align > 0 ? 'ENTER' : 'LEAVE'}`);
-									}
-								}
-							}
-							// Re-run clips to get raw ra/rb values
-							const _dir2 = vec3.create();
-							vec3.cross(_dir2, fA.n, fB.n);
-							vec3.normalize(_dir2, _dir2);
-							const _nA2 = fA.n, _nB2 = fB.n, _dA2 = fA.d, _dB2 = fB.d;
-							const _ad = [Math.abs(_dir2[0]), Math.abs(_dir2[1]), Math.abs(_dir2[2])];
-							const _mx = _ad[0] >= _ad[1] && _ad[0] >= _ad[2] ? 0 : _ad[1] >= _ad[2] ? 1 : 2;
-							const _a12 = (_mx + 1) % 3, _a22 = (_mx + 2) % 3;
-							const _det2 = _nA2[_a12] * _nB2[_a22] - _nA2[_a22] * _nB2[_a12];
-							const _p02 = vec3.create();
-							_p02[_a12] = (_dA2 * _nB2[_a22] - _dB2 * _nA2[_a22]) / _det2;
-							_p02[_a22] = (_nA2[_a12] * _dB2 - _nB2[_a12] * _dA2) / _det2;
-							const _ra2 = this.clip_to_quad_with_edges(_p02, _dir2, fA.corners, fA.n, -1e6, 1e6);
-							const _rb2 = _ra2 ? this.clip_to_quad_with_edges(_p02, _dir2, fB.corners, fB.n, _ra2[0], _ra2[1]) : null;
-							const vtxN = (f: typeof fA, ei: number) => {
-								const fvl = f.obj.faces![f.fi];
-								const vi = fvl[ei], vj = fvl[(ei + 1) % fvl.length];
-								const p = f === fB ? "'" : '';
-								return `${String.fromCharCode(65+vi)}${p}${String.fromCharCode(65+vj)}${p}`;
-							};
-							console.log(`HGCD x H'G'C'D' clip details:`);
-							if (_ra2) console.log(`  ALPHA: t=${_ra2[0].toFixed(1)} to ${_ra2[1].toFixed(1)}, enter ${vtxN(fA, _ra2[2])}, leave ${vtxN(fA, _ra2[3])}`);
-							if (_rb2) console.log(`  BETA:  t=${_rb2[0].toFixed(1)} to ${_rb2[1].toFixed(1)}, enter ${vtxN(fB, _rb2[2])}, leave ${vtxN(fB, _rb2[3])}`);
-							const ws = geom.start, we = geom.end;
-							console.log(`  start: (${ws[0].toFixed(0)}, ${ws[1].toFixed(0)}, ${ws[2].toFixed(0)}), end: (${we[0].toFixed(0)}, ${we[1].toFixed(0)}, ${we[2].toFixed(0)})`);
-							// Show BETA corners for reference
-							const fvb = fB.obj.faces![fB.fi];
-							for (let _ci = 0; _ci < fB.corners.length; _ci++) {
-								const c = fB.corners[_ci];
-								console.log(`  BETA corner ${String.fromCharCode(65+fvb[_ci])}': (${c[0].toFixed(0)}, ${c[1].toFixed(0)}, ${c[2].toFixed(0)})`);
-							}
-						}
-
 						const identity = mat4.create();
 						const s1 = input.project_vertex(geom.start, identity);
 						const s2 = input.project_vertex(geom.end, identity);
@@ -501,7 +433,7 @@ export class Topology_Simple {
 						const p2: Pt = { x: s2.x, y: s2.y };
 
 						// Skip both objects' faces — the intersection line lies on both objects' surfaces.
-						// The fi-fi skip in Pass 3 handles hidden intersection line sections.
+						// The pierce-pierce skip in Pass 3 handles hidden intersection line sections.
 						const intervals = this.clip_segment_for_occlusion_rich(
 							p1, p2, geom.start, geom.end, [fA.obj.id, fB.obj.id], [fA, fB], input,
 						);
@@ -527,7 +459,7 @@ export class Topology_Simple {
 							const t = len_sq > 1e-10 ? vec3.dot(pt_vec, edge_vec) / len_sq : 0;
 							return { so: f.obj.id, edge_key: ek_str, t };
 						};
-						// Also compute edge info from the OTHER face (for fi-fi merge)
+						// Also compute edge info from the OTHER face (for pierce-pierce merge)
 						const other_edge_info = (e: { face: 'A' | 'B'; edge_idx: number }, world_pt: vec3) => {
 							const f = e.face === 'A' ? fB : fA; // opposite face
 							const face_verts = f.obj.faces![f.fi];
@@ -558,14 +490,14 @@ export class Topology_Simple {
 						const se_other = other_edge_info(geom.start_edge, geom.start);
 						const ee_other = other_edge_info(geom.end_edge, geom.end);
 
-						// Tag endpoints — fi for unoccluded ends, oc for occluded ends
+						// Tag endpoints — pierce for unoccluded ends, oc for occluded ends
 						const ep_keys: [string, string][] = [];
 						for (const ci of intervals) {
 							const t_s = Topology_Simple.screen_t(p1, p2, ci.start);
 							const w_s = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_s)));
 							let s_id: EndpointID;
 							if (!ci.start_cause) {
-								s_id = { type: T_Endpoint.face_intersection, faceA: face_key_a, faceB: face_key_b, end: 'start' };
+								s_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'start' };
 							} else {
 								const occ_id = `${ci.start_cause.obj_id}:${ci.start_cause.face_index ?? -1}`;
 								s_id = { type: T_Endpoint.occlusion_clip, edge: `ix:${face_key_a}:${face_key_b}`, occluder_face: occ_id, end: 'exit' };
@@ -576,7 +508,7 @@ export class Topology_Simple {
 							const w_e = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_e)));
 							let e_id: EndpointID;
 							if (!ci.end_cause) {
-								e_id = { type: T_Endpoint.face_intersection, faceA: face_key_a, faceB: face_key_b, end: 'end' };
+								e_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'end' };
 							} else {
 								const occ_id = `${ci.end_cause.obj_id}:${ci.end_cause.face_index ?? -1}`;
 								e_id = { type: T_Endpoint.occlusion_clip, edge: `ix:${face_key_a}:${face_key_b}`, occluder_face: occ_id, end: 'enter' };
@@ -585,19 +517,19 @@ export class Topology_Simple {
 
 							ep_keys.push([s_key, e_key]);
 
-							// Register fi endpoints on their edges for Pass 1b lookup
+							// Register pierce endpoints on their edges for Pass 1b lookup
 							if (!ci.start_cause) {
 								const edge_full = `${se.so}:${se.edge_key}`;
-								let list = fi_on_edge.get(edge_full);
-								if (!list) { list = []; fi_on_edge.set(edge_full, list); }
+								let list = pierce_on_edge.get(edge_full);
+								if (!list) { list = []; pierce_on_edge.set(edge_full, list); }
 								if (!list.some(e => e.key === s_key)) {
 									list.push({ key: s_key, face_a: face_key_a, face_b: face_key_b });
 								}
 							}
 							if (!ci.end_cause) {
 								const edge_full = `${ee.so}:${ee.edge_key}`;
-								let list = fi_on_edge.get(edge_full);
-								if (!list) { list = []; fi_on_edge.set(edge_full, list); }
+								let list = pierce_on_edge.get(edge_full);
+								if (!list) { list = []; pierce_on_edge.set(edge_full, list); }
 								if (!list.some(e => e.key === e_key)) {
 									list.push({ key: e_key, face_a: face_key_a, face_b: face_key_b });
 								}
@@ -737,19 +669,7 @@ export class Topology_Simple {
 
 				const ix = Topology_Simple.intersect_2d(a.screen[0], a.screen[1], b.screen[0], b.screen[1]);
 
-				// Log checks for HGCD×H'G'C'D' intersection vs ALPHA edge GH
-				if (!k.debug.merge_logged) {
-					const isIx = (c: VisibleClip) => c.type === 'intersection' && c.face_pair?.face_a === 4 && c.face_pair?.face_b === 4;
-					const isGH = (c: VisibleClip) => c.type === 'edge' && c.edge_key === '6-7';
-					if ((isIx(a) && isGH(b)) || (isIx(b) && isGH(a))) {
-						const ixClip = isIx(a) ? a : b;
-						const edClip = isIx(a) ? b : a;
-						console.warn(`arrangement: HGCD×H'G'C'D' vs edge GH (${edClip.so === ixClip.so ? 'same' : 'diff'} object)`);
-						console.warn(`  ix screen: (${ixClip.screen[0].x.toFixed(0)},${ixClip.screen[0].y.toFixed(0)}) to (${ixClip.screen[1].x.toFixed(0)},${ixClip.screen[1].y.toFixed(0)})`);
-						console.warn(`  edge screen: (${edClip.screen[0].x.toFixed(0)},${edClip.screen[0].y.toFixed(0)}) to (${edClip.screen[1].x.toFixed(0)},${edClip.screen[1].y.toFixed(0)})`);
-						console.warn(`  2D intersection: ${ix ? `ta=${ix.ta.toFixed(3)} tb=${ix.tb.toFixed(3)}` : 'null'}`);
-					}
-				}
+
 
 				if (!ix) continue;
 				if (ix.ta < -0.01 || ix.ta > 1.01 || ix.tb < -0.01 || ix.tb > 1.01) continue;
@@ -763,13 +683,9 @@ export class Topology_Simple {
 
 				crossings.push({ clip_a: i, clip_b: j, ta: ix.ta, tb: ix.tb, screen, world_a, world_b });
 
-				if (!k.debug.merge_logged && (a.edge_key === '6-7' || b.edge_key === '6-7')) {
-					console.warn(`crossing found: ${a.type} ${a.so} ${a.edge_key ?? 'ix'} x ${b.type} ${b.so} ${b.edge_key ?? 'ix'}, ta=${ix.ta.toFixed(3)} tb=${ix.tb.toFixed(3)}`);
-				}
 			}
 		}
 
-		if (!k.debug.merge_logged) console.warn(`arrangement: ${crossings.length} crossings total`);
 		if (crossings.length === 0) return;
 
 		// 2b: Group crossings by clip and split
@@ -1025,7 +941,7 @@ export class Topology_Simple {
 		// Intermediate endpoints = crossing identity
 
 		// Track which endpoints come from intersection lines on which edges (for merge step)
-		const fi_edge_map: { key: string; edge_full: string; other_edge: string; t: number; face_a: string; face_b: string }[] = [];
+		const pierce_edge_map: { key: string; edge_full: string; other_edge: string; t: number; face_a: string; face_b: string }[] = [];
 
 		for (let ci = 0; ci < clips.length; ci++) {
 			const clip = clips[ci];
@@ -1035,8 +951,8 @@ export class Topology_Simple {
 				: [];
 
 			// Identify the original clip's start and end endpoints
-			this.identify_clip_endpoint(clip, 'start', input, endpoints, CORNER_T, fi_edge_map);
-			this.identify_clip_endpoint(clip, 'end', input, endpoints, CORNER_T, fi_edge_map);
+			this.identify_clip_endpoint(clip, 'start', input, endpoints, CORNER_T, pierce_edge_map);
+			this.identify_clip_endpoint(clip, 'end', input, endpoints, CORNER_T, pierce_edge_map);
 
 			// Crossing endpoints (splits)
 			for (const sp of sorted_splits) {
@@ -1055,18 +971,18 @@ export class Topology_Simple {
 
 		const key_rewrites = new Map<string, string>(); // old key → new key
 
-		// ── Topological merge: fi = fi (runs first) ──
+		// ── Topological merge: pierce = pierce (runs first) ──
 		// Two intersection endpoints on the same edge are the same point when:
 		// 1. They share one face (e.g., both involve D'C'B'A')
 		// 2. Their non-shared faces both contain the edge (i.e., they're adjacent faces sharing that edge)
 		// Pure topology — no distance or parametric comparison.
-		// ── Topological merge: fi = fi (runs first) ──
+		// ── Topological merge: pierce = pierce (runs first) ──
 		// Tier 1: Both endpoints have edge info from both faces.
 		// Two edges can only cross at one point — same edge pair = same point.
-		for (let i = 0; i < fi_edge_map.length; i++) {
-			for (let j = i + 1; j < fi_edge_map.length; j++) {
-				const a = fi_edge_map[i];
-				const b = fi_edge_map[j];
+		for (let i = 0; i < pierce_edge_map.length; i++) {
+			for (let j = i + 1; j < pierce_edge_map.length; j++) {
+				const a = pierce_edge_map[i];
+				const b = pierce_edge_map[j];
 				if (a.key === b.key) continue;
 				if (!a.other_edge || !b.other_edge) continue;
 				const pair_a = a.edge_full < a.other_edge ? `${a.edge_full}|${a.other_edge}` : `${a.other_edge}|${a.edge_full}`;
@@ -1081,10 +997,10 @@ export class Topology_Simple {
 		// Tier 2: Only the constraining edge is known (point is inside the other face).
 		// A BETA face's plane crosses an ALPHA edge at exactly one point.
 		// So: same ALPHA edge + same BETA face (from the other object) = same point.
-		for (let i = 0; i < fi_edge_map.length; i++) {
-			for (let j = i + 1; j < fi_edge_map.length; j++) {
-				const a = fi_edge_map[i];
-				const b = fi_edge_map[j];
+		for (let i = 0; i < pierce_edge_map.length; i++) {
+			for (let j = i + 1; j < pierce_edge_map.length; j++) {
+				const a = pierce_edge_map[i];
+				const b = pierce_edge_map[j];
 				if (a.key === b.key) continue;
 				if (a.edge_full !== b.edge_full) continue;
 				if (a.other_edge || b.other_edge) continue; // tier 1 handles these
@@ -1101,7 +1017,7 @@ export class Topology_Simple {
 			}
 		}
 
-		// ── Topological merge: fi = oc ──
+		// ── Topological merge: pierce = oc ──
 		// Same edge + the hiding face matches one of the intersection's faces (face-level, not object-level).
 		const oc_edge_map: { key: string; edge_full: string; caused_by: string }[] = [];
 		for (const [key, ep] of endpoints) {
@@ -1111,40 +1027,23 @@ export class Topology_Simple {
 			}
 		}
 
-		if (!k.debug.merge_logged) {
-			const gh_ocs = oc_edge_map.filter(o => o.edge_full.includes('6-7'));
-			const gh_fis = fi_edge_map.filter(f => f.edge_full.includes('6-7') || f.other_edge.includes('6-7'));
-			console.log(`endpoints on edge GH or G'H': ${gh_ocs.length} occlusion clips, ${gh_fis.length} intersection points`);
-			for (const o of gh_ocs) {
-				const ep = endpoints.get(o.key);
-				const pos = ep ? `(${ep.screen.x.toFixed(0)}, ${ep.screen.y.toFixed(0)}) world (${ep.world[0].toFixed(0)}, ${ep.world[1].toFixed(0)}, ${ep.world[2].toFixed(0)})` : '?';
-				const edge_label = o.edge_full.replace(/obj_1/, 'ALPHA').replace(/obj_2/, 'BETA').replace(/(\d+)-(\d+)/, (_, a, b) => String.fromCharCode(65+Number(a)) + String.fromCharCode(65+Number(b)));
-				console.log(`  oc on ${edge_label} hidden by ${o.caused_by}: ${pos}`);
-			}
-			// Also show the HGCD×H'G'C'D' start endpoint position
-			const m_key = 'fi:obj_1:4:obj_2:4:start';
-			const m_ep = endpoints.get(m_key);
-			if (m_ep) {
-				console.log(`  HGCD×H'G'C'D' start: screen (${m_ep.screen.x.toFixed(0)}, ${m_ep.screen.y.toFixed(0)}) world (${m_ep.world[0].toFixed(0)}, ${m_ep.world[1].toFixed(0)}, ${m_ep.world[2].toFixed(0)})`);
-			}
-		}
-		for (const fi of fi_edge_map) {
-			const fi_ep = endpoints.get(fi.key);
-			if (!fi_ep) continue;
+		for (const p of pierce_edge_map) {
+			const pierce_ep = endpoints.get(p.key);
+			if (!pierce_ep) continue;
 			for (const oc of oc_edge_map) {
-				if (oc.edge_full !== fi.edge_full && oc.edge_full !== fi.other_edge) continue;
-				if (oc.caused_by !== fi.face_a && oc.caused_by !== fi.face_b) continue;
-				if (oc.key === fi.key) continue;
+				if (oc.edge_full !== p.edge_full && oc.edge_full !== p.other_edge) continue;
+				if (oc.caused_by !== p.face_a && oc.caused_by !== p.face_b) continue;
+				if (oc.key === p.key) continue;
 				// Verify they're the same physical point — not just on the same edge
 				const oc_ep = endpoints.get(oc.key);
-				if (oc_ep && vec3.distance(fi_ep.world, oc_ep.world) > 5) continue;
-				if (!k.debug.merge_logged) console.log(`fi-oc: ${oc.key} → ${fi.key}`);
+				if (oc_ep && vec3.distance(pierce_ep.world, oc_ep.world) > 5) continue;
+				if (!k.debug.merge_logged) console.log(`pierce-oc: ${oc.key} → ${p.key}`);
 				endpoints.delete(oc.key);
-				key_rewrites.set(oc.key, fi.key);
+				key_rewrites.set(oc.key, p.key);
 			}
 		}
 
-		// ── Topological merge: fi at vertex = corner ──
+		// ── Topological merge: pierce at vertex = corner ──
 		for (let ci = 0; ci < clips.length; ci++) {
 			const clip = clips[ci];
 			if (clip.type !== 'intersection') continue;
@@ -1153,16 +1052,16 @@ export class Topology_Simple {
 				const cause = end === 'start' ? clip.start_cause : clip.end_cause;
 				if (!vtx_info || cause) continue;
 				const corner_key = endpoint_key({ type: T_Endpoint.corner, so: vtx_info.so, vertex: vtx_info.vertex });
-				const fi_face_pair = clip.face_pair!;
-				const fi_id: EndpointID = { type: T_Endpoint.face_intersection,
-					faceA: `${fi_face_pair.so_a}:${fi_face_pair.face_a}`,
-					faceB: `${fi_face_pair.so_b}:${fi_face_pair.face_b}`,
+				const pierce_face_pair = clip.face_pair!;
+				const pierce_id: EndpointID = { type: T_Endpoint.pierce,
+					faceA: `${pierce_face_pair.so_a}:${pierce_face_pair.face_a}`,
+					faceB: `${pierce_face_pair.so_b}:${pierce_face_pair.face_b}`,
 					end };
-				const fi_key = endpoint_key(fi_id);
-				if (endpoints.has(fi_key) && endpoints.has(corner_key)) {
+				const pierce_key = endpoint_key(pierce_id);
+				if (endpoints.has(pierce_key) && endpoints.has(corner_key)) {
 						if (!k.debug.merge_logged) console.log('corner merge');
-					endpoints.delete(fi_key);
-					key_rewrites.set(fi_key, corner_key);
+					endpoints.delete(pierce_key);
+					key_rewrites.set(pierce_key, corner_key);
 				}
 			}
 		}
@@ -1186,9 +1085,9 @@ export class Topology_Simple {
 					pair[1] = rewrite(pair[1]);
 				}
 			}
-			// Also rewrite fi_edge_map so occluding segment matching finds the right keys
-			for (const fi of fi_edge_map) {
-				fi.key = rewrite(fi.key);
+			// Also rewrite pierce_edge_map so occluding segment matching finds the right keys
+			for (const p of pierce_edge_map) {
+				p.key = rewrite(p.key);
 			}
 		}
 
@@ -1221,26 +1120,26 @@ export class Topology_Simple {
 			let leave_key: string | undefined;
 
 			// Helper: find an intersection endpoint on a specific boundary edge of this face
-			const find_fi_on_boundary = (poly_edge_idx: number): string | undefined => {
+			const find_pierce_on_boundary = (poly_edge_idx: number): string | undefined => {
 				if (poly_edge_idx < 0 || !fbc.face_verts) return undefined;
 				const vi = fbc.face_verts[poly_edge_idx];
 				const vj = fbc.face_verts[(poly_edge_idx + 1) % fbc.face_verts.length];
 				const boundary_ek = `${Math.min(vi, vj)}-${Math.max(vi, vj)}`;
 				const boundary_full = `${fbc.face_so}:${boundary_ek}`;
-				// Search fi_edge_map for an intersection endpoint on this boundary edge
-				for (const fi of fi_edge_map) {
-					if (fi.edge_full !== boundary_full) continue;
+				// Search pierce_edge_map for an intersection endpoint on this boundary edge
+				for (const p of pierce_edge_map) {
+					if (p.edge_full !== boundary_full) continue;
 					// Check that the intersection involves the face being crossed
 					const face_key = `${fbc.face_so}:${fbc.face_index}`;
-					if (fi.face_a === face_key || fi.face_b === face_key) {
-						return fi.key;
+					if (p.face_a === face_key || p.face_b === face_key) {
+						return p.key;
 					}
 				}
 				return undefined;
 			};
 
 			// Helper: search all boundary edges of this face for any matching intersection endpoint
-			const find_fi_any_boundary = (): string | undefined => {
+			const find_pierce_any_boundary = (): string | undefined => {
 				if (!fbc.face_verts) return undefined;
 				const face_key = `${fbc.face_so}:${fbc.face_index}`;
 				const candidates: string[] = [];
@@ -1249,10 +1148,10 @@ export class Topology_Simple {
 					const vj = fbc.face_verts[(ei + 1) % fbc.face_verts.length];
 					const boundary_ek = `${Math.min(vi, vj)}-${Math.max(vi, vj)}`;
 					const boundary_full = `${fbc.face_so}:${boundary_ek}`;
-					for (const fi of fi_edge_map) {
-						if (fi.edge_full !== boundary_full) continue;
-						if (fi.face_a === face_key || fi.face_b === face_key) {
-							candidates.push(fi.key);
+					for (const p of pierce_edge_map) {
+						if (p.edge_full !== boundary_full) continue;
+						if (p.face_a === face_key || p.face_b === face_key) {
+							candidates.push(p.key);
 						}
 					}
 				}
@@ -1261,8 +1160,8 @@ export class Topology_Simple {
 
 			// For entry: try boundary-edge match first, then use edge clip's own endpoint
 			if (fbc.enter_boundary_edge >= 0) {
-				enter_key = find_fi_on_boundary(fbc.enter_boundary_edge);
-				if (!enter_key) enter_key = find_fi_any_boundary();
+				enter_key = find_pierce_on_boundary(fbc.enter_boundary_edge);
+				if (!enter_key) enter_key = find_pierce_any_boundary();
 			}
 			if (!enter_key && fbc.t_enter < 0.01) {
 				// Edge starts inside face — use the edge clip's own start endpoint
@@ -1271,8 +1170,8 @@ export class Topology_Simple {
 
 			// For exit: try boundary-edge match first, then use edge clip's own endpoint
 			if (fbc.leave_boundary_edge >= 0) {
-				leave_key = find_fi_on_boundary(fbc.leave_boundary_edge);
-				if (!leave_key) leave_key = find_fi_any_boundary();
+				leave_key = find_pierce_on_boundary(fbc.leave_boundary_edge);
+				if (!leave_key) leave_key = find_pierce_any_boundary();
 			}
 			if (!leave_key && fbc.t_leave > 0.99) {
 				// Edge ends inside face — use the edge clip's own end endpoint
@@ -1303,7 +1202,7 @@ export class Topology_Simple {
 
 			// Skip if both endpoints are intersection endpoints — this traces a hidden
 			// intersection line that the visibility clipper correctly removed.
-			if (enter_key.startsWith('fi:') && leave_key.startsWith('fi:')) {
+			if (enter_key.startsWith('pierce:') && leave_key.startsWith('pierce:')) {
 				continue;
 			}
 
@@ -1340,7 +1239,7 @@ export class Topology_Simple {
 		input: TopologyInput,
 		endpoints: Map<string, ComputedEndpoint>,
 		CORNER_T: number,
-		fi_edge_map: { key: string; edge_full: string; other_edge: string; t: number; face_a: string; face_b: string }[],
+		pierce_edge_map: { key: string; edge_full: string; other_edge: string; t: number; face_a: string; face_b: string }[],
 	): string {
 		const screen = end === 'start' ? clip.screen[0] : clip.screen[1];
 		const world = end === 'start' ? clip.world[0] : clip.world[1];
@@ -1383,13 +1282,13 @@ export class Topology_Simple {
 				return this.register_corner(endpoints, vtx_info.so, vtx_info.vertex, screen, world);
 			}
 			// Face intersection endpoint
-			const id: EndpointID = { type: T_Endpoint.face_intersection, faceA: face_key_a, faceB: face_key_b, end };
+			const id: EndpointID = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end };
 			const key = this.register_endpoint(endpoints, id, screen, world);
 			// Track for merge step
 			const on_edge = end === 'start' ? clip.start_on_edge : clip.end_on_edge;
 			if (on_edge) {
 				const other_edge = end === 'start' ? (clip.start_other_edge ?? '') : (clip.end_other_edge ?? '');
-				fi_edge_map.push({ key, edge_full: `${on_edge.so}:${on_edge.edge_key}`, other_edge, t: on_edge.t, face_a: face_key_a, face_b: face_key_b });
+				pierce_edge_map.push({ key, edge_full: `${on_edge.so}:${on_edge.edge_key}`, other_edge, t: on_edge.t, face_a: face_key_a, face_b: face_key_b });
 			}
 			return key;
 		}

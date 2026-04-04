@@ -101,8 +101,8 @@ class Render {
 	/** Precomputed endpoint identities (computed once, consumed by facets). */
 	private computed_endpoints = new Map<string, ComputedEndpoint>();
 
-	/** Map from edge+occluder to face_intersection identity.
-	 *  Key: "so:edge_key:occ_obj:occ_face" → array of EndpointIDs of type face_intersection.
+	/** Map from edge+occluder to pierce identity.
+	 *  Key: "so:edge_key:occ_obj:occ_face" → array of EndpointIDs of type pierce.
 	 *  Built during intersection compute, consumed during edge compute. */
 	private intersection_clip_map = new Map<string, EndpointID[]>();
 
@@ -112,7 +112,7 @@ class Render {
 
 	/** Fi endpoints by edge: for merging coincident fi endpoints on shared edges.
 	 *  Key: "so:edge_key" → list of { key, world }. */
-	private fi_on_edge = new Map<string, { key: string; world: vec3 }[]>();
+	private pierce_on_edge = new Map<string, { key: string; world: vec3 }[]>();
 
 	/** Split points: crossing segment endpoints that need to split a target SO's edge. */
 	private crossing_splits: { so: string; edge_key: string; screen: Pt; world: vec3; ep_key: string; poly_edge_idx: number }[] = [];
@@ -390,7 +390,7 @@ class Render {
 			this.computed_endpoints.clear();
 			this.oc_at_occluder_edge.clear();
 			this.intersection_edge_splits = [];
-			this.fi_on_edge.clear();
+			this.pierce_on_edge.clear();
 			if (objects.length > 1) {
 				this.compute_visible_intersection_segments(objects);
 			} else {
@@ -846,23 +846,23 @@ class Render {
 							id = { type: T_Endpoint.corner, so: obj.id, vertex: j };
 						} else if (cause) {
 							const clip_key = `${obj.id}:${ek}:${cause.obj_id}:${cause.face_index ?? -1}`;
-							const fi_list = this.intersection_clip_map.get(clip_key);
-							let fi_id: EndpointID | undefined;
-							if (fi_list && fi_list.length === 1) {
-								fi_id = fi_list[0];
-							} else if (fi_list && fi_list.length > 1) {
+							const pierce_list = this.intersection_clip_map.get(clip_key);
+							let pierce_id: EndpointID | undefined;
+							if (pierce_list && pierce_list.length === 1) {
+								pierce_id = pierce_list[0];
+							} else if (pierce_list && pierce_list.length > 1) {
 								// Multiple fi endpoints on same edge+face — pick closest by world position
 								let best_dist = Infinity;
-								for (const candidate of fi_list) {
-									if (candidate.type !== T_Endpoint.face_intersection) continue;
+								for (const candidate of pierce_list) {
+									if (candidate.type !== T_Endpoint.pierce) continue;
 									const ckey = endpoint_key(candidate);
-									if (used_fi_keys.has(ckey)) continue;
+									if (used_pierce_keys.has(ckey)) continue;
 									const cep = this.computed_endpoints.get(ckey);
 									if (!cep) continue;
 									const d = vec3.distance(w, cep.world);
 									if (d < best_dist) {
 										best_dist = d;
-										fi_id = candidate;
+										pierce_id = candidate;
 									}
 								}
 							}
@@ -870,12 +870,12 @@ class Render {
 							? (() => { const vi = cause.face_verts![poly_edge_idx]; const vj = cause.face_verts![(poly_edge_idx + 1) % cause.face_verts!.length]; return `${cause.obj_id}:${Math.min(vi, vj)}-${Math.max(vi, vj)}`; })()
 							: undefined;
 							// Don't reuse the same fi key twice on the same edge
-							if (fi_id) {
-								const fi_key_check = endpoint_key(fi_id);
-								if (used_fi_keys.has(fi_key_check)) fi_id = undefined;
-								else used_fi_keys.add(fi_key_check);
+							if (pierce_id) {
+								const pierce_key_check = endpoint_key(pierce_id);
+								if (used_pierce_keys.has(pierce_key_check)) pierce_id = undefined;
+								else used_pierce_keys.add(pierce_key_check);
 							}
-							id = fi_id ?? { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: `${cause.obj_id}:${cause.face_index ?? -1}`, end: is_start_of_visible ? 'exit' : 'enter', occluder_edge: occ_edge };
+							id = pierce_id ?? { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: `${cause.obj_id}:${cause.face_index ?? -1}`, end: is_start_of_visible ? 'exit' : 'enter', occluder_edge: occ_edge };
 							const ep_key = this.register_endpoint(id, screen, w);
 							// Register reverse mapping: occluder_edge → this oc endpoint
 							if (occ_edge) {
@@ -892,7 +892,7 @@ class Render {
 						return this.register_endpoint(id, screen, w);
 					};
 
-					const used_fi_keys = new Set<string>();
+					const used_pierce_keys = new Set<string>();
 					for (const ci of clips) {
 
 						const t_s = Render.screen_t(a, b, ci.start);
@@ -1037,17 +1037,17 @@ class Render {
 						// intersection already registered an fi at the same world position
 						const find_coincident_fi = (world_pt: vec3, ei: typeof se): string | null => {
 							const edge_full = `${ei.so}:${ei.edge_key}`;
-							const list = this.fi_on_edge.get(edge_full);
+							const list = this.pierce_on_edge.get(edge_full);
 							if (!list) return null;
 							for (const entry of list) {
 								if (vec3.distance(entry.world, world_pt) < 1e-4) return entry.key;
 							}
 							return null;
 						};
-						const register_fi_on_edge = (key: string, world_pt: vec3, ei: typeof se) => {
+						const register_pierce_on_edge = (key: string, world_pt: vec3, ei: typeof se) => {
 							const edge_full = `${ei.so}:${ei.edge_key}`;
-							let list = this.fi_on_edge.get(edge_full);
-							if (!list) { list = []; this.fi_on_edge.set(edge_full, list); }
+							let list = this.pierce_on_edge.get(edge_full);
+							if (!list) { list = []; this.pierce_on_edge.set(edge_full, list); }
 							if (!list.some(e => e.key === key)) {
 								list.push({ key, world: world_pt });
 							}
@@ -1056,7 +1056,7 @@ class Render {
 						// Build graph segments from visible clip intervals only
 						const ep_keys: [string, string][] = [];
 						for (const ci of clips) {
-							// Tag start: corner if at vertex, face_intersection if at geometric boundary, occlusion_clip if clipped
+							// Tag start: corner if at vertex, pierce if at geometric boundary, occlusion_clip if clipped
 							let s_id: EndpointID;
 							if (!ci.start_cause && start_corner) {
 								s_id = start_corner;
@@ -1066,7 +1066,7 @@ class Render {
 								if (existing) {
 									s_id = this.computed_endpoints.get(existing)!.id;
 								} else {
-									s_id = { type: T_Endpoint.face_intersection, faceA: face_key_a, faceB: face_key_b, end: 'start' };
+									s_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'start' };
 								}
 							} else {
 								const occ_id = `${ci.start_cause.obj_id}:${ci.start_cause.face_index ?? -1}`;
@@ -1079,7 +1079,7 @@ class Render {
 							const w_s = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_s)));
 							const s_key = this.register_endpoint(s_id, ci.start, w_s);
 							// Register fi on edge for coincidence merging
-							if (s_id.type === T_Endpoint.face_intersection) register_fi_on_edge(s_key, w_s, se);
+							if (s_id.type === T_Endpoint.pierce) register_pierce_on_edge(s_key, w_s, se);
 							// Register reverse mapping, edge split, and same-SO crossing data for intersection oc endpoints
 							if (s_id.type === T_Endpoint.occlusion_clip && s_id.occluder_edge) {
 								let list = this.oc_at_occluder_edge.get(s_id.occluder_edge);
@@ -1092,7 +1092,7 @@ class Render {
 								this.intersection_edge_splits.push({ so: s_id.occluder_edge.slice(0, colon), edge_key: s_id.occluder_edge.slice(colon + 1), screen: ci.start, world: w_s, ep_key: s_key });
 							}
 
-							// Tag end: corner if at vertex, face_intersection if at geometric boundary, occlusion_clip if clipped
+							// Tag end: corner if at vertex, pierce if at geometric boundary, occlusion_clip if clipped
 							let e_id: EndpointID;
 							if (!ci.end_cause && end_corner) {
 								e_id = end_corner;
@@ -1101,7 +1101,7 @@ class Render {
 								if (existing_e) {
 									e_id = this.computed_endpoints.get(existing_e)!.id;
 								} else {
-									e_id = { type: T_Endpoint.face_intersection, faceA: face_key_a, faceB: face_key_b, end: 'end' };
+									e_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'end' };
 								}
 							} else {
 								const occ_id = `${ci.end_cause.obj_id}:${ci.end_cause.face_index ?? -1}`;
@@ -1114,7 +1114,7 @@ class Render {
 							const w_e = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_e)));
 							const e_key = this.register_endpoint(e_id, ci.end, w_e);
 							// Register fi on edge for coincidence merging
-							if (e_id.type === T_Endpoint.face_intersection) register_fi_on_edge(e_key, w_e, ee);
+							if (e_id.type === T_Endpoint.pierce) register_pierce_on_edge(e_key, w_e, ee);
 							// Register reverse mapping, edge split, and same-SO crossing data for intersection oc endpoints
 							if (e_id.type === T_Endpoint.occlusion_clip && e_id.occluder_edge) {
 								let list = this.oc_at_occluder_edge.get(e_id.occluder_edge);
@@ -1137,10 +1137,10 @@ class Render {
 						const first_s_id = first_s_key ? this.computed_endpoints.get(first_s_key)?.id : null;
 						const last_e_id = last_e_key ? this.computed_endpoints.get(last_e_key)?.id : null;
 
-						// Register intersection exits — only for face_intersection or corner identities
+						// Register intersection exits — only for pierce or corner identities
 						// Occlusion clips on intersection lines are NOT edge exit points
 						const is_edge_exit = (id: EndpointID | null) =>
-							id?.type === T_Endpoint.face_intersection || id?.type === T_Endpoint.corner;
+							id?.type === T_Endpoint.pierce || id?.type === T_Endpoint.corner;
 
 						const add_clip = (key: string, id: EndpointID) => {
 							let list = this.intersection_clip_map.get(key);
@@ -1159,7 +1159,7 @@ class Render {
 								se_list.push({ key: first_s_key, screen: se_ep.screen, world: se_ep.world });
 							}
 							// Split the edge this fi endpoint sits on
-							if (first_s_id.type === T_Endpoint.face_intersection) {
+							if (first_s_id.type === T_Endpoint.pierce) {
 								this.intersection_edge_splits.push({ so: se.so, edge_key: se.edge_key, screen: se_ep.screen, world: se_ep.world, ep_key: first_s_key });
 							}
 						}
@@ -1175,7 +1175,7 @@ class Render {
 								ee_list.push({ key: last_e_key, screen: ee_ep.screen, world: ee_ep.world });
 							}
 							// Split the edge this fi endpoint sits on
-							if (last_e_id.type === T_Endpoint.face_intersection) {
+							if (last_e_id.type === T_Endpoint.pierce) {
 								this.intersection_edge_splits.push({ so: ee.so, edge_key: ee.edge_key, screen: ee_ep.screen, world: ee_ep.world, ep_key: last_e_key });
 							}
 						}

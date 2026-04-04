@@ -4,14 +4,14 @@ import { vec3, vec4, mat4 } from 'gl-matrix';
 // --- Endpoint identity types ---
 
 export enum T_Endpoint {
-	face_intersection = 'face_intersection',
+	pierce            = 'pierce',
 	occlusion_clip    = 'occlusion_clip',
 	edge_crossing     = 'edge_crossing',
 	corner            = 'corner',
 }
 
 export type EndpointID =
-	| { type: T_Endpoint.face_intersection; faceA: string; faceB: string; end: 'start' | 'end' }
+	| { type: T_Endpoint.pierce; faceA: string; faceB: string; end: 'start' | 'end' }
 	| { type: T_Endpoint.occlusion_clip; edge: string; occluder_face: string; end: 'enter' | 'exit'; occluder_edge?: string }
 	| { type: T_Endpoint.edge_crossing; edgeA: string; edgeB: string }
 	| { type: T_Endpoint.corner; so: string; vertex: number };
@@ -31,7 +31,7 @@ function edge_letters(ek: string): string {
 
 export function endpoint_key(id: EndpointID): string {
 	switch (id.type) {
-		case T_Endpoint.face_intersection: return `fi:${id.faceA}:${id.faceB}:${id.end}`;
+		case T_Endpoint.pierce: return `pierce:${id.faceA}:${id.faceB}:${id.end}`;
 		case T_Endpoint.occlusion_clip:    return `oc:${edge_letters(id.edge)}:${id.occluder_face}:${id.end}`;
 		case T_Endpoint.edge_crossing:     return `ex:${edge_letters(id.edgeA)}:${edge_letters(id.edgeB)}`;
 		case T_Endpoint.corner:            return `c:${id.so}:${vtx(id.vertex)}`;
@@ -662,7 +662,7 @@ export class Facets {
 					const type_name = dep.id.type === T_Endpoint.corner ? 'corner'
 						: dep.id.type === T_Endpoint.occlusion_clip ? 'occlusion clip'
 						: dep.id.type === T_Endpoint.edge_crossing ? 'crossing'
-						: dep.id.type === T_Endpoint.face_intersection ? 'intersection'
+						: dep.id.type === T_Endpoint.pierce ? 'intersection'
 						: 'unknown';
 
 					// What segments connect HERE on this face?
@@ -829,7 +829,7 @@ export class Facets {
 			if (ep.id.type === T_Endpoint.corner && ep.id.so === so_id) continue;
 			if (ep.segments.length < 2) continue;
 			// Skip fi/ex endpoints with no edge segments — phantom intersection exits
-			if (ep.id.type === T_Endpoint.face_intersection || ep.id.type === T_Endpoint.edge_crossing) {
+			if (ep.id.type === T_Endpoint.pierce || ep.id.type === T_Endpoint.edge_crossing) {
 				const has_edge = ep.segments.some(sid => {
 					const s = this.segments.get(sid);
 					return s?.type === 'edge';
