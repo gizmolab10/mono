@@ -11,7 +11,7 @@ export enum T_Endpoint {
 }
 
 export type EndpointID =
-	| { type: T_Endpoint.pierce; faceA: string; faceB: string; end: 'start' | 'end' }
+	| { type: T_Endpoint.pierce; edge: string; face: string }
 	| { type: T_Endpoint.occlusion_clip; edge: string; occluder_face: string; end: 'enter' | 'exit'; occluder_edge?: string }
 	| { type: T_Endpoint.cross; edgeA: string; edgeB: string }
 	| { type: T_Endpoint.corner; so: string; vertex: number };
@@ -31,7 +31,7 @@ function edge_letters(ek: string): string {
 
 export function endpoint_key(id: EndpointID): string {
 	switch (id.type) {
-		case T_Endpoint.pierce: return `pierce:${id.faceA}:${id.faceB}:${id.end}`;
+		case T_Endpoint.pierce: return `pierce:${edge_letters(id.edge)}:${id.face}`;
 		case T_Endpoint.occlusion_clip:    return `oc:${edge_letters(id.edge)}:${id.occluder_face}:${id.end}`;
 		case T_Endpoint.cross:             return `cross:${edge_letters(id.edgeA)}:${edge_letters(id.edgeB)}`;
 		case T_Endpoint.corner:            return `c:${id.so}:${vtx(id.vertex)}`;

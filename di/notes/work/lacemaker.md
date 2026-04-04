@@ -6,7 +6,8 @@ The object's edges and intersection lines are projected onto a lacework of knots
 
 **Status:** All 44 tests passing, svelte-check clean. 4 facets painting (was 0).
 **Test case:** facet #5 m→j→g→G→m on face HGCD paints correctly.
-**Design spec:** [simpler design.md](facets/designs/simpler%20design.md)
+**References:** [simpler design.md](facets/designs/simpler%20design.md) for design specification. [handoff.md](handoff.md) for dead ends, and solved items.
+
 
 ---
 ## Names
@@ -74,7 +75,7 @@ Rename in variable names and comments. Keep "clip" as a verb in method names —
 - 2d. Run tests, confirm green.
 **Risk: low.**
 
-### Phase B: Cross key logic
+### Phase B: DONE (Cross key logic)
 
 Run tests after each step.
 
@@ -101,18 +102,12 @@ Create `cross:edgeA:edgeB` instead of `ex:edgeA:edgeB` at line 797 and the Pass 
 
 **Risk: low.**
 
-#### **7. Pierce key unification**
+#### **7. DONE (Pierce key unification)**
 Today a pierce key is `pierce:faceA:faceB:start/end` — unique per intersection line. But the physical point is where a specific edge pierces a specific face. Two intersection lines that end at the same point get different keys, and a merge reconciles them after.
 Rekey as `pierce:edge:face`. The boundary edge is the one the intersection line ends at. The pierced face is the other face in the pair. Apply canonical ordering from step 3. Then two intersection lines ending at the same point produce the same key automatically.
 This eliminates the pierce-pierce merges (tier 1 and tier 2) the same way cross unification eliminates the pierce-occlusion merge.
 
 - 7a. Update the pierce-at-vertex-corner merge to match the new pierce key format. That merge stays in the pipeline — it looks up pierce keys to replace them with corner keys. If it still uses the old format, it won't find them.
-
-**Known limitation:** `pierce:edge:face` only works when the intersection line ends at a boundary edge. When three faces meet at a single point, each intersection line pierces the third face's interior — no boundary edge involved. That case doesn't exist in the current scene but will appear in future use cases.
-
-**Future-proof key:** `pierce:edge:face` for the two-face case (edge pierces face). For the three-face case, use `pierce:soIDA:soIDB:soIDC` (three object IDs in canonical order). Since every object is convex, three objects can only produce one visible triple-intersection point — so object IDs alone are unique. Both formats start with `pierce:` so the rest of the pipeline doesn't care which variant it is.
-
-As the number of intersecting SO's increases, the length of keys will likely also increase. The code must determine this number first. Future approach: build an overlap graph from 3D bounding-box tests (already done in Pass 1a's broad phase). The maximum group size tells you the pierce key format before any keys are built. No proximity, no reconciliation.
 
 **Risk: low.** — step 8 must catch every mismatch.
 
@@ -150,5 +145,11 @@ Cross unification may not be enough — `j` is a pierce endpoint (intersection l
 
 When an intersection line and an edge meet, let the edge use the intersection line's key for that point. Don't do this when two edges meet — that creates phantom connections.
 
-See [handoff.md](handoff.md) for dead ends, and solved items.
+#### **Known limitation**
+`pierce:edge:face` only works when the intersection line ends at a boundary edge. When three faces meet at a single point, each intersection line pierces the third face's interior — no boundary edge involved. That case doesn't exist in the current scene but will appear in future use cases.
 
+#### **Future-proof key**
+`pierce:edge:face` for the two-face case (edge pierces face). For the three-face case, use `pierce:soIDA:soIDB:soIDC` (three object IDs in canonical order). Since every object is convex, three objects can only produce one visible triple-intersection point — so object IDs alone are unique. Both formats start with `pierce:` so the rest of the pipeline doesn't care which variant it is.
+
+#### Key lengths
+As the number of intersecting SO's increases, the length of keys will likely also increase. The code must determine this number first. Future approach: build an overlap graph from 3D bounding-box tests (already done in Pass 1a's broad phase). The maximum group size tells you the pierce key format before any keys are built. No proximity, no reconciliation.

@@ -396,7 +396,7 @@ export class Topology {
 								if (existing) {
 									s_id = this.endpoints.get(existing.key)!.id;
 								} else {
-									s_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'start' };
+									s_id = { type: T_Endpoint.pierce, edge: `legacy:${face_key_a}:start`, face: face_key_b };
 								}
 							} else {
 								const occ_id = `${ci.start_cause.obj_id}:${ci.start_cause.face_index ?? -1}`;
@@ -431,7 +431,7 @@ export class Topology {
 								if (existing_e) {
 									e_id = this.endpoints.get(existing_e.key)!.id;
 								} else {
-									e_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'end' };
+									e_id = { type: T_Endpoint.pierce, edge: `legacy:${face_key_a}:end`, face: face_key_b };
 								}
 							} else {
 								const occ_id = `${ci.end_cause.obj_id}:${ci.end_cause.face_index ?? -1}`;

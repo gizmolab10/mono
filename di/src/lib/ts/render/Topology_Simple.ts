@@ -172,8 +172,11 @@ export class Topology_Simple {
 					const screen_pt = end === 'start' ? part.screen[0] : part.screen[1];
 					const world_pt = end === 'start' ? part.world[0] : part.world[1];
 					const fp = part.face_pair!;
-					const pierce_id: EndpointID = { type: T_Endpoint.pierce,
-						faceA: `${fp.so_a}:${fp.face_a}`, faceB: `${fp.so_b}:${fp.face_b}`, end };
+					const piercing_edge = `${on_edge.so}:${on_edge.edge_key}`;
+					const pierced_face = on_edge.so === fp.so_a
+						? face_key_by_id(fp.so_b, fp.face_b, input)
+						: face_key_by_id(fp.so_a, fp.face_a, input);
+					const pierce_id: EndpointID = { type: T_Endpoint.pierce, edge: piercing_edge, face: pierced_face };
 					const pierce_key = endpoint_key(pierce_id);
 
 					// Find the edge segment that contains this point
@@ -557,7 +560,9 @@ export class Topology_Simple {
 							const w_s = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_s)));
 							let s_id: EndpointID;
 							if (!ci.start_cause) {
-								s_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'start' };
+								const piercing_edge = `${se.so}:${se.edge_key}`;
+								const pierced_face = geom.start_edge.face === 'A' ? face_key_b : face_key_a;
+								s_id = { type: T_Endpoint.pierce, edge: piercing_edge, face: pierced_face };
 							} else {
 								const ix_edge = `ix:${face_key_a}:${face_key_b}`;
 								const hiding_edge = ci.start_poly_edge != null
@@ -577,7 +582,9 @@ export class Topology_Simple {
 							const w_e = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_e)));
 							let e_id: EndpointID;
 							if (!ci.end_cause) {
-								e_id = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end: 'end' };
+								const piercing_edge = `${ee.so}:${ee.edge_key}`;
+								const pierced_face = geom.end_edge.face === 'A' ? face_key_b : face_key_a;
+								e_id = { type: T_Endpoint.pierce, edge: piercing_edge, face: pierced_face };
 							} else {
 								const ix_edge = `ix:${face_key_a}:${face_key_b}`;
 								const hiding_edge = ci.end_poly_edge != null
@@ -1130,11 +1137,14 @@ export class Topology_Simple {
 				const cause = end === 'start' ? part.start_cause : part.end_cause;
 				if (!vtx_info || cause) continue;
 				const corner_key = endpoint_key({ type: T_Endpoint.corner, so: vtx_info.so, vertex: vtx_info.vertex });
-				const pierce_face_pair = part.face_pair!;
-				const pierce_id: EndpointID = { type: T_Endpoint.pierce,
-					faceA: `${pierce_face_pair.so_a}:${pierce_face_pair.face_a}`,
-					faceB: `${pierce_face_pair.so_b}:${pierce_face_pair.face_b}`,
-					end };
+				const on_edge = end === 'start' ? part.start_on_edge : part.end_on_edge;
+				if (!on_edge) continue;
+				const fp = part.face_pair!;
+				const piercing_edge = `${on_edge.so}:${on_edge.edge_key}`;
+				const pierced_face = on_edge.so === fp.so_a
+					? face_key_by_id(fp.so_b, fp.face_b, input)
+					: face_key_by_id(fp.so_a, fp.face_a, input);
+				const pierce_id: EndpointID = { type: T_Endpoint.pierce, edge: piercing_edge, face: pierced_face };
 				const pierce_key = endpoint_key(pierce_id);
 				if (endpoints.has(pierce_key) && endpoints.has(corner_key)) {
 						if (!k.debug.merge_logged) console.log(`pierce at vertex → corner merge`);
@@ -1387,14 +1397,19 @@ export class Topology_Simple {
 				return this.register_corner(endpoints, vtx_info.so, vtx_info.vertex, screen, world);
 			}
 			// Face intersection endpoint
-			const id: EndpointID = { type: T_Endpoint.pierce, faceA: face_key_a, faceB: face_key_b, end };
-			const key = this.register_endpoint(endpoints, id, screen, world);
-			// Track for merge step
 			const on_edge = end === 'start' ? part.start_on_edge : part.end_on_edge;
-			if (on_edge) {
-				const other_edge = end === 'start' ? (part.start_other_edge ?? '') : (part.end_other_edge ?? '');
-				pierce_edge_map.push({ key, edge_full: `${on_edge.so}:${on_edge.edge_key}`, other_edge, t: on_edge.t, face_a: face_key_a, face_b: face_key_b });
+			if (!on_edge) {
+				// No edge info — shouldn't happen for boundary pierce points, but fallback
+				console.warn(`pierce endpoint missing edge info: ${face_key_a} × ${face_key_b} ${end}`);
+				const id: EndpointID = { type: T_Endpoint.pierce, edge: `?:${face_key_a}`, face: face_key_b };
+				return this.register_endpoint(endpoints, id, screen, world);
 			}
+			const piercing_edge = `${on_edge.so}:${on_edge.edge_key}`;
+			const pierced_face = on_edge.so === fp.so_a ? face_key_b : face_key_a;
+			const id: EndpointID = { type: T_Endpoint.pierce, edge: piercing_edge, face: pierced_face };
+			const key = this.register_endpoint(endpoints, id, screen, world);
+			const other_edge = end === 'start' ? (part.start_other_edge ?? '') : (part.end_other_edge ?? '');
+			pierce_edge_map.push({ key, edge_full: piercing_edge, other_edge, t: on_edge.t, face_a: face_key_a, face_b: face_key_b });
 			return key;
 		}
 		// Occluded intersection endpoint — try cross key first
