@@ -65,7 +65,7 @@ Run tests after each step.
 Rename across Topology_Simple.ts and Facets.ts. ~43 references in 5 files. Mechanical find-and-replace.
 **Risk: low.** Breakage is immediate and obvious.
 
-#### **2. clip → part**
+#### **2. DONE (clip → part)**
 Rename in variable names and comments. Keep "clip" as a verb in method names — the methods do clipping, the results are parts. ~170+ references in Topology_Simple.ts. Approach:
 
 - 2a. Rename the type definitions first. The compiler will flag every place that uses them.
