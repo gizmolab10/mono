@@ -18,7 +18,6 @@ import { camera } from './Camera';
 import { scene } from './Scene';
 import { Facets, T_Endpoint, endpoint_key, /* vtx, */ type EndpointID } from './Facets';
 import { Topology } from './Topology';
-import { Topology_Simple } from './Topology_Simple';
 import Flatbush from 'flatbush';
 
 type Pt = { x: number; y: number };
@@ -60,9 +59,7 @@ interface ComputedEndpoint {
 class Render {
 	private static _facets_logged = false;
 	private static _last_facet_log = '';
-	private topology = new Topology();
-	private topology_simple = new Topology_Simple();
-	private static use_simple_topology = true; // flip to true to use the new 3-pass pipeline
+	private topology_simple = new Topology();
 	private topology_endpoints = new Map<string, { key: string; id: EndpointID; screen: { x: number; y: number }; world: vec3 }>();
 	private topology_edge_segments = new Map<string, { edge_key: string; so: string; visible: [{ x: number; y: number }, { x: number; y: number }][]; endpoint_keys: [string, string][] }[]>();
 	private topology_intersection_segments: { visible: [{ x: number; y: number }, { x: number; y: number }][]; endpoint_keys: [string, string][]; color: string; so_a: string; face_a: number; so_b: string; face_b: number }[] = [];
@@ -418,9 +415,7 @@ class Render {
 					project_vertex: (v: vec3, w: mat4) => this.project_vertex(v, w),
 					front_face_edges: (o: O_Scene, p: Projected[]) => this.front_face_edges(o, p),
 				};
-				const topo = Render.use_simple_topology
-					? this.topology_simple.compute(topo_input)
-					: this.topology.compute(topo_input);
+				const topo = this.topology_simple.compute(topo_input);
 
 				// Store output for Facets
 				this.topology_endpoints = topo.endpoints;

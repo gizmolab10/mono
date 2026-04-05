@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { vec3, mat4, vec4 } from 'gl-matrix';
-import { Topology_Simple as Topology } from '../render/Topology_Simple';
+import { Topology } from '../render/Topology';
 import type { TopologyInput, Pt, OccludingFace } from '../render/Topology';
 import type { Projected, O_Scene } from '../types/Interfaces';
 import Smart_Object from '../runtime/Smart_Object';
