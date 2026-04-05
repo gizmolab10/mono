@@ -403,7 +403,9 @@ export class Topology {
 								const occ_edge_s = (ci.start_poly_edge != null && ci.start_poly_edge >= 0 && ci.start_cause.face_verts)
 									? Topology.occ_edge_str(ci.start_cause.obj_id, ci.start_cause.face_verts, ci.start_poly_edge)
 									: undefined;
-								s_id = { type: T_Endpoint.occlusion_clip, edge: ix_edge_id, occluder_face: occ_id, end: 'exit', occluder_edge: occ_edge_s };
+								s_id = occ_edge_s
+								? { type: T_Endpoint.cross, edgeA: ix_edge_id < occ_edge_s ? ix_edge_id : occ_edge_s, edgeB: ix_edge_id < occ_edge_s ? occ_edge_s : ix_edge_id }
+								: { type: T_Endpoint.cross, edgeA: ix_edge_id, edgeB: `${occ_id}:oc` };
 							}
 							const t_s = Topology.screen_t(p1, p2, ci.start);
 							const w_s = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_s)));
@@ -413,13 +415,17 @@ export class Topology {
 							if (s_id.type === T_Endpoint.pierce) {
 								this.add_edge_point(se.so, se.edge_key, s_key, w_s, ci.start, se.t);
 							}
-							// Register oc endpoints on their occluder edge + record edge split
-							if (s_id.type === T_Endpoint.occlusion_clip && s_id.occluder_edge) {
-								const colon = s_id.occluder_edge.indexOf(':');
-								const occ_so = s_id.occluder_edge.slice(0, colon);
-								const occ_ek = s_id.occluder_edge.slice(colon + 1);
-								this.add_edge_point(occ_so, occ_ek, s_key, w_s, ci.start, 0);
-								this.intersection_edge_splits.push({ so: occ_so, edge_key: occ_ek, screen: ci.start, world: w_s, ep_key: s_key });
+							// Register cross endpoints on their occluder edge + record edge split
+							if (s_id.type === T_Endpoint.cross && ci.start_cause) {
+								const _occ_edge_s = (ci.start_poly_edge != null && ci.start_poly_edge >= 0 && ci.start_cause.face_verts)
+									? Topology.occ_edge_str(ci.start_cause.obj_id, ci.start_cause.face_verts, ci.start_poly_edge) : undefined;
+								if (_occ_edge_s) {
+									const colon = _occ_edge_s.indexOf(':');
+									const occ_so = _occ_edge_s.slice(0, colon);
+									const occ_ek = _occ_edge_s.slice(colon + 1);
+									this.add_edge_point(occ_so, occ_ek, s_key, w_s, ci.start, 0);
+									this.intersection_edge_splits.push({ so: occ_so, edge_key: occ_ek, screen: ci.start, world: w_s, ep_key: s_key });
+								}
 							}
 
 							// ── Tag end ──
@@ -438,7 +444,9 @@ export class Topology {
 								const occ_edge_e = (ci.end_poly_edge != null && ci.end_poly_edge >= 0 && ci.end_cause.face_verts)
 									? Topology.occ_edge_str(ci.end_cause.obj_id, ci.end_cause.face_verts, ci.end_poly_edge)
 									: undefined;
-								e_id = { type: T_Endpoint.occlusion_clip, edge: ix_edge_id, occluder_face: occ_id, end: 'enter', occluder_edge: occ_edge_e };
+								e_id = occ_edge_e
+									? { type: T_Endpoint.cross, edgeA: ix_edge_id < occ_edge_e ? ix_edge_id : occ_edge_e, edgeB: ix_edge_id < occ_edge_e ? occ_edge_e : ix_edge_id }
+									: { type: T_Endpoint.cross, edgeA: ix_edge_id, edgeB: `${occ_id}:oc` };
 							}
 							const t_e = Topology.screen_t(p1, p2, ci.end);
 							const w_e = vec3.lerp(vec3.create(), geom.start, geom.end, Math.max(0, Math.min(1, t_e)));
@@ -448,13 +456,17 @@ export class Topology {
 							if (e_id.type === T_Endpoint.pierce) {
 								this.add_edge_point(ee.so, ee.edge_key, e_key, w_e, ci.end, ee.t);
 							}
-							// Register oc endpoints on their occluder edge + record edge split
-							if (e_id.type === T_Endpoint.occlusion_clip && e_id.occluder_edge) {
-								const colon = e_id.occluder_edge.indexOf(':');
-								const occ_so = e_id.occluder_edge.slice(0, colon);
-								const occ_ek = e_id.occluder_edge.slice(colon + 1);
-								this.add_edge_point(occ_so, occ_ek, e_key, w_e, ci.end, 0);
-								this.intersection_edge_splits.push({ so: occ_so, edge_key: occ_ek, screen: ci.end, world: w_e, ep_key: e_key });
+							// Register cross endpoints on their occluder edge + record edge split
+							if (e_id.type === T_Endpoint.cross && ci.end_cause) {
+								const _occ_edge_e = (ci.end_poly_edge != null && ci.end_poly_edge >= 0 && ci.end_cause.face_verts)
+									? Topology.occ_edge_str(ci.end_cause.obj_id, ci.end_cause.face_verts, ci.end_poly_edge) : undefined;
+								if (_occ_edge_e) {
+									const colon = _occ_edge_e.indexOf(':');
+									const occ_so = _occ_edge_e.slice(0, colon);
+									const occ_ek = _occ_edge_e.slice(colon + 1);
+									this.add_edge_point(occ_so, occ_ek, e_key, w_e, ci.end, 0);
+									this.intersection_edge_splits.push({ so: occ_so, edge_key: occ_ek, screen: ci.end, world: w_e, ep_key: e_key });
+								}
 							}
 
 							ep_keys.push([s_key, e_key]);
@@ -563,7 +575,7 @@ export class Topology {
 					const used_pierce_keys = new Set<string>();
 
 					// Helper: tag an endpoint from t value and clip cause
-					const tag_endpoint = (t: number, screen: Pt, cause: OccFaceRef, is_start_of_visible: boolean, poly_edge_idx?: number): string => {
+					const tag_endpoint = (t: number, screen: Pt, cause: OccFaceRef, _is_start_of_visible: boolean, poly_edge_idx?: number): string => {
 						const w = vec3.lerp(vec3.create(), w1, w2, Math.max(0, Math.min(1, t)));
 						let id: EndpointID;
 
@@ -606,7 +618,14 @@ export class Topology {
 								if (used_pierce_keys.has(pierce_key_check) && pierce_key_check !== prev_clip_end_key) pierce_id = undefined;
 								else used_pierce_keys.add(pierce_key_check);
 							}
-							id = pierce_id ?? { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: `${cause.obj_id}:${cause.face_index ?? -1}`, end: is_start_of_visible ? 'exit' : 'enter', occluder_edge: occ_edge };
+							if (pierce_id) {
+							id = pierce_id;
+						} else if (occ_edge) {
+							const [eA, eB] = edge_id < occ_edge ? [edge_id, occ_edge] : [occ_edge, edge_id];
+							id = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
+						} else {
+							id = { type: T_Endpoint.cross, edgeA: edge_id, edgeB: `${cause.obj_id}:face:${cause.face_index ?? -1}` };
+						}
 							const ep_key = this.register_endpoint(id, screen, w);
 
 							// Focused CG/F'G' logging
@@ -632,7 +651,7 @@ export class Topology {
 							}
 							return ep_key;
 						} else {
-							id = { type: T_Endpoint.occlusion_clip, edge: edge_id, occluder_face: '', end: is_start_of_visible ? 'exit' : 'enter' };
+							id = { type: T_Endpoint.cross, edgeA: edge_id, edgeB: 'unknown' };
 						}
 						const ep_key = this.register_endpoint(id, screen, w);
 						// Register corners in identity registry too
@@ -743,15 +762,16 @@ export class Topology {
 			}
 		}
 
-		// Check occlusion_clip endpoints on edges belonging to their SO's faces
+		// Check cross endpoints on edges belonging to their SO's faces
 		for (const [key, ep] of this.endpoints) {
-			if (ep.id.type !== T_Endpoint.occlusion_clip) continue;
+			if (ep.id.type !== T_Endpoint.cross) continue;
 			if (edge_referenced.has(key)) continue;
-			const oc = ep.id as { type: T_Endpoint.occlusion_clip; edge: string; occluder_face: string; end: 'enter' | 'exit' };
-			const colon = oc.edge.indexOf(':');
+			const edge_str = ep.id.edgeA;
+			const colon = edge_str.indexOf(':');
 			if (colon < 0) continue;
-			const so_id = oc.edge.slice(0, colon);
-			const edge_key = oc.edge.slice(colon + 1);
+			const so_id = edge_str.slice(0, colon);
+			const edge_key = edge_str.slice(colon + 1);
+			if (!edge_key.includes('-')) continue;
 			const [evi, evj] = edge_key.split('-').map(Number);
 
 			const obj = objects.find(o => o.id === so_id);

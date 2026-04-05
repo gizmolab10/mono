@@ -5,14 +5,12 @@ import { vec3, vec4, mat4 } from 'gl-matrix';
 
 export enum T_Endpoint {
 	pierce            = 'pierce',
-	occlusion_clip    = 'occlusion_clip',
 	cross             = 'cross',
 	corner            = 'corner',
 }
 
 export type EndpointID =
 	| { type: T_Endpoint.pierce; edge: string; face: string }
-	| { type: T_Endpoint.occlusion_clip; edge: string; occluder_face: string; end: 'enter' | 'exit'; occluder_edge?: string }
 	| { type: T_Endpoint.cross; edgeA: string; edgeB: string }
 	| { type: T_Endpoint.corner; so: string; vertex: number };
 
@@ -32,9 +30,8 @@ function edge_letters(ek: string): string {
 export function endpoint_key(id: EndpointID): string {
 	switch (id.type) {
 		case T_Endpoint.pierce: return `pierce:${edge_letters(id.edge)}:${id.face}`;
-		case T_Endpoint.occlusion_clip:    return `oc:${edge_letters(id.edge)}:${id.occluder_face}:${id.end}`;
-		case T_Endpoint.cross:             return `cross:${edge_letters(id.edgeA)}:${edge_letters(id.edgeB)}`;
-		case T_Endpoint.corner:            return `c:${id.so}:${vtx(id.vertex)}`;
+		case T_Endpoint.cross:  return `cross:${edge_letters(id.edgeA)}:${edge_letters(id.edgeB)}`;
+		case T_Endpoint.corner: return `c:${id.so}:${vtx(id.vertex)}`;
 	}
 }
 
@@ -559,16 +556,6 @@ export class Facets {
 						dud_reason = `${ep_label(other_ep_key)}: wrong SO (${other_ep.id.so} != ${so})`;
 						break;
 					}
-					if (other_ep.id.type === T_Endpoint.occlusion_clip) {
-						// oc edge format: "so_id:edge_key" — extract the SO
-						const oc_so = other_ep.id.edge.slice(0, other_ep.id.edge.indexOf(':'));
-						if (oc_so !== so) {
-							dud = true;
-							dud_reason = `${ep_label(other_ep_key)}: wrong SO oc (${oc_so} != ${so})`;
-							break;
-						}
-					}
-
 					const face_order = other_ep.ordering.filter(sid => {
 						const s = this.segments.get(sid);
 						return s && s.so === so && s.face === face;
@@ -660,9 +647,8 @@ export class Facets {
 
 				for (const dep of dead_ends) {
 					const type_name = dep.id.type === T_Endpoint.corner ? 'corner'
-						: dep.id.type === T_Endpoint.occlusion_clip ? 'occlusion clip'
 						: dep.id.type === T_Endpoint.cross ? 'crossing'
-						: dep.id.type === T_Endpoint.pierce ? 'intersection'
+						: dep.id.type === T_Endpoint.pierce ? 'pierce'
 						: 'unknown';
 
 					// What segments connect HERE on this face?

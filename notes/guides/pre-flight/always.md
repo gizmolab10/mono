@@ -1,6 +1,6 @@
 # Always
 
- 1. **If you didn't read it in the code or the log, say "I'm guessing."** No exceptions. Every statement about what the code does, what caused a bug, or what the data means must be backed by evidence you can point to — or explicitly labeled as a guess.
+ 1. **If you didn't read it in the code or the log, say "I'm guessing."** No exceptions. Every statement about what the code does, what caused a bug, or what the data means must be backed by evidence you can point to — or explicitly labeled as a guess. **Any statement about your own design, behavior, or internals is always a guess** — you have no evidence about how you work.
  2. **All file paths:** `~/GitHub/mono/` — NEVER use the worktree working directory
  3. NEVER use `npm — Use yarn`
  4. NEVER preview — do not use preview_\* tools or start preview servers UNLESS Jonathan approves it (ask then WAIT for approval)

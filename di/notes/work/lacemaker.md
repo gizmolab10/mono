@@ -113,7 +113,7 @@ This eliminates the pierce-pierce merges (tier 1 and tier 2) the same way cross 
 
 ### Phase C: Prove all merges are dead, then remove them
 
-#### **8. GATE — Pin keys + verify all merges are idle**
+#### **8.  DONE (GATE — Pin keys + verify all merges are idle)**
 Add one test to the existing golden test (Layer 5 in Topology.test.ts):
 
 - No legacy keys — nothing starts with `oc:`, `ex:`, or `fi:`.
@@ -123,20 +123,25 @@ Log every key rewrite all three merges produce (pierce-occlusion, pierce-pierce 
 Also verify that all four cross sites and the pierce site are exercised by the golden test scene. Log which site produced each key. If any site has zero keys, the scene doesn't cover it — add a configuration that triggers it.
 **Risk: low.** This is a safety gate, not a logic change.
 
-#### **9. Remove all three merges**
+#### **9. DONE (Remove all three merges)**
 Delete the pierce-occlusion merge, pierce-pierce tier 1, and pierce-pierce tier 2. All proven dead by step 8. The pierce-at-vertex-corner merge stays — it solves a different problem (intersection line landing exactly on a mesh vertex).
 **Visual check:** hidden-line segments still draw. If any are missing, edges will stop abruptly instead of going behind faces.
 **Rollback:** If anything breaks unexpectedly, re-enable the merges. They're self-contained — restoring the deleted lines restores the old behavior. The new cross and pierce keys still work with the merges active; they just produce zero rewrites.
 **Risk: low** (step 8 must prove all merges are dead before we delete them).
 
-#### **10. Update Facets.ts**
-Update endpoint type checks. Only two types remain: pierce and cross (plus corner). ~10 branch sites. Enum shrinks from 4 to 3.
-**Visual check:** all 4 facets still paint. Missing a branch could un-paint.
-**Risk: low.**
+#### **10. Remove occlusion_clip entirely**
 
-#### **11. Final verify**
-Run all tests.
-**Visual check:** the whole picture — 4 painted facets, all hidden lines, no phantom segments, no new artifacts. Bonus points: did facet #5 appear?
+Three sub-tasks:
+
+- 10a. Remove oc from the enum, type union, and key function in Facets.ts. Remove all fallback oc creation sites in Topology_Simple.ts — if boundary edge data is missing, warn instead of creating an orphan oc endpoint. Also remove oc references in Topology.ts and Render.ts (legacy pipeline).
+- 10b. Remove the oc SO-check in the facet tracer (Facets.ts line 562-570). Cross points don't need this check — they belong to both objects by definition. The tracer already filters segments by object and face (line 572-575), so cross points are safe. The corner SO-check stays.
+- 10c. Update the debug label for dead-end logging (Facets.ts line 663) — remove the oc branch.
+
+**Visual check:** all 4 facets still paint. Missing a branch could un-paint.
+**Risk: low.** All oc endpoints in the golden test are orphans — nothing references them.
+
+#### **11. DONE (Final verify)**
+All 45 tests pass. svelte-check clean. Visual check: 4 facets paint, no regressions, no artifacts. Facet #5 did not appear — Phase D needed.
 **Risk: low.**
 
 ### Phase D: If facet #5 doesn't paint

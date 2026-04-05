@@ -1088,4 +1088,41 @@ describe('Layer 5: Golden test (ALPHA + BETA)', () => {
 			console.log(`Golden test: ${orphans.length} orphan endpoints: ${orphans.join(', ')}`);
 		}
 	});
+
+	it('overlapping ALPHA + BETA: key format is correct (no legacy keys)', () => {
+		const alpha_so = make_so('ALPHA', [-2, 0.5, -1, 1, -1, 1]);
+		const beta_so = make_so('BETA', [-0.5, 2, -1, 1, -0.5, 1.5]);
+		const alpha: O_Scene = { id: 'alpha', so: alpha_so, edges: cube_edges, faces: cube_faces, position: vec3.fromValues(0, 0, 0), color: 'rgba(0,0,0,' };
+		const beta: O_Scene = { id: 'beta', so: beta_so, edges: cube_edges, faces: cube_faces, position: vec3.fromValues(0, 0, 0), color: 'rgba(0,0,0,' };
+
+		const topo = new Topology();
+		const result = topo.compute(build_golden_input([alpha, beta]));
+
+		const keys = [...result.endpoints.keys()];
+
+		// No legacy key prefixes
+		const legacy_fi = keys.filter(k => k.startsWith('fi:'));
+		const legacy_ex = keys.filter(k => k.startsWith('ex:'));
+		expect(legacy_fi.length).toBe(0);
+		expect(legacy_ex.length).toBe(0);
+
+		// Every key starts with a known prefix
+		for (const key of keys) {
+			const valid = key.startsWith('pierce:') || key.startsWith('cross:') || key.startsWith('c:');
+			if (!valid) {
+				console.log(`Unexpected key format: ${key}`);
+			}
+			expect(valid).toBe(true);
+		}
+
+		// Count key types to verify all sites are exercised
+		const pierce_keys = keys.filter(k => k.startsWith('pierce:'));
+		const cross_keys = keys.filter(k => k.startsWith('cross:'));
+		const corner_keys = keys.filter(k => k.startsWith('c:'));
+		console.log(`Key types: ${pierce_keys.length} pierce, ${cross_keys.length} cross, ${corner_keys.length} corner`);
+
+		// Must have at least some pierce and cross keys (both sites exercised)
+		expect(pierce_keys.length).toBeGreaterThan(0);
+		expect(cross_keys.length).toBeGreaterThan(0);
+	});
 });
