@@ -963,11 +963,11 @@ describe('Layer 5: Golden test (ALPHA + BETA)', () => {
 		return edges;
 	}
 
-	function build_golden_input(objects: O_Scene[]): TopologyInput {
+	function build_golden_input(objects: O_Scene[], world_matrices?: Map<string, mat4>): TopologyInput {
 		const projected_map = new Map<string, Projected[]>();
 		const occluding_faces: OccludingFace[] = [];
 		for (const obj of objects) {
-			const world = mat4.create();
+			const world = world_matrices?.get(obj.id) ?? mat4.create();
 			const projected = obj.so.vertices.map(v => simple_project(v, world));
 			projected_map.set(obj.id, projected);
 			if (!obj.faces) continue;
@@ -978,7 +978,12 @@ describe('Layer 5: Golden test (ALPHA + BETA)', () => {
 			for (const fi of front_facing) {
 				const face = obj.faces[fi];
 				const poly = face.map(vi => ({ x: projected[vi].x, y: projected[vi].y }));
-				const corners = face.map(vi => vec3.clone(obj.so.vertices[vi]));
+				const corners = face.map(vi => {
+					const v = obj.so.vertices[vi];
+					const wv = vec4.create();
+					vec4.transformMat4(wv, [v[0], v[1], v[2], 1], world);
+					return vec3.fromValues(wv[0], wv[1], wv[2]);
+				});
 				const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);
 				const e2 = vec3.sub(vec3.create(), corners[3], corners[0]);
 				const n = vec3.cross(vec3.create(), e1, e2);
@@ -995,9 +1000,11 @@ describe('Layer 5: Golden test (ALPHA + BETA)', () => {
 				occluding_faces.push({ n, d, corners, poly, obj_id: obj.id, face_index: fi, face_verts: face, silhouette_edges });
 			}
 		}
+		const _wm = world_matrices;
 		return {
 			objects, projected_map, occluding_faces, occluding_index: null,
-			face_winding: simple_winding, get_world_matrix: () => mat4.create(),
+			face_winding: simple_winding,
+			get_world_matrix: (obj: O_Scene) => _wm?.get(obj.id) ?? mat4.create(),
 			project_vertex: simple_project, front_face_edges: simple_front_edges,
 		};
 	}
@@ -1124,5 +1131,79 @@ describe('Layer 5: Golden test (ALPHA + BETA)', () => {
 		// Must have at least some pierce and cross keys (both sites exercised)
 		expect(pierce_keys.length).toBeGreaterThan(0);
 		expect(cross_keys.length).toBeGreaterThan(0);
+	});
+
+	it('rotated ALPHA + BETA (real scene): HGCD faces intersect', () => {
+		// World-space vertices from the real app's klubes.di scene.
+		// ALPHA is rotated 45° on y and z. BETA is axis-aligned.
+		// This produces the HGCD × H'G'C'D' intersection that the axis-aligned test misses.
+		const alpha_verts: vec3[] = [
+			vec3.fromValues(-654.9, -126.3, -286.3),  // A
+			vec3.fromValues(-385.3,  509.7,  118.6),   // B
+			vec3.fromValues( -38.9,   23.2,  651.9),   // C
+			vec3.fromValues(-308.6, -612.8,  247.0),   // D
+			vec3.fromValues(  14.7, -130.7, -725.3),   // E
+			vec3.fromValues( 284.4,  505.2, -320.3),   // F
+			vec3.fromValues( 630.7,   18.7,  213.0),   // G
+			vec3.fromValues( 361.1, -617.2, -191.9),   // H
+		];
+		const beta_verts: vec3[] = [
+			vec3.fromValues(-599.0,  -35.6,  352.0),   // A'
+			vec3.fromValues(-374.2,  624.2,  -42.1),   // B'
+			vec3.fromValues( 340.3,  595.9,  318.0),   // C'
+			vec3.fromValues( 115.6,  -63.8,  712.1),   // D'
+			vec3.fromValues(-316.1, -488.4, -244.7),   // E'
+			vec3.fromValues( -91.4,  171.4, -638.8),   // F'
+			vec3.fromValues( 623.2,  143.1, -278.7),   // G'
+			vec3.fromValues( 398.4, -516.6,  115.4),   // H'
+		];
+
+		// Build O_Scene objects with pre-transformed vertices
+		const alpha_so = new Smart_Object('ALPHA');
+		// Override vertices getter with pre-computed world positions
+		Object.defineProperty(alpha_so, 'vertices', { get: () => alpha_verts });
+		const beta_so = new Smart_Object('BETA');
+		Object.defineProperty(beta_so, 'vertices', { get: () => beta_verts });
+
+		const alpha: O_Scene = { id: 'alpha', so: alpha_so, edges: cube_edges, faces: cube_faces, position: vec3.fromValues(0,0,0), color: 'rgba(0,0,0,' };
+		const beta: O_Scene = { id: 'beta', so: beta_so, edges: cube_edges, faces: cube_faces, position: vec3.fromValues(0,0,0), color: 'rgba(0,0,0,' };
+
+		const topo = new Topology();
+		const result = topo.compute(build_golden_input([alpha, beta]));
+
+		// Check that HGCD × H'G'C'D' intersection exists
+		// Both objects have face 4 = HGCD. If these faces intersect,
+		// there should be pierce endpoints whose keys reference both faces.
+		const keys = [...result.endpoints.keys()];
+		const pierce_keys = keys.filter(k => k.startsWith('pierce:'));
+		console.log(`Rotated scene: ${pierce_keys.length} pierce, ${keys.filter(k => k.startsWith('cross:')).length} cross, ${keys.filter(k => k.startsWith('c:')).length} corner`);
+		console.log(`Pierce keys: ${pierce_keys.join(', ')}`);
+
+		// There should be pierce keys — the rotated geometry produces intersection lines
+		expect(pierce_keys.length).toBeGreaterThan(0);
+
+		// Check that point j (on BETA edge G'H', piercing ALPHA face HGCD) is connected
+		const j_key = 'pierce:beta:G-H:alpha:HGCD';
+		expect(keys).toContain(j_key);
+
+		// j should appear in both an intersection segment and an edge segment
+		let j_in_intersection = false;
+		let j_in_edge = false;
+		for (const iseg of result.intersection_segments) {
+			for (const [sk, ek] of iseg.endpoint_keys) {
+				if (sk === j_key || ek === j_key) j_in_intersection = true;
+			}
+		}
+		for (const [, segs] of result.edge_segments) {
+			for (const seg of segs) {
+				for (const [sk, ek] of seg.endpoint_keys) {
+					if (sk === j_key || ek === j_key) j_in_edge = true;
+				}
+			}
+		}
+		console.log(`Point j (${j_key}): in intersection segment = ${j_in_intersection}, in edge segment = ${j_in_edge}`);
+		expect(j_in_intersection).toBe(true);
+		// This is the key test — if j is in an edge segment, the facet can close
+		expect(j_in_edge).toBe(true);
 	});
 });

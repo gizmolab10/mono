@@ -297,6 +297,50 @@ export class Facets {
 			}
 		}
 
+		// Import cross-face edge segments.
+		// An edge from one object may cross a face of another object.
+		// If both endpoints of an edge segment already appear on another object's face
+		// (via intersection segments or other shared keys), assign the edge segment there too.
+		for (const [so_id, segs] of edge_segments) {
+			for (const seg of segs) {
+				for (let ci = 0; ci < seg.visible.length; ci++) {
+					const [s, e] = seg.visible[ci];
+					const [sk, ek] = seg.endpoint_keys[ci];
+					const sk_ep = this.endpoints.get(sk);
+					const ek_ep = this.endpoints.get(ek);
+					if (!sk_ep || !ek_ep) continue;
+					// Check each other object's front-facing faces
+					for (const other_obj of objects) {
+						if (other_obj.id === so_id) continue;
+						if (!other_obj.faces) continue;
+						const other_projected = projected_map.get(other_obj.id);
+						if (!other_projected) continue;
+						for (let fi = 0; fi < other_obj.faces.length; fi++) {
+							if (face_winding(other_obj.faces[fi], other_projected) >= 0) continue;
+							// Do both endpoints have segments on this face?
+							let has_sk = false, has_ek = false;
+							for (const seg_id of sk_ep.segments) {
+								const s2 = this.segments.get(seg_id);
+								if (s2 && s2.so === other_obj.id && s2.face === fi) { has_sk = true; break; }
+							}
+							if (!has_sk) continue;
+							for (const seg_id of ek_ep.segments) {
+								const s2 = this.segments.get(seg_id);
+								if (s2 && s2.so === other_obj.id && s2.face === fi) { has_ek = true; break; }
+							}
+							if (!has_ek) continue;
+							// Both endpoints are on this other face — add the edge segment there
+							const sid = 'seg:' + this._seg_counter++;
+							this.add_segment({
+								id: sid, so: other_obj.id, face: fi,
+								type: 'edge', endpoints: [sk, ek], screen: [s, e],
+							});
+						}
+					}
+				}
+			}
+		}
+
 		// Import occluding edge segments
 		for (const oseg of occluding_segments) {
 			const [sk, ek] = oseg.endpoint_keys;

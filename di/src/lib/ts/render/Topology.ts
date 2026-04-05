@@ -399,9 +399,9 @@ export class Topology {
 
 						let sk: string;
 						if (!ci.start_cause && t_s < CORNER_T) {
-							sk = this.register_corner(endpoints, obj.id, i, ci.start, w_s);
+							sk = this.register_corner(endpoints, obj.id, i, { x: projected[i].x, y: projected[i].y }, w_s);
 						} else if (!ci.start_cause && t_s > 1 - CORNER_T) {
-							sk = this.register_corner(endpoints, obj.id, j_idx, ci.start, w_s);
+							sk = this.register_corner(endpoints, obj.id, j_idx, { x: projected[j_idx].x, y: projected[j_idx].y }, w_s);
 						} else {
 							const pierce_key = find_pierce(ci.start_cause);
 							if (pierce_key) {
@@ -416,17 +416,17 @@ export class Topology {
 									const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 									sk = this.register_endpoint(endpoints, id, ci.start, w_s);
 								} else {
-									// No boundary edge — for ${edge_id} hidden by ${ci.start_cause?.obj_id}`);
-									sk = this.register_corner(endpoints, obj.id, i, ci.start, w_s);
+									// No boundary edge — use interval position (not vertex position)
+									sk = this.register_endpoint(endpoints, { type: T_Endpoint.cross, edgeA: edge_id, edgeB: 'unknown' }, ci.start, w_s);
 								}
 							}
 						}
 
 						let ek2: string;
 						if (!ci.end_cause && t_e > 1 - CORNER_T) {
-							ek2 = this.register_corner(endpoints, obj.id, j_idx, ci.end, w_e);
+							ek2 = this.register_corner(endpoints, obj.id, j_idx, { x: projected[j_idx].x, y: projected[j_idx].y }, w_e);
 						} else if (!ci.end_cause && t_e < CORNER_T) {
-							ek2 = this.register_corner(endpoints, obj.id, i, ci.end, w_e);
+							ek2 = this.register_corner(endpoints, obj.id, i, { x: projected[i].x, y: projected[i].y }, w_e);
 						} else {
 							const pierce_key = find_pierce(ci.end_cause);
 							if (pierce_key) {
@@ -442,8 +442,8 @@ export class Topology {
 									const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 									ek2 = this.register_endpoint(endpoints, id, ci.end, w_e);
 								} else {
-									// No boundary edge — for ${edge_id} hidden by ${ci.end_cause?.obj_id}`);
-									ek2 = this.register_corner(endpoints, obj.id, j_idx, ci.end, w_e);
+									// No boundary edge — use interval position (not vertex position)
+									ek2 = this.register_endpoint(endpoints, { type: T_Endpoint.cross, edgeA: edge_id, edgeB: 'unknown:end' }, ci.end, w_e);
 								}
 							}
 						}
@@ -656,15 +656,15 @@ export class Topology {
 							ep_keys.push([s_key, e_key]);
 
 							// Register pierce endpoints on their edges for Pass 1b lookup
-							if (!ci.start_cause) {
+							if (!ci.start_cause && se.so && se.edge_key) {
 								const edge_full = `${se.so}:${se.edge_key}`;
-								let list = pierce_on_edge.get(edge_full);
+									let list = pierce_on_edge.get(edge_full);
 								if (!list) { list = []; pierce_on_edge.set(edge_full, list); }
 								if (!list.some(e => e.key === s_key)) {
 									list.push({ key: s_key, face_a: face_key_a, face_b: face_key_b });
 								}
 							}
-							if (!ci.end_cause) {
+							if (!ci.end_cause && ee.so && ee.edge_key) {
 								const edge_full = `${ee.so}:${ee.edge_key}`;
 								let list = pierce_on_edge.get(edge_full);
 								if (!list) { list = []; pierce_on_edge.set(edge_full, list); }
@@ -1361,8 +1361,9 @@ export class Topology {
 				const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 				return this.register_endpoint(endpoints, id, screen, world);
 			}
-			// No boundary edge — for ${edge_id} hidden by ${cause?.obj_id}`);
-			return this.register_corner(endpoints, part.so, end === 'start' ? part.vertex_i! : part.vertex_j!, screen, world);
+			// No boundary edge — use interval position, not vertex position
+			const _eid = `${part.so}:${part.edge_key}`;
+			return this.register_endpoint(endpoints, { type: T_Endpoint.cross, edgeA: _eid, edgeB: 'unknown:id' }, screen, world);
 		}
 
 		// Intersection endpoint
