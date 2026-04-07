@@ -347,7 +347,7 @@ export class Topology {
 				let intervals = this.clip_segment_for_occlusion_rich(
 					{ x: a.x, y: a.y }, { x: b.x, y: b.y }, w1, w2, obj.id, undefined, input,
 				);
-
+	
 				// Merge nearly-touching intervals
 				if (intervals.length > 1) {
 					const GAP_T = 0.02;
@@ -380,7 +380,7 @@ export class Topology {
 						const w_e = vec3.lerp(vec3.create(), w1, w2, Math.max(0, Math.min(1, t_e)));
 
 						// Tag endpoints — check pierce_on_edge before creating oc
-						const find_pierce = (cause: OccFaceRef): string | undefined => {
+						const find_pierce = (cause: OccFaceRef, screen_pt: Pt): string | undefined => {
 							if (!cause) return undefined;
 							const hiding_face = face_key_by_id(cause.obj_id, cause.face_index ?? -1, input);
 							const this_edge = `${obj.id}:${ek}`;
@@ -391,6 +391,12 @@ export class Topology {
 							for (const p of pierce_list) {
 								if (p.face_a !== hiding_face && p.face_b !== hiding_face) {
 									continue;
+								}
+								// Verify the candidate is near the interval's screen position
+								const ep = endpoints.get(p.key);
+								if (ep) {
+									const dx = ep.screen.x - screen_pt.x, dy = ep.screen.y - screen_pt.y;
+									if (dx * dx + dy * dy > 25) continue; // more than 5 pixels away — wrong point
 								}
 								return p.key;
 							}
@@ -403,7 +409,7 @@ export class Topology {
 						} else if (!ci.start_cause && t_s > 1 - CORNER_T) {
 							sk = this.register_corner(endpoints, obj.id, j_idx, { x: projected[j_idx].x, y: projected[j_idx].y }, w_s);
 						} else {
-							const pierce_key = find_pierce(ci.start_cause);
+							const pierce_key = find_pierce(ci.start_cause, ci.start);
 							if (pierce_key) {
 								sk = pierce_key;
 							} else {
@@ -428,7 +434,7 @@ export class Topology {
 						} else if (!ci.end_cause && t_e < CORNER_T) {
 							ek2 = this.register_corner(endpoints, obj.id, i, { x: projected[i].x, y: projected[i].y }, w_e);
 						} else {
-							const pierce_key = find_pierce(ci.end_cause);
+							const pierce_key = find_pierce(ci.end_cause, ci.end);
 							if (pierce_key) {
 								ek2 = pierce_key;
 							} else {
@@ -1212,11 +1218,12 @@ export class Topology {
 				return undefined;
 			};
 
-			// Helper: search all boundary edges of this face for any matching intersection endpoint
-			const find_pierce_any_boundary = (): string | undefined => {
+			// Helper: search all boundary edges for a nearby intersection endpoint
+			const find_pierce_any_boundary = (screen_pt: Pt): string | undefined => {
 				if (!fbc.face_verts) return undefined;
 				const fk = face_key_by_id(fbc.face_so, fbc.face_index, input);
-				const candidates: string[] = [];
+				let best_key: string | undefined;
+				let best_dist = 25; // max 5 pixels
 				for (let ei = 0; ei < fbc.face_verts.length; ei++) {
 					const vi = fbc.face_verts[ei];
 					const vj = fbc.face_verts[(ei + 1) % fbc.face_verts.length];
@@ -1224,31 +1231,34 @@ export class Topology {
 					const boundary_full = `${fbc.face_so}:${boundary_ek}`;
 					for (const p of pierce_edge_map) {
 						if (p.edge_full !== boundary_full) continue;
-						if (p.face_a === fk || p.face_b === fk) {
-							candidates.push(p.key);
-						}
+						if (p.face_a !== fk && p.face_b !== fk) continue;
+						const ep = endpoints.get(p.key);
+						if (!ep) continue;
+						const dx = ep.screen.x - screen_pt.x, dy = ep.screen.y - screen_pt.y;
+						const dist = dx * dx + dy * dy;
+						if (dist < best_dist) { best_dist = dist; best_key = p.key; }
 					}
 				}
-				return candidates.length === 1 ? candidates[0] : undefined;
+				return best_key;
 			};
 
-			// For entry: try boundary-edge match first, then use edge part's own endpoint
+			// For entry: match on specific boundary edge. Fall back to any-boundary only if edge is unknown.
 			if (fbc.enter_boundary_edge >= 0) {
 				enter_key = find_pierce_on_boundary(fbc.enter_boundary_edge);
-				if (!enter_key) enter_key = find_pierce_any_boundary();
+			} else {
+				enter_key = find_pierce_any_boundary(fbc.screen_enter);
 			}
 			if (!enter_key && fbc.t_enter < 0.01) {
-				// Edge starts inside face — use the edge part's own start endpoint
 				enter_key = rewrite(fbc.edge_part_start_key);
 			}
 
-			// For exit: try boundary-edge match first, then use edge part's own endpoint
+			// For exit: match on specific boundary edge. Fall back to any-boundary only if edge is unknown.
 			if (fbc.leave_boundary_edge >= 0) {
 				leave_key = find_pierce_on_boundary(fbc.leave_boundary_edge);
-				if (!leave_key) leave_key = find_pierce_any_boundary();
+			} else {
+				leave_key = find_pierce_any_boundary(fbc.screen_leave);
 			}
 			if (!leave_key && fbc.t_leave > 0.99) {
-				// Edge ends inside face — use the edge part's own end endpoint
 				leave_key = rewrite(fbc.edge_part_end_key);
 			}
 
@@ -1307,6 +1317,14 @@ export class Topology {
 				return parts[1] !== fbc.face_so;
 			};
 			if (is_other_corner(enter_key) || is_other_corner(leave_key)) {
+				continue;
+			}
+
+
+			// Skip if enter and leave are on different boundary edges —
+			// the edge passes through the face, it's not hidden behind a single boundary
+			if (fbc.enter_boundary_edge >= 0 && fbc.leave_boundary_edge >= 0 &&
+				fbc.enter_boundary_edge !== fbc.leave_boundary_edge) {
 				continue;
 			}
 

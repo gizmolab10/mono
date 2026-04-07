@@ -56,6 +56,19 @@ export interface Facet {
 	face: number;         // face index within the SO
 }
 
+/** Ray-casting point-in-polygon test (screen space) */
+function point_in_polygon(px: number, py: number, poly: { x: number; y: number }[]): boolean {
+	let inside = false;
+	for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+		const yi = poly[i].y, yj = poly[j].y;
+		if ((yi > py) !== (yj > py)) {
+			const xi = poly[i].x + (py - yi) / (yj - yi) * (poly[j].x - poly[i].x);
+			if (px < xi) inside = !inside;
+		}
+	}
+	return inside;
+}
+
 // --- Endpoint ---
 
 export interface Endpoint {
@@ -298,18 +311,46 @@ export class Facets {
 		}
 
 		// Import cross-face edge segments.
-		// An edge from one object may cross a face of another object.
-		// If both endpoints of an edge segment already appear on another object's face
-		// (via intersection segments or other shared keys), assign the edge segment there too.
+		// An edge from one object may be a boundary on another object's face.
+		// Dihedral test: only import if the source edge is on the silhouette of the source object
+		// (i.e., not both adjacent faces are front-facing). If both faces are visible,
+		// the edge is interior to the source object's surface and can't be a boundary elsewhere.
+		// Relaxed rule: at least one endpoint must have a segment on the target face,
+		// and at least one endpoint must be a shared point (pierce or cross).
 		for (const [so_id, segs] of edge_segments) {
+			const source_obj = objects.find(o => o.id === so_id);
+			if (!source_obj?.faces) continue;
+			const source_projected = projected_map.get(so_id);
+			if (!source_projected) continue;
+
 			for (const seg of segs) {
+				// Dihedral test: skip edges where both adjacent faces are front-facing
+				const edge_vi = seg.edge_key.split('-').map(Number);
+				let both_faces_visible = false;
+				if (edge_vi.length === 2) {
+					const adj_faces: number[] = [];
+					for (let sfi = 0; sfi < source_obj.faces.length; sfi++) {
+						const fv = source_obj.faces[sfi];
+						if (fv.includes(edge_vi[0]) && fv.includes(edge_vi[1])) adj_faces.push(sfi);
+					}
+					if (adj_faces.length === 2) {
+						const f0_front = face_winding(source_obj.faces[adj_faces[0]], source_projected) < 0;
+						const f1_front = face_winding(source_obj.faces[adj_faces[1]], source_projected) < 0;
+						both_faces_visible = f0_front && f1_front;
+					}
+				}
+				if (both_faces_visible) continue;
+
 				for (let ci = 0; ci < seg.visible.length; ci++) {
 					const [s, e] = seg.visible[ci];
 					const [sk, ek] = seg.endpoint_keys[ci];
 					const sk_ep = this.endpoints.get(sk);
 					const ek_ep = this.endpoints.get(ek);
 					if (!sk_ep || !ek_ep) continue;
-					// Check each other object's front-facing faces
+					// At least one endpoint must be a shared point (pierce or cross)
+					const sk_shared = sk_ep.id.type === T_Endpoint.pierce || sk_ep.id.type === T_Endpoint.cross;
+					const ek_shared = ek_ep.id.type === T_Endpoint.pierce || ek_ep.id.type === T_Endpoint.cross;
+					if (!sk_shared && !ek_shared) continue;
 					for (const other_obj of objects) {
 						if (other_obj.id === so_id) continue;
 						if (!other_obj.faces) continue;
@@ -317,19 +358,25 @@ export class Facets {
 						if (!other_projected) continue;
 						for (let fi = 0; fi < other_obj.faces.length; fi++) {
 							if (face_winding(other_obj.faces[fi], other_projected) >= 0) continue;
-							// Do both endpoints have segments on this face?
+							// At least one endpoint must have a segment on this face
 							let has_sk = false, has_ek = false;
 							for (const seg_id of sk_ep.segments) {
 								const s2 = this.segments.get(seg_id);
 								if (s2 && s2.so === other_obj.id && s2.face === fi) { has_sk = true; break; }
 							}
-							if (!has_sk) continue;
 							for (const seg_id of ek_ep.segments) {
 								const s2 = this.segments.get(seg_id);
 								if (s2 && s2.so === other_obj.id && s2.face === fi) { has_ek = true; break; }
 							}
-							if (!has_ek) continue;
-							// Both endpoints are on this other face — add the edge segment there
+							if (!has_sk && !has_ek) continue;
+							// Stipulation 9.5: if an endpoint is a corner of the source object,
+							// it must be inside the target face on screen
+							const face_verts = other_obj.faces[fi];
+							const face_poly = face_verts.map((vi: number) => ({ x: other_projected[vi].x, y: other_projected[vi].y }));
+							const sk_is_source_corner = sk_ep.id.type === T_Endpoint.corner && sk_ep.id.so === so_id;
+							const ek_is_source_corner = ek_ep.id.type === T_Endpoint.corner && ek_ep.id.so === so_id;
+							if (sk_is_source_corner && !point_in_polygon(s.x, s.y, face_poly)) continue;
+							if (ek_is_source_corner && !point_in_polygon(e.x, e.y, face_poly)) continue;
 							const sid = 'seg:' + this._seg_counter++;
 							this.add_segment({
 								id: sid, so: other_obj.id, face: fi,
@@ -593,12 +640,17 @@ export class Facets {
 						}
 						break;
 					}
-					// SO check: corner and oc endpoints have a single SO.
-					// If it doesn't match the SO being traced, this facet crosses into another object.
+					// SO check: reject corners from other objects UNLESS they have segments on this face
 					if (other_ep.id.type === T_Endpoint.corner && other_ep.id.so !== so) {
-						dud = true;
-						dud_reason = `${ep_label(other_ep_key)}: wrong SO (${other_ep.id.so} != ${so})`;
-						break;
+						const has_seg_on_face = other_ep.segments.some(sid => {
+							const s2 = this.segments.get(sid);
+							return s2 && s2.so === so && s2.face === face;
+						});
+						if (!has_seg_on_face) {
+							dud = true;
+							dud_reason = `${ep_label(other_ep_key)}: wrong SO (${other_ep.id.so} != ${so})`;
+							break;
+						}
 					}
 					const face_order = other_ep.ordering.filter(sid => {
 						const s = this.segments.get(sid);
@@ -752,19 +804,21 @@ export class Facets {
 			ctx.closePath();
 			ctx.clip();
 
+			// One path per face, all facets as sub-paths, even-odd fill.
+			// Islands (facets enclosed by other facets) are automatically subtracted.
+			ctx.fillStyle = color;
+			ctx.beginPath();
 			for (const facet of face_facets) {
-				ctx.fillStyle = color;
-				ctx.beginPath();
-				const first = this.endpoints.get(facet.endpoints[0])!;
+				const first = this.endpoints.get(facet.endpoints[0]);
+				if (!first) continue;
 				ctx.moveTo(first.screen.x, first.screen.y);
 				for (let i = 1; i < facet.endpoints.length; i++) {
 					const ep = this.endpoints.get(facet.endpoints[i]);
 					if (ep) ctx.lineTo(ep.screen.x, ep.screen.y);
 				}
 				ctx.closePath();
-				ctx.fill();
-
 			}
+			ctx.fill('evenodd');
 
 			ctx.restore();
 
