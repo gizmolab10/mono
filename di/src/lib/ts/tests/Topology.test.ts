@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { vec3, mat4, vec4 } from 'gl-matrix';
 import { Topology } from '../render/Topology';
 import type { TopologyInput, Pt, OccludingFace } from '../render/Topology';
+import { Facets } from '../render/Facets';
 import type { Projected, O_Scene } from '../types/Interfaces';
 import Smart_Object from '../runtime/Smart_Object';
 
@@ -397,6 +398,15 @@ describe('Layer 2: Clipping', () => {
 			}
 		}
 
+		// Compute root scale from first object (largest dimension)
+		const root = objects[0]?.so;
+		const root_scale = root
+			? Math.max(
+				Math.abs(root.x_max - root.x_min),
+				Math.abs(root.y_max - root.y_min),
+				Math.abs(root.z_max - root.z_min),
+			) : 1;
+
 		return {
 			objects,
 			projected_map,
@@ -406,6 +416,7 @@ describe('Layer 2: Clipping', () => {
 			get_world_matrix: () => mat4.create(),
 			project_vertex: simple_project,
 			front_face_edges: simple_front_edges,
+			root_scale,
 		};
 	}
 
@@ -691,10 +702,18 @@ describe('Layer 4: Two-object scenes', () => {
 				occluding_faces.push({ n, d, corners, poly, obj_id: obj.id, face_index: fi, face_verts: face, silhouette_edges });
 			}
 		}
+		const root = objects[0]?.so;
+		const root_scale = root
+			? Math.max(
+				Math.abs(root.x_max - root.x_min),
+				Math.abs(root.y_max - root.y_min),
+				Math.abs(root.z_max - root.z_min),
+			) : 1;
 		return {
 			objects, projected_map, occluding_faces, occluding_index: null,
 			face_winding: simple_winding, get_world_matrix: () => mat4.create(),
 			project_vertex: simple_project, front_face_edges: simple_front_edges,
+			root_scale,
 		};
 	}
 
@@ -1001,11 +1020,19 @@ describe('Layer 5: Golden test (ALPHA + BETA)', () => {
 			}
 		}
 		const _wm = world_matrices;
+		const root = objects[0]?.so;
+		const root_scale = root
+			? Math.max(
+				Math.abs(root.x_max - root.x_min),
+				Math.abs(root.y_max - root.y_min),
+				Math.abs(root.z_max - root.z_min),
+			) : 1;
 		return {
 			objects, projected_map, occluding_faces, occluding_index: null,
 			face_winding: simple_winding,
 			get_world_matrix: (obj: O_Scene) => _wm?.get(obj.id) ?? mat4.create(),
 			project_vertex: simple_project, front_face_edges: simple_front_edges,
+			root_scale,
 		};
 	}
 
@@ -1182,8 +1209,8 @@ describe('Layer 5: Golden test (ALPHA + BETA)', () => {
 		// There should be pierce keys — the rotated geometry produces intersection lines
 		expect(pierce_keys.length).toBeGreaterThan(0);
 
-		// Check that point j (on BETA edge G'H', piercing ALPHA face HGCD) is connected
-		const j_key = 'pierce:beta:G-H:alpha:HGCD';
+		// Check that point j (on BETA edge O-P (G'-H'), piercing ALPHA face HGCD) is connected
+		const j_key = 'pierce:beta:O-P:alpha:HGCD';
 		expect(keys).toContain(j_key);
 
 		// j should appear in both an intersection segment and an edge segment
@@ -1205,5 +1232,47 @@ describe('Layer 5: Golden test (ALPHA + BETA)', () => {
 		expect(j_in_intersection).toBe(true);
 		// This is the key test — if j is in an edge segment, the facet can close
 		expect(j_in_edge).toBe(true);
+	});
+
+	it('traced facets have valid structure: no repeated endpoints, no duplicate facets', () => {
+		const alpha_so = make_so('ALPHA', [-2, 0.5, -1, 1, -1, 1]);
+		const beta_so = make_so('BETA', [-0.5, 2, -1, 1, -0.5, 1.5]);
+		const root_so = make_so('ROOT', [-3, 3, -2, 2, -2, 2]);
+		const root: O_Scene = { id: 'root', so: root_so, edges: cube_edges, faces: cube_faces, position: vec3.fromValues(0, 0, 0), color: 'rgba(0,0,0,' };
+		const alpha: O_Scene = { id: 'alpha', so: alpha_so, edges: cube_edges, faces: cube_faces, position: vec3.fromValues(0, 0, 0), color: 'rgba(0,0,0,', parent: root };
+		const beta: O_Scene = { id: 'beta', so: beta_so, edges: cube_edges, faces: cube_faces, position: vec3.fromValues(0, 0, 0), color: 'rgba(0,0,0,', parent: root };
+
+		const objects = [alpha, beta];
+		const input = build_golden_input(objects);
+		const topo = new Topology();
+		const result = topo.compute(input);
+
+		const facets = new Facets();
+		facets.ingest_precomputed(
+			result.endpoints,
+			result.edge_segments,
+			result.intersection_segments,
+			result.occluding_segments,
+			objects,
+			input.projected_map,
+			simple_winding,
+		);
+		facets.compute_cyclic_ordering();
+
+		const traced = facets.trace_facets(alpha.id);
+
+		// Every facet should visit each endpoint at most once
+		for (const facet of traced) {
+			const unique = new Set(facet.endpoints);
+			expect(unique.size).toBe(facet.endpoints.length);
+		}
+
+		// No two facets should share all their segments (duplicate facets)
+		const facet_sigs = traced.map(f => [...f.endpoints].sort().join(','));
+		const unique_sigs = new Set(facet_sigs);
+		expect(unique_sigs.size).toBe(facet_sigs.length);
+
+		// At least one facet should exist
+		expect(traced.length).toBeGreaterThan(0);
 	});
 });

@@ -1,40 +1,4 @@
 {
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jq -r '.user_prompt' | grep -qiE '\\b(bug|debug|phantom|fix|wrong|broken|fails|crash|log|trace|why|check|look|egads|fuck)\\b' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"DEBUGGING REMINDER: The code is the suspect — read log data FIRST. Do not reason from code structure about what should happen. Reason from evidence about what did happen.\"}}' || true"
-          },
-          {
-            "type": "command",
-            "command": "jq -r '.user_prompt' | grep -qiE '(PIPELINE DIFF|PHANTOM|UNLABELED|trace:|Facets\\.ts|Topology\\.ts|Render\\.ts|segs=|console\\.log)' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"LOG DATA PRESENT: The user just pasted log output. READ IT YOURSELF. Do not ask the user to look at it or interpret it for you. Extract the answer from the data.\"}}' || true"
-          },
-          {
-            "type": "command",
-            "command": "FLAG=~/.claude/geometric-mode; PROMPT=$(jq -r '.user_prompt'); if echo \"$PROMPT\" | grep -qiE '\\bnot geometric\\b'; then rm -f $FLAG; elif echo \"$PROMPT\" | grep -qiE '\\bgeometric\\b'; then touch $FLAG; fi; [ -f $FLAG ] && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"GEOMETRIC MODE: You are terrible at visualizing geometry. Do NOT assume spatial relationships. Ask specific questions to verify: which edge is in front? which corner is inside? what direction is clockwise? State your geometric assumption explicitly and ask Jonathan to confirm before acting on it. Also, ask questions to gain data you need in order to do a precision analysis. LOGGING: Never use obj_X identifiers in logs — always use the SO name (the human-readable solid name). Never number edge-pairs (ep1, ep2, etc.) — use ep labels or edge/edge notation (e.g. CG/F'G'). Use ep labels for faces too (e.g. ABCD), not face indices.\"}}' || true"
-          },
-          {
-            "type": "command",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"PLAIN ENGLISH RULE: All explanations, answers to questions, and console.log messages must use plain English. No jargon, no code references, no variable names, no type names in explanations. Say what things DO, not what they are CALLED. If you must reference a specific line or file for evidence, do it in a separate line after the plain English explanation. Console logs you write must also be readable by a human who does not know the codebase — use real names (ALPHA, BETA), descriptive labels (edge CG, face ABCD), and short sentences, not key dumps.\"}}'"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/GitHub/mono/.claude/hooks/plain-english-check.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ]
-  },
   "permissions": {
     "allow": [
       "Read",
@@ -78,7 +42,49 @@
       "Bash(yarn docs:build)",
       "Bash(git rm:*)",
       "Bash(xxd:*)",
-      "Bash(git grep -i \"fit\" --include=\"*.ts\" --include=\"*.svelte\")"
+      "Bash(git grep -i \"fit\" --include=\"*.ts\" --include=\"*.svelte\")",
+      "Bash(git checkout:*)"
     ]
-  }
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.user_prompt' | grep -qiE '\\b(bug|debug|phantom|fix|wrong|broken|fails|crash|log|trace|why|check|look|egads|fuck)\\b' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"DEBUGGING REMINDER: The code is the suspect — read log data FIRST. Do not reason from code structure about what should happen. Reason from evidence about what did happen.\"}}' || true"
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.user_prompt' | grep -qiE '(PIPELINE DIFF|PHANTOM|UNLABELED|trace:|Facets\\.ts|Topology\\.ts|Render\\.ts|segs=|console\\.log)' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"LOG DATA PRESENT: The user just pasted log output. READ IT YOURSELF. Do not ask the user to look at it or interpret it for you. Extract the answer from the data.\"}}' || true"
+          },
+          {
+            "type": "command",
+            "command": "FLAG=~/.claude/geometric-mode; PROMPT=$(jq -r '.user_prompt'); if echo \"$PROMPT\" | grep -qiE '\\bnot geometric\\b'; then rm -f $FLAG; elif echo \"$PROMPT\" | grep -qiE '\\bgeometric\\b'; then touch $FLAG; fi; [ -f $FLAG ] && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"GEOMETRIC MODE: You are terrible at visualizing geometry. Do NOT assume spatial relationships. Ask specific questions to verify: which edge is in front? which corner is inside? what direction is clockwise? State your geometric assumption explicitly and ask Jonathan to confirm before acting on it. Also, ask questions to gain data you need in order to do a precision analysis. LOGGING: Never use obj_X identifiers in logs — always use the SO name (the human-readable solid name). Never number edge-pairs (ep1, ep2, etc.) — use ep labels or edge/edge notation (e.g. CG/F'G'). Use ep labels for faces too (e.g. ABCD), not face indices.\"}}' || true"
+          },
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"PLAIN ENGLISH RULE: All explanations, answers to questions, and console.log messages must use plain English. No jargon, no code references, no variable names, no type names in explanations. Say what things DO, not what they are CALLED. If you must reference a specific line or file for evidence, do it in a separate line after the plain English explanation. Console logs you write must also be readable by a human who does not know the codebase — use real names (ALPHA, BETA), descriptive labels (edge CG, face ABCD), and short sentences, not key dumps.\"}}'"
+          },
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"GUESS RULE: Every statement about what code does, what caused a bug, or what will happen must be backed by evidence you can point to. If you cannot point to evidence, prefix the statement with I AM GUESSING. No exceptions. Never pad a pros-and-cons list — if there are no real cons, say no cons found.\"}}'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/GitHub/mono/.claude/hooks/plain-english-check.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "prefersReducedMotion": false
 }

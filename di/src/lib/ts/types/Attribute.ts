@@ -24,7 +24,7 @@ export default class Attribute {
 
 	serialize(): Compact_Attribute {
 		if (this.formula) {
-			const result: { formula: string; value?: number; attached?: boolean } = { formula: tokenizer.untokenize(this.formula), value: this.value };
+			const result: { formula: string; value?: number; attached?: boolean } = { formula: tokenizer.untokenize(this.formula) };
 			if (this.attached) { result.attached = true; }
 			return result;
 		}

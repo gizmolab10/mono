@@ -130,4 +130,4 @@ Each edge segment carries: edge key (vertex pair), SO id, array of visible scree
 
 ### Missing endpoints (2026-03-30)
 
-Still has missing endpoints. The hybrid phase 4 approach produces correct crossing detection and splits, but some endpoints aren't appearing in the output. Targeted debug logging is in place across phases 2, 3, and 4 for the CG/F'G' crossing (edges CG and FG), showing endpoint keys, matching path taken, and readable SO names.
+Still has missing endpoints. The hybrid phase 4 approach produces correct crossing detection and splits, but some endpoints aren't appearing in the output. Targeted debug logging is in place across phases 2, 3, and 4 for the CG/NO crossing (edges CG and NO), showing endpoint keys, matching path taken, and readable SO names.

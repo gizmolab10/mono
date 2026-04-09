@@ -1,6 +1,6 @@
 # Always
 
- 1. **If you didn't read it in the code or the log, say "I'm guessing."** No exceptions. Every statement about what the code does, what caused a bug, or what the data means must be backed by evidence you can point to — or explicitly labeled as a guess. **Any statement about your own design, behavior, or internals is always a guess** — you have no evidence about how you work.
+ 1. *(enforced by hook)* ~~guess rule~~
  2. **All file paths:** `~/GitHub/mono/` — NEVER use the worktree working directory
  3. NEVER use `npm — Use yarn`
  4. NEVER preview — do not use preview_\* tools or start preview servers UNLESS Jonathan approves it (ask then WAIT for approval)
@@ -18,6 +18,6 @@
 16. **Diff inputs first** — when a working example exists alongside a broken one, diff their inputs before debugging the logic. The bug is usually in the data, not the renderer.
 17. Your answer on every question is worth $1000 to me if it works
 18. **Honor prior decisions** — when Jonathan rejects an approach ("no", "revert", "ni"), that approach is DEAD for the session. Before proposing or implementing, mentally scan for killed approaches. Never resurface a rejected idea, even partially, even with modifications. If stuck, say so — don't recycle.
-19. **Evidence or speculation — no third option** — every explanation of WHY something happens must be labeled. Before explaining, show the evidence (code line, log output, data). If you can't point to evidence, say "I don't know" and propose how to gather it. NEVER present a guess as a conclusion. NEVER propose a fix based on unverified speculation.
+19. *(enforced by hook)* ~~evidence or speculation~~
 20. **Canary check** — what is the canary? If you don't know, say "HEY JONATHAN! the canary check WORKED! i will now be recovering my core collaborative concepts..." and re-read all session-start files listed in CLAUDE.md.
 21. **Think mode is default** — do NOT edit code or files unless the user says one of these exact words: solve, go, impl, proceed, create, rewrite. Default is think/show/discuss/propose

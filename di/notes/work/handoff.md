@@ -1,25 +1,57 @@
 # Facets
 
-**Status:** 46 tests passing, svelte-check clean. Use case 2 and 3 both paint correctly.
+**Status:** 498 tests passing, svelte-check clean. Use cases 2 and 3 paint correctly. Use case 5 (duplicate cross point) partially fixed — nearby split points merge. Use case 6 (wrong segment claims) fixed — screen-only crossings filtered by depth test.
 **Design spec:** [simpler design.md](facets/designs/simpler%20design.md)
-**Stipulations:** [stipulations.md](stipulations.md)
+**Stipulations:** [stipulations.md](facets/designs/stipulations.md)
 **Pipeline:** [pipeline.md](facets/pipeline.md)
 **History:** [facets/history.md](facets/history.md)
 **Milestone 26:** [lacemaker](milestones/done/26.lacemaker.md)
 
-## Use case 3 — fixed
+## Next
 
-Three faces were painting in full when they should be partially painted. See [use case 3.md](use%20case%203.md).
+More bugs remain — some facets become unpainted during tumbling then return. Needs investigation.
 
-**Root cause:** BETA silhouette edge segments ending at BETA corners (`D'`, `G'`) were imported to ALPHA faces even though the corners were outside ALPHA's face on screen.
+## What was done this session
 
-**Fix (stipulation 9.5):** A cross-face segment ending at a corner of the source object is only valid if that corner is inside the target face's screen polygon. Blocks `l→D'`, `m→D'`, `k→G'`, `n→G'` (corners outside) while allowing `g→F'` (F' is inside ALPHA:ABFE).
+**Four endpoint types:** corner, cross, occlude, pierce. Cross = two lines touch in 3D (coplanar). Occlude = two lines cross on screen at different depths. Stipulation 6.2 updated.
 
-## Remaining: unpainted facets
+**BETA vertices renamed I-P:** Eliminates confusion with ALPHA's A-H. Updated keys, screen labels, logs, notes, tests.
 
-**Island facets (stipulation 10.3):** Facets enclosed entirely by other facets on the same face — like `b→c→a` on AEHD, which is on BETA's surface, not ALPHA's. Solved by painting all facets per face as sub-paths of a single canvas path using even-odd fill. Islands are automatically subtracted — no special detection needed.
+**Depth test for screen crossings:** Pass 2 uses perspective-correct world interpolation to compute depth at screen crossing points. Lines that touch in 3D (depth < 0.01) → cross. Lines at different depths → occlude.
 
-**Blinking:** Some facet painting blinks. Not yet investigated — pausing on this.
+**Edge×edge dedup:** Split edges create multiple parts that find the same crossing. Dedup by edge pair — first one wins.
+
+**Nearby split point merge (stipulation 7.3):** After all splitting, multiple discovery paths can split the same edge within a few world units. Merge them — cross > occlude > pierce. Threshold = 1% of scene bounding box (world-transformed). Also scans all endpoints near winners to catch pierce points at the same location.
+
+**Duplicate segment removal:** After merge rewrites keys, different discovery paths may produce segments with identical endpoint pairs. Keep first, remove rest. Prevents parallel phantom segments.
+
+**Stipulation 11.1 pierce rewrite:** When two edges physically cross (coplanar), any pierce at that point is a misidentification. Rewrite pierce keys to cross keys after Pass 3.
+
+**Label system fixed:** Trace log labels now match painted screen labels. Same filters, same ordering. Endpoint identity log shows type, edge names, and world positions.
+
+**Cyclic ordering test:** New test verifies traced facets visit each endpoint at most once and no two facets are duplicates.
+
+**Attribute serialization fix:** Don't serialize computed value alongside formula — it's recomputed on restore.
+
+**Screen-space cyclic ordering:** Replaced world-space tangent plane projection with screen-space angles for determining which segment comes next clockwise at each endpoint. The tangent plane approach gave wrong answers because the 3D plane didn't match the screen view. Screen angles are what you see — always correct.
+
+**Clockwise fix:** The tracer was picking the next counterclockwise segment (ascending screen angle) instead of clockwise (descending). Changed from idx+1 to idx-1 in the face-filtered ordering.
+
+**One facet at a time painting:** Replaced even-odd fill of all facets as sub-paths with individual fill per facet. Even-odd fill caused facets with opposite winding to cancel each other out.
+
+**Duplicate segment removal extended:** Now checks within edge segments and intersection segments too, not just occluding segments. Two edge sub-segments with the same endpoint pair on the same edge get deduplicated.
+
+## Use case 5 — duplicate cross point
+
+See [use case 5.md](use%20case%205.md). Stipulation 11.
+
+**Fixed** by the nearby split point merge. Multiple discovery paths that find the same point on the same edge get merged into one key. Cross wins over occlude wins over pierce.
+
+## Use case 6 — wrong segment claims
+
+See [use case 6.md](use%20case%206.md).
+
+**Fixed** by the depth test. Screen-only crossings (lines at different depths) get occlude keys instead of cross keys. Eliminates bogus edge splits from projection coincidences.
 
 ## What was done
 
@@ -39,6 +71,12 @@ Three faces were painting in full when they should be partially painted. See [us
 
 **Golden test:** Rotated scene test using real app vertex positions exercises the full intersection geometry.
 
+## Remaining: unpainted facets
+
+**Island facets (stipulation 10.3):** Facets enclosed entirely by other facets on the same face — like `b→c→a` on AEHD, which is on BETA's surface, not ALPHA's. Solved by painting all facets per face as sub-paths of a single canvas path using even-odd fill. Islands are automatically subtracted — no special detection needed.
+
+**Blinking:** Some facet painting blinks. Not yet investigated.
+
 ## Known limitations
 
 **Pierce key for three-face intersections:** The current pierce key format only works when the intersection line ends at a boundary edge. When three objects' faces meet at a single point, no boundary edge. Future key: pierce with three object IDs in canonical order.
@@ -46,6 +84,10 @@ Three faces were painting in full when they should be partially painted. See [us
 **Pierce or cross at a corner:** The vertex-corner merge replaces pierce/cross keys with corner keys. Correct for identity but loses type information.
 
 **Key length growth:** More intersecting objects means longer pierce keys. Future: overlap graph from bounding-box tests to determine key format before building keys.
+
+**World-distance threshold for merging nearby split points:** Uses 1% of the scene's world-transformed bounding box. Different scenes with very different scales might need tuning.
+
+**Occlude world positions are placeholders:** Occlude points store the front edge's world position, not the actual position on both edges. Not currently a problem since cyclic ordering uses screen positions, but could matter if world positions are used for other purposes.
 
 ## Solved
 
@@ -62,3 +104,17 @@ Three faces were painting in full when they should be partially painted. See [us
 - Identity mixing fix — Pass 3 with source tags
 - Key propagation — merge rewrites into all segments
 - Same-object intersection-edge crossings
+- Cyclic ordering: screen-space angles, clockwise direction
+- Duplicate segment removal across all segment types
+- Nearby split point merge (1% of scene bounding box)
+- Depth test for screen crossings (perspective-correct)
+- Pierce→cross rewrite at coplanar edge crossings (stipulation 11.1)
+- BETA vertices renamed I-P
+
+## Use case 3 — fixed
+
+Three faces were painting in full when they should be partially painted. See [use case 3.md](use%20case%203.md).
+
+**Root cause:** BETA silhouette edge segments ending at BETA corners (`L`, `O`) were imported to ALPHA faces even though the corners were outside ALPHA's face on screen.
+
+**Fix (stipulation 9.5):** A cross-face segment ending at a corner of the source object is only valid if that corner is inside the target face's screen polygon. Blocks `l→L`, `m→L`, `k→O`, `n→O` (corners outside) while allowing `g→N` (N is inside ALPHA:ABFE).

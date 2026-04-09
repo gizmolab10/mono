@@ -1,37 +1,44 @@
 import type { Projected, O_Scene } from '../types/Interfaces';
-import { vec3, vec4, mat4 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 
 // --- Endpoint identity types ---
 
 export enum T_Endpoint {
 	pierce            = 'pierce',
 	cross             = 'cross',
+	occlude           = 'occlude',
 	corner            = 'corner',
 }
 
 export type EndpointID =
 	| { type: T_Endpoint.pierce; edge: string; face: string }
 	| { type: T_Endpoint.cross; edgeA: string; edgeB: string }
+	| { type: T_Endpoint.occlude; edgeA: string; edgeB: string }
 	| { type: T_Endpoint.corner; so: string; vertex: number };
 
-/** Map vertex index to letter: 0→A, 1→B, ... 7→H */
-export function vtx(i: number): string { return String.fromCharCode(65 + i); }
+/** Map vertex index to letter: obj 0: 0→A, 1→B, ... 7→H; obj 1: 0→I, 1→J, ... 7→P */
+export function vtx(i: number, obj_idx = 0): string { return String.fromCharCode(65 + i + obj_idx * 8); }
 
-/** Map edge key "3-5" to letter form "D-F" */
+/** Map edge key "3-5" to letter form "D-F", with object-based offset for BETA (I-P) etc. */
+let _obj_idx_map: Map<string, number> = new Map();
+export function set_obj_idx_map(m: Map<string, number>): void { _obj_idx_map = m; }
+
 function edge_letters(ek: string): string {
 	// Split on first ':', convert only vertex digits (after the SO id)
 	const colon = ek.indexOf(':');
 	if (colon < 0) return ek;
 	const so = ek.slice(0, colon);
-	const rest = ek.slice(colon).replace(/(\d+)/g, (_, n) => vtx(parseInt(n)));
+	const oi = _obj_idx_map.get(so) ?? 0;
+	const rest = ek.slice(colon).replace(/(\d+)/g, (_, n) => vtx(parseInt(n), oi));
 	return so + rest;
 }
 
 export function endpoint_key(id: EndpointID): string {
 	switch (id.type) {
-		case T_Endpoint.pierce: return `pierce:${edge_letters(id.edge)}:${id.face}`;
-		case T_Endpoint.cross:  return `cross:${edge_letters(id.edgeA)}:${edge_letters(id.edgeB)}`;
-		case T_Endpoint.corner: return `c:${id.so}:${vtx(id.vertex)}`;
+		case T_Endpoint.pierce:  return `pierce:${edge_letters(id.edge)}:${id.face}`;
+		case T_Endpoint.cross:   return `cross:${edge_letters(id.edgeA)}:${edge_letters(id.edgeB)}`;
+		case T_Endpoint.occlude: return `occlude:${edge_letters(id.edgeA)}:${edge_letters(id.edgeB)}`;
+		case T_Endpoint.corner:  return `c:${id.so}:${vtx(id.vertex, _obj_idx_map.get(id.so) ?? 0)}`;
 	}
 }
 
@@ -90,6 +97,7 @@ export class Facets {
 	segments = new Map<string, Segment>();
 	endpoints = new Map<string, Endpoint>();
 	private id_to_name = new Map<string, string>();
+	private id_to_obj_idx = new Map<string, number>(); // SO id → object index (0=ALPHA, 1=BETA, ...)
 	private face_labels = new Map<string, string>(); // "obj_id:face_idx" → "ABFE" etc
 	/** Replace obj IDs and face indices with readable names */
 	private pretty(s: string): string {
@@ -122,82 +130,50 @@ export class Facets {
 
 
 	/** Compute the cyclic ordering at each endpoint.
-	 *  For each face that has segments at this endpoint, project outgoing
-	 *  segment directions onto the face's tangent plane and sort by angle. */
-	compute_cyclic_ordering(
-		objects: O_Scene[],
-		projected_map: Map<string, Projected[]>,
-		get_world_matrix: (obj: O_Scene) => mat4,
-		face_winding: (face: number[], projected: Projected[]) => number,
-	): void {
-		// Build face tangent planes: for each (obj_id, face_index), store normal + u/v axes
-		type TangentPlane = { n: vec3; u: vec3; v: vec3 };
-		const planes = new Map<string, TangentPlane>();
-
-		for (const obj of objects) {
-			if (!obj.parent || !obj.faces) continue;
-			const projected = projected_map.get(obj.id)!;
-			const world = get_world_matrix(obj);
-			const verts = obj.so.vertices;
-
-			for (let fi = 0; fi < obj.faces.length; fi++) {
-				const face = obj.faces[fi];
-				if (face_winding(face, projected) >= 0) continue;
-
-				const corners: vec3[] = [];
-				for (const vi of face) {
-					const wv = vec4.create();
-					vec4.transformMat4(wv, [verts[vi][0], verts[vi][1], verts[vi][2], 1], world);
-					corners.push(vec3.fromValues(wv[0], wv[1], wv[2]));
-				}
-				const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);
-				const e2 = vec3.sub(vec3.create(), corners[3], corners[0]);
-				const n = vec3.cross(vec3.create(), e1, e2);
-				vec3.normalize(n, n);
-				const u = vec3.normalize(vec3.create(), e1);
-				const v = vec3.cross(vec3.create(), n, u);
-				vec3.normalize(v, v);
-				planes.set(`${obj.id}:${fi}`, { n, u, v });
-			}
-		}
-
-		// For each endpoint, compute ordering
+	 *  Sort outgoing segments by screen-space angle. */
+	compute_cyclic_ordering(): void {
 		for (const ep of this.endpoints.values()) {
 			if (ep.segments.length < 2) {
 				ep.ordering = [...ep.segments];
 				continue;
 			}
 
-			// Find a tangent plane — use the first segment's face
-			const first_seg = this.segments.get(ep.segments[0]);
-			if (!first_seg) continue;
-			const plane = planes.get(`${first_seg.so}:${first_seg.face}`);
-			if (!plane) continue;
-
-			// Compute angle for each segment's outgoing direction
 			const angles: { seg_id: string; angle: number }[] = [];
 			for (const seg_id of ep.segments) {
 				const seg = this.segments.get(seg_id);
 				if (!seg) continue;
 
-				// Find the other endpoint
 				const other_key = seg.endpoints[0] === ep.key ? seg.endpoints[1] : seg.endpoints[0];
 				const other_ep = this.endpoints.get(other_key);
 				if (!other_ep) continue;
 
-				// Direction from this endpoint to the other
-				const dir = vec3.sub(vec3.create(), other_ep.world, ep.world);
-
-				// Project onto tangent plane
-				const du = vec3.dot(dir, plane.u);
-				const dv = vec3.dot(dir, plane.v);
-
-				angles.push({ seg_id, angle: Math.atan2(dv, du) });
+				const dx = other_ep.screen.x - ep.screen.x;
+				const dy = other_ep.screen.y - ep.screen.y;
+				angles.push({ seg_id, angle: Math.atan2(dy, dx) });
 			}
 
 			angles.sort((a, b) => a.angle - b.angle);
 
 			ep.ordering = angles.map(a => a.seg_id);
+
+			if (ep.id.type === T_Endpoint.cross && ep.segments.length >= 6 && !Facets._trace_logged) {
+				const descs = angles.map(a => {
+					const s = this.segments.get(a.seg_id);
+					if (!s) return '?';
+					const ok = s.endpoints[0] === ep.key ? s.endpoints[1] : s.endpoints[0];
+					const oep = this.endpoints.get(ok);
+					let label: string;
+					if (oep?.id.type === T_Endpoint.corner) {
+						const oi = this.id_to_obj_idx.get(oep.id.so) ?? 0;
+						label = String.fromCharCode(65 + oep.id.vertex + oi * 8);
+					} else {
+						label = `(${oep?.screen.x.toFixed(0)},${oep?.screen.y.toFixed(0)})`;
+					}
+					const face_label = this.pretty(`${s.so}:${s.face}`);
+					return `${label} ${(a.angle * 180 / Math.PI).toFixed(1)}° ${s.type[0]} ${face_label}`;
+				});
+				console.log(`screen angles at merged cross (${ep.screen.x.toFixed(0)},${ep.screen.y.toFixed(0)}): ${descs.join(' | ')}`);
+			}
 		}
 	}
 
@@ -220,13 +196,17 @@ export class Facets {
 		face_winding: (face: number[], projected: Projected[]) => number,
 	): void {
 		this.id_to_name.clear();
+		this.id_to_obj_idx.clear();
+		const idx_map = new Map<string, number>();
 		this.face_labels.clear();
-		for (const obj of objects) {
+		for (let oi = 0; oi < objects.length; oi++) {
+			const obj = objects[oi];
 			this.id_to_name.set(obj.id, obj.so.name);
+			this.id_to_obj_idx.set(obj.id, oi);
+			idx_map.set(obj.id, oi);
 			if (obj.faces) {
-				const p = obj === objects[1] ? "'" : '';
 				for (let fi = 0; fi < obj.faces.length; fi++) {
-					const corners = obj.faces[fi].map(v => vtx(v) + p).join('');
+					const corners = obj.faces[fi].map(v => vtx(v, oi)).join('');
 					this.face_labels.set(`${obj.so.name}:${fi}`, `${obj.so.name}:${corners}`);
 					// Also handle edge_letters format: face:D (where D = vtx(3))
 					this.face_labels.set(`face:${vtx(fi)}:`, `face:${corners}:`);
@@ -234,6 +214,7 @@ export class Facets {
 				}
 			}
 		}
+		set_obj_idx_map(idx_map);
 		// Import endpoints
 		for (const [key, cep] of computed_endpoints) {
 			if (!this.endpoints.has(key)) {
@@ -347,9 +328,9 @@ export class Facets {
 					const sk_ep = this.endpoints.get(sk);
 					const ek_ep = this.endpoints.get(ek);
 					if (!sk_ep || !ek_ep) continue;
-					// At least one endpoint must be a shared point (pierce or cross)
-					const sk_shared = sk_ep.id.type === T_Endpoint.pierce || sk_ep.id.type === T_Endpoint.cross;
-					const ek_shared = ek_ep.id.type === T_Endpoint.pierce || ek_ep.id.type === T_Endpoint.cross;
+					// At least one endpoint must be a shared point (pierce, cross, or occlude)
+					const sk_shared = sk_ep.id.type === T_Endpoint.pierce || sk_ep.id.type === T_Endpoint.cross || sk_ep.id.type === T_Endpoint.occlude;
+					const ek_shared = ek_ep.id.type === T_Endpoint.pierce || ek_ep.id.type === T_Endpoint.cross || ek_ep.id.type === T_Endpoint.occlude;
 					if (!sk_shared && !ek_shared) continue;
 					for (const other_obj of objects) {
 						if (other_obj.id === so_id) continue;
@@ -430,6 +411,21 @@ export class Facets {
 		}
 	}
 
+	/** Debug: dump all segments at specific endpoints */
+	dump_endpoint_segments(labels: string[]): void {
+		for (const ep of this.endpoints.values()) {
+			if (!labels.includes(ep.label)) continue;
+			const segs = ep.segments.map(sid => {
+				const s = this.segments.get(sid);
+				if (!s) return '?';
+				const a = this.endpoints.get(s.endpoints[0])?.label || '?';
+				const b = this.endpoints.get(s.endpoints[1])?.label || '?';
+				return `${s.type[0]}:${a}→${b} on ${s.so}:${s.face}`;
+			});
+			console.log(`endpoint ${ep.label} (${ep.id.type}, key=${ep.key}): ${segs.length} segments — ${segs.join(', ')}`);
+		}
+	}
+
 	/** Trace closed facets per face per the design in facets.md:
 	 *  1. Per face, build a mutable set of segments (excluding collinear duplicates — handled by ordering dedup)
 	 *  2. Start from an edge-type segment, orient clockwise around the face
@@ -441,20 +437,56 @@ export class Facets {
 		const facets: Facet[] = [];
 		const log = !Facets._trace_logged;
 
-		// Assign temporary labels for readable logging (before paint_labels runs)
+		// Assign labels matching paint_labels — same filters, same order
 		if (log) {
+			// Corners first
+			for (const ep of this.endpoints.values()) {
+				if (ep.label) continue;
+				if (ep.id.type === T_Endpoint.corner) {
+					const oi = this.id_to_obj_idx.get(ep.id.so) ?? 0;
+					ep.label = vtx(ep.id.vertex, oi);
+				}
+			}
+			// Non-corners: same filters as paint_labels
 			let next_lower = 0;
 			for (const ep of this.endpoints.values()) {
-				if (ep.label) continue; // already labeled
+				if (ep.label) continue;
+				if (ep.id.type === T_Endpoint.corner) continue;
+				if (ep.segments.length < 2) continue;
+				const has_edge = ep.segments.some(sid => {
+					const s = this.segments.get(sid);
+					return s?.type === 'edge';
+				});
+				if (!has_edge) continue;
+				ep.label = next_lower < 26
+					? String.fromCharCode(97 + next_lower)
+					: String.fromCharCode(97 + Math.floor((next_lower - 26) / 26)) + String.fromCharCode(97 + (next_lower - 26) % 26);
+				next_lower++;
+			}
+		}
+
+		if (log) {
+			const pretty_field = (s: string) => {
+				s = edge_letters(s); // convert digits to letters BEFORE replacing SO ids
+				for (const [id, name] of this.id_to_name) s = s.split(id).join(name);
+				return s;
+			};
+			for (const ep of this.endpoints.values()) {
+				if (!ep.label) continue; // skip unlabeled (filtered out)
 				if (ep.id.type === T_Endpoint.corner) {
-					const p = (only_so && ep.id.so !== only_so) ? "'" : '';
-					ep.label = vtx(ep.id.vertex) + p;
-				} else {
-					ep.label = next_lower < 26
-						? String.fromCharCode(97 + next_lower)
-						: String.fromCharCode(97 + Math.floor((next_lower - 26) / 26)) + String.fromCharCode(97 + (next_lower - 26) % 26);
-					next_lower++;
+					const pos = `(${ep.screen.x.toFixed(0)}, ${ep.screen.y.toFixed(0)})`;
+					const w = `world(${ep.world[0].toFixed(1)}, ${ep.world[1].toFixed(1)}, ${ep.world[2].toFixed(1)})`;
+					console.log(`  ${ep.label} = corner at ${pos} ${w}`);
+					continue;
 				}
+				const type_name = ep.id.type === T_Endpoint.cross ? 'cross'
+					: ep.id.type === T_Endpoint.occlude ? 'occlude' : 'pierce';
+				const detail = (ep.id.type === T_Endpoint.cross || ep.id.type === T_Endpoint.occlude)
+					? `${pretty_field(ep.id.edgeA)} x ${pretty_field(ep.id.edgeB)}`
+					: `${pretty_field(ep.id.edge)} on ${pretty_field(ep.id.face)}`;
+				const pos = `(${ep.screen.x.toFixed(0)}, ${ep.screen.y.toFixed(0)})`;
+				const w = `world(${ep.world[0].toFixed(1)}, ${ep.world[1].toFixed(1)}, ${ep.world[2].toFixed(1)})`;
+				console.log(`  ${ep.label} = ${type_name}: ${detail} at ${pos} ${w}`);
 			}
 		}
 
@@ -665,7 +697,21 @@ export class Facets {
 						break;
 					}
 
-					const next_id = face_order[(idx + 1) % face_order.length];
+					const next_id = face_order[(idx - 1 + face_order.length) % face_order.length];
+					// Log face-filtered ordering at the merged cross point
+					if (log && other_ep.id.type === T_Endpoint.cross && other_ep.segments.length >= 6) {
+						const order_descs = face_order.map((sid, fi) => {
+							const s = this.segments.get(sid);
+							if (!s) return '?';
+							const ok = s.endpoints[0] === other_ep.key ? s.endpoints[1] : s.endpoints[0];
+							const oep = this.endpoints.get(ok);
+							const lbl = ep_label(ok);
+							return `${fi === idx ? '*' : ''}${lbl}`;
+						});
+						const next_seg = this.segments.get(next_id);
+						const next_lbl = next_seg ? ep_label(next_seg.endpoints[0] === other_ep.key ? next_seg.endpoints[1] : next_seg.endpoints[0]) : '?';
+						console.log(`  tracer at ${ep_label(other_ep.key)} on ${this.pretty(`${so}:${face}`)}: order=[${order_descs.join(', ')}] cur=*${ep_label(cur_seg.endpoints[0] === other_ep.key ? cur_seg.endpoints[1] : cur_seg.endpoints[0])} → next=${next_lbl}`);
+					}
 					// Check if the directed half-edge is available (entering from other_ep_key)
 					const next_half = half(next_id, other_ep_key);
 					if (!remaining.has(next_half)) {
@@ -701,7 +747,17 @@ export class Facets {
 				if (!dud && loop.length >= 3) {
 					facets.push({ endpoints: loop, so, face });
 					for (const h of trace_used) facet_halves.add(h);
-					if (log) console.log(`  #${trace_num}: FACET ${loop.map(ep_label).join('→')}`);
+					if (log) {
+							// Compute screen winding: positive = clockwise (y-down), negative = counter-clockwise
+							let area = 0;
+							for (let li = 0; li < loop.length; li++) {
+								const ep0 = this.endpoints.get(loop[li]);
+								const ep1 = this.endpoints.get(loop[(li + 1) % loop.length]);
+								if (ep0 && ep1) area += (ep1.screen.x - ep0.screen.x) * (ep1.screen.y + ep0.screen.y);
+							}
+							const wind = area > 0 ? 'CW' : 'CCW';
+							console.log(`  #${trace_num}: FACET ${loop.map(ep_label).join('→')} [${wind}]`);
+						}
 				} else {
 					if (log) console.log(`  #${trace_num}: DUD ${dud_reason} | ${loop.map(ep_label).join('→')}`);
 				}
@@ -744,6 +800,7 @@ export class Facets {
 				for (const dep of dead_ends) {
 					const type_name = dep.id.type === T_Endpoint.corner ? 'corner'
 						: dep.id.type === T_Endpoint.cross ? 'crossing'
+						: dep.id.type === T_Endpoint.occlude ? 'occlude'
 						: dep.id.type === T_Endpoint.pierce ? 'pierce'
 						: 'unknown';
 
@@ -804,7 +861,7 @@ export class Facets {
 			ctx.closePath();
 			ctx.clip();
 
-			// One path per face, all facets as sub-paths, even-odd fill.
+			// All facets on this face as sub-paths, even-odd fill.
 			// Islands (facets enclosed by other facets) are automatically subtracted.
 			ctx.fillStyle = color;
 			ctx.beginPath();
@@ -812,8 +869,8 @@ export class Facets {
 				const first = this.endpoints.get(facet.endpoints[0]);
 				if (!first) continue;
 				ctx.moveTo(first.screen.x, first.screen.y);
-				for (let i = 1; i < facet.endpoints.length; i++) {
-					const ep = this.endpoints.get(facet.endpoints[i]);
+				for (let ei = 1; ei < facet.endpoints.length; ei++) {
+					const ep = this.endpoints.get(facet.endpoints[ei]);
 					if (ep) ctx.lineTo(ep.screen.x, ep.screen.y);
 				}
 				ctx.closePath();
@@ -898,10 +955,11 @@ export class Facets {
 				if (visible_verts && !visible_verts.has(vi)) continue;
 				const p = sel_projected[vi];
 				if (p.w < 0) continue;
-				draw(p.x, p.y, vtx(vi));
+				const sel_oi = this.id_to_obj_idx.get(so_id) ?? 0;
+				draw(p.x, p.y, vtx(vi, sel_oi));
 				const corner_key = endpoint_key({ type: T_Endpoint.corner, so: so_id, vertex: vi });
 				const corner_ep = this.endpoints.get(corner_key);
-				if (corner_ep) corner_ep.label = vtx(vi);
+				if (corner_ep) corner_ep.label = vtx(vi, sel_oi);
 			}
 		}
 
@@ -913,7 +971,7 @@ export class Facets {
 			if (ep.id.type === T_Endpoint.corner && ep.id.so === so_id) continue;
 			if (ep.segments.length < 2) continue;
 			// Skip fi/ex endpoints with no edge segments — phantom intersection exits
-			if (ep.id.type === T_Endpoint.pierce || ep.id.type === T_Endpoint.cross) {
+			if (ep.id.type === T_Endpoint.pierce || ep.id.type === T_Endpoint.cross || ep.id.type === T_Endpoint.occlude) {
 				const has_edge = ep.segments.some(sid => {
 					const s = this.segments.get(sid);
 					return s?.type === 'edge';
@@ -924,7 +982,8 @@ export class Facets {
 
 			let label: string;
 			if (ep.id.type === T_Endpoint.corner) {
-				label = vtx(ep.id.vertex) + "'";
+				const oi = this.id_to_obj_idx.get(ep.id.so) ?? 0;
+				label = vtx(ep.id.vertex, oi);
 			} else {
 				if (next_lower < 26) {
 					label = String.fromCharCode(97 + next_lower);

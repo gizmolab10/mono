@@ -30,5 +30,5 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `ex` | Execute mode — skip proposals, just do it |
 | `rs` | Reserved mode — propose before file changes |
 | `ni` | No improvement, try something different |
-| `pac` | pros and cons |
+| `pac` | pros and cons. If there are no real cons, say "no cons found." Never pad with fabricated concerns. |
 | `cd` | read code.debt.md |

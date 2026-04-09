@@ -406,6 +406,19 @@ class Render {
 
 			// Run topology pipeline — old or simple, selected by flag
 			{
+				// Compute root_scale from world-transformed bounding box of all objects
+				let rs_min = vec3.fromValues(Infinity, Infinity, Infinity);
+				let rs_max = vec3.fromValues(-Infinity, -Infinity, -Infinity);
+				for (const obj of objects) {
+					const world = this.get_world_matrix(obj);
+					for (const v of obj.so.vertices) {
+						const wv = vec4.create();
+						vec4.transformMat4(wv, [v[0], v[1], v[2], 1], world);
+						vec3.min(rs_min, rs_min, vec3.fromValues(wv[0], wv[1], wv[2]));
+						vec3.max(rs_max, rs_max, vec3.fromValues(wv[0], wv[1], wv[2]));
+					}
+				}
+				const root_scale = Math.max(rs_max[0] - rs_min[0], rs_max[1] - rs_min[1], rs_max[2] - rs_min[2]) || 1;
 				const topo_input = {
 					objects, projected_map,
 					occluding_faces: this.occluding_faces,
@@ -414,6 +427,7 @@ class Render {
 					get_world_matrix: (o: O_Scene) => this.get_world_matrix(o),
 					project_vertex: (v: vec3, w: mat4) => this.project_vertex(v, w),
 					front_face_edges: (o: O_Scene, p: Projected[]) => this.front_face_edges(o, p),
+					root_scale,
 				};
 				const topo = this.topology_simple.compute(topo_input);
 
@@ -449,11 +463,7 @@ class Render {
 				objects, projected_map,
 				(face, proj) => this.face_winding(face, proj),
 			);
-			facets.compute_cyclic_ordering(
-				objects, projected_map,
-				(obj) => this.get_world_matrix(obj),
-				(face, proj) => this.face_winding(face, proj),
-			);
+			facets.compute_cyclic_ordering();
 			const sel_so = hits_3d.selection?.so ?? null;
 			const sel_scene = sel_so?.scene ?? null;
 			const traced = facets.trace_facets(sel_scene?.id, undefined, objects);

@@ -1,4 +1,4 @@
-import { T_Endpoint, endpoint_key, type EndpointID } from './Facets';
+import { T_Endpoint, endpoint_key, set_obj_idx_map, type EndpointID } from './Facets';
 import type { Projected, O_Scene } from '../types/Interfaces';
 import { vec3, vec4, mat4 } from 'gl-matrix';
 import { k } from '../common/Constants';
@@ -27,6 +27,7 @@ export interface TopologyInput {
 	get_world_matrix: (obj: O_Scene) => mat4;
 	project_vertex: (v: vec3, world: mat4) => Projected;
 	front_face_edges: (obj: O_Scene, projected: Projected[]) => Set<string>;
+	root_scale: number; // largest dimension of root SO — used for merge threshold
 }
 
 export interface ComputedEndpoint {
@@ -109,6 +110,8 @@ interface VisiblePart {
 	// For intersections: vertex hit from quad clipper (mesh vertex index, or -1)
 	start_at_vertex?: { so: string; vertex: number };
 	end_at_vertex?: { so: string; vertex: number };
+	// Original world endpoints (before splitting) for stable coplanarity test
+	orig_world: [vec3, vec3];
 }
 
 /** Anonymous face-boundary crossing from Pass 1d (no identity assigned) */
@@ -143,23 +146,29 @@ interface SplitPoint {
 	t: number; screen: Pt; world: vec3; crossing_idx: number;
 }
 
-/** Convert a face's vertex indices to letters: [7,6,2,3] → "HGCD" */
-function face_name(obj: O_Scene, face_index: number): string {
+/** Object index in the scene (0=ALPHA, 1=BETA, ...) — vertex letters offset by 8 per object */
+function obj_idx(obj: O_Scene, input: TopologyInput): number {
+	return input.objects.indexOf(obj);
+}
+
+/** Convert a face's vertex indices to letters: obj 0: [7,6,2,3] → "HGCD", obj 1: [7,6,2,3] → "POKL" */
+function face_name(obj: O_Scene, face_index: number, input?: TopologyInput): string {
 	const verts = obj.faces?.[face_index];
 	if (!verts) return String(face_index);
-	return verts.map((v: number) => String.fromCharCode(65 + v)).join('');
+	const offset = input ? obj_idx(obj, input) * 8 : 0;
+	return verts.map((v: number) => String.fromCharCode(65 + v + offset)).join('');
 }
 
 /** Build a face key using vertex letters: "obj_1:HGCD" instead of "obj_1:4" */
-function face_key(obj: O_Scene, face_index: number): string {
-	return `${obj.id}:${face_name(obj, face_index)}`;
+function face_key(obj: O_Scene, face_index: number, input?: TopologyInput): string {
+	return `${obj.id}:${face_name(obj, face_index, input)}`;
 }
 
 /** Build a face key by looking up the object by id */
 function face_key_by_id(so_id: string, face_index: number, input: TopologyInput): string {
 	const obj = input.objects.find(o => o.id === so_id);
 	if (!obj) return `${so_id}:${face_index}`;
-	return face_key(obj, face_index);
+	return face_key(obj, face_index, input);
 }
 
 /** Convert a polygon edge index to an edge string: "obj_id:min_vertex-max_vertex" */
@@ -174,11 +183,14 @@ function boundary_edge_str(obj_id: string, face_verts: number[], poly_edge_idx: 
 	return `${obj_id}:${Math.min(vi, vj)}-${Math.max(vi, vj)}`;
 }
 
-/** Make a key string readable: obj_1→ALPHA, obj_2→BETA, vertex numbers→letters */
+/** Make a key string readable: obj_1→ALPHA, obj_2→BETA, vertex numbers→letters (offset by object) */
 function pretty_key(key: string): string {
 	return key
 		.replace(/obj_1/g, 'ALPHA').replace(/obj_2/g, 'BETA').replace(/obj_3/g, 'GAMMA')
-		.replace(/:(\d+)-(\d+)/g, (_, a, b) => ':' + String.fromCharCode(65+Number(a)) + String.fromCharCode(65+Number(b)));
+		.replace(/(ALPHA|BETA|GAMMA):(\d+)-(\d+)/g, (_, name, a, b) => {
+			const offset = name === 'BETA' ? 8 : name === 'GAMMA' ? 16 : 0;
+			return name + ':' + String.fromCharCode(65+Number(a)+offset) + '-' + String.fromCharCode(65+Number(b)+offset);
+		});
 }
 
 // ─── Topology ─────────────────────────────────────────────────────────
@@ -188,6 +200,7 @@ export class Topology {
 	private _crossings: ArrangementCrossing[] = [];
 	private _splits_by_part = new Map<number, SplitPoint[]>();
 	private _face_boundary_crossings: FaceBoundaryCrossing[] = [];
+	private _edge_edge_crosses: { cross_key: string; world: vec3 }[] = [];
 
 	// ─── Public API ──────────────────────────────────────────────────────────
 
@@ -197,10 +210,18 @@ export class Topology {
 		const intersection_segments: ComputedIntersectionSeg[] = [];
 		const occluding_segments: ComputedOccludingSeg[] = [];
 
+		// Set object index map for vertex letter offsets (ALPHA=A-H, BETA=I-P, ...)
+		const idx_map = new Map<string, number>();
+		for (let oi = 0; oi < input.objects.length; oi++) {
+			idx_map.set(input.objects[oi].id, oi);
+		}
+		set_obj_idx_map(idx_map);
+
 		// Clear per-frame state
 		this._crossings = [];
 		this._splits_by_part = new Map();
 		this._face_boundary_crossings = [];
+		this._edge_edge_crosses = [];
 
 		// ── Pass 1: Visibility ──
 		const parts: VisiblePart[] = [];
@@ -295,19 +316,251 @@ export class Topology {
 			this.compute_arrangement(input, parts, endpoints, edge_segments, intersection_segments, occluding_segments);
 		}
 
+
 		// ── Pass 3: Assign identity from source tags ──
 		if (input.objects.length > 1) {
 			const v2 = this.compute_identity_v2(input, parts, endpoints, occluding_segments, intersection_segments, edge_segments);
 			for (const [key, ep] of v2.endpoints) {
 				endpoints.set(key, ep);
 			}
+			// Build a rewrite map: Pass 3 cross keys that should be occlude (Pass 2 typed them)
+			const occlude_rewrites = new Map<string, string>();
+			for (const key of endpoints.keys()) {
+				if (!key.startsWith('occlude:')) continue;
+				const cross_version = 'cross:' + key.slice('occlude:'.length);
+				if (v2.endpoints.has(cross_version)) {
+					occlude_rewrites.set(cross_version, key);
+				}
+			}
 			for (const key of [...endpoints.keys()]) {
 				if (key.startsWith('cross:') && !v2.endpoints.has(key)) {
 					endpoints.delete(key);
 				}
 			}
+			// Rewrite Pass 3's cross keys to occlude and remove the cross duplicates
+			if (occlude_rewrites.size > 0) {
+				const rewrite = (k: string) => occlude_rewrites.get(k) ?? k;
+				for (const [, segs] of edge_segments) {
+					for (const seg of segs) {
+						for (const pair of seg.endpoint_keys) {
+							pair[0] = rewrite(pair[0]);
+							pair[1] = rewrite(pair[1]);
+						}
+					}
+				}
+				for (const iseg of intersection_segments) {
+					for (const pair of iseg.endpoint_keys) {
+						pair[0] = rewrite(pair[0]);
+						pair[1] = rewrite(pair[1]);
+					}
+				}
+				for (const oseg of v2.occluding_segments) {
+					oseg.endpoint_keys[0] = rewrite(oseg.endpoint_keys[0]);
+					oseg.endpoint_keys[1] = rewrite(oseg.endpoint_keys[1]);
+				}
+				for (const cross_key of occlude_rewrites.keys()) {
+					endpoints.delete(cross_key);
+				}
+			}
 			occluding_segments.length = 0;
 			occluding_segments.push(...v2.occluding_segments);
+		}
+
+		// ── Stipulation 11.1: rewrite pierce keys at edge×edge cross points ──
+		if (this._edge_edge_crosses.length > 0) {
+			const cross_rewrites = new Map<string, string>();
+			for (const { cross_key, world: cx_world } of this._edge_edge_crosses) {
+				if (!endpoints.has(cross_key)) continue;
+				for (const [pk, pep] of endpoints) {
+					if (pep.id.type !== T_Endpoint.pierce) continue;
+					if (pk === cross_key) continue;
+					if (vec3.distance(pep.world, cx_world) > 0.01) continue;
+					cross_rewrites.set(pk, cross_key);
+				}
+			}
+			if (cross_rewrites.size > 0) {
+				const rewrite = (key: string) => cross_rewrites.get(key) ?? key;
+				for (const [, segs] of edge_segments) {
+					for (const seg of segs) {
+						for (const pair of seg.endpoint_keys) {
+							pair[0] = rewrite(pair[0]);
+							pair[1] = rewrite(pair[1]);
+						}
+						for (let vi = seg.endpoint_keys.length - 1; vi >= 0; vi--) {
+							if (seg.endpoint_keys[vi][0] === seg.endpoint_keys[vi][1]) {
+								seg.visible.splice(vi, 1);
+								seg.endpoint_keys.splice(vi, 1);
+							}
+						}
+					}
+				}
+				for (const iseg of intersection_segments) {
+					for (const pair of iseg.endpoint_keys) {
+						pair[0] = rewrite(pair[0]);
+						pair[1] = rewrite(pair[1]);
+					}
+				}
+				for (const oseg of occluding_segments) {
+					oseg.endpoint_keys[0] = rewrite(oseg.endpoint_keys[0]);
+					oseg.endpoint_keys[1] = rewrite(oseg.endpoint_keys[1]);
+				}
+				for (const pk of cross_rewrites.keys()) {
+					endpoints.delete(pk);
+				}
+			}
+		}
+
+		// ── Stipulation 7.3: merge nearby split points on the same edge ──
+		// Multiple discovery paths can split the same edge within a few world units.
+		// Merge them: cross > occlude > pierce (stipulation 8.5).
+		if (input.objects.length > 1) {
+			const MERGE_THRESHOLD = input.root_scale * 0.01; // 1% of root SO's largest dimension
+			const merge_rewrites = new Map<string, string>();
+
+			const resolve = (key: string): string => {
+				let k = key;
+				while (merge_rewrites.has(k)) k = merge_rewrites.get(k)!;
+				return k;
+			};
+			const priority = (t: T_Endpoint) =>
+				t === T_Endpoint.cross ? 3 : t === T_Endpoint.occlude ? 2 : t === T_Endpoint.pierce ? 1 : 0;
+
+			for (const [, segs] of edge_segments) {
+				for (const seg of segs) {
+					for (let vi = 0; vi < seg.visible.length; vi++) {
+						const key_start = resolve(seg.endpoint_keys[vi][0]);
+						const key_end = resolve(seg.endpoint_keys[vi][1]);
+						if (key_start === key_end) continue;
+						const ep_start = endpoints.get(key_start);
+						const ep_end = endpoints.get(key_end);
+						if (!ep_start || !ep_end) continue;
+						if (vec3.distance(ep_start.world, ep_end.world) > MERGE_THRESHOLD) continue;
+
+						// Pick winner by type priority: cross > occlude > pierce
+						const ps = priority(ep_start.id.type);
+						const pe = priority(ep_end.id.type);
+						const winner = ps >= pe ? key_start : key_end;
+						const loser = ps >= pe ? key_end : key_start;
+						merge_rewrites.set(loser, winner);
+					}
+				}
+			}
+
+			// Also merge any other endpoints (pierce, etc.) near the winners
+			if (merge_rewrites.size > 0) {
+				// Collect winners with their world positions and thresholds
+				const winners = new Map<string, { world: vec3; threshold: number }>();
+				for (const [, winner] of merge_rewrites) {
+					const resolved = resolve(winner);
+					const ep = endpoints.get(resolved);
+					if (!ep) continue;
+					if (!winners.has(resolved)) {
+						winners.set(resolved, { world: ep.world, threshold: MERGE_THRESHOLD });
+					}
+				}
+				// Scan all endpoints for any near a winner
+				for (const [pk, pep] of endpoints) {
+					if (merge_rewrites.has(pk)) continue;
+					if (winners.has(pk)) continue;
+					for (const [wk, wdata] of winners) {
+						const d = vec3.distance(pep.world, wdata.world);
+						if (d <= wdata.threshold) {
+							// Winner's type takes priority unless this endpoint has higher priority
+							const pw = priority(endpoints.get(wk)!.id.type);
+							const pp = priority(pep.id.type);
+							if (pw >= pp) {
+								merge_rewrites.set(pk, wk);
+							} else {
+								// This endpoint has higher priority — it becomes the new winner
+								merge_rewrites.set(wk, pk);
+								winners.delete(wk);
+								winners.set(pk, { world: pep.world, threshold: wdata.threshold });
+							}
+							break;
+						}
+					}
+				}
+			}
+
+			if (merge_rewrites.size > 0) {
+				const rewrite = (key: string): string => {
+					let k = key;
+					while (merge_rewrites.has(k)) k = merge_rewrites.get(k)!;
+					return k;
+				};
+				for (const [, segs] of edge_segments) {
+					for (const seg of segs) {
+						for (const pair of seg.endpoint_keys) {
+							pair[0] = rewrite(pair[0]);
+							pair[1] = rewrite(pair[1]);
+						}
+						for (let vi = seg.endpoint_keys.length - 1; vi >= 0; vi--) {
+							if (seg.endpoint_keys[vi][0] === seg.endpoint_keys[vi][1]) {
+								seg.visible.splice(vi, 1);
+								seg.endpoint_keys.splice(vi, 1);
+							}
+						}
+					}
+				}
+				for (const iseg of intersection_segments) {
+					for (const pair of iseg.endpoint_keys) {
+						pair[0] = rewrite(pair[0]);
+						pair[1] = rewrite(pair[1]);
+					}
+				}
+				for (const oseg of occluding_segments) {
+					oseg.endpoint_keys[0] = rewrite(oseg.endpoint_keys[0]);
+					oseg.endpoint_keys[1] = rewrite(oseg.endpoint_keys[1]);
+				}
+				for (const loser of merge_rewrites.keys()) {
+					endpoints.delete(loser);
+				}
+			}
+		}
+
+		// ── Remove duplicate segments (same endpoint pair, same SO) ──
+		// After merging nearby split points, different discovery paths may produce
+		// segments with identical endpoint pairs. Keep the first, remove the rest.
+		{
+			const seen_pairs = new Set<string>();
+			// Remove duplicates within edge segments
+			for (const [, segs] of edge_segments) {
+				for (const seg of segs) {
+					for (let vi = seg.endpoint_keys.length - 1; vi >= 0; vi--) {
+						const [sk, ek] = seg.endpoint_keys[vi];
+						const pair = sk < ek ? `${sk}|${ek}` : `${ek}|${sk}`;
+						if (seen_pairs.has(pair)) {
+							seg.visible.splice(vi, 1);
+							seg.endpoint_keys.splice(vi, 1);
+						} else {
+							seen_pairs.add(pair);
+						}
+					}
+				}
+			}
+			// Remove duplicates within intersection segments
+			for (const iseg of intersection_segments) {
+				for (let vi = iseg.endpoint_keys.length - 1; vi >= 0; vi--) {
+					const [sk, ek] = iseg.endpoint_keys[vi];
+					const pair = sk < ek ? `${sk}|${ek}` : `${ek}|${sk}`;
+					if (seen_pairs.has(pair)) {
+						iseg.visible.splice(vi, 1);
+						iseg.endpoint_keys.splice(vi, 1);
+					} else {
+						seen_pairs.add(pair);
+					}
+				}
+			}
+			// Remove duplicate occluding segments
+			for (let i = occluding_segments.length - 1; i >= 0; i--) {
+				const [sk, ek] = occluding_segments[i].endpoint_keys;
+				const pair = sk < ek ? `${sk}|${ek}` : `${ek}|${sk}`;
+				if (seen_pairs.has(pair)) {
+					occluding_segments.splice(i, 1);
+				} else {
+					seen_pairs.add(pair);
+				}
+			}
 		}
 
 		return { endpoints, edge_segments, intersection_segments, occluding_segments };
@@ -464,6 +717,7 @@ export class Topology {
 							start_cause: ci.start_cause, end_cause: ci.end_cause,
 							start_poly_edge: ci.start_poly_edge ?? -1, end_poly_edge: ci.end_poly_edge ?? -1,
 							vertex_i: i, vertex_j: j_idx,
+							orig_world: [w1, w2],
 						});
 					}
 
@@ -563,8 +817,8 @@ export class Topology {
 						if (intervals.length === 0) continue;
 
 						const visible: [Pt, Pt][] = intervals.map(ci => [ci.start, ci.end]);
-						const face_key_a = face_key(fA.obj, fA.fi);
-						const face_key_b = face_key(fB.obj, fB.fi);
+						const face_key_a = face_key(fA.obj, fA.fi, input);
+						const face_key_b = face_key(fB.obj, fB.fi, input);
 
 						// Compute edge info for both endpoints — from the constraining face
 						const edge_info = (e: { face: 'A' | 'B'; edge_idx: number }, world_pt: vec3) => {
@@ -623,7 +877,7 @@ export class Topology {
 								const pierced_face = geom.start_edge.face === 'A' ? face_key_b : face_key_a;
 								s_id = { type: T_Endpoint.pierce, edge: piercing_edge, face: pierced_face };
 							} else {
-								const ix_edge = `ix:${face_key_a}:${face_key_b}`;
+								const ix_edge = `di:${face_key_a}:${face_key_b}`;
 								const hiding_edge = ci.start_poly_edge != null
 									? boundary_edge_str(ci.start_cause.obj_id, ci.start_cause.face_verts!, ci.start_poly_edge)
 									: undefined;
@@ -645,7 +899,7 @@ export class Topology {
 								const pierced_face = geom.end_edge.face === 'A' ? face_key_b : face_key_a;
 								e_id = { type: T_Endpoint.pierce, edge: piercing_edge, face: pierced_face };
 							} else {
-								const ix_edge = `ix:${face_key_a}:${face_key_b}`;
+								const ix_edge = `di:${face_key_a}:${face_key_b}`;
 								const hiding_edge = ci.end_poly_edge != null
 									? boundary_edge_str(ci.end_cause.obj_id, ci.end_cause.face_verts!, ci.end_poly_edge)
 									: undefined;
@@ -698,6 +952,7 @@ export class Topology {
 								start_poly_edge: ci.start_poly_edge ?? -1, end_poly_edge: ci.end_poly_edge ?? -1,
 								start_at_vertex: resolve_vertex(geom.start_vertex, geom.start_edge),
 								end_at_vertex: resolve_vertex(geom.end_vertex, geom.end_edge),
+								orig_world: [geom.start, geom.end],
 							});
 						}
 
@@ -793,6 +1048,8 @@ export class Topology {
 		// Intersection lines cross edges at the same points where face planes meet edges —
 		// these are the connections the facet graph needs.
 		const crossings: ArrangementCrossing[] = [];
+		// Track edge×edge pairs already found (an edge split into parts can match twice)
+		const edge_edge_seen = new Set<string>();
 
 		for (let i = 0; i < parts.length; i++) {
 			const a = parts[i];
@@ -822,8 +1079,34 @@ export class Topology {
 					x: a.screen[0].x + (a.screen[1].x - a.screen[0].x) * ix.ta,
 					y: a.screen[0].y + (a.screen[1].y - a.screen[0].y) * ix.ta,
 				};
-				const world_a = vec3.lerp(vec3.create(), a.world[0], a.world[1], ix.ta);
-				const world_b = vec3.lerp(vec3.create(), b.world[0], b.world[1], ix.tb);
+				// Project original edge endpoints to get w values for perspective-correct interpolation
+				const identity = mat4.create();
+				const pa0 = input.project_vertex(a.orig_world[0], identity);
+				const pa1 = input.project_vertex(a.orig_world[1], identity);
+				const pb0 = input.project_vertex(b.orig_world[0], identity);
+				const pb1 = input.project_vertex(b.orig_world[1], identity);
+				// Find screen-space t along original edges (not sub-parts)
+				const ta_screen = Topology.screen_t({ x: pa0.x, y: pa0.y }, { x: pa1.x, y: pa1.y }, screen);
+				const tb_screen = Topology.screen_t({ x: pb0.x, y: pb0.y }, { x: pb1.x, y: pb1.y }, screen);
+				// Perspective-correct world t from screen t and w values
+				const ta_w = (pa0.w > 1e-10 && pa1.w > 1e-10)
+					? (ta_screen / pa1.w) / ((1 - ta_screen) / pa0.w + ta_screen / pa1.w)
+					: ta_screen;
+				const tb_w = (pb0.w > 1e-10 && pb1.w > 1e-10)
+					? (tb_screen / pb1.w) / ((1 - tb_screen) / pb0.w + tb_screen / pb1.w)
+					: tb_screen;
+				const world_a = vec3.lerp(vec3.create(), a.orig_world[0], a.orig_world[1], ta_w);
+				const world_b = vec3.lerp(vec3.create(), b.orig_world[0], b.orig_world[1], tb_w);
+
+				// Deduplicate edge×edge crossings: a split edge creates multiple parts
+				// that find the same crossing — only keep the first one
+				if (a.type === 'edge' && b.type === 'edge') {
+					const ek_a = `${a.so}:${a.edge_key}`;
+					const ek_b = `${b.so}:${b.edge_key}`;
+					const pair = ek_a < ek_b ? `${ek_a}|${ek_b}` : `${ek_b}|${ek_a}`;
+					if (edge_edge_seen.has(pair)) continue;
+					edge_edge_seen.add(pair);
+				}
 
 				crossings.push({ part_a: i, part_b: j, ta: ix.ta, tb: ix.tb, screen, world_a, world_b });
 
@@ -851,13 +1134,28 @@ export class Topology {
 		for (const c of crossings) {
 			const a = parts[c.part_a];
 			const b = parts[c.part_b];
-			const edge_a = a.type === 'edge' ? `${a.so}:${a.edge_key}` : `ix:${a.so}`;
-			const edge_b = b.type === 'edge' ? `${b.so}:${b.edge_key}` : `ix:${b.so}`;
+			const edge_a = a.type === 'edge' ? `${a.so}:${a.edge_key}` : `di:${face_key_by_id(a.face_pair!.so_a, a.face_pair!.face_a, input)}:${face_key_by_id(a.face_pair!.so_b, a.face_pair!.face_b, input)}`;
+			const edge_b = b.type === 'edge' ? `${b.so}:${b.edge_key}` : `di:${face_key_by_id(b.face_pair!.so_a, b.face_pair!.face_a, input)}:${face_key_by_id(b.face_pair!.so_b, b.face_pair!.face_b, input)}`;
 			const [eA, eB] = edge_a < edge_b ? [edge_a, edge_b] : [edge_b, edge_a];
-			const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
-			const world_mid = vec3.lerp(vec3.create(), c.world_a, c.world_b, 0.5);
-			const key = this.register_endpoint(endpoints, id, c.screen, world_mid);
+			// Depth test: do the two lines touch in 3D (cross) or pass at different depths (occlude)?
+			const depth = vec3.distance(c.world_a, c.world_b);
+			const ep_type = depth > 0.01 ? T_Endpoint.occlude : T_Endpoint.cross;
+
+			const id: EndpointID = ep_type === T_Endpoint.occlude
+				? { type: T_Endpoint.occlude, edgeA: eA, edgeB: eB }
+				: { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
+			// Cross: both edges meet at the same 3D point, use midpoint.
+			// Occlude: edges are at different depths, world position is irrelevant — use first edge's position as placeholder.
+			const world_pos = ep_type === T_Endpoint.cross
+				? vec3.lerp(vec3.create(), c.world_a, c.world_b, 0.5)
+				: c.world_a;
+			const key = this.register_endpoint(endpoints, id, c.screen, world_pos);
 			crossing_keys.push(key);
+
+			// Record coplanar edge×edge crosses for stipulation 11.1 (pierce rewrite after Pass 3)
+			if (a.type === 'edge' && b.type === 'edge' && ep_type === T_Endpoint.cross) {
+				this._edge_edge_crosses.push({ cross_key: key, world: world_pos });
+			}
 		}
 
 		// Now split edge segments at crossing points
@@ -1103,8 +1401,8 @@ export class Topology {
 				const cx = this._crossings[sp.crossing_idx];
 				const part_a = parts[cx.part_a];
 				const part_b = parts[cx.part_b];
-				const edge_a = part_a.type === 'edge' ? `${part_a.so}:${part_a.edge_key}` : `ix:${part_a.so}`;
-				const edge_b = part_b.type === 'edge' ? `${part_b.so}:${part_b.edge_key}` : `ix:${part_b.so}`;
+				const edge_a = part_a.type === 'edge' ? `${part_a.so}:${part_a.edge_key}` : `di:${face_key_by_id(part_a.face_pair!.so_a, part_a.face_pair!.face_a, input)}:${face_key_by_id(part_a.face_pair!.so_b, part_a.face_pair!.face_b, input)}`;
+				const edge_b = part_b.type === 'edge' ? `${part_b.so}:${part_b.edge_key}` : `di:${face_key_by_id(part_b.face_pair!.so_a, part_b.face_pair!.face_a, input)}:${face_key_by_id(part_b.face_pair!.so_b, part_b.face_pair!.face_b, input)}`;
 				const [eA, eB] = edge_a < edge_b ? [edge_a, edge_b] : [edge_b, edge_a];
 				const id: EndpointID = { type: T_Endpoint.cross, edgeA: eA, edgeB: eB };
 				const world_mid = vec3.lerp(vec3.create(), cx.world_a, cx.world_b, 0.5);
@@ -1412,7 +1710,7 @@ export class Topology {
 			return key;
 		}
 		// Occluded intersection endpoint — try cross key first
-		const ix_edge = `ix:${face_key_a}:${face_key_b}`;
+		const ix_edge = `di:${face_key_a}:${face_key_b}`;
 		const poly_edge = end === 'start' ? part.start_poly_edge : part.end_poly_edge;
 		const hiding_edge = poly_edge != null
 			? boundary_edge_str(cause.obj_id, cause.face_verts!, poly_edge)
