@@ -1259,7 +1259,7 @@ describe('Layer 5: Golden test (ALPHA + BETA)', () => {
 		);
 		facets.compute_cyclic_ordering();
 
-		const traced = facets.trace_facets(alpha.id);
+		const traced = facets.trace_facets(alpha.id, undefined, objects);
 
 		// Every facet should visit each endpoint at most once
 		for (const facet of traced) {

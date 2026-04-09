@@ -45,10 +45,14 @@ points
     4. a silhouette of one object that crosses another object's edge is also assigned to that other object's face
     5. exclude any segment that ends at a corner (of another object) not inside a face of the first object
 
-tracing
+traces
 
-5. tracing visits endpoints that are assigned to a single face
-    1. a trace must close (return to its starting point) to form a facet
-    2. an unclosed trace is a DUD and is ignored
-    3. a trace that does not include at least one edge of its own object is unpainted
-    4. at each point, the next segment is clockwise, according to screen space angles at that point
+11. tracing visits endpoints that are assigned to a single face (the face's segment list)
+    1. tracing always starts from a corner, and proceeds along the clockwise edge
+    2. at each point, the next segment is clockwise, according to screen space angles at that point
+    3. if a point is revisited, stop -> that is a facet
+    4. if a point is a dead end -> DUD (ignored)
+    5. examine all segments of a trace, if none are on an edge -> DUD
+    6. each traced segment is removed from the list, unless the trace is a DUD
+    7. each traced corner is removed from the list of vertices, unless the trace is a DUD
+    8. after all corners have begun a trace, use one of the remaining list of segments to begin a trace

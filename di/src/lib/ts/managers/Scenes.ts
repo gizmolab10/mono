@@ -2,14 +2,14 @@ import type { Portable_Scene, Portable_SO, Exported_File } from './Versions';
 import default_scene from '../../../assets/cabinetry/drawer.di?raw';
 import { preferences, T_Preference } from './Preferences';
 import { CURRENT_VERSION, versions } from './Versions';
-import { givens } from '../algebra/Givens';
 import { constraints } from '../algebra/Constraints';
 import Smart_Object from '../runtime/Smart_Object';
 import { T_Hit_3D } from '../types/Enumerations';
+import { hits_3d } from '../events/Hits_3D';
+import { givens } from '../algebra/Givens';
 import { Identifiable } from '../runtime';
 import { camera } from '../render/Camera';
 import { scene } from '../render/Scene';
-import { hits_3d } from '../events/Hits_3D';
 import { stores } from './Stores';
 
 /**

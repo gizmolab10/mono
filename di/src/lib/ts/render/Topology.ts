@@ -551,9 +551,10 @@ export class Topology {
 					}
 				}
 			}
-			// Remove duplicate occluding segments
+			// Remove duplicate and self-loop occluding segments
 			for (let i = occluding_segments.length - 1; i >= 0; i--) {
 				const [sk, ek] = occluding_segments[i].endpoint_keys;
+				if (sk === ek) { occluding_segments.splice(i, 1); continue; }
 				const pair = sk < ek ? `${sk}|${ek}` : `${ek}|${sk}`;
 				if (seen_pairs.has(pair)) {
 					occluding_segments.splice(i, 1);

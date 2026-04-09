@@ -68,7 +68,7 @@
           },
           {
             "type": "command",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"GUESS RULE: Every statement about what code does, what caused a bug, or what will happen must be backed by evidence you can point to. If you cannot point to evidence, prefix the statement with I AM GUESSING. No exceptions. Never pad a pros-and-cons list — if there are no real cons, say no cons found.\"}}'"
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"GUESS RULE: Every statement about what code does, what caused a bug, or what will happen must be backed by evidence you can point to. If you cannot point to evidence, prefix the statement with I AM GUESSING. No exceptions. Never pad a pros-and-cons list — if there are no real cons, say no cons found. IMPLICATION RULE: Before stating a conclusion, ask yourself: if this is true, what else must be true? Follow the chain. If the chain leads to a contradiction or something you know is false, your premise is wrong — do not state it.\"}}'"
           }
         ]
       }

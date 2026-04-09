@@ -1,23 +1,22 @@
 import type { Projected, O_Scene, Dimension_Rect, Label_Rect, Angle_Rect } from '../types/Interfaces';
+import { Facets, T_Endpoint, endpoint_key, type EndpointID } from './Facets';
 import { render_back_grid, render_root_bottom } from './R_Grid';
 import { render_dimensions } from './R_Dimensions';
-import { render_axes } from './R_Axes';
 import { face_label } from '../editors/Face_Label';
 import Smart_Object from '../runtime/Smart_Object';
 import { T_Hit_3D } from '../types/Enumerations';
 import { render_angulars } from './R_Angulars';
-import { hits_3d } from '../events/Hits_3D';
 import { mat4, vec3, vec4 } from 'gl-matrix';
+import { hits_3d } from '../events/Hits_3D';
 import { Size } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
-import { debug } from '../common/Debug';
 import { k } from '../common/Constants';
 import { drag } from '../editors/Drag';
+import { render_axes } from './R_Axes';
+import { Topology } from './Topology';
 import { camera } from './Camera';
 import { scene } from './Scene';
-import { Facets, T_Endpoint, endpoint_key, /* vtx, */ type EndpointID } from './Facets';
-import { Topology } from './Topology';
 import Flatbush from 'flatbush';
 
 type Pt = { x: number; y: number };
@@ -57,8 +56,6 @@ interface ComputedEndpoint {
 }
 
 class Render {
-	private static _facets_logged = false;
-	private static _last_facet_log = '';
 	private topology_simple = new Topology();
 	private topology_endpoints = new Map<string, { key: string; id: EndpointID; screen: { x: number; y: number }; world: vec3 }>();
 	private topology_edge_segments = new Map<string, { edge_key: string; so: string; visible: [{ x: number; y: number }, { x: number; y: number }][]; endpoint_keys: [string, string][] }[]>();
@@ -393,7 +390,7 @@ class Render {
 			} else {
 				this.computed_intersection_segments = [];
 			}
-			if (!Render._facets_logged) {
+			if (!k.debug.facets_logged) {
 				}
 				this.compute_visible_edge_segments(objects, projected_map);
 			if (objects.length > 1) {
@@ -438,7 +435,7 @@ class Render {
 				this.topology_occluding_segments = topo.occluding_segments;
 
 				// Diff logging disabled — new pipeline is active, old comparison no longer useful
-				// if (!Render._facets_logged) { ... }
+				// if (!k.debug.facets_logged) { ... }
 			}
 		}
 
@@ -447,19 +444,17 @@ class Render {
 		let _facets_so_id = '';
 		let _facets_face_polys: Map<number, { x: number; y: number }[]> | null = null;
 		let _facets_traced: import('./Facets').Facet[] = [];
-		if (k.debug && solid) {
+		if (k.debug.show_facets && solid) {
 			// Reset stale log flags so fresh output appears after code changes
-			if (!Render._facets_logged) {
-				Facets._trace_logged = false;
-				Facets._occlusion_logged = false;
+			if (!k.debug.facets_logged) {
+				k.debug.trace_logged = false;
 			}
-			const use_topology_facets = true;  // flip to false for old code facets
 			const facets = new Facets();
 			facets.ingest_precomputed(
-				use_topology_facets ? this.topology_endpoints : this.computed_endpoints,
-				use_topology_facets ? this.topology_edge_segments : this.computed_edge_segments,
-				use_topology_facets ? this.topology_intersection_segments : this.computed_intersection_segments,
-				use_topology_facets ? this.topology_occluding_segments : this.computed_occluding_segments,
+				this.topology_endpoints,
+				this.topology_edge_segments,
+				this.topology_intersection_segments,
+				this.topology_occluding_segments,
 				objects, projected_map,
 				(face, proj) => this.face_winding(face, proj),
 			);
@@ -534,9 +529,7 @@ class Render {
 					}
 				}
 			}
-			_facets_ref.paint_labels(this.ctx, _facets_so_id, sel_projected, visible_verts,
-				this.occluding_faces, this.occluding_index,
-				(px, py, poly) => this.point_in_polygon_2d(px, py, poly));
+			_facets_ref.paint_labels(this.ctx, _facets_so_id, sel_projected, visible_verts);
 
 			// Log facet paths using display labels — only when they change
 			const facets_ref = _facets_ref;
@@ -547,11 +540,11 @@ class Render {
 					return labels.join('→');
 				}).join(' | ')
 				: '';
-			if (path_str !== Render._last_facet_log || !Render._facets_logged) {
-				Render._last_facet_log = path_str;
+			if (path_str !== k.debug.last_facet_log || !k.debug.facets_logged) {
+				k.debug.last_facet_log = path_str;
 				console.log(`facets: ${path_str || '(none)'}`);
 			}
-			Render._facets_logged = true;
+			k.debug.facets_logged = true;
 		}
 
 		// 2D: camera_view_extent front-face outline (after edges so it renders on top of white fill)
@@ -604,7 +597,7 @@ class Render {
 		this.render_selection();
 		if (stores.show_dimensionals()) render_dimensions(this);
 		if (stores.show_angulars()) render_angulars(this);
-		if (debug.enabled) this.render_front_face_label();
+		if (k.debug.show_ep_labels) this.render_front_face_label();
 	}
 
 	/** Recompute camera-view extent from world coordinates + rotation projections.
@@ -920,7 +913,7 @@ class Render {
 				}
 			}
 			// EDGE debug logging — commented out
-			// if (!Render._facets_logged) { ... }
+			// if (!k.debug.facets_logged) { ... }
 			this.computed_edge_segments.set(obj.id, segments);
 		}
 
@@ -1407,7 +1400,7 @@ class Render {
 							}
 						}
 
-						// if (!Render._facets_logged) {
+						// if (!k.debug.facets_logged) {
 						// 	const sk_ep = this.computed_endpoints.get(cs_key);
 						// 	const ek_ep = this.computed_endpoints.get(ce_key);
 						// 	console.log(`  crossing: ${so_a_id}:${seg.edge_key} clip[${ci}] → face ${face.obj_id}:${face.face_index} keys=[${cs_key}, ${ce_key}] types=[${sk_ep?.id.type}, ${ek_ep?.id.type}]`);
@@ -1913,7 +1906,7 @@ class Render {
 			// Occlusion: skip label if another SO's face is in front at this screen point
 			if (world && this.is_point_occluded(cx, cy, face, verts, world, obj.id)) continue;
 
-			const text = debug.enabled ? `${obj.so.name} ${fi}` : obj.so.name;
+			const text = k.debug.show_ep_labels ? `${obj.so.name} ${fi}` : obj.so.name;
 			const tw = ctx.measureText(text).width;
 			const fls = face_label.state;
 			if (!fls || fls.so !== obj.so || fls.face_index !== fi) {
@@ -1981,7 +1974,7 @@ class Render {
 
 	private draw_debug_face(face: number[], fi: number, projected: Projected[]): void {
 		const rgb = this.FACE_RGB[fi] ?? [128, 128, 128];
-		const alpha = debug.enabled ? 1 : 0;
+		const alpha = k.debug.show_ep_labels ? 1 : 0;
 		this.ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
 		this.ctx.beginPath();
 		this.ctx.moveTo(projected[face[0]].x, projected[face[0]].y);

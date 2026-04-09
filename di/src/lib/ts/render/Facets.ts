@@ -1,5 +1,6 @@
 import type { Projected, O_Scene } from '../types/Interfaces';
 import { vec3 } from 'gl-matrix';
+import { k } from '../common/Constants';
 
 // --- Endpoint identity types ---
 
@@ -91,9 +92,6 @@ export interface Endpoint {
 // --- Graph ---
 
 export class Facets {
-	static _trace_logged = false;
-	static _occlusion_logged = false;
-	static _last_label_log = '';
 	segments = new Map<string, Segment>();
 	endpoints = new Map<string, Endpoint>();
 	private id_to_name = new Map<string, string>();
@@ -156,7 +154,27 @@ export class Facets {
 
 			ep.ordering = angles.map(a => a.seg_id);
 
-			if (ep.id.type === T_Endpoint.cross && ep.segments.length >= 6 && !Facets._trace_logged) {
+			if (ep.id.type === T_Endpoint.corner && !k.debug.trace_logged) {
+				const oi = this.id_to_obj_idx.get(ep.id.so) ?? 0;
+				const label = vtx(ep.id.vertex, oi);
+				const descs = angles.map(a => {
+					const s = this.segments.get(a.seg_id);
+					if (!s) return '?';
+					const ok = s.endpoints[0] === ep.key ? s.endpoints[1] : s.endpoints[0];
+					const oep = this.endpoints.get(ok);
+					let olabel: string;
+					if (oep?.id.type === T_Endpoint.corner) {
+						const ooi = this.id_to_obj_idx.get(oep.id.so) ?? 0;
+						olabel = vtx(oep.id.vertex, ooi);
+					} else {
+						olabel = oep?.label || `(${oep?.screen.x.toFixed(0)},${oep?.screen.y.toFixed(0)})`;
+					}
+					return `${olabel} ${(a.angle * 180 / Math.PI).toFixed(1)}° ${s.type[0]} ${this.pretty(`${s.so}:${s.face}`)}`;
+				});
+				console.log(`corner ${label} at (${ep.screen.x.toFixed(0)},${ep.screen.y.toFixed(0)}): ${descs.join(' | ')}`);
+			}
+
+			if (ep.id.type === T_Endpoint.cross && ep.segments.length >= 6 && !k.debug.trace_logged) {
 				const descs = angles.map(a => {
 					const s = this.segments.get(a.seg_id);
 					if (!s) return '?';
@@ -435,7 +453,7 @@ export class Facets {
 	 *  6. Repeat until set empty */
 	trace_facets(only_so?: string, only_face?: number, objects?: O_Scene[]): Facet[] {
 		const facets: Facet[] = [];
-		const log = !Facets._trace_logged;
+		const log = !k.debug.trace_logged;
 
 		// Assign labels matching paint_labels — same filters, same order
 		if (log) {
@@ -528,6 +546,24 @@ export class Facets {
 				const ic = segs.filter(s => s.type === 'intersection').length;
 				const xc = segs.filter(s => s.type === 'crossing').length;
 				console.log(`\ntrace: ${this.pretty(face_key)} — ${seg_ids.size} segs (${ec}e ${ic}i ${xc}x)`);
+				// Log face vertex winding on screen
+				const face_obj_log = objects?.find(o => o.id === so);
+				const face_verts_log = face_obj_log?.faces?.[face];
+				if (face_verts_log) {
+					let area = 0;
+					const oi = this.id_to_obj_idx.get(so) ?? 0;
+					const vnames: string[] = [];
+					for (let vi = 0; vi < face_verts_log.length; vi++) {
+						const ck = endpoint_key({ type: T_Endpoint.corner, so, vertex: face_verts_log[vi] });
+						const cep = this.endpoints.get(ck);
+						const nk = endpoint_key({ type: T_Endpoint.corner, so, vertex: face_verts_log[(vi + 1) % face_verts_log.length] });
+						const nep = this.endpoints.get(nk);
+						if (cep && nep) area += (nep.screen.x - cep.screen.x) * (nep.screen.y + cep.screen.y);
+						vnames.push(vtx(face_verts_log[vi], oi));
+					}
+					const wind = area > 0 ? 'CW' : 'CCW';
+					console.log(`  face vertices: ${vnames.join('→')} = ${wind} on screen`);
+				}
 				for (const s of segs) console.log(`  ${seg_desc(s)}`);
 			}
 
@@ -704,7 +740,6 @@ export class Facets {
 							const s = this.segments.get(sid);
 							if (!s) return '?';
 							const ok = s.endpoints[0] === other_ep.key ? s.endpoints[1] : s.endpoints[0];
-							const oep = this.endpoints.get(ok);
 							const lbl = ep_label(ok);
 							return `${fi === idx ? '*' : ''}${lbl}`;
 						});
@@ -824,7 +859,7 @@ export class Facets {
 
 		if (log) {
 			console.log(`\ntrace_facets: ${facets.length} facets total`);
-			Facets._trace_logged = true;
+			k.debug.trace_logged = true;
 		}
 		return facets;
 	}
@@ -920,24 +955,9 @@ export class Facets {
 				const occ = occluding_faces[fi];
 				const dist = vec3.dot(occ.n, world_pt) - occ.d;
 				const in_poly = point_in_polygon_2d(sx, sy, occ.poly);
-				// if (label && !Facets._occlusion_logged) {
-				// 	if (in_poly) {
-				// 		console.log(`  occlusion check "${label}": occ=${this.pretty(occ.obj_id)} dist=${dist.toFixed(4)} in_poly=true → ${dist > 0 ? 'NOT occluded' : 'OCCLUDED'}`);
-				// 	} else {
-				// 		let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-				// 		for (const p of occ.poly) {
-				// 			if (p.x < minX) minX = p.x; if (p.y < minY) minY = p.y;
-				// 			if (p.x > maxX) maxX = p.x; if (p.y > maxY) maxY = p.y;
-				// 		}
-				// 		console.log(`  occlusion check "${label}": occ=${this.pretty(occ.obj_id)} dist=${dist.toFixed(4)} in_poly=false pt=(${sx.toFixed(0)},${sy.toFixed(0)}) bbox=(${minX.toFixed(0)},${minY.toFixed(0)})-(${maxX.toFixed(0)},${maxY.toFixed(0)})`);
-				// 	}
-				// }
 				if (dist > 0) continue;
 				if (in_poly) { dominated = true; break; }
 			}
-			// if (label && !Facets._occlusion_logged && !dominated) {
-			// 	console.log(`  occlusion check "${label}": NOT occluded (${candidates.length} candidates)`);
-			// }
 			return dominated;
 		};
 

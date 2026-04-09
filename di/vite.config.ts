@@ -18,6 +18,15 @@ const buildNumber = Math.max(...buildNotes.map(n => n.build));
 
 export default defineConfig({
   plugins: [svelte()],
+  build: {
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Vite false positive: ?raw imports detected as both static and dynamic (vitejs/vite#12706)
+        if (warning.message?.includes('dynamically imported') && warning.message?.includes('statically imported')) return;
+        warn(warning);
+      },
+    },
+  },
   server: {
     port: ports.di.port,
     strictPort: true,

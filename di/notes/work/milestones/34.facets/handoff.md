@@ -1,15 +1,51 @@
 # Facets
 
-**Status:** 498 tests passing, svelte-check clean. Use cases 2 and 3 paint correctly. Use case 5 (duplicate cross point) partially fixed — nearby split points merge. Use case 6 (wrong segment claims) fixed — screen-only crossings filtered by depth test.
+**Status:** MOTHBALLED. 498 tests passing, svelte-check clean. Feature disabled via `k.debug.show_facets = false` in Constants.ts. Set to `true` to re-enable.
 **Design spec:** [simpler design.md](facets/designs/simpler%20design.md)
 **Stipulations:** [stipulations.md](facets/designs/stipulations.md)
 **Pipeline:** [pipeline.md](facets/pipeline.md)
 **History:** [facets/history.md](facets/history.md)
 **Milestone 26:** [lacemaker](milestones/done/26.lacemaker.md)
 
-## Next
+## Why mothballed
 
-More bugs remain — some facets become unpainted during tumbling then return. Needs investigation.
+The facet tracing has a fundamental unresolved problem: **clockwise direction is inconsistent across faces.** Screen-space angle ordering (ascending `atan2`) is clockwise on some faces and counterclockwise on others. The tracer uses `idx-1` for clockwise, which works on some faces and fails on others. Neither `idx-1` nor `idx+1` is universally correct. Every fix for one face breaks another.
+
+This affects:
+- Starting direction from a vertex (stipulation 11.1)
+- Next segment at each point (stipulation 11.2)
+- Winding of traced facets (CW vs CCW)
+
+Until this is resolved, facet tracing produces phantom segments, wrong turns, and unpainted facets.
+
+## What works
+
+- Topology pipeline: intersection lines, edge splitting, endpoint identity, all types (corner, cross, occlude, pierce)
+- Nearby split point merge (1% of scene bounding box)
+- Depth test for screen crossings (perspective-correct)
+- Duplicate segment removal
+- Pierce→cross rewrite at coplanar crossings
+- BETA vertices renamed I-P
+- Label system matches screen labels
+- Even-odd fill painting (when tracing is correct)
+
+## What doesn't work
+
+- Clockwise direction inconsistency (see above)
+- Phantom segments near merged points (f→L, f→C)
+- Some facets start from non-vertices after revisit trimming
+
+## Debug flags
+
+All in `k.debug` (Constants.ts):
+- `show_facets` — master switch (false = off)
+- `trace_logged` — log trace output once
+- `facets_logged` — log facet paths once
+- `merge_logged` — log merge/pierce diagnostics once
+- `last_facet_log` — detect path changes
+- `last_label_log` — detect label changes
+- `show_ep_labels` — show endpoint labels
+- `clip_debug` — clip debugging
 
 ## What was done this session
 

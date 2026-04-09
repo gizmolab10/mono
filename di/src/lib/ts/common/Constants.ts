@@ -24,13 +24,14 @@ const common_size = 33;		// minimum fingertip touch size
 export default class Constants {
 
 	debug = {
-		last_label_log   : '',
-		last_facet_log   : '',
-		occlusion_logged : false,
+		show_facets      : false,   // master switch for facet pipeline (false = mothballed)
+		show_ep_labels   : false,
 		facets_logged    : false,
 		merge_logged     : false,
 		trace_logged     : false,
 		clip_debug       : false,
+		last_label_log   : '',
+		last_facet_log   : '',
 	};
 
 	assets_directory = __ASSETS_DIR__;
