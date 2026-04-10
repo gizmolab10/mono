@@ -1,10 +1,10 @@
 # Facets
 
 **Status:** MOTHBALLED. 498 tests passing, svelte-check clean. Feature disabled via `k.debug.show_facets = false` in Constants.ts. Set to `true` to re-enable.
-**Design spec:** [simpler design.md](facets/designs/simpler%20design.md)
-**Stipulations:** [stipulations.md](facets/designs/stipulations.md)
+**Design spec:** [simpler design.md](simpler%20design.md)
+**Stipulations:** [stipulations.md](stipulations.md)
 **Pipeline:** [pipeline.md](facets/pipeline.md)
-**History:** [facets/history.md](facets/history.md)
+**History:** [facets/history.md](di/notes/work/next/facets/history.md)
 **Milestone 26:** [lacemaker](milestones/done/26.lacemaker.md)
 
 ## Why mothballed

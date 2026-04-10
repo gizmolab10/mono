@@ -129,3 +129,16 @@
             - [x] drag does not update the constant
 - [x] invert the order of the breadcrumb buttons
 - [x] add another col to attr table before first col: s, l, e
+- [x] change the order of axis rotations (eg y then x)
+    - [x] sphere symmetry bug
+    - [x] UX to reorder axes
+        - [x] show the current rotation order
+        - [x] new column with a down pointing triangle
+        - [x] add action to click ->
+        - [x] buttons with the order
+            - [x] swap first two
+            - [x] swap last two
+            - [x] swap first and last
+        - [x] permutation
+            - [x] three things taken three at a time
+            - [x] nine buttons, ick

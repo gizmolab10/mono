@@ -1,10 +1,5 @@
 # Work
 
-- [ ] color
-	- [ ] white
-		- [ ] text for selected when bk color is too dark
-		- [ ] triangle and border of collapse triangle
-	- [ ] cross in attr table too faint
 - [ ] color and inheritance
 	- [ ] assign the color to the selected SO
 	- [ ] make all children inherit the color of their parent
