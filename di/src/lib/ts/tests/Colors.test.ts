@@ -13,14 +13,6 @@ describe('Colors', () => {
 			expect(result).toBe('#808080');
 		});
 
-		it('returns default for undefined', () => {
-			expect(colors.color_test(undefined)).toBe(colors.default_forThings);
-		});
-
-		it('returns default for empty string', () => {
-			expect(colors.color_test('')).toBe(colors.default_forThings);
-		});
-
 		it('handles blue', () => {
 			const result = colors.color_test('red:0,green:0,blue:1,alpha:1');
 			expect(result).toBe('#0000ff');
@@ -190,8 +182,6 @@ describe('Colors', () => {
 	describe('default values', () => {
 		it('has sensible defaults', () => {
 			expect(colors.default).toBe('black');
-			expect(colors.background).toBe('white');
-			expect(colors.default_forThings).toBe('blue');
 		});
 	});
 });

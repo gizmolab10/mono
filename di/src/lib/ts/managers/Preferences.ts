@@ -1,3 +1,6 @@
+import type { Writable } from 'svelte/store';
+import { writable } from 'svelte/store';
+
 /**
  * Preferences — persistent storage for user settings
  * 
@@ -123,6 +126,13 @@ class Preferences {
 		}
 		console.log('Preferences:', prefs);
 	}
+	
+	persistent<T>(key: T_Preference, fallback: T): Writable<T> {
+		const w = writable<T>(this.read<T>(key) ?? fallback);
+		w.subscribe((v) => this.write(key, v));
+		return w;
+	}
+	
 }
 
 export const preferences = new Preferences();

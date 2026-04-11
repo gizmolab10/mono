@@ -4,13 +4,19 @@ Running a project according to code debt changes the dynamic. It can be used to 
 
 offer a proposal for the first unchecked item
 
+- [x] add "3 of 24" at right of edit title when not showing parts
 - [ ] color
+    - [ ] selection and hover dot colors
+        - [ ] larger
+        - [ ] hover
+            - [ ] hand cursor (over hover dot, selected face) -- otherwise pointer
+            - [ ] tint shift from lines color
+            - [ ] lines fatter and colored
     - [ ] white
         - [ ] text for selected when bk color is too dark
         - [ ] triangle and border of collapse triangle
-    - [ ] cross in attr table too faint
+    - [ ] cross is too faint in attributes table
 - [ ] [[propagating value changes]]
-- [ ] can period be a spacer?
 
 ---
 

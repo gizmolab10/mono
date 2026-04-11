@@ -41,13 +41,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -56,13 +54,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -87,13 +83,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -102,13 +96,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -133,13 +125,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -148,13 +138,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -184,13 +172,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -208,13 +194,11 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -235,13 +219,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -250,13 +232,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -286,13 +266,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -301,13 +279,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -332,13 +308,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -347,13 +321,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -378,13 +350,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -393,13 +363,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -410,7 +378,7 @@
             "origin": 0,
             "extent": 0,
             "length": 609.6,
-            "angle": 0.767944870877505
+            "angle": 0.7853981633974483
           },
           "invariant": 1
         },
@@ -429,13 +397,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -444,13 +410,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -480,13 +444,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -495,13 +457,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0
           },
@@ -531,13 +491,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -546,13 +504,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -582,13 +538,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -597,13 +551,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -633,13 +585,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -648,13 +598,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -684,13 +632,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -699,13 +645,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -735,13 +679,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -750,13 +692,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -786,13 +726,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -801,13 +739,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s",
-              "value": 0
+              "formula": ".s"
             },
             "extent": 0,
             "length": {
-              "formula": ".l",
-              "value": 609.6
+              "formula": ".l"
             },
             "angle": 0.7853981633974483
           },
@@ -830,6 +766,278 @@
           1
         ],
         "parent_id": "die2470f99a91fb7"
+      },
+      {
+        "id": "di7a4fefb4c9f273",
+        "name": "x Y z",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": -0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 609.6,
+            "angle": 0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "die2470f99a91fb7"
+      },
+      {
+        "id": "di514a64a0b3f48b",
+        "name": "x Z y",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 609.6,
+            "angle": -0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "rotation_order": [
+          0,
+          2,
+          1
+        ],
+        "parent_id": "die2470f99a91fb7"
+      },
+      {
+        "id": "dia048f89bab1450",
+        "name": "y Z x",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 609.6,
+            "angle": -0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "rotation_order": [
+          1,
+          2,
+          0
+        ],
+        "parent_id": "die2470f99a91fb7"
+      },
+      {
+        "id": "diac4b97b68723c7",
+        "name": "z X y",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": -0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 609.6,
+            "angle": 0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "rotation_order": [
+          2,
+          0,
+          1
+        ],
+        "parent_id": "die2470f99a91fb7"
+      },
+      {
+        "id": "dib14407af96017a",
+        "name": "z Y x",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": -0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 609.6,
+            "angle": 0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "rotation_order": [
+          2,
+          1,
+          0
+        ],
+        "parent_id": "die2470f99a91fb7"
+      },
+      {
+        "id": "di374bebb97097d8",
+        "name": "x Y Z",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": -0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 609.6,
+            "angle": -0.7853981633974483
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "die2470f99a91fb7"
       }
     ],
     "camera": {
@@ -849,8 +1057,6 @@
         0
       ]
     },
-    "root_id": "die2470f99a91fb7",
-    "selected_id": "die2470f99a91fb7",
-    "selected_face": 2
+    "root_id": "die2470f99a91fb7"
   }
 }

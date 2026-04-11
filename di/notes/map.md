@@ -127,7 +127,6 @@
 - di/src/lib/ts/events/S_Hit_Target.ts
 - di/src/lib/ts/events/S_Mouse.ts
 
-
 ## Tests
 
 - di/src/lib/ts/tests/setup.ts
@@ -151,43 +150,112 @@
 
 ## Notes — Work
 
-- di/notes/work/revisit.di.md
-- di/notes/work/code.debt.md
-- di/notes/work/invisible.root.md
-- di/notes/work/rotation.md
-- di/notes/work/more milestones.md
 - di/notes/work/index.md
+
+## Notes — Work — Now
+
+- di/notes/work/now/index.md
+- di/notes/work/now/handoff.md
+- di/notes/work/now/road.map.md
+- di/notes/work/now/revisit.di.md
+- di/notes/work/now/code.debt.md
+- di/notes/work/now/learn.md
+- di/notes/work/now/technique.md
+- di/notes/work/now/working features.md
+
+## Notes — Work — Next
+
 - di/notes/work/next/index.md
 - di/notes/work/next/pacing.md
 - di/notes/work/next/punch list.md
 - di/notes/work/next/roots.md
 - di/notes/work/next/separators.md
-- di/notes/work/translate.md
+- di/notes/work/next/colors.md
+- di/notes/work/next/snap.pin.md
+- di/notes/work/next/collaboration priorities.md
+- di/notes/work/next/data schema for wendy.md
+
+## Notes — Work — Milestones (open)
+
 - di/notes/work/milestones/index.md
-- di/notes/work/milestones/1.solid.foundation.md
-- di/notes/work/milestones/2.panel.md
-- di/notes/work/milestones/3.docs.md
-- di/notes/work/milestones/4.hits.manager.md
-- di/notes/work/milestones/5.smart.objects.md
-- di/notes/work/milestones/6.build.notes.md
-- di/notes/work/milestones/7.edit.drags.md
-- di/notes/work/milestones/8.dimensionals.md
-- di/notes/work/milestones/9.persistence.md
-- di/notes/work/milestones/10.controls.md
-- di/notes/work/milestones/11.units.md
-- di/notes/work/milestones/12.hierarchy.md
-- di/notes/work/milestones/13.algebra.md
-- di/notes/work/milestones/14.details.md
-- di/notes/work/milestones/15.attributes.md
-- di/notes/work/milestones/16.formulas.md
-- di/notes/work/milestones/17.library.md
-- di/notes/work/milestones/18.user.constants.md
-- di/notes/work/milestones/19.skills.md
-- di/notes/work/milestones/20.repeaters.md
-- di/notes/work/milestones/21.cut.lists.md
-- di/notes/work/milestones/22.licensing.md
-- di/notes/work/milestones/23.marketing.md
-- di/notes/work/milestones/24.hierarchy.md
+- di/notes/work/milestones/27.selection.algorithm.md
+- di/notes/work/milestones/28.cut.lists.md
+- di/notes/work/milestones/29.user.manual.md
+- di/notes/work/milestones/30.licensing.md
+- di/notes/work/milestones/31.marketing.md
+
+## Notes — Work — Milestones — 32.facets (mothballed)
+
+- di/notes/work/milestones/32.facets/handoff.md
+- di/notes/work/milestones/32.facets/28.facets.md
+- di/notes/work/milestones/32.facets/history.md
+- di/notes/work/milestones/32.facets/lessons.md
+- di/notes/work/milestones/32.facets/designs/theory.md
+- di/notes/work/milestones/32.facets/designs/standard.facets.md
+- di/notes/work/milestones/32.facets/designs/simpler design.md
+- di/notes/work/milestones/32.facets/designs/pipeline.md
+- di/notes/work/milestones/32.facets/designs/stipulations.md
+- di/notes/work/milestones/32.facets/designs/3D sweep algorithm.md
+- di/notes/work/milestones/32.facets/use cases/use case 3.md
+- di/notes/work/milestones/32.facets/use cases/use case 4.md
+- di/notes/work/milestones/32.facets/use cases/use case 5.md
+- di/notes/work/milestones/32.facets/use cases/use case 6.md
+- di/notes/work/milestones/32.facets/slow/handoff.md
+- di/notes/work/milestones/32.facets/slow/summary.md
+- di/notes/work/milestones/32.facets/slow/bottlenecks.md
+- di/notes/work/milestones/32.facets/slow/render is stale.md
+
+## Notes — Work — Milestones (done)
+
+- di/notes/work/milestones/done/index.md
+- di/notes/work/milestones/done/1.solid.foundation.md
+- di/notes/work/milestones/done/2.panel.md
+- di/notes/work/milestones/done/3.docs.md
+- di/notes/work/milestones/done/4.hits.manager.md
+- di/notes/work/milestones/done/5.smart.objects.md
+- di/notes/work/milestones/done/6.build.notes.md
+- di/notes/work/milestones/done/7.edit.drags.md
+- di/notes/work/milestones/done/8.dimensionals.md
+- di/notes/work/milestones/done/9.persistence.md
+- di/notes/work/milestones/done/10.controls.md
+- di/notes/work/milestones/done/11.units.md
+- di/notes/work/milestones/done/12.parts.md
+- di/notes/work/milestones/done/13.algebra.md
+- di/notes/work/milestones/done/14.details.md
+- di/notes/work/milestones/done/15.attributes.md
+- di/notes/work/milestones/done/16.formulas.md
+- di/notes/work/milestones/done/17.library.md
+- di/notes/work/milestones/done/18.givens.md
+- di/notes/work/milestones/done/19.angles.md
+- di/notes/work/milestones/done/20.repeaters.md
+- di/notes/work/milestones/done/21.css.engine.md
+- di/notes/work/milestones/done/22.aesthetics.md
+- di/notes/work/milestones/done/23.undo.md
+- di/notes/work/milestones/done/24.mobile.devices.md
+- di/notes/work/milestones/done/25.errors.md
+- di/notes/work/milestones/done/26.lacemaker.md
+
+## Notes — Work — Done
+
+- di/notes/work/done/index.md
+- di/notes/work/done/article.first.draft.md
+- di/notes/work/done/chat.md
+- di/notes/work/done/code.debt.done.md
+- di/notes/work/done/cruft.md
+- di/notes/work/done/invisible.root.md
+- di/notes/work/done/layout-algorithm.md
+- di/notes/work/done/pipeline.md
+- di/notes/work/done/propagating value changes.md
+- di/notes/work/done/quaternions.md
+- di/notes/work/done/render.md
+- di/notes/work/done/rotation.md
+- di/notes/work/done/scene.model.md
+- di/notes/work/done/separators.md
+- di/notes/work/done/skills.md
+- di/notes/work/done/svelte.md
+- di/notes/work/done/topology.md
+- di/notes/work/done/version.9.md
+- di/notes/work/done/what.md
 
 ## Notes — Archives
 
@@ -233,7 +301,6 @@
 - di/notes/guides/index.md
 - di/notes/guides/best.practices.md
 - di/notes/guides/gotchas.md
-- di/notes/guides/road.map.md
 - di/notes/guides/style.md
 - di/notes/guides/testing.md
 

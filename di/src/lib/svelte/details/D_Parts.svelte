@@ -1,14 +1,14 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { T_Hit_3D, T_Editing } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { stores, scenes, history } from '../../ts/managers';
-	import { hits_3d } from '../../ts/events';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { T_Hit_3D, T_Editing } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import Separator from '../mouse/Separator.svelte';
 	import P_Selected from './P_Selected.svelte';
 	import { units } from '../../ts/types/Units';
+	import { hits_3d } from '../../ts/events';
 	import { errors } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
 
@@ -17,6 +17,20 @@
 	let show_position = $state(preferences.read<boolean>(T_Preference.showPosition) ?? true);
 	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
 	let selected_so = $derived($w_selection?.so ?? null);
+
+	// Sibling position: "N of M" among tree-order siblings of the selected SO.
+	// Suppressed when the selection is root, or when the selection has no siblings.
+	let sibling_position = $derived.by(() => {
+		$w_tick;
+		const sel = $w_selection;
+		if (!sel) return null;
+		const parent = sel.so.scene?.parent;
+		if (!parent) return null;
+		const siblings = stores.tree_order($w_all_sos).filter(so => so.scene?.parent === parent);
+		if (siblings.length <= 1) return null;
+		const index = siblings.indexOf(sel.so) + 1;
+		return { index, total: siblings.length };
+	});
 
 	function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
 	let editing_id: string | null = $state(null);
@@ -262,13 +276,18 @@
 {/if}
 {#if $w_selection}
 	{#if !show_parts}
-		<input
-			type      = 'text'
-			class     = 'collapsed-name'
-			value     = {$w_selection.so.name}
-			onkeydown = {(e) => name_keydown(e, $w_selection!.so)}
-			onblur    = {(e) => { const inp = e.target as HTMLInputElement; commit_name($w_selection!.so, inp.value, inp); }}
-		/>
+		<div class='edit-title-row'>
+			<input
+				type      = 'text'
+				class     = 'collapsed-name'
+				value     = {$w_selection.so.name}
+				onkeydown = {(e) => name_keydown(e, $w_selection!.so)}
+				onblur    = {(e) => { const inp = e.target as HTMLInputElement; commit_name($w_selection!.so, inp.value, inp); }}
+			/>
+			{#if sibling_position}
+				<span class='sibling-position'>{sibling_position.index} of {sibling_position.total}</span>
+			{/if}
+		</div>
 	{/if}
 	{#if $w_selection.so.scene?.parent}
 		<div class='duplicate-row'>
@@ -368,6 +387,20 @@
 		font-size   : var(--h-font-small);
 		margin-left : var(--l-gap);
 		opacity     : 0.5;
+	}
+
+	.edit-title-row {
+		display     : flex;
+		align-items : center;
+		gap         : 6px;
+	}
+
+	.sibling-position {
+		font-size      : var(--h-font-small);
+		color          : rgba(0, 0, 0, 0.5);
+		white-space    : nowrap;
+		user-select    : none;
+		pointer-events : none;
 	}
 
 	.collapsed-name {

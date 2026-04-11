@@ -1,10 +1,7 @@
 # Completed Milestones
 
-
-
 | #   | Name                                      | Timeline       |
 | --- | ----------------------------------------- | -------------- |
-|     | [Road.map](road.map.md)                   |                |
 | 1   | [Solid Foundation](1.solid.foundation.md) | Jan 4–5        |
 | 2   | [Panel Layout](2.panel.md)                | Jan 6–7        |
 | 3   | [Document Publishing](3.docs.md)          | Jan 5–8        |
@@ -22,10 +19,12 @@
 | 15  | [Attributes](15.attributes.md)            |                |
 | 16  | [Formulas](16.formulas.md)                | Feb 16         |
 | 17  | [Library](17.library.md)                  |                |
-| 18  | [User Constants](18.givens.md)    |                |
-| 19  | [Skills](19.angles.md)                    |                |
+| 18  | [Givens](18.givens.md)                    |                |
+| 19  | [Angles](19.angles.md)                    |                |
 | 20  | [Repeaters](20.repeaters.md)              |                |
 | 21  | [CSS Engine](21.css.engine.md)            |                |
 | 22  | [Aesthetics](22.aesthetics.md)            |                |
 | 23  | [Undo](23.undo.md)                        | Mar 12         |
 | 24  | [Mobile Devices](24.mobile.devices.md)    | Mar 12         |
+| 25  | [Errors](25.errors.md)                    |                |
+| 26  | [Lacemaker](26.lacemaker.md)              |                |

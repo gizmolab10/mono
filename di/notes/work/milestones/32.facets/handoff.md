@@ -1,5 +1,7 @@
 # Facets
 
+## **Vital conclusion:** Abysmally slow!
+
 **Status:** MOTHBALLED. 498 tests passing, svelte-check clean. Feature disabled via `k.debug.show_facets = false` in Constants.ts. Set to `true` to re-enable.
 **Design spec:** [simpler design.md](simpler%20design.md)
 **Stipulations:** [stipulations.md](stipulations.md)

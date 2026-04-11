@@ -3,7 +3,7 @@
 ---
 
 - [web seriously](/ws/notes/work/revisit.ws.md) <!-- @ws/work/revisit.ws.md -->
-- [design intuition](/di/notes/work/revisit.di.md) <!-- @di/work/revisit.di.md -->
+- [design intuition](revisit.di.md) <!-- @di/work/revisit.di.md -->
 - [jonathan](/me/notes/work/revisit.me.md) <!-- @me/work/revisit.me.md -->
 - [[journal]]
 - [[hub-app]]

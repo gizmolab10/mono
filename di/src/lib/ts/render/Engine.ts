@@ -36,7 +36,7 @@ class Engine {
 
 	constructor() {
 		// Keep all O_Scene colors in sync with the edge color preference
-		stores.w_edge_color.subscribe(() => {
+		colors.w_edge_color.subscribe(() => {
 			const rgba = colors.edge_color_rgba();
 			for (const obj of scene.get_all()) {
 				obj.color = rgba;

@@ -401,8 +401,9 @@ class Render {
 				this.computed_occluding_segments = [];
 			}
 
-			// Run topology pipeline — old or simple, selected by flag
-			{
+			// Run topology pipeline only when the facets debug switch is on — its output
+			// is consumed only by the facets block below, which is gated on the same flag.
+			if (k.debug.show_facets) {
 				// Compute root_scale from world-transformed bounding box of all objects
 				let rs_min = vec3.fromValues(Infinity, Infinity, Infinity);
 				let rs_max = vec3.fromValues(-Infinity, -Infinity, -Infinity);

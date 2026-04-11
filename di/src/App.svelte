@@ -14,7 +14,7 @@
 
 		root.setProperty('--window-min-width', `${k.width.window_min}`);
 
-		root.setProperty('--c-white',           colors.background);
+		root.setProperty('--c-white',           'white');
 		root.setProperty('--c-black',           colors.default);
 		root.setProperty('--c-slider-border',   colors.border);
 		root.setProperty('--c-focus',           colors.focus);

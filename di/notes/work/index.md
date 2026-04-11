@@ -1,16 +1,19 @@
 # Work
 
-Current work items and milestones.
+Top-level index for everything in this folder.
 
-## Contents
+## Where current work lives
 
-- [Handoff](./handoff.md) — current session plan for milestone 27
-- [Milestones](./milestones/)
-- [Facets](./facets/) — lessons, history, designs
-- [Next](./next/)
-- [Done](./done/)
-- [Code Debt](./code.debt.md)
-- [Collaboration Priorities](collaboration%20priorities.md)
-- [Revisit](./revisit.di.md)
-- [What](what.md)
-- [Working Features](./working%20features.md)
+- [Now](./now/) — active non-milestone work (code debt, general session work). Start here.
+- [Milestones](./milestones/) — work bundled into named milestones, both open and completed.
+- [Next](./next/) — planned work not yet started.
+- [Done](./done/) — archived notes, historical sessions, finished features.
+
+## Quick jumps
+
+- [Current handoff](./now/handoff.md) — what was done in the most recent session and what is next.
+- [Code debt](./now/code.debt.md) — running list of small items.
+- [Revisit list](./now/revisit.di.md) — items to return to.
+- [Working features](./now/working%20features.md) — current feature status.
+- [Learn](./now/learn.md) — lessons from mistakes and corrections.
+- [Technique](./now/technique.md) — notes on approach and methodology.

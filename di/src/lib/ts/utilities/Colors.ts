@@ -1,7 +1,6 @@
 import { preferences, T_Preference } from '../managers/Preferences';
 import { parseToRgba, transparentize } from 'color2k';
 import { get, writable } from 'svelte/store';
-import { stores } from '../managers/Stores';
 
 // ─── Color source of truth ────────────────────────────────────────────────────
 //
@@ -25,41 +24,25 @@ import { stores } from '../managers/Stores';
 
 export class Colors {
 	// Static colors (non-reactive)
-	default_forThings         = 'blue';
-	default                   = 'black';
-	background                = 'white';
-	graph_background          = 'white';
-	track                     = '#ccc';
-	border                    = 'darkgray';
-	banner                    = '#f8f8f8';
-	disabled                  = 'lightGray';
-	thin_separator_line_color = '#999999';
-	thumb                     = '#007aff';
-	focus                     = 'cornflowerblue';
+	default    = 'black';
+	track      = '#ccc';
+	border     = 'darkgray';
+	banner     = '#f8f8f8';
+	thumb      = '#007aff';
+	focus      = 'cornflowerblue';
 
 	// Reactive colors (stores)
-	w_thing_color      = writable<string | null>(null);
-	w_text_color       = writable<string>('black');
-	w_accent_color	   = writable<string>('rgb(200, 200, 200)');
-	w_background_color = writable<string>('rgb(135, 135, 135)');
+	w_so_hover_color   = writable<string>('gray');
 	w_selected_color   = writable<string>('rgb(120, 120, 120)');
+	w_background_color = writable<string>('rgb(135, 135, 135)');
+	w_text_color	   = preferences.persistent<string>(T_Preference.textColor, 'black');
+	w_edge_color	   = preferences.persistent<string>(T_Preference.edgeColor, '#874efe');
+	w_accent_color	   = preferences.persistent<string>(T_Preference.accentColor, 'rgb(200, 200, 200)');
 
 	constructor() {
-		this.restore_preferences();
 		this.subscribe_to_changes();
 	}
-
-	/**
-	 * Load saved color preferences from localStorage
-	 */
-	restore_preferences() : void {
-		const text = preferences.read<string>(T_Preference.textColor) ?? 'black';
-		const acc  = preferences.read<string>(T_Preference.accentColor) ?? 'rgb(219, 219, 219)';
-
-		if (!!text) this.w_text_color.set(text);
-		if (!!acc) this.w_accent_color.set(acc);
-	}
-
+	
 	/**
 	 * Derive background from accent: same hue, much less saturation, lighter.
 	 */
@@ -89,13 +72,13 @@ export class Colors {
 		});
 	}
 
-	ofBannerFor(background : string) : string { return this.blend('white', background, 4); }
 	ofBackgroundFor(color : string) : string { return this.lighterBy(color, 10); }
+	ofBannerFor(background : string) : string { return this.blend('white', background, 4); }
 	opacitize(color : string, amount : number) : string { return color == '' ? '' : transparentize(color, 1 - amount); }
 	background_special_blend(color : string, opacity : number) : string { return this.special_blend(color, get(this.w_background_color), opacity) ?? color; }
 
 	edge_color_rgba(): string {
-		const hex = stores.edge_color();
+		const hex = get(this.w_edge_color);
 		const r = parseInt(hex.slice(1, 3), 16);
 		const g = parseInt(hex.slice(3, 5), 16);
 		const b = parseInt(hex.slice(5, 7), 16);
@@ -110,7 +93,7 @@ export class Colors {
 
 	blend(color : string, background : string, saturation : number = 7) : string {
 		let blended : string | null = 'lightgray';
-		if (!this.colors_areIdentical(background, this.background)) {
+		if (!this.colors_areIdentical(background, get(this.w_background_color))) {
 			if (this.isGray(background)) {
 				blended = this.darkerBy(background, 1 / saturation);
 			} else {
@@ -151,7 +134,7 @@ export class Colors {
 			}
 			return this.RGBA_toHex(rgba);
 		}
-		return this.default_forThings;
+		return this.default;
 	}
 
 	// ═══════════════════════════════════════════════════════════════════════════

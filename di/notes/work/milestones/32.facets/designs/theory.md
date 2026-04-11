@@ -5,7 +5,7 @@ Right now i want to do a rational assessment of facets. my curiosity and vanity 
 **Date:** 2026-04-03
 
 **Reading order — companion files:**
-- [handoff.md](handoff.md) — what's being worked on right now, what's blocked, what was just solved
+- [handoff.md](di/notes/work/milestones/32.facets/slow/handoff.md) — what's being worked on right now, what's blocked, what was just solved
 - [done/topology.md](topology.md) — how the pipeline works step by step (the *how*)
 - [lessons.md](lessons.md) — mistakes not to repeat
 - [designs/](designs/) — the design spec for the simpler topology rewrite
