@@ -66,9 +66,9 @@ export function render_grid(host: GridHost): void {
 
 	const ctx = host.ctx;
 	ctx.save();
-	ctx.globalAlpha = stores.grid_opacity();
+	ctx.globalAlpha = stores.grid_opacity;
 	ctx.strokeStyle = get(colors.w_accent_color);
-	ctx.lineWidth = stores.line_thickness();
+	ctx.lineWidth = stores.edge_thickness;
 	ctx.lineCap = 'round';
 	ctx.setLineDash([1, 4]);
 
@@ -141,12 +141,12 @@ function ve_face_fixed_value(ve: Camera_View_Extent, face_index: number): number
 /** Tumble-independent grid spacing. Projects through scale-only (no rotation) for stable px/mm. */
 export function stable_spacing(host: GridHost, so: Smart_Object): { spacing: number; px_per_mm: number } {
 	const system = Units.current_unit_system();
-	const precision = stores.current_precision();
+	const precision = stores.current_precision;
 	const max_dim = Math.max(so.width, so.height, so.depth);
 	const base = units.grid_spacing_mm(system, precision, max_dim);
 	if (base <= 0) return { spacing: 0, px_per_mm: 0 };
 
-	const s = stores.current_scale();
+	const s = stores.current_scale;
 	const scale_mat = mat4.create();
 	mat4.fromScaling(scale_mat, [s, s, s]);
 	const p0 = host.project_vertex(vec3.fromValues(0, 0, 0), scale_mat);
@@ -296,7 +296,7 @@ export function render_back_grid(host: GridHost): void {
 
 	const ctx = host.ctx;
 	ctx.save();
-	ctx.globalAlpha = stores.grid_opacity();
+	ctx.globalAlpha = stores.grid_opacity;
 	ctx.strokeStyle = 'rgba(128, 128, 128, 0.12)';
 	ctx.lineWidth = 1;
 	ctx.lineCap = 'round';
@@ -380,14 +380,14 @@ export function render_back_grid(host: GridHost): void {
 					ctx.moveTo(hull[0].x, hull[0].y);
 					for (let i = 1; i < hull.length; i++) ctx.lineTo(hull[i].x, hull[i].y);
 					ctx.closePath();
-					ctx.globalAlpha = stores.grid_opacity();
+					ctx.globalAlpha = stores.grid_opacity;
 					ctx.fillStyle = `rgba(${shadow_r}, ${shadow_g}, ${shadow_b}, 0.3)`;
 					ctx.fill();
 					ctx.strokeStyle = `rgba(${shadow_r}, ${shadow_g}, ${shadow_b}, 0.8)`;
 					ctx.lineWidth = 1;
 					ctx.stroke();
 					// Restore grid style for next face
-					ctx.globalAlpha = stores.grid_opacity();
+					ctx.globalAlpha = stores.grid_opacity;
 					ctx.strokeStyle = 'rgba(128, 128, 128, 0.12)';
 				}
 			}

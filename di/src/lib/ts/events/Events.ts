@@ -180,7 +180,7 @@ export class Events {
 	}
 
 	private handle_key_down = (event: KeyboardEvent) => {
-		if (stores.is_editing()) {
+		if (stores.is_editing) {
 			if (event.key === 'Enter' || event.key === 'Tab') {
 				event.preventDefault();
 				this.navigate_table_cell(event.key, event.shiftKey);
@@ -275,7 +275,7 @@ export class Events {
 	private navigate_parts(direction: number): void {
 		const visible = this.visible_parts();
 		if (visible.length === 0) return;
-		const selected = stores.selection()?.so;
+		const selected = stores.selection?.so;
 		const current_index = selected ? visible.indexOf(selected) : -1;
 		let next_index = current_index + direction;
 		if (next_index < 0) next_index = visible.length - 1;
@@ -286,7 +286,7 @@ export class Events {
 	}
 
 	private collapse_selected(): void {
-		const so = stores.selection()?.so;
+		const so = stores.selection?.so;
 		if (!so) return;
 		const ids = get(stores.w_collapsed_ids);
 		const visible = this.visible_parts();
@@ -305,7 +305,7 @@ export class Events {
 	}
 
 	private expand_selected(): void {
-		const so = stores.selection()?.so;
+		const so = stores.selection?.so;
 		if (!so) return;
 		const ids = get(stores.w_collapsed_ids);
 		if (ids.has(so.id)) {

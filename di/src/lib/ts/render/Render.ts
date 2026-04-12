@@ -11,6 +11,7 @@ import { hits_3d } from '../events/Hits_3D';
 import { Size } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
+import { colors } from '../utilities/Colors';
 import { k } from '../common/Constants';
 import { drag } from '../editors/Drag';
 import { render_axes } from './R_Axes';
@@ -63,9 +64,6 @@ class Render {
 	private topology_occluding_segments: { so: string; face: number; screen: [{ x: number; y: number }, { x: number; y: number }]; endpoint_keys: [string, string] }[] = [];
 	// static _clip_debug = false;
 	private occluding_index: Flatbush | null = null;  /** Spatial index for screen-space face bounding boxes (rebuilt each frame). */
-	/** Selection-dot occlusion: includes ALL non-root objects (visible + invisible). */
-	private sel_occluding_faces: { n: vec3; d: number; corners: vec3[]; poly: { x: number; y: number }[]; obj_id: string }[] = [];
-	private sel_occluding_index: Flatbush | null = null;
 	ctx!: CanvasRenderingContext2D;
 	private mvp_matrix = mat4.create();
 	private cached_world: mat4 | null = null;  /** Last world matrix passed to project_vertex (by reference). */
@@ -195,8 +193,8 @@ class Render {
 		const all_objects = scene.get_all();
 		this.update_camera_view_extent(all_objects);
 		const objects = all_objects.filter(o => o.so.visible);
-		const is_2d = stores.current_view_mode() === '2d';
-		const solid = stores.is_solid();
+		const is_2d = stores.current_view_mode === '2d';
+		const solid = stores.is_solid;
 
 		// Projection: project ALL vertices (including hidden) for hit-test caches
 		const projected_map = new Map<string, Projected[]>();
@@ -207,7 +205,7 @@ class Render {
 			hits_3d.update_projected(obj.id, projected, world_matrix);
 		}
 
-		if (stores.grid_opacity() > 0) render_back_grid(this);
+		if (stores.grid_opacity > 0) render_back_grid(this);
 		if (!is_2d) render_root_bottom(this);
 
 		// Solidify: fill front-facing faces (occlusion layer)
@@ -327,58 +325,6 @@ class Render {
 			}
 		}
 
-		// Build selection-dot occlusion: ALL non-root objects (visible + invisible)
-		this.sel_occluding_faces = [];
-		if (solid) {
-			for (const obj of all_objects) {
-				if (!obj.parent) continue;
-				const projected = projected_map.get(obj.id)!;
-				if (!obj.faces) continue;
-				const world = this.get_world_matrix(obj);
-				const verts = obj.so.vertices;
-				for (const face of obj.faces) {
-					if (this.face_winding(face, projected) >= 0) continue;
-					const poly: { x: number; y: number }[] = [];
-					let cam_behind = false;
-					for (const vi of face) {
-						if (projected[vi].w < 0) { cam_behind = true; break; }
-						poly.push({ x: projected[vi].x, y: projected[vi].y });
-					}
-					if (cam_behind) continue;
-					const corners: vec3[] = [];
-					for (const vi of face) {
-						const lv = verts[vi];
-						const wv = vec4.create();
-						vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], world);
-						corners.push(vec3.fromValues(wv[0], wv[1], wv[2]));
-					}
-					const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);
-					const e2 = vec3.sub(vec3.create(), corners[3], corners[0]);
-					const n = vec3.cross(vec3.create(), e1, e2);
-					vec3.normalize(n, n);
-					const d = vec3.dot(n, corners[0]);
-					this.sel_occluding_faces.push({ n, d, corners, poly, obj_id: obj.id });
-				}
-			}
-			if (this.sel_occluding_faces.length > 0) {
-				const index = new Flatbush(this.sel_occluding_faces.length);
-				for (const face of this.sel_occluding_faces) {
-					let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-					for (const p of face.poly) {
-						if (p.x < minX) minX = p.x;
-						if (p.y < minY) minY = p.y;
-						if (p.x > maxX) maxX = p.x;
-						if (p.y > maxY) maxY = p.y;
-					}
-					index.add(minX, minY, maxX, maxY);
-				}
-				index.finish();
-				this.sel_occluding_index = index;
-			} else {
-				this.sel_occluding_index = null;
-			}
-		}
-
 		// Compute visible segments (single source of truth for edges, intersections + facets)
 		if (solid) {
 			this.computed_endpoints.clear();
@@ -490,7 +436,7 @@ class Render {
 			const world = (solid) ? this.get_world_matrix(obj) : undefined;
 			const bottom_only = !obj.parent && !is_2d;
 			this.render_edges(obj, projected, solid, world, bottom_only ? 0 : undefined);
-			if (stores.show_names()) this.render_face_names(obj, projected, world);
+			if (stores.show_names) this.render_face_names(obj, projected, world);
 		}
 
 		// Facets debug labels — after all lines so backgrounds aren't covered
@@ -560,7 +506,7 @@ class Render {
 			this.ctx.save();
 			this.ctx.setLineDash([1, 1]);
 			this.ctx.strokeStyle = 'rgba(128, 128, 128, 1)';
-			this.ctx.globalAlpha = stores.grid_opacity();
+			this.ctx.globalAlpha = stores.grid_opacity;
 			this.ctx.lineWidth = 0.5;
 			for (const [i, j] of obj.edges) {
 				if (root_bottom && !root_bottom.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
@@ -591,13 +537,13 @@ class Render {
 			this.ctx.restore();
 		}
 
-		if (stores.grid_opacity() > 0) {
+		if (stores.grid_opacity > 0) {
 			render_axes(this);
 		}
 		this.render_hover();
 		this.render_selection();
-		if (stores.show_dimensionals()) render_dimensions(this);
-		if (stores.show_angulars()) render_angulars(this);
+		if (stores.show_dimensionals) render_dimensions(this);
+		if (stores.show_angulars) render_angulars(this);
 		if (k.debug.show_ep_labels) this.render_front_face_label();
 	}
 
@@ -699,7 +645,7 @@ class Render {
 			mat4.multiply(local, from_center, local);
 		} else {
 			// Root: keep center at origin → scale around origin → position (for pan)
-			const s = stores.current_scale();
+			const s = stores.current_scale;
 			const scale_mat = mat4.create();
 			mat4.fromScaling(scale_mat, [s, s, s]);
 			mat4.multiply(local, scale_mat, local);
@@ -1495,7 +1441,7 @@ class Render {
 		const ctx = this.ctx;
 		const is_selected = hits_3d.selection?.so.scene === obj;
 		const is_hovered = hits_3d.hover?.so.scene === obj && !is_selected;
-		ctx.lineWidth = is_selected ? stores.line_thickness() * 5 : is_hovered ? 5 : stores.line_thickness();
+		ctx.lineWidth = (is_selected || is_hovered) ? stores.bold_thickness : stores.edge_thickness;
 		ctx.lineCap = 'square';
 
 		// In 2D or solid mode, only draw edges belonging to front-facing faces
@@ -1526,19 +1472,19 @@ class Render {
 				}
 			}
 
-			ctx.strokeStyle = is_hovered ? 'red' : `${obj.color}1)`;
+			ctx.strokeStyle = is_hovered ? colors.so_hover_color : `${obj.color}1)`;
 			ctx.stroke(normal_path);
 			if (guidance_edges) {
 				ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
-				ctx.lineWidth = stores.line_thickness() * 3;
+				ctx.lineWidth = stores.bold_thickness;
 				ctx.stroke(guide_path);
-				ctx.lineWidth = stores.line_thickness();
+				ctx.lineWidth = stores.edge_thickness;
 			}
 			if (rotation_edges) {
 				ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
-				ctx.lineWidth = stores.line_thickness() * 3;
+				ctx.lineWidth = stores.bold_thickness;
 				ctx.stroke(rot_path);
-				ctx.lineWidth = stores.line_thickness();
+				ctx.lineWidth = stores.edge_thickness;
 			}
 		} else {
 			// Non-solid: batch edges by color into single beginPath/stroke calls
@@ -1562,20 +1508,20 @@ class Render {
 				path.lineTo(bx, by);
 			}
 
-			ctx.strokeStyle = is_hovered ? 'red' : `${obj.color}1)`;
+			ctx.strokeStyle = is_hovered ? colors.so_hover_color : `${obj.color}1)`;
 			ctx.stroke(normal_path);
 
 			if (guidance_edges) {
 				ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
-				ctx.lineWidth = stores.line_thickness() * 3;
+				ctx.lineWidth = stores.bold_thickness;
 				ctx.stroke(guide_path);
-				ctx.lineWidth = stores.line_thickness();
+				ctx.lineWidth = stores.edge_thickness;
 			}
 			if (rotation_edges) {
 				ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
-				ctx.lineWidth = stores.line_thickness() * 3;
+				ctx.lineWidth = stores.bold_thickness;
 				ctx.stroke(rot_path);
-				ctx.lineWidth = stores.line_thickness();
+				ctx.lineWidth = stores.edge_thickness;
 			}
 		}
 	}
@@ -1583,7 +1529,7 @@ class Render {
 	/** Draw intersection lines from precomputed data. */
 	private render_intersections(): void {
 		const ctx = this.ctx;
-		ctx.lineWidth = stores.line_thickness();
+		ctx.lineWidth = stores.edge_thickness;
 		for (const seg of this.computed_intersection_segments) {
 			ctx.strokeStyle = `${seg.color}1)`;
 			for (const [a, b] of seg.visible) {
@@ -1988,7 +1934,13 @@ class Render {
 	}
 
 	private render_selection(): void {
-		// Selection shown via thickened edges (in render_edges), not dots
+		const sel = hits_3d.selection;
+		if (!sel || !sel.so.scene) return;
+
+		const projected = hits_3d.get_projected(sel.so.scene.id);
+		if (!projected) return;
+
+		this.render_hit_dots(sel, projected, `${sel.so.scene.color}1)`);
 	}
 
 	private render_hover(): void {
@@ -2001,8 +1953,8 @@ class Render {
 		const projected = hits_3d.get_projected(hover.so.scene.id);
 		if (!projected) return;
 
-		this.ctx.fillStyle = 'red';
-		this.render_hit_dots(hover, projected, 'red');
+		this.ctx.fillStyle = colors.so_hover_color;
+		this.render_hit_dots(hover, projected, colors.so_hover_color);
 	}
 
 	private render_front_face_label(): void {
@@ -2028,92 +1980,47 @@ class Render {
 		ctx.restore();
 	}
 
-	// for hover and selection
+	// for hover and selection — white-filled circles with a colored outline
 	private render_hit_dots(
 		hit: { so: Smart_Object, type: T_Hit_3D, index: number },
 		projected: Projected[],
 		color: string,
-		world?: mat4,
-		for_selection?: boolean,
 	): void {
 		if (!hit.so.scene) return;
-		const so = hit.so;
-		const scene_obj = so.scene!;
+		const scene_obj = hit.so.scene!;
 
-		// Compute world-space position for a vertex (for occlusion checks)
-		const world_pos = (vi: number): vec3 => {
-			const lv = so.vertices[vi];
-			const wv = vec4.create();
-			vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], world!);
-			return vec3.fromValues(wv[0], wv[1], wv[2]);
-		};
-
-		const skip_id = scene_obj.id;
-		const occ_faces = for_selection ? this.sel_occluding_faces : this.occluding_faces;
-		const occ_index = for_selection ? this.sel_occluding_index : this.occluding_index;
-		const draw = (p: Projected, vi?: number, vi2?: number) => {
+		const draw = (p: Projected) => {
 			if (p.w < 0) return;
-			let occluded = false;
-			if (world && occ_faces.length > 0) {
-				if (vi !== undefined && vi2 !== undefined) {
-					const w1 = world_pos(vi), w2 = world_pos(vi2);
-					const mid: vec3 = [(w1[0]+w2[0])/2, (w1[1]+w2[1])/2, (w1[2]+w2[2])/2];
-					occluded = this.is_dot_occluded(p.x, p.y, mid, skip_id, occ_faces, occ_index);
-				} else if (vi !== undefined) {
-					occluded = this.is_dot_occluded(p.x, p.y, world_pos(vi), skip_id, occ_faces, occ_index);
-				}
-			}
-			this.ctx.fillStyle = occluded ? 'red' : color;
 			this.ctx.beginPath();
-			this.ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+			this.ctx.arc(p.x, p.y, stores.bold_thickness, 0, Math.PI * 2);
+			this.ctx.fillStyle = 'white';
 			this.ctx.fill();
+			this.ctx.lineWidth = 2;
+			this.ctx.strokeStyle = color;
+			this.ctx.lineJoin = 'round';
+			this.ctx.stroke();
 		};
 
 		switch (hit.type) {
 			case T_Hit_3D.corner:
-				draw(projected[hit.index], hit.index);
+				draw(projected[hit.index]);
 				break;
 			case T_Hit_3D.edge: {
 				const [a, b] = scene_obj.edges[hit.index];
-				draw(projected[a], a);
-				draw(projected[b], b);
-				draw(this.midpoint(projected[a], projected[b]), a, b);
+				draw(projected[a]);
+				draw(projected[b]);
+				draw(this.midpoint(projected[a], projected[b]));
 				break;
 			}
 			case T_Hit_3D.face: {
 				const face = scene_obj.faces![hit.index];
 				for (let i = 0; i < face.length; i++) {
-					const vi = face[i];
-					const vi2 = face[(i + 1) % face.length];
-					draw(projected[vi], vi);
-					draw(this.midpoint(projected[vi], projected[vi2]), vi, vi2);
+					draw(projected[face[i]]);
+					draw(this.midpoint(projected[face[i]], projected[face[(i + 1) % face.length]]));
 				}
 				break;
 			}
 		}
-	}
-
-	/** Check if a screen-space dot is occluded by any front-facing face.
-	 *  Unlike edge occlusion, does NOT skip same-object faces — a dot on the
-	 *  back face of a box should be red when the front face hides it.
-	 *  Coplanar vertices (on the occluding face itself) pass through naturally. */
-	private is_dot_occluded(
-		sx: number, sy: number, world_pos: vec3, skip_id?: string,
-		faces?: typeof this.occluding_faces, index?: Flatbush | null,
-	): boolean {
-		const occ_faces = faces ?? this.occluding_faces;
-		const occ_index = index !== undefined ? index : this.occluding_index;
-		const candidates = occ_index
-			? occ_index.search(sx, sy, sx, sy)
-			: occ_faces.map((_, i) => i);
-		for (const fi of candidates) {
-			const occ = occ_faces[fi];
-			if (skip_id && occ.obj_id === skip_id) continue;
-			const dist = vec3.dot(occ.n, world_pos) - occ.d;
-			if (dist > -k.coplanar_epsilon) continue;
-			if (this.point_in_polygon_2d(sx, sy, occ.poly)) return true;
-		}
-		return false;
 	}
 
 	private midpoint(a: Projected, b: Projected): Projected {

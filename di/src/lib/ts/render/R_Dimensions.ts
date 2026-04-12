@@ -36,7 +36,7 @@ export function render_dimensions(host: DimensionHost): void {
 			if (!root_projected) continue;
 			const root_so = obj.so;
 			const root_world = host.get_world_matrix(obj);
-			const is_2d = stores.current_view_mode() === '2d';
+			const is_2d = stores.current_view_mode === '2d';
 			const root_front = is_2d ? hits_3d.front_most_face(root_so) : -1;
 			const root_axes: Axis_Name[] = (is_2d && root_front >= 0) ? root_so.face_axes(root_front) : ['x', 'y', 'z'];
 			for (const axis of root_axes) {
@@ -82,7 +82,7 @@ export function render_dimensions(host: DimensionHost): void {
 		const so = obj.so;
 		const world_matrix = host.get_world_matrix(obj);
 
-		const is_2d_mode = stores.current_view_mode() === '2d';
+		const is_2d_mode = stores.current_view_mode === '2d';
 		const front_face = is_2d_mode ? hits_3d.front_most_face(so) : -1;
 		const all_axes: Axis_Name[] = (is_2d_mode && front_face >= 0) ? so.face_axes(front_face) : ['x', 'y', 'z'];
 		for (const axis of all_axes) {
@@ -312,7 +312,7 @@ function draw_dimension_3d(
 	const ctx = host.ctx;
 
 	ctx.font = '12px sans-serif';
-	const text = units.format_for_system(value, Units.current_unit_system(), stores.current_precision());
+	const text = units.format_for_system(value, Units.current_unit_system(), stores.current_precision);
 	const textWidth = ctx.measureText(text).width;
 	const textHeight = 12;
 

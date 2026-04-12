@@ -6,12 +6,12 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { w_unit_system } from '../../ts/types/Units';
 	import Separator from '../mouse/Separator.svelte';
+	import { k } from '../../ts/common/Constants';
 	import P_Selected from './P_Selected.svelte';
 	import { units } from '../../ts/types/Units';
 	import { hits_3d } from '../../ts/events';
 	import { errors } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
-	import { k } from '../../ts/common/Constants';
 
 	const { w_all_sos, w_selection, w_tick, w_precision, w_collapsed_ids } = stores;
 

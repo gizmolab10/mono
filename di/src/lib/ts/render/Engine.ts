@@ -67,7 +67,7 @@ class Engine {
 		e3.init(canvas);
 
 		// Wire up precision snapping for drag operations
-		Smart_Object.snap = (mm) => units.snap_for_system(mm, Units.current_unit_system(), stores.current_precision());
+		Smart_Object.snap = (mm) => units.snap_for_system(mm, Units.current_unit_system(), stores.current_precision);
 
 		// Load scene
 		this.load_scene(scenes.load());
@@ -102,7 +102,7 @@ class Engine {
 					t: 0,
 				};
 				this.is_tilting = false;
-			} else if (stores.current_view_mode() === '3d' && stores.rotation_snap() && this.root_scene) {
+			} else if (stores.current_view_mode === '3d' && stores.rotation_snap && this.root_scene) {
 				// 3D snap: animate to nearest face-aligned orientation on drag end
 				const so = this.root_scene.so;
 				const face = hits_3d.front_most_face(so);
@@ -242,7 +242,7 @@ class Engine {
 		}
 
 		// Restore ortho mode if saved view was 2d
-		if (stores.current_view_mode() === '2d') {
+		if (stores.current_view_mode === '2d') {
 			camera.set_ortho(true);
 		}
 
@@ -373,7 +373,7 @@ class Engine {
 
 	/** Toggle rotation snap. Snap on = straighten + save prior orientation. Snap off = restore prior. */
 	toggle_rotation_snap(): void {
-		const was_snapped = stores.rotation_snap();
+		const was_snapped = stores.rotation_snap;
 		stores.toggle_rotation_snap();
 		if (!was_snapped) {
 			// Turning snap ON — save current orientation, then straighten
@@ -423,10 +423,10 @@ class Engine {
 
 	/** Toggle between 2D and 3D view. 2D snaps root face-on (if snap enabled), 3D restores. */
 	toggle_view_mode(): void {
-		const mode = stores.current_view_mode() === '3d' ? '2d' : '3d';
+		const mode = stores.current_view_mode === '3d' ? '2d' : '3d';
 		stores.w_view_mode.set(mode);
 		if (mode === '2d') {
-			if (stores.rotation_snap()) {
+			if (stores.rotation_snap) {
 				const so = this.root_scene?.so;
 				const face = so ? hits_3d.front_most_face(so) : -1;
 				if (so && face >= 0) {
@@ -474,7 +474,7 @@ class Engine {
 
 	delete_selected_so(): void {
 		history.snapshot();
-		const sel = stores.selection();
+		const sel = stores.selection;
 		if (!sel) return;
 		const so = sel.so;
 		if (!so.scene?.parent) return;  // can't delete root
@@ -538,7 +538,7 @@ class Engine {
 	/** Insert an SO subtree from a .di file as children of the selected (or root) SO. */
 	insert_child_from_text(text: string): void {
 		history.snapshot();
-		const target_so = stores.selection()?.so ?? this.root_scene?.so;
+		const target_so = stores.selection?.so ?? this.root_scene?.so;
 		if (!target_so?.scene) return;
 
 		const parsed = scenes.parse_text(text);
@@ -630,7 +630,7 @@ class Engine {
 
 	/** Remove all children (and their subtrees) of the selected SO. */
 	remove_all_children(): void {
-		const target = stores.selection()?.so ?? this.root_scene?.so;
+		const target = stores.selection?.so ?? this.root_scene?.so;
 		if (!target?.scene) return;
 
 		const all = scene.get_all();
@@ -678,7 +678,7 @@ class Engine {
 
 	add_child_so(): void {
 		history.snapshot();
-		const selected = stores.selection();
+		const selected = stores.selection;
 		const parent_so = selected?.so ?? this.root_scene?.so;
 		if (!parent_so?.scene) return;
 
@@ -709,7 +709,7 @@ class Engine {
 	/** Duplicate the selected SO as a sibling with the same dimensions, angles, and formulas. */
 	duplicate_so(): void {
 		history.snapshot();
-		const selected = stores.selection();
+		const selected = stores.selection;
 		if (!selected?.so) return;
 		const src = selected.so;
 		const parent_scene = src.scene?.parent;

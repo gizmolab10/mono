@@ -32,12 +32,16 @@ export class Colors {
 	focus      = 'cornflowerblue';
 
 	// Reactive colors (stores)
-	w_so_hover_color   = writable<string>('gray');
+	w_so_so_hover_color   = writable<string>('gray');
 	w_selected_color   = writable<string>('rgb(120, 120, 120)');
 	w_background_color = writable<string>('rgb(135, 135, 135)');
 	w_text_color	   = preferences.persistent<string>(T_Preference.textColor, 'black');
 	w_edge_color	   = preferences.persistent<string>(T_Preference.edgeColor, '#874efe');
 	w_accent_color	   = preferences.persistent<string>(T_Preference.accentColor, 'rgb(200, 200, 200)');
+
+	// Precomputed: a contrasting color derived from the edge color, used for hover highlights.
+	// Recomputed whenever the edge color changes.
+	so_hover_color = 'red';
 
 	constructor() {
 		this.subscribe_to_changes();
@@ -63,6 +67,10 @@ export class Colors {
 			preferences.write(T_Preference.textColor, color);
 		});
 
+		this.w_edge_color.subscribe((color : string) => {
+			this.so_hover_color = this.compute_so_hover_color(color);
+		});
+
 		this.w_accent_color.subscribe((color : string) => {
 			preferences.write(T_Preference.accentColor, color);
 			const bg = this.accent_to_background(color);
@@ -70,6 +78,31 @@ export class Colors {
 			this.w_selected_color.set(this.special_blend('black', bg, 0.12) ?? bg);
 			this.banner = this.ofBannerFor(bg);
 		});
+	}
+
+	/**
+	 * Derive a contrasting hover color from the edge color.
+	 * Shifts hue by +/- 120 degrees and picks whichever has lower luminance.
+	 * Floors saturation at 50 so near-gray source colors still produce a visible hue.
+	 * Does not touch brightness.
+	 */
+	private compute_so_hover_color(color : string) : string {
+		const hsba = this.color_toHSBA(color);
+		if (!hsba) return 'red';
+
+		const make = (hue_offset : number) : { hex: string; lum: number } => {
+			const h = (hsba.h + hue_offset + 360) % 360;
+			const s = Math.max(hsba.s, 50);
+			const candidate = new HSBA(h, s, hsba.b, hsba.a);
+			const rgba = this.HSBA_toRGBA(candidate);
+			const hex = this.RGBA_toHex(rgba);
+			const lum = this.luminance_ofRGBA(rgba);
+			return { hex, lum };
+		};
+
+		const a = make(120);
+		const b = make(-120);
+		return a.lum <= b.lum ? a.hex : b.hex;
 	}
 
 	ofBackgroundFor(color : string) : string { return this.lighterBy(color, 10); }

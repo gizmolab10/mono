@@ -41,7 +41,7 @@ class Events_3D {
 			const point = new Point(e.clientX - rect.left, e.clientY - rect.top);
 
 			if (!this.is_dragging) {
-				if (!stores.allow_editing()) {
+				if (!stores.allow_editing) {
 					canvas.style.cursor = 'grab';
 					hits_3d.set_hover(null);
 				} else {
@@ -77,7 +77,7 @@ class Events_3D {
 		this.last_canvas_position = point;
 
 		// Read-only mode: only allow tumble (no editing, no drag, no selection)
-		if (!stores.allow_editing()) {
+		if (!stores.allow_editing) {
 			drag.set_target(null);
 			hits_3d.set_hover(null);
 			return;
@@ -144,9 +144,9 @@ class Events_3D {
 	end_drag(): void {
 		if (this.is_dragging && !this.did_drag && this.mouse_in_canvas) {
 			// Click/tap on background → deselect (but not if editing just started)
-			if (!drag.has_target && stores.editing() === T_Editing.none) {
+			if (!drag.has_target && stores.editing === T_Editing.none) {
 				const root = scenes.root_so;
-				if (root && stores.selection()?.so !== root) {
+				if (root && stores.selection?.so !== root) {
 					hits_3d.set_selection({ so: root, type: T_Hit_3D.face, index: 0 });
 				} else {
 					hits_3d.set_selection(null);

@@ -576,7 +576,7 @@ class Drag {
 			mat4.multiply(local, from_center, local);
 		} else {
 			// Root: keep center at origin → scale around origin → position (for pan)
-			const s = stores.current_scale();
+			const s = stores.current_scale;
 			const scale_mat = mat4.create();
 			mat4.fromScaling(scale_mat, [s, s, s]);
 			mat4.multiply(local, scale_mat, local);

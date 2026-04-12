@@ -9,9 +9,9 @@ offer a proposal for the first unchecked item
     - [x] add new first column to parts table, for sibling number, when showing parts
 - [ ] color
     - [ ] hover color
-        - [ ] lines
+        - [x] lines
             - [x] lines fatter and colored red
-            - [ ] tint shift from lines color
+            - [x] hue shift from lines color
         - [ ] dots: larger white filled circular bordered
     - [ ] white text for selected when bk color is too dark
     - [ ] cross is too faint in attributes table

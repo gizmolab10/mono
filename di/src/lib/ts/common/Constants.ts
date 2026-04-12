@@ -100,6 +100,7 @@ export default class Constants {
 		thumb:       common_size / 6,
 		track:       common_size / 8,
 		border:      0.5,
+		bold:        5,
 		tick:        1,
 	};
 

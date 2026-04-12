@@ -41,9 +41,9 @@ class Face_Label {
 
 	/** Start editing a face label. Called on click when hit_test() hits. */
 	begin(rect: Label_Rect): void {
-		const already_editing = stores.editing() !== T_Editing.none;
+		const already_editing = stores.editing !== T_Editing.none;
 		if (!already_editing) {
-			this.prev_selection = stores.selection();
+			this.prev_selection = stores.selection;
 			this.cursor = null; // select all on fresh begin
 		}
 		const face = hits_3d.front_most_face(rect.so);

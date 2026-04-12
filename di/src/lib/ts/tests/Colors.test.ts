@@ -184,4 +184,54 @@ describe('Colors', () => {
 			expect(colors.default).toBe('black');
 		});
 	});
+
+	describe('hover color (contrasting edge color)', () => {
+		it('returns a valid hex color for the default purple', () => {
+			colors.w_edge_color.set('#874efe');
+			expect(colors.so_hover_color).toMatch(/^#[0-9a-f]{6}$/i);
+		});
+
+		it('produces a different color from the input', () => {
+			colors.w_edge_color.set('#874efe');
+			expect(colors.so_hover_color).not.toBe('#874efe');
+		});
+
+		it('picks the lower-luminance candidate for pure red', () => {
+			// Red is hue 0. Candidates are hue 120 (green) and hue 240 (blue).
+			// Blue has lower luminance than green. Result should be blue-ish.
+			colors.w_edge_color.set('#ff0000');
+			const result = colors.so_hover_color;
+			const r = parseInt(result.slice(1, 3), 16);
+			const b = parseInt(result.slice(5, 7), 16);
+			expect(b).toBeGreaterThan(r);
+		});
+
+		it('produces a colorful output from a gray input', () => {
+			// Gray has no hue, but the saturation floor should inject one.
+			// The result should NOT be gray — at least one channel differs from the others.
+			colors.w_edge_color.set('#808080');
+			const result = colors.so_hover_color;
+			const r = parseInt(result.slice(1, 3), 16);
+			const g = parseInt(result.slice(3, 5), 16);
+			const b = parseInt(result.slice(5, 7), 16);
+			const all_equal = (r === g) && (g === b);
+			expect(all_equal).toBe(false);
+		});
+
+		it('preserves brightness — bright input produces bright output', () => {
+			// Full-brightness yellow. Both candidates should also be full brightness.
+			colors.w_edge_color.set('#ffff00');
+			const result = colors.so_hover_color;
+			const r = parseInt(result.slice(1, 3), 16);
+			const g = parseInt(result.slice(3, 5), 16);
+			const b = parseInt(result.slice(5, 7), 16);
+			const max_channel = Math.max(r, g, b);
+			expect(max_channel).toBe(255);
+		});
+
+		it('falls back to red for unparseable input', () => {
+			colors.w_edge_color.set('garbage');
+			expect(colors.so_hover_color).toBe('red');
+		});
+	});
 });

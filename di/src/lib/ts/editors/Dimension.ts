@@ -46,7 +46,7 @@ class Dimensions {
 			axis: rect.axis,
 			x: rect.x,
 			y: rect.y,
-			formatted: units.format_for_system(value_mm, system, stores.current_precision()),
+			formatted: units.format_for_system(value_mm, system, stores.current_precision),
 		});
 		stores.w_editing.set(T_Editing.dimension);
 	}
@@ -68,7 +68,7 @@ class Dimensions {
 		// (Snapping each bound individually caused asymmetric rounding — Math.round
 		// rounds half-values toward +∞, so center−half and center+half could
 		// snap unevenly, shrinking the dimension.)
-		const precision = stores.current_precision();
+		const precision = stores.current_precision;
 		const snapped_mm = units.snap_for_system(new_mm, system, precision);
 		const axis = state.axis;
 		const min_bound = `${axis}_min` as const;

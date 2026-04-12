@@ -32,7 +32,7 @@ class Hits_3D {
 	w_hover = writable<Hit_3D_Result | null>(null);
 
 	get hover(): Hit_3D_Result | null { return get(this.w_hover); }
-	get selection(): Hit_3D_Result | null { return stores.selection(); }
+	get selection(): Hit_3D_Result | null { return stores.selection; }
 
 	set_hover(result: Hit_3D_Result | null) { this.w_hover.set(result); }
 	set_selection(result: Hit_3D_Result | null) { stores.set_selection(result); }
@@ -96,11 +96,11 @@ class Hits_3D {
 		const selected_so = this.selection?.so ?? null;
 
 		// Dimension / angle labels win over everything (corners, edges, faces)
-		if (stores.show_dimensionals()) {
+		if (stores.show_dimensionals) {
 			const dim = dimensions.hit_test(point.x, point.y);
 			if (dim) return { so: dim.so, type: T_Hit_3D.dimension, index: 0 };
 		}
-		if (stores.show_angulars()) {
+		if (stores.show_angulars) {
 			const ang = angulars.hit_test(point.x, point.y);
 			if (ang) return { so: ang.so, type: T_Hit_3D.angle, index: 0 };
 		}

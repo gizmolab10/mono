@@ -25,7 +25,7 @@ export enum T_Preference {
 
 	// View
 	decorations      = 'decorations',
-	lineThickness    = 'lineThickness',
+	edgeThickness    = 'edgeThickness',
 	precision        = 'precision',
 	edgeColor        = 'edgeColor',
 	viewMode         = 'viewMode',

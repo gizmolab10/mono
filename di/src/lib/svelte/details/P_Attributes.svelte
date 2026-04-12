@@ -18,7 +18,7 @@
 
 	let selected_so = $derived($w_selection?.so ?? null);
 	let is_root = $derived(!selected_so?.scene?.parent);
-	let tick = $derived.by(() => { const t = $w_tick; return stores.is_editing() ? 0 : t; });
+	let tick = $derived.by(() => { const t = $w_tick; return stores.is_editing ? 0 : t; });
 
 	function get_bounds(so: Smart_Object, _tick: number) {
 		const fmt = (mm: number) => units.format_for_system(mm, $w_unit_system, $w_precision);

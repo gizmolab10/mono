@@ -9,7 +9,7 @@
 	import { engine } from '../../ts/render';
 
 	const { w_accent_color, w_edge_color } = colors;
-	const { w_precision, w_line_thickness } = stores;
+	const { w_precision, w_edge_thickness } = stores;
 	const chevron_url = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23999'/%3E%3C/svg%3E\")";
 	const imperial_ticks = ['foot', 'inch', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64'];
 	const decimal_ticks  = ['whole', '1', '2', '3'];
@@ -60,8 +60,8 @@
 		min     = {0.5}
 		step    = {0.5}
 		type    = 'range'
-		value   = {$w_line_thickness}
-		oninput = {(e) => w_line_thickness.set(Number((e.target as HTMLInputElement).value))}
+		value   = {$w_edge_thickness}
+		oninput = {(e) => w_edge_thickness.set(Number((e.target as HTMLInputElement).value))}
 	/>
 </div>
 <div class='color-row'>

@@ -136,7 +136,7 @@
 		face_label.cursor = { start: input.selectionStart ?? 0, end: input.selectionEnd ?? 0 };
 		// Defer so the focus handler on Details fires first
 		setTimeout(() => {
-			if (stores.editing() !== T_Editing.details_name) {
+			if (stores.editing !== T_Editing.details_name) {
 				face_label.cancel();
 			}
 		});

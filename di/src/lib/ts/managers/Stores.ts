@@ -23,7 +23,7 @@ class Stores {
 	w_view_mode			= preferences.persistent<'2d' | '3d'>(T_Preference.viewMode, '3d');
 	w_show_details		= preferences.persistent<boolean>(T_Preference.showDetails, true);
 	w_t_details			= preferences.persistent<number>(T_Preference.visibleDetails, 1);
-	w_line_thickness	= preferences.persistent<number>(T_Preference.lineThickness, 2);
+	w_edge_thickness	= preferences.persistent<number>(T_Preference.edgeThickness, 2);
 	w_grid_opacity		= preferences.persistent<number>(T_Preference.gridOpacity, 0.5);
 	w_show_grid			= preferences.persistent<boolean>(T_Preference.showGrid, true);
 	w_solid				= preferences.persistent<boolean>(T_Preference.solid, true);
@@ -44,22 +44,23 @@ class Stores {
 	toggle_allow_editing():					void { this.w_allow_editing.update(v => !v); }
 	toggle_grid():							void { this.w_show_grid.update(v => !v); }
 	set_selection(result:  Hit_3D_Result | null) { this.w_selection.set(result); }
-	selection():		   Hit_3D_Result | null  { return get(this.w_selection); }
-	current_view_mode():			 '2d' | '3d' { return get(this.w_view_mode); }
-	editing():						   T_Editing { return get(this.w_editing); }
-	current_scale():					  number { return get(this.w_scale); }
-	current_precision():				  number { return get(this.w_precision); }
-	grid_opacity():						  number { return get(this.w_grid_opacity); }
-	line_thickness():					  number { return get(this.w_line_thickness); }
-	is_solid():							 boolean { return get(this.w_solid); }
-	rotation_snap():					 boolean { return get(this.w_rotation_snap); }
-	allow_editing():					 boolean { return get(this.w_allow_editing); }
-	show_grid():						 boolean { return get(this.w_show_grid); }
-	show_details():						 boolean { return get(this.w_show_details); }
-	is_editing():						 boolean { return get(this.w_editing) !== T_Editing.none; }
-	show_names():						 boolean { return (get(this.w_decorations) & T_Decorations.names) !== 0; }
-	show_angulars():      				 boolean { return (get(this.w_decorations) & T_Decorations.angles) !== 0; }
-	show_dimensionals():  				 boolean { return (get(this.w_decorations) & T_Decorations.dimensions) !== 0; }
+	get selection():	   Hit_3D_Result | null  { return get(this.w_selection); }
+	get current_view_mode():		 '2d' | '3d' { return get(this.w_view_mode); }
+	get editing():					   T_Editing { return get(this.w_editing); }
+	get current_scale():				  number { return get(this.w_scale); }
+	get current_precision():			  number { return get(this.w_precision); }
+	get grid_opacity():					  number { return get(this.w_grid_opacity); }
+	get edge_thickness():				  number { return get(this.w_edge_thickness); }
+	get bold_thickness():				  number { return get(this.w_edge_thickness) * 5; }
+	get is_solid():						 boolean { return get(this.w_solid); }
+	get rotation_snap():				 boolean { return get(this.w_rotation_snap); }
+	get allow_editing():				 boolean { return get(this.w_allow_editing); }
+	get show_grid():					 boolean { return get(this.w_show_grid); }
+	get show_details():					 boolean { return get(this.w_show_details); }
+	get is_editing():					 boolean { return get(this.w_editing) !== T_Editing.none; }
+	get show_names():					 boolean { return (get(this.w_decorations) & T_Decorations.names) !== 0; }
+	get show_angulars():      			 boolean { return (get(this.w_decorations) & T_Decorations.angles) !== 0; }
+	get show_dimensionals(): 			 boolean { return (get(this.w_decorations) & T_Decorations.dimensions) !== 0; }
 
 	tree_order(sos: Smart_Object[]): Smart_Object[] {
 		const result: Smart_Object[] = [];
