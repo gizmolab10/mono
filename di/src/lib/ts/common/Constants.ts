@@ -56,11 +56,9 @@ export default class Constants {
 		zoom_in:  1.1
 	};
 
-	width = {
-		wrap_mobile : 1100,
-		wrap_phone  : 610,
-		window_min  : 360,
-		details     : 350,
+	radius = {
+		content: common_size / 3,
+		main:	 common_size * 0.6
 	};
 
 	corner = {
@@ -68,6 +66,41 @@ export default class Constants {
 		banner: common_size / 2,
 		input:  2,
 		box:    4,
+	};
+
+	z = {
+		common:    0,
+		layout:    1,
+		action:    2,
+		frontmost: 3,
+	};
+
+	threshold = {
+		autorepeat:	  150,
+		double_click: 400,
+		alteration:	  500,
+		long_click:	  800,
+	};
+
+	width = {
+		wrap_mobile : 1100,
+		wrap_phone  : 610,
+		window_min  : 360,
+		details     : 350,
+		title       : 120,
+		small       : 16,
+		indent      : 12,
+	};
+
+	thickness = {
+		separator: {
+			content: common_size / 10,
+			main:	 common_size / 5,
+		},
+		thumb:       common_size / 6,
+		track:       common_size / 8,
+		border:      0.5,
+		tick:        1,
 	};
 
 	layout = {
@@ -85,36 +118,6 @@ export default class Constants {
 		}
 	};
 
-	z = {
-		common:    0,
-		layout:    1,
-		action:    2,
-		frontmost: 3,
-	};
-
-	threshold = {
-		autorepeat:	  150,
-		double_click: 400,
-		alteration:	  500,
-		long_click:	  800,
-	};
-
-	thickness = {
-		separator: {
-			content: common_size / 10,
-			main:	 common_size / 5,
-		},
-		thumb:       common_size / 6,
-		track:       common_size / 8,
-		border:      0.5,
-		tick:        1,
-	};
-
-	radius = {
-		content: common_size / 3,
-		main:	 common_size * 0.6
-	};
-
 	height = {
 		controls:    common_size * 1.4,
 		slider:      common_size * 0.8,
@@ -130,7 +133,6 @@ export default class Constants {
 		button: {
 			small:   common_size * 0.8,
 			tiny:    common_size * 0.7,
-			segment: common_size,
 			common:  common_size,
 		},
 	};

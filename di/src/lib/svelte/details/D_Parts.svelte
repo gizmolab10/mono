@@ -11,6 +11,7 @@
 	import { hits_3d } from '../../ts/events';
 	import { errors } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
+	import { k } from '../../ts/common/Constants';
 
 	const { w_all_sos, w_selection, w_tick, w_precision, w_collapsed_ids } = stores;
 
@@ -31,6 +32,17 @@
 		const index = siblings.indexOf(sel.so) + 1;
 		return { index, total: siblings.length };
 	});
+
+	// Sibling number for a parts-table row: one-based index among non-clone siblings at this SO's level.
+	// Blank for the root (no parent) and for any SO not found in the filtered sibling list.
+	function sibling_num(so: Smart_Object, _sos: Smart_Object[], tick: number): string {
+		const parent = so.scene?.parent;
+		if (!parent) return '';
+		const siblings = stores.tree_order($w_all_sos)
+			.filter(s => s.scene?.parent === parent && !is_clone(s, $w_all_sos, tick));
+		const idx = siblings.indexOf(so);
+		return idx >= 0 ? String(idx + 1) : '';
+	}
 
 	function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
 	let editing_id: string | null = $state(null);
@@ -201,7 +213,7 @@
 <table class='hierarchy'>
 	<thead>
 		<tr>
-			<th class='toggle-header' class:gap-r={show_parts} colspan={show_parts ? 1 : 5} use:hit_target={{ id: 'toggle-parts', onpress: toggle_show_parts }}>
+			<th class='toggle-header' class:gap-r={show_parts} colspan={show_parts ? 2 : 6} use:hit_target={{ id: 'toggle-parts', onpress: toggle_show_parts }}>
 				{show_parts ? 'hide parts' : 'show parts'}
 			</th>
 			{#if show_parts}
@@ -222,16 +234,18 @@
 					class='hierarchy-row'
 					class:selected={is_selected(so, $w_tick)}
 					onclick={() => select(so)}>
-					<td class='hierarchy-name' style:padding-left='{depth(so) * 8}px'
+					<td class='hierarchy-sibling'>{sibling_num(so, $w_all_sos, $w_tick)}</td>
+					<td class='hierarchy-name' style:padding-left='{depth(so) * k.width.indent}px'
 						onclick={(e) => handle_name_click(e, so)}>
 						{#if editing_id === so.id}
 							<input
-								type      = 'text'
-								value     = {so.name}
-								class     = 'name-input'
-								onkeydown = {(e) => name_keydown(e, so)}
-								onfocus   = {() => stores.w_editing.set(T_Editing.value)}
-								onblur    = {(e) => { const inp = e.target as HTMLInputElement; commit_name(so, inp.value, inp); if (!naming_error) stores.w_editing.set(T_Editing.none); }}
+								type               = 'text'
+								value              = {so.name}
+								class              = 'name-input'
+								onkeydown          = {(e) => name_keydown(e, so)}
+								style:padding-left = '{depth(so) * k.width.indent}px'
+								onfocus            = {() => stores.w_editing.set(T_Editing.value)}
+								onblur             = {(e) => { const inp = e.target as HTMLInputElement; commit_name(so, inp.value, inp); if (!naming_error) stores.w_editing.set(T_Editing.none); }}
 								use:autofocus
 							/>
 						{:else}
@@ -277,6 +291,9 @@
 {#if $w_selection}
 	{#if !show_parts}
 		<div class='edit-title-row'>
+			{#if sibling_position}
+				<span class='sibling-position'>{sibling_position.index} of {sibling_position.total}</span>
+			{/if}
 			<input
 				type      = 'text'
 				class     = 'collapsed-name'
@@ -284,9 +301,6 @@
 				onkeydown = {(e) => name_keydown(e, $w_selection!.so)}
 				onblur    = {(e) => { const inp = e.target as HTMLInputElement; commit_name($w_selection!.so, inp.value, inp); }}
 			/>
-			{#if sibling_position}
-				<span class='sibling-position'>{sibling_position.index} of {sibling_position.total}</span>
-			{/if}
 		</div>
 	{/if}
 	{#if $w_selection.so.scene?.parent}
@@ -321,20 +335,26 @@
 	}
 
 	.hierarchy-row.selected {
-		background  : var(--selected);
-		font-weight : 600;
+		background : var(--selected);
 	}
 
 	.hierarchy-name {
-		padding    : 2px 0;
-		text-align : left;
+		width       : var(--w-title);
+		text-align  : left;
+	}
+
+	.hierarchy-sibling {
+		color       : rgba(0, 0, 0, 0.5);
+		font-size   : var(--h-font-small);
+		width       : var(--w-small);
+		user-select : none;
 	}
 
 	.hierarchy-eye {
 		font-size  : var(--h-font-common);
+		width      : var(--w-small);
 		cursor     : pointer;
 		text-align : center;
-		width      : 1em;
 		opacity    : 0.4;
 		padding    : 0;
 	}
@@ -352,14 +372,9 @@
 		outline     : var(--focus-outline);
 		z-index     : var(--z-action);
 		background  : var(--c-white);
+		width       : var(--w-title);
 		box-sizing  : border-box;
-		font-family : inherit;
-		font-weight : inherit;
-		font-size   : inherit;
-		color       : inherit;
-		width       : 100%;
 		border      : none;
-		padding     : 4;
 		margin      : 0;
 	}
 
@@ -390,8 +405,8 @@
 	}
 
 	.edit-title-row {
-		display     : flex;
 		align-items : center;
+		display     : flex;
 		gap         : 6px;
 	}
 
@@ -414,7 +429,6 @@
 		box-sizing    : border-box;
 		color         : inherit;
 		font-family   : inherit;
-		padding       : 0 6px;
 		width         : 100%;
 		outline       : none;
 		text-align    : left;
@@ -450,8 +464,8 @@
 
 	.hierarchy-data {
 		color                : var(--c-black);
-		padding              : 2px 0 2px 6px;
 		font-variant-numeric : tabular-nums;
+		font-weight          : normal;
 		white-space          : nowrap;
 		text-align           : right;
 	}
@@ -493,18 +507,18 @@
 	}
 
 	.naming-overlay {
-		position      : relative;
-		z-index       : 1000;
-		border        : 2px solid darkred;
-		border-radius : 8px;
-		background    : var(--c-white);
-		padding       : 6px 8px;
 		font-size     : var(--h-font-small);
+		border        : 2px solid darkred;
+		background    : var(--c-white);
+		box-sizing    : border-box;
+		position      : relative;
+		padding       : 6px 8px;
+		text-align    : center;
+		width         : 100%;
+		z-index       : 1000;
 		margin-top    : 8px;
 		margin-bottom : 8px;
-		box-sizing    : border-box;
-		width         : 100%;
-		text-align    : center;
+		border-radius : 8px;
 	}
 
 	.naming-message :global(.naming-quoted) {
@@ -518,19 +532,19 @@
 	}
 
 	.naming-suggestion {
-		background    : white;
-		padding       : 2px 5px;
-		border-radius : 5px;
-		font-size     : var(--h-font-small);
 		border        : var(--th-border) solid currentColor;
+		font-size     : var(--h-font-small);
 		cursor        : pointer;
 		color         : inherit;
+		padding       : 2px 5px;
+		background    : white;
+		border-radius : 5px;
 		line-height   : 1;
 	}
 
 	.naming-suggestion:hover {
-		background : var(--selected);
 		outline    : 2px solid var(--accent);
+		background : var(--selected);
 	}
 
 </style>

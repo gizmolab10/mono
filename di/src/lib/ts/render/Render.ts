@@ -1494,7 +1494,8 @@ class Render {
 	private render_edges(obj: O_Scene, projected: Projected[], solid: boolean, world?: mat4, restrict_face?: number): void {
 		const ctx = this.ctx;
 		const is_selected = hits_3d.selection?.so.scene === obj;
-		ctx.lineWidth = is_selected ? stores.line_thickness() * 5 : stores.line_thickness();
+		const is_hovered = hits_3d.hover?.so.scene === obj && !is_selected;
+		ctx.lineWidth = is_selected ? stores.line_thickness() * 5 : is_hovered ? 5 : stores.line_thickness();
 		ctx.lineCap = 'square';
 
 		// In 2D or solid mode, only draw edges belonging to front-facing faces
@@ -1525,7 +1526,7 @@ class Render {
 				}
 			}
 
-			ctx.strokeStyle = `${obj.color}1)`;
+			ctx.strokeStyle = is_hovered ? 'red' : `${obj.color}1)`;
 			ctx.stroke(normal_path);
 			if (guidance_edges) {
 				ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
@@ -1561,7 +1562,7 @@ class Render {
 				path.lineTo(bx, by);
 			}
 
-			ctx.strokeStyle = `${obj.color}1)`;
+			ctx.strokeStyle = is_hovered ? 'red' : `${obj.color}1)`;
 			ctx.stroke(normal_path);
 
 			if (guidance_edges) {

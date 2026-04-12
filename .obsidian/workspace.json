@@ -77,7 +77,8 @@
               "title": "working features"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -212,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/handoff.md",
+                "file": "di/notes/work/now/code.debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -239,8 +240,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "199a70aa6af62b58",
+  "active": "547ed81b928e25ea",
   "lastOpenFiles": [
+    "di/notes/work/now/handoff.md",
     "di/notes/work/now/road.map.md",
     "di/notes/work/milestones/index.md",
     "di/notes/work/milestones/32.facets/lessons.md",
@@ -254,7 +256,6 @@
     "di/notes/index.md",
     "di/notes/work/now/index.md",
     "di/notes/work/index.md",
-    "di/notes/work/now/handoff.md",
     "di/notes/work/milestones/32.facets/slow/handoff.md",
     "di/notes/work/milestones/32.facets/handoff.md",
     "di/notes/work/milestones/32.facets/slow/render is stale.md",

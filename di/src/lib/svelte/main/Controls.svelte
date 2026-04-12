@@ -227,7 +227,7 @@
 
 	.segmented {
 		border        : var(--th-border) solid currentColor;
-		height        : var(--h-button-segment);
+		height        : var(--h-button-common);
 		border-radius : var(--corner-common);
 		z-index       : var(--z-action);
 		box-sizing    : border-box;

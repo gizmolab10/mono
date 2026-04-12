@@ -51,7 +51,7 @@
 		background    : var(--c-white);
 		padding       : 0 8px;
 		font-size     : var(--h-font-common);
-		height        : var(--h-button-segment);
+		height        : var(--h-button-common);
 	}
 
 	.segmented button:first-child {

@@ -1,23 +1,21 @@
 # Code Debt
 
-Running a project according to code debt changes the dynamic. It can be used to aim for tackling that debt. It's a combination of refactoring and of get the fucking final sign off.
+Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into chaos.
 
 offer a proposal for the first unchecked item
 
 - [x] add "3 of 24" at right of edit title when not showing parts
-    - [ ] move to left of title input, when not showing parts
-    - [ ] add new first column to parts table, for sibling number, when showing parts
+    - [x] move to left of title input, when not showing parts
+    - [x] add new first column to parts table, for sibling number, when showing parts
 - [ ] color
-    - [ ] selection and hover dot colors
-        - [ ] larger
-        - [ ] hover
-            - [ ] hand cursor (over hover dot, selected face) -- otherwise pointer
+    - [ ] hover color
+        - [ ] lines
+            - [x] lines fatter and colored red
             - [ ] tint shift from lines color
-            - [ ] lines fatter and colored
-    - [ ] white
-        - [ ] text for selected when bk color is too dark
-        - [ ] triangle and border of collapse triangle
+        - [ ] dots: larger white filled circular bordered
+    - [ ] white text for selected when bk color is too dark
     - [ ] cross is too faint in attributes table
+    - [ ] hand cursor (over hover dot, selected face) -- otherwise pointer
 - [ ] [[propagating value changes]]
 
 ---

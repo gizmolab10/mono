@@ -135,7 +135,7 @@
 
 	.segmented button {
 		border        : var(--th-border) solid currentColor;
-		height        : var(--h-button-segment);
+		height        : var(--h-button-common);
 		font-size     : var(--h-font-common);
 		z-index       : var(--z-action);
 		background    : var(--c-white);
