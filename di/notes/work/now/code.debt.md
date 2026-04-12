@@ -5,6 +5,8 @@ Running a project according to code debt changes the dynamic. It can be used to 
 offer a proposal for the first unchecked item
 
 - [x] add "3 of 24" at right of edit title when not showing parts
+    - [ ] move to left of title input, when not showing parts
+    - [ ] add new first column to parts table, for sibling number, when showing parts
 - [ ] color
     - [ ] selection and hover dot colors
         - [ ] larger

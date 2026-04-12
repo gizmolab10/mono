@@ -14,7 +14,7 @@
 - Milestones 1–26 are complete. See [completed milestones](../milestones/done/).
 - Milestones 27–31 are open and unstarted.
 - Milestone 32 (facets) is mothballed.
-- Active work: render performance bottleneck cleanup and small code-debt items. See [the current handoff](./handoff.md).
+- Active work: See [the current handoff](./handoff.md).
 
 ## Goal
 
@@ -42,7 +42,7 @@ A concise snapshot of the arc of the project at the milestone level, each is par
 
 ### Milestone Detail File
 
-This is intended to capture the look of [[1.solid.foundation]], so refer to it (a) when you begin a new milestone and (b) when you polish it for completion.
+This is intended to capture the look of [1.solid.foundation](../milestones/done/1.solid.foundation.md), so refer to it (a) when you begin a new milestone and (b) when you polish it for completion.
 
 ```markdown
 # Milestone N: Name

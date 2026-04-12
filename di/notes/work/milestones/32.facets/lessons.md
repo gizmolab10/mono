@@ -11,26 +11,19 @@ Don't repeat these.
 - **A crossing between two edges is only real if BOTH edges are visible at the crossing point.** Checking one edge against the other's face is necessary but not sufficient.
 - **Prefer face_intersection over occlusion_clip at shared points.** An oc endpoint inserted later in a matching loop can overwrite an fi match at the same screen position, leaving the fi floating.
 - **Skip both SOs for intersection line occlusion.** Intersection lines are on both surfaces of convex solids. No face of either SO can occlude them. Only third-party objects could.
+- **Screen-space angle ordering is not orientation-invariant across faces.** Ascending angles give a clockwise sweep on some faces and a counterclockwise sweep on others, depending on which way the face normal projects to screen. Neither "take the previous index" nor "take the next index" works on every face. **This is the structural reason the feature was mothballed.** The tracer needs a per-face sense-of-direction step that the current architecture does not provide.
+- **Depth test distinguishes real 3D crossings from screen-only coincidences.** Two edges that cross on screen are not necessarily touching in 3D. Without a perspective-correct depth test at the crossing point, screen-only coincidences get classified as real crossings and pollute the topology. Interpolate the world position at the screen crossing and compare depths. Below a tiny threshold, treat it as a real touch; otherwise it is just one edge passing in front of the other.
+- **Single key from birth beats multi-pass merges.** Letting each pass invent its own keys for the points it discovers and then trying to merge duplicates across passes is a losing game. Every merge rewrites a key, and every downstream structure has to catch up, and any miss leaves a stale reference the tracer bounces against. Unify keys up front so each point has one key from the moment it is born.
+- **Cross-face segments need an inside-polygon check at their corner endpoints.** A silhouette edge ending at one of its own object's corners is only a valid segment on another object's face if that corner lies inside the target face's screen polygon. Without this check, phantom segments leak across faces and paint regions that should not be painted.
+- **Even-odd fill cancels facets with opposing windings.** Collecting every facet into one canvas path and filling with the even-odd rule causes facets with opposite winding to subtract from each other. Paint one facet at a time instead.
+- **Screen angles beat tangent-plane angles for cyclic ordering.** Projecting segment directions onto the face's 3D tangent plane and computing angles there gives wrong answers, because the 3D plane does not match what the viewer sees. The tracer needs the angles the viewer sees — compute them in screen space.
 
+## Meta lessons
 
-## Trajectory assessment (2026-04-02)
+- **When each fix uncovers a deeper problem instead of shrinking the remaining work, suspect the architecture, not the patches.** Converging means today's bugs were smaller than yesterday's. Uncovering means today's bugs were deeper than yesterday's. The second pattern is a reset signal — stop patching and rethink and redesign.
 
-The fixes are not getting smaller. They're getting harder and more tangled.
+## Final outcome (2026-04-9)
 
-The history tells a clear story:
+The feature was mothballed. The remaining structural problem — the across-face inconsistency in clockwise direction — was not resolvable with a local fix. The tracer could paint correctly on some faces and wrong on others depending on face orientation relative to the screen, and no single index-offset rule worked universally.
 
-1. **March 27** — Phantom investigation. Tried five different approaches (clear-and-rebuild, filters, edge checks). None worked. Paused.
-
-2. **March 28** — Five separate bugs found and fixed. Then built a whole new file (the pipeline) alongside the old one to try a different architecture. Endpoint counts still diverged at the end of the session.
-
-3. **March 29** — Duplicate labels, phantom endpoints. Five more bugs.
-
-4. **March 30** — Rewrote the crossing detection into a two-part hybrid approach. Fixed six bugs. Session ended with: "Still has missing endpoints."
-
-5. **April 1** — Threw out the old topology and started a simpler design. Got from zero facets tracing back up to three. But the handoff right now says the quad clipper is reporting the wrong edge for an intersection endpoint, and that's causing a cascade of wrong merges.
-
-**The pattern isn't convergence. It's each fix uncovering a deeper structural problem.** You fix the matching, and the merging breaks. You fix the merging, and the wrong edge gets reported. You fix the edge reporting, and endpoints don't connect. The handoff has sections labeled "Blocked" and "Main bug" that describe fundamental connectivity gaps — boundary endpoints disconnected from interior intersection shapes.
-
-**The honest read:** You're not spiraling — you've been systematically stripping away bad approaches and narrowing toward the right architecture. The simpler topology rewrite on April 1 was a genuine reset, not a retreat. But the remaining problems (wrong edge assignment, false merges on shared edges, boundary-to-interior connectivity) are structural, not cosmetic. Each one requires understanding why the geometry doesn't match the topology, not just patching a threshold.
-
-There's no evidence the end is nearby. There's evidence you're asking better questions each round.
+The codepath is still present, gated off by the master debug switch. The test suite is green. Re-entering this work means finding a per-face direction sense that replaces the current ambient rule — not patching the existing tracer.

@@ -187,7 +187,7 @@
 ## Notes — Work — Milestones — 32.facets (mothballed)
 
 - di/notes/work/milestones/32.facets/handoff.md
-- di/notes/work/milestones/32.facets/28.facets.md
+- di/notes/work/milestones/32.facets/32.facets.md
 - di/notes/work/milestones/32.facets/history.md
 - di/notes/work/milestones/32.facets/lessons.md
 - di/notes/work/milestones/32.facets/designs/theory.md
