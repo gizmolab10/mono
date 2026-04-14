@@ -25,7 +25,7 @@ export default class Constants {
 
 	debug = {
 		show_facets      : false,   // master switch for facet pipeline (false = mothballed)
-		show_ep_labels   : false,
+		show_ep_labels   : true,
 		facets_logged    : false,
 		merge_logged     : false,
 		trace_logged     : false,

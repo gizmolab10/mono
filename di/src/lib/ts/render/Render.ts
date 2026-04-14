@@ -621,7 +621,7 @@ class Render {
 
 	get_world_matrix(obj: O_Scene): mat4 {
 		const so = obj.so;
-		const center: vec3 = [
+		const center: vec3 = obj.frozen_center ?? [
 			(so.x_min + so.x_max) / 2,
 			(so.y_min + so.y_max) / 2,
 			(so.z_min + so.z_max) / 2,

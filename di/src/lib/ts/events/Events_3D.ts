@@ -1,5 +1,5 @@
 import { T_Hit_3D, T_Editing } from '../types/Enumerations';
-import { face_label } from '../editors/Face_Label';
+// import { face_label } from '../editors/Face_Label';
 import { dimensions } from '../editors/Dimension';
 import { angulars } from '../editors/Angular';
 import { history } from '../managers/History';
@@ -100,13 +100,13 @@ class Events_3D {
 			drag.set_target(null);
 			hits_3d.set_hover(null);
 			return;
-		} else if (hit?.type === T_Hit_3D.face_label) {
-			e?.preventDefault();
-			const label = face_label.hit_test(point.x, point.y);
-			if (label) face_label.begin(label);
-			drag.set_target(null);
-			hits_3d.set_hover(null);
-			return;
+		// } else if (hit?.type === T_Hit_3D.face_label) {
+		// 	e?.preventDefault();
+		// 	// const label = face_label.hit_test(point.x, point.y);
+		// 	// if (label) face_label.begin(label);
+		// 	drag.set_target(null);
+		// 	hits_3d.set_hover(null);
+		// 	return;
 		}
 
 		// Snapshot for undo before any drag mutation

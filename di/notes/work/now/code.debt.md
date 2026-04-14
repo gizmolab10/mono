@@ -4,6 +4,14 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
+- [ ] formula deltas -> extensive sum, bad -> simplify
+- [ ] after drag, mouse up -> repositions / jumps / unintuitive / unexpected / feels unreliable & inconsistent
+- [ ] remove FaceLabel?
+- [ ] increase font size for face labels
+- [ ] redo for undo
+- [ ] read all the di work md files and summarize the organization
+- [ ] AI coolness: https://medium.com/@gaddamnaveen192/ai-replaced-80-of-coding-only-these-7-skills-are-left-128e13d3020d
+- [ ] performance issues?
 - [x] add "3 of 24" at right of edit title when not showing parts
     - [x] move to left of title input, when not showing parts
     - [x] add new first column to parts table, for sibling number, when showing parts

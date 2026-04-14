@@ -2,7 +2,6 @@ import type Smart_Object from '../runtime/Smart_Object';
 import type { Projected } from '../types/Interfaces';
 import { dimensions } from '../editors/Dimension';
 import { angulars } from '../editors/Angular';
-import { face_label } from '../editors/Face_Label';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
@@ -103,12 +102,6 @@ class Hits_3D {
 		if (stores.show_angulars) {
 			const ang = angulars.hit_test(point.x, point.y);
 			if (ang) return { so: ang.so, type: T_Hit_3D.angle, index: 0 };
-		}
-
-		// Face name labels win over corners, edges, faces
-		{
-			const label = face_label.hit_test(point.x, point.y);
-			if (label) return { so: label.so, type: T_Hit_3D.face_label, index: 0 };
 		}
 
 		// Selected SO's corners/edges get priority (for resizing through overlap)

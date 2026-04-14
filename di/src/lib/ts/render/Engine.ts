@@ -255,13 +255,13 @@ class Engine {
 	undo(): void {
 		const saved = history.undo();
 		if (!saved) return;
-		this.load_scene(saved, false);
+		this.load_scene(saved, true);
 	}
 
 	redo(): void {
 		const saved = history.redo();
 		if (!saved) return;
-		this.load_scene(saved, false);
+		this.load_scene(saved, true);
 	}
 
 	/** Check if current orientation is already snapped to a face-aligned position. */

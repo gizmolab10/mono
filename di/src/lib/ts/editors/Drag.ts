@@ -12,46 +12,83 @@ import { scene as scene_graph } from '../render/Scene';
 import { scenes } from '../managers/Scenes';
 import { writable, get } from 'svelte/store';
 
-/** Anchored plane captured at drag start — prevents frame-to-frame drift.
- *  Uses parent-face geometry: the face's two edge vectors (e1, e2) form
- *  a natural basis.  World delta is decomposed onto e1/e2, then mapped
- *  directly to position-space via the corresponding local edge vectors.
- *  No matrix inverse needed — cleaner and immune to center-rotate artifacts. */
-interface Face_Anchor {
-	plane_point: vec3;           // world-space point on the face plane (fixed)
-	plane_normal: vec3;          // world-space face normal (fixed)
-	anchor_world: vec3;          // world-space intersection of initial mousedown
-	e1_world: vec3;              // world-space edge vector 1 (corners[1] - corners[0])
-	e2_world: vec3;              // world-space edge vector 2 (corners[3] - corners[0])
-	e1_local: vec3;              // parent-local edge vector 1 (raw vertex diff)
-	e2_local: vec3;              // parent-local edge vector 2 (raw vertex diff)
-	initial_bounds: Map<Bound, number>;  // child's absolute bounds at drag start
-	so: Smart_Object;            // child SO being translated
-	child_scene: O_Scene;        // reference to child scene
-	parent_scene: O_Scene;       // reference to parent scene (for guidance rendering)
-	face_index: number;          // which parent face is the guidance plane
+// ── Exported pure math for testing ──
+
+/** Intersect a ray with a plane. Returns the intersection point.
+ *  If the ray is parallel to the plane, returns the ray origin (safe fallback). */
+export function ray_plane_hit(
+	ray_origin: vec3, ray_dir: vec3,
+	plane_point: vec3, plane_normal: vec3,
+): vec3 {
+	const denom = vec3.dot(ray_dir, plane_normal);
+	const diff = vec3.create();
+	vec3.subtract(diff, plane_point, ray_origin);
+	const t = denom !== 0 ? vec3.dot(diff, plane_normal) / denom : 0;
+	const result = vec3.create();
+	vec3.scaleAndAdd(result, ray_origin, ray_dir, t);
+	return result;
 }
 
-/** Anchored plane for edge/corner stretch drags — same pattern as Face_Anchor.
- *  Freezes face geometry at mousedown so the projection plane doesn't shift
- *  as bounds change.  Stores initial bound values for absolute offset application. */
+/** Decompose a world-space delta onto two face edge vectors, returning the result in local space.
+ *  Returns null if either edge vector is near-zero length. */
+export function decompose_delta(
+	delta_world: vec3,
+	e1_world: vec3, e2_world: vec3,
+	e1_local: vec3, e2_local: vec3,
+): vec3 | null {
+	const e1_dot_e1 = vec3.dot(e1_world, e1_world);
+	const e2_dot_e2 = vec3.dot(e2_world, e2_world);
+	if (e1_dot_e1 < 1e-10 || e2_dot_e2 < 1e-10) return null;
+
+	const a_coeff = vec3.dot(delta_world, e1_world) / e1_dot_e1;
+	const b_coeff = vec3.dot(delta_world, e2_world) / e2_dot_e2;
+
+	const result = vec3.create();
+	vec3.scaleAndAdd(result, result, e1_local, a_coeff);
+	vec3.scaleAndAdd(result, result, e2_local, b_coeff);
+	return result;
+}
+
+/** Screen-space face drag anchor — projects face edges to screen at drag start.
+ *  Mouse displacement is decomposed in 2D, same as the stretch anchor. */
+interface Face_Anchor {
+	anchor_screen: Point;                  // mouse screen position at drag start
+	e1_screen: { x: number; y: number };   // face edge 1 projected to screen (pixels)
+	e2_screen: { x: number; y: number };   // face edge 2 projected to screen (pixels)
+	e1_local: vec3;                        // local edge vector 1
+	e2_local: vec3;                        // local edge vector 2
+	initial_bounds: Map<Bound, number>;    // child's absolute bounds at drag start
+	so: Smart_Object;                      // child SO being translated
+	child_scene: O_Scene;                  // reference to child scene
+	parent_scene: O_Scene;                 // reference to parent scene (for guidance rendering)
+	face_index: number;                    // which face is the guidance plane
+}
+
+/** Per-axis formula info captured at drag start — used to redirect the stretch
+ *  to the formula-bearing source attribute, and to update the formula at drag end. */
+interface Axis_Formula_Info {
+	axis_name: Axis_Name;
+	invariant: number;               // 0=start derived, 1=end derived, 2=length derived
+	formula_text: string | null;     // original formula on the source attribute (if any)
+	formula_result: number;          // value the formula produced at drag start
+	source_attr_name: string;        // name of the source attribute being modified (e.g., 'width')
+}
+
+/** Screen-space stretch anchor — captures screen-projected face edges at drag start.
+ *  Mouse displacement is decomposed in 2D, then scaled to bounds units. */
 interface Stretch_Anchor {
-	plane_point: vec3;           // world-space face center at mousedown (fixed)
-	plane_normal: vec3;          // world-space face normal at mousedown (fixed)
-	anchor_world: vec3;          // world-space intersection of initial mousedown
-	e1_world: vec3;              // face edge vector 1 at mousedown (fixed)
-	e2_world: vec3;              // face edge vector 2 at mousedown (fixed)
-	e1_local: vec3;              // local edge vector 1 at mousedown (fixed)
-	e2_local: vec3;              // local edge vector 2 at mousedown (fixed)
-	initial_bounds: Map<Bound, number>;   // snapshot of affected bounds at mousedown
-	initial_position: vec3;      // scene.position at mousedown (for absolute reset)
-	ref_local: vec3;             // local-space reference point (opposite side, should not move)
-	ref_world: vec3;             // world-space position of ref point at mousedown
-	so: Smart_Object;            // the SO being stretched
-	scene: O_Scene;              // scene being stretched (to adjust position)
-	face_index: number;          // selected face
-	target_type: T_Hit_3D;       // edge or corner
-	target_index: number;        // which edge or corner
+	anchor_screen: Point;                  // mouse screen position at drag start
+	e1_screen: { x: number; y: number };   // face edge 1 projected to screen (pixels)
+	e2_screen: { x: number; y: number };   // face edge 2 projected to screen (pixels)
+	e1_local: vec3;                        // local bounds-space edge vector 1
+	e2_local: vec3;                        // local bounds-space edge vector 2
+	initial_bounds: Map<Bound, number>;    // snapshot of affected bounds at mousedown
+	formula_info: Axis_Formula_Info[];     // per-axis formula info for redirect + update
+	so: Smart_Object;                      // the SO being stretched
+	scene: O_Scene;                        // scene object (for frozen_center)
+	face_index: number;                    // selected face
+	target_type: T_Hit_3D;                 // edge or corner
+	target_index: number;                  // which edge or corner
 }
 
 /** Record of an edge snap during face drag — used for pin offer on drag end. */
@@ -119,11 +156,45 @@ class Drag {
 	}
 
 	clear(): void {
+		// Finalize stretch: update formulas with the drag offset, then unfreeze
+		if (this.stretch_anchor) {
+			this.finalize_stretch();
+			delete this.stretch_anchor.scene.frozen_center;
+		}
 		this.target = null;
 		this.face_anchor = null;
 		this.stretch_anchor = null;
 		this.stretch_face = null;
 		this._rotation_face = null;
+	}
+
+	/** At drag end, update formulas on the source attributes to include the drag offset.
+	 *  This preserves the formula relationship while encoding the manual adjustment. */
+	private finalize_stretch(): void {
+		const a = this.stretch_anchor;
+		if (!a) return;
+
+		for (const info of a.formula_info) {
+			if (!info.formula_text) continue;  // no formula on this axis — nothing to update
+
+			const axis = a.so.axis_by_name(info.axis_name);
+			const current_value = (info.invariant === 0 || info.invariant === 1)
+				? axis.length.value
+				: a.so.get_bound(info.source_attr_name as Bound);
+			const offset = current_value - info.formula_result;
+
+			// Skip if the drag didn't change anything (within snap precision)
+			if (Math.abs(offset) < 0.01) continue;
+
+			// Build the updated formula: original ± offset
+			const sign = offset >= 0 ? '+' : '-';
+			const abs_offset = Math.abs(offset);
+			const new_formula = `${info.formula_text} ${sign} ${abs_offset}`;
+
+			// Apply the updated formula to the source attribute
+			const parent_id = a.scene.parent?.so.id;
+			constraints.set_formula(a.so, info.source_attr_name, new_formula, parent_id);
+		}
 	}
 
 	get has_target(): boolean { return this.target !== null; }
@@ -354,17 +425,13 @@ class Drag {
 		const scene = sel.so.scene;
 		if (!scene) return false;
 
-		// Face drag: translate child SO in the plane of the parent's front-most face
+		// Face drag: translate child SO in the plane of the selected face
 		if (target.type === T_Hit_3D.face) {
 			if (!scene.parent) return false; // root SO cannot be translated
 
-			// First frame: capture anchor from PARENT's face (back face for root, front face otherwise)
+			// First frame: capture anchor from the SELECTED face on the child SO
 			if (!this.face_anchor) {
-				const parent_so = scene.parent.so;
-				const is_parent_root = !scene.parent.parent;
-				const front = is_parent_root ? hits_3d.back_most_face(parent_so) : hits_3d.front_most_face(parent_so);
-				if (front < 0) return false;
-				this.face_anchor = this.init_face_anchor(prev_mouse, front, scene.parent, scene);
+				this.face_anchor = this.init_face_anchor(prev_mouse, sel.index, scene, scene);
 			}
 
 			// Every frame: intersect curr_mouse with the FIXED plane, compute total delta
@@ -432,63 +499,83 @@ class Drag {
 		return { e1_world, e2_world, e1_local, e2_local, plane_normal, plane_point };
 	}
 
-	/** Decompose world delta onto frozen face edge vectors, return local-space delta.
-	 *  Shared by face drag (get_anchored_delta) and stretch drag (get_stretch_delta). */
-	private decompose_to_local(
-		delta_world: vec3,
-		e1_world: vec3, e2_world: vec3,
-		e1_local: vec3, e2_local: vec3
-	): vec3 | null {
-		const e1_dot_e1 = vec3.dot(e1_world, e1_world);
-		const e2_dot_e2 = vec3.dot(e2_world, e2_world);
-		if (e1_dot_e1 < 1e-10 || e2_dot_e2 < 1e-10) return null;
-
-		const a_coeff = vec3.dot(delta_world, e1_world) / e1_dot_e1;
-		const b_coeff = vec3.dot(delta_world, e2_world) / e2_dot_e2;
-
-		const result = vec3.create();
-		vec3.scaleAndAdd(result, result, e1_local, a_coeff);
-		vec3.scaleAndAdd(result, result, e2_local, b_coeff);
-		return result;
-	}
-
 	/** Capture a fixed plane + anchor at drag start for face translation.
 	 *  Plane comes from the PARENT SO's front face (stable — parent doesn't move).
 	 *  Snapshots child SO bounds for absolute offset application. */
 	private init_face_anchor(
 		mouse: Point,
 		face_index: number,
-		parent_scene: O_Scene,
+		plane_scene: O_Scene,
 		child_scene: O_Scene
 	): Face_Anchor {
-		const world = this.get_world_matrix(parent_scene);
-		const plane = this.compute_face_plane(parent_scene.so, face_index, world);
-		const anchor_world = this.ray_plane_intersect(mouse, plane.plane_point, plane.plane_normal);
+		const so = plane_scene.so;
+		const world_matrix = this.get_world_matrix(plane_scene);
+		const plane = this.compute_face_plane(so, face_index, world_matrix);
 
-		const so = child_scene.so;
+		// Project face corners to screen space
+		const project = (world_pt: vec3): { x: number; y: number } => {
+			const clip = vec4.create();
+			vec4.transformMat4(clip, [world_pt[0], world_pt[1], world_pt[2], 1], this.vp_matrix());
+			if (Math.abs(clip[3]) < 1e-6) return { x: 0, y: 0 };
+			return {
+				x: ((clip[0] / clip[3]) + 1) * 0.5 * camera.size.width,
+				y: (1 - (clip[1] / clip[3])) * 0.5 * camera.size.height,
+			};
+		};
+		const face_verts = so.face_vertices(face_index);
+		const local_verts = so.vertices;
+		const corners_screen: { x: number; y: number }[] = [];
+		for (const vi of face_verts) {
+			const lv = local_verts[vi];
+			const wv: vec3 = [0, 0, 0];
+			vec3.transformMat4(wv, lv, world_matrix);
+			corners_screen.push(project(wv));
+		}
+		const e1_screen = { x: corners_screen[1].x - corners_screen[0].x, y: corners_screen[1].y - corners_screen[0].y };
+		const e2_screen = { x: corners_screen[3].x - corners_screen[0].x, y: corners_screen[3].y - corners_screen[0].y };
+
+		const child_so = child_scene.so;
 		const bound_names: Bound[] = ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max'];
 		const initial_bounds = new Map<Bound, number>();
-		for (const b of bound_names) initial_bounds.set(b, so.get_bound(b));
+		for (const b of bound_names) initial_bounds.set(b, child_so.get_bound(b));
 
-		return { ...plane, anchor_world, initial_bounds, so, child_scene, parent_scene, face_index };
+		// Rotate the local edge vectors by the child's orientation so the
+		// bounds-space delta follows the child's rotated face, not the parent's axes.
+		const orientation = child_so.orientation;
+		const e1_rotated = vec3.create();
+		const e2_rotated = vec3.create();
+		vec3.transformQuat(e1_rotated, plane.e1_local, orientation);
+		vec3.transformQuat(e2_rotated, plane.e2_local, orientation);
+
+		return { anchor_screen: mouse, e1_screen, e2_screen, e1_local: e1_rotated, e2_local: e2_rotated, initial_bounds, so: child_so, child_scene, parent_scene: plane_scene, face_index };
 	}
 
-	/** Compute position delta from the fixed anchor to the current mouse position.
-	 *  No matrix inverse — pure face-geometry decomposition. */
+	/** Compute bounds-space delta from screen-space mouse displacement for face drag. */
 	private get_anchored_delta(curr_mouse: Point): vec3 | null {
 		const a = this.face_anchor;
 		if (!a) return null;
 
-		const curr_world = this.ray_plane_intersect(curr_mouse, a.plane_point, a.plane_normal);
-		const delta_world = vec3.create();
-		vec3.subtract(delta_world, curr_world, a.anchor_world);
+		const dx = curr_mouse.x - a.anchor_screen.x;
+		const dy = curr_mouse.y - a.anchor_screen.y;
 
-		return this.decompose_to_local(delta_world, a.e1_world, a.e2_world, a.e1_local, a.e2_local);
+		const e1 = a.e1_screen, e2 = a.e2_screen;
+		const e1_dot_e1 = e1.x * e1.x + e1.y * e1.y;
+		const e2_dot_e2 = e2.x * e2.x + e2.y * e2.y;
+		if (e1_dot_e1 < 1e-6 || e2_dot_e2 < 1e-6) return null;
+
+		const a_coeff = (dx * e1.x + dy * e1.y) / e1_dot_e1;
+		const b_coeff = (dx * e2.x + dy * e2.y) / e2_dot_e2;
+
+		const result = vec3.create();
+		vec3.scaleAndAdd(result, result, a.e1_local, a_coeff);
+		vec3.scaleAndAdd(result, result, a.e2_local, b_coeff);
+		return result;
 	}
 
-	/** Capture a fixed plane + anchor at drag start for edge/corner stretching.
-	 *  Freezes face geometry so the projection plane doesn't shift as bounds change.
-	 *  Snapshots affected bounds and a reference vertex for center-shift compensation. */
+	/** Capture screen-projected face edges at drag start for edge/corner stretching.
+	 *  Projects the face's two edge vectors to screen space. Mouse displacement
+	 *  is decomposed in 2D and scaled to bounds units — no 3D ray intersection,
+	 *  no center-shift compensation needed. */
 	private init_stretch_anchor(
 		mouse: Point,
 		face_index: number,
@@ -500,8 +587,27 @@ class Drag {
 		const world_matrix = this.get_world_matrix(scene);
 		const plane = this.compute_face_plane(so, face_index, world_matrix);
 
-		const anchor_world = this.ray_plane_intersect(mouse, plane.plane_point, plane.plane_normal);
-		if (!anchor_world) return null;
+		// Project the face's two edge vectors to screen space
+		const project = (world_pt: vec3): { x: number; y: number } => {
+			const clip = vec4.create();
+			vec4.transformMat4(clip, [world_pt[0], world_pt[1], world_pt[2], 1], this.vp_matrix());
+			if (Math.abs(clip[3]) < 1e-6) return { x: 0, y: 0 };
+			return {
+				x: ((clip[0] / clip[3]) + 1) * 0.5 * camera.size.width,
+				y: (1 - (clip[1] / clip[3])) * 0.5 * camera.size.height,
+			};
+		};
+		const face_verts = so.face_vertices(face_index);
+		const local_verts = so.vertices;
+		const corners_screen: { x: number; y: number }[] = [];
+		for (const vi of face_verts) {
+			const lv = local_verts[vi];
+			const wv: vec3 = [0, 0, 0];
+			vec3.transformMat4(wv, lv, world_matrix);
+			corners_screen.push(project(wv));
+		}
+		const e1_screen = { x: corners_screen[1].x - corners_screen[0].x, y: corners_screen[1].y - corners_screen[0].y };
+		const e2_screen = { x: corners_screen[3].x - corners_screen[0].x, y: corners_screen[3].y - corners_screen[0].y };
 
 		// Snapshot affected bounds
 		const initial_bounds = new Map<Bound, number>();
@@ -509,7 +615,6 @@ class Drag {
 		if (target_type === T_Hit_3D.edge) {
 			const bound = so.edge_bound(target_index, face_index);
 			initial_bounds.set(bound, so.get_bound(bound));
-			// Root min: will redirect to opposite max — snapshot it too
 			if (is_root && bound.endsWith('_min')) {
 				const opposite = bound.replace('_min', '_max') as Bound;
 				initial_bounds.set(opposite, so.get_bound(opposite));
@@ -525,34 +630,82 @@ class Drag {
 			}
 		}
 
-		// Snapshot position and opposite-side vertex for center-shift compensation.
-		// Read at mousedown before any changes — so.vertices reflects initial bounds.
-		const initial_position = vec3.clone(scene.position);
-		const ref_local = this.find_opposite_vertex(so, face_index, target_type, target_index);
-		const ref_world: vec3 = [0, 0, 0];
-		vec3.transformMat4(ref_world, ref_local, world_matrix);
+		// Freeze the center so the world matrix doesn't shift during the drag
+		scene.frozen_center = vec3.fromValues(
+			(so.x_min + so.x_max) / 2,
+			(so.y_min + so.y_max) / 2,
+			(so.z_min + so.z_max) / 2,
+		);
 
-		return { ...plane, anchor_world, initial_bounds, initial_position, ref_local, ref_world, so, scene, face_index, target_type, target_index };
+		// Capture per-axis formula info: which attribute is derived, which is the source,
+		// and what formula (if any) is on the source that the drag will modify.
+		const formula_info: Axis_Formula_Info[] = [];
+		const affected_axes = target_type === T_Hit_3D.edge
+			? [so.edge_changes_axis(target_index, face_index)]
+			: so.face_axes(face_index);
+		for (const axis_name of affected_axes) {
+			const axis = so.axis_by_name(axis_name);
+			const inv = axis.invariant;
+			// The source attribute that the drag should modify:
+			// If inv=1 (end derived), source = length. If inv=0 (start derived), source = length.
+			// If inv=2 (length derived), source = the bound itself (start or end).
+			let source_attr;
+			if (inv === 0 || inv === 1) {
+				source_attr = axis.length;
+			} else {
+				const bound = target_type === T_Hit_3D.edge
+					? so.edge_bound(target_index, face_index)
+					: so.vertex_bound(target_index, axis_name);
+				source_attr = so.attributes_dict_byName[bound];
+			}
+			formula_info.push({
+				axis_name,
+				invariant: inv,
+				formula_text: source_attr?.formula_display ?? null,
+				formula_result: source_attr?.value ?? 0,
+				source_attr_name: source_attr?.name ?? '',
+			});
+		}
+
+		return { anchor_screen: mouse, e1_screen, e2_screen, e1_local: plane.e1_local, e2_local: plane.e2_local, initial_bounds, formula_info, so, scene, face_index, target_type, target_index };
 	}
 
-	/** Compute bounds-space delta from the frozen stretch anchor to current mouse. */
+	/** View-projection matrix for screen projection. */
+	private vp_matrix(): mat4 {
+		const vp = mat4.create();
+		mat4.multiply(vp, camera.projection, camera.view);
+		return vp;
+	}
+
+	/** Compute bounds-space delta from screen-space mouse displacement. */
 	private get_stretch_delta(curr_mouse: Point): vec3 | null {
 		const a = this.stretch_anchor;
 		if (!a) return null;
 
-		const curr_world = this.ray_plane_intersect(curr_mouse, a.plane_point, a.plane_normal);
-		if (!curr_world) return null;
+		// 2D pixel displacement from anchor
+		const dx = curr_mouse.x - a.anchor_screen.x;
+		const dy = curr_mouse.y - a.anchor_screen.y;
 
-		const delta_world = vec3.create();
-		vec3.subtract(delta_world, curr_world, a.anchor_world);
+		// Decompose pixel displacement onto the two screen-projected edge directions
+		const e1 = a.e1_screen, e2 = a.e2_screen;
+		const e1_dot_e1 = e1.x * e1.x + e1.y * e1.y;
+		const e2_dot_e2 = e2.x * e2.x + e2.y * e2.y;
+		if (e1_dot_e1 < 1e-6 || e2_dot_e2 < 1e-6) return null;
 
-		return this.decompose_to_local(delta_world, a.e1_world, a.e2_world, a.e1_local, a.e2_local);
+		const a_coeff = (dx * e1.x + dy * e1.y) / e1_dot_e1;
+		const b_coeff = (dx * e2.x + dy * e2.y) / e2_dot_e2;
+
+		// Map to local bounds space
+		const result = vec3.create();
+		vec3.scaleAndAdd(result, result, a.e1_local, a_coeff);
+		vec3.scaleAndAdd(result, result, a.e2_local, b_coeff);
+		return result;
 	}
 
 	// Get world matrix for a scene object (must match Render.ts exactly)
 	private get_world_matrix(obj: O_Scene): mat4 {
 		const so = obj.so;
-		const center: vec3 = [
+		const center: vec3 = obj.frozen_center ?? [
 			(so.x_min + so.x_max) / 2,
 			(so.y_min + so.y_max) / 2,
 			(so.z_min + so.z_max) / 2,
@@ -592,22 +745,6 @@ class Drag {
 		}
 
 		return local;
-	}
-
-	// Intersect camera ray through screen point with a plane
-	private ray_plane_intersect(
-		screen: Point,
-		plane_point: vec3,
-		plane_normal: vec3
-	): vec3 {
-		const ray = camera.screen_to_ray(screen.x, screen.y);
-		const denom = vec3.dot(ray.dir, plane_normal);
-		const diff = vec3.create();
-		vec3.subtract(diff, plane_point, ray.origin);
-		const t = denom !== 0 ? vec3.dot(diff, plane_normal) / denom : 0;
-		const result = vec3.create();
-		vec3.scaleAndAdd(result, ray.origin, ray.dir, t);
-		return result;
 	}
 
 	// Apply face drag as absolute offset from initial bounds (no drift).
@@ -696,106 +833,69 @@ class Drag {
 		for (const [bound, initial] of a.initial_bounds) {
 			a.so.set_bound(bound, initial);
 		}
-		// Reset position to initial
-		vec3.copy(a.scene.position, a.initial_position);
 
 		// Root: symmetric stretch (both sides move, center stays fixed)
 		const is_root = !a.scene.parent;
 		if (is_root) vec3.scale(delta, delta, 2);
 
-		// Try solve-for-given first, fall back to set_bound
-		const stretch = (bound: Bound, value: number) => {
-			const snapped = Smart_Object.snap(value);
-			if (constraints.try_solve_given(a.so, bound, snapped)) {
-				constraints.propagate_all();
+		// Apply bound changes — redirect to the source attribute when the target bound is derived
+		const apply_axis = (info: Axis_Formula_Info, desired_abs: number) => {
+			const snapped = Smart_Object.snap(desired_abs);
+			const axis = a.so.axis_by_name(info.axis_name);
+
+			if (info.invariant === 0 || info.invariant === 1) {
+				// Start or end is derived from length. Set LENGTH directly —
+				// enforce_invariants will compute the derived attribute from it.
+				// Use the INITIAL length and INITIAL bound to avoid frame-over-frame accumulation.
+				const bound = a.target_type === T_Hit_3D.edge
+					? a.so.edge_bound(a.target_index, a.face_index)
+					: a.so.vertex_bound(a.target_index, info.axis_name);
+				const initial_bound = a.initial_bounds.get(bound)!;
+				const drag_offset = bound.endsWith('_max')
+					? snapped - initial_bound   // max moved outward → length grows
+					: initial_bound - snapped;  // min moved inward → length shrinks
+				axis.length.value = info.formula_result + drag_offset;
 			} else {
-				a.so.set_bound(bound, snapped);
+				// Length is derived. Start or end is a source — set it directly.
+				if (constraints.try_solve_given(a.so, a.so.vertex_bound(a.target_index, info.axis_name), snapped)) {
+					constraints.propagate_all();
+				} else {
+					a.so.set_bound(a.so.vertex_bound(a.target_index, info.axis_name), snapped);
+				}
 			}
 		};
 
-		// Apply bound changes from initial
-		if (a.target_type === T_Hit_3D.edge) {
-			const axis = a.so.edge_changes_axis(a.target_index, a.face_index);
-			const bound = a.so.edge_bound(a.target_index, a.face_index);
-			const axis_vec = a.so.axis_vector(axis);
+		// Compute desired absolute position per axis and apply.
+		for (const info of a.formula_info) {
+			const axis_vec = a.so.axis_vector(info.axis_name);
 			const offset = vec3.dot(delta, axis_vec);
-			// Root min: invariant clamps start to 0 — redirect to opposite max
+			const bound = a.target_type === T_Hit_3D.edge
+				? a.so.edge_bound(a.target_index, a.face_index)
+				: a.so.vertex_bound(a.target_index, info.axis_name);
+			const initial = a.initial_bounds.get(bound)!;
+
 			if (is_root && bound.endsWith('_min')) {
 				const opposite = bound.replace('_min', '_max') as Bound;
 				const opp_initial = a.initial_bounds.get(opposite)!;
-				// Math.abs: at length=0, reflect — seamlessly switch to growing from other side
-				stretch(opposite, Math.abs(opp_initial - offset));
+				apply_axis(info, Math.abs(opp_initial - offset));
 			} else {
-				const initial = a.initial_bounds.get(bound)!;
-				const raw = initial + offset;
-				stretch(bound, is_root ? Math.abs(raw) : raw);
-			}
-		} else {
-			const axes = a.so.face_axes(a.face_index);
-			for (const axis of axes) {
-				const bound = a.so.vertex_bound(a.target_index, axis);
-				const axis_vec = a.so.axis_vector(axis);
-				const offset = vec3.dot(delta, axis_vec);
-				// Root min: redirect to opposite max
-				if (is_root && bound.endsWith('_min')) {
-					const opposite = bound.replace('_min', '_max') as Bound;
-					const opp_initial = a.initial_bounds.get(opposite)!;
-					stretch(opposite, Math.abs(opp_initial - offset));
-				} else {
-					const initial = a.initial_bounds.get(bound)!;
-					const raw = initial + offset;
-					stretch(bound, is_root ? Math.abs(raw) : raw);
+				const desired = initial + offset;
+				const snapped = Smart_Object.snap(is_root ? Math.abs(desired) : desired);
+
+				// For _min drags: also set the start bound so the opposite side stays fixed.
+				// Without this, only length changes and end = start + length moves both sides.
+				if (bound.endsWith('_min') && !is_root) {
+					a.so.set_bound(bound, snapped);
 				}
+
+				apply_axis(info, snapped);
 			}
 		}
 
-		// Compensate center-rotate-uncenter shift:
-		// The reference point (opposite side) should stay at its original world position.
-		// Drift must be converted from world space to position space (parent space).
-		const wm_after = this.get_world_matrix(a.scene);
-		const ref_after: vec3 = [0, 0, 0];
-		vec3.transformMat4(ref_after, a.ref_local, wm_after);
-
-		// World-space drift
-		const drift_world: vec3 = [0, 0, 0];
-		vec3.subtract(drift_world, a.ref_world, ref_after);
-
-		// Convert to position space: position is in parent's coordinate frame.
-		// Use direction-mode transform: apply parent's inverse to drift (no translation).
-		if (a.scene.parent) {
-			const parent_world = this.get_world_matrix(a.scene.parent);
-			const inv_parent = mat4.create();
-			mat4.invert(inv_parent, parent_world);
-			// Direction transform: transform both origin and drift, subtract
-			const origin_in_parent: vec3 = [0, 0, 0];
-			const drift_end: vec3 = [...drift_world] as vec3;
-			vec3.transformMat4(origin_in_parent, [0, 0, 0], inv_parent);
-			vec3.transformMat4(drift_end, drift_world, inv_parent);
-			const drift_parent: vec3 = [0, 0, 0];
-			vec3.subtract(drift_parent, drift_end, origin_in_parent);
-			vec3.add(a.scene.position, a.scene.position, drift_parent);
-		}
-		// Root: no drift compensation — symmetric stretch keeps center fixed
+		// Let the invariant system compute derived attributes from the sources we just set
+		constraints.enforce_invariants(a.so);
 	}
 
-	/** Find a local-space vertex on the opposite side of the drag target.
-	 *  For edge: a vertex on the same face NOT on the dragged edge.
-	 *  For corner: the diagonally opposite vertex in the face.
-	 *  This vertex should not move when the dragged bound changes. */
-	private find_opposite_vertex(so: Smart_Object, face_index: number, target_type: T_Hit_3D, target_index: number): vec3 {
-		const face_verts = so.face_vertices(face_index);
-		if (target_type === T_Hit_3D.edge) {
-			const [ea, eb] = so.edge_vertices(target_index);
-			const opp = face_verts.find(v => v !== ea && v !== eb);
-			if (opp !== undefined) return vec3.clone(so.vertices[opp]);
-		} else {
-			const idx = face_verts.indexOf(target_index);
-			const opp = face_verts[(idx + 2) % face_verts.length];
-			return vec3.clone(so.vertices[opp]);
-		}
-		// Fallback: center
-		return vec3.fromValues((so.x_min + so.x_max) / 2, (so.y_min + so.y_max) / 2, (so.z_min + so.z_max) / 2);
-	}
 }
 
 export const drag = new Drag();

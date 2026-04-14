@@ -242,6 +242,7 @@
   },
   "active": "547ed81b928e25ea",
   "lastOpenFiles": [
+    "di/src/lib/ts/tests/Drag_math.test.ts",
     "di/notes/work/now/handoff.md",
     "di/notes/work/now/road.map.md",
     "di/notes/work/milestones/index.md",
@@ -270,7 +271,6 @@
     "di/notes/work/milestones/32.facets/use cases/use case 3.md",
     "di/notes/work/milestones/32.facets/designs/theory.md",
     "di/notes/work/milestones/32.facets/designs/stipulations.md",
-    "di/notes/work/milestones/32.facets/designs/standard.facets.md",
     "di/notes/work/milestones/32.facets/use cases",
     "di/notes/work/milestones/32.facets/designs",
     "di/notes/work/milestones/32.facets",

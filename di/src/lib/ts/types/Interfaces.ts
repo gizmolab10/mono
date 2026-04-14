@@ -77,4 +77,5 @@ export interface O_Scene {
 	position: vec3;
 	color: string;
 	id: string;
+	frozen_center?: vec3;         // set during stretch drag — world matrix uses this instead of live center
 }
