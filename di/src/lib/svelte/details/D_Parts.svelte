@@ -201,6 +201,13 @@
 		scenes.save();
 	}
 
+	function toggle_hide_children(e: MouseEvent, so: Smart_Object) {
+		e.stopPropagation();
+		so.hide_children = !so.hide_children;
+		stores.tick();
+		scenes.save();
+	}
+
 	function depth(so: Smart_Object): number {
 		let d = 0;
 		let scene = so.scene;
@@ -213,10 +220,11 @@
 <table class='hierarchy'>
 	<thead>
 		<tr>
-			<th class='toggle-header' class:gap-r={show_parts} colspan={show_parts ? 2 : 6} use:hit_target={{ id: 'toggle-parts', onpress: toggle_show_parts }}>
+			<th class='toggle-header' class:gap-r={show_parts} colspan={show_parts ? 2 : 7} use:hit_target={{ id: 'toggle-parts', onpress: toggle_show_parts }}>
 				{show_parts ? 'hide parts' : 'show parts'}
 			</th>
 			{#if show_parts}
+				<th class='hierarchy-eye static'>👁</th>
 				<th class='hierarchy-eye static'>👁</th>
 				<th class='toggle-header gap-l' colspan='3' use:hit_target={{ id: 'toggle-position', onpress: () => { show_position = !show_position; preferences.write(T_Preference.showPosition, show_position); } }}>
 					{show_position ? 'position' : 'size'} ⟳
@@ -264,6 +272,11 @@
 									×{n_rpt}
 								</span>
 							{/if}
+						{/if}
+					</td>
+					<td class='hierarchy-eye' onclick={(e) => has_children(so, $w_all_sos) ? toggle_hide_children(e, so) : null}>
+						{#if has_children(so, $w_all_sos)}
+							{so.hide_children ? '–' : '👁'}
 						{/if}
 					</td>
 					<td class='hierarchy-eye' onclick={(e) => toggle_visible(e, so)}>
@@ -355,17 +368,12 @@
 		width      : var(--w-small);
 		cursor     : pointer;
 		text-align : center;
-		opacity    : 0.4;
+		opacity    : 1;
 		padding    : 0;
 	}
 
-	.hierarchy-eye:not(.static):hover {
-		opacity : 1;
-	}
-
 	.hierarchy-eye.static {
-		cursor  : default;
-		opacity : 1;
+		cursor : default;
 	}
 
 	.name-input {

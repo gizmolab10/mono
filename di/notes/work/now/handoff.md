@@ -1,23 +1,29 @@
 # Code-Debt Handoff
 
-**Date:** 2026-04-14
+**Date:** 2026-04-15
 **Work stream:** items from [code.debt.md](di/notes/work/now/code.debt.md), one item at a time.
 
 ---
 
 ## Next
 
-Visually verify the parts-panel sibling-position label (shipped 2026-04-11). Tests pass and type-check is clean, but Jonathan wants to look at it in a live session before the corresponding code-debt bullet gets checked off. Once the label is checked off, the next code-debt item is the color sub-list — start with making the selection and hover dots larger.
+A proposal for the first unchecked code-debt item — "visible children button → new column, before eye column" — is on the table and waiting for Jonathan's **go**. The flag already exists on every shape and persists through save/load, but nothing reads it and there's no UI to toggle it. The proposal covers two pieces: wire the flag into the one place in the renderer that filters shapes by visibility so descendants vanish when any ancestor has the flag set, and add a new column to the parts-panel table just before the eye column with a tree-shaped icon that toggles the flag and stays in sync across repeater-group siblings the same way the eye column already does. Three small confirmations requested: cascade to all descendants (not just direct children), tree icon rather than a second eye, and matching repeater-group sync.
+
+seems to me a parent's state is three: all, children, hidden. leaves only have visible, hidden. pac create a new enum for these three states. vs. two booleans, me and my children / progeny.
+
+the new column goes before the current eye column. it shows an eye or a dash (click toggles them), for sos that have children. nothing for those that don't. 
 
 ## Where we are
 
 - **Parts-panel sibling-position label is shipped.** Awaiting live verification before the code-debt bullet gets checked off.
+- **Visible-children column is proposed, not built.** Waiting on three small confirmations before wiring it in.
 - **Drag work is mothballed.** The drag rewrite is shipped and stable (514 tests green, type-check clean), but a small residual visual drift on child drags is unresolved. See [milestone 33](di/notes/work/milestones/33.drag/handoff.md) for the full state, and [its lessons](di/notes/work/milestones/33.drag/lessons.md) for what was learned.
 
 ## Open items
 
+- **Waiting on Jonathan's go for the visible-children column.** See **Next** above.
 - **Visually verify the parts-panel sibling-position label.** Pending live check.
-- **Then the next code-debt item.** Once the label is checked off, the next unchecked bullet is the color sub-list, which begins with making the selection and hover dots larger. The leaf items will need their own proposals.
+- **Color sub-list.** Once the label is checked off and the visible-children column is shipped, the next unchecked bullet is the color sub-list — start with making the selection and hover dots larger. The leaf items will need their own proposals.
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](di/notes/work/milestones/33.drag/handoff.md). Pick back up if and when Jonathan wants to revisit the drag work.
 
 ## Notes for future sessions

@@ -1,4 +1,4 @@
-import { constraints, givens, evaluator } from '../algebra';
+import { constraints, givens, evaluator, tokenizer } from '../algebra';
 import type { Portable_Scene } from '../managers/Versions';
 import type { Bound, Axis_Name } from '../types/Types';
 import { scenes, stores, history } from '../managers';
@@ -706,55 +706,110 @@ class Engine {
 		scenes.save();
 	}
 
-	/** Duplicate the selected SO as a sibling with the same dimensions, angles, and formulas. */
+	/** Duplicate the selected SO as a sibling, along with its entire descendant
+	 *  subtree.  Internal references between cloned shapes are rewritten to
+	 *  point at the new names; external references stay pointing at originals.
+	 *  Repeater-clone descendants are skipped — they regenerate from the
+	 *  cloned template on the next repeater sync. */
 	duplicate_so(): void {
 		history.snapshot();
 		const selected = stores.selection;
 		if (!selected?.so) return;
-		const src = selected.so;
-		const parent_scene = src.scene?.parent;
-		if (!parent_scene) return; // can't duplicate root
+		const root_src = selected.so;
+		const root_parent_scene = root_src.scene?.parent;
+		if (!root_parent_scene) return; // can't duplicate root
 
-		const used = new Set(scene.get_all().map(o => o.so.name));
-		const serialized = src.serialize();
+		// ── gather the subtree in tree order (parent before children) ──
+		const all_sos = scene.get_all().map(o => o.so);
+		const is_repeater_clone = (so: Smart_Object): boolean => {
+			const parent = so.scene?.parent?.so;
+			if (!parent?.repeater) return false;
+			const siblings = all_sos.filter(s => s.scene?.parent?.so === parent);
+			return siblings[0] !== so;
+		};
+		const sources: Smart_Object[] = [];
+		const visit = (so: Smart_Object) => {
+			sources.push(so);
+			const children = all_sos.filter(s => s.scene?.parent?.so === so && !is_repeater_clone(s));
+			for (const c of children) visit(c);
+		};
+		visit(root_src);
 
-		// Fresh name
-		let name = src.name;
-		while (used.has(name)) {
-			const m = name.match(/^(.*?)(\d+)$/);
-			name = m ? m[1] + (parseInt(m[2]) + 1) : name + '2';
+		// ── pick fresh names.  Names already picked count as used so no two
+		//    clones collide on the same bumped number. ──
+		const used = new Set(all_sos.map(s => s.name));
+		const name_map = new Map<string, string>();
+		for (const src of sources) {
+			let name = src.name;
+			while (used.has(name)) {
+				const m = name.match(/^(.*?)(\d+)$/);
+				name = m ? m[1] + (parseInt(m[2]) + 1) : name + '2';
+			}
+			name_map.set(src.name, name);
+			used.add(name);
 		}
 
-		serialized.name = name;
-		const clone = Smart_Object.deserialize(serialized);
-		clone.setID();
+		// ── clone each shape: serialize, rename, deserialize, new id. ──
+		const clones = new Map<string, Smart_Object>(); // old id → cloned SO
+		for (const src of sources) {
+			const data = src.serialize();
+			data.name = name_map.get(src.name)!;
+			const clone = Smart_Object.deserialize(data);
+			clone.setID();
+			clones.set(src.id, clone);
+		}
 
-		// Recompile formulas from source tokens onto the clone
-		for (let ai = 0; ai < 3; ai++) {
-			for (const attr_name of ['start', 'end', 'length'] as const) {
-				const src_attr = src.axes[ai][attr_name];
-				if (src_attr.formula) {
-					const formula_str = src_attr.formula_display;
-					if (formula_str) {
-						constraints.set_formula(clone, clone.axes[ai][attr_name].name, formula_str, parent_scene.so.id);
-					}
+		// ── attach each clone to the scene with the right parent.  Top-level
+		//    goes under the source's original parent; descendants go under
+		//    their cloned parent's scene. ──
+		const clone_scenes = new Map<string, O_Scene>(); // old id → cloned scene
+		for (const src of sources) {
+			const clone = clones.get(src.id)!;
+			const parent_scene_for_clone = src === root_src
+				? root_parent_scene
+				: clone_scenes.get(src.scene!.parent!.so.id)!;
+			const so_scene = scene.create({
+				so: clone,
+				edges: this.edges,
+				faces: this.faces,
+				color: colors.edge_color_rgba(),
+				parent: parent_scene_for_clone,
+			});
+			clone.scene = so_scene;
+			clone_scenes.set(src.id, so_scene);
+			hits_3d.register(clone);
+		}
+
+		// ── recompile formulas on each clone.  Any reference whose owner is
+		//    a shape in the rename map gets its owner swapped for the new
+		//    name.  External references stay pointing at originals.  The
+		//    parent context is the cloned parent's id (or the original
+		//    parent's id for the top-level clone). ──
+		for (const src of sources) {
+			const clone = clones.get(src.id)!;
+			const parent_id = src === root_src
+				? root_parent_scene.so.id
+				: clones.get(src.scene!.parent!.so.id)!.id;
+			for (let ai = 0; ai < 3; ai++) {
+				for (const attr_name of ['start', 'end', 'length'] as const) {
+					const src_attr = src.axes[ai][attr_name];
+					if (!src_attr.formula) continue;
+					const rewritten = src_attr.formula.map(t =>
+						(t.type === 'reference' && name_map.has(t.object))
+							? { ...t, object: name_map.get(t.object)! }
+							: t
+					);
+					const new_text = tokenizer.untokenize(rewritten);
+					constraints.set_formula(clone, clone.axes[ai][attr_name].name, new_text, parent_id);
 				}
 			}
 		}
 
-		const so_scene = scene.create({
-			so: clone,
-			edges: this.edges,
-			faces: this.faces,
-			color: colors.edge_color_rgba(),
-			parent: parent_scene,
-		});
-		clone.scene = so_scene;
-		hits_3d.register(clone);
-
-		constraints.propagate(clone);
-		stores.w_all_sos.update(list => [...list, clone]);
-		hits_3d.set_selection({ so: clone, type: T_Hit_3D.face, index: 0 });
+		// ── propagate, select top-level, tick, save. ──
+		const top_clone = clones.get(root_src.id)!;
+		constraints.propagate(top_clone);
+		stores.w_all_sos.update(list => [...list, ...sources.map(s => clones.get(s.id)!)]);
+		hits_3d.set_selection({ so: top_clone, type: T_Hit_3D.face, index: 0 });
 		stores.tick();
 		scenes.save();
 	}

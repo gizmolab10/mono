@@ -192,7 +192,18 @@ class Render {
 
 		const all_objects = scene.get_all();
 		this.update_camera_view_extent(all_objects);
-		const objects = all_objects.filter(o => o.so.visible);
+		// A shape is drawn only if its own visible flag is on AND no ancestor has
+		// "hide children" turned on. Walking up the parent chain at each level
+		// catches the full subtree — direct children, grandchildren, and deeper.
+		const objects = all_objects.filter(o => {
+			if (!o.so.visible) return false;
+			let cursor = o.parent;
+			while (cursor) {
+				if (cursor.so.hide_children) return false;
+				cursor = cursor.parent;
+			}
+			return true;
+		});
 		const is_2d = stores.current_view_mode === '2d';
 		const solid = stores.is_solid;
 

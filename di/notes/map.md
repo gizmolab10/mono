@@ -151,6 +151,7 @@
 ## Notes — Work
 
 - di/notes/work/index.md
+- di/notes/work/cadence.md
 
 ## Notes — Work — Now
 

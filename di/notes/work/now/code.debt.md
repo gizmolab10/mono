@@ -4,11 +4,15 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
-- [ ] visible children button -> new column, before eye column
+- [x] duplicate button -> recursive
+- [x] visible children button -> new column, before eye column
+- [ ] givens for angles
+- [ ] 5x for select hover too thick
+- [ ] [[cadence]]
 - [ ] layout of separators needs larger/uniform gaps
 - [ ] rename library items
 - [ ] don't like the drag dots, only appear on hover, allow appear on not quite forward most facing face
-- [ ] after drag, mouse up -> repositions / jumps / unintuitive / unexpected / feels unreliable & inconsistent
+- [x] after drag, mouse up -> repositions / jumps / unintuitive / unexpected / feels unreliable & inconsistent
 - [ ] remove FaceLabel?
 - [ ] increase font size for face labels
 - [ ] redo for undo

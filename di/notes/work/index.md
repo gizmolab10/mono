@@ -17,3 +17,4 @@ Top-level index for everything in this folder.
 - [Working features](./now/working%20features.md) — current feature status.
 - [Learn](./now/learn.md) — lessons from mistakes and corrections.
 - [Technique](./now/technique.md) — notes on approach and methodology.
+- [Cadence](./cadence.md) — how Jonathan and co work together; turn-taking, propose-first, explicit-asks.

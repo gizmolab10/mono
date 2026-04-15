@@ -203,7 +203,7 @@
           },
           "invariant": 1
         },
-        "visible": false,
+        "visible": true,
         "hide_children": false,
         "parent_id": "diff40299d7f90fe"
       },
@@ -238,7 +238,7 @@
           "invariant": 1
         },
         "visible": false,
-        "hide_children": false,
+        "hide_children": true,
         "parent_id": "dia2480ebef32cfd"
       },
       {
@@ -329,7 +329,7 @@
           },
           "invariant": 1
         },
-        "visible": false,
+        "visible": true,
         "hide_children": false,
         "parent_id": "dif1461da6c52a64"
       },
@@ -375,7 +375,7 @@
           },
           "invariant": 1
         },
-        "visible": false,
+        "visible": true,
         "hide_children": false,
         "parent_id": "dif1461da6c52a64"
       },
@@ -410,7 +410,7 @@
           "invariant": 1
         },
         "visible": false,
-        "hide_children": false,
+        "hide_children": true,
         "parent_id": "dia2480ebef32cfd"
       },
       {
@@ -455,7 +455,7 @@
           },
           "invariant": 1
         },
-        "visible": false,
+        "visible": true,
         "hide_children": false,
         "parent_id": "dif44661bdeae34e"
       },
@@ -501,7 +501,7 @@
           },
           "invariant": 1
         },
-        "visible": false,
+        "visible": true,
         "hide_children": false,
         "parent_id": "dif44661bdeae34e"
       },
@@ -547,7 +547,7 @@
           },
           "invariant": 1
         },
-        "visible": false,
+        "visible": true,
         "hide_children": false,
         "parent_id": "dif44661bdeae34e"
       },
@@ -582,7 +582,7 @@
           "invariant": 1
         },
         "visible": false,
-        "hide_children": false,
+        "hide_children": true,
         "parent_id": "dia2480ebef32cfd"
       },
       {
@@ -673,7 +673,7 @@
           },
           "invariant": 1
         },
-        "visible": false,
+        "visible": true,
         "hide_children": false,
         "parent_id": "di11486fb9b823fc"
       },
@@ -719,9 +719,181 @@
           },
           "invariant": 1
         },
-        "visible": false,
+        "visible": true,
         "hide_children": false,
         "parent_id": "di11486fb9b823fc"
+      },
+      {
+        "id": "di1b43ff9a2ffa32",
+        "name": "gear Zx",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 609.6,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 609.6,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 0,
+            "length": 609.6,
+            "angle": -0.5235987755982988
+          },
+          "invariant": 1
+        },
+        "visible": false,
+        "hide_children": true,
+        "parent_id": "dia2480ebef32cfd"
+      },
+      {
+        "id": "dif847059c55e4c8",
+        "name": "none",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di1b43ff9a2ffa32"
+      },
+      {
+        "id": "di2c4e12836efa9b",
+        "name": "x only",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0.5235987755982988
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di1b43ff9a2ffa32"
+      },
+      {
+        "id": "di624c869b3aa48b",
+        "name": "X only",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": -0.5235987755982988
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di1b43ff9a2ffa32"
       }
     ],
     "camera": {
@@ -741,6 +913,8 @@
         0
       ]
     },
-    "root_id": "dia2480ebef32cfd"
+    "root_id": "dia2480ebef32cfd",
+    "selected_id": "dia2480ebef32cfd",
+    "selected_face": 4
   }
 }
