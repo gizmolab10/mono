@@ -1,10 +1,13 @@
 # Code Debt
 
-Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into chaos.
+Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into tangles.
 
 offer a proposal for the first unchecked item
 
-- [ ] formula deltas -> extensive sum, bad -> simplify
+- [ ] visible children button -> new column, before eye column
+- [ ] layout of separators needs larger/uniform gaps
+- [ ] rename library items
+- [ ] don't like the drag dots, only appear on hover, allow appear on not quite forward most facing face
 - [ ] after drag, mouse up -> repositions / jumps / unintuitive / unexpected / feels unreliable & inconsistent
 - [ ] remove FaceLabel?
 - [ ] increase font size for face labels
@@ -66,3 +69,42 @@ offer a proposal for the first unchecked item
 - [ ] use codegraph
 - [ ] [great conversation with Pete](https://jonathan-and-pete-2026-02-19.peterkaminski.wiki/Conversation_Flow)
 - [ ] tmux terminal multiplexer
+
+---
+
+# handoff
+
+The issue: the face plane is computed from the child's rotated face (correct for screen tracking), but the local edge vectors come from the child's un-rotated vertices (parent-space). When the child has its own rotation, the decomposition maps screen displacement to an un-rotated direction. The child moves along parent axes instead of along its visible face edges.
+
+The fix: rotate the local edge vectors by the child's orientation before using them in the decomposition result.
+
+Read [Drag.ts](vscode-webview://081v1990oep8ie604s97pudvrnipbh0so5lle4fbgfctemaevakk/index.html?id=238a8563-63a1-4fa4-ab3d-883cbe79e8fa&parentId=1&origin=d72592df-8897-417d-ac84-1bc7b6bf5a45&swVersion=4&extensionId=Anthropic.claude-code&platform=electron&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=vscode-file%3A%2F%2Fvscode-app&session=0c915fda-7c3b-40a5-ab93-2fa1ba36e856#) (lines 503-552)
+
+The local edges need to be rotated by the child's orientation so the bounds-space delta follows the child's rotated axes.
+
+Edit [Drag.ts](vscode-webview://081v1990oep8ie604s97pudvrnipbh0so5lle4fbgfctemaevakk/index.html?id=238a8563-63a1-4fa4-ab3d-883cbe79e8fa&parentId=1&origin=d72592df-8897-417d-ac84-1bc7b6bf5a45&swVersion=4&extensionId=Anthropic.claude-code&platform=electron&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=vscode-file%3A%2F%2Fvscode-app&session=0c915fda-7c3b-40a5-ab93-2fa1ba36e856#)
+
+Added 8 lines
+
+Bash Verify compilation
+
+IN
+
+cd /Users/sand/GitHub/mono/di && yarn svelte-check 2>&1 | tail -6
+
+OUT
+
+$ /Users/sand/GitHub/mono/node_modules/.bin/svelte-check
+Loading svelte-check in workspace: /Users/sand/GitHub/mono/di
+Getting Svelte diagnostics...
+
+svelte-check found 0 errors and 0 warnings
+Done in 13.22s.
+
+Clean. The local edge vectors used in the decomposition result are now rotated by the child's orientation. When a child is rotated, the bounds-space delta will follow the child's rotated face edges instead of the parent's axis-aligned directions.
+
+For un-rotated children, the orientation is identity and the rotation is a no-op — same behavior as before.
+
+the adjustments made to formulas are lengthy sequences of arithmetic ops. i want the formulas as simple as reasonable. proposal
+
+Prompt is too long

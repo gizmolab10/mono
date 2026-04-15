@@ -14,9 +14,10 @@ A living snapshot of the arc of the project at the milestone level.
 
 ## Mothballed
 
-| #   | Name                           | Outcome                                                                                  |
-| --- | ------------------------------ | ---------------------------------------------------------------------------------------- |
-| 32  | [Facets](32.facets/handoff.md) | Mothballed after multiple attempts. Lessons captured in [lessons](32.facets/lessons.md). |
+| #   | Name                           | Outcome                                                                                          |
+| --- | ------------------------------ | ------------------------------------------------------------------------------------------------ |
+| 32  | [Facets](32.facets/handoff.md) | Mothballed after multiple attempts. Lessons captured in [lessons](32.facets/lessons.md).         |
+| 33  | [Drag](33.drag/handoff.md)     | Mothballed mid-investigation. Code shipped and stable. Lessons in [lessons](33.drag/lessons.md). |
 
 ## Done
 

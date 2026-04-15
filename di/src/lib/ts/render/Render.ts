@@ -430,12 +430,12 @@ class Render {
 		// Intersection lines: draw from precomputed data
 		this.render_intersections();
 
-		// Edges: draw edges (root: bottom face only)
+		// Edges: a visible root draws all its edges. An invisible root is
+		// restricted to the bottom face further down.
 		for (const obj of objects) {
 			const projected = projected_map.get(obj.id)!;
 			const world = (solid) ? this.get_world_matrix(obj) : undefined;
-			const bottom_only = !obj.parent && !is_2d;
-			this.render_edges(obj, projected, solid, world, bottom_only ? 0 : undefined);
+			this.render_edges(obj, projected, solid, world);
 			if (stores.show_names) this.render_face_names(obj, projected, world);
 		}
 
@@ -506,7 +506,9 @@ class Render {
 			this.ctx.save();
 			this.ctx.setLineDash([1, 1]);
 			this.ctx.strokeStyle = 'rgba(128, 128, 128, 1)';
-			this.ctx.globalAlpha = stores.grid_opacity;
+			// Invisible root's bottom outline stays fully visible — it's the
+			// floor reference. Other invisible objects fade with the grid.
+			this.ctx.globalAlpha = !obj.parent ? 1 : stores.grid_opacity;
 			this.ctx.lineWidth = 0.5;
 			for (const [i, j] of obj.edges) {
 				if (root_bottom && !root_bottom.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
@@ -621,7 +623,7 @@ class Render {
 
 	get_world_matrix(obj: O_Scene): mat4 {
 		const so = obj.so;
-		const center: vec3 = obj.frozen_center ?? [
+		const center: vec3 = [
 			(so.x_min + so.x_max) / 2,
 			(so.y_min + so.y_max) / 2,
 			(so.z_min + so.z_max) / 2,

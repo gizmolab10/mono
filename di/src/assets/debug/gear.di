@@ -4,7 +4,7 @@
     "smart_objects": [
       {
         "id": "di7b463e89d29afe",
-        "name": "kubes",
+        "name": "gear",
         "x": {
           "attributes": {
             "origin": 0,
@@ -32,12 +32,12 @@
           },
           "invariant": 1
         },
-        "visible": true,
+        "visible": false,
         "hide_children": false
       },
       {
         "id": "dicb47e181f57a78",
-        "name": "a",
+        "name": "none",
         "x": {
           "attributes": {
             "origin": {
@@ -60,7 +60,7 @@
             "length": {
               "formula": ".l"
             },
-            "angle": 0.7853981633974483
+            "angle": 0
           },
           "invariant": 1
         },
@@ -70,8 +70,10 @@
               "formula": ".s"
             },
             "extent": 0,
-            "length": 609.6,
-            "angle": 0.7853981633974483
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
           },
           "invariant": 1
         },
@@ -81,7 +83,7 @@
       },
       {
         "id": "dia94b85ac192758",
-        "name": "b",
+        "name": "x only",
         "x": {
           "attributes": {
             "origin": {
@@ -91,7 +93,53 @@
             "length": {
               "formula": ".l"
             },
+            "angle": 0.5235987755982988
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
             "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di7b463e89d29afe"
+      },
+      {
+        "id": "di6b4bb9b32de723",
+        "name": "X only",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 0,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": -0.5235987755982988
           },
           "invariant": 1
         },
@@ -143,8 +191,6 @@
         0
       ]
     },
-    "root_id": "di7b463e89d29afe",
-    "selected_id": "dicb47e181f57a78",
-    "selected_face": 1
+    "root_id": "di7b463e89d29afe"
   }
 }

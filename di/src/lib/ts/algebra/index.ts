@@ -4,6 +4,7 @@ export type { Portable_Given } from './Givens';
 export type { Node, Operator } from './Nodes';
 export { givens, GIVENS_ID } from './Givens';
 export { constraints } from './Constraints';
+export type { Free_Constant } from './Constraints';
 export type { Token } from './Tokenizer';
 export { evaluator } from './Evaluator';
 export { tokenizer } from './Tokenizer';

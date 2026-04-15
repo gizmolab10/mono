@@ -184,6 +184,11 @@
 - di/notes/work/milestones/30.licensing.md
 - di/notes/work/milestones/31.marketing.md
 
+## Notes — Work — Milestones — 33.drag (mothballed)
+
+- di/notes/work/milestones/33.drag/handoff.md
+- di/notes/work/milestones/33.drag/lessons.md
+
 ## Notes — Work — Milestones — 32.facets (mothballed)
 
 - di/notes/work/milestones/32.facets/handoff.md

@@ -18,7 +18,7 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `learn`                | Summarize the mistake you just made, add it to learn, and report number of pending entries                                                 |
 | `shorthand`            | Read this file (`shorthand.md`)                                                                                                            |
 | `theory`               | Read `di/notes/work/milestones/32.facets/designs/theory.md`, check changes, summarize, refresh `Date:`                                     |
-| `handoff`              | read `di/notes/work/now/handoff.md`, check if anything changed, update the **Next** line and any relevant sections                         |
+| `handoff`              | read `di/notes/work/now/handoff.md`, check if anything changed, update from the chat: the **Next** line and any relevant or new sections   |
 | `hands`                | Read `di/notes/work/now/handoff.md`, follow the **Next** instructions                                                                      |
 | `translate`, `rewrite` | Rewrite the last response using concise, plain english. Avoid jargon.                                                                      |
 | `geometric`            | use names of SO rather than obj_N, use label names of eps when describing faces, segs or eps                                               |

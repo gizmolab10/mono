@@ -19,6 +19,13 @@ import { nodes } from './Nodes';
 // Holds formulas, resolves references, triggers propagation.
 // ═══════════════════════════════════════════════════════════════════
 
+/** A modifiable leaf in the formula graph — either an SO attribute with no
+ *  formula (and not derived by an invariant) or a named given constant.
+ *  Drags push their desired change into these leaves instead of formula text. */
+export type Free_Constant =
+	| { kind: 'attr'; so: Smart_Object; attr: Attribute }
+	| { kind: 'given'; name: string };
+
 // ── alias map ──
 // Customer-facing names → internal bounds.
 // Simple aliases map 1:1. Derived aliases (w, h, d) compute from two bounds.
@@ -820,6 +827,161 @@ class Constraints {
 		const na = names[a], nb = names[b];
 		if (!na || !nb) return {};
 		return { [na]: nb, [nb]: na, [`.${na}`]: `.${nb}`, [`.${nb}`]: `.${na}` };
+	}
+
+	// ── upstream-constant distribution ──
+	// A drag on a child part does not change any formula text. It changes the
+	// real numbers upstream. These helpers find every modifiable leaf that the
+	// dragged value depends on, measure how strongly each leaf pulls on the
+	// dragged value, and let the drag split the desired change across them.
+
+	/** Resolve an attribute name or alias to the underlying Attribute on an SO. */
+	find_attr(so: Smart_Object, attr_name: string): Attribute | null {
+		const aa = alias_axis_attr[attr_name];
+		if (aa) return so.axes[aa[0]].attributes[aa[1]];
+		return so.attributes_dict_byName[attr_name] ?? null;
+	}
+
+	/** Walk the formula graph upstream from one attribute, collecting every
+	 *  leaf whose value can change without editing any formula text.  A leaf
+	 *  is any attribute that has no formula AND is not derived by its axis's
+	 *  invariant rule.  Invariant-derived attributes are walked through to
+	 *  the other two attributes on their axis.  Givens found in formulas are
+	 *  returned as leaves too.  Returns null if a cycle is detected. */
+	collect_upstream(so: Smart_Object, attr_name: string): Free_Constant[] | null {
+		const out: Free_Constant[] = [];
+		const keys = new Set<string>();
+		const visiting = new Set<string>();
+		if (!this.walk_upstream(so, attr_name, visiting, keys, out)) return null;
+		return out;
+	}
+
+	private walk_upstream(
+		so: Smart_Object,
+		attr_name: string,
+		visiting: Set<string>,
+		seen: Set<string>,
+		out: Free_Constant[],
+	): boolean {
+		const visit_key = `${so.id}.${attr_name}`;
+		if (visiting.has(visit_key)) {
+			console.log(`upstream walk hit a cycle at ${so.name}.${attr_name} — aborting this axis`);
+			return false;
+		}
+		visiting.add(visit_key);
+		try {
+			const attr = this.find_attr(so, attr_name);
+			if (!attr) return true;
+
+			if (attr.compiled) {
+				const refs = this.collect_refs(attr.compiled);
+				for (const ref of refs) {
+					if (ref.object === GIVENS_ID) {
+						const gkey = `given:${ref.attribute}`;
+						if (seen.has(gkey)) continue;
+						seen.add(gkey);
+						out.push({ kind: 'given', name: ref.attribute });
+						continue;
+					}
+					const ref_so = this.find_so(ref.object);
+					if (!ref_so) continue;
+					if (!this.walk_upstream(ref_so, ref.attribute, visiting, seen, out)) return false;
+				}
+				return true;
+			}
+
+			// No formula — is this attribute the invariant-derived one on its axis?
+			for (const axis of so.axes) {
+				const inv = axis.invariant;
+				if (inv < 0 || inv > 2) continue;
+				if (axis.attributes[inv] !== attr) continue;
+				// Walk through to the other two attributes on this axis
+				for (let i = 0; i < 3; i++) {
+					if (i === inv) continue;
+					if (!this.walk_upstream(so, axis.attributes[i].name, visiting, seen, out)) return false;
+				}
+				return true;
+			}
+
+			// True free constant
+			const akey = `attr:${so.id}.${attr.name}`;
+			if (seen.has(akey)) return true;
+			seen.add(akey);
+			out.push({ kind: 'attr', so, attr });
+			return true;
+		} finally {
+			visiting.delete(visit_key);
+		}
+	}
+
+	private collect_refs(node: Node): Array<{ object: string; attribute: string }> {
+		switch (node.type) {
+			case 'literal': return [];
+			case 'reference': return [{ object: node.object, attribute: node.attribute }];
+			case 'unary': return this.collect_refs(node.operand);
+			case 'binary': return [...this.collect_refs(node.left), ...this.collect_refs(node.right)];
+		}
+	}
+
+	/** Read the current numeric value of one free-constant leaf. */
+	read_free_constant(fc: Free_Constant): number {
+		if (fc.kind === 'given') return givens.get(fc.name);
+		return fc.attr.value;
+	}
+
+	/** Write a new numeric value to one free-constant leaf. Does not propagate. */
+	write_free_constant(fc: Free_Constant, value: number): void {
+		if (fc.kind === 'given') { givens.set(fc.name, value); return; }
+		fc.attr.value = value;
+	}
+
+	/** Unique key for a free constant — used to detect overlap between walks. */
+	free_constant_key(fc: Free_Constant): string {
+		return fc.kind === 'given' ? `given:${fc.name}` : `attr:${fc.so.id}.${fc.attr.name}`;
+	}
+
+	/** Measure how much the dragged attribute's value changes per unit change
+	 *  in each given free constant.  Uses the real propagation machinery.
+	 *  Non-destructive — every value is restored on exit. */
+	measure_coefficients(
+		dragged_so: Smart_Object,
+		dragged_attr_name: string,
+		fcs: Free_Constant[],
+	): number[] {
+		const epsilon = 0.01;
+		const dragged_attr = this.find_attr(dragged_so, dragged_attr_name);
+		if (!dragged_attr) return fcs.map(() => 0);
+
+		// Snapshot free-constant values so we can restore each nudge.
+		const saved: number[] = fcs.map(fc => this.read_free_constant(fc));
+		const baseline = dragged_attr.value;
+
+		const coeffs: number[] = [];
+		for (let i = 0; i < fcs.length; i++) {
+			this.write_free_constant(fcs[i], saved[i] + epsilon);
+			this.reevaluate_all_formulas();
+			const new_value = dragged_attr.value;
+			coeffs.push((new_value - baseline) / epsilon);
+			this.write_free_constant(fcs[i], saved[i]);
+		}
+		this.reevaluate_all_formulas();
+		return coeffs;
+	}
+
+	/** Re-evaluate every formula-bearing attribute and re-enforce invariants.
+	 *  Like propagate_all, but does not fire the post-propagate hook — callers
+	 *  using this inside measurement do not want repeater-sync side effects. */
+	private reevaluate_all_formulas(): void {
+		const all_objects = scene.get_all();
+		for (const o of all_objects) {
+			const so = o.so;
+			for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
+				if (!attr.compiled) continue;
+				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
+				this.sync_length(so, attr.name, attr.value);
+			}
+			this.enforce_invariants(so);
+		}
 	}
 
 	/** Rename a standard dimension across all formulas in the scene.

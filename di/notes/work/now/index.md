@@ -4,7 +4,7 @@ Active non-milestone work. The files in this folder are the current working docu
 
 ## Contents
 
-- [Handoff](./handoff.md) — current session plan and what's next.
+- [Handoff](di/notes/work/now/handoff.md) — current session plan and what's next.
 - [Road Map](./road.map.md) — living project roadmap and template conventions.
 - [Code Debt](./code.debt.md) — running list of small items to clean up.
 - [Revisit](./revisit.di.md) — items to come back to.

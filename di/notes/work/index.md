@@ -11,7 +11,7 @@ Top-level index for everything in this folder.
 
 ## Quick jumps
 
-- [Current handoff](./now/handoff.md) — what was done in the most recent session and what is next.
+- [Current handoff](di/notes/work/now/handoff.md) — what was done in the most recent session and what is next.
 - [Code debt](./now/code.debt.md) — running list of small items.
 - [Revisit list](./now/revisit.di.md) — items to return to.
 - [Working features](./now/working%20features.md) — current feature status.

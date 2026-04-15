@@ -1,9 +1,31 @@
 # Code-Debt Handoff
 
-**Date:** 2026-04-11
-**Work stream:** items from [code.debt.md](di/notes/work/now/code.debt.md) in this folder
+**Date:** 2026-04-14
+**Work stream:** items from [code.debt.md](di/notes/work/now/code.debt.md), one item at a time.
 
-**Next:** decide whether the parts-panel sibling-position label is verified well enough to check off the first debt item, then move to the next unchecked item (the color sub-list, starting with selection and hover dot colors).
+---
+
+## Next
+
+Visually verify the parts-panel sibling-position label (shipped 2026-04-11). Tests pass and type-check is clean, but Jonathan wants to look at it in a live session before the corresponding code-debt bullet gets checked off. Once the label is checked off, the next code-debt item is the color sub-list — start with making the selection and hover dots larger.
+
+## Where we are
+
+- **Parts-panel sibling-position label is shipped.** Awaiting live verification before the code-debt bullet gets checked off.
+- **Drag work is mothballed.** The drag rewrite is shipped and stable (514 tests green, type-check clean), but a small residual visual drift on child drags is unresolved. See [milestone 33](di/notes/work/milestones/33.drag/handoff.md) for the full state, and [its lessons](di/notes/work/milestones/33.drag/lessons.md) for what was learned.
+
+## Open items
+
+- **Visually verify the parts-panel sibling-position label.** Pending live check.
+- **Then the next code-debt item.** Once the label is checked off, the next unchecked bullet is the color sub-list, which begins with making the selection and hover dots larger. The leaf items will need their own proposals.
+- **Mothballed: residual child-drag drift.** Parked in [milestone 33](di/notes/work/milestones/33.drag/handoff.md). Pick back up if and when Jonathan wants to revisit the drag work.
+
+## Notes for future sessions
+
+- The code-debt track is a grab-bag of small, unrelated items. Each one deserves its own short propose-then-build cycle. Do not batch them.
+- The slow-render work has its own handoff at `di/notes/work/milestones/32.facets/slow/handoff.md`. That handoff is for bottleneck work inside the facets milestone, not debt items.
+- The drag work has its own mothballed handoff at `di/notes/work/milestones/33.drag/handoff.md`. Same separation.
+- The `handoff` and `hands` shorthands point at this file. If you want a separate shorthand for the drag handoff, add a row to `notes/guides/pre-flight/shorthand.md`.
 
 ---
 
@@ -42,18 +64,3 @@ Before wrapping the input I ran a targeted grep for any rule that reached the in
 
 - `di/src/lib/svelte/details/D_Parts.svelte`
 - `di/notes/work/now/handoff.md` — this file (the section you are reading)
-
----
-
-## Open items
-
-- **Check off the first debt item?** The parts-panel sibling-position label is shipped. Tests pass, type-check is clean. Jonathan wants to verify visually before the debt bullet gets checked off — pending.
-- **Next debt item to tackle.** After the first one is checked, the next unchecked bullet is the color sub-list, which begins with "selection and hover dot colors: larger". That is itself a nested list with several leaf items. When you are ready to start, say so and I will propose a plan for the first leaf.
-
----
-
-## Notes for future sessions
-
-- The code-debt track is a grab-bag of small, unrelated items. Each one deserves its own short propose-then-build cycle. Do not batch them.
-- The slow-render work has its own handoff at `di/notes/work/milestones/32.facets/slow/handoff.md`. That handoff is for bottleneck work inside the facets milestone, not debt items.
-- The `handoff` and `hands` shorthands now point at this file (the `now/` handoff). If you want a separate shorthand for the slow-render handoff, add a row to `notes/guides/pre-flight/shorthand.md`.

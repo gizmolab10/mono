@@ -1,4 +1,4 @@
-import { quat, vec3, vec4, mat4 } from 'gl-matrix';
+import { quat, vec3, vec4, mat3, mat4 } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
 import { hits_3d, type Hit_3D_Result } from '../events/Hits_3D';
 import { Point } from '../types/Coordinates';
@@ -6,7 +6,7 @@ import { T_Hit_3D } from '../types/Enumerations';
 import { stores } from '../managers/Stores';
 import { camera } from '../render/Camera';
 import type { Bound, Axis_Name } from '../types/Types';
-import { constraints } from '../algebra/Constraints';
+import { constraints, type Free_Constant } from '../algebra/Constraints';
 import Smart_Object from '../runtime/Smart_Object';
 import { scene as scene_graph } from '../render/Scene';
 import { scenes } from '../managers/Scenes';
@@ -49,12 +49,18 @@ export function decompose_delta(
 	return result;
 }
 
-/** Screen-space face drag anchor — projects face edges to screen at drag start.
- *  Mouse displacement is decomposed in 2D, same as the stretch anchor. */
+/** Face drag anchor in the child's parent-local frame.  Plane data is captured
+ *  once in that frame and stays valid even when upstream pushes resize the
+ *  parent during the drag.  For a drag where the child has no parent (edge
+ *  case — the root is being translated), the frame is world and the frame
+ *  transform is identity. */
 interface Face_Anchor {
-	anchor_screen: Point;                  // mouse screen position at drag start
-	e1_screen: { x: number; y: number };   // face edge 1 projected to screen (pixels)
-	e2_screen: { x: number; y: number };   // face edge 2 projected to screen (pixels)
+	frame_scene: O_Scene | null;           // parent scene whose local frame hosts the plane
+	anchor_frame: vec3;                    // point where mousedown ray hit the plane, in frame coords
+	plane_point: vec3;                     // any point on the face plane (frame coords)
+	plane_normal: vec3;                    // face plane normal (frame coords, unit length)
+	e1_frame: vec3;                        // face edge 1 in frame coords (drag start)
+	e2_frame: vec3;                        // face edge 2 in frame coords (drag start)
 	e1_local: vec3;                        // local edge vector 1
 	e2_local: vec3;                        // local edge vector 2
 	initial_bounds: Map<Bound, number>;    // child's absolute bounds at drag start
@@ -64,28 +70,56 @@ interface Face_Anchor {
 	face_index: number;                    // which face is the guidance plane
 }
 
-/** Per-axis formula info captured at drag start — used to redirect the stretch
- *  to the formula-bearing source attribute, and to update the formula at drag end. */
-interface Axis_Formula_Info {
-	axis_name: Axis_Name;
-	invariant: number;               // 0=start derived, 1=end derived, 2=length derived
-	formula_text: string | null;     // original formula on the source attribute (if any)
-	formula_result: number;          // value the formula produced at drag start
-	source_attr_name: string;        // name of the source attribute being modified (e.g., 'width')
+/** One source attribute that a drag needs to push upstream in order to move
+ *  a corner or edge.  Captures, at drag start: the attribute the drag wants
+ *  to change, its starting value, the modifiable leaves reachable from it,
+ *  how strongly each leaf pulls on it, and the starting values of each leaf. */
+interface Attr_Target {
+	attr_name: string;
+	initial_value: number;
+	/** If true, the target's new value equals initial + drag_offset.
+	 *  If false, the target's new value equals initial - drag_offset. */
+	grows_with_drag: boolean;
+	free_constants: Free_Constant[];
+	coefficients: number[];
+	initial_fc_values: number[];
+	/** Indices into the three arrays above where the coefficient is nonzero. */
+	live_indices: number[];
+	/** When the target attribute itself has no formula (it IS the free constant),
+	 *  writing via free_constants misses the positional-vs-relative semantics
+	 *  handled by set_bound. This flag lets the drag short-circuit and write
+	 *  the bound directly for positional sources. */
+	direct_bound: Bound | null;
 }
 
-/** Screen-space stretch anchor — captures screen-projected face edges at drag start.
- *  Mouse displacement is decomposed in 2D, then scaled to bounds units. */
+/** All drag-time info for one axis affected by a corner or edge drag. */
+interface Axis_Drag_Info {
+	axis_name: Axis_Name;
+	targets: Attr_Target[];
+	/** The bound the drag is visibly moving (for root symmetric logic). */
+	bound_name: Bound;
+	bound_initial: number;
+}
+
+/** Stretch anchor in the dragged SO's parent-local frame.  Capturing the plane
+ *  here (instead of in world) keeps the plane valid even when upstream pushes
+ *  resize the parent during the drag — the parent's world transform can slide
+ *  around, but the plane expressed in parent-local coordinates does not.
+ *  For a root drag there is no parent; the anchor is captured in world and the
+ *  frame transform is identity. */
 interface Stretch_Anchor {
-	anchor_screen: Point;                  // mouse screen position at drag start
-	e1_screen: { x: number; y: number };   // face edge 1 projected to screen (pixels)
-	e2_screen: { x: number; y: number };   // face edge 2 projected to screen (pixels)
+	frame_scene: O_Scene | null;           // parent scene whose local frame hosts the plane (null = world)
+	anchor_frame: vec3;                    // point where mousedown ray hit the plane, in frame coords
+	plane_point: vec3;                     // any point on the face plane (frame coords)
+	plane_normal: vec3;                    // face plane normal (frame coords, unit length)
+	e1_frame: vec3;                        // face edge 1 in frame coords (drag start)
+	e2_frame: vec3;                        // face edge 2 in frame coords (drag start)
 	e1_local: vec3;                        // local bounds-space edge vector 1
 	e2_local: vec3;                        // local bounds-space edge vector 2
 	initial_bounds: Map<Bound, number>;    // snapshot of affected bounds at mousedown
-	formula_info: Axis_Formula_Info[];     // per-axis formula info for redirect + update
+	axis_info: Axis_Drag_Info[];           // per-axis targets for upstream distribution
 	so: Smart_Object;                      // the SO being stretched
-	scene: O_Scene;                        // scene object (for frozen_center)
+	scene: O_Scene;                        // scene object for the SO being stretched
 	face_index: number;                    // selected face
 	target_type: T_Hit_3D;                 // edge or corner
 	target_index: number;                  // which edge or corner
@@ -156,45 +190,13 @@ class Drag {
 	}
 
 	clear(): void {
-		// Finalize stretch: update formulas with the drag offset, then unfreeze
-		if (this.stretch_anchor) {
-			this.finalize_stretch();
-			delete this.stretch_anchor.scene.frozen_center;
-		}
+		// End of drag: no formula text is ever edited by a drag — all changes
+		// were written straight to upstream free constants.
 		this.target = null;
 		this.face_anchor = null;
 		this.stretch_anchor = null;
 		this.stretch_face = null;
 		this._rotation_face = null;
-	}
-
-	/** At drag end, update formulas on the source attributes to include the drag offset.
-	 *  This preserves the formula relationship while encoding the manual adjustment. */
-	private finalize_stretch(): void {
-		const a = this.stretch_anchor;
-		if (!a) return;
-
-		for (const info of a.formula_info) {
-			if (!info.formula_text) continue;  // no formula on this axis — nothing to update
-
-			const axis = a.so.axis_by_name(info.axis_name);
-			const current_value = (info.invariant === 0 || info.invariant === 1)
-				? axis.length.value
-				: a.so.get_bound(info.source_attr_name as Bound);
-			const offset = current_value - info.formula_result;
-
-			// Skip if the drag didn't change anything (within snap precision)
-			if (Math.abs(offset) < 0.01) continue;
-
-			// Build the updated formula: original ± offset
-			const sign = offset >= 0 ? '+' : '-';
-			const abs_offset = Math.abs(offset);
-			const new_formula = `${info.formula_text} ${sign} ${abs_offset}`;
-
-			// Apply the updated formula to the source attribute
-			const parent_id = a.scene.parent?.so.id;
-			constraints.set_formula(a.so, info.source_attr_name, new_formula, parent_id);
-		}
 	}
 
 	get has_target(): boolean { return this.target !== null; }
@@ -499,9 +501,9 @@ class Drag {
 		return { e1_world, e2_world, e1_local, e2_local, plane_normal, plane_point };
 	}
 
-	/** Capture a fixed plane + anchor at drag start for face translation.
-	 *  Plane comes from the PARENT SO's front face (stable — parent doesn't move).
-	 *  Snapshots child SO bounds for absolute offset application. */
+	/** Capture a fixed parent-local plane and anchor point at drag start for face
+	 *  translation.  Plane comes from the child's selected face (the face the
+	 *  user clicked).  Snapshots child SO bounds for absolute offset application. */
 	private init_face_anchor(
 		mouse: Point,
 		face_index: number,
@@ -512,64 +514,54 @@ class Drag {
 		const world_matrix = this.get_world_matrix(plane_scene);
 		const plane = this.compute_face_plane(so, face_index, world_matrix);
 
-		// Project face corners to screen space
-		const project = (world_pt: vec3): { x: number; y: number } => {
-			const clip = vec4.create();
-			vec4.transformMat4(clip, [world_pt[0], world_pt[1], world_pt[2], 1], this.vp_matrix());
-			if (Math.abs(clip[3]) < 1e-6) return { x: 0, y: 0 };
-			return {
-				x: ((clip[0] / clip[3]) + 1) * 0.5 * camera.size.width,
-				y: (1 - (clip[1] / clip[3])) * 0.5 * camera.size.height,
-			};
-		};
-		const face_verts = so.face_vertices(face_index);
-		const local_verts = so.vertices;
-		const corners_screen: { x: number; y: number }[] = [];
-		for (const vi of face_verts) {
-			const lv = local_verts[vi];
-			const wv: vec3 = [0, 0, 0];
-			vec3.transformMat4(wv, lv, world_matrix);
-			corners_screen.push(project(wv));
-		}
-		const e1_screen = { x: corners_screen[1].x - corners_screen[0].x, y: corners_screen[1].y - corners_screen[0].y };
-		const e2_screen = { x: corners_screen[3].x - corners_screen[0].x, y: corners_screen[3].y - corners_screen[0].y };
+		// Where the mouse-down ray hits the face plane in world.
+		const ray = camera.screen_to_ray(mouse.x, mouse.y);
+		const anchor_world = ray_plane_hit(ray.origin, ray.dir, plane.plane_point, plane.plane_normal);
+
+		// Express in parent-local frame so parent resizes during the drag do
+		// not invalidate the plane (the drag-start plane stays fixed in the
+		// parent's own coordinate system).
+		const frame_scene = plane_scene.parent ?? null;
+		const inv_frame = this.inverse_frame_matrix(frame_scene);
+		const anchor_frame = vec3.transformMat4(vec3.create(), anchor_world, inv_frame);
+		const plane_point_frame = vec3.transformMat4(vec3.create(), plane.plane_point, inv_frame);
+		const plane_normal_frame = this.transform_direction(plane.plane_normal, inv_frame);
+		vec3.normalize(plane_normal_frame, plane_normal_frame);
+		const e1_frame = this.transform_direction(plane.e1_world, inv_frame);
+		const e2_frame = this.transform_direction(plane.e2_world, inv_frame);
 
 		const child_so = child_scene.so;
 		const bound_names: Bound[] = ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max'];
 		const initial_bounds = new Map<Bound, number>();
 		for (const b of bound_names) initial_bounds.set(b, child_so.get_bound(b));
 
-		// Rotate the local edge vectors by the child's orientation so the
-		// bounds-space delta follows the child's rotated face, not the parent's axes.
-		const orientation = child_so.orientation;
-		const e1_rotated = vec3.create();
-		const e2_rotated = vec3.create();
-		vec3.transformQuat(e1_rotated, plane.e1_local, orientation);
-		vec3.transformQuat(e2_rotated, plane.e2_local, orientation);
-
-		return { anchor_screen: mouse, e1_screen, e2_screen, e1_local: e1_rotated, e2_local: e2_rotated, initial_bounds, so: child_so, child_scene, parent_scene: plane_scene, face_index };
+		return {
+			frame_scene,
+			anchor_frame, plane_point: plane_point_frame, plane_normal: plane_normal_frame,
+			e1_frame, e2_frame,
+			e1_local: plane.e1_local, e2_local: plane.e2_local,
+			initial_bounds, so: child_so, child_scene, parent_scene: plane_scene, face_index,
+		};
 	}
 
-	/** Compute bounds-space delta from screen-space mouse displacement for face drag. */
+	/** Compute bounds-space delta for face drag via frame-local ray-plane
+	 *  intersection.  Same pattern as the stretch drag — the mouse ray is
+	 *  transformed into the parent's current local frame, hits the stored
+	 *  plane there, and the parent-local displacement is decomposed onto
+	 *  the face's frame-local edges captured at drag start. */
 	private get_anchored_delta(curr_mouse: Point): vec3 | null {
 		const a = this.face_anchor;
 		if (!a) return null;
 
-		const dx = curr_mouse.x - a.anchor_screen.x;
-		const dy = curr_mouse.y - a.anchor_screen.y;
+		const ray = camera.screen_to_ray(curr_mouse.x, curr_mouse.y);
+		const inv_frame = this.inverse_frame_matrix(a.frame_scene);
+		const ray_origin_frame = vec3.transformMat4(vec3.create(), ray.origin, inv_frame);
+		const ray_dir_frame = this.transform_direction(ray.dir, inv_frame);
 
-		const e1 = a.e1_screen, e2 = a.e2_screen;
-		const e1_dot_e1 = e1.x * e1.x + e1.y * e1.y;
-		const e2_dot_e2 = e2.x * e2.x + e2.y * e2.y;
-		if (e1_dot_e1 < 1e-6 || e2_dot_e2 < 1e-6) return null;
+		const hit = ray_plane_hit(ray_origin_frame, ray_dir_frame, a.plane_point, a.plane_normal);
+		const delta_frame = vec3.subtract(vec3.create(), hit, a.anchor_frame);
 
-		const a_coeff = (dx * e1.x + dy * e1.y) / e1_dot_e1;
-		const b_coeff = (dx * e2.x + dy * e2.y) / e2_dot_e2;
-
-		const result = vec3.create();
-		vec3.scaleAndAdd(result, result, a.e1_local, a_coeff);
-		vec3.scaleAndAdd(result, result, a.e2_local, b_coeff);
-		return result;
+		return decompose_delta(delta_frame, a.e1_frame, a.e2_frame, a.e1_local, a.e2_local);
 	}
 
 	/** Capture screen-projected face edges at drag start for edge/corner stretching.
@@ -587,27 +579,21 @@ class Drag {
 		const world_matrix = this.get_world_matrix(scene);
 		const plane = this.compute_face_plane(so, face_index, world_matrix);
 
-		// Project the face's two edge vectors to screen space
-		const project = (world_pt: vec3): { x: number; y: number } => {
-			const clip = vec4.create();
-			vec4.transformMat4(clip, [world_pt[0], world_pt[1], world_pt[2], 1], this.vp_matrix());
-			if (Math.abs(clip[3]) < 1e-6) return { x: 0, y: 0 };
-			return {
-				x: ((clip[0] / clip[3]) + 1) * 0.5 * camera.size.width,
-				y: (1 - (clip[1] / clip[3])) * 0.5 * camera.size.height,
-			};
-		};
-		const face_verts = so.face_vertices(face_index);
-		const local_verts = so.vertices;
-		const corners_screen: { x: number; y: number }[] = [];
-		for (const vi of face_verts) {
-			const lv = local_verts[vi];
-			const wv: vec3 = [0, 0, 0];
-			vec3.transformMat4(wv, lv, world_matrix);
-			corners_screen.push(project(wv));
-		}
-		const e1_screen = { x: corners_screen[1].x - corners_screen[0].x, y: corners_screen[1].y - corners_screen[0].y };
-		const e2_screen = { x: corners_screen[3].x - corners_screen[0].x, y: corners_screen[3].y - corners_screen[0].y };
+		// Where the mouse-down ray hits the face plane in world space.
+		const ray = camera.screen_to_ray(mouse.x, mouse.y);
+		const anchor_world = ray_plane_hit(ray.origin, ray.dir, plane.plane_point, plane.plane_normal);
+
+		// Express all plane data in the parent's local frame. If upstream pushes
+		// during the drag resize the parent, the parent's world transform will
+		// slide — but the plane in parent-local stays put.
+		const frame_scene = scene.parent ?? null;
+		const inv_frame = this.inverse_frame_matrix(frame_scene);
+		const anchor_frame = vec3.transformMat4(vec3.create(), anchor_world, inv_frame);
+		const plane_point_frame = vec3.transformMat4(vec3.create(), plane.plane_point, inv_frame);
+		const plane_normal_frame = this.transform_direction(plane.plane_normal, inv_frame);
+		vec3.normalize(plane_normal_frame, plane_normal_frame);
+		const e1_frame = this.transform_direction(plane.e1_world, inv_frame);
+		const e2_frame = this.transform_direction(plane.e2_world, inv_frame);
 
 		// Snapshot affected bounds
 		const initial_bounds = new Map<Bound, number>();
@@ -630,82 +616,223 @@ class Drag {
 			}
 		}
 
-		// Freeze the center so the world matrix doesn't shift during the drag
-		scene.frozen_center = vec3.fromValues(
-			(so.x_min + so.x_max) / 2,
-			(so.y_min + so.y_max) / 2,
-			(so.z_min + so.z_max) / 2,
-		);
-
-		// Capture per-axis formula info: which attribute is derived, which is the source,
-		// and what formula (if any) is on the source that the drag will modify.
-		const formula_info: Axis_Formula_Info[] = [];
+		// Capture per-axis targets — which source attributes the drag will try
+		// to move, and the upstream free constants it will change to move them.
 		const affected_axes = target_type === T_Hit_3D.edge
 			? [so.edge_changes_axis(target_index, face_index)]
 			: so.face_axes(face_index);
+		const axis_info: Axis_Drag_Info[] = [];
 		for (const axis_name of affected_axes) {
 			const axis = so.axis_by_name(axis_name);
-			const inv = axis.invariant;
-			// The source attribute that the drag should modify:
-			// If inv=1 (end derived), source = length. If inv=0 (start derived), source = length.
-			// If inv=2 (length derived), source = the bound itself (start or end).
-			let source_attr;
-			if (inv === 0 || inv === 1) {
-				source_attr = axis.length;
-			} else {
-				const bound = target_type === T_Hit_3D.edge
-					? so.edge_bound(target_index, face_index)
-					: so.vertex_bound(target_index, axis_name);
-				source_attr = so.attributes_dict_byName[bound];
-			}
-			formula_info.push({
-				axis_name,
-				invariant: inv,
-				formula_text: source_attr?.formula_display ?? null,
-				formula_result: source_attr?.value ?? 0,
-				source_attr_name: source_attr?.name ?? '',
-			});
+			const bound = target_type === T_Hit_3D.edge
+				? so.edge_bound(target_index, face_index)
+				: so.vertex_bound(target_index, axis_name);
+			const is_min_drag = bound.endsWith('_min');
+			const bound_initial = so.get_bound(bound);
+
+			// Pick which source attributes the drag must change, per invariant.
+			// Invariant index tells us which of the three axis attributes is
+			// derived (start=0, end=1, length=2). Whichever of the other two
+			// attributes actually move for this drag is a target here.
+			const targets = this.build_axis_targets(so, axis, bound, is_min_drag, is_root);
+			axis_info.push({ axis_name, targets, bound_name: bound, bound_initial });
 		}
 
-		return { anchor_screen: mouse, e1_screen, e2_screen, e1_local: plane.e1_local, e2_local: plane.e2_local, initial_bounds, formula_info, so, scene, face_index, target_type, target_index };
+		return {
+			frame_scene,
+			anchor_frame, plane_point: plane_point_frame, plane_normal: plane_normal_frame,
+			e1_frame, e2_frame,
+			e1_local: plane.e1_local, e2_local: plane.e2_local,
+			initial_bounds, axis_info, so, scene, face_index, target_type, target_index,
+		};
 	}
 
-	/** View-projection matrix for screen projection. */
-	private vp_matrix(): mat4 {
-		const vp = mat4.create();
-		mat4.multiply(vp, camera.projection, camera.view);
-		return vp;
+	/** Figure out which source attributes on this axis the drag must change in
+	 *  order to move the given corner or edge, capture upstream free constants
+	 *  for each, measure coefficients, and return the targets. */
+	private build_axis_targets(
+		so: Smart_Object,
+		axis: { invariant: number; start: { name: string; value: number }; end: { name: string; value: number }; length: { name: string; value: number } },
+		bound: Bound,
+		is_min_drag: boolean,
+		is_root: boolean,
+	): Attr_Target[] {
+		// Root has no parent and typically no formulas on its own bounds.
+		// It uses symmetric stretch — writing directly to the end bound.
+		// One direct-write target is sufficient; the symmetric sign flip for
+		// min-drag corners is handled by apply_stretch_absolute.
+		if (is_root) {
+			const end_bound = bound.replace('_min', '_max') as Bound;
+			const t = this.make_direct_target(so, end_bound);
+			return t ? [t] : [];
+		}
+
+		const inv = axis.invariant;
+		// Which attributes actually change value when this bound moves?
+		// Max-bound drag: end and length grow with the drag. Start is fixed.
+		// Min-bound drag: start grows with the drag, length shrinks. End is fixed.
+		// Which ones are SOURCES (not derived)?  Any index that is NOT inv.
+		const targets: Attr_Target[] = [];
+
+		const push = (attr_name: string, grows: boolean, direct_bound: Bound | null) => {
+			const t = this.make_target(so, attr_name, grows, direct_bound);
+			if (t) targets.push(t);
+		};
+
+		if (is_min_drag) {
+			// start and length move; start grows with drag, length shrinks.
+			if (inv !== 0) push(axis.start.name, /*grows*/ true, bound);
+			if (inv !== 2) push(axis.length.name, /*grows*/ false, null);
+		} else {
+			// end and length move; both grow with drag.
+			if (inv !== 1) push(axis.end.name, /*grows*/ true, bound);
+			if (inv !== 2) push(axis.length.name, /*grows*/ true, null);
+		}
+
+		// Overlap guard: if two targets share any free constant, fall back to
+		// a single direct-write target (length for inv 0/1, bound for inv 2),
+		// and log a warning. This avoids double-writing a single upstream number.
+		if (targets.length > 1) {
+			const seen = new Set<string>();
+			let overlap = false;
+			for (const t of targets) {
+				for (const fc of t.free_constants) {
+					const key = constraints.free_constant_key(fc);
+					if (seen.has(key)) { overlap = true; break; }
+					seen.add(key);
+				}
+				if (overlap) break;
+			}
+			if (overlap) {
+				console.log(`drag axis ${axis.length.name.replace(/length|width|depth|height/, m => m.toUpperCase())}: two targets share a free constant — falling back to direct write to avoid double-counting`);
+				// Fallback: write directly to the dragged bound, ignore length.
+				const direct = this.make_direct_target(so, bound);
+				return direct ? [direct] : [];
+			}
+		}
+
+		return targets;
 	}
 
-	/** Compute bounds-space delta from screen-space mouse displacement. */
+	/** Build one Attr_Target by walking upstream from (so, attr_name). */
+	private make_target(
+		so: Smart_Object,
+		attr_name: string,
+		grows_with_drag: boolean,
+		direct_bound: Bound | null,
+	): Attr_Target | null {
+		const attr = constraints.find_attr(so, attr_name);
+		if (!attr) return null;
+
+		const fcs = constraints.collect_upstream(so, attr_name);
+		if (fcs === null) {
+			// Cycle — abort this target. The axis may still move via its other
+			// target, or the drag may be a no-op on this axis.
+			console.log(`drag target ${so.name}.${attr_name}: upstream walk found a cycle — this target is inert`);
+			return {
+				attr_name, initial_value: attr.value, grows_with_drag,
+				free_constants: [], coefficients: [], initial_fc_values: [],
+				live_indices: [], direct_bound: null,
+			};
+		}
+
+		const coeffs = constraints.measure_coefficients(so, attr_name, fcs);
+		const initial_fc = fcs.map(fc => constraints.read_free_constant(fc));
+		const live: number[] = [];
+		for (let i = 0; i < coeffs.length; i++) {
+			if (Math.abs(coeffs[i]) > 1e-6) live.push(i);
+		}
+
+		// Only keep direct_bound when the target IS its own free constant.
+		// Walking upstream to parent constants means a formula is in play —
+		// the normal distribution path must be used, not a direct bound write.
+		const resolved_direct = (direct_bound
+			&& fcs.length === 1
+			&& fcs[0].kind === 'attr'
+			&& fcs[0].so === so
+			&& fcs[0].attr === attr) ? direct_bound : null;
+
+		return {
+			attr_name,
+			initial_value: attr.value,
+			grows_with_drag,
+			free_constants: fcs,
+			coefficients: coeffs,
+			initial_fc_values: initial_fc,
+			live_indices: live,
+			direct_bound: resolved_direct,
+		};
+	}
+
+	/** Fallback target used for direct bound writes — used for root (symmetric
+	 *  stretch) and when overlap or cycles corrupt the upstream distribution.
+	 *  Reads and writes use absolute (world-space) bound values via set_bound,
+	 *  which handles the parent-offset conversion for child SOs. */
+	private make_direct_target(so: Smart_Object, bound: Bound): Attr_Target | null {
+		const attr = so.attributes_dict_byName[bound];
+		if (!attr) return null;
+		const absolute = so.get_bound(bound);
+		return {
+			attr_name: bound,
+			initial_value: absolute,
+			grows_with_drag: true,
+			free_constants: [{ kind: 'attr', so, attr }],
+			coefficients: [1],
+			initial_fc_values: [absolute],
+			live_indices: [0],
+			direct_bound: bound,
+		};
+	}
+
+	/** Inverse of the frame scene's world matrix, or identity when there is no
+	 *  frame scene (i.e., the drag is on the root itself).  Used to transform
+	 *  world-space mouse rays and plane data into a parent-local frame that
+	 *  stays stable even when upstream pushes resize the parent. */
+	private inverse_frame_matrix(frame_scene: O_Scene | null): mat4 {
+		if (!frame_scene) return mat4.create(); // identity
+		const frame_world = this.get_world_matrix(frame_scene);
+		const inv = mat4.create();
+		mat4.invert(inv, frame_world);
+		return inv;
+	}
+
+	/** Transform a world-space direction (not point) by a 4x4 matrix.  Strips
+	 *  the translation column so the direction only gets the rotation-and-scale
+	 *  part of the transform.  Result retains direction-vector semantics. */
+	private transform_direction(dir: vec3, m: mat4): vec3 {
+		const m3 = mat3.create();
+		mat3.fromMat4(m3, m);
+		const out = vec3.create();
+		vec3.transformMat3(out, dir, m3);
+		return out;
+	}
+
+	/** Compute bounds-space delta for stretch drag via frame-local ray-plane
+	 *  intersection.  Unprojects the mouse to a world ray, transforms it into
+	 *  the parent's current local frame, hits the drag-start plane (stored in
+	 *  that frame), and decomposes the frame-local displacement onto the face's
+	 *  frame-local edges captured at drag start.  Because the frame is the
+	 *  parent's live frame, parent resizes during the drag do not invalidate
+	 *  the plane. */
 	private get_stretch_delta(curr_mouse: Point): vec3 | null {
 		const a = this.stretch_anchor;
 		if (!a) return null;
 
-		// 2D pixel displacement from anchor
-		const dx = curr_mouse.x - a.anchor_screen.x;
-		const dy = curr_mouse.y - a.anchor_screen.y;
+		const ray = camera.screen_to_ray(curr_mouse.x, curr_mouse.y);
+		const inv_frame = this.inverse_frame_matrix(a.frame_scene);
+		const ray_origin_frame = vec3.transformMat4(vec3.create(), ray.origin, inv_frame);
+		const ray_dir_frame = this.transform_direction(ray.dir, inv_frame);
 
-		// Decompose pixel displacement onto the two screen-projected edge directions
-		const e1 = a.e1_screen, e2 = a.e2_screen;
-		const e1_dot_e1 = e1.x * e1.x + e1.y * e1.y;
-		const e2_dot_e2 = e2.x * e2.x + e2.y * e2.y;
-		if (e1_dot_e1 < 1e-6 || e2_dot_e2 < 1e-6) return null;
+		const hit = ray_plane_hit(ray_origin_frame, ray_dir_frame, a.plane_point, a.plane_normal);
+		const delta_frame = vec3.subtract(vec3.create(), hit, a.anchor_frame);
 
-		const a_coeff = (dx * e1.x + dy * e1.y) / e1_dot_e1;
-		const b_coeff = (dx * e2.x + dy * e2.y) / e2_dot_e2;
-
-		// Map to local bounds space
-		const result = vec3.create();
-		vec3.scaleAndAdd(result, result, a.e1_local, a_coeff);
-		vec3.scaleAndAdd(result, result, a.e2_local, b_coeff);
-		return result;
+		return decompose_delta(delta_frame, a.e1_frame, a.e2_frame, a.e1_local, a.e2_local);
 	}
 
 	// Get world matrix for a scene object (must match Render.ts exactly)
 	private get_world_matrix(obj: O_Scene): mat4 {
 		const so = obj.so;
-		const center: vec3 = obj.frozen_center ?? [
+		const center: vec3 = [
 			(so.x_min + so.x_max) / 2,
 			(so.y_min + so.y_max) / 2,
 			(so.z_min + so.z_max) / 2,
@@ -823,77 +950,96 @@ class Drag {
 
 	/** Apply stretch drag as absolute offset from initial bounds.
 	 *  delta is the total bounds-space displacement since mousedown.
-	 *  For edge: affects 1 bound.  For corner: affects 2 bounds.
-	 *  Compensates for center-rotate-uncenter shift: pins the opposite side
-	 *  by adjusting O_Scene.position after the bound change. */
+	 *
+	 *  For each affected axis, we know which source attributes actually move
+	 *  (captured at drag start).  For each of those sources we push the new
+	 *  desired value upstream: the change is split equally across the free
+	 *  constants reachable by walking its formula graph, weighted by how
+	 *  strongly each constant pulls on the source.  Formula text is never
+	 *  rewritten — only raw numbers change. */
 	private apply_stretch_absolute(delta: vec3): void {
 		const a = this.stretch_anchor!;
 
-		// Reset all affected bounds to initial values first (absolute, not incremental)
+		// Reset all affected bounds to initial values. Upstream pushes will
+		// overwrite what they need; anything not touched stays at its snapshot.
 		for (const [bound, initial] of a.initial_bounds) {
 			a.so.set_bound(bound, initial);
 		}
 
-		// Root: symmetric stretch (both sides move, center stays fixed)
 		const is_root = !a.scene.parent;
-		if (is_root) vec3.scale(delta, delta, 2);
+		if (is_root) {
+			this.apply_stretch_root(delta);
+			constraints.enforce_invariants(a.so);
+			return;
+		}
 
-		// Apply bound changes — redirect to the source attribute when the target bound is derived
-		const apply_axis = (info: Axis_Formula_Info, desired_abs: number) => {
-			const snapped = Smart_Object.snap(desired_abs);
-			const axis = a.so.axis_by_name(info.axis_name);
-
-			if (info.invariant === 0 || info.invariant === 1) {
-				// Start or end is derived from length. Set LENGTH directly —
-				// enforce_invariants will compute the derived attribute from it.
-				// Use the INITIAL length and INITIAL bound to avoid frame-over-frame accumulation.
-				const bound = a.target_type === T_Hit_3D.edge
-					? a.so.edge_bound(a.target_index, a.face_index)
-					: a.so.vertex_bound(a.target_index, info.axis_name);
-				const initial_bound = a.initial_bounds.get(bound)!;
-				const drag_offset = bound.endsWith('_max')
-					? snapped - initial_bound   // max moved outward → length grows
-					: initial_bound - snapped;  // min moved inward → length shrinks
-				axis.length.value = info.formula_result + drag_offset;
-			} else {
-				// Length is derived. Start or end is a source — set it directly.
-				if (constraints.try_solve_given(a.so, a.so.vertex_bound(a.target_index, info.axis_name), snapped)) {
-					constraints.propagate_all();
-				} else {
-					a.so.set_bound(a.so.vertex_bound(a.target_index, info.axis_name), snapped);
-				}
-			}
-		};
-
-		// Compute desired absolute position per axis and apply.
-		for (const info of a.formula_info) {
+		for (const info of a.axis_info) {
 			const axis_vec = a.so.axis_vector(info.axis_name);
 			const offset = vec3.dot(delta, axis_vec);
-			const bound = a.target_type === T_Hit_3D.edge
-				? a.so.edge_bound(a.target_index, a.face_index)
-				: a.so.vertex_bound(a.target_index, info.axis_name);
-			const initial = a.initial_bounds.get(bound)!;
-
-			if (is_root && bound.endsWith('_min')) {
-				const opposite = bound.replace('_min', '_max') as Bound;
-				const opp_initial = a.initial_bounds.get(opposite)!;
-				apply_axis(info, Math.abs(opp_initial - offset));
-			} else {
-				const desired = initial + offset;
-				const snapped = Smart_Object.snap(is_root ? Math.abs(desired) : desired);
-
-				// For _min drags: also set the start bound so the opposite side stays fixed.
-				// Without this, only length changes and end = start + length moves both sides.
-				if (bound.endsWith('_min') && !is_root) {
-					a.so.set_bound(bound, snapped);
-				}
-
-				apply_axis(info, snapped);
+			for (const target of info.targets) {
+				this.apply_target(target, offset);
 			}
 		}
 
-		// Let the invariant system compute derived attributes from the sources we just set
-		constraints.enforce_invariants(a.so);
+		// Re-evaluate every formula now that free constants may have changed,
+		// then enforce invariants so derived attributes catch up.
+		constraints.propagate_all();
+	}
+
+	/** Root-only stretch: symmetric about the origin, writing end bounds
+	 *  directly.  Preserved from the pre-walker drag — root has no parent,
+	 *  typically no formulas on its own bounds, and needs the "abs" flip so
+	 *  dragging a min corner past the origin doesn't go negative. */
+	private apply_stretch_root(delta: vec3): void {
+		const a = this.stretch_anchor!;
+		// Symmetric stretch — both sides move, center stays fixed.
+		vec3.scale(delta, delta, 2);
+
+		for (const info of a.axis_info) {
+			const axis_vec = a.so.axis_vector(info.axis_name);
+			const offset = vec3.dot(delta, axis_vec);
+			const bound = info.bound_name;
+			const initial = info.bound_initial;
+
+			let desired_abs: number;
+			if (bound.endsWith('_min')) {
+				const opposite = bound.replace('_min', '_max') as Bound;
+				const opp_initial = a.initial_bounds.get(opposite) ?? initial;
+				desired_abs = Math.abs(opp_initial - offset);
+			} else {
+				desired_abs = Math.abs(initial + offset);
+			}
+			const snapped = Smart_Object.snap(desired_abs);
+			const end_bound = bound.replace('_min', '_max') as Bound;
+			a.so.set_bound(end_bound, snapped);
+		}
+	}
+
+	/** Push one target attribute's desired new value upstream by splitting the
+	 *  change equally across its live free constants. */
+	private apply_target(target: Attr_Target, drag_offset: number): void {
+		const signed = target.grows_with_drag ? drag_offset : -drag_offset;
+		const desired = Smart_Object.snap(target.initial_value + signed);
+		const delta = desired - target.initial_value;
+
+		if (target.live_indices.length === 0) return; // fully rigid — drag is a no-op here
+
+		// Short-circuit for direct-bound targets (fallback path): writing via
+		// free_constants on a positional attribute skips the parent-offset
+		// handling that set_bound provides, so route through set_bound instead.
+		if (target.direct_bound) {
+			const fc = target.free_constants[0];
+			if (fc.kind === 'attr') {
+				fc.so.set_bound(target.direct_bound, desired);
+				return;
+			}
+		}
+
+		const share_per_constant = delta / target.live_indices.length;
+		for (const i of target.live_indices) {
+			const new_value = target.initial_fc_values[i] + share_per_constant / target.coefficients[i];
+			constraints.write_free_constant(target.free_constants[i], new_value);
+		}
 	}
 
 }
