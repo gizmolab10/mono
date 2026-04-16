@@ -17,6 +17,11 @@ export default class Smart_Object extends Identifiable {
 	// Snap callback — set by Setup to snap mm values to the current precision grid. */
 	static snap: (mm: number) => number = (v) => v;
 
+	// Called whenever any bound changes. Setup wires this to mark the canvas
+	// as out of date so the next tick paints. Noop by default so unit tests
+	// that construct smart objects without running setup stay decoupled.
+	static on_bound_change: () => void = () => {};
+
 	constructor(name: string = '', scene: O_Scene | null = null) {
 		super();
 		this.name = name;
@@ -92,6 +97,7 @@ export default class Smart_Object extends Identifiable {
 				axis.length.value = this.get_bound(axis.end.name as Bound) - this.get_bound(axis.start.name as Bound);
 			}
 		}
+		Smart_Object.on_bound_change();
 	}
 
 	get x_min(): number { return this.get_bound('x_min'); }

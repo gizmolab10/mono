@@ -10,7 +10,8 @@ import { constraints, type Free_Constant } from '../algebra/Constraints';
 import Smart_Object from '../runtime/Smart_Object';
 import { scene as scene_graph } from '../render/Scene';
 import { scenes } from '../managers/Scenes';
-import { writable, get } from 'svelte/store';
+import { stale_writable } from '../common/Stale_Writable';
+import { get } from 'svelte/store';
 
 // ── Exported pure math for testing ──
 
@@ -170,7 +171,7 @@ class Drag {
 	private _snap_results: Snap_Result[] = [];
 
 	/** Pin offer shown after drag ends with active snaps. */
-	w_pin_offer = writable<Pin_Offer | null>(null);
+	w_pin_offer = stale_writable<Pin_Offer | null>(null);
 
 	// ── lifecycle ──
 

@@ -9,13 +9,14 @@ import { constraints, compiler, evaluator } from '../algebra';
 import { history } from '../managers/History';
 import { units, Units } from '../types/Units';
 import { T_Units, T_Editing } from '../types/Enumerations';
-import { writable, get } from 'svelte/store';
+import { stale_writable } from '../common/Stale_Writable';
+import { get } from 'svelte/store';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
 import { render } from '../render/Render';
 
 class Dimensions {
-	w_s_dimensions = writable<S_Dimensions | null>(null);
+	w_s_dimensions = stale_writable<S_Dimensions | null>(null);
 
 	get state(): S_Dimensions | null { return get(this.w_s_dimensions); }
 

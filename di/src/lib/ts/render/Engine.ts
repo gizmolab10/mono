@@ -5,7 +5,11 @@ import { scenes, stores, history } from '../managers';
 import { scene, camera, render, animation } from '.';
 import type { O_Scene } from '../types/Interfaces';
 import { T_Hit_3D } from '../types/Enumerations';
-import { units, Units } from '../types/Units';
+import { units, Units, w_unit_system } from '../types/Units';
+import { face_label } from '../editors/Face_Label';
+import { dimensions } from '../editors/Dimension';
+import { angulars } from '../editors/Angular';
+import { register_stale_mark } from '../common/Stale_Writable';
 import { Smart_Object } from '../runtime';
 import { colors } from '../utilities/Colors';
 import { quat, vec3 } from 'gl-matrix';
@@ -43,8 +47,10 @@ class Engine {
 			}
 		});
 
-		// After any propagation, sync repeater SOs so clone count/positions stay current
+		// After any propagation, mark the canvas out of date and sync
+		// repeater SOs so clone count/positions stay current.
 		constraints.register_post_propagate(() => {
+			render.mark_stale();
 			let any = false;
 			for (const o of scene.get_all()) {
 				if (o.so.repeater) { this.sync_repeater(o.so); any = true; }
@@ -60,14 +66,29 @@ class Engine {
 		scene.clear();
 		animation.reset();
 		hits_3d.clear();
+		render.reset_stale_subs();
 
 		// Initialize managers
 		render.init(canvas);
 		camera.init(render.logical_size);
 		e3.init(canvas);
 
+		// Subscribe to every tier-one input that affects what the canvas shows.
+		// Each subscription marks the canvas as out of date when its source
+		// changes; the render loop uses that flag to decide whether to paint.
+		this.wire_stale_marking();
+
 		// Wire up precision snapping for drag operations
 		Smart_Object.snap = (mm) => units.snap_for_system(mm, Units.current_unit_system(), stores.current_precision);
+
+		// Any direct write to a smart-object bound must mark the canvas out
+		// of date, because these writes bypass the reactive store wiring.
+		Smart_Object.on_bound_change = () => render.mark_stale();
+
+		// Every reactive-store write wrapped with the canvas-stale helpers
+		// now funnels through this hook — any new canvas-affecting store
+		// added later gets coverage automatically when declared that way.
+		register_stale_mark(() => render.mark_stale());
 
 		// Load scene
 		this.load_scene(scenes.load());
@@ -130,14 +151,58 @@ class Engine {
 		// Signal that setup is complete (syncs reactive UI like SD table)
 		stores.tick();
 
-		// Render loop
+		// Render loop — the canvas only repaints when something we know about
+		// changed or when the orientation snap-back animation is running.
 		animation.on_tick(() => {
+			const snap_running = this.snap_anim !== null;
+			if (!render.is_stale && !snap_running) return;
 			this.tick_snap_animation();
 			this.update_front_face();
 			render.render();
 		});
 
 		animation.start();
+	}
+
+	/** Subscribe to every tier-one reactive input that affects the canvas.
+	 *  Each subscription marks the canvas out of date whenever its source
+	 *  changes. Scene singletons (fourteen), color singletons (six) and
+	 *  interaction singletons (six) add up to twenty-six. Every unsubscribe
+	 *  is handed to the render module so hot-module-reload can drop them. */
+	private wire_stale_marking(): void {
+		const mark = () => render.mark_stale();
+
+		// Scene stores — fourteen inputs that change what the canvas shows.
+		render.add_stale_sub(stores.w_selection.subscribe(mark));
+		render.add_stale_sub(stores.w_all_sos.subscribe(mark));
+		render.add_stale_sub(stores.w_tick.subscribe(mark));
+		render.add_stale_sub(stores.w_forward_face.subscribe(mark));
+		render.add_stale_sub(stores.w_editing.subscribe(mark));
+		render.add_stale_sub(stores.w_decorations.subscribe(mark));
+		render.add_stale_sub(stores.w_orientation.subscribe(mark));
+		render.add_stale_sub(stores.w_view_mode.subscribe(mark));
+		render.add_stale_sub(stores.w_edge_thickness.subscribe(mark));
+		render.add_stale_sub(stores.w_grid_opacity.subscribe(mark));
+		render.add_stale_sub(stores.w_show_grid.subscribe(mark));
+		render.add_stale_sub(stores.w_solid.subscribe(mark));
+		render.add_stale_sub(stores.w_precision.subscribe(mark));
+		render.add_stale_sub(stores.w_scale.subscribe(mark));
+
+		// Color stores — six inputs that change how the canvas looks.
+		render.add_stale_sub(colors.w_so_so_hover_color.subscribe(mark));
+		render.add_stale_sub(colors.w_selected_color.subscribe(mark));
+		render.add_stale_sub(colors.w_background_color.subscribe(mark));
+		render.add_stale_sub(colors.w_text_color.subscribe(mark));
+		render.add_stale_sub(colors.w_edge_color.subscribe(mark));
+		render.add_stale_sub(colors.w_accent_color.subscribe(mark));
+
+		// Interaction stores — six inputs driven by pointer, editors and units.
+		render.add_stale_sub(hits_3d.w_hover.subscribe(mark));
+		render.add_stale_sub(drag.w_pin_offer.subscribe(mark));
+		render.add_stale_sub(face_label.w_s_face_label.subscribe(mark));
+		render.add_stale_sub(angulars.w_s_angular.subscribe(mark));
+		render.add_stale_sub(dimensions.w_s_dimensions.subscribe(mark));
+		render.add_stale_sub(w_unit_system.subscribe(mark));
 	}
 
 	// ── load scene ──

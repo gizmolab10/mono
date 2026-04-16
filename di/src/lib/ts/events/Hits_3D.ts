@@ -4,7 +4,8 @@ import { dimensions } from '../editors/Dimension';
 import { angulars } from '../editors/Angular';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Point } from '../types/Coordinates';
-import { writable, get } from 'svelte/store';
+import { stale_writable } from '../common/Stale_Writable';
+import { get } from 'svelte/store';
 import { stores } from '../managers/Stores';
 import { camera } from '../render/Camera';
 import { mat4, quat, vec3, vec4 } from 'gl-matrix';
@@ -28,7 +29,7 @@ class Hits_3D {
 	corner_radius = 8;
 	edge_radius = 5;
 
-	w_hover = writable<Hit_3D_Result | null>(null);
+	w_hover = stale_writable<Hit_3D_Result | null>(null);
 
 	get hover(): Hit_3D_Result | null { return get(this.w_hover); }
 	get selection(): Hit_3D_Result | null { return stores.selection; }

@@ -1,6 +1,7 @@
 import { preferences, T_Preference } from '../managers/Preferences';
+import { stale_writable, make_stale } from '../common/Stale_Writable';
 import { parseToRgba, transparentize } from 'color2k';
-import { get, writable } from 'svelte/store';
+import { get } from 'svelte/store';
 
 // ─── Color source of truth ────────────────────────────────────────────────────
 //
@@ -31,13 +32,14 @@ export class Colors {
 	thumb      = '#007aff';
 	focus      = 'cornflowerblue';
 
-	// Reactive colors (stores)
-	w_so_so_hover_color   = writable<string>('gray');
-	w_selected_color   = writable<string>('rgb(120, 120, 120)');
-	w_background_color = writable<string>('rgb(135, 135, 135)');
-	w_text_color	   = preferences.persistent<string>(T_Preference.textColor, 'black');
-	w_edge_color	   = preferences.persistent<string>(T_Preference.edgeColor, '#874efe');
-	w_accent_color	   = preferences.persistent<string>(T_Preference.accentColor, 'rgb(200, 200, 200)');
+	// Reactive colors (stores). Wrapped so every write marks the canvas out
+	// of date — color changes are canvas-visible.
+	w_so_so_hover_color   = stale_writable<string>('gray');
+	w_selected_color   = stale_writable<string>('rgb(120, 120, 120)');
+	w_background_color = stale_writable<string>('rgb(135, 135, 135)');
+	w_text_color	   = make_stale(preferences.persistent<string>(T_Preference.textColor, 'black'));
+	w_edge_color	   = make_stale(preferences.persistent<string>(T_Preference.edgeColor, '#874efe'));
+	w_accent_color	   = make_stale(preferences.persistent<string>(T_Preference.accentColor, 'rgb(200, 200, 200)'));
 
 	// Precomputed: a contrasting color derived from the edge color, used for hover highlights.
 	// Recomputed whenever the edge color changes.

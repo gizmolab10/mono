@@ -7,14 +7,15 @@ interface S_Name extends S_SO {
 }
 import { T_Editing, T_Hit_3D } from '../types/Enumerations';
 import { history } from '../managers/History';
-import { writable, get } from 'svelte/store';
+import { stale_writable } from '../common/Stale_Writable';
+import { get } from 'svelte/store';
 import { hits_3d } from '../events/Hits_3D';
 import { scenes } from '../managers/Scenes';
 import { stores } from '../managers/Stores';
 import { render } from '../render/Render';
 
 class Face_Label {
-	w_s_face_label = writable<S_Name | null>(null);
+	w_s_face_label = stale_writable<S_Name | null>(null);
 	private prev_selection: Hit_3D_Result | null = null;
 
 	/** Cursor position to transfer between inputs. null = select all. */

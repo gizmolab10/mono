@@ -6,6 +6,7 @@ offer a proposal for the first unchecked item
 
 - [x] duplicate button -> recursive
 - [x] visible children button -> new column, before eye column
+- [ ] show / hide xxx parts
 - [ ] givens for angles
 - [ ] 5x for select hover too thick
 - [ ] [[cadence]]

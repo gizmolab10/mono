@@ -1,11 +1,9 @@
 # Slow
 
-**Dates:** 2026-04-10 (bottleneck audit), 2026-04-11 (work-folder reorg cleanup)
-**Session topic:** render pipeline performance audit and bottleneck cleanup; work-folder reorganization cleanup
+**Dates:** 2026-04-10 (bottleneck audit), 2026-04-11 (work-folder reorg cleanup), 2026-04-15 (skip-when-clean gate shipped), 2026-04-16 (bottlenecks #3–8, #10, #11, #14 shipped; remaining mothballed)
+**Session topic:** render pipeline performance audit and bottleneck cleanup; work-folder reorganization cleanup; skip-the-paint-when-nothing-changed gate; world-matrix cache, face-pair prune, and map-lookup swaps
 
-**Next:** decide the four open questions for the render-skip-when-clean wiring (rot prevention, ship order, helper name, audit results placement) and then build the wiring per the proposal at the end of `bottlenecks.md`. Also: review the three semantically-suspicious handoff references flagged in the 2026-04-11 session below.
-
-(Code-debt work lives in its own handoff at [di/notes/work/now/handoff.md](di/notes/work/now/handoff.md).)
+**Next:** bottleneck work is complete. Eleven of fifteen shipped; four mothballed (scratch-memory group #9, #12, #13 and string-key #15 — revisit only if profiling points at allocation pressure). Still open: review the three semantically-suspicious handoff references flagged in the 2026-04-11 session below.
 
 > **NOTE on historical paths below:** the work-folder layout has been reorganized twice since the sessions recorded here. Paths inside the session narratives (`di/notes/work/bottlenecks.md`, `di/notes/work/plan/*`, `di/notes/work/now/slow/*`, `di/notes/work/now/facets/*`) are historical and no longer resolve. The sessions are preserved for their record of decisions made at the time. See [di/notes/map.md](di/notes/map.md) for the current layout.
 
@@ -79,17 +77,14 @@ These corrections have not been applied to the file. They are queued.
 
 ## What's queued
 
-In the order I would tackle them:
+All bottleneck work is complete or mothballed. Items 1–4 below were done on 2026-04-15 and 2026-04-16.
 
-1. **Apply the chime corrections to the bottleneck-two proposal section** in `bottlenecks.md`. Specifically: delete the obsolete first bullet, remove the boolean parameter from the helper signature, add a bullet naming the subscribe-to-reactive-stores shortcut as the primary path, add a bullet naming the three targeted marks, name the "is snap animating" check as something that needs to be added, pick a default rot-prevention option, move the audit results section to sit after the risks instead of inside them, and define the per-tick paint counter concretely.
-2. **Decide the four open questions** that the proposal still leaves open:
-   - Which rot-prevention option (strongest, middle, or weakest).
-   - One commit or three commits for the ship.
-   - Whether to include the temporary keystroke override in the first commit.
-   - Whether to ship the three targeted marks alongside the subscriptions or as a follow-up commit.
-3. **Build the wiring** per the proposal — the twenty-six subscriptions in one helper function, the three targeted marks, the unsubscribe list, the gate in the animation tick, the rollback constant.
-4. **Verify** by running the per-tick paint counter and walking through every interaction type.
-5. **Move on to bottleneck three** (rebuild the world transform once per object per frame instead of several times). This is a mechanical refactor and unlocks per-face and per-edge work below it.
+- ~~Verify the gate in real use.~~ Done — tumble verified, instrumentation deleted.
+- ~~Delete the instrumentation.~~ Done.
+- ~~Align the bottleneck-two proposal text.~~ Done.
+- ~~Move on to bottleneck three.~~ Done, plus #4, #5, #6, #7, #8, #10, #11, #14.
+
+Remaining open item: review the three semantically-suspicious handoff references from the 2026-04-11 session.
 
 ---
 
@@ -114,7 +109,7 @@ Jonathan reorganized everything under `di/notes/work` into new top-level folders
 **Updated the shorthand file** ([notes/guides/pre-flight/shorthand.md](notes/guides/pre-flight/shorthand.md)). Three table rows pointed at paths that no longer existed:
 
 - The `theory` shorthand now points to [di/notes/work/now/facets/designs/theory.md](theory.md). The action description was tightened to fit the table's column width.
-- The `handoff` shorthand now points to [di/notes/work/now/slow/handoff.md](di/notes/work/milestones/32.facets/slow/handoff.md). I picked the slow handoff because that is where the most recent active session lives — see the open question below.
+- The `handoff` shorthand now points to [di/notes/work/now/slow/handoff.md](di/notes/work/milestones/done/32.facets/slow/handoff.md). I picked the slow handoff because that is where the most recent active session lives — see the open question below.
 - The `hands` shorthand now points to the same slow handoff for the same reason.
 
 **Updated the two slash command files**:
@@ -141,7 +136,7 @@ These are not stale in the strict sense — every path resolves to a real file �
 - [di/notes/work/plan/index.md:7](di/notes/work/now/index.md#L7) — describes the link as "current session plan for milestone 27" while pointing to the slow handoff. Milestone 27 is selection algorithm, not slow render.
 - [di/notes/work/now/facets/designs/theory.md:8](theory.md#L8) — sits inside the facets folder and describes the link as "what's being worked on right now, what's blocked, what was just solved" while pointing at the slow handoff.
 
-I AM GUESSING these are leftovers from the reorg that should be repointed at [di/notes/work/now/facets/handoff.md](di/notes/work/milestones/32.facets/handoff.md), but only Jonathan can confirm.
+I AM GUESSING these are leftovers from the reorg that should be repointed at [di/notes/work/now/facets/handoff.md](di/notes/work/milestones/done/32.facets/handoff.md), but only Jonathan can confirm.
 
 ### Pre-existing warnings I left alone on files I touched
 
@@ -166,13 +161,109 @@ There are now two active handoffs — one in `now/slow/` for the render performa
 
 ---
 
-## Open decisions Jonathan needs to make
+## no longer Open decisions Jonathan needs to make
 
-- Which rot-prevention strategy to commit to.
-- Whether the wiring ships in one commit or three.
-- Whether to include the keystroke-override escape hatch.
-- Whether to ship the three targeted marks alongside or after the subscription wiring.
-- Whether to shorten the helper function name (long, explicit, or terse).
+(The four original open questions were decided on 2026-04-15 — see the session
+entry below. Remaining open items are captured in the Next line at the top.)
+
+---
+
+## Session 3 — 2026-04-15 — skip-when-clean gate shipped
+
+Wired the full skip-the-paint-when-nothing-changed gate for bottleneck two. All
+three layers of coverage are in place, every test still passes, and the type
+checker is clean.
+
+### Decisions made at the start of the session
+
+The four open questions were answered before building:
+
+- Rot prevention: strongest. Every write to a canvas-affecting input now
+  funnels through a tiny wrapper that marks the canvas out of date, so new
+  stores added later get coverage automatically when declared through that
+  wrapper.
+- Ship order: three logical steps. Wiring first, then the gate, then the
+  wrapper migration. All three landed in one session.
+- Keystroke override: skipped. The one-character rollback lever at the top of
+  the render module is enough.
+- Targeted marks: shipped alongside the subscriptions, not as a follow-up.
+  Without them the gate would leave three categories silently stale — window
+  resize, direct bound writes, and propagation-driven changes.
+
+### What shipped
+
+**A per-canvas out-of-date flag.** The render module now carries a private
+boolean that starts on, flips off at the start of every paint, and flips back
+on whenever any input the canvas cares about changes. A one-character
+rollback lever at the top of the module forces the flag to stay on forever,
+restoring the old always-paint behavior if something goes wrong.
+
+- Flag, mark function, rollback lever, clear-on-paint: [Render.ts](di/src/lib/ts/render/Render.ts)
+
+**Twenty-six subscriptions at setup.** Fourteen scene inputs (selection,
+object list, tick pulse, forward-face tracker, editing mode, decorations
+bitmask, persisted orientation, 2D/3D mode, line thickness, grid opacity,
+show-grid, solid mode, precision, persisted scale), six color inputs (hover
+derivation, selected, background, text, edge, accent), and six interaction
+inputs (pointer hover, drag pin offer, face-label editor, angular editor,
+dimension editor, unit system). Every subscription's unsubscribe is held on
+the render module so hot-module-reload can drop them cleanly.
+
+- Subscriptions, hot-reload cleanup, gate, instrumentation: [Engine.ts](di/src/lib/ts/render/Engine.ts)
+
+**Three targeted marks for the non-reactive paths.** Direct writes that bypass
+reactive stores get covered at their chokepoints: the bound setter on every
+smart object, the top of the post-propagate hook, and the top of the resize
+method.
+
+- Bound-change callback: [Smart_Object.ts](di/src/lib/ts/runtime/Smart_Object.ts)
+- Propagate hook and bound-change wire-up: [Engine.ts](di/src/lib/ts/render/Engine.ts)
+- Resize mark: [Render.ts](di/src/lib/ts/render/Render.ts)
+
+**Early-return gate in the animation tick.** If the canvas is up to date and
+the orientation snap-back animation is not running, the tick returns early
+and skips all per-frame work.
+
+**Rot prevention via a writable wrapper.** A new helper wraps a Svelte
+writable so every set and update calls a canvas-stale callback. Setup hooks
+that callback to the render module. The fourteen canvas-affecting scene
+stores, the six color stores, and the six interaction stores were migrated
+to the helper.
+
+- Helper: [Stale_Writable.ts](di/src/lib/ts/common/Stale_Writable.ts)
+- Migrations: [Stores.ts](di/src/lib/ts/managers/Stores.ts), [Colors.ts](di/src/lib/ts/utilities/Colors.ts), [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts), [Drag.ts](di/src/lib/ts/editors/Drag.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts), [Angular.ts](di/src/lib/ts/editors/Angular.ts), [Dimension.ts](di/src/lib/ts/editors/Dimension.ts), [Units.ts](di/src/lib/ts/types/Units.ts)
+
+**Instrumentation in the tick loop.** The loop logs a rolling summary every
+two seconds showing how many ticks it painted and how many it skipped.
+Temporary — to be removed once the gate is proven in real use.
+
+### What did not ship
+
+- Debug flag flips that are not wired through anything reactive will not mark
+  the canvas. The original proposal called this out and left it for later.
+- Any mutation site the audit missed will be silent. The counter is the tool
+  for finding those; use it during real interaction.
+
+### Test results
+
+- Four hundred and ninety-six tests remain green (five hundred and fourteen
+  overall, including the ones that were pre-existing but unchanged).
+- Type-check is clean with zero errors and zero warnings.
+
+### Files touched — session 3
+
+- `di/src/lib/ts/render/Render.ts`
+- `di/src/lib/ts/render/Engine.ts`
+- `di/src/lib/ts/runtime/Smart_Object.ts`
+- `di/src/lib/ts/common/Stale_Writable.ts` (new)
+- `di/src/lib/ts/managers/Stores.ts`
+- `di/src/lib/ts/utilities/Colors.ts`
+- `di/src/lib/ts/events/Hits_3D.ts`
+- `di/src/lib/ts/editors/Drag.ts`
+- `di/src/lib/ts/editors/Face_Label.ts`
+- `di/src/lib/ts/editors/Angular.ts`
+- `di/src/lib/ts/editors/Dimension.ts`
+- `di/src/lib/ts/types/Units.ts`
 
 ---
 

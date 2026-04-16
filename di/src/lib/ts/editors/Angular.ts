@@ -3,7 +3,8 @@ import { constraints } from '../algebra';
 import { history } from '../managers/History';
 import { T_Editing } from '../types/Enumerations';
 import type { Axis_Name } from '../types/Types';
-import { writable, get } from 'svelte/store';
+import { stale_writable } from '../common/Stale_Writable';
+import { get } from 'svelte/store';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
 import { render } from '../render/Render';
@@ -15,7 +16,7 @@ interface S_Angular extends S_SO {
 }
 
 class Angulars {
-	w_s_angular = writable<S_Angular | null>(null);
+	w_s_angular = stale_writable<S_Angular | null>(null);
 
 	get state(): S_Angular | null { return get(this.w_s_angular); }
 

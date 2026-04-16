@@ -23,6 +23,11 @@ import Flatbush from 'flatbush';
 type Pt = { x: number; y: number };
 type OccFaceRef = typeof Render.prototype['occluding_faces'][number] | null;
 
+/** One-character rollback lever. When true, the canvas-up-to-date flag is
+ *  forced off so the tick always paints — same behavior as before the gate
+ *  was wired. Flip to true to revert; next reload picks it up. */
+const ALWAYS_REDRAW = false;
+
 interface ClipInterval {
 	start: Pt; end: Pt;
 	start_cause: OccFaceRef;  // null = original endpoint (corner)
@@ -68,10 +73,45 @@ class Render {
 	private mvp_matrix = mat4.create();
 	private cached_world: mat4 | null = null;  /** Last world matrix passed to project_vertex (by reference). */
 	private cached_mvp = mat4.create();        /** MVP computed from cached_world — reused when world matrix hasn't changed. */
+
+	/** World matrix for each object in the current frame, keyed by object id.
+	 *  Filled on first request, reused on every subsequent request within the
+	 *  same render call. Cleared at the top of render() so the next frame
+	 *  rebuilds against the current camera and scene state. */
+	private world_matrix_cache = new Map<string, mat4>();
 	private canvas!: HTMLCanvasElement;
 	private snap: HTMLCanvasElement | null = null;
 	private size: Size = Size.zero;
 	private dpr = 1;
+
+	/** True when the canvas may be out of date and the next tick should paint.
+	 *  Starts true so the first frame always paints. Cleared at the start of
+	 *  each paint; set by any mutation source we have wired up to mark it. */
+	private _is_stale = true;
+
+	/** Holds the unsubscribe function for every store subscription that marks
+	 *  the flag. Walked on reset so hot-module-reload doesn't pile up
+	 *  duplicate subscriptions across reloads. */
+	private stale_subs: Array<() => void> = [];
+
+	/** Mark the canvas as possibly out of date. Callers should invoke this
+	 *  whenever they change something that affects what the canvas shows. */
+	mark_stale(): void { this._is_stale = true; }
+
+	/** True when the next tick should paint. Reports true whenever the
+	 *  rollback lever is on, regardless of the internal flag. */
+	get is_stale(): boolean { return ALWAYS_REDRAW || this._is_stale; }
+
+	/** Remember an unsubscribe function so it can be called on reset. */
+	add_stale_sub(unsub: () => void): void { this.stale_subs.push(unsub); }
+
+	/** Drop every wired subscription and reset the flag to stale so the
+	 *  first frame after a hot-module-reload always paints. */
+	reset_stale_subs(): void {
+		for (const unsub of this.stale_subs) unsub();
+		this.stale_subs = [];
+		this.mark_stale();
+	}
 
 	/** Camera-view extent: rotation-aware AABB for grid/shadow rendering.
 	 *  Recomputed each frame — never touches stored root bounds. */
@@ -143,6 +183,9 @@ class Render {
 	}
 
 	resize(width: number, height: number): void {
+		// A window resize or device-pixel-ratio change doesn't pass through
+		// any reactive store, so mark the canvas out of date directly.
+		this.mark_stale();
 		this.dpr = window.devicePixelRatio || 1;
 		this.size = new Size(width, height);
 		this.apply_dpr(width, height);
@@ -184,11 +227,15 @@ class Render {
 	}
 
 	render(): void {
+		// Clear the canvas-out-of-date flag first. If any mutation happens
+		// during this paint, the flag flips back on and the next tick repaints.
+		this._is_stale = false;
 		this.ctx.clearRect(0, 0, this.size.width, this.size.height);
 		this.dimension_rects = [];
 		this.face_name_rects = [];
 		this.angular_rects = [];
 		this.cached_world = null;  // invalidate MVP cache (camera may have moved)
+		this.world_matrix_cache.clear();  // per-frame world-matrix memo starts fresh
 
 		const all_objects = scene.get_all();
 		this.update_camera_view_extent(all_objects);
@@ -273,6 +320,19 @@ class Render {
 				for (let fi = 0; fi < obj.faces.length; fi++) {
 					if (this.face_winding(obj.faces[fi], projected) < 0) front_facing.add(fi);
 				}
+				// Edge-to-adjacent-faces map: constant-time neighbor lookup
+				// replaces the per-edge full-face scan.
+				const edge_adj = new Map<string, number[]>();
+				for (let fi = 0; fi < obj.faces.length; fi++) {
+					const f = obj.faces[fi];
+					for (let ei = 0; ei < f.length; ei++) {
+						const a = f[ei], b = f[(ei + 1) % f.length];
+						const ek = `${Math.min(a, b)}-${Math.max(a, b)}`;
+						let list = edge_adj.get(ek);
+						if (!list) { list = []; edge_adj.set(ek, list); }
+						list.push(fi);
+					}
+				}
 				for (let fi = 0; fi < obj.faces.length; fi++) {
 					if (!front_facing.has(fi)) continue;
 					const face = obj.faces[fi];
@@ -288,17 +348,13 @@ class Render {
 					const silhouette_edges: boolean[] = [];
 					for (let ei = 0; ei < face.length; ei++) {
 						const vi = face[ei], vj = face[(ei + 1) % face.length];
-						// Find the adjacent face sharing this edge
+						const ek = `${Math.min(vi, vj)}-${Math.max(vi, vj)}`;
+						const adj = edge_adj.get(ek) ?? [];
 						let adj_front = false;
-						for (let fi2 = 0; fi2 < obj.faces.length; fi2++) {
-							if (fi2 === fi) continue;
-							const f2 = obj.faces[fi2];
-							if (f2.includes(vi) && f2.includes(vj)) {
-								adj_front = front_facing.has(fi2);
-								break;
-							}
+						for (const fi2 of adj) {
+							if (fi2 !== fi) { adj_front = front_facing.has(fi2); break; }
 						}
-						silhouette_edges.push(!adj_front); // silhouette if adjacent is NOT front-facing
+						silhouette_edges.push(!adj_front);
 					}
 					// World-space corners and plane
 					const corners: vec3[] = [];
@@ -361,19 +417,15 @@ class Render {
 			// Run topology pipeline only when the facets debug switch is on — its output
 			// is consumed only by the facets block below, which is gated on the same flag.
 			if (k.debug.show_facets) {
-				// Compute root_scale from world-transformed bounding box of all objects
-				let rs_min = vec3.fromValues(Infinity, Infinity, Infinity);
-				let rs_max = vec3.fromValues(-Infinity, -Infinity, -Infinity);
-				for (const obj of objects) {
-					const world = this.get_world_matrix(obj);
-					for (const v of obj.so.vertices) {
-						const wv = vec4.create();
-						vec4.transformMat4(wv, [v[0], v[1], v[2], 1], world);
-						vec3.min(rs_min, rs_min, vec3.fromValues(wv[0], wv[1], wv[2]));
-						vec3.max(rs_max, rs_max, vec3.fromValues(wv[0], wv[1], wv[2]));
-					}
-				}
-				const root_scale = Math.max(rs_max[0] - rs_min[0], rs_max[1] - rs_min[1], rs_max[2] - rs_min[2]) || 1;
+				// Read the scene extent already computed earlier in this frame and
+				// take its longest axis span. Replaces a per-vertex walk that built
+				// the same number at per-frame cost.
+				const ext = this.camera_view_extent;
+				const root_scale = Math.max(
+					ext.x_max - ext.x_min,
+					ext.y_max - ext.y_min,
+					ext.z_max - ext.z_min,
+				) || 1;
 				const topo_input = {
 					objects, projected_map,
 					occluding_faces: this.occluding_faces,
@@ -567,11 +619,23 @@ class Render {
 		if (!root_obj) return;
 		const root = root_obj.so;
 
+		// Build a parent→children lookup once so the recursive descent
+		// below finds children in constant time instead of scanning the
+		// full object list at every level.
+		const children_of = new Map<string, O_Scene[]>();
+		for (const obj of all) {
+			if (!obj.parent) continue;
+			const pid = obj.parent.id;
+			let list = children_of.get(pid);
+			if (!list) { list = []; children_of.set(pid, list); }
+			list.push(obj);
+		}
+
 		let min_x = Math.min(root.x_min, root.x_max), max_x = Math.max(root.x_min, root.x_max);
 		let min_y = Math.min(root.y_min, root.y_max), max_y = Math.max(root.y_min, root.y_max);
 		let min_z = Math.min(root.z_min, root.z_max), max_z = Math.max(root.z_min, root.z_max);
 
-		const children = all.filter(o => o.parent === root_obj);
+		const children = children_of.get(root_obj.id) ?? [];
 
 		// Expand for all descendants (world-coordinate bounds).
 		// Uses Math.min/max to handle potentially inverted bounds (matches Smart_Object.vertices).
@@ -596,17 +660,17 @@ class Render {
 			let sy0 = Math.min(so.y_min, so.y_max), sy1 = Math.max(so.y_min, so.y_max);
 			let sz0 = Math.min(so.z_min, so.z_max), sz1 = Math.max(so.z_min, so.z_max);
 			const collect_sub = (parent: O_Scene) => {
-				for (const obj of all) {
-					if (obj.parent === parent) {
-						const s = obj.so;
-						const xl = Math.min(s.x_min, s.x_max), xh = Math.max(s.x_min, s.x_max);
-						const yl = Math.min(s.y_min, s.y_max), yh = Math.max(s.y_min, s.y_max);
-						const zl = Math.min(s.z_min, s.z_max), zh = Math.max(s.z_min, s.z_max);
-						if (xl < sx0) sx0 = xl; if (xh > sx1) sx1 = xh;
-						if (yl < sy0) sy0 = yl; if (yh > sy1) sy1 = yh;
-						if (zl < sz0) sz0 = zl; if (zh > sz1) sz1 = zh;
-						collect_sub(obj);
-					}
+				const kids = children_of.get(parent.id);
+				if (!kids) return;
+				for (const obj of kids) {
+					const s = obj.so;
+					const xl = Math.min(s.x_min, s.x_max), xh = Math.max(s.x_min, s.x_max);
+					const yl = Math.min(s.y_min, s.y_max), yh = Math.max(s.y_min, s.y_max);
+					const zl = Math.min(s.z_min, s.z_max), zh = Math.max(s.z_min, s.z_max);
+					if (xl < sx0) sx0 = xl; if (xh > sx1) sx1 = xh;
+					if (yl < sy0) sy0 = yl; if (yh > sy1) sy1 = yh;
+					if (zl < sz0) sz0 = zl; if (zh > sz1) sz1 = zh;
+					collect_sub(obj);
 				}
 			};
 			collect_sub(child);
@@ -633,6 +697,11 @@ class Render {
 	}
 
 	get_world_matrix(obj: O_Scene): mat4 {
+		// Reuse the per-frame memo when present — every object's world matrix
+		// is identical across the several passes that ask for it in one frame.
+		const cached = this.world_matrix_cache.get(obj.id);
+		if (cached) return cached;
+
 		const so = obj.so;
 		const center: vec3 = [
 			(so.x_min + so.x_max) / 2,
@@ -673,6 +742,7 @@ class Render {
 			mat4.multiply(local, parent_world, local);
 		}
 
+		this.world_matrix_cache.set(obj.id, local);
 		return local;
 	}
 
@@ -883,9 +953,16 @@ class Render {
 	private compute_visible_intersection_segments(objects: O_Scene[]): void {
 		this.computed_intersection_segments = [];
 		this.intersection_clip_map.clear();
-		// Build world-space face data for each object
-		type WFace = { n: vec3; d: number; corners: vec3[]; fi: number; obj: O_Scene };
+		// Build world-space face data for each object. Each face carries its
+		// own world-space bounding box so the pair loop below can prune face
+		// pairs that don't overlap before running the expensive plane-
+		// intersection math.
+		type WFace = { n: vec3; d: number; corners: vec3[]; fi: number; obj: O_Scene; lo: vec3; hi: vec3 };
 		const obj_faces: WFace[][] = [];
+
+		// Set lookup replaces the per-face linear scan of the occluder list.
+		const occluding_set = new Set<string>();
+		for (const f of this.occluding_faces) occluding_set.add(`${f.obj_id}:${f.face_index}`);
 
 		for (const obj of objects) {
 			const world = this.get_world_matrix(obj);
@@ -895,23 +972,27 @@ class Render {
 			if (!face_indices) { obj_faces.push([]); continue; }
 
 			for (let fi = 0; fi < face_indices.length; fi++) {
-				// Only use faces that are in the occluding_faces list (front-facing)
-				if (!this.occluding_faces.some(f => f.obj_id === obj.id && f.face_index === fi)) continue;
+				if (!occluding_set.has(`${obj.id}:${fi}`)) continue;
 				const face_vi = face_indices[fi];
 
 				const corners: vec3[] = [];
+				const lo = vec3.fromValues(Infinity, Infinity, Infinity);
+				const hi = vec3.fromValues(-Infinity, -Infinity, -Infinity);
 				for (const vi of face_vi) {
 					const lv = verts[vi];
 					const wv = vec4.create();
 					vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], world);
-					corners.push(vec3.fromValues(wv[0], wv[1], wv[2]));
+					const corner = vec3.fromValues(wv[0], wv[1], wv[2]);
+					corners.push(corner);
+					vec3.min(lo, lo, corner);
+					vec3.max(hi, hi, corner);
 				}
 				const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);
 				const e2 = vec3.sub(vec3.create(), corners[3], corners[0]);
 				const n = vec3.cross(vec3.create(), e1, e2);
 				vec3.normalize(n, n);
 				const d = vec3.dot(n, corners[0]);
-				faces.push({ n, d, corners, fi, obj });
+				faces.push({ n, d, corners, fi, obj, lo, hi });
 			}
 			obj_faces.push(faces);
 		}
@@ -942,6 +1023,11 @@ class Render {
 					for (let fi_b = 0; fi_b < obj_faces[j].length; fi_b++) {
 						const fA = obj_faces[i][fi_a];
 						const fB = obj_faces[j][fi_b];
+						// Per-face world-space bounding-box prune: most face pairs
+						// inside overlapping objects still don't actually touch.
+						if (fA.lo[0] > fB.hi[0] || fB.lo[0] > fA.hi[0] ||
+							fA.lo[1] > fB.hi[1] || fB.lo[1] > fA.hi[1] ||
+							fA.lo[2] > fB.hi[2] || fB.lo[2] > fA.hi[2]) continue;
 						const geom = this.intersect_face_pair(null, fA, fB, '');
 						if (!geom) continue;
 
@@ -1180,20 +1266,31 @@ class Render {
 	 *  An intersection line exits a face at an edge. If that edge is occluded at that point,
 	 *  the other SO is behind something there, and the intersection endpoint is phantom. */
 	private filter_occluded_intersection_endpoints(objects: O_Scene[], projected_map: Map<string, Projected[]>): void {
+		// Constant-time lookups replace linear scans inside the inner function.
+		const obj_by_id = new Map<string, O_Scene>();
+		for (const o of objects) obj_by_id.set(o.id, o);
+
+		const edge_seg_by_key = new Map<string, Map<string, ComputedEdgeSeg>>();
+		for (const [so_id, segs] of this.computed_edge_segments) {
+			const m = new Map<string, ComputedEdgeSeg>();
+			for (const seg of segs) m.set(seg.edge_key, seg);
+			edge_seg_by_key.set(so_id, m);
+		}
+
 		// For a given SO face, check if screen point falls on an occluded portion of any visible edge
 		const is_occluded_on_face = (so_id: string, face_idx: number, screen: Pt): boolean => {
-			const obj = objects.find(o => o.id === so_id);
+			const obj = obj_by_id.get(so_id);
 			if (!obj?.faces) return false;
 			const face_verts = obj.faces[face_idx];
 			const projected = projected_map.get(so_id);
 			if (!projected) return false;
-			const edge_segs = this.computed_edge_segments.get(so_id);
-			if (!edge_segs) return false;
+			const seg_map = edge_seg_by_key.get(so_id);
+			if (!seg_map) return false;
 
 			for (let i = 0; i < face_verts.length; i++) {
 				const vi = face_verts[i], vj = face_verts[(i + 1) % face_verts.length];
 				const ek = `${Math.min(vi, vj)}-${Math.max(vi, vj)}`;
-				const seg = edge_segs.find(s => s.edge_key === ek);
+				const seg = seg_map.get(ek);
 				if (!seg) continue;
 
 				const a = projected[vi], b = projected[vj];
@@ -1395,13 +1492,17 @@ class Render {
 			list.push(sp);
 		}
 
-		for (const [edge_full_key, splits] of by_edge) {
-			const [so_id, edge_key] = [edge_full_key.slice(0, edge_full_key.indexOf(':')), edge_full_key.slice(edge_full_key.indexOf(':') + 1)];
-			const segs = this.computed_edge_segments.get(so_id);
-			if (!segs) continue;
+		// Direct lookup from "so:edge_key" to the segment, replacing the
+		// per-split linear scan over all segments of each object.
+		const seg_by_edge = new Map<string, ComputedEdgeSeg>();
+		for (const [so_id, segs] of this.computed_edge_segments) {
+			for (const seg of segs) seg_by_edge.set(`${so_id}:${seg.edge_key}`, seg);
+		}
 
-			for (const seg of segs) {
-				if (seg.edge_key !== edge_key) continue;
+		for (const [edge_full_key, splits] of by_edge) {
+			const seg = seg_by_edge.get(edge_full_key);
+			if (!seg) continue;
+			{
 
 				// For each visible clip interval, check if any split falls inside it
 				const new_visible: [Pt, Pt][] = [];

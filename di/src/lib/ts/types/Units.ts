@@ -1,7 +1,8 @@
 import { preferences, T_Preference } from '../managers/Preferences';
 import { tu } from '../utilities/Testworthy_Utilities';
 import { T_Unit, T_Units } from './Enumerations';
-import { writable, get } from 'svelte/store';
+import { stale_writable } from '../common/Stale_Writable';
+import { get } from 'svelte/store';
 
 // ═══════════════════════════════════════════════════════════════════
 // CONVERSION TABLE — millimeters per unit
@@ -421,7 +422,7 @@ export const units = new Units();
 // ═══════════════════════════════════════════════════════════════════
 
 const saved_system = preferences.read<T_Units>(T_Preference.unitSystem);
-export const w_unit_system = writable<T_Units>(saved_system ?? T_Units.imperial);
+export const w_unit_system = stale_writable<T_Units>(saved_system ?? T_Units.imperial);
 
 w_unit_system.subscribe((system: T_Units) => {
 	preferences.write(T_Preference.unitSystem, system);
