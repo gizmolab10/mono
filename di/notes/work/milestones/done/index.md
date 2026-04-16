@@ -28,3 +28,9 @@
 | 24  | [Mobile Devices](24.mobile.devices.md)    | Mar 12         |
 | 25  | [Errors](25.errors.md)                    |                |
 | 26  | [Lacemaker](26.lacemaker.md)              |                |
+
+## Mothballed
+
+| #   | Name                                              | Status                                                                           |
+| --- | ------------------------------------------------- | -------------------------------------------------------------------------------- |
+| 32  | [Facets](32.facets/handoff.md)                    | Mothballed after multiple attempts. Lessons in [lessons](32.facets/lessons.md).  |

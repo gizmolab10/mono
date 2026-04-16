@@ -142,3 +142,9 @@
         - [x] permutation
             - [x] three things taken three at a time
             - [x] nine buttons, ick
+- [x] after drag, mouse up -> repositions / jumps / unintuitive / unexpected / feels unreliable & inconsistent
+- [x] duplicate button -> recursive
+- [x] visible children button -> new column, before eye column
+- [x] add "3 of 24" at right of edit title when not showing parts
+    - [x] move to left of title input, when not showing parts
+    - [x] add new first column to parts table, for sibling number, when showing parts

@@ -96,9 +96,10 @@
 ## TS — Common
 
 - di/src/lib/ts/common/index.ts
+- di/src/lib/ts/common/Configuration.ts
 - di/src/lib/ts/common/Constants.ts
-- di/src/lib/ts/common/Debug.ts
 - di/src/lib/ts/common/Extensions.ts
+- di/src/lib/ts/common/Stale_Writable.ts
 
 ## TS — Editors
 
@@ -190,27 +191,6 @@
 - di/notes/work/milestones/33.drag/handoff.md
 - di/notes/work/milestones/33.drag/lessons.md
 
-## Notes — Work — Milestones — 32.facets (mothballed)
-
-- di/notes/work/milestones/32.facets/handoff.md
-- di/notes/work/milestones/32.facets/32.facets.md
-- di/notes/work/milestones/32.facets/history.md
-- di/notes/work/milestones/32.facets/lessons.md
-- di/notes/work/milestones/32.facets/designs/theory.md
-- di/notes/work/milestones/32.facets/designs/standard.facets.md
-- di/notes/work/milestones/32.facets/designs/simpler design.md
-- di/notes/work/milestones/32.facets/designs/pipeline.md
-- di/notes/work/milestones/32.facets/designs/stipulations.md
-- di/notes/work/milestones/32.facets/designs/3D sweep algorithm.md
-- di/notes/work/milestones/32.facets/use cases/use case 3.md
-- di/notes/work/milestones/32.facets/use cases/use case 4.md
-- di/notes/work/milestones/32.facets/use cases/use case 5.md
-- di/notes/work/milestones/32.facets/use cases/use case 6.md
-- di/notes/work/milestones/32.facets/slow/handoff.md
-- di/notes/work/milestones/32.facets/slow/summary.md
-- di/notes/work/milestones/32.facets/slow/bottlenecks.md
-- di/notes/work/milestones/32.facets/slow/render is stale.md
-
 ## Notes — Work — Milestones (done)
 
 - di/notes/work/milestones/done/index.md
@@ -240,6 +220,27 @@
 - di/notes/work/milestones/done/24.mobile.devices.md
 - di/notes/work/milestones/done/25.errors.md
 - di/notes/work/milestones/done/26.lacemaker.md
+
+## Notes — Work — Milestones — 32.facets (done/mothballed)
+
+- di/notes/work/milestones/done/32.facets/handoff.md
+- di/notes/work/milestones/done/32.facets/32.facets.md
+- di/notes/work/milestones/done/32.facets/history.md
+- di/notes/work/milestones/done/32.facets/lessons.md
+- di/notes/work/milestones/done/32.facets/designs/theory.md
+- di/notes/work/milestones/done/32.facets/designs/standard.facets.md
+- di/notes/work/milestones/done/32.facets/designs/simpler design.md
+- di/notes/work/milestones/done/32.facets/designs/pipeline.md
+- di/notes/work/milestones/done/32.facets/designs/stipulations.md
+- di/notes/work/milestones/done/32.facets/designs/3D sweep algorithm.md
+- di/notes/work/milestones/done/32.facets/use cases/use case 3.md
+- di/notes/work/milestones/done/32.facets/use cases/use case 4.md
+- di/notes/work/milestones/done/32.facets/use cases/use case 5.md
+- di/notes/work/milestones/done/32.facets/use cases/use case 6.md
+- di/notes/work/milestones/done/32.facets/slow/handoff.md
+- di/notes/work/milestones/done/32.facets/slow/summary.md
+- di/notes/work/milestones/done/32.facets/slow/bottlenecks.md
+- di/notes/work/milestones/done/32.facets/slow/render is stale.md
 
 ## Notes — Work — Done
 
