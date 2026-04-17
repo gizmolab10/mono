@@ -58,6 +58,7 @@
 		root.setProperty('--h-font-common',    `${k.height.font.common}px`);
 		root.setProperty('--h-font-large',     `${k.height.font.large}px`);
 		root.setProperty('--h-font-small',     `${k.height.font.small}px`);
+		root.setProperty('--h-font-huge',      `${k.height.font.huge}px`);
 		root.setProperty('--h-controls',       `${k.height.controls}px`);
 		root.setProperty('--h-collapse',       `${k.height.collapse}px`);
 		root.setProperty('--h-banner',         `${k.height.banner}px`);

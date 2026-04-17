@@ -18,6 +18,7 @@
 	let show_position = $state(preferences.read<boolean>(T_Preference.showPosition) ?? true);
 	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
 	let selected_so = $derived($w_selection?.so ?? null);
+	let parts_count = $derived(($w_tick, $w_all_sos.length - 1));
 
 	// Sibling position: "N of M" among tree-order siblings of the selected SO.
 	// Suppressed when the selection is root, or when the selection has no siblings.
@@ -221,7 +222,7 @@
 	<thead>
 		<tr>
 			<th class='toggle-header' class:gap-r={show_parts} colspan={show_parts ? 2 : 7} use:hit_target={{ id: 'toggle-parts', onpress: toggle_show_parts }}>
-				{show_parts ? 'hide parts' : 'show parts'}
+				{show_parts ? 'hide' : 'show'} {parts_count} parts
 			</th>
 			{#if show_parts}
 				<th class='hierarchy-eye static'>👁</th>
@@ -274,8 +275,8 @@
 							{/if}
 						{/if}
 					</td>
-					<td class='hierarchy-eye' onclick={(e) => has_children(so, $w_all_sos) ? toggle_hide_children(e, so) : null}>
-						{#if has_children(so, $w_all_sos)}
+					<td class='hierarchy-eye' onclick={(e) => has_children(so, $w_all_sos) && so.scene?.parent ? toggle_hide_children(e, so) : null}>
+						{#if has_children(so, $w_all_sos) && so.scene?.parent}
 							{so.hide_children ? '–' : '👁'}
 						{/if}
 					</td>
@@ -388,7 +389,7 @@
 
 	.collapse-tri {
 		all              : unset;
-		font-size        : var(--h-font-common);
+		font-size        : var(--h-font-huge);
 		position         : relative;
 		cursor           : pointer;
 		vertical-align   : middle;

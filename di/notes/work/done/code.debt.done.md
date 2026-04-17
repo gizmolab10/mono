@@ -148,3 +148,6 @@
 - [x] add "3 of 24" at right of edit title when not showing parts
     - [x] move to left of title input, when not showing parts
     - [x] add new first column to parts table, for sibling number, when showing parts
+- [x] alter the text of the hide-show toggle in the parts table title row
+    - [x] show / hide xxx parts (xxx = total number of SOs, not including clones)
+    - [x] The count of non-clone parts is: `$w_all_sos.filter(s => !is_clone(s, $w_all_sos, $w_tick)).length`. I also need to subtract 1 for the root (since the root is not really a "part" users think of). Let me check if the parts table shows the root.
