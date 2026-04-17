@@ -288,37 +288,13 @@ export class Events {
 	private collapse_selected(): void {
 		const so = stores.selection?.so;
 		if (!so) return;
-		const ids = get(stores.w_collapsed_ids);
-		const visible = this.visible_parts();
-		const has_kids = visible.some(s => s.scene?.parent?.so === so);
-		if (has_kids && !ids.has(so.id)) {
-			ids.add(so.id);
-			stores.w_collapsed_ids.set(new Set(ids));
-		} else {
-			const parent = so.scene?.parent?.so;
-			if (parent) {
-				ids.add(parent.id);
-				stores.w_collapsed_ids.set(new Set(ids));
-				stores.set_selection({ so: parent, type: T_Hit_3D.face, index: 0 });
-			}
-		}
+		stores.hide_generation(so);
 	}
 
 	private expand_selected(): void {
 		const so = stores.selection?.so;
 		if (!so) return;
-		const ids = get(stores.w_collapsed_ids);
-		if (ids.has(so.id)) {
-			ids.delete(so.id);
-			stores.w_collapsed_ids.set(new Set(ids));
-		} else {
-			const visible = this.visible_parts();
-			const first_child = visible.find(s => s.scene?.parent?.so === so);
-			if (first_child) {
-				stores.reveal_so(first_child);
-				stores.set_selection({ so: first_child, type: T_Hit_3D.face, index: 0 });
-			}
-		}
+		stores.reveal_generation(so);
 	}
 
 }

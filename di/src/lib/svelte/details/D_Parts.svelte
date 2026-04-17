@@ -18,7 +18,7 @@
 	let show_position = $state(preferences.read<boolean>(T_Preference.showPosition) ?? true);
 	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
 	let selected_so = $derived($w_selection?.so ?? null);
-	let parts_count = $derived(($w_tick, $w_all_sos.length - 1));
+	let parts_count = $derived($w_all_sos.length - 1);
 
 	// Sibling position: "N of M" among tree-order siblings of the selected SO.
 	// Suppressed when the selection is root, or when the selection has no siblings.
@@ -51,16 +51,10 @@
 	let naming_error: string | null = $state(null);
 	let naming_input: HTMLInputElement | null = null;
 
-	function toggle_collapse(e: MouseEvent, so: Smart_Object) {
+	function handle_triangle_click(e: MouseEvent, so: Smart_Object) {
 		e.stopPropagation();
-		const ids = $w_collapsed_ids;
-		if (ids.has(so.id)) { ids.delete(so.id); }
-		else {
-			ids.add(so.id);
-			const sel = selected_so;
-			if (sel && is_ancestor_collapsed(sel, ids)) select(so);
-		}
-		w_collapsed_ids.set(new Set(ids));
+		if (e.altKey) stores.hide_generation(so);
+		else          stores.reveal_generation(so);
 	}
 
 	function is_ancestor_collapsed(so: Smart_Object, ids: Set<string>): boolean {
@@ -187,6 +181,10 @@
 		return sos.some(s => s.scene?.parent?.so === so);
 	}
 
+	function triangle_down(so: Smart_Object, _collapsed: Set<string>, _sos: Smart_Object[], _tick: number): boolean {
+		return stores.has_visible_descendant(so);
+	}
+
 	function toggle_visible(e: MouseEvent, so: Smart_Object) {
 		e.stopPropagation();
 		const v = !so.visible;
@@ -259,8 +257,8 @@
 							/>
 						{:else}
 							{#if has_children(so, $w_all_sos)}
-								<button class='collapse-tri' onclick={(e) => toggle_collapse(e, so)}>
-									{$w_collapsed_ids.has(so.id) ? '▸' : '▾'}
+								<button class='collapse-tri' onclick={(e) => handle_triangle_click(e, so)}>
+									{triangle_down(so, $w_collapsed_ids, $w_all_sos, $w_tick) ? '▾' : '▸'}
 								</button>
 							{:else}
 								<button class='collapse-tri spacer'>

@@ -55,6 +55,9 @@ export enum T_Preference {
 	// Library
 	library = 'library',
 	libraryFolder = 'libraryFolder',
+
+	// Parts table
+	collapsedIds = 'collapsedIds',
 }
 
 const STORAGE_PREFIX = 'di:';
@@ -132,7 +135,14 @@ class Preferences {
 		w.subscribe((v) => this.write(key, v));
 		return w;
 	}
-	
+
+	persistent_set(key: T_Preference): Writable<Set<string>> {
+		const initial = this.read<string[]>(key) ?? [];
+		const w = writable<Set<string>>(new Set(initial));
+		w.subscribe((s) => this.write(key, Array.from(s)));
+		return w;
+	}
+
 }
 
 export const preferences = new Preferences();

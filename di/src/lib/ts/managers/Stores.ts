@@ -1,4 +1,4 @@
-import { T_Editing, T_Decorations, T_Parts_Tab } from '../types/Enumerations';
+import { T_Editing, T_Decorations, T_Parts_Tab, T_Hit_3D } from '../types/Enumerations';
 import { preferences, T_Preference } from './Preferences';
 import type { Hit_3D_Result } from '../events/Hits_3D';
 import { stale_writable, make_stale } from '../common/Stale_Writable';
@@ -17,7 +17,7 @@ class Stores {
 	w_tick				= stale_writable<number>(0);
 	w_library			= writable<number>(0);
 	w_forward_face		= stale_writable<number>(-1);
-	w_collapsed_ids		= writable<Set<string>>(new Set());
+	w_collapsed_ids		= preferences.persistent_set(T_Preference.collapsedIds);
 
 	// Persistent. Ones that feed the canvas are wrapped the same way.
 	w_decorations       = make_stale(preferences.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.dimensions));
@@ -110,6 +110,91 @@ class Stores {
 			scene = scene.parent;
 		}
 		if (changed) this.w_collapsed_ids.set(new Set(ids));
+	}
+
+	private children_of(so: Smart_Object): Smart_Object[] {
+		return get(this.w_all_sos).filter(s => s.scene?.parent?.so === so);
+	}
+
+	// Deepest relative depth visible under R, and the direct parents of that layer.
+	// Returns depth 0 when R has no visible descendants.
+	deepest_visible_under(R: Smart_Object): { depth: number, parents: Set<Smart_Object> } {
+		const ids = get(this.w_collapsed_ids);
+		let max_depth = 0;
+		let parents_at_max: Set<Smart_Object> = new Set();
+		const walk = (cur: Smart_Object, parent: Smart_Object | null, d: number) => {
+			if (d > max_depth) {
+				max_depth = d;
+				parents_at_max = new Set();
+				if (parent) parents_at_max.add(parent);
+			} else if (d === max_depth && parent) {
+				parents_at_max.add(parent);
+			}
+			if (ids.has(cur.id)) return;
+			for (const c of this.children_of(cur)) walk(c, cur, d + 1);
+		};
+		walk(R, null, 0);
+		return { depth: max_depth, parents: parents_at_max };
+	}
+
+	// Shallowest relative depth hidden under R, and the rows currently in the
+	// collapsed set that cause that layer to hide. Returns depth 0 when nothing
+	// is hidden below R.
+	shallowest_hidden_under(R: Smart_Object): { depth: number, ancestors: Set<Smart_Object> } {
+		const ids = get(this.w_collapsed_ids);
+		let min_depth = Infinity;
+		let ancestors: Set<Smart_Object> = new Set();
+		const walk = (cur: Smart_Object, d: number) => {
+			if (ids.has(cur.id)) {
+				const hidden = d + 1;
+				if (hidden < min_depth) {
+					min_depth = hidden;
+					ancestors = new Set([cur]);
+				} else if (hidden === min_depth) {
+					ancestors.add(cur);
+				}
+				return;
+			}
+			for (const c of this.children_of(cur)) walk(c, d + 1);
+		};
+		walk(R, 0);
+		return { depth: min_depth === Infinity ? 0 : min_depth, ancestors };
+	}
+
+	has_visible_descendant(R: Smart_Object): boolean {
+		return this.deepest_visible_under(R).depth > 0;
+	}
+
+	// Hide the outermost visible generation under R. If nothing is visible
+	// below R, bubble up and collapse R's parent instead. Relocates the
+	// selection when the current selection becomes hidden (to R, or to R's
+	// parent in the bubble-up case).
+	hide_generation(R: Smart_Object): void {
+		const { depth, parents } = this.deepest_visible_under(R);
+		const ids = new Set(get(this.w_collapsed_ids));
+		if (depth > 0) {
+			for (const p of parents) ids.add(p.id);
+			this.w_collapsed_ids.set(ids);
+			const sel = get(this.w_selection)?.so;
+			if (sel && this.is_ancestor_collapsed(sel)) {
+				this.set_selection({ so: R, type: T_Hit_3D.face, index: 0 });
+			}
+		} else {
+			const parent = R.scene?.parent?.so;
+			if (!parent) return;
+			ids.add(parent.id);
+			this.w_collapsed_ids.set(ids);
+			this.set_selection({ so: parent, type: T_Hit_3D.face, index: 0 });
+		}
+	}
+
+	// Reveal the shallowest hidden generation under R.
+	reveal_generation(R: Smart_Object): void {
+		const { depth, ancestors } = this.shallowest_hidden_under(R);
+		if (depth === 0) return;
+		const ids = new Set(get(this.w_collapsed_ids));
+		for (const a of ancestors) ids.delete(a.id);
+		this.w_collapsed_ids.set(ids);
 	}
 
 }
