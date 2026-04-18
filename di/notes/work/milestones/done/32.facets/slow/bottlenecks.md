@@ -289,3 +289,133 @@ Everything above item 9 I am confident about from reading the code alone — tho
 Remaining bottlenecks (#9, #12, #13, #15) are **mothballed**. All four are scratch-memory or allocation-reduction work with uncertain payoff — estimated five to fifteen percent of a painted frame, unmeasured. Revisit only if profiling points at allocation pressure as the top remaining cost.
 
 Say what you want to dig into first and I can go deeper on any single item.
+
+---
+
+## Second pass — tumble is slow at 100 parts (2026-04-17)
+
+Jonathan reports that at roughly one hundred parts on screen, tumbling (orbit-camera drag) is noticeably sluggish. The skip-when-clean gate does not help tumbling because every mouse move invalidates the canvas. The per-paint cost itself is what matters now. A fresh inspection of the paint found five hotspots. All are driven by the parts-count scaling in ways that line up with the previously-mothballed allocation items.
+
+Numbered A through E so they do not collide with the original 1–15 list above. A is the deepest hot loop and the top target. The mothballed items (#9, #12, #13, #15) map onto B, C, D, E below.
+
+---
+
+## A. Edge-against-face clipping allocates a new interval list per occluder per edge
+
+For each visible edge of each visible part, the clipper walks every face that might hide it. For each such face, it builds a **fresh array of interval objects** to represent "what parts of the edge are still visible". With roughly six hundred visible edges and up to one hundred occluding faces considered per edge, this is tens of thousands of array builds per paint, each with its own allocations.
+
+Evidence:
+
+- The per-occluder rebuild: [Render.ts:1809-1818](di/src/lib/ts/render/Render.ts#L1809-L1818)
+- The two world-space lerp points allocated per plane crossing: [Render.ts:1786](di/src/lib/ts/render/Render.ts#L1786), [Render.ts:1793](di/src/lib/ts/render/Render.ts#L1793)
+- The outer occluder loop: [Render.ts:1767-1820](di/src/lib/ts/render/Render.ts#L1767-L1820)
+
+Proposal:
+
+- Hold **two scratch arrays of interval records** on the renderer, each preallocated with a generous fixed slot count (start with 32). Also hold a length integer for each, tracked separately from the array's own `.length`.
+- On each occluder step, treat one scratch array as "current" and the other as "next". Read from current, write into next, then swap the two references at the end of the step. No array allocation inside the loop.
+- Each interval record is itself an object today — change those to small preallocated record holders (one scratch list of records, indexed by the length integer). This removes the `new_intervals.push({ … })` allocation pattern inside the occluder loop.
+- For the two world-space lerp points: hold two `vec3` scratches on the renderer and call the in-place variants of the gl-matrix lerp (the math library already has out-parameter versions of every op).
+- On overflow (rare, only with richer meshes): grow by doubling. Cap the scratch back to a modest size at the top of every paint so occasional big edges do not hold memory.
+- Surface a one-line assertion in dev builds that warns if the overflow path triggers, so we notice if some geometry consistently needs bigger scratch.
+
+Out of scope, left for a later pass: replacing the spatial index rebuild. That is already O(visible faces) and is only one allocation per paint.
+
+## B. Hot loops create fresh vectors and matrices on every iteration
+
+Projection, edge clipping, plane math, and intersection all create new `vec3`, `vec4`, and `mat4` objects inside their innermost loops. A count of the file found about thirty-nine allocation sites on the paint path. At a hundred parts this produces thousands of short-lived math objects per frame, which pressures the garbage collector and makes frame time jittery.
+
+Evidence — a sample:
+
+- Projected corner and plane build in the front-face loop: [Render.ts:295-305](di/src/lib/ts/render/Render.ts#L295-L305)
+- Selection-occluder corner build: [Render.ts:348-360](di/src/lib/ts/render/Render.ts#L348-L360)
+- Hidden-wireframe world-space transforms for every edge of every invisible part: [Render.ts:582-587](di/src/lib/ts/render/Render.ts#L582-L587)
+- Identity matrix rebuilt inside the face-pair intersection loop: [Render.ts:1034](di/src/lib/ts/render/Render.ts#L1034)
+- Edge-vector and point-vector rebuilt inside the per-endpoint edge-info closure: [Render.ts:1078-1080](di/src/lib/ts/render/Render.ts#L1078-L1080)
+- Every projected corner gets a fresh `vec4`: [Render.ts:720](di/src/lib/ts/render/Render.ts#L720)
+
+Proposal:
+
+- For each hot function, hold **a small handful of scratch vectors and matrices** as private fields on the renderer, named for their role: `scratch_corner`, `scratch_normal`, `scratch_plane_point`, `scratch_world_a`, `scratch_world_b`, `scratch_identity`, and so on. Reuse them on every call.
+- Replace every allocating gl-matrix call in a hot loop with its in-place variant: `vec3.lerp(out, …)` with `out = this.scratch_world_a` instead of `vec3.lerp(vec3.create(), …)`. Same for `vec3.sub`, `vec3.cross`, `vec3.transformMat4`, `vec4.transformMat4`, `mat4.multiply`, `mat4.identity`.
+- The few places where a result genuinely needs to outlive the function (stored world corner, memoized world matrix) keep allocating — but only at the storage point, not on every intermediate step.
+- The identity matrix used inside the face-pair loop: hoist it to a per-paint field, built once at the top of the paint, reused every call. Today it gets rebuilt for every face pair.
+- Ship this in groups: projection first (highest hit count), then edge clipping, then intersection, then plane math. Each group is verifiable independently by pixel diff against a before-snapshot.
+
+## C. Face-pair intersection builds three short strings for every face pair tested
+
+The face-pair loop computes the intersection geometry, then builds three template strings — two face keys and one intersection edge id — before checking whether the result will actually be stored. Even pairs that fail the downstream checks allocate these strings. At a hundred parts with six faces each, the worst-case face-pair count is in the tens of thousands per paint.
+
+Evidence:
+
+- The three string builds: [Render.ts:1047-1049](di/src/lib/ts/render/Render.ts#L1047-L1049)
+- The surrounding nested loop: [Render.ts:1016-1049](di/src/lib/ts/render/Render.ts#L1016-L1049)
+
+Proposal:
+
+- Move the three string builds **below** every early-out check in the face-pair body. Today they build before the "do the clips actually produce anything" branch is entered. The keys only need to exist if the code actually stores a result.
+- For the per-loop portion that must build keys: replace the template-string pair-key scheme with a **numeric key** where possible. For a face key that is "object id plus face index", the face index is a small integer (0–5 for a cuboid). If object ids were numeric (or a per-frame numeric alias for the small set of objects on screen), the face key could be packed as one number. Leave the compound intersection key as a string for the map boundary — only entries that survive to the map need the string.
+- The small-integer-vertex-pair edge key built inside the edge-info closure: same pattern, replace `${Math.min(i,j)}-${Math.max(i,j)}` with `(Math.max(i,j) << 16) | Math.min(i,j)` since every current mesh has far fewer than sixty-five thousand vertices.
+
+## D. Hidden-wireframe pass calls the rich clipper and throws away its metadata
+
+The pass that draws dashed grey outlines for invisible parts calls the same clipper as the visible-edge pass. That clipper tags every interval with "which face caused this cut" and "which polygon edge of that face was crossed", then the hidden-wireframe pass strips all of it back down to pairs of two-dimensional points and discards the tags. Half of the clipper's work in this pass is wasted.
+
+Evidence:
+
+- The call: [Render.ts:585-588](di/src/lib/ts/render/Render.ts#L585-L588)
+- The wrapper that allocates, tags, and then discards: the simple wrapper lives at around [Render.ts:1784-1791](di/src/lib/ts/render/Render.ts#L1784-L1791) and internally calls the rich variant
+
+Proposal:
+
+- Split the clipper into **two variants with a shared inner helper**. The inner helper does the interval math on scratch arrays (see A). The rich variant wraps that with cause and polygon-edge bookkeeping; the plain variant returns only an array of visible `(start, end)` pairs.
+- The hidden-wireframe pass at [Render.ts:585](di/src/lib/ts/render/Render.ts#L585) calls the plain variant. Any other "I just want the visible bits" caller also calls the plain variant.
+- The front-edge pass at [Render.ts:832](di/src/lib/ts/render/Render.ts#L832) keeps calling the rich variant — it actually uses the cause data to compute endpoint identities.
+- With A in place, both variants share the same scratch arrays, so the plain variant is almost free.
+
+## E. Short string keys are built per edge per frame
+
+Edge keys, clip keys, and endpoint keys are assembled with template strings inside the edge and intersection loops. Every string is a fresh allocation. On its own this does not dominate frame time, but on top of B it magnifies allocation pressure — every edge in the scene generates a handful of these.
+
+Evidence — a sample:
+
+- Vertex-pair edge keys: [Render.ts:792](di/src/lib/ts/render/Render.ts#L792), [Render.ts:1075](di/src/lib/ts/render/Render.ts#L1075)
+- Clip key built per occluder per clip interval: [Render.ts:876](di/src/lib/ts/render/Render.ts#L876)
+- Endpoint keys: [Render.ts:898](di/src/lib/ts/render/Render.ts#L898), [Render.ts:909-912](di/src/lib/ts/render/Render.ts#L909-L912)
+- Intersection-edge ids: [Render.ts:1049](di/src/lib/ts/render/Render.ts#L1049)
+
+Proposal:
+
+- **Pack vertex-pair edge keys as a single number.** Every current mesh has far fewer than sixty-five thousand vertices, so `(Math.max(i,j) << 16) | Math.min(i,j)` is unambiguous. The map storing per-object edge adjacency can use `Map<number, …>` just as easily as a string key.
+- For **compound keys that cross a module boundary** (an edge key plus an object id plus an occluder id, stored in a map that outlives the call): keep them as strings, but only build the string once the map write is certain to happen. Today some keys are built before the decision to store.
+- For **ephemeral compound keys** used only to compare inside the same loop: compute the comparison as a pair of numbers and avoid the string altogether.
+- Ship this one **last**, after B lands. Its payoff is real only when allocation pressure is already the top remaining cost — if the gl-matrix scratch migration leaves allocation off the critical path, this one becomes optional.
+
+---
+
+## Suggested ship order for second pass
+
+A first — deepest loop, biggest single allocator. B next — broadest hit, moderate mechanical effort, needed by A and D to share scratch. D after B, because it lands almost free once the scratch-array pattern from A is in place. C any time after its own loop lands — it is self-contained and blocks nothing else. E last; skip entirely if B leaves allocation off the critical path.
+
+Measure between each landing. The skip-when-clean gate gave us a straightforward way to count paints; adding a per-paint millisecond sampler next to the existing rolling counter would let us confirm each step pays.
+
+## Status — 2026-04-17
+
+- **A — done.** The part of the paint that decides which bits of an edge are still visible after the faces in front of it are considered now reuses two pre-built scratch lists and a reusable world-space lerp target. No list or record object gets freshly allocated while walking through the faces that might hide an edge. A one-line rollback switch at the top of the file flips back to the previous allocating path on next reload. All five hundred fourteen tests still pass; type-check is clean.
+- **B — done in the highest-value places.** Several allocation sites in the hottest loops were changed to write into pre-built scratch math objects kept on the renderer instead of allocating new ones each time: the world-space corner and plane-edge builds for the faces that occlude other faces, the world-space corner and plane-edge builds for the faces that take part in cross-object intersections, the empty "no transform" matrix now shared across three spots that pass one to the projector, the edge-vector and point-vector builds inside the endpoint-tagging closure, the world-space endpoint builds inside the hidden-wireframe loop, and the world-space endpoint builds inside the visible-edge loop. Allocation sites deeper in the file (lerps inside the intersection-endpoint work, a couple of scratch vectors in the polygon-clipping helper) were not touched — they sit off the tumble-critical path. Tests still pass; type-check is clean.
+- **D — done.** The inner loop that walks through occluders and splits the edge's visible intervals was split out of the clipper into a shared helper. The full-featured variant still reports which occluding face caused each cut, used by the visible-edge pass. The light variant skips that bookkeeping and returns only pairs of screen points, used by the dashed-grey hidden-wireframe pass. Both share the same scratch lists built in A. Tests still pass.
+- **C — deferred.** The first half of the proposal — move the three short string builds below the early-out checks inside the face-pair loop — turned out to already be the case. Those strings only get built once the face-pair has actually produced a visible clip, so there's nothing to move.
+Evidence at [Render.ts:1096-1098](di/src/lib/ts/render/Render.ts#L1096-L1098).
+The second half — replace the short "smaller-vertex-dash-larger-vertex" edge-name strings with a single packed number — would ripple through every place where an edge-name is stored: the per-edge computed segment records, the intersection-edge split list, the crossing split list, the "segment-owner plus edge" map keys, and one spot where an edge-name string gets split back into two numbers. Too broad for a second-pass quick win. Revisit only if profiling after A, B, and D points here.
+Evidence for the split-back site at [Render.ts:564](di/src/lib/ts/render/Render.ts#L564).
+- **E — deferred for the same reason as the second half of C.** The short edge-name strings and the compound "edge plus occluder" keys built inside the visible-edge and intersection loops are used both for quick set lookups AND for storage in long-lived data structures. Changing only the lookup side is easy; changing the stored shape ripples broadly. Revisit if profiling still points at string-allocation pressure.
+
+### Files touched
+
+- [Render.ts](di/src/lib/ts/render/Render.ts) — one new rollback switch at the top of the file, one new shape moved up from inside a function to the file level so several functions can share it, several scratch math objects grouped on the renderer and named for their role, two new versions of the edge-vs-face clipper (full and light) plus a shared inner helper they both call, and the previous allocating path kept in place behind the rollback switch.
+
+### Verification
+
+- Type-checker: zero errors, zero warnings.
+- Test runner: five hundred fourteen of five hundred fourteen tests pass.
+- Real-world tumble with a hundred parts not measured yet — the paint-versus-skip counter added during the first pass is still in place and can be used to confirm the improvement.

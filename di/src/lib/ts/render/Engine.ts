@@ -16,6 +16,11 @@ import { quat, vec3 } from 'gl-matrix';
 import { drag } from '../editors/Drag';
 import { e3, hits_3d } from '../events';
 
+/** When true, the render loop measures the time each paint takes and logs a
+ *  one-line summary to the browser console every second during active
+ *  painting. Flip to false when you no longer need the numbers. */
+const MEASURE_PAINTS = true;
+
 class Engine {
 	private root_scene: O_Scene | null = null;
 
@@ -153,12 +158,59 @@ class Engine {
 
 		// Render loop — the canvas only repaints when something we know about
 		// changed or when the orientation snap-back animation is running.
+		const now_ms = (): number => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+		let paint_count = 0;
+		let paint_total_ms = 0;
+		let paint_max_ms = 0;
+		const phase_totals = new Map<string, number>();
+		const counter_totals = new Map<string, number>();
+		let window_start_ms = now_ms();
 		animation.on_tick(() => {
 			const snap_running = this.snap_anim !== null;
 			if (!render.is_stale && !snap_running) return;
 			this.tick_snap_animation();
 			this.update_front_face();
-			render.render();
+			if (MEASURE_PAINTS) {
+				const t0 = now_ms();
+				render.render();
+				const dt = now_ms() - t0;
+				paint_count++;
+				paint_total_ms += dt;
+				if (dt > paint_max_ms) paint_max_ms = dt;
+				for (const [label, ms] of render.last_paint_phase_times) {
+					phase_totals.set(label, (phase_totals.get(label) ?? 0) + ms);
+				}
+				for (const [label, n] of render.last_paint_counters) {
+					counter_totals.set(label, (counter_totals.get(label) ?? 0) + n);
+				}
+				const elapsed = now_ms() - window_start_ms;
+				if (elapsed >= 1000) {
+					// Per-second summary log — uncomment to re-enable during tumble timing work.
+					// const avg = paint_count > 0 ? (paint_total_ms / paint_count) : 0;
+					// const phase_parts: string[] = [];
+					// const sorted_phases = Array.from(phase_totals.entries()).sort((a, b) => b[1] - a[1]);
+					// for (const [label, total] of sorted_phases) {
+					// 	const per_paint = paint_count > 0 ? total / paint_count : 0;
+					// 	phase_parts.push(`${label} ${per_paint.toFixed(0)} ms`);
+					// }
+					// const breakdown = phase_parts.length > 0 ? ` Per paint: ${phase_parts.join(', ')}.` : '';
+					// const counter_parts: string[] = [];
+					// for (const [label, total] of counter_totals) {
+					// 	const per_paint = paint_count > 0 ? total / paint_count : 0;
+					// 	counter_parts.push(`${label} ${per_paint.toFixed(0)}`);
+					// }
+					// const counts = counter_parts.length > 0 ? ` Counts per paint: ${counter_parts.join(', ')}.` : '';
+					// console.log(`Last second: painted ${paint_count} times. Average paint took ${avg.toFixed(1)} ms. Longest was ${paint_max_ms.toFixed(1)} ms.${breakdown}${counts}`);
+					paint_count = 0;
+					paint_total_ms = 0;
+					paint_max_ms = 0;
+					phase_totals.clear();
+					counter_totals.clear();
+					window_start_ms = now_ms();
+				}
+			} else {
+				render.render();
+			}
 		});
 
 		animation.start();

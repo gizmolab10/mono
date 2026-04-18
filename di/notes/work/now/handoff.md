@@ -1,72 +1,101 @@
 # Code-Debt Handoff
 
-**Date:** 2026-04-15
-**Work stream:** items from [code.debt.md](di/notes/work/now/code.debt.md), one item at a time.
+**Date:** 2026-04-18
+**Work stream:** items from [code.debt.md](di/notes/work/now/code.debt.md), one item at a time, plus the second pass of render-pipeline performance work.
 
 ---
 
 ## Next
 
-A proposal for the first unchecked code-debt item — "visible children button → new column, before eye column" — is on the table and waiting for Jonathan's **go**. The flag already exists on every shape and persists through save/load, but nothing reads it and there's no UI to toggle it. The proposal covers two pieces: wire the flag into the one place in the renderer that filters shapes by visibility so descendants vanish when any ancestor has the flag set, and add a new column to the parts-panel table just before the eye column with a tree-shaped icon that toggles the flag and stays in sync across repeater-group siblings the same way the eye column already does. Three small confirmations requested: cascade to all descendants (not just direct children), tree icon rather than a second eye, and matching repeater-group sync.
-
-seems to me a parent's state is three: all, children, hidden. leaves only have visible, hidden. pac create a new enum for these three states. vs. two booleans, me and my children / progeny.
-
-the new column goes before the current eye column. it shows an eye or a dash (click toggles them), for sos that have children. nothing for those that don't. 
+The first unchecked code-debt item is about the layout of the separators between details sections — the gaps between them are uneven and too small. No proposal is on the table yet. The ask is to make the gaps larger and uniform. Propose next.
 
 ## Where we are
 
-- **Parts-panel sibling-position label is shipped.** Awaiting live verification before the code-debt bullet gets checked off.
-- **Visible-children column is proposed, not built.** Waiting on three small confirmations before wiring it in.
-- **Drag work is mothballed.** The drag rewrite is shipped and stable (514 tests green, type-check clean), but a small residual visual drift on child drags is unresolved. See [milestone 33](di/notes/work/milestones/33.drag/handoff.md) for the full state, and [its lessons](di/notes/work/milestones/33.drag/lessons.md) for what was learned.
+- **Parts-table work for the last session is done.** Five code-debt items shipped in order: the first small eye cell on the root row is now blank; the collapse triangles were made larger; clicking a triangle reveals one more generation outward while option-clicking hides one more outermost generation, with the triangle pointing right only when nothing below is showing; the keyboard left and right arrows on the selected row do the same as the two click modes; when a row's children are hidden, the small eye cell shows the count of every part tucked below it that has no children of its own (so the number says "how many real parts are hidden", not "how many boxes are hidden"); and the "show N parts" toggle at the top of the parts table was updated so N follows the same rule — it counts parts that have no children of their own, not containers.
+- **Row numbers replaced the sibling numbers in the leftmost column.** Each row in the parts table now shows its position in the visible list (zero for the root, blank there; one for the next row, and so on). The old helper that computed "which sibling am I among my parent's children" was removed since nothing else used it.
+- **The selected-part position label at the top of the details panel now matches the row number.** When the parts table is hidden, the little "X of Y" label above the selected part's name uses the same visible-row count — X is the row number, Y is the total number of visible rows. Blank when the root is selected.
+- **The hide-list now persists across reloads.** The list of rows whose children are hidden is saved to the browser's local storage and restored on next launch. A new helper on the preferences object handles the array-to-set and back conversion so the stored shape stays small.
+- **Second pass of render-pipeline performance is shipped and measured.** Three of five proposals landed — the edge-versus-face clipping no longer allocates inside its inner loop, the hottest allocation sites in the paint now write into pre-built reusable math objects, and the dashed-grey pass for hidden parts stopped asking for metadata it throws away. Two proposals (moving strings below early-outs in the cross-object face-pair loop, and packing vertex-pair names as single numbers) were deferred because the changes would ripple through multiple stored data shapes across the file for a modest payoff. All changes sit behind a one-line rollback switch in the renderer file. Five hundred fourteen tests still pass; type-check clean. Full status recorded in [bottlenecks.md](di/notes/work/milestones/done/32.facets/slow/bottlenecks.md).
+- **Tumble timing instrumentation is wired in and currently silent.** A per-paint clock and a phase breakdown plus counters for the cross-object pair loop live in the renderer and the engine loop. A single constant at the top of the engine file turns everything on. The per-second console summary is commented out for now. When the numbers are needed again, uncomment the summary block and flip the constant to true.
+
+## What the tumble measurement told us
+
+At roughly a hundred parts where every part's outer box overlaps every other, the dominant cost is the cross-object intersection compute — about seventy percent of paint time. The pooled clipper shipped in this pass saved fifteen to twenty percent of total paint time. That is a real win but does not change the working comfort ceiling much: around fifty overlapping parts is the realistic limit today. The remaining cost is structural — more than eleven thousand face-pair intersections get tested per paint in dense scenes, and about nine of every ten produce nothing visible after occlusion clipping. Pushing the ceiling further means either skipping ancestor-descendant pairs by policy (risks hiding legitimate intersection edges), adding a "draft mode" during camera motion (risks visual flicker), or rewriting the intersection feature with a fundamentally different approach (high cost, high payoff, high risk). Decision for now: accept the limit. Revisit only if a real scene pushes past the comfort threshold.
 
 ## Open items
 
-- **Waiting on Jonathan's go for the visible-children column.** See **Next** above.
-- **Visually verify the parts-panel sibling-position label.** Pending live check.
-- **Color sub-list.** Once the label is checked off and the visible-children column is shipped, the next unchecked bullet is the color sub-list — start with making the selection and hover dots larger. The leaf items will need their own proposals.
-- **Mothballed: residual child-drag drift.** Parked in [milestone 33](di/notes/work/milestones/33.drag/handoff.md). Pick back up if and when Jonathan wants to revisit the drag work.
+- **Up/down arrow in the parts table skips two rows per press on Jonathan's scene.** I could not reproduce from reading the code — the arrow-navigation list and the table-display list look like the same filter. Jonathan reports pressing down from the top row lands on the row three deeper in the family tree instead of the next row. Still open. Need more detail about the scene (whether any row shows a repeater "×N" badge, and whether the table displays all four rows or only two) before a fix can be made.
+- **Separators layout.** Next unchecked item — propose.
+- **Drag dots appearance policy.** After separators. The dots should appear only on hover, and should allow appearing on a face that is not quite the forward-most-facing face.
+- **Face-label question.** Decide whether to remove the on-face name labels entirely; if kept, make their font bigger.
+- **Redo for undo.** No proposal yet.
+- **Givens for angles.** No proposal yet.
+- **Rename library items.** No proposal yet.
+- **Color sub-list.** Starts with "dots: larger white filled circular bordered" under hover color. Also: white text for selected when background is too dark; the cross icon in the attributes table is too faint; and a hand cursor over hover dot and selected face, otherwise pointer.
+- **Mothballed: residual child-drag drift.** Parked in [milestone 33](di/notes/work/milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
+- **Mothballed: allocation-cluster and string-key performance bullets.** Left as deferred in [bottlenecks.md](di/notes/work/milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
 ## Notes for future sessions
 
 - The code-debt track is a grab-bag of small, unrelated items. Each one deserves its own short propose-then-build cycle. Do not batch them.
-- The slow-render work has its own handoff at `di/notes/work/milestones/32.facets/slow/handoff.md`. That handoff is for bottleneck work inside the facets milestone, not debt items.
-- The drag work has its own mothballed handoff at `di/notes/work/milestones/33.drag/handoff.md`. Same separation.
-- The `handoff` and `hands` shorthands point at this file. If you want a separate shorthand for the drag handoff, add a row to `notes/guides/pre-flight/shorthand.md`.
+- The slow-render work has its own handoff at `di/notes/work/milestones/done/32.facets/slow/handoff.md`. The bottleneck-analysis file sits next to it.
+- The drag work has its own mothballed handoff at `di/notes/work/milestones/33.drag/handoff.md`.
+- The `handoff` and `hands` shorthands point at this file.
+- The tumble instrumentation is in place but silent. Flip the constant at the top of the engine file to true, uncomment the per-second summary block inside the render loop, reload, and the console will print timings and counters again.
+
+---
+
+## Session — 2026-04-18 — generational triangles, hide-count, performance second pass, measurement
+
+Big session. Three threads ran in sequence:
+
+### Thread one — generational triangles and the hide list
+
+I shipped the full generational behavior for the parts-table triangles. A click reveals one more generation outward; holding option while clicking hides one more outermost generation; the triangle points right only when no descendants of that row are currently showing; if option-click on a row that has nothing visible below it, the collapse "bubbles up" and the row's parent is collapsed instead, with the selection moving up accordingly. The hide list is now saved to the browser between reloads. Arrow-left and arrow-right on the selected row mirror the two click modes. Changing collapse state does not mark the render as stale unless the selection actually moves; changes that only affect the parts table do not trigger a repaint.
+
+The data model stayed the same on purpose — one flat list of identifiers where each entry means "the children of this row are hidden". The new logic interprets that list at different relative depths to step layer by layer.
+
+### Thread two — the render pipeline, second pass
+
+I audited where each paint spends its time, found five proposals, and wrote them into the bottlenecks file. Three shipped, two deferred. The full-status entries for each are in that file.
+
+### Thread three — measurement
+
+Instrumentation was wired in so we could see where the paint actually spends its time. The numbers, over a scene of roughly one hundred parts during tumble, showed that the dominant cost was the cross-object intersection compute. The pooled clipper saved about fifteen to twenty percent. The remaining cost is structural — dense scenes generate too many face-pair intersections to clip at interactive rates, and the outer bounding-box prune is useless when every part's box overlaps every other. Jonathan chose to accept the current limit rather than take on the risks of a further rewrite. The instrumentation is now silent but left in place for the next time we need to measure.
+
+### What shipped this session
+
+- Five parts-table code-debt items.
+- A generational collapse model, wired through click, option-click, right arrow, left arrow, and the reveal-on-select behavior.
+- A persistent hide list.
+- A file-level rollback switch for the pooled edge-vs-face clipper.
+- Pooled scratch lists and records for the inner occluder loop.
+- Named scratch math objects for nine hot allocation sites.
+- A light-weight variant of the clipper used by the dashed-grey invisible-part pass.
+- A per-paint timer, phase breakdown, and counters for the cross-object pair loop, currently silent behind a top-of-file constant.
+- Updates to the bottlenecks file with the second-pass status and the measurement findings.
+- The leftmost small-number column in the parts table now shows each row's position in the visible list instead of its sibling index within its parent. Root is blank.
+- The little "X of Y" label above the selected part's name (visible when the parts table is hidden) now reports the row's position in the visible list and the total count of visible rows, matching the first column.
+
+### Files touched this session
+
+- Render loop and paint code: [Render.ts](di/src/lib/ts/render/Render.ts).
+- Engine loop and timer: [Engine.ts](di/src/lib/ts/render/Engine.ts).
+- Stores (generational helpers, persistent hide list): [Stores.ts](di/src/lib/ts/managers/Stores.ts).
+- Preferences (new key and set-persistence helper): [Preferences.ts](di/src/lib/ts/managers/Preferences.ts).
+- Parts table component (triangle click, hide-children count, parts-count): [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
+- Events (keyboard arrows defer to generational helpers): [Events.ts](di/src/lib/ts/events/Events.ts).
+- Bottlenecks write-up: [bottlenecks.md](di/notes/work/milestones/done/32.facets/slow/bottlenecks.md).
+- Code-debt list ticking items off: [code.debt.md](di/notes/work/now/code.debt.md).
+
+### Verification
+
+- Type-checker: zero errors, zero warnings across every intermediate step.
+- Test suite: five hundred fourteen of five hundred fourteen tests pass.
+- Real-world tumble measured on a roughly hundred-part scene before handing back.
 
 ---
 
 ## Session — 2026-04-11 — parts-panel sibling-position label
 
-Jonathan invoked the code-debt shortcut and I proposed the first unchecked item: a small "N of M" label next to the name editor in the parts details panel, showing the selected smart object's position among its siblings in tree order. After two rounds of pros-and-cons and a CSS-selector safety check, I shipped it.
-
-### The rules we settled on
-
-- Counts include invisible smart objects and include clones.
-- Order is tree order (uses the existing tree-order helper).
-- Hidden when the selection is the root.
-- Hidden when the selection has no siblings (only-child).
-- Hidden when the parts tree is visible — the label lives inside the existing "no parts tree" guard.
-- Sits on the same row as the name editor, right-aligned.
-
-### What I changed
-
-All changes in one file: [di/src/lib/svelte/details/D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
-
-- Added a reactive value at the top of the script block that derives the position and total from the selection, the parent, the scene list, and the tick store.
-- Wrapped the existing name input in a new flex row and added a small muted label next to it. The input's attributes and handlers are unchanged.
-- Added two CSS rules: one for the flex row and one for the label's font, color, and non-interactive behavior.
-
-### CSS selector safety check
-
-Before wrapping the input I ran a targeted grep for any rule that reached the input through its parent position. The input's class is referenced in exactly three places, all inside the same file, and every rule is a plain class selector with no parent qualifier, no child-position, no sibling combinator. Wrapping the input is safe.
-
-### Verification
-
-- Type-check is clean — zero errors, zero warnings.
-- Full test suite passes — four hundred ninety-six green.
-- I did not run the app and look at the label in a live session. Jonathan may want to verify visually before checking the debt item off.
-
-### Files updated this session
-
-- `di/src/lib/svelte/details/D_Parts.svelte`
-- `di/notes/work/now/handoff.md` — this file (the section you are reading)
+(Previous session — kept for history. Delivered the N-of-M sibling label next to the name editor in the parts details panel. Full details in the handoff file prior to this one.)

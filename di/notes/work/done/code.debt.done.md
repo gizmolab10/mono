@@ -151,3 +151,10 @@
 - [x] alter the text of the hide-show toggle in the parts table title row
     - [x] show / hide xxx parts (xxx = total number of SOs, not including clones)
     - [x] The count of non-clone parts is: `$w_all_sos.filter(s => !is_clone(s, $w_all_sos, $w_tick)).length`. I also need to subtract 1 for the root (since the root is not really a "part" users think of). Let me check if the parts table shows the root.
+- [x] in the root row of the parts table, make the first eyeball cell blank (root always shows children)
+- [x] hierarchal triangles
+    - [x] larger
+    - [x] generational -> each click hides a generation, depth first
+        - [x] **click** computes the deepest, then reveals (**OPTION** hides) those
+        - [x] triangle points right only for all hidden
+- [x] when children are hidden -> show number of progeny in place of hyphen

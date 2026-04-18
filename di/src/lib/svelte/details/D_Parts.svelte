@@ -18,34 +18,24 @@
 	let show_position = $state(preferences.read<boolean>(T_Preference.showPosition) ?? true);
 	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
 	let selected_so = $derived($w_selection?.so ?? null);
-	let parts_count = $derived($w_all_sos.length - 1);
+	let parts_count = $derived($w_all_sos.filter(s => !$w_all_sos.some(c => c.scene?.parent?.so === s)).length);
 
-	// Sibling position: "N of M" among tree-order siblings of the selected SO.
-	// Suppressed when the selection is root, or when the selection has no siblings.
+	// Row position: "N of M" where N is the selected row's position in the
+	// visible parts list and M is the total number of visible rows.
+	// Suppressed when the selection is root, or when the selection is not in
+	// the visible list.
 	let sibling_position = $derived.by(() => {
 		$w_tick;
 		const sel = $w_selection;
 		if (!sel) return null;
-		const parent = sel.so.scene?.parent;
-		if (!parent) return null;
-		const siblings = stores.tree_order($w_all_sos).filter(so => so.scene?.parent === parent);
-		if (siblings.length <= 1) return null;
-		const index = siblings.indexOf(sel.so) + 1;
-		return { index, total: siblings.length };
+		if (!sel.so.scene?.parent) return null;
+		const visible = stores.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !is_ancestor_collapsed(s, $w_collapsed_ids));
+		const index = visible.indexOf(sel.so);
+		if (index < 0) return null;
+		return { index, total: visible.length };
 	});
 
-	// Sibling number for a parts-table row: one-based index among non-clone siblings at this SO's level.
-	// Blank for the root (no parent) and for any SO not found in the filtered sibling list.
-	function sibling_num(so: Smart_Object, _sos: Smart_Object[], tick: number): string {
-		const parent = so.scene?.parent;
-		if (!parent) return '';
-		const siblings = stores.tree_order($w_all_sos)
-			.filter(s => s.scene?.parent === parent && !is_clone(s, $w_all_sos, tick));
-		const idx = siblings.indexOf(so);
-		return idx >= 0 ? String(idx + 1) : '';
-	}
-
-	function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
+function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
 	let editing_id: string | null = $state(null);
 	let editing_original: string = '';
 	let naming_error: string | null = $state(null);
@@ -181,6 +171,21 @@
 		return sos.some(s => s.scene?.parent?.so === so);
 	}
 
+	function leaf_descendants(so: Smart_Object, sos: Smart_Object[]): number {
+		let count = 0;
+		for (const s of sos) {
+			let cur = s.scene?.parent;
+			let is_desc = false;
+			while (cur) {
+				if (cur.so === so) { is_desc = true; break; }
+				cur = cur.parent;
+			}
+			if (!is_desc) continue;
+			if (!sos.some(c => c.scene?.parent?.so === s)) count++;
+		}
+		return count;
+	}
+
 	function triangle_down(so: Smart_Object, _collapsed: Set<string>, _sos: Smart_Object[], _tick: number): boolean {
 		return stores.has_visible_descendant(so);
 	}
@@ -223,7 +228,7 @@
 				{show_parts ? 'hide' : 'show'} {parts_count} parts
 			</th>
 			{#if show_parts}
-				<th class='hierarchy-eye static'>👁</th>
+				<th class='hierarchy-eye static'>⋮</th>
 				<th class='hierarchy-eye static'>👁</th>
 				<th class='toggle-header gap-l' colspan='3' use:hit_target={{ id: 'toggle-position', onpress: () => { show_position = !show_position; preferences.write(T_Preference.showPosition, show_position); } }}>
 					{show_position ? 'position' : 'size'} ⟳
@@ -234,14 +239,14 @@
 	{#if show_parts}
 		<tbody>
 			<tr style:height='4px'></tr>
-			{#each stores.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !is_ancestor_collapsed(s, $w_collapsed_ids)) as so (so.id)}
+			{#each stores.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !is_ancestor_collapsed(s, $w_collapsed_ids)) as so, row_index (so.id)}
 				{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
 				{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
 				<tr
 					class='hierarchy-row'
 					class:selected={is_selected(so, $w_tick)}
 					onclick={() => select(so)}>
-					<td class='hierarchy-sibling'>{sibling_num(so, $w_all_sos, $w_tick)}</td>
+					<td class='hierarchy-sibling'>{so.scene?.parent ? row_index : ''}</td>
 					<td class='hierarchy-name' style:padding-left='{depth(so) * k.width.indent}px'
 						onclick={(e) => handle_name_click(e, so)}>
 						{#if editing_id === so.id}
@@ -275,7 +280,7 @@
 					</td>
 					<td class='hierarchy-eye' onclick={(e) => has_children(so, $w_all_sos) && so.scene?.parent ? toggle_hide_children(e, so) : null}>
 						{#if has_children(so, $w_all_sos) && so.scene?.parent}
-							{so.hide_children ? '–' : '👁'}
+							{so.hide_children ? leaf_descendants(so, $w_all_sos) : '👁'}
 						{/if}
 					</td>
 					<td class='hierarchy-eye' onclick={(e) => toggle_visible(e, so)}>

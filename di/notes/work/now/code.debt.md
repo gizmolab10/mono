@@ -4,15 +4,8 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
-- [x] in the root row of the parts table, make the first eyeball cell blank (root always shows children)
-- [x] hierarchal triangles
-    - [x] larger
-    - [x] generational -> each click hides a generation, depth first
-        - [x] **click** computes the deepest, then reveals (**OPTION** hides) those
-        - [x] triangle points right only for all hidden
-- [ ] when children are hidden -> show number of progeny in place of hyphen
 - [ ] layout of separators needs larger/uniform gaps
-- [ ] don't like the drag dots, only appear on hover, allow appear on not quite forward most facing face
+- [ ] i don't like the drag dots, only appear on hover, allow appear on not quite forward most facing face
 - [ ] remove FaceLabel?
     - [ ] increase font size for face labels
 - [ ] redo for undo

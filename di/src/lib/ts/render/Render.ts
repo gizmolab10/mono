@@ -28,6 +28,20 @@ type OccFaceRef = typeof Render.prototype['occluding_faces'][number] | null;
  *  was wired. Flip to true to revert; next reload picks it up. */
 const ALWAYS_REDRAW = false;
 
+/** Rollback lever for the pooled edge-vs-face clipper. Flip to false to
+ *  restore the legacy path that allocates a fresh interval array and fresh
+ *  interval records per occluder. */
+const USE_POOLED_CLIPPER = true;
+
+interface RichInterval {
+	a: number;
+	b: number;
+	a_cause: OccFaceRef;
+	b_cause: OccFaceRef;
+	a_poly_edge: number;
+	b_poly_edge: number;
+}
+
 interface ClipInterval {
 	start: Pt; end: Pt;
 	start_cause: OccFaceRef;  // null = original endpoint (corner)
@@ -79,6 +93,53 @@ class Render {
 	 *  same render call. Cleared at the top of render() so the next frame
 	 *  rebuilds against the current camera and scene state. */
 	private world_matrix_cache = new Map<string, mat4>();
+
+	/** Per-paint time spent in each labeled phase. Cleared at the top of
+	 *  render(); filled by _phase() markers; consumed by the engine's
+	 *  per-second summary. */
+	last_paint_phase_times = new Map<string, number>();
+	/** Per-paint counters — integer tallies set inside the paint (e.g. how
+	 *  many object pairs survived each filter in the intersection loop).
+	 *  Cleared at the top of render(); consumed by the engine's per-second
+	 *  summary as averages over the window. */
+	last_paint_counters = new Map<string, number>();
+	private _phase_t0 = 0;
+	private _phase_label = '';
+
+	/** Two ping-pong scratch arrays of preallocated interval records for the
+	 *  pooled edge-vs-face clipper. Slots are created lazily and reused across
+	 *  every call to the clipper during a paint — no array or record alloc
+	 *  inside the hot occluder loop. */
+	private _clip_ivs_a: RichInterval[] = [];
+	private _clip_ivs_b: RichInterval[] = [];
+	/** Reusable world-space lerp target used inside the occluder loop. */
+	private _clip_lerp_a = vec3.create();
+
+	// Scratch objects for hot-loop allocation avoidance. Each is named for its
+	// exclusive role so reuse inside nested call chains stays safe. Writers must
+	// not call helpers that also write the same scratch.
+	private _identity_m4 = mat4.create();
+	// Occluder-face build (per front face during setup).
+	private _occ_face_wv = vec4.create();
+	private _occ_face_e1 = vec3.create();
+	private _occ_face_e2 = vec3.create();
+	// Intersection-face build (per front face in the face-pair prep pass).
+	private _ixn_face_wv = vec4.create();
+	private _ixn_face_e1 = vec3.create();
+	private _ixn_face_e2 = vec3.create();
+	// Edge-info closure for face-pair endpoint tagging.
+	private _einfo_edge = vec3.create();
+	private _einfo_pt = vec3.create();
+	// Hidden-wireframe per-edge world-space transforms.
+	private _hw_wi4 = vec4.create();
+	private _hw_wj4 = vec4.create();
+	private _hw_wi3 = vec3.create();
+	private _hw_wj3 = vec3.create();
+	// Visible-edge per-edge world-space transforms in compute_visible_edge_segments.
+	private _ve_wi4 = vec4.create();
+	private _ve_wj4 = vec4.create();
+	private _ve_wi3 = vec3.create();
+	private _ve_wj3 = vec3.create();
 	private canvas!: HTMLCanvasElement;
 	private snap: HTMLCanvasElement | null = null;
 	private size: Size = Size.zero;
@@ -97,6 +158,19 @@ class Render {
 	/** Mark the canvas as possibly out of date. Callers should invoke this
 	 *  whenever they change something that affects what the canvas shows. */
 	mark_stale(): void { this._is_stale = true; }
+
+	/** Mark a phase boundary in the paint. Closes the previous phase (adding
+	 *  its elapsed milliseconds to the per-paint totals) and opens a new one
+	 *  under `next_label`. Pass the empty string to close without opening. */
+	private _phase(next_label: string): void {
+		const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+		if (this._phase_label) {
+			const prev = this.last_paint_phase_times.get(this._phase_label) ?? 0;
+			this.last_paint_phase_times.set(this._phase_label, prev + (now - this._phase_t0));
+		}
+		this._phase_label = next_label;
+		this._phase_t0 = now;
+	}
 
 	/** True when the next tick should paint. Reports true whenever the
 	 *  rollback lever is on, regardless of the internal flag. */
@@ -230,6 +304,9 @@ class Render {
 		// Clear the canvas-out-of-date flag first. If any mutation happens
 		// during this paint, the flag flips back on and the next tick repaints.
 		this._is_stale = false;
+		this.last_paint_phase_times.clear();
+		this.last_paint_counters.clear();
+		this._phase('setup');
 		this.ctx.clearRect(0, 0, this.size.width, this.size.height);
 		this.dimension_rects = [];
 		this.face_name_rects = [];
@@ -307,6 +384,7 @@ class Render {
 		}
 
 		// Build occluding face list for edge clipping (solid or 2D mode)
+		this._phase('occluders');
 		this.occluding_faces = [];
 		if (solid) {
 			for (const obj of objects) {
@@ -360,12 +438,11 @@ class Render {
 					const corners: vec3[] = [];
 					for (const vi of face) {
 						const lv = verts[vi];
-						const wv = vec4.create();
-						vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], world);
-						corners.push(vec3.fromValues(wv[0], wv[1], wv[2]));
+						vec4.transformMat4(this._occ_face_wv, [lv[0], lv[1], lv[2], 1], world);
+						corners.push(vec3.fromValues(this._occ_face_wv[0], this._occ_face_wv[1], this._occ_face_wv[2]));
 					}
-					const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);
-					const e2 = vec3.sub(vec3.create(), corners[3], corners[0]);
+					const e1 = vec3.sub(this._occ_face_e1, corners[1], corners[0]);
+					const e2 = vec3.sub(this._occ_face_e2, corners[3], corners[0]);
 					const n = vec3.cross(vec3.create(), e1, e2);
 					vec3.normalize(n, n);
 					const d = vec3.dot(n, corners[0]);
@@ -398,19 +475,25 @@ class Render {
 			this.oc_at_occluder_edge.clear();
 			this.intersection_edge_splits = [];
 			this.pierce_on_edge.clear();
+			this._phase('intersections');
 			if (objects.length > 1) {
 				this.compute_visible_intersection_segments(objects);
 			} else {
 				this.computed_intersection_segments = [];
 			}
+			this._phase('edge clipping');
 			if (!k.debug.facets_logged) {
 				}
 				this.compute_visible_edge_segments(objects, projected_map);
 			if (objects.length > 1) {
+				this._phase('filter occluded');
 				this.filter_occluded_intersection_endpoints(objects, projected_map);
+				this._phase('occluding segs');
 				this.compute_occluding_edge_segments();
+				this._phase('crossing splits');
 				this.apply_crossing_splits();
 			} else {
+				this._phase('post-clip');
 				this.computed_occluding_segments = [];
 			}
 
@@ -491,6 +574,7 @@ class Render {
 		}
 
 		// Intersection lines: draw from precomputed data
+		this._phase('draw');
 		this.render_intersections();
 
 		// Edges: a visible root draws all its edges. An invisible root is
@@ -561,6 +645,7 @@ class Render {
 		if (is_2d) render_root_bottom(this, true);
 
 		// 3D wireframe for invisible SOs (occluded by visible children in solid/2D)
+		this._phase('hidden wireframe');
 		for (const obj of all_objects) {
 			if (obj.so.visible) continue;
 			const projected = projected_map.get(obj.id)!;
@@ -579,12 +664,13 @@ class Render {
 				if (a.w < 0 || b.w < 0) continue;
 				if (world) {
 					const vi = obj.so.vertices[i], vj = obj.so.vertices[j];
-					const wi = vec4.create(), wj = vec4.create();
-					vec4.transformMat4(wi, [vi[0], vi[1], vi[2], 1], world);
-					vec4.transformMat4(wj, [vj[0], vj[1], vj[2], 1], world);
+					vec4.transformMat4(this._hw_wi4, [vi[0], vi[1], vi[2], 1], world);
+					vec4.transformMat4(this._hw_wj4, [vj[0], vj[1], vj[2], 1], world);
+					vec3.set(this._hw_wi3, this._hw_wi4[0], this._hw_wi4[1], this._hw_wi4[2]);
+					vec3.set(this._hw_wj3, this._hw_wj4[0], this._hw_wj4[1], this._hw_wj4[2]);
 					const segments = this.clip_segment_for_occlusion(
 						{ x: a.x, y: a.y }, { x: b.x, y: b.y },
-						vec3.fromValues(wi[0], wi[1], wi[2]), vec3.fromValues(wj[0], wj[1], wj[2]), obj.id
+						this._hw_wi3, this._hw_wj3, obj.id
 					);
 					for (const [s, e] of segments) {
 						this.ctx.beginPath();
@@ -602,6 +688,7 @@ class Render {
 			this.ctx.restore();
 		}
 
+		this._phase('overlays');
 		if (stores.grid_opacity > 0) {
 			render_axes(this);
 		}
@@ -610,6 +697,7 @@ class Render {
 		if (stores.show_dimensionals) render_dimensions(this);
 		if (stores.show_angulars) render_angulars(this);
 		if (k.debug.show_ep_labels) this.render_front_face_label();
+		this._phase('');
 	}
 
 	/** Recompute camera-view extent from world coordinates + rotation projections.
@@ -823,11 +911,12 @@ class Render {
 				if (!front_edges.has(ek)) continue;
 
 				const vi = obj.so.vertices[i], vj = obj.so.vertices[j];
-				const wi = vec4.create(), wj = vec4.create();
-				vec4.transformMat4(wi, [vi[0], vi[1], vi[2], 1], world);
-				vec4.transformMat4(wj, [vj[0], vj[1], vj[2], 1], world);
-				const w1 = vec3.fromValues(wi[0], wi[1], wi[2]);
-				const w2 = vec3.fromValues(wj[0], wj[1], wj[2]);
+				vec4.transformMat4(this._ve_wi4, [vi[0], vi[1], vi[2], 1], world);
+				vec4.transformMat4(this._ve_wj4, [vj[0], vj[1], vj[2], 1], world);
+				vec3.set(this._ve_wi3, this._ve_wi4[0], this._ve_wi4[1], this._ve_wi4[2]);
+				vec3.set(this._ve_wj3, this._ve_wj4[0], this._ve_wj4[1], this._ve_wj4[2]);
+				const w1 = this._ve_wi3;
+				const w2 = this._ve_wj3;
 
 				let clips = this.clip_segment_for_occlusion_rich(
 					{ x: a.x, y: a.y }, { x: b.x, y: b.y }, w1, w2, obj.id
@@ -951,6 +1040,7 @@ class Render {
 
 	/** Compute visible intersection segments for all SO pairs (clip for occlusion once, store results). */
 	private compute_visible_intersection_segments(objects: O_Scene[]): void {
+		this._phase('ix-prep');
 		this.computed_intersection_segments = [];
 		this.intersection_clip_map.clear();
 		// Build world-space face data for each object. Each face carries its
@@ -980,15 +1070,14 @@ class Render {
 				const hi = vec3.fromValues(-Infinity, -Infinity, -Infinity);
 				for (const vi of face_vi) {
 					const lv = verts[vi];
-					const wv = vec4.create();
-					vec4.transformMat4(wv, [lv[0], lv[1], lv[2], 1], world);
-					const corner = vec3.fromValues(wv[0], wv[1], wv[2]);
+					vec4.transformMat4(this._ixn_face_wv, [lv[0], lv[1], lv[2], 1], world);
+					const corner = vec3.fromValues(this._ixn_face_wv[0], this._ixn_face_wv[1], this._ixn_face_wv[2]);
 					corners.push(corner);
 					vec3.min(lo, lo, corner);
 					vec3.max(hi, hi, corner);
 				}
-				const e1 = vec3.sub(vec3.create(), corners[1], corners[0]);
-				const e2 = vec3.sub(vec3.create(), corners[3], corners[0]);
+				const e1 = vec3.sub(this._ixn_face_e1, corners[1], corners[0]);
+				const e2 = vec3.sub(this._ixn_face_e2, corners[3], corners[0]);
 				const n = vec3.cross(vec3.create(), e1, e2);
 				vec3.normalize(n, n);
 				const d = vec3.dot(n, corners[0]);
@@ -1013,14 +1102,37 @@ class Render {
 			maxs.push(hi);
 		}
 
+		this._phase('ix-pairs');
+		const _now = (): number => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+		let _t_math = 0, _t_clip = 0, _t_tag = 0;
+		let _obj_pairs = 0, _obj_pairs_ok = 0;
+		let _pairs_ancestral = 0, _pairs_siblings = 0, _pairs_other = 0;
+		let _fp_total = 0, _fp_box_ok = 0, _fp_with_geom = 0, _fp_with_seg = 0;
+		let _fp_geom_ancestral = 0;
+		const _is_ancestor = (anc: O_Scene, desc: O_Scene): boolean => {
+			let cur: O_Scene | null | undefined = desc.parent;
+			while (cur) {
+				if (cur === anc) return true;
+				cur = cur.parent;
+			}
+			return false;
+		};
 		for (let i = 0; i < objects.length; i++) {
 			for (let j = i + 1; j < objects.length; j++) {
+				_obj_pairs++;
 				if (mins[i][0] > maxs[j][0] || mins[j][0] > maxs[i][0] ||
 						mins[i][1] > maxs[j][1] || mins[j][1] > maxs[i][1] ||
 						mins[i][2] > maxs[j][2] || mins[j][2] > maxs[i][2]) continue;
+				_obj_pairs_ok++;
+				const _ancestral = _is_ancestor(objects[i], objects[j]) || _is_ancestor(objects[j], objects[i]);
+				const _sibling = !_ancestral && objects[i].parent != null && objects[i].parent === objects[j].parent;
+				if (_ancestral) _pairs_ancestral++;
+				else if (_sibling) _pairs_siblings++;
+				else _pairs_other++;
 
 				for (let fi_a = 0; fi_a < obj_faces[i].length; fi_a++) {
 					for (let fi_b = 0; fi_b < obj_faces[j].length; fi_b++) {
+						_fp_total++;
 						const fA = obj_faces[i][fi_a];
 						const fB = obj_faces[j][fi_b];
 						// Per-face world-space bounding-box prune: most face pairs
@@ -1028,20 +1140,29 @@ class Render {
 						if (fA.lo[0] > fB.hi[0] || fB.lo[0] > fA.hi[0] ||
 							fA.lo[1] > fB.hi[1] || fB.lo[1] > fA.hi[1] ||
 							fA.lo[2] > fB.hi[2] || fB.lo[2] > fA.hi[2]) continue;
+						_fp_box_ok++;
+						const _tm0 = _now();
 						const geom = this.intersect_face_pair(null, fA, fB, '');
-						if (!geom) continue;
+						if (!geom) { _t_math += _now() - _tm0; continue; }
 
-						const identity = mat4.create();
+						const identity = this._identity_m4;
 						const s1 = this.project_vertex(geom.start, identity);
 						const s2 = this.project_vertex(geom.end, identity);
+						_t_math += _now() - _tm0;
 						if (s1.w < 0 || s2.w < 0) continue;
+						_fp_with_geom++;
+						if (_ancestral) _fp_geom_ancestral++;
 
 						const p1: Pt = { x: s1.x, y: s1.y };
 						const p2: Pt = { x: s2.x, y: s2.y };
+						const _tc0 = _now();
 						const clips = this.clip_segment_for_occlusion_rich(
 							p1, p2, geom.start, geom.end, [fA.obj.id, fB.obj.id], [fA, fB]
 						);
+						_t_clip += _now() - _tc0;
 						if (clips.length === 0) continue;
+						_fp_with_seg++;
+						const _tt0 = _now();
 						const visible: [Pt, Pt][] = clips.map(ci => [ci.start, ci.end]);
 
 						const face_key_a = `${fA.obj.id}:${fA.fi}`;
@@ -1075,9 +1196,9 @@ class Render {
 							const ek = `${Math.min(vi, vj)}-${Math.max(vi, vj)}`;
 							const c0 = f.corners[e.edge_idx];
 							const c1 = f.corners[(e.edge_idx + 1) % f.corners.length];
-							const edge_vec = vec3.sub(vec3.create(), c1, c0);
+							const edge_vec = vec3.sub(this._einfo_edge, c1, c0);
 							const len_sq = vec3.dot(edge_vec, edge_vec);
-							const pt_vec = vec3.sub(vec3.create(), world_pt, c0);
+							const pt_vec = vec3.sub(this._einfo_pt, world_pt, c0);
 							const t = len_sq > 1e-10 ? vec3.dot(pt_vec, edge_vec) / len_sq : 0;
 							return { so: f.obj.id, edge_key: ek, t };
 						};
@@ -1255,10 +1376,24 @@ class Render {
 							start_on_edge: se, end_on_edge: ee,
 						});
 						}
+						_t_tag += _now() - _tt0;
 					}
 				}
 			}
 		}
+		this.last_paint_phase_times.set('ix-math', _t_math);
+		this.last_paint_phase_times.set('ix-clip', _t_clip);
+		this.last_paint_phase_times.set('ix-tag', _t_tag);
+		this.last_paint_counters.set('obj pairs', _obj_pairs);
+		this.last_paint_counters.set('obj pairs box-ok', _obj_pairs_ok);
+		this.last_paint_counters.set('pairs ancestral', _pairs_ancestral);
+		this.last_paint_counters.set('pairs siblings', _pairs_siblings);
+		this.last_paint_counters.set('pairs other', _pairs_other);
+		this.last_paint_counters.set('face pairs', _fp_total);
+		this.last_paint_counters.set('face pairs box-ok', _fp_box_ok);
+		this.last_paint_counters.set('face pairs geom', _fp_with_geom);
+		this.last_paint_counters.set('fp geom ancestral', _fp_geom_ancestral);
+		this.last_paint_counters.set('face pairs seg', _fp_with_seg);
 	}
 
 
@@ -1715,7 +1850,7 @@ class Render {
 		const start = vec3.scaleAndAdd(vec3.create(), p0, dir, tA);
 		const end = vec3.scaleAndAdd(vec3.create(), p0, dir, tB);
 
-		const identity = mat4.create();
+		const identity = this._identity_m4;
 		const s1 = this.project_vertex(start, identity);
 		const s2 = this.project_vertex(end, identity);
 		if (s1.w < 0 || s2.w < 0) return null;
@@ -1752,11 +1887,22 @@ class Render {
 		skip_ids: string | string[],
 		skip_planes?: { n: vec3; d: number }[],
 	): ClipInterval[] {
-		type RichInterval = { a: number; b: number; a_cause: OccFaceRef; b_cause: OccFaceRef; a_poly_edge: number; b_poly_edge: number };
+		if (USE_POOLED_CLIPPER) return this.clip_segment_for_occlusion_rich_pooled(p1, p2, w1, w2, skip_ids, skip_planes);
+		return this.clip_segment_for_occlusion_rich_legacy(p1, p2, w1, w2, skip_ids, skip_planes);
+	}
+
+	/** Legacy path: allocates a fresh interval array per occluder and a fresh
+	 *  record object per split. Kept behind the pooled-clipper flag so the
+	 *  pooled path can be rolled back without redeploy. */
+	private clip_segment_for_occlusion_rich_legacy(
+		p1: Pt, p2: Pt, w1: vec3, w2: vec3,
+		skip_ids: string | string[],
+		skip_planes?: { n: vec3; d: number }[],
+	): ClipInterval[] {
 		let intervals: RichInterval[] = [{ a: 0, b: 1, a_cause: null, b_cause: null, a_poly_edge: -1, b_poly_edge: -1 }];
 		const skip = Array.isArray(skip_ids) ? skip_ids : [skip_ids];
 		const dx = p2.x - p1.x, dy = p2.y - p1.y;
-		const identity = mat4.create();
+		const identity = this._identity_m4;
 
 		const edge_min_x = Math.min(p1.x, p2.x), edge_min_y = Math.min(p1.y, p2.y);
 		const edge_max_x = Math.max(p1.x, p2.x), edge_max_y = Math.max(p1.y, p2.y);
@@ -1842,12 +1988,178 @@ class Render {
 		}));
 	}
 
+	/** Fetch or lazily-create an interval slot at `idx` in a scratch array. */
+	private _clip_slot(arr: RichInterval[], idx: number): RichInterval {
+		let slot = arr[idx];
+		if (!slot) {
+			slot = { a: 0, b: 0, a_cause: null, b_cause: null, a_poly_edge: -1, b_poly_edge: -1 };
+			arr[idx] = slot;
+		}
+		return slot;
+	}
+
+	/** Shared inner loop for pooled clipping. Fills the ping-pong scratch
+	 *  arrays and returns which scratch holds the final intervals and how
+	 *  many are live. Neither filters nor allocates return objects. */
+	private _run_clip_pool(
+		p1: Pt, p2: Pt, w1: vec3, w2: vec3,
+		skip_ids: string | string[],
+		skip_planes: { n: vec3; d: number }[] | undefined,
+	): { cur: RichInterval[]; cur_len: number; dx: number; dy: number } {
+		let cur = this._clip_ivs_a;
+		let nxt = this._clip_ivs_b;
+		let cur_len = 1;
+		const seed = this._clip_slot(cur, 0);
+		seed.a = 0; seed.b = 1;
+		seed.a_cause = null; seed.b_cause = null;
+		seed.a_poly_edge = -1; seed.b_poly_edge = -1;
+
+		const skip = Array.isArray(skip_ids) ? skip_ids : [skip_ids];
+		const dx = p2.x - p1.x, dy = p2.y - p1.y;
+		const identity = this._identity_m4;
+
+		const edge_min_x = Math.min(p1.x, p2.x), edge_min_y = Math.min(p1.y, p2.y);
+		const edge_max_x = Math.max(p1.x, p2.x), edge_max_y = Math.max(p1.y, p2.y);
+		const candidates = this.occluding_index
+			? this.occluding_index.search(edge_min_x, edge_min_y, edge_max_x, edge_max_y)
+			: this.occluding_faces.map((_, i) => i);
+
+		for (const fi of candidates) {
+			const face = this.occluding_faces[fi];
+			if (!face) continue;
+			if (skip.includes(face.obj_id)) continue;
+			if (skip_planes && skip_planes.some(sp => {
+				const dot = vec3.dot(sp.n, face.n);
+				return (Math.abs(dot - 1) < 1e-6 && Math.abs(sp.d - face.d) < 1e-6) ||
+							 (Math.abs(dot + 1) < 1e-6 && Math.abs(sp.d + face.d) < 1e-6);
+			})) continue;
+
+			const d1 = vec3.dot(face.n, w1) - face.d;
+			const d2 = vec3.dot(face.n, w2) - face.d;
+			if (d1 > -k.coplanar_epsilon && d2 > -k.coplanar_epsilon) continue;
+
+			let s_behind_start = 0, s_behind_end = 1;
+			if (d1 > 0 && d2 <= 0) {
+				const t_cross = d1 / (d1 - d2);
+				const wc = vec3.lerp(this._clip_lerp_a, w1, w2, t_cross);
+				const pc = this.project_vertex(wc, identity);
+				const cdx = pc.x - p1.x, cdy = pc.y - p1.y;
+				s_behind_start = Math.abs(dx) > Math.abs(dy) ? cdx / dx : cdy / dy;
+				s_behind_end = 1;
+			} else if (d1 <= 0 && d2 > 0) {
+				const t_cross = d1 / (d1 - d2);
+				const wc = vec3.lerp(this._clip_lerp_a, w1, w2, t_cross);
+				const pc = this.project_vertex(wc, identity);
+				const cdx = pc.x - p1.x, cdy = pc.y - p1.y;
+				s_behind_start = 0;
+				s_behind_end = Math.abs(dx) > Math.abs(dy) ? cdx / dx : cdy / dy;
+			}
+
+			const bs = { x: p1.x + dx * s_behind_start, y: p1.y + dy * s_behind_start };
+			const be = { x: p1.x + dx * s_behind_end, y: p1.y + dy * s_behind_end };
+			const clip = this.clip_segment_to_polygon_2d(bs, be, face.poly);
+			if (!clip) continue;
+
+			const s_range = s_behind_end - s_behind_start;
+			const s_enter = s_behind_start + clip[0] * s_range;
+			const s_leave = s_behind_start + clip[1] * s_range;
+
+			let nxt_len = 0;
+			for (let k = 0; k < cur_len; k++) {
+				const iv = cur[k];
+				if (s_leave <= iv.a || s_enter >= iv.b) {
+					const dst = this._clip_slot(nxt, nxt_len++);
+					dst.a = iv.a; dst.b = iv.b;
+					dst.a_cause = iv.a_cause; dst.b_cause = iv.b_cause;
+					dst.a_poly_edge = iv.a_poly_edge; dst.b_poly_edge = iv.b_poly_edge;
+					continue;
+				}
+				if (s_enter > iv.a) {
+					const dst = this._clip_slot(nxt, nxt_len++);
+					dst.a = iv.a; dst.b = s_enter;
+					dst.a_cause = iv.a_cause; dst.b_cause = face;
+					dst.a_poly_edge = iv.a_poly_edge; dst.b_poly_edge = clip[2];
+				}
+				if (s_leave < iv.b) {
+					const dst = this._clip_slot(nxt, nxt_len++);
+					dst.a = s_leave; dst.b = iv.b;
+					dst.a_cause = face; dst.b_cause = iv.b_cause;
+					dst.a_poly_edge = clip[3]; dst.b_poly_edge = iv.b_poly_edge;
+				}
+			}
+
+			const tmp = cur; cur = nxt; nxt = tmp;
+			cur_len = nxt_len;
+			if (cur_len === 0) break;
+		}
+
+		return { cur, cur_len, dx, dy };
+	}
+
+	/** True when an interval between two same-object non-silhouette edges is
+	 *  "fake" (body continues through, not really visible) and should be
+	 *  dropped. Shared by the rich and plain variants. */
+	private _clip_interval_is_fake(iv: RichInterval): boolean {
+		if (!iv.a_cause || !iv.b_cause) return false;
+		if (iv.a_cause.obj_id !== iv.b_cause.obj_id) return false;
+		const a_sil = iv.a_cause.silhouette_edges?.[iv.a_poly_edge] ?? true;
+		const b_sil = iv.b_cause.silhouette_edges?.[iv.b_poly_edge] ?? true;
+		return !a_sil && !b_sil;
+	}
+
+	/** Pooled path: two ping-pong scratch arrays and reusable lerp vectors.
+	 *  Same inputs, same outputs as the legacy path — no allocations inside
+	 *  the occluder loop. */
+	private clip_segment_for_occlusion_rich_pooled(
+		p1: Pt, p2: Pt, w1: vec3, w2: vec3,
+		skip_ids: string | string[],
+		skip_planes?: { n: vec3; d: number }[],
+	): ClipInterval[] {
+		const { cur, cur_len, dx, dy } = this._run_clip_pool(p1, p2, w1, w2, skip_ids, skip_planes);
+		const result: ClipInterval[] = [];
+		for (let k = 0; k < cur_len; k++) {
+			const iv = cur[k];
+			if (this._clip_interval_is_fake(iv)) continue;
+			result.push({
+				start: { x: p1.x + dx * iv.a, y: p1.y + dy * iv.a },
+				end:   { x: p1.x + dx * iv.b, y: p1.y + dy * iv.b },
+				start_cause: iv.a_cause,
+				end_cause:   iv.b_cause,
+				start_poly_edge: iv.a_poly_edge,
+				end_poly_edge: iv.b_poly_edge,
+			});
+		}
+		return result;
+	}
+
+	/** Plain pooled path: returns only visible screen intervals as pairs of
+	 *  points. Used by the hidden-wireframe pass and anyone else who doesn't
+	 *  need the cause or polygon-edge metadata. */
+	private clip_segment_for_occlusion_plain_pooled(
+		p1: Pt, p2: Pt, w1: vec3, w2: vec3,
+		skip_ids: string | string[],
+		skip_planes?: { n: vec3; d: number }[],
+	): [Pt, Pt][] {
+		const { cur, cur_len, dx, dy } = this._run_clip_pool(p1, p2, w1, w2, skip_ids, skip_planes);
+		const result: [Pt, Pt][] = [];
+		for (let k = 0; k < cur_len; k++) {
+			const iv = cur[k];
+			if (this._clip_interval_is_fake(iv)) continue;
+			result.push([
+				{ x: p1.x + dx * iv.a, y: p1.y + dy * iv.a },
+				{ x: p1.x + dx * iv.b, y: p1.y + dy * iv.b },
+			]);
+		}
+		return result;
+	}
+
 	/** Clip a segment, returning only visible screen intervals (backward compat). */
 	private clip_segment_for_occlusion(
 		p1: Pt, p2: Pt, w1: vec3, w2: vec3,
 		skip_ids: string | string[],
 		skip_planes?: { n: vec3; d: number }[],
 	): [Pt, Pt][] {
+		if (USE_POOLED_CLIPPER) return this.clip_segment_for_occlusion_plain_pooled(p1, p2, w1, w2, skip_ids, skip_planes);
 		return this.clip_segment_for_occlusion_rich(p1, p2, w1, w2, skip_ids, skip_planes)
 			.map(ci => [ci.start, ci.end]);
 	}
