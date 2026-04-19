@@ -63,7 +63,8 @@
               "title": "shorthand"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -198,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/handoff.md",
+                "file": "di/notes/work/now/code.debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -225,8 +226,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "199a70aa6af62b58",
+  "active": "1bb4d44ebb78a9cb",
   "lastOpenFiles": [
+    "di/notes/work/now/handoff.md",
     "di/src/lib/ts/managers/Selection.ts",
     "di/src/lib/ts/managers/Parts.ts",
     "di/notes/work/now/code.debt.md",
@@ -236,7 +238,6 @@
     "di/notes/work/milestones/done/32.facets/handoff.md",
     "di/notes/work/milestones/done/32.facets/slow/bottlenecks.md",
     "di/notes/work/milestones/done/32.facets/slow/handoff.md",
-    "di/notes/work/now/handoff.md",
     "di/src/assets/debug/gears 2.di",
     "di/notes/work/now/code debt handoff.md",
     "di/src/lib/ts/common/Stale_Writable.ts",
@@ -251,7 +252,6 @@
     "di/notes/work/now/working features.md",
     "di/src/assets/debug/gear.di",
     "di/src/assets/debug/sphere 30.di",
-    "di/notes/work/now/handoff.md.tmp.51167.1776141563528",
     "di/notes/work/now/road.map.md",
     "di/notes/work/milestones/index.md",
     "di/notes/work/milestones/done/32.facets/lessons.md",

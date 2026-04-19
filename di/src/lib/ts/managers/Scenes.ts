@@ -134,6 +134,12 @@ class Scenes {
 		}
 	}
 
+	/** Wipe user-saved files and tell the library panel to refresh. */
+	async reset_library(): Promise<void> {
+		await this.clear_idb();
+		stores.w_library.update(n => n + 1);
+	}
+
 	/** Clear all user-saved files from IndexedDB, restoring library to bundled defaults. */
 	async clear_idb(): Promise<void> {
 		try {

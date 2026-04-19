@@ -58,6 +58,7 @@
 		root.setProperty('--h-font-monster',   `${k.height.font.monster}px`);
 		root.setProperty('--h-font-common',    `${k.height.font.common}px`);
 		root.setProperty('--h-font-large',     `${k.height.font.large}px`);
+		root.setProperty('--h-font-reset',     `${k.height.font.reset}px`);
 		root.setProperty('--h-font-small',     `${k.height.font.small}px`);
 		root.setProperty('--h-font-huge',      `${k.height.font.huge}px`);
 		root.setProperty('--h-controls',       `${k.height.controls}px`);

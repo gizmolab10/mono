@@ -126,7 +126,7 @@ export default class Constants {
 		cell:        common_size * 0.5,
 		banner:      common_size,
 		font: {
-			edit:    common_size / 2.75,
+			reset:   common_size / 2.75,
 			small:   common_size / 2.5,
 			large:   common_size / 1.5,
 			common:  common_size / 2,

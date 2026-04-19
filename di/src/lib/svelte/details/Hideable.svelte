@@ -11,13 +11,15 @@
 		title,
 		detail,
 		actions,
+		leftActions,
 		children,
 	} : {
-		id       : string;
-		title    : string;
-		detail   : T_Details;
-		children : import('svelte').Snippet;
-		actions? : import('svelte').Snippet;
+		id           : string;
+		title        : string;
+		detail       : T_Details;
+		children     : import('svelte').Snippet;
+		actions?     : import('svelte').Snippet;
+		leftActions? : import('svelte').Snippet;
 	} = $props();
 
 	let is_visible = $derived(($w_t_details & detail) !== 0);
@@ -44,6 +46,7 @@
 		class:open={is_visible}
 		style:--banner={colors.banner}
 		use:hit_target={{ type: T_Hit_Target.banner, id: `hideable-${id}`, onpress: toggle }}>
+		{#if leftActions}<span class='banner-actions-left'>{@render leftActions()}</span>{/if}
 		<span class='banner-title'>{title}</span>
 		{#if actions}<span class='banner-actions'>{@render actions()}</span>{/if}
 	</button>
@@ -103,6 +106,14 @@
 		z-index  : var(--z-action);
 		position : absolute;
 		right    : 6px;
+		display  : flex;
+		gap      : 2px;
+	}
+
+	.banner-actions-left {
+		z-index  : var(--z-action);
+		position : absolute;
+		left     : 6px;
 		display  : flex;
 		gap      : 2px;
 	}

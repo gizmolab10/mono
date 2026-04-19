@@ -1,13 +1,13 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { hits } from '../../ts/events/Hits';
-	import { scenes, stores } from '../../ts/managers';
 	import { constraints } from '../../ts/algebra/Constraints';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { scenes, stores } from '../../ts/managers';
+	import Separator from '../mouse/Separator.svelte';
+	import { hits } from '../../ts/events/Hits';
 	import { engine } from '../../ts/render';
 	import { get } from 'svelte/store';
 	import { tick } from 'svelte';
-	import Separator from '../mouse/Separator.svelte';
 
 	const { w_library } = stores;
 
@@ -46,6 +46,9 @@
 		if (!entries.some(e => e.folder === active_folder)) {
 			active_folder = folders[0] ?? '';
 		}
+		if (selected && !entries.some(e => e.name === selected!.name)) {
+			selected = null;
+		}
 		await tick();
 		hits.recalibrate();
 	}
@@ -54,13 +57,6 @@
 
 	// react to library changes (e.g. save from Controls)
 	$effect(() => { $w_library; merge_idb(); });
-
-	async function reset_library(): Promise<void> {
-		await scenes.clear_idb();
-		entries = parse_names(scenes.list_bundled());
-		selected = null;
-		await merge_idb();
-	}
 
 	async function do_replace(): Promise<void> {
 		if (!selected) return;
@@ -123,7 +119,6 @@
 	<button class='action-button' disabled={!selected} use:hit_target={{ id: 'lib-replace', onpress: do_replace }}>replace</button>
 	<button class='action-button' disabled={!selected} use:hit_target={{ id: 'lib-insert', onpress: do_insert }}>insert</button>
 	<button class='action-button far-right' use:hit_target={{ id: 'import', onpress: () => scenes.import_from_file((s) => engine.load_scene(s)) }}>import</button>
-	<button class='action-button far-right' use:hit_target={{ id: 'reset-library', onpress: reset_library }}>reinstall</button>
 </div>
 
 <style>

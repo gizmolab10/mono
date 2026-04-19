@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { T_Details } from '../../ts/types/Enumerations';
+	import { preferences } from '../../ts/managers/Preferences';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import D_Preferences from './D_Preferences.svelte';
 	import { hits } from '../../ts/events/Hits';
@@ -9,6 +10,11 @@
 	import { engine } from '../../ts/render';
 	import D_Parts from './D_Parts.svelte';
 	import { onMount } from 'svelte';
+
+	function factory_reset() {
+		preferences.reset();
+		location.reload();
+	}
 
 	onMount( async () => {
 		setTimeout( async () => {
@@ -25,10 +31,16 @@
 
 	<div class='banner-zone'>
 		<Hideable title='preferences' id='preferences' detail={T_Details.preferences}>
+			{#snippet leftActions()}
+				<button class='action-button' use:hit_target={{ id: 'reset-prefs', onpress: factory_reset }}>factory reset</button>
+			{/snippet}
 			<D_Preferences />
 		</Hideable>
 
 		<Hideable title='library' id='library' detail={T_Details.library}>
+			{#snippet leftActions()}
+				<button class='action-button' use:hit_target={{ id: 'reset-library', onpress: () => scenes.reset_library() }}>reinstall</button>
+			{/snippet}
 			{#snippet actions()}
 				<button class='banner-add' use:hit_target={{ id: 'new-scene', onpress: () => engine.load_scene(scenes.new_scene()) }}>+</button>
 			{/snippet}
@@ -77,6 +89,25 @@
 		overflow-y : auto;
 		height     : 100%;
 		width      : 100%;
+	}
+
+	.action-button {
+		background    : radial-gradient(ellipse at center, var(--bg) 30%, var(--accent) 100%);
+		border        : var(--th-border) solid rgba(0, 0, 0, 0.3);
+		height        : var(--h-button-tiny);
+		border-radius : var(--corner-common);
+		font-size     : var(--h-font-reset);
+		z-index       : var(--z-action);
+		box-sizing    : border-box;
+		cursor        : pointer;
+		color         : inherit;
+		white-space   : nowrap;
+		padding       : 0 10px;
+	}
+
+	.action-button:global([data-hit]) {
+		color      : var(--c-black);
+		background : var(--bg);
 	}
 
 	.banner-add {

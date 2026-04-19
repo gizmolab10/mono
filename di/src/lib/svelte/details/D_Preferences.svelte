@@ -1,5 +1,4 @@
 <script lang='ts'>
-	import { preferences } from '../../ts/managers/Preferences';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Units } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
@@ -26,10 +25,6 @@
 		w_unit_system.set(select.value as T_Units);
 	}
 
-	function reset() {
-		preferences.reset();
-		location.reload();
-	}
 </script>
 
 <div class='unit-system'>
@@ -81,7 +76,6 @@
 			oninput = {(e) => w_edge_color.set((e.target as HTMLInputElement).value)}
 		/>
 	</div>
-	<button class='action-button right' use:hit_target={{ id: 'reset-prefs', onpress: reset }}>factory reset</button>
 </div>
 
 <style>
@@ -89,29 +83,6 @@
 		gap             : var(--l-gap-small);
 		justify-content : flex-end;
 		display         : flex;
-	}
-
-	.action-button {
-		border        : var(--th-border) solid currentColor;
-		height        : var(--h-button-common);
-		border-radius : var(--corner-common);
-		font-size     : var(--h-font-common);
-		z-index       : var(--z-action);
-		background    : var(--c-white);
-		box-sizing    : border-box;
-		cursor        : pointer;
-		color         : inherit;
-		white-space   : nowrap;
-		padding       : 0 8px;
-	}
-
-	.action-button:global([data-hit]) {
-		color      : var(--c-black);
-		background : var(--hover);
-	}
-
-	.right {
-		margin-left : auto;
 	}
 
 	.label {
