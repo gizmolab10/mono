@@ -5,6 +5,7 @@ import type { Axis_Name } from '../types/Types';
 import { units, Units } from '../types/Units';
 import { hits_3d } from '../events/Hits_3D';
 import { stores } from '../managers/Stores';
+import { selection } from '../managers/Selection';
 import { scenes } from '../managers/Scenes';
 import { colors } from '../utilities/Colors';
 import { parseToRgba } from 'color2k';
@@ -275,7 +276,7 @@ export function render_back_grid(host: GridHost): void {
 	if (spacing <= 0) return;
 
 	// Shadow setup: selected non-root SO's vertices in root-local space
-	const sel_so = hits_3d.selection?.so ?? null;
+	const sel_so = selection.current?.so ?? null;
 	const has_shadow = sel_so && sel_so !== root_so && sel_so.scene;
 	let root_local: vec3[] | null = null;
 	let shadow_r = 0, shadow_g = 0, shadow_b = 0;

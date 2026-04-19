@@ -1,9 +1,10 @@
 import { quat, vec3, vec4, mat3, mat4 } from 'gl-matrix';
 import type { O_Scene } from '../types/Interfaces';
-import { hits_3d, type Hit_3D_Result } from '../events/Hits_3D';
+import type { Hit_3D_Result } from '../events/Hits_3D';
 import { Point } from '../types/Coordinates';
 import { T_Hit_3D } from '../types/Enumerations';
 import { stores } from '../managers/Stores';
+import { selection } from '../managers/Selection';
 import { camera } from '../render/Camera';
 import type { Bound, Axis_Name } from '../types/Types';
 import { constraints, type Free_Constant } from '../algebra/Constraints';
@@ -182,7 +183,7 @@ class Drag {
 		this._snap_results = [];
 		this.w_pin_offer.set(null);
 		// Immediate highlight: if clicking an edge/corner on a selected face, store for guidance rendering
-		const sel = hits_3d.selection;
+		const sel = selection.current;
 		if (hit && sel && (hit.type === T_Hit_3D.edge || hit.type === T_Hit_3D.corner) && sel.so.scene) {
 			this.stretch_face = { scene: sel.so.scene, face_index: sel.index };
 		} else {
@@ -304,7 +305,7 @@ class Drag {
 	}
 
 	rotate_object(_obj: O_Scene, prev: Point, curr: Point, alt_key = false): void {
-		const sel = hits_3d.selection;
+		const sel = selection.current;
 
 		// No alt key → always tumble root (free rotation via store)
 		// Alt key but no face selected → also tumble root
@@ -415,7 +416,7 @@ class Drag {
 	// Edit the current selection by modifying SO bounds
 	// Projects mouse positions onto face plane to get world-space delta
 	edit_selection(prev_mouse: Point, curr_mouse: Point): boolean {
-		const sel = hits_3d.selection;
+		const sel = selection.current;
 		const target = this.target;
 		if (!sel || !target) return false;
 

@@ -131,6 +131,7 @@ export default class Constants {
 			large:   common_size / 1.5,
 			common:  common_size / 2,
 			huge:    common_size,
+			monster: common_size * 1.5,
 		},
 		button: {
 			small:   common_size * 0.8,

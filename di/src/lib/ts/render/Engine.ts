@@ -1,7 +1,7 @@
 import { constraints, givens, evaluator, tokenizer } from '../algebra';
 import type { Portable_Scene } from '../managers/Versions';
 import type { Bound, Axis_Name } from '../types/Types';
-import { scenes, stores, history } from '../managers';
+import { scenes, stores, selection, history } from '../managers';
 import { scene, camera, render, animation } from '.';
 import type { O_Scene } from '../types/Interfaces';
 import { T_Hit_3D } from '../types/Enumerations';
@@ -100,10 +100,10 @@ class Engine {
 
 		// Input: drag edits selection OR rotates selected object, then save
 		e3.set_drag_handler((prev, curr, alt_key) => {
-			const target = hits_3d.selection?.so.scene ?? this.root_scene;
+			const target = selection.current?.so.scene ?? this.root_scene;
 			if (!target) return;
 			if (drag.edit_selection(prev, curr)) {
-				const changed = hits_3d.selection?.so;
+				const changed = selection.current?.so;
 				if (changed) constraints.propagate(changed);
 			} else if (!drag.has_target) {
 				this.saved_pre_snap_orientation = null;
@@ -225,7 +225,7 @@ class Engine {
 		const mark = () => render.mark_stale();
 
 		// Scene stores — fourteen inputs that change what the canvas shows.
-		render.add_stale_sub(stores.w_selection.subscribe(mark));
+		render.add_stale_sub(selection.w_selection.subscribe(mark));
 		render.add_stale_sub(stores.w_all_sos.subscribe(mark));
 		render.add_stale_sub(stores.w_tick.subscribe(mark));
 		render.add_stale_sub(stores.w_forward_face.subscribe(mark));
@@ -350,7 +350,7 @@ class Engine {
 		if (saved?.selected_id != null) {
 			const sel_so = smart_objects.find(so => so.id === saved.selected_id);
 			if (sel_so && saved.selected_face != null) {
-				hits_3d.set_selection({ so: sel_so, type: T_Hit_3D.face, index: saved.selected_face });
+				selection.current = { so: sel_so, type: T_Hit_3D.face, index: saved.selected_face };
 			}
 		}
 
@@ -591,13 +591,13 @@ class Engine {
 
 	delete_selected_so(): void {
 		history.snapshot();
-		const sel = stores.selection;
+		const sel = selection.current;
 		if (!sel) return;
 		const so = sel.so;
 		if (!so.scene?.parent) return;  // can't delete root
 
 		// Clear selection first
-		hits_3d.set_selection(null);
+		selection.current = null;
 
 		// Collect the entire subtree: selected SO + all descendants
 		const to_remove = new Set<O_Scene>([so.scene]);
@@ -655,7 +655,7 @@ class Engine {
 	/** Insert an SO subtree from a .di file as children of the selected (or root) SO. */
 	insert_child_from_text(text: string): void {
 		history.snapshot();
-		const target_so = stores.selection?.so ?? this.root_scene?.so;
+		const target_so = selection.current?.so ?? this.root_scene?.so;
 		if (!target_so?.scene) return;
 
 		const parsed = scenes.parse_text(text);
@@ -747,7 +747,7 @@ class Engine {
 
 	/** Remove all children (and their subtrees) of the selected SO. */
 	remove_all_children(): void {
-		const target = stores.selection?.so ?? this.root_scene?.so;
+		const target = selection.current?.so ?? this.root_scene?.so;
 		if (!target?.scene) return;
 
 		const all = scene.get_all();
@@ -768,9 +768,9 @@ class Engine {
 		}
 
 		// Clear selection if it was in the removed subtree
-		const sel = hits_3d.selection;
+		const sel = selection.current;
 		if (sel && to_remove.some(o => o.so === sel.so)) {
-			hits_3d.set_selection(null);
+			selection.current = null;
 		}
 
 		// Prune givens no longer referenced by any remaining formula
@@ -795,7 +795,7 @@ class Engine {
 
 	add_child_so(): void {
 		history.snapshot();
-		const selected = stores.selection;
+		const selected = selection.current;
 		const parent_so = selected?.so ?? this.root_scene?.so;
 		if (!parent_so?.scene) return;
 
@@ -830,7 +830,7 @@ class Engine {
 	 *  cloned template on the next repeater sync. */
 	duplicate_so(): void {
 		history.snapshot();
-		const selected = stores.selection;
+		const selected = selection.current;
 		if (!selected?.so) return;
 		const root_src = selected.so;
 		const root_parent_scene = root_src.scene?.parent;
@@ -926,7 +926,7 @@ class Engine {
 		const top_clone = clones.get(root_src.id)!;
 		constraints.propagate(top_clone);
 		stores.w_all_sos.update(list => [...list, ...sources.map(s => clones.get(s.id)!)]);
-		hits_3d.set_selection({ so: top_clone, type: T_Hit_3D.face, index: 0 });
+		selection.current = { so: top_clone, type: T_Hit_3D.face, index: 0 };
 		stores.tick();
 		scenes.save();
 	}

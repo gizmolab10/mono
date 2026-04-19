@@ -1,14 +1,15 @@
+import { stale_writable } from '../common/Stale_Writable';
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Projected } from '../types/Interfaces';
+import { mat4, quat, vec3, vec4 } from 'gl-matrix';
 import { dimensions } from '../editors/Dimension';
-import { angulars } from '../editors/Angular';
+import { selection } from '../managers/Selection';
 import { T_Hit_3D } from '../types/Enumerations';
+import { angulars } from '../editors/Angular';
 import { Point } from '../types/Coordinates';
-import { stale_writable } from '../common/Stale_Writable';
-import { get } from 'svelte/store';
 import { stores } from '../managers/Stores';
 import { camera } from '../render/Camera';
-import { mat4, quat, vec3, vec4 } from 'gl-matrix';
+import { get } from 'svelte/store';
 
 export interface Hit_3D_Result {
 	so: Smart_Object;
@@ -32,10 +33,7 @@ class Hits_3D {
 	w_hover = stale_writable<Hit_3D_Result | null>(null);
 
 	get hover(): Hit_3D_Result | null { return get(this.w_hover); }
-	get selection(): Hit_3D_Result | null { return stores.selection; }
-
-	set_hover(result: Hit_3D_Result | null) { this.w_hover.set(result); }
-	set_selection(result: Hit_3D_Result | null) { stores.set_selection(result); }
+	set hover(result: Hit_3D_Result | null) { this.w_hover.set(result); }
 
 	get_projected(scene_id: string): Projected[] | undefined {
 		return this.cache.get(scene_id)?.projected;
@@ -50,7 +48,7 @@ class Hits_3D {
 		this.objects = [];
 		this.cache.clear();
 		this.w_hover.set(null);
-		stores.set_selection(null);
+		selection.current = null;
 	}
 
 	register(so: Smart_Object) {
@@ -81,19 +79,19 @@ class Hits_3D {
 	}
 
 	private check_face_flip(scene_id: string, _projected: Projected[]): void {
-		const sel = this.selection;
+		const sel = selection.current;
 		if (!sel || sel.type !== T_Hit_3D.face || !sel.so.scene?.faces) return;
 		if (sel.so.scene.id !== scene_id) return;
 
 		// Always track most front-facing face (6 quat transforms, scratch buffers, no allocs)
 		const best = this.front_most_face(sel.so);
 		if (best >= 0 && best !== sel.index) {
-			this.set_selection({ so: sel.so, type: T_Hit_3D.face, index: best });
+			selection.current = { so: sel.so, type: T_Hit_3D.face, index: best };
 		}
 	}
 
 	hit_test(point: Point): Hit_3D_Result | null {
-		const selected_so = this.selection?.so ?? null;
+		const selected_so = selection.current?.so ?? null;
 
 		// Dimension / angle labels win over everything (corners, edges, faces)
 		if (stores.show_dimensionals) {

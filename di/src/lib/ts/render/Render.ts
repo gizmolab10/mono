@@ -10,6 +10,7 @@ import { mat4, vec3, vec4 } from 'gl-matrix';
 import { hits_3d } from '../events/Hits_3D';
 import { Size } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
+import { selection } from '../managers/Selection';
 import { scenes } from '../managers/Scenes';
 import { colors } from '../utilities/Colors';
 import { k } from '../common/Constants';
@@ -552,7 +553,7 @@ class Render {
 				(face, proj) => this.face_winding(face, proj),
 			);
 			facets.compute_cyclic_ordering();
-			const sel_so = hits_3d.selection?.so ?? null;
+			const sel_so = selection.current?.so ?? null;
 			const sel_scene = sel_so?.scene ?? null;
 			const traced = facets.trace_facets(sel_scene?.id, undefined, objects);
 			_facets_traced = traced;
@@ -1688,7 +1689,7 @@ class Render {
 
 	private render_edges(obj: O_Scene, projected: Projected[], solid: boolean, world?: mat4, restrict_face?: number): void {
 		const ctx = this.ctx;
-		const is_selected = hits_3d.selection?.so.scene === obj;
+		const is_selected = selection.current?.so.scene === obj;
 		const is_hovered = hits_3d.hover?.so.scene === obj && !is_selected;
 		ctx.lineWidth = (is_selected || is_hovered) ? stores.bold_thickness : stores.edge_thickness;
 		ctx.lineCap = 'square';
@@ -2360,7 +2361,7 @@ class Render {
 	}
 
 	private render_selection(): void {
-		const sel = hits_3d.selection;
+		const sel = selection.current;
 		if (!sel || !sel.so.scene) return;
 
 		const projected = hits_3d.get_projected(sel.so.scene.id);
@@ -2373,7 +2374,7 @@ class Render {
 		const hover = hits_3d.hover;
 		if (!hover || !hover.so.scene) return;
 		// Don't draw hover dots when hovering sub-elements of the selected face
-		const sel = hits_3d.selection;
+		const sel = selection.current;
 		if (sel && sel.so === hover.so && sel.type === T_Hit_3D.face) return;
 
 		const projected = hits_3d.get_projected(hover.so.scene.id);

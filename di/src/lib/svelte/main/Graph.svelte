@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Editing, T_Hit_3D, T_Hit_Target } from '../../ts/types/Enumerations';
 	import { hits, hits_3d } from '../../ts/events';
-	import { scenes, stores } from '../../ts/managers';
+	import { scenes, stores, selection } from '../../ts/managers';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 
 	import { face_label } from '../../ts/editors/Face_Label';
@@ -19,7 +19,8 @@
 	const { w_s_dimensions } = dimensions;
 	const { w_s_face_label } = face_label;
 	const { w_pin_offer } = drag;
-	const { w_selection, w_scale, w_grid_opacity } = stores;
+	const { w_scale, w_grid_opacity } = stores;
+	const { w_selection } = selection;
 
 	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 	let dim_input   = $state<HTMLInputElement>();
@@ -60,7 +61,7 @@
 	function select_so(so: Smart_Object) {
 		const face = hits_3d.front_most_face(so);
 		if (face >= 0) {
-			hits_3d.set_selection({ so, type: T_Hit_3D.face, index: face });
+			selection.current = { so, type: T_Hit_3D.face, index: face };
 		}
 		scenes.save();
 	}

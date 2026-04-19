@@ -12,6 +12,7 @@ import { get } from 'svelte/store';
 import { hits_3d } from '../events/Hits_3D';
 import { scenes } from '../managers/Scenes';
 import { stores } from '../managers/Stores';
+import { selection } from '../managers/Selection';
 import { render } from '../render/Render';
 
 class Face_Label {
@@ -44,11 +45,11 @@ class Face_Label {
 	begin(rect: Label_Rect): void {
 		const already_editing = stores.editing !== T_Editing.none;
 		if (!already_editing) {
-			this.prev_selection = stores.selection;
+			this.prev_selection = selection.current;
 			this.cursor = null; // select all on fresh begin
 		}
 		const face = hits_3d.front_most_face(rect.so);
-		if (face >= 0) hits_3d.set_selection({ so: rect.so, type: T_Hit_3D.face, index: face });
+		if (face >= 0) selection.current = { so: rect.so, type: T_Hit_3D.face, index: face };
 		this.w_s_face_label.set({
 			so: rect.so,
 			x: rect.x,
@@ -87,7 +88,7 @@ class Face_Label {
 		state.so.name = value;
 		this.w_s_face_label.update(s => s ? { ...s, current_name: value } : s);
 		stores.w_all_sos.update(sos => sos);
-		stores.w_selection.update(s => s ? { ...s } : s);
+		selection.w_selection.update(s => s ? { ...s } : s);
 	}
 
 	/** Cancel editing without changing anything. */
@@ -98,7 +99,7 @@ class Face_Label {
 	}
 
 	private restore_selection(): void {
-		stores.set_selection(this.prev_selection);
+		selection.current = this.prev_selection;
 		this.prev_selection = null;
 	}
 }

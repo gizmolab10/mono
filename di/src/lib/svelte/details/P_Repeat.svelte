@@ -1,13 +1,14 @@
 <script lang='ts'>
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { scenes, stores, history } from '../../ts/managers';
+	import { scenes, stores, selection, history } from '../../ts/managers';
 	import { w_unit_system, units } from '../../ts/types/Units';
 	import { T_Units } from '../../ts/types/Enumerations';
 	import { engine } from '../../ts/render';
 	import Slider from '../mouse/Slider.svelte';
 
-	const { w_all_sos, w_selection, w_tick, w_precision } = stores;
+	const { w_all_sos, w_tick, w_precision } = stores;
+	const { w_selection } = selection;
 
 	let selected_so = $derived($w_selection?.so ?? null);
 

@@ -5,12 +5,12 @@ import { CURRENT_VERSION, versions } from './Versions';
 import { constraints } from '../algebra/Constraints';
 import Smart_Object from '../runtime/Smart_Object';
 import { T_Hit_3D } from '../types/Enumerations';
-import { hits_3d } from '../events/Hits_3D';
 import { givens } from '../algebra/Givens';
 import { Identifiable } from '../runtime';
 import { camera } from '../render/Camera';
 import { scene } from '../render/Scene';
 import { stores } from './Stores';
+import { selection } from './Selection';
 
 /**
  * Scenes — save/load scene state to localStorage and filesystem
@@ -77,7 +77,7 @@ class Scenes {
 					...(o.parent ? { parent_id: o.parent.so.id } : {}),
 				};
 			});
-		const sel = hits_3d.selection;
+		const sel = selection.current;
 		const user_givens = givens.get_all();
 		return {
 			smart_objects: objects,

@@ -2,7 +2,7 @@
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { T_Editing } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
-	import { scenes, stores, history } from '../../ts/managers';
+	import { scenes, stores, selection, history } from '../../ts/managers';
 	import type { Bound } from '../../ts/types/Types';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { givens } from '../../ts/algebra/Givens';
@@ -12,7 +12,8 @@
 	import P_Givens from './P_Givens.svelte';
 	import { units } from '../../ts/types/Units';
 
-	const { w_selection, w_precision, w_tick } = stores;
+	const { w_precision, w_tick } = stores;
+	const { w_selection } = selection;
 
 	type BoundsRow = { label: string; bound: string | null; value: string; formula: string; has_formula: boolean; is_attached: boolean; is_invariant: boolean; axis_index: number; attr_index: number };
 

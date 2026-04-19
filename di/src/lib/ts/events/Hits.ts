@@ -3,6 +3,7 @@ import { T_Drag, T_Hit_Target } from '../types/Enumerations';
 import type { Dictionary } from '../types/Types';
 import S_Hit_Target from './S_Hit_Target';
 import { hits_3d } from './Hits_3D';
+import { selection } from '../managers/Selection';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
 import { drag } from '../editors/Drag';
@@ -67,7 +68,7 @@ export default class Hits {
 			if (!allow_3d || !s_mouse.isDown || drag.has_target) return false;
 			const hit_3d = hits_3d.hit_test(point);
 			if (hit_3d) {
-				hits_3d.set_selection(hit_3d);
+				selection.current = hit_3d;
 				return true;
 			}
 			return false;

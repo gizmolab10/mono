@@ -1,6 +1,6 @@
 import { T_Hit_3D, T_Editing } from '../types/Enumerations';
-// import { face_label } from '../editors/Face_Label';
 import { dimensions } from '../editors/Dimension';
+import { selection } from '../managers/Selection';
 import { angulars } from '../editors/Angular';
 import { history } from '../managers/History';
 import { Point } from '../types/Coordinates';
@@ -43,7 +43,7 @@ class Events_3D {
 			if (!this.is_dragging) {
 				if (!stores.allow_editing) {
 					canvas.style.cursor = 'grab';
-					hits_3d.set_hover(null);
+					hits_3d.hover = null;
 				} else {
 					const hit = hits_3d.hit_test(point);
 
@@ -54,10 +54,10 @@ class Events_3D {
 					// Hover shows face — convert corner/edge hits to best face
 					// But don't hover on already-selected face
 					const face_hit = hit ? hits_3d.hit_to_face(hit) : null;
-					const sel = hits_3d.selection;
+					const sel = selection.current;
 					const is_selected = face_hit && sel &&
 						face_hit.so === sel.so && face_hit.index === sel.index;
-					hits_3d.set_hover(is_selected ? null : face_hit);
+					hits_3d.hover = is_selected ? null : face_hit;
 				}
 			} else if (this.on_drag) {
 				this.continue_drag(canvas, e.clientX, e.clientY, e.altKey);
@@ -79,7 +79,7 @@ class Events_3D {
 		// Read-only mode: only allow tumble (no editing, no drag, no selection)
 		if (!stores.allow_editing) {
 			drag.set_target(null);
-			hits_3d.set_hover(null);
+			hits_3d.hover = null;
 			return;
 		}
 
@@ -91,21 +91,21 @@ class Events_3D {
 			const dim = dimensions.hit_test(point.x, point.y);
 			if (dim) dimensions.begin(dim);
 			drag.set_target(null);
-			hits_3d.set_hover(null);
+			hits_3d.hover = null;
 			return;
 		} else if (hit?.type === T_Hit_3D.angle) {
 			e?.preventDefault();
 			const ang = angulars.hit_test(point.x, point.y);
 			if (ang) angulars.begin(ang);
 			drag.set_target(null);
-			hits_3d.set_hover(null);
+			hits_3d.hover = null;
 			return;
 		// } else if (hit?.type === T_Hit_3D.face_label) {
 		// 	e?.preventDefault();
 		// 	// const label = face_label.hit_test(point.x, point.y);
 		// 	// if (label) face_label.begin(label);
 		// 	drag.set_target(null);
-		// 	hits_3d.set_hover(null);
+		// 	hits_3d.hover = null;
 		// 	return;
 		}
 
@@ -116,16 +116,16 @@ class Events_3D {
 		drag.set_target(hit);
 
 		// Clear hover during drag (especially rotation)
-		hits_3d.set_hover(null);
+		hits_3d.hover = null;
 
 		// Face click → select that face
 		// Corner/edge click → select best face (only if nothing selected yet)
 		if (hit) {
 			if (hit.type === T_Hit_3D.face) {
-				hits_3d.set_selection(hit);
-			} else if (!hits_3d.selection) {
+				selection.current = hit;
+			} else if (!selection.current) {
 				const face_hit = hits_3d.hit_to_face(hit);
-				if (face_hit) hits_3d.set_selection(face_hit);
+				if (face_hit) selection.current = face_hit;
 			}
 		}
 	}
@@ -146,10 +146,10 @@ class Events_3D {
 			// Click/tap on background → deselect (but not if editing just started)
 			if (!drag.has_target && stores.editing === T_Editing.none) {
 				const root = scenes.root_so;
-				if (root && stores.selection?.so !== root) {
-					hits_3d.set_selection({ so: root, type: T_Hit_3D.face, index: 0 });
+				if (root && selection.current?.so !== root) {
+					selection.current = { so: root, type: T_Hit_3D.face, index: 0 };
 				} else {
-					hits_3d.set_selection(null);
+					selection.current = null;
 				}
 			}
 		}

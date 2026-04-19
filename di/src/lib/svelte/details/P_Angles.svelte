@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { scenes, stores, history } from '../../ts/managers';
+	import { scenes, stores, selection, history } from '../../ts/managers';
 	import type { Axis_Name } from '../../ts/types/Types';
 	import { constraints } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
@@ -7,7 +7,8 @@
 	import Slider from '../mouse/Slider.svelte';
 
 	const { w_mouse_button_down } = e;
-	const { w_selection, w_tick, w_forward_face } = stores;
+	const { w_tick, w_forward_face } = stores;
+	const { w_selection } = selection;
 
 	const SWAP_LABELS:  Record<Axis_Name, string>           = { z: 'swap x | y', x: 'swap y | z', y: 'swap x | z' };
 	const SWAP_INDICES: Record<Axis_Name, [number, number]> = { z: [0, 1], x: [1, 2], y: [0, 2] };

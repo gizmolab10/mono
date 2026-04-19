@@ -1,24 +1,29 @@
 <script lang='ts'>
+	import { stores, parts, selection, scenes, history } from '../../ts/managers';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { T_Hit_3D, T_Editing } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import { stores, scenes, history } from '../../ts/managers';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { w_unit_system } from '../../ts/types/Units';
 	import Separator from '../mouse/Separator.svelte';
 	import { k } from '../../ts/common/Constants';
 	import P_Selected from './P_Selected.svelte';
 	import { units } from '../../ts/types/Units';
-	import { hits_3d } from '../../ts/events';
 	import { errors } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
 
-	const { w_all_sos, w_selection, w_tick, w_precision, w_collapsed_ids } = stores;
+	const { w_all_sos, w_tick, w_precision } = stores;
+	const { w_collapsed_ids } = parts;
+	const { w_selection } = selection;
 
+	let parts_count = $derived($w_all_sos.filter(s => !$w_all_sos.some(c => c.scene?.parent?.so === s)).length);
 	let show_position = $state(preferences.read<boolean>(T_Preference.showPosition) ?? true);
 	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
 	let selected_so = $derived($w_selection?.so ?? null);
-	let parts_count = $derived($w_all_sos.filter(s => !$w_all_sos.some(c => c.scene?.parent?.so === s)).length);
+	let naming_input: HTMLInputElement | null = null;
+	let naming_error: string | null = $state(null);
+	let editing_id: string | null = $state(null);
+	let editing_original: string = '';
 
 	// Row position: "N of M" where N is the selected row's position in the
 	// visible parts list and M is the total number of visible rows.
@@ -29,45 +34,31 @@
 		const sel = $w_selection;
 		if (!sel) return null;
 		if (!sel.so.scene?.parent) return null;
-		const visible = stores.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !is_ancestor_collapsed(s, $w_collapsed_ids));
+		const visible = parts.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !parts.is_ancestor_collapsed(s, $w_collapsed_ids));
 		const index = visible.indexOf(sel.so);
 		if (index < 0) return null;
 		return { index, total: visible.length };
 	});
 
-function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
-	let editing_id: string | null = $state(null);
-	let editing_original: string = '';
-	let naming_error: string | null = $state(null);
-	let naming_input: HTMLInputElement | null = null;
+	function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
 
 	function handle_triangle_click(e: MouseEvent, so: Smart_Object) {
 		e.stopPropagation();
-		if (e.altKey) stores.hide_generation(so);
-		else          stores.reveal_generation(so);
+		parts.apply_generational(so, e.altKey, e.shiftKey);
 	}
-
-	function is_ancestor_collapsed(so: Smart_Object, ids: Set<string>): boolean {
-		let scene = so.scene?.parent;
-		while (scene) {
-			if (ids.has(scene.so.id)) return true;
-			scene = scene.parent;
-		}
-		return false;
-	}
-
-	$effect(() => {
-		const so = selected_so;
-		if (so && is_ancestor_collapsed(so, $w_collapsed_ids)) stores.reveal_so(so);
-	});
 
 	function select(so: Smart_Object): void {
-		hits_3d.set_selection({ so, type: T_Hit_3D.face, index: 0 });
+		selection.current = { so, type: T_Hit_3D.face, index: 0 };
 	}
 
 	function is_selected(so: Smart_Object, _tick: number): boolean {
 		return selected_so === so;
 	}
+
+	$effect(() => {
+		const so = selected_so;
+		if (so && parts.is_ancestor_collapsed(so, $w_collapsed_ids)) parts.reveal_so(so);
+	});
 
 	function handle_name_click(e: MouseEvent, so: Smart_Object) {
 		naming_error = null;
@@ -186,8 +177,8 @@ function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Pre
 		return count;
 	}
 
-	function triangle_down(so: Smart_Object, _collapsed: Set<string>, _sos: Smart_Object[], _tick: number): boolean {
-		return stores.has_visible_descendant(so);
+	function show_down_triangle(so: Smart_Object, _collapsed: Set<string>, _sos: Smart_Object[], _tick: number): boolean {
+		return parts.has_visible_descendant(so);
 	}
 
 	function toggle_visible(e: MouseEvent, so: Smart_Object) {
@@ -239,7 +230,7 @@ function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Pre
 	{#if show_parts}
 		<tbody>
 			<tr style:height='4px'></tr>
-			{#each stores.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !is_ancestor_collapsed(s, $w_collapsed_ids)) as so, row_index (so.id)}
+			{#each parts.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !parts.is_ancestor_collapsed(s, $w_collapsed_ids)) as so, row_index (so.id)}
 				{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
 				{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
 				<tr
@@ -263,7 +254,7 @@ function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Pre
 						{:else}
 							{#if has_children(so, $w_all_sos)}
 								<button class='collapse-tri' onclick={(e) => handle_triangle_click(e, so)}>
-									{triangle_down(so, $w_collapsed_ids, $w_all_sos, $w_tick) ? '▾' : '▸'}
+									<span class='tri-glyph'>{show_down_triangle(so, $w_collapsed_ids, $w_all_sos, $w_tick) ? '▾' : '▸'}</span>
 								</button>
 							{:else}
 								<button class='collapse-tri spacer'>
@@ -392,18 +383,32 @@ function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Pre
 
 	.collapse-tri {
 		all              : unset;
-		font-size        : var(--h-font-huge);
-		position         : relative;
+		display          : inline-block;
+		height           : var(--h-font-small);
+		width            : var(--h-font-small);
+		line-height      : var(--h-font-small);
 		cursor           : pointer;
+		overflow         : visible;
 		vertical-align   : middle;
-		top              : -2px;
 		margin-right     : 1px;
 		opacity          : 0.4;
-		line-height      : 0;
+	}
+
+	.collapse-tri .tri-glyph {
+		font-size        : var(--h-font-huge);
+		position         : relative;
+		top              : -3.5px;
+		pointer-events   : none;
 	}
 
 	.collapse-tri:not(.spacer):hover {
 		opacity : 1;
+	}
+
+	.collapse-tri:not(.spacer):hover .tri-glyph {
+		font-size : var(--h-font-monster);
+		left      : -3px;
+		top       : -5px;
 	}
 
 	.collapse-tri.spacer {

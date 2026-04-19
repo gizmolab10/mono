@@ -55,6 +55,7 @@
 		root.setProperty('--h-button-tiny',    `${k.height.button.tiny}px`);
 		root.setProperty('--h-button-small',   `${k.height.button.small}px`);
 		root.setProperty('--h-button-common',  `${k.height.button.common}px`);
+		root.setProperty('--h-font-monster',   `${k.height.font.monster}px`);
 		root.setProperty('--h-font-common',    `${k.height.font.common}px`);
 		root.setProperty('--h-font-large',     `${k.height.font.large}px`);
 		root.setProperty('--h-font-small',     `${k.height.font.small}px`);
