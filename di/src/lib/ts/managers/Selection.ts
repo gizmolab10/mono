@@ -1,5 +1,5 @@
 import type { Hit_3D_Result } from '../events/Hits_3D';
-import { stale_writable } from '../common/Stale_Writable';
+import { stale_writable } from '../common/Dirty';
 import { get } from 'svelte/store';
 
 class Selection {

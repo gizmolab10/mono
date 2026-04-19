@@ -1,4 +1,4 @@
-import { stale_writable } from '../common/Stale_Writable';
+import { stale_writable } from '../common/Dirty';
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Projected } from '../types/Interfaces';
 import { mat4, quat, vec3, vec4 } from 'gl-matrix';

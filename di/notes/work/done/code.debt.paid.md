@@ -1,4 +1,4 @@
-# Code Debt --- Done
+# Code Debt --- Paid
 
 - [x] cannot edit Z in 2D
     - [x] movement in the z axis seems to be disabled
@@ -158,3 +158,5 @@
         - [x] **click** computes the deepest, then reveals (**OPTION** hides) those
         - [x] triangle points right only for all hidden
 - [x] when children are hidden -> show number of progeny in place of hyphen
+- [x] move "factory reset" and "reinstall" to their respective glow banner, at the left, without moving the title
+- [x] layout of separators needs larger/uniform gaps

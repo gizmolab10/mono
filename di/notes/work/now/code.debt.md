@@ -4,14 +4,9 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
-- [ ] move "factory reset" and "reinstall" to their respective glow banner, at the left, without moving the title
-- [ ] layout of separators needs larger/uniform gaps
-- [ ] i don't like the drag dots, only appear on hover, allow appear on not quite forward most facing face
 - [ ] remove FaceLabel?
     - [ ] increase font size for face labels
 - [ ] redo for undo
-- [ ] givens for angles
-- [ ] rename library items
 - [ ] color
     - [ ] hover color
         - [x] lines
@@ -21,6 +16,7 @@ offer a proposal for the first unchecked item
     - [ ] white text for selected when bk color is too dark
     - [ ] cross is too faint in attributes table
     - [ ] hand cursor (over hover dot, selected face) -- otherwise pointer
+- [ ] [[three.dimensions]] revisit Intersection detection when object count grows
 
 ---
 ## AI
@@ -31,6 +27,8 @@ offer a proposal for the first unchecked item
 
 ## leftovers
 
+- [ ] givens for angles
+- [ ] rename library items
 - [ ] [[propagating value changes]]
 - [ ] bring the [[working features]] table up to date
 - [ ] previous milestones
@@ -54,7 +52,6 @@ offer a proposal for the first unchecked item
 
 - [ ] [wendy](data schema for wendy)
 - [ ] document the update handoff tracking aid to AI human interaction
-- [ ] [[three.dimensions]] revisit Intersection detection when object count grows
 - [ ] what went wrong with [[s3]]?
 - [ ] collaboration
     - [ ] oh fuck me, what have we created here?

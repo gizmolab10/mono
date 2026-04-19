@@ -331,6 +331,7 @@
 		position        : relative;
 		width           : 100%;
 		margin-top      : 1px;
+		margin-bottom   : 8px;
 		border-spacing  : 0;
 	}
 
@@ -498,6 +499,7 @@
 	.duplicate-row {
 		justify-content : center;
 		display         : flex;
+		margin-bottom   : 7px;
 	}
 
 	.action-button {

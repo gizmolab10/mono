@@ -99,7 +99,7 @@
 - di/src/lib/ts/common/Configuration.ts
 - di/src/lib/ts/common/Constants.ts
 - di/src/lib/ts/common/Extensions.ts
-- di/src/lib/ts/common/Stale_Writable.ts
+- di/src/lib/ts/common/Dirty.ts
 
 ## TS — Editors
 
@@ -247,7 +247,7 @@
 - di/notes/work/done/index.md
 - di/notes/work/done/article.first.draft.md
 - di/notes/work/done/chat.md
-- di/notes/work/done/code.debt.done.md
+- di/notes/work/done/code.debt.paid.md
 - di/notes/work/done/cruft.md
 - di/notes/work/done/invisible.root.md
 - di/notes/work/done/layout-algorithm.md

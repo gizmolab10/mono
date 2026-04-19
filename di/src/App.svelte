@@ -21,7 +21,7 @@
 		root.setProperty('--c-thumb',           colors.thumb);
 		root.setProperty('--c-track',           colors.track);
 
-		root.setProperty('--font-edit',        `${k.height.font.edit}px sans-serif`);
+		root.setProperty('--font-reset',       `${k.height.font.reset}px sans-serif`);
 		root.setProperty('--font-common',      `${k.height.font.common}px`);
 		root.setProperty('--font-small',       `${k.height.font.small}px`);
 

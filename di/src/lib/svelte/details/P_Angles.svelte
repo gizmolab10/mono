@@ -245,7 +245,6 @@
 
 	.angles {
 		font-size       : var(--h-font-small);
-		margin-top      : var(--l-gap);
 		border-collapse : collapse;
 		width           : 100%;
 	}
@@ -257,10 +256,10 @@
 
 	.angle-arrow {
 		background  : var(--c-white);
+		cursor      : pointer;
 		text-align  : center;
 		width       : 16px;
 		min-width   : 16px;
-		cursor      : pointer;
 		opacity     : 0.7;
 	}
 

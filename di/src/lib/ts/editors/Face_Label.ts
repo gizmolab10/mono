@@ -1,19 +1,11 @@
-import type { Label_Rect, S_SO } from '../types/Interfaces';
-import type { Hit_3D_Result } from '../events/Hits_3D';
-
-interface S_Name extends S_SO {
-	current_name: string;
-	face_index: number;
-}
+import { scenes, stores, history, selection } from '../managers';
+import type { Label_Rect, S_Name } from '../types/Interfaces';
 import { T_Editing, T_Hit_3D } from '../types/Enumerations';
-import { history } from '../managers/History';
-import { stale_writable } from '../common/Stale_Writable';
-import { get } from 'svelte/store';
+import { stale_writable } from '../common/Dirty';
+import type { Hit_3D_Result } from '../events/Hits_3D';
 import { hits_3d } from '../events/Hits_3D';
-import { scenes } from '../managers/Scenes';
-import { stores } from '../managers/Stores';
-import { selection } from '../managers/Selection';
 import { render } from '../render/Render';
+import { get } from 'svelte/store';
 
 class Face_Label {
 	w_s_face_label = stale_writable<S_Name | null>(null);

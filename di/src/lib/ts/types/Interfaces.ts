@@ -28,6 +28,11 @@ export interface Label_Rect extends S_SO {
 	z: number;        // NDC depth at text center
 }
 
+export interface S_Name extends S_SO {
+	current_name: string;
+	face_index: number;
+}
+
 // axis = which dimension (x/y/z) this label measures.
 export interface Dimension_Rect extends Label_Rect {
 	axis: Axis_Name;

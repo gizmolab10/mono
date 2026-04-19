@@ -1,13 +1,13 @@
 # Code-Debt Handoff
 
-**Date:** 2026-04-18
-**Work stream:** items from [code.debt.md](di/notes/work/now/code.debt.md), one item at a time, plus the second pass of render-pipeline performance work.
+**Date:** 2026-04-19
+**Work stream:** items from [code.debt.md](di/notes/work/now/code.debt.md), one item at a time, plus continuing internal cleanup of the manager layer.
 
 ---
 
 ## Next
 
-The first unchecked code-debt item is about the layout of the separators between details sections — the gaps between them are uneven and too small. No proposal is on the table yet. The ask is to make the gaps larger and uniform. Propose next.
+The first unchecked code-debt item is about the on-face name labels — decide whether to remove them entirely, and if kept, raise the font size. No proposal is on the table yet. Propose next.
 
 ## Where we are
 
@@ -25,13 +25,10 @@ At roughly a hundred parts where every part's outer box overlaps every other, th
 ## Open items
 
 - **Up/down arrow in the parts table skips two rows per press on Jonathan's scene.** I could not reproduce from reading the code — the arrow-navigation list and the table-display list look like the same filter. Jonathan reports pressing down from the top row lands on the row three deeper in the family tree instead of the next row. Still open. Need more detail about the scene (whether any row shows a repeater "×N" badge, and whether the table displays all four rows or only two) before a fix can be made.
-- **Separators layout.** Next unchecked item — propose.
-- **Drag dots appearance policy.** After separators. The dots should appear only on hover, and should allow appearing on a face that is not quite the forward-most-facing face.
-- **Face-label question.** Decide whether to remove the on-face name labels entirely; if kept, make their font bigger.
+- **Face-label question.** Next unchecked item — propose. Decide whether to remove the on-face name labels entirely; if kept, make their font bigger.
 - **Redo for undo.** No proposal yet.
-- **Givens for angles.** No proposal yet.
-- **Rename library items.** No proposal yet.
 - **Color sub-list.** Starts with "dots: larger white filled circular bordered" under hover color. Also: white text for selected when background is too dark; the cross icon in the attributes table is too faint; and a hand cursor over hover dot and selected face, otherwise pointer.
+- **Givens for angles** and **rename library items** moved into the leftovers section of code.debt.
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](di/notes/work/milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Left as deferred in [bottlenecks.md](di/notes/work/milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
@@ -42,6 +39,60 @@ At roughly a hundred parts where every part's outer box overlaps every other, th
 - The drag work has its own mothballed handoff at `di/notes/work/milestones/33.drag/handoff.md`.
 - The `handoff` and `hands` shorthands point at this file.
 - The tumble instrumentation is in place but silent. Flip the constant at the top of the engine file to true, uncomment the per-second summary block inside the render loop, reload, and the console will print timings and counters again.
+
+---
+
+## Session — 2026-04-19 — manager split, parts-triangle hit area, banner action buttons
+
+Three threads ran in sequence.
+
+### Thread one — manager split
+
+The big shared "stores" file had grown into two unrelated jobs: it held both the parts-tree machinery and the current selection. I pulled each out into its own file. The parts-tree file owns the collapsed-rows set, the tree walks, the show-hide generations, and a small toggle helper. The selection file owns the current selection, exposed as a paired reader and writer under one short name so callers can read with a property reference and assign with the same property reference. The big "stores" file is now back to general session and persistent values only.
+
+The pass-through getter and setter that used to live on the hit-testing helper for the current selection were removed too. Every place in the codebase that used to read or write the selection through the hit-testing helper was redirected to talk to the new selection file directly.
+
+### Thread two — parts-triangle hit area
+
+A long thread of UI-pointer debugging. The visible triangle on each row had been drawn with a normal text character at a much-larger font size, sitting on a row whose own line height was set to zero. Two symptoms followed: the cursor over the visible triangle was the open-hand drag cursor of the canvas behind the panel rather than the pointing-hand cursor of a real button, and sliding the cursor across the title text of any row made the row below light up the moment the cursor crossed where the lower row's triangle would be drawn.
+
+After several attempts that traded one symptom for another, the working layout is: the triangle button is a small fixed-size block sized to a line of the small body text. The painted character lives in a wrapper inside that block. The wrapper ignores the pointer entirely. So the visible character can grow on hover and poke above its row, but the part of the character outside the block is silent to the mouse — no row bleed, no flicker. On hover, the painted character grows to the largest preset size, fully opaque.
+
+### Thread three — banner action buttons
+
+A code-debt item shipped: the factory-reset button moved out of the bottom of the preferences panel, and the reinstall button moved out of the bottom of the library panel. Both now sit at the far-left end of their respective glow-banner headers, mirroring the small plus button on the far-right end. The shared glow-banner component grew a second slot for buttons on the left side that mirrors the existing right-side slot. The center-aligned title is unaffected by either slot.
+
+The reinstall handler was lifted into the scenes manager as a one-call helper that wipes the user-saved files and bumps the library refresh signal. The library panel's refresh effect now also clears the highlighted row if it points to a file that no longer exists, so the wipe behaves the same as the in-panel button used to.
+
+A small shared font-size constant for these buttons was added in the constants table; the app root now publishes it as a style variable so the banner buttons can refer to it. A polish followed: eight pixels of empty space above and below the separator inside the library panel.
+
+### What shipped — 2026-04-19
+
+- A new parts-tree manager file, holding nine generation-walking helpers and the collapsed-rows set.
+- A new selection manager file, holding the current selection, with a property-style read and a property-style write.
+- The pass-through selection getter and setter on the hit-testing helper were removed and every caller across the project (renderer, drag tool, scene save, mouse handlers, parts panel, several details panels) now talks to the new selection file directly.
+- A redesigned hit area for the parts-table triangle that no longer bleeds across rows or interacts with the canvas behind the panel.
+- A second slot on the shared glow-banner component for left-side buttons.
+- The factory-reset and reinstall buttons moved into their respective banners and resized to a smaller form.
+- A new one-call scenes helper that wipes user files and refreshes the library list.
+- The library panel auto-clears its highlighted row when a refresh removes that file.
+- A new published style variable for the smaller "reset"-class font.
+- Eight-pixel separator gap inside the library panel.
+
+### Files touched — 2026-04-19
+
+- New: [Parts.ts](di/src/lib/ts/managers/Parts.ts), [Selection.ts](di/src/lib/ts/managers/Selection.ts).
+- Trimmed: [Stores.ts](di/src/lib/ts/managers/Stores.ts).
+- Manager re-exports: [managers/index.ts](di/src/lib/ts/managers/index.ts).
+- Selection callers across the project: [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts), [Hits.ts](di/src/lib/ts/events/Hits.ts), [Events.ts](di/src/lib/ts/events/Events.ts), [Events_3D.ts](di/src/lib/ts/events/Events_3D.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts), [Drag.ts](di/src/lib/ts/editors/Drag.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Render.ts](di/src/lib/ts/render/Render.ts), [R_Grid.ts](di/src/lib/ts/render/R_Grid.ts), [Scenes.ts](di/src/lib/ts/managers/Scenes.ts), [Graph.svelte](di/src/lib/svelte/main/Graph.svelte), [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte), [P_Angles.svelte](di/src/lib/svelte/details/P_Angles.svelte), [P_Repeat.svelte](di/src/lib/svelte/details/P_Repeat.svelte), [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte).
+- Triangle hit area: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
+- Banner left slot: [Hideable.svelte](di/src/lib/svelte/details/Hideable.svelte), [Details.svelte](di/src/lib/svelte/details/Details.svelte). Removed buttons from [D_Preferences.svelte](di/src/lib/svelte/details/D_Preferences.svelte) and [D_Library.svelte](di/src/lib/svelte/details/D_Library.svelte). Helper added in [Scenes.ts](di/src/lib/ts/managers/Scenes.ts).
+- Constants and root variables: [Constants.ts](di/src/lib/ts/common/Constants.ts), [App.svelte](di/src/App.svelte).
+- Code-debt list: [code.debt.md](di/notes/work/now/code.debt.md).
+
+### Verification — 2026-04-19
+
+- Type-checker: zero errors, zero warnings after each step.
 
 ---
 

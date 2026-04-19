@@ -9,7 +9,7 @@ import { constraints, compiler, evaluator } from '../algebra';
 import { history } from '../managers/History';
 import { units, Units } from '../types/Units';
 import { T_Units, T_Editing } from '../types/Enumerations';
-import { stale_writable } from '../common/Stale_Writable';
+import { stale_writable } from '../common/Dirty';
 import { get } from 'svelte/store';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';

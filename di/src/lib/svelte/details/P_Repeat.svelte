@@ -259,18 +259,18 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 
 <style>
 	.repeater-options {
+		gap            : var(--l-gap-large);
 		flex-direction : column;
 		display        : flex;
 		padding-bottom : 2px;
-		gap            : var(--l-gap);
 	}
 
 	.repeater-option-row {
+		min-height  : var(--h-button-common);
+		gap         : var(--l-gap);
+		position    : relative;
 		align-items : center;
 		display     : flex;
-		min-height  : var(--h-button-common);
-		position    : relative;
-		gap         : var(--l-gap);
 	}
 
 	.option-label {
@@ -291,10 +291,10 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 		font-size     : var(--h-font-common);
 		padding       : 0 var(--l-padding);
 		z-index       : var(--z-action);
+		background    : var(--c-white);
 		color         : inherit;
 		cursor        : pointer;
 		white-space   : nowrap;
-		background    : var(--c-white);
 	}
 
 	.segmented button:first-child {

@@ -1,7 +1,7 @@
 import { preferences, T_Preference } from '../managers/Preferences';
 import { tu } from '../utilities/Testworthy_Utilities';
 import { T_Unit, T_Units } from './Enumerations';
-import { stale_writable } from '../common/Stale_Writable';
+import { stale_writable } from '../common/Dirty';
 import { get } from 'svelte/store';
 
 // ═══════════════════════════════════════════════════════════════════

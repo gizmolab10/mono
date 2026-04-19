@@ -11,7 +11,7 @@ import { constraints, type Free_Constant } from '../algebra/Constraints';
 import Smart_Object from '../runtime/Smart_Object';
 import { scene as scene_graph } from '../render/Scene';
 import { scenes } from '../managers/Scenes';
-import { stale_writable } from '../common/Stale_Writable';
+import { stale_writable } from '../common/Dirty';
 import { get } from 'svelte/store';
 
 // ── Exported pure math for testing ──

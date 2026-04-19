@@ -113,7 +113,7 @@
 	{/each}
 </tbody></table>
 
-<Separator/>
+<div class='sep-gap'><Separator/></div>
 
 <div class='settings'>
 	<button class='action-button' disabled={!selected} use:hit_target={{ id: 'lib-replace', onpress: do_replace }}>replace</button>
@@ -161,12 +161,14 @@
 		background : var(--hover);
 	}
 
+	.sep-gap {
+		padding : 8px 0;
+	}
 
 	.settings {
-		gap        : var(--l-gap-small);
-		margin-top : var(--l-gap);
-		flex-wrap  : wrap;
-		display    : flex;
+		gap       : var(--l-gap-small);
+		flex-wrap : wrap;
+		display   : flex;
 	}
 
 	.action-button {

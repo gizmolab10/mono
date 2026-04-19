@@ -18,7 +18,7 @@
 		<button class:active={$w_parts_tab === 'repeater'} onclick={() => w_parts_tab.set(T_Parts_Tab.repeater)}>repeats</button>
 	</div>
 </div>
-<Separator />
+<div class='sep-gap'><Separator/></div>
 <div class='tab-content'>
 	{#if $w_parts_tab === 'attributes'}
 		<P_Attributes />
@@ -32,7 +32,7 @@
 <style>
 	.actions-row {
 		display       : flex;
-		margin-top    : -4px;
+		margin-top    : 1px;
 		gap           : 6px;
 		margin-bottom : 2px;
 	}
@@ -78,4 +78,9 @@
 	.tab-content {
 		padding-top    : var(--l-gap);
 	}
+
+	.sep-gap {
+		padding : 5px 0;
+	}
+
 </style>

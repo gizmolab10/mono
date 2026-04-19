@@ -1,6 +1,6 @@
 import { T_Editing, T_Decorations, T_Parts_Tab } from '../types/Enumerations';
 import { preferences, T_Preference } from './Preferences';
-import { stale_writable, make_stale } from '../common/Stale_Writable';
+import { stale_writable, make_stale } from '../common/Dirty';
 import { k } from '../../ts/common/Constants';
 import { writable, get } from 'svelte/store';
 import { Smart_Object } from '../runtime';

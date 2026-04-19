@@ -3,7 +3,7 @@ import { constraints } from '../algebra';
 import { history } from '../managers/History';
 import { T_Editing } from '../types/Enumerations';
 import type { Axis_Name } from '../types/Types';
-import { stale_writable } from '../common/Stale_Writable';
+import { stale_writable } from '../common/Dirty';
 import { get } from 'svelte/store';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';

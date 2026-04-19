@@ -1,16 +1,15 @@
 <script lang='ts'>
+	import { constraints, tokenizer, errors, type S_Error } from '../../ts/algebra';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { scenes, stores, selection, history } from '../../ts/managers';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Editing } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
-	import { scenes, stores, selection, history } from '../../ts/managers';
 	import type { Bound } from '../../ts/types/Types';
-	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { givens } from '../../ts/algebra/Givens';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { constraints, tokenizer, errors, type S_Error } from '../../ts/algebra';
-	import Separator from '../mouse/Separator.svelte';
-	import P_Givens from './P_Givens.svelte';
 	import { units } from '../../ts/types/Units';
+	import P_Givens from './P_Givens.svelte';
 
 	const { w_precision, w_tick } = stores;
 	const { w_selection } = selection;
@@ -399,7 +398,6 @@
 	{:else if error_state.show_overlay && error_state.active_error}
 		{@render error_overlay()}
 	{/if}
-	<Separator />
 	<div class='givens-header'>
 		<button class='givens-toggle' onclick={toggle_show_givens}>
 			{show_givens ? 'hide' : 'show'} givens
@@ -419,6 +417,7 @@
 	.bounds {
 		font-size       : var(--h-font-small);
 		border-collapse : collapse;
+		margin-bottom   : 10px;
 		width           : 100%;
 	}
 
@@ -474,7 +473,7 @@
 	}
 
 	.merge-cont td {
-		border-top : none !important;
+		border-top.   : none !important;
 	}
 
 	.attr-formula {
@@ -685,6 +684,5 @@
 		background : var(--selected);
 		outline    : 2px solid var(--accent);
 	}
-
 
 </style>

@@ -9,7 +9,7 @@ import { units, Units, w_unit_system } from '../types/Units';
 import { face_label } from '../editors/Face_Label';
 import { dimensions } from '../editors/Dimension';
 import { angulars } from '../editors/Angular';
-import { register_stale_mark } from '../common/Stale_Writable';
+import { register_stale_mark } from '../common/Dirty';
 import { Smart_Object } from '../runtime';
 import { colors } from '../utilities/Colors';
 import { quat, vec3 } from 'gl-matrix';

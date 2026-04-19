@@ -1,5 +1,5 @@
 import { preferences, T_Preference } from '../managers/Preferences';
-import { stale_writable, make_stale } from '../common/Stale_Writable';
+import { stale_writable, make_stale } from '../common/Dirty';
 import { parseToRgba, transparentize } from 'color2k';
 import { get } from 'svelte/store';
 
