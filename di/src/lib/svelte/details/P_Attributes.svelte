@@ -439,8 +439,8 @@
 
 	.attr-key {
 		text-align     : center !important;
-		vertical-align : middle;
 		background     : var(--bg);
+		vertical-align : middle;
 		opacity        : 0.5;
 		font-weight    : 600;
 		min-width      : 1lh;
@@ -449,8 +449,8 @@
 	}
 
 	.attr-invariant {
-		cursor     : pointer;
 		background : var(--c-white);
+		cursor     : pointer;
 		width      : 12px;
 		min-width  : 12px;
 	}
@@ -467,8 +467,8 @@
 
 	.attr-invariant.cross {
 		background :
-			linear-gradient(to top right, transparent calc(50% - 0.25px), currentColor 50%, transparent calc(50% + 0.25px)),
-			linear-gradient(to bottom right, transparent calc(50% - 0.25px), currentColor 50%, transparent calc(50% + 0.25px)),
+			linear-gradient(to top right, transparent calc(50% - 0.75px), currentColor 50%, transparent calc(50% + 0.75px)),
+			linear-gradient(to bottom right, transparent calc(50% - 0.75px), currentColor 50%, transparent calc(50% + 0.75px)),
 			var(--bg);
 	}
 
@@ -498,14 +498,14 @@
 	}
 
 	.attr-attached {
-		background      : var(--c-white);
 		text-align      : center !important;
+		background      : var(--c-white);
+		padding         : 0 !important;
 		vertical-align  : middle;
-		font-size       : 8px;
 		width           : 14px;
 		min-width       : 14px;
+		font-size       : 8px;
 		line-height     : 1;
-		padding         : 0 !important;
 	}
 
 	.attr-attached.invariant-bg {
@@ -514,11 +514,11 @@
 
 	.cell-input {
 		z-index       : var(--z-action);
+		background    : var(--c-white);
 		box-sizing    : border-box;
 		color         : inherit;
 		font-size     : inherit;
 		font-family   : inherit;
-		background    : var(--c-white);
 		padding       : 0 4px;
 		width         : 100%;
 		height        : 100%;
@@ -533,9 +533,9 @@
 
 	.cell-input:focus {
 		outline        : var(--focus-outline);
-		outline-offset : -1.5px;
 		background     : var(--c-white);
 		color          : var(--c-black);
+		outline-offset : -1.5px;
 	}
 
 	.cell-error {
@@ -574,7 +574,7 @@
 	}
 
 	.givens-toggle {
-		border        : 0.25px solid currentColor;
+		border        : 0.75px solid currentColor;
 		height        : var(--h-button-tiny);
 		font-size     : var(--h-font-common);
 		border-radius : var(--corner-common);
@@ -621,17 +621,17 @@
 	}
 
 	.error-overlay {
-		position      : relative;
-		z-index       : 1000;
-		border        : 2px solid darkred;
-		border-radius : 8px;
-		background    : var(--c-white);
-		padding       : 6px 8px;
 		font-size     : var(--h-font-small);
+		border        : 2px solid darkred;
+		background    : var(--c-white);
+		box-sizing    : border-box;
+		position      : relative;
+		padding       : 6px 8px;
+		z-index       : 1000;
+		width         : 100%;
+		border-radius : 8px;
 		margin-top    : 8px;
 		margin-bottom : 8px;
-		box-sizing    : border-box;
-		width         : 100%;
 	}
 
 	.error-message :global(.error-quoted) {
@@ -647,8 +647,8 @@
 		display         : flex;
 		flex-wrap       : wrap;
 		justify-content : space-between;
-		margin-bottom   : 4px;
 		gap             : 3.95px;
+		margin-bottom   : 4px;
 	}
 
 	.error-suggestions.single {
@@ -656,13 +656,13 @@
 	}
 
 	.error-suggestion {
-		background    : white;
-		padding       : 2px 5px;
-		border-radius : 5px;
-		font-size     : var(--h-font-small);
 		border        : var(--th-border) solid currentColor;
+		font-size     : var(--h-font-small);
+		padding       : 2px 5px;
 		cursor        : pointer;
 		color         : inherit;
+		background    : white;
+		border-radius : 5px;
 		line-height   : 1;
 	}
 
@@ -671,18 +671,18 @@
 	}
 
 	.error-suggestion:hover {
-		background : var(--selected);
 		outline    : 2px solid var(--accent);
+		background : var(--selected);
 	}
 
 	.error-suggestion.hint:hover {
-		background : var(--bg);
 		outline    : 2px solid var(--accent);
+		background : var(--bg);
 	}
 
 	.error-suggestion:global(.blink) {
+		outline    : 2px solid var(--accent);å
 		background : var(--selected);
-		outline    : 2px solid var(--accent);
 	}
 
 </style>

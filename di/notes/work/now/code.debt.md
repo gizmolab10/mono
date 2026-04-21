@@ -4,29 +4,17 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
-- [ ] remove FaceLabel?
-    - [ ] increase font size for face labels
-- [ ] redo for undo
-- [ ] color
-    - [ ] hover color
-        - [x] lines
-            - [x] lines fatter and colored red
-            - [x] hue shift from lines color
-        - [ ] dots: larger white filled circular bordered
-    - [ ] white text for selected when bk color is too dark
-    - [ ] cross is too faint in attributes table
-    - [ ] hand cursor (over hover dot, selected face) -- otherwise pointer
-- [ ] [[three.dimensions]] revisit Intersection detection when object count grows
+- [ ] [[27.selection.algorithm]]
+- [ ] arrow keys nudge SO position
+- [ ] print just the graph, scaled to fit
+- [ ] add move up move down buttons to bottom of parts list at far left
+    - [ ] move duplicate to the far right
+- [ ] add move to child, become parent buttons
 
 ---
-## AI
-
-- [ ] read all the di work md files and summarize the organization
-- [ ] [[cadence]]
-- [ ] AI coolness: https://medium.com/@gaddamnaveen192/ai-replaced-80-of-coding-only-these-7-skills-are-left-128e13d3020d
-
 ## leftovers
 
+- [ ] color -> white text for selected when bk color is too dark
 - [ ] givens for angles
 - [ ] rename library items
 - [ ] [[propagating value changes]]
@@ -50,7 +38,7 @@ offer a proposal for the first unchecked item
 
 ## later
 
-- [ ] [wendy](data schema for wendy)
+- [ ] data schema for wendy
 - [ ] document the update handoff tracking aid to AI human interaction
 - [ ] what went wrong with [[s3]]?
 - [ ] collaboration
@@ -67,4 +55,10 @@ offer a proposal for the first unchecked item
 - [ ] tmux terminal multiplexer
 
 ---
+
+## AI
+
+- [ ] read all the di work md files and summarize the organization
+- [ ] [[cadence]]
+- [ ] AI coolness: https://medium.com/@gaddamnaveen192/ai-replaced-80-of-coding-only-these-7-skills-are-left-128e13d3020d
 

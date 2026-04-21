@@ -22,13 +22,15 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `hands`                | Read `di/notes/work/now/handoff.md`, follow the **Next** instructions                                                                      |
 | `translate`, `rewrite` | Rewrite the last response using concise, plain english. Avoid jargon.                                                                      |
 | `geometric`            | use names of SO rather than obj_N, use label names of eps when describing faces, segs or eps                                               |
+| `build notes`          |                                                                                                                                            |
 
 ## Abbreviations
 
-| Abbreviation | Meaning |
-| ------------ | ------- |
-| `ex` | Execute mode — skip proposals, just do it |
-| `rs` | Reserved mode — propose before file changes |
-| `ni` | No improvement, try something different |
-| `pac` | pros and cons. If there are no real cons, say "no cons found." Never pad with fabricated concerns. |
-| `cd` | read code.debt.md |
+| Abbreviation | Meaning                                                                                                                          |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| `ex`         | Execute mode — skip proposals, just do it                                                                                        |
+| `rs`         | Reserved mode — propose before file changes                                                                                      |
+| `ni`         | No improvement, try something different                                                                                          |
+| `pac`        | pros and cons. If there are no real cons, say "no cons found." Never pad with fabricated concerns.                               |
+| `cd`         | read code.debt.md                                                                                                                |
+| `up`         | update current handoff file, check if anything changed, update from the chat: the **Next** line and any relevant or new sections |

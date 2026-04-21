@@ -1006,6 +1006,28 @@ class Constraints {
 			}
 		}
 	}
+
+	/** Rename an SO across all formulas in the scene.
+	 *  Matches direct references whose object field equals the old name; does
+	 *  not walk into dotted paths. Updates both stored tokens and compiled AST. */
+	rename_so_in_formulas(old_name: string, new_name: string): void {
+		const all_objects = scene.get_all();
+		for (const o of all_objects) {
+			for (const axis of o.so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
+				if (!attr.formula) continue;
+				const changed = tokenizer.rename_object(attr.formula, old_name, new_name);
+				if (changed) {
+					const source = tokenizer.untokenize(attr.formula);
+					try {
+						const compiled = compiler.compile(source);
+						const parent_id = o.parent?.so.id;
+						const owner_axis = attribute_to_axis[attr.name];
+						attr.compiled = this.bind_refs(compiled, o.so.id, parent_id, owner_axis);
+					} catch { /* skip — formula might be temporarily invalid */ }
+				}
+			}
+		}
+	}
 }
 
 export const constraints = new Constraints();

@@ -93,6 +93,30 @@ describe('validate_name', () => {
 		expect(errors.validate_name('drawer', so.id)).toBeNull();
 	});
 
+	it('allows two SOs with the same name under different parents', () => {
+		const A = new Smart_Object('A');
+		const A_scene = scene.create({ so: A, edges: cube_edges });
+		const B = new Smart_Object('B');
+		const B_scene = scene.create({ so: B, edges: cube_edges });
+		const foo_under_A = new Smart_Object('foo');
+		scene.create({ so: foo_under_A, edges: cube_edges, parent: A_scene });
+		const other = new Smart_Object('bar');
+		scene.create({ so: other, edges: cube_edges, parent: B_scene });
+		// Renaming 'bar' (under B) to 'foo' is fine — 'foo' exists only under A.
+		expect(errors.validate_name('foo', other.id)).toBeNull();
+	});
+
+	it('rejects the same name when siblings share a parent', () => {
+		const A = new Smart_Object('A');
+		const A_scene = scene.create({ so: A, edges: cube_edges });
+		const sib1 = new Smart_Object('foo');
+		scene.create({ so: sib1, edges: cube_edges, parent: A_scene });
+		const sib2 = new Smart_Object('bar');
+		scene.create({ so: sib2, edges: cube_edges, parent: A_scene });
+		// Renaming 'bar' to 'foo' collides with the sibling already named 'foo'.
+		expect(errors.validate_name('foo', sib2.id)).toContain('already in use');
+	});
+
 	// ── duplicate given names ──
 
 	it('rejects names already used by a given', () => {

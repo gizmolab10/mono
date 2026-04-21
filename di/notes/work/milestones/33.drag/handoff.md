@@ -5,6 +5,7 @@
 
 ---
 
+- [ ] [[three.dimensions]] revisit Intersection detection when object count grows
 ## Where it stopped
 
 The drag rewrite is shipped and works. Five hundred fourteen tests pass, type-check is clean. The remaining open question — small residual drift on child drags whose formulas reach upstream to a parent — was triaged but not resolved before mothballing. Jonathan rejected the most-recently-proposed compensations as "too complex" and suggested the residual is just plane-projection geometry; co's proposals never matched that framing.

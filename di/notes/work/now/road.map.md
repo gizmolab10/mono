@@ -14,7 +14,7 @@
 - Milestones 1–26 are complete. See [completed milestones](../milestones/done/).
 - Milestones 27–31 are open and unstarted.
 - Milestone 32 (facets) is mothballed.
-- Active work: See [the current handoff](di/notes/work/now/handoff.md).
+- Active work: See [the current handoff](./handoff.md).
 
 ## Goal
 

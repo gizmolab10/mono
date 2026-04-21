@@ -5,10 +5,10 @@ Right now i want to do a rational assessment of facets. my curiosity and vanity 
 **Date:** 2026-04-03
 
 **Reading order — companion files:**
-- [handoff.md](di/notes/work/milestones/done/32.facets/slow/handoff.md) — what's being worked on right now, what's blocked, what was just solved
-- [done/topology.md](topology.md) — how the pipeline works step by step (the *how*)
-- [lessons.md](di/notes/work/milestones/33.drag/lessons.md) — mistakes not to repeat
-- [designs/](designs/) — the design spec for the simpler topology rewrite
+- [handoff.md](../slow/handoff.md) — what's being worked on right now, what's blocked, what was just solved
+- [done/topology.md](../../../../done/topology.md) — how the pipeline works step by step (the *how*)
+- [lessons.md](../../../33.drag/lessons.md) — mistakes not to repeat
+- [simpler design.md](./simpler%20design.md) — the design spec for the simpler topology rewrite
 - This file — the *why* and *whether*: theory, sources, trajectory, and the folly-or-summit question
 
 ## Folly / summit?

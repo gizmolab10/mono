@@ -54,6 +54,10 @@ export default defineConfig({
     sidebar: {
       '/ws/': [
         {
+          text: 'Mj',
+          link: '/mj'
+        },
+        {
           text: 'Di >',
           collapsed: true,
           items: [
@@ -134,6 +138,10 @@ export default defineConfig({
                         {
                           text: 'Quaternions',
                           link: '/di/notes/architecture/graph/quaternions'
+                        },
+                        {
+                          text: 'Render',
+                          link: '/di/notes/architecture/graph/render'
                         },
                         {
                           text: 'Rendering.types',
@@ -278,30 +286,6 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     {
-                      text: 'Chat',
-                      link: '/di/notes/work/chat'
-                    },
-                    {
-                      text: 'Code.debt',
-                      link: '/di/notes/work/code.debt'
-                    },
-                    {
-                      text: 'Collaboration Priorities',
-                      link: '/di/notes/work/collaboration priorities'
-                    },
-                    {
-                      text: 'Revisit.di',
-                      link: '/di/notes/work/revisit.di'
-                    },
-                    {
-                      text: 'Skills',
-                      link: '/di/notes/work/skills'
-                    },
-                    {
-                      text: 'Working Features',
-                      link: '/di/notes/work/working features'
-                    },
-                    {
                       text: 'Done >',
                       link: '/di/notes/work/done/',
                       collapsed: true,
@@ -311,8 +295,12 @@ export default defineConfig({
                           link: '/di/notes/work/done/article.first.draft'
                         },
                         {
-                          text: 'Code.debt.done',
-                          link: '/di/notes/work/done/code.debt.done'
+                          text: 'Chat',
+                          link: '/di/notes/work/done/chat'
+                        },
+                        {
+                          text: 'Code.debt.paid',
+                          link: '/di/notes/work/done/code.debt.paid'
                         },
                         {
                           text: 'Cruft',
@@ -327,8 +315,20 @@ export default defineConfig({
                           link: '/di/notes/work/done/layout-algorithm'
                         },
                         {
+                          text: 'Pipeline',
+                          link: '/di/notes/work/done/pipeline'
+                        },
+                        {
+                          text: 'Propagating Value Changes',
+                          link: '/di/notes/work/done/propagating value changes'
+                        },
+                        {
                           text: 'Quaternions',
                           link: '/di/notes/work/done/quaternions'
+                        },
+                        {
+                          text: 'Render',
+                          link: '/di/notes/work/done/render'
                         },
                         {
                           text: 'Rotation',
@@ -339,8 +339,28 @@ export default defineConfig({
                           link: '/di/notes/work/done/scene.model'
                         },
                         {
+                          text: 'Separators',
+                          link: '/di/notes/work/done/separators'
+                        },
+                        {
+                          text: 'Skills',
+                          link: '/di/notes/work/done/skills'
+                        },
+                        {
                           text: 'Svelte',
                           link: '/di/notes/work/done/svelte'
+                        },
+                        {
+                          text: 'Topology',
+                          link: '/di/notes/work/done/topology'
+                        },
+                        {
+                          text: 'Version.9',
+                          link: '/di/notes/work/done/version.9'
+                        },
+                        {
+                          text: 'What',
+                          link: '/di/notes/work/done/what'
                         }
                       ]
                     },
@@ -350,28 +370,34 @@ export default defineConfig({
                       collapsed: true,
                       items: [
                         {
-                          text: '25.selection.algorithm',
-                          link: '/di/notes/work/milestones/25.selection.algorithm'
+                          text: '28.cut.lists',
+                          link: '/di/notes/work/milestones/28.cut.lists'
                         },
                         {
-                          text: '26.cut.lists',
-                          link: '/di/notes/work/milestones/26.cut.lists'
+                          text: '29.user.manual',
+                          link: '/di/notes/work/milestones/29.user.manual'
                         },
                         {
-                          text: '27.colors',
-                          link: '/di/notes/work/milestones/27.colors'
+                          text: '30.licensing',
+                          link: '/di/notes/work/milestones/30.licensing'
                         },
                         {
-                          text: '28.user.manual',
-                          link: '/di/notes/work/milestones/28.user.manual'
+                          text: '31.marketing',
+                          link: '/di/notes/work/milestones/31.marketing'
                         },
                         {
-                          text: '29.licensing',
-                          link: '/di/notes/work/milestones/29.licensing'
-                        },
-                        {
-                          text: '30.marketing',
-                          link: '/di/notes/work/milestones/30.marketing'
+                          text: '33.drag >',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Handoff',
+                              link: '/di/notes/work/milestones/33.drag/handoff'
+                            },
+                            {
+                              text: 'Lessons',
+                              link: '/di/notes/work/milestones/33.drag/lessons'
+                            }
+                          ]
                         },
                         {
                           text: 'Done >',
@@ -415,8 +441,8 @@ export default defineConfig({
                               link: '/di/notes/work/milestones/done/17.library'
                             },
                             {
-                              text: '18.user.constants',
-                              link: '/di/notes/work/milestones/done/18.user.constants'
+                              text: '18.givens',
+                              link: '/di/notes/work/milestones/done/18.givens'
                             },
                             {
                               text: '19.angles',
@@ -447,6 +473,14 @@ export default defineConfig({
                               link: '/di/notes/work/milestones/done/24.mobile.devices'
                             },
                             {
+                              text: '25.errors',
+                              link: '/di/notes/work/milestones/done/25.errors'
+                            },
+                            {
+                              text: '26.lacemaker',
+                              link: '/di/notes/work/milestones/done/26.lacemaker'
+                            },
+                            {
                               text: '3.docs',
                               link: '/di/notes/work/milestones/done/3.docs'
                             },
@@ -475,8 +509,100 @@ export default defineConfig({
                               link: '/di/notes/work/milestones/done/9.persistence'
                             },
                             {
-                              text: 'Road.map',
-                              link: '/di/notes/work/milestones/done/road.map'
+                              text: '32.facets >',
+                              collapsed: true,
+                              items: [
+                                {
+                                  text: '32.facets',
+                                  link: '/di/notes/work/milestones/done/32.facets/32.facets'
+                                },
+                                {
+                                  text: 'Handoff',
+                                  link: '/di/notes/work/milestones/done/32.facets/handoff'
+                                },
+                                {
+                                  text: 'History',
+                                  link: '/di/notes/work/milestones/done/32.facets/history'
+                                },
+                                {
+                                  text: 'Lessons',
+                                  link: '/di/notes/work/milestones/done/32.facets/lessons'
+                                },
+                                {
+                                  text: 'Designs >',
+                                  collapsed: true,
+                                  items: [
+                                    {
+                                      text: '3D Sweep Algorithm',
+                                      link: '/di/notes/work/milestones/done/32.facets/designs/3D sweep algorithm'
+                                    },
+                                    {
+                                      text: 'Pipeline',
+                                      link: '/di/notes/work/milestones/done/32.facets/designs/pipeline'
+                                    },
+                                    {
+                                      text: 'Simpler Design',
+                                      link: '/di/notes/work/milestones/done/32.facets/designs/simpler design'
+                                    },
+                                    {
+                                      text: 'Standard.facets',
+                                      link: '/di/notes/work/milestones/done/32.facets/designs/standard.facets'
+                                    },
+                                    {
+                                      text: 'Stipulations',
+                                      link: '/di/notes/work/milestones/done/32.facets/designs/stipulations'
+                                    },
+                                    {
+                                      text: 'Theory',
+                                      link: '/di/notes/work/milestones/done/32.facets/designs/theory'
+                                    }
+                                  ]
+                                },
+                                {
+                                  text: 'Slow >',
+                                  collapsed: true,
+                                  items: [
+                                    {
+                                      text: 'Bottlenecks',
+                                      link: '/di/notes/work/milestones/done/32.facets/slow/bottlenecks'
+                                    },
+                                    {
+                                      text: 'Handoff',
+                                      link: '/di/notes/work/milestones/done/32.facets/slow/handoff'
+                                    },
+                                    {
+                                      text: 'Render Is Stale',
+                                      link: '/di/notes/work/milestones/done/32.facets/slow/render is stale'
+                                    },
+                                    {
+                                      text: 'Summary',
+                                      link: '/di/notes/work/milestones/done/32.facets/slow/summary'
+                                    }
+                                  ]
+                                },
+                                {
+                                  text: 'Use Cases >',
+                                  collapsed: true,
+                                  items: [
+                                    {
+                                      text: 'Use Case 3',
+                                      link: '/di/notes/work/milestones/done/32.facets/use cases/use case 3'
+                                    },
+                                    {
+                                      text: 'Use Case 4',
+                                      link: '/di/notes/work/milestones/done/32.facets/use cases/use case 4'
+                                    },
+                                    {
+                                      text: 'Use Case 5',
+                                      link: '/di/notes/work/milestones/done/32.facets/use cases/use case 5'
+                                    },
+                                    {
+                                      text: 'Use Case 6',
+                                      link: '/di/notes/work/milestones/done/32.facets/use cases/use case 6'
+                                    }
+                                  ]
+                                }
+                              ]
                             }
                           ]
                         }
@@ -487,6 +613,18 @@ export default defineConfig({
                       link: '/di/notes/work/next/',
                       collapsed: true,
                       items: [
+                        {
+                          text: 'Collaboration Priorities',
+                          link: '/di/notes/work/next/collaboration priorities'
+                        },
+                        {
+                          text: 'Colors',
+                          link: '/di/notes/work/next/colors'
+                        },
+                        {
+                          text: 'Data Schema For Wendy',
+                          link: '/di/notes/work/next/data schema for wendy'
+                        },
                         {
                           text: 'Pacing',
                           link: '/di/notes/work/next/pacing'
@@ -502,6 +640,57 @@ export default defineConfig({
                         {
                           text: 'Separators',
                           link: '/di/notes/work/next/separators'
+                        },
+                        {
+                          text: 'Snap.pin',
+                          link: '/di/notes/work/next/snap.pin'
+                        }
+                      ]
+                    },
+                    {
+                      text: 'Now >',
+                      link: '/di/notes/work/now/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: '27.selection.algorithm',
+                          link: '/di/notes/work/now/27.selection.algorithm'
+                        },
+                        {
+                          text: 'Cadence',
+                          link: '/di/notes/work/now/cadence'
+                        },
+                        {
+                          text: 'Code.debt',
+                          link: '/di/notes/work/now/code.debt'
+                        },
+                        {
+                          text: 'Handoff',
+                          link: '/di/notes/work/now/handoff'
+                        },
+                        {
+                          text: 'Key Paths',
+                          link: '/di/notes/work/now/key paths'
+                        },
+                        {
+                          text: 'Learn',
+                          link: '/di/notes/work/now/learn'
+                        },
+                        {
+                          text: 'Revisit.di',
+                          link: '/di/notes/work/now/revisit.di'
+                        },
+                        {
+                          text: 'Road.map',
+                          link: '/di/notes/work/now/road.map'
+                        },
+                        {
+                          text: 'Technique',
+                          link: '/di/notes/work/now/technique'
+                        },
+                        {
+                          text: 'Working Features',
+                          link: '/di/notes/work/now/working features'
                         }
                       ]
                     }
@@ -693,8 +882,20 @@ export default defineConfig({
                       link: '/notes/guides/collaborate/chat'
                     },
                     {
+                      text: 'Creating A Design',
+                      link: '/notes/guides/collaborate/creating a design'
+                    },
+                    {
                       text: 'Exclude',
                       link: '/notes/guides/collaborate/exclude'
+                    },
+                    {
+                      text: 'Expectations',
+                      link: '/notes/guides/collaborate/expectations'
+                    },
+                    {
+                      text: 'Framing Filters',
+                      link: '/notes/guides/collaborate/framing filters'
                     },
                     {
                       text: 'Journals',
@@ -729,6 +930,10 @@ export default defineConfig({
                     {
                       text: 'Aesthetics',
                       link: '/notes/guides/develop/aesthetics'
+                    },
+                    {
+                      text: 'Build Notes',
+                      link: '/notes/guides/develop/build notes'
                     },
                     {
                       text: 'Build',

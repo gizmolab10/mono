@@ -275,6 +275,18 @@ class Tokenizer {
 		return changed;
 	}
 
+	/** Rename the object of reference tokens. Returns true if any token was changed. */
+	rename_object(tokens: Token[], old_name: string, new_name: string): boolean {
+		let changed = false;
+		for (const token of tokens) {
+			if (token.type === 'reference' && token.object === old_name) {
+				token.object = new_name;
+				changed = true;
+			}
+		}
+		return changed;
+	}
+
 	/** Reconstruct a formula string from tokens.
 	 *  Spaces around operators; compound imperial spacing preserved in source. */
 	untokenize(tokens: Token[]): string {

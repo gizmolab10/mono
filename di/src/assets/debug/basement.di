@@ -315,7 +315,7 @@
         "name": "center beam",
         "x": {
           "attributes": {
-            "origin": 5175.250000000001,
+            "origin": 5175.25,
             "extent": {
               "formula": "outer street wall.e"
             },
@@ -334,7 +334,7 @@
             "extent": {
               "formula": "outer street wall.s"
             },
-            "length": 6654.800000001803,
+            "length": 6721.604687501803,
             "angle": 0
           },
           "invariant": 2
@@ -365,10 +365,9 @@
               "formula": "back wall.e"
             },
             "extent": {
-              "formula": "jog wall.x",
-              "attached": true
+              "formula": "jog wall.s"
             },
-            "length": 5270.5,
+            "length": 5246.462888717651,
             "angle": 0
           },
           "invariant": 2
@@ -378,7 +377,7 @@
             "origin": {
               "formula": ".e - stud width"
             },
-            "extent": 0,
+            "extent": 66.8046875,
             "length": {
               "formula": "stud width"
             },
@@ -434,7 +433,7 @@
             "extent": {
               "formula": "outer street wall.e"
             },
-            "length": 1657.350000001804,
+            "length": 1724.154687501804,
             "angle": 0
           },
           "invariant": 2
@@ -475,8 +474,10 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": -5194.300000001803,
-            "length": 1549.3999999999996,
+            "extent": {
+              "formula": "stair wall.e"
+            },
+            "length": 1384.3000000000002,
             "angle": 0
           },
           "invariant": 2
@@ -587,6 +588,55 @@
         },
         "visible": true,
         "hide_children": false,
+        "parent_id": "didc4131a9e6d366"
+      },
+      {
+        "id": "die642d385191a9e",
+        "name": "stair wall",
+        "x": {
+          "attributes": {
+            "origin": 1809.75,
+            "extent": {
+              "formula": "jog wall.x"
+            },
+            "length": 3549.6499999999996,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": 1295.4,
+            "extent": -5359.400000001802,
+            "length": {
+              "formula": "stud width"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 3207.7481243133543,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "repeater": {
+          "spacing": 406.4,
+          "firewall": true,
+          "is_repeating": true,
+          "run_axis": 1,
+          "is_diagonal": false
+        },
         "parent_id": "didc4131a9e6d366"
       }
     ],
@@ -700,7 +750,7 @@
       ]
     },
     "root_id": "didc4131a9e6d366",
-    "selected_id": "die74e6990e5e2ec",
-    "selected_face": 4
+    "selected_id": "didc4131a9e6d366",
+    "selected_face": 1
   }
 }

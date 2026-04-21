@@ -1,8 +1,8 @@
 import { scenes, stores, history, selection } from '../managers';
 import type { Label_Rect, S_Name } from '../types/Interfaces';
 import { T_Editing, T_Hit_3D } from '../types/Enumerations';
-import { stale_writable } from '../common/Dirty';
 import type { Hit_3D_Result } from '../events/Hits_3D';
+import { stale_writable } from '../common/Dirty';
 import { hits_3d } from '../events/Hits_3D';
 import { render } from '../render/Render';
 import { get } from 'svelte/store';

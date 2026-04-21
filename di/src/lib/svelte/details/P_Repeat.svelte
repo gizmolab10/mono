@@ -247,7 +247,9 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 		{/if}
 	</div>
 {:else if selected_so && !has_children}
-	<div class='hint'>need one child for the template</div>
+	<div class='repeater-option-row' style:justify-content='center' style:padding-bottom='2px'>
+		<button class='action-button' use:hit_target={{ id: 'add-template', onpress: () => engine.add_template_child_so() }}>add template</button>
+	</div>
 {:else if selected_so}
 	<div class='repeater-option-row' style:justify-content='center' style:padding-bottom='2px'>
 		<div class='segmented'>
@@ -403,10 +405,4 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 		background : var(--hover);
 	}
 
-	.hint {
-		font-size   : var(--h-font-common);
-		text-align  : center;
-		opacity     : 0.5;
-		line-height : 1;
-	}
 </style>

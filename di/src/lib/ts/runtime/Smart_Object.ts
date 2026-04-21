@@ -329,6 +329,28 @@ export default class Smart_Object extends Identifiable {
 		return { child, formulas: {} };
 	}
 
+	/** Create a child SO identical in size to this parent — seeds a repeater template.
+	 *  Always named "template"; siblings-only uniqueness rule lets each parent have its own. */
+	create_template_child(): Smart_Object {
+		const name = 'template';
+
+		const child = new Smart_Object(name);
+
+		// Fill the parent exactly: min bounds at parent origin, max bounds at parent's max.
+		child.attributes_dict_byName['x_min'].value = 0;
+		child.attributes_dict_byName['y_min'].value = 0;
+		child.attributes_dict_byName['z_min'].value = 0;
+		child.attributes_dict_byName['x_max'].value = 0;
+		child.attributes_dict_byName['y_max'].value = 0;
+		child.attributes_dict_byName['z_max'].value = 0;
+
+		child.axes[0].length.value = this.width;
+		child.axes[1].length.value = this.depth;
+		child.axes[2].length.value = this.height;
+
+		return child;
+	}
+
 	// ═══════════════════════════════════════════════════════════════════
 	// ORIENTATION — compose non-zero axes in rotation_order
 	// ═══════════════════════════════════════════════════════════════════

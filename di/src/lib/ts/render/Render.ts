@@ -2253,7 +2253,10 @@ class Render {
 	private render_face_names(obj: O_Scene, projected: Projected[], world?: mat4): void {
 		if (!obj.faces) return;
 		const ctx = this.ctx;
-		ctx.font = '10px sans-serif';
+		const font_size = k.height.font.large;
+		const box_h = font_size + 2;
+		const half_box_h = box_h / 2;
+		ctx.font = `${font_size}px sans-serif`;
 		ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
@@ -2286,13 +2289,13 @@ class Render {
 			const fls = face_label.state;
 			if (!fls || fls.so !== obj.so || fls.face_index !== fi) {
 				ctx.fillStyle = 'white';
-				ctx.fillRect(Math.round(cx) - tw / 2 - 2, Math.round(cy) - 6, tw + 4, 12);
+				ctx.fillRect(Math.round(cx) - tw / 2 - 2, Math.round(cy) - half_box_h, tw + 4, box_h);
 				ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
 				ctx.fillText(text, Math.round(cx), Math.round(cy));
 			}
 
 			// Record hit rect for every visible face label (all are clickable)
-			this.face_name_rects.push({ so: obj.so, x: cx, y: cy, w: tw, h: 10, z: cz, face_index: fi });
+			this.face_name_rects.push({ so: obj.so, x: cx, y: cy, w: tw, h: font_size, z: cz, face_index: fi });
 		}
 	}
 

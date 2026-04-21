@@ -1,13 +1,17 @@
 # Code-Debt Handoff
 
-**Date:** 2026-04-19
-**Work stream:** items from [code.debt.md](di/notes/work/now/code.debt.md), one item at a time, plus continuing internal cleanup of the manager layer.
+**Date:** 2026-04-20
+**Work stream:** items from [code.debt.md](./code.debt.md), one item at a time. Several small bugs surfaced and were fixed alongside the planned items.
 
 ---
 
 ## Next
 
-The first unchecked code-debt item is about the on-face name labels — decide whether to remove them entirely, and if kept, raise the font size. No proposal is on the table yet. Propose next.
+The first unchecked code-debt item now points at the selection-algorithm milestone — a grouping of related selection improvements: drag dots that only appear on hover and on the not-quite-forward face, mouse-driven drill-down into nested parts, rubber-band rectangles that re-centre and zoom, a recentre button on the controls strip, and a command-drag that shifts the rotation centre so the canvas follows the mouse. No proposal is on the table yet. Propose next.
+
+For evidence:
+
+- the milestone notes are at [di/notes/work/now/27.selection.algorithm.md](./27.selection.algorithm.md)
 
 ## Where we are
 
@@ -15,7 +19,7 @@ The first unchecked code-debt item is about the on-face name labels — decide w
 - **Row numbers replaced the sibling numbers in the leftmost column.** Each row in the parts table now shows its position in the visible list (zero for the root, blank there; one for the next row, and so on). The old helper that computed "which sibling am I among my parent's children" was removed since nothing else used it.
 - **The selected-part position label at the top of the details panel now matches the row number.** When the parts table is hidden, the little "X of Y" label above the selected part's name uses the same visible-row count — X is the row number, Y is the total number of visible rows. Blank when the root is selected.
 - **The hide-list now persists across reloads.** The list of rows whose children are hidden is saved to the browser's local storage and restored on next launch. A new helper on the preferences object handles the array-to-set and back conversion so the stored shape stays small.
-- **Second pass of render-pipeline performance is shipped and measured.** Three of five proposals landed — the edge-versus-face clipping no longer allocates inside its inner loop, the hottest allocation sites in the paint now write into pre-built reusable math objects, and the dashed-grey pass for hidden parts stopped asking for metadata it throws away. Two proposals (moving strings below early-outs in the cross-object face-pair loop, and packing vertex-pair names as single numbers) were deferred because the changes would ripple through multiple stored data shapes across the file for a modest payoff. All changes sit behind a one-line rollback switch in the renderer file. Five hundred fourteen tests still pass; type-check clean. Full status recorded in [bottlenecks.md](di/notes/work/milestones/done/32.facets/slow/bottlenecks.md).
+- **Second pass of render-pipeline performance is shipped and measured.** Three of five proposals landed — the edge-versus-face clipping no longer allocates inside its inner loop, the hottest allocation sites in the paint now write into pre-built reusable math objects, and the dashed-grey pass for hidden parts stopped asking for metadata it throws away. Two proposals (moving strings below early-outs in the cross-object face-pair loop, and packing vertex-pair names as single numbers) were deferred because the changes would ripple through multiple stored data shapes across the file for a modest payoff. All changes sit behind a one-line rollback switch in the renderer file. Five hundred fourteen tests still pass; type-check clean. Full status recorded in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md).
 - **Tumble timing instrumentation is wired in and currently silent.** A per-paint clock and a phase breakdown plus counters for the cross-object pair loop live in the renderer and the engine loop. A single constant at the top of the engine file turns everything on. The per-second console summary is commented out for now. When the numbers are needed again, uncomment the summary block and flip the constant to true.
 
 ## What the tumble measurement told us
@@ -24,13 +28,15 @@ At roughly a hundred parts where every part's outer box overlaps every other, th
 
 ## Open items
 
-- **Up/down arrow in the parts table skips two rows per press on Jonathan's scene.** I could not reproduce from reading the code — the arrow-navigation list and the table-display list look like the same filter. Jonathan reports pressing down from the top row lands on the row three deeper in the family tree instead of the next row. Still open. Need more detail about the scene (whether any row shows a repeater "×N" badge, and whether the table displays all four rows or only two) before a fix can be made.
-- **Face-label question.** Next unchecked item — propose. Decide whether to remove the on-face name labels entirely; if kept, make their font bigger.
-- **Redo for undo.** No proposal yet.
-- **Color sub-list.** Starts with "dots: larger white filled circular bordered" under hover color. Also: white text for selected when background is too dark; the cross icon in the attributes table is too faint; and a hand cursor over hover dot and selected face, otherwise pointer.
-- **Givens for angles** and **rename library items** moved into the leftovers section of code.debt.
-- **Mothballed: residual child-drag drift.** Parked in [milestone 33](di/notes/work/milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
-- **Mothballed: allocation-cluster and string-key performance bullets.** Left as deferred in [bottlenecks.md](di/notes/work/milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
+- **Delete on a non-repeater grandchild leaves the part still listed.** Jonathan reports: select a child of a child of root, press delete, the selection clears but the part stays in the parts table. Static analysis ruled out the repeater-regeneration angle and the early-return paths. Most likely cause is an exception thrown between selection-clear and the parts-list rewrite — the formula-reference walker is the most fragile step. Still open. Need a console error message or a small repro scene to pin the failing step.
+- **Up/down arrow in the parts table skips two rows per press on Jonathan's scene.** Same status as the prior session — could not reproduce from reading the code. Need more detail about the scene before a fix can be made.
+- **Identity-based formula storage.** Today's targeted rename helper closed the immediate bug, but the deeper fix is to store formula references by part identity rather than by a snapshot of the part's name. Recorded as a future structural refactor; see the rename-bug discussion in today's session below.
+- **Selection-algorithm milestone.** Next on the code-debt list — propose. Covers drag-dot visibility, mouse drill-down, rubber-band re-centre and zoom, recentre control, and command-drag follow.
+- **Arrow keys nudge SO position**, **print just the graph scaled to fit**, **move-up / move-down buttons in the parts table**, and **move-to-child / become-parent buttons** sit on the code-debt list after the selection-algorithm milestone.
+- **Color leftovers.** Two unchecked items remain in the colour family: white text for selected rows when the background is too dark, and a hand cursor over hover dots and the selected face (with a pointing-finger cursor everywhere else).
+- **Givens for angles** and **rename library items** sit in the leftovers section of code.debt.
+- **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
+- **Mothballed: allocation-cluster and string-key performance bullets.** Left as deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
 ## Notes for future sessions
 
@@ -39,6 +45,58 @@ At roughly a hundred parts where every part's outer box overlaps every other, th
 - The drag work has its own mothballed handoff at `di/notes/work/milestones/33.drag/handoff.md`.
 - The `handoff` and `hands` shorthands point at this file.
 - The tumble instrumentation is in place but silent. Flip the constant at the top of the engine file to true, uncomment the per-second summary block inside the render loop, reload, and the console will print timings and counters again.
+
+---
+
+## Session — 2026-04-20 — repeater template button, sibling-only names, formula rename, key-paths reference
+
+Five threads in sequence.
+
+### Thread one — add-template button for repeaters
+
+Code-debt item shipped: when you select a part that has no children and open the repeat panel, the panel used to show only a small grey hint saying "need one child for the template". It now shows a real button labelled "add template". Clicking it creates one child sized identically to the parent — same width, depth, and height, placed at the parent's origin so it fills the parent exactly — names the new child "template", selects the new child, and re-renders the panel into the straight-or-diagonal chooser. The new child is always visible regardless of the parent's visibility flag.
+
+### Thread two — sibling-only name uniqueness
+
+The name-validation rule used to reject any name that any other part anywhere in the scene already had. The user reported wanting to use the same name on parts under different parents — for example, "drawer" inside a cabinet and "drawer" inside a kitchen layout. The validator was changed to scope the duplicate check to siblings of the part being renamed: cousins under different parents may now share names. Givens stay globally unique. Two new tests pin both directions of the new rule. The formula resolver was already scope-aware (it walks up the parent chain looking only at siblings at each level), so writer and reader are now consistent.
+
+### Thread three — investigated a delete-not-removing-part bug
+
+Jonathan reported: selecting a non-repeater grandchild and pressing delete clears the selection but the part stays in the parts table. Walked the delete routine in detail, ruled out the repeater-regeneration theory and the early-return paths, and arrived at the most likely remaining culprit — an exception thrown between the selection-clear step and the parts-list rewrite step, with the formula-reference walker being the most fragile candidate. Could not pin the failing step from static analysis alone. Open in the open-items section above; needs a console error message or a small repro scene.
+
+### Thread four — formula rename helper, plus a structural-direction note
+
+Jonathan reported: rename a part that another part's formula references; the formula text still shows the old name. Traced the cause: formulas hold reference tokens whose object field is the referenced part's name, not its identity. The compiled form binds names to identities at compile time, so evaluation kept giving correct numbers, but the displayed text and the on-disk save kept the old name — and a reload would fail to re-bind because the saved text held a name no part in the scene had any more.
+
+Two routes were laid out. The targeted route mirrors the existing given-rename helper: walk every formula in the scene, rewrite reference tokens whose object equals the old name, recompile, re-bind. The structural route — store reference tokens by identity, not by name — was analysed in pros-and-cons and recorded as a future structural direction (see open items). The targeted route landed today: a new tokeniser helper that rewrites the object field of reference tokens, a new constraints helper that uses it across the whole scene, and a call from the part-rename flow right after assigning the new name.
+
+A small clean-up went with it: the template-child creator was simplified to always name the new child "template" (no uniquify loop) and its now-unused argument was removed from the definition and its one caller — aligned with the new sibling-only uniqueness rule.
+
+### Thread five — key-paths reference doc
+
+A two-column table of every keyboard binding in the app, grouped by the context the key fires in. Keys mean different things on the canvas, inside a value cell, inside a name cell, inside a dimension or angle input, and inside the build-notes modal. Lives at [di/notes/work/now/key paths.md](./key%20paths.md).
+
+### What shipped — 2026-04-20
+
+- "Add template" button in the repeat panel for parts without children, plus the engine and runtime helpers behind it. New child is sized identically to its parent, named "template", and selected.
+- The sibling-only name-uniqueness rule, with two new tests pinning the cousin-allowed and sibling-rejected directions.
+- Formula reference tokens now follow part renames: a new tokeniser helper, a new constraints helper, and a call from the part-rename flow.
+- A small reference document listing every keyboard binding by context.
+
+### Files touched — 2026-04-20
+
+- New child-creator: [di/src/lib/ts/runtime/Smart_Object.ts](di/src/lib/ts/runtime/Smart_Object.ts).
+- New engine wrapper for the add-template flow: [di/src/lib/ts/render/Engine.ts](di/src/lib/ts/render/Engine.ts).
+- Repeat panel button: [di/src/lib/svelte/details/P_Repeat.svelte](di/src/lib/svelte/details/P_Repeat.svelte).
+- Sibling-only name rule and its tests: [di/src/lib/ts/algebra/Errors.ts](di/src/lib/ts/algebra/Errors.ts), [di/src/lib/ts/tests/Errors.test.ts](di/src/lib/ts/tests/Errors.test.ts).
+- Token-rename helper: [di/src/lib/ts/algebra/Tokenizer.ts](di/src/lib/ts/algebra/Tokenizer.ts). Constraints helper that uses it: [di/src/lib/ts/algebra/Constraints.ts](di/src/lib/ts/algebra/Constraints.ts). Called from: [di/src/lib/svelte/details/D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
+- New reference doc: [di/notes/work/now/key paths.md](./key%20paths.md).
+- Code-debt list: [di/notes/work/now/code.debt.md](./code.debt.md).
+
+### Verification — 2026-04-20
+
+- Type-checker: zero errors, zero warnings after each step.
+- Test suite: now five hundred eighteen tests, two more than at the end of the prior session, all green.
 
 ---
 
@@ -88,11 +146,65 @@ A small shared font-size constant for these buttons was added in the constants t
 - Triangle hit area: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
 - Banner left slot: [Hideable.svelte](di/src/lib/svelte/details/Hideable.svelte), [Details.svelte](di/src/lib/svelte/details/Details.svelte). Removed buttons from [D_Preferences.svelte](di/src/lib/svelte/details/D_Preferences.svelte) and [D_Library.svelte](di/src/lib/svelte/details/D_Library.svelte). Helper added in [Scenes.ts](di/src/lib/ts/managers/Scenes.ts).
 - Constants and root variables: [Constants.ts](di/src/lib/ts/common/Constants.ts), [App.svelte](di/src/App.svelte).
-- Code-debt list: [code.debt.md](di/notes/work/now/code.debt.md).
+- Code-debt list: [code.debt.md](./code.debt.md).
 
 ### Verification — 2026-04-19
 
 - Type-checker: zero errors, zero warnings after each step.
+
+---
+
+## Session — 2026-04-19 (continued) — file rename, face labels, undo/redo fix, build-notes table
+
+Five smaller threads ran after the earlier session, each closing a code-debt item or a polish target.
+
+### Thread one — rename of the canvas-stale helper file
+
+Walked through the naming options in a short pros-and-cons cycle: render-gate, an interface-style prefix, stall-render, and finally the bare word "dirty". Picked the bare word — it matches the existing one-word file-naming pattern in the project, it is the long-standing software term for "modified, needs re-processing", and it leaves room for any future second consumer that wants to react to changes. Renamed the file, redirected the ten consumer files that imported it, and updated the file-map note.
+
+### Thread two — face-label font
+
+Bumped the on-canvas face name labels from a hard-coded ten-pixel size to the project's preset large size — about twenty-two pixels. The white background plate behind each label and the recorded clickable footprint each derive from the new font size, so the box still hugs the text and the labels are still hittable.
+
+### Thread three — undo and redo
+
+Investigated the long-standing redo question on the code-debt list. Found that the redo machinery was fully built — the stack, the method, the keyboard chord — but a single shared call inside both step-back and step-forward asked the scene-load routine to wipe history every time either ran. The doc comment on the scene-load routine already said the call should not wipe in this case; the code did not match the comment. Two-character fix in the engine. After the fix you can step back many times and step forward to undo each step back, and the chain holds together.
+
+A small focused test landed alongside: it pretends the scene-capture call returns whatever marker we hand it, snapshots five marker values, walks back five steps, then walks forward five steps, and asserts the chain returns to where it started. A second test pins the existing rule that taking a fresh snapshot after stepping back wipes the forward chain.
+
+### Thread four — attribute-table cross thickness
+
+The little X marker that signals an invariant in the attributes table was too faint to read. Each diagonal line was drawn half a pixel wide, which the browser anti-aliases to a soft grey hairline. Bumped the offset to draw three-pixel-wide lines instead, in two steps. The hover-time variant was proposed (also draw the cross on hover, darker and thicker), discussed, and rejected as not needed.
+
+### Thread five — build-notes table
+
+Walked the git history from the previous build-notes entry through today, separated significant feature shipments from cosmetic tweaks, bug fixes, and mothballed branches, and added twenty-four new entries to the build-notes table. The bundler reads that markdown file at build time and turns each row into a small entry the in-app build-notes panel renders.
+
+A couple of small clean-ups along the way: removed an unused separator import from the attributes panel that was a leftover from a prior edit; renamed a font-size constant the user had switched from one purpose name to another so the two consumers and the published style variable stayed aligned.
+
+### What shipped — 2026-04-19 (continued)
+
+- The canvas-stale helper file is renamed to a one-word concept name; the ten consumers and the file-map note follow.
+- The on-canvas face name labels render at twenty-two pixels instead of ten; the white plate and the click footprint scale with the font.
+- Undo and redo now keep the history alive across each step-back and step-forward; you can step many times in either direction.
+- Two new tests pin the back-and-forward chain inside the history machinery and the rule that fresh snapshots wipe the forward chain.
+- The attribute-table invariant cross is now drawn three pixels wide per diagonal instead of half a pixel.
+- The build-notes table grew by twenty-four entries covering work from late February through today.
+
+### Files touched — 2026-04-19 (continued)
+
+- File rename: [Dirty.ts](di/src/lib/ts/common/Dirty.ts) (was Stale_Writable.ts). Imports updated in [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts), [Units.ts](di/src/lib/ts/types/Units.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Stores.ts](di/src/lib/ts/managers/Stores.ts), [Selection.ts](di/src/lib/ts/managers/Selection.ts), [Angular.ts](di/src/lib/ts/editors/Angular.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts), [Drag.ts](di/src/lib/ts/editors/Drag.ts), [Dimension.ts](di/src/lib/ts/editors/Dimension.ts), [Colors.ts](di/src/lib/ts/utilities/Colors.ts). File map: [map.md](../../map.md).
+- Face label font: [Render.ts](di/src/lib/ts/render/Render.ts).
+- Undo/redo fix: [Engine.ts](di/src/lib/ts/render/Engine.ts). New test: [History.test.ts](di/src/lib/ts/tests/History.test.ts).
+- Cross thickness: [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte). Unused import removed in the same file.
+- Build notes: [builds.md](di/src/lib/md/builds.md).
+- Constants and root variables: [Constants.ts](di/src/lib/ts/common/Constants.ts), [App.svelte](di/src/App.svelte).
+- Code-debt list: [code.debt.md](./code.debt.md).
+
+### Verification — 2026-04-19 (continued)
+
+- Type-checker: zero errors, zero warnings after each step.
+- Test suite: now five hundred sixteen tests, two more than before this session, all green.
 
 ---
 
@@ -136,8 +248,8 @@ Instrumentation was wired in so we could see where the paint actually spends its
 - Preferences (new key and set-persistence helper): [Preferences.ts](di/src/lib/ts/managers/Preferences.ts).
 - Parts table component (triangle click, hide-children count, parts-count): [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
 - Events (keyboard arrows defer to generational helpers): [Events.ts](di/src/lib/ts/events/Events.ts).
-- Bottlenecks write-up: [bottlenecks.md](di/notes/work/milestones/done/32.facets/slow/bottlenecks.md).
-- Code-debt list ticking items off: [code.debt.md](di/notes/work/now/code.debt.md).
+- Bottlenecks write-up: [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md).
+- Code-debt list ticking items off: [code.debt.md](./code.debt.md).
 
 ### Verification
 

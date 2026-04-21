@@ -2,34 +2,36 @@
 
 | Layer       | Status                                                                                                                                     |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Rendering   | Quaternions, wireframe, depth-based alpha, 2D infinite-zoom, face intersections, face label occlusion, face painting (partial, via facets) |
-| Main        | Three regions: controls, details, graph                                                                                                    |
+| Rendering   | Quaternions, wireframe, depth-based alpha, 2D infinite-zoom, background grid, face intersections, face label occlusion, shrink-to-fit with red dashed bbox for invisible parts |
+| Main        | Three regions -- controls, details, graph; Electron multi-window wrapper                                                                    |
 | Interaction | Hits managers -- 2D (RBush) and 3D, touch events (1-finger drag, 3-finger details)                                                         |
 | Docs        | VitePress configured, new guides content                                                                                                   |
-| Testing     | ~498 tests -- types, algebra, orientation, units, constraints, coordinates, topology                                                       |
-| Editing     | Select face, drag edge/vertex, inline dimension editing, face label editing, angular editing                                               |
-| Build Notes | 34 builds tracked                                                                                                                          |
+| Testing     | 518 tests -- types, algebra, orientation, units, constraints, coordinates, topology, history, errors                                       |
+| Editing     | Select face, drag edge/vertex, inline dimension editing, face label editing, angular editing, snap-and-pin                                 |
+| Build Notes | 57 builds tracked, paginated 10 at a time                                                                                                  |
 | Dimensions  | Dynamic value + layout, inline click-to-edit, unit-aware display                                                                           |
-| Controls    | Save, fit, straighten, edit/lock, decorations, 2D/3D, solid/x-ray, orient, scale, snap, color picker, responsive wrap                      |
+| Controls    | Save, fit, straighten, edit-lock, snap-lock, decorations, 2D/3D toggle, solid/x-ray, orient, scale, color picker, responsive wrap          |
 | Units       | mm storage, imperial fractions, compound display/parse, 22 units across 4 systems                                                          |
 | Persistence | JSON serialize, localStorage auto-save, camera state, file import/export                                                                   |
-| Hierarchy   | Parent-child SOs, named, add-child, ancestry, parent-relative offsets                                                                      |
-| Scenes      | SO, camera orientation, scale, hierarchy, constants                                                                                        |
-| Algebra     | Compiler, eval, reverse propagation, cycle detection, constraints                                                                          |
-| Orientation | Per-axis angles, axis compaction, swap axes, 90-degree steps, slider+sticky angles                                                         |
-| Formulas    | Aliases (x/X/w), dot-prefix parent refs, empty=offset, invariants                                                                          |
-| Details     | Hideable panels -- Prefs, Library, Parts; tabs + constants; precision, units, line thickness                                               |
-| Parts       | Hierarchy, position/size toggle, depth indent, repeat badges, select, name edit, 3 tabs                                                    |
-| Selection   | Duplicate, empty, repeat/unrepeat, visible toggle, repeater options                                                                        |
-| Rotation    | Axis picker, 90-degree steps, swap axes, angle slider with sticky, editable per-axis                                                       |
-| Attributes  | 9-row bounds (x/y/z/w/d/h/X/Y/Z), formula+value edit, invariants, rotation+lock                                                            |
-| Library     | Bundled .di presets, IndexedDB user files, import/click-load/option-insert                                                                 |
-| Constants   | Scene-wide named values, usable in all formulas, rename propagates                                                                         |
-| Repeaters   | Linear repeat, gap constraints, spacing presets, stairs/studs/joists, fireblocks                                                           |
-| Versions    | v1->v7 chain -- IDs, bounds->axes, offsets, constants, repeater fields                                                                     |
-| CSS Engine  | Design tokens from common_size, 3-tier pipeline (Constants -> CSS vars -> scoped styles), swept colors/fonts/spacing                       |
-| Undo        | Snapshot-based, Cmd+Z / Cmd+Shift+Z, 50-state stack, covers drag/rotate/edit/delete/add/rename                                             |
-| Mobile      | Touch-only input (no mouse wired), 3-finger details toggle, browser pinch-to-zoom, no hover                                                |
+| Hierarchy   | Parent-child SOs, ancestry, parent-relative offsets, sibling-only name uniqueness (cousins may share names)                                |
+| Scenes      | SO, camera orientation, scale, hierarchy, givens                                                                                           |
+| Algebra     | Compiler, evaluator, forward and reverse propagation through the AST, cycle detection, constraints, expanded error handling with suggestions |
+| Orientation | Per-axis angles, axis compaction, swap-two-axes, 90-degree steps, arbitrary-angle rotation, slider+sticky angles, root rotate with sticky dot |
+| Formulas    | Aliases (x/X/w), dot-prefix parent refs, empty=offset, invariants, name-with-spaces refs, follow part renames automatically                |
+| Details     | Hideable panels -- Preferences, Library, Parts; preferences and library each have a small action button on the left of the banner          |
+| Parts       | Hierarchy, position/size toggle, depth indent, repeat badges, select, name edit, row numbers, generational reveal/collapse (click triangle, arrow-left/right), arrow-up/down navigation, show-hidden-children count, persistent hide list |
+| Selection   | Add child, add template (sized to parent for repeater seed), duplicate, delete, repeat/unrepeat, visible toggle, repeater options          |
+| Rotation    | Axis picker, 90-degree steps, swap-two-axes, arbitrary-angle slider with sticky, editable per-axis, reset angle                            |
+| Attributes  | 9-row bounds (x/y/z/w/d/h/X/Y/Z), formula+value edit, invariants (cross marker), unlockable givens                                         |
+| Library     | Bundled .di presets, IndexedDB user files, import/click-load/option-insert, reinstall button on banner                                     |
+| Givens      | Scene-wide named values, usable in all formulas, rename propagates, lock toggle                                                            |
+| Repeaters   | Linear repeat, gap constraints, spacing presets, stairs/studs/joists, fireblocks, "add template" button when no children yet               |
+| Versions    | v1->v9 chain -- IDs, bounds->axes, offsets, constants->givens, repeater fields                                                             |
+| CSS Engine  | Design tokens from common_size, 3-tier pipeline (Constants -> CSS vars -> scoped styles), swept colours/fonts/spacing                      |
+| Undo        | Snapshot-based, Cmd+Z / Cmd+Shift+Z, 50-state stack, covers drag/rotate/edit/delete/add/rename, chain survives repeated steps              |
+| Mobile      | Touch-only input (no mouse wired), 3-finger details toggle, browser pinch-to-zoom, narrow-window controls layout                            |
 | Topology    | Unified endpoint pipeline -- intersection lines, edge splitting, endpoint identity, duplicate segment removal, nearby-point merge          |
 | Lacemaker   | Replaced old topology -- unified key system, renamed pipeline stages, eliminated three merge steps, 46 tests                               |
 | Facets      | Mothballed -- tracing, painting, even-odd fill work partially; blocked on clockwise direction inconsistency                                |
+| Performance | Two passes shipped -- pooled clipper, scratch math objects, dashed-grey light variant; behind one-line rollback switch; tumble timing in place but silent |
+| Managers    | Stores (session+persistent), Selection (paired read/write under one name), Parts (collapsed-rows + tree walks), Scenes, Preferences, History, Versions |

@@ -9,7 +9,7 @@
 	import { k } from '../../ts/common/Constants';
 	import P_Selected from './P_Selected.svelte';
 	import { units } from '../../ts/types/Units';
-	import { errors } from '../../ts/algebra';
+	import { errors, constraints } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
 
 	const { w_all_sos, w_tick, w_precision } = stores;
@@ -80,7 +80,9 @@
 				return;
 			}
 			history.snapshot();
+			const old_name = so.name;
 			so.name = trimmed.replace(/_/g, ' ');
+			if (so.name !== old_name) constraints.rename_so_in_formulas(old_name, so.name);
 			scenes.save();
 			stores.w_all_sos.update(sos => sos);
 		}

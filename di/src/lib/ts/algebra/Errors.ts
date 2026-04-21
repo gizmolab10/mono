@@ -294,7 +294,9 @@ class Errors {
 		return prev[a.length];
 	}
 
-	/** Validate a proposed name for an SO or given. Returns error message or null. */
+	/** Validate a proposed name for an SO or given. Returns error message or null.
+	 *  When renaming an SO, only its siblings are checked — a cousin under a
+	 *  different parent may share the same name. Givens remain globally unique. */
 	validate_name(name: string, exclude_so_id?: string, exclude_given_name?: string): string | null {
 		if (/[^a-zA-Z0-9_ ]/.test(name)) {
 			const bad = name.match(/[^a-zA-Z0-9_ ]+/)![0];
@@ -302,9 +304,19 @@ class Errors {
 		}
 		if (valid_attrs.includes(name)) return `'${name}' is a reserved attribute name.`;
 		const all = scene.get_all();
-		for (const o of all) {
-			if (o.so.id !== exclude_so_id && o.so.name === name) {
-				return `'${name}' is already in use.`;
+		const self_entry = exclude_so_id ? all.find(o => o.so.id === exclude_so_id) : undefined;
+		if (self_entry) {
+			// Scope-aware: clash only if a sibling (same parent) has the name.
+			const self_parent = self_entry.parent;
+			for (const o of all) {
+				if (o.so.id === exclude_so_id) continue;
+				if (o.parent !== self_parent) continue;
+				if (o.so.name === name) return `'${name}' is already in use.`;
+			}
+		} else {
+			// No scope to check (e.g. validating a given's name). Flat-scan.
+			for (const o of all) {
+				if (o.so.name === name) return `'${name}' is already in use.`;
 			}
 		}
 		if (name !== exclude_given_name && givens.has(name)) {

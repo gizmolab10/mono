@@ -301,9 +301,11 @@ class Engine {
 					constraints.rebind_formulas(smart_objects[i], parent_id, !recompute);
 				}
 			}
-			// Evaluate all formulas now that refs are bound and scene is populated
-			// Skip during undo/redo — serialized values already reflect the correct state
-			if (recompute) constraints.propagate_all();
+			// Evaluate all formulas now that refs are bound and scene is populated.
+			// Always propagate, even during undo/redo: formula-driven attributes
+			// are saved as formulas only (no value), so their value is zero after
+			// deserialize and must be recomputed before anything else uses them.
+			constraints.propagate_all();
 		} else {
 			// First run — create default SO with initial tumble
 			const so = new Smart_Object('A');
@@ -337,6 +339,14 @@ class Engine {
 
 		scenes.root_so = root_so;
 		scenes.root_id = root_so.id;
+
+		// Snapshots skip repeater clones (they are derived). Rebuild them from each
+		// template now. In the recompute=true path the post-propagate hook already
+		// did this, and this pass is then a no-op. In the undo/redo path nothing
+		// else regenerates clones, so this is the only call that brings them back.
+		for (const so of smart_objects) {
+			if (so.repeater) this.sync_repeater(so);
+		}
 		scenes.root_name = root_so.name;
 		stores.w_all_sos.set(scene.get_all().map(o => o.so));
 
@@ -372,13 +382,13 @@ class Engine {
 	undo(): void {
 		const saved = history.undo();
 		if (!saved) return;
-		this.load_scene(saved, true);
+		this.load_scene(saved, false);
 	}
 
 	redo(): void {
 		const saved = history.redo();
 		if (!saved) return;
-		this.load_scene(saved, true);
+		this.load_scene(saved, false);
 	}
 
 	/** Check if current orientation is already snapped to a face-aligned position. */
@@ -823,6 +833,31 @@ class Engine {
 		scenes.save();
 	}
 
+	/** Add a child that fills the selected parent exactly — seeds a repeater template. */
+	add_template_child_so(): void {
+		history.snapshot();
+		const selected = selection.current;
+		const parent_so = selected?.so ?? this.root_scene?.so;
+		if (!parent_so?.scene) return;
+
+		const child = parent_so.create_template_child();
+
+		const so_scene = scene.create({
+			so: child,
+			edges: this.edges,
+			faces: this.faces,
+			color: colors.edge_color_rgba(),
+			parent: parent_so.scene,
+		});
+		child.scene = so_scene;
+		hits_3d.register(child);
+
+		stores.w_all_sos.update(list => [...list, child]);
+		selection.current = { so: child, type: T_Hit_3D.face, index: 0 };
+		stores.tick();
+		scenes.save();
+	}
+
 	/** Duplicate the selected SO as a sibling, along with its entire descendant
 	 *  subtree.  Internal references between cloned shapes are rewritten to
 	 *  point at the new names; external references stay pointing at originals.
@@ -925,7 +960,11 @@ class Engine {
 		// ── propagate, select top-level, tick, save. ──
 		const top_clone = clones.get(root_src.id)!;
 		constraints.propagate(top_clone);
-		stores.w_all_sos.update(list => [...list, ...sources.map(s => clones.get(s.id)!)]);
+		// Set the parts list straight from the live scene. The clones were
+		// attached above, so the scene already includes them. Using set with
+		// the live contents avoids the double-entry case where the propagate
+		// hook above (when any repeater exists) has already replaced the list.
+		stores.w_all_sos.set(scene.get_all().map(o => o.so));
 		selection.current = { so: top_clone, type: T_Hit_3D.face, index: 0 };
 		stores.tick();
 		scenes.save();

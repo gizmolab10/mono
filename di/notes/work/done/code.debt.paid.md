@@ -160,3 +160,13 @@
 - [x] when children are hidden -> show number of progeny in place of hyphen
 - [x] move "factory reset" and "reinstall" to their respective glow banner, at the left, without moving the title
 - [x] layout of separators needs larger/uniform gaps
+- [x] increase font size for face labels
+- [x] hover color
+    - [x] lines
+        - [x] lines fatter and colored red
+        - [x] hue shift from lines color
+- [x] redo for undo
+- [x] cross is too faint in attributes table
+- [x] to convert an SO into a repeater:
+    - [x] in empty repeat area (SO has no child), add button to add child for template
+        - [x] identical to SO

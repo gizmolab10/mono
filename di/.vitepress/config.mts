@@ -7,7 +7,10 @@ export default defineConfig({
   title: "Design Intuition",
   description: "Project documentation and design notes",
   ignoreDeadLinks: [
-    /^http:\/\/localhost/
+    /^http:\/\/localhost/,
+    /\/di\/src\//,
+    /^(\.\/)?\.claude\//,
+    /^(\.\/)?notes\//
   ],
 
   markdown: {
