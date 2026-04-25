@@ -1,21 +1,25 @@
 # Code-Debt Handoff
 
-**Date:** 2026-04-20
+**Date:** 2026-04-24
 **Work stream:** items from [code.debt.md](./code.debt.md), one item at a time. Several small bugs surfaced and were fixed alongside the planned items.
 
 ---
 
 ## Next
 
-The first unchecked code-debt item now points at the selection-algorithm milestone — a grouping of related selection improvements: drag dots that only appear on hover and on the not-quite-forward face, mouse-driven drill-down into nested parts, rubber-band rectangles that re-centre and zoom, a recentre button on the controls strip, and a command-drag that shifts the rotation centre so the canvas follows the mouse. No proposal is on the table yet. Propose next.
+The first unchecked code-debt item points at the selection-algorithm milestone — a grouping of related selection improvements: drag dots that only appear on hover and on the not-quite-forward face, mouse-driven drill-down into nested parts, rubber-band rectangles that re-centre and zoom, a recentre button on the controls strip, and a command-drag that shifts the rotation centre so the canvas follows the mouse. No proposal is on the table yet. Propose next.
 
 For evidence:
 
-- the milestone notes are at [di/notes/work/now/27.selection.algorithm.md](./27.selection.algorithm.md)
+- the milestone notes are at [27.selection.algorithm.md](./27.selection.algorithm.md)
 
 ## Where we are
 
-- **Parts-table work for the last session is done.** Five code-debt items shipped in order: the first small eye cell on the root row is now blank; the collapse triangles were made larger; clicking a triangle reveals one more generation outward while option-clicking hides one more outermost generation, with the triangle pointing right only when nothing below is showing; the keyboard left and right arrows on the selected row do the same as the two click modes; when a row's children are hidden, the small eye cell shows the count of every part tucked below it that has no children of its own (so the number says "how many real parts are hidden", not "how many boxes are hidden"); and the "show N parts" toggle at the top of the parts table was updated so N follows the same rule — it counts parts that have no children of their own, not containers.
+- **The formula-doesn't-refresh bug is fixed.** A small helper inside the constraints manager was running on every formula edit and writing the new length value into the end-of-axis bound, regardless of which cell the axis's invariant marker pointed at. On axes where the invariant marker is the start (such as art's y-axis), this overwrote the end-bound with a value the helper computed from the old start, then the invariant pass that immediately followed used that polluted end-bound to compute a new start — and the math cancelled out, leaving every cell at its old number. The fix: delete the helper and its six call sites. The invariant pass alone now keeps each axis consistent, which is what it was always designed to do. Existing scenes may carry corrupted bound values from prior runs of the helper; a one-time scene reload triggers a global re-evaluation and clears the pollution.
+- **The two eyeball columns in the parts table are now coupled on parent rows.** Clicking the self-visibility eye on a row that has children now also flips the other column's "block children from rendering" flag, so only one of the two eyes shows at a time. One click hides the part and folds the subtree away; one click brings both back. Leaf rows and the root row are unchanged.
+- **The dev-docs build is green again.** Two rounds of dead-link fixes — first a small set inside the project notes, then a larger sweep prompted by the deploy log. The sweep added two ignore patterns to the docs build config (one for source-code links, one for workspace-config and parent-workspace links that the docs site cannot route to), rewrote a couple dozen workspace-root-style paths into proper relative paths across the milestone-32 facets folder and the current-work folder, and dropped the historical-paths note at the top of the slow-handoff file since preserving the old path framing is no longer the goal.
+- **The working-features summary is current.** Small edits matching what shipped through 2026-04-20 — added "row numbers" and "persistent hide list" to the parts row; trimmed the "(font now large)" parenthetical from the editing row.
+- **Parts-table work for the prior session is done.** Five code-debt items shipped in order: the first small eye cell on the root row is now blank; the collapse triangles were made larger; clicking a triangle reveals one more generation outward while option-clicking hides one more outermost generation, with the triangle pointing right only when nothing below is showing; the keyboard left and right arrows on the selected row do the same as the two click modes; when a row's children are hidden, the small eye cell shows the count of every part tucked below it that has no children of its own (so the number says "how many real parts are hidden", not "how many boxes are hidden"); and the "show N parts" toggle at the top of the parts table was updated so N follows the same rule — it counts parts that have no children of their own, not containers.
 - **Row numbers replaced the sibling numbers in the leftmost column.** Each row in the parts table now shows its position in the visible list (zero for the root, blank there; one for the next row, and so on). The old helper that computed "which sibling am I among my parent's children" was removed since nothing else used it.
 - **The selected-part position label at the top of the details panel now matches the row number.** When the parts table is hidden, the little "X of Y" label above the selected part's name uses the same visible-row count — X is the row number, Y is the total number of visible rows. Blank when the root is selected.
 - **The hide-list now persists across reloads.** The list of rows whose children are hidden is saved to the browser's local storage and restored on next launch. A new helper on the preferences object handles the array-to-set and back conversion so the stored shape stays small.
@@ -28,6 +32,7 @@ At roughly a hundred parts where every part's outer box overlaps every other, th
 
 ## Open items
 
+- **Trace logs left from the formula-bug investigation should be removed.** Eight console.log calls are still wired across the constraints manager, the renderer, the engine, and the attributes panel. Pull them in a small clean-up pass before the next feature work.
 - **Delete on a non-repeater grandchild leaves the part still listed.** Jonathan reports: select a child of a child of root, press delete, the selection clears but the part stays in the parts table. Static analysis ruled out the repeater-regeneration angle and the early-return paths. Most likely cause is an exception thrown between selection-clear and the parts-list rewrite — the formula-reference walker is the most fragile step. Still open. Need a console error message or a small repro scene to pin the failing step.
 - **Up/down arrow in the parts table skips two rows per press on Jonathan's scene.** Same status as the prior session — could not reproduce from reading the code. Need more detail about the scene before a fix can be made.
 - **Identity-based formula storage.** Today's targeted rename helper closed the immediate bug, but the deeper fix is to store formula references by part identity rather than by a snapshot of the part's name. Recorded as a future structural refactor; see the rename-bug discussion in today's session below.
@@ -45,6 +50,60 @@ At roughly a hundred parts where every part's outer box overlaps every other, th
 - The drag work has its own mothballed handoff at `di/notes/work/milestones/33.drag/handoff.md`.
 - The `handoff` and `hands` shorthands point at this file.
 - The tumble instrumentation is in place but silent. Flip the constant at the top of the engine file to true, uncomment the per-second summary block inside the render loop, reload, and the console will print timings and counters again.
+
+---
+
+## Session — 2026-04-24 — parts eyeball coupling, dead-link sweep, formula-doesn't-refresh fixed
+
+Five threads.
+
+### Thread one — working-features summary edits
+
+Two small touch-ups to the running feature list. Added "row numbers" and "persistent hide list" to the parts row to match what had already shipped. Trimmed "(font now large)" out of the editing row — the parenthetical read as a dated marker; the current font size is just the size.
+
+### Thread two — dead-link fixes inside the notes tree
+
+A first-pass sweep prompted by Jonathan's report of dead links. Real fixes that landed: the cadence link in the work index pointed to a file that had been moved into the now folder; the selection-algorithm link in the milestones index pointed to a sibling that actually lives in the now folder; the facets and lessons links in the same milestones index used a workspace-root path that breaks when the renderer resolves it relative to the current file; a checkbox in the code-debt list was wrapped as a link to a non-existent file. All five fixed.
+
+### Thread three — dead-link sweep driven by the deploy build
+
+The deploy log had eighty-five dead-link errors. Triaging them showed three real classes plus one false-positive class. Two ignore patterns were added to the docs-build config — one catches links to source-code files (which the docs site cannot route to anyway), the other catches links into the workspace's parent-level notes folder and the workspace-config command files. Inside the markdown, the workspace-root-style paths used in the milestone-32 facets folder and the current-work handoff were rewritten to proper relative paths. A handful of links lost track of subfolder reorganisations (the facets folder split into a designs subfolder and a use-cases subfolder); those got their subfolder names back. The "note on historical paths" framing at the top of the slow-handoff file was removed since preserving the old path text inside link labels is no longer the goal — labels were tightened to just the file name.
+
+### Thread four — explained the click-on-dimensional bug
+
+Jonathan reported that clicking on a dimensional number on the canvas was being ignored — the input box did not appear. Walked the click handler and surfaced the most likely cause: the editing-lock toggle is on, which makes the click handler bail out before any hit-type check runs. With the lock on, the cursor stays as the open-grab-hand even when over a dimensional, and clicks just possibly deselect the current selection. Fix is for the user to flip the lock — the small toolbar button at the top of the canvas. No code change.
+
+### Thread five — built the parts-table eyeball coupling, then opened the formula-doesn't-refresh investigation
+
+Coupling: clicking the self-visibility eye on a row that has children now also flips the other column's block-children flag. After the click, exactly one of the two eyes shows. Leaf rows and root row unchanged. One line added in the parts-table click handler.
+
+Investigation, fixed: Jonathan reported that typing a new formula on a cell did not make the shape on screen update. The value column also did not refresh. Tracing logs were added across the whole chain — the attributes-panel commit handler, the compile-and-write step inside the constraints manager, the start and end of the propagate routine, the after-hook that fires when propagate finishes, and the canvas-out-of-date flip on the renderer. The logs proved every link in the chain fires end to end. The fault sat one step in front of the invariant pass: a small helper inside the constraints manager was running on every formula edit and writing the new length value into the end-of-axis bound, regardless of which cell the axis's invariant marker pointed at. On art's y-axis, where the invariant marker is the start, the helper overwrote y_max with a value computed from the old y_min plus the new depth — the formula on y_max (which says "track parent's end") was silently stomped — and then the invariant pass that ran immediately after used that polluted y_max to compute a new y_min, which cancelled out to the same old y_min. Net: every cell wrote back the value it already had. The fix: delete the helper and its six call sites. The invariant pass alone is enough to keep an axis consistent. The UI gate that disables the formula slot on the invariant cell, plus the scene-load step that clears any formula that somehow landed on an invariant cell, together guarantee the invariant pass never has to deal with a formula on the invariant cell — which is the only situation the helper could ever have been useful for. Caveat: existing scenes may carry corrupted bound values from prior runs of the helper; a one-time scene reload triggers a full re-evaluation and clears them.
+
+### What shipped — 2026-04-24
+
+- Formula-doesn't-refresh bug fixed: the redundant length-syncing helper was deleted along with its six call sites. The invariant pass now keeps each axis consistent on its own.
+- The two-eyeball coupling on parent rows in the parts table.
+- The "Cadence" jump and four other broken markdown links inside the notes tree.
+- The docs-build config now ignores source-file links and parent-workspace links; many workspace-root-style paths inside the milestone-32 facets folder and the current-work handoff were rewritten to relative paths; subfolder names were restored on a handful of intra-facets links; the historical-paths header on the slow-handoff file was dropped.
+- Working-features summary trimmed and topped up to match the latest shipped state.
+- Tracing logs across the full constraints-and-render chain — used to find the formula-doesn't-refresh bug. Still wired; should be pulled in a small clean-up pass.
+
+### Files touched — 2026-04-24
+
+- Eyeball coupling: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
+- Working features: [working features.md](./working%20features.md).
+- Dead-link fixes (first pass): [work index](../index.md), [milestones index](../milestones/index.md), [code-debt list](./code.debt.md).
+- Dead-link sweep (second pass): [docs config](di/.vitepress/config.mts), [26.lacemaker.md](../milestones/done/26.lacemaker.md), [32.facets.md](../milestones/done/32.facets/32.facets.md), [theory.md](../milestones/done/32.facets/designs/theory.md), [32.facets handoff](../milestones/done/32.facets/handoff.md), [32.facets history](../milestones/done/32.facets/history.md), [bottlenecks](../milestones/done/32.facets/slow/bottlenecks.md), [slow handoff](../milestones/done/32.facets/slow/handoff.md), [current work handoff](./handoff.md), [road map](./road.map.md).
+- Tracing logs (still wired): [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte), [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Render.ts](di/src/lib/ts/render/Render.ts).
+- Propagate-skip guard removed: [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts) — the loop in propagate no longer skips the edited object. Useful side fix during the investigation.
+- Length-syncing helper deleted along with its six call sites: [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts). The invariant pass alone keeps each axis consistent.
+
+### Verification — 2026-04-24
+
+- Formula-doesn't-refresh: confirmed in the running app. After the helper was deleted, depth edits on art produced visible y-axis movement and the value column updated.
+- Type-checker: should be re-run after the trace logs are pulled.
+- Test suite: should be re-run after the trace logs are pulled.
+- The eyeball-coupling change was reasoned through by trace, not run-tested in the browser yet.
 
 ---
 
@@ -74,7 +133,7 @@ A small clean-up went with it: the template-child creator was simplified to alwa
 
 ### Thread five — key-paths reference doc
 
-A two-column table of every keyboard binding in the app, grouped by the context the key fires in. Keys mean different things on the canvas, inside a value cell, inside a name cell, inside a dimension or angle input, and inside the build-notes modal. Lives at [di/notes/work/now/key paths.md](./key%20paths.md).
+A two-column table of every keyboard binding in the app, grouped by the context the key fires in. Keys mean different things on the canvas, inside a value cell, inside a name cell, inside a dimension or angle input, and inside the build-notes modal. Lives at [key paths.md](./key%20paths.md).
 
 ### What shipped — 2026-04-20
 
@@ -90,8 +149,8 @@ A two-column table of every keyboard binding in the app, grouped by the context 
 - Repeat panel button: [di/src/lib/svelte/details/P_Repeat.svelte](di/src/lib/svelte/details/P_Repeat.svelte).
 - Sibling-only name rule and its tests: [di/src/lib/ts/algebra/Errors.ts](di/src/lib/ts/algebra/Errors.ts), [di/src/lib/ts/tests/Errors.test.ts](di/src/lib/ts/tests/Errors.test.ts).
 - Token-rename helper: [di/src/lib/ts/algebra/Tokenizer.ts](di/src/lib/ts/algebra/Tokenizer.ts). Constraints helper that uses it: [di/src/lib/ts/algebra/Constraints.ts](di/src/lib/ts/algebra/Constraints.ts). Called from: [di/src/lib/svelte/details/D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
-- New reference doc: [di/notes/work/now/key paths.md](./key%20paths.md).
-- Code-debt list: [di/notes/work/now/code.debt.md](./code.debt.md).
+- New reference doc: [key paths.md](./key%20paths.md).
+- Code-debt list: [code.debt.md](./code.debt.md).
 
 ### Verification — 2026-04-20
 

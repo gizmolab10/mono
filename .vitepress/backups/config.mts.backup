@@ -387,6 +387,7 @@ export default defineConfig({
                         },
                         {
                           text: '33.drag >',
+                          link: '/di/notes/work/milestones/33.drag/',
                           collapsed: true,
                           items: [
                             {

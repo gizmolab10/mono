@@ -5,8 +5,6 @@
 
 **Next:** bottleneck work is complete. Eleven of fifteen shipped; four mothballed (scratch-memory group #9, #12, #13 and string-key #15 — revisit only if profiling points at allocation pressure). Still open: review the three semantically-suspicious handoff references flagged in the 2026-04-11 session below.
 
-> **NOTE on historical paths below:** the work-folder layout has been reorganized twice since the sessions recorded here. Paths inside the session narratives (`di/notes/work/bottlenecks.md`, `di/notes/work/plan/*`, `di/notes/work/now/slow/*`, `di/notes/work/now/facets/*`) are historical and no longer resolve. The sessions are preserved for their record of decisions made at the time. See [di/notes/map.md](../../../../../map.md) for the current layout.
-
 ---
 
 ## What we did this session
@@ -104,12 +102,12 @@ Jonathan reorganized everything under `di/notes/work` into new top-level folders
 
 ### What I did
 
-**Updated the project map** ([di/notes/map.md](../../../../../map.md)). The "Notes — Work" section was a flat list of files that no longer existed. I rewrote it into seven groupings that mirror the new folder layout: plan, now-slow, now-facets, next, milestones (open), milestones (done), and done. Every file currently in the new structure is now listed under its correct grouping.
+**Updated the project map** ([map.md](../../../../../map.md)). The "Notes — Work" section was a flat list of files that no longer existed. I rewrote it into seven groupings that mirror the new folder layout: plan, now-slow, now-facets, next, milestones (open), milestones (done), and done. Every file currently in the new structure is now listed under its correct grouping.
 
 **Updated the shorthand file** ([notes/guides/pre-flight/shorthand.md](notes/guides/pre-flight/shorthand.md)). Three table rows pointed at paths that no longer existed:
 
-- The `theory` shorthand now points to [di/notes/work/now/facets/designs/theory.md](../designs/theory.md). The action description was tightened to fit the table's column width.
-- The `handoff` shorthand now points to [di/notes/work/now/slow/handoff.md](./handoff.md). I picked the slow handoff because that is where the most recent active session lives — see the open question below.
+- The `theory` shorthand now points to [theory.md](../designs/theory.md). The action description was tightened to fit the table's column width.
+- The `handoff` shorthand now points to [handoff.md](./handoff.md). I picked the slow handoff because that is where the most recent active session lives — see the open question below.
 - The `hands` shorthand now points to the same slow handoff for the same reason.
 
 **Updated the two slash command files**:
@@ -123,8 +121,8 @@ Jonathan reorganized everything under `di/notes/work` into new top-level folders
 
 **Historical journal entries inside `done/`** that mention old paths in narrative form. Per the journals rule and pitfall #16, historical journal content stays as-is — the old paths are part of the snapshot of what was true at the time.
 
-- [di/notes/work/done/skills.md:12](../../../../done/skills.md#L12) — example text quoting an old slash command.
-- [di/notes/work/done/chat.md:89](../../../../done/chat.md#L89) and [di/notes/work/done/chat.md:233](../../../../done/chat.md#L233) — historical session notes.
+- [skills.md:12](../../../../done/skills.md#L12) — example text quoting an old slash command.
+- [chat.md:89](../../../../done/chat.md#L89) and [chat.md:233](../../../../done/chat.md#L233) — historical session notes.
 
 **The generated project snapshot dump** at [notes/tools/scripts/snapshot.md](notes/tools/scripts/snapshot.md). It is a generated file from January 31, not hand-edited. Touching it would be wrong.
 
@@ -132,11 +130,11 @@ Jonathan reorganized everything under `di/notes/work` into new top-level folders
 
 These are not stale in the strict sense — every path resolves to a real file — but they look semantically wrong after the reorg. Three files link to the slow handoff but the surrounding text reads like they actually mean the facets handoff:
 
-- [di/notes/work/milestones/done/26.lacemaker.md:9](../../26.lacemaker.md#L9) — references "handoff.md for dead ends, and solved items" while pointing to the slow handoff. Lacemaker is milestone 26, which was facets-adjacent. Probably should point to the facets handoff.
-- [di/notes/work/plan/index.md:7](../../../../now/index.md#L7) — describes the link as "current session plan for milestone 27" while pointing to the slow handoff. Milestone 27 is selection algorithm, not slow render.
-- [di/notes/work/now/facets/designs/theory.md:8](../designs/theory.md#L8) — sits inside the facets folder and describes the link as "what's being worked on right now, what's blocked, what was just solved" while pointing at the slow handoff.
+- [26.lacemaker.md:9](../../26.lacemaker.md#L9) — references "handoff.md for dead ends, and solved items" while pointing to the slow handoff. Lacemaker is milestone 26, which was facets-adjacent. Probably should point to the facets handoff.
+- [now/index.md:7](../../../../now/index.md#L7) — describes the link as "current session plan for milestone 27" while pointing to the slow handoff. Milestone 27 is selection algorithm, not slow render.
+- [theory.md:8](../designs/theory.md#L8) — sits inside the facets folder and describes the link as "what's being worked on right now, what's blocked, what was just solved" while pointing at the slow handoff.
 
-I AM GUESSING these are leftovers from the reorg that should be repointed at [di/notes/work/now/facets/handoff.md](../handoff.md), but only Jonathan can confirm.
+I AM GUESSING these are leftovers from the reorg that should be repointed at [handoff.md](../handoff.md), but only Jonathan can confirm.
 
 ### Pre-existing warnings I left alone on files I touched
 

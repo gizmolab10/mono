@@ -48,9 +48,6 @@ const alias_map: Record<string, AliasEntry> = {
 
 // Invariant derivation formulas — when an attribute is invariant,
 // its value comes from the other two in its axis.
-// Length attribute names → alias letters (for syncing formula results to geometry)
-const length_to_alias: Record<string, string> = { width: 'w', depth: 'd', height: 'h' };
-
 // Alias → [axis_index, attr_index] for invariant checks
 // attr_index: 0=start, 1=end, 2=length
 const alias_axis_attr: Record<string, [number, number]> = {
@@ -396,7 +393,6 @@ class Constraints {
 				// During undo/redo, keep serialized values — formulas don't need re-evaluation
 				if (!skip_eval && !attr.attached) {
 					attr.value = evaluator.evaluate(attr.compiled, (o, a) => this.resolve(o, a));
-					this.sync_length(so, attr.name, attr.value);
 				}
 			} catch (e) { if (!(e instanceof AlgebraError)) throw e; } // skip — formula references something invalid
 		}
@@ -468,14 +464,11 @@ class Constraints {
 		attr.compiled = compiled;
 		attr.attached = attached ?? false;
 
-		if (attached) {
-			// Attached: keep current value as seed — don't evaluate
-			this.sync_length(so, attr_name, attr.value);
-		} else {
+		if (!attached) {
 			// Normal: evaluate immediately
 			attr.value = evaluator.evaluate(compiled, (o, a) => this.resolve(o, a));
-			this.sync_length(so, attr_name, attr.value);
 		}
+		// Attached: keep current value as seed — don't evaluate
 		this.enforce_invariants(so);
 		errors.clear(so.id, attr_name);
 		return null;
@@ -578,7 +571,6 @@ class Constraints {
 
 		for (const o of all_objects) {
 			const so = o.so;
-			if (changed.has(so.id)) continue;
 
 			let dominated = false;
 
@@ -596,7 +588,6 @@ class Constraints {
 				}
 				if (refs_changed) {
 					attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
-					this.sync_length(so, attr.name, attr.value);
 					dominated = true;
 				}
 			}
@@ -619,7 +610,6 @@ class Constraints {
 			for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (!attr.compiled) continue;
 				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
-				this.sync_length(so, attr.name, attr.value);
 			}
 
 			this.enforce_invariants(so);
@@ -681,12 +671,6 @@ class Constraints {
 	private find_name_span(input: string, name: string): [number, number] {
 		const idx = input.lastIndexOf(name);
 		return idx >= 0 ? [idx, name.length] : [0, input.length];
-	}
-
-	/** If attr is a length attribute (width/depth/height), sync its value to geometry. */
-	private sync_length(so: Smart_Object, attr_name: string, value: number): void {
-		const alias = length_to_alias[attr_name];
-		if (alias) this.write(so.id, alias, value);
 	}
 
 	private find_so(id: string): Smart_Object | null {
@@ -978,7 +962,6 @@ class Constraints {
 			for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (!attr.compiled) continue;
 				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
-				this.sync_length(so, attr.name, attr.value);
 			}
 			this.enforce_invariants(so);
 		}

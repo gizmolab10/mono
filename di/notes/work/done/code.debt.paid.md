@@ -170,3 +170,5 @@
 - [x] to convert an SO into a repeater:
     - [x] in empty repeat area (SO has no child), add button to add child for template
         - [x] identical to SO
+- [x] edit formula -> immediately recompute value
+- [x] parent is-visible eyeball -> toggles both self and children

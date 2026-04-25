@@ -194,6 +194,8 @@
 				if (s.scene?.parent?.so === parent) s.visible = v;
 			}
 		}
+		// Parent rows: keep the two eyeballs opposite so only one shows an eye at a time.
+		if (has_children(so, $w_all_sos)) so.hide_children = v;
 		stores.tick();
 		scenes.save();
 	}
@@ -362,11 +364,10 @@
 	}
 
 	.hierarchy-eye {
-		font-size  : var(--h-font-common);
 		width      : var(--w-small);
 		cursor     : pointer;
 		text-align : center;
-		opacity    : 1;
+		opacity    : 0.85;
 		padding    : 0;
 	}
 

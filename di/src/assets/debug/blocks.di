@@ -8,8 +8,8 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 609.6,
-            "length": 609.6,
+            "extent": 609.5999999998845,
+            "length": 609.5999999998845,
             "angle": 0
           },
           "invariant": 1
@@ -37,13 +37,15 @@
       },
       {
         "id": "diba47a18c85ba9d",
-        "name": "block",
+        "name": "A",
         "x": {
           "attributes": {
-            "origin": -87.8052749633789,
-            "extent": -570.401775420017,
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": -507.9999999998845,
             "length": {
-              "formula": "block width"
+              "formula": "thick"
             },
             "angle": 0
           },
@@ -51,12 +53,16 @@
         },
         "y": {
           "attributes": {
-            "origin": 0,
-            "extent": 0,
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
             "length": 609.6,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
         "z": {
           "attributes": {
@@ -77,22 +83,28 @@
       },
       {
         "id": "dib543189150f4d8",
-        "name": "block2",
+        "name": "B",
         "x": {
           "attributes": {
-            "origin": 38.099999999999994,
-            "extent": -1.1550582712516189e-10,
-            "length": 571.4999999998845,
+            "origin": {
+              "formula": "A.e"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 507.9999999998845,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
         "y": {
           "attributes": {
-            "origin": 0,
-            "extent": -482.596500456638,
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": -508,
             "length": {
-              "formula": "block width"
+              "formula": "thick"
             },
             "angle": 0
           },
@@ -118,8 +130,8 @@
     ],
     "givens": [
       {
-        "name": "block width",
-        "value_mm": 127.00349954336201,
+        "name": "thick",
+        "value_mm": 101.6,
         "locked": true
       }
     ],
