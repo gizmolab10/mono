@@ -1,10 +1,10 @@
 {
-  "version": "7",
+  "version": "9",
   "scene": {
     "smart_objects": [
       {
         "id": "di8a2f4c6e1b3d5a",
-        "name": "stretch",
+        "name": "wall",
         "x": {
           "attributes": {
             "origin": 0,
@@ -32,23 +32,25 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
         "visible": false,
+        "hide_children": false,
         "repeater": {
-          "repeat_axis": 0,
           "spacing": 406.4,
-          "firewall": true
+          "firewall": true,
+          "is_repeating": true,
+          "run_axis": 0,
+          "is_diagonal": false
         }
       },
       {
         "id": "di7b3e5d9a2c4f1e",
-        "name": "template",
+        "name": "stud",
         "x": {
           "attributes": {
             "origin": 0,
             "extent": -2400.3,
             "length": {
-              "formula": "template_th"
+              "formula": "stud thickness"
             },
             "angle": 0
           },
@@ -76,18 +78,21 @@
           },
           "invariant": 1
         },
-        "rotation_lock": 0,
+        "visible": true,
+        "hide_children": false,
         "parent_id": "di8a2f4c6e1b3d5a"
       }
     ],
-    "constants": [
+    "givens": [
       {
-        "name": "template_w",
-        "value_mm": 88.9
+        "name": "wall thickness",
+        "value_mm": 88.9,
+        "locked": true
       },
       {
-        "name": "template_th",
-        "value_mm": 38.1
+        "name": "stud thickness",
+        "value_mm": 38.1,
+        "locked": true
       }
     ],
     "camera": {
@@ -108,6 +113,7 @@
       ]
     },
     "root_id": "di8a2f4c6e1b3d5a",
-    "selected_face": 3
+    "selected_id": "di8a2f4c6e1b3d5a",
+    "selected_face": 1
   }
 }

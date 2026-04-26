@@ -391,8 +391,8 @@ class Constraints {
 			try {
 				attr.compiled = this.bind_refs(attr.compiled, so.id, parent_id, owner_axis);
 				// During undo/redo, keep serialized values — formulas don't need re-evaluation
-				if (!skip_eval && !attr.attached) {
-					attr.value = evaluator.evaluate(attr.compiled, (o, a) => this.resolve(o, a));
+				if (!skip_eval) {
+					so.set_bound(attr.name as Bound, evaluator.evaluate(attr.compiled, (o, a) => this.resolve(o, a)));
 				}
 			} catch (e) { if (!(e instanceof AlgebraError)) throw e; } // skip — formula references something invalid
 		}
@@ -416,10 +416,8 @@ class Constraints {
 
 	/** Set a formula on an SO attribute. Compiles, binds, checks cycles.
 	 *  Returns S_Error on failure (stored in Errors singleton), null on success.
-	 *  parent_id: if provided, dot-prefixed attributes (.x, .w, etc.) resolve to this SO.
-	 *  attached: if true, marks the attr as attached (mutual cross-reference),
-	 *    skips cycle detection, and preserves current value as seed. */
-	set_formula(so: Smart_Object, attr_name: string, formula: string, parent_id?: string, attached?: boolean): S_Error | null {
+	 *  parent_id: if provided, dot-prefixed attributes (.x, .w, etc.) resolve to this SO. */
+	set_formula(so: Smart_Object, attr_name: string, formula: string, parent_id?: string): S_Error | null {
 		const attr = so.attributes_dict_byName[attr_name];
 		if (!attr) {
 			const err = errors.bad_syntax(formula, [0, formula.length], new Error(`Unknown attribute: ${attr_name}`));
@@ -447,28 +445,21 @@ class Constraints {
 			return e.s_error;
 		}
 
-		// Attached formulas intentionally cross-reference — skip cycle detection
-		if (!attached) {
-			const formulas = this.build_formula_map();
-			const key = nodes.ref_key(so.id, attr_name);
-			formulas.set(key, compiled);
-			const cycle = evaluator.detect_cycle(formulas);
-			if (cycle) {
-				const err = errors.cycle(formula, cycle);
-				errors.set(so.id, attr_name, err);
-				return err;
-			}
+		const formulas = this.build_formula_map();
+		const key = nodes.ref_key(so.id, attr_name);
+		formulas.set(key, compiled);
+		const cycle = evaluator.detect_cycle(formulas);
+		if (cycle) {
+			const err = errors.cycle(formula, cycle);
+			errors.set(so.id, attr_name, err);
+			return err;
 		}
 
 		attr.formula = tokenizer.fuse_name_tokens(tokenizer.tokenize(formula));
 		attr.compiled = compiled;
-		attr.attached = attached ?? false;
+		attr.is_locked = false;
 
-		if (!attached) {
-			// Normal: evaluate immediately
-			attr.value = evaluator.evaluate(compiled, (o, a) => this.resolve(o, a));
-		}
-		// Attached: keep current value as seed — don't evaluate
+		so.set_bound(attr_name as Bound, evaluator.evaluate(compiled, (o, a) => this.resolve(o, a)));
 		this.enforce_invariants(so);
 		errors.clear(so.id, attr_name);
 		return null;
@@ -587,7 +578,7 @@ class Constraints {
 					if (this.formula_references(attr.compiled, cid)) { refs_changed = true; break; }
 				}
 				if (refs_changed) {
-					attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
+					so.set_bound(attr.name as Bound, evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a)));
 					dominated = true;
 				}
 			}
@@ -609,7 +600,7 @@ class Constraints {
 
 			for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (!attr.compiled) continue;
-				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
+				so.set_bound(attr.name as Bound, evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a)));
 			}
 
 			this.enforce_invariants(so);
@@ -647,6 +638,7 @@ class Constraints {
 					so.set_bound(axis.start.name as Bound, end_abs - axis.length.value);
 					break;
 				case 1: // end = start + length
+					if (axis.name === 'z' && !so.scene?.parent) console.log(`enforce case 1 on '${so.name}' z-axis: start=${start_abs}, length=${axis.length.value}, writing end=${start_abs + axis.length.value}`);
 					so.set_bound(axis.end.name as Bound, start_abs + axis.length.value);
 					break;
 				case 2: // length = end - start
@@ -657,6 +649,7 @@ class Constraints {
 		// Root: start is always 0, length always equals end
 		if (so.scene && !so.scene.parent) {
 			for (const axis of so.axes) {
+				if (axis.name === 'z') console.log(`root special on '${so.name}' z-axis: end=${axis.end.value}, length before=${axis.length.value}, length after=${axis.end.value}`);
 				axis.start.value = 0;
 				axis.length.value = axis.end.value;
 			}
@@ -913,9 +906,12 @@ class Constraints {
 		return fc.attr.value;
 	}
 
-	/** Write a new numeric value to one free-constant leaf. Does not propagate. */
+	/** Write a new numeric value to one free-constant leaf. Does not propagate.
+	 *  Locked attributes refuse the write — they can only be altered by direct
+	 *  edit of the value cell. */
 	write_free_constant(fc: Free_Constant, value: number): void {
 		if (fc.kind === 'given') { givens.set(fc.name, value); return; }
+		if (fc.attr.is_locked) return;
 		fc.attr.value = value;
 	}
 
@@ -961,7 +957,7 @@ class Constraints {
 			const so = o.so;
 			for (const axis of so.axes) for (const attr of [axis.start, axis.end, axis.length]) {
 				if (!attr.compiled) continue;
-				attr.value = evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a));
+				so.set_bound(attr.name as Bound, evaluator.evaluate(attr.compiled, (obj, a) => this.resolve(obj, a)));
 			}
 			this.enforce_invariants(so);
 		}

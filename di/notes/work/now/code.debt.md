@@ -4,11 +4,11 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
-- [ ] attributes table
-    - [ ] values are computed wrong for .s and .e
-    - [ ] "-" cell -> lock
+- [ ] attributes table -> "-" cell -> lock (value)
 - [ ] lock ignored on givens
-- [ ] parts table -> drag and drop
+- [ ] parts table
+    - [ ] eliminate position/size columns
+    - [ ] drag and drop
 - [ ] [[27.selection.algorithm]]
 - [ ] arrow keys nudge SO position
 - [ ] print just the graph, scaled to fit

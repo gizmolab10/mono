@@ -61,12 +61,17 @@ export default class Smart_Object extends Identifiable {
 		z_min: 'z_min', z_max: 'z_min', height: 'z_min',
 	};
 
+	/** Length attributes are absolute counts, not parent-relative positions. */
+	private static readonly LENGTH_BOUNDS: ReadonlySet<string> = new Set(['width', 'depth', 'height']);
+
 	/** Read a bound as a scene-absolute value.
+	 *  Length attributes: stored as absolute, returned as-is.
 	 *  Plain values: offset from parent's same-named bound → recurse through same bound.
 	 *  Formula values: parent-local from origin → recurse through axis origin bound. */
 	get_bound(bound: Bound): number {
 		const attr = this.attributes_dict_byName[bound];
 		if (!attr) return 0;
+		if (Smart_Object.LENGTH_BOUNDS.has(bound)) return attr.value;
 		if (!this.scene?.parent) return attr.value;
 		if (attr.compiled) {
 			const origin = Smart_Object.AXIS_ORIGIN[bound] ?? bound;
@@ -76,6 +81,7 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	/** Store a bound (absolute world-space value).
+	 *  Length attributes: stored as absolute, no parent offset.
 	 *  No parent / root: stored directly.
 	 *  Plain values: stored as offset from parent's same-named bound.
 	 *  Formula values: stored as offset from parent's axis origin bound
@@ -83,7 +89,9 @@ export default class Smart_Object extends Identifiable {
 	set_bound(bound: Bound, value: number): void {
 		const attr = this.attributes_dict_byName[bound];
 		if (!attr) return;
-		if (!this.scene?.parent) {
+		if (Smart_Object.LENGTH_BOUNDS.has(bound)) {
+			attr.value = value;
+		} else if (!this.scene?.parent) {
 			attr.value = value;
 		} else if (attr.compiled) {
 			const origin = Smart_Object.AXIS_ORIGIN[bound] ?? bound;
@@ -94,7 +102,9 @@ export default class Smart_Object extends Identifiable {
 		// Keep length in sync when an endpoint changes (and length has no formula)
 		for (const axis of this.axes) {
 			if ((attr === axis.start || attr === axis.end) && !axis.length.compiled) {
+				const before = axis.length.value;
 				axis.length.value = this.get_bound(axis.end.name as Bound) - this.get_bound(axis.start.name as Bound);
+				if (axis.name === 'z') console.log(`set_bound side effect on '${this.name}' z-axis: end=${this.get_bound(axis.end.name as Bound)}, start=${this.get_bound(axis.start.name as Bound)}, length ${before} → ${axis.length.value}`);
 			}
 		}
 		Smart_Object.on_bound_change();

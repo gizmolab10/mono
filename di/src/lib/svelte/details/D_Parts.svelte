@@ -250,7 +250,6 @@
 								value              = {so.name}
 								class              = 'name-input'
 								onkeydown          = {(e) => name_keydown(e, so)}
-								style:padding-left = '{depth(so) * k.width.indent}px'
 								onfocus            = {() => stores.w_editing.set(T_Editing.value)}
 								onblur             = {(e) => { const inp = e.target as HTMLInputElement; commit_name(so, inp.value, inp); if (!naming_error) stores.w_editing.set(T_Editing.none); }}
 								use:autofocus
@@ -376,13 +375,14 @@
 	}
 
 	.name-input {
-		outline     : var(--focus-outline);
-		z-index     : var(--z-action);
-		background  : var(--c-white);
-		width       : var(--w-title);
-		box-sizing  : border-box;
-		border      : none;
-		margin      : 0;
+		outline      : var(--focus-outline);
+		z-index      : var(--z-action);
+		background   : var(--c-white);
+		width        : var(--w-title);
+		box-sizing   : border-box;
+		border       : none;
+		padding-left : 19px;
+		margin       : 0;
 	}
 
 	.collapse-tri {

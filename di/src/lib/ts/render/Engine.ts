@@ -115,11 +115,6 @@ class Engine {
 
 		// Input: drag ended — snap to nearest face-aligned orientation
 		e3.set_drag_end_handler(() => {
-			// Pin offer for edge snaps (must run before drag.clear)
-			if (drag.snap_results.length > 0) {
-				drag.compute_pin_offer();
-			}
-
 			if (this.is_tilting && this.root_scene) {
 				// 2D tilt snap-back
 				this.snap_anim = {
@@ -248,9 +243,8 @@ class Engine {
 		render.add_stale_sub(colors.w_edge_color.subscribe(mark));
 		render.add_stale_sub(colors.w_accent_color.subscribe(mark));
 
-		// Interaction stores — six inputs driven by pointer, editors and units.
+		// Interaction stores — driven by pointer, editors and units.
 		render.add_stale_sub(hits_3d.w_hover.subscribe(mark));
-		render.add_stale_sub(drag.w_pin_offer.subscribe(mark));
 		render.add_stale_sub(face_label.w_s_face_label.subscribe(mark));
 		render.add_stale_sub(angulars.w_s_angular.subscribe(mark));
 		render.add_stale_sub(dimensions.w_s_dimensions.subscribe(mark));
@@ -1402,8 +1396,10 @@ class Engine {
 		for (let i = 0; i < Math.min(surviving.length, needed_studs); i++) {
 			const c = surviving[i].so;
 			for (let ai = 0; ai < 3; ai++) {
-				c.axes[ai].start.value  = t.axes[ai].start.value;
-				c.axes[ai].end.value    = t.axes[ai].end.value;
+				// Route through bound-getter / bound-setter so position values land in
+				// the convention the clone reads them by (no formula → same-side offset).
+				c.set_bound(t.axes[ai].start.name as Bound, t.get_bound(t.axes[ai].start.name as Bound));
+				c.set_bound(t.axes[ai].end.name as Bound,   t.get_bound(t.axes[ai].end.name as Bound));
 				c.axes[ai].length.value = t.axes[ai].length.value;
 				c.axes[ai].angle.value  = t.axes[ai].angle.value;
 			}
@@ -1496,11 +1492,22 @@ class Engine {
 		used_names.add(name);
 
 		const clone = new Smart_Object(name);
+		// Clone shares its parent with the template. Template stores position
+		// values in the convention its formulas use (offset from parent's origin
+		// when a formula is present). The clone has no formulas, so it reads
+		// stored position values as offset from the parent's same-side bound.
+		// Convert each position via the template's absolute world coordinate.
+		const t_parent = t.scene?.parent?.so;
 		for (let ai = 0; ai < 3; ai++) {
 			const ta = t.axes[ai];
 			const ca = clone.axes[ai];
-			ca.start.value  = ta.start.value;
-			ca.end.value    = ta.end.value;
+			if (t_parent) {
+				ca.start.value = t.get_bound(ta.start.name as Bound) - t_parent.get_bound(ta.start.name as Bound);
+				ca.end.value   = t.get_bound(ta.end.name as Bound)   - t_parent.get_bound(ta.end.name as Bound);
+			} else {
+				ca.start.value = ta.start.value;
+				ca.end.value   = ta.end.value;
+			}
 			ca.length.value = ta.length.value;
 			ca.angle.value  = ta.angle.value;
 			ca.invariant    = ta.invariant;

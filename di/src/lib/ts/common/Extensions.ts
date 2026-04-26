@@ -1,4 +1,4 @@
-type Integer = number;
+import type { Integer } from '../types/Types';
 
 /** Define a non-writable, non-enumerable, non-configurable prototype method. */
 function define<T>(ctor: { prototype: T }, name: string, value: Function): void {
@@ -88,13 +88,14 @@ define(String, 'beginWithEllipsis_forLength', function(this: string, length: num
 
 define(String, 'hash', function(this: string): Integer {
 	let hash = 0, i, character;
-	if (this.length === 0) return hash;
-	for (i = 0; i < this.length; i++) {
-		character = this.charCodeAt(i);
-		hash = ((hash << 5) - hash) + character;
-		hash |= 0;
+	if (this.length != 0) {
+		for (i = 0; i < this.length; i++) {
+			character = this.charCodeAt(i);
+			hash = ((hash << 5) - hash) + character;
+			hash |= 0;
+		}
 	}
-	return hash;
+	return hash as Integer;
 });
 
 define(String, 'html_encode', function(this: string): string {

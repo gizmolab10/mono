@@ -1,11 +1,4 @@
-import S_Mouse from '../events/S_Mouse';	
-
 export type Axis_Name = 'x' | 'y' | 'z';
 export type Dictionary<T = any> = Record<string, T>;
-export type T_Preview_Type = 'image' | 'text' | null;
 export type Integer = number & { __brand: 'integer' };
-export type Handle_Result<T = Object, U = void> = (result: T) => U;
-export type Handle_S_Mouse = Handle_Result<S_Mouse, boolean>;
-export type Async_Handle_Boolean = (flag: boolean) => Promise<void>;
-export type Create_S_Mouse = (event: MouseEvent | null, element: HTMLElement) => S_Mouse;
 export type Bound = 'x_min' | 'x_max' | 'y_min' | 'y_max' | 'z_min' | 'z_max' | 'width' | 'depth' | 'height';

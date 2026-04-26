@@ -9,7 +9,7 @@
 | 53 | Apr 15, 2026 | mothballed drag |
 | 52 | Apr 4, 2026 | lacemaker — new topology engine |
 | 51 | Mar 22, 2026 | reverse AST propagation |
-| 50 | Mar 17, 2026 | snap and pin |
+| 50 | Mar 17, 2026 | snap and pin parts together |
 | 49 | Mar 16, 2026 | unlockable givens, names with spaces |
 | 48 | Mar 14, 2026 | expanded error handling |
 | 47 | Mar 13, 2026 | enhanced formulas — refs and spaces |

@@ -45,6 +45,7 @@ export interface Angle_Rect extends Label_Rect {
 
 export interface Repeater {
 	is_diagonal?: boolean | null;
+	_orig_run_length?: number;
 	is_repeating?: boolean;
 	rise_axis?: 0 | 1 | 2;
 	run_axis?: 0 | 1 | 2;
@@ -52,13 +53,12 @@ export interface Repeater {
 	gap_min?: number;
 	gap_max?: number;
 	spacing?: number;
-	_orig_run_length?: number;
 }
 
 export interface Portable_Attribute {
 	formula?: string;
 	value?: number;
-	attached?: boolean;
+	is_locked?: boolean;
 }
 
 // number = just a value, object = formula/offset/etc.

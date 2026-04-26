@@ -172,3 +172,4 @@
         - [x] identical to SO
 - [x] edit formula -> immediately recompute value
 - [x] parent is-visible eyeball -> toggles both self and children
+- [x] [[16.formulas]]

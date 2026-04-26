@@ -18,7 +18,6 @@
 	const { w_s_angular } = angulars;
 	const { w_s_dimensions } = dimensions;
 	const { w_s_face_label } = face_label;
-	const { w_pin_offer } = drag;
 	const { w_scale, w_grid_opacity } = stores;
 	const { w_selection } = selection;
 
@@ -269,15 +268,6 @@
 			type         = 'text'
 		/>
 	{/if}
-	{#if $w_pin_offer}
-		<button
-			class        = 'pin-offer'
-			style:left   = '{Math.round($w_pin_offer.screen_x)}px'
-			style:top    = '{Math.round($w_pin_offer.screen_y)}px'
-			onclick      = {() => drag.accept_pin()}>
-			pin
-		</button>
-	{/if}
 </div>
 
 <style>
@@ -445,22 +435,5 @@
 		padding                : 0;
 	}
 
-	.pin-offer {
-		transform     : translate(-50%, -100%) translateY(-8px);
-		z-index       : var(--z-frontmost);
-		font-size     : var(--h-font-common);
-		background    : var(--c-white);
-		border        : var(--th-border) solid rgba(0, 0, 0, 0.5);
-		border-radius : var(--corner-common);
-		position      : absolute;
-		cursor        : pointer;
-		padding       : 2px 8px;
-		box-shadow    : 0 1px 3px rgba(0, 0, 0, 0.15);
-	}
-
-	.pin-offer:hover {
-		background : var(--hover);
-		border     : var(--th-border) solid rgba(0, 0, 0, 0.7);
-	}
 
 </style>

@@ -141,11 +141,6 @@
 						onblur    = {(e) => { const inp = e.target as HTMLInputElement; commit_name(index, inp.value, inp); if (!naming_error) stores.w_editing.set(T_Editing.none); }}
 					/>
 				</td>
-				<td class='std-lock'>
-					<button class='lock-button' onclick={() => toggle_lock(index)}>
-						{row.locked ? '🔒' : '–'}
-					</button>
-				</td>
 				<td class='std-value'>
 					<input
 						type      = 'text'
@@ -155,6 +150,11 @@
 						onfocus   = {() => stores.w_editing.set(T_Editing.value)}
 						onblur    = {(e) => { commit_value(index, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
 					/>
+				</td>
+				<td class='std-lock'>
+					<button class='lock-button' onclick={() => toggle_lock(index)}>
+						{row.locked ? '🔒' : '–'}
+					</button>
 				</td>
 				<td class='std-remove'>
 					<button
@@ -230,7 +230,7 @@
 	}
 
 	.remove-button {
-		font-size   : var(--h-font-common);
+		font-size   : var(--h-font-small);
 		background  : transparent;
 		color       : inherit;
 		cursor      : pointer;
@@ -265,9 +265,9 @@
 
 	.cell-input:focus {
 		outline        : var(--focus-outline);
-		outline-offset : -1.5px;
 		background     : var(--c-white);
 		color          : var(--c-black);
+		outline-offset : -1.5px;
 	}
 
 	.cell-input.right {
@@ -282,18 +282,18 @@
 	}
 
 	.naming-overlay {
-		position      : relative;
-		z-index       : 1000;
-		border        : 2px solid darkred;
-		border-radius : 8px;
-		background    : var(--c-white);
-		padding       : 6px 8px;
 		font-size     : var(--h-font-small);
+		border        : 2px solid darkred;
+		background    : var(--c-white);
+		box-sizing    : border-box;
+		position      : relative;
+		padding       : 6px 8px;
+		text-align    : center;
+		width         : 100%;
+		z-index       : 1000;
+		border-radius : 8px;
 		margin-top    : 8px;
 		margin-bottom : 8px;
-		box-sizing    : border-box;
-		width         : 100%;
-		text-align    : center;
 	}
 
 	.naming-message :global(.naming-quoted) {
@@ -307,18 +307,18 @@
 	}
 
 	.naming-suggestion {
-		background    : white;
-		padding       : 2px 5px;
-		border-radius : 5px;
-		font-size     : var(--h-font-small);
 		border        : var(--th-border) solid currentColor;
+		font-size     : var(--h-font-small);
 		cursor        : pointer;
 		color         : inherit;
+		padding       : 2px 5px;
+		background    : white;
+		border-radius : 5px;
 		line-height   : 1;
 	}
 
 	.naming-suggestion:hover {
-		background : var(--selected);
 		outline    : 2px solid var(--accent);
+		background : var(--selected);
 	}
 </style>
