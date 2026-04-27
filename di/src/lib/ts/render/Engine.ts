@@ -344,12 +344,6 @@ class Engine {
 		scenes.root_name = root_so.name;
 		stores.w_all_sos.set(scene.get_all().map(o => o.so));
 
-		// Fit-normalize root if any SO has negative start/end/length (skip if root is a repeater)
-		// Skip during undo/redo — serialized values are the complete truth
-		if (recompute && !root_so.repeater && smart_objects.some(so => so.axes.some(a => a.start.value < 0 || a.end.value < 0 || a.length.value < 0))) {
-			this.fit_to_children();
-		}
-
 		// Restore selection only if previously saved
 		if (saved?.selected_id != null) {
 			const sel_so = smart_objects.find(so => so.id === saved.selected_id);
@@ -1460,7 +1454,7 @@ class Engine {
 	}
 
 	/** Position a fire block clone: template rotated 90° (swap repeat/height lengths), shortened to fit between studs, at mid-height.
-	 *  Values are offsets: start.value = offset from parent's min, end.value = offset from parent's max. */
+	 *  Stored values follow the same convention as everywhere else: start and end are both offsets from the parent's start side. */
 	private apply_firewall_position(clone: Smart_Object, t: Smart_Object, index: number, repeat_ai: number, height_ai: number, step: number, template_dim: number, parent_dims: number[], bay_length: number): void {
 		// Start from template axes for the "other" axis (depth), then override repeat and height
 		for (let ai = 0; ai < 3; ai++) {
@@ -1474,13 +1468,13 @@ class Engine {
 		const block_length = bay_length;
 		const block_start = t.axes[repeat_ai].start.value + template_dim + step * index;
 		clone.axes[repeat_ai].start.value  = block_start;
-		clone.axes[repeat_ai].end.value    = block_start + block_length - parent_dims[repeat_ai];
+		clone.axes[repeat_ai].end.value    = block_start + block_length;
 		clone.axes[repeat_ai].length.value = block_length;
 
 		// Height axis: swapped to template_dim (stud width), centered at mid-height of parent
 		const mid_start = parent_dims[height_ai] / 2 - template_dim / 2;
 		clone.axes[height_ai].start.value  = mid_start;
-		clone.axes[height_ai].end.value    = mid_start + template_dim - parent_dims[height_ai];
+		clone.axes[height_ai].end.value    = mid_start + template_dim;
 		clone.axes[height_ai].length.value = template_dim;
 	}
 
@@ -1492,18 +1486,14 @@ class Engine {
 		used_names.add(name);
 
 		const clone = new Smart_Object(name);
-		// Clone shares its parent with the template. Template stores position
-		// values in the convention its formulas use (offset from parent's origin
-		// when a formula is present). The clone has no formulas, so it reads
-		// stored position values as offset from the parent's same-side bound.
-		// Convert each position via the template's absolute world coordinate.
+		// Both start and end store offset from parent's start (matches bound-getter convention).
 		const t_parent = t.scene?.parent?.so;
 		for (let ai = 0; ai < 3; ai++) {
 			const ta = t.axes[ai];
 			const ca = clone.axes[ai];
 			if (t_parent) {
 				ca.start.value = t.get_bound(ta.start.name as Bound) - t_parent.get_bound(ta.start.name as Bound);
-				ca.end.value   = t.get_bound(ta.end.name as Bound)   - t_parent.get_bound(ta.end.name as Bound);
+				ca.end.value   = t.get_bound(ta.end.name as Bound)   - t_parent.get_bound(ta.start.name as Bound);
 			} else {
 				ca.start.value = ta.start.value;
 				ca.end.value   = ta.end.value;

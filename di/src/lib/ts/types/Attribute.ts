@@ -38,7 +38,6 @@ export default class Attribute {
 		if (typeof data === 'number') {
 			this.value = data;
 			this.is_locked = false;
-			if (this.name === 'height') console.log(`deserialize ${this.name} from bare number: value=${this.value}, locked=${this.is_locked}`);
 			return;
 		}
 		this.is_locked = data.is_locked ?? false;
@@ -49,6 +48,5 @@ export default class Attribute {
 		} else {
 			this.value = data.value ?? 0;
 		}
-		if (this.name === 'height' || this.name === 'z_max' || this.name === 'z_min') console.log(`deserialize ${this.name} from object: value=${this.value}, locked=${this.is_locked}`);
 	}
 }

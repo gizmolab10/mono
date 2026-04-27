@@ -61,9 +61,9 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -4572.000000000001,
+            "extent": 4572,
             "length": {
-              "value": 4267.2,
+              "value": 4572,
               "is_locked": true
             },
             "angle": 0
@@ -75,7 +75,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
+            "extent": 11582.4,
             "length": {
               "formula": ".l"
             },
@@ -88,7 +88,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
+            "extent": 2743.2000000000003,
             "length": {
               "formula": ".l"
             },
@@ -111,7 +111,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 4572.000000000001,
+            "length": 4267.200000000001,
             "angle": 0
           },
           "invariant": 2
@@ -134,13 +134,13 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
-            "length": {
-              "formula": ".l"
+            "extent": {
+              "formula": ".e"
             },
+            "length": 2743.2000000000003,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
         "visible": false,
         "hide_children": false,
@@ -157,7 +157,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 4572.000000000001,
+            "length": 4267.200000000001,
             "angle": 0
           },
           "invariant": 2
@@ -181,7 +181,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
+            "extent": 2743.2000000000003,
             "length": {
               "formula": ".l"
             },
@@ -204,7 +204,7 @@
             "extent": {
               "formula": ".e - wall thickness"
             },
-            "length": 4483.100000000001,
+            "length": 4178.300000000001,
             "angle": 0
           },
           "invariant": 2
@@ -248,13 +248,13 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
-            "length": {
-              "formula": ".l"
+            "extent": {
+              "formula": ".e"
             },
+            "length": 4267.200000000001,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
         "y": {
           "attributes": {
@@ -274,13 +274,13 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
-            "length": {
-              "formula": ".l"
+            "extent": {
+              "formula": ".e"
             },
+            "length": 2743.2000000000003,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
         "visible": false,
         "hide_children": false,
@@ -297,7 +297,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 4267.2,
+            "length": 4572,
             "angle": 0
           },
           "invariant": 2
@@ -344,7 +344,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 4267.2,
+            "length": 4572,
             "angle": 0
           },
           "invariant": 2
@@ -386,12 +386,13 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": "4'"
+              "value": 1219.2,
+              "is_locked": true
             },
             "extent": {
-              "formula": ".e - 30\""
+              "formula": ".e - 2' 6\""
             },
-            "length": 2286,
+            "length": 2590.8,
             "angle": 0
           },
           "invariant": 2
@@ -401,7 +402,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
+            "extent": 914.3999999999996,
             "length": {
               "formula": ".l"
             },
@@ -441,9 +442,11 @@
         "name": "tread",
         "x": {
           "attributes": {
-            "origin": 0,
-            "extent": -2085.4736842105262,
-            "length": 200.5263157894737,
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 227.26315789473688,
+            "length": 227.26315789473685,
             "angle": 0
           },
           "invariant": 1
@@ -451,19 +454,18 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 0,
+            "extent": 914.3999999999996,
             "length": 914.3999999999996,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
         "z": {
           "attributes": {
-            "origin": 180.34000000000006,
-            "extent": -2524.7600000000007,
+            "origin": 180.34000000000003,
+            "extent": 218.44000000000003,
             "length": {
-              "value": 38.09999999999954,
-              "is_locked": true
+              "formula": "stud thickness"
             },
             "angle": 0
           },
@@ -484,7 +486,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 4267.2,
+            "length": 4572,
             "angle": 0
           },
           "invariant": 2
@@ -531,7 +533,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2438.3999999999996,
+            "length": 2743.2,
             "angle": 0
           },
           "invariant": 2
@@ -563,8 +565,8 @@
           },
           "invariant": 2
         },
-        "visible": true,
-        "hide_children": true,
+        "visible": false,
+        "hide_children": false,
         "repeater": {
           "run_axis": 0,
           "rise_axis": 1,
@@ -573,7 +575,7 @@
           "gap_max": 304.79999999999995,
           "is_diagonal": false,
           "is_repeating": true,
-          "firewall": true
+          "firewall": false
         },
         "parent_id": "did04260a3a40843"
       },
@@ -585,10 +587,9 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -2400.2999999999997,
+            "extent": 38.09999999999991,
             "length": {
-              "value": 38.09999999999991,
-              "is_locked": true
+              "formula": "stud thickness"
             },
             "angle": 0
           },
@@ -599,14 +600,13 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
-            "length": {
-              "value": 88.89999999999964,
-              "is_locked": true
+            "extent": {
+              "formula": ".e"
             },
+            "length": 88.89999999999964,
             "angle": 0
           },
-          "invariant": 1
+          "invariant": 2
         },
         "z": {
           "attributes": {
@@ -636,7 +636,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 4267.2,
+            "length": 4572,
             "angle": 0
           },
           "invariant": 2
@@ -686,7 +686,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -4483.100000000001,
+            "extent": 88.89999999999964,
             "length": {
               "formula": "wall thickness"
             },
@@ -736,7 +736,7 @@
         "name": "glass wall",
         "x": {
           "attributes": {
-            "origin": 4483.100000000001,
+            "origin": 4178.300000000001,
             "extent": {
               "formula": ".e"
             },
@@ -791,7 +791,7 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": -8750.300000000001,
+            "extent": 88.89999999999999,
             "length": {
               "formula": "wall thickness"
             },
@@ -853,7 +853,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -11493.5,
+            "extent": 88.89999999999999,
             "length": {
               "formula": "wall thickness"
             },
@@ -874,7 +874,7 @@
           },
           "invariant": 2
         },
-        "visible": true,
+        "visible": false,
         "hide_children": false,
         "repeater": {
           "spacing": 406.4,
@@ -896,7 +896,7 @@
             "extent": {
               "formula": ".e - 3'"
             },
-            "length": 3568.7000000000016,
+            "length": 3263.9000000000015,
             "angle": 0
           },
           "invariant": 2
@@ -906,7 +906,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -4178.3,
+            "extent": 88.89999999999964,
             "length": {
               "formula": "wall thickness"
             },
@@ -942,7 +942,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 4483.100000000001,
+            "length": 4178.300000000001,
             "angle": 0
           },
           "invariant": 2
@@ -982,22 +982,28 @@
         "name": "bathroom",
         "x": {
           "attributes": {
-            "origin": -4267.2,
+            "origin": 1828.8000000000002,
             "extent": {
               "formula": ".e"
             },
-            "length": 8839.2,
+            "length": {
+              "value": 2438.4000000000005,
+              "is_locked": true
+            },
             "angle": 0
           },
           "invariant": 0
         },
         "y": {
           "attributes": {
-            "origin": 0,
+            "origin": 3962.4,
             "extent": {
               "formula": ".e"
             },
-            "length": 5791.2,
+            "length": {
+              "value": 1828.7999999999997,
+              "is_locked": true
+            },
             "angle": 0
           },
           "invariant": 0
@@ -1018,6 +1024,204 @@
         "visible": false,
         "hide_children": false,
         "parent_id": "di38476b85f5fb05"
+      },
+      {
+        "id": "di8c404384d31f08",
+        "name": "bath back wall",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 88.89999999999964,
+            "length": {
+              "formula": "wall thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 1828.7999999999997,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2743.2000000000003,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": false,
+        "hide_children": false,
+        "repeater": {
+          "spacing": 406.4,
+          "firewall": false,
+          "is_repeating": true,
+          "run_axis": 1,
+          "is_diagonal": false
+        },
+        "parent_id": "di6e49f7949d45d3"
+      },
+      {
+        "id": "di5244f08f7d9fff",
+        "name": "stud",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 88.89999999999964,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 38.09999999999991,
+            "length": {
+              "formula": "stud thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2743.2000000000003,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di8c404384d31f08"
+      },
+      {
+        "id": "di5d4068af039b53",
+        "name": "bath side wall",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - 3'"
+            },
+            "length": 1524.000000000001,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 88.90000000000009,
+            "length": {
+              "formula": "wall thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2743.2000000000003,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": false,
+        "hide_children": false,
+        "repeater": {
+          "spacing": 406.4,
+          "firewall": true,
+          "is_repeating": true,
+          "run_axis": 0,
+          "is_diagonal": false
+        },
+        "parent_id": "di6e49f7949d45d3"
+      },
+      {
+        "id": "di6a49ca9d8297b8",
+        "name": "stud",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 38.100000000000364,
+            "length": {
+              "formula": "stud thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 88.90000000000009,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 2743.2000000000003,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di5d4068af039b53"
       }
     ],
     "givens": [
@@ -1050,7 +1254,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "dia2480ebef32cfd",
-    "selected_face": 1
+    "selected_id": "dif84dfb9131ebc9",
+    "selected_face": 5
   }
 }

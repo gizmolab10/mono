@@ -225,9 +225,6 @@
 			{#if show_parts}
 				<th class='hierarchy-eye static'>⋮</th>
 				<th class='hierarchy-eye static'>👁</th>
-				<th class='toggle-header gap-l' colspan='3' use:hit_target={{ id: 'toggle-position', onpress: () => { show_position = !show_position; preferences.write(T_Preference.showPosition, show_position); } }}>
-					{show_position ? 'position' : 'size'} ⟳
-				</th>
 			{/if}
 		</tr>
 	</thead>
@@ -280,9 +277,6 @@
 					<td class='hierarchy-eye' onclick={(e) => toggle_visible(e, so)}>
 						{so.visible !== false ? '👁' : '–'}
 					</td>
-					<td class='hierarchy-data'>{values[0].whole}<span class='faint' class:hidden={!values[0].plus}>+</span></td>
-					<td class='hierarchy-data'>{values[1].whole}<span class='faint' class:hidden={!values[1].plus}>+</span></td>
-					<td class='hierarchy-data'>{values[2].whole}<span class='faint' class:hidden={!values[2].plus}>+</span></td>
 				</tr>
 			{/each}
 		</tbody>
@@ -477,18 +471,9 @@
 	}
 
 	.toggle-header.gap-r { border-right-width : 3px; }
-	.toggle-header.gap-l { border-left-width  : 3px; }
 
 	.toggle-header:hover {
 		background : var(--hover);
-	}
-
-	.hierarchy-data {
-		color                : var(--c-black);
-		font-variant-numeric : tabular-nums;
-		font-weight          : normal;
-		white-space          : nowrap;
-		text-align           : right;
 	}
 
 	.faint {

@@ -638,7 +638,6 @@ class Constraints {
 					so.set_bound(axis.start.name as Bound, end_abs - axis.length.value);
 					break;
 				case 1: // end = start + length
-					if (axis.name === 'z' && !so.scene?.parent) console.log(`enforce case 1 on '${so.name}' z-axis: start=${start_abs}, length=${axis.length.value}, writing end=${start_abs + axis.length.value}`);
 					so.set_bound(axis.end.name as Bound, start_abs + axis.length.value);
 					break;
 				case 2: // length = end - start
@@ -649,7 +648,6 @@ class Constraints {
 		// Root: start is always 0, length always equals end
 		if (so.scene && !so.scene.parent) {
 			for (const axis of so.axes) {
-				if (axis.name === 'z') console.log(`root special on '${so.name}' z-axis: end=${axis.end.value}, length before=${axis.length.value}, length after=${axis.end.value}`);
 				axis.start.value = 0;
 				axis.length.value = axis.end.value;
 			}

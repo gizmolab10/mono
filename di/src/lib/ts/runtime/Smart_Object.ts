@@ -66,26 +66,22 @@ export default class Smart_Object extends Identifiable {
 
 	/** Read a bound as a scene-absolute value.
 	 *  Length attributes: stored as absolute, returned as-is.
-	 *  Plain values: offset from parent's same-named bound → recurse through same bound.
-	 *  Formula values: parent-local from origin → recurse through axis origin bound. */
+	 *  Position attributes on a child: stored as offset from parent's axis origin
+	 *    (the start side of the axis), regardless of whether the cell carries a formula. */
 	get_bound(bound: Bound): number {
 		const attr = this.attributes_dict_byName[bound];
 		if (!attr) return 0;
 		if (Smart_Object.LENGTH_BOUNDS.has(bound)) return attr.value;
 		if (!this.scene?.parent) return attr.value;
-		if (attr.compiled) {
-			const origin = Smart_Object.AXIS_ORIGIN[bound] ?? bound;
-			return this.scene.parent.so.get_bound(origin) + attr.value;
-		}
-		return this.scene.parent.so.get_bound(bound) + attr.value;
+		const origin = Smart_Object.AXIS_ORIGIN[bound] ?? bound;
+		return this.scene.parent.so.get_bound(origin) + attr.value;
 	}
 
 	/** Store a bound (absolute world-space value).
 	 *  Length attributes: stored as absolute, no parent offset.
 	 *  No parent / root: stored directly.
-	 *  Plain values: stored as offset from parent's same-named bound.
-	 *  Formula values: stored as offset from parent's axis origin bound
-	 *    (matching get_bound's resolution path for compiled attributes). */
+	 *  Position attributes on a child: stored as offset from parent's axis origin
+	 *    (the start side of the axis), regardless of whether the cell carries a formula. */
 	set_bound(bound: Bound, value: number): void {
 		const attr = this.attributes_dict_byName[bound];
 		if (!attr) return;
@@ -93,18 +89,19 @@ export default class Smart_Object extends Identifiable {
 			attr.value = value;
 		} else if (!this.scene?.parent) {
 			attr.value = value;
-		} else if (attr.compiled) {
+		} else {
 			const origin = Smart_Object.AXIS_ORIGIN[bound] ?? bound;
 			attr.value = value - this.scene.parent.so.get_bound(origin);
-		} else {
-			attr.value = value - this.scene.parent.so.get_bound(bound);
 		}
-		// Keep length in sync when an endpoint changes (and length has no formula)
+		// When start or end was just written by a direct write (not by a formula
+		// evaluation), keep length in sync so the invariant pass that follows does
+		// not roll back the just-written value using a stale length. Skip when
+		// length is locked, when length carries its own formula, or when the cell
+		// being written carries a formula (its value is the formula's result, not
+		// a user signal to change the axis's length).
 		for (const axis of this.axes) {
-			if ((attr === axis.start || attr === axis.end) && !axis.length.compiled) {
-				const before = axis.length.value;
+			if ((attr === axis.start || attr === axis.end) && !axis.length.compiled && !axis.length.is_locked && !attr.compiled) {
 				axis.length.value = this.get_bound(axis.end.name as Bound) - this.get_bound(axis.start.name as Bound);
-				if (axis.name === 'z') console.log(`set_bound side effect on '${this.name}' z-axis: end=${this.get_bound(axis.end.name as Bound)}, start=${this.get_bound(axis.start.name as Bound)}, length ${before} → ${axis.length.value}`);
 			}
 		}
 		Smart_Object.on_bound_change();

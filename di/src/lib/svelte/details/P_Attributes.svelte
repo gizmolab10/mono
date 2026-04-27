@@ -203,20 +203,13 @@
 		errors.clear(selected_so.id, row.bound);
 		error_state.active_error = null;
 		error_state.show_overlay = false;
-		if (length_bounds.has(row.bound)) {
-			constraints.write(selected_so.id, row.label, mm);
-		} else {
-			// Write raw offset directly — table displays attr.value (offset from parent's origin)
-			const attr = selected_so.attributes_dict_byName[row.bound];
-			if (attr) {
-				attr.value = mm;
-				// Sync length when an endpoint changes
-				const axis = selected_so.axes[row.axis_index];
-				if (!axis.length.compiled) {
-					axis.length.value = selected_so.get_bound(axis.end.name as Bound) - selected_so.get_bound(axis.start.name as Bound);
-				}
-			}
-		}
+		// Write the typed number directly into the attribute's stored value.
+		// For a length attribute this stores the new length; for a position attribute
+		// this stores the offset from parent's start. The invariant pass that runs
+		// inside propagate immediately after will recompute whichever cell on the
+		// axis is marked invariant — leaving formula-bearing cells untouched.
+		const attr = selected_so.attributes_dict_byName[row.bound];
+		if (attr) attr.value = mm;
 		constraints.propagate(selected_so);
 		stores.tick();
 		scenes.save();
