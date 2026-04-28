@@ -10,6 +10,7 @@ Active non-milestone work. The files in this folder are the current working docu
 - [Handoff](./handoff.md)
 - [Key Paths](./key paths.md)
 - [Learn](./learn.md)
+- [Minimum Viable INTERSECTION App](./Minimum Viable INTERSECTION app.md)
 - [Revisit.di](./revisit.di.md)
 - [Road.map](./road.map.md)
 - [Technique](./technique.md)

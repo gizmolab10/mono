@@ -284,6 +284,8 @@
   },
   "active": "896a014107adf0d5",
   "lastOpenFiles": [
+    "logs/update-docs.error.mono.log",
+    "logs/update-docs.error.di.log",
     "di/notes/guides/testing.md",
     "di/notes/guides/stipulations.md",
     "di/src/lib/ts/tests/Save_Load.test.ts",
@@ -303,7 +305,6 @@
     "di/notes/work/milestones/done/16.formulas.md",
     "di/notes/work/now/handoff.md",
     "di/src/assets/debug/sphere 45.di",
-    "di/src/assets/home/basement3.di",
     "di/notes/work/now/Minimum Viable INTERSECTION app.md",
     "notes/guides/develop/build notes.md",
     "di/notes/work/now/key paths.md",

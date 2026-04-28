@@ -264,6 +264,10 @@ export default defineConfig({
                       link: '/di/notes/guides/gotchas'
                     },
                     {
+                      text: 'Stipulations',
+                      link: '/di/notes/guides/stipulations'
+                    },
+                    {
                       text: 'Testing',
                       link: '/di/notes/guides/testing'
                     }
@@ -676,6 +680,10 @@ export default defineConfig({
                         {
                           text: 'Learn',
                           link: '/di/notes/work/now/learn'
+                        },
+                        {
+                          text: 'Minimum Viable INTERSECTION App',
+                          link: '/di/notes/work/now/Minimum Viable INTERSECTION app'
                         },
                         {
                           text: 'Revisit.di',
