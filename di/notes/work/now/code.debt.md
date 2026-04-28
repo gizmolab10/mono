@@ -4,6 +4,7 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
+- [ ] v scroll in details
 - [ ] stipulations -> tests -> code
 - [ ] attributes table -> "-" cell -> lock (value)
 - [ ] lock ignored on givens

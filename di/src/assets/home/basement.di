@@ -211,12 +211,12 @@
         },
         "y": {
           "attributes": {
-            "origin": 5791.2,
+            "origin": 5486.4,
             "extent": {
               "formula": ".e"
             },
             "length": {
-              "value": 4267.2,
+              "value": 4572,
               "is_locked": true
             },
             "angle": 0
@@ -264,7 +264,7 @@
             "extent": {
               "formula": "moose.s"
             },
-            "length": 5791.2,
+            "length": 5486.4,
             "angle": 0
           },
           "invariant": 2
@@ -445,7 +445,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 227.26315789473688,
+            "extent": 227.26315789473685,
             "length": 227.26315789473685,
             "angle": 0
           },
@@ -565,8 +565,8 @@
           },
           "invariant": 2
         },
-        "visible": false,
-        "hide_children": false,
+        "visible": true,
+        "hide_children": true,
         "repeater": {
           "run_axis": 0,
           "rise_axis": 1,
@@ -874,7 +874,7 @@
           },
           "invariant": 2
         },
-        "visible": false,
+        "visible": true,
         "hide_children": false,
         "repeater": {
           "spacing": 406.4,
@@ -949,7 +949,7 @@
         },
         "y": {
           "attributes": {
-            "origin": 4178.3,
+            "origin": 4483.1,
             "extent": {
               "formula": ".e"
             },
@@ -982,12 +982,12 @@
         "name": "bathroom",
         "x": {
           "attributes": {
-            "origin": 1828.8000000000002,
+            "origin": 2133.6000000000004,
             "extent": {
               "formula": ".e"
             },
             "length": {
-              "value": 2438.4000000000005,
+              "value": 2133.6,
               "is_locked": true
             },
             "angle": 0
@@ -996,7 +996,7 @@
         },
         "y": {
           "attributes": {
-            "origin": 3962.4,
+            "origin": 3657.6,
             "extent": {
               "formula": ".e"
             },
@@ -1067,11 +1067,11 @@
           },
           "invariant": 2
         },
-        "visible": false,
-        "hide_children": false,
+        "visible": true,
+        "hide_children": true,
         "repeater": {
           "spacing": 406.4,
-          "firewall": false,
+          "firewall": true,
           "is_repeating": true,
           "run_axis": 1,
           "is_diagonal": false
@@ -1135,7 +1135,7 @@
             "extent": {
               "formula": ".e - 3'"
             },
-            "length": 1524.000000000001,
+            "length": 1219.2000000000007,
             "angle": 0
           },
           "invariant": 2
@@ -1166,11 +1166,11 @@
           },
           "invariant": 2
         },
-        "visible": false,
-        "hide_children": false,
+        "visible": true,
+        "hide_children": true,
         "repeater": {
           "spacing": 406.4,
-          "firewall": true,
+          "firewall": false,
           "is_repeating": true,
           "run_axis": 0,
           "is_diagonal": false
@@ -1222,6 +1222,52 @@
         "visible": true,
         "hide_children": false,
         "parent_id": "di5d4068af039b53"
+      },
+      {
+        "id": "di334398930cb9ea",
+        "name": "stair wall",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 88.89999999999964,
+            "length": {
+              "formula": "wall thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": "back.well.s"
+            },
+            "length": 1219.2000000000007,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2743.2000000000003,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
       }
     ],
     "givens": [
@@ -1254,7 +1300,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "dif84dfb9131ebc9",
-    "selected_face": 5
+    "selected_id": "di6e49f7949d45d3",
+    "selected_face": 1
   }
 }

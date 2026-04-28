@@ -50,7 +50,21 @@
             }
           },
           {
-            "id": "40f93910fa0879b1",
+            "id": "896a014107adf0d5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/guides/stipulations.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "stipulations"
+            }
+          },
+          {
+            "id": "2f054353634fd11d",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -138,7 +152,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:jeff",
+                "query": "file:builds",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -241,13 +255,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/guides/testing.md",
+                "file": "di/notes/guides/stipulations.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of testing"
+              "title": "Outline of stipulations"
             }
           }
         ],
@@ -268,11 +282,19 @@
       "bases:Create new base": false
     }
   },
-  "active": "40f93910fa0879b1",
+  "active": "896a014107adf0d5",
   "lastOpenFiles": [
-    "di/src/lib/ts/tests/Repeaters.test.ts",
-    "di/notes/work/now/code.debt.md",
     "di/notes/guides/testing.md",
+    "di/notes/guides/stipulations.md",
+    "di/src/lib/ts/tests/Save_Load.test.ts",
+    "di/src/lib/ts/tests/Data_Layout.test.ts",
+    "di/src/lib/ts/tests/Camera.test.ts",
+    "di/src/lib/ts/tests/Root.test.ts",
+    "di/src/lib/ts/tests/Hierarchy.test.ts",
+    "di/notes/work/now/code.debt.md",
+    "di/src/lib/md/builds.md",
+    "di/notes/work/now/stipulations.md",
+    "di/src/lib/ts/tests/Repeaters.test.ts",
     "di/notes/work/milestones/done/15.attributes.md",
     "di/src/lib/ts/tests/Invariants_and_Locks.test.ts",
     "di/src/assets/home/basement.di",
@@ -283,29 +305,20 @@
     "di/src/assets/debug/sphere 45.di",
     "di/src/assets/home/basement3.di",
     "di/notes/work/now/Minimum Viable INTERSECTION app.md",
-    "di/src/assets/debug/basement3.di",
-    "di/src/assets/debug/basement.di",
-    "di/src/assets/debug/basementi.di",
     "notes/guides/develop/build notes.md",
     "di/notes/work/now/key paths.md",
-    "logs/update-docs.error.mono.log",
     "di/notes/work/milestones/33.drag/index.md",
-    "logs/update-docs.error.di.log",
     "notes/guides/develop/build.md",
     "di/notes/work/milestones/done/6.build.notes.md",
     "ga/node_modules/phaser/changelog/3.60/Build.md",
-    "di/src/lib/md/builds.md",
     "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/prebuild_tools.md",
     "notes/work/articles/how.to.build.it.md",
     "s3/notes/work/fresh.build.md",
     "di/notes/work/now/working features.md",
     "di/notes/work/now/key table.md",
     "di/notes/work/now/index.md",
-    "di/src/assets/debug/blocks.di",
     "di/notes/work/index.md",
     "di/notes/work/now/technique.md",
-    "notes/guides/pre-flight/keywords.md",
-    "di/notes/work/now/cadence.md",
     "ws/dist/assets/seriously-icon.png",
     "Screenshot 2026-04-07 at 2.37.08 PM.png",
     "Screenshot 2026-04-06 at 6.25.28 PM.png",
