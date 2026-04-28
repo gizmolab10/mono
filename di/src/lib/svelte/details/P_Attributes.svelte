@@ -480,7 +480,7 @@
 	}
 
 	.merge-cont td {
-		border-top.   : none !important;
+		border-top : none !important;
 	}
 
 	.attr-formula {
@@ -690,7 +690,7 @@
 	}
 
 	.error-suggestion:global(.blink) {
-		outline    : 2px solid var(--accent);å
+		outline    : 2px solid var(--accent);
 		background : var(--selected);
 	}
 

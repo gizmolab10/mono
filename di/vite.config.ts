@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import ports from '../notes/tools/hub/ports.json';
+import { defineConfig } from 'vite';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import ports from '../notes/tools/hub/ports.json';
 
 function parseBuildNotes() {
   const md = readFileSync('src/lib/md/builds.md', 'utf-8');

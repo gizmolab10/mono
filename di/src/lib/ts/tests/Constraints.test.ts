@@ -1116,3 +1116,57 @@ describe('translate_formulas', () => {
 		expect(so.width).toBe(before);
 	});
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// Rule 43 — setting a formula on a cell clears any lock the cell carried
+// ═══════════════════════════════════════════════════════════════════
+
+describe('setting a formula clears the lock', () => {
+	it('a cell that was locked has its lock cleared once a formula is set on it', () => {
+		const wall = add_so('wall', { x_max: 100 });
+		const so = add_so('box', { x_min: 5, x_max: 50 });
+
+		const cell = so.attributes_dict_byName['x_min'];
+		cell.is_locked = true;
+		expect(cell.is_locked).toBe(true);
+
+		const error = constraints.set_formula(so, 'x_min', ref(wall, 'x_max'));
+		expect(error).toBeNull();
+
+		expect(cell.is_locked).toBe(false);
+	});
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// Rule 44 — bare-name resolver walks up the parent chain, picks first match
+// ═══════════════════════════════════════════════════════════════════
+
+describe('bare-name resolver walks up and picks the first match', () => {
+	it('a bare name in a formula resolves to the closest sibling with that name, not a more distant SO', () => {
+		// Build a small tree:
+		//   root_alpha (named "alpha", x_max = 999)
+		//   parent
+		//     formula_host (the SO carrying the formula)
+		//     near_alpha (named "alpha", x_max = 50)
+		const root_alpha = add_so('alpha', { x_min: 0, x_max: 999 });
+		const parent = add_so('parent', { x_min: 0, x_max: 1000 });
+		const formula_host = add_so('formula_host', { x_min: 0, x_max: 10 });
+		const near_alpha = add_so('alpha', { x_min: 0, x_max: 50 });
+
+		// Wire the parent-child links so the formula host and the near alpha are siblings under "parent".
+		const all = scene.get_all();
+		const parent_o = all.find(o => o.so === parent)!;
+		const fh_o = all.find(o => o.so === formula_host)!;
+		const near_o = all.find(o => o.so === near_alpha)!;
+		fh_o.parent = parent_o;
+		near_o.parent = parent_o;
+
+		const error = constraints.set_formula(formula_host, 'x_max', 'alpha.x_max');
+		expect(error).toBeNull();
+
+		// The closest sibling named "alpha" wins — that's near_alpha at x_max = 50, not root_alpha at 999.
+		expect(formula_host.attributes_dict_byName['x_max'].value).toBeCloseTo(50);
+		// Touch the unused vars so the linter does not complain.
+		void root_alpha;
+	});
+});

@@ -821,7 +821,7 @@
           },
           "invariant": 2
         },
-        "visible": true,
+        "visible": false,
         "hide_children": true,
         "repeater": {
           "spacing": 406.4,
@@ -874,7 +874,7 @@
           },
           "invariant": 2
         },
-        "visible": true,
+        "visible": false,
         "hide_children": false,
         "repeater": {
           "spacing": 406.4,
@@ -1268,6 +1268,473 @@
         "visible": true,
         "hide_children": false,
         "parent_id": "di814622bfde093a"
+      },
+      {
+        "id": "di46448b947f83a6",
+        "name": "center beam",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "front.s - 4\""
+            },
+            "extent": 4654.549999999999,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s - 4'"
+            },
+            "extent": {
+              "formula": ".e + 4'"
+            },
+            "length": 14020.800000000001,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": 2457.4500000000003,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia2480ebef32cfd"
+      },
+      {
+        "id": "di194aa0bcec9ee6",
+        "name": "center post",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "front.kitchen.s - 4\""
+            },
+            "extent": 4654.549999999999,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "front.kitchen.e - 4\""
+            },
+            "extent": 5568.949999999999,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - 11\""
+            },
+            "length": 2463.8,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia2480ebef32cfd"
+      },
+      {
+        "id": "di28470382743179",
+        "name": "back beam",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "back.l / 2"
+            },
+            "extent": 2470.15,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s - 4'"
+            },
+            "extent": {
+              "formula": "stair post.e"
+            },
+            "length": 7924.8,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": 2457.4500000000003,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia2480ebef32cfd"
+      },
+      {
+        "id": "did74e849945d8cf",
+        "name": "front beam",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "front.s + front.l / 2"
+            },
+            "extent": 6889.75,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s - 4'"
+            },
+            "extent": {
+              "formula": "front.e"
+            },
+            "length": 11277.6,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": 2457.4500000000003,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia2480ebef32cfd"
+      },
+      {
+        "id": "di8c448f846398a2",
+        "name": "kitchen post",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "front.s + front.l / 2"
+            },
+            "extent": 6889.75,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "front.kitchen.bathroom.s - 4\""
+            },
+            "extent": 3740.15,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - 11\""
+            },
+            "length": 2463.8,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia2480ebef32cfd"
+      },
+      {
+        "id": "dia04a54814864bd",
+        "name": "shower wall",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - 3'"
+            },
+            "length": 1219.2000000000007,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s + .l / 2"
+            },
+            "extent": 1003.2999999999997,
+            "length": {
+              "formula": "wall thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2743.2000000000003,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": true,
+        "repeater": {
+          "spacing": 406.4,
+          "firewall": false,
+          "is_repeating": true,
+          "run_axis": 0,
+          "is_diagonal": false
+        },
+        "parent_id": "di6e49f7949d45d3"
+      },
+      {
+        "id": "di424b3ea70d6b7d",
+        "name": "stud",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 38.100000000000364,
+            "length": {
+              "formula": "stud thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 88.89999999999964,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 2743.2000000000003,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia04a54814864bd"
+      },
+      {
+        "id": "dicd44d09951ec46",
+        "name": "stair post",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "back beam.s"
+            },
+            "extent": 2470.15,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "back.well.s - post thickness"
+            },
+            "extent": 6705.6,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - 11\""
+            },
+            "length": 2463.8,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia2480ebef32cfd"
+      },
+      {
+        "id": "did64123ba34e4ba",
+        "name": "well post",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "back beam.s"
+            },
+            "extent": 2470.15,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "back.well.e"
+            },
+            "extent": 7804.15,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - 11\""
+            },
+            "length": 2463.8,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia2480ebef32cfd"
+      },
+      {
+        "id": "di294d3d8f2800fb",
+        "name": "back beam2",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "back.l / 2"
+            },
+            "extent": 2470.15,
+            "length": {
+              "formula": "post thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "well post.s"
+            },
+            "extent": {
+              "formula": ".e + 4'"
+            },
+            "length": 5181.6,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": 2457.4500000000003,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia2480ebef32cfd"
       }
     ],
     "givens": [
@@ -1279,6 +1746,16 @@
       {
         "name": "stud thickness",
         "value_mm": 38.099999999999994,
+        "locked": true
+      },
+      {
+        "name": "post thickness",
+        "value_mm": 184.14999999999998,
+        "locked": true
+      },
+      {
+        "name": "beam thickness",
+        "value_mm": 285.75,
         "locked": true
       }
     ],
@@ -1300,7 +1777,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "di6e49f7949d45d3",
+    "selected_id": "di28470382743179",
     "selected_face": 1
   }
 }

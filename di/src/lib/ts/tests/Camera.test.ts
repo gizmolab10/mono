@@ -97,3 +97,34 @@ describe('forward projection then ray-cast is a round trip', () => {
 		}
 	});
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// Rule 48 — the camera has two viewing modes; the choice is not part of the saved scene
+// ═══════════════════════════════════════════════════════════════════
+
+describe('the camera has two viewing modes', () => {
+	it('switching between 3D mode and 2D mode changes where a known world point lands on the screen', () => {
+		// Pick a point that is off-axis AND off the camera's focal plane.
+		// The 2D mode is calibrated so the focal plane (z=0 here) projects the same in both modes,
+		// so we deliberately pick z>0 to make the two modes disagree.
+		const off_axis_off_plane = vec3.fromValues(5, 0, 50);
+
+		camera.set_ortho(false);
+		const screen_3d = world_to_screen(off_axis_off_plane);
+
+		camera.set_ortho(true);
+		const screen_2d = world_to_screen(off_axis_off_plane);
+
+		const dx = Math.abs(screen_3d.x - screen_2d.x);
+		const dy = Math.abs(screen_3d.y - screen_2d.y);
+		expect(dx + dy).toBeGreaterThan(1);
+
+		// Reset to 3D mode for any later tests.
+		camera.set_ortho(false);
+	});
+
+	it('the saved camera records only where it is, where it is looking, and which way is up — not which viewing mode was on', () => {
+		const data = camera.serialize();
+		expect(Object.keys(data).sort()).toEqual(['center', 'eye', 'up']);
+	});
+});

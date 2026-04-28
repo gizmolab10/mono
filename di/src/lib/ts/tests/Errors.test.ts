@@ -232,3 +232,42 @@ describe('classify', () => {
 		expect(err.message).toContain('unexpected');
 	});
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// Rule 49 — an error reported on a cell stays on that cell until cleared
+// ═══════════════════════════════════════════════════════════════════
+
+describe('an error stays on its cell until it is cleared', () => {
+	it('an error written on one cell of an SO is still there after later operations on other cells', () => {
+		const alpha = add_so('ALPHA');
+		const err = errors.bad_syntax('bad text', [0, 8], new Error('test'));
+
+		errors.set(alpha.id, 'x_min', err);
+		expect(errors.get(alpha.id, 'x_min')).toBe(err);
+
+		// Clearing a different cell on the same SO must not touch the x_min entry.
+		errors.clear(alpha.id, 'y_min');
+		expect(errors.get(alpha.id, 'x_min')).toBe(err);
+
+		// Clearing a different SO must not touch the x_min entry either.
+		const beta = add_so('BETA');
+		errors.clear(beta.id, 'x_min');
+		expect(errors.get(alpha.id, 'x_min')).toBe(err);
+
+		// Only an explicit clear on the right SO and right cell removes the error.
+		errors.clear(alpha.id, 'x_min');
+		expect(errors.get(alpha.id, 'x_min')).toBeNull();
+	});
+
+	it('an error survives unrelated set calls on other cells', () => {
+		const alpha = add_so('ALPHA');
+		const first = errors.bad_syntax('first', [0, 5], new Error('one'));
+		const second = errors.bad_syntax('second', [0, 6], new Error('two'));
+
+		errors.set(alpha.id, 'x_min', first);
+		errors.set(alpha.id, 'x_max', second);
+
+		expect(errors.get(alpha.id, 'x_min')).toBe(first);
+		expect(errors.get(alpha.id, 'x_max')).toBe(second);
+	});
+});

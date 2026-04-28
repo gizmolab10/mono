@@ -271,4 +271,28 @@ describe('Units', () => {
 			expect(units.parse('3 1/4"', T_Unit.inch)).toBeCloseTo(82.55);
 		});
 	});
+
+	// ═══════════════════════════════════════════════════════════════════
+	// Rule 34 — internal storage is in millimeters
+	// Whatever the user types, the parser hands back a value already in mm.
+	// ═══════════════════════════════════════════════════════════════════
+
+	describe('storage is in millimeters', () => {
+		it('parsing one inch returns 25.4', () => {
+			expect(units.parse('1', T_Unit.inch)).toBeCloseTo(25.4);
+		});
+
+		it('parsing one foot returns 304.8', () => {
+			expect(units.parse('1', T_Unit.foot)).toBeCloseTo(304.8);
+		});
+
+		it('parsing a compound foot-and-inch value returns the same number of millimeters', () => {
+			// 1 foot 3 inches = 12 inches + 3 inches = 15 inches = 381 mm
+			expect(units.parse("1' 3\"", T_Unit.inch)).toBeCloseTo(381);
+		});
+
+		it('parsing a value already in millimeters returns the same number', () => {
+			expect(units.parse('500', T_Unit.millimeter)).toBe(500);
+		});
+	});
 });

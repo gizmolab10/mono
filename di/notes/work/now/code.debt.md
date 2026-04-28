@@ -4,16 +4,18 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
-- [ ] v scroll in details
-- [ ] stipulations -> tests -> code
-- [ ] attributes table -> "-" cell -> lock (value)
-- [ ] lock ignored on givens
+- [ ] lock ignored on givens AND attributes
+- [ ] ability to cut an SO in half
+- [ ] v scroll in details -> update hit rects
+- [ ] SO opacity slider
+- [ ] print just the graph, scaled to fit
+- [x] stipulations -> tests -> code
+- [x] attributes table -> "-" cell -> lock (value)
 - [ ] parts table
     - [ ] eliminate position/size columns
     - [ ] drag and drop
 - [ ] [[27.selection.algorithm]]
 - [ ] arrow keys nudge SO position
-- [ ] print just the graph, scaled to fit
 - [ ] add move up move down buttons to bottom of parts list at far left
     - [ ] move duplicate button to the far right
 

