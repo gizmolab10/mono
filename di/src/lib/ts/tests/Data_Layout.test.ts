@@ -181,3 +181,23 @@ describe('every SO is shaped like a box', () => {
 		expect(directions.size).toBe(6);
 	});
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// Rule 50 — every SO carries a unique identifier (fresh SOs disagree)
+// ═══════════════════════════════════════════════════════════════════
+
+describe('every SO carries a unique identifier', () => {
+	it('two freshly built SOs disagree on identifier', () => {
+		const alpha = make_so('ALPHA');
+		const beta = make_so('BETA');
+		expect(alpha.id).not.toBe(beta.id);
+	});
+
+	it('a hundred freshly built SOs all carry distinct identifiers', () => {
+		const ids = new Set<string>();
+		for (let i = 0; i < 100; i++) {
+			ids.add(make_so(`thing_${i}`).id);
+		}
+		expect(ids.size).toBe(100);
+	});
+});

@@ -7,19 +7,22 @@ Unit tests for pure logic. Vitest runner.
 Each line names what the file in `src/lib/ts/tests/` covers.
 
 - **Angle** — angle normalization, conversion, comparison.
-- **Camera** — clicking the screen becomes a ray into the world, and projecting a known world point and clicking that spot gives a ray that passes back through it.
+- **Camera** — clicking the screen becomes a ray into the world; projecting a known world point and clicking that spot gives a ray that passes back through it; the two viewing modes (3D and 2D) project a known point at non-zero depth to noticeably different screen spots; the saved camera does not record which mode was on.
 - **Colors** — color parsing, blending, conversion between RGB and HSL.
 - **Compiler** — the formula tokenizer and compiler that turn typed text into an evaluable tree.
-- **Constraints** — the constraints manager: formula binding, evaluation, cycle detection, propagation across objects.
+- **Constraints** — the constraints manager: formula binding, evaluation, cycle detection, propagation across objects, formula-clears-lock, and the bare-name resolver walking up the parent chain.
 - **Coordinates** — point, size, and rectangle math; coordinate transformations.
-- **Data_Layout** — the structure each block carries by construction: three directions, three numbers per direction, a single parent slot.
+- **Data_Layout** — the structure each SO carries by construction: three directions, three numbers per direction, a single parent slot, plain-number cells, exactly one recomputed marker per direction, visibility flags, and the eight-corner / twelve-edge / six-face shape.
 - **Drag_math** — pure math helpers used by drag (ray-plane intersection, decomposing a screen delta onto two face edges).
-- **Errors** — the formula-error classifier and the suggestion list it surfaces in the panel.
+- **Engine_Behaviors** — engine-level rules that run end-to-end through the running app: deleting an SO removes its subtree and clears every formula that pointed at any deleted SO; changing the precision setting snaps every plain-number cell while leaving formula-driven cells alone.
+- **Errors** — the formula-error classifier and the suggestion list it surfaces in the panel; an error reported on a cell stays there until explicitly cleared.
 - **Evaluator** — the evaluator that walks a compiled tree to a number, and the reverse-propagation path that finds and writes a free constant during drag.
 - **Extensions** — small utility extensions on numbers and arrays.
+- **Givens** — named values defined outside any SO that formulas can reference; locked named values are protected from reverse-propagation writes.
 - **Hierarchy** — what happens to a child when its parent is moved or resized.
 - **History** — the snapshot-and-restore stack behind undo and redo, with a stubbed scene manager.
 - **Hits_3D** — pure 3D hit-testing geometry: point in polygon, segment proximity, front-facing detection.
+- **Preferences** — values written to browser storage round-trip on read, removed values come back as missing, and different keys do not collide.
 - **Invariants_and_Locks** — behavior around stored values, the invariant rule, the lock, and the load-time recompute. Each test names a single behavior; together they cover the bug shapes seen in recent sessions.
     - **Test 1 — storage round-trip.** Set a value to a cell on a child. Read the cell. Assert: same value back.
     - **Test 2 — invariant rule, marker on the near end.** Set far = 7, length = 4, near = 999 (deliberately wrong). Run the invariant pass on the child. Assert: near is now 3.
@@ -36,14 +39,17 @@ Each line names what the file in `src/lib/ts/tests/` covers.
     - **Test 12 — clone's z-end follows the formula at depth.** The wall is a child of a child of the root, so the stud template lives two levels below the root. The stud template's z-end carries the formula that says "follow my parent's z-end". Trigger the repeater sync. Assert: each clone's z-end stored value equals the template's z-end stored value.
     - **Test 13 — re-running the sync does not change the template.** Wall with stud template configured as a linear repeater. Record the template's stored values for every direction. Run the repeater sync several times in a row. Assert: the template's stored values are exactly what they were at the start.
     - **Test 14 — fireblocks have the right size and position.** Wall is a child of the root, marked as a linear repeater with the firewall option on, run-axis is x, spacing is 4. The stud template inside the wall has width 1. The wall has width 12 along the run-axis. Trigger the repeater sync. The repeat produces studs at x = 0, 4, 8, plus a bookend stud at x = 11. The bays between the studs are filled by fireblocks. Two assertions in this one test: (a) the first fireblock — the one in the bay right after the first stud — has width 3 (the bay length, equal to spacing minus the stud width) and starts at x = 1 (right after the first stud's right edge); (b) the fractional extra filler — the fireblock in the leftover bay between the third stud and the bookend stud — has width 2 (the leftover bay length) and starts at x = 9 (right after the third stud's right edge).
-- **Root** — conventions about the topmost block: it has nothing above it, its recomputed cell on each direction is the far end, its length can be locked, and its near ends stay at zero through normal scene operations.
-- **Save_Load** — capturing a small world, replaying it the same way the running app does, and confirming the stored numbers, parent links, locked lengths, and camera all come back identical (including a trip through a string and back).
+- **Root** — conventions about the topmost SO: it has nothing above it, its recomputed cell on each direction is the far end, its length can be locked, and its near ends stay at zero through normal scene operations.
+- **Rotation** — each direction on an SO carries an angle; the overall rotation is the composition of the three angles in a recorded order; the order matters.
+- **Save_Load** — capturing a small world, replaying it the same way the running app does, and confirming the stored numbers, parent links, locked lengths, and camera all come back identical (including a trip through a string and back); a repeater's duplicates are excluded from the saved snapshot.
+- **Snap** — drag results round to the current precision grid before they are stored.
 - **Testworthy_Utilities** — generic helpers worth pinning.
 - **Topology** — pure geometry helpers extracted from the topology pipeline.
-- **Units** — unit parsing across millimeters, inches, feet, and compound forms; rounding for each system.
+- **Units** — unit parsing across millimeters, inches, feet, and compound forms; rounding for each system; internal storage is always in millimeters regardless of input unit.
 - **Versions** — the saved-scene migration that converts older save formats forward to the current one.
 
 ---
+
 ## Methodology
 
 ### Location
@@ -81,20 +87,89 @@ describe('function_name', () => {
 2. Import from source: `import { Thing } from '../types/Thing'`.
 3. If a method needs to be tested, make it public. Do not copy the function into the test file.
 
-## Visual testing (future)
+## Browser-driven tests (planned)
 
-Vitest runs in Node — no browser, no canvas. For visual regression testing, add Playwright:
+The unit-test runner has no real browser, no canvas, and no event loop. Three rules in the catalog describe user-interface flows the unit runner cannot exercise: the editing-lock toggle that blocks clicks on the canvas, the camera animation that fires when the rotation-snap toggle changes or when the user switches between the three-dimensional and the flat views, and the drag-versus-tumble decision that depends on whether anything is currently selected. The plan below pins those down with a browser-driven runner.
+
+### Plan-of-record
+
+The runner is Playwright. It opens a real browser, drives real mouse and keyboard events, and asserts on what the running app actually does.
+
+#### Folder layout
+
+```text
+di/
+├── e2e/
+│   ├── tests/
+│   │   ├── editing-lock.spec.ts
+│   │   ├── view-mode-switch.spec.ts
+│   │   ├── rotation-snap.spec.ts
+│   │   └── drag-vs-tumble.spec.ts
+│   ├── fixtures/
+│   │   └── known-scene.json     (a tiny scene the tests start from)
+│   └── playwright.config.ts     (browser, dev-server, baseline path)
+└── src/...
+```
+
+The browser-test tree sits beside the source tree, separate from the unit tests, so the two runners do not collide.
+
+#### The four tests
+
+1. **Editing-lock blocks clicks.** Open the running app, turn the lock on through the toolbar, click somewhere on the canvas, assert that no selection exists and the cursor stayed as the open-grab-hand. Turn the lock off, click the same spot, assert that a selection appears.
+2. **View-mode switch saves and restores the angle.** Rotate the world to a known angle in three-dimensional mode. Switch to two-dimensional mode and assert the camera lands flat on the front face. Switch back and assert the angle returns to the one before the switch.
+3. **Rotation-snap animation lands on a face.** With the rotation-snap toggle on, drag the canvas to a slightly off-axis angle and release. Wait for the animation to settle, then assert the final angle is one of the six face-aligned ones. Repeat with the toggle off and assert the angle stays where the user left it.
+4. **Drag with versus without a selection.** Without a selection, drag the canvas, assert the world rotated and no SO moved. Click an SO to select it, drag the canvas, assert the SO's stored numbers changed and the camera angle did not.
+
+#### Read hooks the tests need
+
+The running app does not currently publish its internal state to the page. The four tests need a small, read-only hook on the page that turns on when a query parameter is present in the URL — off by default, on only when the test starts the app. The hook publishes:
+
+- The current camera angle (the same four-number list the saved scene already carries).
+- The current selection (the SO's identifier and the face index, or empty).
+- The current view mode (the string two-dimensional or three-dimensional).
+- The current state of the editing-lock toggle (on or off).
+- A signal that goes from "animating" to "settled" so the rotation-snap test can wait without racing the animation.
+
+Writing to the toggles uses the existing on-screen buttons. We do not need a write hook.
+
+#### Wiring to the development server
+
+The browser-test config tells the runner to start the development server (`yarn dev`) at the start of the run, wait for a healthy response on the development port, run the four tests, then stop the server. One browser is enough — Chromium covers the four flows. Three browsers would slow the run threefold without buying much for an internal tool.
+
+#### Install (one-time, on each developer's machine)
 
 ```bash
 yarn add -D @playwright/test
-npx playwright install
+npx playwright install chromium
 ```
 
-Workflow: captures screenshots, diffs against baseline images in repo. Update baselines with `--update-snapshots`.
+The browser binary fetched by the second command is cached in the developer's home folder; later runs reuse it.
+
+#### Daily usage
+
+```bash
+yarn e2e
+```
+
+Runs the four browser-driven tests against the development server. The unit tests stay on `yarn test` and remain the fast feedback loop.
+
+#### Continuous-integration step
+
+The browser tests run on every commit. A new continuous-integration step starts the development server, runs the four tests, and fails the build if any of them fails. Total runtime — I AM GUESSING — twenty to forty seconds for all four, dominated by the development server starting up. The browser binary is cached between runs to avoid re-downloading on every build.
+
+### Risks and trade-offs
+
+- **Slower than unit tests.** Five hundred ninety-five unit tests run in three to four seconds today. Four browser tests will take roughly an order of magnitude longer per test. Total continuous-integration time goes up by less than a minute.
+- **Animation-timing flake.** A test that moves on before the animation has settled becomes intermittently red. The "settled" signal in the read hooks is the safeguard. If a test still flakes, lengthening the wait is the easy lever.
+- **The read hooks are a small test-only API.** Keeping them small and read-only — no write paths from tests, no shape that callers in production rely on — keeps the maintenance cost low.
+
+### Stipulation coverage after browser tests land
+
+The catalog summary will move from "fifty-four of fifty-seven directly covered" to "all fifty-seven directly covered." The four UI rules will list `e2e/tests/...` as their coverage source instead of the current "not unit-tested" note.
 
 ---
 
 ## Stipulation coverage
 
-Each rule in [`stipulations.md`](stipulations.md) is now annotated in place with the test file that pins it down. The remaining untested rules are either user-interface behavior or thin structural assertions whose violation would be caught by ordinary use; no high-priority items remain.
+Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, fifty-four of the fifty-seven rules are directly covered. The three remaining rules describe user-interface flows the unit-test runner cannot exercise — a click-blocking lock that lives inside the click handler, the camera animation when the rotation-snap toggle changes, the orientation save and restore that fires on a real two-dimensional-mode toggle, and the drag-versus-tumble decision that fires on real mouse events. Adding tests for those would require a runner that can replay user input.
 

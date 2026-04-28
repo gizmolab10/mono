@@ -2,7 +2,7 @@
 
 The load-bearing rules the app is built on. Without these written down, work drifts. Anything new should be checked against this list. All entries are guesses pending review.
 
-**Coverage summary:** of forty-nine rules, all forty-nine are directly covered by tests. Coverage judgments are guesses pending review.
+**Coverage summary:** of fifty-seven rules, fifty-three are directly covered by tests. Four rules describe user-interface flows that the unit-test runner cannot exercise (a click-blocking lock that lives in the click handler, the angle save and restore that fires on a view-mode switch, the rotation-snap animation, and the drag-versus-tumble decision that fires on real mouse events). Those four are queued for browser-driven tests — see [testing.md](../guides/testing.md). Coverage judgments are guesses pending review.
 
 ## Blocks
 
@@ -158,3 +158,37 @@ The load-bearing rules the app is built on. Without these written down, work dri
     - Covered: [Camera.test.ts](../../src/lib/ts/tests/Camera.test.ts)
 49. An error reported on a cell stays on that cell until it is explicitly cleared.
     - Covered: [Errors.test.ts](../../src/lib/ts/tests/Errors.test.ts)
+
+## Identity, persistence, and deletion
+
+50. Every SO carries a unique identifier that stays the same across save and load. Formulas, parent links, and the saved selection all point at SOs by this identifier; identifier stability is what lets save and load round-trip the world.
+    - Covered: [Save_Load.test.ts](../../src/lib/ts/tests/Save_Load.test.ts) (round-trip preserves identifier) and [Data_Layout.test.ts](../../src/lib/ts/tests/Data_Layout.test.ts) (fresh SOs get distinct identifiers).
+51. Deleting an SO removes every descendant of that SO too. Every formula inside the deleted subtree is cleared, and every formula on a surviving SO that referenced any deleted SO is also cleared.
+    - Covered: [Engine_Behaviors.test.ts](../../src/lib/ts/tests/Engine_Behaviors.test.ts).
+
+## Precision and grid
+
+52. Changing the precision setting snaps every plain-number cell in the scene to the new grid. Cells that hold a formula are not touched.
+    - Covered: [Engine_Behaviors.test.ts](../../src/lib/ts/tests/Engine_Behaviors.test.ts).
+
+## Editing lock and decorations
+
+53. There is an editing-lock toggle. While the lock is on, clicks on the canvas do nothing; the cursor stays as the open-grab-hand.
+    - Not unit-tested — this rule lives in a click-event handler whose path through the lock requires real mouse events. Verifying it requires a runner that can replay user input.
+
+## View-mode and rotation
+
+54. Switching from the normal three-dimensional view to the flat view snaps the camera onto the front-most face of the topmost SO and saves the prior orientation. Switching back restores that saved orientation.
+    - Not unit-tested — exercising this rule end-to-end requires the running app's animation loop and store layer; the underlying orientation-restore logic is testable but the full flow is not.
+55. When the rotation-snap toggle is on, releasing a tumble drag animates the orientation to the nearest face-aligned orientation. Turning the toggle off restores the orientation that was in place before the snap was last turned on.
+    - Not unit-tested — the snap fires on a real drag-end event that the unit-test runner cannot generate.
+
+## Drag
+
+56. A drag with a current selection edits that selection — moves a corner, an edge, or a face. A drag with nothing selected tumbles the camera around the topmost SO.
+    - Not unit-tested — the drag flow is driven by mouse events that the unit-test runner cannot generate. The math used inside the drag (ray-plane intersection, decomposing screen motion onto two face directions) is covered by [Drag_math.test.ts](../../src/lib/ts/tests/Drag_math.test.ts).
+
+## Preferences layer
+
+57. A long list of user preferences persists across reloads through browser storage: chosen unit system, theme colors, the view mode, edge thickness, grid opacity, the precision level, the editing-lock toggle, which decorations are visible, which parts table tab is open, the parts hide list, which detail panels are showing, and several more. Preferences are not part of the saved scene file — they belong to the user, not the design.
+    - Covered: a focused round-trip test in [Preferences.test.ts](../../src/lib/ts/tests/Preferences.test.ts).
