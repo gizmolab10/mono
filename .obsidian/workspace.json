@@ -106,7 +106,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -241,13 +241,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/milestones/done/16.formulas.md",
+                "file": "di/notes/work/now/code.debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 16.formulas"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -268,8 +268,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "cc4bc4ce9082a4d7",
+  "active": "604370a677266b8c",
   "lastOpenFiles": [
+    "di/notes/work/milestones/done/16.formulas.md",
     "di/notes/work/done/code.debt.paid.md",
     "di/notes/work/now/code.debt.md",
     "di/notes/guides/stipulations.md",
@@ -281,7 +282,6 @@
     "di/test-results/drag-vs-tumble-a-drag-with-c1ce4-e-camera-the-angle-changes--chromium",
     "di/test-results",
     "di/e2e/tests/drag-vs-tumble.spec.ts",
-    "di/notes/work/milestones/done/16.formulas.md",
     "di/e2e/tests/rotation-snap.spec.ts",
     "di/e2e/tests/view-mode-switch.spec.ts",
     "di/test-results/editing-lock-once-the-edit-ca125-s-on-the-canvas-pick-a-part-chromium/trace.zip",
