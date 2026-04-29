@@ -4,5 +4,6 @@ export { CURRENT_VERSION, versions } from './Versions';
 export { selection } from './Selection';
 export { history } from './History';
 export { scenes } from './Scenes';
+export { status } from './Status';
 export { stores } from './Stores';
 export { parts } from './Parts';

@@ -5,6 +5,7 @@ import { writable, get } from 'svelte/store';
 import { Point } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
 import { selection } from '../managers/Selection';
+import { status } from '../managers/Status';
 import { parts } from '../managers/Parts';
 import { engine } from '../render/Engine';
 import Mouse_Timer from './Mouse_Timer';
@@ -73,6 +74,10 @@ export class Events {
 		const target = event.target as HTMLElement;
 		const in_graph = !!target.closest('.graph');
 		const location = new Point(event.clientX, event.clientY);
+		// Any click anywhere on the page also dismisses the front of the status strip.
+		// The dismiss runs alongside the existing handler — the click still does
+		// whatever it was already going to do.
+		status.dismiss();
 		hits.handle_s_mouse_at(location, S_Mouse.down(event, null), in_graph);
 		hits.disable_hover = true;
 		this.w_count_mouse_down.update(n => n + 1);

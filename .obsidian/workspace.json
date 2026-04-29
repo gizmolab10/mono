@@ -256,6 +256,9 @@
   },
   "active": "cc4bc4ce9082a4d7",
   "lastOpenFiles": [
+    "di/src/lib/svelte/main/Status_Strip.svelte",
+    "di/src/lib/ts/tests/Status.test.ts",
+    "di/src/lib/ts/managers/Status.ts",
     "di/notes/work/now/code.debt.md",
     "di/notes/guides/stipulations.md",
     "di/notes/guides/testing.md",
@@ -268,8 +271,6 @@
     "di/dist/assets/index-CK6R8vWw.js",
     "di/dist/assets/index-B76XwLB2.css",
     "di/dist/assets/best-CGZzZHEb.ico",
-    "di/dist/assets",
-    "di/dist/assets/index-DYdIwluX.js",
     "di/src/lib/md/builds.md",
     "di/notes/work/now/stipulations.md",
     "di/notes/work/milestones/done/15.attributes.md",

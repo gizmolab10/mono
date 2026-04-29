@@ -56,7 +56,7 @@ describe('deleting an SO clears formulas that referenced it', () => {
 		// Mark this scene's root so the engine has somewhere to anchor.
 		scenes.root_so = root;
 		scenes.root_id = root.id;
-		engine.root_scene = root.scene!;
+		(engine as unknown as { root_scene: typeof root.scene }).root_scene = root.scene!;
 
 		// Select ALPHA and ask the engine to delete it.
 		selection.current = { so: alpha, type: T_Hit_3D.face, index: 0 };
@@ -75,7 +75,7 @@ describe('deleting an SO clears formulas that referenced it', () => {
 
 		scenes.root_so = root;
 		scenes.root_id = root.id;
-		engine.root_scene = root.scene!;
+		(engine as unknown as { root_scene: typeof root.scene }).root_scene = root.scene!;
 
 		selection.current = { so: middle, type: T_Hit_3D.face, index: 0 };
 		engine.delete_selected_so();
@@ -107,7 +107,7 @@ describe('changing the precision snaps plain-number cells', () => {
 
 		scenes.root_so = root;
 		scenes.root_id = root.id;
-		engine.root_scene = root.scene!;
+		(engine as unknown as { root_scene: typeof root.scene }).root_scene = root.scene!;
 
 		// Bump the precision. The exact resulting number depends on the active unit system,
 		// but the plain cell should have changed and the formula should still be there.

@@ -83,13 +83,18 @@ export default class Constants {
 	};
 
 	width = {
-		wrap_mobile : 1100,
-		wrap_phone  : 610,
-		window_min  : 360,
-		details     : 350,
-		title       : 120,
-		small       : 16,
-		indent      : 12,
+		wrap_mobile    : 1100,
+		wrap_phone     : 610,
+		window_min     : 360,
+		details        : 350,
+		title          : 120,
+		small          : 16,
+		indent         : 12,
+		// Approximate widths of the two on-canvas neighbors of the status strip
+		// at the bottom of the graph. Used to compute the strip's left and right
+		// offsets so it sits between them with one layout gap on each side.
+		build_button   : 80,
+		guides_slider  : 40,
 	};
 
 	thickness = {

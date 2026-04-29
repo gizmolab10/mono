@@ -4,20 +4,17 @@
 	import { T_Hit_3D, T_Editing } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { w_unit_system } from '../../ts/types/Units';
 	import Separator from '../mouse/Separator.svelte';
 	import { k } from '../../ts/common/Constants';
 	import P_Selected from './P_Selected.svelte';
-	import { units } from '../../ts/types/Units';
 	import { errors, constraints } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
 
-	const { w_all_sos, w_tick, w_precision } = stores;
+	const { w_all_sos, w_tick } = stores;
 	const { w_collapsed_ids } = parts;
 	const { w_selection } = selection;
 
 	let parts_count = $derived($w_all_sos.filter(s => !$w_all_sos.some(c => c.scene?.parent?.so === s)).length);
-	let show_position = $state(preferences.read<boolean>(T_Preference.showPosition) ?? true);
 	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
 	let selected_so = $derived($w_selection?.so ?? null);
 	let naming_input: HTMLInputElement | null = null;
@@ -121,30 +118,6 @@
 		requestAnimationFrame(() => { node.focus(); node.select(); });
 	}
 
-	type Fmt_V = { whole: string; plus: boolean };
-
-	function fmt(mm: number): Fmt_V {
-		const full = units.format_for_system(mm, $w_unit_system, $w_precision, false);
-		if (full.includes('/')) {
-			const space = full.lastIndexOf(' ');
-			return space === -1
-				? { whole: '0', plus: true }
-				: { whole: full.slice(0, space), plus: true };
-		}
-		const dot = full.indexOf('.');
-		if (dot === -1) return { whole: full, plus: false };
-		if (/^0+$/.test(full.slice(dot + 1))) return { whole: full.slice(0, dot), plus: false };
-		return { whole: full.slice(0, dot), plus: true };
-	}
-
-	function position(so: Smart_Object, _tick: number): [Fmt_V, Fmt_V, Fmt_V] {
-		return [fmt(so.x_min), fmt(so.y_min), fmt(so.z_min)];
-	}
-
-	function size(so: Smart_Object, _tick: number): [Fmt_V, Fmt_V, Fmt_V] {
-		return [fmt(so.axes[0].length.value), fmt(so.axes[1].length.value), fmt(so.axes[2].length.value)];
-	}
-
 	function repeat_count(so: Smart_Object, sos: Smart_Object[], _tick: number): number {
 		const parent = so.scene?.parent?.so;
 		if (!parent?.repeater) return 0;
@@ -233,7 +206,6 @@
 			<tr style:height='4px'></tr>
 			{#each parts.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !parts.is_ancestor_collapsed(s, $w_collapsed_ids)) as so, row_index (so.id)}
 				{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
-				{@const values = show_position ? position(so, $w_tick) : size(so, $w_tick)}
 				<tr
 					class='hierarchy-row'
 					class:selected={is_selected(so, $w_tick)}

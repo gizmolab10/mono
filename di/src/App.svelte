@@ -2,6 +2,7 @@
 	import { colors } from './lib/ts/utilities/Colors';
 	import Main from './lib/svelte/main/Main.svelte';
 	import { k } from './lib/ts/common/Constants';
+	import { status } from './lib/ts/managers/Status';
 	import { onMount } from 'svelte';
 
 	const { w_accent_color, w_background_color, w_selected_color, w_text_color } = colors;
@@ -55,6 +56,15 @@
 		root.setProperty('--h-button-tiny',    `${k.height.button.tiny}px`);
 		root.setProperty('--h-button-small',   `${k.height.button.small}px`);
 		root.setProperty('--h-button-common',  `${k.height.button.common}px`);
+		root.setProperty('--w-build-button',   `${k.width.build_button}px`);
+		root.setProperty('--w-guides-slider',  `${k.width.guides_slider}px`);
+
+		// PHASE-ZERO PLACEHOLDER — remove when phase two lands.
+		// Exposes the status helper on the window so a developer can light up
+		// the strip from the browser console. The property name is `di_status`
+		// because `window.status` is a built-in string the browser owns.
+		// Try: di_status.show('hello'), or di_status.show('boom', 'error').
+		(window as unknown as { di_status: typeof status }).di_status = status;
 		root.setProperty('--h-font-monster',   `${k.height.font.monster}px`);
 		root.setProperty('--h-font-common',    `${k.height.font.common}px`);
 		root.setProperty('--h-font-large',     `${k.height.font.large}px`);

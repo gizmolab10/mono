@@ -164,8 +164,6 @@
 		scenes.save();
 	}
 
-	const length_bounds = new Set(['width', 'depth', 'height']);
-
 	function commit_value(row: BoundsRow, value: string, input?: HTMLInputElement) {
 		if (!selected_so || !row.bound) return;
 		history.snapshot();

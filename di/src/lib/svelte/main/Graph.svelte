@@ -11,9 +11,9 @@
 	import { render } from '../../ts/render/Render';
 	import { k } from '../../ts/common/Constants';
 	import Slider from '../mouse/Slider.svelte';
+	import Status_Strip from './Status_Strip.svelte';
 	import { onMount } from 'svelte';
 	import { engine } from '../../ts/render';
-	import { drag } from '../../ts/editors/Drag';
 
 	const { w_s_angular } = angulars;
 	const { w_s_dimensions } = dimensions;
@@ -208,6 +208,7 @@
 	<div class='canvas-actions'>
 		<button class='build-button' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
 	</div>
+	<Status_Strip />
 	{#if breadcrumbs.length > 1}
 		<div
 			class='breadcrumbs'>

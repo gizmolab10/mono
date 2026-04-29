@@ -43,7 +43,7 @@ describe('linear stud repeater', () => {
 	it('test 10: clones have the template\'s width', () => {
 		const root = make_so('root', { x_min: 0, x_max: 12, y_min: 0, y_max: 4, z_min: 0, z_max: 8 });
 		const wall = make_so('wall', { x_min: 0, x_max: 12, y_min: 0, y_max: 4, z_min: 0, z_max: 8 }, root);
-		const stud = make_so('stud', { x_min: 0, x_max: 1, y_min: 0, y_max: 4, z_min: 0, z_max: 8 }, wall);
+		make_so('stud', { x_min: 0, x_max: 1, y_min: 0, y_max: 4, z_min: 0, z_max: 8 }, wall);
 
 		wall.repeater = { is_repeating: true, run_axis: 0, spacing: 4 };
 
@@ -68,7 +68,7 @@ describe('linear stud repeater stride', () => {
 	it('test 11: each clone steps by the configured spacing along the run axis', () => {
 		const root = make_so('root', { x_min: 0, x_max: 12, y_min: 0, y_max: 4, z_min: 0, z_max: 8 });
 		const wall = make_so('wall', { x_min: 0, x_max: 12, y_min: 0, y_max: 4, z_min: 0, z_max: 8 }, root);
-		const stud = make_so('stud', { x_min: 0, x_max: 2, y_min: 0, y_max: 4, z_min: 0, z_max: 8 }, wall);
+		make_so('stud', { x_min: 0, x_max: 2, y_min: 0, y_max: 4, z_min: 0, z_max: 8 }, wall);
 
 		wall.repeater = { is_repeating: true, run_axis: 0, spacing: 2 };
 
@@ -153,7 +153,7 @@ describe('linear stud repeater fireblocks', () => {
 	it('test 14: regular and bookend fireblocks have the right size and position', () => {
 		const root = make_so('root', { x_min: 0, x_max: 12, y_min: 0, y_max: 4, z_min: 0, z_max: 8 });
 		const wall = make_so('wall', { x_min: 0, x_max: 12, y_min: 0, y_max: 4, z_min: 0, z_max: 8 }, root);
-		const stud = make_so('stud', { x_min: 0, x_max: 1, y_min: 0, y_max: 4, z_min: 0, z_max: 8 }, wall);
+		make_so('stud', { x_min: 0, x_max: 1, y_min: 0, y_max: 4, z_min: 0, z_max: 8 }, wall);
 
 		wall.repeater = { is_repeating: true, run_axis: 0, spacing: 4, firewall: true };
 
