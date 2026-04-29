@@ -179,6 +179,8 @@ class Constraints {
 		const so = this.find_so(id);
 		if (!so) return;
 
+		if (this.find_attr(so, attribute)?.is_locked) return;
+
 		const entry = alias_map[attribute];
 		if (!entry) { so.set_bound(attribute as Bound, value); return; }
 
@@ -964,7 +966,13 @@ class Constraints {
 	 *  read-only by design, and the refusal posts a visible message on the
 	 *  status strip. */
 	write_free_constant(fc: Free_Constant, value: number): void {
-		if (fc.kind === 'given') { givens.set(fc.name, value); return; }
+		if (fc.kind === 'given') {
+			// Locked named values are protected from reverse propagation, the
+			// same way locked cells are. Refuse the write rather than overwriting.
+			if (givens.is_locked(fc.name)) return;
+			givens.set(fc.name, value);
+			return;
+		}
 		if (fc.attr.name === 'x_center' || fc.attr.name === 'y_center' || fc.attr.name === 'z_center') {
 			status.show('cannot drag a center', 'error');
 			return;

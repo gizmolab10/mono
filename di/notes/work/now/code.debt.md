@@ -4,12 +4,9 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
-- [ ] add a new stipulation and new tests for givens
-    - [ ] givens can be locked. locked givens cannot be target of reverse propagation
 - [ ] move scaling slider to controls
 - [ ] layers -> wall, beam, post, stairs, block
 - [ ] convert button create a template -> stud/joist / stair segmented
-- [ ] lock ignored on givens AND attributes
 - [ ] ability to combine multiple SOs
 - [ ] ability to cut an SO in half
 - [ ] v scroll in details -> update hit rects

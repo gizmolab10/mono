@@ -176,3 +176,6 @@
 - [x] stipulations -> tests -> code
 - [x] attributes table -> "-" cell -> lock (value)
 - [x] new implicit 'c' -> exact center between start and end
+- [x] add a new stipulation and new tests for givens
+    - [x] givens can be locked. locked givens cannot be target of reverse propagation
+- [x] lock ignored on givens AND attributes

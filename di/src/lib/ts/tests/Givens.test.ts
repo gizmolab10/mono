@@ -120,4 +120,26 @@ describe('named values referenced from formulas', () => {
 		// FLEX moved to 250 because it was not locked.
 		expect(givens.get('FLEX')).toBeCloseTo(250);
 	});
+
+	it('the drag-machinery write path also refuses to write through a locked named value', () => {
+		// The given-solver path checks the lock; this test exercises the OTHER
+		// reverse-propagation path — the one used by the drag math when it
+		// writes directly to a free reference.
+		givens.add('FIXED', 42);
+		givens.set_locked('FIXED', true);
+
+		// Direct write attempt through the drag-machinery path.
+		constraints.write_free_constant({ kind: 'given', name: 'FIXED' }, 999);
+
+		expect(givens.get('FIXED')).toBe(42);
+	});
+
+	it('the drag-machinery write path writes to an unlocked named value (proves the lock is what stops the write)', () => {
+		givens.add('FREE', 42);
+		givens.set_locked('FREE', false);
+
+		constraints.write_free_constant({ kind: 'given', name: 'FREE' }, 999);
+
+		expect(givens.get('FREE')).toBe(999);
+	});
 });
