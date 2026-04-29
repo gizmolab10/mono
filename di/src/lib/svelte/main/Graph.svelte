@@ -10,11 +10,9 @@
 	import { hits, hits_3d } from '../../ts/events';
 	import { render } from '../../ts/render/Render';
 	import { k } from '../../ts/common/Constants';
-	import Slider from '../mouse/Slider.svelte';
 	import { engine } from '../../ts/render';
 	import { onMount } from 'svelte';
 
-	const { w_scale, w_grid_opacity } = stores;
 	const { w_s_dimensions } = dimensions;
 	const { w_s_face_label } = face_label;
 	const { w_selection } = selection;
@@ -28,19 +26,6 @@
 	let container   : HTMLDivElement;
 	let label_focused = false;
 	let initialized = false;
-
-	function handle_zoom_step(pointsUp: boolean) {
-		if (pointsUp) engine.scale_up();
-		else engine.scale_down();
-	}
-
-	function handle_zoom_slide(value: number) {
-		w_scale.set(value);
-	}
-
-	function handle_grid_opacity(value: number) {
-		w_grid_opacity.set(value);
-	}
 
 	let selected_so = $derived($w_selection?.so ?? scenes.root_so);
 
@@ -221,15 +206,6 @@
 			{/each}
 		</div>
 	{/if}
-	<div class='assist'>
-		<div class='assist-slider'>
-			<Slider min={0} max={1} value={$w_grid_opacity} width={81} show_steppers={false} onchange={handle_grid_opacity} />
-		</div>
-		<span class='assist-label'>guides</span>
-	</div>
-	<div class='zoom'>
-		<Slider min={0.01} max={10000} value={$w_scale} logarithmic fill onchange={handle_zoom_slide} onstep={handle_zoom_step} />
-	</div>
 	{#if $w_s_dimensions}
 		<input
 			value        = {$w_s_dimensions.formatted}
@@ -287,45 +263,6 @@
 
 	.graph canvas:active {
 		cursor : grabbing;
-	}
-
-	.assist {
-		z-index        : var(--z-action);
-		position       : absolute;
-		flex-direction : column;
-		align-items    : center;
-		display        : flex;
-		bottom         : 14px;
-		gap            : 12px;
-		right          : 3px;
-	}
-
-	.assist-label {
-		letter-spacing : var(--l-letter-spacing);
-		color          : rgba(0, 0, 0, 0.35);
-		font-size      : var(--h-font-common);
-	}
-
-	.assist-slider {
-		container-type : size;
-		width          : 24px;
-		height         : 81px;
-	}
-
-	.assist-slider :global(.slider-compound) {
-		transform : translate(-50%, -50%) rotate(-90deg);
-		position  : absolute;
-		width     : 100cqh;
-		top       : 50%;
-		left      : 50%;
-	}
-
-	.zoom {
-		z-index  : var(--z-action);
-		position : absolute;
-		right    : 10px;
-		top      : 2px;
-		width    : 50%;
 	}
 
 	.canvas-actions {

@@ -4,7 +4,12 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
-- [ ] move scaling slider to controls
+- [ ] move scaling slider to controls. layout for:
+    - [ ] desktop: two control rows:
+        - [ ] first row same as current
+        - [ ] second row guides slider horizontal left justified, scale right justified
+    - [ ] mobile: two rows:
+        - [ ] first has hamburger, 
 - [ ] layers -> wall, beam, post, stairs, block
 - [ ] convert button create a template -> stud/joist / stair segmented
 - [ ] ability to combine multiple SOs

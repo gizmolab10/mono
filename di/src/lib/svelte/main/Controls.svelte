@@ -7,8 +7,9 @@
 	import { c } from '../../ts/common/Configuration'
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
+	import Slider from '../mouse/Slider.svelte';
 
-	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
+	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation, w_scale, w_grid_opacity } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 
 	let controls_width   = $state(Infinity);
@@ -22,6 +23,19 @@
 
 	async function save() { await scenes.add_to_library(); }
 
+	function handle_zoom_step(pointsUp: boolean) {
+		if (pointsUp) engine.scale_up();
+		else engine.scale_down();
+	}
+
+	function handle_zoom_slide(value: number) {
+		w_scale.set(value);
+	}
+
+	function handle_grid_opacity(value: number) {
+		w_grid_opacity.set(value);
+	}
+
 </script>
 
 {#snippet hamburger_button()}
@@ -31,10 +45,24 @@
 			<path d={svg_paths.hamburger(k.height.button.common + 2)}/>
 		</svg>
 	</button>
-	{#if !c.device_isMobile}
-		<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
-		<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
-	{/if}
+{/snippet}
+
+{#snippet desktop_only_buttons()}
+	<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
+	<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
+{/snippet}
+
+{#snippet scaling_slider()}
+	<div class='scale-block'>
+		<Slider min={0.01} max={10000} value={$w_scale} logarithmic fill onchange={handle_zoom_slide} onstep={handle_zoom_step} />
+	</div>
+{/snippet}
+
+{#snippet guides_slider()}
+	<div class='guides-block'>
+		<span class='guides-label'>guides</span>
+		<Slider min={0} max={1} value={$w_grid_opacity} width={81} show_steppers={false} onchange={handle_grid_opacity} />
+	</div>
 {/snippet}
 
 {#snippet decoration_buttons()}
@@ -74,45 +102,55 @@
 			<div class='right-row'>
 				{@render hamburger_button()}
 				<span class='spacer'></span>
-				{@render face_accessory_buttons()}
-				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
-				<span class='spacer'></span>
-			</div>
-			<div class='right-row'>
-				{@render face_buttons()}
-			</div>
-			<div class='right-row'>
-				<span class='spacer'></span>
 				{@render decoration_buttons()}
+				<span class='spacer'></span>
+				{@render guides_slider()}
+			</div>
+			<div class='right-row'>
+				<span class='spacer'></span>
+				{@render face_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
 				<span class='spacer'></span>
+			</div>
+			<div class='right-row'>
+				{@render face_accessory_buttons()}
+				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
+				{@render scaling_slider()}
 			</div>
 		</div>
 	{:else if wrap_mobile}
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
+				{@render desktop_only_buttons()}
 				<span class='spacer'></span>
 				{@render mode_buttons()}
 				<span class='spacer'></span>
+				{@render guides_slider()}
 			</div>
 			<div class='right-row'>
-				<span class='spacer'></span>
 				{@render face_buttons()}
 				{@render face_accessory_buttons()}
-				<span class='spacer'></span>
+				{@render scaling_slider()}
 			</div>
 		</div>
 	{:else}
-		{@render hamburger_button()}
-		{#if $w_allow_editing && !root_fits}
-			<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
-		{/if}
-		<span class='spacer'></span>
-		{@render face_buttons()}
-		{@render face_accessory_buttons()}
-		<span class='spacer'></span>
-		{@render mode_buttons()}
+		<div class='desktop-row'>
+			{@render hamburger_button()}
+			{#if $w_allow_editing && !root_fits}
+				<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
+			{/if}
+			{@render desktop_only_buttons()}
+			<span class='spacer'></span>
+			{@render face_buttons()}
+			{@render face_accessory_buttons()}
+			{@render guides_slider()}
+			<span class='spacer'></span>
+			{@render mode_buttons()}
+		</div>
+		<div class='sliders-row'>
+			{@render scaling_slider()}
+		</div>
 	{/if}
 </div>
 
@@ -156,8 +194,45 @@
 		min-width : 0;
 	}
 
+	.desktop-row {
+		gap         : var(--l-gap);
+		flex        : 0 1 auto;
+		align-items : center;
+		display     : flex;
+		min-width   : 0;
+	}
+
+	.sliders-row {
+		gap         : var(--l-gap);
+		flex        : 1 1 auto;
+		align-items : center;
+		min-width   : 200px;
+		display     : flex;
+	}
+
+	.guides-block {
+		flex           : 0 0 auto;
+		flex-direction : column;
+		align-items    : center;
+		display        : flex;
+	}
+
+	.scale-block {
+		margin-right : calc(-1 * var(--l-gap-small));
+		flex         : 1 1 auto;
+		min-width    : 200px;
+		margin-left  : auto;
+		min-width    : 0;
+	}
+
+	.guides-label {
+		letter-spacing : var(--l-letter-spacing);
+		color          : rgba(0, 0, 0, 0.35);
+		font-size      : var(--h-font-small);
+		line-height    : 1;
+	}
+
 	.hamburger {
-		border          : none;
 		height          : var(--h-button-common);
 		width           : var(--h-button-common);
 		z-index         : var(--z-action);
@@ -168,6 +243,7 @@
 		align-items     : center;
 		justify-content : center;
 		display         : flex;
+		border          : none;
 		left            : 1px;
 		margin-right    : 4px;
 		padding         : 0;

@@ -41,9 +41,9 @@
               "value": 0,
               "is_locked": true
             },
-            "extent": 2743.2000000000003,
+            "extent": 2895.6000000000004,
             "length": {
-              "value": 2743.2000000000003,
+              "value": 2895.6000000000004,
               "is_locked": true
             },
             "angle": 0
@@ -88,7 +88,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 2743.2000000000003,
+            "extent": 2895.6000000000004,
             "length": {
               "formula": ".l"
             },
@@ -137,7 +137,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -181,7 +181,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 2743.2000000000003,
+            "extent": 2895.6000000000004,
             "length": {
               "formula": ".l"
             },
@@ -231,7 +231,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -277,7 +277,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -324,7 +324,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -371,7 +371,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -418,7 +418,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -445,8 +445,8 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 227.26315789473685,
-            "length": 227.26315789473685,
+            "extent": 212.36065573770492,
+            "length": 212.36065573770492,
             "angle": 0
           },
           "invariant": 1
@@ -462,8 +462,8 @@
         },
         "z": {
           "attributes": {
-            "origin": 180.34000000000003,
-            "extent": 218.44000000000003,
+            "origin": 178.59375000000003,
+            "extent": 216.69375000000002,
             "length": {
               "formula": "stud th"
             },
@@ -512,7 +512,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -560,7 +560,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -616,7 +616,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -662,7 +662,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -715,7 +715,7 @@
             "extent": {
               "formula": ".e - beam th"
             },
-            "length": 2457.4500000000003,
+            "length": 2609.8500000000004,
             "angle": 0
           },
           "invariant": 2
@@ -769,7 +769,7 @@
             "extent": {
               "formula": ".e - beam th"
             },
-            "length": 2457.4500000000003,
+            "length": 2609.8500000000004,
             "angle": 0
           },
           "invariant": 2
@@ -816,7 +816,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -869,7 +869,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -922,7 +922,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -968,7 +968,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -1016,7 +1016,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -1062,7 +1062,7 @@
             "extent": {
               "formula": ".e - beam th"
             },
-            "length": 2457.4500000000003,
+            "length": 2609.8500000000004,
             "angle": 0
           },
           "invariant": 2
@@ -1115,7 +1115,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2457.4500000000003,
+            "length": 2609.8500000000004,
             "angle": 0
           },
           "invariant": 2
@@ -1161,7 +1161,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -1211,7 +1211,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 2743.2000000000003,
+            "extent": 2895.6000000000004,
             "length": {
               "formula": ".l"
             },
@@ -1260,7 +1260,7 @@
             "extent": {
               "formula": ".e - beam th"
             },
-            "length": 2457.4500000000003,
+            "length": 2609.8500000000004,
             "angle": 0
           },
           "invariant": 2
@@ -1300,7 +1300,7 @@
         },
         "z": {
           "attributes": {
-            "origin": 2457.4500000000003,
+            "origin": 2609.8500000000004,
             "extent": {
               "formula": ".e"
             },
@@ -1352,7 +1352,7 @@
             "extent": {
               "formula": ".e - 11\""
             },
-            "length": 2463.8,
+            "length": 2616.2000000000003,
             "angle": 0
           },
           "invariant": 2
@@ -1392,7 +1392,7 @@
         },
         "z": {
           "attributes": {
-            "origin": 2457.4500000000003,
+            "origin": 2609.8500000000004,
             "extent": {
               "formula": ".e"
             },
@@ -1438,7 +1438,7 @@
         },
         "z": {
           "attributes": {
-            "origin": 2457.4500000000003,
+            "origin": 2609.8500000000004,
             "extent": {
               "formula": ".e"
             },
@@ -1490,7 +1490,7 @@
             "extent": {
               "formula": ".e - 11\""
             },
-            "length": 2463.8,
+            "length": 2616.2000000000003,
             "angle": 0
           },
           "invariant": 2
@@ -1536,7 +1536,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2895.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -1586,7 +1586,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 2743.2000000000003,
+            "extent": 2895.6000000000004,
             "length": {
               "formula": ".l"
             },
@@ -1635,7 +1635,7 @@
             "extent": {
               "formula": ".e - 11\""
             },
-            "length": 2463.8,
+            "length": 2616.2000000000003,
             "angle": 0
           },
           "invariant": 2
@@ -1681,7 +1681,7 @@
             "extent": {
               "formula": ".e - 11\""
             },
-            "length": 2463.8,
+            "length": 2616.2000000000003,
             "angle": 0
           },
           "invariant": 2
@@ -1721,7 +1721,7 @@
         },
         "z": {
           "attributes": {
-            "origin": 2457.4500000000003,
+            "origin": 2609.8500000000004,
             "extent": {
               "formula": ".e"
             },
@@ -1767,7 +1767,7 @@
         },
         "z": {
           "attributes": {
-            "origin": 2457.4500000000003,
+            "origin": 2609.8500000000004,
             "extent": {
               "formula": ".e"
             },
@@ -1817,9 +1817,9 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 762,
+            "extent": 609.6,
             "length": {
-              "value": 762,
+              "value": 609.6,
               "is_locked": true
             },
             "angle": 0
@@ -1829,6 +1829,94 @@
         "visible": true,
         "hide_children": false,
         "parent_id": "die948608c4b1219"
+      },
+      {
+        "id": "di6c4e8c8e6c9c07",
+        "name": "well beam",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": {
+              "formula": "main beam.s"
+            },
+            "length": 4470.4,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "back.well.e"
+            },
+            "extent": 7712.075,
+            "length": {
+              "formula": "post th / 2"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 2609.8500000000004,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia2480ebef32cfd"
+      },
+      {
+        "id": "di8248e39cefbdca",
+        "name": "stair beam",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": {
+              "formula": "main beam.s"
+            },
+            "length": 4470.4,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "zen beam.e"
+            },
+            "extent": 6705.6,
+            "length": {
+              "formula": "post th / 2"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 2609.8500000000004,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia2480ebef32cfd"
       }
     ],
     "givens": [
@@ -1871,7 +1959,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "dic14ae1a524808c",
-    "selected_face": 1
+    "selected_id": "di8248e39cefbdca",
+    "selected_face": 2
   }
 }
