@@ -8,6 +8,7 @@ Each line names what the file in `src/lib/ts/tests/` covers.
 
 - **Angle** — angle normalization, conversion, comparison.
 - **Camera** — clicking the screen becomes a ray into the world; projecting a known world point and clicking that spot gives a ray that passes back through it; the two viewing modes (3D and 2D) project a known point at non-zero depth to noticeably different screen spots; the saved camera does not record which mode was on.
+- **Center** — the bare letter `c` in a formula resolves to start-plus-end-over-two on the host direction; axis-qualified forms read other directions; center is read-only end to end (all three write paths refuse — the upstream walker, the resolver-level write, and the free-constant write); a refused write posts "cannot drag a center" to the status strip; a formula on a start, end, or length cell that references the same-direction same-SO center is rejected at the moment it is typed; the formula text saved with the bare letter survives a re-compile and a translation round trip; a multi-line debug summary on each SO includes the center alongside the start, end, and length of every direction.
 - **Colors** — color parsing, blending, conversion between RGB and HSL.
 - **Compiler** — the formula tokenizer and compiler that turn typed text into an evaluable tree.
 - **Constraints** — the constraints manager: formula binding, evaluation, cycle detection, propagation across objects, formula-clears-lock, and the bare-name resolver walking up the parent chain.
@@ -22,7 +23,6 @@ Each line names what the file in `src/lib/ts/tests/` covers.
 - **Hierarchy** — what happens to a child when its parent is moved or resized.
 - **History** — the snapshot-and-restore stack behind undo and redo, with a stubbed scene manager.
 - **Hits_3D** — pure 3D hit-testing geometry: point in polygon, segment proximity, front-facing detection.
-- **Preferences** — values written to browser storage round-trip on read, removed values come back as missing, and different keys do not collide.
 - **Invariants_and_Locks** — behavior around stored values, the invariant rule, the lock, and the load-time recompute. Each test names a single behavior; together they cover the bug shapes seen in recent sessions.
     - **Test 1 — storage round-trip.** Set a value to a cell on a child. Read the cell. Assert: same value back.
     - **Test 2 — invariant rule, marker on the near end.** Set far = 7, length = 4, near = 999 (deliberately wrong). Run the invariant pass on the child. Assert: near is now 3.
@@ -33,6 +33,7 @@ Each line names what the file in `src/lib/ts/tests/` covers.
     - **Test 7 — writing the length does not stomp on other cells.** Child's invariant marker on the near end. far = 17, length = 5. Type 8 into the length cell. Run the invariant pass. Assert: far is still 17, length is 8, near is now 9.
     - **Test 8 — writing the length when the far end carries a formula.** Same as test 7 but the child's far end carries a formula tracking the parent's far end. Set the parent's far end to 17. Type 8 into the length cell. Run the pass. Assert: far is 17 (matching the parent), length is 8, near is 9.
     - **Test 9 — invariant cell is recomputed on load.** Build a saved scene where the invariant cell on a child carries a wrong stored value. Run the load-time pass. Assert: after load, the invariant cell's value matches the rule, not the wrong saved value.
+- **Preferences** — values written to browser storage round-trip on read, removed values come back as missing, and different keys do not collide.
 - **Repeaters** — behavior of linear repeaters: clones share the template, step along the run axis, follow formulas at depth, sync is idempotent, and fireblocks fill the gaps.
     - **Test 10 — clones have the right width.** A wall sits inside the root and is marked as a linear repeater along its x-axis. A stud template sits inside the wall with width 2. Trigger the repeater sync. Assert: each clone of the stud template has width stored value 2.
     - **Test 11 — clones step along the run axis.** Same setup as test 10, with step size 2 (the stud width and no gap). Trigger the sync. Assert: the second stud's near-x stored value is 2 greater than the first stud's, the third's is 4 greater than the first's, and so on.
@@ -171,5 +172,4 @@ The catalog summary will move from "fifty-four of fifty-seven directly covered" 
 
 ## Stipulation coverage
 
-Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, fifty-four of the fifty-seven rules are directly covered. The three remaining rules describe user-interface flows the unit-test runner cannot exercise — a click-blocking lock that lives inside the click handler, the camera animation when the rotation-snap toggle changes, the orientation save and restore that fires on a real two-dimensional-mode toggle, and the drag-versus-tumble decision that fires on real mouse events. Adding tests for those would require a runner that can replay user input.
-
+Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, all fifty-eight rules are directly covered. Fifty-four are pinned by unit tests in `src/lib/ts/tests/`; the remaining four — the user-interface flows that need real mouse events and the running animation loop — are pinned by browser-driven tests in [`e2e/tests/`](../../e2e/tests/). The browser tests run via `yarn e2e`.

@@ -175,3 +175,4 @@
 - [x] [[16.formulas]]
 - [x] stipulations -> tests -> code
 - [x] attributes table -> "-" cell -> lock (value)
+- [x] new implicit 'c' -> exact center between start and end

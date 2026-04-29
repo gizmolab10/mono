@@ -202,9 +202,9 @@
               "formula": ".s"
             },
             "extent": {
-              "formula": ".e - wall thickness"
+              "formula": ".e"
             },
-            "length": 4178.300000000001,
+            "length": 4267.200000000001,
             "angle": 0
           },
           "invariant": 2
@@ -465,7 +465,7 @@
             "origin": 180.34000000000003,
             "extent": 218.44000000000003,
             "length": {
-              "formula": "stud thickness"
+              "formula": "stud th"
             },
             "angle": 0
           },
@@ -589,7 +589,7 @@
             },
             "extent": 38.09999999999991,
             "length": {
-              "formula": "stud thickness"
+              "formula": "stud th"
             },
             "angle": 0
           },
@@ -648,7 +648,7 @@
               "formula": ".e"
             },
             "length": {
-              "formula": "wall thickness"
+              "formula": "wall th"
             },
             "angle": 0
           },
@@ -688,7 +688,7 @@
             },
             "extent": 88.89999999999964,
             "length": {
-              "formula": "wall thickness"
+              "formula": "wall th"
             },
             "angle": 0
           },
@@ -713,9 +713,9 @@
               "formula": ".s"
             },
             "extent": {
-              "formula": ".e"
+              "formula": ".e - beam th"
             },
-            "length": 2743.2000000000003,
+            "length": 2457.4500000000003,
             "angle": 0
           },
           "invariant": 2
@@ -741,7 +741,7 @@
               "formula": ".e"
             },
             "length": {
-              "formula": "wall thickness"
+              "formula": "wall th"
             },
             "angle": 0
           },
@@ -767,9 +767,9 @@
               "formula": ".s"
             },
             "extent": {
-              "formula": ".e"
+              "formula": ".e - beam th"
             },
-            "length": 2743.2000000000003,
+            "length": 2457.4500000000003,
             "angle": 0
           },
           "invariant": 2
@@ -793,7 +793,7 @@
             "origin": 0,
             "extent": 88.89999999999999,
             "length": {
-              "formula": "wall thickness"
+              "formula": "wall th"
             },
             "angle": 0
           },
@@ -855,7 +855,7 @@
             },
             "extent": 88.89999999999999,
             "length": {
-              "formula": "wall thickness"
+              "formula": "wall th"
             },
             "angle": 0
           },
@@ -896,7 +896,7 @@
             "extent": {
               "formula": ".e - 3'"
             },
-            "length": 3263.9000000000015,
+            "length": 3352.800000000001,
             "angle": 0
           },
           "invariant": 2
@@ -908,7 +908,7 @@
             },
             "extent": 88.89999999999964,
             "length": {
-              "formula": "wall thickness"
+              "formula": "wall th"
             },
             "angle": 0
           },
@@ -942,7 +942,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 4178.300000000001,
+            "length": 4267.200000000001,
             "angle": 0
           },
           "invariant": 2
@@ -954,7 +954,7 @@
               "formula": ".e"
             },
             "length": {
-              "formula": "wall thickness"
+              "formula": "wall th"
             },
             "angle": 0
           },
@@ -1035,7 +1035,7 @@
             },
             "extent": 88.89999999999964,
             "length": {
-              "formula": "wall thickness"
+              "formula": "wall th"
             },
             "angle": 0
           },
@@ -1060,9 +1060,9 @@
               "formula": ".s"
             },
             "extent": {
-              "formula": ".e"
+              "formula": ".e - beam th"
             },
-            "length": 2743.2000000000003,
+            "length": 2457.4500000000003,
             "angle": 0
           },
           "invariant": 2
@@ -1101,7 +1101,7 @@
             },
             "extent": 38.09999999999991,
             "length": {
-              "formula": "stud thickness"
+              "formula": "stud th"
             },
             "angle": 0
           },
@@ -1115,7 +1115,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 2743.2000000000003,
+            "length": 2457.4500000000003,
             "angle": 0
           },
           "invariant": 2
@@ -1147,7 +1147,7 @@
             },
             "extent": 88.90000000000009,
             "length": {
-              "formula": "wall thickness"
+              "formula": "wall th"
             },
             "angle": 0
           },
@@ -1187,7 +1187,7 @@
             },
             "extent": 38.100000000000364,
             "length": {
-              "formula": "stud thickness"
+              "formula": "stud th"
             },
             "angle": 0
           },
@@ -1233,7 +1233,7 @@
             },
             "extent": 88.89999999999964,
             "length": {
-              "formula": "wall thickness"
+              "formula": "wall th"
             },
             "angle": 0
           },
@@ -1258,9 +1258,9 @@
               "formula": ".s"
             },
             "extent": {
-              "formula": ".e"
+              "formula": ".e - beam th"
             },
-            "length": 2743.2000000000003,
+            "length": 2457.4500000000003,
             "angle": 0
           },
           "invariant": 2
@@ -1271,7 +1271,7 @@
       },
       {
         "id": "di46448b947f83a6",
-        "name": "center beam",
+        "name": "main beam",
         "x": {
           "attributes": {
             "origin": {
@@ -1279,7 +1279,7 @@
             },
             "extent": 4654.549999999999,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1305,7 +1305,7 @@
               "formula": ".e"
             },
             "length": {
-              "formula": "beam thickness"
+              "formula": "beam th"
             },
             "angle": 0
           },
@@ -1317,7 +1317,7 @@
       },
       {
         "id": "di194aa0bcec9ee6",
-        "name": "center post",
+        "name": "main post",
         "x": {
           "attributes": {
             "origin": {
@@ -1325,7 +1325,7 @@
             },
             "extent": 4654.549999999999,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1338,7 +1338,7 @@
             },
             "extent": 5568.949999999999,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1363,7 +1363,7 @@
       },
       {
         "id": "di28470382743179",
-        "name": "back beam",
+        "name": "zen beam",
         "x": {
           "attributes": {
             "origin": {
@@ -1371,7 +1371,7 @@
             },
             "extent": 2470.15,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1383,9 +1383,9 @@
               "formula": ".s - 4'"
             },
             "extent": {
-              "formula": "stair post.e"
+              "formula": "zen post.c"
             },
-            "length": 7924.8,
+            "length": 7832.725,
             "angle": 0
           },
           "invariant": 2
@@ -1397,7 +1397,7 @@
               "formula": ".e"
             },
             "length": {
-              "formula": "beam thickness"
+              "formula": "beam th"
             },
             "angle": 0
           },
@@ -1413,11 +1413,11 @@
         "x": {
           "attributes": {
             "origin": {
-              "formula": "front.s + front.l / 2"
+              "formula": "front.e - post th"
             },
-            "extent": 6889.75,
+            "extent": 8839.2,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1443,7 +1443,7 @@
               "formula": ".e"
             },
             "length": {
-              "formula": "beam thickness"
+              "formula": "beam th"
             },
             "angle": 0
           },
@@ -1463,7 +1463,7 @@
             },
             "extent": 6889.75,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1472,11 +1472,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": "front.kitchen.bathroom.s - 4\""
+              "formula": "front.kitchen.bathroom.e - 3.5\""
             },
-            "extent": 3740.15,
+            "extent": 5581.65,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1522,7 +1522,7 @@
             },
             "extent": 1003.2999999999997,
             "length": {
-              "formula": "wall thickness"
+              "formula": "wall th"
             },
             "angle": 0
           },
@@ -1562,7 +1562,7 @@
             },
             "extent": 38.100000000000364,
             "length": {
-              "formula": "stud thickness"
+              "formula": "stud th"
             },
             "angle": 0
           },
@@ -1600,15 +1600,15 @@
       },
       {
         "id": "dicd44d09951ec46",
-        "name": "stair post",
+        "name": "zen post",
         "x": {
           "attributes": {
             "origin": {
-              "formula": "back beam.s"
+              "formula": "zen beam.s"
             },
             "extent": 2470.15,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1617,11 +1617,11 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": "back.well.s - post thickness"
+              "formula": "back.well.s - post th"
             },
             "extent": 6705.6,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1646,15 +1646,15 @@
       },
       {
         "id": "did64123ba34e4ba",
-        "name": "well post",
+        "name": "art post",
         "x": {
           "attributes": {
             "origin": {
-              "formula": "back beam.s"
+              "formula": "zen beam.s"
             },
             "extent": 2470.15,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1667,7 +1667,7 @@
             },
             "extent": 7804.15,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1692,7 +1692,7 @@
       },
       {
         "id": "di294d3d8f2800fb",
-        "name": "back beam2",
+        "name": "art beam",
         "x": {
           "attributes": {
             "origin": {
@@ -1700,7 +1700,7 @@
             },
             "extent": 2470.15,
             "length": {
-              "formula": "post thickness"
+              "formula": "post th"
             },
             "angle": 0
           },
@@ -1709,12 +1709,12 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": "well post.s"
+              "formula": "art post.c"
             },
             "extent": {
               "formula": ".e + 4'"
             },
-            "length": 5181.6,
+            "length": 5089.525000000001,
             "angle": 0
           },
           "invariant": 2
@@ -1726,7 +1726,7 @@
               "formula": ".e"
             },
             "length": {
-              "formula": "beam thickness"
+              "formula": "beam th"
             },
             "angle": 0
           },
@@ -1735,26 +1735,120 @@
         "visible": true,
         "hide_children": false,
         "parent_id": "dia2480ebef32cfd"
+      },
+      {
+        "id": "di6e4111a884deec",
+        "name": "kitchen beam",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "front.s + front.l / 2 - wall th"
+            },
+            "extent": 6800.85,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s - 4'"
+            },
+            "extent": {
+              "formula": "front.e"
+            },
+            "length": 11277.6,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": 2457.4500000000003,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dia2480ebef32cfd"
+      },
+      {
+        "id": "di5c4dd68247b856",
+        "name": "dirt",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 4267.200000000001,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "value": 1219.2,
+              "is_locked": true
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 8839.199999999999,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 762,
+            "length": {
+              "value": 762,
+              "is_locked": true
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "die948608c4b1219"
       }
     ],
     "givens": [
       {
-        "name": "wall thickness",
+        "name": "wall th",
         "value_mm": 88.89999999999999,
         "locked": true
       },
       {
-        "name": "stud thickness",
+        "name": "stud th",
         "value_mm": 38.099999999999994,
         "locked": true
       },
       {
-        "name": "post thickness",
+        "name": "post th",
         "value_mm": 184.14999999999998,
         "locked": true
       },
       {
-        "name": "beam thickness",
+        "name": "beam th",
         "value_mm": 285.75,
         "locked": true
       }
@@ -1777,7 +1871,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "di28470382743179",
+    "selected_id": "dic14ae1a524808c",
     "selected_face": 1
   }
 }

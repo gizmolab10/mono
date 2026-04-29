@@ -1,25 +1,24 @@
 <script lang='ts'>
 	import { T_Editing, T_Hit_3D, T_Hit_Target } from '../../ts/types/Enumerations';
-	import { hits, hits_3d } from '../../ts/events';
 	import { scenes, stores, selection } from '../../ts/managers';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
-
 	import { face_label } from '../../ts/editors/Face_Label';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { dimensions } from '../../ts/editors/Dimension';
 	import { angulars } from '../../ts/editors/Angular';
+	import Status_Strip from './Status_Strip.svelte';
+	import { hits, hits_3d } from '../../ts/events';
 	import { render } from '../../ts/render/Render';
 	import { k } from '../../ts/common/Constants';
 	import Slider from '../mouse/Slider.svelte';
-	import Status_Strip from './Status_Strip.svelte';
-	import { onMount } from 'svelte';
 	import { engine } from '../../ts/render';
+	import { onMount } from 'svelte';
 
-	const { w_s_angular } = angulars;
+	const { w_scale, w_grid_opacity } = stores;
 	const { w_s_dimensions } = dimensions;
 	const { w_s_face_label } = face_label;
-	const { w_scale, w_grid_opacity } = stores;
 	const { w_selection } = selection;
+	const { w_s_angular } = angulars;
 
 	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 	let dim_input   = $state<HTMLInputElement>();

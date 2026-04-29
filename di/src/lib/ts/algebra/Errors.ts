@@ -18,7 +18,7 @@ export type S_Error = {
 	suggestions: Suggestion[];     // actionable fixes
 };
 
-const valid_attrs = ['s', 'e', 'l', 'x', 'y', 'z', 'X', 'Y', 'Z', 'w', 'd', 'h'];
+const valid_attrs = ['s', 'e', 'l', 'c', 'x', 'y', 'z', 'X', 'Y', 'Z', 'w', 'd', 'h'];
 
 class Errors {
 

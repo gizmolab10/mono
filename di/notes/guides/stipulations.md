@@ -2,7 +2,7 @@
 
 The load-bearing rules the app is built on. Without these written down, work drifts. Anything new should be checked against this list. All entries are guesses pending review.
 
-**Coverage summary:** of fifty-seven rules, fifty-three are directly covered by tests. Four rules describe user-interface flows that the unit-test runner cannot exercise (a click-blocking lock that lives in the click handler, the angle save and restore that fires on a view-mode switch, the rotation-snap animation, and the drag-versus-tumble decision that fires on real mouse events). Those four are queued for browser-driven tests — see [testing.md](../guides/testing.md). Coverage judgments are guesses pending review.
+**Coverage summary:** all fifty-eight rules are now directly covered. Fifty-four are pinned by unit tests; the remaining four — user-interface flows that need real mouse events and a real animation loop — are pinned by browser-driven tests under [`e2e/tests/`](../../e2e/tests/). Coverage judgments are guesses pending review.
 
 ## Blocks
 
@@ -174,21 +174,26 @@ The load-bearing rules the app is built on. Without these written down, work dri
 ## Editing lock and decorations
 
 53. There is an editing-lock toggle. While the lock is on, clicks on the canvas do nothing; the cursor stays as the open-grab-hand.
-    - Not unit-tested — this rule lives in a click-event handler whose path through the lock requires real mouse events. Verifying it requires a runner that can replay user input.
+    - Covered: [`e2e/tests/editing-lock.spec.ts`](../../e2e/tests/editing-lock.spec.ts) — the lock starts on by default; a click on the canvas while the lock is on does not pick a part; toggling the lock off lets a click pick a part.
 
 ## View-mode and rotation
 
 54. Switching from the normal three-dimensional view to the flat view snaps the camera onto the front-most face of the topmost SO and saves the prior orientation. Switching back restores that saved orientation.
-    - Not unit-tested — exercising this rule end-to-end requires the running app's animation loop and store layer; the underlying orientation-restore logic is testable but the full flow is not.
+    - Covered: [`e2e/tests/view-mode-switch.spec.ts`](../../e2e/tests/view-mode-switch.spec.ts) — toggling from 3D to 2D and back restores the orientation to within a small numerical tolerance of where it started.
 55. When the rotation-snap toggle is on, releasing a tumble drag animates the orientation to the nearest face-aligned orientation. Turning the toggle off restores the orientation that was in place before the snap was last turned on.
-    - Not unit-tested — the snap fires on a real drag-end event that the unit-test runner cannot generate.
+    - Covered: [`e2e/tests/rotation-snap.spec.ts`](../../e2e/tests/rotation-snap.spec.ts) — a tumble drag with rotation-snap on lands on a face-aligned orientation (one quaternion component is close to ±1 after the animation settles).
 
 ## Drag
 
 56. A drag with a current selection edits that selection — moves a corner, an edge, or a face. A drag with nothing selected tumbles the camera around the topmost SO.
-    - Not unit-tested — the drag flow is driven by mouse events that the unit-test runner cannot generate. The math used inside the drag (ray-plane intersection, decomposing screen motion onto two face directions) is covered by [Drag_math.test.ts](../../src/lib/ts/tests/Drag_math.test.ts).
+    - Covered: the underlying drag math (ray-plane intersection, decomposing screen motion onto two face directions) is in [Drag_math.test.ts](../../src/lib/ts/tests/Drag_math.test.ts). The drag-versus-tumble user flow is in [`e2e/tests/drag-vs-tumble.spec.ts`](../../e2e/tests/drag-vs-tumble.spec.ts) — a drag of empty canvas changes the camera angle; a drag with a selection in place leaves the selection intact.
 
 ## Preferences layer
 
 57. A long list of user preferences persists across reloads through browser storage: chosen unit system, theme colors, the view mode, edge thickness, grid opacity, the precision level, the editing-lock toggle, which decorations are visible, which parts table tab is open, the parts hide list, which detail panels are showing, and several more. Preferences are not part of the saved scene file — they belong to the user, not the design.
     - Covered: a focused round-trip test in [Preferences.test.ts](../../src/lib/ts/tests/Preferences.test.ts).
+
+## Center letter in formulas
+
+58. A formula may reference the center of any direction using the bare letter `c` (host direction) or the axis-qualified form `<direction>.c` for a different direction. The center resolves to start-plus-end-over-two on the named direction, computed fresh on every read. Center references are read-only — reverse propagation refuses to write through a center, and a drag on a cell whose formula reads a center posts the message "cannot drag a center" to the on-screen status strip. A formula on a start, end, or length cell that references the same-direction same-SO center is rejected at the moment it is typed.
+    - Covered: [Center.test.ts](../../src/lib/ts/tests/Center.test.ts) — twenty-four tests covering forward reads (cross-direction, cross-SO, with-literal, mixed, freshness), self-loop rejection (start, end, length, qualified-self), self-loop acceptance (cross-direction, cross-SO), the three write-path refusals (resolver-level write, free-constant write, drag-time upstream walker), the four refusal-message tests (walker publishes, resolver write publishes, free-constant write publishes, dedup under repeat refusals), the no-message-for-non-center-drags case, the save-and-reparse round trip, the concrete-agnostic translation round trip, and the two debug-summary tests (the per-direction center appears in the multi-line summary; the summary updates after edits).

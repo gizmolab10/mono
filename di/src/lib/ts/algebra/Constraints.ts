@@ -6,6 +6,7 @@ import type { FormulaMap } from './Evaluator';
 
 import { givens, GIVENS_ID } from './Givens';
 import { errors, AlgebraError, type S_Error } from './Errors';
+import { status } from '../managers/Status';
 import { tokenizer } from './Tokenizer';
 import { evaluator } from './Evaluator';
 import { scene } from '../render/Scene';
@@ -58,23 +59,26 @@ const alias_axis_attr: Record<string, [number, number]> = {
 
 // Attribute name → axis index (for contextual alias expansion)
 const attribute_to_axis: Record<string, number> = {
-	x_min: 0, x_max: 0, width: 0,
-	y_min: 1, y_max: 1, depth: 1,
-	z_min: 2, z_max: 2, height: 2,
+	x_min: 0, x_max: 0, width: 0, x_center: 0,
+	y_min: 1, y_max: 1, depth: 1, y_center: 1,
+	z_min: 2, z_max: 2, height: 2, z_center: 2,
 };
 
 // Axis letter → axis index (for axis-qualified references: y.l, .z.s)
 const axis_name_to_index: Record<string, number> = { x: 0, y: 1, z: 2 };
 
 // Contextual aliases: axis-agnostic names → attr_index within axis
-// s = start, e = end, l = length — resolved based on owning attribute's axis
-const contextual_aliases: Record<string, number> = { s: 0, e: 1, l: 2 };
+// s = start, e = end, l = length, c = center
+// Center is read-only and resolves to (start + end) / 2 on the same direction.
+const contextual_aliases: Record<string, number> = { s: 0, e: 1, l: 2, c: 3 };
 
-// Axis index → [start_alias, end_alias, length_alias]
+// Axis index → [start_alias, end_alias, length_alias, center_concrete_name]
+// Center has no single-letter concrete name; it uses x_center / y_center / z_center.
+// The resolver intercepts these names and computes the value on every read.
 const axis_concrete: string[][] = [
-	['x', 'X', 'w'],
-	['y', 'Y', 'd'],
-	['z', 'Z', 'h'],
+	['x', 'X', 'w', 'x_center'],
+	['y', 'Y', 'd', 'y_center'],
+	['z', 'Z', 'h', 'z_center'],
 ];
 
 const invariant_formulas: Record<string, string> = {
@@ -93,14 +97,14 @@ const invariant_formulas: Record<string, string> = {
 // to_agnostic[axis]['x'] = 's' (same-axis bare), to_agnostic[axis]['d'] = 'y.l' (cross-axis qualified)
 // to_explicit[axis]['s'] = 'x' (bare → concrete), to_explicit[axis]['y.l'] = 'd' (qualified → concrete)
 const axis_letters = ['x', 'y', 'z'];
-const contextual_names = ['s', 'e', 'l'];
+const contextual_names = ['s', 'e', 'l', 'c'];
 const to_agnostic: Record<string, string>[] = [];
 const to_explicit: Record<string, string>[] = [];
 for (let owner = 0; owner < 3; owner++) {
 	const ag: Record<string, string> = {};
 	const ex: Record<string, string> = {};
 	for (let axis = 0; axis < 3; axis++) {
-		for (let attr = 0; attr < 3; attr++) {
+		for (let attr = 0; attr < contextual_names.length; attr++) {
 			const concrete = axis_concrete[axis][attr];
 			if (axis === owner) {
 				ag[concrete] = contextual_names[attr];
@@ -141,6 +145,12 @@ class Constraints {
 		const so = this.find_so(id);
 		if (!so) return 0;
 
+		// Center reference — read-only, computed on every read as start-plus-end-over-two
+		// on the named direction. The center is not a stored cell.
+		if (attribute === 'x_center') return (so.get_bound('x_min') + so.get_bound('x_max')) / 2;
+		if (attribute === 'y_center') return (so.get_bound('y_min') + so.get_bound('y_max')) / 2;
+		if (attribute === 'z_center') return (so.get_bound('z_min') + so.get_bound('z_max')) / 2;
+
 		const aa = alias_axis_attr[attribute];
 		if (aa) {
 			const [axis_idx, attr_idx] = aa;
@@ -157,6 +167,15 @@ class Constraints {
 	/** Write a value to an SO attribute.
 	 *  Handles aliases: writing w = 300 sets x_max = x_min + 300. */
 	write(id: string, attribute: string, value: number): void {
+		// Center is read-only — refuse any write and surface the reason on the
+		// status strip. Reverse propagation reaches this guard if a write path
+		// ever lands on a center reference; the strip dedup keeps repeat
+		// messages from filling the queue.
+		if (attribute === 'x_center' || attribute === 'y_center' || attribute === 'z_center') {
+			status.show('cannot drag a center', 'error');
+			return;
+		}
+
 		const so = this.find_so(id);
 		if (!so) return;
 
@@ -443,6 +462,31 @@ class Constraints {
 			if (!(e instanceof AlgebraError)) throw e;
 			errors.set(so.id, attr_name, e.s_error);
 			return e.s_error;
+		}
+
+		// Self-loop check for the new center letter. A formula on the start, end,
+		// or length of a direction must not reference the center of that same
+		// direction on the same SO. The angle cell on the same direction is
+		// exempt — angle is independent of start-end. Cross-direction and
+		// cross-SO center references are accepted; multi-part cycles through
+		// center are out of scope and would surface at run time.
+		if (owner_axis !== undefined) {
+			const host_is_storage_cell = attr_name === axis_concrete[owner_axis][0]
+				|| attr_name === axis_concrete[owner_axis][1]
+				|| attr_name === axis_concrete[owner_axis][2]
+				|| attr_name === 'x_min' || attr_name === 'x_max' || attr_name === 'width'
+				|| attr_name === 'y_min' || attr_name === 'y_max' || attr_name === 'depth'
+				|| attr_name === 'z_min' || attr_name === 'z_max' || attr_name === 'height';
+			if (host_is_storage_cell) {
+				const own_center = axis_concrete[owner_axis][3];
+				const refs = this.collect_refs(compiled);
+				if (refs.some(r => r.object === so.id && r.attribute === own_center)) {
+					const so_name = so.name || so.id;
+					const err = errors.cycle(formula, [`${so_name}.${attr_name}`, `${so_name}.${own_center}`, `${so_name}.${attr_name}`]);
+					errors.set(so.id, attr_name, err);
+					return err;
+				}
+			}
 		}
 
 		const formulas = this.build_formula_map();
@@ -846,7 +890,17 @@ class Constraints {
 		visiting.add(visit_key);
 		try {
 			const attr = this.find_attr(so, attr_name);
-			if (!attr) return true;
+			if (!attr) {
+				// A center reference resolves to no underlying number — center is
+				// read-only by design. The drag's setup walker reaches here when
+				// a formula on the dragged cell reads a center; the drag then has
+				// no writable target and silently does nothing. Surface the reason
+				// on the status strip so the user knows why their drag did nothing.
+				if (attr_name === 'x_center' || attr_name === 'y_center' || attr_name === 'z_center') {
+					status.show('cannot drag a center', 'error');
+				}
+				return true;
+			}
 
 			if (attr.compiled) {
 				const refs = this.collect_refs(attr.compiled);
@@ -906,9 +960,15 @@ class Constraints {
 
 	/** Write a new numeric value to one free-constant leaf. Does not propagate.
 	 *  Locked attributes refuse the write — they can only be altered by direct
-	 *  edit of the value cell. */
+	 *  edit of the value cell. Center references are also refused — center is
+	 *  read-only by design, and the refusal posts a visible message on the
+	 *  status strip. */
 	write_free_constant(fc: Free_Constant, value: number): void {
 		if (fc.kind === 'given') { givens.set(fc.name, value); return; }
+		if (fc.attr.name === 'x_center' || fc.attr.name === 'y_center' || fc.attr.name === 'z_center') {
+			status.show('cannot drag a center', 'error');
+			return;
+		}
 		if (fc.attr.is_locked) return;
 		fc.attr.value = value;
 	}

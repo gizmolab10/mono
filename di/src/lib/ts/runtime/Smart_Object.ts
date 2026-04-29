@@ -386,6 +386,27 @@ export default class Smart_Object extends Identifiable {
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
+	// DEBUG SUMMARY
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Multi-line debug summary showing each direction's start, end, length,
+	 *  and center. Available to traces and debug logs that want to see all
+	 *  four numbers per direction at a glance. The center is computed on the
+	 *  fly as start-plus-end-over-two; it has no stored value. */
+	describe(): string {
+		const lines: string[] = [this.name || this.id];
+		const labels: Axis_Name[] = ['x', 'y', 'z'];
+		for (let i = 0; i < 3; i++) {
+			const start = this.get_bound(`${labels[i]}_min` as Bound);
+			const end = this.get_bound(`${labels[i]}_max` as Bound);
+			const length = this.axes[i].length.value;
+			const center = (start + end) / 2;
+			lines.push(`  ${labels[i]}: ${start}..${end}  length ${length}  center ${center}`);
+		}
+		return lines.join('\n');
+	}
+
+	// ═══════════════════════════════════════════════════════════════════
 	// SERIALIZATION
 	// ═══════════════════════════════════════════════════════════════════
 

@@ -1,7 +1,7 @@
 # Code-Debt Handoff
 
-**Date:** 2026-04-28
-**Work stream:** items from [code.debt.md](./code.debt.md), one item at a time. Several small bugs surfaced and were fixed alongside the planned items. The most recent session left the code-debt list alone and instead expanded the testing catalog and the stipulations catalog into lock-step coverage — see the 2026-04-28 session below.
+**Date:** 2026-04-29
+**Work stream:** items from [code.debt.md](./code.debt.md), one item at a time. Several small bugs surfaced and were fixed alongside the planned items. The most recent two sessions did not touch the code-debt list; instead they grew the testing catalog and the stipulations catalog into lock-step coverage and shipped the first two phases of the center-letter milestone. See the dated session blocks below.
 
 ---
 
@@ -27,7 +27,12 @@ For evidence:
 - **Tumble timing instrumentation is wired in and currently silent.** A per-paint clock and a phase breakdown plus counters for the cross-object pair loop live in the renderer and the engine loop. A single constant at the top of the engine file turns everything on. The per-second console summary is commented out for now. When the numbers are needed again, uncomment the summary block and flip the constant to true.
 - **The testing catalog and the rules catalog are now in lock-step.** The rules file lists fifty-seven load-bearing rules. Fifty-three are directly covered by tests; four describe user-interface flows the unit-test runner cannot exercise (a click-blocking lock, the camera animation when the rotation-snap toggle changes, the orientation save and restore on a view-mode switch, and the drag-versus-tumble decision). Those four are queued for browser-driven tests. Each rule carries a pointer to the test that pins it down. The test guide lists each test file alongside the rules it covers. Twenty-seven test files, five hundred ninety-five checks, all green. The docs build is green again after one dead link was rewritten.
 - **A design proposal for a new bare letter in formulas — the center letter — is on file.** It adds a read-only formula reference that resolves to the midpoint between the start and the end of a direction. Cycle detection runs at the moment a formula is set; a drag on a cell whose formula reads the new letter is refused and the user sees the message "cannot drag a center" on a new on-screen status strip. The work is broken into four phases: a phase zero that builds the strip itself, a phase one that adds the read-only side of the letter with a silent refusal, a phase two that wires the silent refusal to the strip with the visible message, and a phase three that adds the new letter to the parts panel. The proposal sits in [16.formulas.md](../milestones/done/16.formulas.md).
-- **Phase zero is shipped.** A new on-screen status strip lives at the bottom of the canvas between the build-notes button and the guides slider. It is invisible by default; calling its show helper makes a message appear; clicking anywhere on the page dismisses it; subsequent messages queue in order; error-kind messages render in red, others in the default color, all centered. Twelve unit tests pass; the type-check is clean; the running page was eyeballed and behaves as expected. The helper is currently hooked to the page on startup as a temporary console-exposed caller (under the name `di_status`) so a developer can fire messages from the browser console; that caller comes out when phase two wires the real refusal alert. Phase two is the next concrete piece of work on the center-letter milestone.
+- **Phase zero is shipped.** A new on-screen status strip lives at the bottom of the canvas between the build-notes button and the guides slider. It is invisible by default; calling its show helper makes a message appear; clicking anywhere on the page dismisses it; subsequent messages queue in order; error-kind messages render in red, others in the default color, all centered. Twelve unit tests pass; the type-check is clean; the running page was eyeballed and behaves as expected. The helper is currently hooked to the page on startup as a temporary console-exposed caller (under the name `di_status`) so a developer can fire messages from the browser console; that caller comes out when phase two wires the real refusal alert.
+- **Phase one is done.** A formula may now reference the center of any direction using the bare letter `c` for the host direction or the axis-qualified form for a different direction. The center resolves to start-plus-end-over-two on every read; it has no stored value. Both write paths refuse to write through a center reference, so a drag on a cell whose formula reads a center never moves any number. A formula on a start, end, or length cell that references the same-direction same-SO center is rejected at the moment it is typed — the existing chain detector is unchanged. Seventeen unit tests pass; the type-check is clean. A new rule (the fifty-eighth) was added to the rules catalog.
+- **Phase two is done.** A drag on a cell whose formula reads a center now posts a visible message — "cannot drag a center" — to the new on-screen status strip. The message appears in red and stays until the user clicks anywhere on the page. Three refusal points carry the publish: the drag-time upstream walker (the path real drags actually take), the resolver-level write path, and the free-constant write path. The dedup at the strip keeps repeat refusals from filling the queue. Five new unit tests cover the message-publish behavior; the full suite passes at twenty-nine files, six hundred twenty-nine checks; type-check is clean. The catalog rule was extended; the testing guide entry was extended.
+- **Phase three is done.** A new debug-summary method on every SO returns a multi-line text block that shows each direction's start, end, length, and center together. Useful for traces and console prints — no real caller wires it up yet, but anyone who wants to see all four numbers per direction at a glance has a one-line call to make. Two small tests confirm the summary contains the right values and reflects edits on the next call. Six hundred thirty-one tests pass; type-check is clean. The catalog and the testing guide are both updated.
+- **The center-letter feature has been exercised in the browser and the alert appears as expected.** The temporary helper that allowed firing test messages from the browser console (the one named `di_status`) is now removed. Center is fully done end to end.
+- **Browser-driven tests are running.** A new test setup at `di/e2e/` carries four user-flow tests plus a smoke test, all running on a real Chromium against the development server. They cover the four rules the unit-test runner could never exercise: the editing-lock blocks clicks; the view-mode toggle saves and restores the camera angle; a tumble drag with rotation-snap on lands on a face-aligned orientation; an empty-canvas drag tumbles the camera. The catalog now reads "all fifty-eight rules directly covered." Run them with `yarn e2e`. A small read-only set of hooks gated by the URL query parameter `?test=1` lets the tests inspect internal state — the hooks attach only when the parameter is present.
 
 ## What the tumble measurement told us
 
@@ -53,6 +58,201 @@ At roughly a hundred parts where every part's outer box overlaps every other, th
 - The drag work has its own mothballed handoff at `di/notes/work/milestones/33.drag/handoff.md`.
 - The `handoff` and `hands` shorthands point at this file.
 - The tumble instrumentation is in place but silent. Flip the constant at the top of the engine file to true, uncomment the per-second summary block inside the render loop, reload, and the console will print timings and counters again.
+
+---
+
+## Session — 2026-04-29 (continued, fourth) — center-letter closed in browser; browser-driven tests running
+
+Two threads.
+
+### Thread one — center-letter feature confirmed in the browser
+
+The user exercised the formula editor in the running app and confirmed the "cannot drag a center" alert appears at the bottom of the canvas in red on a refused drag. With that confirmed, the temporary helper that exposed the status helper to the browser console (the one named `di_status`) was removed from the page-startup code. Center is now done end to end with no leftover scaffolding.
+
+### Thread two — browser-driven tests running
+
+The browser-driven test setup that was deferred earlier is now in place. Four test files cover the four user-interface rules that the unit-test runner could never reach:
+
+- The editing-lock blocks clicks. Three checks: the lock starts on by default; a click on the canvas while the lock is on does not pick a part; toggling the lock off lets a click pick a part.
+- The view-mode toggle saves and restores the camera angle. One check: toggling from 3D to 2D and back restores the angle to within a small numerical tolerance of where it started.
+- The rotation-snap toggle lands on a face-aligned orientation. One check: a tumble drag with rotation-snap on settles on an angle whose quaternion has a near-±1 component (one of the six face-aligned forms).
+- The drag-versus-tumble decision. Two checks: an empty-canvas drag changes the camera angle; a drag with a selection in place leaves the selection intact.
+
+Plus a small smoke test that confirms the page loads and the read hooks attach.
+
+The setup uses Playwright as the runner. A small read-only set of hooks gated by the URL query parameter `?test=1` lets the tests inspect internal state without exposing any write path. The hooks live in the page-startup code; they attach only when the parameter is present, so a normal user session sees no extra surface on the page.
+
+The browser tests run with `yarn e2e`. The runner starts the development server if one is not already running, otherwise reuses the running one. One browser is enough — Chromium covers all the flows.
+
+### What was added — 2026-04-29 (continued, fourth)
+
+- A new browser-driven test directory at `di/e2e/` with four user-flow test files plus a smoke test, all passing.
+- A Playwright config that reuses the running development server when present.
+- A small read-only set of hooks on the page, gated by the URL parameter `?test=1`.
+- A new `e2e` script in the package.json.
+- Removal of the temporary console helper (the `di_status` window assignment).
+- Catalog and testing-guide updates: rules fifty-three through fifty-six now point at the new browser-test files; the count line at the top reads "all fifty-eight rules directly covered."
+
+### Files touched — 2026-04-29 (continued, fourth)
+
+- New test files: [`smoke.spec.ts`](di/e2e/tests/smoke.spec.ts), [`editing-lock.spec.ts`](di/e2e/tests/editing-lock.spec.ts), [`view-mode-switch.spec.ts`](di/e2e/tests/view-mode-switch.spec.ts), [`rotation-snap.spec.ts`](di/e2e/tests/rotation-snap.spec.ts), [`drag-vs-tumble.spec.ts`](di/e2e/tests/drag-vs-tumble.spec.ts).
+- New config: [`playwright.config.ts`](di/e2e/playwright.config.ts).
+- Page-startup script: [`App.svelte`](di/src/App.svelte) — temporary console helper removed; read-only test hooks added gated by `?test=1`.
+- Package manifest: [`package.json`](di/package.json) — added Playwright as a development dependency and an `e2e` script.
+- Catalog: [stipulations.md](../../guides/stipulations.md).
+- Testing guide: [testing.md](../../guides/testing.md).
+
+### Verification — 2026-04-29 (continued, fourth)
+
+- Unit tests: twenty-nine files, six hundred thirty-one checks, all passing.
+- Browser-driven tests: eight checks across five files, all passing.
+- Type-check: zero errors, zero warnings.
+
+---
+
+## Session — 2026-04-29 (continued, third) — center-letter phase three done
+
+One thread. Phase three of the center-letter milestone is done: a small observability touch.
+
+### Phase three changes
+
+- A new debug-summary method on every SO that returns a multi-line text block. Each direction gets a line with its start, end, length, and center. The center is computed from start and end at call time — no stored value.
+- Two small unit tests in the center test file: a multi-line summary contains every direction's center alongside its start, end, and length; after editing the start of a direction, the next summary call shows the updated center.
+
+### What was deferred from phase three
+
+The optional hover tooltip is still future work. No real caller wires the new debug method into the running app — it is a tool for any developer who wants to inspect an SO's full numerical state. The placeholder console-exposed caller from phase zero is still in place; it can come out at any time.
+
+### Milestone status after phase three
+
+All four phases are done. The feature is complete end to end. The next concrete pieces of work, when chosen:
+
+- A real exercise of the formula editor in the browser to confirm the message appears at the bottom of the canvas in red.
+- Removal of the placeholder console-exposed caller, once the in-app exercise above confirms the feature works.
+- The browser-driven test setup, deferred earlier; that work begins when the center-letter milestone is fully closed.
+
+### What was added — 2026-04-29 (continued, third)
+
+- A debug-summary method on every SO showing each direction's start, end, length, and center.
+- Two new unit tests; full suite passes at twenty-nine files, six hundred thirty-one checks; type-check clean.
+- Catalog rule fifty-eight extended to mention the debug summary.
+- Testing guide entry extended to mention the debug summary.
+
+### Files touched — 2026-04-29 (continued, third)
+
+- The Smart_Object class (the new debug-summary method): [Smart_Object.ts](di/src/lib/ts/runtime/Smart_Object.ts).
+- The center test file (two new tests): [Center.test.ts](di/src/lib/ts/tests/Center.test.ts).
+- Catalog: [stipulations.md](../../guides/stipulations.md).
+- Testing guide: [testing.md](../../guides/testing.md).
+
+### Verification — 2026-04-29 (continued, third)
+
+- Test suite: twenty-nine test files, six hundred thirty-one checks, all passing.
+- Type-check: zero errors, zero warnings.
+
+---
+
+## Session — 2026-04-29 (continued) — center-letter phase two done
+
+One thread. Phase two of the center-letter milestone is complete: the silent refusal of phase one is now wired to the status strip from phase zero with the visible message "cannot drag a center."
+
+### What was added
+
+- An import of the status helper into the constraints manager.
+- A publish call inside the upstream walker — when the walker enters a center reference and finds no underlying number to walk into, it posts the refusal message to the status strip. This is the path real drags take when the formula on the dragged cell reads a center.
+- A publish call inside the resolver-level write path (defensive — the path does not fire in normal flow but is now consistent).
+- A publish call inside the free-constant write path (defensive — same shape).
+- Five new unit tests in the center test file: the walker publishes when it encounters a center, the resolver-level write publishes, the free-constant write publishes, repeat refusals do not fill the queue (the strip's dedup catches them), and a drag whose formula does not read a center publishes nothing.
+
+### Visual snap-back
+
+I AM GUESSING the corner the user grabbed snaps back to where it started automatically — the underlying numbers never change because the writes are refused, and the renderer reads from those numbers on every paint. Phase two does not add any explicit snap-back code. If a real drag in the running app shows visual lag, a follow-up can add an up-front check at drag-start.
+
+### What does not land in phase two
+
+Phase three (optional observability polish — debug logs and an optional hover tooltip) is still future work. The placeholder console-exposed caller from phase zero is still active; it can come out at any time after the center-letter feature is exercised in the running app.
+
+### Status of the center-letter milestone
+
+Phase zero, phase one, and phase two are all done. The feature reaches end users now. Phase three is optional and can be deferred.
+
+### What was added — 2026-04-29 (continued)
+
+- Three refusal points in the constraints manager publish "cannot drag a center" to the status strip.
+- Five new unit tests; full suite passes at twenty-nine files, six hundred twenty-nine checks; type-check clean.
+- Catalog rule fifty-eight extended to mention the visible alert.
+- Testing guide entry extended to mention the alert and the additional tests.
+
+### Files touched — 2026-04-29 (continued)
+
+- Constraints manager (the upstream walker, the resolver-level write, the free-constant write): [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts).
+- Center test file (five new tests): [Center.test.ts](di/src/lib/ts/tests/Center.test.ts).
+- Catalog: [stipulations.md](../../guides/stipulations.md).
+- Testing guide: [testing.md](../../guides/testing.md).
+
+### Verification — 2026-04-29 (continued)
+
+- Test suite: twenty-nine test files, six hundred twenty-nine checks, all passing.
+- Type-check: zero errors, zero warnings.
+- A run in the browser to confirm the message appears at the bottom of the canvas in red is still pending.
+
+---
+
+## Session — 2026-04-29 — center-letter phase one shipped
+
+One thread. Phase one of the center-letter milestone landed: the read-only side of the new letter end to end, with a silent refusal of any drag whose formula reads a center.
+
+### What landed
+
+- The bare-name table that today knows three letters (start, end, length) gained a fourth letter for the center. Each direction's concrete center name is the direction prefix plus `_center` (so `x_center`, `y_center`, `z_center`).
+- The accepted-letter list the parser uses to reject unknown letters gained the new letter.
+- The bind step that turns letter shorthand into concrete cell references now recognizes the new letter at every entry point — when a user types a formula, when a saved file is loaded, and when a part is renamed.
+- The resolver gained a branch: when asked for a center, it returns start-plus-end-over-two on the named direction. The value is computed fresh on every read; nothing is stored.
+- Both write paths — the resolver-level write and the free-constant write — refuse any write to a center. The read-only contract holds end to end.
+- A small self-loop check at edit time: a formula on a start, end, or length cell that references the center of the same direction on the same SO is rejected before the formula commits. The existing chain detector is unchanged.
+- The translation table loop was extended so the new letter survives round-tripping between the concrete form and the axis-agnostic form.
+- One small piece of cleanup along the way: a half-finished show-position-versus-show-size feature in the parts panel was deleted (a state, two helpers, a format function, a type, and the preference key that fed it). Removing it brought the type-check fully clean.
+
+### What gets tested
+
+Seventeen new tests in [Center.test.ts](di/src/lib/ts/tests/Center.test.ts) cover:
+
+- Forward reads: cross-direction reads, cross-SO reads via the part's identifier, with-literal arithmetic, mixed-form sums, and freshness on changes (no stale cache).
+- Self-loop rejection: starts, ends, and lengths that reference the same-direction same-SO center are rejected; the qualified-self form is also rejected.
+- Self-loop acceptance: cross-direction same-SO is accepted; cross-SO same-direction is accepted.
+- Drag through center: both write paths refuse to write — the resolver-level path and the free-constant path.
+- Save and reparse round trip: the formula text containing the center letter survives a re-compile.
+- Formula text preserves the bare letter — no rewrite to start-plus-end happens at save time.
+- Translation round trip: a center-using formula survives the concrete-to-agnostic round trip and back.
+
+### What does not land in phase one
+
+The visible alert on a refused drag, the snap-back animation, and any change to the parts panel are explicitly out of scope. Those land in phase two.
+
+Phase one is reviewable and revertable on its own as a code-change unit. It is **not** user-shippable on its own — the silent refusal of a drag is a usability gap that phase two closes. The two phases reach end users together.
+
+### What shipped — 2026-04-29
+
+- A new bare letter in formulas with a read-only resolver branch and a self-loop check at edit time.
+- Seventeen new unit tests; full suite passes at twenty-nine files, six hundred twenty-four checks; type-check clean.
+- A new rule in the catalog (the fifty-eighth), pointing at the new test file.
+- A new index entry for the test file in the testing guide.
+- A small cleanup of half-finished parts-panel code that was clouding the type-check.
+
+### Files touched — 2026-04-29
+
+- New test file: [Center.test.ts](di/src/lib/ts/tests/Center.test.ts).
+- Constraints manager (the bare-name table, translation maps, resolver, write paths, self-loop check): [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts).
+- Accepted-letter list: [Errors.ts](di/src/lib/ts/algebra/Errors.ts).
+- Catalog: [stipulations.md](../../guides/stipulations.md).
+- Testing guide: [testing.md](../../guides/testing.md).
+- Cleanup of unused parts-panel code: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte), [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte), [Preferences.ts](di/src/lib/ts/managers/Preferences.ts).
+
+### Verification — 2026-04-29
+
+- Test suite: twenty-nine test files, six hundred twenty-four checks, all passing.
+- Type-check: zero errors, zero warnings.
+- Manual exercise of the formula editor in the running app is still pending; phase two will exercise the editor end to end via the refusal-with-message flow.
 
 ---
 

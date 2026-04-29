@@ -12,5 +12,9 @@ export default defineConfig({
   test: {
     setupFiles: ['src/lib/ts/tests/setup.ts'],
     globals: true,
+    // Browser-driven tests live under e2e/ and run with Playwright via
+    // `yarn e2e`. Keep the unit-test runner pointed at src/ only.
+    include: ['src/**/*.{test,spec}.{ts,tsx,js,jsx}'],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/e2e/**'],
   },
 });

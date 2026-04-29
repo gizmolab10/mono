@@ -2,7 +2,8 @@
 	import { colors } from './lib/ts/utilities/Colors';
 	import Main from './lib/svelte/main/Main.svelte';
 	import { k } from './lib/ts/common/Constants';
-	import { status } from './lib/ts/managers/Status';
+	import { stores } from './lib/ts/managers/Stores';
+	import { selection } from './lib/ts/managers/Selection';
 	import { onMount } from 'svelte';
 
 	const { w_accent_color, w_background_color, w_selected_color, w_text_color } = colors;
@@ -58,13 +59,6 @@
 		root.setProperty('--h-button-common',  `${k.height.button.common}px`);
 		root.setProperty('--w-build-button',   `${k.width.build_button}px`);
 		root.setProperty('--w-guides-slider',  `${k.width.guides_slider}px`);
-
-		// PHASE-ZERO PLACEHOLDER — remove when phase two lands.
-		// Exposes the status helper on the window so a developer can light up
-		// the strip from the browser console. The property name is `di_status`
-		// because `window.status` is a built-in string the browser owns.
-		// Try: di_status.show('hello'), or di_status.show('boom', 'error').
-		(window as unknown as { di_status: typeof status }).di_status = status;
 		root.setProperty('--h-font-monster',   `${k.height.font.monster}px`);
 		root.setProperty('--h-font-common',    `${k.height.font.common}px`);
 		root.setProperty('--h-font-large',     `${k.height.font.large}px`);
@@ -80,6 +74,22 @@
 		root.setProperty('--w-title',          `${k.width.title}px`);
 		root.setProperty('--w-small',          `${k.width.small}px`);
 
+		// Read-only hooks for browser-driven tests. Only attached when the URL
+		// carries the `test=1` query parameter, so a normal user session sees
+		// no extra surface on the page. The hooks expose internal state for
+		// assertions; they do not write anything. Test code uses the on-screen
+		// buttons to change state.
+		if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('test') === '1') {
+			(window as unknown as { di_test: Record<string, () => unknown> }).di_test = {
+				orientation: () => Array.from(stores.current_orientation()),
+				selection: () => {
+					const sel = selection.current;
+					return sel ? { so_id: sel.so.id, type: sel.type, index: sel.index } : null;
+				},
+				view_mode: () => stores.current_view_mode,
+				is_editing_allowed: () => stores.allow_editing,
+			};
+		}
 	});
 
 	// Reactive color stores

@@ -83,7 +83,7 @@ export default class Constants {
 	};
 
 	width = {
-		wrap_mobile    : 1100,
+		wrap_mobile    : 1130,
 		wrap_phone     : 610,
 		window_min     : 360,
 		details        : 350,
@@ -115,8 +115,8 @@ export default class Constants {
 		gap:            common_size / 5,
 		gap_large:      common_size / 5 * 1.5,
 		padding_small:  common_size / 4,
-		padding:        common_size / 3,
 		margin:         common_size / 3.2,
+		padding:        common_size / 3,
 		letter_spacing: 0.5,
 		extra: {
 			main:       common_size / 5,    // same as gap

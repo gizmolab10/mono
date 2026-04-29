@@ -15,17 +15,17 @@
 
 <style>
 	.status-strip {
-		z-index         : var(--z-action);
-		position        : absolute;
-		bottom          : var(--l-gap);
-		left            : calc(var(--w-build-button) + 2 * var(--l-gap));
 		right           : calc(var(--w-guides-slider) + 2 * var(--l-gap));
+		left            : calc(var(--w-build-button) + 2 * var(--l-gap));
 		height          : var(--h-button-common);
-		display         : flex;
-		align-items     : center;
-		justify-content : center;
 		font-size       : var(--h-font-common);
 		color           : rgba(0, 0, 0, 0.7);
+		bottom          : var(--l-padding);
+		z-index         : var(--z-action);
+		position        : absolute;
+		align-items     : center;
+		justify-content : center;
+		display         : flex;
 		pointer-events  : none;
 		user-select     : none;
 	}
