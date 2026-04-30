@@ -4,7 +4,10 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
+- [ ] parts table
+    - [ ] drag and drop
 - [ ] [[27.selection.algorithm]]
+    - [ ] create new group around selected objects
 - [ ] crowded dimensionals
 - [ ] convert button create a template -> stud/joist / stair segmented
 - [ ] ability to combine multiple SOs
@@ -12,8 +15,6 @@ offer a proposal for the first unchecked item
 - [ ] SO opacity slider
 - [ ] print just the graph, scaled to fit
 - [ ] pac: rename Smart Object -> Smart Block
-- [ ] parts table
-    - [ ] drag and drop
 - [ ] layers -> wall, beam, post, stairs, generic
     - [ ] layer tag
         - [ ] in SO

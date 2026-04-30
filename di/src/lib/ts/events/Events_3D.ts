@@ -118,11 +118,17 @@ class Events_3D {
 		// Clear hover during drag (especially rotation)
 		hits_3d.hover = null;
 
-		// Face click → select that face
-		// Corner/edge click → select best face (only if nothing selected yet)
+		// Face click → select that face. Command-click on a face toggles the
+		// face's part in the multi-selection list instead of replacing the
+		// selection.
+		// Corner/edge click → select best face (only if nothing selected yet).
 		if (hit) {
 			if (hit.type === T_Hit_3D.face) {
-				selection.current = hit;
+				if (e?.metaKey) {
+					selection.toggle(hit);
+				} else {
+					selection.current = hit;
+				}
 			} else if (!selection.current) {
 				const face_hit = hits_3d.hit_to_face(hit);
 				if (face_hit) selection.current = face_hit;

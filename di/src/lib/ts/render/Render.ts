@@ -1689,7 +1689,7 @@ class Render {
 
 	private render_edges(obj: O_Scene, projected: Projected[], solid: boolean, world?: mat4, restrict_face?: number): void {
 		const ctx = this.ctx;
-		const is_selected = selection.current?.so.scene === obj;
+		const is_selected = selection.contains(obj.so);
 		const is_hovered = hits_3d.hover?.so.scene === obj && !is_selected;
 		ctx.lineWidth = (is_selected || is_hovered) ? stores.bold_thickness : stores.edge_thickness;
 		ctx.lineCap = 'square';

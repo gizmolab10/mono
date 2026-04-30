@@ -12,7 +12,7 @@
 
 	const { w_all_sos, w_tick } = stores;
 	const { w_collapsed_ids } = parts;
-	const { w_selection } = selection;
+	const { w_selection, w_selections } = selection;
 
 	let parts_count = $derived($w_all_sos.filter(s => !$w_all_sos.some(c => c.scene?.parent?.so === s)).length);
 	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
@@ -44,12 +44,17 @@
 		parts.apply_generational(so, e.altKey, e.shiftKey);
 	}
 
-	function select(so: Smart_Object): void {
-		selection.current = { so, type: T_Hit_3D.face, index: 0 };
+	function select(so: Smart_Object, e?: MouseEvent): void {
+		const hit = { so, type: T_Hit_3D.face, index: 0 };
+		if (e?.metaKey) {
+			selection.toggle(hit);
+		} else {
+			selection.current = hit;
+		}
 	}
 
 	function is_selected(so: Smart_Object, _tick: number): boolean {
-		return selected_so === so;
+		return $w_selections.some(h => h.so === so);
 	}
 
 	$effect(() => {
@@ -209,7 +214,7 @@
 				<tr
 					class='hierarchy-row'
 					class:selected={is_selected(so, $w_tick)}
-					onclick={() => select(so)}>
+					onclick={(e) => select(so, e)}>
 					<td class='hierarchy-sibling'>{so.scene?.parent ? row_index : ''}</td>
 					<td class='hierarchy-name' style:padding-left='{depth(so) * k.width.indent}px'
 						onclick={(e) => handle_name_click(e, so)}>

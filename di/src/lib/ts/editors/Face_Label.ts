@@ -80,7 +80,7 @@ class Face_Label {
 		state.so.name = value;
 		this.w_s_face_label.update(s => s ? { ...s, current_name: value } : s);
 		stores.w_all_sos.update(sos => sos);
-		selection.w_selection.update(s => s ? { ...s } : s);
+		selection.w_selections.update(list => list.map(h => ({ ...h })));
 	}
 
 	/** Cancel editing without changing anything. */
