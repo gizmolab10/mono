@@ -22,26 +22,40 @@ Nine aliases, six SOTs, three derived.
 
 The algebra supports two notations. **Explicit** names each axis directly (`x`, `w`, `X`). **Agnostic** uses positional roles (`s`, `l`, `e`) that mean the same thing on every axis.
 
-| Role   | Agnostic | x-axis | y-axis | z-axis |
-|--------|----------|--------|--------|--------|
-| start  | `s`      | `x`    | `y`    | `z`    |
-| length | `l`      | `w`    | `d`    | `h`    |
-| end    | `e`      | `X`    | `Y`    | `Z`    |
+| Role   | Agnostic | x-axis     | y-axis     | z-axis     |
+|--------|----------|------------|------------|------------|
+| start  | `s`      | `x`        | `y`        | `z`        |
+| length | `l`      | `w`        | `d`        | `h`        |
+| end    | `e`      | `X`        | `Y`        | `Z`        |
+| center | `c`      | `x_center` | `y_center` | `z_center` |
 
 In explicit notation, `X - w` means "far edge minus width" on the x-axis. In agnostic notation, the same relationship is `e - l` — an expression that works on any axis.
+
+### The center letter
+
+`c` is a fourth contextual letter — read-only — that resolves to the midpoint between the start and the end of a direction. The value is computed on every read; nothing is stored.
+
+- Bare `c` resolves to the center of the owning attribute's axis. Cross-axis uses the qualified form (`y.c`, `z.c`); cross-axis on the parent uses the dot-prefixed form (`.y.c`).
+- Both write paths (the resolver-level write and the free-constant write) refuse a write through a center reference. A drag whose formula reads a center is also refused.
+- A refused drag posts the message "cannot drag a center" to the on-screen status strip at the bottom of the canvas.
+- Cycle detection at edit time rejects a formula on a start, end, or length cell that references the same-direction same-SO center. The same-axis self-loop check sits in `set_formula`; cross-direction and cross-SO center references are accepted.
+- `c` has no concrete per-axis customer letter — the explicit forms are the internal names `x_center`, `y_center`, `z_center`. Formulas store the bare letter literally; the save format is unchanged.
 
 ### Cross-axis references
 
 Bare `s`/`l`/`e` are contextual — they refer to the owning attribute's axis. To reference a different axis, prefix with the axis letter and a dot:
 
-| In x-axis formula | Meaning             | Explicit equiv |
-|--------------------|---------------------|----------------|
-| `s`                | x-axis start        | `x`            |
-| `l`                | x-axis length       | `w`            |
-| `y.l`              | y-axis length       | `d`            |
-| `z.e`              | z-axis end          | `Z`            |
-| `.l`               | parent's x-axis length | `.w`        |
-| `.y.l`             | parent's y-axis length | `.d`        |
+| In x-axis formula  | Meaning                | Explicit equiv |
+|--------------------|------------------------|----------------|
+| `s`                | x-axis start           | `x`            |
+| `l`                | x-axis length          | `w`            |
+| `c`                | x-axis center          | `x_center`     |
+| `y.l`              | y-axis length          | `d`            |
+| `z.e`              | z-axis end             | `Z`            |
+| `y.c`              | y-axis center          | `y_center`     |
+| `.l`               | parent's x-axis length | `.w`           |
+| `.y.l`             | parent's y-axis length | `.d`           |
+| `.c`               | parent's x-axis center | `.x_center`    |
 
 ### Translation
 
@@ -70,6 +84,20 @@ A dev-only tool translates all library files at once: deserializes each object h
 Bare letter = self. Dot-prefix = parent (like `A.x` with name omitted). Dot notation = explicit SO.
 
 Cross-axis named references use explicit tokens only — `A.d` not `A.y.l` — keeping the compiler simpler.
+
+## Named values
+
+Formulas may reference globally named numbers — for example `wall_thickness` or `door_width`. The named-value table sits beside the formula machinery; bare names that no part in the scene owns resolve to it.
+
+- Locality beats globality. If a sibling under the same parent shares the name, the sibling wins. The named-value table is the fallback when no part owns the name.
+- A named value can be locked. A locked value refuses reverse propagation, the same way a locked cell does — a drag whose downstream walk lands on a locked named value finds nothing it can move and does nothing.
+- The save format carries the named-value table alongside the scene.
+
+## Parse errors
+
+Every parse failure carries a message and a character span into the source. The failing cell shows a red underline under the bad span; hovering reveals the message. Errors persist on a cell until the cell is edited or cleared.
+
+The classifier distinguishes several shapes: unknown attribute on a known SO, unknown SO, leading dot at the start of a name, unexpected dot inside a path, bare SO name with no attribute, and a bare SO name typed where the user meant "self." Fuzzy-match suggestions help with typos in SO names.
 
 ## Where it lives
 
@@ -123,6 +151,8 @@ Two sites handle this:
 Without this, a persisted formula on an invariant attribute would prevent `enforce_invariants` from computing the correct value (it skips attributes with `attr.compiled`).
 
 ## AST
+
+**`Abstract Syntax Tree`** — hierarchal data structure that `Compiler.ts` builds out of a formula's text
 
 ### Node Types
 
@@ -185,19 +215,24 @@ Used by `try_solve_given` to adjust a given so a formula evaluates to a target v
 | `algebra/Tokenizer.ts` | String → token stream, unit suffixes, compound imperial |
 | `algebra/Compiler.ts` | Recursive descent parser — expression/term/factor/atom |
 | `algebra/Evaluator.ts` | Forward eval, reverse propagation, cycle detection |
-| `algebra/Constraints.ts` | Glue — formula management, resolve/write, propagation, invariant enforcement, translation maps, `translate_formulas()`, `detect_formula_mode()` |
+| `algebra/Constraints.ts` | Glue — formula management, resolve/write, propagation, invariant enforcement, translation maps, `translate_formulas()`, `detect_formula_mode()`, center-letter resolver branch and self-loop check |
 | `algebra/Orientation.ts` | Compute orientation from bounds, recompute max bounds from rotation |
+| `algebra/Givens.ts` | Global table of named numerical values that any formula can reference; lock flag protects a value from reverse propagation |
+| `algebra/Errors.ts` | Parse-error classification — message text, span into the source, fuzzy-match suggestions for unknown SO names |
 
 ## Tests
 
-4 files, 154 tests.
+7 files cover the algebra subsystem. The full project test count sits at six hundred thirty-one across all subsystems.
 
-| File | Tests | Covers |
-| ---- | ----: | ------ |
-| `Compiler.test.ts` | 36 | Tokenizer (18): bare numbers, decimals, operators, parens, references, unit suffixes (in/ft/mm/cm), mixed expressions, end token, errors, bare self-refs, dot-prefix parent-refs. Compiler (18): AST shape for literals, refs, precedence, parens, unary minus, unit expressions, bare+dotted+dot-prefix, errors. |
-| `Evaluator.test.ts` | 20 | Forward eval (10): literal, ref, four ops, div-by-zero → 0, unary minus, precedence, parens. Reverse propagation (8): solve for single unknown through each op, nested, throws on zero/multiple refs. Cycle detection (5+): acyclic, direct, indirect, self-ref, isolation. |
-| `Constraints.test.ts` | 85 | Formula on Attribute (6): set+eval, store, null compiled, bad formula error, cycle error, clear keeps value. Propagation (3): source→dependent, chain cascade, unrelated untouched. Serialize (5): round-trip, omit when absent, deserialize recompiles AST. Orientation (2): copy angles, survives serialize. Add child (4): min bounds track parent, update on move, max bounds, half-smallest-dimension cube. Alias resolution (8): resolve x/X/w/h/d + fallthrough, write x/w + fallthrough. Dot-prefix parent (11): .x binding, explicit SO, mixed, .w alias, no parent → 0, propagation, .w→parent width, add_child_so flow. Bare self (3): x self-ref, w self-width, mixed .x+x. Invariant formulas (5): lookup x/w/X, null for unknown, eval with self. Enforce invariants (8): inv=0/1/2, no override formulas, set_formula triggers, propagate triggers, multi-axis. Contextual aliases (9): self cross-axis, parent cross-axis, tokenizer round-trips, propagation. Translate formulas (21): same-axis bare (all 3 axes), cross-axis, parent dot-prefix, explicit SO refs, invariant agnostic/explicit, mixed mode normalization, values unchanged. |
-| `Orientation.test.ts` | 13 | from_bounds (6): flat→identity, non-square angle, 45° around each axis, 30° staircase. Use case S (1): staircase orientation stable on stretch. Use case W (2): fixed dimensions, slides with origin. recompute_max_bounds (3): 45°/30° redistribution, diagonal preserved. |
+| File | Covers |
+| ---- | ------ |
+| `Compiler.test.ts` | Tokenizer: bare numbers, decimals, operators, parens, references, unit suffixes (in/ft/mm/cm), mixed expressions, end token, errors, bare self-refs, dot-prefix parent-refs. Compiler: AST shape for literals, refs, precedence, parens, unary minus, unit expressions, bare+dotted+dot-prefix, errors. |
+| `Evaluator.test.ts` | Forward eval: literal, ref, four ops, div-by-zero → 0, unary minus, precedence, parens. Reverse propagation: solve for single unknown through each op, nested, throws on zero/multiple refs. Cycle detection: acyclic, direct, indirect, self-ref, isolation. |
+| `Constraints.test.ts` | Formula on Attribute: set+eval, store, null compiled, bad formula error, cycle error, clear keeps value. Propagation: source→dependent, chain cascade, unrelated untouched. Serialize: round-trip, omit when absent, deserialize recompiles AST. Orientation: copy angles, survives serialize. Add child: min bounds track parent, update on move, max bounds, half-smallest-dimension cube. Alias resolution: resolve x/X/w/h/d + fallthrough, write x/w + fallthrough. Dot-prefix parent: .x binding, explicit SO, mixed, .w alias, no parent → 0, propagation, .w→parent width, add_child_so flow. Bare self: x self-ref, w self-width, mixed .x+x. Invariant formulas: lookup x/w/X, null for unknown, eval with self. Enforce invariants: inv=0/1/2, no override formulas, set_formula triggers, propagate triggers, multi-axis. Contextual aliases: self cross-axis, parent cross-axis, tokenizer round-trips, propagation. Translate formulas: same-axis bare (all 3 axes), cross-axis, parent dot-prefix, explicit SO refs, invariant agnostic/explicit, mixed mode normalization, values unchanged. |
+| `Orientation.test.ts` | from_bounds: flat→identity, non-square angle, 45° around each axis, 30° staircase. Use case S: staircase orientation stable on stretch. Use case W: fixed dimensions, slides with origin. recompute_max_bounds: 45°/30° redistribution, diagonal preserved. |
+| `Center.test.ts` | Forward reads (cross-direction, cross-SO, with-literal arithmetic, mixed-form sums, freshness on changes). Self-loop rejection at edit time (start, end, length on same direction; qualified-self form). Self-loop acceptance (cross-direction same-SO; cross-SO same-direction). Both write paths refuse to write through a center reference. Status-strip messages on a refused drag — walker, resolver-level write, free-constant write — with dedup. Save-and-reparse round trip and explicit-to-agnostic round trip preserve the bare letter. |
+| `Givens.test.ts` | Define and read a named value. Reference resolution (a bare name resolves to the named-value table when no part owns the name). Reverse propagation through a formula updates the referenced named value. A locked named value refuses reverse propagation. Sibling SO name beats a same-spelled named value at the local level (locality wins). |
+| `Errors.test.ts` | Parse-error classification (unknown attribute, unknown SO, leading dot, unexpected dot, bare SO without attribute, bare-SO-as-self). Span computation lands on the offending fragment. Fuzzy-match suggestions for unknown SO names. Errors persist on a cell until the cell is edited or cleared. |
 
 ## Face-Axis Mapping
 

@@ -102,19 +102,17 @@
 			<div class='right-row'>
 				{@render hamburger_button()}
 				<span class='spacer'></span>
-				{@render decoration_buttons()}
+				{@render face_buttons()}
 				<span class='spacer'></span>
 				{@render guides_slider()}
 			</div>
 			<div class='right-row'>
-				<span class='spacer'></span>
-				{@render face_buttons()}
+				{@render decoration_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
-				<span class='spacer'></span>
+				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 			</div>
 			<div class='right-row'>
 				{@render face_accessory_buttons()}
-				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 				{@render scaling_slider()}
 			</div>
 		</div>
@@ -142,11 +140,11 @@
 			{/if}
 			{@render desktop_only_buttons()}
 			<span class='spacer'></span>
+			{@render mode_buttons()}
+			<span class='spacer'></span>
+			{@render guides_slider()}
 			{@render face_buttons()}
 			{@render face_accessory_buttons()}
-			{@render guides_slider()}
-			<span class='spacer'></span>
-			{@render mode_buttons()}
 		</div>
 		<div class='sliders-row'>
 			{@render scaling_slider()}
@@ -157,9 +155,7 @@
 <style>
 
 	.controls {
-		padding         : 0 var(--l-gap-small);
 		background      : var(--accent);
-		gap             : var(--l-gap);
 		box-sizing      : border-box;
 		justify-content : flex-end;
 		overflow        : visible;
@@ -221,14 +217,17 @@
 		margin-right : calc(-1 * var(--l-gap-small));
 		flex         : 1 1 auto;
 		min-width    : 200px;
-		margin-left  : auto;
+		margin-left  : 10px;
+		margin-top   : 4px;
 		min-width    : 0;
 	}
 
 	.guides-label {
 		letter-spacing : var(--l-letter-spacing);
-		color          : rgba(0, 0, 0, 0.35);
+		color          : rgba(0, 0, 0, 0.65);
 		font-size      : var(--h-font-small);
+		position       : relative;
+		top            : -2px;
 		line-height    : 1;
 	}
 
@@ -244,8 +243,8 @@
 		justify-content : center;
 		display         : flex;
 		border          : none;
-		left            : 1px;
-		margin-right    : 4px;
+		top             : -1px;
+		margin-right    : 0px;
 		padding         : 0;
 	}
 

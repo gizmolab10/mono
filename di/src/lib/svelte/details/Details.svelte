@@ -17,9 +17,7 @@
 	}
 
 	onMount( async () => {
-		setTimeout( async () => {
-			await hits.defer_recalibrate();
-		}, 10);
+		await hits.defer_recalibrate();
 	});
 
 </script>
@@ -27,7 +25,8 @@
 <div
 	class            = 'details'
 	style:color      = 'var(--text)'
-	style:background = 'var(--bg)'>
+	style:background = 'var(--bg)'
+	onscroll         = {() => hits.recalibrate()}>
 
 	<div class='banner-zone'>
 		<Hideable title='preferences' id='preferences' detail={T_Details.preferences}>

@@ -85,7 +85,7 @@ export default class Constants {
 	width = {
 		wrap_mobile    : 1400,
 		wrap_phone     : 720,
-		window_min     : 360,
+		window_min     : 490,
 		details        : 350,
 		title          : 120,
 		small          : 16,
@@ -125,7 +125,7 @@ export default class Constants {
 	};
 
 	height = {
-		controls:    common_size * 1.4,
+		controls:    common_size * 1.1,
 		slider:      common_size * 0.8,
 		collapse:    common_size * 0.56,
 		cell:        common_size * 0.5,

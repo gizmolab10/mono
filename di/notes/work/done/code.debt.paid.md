@@ -172,6 +172,7 @@
         - [x] identical to SO
 - [x] edit formula -> immediately recompute value
 - [x] parent is-visible eyeball -> toggles both self and children
+- [x] eliminate position/size columns from parts table
 - [x] [[16.formulas]]
 - [x] stipulations -> tests -> code
 - [x] attributes table -> "-" cell -> lock (value)
@@ -179,3 +180,11 @@
 - [x] add a new stipulation and new tests for givens
     - [x] givens can be locked. locked givens cannot be target of reverse propagation
 - [x] lock ignored on givens AND attributes
+- [x] move scaling slider to controls. layout for:
+    - [x] desktop: two control rows:
+        - [x] first row same as current
+        - [x] second row guides slider horizontal left justified, scale right justified
+    - [x] mobile: two rows:
+        - [x] first has hamburger, 
+- [x] controls have too much separation
+- [x] v scroll in details -> update hit rects

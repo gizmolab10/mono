@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { Identifiable } from '../../ts/runtime';
 	import { colors } from '../../ts/utilities/Colors';
-	import { hits } from '../../ts/events/Hits';
+	import { Identifiable } from '../../ts/runtime';
 	import { k } from '../../ts/common/Constants';
+	import { hits } from '../../ts/events/Hits';
 	import Steppers from './Steppers.svelte';
 
 	let {
@@ -200,9 +200,18 @@
 </script>
 
 <div class='slider-compound' class:fill>
+	{#if show_steppers && onstep}
+		<div class='steppers-wrapper'>
+			<Steppers size={20} gap={0} hit_closure={onstep} />
+		</div>
+	{/if}
 	<div class='slider-with-label'>
-		{#if logarithmic && show_value}
-			<span class='current-value'>{Math.log10(value).toFixed(1)}</span>
+		{#if show_value}
+			{#if logarithmic}
+				<span class='current-value'>{Math.log10(value).toFixed(1)}</span>
+			{:else}
+				<span class='slider-label'>{Math.log10(value).toFixed(1)}</span>
+			{/if}
 		{/if}
 		{#if value_alt !== undefined}
 			<!-- Two-thumb range mode -->
@@ -299,15 +308,7 @@
 				{/if}
 			</div>
 		{/if}
-		{#if !logarithmic && show_value}
-			<span class='slider-label'>{Math.log10(value).toFixed(1)}</span>
-		{/if}
 	</div>
-	{#if show_steppers && onstep}
-		<div class='steppers-wrapper'>
-			<Steppers size={20} gap={0} hit_closure={onstep} />
-		</div>
-	{/if}
 </div>
 
 <style>

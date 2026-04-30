@@ -33,6 +33,8 @@ For evidence:
 - **Phase three is done.** A new debug-summary method on every SO returns a multi-line text block that shows each direction's start, end, length, and center together. Useful for traces and console prints — no real caller wires it up yet, but anyone who wants to see all four numbers per direction at a glance has a one-line call to make. Two small tests confirm the summary contains the right values and reflects edits on the next call. Six hundred thirty-one tests pass; type-check is clean. The catalog and the testing guide are both updated.
 - **The center-letter feature has been exercised in the browser and the alert appears as expected.** The temporary helper that allowed firing test messages from the browser console (the one named `di_status`) is now removed. Center is fully done end to end.
 - **Browser-driven tests are running.** A new test setup at `di/e2e/` carries four user-flow tests plus a smoke test, all running on a real Chromium against the development server. They cover the four rules the unit-test runner could never exercise: the editing-lock blocks clicks; the view-mode toggle saves and restores the camera angle; a tumble drag with rotation-snap on lands on a face-aligned orientation; an empty-canvas drag tumbles the camera. The catalog now reads "all fifty-eight rules directly covered." Run them with `yarn e2e`. A small read-only set of hooks gated by the URL query parameter `?test=1` lets the tests inspect internal state — the hooks attach only when the parameter is present.
+- **The zoom slider and the guides slider have moved out of the drawing area and into the toolbar at the top of the screen.** The drawing area no longer carries either slider or any of the wiring that drove them. The toolbar now holds both, in all three responsive layouts. The scaling slider flexes into whatever room is left after the buttons, up to a six-hundred-pixel ceiling, and its right edge sits flush with the right edge of the toolbar. The guides slider keeps its small fixed width and its label, with the label nudged five pixels up so it reads above the slider track without crowding the row.
+- **The resolver-level write path now refuses a locked target.** The drag's write path already refused locked targets; the resolver-level write path did not. A one-line refusal closes the gap. No production code calls this write path today, so the change is belt-and-suspenders for any future test or caller.
 
 ## What the tumble measurement told us
 
@@ -58,6 +60,48 @@ At roughly a hundred parts where every part's outer box overlaps every other, th
 - The drag work has its own mothballed handoff at `di/notes/work/milestones/33.drag/handoff.md`.
 - The `handoff` and `hands` shorthands point at this file.
 - The tumble instrumentation is in place but silent. Flip the constant at the top of the engine file to true, uncomment the per-second summary block inside the render loop, reload, and the console will print timings and counters again.
+
+---
+
+## Session — 2026-04-29 (continued, fifth) — sliders moved into the toolbar; resolver write-path lock check
+
+Two threads.
+
+### Thread one — resolver write-path lock check
+
+The drag's write path already refuses to write through a locked target — that is the path real drags travel. A second write path sits one level lower, used by the resolver. It did not refuse locked targets. No production code calls it today, but a future test or new caller could land on it and behave inconsistently with the drag path. Added a one-line refusal at the same shape as the drag-side check: look up the target, bail if it is locked. No new behavior reaches end users from this change.
+
+### Thread two — sliders moved out of the drawing area and into the toolbar
+
+The zoom slider used to float at the top-right of the drawing area, taking half the drawing width. The guides slider used to sit in the lower-right corner of the drawing area as a small vertical bar with the word "guides" beneath it. Both have moved into the toolbar at the top of the screen.
+
+Layout decisions, all from the user:
+
+- The zoom slider lives in all three responsive layouts (phone, mobile, desktop), keeps its end-cap step buttons, and flexes into whatever toolbar room is left after the buttons. The user set the upper limit at six hundred pixels wide. No minimum width.
+- The guides slider also lives in all three layouts and was rotated from vertical to horizontal. Its "guides" label sits directly above the slider track. The label is nudged five pixels upward so it reads cleanly above without crowding the row.
+- In the desktop layout, the buttons sit in one flex row on the left and the zoom slider sits in a second flex area on the right. The zoom slider's right edge is flush with the right edge of the toolbar — a negative right margin pulls it past the toolbar's own horizontal padding, and an automatic left margin pushes it to the right end of its area.
+- The new buttons wrapper carries an explicit flex layout so its spacers behave and its segmented blocks do not force line breaks.
+
+The drawing area no longer carries any slider markup, any slider styles, or any of the store handles or handler functions that drove them.
+
+### What was added — 2026-04-29 (continued, fifth)
+
+- A one-line locked-target refusal in the resolver-level write path of the constraints manager.
+- The slider import, two store handles, and three handler functions on the toolbar component.
+- Two new toolbar snippets (one for the zoom slider, one for the guides slider) and four new style classes (the buttons row, the slider area, the guides block, the scale block) plus a small styling rule for the guides label.
+- Removal of the slider import, the store handles, the three handler functions, the two markup blocks, and four style classes from the drawing-area component.
+
+### Files touched — 2026-04-29 (continued, fifth)
+
+- Resolver write-path lock check: [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts).
+- Toolbar additions: [Controls.svelte](di/src/lib/svelte/main/Controls.svelte).
+- Drawing-area removals: [Graph.svelte](di/src/lib/svelte/main/Graph.svelte).
+- Code-debt list: [code.debt.md](./code.debt.md) — the slider-move item is now off the list.
+
+### Verification — 2026-04-29 (continued, fifth)
+
+- I AM GUESSING the unit-test suite still passes — it has not been re-run this session.
+- The user iterated visually on the toolbar layout in the running app across several rounds.
 
 ---
 

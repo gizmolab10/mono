@@ -4,23 +4,17 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
-- [ ] move scaling slider to controls. layout for:
-    - [ ] desktop: two control rows:
-        - [ ] first row same as current
-        - [ ] second row guides slider horizontal left justified, scale right justified
-    - [ ] mobile: two rows:
-        - [ ] first has hamburger, 
-- [ ] layers -> wall, beam, post, stairs, block
+- [ ] [[27.selection.algorithm]]
+- [ ] crowded dimensionals
 - [ ] convert button create a template -> stud/joist / stair segmented
 - [ ] ability to combine multiple SOs
 - [ ] ability to cut an SO in half
-- [ ] v scroll in details -> update hit rects
 - [ ] SO opacity slider
 - [ ] print just the graph, scaled to fit
+- [ ] pac: rename Smart Object -> Smart Block
 - [ ] parts table
-    - [x] eliminate position/size columns
     - [ ] drag and drop
-- [ ] [[27.selection.algorithm]]
+- [ ] layers -> wall, beam, post, stairs, block
 - [ ] arrow keys nudge SO position
 - [ ] add move up move down buttons to bottom of parts list at far left
     - [ ] move duplicate button to the far right
