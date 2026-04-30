@@ -14,7 +14,11 @@ offer a proposal for the first unchecked item
 - [ ] pac: rename Smart Object -> Smart Block
 - [ ] parts table
     - [ ] drag and drop
-- [ ] layers -> wall, beam, post, stairs, block
+- [ ] layers -> wall, beam, post, stairs, generic
+    - [ ] layer tag
+        - [ ] in SO
+        - [ ] list
+        - [ ] custom creator
 - [ ] arrow keys nudge SO position
 - [ ] add move up move down buttons to bottom of parts list at far left
     - [ ] move duplicate button to the far right

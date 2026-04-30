@@ -116,12 +116,17 @@ class Hits_3D {
 			}
 		}
 
-		// Face hits: closest front-facing face across ALL SOs (no selection priority)
-		let best: Hit_3D_Result | null = null;
-		let best_z = Infinity;
+		// Face hits: build a fresh list of every part the click landed on,
+		// front to back. One entry per part (the closest front-facing face
+		// of that part at the click point). Drill-down rule: if the
+		// currently selected part is in the list, return the one right
+		// after it, wrapping at the end. Otherwise return the front-most.
+		const stack: { result: Hit_3D_Result; z: number }[] = [];
 		for (const so of this.objects) {
 			if (!so.scene?.faces) continue;
 			if (!so.scene.parent) continue; // root is non-interactive
+			if (so.visible === false) continue; // skip parts marked not visible
+			if (this.is_repeater_clone(so)) continue; // clones are derived; only the master can be hit
 			const c = this.cache.get(so.scene.id);
 			if (!c) continue;
 
@@ -131,6 +136,8 @@ class Hits_3D {
 			if (point.x < b.minX - r || point.x > b.maxX + r ||
 				point.y < b.minY - r || point.y > b.maxY + r) continue;
 
+			let so_best_z = Infinity;
+			let so_best_face = -1;
 			for (let fi = 0; fi < so.scene.faces.length; fi++) {
 				if (this.facing_front(so.scene.faces[fi], c.projected) >= 0) continue;
 				if (!this.point_in_polygon(point, so.scene.faces[fi], c.projected)) continue;
@@ -138,14 +145,24 @@ class Hits_3D {
 				const z = this.face_depth_at(point, so.scene.faces[fi], so, c.world);
 				if (z === null) continue;
 
-				if (z < best_z) {
-					best_z = z;
-					best = { so, type: T_Hit_3D.face, index: fi };
+				if (z < so_best_z) {
+					so_best_z = z;
+					so_best_face = fi;
 				}
+			}
+			if (so_best_face >= 0) {
+				stack.push({ result: { so, type: T_Hit_3D.face, index: so_best_face }, z: so_best_z });
 			}
 		}
 
-		return best;
+		if (stack.length === 0) return null;
+		stack.sort((a, b) => a.z - b.z);
+
+		if (selected_so) {
+			const idx = stack.findIndex(h => h.result.so === selected_so);
+			if (idx >= 0) return stack[(idx + 1) % stack.length].result;
+		}
+		return stack[0].result;
 	}
 
 	// Convert corner/edge hit to best face for hover
@@ -160,6 +177,16 @@ class Hits_3D {
 			: hit.so.scene.edges[hit.index];
 		const face_index = this.best_face_containing(vertices, hit.so, projected);
 		return face_index === -1 ? null : { so: hit.so, type: T_Hit_3D.face, index: face_index };
+	}
+
+	// A repeater clone is a 2nd-onward sibling under a parent that has a repeater.
+	// The first sibling (the template) is the master; clones are derived from it,
+	// so only the master should be hittable/hoverable.
+	private is_repeater_clone(so: Smart_Object): boolean {
+		const parent = so.scene?.parent?.so;
+		if (!parent?.repeater) return false;
+		const siblings = this.objects.filter(s => s.scene?.parent?.so === parent);
+		return siblings[0] !== so;
 	}
 
 	// Scratch allocations for front_most_face (avoid per-frame GC pressure)
