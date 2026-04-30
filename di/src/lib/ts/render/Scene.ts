@@ -43,6 +43,33 @@ class Scene {
 	clear(): void {
 		this.objects.clear();
 	}
+
+	/** Move an entry to a new spot in the master order. The entry whose id is
+	 *  given is removed from its current position and re-inserted just before
+	 *  the entry with id `before_id`. Pass null to move to the end. The visible
+	 *  parts table reads tree order from this list, so reordering here changes
+	 *  sibling order. */
+	move(id: string, before_id: string | null): void {
+		if (!this.objects.has(id)) return;
+		if (before_id === id) return;
+		const entries = Array.from(this.objects.entries());
+		const moving = entries.find(e => e[0] === id);
+		if (!moving) return;
+		const without = entries.filter(e => e[0] !== id);
+		const next = new Map<string, O_Scene>();
+		if (before_id === null) {
+			for (const e of without) next.set(e[0], e[1]);
+			next.set(moving[0], moving[1]);
+		} else {
+			let inserted = false;
+			for (const e of without) {
+				if (!inserted && e[0] === before_id) { next.set(moving[0], moving[1]); inserted = true; }
+				next.set(e[0], e[1]);
+			}
+			if (!inserted) next.set(moving[0], moving[1]);
+		}
+		this.objects = next;
+	}
 }
 
 export const scene = new Scene();

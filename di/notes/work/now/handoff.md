@@ -1,13 +1,13 @@
 # Code-Debt Handoff
 
-**Date:** 2026-04-29
-**Work stream:** items from [code.debt.md](./code.debt.md), one item at a time. Several small bugs surfaced and were fixed alongside the planned items. The most recent two sessions did not touch the code-debt list; instead they grew the testing catalog and the stipulations catalog into lock-step coverage and shipped the first two phases of the center-letter milestone. See the dated session blocks below.
+**Date:** 2026-04-30
+**Work stream:** items from [code.debt.md](./code.debt.md), one item at a time. Several small bugs surfaced and were fixed alongside the planned items. The most recent session shipped two parts-related items — the parts-table drag-and-drop, and the first two pieces of the selection-algorithm milestone (drill-down clicks and multi-select). See the dated session blocks below.
 
 ---
 
 ## Next
 
-The first unchecked code-debt item points at the selection-algorithm milestone — a grouping of related selection improvements: drag dots that only appear on hover and on the not-quite-forward face, mouse-driven drill-down into nested parts, rubber-band rectangles that re-centre and zoom, a recentre button on the controls strip, and a command-drag that shifts the rotation centre so the canvas follows the mouse. No proposal is on the table yet. Propose next.
+The next unchecked item on the selection-algorithm milestone is the rubber-band rectangle, including the option-key centre-and-zoom and the recentre button on the controls strip.
 
 For evidence:
 
@@ -35,6 +35,11 @@ For evidence:
 - **Browser-driven tests are running.** A new test setup at `di/e2e/` carries four user-flow tests plus a smoke test, all running on a real Chromium against the development server. They cover the four rules the unit-test runner could never exercise: the editing-lock blocks clicks; the view-mode toggle saves and restores the camera angle; a tumble drag with rotation-snap on lands on a face-aligned orientation; an empty-canvas drag tumbles the camera. The catalog now reads "all fifty-eight rules directly covered." Run them with `yarn e2e`. A small read-only set of hooks gated by the URL query parameter `?test=1` lets the tests inspect internal state — the hooks attach only when the parameter is present.
 - **The zoom slider and the guides slider have moved out of the drawing area and into the toolbar at the top of the screen.** The drawing area no longer carries either slider or any of the wiring that drove them. The toolbar now holds both, in all three responsive layouts. The scaling slider flexes into whatever room is left after the buttons, up to a six-hundred-pixel ceiling, and its right edge sits flush with the right edge of the toolbar. The guides slider keeps its small fixed width and its label, with the label nudged five pixels up so it reads above the slider track without crowding the row.
 - **The resolver-level write path now refuses a locked target.** The drag's write path already refused locked targets; the resolver-level write path did not. A one-line refusal closes the gap. No production code calls this write path today, so the change is belt-and-suspenders for any future test or caller.
+- **A click on the drawing area drills through stacked parts.** Each click builds a fresh ordered list of every part the click landed on, front to back. If the currently selected part is in the list, the new selection is the part right after it on the list, wrapping back to the front when the current part is the last. If the current part is not in the list, the new selection is the front-most. There is no memory between clicks — the rule is determined entirely by what the cursor is over and what is currently selected.
+- **The click stack skips parts that should not be hit.** Parts whose own visibility flag is off are excluded. Repeater clones are excluded — only the master in a repeater group can be hovered or clicked. The drawing area still draws all of them; the click stack is just smaller.
+- **Selection is now a list, not a single part.** Empty list means nothing is selected. One item means the selected part — exactly as before. More than one means multi-select. A plain click on a part replaces the list with that one part. A command-click on a part toggles that part's membership in the list. The same rule applies in the parts table — plain click replaces, command-click toggles. The parts table marks every row whose part is in the list; the canvas draws the bold outline on each part in the list. When more than one is selected, the three-tab strip in the details panel hides.
+- **Rows in the parts table can be dragged to re-parent a part.** Drag a row onto another row to make the dragged part a child of the target. While dragging, the cursor's vertical position inside a row decides the drop mode: middle of a row drops as child of that row; top edge or bottom edge drops as a sibling between the two adjacent rows when those rows share a parent, or as a child of the upper of the two when they do not. The empty area below the last row drops as child of root, last in order. Drops onto self, descendants, or repeater parents are rejected with no highlight. The visual cue is a soft blue tint on the affected row(s) plus a thin blue line at the drop edge. On drop, the dragged part's stored numbers are rewritten so it draws in exactly the same world position and size — formulas are kept untouched. History is snapshotted so the move is undoable.
+- **Scrolling the side panel keeps its buttons clickable.** The right-side panel that shows preferences, library, and parts now refreshes the click-target record whenever the user scrolls inside it. Without this, scrolled rows landed at new on-screen positions while the click record still pointed at the old positions, so clicks missed.
 
 ## What the tumble measurement told us
 
@@ -60,6 +65,73 @@ At roughly a hundred parts where every part's outer box overlaps every other, th
 - The drag work has its own mothballed handoff at `di/notes/work/milestones/33.drag/handoff.md`.
 - The `handoff` and `hands` shorthands point at this file.
 - The tumble instrumentation is in place but silent. Flip the constant at the top of the engine file to true, uncomment the per-second summary block inside the render loop, reload, and the console will print timings and counters again.
+
+---
+
+## Session — 2026-04-30 — drill-down clicks, multi-select, parts-table drag-and-drop
+
+Several threads.
+
+### Thread one — drill-down click on the drawing area
+
+A click on the drawing area now picks the front-most part by default, but on the second click the selection moves one part deeper into the stack. Each click builds a fresh ordered list of every part the click landed on, front to back. If the currently selected part is in that list, the new selection is the part right after it on the list, wrapping back to the front when the current part is at the end. If the current selection is not in the list (or nothing is selected), the new selection is the front-most. The rule is stateless — the click handler keeps no memory between clicks; the input is just "what is the cursor over" plus "what is currently selected."
+
+### Thread two — skip non-eligible parts in the click stack
+
+The click stack now skips two kinds of parts. Parts whose visibility flag is off are excluded so a hidden part cannot be reached by a click — drill-down moves straight past it to the next one behind. Repeater clones are also excluded — only the master in a repeater group can be hovered or clicked, since the parts table treats clones as derived and does not list them. The drawing area still draws all parts as before; the click stack is just smaller.
+
+### Thread three — multi-selection
+
+The single-selected-part data shape became a list of selected parts. Empty list means nothing is selected. One item means the selected part, identical to the prior single-selection behavior. Two or more means multi-select. A small backwards-compat reader called "the only selected part" returns the single item when the list has exactly one, otherwise nothing — so every existing call site that reads "the selected part" keeps working without modification.
+
+A plain click on a part replaces the list with that one part. A command-click on a part toggles that part's membership in the list. The same rule applies in the parts table for row clicks. The parts table marks every row whose part is in the list, and the canvas draws the bold outline on every part in the list. When more than one is selected, the three-tab segmented control in the details panel (and the rest of the per-selection editing widgets) hides.
+
+### Thread four — parts-table drag-and-drop re-parenting
+
+Rows in the parts table can now be dragged onto each other to change the tree. Each row is draggable; while a drag is in progress the cursor's vertical position inside the row over decides the drop mode. The middle of a row drops as a child of that row. The top edge of a row, when the row above is a sibling, drops as a sibling inserted between them. The bottom edge of a row, when the row below is a sibling, drops as a sibling inserted between them. When the cursor is on the line between two rows that are NOT siblings, only the upper of the two is highlighted and the drop becomes a child of that upper row. The empty area below the last row drops as child of root, last in order. Drops onto self, descendants, or onto a part that has a repeater set up are rejected with no highlight.
+
+The visual cue during a valid hover is a soft blue tint on the affected row (or both rows when sibling-mode) plus a thin blue line at the drop edge.
+
+On drop, the dragged part's six absolute world bounds are snapshotted, the part is re-parented in the scene tree, the master order is reshuffled so the parts table sibling order matches, and the bounds are written back so the drawing-area position does not move. Formulas are not touched, per the user's instruction. History is snapshotted before the move so the action is undoable.
+
+### Thread five — small fix: scroll on the side panel keeps buttons clickable
+
+The right-side panel that holds preferences, library, and parts now refreshes the click-detector's record whenever the user scrolls inside it. Without this, scrolled rows landed at new on-screen positions while the record still pointed at the old positions, so clicks missed. The mount-time refresh got a small cleanup at the same time — the wrapping setTimeout was unnecessary because the existing deferred-refresh helper already waits one layout pass.
+
+### What was added — 2026-04-30
+
+- A drill-down click rule that uses the current selection plus the click stack. No internal state in the click handler.
+- A visibility-and-clone filter on the click stack.
+- A list-based selection store with backwards-compat single-selection reader, a "toggle membership" method, and a "contains this part" check.
+- A canvas-side command-click branch that toggles the picked part instead of replacing the selection.
+- A parts-table-side command-click branch that does the same for rows.
+- A multi-row highlight in the parts table driven by the selection list.
+- A canvas multi-part bold-outline driven by the same list.
+- A details-panel gate that hides the three-tab segmented control (and the rest of the per-selection widgets) when more than one part is selected.
+- A new helper that re-parents a part to a new target with three modes (child of, sibling-before, sibling-after), preserving the on-screen position by rewriting the dragged part's stored offsets.
+- A new method on the scene module that moves a single entry to any spot in the master order — drives sibling reorder.
+- Drag handlers on each parts-table row plus a table-level handler for the empty area below.
+- Visual-feedback styles (soft blue background; thin blue top or bottom line) on rows during a drag.
+- A scroll listener on the side panel that refreshes the click-detector record on each scroll.
+
+### Files touched — 2026-04-30
+
+- Click stack, drill-down rule, visibility-and-clone filter: [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts).
+- Selection model: [Selection.ts](di/src/lib/ts/managers/Selection.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts).
+- Canvas command-click branch: [Events_3D.ts](di/src/lib/ts/events/Events_3D.ts).
+- Multi-part bold outline: [Render.ts](di/src/lib/ts/render/Render.ts).
+- Parts-table multi-row highlight, command-click, drag-and-drop wiring, drag-style CSS: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
+- Re-parent helper: [Engine.ts](di/src/lib/ts/render/Engine.ts).
+- Master-order move helper: [Scene.ts](di/src/lib/ts/render/Scene.ts).
+- Side-panel scroll refresh and mount-time cleanup: [Details.svelte](di/src/lib/svelte/details/Details.svelte).
+- Code-debt list: [code.debt.md](./code.debt.md) — parts-table drag-and-drop is now off the list.
+
+### Verification — 2026-04-30
+
+- The Svelte type check is clean for all of today's changes.
+- One pre-existing unused-import line remains in the toolbar component (a leftover from earlier work, not from this session).
+- The unit-test suite has not been re-run this session.
+- The drill-down click and the multi-select were both exercised by the user in the running app. The drag-and-drop wiring is wired but the user has not yet exercised it.
 
 ---
 

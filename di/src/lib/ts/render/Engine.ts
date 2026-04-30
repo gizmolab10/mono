@@ -1231,6 +1231,84 @@ class Engine {
 		return best_count;
 	}
 
+	/** Move part A under a new parent in the scene tree.
+	 *  - mode 'child': A becomes the last child of `target`.
+	 *  - mode 'before': A becomes a sibling of `target`, inserted just before it.
+	 *  - mode 'after':  A becomes a sibling of `target`, inserted just after it.
+	 *  A's stored numbers are rewritten so it draws in exactly the same world
+	 *  position and size as before. Formulas are not touched. Returns true on
+	 *  success, false when the move is rejected (root, cycle, repeater parent,
+	 *  or no-op). */
+	reparent_so(a: Smart_Object, target: Smart_Object, mode: 'child' | 'before' | 'after'): boolean {
+		// Cannot move the root.
+		if (!a.scene?.parent) return false;
+		// Cannot drop onto self.
+		if (a === target) return false;
+
+		// Determine the new parent based on mode.
+		let new_parent_so: Smart_Object;
+		if (mode === 'child') {
+			new_parent_so = target;
+		} else {
+			if (!target.scene?.parent) return false;
+			new_parent_so = target.scene.parent.so;
+		}
+		if (!new_parent_so.scene) return false;
+
+		// Cycle check: the new parent (and any of its ancestors) must not be A.
+		let cursor: O_Scene | undefined = new_parent_so.scene;
+		while (cursor) {
+			if (cursor.so === a) return false;
+			cursor = cursor.parent;
+		}
+
+		// Reject dropping ONTO a repeater parent (becomes a clone-soup case).
+		// Sibling drops next to a child of a repeater are also rejected because
+		// the parent in that case is the repeater.
+		if (new_parent_so.repeater) return false;
+
+		// Snapshot A's absolute world bounds so we can restore them after the
+		// parent change. Length values are stored absolutely already; positions
+		// are stored as offsets from the parent's start corner, so they need to
+		// be recomputed on the new parent.
+		const bounds: Bound[] = ['x_min', 'x_max', 'y_min', 'y_max', 'z_min', 'z_max'];
+		const abs: Record<string, number> = {};
+		for (const b of bounds) abs[b] = a.get_bound(b);
+
+		history.snapshot();
+
+		// Switch parent in the scene tree.
+		a.scene.parent = new_parent_so.scene;
+
+		// Reorder the master list so the parts table reflects the new sibling
+		// position. Use scene id-based moves; tree order picks up sibling order
+		// from the relative position of entries that share the same parent.
+		if (mode === 'before') {
+			scene.move(a.scene.id, target.scene!.id);
+		} else if (mode === 'after') {
+			const all = scene.get_all();
+			const idx = all.findIndex(o => o.so === target);
+			const next_id = (idx >= 0 && idx + 1 < all.length) ? all[idx + 1].id : null;
+			scene.move(a.scene.id, next_id);
+		} else {
+			// child mode: place A at the end so it becomes the last entry whose
+			// parent is `target` — that is, the last child.
+			scene.move(a.scene.id, null);
+		}
+
+		// Restore absolute bounds. The setter recomputes the offset from the
+		// new parent's start corner, so A draws in the same place on screen.
+		for (const b of bounds) a.set_bound(b, abs[b]);
+
+		// Re-evaluate any formulas that may have changed meaning, then refresh
+		// the all-parts list so the panel re-renders.
+		constraints.propagate_all();
+		stores.w_all_sos.set(scene.get_all().map(o => o.so));
+		render.mark_stale();
+		scenes.save();
+		return true;
+	}
+
 	/** Remove all children except the first (template) from a repeater parent.
 	 *  Resets the template back to parent origin and restores original run-axis
 	 *  length if it was modified by diagonal layout. */

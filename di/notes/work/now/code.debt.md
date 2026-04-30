@@ -5,7 +5,7 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 offer a proposal for the first unchecked item
 
 - [ ] parts table
-    - [ ] drag and drop
+    - [x] drag and drop
 - [ ] [[27.selection.algorithm]]
     - [ ] create new group around selected objects
 - [ ] crowded dimensionals

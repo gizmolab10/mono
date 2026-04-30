@@ -64,6 +64,20 @@
             }
           },
           {
+            "id": "3600da23cb554c9c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/architecture/ui/details.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "details"
+            }
+          },
+          {
             "id": "e0c79920fb1874e5",
             "type": "leaf",
             "state": {
@@ -92,7 +106,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -227,13 +241,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/code.debt.md",
+                "file": "di/notes/architecture/ui/details.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of details"
             }
           }
         ],
@@ -254,10 +268,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "604370a677266b8c",
+  "active": "3600da23cb554c9c",
   "lastOpenFiles": [
-    "di/notes/work/now/27.selection.algorithm.md",
     "di/notes/work/now/code.debt.md",
+    "di/notes/work/now/27.selection.algorithm.md",
     "di/notes/work/done/code.debt.paid.md",
     "di/notes/architecture/core/algebra.md",
     "di/notes/work/milestones/done/13.algebra.md",

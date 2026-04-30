@@ -3,6 +3,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { T_Hit_3D, T_Editing } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
+	import type { O_Scene } from '../../ts/types/Interfaces';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import Separator from '../mouse/Separator.svelte';
 	import { k } from '../../ts/common/Constants';
@@ -161,6 +162,152 @@
 		return parts.has_visible_descendant(so);
 	}
 
+	// ── drag-and-drop reparenting ──
+
+	let drag_so:        Smart_Object | null = $state(null);
+	let drop_target_so: Smart_Object | null = $state(null);
+	let drop_mode:      'child' | 'before' | 'after' | null = $state(null);
+
+	let visible_rows = $derived(parts.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !parts.is_ancestor_collapsed(s, $w_collapsed_ids)));
+
+	function siblings_in_tree(a: Smart_Object | undefined, b: Smart_Object | undefined): boolean {
+		if (!a || !b) return false;
+		return a.scene?.parent?.so === b.scene?.parent?.so;
+	}
+
+	function valid_drop(a: Smart_Object, target: Smart_Object, mode: 'child' | 'before' | 'after'): boolean {
+		if (a === target && mode === 'child') return false;
+		let new_parent: Smart_Object;
+		if (mode === 'child') {
+			new_parent = target;
+		} else {
+			if (!target.scene?.parent) return false;
+			new_parent = target.scene.parent.so;
+		}
+		// No cycle: a must not be an ancestor of new_parent (or equal to it).
+		let cur = new_parent.scene as O_Scene | undefined;
+		while (cur) {
+			if (cur.so === a) return false;
+			cur = cur.parent;
+		}
+		// No drops onto a part that is set up as a repeater.
+		if (new_parent.repeater) return false;
+		return true;
+	}
+
+	function handle_dragstart(e: DragEvent, so: Smart_Object) {
+		// Root cannot be moved.
+		if (!so.scene?.parent) { e.preventDefault(); return; }
+		drag_so = so;
+		if (e.dataTransfer) {
+			e.dataTransfer.effectAllowed = 'move';
+			e.dataTransfer.setData('text/plain', so.id);
+		}
+	}
+
+	function handle_dragend() {
+		drag_so = null;
+		drop_target_so = null;
+		drop_mode = null;
+	}
+
+	function handle_row_dragover(e: DragEvent, so: Smart_Object) {
+		if (!drag_so) return;
+		const row = e.currentTarget as HTMLElement;
+		const rect = row.getBoundingClientRect();
+		const y = e.clientY - rect.top;
+		const edge = 5;
+
+		const idx = visible_rows.indexOf(so);
+		let target: Smart_Object | null = null;
+		let mode: 'child' | 'before' | 'after' | null = null;
+
+		if (y < edge && idx > 0) {
+			const above = visible_rows[idx - 1];
+			if (siblings_in_tree(above, so)) {
+				target = so;
+				mode = 'before';
+			} else {
+				// Non-siblings: highlight the upper of the two; drop becomes child of upper.
+				target = above;
+				mode = 'child';
+			}
+		} else if (y > rect.height - edge && idx < visible_rows.length - 1) {
+			const below = visible_rows[idx + 1];
+			if (siblings_in_tree(so, below)) {
+				target = so;
+				mode = 'after';
+			} else {
+				// Non-siblings: highlight the upper (so); drop becomes child of so.
+				target = so;
+				mode = 'child';
+			}
+		} else {
+			target = so;
+			mode = 'child';
+		}
+
+		if (target && mode && valid_drop(drag_so, target, mode)) {
+			drop_target_so = target;
+			drop_mode = mode;
+			e.preventDefault();
+			if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+		} else {
+			drop_target_so = null;
+			drop_mode = null;
+			if (e.dataTransfer) e.dataTransfer.dropEffect = 'none';
+		}
+		e.stopPropagation();
+	}
+
+	function handle_row_drop(e: DragEvent) {
+		e.preventDefault();
+		e.stopPropagation();
+		if (drag_so && drop_target_so && drop_mode) {
+			engine.reparent_so(drag_so, drop_target_so, drop_mode);
+		}
+		handle_dragend();
+	}
+
+	function handle_outside_dragover(e: DragEvent) {
+		if (!drag_so) return;
+		// Empty area below all rows: drop becomes child of root, last in order.
+		const root = scenes.root_so;
+		if (root && valid_drop(drag_so, root, 'child')) {
+			drop_target_so = root;
+			drop_mode = 'child';
+			e.preventDefault();
+			if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+		}
+	}
+
+	function handle_outside_drop(e: DragEvent) {
+		e.preventDefault();
+		if (drag_so && drop_target_so && drop_mode) {
+			engine.reparent_so(drag_so, drop_target_so, drop_mode);
+		}
+		handle_dragend();
+	}
+
+	function row_is_drop_active(so: Smart_Object): boolean {
+		if (!drop_target_so) return false;
+		if (so === drop_target_so) return true;
+		// The other half of a sibling-between drop.
+		const t_idx = visible_rows.indexOf(drop_target_so);
+		if (t_idx < 0) return false;
+		if (drop_mode === 'before' && so === visible_rows[t_idx - 1]) return true;
+		if (drop_mode === 'after'  && so === visible_rows[t_idx + 1]) return true;
+		return false;
+	}
+
+	function row_has_top_line(so: Smart_Object): boolean {
+		return so === drop_target_so && drop_mode === 'before';
+	}
+
+	function row_has_bottom_line(so: Smart_Object): boolean {
+		return so === drop_target_so && (drop_mode === 'child' || drop_mode === 'after');
+	}
+
 	function toggle_visible(e: MouseEvent, so: Smart_Object) {
 		e.stopPropagation();
 		const v = !so.visible;
@@ -194,7 +341,7 @@
 
 </script>
 
-<table class='hierarchy'>
+<table class='hierarchy' ondragover={handle_outside_dragover} ondrop={handle_outside_drop}>
 	<thead>
 		<tr>
 			<th class='toggle-header' class:gap-r={show_parts} colspan={show_parts ? 2 : 7} use:hit_target={{ id: 'toggle-parts', onpress: toggle_show_parts }}>
@@ -214,6 +361,14 @@
 				<tr
 					class='hierarchy-row'
 					class:selected={is_selected(so, $w_tick)}
+					class:drop-active={row_is_drop_active(so)}
+					class:drop-line-top={row_has_top_line(so)}
+					class:drop-line-bottom={row_has_bottom_line(so)}
+					draggable={true}
+					ondragstart={(e) => handle_dragstart(e, so)}
+					ondragover={(e) => handle_row_dragover(e, so)}
+					ondragend={handle_dragend}
+					ondrop={handle_row_drop}
 					onclick={(e) => select(so, e)}>
 					<td class='hierarchy-sibling'>{so.scene?.parent ? row_index : ''}</td>
 					<td class='hierarchy-name' style:padding-left='{depth(so) * k.width.indent}px'
@@ -319,6 +474,18 @@
 
 	.hierarchy-row.selected {
 		background : var(--selected);
+	}
+
+	.hierarchy-row.drop-active {
+		background : rgba(64, 128, 255, 0.18);
+	}
+
+	.hierarchy-row.drop-line-top > td {
+		border-top : 2px solid #4080ff;
+	}
+
+	.hierarchy-row.drop-line-bottom > td {
+		border-bottom : 2px solid #4080ff;
 	}
 
 	.hierarchy-name {
