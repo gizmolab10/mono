@@ -140,16 +140,23 @@ class Parts {
 		this.w_collapsed_ids.set(ids);
 	}
 
-	// Add or remove so from w_collapsed_ids
+	// Add or remove so from w_collapsed_ids. When folding a row up that
+	// contains the currently selected part, move the selection to that row
+	// so the click wins and the selection stays visible.
 	toggle_reveal(so: Smart_Object): void {
 		const ids = new Set(get(this.w_collapsed_ids));
 		const id = so.id;
 		if (ids.has(id)) {
 			ids.delete(id);
+			this.w_collapsed_ids.set(ids);
 		} else {
 			ids.add(id);
+			this.w_collapsed_ids.set(ids);
+			const sel = get(selection.w_selection)?.so;
+			if (sel && this.is_ancestor_collapsed(sel, ids)) {
+				selection.current = { so, type: T_Hit_3D.face, index: 0 };
+			}
 		}
-		this.w_collapsed_ids.set(ids);
 	}
 
 	apply_generational(so: Smart_Object, OPTION: boolean, SHIFT: boolean): void {

@@ -310,7 +310,7 @@
 
 </script>
 
-{#snippet attr_row(row: typeof bounds_rows[0], i: number)}
+{#snippet attr_row(row: typeof bounds_rows[0], i: number, split_start: boolean = false)}
 	{@const row_disabled = is_root ? row.attr_index !== 2 : (row.is_invariant || row.has_formula)}
 	{@const gpos = i % 3}
 	{@const prev_inv = i > 0 && bounds_rows[i - 1]?.is_invariant}
@@ -322,8 +322,8 @@
 	{@const has_formula_error = has_error_base && error_state.source === 'formula'}
 	{@const has_value_error = has_error_base && error_state.source === 'value'}
 	<tr class:merge-cont={is_merge_cont || root_formula_cont || root_start_cont}>
-		{#if formula_mode === 'agnostic' && i % 3 === 0}
-			<td class='attr-key' rowspan={3}>{['s', 'l', 'e'][Math.floor(i / 3)]}</td>
+		{#if formula_mode === 'agnostic' && (gpos === 0 || split_start)}
+			<td class='attr-key' rowspan={3 - gpos}>{['s', 'l', 'e'][Math.floor(i / 3)]}</td>
 		{/if}
 		<td class='attr-name'>
 			{row.label}
@@ -396,7 +396,7 @@
 		<table class='bounds'>
 			<tbody>
 				{#each bounds_rows.slice(error_row_idx + 1) as row, j (selected_so?.id + row.label)}
-					{@render attr_row(row, error_row_idx + 1 + j)}
+					{@render attr_row(row, error_row_idx + 1 + j, j === 0)}
 				{/each}
 			</tbody>
 		</table>

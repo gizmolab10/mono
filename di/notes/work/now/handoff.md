@@ -7,10 +7,13 @@
 
 ## Next
 
-The next unchecked item on the selection-algorithm milestone is the rubber-band rectangle, including the option-key centre-and-zoom and the recentre button on the controls strip.
+The first unchecked code-debt item is "collapse parts tree not stuck on selected — select the collapsed part." Pick that up next.
+
+After that, the selection-algorithm milestone has the rubber-band rectangle (with option-key centre-and-zoom and a recentre button on the controls strip), and "create new group around selected objects" / "ability to combine multiple parts" sub-items.
 
 For evidence:
 
+- the code-debt list is at [code.debt.md](./code.debt.md)
 - the milestone notes are at [27.selection.algorithm.md](./27.selection.algorithm.md)
 
 ## Where we are
@@ -40,6 +43,10 @@ For evidence:
 - **Selection is now a list, not a single part.** Empty list means nothing is selected. One item means the selected part — exactly as before. More than one means multi-select. A plain click on a part replaces the list with that one part. A command-click on a part toggles that part's membership in the list. The same rule applies in the parts table — plain click replaces, command-click toggles. The parts table marks every row whose part is in the list; the canvas draws the bold outline on each part in the list. When more than one is selected, the three-tab strip in the details panel hides.
 - **Rows in the parts table can be dragged to re-parent a part.** Drag a row onto another row to make the dragged part a child of the target. While dragging, the cursor's vertical position inside a row decides the drop mode: middle of a row drops as child of that row; top edge or bottom edge drops as a sibling between the two adjacent rows when those rows share a parent, or as a child of the upper of the two when they do not. The empty area below the last row drops as child of root, last in order. Drops onto self, descendants, or repeater parents are rejected with no highlight. The visual cue is a soft blue tint on the affected row(s) plus a thin blue line at the drop edge. On drop, the dragged part's stored numbers are rewritten so it draws in exactly the same world position and size — formulas are kept untouched. History is snapshotted so the move is undoable.
 - **Scrolling the side panel keeps its buttons clickable.** The right-side panel that shows preferences, library, and parts now refreshes the click-target record whenever the user scrolls inside it. Without this, scrolled rows landed at new on-screen positions while the click record still pointed at the old positions, so clicks missed.
+- **The collapsed details view now has working eye cells next to the name.** When the parts list is hidden and only the selected part is shown, two clickable eye cells sit to the right of the name input. The first cell flips the hide-children flag (only when the part has children and is not root); the second flips the visibility flag. Both cells re-paint immediately on click.
+- **A multi-word part name in a formula keeps its space.** Typing a path like "structure.main beam.e" used to commit as "structure.mainbeam.e" because the formula's tokenize-and-rebuild pipeline had no rule for joining a dotted reference with a following one. The pipeline now joins them and keeps the space inside the merged name segment. The same fix repairs the "did you mean: main beam" suggestion button — clicking it now actually applies the correction.
+- **The attributes table no longer drops its first column below a formula error.** When an error overlay sits in the middle of one of the three-row groups (start / length / end), the table is split into two physical tables with the overlay in between. The bottom table now renders its own letter cell on the first row when the split falls mid-group, with a row-span sized to cover only the rows that remain in that group. So the first column stays in place above and below the overlay.
+- **The toolbar component is clean of unused imports.** A leftover configuration import was removed; the project's type check now reports zero errors.
 
 ## What the tumble measurement told us
 
@@ -98,6 +105,22 @@ On drop, the dragged part's six absolute world bounds are snapshotted, the part 
 
 The right-side panel that holds preferences, library, and parts now refreshes the click-detector's record whenever the user scrolls inside it. Without this, scrolled rows landed at new on-screen positions while the record still pointed at the old positions, so clicks missed. The mount-time refresh got a small cleanup at the same time — the wrapping setTimeout was unnecessary because the existing deferred-refresh helper already waits one layout pass.
 
+### Thread six — eye cells in the collapsed details view
+
+When the parts list is hidden and only the selected part is shown, the row that holds the part's name now also shows the two eye cells (the hide-children eye and the visibility eye) on the right of the name input. They use the same click handlers as the rows in the full parts list — clicking one flips the matching flag on the selected part. The first cell only paints when the selected part has children and is not root; the second cell always paints with either the eye glyph or a dash. The cells re-paint on every click because their displayed values are read through three small reactive views that depend on the global change-tick the toggle handlers bump after each mutation.
+
+### Thread seven — pre-existing unused-import cleanup
+
+The toolbar component had an unused configuration import left over from earlier work; it has been removed. The Svelte type check now reports zero errors across the project.
+
+### Thread eight — formula commit kept the space inside a multi-word name
+
+A formula like "structure.main beam.e" was committed as "structure.mainbeam.e" — the space between "main" and "beam" was being lost. The text was being tokenized into two separate references — one for "structure.main" and one for "beam.e" — and the joiner that follows only knew how to merge bare-name references that follow the form "foo bar.x". When the first reference is itself a dotted path (because the part lives inside another part), the joiner left the two references separate, and the un-tokenizer concatenated them with no separator. The same bug also caused the "did you mean: main beam" suggestion button to look like it was being ignored — the suggestion's corrected text went through the same commit pipeline and the space was lost the second time too. Fix: extend the joiner so two adjacent dotted references also collapse into one, with the merged path holding the space inside its last name segment.
+
+### Thread nine — attributes table dropped its first column below an error overlay
+
+When a formula error overlay appears, the attributes table is split into two physical tables with the overlay in between. The left-most column of the table holds a single letter (s, l, or e) that spans three rows in agnostic mode. If the split fell in the middle of one of those three-row groups, the spanned cell was rendered only in the top table — so every row below the overlay was missing its left-most column and the rest of the row drifted left. Fix: when the bottom table starts in the middle of a three-row group, render the letter cell on its first row with a row-span sized to cover only the rows that remain in that group.
+
 ### What was added — 2026-04-30
 
 - A drill-down click rule that uses the current selection plus the click stack. No internal state in the click handler.
@@ -113,6 +136,10 @@ The right-side panel that holds preferences, library, and parts now refreshes th
 - Drag handlers on each parts-table row plus a table-level handler for the empty area below.
 - Visual-feedback styles (soft blue background; thin blue top or bottom line) on rows during a drag.
 - A scroll listener on the side panel that refreshes the click-detector record on each scroll.
+- Two clickable eye cells alongside the name input in the collapsed details view, with three small reactive views that re-paint them on every click.
+- Removal of an unused configuration import from the toolbar component.
+- An extension of the formula token-joiner so spaces inside multi-word part names survive the tokenize-and-rebuild round trip — fixes both the typed-input and the "did you mean" suggestion-button paths.
+- A row-span-aware split of the attributes table's left-most letter column, so the column does not vanish below a formula error overlay.
 
 ### Files touched — 2026-04-30
 
@@ -120,18 +147,20 @@ The right-side panel that holds preferences, library, and parts now refreshes th
 - Selection model: [Selection.ts](di/src/lib/ts/managers/Selection.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts).
 - Canvas command-click branch: [Events_3D.ts](di/src/lib/ts/events/Events_3D.ts).
 - Multi-part bold outline: [Render.ts](di/src/lib/ts/render/Render.ts).
-- Parts-table multi-row highlight, command-click, drag-and-drop wiring, drag-style CSS: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
+- Parts-table multi-row highlight, command-click, drag-and-drop wiring, drag-style CSS, collapsed-view eye cells: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
 - Re-parent helper: [Engine.ts](di/src/lib/ts/render/Engine.ts).
 - Master-order move helper: [Scene.ts](di/src/lib/ts/render/Scene.ts).
 - Side-panel scroll refresh and mount-time cleanup: [Details.svelte](di/src/lib/svelte/details/Details.svelte).
+- Toolbar unused-import cleanup: [Controls.svelte](di/src/lib/svelte/main/Controls.svelte).
+- Formula token-joiner extension for multi-word names: [Tokenizer.ts](di/src/lib/ts/algebra/Tokenizer.ts).
+- Attributes-table split-row letter column: [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte).
 - Code-debt list: [code.debt.md](./code.debt.md) — parts-table drag-and-drop is now off the list.
 
 ### Verification — 2026-04-30
 
-- The Svelte type check is clean for all of today's changes.
-- One pre-existing unused-import line remains in the toolbar component (a leftover from earlier work, not from this session).
+- The Svelte type check now reports zero errors across the project after the unused-import cleanup.
 - The unit-test suite has not been re-run this session.
-- The drill-down click and the multi-select were both exercised by the user in the running app. The drag-and-drop wiring is wired but the user has not yet exercised it.
+- The drill-down click, the multi-select, the collapsed-view eye cells, the multi-word-name formula commit, and the attributes-table split row were all exercised by the user in the running app. The drag-and-drop wiring is in place but the user has not yet exercised it.
 
 ---
 

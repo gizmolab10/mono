@@ -4,6 +4,7 @@
 	import { T_Hit_3D, T_Editing } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import type { O_Scene } from '../../ts/types/Interfaces';
+	import { get } from 'svelte/store';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import Separator from '../mouse/Separator.svelte';
 	import { k } from '../../ts/common/Constants';
@@ -58,9 +59,13 @@
 		return $w_selections.some(h => h.so === so);
 	}
 
+	// Reveal the selected part's collapsed ancestors only when the selection
+	// itself moves — not when the collapsed list changes. Reading the
+	// collapsed list through a non-subscribing get keeps this effect from
+	// fighting a user click that just collapsed a row.
 	$effect(() => {
 		const so = selected_so;
-		if (so && parts.is_ancestor_collapsed(so, $w_collapsed_ids)) parts.reveal_so(so);
+		if (so && parts.is_ancestor_collapsed(so, get(parts.w_collapsed_ids))) parts.reveal_so(so);
 	});
 
 	function handle_name_click(e: MouseEvent, so: Smart_Object) {
@@ -161,6 +166,26 @@
 	function show_down_triangle(so: Smart_Object, _collapsed: Set<string>, _sos: Smart_Object[], _tick: number): boolean {
 		return parts.has_visible_descendant(so);
 	}
+
+	// Reactive views of the selected part's eye-cell display values for the
+	// collapsed (parts-list-hidden) layout. The tick reference is what makes
+	// these re-evaluate when toggle_visible / toggle_hide_children mutate the
+	// part's flags — those handlers call stores.tick() after each mutation.
+	let collapsed_show_hide_eye = $derived.by(() => {
+		$w_tick;
+		const sel = $w_selection;
+		return !!sel && has_children(sel.so, $w_all_sos) && !!sel.so.scene?.parent;
+	});
+	let collapsed_hide_eye_label = $derived.by(() => {
+		$w_tick;
+		const sel = $w_selection;
+		if (!sel) return '';
+		return sel.so.hide_children ? String(leaf_descendants(sel.so, $w_all_sos)) : '👁';
+	});
+	let collapsed_visible_label = $derived.by(() => {
+		$w_tick;
+		return $w_selection?.so.visible !== false ? '👁' : '–';
+	});
 
 	// ── drag-and-drop reparenting ──
 
@@ -438,6 +463,18 @@
 				onkeydown = {(e) => name_keydown(e, $w_selection!.so)}
 				onblur    = {(e) => { const inp = e.target as HTMLInputElement; commit_name($w_selection!.so, inp.value, inp); }}
 			/>
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<span class='hierarchy-eye' onclick={(e) => collapsed_show_hide_eye ? toggle_hide_children(e, $w_selection!.so) : null}>
+				{#if collapsed_show_hide_eye}
+					{collapsed_hide_eye_label}
+				{/if}
+			</span>
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<span class='hierarchy-eye' onclick={(e) => toggle_visible(e, $w_selection!.so)}>
+				{collapsed_visible_label}
+			</span>
 		</div>
 	{/if}
 	{#if $w_selection.so.scene?.parent}
@@ -588,10 +625,15 @@
 		box-sizing    : border-box;
 		color         : inherit;
 		font-family   : inherit;
-		width         : 100%;
+		flex          : 1 1 auto;
+		min-width     : 0;
 		outline       : none;
 		text-align    : left;
 		border-radius : 3px;
+	}
+
+	.edit-title-row .hierarchy-eye {
+		flex : 0 0 auto;
 	}
 
 	.collapsed-name:focus {

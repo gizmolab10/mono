@@ -2,6 +2,7 @@
 
 | Build | Date         | Note                                            |
 | ----- | ------------ | ----------------------------------------------- |
+| 59    | Apr 30, 2026 | drag and drop in parts table                    |
 | 58    | Apr 26, 2026 | new value lock feature                          |
 | 57    | Apr 19, 2026 | new Parts and Selection classes                 |
 | 56    | Apr 17, 2026 | generational reveal/collapse of parts           |

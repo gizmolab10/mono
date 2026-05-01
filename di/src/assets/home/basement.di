@@ -194,6 +194,108 @@
         "parent_id": "dia2480ebef32cfd"
       },
       {
+        "id": "di5c4dd68247b856",
+        "name": "dirt",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 4267.200000000001,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "value": 1219.2000000000091,
+              "is_locked": true
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 8839.19999999999,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 609.6,
+            "length": {
+              "value": 609.6,
+              "is_locked": true
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "die948608c4b1219"
+      },
+      {
+        "id": "di0e4bfda1591e53",
+        "name": "glass wall",
+        "x": {
+          "attributes": {
+            "origin": 4178.300000000001,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "wall th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "value": 1219.200244140625,
+              "is_locked": true
+            },
+            "extent": {
+              "formula": ".e - 4'"
+            },
+            "length": 7619.999755859374,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - beam th"
+            },
+            "length": 2609.8500000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "repeater": {
+          "spacing": 406.4,
+          "firewall": true,
+          "is_repeating": false,
+          "run_axis": 1,
+          "is_diagonal": false
+        },
+        "parent_id": "die948608c4b1219"
+      },
+      {
         "id": "di814622bfde093a",
         "name": "moose",
         "x": {
@@ -1136,9 +1238,9 @@
               "formula": ".s"
             },
             "extent": {
-              "formula": "back.well.s"
+              "formula": "back.well.e"
             },
-            "length": 609.6000000000004,
+            "length": 1524,
             "angle": 0
           },
           "invariant": 2
@@ -1258,54 +1360,6 @@
         "visible": true,
         "hide_children": false,
         "parent_id": "dia04a54814864bd"
-      },
-      {
-        "id": "di5c4dd68247b856",
-        "name": "dirt",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 4267.200000000001,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "value": 1219.2000000000091,
-              "is_locked": true
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 8839.19999999999,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": 609.6,
-            "length": {
-              "value": 609.6,
-              "is_locked": true
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "visible": true,
-        "hide_children": false,
-        "parent_id": "die948608c4b1219"
       },
       {
         "id": "dibb46a3aa5f0c4c",
@@ -2000,60 +2054,6 @@
         "visible": true,
         "hide_children": false,
         "parent_id": "dibb46a3aa5f0c4c"
-      },
-      {
-        "id": "di0e4bfda1591e53",
-        "name": "glass wall",
-        "x": {
-          "attributes": {
-            "origin": 8750.300000000001,
-            "extent": {
-              "formula": ".e"
-            },
-            "length": {
-              "formula": "wall th"
-            },
-            "angle": 0
-          },
-          "invariant": 0
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "value": 1219.2,
-              "is_locked": true
-            },
-            "extent": {
-              "formula": ".e - 4'"
-            },
-            "length": 9143.999999999998,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e - beam th"
-            },
-            "length": 2609.8500000000004,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": true,
-        "hide_children": false,
-        "repeater": {
-          "spacing": 406.4,
-          "firewall": true,
-          "is_repeating": false,
-          "run_axis": 1,
-          "is_diagonal": false
-        },
-        "parent_id": "dibb46a3aa5f0c4c"
       }
     ],
     "givens": [
@@ -2096,7 +2096,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "did348efbe38737f",
-    "selected_face": 5
+    "selected_id": "di334398930cb9ea",
+    "selected_face": 1
   }
 }

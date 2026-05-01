@@ -239,25 +239,48 @@ class Tokenizer {
 		return tokens;
 	}
 
-	/** Merge consecutive bare references: "foo bar.e" → ref("foo bar", "e") */
+	/** Merge consecutive bare references: "foo bar.e" → ref("foo bar", "e").
+	 *  Also merges adjacent dotted references that came from a path with a
+	 *  space-bearing name segment: "structure.main beam.e" tokenizes as two
+	 *  references (object 'structure', attr 'main') and (object 'beam', attr 'e');
+	 *  the second is a continuation of the first's name segment, so they
+	 *  collapse to one reference (object 'structure.main beam', attr 'e'). */
 	fuse_name_tokens(tokens: Token[]): Token[] {
 		const out: Token[] = [];
 		for (let i = 0; i < tokens.length; i++) {
 			const t = tokens[i];
-			if (t.type !== 'reference' || t.object !== 'self') { out.push(t); continue; }
+			if (t.type !== 'reference') { out.push(t); continue; }
 
-			let name = t.attribute;
-			while (i + 1 < tokens.length && tokens[i + 1].type === 'reference' && (tokens[i + 1] as any).object === 'self') {
-				i++;
-				name += ' ' + (tokens[i] as any).attribute;
-			}
+			if (t.object === 'self') {
+				// Self-ref start: absorb consecutive self-refs into a multi-word name.
+				let name = t.attribute;
+				while (i + 1 < tokens.length && tokens[i + 1].type === 'reference' && (tokens[i + 1] as any).object === 'self') {
+					i++;
+					name += ' ' + (tokens[i] as any).attribute;
+				}
 
-			const next = tokens[i + 1];
-			if (next && next.type === 'reference' && next.object !== '' && next.object !== 'self') {
-				out.push({ type: 'reference', object: name + ' ' + next.object, attribute: next.attribute });
-				i++;
+				const next = tokens[i + 1];
+				if (next && next.type === 'reference' && next.object !== '' && next.object !== 'self') {
+					out.push({ type: 'reference', object: name + ' ' + next.object, attribute: next.attribute });
+					i++;
+				} else {
+					out.push({ type: 'reference', object: 'self', attribute: name });
+				}
+			} else if (t.object !== '') {
+				// Non-self, non-parent reference: a path that may have name segments
+				// with spaces. Absorb any following non-empty non-self refs as
+				// continuations of the path's last name segment.
+				let merged_object = t.object;
+				let merged_attr = t.attribute;
+				while (i + 1 < tokens.length && tokens[i + 1].type === 'reference' && (tokens[i + 1] as any).object !== '' && (tokens[i + 1] as any).object !== 'self') {
+					i++;
+					merged_object = merged_object + '.' + merged_attr + ' ' + (tokens[i] as any).object;
+					merged_attr = (tokens[i] as any).attribute;
+				}
+				out.push({ type: 'reference', object: merged_object, attribute: merged_attr });
 			} else {
-				out.push({ type: 'reference', object: 'self', attribute: name });
+				// Parent-prefix reference (object is empty); pass through unchanged.
+				out.push(t);
 			}
 		}
 		return out;

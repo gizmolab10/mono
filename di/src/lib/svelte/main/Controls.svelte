@@ -4,7 +4,6 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { stores } from '../../ts/managers/Stores';
 	import { scenes } from '../../ts/managers/Scenes';
-	import { c } from '../../ts/common/Configuration'
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 	import Slider from '../mouse/Slider.svelte';

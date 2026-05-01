@@ -188,3 +188,6 @@
         - [x] first has hamburger, 
 - [x] controls have too much separation
 - [x] v scroll in details -> update hit rects
+- [x] parts table
+    - [x] drag and drop
+- [x] collapse parts tree not stuck on selected -> select the collapsed SO
