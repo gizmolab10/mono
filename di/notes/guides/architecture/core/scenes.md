@@ -1,6 +1,6 @@
-# Launch
+# Scenes
 
-Design Intuition is a 3D editor. Launch creates the Graph component, which sets up a 3D canvas and populates it with Smart Objects (SO).
+Design Intuition is a 3D editor. App launch creates the drawing-area component, which sets up a 3D canvas and populates it with Smart Objects (SO).
 
 ## Launch details
 

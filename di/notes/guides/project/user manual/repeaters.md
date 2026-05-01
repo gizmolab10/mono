@@ -34,3 +34,7 @@ The readout shows: `count × gap (axis) = total`. Example: `14 × 6 3/4" (y) = 8
 ## Validation — phantom stairs
 
 extend the stair pattern by one in each direction. step[-1] should sit just below floor. step[count] should land just beyond the top. if both match, the geometry is right.
+
+## Selecting clones
+
+Only the master (the first sibling) can be hovered or clicked. The other repeated copies are derived from it — they are skipped in the click stack and do not appear as rows in the parts table. To change a property on every copy, edit the master.

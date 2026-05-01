@@ -26,28 +26,24 @@ A thing in the scene graph that can be rendered.
 ```ts
 interface O_Scene {
   id: string;
-  vertices: Point3[];
+  so: Smart_Object;
   edges: [number, number][];
-  orientation: quat;
-  position: vec3;
-  scale: number;
-  color: string;
+  faces?: number[][];
   parent?: O_Scene;
+  position: vec3;
+  color: string;
 }
 ```
 
-| Field | What it's for |
-|-------|---------------|
-| `id` | Unique identifier, auto-generated |
-| `vertices` | 3D points defining geometry (`Point3[]`) |
-| `edges` | Pairs of vertex indices to connect |
-| `orientation` | Rotation as quaternion (gl-matrix `quat`) |
-| `position` | Translation in world/parent space (gl-matrix `vec3`) |
-| `scale` | Uniform scale factor |
-| `color` | CSS color prefix, e.g. `'rgba(78, 205, 196,'` |
-| `parent` | Optional parent for hierarchical transforms |
+- `id` — unique identifier, auto-generated.
+- `so` — back-reference to the part this entry draws. The vertex coordinates and the orientation come from the part, not from this entry.
+- `edges` — pairs of vertex indices that define the wireframe.
+- `faces` — optional groups of vertex indices that define filled polygons.
+- `parent` — optional parent entry for hierarchical transforms.
+- `position` — translation in parent space, passed directly to gl-matrix.
+- `color` — CSS color prefix, for example `'rgba(78, 205, 196,'`.
 
-Note: `position` stays as `vec3` because it's passed directly to gl-matrix functions. `vertices` uses `Point3` because it's just stored/iterated—no gl-matrix interop needed.
+Note: vertices are not stored on the entry. They live on the back-referenced part and are read on every projection pass. This keeps geometry edits in one place (the part's bounds, formulas, and rotation).
 
 ---
 

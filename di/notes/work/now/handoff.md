@@ -244,8 +244,8 @@ The browser tests run with `yarn e2e`. The runner starts the development server 
 - New config: [`playwright.config.ts`](di/e2e/playwright.config.ts).
 - Page-startup script: [`App.svelte`](di/src/App.svelte) — temporary console helper removed; read-only test hooks added gated by `?test=1`.
 - Package manifest: [`package.json`](di/package.json) — added Playwright as a development dependency and an `e2e` script.
-- Catalog: [stipulations.md](../../guides/stipulations.md).
-- Testing guide: [testing.md](../../guides/testing.md).
+- Catalog: [stipulations.md](../../guides/project/main/stipulations.md).
+- Testing guide: [testing.md](../../guides/project/main/testing.md).
 
 ### Verification — 2026-04-29 (continued, fourth)
 
@@ -287,8 +287,8 @@ All four phases are done. The feature is complete end to end. The next concrete 
 
 - The Smart_Object class (the new debug-summary method): [Smart_Object.ts](di/src/lib/ts/runtime/Smart_Object.ts).
 - The center test file (two new tests): [Center.test.ts](di/src/lib/ts/tests/Center.test.ts).
-- Catalog: [stipulations.md](../../guides/stipulations.md).
-- Testing guide: [testing.md](../../guides/testing.md).
+- Catalog: [stipulations.md](../../guides/project/main/stipulations.md).
+- Testing guide: [testing.md](../../guides/project/main/testing.md).
 
 ### Verification — 2026-04-29 (continued, third)
 
@@ -332,8 +332,8 @@ Phase zero, phase one, and phase two are all done. The feature reaches end users
 
 - Constraints manager (the upstream walker, the resolver-level write, the free-constant write): [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts).
 - Center test file (five new tests): [Center.test.ts](di/src/lib/ts/tests/Center.test.ts).
-- Catalog: [stipulations.md](../../guides/stipulations.md).
-- Testing guide: [testing.md](../../guides/testing.md).
+- Catalog: [stipulations.md](../../guides/project/main/stipulations.md).
+- Testing guide: [testing.md](../../guides/project/main/testing.md).
 
 ### Verification — 2026-04-29 (continued)
 
@@ -389,8 +389,8 @@ Phase one is reviewable and revertable on its own as a code-change unit. It is *
 - New test file: [Center.test.ts](di/src/lib/ts/tests/Center.test.ts).
 - Constraints manager (the bare-name table, translation maps, resolver, write paths, self-loop check): [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts).
 - Accepted-letter list: [Errors.ts](di/src/lib/ts/algebra/Errors.ts).
-- Catalog: [stipulations.md](../../guides/stipulations.md).
-- Testing guide: [testing.md](../../guides/testing.md).
+- Catalog: [stipulations.md](../../guides/project/main/stipulations.md).
+- Testing guide: [testing.md](../../guides/project/main/testing.md).
 - Cleanup of unused parts-panel code: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte), [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte), [Preferences.ts](di/src/lib/ts/managers/Preferences.ts).
 
 ### Verification — 2026-04-29
@@ -444,8 +444,8 @@ A wording convention was also established for new content about this project: wr
 
 - New tests: [Rotation.test.ts](di/src/lib/ts/tests/Rotation.test.ts), [Givens.test.ts](di/src/lib/ts/tests/Givens.test.ts), [Snap.test.ts](di/src/lib/ts/tests/Snap.test.ts).
 - Test files extended with new groups: [Data_Layout.test.ts](di/src/lib/ts/tests/Data_Layout.test.ts), [Units.test.ts](di/src/lib/ts/tests/Units.test.ts), [Constraints.test.ts](di/src/lib/ts/tests/Constraints.test.ts), [Errors.test.ts](di/src/lib/ts/tests/Errors.test.ts), [Save_Load.test.ts](di/src/lib/ts/tests/Save_Load.test.ts), [Camera.test.ts](di/src/lib/ts/tests/Camera.test.ts), [Hierarchy.test.ts](di/src/lib/ts/tests/Hierarchy.test.ts), [Root.test.ts](di/src/lib/ts/tests/Root.test.ts).
-- Catalog: [stipulations.md](../../guides/stipulations.md).
-- Testing guide: [testing.md](../../guides/testing.md).
+- Catalog: [stipulations.md](../../guides/project/main/stipulations.md).
+- Testing guide: [testing.md](../../guides/project/main/testing.md).
 - Markdown-linter config: `di/.markdownlint.json`.
 - Dead-link fix in this handoff (docs config reference).
 
@@ -496,8 +496,8 @@ The status strip is a small new on-screen surface that displays brief transient 
 
 ### Files touched — 2026-04-28 (continued)
 
-- Catalog: [stipulations.md](../../guides/stipulations.md).
-- Testing guide: [testing.md](../../guides/testing.md).
+- Catalog: [stipulations.md](../../guides/project/main/stipulations.md).
+- Testing guide: [testing.md](../../guides/project/main/testing.md).
 - New tests: [Engine_Behaviors.test.ts](di/src/lib/ts/tests/Engine_Behaviors.test.ts), [Preferences.test.ts](di/src/lib/ts/tests/Preferences.test.ts).
 - Test extensions: [Data_Layout.test.ts](di/src/lib/ts/tests/Data_Layout.test.ts).
 - Center-letter and status-strip proposal: [16.formulas.md](../milestones/done/16.formulas.md).
@@ -707,7 +707,7 @@ A couple of small clean-ups along the way: removed an unused separator import fr
 
 ### Files touched — 2026-04-19 (continued)
 
-- File rename: [Dirty.ts](di/src/lib/ts/common/Dirty.ts) (was Stale_Writable.ts). Imports updated in [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts), [Units.ts](di/src/lib/ts/types/Units.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Stores.ts](di/src/lib/ts/managers/Stores.ts), [Selection.ts](di/src/lib/ts/managers/Selection.ts), [Angular.ts](di/src/lib/ts/editors/Angular.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts), [Drag.ts](di/src/lib/ts/editors/Drag.ts), [Dimension.ts](di/src/lib/ts/editors/Dimension.ts), [Colors.ts](di/src/lib/ts/utilities/Colors.ts). File map: [map.md](../../map.md).
+- File rename: [Dirty.ts](di/src/lib/ts/common/Dirty.ts) (was Stale_Writable.ts). Imports updated in [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts), [Units.ts](di/src/lib/ts/types/Units.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Stores.ts](di/src/lib/ts/managers/Stores.ts), [Selection.ts](di/src/lib/ts/managers/Selection.ts), [Angular.ts](di/src/lib/ts/editors/Angular.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts), [Drag.ts](di/src/lib/ts/editors/Drag.ts), [Dimension.ts](di/src/lib/ts/editors/Dimension.ts), [Colors.ts](di/src/lib/ts/utilities/Colors.ts). File map: [map.md](../../guides/project/main/map.md).
 - Face label font: [Render.ts](di/src/lib/ts/render/Render.ts).
 - Undo/redo fix: [Engine.ts](di/src/lib/ts/render/Engine.ts). New test: [History.test.ts](di/src/lib/ts/tests/History.test.ts).
 - Cross thickness: [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte). Unused import removed in the same file.

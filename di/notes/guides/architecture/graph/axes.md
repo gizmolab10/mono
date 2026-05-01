@@ -87,5 +87,5 @@ All angular geometry in **world space**, projected through `identity`. Never pro
 
 * `Angle_Rect` (`Interfaces.ts`): extends `Label_Rect` with `rotation_axis` and `angle_degrees`
 * `Angular.ts` (`editors/Angular.ts`): hit test, begin/commit/cancel editing cycle
-* `Render.ts`: `angular_rects[]` cleared each frame, `render_angulars()` + `render_angular()`
+* `Render.ts`: holds `angular_rects[]`, cleared each frame; calls into `render_angulars()` and `render_angular()` which now live in `R_Angulars.ts`
 * Hit testing + events: wired through `Hits_3D`, `Events_3D`, `Graph.svelte`

@@ -95,7 +95,7 @@ The snap animation uses `t += 0.15` per frame with `1 - (1-t)²` easing — fast
 
 ## Files
 
-- `Engine.ts` — `toggle_view_mode()`, `straighten()`, `FACE_SNAP_QUATS`, `rotate_2d()`, `tick_snap_animation()`, `scratch_orientation`, `snapped_orientation`, `snap_anim`
+- `Engine.ts` — `toggle_view_mode()`, `straighten()`, `FACE_SNAP_QUATS`, `tick_snap_animation()`, `scratch_orientation`, `snapped_orientation`, `snap_anim`. The 2D drag-rotation accumulation runs inside the animation tick, not as a separately-named method.
 - `Render.ts` — 5 guard changes enabling 3D occlusion in 2D; `render_dimensions()`, `find_best_edge_for_axis()`, `render_axis_dimension()`
 - `Hits_3D.ts` — `front_most_face()`
 - `Camera.ts` — `set_ortho()`, `set_position()`

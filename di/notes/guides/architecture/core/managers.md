@@ -1,175 +1,65 @@
 # Managers
 
-Each manager owns one concern. Singleton pattern throughout.
+Each manager owns one concern. Singleton pattern throughout. They live in `src/lib/ts/managers/`.
 
 ## Overview
 
-| Class         | Export        | Location    | What it does                             |
-| ------------- | ------------- | ----------- | ---------------------------------------- |
-| `Scene`       | `scene`       | `render/`   | O_Scene CRUD, hierarchy                  |
-| `Camera`      | `camera`      | `render/`   | View/projection matrices                 |
-| `Render`      | `render`      | `render/`   | Projection pipeline, draw calls          |
-| `Events_3D`   | `e3`          | `signals/`  | Canvas mouse events → rotation, hover    |
-| `Animation`   | `animation`   | `render/`   | rAF loop, tick callbacks                 |
-| `Hits`        | `hits`        | `managers/` | RBush spatial index, click routing (DOM) |
-| `Hits_3D`     | `hits_3d`     | `managers/` | 3D hit testing for canvas objects        |
-| `Components`  | `components`  | `managers/` | Component registry                       |
-| `Preferences` | `preferences` | `managers/` | localStorage wrapper                     |
-| `Scenes`      | `scenes`      | `managers/` | Scene save/load/clear                    |
-| `Editor`      | `editor`      | `managers/` | Dimensional editing lifecycle            |
+- **Stores.** General session-and-persistent values shared across components — view mode, decorations bitmask, solid flag, side-panel-open flag, forward face index, rotation-snap flag, editing-lock flag, scale, grid opacity, orientation, the all-parts list, the tick counter.
+- **Selection.** The current list of selected parts. Empty list means nothing selected; one item means the selected part; two or more means multi-selection. Exposes a backwards-compatible "the only selected part" view for the many call sites that read single-selection semantics.
+- **Parts.** The collapsed-rows set for the parts table, plus tree-walk helpers (tree order, ancestor-collapsed check, reveal helpers, hide-generation, reveal-generation, toggle-reveal). The collapsed-rows set is persistent.
+- **Scenes.** Save and load the current scene to and from local storage. Library management — list saved scenes, switch active scene, reset library to defaults.
+- **History.** The undo and redo stack. The engine snapshots the current scene before any mutation; undo and redo walk the stack.
+- **Preferences.** Local-storage wrapper. Read, write, remove, clear by typed key. Plus two store builders (`persistent` and `persistent_set`) that back a writable with local storage.
+- **Status.** The on-screen status strip. Shows transient messages ("cannot drag a center", and similar) at the bottom of the canvas.
+- **Versions.** Library object version migration. Reads the saved-scene format version and rewrites old-format data into current format on load.
 
-## File Layout
+## File layout
 
-```
-src/lib/ts/
-├── managers/
-│   ├── Components.ts
-│   ├── Hits.ts
-│   ├── Hits_3D.ts
-│   ├── Preferences.ts
-│   ├── Scenes.ts
-│   └── Editor.ts
-├── render/
-│   ├── index.ts
-│   ├── Animation.ts
-│   ├── Camera.ts
-│   ├── Render.ts
-│   ├── Scene.ts
-│   └── Setup.ts
-└── signals/
-    └── Events_3D.ts
+```text
+src/lib/ts/managers/
+├── index.ts
+├── History.ts
+├── Parts.ts
+├── Preferences.ts
+├── Scenes.ts
+├── Selection.ts
+├── Status.ts
+├── Stores.ts
+└── Versions.ts
 ```
 
-## Dependencies
+## Singletons used by the rest of the app
 
-```
-animation.on_tick()
-    ↓
-events → scene (rotate object)
-    ↓
-render ← camera (matrices)
-    ↓
-scene.get_all() → render
-    ↓
-render → hits_3d.update_projected()
+Each manager exposes one singleton instance:
 
-events.mousemove → hits_3d.test() → hits_3d.set_hover()
-    ↓
-render.render_hover()
+- `stores` — from `Stores.ts`
+- `selection` — from `Selection.ts`
+- `parts` — from `Parts.ts`
+- `scenes` — from `Scenes.ts`
+- `history` — from `History.ts`
+- `preferences` — from `Preferences.ts`
+- `status` — from `Status.ts`
+- (the versions module is used at load time by `scenes`)
 
-hits ← components (spatial index for DOM)
-    ↓
-Events.ts → hits.handle_mouse()
-```
+## What is NOT in managers
 
-## Scene
+Several other major orchestrators live elsewhere because they are tied to the canvas or to events:
 
-Factory + registry for `O_Scene` instances.
+- The renderer, the engine, the camera, the animation tick, and the scene-tree storage live under `src/lib/ts/render/`.
+- The mouse routing, the hit-target detector, the canvas-side mouse handler, and the three-dimensional hit-test live under `src/lib/ts/events/`.
+- The drag tool and the inline editors (dimension, angle, face label) live under `src/lib/ts/editors/`.
 
-```ts
-scene.create({ vertices, edges, color, scale?, parent? }) → O_Scene
-scene.get(id) → O_Scene | undefined
-scene.get_all() → O_Scene[]
-scene.destroy(id)
-scene.clear()
-```
+## Dependencies between managers
 
-## Camera
+- The history manager calls scene serialization on snapshot.
+- The scenes manager reads and writes through the preferences manager.
+- The parts manager reads the selection and writes to the selection (when collapsing a row that hides the selected part, the selection moves to the collapsed row).
+- The stores manager exposes a tick counter that many other modules bump after mutation to nudge reactive readers.
+- The versions module is used only at scene-load time, behind the scenes manager.
 
-View and projection matrices.
+## Citations
 
-```ts
-camera.init(size: Size)
-camera.set_position(eye, center?)
-camera.set_fov(fov)
-camera.view       // mat4
-camera.projection // mat4
-```
-
-## Render
-
-The projection pipeline and drawing.
-
-```ts
-render.init(canvas)
-render.render()
-render.resize(width, height)
-```
-
-## Events_3D
-
-Canvas mouse events → quaternion rotations, hover detection.
-
-```ts
-e3.init(canvas)
-e3.set_drag_handler((delta: Point) => void)
-e3.rotate_object(obj, delta, sensitivity?)
-// mousemove → hits_3d.test() → set_hover()
-```
-
-## Animation
-
-Frame loop with delta time.
-
-```ts
-animation.start()
-animation.stop()
-animation.on_tick((dt) => void)
-```
-
-## Hits
-
-RBush-based spatial indexing for DOM click/hover detection.
-
-```ts
-hits.register(target: S_Hit_Target)
-hits.unregister(id: string)
-hits.handle_mouse(s_mouse: S_Mouse)
-hits.target_at(point: Point) → S_Hit_Target | null
-```
-
-## Hits_3D
-
-Screen-space hit testing for 3D canvas objects (Smart Objects).
-
-```ts
-hits_3d.register(so: Smart_Object)
-hits_3d.unregister(so: Smart_Object)
-hits_3d.update_projected(scene_id: string, projected: Projected[])
-hits_3d.test(point: Point) → Hit_3D_Result | null
-hits_3d.set_hover(result: Hit_3D_Result | null)
-hits_3d.set_selection(result: Hit_3D_Result | null)
-// w_hover, w_selection: Writable<Hit_3D_Result | null>
-```
-
-## Components
-
-Registry for UI components that participate in hit detection.
-
-```ts
-components.register(component: S_Component)
-components.unregister(id: string)
-components.get(id: string) → S_Component | null
-```
-
-## Preferences
-
-localStorage persistence with `di:` prefix.
-
-```ts
-preferences.read(key: T_Preference) → T | null
-preferences.write(key: T_Preference, value: T)
-preferences.remove(key: T_Preference)
-preferences.restore()
-```
-
-## Scenes
-
-Save/load scene state (SOs + camera + active selection) via Preferences.
-
-```ts
-scenes.save()
-scenes.load() → Saved_Scene | null
-scenes.clear()
-scenes.active_name: string
-```
+- The set of files in the managers folder: `src/lib/ts/managers/` directory listing.
+- The selection's list-shaped store and the backwards-compat single-selection view: `src/lib/ts/managers/Selection.ts`.
+- The toggle-reveal moving the selection: `src/lib/ts/managers/Parts.ts` lines 144-163.
+- The store-builder helpers backed by local storage: `src/lib/ts/managers/Preferences.ts` lines 132-143.

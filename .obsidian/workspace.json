@@ -22,34 +22,6 @@
             }
           },
           {
-            "id": "896a014107adf0d5",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/guides/stipulations.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "stipulations"
-            }
-          },
-          {
-            "id": "2f054353634fd11d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/guides/testing.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "testing"
-            }
-          },
-          {
             "id": "3600da23cb554c9c",
             "type": "leaf",
             "state": {
@@ -69,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/now/update.guides.md",
+                "file": "di/notes/guides/architecture/core/Preferences.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "update.guides"
+              "title": "Preferences"
             }
           },
           {
@@ -106,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -241,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/update.guides.md",
+                "file": "di/notes/guides/architecture/core/Preferences.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of update.guides"
+              "title": "Outline of Preferences"
             }
           }
         ],
@@ -268,48 +240,48 @@
       "bases:Create new base": false
     }
   },
-  "active": "407a553f715d7b4e",
+  "active": "26b78cd156d15e82",
   "lastOpenFiles": [
-    "di/notes/guides/testing.md",
-    "di/notes/guides/stipulations.md",
-    "di/notes/work/now/update.guides.md",
-    "di/notes/work/now/code.debt.md",
-    "di/notes/guides/architecture/ui/details.md",
-    "di/src/lib/md/builds.md",
-    "di/notes/work/done/code.debt.paid.md",
-    "di/notes/work/now/27.selection.algorithm.md",
-    "di/notes/guides/architecture/core/algebra.md",
-    "di/notes/work/milestones/done/13.algebra.md",
-    "di/notes/work/milestones/done/16.formulas.md",
+    "di/notes/guides/project/research/library-versioning.md",
+    "di/notes/guides/architecture/core/Preferences.md",
+    "di/notes/guides/project/user manual/repeaters.md",
+    "di/notes/guides/guides.layout.md",
+    "di/notes/guides/project/research/spatial-acceleration.md",
+    "di/notes/guides/project/research/index.md",
+    "di/notes/guides/project/research/3D.primer.md",
+    "di/notes/guides/project/research",
+    "di/notes/guides/architecture/graph/rotation.md",
+    "di/notes/guides/index.md",
+    "di/notes/guides/archives/rotation.md",
+    "di/notes/guides/architecture/core/versions.md",
+    "di/notes/guides/project/index.md",
+    "di/notes/guides/project/main/testing.md",
+    "di/notes/guides/project/main/stipulations.md",
+    "di/notes/guides/project/main/project.md",
+    "di/notes/guides/project/main/map.md",
+    "di/notes/guides/project/main/file layout.md",
+    "di/notes/guides/project/main/index.md",
+    "di/notes/guides/project/main/best.practices.md",
+    "di/notes/guides/project/user manual/index.md",
+    "di/notes/guides/architecture/components/index.md",
+    "di/notes/guides/architecture/core/Smart_Objects.md",
+    "di/notes/guides/architecture/components/Separators.md",
+    "di/notes/guides/architecture/components/Main.md",
+    "di/notes/guides/architecture/graph/Hits_3D.md",
+    "di/notes/guides/architecture/components/Graph.md",
+    "di/notes/guides/project/main",
+    "di/notes/guides/project/user manual",
+    "di/notes/guides/architecture/components",
+    "di/notes/guides/project",
+    "di/notes/guides/main",
+    "di/notes/guides/architecture/research",
+    "di/notes/guides/research",
     "di/test-results/drag-vs-tumble-a-drag-with-2df51-er-than-tumbling-the-camera-chromium/trace.zip",
-    "di/test-results/drag-vs-tumble-a-drag-with-2df51-er-than-tumbling-the-camera-chromium/error-context.md",
     "di/test-results/drag-vs-tumble-a-drag-with-2df51-er-than-tumbling-the-camera-chromium",
-    "di/test-results/drag-vs-tumble-a-drag-with-c1ce4-e-camera-the-angle-changes--chromium/trace.zip",
-    "di/test-results/drag-vs-tumble-a-drag-with-c1ce4-e-camera-the-angle-changes--chromium/error-context.md",
-    "di/test-results/drag-vs-tumble-a-drag-with-c1ce4-e-camera-the-angle-changes--chromium",
-    "di/test-results",
-    "di/e2e/tests/drag-vs-tumble.spec.ts",
-    "di/e2e/tests/rotation-snap.spec.ts",
-    "di/e2e/tests/view-mode-switch.spec.ts",
-    "di/test-results/editing-lock-once-the-edit-ca125-s-on-the-canvas-pick-a-part-chromium/trace.zip",
-    "di/test-results/editing-lock-once-the-edit-ca125-s-on-the-canvas-pick-a-part-chromium/error-context.md",
-    "di/test-results/editing-lock-once-the-edit-ca125-s-on-the-canvas-pick-a-part-chromium",
-    "node_modules/playwright-core/lib/tools/cli-client/skill/references/video-recording.md",
-    "node_modules/playwright-core/lib/tools/cli-client/skill/references/test-generation.md",
-    "node_modules/playwright-core/lib/tools/cli-client/skill/references/tracing.md",
-    "node_modules/playwright-core/lib/tools/cli-client/skill/references/storage-state.md",
-    "node_modules/playwright-core/lib/tools/cli-client/skill/references/session-management.md",
-    "node_modules/playwright-core/lib/tools/cli-client/skill/references/request-mocking.md",
-    "node_modules/playwright-core/lib/tools/cli-client/skill/references/running-code.md",
-    "node_modules/playwright-core/lib/tools/cli-client/skill/references/playwright-tests.md",
-    "node_modules/playwright-core/lib/tools/cli-client/skill/references/element-attributes.md",
-    "node_modules/playwright-core/lib/tools/cli-client/skill/SKILL.md",
     "node_modules/playwright-core/lib/server/chromium/appIcon.png",
     "node_modules/playwright-core/lib/vite/traceViewer/playwright-logo.svg",
     "node_modules/playwright-core/lib/vite/recorder/playwright-logo.svg",
-    "node_modules/playwright-core/lib/tools/trace/SKILL.md",
     "node_modules/playwright-core/lib/tools/dashboard/appIcon.png",
-    "node_modules/playwright/lib/agents/playwright-test-heal.prompt.md",
     "ws/dist/assets/seriously-icon.png",
     "Screenshot 2026-04-07 at 2.37.08 PM.png",
     "Screenshot 2026-04-06 at 6.25.28 PM.png",

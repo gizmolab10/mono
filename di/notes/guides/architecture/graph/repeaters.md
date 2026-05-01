@@ -12,14 +12,13 @@ Automagic clone generation. a parent SO with a repeater config produces copies o
 
 The `repeater` field on Smart_Object:
 
-| Field | Type | Purpose |
-|-------|------|---------|
-| `run_axis` | `0 \| 1` | which axis clones march along (never 2) |
-| `gap_min` / `gap_max` | `number?` | constrained spacing range in mm (stairs) |
-| `spacing` | `number?` | discrete spacing in mm (studs: 304.8 / 406.4 / 609.6 for 12/16/24") |
-| `firewall` | `boolean?` | add horizontal fire blocks between clones |
-| `is_diagonal` | `boolean?` | UI-only flag for straight vs diagonal button state |
-| `is_repeating` | `boolean?` | true when actively repeating |
+- `run_axis` — which axis the clones march along (never the upright axis).
+- `rise_axis` — the secondary axis that distributes the clones when the run is diagonal (stairs). Equals `run_axis` for non-diagonal cases.
+- `gap_min` and `gap_max` — constrained spacing range in mm. Used for stairs.
+- `spacing` — discrete spacing in mm. Used for studs (304.8 mm for 12-inch on-center, 406.4 mm for 16-inch, 609.6 mm for 24-inch).
+- `firewall` — when true, horizontal fire blocks are inserted between clones.
+- `is_diagonal` — flag for the straight-vs-diagonal button state.
+- `is_repeating` — true while the parent is actively repeating.
 
 Clones are never serialized. only the parent (with repeater config) and the template (first child) are saved. on load, `propagate_all()` triggers `sync_repeater` on every repeater, regenerating all clones.
 
@@ -39,7 +38,7 @@ Each clone gets an offset along the repeat axis: `step * (i + 1)` from the templ
 
 ### Diagonal (stairs)
 
-When `gap_axis !== repeat_axis`, the engine offsets clones along two axes simultaneously:
+When the rise axis differs from the run axis, the engine offsets clones along two axes simultaneously:
 
 - `step` along the run axis (distributes treads horizontally)
 - `gap_step` along the gap axis (distributes treads vertically)

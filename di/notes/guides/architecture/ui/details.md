@@ -1,60 +1,51 @@
-# Details
+# Details panel — architecture
 
-The left sidebar. Three collapsible panels inside a banner-zone.
+The right-side panel. Three folding sections: preferences, library, parts.
 
-### File structure
+For the user-level description of what the panel shows, see the [Details component page](../components/Details.md). This page covers the architecture decisions.
 
+## File structure
+
+```text
+src/lib/svelte/details/
+├── Details.svelte         — the shell that holds the three folding sections
+├── Hideable.svelte        — the generic folding-section wrapper used by each section
+├── D_Preferences.svelte   — units, precision, line thickness, colors, view options
+├── D_Library.svelte       — list of saved scenes; folder picker; per-row actions
+├── D_Parts.svelte         — the parts tree, the selected-part editor, the drag-and-drop
+├── P_Selected.svelte      — the three-tab segmented control (attributes / angles / repeat) inside the parts panel
+├── P_Attributes.svelte    — the bounds table (start, length, end per direction; values; formulas; locks; invariant markers)
+├── P_Angles.svelte        — the rotation angles editor
+├── P_Repeat.svelte        — the repeater configuration editor
+└── P_Givens.svelte        — the named-value (givens) editor
 ```
-svelte/details/
-  Details.svelte       — layout shell, banner-zone, three Hideables
-  Hideable.svelte      — generic collapsible: banner button + slot
-  D_Preferences.svelte — units, precision, line thickness, colors
-  D_Selection.svelte   — SO name, bounds table, rotation angles
-  D_Library.svelte     — import/export
-```
 
-### Details.svelte
+The naming convention: capital `D_` files are top-level details panels (one of the three folding sections); capital `P_` files are sub-panels nested inside the parts panel.
 
-Thin shell. Reads reactive color stores (`w_text_color`, `w_background_color`, `w_accent_color`) and sets CSS vars (`--accent`, `--bg`). Wraps three `<Hideable>` in a `.banner-zone` div. No business logic — all content lives in D_* components.
+## Folding mechanism
 
-### Hideable.svelte
+The three sections use a generic folding wrapper, `Hideable.svelte`. Each instance declares its own bit of a small bitmask kept in the visible-details preferences. Toggling a section flips its bit. The bitmask is persistent across reloads.
 
-Visibility is driven by a bitmask — `w_t_details` store holds a `T_Details` enum, and each Hideable XORs its bit on toggle. One store, one bitmask, replaces three separate boolean stores.
+- The header is a pill-shaped button (22px tall, fully rounded) with optional left-side and right-side action snippets.
+- The body contains whatever child component was passed in.
+- A resize observer on the wrapper calls the click-target detector's deferred refresh whenever the section opens, closes, or its content changes height.
 
-- Banner: pill-shaped button (22px tall, `border-radius: 11px`, no border)
-- `::before` pseudo-element for `colors.banner` radial gradient
-- Hover (`[data-hitting]`): gradient replaced with `var(--bg)`
-- Slot: panel background, 11px border-radius, appears below banner when open
-- Wired to `hit_target` system, `hits.recalibrate()` on toggle
-- Z-index layering via `T_Layer.common` and `T_Layer.hideable`
+## Click-target lifecycle
 
-### D_Selection.svelte
+Buttons and rows inside the panel register with the click-target detector. The panel itself listens for scroll events and calls the detector's refresh helper on every scroll. Without this, scrolled rows would land at new positions while the click-target record still pointed at old positions.
 
-The meat of the sidebar. Shows details for the selected SO (or root if nothing selected).
+## Banner-zone styling
 
-- **Name field** — editable input, syncs with `face_label` editor for inline canvas rename. Focus/blur/keydown handlers manage the `T_Editing` state machine.
-- **Bounds table** — nine rows (x/X/w, y/Y/h, z/Z/d). Each row shows:
-  - Label (attribute name)
-  - Invariant marker (cross icon, clickable to pin which attribute stays fixed during drag)
-  - Formula cell (editable, e.g. `B.w + 10`)
-  - Value cell (editable, formatted per current unit system and precision)
-- **Rotation angles** — three rows (x/y/z), degrees with half-degree rounding. Editable.
-- **Rotation lock** — cross marker on one axis, constraining rotation to that axis.
-- **Add child** button — calls `engine.add_child_so()`
+The three sections live in a single `banner-zone` div whose background is the accent color. Each section's pill banner sits over this background, separated by a small gap. After the last section, a small pseudo-element rounds the bottom corners and fades into the panel background.
 
-### D_Preferences.svelte
+## Per-section content
 
-- **Unit system** — select dropdown (`T_Units`: imperial, metric, etc.)
-- **Precision** — segmented control. Imperial: foot → 1/64". Decimal: whole → 3 places. Auto-clamps if switching systems.
-- **Line thickness** — range slider, 0.5–4px in 0.5 steps
-- **Colors** — accent and edge color pickers
+- **Preferences** carries the units selector, the precision picker, the edge thickness slider, and the color pickers. The factory-reset button lives in the section's left-side action slot.
+- **Library** carries the folder picker, the list of saved scenes, click-to-load behavior on each row, and the new-scene plus-button in the right-side action slot. The reinstall button lives in the left-side action slot.
+- **Parts** carries the parts tree, drag-and-drop reordering, the multi-row highlight, the eye cells (in the table and in the collapsed view), the per-row triangle for folding subtrees, the duplicate button, and the segmented control for attributes / angles / repeat when exactly one part is selected.
 
-### D_Library.svelte
+## Related files
 
-Buttons: import, save, clear. Save calls `scenes.add_to_library()` (IDB + download).
-
-### Banner-zone styling
-
-- `background: var(--accent)` fills gaps between pill banners
-- `::after` pseudo-element: 11px tall, `var(--bg)` background, `border-radius: 11px 11px 0 0` — rounded footer below last hideable
-- Last hideable's slot gets `border-bottom: 3px solid var(--accent)`
+- [components/Details](../components/Details.md) — the user-level description.
+- `src/lib/ts/managers/Stores.ts` — the visible-details bitmask store.
+- `src/lib/ts/events/Hits.ts` — the click-target detector that gets refreshed on scroll.

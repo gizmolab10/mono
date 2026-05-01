@@ -277,15 +277,12 @@
 - di/notes/architecture/core/algebra.md
 - di/notes/architecture/core/managers.md
 - di/notes/architecture/core/versions.md (was migration.md)
-- di/notes/architecture/core/references.md (was versions.md)
 - di/notes/architecture/graph/index.md
 - di/notes/architecture/graph/3D.primer.md
 - di/notes/architecture/graph/drag.md
 - di/notes/architecture/graph/intersecting.faces.md
 - di/notes/architecture/graph/projection.md
-- di/notes/architecture/graph/quaternions.md
 - di/notes/architecture/graph/rendering.types.md
-- di/notes/architecture/graph/spatial.md
 - di/notes/architecture/graph/three.dimensions.md
 - di/notes/architecture/graph/two.dimensions.md
 - di/notes/architecture/ui/index.md
@@ -294,20 +291,20 @@
 
 ## Notes — Components
 
-- di/notes/components/index.md
-- di/notes/components/Controls.md
-- di/notes/components/Details.md
-- di/notes/components/Graph.md
-- di/notes/components/Hits_3D.md
-- di/notes/components/Main.md
-- di/notes/components/Preferences.md
-- di/notes/components/Smart_Objects.md
+- di/notes/guides/architecture/components/index.md
+- di/notes/guides/architecture/components/Controls.md
+- di/notes/guides/architecture/components/Details.md
+- di/notes/guides/architecture/components/Graph.md
+- di/notes/guides/architecture/components/Main.md
+- di/notes/guides/architecture/components/Separators.md
+- di/notes/guides/architecture/graph/Hits_3D.md
+- di/notes/guides/architecture/core/Preferences.md
+- di/notes/guides/architecture/core/Smart_Objects.md
 
 ## Notes — Guides
 
 - di/notes/guides/index.md
 - di/notes/guides/best.practices.md
-- di/notes/guides/gotchas.md
 - di/notes/guides/style.md
 - di/notes/guides/testing.md
 

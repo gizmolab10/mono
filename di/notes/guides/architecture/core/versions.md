@@ -1,6 +1,6 @@
 # File Format Migration
 
-How a v1 `.di` file becomes a v7 scene at runtime.
+How a v1 `.di` file becomes a v9 scene at runtime.
 
 All migration lives in `Scenes.ts` (the `migrate()` method). Dispatch is version-number-based — `migrate(raw, version)` parses the version string to an integer and runs each step whose threshold exceeds it: `if (v < 3)`, `if (v < 4)`, etc.
 
@@ -10,7 +10,7 @@ Was shape-based (inspecting SO fields). We agreed in v1/v2 to use version number
 
 ## Current version
 
-`CURRENT_VERSION = '7'` in `Scenes.ts`.
+`CURRENT_VERSION = '9'` in `Versions.ts`.
 
 ## Entry points
 
@@ -64,16 +64,30 @@ Pure field rename. No data transformation.
 
 No migration needed. The `repeater` field on Portable_SO is optional — existing files without it work unchanged.
 
+### v6,7 → v8: repeater config refactor
+
+**Gate:** `v < 8`
+
+Field renames inside the repeater config: `repeat_axis` → `run_axis`, `gap_axis` → `rise_axis`. A new `is_repeating` flag is set to true when missing. A new `is_diagonal` flag is computed from whether `rise_axis` is set. The old `count_formula` field is dropped.
+
+### v8 → v9: rename constants → givens
+
+**Gate:** `v < 9`
+
+Pure field rename at the top of the scene. `constants` becomes `givens`.
+
 ## What happens to a v1 file today
 
-```
+```text
 v1 file → validate_import()   [extract version: '1']
         → migrate(scene, '1')
-          → v < 3: migrate_legacy()  [mint IDs, bounds → axes]
-          → v < 4: no-op            [legacy already produces keyed objects]
-          → v < 5: migrate_to_offsets() [absolute → parent-relative]
-          → v < 6: no-op            [no standard_dimensions field]
-        → Portable_Scene (v7)
+          → v < 3: migrate_legacy()      [mint IDs, bounds → axes]
+          → v < 4: no-op                  [legacy already produces keyed objects]
+          → v < 5: migrate_to_offsets()  [absolute → parent-relative]
+          → v < 6: no-op                  [no standard_dimensions field]
+          → v < 8: repeater config refactor (run_axis, rise_axis, is_diagonal, is_repeating)
+          → v < 9: rename constants → givens
+        → Portable_Scene (v9)
 ```
 
 All geometry, formulas, hierarchy, and camera state survive. SO IDs change (newly generated), so re-saving produces a file that won't match byte-for-byte, but the scene is identical.

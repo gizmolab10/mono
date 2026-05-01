@@ -1,135 +1,82 @@
-# Panel Architecture
+# Panel layout
 
-## Overview
+The root layout shape: a fixed-position, full-viewport container that holds four regions (toolbar, side panel, drawing area, build-notes overlay).
 
-Panel is the root layout component for the di application. It provides a fixed, full-viewport container with three distinct regions: controls (top), graph (main content), and details (right sidebar).
+For the user-facing description, see the [Main component page](../components/Main.md). This page covers the layout decisions.
 
-## Layout Diagram
+## Diagram
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
-│                         .controls                               │
-│                        (48px height)                            │
-├═══════════════════════════════════════════════════════════════╮─┤
-│                    Separator (horizontal, 8px)                ╯ │
-├─────────────────╦═══════════════════════════════════════════════┤
-│                 ║                                               │
-│                 ║                                               │
-│    .details     ║                    .graph                     │
-│   (280px width) ║               (flex: 1, fills)                │
-│                 ║                                               │
-│                 ║  Separator                                    │
-│                 ║  (vertical, 8px)                              │
-│                 ║                                               │
-│                 ║                                               │
-└─────────────────╩═══════════════════════════════════════════════┘
-                              .panel
-                    (fixed, full viewport)
+│                                                                 │
+│                   .controls (the toolbar)                       │
+│                  (height = h-controls const)                    │
+│                                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                 │                                               │
+│   .details      │              .graph                           │
+│   (the side     │           (the drawing area)                  │
+│   panel,        │            (flexes to fill)                   │
+│   shown when    │                                               │
+│   the side-     │                                               │
+│   panel-open    │                                               │
+│   flag is set)  │                                               │
+│                 │                                               │
+└─────────────────┴───────────────────────────────────────────────┘
+                            .panel (full viewport)
 ```
 
-## DOM Structure
+When the build-notes button is clicked, the entire panel is replaced by a single full-screen overlay until dismissed.
 
-```
+## DOM structure
+
+```text
 Main.svelte (.panel)
-├── .region.controls      ← top bar
-│   └── Controls.svelte
-├── Separator             ← horizontal, below controls
-├── .main                 ← flexbox container
-│   ├── .region.details   ← left sidebar (if showDetails)
-│   │   └── Details.svelte
-│   ├── Separator         ← vertical, between details/graph (if showDetails)
-│   └── .region.graph     ← main content area
-│       └── Graph.svelte
+├── (build-notes overlay)            — full-screen, only when active
+└── (normal layout)
+    ├── .region.controls              — toolbar
+    │   └── Controls.svelte
+    └── .main                         — flex row
+        ├── .region.details           — side panel (only when open)
+        │   └── Details.svelte
+        └── .region.graph             — drawing area
+            └── Graph.svelte
 ```
 
-## Components
+## Region styling
 
-| Component | Location | Purpose |
-|-----------|----------|--------|
-| `Main.svelte` | `layout/` | Root layout, manages regions, renders children |
-| `Controls.svelte` | `layout/` | Top bar with title |
-| `Graph.svelte` | `layout/` | Canvas with ResizeObserver, 3D rendering |
-| `Details.svelte` | `layout/` | Left sidebar, properties panel |
-| `Separator.svelte` | `layout/` | Visual divider with optional fillets |
-| `Fillets.svelte` | `layout/` | SVG curved corner decorations |
-| `Box.svelte` | `layout/` | Bordered container using separators |
+- `.panel` — fixed at top-left, full viewport width and height, accent background, project font.
+- `.main` — flex row, no overflow, gap between children.
+- `.region` — shared: relative position, hidden overflow, rounded corners.
+- `.controls` — full width.
+- `.graph` — flex grow.
+- `.details` — flex-shrink zero so it stays its declared width.
 
-### Managers
+## Sizing
 
-| Component | Location | Purpose |
-|-----------|----------|--------|
-| `Preferences.ts` | `managers/` | localStorage read/write for persistent settings |
+Sizes come from the constants module:
 
-## CSS Classes
+- The toolbar height is bound to the toolbar's measured height.
+- The side panel width is the layout constant for the side panel minus two layout gaps. In the phone responsive layout (viewport below seven hundred and twenty pixels), the side panel takes the viewport width minus two layout gaps.
+- The drawing area takes whatever width remains after the side panel and gaps.
 
-| Class | Element | Purpose |
-|-------|---------|---------|
-| `.panel` | Root `<div>` | Fixed position, full viewport, flex column, theming vars |
-| `.main` | Content wrapper | Flex row container for graph + details |
-| `.region` | All content areas | Shared: relative position, overflow hidden |
-| `.controls` | Top bar | Full width, bottom border, fixed height |
-| `.graph` | Main content | Flex grow, fills available space |
-| `.details` | Left sidebar | Fixed width, right border |
+Citation: `src/lib/svelte/main/Main.svelte` lines 19-33.
 
-## CSS Custom Properties
+## Reactive state
 
-| Property | Default | Purpose |
-|----------|---------|---------|
-| `--panel-bg` | `#1a1a2e` | Panel background color |
-| `--panel-fg` | `#eee` | Panel text color |
-| `--border-color` | `#333` | Border color for regions |
+- The viewport width and height are read from the window on mount and updated on every window resize.
+- The toolbar's measured height is bound from the toolbar element.
+- The side-panel-open flag comes from the stores manager.
+- The build-notes flag is component-local.
 
-## State
+## What changed from earlier designs
 
-| Variable | Type | Reactive | Purpose |
-|----------|------|----------|---------|
-| `width` | `number` | `$state` | Viewport width, updates on resize |
-| `height` | `number` | `$state` | Viewport height, updates on resize |
-| `showDetails` | `boolean` | `$state` | Toggle details panel visibility |
-| `controlsHeight` | `number` | `$derived` | Fixed at 48px (configurable later) |
-| `detailsWidth` | `number` | `$derived` | Fixed at 280px (configurable later) |
-| `graphRect` | `object` | `$derived` | Computed {x, y, width, height} for graph region |
-| `detailsRect` | `object` | `$derived` | Computed {x, y, width, height} for details region |
+- An older design used a generic `Panel.svelte` component that received its three regions as snippets. That design was removed in favor of direct children — the current `Main.svelte` instantiates the three components explicitly.
+- An older design included a separator between the toolbar and the main row, plus a vertical separator between the details and graph regions. The current layout uses a simple gap instead.
+- Earlier designs included `Fillets.svelte` and `Box.svelte` components for decorative borders. Those have been removed; the corner rounding now happens via CSS `border-radius` on each region.
 
-## Props (Snippets)
+## Related files
 
-| Prop | Type | Required | Purpose |
-|------|------|----------|---------|
-| `controls` | `Snippet` | No | Content for top control bar |
-| `graph` | `Snippet` | No | Content for main graph area |
-| `details` | `Snippet` | No | Content for right sidebar |
-| `children` | `Snippet` | No | Fallback content |
-
-## Usage
-
-```svelte
-<Panel>
-	{#snippet controls()}
-		<h1>Title</h1>
-	{/snippet}
-
-	{#snippet graph()}
-		<canvas></canvas>
-	{/snippet}
-
-	{#snippet details()}
-		<aside>Properties</aside>
-	{/snippet}
-</Panel>
-```
-
-## Sticky Edges
-
-| Edge | Behavior |
-|------|----------|
-| Top | `.controls` sticks to top (position: fixed on parent) |
-| Left | `.details` sticks to left edge |
-| Right | `.graph` fills to right edge |
-| Bottom | `.main` fills to bottom |
-
-## Future Considerations
-
-- Resizable details panel (drag border)
-- Collapsible details (toggle `showDetails`)
-- Multiple control bars (primary/secondary)
-- Breakpoints for mobile (hide details on narrow screens)
+- [components/Main](../components/Main.md) — the layout component itself.
+- `src/lib/ts/common/Constants.ts` — sizes and breakpoints.
+- `src/lib/ts/managers/Stores.ts` — the side-panel-open flag.

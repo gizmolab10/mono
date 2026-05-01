@@ -3,8 +3,8 @@
 ## Contents
 
 - [Algebra](algebra.md)
-- [Launch](launch.md)
 - [Managers](managers.md)
-- [References](references.md)
+- [Preferences](Preferences.md)
+- [Scenes](scenes.md)
+- [Smart_Objects](Smart_Objects.md)
 - [Versions](versions.md)
-

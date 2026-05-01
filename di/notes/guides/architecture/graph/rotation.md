@@ -51,3 +51,9 @@ This is the same math the shadow renderer uses in `R_Grid.ts` — transform vert
 ## Debug wireframe
 
 Invisible SOs render as dashed 3D wireframes (grid color, grid opacity). Handy for seeing the rotated child's actual block vs. the camera view extent.
+
+## Policy: parent size is user intent
+
+Rotation never changes a parent's stored bounds. A rotated child that protrudes is allowed — a rafter past a wall plate, a door swung open, a diagonal brace through a stud bay. In every case the user defined the parent's dimensions intentionally. Auto-expanding would change the meaning of the design.
+
+When the user wants to resize a parent to match its children, the **fit** button (`Engine.fit_to_children`) does it on demand. Explicit intent, runs once, no automatic behavior. It snapshots direct children's absolute positions, resizes root to the union AABB, and restores children (recalculates offsets against the new root).

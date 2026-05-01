@@ -39,9 +39,13 @@ No drop-in JS/TS library does HLR with intersecting objects without a GPU.
 
 opencascade.js is the "right" answer but it's bringing a crane to hang a picture.
 
-## Plan
+## Plan — done
 
-- [ ] Add flatbush dependency
-- [ ] After projection, build a flatbush index from all front-facing face bounding boxes (screen space)
-- [ ] For each edge, query the index for overlapping faces instead of iterating all
-- [ ] Benchmark before/after
+- [x] Add flatbush dependency
+- [x] After projection, build a flatbush index from all front-facing face bounding boxes (screen space)
+- [x] For each edge, query the index for overlapping faces instead of iterating all
+- [x] Benchmark before/after
+
+The spatial index is now part of the render pipeline. The renderer holds a flatbush index of front-facing face bounding boxes, rebuilt every frame and queried by every edge during clipping.
+
+Citation: `src/lib/ts/render/Render.ts` line 22 (the import), line 86 (the index field), line 455 (the per-frame rebuild). Plus the Topology helper at `src/lib/ts/render/Topology.ts` line 25 carries its own index for the visible-edge clipping pass.

@@ -4,13 +4,13 @@ Svelte 5 patterns and choices for the di project, based on research and implemen
 
 ## Runes
 
-| Rune | Purpose | Use When |
-|------|---------|----------|
-| `$state()` | Mutable reactive state | Component-local values that change |
-| `$derived()` | Computed values (memoized) | Values calculated from other state |
-| `$effect()` | Side effects (browser only) | DOM manipulation, subscriptions, logging |
-| `$props()` | Component props | Receiving data from parent |
-| `$bindable()` | Two-way binding props | Forms, input fields |
+| Rune          | Purpose                      | Use When                                  |
+| ------------- | ---------------------------- | ----------------------------------------- |
+| `$state()`    | Mutable reactive state       | Component-local values that change        |
+| `$derived()`  | Computed values (memoized)   | Values calculated from other state        |
+| `$effect()`   | Side effects (browser only)  | DOM manipulation, subscriptions, logging  |
+| `$props()`    | Component props              | Receiving data from parent                |
+| `$bindable()` | Two-way binding props        | Forms, input fields                       |
 
 **Key rule:** Use `$derived` for computing values, `$effect` for actions. Never use `$effect` when `$derived` will do.
 
@@ -18,13 +18,13 @@ Svelte 5 patterns and choices for the di project, based on research and implemen
 
 ```typescript
 let {
-	title = 'Default',
-	width,
-	height = 100
+    title = 'Default',
+    width,
+    height = 100
 }: {
-	title?: string;
-	width: number;
-	height?: number;
+    title?: string;
+    width: number;
+    height?: number;
 } = $props();
 ```
 
@@ -49,15 +49,15 @@ Slots are deprecated. Use snippets for content injection:
 ```svelte
 <!-- Parent -->
 <Box>
-	{#snippet header()}
-		<h1>Title</h1>
-	{/snippet}
+    {#snippet header()}
+        <h1>Title</h1>
+    {/snippet}
 </Box>
 
 <!-- Child -->
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	let { header }: { header?: Snippet } = $props();
+    import type { Snippet } from 'svelte';
+    let { header }: { header?: Snippet } = $props();
 </script>
 
 {@render header?.()}
@@ -80,8 +80,8 @@ For state across components, use `.svelte.ts` files:
 ```typescript
 // state.svelte.ts
 export const appState = $state({
-	count: 0,
-	user: null
+    count: 0,
+    user: null
 });
 ```
 
@@ -93,12 +93,12 @@ For container-relative sizing:
 
 ```typescript
 onMount(() => {
-	const observer = new ResizeObserver((entries) => {
-		const { width, height } = entries[0].contentRect;
-		// handle resize
-	});
-	observer.observe(container);
-	return () => observer.disconnect();
+    const observer = new ResizeObserver((entries) => {
+        const { width, height } = entries[0].contentRect;
+        // handle resize
+    });
+    observer.observe(container);
+    return () => observer.disconnect();
 });
 ```
 
@@ -109,17 +109,18 @@ onMount(() => {
 "You Aren't Gonna Need It" — don't build flexibility until you need it.
 
 **Applied:**
+
 - Removed snippet-based Panel in favor of direct children in Main
 - No abstract "region" system — just the three regions we actually use
 - No configuration props for layout dimensions yet — hardcoded until needed
 
 ## Composition Decisions
 
-| Pattern | When to Use | When to Skip |
-|---------|-------------|--------------|
-| Snippets | Multiple consumers with different content | Single use, known children |
-| Separate components | Reusable, testable, complex logic | Simple, single-use markup |
-| Props | Configurable behavior | Fixed behavior |
+| Pattern              | When to Use                               | When to Skip               |
+| -------------------- | ----------------------------------------- | -------------------------- |
+| Snippets             | Multiple consumers with different content | Single use, known children |
+| Separate components  | Reusable, testable, complex logic         | Simple, single-use markup  |
+| Props                | Configurable behavior                     | Fixed behavior             |
 
 **Our structure:**
 

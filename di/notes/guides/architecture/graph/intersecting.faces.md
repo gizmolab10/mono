@@ -22,12 +22,10 @@ The entering/leaving classification:
 
 From reset: add child, stretch it longer than parent, rotate it. The rotated child's faces cross the parent's faces, producing visible segments. A default child (identity orientation, contained inside parent) won't produce any — `shares_all_axes` skips it, and even without the filter, no faces geometrically cross.
 
-## Key Methods
+## Key methods
 
-| Method | Line | Purpose |
-|--------|------|---------|
-| `render_intersections` | 210 | builds world-space face data, iterates pairs |
-| `intersect_face_pair` | 266 | plane-plane math + double clip |
-| `clip_to_quad` | 338 | Cyrus-Beck against convex quad edges |
-| `shares_all_axes` | 363 | parent-child + identity quaternion check |
-| `draw_seg_world` | 371 | project world points, stroke segment |
+- `render_intersections` — builds world-space face data, iterates face pairs.
+- `intersect_face_pair` — plane-plane math plus the double clip.
+- `clip_to_quad_with_edges` — Cyrus-Beck against the convex quad's edges, returning which edge caused each clip boundary.
+
+All three live in `src/lib/ts/render/Render.ts`. Line numbers shift as the file evolves; check the file directly.

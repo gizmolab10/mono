@@ -20,7 +20,7 @@ Two projection modes: perspective (things shrink with distance, feels natural) a
 
 The heartbeat. A `requestAnimationFrame` loop that fires registered callbacks each frame with a delta-time. Engine registers one callback: update front face, then render. That's it. Start, stop, reset for HMR.
 
-### Engine.ts (~480 lines)
+### Engine.ts (~1600 lines)
 
 The boss. Engine wires everything together at startup — initializes canvas, camera, and scene, loads saved state (or creates defaults), hooks up mouse/scroll input, and starts the animation loop.
 
@@ -30,7 +30,7 @@ Engine also owns the cuboid topology — the 12 edges and 6 faces that every Sma
 
 ## The Render Pipeline
 
-### Render.ts (~1200 lines)
+### Render.ts (~2500 lines)
 
 The workhorse. One call to `render()`, one frame. It runs in phases, strictly ordered — later phases depend on earlier ones. Render starts with `get_world_matrix` — the function that builds the transformation chain for any object (tumble, rotate and translate).
 

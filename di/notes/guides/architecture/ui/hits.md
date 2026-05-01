@@ -14,7 +14,7 @@ Only one element in the app can react to the mouse. The **Hits** spatial index k
   - [Hover Detection in Components](#hover-detection-in-components)
   - [Component Pattern](#component-pattern)
 - [Reference](#reference)
-  - [Hit Target Type Getters](#hit-target-type-getters)
+  - [Hit-target types](#hit-target-types)
 
 ---
 
@@ -47,8 +47,8 @@ On `mousedown`/`mouseup` at the document level (Events.ts):
 3. Invoke `target.handle_s_mouse(s_mouse)` if defined
 4. Hits handles timing centrally for autorepeat, long-click, double-click
 
-```
-mousedown → Events.ts → hits.handle_click_at(point, s_mouse)
+```text
+mousedown → Events.ts → hits.handle_s_mouse_at(point, s_mouse)
                               ↓
                      targets_atPoint(point)
                               ↓
@@ -162,11 +162,12 @@ DOM `on:mouse*` handlers are removed — only centralized `Events.ts` listeners 
 
 ## Reference
 
-### Hit Target Type Getters
+### Hit-target types
 
-| Getter | Includes |
-|--------|----------|
-| `isAControl` | `T_Hit_Target.control`, `T_Hit_Target.button` |
-| `isAWidget` | `T_Hit_Target.widget`, `T_Hit_Target.title` |
-| `isRing` | `T_Hit_Target.ring`, `T_Hit_Target.paging` |
-| `isADot` | `T_Hit_Target.dot` |
+The hit-target enum carries three values:
+
+- `T_Hit_Target.control` — the default for buttons and clickable rows.
+- `T_Hit_Target.banner` — folding-section header pills.
+- `T_Hit_Target.graph` — the canvas itself.
+
+Citation: `src/lib/ts/types/Enumerations.ts` lines 3-7.
