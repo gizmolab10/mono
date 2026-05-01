@@ -4,6 +4,8 @@ The load-bearing rules the app is built on. Without these written down, work dri
 
 **Coverage summary:** all fifty-eight rules are now directly covered. Fifty-four are pinned by unit tests; the remaining four — user-interface flows that need real mouse events and a real animation loop — are pinned by browser-driven tests under [`e2e/tests/`](../../e2e/tests/). Coverage judgments are guesses pending review.
 
+ALWAYS: Always update the authoritative count testing is done.
+
 ## Blocks
 
 1. The world is made of blocks called smart objects (SO). Every SO has three dimensions / axes {x, y, z}

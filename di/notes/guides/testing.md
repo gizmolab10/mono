@@ -172,4 +172,6 @@ The catalog summary will move from "fifty-four of fifty-seven directly covered" 
 
 ## Stipulation coverage
 
-Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, all fifty-eight rules are directly covered. Fifty-four are pinned by unit tests in `src/lib/ts/tests/`; the remaining four — the user-interface flows that need real mouse events and the running animation loop — are pinned by browser-driven tests in [`e2e/tests/`](../../e2e/tests/). The browser tests run via `yarn e2e`.
+Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, all fifty-eight rules are directly covered. (!) Fifty-four are pinned by unit tests in `src/lib/ts/tests/`; the remaining four — the user-interface flows that need real mouse events and the running animation loop — are pinned by browser-driven tests in [`e2e/tests/`](../../e2e/tests/). The browser tests run via `yarn e2e`.
+
+(!) ALWAYS: Always update this authoritative count each time testing is done.

@@ -4,10 +4,10 @@ Documentation and design notes for the Design Intuition project.
 
 ## Contents
 
-- [Architecture](./architecture/)
-- [Components](./components/)
 - [Guides](./guides/)
-- [User Manual](./user manual/)
+- [Architecture](./guides/architecture/)
+- [Components](./guides/components/)
+- [User Manual](./guides/user manual/)
 - [Work](./work/)
 - [Map](./map.md)
 

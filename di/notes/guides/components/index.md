@@ -5,13 +5,13 @@ Design documentation for components and managers.
 | Component | Description |
 |-----------|-------------|
 | [Main](Main.md) | Root layout, viewport management |
-| [Controls](./Controls.md) | Top bar with title |
+| [Controls](Controls.md) | Top bar with title |
 | [Graph](Graph.md) | Canvas for 3D visualization |
-| [Details](./Details.md) | Left sidebar for properties |
+| [Details](Details.md) | Left sidebar for properties |
 ## Managers
 | Component | Description |
 |-----------|-------------|
-| [Preferences](./Preferences.md) | localStorage persistence |
+| [Preferences](Preferences.md) | localStorage persistence |
 | [Hits_3D](Hits_3D.md) | 3D hit testing for canvas objects |
 ## Runtime
 | Component | Description |
@@ -30,12 +30,12 @@ These files exist but lack design docs:
 
 ## Contents
 
-- [Controls](./Controls.md)
-- [Details](./Details.md)
-- [Graph](./Graph.md)
-- [Hits_3D](./Hits_3D.md)
-- [Main](./Main.md)
-- [Preferences](./Preferences.md)
-- [Separators](./Separators.md)
-- [Smart_Objects](./Smart_Objects.md)
+- [Controls](Controls.md)
+- [Details](Details.md)
+- [Graph](Graph.md)
+- [Hits_3D](Hits_3D.md)
+- [Main](Main.md)
+- [Preferences](Preferences.md)
+- [Separators](Separators.md)
+- [Smart_Objects](Smart_Objects.md)
 

@@ -9,6 +9,7 @@ export default defineConfig({
   ignoreDeadLinks: [
     /^http:\/\/localhost/,
     /\/di\/src\//,
+    /e2e\//,
     /^(\.\/)?\.claude\//,
     /^(\.\/)?notes\//
   ],

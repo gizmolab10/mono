@@ -1,6 +1,6 @@
 # Rotation
 
-Architecture: [[architecture/graph/axes.md]]
+Architecture: [[axes]]
 
 ## Not in scope (yet)
 

@@ -4,6 +4,8 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
+
+- [ ] bring guides up to date
 - [ ] ability to cut an SO in half
 - [ ] convert button create a template -> stud/joist / stair segmented
 - [ ] pac: rename Smart Object -> Smart Block

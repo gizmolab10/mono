@@ -63,7 +63,7 @@ Slots are deprecated. Use snippets for content injection:
 {@render header?.()}
 ```
 
-**Our choice:** We tried snippets, then removed them. YAGNI — we weren't reusing the layout with different content. Direct children are simpler.
+**Our choice:** We use snippets where they help — the toolbar's button groups are reusable inside one component. We do not use them as a layout-composition tool; the panel layout uses direct children instead.
 
 ## Component Structure
 
@@ -85,7 +85,7 @@ export const appState = $state({
 });
 ```
 
-**Our choice:** Not yet needed. State lives in Main.svelte for now.
+**Our choice:** State now lives in dedicated manager files — selection, parts, scenes, history, preferences, status, stores, versions.
 
 ## ResizeObserver over Window Events
 
@@ -122,12 +122,14 @@ onMount(() => {
 | Props | Configurable behavior | Fixed behavior |
 
 **Our structure:**
-```
+
+```text
 App.svelte (global styles)
-└── Main.svelte (layout + state + children)
+└── Main.svelte (layout + children)
     ├── Controls.svelte
     ├── Details.svelte
-    └── Graph.svelte
+    ├── Graph.svelte (renders Status_Strip)
+    └── BuildNotes.svelte
 ```
 
 No intermediate abstractions. Main owns the layout directly.
