@@ -8,6 +8,7 @@ Per-file reference pages for the user-facing layout components.
 - [Controls](Controls.md) — toolbar component reference.
 - [Details](Details.md) — right-side panel component reference.
 - [Graph](Graph.md) — drawing area component reference.
+- [Library](Library.md) — saved-arrangement panel inside the side panel.
 - [Separators](Separators.md) — visual divider component reference.
 
 ## Pages that moved out

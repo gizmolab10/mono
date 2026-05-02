@@ -116,6 +116,19 @@ Only `id` is required. `type` defaults to `T_Hit_Target.control`.
 
 **Do not mix with manual S_Hit_Target.** Using both `use:hit_target` and a manually created `S_Hit_Target` on the same element creates two targets — the action's target gets a double-prefixed id and the manual target's cleanup won't cover the action's target. Pick one approach.
 
+### Click timing — long click, double click, autorepeat
+
+The dispatch flow above runs once per mouse-down or mouse-up. Three other things can happen on top of a normal click, all driven by timers that the manager owns. The thresholds that govern them all live in one place.
+
+Citation: thresholds at `src/lib/ts/common/Constants.ts` lines 79-82.
+
+- **Autorepeat** — used by buttons that should keep firing while held. Eight hundred milliseconds after the press starts, the manager begins firing the autorepeat callback every one hundred and fifty milliseconds. The release stops it; moving the mouse off the target stops it; mousing onto a different target also stops it.
+- **Long click** — fires once, eight hundred milliseconds after the press, on targets that registered a long-click callback. After it fires the click count resets, so the release does not also fire a press.
+- **Double click** — when a target carries both a single-click handler and a double-click handler, the manager waits four hundred milliseconds before delivering the single click. A second press inside the window cancels the wait and fires the double click instead.
+- **Alteration** — used by sticky-mode buttons that need to toggle a state every five hundred milliseconds while a condition holds. Less common; lives in the same timer.
+
+Citation: timer wiring at `src/lib/ts/events/Mouse_Timer.ts` (the four timer types, the autorepeat start with its long-click warm-up, the timeout-start helper); manager calls at `src/lib/ts/events/Hits.ts` lines 256-322 (the start, cancel, and stop helpers for each).
+
 ### S_Mouse
 
 A **transient value object** encapsulating current mouse-relevant information:

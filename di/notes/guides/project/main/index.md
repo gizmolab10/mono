@@ -9,4 +9,6 @@ The project's shape, conventions, and quality bar.
 - [Best practices](best.practices.md) — Svelte 5 patterns, component structure, shared state, what to avoid.
 - [Stipulations](stipulations.md) — the rules catalog. Every load-bearing rule the code must hold.
 - [Testing](testing.md) — the test index. Each rule maps to the test that pins it down.
+- [Lessons](lessons.md) — meta-lessons from mothballed work; patterns to spot early next time.
+- [Updating guides](updating%20guides.md) — instructions for the next guide-update pass.
 - [Map](map.md) — flat list of every file in the notes tree.

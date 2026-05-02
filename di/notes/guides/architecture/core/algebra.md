@@ -85,6 +85,21 @@ Bare letter = self. Dot-prefix = parent (like `A.x` with name omitted). Dot nota
 
 Cross-axis named references use explicit tokens only — `A.d` not `A.y.l` — keeping the compiler simpler.
 
+### Worked example — the x row
+
+Four ways the user can fill the formula cell on the x position attribute, and what each one resolves to at evaluation time:
+
+| Formula | Resolves to |
+| --- | --- |
+| *(empty)* | parent's x position plus the stored offset |
+| `x * 2` | self's x position times two |
+| `.x * 2` | parent's x position times two |
+| `A.x * 2` | the part named A's x position times two |
+
+The same four shapes work for every position attribute (`x`, `y`, `z`, `X`, `Y`, `Z`). For length attributes (`w`, `d`, `h`), an empty cell resolves to the stored value rather than the parent-plus-offset rule above.
+
+Citation: the resolver lives in `src/lib/ts/algebra/Constraints.ts` (`resolve` and `bind_refs`); the empty-formula offset rule is described in the Empty-formula default section below.
+
 ## Named values
 
 Formulas may reference globally named numbers — for example `wall_thickness` or `door_width`. The named-value table sits beside the formula machinery; bare names that no part in the scene owns resolve to it.
@@ -113,6 +128,16 @@ When a child's position attribute has no formula, Constraints treats it as `pare
 
 - Position attributes (`x_min`, `x_max`, `y_min`, `y_max`, `z_min`, `z_max`): empty formula → `parent.value + offset`
 - Length attributes (`width`, `depth`, `height`): empty formula → stored value (no parent tracking)
+
+## Constraints during stretching
+
+When the user drags a corner or an edge, the new value has to land somewhere. The algebra has two distinct paths for absorbing that change, and the user chooses between them at the time they fill in (or leave empty) the formula cells.
+
+The first path is the empty-formula offset model described above. A child whose position attribute carries no formula tracks the parent — the parent's stretch slides the child along by the same amount, and the stored offset stays the same. This is the default; it requires nothing of the user.
+
+The second path is a named value (a given) that absorbs the stretch. When the user writes a formula that names a given (for instance, `wall_thickness * 2`), and the user later stretches a part whose value is computed from that formula, the engine looks for a single given referenced in the formula and solves the formula backward to find a new value for the given. Every other reference in the formula is held fixed so the solver only sees one unknown. A given that has been locked refuses to be solved for — the dragger finds nothing it can move and the drag does nothing.
+
+Citation: the search-and-solve helper sits in `src/lib/ts/algebra/Constraints.ts` lines 522-578; the freeze step that holds non-given references as literals is at lines 580-593; the locked-given check is at line 571.
 
 ## Compound imperial literals
 
