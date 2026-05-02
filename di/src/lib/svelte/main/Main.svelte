@@ -3,6 +3,7 @@
 	import Details from '../details/Details.svelte';
 	import { k } from '../../ts/common/Constants';
 	import BuildNotes from './BuildNotes.svelte';
+	import UserGuide from './UserGuide.svelte';
 	import { e } from '../../ts/events/Events';
 	import Controls from './Controls.svelte';
 	import Graph from './Graph.svelte';
@@ -27,6 +28,7 @@
 	let wrap_phone     = $derived(width < k.width.wrap_phone);
 	let detailsWidth   = $derived(wrap_phone ? width - gap * 2 : k.width.details - gap * 2);
 	let showBuildNotes = $state(false);
+	let showUserGuide  = $state(false);
 
 	// Computed dimensions
 	let mainHeight = $derived(height - controlsHeight - gap * 3);
@@ -63,12 +65,17 @@
 			tabindex="-1">
 			<BuildNotes onclose={() => showBuildNotes = false} />
 		</div>
+	{:else if showUserGuide}
+		<!-- User guide: full-screen overlay with sidebar list and content panel -->
+		<div class='region user-guide-region'>
+			<UserGuide onclose={() => showUserGuide = false} />
+		</div>
 	{:else}
 		<!-- Controls region -->
 		<div
 			bind:clientHeight={controlsHeight}
 			class = 'region controls'>
-			<Controls />
+			<Controls onshowuserguide={() => showUserGuide = true} />
 		</div>
 
 		<!-- Main content area -->
@@ -132,12 +139,18 @@
 	}
 
 	.build-notes-region {
-		padding-top     : 20%;
 		width           : 100%;
 		height          : 100%;
 		display         : flex;
 		justify-content : center;
-		align-items     : flex-start;
+		align-items     : center;
+		box-sizing      : border-box;
+	}
+
+	.user-guide-region {
+		width           : 100%;
+		height          : 100%;
+		position        : relative;
 		box-sizing      : border-box;
 	}
 </style>

@@ -4,11 +4,12 @@ The project's shape, conventions, and quality bar.
 
 ## Contents
 
-- [Project](project.md) — entry flow, core loop, parts, engine, render pipeline.
-- [File layout](file%20layout.md) — every folder and file in the source tree, with a one-line description.
-- [Best practices](best.practices.md) — Svelte 5 patterns, component structure, shared state, what to avoid.
-- [Stipulations](stipulations.md) — the rules catalog. Every load-bearing rule the code must hold.
-- [Testing](testing.md) — the test index. Each rule maps to the test that pins it down.
-- [Lessons](lessons.md) — meta-lessons from mothballed work; patterns to spot early next time.
-- [Updating guides](updating%20guides.md) — instructions for the next guide-update pass.
-- [Map](map.md) — flat list of every file in the notes tree.
+- [Best.practices](./best.practices.md)
+- [File Layout](./file layout.md)
+- [Lessons](./lessons.md)
+- [Map](./map.md)
+- [Project](./project.md)
+- [Stipulations](./stipulations.md)
+- [Testing](./testing.md)
+- [Updating Guides](./updating guides.md)
+

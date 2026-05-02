@@ -11,7 +11,15 @@ export default defineConfig({
     /\/di\/src\//,
     /e2e\//,
     /^(\.\/)?\.claude\//,
-    /^(\.\/)?notes\//
+    /^(\.\/)?notes\//,
+    // Manual files live at src/manual/ and are surfaced into the docs tree
+    // via a symlink at notes/guides/project/user guide/. Vitepress's dead-link
+    // checker resolves links through the symlink to the canonical src/manual/
+    // path, which sits outside srcDir, so the cross-references between the
+    // manual's own pages get flagged. Skip them — the symlinked tree renders
+    // correctly at runtime.
+    /^\.\/first-steps/,
+    /^\.\/index/,
   ],
 
   markdown: {

@@ -1,3 +1,5 @@
+// Run URL-flag handling before anything else imports preferences-backed state.
+import './lib/ts/common/Configuration';
 import { mount } from 'svelte';
 import App from './App.svelte';
 

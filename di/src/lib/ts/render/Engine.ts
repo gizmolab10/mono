@@ -1,20 +1,20 @@
 import { constraints, givens, evaluator, tokenizer } from '../algebra';
+import { scenes, stores, selection, history } from '../managers';
+import { units, Units, w_unit_system } from '../types/Units';
 import type { Portable_Scene } from '../managers/Versions';
 import type { Bound, Axis_Name } from '../types/Types';
-import { scenes, stores, selection, history } from '../managers';
+import { register_stale_mark } from '../common/Dirty';
 import { scene, camera, render, animation } from '.';
 import type { O_Scene } from '../types/Interfaces';
-import { T_Hit_3D } from '../types/Enumerations';
-import { units, Units, w_unit_system } from '../types/Units';
 import { face_label } from '../editors/Face_Label';
 import { dimensions } from '../editors/Dimension';
+import { T_Hit_3D } from '../types/Enumerations';
 import { angulars } from '../editors/Angular';
-import { register_stale_mark } from '../common/Dirty';
-import { Smart_Object } from '../runtime';
 import { colors } from '../utilities/Colors';
+import { Smart_Object } from '../runtime';
+import { e3, hits_3d } from '../events';
 import { quat, vec3 } from 'gl-matrix';
 import { drag } from '../editors/Drag';
-import { e3, hits_3d } from '../events';
 
 /** When true, the render loop measures the time each paint takes and logs a
  *  one-line summary to the browser console every second during active

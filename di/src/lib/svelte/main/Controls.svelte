@@ -8,6 +8,8 @@
 	import { engine } from '../../ts/render';
 	import Slider from '../mouse/Slider.svelte';
 
+	let { onshowuserguide = () => {} }: { onshowuserguide?: () => void } = $props();
+
 	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation, w_scale, w_grid_opacity } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 
@@ -44,6 +46,11 @@
 			<path d={svg_paths.hamburger(k.height.button.common + 2)}/>
 		</svg>
 	</button>
+{/snippet}
+
+{#snippet help_button()}
+	<button class='toolbar-button help-button' aria-label='Open user guide'
+		use:hit_target={{ id: 'help', onpress: onshowuserguide }}>?</button>
 {/snippet}
 
 {#snippet desktop_only_buttons()}
@@ -100,6 +107,7 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
+				{@render help_button()}
 				<span class='spacer'></span>
 				{@render face_buttons()}
 				<span class='spacer'></span>
@@ -119,6 +127,7 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
+				{@render help_button()}
 				{@render desktop_only_buttons()}
 				<span class='spacer'></span>
 				{@render mode_buttons()}
@@ -134,6 +143,7 @@
 	{:else}
 		<div class='desktop-row'>
 			{@render hamburger_button()}
+			{@render help_button()}
 			{#if $w_allow_editing && !root_fits}
 				<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 			{/if}
@@ -267,6 +277,11 @@
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
+	}
+
+	.help-button {
+		font-size   : var(--h-font-large);
+		padding     : 1px 10px 0 9px;
 	}
 
 	.toolbar-button:disabled {

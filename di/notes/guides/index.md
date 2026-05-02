@@ -2,6 +2,7 @@
 
 ## Contents
 
-- [Project](./project/) — main, components, user manual
 - [Architecture](./architecture/)
-- [Research](./project/research/)
+- [Project](./project/)
+- [Guides.layout](./guides.layout.md)
+

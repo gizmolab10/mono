@@ -2,9 +2,11 @@
 
 Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into tangles.
 
-offer a proposal for the first unchecked item
+offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] i want to add screenshots of first steps
+- [ ] incorporate user guide into app
+    - [ ] move md files and images into /src
+    - [ ] "?" button in lower right corner of graph
 - [ ] click plus button in parts banner -> opens (if closed), selects new part
 - [ ] ability to cut an SO in half
 - [ ] convert button create a template -> stud/joist / stair segmented

@@ -67,220 +67,284 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
-                  text: 'Map',
-                  link: '/di/notes/map'
-                },
-                {
-                  text: 'Architecture >',
-                  link: '/di/notes/architecture/',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'File Layout',
-                      link: '/di/notes/architecture/file layout'
-                    },
-                    {
-                      text: 'Project',
-                      link: '/di/notes/architecture/project'
-                    },
-                    {
-                      text: 'Core >',
-                      link: '/di/notes/architecture/core/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Algebra',
-                          link: '/di/notes/architecture/core/algebra'
-                        },
-                        {
-                          text: 'Launch',
-                          link: '/di/notes/architecture/core/launch'
-                        },
-                        {
-                          text: 'Managers',
-                          link: '/di/notes/architecture/core/managers'
-                        },
-                        {
-                          text: 'References',
-                          link: '/di/notes/architecture/core/references'
-                        },
-                        {
-                          text: 'Versions',
-                          link: '/di/notes/architecture/core/versions'
-                        }
-                      ]
-                    },
-                    {
-                      text: 'Graph >',
-                      link: '/di/notes/architecture/graph/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Axes',
-                          link: '/di/notes/architecture/graph/axes'
-                        },
-                        {
-                          text: 'Dimensionals',
-                          link: '/di/notes/architecture/graph/dimensionals'
-                        },
-                        {
-                          text: 'Drag',
-                          link: '/di/notes/architecture/graph/drag'
-                        },
-                        {
-                          text: 'Intersecting.faces',
-                          link: '/di/notes/architecture/graph/intersecting.faces'
-                        },
-                        {
-                          text: 'Projection',
-                          link: '/di/notes/architecture/graph/projection'
-                        },
-                        {
-                          text: 'Quaternions',
-                          link: '/di/notes/architecture/graph/quaternions'
-                        },
-                        {
-                          text: 'Render',
-                          link: '/di/notes/architecture/graph/render'
-                        },
-                        {
-                          text: 'Rendering.types',
-                          link: '/di/notes/architecture/graph/rendering.types'
-                        },
-                        {
-                          text: 'Repeaters',
-                          link: '/di/notes/architecture/graph/repeaters'
-                        },
-                        {
-                          text: 'Three.dimensions',
-                          link: '/di/notes/architecture/graph/three.dimensions'
-                        },
-                        {
-                          text: 'Two.dimensions',
-                          link: '/di/notes/architecture/graph/two.dimensions'
-                        }
-                      ]
-                    },
-                    {
-                      text: 'Theory >',
-                      link: '/di/notes/architecture/theory/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: '3D.primer',
-                          link: '/di/notes/architecture/theory/3D.primer'
-                        },
-                        {
-                          text: 'Spatial',
-                          link: '/di/notes/architecture/theory/spatial'
-                        }
-                      ]
-                    },
-                    {
-                      text: 'UI >',
-                      link: '/di/notes/architecture/ui/',
-                      collapsed: true,
-                      items: [
-                        {
-                          text: 'Details',
-                          link: '/di/notes/architecture/ui/details'
-                        },
-                        {
-                          text: 'Hits',
-                          link: '/di/notes/architecture/ui/hits'
-                        },
-                        {
-                          text: 'Panel.layout',
-                          link: '/di/notes/architecture/ui/panel.layout'
-                        },
-                        {
-                          text: 'Style',
-                          link: '/di/notes/architecture/ui/style'
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  text: 'Archives >',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Rotation',
-                      link: '/di/notes/archives/rotation'
-                    }
-                  ]
-                },
-                {
-                  text: 'Components >',
-                  link: '/di/notes/components/',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Controls',
-                      link: '/di/notes/components/Controls'
-                    },
-                    {
-                      text: 'Details',
-                      link: '/di/notes/components/Details'
-                    },
-                    {
-                      text: 'Graph',
-                      link: '/di/notes/components/Graph'
-                    },
-                    {
-                      text: 'Hits 3D',
-                      link: '/di/notes/components/Hits_3D'
-                    },
-                    {
-                      text: 'Main',
-                      link: '/di/notes/components/Main'
-                    },
-                    {
-                      text: 'Preferences',
-                      link: '/di/notes/components/Preferences'
-                    },
-                    {
-                      text: 'Separators',
-                      link: '/di/notes/components/Separators'
-                    },
-                    {
-                      text: 'Smart Objects',
-                      link: '/di/notes/components/Smart_Objects'
-                    }
-                  ]
-                },
-                {
                   text: 'Guides >',
                   link: '/di/notes/guides/',
                   collapsed: true,
                   items: [
                     {
-                      text: 'Best.practices',
-                      link: '/di/notes/guides/best.practices'
+                      text: 'Guides.layout',
+                      link: '/di/notes/guides/guides.layout'
                     },
                     {
-                      text: 'Gotchas',
-                      link: '/di/notes/guides/gotchas'
+                      text: 'Architecture >',
+                      link: '/di/notes/guides/architecture/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Components >',
+                          link: '/di/notes/guides/architecture/components/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Controls',
+                              link: '/di/notes/guides/architecture/components/Controls'
+                            },
+                            {
+                              text: 'Details',
+                              link: '/di/notes/guides/architecture/components/Details'
+                            },
+                            {
+                              text: 'Graph',
+                              link: '/di/notes/guides/architecture/components/Graph'
+                            },
+                            {
+                              text: 'Library',
+                              link: '/di/notes/guides/architecture/components/Library'
+                            },
+                            {
+                              text: 'Main',
+                              link: '/di/notes/guides/architecture/components/Main'
+                            },
+                            {
+                              text: 'Separators',
+                              link: '/di/notes/guides/architecture/components/Separators'
+                            }
+                          ]
+                        },
+                        {
+                          text: 'Core >',
+                          link: '/di/notes/guides/architecture/core/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Algebra',
+                              link: '/di/notes/guides/architecture/core/algebra'
+                            },
+                            {
+                              text: 'Errors',
+                              link: '/di/notes/guides/architecture/core/errors'
+                            },
+                            {
+                              text: 'History',
+                              link: '/di/notes/guides/architecture/core/history'
+                            },
+                            {
+                              text: 'Managers',
+                              link: '/di/notes/guides/architecture/core/managers'
+                            },
+                            {
+                              text: 'Preferences',
+                              link: '/di/notes/guides/architecture/core/Preferences'
+                            },
+                            {
+                              text: 'Scenes',
+                              link: '/di/notes/guides/architecture/core/scenes'
+                            },
+                            {
+                              text: 'Smart Objects',
+                              link: '/di/notes/guides/architecture/core/Smart_Objects'
+                            },
+                            {
+                              text: 'Units',
+                              link: '/di/notes/guides/architecture/core/units'
+                            },
+                            {
+                              text: 'Versions',
+                              link: '/di/notes/guides/architecture/core/versions'
+                            }
+                          ]
+                        },
+                        {
+                          text: 'Graph >',
+                          link: '/di/notes/guides/architecture/graph/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Axes',
+                              link: '/di/notes/guides/architecture/graph/axes'
+                            },
+                            {
+                              text: 'Dimensionals',
+                              link: '/di/notes/guides/architecture/graph/dimensionals'
+                            },
+                            {
+                              text: 'Drag',
+                              link: '/di/notes/guides/architecture/graph/drag'
+                            },
+                            {
+                              text: 'Editors',
+                              link: '/di/notes/guides/architecture/graph/editors'
+                            },
+                            {
+                              text: 'Hits 3D',
+                              link: '/di/notes/guides/architecture/graph/Hits_3D'
+                            },
+                            {
+                              text: 'Intersecting.faces',
+                              link: '/di/notes/guides/architecture/graph/intersecting.faces'
+                            },
+                            {
+                              text: 'Render',
+                              link: '/di/notes/guides/architecture/graph/render'
+                            },
+                            {
+                              text: 'Rendering.types',
+                              link: '/di/notes/guides/architecture/graph/rendering.types'
+                            },
+                            {
+                              text: 'Repeaters',
+                              link: '/di/notes/guides/architecture/graph/repeaters'
+                            },
+                            {
+                              text: 'Rotation',
+                              link: '/di/notes/guides/architecture/graph/rotation'
+                            },
+                            {
+                              text: 'Three.dimensions',
+                              link: '/di/notes/guides/architecture/graph/three.dimensions'
+                            },
+                            {
+                              text: 'Two.dimensions',
+                              link: '/di/notes/guides/architecture/graph/two.dimensions'
+                            }
+                          ]
+                        },
+                        {
+                          text: 'UI >',
+                          link: '/di/notes/guides/architecture/ui/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Details',
+                              link: '/di/notes/guides/architecture/ui/details'
+                            },
+                            {
+                              text: 'Hits',
+                              link: '/di/notes/guides/architecture/ui/hits'
+                            },
+                            {
+                              text: 'Key Paths',
+                              link: '/di/notes/guides/architecture/ui/key paths'
+                            },
+                            {
+                              text: 'Panel.layout',
+                              link: '/di/notes/guides/architecture/ui/panel.layout'
+                            },
+                            {
+                              text: 'Style',
+                              link: '/di/notes/guides/architecture/ui/style'
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
-                      text: 'Stipulations',
-                      link: '/di/notes/guides/stipulations'
-                    },
-                    {
-                      text: 'Testing',
-                      link: '/di/notes/guides/testing'
-                    }
-                  ]
-                },
-                {
-                  text: 'User Manual >',
-                  link: '/di/notes/user manual/',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Repeaters',
-                      link: '/di/notes/user manual/repeaters'
+                      text: 'Project >',
+                      link: '/di/notes/guides/project/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Main >',
+                          link: '/di/notes/guides/project/main/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Best.practices',
+                              link: '/di/notes/guides/project/main/best.practices'
+                            },
+                            {
+                              text: 'File Layout',
+                              link: '/di/notes/guides/project/main/file layout'
+                            },
+                            {
+                              text: 'Lessons',
+                              link: '/di/notes/guides/project/main/lessons'
+                            },
+                            {
+                              text: 'Map',
+                              link: '/di/notes/guides/project/main/map'
+                            },
+                            {
+                              text: 'Project',
+                              link: '/di/notes/guides/project/main/project'
+                            },
+                            {
+                              text: 'Stipulations',
+                              link: '/di/notes/guides/project/main/stipulations'
+                            },
+                            {
+                              text: 'Testing',
+                              link: '/di/notes/guides/project/main/testing'
+                            },
+                            {
+                              text: 'Updating Guides',
+                              link: '/di/notes/guides/project/main/updating guides'
+                            }
+                          ]
+                        },
+                        {
+                          text: 'Reference Guide >',
+                          link: '/di/notes/guides/project/reference guide/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Build Notes',
+                              link: '/di/notes/guides/project/reference guide/build notes'
+                            },
+                            {
+                              text: 'Formulas',
+                              link: '/di/notes/guides/project/reference guide/formulas'
+                            },
+                            {
+                              text: 'Library',
+                              link: '/di/notes/guides/project/reference guide/library'
+                            },
+                            {
+                              text: 'Reparenting',
+                              link: '/di/notes/guides/project/reference guide/reparenting'
+                            },
+                            {
+                              text: 'Repeaters',
+                              link: '/di/notes/guides/project/reference guide/repeaters'
+                            },
+                            {
+                              text: 'Save And Load',
+                              link: '/di/notes/guides/project/reference guide/save and load'
+                            },
+                            {
+                              text: 'Selection',
+                              link: '/di/notes/guides/project/reference guide/selection'
+                            },
+                            {
+                              text: 'Undo And Redo',
+                              link: '/di/notes/guides/project/reference guide/undo and redo'
+                            },
+                            {
+                              text: 'Units',
+                              link: '/di/notes/guides/project/reference guide/units'
+                            }
+                          ]
+                        },
+                        {
+                          text: 'Research >',
+                          link: '/di/notes/guides/project/research/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: '3D.primer',
+                              link: '/di/notes/guides/project/research/3D.primer'
+                            },
+                            {
+                              text: 'Library Versioning',
+                              link: '/di/notes/guides/project/research/library-versioning'
+                            },
+                            {
+                              text: 'Spatial Acceleration',
+                              link: '/di/notes/guides/project/research/spatial-acceleration'
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 },
@@ -357,6 +421,10 @@ export default defineConfig({
                         {
                           text: 'Topology',
                           link: '/di/notes/work/done/topology'
+                        },
+                        {
+                          text: 'Update.guides',
+                          link: '/di/notes/work/done/update.guides'
                         },
                         {
                           text: 'Version.9',
@@ -674,10 +742,6 @@ export default defineConfig({
                           link: '/di/notes/work/now/handoff'
                         },
                         {
-                          text: 'Key Paths',
-                          link: '/di/notes/work/now/key paths'
-                        },
-                        {
                           text: 'Learn',
                           link: '/di/notes/work/now/learn'
                         },
@@ -696,6 +760,10 @@ export default defineConfig({
                         {
                           text: 'Technique',
                           link: '/di/notes/work/now/technique'
+                        },
+                        {
+                          text: 'Work Journal',
+                          link: '/di/notes/work/now/work journal'
                         },
                         {
                           text: 'Working Features',

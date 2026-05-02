@@ -49,19 +49,26 @@ export enum T_Preference {
 	allowEditing     = 'allowEditing',
 
 	// Scenes
-	scene = 'scene',
+	scene            = 'scene',
 
 	// Library
-	library = 'library',
-	libraryFolder = 'libraryFolder',
+	library          = 'library',
+	libraryFolder    = 'libraryFolder',
 
 	// Parts table
-	collapsedIds = 'collapsedIds',
+	collapsedIds     = 'collapsedIds',
 }
 
 const STORAGE_PREFIX = 'di:';
 
 class Preferences {
+
+	apply_queryStrings(queryStrings: URLSearchParams): void {
+		const clear_options = queryStrings.get('clear')?.split(',') ?? [];
+		if (clear_options.includes('preferences')) {
+			preferences.reset();
+		}
+	}
 	
 	/**
 	 * Read a preference from localStorage

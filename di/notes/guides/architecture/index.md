@@ -1,17 +1,11 @@
 # Architecture
 
 How Design Intuition is built. Read top to bottom — each layer builds on the last.
-
 ## 1. Orient
-
 Start here. One page, whole app.
-
 - See the [Main](../project/main/) folder for the project shape, file layout, best practices, stipulations, and testing.
-
 ## 2. Understand
-
 Where things live, what they do.
-
 - [Core](./core/) — singletons and systems
     - [Managers](core/managers.md) — who owns what
     - [Algebra](./core/algebra.md) — constraints, expressions, reverse propagation
@@ -29,11 +23,8 @@ Where things live, what they do.
     - [Hits](./ui/hits.md) — click and hover dispatch
     - [Key paths](./ui/key%20paths.md) — keyboard shortcuts grouped by context
     - [Style](./ui/style.md) — CSS conventions and design tokens
-
 ## 3. Deep dive
-
 The render pipeline — projection, occlusion, intersections, overlays.
-
 - [Graph](./graph/) — start with [Three Dimensions](./graph/three.dimensions.md), then explore:
     - [Two Dimensions](./graph/two.dimensions.md) — 2D mode, face snapping
     - [Three Dimensions](./graph/three.dimensions.md) — the full render pipeline
@@ -55,4 +46,3 @@ The render pipeline — projection, occlusion, intersections, overlays.
 - [Graph](./graph/)
 - [Ui](./ui/)
 
-The research folder (3D primer, library-versioning notes, spatial-acceleration research) lives under [project/research](../project/research/).

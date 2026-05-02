@@ -22,6 +22,20 @@
             }
           },
           {
+            "id": "89f29862184edb80",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/src/manual/index.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "index"
+            }
+          },
+          {
             "id": "40c17ae35c4b3642",
             "type": "leaf",
             "state": {
@@ -36,31 +50,17 @@
             }
           },
           {
-            "id": "60b73766e61dfd95",
+            "id": "a871e2dfc18c3cf2",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/now/handoff.md",
+                "file": "di/notes/work/now/work journal.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "handoff"
-            }
-          },
-          {
-            "id": "df1ce7d412748d41",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/guides/project/user manual/first.steps.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "first.steps"
+              "title": "work journal"
             }
           },
           {
@@ -110,7 +110,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:builds",
+                "query": "file:build",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/code.debt.md",
+                "file": "di/src/manual/index.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of index"
             }
           }
         ],
@@ -240,54 +240,53 @@
       "bases:Create new base": false
     }
   },
-  "active": "40c17ae35c4b3642",
+  "active": "26b78cd156d15e82",
   "lastOpenFiles": [
-    "di/notes/guides/project/user manual/first.steps.md",
-    "di/notes/work/done/code.debt.paid.md",
-    "di/notes/work/now/code.debt.md",
+    "di/src/manual/delete me.md",
     "di/notes/work/now/handoff.md",
-    "di/notes/guides/project/user manual/index.md",
-    "di/notes/guides/project/user manual/first.time.md",
-    "di/notes/work/now/update.guides.md",
-    "di/notes/work/done/update.guides.md",
-    "di/notes/guides/project/main/updating guides.md",
-    "di/notes/guides/project/user manual/formulas.md",
-    "di/notes/guides/project/user manual/build notes.md",
-    "di/notes/guides/project/user manual/undo and redo.md",
-    "di/notes/guides/project/user manual/reparenting.md",
-    "di/notes/guides/project/user manual/save and load.md",
-    "di/notes/guides/project/user manual/units.md",
-    "di/notes/guides/project/user manual/library.md",
-    "di/notes/guides/project/user manual/selection.md",
-    "di/notes/guides/architecture/ui/key paths.md",
-    "di/notes/guides/architecture/graph/editors.md",
-    "di/notes/guides/architecture/components/Library.md",
-    "di/notes/guides/architecture/core/history.md",
-    "di/notes/guides/architecture/core/errors.md",
-    "di/notes/guides/architecture/core/units.md",
-    "di/notes/guides/project/main/lessons.md",
-    "di/notes/guides/architecture/core/Preferences.md",
-    "di/notes/guides/project/research/library-versioning.md",
-    "di/notes/guides/project/research",
-    "di/notes/guides/project/main",
-    "di/notes/guides/project/user manual",
-    "di/notes/guides/architecture/components",
-    "di/notes/guides/project",
-    "di/notes/guides/main",
-    "di/notes/guides/architecture/research",
-    "di/notes/guides/research",
-    "di/test-results/drag-vs-tumble-a-drag-with-2df51-er-than-tumbling-the-camera-chromium/trace.zip",
-    "di/test-results/drag-vs-tumble-a-drag-with-2df51-er-than-tumbling-the-camera-chromium",
-    "node_modules/playwright-core/lib/server/chromium/appIcon.png",
-    "node_modules/playwright-core/lib/vite/traceViewer/playwright-logo.svg",
-    "node_modules/playwright-core/lib/vite/recorder/playwright-logo.svg",
-    "node_modules/playwright-core/lib/tools/dashboard/appIcon.png",
-    "ws/dist/assets/seriously-icon.png",
-    "Screenshot 2026-04-07 at 2.37.08 PM.png",
-    "Screenshot 2026-04-06 at 6.25.28 PM.png",
-    "Screenshot 2026-04-06 at 3.30.38 PM.png",
-    "Screenshot 2026-04-06 at 3.04.38 PM.png",
-    "Screenshot 2026-04-05 at 11.25.45 AM.png",
+    "ws/vite.config.js.timestamp-1777763148210-189cb1d473ec7.mjs",
+    "di/notes/work/now/work journal.md",
+    "s3/notes/work/fresh.build.md",
+    "di/notes/guides/project/reference guide/build notes.md",
+    "notes/guides/develop/build notes.md",
+    "ga/node_modules/phaser/changelog/3.60/Build.md",
+    "notes/guides/develop/build.md",
+    "di/notes/work/milestones/done/6.build.notes.md",
+    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/prebuild_tools.md",
+    "notes/work/articles/how.to.build.it.md",
+    "di/src/lib/md/builds.md",
+    "di/src/manual/images/first-steps/index.md",
+    "di/src/manual/images/index.md",
+    "logs/update-docs.error.mono.log",
+    "ws/vite.config.js.timestamp-1777759387601-d832ca05758dc.mjs",
+    "di/src/lib/svelte/main/UserGuide.svelte",
+    "node_modules/typedoc/node_modules/entities/lib/esm/generated/encode-html.d.ts",
+    "node_modules/typedoc/node_modules/entities/lib/esm/generated/encode-html.js.map",
+    "node_modules/typedoc/node_modules/entities/lib/esm/generated/encode-html.js",
+    "node_modules/typedoc/node_modules/entities/lib/esm/generated/encode-html.d.ts.map",
+    "node_modules/typedoc/node_modules/entities/lib/esm/generated/decode-data-xml.d.ts.map",
+    "node_modules/typedoc/node_modules/entities/lib/esm/generated/decode-data-html.js",
+    "node_modules/typedoc/node_modules/entities/readme.md",
+    "node_modules/typedoc/node_modules/markdown-it/README.md",
+    "di/src/manual/index.md",
+    "di/src/manual/images/first-steps/06-dimension-input.png",
+    "di/src/manual/images/first-steps/08-fresh-child.png",
+    "di/src/manual/images/first-steps/07-blank-canvas.png",
+    "di/src/manual/images/first-steps/05-mid-stretch.png",
+    "di/src/manual/images/first-steps/04-toolbar-padlock.png",
+    "di/src/manual/images/first-steps/03-locked-cursor.png",
+    "di/src/manual/images/first-steps/02-dimensions-on.png",
+    "di/src/manual/images/first-steps/01-opening.png",
+    "di/src/manual/first.steps.md",
+    "di/notes/work/now/code.debt.md",
+    "di/notes/work/done/code.debt.paid.md",
+    "di/notes/guides/project/reference guide/index.md",
+    "di/notes/guides/project/index.md",
+    "di/notes/guides/project/user guide/index.md",
+    "di/notes/guides/project/user guide/first.steps.md",
+    "di/notes/guides/project/reference guide/units.md",
+    "di/notes/guides/project/user guide/images/first-steps/08-fresh-child.png",
+    "di/notes/guides/project/user guide/images/first-steps/05-mid-stretch.png",
     "ws/notes/work/Untitled.canvas"
   ]
 }

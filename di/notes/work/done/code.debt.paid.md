@@ -193,3 +193,12 @@
 - [x] collapse parts tree not stuck on selected -> select the collapsed SO
 - [x] bring guides up to date
 - [x] launch with editing enabled and "straightening" magnet turned off
+- [x] add screenshots of first steps
+- [x] analyze how ws reads and captures query strings
+    - [x] add that capability to managers/Configuration.ts
+    - [x] query strings "clear preferences"
+    - [x] move the App on mount code -> Configuration "configure_css"
+- [x] rename user manual -> reference guide
+    - [x] create new folder "user guide"
+    - [x] move first.steps into it
+    - [x] update index

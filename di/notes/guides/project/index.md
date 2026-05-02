@@ -4,8 +4,8 @@ Everything about the project itself — how it is built, how it is organized, ho
 
 ## Contents
 
-- [Main](./main/) — file layout, project shape, best practices, stipulations, testing, and the file map.
-- [User manual](./user%20manual/) — end-user instructions for project-specific features.
-- [Research](./research/) — 3D primer, library-versioning notes, spatial-acceleration research.
+- [Main](./main/)
+- [Reference Guide](./reference guide/)
+- [Research](./research/)
+- [User Guide](./user guide/)
 
-The per-file reference pages (Controls, Details, Graph, Main, Separators) live under [architecture/components](../architecture/components/). Hits_3D moved to [architecture/graph](../architecture/graph/Hits_3D.md). Preferences and Smart_Objects moved to [architecture/core](../architecture/core/).
