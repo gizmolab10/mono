@@ -191,3 +191,5 @@
 - [x] parts table
     - [x] drag and drop
 - [x] collapse parts tree not stuck on selected -> select the collapsed SO
+- [x] bring guides up to date
+- [x] launch with editing enabled and "straightening" magnet turned off

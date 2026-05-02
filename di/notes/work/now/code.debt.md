@@ -4,8 +4,8 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item
 
-
-- [ ] bring guides up to date
+- [ ] i want to add screenshots of first steps
+- [ ] click plus button in parts banner -> opens (if closed), selects new part
 - [ ] ability to cut an SO in half
 - [ ] convert button create a template -> stud/joist / stair segmented
 - [ ] pac: rename Smart Object -> Smart Block
@@ -25,6 +25,7 @@ offer a proposal for the first unchecked item
     - [ ] move duplicate button to the far right
 
 ---
+
 ## leftovers
 
 - [ ] color -> white text for selected when bk color is too dark
@@ -73,5 +74,4 @@ offer a proposal for the first unchecked item
 
 - [ ] read all the di work md files and summarize the organization
 - [ ] [[cadence]]
-- [ ] AI coolness: https://medium.com/@gaddamnaveen192/ai-replaced-80-of-coding-only-these-7-skills-are-left-128e13d3020d
-
+- [ ] AI coolness: <https://medium.com/@gaddamnaveen192/ai-replaced-80-of-coding-only-these-7-skills-are-left-128e13d3020d>

@@ -27,8 +27,8 @@ class Stores {
 	w_grid_opacity		= make_stale(preferences.persistent<number>(T_Preference.gridOpacity, 0.5));
 	w_show_grid			= make_stale(preferences.persistent<boolean>(T_Preference.showGrid, true));
 	w_solid				= make_stale(preferences.persistent<boolean>(T_Preference.solid, true));
-	w_rotation_snap		= preferences.persistent<boolean>(T_Preference.rotationSnap, true);
-	w_allow_editing		= preferences.persistent<boolean>(T_Preference.allowEditing, false);
+	w_rotation_snap		= preferences.persistent<boolean>(T_Preference.rotationSnap, false);
+	w_allow_editing		= preferences.persistent<boolean>(T_Preference.allowEditing, true);
 	w_precision			= make_stale(preferences.persistent<number>(T_Preference.precision, 2));
 	w_scale				= make_stale(preferences.persistent<number>(T_Preference.scale, 2.5));
 

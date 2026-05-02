@@ -776,3 +776,41 @@ Instrumentation was wired in so we could see where the paint actually spends its
 ## Session — 2026-04-11 — parts-panel sibling-position label
 
 (Previous session — kept for history. Delivered the N-of-M sibling label next to the name editor in the parts details panel. Full details in the handoff file prior to this one.)
+
+---
+
+## Proposal — launch with editing on, magnet off
+
+First unchecked code-debt item: "launch with editing enabled and 'straightening' magnet turned off."
+
+### What is true today
+
+The app starts with editing locked off (a closed padlock on the toolbar button). Every part is read-only until the user clicks the lock to unlock. The straightening magnet — the small magnet icon next to the "straighten" button — also starts on, which means after every rotation the system snaps the angle to the nearest face-aligned position.
+
+Citation: the editing flag's default-off is at `src/lib/ts/managers/Stores.ts` line 31. The magnet's default-on is at line 30.
+
+### What this asks for
+
+The opposite. On launch: editing on (the padlock is open), the magnet off (no auto-snapping after a rotation).
+
+### How to make the change
+
+Two single-character edits.
+
+1. Change the default of the editing flag from `false` to `true`. Same file, same line, just flip the third argument of the persistent-flag helper.
+2. Change the default of the magnet flag from `true` to `false`. Same file, same line above.
+
+Both flags are persistent — they live in the browser's local storage. The default only applies to a fresh visitor. A visitor who has used the app before keeps whatever their last toggle was.
+
+### Implication for existing users
+
+Because these flags are persistent, changing the default only changes the launch state for fresh visitors. Anyone who has already used the app and toggled either flag will keep their stored choice on the next launch.
+
+If every existing user should also land in the new state on their next launch, two bigger options exist:
+
+- **Bump a preferences-version number** that triggers a one-time wipe of the stored values for these two keys.
+- **Migrate the stored values** explicitly — read the old key, write the new value, on a one-shot path.
+
+The simpler "just flip the default" route is honest about what it does (helps new users only). The bigger route forces every user into the new state but rewrites their preferences.
+
+Decision needed: which way.

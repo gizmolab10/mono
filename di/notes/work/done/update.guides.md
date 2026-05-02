@@ -132,7 +132,7 @@ For balance — these areas read well and have current pages: the panel layout, 
 
 ### Suggested order to close the gaps
 
-Largest payoff per page first. The first nine are done.
+Largest payoff per page first. All ten are done.
 
 1. ~~The units system (new page).~~ Done.
 2. ~~The error system (new page).~~ Done.
@@ -143,4 +143,4 @@ Largest payoff per page first. The first nine are done.
 7. ~~The drawing-area editors group page (new).~~ Done.
 8. ~~Move key paths into `architecture/ui/`.~~ Done.
 9. ~~Distill this file into a useful set of instructions for the next time we update the guides.~~ Done — the distilled instructions live at `project/main/updating guides.md`.
-10. The user manual filled out feature by feature.
+10. ~~The user manual filled out feature by feature.~~ Done. Eight new pages under `project/user manual/`: selection, re-parenting, formulas, library, build notes, undo and redo, units, save and load. Every claim has a code citation; the existing repeaters page was left as-is.

@@ -67,5 +67,14 @@ guides/
     │   └── spatial-acceleration.md ...... flatbush adoption research notes
     └── user manual/
         ├── index.md ..................... user manual table of contents
-        └── repeaters.md ................. stairs, studs, joists configuration
+        ├── build notes.md ............... per-build change-log overlay
+        ├── first.steps.md ............... walk-through of first few minutes
+        ├── formulas.md .................. what you can type in a formula cell
+        ├── library.md ................... saving, replacing, inserting, importing
+        ├── repeaters.md ................. stairs, studs, joists configuration
+        ├── reparenting.md ............... move a part to a new parent
+        ├── save and load.md ............. auto-save, reset, import
+        ├── selection.md ................. single, command-click, drill-down
+        ├── undo and redo.md ............. stepping backward and forward
+        └── units.md ..................... unit family, precision, typing
 ```
