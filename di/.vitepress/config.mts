@@ -130,6 +130,25 @@ export default defineConfig({
           ]
         },
         {
+          text: 'Project >',
+          link: '/guides/project/',
+          collapsed: true,
+          items: [
+            {
+              text: 'Adherence dashboard',
+              link: '/guides/project/development/adherence dashboard'
+            },
+            {
+              text: 'Dashboard guide',
+              link: '/guides/project/development/dashboard guide'
+            },
+            {
+              text: 'Logic Driven Design',
+              link: '/guides/project/development/logic driven design'
+            }
+          ]
+        },
+        {
           text: 'Work >',
           link: '/work/',
           collapsed: true,

@@ -4,8 +4,7 @@ Everything about the project itself — how it is built, how it is organized, ho
 
 ## Contents
 
-- [Main](./main/)
-- [Reference Guide](./reference guide/)
+- [Development](./development/)
+- [Overview](./overview/)
 - [Research](./research/)
-- [User Guide](./user guide/)
 

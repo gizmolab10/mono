@@ -4,12 +4,24 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] incorporate user guide into app
-    - [ ] move md files and images into /src
-    - [ ] "?" button in lower right corner of graph
+- [ ] stipulations <-> code
+    - [ ] distribute -> components?
+- [ ] mobile
+    - [ ] thin gaps
+    - [ ] css craziness -> css configurator -> constants
+    - [ ] edit always disabled
+- [ ] help
+    - [ ] complete & excellent
+    - [ ] keep hamburger visible
+    - [ ] sidebar -> details view
+    - [ ] new preferences`
+        - [ ] hamburger help visibility
+        - [ ] help page id
+    - [ ] move reference guide -> src/manual
+- [ ] white thumbs
 - [ ] click plus button in parts banner -> opens (if closed), selects new part
 - [ ] ability to cut an SO in half
-- [ ] convert button create a template -> stud/joist / stair segmented
+- [ ] convert button 'create a template' -> stud/joist / stair segmented
 - [ ] pac: rename Smart Object -> Smart Block
 - [ ] [[27.selection.algorithm]]
     - [ ] create new group around selected objects

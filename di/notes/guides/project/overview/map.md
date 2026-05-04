@@ -149,6 +149,20 @@
 - di/src/assets/three drawer cabinet.di
 - di/src/assets/two drawer cabinet.di
 
+## In-app manual
+
+- di/src/manual/index.md
+- di/src/manual/reference guide/index.md
+- di/src/manual/reference guide/build notes.md
+- di/src/manual/reference guide/formulas.md
+- di/src/manual/reference guide/library.md
+- di/src/manual/reference guide/repeaters.md
+- di/src/manual/reference guide/reparenting.md
+- di/src/manual/reference guide/save and load.md
+- di/src/manual/reference guide/selection.md
+- di/src/manual/reference guide/undo and redo.md
+- di/src/manual/reference guide/units.md
+
 ## Notes — Work
 
 - di/notes/work/index.md
@@ -268,49 +282,80 @@
 - di/notes/work/done/version.9.md
 - di/notes/work/done/what.md
 
-## Notes — Archives
+## Notes — Guides — Top
 
-- di/notes/archives/rotation.md
+- di/notes/guides/index.md
+- di/notes/guides/guides.layout.md
 
-## Notes — Architecture
+## Notes — Guides — Architecture
 
-- di/notes/architecture/index.md
-- di/notes/architecture/project.md
-- di/notes/architecture/file layout.md
-- di/notes/architecture/core/index.md
-- di/notes/architecture/core/algebra.md
-- di/notes/architecture/core/managers.md
-- di/notes/architecture/core/versions.md (was migration.md)
-- di/notes/architecture/graph/index.md
-- di/notes/architecture/graph/3D.primer.md
-- di/notes/architecture/graph/drag.md
-- di/notes/architecture/graph/intersecting.faces.md
-- di/notes/architecture/graph/projection.md
-- di/notes/architecture/graph/rendering.types.md
-- di/notes/architecture/graph/three.dimensions.md
-- di/notes/architecture/graph/two.dimensions.md
-- di/notes/architecture/ui/index.md
-- di/notes/architecture/ui/details.md
-- di/notes/architecture/ui/panel.layout.md
-
-## Notes — Components
-
+- di/notes/guides/architecture/index.md
 - di/notes/guides/architecture/components/index.md
 - di/notes/guides/architecture/components/Controls.md
 - di/notes/guides/architecture/components/Details.md
 - di/notes/guides/architecture/components/Graph.md
+- di/notes/guides/architecture/components/Library.md
 - di/notes/guides/architecture/components/Main.md
 - di/notes/guides/architecture/components/Separators.md
-- di/notes/guides/architecture/graph/Hits_3D.md
+- di/notes/guides/architecture/core/index.md
 - di/notes/guides/architecture/core/Preferences.md
 - di/notes/guides/architecture/core/Smart_Objects.md
+- di/notes/guides/architecture/core/algebra.md
+- di/notes/guides/architecture/core/errors.md
+- di/notes/guides/architecture/core/history.md
+- di/notes/guides/architecture/core/managers.md
+- di/notes/guides/architecture/core/scenes.md
+- di/notes/guides/architecture/core/units.md
+- di/notes/guides/architecture/core/versions.md
+- di/notes/guides/architecture/graph/index.md
+- di/notes/guides/architecture/graph/Hits_3D.md
+- di/notes/guides/architecture/graph/axes.md
+- di/notes/guides/architecture/graph/dimensionals.md
+- di/notes/guides/architecture/graph/drag.md
+- di/notes/guides/architecture/graph/editors.md
+- di/notes/guides/architecture/graph/intersecting.faces.md
+- di/notes/guides/architecture/graph/render.md
+- di/notes/guides/architecture/graph/rendering.types.md
+- di/notes/guides/architecture/graph/repeaters.md
+- di/notes/guides/architecture/graph/rotation.md
+- di/notes/guides/architecture/graph/three.dimensions.md
+- di/notes/guides/architecture/graph/two.dimensions.md
+- di/notes/guides/architecture/ui/index.md
+- di/notes/guides/architecture/ui/details.md
+- di/notes/guides/architecture/ui/hits.md
+- di/notes/guides/architecture/ui/key paths.md
+- di/notes/guides/architecture/ui/panel.layout.md
+- di/notes/guides/architecture/ui/style.md
 
-## Notes — Guides
+## Notes — Guides — Project
 
-- di/notes/guides/index.md
-- di/notes/guides/best.practices.md
-- di/notes/guides/style.md
-- di/notes/guides/testing.md
+- di/notes/guides/project/index.md
+- di/notes/guides/project/development/index.md
+- di/notes/guides/project/development/adherence dashboard.md
+- di/notes/guides/project/development/adherence log.md
+- di/notes/guides/project/development/areas.json
+- di/notes/guides/project/development/best.practices.md
+- di/notes/guides/project/development/build-status.json
+- di/notes/guides/project/development/dashboard guide.md
+- di/notes/guides/project/development/lessons.md
+- di/notes/guides/project/development/logic driven design.md
+- di/notes/guides/project/development/stipulations.md
+- di/notes/guides/project/development/testing.md
+- di/notes/guides/project/development/updating guides.md
+- di/notes/guides/project/overview/index.md
+- di/notes/guides/project/overview/file layout.md
+- di/notes/guides/project/overview/map.md
+- di/notes/guides/project/overview/project.md
+- di/notes/guides/project/research/index.md
+- di/notes/guides/project/research/3D.primer.md
+- di/notes/guides/project/research/library-versioning.md
+- di/notes/guides/project/research/spatial-acceleration.md
+
+## Notes — Tools
+
+- di/notes/tools/extract-adherence.mjs
+- di/notes/tools/build-with-status.mjs
+- di/notes/tools/validate-adherence.mjs
 
 ## Other
 

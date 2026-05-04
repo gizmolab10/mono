@@ -41,12 +41,54 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/now/code.debt.md",
+                "file": "di/notes/guides/project/development/stipulations.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt"
+              "title": "stipulations"
+            }
+          },
+          {
+            "id": "7b54a3668f01e1ab",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/guides/project/development/logic driven design.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "logic driven design"
+            }
+          },
+          {
+            "id": "3f61be3ff887e8a4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/guides/project/development/adherence log.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "adherence log"
+            }
+          },
+          {
+            "id": "d8373beec00b15a1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/guides/project/development/adherence dashboard.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "adherence dashboard"
             }
           },
           {
@@ -78,7 +120,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -135,7 +177,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 301.5026054382324
+    "width": 352.5024719238281
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -213,13 +255,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/src/manual/index.md",
+                "file": "di/notes/guides/project/development/adherence dashboard.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of index"
+              "title": "Outline of adherence dashboard"
             }
           }
         ],
@@ -240,35 +282,44 @@
       "bases:Create new base": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "d8373beec00b15a1",
   "lastOpenFiles": [
-    "di/src/manual/delete me.md",
-    "di/notes/work/now/handoff.md",
-    "ws/vite.config.js.timestamp-1777763148210-189cb1d473ec7.mjs",
-    "di/notes/work/now/work journal.md",
-    "s3/notes/work/fresh.build.md",
-    "di/notes/guides/project/reference guide/build notes.md",
-    "notes/guides/develop/build notes.md",
-    "ga/node_modules/phaser/changelog/3.60/Build.md",
-    "notes/guides/develop/build.md",
-    "di/notes/work/milestones/done/6.build.notes.md",
-    "node_modules/iconv-corefoundation/node_modules/node-addon-api/doc/prebuild_tools.md",
-    "notes/work/articles/how.to.build.it.md",
-    "di/src/lib/md/builds.md",
-    "di/src/manual/images/first-steps/index.md",
-    "di/src/manual/images/index.md",
-    "logs/update-docs.error.mono.log",
-    "ws/vite.config.js.timestamp-1777759387601-d832ca05758dc.mjs",
-    "di/src/lib/svelte/main/UserGuide.svelte",
-    "node_modules/typedoc/node_modules/entities/lib/esm/generated/encode-html.d.ts",
-    "node_modules/typedoc/node_modules/entities/lib/esm/generated/encode-html.js.map",
-    "node_modules/typedoc/node_modules/entities/lib/esm/generated/encode-html.js",
-    "node_modules/typedoc/node_modules/entities/lib/esm/generated/encode-html.d.ts.map",
-    "node_modules/typedoc/node_modules/entities/lib/esm/generated/decode-data-xml.d.ts.map",
-    "node_modules/typedoc/node_modules/entities/lib/esm/generated/decode-data-html.js",
-    "node_modules/typedoc/node_modules/entities/readme.md",
-    "node_modules/typedoc/node_modules/markdown-it/README.md",
-    "di/src/manual/index.md",
+    "di/notes/tools/index.md",
+    "logs/update-docs.error.di.log",
+    "ws/vite.config.js.timestamp-1777883071123-1e85b1a51fc09.mjs",
+    "ws/vite.config.js.timestamp-1777883050248-3731a1e1f8e05.mjs",
+    "di/notes/guides/project/development/logic driven design.md",
+    "di/notes/guides/project/development/adherence dashboard.md",
+    "di/notes/guides/project/development/stipulations.md",
+    "di/notes/guides/project/development/adherence log.md",
+    "di/notes/guides/project/development/dashboard guide.md",
+    "di/notes/tools/validate-adherence.mjs",
+    "di/notes/guides/project/development/build-status.json",
+    "di/notes/tools/build-with-status.mjs",
+    "di/notes/guides/project/development/areas.json",
+    "di/notes/tools/extract-adherence.mjs",
+    "di/notes/tools",
+    "di/scripts/extract-adherence.mjs",
+    "di/notes/guides/guides.layout.md",
+    "di/src/manual/reference guide/index.md",
+    "di/src/manual/reference guide/units.md",
+    "di/src/manual/reference guide/undo and redo.md",
+    "di/src/manual/reference guide/selection.md",
+    "di/src/manual/reference guide/save and load.md",
+    "di/src/manual/reference guide/repeaters.md",
+    "di/src/manual/reference guide/reparenting.md",
+    "di/src/manual/reference guide/library.md",
+    "di/src/manual/reference guide/formulas.md",
+    "di/src/manual/reference guide/build notes.md",
+    "di/src/manual/units.md",
+    "di/src/manual/undo and redo.md",
+    "di/src/manual/selection.md",
+    "di/src/manual/save and load.md",
+    "di/src/manual/reparenting.md",
+    "di/src/manual/repeaters.md",
+    "di/src/manual/library.md",
+    "di/src/manual/formulas.md",
+    "di/src/manual/build notes.md",
     "di/src/manual/images/first-steps/06-dimension-input.png",
     "di/src/manual/images/first-steps/08-fresh-child.png",
     "di/src/manual/images/first-steps/07-blank-canvas.png",
@@ -277,14 +328,6 @@
     "di/src/manual/images/first-steps/03-locked-cursor.png",
     "di/src/manual/images/first-steps/02-dimensions-on.png",
     "di/src/manual/images/first-steps/01-opening.png",
-    "di/src/manual/first.steps.md",
-    "di/notes/work/now/code.debt.md",
-    "di/notes/work/done/code.debt.paid.md",
-    "di/notes/guides/project/reference guide/index.md",
-    "di/notes/guides/project/index.md",
-    "di/notes/guides/project/user guide/index.md",
-    "di/notes/guides/project/user guide/first.steps.md",
-    "di/notes/guides/project/reference guide/units.md",
     "di/notes/guides/project/user guide/images/first-steps/08-fresh-child.png",
     "di/notes/guides/project/user guide/images/first-steps/05-mid-stretch.png",
     "ws/notes/work/Untitled.canvas"

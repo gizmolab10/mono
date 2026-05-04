@@ -68,7 +68,7 @@ These corrections have not been applied to the file. They are queued.
 - Two pre-existing type-check errors fixed (unused import, moved field reference).
 - One linter blank-line cleanup in the project map file.
 - The new work file `bottlenecks.md` itself (created, populated, restructured several times).
-- The map file updated to include the new work file: [map.md](../../../../../guides/project/main/map.md)
+- The map file updated to include the new work file: [map.md](../../../../../guides/project/overview/map.md)
 - One memory update: the feedback rule for pre-existing errors now says "always fix" instead of "report and ask."
 
 ---
@@ -102,7 +102,7 @@ Jonathan reorganized everything under `di/notes/work` into new top-level folders
 
 ### What I did
 
-**Updated the project map** ([map.md](../../../../../guides/project/main/map.md)). The "Notes — Work" section was a flat list of files that no longer existed. I rewrote it into seven groupings that mirror the new folder layout: plan, now-slow, now-facets, next, milestones (open), milestones (done), and done. Every file currently in the new structure is now listed under its correct grouping.
+**Updated the project map** ([map.md](../../../../../guides/project/overview/map.md)). The "Notes — Work" section was a flat list of files that no longer existed. I rewrote it into seven groupings that mirror the new folder layout: plan, now-slow, now-facets, next, milestones (open), milestones (done), and done. Every file currently in the new structure is now listed under its correct grouping.
 
 **Updated the shorthand file** ([notes/guides/pre-flight/shorthand.md](notes/guides/pre-flight/shorthand.md)). Three table rows pointed at paths that no longer existed:
 

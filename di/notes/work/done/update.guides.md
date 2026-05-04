@@ -21,7 +21,7 @@ Listed compactly so the file reads in a finite time. Folder paths use the layout
 4. The version-migration page was updated through the latest two migration steps.
 5. Targeted fixes landed on the click-and-hover dispatch page, the repeaters page, the rendering-types page, the three-dimensions render page, the axes page, the intersecting-faces page, the two-dimensions page, and the spatial-acceleration research page.
 6. Folder reshape landed in stages. The theory folder became research. The launch page was renamed to the scenes page. The library-versioning notes moved from core into research. The quaternions redirect page was deleted. The archives folder was left as-is.
-7. The top-level shape settled at `guides/architecture/`, `guides/project/main/`, `guides/project/user manual/`, `guides/project/research/`, with the per-component reference pages now living under `guides/architecture/components/`. The three-dimensional hit-tester page lives under `architecture/graph/`. The local-storage wrapper page and the part data shape page live under `architecture/core/`. The map page lives at `guides/project/main/map.md`.
+7. The top-level shape settled at `guides/architecture/`, `guides/project/overview/`, `guides/project/user manual/`, `guides/project/research/`, with the per-component reference pages now living under `guides/architecture/components/`. The three-dimensional hit-tester page lives under `architecture/graph/`. The local-storage wrapper page and the part data shape page live under `architecture/core/`. The map page lives at `guides/project/overview/map.md`.
 8. After the most recent components reshape, every dead link surfaced by the docs build was repaired. The build is green.
 
 ## Proposal — extract enduring material from milestone files
@@ -73,7 +73,7 @@ Decided: milestones 9 and 31 are research, not architecture.
 
 Today only the two mothballed milestones (32 facets, 33 drag) carry a `lessons.md`. The lessons in those two files are some of the most valuable writing in the project — they are about why approaches failed, not what code does.
 
-Proposal: add `project/main/lessons.md`. It carries the meta-lessons (the patterns that would mislead a successor on any feature, not just facets or drag), and it links out to the two existing `lessons.md` files for the deeper case-by-case writing. Keep the originals in place.
+Proposal: add `project/overview/lessons.md`. It carries the meta-lessons (the patterns that would mislead a successor on any feature, not just facets or drag), and it links out to the two existing `lessons.md` files for the deeper case-by-case writing. Keep the originals in place.
 
 Candidate meta-lessons to lift:
 
@@ -142,5 +142,5 @@ Largest payoff per page first. All ten are done.
 6. ~~The two-dimensional hit manager — verify completeness, fill in the timing detail if missing.~~ Done.
 7. ~~The drawing-area editors group page (new).~~ Done.
 8. ~~Move key paths into `architecture/ui/`.~~ Done.
-9. ~~Distill this file into a useful set of instructions for the next time we update the guides.~~ Done — the distilled instructions live at `project/main/updating guides.md`.
+9. ~~Distill this file into a useful set of instructions for the next time we update the guides.~~ Done — the distilled instructions live at `project/overview/updating guides.md`.
 10. ~~The user manual filled out feature by feature.~~ Done. Eight new pages under `project/user manual/`: selection, re-parenting, formulas, library, build notes, undo and redo, units, save and load. Every claim has a code citation; the existing repeaters page was left as-is.

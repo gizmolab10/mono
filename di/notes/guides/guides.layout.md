@@ -50,16 +50,24 @@ guides/
 │       └── style.md ..................... CSS conventions and design tokens
 └── project/
     ├── index.md ......................... project table of contents
-    ├── main/
-    │   ├── index.md ..................... main table of contents
+    ├── development/
+    │   ├── index.md ..................... development table of contents
+    │   ├── adherence dashboard.md ....... auto-generated scorecard, refreshed on every build
+    │   ├── adherence log.md ............. hand-recorded sweeps, compliance, triage entries
+    │   ├── areas.json ................... module count per area (hand-maintained)
     │   ├── best.practices.md ............ Svelte patterns and what to avoid
-    │   ├── file layout.md ............... every folder and file listed
+    │   ├── build-status.json ............ last build outcome, written by the wrapper script
+    │   ├── dashboard guide.md ........... how to read the adherence dashboard
     │   ├── lessons.md ................... meta-lessons from mothballed work
-    │   ├── map.md ....................... flat list of notes files
-    │   ├── project.md ................... entry flow and core loop
+    │   ├── logic driven design.md ....... logic-driven design notes
     │   ├── stipulations.md .............. load-bearing rules catalog
     │   ├── testing.md ................... test index per rule
     │   └── updating guides.md ........... instructions for guide updates
+    ├── overview/
+    │   ├── index.md ..................... overview table of contents
+    │   ├── file layout.md ............... every folder and file listed
+    │   ├── map.md ....................... flat list of notes files
+    │   └── project.md ................... entry flow and core loop
     ├── research/
     │   ├── index.md ..................... research table of contents
     │   ├── 3D.primer.md ................. quaternions, projection, perspective basics

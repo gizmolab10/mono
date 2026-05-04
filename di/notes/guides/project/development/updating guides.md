@@ -31,7 +31,7 @@ When adding, moving, renaming, or removing a guide page, all the following stay 
 1. **The folder's own `index.md`.** Add or remove the link in the contents list. Pages are listed alphabetically.
 2. **The architecture top-level `index.md`** (for any page under `architecture/`). The descriptive bullet list is grouped by sub-folder; the contents list at the bottom names the folders.
 3. **The `guides.layout.md` file.** A bird's-eye tree of every page; each entry has a one-line description of eight words or less.
-4. **The map page** (`project/main/map.md`) — only when source-code paths or notes-tree paths change. The map is a flat list, not an index.
+4. **The map page** (`project/overview/map.md`) — only when source-code paths or notes-tree paths change. The map is a flat list, not an index.
 
 For a moved page, also fix every inbound link surfaced by the docs build.
 

@@ -202,3 +202,6 @@
     - [x] create new folder "user guide"
     - [x] move first.steps into it
     - [x] update index
+- [x] incorporate user guide into app
+    - [x] move md files and images into /src
+    - [x] "?" button in lower right corner of graph

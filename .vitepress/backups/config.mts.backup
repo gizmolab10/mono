@@ -244,84 +244,64 @@ export default defineConfig({
                       collapsed: true,
                       items: [
                         {
-                          text: 'Main >',
-                          link: '/di/notes/guides/project/main/',
+                          text: 'Development >',
+                          link: '/di/notes/guides/project/development/',
                           collapsed: true,
                           items: [
                             {
-                              text: 'Best.practices',
-                              link: '/di/notes/guides/project/main/best.practices'
+                              text: 'Adherence Dashboard',
+                              link: '/di/notes/guides/project/development/adherence dashboard'
                             },
                             {
-                              text: 'File Layout',
-                              link: '/di/notes/guides/project/main/file layout'
+                              text: 'Adherence Log',
+                              link: '/di/notes/guides/project/development/adherence log'
+                            },
+                            {
+                              text: 'Best.practices',
+                              link: '/di/notes/guides/project/development/best.practices'
+                            },
+                            {
+                              text: 'Dashboard Guide',
+                              link: '/di/notes/guides/project/development/dashboard guide'
                             },
                             {
                               text: 'Lessons',
-                              link: '/di/notes/guides/project/main/lessons'
+                              link: '/di/notes/guides/project/development/lessons'
                             },
                             {
-                              text: 'Map',
-                              link: '/di/notes/guides/project/main/map'
-                            },
-                            {
-                              text: 'Project',
-                              link: '/di/notes/guides/project/main/project'
+                              text: 'Logic Driven Design',
+                              link: '/di/notes/guides/project/development/logic driven design'
                             },
                             {
                               text: 'Stipulations',
-                              link: '/di/notes/guides/project/main/stipulations'
+                              link: '/di/notes/guides/project/development/stipulations'
                             },
                             {
                               text: 'Testing',
-                              link: '/di/notes/guides/project/main/testing'
+                              link: '/di/notes/guides/project/development/testing'
                             },
                             {
                               text: 'Updating Guides',
-                              link: '/di/notes/guides/project/main/updating guides'
+                              link: '/di/notes/guides/project/development/updating guides'
                             }
                           ]
                         },
                         {
-                          text: 'Reference Guide >',
-                          link: '/di/notes/guides/project/reference guide/',
+                          text: 'Overview >',
+                          link: '/di/notes/guides/project/overview/',
                           collapsed: true,
                           items: [
                             {
-                              text: 'Build Notes',
-                              link: '/di/notes/guides/project/reference guide/build notes'
+                              text: 'File Layout',
+                              link: '/di/notes/guides/project/overview/file layout'
                             },
                             {
-                              text: 'Formulas',
-                              link: '/di/notes/guides/project/reference guide/formulas'
+                              text: 'Map',
+                              link: '/di/notes/guides/project/overview/map'
                             },
                             {
-                              text: 'Library',
-                              link: '/di/notes/guides/project/reference guide/library'
-                            },
-                            {
-                              text: 'Reparenting',
-                              link: '/di/notes/guides/project/reference guide/reparenting'
-                            },
-                            {
-                              text: 'Repeaters',
-                              link: '/di/notes/guides/project/reference guide/repeaters'
-                            },
-                            {
-                              text: 'Save And Load',
-                              link: '/di/notes/guides/project/reference guide/save and load'
-                            },
-                            {
-                              text: 'Selection',
-                              link: '/di/notes/guides/project/reference guide/selection'
-                            },
-                            {
-                              text: 'Undo And Redo',
-                              link: '/di/notes/guides/project/reference guide/undo and redo'
-                            },
-                            {
-                              text: 'Units',
-                              link: '/di/notes/guides/project/reference guide/units'
+                              text: 'Project',
+                              link: '/di/notes/guides/project/overview/project'
                             }
                           ]
                         },

@@ -3,7 +3,7 @@
 How Design Intuition is built. Read top to bottom — each layer builds on the last.
 ## 1. Orient
 Start here. One page, whole app.
-- See the [Main](../project/main/) folder for the project shape, file layout, best practices, stipulations, and testing.
+- See the [Overview](../project/overview/) folder for the project shape, file layout, and the entry-flow walk-through.
 ## 2. Understand
 Where things live, what they do.
 - [Core](./core/) — singletons and systems

@@ -109,18 +109,23 @@
 				{@render hamburger_button()}
 				{@render help_button()}
 				<span class='spacer'></span>
-				{@render face_buttons()}
+				{@render decoration_buttons()}
 				<span class='spacer'></span>
 				{@render guides_slider()}
 			</div>
 			<div class='right-row'>
-				{@render decoration_buttons()}
+				{@render desktop_only_buttons()}
+				<span class='spacer'></span>
 				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
 				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
+				<span class='spacer'></span>
+				{@render scaling_slider()}
 			</div>
 			<div class='right-row'>
+				<span class='spacer'></span>
+				{@render face_buttons()}
 				{@render face_accessory_buttons()}
-				{@render scaling_slider()}
+				<span class='spacer'></span>
 			</div>
 		</div>
 	{:else if wrap_mobile}
@@ -186,8 +191,8 @@
 
 	.right-row {
 		height          : var(--h-controls);
+		gap             : var(--l-gap-tiny);
 		background      : var(--accent);
-		gap             : var(--l-gap);
 		overflow        : visible;
 		justify-content : center;
 		align-items     : center;
@@ -200,7 +205,7 @@
 	}
 
 	.desktop-row {
-		gap         : var(--l-gap);
+		gap         : var(--l-gap-tiny);
 		flex        : 0 1 auto;
 		align-items : center;
 		display     : flex;
@@ -208,15 +213,14 @@
 	}
 
 	.sliders-row {
-		gap         : var(--l-gap);
+		gap         : var(--l-gap-tiny);
 		flex        : 1 1 auto;
 		align-items : center;
-		min-width   : 200px;
 		display     : flex;
 	}
 
 	.guides-block {
-		flex           : 0 0 auto;
+		flex           : 1 1 auto;
 		flex-direction : column;
 		align-items    : center;
 		display        : flex;
@@ -225,8 +229,7 @@
 	.scale-block {
 		margin-right : calc(-1 * var(--l-gap-small));
 		flex         : 1 1 auto;
-		min-width    : 200px;
-		margin-left  : 10px;
+		margin-left  : 4px;
 		margin-top   : 4px;
 		min-width    : 0;
 	}
@@ -267,7 +270,6 @@
 	}
 
 	.toolbar-button {
-		padding       : 0 var(--l-padding) 1px var(--l-padding);
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		font-size     : var(--h-font-common);

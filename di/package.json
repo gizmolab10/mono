@@ -17,7 +17,8 @@
     "shoot": "playwright test --config=e2e/screenshots/playwright.config.ts",
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "docs:preview": "vitepress preview",
+    "adherence": "node notes/tools/extract-adherence.mjs && node notes/tools/build-with-status.mjs"
   },
   "dependencies": {
     "@types/rbush": "^4.0.0",

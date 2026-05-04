@@ -84,8 +84,8 @@ Citation: the parts plus button is wired at `src/lib/svelte/details/Details.svel
 
 ## What to read next
 
-- [Selection](../reference guide/selection.md) — multi-select with command-click, drill-down through stacks.
-- [Formulas](../reference guide/formulas.md) — what you can type in a formula cell.
-- [Units](../reference guide/units.md) — choosing a unit family, precision, typing values.
-- [Library](../reference guide/library.md) — saving, replacing, importing arrangements.
-- [Repeaters](../reference guide/repeaters.md) — stairs, studs, joists.
+- [Selection](./reference guide/selection.md) — multi-select with command-click, drill-down through stacks.
+- [Formulas](./reference guide/formulas.md) — what you can type in a formula cell.
+- [Units](./reference guide/units.md) — choosing a unit family, precision, typing values.
+- [Library](./reference guide/library.md) — saving, replacing, importing arrangements.
+- [Repeaters](./reference guide/repeaters.md) — stairs, studs, joists.

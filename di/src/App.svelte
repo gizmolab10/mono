@@ -15,9 +15,9 @@
 
 <style>
 	:global(body) {
-		margin: 0;
 		font-family: system-ui, sans-serif;
 		user-select: none;
+		margin: 0;
 	}
 
 	:global(input:focus, textarea:focus) {
@@ -26,9 +26,11 @@
 
 	@media (max-width: 429px) {
 		:global(:root) {
-			--l-gap: 2px !important;
-			--th-thin-sep: 1px !important;
 			--th-content-sep: 1px !important;
+			--th-thin-sep: 1px !important;
+			--l-gap-small: 1px !important;
+			--l-gap-tiny: 1px !important;
+			--l-gap: 1px !important;
 		}
 	}
 </style>

@@ -1,0 +1,31 @@
+{
+	"_comment": "Load-bearing modules per area. Hand-maintained. The area name must exactly match a heading in stipulations.md. The number is the count of modules whose invariants are tracked under this area. Use 0 when the area has not yet been audited; the dashboard reports 'not yet audited' for those.",
+	"areas": {
+		"Blocks": 2,
+		"Each attribute has several flavors": 1,
+		"Invariants": 2,
+		"Root": 2,
+		"Locked attribute": 1,
+		"Formulas": 1,
+		"Children": 2,
+		"Repeaters": 2,
+		"Fire blocks": 1,
+		"Formula trees": 3,
+		"Camera and projection": 2,
+		"Dragging": 1,
+		"Wider behavior": 3,
+		"Orientation and units": 2,
+		"Givens and formula safety": 2,
+		"Display, history, and repeater details": 3,
+		"Cell modes and name resolution": 1,
+		"Save format and named-value locks": 2,
+		"Geometry, viewing modes, and error state": 3,
+		"Identity, persistence, and deletion": 2,
+		"Precision and grid": 1,
+		"Editing lock and decorations": 1,
+		"View-mode and rotation": 2,
+		"Drag": 1,
+		"Preferences layer": 1,
+		"Center letter in formulas": 1
+	}
+}
