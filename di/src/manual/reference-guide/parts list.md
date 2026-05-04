@@ -1,4 +1,4 @@
-# Re-parenting parts by drag
+# Organizing the parts list
 
 You can re-arrange the parts hierarchy by dragging a row in the parts panel onto another row.
 
@@ -16,9 +16,9 @@ The dragged part keeps its visible position, size, and angle on the canvas. What
 
 The drag refuses three combinations.
 
-- A part dragged onto itself.
-- A part dragged onto one of its descendants (which would create a loop).
-- A part dragged into a part whose role is to be a repeater template (the first child of a repeating parent).
+* A part dragged onto itself.
+* A part dragged onto one of its descendants (which would create a loop).
+* A part dragged into a part whose role is to be a repeater template (the first child of a repeating parent).
 
 When the drop is refused, the indicator does not appear and the drop is silently ignored.
 

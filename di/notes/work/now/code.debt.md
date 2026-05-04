@@ -5,10 +5,10 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
 - [ ] help
-    - [ ] keep hamburger visible
-    - [ ] hamburger -> sidebar visibility toggle
+    - [x] keep hamburger visible
+    - [x] hamburger -> sidebar visibility toggle
     - [ ] new preferences`
-        - [ ] hamburger help visibility
+        - [x] hamburger help visibility
         - [ ] help page id
     - [ ] complete & excellent
 - [ ] mobile

@@ -10,7 +10,7 @@ Three things kept in lock-step: a catalogue of load-bearing rules, a test for ea
 
 - [ ] adopt the framework opt-in by area
     - [ ] algebra, units, version migration — yes (stable, well-bounded, benefit clearly)
-    - [ ] visual layout, colour, animation tick — no (resist formalisation)
+    - [ ] visual layout, color, animation tick — no (resist formalisation)
     - [ ] each area decides for itself based on its own shape
 - [ ] apply the framework only to stable code
     - [ ] a feature must have lived for some months without major redesign before its stipulations get pinned

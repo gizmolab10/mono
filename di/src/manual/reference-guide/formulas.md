@@ -19,7 +19,7 @@ An empty cell on a length attribute (`w`, `d`, `h`) means the stored value is us
 
 ## What names you can use
 
-Each axis has three letters for the start, the length, and the end: `x w X`, `y d Y`, `z h Z`. There is also a fourth read-only letter for the centre of each axis (`x_center`, `y_center`, `z_center`). For the same letters but agnostic of which axis you are on, use `s l e` (start, length, end) and `c` for centre.
+Each axis has three letters for the start, the length, and the end: `x w X`, `y d Y`, `z h Z`. There is also a fourth read-only letter for the center of each axis (`x_center`, `y_center`, `z_center`). For the same letters but agnostic of which axis you are on, use `s l e` (start, length, end) and `c` for center.
 
 ## What if your formula has a mistake
 

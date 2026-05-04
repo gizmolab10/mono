@@ -13,26 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/now/handoff.md",
+                "file": "di/src/manual/reference-guide/parts list.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "handoff"
-            }
-          },
-          {
-            "id": "89f29862184edb80",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/src/manual/index.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "index"
+              "title": "parts list"
             }
           },
           {
@@ -105,7 +91,8 @@
               "title": "code.debt.paid"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -137,7 +124,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:build",
+                "query": "centre",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -240,13 +227,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/handoff.md",
+                "file": "di/notes/work/now/code.debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -267,54 +254,54 @@
       "bases:Create new base": false
     }
   },
-  "active": "21e3ad04b1f2972e",
+  "active": "a4f7fe31b964230b",
   "lastOpenFiles": [
+    "di/test-results",
+    "di/src/manual/reference-guide/parts list.md",
+    "di/src/manual/index.md",
+    "di/notes/guides/project/development/logic driven design.md",
+    "ws/vite.config.js.timestamp-1777930751636-a57256cf19769.mjs",
+    "logs/update-docs.error.di.log",
+    "logs/update-docs.error.mono.log",
+    "di/src/manual/reference-guide/index.md",
+    "di/notes/work/now/handoff.md",
+    "di/dist/assets/index-BAB9V-46.js",
+    "di/dist/assets/07-blank-canvas-B2Uo0KVX.png",
+    "di/dist/assets/index-hyaqjWt8.css",
+    "di/dist/assets/08-fresh-child-2u3Y4gkp.png",
+    "di/dist/assets/06-dimension-input-D4fwGeTM.png",
+    "di/dist/assets/05-mid-stretch-3Z5nELyA.png",
+    "di/dist/assets/01-opening-DDsFJvfv.png",
+    "di/dist/assets/03-locked-cursor-BEKKah8f.png",
+    "di/dist/assets/02-dimensions-on-C-zh2LZ9.png",
+    "di/src/manual/reference-guide/units.md",
+    "di/src/manual/reference-guide/undo and redo.md",
+    "di/src/manual/reference-guide/selection.md",
+    "di/src/manual/reference-guide/save and load.md",
+    "di/src/manual/reference-guide/repeaters.md",
+    "di/src/manual/reference-guide/reparenting.md",
+    "di/src/manual/reference-guide/library.md",
+    "di/src/manual/reference-guide/formulas.md",
+    "di/src/manual/reference-guide/build notes.md",
+    "di/src/manual/reference-guide",
     "di/notes/work/now/code.debt.md",
     "di/notes/work/done/code.debt.paid.md",
     "di/notes/guides/project/development/stipulations.md",
     "di/notes/work/now/work journal.md",
-    "di/src/manual/index.md",
     "CLAUDE.MD",
-    "di/notes/guides/project/development/logic driven design.md",
     "di/notes/guides/project/development/dashboard guide.md",
-    "di/notes/work/now/handoff.md",
     "di/notes/guides/project/development/adherence log.md",
     "di/notes/guides/project/development/adherence dashboard.md",
     "di/notes/tools/index.md",
-    "logs/update-docs.error.di.log",
     "ws/vite.config.js.timestamp-1777883071123-1e85b1a51fc09.mjs",
     "ws/vite.config.js.timestamp-1777883050248-3731a1e1f8e05.mjs",
     "di/notes/tools/validate-adherence.mjs",
     "di/notes/guides/project/development/build-status.json",
-    "di/notes/tools/build-with-status.mjs",
-    "di/notes/guides/project/development/areas.json",
-    "di/notes/tools/extract-adherence.mjs",
-    "di/notes/tools",
-    "di/scripts/extract-adherence.mjs",
     "di/notes/guides/guides.layout.md",
     "di/src/manual/reference guide/index.md",
-    "di/src/manual/reference guide/units.md",
-    "di/src/manual/reference guide/undo and redo.md",
-    "di/src/manual/reference guide/selection.md",
-    "di/src/manual/reference guide/save and load.md",
-    "di/src/manual/reference guide/repeaters.md",
-    "di/src/manual/reference guide/reparenting.md",
-    "di/src/manual/reference guide/library.md",
-    "di/src/manual/reference guide/formulas.md",
-    "di/src/manual/reference guide/build notes.md",
-    "di/src/manual/units.md",
-    "di/src/manual/undo and redo.md",
-    "di/src/manual/selection.md",
     "di/src/manual/images/first-steps/06-dimension-input.png",
     "di/src/manual/images/first-steps/08-fresh-child.png",
     "di/src/manual/images/first-steps/07-blank-canvas.png",
-    "di/src/manual/images/first-steps/05-mid-stretch.png",
-    "di/src/manual/images/first-steps/04-toolbar-padlock.png",
-    "di/src/manual/images/first-steps/03-locked-cursor.png",
-    "di/src/manual/images/first-steps/02-dimensions-on.png",
-    "di/src/manual/images/first-steps/01-opening.png",
-    "di/notes/guides/project/user guide/images/first-steps/08-fresh-child.png",
-    "di/notes/guides/project/user guide/images/first-steps/05-mid-stretch.png",
     "ws/notes/work/Untitled.canvas"
   ]
 }

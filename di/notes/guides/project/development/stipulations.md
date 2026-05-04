@@ -360,7 +360,7 @@ load-bearing behaviour that no rule pins:
 
 ### **Out of scope per the development process:**
 
-- Visual layout, colour, animation tick (`utilities/Colors.ts`, `render/Animation.ts`, the `R_*` decoration files, `editors/*` for inline editing widgets, `common/Constants.ts` for sizes and fonts) — the development process explicitly says these resist formalisation.
+- Visual layout, color, animation tick (`utilities/Colors.ts`, `render/Animation.ts`, the `R_*` decoration files, `editors/*` for inline editing widgets, `common/Constants.ts` for sizes and fonts) — the development process explicitly says these resist formalisation.
 - Pure plumbing — type-alias files, prototype extensions, event plumbing without a clear invariant.
 
 How the development process expects this to play out: don't extract them in a sweep. When work next touches one of these modules, write the rules its code assumes and add them at that point.

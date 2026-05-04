@@ -12,7 +12,7 @@
 	// Eagerly import every markdown page in the user guide and every image. The
 	// keys are the source paths; the values are the file content (raw text for
 	// markdown, URL strings for images).
-	const pages = import.meta.glob<string>('../../../manual/*.md', {
+	const pages = import.meta.glob<string>('../../../manual/**/*.md', {
 		eager: true, query: '?raw', import: 'default'
 	}) as Record<string, string>;
 
@@ -24,21 +24,46 @@
 
 	const md = new MarkdownIt({ html: false, linkify: true, typographer: true });
 
-	// Build the page list. The id is the filename without the .md extension. The
-	// title is the first-line heading (stripping the leading "# "). Pages are
-	// sorted with index first, then alphabetical.
+	// Build the page list. The id is the path under the manual folder, without
+	// the .md extension (e.g. "index", "reference-guide/selection"). The title
+	// is the first-line heading (stripping the leading "# ").
+	//
+	// Sidebar order is hand-set via SIDEBAR_ORDER below: pages whose id appears
+	// in that list sort by their position in it; any page not in the list sorts
+	// at the end alphabetically (so a newly-added file is still discoverable
+	// until it gets placed in the order).
+	const MANUAL_PREFIX = '../../../manual/';
+	const SIDEBAR_ORDER: string[] = [
+		'index',
+		'reference-guide/units',
+		'reference-guide/library',
+		'reference-guide/save and load',
+		'reference-guide/undo and redo',
+		'reference-guide/selection',
+		'reference-guide/formulas',
+		'reference-guide/parts list',
+		'reference-guide/repeaters',
+	];
 	const all_pages: Page[] = Object.entries(pages)
 		.map(([path, raw]) => {
-			const filename = path.split('/').pop() ?? '';
-			const id = filename.replace(/\.md$/, '');
+			const id = path.startsWith(MANUAL_PREFIX)
+				? path.slice(MANUAL_PREFIX.length).replace(/\.md$/, '')
+				: path.replace(/\.md$/, '');
 			const heading_match = raw.match(/^#\s+(.+)$/m);
 			const title = heading_match ? heading_match[1].trim() : id;
 			return { id, title, raw };
 		})
+		// Hide stray pages from the sidebar:
+		//   - anything under the images folder (alt-text scratchpads, not real pages)
+		//   - the reference-guide index page (a list of links already in the sidebar)
+		.filter(p => !p.id.startsWith('images/') && p.id !== 'reference-guide/index')
 		.sort((a, b) => {
-			if (a.id === 'index') return -1;
-			if (b.id === 'index') return 1;
-			return a.title.localeCompare(b.title);
+			const ai = SIDEBAR_ORDER.indexOf(a.id);
+			const bi = SIDEBAR_ORDER.indexOf(b.id);
+			if (ai !== -1 && bi !== -1) return ai - bi;
+			if (ai !== -1) return -1;
+			if (bi !== -1) return 1;
+			return a.id.localeCompare(b.id);
 		});
 
 	let active_id = $state(all_pages[0]?.id ?? 'index');
@@ -68,25 +93,28 @@
 		if (event.key === 'Escape') onclose();
 	}
 
-	// Intercept clicks on rendered-markdown links. A link to one of the user
-	// guide's own pages (e.g. "first-steps.md" or "first-steps") switches the
-	// active page in-place instead of letting the browser navigate. External
-	// links (http, mailto, etc.) and links pointing outside the guide
-	// (containing ../ or other paths) fall through to the browser.
+	// Intercept clicks on rendered-markdown links. A link that resolves to one
+	// of the user guide's own pages switches the active page in-place. Links
+	// that escape the guide (using ../ to break out of the manual root, or
+	// pointing at scheme-prefixed / rooted URLs) fall through to the browser.
 	function handle_click(event: MouseEvent) {
 		const target = event.target as HTMLElement;
 		const anchor = target.closest('a');
 		if (!anchor) return;
 		const href = anchor.getAttribute('href');
-		console.log('user-guide click — href is:', href);
 		if (!href) return;
 		// Scheme-prefixed (http:, mailto:, etc.), protocol-relative, or rooted — leave alone
 		if (/^[a-z]+:|^\/\//i.test(href)) return;
 		if (href.startsWith('/')) return;
-		// Strip a leading "./", a trailing "?...", a fragment, and the ".md" extension to get a candidate id
-		const candidate = href.replace(/^\.\//, '').replace(/[?#].*$/, '').replace(/\.md$/, '');
-		// Only single-segment ids are page references
-		if (candidate.includes('/')) return;
+		// Resolve the link relative to the active page's location inside the manual.
+		// The manual root is treated as the URL root, so a top-level page sits at "/<id>"
+		// and a subfolder page sits at "/<folder>/<id>".
+		const base = new URL('http://x/' + encodeURI(active_id));
+		let resolved: URL;
+		try { resolved = new URL(href, base); } catch { return; }
+		// Anything outside the manual root (host changed, or path leaves with ../) falls through
+		if (resolved.host !== 'x') return;
+		const candidate = decodeURIComponent(resolved.pathname.replace(/^\//, '').replace(/\.md$/, ''));
 		if (all_pages.some(p => p.id === candidate)) {
 			event.preventDefault();
 			active_id = candidate;

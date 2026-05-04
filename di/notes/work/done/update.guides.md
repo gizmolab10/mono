@@ -46,7 +46,7 @@ These are checkbox lists with little reusable content.
 | 14 details | `architecture/components/Details.md` | The three-pill layout, the Hideable shell, the persistent open/closed state |
 | 15 attributes | `architecture/core/Smart_Objects.md` | The three states a value can be in (free, locked, formula-driven); the automatic transitions that keep state consistent; how the runtime block sits at the resolver write |
 | 16 formulas | `architecture/core/algebra.md` | The reference conventions (bare, dot-prefix, name.path); the derived formulas for invariants; the silent empty-formula rule |
-| 21 css engine | `architecture/ui/style.md` | The token catalogue, the colour-flow rule, the magic-number audit outcome |
+| 21 css engine | `architecture/ui/style.md` | The token catalogue, the color-flow rule, the magic-number audit outcome |
 | 26 lacemaker | `architecture/graph/intersecting.faces.md` | The single-key-from-birth rule; the canonical edge-pair ordering; why three merge passes were removed |
 
 ### New guide pages — large bodies of design that have no home today
@@ -114,7 +114,7 @@ Only one page exists today (repeaters). I AM GUESSING the user-visible features 
 I AM GUESSING each of these is incomplete because the page has not been read this session; verify before acting.
 
 1. ~~The page on click-and-hover dispatch — likely missing the long-click, double-click, and autorepeat timing detail.~~ Done — see the recently-added-pages list above.
-2. The page on style and design tokens — likely needs the token catalogue and the colour-flow rule from milestone twenty-one.
+2. The page on style and design tokens — likely needs the token catalogue and the color-flow rule from milestone twenty-one.
 3. The pages on rotation and on the rendering types — both touched late this session in spot-fix mode; completeness not verified.
 4. The page on scenes (save and load) — may or may not include the format research from milestone nine; the proposal above already moves that to research instead.
 5. The build-and-deploy story (the two-deployment pattern, docs site versus app site) — milestone three has the material; no corresponding page in the guides.

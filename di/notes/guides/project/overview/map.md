@@ -152,16 +152,16 @@
 ## In-app manual
 
 - di/src/manual/index.md
-- di/src/manual/reference guide/index.md
-- di/src/manual/reference guide/build notes.md
-- di/src/manual/reference guide/formulas.md
-- di/src/manual/reference guide/library.md
-- di/src/manual/reference guide/repeaters.md
-- di/src/manual/reference guide/reparenting.md
-- di/src/manual/reference guide/save and load.md
-- di/src/manual/reference guide/selection.md
-- di/src/manual/reference guide/undo and redo.md
-- di/src/manual/reference guide/units.md
+- di/src/manual/reference-guide/index.md
+- di/src/manual/reference-guide/build notes.md
+- di/src/manual/reference-guide/formulas.md
+- di/src/manual/reference-guide/library.md
+- di/src/manual/reference-guide/repeaters.md
+- di/src/manual/reference-guide/reparenting.md
+- di/src/manual/reference-guide/save and load.md
+- di/src/manual/reference-guide/selection.md
+- di/src/manual/reference-guide/undo and redo.md
+- di/src/manual/reference-guide/units.md
 
 ## Notes — Work
 

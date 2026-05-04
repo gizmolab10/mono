@@ -6,7 +6,7 @@ Citation: `src/lib/ts/editors/` — `Angular.ts`, `Dimension.ts`, `Drag.ts`, `Fa
 
 ## What each one does
 
-- **Dimension.** The user clicks a dimension number floating beside an edge and types a new value. The new value is parsed (units string, fraction, or formula expression), then applied to the part by writing the two endpoint bounds symmetrically around the current centre, then propagation runs.
+- **Dimension.** The user clicks a dimension number floating beside an edge and types a new value. The new value is parsed (units string, fraction, or formula expression), then applied to the part by writing the two endpoint bounds symmetrically around the current center, then propagation runs.
 - **Angular.** The user clicks an angle number floating beside an axis and types a new angle. The new angle is parsed (number, with or without a degree symbol), then written to the part's angle for that axis, then propagation runs.
 - **Face label.** The user clicks the small text on a face that shows the part's name and types a new name. The new name is trimmed, written to the part, the saved scene is updated.
 - **Drag.** The user drags a face, an edge, or a corner of the selected part. Per-frame, the mouse position is unprojected to a world ray, intersected with the drag-start plane (held in the parent's local frame so a parent resize during the drag does not invalidate it), and the displacement is decomposed onto the face's two edges, then applied to the affected bounds via the upstream-walking distribution path.

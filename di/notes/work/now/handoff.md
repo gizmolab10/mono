@@ -9,7 +9,7 @@
 
 The first unchecked code-debt item is "collapse parts tree not stuck on selected — select the collapsed part." Pick that up next.
 
-After that, the selection-algorithm milestone has the rubber-band rectangle (with option-key centre-and-zoom and a recentre button on the controls strip), and "create new group around selected objects" / "ability to combine multiple parts" sub-items.
+After that, the selection-algorithm milestone has the rubber-band rectangle (with option-key center-and-zoom and a recenter button on the controls strip), and "create new group around selected objects" / "ability to combine multiple parts" sub-items.
 
 For evidence:
 
@@ -58,9 +58,9 @@ At roughly a hundred parts where every part's outer box overlaps every other, th
 - **Delete on a non-repeater grandchild leaves the part still listed.** Jonathan reports: select a child of a child of root, press delete, the selection clears but the part stays in the parts table. Static analysis ruled out the repeater-regeneration angle and the early-return paths. Most likely cause is an exception thrown between selection-clear and the parts-list rewrite — the formula-reference walker is the most fragile step. Still open. Need a console error message or a small repro scene to pin the failing step.
 - **Up/down arrow in the parts table skips two rows per press on Jonathan's scene.** Same status as the prior session — could not reproduce from reading the code. Need more detail about the scene before a fix can be made.
 - **Identity-based formula storage.** Today's targeted rename helper closed the immediate bug, but the deeper fix is to store formula references by part identity rather than by a snapshot of the part's name. Recorded as a future structural refactor; see the rename-bug discussion in today's session below.
-- **Selection-algorithm milestone.** Next on the code-debt list — propose. Covers drag-dot visibility, mouse drill-down, rubber-band re-centre and zoom, recentre control, and command-drag follow.
+- **Selection-algorithm milestone.** Next on the code-debt list — propose. Covers drag-dot visibility, mouse drill-down, rubber-band re-center and zoom, recenter control, and command-drag follow.
 - **Arrow keys nudge SO position**, **print just the graph scaled to fit**, **move-up / move-down buttons in the parts table**, and **move-to-child / become-parent buttons** sit on the code-debt list after the selection-algorithm milestone.
-- **Color leftovers.** Two unchecked items remain in the colour family: white text for selected rows when the background is too dark, and a hand cursor over hover dots and the selected face (with a pointing-finger cursor everywhere else).
+- **Color leftovers.** Two unchecked items remain in the color family: white text for selected rows when the background is too dark, and a hand cursor over hover dots and the selected face (with a pointing-finger cursor everywhere else).
 - **Givens for angles** and **rename library items** sit in the leftovers section of code.debt.
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Left as deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
@@ -271,7 +271,7 @@ Awaiting decision.
 
 Both wrappers have the same rounded corner with `overflow: hidden`. The difference is the alignment of items inside the toolbar row.
 
-- The main app's toolbar row centres its children: at [Controls.svelte:197](../../src/lib/svelte/main/Controls.svelte#L197) the row uses `justify-content: center`. The hamburger sits in the middle of the row, far from the rounded corner. At desktop widths (≥1500 pixels) the row instead packs to the left, but the typical viewer hits the wrap-mobile layout and the centring hides the corner.
+- The main app's toolbar row centers its children: at [Controls.svelte:197](../../src/lib/svelte/main/Controls.svelte#L197) the row uses `justify-content: center`. The hamburger sits in the middle of the row, far from the rounded corner. At desktop widths (≥1500 pixels) the row instead packs to the left, but the typical viewer hits the wrap-mobile layout and the centring hides the corner.
 - The help overlay's toolbar row packs its children to the left: at [UserGuide.svelte:158](../../src/lib/svelte/main/UserGuide.svelte#L158) the row uses `justify-content: flex-start`. The hamburger sits hard against the row's left edge, exactly where the corner curve cuts in.
 
 The user's nudges (-7 pixels left) made the clip more obvious. The underlying cause is the alignment direction — even with no nudge the help hamburger would sit only ~6 pixels in from the wrapper's edge, well inside a corner curve of radius ~20.
@@ -291,5 +291,125 @@ The result: the toolbar's rounded curve is smaller than the help overlay's round
 Fix: tell the help wrapper to use a radius equal to half the toolbar height instead of the shared full radius. This matches the effective rounded curve of the main toolbar exactly. The visual rounded corner stays — it just renders at the toolbar's curve size, not the larger one. Hamburger and corner radius unchanged in their own definitions; both now render the same way the main toolbar does.
 
 One CSS line added to the help-overlay wrapper at [Main.svelte:155](../../src/lib/svelte/main/Main.svelte#L155): `border-radius: calc(var(--h-controls) / 2)`.
+
+Type-check still clean.
+
+---
+
+## Why the "What to read next" links do not work
+
+The "What to read next" list inside one of the help overlay pages contains five bullets that point at pages inside the `reference guide/` subfolder of the manual. None of them works. Three independent problems stack on top of each other:
+
+1. **Spaces in the link URL break markdown's link parser.** Markdown does not allow plain spaces between the parentheses that hold a URL. The folder is named "reference guide" with a space, so the parser rejects the link and shows the raw bracket-and-paren text instead. The markdown library is configured at [UserGuide.svelte:20](../../src/lib/svelte/main/UserGuide.svelte#L20).
+2. **The in-overlay click handler refuses anything with a slash.** Even if the link rendered as a real link, the handler at [UserGuide.svelte:71-94](../../src/lib/svelte/main/UserGuide.svelte#L71-L94) treats only single-segment names (no slashes) as in-overlay page references. The `reference guide/selection` candidate has a slash and is dropped.
+3. **The reference-guide pages are not in the overlay's page list at all.** The page glob at [UserGuide.svelte:15](../../src/lib/svelte/main/UserGuide.svelte#L15) is `../../../manual/*.md` — a single star, no recursion. Files inside subfolders are invisible to the overlay.
+
+For these links to work, all three need to change:
+
+- Rename the folder so its name has no space (or URL-encode the space in every link), so the markdown parser will actually emit a link.
+- Either flatten the manual into a single folder so every link is a single-segment id, or teach the click handler to accept multi-segment ids.
+- Widen the glob to recurse into subfolders so the reference-guide pages enter the page list.
+
+---
+
+## Help-overlay reference-guide links — fixed
+
+All five fixes applied. The "What to read next" links now render as real markdown links and clicking them navigates inside the help overlay. Same for cross-links between reference-guide pages and the reference-guide index page.
+
+### What changed
+
+- **Folder rename.** `src/manual/reference guide/` → `src/manual/reference-guide/`. The hyphen lets markdown parse the URL.
+- **Walkthrough page links.** Five lines in `src/manual/index.md` updated from `./reference guide/X.md` to `./reference-guide/X.md`.
+- **Help overlay's page glob.** Widened from `*.md` to `**/*.md` so subfolder pages are picked up.
+- **Page id calculation.** Now uses the path under the manual folder (e.g. `index`, `reference-guide/selection`) instead of just the filename. Distinct ids for top-level and subfolder pages, no collisions.
+- **Click handler.** Slash-rejection removed. URL resolution rewrites the link relative to the current page's id, so a same-folder link like `library.md` from inside `reference-guide/save and load` resolves to `reference-guide/library`. Outside-overlay links (with `..` segments leading out of the manual root, or scheme-prefixed URLs) still fall through to the browser.
+- **Layout map.** `notes/guides/project/overview/map.md` updated to use the new folder name.
+- **Dead-link regex.** A pre-existing handoff entry contained relative links into `../../src/lib/svelte/...` that the docs build started flagging when the docs build ran with these source-file references in the file. The vitepress config's ignore list already covered `/di/src/` paths but not the `../../src/` form; added a `/\/src\//` pattern so any `/src/` path in a markdown link is treated as expected-dead.
+
+### Verification
+
+- `yarn adherence` (extractor + docs build): green.
+- `yarn build` (app build): green.
+- `yarn svelte-check`: zero errors, zero warnings.
+
+### Notable side effects
+
+- The help overlay sidebar now lists eleven entries (top-level walkthrough plus the ten reference-guide pages). The list is sorted by id, with `index` pinned first, then alphabetical: the ten reference-guide pages all sort below the walkthrough, with the reference-guide index near the top of that batch. The display might feel crowded; grouping or a sub-header is a possible follow-up but not part of this fix.
+- The reference-guide index page is itself a list of links. It now appears in the sidebar as a sibling of the pages it links to. Could be hidden later if it feels redundant.
+
+---
+
+## Help-overlay sidebar — three stray entries removed
+
+The recursive page glob picked up three pages that should not be in the sidebar:
+
+- "Images" — from a leftover `images/index.md` placeholder.
+- "First Steps" (capital S) — from another leftover `images/first-steps/index.md` placeholder.
+- "Reference Guide" — the reference-guide section's own index page, which is just a list of links to the pages already in the sidebar.
+
+Filter added in [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte): pages whose id starts with `images/` are dropped (no real content), and the page with id `reference-guide/index` is dropped (redundant with the rest of the section). The actual top-level walkthrough page (id `index`, title "First steps" with lowercase s) stays as the first entry.
+
+Type-check clean. Docs build clean.
+
+---
+
+## Command to recreate the help screenshots
+
+The walkthrough's eight screenshots are produced by:
+
+```bash
+yarn shoot
+```
+
+Behaviour: the script either starts the dev server on port 5175 or reuses the one already running, drives a real Chromium browser through the eight scripted steps, and writes one PNG per step into `src/manual/images/first-steps/`. The markdown pages of the help content are hand-edited; only the screenshots are generated by this command.
+
+Evidence: the script is wired in package.json under "scripts". The Playwright config and the journey it follows are in [e2e/screenshots/](../../e2e/screenshots/).
+
+---
+
+## How the help-overlay markdown becomes HTML
+
+There is no command that turns the manual's markdown into standalone HTML files. The conversion happens at runtime inside the browser:
+
+- At bundle time, the page glob inside the help overlay component pulls every manual markdown file as raw text. The text is shipped with the app as a string.
+- At runtime, when a help page becomes active, the overlay calls the markdown library to render that page's text, and injects the resulting HTML into the page area.
+
+To see the conversion in action, run `yarn dev` and open the help overlay. There is no on-disk HTML output for the manual; the docs build (`yarn docs:build`) does not include the manual either — its source folder is `notes/` and there is no symlink to the manual on disk today (an older comment in the vitepress config mentions one, but it is gone).
+
+Evidence: the page glob and the runtime call to the markdown library both live in [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte). The vitepress source folder setting is in [.vitepress/config.mts](../../.vitepress/config.mts).
+
+---
+
+## How the help-overlay sidebar gets generated
+
+There is no command that recreates the sidebar as a standalone HTML artifact. The sidebar is rendered by the help overlay component at runtime, inside the browser:
+
+- At bundle time, the page glob picks up every manual markdown file. The component computes an id and a title for each, filters out the stray pages (anything under `images/` and the reference-guide section's own index), and sorts the result.
+- At runtime, the component's template emits one list-item button per remaining page. The active page gets the highlighted-pill style.
+
+To see the actual HTML, run `yarn dev`, open the help overlay, and inspect the DOM in the browser. To rebuild the bundle that contains the sidebar template, run `yarn build`. Neither produces a standalone sidebar HTML file on disk; that would require a small one-off script that walks the manual folder with the same id/title/filter rules the component uses.
+
+Evidence: the each-block that renders the sidebar list lives in the template body of [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte).
+
+---
+
+## Help-overlay sidebar — manual ordering applied
+
+A hand-set order list now controls the sidebar sequence. The ten visible pages appear in this order:
+
+1. First steps (the walkthrough)
+2. Selection
+3. Formulas
+4. Units
+5. Library
+6. Repeaters
+7. Reparenting
+8. Save and load
+9. Undo and redo
+10. Build notes
+
+A new constant near the top of the help overlay component lists every page id in the desired order. The sort uses each page's position in this list. A page not in the list falls to the end alphabetically — so a freshly-added file remains visible until it gets a slot in the order.
+
+To rearrange in the future: edit the constant in [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte) (look for `SIDEBAR_ORDER` near the top of the script block) and reorder the entries.
 
 Type-check still clean.
