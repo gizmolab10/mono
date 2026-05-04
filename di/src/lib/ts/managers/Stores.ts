@@ -22,6 +22,7 @@ class Stores {
 	w_parts_tab			= preferences.persistent<T_Parts_Tab>(T_Preference.partsTab, T_Parts_Tab.attributes);
 	w_view_mode			= make_stale(preferences.persistent<'2d' | '3d'>(T_Preference.viewMode, '3d'));
 	w_show_details		= preferences.persistent<boolean>(T_Preference.showDetails, true);
+	w_show_help_sidebar	= preferences.persistent<boolean>(T_Preference.showHelpSidebar, true);
 	w_t_details			= preferences.persistent<number>(T_Preference.visibleDetails, 1);
 	w_edge_thickness	= make_stale(preferences.persistent<number>(T_Preference.edgeThickness, 2));
 	w_grid_opacity		= make_stale(preferences.persistent<number>(T_Preference.gridOpacity, 0.5));

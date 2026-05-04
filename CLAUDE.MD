@@ -1,18 +1,15 @@
 # Shared Context
 
-NEVER EVER use git
+NEVER EVER use git.
 
 PROJECTS: ws (webseriously) = graph visualization, di (design intuition) = CAD rebuild, ga (game), me (my personal work)
 
-> Read files before editing, search before claiming, propose before changing. Gates force reading the right guide before acting. Work tracked in `notes/work/`, style follows `voice.md`.
+## Principles
 
-**Every response:** in `notes/guides/pre-flight`, read `always.md`, `keywords.md` and `shorthand.md`. If any keyword matches, read the listed guide(s). If any shorthand matches perform the action.
-
-Before starting work, read all `.md` files within:
-
-`notes/guides/collaborate`
-`notes/guides/pre-flight`
-`<X>notes/work` (top level only, where X is the project name, eg "di")
+1. Don't assume. Don't hide confusion. Surface tradeoffs.
+2. Minimum code that solves the problem. Nothing speculative.
+3. Touch only what you must. Clean up only your own mess.
+4. Define success criteria. Loop until verified.
 
 ## Who
 
@@ -20,50 +17,28 @@ Jonathan: artist before engineer. Engineering serves the art. Values intuition, 
 
 Collaborator (or "co") = Claude.
 
-## Defaults
+## Reading on load
 
-NEVER use Claude's own memory/config dirs (eg .claude/projects/). All persistent notes go in \~/GitHub/mono/
+Read every `.md` file in:
 
-ALWAYS use yarn. `yarn vitest`, `yarn svelte-check`, `yarn <script>`. NEVER use npm or npx — No exceptions.
-
-EXECUTE: Hybrid — reads/searches immediately, propose file changes before executing
-
-FILESYSTEM: Full read/write/execute within `~/GitHub/mono`
-
-MEMORY: Use `conversation_search/recent_chats` before claiming no context
-
-userMemories: Ignore entirely. Stale data risk outweighs serendipity. Use `memory` command if curious.
-
-UNDO: Before `write_file`, always `read_file` first and hold content. On "undo", restore it.
-
-WORK TRACKING: Keep `notes/work/<file>.md` updated as we go
-
-TONE: Follow `voice.md` — first person, casual, punchy
-
-DOCS STYLE: Update index.md files when adding/moving/removing files
-
-## Session Start
+- `notes/guides/collaborate/` — chat roles, prose voice, workflow discipline, folders to skip when mapping
+- `notes/guides/pre-flight/` — `always.md`, `keywords.md`, `shorthand.md` apply every response; `gates.md`, `kinds.of.tasks.md`, `pitfalls.md` apply at session start
+- `<X>/notes/work/` (top level only, where X is the active project)
 
 Also read:
 
-1. `shorthand.md` — parse commands and abbreviations
-2. `kinds.of.tasks.md` — classify task type, note conflicts
-3. `gates.md` — check for STOP/SEARCH/LIST/WAIT
-4. `pitfalls.md` — edge cases that cause mistakes
-5. `../work/learn.md` — don't repeat them. If 10+ entries, say: "Feedstock: \[N\] — time to distill."
-6. `<X>/notes/map.md` — file map for the active project. Read instead of globbing. Update when files are added/moved/removed. Exclude folders listed in `notes/guides/collaborate/exclude.md`.
+- `<X>/notes/work/learn.md` — past mistakes; never repeat them. If ten or more entries, say: "Feedstock: \[N\] — time to distill."
+- `<X>/notes/map.md` — the project's file map. Read instead of globbing. Update when files are added, moved, or removed. Skip folders listed in `notes/guides/collaborate/exclude.md` (when building maps; not for general searching).
 
-## Guides
+If any keyword matches, read the listed guide(s). If any shorthand matches, perform the action.
 
-In `notes/guides/collaborate/`:
+## Defaults
 
-* `chat.md` — roles, requirements, division of labor
-* `voice.md` — prose style
-* `workflow.md` — implementation, refactoring, debugging discipline
-* `exclude.md` — folders to skip when building map files (not general searching)
-
-In `notes/guides/pre-flight/`:
-
-* `always.md` — read every response
-* `keywords.md` — scan every response
-* `gates.md`, `shorthand.md`, `kinds.of.tasks.md`, `pitfalls.md` — session start
+- **Tooling.** Always use yarn (`yarn vitest`, `yarn svelte-check`, `yarn <script>`). Never npm or npx — no exceptions.
+- **Filesystem.** Full read/write/execute inside `~/GitHub/mono`. All persistent notes live there. Never use Claude's own memory or config directories (e.g. `.claude/projects/`).
+- **Execution.** Hybrid — reads and searches immediately; propose file changes before executing.
+- **Undo.** Before `write_file`, always `read_file` first and hold the content. On "undo", restore it.
+- **Memory.** Use `conversation_search` / `recent_chats` before claiming no context. Ignore the userMemories surface entirely (stale-data risk outweighs serendipity; use the `memory` command if curious).
+- **Work tracking.** Keep `notes/work/<file>.md` updated as work moves.
+- **Tone.** Follow `voice.md` — first person, casual, punchy.
+- **Docs.** Update `index.md` files when adding, moving, or removing files.

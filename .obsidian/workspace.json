@@ -8,7 +8,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "637080e9f6da3143",
+            "id": "21e3ad04b1f2972e",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -36,21 +36,7 @@
             }
           },
           {
-            "id": "40c17ae35c4b3642",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/guides/project/development/stipulations.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "stipulations"
-            }
-          },
-          {
-            "id": "7b54a3668f01e1ab",
+            "id": "637080e9f6da3143",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -64,17 +50,17 @@
             }
           },
           {
-            "id": "3f61be3ff887e8a4",
+            "id": "40c17ae35c4b3642",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/guides/project/development/adherence log.md",
+                "file": "di/notes/guides/project/development/stipulations.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "adherence log"
+              "title": "stipulations"
             }
           },
           {
@@ -92,17 +78,17 @@
             }
           },
           {
-            "id": "a871e2dfc18c3cf2",
+            "id": "a4f7fe31b964230b",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/now/work journal.md",
+                "file": "di/notes/work/now/code.debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "work journal"
+              "title": "code.debt"
             }
           },
           {
@@ -119,8 +105,7 @@
               "title": "code.debt.paid"
             }
           }
-        ],
-        "currentTab": 5
+        ]
       }
     ],
     "direction": "vertical"
@@ -255,13 +240,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/guides/project/development/adherence dashboard.md",
+                "file": "di/notes/work/now/handoff.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of adherence dashboard"
+              "title": "Outline of handoff"
             }
           }
         ],
@@ -282,17 +267,23 @@
       "bases:Create new base": false
     }
   },
-  "active": "d8373beec00b15a1",
+  "active": "21e3ad04b1f2972e",
   "lastOpenFiles": [
+    "di/notes/work/now/code.debt.md",
+    "di/notes/work/done/code.debt.paid.md",
+    "di/notes/guides/project/development/stipulations.md",
+    "di/notes/work/now/work journal.md",
+    "di/src/manual/index.md",
+    "CLAUDE.MD",
+    "di/notes/guides/project/development/logic driven design.md",
+    "di/notes/guides/project/development/dashboard guide.md",
+    "di/notes/work/now/handoff.md",
+    "di/notes/guides/project/development/adherence log.md",
+    "di/notes/guides/project/development/adherence dashboard.md",
     "di/notes/tools/index.md",
     "logs/update-docs.error.di.log",
     "ws/vite.config.js.timestamp-1777883071123-1e85b1a51fc09.mjs",
     "ws/vite.config.js.timestamp-1777883050248-3731a1e1f8e05.mjs",
-    "di/notes/guides/project/development/logic driven design.md",
-    "di/notes/guides/project/development/adherence dashboard.md",
-    "di/notes/guides/project/development/stipulations.md",
-    "di/notes/guides/project/development/adherence log.md",
-    "di/notes/guides/project/development/dashboard guide.md",
     "di/notes/tools/validate-adherence.mjs",
     "di/notes/guides/project/development/build-status.json",
     "di/notes/tools/build-with-status.mjs",
@@ -314,12 +305,6 @@
     "di/src/manual/units.md",
     "di/src/manual/undo and redo.md",
     "di/src/manual/selection.md",
-    "di/src/manual/save and load.md",
-    "di/src/manual/reparenting.md",
-    "di/src/manual/repeaters.md",
-    "di/src/manual/library.md",
-    "di/src/manual/formulas.md",
-    "di/src/manual/build notes.md",
     "di/src/manual/images/first-steps/06-dimension-input.png",
     "di/src/manual/images/first-steps/08-fresh-child.png",
     "di/src/manual/images/first-steps/07-blank-canvas.png",

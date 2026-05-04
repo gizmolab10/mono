@@ -1,8 +1,13 @@
 <script lang='ts'>
 	import MarkdownIt from 'markdown-it';
 	import Separator from '../mouse/Separator.svelte';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { stores } from '../../ts/managers/Stores';
+	import { k } from '../../ts/common/Constants';
 
 	let { onclose } : { onclose: () => void } = $props();
+
+	const { w_show_help_sidebar } = stores;
 
 	// Eagerly import every markdown page in the user guide and every image. The
 	// keys are the source paths; the values are the file content (raw text for
@@ -93,29 +98,39 @@
 
 <div class='user-guide' role="dialog" aria-modal="true" aria-label="User guide">
 	<div class='controls-bar'>
+		<button class='hamburger'
+			onclick={() => w_show_help_sidebar.update(v => !v)}
+			aria-label='toggle help sidebar'>
+			<svg class='hamburger-icon' viewBox='0 0 {k.height.button.common} {k.height.button.common}' width={k.height.button.common + 20} height={k.height.button.common}>
+				<path d={svg_paths.hamburger(k.height.button.common + 2)}/>
+			</svg>
+		</button>
 		<button class='toolbar-button' onclick={onclose}>← Return to Design Intuition</button>
 	</div>
 
 	<div class='content-card'>
 		<div class='content-row'>
-			<aside class='sidebar'>
-				<ul>
-					{#each all_pages as page}
-						<li>
-							<button
-								class:active={page.id === active_id}
-								onclick={() => active_id = page.id}>
-								{page.title}
-							</button>
-						</li>
-					{/each}
-				</ul>
-			</aside>
+			{#if $w_show_help_sidebar}
+				<aside class='sidebar'>
+					<ul>
+						{#each all_pages as page}
+							<li>
+								<button
+									class:active={page.id === active_id}
+									onclick={() => active_id = page.id}>
+									{page.title}
+								</button>
+							</li>
+						{/each}
+					</ul>
+				</aside>
 
-			<Separator vertical kind='main'/>
+				<Separator vertical kind='main'/>
+			{/if}
 
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<div class='page' role="document" onclick={handle_click}>
 				{@html rendered}
 			</div>
@@ -138,18 +153,46 @@
 		height          : var(--h-controls);
 		padding         : 0 var(--l-gap);
 		background      : var(--accent);
+		gap             : var(--l-gap);
 		box-sizing      : border-box;
 		justify-content : flex-start;
+		overflow        : visible;
 		align-items     : center;
 		width           : 100%;
 		display         : flex;
 		flex-shrink     : 0;
 	}
 
+	.hamburger {
+		height          : var(--h-button-common);
+		width           : var(--h-button-common);
+		z-index         : var(--z-action);
+		background      : transparent;
+		position        : relative;
+		cursor          : pointer;
+		color           : inherit;
+		align-items     : center;
+		justify-content : center;
+		left            : -6.5px;
+		top             : -1px;
+		display         : flex;
+		border          : none;
+		padding         : 0;
+	}
+
+	.hamburger-icon path {
+		fill   : currentColor;
+		stroke : currentColor;
+	}
+
+	.hamburger:hover .hamburger-icon path {
+		fill : var(--c-white);
+	}
+
 	.content-card {
 		margin                  : var(--l-gap) 0 0 0;
-		border-top-left-radius  : var(--radius);
 		border-top-right-radius : var(--radius);
+		border-top-left-radius  : var(--radius);
 		background              : var(--bg);
 		flex-direction          : column;
 		overflow                : hidden;
@@ -166,8 +209,10 @@
 		border-radius   : var(--corner-common);
 		background      : var(--c-white);
 		box-sizing      : border-box;
+		position        : relative;
 		cursor          : pointer;
 		color           : inherit;
+		left            : -9px;
 	}
 
 	.toolbar-button:hover {

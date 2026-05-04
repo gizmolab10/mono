@@ -110,3 +110,186 @@ If every existing user should also land in the new state on their next launch, t
 The simpler "just flip the default" route is honest about what it does (helps new users only). The bigger route forces every user into the new state but rewrites their preferences.
 
 Decision needed: which way.
+
+---
+
+## Adherence dashboard built and rules catalogue fully migrated
+
+The "logic driven design" guide had a ten-step plan for a small dashboard that scores the project against the development process. All ten steps are done. Then all fifty-eight rules in the catalogue were walked through the migration in twelve passes. End state: zero rules on the old shape, every audited area green, every gated metric green.
+
+### What runs now
+
+A new yarn script — `yarn adherence` — chains two scripts. The first reads the rules catalogue and the test index, cross-joins them, and writes a dashboard page at `notes/guides/project/development/adherence dashboard.md`. The second runs the docs build and records its exit code into a small status file the next run reads. A separate validator at `notes/tools/validate-adherence.mjs` runs two in-memory fixtures through the same parser and confirms the cross-join's counts on a deliberate orphan and on a clean run.
+
+The dashboard opens with a green-or-red overall badge that names the failing metrics when red. Below the badge sits a one-line legacy count and the migration progress section. The four gated metrics (test binding, orphan tests, build-gate, coverage by area) come next, then a per-area table with a coverage figure for every audited area. A hand-written guide at `notes/guides/project/development/dashboard guide.md` explains every section, the action triggered by each red value, and where to look when the dashboard itself looks suspect.
+
+A hand-recorded sibling file at `notes/guides/project/development/adherence log.md` holds three append-only sections — re-read sweeps, new-work compliance, and failure triage — for the metrics the dashboard cannot read automatically.
+
+### What the migration produced
+
+Every rule in the catalogue now carries a short stable name, a pointer to the test that pins it, and a pointer to the source line that proves it. Every test entry in the index points back at the rules it pins. Twenty-six areas are audited; each carries a hand-counted module count in `areas.json`. Coverage runs from one rule per module to three rules per module — every audited area is green.
+
+Four new browser-driven test entries were added to the test index for the four user-flow rules (editing-lock blocks clicks, view-mode toggle saves and restores orientation, rotation-snap aligns to a face, drag-without-selection tumbles the camera) — those rules now have a place to point back from.
+
+### Drifts surfaced during migration
+
+Two semantic mismatches between rule wording and code came out of the work:
+
+1. The rule "each direction has three attributes" says three; the code defines four (the angle is the unrecorded fourth on every direction). The proving test only checks for three, so the rule and the test agree; the code is the odd one out. Logged under re-read sweeps in the adherence log.
+2. The rule "if an invariant is altered by the user, this causes reverse propagation" originally read as a different mechanism than the one the cited tests prove (the tests prove forward enforcement that overwrites the user's value, not reverse propagation that respects it). Surfaced mid-migration; Jonathan rewrote the rule to align with the tests.
+
+### What this enables
+
+A rename or removal of a test or a source file the catalogue points at becomes a malformed entry, which fails the docs build. Drift between rule wording and code surfaces the moment someone re-reads a rule against its proving lines — that already happened twice during the migration, cleanly.
+
+Going forward, every new feature lands a rule in its area before the test, and a test before the merge. The development process gates this; the dashboard reports it.
+
+### Where everything lives
+
+- Catalogue: [stipulations.md](../../guides/project/development/stipulations.md)
+- Test index: [testing.md](../../guides/project/development/testing.md)
+- Module counts: `notes/guides/project/development/areas.json`
+- Build status: `notes/guides/project/development/build-status.json` (auto, refreshed by the wrapper script)
+- Auto dashboard: [adherence dashboard.md](../../guides/project/development/adherence%20dashboard.md)
+- Sweep log: [adherence log.md](../../guides/project/development/adherence%20log.md)
+- Reading guide: [dashboard guide.md](../../guides/project/development/dashboard%20guide.md)
+- Tools: `notes/tools/extract-adherence.mjs`, `notes/tools/build-with-status.mjs`, `notes/tools/validate-adherence.mjs`
+- Process doc: [logic driven design.md](../../guides/project/development/logic%20driven%20design.md)
+
+---
+
+## Help-overlay hamburger and sidebar toggle — proposed slice
+
+The help overlay (the full-screen page that opens when the user taps the question mark on the toolbar) currently shows its sidebar permanently — there's no way to hide it. The four code-debt items under "help" want to add a hamburger inside the overlay that toggles the sidebar, plus persist the sidebar's open or closed state and which page the user was last reading.
+
+Ordered so each step is a clean stopping point:
+
+1. **Hamburger inside the help overlay.** A button at the top-left of the help overlay's control bar, matching the main app's hamburger style. Clicking it toggles a local "show sidebar" state. The hamburger stays visible whether the sidebar is open or closed.
+2. **Wire the toggle to the sidebar.** When the state is off, the sidebar's column collapses to zero width so only the page content shows; the vertical separator hides too. When the state is on, the sidebar comes back at its current width.
+3. **Persist the sidebar visibility.** A new preference key. The state survives reloads.
+4. **Persist the active page id.** A new preference key. Reopening the help overlay returns to the last page the user was reading.
+5. **Polish to "complete & excellent".** Hover and active styling that matches the main app's hamburger; keyboard focus ring; smooth transition when the sidebar collapses; check that the small-screen layouts still work.
+
+Risk notes:
+
+- The persistent preference helper exists already (used elsewhere in the app for similar flags).
+- The help overlay reads its pages via a glob; persisting the page id needs a fallback if that page id no longer exists after a manual edit to the manual files.
+- I am guessing the hamburger should sit to the LEFT of the "← Return" button, mirroring the main app's toolbar layout. Could go right instead.
+
+---
+
+## Where the persistent-preference helper lives
+
+The two pieces:
+
+- `persistent<T>(key, fallback)` lives at [Preferences.ts:139](../../src/lib/ts/managers/Preferences.ts#L139). Returns a writable that reads from browser storage on first read and writes through on every change.
+- `persistent_set(key)` lives at [Preferences.ts:145](../../src/lib/ts/managers/Preferences.ts#L145). Same idea but for sets — handles the array-to-set round-trip.
+
+Existing call sites are clustered in [Stores.ts:20-27](../../src/lib/ts/managers/Stores.ts#L20-L27). The decorations flag, the saved orientation, the active parts tab, the view mode, the details panel show flag, and several display values all use the same pattern. The help-overlay sidebar visibility would mirror the existing line for the details panel show flag at line 24; the active page id would mirror the active parts tab line at line 22.
+
+---
+
+## Help-overlay slice — decisions
+
+Two open questions answered:
+
+- **Hamburger position.** Left of the "← Return to Design Intuition" button, mirroring the main app's toolbar layout.
+- **Fallback for a missing page id.** Land on the index page when the persisted page id no longer resolves to a real manual page.
+
+Both confirm the original guesses. Slice is ready to build on a green light.
+
+---
+
+## Help-overlay slice — steps 1, 2, 3 done
+
+Three of the five steps shipped. The help overlay's full-screen view now has a hamburger to its left of the "← Return" button. Clicking it toggles the sidebar. The state survives reloads.
+
+### What landed
+
+1. **Hamburger inside the help overlay.** A new button at the left of the help overlay's top bar. The icon and styling mirror the main toolbar's hamburger, including the white-when-active fill. Position is left of the "← Return to Design Intuition" button.
+2. **Sidebar visibility is wired.** When the hamburger is off the navigation column and its vertical separator are removed from the layout entirely; the page content widens to fill the space. When the hamburger is on, both come back at their original widths.
+3. **The visibility is persistent.** A new preference key holds the on-or-off state. Reloading the page reopens the help overlay with the same sidebar state the user left it in. Default is on, so a fresh visitor sees the navigation.
+
+### Files touched
+
+- New preference key `showHelpSidebar` added to the enum in [Preferences.ts:60-62](../../src/lib/ts/managers/Preferences.ts#L60-L62).
+- New persistent store `w_show_help_sidebar` added next to the existing details-panel show flag in [Stores.ts:24-25](../../src/lib/ts/managers/Stores.ts#L24-L25).
+- The help overlay component picked up the hamburger button, the conditional sidebar rendering, the new imports, the active-class style, and a small gap between toolbar items so the hamburger doesn't crowd the return button: [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte).
+
+### Pre-existing warnings cleaned up
+
+The svelte-check pass first showed one pre-existing warning about a non-interactive element with a click handler (the rendered-markdown div that intercepts internal links). Two ignore comments were already in place above it, but they named two different warning rules; the one that actually fires (`a11y_no_noninteractive_element_interactions`) was not covered. Added the missing ignore comment. Final state: zero errors, zero warnings.
+
+### Still open
+
+- **Step 4 — persist the active page id.** Not done yet. The help overlay still resets to the index page on every reload.
+- **Step 5 — polish.** No transition on the sidebar collapse, no keyboard focus ring tweaks, small-screen layouts not re-checked.
+
+---
+
+## Help-overlay hamburger — hover styling matched to main app
+
+The hamburger inside the help overlay now uses the same look as the main toolbar's hamburger: black icon by default, white icon on hover. The active-state class wiring was unused for visuals (the main app's white-fill rule fires on the project's own hover-tracking attribute, not on a plain "active" class), so it was removed. The CSS rule that paints the icon white now uses plain CSS `:hover` instead of a class flag, since the help overlay's controls are wired with plain `onclick` handlers and not the project's hit-target system.
+
+Type-check still clean: zero errors, zero warnings.
+
+---
+
+## Help-overlay hamburger — nudged 4px left
+
+The help hamburger sat one pixel up and zero pixels in from the left edge of the top bar. Bumped it 4 pixels further left so it lines up better against the bar's left edge. One CSS line added: `left: -4px` next to the existing `top: -1px` on the hamburger rule.
+
+---
+
+## Help-overlay return button — nudged 3px left
+
+The "← Return to Design Intuition" button sat at the top-bar gap default after the hamburger. Bumped it 3 pixels further left so the spacing between the hamburger and the button feels right. One CSS rule added on the toolbar-button class: relative positioning plus a 3-pixel leftward offset.
+
+---
+
+## Help-overlay hamburger — top-left clipping explained
+
+The hamburger's top-left corner gets clipped because the wrapper that surrounds the entire help overlay has a rounded outer corner with `overflow: hidden`. Anything drawn at the very top-left of the wrapper is cut along that curved edge.
+
+Evidence: every region wrapper gets a rounded corner and a clip at [Main.svelte:123-127](../../src/lib/svelte/main/Main.svelte#L123-L127); the help-overlay wrapper inherits both at [Main.svelte:150-155](../../src/lib/svelte/main/Main.svelte#L150-L155).
+
+The hamburger is at -7 pixels left and -1 pixel up from its natural spot. The natural spot is already only about 6 pixels from the wrapper's left edge and 1.6 pixels from the top, so the offsets push the SVG's drawing into the rounded-corner safe zone.
+
+z-index does not address this — the clip is the parent's rounded mask, not a stacking-order issue.
+
+Three options to fix:
+
+1. Move the hamburger right and down so it sits clear of the curve.
+2. Add inner padding to the help-overlay wrapper so the children start past the rounded corner.
+3. Drop the rounded corner on the help-overlay wrapper specifically (it is a full-screen overlay; rounded corners arguably do no visual work there).
+
+Awaiting decision.
+
+---
+
+## Why the main app's hamburger is not clipped, but the help's is
+
+Both wrappers have the same rounded corner with `overflow: hidden`. The difference is the alignment of items inside the toolbar row.
+
+- The main app's toolbar row centres its children: at [Controls.svelte:197](../../src/lib/svelte/main/Controls.svelte#L197) the row uses `justify-content: center`. The hamburger sits in the middle of the row, far from the rounded corner. At desktop widths (≥1500 pixels) the row instead packs to the left, but the typical viewer hits the wrap-mobile layout and the centring hides the corner.
+- The help overlay's toolbar row packs its children to the left: at [UserGuide.svelte:158](../../src/lib/svelte/main/UserGuide.svelte#L158) the row uses `justify-content: flex-start`. The hamburger sits hard against the row's left edge, exactly where the corner curve cuts in.
+
+The user's nudges (-7 pixels left) made the clip more obvious. The underlying cause is the alignment direction — even with no nudge the help hamburger would sit only ~6 pixels in from the wrapper's edge, well inside a corner curve of radius ~20.
+
+z-index does not help. The clip is the wrapper's rounded mask, not a layer-stacking effect.
+
+---
+
+## Help-overlay hamburger — clip resolved by clamping the help wrapper's effective corner radius
+
+The two wrappers (the toolbar wrapper in the main app and the full-screen wrapper around the help overlay) both ask for the same corner-radius value. The browser ends up rendering them at different sizes because of how it handles corners that are too big to fit.
+
+When the two corners on the same side of a box ask for a combined radius bigger than that side, the browser shrinks both proportionally so they fit. The toolbar wrapper is only as tall as one toolbar, so its top and bottom corners (each asking for the full radius) get shrunk to half that height. The help wrapper is full-screen tall, so the corners get to render at the full requested radius.
+
+The result: the toolbar's rounded curve is smaller than the help overlay's rounded curve, even though both are written the same way in the CSS. The help overlay's bigger curve eats enough further into the top-left corner to clip the topmost bar of the hamburger.
+
+Fix: tell the help wrapper to use a radius equal to half the toolbar height instead of the shared full radius. This matches the effective rounded curve of the main toolbar exactly. The visual rounded corner stays — it just renders at the toolbar's curve size, not the larger one. Hamburger and corner radius unchanged in their own definitions; both now render the same way the main toolbar does.
+
+One CSS line added to the help-overlay wrapper at [Main.svelte:155](../../src/lib/svelte/main/Main.svelte#L155): `border-radius: calc(var(--h-controls) / 2)`.
+
+Type-check still clean.

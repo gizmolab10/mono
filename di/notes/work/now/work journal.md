@@ -4,6 +4,53 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-04 — adherence dashboard built; rules catalogue fully migrated
+
+A long autonomous run that built an adherence-tracking system from scratch, then walked every rule in the catalogue through the migration to the new format.
+
+### Thread one — dashboard build, ten steps
+
+The "logic driven design" guide had a ten-step plan for a small dashboard that scores the project against the development process. All ten shipped:
+
+1. Catalogue and test-index format — added a Format section to each file showing the expected shape.
+2. Extractor — `notes/tools/extract-adherence.mjs` reads both files, cross-joins, returns matched / uncovered / orphan / malformed lists.
+3. Metrics — coverage by area, test binding, orphan tests, build-gate.
+4. Dashboard markdown — generated at `notes/guides/project/development/adherence dashboard.md` with a top-of-page badge and one section per metric.
+5. Build wiring — new `yarn adherence` script chains the extractor and a build-with-status wrapper that records the build's exit code so the next run can read it.
+6. Thresholds and badge — green when all four metrics meet their targets; red lists the failing metrics.
+7. Tracking policy — dashboard and status file are not gitignored. Hand-recorded log lives alongside with three append-only sections.
+8. Publishing — sidebar gained a Project section; project index calls out the dashboard; layout map and overview map list the new files.
+9. End-to-end validator — `notes/tools/validate-adherence.mjs` builds two in-memory fixtures and asserts the cross-join's counts.
+10. Hand-written guide — `notes/guides/project/development/dashboard guide.md` walks through every section, the red-value action table, and "when the dashboard is wrong".
+
+### Thread two — overall health line and migration progress moved to the top
+
+Added an at-a-glance line below the badge that surfaces the legacy count, then moved the full Migration progress section up to sit right under the badges so the migration status is the first thing the eye lands on.
+
+### Thread three — rules catalogue migrated, all fifty-eight
+
+Walked every area in twelve passes, applying the per-rule recipe each time: pick the next un-audited area, give each rule a short stable name, find the proving test in its file, find the proving code line, add the back-pointer on the test entry, set the area's module count in `areas.json`, run the extractor, run the validator. Final state: zero rules on the old "Covered:" shape, fifty-eight matched, zero uncovered, zero orphan, zero malformed. Twenty-six areas audited; coverage runs from one rule per module up to three rules per module, all green.
+
+Four new browser-driven test entries went into the test index — for the editing-lock, view-mode-switch, rotation-snap, and drag-versus-tumble user flows — so the four user-flow rules have somewhere to point back from.
+
+### Drifts surfaced during the migration
+
+1. The rule "each direction has three attributes" says three; the code defines four (the angle is the unrecorded fourth). The proving test only checks for three, so the rule and the test agree; the code is the odd one out. Logged in the adherence log.
+2. The rule "user-altered invariant causes reverse propagation" did not match the cited tests (which prove forward enforcement that overwrites the user's value). Surfaced mid-migration; Jonathan rewrote the rule to align with the tests, then the migration resumed.
+
+### Files touched — 2026-05-04
+
+- New tools: [extract-adherence.mjs](../../tools/extract-adherence.mjs), [build-with-status.mjs](../../tools/build-with-status.mjs), [validate-adherence.mjs](../../tools/validate-adherence.mjs).
+- New guides: [adherence dashboard.md](../../guides/project/development/adherence%20dashboard.md) (generated), [adherence log.md](../../guides/project/development/adherence%20log.md), [dashboard guide.md](../../guides/project/development/dashboard%20guide.md).
+- Edited: [stipulations.md](../../guides/project/development/stipulations.md), [testing.md](../../guides/project/development/testing.md), [logic driven design.md](../../guides/project/development/logic%20driven%20design.md), `notes/guides/project/development/areas.json`, [development index](../../guides/project/development/index.md), [project index](../../guides/project/index.md), [guides.layout.md](../../guides/guides.layout.md), [overview map.md](../../guides/project/overview/map.md), `.vitepress/config.mts`, `package.json`.
+
+### Verification — 2026-05-04
+
+- `yarn adherence`: every gated metric green; legacy count zero; zero malformed; build green.
+- `node notes/tools/validate-adherence.mjs`: both fixture passes green.
+
+---
+
 ## Session — 2026-05-01 — guides cleanup, screenshots, URL flag, App.svelte slimming
 
 A long session that closed out the guide-update arc and started chipping at code-debt items.

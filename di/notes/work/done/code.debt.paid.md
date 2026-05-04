@@ -205,3 +205,6 @@
 - [x] incorporate user guide into app
     - [x] move md files and images into /src
     - [x] "?" button in lower right corner of graph
+- [x] stipulations <-> code
+    - [x] distribute -> components?
+- [x] move reference guide -> src/manual

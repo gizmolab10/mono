@@ -4,20 +4,17 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] stipulations <-> code
-    - [ ] distribute -> components?
+- [ ] help
+    - [ ] keep hamburger visible
+    - [ ] hamburger -> sidebar visibility toggle
+    - [ ] new preferences`
+        - [ ] hamburger help visibility
+        - [ ] help page id
+    - [ ] complete & excellent
 - [ ] mobile
     - [ ] thin gaps
     - [ ] css craziness -> css configurator -> constants
     - [ ] edit always disabled
-- [ ] help
-    - [ ] complete & excellent
-    - [ ] keep hamburger visible
-    - [ ] sidebar -> details view
-    - [ ] new preferences`
-        - [ ] hamburger help visibility
-        - [ ] help page id
-    - [ ] move reference guide -> src/manual
 - [ ] white thumbs
 - [ ] click plus button in parts banner -> opens (if closed), selects new part
 - [ ] ability to cut an SO in half

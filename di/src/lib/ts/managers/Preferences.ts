@@ -57,6 +57,9 @@ export enum T_Preference {
 
 	// Parts table
 	collapsedIds     = 'collapsedIds',
+
+	// Help overlay
+	showHelpSidebar  = 'showHelpSidebar',
 }
 
 const STORAGE_PREFIX = 'di:';

@@ -106,24 +106,24 @@
 
 <style>
 	.panel {
+		min-width   : var(--window-min-width);
+		font-family : system-ui, sans-serif;
+		box-sizing  : border-box;
+		position    : fixed;
 		top         : 0;
 		left        : 0;
-		position    : fixed;
-		box-sizing  : border-box;
-		font-family : system-ui, sans-serif;
-		min-width   : var(--window-min-width);
 	}
 
 	.main {
-		display  : flex;
-		overflow : hidden;
 		gap      : var(--l-gap);
+		overflow : hidden;
+		display  : flex;
 	}
 
 	.region {
-		overflow      : hidden;
-		position      : relative;
 		border-radius : var(--radius);
+		position      : relative;
+		overflow      : hidden;
 	}
 
 	.controls {
@@ -139,18 +139,19 @@
 	}
 
 	.build-notes-region {
-		width           : 100%;
-		height          : 100%;
-		display         : flex;
+		box-sizing      : border-box;
 		justify-content : center;
 		align-items     : center;
-		box-sizing      : border-box;
+		display         : flex;
+		width           : 100%;
+		height          : 100%;
 	}
 
 	.user-guide-region {
+		box-sizing      : border-box;
+		position        : relative;
 		width           : 100%;
 		height          : 100%;
-		position        : relative;
-		box-sizing      : border-box;
+		border-radius   : calc(var(--h-controls) / 2);
 	}
 </style>

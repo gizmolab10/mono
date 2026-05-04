@@ -8,7 +8,7 @@ ALWAYS: Always update the authoritative count testing is done.
 
 ## Format
 
-Going forward, every stipulation carries three lines beneath the prose: a stable id (a short kebab-case slug), a `test:` pointer to the test that pins it, and a `code:` pointer to the source file and lines that prove it. The slug is what the test index references back. Existing entries will be migrated to this shape on demand as work next touches their area.
+Every stipulation carries three lines beneath the prose: a stable id (a short kebab-case slug), a `test:` pointer to the test that pins it, and a `code:` pointer to the source file and lines that prove it. The slug is what the test index references back.
 
 The shape:
 
@@ -27,8 +27,6 @@ A real example, fully written:
     - test: [Data_Layout.test.ts](../../../src/lib/ts/tests/Data_Layout.test.ts) "an SO has exactly three directions"
     - code: [src/lib/ts/runtime/Smart_Object.ts:9-14](../../../src/lib/ts/runtime/Smart_Object.ts)
 ```
-
-The legacy "Covered:" line stays valid until the entry is migrated; it just lacks an id and a code pointer.
 
 ## Blocks
 
@@ -339,3 +337,32 @@ The legacy "Covered:" line stays valid until the entry is migrated; it just lack
     - id: center-letter-formula-conventions
     - test: [Center.test.ts](../../../src/lib/ts/tests/Center.test.ts) "the bare letter c on a host direction resolves to the host direction's center"
     - code: [src/lib/ts/algebra/Constraints.ts:139](../../../src/lib/ts/algebra/Constraints.ts)
+
+## Expand scope
+
+### **Strong candidates**
+
+these have tests already in the test index but no rule citing them, so the tests are quietly proving behavior the catalogue does not name:
+
+- **Angle math** (`types/Angle.ts`) — there's a test file pinning angle normalisation, conversion, and comparison, but no rule names what those tests prove. Possible rule: "angles normalise to a canonical range; the same angle written two ways compares equal."
+- **Coordinate math** (`types/Coordinates.ts`) — point/size/rectangle helpers, with tests, no rule.
+- **Hit testing** (`events/Hits_3D.ts`) — there's a test file for 3D hit geometry (point-in-polygon, segment proximity, front-facing detection), no rule. The click-stack drill-down behaviour (each click rotates through stacked parts under the cursor) is described in the handoff but not in the catalogue.
+- **Topology** (`render/Topology.ts`) — there's a test file ("Topology") for the unified-endpoint pipeline, no rule.
+- **Save-format migrations** (`managers/Versions.ts`) — there's a test file ("Versions") for the v1-through-v9 chain, no rule. The catalogue says scenes round-trip but does not say "every old save format has a one-way upgrade to the current shape."
+
+### **Plausible candidates**
+
+load-bearing behaviour that no rule pins:
+
+- **Selection-as-list semantics** — the "plain click replaces, command-click toggles, multi-select hides the three-tab strip" behaviour is described in the handoff but is not a catalogue rule.
+- **Parts tree walks** (`managers/Parts.ts`) — the collapsed-rows model, the visible-row count, the hide-list generation — there are invariants (e.g. "collapsing a row hides every descendant; the visible-row count equals total minus hidden") that are not pinned.
+- **Orientation math** (`algebra/Orientation.ts`) — sits in algebra (the explicit-yes area in the development process), no rule.
+
+### **Out of scope per the development process:**
+
+- Visual layout, colour, animation tick (`utilities/Colors.ts`, `render/Animation.ts`, the `R_*` decoration files, `editors/*` for inline editing widgets, `common/Constants.ts` for sizes and fonts) — the development process explicitly says these resist formalisation.
+- Pure plumbing — type-alias files, prototype extensions, event plumbing without a clear invariant.
+
+How the development process expects this to play out: don't extract them in a sweep. When work next touches one of these modules, write the rules its code assumes and add them at that point.
+
+The validator and dashboard will keep the catalogue honest in the meantime — the strong candidates above are visible as a tell, since their tests sit in the test index without a `stipulation:` back-pointer.
