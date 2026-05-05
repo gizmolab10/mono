@@ -969,13 +969,13 @@ export default defineConfig({
                   ]
                 },
                 {
-                  text: 'Design >',
-                  link: '/notes/guides/design/',
+                  text: 'Hub >',
+                  link: '/notes/guides/hub/',
                   collapsed: true,
                   items: [
                     {
                       text: 'Port',
-                      link: '/notes/guides/design/port'
+                      link: '/notes/guides/hub/port'
                     }
                   ]
                 },

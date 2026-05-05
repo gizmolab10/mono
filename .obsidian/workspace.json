@@ -78,6 +78,20 @@
             }
           },
           {
+            "id": "a37a86f69a513cdc",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/now/handoff.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "handoff"
+            }
+          },
+          {
             "id": "19fc42fcf8b7a48f",
             "type": "leaf",
             "state": {
@@ -124,7 +138,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "centre",
+                "query": "file:shorthand",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -254,8 +268,25 @@
       "bases:Create new base": false
     }
   },
-  "active": "a4f7fe31b964230b",
+  "active": "26b78cd156d15e82",
   "lastOpenFiles": [
+    "di/dist/assets/07-blank-canvas-Ceuln_sh.png",
+    "di/dist/assets/index-DnML445b.js",
+    "di/dist/assets/08-fresh-child-58x7WED6.png",
+    "di/dist/assets/02-dimensions-on-BtS89kMn.png",
+    "di/dist/assets/06-dimension-input-BaK3RdUS.png",
+    "di/dist/assets/01-opening-YRx_PPGG.png",
+    "di/dist/assets/05-mid-stretch-DfF8mrVj.png",
+    "di/dist/assets/03-locked-cursor-BNz07XWk.png",
+    "di/notes/work/now/handoff.md",
+    "di/notes/tools/sync-next.mjs",
+    "di/notes/work/now/code.debt.md",
+    "notes/guides/pre-flight/shorthand.md",
+    "notes/guides/pre-flight/keywords.md",
+    "notes/guides/hub/index.md",
+    "notes/guides/hub/port.md",
+    "notes/guides/hub",
+    "notes/guides/pre-flight/always.md",
     "di/test-results",
     "di/src/manual/reference-guide/parts list.md",
     "di/src/manual/index.md",
@@ -264,16 +295,12 @@
     "logs/update-docs.error.di.log",
     "logs/update-docs.error.mono.log",
     "di/src/manual/reference-guide/index.md",
-    "di/notes/work/now/handoff.md",
     "di/dist/assets/index-BAB9V-46.js",
     "di/dist/assets/07-blank-canvas-B2Uo0KVX.png",
     "di/dist/assets/index-hyaqjWt8.css",
     "di/dist/assets/08-fresh-child-2u3Y4gkp.png",
     "di/dist/assets/06-dimension-input-D4fwGeTM.png",
     "di/dist/assets/05-mid-stretch-3Z5nELyA.png",
-    "di/dist/assets/01-opening-DDsFJvfv.png",
-    "di/dist/assets/03-locked-cursor-BEKKah8f.png",
-    "di/dist/assets/02-dimensions-on-C-zh2LZ9.png",
     "di/src/manual/reference-guide/units.md",
     "di/src/manual/reference-guide/undo and redo.md",
     "di/src/manual/reference-guide/selection.md",
@@ -284,24 +311,11 @@
     "di/src/manual/reference-guide/formulas.md",
     "di/src/manual/reference-guide/build notes.md",
     "di/src/manual/reference-guide",
-    "di/notes/work/now/code.debt.md",
     "di/notes/work/done/code.debt.paid.md",
     "di/notes/guides/project/development/stipulations.md",
     "di/notes/work/now/work journal.md",
     "CLAUDE.MD",
     "di/notes/guides/project/development/dashboard guide.md",
-    "di/notes/guides/project/development/adherence log.md",
-    "di/notes/guides/project/development/adherence dashboard.md",
-    "di/notes/tools/index.md",
-    "ws/vite.config.js.timestamp-1777883071123-1e85b1a51fc09.mjs",
-    "ws/vite.config.js.timestamp-1777883050248-3731a1e1f8e05.mjs",
-    "di/notes/tools/validate-adherence.mjs",
-    "di/notes/guides/project/development/build-status.json",
-    "di/notes/guides/guides.layout.md",
-    "di/src/manual/reference guide/index.md",
-    "di/src/manual/images/first-steps/06-dimension-input.png",
-    "di/src/manual/images/first-steps/08-fresh-child.png",
-    "di/src/manual/images/first-steps/07-blank-canvas.png",
     "ws/notes/work/Untitled.canvas"
   ]
 }

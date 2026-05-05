@@ -4,10 +4,11 @@
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { stores } from '../../ts/managers/Stores';
 	import { k } from '../../ts/common/Constants';
+	import { get } from 'svelte/store';
 
 	let { onclose } : { onclose: () => void } = $props();
 
-	const { w_show_help_sidebar } = stores;
+	const { w_show_help_sidebar, w_help_page_id } = stores;
 
 	// Eagerly import every markdown page in the user guide and every image. The
 	// keys are the source paths; the values are the file content (raw text for
@@ -66,8 +67,13 @@
 			return a.id.localeCompare(b.id);
 		});
 
-	let active_id = $state(all_pages[0]?.id ?? 'index');
-	let active_page = $derived(all_pages.find(p => p.id === active_id) ?? all_pages[0]);
+	// Reset the stored active-page id if it no longer matches a real page (e.g.
+	// the manual file was renamed or removed since the user last visited).
+	if (!all_pages.some(p => p.id === get(w_help_page_id))) {
+		w_help_page_id.set(all_pages[0]?.id ?? 'index');
+	}
+
+	let active_page = $derived(all_pages.find(p => p.id === $w_help_page_id) ?? all_pages[0]);
 
 	// Resolve a markdown image path (relative from the source markdown file) to
 	// the bundled asset URL. The path comes in as e.g. "images/first-steps/01-opening.png"
@@ -109,7 +115,7 @@
 		// Resolve the link relative to the active page's location inside the manual.
 		// The manual root is treated as the URL root, so a top-level page sits at "/<id>"
 		// and a subfolder page sits at "/<folder>/<id>".
-		const base = new URL('http://x/' + encodeURI(active_id));
+		const base = new URL('http://x/' + encodeURI($w_help_page_id));
 		let resolved: URL;
 		try { resolved = new URL(href, base); } catch { return; }
 		// Anything outside the manual root (host changed, or path leaves with ../) falls through
@@ -117,7 +123,7 @@
 		const candidate = decodeURIComponent(resolved.pathname.replace(/^\//, '').replace(/\.md$/, ''));
 		if (all_pages.some(p => p.id === candidate)) {
 			event.preventDefault();
-			active_id = candidate;
+			w_help_page_id.set(candidate);
 		}
 	}
 </script>
@@ -144,8 +150,8 @@
 						{#each all_pages as page}
 							<li>
 								<button
-									class:active={page.id === active_id}
-									onclick={() => active_id = page.id}>
+									class:active={page.id === $w_help_page_id}
+									onclick={() => w_help_page_id.set(page.id)}>
 									{page.title}
 								</button>
 							</li>

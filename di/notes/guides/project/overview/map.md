@@ -21,6 +21,7 @@
 - di/src/lib/svelte/main/Graph.svelte
 - di/src/lib/svelte/main/Controls.svelte
 - di/src/lib/svelte/main/BuildNotes.svelte
+- di/src/lib/svelte/main/UserGuide.svelte
 
 ## Svelte — Details Panel
 
@@ -356,6 +357,7 @@
 - di/notes/tools/extract-adherence.mjs
 - di/notes/tools/build-with-status.mjs
 - di/notes/tools/validate-adherence.mjs
+- di/notes/tools/sync-next.mjs
 
 ## Other
 

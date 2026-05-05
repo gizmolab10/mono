@@ -25,6 +25,7 @@ src/
     │   │   ├── Controls.svelte
     │   │   ├── Graph.svelte
     │   │   ├── BuildNotes.svelte
+    │   │   ├── UserGuide.svelte
     │   │   └── Status_Strip.svelte
     │   └── mouse/            # Reusable mouse-driven controls
     │       ├── Close_Button.svelte
@@ -109,6 +110,21 @@ src/
             ├── Colors.ts
             ├── SVG_Paths.ts
             └── Testworthy_Utilities.ts
+
+manual/                      # In-app help content (markdown + screenshots)
+├── index.md                 # First-steps walkthrough
+├── images/                  # Screenshots used by the manual pages
+└── reference-guide/         # Reference pages (one per topic)
+    ├── index.md             # Reference-guide table of contents
+    ├── build notes.md
+    ├── formulas.md
+    ├── library.md
+    ├── repeaters.md
+    ├── reparenting.md
+    ├── save and load.md
+    ├── selection.md
+    ├── undo and redo.md
+    └── units.md
 ```
 
 ## Entry
@@ -118,9 +134,10 @@ src/
 
 ## Svelte components
 
-- `main/` — The four layout regions (controls, details, graph, build-notes) plus the small status strip rendered inside the graph
+- `main/` — The four layout regions (controls, details, graph, build-notes), the in-app help overlay (UserGuide), plus the small status strip rendered inside the graph
 - `details/` — The right-side panel and its three sub-panels (preferences, library, parts) plus the sub-sub-panels for the parts panel (attributes, angles, repeat, givens, selected, name)
 - `mouse/` — Reusable mouse-driven controls (sliders, steppers, separators, close button)
+- `manual/` — Markdown source for the in-app help overlay; the help component imports every file under here as raw text and renders the active page at runtime
 
 ## Algebra
 

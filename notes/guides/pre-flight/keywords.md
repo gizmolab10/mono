@@ -47,5 +47,5 @@ Words in input that trigger reading a guide before acting.
 | not found     | pre-flight/pitfalls.md#show-evidence                       |
 | which one     | pre-flight/pitfalls.md#task-list-order                     |
 |               |                                                            |
-| fresh         | design/port.md                                             |
-| port          | design/port.md                                             |
+| fresh         | hub/port.md                                                |
+| port          | hub/port.md                                                |

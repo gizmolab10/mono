@@ -4,6 +4,53 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-04 (continued) — help overlay improvements
+
+A long second pass through the day's work focused on the help overlay (the full-screen page that opens from the question-mark button on the toolbar). Three threads.
+
+### Thread one — sidebar can be hidden
+
+A new hamburger button was added to the help overlay's top bar, to the left of the "← Return" button. Clicking it toggles the navigation column on the left. When the column is hidden, the page content widens to fill the space; the vertical separator hides too. The choice survives reloads via a new persistent preference. Default is "shown" so a fresh visitor still sees the navigation.
+
+### Thread two — corner-clipping bug found and fixed
+
+The hamburger's top-left bar was being clipped by the help overlay wrapper's rounded corner. The wrappers in the main toolbar and in the help overlay both ask for the same corner-radius value, but the browser shrinks corners that are too big to fit on a short edge. The main toolbar wrapper is short (about one toolbar tall), so its radius gets shrunk to half that height. The help wrapper is full-screen tall, so the radius renders at its full requested size. The bigger curve eats further into the corner and clips the hamburger.
+
+Fix: tell the help wrapper to use a radius equal to half the toolbar height instead of the shared full radius. The visual rounded corner stays — it just renders at the toolbar's curve size, not the larger one. Both wrappers now look the same at their top corners.
+
+### Thread three — reference-guide links work, sidebar is curated
+
+The "What to read next" links in the walkthrough page pointed at pages inside the manual's `reference guide/` subfolder. None of them worked because of three independent problems stacked together. All five fixes shipped together:
+
+- Folder renamed: `src/manual/reference guide/` → `src/manual/reference-guide/` (no space, so markdown actually parses the link).
+- Walkthrough page links updated to use the new folder name.
+- Help overlay's page glob widened from one-level to recursive, so subfolder pages are picked up.
+- Page id calculation now uses the path under the manual folder, so a top-level file and a subfolder file with the same name don't collide.
+- Click handler rewritten to resolve link URLs relative to the active page's location, and the slash-rejection that prevented multi-segment ids was removed. Outside-overlay links (with `..` segments leading out of the manual root) still fall through to the browser.
+
+Three stray pages that the recursive glob picked up — two leftover index files inside the `images/` folder and the reference-guide section's own index — are filtered out of the sidebar.
+
+A new constant near the top of the help overlay component sets the sidebar's order by hand. Pages whose id appears in the constant sort by their position in it; any page not in the constant falls to the end alphabetically, so a freshly-added file remains discoverable until it gets a slot.
+
+The vitepress dead-link checker started flagging some source-file references in the handoff that had been dormant; the ignore list grew a small new pattern so these no longer fail the docs build.
+
+### Files touched — 2026-05-04 (continued)
+
+- New persistent preference key for the help-sidebar visibility added to [Preferences.ts](../../src/lib/ts/managers/Preferences.ts).
+- New persistent store added to [Stores.ts](../../src/lib/ts/managers/Stores.ts) next to the existing details-panel show flag.
+- The help overlay component picked up the hamburger button, the conditional sidebar rendering, the recursive page glob, the new id calculation, the URL-based click resolution, the stray-page filter, and the hand-set order constant: [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte).
+- The wrapper radius override added to [Main.svelte](../../src/lib/svelte/main/Main.svelte).
+- The reference-guide folder was renamed; the five walkthrough links were updated; the overview map and the file layout were updated to reflect the rename and the new help component.
+- `.vitepress/config.mts` ignore-list grew one pattern to cover handoff entries that link into source files.
+
+### Verification — 2026-05-04 (continued)
+
+- `yarn svelte-check`: zero errors, zero warnings.
+- `yarn build`: green.
+- `yarn adherence` (extractor + docs build): green.
+
+---
+
 ## Session — 2026-05-04 — adherence dashboard built; rules catalogue fully migrated
 
 A long autonomous run that built an adherence-tracking system from scratch, then walked every rule in the catalogue through the migration to the new format.
@@ -813,4 +860,3 @@ Instrumentation was wired in so we could see where the paint actually spends its
 - Type-checker: zero errors, zero warnings across every intermediate step.
 - Test suite: five hundred fourteen of five hundred fourteen tests pass.
 - Real-world tumble measured on a roughly hundred-part scene before handing back.
-

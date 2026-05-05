@@ -60,6 +60,7 @@ export enum T_Preference {
 
 	// Help overlay
 	showHelpSidebar  = 'showHelpSidebar',
+	helpPageId       = 'helpPageId',
 }
 
 const STORAGE_PREFIX = 'di:';

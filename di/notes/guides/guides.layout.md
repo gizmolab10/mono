@@ -68,21 +68,11 @@ guides/
     │   ├── file layout.md ............... every folder and file listed
     │   ├── map.md ....................... flat list of notes files
     │   └── project.md ................... entry flow and core loop
-    ├── research/
-    │   ├── index.md ..................... research table of contents
-    │   ├── 3D.primer.md ................. quaternions, projection, perspective basics
-    │   ├── library-versioning.md ........ saving library objects, design notes
-    │   └── spatial-acceleration.md ...... flatbush adoption research notes
-    └── user manual/
-        ├── index.md ..................... user manual table of contents
-        ├── build notes.md ............... per-build change-log overlay
-        ├── first.steps.md ............... walk-through of first few minutes
-        ├── formulas.md .................. what you can type in a formula cell
-        ├── library.md ................... saving, replacing, inserting, importing
-        ├── repeaters.md ................. stairs, studs, joists configuration
-        ├── reparenting.md ............... move a part to a new parent
-        ├── save and load.md ............. auto-save, reset, import
-        ├── selection.md ................. single, command-click, drill-down
-        ├── undo and redo.md ............. stepping backward and forward
-        └── units.md ..................... unit family, precision, typing
+    └── research/
+        ├── index.md ..................... research table of contents
+        ├── 3D.primer.md ................. quaternions, projection, perspective basics
+        ├── library-versioning.md ........ saving library objects, design notes
+        └── spatial-acceleration.md ...... flatbush adoption research notes
 ```
+
+The user-manual markdown files no longer live under `notes/guides/project/`. They are now in `src/manual/` (the in-app help component imports them directly). See the overview file map for the full listing.

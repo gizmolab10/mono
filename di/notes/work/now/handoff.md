@@ -7,14 +7,7 @@
 
 ## Next
 
-The first unchecked code-debt item is "collapse parts tree not stuck on selected — select the collapsed part." Pick that up next.
-
-After that, the selection-algorithm milestone has the rubber-band rectangle (with option-key center-and-zoom and a recenter button on the controls strip), and "create new group around selected objects" / "ability to combine multiple parts" sub-items.
-
-For evidence:
-
-- the code-debt list is at [code.debt.md](./code.debt.md)
-- the milestone notes are at [27.selection.algorithm.md](./27.selection.algorithm.md)
+The first unchecked code-debt item is "help". Pick that up next.
 
 ## Where we are
 
@@ -113,303 +106,128 @@ Decision needed: which way.
 
 ---
 
-## Adherence dashboard built and rules catalogue fully migrated
+## Adherence framework — done
 
-The "logic driven design" guide had a ten-step plan for a small dashboard that scores the project against the development process. All ten steps are done. Then all fifty-eight rules in the catalogue were walked through the migration in twelve passes. End state: zero rules on the old shape, every audited area green, every gated metric green.
+A small dashboard scores the project against the development process on every build, and every rule in the catalogue is now in the new shape.
 
-### What runs now
-
-A new yarn script — `yarn adherence` — chains two scripts. The first reads the rules catalogue and the test index, cross-joins them, and writes a dashboard page at `notes/guides/project/development/adherence dashboard.md`. The second runs the docs build and records its exit code into a small status file the next run reads. A separate validator at `notes/tools/validate-adherence.mjs` runs two in-memory fixtures through the same parser and confirms the cross-join's counts on a deliberate orphan and on a clean run.
-
-The dashboard opens with a green-or-red overall badge that names the failing metrics when red. Below the badge sits a one-line legacy count and the migration progress section. The four gated metrics (test binding, orphan tests, build-gate, coverage by area) come next, then a per-area table with a coverage figure for every audited area. A hand-written guide at `notes/guides/project/development/dashboard guide.md` explains every section, the action triggered by each red value, and where to look when the dashboard itself looks suspect.
-
-A hand-recorded sibling file at `notes/guides/project/development/adherence log.md` holds three append-only sections — re-read sweeps, new-work compliance, and failure triage — for the metrics the dashboard cannot read automatically.
-
-### What the migration produced
-
-Every rule in the catalogue now carries a short stable name, a pointer to the test that pins it, and a pointer to the source line that proves it. Every test entry in the index points back at the rules it pins. Twenty-six areas are audited; each carries a hand-counted module count in `areas.json`. Coverage runs from one rule per module to three rules per module — every audited area is green.
-
-Four new browser-driven test entries were added to the test index for the four user-flow rules (editing-lock blocks clicks, view-mode toggle saves and restores orientation, rotation-snap aligns to a face, drag-without-selection tumbles the camera) — those rules now have a place to point back from.
-
-### Drifts surfaced during migration
-
-Two semantic mismatches between rule wording and code came out of the work:
-
-1. The rule "each direction has three attributes" says three; the code defines four (the angle is the unrecorded fourth on every direction). The proving test only checks for three, so the rule and the test agree; the code is the odd one out. Logged under re-read sweeps in the adherence log.
-2. The rule "if an invariant is altered by the user, this causes reverse propagation" originally read as a different mechanism than the one the cited tests prove (the tests prove forward enforcement that overwrites the user's value, not reverse propagation that respects it). Surfaced mid-migration; Jonathan rewrote the rule to align with the tests.
-
-### What this enables
-
-A rename or removal of a test or a source file the catalogue points at becomes a malformed entry, which fails the docs build. Drift between rule wording and code surfaces the moment someone re-reads a rule against its proving lines — that already happened twice during the migration, cleanly.
-
-Going forward, every new feature lands a rule in its area before the test, and a test before the merge. The development process gates this; the dashboard reports it.
-
-### Where everything lives
-
-- Catalogue: [stipulations.md](../../guides/project/development/stipulations.md)
-- Test index: [testing.md](../../guides/project/development/testing.md)
-- Module counts: `notes/guides/project/development/areas.json`
-- Build status: `notes/guides/project/development/build-status.json` (auto, refreshed by the wrapper script)
-- Auto dashboard: [adherence dashboard.md](../../guides/project/development/adherence%20dashboard.md)
-- Sweep log: [adherence log.md](../../guides/project/development/adherence%20log.md)
-- Reading guide: [dashboard guide.md](../../guides/project/development/dashboard%20guide.md)
-- Tools: `notes/tools/extract-adherence.mjs`, `notes/tools/build-with-status.mjs`, `notes/tools/validate-adherence.mjs`
-- Process doc: [logic driven design.md](../../guides/project/development/logic%20driven%20design.md)
+- **Run it:** `yarn adherence`. The extractor cross-joins the rules catalogue and the test index, writes the dashboard page, then runs the docs build and records its exit code into a status file. The next run reads that file for the build-gate metric.
+- **Verify the parser:** `node notes/tools/validate-adherence.mjs`. Two in-memory fixtures, both pass.
+- **State today:** all 58 rules in the new shape (stable name + proving test pointer + proving code pointer); every test entry points back at the rules it pins; 26 areas audited with hand-counted module counts in [areas.json](../../guides/project/development/areas.json); every gated metric green.
+- **Drifts surfaced and logged:** the rule that says each direction has three attributes (the code defines four; angle is the unrecorded fourth) is logged in [adherence log.md](../../guides/project/development/adherence%20log.md). The rule on user-altered invariants was rewritten by Jonathan mid-migration to align with what the cited tests prove.
+- **Where everything lives:** [stipulations.md](../../guides/project/development/stipulations.md), [testing.md](../../guides/project/development/testing.md), [adherence dashboard.md](../../guides/project/development/adherence%20dashboard.md), [adherence log.md](../../guides/project/development/adherence%20log.md), [dashboard guide.md](../../guides/project/development/dashboard%20guide.md), [logic driven design.md](../../guides/project/development/logic%20driven%20design.md). Tools at `notes/tools/`.
 
 ---
 
-## Help-overlay hamburger and sidebar toggle — proposed slice
+## Help overlay — sidebar toggle, reference-guide links, hand-set order
 
-The help overlay (the full-screen page that opens when the user taps the question mark on the toolbar) currently shows its sidebar permanently — there's no way to hide it. The four code-debt items under "help" want to add a hamburger inside the overlay that toggles the sidebar, plus persist the sidebar's open or closed state and which page the user was last reading.
+The help overlay (the full-screen page that opens from the question-mark button on the toolbar) gained four substantive changes today.
 
-Ordered so each step is a clean stopping point:
+### What works now
 
-1. **Hamburger inside the help overlay.** A button at the top-left of the help overlay's control bar, matching the main app's hamburger style. Clicking it toggles a local "show sidebar" state. The hamburger stays visible whether the sidebar is open or closed.
-2. **Wire the toggle to the sidebar.** When the state is off, the sidebar's column collapses to zero width so only the page content shows; the vertical separator hides too. When the state is on, the sidebar comes back at its current width.
-3. **Persist the sidebar visibility.** A new preference key. The state survives reloads.
-4. **Persist the active page id.** A new preference key. Reopening the help overlay returns to the last page the user was reading.
-5. **Polish to "complete & excellent".** Hover and active styling that matches the main app's hamburger; keyboard focus ring; smooth transition when the sidebar collapses; check that the small-screen layouts still work.
+- A hamburger inside the help overlay toggles the navigation column on the left. The choice survives reloads via a new persistent preference. Default: shown.
+- The "What to read next" links in the walkthrough page navigate inside the overlay. Same for cross-links between reference-guide pages.
+- The sidebar lists ten pages — the walkthrough plus nine reference topics — in a hand-set order. Three stray pages picked up by the recursive page glob (two leftover index files inside `images/`, plus the reference-guide section's own index) are filtered out.
+- The hamburger and its containing wrapper render at the same effective rounded curve as the main app's toolbar. No clipping at the top-left corner.
+
+### Key changes
+
+- **Folder rename:** `src/manual/reference guide/` → `src/manual/reference-guide/` (the hyphen lets markdown actually parse the URL).
+- **Help overlay component** at [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte): hamburger button, conditional sidebar rendering, recursive page glob (`**/*.md`), full-path id calculation, URL-resolution-based click handler, stray-page filter, hand-set `SIDEBAR_ORDER` constant.
+- **Help wrapper radius override** in [Main.svelte](../../src/lib/svelte/main/Main.svelte): `border-radius: calc(var(--h-controls) / 2)` makes the help wrapper render the same effective curve as the short toolbar wrapper does after CSS auto-clamping.
+- **New persistent preference** `showHelpSidebar` in [Preferences.ts](../../src/lib/ts/managers/Preferences.ts) plus `w_show_help_sidebar` in [Stores.ts](../../src/lib/ts/managers/Stores.ts).
+- **Five walkthrough links** in [src/manual/index.md](../../src/manual/index.md) updated to the renamed folder.
+- **Vitepress dead-link ignore list** in `.vitepress/config.mts` grew one regex (`/\/src\//`) so handoff entries that link into source files do not fail the docs build.
+
+### Reorder the sidebar in the future
+
+Edit `SIDEBAR_ORDER` near the top of [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte). Pages whose id is in the list sort by their position; pages not in the list fall to the end alphabetically.
+
+### Still open from the help slice
+
+- **Persist the active page id** so the overlay reopens to the last page the user was reading.
+- **Polish:** smooth transition when the sidebar collapses, keyboard focus ring tweaks, re-check the small-screen layouts.
+
+### Verification (end of session)
+
+- `yarn svelte-check`: zero errors, zero warnings.
+- `yarn build`: green.
+- `yarn adherence`: extractor + docs build green.
+
+---
+
+## Mono guides folder renamed: design → hub
+
+The shared-guides folder at `notes/guides/design/` is now `notes/guides/hub/`. Five touch points updated:
+
+- The folder itself was renamed.
+- The heading inside `hub/index.md` changed from "Design" to "Hub" so the page title matches the folder.
+- The contents listing in `notes/guides/index.md` now reads `[Hub](./hub/)`.
+- The shared vitepress sidebar entry at `mono/.vitepress/config.mts` changed both the section text ("Design >" → "Hub >") and the two link paths.
+- A leftover reference inside `ga/notes/design/file.layout.md` was left alone — it documents ga's own intended folder layout, not mono's guides path.
+
+Docs build green.
+
+---
+
+## Next section is now auto-generated
+
+The Next section near the top of this file no longer needs hand-editing. A new script reads the code-debt list, finds the first unchecked item, and rewrites the Next section to match. The block sits between two HTML markers so re-running the script is idempotent.
+
+- **Script:** `notes/tools/sync-next.mjs`. Run on demand with `node notes/tools/sync-next.mjs`.
+- **Wired into the build:** the adherence chain now runs the sync first, then the extractor, then the build wrapper. So every `yarn adherence` refreshes the Next section automatically.
+- **Idempotent:** the auto-generated block is bounded by `<!-- BEGIN-NEXT ... -->` and `<!-- END-NEXT -->` markers. Re-running on an already-synced file is a no-op.
+- **Hand-editing the Next section is no longer the right move:** edit `code.debt.md` instead and let the next sync pick it up.
+
+Logged in [overview map.md](../../guides/project/overview/map.md) under Notes — Tools.
+
+---
+
+## Proposal — persist the active help page id (step 4 of the help slice)
+
+Three sub-items of the help block were completed earlier in the session and are now ticked off in the code-debt list. The first remaining unchecked leaf reads: "deploy help page id in preferences so revisit help goes to last-visited help content."
+
+What it does for the user: when they close the help overlay on, say, the "Repeaters" page and reopen it later, it lands back on Repeaters instead of always returning to the walkthrough.
+
+Concrete steps:
+
+1. **New persistent preference key** for the active help page id. Default value: the walkthrough page's id ("index"). Sits in the same enum as the existing help-sidebar visibility flag.
+2. **New persistent store** in the stores file, mirroring the line that holds the help-sidebar visibility flag. Default falls back to the walkthrough page.
+3. **Wire into the help overlay component.** Read the stored id at mount time and use it for the active page. If the stored id no longer matches a real page (a manual file was renamed or removed), fall back to the walkthrough page. Every page switch writes back to the store, so the next reload picks up where the user left off.
+4. **Replace the existing rune-state primitive for the active page with the persistent store.** This keeps a single source of truth — no double bookkeeping between the in-memory state and the persisted value.
 
 Risk notes:
 
-- The persistent preference helper exists already (used elsewhere in the app for similar flags).
-- The help overlay reads its pages via a glob; persisting the page id needs a fallback if that page id no longer exists after a manual edit to the manual files.
-- I am guessing the hamburger should sit to the LEFT of the "← Return" button, mirroring the main app's toolbar layout. Could go right instead.
+- The fallback for a missing page id is one line: if the page list does not contain the stored id, reset to the walkthrough.
+- The Svelte rune-state to store conversion mirrors the pattern already used for the sidebar-visibility flag, so the shape is familiar.
+
+Estimated scope: three small file edits — preferences enum, stores file, help overlay component. Type-check should stay clean. No build changes.
+
+Awaiting a green light.
 
 ---
 
-## Where the persistent-preference helper lives
+## Help-overlay slice — step 4 done (active page id is persistent)
 
-The two pieces:
-
-- `persistent<T>(key, fallback)` lives at [Preferences.ts:139](../../src/lib/ts/managers/Preferences.ts#L139). Returns a writable that reads from browser storage on first read and writes through on every change.
-- `persistent_set(key)` lives at [Preferences.ts:145](../../src/lib/ts/managers/Preferences.ts#L145). Same idea but for sets — handles the array-to-set round-trip.
-
-Existing call sites are clustered in [Stores.ts:20-27](../../src/lib/ts/managers/Stores.ts#L20-L27). The decorations flag, the saved orientation, the active parts tab, the view mode, the details panel show flag, and several display values all use the same pattern. The help-overlay sidebar visibility would mirror the existing line for the details panel show flag at line 24; the active page id would mirror the active parts tab line at line 22.
-
----
-
-## Help-overlay slice — decisions
-
-Two open questions answered:
-
-- **Hamburger position.** Left of the "← Return to Design Intuition" button, mirroring the main app's toolbar layout.
-- **Fallback for a missing page id.** Land on the index page when the persisted page id no longer resolves to a real manual page.
-
-Both confirm the original guesses. Slice is ready to build on a green light.
-
----
-
-## Help-overlay slice — steps 1, 2, 3 done
-
-Three of the five steps shipped. The help overlay's full-screen view now has a hamburger to its left of the "← Return" button. Clicking it toggles the sidebar. The state survives reloads.
+The help overlay now remembers which page the user was last reading. Closing the overlay on, say, the Repeaters page and reopening it later lands back on Repeaters instead of always returning to the walkthrough.
 
 ### What landed
 
-1. **Hamburger inside the help overlay.** A new button at the left of the help overlay's top bar. The icon and styling mirror the main toolbar's hamburger, including the white-when-active fill. Position is left of the "← Return to Design Intuition" button.
-2. **Sidebar visibility is wired.** When the hamburger is off the navigation column and its vertical separator are removed from the layout entirely; the page content widens to fill the space. When the hamburger is on, both come back at their original widths.
-3. **The visibility is persistent.** A new preference key holds the on-or-off state. Reloading the page reopens the help overlay with the same sidebar state the user left it in. Default is on, so a fresh visitor sees the navigation.
+- New persistent preference key for the active page id, with the walkthrough as the default. The id is a string like "index" or "reference-guide/repeaters".
+- New persistent store mirroring the line that holds the help-sidebar visibility flag. Lives next to it in the stores file.
+- The help overlay component reads from and writes to this store: the active page comes from the store, the sidebar's highlighted-pill state reads from the store, page switches write back to the store, and the click handler that resolves internal links also writes to the store.
+- One-time fix-up at mount: if the stored id no longer matches a real page (the manual file was renamed or removed), the store resets to the walkthrough. Without this, a stale id would show the fallback page but the bad value would stick.
 
 ### Files touched
 
-- New preference key `showHelpSidebar` added to the enum in [Preferences.ts:60-62](../../src/lib/ts/managers/Preferences.ts#L60-L62).
-- New persistent store `w_show_help_sidebar` added next to the existing details-panel show flag in [Stores.ts:24-25](../../src/lib/ts/managers/Stores.ts#L24-L25).
-- The help overlay component picked up the hamburger button, the conditional sidebar rendering, the new imports, the active-class style, and a small gap between toolbar items so the hamburger doesn't crowd the return button: [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte).
-
-### Pre-existing warnings cleaned up
-
-The svelte-check pass first showed one pre-existing warning about a non-interactive element with a click handler (the rendered-markdown div that intercepts internal links). Two ignore comments were already in place above it, but they named two different warning rules; the one that actually fires (`a11y_no_noninteractive_element_interactions`) was not covered. Added the missing ignore comment. Final state: zero errors, zero warnings.
-
-### Still open
-
-- **Step 4 — persist the active page id.** Not done yet. The help overlay still resets to the index page on every reload.
-- **Step 5 — polish.** No transition on the sidebar collapse, no keyboard focus ring tweaks, small-screen layouts not re-checked.
-
----
-
-## Help-overlay hamburger — hover styling matched to main app
-
-The hamburger inside the help overlay now uses the same look as the main toolbar's hamburger: black icon by default, white icon on hover. The active-state class wiring was unused for visuals (the main app's white-fill rule fires on the project's own hover-tracking attribute, not on a plain "active" class), so it was removed. The CSS rule that paints the icon white now uses plain CSS `:hover` instead of a class flag, since the help overlay's controls are wired with plain `onclick` handlers and not the project's hit-target system.
-
-Type-check still clean: zero errors, zero warnings.
-
----
-
-## Help-overlay hamburger — nudged 4px left
-
-The help hamburger sat one pixel up and zero pixels in from the left edge of the top bar. Bumped it 4 pixels further left so it lines up better against the bar's left edge. One CSS line added: `left: -4px` next to the existing `top: -1px` on the hamburger rule.
-
----
-
-## Help-overlay return button — nudged 3px left
-
-The "← Return to Design Intuition" button sat at the top-bar gap default after the hamburger. Bumped it 3 pixels further left so the spacing between the hamburger and the button feels right. One CSS rule added on the toolbar-button class: relative positioning plus a 3-pixel leftward offset.
-
----
-
-## Help-overlay hamburger — top-left clipping explained
-
-The hamburger's top-left corner gets clipped because the wrapper that surrounds the entire help overlay has a rounded outer corner with `overflow: hidden`. Anything drawn at the very top-left of the wrapper is cut along that curved edge.
-
-Evidence: every region wrapper gets a rounded corner and a clip at [Main.svelte:123-127](../../src/lib/svelte/main/Main.svelte#L123-L127); the help-overlay wrapper inherits both at [Main.svelte:150-155](../../src/lib/svelte/main/Main.svelte#L150-L155).
-
-The hamburger is at -7 pixels left and -1 pixel up from its natural spot. The natural spot is already only about 6 pixels from the wrapper's left edge and 1.6 pixels from the top, so the offsets push the SVG's drawing into the rounded-corner safe zone.
-
-z-index does not address this — the clip is the parent's rounded mask, not a stacking-order issue.
-
-Three options to fix:
-
-1. Move the hamburger right and down so it sits clear of the curve.
-2. Add inner padding to the help-overlay wrapper so the children start past the rounded corner.
-3. Drop the rounded corner on the help-overlay wrapper specifically (it is a full-screen overlay; rounded corners arguably do no visual work there).
-
-Awaiting decision.
-
----
-
-## Why the main app's hamburger is not clipped, but the help's is
-
-Both wrappers have the same rounded corner with `overflow: hidden`. The difference is the alignment of items inside the toolbar row.
-
-- The main app's toolbar row centers its children: at [Controls.svelte:197](../../src/lib/svelte/main/Controls.svelte#L197) the row uses `justify-content: center`. The hamburger sits in the middle of the row, far from the rounded corner. At desktop widths (≥1500 pixels) the row instead packs to the left, but the typical viewer hits the wrap-mobile layout and the centring hides the corner.
-- The help overlay's toolbar row packs its children to the left: at [UserGuide.svelte:158](../../src/lib/svelte/main/UserGuide.svelte#L158) the row uses `justify-content: flex-start`. The hamburger sits hard against the row's left edge, exactly where the corner curve cuts in.
-
-The user's nudges (-7 pixels left) made the clip more obvious. The underlying cause is the alignment direction — even with no nudge the help hamburger would sit only ~6 pixels in from the wrapper's edge, well inside a corner curve of radius ~20.
-
-z-index does not help. The clip is the wrapper's rounded mask, not a layer-stacking effect.
-
----
-
-## Help-overlay hamburger — clip resolved by clamping the help wrapper's effective corner radius
-
-The two wrappers (the toolbar wrapper in the main app and the full-screen wrapper around the help overlay) both ask for the same corner-radius value. The browser ends up rendering them at different sizes because of how it handles corners that are too big to fit.
-
-When the two corners on the same side of a box ask for a combined radius bigger than that side, the browser shrinks both proportionally so they fit. The toolbar wrapper is only as tall as one toolbar, so its top and bottom corners (each asking for the full radius) get shrunk to half that height. The help wrapper is full-screen tall, so the corners get to render at the full requested radius.
-
-The result: the toolbar's rounded curve is smaller than the help overlay's rounded curve, even though both are written the same way in the CSS. The help overlay's bigger curve eats enough further into the top-left corner to clip the topmost bar of the hamburger.
-
-Fix: tell the help wrapper to use a radius equal to half the toolbar height instead of the shared full radius. This matches the effective rounded curve of the main toolbar exactly. The visual rounded corner stays — it just renders at the toolbar's curve size, not the larger one. Hamburger and corner radius unchanged in their own definitions; both now render the same way the main toolbar does.
-
-One CSS line added to the help-overlay wrapper at [Main.svelte:155](../../src/lib/svelte/main/Main.svelte#L155): `border-radius: calc(var(--h-controls) / 2)`.
-
-Type-check still clean.
-
----
-
-## Why the "What to read next" links do not work
-
-The "What to read next" list inside one of the help overlay pages contains five bullets that point at pages inside the `reference guide/` subfolder of the manual. None of them works. Three independent problems stack on top of each other:
-
-1. **Spaces in the link URL break markdown's link parser.** Markdown does not allow plain spaces between the parentheses that hold a URL. The folder is named "reference guide" with a space, so the parser rejects the link and shows the raw bracket-and-paren text instead. The markdown library is configured at [UserGuide.svelte:20](../../src/lib/svelte/main/UserGuide.svelte#L20).
-2. **The in-overlay click handler refuses anything with a slash.** Even if the link rendered as a real link, the handler at [UserGuide.svelte:71-94](../../src/lib/svelte/main/UserGuide.svelte#L71-L94) treats only single-segment names (no slashes) as in-overlay page references. The `reference guide/selection` candidate has a slash and is dropped.
-3. **The reference-guide pages are not in the overlay's page list at all.** The page glob at [UserGuide.svelte:15](../../src/lib/svelte/main/UserGuide.svelte#L15) is `../../../manual/*.md` — a single star, no recursion. Files inside subfolders are invisible to the overlay.
-
-For these links to work, all three need to change:
-
-- Rename the folder so its name has no space (or URL-encode the space in every link), so the markdown parser will actually emit a link.
-- Either flatten the manual into a single folder so every link is a single-segment id, or teach the click handler to accept multi-segment ids.
-- Widen the glob to recurse into subfolders so the reference-guide pages enter the page list.
-
----
-
-## Help-overlay reference-guide links — fixed
-
-All five fixes applied. The "What to read next" links now render as real markdown links and clicking them navigates inside the help overlay. Same for cross-links between reference-guide pages and the reference-guide index page.
-
-### What changed
-
-- **Folder rename.** `src/manual/reference guide/` → `src/manual/reference-guide/`. The hyphen lets markdown parse the URL.
-- **Walkthrough page links.** Five lines in `src/manual/index.md` updated from `./reference guide/X.md` to `./reference-guide/X.md`.
-- **Help overlay's page glob.** Widened from `*.md` to `**/*.md` so subfolder pages are picked up.
-- **Page id calculation.** Now uses the path under the manual folder (e.g. `index`, `reference-guide/selection`) instead of just the filename. Distinct ids for top-level and subfolder pages, no collisions.
-- **Click handler.** Slash-rejection removed. URL resolution rewrites the link relative to the current page's id, so a same-folder link like `library.md` from inside `reference-guide/save and load` resolves to `reference-guide/library`. Outside-overlay links (with `..` segments leading out of the manual root, or scheme-prefixed URLs) still fall through to the browser.
-- **Layout map.** `notes/guides/project/overview/map.md` updated to use the new folder name.
-- **Dead-link regex.** A pre-existing handoff entry contained relative links into `../../src/lib/svelte/...` that the docs build started flagging when the docs build ran with these source-file references in the file. The vitepress config's ignore list already covered `/di/src/` paths but not the `../../src/` form; added a `/\/src\//` pattern so any `/src/` path in a markdown link is treated as expected-dead.
+- New preference key `helpPageId` added to the enum in [Preferences.ts](../../src/lib/ts/managers/Preferences.ts).
+- New persistent store `w_help_page_id` added to [Stores.ts](../../src/lib/ts/managers/Stores.ts) right next to the existing help-sidebar visibility line.
+- The help overlay component picked up the new store, the fix-up check, and replaced its previous local rune-state for the active page with the store everywhere: [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte).
 
 ### Verification
 
-- `yarn adherence` (extractor + docs build): green.
-- `yarn build` (app build): green.
 - `yarn svelte-check`: zero errors, zero warnings.
+- `yarn build`: green.
 
-### Notable side effects
+### Still open
 
-- The help overlay sidebar now lists eleven entries (top-level walkthrough plus the ten reference-guide pages). The list is sorted by id, with `index` pinned first, then alphabetical: the ten reference-guide pages all sort below the walkthrough, with the reference-guide index near the top of that batch. The display might feel crowded; grouping or a sub-header is a possible follow-up but not part of this fix.
-- The reference-guide index page is itself a list of links. It now appears in the sidebar as a sibling of the pages it links to. Could be hidden later if it feels redundant.
-
----
-
-## Help-overlay sidebar — three stray entries removed
-
-The recursive page glob picked up three pages that should not be in the sidebar:
-
-- "Images" — from a leftover `images/index.md` placeholder.
-- "First Steps" (capital S) — from another leftover `images/first-steps/index.md` placeholder.
-- "Reference Guide" — the reference-guide section's own index page, which is just a list of links to the pages already in the sidebar.
-
-Filter added in [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte): pages whose id starts with `images/` are dropped (no real content), and the page with id `reference-guide/index` is dropped (redundant with the rest of the section). The actual top-level walkthrough page (id `index`, title "First steps" with lowercase s) stays as the first entry.
-
-Type-check clean. Docs build clean.
-
----
-
-## Command to recreate the help screenshots
-
-The walkthrough's eight screenshots are produced by:
-
-```bash
-yarn shoot
-```
-
-Behaviour: the script either starts the dev server on port 5175 or reuses the one already running, drives a real Chromium browser through the eight scripted steps, and writes one PNG per step into `src/manual/images/first-steps/`. The markdown pages of the help content are hand-edited; only the screenshots are generated by this command.
-
-Evidence: the script is wired in package.json under "scripts". The Playwright config and the journey it follows are in [e2e/screenshots/](../../e2e/screenshots/).
-
----
-
-## How the help-overlay markdown becomes HTML
-
-There is no command that turns the manual's markdown into standalone HTML files. The conversion happens at runtime inside the browser:
-
-- At bundle time, the page glob inside the help overlay component pulls every manual markdown file as raw text. The text is shipped with the app as a string.
-- At runtime, when a help page becomes active, the overlay calls the markdown library to render that page's text, and injects the resulting HTML into the page area.
-
-To see the conversion in action, run `yarn dev` and open the help overlay. There is no on-disk HTML output for the manual; the docs build (`yarn docs:build`) does not include the manual either — its source folder is `notes/` and there is no symlink to the manual on disk today (an older comment in the vitepress config mentions one, but it is gone).
-
-Evidence: the page glob and the runtime call to the markdown library both live in [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte). The vitepress source folder setting is in [.vitepress/config.mts](../../.vitepress/config.mts).
-
----
-
-## How the help-overlay sidebar gets generated
-
-There is no command that recreates the sidebar as a standalone HTML artifact. The sidebar is rendered by the help overlay component at runtime, inside the browser:
-
-- At bundle time, the page glob picks up every manual markdown file. The component computes an id and a title for each, filters out the stray pages (anything under `images/` and the reference-guide section's own index), and sorts the result.
-- At runtime, the component's template emits one list-item button per remaining page. The active page gets the highlighted-pill style.
-
-To see the actual HTML, run `yarn dev`, open the help overlay, and inspect the DOM in the browser. To rebuild the bundle that contains the sidebar template, run `yarn build`. Neither produces a standalone sidebar HTML file on disk; that would require a small one-off script that walks the manual folder with the same id/title/filter rules the component uses.
-
-Evidence: the each-block that renders the sidebar list lives in the template body of [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte).
-
----
-
-## Help-overlay sidebar — manual ordering applied
-
-A hand-set order list now controls the sidebar sequence. The ten visible pages appear in this order:
-
-1. First steps (the walkthrough)
-2. Selection
-3. Formulas
-4. Units
-5. Library
-6. Repeaters
-7. Reparenting
-8. Save and load
-9. Undo and redo
-10. Build notes
-
-A new constant near the top of the help overlay component lists every page id in the desired order. The sort uses each page's position in this list. A page not in the list falls to the end alphabetically — so a freshly-added file remains visible until it gets a slot in the order.
-
-To rearrange in the future: edit the constant in [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte) (look for `SIDEBAR_ORDER` near the top of the script block) and reorder the entries.
-
-Type-check still clean.
+- **Step 5 — polish.** Smooth transition when the sidebar collapses, keyboard focus ring tweaks, re-check the small-screen layouts.

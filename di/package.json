@@ -18,7 +18,7 @@
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview",
-    "adherence": "node notes/tools/extract-adherence.mjs && node notes/tools/build-with-status.mjs"
+    "adherence": "node notes/tools/sync-next.mjs && node notes/tools/extract-adherence.mjs && node notes/tools/build-with-status.mjs"
   },
   "dependencies": {
     "@types/rbush": "^4.0.0",

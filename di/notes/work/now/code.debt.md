@@ -9,7 +9,7 @@ offer a proposal for the first unchecked item, and add it to a new section at th
     - [x] hamburger -> sidebar visibility toggle
     - [ ] new preferences`
         - [x] hamburger help visibility
-        - [ ] help page id
+        - [ ] deploy help page id in preferences so revisit help goes to last-visited help content
     - [ ] complete & excellent
 - [ ] mobile
     - [ ] thin gaps
