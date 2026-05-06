@@ -6,6 +6,7 @@
 ---
 
 - [ ] [[three.dimensions]] revisit Intersection detection when object count grows
+
 ## Where it stopped
 
 The drag rewrite is shipped and works. Five hundred fourteen tests pass, type-check is clean. The remaining open question — small residual drift on child drags whose formulas reach upstream to a parent — was triaged but not resolved before mothballing. Jonathan rejected the most-recently-proposed compensations as "too complex" and suggested the residual is just plane-projection geometry; co's proposals never matched that framing.
@@ -37,15 +38,15 @@ After the upstream-constant drag was wired in (entry below), Jonathan tested liv
 
 ### One — visible root draws all its edges
 
-Old behaviour: a visible root only drew the four edges of its bottom face. New behaviour: a visible root draws all twelve of its edges. The bottom-face restriction was carried over from when the root was always invisible; now that the root can be visible, it deserves the full wireframe. The invisible-root branch further down still restricts to the bottom face. Single-line change in [di/src/lib/ts/render/Render.ts](di/src/lib/ts/render/Render.ts).
+Old behavior: a visible root only drew the four edges of its bottom face. New behavior: a visible root draws all twelve of its edges. The bottom-face restriction was carried over from when the root was always invisible; now that the root can be visible, it deserves the full wireframe. The invisible-root branch further down still restricts to the bottom face. Single-line change in [di/src/lib/ts/render/Render.ts](di/src/lib/ts/render/Render.ts).
 
 ### Two — invisible root's bottom edges always visible
 
-Old behaviour: the dashed wireframe of an invisible root used the grid-opacity slider as its alpha, so turning the grid down to zero hid the floor reference too. New behaviour: the invisible root's wireframe is drawn at full opacity regardless of the grid slider; other invisible objects still fade with the grid. Single-line change in [di/src/lib/ts/render/Render.ts](di/src/lib/ts/render/Render.ts).
+Old behavior: the dashed wireframe of an invisible root used the grid-opacity slider as its alpha, so turning the grid down to zero hid the floor reference too. New behavior: the invisible root's wireframe is drawn at full opacity regardless of the grid slider; other invisible objects still fade with the grid. Single-line change in [di/src/lib/ts/render/Render.ts](di/src/lib/ts/render/Render.ts).
 
 ### Three — pivot is live during the drag
 
-Old behaviour: at drag start, the rotation pivot was frozen at the shape's center, so the world matrix did not "drift" during the drag. Side effect: the rendered shape stretched lopsidedly from a fixed pivot, then snapped back to its real centroid on mouse-up. Jonathan asked for the recenter to happen continuously during the drag instead of in one snap at the end. The freeze and the unfreeze were deleted; the field on the scene record was deleted; both fallback reads of the field (in the renderer and in the drag's own copy of the world matrix) now always use the live center.
+Old behavior: at drag start, the rotation pivot was frozen at the shape's center, so the world matrix did not "drift" during the drag. Side effect: the rendered shape stretched lopsidedly from a fixed pivot, then snapped back to its real centroid on mouse-up. Jonathan asked for the recenter to happen continuously during the drag instead of in one snap at the end. The freeze and the unfreeze were deleted; the field on the scene record was deleted; both fallback reads of the field (in the renderer and in the drag's own copy of the world matrix) now always use the live center.
 
 ### Four — mouse-to-bounds math, three iterations
 
@@ -57,7 +58,7 @@ The first live test of the live-pivot drag surfaced "mouse moves twice as fast a
 
 ### Five — parent-local frame for child drags
 
-After the world-space fix, child drag still drifted. Cause: when the dragged child has a formula that references the parent (e.g., child length = parent width), the upstream push grows the parent during the drag. The parent's world transform slides, the child slides with it, and the captured world plane no longer matches where the user sees the face. Fix: capture the plane in the **parent's local coordinate system** instead of world. Each frame, transform the mouse world ray into the parent's *current* local frame (using the inverse of the parent's current world matrix) and hit the still-fixed parent-local plane. Root drag also stays correct — root has no parent, so the "frame" becomes world, identical to the previous behaviour.
+After the world-space fix, child drag still drifted. Cause: when the dragged child has a formula that references the parent (e.g., child length = parent width), the upstream push grows the parent during the drag. The parent's world transform slides, the child slides with it, and the captured world plane no longer matches where the user sees the face. Fix: capture the plane in the **parent's local coordinate system** instead of world. Each frame, transform the mouse world ray into the parent's *current* local frame (using the inverse of the parent's current world matrix) and hit the still-fixed parent-local plane. Root drag also stays correct — root has no parent, so the "frame" becomes world, identical to the previous behavior.
 
 Drift after this fix is small and roughly aligned with the mouse direction. Mothballed before resolving.
 

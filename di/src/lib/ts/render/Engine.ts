@@ -1,5 +1,5 @@
 import { constraints, givens, evaluator, tokenizer } from '../algebra';
-import { scenes, stores, selection, history } from '../managers';
+import { scenes, stores, selection, history, status } from '../managers';
 import { units, Units, w_unit_system } from '../types/Units';
 import type { Portable_Scene } from '../managers/Versions';
 import type { Bound, Axis_Name } from '../types/Types';
@@ -792,11 +792,21 @@ class Engine {
 	}
 
 	add_child_so(): void {
-		history.snapshot();
 		const selected = selection.current;
 		const parent_so = selected?.so ?? this.root_scene?.so;
 		if (!parent_so?.scene) return;
 
+		// Refuse children for repeaters and their clones. The repeater replicates
+		// the template; clones are derived and recreated on every sync.
+		const grand = parent_so.scene.parent?.so;
+		const is_clone = grand?.repeater?.is_repeating === true
+			&& scene.get_all().filter(o => o.parent?.so === grand).map(o => o.so)[0] !== parent_so;
+		if (parent_so.repeater?.is_repeating || is_clone) {
+			status.show('cannot add a child to a repeater or its clone', 'error');
+			return;
+		}
+
+		history.snapshot();
 		const used = new Set(scene.get_all().map(o => o.so.name));
 		const { child, formulas } = parent_so.create_child(used);
 
@@ -815,8 +825,9 @@ class Engine {
 		child.scene = so_scene;
 		hits_3d.register(child);
 
-		// Keep parent selected after adding child
+		// Select the new child
 		stores.w_all_sos.update(list => [...list, child]);
+		selection.current = { so: child, type: T_Hit_3D.face, index: 0 };
 		stores.tick();
 		scenes.save();
 	}
@@ -846,18 +857,18 @@ class Engine {
 		scenes.save();
 	}
 
-	/** Duplicate the selected SO as a sibling, along with its entire descendant
-	 *  subtree.  Internal references between cloned shapes are rewritten to
-	 *  point at the new names; external references stay pointing at originals.
-	 *  Repeater-clone descendants are skipped — they regenerate from the
-	 *  cloned template on the next repeater sync. */
-	duplicate_so(): void {
-		history.snapshot();
-		const selected = selection.current;
-		if (!selected?.so) return;
-		const root_src = selected.so;
+	/** Clone a selected SO and its entire descendant subtree as a new sibling.
+	 *  Internal references between cloned shapes are rewritten to point at the
+	 *  new names; external references stay pointing at originals. Repeater-
+	 *  clone descendants are skipped — they regenerate from the cloned
+	 *  template on the next repeater sync.
+	 *
+	 *  Returns the top-level clone (the new sibling), or null if cloning is
+	 *  not possible (selection is root, etc.). The caller is responsible for
+	 *  history snapshots, propagation, selection, ticks, and save. */
+	private clone_subtree_as_sibling(root_src: Smart_Object): Smart_Object | null {
 		const root_parent_scene = root_src.scene?.parent;
-		if (!root_parent_scene) return; // can't duplicate root
+		if (!root_parent_scene) return null; // can't clone root
 
 		// ── gather the subtree in tree order (parent before children) ──
 		const all_sos = scene.get_all().map(o => o.so);
@@ -945,8 +956,19 @@ class Engine {
 			}
 		}
 
+		return clones.get(root_src.id) ?? null;
+	}
+
+	/** Duplicate the selected SO as a sibling, along with its entire descendant
+	 *  subtree. */
+	duplicate_so(): void {
+		history.snapshot();
+		const selected = selection.current;
+		if (!selected?.so) return;
+		const top_clone = this.clone_subtree_as_sibling(selected.so);
+		if (!top_clone) return;
+
 		// ── propagate, select top-level, tick, save. ──
-		const top_clone = clones.get(root_src.id)!;
 		constraints.propagate(top_clone);
 		// Set the parts list straight from the live scene. The clones were
 		// attached above, so the scene already includes them. Using set with
@@ -954,6 +976,141 @@ class Engine {
 		// hook above (when any repeater exists) has already replaced the list.
 		stores.w_all_sos.set(scene.get_all().map(o => o.so));
 		selection.current = { so: top_clone, type: T_Hit_3D.face, index: 0 };
+		stores.tick();
+		scenes.save();
+	}
+
+	/** Return true if the selected SO can be cut. Used by the details panel
+	 *  to decide whether to render the cut button. */
+	can_cut_selected(): boolean {
+		const selected = selection.current;
+		if (!selected?.so) return false;
+		const so = selected.so;
+		// Refuse: root
+		if (!so.scene?.parent) return false;
+		const parent_so = so.scene.parent.so;
+		// Refuse: clone or template of a repeater
+		if (parent_so.repeater) return false;
+		// Refuse: has children and is not itself a repeater
+		const all_sos = scene.get_all().map(o => o.so);
+		const has_children = all_sos.some(s => s.scene?.parent?.so === so);
+		if (has_children && !so.repeater?.is_repeating) return false;
+		// Refuse: two longest dimensions are tied
+		const lengths = so.axes.map(a => a.length.value);
+		const max_length = Math.max(...lengths);
+		const tied = lengths.filter(l => l === max_length).length;
+		if (tied > 1) return false;
+		return true;
+	}
+
+	/** Cut the selected SO in half along its longest direction. The original
+	 *  keeps the lower half; a new sibling is created for the upper half and
+	 *  becomes the selected part. Refusals post a red message to the status
+	 *  strip and leave the scene untouched.
+	 *
+	 *  Formula behavior on the cut direction depends on which attribute the
+	 *  axis invariant points at:
+	 *    - invariant on length (2): leave length formula alone; write the
+	 *      half-way point to the original's end and to the new sibling's start.
+	 *    - invariant on start  (0): leave start formula alone; halve length on
+	 *      both halves; the new sibling's start is overridden to half-way.
+	 *    - invariant on end    (1): leave end formula alone; halve length on
+	 *      both halves; the original's end is overridden to half-way.
+	 *  Where a non-invariant attribute had a formula, the formula is replaced
+	 *  by a plain half-way (or half-length) value. Formulas on the two
+	 *  directions that are NOT being cut are copied unchanged by the underlying
+	 *  clone routine. */
+	cut_selected_so(): void {
+		const selected = selection.current;
+		if (!selected?.so) return;
+		const so = selected.so;
+
+		// ── Refusal block ──
+		if (!so.scene?.parent) {
+			status.show('cannot cut: nothing above this part', 'error');
+			return;
+		}
+		const parent_so = so.scene.parent.so;
+		const all_sos = scene.get_all().map(o => o.so);
+		if (parent_so.repeater) {
+			const siblings = all_sos.filter(s => s.scene?.parent?.so === parent_so);
+			if (siblings[0] === so) {
+				status.show('cannot cut: this part is a template inside a repeater', 'error');
+			} else {
+				status.show('cannot cut: this part is a clone of a repeater', 'error');
+			}
+			return;
+		}
+		const has_children = all_sos.some(s => s.scene?.parent?.so === so);
+		if (has_children && !so.repeater?.is_repeating) {
+			status.show('cannot cut: this part has children', 'error');
+			return;
+		}
+
+		// ── Pick the longest direction by stored length value ──
+		const lengths = so.axes.map(a => a.length.value);
+		const max_length = Math.max(...lengths);
+		const longest_indices: number[] = [];
+		for (let i = 0; i < lengths.length; i++) if (lengths[i] === max_length) longest_indices.push(i);
+		if (longest_indices.length > 1) {
+			status.show('cannot cut: two sides are tied for longest', 'error');
+			return;
+		}
+		const cut_axis_index = longest_indices[0];
+		const cut_axis = so.axes[cut_axis_index];
+		const start_value = cut_axis.start.value;
+		const original_length = cut_axis.length.value;
+		const half_way = start_value + original_length / 2;
+		const half_length = original_length / 2;
+		const invariant = cut_axis.invariant; // 0 = start, 1 = end, 2 = length
+
+		// ── Snapshot, then clone the subtree as a sibling ──
+		history.snapshot();
+		const new_sibling = this.clone_subtree_as_sibling(so);
+		if (!new_sibling) return;
+
+		const original_axis = so.axes[cut_axis_index];
+		const new_axis = new_sibling.axes[cut_axis_index];
+
+		// Helper — clear the formula and write a plain value to a single attribute.
+		const write_plain = (attr: { formula: unknown; compiled: unknown; value: number }, value: number) => {
+			attr.formula = null;
+			attr.compiled = null;
+			attr.value = value;
+		};
+
+		if (invariant === 2) {
+			// length is the derived attribute. Spec: leave length alone;
+			// alter the original's end and the new sibling's start to sit
+			// at the half-way point. Length value follows from derivation
+			// (end - start).
+			write_plain(original_axis.end, half_way);
+			write_plain(new_axis.start, half_way);
+		} else if (invariant === 0) {
+			// start is the derived attribute. Spec: leave start alone; on
+			// the original divide length in half and set end at the
+			// half-way point. The new sibling: length divided in half; end
+			// stays at the original's pre-cut end (cloned). New sibling's
+			// start derives to the half-way point.
+			write_plain(original_axis.length, half_length);
+			write_plain(original_axis.end, half_way);
+			write_plain(new_axis.length, half_length);
+		} else {
+			// end is the derived attribute. Spec: leave end alone; on the
+			// new sibling divide length in half and set start at the
+			// half-way point. The original: length divided in half; start
+			// stays at the original's pre-cut start (already in place).
+			// Original's end derives to the half-way point.
+			write_plain(original_axis.length, half_length);
+			write_plain(new_axis.length, half_length);
+			write_plain(new_axis.start, half_way);
+		}
+
+		// ── Propagate, refresh parts list, select the new sibling, tick, save ──
+		constraints.propagate(so);
+		constraints.propagate(new_sibling);
+		stores.w_all_sos.set(scene.get_all().map(o => o.so));
+		selection.current = { so: new_sibling, type: T_Hit_3D.face, index: 0 };
 		stores.tick();
 		scenes.save();
 	}

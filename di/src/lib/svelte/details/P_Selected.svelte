@@ -14,8 +14,8 @@
 <div class='actions-row'>
 	<div class='segmented'>
 		<button class:active={$w_parts_tab === 'attributes'} onclick={() => w_parts_tab.set(T_Parts_Tab.attributes)}>attributes</button>
-		<button class:active={$w_parts_tab === 'rotation'} onclick={() => w_parts_tab.set(T_Parts_Tab.rotation)}>angles</button>
-		<button class:active={$w_parts_tab === 'repeater'} onclick={() => w_parts_tab.set(T_Parts_Tab.repeater)}>repeats</button>
+		<button class:active={$w_parts_tab === 'rotation'}   onclick={() => w_parts_tab.set(T_Parts_Tab.rotation)}>angles</button>
+		<button class:active={$w_parts_tab === 'repeater'}   onclick={() => w_parts_tab.set(T_Parts_Tab.repeater)}>repeats</button>
 	</div>
 </div>
 <div class='sep-gap'><Separator/></div>
@@ -31,10 +31,10 @@
 
 <style>
 	.actions-row {
+		gap           : var(--l-gap-tiny);
 		display       : flex;
-		margin-top    : 1px;
-		gap           : 6px;
-		margin-bottom : 2px;
+		margin-top    : -1px;
+		margin-bottom : 0px;
 	}
 
 	.segmented {
@@ -45,13 +45,13 @@
 
 	.segmented button {
 		border        : var(--th-border) solid currentColor;
+		height        : var(--h-button-common);
+		font-size     : var(--h-font-common);
+		background    : var(--c-white);
 		cursor        : pointer;
 		color         : inherit;
 		white-space   : nowrap;
-		background    : var(--c-white);
 		padding       : 0 8px;
-		font-size     : var(--h-font-common);
-		height        : var(--h-button-common);
 	}
 
 	.segmented button:first-child {
@@ -76,7 +76,7 @@
 	}
 
 	.tab-content {
-		padding-top    : var(--l-gap);
+		padding-top : var(--l-gap-tiny);
 	}
 
 	.sep-gap {

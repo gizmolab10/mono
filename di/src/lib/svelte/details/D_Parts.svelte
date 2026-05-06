@@ -4,17 +4,17 @@
 	import { T_Hit_3D, T_Editing } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import type { O_Scene } from '../../ts/types/Interfaces';
-	import { get } from 'svelte/store';
 	import { hit_target } from '../../ts/events/Hit_Target';
+	import { errors, constraints } from '../../ts/algebra';
 	import Separator from '../mouse/Separator.svelte';
 	import { k } from '../../ts/common/Constants';
 	import P_Selected from './P_Selected.svelte';
-	import { errors, constraints } from '../../ts/algebra';
 	import { engine } from '../../ts/render';
+	import { get } from 'svelte/store';
 
+	const { w_selection, w_selections } = selection;
 	const { w_all_sos, w_tick } = stores;
 	const { w_collapsed_ids } = parts;
-	const { w_selection, w_selections } = selection;
 
 	let parts_count = $derived($w_all_sos.filter(s => !$w_all_sos.some(c => c.scene?.parent?.so === s)).length);
 	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
@@ -186,6 +186,14 @@
 		$w_tick;
 		return $w_selection?.so.visible !== false ? '👁' : '–';
 	});
+
+	// Reactive: re-evaluate the cut-button visibility on every state tick and
+	// on every selection change. The engine routine reads selection, scene
+	// parent, repeater flags, descendant list, and stored axis lengths.
+	let _can_cut_tick = $derived($w_tick + ($w_selection ? 1 : 0));
+	function can_cut(_tick: number): boolean {
+		return engine.can_cut_selected();
+	}
 
 	// ── drag-and-drop reparenting ──
 
@@ -478,7 +486,11 @@
 		</div>
 	{/if}
 	{#if $w_selection.so.scene?.parent}
+		<Separator />
 		<div class='duplicate-row'>
+			{#if can_cut(_can_cut_tick)}
+				<button class='action-button' use:hit_target={{ id: 'cut', onpress: () => engine.cut_selected_so() }}>divide in half</button>
+			{/if}
 			<button class='action-button' use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_so() }}>duplicate</button>
 		</div>
 	{/if}
@@ -596,7 +608,7 @@
 
 	.repeat-badge {
 		font-size   : var(--h-font-small);
-		margin-left : var(--l-gap);
+		margin-left : var(--l-gap-tiny);
 		opacity     : 0.5;
 	}
 
@@ -620,8 +632,8 @@
 		z-index       : var(--z-action);
 		height        : var(--h-slider);
 		background    : var(--c-white);
-		margin-top    : var(--l-gap);
-		margin-bottom : var(--l-gap);
+		margin-top    : var(--l-gap-tiny);
+		margin-bottom : var(--l-gap-tiny);
 		box-sizing    : border-box;
 		color         : inherit;
 		font-family   : inherit;
@@ -663,9 +675,11 @@
 	}
 
 	.duplicate-row {
+		gap             : var(--l-gap-tiny);
+		margin-top      : var(--l-gap-tiny);
+		margin-bottom   : var(--l-gap-tiny);
 		justify-content : center;
 		display         : flex;
-		margin-bottom   : 7px;
 	}
 
 	.action-button {

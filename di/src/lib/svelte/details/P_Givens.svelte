@@ -127,21 +127,21 @@
 </script>
 
 {#if rows.length > 0}
-	<table class='standards'><tbody>
+	<table class='constants'><tbody>
 		{#each rows as row, index}
 			<tr>
-				<td class='std-name'>
+				<td class='constants-name'>
 					<input
-						type      = 'text'
+						type        = 'text'
 						placeholder = 'name'
-						value     = {row.name}
-						class     = 'cell-input'
-						onkeydown = {(e) => cell_keydown(e, index)}
-						onfocus   = {() => stores.w_editing.set(T_Editing.value)}
-						onblur    = {(e) => { const inp = e.target as HTMLInputElement; commit_name(index, inp.value, inp); if (!naming_error) stores.w_editing.set(T_Editing.none); }}
+						value       = {row.name}
+						class       = 'cell-input'
+						onkeydown   = {(e) => cell_keydown(e, index)}
+						onfocus     = {() => stores.w_editing.set(T_Editing.value)}
+						onblur      = {(e) => { const inp = e.target as HTMLInputElement; commit_name(index, inp.value, inp); if (!naming_error) stores.w_editing.set(T_Editing.none); }}
 					/>
 				</td>
-				<td class='std-value'>
+				<td class='constants-value'>
 					<input
 						type      = 'text'
 						onkeydown = {cell_keydown}
@@ -151,15 +151,15 @@
 						onblur    = {(e) => { commit_value(index, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
 					/>
 				</td>
-				<td class='std-lock'>
+				<td class='constants-lock'>
 					<button class='lock-button' onclick={() => toggle_lock(index)}>
 						{row.locked ? '🔒' : '–'}
 					</button>
 				</td>
-				<td class='std-remove'>
+				<td class='constants-remove'>
 					<button
 						class='remove-button'
-						use:hit_target={{ id: `remove-std-${index}`, onpress: () => remove_dimension(index) }}>
+						use:hit_target={{ id: `remove-constants-${index}`, onpress: () => remove_dimension(index) }}>
 						×
 					</button>
 				</td>
@@ -181,27 +181,27 @@
 
 
 <style>
-	.standards {
+	.constants {
 		font-size       : var(--h-font-small);
 		border-collapse : collapse;
 		width           : 100%;
 		top             : 8px;
 	}
 
-	.standards td {
+	.constants td {
 		border  : var(--th-border) solid currentColor;
 		padding : 0;
 	}
 
-	.std-name {
+	.constants-name {
 		width : 50%;
 	}
 
-	.std-value {
+	.constants-value {
 		font-variant-numeric : tabular-nums;
 	}
 
-	.std-lock {
+	.constants-lock {
 		background : var(--c-white);
 		text-align : center;
 		min-width  : 1lh;
@@ -218,14 +218,14 @@
 		padding     : 0;
 	}
 
-	.std-remove {
+	.constants-remove {
 		background : var(--c-white);
 		text-align : center;
 		min-width  : 1lh;
 		width      : 1lh;
 	}
 
-	.std-remove:hover {
+	.constants-remove:hover {
 		background : var(--hover);
 	}
 
@@ -321,4 +321,5 @@
 		outline    : 2px solid var(--accent);
 		background : var(--selected);
 	}
+
 </style>

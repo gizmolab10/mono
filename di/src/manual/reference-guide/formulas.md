@@ -25,4 +25,4 @@ Each axis has three letters for the start, the length, and the end: `x w X`, `y 
 
 Any parse failure shows a red underline under the bad portion of the cell. Hovering over the underline reveals the message. A small panel below offers buttons that propose fixes — substituting an operator, deleting the bad part, or replacing an unknown part name with a similar one nearby.
 
-Citation: the formula language is implemented in `src/lib/ts/algebra/`. For the engineer's view (the parser, the evaluator, the propagation rule), see [the algebra page](../../architecture/core/algebra.md). For the error overlay's behaviour, see [the errors page](../../architecture/core/errors.md).
+Citation: the formula language is implemented in `src/lib/ts/algebra/`. For the engineer's view (the parser, the evaluator, the propagation rule), see [the algebra page](../../architecture/core/algebra.md). For the error overlay's behavior, see [the errors page](../../architecture/core/errors.md).

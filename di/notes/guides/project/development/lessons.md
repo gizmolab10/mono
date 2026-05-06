@@ -42,7 +42,7 @@ Source: facet tracer.
 
 If the rotation pivot follows the shape's live center and the user has tumbled the view off-axis, then a one-sided stretch (one corner moves, the opposite corner stays) renders the moving corner at less than one-to-one with the mouse. The math is mathematical: the moving corner gets the identity-plus-rotation of half the bound change, which is below one for any non-identity rotation. You cannot have both a live pivot and a perfectly tracking corner with a center pivot.
 
-The pattern: when two desirable behaviours are written down in user-facing terms and both feel intuitive, check whether they are mathematically compatible before promising both. Often the only way out is to give up one or pick a different pivot.
+The pattern: when two desirable behaviors are written down in user-facing terms and both feel intuitive, check whether they are mathematically compatible before promising both. Often the only way out is to give up one or pick a different pivot.
 
 Source: drag.
 

@@ -4,16 +4,38 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import D_Preferences from './D_Preferences.svelte';
 	import { hits } from '../../ts/events/Hits';
-	import { scenes } from '../../ts/managers';
+	import { scenes, stores, selection } from '../../ts/managers';
 	import D_Library from './D_Library.svelte';
 	import Hideable from './Hideable.svelte';
 	import { engine } from '../../ts/render';
+	import { scene } from '../../ts/render/Scene';
 	import D_Parts from './D_Parts.svelte';
 	import { onMount } from 'svelte';
+
+	const w_selection = selection.w_selection;
+	const { w_tick } = stores;
+
+	let is_repeater_or_clone = $derived.by(() => {
+		// Re-trigger on any scene-state change so reorderings are picked up too.
+		$w_tick;
+		const sel = $w_selection;
+		const so = sel?.so;
+		if (!so) return false;
+		if (so.repeater?.is_repeating) return true;
+		const parent = so.scene?.parent?.so;
+		if (!parent?.repeater?.is_repeating) return false;
+		const siblings = scene.get_all().filter(o => o.parent?.so === parent).map(o => o.so);
+		return siblings[0] !== so;
+	});
 
 	function factory_reset() {
 		preferences.reset();
 		location.reload();
+	}
+
+	function add_child_and_show_parts() {
+		stores.w_t_details.update(v => v | T_Details.parts);
+		engine.add_child_so();
 	}
 
 	onMount( async () => {
@@ -48,7 +70,9 @@
 
 		<Hideable title='parts' id='parts' detail={T_Details.parts}>
 			{#snippet actions()}
-				<button class='banner-add' use:hit_target={{ id: 'add-child', onpress: () => engine.add_child_so() }}>+</button>
+				{#if !is_repeater_or_clone}
+					<button class='banner-add' use:hit_target={{ id: 'add-child', onpress: add_child_and_show_parts }}>+</button>
+				{/if}
 			{/snippet}
 			<D_Parts />
 		</Hideable>

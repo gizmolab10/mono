@@ -194,108 +194,6 @@
         "parent_id": "dia2480ebef32cfd"
       },
       {
-        "id": "di5c4dd68247b856",
-        "name": "dirt",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 4267.200000000001,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "value": 1219.2000000000091,
-              "is_locked": true
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 8839.19999999999,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": 609.6,
-            "length": {
-              "value": 609.6,
-              "is_locked": true
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "visible": true,
-        "hide_children": false,
-        "parent_id": "die948608c4b1219"
-      },
-      {
-        "id": "di0e4bfda1591e53",
-        "name": "glass wall",
-        "x": {
-          "attributes": {
-            "origin": 4178.300000000001,
-            "extent": {
-              "formula": ".e"
-            },
-            "length": {
-              "formula": "wall th"
-            },
-            "angle": 0
-          },
-          "invariant": 0
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "value": 1219.200244140625,
-              "is_locked": true
-            },
-            "extent": {
-              "formula": ".e - 4'"
-            },
-            "length": 7619.999755859374,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e - beam th"
-            },
-            "length": 2609.8500000000004,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": true,
-        "hide_children": false,
-        "repeater": {
-          "spacing": 406.4,
-          "firewall": true,
-          "is_repeating": false,
-          "run_axis": 1,
-          "is_diagonal": false
-        },
-        "parent_id": "die948608c4b1219"
-      },
-      {
         "id": "di814622bfde093a",
         "name": "moose",
         "x": {
@@ -313,63 +211,17 @@
         },
         "y": {
           "attributes": {
-            "origin": 6096,
+            "origin": 4571.999999999999,
             "extent": {
               "formula": ".e"
             },
             "length": {
-              "value": 3962.4,
+              "value": 5486.400000000001,
               "is_locked": true
             },
             "angle": 0
           },
           "invariant": 0
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 2895.6000000000004,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": false,
-        "hide_children": false,
-        "parent_id": "die948608c4b1219"
-      },
-      {
-        "id": "di38476b85f5fb05",
-        "name": "kitchen",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 4267.200000000001,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": "moose.s"
-            },
-            "length": 6096,
-            "angle": 0
-          },
-          "invariant": 2
         },
         "z": {
           "attributes": {
@@ -844,12 +696,12 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s"
+              "formula": ".s - closet d"
             },
             "extent": {
               "formula": ".e"
             },
-            "length": 1524,
+            "length": 2438.3999999999996,
             "angle": 0
           },
           "invariant": 2
@@ -879,245 +731,6 @@
         "parent_id": "di4d46b58f96fcd0"
       },
       {
-        "id": "di3e429f96ddfb7b",
-        "name": "kitchen wall",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": "main post.e"
-            },
-            "extent": {
-              "formula": "kitchen beam.s"
-            },
-            "length": 1962.1500000000015,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": 88.89999999999964,
-            "length": {
-              "formula": "wall th"
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 2895.6000000000004,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": true,
-        "hide_children": false,
-        "parent_id": "di814622bfde093a"
-      },
-      {
-        "id": "did948f886e40d95",
-        "name": "chimney wall",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 4267.200000000001,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "y": {
-          "attributes": {
-            "origin": 3873.5,
-            "extent": {
-              "formula": ".e"
-            },
-            "length": {
-              "formula": "wall th"
-            },
-            "angle": 0
-          },
-          "invariant": 0
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 2895.6000000000004,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": true,
-        "hide_children": false,
-        "parent_id": "di814622bfde093a"
-      },
-      {
-        "id": "di6e49f7949d45d3",
-        "name": "bathroom",
-        "x": {
-          "attributes": {
-            "origin": 2438.4000000000015,
-            "extent": {
-              "formula": ".e"
-            },
-            "length": {
-              "value": 1828.7999999999997,
-              "is_locked": true
-            },
-            "angle": 0
-          },
-          "invariant": 0
-        },
-        "y": {
-          "attributes": {
-            "origin": 5181.6,
-            "extent": {
-              "formula": ".e"
-            },
-            "length": {
-              "value": 914.4000000000001,
-              "is_locked": true
-            },
-            "angle": 0
-          },
-          "invariant": 0
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 2895.6000000000004,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": false,
-        "hide_children": false,
-        "parent_id": "di38476b85f5fb05"
-      },
-      {
-        "id": "di8c404384d31f08",
-        "name": "bath back wall",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 1828.7999999999993,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": 88.89999999999964,
-            "length": {
-              "formula": "wall th"
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 2895.6000000000004,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": true,
-        "hide_children": true,
-        "repeater": {
-          "spacing": 406.4,
-          "firewall": true,
-          "is_repeating": true,
-          "run_axis": 0,
-          "is_diagonal": false
-        },
-        "parent_id": "di6e49f7949d45d3"
-      },
-      {
-        "id": "di5244f08f7d9fff",
-        "name": "stud",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": 38.100000000000364,
-            "length": {
-              "formula": "stud th"
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 88.89999999999964,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 2895.6000000000004,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": true,
-        "hide_children": false,
-        "parent_id": "di8c404384d31f08"
-      },
-      {
         "id": "di5d4068af039b53",
         "name": "bath side wall",
         "x": {
@@ -1141,7 +754,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 914.3999999999996,
+            "length": 914.4000000000005,
             "angle": 0
           },
           "invariant": 2
@@ -1152,9 +765,9 @@
               "formula": ".s"
             },
             "extent": {
-              "formula": ".e"
+              "formula": ".e - beam th"
             },
-            "length": 2895.6000000000004,
+            "length": 2609.8500000000004,
             "angle": 0
           },
           "invariant": 2
@@ -1204,7 +817,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 2895.6000000000004,
+            "extent": 2609.8500000000004,
             "length": {
               "formula": ".l"
             },
@@ -1215,6 +828,52 @@
         "visible": true,
         "hide_children": false,
         "parent_id": "di5d4068af039b53"
+      },
+      {
+        "id": "did948f886e40d95",
+        "name": "street wall",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 4267.200000000001,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": 5397.500000000001,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "wall th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2895.6000000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
       },
       {
         "id": "di334398930cb9ea",
@@ -1238,9 +897,9 @@
               "formula": ".s"
             },
             "extent": {
-              "formula": "back.well.e"
+              "formula": "well post.s"
             },
-            "length": 1524,
+            "length": 3352.8,
             "angle": 0
           },
           "invariant": 2
@@ -1263,6 +922,142 @@
         "parent_id": "di814622bfde093a"
       },
       {
+        "id": "di0646c8951cb17e",
+        "name": "well post",
+        "x": {
+          "attributes": {
+            "origin": -101.60000000000036,
+            "extent": 82.54999999999927,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "overhang beam.s"
+            },
+            "extent": 3536.95,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - 11\""
+            },
+            "length": 2616.2000000000003,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
+      },
+      {
+        "id": "di484f8bab1e0e2b",
+        "name": "overhang beam",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s + post th / 2"
+            },
+            "extent": {
+              "formula": "front.e + overhang"
+            },
+            "length": 5394.325000000002,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".e - 7'"
+            },
+            "extent": 3536.95,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 2609.8500000000004,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
+      },
+      {
+        "id": "di1e4196aac255dc",
+        "name": "outer beam",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "front.e - post th"
+            },
+            "extent": 4267.200000000001,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "overhang beam.e"
+            },
+            "extent": {
+              "formula": "front.e"
+            },
+            "length": 1949.4500000000007,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": 2609.8500000000004,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
+      },
+      {
         "id": "dia04a54814864bd",
         "name": "shower wall",
         "x": {
@@ -1270,7 +1065,7 @@
             "origin": {
               "formula": ".s + .l / 2"
             },
-            "extent": 1003.2999999999993,
+            "extent": 1200.1499999999996,
             "length": {
               "formula": "wall th"
             },
@@ -1281,7 +1076,7 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s"
+              "formula": ".e - closet d"
             },
             "extent": {
               "formula": ".e"
@@ -1363,7 +1158,7 @@
       },
       {
         "id": "dibb46a3aa5f0c4c",
-        "name": "structure",
+        "name": "main",
         "x": {
           "attributes": {
             "origin": {
@@ -1414,7 +1209,7 @@
           "attributes": {
             "origin": -2.536155313537236e-12,
             "extent": {
-              "formula": "main beam.s"
+              "formula": "kitchen main beam.s"
             },
             "length": 4470.400000000002,
             "angle": 0
@@ -1426,7 +1221,7 @@
             "origin": {
               "formula": "zen beam.e"
             },
-            "extent": 0,
+            "extent": 3.175000000000182,
             "length": {
               "formula": "post th / 2"
             },
@@ -1458,7 +1253,7 @@
           "attributes": {
             "origin": 0,
             "extent": {
-              "formula": "main beam.s"
+              "formula": "kitchen main beam.s"
             },
             "length": 4470.4,
             "angle": 0
@@ -1519,7 +1314,7 @@
             "extent": {
               "formula": "stair beam.e"
             },
-            "length": -914.3999999999996,
+            "length": -911.2249999999995,
             "angle": 0
           },
           "invariant": 2
@@ -1565,7 +1360,7 @@
             "extent": {
               "formula": "stair beam.e"
             },
-            "length": -914.3999999999996,
+            "length": -911.2249999999995,
             "angle": 0
           },
           "invariant": 2
@@ -1609,7 +1404,7 @@
               "formula": "art post.c"
             },
             "extent": {
-              "formula": ".e + 4'"
+              "formula": ".e + overhang"
             },
             "length": 5089.525000000001,
             "angle": 0
@@ -1698,12 +1493,12 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s - 4'"
+              "formula": ".s - overhang"
             },
             "extent": {
-              "formula": "zen post.c"
+              "formula": ".e - wall th"
             },
-            "length": 7832.725,
+            "length": 7835.900000000001,
             "angle": 0
           },
           "invariant": 2
@@ -1724,98 +1519,6 @@
         "visible": true,
         "hide_children": false,
         "parent_id": "did04260a3a40843"
-      },
-      {
-        "id": "di194aa0bcec9ee6",
-        "name": "main post",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": "front.kitchen.s - 4\""
-            },
-            "extent": 4654.549999999999,
-            "length": {
-              "formula": "post th"
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "formula": "front.kitchen.e - 4\""
-            },
-            "extent": 6178.549999999999,
-            "length": {
-              "formula": "post th"
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e - 11\""
-            },
-            "length": 2616.2000000000003,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": true,
-        "hide_children": false,
-        "parent_id": "dibb46a3aa5f0c4c"
-      },
-      {
-        "id": "di46448b947f83a6",
-        "name": "main beam",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": "front.s - 4\""
-            },
-            "extent": 4654.549999999999,
-            "length": {
-              "formula": "post th"
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "formula": ".s - 4'"
-            },
-            "extent": {
-              "formula": ".e + 4'"
-            },
-            "length": 14020.800000000001,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "z": {
-          "attributes": {
-            "origin": 2609.8500000000004,
-            "extent": {
-              "formula": ".e"
-            },
-            "length": {
-              "formula": "beam th"
-            },
-            "angle": 0
-          },
-          "invariant": 0
-        },
-        "visible": true,
-        "hide_children": false,
-        "parent_id": "dibb46a3aa5f0c4c"
       },
       {
         "id": "did6490982286f3f",
@@ -1853,7 +1556,7 @@
           },
           "invariant": 2
         },
-        "visible": false,
+        "visible": true,
         "hide_children": true,
         "repeater": {
           "spacing": 406.4,
@@ -1906,7 +1609,7 @@
           },
           "invariant": 2
         },
-        "visible": false,
+        "visible": true,
         "hide_children": false,
         "repeater": {
           "spacing": 406.4,
@@ -1918,14 +1621,14 @@
         "parent_id": "dibb46a3aa5f0c4c"
       },
       {
-        "id": "di6e4111a884deec",
-        "name": "kitchen beam",
+        "id": "di194aa0bcec9ee6",
+        "name": "post",
         "x": {
           "attributes": {
             "origin": {
-              "formula": "front.s + front.l / 2 - wall th"
+              "formula": "kitchen main beam.s"
             },
-            "extent": 2228.8500000000004,
+            "extent": 4654.549999999999,
             "length": {
               "formula": "post th"
             },
@@ -1936,55 +1639,10 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s - 4'"
+              "value": 5486.400000000001,
+              "is_locked": true
             },
-            "extent": {
-              "formula": "front.e"
-            },
-            "length": 11277.6,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "z": {
-          "attributes": {
-            "origin": 2609.8500000000004,
-            "extent": {
-              "formula": ".e"
-            },
-            "length": {
-              "formula": "beam th"
-            },
-            "angle": 0
-          },
-          "invariant": 0
-        },
-        "visible": true,
-        "hide_children": false,
-        "parent_id": "di38476b85f5fb05"
-      },
-      {
-        "id": "di8c448f846398a2",
-        "name": "kitchen post",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": "kitchen beam.s"
-            },
-            "extent": 2228.8500000000004,
-            "length": {
-              "formula": "post th"
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "formula": "front.moose.s - wall th"
-            },
-            "extent": 6191.25,
+            "extent": 5670.55,
             "length": {
               "formula": "post th"
             },
@@ -2007,16 +1665,14 @@
         },
         "visible": true,
         "hide_children": false,
-        "parent_id": "di38476b85f5fb05"
+        "parent_id": "dibb46a3aa5f0c4c"
       },
       {
-        "id": "did74e849945d8cf",
-        "name": "front beam",
+        "id": "di82442893cdd1d4",
+        "name": "outer post",
         "x": {
           "attributes": {
-            "origin": {
-              "formula": "front.e - post th"
-            },
+            "origin": 8655.050000000001,
             "extent": 8839.2,
             "length": {
               "formula": "post th"
@@ -2028,12 +1684,94 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s - 4'"
+              "formula": "post.s"
             },
+            "extent": 5670.55,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 2609.8500000000004,
+            "length": 2609.8500000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dibb46a3aa5f0c4c"
+      },
+      {
+        "id": "di8c448f846398a2",
+        "name": "kitchen post",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "kitchen beam.s"
+            },
+            "extent": 6800.85,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "post.s"
+            },
+            "extent": 5670.55,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 2609.8500000000004,
+            "length": 2609.8500000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dibb46a3aa5f0c4c"
+      },
+      {
+        "id": "di46448b947f83a6",
+        "name": "kitchen main beam",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "front.s - 4\""
+            },
+            "extent": 4654.549999999999,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": -1219.2,
             "extent": {
-              "formula": "front.e"
+              "formula": "post.c"
             },
-            "length": 11277.6,
+            "length": 6797.675,
             "angle": 0
           },
           "invariant": 2
@@ -2054,6 +1792,537 @@
         "visible": true,
         "hide_children": false,
         "parent_id": "dibb46a3aa5f0c4c"
+      },
+      {
+        "id": "di4344b1a72875b7",
+        "name": "moose main beam",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "front.s - 4\""
+            },
+            "extent": 4654.549999999999,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "post.c"
+            },
+            "extent": {
+              "formula": ".e + 4'"
+            },
+            "length": 7223.125,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": 2609.8500000000004,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dibb46a3aa5f0c4c"
+      },
+      {
+        "id": "dia14196bea368a4",
+        "name": "overhang beam",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "post.e"
+            },
+            "extent": {
+              "formula": "front.e - beam th / 2"
+            },
+            "length": 4041.7750000000015,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "post.s"
+            },
+            "extent": 5670.55,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 2609.8500000000004,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dibb46a3aa5f0c4c"
+      },
+      {
+        "id": "di6e4111a884deec",
+        "name": "kitchen beam",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "front.c - wall th"
+            },
+            "extent": 6800.85,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": " - overhang"
+            },
+            "extent": {
+              "formula": "overhang beam.s"
+            },
+            "length": 6705.6,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": 2609.8500000000004,
+            "extent": 2895.6000000000004,
+            "length": {
+              "formula": "beam th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dibb46a3aa5f0c4c"
+      },
+      {
+        "id": "did74e849945d8cf",
+        "name": "front beam",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "front.e - post th"
+            },
+            "extent": 8839.2,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s - overhang"
+            },
+            "extent": {
+              "formula": "front.moose.overhang beam.s"
+            },
+            "length": 9144,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": 2609.8500000000004,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "beam th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "dibb46a3aa5f0c4c"
+      },
+      {
+        "id": "di5c4dd68247b856",
+        "name": "dirt",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 4267.200000000001,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "value": 1219.2000000000091,
+              "is_locked": true
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 8839.19999999999,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 609.6,
+            "length": {
+              "value": 609.6,
+              "is_locked": true
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": false,
+        "hide_children": false,
+        "parent_id": "die948608c4b1219"
+      },
+      {
+        "id": "di3e429f96ddfb7b",
+        "name": "kitchen wall",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": "bathroom.c"
+            },
+            "length": 3155.9500000000007,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 88.89999999999964,
+            "length": {
+              "formula": "wall th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2895.6000000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
+      },
+      {
+        "id": "di1449918b4c7d64",
+        "name": "overhang post",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".e - post th"
+            },
+            "extent": 4267.200000000001,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "overhang beam.s"
+            },
+            "extent": 3536.95,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - 11\""
+            },
+            "length": 2616.2000000000003,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
+      },
+      {
+        "id": "di6e49f7949d45d3",
+        "name": "bathroom",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": "main.kitchen post.s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2222.5,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 914.4000000000005,
+            "length": {
+              "value": 914.4000000000005,
+              "is_locked": true
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2895.6000000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": false,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
+      },
+      {
+        "id": "di0e4bfda1591e53",
+        "name": "door wall",
+        "x": {
+          "attributes": {
+            "origin": 4178.300000000001,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "wall th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "value": 0,
+              "is_locked": true
+            },
+            "extent": {
+              "value": 914.4000000000001,
+              "is_locked": true
+            },
+            "length": 914.4000000000001,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - beam th"
+            },
+            "length": 2609.8500000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "repeater": {
+          "spacing": 406.4,
+          "firewall": true,
+          "is_repeating": false,
+          "run_axis": 1,
+          "is_diagonal": false
+        },
+        "parent_id": "die948608c4b1219"
+      },
+      {
+        "id": "di0b4587b5e56f1b",
+        "name": "stub wall",
+        "x": {
+          "attributes": {
+            "origin": 4178.300000000001,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "wall th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".e - 3'"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 914.3999999999996,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - beam th"
+            },
+            "length": 2609.8500000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "repeater": {
+          "spacing": 406.4,
+          "firewall": true,
+          "is_repeating": false,
+          "run_axis": 1,
+          "is_diagonal": false
+        },
+        "parent_id": "die948608c4b1219"
+      },
+      {
+        "id": "di2a41cc84c2800d",
+        "name": "glass wall",
+        "x": {
+          "attributes": {
+            "origin": 4178.300000000001,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "wall th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "value": 1828.8000000000002,
+              "is_locked": true
+            },
+            "extent": {
+              "formula": "moose.overhang post.s"
+            },
+            "length": 6095.999999999999,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - beam th"
+            },
+            "length": 2609.8500000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "repeater": {
+          "spacing": 406.4,
+          "firewall": true,
+          "is_repeating": false,
+          "run_axis": 1,
+          "is_diagonal": false
+        },
+        "parent_id": "die948608c4b1219"
       }
     ],
     "givens": [
@@ -2076,6 +2345,16 @@
         "name": "beam th",
         "value_mm": 285.75,
         "locked": true
+      },
+      {
+        "name": "overhang",
+        "value_mm": 1219.2,
+        "locked": true
+      },
+      {
+        "name": "closet d",
+        "value_mm": 914.4000000000001,
+        "locked": true
       }
     ],
     "camera": {
@@ -2096,7 +2375,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "di334398930cb9ea",
+    "selected_id": "di6e49f7949d45d3",
     "selected_face": 1
   }
 }

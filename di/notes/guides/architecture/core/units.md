@@ -62,4 +62,4 @@ Citation: `Units.ts` lines 421-429.
 
 ## Tests
 
-Round-trip behaviour is pinned down in `src/lib/ts/tests/Units.test.ts`.
+Round-trip behavior is pinned down in `src/lib/ts/tests/Units.test.ts`.

@@ -207,4 +207,14 @@
     - [x] "?" button in lower right corner of graph
 - [x] stipulations <-> code
     - [x] distribute -> components?
-- [x] move reference guide -> src/manual
+- [x] help
+    - [x] move reference guide -> src/manual
+    - [x] keep hamburger visible
+    - [x] hamburger -> sidebar visibility toggle
+    - [x] new preferences`
+        - [x] hamburger help visibility
+        - [x] deploy help page id in preferences so revisit help goes to last-visited help content
+- [x] white thumbs on all sliders
+- [x] click plus button in parts banner -> opens (if closed), selects new part
+    - [x] do not create a child if selected SO is a repeater or a clone
+    - [x] hide plus button in parts banner when selected SO is a repeater or a clone

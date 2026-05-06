@@ -78,12 +78,12 @@
 	const current_thumb_color = $derived(
 		is_sticky
 			? (isHoveringOn_slider && !is_dragging) ? sticky_dot_hover : sticky_dot
-			: (isHoveringOn_slider && !is_dragging) ? 'var(--hover)' : 'var(--selected)'
+			: (isHoveringOn_slider && !is_dragging) ? 'var(--hover)' : 'var(--c-thumb)'
 	);
 	const current_thumb_color_alt = $derived(
 		is_sticky_alt
 			? (isHoveringOn_slider_alt && !is_dragging_alt) ? sticky_dot_hover : sticky_dot
-			: (isHoveringOn_slider_alt && !is_dragging_alt) ? 'var(--hover)' : 'var(--selected)'
+			: (isHoveringOn_slider_alt && !is_dragging_alt) ? 'var(--hover)' : 'var(--c-thumb)'
 	);
 
 	// Value → slider position (0..divisions)

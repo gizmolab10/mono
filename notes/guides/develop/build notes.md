@@ -27,7 +27,7 @@ Walk the list once and drop everything that is not a real build. Drop:
 
 - pure cosmetic or aesthetic tweaks ("colors", "darker controls", "common hover", "looks better");
 - bug fixes by themselves ("fix infinite grids", "rotation tweak", "missed one");
-- internal reorganisations and file moves that do not change behaviour;
+- internal reorganisations and file moves that do not change behavior;
 - documentation-only updates;
 - work in other projects in the same repo, when those touch folders outside the design-intuition app;
 - mothballed work that was parked rather than shipped — entries that say "give up", "moth ball", "park".

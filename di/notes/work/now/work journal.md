@@ -4,6 +4,106 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-05 (continued, second) — two separators on the right-side panel
+
+A small follow-up. Added a thin horizontal separator above the show/hide-givens toggle inside the attributes panel, and another one above the divide-and-duplicate button row inside the parts panel. Both panels now use the same separator component used everywhere else on the right side of the screen. Two single-line additions plus one new import on the attributes panel; type-check clean.
+
+Files: [P_Attributes.svelte](../../src/lib/svelte/details/P_Attributes.svelte) (added the import and the separator above the givens toggle row), [D_Parts.svelte](../../src/lib/svelte/details/D_Parts.svelte) (added the separator above the duplicate button row).
+
+---
+
+## Session — 2026-05-05 (continued) — cut a smart object in half
+
+A long pass on the next code-debt item: cutting a selected part in half along its longest direction. Worked back and forth with the user to nail down the spec (several rounds of edits to the code-debt list answered the open guesses). Wrote the rule into the catalog first, wrote the tests next, then implemented the engine routine and the toolbar button. All checks green.
+
+### Thread one — the new rule
+
+A new line in the rules catalog (rule 59, "Cutting a smart object in half") names every detail of the feature: the longest direction is chosen by the stored length value; the original keeps the lower half and a new sibling holds the upper half; the new sibling becomes the selected part with a numeric-suffix name. Five refusal cases — root, clone, template, has-children-not-repeater, two longest tied — each post a red message in the on-screen status strip and leave the scene untouched. Repeaters are an exception to the has-children refusal: a cut on a repeater produces two repeaters, each carrying its own copy of the template. Formula behavior on the cut direction depends on which attribute the invariant points at (the spec text spells out each of the three cases). Formulas on the two non-cut directions are copied unchanged.
+
+### Thread two — the tests
+
+A new test file at `src/lib/ts/tests/Cut.test.ts` carries thirty-nine tests across nine groups: longest-direction selection, equal halves, selection and naming after the cut, the five refusal cases, the repeater exception, formula behavior per invariant case (three groups — invariant on length, invariant on start, invariant on end), formulas on the non-cut directions, and the can-cut flag the details panel uses to decide whether to render the cut button. Several tests caught real bugs in the first implementation pass and pushed the code toward the spec text rather than my initial guesses about what the spec meant.
+
+### Thread three — the engine routine
+
+The existing duplicate routine was refactored: its inner clone-and-rename work was extracted into a private helper that the cut routine now reuses. The cut routine builds on top of that helper. The flow is: refusal block → pick the longest direction by stored length → snapshot history → clone the subtree as a sibling → write the cut overrides on the cut direction (the writes depend on the invariant case) → propagate → refresh the parts list → select the new sibling → tick → save.
+
+### Thread four — the cut button
+
+A new "cut" button sits to the left of the existing "duplicate" button on the selected-part panel. The button is hidden when the selection is in any of the refusal cases — root, clone, template, part-with-children-and-not-a-repeater, or two longest tied. Visibility is driven by a new derived flag in the parts component that calls a new `engine.can_cut_selected()` helper.
+
+### Files touched — 2026-05-05 (continued)
+
+- New stipulation 59 added to [stipulations.md](../../guides/project/development/stipulations.md), in a new section "Cutting a smart object in half." Coverage summary at the top updated to fifty-nine total, fifty-five unit-pinned, four browser-driven.
+- New test file [Cut.test.ts](../../src/lib/ts/tests/Cut.test.ts) — thirty-nine tests, all green.
+- Engine refactor and new routines at [Engine.ts](../../src/lib/ts/render/Engine.ts) — extracted `clone_subtree_as_sibling`; added `can_cut_selected()` and `cut_selected_so()`.
+- Cut button and derived flag added to [D_Parts.svelte](../../src/lib/svelte/details/D_Parts.svelte).
+- Areas list at [areas.json](../../guides/project/development/areas.json) — bumped the Cutting area from zero to one module.
+- Testing index at [testing.md](../../guides/project/development/testing.md) — Cut entry now describes the real test groups instead of pending todos. Coverage summary updated.
+
+### Verification — 2026-05-05 (continued)
+
+- `yarn vitest run`: thirty files pass, six hundred seventy-two tests, all green.
+- `yarn svelte-check`: zero errors, zero warnings.
+- `yarn adherence`: extractor + docs build green; dashboard reports fifty-nine stipulations total, fifty-nine matched, all areas at one hundred percent or higher.
+
+### Notes
+
+- The "leave the invariant formula alone" rule in the spec is honored case by case in the routine. For invariant-on-length, only end and start are written. For invariant-on-start, length and end are written on the original (the new sibling's start derives from its end and the halved length). For invariant-on-end, length is written on both halves and start is written on the new sibling (the original's end derives from its start and the halved length).
+- The geometry assumes no user-typed formula on the derived (invariant) attribute. If the user types a formula on the derived attribute, the formula evaluates and may pin the value away from the geometric expectation — this matches the design choice the user made on 2026-05-05 about the contradiction in the length-invariant case.
+- The code-debt item still shows the sub-bullets unchecked in [code.debt.md](../now/code.debt.md). The user marks them off when they're satisfied.
+
+---
+
+## Session — 2026-05-05 — help slice finished, parts plus button refined, mono guides folder renamed
+
+A short pass that closed out the help-overlay slice, tightened the parts panel's plus-button behavior, and renamed the shared-guides folder. Six threads.
+
+### Thread one — help-overlay slice step four
+
+The help overlay now remembers the last visited page across reloads. A new persistent preference holds the page id; the help component reads from and writes to it; a one-time fix-up at mount resets the stored id to the walkthrough if the stored page no longer exists. The previous local rune-state for the active page was replaced with the persistent store everywhere so there's a single source of truth.
+
+### Thread two — parts banner plus button
+
+Two behavior changes when the user clicks the plus button at the right of the parts panel banner:
+
+- The parts panel auto-opens if it was collapsed. A small wrapper helper sets the parts bit in the visibility bitmask using OR (idempotent) before calling the engine routine.
+- The newly-added child becomes the selected part. The engine routine that adds a child now sets the selection to the new child after wiring it into the scene; the previous "keep parent selected" comment flipped to "select the new child".
+
+### Thread three — refuse to add a child to a repeater or a clone
+
+The engine routine that adds a child now refuses when the would-be parent is a repeater (its own repeater flag is on) or a clone (its grand-parent is a repeater and it is not the first child of that grand-parent — which is what makes a part a clone). On refusal the user sees the message "cannot add a child to a repeater or its clone" in the on-screen status strip, in red. The history snapshot moved below the new check so the no-op click does not record an empty undo step.
+
+### Thread four — hide the plus button when selection is a repeater or a clone
+
+The plus button at the right of the parts panel banner now disappears when the selected part is a repeater or a clone. The details component reads the current selection reactively and recomputes a flag using the same repeater-or-clone test the engine routine uses. The flag re-evaluates on selection changes and on scene state changes. Without an active button the user cannot try the refused action; the on-screen status message is reserved for the rare cases where the engine routine is reached via a different path.
+
+### Thread five — Next section is auto-generated
+
+A new tiny script reads the code-debt list, finds the first unchecked item, and rewrites the handoff's Next section to match. It is wired into the adherence chain so every build refreshes the Next section. The script finds the section by its heading and replaces everything until the next heading or separator. The replacement is plain English: a single sentence that names the first unchecked item.
+
+### Thread six — mono guides folder renamed: design → hub
+
+The shared-guides folder at `notes/guides/design/` is now `notes/guides/hub/`. Folder renamed; the contents listing in the parent index updated; the heading inside the section's index page updated to match; the shared vitepress sidebar entry updated for both the section text and the link paths; the keyword-trigger references in the pre-flight keywords table updated. A leftover reference inside `ga/notes/design/file.layout.md` was left alone — it documents ga's own intended folder layout, not mono's guides path.
+
+### Files touched — 2026-05-05
+
+- New persistent preference key for the active help page id added to [Preferences.ts](../../src/lib/ts/managers/Preferences.ts).
+- New persistent store added to [Stores.ts](../../src/lib/ts/managers/Stores.ts) next to the existing help-sidebar visibility line.
+- [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte) replaced its previous local rune-state for the active page with the persistent store everywhere; added a one-time fix-up for stale stored ids at mount.
+- [Details.svelte](../../src/lib/svelte/details/Details.svelte) gained a small wrapper helper for the parts plus button (panel auto-open + add-child) and a new derived flag that decides whether to render the plus button at all.
+- [Engine.ts](../../src/lib/ts/render/Engine.ts) gained the repeater-or-clone refusal at the top of the add-a-child routine, with the status-strip message; the history snapshot moved below the refusal check; the post-add comment flipped from "keep parent selected" to "select the new child".
+- New tooling: [sync-next.mjs](../../tools/sync-next.mjs). The adherence chain in package.json now runs sync-next first.
+- The shared-guides folder was renamed; the cross-references in the parent index, the section's index, the vitepress sidebar, and the pre-flight keywords table were updated.
+
+### Verification — 2026-05-05
+
+- `yarn svelte-check`: zero errors, zero warnings.
+- `yarn build`: green.
+- `yarn adherence` (extractor + docs build): green.
+
+---
+
 ## Session — 2026-05-04 (continued) — help overlay improvements
 
 A long second pass through the day's work focused on the help overlay (the full-screen page that opens from the question-mark button on the toolbar). Three threads.
@@ -122,7 +222,7 @@ Two preference defaults flipped on first launch: editing now starts on (lock ope
 
 The ws project's pattern for URL flags was lifted into di. Configuration gained a query-strings field captured at construction time, an `apply_queryStrings` method, a `configure` step that wires each manager's apply method in order, and a side-effect call at module load. Preferences gained an `apply_queryStrings` of its own that handles the new flag.
 
-The flag is `?clear=preferences`. When present, the preferences-reset helper runs before any persistent store reads its initial value. The result: a fresh launch on the next page render. Scene and library are preserved (matching the existing factory-reset button's behaviour).
+The flag is `?clear=preferences`. When present, the preferences-reset helper runs before any persistent store reads its initial value. The result: a fresh launch on the next page render. Scene and library are preserved (matching the existing factory-reset button's behavior).
 
 `main.ts` imports Configuration first so the side-effect runs before App.svelte's transitive imports trigger the persistent stores to read.
 

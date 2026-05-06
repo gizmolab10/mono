@@ -23,4 +23,4 @@ A separate precision setting controls how detailed the display is. For imperial,
 
 You can type a number in any unit, regardless of the family you have chosen. The system tries three reads in order. First, if the number has a foot tick or an inch tick (`5' 3 1/4"`), the compound imperial reader takes it. Second, any unit's display symbol (`mm`, `cm`, `m`, `ft`, `yd`, `cubit`, and so on) is recognised as a suffix. Third, a bare number is read in the family's default unit — foot for imperial, metre for metric, fathom for marine, cubit for archaic.
 
-Citation: the preferences selector lives at `src/lib/svelte/details/D_Preferences.svelte`. The full units behaviour is described on [the units page](../../architecture/core/units.md).
+Citation: the preferences selector lives at `src/lib/svelte/details/D_Preferences.svelte`. The full units behavior is described on [the units page](../../architecture/core/units.md).

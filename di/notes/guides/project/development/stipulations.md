@@ -2,7 +2,7 @@
 
 The load-bearing rules the app is built on. Without these written down, work drifts. Anything new should be checked against this list. All entries are guesses pending review.
 
-**Coverage summary:** all fifty-eight rules are now directly covered. Fifty-four are pinned by unit tests; the remaining four — user-interface flows that need real mouse events and a real animation loop — are pinned by browser-driven tests under [`e2e/tests/`](../../e2e/tests/). Coverage judgments are guesses pending review.
+**Coverage summary:** all fifty-nine rules are now directly covered. Fifty-five are pinned by unit tests in `src/lib/ts/tests/`; the remaining four — user-interface flows that need real mouse events and a real animation loop — are pinned by browser-driven tests under [`e2e/tests/`](../../e2e/tests/). Coverage judgments are guesses pending review.
 
 ALWAYS: Always update the authoritative count testing is done.
 
@@ -338,6 +338,13 @@ A real example, fully written:
     - test: [Center.test.ts](../../../src/lib/ts/tests/Center.test.ts) "the bare letter c on a host direction resolves to the host direction's center"
     - code: [src/lib/ts/algebra/Constraints.ts:139](../../../src/lib/ts/algebra/Constraints.ts)
 
+## Cutting a smart object in half
+
+59. The user can cut the selected smart object in half along its longest direction (measured by the plain stored length value). The original keeps the lower half; a new sibling appears as the upper half (named with a numeric-suffix bump matching the duplicate routine's naming) and becomes the selected part. The cut is refused — with a red message in the on-screen status strip and no change to the scene — when two directions are tied for longest, and when the selected part is root, a clone of a repeater, the template of a repeater, or any other part with children. Repeaters are an exception to the "has children" refusal: a cut on a repeater produces two repeaters, each carrying its own copy of the template; clones in each half regenerate from each half's own template on the next sync. On the cut direction, the formula on whichever attribute is the invariant is preserved unchanged on both halves; the two non-invariant attributes are rewritten so each half's length value equals half the original's old length on that direction. The exact rewrite depends on which attribute the invariant points at: when the invariant is on length, the original's end and the new sibling's start are altered to the half-way point; when the invariant is on start, the length on each half is divided in half (and the original's end lands at the half-way point); when the invariant is on end, the length on each half is divided in half (and the new sibling's start lands at the half-way point). "Half-way" means: alter the formula so its value evaluates to the half-way point; if the relevant attribute carries no formula, write the half-way value directly as a plain number. Both halves carry the original's formulas on the two directions that are NOT being cut, copied unchanged.
+    - id: cut-so-in-half
+    - test: [Cut.test.ts](../../../src/lib/ts/tests/Cut.test.ts) "the cut picks the longest direction and produces two equal halves"
+    - code: [src/lib/ts/render/Engine.ts:1023](../../../src/lib/ts/render/Engine.ts)
+
 ## Expand scope
 
 ### **Strong candidates**
@@ -346,15 +353,15 @@ these have tests already in the test index but no rule citing them, so the tests
 
 - **Angle math** (`types/Angle.ts`) — there's a test file pinning angle normalisation, conversion, and comparison, but no rule names what those tests prove. Possible rule: "angles normalise to a canonical range; the same angle written two ways compares equal."
 - **Coordinate math** (`types/Coordinates.ts`) — point/size/rectangle helpers, with tests, no rule.
-- **Hit testing** (`events/Hits_3D.ts`) — there's a test file for 3D hit geometry (point-in-polygon, segment proximity, front-facing detection), no rule. The click-stack drill-down behaviour (each click rotates through stacked parts under the cursor) is described in the handoff but not in the catalogue.
+- **Hit testing** (`events/Hits_3D.ts`) — there's a test file for 3D hit geometry (point-in-polygon, segment proximity, front-facing detection), no rule. The click-stack drill-down behavior (each click rotates through stacked parts under the cursor) is described in the handoff but not in the catalogue.
 - **Topology** (`render/Topology.ts`) — there's a test file ("Topology") for the unified-endpoint pipeline, no rule.
 - **Save-format migrations** (`managers/Versions.ts`) — there's a test file ("Versions") for the v1-through-v9 chain, no rule. The catalogue says scenes round-trip but does not say "every old save format has a one-way upgrade to the current shape."
 
 ### **Plausible candidates**
 
-load-bearing behaviour that no rule pins:
+load-bearing behavior that no rule pins:
 
-- **Selection-as-list semantics** — the "plain click replaces, command-click toggles, multi-select hides the three-tab strip" behaviour is described in the handoff but is not a catalogue rule.
+- **Selection-as-list semantics** — the "plain click replaces, command-click toggles, multi-select hides the three-tab strip" behavior is described in the handoff but is not a catalogue rule.
 - **Parts tree walks** (`managers/Parts.ts`) — the collapsed-rows model, the visible-row count, the hide-list generation — there are invariants (e.g. "collapsing a row hides every descendant; the visible-row count equals total minus hidden") that are not pinned.
 - **Orientation math** (`algebra/Orientation.ts`) — sits in algebra (the explicit-yes area in the development process), no rule.
 

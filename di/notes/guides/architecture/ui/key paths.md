@@ -29,7 +29,7 @@ Citation: `src/lib/ts/events/Events.ts` lines 189-231 (the document-level keyboa
 | Shift + Tab | Move to the previous cell. |
 | Escape | Cancel the edit and dismiss any error overlay. |
 
-Citation: `Events.ts` lines 191-194 (the route into the table-navigator helper); `Events.ts` lines 233-260 (the helper itself, which does same-column-next-row on Enter and linear walk on Tab); `src/lib/svelte/details/P_Attributes.svelte` lines 254 and 287 (the per-input commit-on-Enter and cancel-on-Escape behaviour).
+Citation: `Events.ts` lines 191-194 (the route into the table-navigator helper); `Events.ts` lines 233-260 (the helper itself, which does same-column-next-row on Enter and linear walk on Tab); `src/lib/svelte/details/P_Attributes.svelte` lines 254 and 287 (the per-input commit-on-Enter and cancel-on-Escape behavior).
 
 ## Inside a part-name input (in the parts table)
 

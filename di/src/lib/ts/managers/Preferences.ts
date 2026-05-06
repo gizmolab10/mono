@@ -24,14 +24,14 @@ export enum T_Preference {
 	visibleDetails   = 'visibleDetails',
 
 	// View
-	decorations      = 'decorations',
 	edgeThickness    = 'edgeThickness',
+	gridOpacity      = 'gridOpacity',
+	decorations      = 'decorations',
 	precision        = 'precision',
 	edgeColor        = 'edgeColor',
 	viewMode         = 'viewMode',
-	solid            = 'solid',
 	showGrid         = 'showGrid',
-	gridOpacity      = 'gridOpacity',
+	solid            = 'solid',
 
 	// Rotation
 	rotationSnap     = 'rotationSnap',
@@ -41,9 +41,9 @@ export enum T_Preference {
 	scale            = 'scale',
 
 	// Parts
-	partsTab         = 'partsTab',
-	showParts        = 'showParts',
 	showGivens       = 'showConstants',
+	showParts        = 'showParts',
+	partsTab         = 'partsTab',
 
 	// Mode
 	allowEditing     = 'allowEditing',
@@ -52,8 +52,8 @@ export enum T_Preference {
 	scene            = 'scene',
 
 	// Library
-	library          = 'library',
 	libraryFolder    = 'libraryFolder',
+	library          = 'library',
 
 	// Parts table
 	collapsedIds     = 'collapsedIds',

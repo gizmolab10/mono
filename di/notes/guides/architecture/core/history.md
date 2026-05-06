@@ -73,4 +73,4 @@ Citation: `src/lib/ts/events/Events.ts` lines 197-200.
 
 ## Tests
 
-Round-trip behaviour is pinned down in `src/lib/ts/tests/History.test.ts`.
+Round-trip behavior is pinned down in `src/lib/ts/tests/History.test.ts`.

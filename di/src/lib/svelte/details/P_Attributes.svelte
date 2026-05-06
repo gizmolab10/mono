@@ -7,6 +7,7 @@
 	import { T_Editing } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import type { Bound } from '../../ts/types/Types';
+	import Separator from '../mouse/Separator.svelte';
 	import { givens } from '../../ts/algebra/Givens';
 	import { units } from '../../ts/types/Units';
 	import P_Givens from './P_Givens.svelte';
@@ -294,11 +295,11 @@
 		}
 	}
 
-	let show_givens = $state(preferences.read<boolean>(T_Preference.showGivens) ?? true);
+	let show_constants = $state(preferences.read<boolean>(T_Preference.showGivens) ?? true);
 
-	function toggle_show_givens() { show_givens = !show_givens; preferences.write(T_Preference.showGivens, show_givens); }
+	function toggle_show_constants() { show_constants = !show_constants; preferences.write(T_Preference.showGivens, show_constants); }
 
-	function add_given() {
+	function add_constant() {
 		givens.add('', 0);
 		stores.tick();
 	}
@@ -403,17 +404,18 @@
 	{:else if error_state.show_overlay && error_state.active_error}
 		{@render error_overlay()}
 	{/if}
-	<div class='givens-header'>
-		<button class='givens-toggle' onclick={toggle_show_givens}>
-			{show_givens ? 'hide' : 'show'} givens
+	<Separator />
+	<div class='constants-header'>
+		<button class='constants-toggle' onclick={toggle_show_constants}>
+			{show_constants ? 'hide' : 'show'} constants
 		</button>
-		{#if show_givens}
-			<button class='add-button' use:hit_target={{ id: 'add-given', onpress: add_given }}>
+		{#if show_constants}
+			<button class='add-button' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>
 				+
 			</button>
 		{/if}
 	</div>
-	{#if show_givens}<P_Givens /><div style:height='3px'></div>{/if}
+	{#if show_constants}<P_Givens /><div style:height='0px'></div>{/if}
 {:else}
 	<p>-- no object selected --</p>
 {/if}
@@ -422,7 +424,7 @@
 	.bounds {
 		font-size       : var(--h-font-small);
 		border-collapse : collapse;
-		margin-bottom   : 10px;
+		margin-bottom   : 8px;
 		width           : 100%;
 	}
 
@@ -572,7 +574,7 @@
 		opacity    : 0.6;
 	}
 
-	.givens-header {
+	.constants-header {
 		align-items   : center;
 		display       : flex;
 		gap           : 6px;
@@ -580,7 +582,7 @@
 		margin-bottom : 6px;
 	}
 
-	.givens-toggle {
+	.constants-toggle {
 		border        : 0.75px solid currentColor;
 		height        : var(--h-button-tiny);
 		font-size     : var(--h-font-common);
@@ -595,7 +597,7 @@
 		padding       : 0;
 	}
 
-	.givens-toggle:hover {
+	.constants-toggle:hover {
 		background : var(--hover);
 	}
 

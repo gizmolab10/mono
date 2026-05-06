@@ -2,6 +2,7 @@
 
 | Build | Date         | Note                                            |
 | ----- | ------------ | ----------------------------------------------- |
+| 62    | May 5, 2026  | new stipulated cut in half                      |
 | 61    | May 4, 2026  | new logic driven development and dashboard      |
 | 60    | May 2, 2026  | new help system                                 |
 | 59    | Apr 30, 2026 | drag and drop in parts table                    |

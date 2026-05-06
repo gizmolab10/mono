@@ -26,10 +26,10 @@ import { get } from 'svelte/store';
 export class Colors {
 	// Static colors (non-reactive)
 	default    = 'black';
+	thumb      = 'white';
 	track      = '#ccc';
 	border     = 'darkgray';
 	banner     = '#f8f8f8';
-	thumb      = '#007aff';
 	focus      = 'cornflowerblue';
 
 	// Reactive colors (stores). Wrapped so every write marks the canvas out

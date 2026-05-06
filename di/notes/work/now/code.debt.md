@@ -4,26 +4,44 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] help
-    - [x] keep hamburger visible
-    - [x] hamburger -> sidebar visibility toggle
-    - [ ] new preferences`
-        - [x] hamburger help visibility
-        - [ ] deploy help page id in preferences so revisit help goes to last-visited help content
-    - [ ] complete & excellent
+- [ ] add a separator between
+    - [ ] attributes table and show/hide givens button
+    - [ ] parts table and duplicate button row
+- [ ] move single visible part up 6 px
+- [ ] shrink gab below show givens button
+- [ ] ability to cut an SO in half
+    - [ ] a "cut" button to the left of the existing "duplicate" button
+    - [ ] cut longest (plain length value) dimension
+        - [ ] refuse if two longest dimensions are equal
+        - [ ] show error in status strip
+    - [ ] repeaters -> duplicate the template (so both halves have an identical copy)
+        - [ ] produces two repeaters (each with its own template)
+    - [ ] a clone or a template or any part that has children -> refuse
+        - [ ] hide the cut button
+    - [ ] formulas -> duplicated except on axis being cut
+        - [ ] each half gets a revised formula such that their values are exactly half the original's length on that axis
+            - [ ] leave the invariant formula alone. it is, ahem! invariant
+            - [ ] if the invariant is 'l' alter the 'e' of the original and the 's' of the new, to place them exactly half way
+            - [ ] if the invariant is 's' divide the 'l' in half and set 'e' in the original to be half way
+            - [ ] if the invariant is 'e' divide the 'l' in half and set 's' in the new to be half way
+            - [ ] "half way" means: "alter the formula such that the value is half way"
+                - [ ] if no formula, "compute and set the value to be half way
+    - [ ] expand "duplicate" helper
+        - [ ] original keeps its current name and the new sibling gets a numeric-suffix name (matching the duplicate routine's naming)
+    - [ ] new half becomes the selected part
+- [ ] rename givens -> constants
+- [ ] convert button 'create a template' -> stud/joist / stair segmented
+- [ ] crowded dimensionals
+- [ ] option to group attributes by axis (in first column: sle -> xyz)
 - [ ] mobile
     - [ ] thin gaps
-    - [ ] css craziness -> css configurator -> constants
+    - [ ] css craziness -> css configurator -> common_size
     - [ ] edit always disabled
-- [ ] white thumbs
-- [ ] click plus button in parts banner -> opens (if closed), selects new part
-- [ ] ability to cut an SO in half
-- [ ] convert button 'create a template' -> stud/joist / stair segmented
-- [ ] pac: rename Smart Object -> Smart Block
 - [ ] [[27.selection.algorithm]]
     - [ ] create new group around selected objects
     - [ ] ability to combine multiple SOs
-- [ ] crowded dimensionals
+- [ ] help
+    - [ ] complete & excellent
 - [ ] SO opacity slider
 - [ ] print just the graph, scaled to fit
 - [ ] layers -> wall, beam, post, stairs, generic
@@ -31,6 +49,7 @@ offer a proposal for the first unchecked item, and add it to a new section at th
         - [ ] in SO
         - [ ] list
         - [ ] custom creator
+- [ ] draw a wall from point to point
 - [ ] arrow keys nudge SO position
 - [ ] add move up move down buttons to bottom of parts list at far left
     - [ ] move duplicate button to the far right

@@ -41,7 +41,7 @@ These are checkbox lists with little reusable content.
 | 5 smart objects | `architecture/core/Smart_Objects.md` | The reason composition won over inheritance; the hit-precedence ordering; how a face automatically flips when its normal points away from the camera; the dots-only highlight decision |
 | 7 edit drags | `architecture/graph/drag.md` | Why six bounds replaced eight vertices; how the mouse maps to the face plane; the rule that picks editing over rotation when something is selected |
 | 8 dimensionals | `architecture/graph/dimensionals.md` | The three algorithms — picking the silhouette edge, picking the side the witness lines lean to, and detecting when the text would be crushed |
-| 12 parts | `architecture/components/Details.md` | The collapse-triangle rule; the parent-child eye behaviour; arrow-key navigation through the tree |
+| 12 parts | `architecture/components/Details.md` | The collapse-triangle rule; the parent-child eye behavior; arrow-key navigation through the tree |
 | 13 algebra | `architecture/core/algebra.md` | The compile-tree shape, the grammar, the forward-and-reverse evaluation; the fixed-versus-variable orientation rule. Today this page only documents the aliases. |
 | 14 details | `architecture/components/Details.md` | The three-pill layout, the Hideable shell, the persistent open/closed state |
 | 15 attributes | `architecture/core/Smart_Objects.md` | The three states a value can be in (free, locked, formula-driven); the automatic transitions that keep state consistent; how the runtime block sits at the resolver write |

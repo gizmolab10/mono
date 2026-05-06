@@ -45,6 +45,8 @@ Each line names what the file in `src/lib/ts/tests/` covers.
     - stipulation: formula-text-tokenized, formula-tokens-built-to-tree
 - **Constraints** — the constraints manager: formula binding, evaluation, cycle detection, propagation across objects, formula-clears-lock, and the bare-name resolver walking up the parent chain.
     - stipulation: formula-recomputes-during-propagation, propagation-triggered-by-change, unrelated-cell-untouched-by-change, formula-cycle-refused, formula-clears-lock, bare-name-resolver-walks-parent-chain
+- **Cut** — the cut routine that splits the selected smart object in half along its longest direction: longest-direction selection by stored length value, equal halves on the cut direction, the new sibling becomes selected with a numeric-suffix name, the five refusal cases (root, clone, template, has-children-not-repeater, tied-longest), the repeater exception (a cut on a repeater produces two repeaters each with its own template), formula behavior per invariant case, and formulas on the two non-cut directions copied unchanged. Includes assertions on the can-cut flag the details panel uses to show or hide the cut button.
+    - stipulation: cut-so-in-half
 - **Coordinates** — point, size, and rectangle math; coordinate transformations.
 - **Data_Layout** — the structure each SO carries by construction: three directions, three numbers per direction, a single parent slot, plain-number cells, exactly one recomputed marker per direction, visibility flags, and the eight-corner / twelve-edge / six-face shape.
     - stipulation: so-three-directions, axis-three-attributes, plain-number-cells, axis-has-one-invariant, block-has-at-most-one-parent, block-visibility-flags, so-shaped-as-eight-corner-box
@@ -234,6 +236,6 @@ The catalog summary will move from "fifty-four of fifty-seven directly covered" 
 
 ## Stipulation coverage
 
-Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, all fifty-eight rules are directly covered. (!) Fifty-four are pinned by unit tests in `src/lib/ts/tests/`; the remaining four — the user-interface flows that need real mouse events and the running animation loop — are pinned by browser-driven tests in [`e2e/tests/`](../../e2e/tests/). The browser tests run via `yarn e2e`.
+Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, all fifty-nine rules are directly covered. (!) Fifty-five are pinned by unit tests in `src/lib/ts/tests/`; the remaining four — the user-interface flows that need real mouse events and the running animation loop — are pinned by browser-driven tests in [`e2e/tests/`](../../e2e/tests/). The browser tests run via `yarn e2e`.
 
 (!) ALWAYS: Always update this authoritative count each time testing is done.
