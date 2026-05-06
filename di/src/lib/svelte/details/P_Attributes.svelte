@@ -405,9 +405,9 @@
 		{@render error_overlay()}
 	{/if}
 	<Separator />
-	<div class='constants-header'>
-		<button class='constants-toggle' onclick={toggle_show_constants}>
-			{show_constants ? 'hide' : 'show'} constants
+	<div class='givens-header'>
+		<button class='givens-toggle' onclick={toggle_show_constants}>
+			{show_constants ? 'hide' : 'show'} givens
 		</button>
 		{#if show_constants}
 			<button class='add-button' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>
@@ -574,7 +574,7 @@
 		opacity    : 0.6;
 	}
 
-	.constants-header {
+	.givens-header {
 		align-items   : center;
 		display       : flex;
 		gap           : 6px;
@@ -582,7 +582,7 @@
 		margin-bottom : 6px;
 	}
 
-	.constants-toggle {
+	.givens-toggle {
 		border        : 0.75px solid currentColor;
 		height        : var(--h-button-tiny);
 		font-size     : var(--h-font-common);
@@ -597,7 +597,7 @@
 		padding       : 0;
 	}
 
-	.constants-toggle:hover {
+	.givens-toggle:hover {
 		background : var(--hover);
 	}
 

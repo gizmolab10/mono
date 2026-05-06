@@ -347,6 +347,8 @@ A real example, fully written:
 
 ## Expand scope
 
+What is the granularity of our stipulations? Are they fractal enough without being crazy?
+
 ### **Strong candidates**
 
 these have tests already in the test index but no rule citing them, so the tests are quietly proving behavior the catalogue does not name:

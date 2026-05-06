@@ -8,7 +8,6 @@
 	import { errors, constraints } from '../../ts/algebra';
 	import Separator from '../mouse/Separator.svelte';
 	import { k } from '../../ts/common/Constants';
-	import P_Selected from './P_Selected.svelte';
 	import { engine } from '../../ts/render';
 	import { get } from 'svelte/store';
 
@@ -494,8 +493,6 @@
 			<button class='action-button' use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_so() }}>duplicate</button>
 		</div>
 	{/if}
-	<Separator />
-	<P_Selected />
 {:else}
 	<div style:height='1px'></div>
 {/if}

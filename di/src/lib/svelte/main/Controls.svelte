@@ -109,23 +109,22 @@
 				{@render hamburger_button()}
 				{@render help_button()}
 				<span class='spacer'></span>
-				{@render decoration_buttons()}
+				{@render face_buttons()}
 				<span class='spacer'></span>
-				{@render guides_slider()}
 			</div>
 			<div class='right-row'>
 				{@render desktop_only_buttons()}
 				<span class='spacer'></span>
-				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
-				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
-				<span class='spacer'></span>
+				{@render face_accessory_buttons()}
 				{@render scaling_slider()}
 			</div>
 			<div class='right-row'>
 				<span class='spacer'></span>
-				{@render face_buttons()}
-				{@render face_accessory_buttons()}
+				{@render decoration_buttons()}
+				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
+				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 				<span class='spacer'></span>
+				{@render guides_slider()}
 			</div>
 		</div>
 	{:else if wrap_mobile}
@@ -133,15 +132,17 @@
 			<div class='right-row'>
 				{@render hamburger_button()}
 				{@render help_button()}
-				{@render desktop_only_buttons()}
 				<span class='spacer'></span>
-				{@render mode_buttons()}
+				{@render face_accessory_buttons()}
+				{@render face_buttons()}
 				<span class='spacer'></span>
 				{@render guides_slider()}
 			</div>
 			<div class='right-row'>
-				{@render face_buttons()}
-				{@render face_accessory_buttons()}
+				{@render desktop_only_buttons()}
+				<span class='spacer'></span>
+				{@render mode_buttons()}
+				<span class='spacer'></span>
 				{@render scaling_slider()}
 			</div>
 		</div>
@@ -157,8 +158,8 @@
 			{@render mode_buttons()}
 			<span class='spacer'></span>
 			{@render guides_slider()}
-			{@render face_buttons()}
 			{@render face_accessory_buttons()}
+			{@render face_buttons()}
 		</div>
 		<div class='sliders-row'>
 			{@render scaling_slider()}

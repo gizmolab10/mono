@@ -55,6 +55,19 @@ export enum T_File_Extension {
 	di	   = 'di',
 }
 
+export enum T_Parts_Tab {
+	attributes = 'attributes',
+	rotation   = 'rotation',
+	repeater   = 'repeater',
+}
+
+export enum T_Details {
+	preferences = 1,
+	library     = 2,
+	parts       = 4,
+	selection   = 8,
+}
+
 export enum T_Decorations {
 	dimensions = 1,
 	angles     = 2,
@@ -75,22 +88,6 @@ export enum T_Mouse_Detection {
 	double	   = 1,
 	long	   = 2,
 	none	   = 0,
-}
-
-export enum T_Details {
-	preferences    = 1,
-	attributes     = 2,	// legacy -- absorbed into parts tab
-	library        = 4,
-	givens         = 8,
-	parts          = 16,
-	selected_part  = 32,
-	rotation       = 64,	// legacy -- absorbed into parts tab
-}
-
-export enum T_Parts_Tab {
-	attributes = 'attributes',
-	rotation   = 'rotation',
-	repeater   = 'repeater',
 }
 
 export enum T_Editing {

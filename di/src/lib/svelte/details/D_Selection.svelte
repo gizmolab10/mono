@@ -1,16 +1,15 @@
 <script lang='ts'>
 	import { T_Parts_Tab } from '../../ts/types/Enumerations';
+	import Separator from '../mouse/Separator.svelte';
 	import P_Attributes from './P_Attributes.svelte';
 	import { stores } from '../../ts/managers';
 	import P_Angles from './P_Angles.svelte';
-	import Separator from '../mouse/Separator.svelte';
 	import P_Repeat from './P_Repeat.svelte';
 
 	const { w_parts_tab } = stores;
 
 </script>
 
-<div style:height='6px'></div>
 <div class='actions-row'>
 	<div class='segmented'>
 		<button class:active={$w_parts_tab === 'attributes'} onclick={() => w_parts_tab.set(T_Parts_Tab.attributes)}>attributes</button>

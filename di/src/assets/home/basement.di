@@ -830,6 +830,52 @@
         "parent_id": "di5d4068af039b53"
       },
       {
+        "id": "di3e429f96ddfb7b",
+        "name": "kitchen wall",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": "bathroom.c"
+            },
+            "length": 3155.9500000000007,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 88.89999999999964,
+            "length": {
+              "formula": "wall th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2895.6000000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
+      },
+      {
         "id": "did948f886e40d95",
         "name": "street wall",
         "x": {
@@ -966,6 +1012,52 @@
         "parent_id": "di814622bfde093a"
       },
       {
+        "id": "di1449918b4c7d64",
+        "name": "overhang post",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".e - post th"
+            },
+            "extent": 4267.200000000001,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "overhang beam.s"
+            },
+            "extent": 3536.95,
+            "length": {
+              "formula": "post th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - 11\""
+            },
+            "length": 2616.2000000000003,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
+      },
+      {
         "id": "di484f8bab1e0e2b",
         "name": "overhang beam",
         "x": {
@@ -1056,59 +1148,6 @@
         "visible": true,
         "hide_children": false,
         "parent_id": "di814622bfde093a"
-      },
-      {
-        "id": "dia04a54814864bd",
-        "name": "shower wall",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": ".s + .l / 2"
-            },
-            "extent": 1200.1499999999996,
-            "length": {
-              "formula": "wall th"
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "formula": ".e - closet d"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 914.3999999999996,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 2895.6000000000004,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": true,
-        "hide_children": true,
-        "repeater": {
-          "spacing": 406.4,
-          "firewall": false,
-          "is_repeating": true,
-          "run_axis": 1,
-          "is_diagonal": false
-        },
-        "parent_id": "di6e49f7949d45d3"
       },
       {
         "id": "di424b3ea70d6b7d",
@@ -2024,98 +2063,6 @@
         "parent_id": "die948608c4b1219"
       },
       {
-        "id": "di3e429f96ddfb7b",
-        "name": "kitchen wall",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": "bathroom.c"
-            },
-            "length": 3155.9500000000007,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": 88.89999999999964,
-            "length": {
-              "formula": "wall th"
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e"
-            },
-            "length": 2895.6000000000004,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": true,
-        "hide_children": false,
-        "parent_id": "di814622bfde093a"
-      },
-      {
-        "id": "di1449918b4c7d64",
-        "name": "overhang post",
-        "x": {
-          "attributes": {
-            "origin": {
-              "formula": ".e - post th"
-            },
-            "extent": 4267.200000000001,
-            "length": {
-              "formula": "post th"
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "y": {
-          "attributes": {
-            "origin": {
-              "formula": "overhang beam.s"
-            },
-            "extent": 3536.95,
-            "length": {
-              "formula": "post th"
-            },
-            "angle": 0
-          },
-          "invariant": 1
-        },
-        "z": {
-          "attributes": {
-            "origin": {
-              "formula": ".s"
-            },
-            "extent": {
-              "formula": ".e - 11\""
-            },
-            "length": 2616.2000000000003,
-            "angle": 0
-          },
-          "invariant": 2
-        },
-        "visible": true,
-        "hide_children": false,
-        "parent_id": "di814622bfde093a"
-      },
-      {
         "id": "di6e49f7949d45d3",
         "name": "bathroom",
         "x": {
@@ -2323,6 +2270,59 @@
           "is_diagonal": false
         },
         "parent_id": "die948608c4b1219"
+      },
+      {
+        "id": "dia04a54814864bd",
+        "name": "shower wall",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s + .l / 2"
+            },
+            "extent": 1200.1499999999996,
+            "length": {
+              "formula": "wall th"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": ".e - closet d"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 914.3999999999996,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2895.6000000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": true,
+        "repeater": {
+          "spacing": 406.4,
+          "firewall": false,
+          "is_repeating": true,
+          "run_axis": 1,
+          "is_diagonal": false
+        },
+        "parent_id": "di6e49f7949d45d3"
       }
     ],
     "givens": [
@@ -2375,7 +2375,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "di6e49f7949d45d3",
+    "selected_id": "di3e429f96ddfb7b",
     "selected_face": 1
   }
 }

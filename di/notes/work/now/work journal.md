@@ -4,11 +4,30 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
-## Session — 2026-05-05 (continued, second) — two separators on the right-side panel
+## Session — 2026-05-05 (continued, third) — invert the radial gradient on the panel banners
 
-A small follow-up. Added a thin horizontal separator above the show/hide-givens toggle inside the attributes panel, and another one above the divide-and-duplicate button row inside the parts panel. Both panels now use the same separator component used everywhere else on the right side of the screen. Two single-line additions plus one new import on the attributes panel; type-check clean.
+The bars at the top of each section that you click to hide or reveal the section now show the user's accent color in the middle and white at the outside. Before the change they showed the panel background in the middle and the accent color at the edges. Banner text is already black and stays that way. The press-state rule was left alone — a pressed banner still flattens to the light panel background, which reads as the "pressed" feedback.
 
-Files: [P_Attributes.svelte](../../src/lib/svelte/details/P_Attributes.svelte) (added the import and the separator above the givens toggle row), [D_Parts.svelte](../../src/lib/svelte/details/D_Parts.svelte) (added the separator above the duplicate button row).
+The wide action button (factory reset, reinstall library) and the round plus button (new scene, add child) were briefly flipped during this pass and then reverted. They keep their original look — the panel background in the middle fading to the accent at the edges — per the user's correction "the banners only! do not touch the buttons IN the banners."
+
+One overlay style block edited in [Hideable.svelte](../../src/lib/svelte/details/Hideable.svelte) for the panel banner. Type-check clean. Visual confirmation in the browser is up to the user.
+
+---
+
+## Session — 2026-05-05 (continued, second) — two separators and two small gaps on the right-side panel
+
+A small follow-up cluster of layout polish on the right-side details panel.
+
+- A thin horizontal separator was added above the show/hide-givens toggle inside the attributes panel.
+- A matching separator was added above the divide-and-duplicate button row inside the parts panel.
+- A standard gap was added between the divide and duplicate buttons so they no longer touch.
+- A tiny gap was added between that button row and the separator just above it so the row breathes.
+
+Both panels now use the same separator component used everywhere else on the right side of the screen.
+
+Files: [P_Attributes.svelte](../../src/lib/svelte/details/P_Attributes.svelte) (added the separator import and the separator above the givens toggle row), [D_Parts.svelte](../../src/lib/svelte/details/D_Parts.svelte) (added the separator above the duplicate button row, gap between the two buttons, top margin above the row).
+
+Verification: type-check clean; full test suite still six hundred seventy-two green; adherence chain green.
 
 ---
 

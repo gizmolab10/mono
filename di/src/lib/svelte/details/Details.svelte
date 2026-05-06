@@ -1,14 +1,15 @@
 <script lang='ts'>
-	import { T_Details } from '../../ts/types/Enumerations';
+	import { scenes, stores, selection } from '../../ts/managers';
 	import { preferences } from '../../ts/managers/Preferences';
+	import { T_Details } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import D_Preferences from './D_Preferences.svelte';
+	import D_Selection from './D_Selection.svelte';
+	import { scene } from '../../ts/render/Scene';
 	import { hits } from '../../ts/events/Hits';
-	import { scenes, stores, selection } from '../../ts/managers';
 	import D_Library from './D_Library.svelte';
 	import Hideable from './Hideable.svelte';
 	import { engine } from '../../ts/render';
-	import { scene } from '../../ts/render/Scene';
 	import D_Parts from './D_Parts.svelte';
 	import { onMount } from 'svelte';
 
@@ -77,6 +78,10 @@
 			<D_Parts />
 		</Hideable>
 
+		<Hideable title='selected part' id='selection' detail={T_Details.selection}>
+			<D_Selection />
+		</Hideable>
+
 	</div>
 </div>
 
@@ -92,7 +97,7 @@
 
 	.banner-add:hover,
 	.banner-add:active {
-		background : var(--bg);
+		background : var(--c-white);
 		color      : var(--c-black);
 	}
 
@@ -107,15 +112,15 @@
 	.details {
 		box-sizing : border-box;
 		position   : relative;
-		padding    : 0;
 		overflow-x : hidden;
 		overflow-y : auto;
 		height     : 100%;
 		width      : 100%;
+		padding    : 0;
 	}
 
 	.action-button {
-		background    : radial-gradient(ellipse at center, var(--bg) 30%, var(--accent) 100%);
+		background    : radial-gradient(ellipse at center, var(--c-white) 30%, var(--accent) 100%);
 		border        : var(--th-border) solid rgba(0, 0, 0, 0.3);
 		height        : var(--h-button-tiny);
 		border-radius : var(--corner-common);
@@ -126,6 +131,7 @@
 		color         : inherit;
 		white-space   : nowrap;
 		padding       : 0 10px;
+		font-weight     : 400;
 	}
 
 	.action-button:global([data-hit]) {
@@ -134,7 +140,7 @@
 	}
 
 	.banner-add {
-		background      : radial-gradient(circle at center, var(--bg) 0%, var(--accent) 100%);
+		background      : radial-gradient(circle at center, var(--c-white) 30%, var(--accent) 80%);
 		border          : var(--th-border) solid rgba(0, 0, 0, 0.3);
 		height          : var(--h-button-small);
 		width           : var(--h-button-small);
@@ -146,7 +152,7 @@
 		justify-content : center;
 		display         : flex;
 		border-radius   : 50%;
-		font-weight     : 300;
+		font-weight     : 600;
 		line-height     : 1;
 		padding         : 0;
 	}

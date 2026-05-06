@@ -99,7 +99,7 @@ export default class Constants {
 
 	thickness = {
 		separator: {
-			content: common_size / 10,
+			content: common_size / 15,
 			main:	 common_size / 5,
 		},
 		thumb:       common_size / 6,

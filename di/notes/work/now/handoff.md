@@ -7,7 +7,7 @@
 
 ## Next
 
-The first unchecked code-debt item is "ability to cut an SO in half". (The engine routine and the toolbar button are now in place; the user marks the sub-bullets off when satisfied. See the 2026-05-05 (continued) session in the [work journal](./work%20journal.md) for the implementation details.)
+The first unchecked code-debt item is "invert the radial gradient -> so they look more like buttons". Pick that up next.
 
 ## Open items
 

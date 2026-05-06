@@ -10,7 +10,7 @@
 - [x] replace _ with space in UI, restore it internally
 - [x] insert -> not write .l into inserted child's l formulas
     - [x] test: add a 2-drawar cabinet to wacka
-- [x] bring the [[working features]] table up to date
+- [x] bring the \[\[working features\]\] table up to date
 - [x] add a sep
     - [x] below att/ang/rep set control in p selected
     - [x] above show constants
@@ -23,16 +23,16 @@
 - [x] convert Orientation functions into a class
 - [x] SO should use its internal id for hierarchy/formulas
 - [x] add child should apply to current selection
-  - [x] **bug:** click on button -> selects root
+    - [x] **bug:** click on button -> selects root
 - [x] add new child -> wrong dimensions
-  - [x] algorithm: using smallest length of parent, divide that in half, use that for all dimensions
-  - [x] assure that the child axes all align with the parent's axes
-  - [x] after adding, select the parent
+    - [x] algorithm: using smallest length of parent, divide that in half, use that for all dimensions
+    - [x] assure that the child axes all align with the parent's axes
+    - [x] after adding, select the parent
 - [x] cruft
-  - [x] consolidate redundancy
-  - [x] simplify over-engineering
-  - [x] remove inconsistencies
-  - [x] ameliorate structural risks
+    - [x] consolidate redundancy
+    - [x] simplify over-engineering
+    - [x] remove inconsistencies
+    - [x] ameliorate structural risks
 - [x] delete selected SO
 - [x] hover/click should hit the front most SO
 - [x] hide occluded dimensionals
@@ -44,11 +44,11 @@
 - [x] use hit target for ALL buttons and segments
 - [x] research scene model
 - [x]  move all Angle and Polar code from Coordinates to Angle
-  - [x] including thin delegates
+    - [x] including thin delegates
 - [x] pac: combine all *\*Rect* interfaces
 - [x] find all the build numbers (milestones) and dates -> build notes
 - [x] rebuild SO with 2 single-axis rotations
-  - [x] from which, quaternion is derived
+    - [x] from which, quaternion is derived
 - [x] **ABANDON:** see through -> all, add "back"
 - [x] organize architecture notes
 - [x] version 4: attr serial -> orig, ext, len, angle
@@ -58,16 +58,16 @@
 - [x] \[\[17.library\]\]
 - [x] get claude vscode == plugin
 - [x] tumble ALWAYS applies to root SO
-  - [x] OPTION tumble -> applies to selected SO
+    - [x] OPTION tumble -> applies to selected SO
 - [x] values in attr tables should be offsets, not absolutes
 - [x] choose an SO (buttons at top of graph) -> select most front facing face
-  - [x] as root tumbles -> update selection to select (possibly different) most front facing face
+    - [x] as root tumbles -> update selection to select (possibly different) most front facing face
 - [x] save button should use SO's name for file name
 - [x] remove all children button should also remove all sd constants that are no longer referenced
 - [x] rename standard dimensions -> user constants
 - [x] not all user constants got removed by delete all children
-  - [x] verify that those that remain are NOT referenced !!! but do NOT remove them
-  - [x] debug delete all children
+    - [x] verify that those that remain are NOT referenced !!! but do NOT remove them
+    - [x] debug delete all children
 - [x] hover -> enabled cells
 - [x] pac: in all code files, use tabs that are 4 (not 2) spaces
 - [x] show computed count (not funky equation)
@@ -76,49 +76,49 @@
 - [x] change "selection" to "smart object" and D_Selection -> D_Smart_Object
 - [x] move instructions (above) for configuring repeaters -> mono/di/notes/user manual/repeaters.md
 - [x] rename list -> hierarchy
-- [x] backward compatibility -- describe current design reading a file that is v1 → [[di/notes/architecture/core/migration|migration
+- [x] backward compatibility -- describe current design reading a file that is v1 → \[\[di/notes/architecture/core/migration|migration
 - [x] preferences
-	- [x] move units system button to top far right
-	- [x] move reset button to bottom right
-	- [x] separator directly above line thickness slider
+    - [x] move units system button to top far right
+    - [x] move reset button to bottom right
+    - [x] separator directly above line thickness slider
 - [x] red dots for occluded and disabled
 - [x] set_invariant synced length from raw .value instead of get_bound(), corrupting child SO geometry
-	- [x] BUG: open the drawer from the library. selected the front SO. click the cross box in row d. the correct formula appeared (Y - y) with the formula for Y blanked, the values unchanged. the drawing looked fine. THEN, check the cross box in row Y. the value for y changed (to a large negative number, and the value for Y to an even larger negative number) and the drawing not so nice. explain
+    - [x] BUG: open the drawer from the library. selected the front SO. click the cross box in row d. the correct formula appeared (Y - y) with the formula for Y blanked, the values unchanged. the drawing looked fine. THEN, check the cross box in row Y. the value for y changed (to a large negative number, and the value for Y to an even larger negative number) and the drawing not so nice. explain
 - [x] row span for root disallowed formulas and "s" values (they are always 0)
 - [x] details rename banners -> parts, selected parts (from assembly and selection)
 - [x] re-enable stretching origin (for any given axis) of root
-	- [x] -> by adjusting length such that end remains fixed (for that axis)
-	- [x] dragging the end point -- disallow making the length negative -> at the moment of length == 0, switch to dragging the start point
+    - [x] -> by adjusting length such that end remains fixed (for that axis)
+    - [x] dragging the end point -- disallow making the length negative -> at the moment of length == 0, switch to dragging the start point
 - [x] the root face selection dots that are red -> blue
 - [x] cannot insert stretch into a new SO
-	- [x] was working
-	- [x] click + in library banner
-	- [x] option click on stretch in library
-	- [x] red dots appear on hover over nothing
-	- [x] relaunch stretch appears
+    - [x] was working
+    - [x] click + in library banner
+    - [x] option click on stretch in library
+    - [x] red dots appear on hover over nothing
+    - [x] relaunch stretch appears
 - [x] always draw the root's bottom rect (faint stroke = grid's selected SO stroke)
 - [x] resizing the window makes the drawing blink a lot. surely it does NOT need to re-render, only shift what is already rendered?
 - [x] straighten & orientation controls -> favor bottom at bottom OR front at bottom
 - [x] select root SO on click a library item (replaces the root) AND on launch if nothing is currently selected
 - [x] shrink to fit broken
-	- [x] relaunch increases depth much farther than farthest SO
-		- [x] fix: `set_bound` on compiled attrs stored absolute value; `get_bound` added parent offset again (double-count)
-	- [x] enhancements moved to [[7.edit.drags]] § Enhancements
+    - [x] relaunch increases depth much farther than farthest SO
+        - [x] fix: `set_bound` on compiled attrs stored absolute value; `get_bound` added parent offset again (double-count)
+    - [x] enhancements moved to \[\[7.edit.drags\]\] § Enhancements
 - [x] rewrite rotation code
-	- [x] add proposal to [[di/notes/work/done/rotation]] for rotating (leave swapping alone)
-	- [x] manual test fails: rotate drawer -> dreadful
-		- [x] only some of the children of the rotated SO actually rotate
+    - [x] add proposal to \[\[di/notes/work/done/rotation\]\] for rotating (leave swapping alone)
+    - [x] manual test fails: rotate drawer -> dreadful
+        - [x] only some of the children of the rotated SO actually rotate
 - [x] put all "<->" on right side of buttons
 - [x] guide files:
-	- [x] rename versions.md -> references.md
-	- [x] rename migration.md -> versions.md
-	- [x] merge enlarged.algebra.md into notes/architecture/core/algebra.md
-		- [x] remove cruft
+    - [x] rename versions.md -> references.md
+    - [x] rename migration.md -> versions.md
+    - [x] merge enlarged.algebra.md into notes/architecture/core/algebra.md
+        - [x] remove cruft
 - [x] algebra cannot parse ".l - top_drawer.l"
 - [x] constants -> values
 - [x] the invariant formulas are distracting. hide them
 - [x] rename user constants -> givens
-- [x] [[version.9]] portable format
+- [x] \[\[version.9\]\] portable format
 - [x] file name
     - [x] take root object name it
     - [x] no underscore (-> space) in them
@@ -173,7 +173,7 @@
 - [x] edit formula -> immediately recompute value
 - [x] parent is-visible eyeball -> toggles both self and children
 - [x] eliminate position/size columns from parts table
-- [x] [[16.formulas]]
+- [x] \[\[16.formulas\]\]
 - [x] stipulations -> tests -> code
 - [x] attributes table -> "-" cell -> lock (value)
 - [x] new implicit 'c' -> exact center between start and end
@@ -185,7 +185,7 @@
         - [x] first row same as current
         - [x] second row guides slider horizontal left justified, scale right justified
     - [x] mobile: two rows:
-        - [x] first has hamburger, 
+        - [x] first has hamburger,
 - [x] controls have too much separation
 - [x] v scroll in details -> update hit rects
 - [x] parts table
@@ -211,10 +211,33 @@
     - [x] move reference guide -> src/manual
     - [x] keep hamburger visible
     - [x] hamburger -> sidebar visibility toggle
-    - [x] new preferences`
+    - [x] new preferences\`
         - [x] hamburger help visibility
         - [x] deploy help page id in preferences so revisit help goes to last-visited help content
 - [x] white thumbs on all sliders
 - [x] click plus button in parts banner -> opens (if closed), selects new part
     - [x] do not create a child if selected SO is a repeater or a clone
     - [x] hide plus button in parts banner when selected SO is a repeater or a clone
+- [x] ability to cut an SO in half
+    - [x] a "cut" button to the left of the existing "duplicate" button
+    - [x] cut longest (plain length value) dimension
+        - [x] refuse if two longest dimensions are equal
+        - [x] show error in status strip
+    - [x] repeaters -> duplicate the template (so both halves have an identical copy)
+        - [x] produces two repeaters (each with its own template)
+    - [x] a clone or a template or any part that has children -> refuse
+        - [x] hide the cut button
+    - [x] formulas -> duplicated except on axis being cut
+        - [x] each half gets a revised formula such that their values are exactly half the original's length on that axis
+            - [x] leave the invariant formula alone. it is, ahem! invariant
+            - [x] if the invariant is 'l' alter the 'e' of the original and the 's' of the new, to place them exactly half way
+            - [x] if the invariant is 's' divide the 'l' in half and set 'e' in the original to be half way
+            - [x] if the invariant is 'e' divide the 'l' in half and set 's' in the new to be half way
+            - [x] "half way" means: "alter the formula such that the value is half way"
+                - [x] if no formula, "compute and set the value to be half way
+    - [x] expand "duplicate" helper
+        - [x] original keeps its current name and the new sibling gets a numeric-suffix name (matching the duplicate routine's naming)
+    - [x] new half becomes the selected part
+- [x] add a separator between
+    - [x] attributes table and show/hide givens button
+    - [x] parts table and duplicate button row
