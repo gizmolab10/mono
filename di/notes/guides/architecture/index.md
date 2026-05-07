@@ -1,11 +1,17 @@
 # Architecture
 
 How Design Intuition is built. Read top to bottom — each layer builds on the last.
+
 ## 1. Orient
+
 Start here. One page, whole app.
+
 - See the [Overview](../project/overview/) folder for the project shape, file layout, and the entry-flow walk-through.
+
 ## 2. Understand
+
 Where things live, what they do.
+
 - [Core](./core/) — singletons and systems
     - [Managers](core/managers.md) — who owns what
     - [Algebra](./core/algebra.md) — constraints, expressions, reverse propagation
@@ -17,14 +23,17 @@ Where things live, what they do.
     - [Units](./core/units.md) — millimetre storage, four families, formatting and parsing
     - [Versions](./core/versions.md) — file format migration
 - [Components](./components/) — per-file reference pages for layout components
+    - [Details](./components/Details.md) — sidebar: preferences, library, parts, part
 - [UI](./ui/) — what the user sees
     - [Panel layout](./ui/panel.layout.md) — three regions, CSS, separators
-    - [Details](ui/details.md) — sidebar: preferences, selection, library
-    - [Hits](./ui/hits.md) — click and hover dispatch
+    - [Hits](./ui/hits%20system.md) — click and hover dispatch
     - [Key paths](./ui/key%20paths.md) — keyboard shortcuts grouped by context
     - [Style](./ui/style.md) — CSS conventions and design tokens
+
 ## 3. Deep dive
+
 The render pipeline — projection, occlusion, intersections, overlays.
+
 - [Graph](./graph/) — start with [Three Dimensions](./graph/three.dimensions.md), then explore:
     - [Two Dimensions](./graph/two.dimensions.md) — 2D mode, face snapping
     - [Three Dimensions](./graph/three.dimensions.md) — the full render pipeline
@@ -45,4 +54,3 @@ The render pipeline — projection, occlusion, intersections, overlays.
 - [Core](./core/)
 - [Graph](./graph/)
 - [Ui](./ui/)
-

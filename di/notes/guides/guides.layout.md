@@ -43,8 +43,7 @@ guides/
 │   │   └── two.dimensions.md ............ face-aligned mode snap behavior
 │   └── ui/
 │       ├── index.md ..................... ui pages table of contents
-│       ├── details.md ................... right-side panel architecture
-│       ├── hits.md ...................... click and hover dispatch
+│       ├── hits system.md ............... click and hover dispatch
 │       ├── key paths.md ................. keyboard shortcuts by context
 │       ├── panel.layout.md .............. full-viewport region layout
 │       └── style.md ..................... CSS conventions and design tokens

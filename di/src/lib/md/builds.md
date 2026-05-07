@@ -2,6 +2,7 @@
 
 | Build | Date         | Note                                            |
 | ----- | ------------ | ----------------------------------------------- |
+| 63    | May 6, 2026  | new part details editor                         |
 | 62    | May 5, 2026  | new stipulated cut in half                      |
 | 61    | May 4, 2026  | new logic driven development and dashboard      |
 | 60    | May 2, 2026  | new help system                                 |

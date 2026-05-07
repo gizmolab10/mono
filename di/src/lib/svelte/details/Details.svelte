@@ -78,7 +78,7 @@
 			<D_Parts />
 		</Hideable>
 
-		<Hideable title='selected part' id='selection' detail={T_Details.selection}>
+		<Hideable title='part' id='selection' detail={T_Details.selection}>
 			<D_Selection />
 		</Hideable>
 

@@ -322,8 +322,7 @@
 - di/notes/guides/architecture/graph/three.dimensions.md
 - di/notes/guides/architecture/graph/two.dimensions.md
 - di/notes/guides/architecture/ui/index.md
-- di/notes/guides/architecture/ui/details.md
-- di/notes/guides/architecture/ui/hits.md
+- di/notes/guides/architecture/ui/hits system.md
 - di/notes/guides/architecture/ui/key paths.md
 - di/notes/guides/architecture/ui/panel.layout.md
 - di/notes/guides/architecture/ui/style.md

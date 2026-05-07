@@ -16,29 +16,11 @@
 	const { w_collapsed_ids } = parts;
 
 	let parts_count = $derived($w_all_sos.filter(s => !$w_all_sos.some(c => c.scene?.parent?.so === s)).length);
-	let show_parts = $state(preferences.read<boolean>(T_Preference.showParts) ?? true);
 	let selected_so = $derived($w_selection?.so ?? null);
 	let naming_input: HTMLInputElement | null = null;
 	let naming_error: string | null = $state(null);
 	let editing_id: string | null = $state(null);
 	let editing_original: string = '';
-
-	// Row position: "N of M" where N is the selected row's position in the
-	// visible parts list and M is the total number of visible rows.
-	// Suppressed when the selection is root, or when the selection is not in
-	// the visible list.
-	let sibling_position = $derived.by(() => {
-		$w_tick;
-		const sel = $w_selection;
-		if (!sel) return null;
-		if (!sel.so.scene?.parent) return null;
-		const visible = parts.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !parts.is_ancestor_collapsed(s, $w_collapsed_ids));
-		const index = visible.indexOf(sel.so);
-		if (index < 0) return null;
-		return { index, total: visible.length };
-	});
-
-	function toggle_show_parts() { show_parts = !show_parts; preferences.write(T_Preference.showParts, show_parts); }
 
 	function handle_triangle_click(e: MouseEvent, so: Smart_Object) {
 		e.stopPropagation();
@@ -376,75 +358,69 @@
 <table class='hierarchy' ondragover={handle_outside_dragover} ondrop={handle_outside_drop}>
 	<thead>
 		<tr>
-			<th class='toggle-header' class:gap-r={show_parts} colspan={show_parts ? 2 : 7} use:hit_target={{ id: 'toggle-parts', onpress: toggle_show_parts }}>
-				{show_parts ? 'hide' : 'show'} {parts_count} parts
-			</th>
-			{#if show_parts}
-				<th class='hierarchy-eye static'>⋮</th>
-				<th class='hierarchy-eye static'>👁</th>
-			{/if}
+			<th class='hierarchy-eye static' colspan=2></th>
+			<th class='hierarchy-eye static'>⋮</th>
+			<th class='hierarchy-eye static'>👁</th>
 		</tr>
 	</thead>
-	{#if show_parts}
-		<tbody>
-			<tr style:height='4px'></tr>
-			{#each parts.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !parts.is_ancestor_collapsed(s, $w_collapsed_ids)) as so, row_index (so.id)}
-				{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
-				<tr
-					class='hierarchy-row'
-					class:selected={is_selected(so, $w_tick)}
-					class:drop-active={row_is_drop_active(so)}
-					class:drop-line-top={row_has_top_line(so)}
-					class:drop-line-bottom={row_has_bottom_line(so)}
-					draggable={true}
-					ondragstart={(e) => handle_dragstart(e, so)}
-					ondragover={(e) => handle_row_dragover(e, so)}
-					ondragend={handle_dragend}
-					ondrop={handle_row_drop}
-					onclick={(e) => select(so, e)}>
-					<td class='hierarchy-sibling'>{so.scene?.parent ? row_index : ''}</td>
-					<td class='hierarchy-name' style:padding-left='{depth(so) * k.width.indent}px'
-						onclick={(e) => handle_name_click(e, so)}>
-						{#if editing_id === so.id}
-							<input
-								type               = 'text'
-								value              = {so.name}
-								class              = 'name-input'
-								onkeydown          = {(e) => name_keydown(e, so)}
-								onfocus            = {() => stores.w_editing.set(T_Editing.value)}
-								onblur             = {(e) => { const inp = e.target as HTMLInputElement; commit_name(so, inp.value, inp); if (!naming_error) stores.w_editing.set(T_Editing.none); }}
-								use:autofocus
-							/>
+	<tbody>
+		<tr style:height='4px'></tr>
+		{#each parts.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !parts.is_ancestor_collapsed(s, $w_collapsed_ids)) as so, row_index (so.id)}
+			{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
+			<tr
+				class='hierarchy-row'
+				class:selected={is_selected(so, $w_tick)}
+				class:drop-active={row_is_drop_active(so)}
+				class:drop-line-top={row_has_top_line(so)}
+				class:drop-line-bottom={row_has_bottom_line(so)}
+				draggable={true}
+				ondragstart={(e) => handle_dragstart(e, so)}
+				ondragover={(e) => handle_row_dragover(e, so)}
+				ondragend={handle_dragend}
+				ondrop={handle_row_drop}
+				onclick={(e) => select(so, e)}>
+				<td class='hierarchy-sibling'>{so.scene?.parent ? row_index : ''}</td>
+				<td class='hierarchy-name' style:padding-left='{depth(so) * k.width.indent}px'
+					onclick={(e) => handle_name_click(e, so)}>
+					{#if editing_id === so.id}
+						<input
+							type               = 'text'
+							value              = {so.name}
+							class              = 'name-input'
+							onkeydown          = {(e) => name_keydown(e, so)}
+							onfocus            = {() => stores.w_editing.set(T_Editing.value)}
+							onblur             = {(e) => { const inp = e.target as HTMLInputElement; commit_name(so, inp.value, inp); if (!naming_error) stores.w_editing.set(T_Editing.none); }}
+							use:autofocus
+						/>
+					{:else}
+						{#if has_children(so, $w_all_sos)}
+							<button class='collapse-tri' onclick={(e) => handle_triangle_click(e, so)}>
+								<span class='tri-glyph'>{show_down_triangle(so, $w_collapsed_ids, $w_all_sos, $w_tick) ? '▾' : '▸'}</span>
+							</button>
 						{:else}
-							{#if has_children(so, $w_all_sos)}
-								<button class='collapse-tri' onclick={(e) => handle_triangle_click(e, so)}>
-									<span class='tri-glyph'>{show_down_triangle(so, $w_collapsed_ids, $w_all_sos, $w_tick) ? '▾' : '▸'}</span>
-								</button>
-							{:else}
-								<button class='collapse-tri spacer'>
-									▸
-								</button>
-							{/if}
-							{so.name}
-							{#if n_rpt > 0}
-								<span class='repeat-badge'>
-									×{n_rpt}
-								</span>
-							{/if}
+							<button class='collapse-tri spacer'>
+								▸
+							</button>
 						{/if}
-					</td>
-					<td class='hierarchy-eye' onclick={(e) => has_children(so, $w_all_sos) && so.scene?.parent ? toggle_hide_children(e, so) : null}>
-						{#if has_children(so, $w_all_sos) && so.scene?.parent}
-							{so.hide_children ? leaf_descendants(so, $w_all_sos) : '👁'}
+						{so.name}
+						{#if n_rpt > 0}
+							<span class='repeat-badge'>
+								×{n_rpt}
+							</span>
 						{/if}
-					</td>
-					<td class='hierarchy-eye' onclick={(e) => toggle_visible(e, so)}>
-						{so.visible !== false ? '👁' : '–'}
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	{/if}
+					{/if}
+				</td>
+				<td class='hierarchy-eye' onclick={(e) => has_children(so, $w_all_sos) && so.scene?.parent ? toggle_hide_children(e, so) : null}>
+					{#if has_children(so, $w_all_sos) && so.scene?.parent}
+						{so.hide_children ? leaf_descendants(so, $w_all_sos) : '👁'}
+					{/if}
+				</td>
+				<td class='hierarchy-eye' onclick={(e) => toggle_visible(e, so)}>
+					{so.visible !== false ? '👁' : '–'}
+				</td>
+			</tr>
+		{/each}
+	</tbody>
 </table>
 {#if naming_error}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -457,45 +433,6 @@
 		</div>
 	</div>
 {/if}
-{#if $w_selection}
-	{#if !show_parts}
-		<div class='edit-title-row'>
-			{#if sibling_position}
-				<span class='sibling-position'>{sibling_position.index} of {sibling_position.total}</span>
-			{/if}
-			<input
-				type      = 'text'
-				class     = 'collapsed-name'
-				value     = {$w_selection.so.name}
-				onkeydown = {(e) => name_keydown(e, $w_selection!.so)}
-				onblur    = {(e) => { const inp = e.target as HTMLInputElement; commit_name($w_selection!.so, inp.value, inp); }}
-			/>
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<span class='hierarchy-eye' onclick={(e) => collapsed_show_hide_eye ? toggle_hide_children(e, $w_selection!.so) : null}>
-				{#if collapsed_show_hide_eye}
-					{collapsed_hide_eye_label}
-				{/if}
-			</span>
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<span class='hierarchy-eye' onclick={(e) => toggle_visible(e, $w_selection!.so)}>
-				{collapsed_visible_label}
-			</span>
-		</div>
-	{/if}
-	{#if $w_selection.so.scene?.parent}
-		<Separator />
-		<div class='duplicate-row'>
-			{#if can_cut(_can_cut_tick)}
-				<button class='action-button' use:hit_target={{ id: 'cut', onpress: () => engine.cut_selected_so() }}>divide in half</button>
-			{/if}
-			<button class='action-button' use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_so() }}>duplicate</button>
-		</div>
-	{/if}
-{:else}
-	<div style:height='1px'></div>
-{/if}
 
 <style>
 
@@ -505,8 +442,8 @@
 		border-collapse : separate;
 		position        : relative;
 		width           : 100%;
-		margin-top      : 1px;
-		margin-bottom   : 8px;
+		margin-top      : -1px;
+		margin-bottom   : -7px;
 		border-spacing  : 0;
 	}
 
@@ -615,40 +552,8 @@
 		gap         : 6px;
 	}
 
-	.sibling-position {
-		font-size      : var(--h-font-small);
-		color          : rgba(0, 0, 0, 0.5);
-		white-space    : nowrap;
-		user-select    : none;
-		pointer-events : none;
-	}
-
-	.collapsed-name {
-		border        : 0.5px solid rgba(0, 0, 0, 0.6);
-		font-size     : var(--h-font-small);
-		z-index       : var(--z-action);
-		height        : var(--h-slider);
-		background    : var(--c-white);
-		margin-top    : var(--l-gap-tiny);
-		margin-bottom : var(--l-gap-tiny);
-		box-sizing    : border-box;
-		color         : inherit;
-		font-family   : inherit;
-		flex          : 1 1 auto;
-		min-width     : 0;
-		outline       : none;
-		text-align    : left;
-		border-radius : 3px;
-	}
-
 	.edit-title-row .hierarchy-eye {
 		flex : 0 0 auto;
-	}
-
-	.collapsed-name:focus {
-		outline        : var(--focus-outline);
-		background     : var(--c-white);
-		outline-offset : -1.5px;
 	}
 
 	.toggle-header {
@@ -669,14 +574,6 @@
 
 	.toggle-header:hover {
 		background : var(--hover);
-	}
-
-	.duplicate-row {
-		gap             : var(--l-gap-tiny);
-		margin-top      : var(--l-gap-tiny);
-		margin-bottom   : var(--l-gap-tiny);
-		justify-content : center;
-		display         : flex;
 	}
 
 	.action-button {

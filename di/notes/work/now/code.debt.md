@@ -7,6 +7,7 @@ offer a proposal for the first unchecked item, and add it to a new section at th
 - [ ] new 'part' banner
     - [ ] mentions-> when nothing is selected
     - [ ] attributes angles repeats
+- [ ] hover graph -> name popup
 - [ ] print just the graph, scaled to fit
 - [ ] move single visible part up 6 px
 - [ ] shrink gab below show givens button
@@ -14,7 +15,8 @@ offer a proposal for the first unchecked item, and add it to a new section at th
 
 ## soon
 
-- [ ] kitchen wall disappears on relaunch
+- [ ] disappear on relaunch -> kitchen wall
+- [ ] shrink on undo -> glass wall. relaunch fixes
 - [ ] vertical scroll bar -> widens details
 - [ ] crowded dimensionals
 - [ ] convert button 'create a template' -> stud/joist / stair segmented

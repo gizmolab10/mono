@@ -12,8 +12,8 @@
 	import { units } from '../../ts/types/Units';
 	import P_Givens from './P_Givens.svelte';
 
+	const { w_selection, w_selections } = selection;
 	const { w_precision, w_tick } = stores;
-	const { w_selection } = selection;
 
 	type BoundsRow = { label: string; bound: string | null; value: string; formula: string; has_formula: boolean; is_locked: boolean; is_invariant: boolean; axis_index: number; attr_index: number };
 
@@ -86,6 +86,10 @@
 
 	function dismiss_overlay() {
 		error_state.show_overlay = false;
+	}
+
+	function is_selected(so: Smart_Object, _tick: number): boolean {
+		return $w_selections.some(h => h.so === so);
 	}
 
 	const bound_to_axis: Record<string, number> = { x_min: 0, x_max: 0, width: 0, y_min: 1, y_max: 1, depth: 1, z_min: 2, z_max: 2, height: 2 };
@@ -416,8 +420,6 @@
 		{/if}
 	</div>
 	{#if show_constants}<P_Givens /><div style:height='0px'></div>{/if}
-{:else}
-	<p>-- no object selected --</p>
 {/if}
 
 <style>
@@ -565,13 +567,6 @@
 	.cell-input.right {
 		font-variant-numeric : tabular-nums;
 		text-align           : right;
-	}
-
-	p {
-		font-size  : var(--h-font-small);
-		margin     : -5px 0 3px;
-		text-align : center;
-		opacity    : 0.6;
 	}
 
 	.givens-header {

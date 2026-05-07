@@ -2,8 +2,7 @@
 
 ## Contents
 
-- [Details](./details.md)
-- [Hits](./hits.md)
+- [Hits](hits%20system.md)
 - [Key Paths](./key paths.md)
 - [Panel.layout](./panel.layout.md)
 - [Style](./style.md)
