@@ -72,16 +72,20 @@ export class Configuration {
 
 		root.setProperty('--window-min-width', `${k.width.window_min}`);
 
-		root.setProperty('--c-white',           'white');
-		root.setProperty('--c-black',           colors.default);
+		root.setProperty('--white',             'white');
+		root.setProperty('--c-default',         colors.default);
 		root.setProperty('--c-slider-border',   colors.border);
 		root.setProperty('--c-focus',           colors.focus);
 		root.setProperty('--c-thumb',           colors.thumb);
 		root.setProperty('--c-track',           colors.track);
 
-		root.setProperty('--font-reset',       `${k.height.font.reset}px sans-serif`);
+		root.setProperty('--font-monster',     `${k.height.font.monster}px`);
 		root.setProperty('--font-common',      `${k.height.font.common}px`);
+		root.setProperty('--font-large',       `${k.height.font.large}px`);
 		root.setProperty('--font-small',       `${k.height.font.small}px`);
+		root.setProperty('--font-reset',       `${k.height.font.reset}px`);
+		root.setProperty('--font-tiny',        `${k.height.font.tiny}px`);
+		root.setProperty('--font-huge',        `${k.height.font.huge}px`);
 
 		root.setProperty('--l-letter-spacing', `${k.layout.letter_spacing}px`);
 		root.setProperty('--l-padding-small',  `${k.layout.padding_small}px`);
@@ -98,6 +102,7 @@ export class Configuration {
 		root.setProperty('--th-border',        `${k.thickness.border}px`);
 		root.setProperty('--th-sep',           `${k.thickness.separator.main}px`);
 		root.setProperty('--th-thin-sep',      `${k.thickness.separator.content}px`);
+		root.setProperty('--th-banners-sep',   `${k.thickness.separator.banners}px`);
 		root.setProperty('--th-content-sep',   `${k.thickness.separator.content}px`);
 
 		root.setProperty('--corner-common',    `${k.corner.common}px`);
@@ -115,12 +120,6 @@ export class Configuration {
 		root.setProperty('--h-button-common',  `${k.height.button.common}px`);
 		root.setProperty('--w-build-button',   `${k.width.build_button}px`);
 		root.setProperty('--w-guides-slider',  `${k.width.guides_slider}px`);
-		root.setProperty('--h-font-monster',   `${k.height.font.monster}px`);
-		root.setProperty('--h-font-common',    `${k.height.font.common}px`);
-		root.setProperty('--h-font-large',     `${k.height.font.large}px`);
-		root.setProperty('--h-font-reset',     `${k.height.font.reset}px`);
-		root.setProperty('--h-font-small',     `${k.height.font.small}px`);
-		root.setProperty('--h-font-huge',      `${k.height.font.huge}px`);
 		root.setProperty('--h-controls',       `${k.height.controls}px`);
 		root.setProperty('--h-collapse',       `${k.height.collapse}px`);
 		root.setProperty('--h-banner',         `${k.height.banner}px`);
@@ -129,6 +128,10 @@ export class Configuration {
 
 		root.setProperty('--w-title',          `${k.width.title}px`);
 		root.setProperty('--w-small',          `${k.width.small}px`);
+
+		root.setProperty('--c-r-main',         `${k.radius.main}px`);
+		root.setProperty('--c-r-table',        `${k.radius.table}px`);
+		root.setProperty('--c-r-content',      `${k.radius.content}px`);
 	}
 
 	/**

@@ -4,6 +4,85 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-07 (continued, second) — parts row height stays constant during inline rename
+
+When the user clicked a part name in the parts list and the row went into edit mode, the row used to grow a few pixels taller than its neighbours. The fix needed five passes before it actually held.
+
+**Pass one — lock the row.** Set the row to a fixed height taken from the cell-height value the project already uses elsewhere. The bug shrank but did not disappear. A row's height in a table is treated as a minimum, not an absolute — so the row was honoring the locked value as a floor and then stretching upward to fit a still-too-tall input.
+
+**Pass two — lock the input.** Apply the same cell-height value to the input itself. The input now had no slack to stretch with. The bug shrank further but the row was still a hair taller during edit.
+
+**Pass three — push the focus ring inside the input.** I had blamed the focus halo (a thin ring drawn around the input). Rendered outside the input's box, the ring extends a couple of pixels above and below — looks like a height gain even though the layout is unchanged. Pushed the ring inward so it draws inside the input. No improvement to the actual measured height. The halo theory was wrong.
+
+**Pass four — zero the cell padding.** The two cells holding eye icons in the same row had their padding zeroed out long ago, but the cell holding the part name did not. So the name cell carried the browser's default vertical cell padding, which wrapped the input with a small extra band of space on top and bottom. Zeroed that padding to match the eye cells. Got better, but the editing row was still a tiny bit taller.
+
+**Pass five — change the input from inline-block to block, lock its line-height to the cell height, and turn off platform-rendered widget styling.** A text input is by default inline-block, which means it participates in the parent line's calculation. The line is allowed to grow to fit any inherited line-height plus the input's own height — which can be taller than the input box itself. Switching the input to block removes it from the line entirely. Locking line-height to the cell height kills any internal stretching. Turning off the platform-default appearance overrides any browser-reserved extra room for native form-widget chrome.
+
+After all five passes, the editing row holds the same height as its neighbours.
+
+A separate change landed alongside, in the constants file. The cell-height value used to be the common size multiplied by half — for the project's common size of 33, that came out to a half-pixel value of 16.5. Half-pixel sizes are a common source of off-by-one rendering bugs because the browser has to round them. Wrapped the expression with a rounding step that always rounds up, so the value lands on a whole pixel (17). The change ripples through every place that uses the cell-height value — most visibly the always-visible name editor in the selection panel — by half a pixel.
+
+Lessons worth carrying forward.
+
+- Locking a table row to a height keeps it from shrinking, not from growing. Pin the tallest child too.
+- A text input is inline-block by default. To stop it from stretching the surrounding line, switch it to block.
+- Half-pixel sizes will quietly bite. Round at the source.
+- The browser's developer tools, used early, would have shortened this from five passes to one. Worth reaching for sooner next time.
+
+Files: [D_Parts.svelte](../../src/lib/svelte/details/D_Parts.svelte) (multiple style additions on .hierarchy-row, .hierarchy-name, and .name-input); [Constants.ts](../../src/lib/ts/common/Constants.ts) (cell-height now rounded up with a ceiling function).
+
+Verification: type-check shows zero errors and zero warnings. Tests still all pass. The editing row was visually confirmed to match the height of its neighbours.
+
+---
+
+## Session — 2026-05-07 (continued) — count of parts in the parts banner title
+
+The parts banner title used to read "parts" — three lowercase letters in the centre of the strip — regardless of how many parts the scene held. Now it reads "1 part" or "12 parts" or any other count, agreeing in singular and plural with the number. When the count is zero (a brand-new file with nothing in it), the title falls back to plain "parts" with no number — keeps the strip from shouting "0 parts" before any work has happened.
+
+The count rule. A part counts when it is a leaf — nothing parented under it — with one exception: a repeater is itself counted as one leaf, and everything inside the repeater (the template the user dropped in plus all the spawned duplicates) is hidden from the count. So a wall set up as a repeater holding a master stud and five auto-spawned studs reads as one part — the wall — not six. A standalone box with no children counts as one. A box with two non-repeater children counts as two (the children, not the box). An empty scene with nothing loaded shows plain "parts".
+
+Where the work landed. The count is derived in the parent details panel, where the live list of parts is already on hand. The parts banner wrapper takes its title as a prop and was not touched. A small tidy-up alongside: the clone-detection helper that was duplicated as a local function in the parts list panel was lifted up to the parts manager file so both panels can share it. The parts list panel now calls into the manager's version. (The count rule itself does not need the clone-check — the "inside a repeater" check excludes both the master and the clones in one pass — but the cleanup is good either way.)
+
+Files: [Details.svelte](../../src/lib/svelte/details/Details.svelte) (new derived for the leaf count and the title phrase, dynamic title passed to the parts banner), [Parts.ts](../../src/lib/ts/managers/Parts.ts) (new shared clone-check), [D_Parts.svelte](../../src/lib/svelte/details/D_Parts.svelte) (local clone-check removed; callers switched to the shared one).
+
+Verification: type-check shows zero errors and zero warnings. All six hundred seventy-three tests across thirty test files still pass. Visual check in the running app left for the user.
+
+---
+
+## Session — 2026-05-07 — adherence dashboard rewrite, parts list trim, rename helpers shared
+
+A long session that started with a complaint about the adherence dashboard being uninformative and ended with a chunk of cleanup across the parts list and the selection panel.
+
+### The dashboard rewrite
+
+The right-side adherence dashboard used to show four green sections that all read zero whenever everything was clean. The complaint was fair: the dashboard had little to say about robustness. After several rounds of proposing and reverting, we anchored on a clear purpose for the page — draw attention to action needed right now, nothing else — and rewrote the layout to match.
+
+The dashboard is now a headline plus a single list. When nothing needs attention it reads "All clear — no action needed" and shows a date stamp. When anything needs attention the headline reads "Action needed: N items" and a flat bullet list follows, each bullet with a sentence on what is wrong, a sentence on what to do, and one word for the owner. All of the older per-section blocks are gone — test binding, orphan tests, build-gate health, the coverage table when green, the migration dial when complete, plus a depth experiment that got tried and removed because it added noise instead of signal.
+
+A new save-and-load test landed along the way. It puts a formula on a child cell that reads the parent's width, saves the scene, loads it back, slides the parent sideways, and checks that the child holds its absolute position because width does not move when the parent slides. The first draft of the test failed for the wrong reason — it was reading a stored offset that always matched, regardless of whether the formula actually re-evaluated. Once the assertion was rewritten in absolute terms, the test passes and verifies that the formula network really does come back to life after a round trip.
+
+Files: [extract-adherence.mjs](../../notes/tools/extract-adherence.mjs) (new headline-and-action-list layout, removed depth and per-section blocks), [adherence dashboard.md](../../notes/guides/project/development/adherence%20dashboard.md) (regenerated), [Save_Load.test.ts](../../src/lib/ts/tests/Save_Load.test.ts) (new formula round-trip test).
+
+### The parts list trim
+
+The leftmost column of the parts list — a small dim number on each row showing the row's position among its siblings — was removed. With drag-and-drop reparenting in place, the dim index was no longer how anyone reasoned about row order. The cell, the row index that fed it, and its style block all came out. The part name column now sits flush at the leftmost edge of each row.
+
+While that was open, sixteen pre-existing type-check warnings and errors got cleaned out of the same neighbourhood. Eight unused style rules and three unused import lines came out of the parts list panel. Six unused declarations and one unused helper came out of the parts list, the selection panel, and the attributes panel. One unused style rule came out of the selection panel. The type-checker dropped from eighteen warnings and nine errors to two errors, both pointing at one specific gap.
+
+### The rename refactor
+
+The two errors that were left came from the selection panel calling two name-editing helpers that did not exist there. They lived in the parts list panel, where the same kind of inline rename runs. The fix landed in two hops.
+
+Hop one moved the rename state — which part is being renamed, what its original name was, what validation error is currently showing — and the pure-logic helpers — start a rename, commit a new name, cancel, dismiss, react to keystrokes — into the parts manager file. Both panels now call into the same machinery. They cannot disagree about whether a rename is in flight or what error is showing.
+
+Hop two lifted the validation-error overlay markup and its styles out of the parts list panel and into the parent details panel. Before, an error raised from the selection panel was only visible because the parts list happened to be mounted; the overlay rendered from there. Now the overlay lives on the shared parent and renders whether the parts list is open or collapsed.
+
+Files: [Parts.ts](../../src/lib/ts/managers/Parts.ts) (new rename store and helpers), [D_Parts.svelte](../../src/lib/svelte/details/D_Parts.svelte) (rename state and overlay removed; calls into the manager), [D_Selection.svelte](../../src/lib/svelte/details/D_Selection.svelte) (name input now wired through the manager), [Details.svelte](../../src/lib/svelte/details/Details.svelte) (overlay markup and styles lifted up).
+
+Verification: type-check shows zero errors and zero warnings. All six hundred seventy-three tests across thirty test files still pass.
+
+---
+
 ## Session — 2026-05-05 (continued, third) — invert the radial gradient on the panel banners
 
 The bars at the top of each section that you click to hide or reveal the section now show the user's accent color in the middle and white at the outside. Before the change they showed the panel background in the middle and the accent color at the edges. Banner text is already black and stays that way. The press-state rule was left alone — a pressed banner still flattens to the light panel background, which reads as the "pressed" feedback.

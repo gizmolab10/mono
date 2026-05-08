@@ -1,6 +1,6 @@
 # DI UI Style Guide
 
-Background rule: everything is `var(--c-white)` / `var(--bg)` by default. The active/selected state is the exception.
+Background rule: everything is `var(--white)` / `var(--bg)` by default. The active/selected state is the exception.
 
 ## Repetitive patterns of usage
 
@@ -11,17 +11,17 @@ Every interactive control shares this core:
 - `border: var(--th-border) solid currentColor`
 - `border-radius: var(--corner-common)` (pill — buttons, select, action) or `var(--corner-input)` (box — input field, SO selector)
 - `height: var(--h-button-common)`
-- `font-size: var(--h-font-common)`
+- `font-size: var(--font-common)`
 - `z-index: var(--z-action)`
 - `cursor: pointer`
 - `color: inherit`
-- `background: var(--c-white)`
+- `background: var(--white)`
 - `box-sizing: border-box`
 - hover rules declared after active rules so hover always wins
 
 ### Hover / active state (8+ files)
 
-- hover → `background: var(--selected)`, `color: var(--c-black)`
+- hover → `background: var(--selected)`, `color: var(--c-default)`
 - active (pressed/selected) → same colors, kept on
 - inactive → `opacity: 0.5`
 - active = stands out by simplicity — no heavy highlight colors, just `var(--selected)` vs plain white
@@ -36,12 +36,12 @@ Every interactive control shares this core:
 
 - `outline: var(--focus-outline)`
 - `outline-offset: -1.5px`
-- `background: var(--c-white); color: var(--c-black)`
+- `background: var(--white); color: var(--c-default)`
 
 ### Table cell / cell input (5 files)
 
-- `font-size: var(--h-font-small); border-collapse: collapse; width: 100%`
-- cell input: `box-sizing: border-box; background: var(--c-white); border: none; outline: none; padding: 0 4px`
+- `font-size: var(--font-small); border-collapse: collapse; width: 100%`
+- cell input: `box-sizing: border-box; background: var(--white); border: none; outline: none; padding: 0 4px`
 
 ### Range input thumb (3 files — Slider, P_Angles, P_Repeat)
 

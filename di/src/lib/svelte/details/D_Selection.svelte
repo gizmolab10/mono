@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { parts, stores, selection } from '../../ts/managers';
+	import { stores, selection, parts } from '../../ts/managers';
 	import { T_Parts_Tab } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import Separator from '../mouse/Separator.svelte';
@@ -8,23 +8,15 @@
 	import P_Repeat from './P_Repeat.svelte';
 	import { engine } from '../../ts/render';
 
-	const { w_tick, w_all_sos, w_parts_tab } = stores;
-	const { w_selection, w_selections } = selection;
-	const { w_collapsed_ids } = parts;
-	
+	const { w_tick, w_parts_tab } = stores;
+	const { w_selection } = selection;
+
 	// Reactive: re-evaluate the cut-button visibility on every state tick and
 	// on every selection change. The engine routine reads selection, scene
 	// parent, repeater flags, descendant list, and stored axis lengths.
 	let _can_cut_tick = $derived($w_tick + ($w_selection ? 1 : 0));
 	function can_cut(_tick: number): boolean {
 		return engine.can_cut_selected();
-	}
-
-	function is_clone(so: Smart_Object, sos: Smart_Object[], _tick: number): boolean {
-		const parent = so.scene?.parent?.so;
-		if (!parent?.repeater) return false;
-		const siblings = sos.filter(s => s.scene?.parent?.so === parent);
-		return siblings[0] !== so;
 	}
 
 </script>
@@ -37,8 +29,8 @@
 			type      = 'text'
 			class     = 'collapsed-name'
 			value     = {$w_selection.so.name}
-			onkeydown = {(e) => name_keydown(e, $w_selection!.so)}
-			onblur    = {(e) => { const inp = e.target as HTMLInputElement; commit_name($w_selection!.so, inp.value, inp); }}
+			onkeydown = {(e) => parts.name_keydown(e, $w_selection!.so)}
+			onblur    = {(e) => { const inp = e.target as HTMLInputElement; parts.commit_name($w_selection!.so, inp.value, inp); }}
 		/>
 	</div>
 	{#if $w_selection.so.scene?.parent}
@@ -57,7 +49,6 @@
 			<button class:active={$w_parts_tab === 'repeater'}   onclick={() => w_parts_tab.set(T_Parts_Tab.repeater)}>repeats</button>
 		</div>
 	</div>
-	<div class='sep-gap'><Separator/></div>
 	<div class='tab-content'>
 		{#if $w_parts_tab === 'attributes'}
 			<P_Attributes />
@@ -72,7 +63,7 @@
 <style>
 
 	p {
-		font-size     : var(--h-font-small);
+		font-size     : var(--font-small);
 		margin        : -5px 0 -3px;
 		text-align    : center;
 		opacity       : 0.6;
@@ -80,17 +71,18 @@
 
 	.collapsed-name:focus {
 		outline        : var(--focus-outline);
-		background     : var(--c-white);
+		background     : var(--white);
 		outline-offset : -1.5px;
 	}
 
 	.collapsed-name {
 		border        : 0.5px solid rgba(0, 0, 0, 0.6);
-		font-size     : var(--h-font-small);
+		font-size     : var(--font-small);
+		border-radius : var(--c-r-table);
 		z-index       : var(--z-action);
-		background    : var(--c-white);
 		height        : var(--h-cell);
 		margin-bottom : var(--l-gap);
+		background    : var(--white);
 		box-sizing    : border-box;
 		flex          : 1 1 auto;
 		color         : inherit;
@@ -99,23 +91,22 @@
 		text-align    : left;
 		width         : 100%;
 		padding-left  : 6px;
-		border-radius : 5px;
 	}
 
 	.actions-row {
 		gap           : var(--l-gap-tiny);
 		display       : flex;
 		margin-top    : 5px;
-		margin-bottom : 0px;
+		margin-bottom : 1px;
 	}
 
 	.action-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-tiny);
 		border-radius : var(--corner-common);
-		font-size     : var(--h-font-common);
+		font-size     : var(--font-common);
 		z-index       : var(--z-action);
-		background    : var(--c-white);
+		background    : var(--white);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
@@ -124,14 +115,6 @@
 
 	.action-button:hover {
 		background : var(--hover);
-	}
-
-	.sibling-position {
-		font-size      : var(--h-font-small);
-		color          : rgba(0, 0, 0, 0.5);
-		white-space    : nowrap;
-		user-select    : none;
-		pointer-events : none;
 	}
 
 	.duplicate-row {
@@ -150,8 +133,8 @@
 	.segmented button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
-		font-size     : var(--h-font-common);
-		background    : var(--c-white);
+		font-size     : var(--font-common);
+		background    : var(--white);
 		cursor        : pointer;
 		color         : inherit;
 		white-space   : nowrap;
@@ -181,10 +164,6 @@
 
 	.tab-content {
 		padding-top : var(--l-gap-tiny);
-	}
-
-	.sep-gap {
-		padding : 5px 0;
 	}
 
 </style>

@@ -1,5 +1,8 @@
 # Code Debt --- Paid
 
+- [x] in parts table, when a row title is focus, the row height changes
+- [x] add count of parts to parts banner title (eg, '52 parts')
+- [x] remove first column of parts table
 - [x] cannot edit Z in 2D
     - [x] movement in the z axis seems to be disabled
         - [x] i can adjust position in x or in y, but not z
@@ -241,3 +244,13 @@
 - [x] add a separator between
     - [x] attributes table and show/hide givens button
     - [x] parts table and duplicate button row
+- [x] new 'part' banner
+    - [x] mentions-> when nothing is selected
+    - [x] attributes angles repeats
+- [x] remove first column of parts table
+- [x] shrink gab below show givens button
+- [x] on clicking '+' button in givens row -> focus on new given's title cell
+- [x] convert givens into a hideable (D_Givens)
+    - [x] move givens '+' button into banner
+    - [x] givens plus button should end editing (and commit the change)
+- [x] **hover** on left-side banner button should change background to white (not --bg)

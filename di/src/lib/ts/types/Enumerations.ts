@@ -66,6 +66,7 @@ export enum T_Details {
 	library     = 2,
 	parts       = 4,
 	selection   = 8,
+	givens      = 16,
 }
 
 export enum T_Decorations {

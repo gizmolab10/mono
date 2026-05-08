@@ -131,9 +131,9 @@
 	.segmented button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
-		font-size     : var(--h-font-common);
+		font-size     : var(--font-common);
 		z-index       : var(--z-action);
-		background    : var(--c-white);
+		background    : var(--white);
 		color         : inherit;
 		cursor        : pointer;
 		white-space   : nowrap;
@@ -175,9 +175,9 @@
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		border-radius : var(--corner-common);
-		font-size     : var(--h-font-common);
+		font-size     : var(--font-common);
 		z-index       : var(--z-action);
-		background    : var(--c-white);
+		background    : var(--white);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
@@ -185,7 +185,7 @@
 	}
 
 	.action-button:global([data-hit]) {
-		color      : var(--c-black);
+		color      : var(--c-default);
 		background : var(--hover);
 	}
 
@@ -199,7 +199,7 @@
 	}
 
 	.library {
-		font-size       : var(--h-font-small);
+		font-size       : var(--font-small);
 		z-index         : var(--z-action);
 		border-collapse : collapse;
 		position        : relative;

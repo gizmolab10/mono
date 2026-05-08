@@ -1,18 +1,13 @@
 <script lang='ts'>
 	import { constraints, tokenizer, errors, type S_Error } from '../../ts/algebra';
-	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { scenes, stores, selection, history } from '../../ts/managers';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
-	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Editing } from '../../ts/types/Enumerations';
 	import { w_unit_system } from '../../ts/types/Units';
 	import type { Bound } from '../../ts/types/Types';
-	import Separator from '../mouse/Separator.svelte';
-	import { givens } from '../../ts/algebra/Givens';
 	import { units } from '../../ts/types/Units';
-	import P_Givens from './P_Givens.svelte';
 
-	const { w_selection, w_selections } = selection;
+	const { w_selection } = selection;
 	const { w_precision, w_tick } = stores;
 
 	type BoundsRow = { label: string; bound: string | null; value: string; formula: string; has_formula: boolean; is_locked: boolean; is_invariant: boolean; axis_index: number; attr_index: number };
@@ -86,10 +81,6 @@
 
 	function dismiss_overlay() {
 		error_state.show_overlay = false;
-	}
-
-	function is_selected(so: Smart_Object, _tick: number): boolean {
-		return $w_selections.some(h => h.so === so);
 	}
 
 	const bound_to_axis: Record<string, number> = { x_min: 0, x_max: 0, width: 0, y_min: 1, y_max: 1, depth: 1, z_min: 2, z_max: 2, height: 2 };
@@ -299,15 +290,6 @@
 		}
 	}
 
-	let show_constants = $state(preferences.read<boolean>(T_Preference.showGivens) ?? true);
-
-	function toggle_show_constants() { show_constants = !show_constants; preferences.write(T_Preference.showGivens, show_constants); }
-
-	function add_constant() {
-		givens.add('', 0);
-		stores.tick();
-	}
-
 	let formula_mode = $derived.by(() => {
 		if (tick === undefined || !selected_so) return 'agnostic' as const;
 		return constraints.detect_formula_mode(selected_so) === 'explicit' ? 'explicit' as const : 'agnostic' as const;
@@ -389,6 +371,7 @@
 
 {#if selected_so}
 	{@const split = error_row_idx >= 0 && error_row_idx < bounds_rows.length - 1 && error_state.active_error}
+	<div class='bounds-wrap'>
 	<table class='bounds'>
 		<tbody>
 			{#each (split ? bounds_rows.slice(0, error_row_idx + 1) : bounds_rows) as row, i (selected_so?.id + row.label)}
@@ -396,8 +379,10 @@
 			{/each}
 		</tbody>
 	</table>
+	</div>
 	{#if split}
 		{@render error_overlay()}
+		<div class='bounds-wrap'>
 		<table class='bounds'>
 			<tbody>
 				{#each bounds_rows.slice(error_row_idx + 1) as row, j (selected_so?.id + row.label)}
@@ -405,28 +390,23 @@
 				{/each}
 			</tbody>
 		</table>
+		</div>
 	{:else if error_state.show_overlay && error_state.active_error}
 		{@render error_overlay()}
 	{/if}
-	<Separator />
-	<div class='givens-header'>
-		<button class='givens-toggle' onclick={toggle_show_constants}>
-			{show_constants ? 'hide' : 'show'} givens
-		</button>
-		{#if show_constants}
-			<button class='add-button' use:hit_target={{ id: 'add-constant', onpress: add_constant }}>
-				+
-			</button>
-		{/if}
-	</div>
-	{#if show_constants}<P_Givens /><div style:height='0px'></div>{/if}
 {/if}
 
 <style>
+	.bounds-wrap {
+		border        : var(--th-border) solid currentColor;
+		border-radius : 6px;
+		overflow      : hidden;
+		margin-bottom : 5px;
+	}
+
 	.bounds {
-		font-size       : var(--h-font-small);
+		font-size       : var(--font-small);
 		border-collapse : collapse;
-		margin-bottom   : 8px;
 		width           : 100%;
 	}
 
@@ -435,6 +415,11 @@
 		text-align : left;
 		padding    : 0;
 	}
+
+	.bounds tr:first-child td { border-top    : none; }
+	.bounds tr:last-child  td { border-bottom : none; }
+	.bounds td:first-child    { border-left   : none; }
+	.bounds td:last-child     { border-right  : none; }
 
 	.attr-name {
 		text-align  : center !important;
@@ -458,7 +443,7 @@
 	}
 
 	.attr-invariant {
-		background : var(--c-white);
+		background : var(--white);
 		cursor     : pointer;
 		width      : 12px;
 		min-width  : 12px;
@@ -525,7 +510,7 @@
 
 	.cell-input {
 		z-index       : var(--z-action);
-		background    : var(--c-white);
+		background    : var(--white);
 		box-sizing    : border-box;
 		color         : inherit;
 		font-size     : inherit;
@@ -544,8 +529,8 @@
 
 	.cell-input:focus {
 		outline        : var(--focus-outline);
-		background     : var(--c-white);
-		color          : var(--c-black);
+		background     : var(--white);
+		color          : var(--c-default);
 		outline-offset : -1.5px;
 	}
 
@@ -569,55 +554,6 @@
 		text-align           : right;
 	}
 
-	.givens-header {
-		align-items   : center;
-		display       : flex;
-		gap           : 6px;
-		margin-top    : 6px;
-		margin-bottom : 6px;
-	}
-
-	.givens-toggle {
-		border        : 0.75px solid currentColor;
-		height        : var(--h-button-tiny);
-		font-size     : var(--h-font-common);
-		border-radius : var(--corner-common);
-		z-index       : var(--z-action);
-		background    : var(--c-white);
-		cursor        : pointer;
-		color         : inherit;
-		text-align    : center;
-		font-weight   : normal;
-		flex          : 1;
-		padding       : 0;
-	}
-
-	.givens-toggle:hover {
-		background : var(--hover);
-	}
-
-	.add-button {
-		border          : var(--th-border) solid currentColor;
-		width           : var(--h-button-tiny);
-		height          : var(--h-button-tiny);
-		font-size       : var(--h-font-large);
-		z-index         : var(--z-action);
-		background      : var(--c-white);
-		color           : inherit;
-		cursor          : pointer;
-		align-items     : center;
-		justify-content : center;
-		display         : flex;
-		font-weight     : 300;
-		border-radius   : 50%;
-		line-height     : 1;
-		padding         : 0;
-	}
-
-	.add-button:hover {
-		background : var(--hover);
-	}
-
 	.error-backdrop {
 		position : fixed;
 		inset    : 0;
@@ -625,9 +561,9 @@
 	}
 
 	.error-overlay {
-		font-size     : var(--h-font-small);
+		font-size     : var(--font-small);
 		border        : 2px solid darkred;
-		background    : var(--c-white);
+		background    : var(--white);
 		box-sizing    : border-box;
 		position      : relative;
 		padding       : 6px 8px;
@@ -661,12 +597,12 @@
 
 	.error-suggestion {
 		border        : var(--th-border) solid currentColor;
-		font-size     : var(--h-font-small);
+		font-size     : var(--font-small);
+		border-radius : var(--c-r-table);;
 		padding       : 2px 5px;
 		cursor        : pointer;
 		color         : inherit;
 		background    : white;
-		border-radius : 5px;
 		line-height   : 1;
 	}
 

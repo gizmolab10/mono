@@ -12,14 +12,14 @@ src/
     │   ├── details/          # Right-side panel and its sub-panels
     │   │   ├── Details.svelte
     │   │   ├── Hideable.svelte
+    │   │   ├── D_Givens.svelte
     │   │   ├── D_Library.svelte
     │   │   ├── D_Parts.svelte
     │   │   ├── D_Preferences.svelte
+    │   │   ├── D_Selection.svelte
     │   │   ├── P_Angles.svelte
     │   │   ├── P_Attributes.svelte
-    │   │   ├── P_Givens.svelte
-    │   │   ├── P_Repeat.svelte
-    │   │   └── P_Selected.svelte
+    │   │   └── P_Repeat.svelte
     │   ├── main/             # Top-level layout components
     │   │   ├── Main.svelte
     │   │   ├── Controls.svelte

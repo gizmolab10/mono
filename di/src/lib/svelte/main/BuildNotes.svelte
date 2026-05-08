@@ -80,7 +80,7 @@
 		color      : var(--text);
 		box-shadow : 0 2px 8px rgba(0, 0, 0, 0.2);
 		border-radius: 12px;
-		font-size: var(--h-font-small);
+		font-size: var(--font-small);
 		padding: 16px 20px;
 		position: relative;
 	}
@@ -99,7 +99,7 @@
 	}
 
 	.title {
-		font-size: var(--h-font-common);
+		font-size: var(--font-common);
 		font-weight: 300;
 	}
 

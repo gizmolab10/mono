@@ -214,7 +214,7 @@
 	}
 
 	.slider-label {
-		font-size   : var(--h-font-common);
+		font-size   : var(--font-common);
 		opacity     : 0.5;
 		flex-shrink : 0;
 	}
@@ -229,9 +229,9 @@
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		border-radius : var(--corner-common);
-		font-size     : var(--h-font-common);
+		font-size     : var(--font-common);
 		z-index       : var(--z-action);
-		background    : var(--c-white);
+		background    : var(--white);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
@@ -244,7 +244,7 @@
 	}
 
 	.angles {
-		font-size       : var(--h-font-small);
+		font-size       : var(--font-small);
 		border-collapse : collapse;
 		width           : 100%;
 	}
@@ -255,7 +255,7 @@
 	}
 
 	.angle-arrow {
-		background  : var(--c-white);
+		background  : var(--white);
 		cursor      : pointer;
 		text-align  : center;
 		width       : 16px;
@@ -288,7 +288,7 @@
 	}
 
 	.angle-cell {
-		background           : var(--c-white);
+		background           : var(--white);
 		font-variant-numeric : tabular-nums;
 		box-sizing           : border-box;
 		color                : inherit;
@@ -308,8 +308,8 @@
 
 	.angle-cell:focus {
 		outline        : var(--focus-outline);
-		background     : var(--c-white);
-		color          : var(--c-black);
+		background     : var(--white);
+		color          : var(--c-default);
 		outline-offset : -1.5px;
 	}
 

@@ -12,13 +12,13 @@ src/lib/svelte/details/
 ├── D_Library.svelte
 ├── D_Parts.svelte
 ├── D_Selection.svelte
+├── D_Givens.svelte
 ├── P_Attributes.svelte
 ├── P_Angles.svelte
-├── P_Repeat.svelte
-└── P_Givens.svelte
+└── P_Repeat.svelte
 ```
 
-The `D_` files are the four folding sections. The `P_` files are sub-panels — currently only used by the part section as the contents of its three tabs.
+The `D_` files are the folding sections. The `P_` files are sub-panels — currently only used by the part section as the contents of its three tabs.
 
 ## Related files
 

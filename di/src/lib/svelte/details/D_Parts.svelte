@@ -1,26 +1,18 @@
 <script lang='ts'>
-	import { stores, parts, selection, scenes, history } from '../../ts/managers';
-	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { stores, parts, selection, scenes } from '../../ts/managers';
 	import { T_Hit_3D, T_Editing } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import type { O_Scene } from '../../ts/types/Interfaces';
 	import { hit_target } from '../../ts/events/Hit_Target';
-	import { errors, constraints } from '../../ts/algebra';
-	import Separator from '../mouse/Separator.svelte';
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 	import { get } from 'svelte/store';
 
 	const { w_selection, w_selections } = selection;
 	const { w_all_sos, w_tick } = stores;
-	const { w_collapsed_ids } = parts;
+	const { w_collapsed_ids, w_naming_error, w_editing_id } = parts;
 
-	let parts_count = $derived($w_all_sos.filter(s => !$w_all_sos.some(c => c.scene?.parent?.so === s)).length);
 	let selected_so = $derived($w_selection?.so ?? null);
-	let naming_input: HTMLInputElement | null = null;
-	let naming_error: string | null = $state(null);
-	let editing_id: string | null = $state(null);
-	let editing_original: string = '';
 
 	function handle_triangle_click(e: MouseEvent, so: Smart_Object) {
 		e.stopPropagation();
@@ -50,60 +42,10 @@
 	});
 
 	function handle_name_click(e: MouseEvent, so: Smart_Object) {
-		naming_error = null;
 		if (is_selected(so, 0)) {
 			e.stopPropagation();
-			editing_id = so.id;
-			editing_original = so.name;
+			parts.begin_rename(so);
 		}
-	}
-
-	function commit_name(so: Smart_Object, value: string, input?: HTMLInputElement) {
-		if (naming_error) return;
-		const trimmed = value.trim();
-		if (trimmed.length > 0 && trimmed !== editing_original) {
-			const err = errors.validate_name(trimmed, so.id);
-			if (err) {
-				naming_error = err;
-				naming_input = input ?? null;
-				return;
-			}
-			history.snapshot();
-			const old_name = so.name;
-			so.name = trimmed.replace(/_/g, ' ');
-			if (so.name !== old_name) constraints.rename_so_in_formulas(old_name, so.name);
-			scenes.save();
-			stores.w_all_sos.update(sos => sos);
-		}
-		naming_error = null;
-		editing_id = null;
-	}
-
-	function dismiss_naming(_so: Smart_Object) {
-		naming_error = null;
-		if (naming_input) { naming_input.value = ''; naming_input = null; }
-	}
-
-	function cancel_name(so: Smart_Object) {
-		so.name = editing_original;
-		editing_id = null;
-	}
-
-	function name_keydown(e: KeyboardEvent, so: Smart_Object) {
-		if (naming_error && (e.key === 'Enter' || e.key === 'Delete' || e.key === 'Backspace')) {
-			const inp = e.target as HTMLInputElement;
-			naming_error = null;
-			naming_input = null;
-			if (e.key === 'Enter') {
-				e.preventDefault();
-				const pos = inp.selectionStart ?? 0;
-				inp.value = inp.value.slice(0, pos) + inp.value.slice(inp.selectionEnd ?? inp.value.length);
-				inp.setSelectionRange(pos, pos);
-			}
-		} else if (e.key === 'Enter') {
-			(e.target as HTMLInputElement).blur();
-		} else if (e.key === 'Escape') { cancel_name(so); }
-		e.stopPropagation();
 	}
 
 	function autofocus(node: HTMLInputElement) {
@@ -116,13 +58,6 @@
 		const siblings = sos.filter(s => s.scene?.parent?.so === parent);
 		if (siblings[0] !== so) return 0; // only first child shows count
 		return siblings.length;
-	}
-
-	function is_clone(so: Smart_Object, sos: Smart_Object[], _tick: number): boolean {
-		const parent = so.scene?.parent?.so;
-		if (!parent?.repeater) return false;
-		const siblings = sos.filter(s => s.scene?.parent?.so === parent);
-		return siblings[0] !== so;
 	}
 
 	function has_children(so: Smart_Object, sos: Smart_Object[]): boolean {
@@ -148,32 +83,10 @@
 		return parts.has_visible_descendant(so);
 	}
 
-	// Reactive views of the selected part's eye-cell display values for the
-	// collapsed (parts-list-hidden) layout. The tick reference is what makes
-	// these re-evaluate when toggle_visible / toggle_hide_children mutate the
-	// part's flags — those handlers call stores.tick() after each mutation.
-	let collapsed_show_hide_eye = $derived.by(() => {
-		$w_tick;
-		const sel = $w_selection;
-		return !!sel && has_children(sel.so, $w_all_sos) && !!sel.so.scene?.parent;
-	});
-	let collapsed_hide_eye_label = $derived.by(() => {
-		$w_tick;
-		const sel = $w_selection;
-		if (!sel) return '';
-		return sel.so.hide_children ? String(leaf_descendants(sel.so, $w_all_sos)) : '👁';
-	});
-	let collapsed_visible_label = $derived.by(() => {
-		$w_tick;
-		return $w_selection?.so.visible !== false ? '👁' : '–';
-	});
-
-	// Reactive: re-evaluate the cut-button visibility on every state tick and
-	// on every selection change. The engine routine reads selection, scene
-	// parent, repeater flags, descendant list, and stored axis lengths.
-	let _can_cut_tick = $derived($w_tick + ($w_selection ? 1 : 0));
-	function can_cut(_tick: number): boolean {
-		return engine.can_cut_selected();
+	function delete_so(so: Smart_Object): void {
+		if (!so.scene?.parent) return;
+		selection.current = { so, type: T_Hit_3D.face, index: 0 };
+		engine.delete_selected_so();
 	}
 
 	// ── drag-and-drop reparenting ──
@@ -182,7 +95,7 @@
 	let drop_target_so: Smart_Object | null = $state(null);
 	let drop_mode:      'child' | 'before' | 'after' | null = $state(null);
 
-	let visible_rows = $derived(parts.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !parts.is_ancestor_collapsed(s, $w_collapsed_ids)));
+	let visible_rows = $derived(parts.tree_order($w_all_sos).filter(s => !parts.is_clone(s, $w_all_sos, $w_tick) && !parts.is_ancestor_collapsed(s, $w_collapsed_ids)));
 
 	function siblings_in_tree(a: Smart_Object | undefined, b: Smart_Object | undefined): boolean {
 		if (!a || !b) return false;
@@ -356,16 +269,9 @@
 </script>
 
 <table class='hierarchy' ondragover={handle_outside_dragover} ondrop={handle_outside_drop}>
-	<thead>
-		<tr>
-			<th class='hierarchy-eye static' colspan=2></th>
-			<th class='hierarchy-eye static'>⋮</th>
-			<th class='hierarchy-eye static'>👁</th>
-		</tr>
-	</thead>
 	<tbody>
 		<tr style:height='4px'></tr>
-		{#each parts.tree_order($w_all_sos).filter(s => !is_clone(s, $w_all_sos, $w_tick) && !parts.is_ancestor_collapsed(s, $w_collapsed_ids)) as so, row_index (so.id)}
+		{#each parts.tree_order($w_all_sos).filter(s => !parts.is_clone(s, $w_all_sos, $w_tick) && !parts.is_ancestor_collapsed(s, $w_collapsed_ids)) as so (so.id)}
 			{@const n_rpt = repeat_count(so, $w_all_sos, $w_tick)}
 			<tr
 				class='hierarchy-row'
@@ -379,17 +285,16 @@
 				ondragend={handle_dragend}
 				ondrop={handle_row_drop}
 				onclick={(e) => select(so, e)}>
-				<td class='hierarchy-sibling'>{so.scene?.parent ? row_index : ''}</td>
 				<td class='hierarchy-name' style:padding-left='{depth(so) * k.width.indent}px'
 					onclick={(e) => handle_name_click(e, so)}>
-					{#if editing_id === so.id}
+					{#if $w_editing_id === so.id}
 						<input
 							type               = 'text'
 							value              = {so.name}
 							class              = 'name-input'
-							onkeydown          = {(e) => name_keydown(e, so)}
+							onkeydown          = {(e) => parts.name_keydown(e, so)}
 							onfocus            = {() => stores.w_editing.set(T_Editing.value)}
-							onblur             = {(e) => { const inp = e.target as HTMLInputElement; commit_name(so, inp.value, inp); if (!naming_error) stores.w_editing.set(T_Editing.none); }}
+							onblur             = {(e) => { const inp = e.target as HTMLInputElement; parts.commit_name(so, inp.value, inp); if (!$w_naming_error) stores.w_editing.set(T_Editing.none); }}
 							use:autofocus
 						/>
 					{:else}
@@ -410,49 +315,63 @@
 						{/if}
 					{/if}
 				</td>
-				<td class='hierarchy-eye' onclick={(e) => has_children(so, $w_all_sos) && so.scene?.parent ? toggle_hide_children(e, so) : null}>
+				<td class='hierarchy-eye'
+					class:has-content={has_children(so, $w_all_sos) && so.scene?.parent}
+					onclick={(e) => has_children(so, $w_all_sos) && so.scene?.parent ? toggle_hide_children(e, so) : null}>
 					{#if has_children(so, $w_all_sos) && so.scene?.parent}
-						{so.hide_children ? leaf_descendants(so, $w_all_sos) : '👁'}
+						<span class='cell-glyph'>{so.hide_children ? leaf_descendants(so, $w_all_sos) : '👁︎'}</span>
 					{/if}
 				</td>
-				<td class='hierarchy-eye' onclick={(e) => toggle_visible(e, so)}>
-					{so.visible !== false ? '👁' : '–'}
+				<td class='hierarchy-eye has-content' onclick={(e) => toggle_visible(e, so)}>
+					<span class='cell-glyph'>{so.visible !== false ? '👁︎' : '–'}</span>
+				</td>
+				<td class='hierarchy-remove'
+					class:has-content={!!so.scene?.parent}
+					onclick={(e) => e.stopPropagation()}>
+					{#if so.scene?.parent}
+						<button class='remove-button' use:hit_target={{ id: `remove-so-${so.id}`, onpress: () => delete_so(so) }}>🗑︎</button>
+					{/if}
 				</td>
 			</tr>
 		{/each}
 	</tbody>
 </table>
-{#if naming_error}
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class='naming-backdrop' onmousedown={(e) => { e.preventDefault(); if (selected_so) dismiss_naming(selected_so); }}></div>
-	<div class='naming-overlay'>
-		<div class='naming-message'>{@html naming_error.replace(/'([^']+)'/g, "&#39;<span class='naming-quoted'>$1</span>&#39;")}</div>
-		<div class='naming-suggestions'>
-			<button class='naming-suggestion' onmousedown={(e) => { e.preventDefault(); if (selected_so) dismiss_naming(selected_so); }}>delete it</button>
-		</div>
-	</div>
-{/if}
-
 <style>
 
 	.hierarchy {
-		font-size       : var(--h-font-small);
+		font-size       : var(--font-small);
 		z-index         : var(--z-action);
 		border-collapse : separate;
 		position        : relative;
-		width           : 100%;
-		margin-top      : -1px;
+		margin-top      : -10px;
 		margin-bottom   : -7px;
+		width           : 100%;
 		border-spacing  : 0;
 	}
 
 	.hierarchy-row {
 		cursor : pointer;
+		height : var(--h-cell);
 	}
 
-	.hierarchy-row:hover {
+	.hierarchy-row:hover:not(:has(.hierarchy-eye.has-content:hover, .hierarchy-remove.has-content:hover)) {
 		background : var(--hover);
+	}
+
+	.hierarchy-eye.has-content:hover,
+	.hierarchy-remove.has-content:hover {
+		background : var(--hover);
+	}
+
+	.hierarchy-remove.has-content:hover .remove-button {
+		filter : brightness(0) invert(1);
+	}
+
+	.cell-glyph {
+		display         : flex;
+		align-items     : center;
+		justify-content : center;
+		height          : var(--h-cell);
 	}
 
 	.hierarchy-row.selected {
@@ -464,54 +383,79 @@
 	}
 
 	.hierarchy-row.drop-line-top > td {
-		border-top : 2px solid #4080ff;
+		border-top : 1px solid #4080ff;
 	}
 
 	.hierarchy-row.drop-line-bottom > td {
-		border-bottom : 2px solid #4080ff;
+		border-bottom : 1px solid #4080ff;
 	}
 
 	.hierarchy-name {
 		width       : var(--w-title);
 		text-align  : left;
-	}
-
-	.hierarchy-sibling {
-		color       : rgba(0, 0, 0, 0.5);
-		font-size   : var(--h-font-small);
-		width       : var(--w-small);
-		user-select : none;
+		padding     : 0;
 	}
 
 	.hierarchy-eye {
-		width      : var(--w-small);
-		cursor     : pointer;
-		text-align : center;
-		opacity    : 0.85;
-		padding    : 0;
+		width              : var(--w-small);
+		cursor             : pointer;
+		vertical-align     : middle;
+		text-align         : center;
+		font-variant-emoji : text;
+		opacity            : 0.85;
+		padding            : 0;
 	}
 
-	.hierarchy-eye.static {
-		cursor : default;
+	.hierarchy-remove {
+		width              : var(--w-small);
+		vertical-align     : middle;
+		text-align         : center;
+		font-variant-emoji : text;
+		padding            : 0;
+	}
+
+	.remove-button {
+		font-size       : var(--font-tiny);
+		background      : transparent;
+		color           : inherit;
+		cursor          : pointer;
+		display         : flex;
+		align-items     : center;
+		justify-content : center;
+		height          : 100%;
+		width           : 100%;
+		border          : none;
+		opacity         : 0.5;
+		line-height     : 1;
+		padding         : 0;
+	}
+
+	.remove-button:hover {
+		opacity : 1;
 	}
 
 	.name-input {
-		outline      : var(--focus-outline);
-		z-index      : var(--z-action);
-		background   : var(--c-white);
-		width        : var(--w-title);
-		box-sizing   : border-box;
-		border       : none;
-		padding-left : 19px;
-		margin       : 0;
+		outline        : var(--focus-outline);
+		z-index        : var(--z-action);
+		background     : var(--white);
+		width          : var(--w-title);
+		height         : var(--h-cell);
+		line-height    : var(--h-cell);
+		box-sizing     : border-box;
+		outline-offset : -1.5px;
+		display        : block;
+		border         : none;
+		padding-left   : 19px;
+		appearance     : none;
+		margin         : 0;
 	}
 
 	.collapse-tri {
 		all              : unset;
 		display          : inline-block;
-		height           : var(--h-font-small);
-		width            : var(--h-font-small);
-		line-height      : var(--h-font-small);
+		height           : var(--font-small);
+		width            : var(--font-small);
+		line-height      : var(--font-small);
 		cursor           : pointer;
 		overflow         : visible;
 		vertical-align   : middle;
@@ -520,7 +464,7 @@
 	}
 
 	.collapse-tri .tri-glyph {
-		font-size        : var(--h-font-huge);
+		font-size        : var(--font-huge);
 		position         : relative;
 		top              : -3.5px;
 		pointer-events   : none;
@@ -531,7 +475,7 @@
 	}
 
 	.collapse-tri:not(.spacer):hover .tri-glyph {
-		font-size : var(--h-font-monster);
+		font-size : var(--font-monster);
 		left      : -3px;
 		top       : -5px;
 	}
@@ -541,103 +485,9 @@
 	}
 
 	.repeat-badge {
-		font-size   : var(--h-font-small);
 		margin-left : var(--l-gap-tiny);
-		opacity     : 0.5;
-	}
-
-	.edit-title-row {
-		align-items : center;
-		display     : flex;
-		gap         : 6px;
-	}
-
-	.edit-title-row .hierarchy-eye {
-		flex : 0 0 auto;
-	}
-
-	.toggle-header {
-		box-shadow      : inset 0 0 0 0.25px currentColor;
-		line-height     : calc(var(--h-collapse) - 1px);
-		font-size       : var(--h-font-common);
-		border          : 0 solid transparent;
-		height          : var(--h-collapse);
-		background      : var(--c-white);
-		cursor          : pointer;
-		text-align      : center;
-		font-weight     : normal;
-		vertical-align  : middle;
-		border-radius   : 8px;
-	}
-
-	.toggle-header.gap-r { border-right-width : 3px; }
-
-	.toggle-header:hover {
-		background : var(--hover);
-	}
-
-	.action-button {
-		border        : var(--th-border) solid currentColor;
-		height        : var(--h-button-tiny);
-		border-radius : var(--corner-common);
-		font-size     : var(--h-font-common);
-		z-index       : var(--z-action);
-		background    : var(--c-white);
-		box-sizing    : border-box;
-		cursor        : pointer;
-		color         : inherit;
-		padding       : 0 8px;
-	}
-
-	.action-button:hover {
-		background : var(--hover);
-	}
-
-	.naming-backdrop {
-		position : fixed;
-		inset    : 0;
-		z-index  : 999;
-	}
-
-	.naming-overlay {
-		font-size     : var(--h-font-small);
-		border        : 2px solid darkred;
-		background    : var(--c-white);
-		box-sizing    : border-box;
-		position      : relative;
-		padding       : 6px 8px;
-		text-align    : center;
-		width         : 100%;
-		z-index       : 1000;
-		margin-top    : 8px;
-		margin-bottom : 8px;
-		border-radius : 8px;
-	}
-
-	.naming-message :global(.naming-quoted) {
-		color : darkred;
-	}
-
-	.naming-suggestions {
-		justify-content : center;
-		display         : flex;
-		margin-top      : 8px;
-	}
-
-	.naming-suggestion {
-		border        : var(--th-border) solid currentColor;
-		font-size     : var(--h-font-small);
-		cursor        : pointer;
-		color         : inherit;
-		padding       : 2px 5px;
-		background    : white;
-		border-radius : 5px;
-		line-height   : 1;
-	}
-
-	.naming-suggestion:hover {
-		outline    : 2px solid var(--accent);
-		background : var(--selected);
+		font-size   : var(--font-small);
+		opacity     : 0.6;
 	}
 
 </style>

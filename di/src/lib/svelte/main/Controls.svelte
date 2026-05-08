@@ -238,7 +238,7 @@
 	.guides-label {
 		letter-spacing : var(--l-letter-spacing);
 		color          : rgba(0, 0, 0, 0.65);
-		font-size      : var(--h-font-small);
+		font-size      : var(--font-small);
 		position       : relative;
 		top            : -2px;
 		line-height    : 1;
@@ -267,23 +267,23 @@
 	}
 
 	.hamburger:global([data-hit]) .hamburger-icon path {
-		fill : var(--c-white);
+		fill : var(--white);
 	}
 
 	.toolbar-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
-		font-size     : var(--h-font-common);
+		font-size     : var(--font-common);
 		border-radius : var(--corner-common);
 		z-index       : var(--z-action);
-		background    : var(--c-white);
+		background    : var(--white);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
 	}
 
 	.help-button {
-		font-size   : var(--h-font-large);
+		font-size   : var(--font-large);
 		padding     : 1px 10px 0 9px;
 	}
 
@@ -293,14 +293,14 @@
 	}
 
 	.toolbar-button:global([data-hit]) {
-		color      : var(--c-black);
+		color      : var(--c-default);
 		background : var(--hover);
 	}
 
 	.snap-button {
 		width         : var(--h-button-common);
 		height        : var(--h-button-common);
-		font-size     : var(--h-font-large);
+		font-size     : var(--font-large);
 		position      : relative;
 		border-radius : 50%;
 		padding       : 0;
@@ -309,7 +309,7 @@
 	.snap-off::after {
 		transform  : translate(-50%, -50%) rotate(-45deg);
 		width      : var(--h-button-common);
-		background : var(--c-black);
+		background : var(--c-default);
 		position   : absolute;
 		height     : 1.5px;
 		top        : 50%;
@@ -332,8 +332,8 @@
 		padding     : 0 var(--l-padding) 1px var(--l-padding);
 		border-right: var(--th-border) solid currentColor;
 		color       : rgba(0, 0, 0, 0.35);
-		font-size   : var(--h-font-common);
-		background  : var(--c-white);
+		font-size   : var(--font-common);
+		background  : var(--white);
 		box-sizing  : border-box;
 		cursor      : pointer;
 		height      : 100%;
@@ -345,16 +345,16 @@
 
 	.seg.forward {
 		background : var(--selected);
-		color      : var(--c-black);
+		color      : var(--c-default);
 	}
 
 	.seg.active {
 		background : var(--selected);
-		color      : var(--c-black);
+		color      : var(--c-default);
 	}
 
 	.seg:global([data-hit]) {
-		color      : var(--c-black);
+		color      : var(--c-default);
 		background : var(--hover);
 	}
 

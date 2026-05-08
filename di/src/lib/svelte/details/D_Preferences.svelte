@@ -86,7 +86,7 @@
 	}
 
 	.label {
-		font-size : var(--h-font-small);
+		font-size : var(--font-small);
 		opacity   : 0.8;
 	}
 
@@ -104,7 +104,7 @@
 		border         : var(--th-border) solid currentColor;
 		height         : var(--h-button-common);
 		border-radius  : var(--corner-common);
-		background     : var(--c-white);
+		background     : var(--white);
 		box-sizing     : border-box;
 		overflow       : hidden;
 		display        : flex;
@@ -112,9 +112,9 @@
 
 	.segment {
 		border         : none;
-		background     : var(--c-white);
+		background     : var(--white);
 		border-right   : var(--th-border) solid currentColor;
-		font-size      : var(--h-font-small);
+		font-size      : var(--font-small);
 		z-index        : var(--z-action);
 		flex           : 1 1 auto;
 		cursor         : pointer;
@@ -132,23 +132,23 @@
 	}
 
 	.segment:global([data-hit]) {
-		color      : var(--c-black);
+		color      : var(--c-default);
 		background : var(--hover);
 		opacity    : 1;
 	}
 
 	.segment.active {
 		background : var(--selected);
-		color      : var(--c-black);
+		color      : var(--c-default);
 		opacity    : 1;
 	}
 
 	.units-select {
-		background         : var(--c-white);
+		background         : var(--white);
 		border             : var(--th-border) solid currentColor;
 		height             : var(--h-button-common);
 		border-radius      : var(--corner-common);
-		font-size          : var(--h-font-common);
+		font-size          : var(--font-common);
 		background-position: right 6px center;
 		z-index            : var(--z-action);
 		padding            : 0 18px 0 8px;
@@ -161,7 +161,7 @@
 	}
 
 	.units-select:hover {
-		color            : var(--c-black);
+		color            : var(--c-default);
 		background-color : var(--hover);
 	}
 

@@ -1,16 +1,38 @@
 import { preferences, T_Preference } from './Preferences';
 import { T_Hit_3D } from '../types/Enumerations';
 import { Smart_Object } from '../runtime';
+import { errors, constraints } from '../algebra';
 import { selection } from './Selection';
-import { get } from 'svelte/store';
+import { history } from './History';
+import { scenes } from './Scenes';
+import { get, writable } from 'svelte/store';
 import { stores } from './Stores';
 
 class Parts {
 
 	w_collapsed_ids = preferences.persistent_set(T_Preference.collapsedIds);
 
+	// Rename-in-flight state. Only one rename can be in flight at a time across
+	// the whole app, so this state is shared by both the parts list (inline
+	// rename via row click) and the selection panel (always-visible name input).
+	w_naming_error      = writable<string | null>(null);
+	w_editing_id        = writable<string | null>(null);
+	w_editing_original  = writable<string>('');
+	private naming_input: HTMLInputElement | null = null;
+
 	private children_of(so: Smart_Object): Smart_Object[] {
 		return get(stores.w_all_sos).filter(s => s.scene?.parent?.so === so);
+	}
+
+	// True for a part that is a generated duplicate inside a repeater. Clones
+	// are the second-and-later children of a part marked as repeating; they
+	// are spawned by the repeater sync from a single master and are not
+	// individually editable.
+	is_clone(so: Smart_Object, sos: Smart_Object[], _tick?: number): boolean {
+		const parent = so.scene?.parent?.so;
+		if (!parent?.repeater) return false;
+		const siblings = sos.filter(s => s.scene?.parent?.so === parent);
+		return siblings[0] !== so;
 	}
 
 	tree_order(sos: Smart_Object[]): Smart_Object[] {
@@ -167,6 +189,72 @@ class Parts {
 		} else {
     		this.reveal_generation(so);
 		}
+	}
+
+	// ── rename helpers ──
+	// Shared by the parts list (inline rename) and the selection panel
+	// (always-visible name input). Pure logic; the input element and the
+	// validation overlay markup stay in the components.
+
+	begin_rename(so: Smart_Object): void {
+		this.w_naming_error.set(null);
+		this.w_editing_id.set(so.id);
+		this.w_editing_original.set(so.name);
+	}
+
+	commit_name(so: Smart_Object, value: string, input?: HTMLInputElement): void {
+		if (get(this.w_naming_error)) return;
+		const trimmed = value.trim();
+		if (trimmed.length > 0 && trimmed !== so.name) {
+			const err = errors.validate_name(trimmed, so.id);
+			if (err) {
+				this.w_naming_error.set(err);
+				this.naming_input = input ?? null;
+				return;
+			}
+			history.snapshot();
+			const old_name = so.name;
+			so.name = trimmed.replace(/_/g, ' ');
+			if (so.name !== old_name) constraints.rename_so_in_formulas(old_name, so.name);
+			scenes.save();
+			stores.w_all_sos.update(sos => sos);
+		}
+		this.w_naming_error.set(null);
+		this.w_editing_id.set(null);
+	}
+
+	cancel_rename(so: Smart_Object): void {
+		const original = get(this.w_editing_original);
+		if (original) so.name = original;
+		this.w_editing_id.set(null);
+	}
+
+	dismiss_naming(): void {
+		this.w_naming_error.set(null);
+		if (this.naming_input) {
+			this.naming_input.value = '';
+			this.naming_input = null;
+		}
+	}
+
+	name_keydown(e: KeyboardEvent, so: Smart_Object): void {
+		const has_error = !!get(this.w_naming_error);
+		if (has_error && (e.key === 'Enter' || e.key === 'Delete' || e.key === 'Backspace')) {
+			const inp = e.target as HTMLInputElement;
+			this.w_naming_error.set(null);
+			this.naming_input = null;
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				const pos = inp.selectionStart ?? 0;
+				inp.value = inp.value.slice(0, pos) + inp.value.slice(inp.selectionEnd ?? inp.value.length);
+				inp.setSelectionRange(pos, pos);
+			}
+		} else if (e.key === 'Enter') {
+			(e.target as HTMLInputElement).blur();
+		} else if (e.key === 'Escape') {
+			this.cancel_rename(so);
+		}
+		e.stopPropagation();
 	}
 
 }

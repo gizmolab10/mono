@@ -73,7 +73,7 @@
 	const isHoveringOn_slider_alt = $derived($w_s_hover?.id === slider_hit_id_alt);
 	const is_sticky  = $derived(!!sticky?.some(s => Math.abs(value - s) < 0.01));
 	const is_sticky_alt = $derived(!!sticky?.some(s => Math.abs((value_alt ?? 0) - s) < 0.01));
-	const sticky_dot       = 'radial-gradient(circle, rgba(0,0,0,0.25) 4px, var(--c-white) 5px)';
+	const sticky_dot       = 'radial-gradient(circle, rgba(0,0,0,0.25) 4px, var(--white) 5px)';
 	const sticky_dot_hover = 'radial-gradient(circle, white 4px, var(--hover) 5px)';
 	const current_thumb_color = $derived(
 		is_sticky
@@ -344,7 +344,7 @@
 	}
 
 	.current-value {
-		font-size            : var(--h-font-small);
+		font-size            : var(--font-small);
 		font-variant-numeric : tabular-nums;
 		text-align           : center;
 		font-weight          : bold;
@@ -354,7 +354,7 @@
 	}
 
 	.slider-label {
-		font-size            : var(--h-font-small);
+		font-size            : var(--font-small);
 		font-variant-numeric : tabular-nums;
 		position             : relative;
 		text-align           : center;
@@ -394,9 +394,9 @@
 	}
 
 	.tick-label {
-		font-size   : var(--h-font-small);
+		font-size   : var(--font-small);
 		transform   : translateX(-50%);
-		color       : var(--c-black);
+		color       : var(--c-default);
 		position    : absolute;
 		text-align  : center;
 		white-space : nowrap;
@@ -406,7 +406,7 @@
 	}
 
 	.value-display {
-		font-size    : var(--h-font-common);
+		font-size    : var(--font-common);
 		margin-left  : var(--l-gap);
 		display      : inline-block;
 		text-align   : right;
@@ -427,7 +427,7 @@
 	}
 
 	.slider-border input[type='range']::-webkit-slider-runnable-track {
-		background    : var(--c-white);
+		background    : var(--white);
 		height        : var(--height);
 		border        : var(--border);
 		border-radius : 16px;
@@ -452,7 +452,7 @@
 	}
 
 	.slider-border input[type='range']::-moz-range-track {
-		background    : var(--c-white);
+		background    : var(--white);
 		height        : var(--height);
 		border        : var(--border);
 		border-radius : 16px;
@@ -460,7 +460,7 @@
 
 	.slider-border input[type='range']::-ms-fill-lower,
 	.slider-border input[type='range']::-ms-fill-upper {
-		background    : var(--c-white);
+		background    : var(--white);
 		border        : var(--border);
 		border-radius : 16px;
 	}
@@ -568,7 +568,7 @@
 
 	.range-label {
 		transform            : translate(-50%, calc(50% - 0.5em));
-		font-size            : var(--h-font-small);
+		font-size            : var(--font-small);
 		font-variant-numeric : tabular-nums;
 		position             : absolute;
 		white-space          : nowrap;

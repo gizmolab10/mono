@@ -9,7 +9,7 @@ import { get } from 'svelte/store';
 //
 //   Static properties  — fixed design values (border, thumb, track, focus…).
 //                        Injected once in App.svelte onMount as CSS vars
-//                        (--c-white, --c-black, --c-thumb, --c-focus, etc.)
+//                        (--white, --c-default, --c-thumb, --c-focus, etc.)
 //                        and then consumed in scoped <style> blocks.
 //
 //   Reactive stores    — user-editable / theme-derived values (accent, bg,

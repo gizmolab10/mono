@@ -18,7 +18,7 @@
 		right           : calc(var(--w-guides-slider) + 2 * var(--l-gap));
 		left            : calc(var(--w-build-button) + 2 * var(--l-gap));
 		height          : var(--h-button-common);
-		font-size       : var(--h-font-common);
+		font-size       : var(--font-common);
 		color           : rgba(0, 0, 0, 0.7);
 		bottom          : var(--l-padding);
 		z-index         : var(--z-action);

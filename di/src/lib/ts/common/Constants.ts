@@ -57,6 +57,7 @@ export default class Constants {
 	};
 
 	radius = {
+		table:   common_size / 6,
 		content: common_size / 3,
 		main:	 common_size * 0.6
 	};
@@ -100,6 +101,7 @@ export default class Constants {
 	thickness = {
 		separator: {
 			content: common_size / 15,
+			banners: common_size / 9,
 			main:	 common_size / 5,
 		},
 		thumb:       common_size / 6,
@@ -113,7 +115,7 @@ export default class Constants {
 		gap_tiny:       common_size / 7,
 		gap_small:      common_size / 5.5,
 		gap:            common_size / 5,
-		gap_large:      common_size / 5 * 1.5,
+		gap_large:      common_size / 3.3,
 		padding_small:  common_size / 4,
 		margin:         common_size / 3.2,
 		padding:        common_size / 3,
@@ -128,9 +130,10 @@ export default class Constants {
 		controls:    common_size * 1.1,
 		slider:      common_size * 0.8,
 		collapse:    common_size * 0.56,
-		cell:        common_size * 0.5,
+		cell:        Math.ceil(common_size * 0.5),
 		banner:      common_size,
 		font: {
+			tiny:    common_size / 4,
 			reset:   common_size / 2.75,
 			small:   common_size / 2.5,
 			large:   common_size / 1.5,

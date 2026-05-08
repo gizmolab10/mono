@@ -52,7 +52,7 @@ Citation: `src/lib/svelte/details/D_Parts.svelte` lines 112-124 (the keyboard ha
 | Delete (with error showing) | Dismiss the naming error and continue editing. |
 | Backspace (with error showing) | Dismiss the naming error and continue editing. |
 
-Citation: `src/lib/svelte/details/P_Givens.svelte` lines 89-105 (the keyboard handler with the with-error escape hatch, the cancel branch, and the commit-and-move-down branch).
+Citation: `src/lib/svelte/details/D_Givens.svelte` keyboard handler around line 115 (the with-error escape hatch, the cancel branch, and the commit-and-move-down branch).
 
 ## Inside a dimension or angle input on the canvas
 

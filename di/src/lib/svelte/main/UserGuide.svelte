@@ -220,7 +220,7 @@
 	}
 
 	.hamburger:hover .hamburger-icon path {
-		fill : var(--c-white);
+		fill : var(--white);
 	}
 
 	.content-card {
@@ -239,9 +239,9 @@
 		padding         : 0 var(--l-padding) 1px var(--l-padding);
 		border          : var(--th-border) solid currentColor;
 		height          : var(--h-button-common);
-		font-size       : var(--h-font-common);
+		font-size       : var(--font-common);
 		border-radius   : var(--corner-common);
-		background      : var(--c-white);
+		background      : var(--white);
 		box-sizing      : border-box;
 		position        : relative;
 		cursor          : pointer;
@@ -278,7 +278,7 @@
 	}
 
 	.sidebar button {
-		font-size       : var(--h-font-common);
+		font-size       : var(--font-common);
 		border-radius   : var(--corner-input);
 		background      : transparent;
 		padding         : 6px 10px;
@@ -308,7 +308,7 @@
 	}
 
 	.page :global(h1) {
-		font-size       : var(--h-font-huge);
+		font-size       : var(--font-huge);
 		margin-top      : 0;
 	}
 
@@ -326,7 +326,7 @@
 	}
 
 	.page :global(em) {
-		font-size       : var(--h-font-small);
+		font-size       : var(--font-small);
 		margin-top      : -0.5em;
 		display         : block;
 		margin-bottom   : 1.5em;

@@ -10,16 +10,16 @@
 		id,
 		title,
 		detail,
-		actions,
+		rightActions,
 		leftActions,
 		children,
 	} : {
-		id           : string;
-		title        : string;
-		detail       : T_Details;
-		children     : import('svelte').Snippet;
-		actions?     : import('svelte').Snippet;
-		leftActions? : import('svelte').Snippet;
+		id            : string;
+		title         : string;
+		detail        : T_Details;
+		children      : import('svelte').Snippet;
+		rightActions? : import('svelte').Snippet;
+		leftActions?  : import('svelte').Snippet;
 	} = $props();
 
 	let is_visible = $derived(($w_t_details & detail) !== 0);
@@ -48,7 +48,7 @@
 		use:hit_target={{ type: T_Hit_Target.banner, id: `hideable-${id}`, onpress: toggle }}>
 		{#if leftActions}<span class='banner-actions-left'>{@render leftActions()}</span>{/if}
 		<span class='banner-title'>{title}</span>
-		{#if actions}<span class='banner-actions'>{@render actions()}</span>{/if}
+		{#if rightActions}<span class='banner-actions-right'>{@render rightActions()}</span>{/if}
 	</button>
 	{#if is_visible}
 		<div class='slot'>
@@ -66,7 +66,7 @@
 	.banner {
 		letter-spacing  : var(--l-letter-spacing);
 		border-radius   : var(--corner-banner);
-		font-size       : var(--h-font-common);
+		font-size       : var(--font-common);
 		color           : rgba(0, 0, 0, 1);
 		z-index         : var(--z-action);
 		height          : var(--h-banner);
@@ -102,7 +102,7 @@
 		position : relative;
 	}
 
-	.banner-actions {
+	.banner-actions-right {
 		z-index  : var(--z-action);
 		position : absolute;
 		right    : 6px;

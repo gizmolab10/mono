@@ -57,7 +57,7 @@ In the side-panel sub-pages:
 - Every repeater toggle, every spacing-slider step, every fireblock toggle.
 - Defining, renaming, or deleting a named value.
 
-Citation: `Engine.ts` lines 573, 591, 655, 795, 826, 855, 1278; `src/lib/ts/editors/Angular.ts` line 57; `src/lib/ts/editors/Dimension.ts` line 59; `src/lib/ts/editors/Face_Label.ts` line 59; `src/lib/ts/events/Events_3D.ts` line 113; `src/lib/svelte/details/D_Parts.svelte` line 90; `P_Attributes.svelte` lines 122, 169, 220; `P_Angles.svelte` lines 59, 94, 112, 123, 136, 151; `P_Repeat.svelte` lines 31, 40, 49, 125, 145, 160, 171; `P_Givens.svelte` lines 35, 57, 71.
+Citation: `Engine.ts` lines 573, 591, 655, 795, 826, 855, 1278; `src/lib/ts/editors/Angular.ts` line 57; `src/lib/ts/editors/Dimension.ts` line 59; `src/lib/ts/editors/Face_Label.ts` line 59; `src/lib/ts/events/Events_3D.ts` line 113; `src/lib/svelte/details/D_Parts.svelte` line 90; `P_Attributes.svelte` lines 122, 169, 220; `P_Angles.svelte` lines 59, 94, 112, 123, 136, 151; `P_Repeat.svelte` lines 31, 40, 49, 125, 145, 160, 171; `D_Givens.svelte` lines 61, 84, 98.
 
 ## What is not stepped through
 

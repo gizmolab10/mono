@@ -185,7 +185,7 @@
 	class            = 'graph'
 	bind:this        = {container}
 	style:color      = 'var(--text)'
-	style:background = 'var(--c-white)'
+	style:background = 'var(--white)'
 	use:hit_target   = {{ id: 'graph', type: T_Hit_Target.graph }}>
 	<canvas
 		bind:this = {canvas}></canvas>
@@ -280,7 +280,7 @@
 		background    : rgba(255, 255, 255, 0.85);
 		height        : var(--h-button-common);
 		border-radius : var(--corner-common);
-		font-size     : var(--h-font-common);
+		font-size     : var(--font-common);
 		color         : rgba(0, 0, 0, 0.5);
 		box-sizing    : border-box;
 		cursor        : pointer;
@@ -289,7 +289,7 @@
 	.build-button:hover,
 	.build-button:global([data-hit]) {
 		border     : var(--th-border) solid rgba(0, 0, 0, 0.4);
-		color      : var(--c-black);
+		color      : var(--c-default);
 		background : var(--hover);
 	}
 
@@ -309,7 +309,7 @@
 		background    : rgba(255, 255, 255, 0.7);
 		height        : var(--h-button-common);
 		color         : rgba(0, 0, 0, 0.45);
-		font-size     : var(--h-font-common);
+		font-size     : var(--font-common);
 		border-radius : var(--corner-box);
 		box-sizing    : border-box;
 		cursor        : pointer;
@@ -318,14 +318,14 @@
 
 	.crumb:hover {
 		border     : var(--th-border) solid rgba(0, 0, 0, 0.3);
-		color      : var(--c-black);
+		color      : var(--c-default);
 		background : var(--hover);
 	}
 
 	.crumb.current {
 		border      : var(--th-border) solid rgba(0, 0, 0, 0.5);
 		background  : var(--crumb-bg);
-		color       : var(--c-black);
+		color       : var(--c-default);
 		font-weight : 600;
 	}
 
@@ -333,7 +333,7 @@
 		transform  : translate(-50%, -50%);
 		z-index    : var(--z-frontmost);
 		font       : var(--font-edit);
-		background : var(--c-white);
+		background : var(--white);
 		position   : absolute;
 		text-align : center;
 		padding    : 2px 4px;
@@ -346,7 +346,7 @@
 		transform  : translate(-50%, -50%);
 		z-index    : var(--z-frontmost);
 		font       : var(--font-edit);
-		background : var(--c-white);
+		background : var(--white);
 		position   : absolute;
 		padding    : 2px 4px;
 		text-align : center;
@@ -359,7 +359,7 @@
 		font                   : normal 10px sans-serif;
 		transform              : translate(-50%, -50%);
 		z-index                : var(--z-frontmost);
-		background             : var(--c-white);
+		background             : var(--white);
 		height                 : var(--h-cell);
 		-webkit-font-smoothing : antialiased;
 		box-sizing             : border-box;

@@ -253,8 +253,8 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 {:else if selected_so}
 	<div class='repeater-option-row' style:justify-content='center' style:padding-bottom='2px'>
 		<div class='segmented'>
-			<button class:active={is_diagonal === false} onclick={repeat_straight}>straight</button>
-			<button class:active={is_diagonal === true} onclick={repeat_diagonal}>diagonal</button>
+			<button class:active={is_diagonal === false} onclick={repeat_straight}>wall</button>
+			<button class:active={is_diagonal === true} onclick={repeat_diagonal}>stairs</button>
 		</div>
 	</div>
 {/if}
@@ -276,7 +276,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	}
 
 	.option-label {
-		font-size   : var(--h-font-small);
+		font-size   : var(--font-small);
 		min-width   : 20px;
 		opacity     : 0.6;
 		flex-shrink : 0;
@@ -290,10 +290,10 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	.segmented button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
-		font-size     : var(--h-font-common);
+		font-size     : var(--font-common);
 		padding       : 0 var(--l-padding);
 		z-index       : var(--z-action);
-		background    : var(--c-white);
+		background    : var(--white);
 		color         : inherit;
 		cursor        : pointer;
 		white-space   : nowrap;
@@ -323,15 +323,15 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	.action-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
-		font-size     : var(--h-font-common);
+		font-size     : var(--font-common);
 		border-radius : var(--corner-common);
+		padding       : 0 var(--l-padding);
 		z-index       : var(--z-action);
+		background    : var(--white);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
 		white-space   : nowrap;
-		background    : var(--c-white);
-		padding       : 0 var(--l-padding);
 	}
 
 	.flex-spacer {
@@ -340,9 +340,9 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 
 	/* sits in a flex row alongside a grow-able slider; nudged up to optical center */
 	.fireblocks-button {
-		flex-shrink : 0;
 		position    : relative;
-		top         : -5.5px;
+		top         : -8px;
+		flex-shrink : 0;
 	}
 
 	.action-button.active {
@@ -374,7 +374,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	}
 
 	.rise-endpoint {
-		font-size : var(--h-font-small);
+		font-size : var(--font-small);
 		opacity   : 0.5;
 	}
 
@@ -386,7 +386,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	}
 
 	.slider-caption {
-		font-size  : var(--h-font-small);
+		font-size  : var(--font-small);
 		text-align : center;
 		display    : block;
 		margin-top : 0px;
@@ -395,13 +395,13 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 
 
 .clone-count {
-		font-size   : var(--h-font-small);
+		font-size   : var(--font-small);
 		opacity     : 0.6;
 		flex-shrink : 0;
 	}
 
 	.action-button:global([data-hit]) {
-		color      : var(--c-black);
+		color      : var(--c-default);
 		background : var(--hover);
 	}
 

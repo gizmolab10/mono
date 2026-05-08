@@ -155,6 +155,45 @@ describe('saving and loading is a round trip', () => {
 		expect(camera.center_pos[2]).toBeCloseTo(3);
 	});
 
+	it('a formula on a child cell survives the round trip and continues to recompute live', () => {
+		// Formula uses the parent's width, not the parent's left edge. Width
+		// does not change when the parent slides sideways — so we can tell
+		// "formula recomputed" apart from "child shifted with the parent".
+		const root = make_so('root', { x_min: 0, x_max: 20, y_min: 0, y_max: 20, z_min: 0, z_max: 20 });
+		const child = make_so('child', { x_min: 2, x_max: 8 }, root);
+
+		const formula_text = `${root.id}.width - 5`;
+		const set_error = constraints.set_formula(child, 'x_min', formula_text);
+		expect(set_error).toBeNull();
+
+		const child_x_min_absolute_before = child.x_min;
+
+		const saved = capture(root);
+		const sos = replay(saved);
+
+		const root_back = sos.find(s => s.id === root.id)!;
+		const child_back = sos.find(s => s.id === child.id)!;
+		const child_x_min_attr = child_back.attributes_dict_byName['x_min'];
+
+		// The formula text comes back unchanged.
+		expect(child_x_min_attr.has_formula).toBe(true);
+		expect(child_x_min_attr.formula_display).toBe(formula_text);
+
+		// The formula still references the loaded parent's identifier.
+		expect(child_x_min_attr.formula_display).toContain(root_back.id);
+
+		// The child's absolute left edge is the same as it was before the save.
+		expect(child_back.x_min).toBe(child_x_min_absolute_before);
+
+		// Slide the parent sideways. The child must STAY at the formula-dictated
+		// absolute position — its formula reads parent width, which did not change.
+		// If the formula network is dead after load, the child would shift with
+		// the parent instead of holding still.
+		root_back.set_bound('x_min', 7);
+		constraints.propagate(root_back);
+		expect(child_back.x_min).toBe(child_x_min_absolute_before);
+	});
+
 	it('the saved world survives a trip through a string and back', () => {
 		const root = make_so('root', { x_min: 0, x_max: 20 });
 		const child = make_so('child', { x_min: 3, x_max: 11 }, root);
