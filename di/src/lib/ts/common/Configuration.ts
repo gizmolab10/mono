@@ -70,7 +70,7 @@ export class Configuration {
 
 		root.setProperty('--focus-outline',    `1.5px solid ${colors.focus}`);
 
-		root.setProperty('--window-min-width', `${k.width.window_min}`);
+		root.setProperty('--window-min-width',  `${k.width.window_min}`);
 
 		root.setProperty('--white',             'white');
 		root.setProperty('--c-default',         colors.default);
@@ -141,10 +141,10 @@ export class Configuration {
 	 */
 	configure_reactive_colors(text: string, accent: string, selected: string, bg: string): void {
 		const root = document.documentElement.style;
-		root.setProperty('--text',     text);
+		root.setProperty('--selected', selected);
 		root.setProperty('--accent',   accent);
 		root.setProperty('--hover',    accent);
-		root.setProperty('--selected', selected);
+		root.setProperty('--text',     text);
 		root.setProperty('--bg',       bg);
 	}
 

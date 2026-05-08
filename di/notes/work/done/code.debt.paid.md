@@ -254,3 +254,8 @@
     - [x] move givens '+' button into banner
     - [x] givens plus button should end editing (and commit the change)
 - [x] **hover** on left-side banner button should change background to white (not --bg)
+- [x] trash, eyeball, lock
+    - [x] hover -> change **icon** color to white
+    - [x] vertically center in table cell
+    - [x] add a 'x' column at the right side of parts table  -> click deletes that part, undo restores it
+- [x] vertical scroll bar -> should widen details so content width stays constant

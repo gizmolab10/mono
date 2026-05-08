@@ -1,11 +1,13 @@
 <script lang='ts'>
-	import { scenes, stores, parts } from '../../ts/managers';
-	import { preferences } from '../../ts/managers/Preferences';
-	import { T_Details } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
+	import { preferences } from '../../ts/managers/Preferences';
+	import { scenes, stores, parts } from '../../ts/managers';
+	import { T_Details } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import D_Preferences from './D_Preferences.svelte';
+	import Separator from '../mouse/Separator.svelte';
 	import D_Selection from './D_Selection.svelte';
+	import { k } from '../../ts/common/Constants';
 	import { hits } from '../../ts/events/Hits';
 	import D_Library from './D_Library.svelte';
 	import D_Givens from './D_Givens.svelte';
@@ -13,6 +15,26 @@
 	import { engine } from '../../ts/render';
 	import D_Parts from './D_Parts.svelte';
 	import { onMount, tick } from 'svelte';
+
+	interface Props {
+		onpadchange?: (pad: number) => void;
+	}
+	let { onpadchange }: Props = $props();
+
+	const th_sep = k.thickness.separator.main;
+	let scroll_box: HTMLDivElement | undefined = $state();
+	let inner_box: HTMLDivElement | undefined = $state();
+	let scrollbar_w = $state(0);
+
+	function recheck_overflow() {
+		if (!scroll_box) return;
+		const overflowing = scroll_box.scrollHeight > scroll_box.clientHeight + 1;
+		const sw = overflowing ? scroll_box.offsetWidth - scroll_box.clientWidth : 0;
+		if (sw !== scrollbar_w) {
+			scrollbar_w = sw;
+			onpadchange?.(sw > 0 ? sw + th_sep : 0);
+		}
+	}
 
 	const { w_tick, w_all_sos } = stores;
 	const { w_naming_error } = parts;
@@ -37,8 +59,8 @@
 	});
 	let parts_title = $derived(
 		parts_leaf_count === 0 ? 'no parts'
-		: parts_leaf_count === 1 ? '(1) part'
-		: `(${parts_leaf_count}) parts`
+		: parts_leaf_count === 1 ? 'part (1)'
+		: `parts (${parts_leaf_count})`
 	);
 
 	function factory_reset() {
@@ -63,15 +85,27 @@
 		await hits.defer_recalibrate();
 	});
 
+	$effect(() => {
+		if (!scroll_box || !inner_box) return;
+		const ro = new ResizeObserver(() => recheck_overflow());
+		ro.observe(scroll_box);
+		ro.observe(inner_box);
+		recheck_overflow();
+		return () => ro.disconnect();
+	});
+
 </script>
+
+<div class='details-shell'>
 
 <div
 	class            = 'details'
+	bind:this        = {scroll_box}
 	style:color      = 'var(--text)'
-	style:background = 'var(--bg)'
-	onscroll         = {() => hits.recalibrate()}>
+	onscroll         = {() => hits.recalibrate()}
+	style:background = '{scrollbar_w > 0 ? "var(--accent)" : "var(--bg)"}'>
 
-	<div class='banner-zone'>
+	<div bind:this={inner_box} class='banner-zone' style:padding-right='{scrollbar_w > 0 ? th_sep + "px" : "0"}'>
 		<Hideable title='preferences' id='preferences' detail={T_Details.preferences}>
 			{#snippet leftActions()}
 				<button class='action-button' use:hit_target={{ id: 'reset-prefs', onpress: factory_reset }}>factory reset</button>
@@ -122,6 +156,14 @@
 	</div>
 </div>
 
+{#if scrollbar_w > 0}
+	<div class='separator-overlay' style:right='{scrollbar_w}px'>
+		<Separator vertical kind='main' />
+	</div>
+{/if}
+
+</div>
+
 <style>
 	.banner-zone :global(.hideable:last-child .slot) {
 		border-bottom : 3px solid var(--accent);
@@ -134,8 +176,8 @@
 
 	.banner-add:hover,
 	.banner-add:active {
-		background : var(--white);
 		color      : var(--c-default);
+		background : var(--white);
 	}
 
 	.banner-zone::after {
@@ -156,6 +198,48 @@
 		padding    : 0;
 	}
 
+	.details-shell {
+		position : relative;
+		height   : 100%;
+		width    : 100%;
+	}
+
+	.separator-overlay {
+		position       : absolute;
+		align-items    : stretch;
+		pointer-events : none;
+		display        : flex;
+		bottom         : -1px;
+		top            : 0;
+	}
+
+	.separator-overlay :global(.separator.vertical) {
+		height     : 100%;
+	}
+
+	.details::-webkit-scrollbar {
+		background : var(--accent);
+		width      : 15px;
+	}
+
+	.details::-webkit-scrollbar-track,
+	.details::-webkit-scrollbar-track-piece,
+	.details::-webkit-scrollbar-corner {
+		background : var(--accent);
+	}
+
+	.details::-webkit-scrollbar-button {
+		height     : var(--th-sep);
+		background : var(--accent);
+		display    : block;
+	}
+
+	.details::-webkit-scrollbar-thumb {
+		border        : 0.1px solid var(--c-default);
+		background    : var(--c-thumb);
+		border-radius : 9999px;
+	}
+
 	.action-button {
 		background    : radial-gradient(ellipse at center, var(--white) 30%, var(--accent) 100%);
 		border        : var(--th-border) solid rgba(0, 0, 0, 0.3);
@@ -168,7 +252,7 @@
 		color         : inherit;
 		white-space   : nowrap;
 		padding       : 0 10px;
-		font-weight     : 400;
+		font-weight   : 400;
 	}
 
 	.action-button:global([data-hit]) {
@@ -196,8 +280,8 @@
 
 	.naming-backdrop {
 		position : fixed;
-		inset    : 0;
 		z-index  : 999;
+		inset    : 0;
 	}
 
 	.naming-overlay {

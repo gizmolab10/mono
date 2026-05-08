@@ -25,8 +25,13 @@
 	const radius = gap * 3;
 
 	let controlsHeight = $state(k.height.controls);
+	let details_pad    = $state(0);
 	let wrap_phone     = $derived(width < k.width.wrap_phone);
-	let detailsWidth   = $derived(wrap_phone ? width - gap * 2 : k.width.details - gap * 2);
+	let detailsWidth   = $derived(
+		wrap_phone
+			? width - gap * 2
+			: k.width.details - gap * 2 + details_pad
+	);
 	let showBuildNotes = $state(false);
 	let showUserGuide  = $state(false);
 
@@ -89,7 +94,7 @@
 					class        = 'region details'
 					style:height = '{mainHeight}px'
 					style:width  = '{detailsWidth}px'>
-					<Details />
+					<Details onpadchange={(v) => details_pad = v} />
 				</div>
 			{/if}
 

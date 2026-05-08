@@ -4,27 +4,23 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] trash, eyeball, lock
-    - [x] hover -> change **icon** color to white
-    - [x] vertically center in table cell
-- [ ] parts table
-    - [x] add a 'x' column at the right side  -> click deletes that part, undo restores it
-    - [ ] rounded corners on background of selected part
 - [ ] print just the graph, scaled to fit
+- [ ] disappear on relaunch -> kitchen wall
+- [ ] shrink on undo -> glass wall. relaunch fixes
 
 ## soon
 
 - [ ] cannot read guides or scaling when accent is too dark
-- [ ] disappear on relaunch -> kitchen wall
-- [ ] shrink on undo -> glass wall. relaunch fixes
-- [ ] vertical scroll bar -> widens details
+- [ ] parts table
+    - [ ] rounded corners on background of selected part
 - [ ] hover graph -> name popup
 - [ ] crowded dimensionals
 - [ ] convert button 'create a template' -> stud/joist / stair segmented
 - [ ] allow segmented to flex to fill
 - [ ] option to group attributes by axis (in first column: sle -> xyz)
 - [ ] mobile
-    - [ ] thin gaps
+    - [ ] thinner gaps
+    - [ ] still too wide
     - [ ] css craziness -> css configurator -> common_size
     - [ ] edit always disabled
 - [ ] [[27.selection.algorithm]]

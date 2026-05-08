@@ -57,14 +57,14 @@ export default class Constants {
 	};
 
 	radius = {
-		table:   common_size / 6,
-		content: common_size / 3,
-		main:	 common_size * 0.6
+		main:	 Math.round(common_size * 0.6),
+		content: Math.round(common_size / 3),
+		table:   Math.round(common_size / 6),
 	};
 
 	corner = {
-		common: common_size / 2,
-		banner: common_size / 2,
+		common: Math.round(common_size / 2),
+		banner: Math.round(common_size / 2),
 		input:  2,
 		box:    4,
 	};
@@ -86,7 +86,7 @@ export default class Constants {
 	width = {
 		wrap_mobile    : 1500,
 		wrap_phone     : 720,
-		window_min     : 500,
+		window_min     : 400,
 		details        : 350,
 		title          : 120,
 		small          : 16,
@@ -100,50 +100,50 @@ export default class Constants {
 
 	thickness = {
 		separator: {
-			content: common_size / 15,
-			banners: common_size / 9,
-			main:	 common_size / 5,
+			content: Math.round(common_size / 15),
+			banners: Math.round(common_size / 9),
+			main:	 Math.round(common_size / 5),
 		},
-		thumb:       common_size / 6,
-		track:       common_size / 8,
+		thumb:       Math.round(common_size / 6),
+		track:       Math.round(common_size / 8),
 		border:      0.5,
 		bold:        2.5,
 		tick:        1,
 	};
 
 	layout = {
-		gap_tiny:       common_size / 7,
-		gap_small:      common_size / 5.5,
-		gap:            common_size / 5,
-		gap_large:      common_size / 3.3,
-		padding_small:  common_size / 4,
-		margin:         common_size / 3.2,
-		padding:        common_size / 3,
+		gap_tiny:       Math.round(common_size / 7),
+		gap_small:      Math.round(common_size / 5.5),
+		gap:            Math.round(common_size / 5),
+		gap_large:      Math.round(common_size / 3.3),
+		padding_small:  Math.round(common_size / 4),
+		margin:         Math.round(common_size / 3.2),
+		padding:        Math.round(common_size / 3),
 		letter_spacing: 0.5,
 		extra: {
-			main:       common_size / 5,    // same as gap
-			content:    common_size / 3.2,	// same as margin
+			main:       Math.round(common_size / 5),    // same as gap
+			content:    Math.round(common_size / 3.2),	// same as margin
 		}
 	};
 
 	height = {
-		controls:    common_size * 1.1,
-		slider:      common_size * 0.8,
-		collapse:    common_size * 0.56,
+		controls:    Math.round(common_size * 1.1),
+		slider:      Math.round(common_size * 0.8),
+		collapse:    Math.round(common_size * 0.56),
 		cell:        Math.ceil(common_size * 0.5),
 		banner:      common_size,
 		font: {
-			tiny:    common_size / 4,
-			reset:   common_size / 2.75,
-			small:   common_size / 2.5,
-			large:   common_size / 1.5,
-			common:  common_size / 2,
-			huge:    common_size,
-			monster: common_size * 1.5,
+			tiny:    Math.round(common_size / 4),
+			reset:   Math.round(common_size / 2.75),
+			small:   Math.round(common_size / 2.5),
+			large:   Math.round(common_size / 1.5),
+			common:  Math.round(common_size / 2),
+			huge:    Math.round(common_size),
+			monster: Math.round(common_size * 1.5),
 		},
 		button: {
-			small:   common_size * 0.8,
-			tiny:    common_size * 0.7,
+			small:   Math.round(common_size * 0.8),
+			tiny:    Math.round(common_size * 0.7),
 			common:  common_size,
 		},
 	};

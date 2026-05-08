@@ -345,7 +345,7 @@ A real example, fully written:
     - test: [Cut.test.ts](../../../src/lib/ts/tests/Cut.test.ts) "the cut picks the longest direction and produces two equal halves"
     - code: [src/lib/ts/render/Engine.ts:1023](../../../src/lib/ts/render/Engine.ts)
 
-## Expand scope
+# Expand scope
 
 What is the granularity of our stipulations? Are they fractal enough without being crazy?
 

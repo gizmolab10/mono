@@ -3,15 +3,8 @@
 **Date:** 2026-05-07
 **Work stream:** items from [code.debt.md](./code.debt.md), one item at a time. Per-session detail in [work journal](./work%20journal.md).
 
----
-
-## Next
-
-The first unchecked code-debt item is "move single visible part up 6 px". Pick that up next.
-
 ## Open items
 
-- **Visual confirmation for the parts banner count.** The parts banner title now reads "1 part" or "12 parts" or — when the scene is empty — plain "parts". Type-check is clean and the test suite is green, but the title has not been visually confirmed in a running browser. Worth a one-minute visual confirmation: open a scene with a few parts including at least one repeater, and check that the banner reads what you expect. Specifically: a wall set up as a repeater with five spawned studs should add one to the count, not six. Adding a child should bump the count by one. Deleting a child should drop it by one. An empty scene should fall back to plain "parts" with no number.
 - **Validation-error overlay placement after the rename refactor.** Hop two of the rename refactor moved the validation overlay from inside the parts list panel to the parent details panel. The overlay now lives at the bottom of the details column, below all the panel banners, rather than tucked inside the parts banner. This was not visually confirmed in a running browser. Worth a one-minute visual confirmation: trigger a name-validation error and check that the red-bordered message appears in a sensible spot whether the parts list panel is open or collapsed. If the placement looks off when the parts list is collapsed, the overlay can be repositioned without changing any of the wiring.
 - **One stray trace log left from the formula-bug investigation.** A single console.log inside the algebra constraints file announces an aborted cycle walk. Pull it (or convert it into a real status-strip warning) before the next feature pass. The renderer's many logs are part of the topology rewrite and should be left alone.
 - **Delete on a non-repeater grandchild leaves the part still listed.** Jonathan reports: select a child of a child of root, press delete, the selection clears but the part stays in the parts table. Static analysis ruled out the repeater-regeneration angle and the early-return paths. Most likely cause is an exception thrown between selection-clear and the parts-list rewrite — the formula-reference walker is the most fragile step. Need a console error message or a small repro scene to pin the failing step.
@@ -20,81 +13,85 @@ The first unchecked code-debt item is "move single visible part up 6 px". Pick t
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
-## Notes for future sessions
+---
 
-- Code-debt items are unrelated. One short propose-then-build cycle per item. Do not batch.
-- Slow-render handoff: `di/notes/work/milestones/done/32.facets/slow/handoff.md` (bottleneck file sits next to it).
-- Drag handoff (mothballed): `di/notes/work/milestones/33.drag/handoff.md`.
-- The `handoff` and `hands` shorthands point at this file.
-- The Next line above is auto-rewritten on every adherence build by `tools/sync-next.mjs` from the first unchecked code-debt entry. Do not hand-edit it; edit `code.debt.md` instead.
-- Tumble instrumentation is wired but silent. Flip the on-flag at the top of the engine file, uncomment the per-second summary block in the render loop, reload, and the console prints timings and counters.
+## Proposal: keep the details column's content width steady when a scrollbar appears
+
+**The item.** The side details column gets a vertical scrollbar when its stack of panels grows tall enough to need one. The scrollbar takes some pixels of width away from the inside of the column. The visible content area shrinks by the scrollbar's width, so everything inside shifts and reflows. The fix is to make the content area stay the same width whether or not the scrollbar is present.
+
+**Two ways to make the content width steady.**
+
+1. Always reserve space for the scrollbar. The column keeps its outer width constant, and a thin strip on the right is always reserved for a scrollbar. When there is no scrollbar to show, the strip is just unused space. Modern browsers expose this as a one-line style declaration on the scrolling container. Smaller-blast-radius change. Slight cost: a small permanent gutter on the right even when not needed.
+
+2. Make the column itself grow wider by the scrollbar's width when the scrollbar appears, and shrink back when it goes away. Content area stays fixed; column outer width swings. Matches the wording of the ask exactly. Requires either a script that watches overflow and toggles a width class, or a more elaborate layout that lets the column borrow width from a sibling. More code, more places to break.
+
+Evidence: the scrolling container is the side details column at [Details.svelte](../../../src/lib/svelte/details/Details.svelte) inside the styles block — the rule that sets vertical overflow to auto.
+
+**Recommended approach.** Option one. A single style declaration on the scrolling container that asks the browser to always reserve scrollbar space. Wide browser support today. The user-facing result is identical to option two — content never jumps when the scrollbar appears or disappears. The only visible difference is whether there is always a thin empty gutter (option one) or no gutter ever and a wider column when the scrollbar shows up (option two). Most users will not notice a permanent thin gutter; most users will notice the whole column resizing.
+
+**Test plan.** Open the app with a few panels — content sits at its natural width. Open enough panels for the column to overflow and force the scrollbar to appear — content does not shift left or right. Scroll up and down — no reflow. Close panels until the scrollbar disappears — content still does not shift. Resize the window to be very tall (no scrollbar) and then short (scrollbar) — content stays put.
+
+I AM GUESSING that browser support is fine on a recent macOS running a recent browser. If the property is not honored, the fallback is the current behavior — content shifts when scrollbar appears, but nothing breaks.
 
 ---
 
-## Built — trash, eyeball, lock now turn white on hover
+## Proposal: option two — make the details column itself widen when its scrollbar appears
 
-**What changed.** Each of the trash, eyeball, and lock characters in the parts and givens tables now carries the invisible text-presentation marker right after the symbol. The browser draws them as monochrome line glyphs that respect the surrounding text color. A new hover rule on each icon cell sets the text color to white. When the cursor sits on the cell, the icon turns crisp white.
+**The item.** Same goal as the previous proposal: keep the content area of the side details column at a constant width whether or not a vertical scrollbar is present. The user has chosen the second of the two options described — make the column's outer width grow by the scrollbar's width when the scrollbar appears, and shrink back when it goes away. This proposal lays out how that grow-and-shrink would work.
 
-**What it looks like at rest.** The icons draw as flat outlined glyphs in the current text color, not the colored emoji you saw before. Same goes for the eyeball in the visibility column and the eyeball that shows when a parent's children are unhidden. The hyphen used for the off state and the leaf-count number were already plain text and look unchanged.
+**How the layout sits today.** The page is split into two side-by-side regions: the side details column on one edge and the graph fills the rest. The column's width is computed from a layout constant. The graph's width is computed as the window width minus the column width and the gaps. The details column scrolls vertically when its content overflows. When a scrollbar appears inside the column, the visible content area shrinks by the scrollbar's width because the scrollbar is drawn inside the column.
 
-**The cell tint stays as it was.** When the cursor enters an icon cell, the cell still tints to the medium-hover background. The new behavior is on top of that — icon turns white at the same moment.
+Evidence: the layout math is at [Main.svelte:29-35](../../../src/lib/svelte/main/Main.svelte#L29-L35) (column width and graph width are both computed from the window width and a constant); the column's scrollable container is [Details.svelte](../../../src/lib/svelte/details/Details.svelte) (the rule that sets vertical overflow to auto).
 
-Evidence: variation marker added next to each icon character in the markup of [D_Parts.svelte](../../../src/lib/svelte/details/D_Parts.svelte) and [D_Givens.svelte](../../../src/lib/svelte/details/D_Givens.svelte); the hover rule in each file's styles block now also sets the text color.
+**Recommended approach.**
 
-**Needs visual confirmation.** Type-check clean. In the running app, look at the parts table — the eyeball and trash icons should draw in flat outline at rest. Hover any icon cell — icon turns white, cell tints. Same in the givens table for the lock and trash. The hyphen and number indicators stay readable.
+1. The details panel measures the scrollbar's pixel width once at startup. It does this by creating a hidden, off-screen scrolling element and reading the difference between its outer width and its inside width. The result is cached as a number — zero on systems with overlay scrollbars (scrollbars that float over content without taking width), or fifteen-ish on systems with classic scrollbars.
+2. The details panel watches its own overflow state with a resize observer. When the inside content gets taller than the outer container, an "overflowing" flag turns on; when it gets shorter, the flag turns off.
+3. The flag flows up to the layout math in the parent. The column's outer width becomes the existing constant plus the scrollbar's pixel width when overflowing, and the existing constant when not. The graph's outer width is recomputed from the same numbers, so the graph automatically gives back exactly that many pixels.
+4. The result: the visible content area inside the details column is always the same width. When the scrollbar appears, the whole column slides outward by the scrollbar's width, and the graph slides over to make room. When the scrollbar goes away, the column slides back and the graph reclaims the space.
 
----
+**Why a measurement, not a hardcoded number.** Scrollbar width varies by operating system and by user preference. macOS users can set scrollbars to "always show" (classic style, takes width) or "automatic" (overlay style, takes no width). On overlay-scrollbar systems the measured width is zero — the grow-and-shrink does nothing because there's nothing to compensate for, which is the right behavior.
 
-## Built — vertically center the trash, eyeball, and lock icons
+**Why a resize observer, not a scroll event.** The trigger is "did the content height change relative to the container height", not "did the user scroll". Resize observer fires precisely when those heights change. A scroll event would also fire on every wheel tick, doing extra work.
 
-**What changed.** Each icon's container — the inner span for the eye columns of the parts table, the inner button for the trash and lock cells — is now a tiny flex container that fills its cell vertically and centers its content. The icons sit in the geometric middle of their cells regardless of font baseline quirks. The cells themselves stay normal table cells, so column widths are unchanged.
+**Test plan.** Open the app with the column not overflowing. Record the column's outer width and the graph's outer width. Open enough panels for the column to start needing a scrollbar — the column should grow wider by exactly the scrollbar's width, and the graph should shrink by the same amount. The visible content inside the column should not shift, reflow, or change width. Close panels until the scrollbar disappears — column and graph should return to their starting widths. On macOS with overlay scrollbars (the default "automatic" setting), the grow-and-shrink should be a no-op — column and graph stay at the same widths regardless of overflow, because the measured scrollbar width is zero. Resize the window — math reflows correctly.
 
-**Side cleanup.** A pre-existing dead piece of code in the side details column was caught by the type-checker on this build — a derived helper that nothing uses anymore. Pulled along with its three now-unused imports. The build passes clean.
+**Cons.** The whole column visibly resizes when overflow toggles. On a tall screen with content that grows just past the threshold, the user may see the column "jump" wider as the last panel pushes things over the edge. Option one (always reserve gutter) does not have this jump because nothing ever moves. The grow-and-shrink approach is the most literal match to the wording but may feel jumpy in practice.
 
-Evidence: flex rules on the icon-glyph span and the trash button in [D_Parts.svelte](../../../src/lib/svelte/details/D_Parts.svelte); flex rules on the lock and trash buttons in [D_Givens.svelte](../../../src/lib/svelte/details/D_Givens.svelte); the dead-code removal in [Details.svelte](../../../src/lib/svelte/details/Details.svelte).
-
-**Needs visual confirmation.** Type-check clean. In the running app, look at any row with an icon and confirm the icon sits vertically centered in the cell, side by side with the part name. Hover behavior unchanged from before.
-
----
-
-## Proposal (superseded): vertically center the trash, eyeball, and lock icons in their cells
-
-**The item.** The trash, eyeball, and lock icons in the parts table and the givens table do not sit visually centered top-to-bottom in their cells. After the swap to text-form glyphs they ride a little high or a little low depending on the row, because text-form glyphs follow the font's baseline rather than being a fixed-height picture. The fix is to place each icon in the geometric middle of its cell.
-
-**What is going on today.** Each icon cell already sets the table-cell vertical alignment to middle, and the buttons inside set the same. That mechanism centers based on the line-of-text rules, which works for most text but does not give a clean geometric center for these particular glyphs. The icons sit just above or just below the line of the row's name text. The slight offset is more visible now that the icons draw as flat outlined glyphs instead of as colored pictures with their own internal vertical bias.
-
-Evidence: the cell rules sit in the styles block of [D_Parts.svelte](../../../src/lib/svelte/details/D_Parts.svelte) (eye and remove cells, plus the inner remove-button) and [D_Givens.svelte](../../../src/lib/svelte/details/D_Givens.svelte) (lock and remove cells, plus the inner lock-button and remove-button).
-
-**Recommended approach.** Switch each icon's container to a flex layout that centers its child both horizontally and vertically. That means adding three lines to each container — set it to flex, center its contents on the cross-axis, and center on the main-axis. For the eye cells in the parts table the flex container is the existing icon-glyph span. For the trash and lock cells in both tables the flex container is the existing button. This treatment ignores font-metric quirks and just puts the glyph in the geometric center of the box.
-
-In plain terms: instead of relying on text-line rules to center the icon, ask the layout engine to place the icon at the middle of its box, like a button label.
-
-**Why a wrapping span and not the cell itself.** Setting flex on the table cell breaks the table's column-width behavior. Setting flex on a small wrapper inside the cell keeps the table happy and the icon centered.
-
-**Test plan.** Open a scene with a few parts including some children. Look at the row for any non-leaf — the eyeball icon should sit dead center of the row's vertical span, side by side with the part name. Same for the trash on every row. In the givens table, the lock and the trash should sit dead center of the cell. The hyphen used for the off state should also sit center. Hover behavior unchanged.
-
-No cons found. The change is local, reversible, and visual only.
+I AM GUESSING about how the jump feels in real use. If it reads as distracting, falling back to option one is one CSS line away.
 
 ---
 
-## Proposal (superseded): turn the trash, eyeball, and lock icons white on hover
+## Done: option two grow-and-shrink, plus a styled scrollbar
 
-**The item.** When the cursor is on a trash cell, an eyeball cell, or a lock cell — in either the parts table or the givens table — the icon inside the cell should turn white. Today these cells tint with a medium beige on hover, and the icon itself does not change. The ask is the other way around: leave the cell as it sits, change the icon color.
+**Outcome.** Visually confirmed in the running browser. The column widens by exactly the scrollbar's pixel width when its contents overflow, and shrinks back when they don't. The graph slides over to give back the same number of pixels. The visible content area inside the column never changes width, so panels and rows do not reflow when the scrollbar appears or disappears.
 
-**The catch.** The trash, eyeball, and lock symbols today are colored emoji — wastebasket, eye, padlock, and so on. By default the browser draws them with their built-in color presentation, and a plain CSS color rule does not reach into them. So "color the icon white" needs one of these moves to actually take effect:
+**Scrollbar look.** The scrollbar itself was styled to match the rest of the side panel rather than show the browser default.
 
-1. Append a text-presentation marker — the invisible character at codepoint U+FE0E — after each emoji. That tells the browser to draw the symbol as a monochrome glyph that does respect the surrounding CSS color. Then a hover rule sets that color to white. Works for the eye and the lock; the wastebasket at U+1F5D1 also has a text presentation that browsers tend to honor.
-2. Drop the emoji entirely and use a non-emoji symbol or a small SVG. More work, more consistent across browsers.
-3. Apply a CSS filter on hover that washes the colored emoji out to white-ish. Cheap to apply but never gives a true crisp white — it tints the whole emoji shape, including any internal detail.
+- The channel behind the moving handle, the channel above and below the handle, the small end-button areas at the top and bottom, and the corner zone are all painted with the accent purple. Together this means there is no white frame, no white triangle in the corner, and no white line surrounding the scrollbar.
+- The moving handle itself uses the dedicated thumb color, with a hairline outline in the default text color and rounded half-circle ends at top and bottom.
 
-Evidence: the icon characters and their cell containers in the parts table are at the row block of [D_Parts.svelte](../../../src/lib/svelte/details/D_Parts.svelte) (eye column, hide-children eye, trash column); in the givens table at [D_Givens.svelte](../../../src/lib/svelte/details/D_Givens.svelte) (lock column, trash column).
+Evidence: the rules are in the styles block of [Details.svelte](../../../src/lib/svelte/details/Details.svelte) just below the `.details` rule.
 
-**Recommended approach.** Option one — append the text-presentation marker after each of the trash, eye, and lock characters in the markup, then add a hover rule on each cell that sets `color: white`. This keeps the icon a normal text glyph that responds to CSS, and the rule is one short block. Existing cell-background hover behavior stays as it is.
+**Test plan, run.** Confirmed in Chrome on macOS: the scrollbar channel and end areas show accent purple; the moving handle shows the thumb color with a thin outline and rounded ends; the surrounding white frame is gone.
 
-In plain terms: tell the browser to draw the symbols as text instead of as colored emoji; then a normal "make this white" rule does the right thing.
+I AM GUESSING that other browsers (Safari, Firefox) will show the system default scrollbar instead of these custom colors, because the rules used here are Chrome/Edge-only. If matching the styled look on Safari and Firefox matters, a follow-up pass with the standard scrollbar-color and scrollbar-width properties would close the gap.
 
-**Tradeoffs.** Option one gives crisp, consistent white. The visual tradeoff: when the cursor is not on the cell, the icon also draws as a monochrome text glyph rather than as the colored emoji it is today. That changes the resting look of the icons across both tables. If keeping the colored emoji at rest matters, option three (the CSS filter) is the only option that lets the emoji stay colorful when not hovered and wash out only on hover; the tradeoff is that the hover white is approximate, not pure.
+---
 
-**Test plan.** In the parts table, hover the eyeball, the hide-children eye when present, and the trash — the icon turns white. In the givens table, hover the lock and the trash — the icon turns white. The cell hover-tint and the row hover-tint behave as before. Empty cells stay flat. Click behavior is unchanged.
+## Done: a divider strip between the visible content and the scrollbar
 
-I AM GUESSING that option one is the right tradeoff for this project — the icons are small and the resting style change is mild. If you disagree, redirect to option three.
+**Outcome.** When the side column needs to scroll, a vertical divider strip now sits between the visible content area and the scrollbar. The strip uses the project's standard divider component at the main-divider thickness, so it visually matches the dividers used elsewhere in the app. When the column does not need to scroll, the strip is not rendered.
+
+**How the layout grows.** When the scrollbar appears, the column widens by two amounts at once: the scrollbar's pixel width, and the divider's pixel width. The visible content area stays exactly the same width as before the scrollbar appeared, the divider sits to the right of the content in its own dedicated strip, and the scrollbar sits to the right of the divider in its own dedicated strip. The graph beside the column shrinks by the same combined amount, so the rest of the page math keeps working without changes.
+
+Evidence: the wiring is in [Details.svelte](../../../src/lib/svelte/details/Details.svelte). The column report-back to the parent now sends scrollbar-width plus divider-width when overflowing, the inner content area gains a right padding equal to the divider width when overflowing, and a positioned overlay places the divider exactly between the content's right edge and the scrollbar's left edge.
+
+**Color and edge cases.** Two visual hazards came up while putting this together and were both resolved.
+
+- The first was a tiny white sliver showing on the right edge of the scrollbar in Safari, because the scroll container's own background was white and the scrollbar paint did not reach the very last pixel. The fix was to paint the scroll container's background with the accent color whenever the scrollbar is visible, and revert it to the regular page background when the scrollbar is hidden — otherwise the empty area below the last banner would also show accent.
+- The second was a thin white line at the bottom of the divider on Safari, caused by the divider's own height computing one pixel short of the surrounding container under sub-pixel rounding. The fix was to give the divider an explicit full height inside the overlay and a thin accent ring around it, both scoped to this overlay only so other uses of the divider in the app are unaffected.
+
+**Test plan, run.** Confirmed in Chrome and Safari on macOS: when the column overflows, the divider sits between the content and the scrollbar, the visible content width does not change as the scrollbar appears or disappears, no white slivers appear around the scrollbar or divider, and the area below the last banner shows the regular page background when the column is short enough not to scroll.
+
+**Scrollbar width.** Pinned to a fixed pixel width on the styled scrollbar so the moving handle and the channel behind it have a consistent feel regardless of the system's default scrollbar width. The current value is set on the rule that styles the scrollbar widget itself.
