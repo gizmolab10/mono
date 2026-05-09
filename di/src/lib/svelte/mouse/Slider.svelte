@@ -200,11 +200,6 @@
 </script>
 
 <div class='slider-compound' class:fill>
-	{#if show_steppers && onstep}
-		<div class='steppers-wrapper'>
-			<Steppers size={20} gap={0} hit_closure={onstep} />
-		</div>
-	{/if}
 	<div class='slider-with-label'>
 		{#if show_value}
 			{#if logarithmic}
@@ -309,17 +304,22 @@
 			</div>
 		{/if}
 	</div>
+	{#if show_steppers && onstep}
+		<div class='steppers-wrapper'>
+			<Steppers size={20} gap={0} hit_closure={onstep} />
+		</div>
+	{/if}
 </div>
 
 <style>
 
 	.slider-compound {
-		z-index     : var(--z-action);
-		overflow    : visible;
-		align-items : center;
-		display     : flex;
-		margin-left : 6px;
-		gap         : 0;
+		z-index      : var(--z-action);
+		overflow     : visible;
+		align-items  : center;
+		display      : flex;
+		margin-right : 6px;
+		gap          : 0;
 	}
 
 	.fill {

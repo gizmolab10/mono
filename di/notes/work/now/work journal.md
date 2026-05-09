@@ -4,6 +4,32 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-09 — stipulations vocabulary refresh, redundant rule removed, file renumbered end-to-end
+
+The catalog of load-bearing rules was overhauled to retire the old "cell" / "value" wording in favor of "attribute", "field", "SO", and "formula" — the words the rest of the project now uses.
+
+Driver document. Jonathan dropped a small spreadsheet in the active-work folder listing every rule that needed a new short name, a new word, or both. The spreadsheet had a few rules listed twice with conflicting instructions; the second entry was treated as the final word in those cases.
+
+What changed in the catalog. Seven rules got new short names: the three flavours-of-attribute rules (plain number, locked number, formula-driven), the "a change to one slot never quietly changes a slot on a different smart object" rule, the "named values can be referenced by formulas" rule, the "an error written on a rule stays put until cleared" rule, and the "changing precision snaps every plain-number slot to the new grid" rule. Eight rules got plain-English wording swaps: "cell" became "attribute" or "SO" or "formula" depending on the rule's subject, and "value" became "attribute" where the spreadsheet asked for it.
+
+One rule was removed. The "a locked named value is protected from reverse propagation" rule was identified as redundant — the more general "a locked slot is protected from reverse propagation" rule already covers the same ground.
+
+End-to-end renumber. After the removal and the section reordering Jonathan did during the pass, the rule numbers were a tangle (gaps, duplicates, misaligned headings). Walked the whole file top to bottom and renumbered every rule so the sequence is now 1 through 62 with no gaps and no duplicates.
+
+Header coverage line refreshed. Now reads: fifty-eight of sixty-two rules are directly covered. Fifty-four are pinned by unit tests; four are pinned by browser-driven tests. The remaining four (the drawing-silhouette rule plus the three printing rules) are not yet test-backed.
+
+Stale references chased down. The rule-name list lives in two places: the catalog itself and the per-test-file index in `testing.md`. Eight bullets in the test-file index referenced old short names; all updated to the new names. The "locked named value is protected" reference in the test-file index was removed when its rule was removed. A grep across the whole project (notes, source, browser tests) confirmed no other docs or code held onto the old names.
+
+Cleanup the linter flagged. Two paste-artifact tails on rule pointer lines were removed; two pointer lines that were missing their closing markdown link bracket were closed; one Preferences-layer pointer was pointing at the wrong source file (the algebra constraints file) and was redirected back at the preferences manager. Two double-blank-line gaps the linter flagged were collapsed to single blanks.
+
+The driver spreadsheet was deleted by Jonathan once the renames had landed. No notes or code linked to it, so nothing broke.
+
+Verification: grep for every old short name across the whole repository returns no matches outside the (now deleted) spreadsheet. Type-check and tests not re-run since this pass touched only documentation.
+
+Files: [stipulations.md](../../guides/project/development/stipulations.md) (renames, prose swaps, redundant rule removed, renumbered, header refreshed, link tails repaired); [testing.md](../../guides/project/development/testing.md) (eight short-name updates, removed reference, coverage summary refreshed); [working features.md](./working%20features.md) (adherence row updated to 58 of 62 with TBD callout).
+
+---
+
 ## Session — 2026-05-07 (continued, second) — parts row height stays constant during inline rename
 
 When the user clicked a part name in the parts list and the row went into edit mode, the row used to grow a few pixels taller than its neighbours. The fix needed five passes before it actually held.
@@ -132,7 +158,7 @@ A new "cut" button sits to the left of the existing "duplicate" button on the se
 
 ### Files touched — 2026-05-05 (continued)
 
-- New stipulation 59 added to [stipulations.md](../../guides/project/development/stipulations.md), in a new section "Cutting a smart object in half." Coverage summary at the top updated to fifty-nine total, fifty-five unit-pinned, four browser-driven.
+- New stipulation added to [stipulations.md](../../guides/project/development/stipulations.md), in a new section "Cutting a smart object in half." Coverage summary at the top updated to fifty-nine total, fifty-five unit-pinned, four browser-driven.
 - New test file [Cut.test.ts](../../src/lib/ts/tests/Cut.test.ts) — thirty-nine tests, all green.
 - Engine refactor and new routines at [Engine.ts](../../src/lib/ts/render/Engine.ts) — extracted `clone_subtree_as_sibling`; added `can_cut_selected()` and `cut_selected_so()`.
 - Cut button and derived flag added to [D_Parts.svelte](../../src/lib/svelte/details/D_Parts.svelte).

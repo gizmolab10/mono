@@ -4,6 +4,10 @@ The development process the project follows.
 
 Three things kept in lock-step: a catalogue of load-bearing rules, a test for each rule, and code that passes every test. When all three line up the build is green; when any one drifts the build catches it.
 
+## the commitment
+
+Every change to the project is governed by the rules below. No shortcut, no exception, no "just this once". When the rules and reality conflict, the rules win and the conflict is logged for review at the next re-read. The rules can be amended — but only through the same propose-first cycle they describe.
+
 ## development process
 
 ### scope and pacing
@@ -138,10 +142,6 @@ AI is poor at: visual judgement; predicting how real users will behave; multi-da
 
 A first-principles framework — rules → tests → code — plays to the strengths and corners off the weaknesses.
 
-## the commitment
-
-Every change to the project is governed by the rules above. No shortcut, no exception, no "just this once". When the rules and reality conflict, the rules win and the conflict is logged for review at the next re-read. The rules can be amended — but only through the same propose-first cycle they describe.
-
 ## adherence dashboard
 
 A small auto-generated dashboard scores the project against the process on every build. Four gated metrics:
@@ -175,3 +175,33 @@ When a new rule lands — from feature work or from an audit sprint that exposes
 8. **Run `yarn adherence`.** Confirm the rule lands in the matched count with zero uncovered, orphan, or malformed.
 
 A rule that mixes the old and new shape is flagged malformed; the extractor's exit code fails the build, so it never lands silently. The fixture validator at `node notes/tools/validate-adherence.mjs` re-runs on demand and confirms the parser still behaves correctly.
+# Needs
+
+What is the granularity of our stipulations? Are they fractal enough without being crazy?
+
+### **Strong candidates**
+
+these have tests already in the test index but no rule citing them, so the tests are quietly proving behavior the catalogue does not name:
+
+- **Angle math** (`types/Angle.ts`) — there's a test file pinning angle normalisation, conversion, and comparison, but no rule names what those tests prove. Possible rule: "angles normalise to a canonical range; the same angle written two ways compares equal."
+- **Coordinate math** (`types/Coordinates.ts`) — point/size/rectangle helpers, with tests, no rule.
+- **Hit testing** (`events/Hits_3D.ts`) — there's a test file for 3D hit geometry (point-in-polygon, segment proximity, front-facing detection), no rule. The click-stack drill-down behavior (each click rotates through stacked parts under the cursor) is described in the handoff but not in the catalogue.
+- **Topology** (`render/Topology.ts`) — there's a test file ("Topology") for the unified-endpoint pipeline, no rule.
+- **Save-format migrations** (`managers/Versions.ts`) — there's a test file ("Versions") for the v1-through-v9 chain, no rule. The catalogue says scenes round-trip but does not say "every old save format has a one-way upgrade to the current shape."
+
+### **Plausible candidates**
+
+load-bearing behavior that no rule pins:
+
+- **Selection-as-list semantics** — the "plain click replaces, command-click toggles, multi-select hides the three-tab strip" behavior is described in the handoff but is not a catalogue rule.
+- **Parts tree walks** (`managers/Parts.ts`) — the collapsed-rows model, the visible-row count, the hide-list generation — there are invariants (e.g. "collapsing a row hides every descendant; the visible-row count equals total minus hidden") that are not pinned.
+- **Orientation math** (`algebra/Orientation.ts`) — sits in algebra (the explicit-yes area in the development process), no rule.
+
+### **Out of scope per the development process:**
+
+- Visual layout, color, animation tick (`utilities/Colors.ts`, `render/Animation.ts`, the `R_*` decoration files, `editors/*` for inline editing widgets, `common/Constants.ts` for sizes and fonts) — the development process explicitly says these resist formalisation.
+- Pure plumbing — type-alias files, prototype extensions, event plumbing without a clear invariant.
+
+How the development process expects this to play out: don't extract them in a sweep. When work next touches one of these modules, write the rules its code assumes and add them at that point.
+
+The validator and dashboard will keep the catalogue honest in the meantime — the strong candidates above are visible as a tell, since their tests sit in the test index without a `stipulation:` back-pointer.

@@ -106,7 +106,7 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -163,7 +163,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 352.5024719238281
+    "width": 352.5024719238281,
+    "collapsed": true
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -241,13 +242,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/code.debt.md",
+                "file": "di/notes/guides/project/development/stipulations.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of stipulations"
             }
           }
         ],
@@ -268,13 +269,17 @@
       "bases:Create new base": false
     }
   },
-  "active": "a14d93139e053a32",
+  "active": "40c17ae35c4b3642",
   "lastOpenFiles": [
+    "di/notes/work/now/code.debt.md",
+    "di/notes/work/now/stipulations.csv",
+    "di/notes/work/now/tipulations.csv",
+    "di/notes/guides/project/development/stipulations.md",
+    "di/notes/guides/project/development/logic driven design.md",
+    "di/src/App.svelte.tmp.71703.e60dce07babc",
+    "di/notes/work/now/handoff.md",
     "ws/vite.config.js.timestamp-1778278747564-738b79c6b7129.mjs",
     "di/notes/work/done/code.debt.paid.md",
-    "di/notes/work/now/code.debt.md",
-    "di/notes/work/now/handoff.md",
-    "di/notes/guides/project/development/stipulations.md",
     "di/notes/guides/project/development/adherence dashboard.md",
     "di/src/lib/svelte/details/D_Givens.svelte",
     "di/notes/work/done/code.debt.paid.md.tmp.53060.4bb87d295971",
@@ -289,15 +294,11 @@
     "di/src/lib/svelte/details/D_Part.svelte",
     "di/src/lib/svelte/details/D_Parts.svelte copy",
     "di/src/assets/home/under the shop.di",
-    "ws/vite.config.js.timestamp-1778016790084-40ec130745291.mjs",
-    "di/src/lib/ts/tests/Cut.test.ts",
-    "di/dist/assets/index-BhK1xIOJ.js",
     "di/dist/assets/05-mid-stretch-DfF8mrVj.png",
     "di/dist/assets/06-dimension-input-BaK3RdUS.png",
     "di/dist/assets/03-locked-cursor-BNz07XWk.png",
     "di/dist/assets/02-dimensions-on-BtS89kMn.png",
     "di/dist/assets/01-opening-YRx_PPGG.png",
-    "di/dist/assets/index-CNsS5zU5.js",
     "di/notes/work/now/road.map.md",
     "di/dist/assets/07-blank-canvas-Ceuln_sh.png",
     "di/dist/assets/08-fresh-child-58x7WED6.png",
@@ -308,7 +309,6 @@
     "notes/guides/pre-flight/always.md",
     "di/src/manual/reference-guide/parts list.md",
     "di/src/manual/index.md",
-    "di/notes/guides/project/development/logic driven design.md",
     "di/src/manual/reference-guide/index.md",
     "di/dist/assets/07-blank-canvas-B2Uo0KVX.png",
     "di/dist/assets/08-fresh-child-2u3Y4gkp.png",

@@ -108,15 +108,9 @@
 			<div class='right-row'>
 				{@render hamburger_button()}
 				{@render help_button()}
-				<span class='spacer'></span>
-				{@render face_buttons()}
-				<span class='spacer'></span>
-			</div>
-			<div class='right-row'>
 				{@render desktop_only_buttons()}
 				<span class='spacer'></span>
-				{@render face_accessory_buttons()}
-				{@render scaling_slider()}
+				{@render guides_slider()}
 			</div>
 			<div class='right-row'>
 				<span class='spacer'></span>
@@ -124,7 +118,17 @@
 				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
 				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 				<span class='spacer'></span>
-				{@render guides_slider()}
+			</div>
+			<div class='right-row'>
+				<span class='spacer'></span>
+				{@render scaling_slider()}
+				<span class='spacer'></span>
+			</div>
+			<div class='right-row'>
+				<span class='spacer'></span>
+				{@render face_buttons()}
+				{@render face_accessory_buttons()}
+				<span class='spacer'></span>
 			</div>
 		</div>
 	{:else if wrap_mobile}
@@ -132,18 +136,23 @@
 			<div class='right-row'>
 				{@render hamburger_button()}
 				{@render help_button()}
-				<span class='spacer'></span>
-				{@render face_accessory_buttons()}
-				{@render face_buttons()}
-				<span class='spacer'></span>
-				{@render guides_slider()}
-			</div>
-			<div class='right-row'>
 				{@render desktop_only_buttons()}
+				{@render guides_slider()}
 				<span class='spacer'></span>
 				{@render mode_buttons()}
 				<span class='spacer'></span>
+				<span class='spacer'></span>
+			</div>
+			<div class='right-row'>
+				<span class='spacer'></span>
 				{@render scaling_slider()}
+				<span class='spacer'></span>
+			</div>
+			<div class='right-row'>
+				<span class='spacer'></span>
+				{@render face_buttons()}
+				{@render face_accessory_buttons()}
+				<span class='spacer'></span>
 			</div>
 		</div>
 	{:else}
@@ -154,15 +163,14 @@
 				<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 			{/if}
 			{@render desktop_only_buttons()}
-			<span class='spacer'></span>
+			{@render guides_slider()}
 			{@render mode_buttons()}
 			<span class='spacer'></span>
-			{@render guides_slider()}
-			{@render face_accessory_buttons()}
-			{@render face_buttons()}
-		</div>
-		<div class='sliders-row'>
 			{@render scaling_slider()}
+			<span class='spacer'></span>
+			{@render face_buttons()}
+			{@render face_accessory_buttons()}
+			<span class='spacer'></span>
 		</div>
 	{/if}
 </div>
@@ -207,10 +215,11 @@
 
 	.desktop-row {
 		gap         : var(--l-gap-tiny);
-		flex        : 0 1 auto;
+		flex        : 1 1 auto;
 		align-items : center;
 		display     : flex;
 		min-width   : 0;
+		left        : 0;
 	}
 
 	.sliders-row {
@@ -221,7 +230,6 @@
 	}
 
 	.guides-block {
-		flex           : 1 1 auto;
 		flex-direction : column;
 		align-items    : center;
 		display        : flex;
@@ -230,9 +238,9 @@
 	.scale-block {
 		margin-right : calc(-1 * var(--l-gap-small));
 		flex         : 1 1 auto;
+		min-width    : 400px;
 		margin-left  : 4px;
 		margin-top   : 4px;
-		min-width    : 0;
 	}
 
 	.guides-label {
@@ -257,7 +265,8 @@
 		display         : flex;
 		border          : none;
 		top             : -1px;
-		margin-right    : 0px;
+		margin-right    : 6px;
+		margin-left     : 2px;
 		padding         : 0;
 	}
 

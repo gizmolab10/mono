@@ -13,85 +13,106 @@
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
----
+## Proposal: print just the graph, scaled to fit
 
-## Proposal: keep the details column's content width steady when a scrollbar appears
+**The item.** When the user prints the page (the keyboard print shortcut, or "save as PDF" through the system print dialog), they currently get whatever the browser captures of the live screen — the side column with all its banners, the top strip with the menu and edit and save buttons, and the graph squeezed into whatever space is left over. The goal is for printing to produce just the drawing area, by itself, scaled up to fill the printable area of the chosen paper size.
 
-**The item.** The side details column gets a vertical scrollbar when its stack of panels grows tall enough to need one. The scrollbar takes some pixels of width away from the inside of the column. The visible content area shrinks by the scrollbar's width, so everything inside shifts and reflows. The fix is to make the content area stay the same width whether or not the scrollbar is present.
+**How the page sits today.** The window is split into three regions: a thin top strip with the menu and a few buttons, a wide drawing area (the graph), and a narrow side column on one edge with the layered detail panels. The drawing area is a single rectangular drawing surface that the rendering engine paints into; the rendering engine sizes that surface to match whatever pixel dimensions the surrounding container hands it.
 
-**Two ways to make the content width steady.**
+The print-aspect ratio number in the project's constants list is ready and waiting (it was added some time ago) but nothing reads it yet, so it has no behavior attached to it.
 
-1. Always reserve space for the scrollbar. The column keeps its outer width constant, and a thin strip on the right is always reserved for a scrollbar. When there is no scrollbar to show, the strip is just unused space. Modern browsers expose this as a one-line style declaration on the scrolling container. Smaller-blast-radius change. Slight cost: a small permanent gutter on the right even when not needed.
+Evidence: window layout at [Main.svelte](../../../src/lib/svelte/main/Main.svelte); drawing surface and engine wiring at [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte); the unused print-aspect ratio constant at [Constants.ts:43](../../../src/lib/ts/common/Constants.ts#L43).
 
-2. Make the column itself grow wider by the scrollbar's width when the scrollbar appears, and shrink back when it goes away. Content area stays fixed; column outer width swings. Matches the wording of the ask exactly. Requires either a script that watches overflow and toggles a width class, or a more elaborate layout that lets the column borrow width from a sibling. More code, more places to break.
+**Two ways to make print show just the graph.**
 
-Evidence: the scrolling container is the side details column at [Details.svelte](../../../src/lib/svelte/details/Details.svelte) inside the styles block — the rule that sets vertical overflow to auto.
+1. **A print stylesheet.** Add a small block of styles that only apply when the browser is printing. The block hides the top strip and the side column, makes the drawing area fill the page, and asks the browser to skip page margins. The browser does the rest — what is on the screen at print time is what gets sent to the printer. Smallest possible change. The drawback is that the drawing surface keeps the same pixel dimensions it had on screen — meaning at print resolution it will look softer than the actual screen rendering, especially on high-resolution print output (a typical printer is two to three times sharper per inch than a typical screen). Lines drawn one pixel wide become slightly fuzzy edges on paper.
 
-**Recommended approach.** Option one. A single style declaration on the scrolling container that asks the browser to always reserve scrollbar space. Wide browser support today. The user-facing result is identical to option two — content never jumps when the scrollbar appears or disappears. The only visible difference is whether there is always a thin empty gutter (option one) or no gutter ever and a wider column when the scrollbar shows up (option two). Most users will not notice a permanent thin gutter; most users will notice the whole column resizing.
+2. **A print button that re-renders the graph at print resolution.** Add a print action somewhere visible (the top strip's existing menu would be a natural place) that, when pressed, asks the rendering engine to draw the current scene one more time into an off-screen drawing surface that is sized for the chosen paper at high resolution, then opens a fresh print window containing that surface alone, then triggers print. The drawing surface used on screen is left alone; the user does not see anything change in the live view. Cleaner output, more code, more places to break, and it touches the rendering engine, which is currently in the middle of a separate refactor.
 
-**Test plan.** Open the app with a few panels — content sits at its natural width. Open enough panels for the column to overflow and force the scrollbar to appear — content does not shift left or right. Scroll up and down — no reflow. Close panels until the scrollbar disappears — content still does not shift. Resize the window to be very tall (no scrollbar) and then short (scrollbar) — content stays put.
+**Recommended approach.** Start with option one (the print stylesheet). It is the smallest change, lands the feature today, and gives the user a usable result immediately. The output will look slightly softer than ideal on paper, but it will be readable and correctly composed (just the drawing area, scaled to the page). Option two stays available as a follow-up if and when print quality becomes the bottleneck — it is a self-contained add-on and does not need any of option one's work to be undone.
 
-I AM GUESSING that browser support is fine on a recent macOS running a recent browser. If the property is not honored, the fallback is the current behavior — content shifts when scrollbar appears, but nothing breaks.
+**Test plan.** Open the app with a scene loaded, press the print shortcut, and check the print preview: only the drawing area should appear, the side column and top strip should be gone, and the drawing area should fill the printable region of the page. Try this in landscape and portrait paper orientations. Print to PDF and inspect the result at full zoom — lines should be sharp enough to read; if they look unacceptably fuzzy, that is the cue to graduate to option two. Confirm that nothing changes on the live screen view when the user is not printing.
 
----
+**Cons.** Soft line edges at print time, as described above. No cons found beyond that for option one.
 
-## Proposal: option two — make the details column itself widen when its scrollbar appears
-
-**The item.** Same goal as the previous proposal: keep the content area of the side details column at a constant width whether or not a vertical scrollbar is present. The user has chosen the second of the two options described — make the column's outer width grow by the scrollbar's width when the scrollbar appears, and shrink back when it goes away. This proposal lays out how that grow-and-shrink would work.
-
-**How the layout sits today.** The page is split into two side-by-side regions: the side details column on one edge and the graph fills the rest. The column's width is computed from a layout constant. The graph's width is computed as the window width minus the column width and the gaps. The details column scrolls vertically when its content overflows. When a scrollbar appears inside the column, the visible content area shrinks by the scrollbar's width because the scrollbar is drawn inside the column.
-
-Evidence: the layout math is at [Main.svelte:29-35](../../../src/lib/svelte/main/Main.svelte#L29-L35) (column width and graph width are both computed from the window width and a constant); the column's scrollable container is [Details.svelte](../../../src/lib/svelte/details/Details.svelte) (the rule that sets vertical overflow to auto).
-
-**Recommended approach.**
-
-1. The details panel measures the scrollbar's pixel width once at startup. It does this by creating a hidden, off-screen scrolling element and reading the difference between its outer width and its inside width. The result is cached as a number — zero on systems with overlay scrollbars (scrollbars that float over content without taking width), or fifteen-ish on systems with classic scrollbars.
-2. The details panel watches its own overflow state with a resize observer. When the inside content gets taller than the outer container, an "overflowing" flag turns on; when it gets shorter, the flag turns off.
-3. The flag flows up to the layout math in the parent. The column's outer width becomes the existing constant plus the scrollbar's pixel width when overflowing, and the existing constant when not. The graph's outer width is recomputed from the same numbers, so the graph automatically gives back exactly that many pixels.
-4. The result: the visible content area inside the details column is always the same width. When the scrollbar appears, the whole column slides outward by the scrollbar's width, and the graph slides over to make room. When the scrollbar goes away, the column slides back and the graph reclaims the space.
-
-**Why a measurement, not a hardcoded number.** Scrollbar width varies by operating system and by user preference. macOS users can set scrollbars to "always show" (classic style, takes width) or "automatic" (overlay style, takes no width). On overlay-scrollbar systems the measured width is zero — the grow-and-shrink does nothing because there's nothing to compensate for, which is the right behavior.
-
-**Why a resize observer, not a scroll event.** The trigger is "did the content height change relative to the container height", not "did the user scroll". Resize observer fires precisely when those heights change. A scroll event would also fire on every wheel tick, doing extra work.
-
-**Test plan.** Open the app with the column not overflowing. Record the column's outer width and the graph's outer width. Open enough panels for the column to start needing a scrollbar — the column should grow wider by exactly the scrollbar's width, and the graph should shrink by the same amount. The visible content inside the column should not shift, reflow, or change width. Close panels until the scrollbar disappears — column and graph should return to their starting widths. On macOS with overlay scrollbars (the default "automatic" setting), the grow-and-shrink should be a no-op — column and graph stay at the same widths regardless of overflow, because the measured scrollbar width is zero. Resize the window — math reflows correctly.
-
-**Cons.** The whole column visibly resizes when overflow toggles. On a tall screen with content that grows just past the threshold, the user may see the column "jump" wider as the last panel pushes things over the edge. Option one (always reserve gutter) does not have this jump because nothing ever moves. The grow-and-shrink approach is the most literal match to the wording but may feel jumpy in practice.
-
-I AM GUESSING about how the jump feels in real use. If it reads as distracting, falling back to option one is one CSS line away.
+I AM GUESSING that the existing single drawing surface will scale up to a typical page size acceptably under option one. If the surface refuses to scale (because its pixel dimensions are forced by the rendering engine), option one will need a small tweak to allow the surface to fill the page rather than sitting at its current pixel size; that tweak is a single style line.
 
 ---
 
-## Done: option two grow-and-shrink, plus a styled scrollbar
+## Done: print stylesheet — just the drawing area, scaled to fit the page
 
-**Outcome.** Visually confirmed in the running browser. The column widens by exactly the scrollbar's pixel width when its contents overflow, and shrinks back when they don't. The graph slides over to give back the same number of pixels. The visible content area inside the column never changes width, so panels and rows do not reflow when the scrollbar appears or disappears.
+**Outcome.** A small print-only block of styles now lives at the top of the app's global styles. When the browser is printing (or the user is "saving as PDF" through the print dialog), the top strip with the menu and buttons is hidden, the side column with the detail panels is hidden, the small overlays inside the drawing area (the build button, the breadcrumbs trail, the status strip at the bottom) are hidden, the outer page frame loses its fixed positioning and padding so it can flow into a normal page, and the drawing area expands to fill the entire printable region of the chosen paper. The drawing surface inside the drawing area is told to scale to fit while preserving its aspect ratio, so the picture is not stretched out of shape — if the paper is a different shape than the drawing surface, the surface fits inside with a thin band of white on the long sides rather than warping.
 
-**Scrollbar look.** The scrollbar itself was styled to match the rest of the side panel rather than show the browser default.
+The page margins are pulled to zero in the same block so the drawing fills edge to edge.
 
-- The channel behind the moving handle, the channel above and below the handle, the small end-button areas at the top and bottom, and the corner zone are all painted with the accent purple. Together this means there is no white frame, no white triangle in the corner, and no white line surrounding the scrollbar.
-- The moving handle itself uses the dedicated thumb color, with a hairline outline in the default text color and rounded half-circle ends at top and bottom.
+Evidence: rules at the bottom of the styles block in [App.svelte](../../../src/App.svelte).
 
-Evidence: the rules are in the styles block of [Details.svelte](../../../src/lib/svelte/details/Details.svelte) just below the `.details` rule.
+**Test plan, run.** Needs visual confirmation in the running browser. Open a scene, press the print shortcut, and check the print preview: only the drawing area should appear, nothing else. Try landscape and portrait paper. Save as PDF and check that the drawing fills the page edge-to-edge with no surrounding column or strip. The live screen view should look exactly the same as before when not printing.
 
-**Test plan, run.** Confirmed in Chrome on macOS: the scrollbar channel and end areas show accent purple; the moving handle shows the thumb color with a thin outline and rounded ends; the surrounding white frame is gone.
-
-I AM GUESSING that other browsers (Safari, Firefox) will show the system default scrollbar instead of these custom colors, because the rules used here are Chrome/Edge-only. If matching the styled look on Safari and Firefox matters, a follow-up pass with the standard scrollbar-color and scrollbar-width properties would close the gap.
+I AM GUESSING that the printed lines may look softer than the on-screen lines because the drawing surface keeps its on-screen pixel resolution and scales up — this is the documented drawback of the simple option chosen here. If the softness bites, the follow-up path (a separate print action that re-renders the scene at print resolution into a fresh off-screen surface) is described in the proposal above and remains untouched by this work.
 
 ---
 
-## Done: a divider strip between the visible content and the scrollbar
+## Proposal: scale the print to the size of the drawing's silhouette, not the size of the drawing surface
 
-**Outcome.** When the side column needs to scroll, a vertical divider strip now sits between the visible content area and the scrollbar. The strip uses the project's standard divider component at the main-divider thickness, so it visually matches the dividers used elsewhere in the app. When the column does not need to scroll, the strip is not rendered.
+**The item.** The current print stylesheet scales the drawing surface to fit the page. That is correct in shape, but the picture inside that surface only occupies the pixels where the actual drawing lives. The drawing surface is sized to match the on-screen drawing area, which is much wider and taller than the picture itself — so most of the surface is empty room around the picture. When the surface scales to fit the page, that empty room scales with it, and the picture ends up small in the middle of the paper. The goal is to scale based on the picture's silhouette — the smallest rectangle that contains every drawn line and shape — so the silhouette fills the page, with the empty room around it cropped away.
 
-**How the layout grows.** When the scrollbar appears, the column widens by two amounts at once: the scrollbar's pixel width, and the divider's pixel width. The visible content area stays exactly the same width as before the scrollbar appeared, the divider sits to the right of the content in its own dedicated strip, and the scrollbar sits to the right of the divider in its own dedicated strip. The graph beside the column shrinks by the same combined amount, so the rest of the page math keeps working without changes.
+**How the picture sits today, once printed.** The drawing surface is a rectangle whose pixel dimensions match the on-screen drawing area. Inside that rectangle, the picture itself (the projected scene with its lines, faces, and labels) occupies some sub-rectangle, surrounded by background. The current print rule scales the whole rectangle to the page, so the sub-rectangle ends up scaled by the same factor as the empty room — which is whatever factor scales the on-screen drawing area to the page.
 
-Evidence: the wiring is in [Details.svelte](../../../src/lib/svelte/details/Details.svelte). The column report-back to the parent now sends scrollbar-width plus divider-width when overflowing, the inner content area gains a right padding equal to the divider width when overflowing, and a positioned overlay places the divider exactly between the content's right edge and the scrollbar's left edge.
+What is needed is two extra numbers: how much bigger to scale (so the silhouette, not the drawing surface, fills the page) and how much to slide left or up (so the silhouette is centered on the page rather than offset by the empty room).
 
-**Color and edge cases.** Two visual hazards came up while putting this together and were both resolved.
+Evidence: the existing print rules at the bottom of the styles block in [App.svelte](../../../src/App.svelte). The drawing surface is the canvas inside [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte). The smart objects in the scene each carry their own world-space corner numbers. The camera that turns those world-space numbers into on-screen pixels exposes its view and projection matrices at [Camera.ts:5-6](../../../src/lib/ts/render/Camera.ts#L5-L6).
 
-- The first was a tiny white sliver showing on the right edge of the scrollbar in Safari, because the scroll container's own background was white and the scrollbar paint did not reach the very last pixel. The fix was to paint the scroll container's background with the accent color whenever the scrollbar is visible, and revert it to the regular page background when the scrollbar is hidden — otherwise the empty area below the last banner would also show accent.
-- The second was a thin white line at the bottom of the divider on Safari, caused by the divider's own height computing one pixel short of the surrounding container under sub-pixel rounding. The fix was to give the divider an explicit full height inside the overlay and a thin accent ring around it, both scoped to this overlay only so other uses of the divider in the app are unaffected.
+**Three ways to compute the silhouette.**
 
-**Test plan, run.** Confirmed in Chrome and Safari on macOS: when the column overflows, the divider sits between the content and the scrollbar, the visible content width does not change as the scrollbar appears or disappears, no white slivers appear around the scrollbar or divider, and the area below the last banner shows the regular page background when the column is short enough not to scroll.
+1. **Project the corners of every smart object through the camera.** Walk every smart object, take its eight world-space corner points, run them through the camera's view-and-projection math to get on-screen pixel positions, and keep a running track of the smallest and largest pixel-x and pixel-y seen. Those four numbers define the silhouette rectangle on the drawing surface. Then compute the scale that fits that rectangle to the page and the slide that centers it. Fast, exact, no rendering needed. Requires reading the camera matrices and the smart-object corner numbers — both already exposed.
 
-**Scrollbar width.** Pinned to a fixed pixel width on the styled scrollbar so the moving handle and the channel behind it have a consistent feel regardless of the system's default scrollbar width. The current value is set on the rule that styles the scrollbar widget itself.
+2. **Scan the picture pixels of the drawing surface.** Right before printing, read the pixel data of the drawing surface, find the smallest rectangle containing every non-background pixel, and use that as the silhouette. Slower (one whole-surface scan, which on a typical large window is in the millions of pixels and takes a few tens of milliseconds), but does not need to know anything about the scene or the camera — it works purely from what is already drawn. Insensitive to engine internals, so it survives the topology rewrite without touching it.
+
+3. **Move the camera to frame the silhouette, then re-render.** Compute a new camera position and zoom that frames the silhouette, render the scene one more time into a fresh off-screen drawing surface sized to the page (at print resolution, not screen resolution), and swap that surface in for printing. This is the path that also fixes the soft-line problem from the previous proposal. Most code, most quality, most touching of the rendering engine — which is currently being rewritten.
+
+**Recommended approach.** Option one (project the corners). The math is small and runs in under a millisecond on any plausible scene. The two numbers it produces (a scale factor and a slide offset) get applied to the drawing surface as a transform, and the print stylesheet picks them up automatically. The implementation is one short helper that walks the scene, plus a tiny event listener that runs the helper just before the print dialog opens and clears the transform when printing ends. It fixes today's "the picture sits tiny on the page" without touching the rendering engine, and it stacks cleanly with option three from the previous proposal if higher print quality becomes the next goal.
+
+**Why not option two.** It does work, and it is the safest against engine churn. The reason to skip it is that option one already does not touch the engine — it only reads numbers the camera exposes — so there is no engine-survival benefit, and the pixel scan is strictly slower and slightly less precise (background-color detection has edge cases at faint anti-aliased line edges).
+
+**Test plan.** Open a scene whose drawing only takes up part of the on-screen drawing area (say, a small house in the middle of a wide window). Print to PDF. The silhouette should be centered on the page and large — filling at least one of the two paper dimensions. Pan the on-screen view so the drawing is in a corner and print again — the silhouette should still be centered and large, regardless of where it sits on the screen. Try a single small object and a sprawling layout — both should print at the largest size that fits. Confirm that nothing changes on the live screen view at any point.
+
+**Cons.** A small helper has to project geometry through the camera, so a handful of new lines of code live near the rendering layer. If the camera matrices ever stop being accessible during a future rewrite, the helper would need to follow them. No cons found beyond that.
+
+I AM GUESSING that the smart objects' world-space corner numbers (the per-object minimum and maximum in each axis) will give a tight enough silhouette for printing. If they over-estimate (because, for example, an object's bounding box includes an annotation that is hidden), the silhouette would be slightly wider than the visible drawing and the print would have a thin extra margin — visually fine, just not pixel-perfect. The pixel-scan fallback (option two) catches that edge case if it ever bites.
+
+---
+
+## Done: silhouette-based print scaling
+
+**Outcome.** When the user prints, a small handler runs once just before the print preview is built. It walks every smart object in the scene, takes each object's eight world-space corner points, runs them through the camera's view-and-projection matrices, and converts each result to a pixel coordinate on the drawing surface. The smallest rectangle that contains all those projected pixel coordinates is the silhouette — the actual extent of the picture on the drawing surface, ignoring any empty room around it. The handler then computes a scale factor (the largest factor that still fits the silhouette inside the page area while preserving aspect ratio) and a slide offset (so the silhouette's center lines up with the page's center) and applies a single transform to the drawing surface. When printing finishes, a second handler clears that transform.
+
+The print stylesheet now also tells the surrounding region to crop anything that extends outside the page area, and pins the drawing surface at its native pixel size with no auto-fit. This way the handler's transform is doing all the scaling and positioning, in plain pixel space, and the result is exactly the silhouette filling the page edge to edge while keeping its shape.
+
+Evidence: handler and listeners in the script of [App.svelte](../../../src/App.svelte); print rules at the bottom of the same file's styles block.
+
+**Test plan, run.** Needs visual confirmation in the running browser. Open a scene whose drawing only takes up part of the on-screen drawing area (a small house in the middle of a wide window). Print to PDF and confirm the picture fills the page rather than sitting small in the middle. Pan the on-screen view so the drawing is in a corner and print again — the print should still show the picture centered and large. Try landscape and portrait paper. Confirm that the live screen view is unchanged outside of printing.
+
+I AM GUESSING that the page area dimensions are correct at the moment the handler reads them (right after the print event fires) on the browsers Jonathan uses. If on some browser the print stylesheet has not yet kicked in when the handler runs, the picture would be sized to the on-screen region instead of the page. If that bites in practice, the fix is to wait a frame before measuring, or to drive the scaling from the drawing surface's own pixel dimensions rather than the page area. Either is a small follow-up.
+
+**Initial print-blank issue, patched.** The first cut of the silhouette work used auto-sized dimensions on the drawing surface during print, which collapsed it to nothing in some browsers and produced a blank page. The patch pins the drawing surface to its own pixel dimensions before applying the scale-and-translate transform, and computes the transform from those pixel dimensions rather than from the surrounding region. The picture now scales the silhouette to fill the drawing surface's own area; the print stylesheet still lets the surrounding region fall back to "fit the whole drawing surface to the page with aspect preserved" if the handler ever does not run. Aspect is preserved in both paths.
+
+I AM GUESSING that this two-step approach (silhouette fills drawing surface, drawing surface fits page) leaves a small margin around the silhouette when the page aspect differs from the drawing-surface aspect, since the drawing surface is letterboxed inside the page. If a tighter fit is needed, a small follow-up can switch to a single-step transform that scales directly to the page — which requires reading the page area at the right moment in the print lifecycle, the timing question called out above.
+
+---
+
+## Done: stipulations vocabulary refresh and end-to-end renumber
+
+**Outcome.** The catalog of load-bearing rules now speaks in the project's current vocabulary — "attribute", "field", "SO", "formula" — instead of the old "cell" / "value" wording. Seven rules got new short names, eight rules got plain-English word swaps, one rule was removed as redundant (the locked-named-value rule, already covered by the general locked-slot rule), and every rule was renumbered so the file reads 1 through 62 in unbroken sequence. The header coverage line now states: fifty-eight of sixty-two rules are directly covered (fifty-four by unit tests, four by browser-driven tests), with four — the drawing silhouette and the three printing rules — not yet test-backed.
+
+The per-test-file index in `testing.md` was synced to match: every old short name was updated, and the reference to the removed rule was dropped. A whole-project grep confirmed no other notes or code held onto the old names.
+
+A handful of paste-artifact link tails on rule pointer lines were trimmed, two pointer lines missing their closing markdown bracket were closed, and one Preferences-layer pointer that aimed at the wrong source file was redirected. Two stray double-blank-line gaps were collapsed.
+
+The driver spreadsheet that listed the renames was deleted by Jonathan once the work landed; nothing else linked to it.
+
+Evidence: rule catalog at [stipulations.md](../../guides/project/development/stipulations.md); test-file index at [testing.md](../../guides/project/development/testing.md); adherence row in [working features.md](./working%20features.md).
+
+**Test plan, run.** No code touched, so no test run is needed. A grep for every old short name across notes, source, and browser tests returns nothing outside the deleted spreadsheet — confirmed during the pass. Visual confirmation not applicable.
+
+I AM GUESSING that the four TBD rules (drawing silhouette, three printing rules) will get test backing once the printing work in the proposals above settles. If a follow-up adds tests for any of them, the coverage line should be bumped accordingly.

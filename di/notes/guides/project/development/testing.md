@@ -26,7 +26,7 @@ A real example, fully written:
 
 ```text
 - **Data_Layout** — the structure each SO carries by construction.
-    - stipulation: so-three-directions, axis-three-attributes, plain-number-cells
+    - stipulation: so-three-directions, axis-three-attributes, plain-number-attributes
 ```
 
 The legacy bullet shape (just the `**Name** — description` line) stays valid until the entry is migrated; it just lacks the stipulation pointer.
@@ -44,30 +44,30 @@ Each line names what the file in `src/lib/ts/tests/` covers.
 - **Compiler** — the formula tokenizer and compiler that turn typed text into an evaluable tree.
     - stipulation: formula-text-tokenized, formula-tokens-built-to-tree
 - **Constraints** — the constraints manager: formula binding, evaluation, cycle detection, propagation across objects, formula-clears-lock, and the bare-name resolver walking up the parent chain.
-    - stipulation: formula-recomputes-during-propagation, propagation-triggered-by-change, unrelated-cell-untouched-by-change, formula-cycle-refused, formula-clears-lock, bare-name-resolver-walks-parent-chain
+    - stipulation: formula-recomputes-during-propagation, propagation-triggered-by-change, unrelated-SO-untouched-by-change, formula-cycle-refused, formula-clears-lock, bare-name-resolver-walks-parent-chain
 - **Cut** — the cut routine that splits the selected smart object in half along its longest direction: longest-direction selection by stored length value, equal halves on the cut direction, the new sibling becomes selected with a numeric-suffix name, the five refusal cases (root, clone, template, has-children-not-repeater, tied-longest), the repeater exception (a cut on a repeater produces two repeaters each with its own template), formula behavior per invariant case, and formulas on the two non-cut directions copied unchanged. Includes assertions on the can-cut flag the details panel uses to show or hide the cut button.
     - stipulation: cut-so-in-half
 - **Coordinates** — point, size, and rectangle math; coordinate transformations.
 - **Data_Layout** — the structure each SO carries by construction: three directions, three numbers per direction, a single parent slot, plain-number cells, exactly one recomputed marker per direction, visibility flags, and the eight-corner / twelve-edge / six-face shape.
-    - stipulation: so-three-directions, axis-three-attributes, plain-number-cells, axis-has-one-invariant, block-has-at-most-one-parent, block-visibility-flags, so-shaped-as-eight-corner-box
+    - stipulation: so-three-directions, axis-three-attributes, plain-number-attributes, axis-has-one-invariant, block-has-at-most-one-parent, block-visibility-flags, so-shaped-as-eight-corner-box
 - **Drag_math** — pure math helpers used by drag (ray-plane intersection, decomposing a screen delta onto two face edges).
     - stipulation: face-drag-confined-to-plane, face-drag-ray-becomes-plane-hit, face-drag-decomposed-to-two-edges
 - **Engine_Behaviors** — engine-level rules that run end-to-end through the running app: deleting an SO removes its subtree and clears every formula that pointed at any deleted SO; changing the precision setting snaps every plain-number cell while leaving formula-driven cells alone.
-    - stipulation: delete-clears-formulas-and-subtree, precision-change-snaps-plain-cells
+    - stipulation: delete-clears-formulas-and-subtree, precision-change-snaps-value-fields
 - **Errors** — the formula-error classifier and the suggestion list it surfaces in the panel; an error reported on a cell stays there until explicitly cleared.
-    - stipulation: cell-error-stays-until-cleared
+    - stipulation: error-stays-until-cleared
 - **Evaluator** — the evaluator that walks a compiled tree to a number, and the reverse-propagation path that finds and writes a free constant during drag.
-    - stipulation: formula-computes-cell-value, formula-tree-evaluates-forward, formula-tree-propagates-backward, reverse-propagation-single-or-refused
+    - stipulation: formula-computes-value-field, formula-tree-evaluates-forward, formula-tree-propagates-backward, reverse-propagation-single-or-refused
 - **Extensions** — small utility extensions on numbers and arrays.
 - **Givens** — named values defined outside any SO that formulas can reference; locked named values are protected from reverse-propagation writes.
-    - stipulation: named-values-referenced-by-formulas, locked-named-value-protected
+    - stipulation: named-attributes-referenced-by-formulas
 - **Hierarchy** — what happens to a child when its parent is moved or resized.
     - stipulation: parent-move-keeps-child-stored-unchanged
 - **History** — the snapshot-and-restore stack behind undo and redo, with a stubbed scene manager.
     - stipulation: undo-restores-prior-state, redo-restores-undone-state
 - **Hits_3D** — pure 3D hit-testing geometry: point in polygon, segment proximity, front-facing detection.
 - **Invariants_and_Locks** — behavior around stored values, the invariant rule, the lock, and the load-time recompute. Each test names a single behavior; together they cover the bug shapes seen in recent sessions.
-    - stipulation: locked-number-cells, invariant-write-reverse-propagates, locked-attribute-protected-from-propagation
+    - stipulation: locked-number-fields, invariant-write-reverse-propagates, locked-attribute-protected-from-propagation
     - **Test 1 — storage round-trip.** Set a value to a cell on a child. Read the cell. Assert: same value back.
     - **Test 2 — invariant rule, marker on the near end.** Set far = 7, length = 4, near = 999 (deliberately wrong). Run the invariant pass on the child. Assert: near is now 3.
     - **Test 3 — invariant rule, marker on the far end.** near = 3, length = 4, far = 999. Run the pass. Assert: far is now 7.
@@ -236,6 +236,6 @@ The catalog summary will move from "fifty-four of fifty-seven directly covered" 
 
 ## Stipulation coverage
 
-Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, all fifty-nine rules are directly covered. (!) Fifty-five are pinned by unit tests in `src/lib/ts/tests/`; the remaining four — the user-interface flows that need real mouse events and the running animation loop — are pinned by browser-driven tests in [`e2e/tests/`](../../e2e/tests/). The browser tests run via `yarn e2e`.
+Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, fifty-eight of sixty-two rules are directly covered. (!) Fifty-four are pinned by unit tests in `src/lib/ts/tests/`; four — the user-interface flows that need real mouse events and the running animation loop — are pinned by browser-driven tests in [`e2e/tests/`](../../e2e/tests/). The browser tests run via `yarn e2e`. The remaining four (the drawing silhouette and the three printing rules) are not yet test-backed.
 
 (!) ALWAYS: Always update this authoritative count each time testing is done.

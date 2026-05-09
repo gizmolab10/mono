@@ -4,15 +4,19 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] print just the graph, scaled to fit
+- [x] print just the graph, scaled to fit
+- [ ] move logic driven design -> alongside always
+    - [ ] convert to instructions that can do the heavy lifting
+- [ ] measure basement
+- [ ] parts table
+    - [ ] rename "parts" -> contents/structure/hierarchy/tree/outline
+    - [ ] rounded corners on background of selected part
 - [ ] disappear on relaunch -> kitchen wall
 - [ ] shrink on undo -> glass wall. relaunch fixes
 
 ## soon
 
 - [ ] cannot read guides or scaling when accent is too dark
-- [ ] parts table
-    - [ ] rounded corners on background of selected part
 - [ ] hover graph -> name popup
 - [ ] crowded dimensionals
 - [ ] convert button 'create a template' -> stud/joist / stair segmented
