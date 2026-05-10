@@ -22,7 +22,7 @@ describe('history chain — back five, forward five', () => {
 		current_state = { n: 0 };
 	});
 
-	it('walks back five and forward five, landing where it started', () => {
+	it('walks back five and forward five, ending where it started', () => {
 		const states = [0, 1, 2, 3, 4, 5].map(n => ({ n }));
 
 		// Snapshot states 0..4 in turn, leaving current at state 5.

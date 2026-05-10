@@ -298,7 +298,7 @@ Build the DCEL. Extract faces. Paint them. Done.
 
 ### One more subtlety
 
-Sometimes an intersection line endpoint lands exactly on a face vertex (say P lands right on corner B). The standard fix: vertex merging with tolerance. P and B are within epsilon, so they merge into one vertex. That vertex now has all of B's edges plus the intersection line. The DCEL handles this fine — it's just a higher-degree vertex.
+Sometimes an intersection line endpoint is done exactly on a face vertex (say P falls right on corner B). The standard fix: vertex merging with tolerance. P and B are within epsilon, so they merge into one vertex. That vertex now has all of B's edges plus the intersection line. The DCEL handles this fine — it's just a higher-degree vertex.
 
 ---
 

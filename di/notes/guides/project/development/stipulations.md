@@ -2,7 +2,7 @@
 
 The load-bearing rules the app is built on. Without these written down, work drifts. Anything new should be checked against this list. All entries are guesses pending review.
 
-**Coverage summary:** fifty-eight of sixty-two rules are directly covered. Fifty-four are pinned by unit tests in `src/lib/ts/tests/`; four — user-interface flows that need real mouse events and a real animation loop — are pinned by browser-driven tests under [`e2e/tests/`](../../e2e/tests/). The remaining four (the drawing silhouette and the three printing rules) are not yet test-backed. Coverage judgments are guesses pending review.
+**Coverage summary:** all sixty-two rules are directly covered. Fifty-six are pinned by unit tests in `src/lib/ts/tests/`; six — the user-interface flows that need real mouse events and a real animation loop, plus the print pipeline that runs against the live DOM — are pinned by browser-driven tests under [`e2e/tests/`](../../e2e/tests/). Coverage judgments are guesses pending review.
 
 ALWAYS: Always update the authoritative count testing is done.
 
@@ -202,7 +202,7 @@ A real example, fully written:
 
 36. The camera has two viewing modes — 3D mode (the normal view where things farther from the camera look smaller) and 2D mode (a flat view where things at different distances keep their real size). The choice is stored as a user preference outside the saved scene file.
     - id: camera-two-viewing-modes
-    - test: [Camera.test.ts](../../../src/lib/ts/tests/Camera.test.ts) "switching between 3D mode and 2D mode changes where a known world point lands on the screen"
+    - test: [Camera.test.ts](../../../src/lib/ts/tests/Camera.test.ts) "switching between 3D mode and 2D mode changes where a known world point ends up on the screen"
     - code: [src/lib/ts/render/Camera.ts:95-103](../../../src/lib/ts/render/Camera.ts)
 37. The world is shown through one camera. The camera defines how every point in the world corresponds to a spot on the screen or sheet of paper.
     - id: camera-projects-world-to-screen
@@ -212,9 +212,9 @@ A real example, fully written:
     - id: camera-unprojects-screen-to-ray
     - test: [Camera.test.ts](../../../src/lib/ts/tests/Camera.test.ts) "clicking the center of the screen gives a ray pointing straight at the camera target"
     - code: [src/lib/ts/render/Camera.ts:53](../../../src/lib/ts/render/Camera.ts)
-39. The drawing's screen silhouette is the smallest rectangle on the screen that contains every visible block's projection, including blocks that extend beyond the frustum. Dimensionals and grid lines are ignored (effectively allowed to clip).
+39. The drawing's screen silhouette is the smallest rectangle on the canvas that contains every painted (non-transparent) pixel of the picture. The painted pixels are what the printer captures; a silhouette derived from world-space corner projection cannot be trusted because the renderer clips lines and shapes at the camera's near plane and the canvas edges, which corner projection does not account for. If the canvas has no painted pixels, the silhouette is empty and no print transform is applied.
     - id: drawing-silhouette
-    - test: TBD
+    - test: [print-notifications.spec.ts](../../../e2e/tests/print-notifications.spec.ts) "Rule 39 — the print handler computes a non-empty silhouette and applies a sensible transform"
     - code: [src/App.svelte](../../../src/App.svelte)
 
 ## Error state
@@ -269,11 +269,11 @@ A real example, fully written:
 
 48. Undo brings the world back to exactly the state it was in before the last user action. Nothing is recomputed.
     - id: undo-restores-prior-state
-    - test: [History.test.ts](../../../src/lib/ts/tests/History.test.ts) "walks back five and forward five, landing where it started"
+    - test: [History.test.ts](../../../src/lib/ts/tests/History.test.ts) "walks back five and forward five, ending where it started"
     - code: [src/lib/ts/managers/History.ts:18-23](../../../src/lib/ts/managers/History.ts)
 49. After undo, redo brings the world forward to the state that was just undone. Like undo, redo restores stored values; nothing is recomputed during the restore.
     - id: redo-restores-undone-state
-    - test: [History.test.ts](../../../src/lib/ts/tests/History.test.ts) "walks back five and forward five, landing where it started"
+    - test: [History.test.ts](../../../src/lib/ts/tests/History.test.ts) "walks back five and forward five, ending where it started"
     - code: [src/lib/ts/managers/History.ts:25-30](../../../src/lib/ts/managers/History.ts)
 
 ## Precision
@@ -317,7 +317,7 @@ A real example, fully written:
     - code: [src/lib/ts/render/Camera.ts](../../../src/lib/ts/render/Camera.ts)
 57. When the rotation-snap toggle is on, releasing a tumble drag animates the orientation to the nearest face-aligned orientation. Turning the toggle off restores the orientation that was in place before the snap was last turned on.
     - id: rotation-snap-aligns-to-face
-    - test: [rotation-snap.spec.ts](../../../e2e/tests/rotation-snap.spec.ts) "a tumble drag with rotation-snap on lands on a face-aligned orientation"
+    - test: [rotation-snap.spec.ts](../../../e2e/tests/rotation-snap.spec.ts) "a tumble drag with rotation-snap on settles on a face-aligned orientation"
     - code: [src/lib/ts/render/Engine.ts](../../../src/lib/ts/render/Engine.ts)
 
 ## Preferences layer
@@ -329,7 +329,7 @@ A real example, fully written:
 
 ## Cutting a smart object in half
 
-59. The user can cut the selected smart object in half along its longest direction (measured by the plain stored length value). The original keeps the lower half; a new sibling appears as the upper half (named with a numeric-suffix bump matching the duplicate routine's naming) and becomes the selected part. The cut is refused — with a red message in the on-screen status strip and no change to the scene — when two directions are tied for longest, and when the selected part is root, a clone of a repeater, the template of a repeater, or any other part with children. Repeaters are an exception to the "has children" refusal: a cut on a repeater produces two repeaters, each carrying its own copy of the template; clones in each half regenerate from each half's own template on the next sync. On the cut direction, the formula on whichever attribute is the invariant is preserved unchanged on both halves; the two non-invariant attributes are rewritten so each half's length value equals half the original's old length on that direction. The exact rewrite depends on which attribute the invariant points at: when the invariant is on length, the original's end and the new sibling's start are altered to the half-way point; when the invariant is on start, the length on each half is divided in half (and the original's end lands at the half-way point); when the invariant is on end, the length on each half is divided in half (and the new sibling's start lands at the half-way point). "Half-way" means: alter the formula so its value evaluates to the half-way point; if the relevant attribute carries no formula, write the half-way value directly as a plain number. Both halves carry the original's formulas on the two directions that are NOT being cut, copied unchanged.
+59. The user can cut the selected smart object in half along its longest direction (measured by the plain stored length value). The original keeps the lower half; a new sibling appears as the upper half (named with a numeric-suffix bump matching the duplicate routine's naming) and becomes the selected part. The cut is refused — with a red message in the on-screen status strip and no change to the scene — when two directions are tied for longest, and when the selected part is root, a clone of a repeater, the template of a repeater, or any other part with children. Repeaters are an exception to the "has children" refusal: a cut on a repeater produces two repeaters, each carrying its own copy of the template; clones in each half regenerate from each half's own template on the next sync. On the cut direction, the formula on whichever attribute is the invariant is preserved unchanged on both halves; the two non-invariant attributes are rewritten so each half's length value equals half the original's old length on that direction. The exact rewrite depends on which attribute the invariant points at: when the invariant is on length, the original's end and the new sibling's start are altered to the half-way point; when the invariant is on start, the length on each half is divided in half (and the original's end is set to the half-way point); when the invariant is on end, the length on each half is divided in half (and the new sibling's start is set to the half-way point). "Half-way" means: alter the formula so its value evaluates to the half-way point; if the relevant attribute carries no formula, write the half-way value directly as a plain number. Both halves carry the original's formulas on the two directions that are NOT being cut, copied unchanged.
     - id: cut-so-in-half
     - test: [Cut.test.ts](../../../src/lib/ts/tests/Cut.test.ts) "the cut picks the longest direction and produces two equal halves"
     - code: [src/lib/ts/render/Engine.ts:1023](../../../src/lib/ts/render/Engine.ts)
@@ -338,15 +338,30 @@ A real example, fully written:
 
 60. There are three coordinate systems for printing: the world (in millimeters), the screen (in screen pixels), and the printed sheet of paper (in sheet-of-paper pixels).
     - id: printer-paper-geometry
-    - test: TBD
+    - test: [Print.test.ts](../../../src/lib/ts/tests/Print.test.ts) "Rule 60 — coordinate systems round-trip"
     - code: [src/App.svelte](../../../src/App.svelte)
 
 61. During printing, the browser delivers two notifications. The first is ignored. The second arrives after the printable paper area has settled. This is when we compute two things (1) the printable paper area (a rectangle in sheet-of-paper pixels) and (2) the screen silhouette (a rectangle in screen pixels -- see [drawing-silhouette]).
     - id: print-two-notifications
-    - test: TBD
+    - test: [print-notifications.spec.ts](../../../e2e/tests/print-notifications.spec.ts) "Rule 61 — dispatching the print-start notification populates the canvas transform"
     - code: [src/App.svelte](../../../src/App.svelte)
 
 62. From them we compute two more things: (3) a single scale factor that fits the silhouette inside the printable area along the limiting axis, and (4) a margin along the other axis that centers the result. These are applied to the screen image using css, which then is printed on the sheet of paper.
     - id: print-to-fit
-    - test: TBD
+    - test: [Print.test.ts](../../../src/lib/ts/tests/Print.test.ts) "Rule 62 — scale to fit, translate to centre"
+    - code: [src/App.svelte](../../../src/App.svelte)
+
+63. During print, the drawing area's CSS box fills the printable area along both directions. The printable area is the printed sheet minus the default half-inch margin on every side, so the drawing area's CSS box equals (paper width minus one inch) by (paper height minus one inch). The fit math reads the drawing area's CSS dimensions and treats them as the printable-area dimensions; if the box is smaller along either direction the picture cannot be centered or scaled. The full chain from the top-most page container down to the drawing area must resolve to the printable-area dimensions, with no intermediate container collapsing to its content.
+    - id: canvas-fills-page-during-print
+    - test: [print-notifications.spec.ts](../../../e2e/tests/print-notifications.spec.ts) "Rule 63 — the drawing area's CSS box fills the printable area during print"
+    - code: [src/App.svelte](../../../src/App.svelte)
+
+64. During print, the body element's CSS height equals the printable page area's height. This anchors the chain of percentage-based heights from body down through the page layout to the drawing area, so heights along the chain resolve to concrete page-area numbers instead of collapsing to content height.
+    - id: body-fills-page-height-during-print
+    - test: [print-notifications.spec.ts](../../../e2e/tests/print-notifications.spec.ts) "Rule 64 — the body fills the page height during print"
+    - code: [src/App.svelte](../../../src/App.svelte)
+
+65. During print, the printed sheet carries a default half-inch margin on every side. The drawing fills the printable area (sheet minus margin), so the printed picture is inset by half an inch from every edge of the paper. The margin is achieved via padding on the body element with border-box sizing, not via the page-area margin, so the inset applies uniformly across browsers.
+    - id: default-half-inch-print-margin
+    - test: [print-notifications.spec.ts](../../../e2e/tests/print-notifications.spec.ts) "Rule 65 — the printed sheet carries a default half-inch margin on every side"
     - code: [src/App.svelte](../../../src/App.svelte)

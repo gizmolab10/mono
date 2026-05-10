@@ -91,7 +91,7 @@ Instant face transitions feel mechanical. The slerp tilt gives a physical wobble
 
 ### Animated snap with ease-out
 
-The snap animation uses `t += 0.15` per frame with `1 - (1-t)²` easing — fast start, soft landing. ~7 frames at 60fps ≈ 120ms. Quick enough to feel snappy, slow enough to see the rotation path.
+The snap animation uses `t += 0.15` per frame with `1 - (1-t)²` easing — fast start, soft being done. ~7 frames at 60fps ≈ 120ms. Quick enough to feel snappy, slow enough to see the rotation path.
 
 ## Files
 

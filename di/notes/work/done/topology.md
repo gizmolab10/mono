@@ -104,7 +104,7 @@ Split edge segments at crossing and intersection exit points. For each split poi
 
 - `edge_points` — all known endpoints on each edge, keyed by SO + edge. Used for world-proximity matching across phases.
 - `clip_identity` — fi endpoints indexed by (clipped edge, occluder face). Used by phase 2 to find intersection points that phase 1 already computed.
-- `oc_at_occluder_edge` — oc/fi endpoints that landed on an occluder's edge during phase 2 clipping. Used by phase 4 part 2 to match crossing boundaries at face polygon enter/exit points.
+- `oc_at_occluder_edge` — oc/fi endpoints that ended up on an occluder's edge during phase 2 clipping. Used by phase 4 part 2 to match crossing boundaries at face polygon enter/exit points.
 
 ### Edge output
 

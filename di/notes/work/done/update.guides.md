@@ -1,6 +1,6 @@
 # Update guides
 
-A working file for guide-tree updates. The big sweep is done — every page in the guides tree was checked against the current code and either rewritten or verified, the docs build is green, and the folder layout has settled. The file now plans further passes as new work lands.
+A working file for guide-tree updates. The big sweep is done — every page in the guides tree was checked against the current code and either rewritten or verified, the docs build is green, and the folder layout has settled. The file now plans further passes as new work is done.
 
 ## Working rules carried forward
 
@@ -11,16 +11,16 @@ These were decided during the big sweep and still apply.
 3. List items in working notes are numbered (`1.`, `2.`, `3.`), not bulleted.
 4. Component-tree diagrams in guides show all four child components and note that the status strip lives inside the graph component.
 
-## What landed in earlier sessions
+## What was done in earlier sessions
 
-Listed compactly so the file reads in a finite time. Folder paths use the layout that landed last.
+Listed compactly so the file reads in a finite time. Folder paths use the most recent layout.
 
 1. A citation-backed sweep ran across every guide page. Every wording change carried a code pointer. Pages that could not be fully verified were flagged for a deeper pass instead of being silently called clean.
 2. The generic-Svelte-advice page was deleted (was lifted from another project, none of its claims were about this code).
 3. Eight component pages were rewritten against the current code: the three-dimensional hit tester, the toolbar, the side panel, the root layout, the local-storage wrapper, the visual divider, the part data shape, and the drawing-area page. The architecture project page, the managers page, the side-panel architecture page, and the panel-layout page were also rewritten.
 4. The version-migration page was updated through the latest two migration steps.
-5. Targeted fixes landed on the click-and-hover dispatch page, the repeaters page, the rendering-types page, the three-dimensions render page, the axes page, the intersecting-faces page, the two-dimensions page, and the spatial-acceleration research page.
-6. Folder reshape landed in stages. The theory folder became research. The launch page was renamed to the scenes page. The library-versioning notes moved from core into research. The quaternions redirect page was deleted. The archives folder was left as-is.
+5. Targeted fixes were applied to the click-and-hover dispatch page, the repeaters page, the rendering-types page, the three-dimensions render page, the axes page, the intersecting-faces page, the two-dimensions page, and the spatial-acceleration research page.
+6. Folder reshape was done in stages. The theory folder became research. The launch page was renamed to the scenes page. The library-versioning notes moved from core into research. The quaternions redirect page was deleted. The archives folder was left as-is.
 7. The top-level shape settled at `guides/architecture/`, `guides/project/overview/`, `guides/project/user manual/`, `guides/project/research/`, with the per-component reference pages now living under `guides/architecture/components/`. The three-dimensional hit-tester page lives under `architecture/graph/`. The local-storage wrapper page and the part data shape page live under `architecture/core/`. The map page lives at `guides/project/overview/map.md`.
 8. After the most recent components reshape, every dead link surfaced by the docs build was repaired. The build is green.
 
@@ -69,7 +69,7 @@ Decided: milestones 9 and 31 are research, not architecture.
 | 9 persistence | `project/research/serialization-formats.md` | The format comparison (JSON, MessagePack, CBOR, BSON), the speed and size numbers, the sources cited, and the reason JSON won the call |
 | 31 marketing | `project/research/competitive-landscape.md` | The competitor tables (closest, adjacent), the "what this project does differently" list, the gap-in-the-market summary |
 
-### Lessons — distill into a single landing page
+### Lessons — distill into a single destination page
 
 Today only the two mothballed milestones (32 facets, 33 drag) carry a `lessons.md`. The lessons in those two files are some of the most valuable writing in the project — they are about why approaches failed, not what code does.
 

@@ -112,7 +112,7 @@ The arc radius is constant in *screen* pixels, not world units — so it looks t
 
 2D mode only. A dotted grid overlaid on the front face of the root object.
 
-The spacing comes from the current measurement unit and precision — if you're working in inches at 1/8" precision, the grid lines land on eighths. If the resulting screen gap would be less than 8 pixels, the spacing doubles until it's comfortable.
+The spacing comes from the current measurement unit and precision — if you're working in inches at 1/8" precision, the grid lines fall on eighths. If the resulting screen gap would be less than 8 pixels, the spacing doubles until it's comfortable.
 
 The grid extends well past the object's bounds to fill the canvas, using the front face's two free axes. The third axis is locked to the face's plane.
 

@@ -2,6 +2,7 @@
 
 | Build | Date         | Note                                            |
 | ----- | ------------ | ----------------------------------------------- |
+| 66    | May 10, 2026 | print the drawing                               |
 | 65    | May 8, 2026  | improved details scrollbar                      |
 | 64    | May 7, 2026  | separate givens hideable                        |
 | 63    | May 6, 2026  | new part details editor                         |

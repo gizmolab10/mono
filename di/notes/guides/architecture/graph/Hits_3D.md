@@ -24,7 +24,7 @@ The hit-test routine runs once per click. It tries each test in priority order, 
 1. **Dimension label.** When dimensions are visible and the click is on one, the dimension wins outright.
 2. **Angle label.** Same, when angles are visible.
 3. **Corner or edge of the selected part.** Picked up only when the cursor is within the small pick-up radius. This lets the user start a resize on the current selection without losing the selection to whatever sits behind.
-4. **Face hit, drilled.** If the cursor is well inside a face (not on a corner or edge of the selected part), the routine builds an ordered list of every part the click landed on, then picks one of them.
+4. **Face hit, drilled.** If the cursor is well inside a face (not on a corner or edge of the selected part), the routine builds an ordered list of every part the click ended up on, then picks one of them.
 
 ## The face-hit list (drill-down)
 

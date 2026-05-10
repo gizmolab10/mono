@@ -103,7 +103,7 @@ describe('forward projection then ray-cast is a round trip', () => {
 // ═══════════════════════════════════════════════════════════════════
 
 describe('the camera has two viewing modes', () => {
-	it('switching between 3D mode and 2D mode changes where a known world point lands on the screen', () => {
+	it('switching between 3D mode and 2D mode changes where a known world point ends up on the screen', () => {
 		// Pick a point that is off-axis AND off the camera's focal plane.
 		// The 2D mode is calibrated so the focal plane (z=0 here) projects the same in both modes,
 		// so we deliberately pick z>0 to make the two modes disagree.

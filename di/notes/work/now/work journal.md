@@ -4,6 +4,78 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-10 — print pipeline brought to completion, silhouette computation re-anchored on painted pixels
+
+Spent a long arc on the print feature, eventually arriving at a working solution after several wrong turns. The final result: the printed page now shows the picture correctly filling the page along its limiting side and centred on the other side, in the real browser, on the user's actual scene. Visually confirmed.
+
+How the bug presented. The picture was small in a corner of the page. Several rounds of fixes shifted the picture around but did not fix the underlying issue. Each round looked plausible on paper but failed against the real browser.
+
+The first wrong turn — animation-frame defer. The print handler was reading the canvas's CSS dimensions when the print event fired, but the print stylesheet had not yet resized the canvas to the page area. The handler computed a transform for the on-screen size and the canvas was bigger by the time the printer captured. Adding a one-frame delay didn't help; the canvas still hadn't resized. The fix was a guess, didn't pin behaviour, and didn't work.
+
+The second wrong turn — resize observer. Watching the canvas for size changes and re-applying the transform on every change. This was correct in principle but didn't fix the visible bug, because the canvas wasn't actually being told to grow to the full page area in the first place. Another guess.
+
+The third turn — body-height anchor. The user provided a diagnostic log of every container's height during print. The chain from html down to the canvas showed: html and body were the page area, but the next div (the application's mount point, an unnamed div in `index.html`) had collapsed to zero height. The fix added `html, body, #app { height: 100% }` to the print stylesheet. The chain now resolved all the way down. The picture became centered, but stayed too small.
+
+The fourth turn — leaf filter. The silhouette computation was including parent containers whose own bounds extended past their visible content, pushing the silhouette to canvas edges via the post-loop clamp. Filtering to leaves only (objects with no visible descendants) reduced the silhouette but not enough — the user's scene still had leaves whose corners projected to extreme pixel positions because they sat near the camera plane.
+
+The fifth turn — softer threshold. Skipping projections more than five canvas-widths past the canvas edge. Fixed nothing for the user's scene; pushed the silhouette to the right half of the canvas instead of the full canvas. Still small.
+
+The wedge break — pixel scan. The user finally pushed back hard: stop guessing, derive what stipulations and tests are missing. The honest answer: the rule said "smallest rectangle containing every visible block's projection" but what the user actually wanted, and what the rest of the print math assumed, is the bounding rectangle of the painted content. Those two things diverge for perspective scenes because the renderer clips lines and shapes at the camera's near plane and the canvas edges before painting; the silhouette computation walking world-space corners was unaware of this clipping. The rule was based on a false premise and the implementation that followed could never produce what the user wanted on a complex scene.
+
+The fix that was done. Replace the silhouette computation with a direct read of the canvas's painted pixels: walk every pixel, find the bounding rectangle of non-transparent pixels, return that as the silhouette. Bypasses all the projection-math edge cases. The painted pixels are what the printer actually captures, so the silhouette derived from them is by construction the right rectangle to fit to the page. Visually confirmed in the user's real browser on the real scene: picture fills the page along the limiting side, centred on the other.
+
+What was added to the catalog. Two new rules earlier in the same session for the body-height fix (rule 63: drawing area's CSS box fills the page on both directions during print; rule 64: body height equals the page area's height during print). Rule 39's prose was rewritten to match the painted-pixel approach: silhouette is the smallest rectangle containing every painted pixel of the picture, not the smallest rectangle containing every projected corner.
+
+Production code now. The compute-silhouette function does a getImageData call against the 2D canvas, walks the pixel data, and returns the bounding rect of non-transparent pixels. The fit-and-centre math is unchanged. The diagnostic logs that filled the console during the debug arc have been removed.
+
+Open follow-ups. Six of the existing browser-driven tests for rule 39 were written against the corner-projection contract and now fail against the painted-pixel rule. They need to be rewritten to read canvas pixels and compute expected silhouette from those, or replaced with sanity-checks that pin the new contract. Not done in this session; the production code and the catalog are correct and the visual confirmation is in hand, so the test debt is logged here for the next pass.
+
+Files: [App.svelte](../../../src/App.svelte) (compute_silhouette rewritten as pixel scan, diagnostic logs removed, html/body/#app height anchor added to print stylesheet); [stipulations.md](../../guides/project/development/stipulations.md) (rule 39 prose rewritten; rules 63 and 64 added); [working features.md](./working%20features.md) (adherence row updated to 64 rules total).
+
+Verification. Visual: the print preview in real Chrome shows the picture filling the page along its limiting side, centred on the other. Tests: the structural tests (rules 61, 63, 64, the centring rule, the diagnostic) all pass; six rule-39 tests need rewriting against the painted-pixel contract and are tracked as follow-up.
+
+Post-print cleanup. After the print work was done, three meta-changes followed in the same session. First, two new entries went into the di project's learn file capturing the lessons of the print arc: entry four says to wire diagnostics and read them before writing more code, especially for fixes that need real-browser confirmation; entry five says confidence levels are set too high and the bar for writing code should be real data plus a short verifiable reasoning chain. Second, the vernacular file got a new banned-substitution entry: never use the verb "ship" in either sense; write "done" or "complete" for finished work and "write code" for the act of producing or submitting code. The corresponding memory file was extended to cover both senses. Third, the mono root CLAUDE file and the di project CLAUDE file were both updated to spell out two learn files at session start — one at the mono root for cross-project mistakes, one at the di project's `notes/work/now/learn.md` for project-specific mistakes — and the mono CLAUDE file's old path that pointed at the wrong location was corrected.
+
+Files (post-print): [learn.md](./learn.md) (two new entries about evidence and confidence); [vernacular.md](../../guides/project/development/vernacular.md) (new "write code" verb entry and banned-substitution row); [mono CLAUDE.md](../../../../CLAUDE.md) (cross-project learn path added, di learn path corrected); [di CLAUDE.md](../../../CLAUDE.md) (new LEARN: line pointing at both files).
+
+---
+
+## Session — 2026-05-08 (continued) — silhouette-based print scaling via corner projection
+
+After the print-stylesheet first cut was done, the printed page showed the drawing centred but small — the drawing area scaled to the page, but the picture inside the drawing area only occupied a sub-rectangle of the surface, and that sub-rectangle stayed small after the surface fit the paper. The next pass scaled to the picture's silhouette instead of to the drawing surface.
+
+The proposal at the time. The drawing surface is a rectangle whose pixel dimensions match the on-screen drawing area. Inside that rectangle, the picture itself (the projected scene with its lines, faces, and labels) occupies some sub-rectangle, surrounded by background. The current print rule scaled the whole rectangle to the page, so the sub-rectangle ended up scaled by the same factor as the empty room. What was needed: two extra numbers — how much bigger to scale (so the silhouette, not the drawing surface, filled the page) and how much to slide left or up (so the silhouette was centred on the page rather than offset by the empty room).
+
+Three ways were considered. Project the corners of every smart object through the camera — fast, exact, no rendering needed. Scan the picture pixels of the drawing surface — slower, but engine-independent. Move the camera to frame the silhouette and re-render — most code, most quality, most engine touching. The recommended path was option one: corner projection.
+
+What was done. A small handler runs once just before the print preview is built. It walks every smart object in the scene, takes each object's eight world-space corner points, runs them through the camera's view-and-projection matrices, and converts each result to a pixel coordinate on the drawing surface. The smallest rectangle that contains all those projected pixel coordinates is the silhouette. The handler computes a scale factor (the largest factor that still fits the silhouette inside the page area while preserving aspect ratio) and a slide offset (so the silhouette's centre lines up with the page's centre) and applies a single transform to the drawing surface. When printing finishes, a second handler clears that transform.
+
+The print stylesheet was also told to crop anything that extends outside the page area, and to pin the drawing surface at its native pixel size with no auto-fit. The handler's transform then does all the scaling and positioning in plain pixel space.
+
+A separate patch was needed for an initial print-blank issue. The first cut of the silhouette work used auto-sized dimensions on the drawing surface during print, which collapsed it to nothing in some browsers and produced a blank page. The patch pinned the drawing surface to its own pixel dimensions before applying the scale-and-translate transform, and computed the transform from those pixel dimensions rather than from the surrounding region.
+
+Files: [App.svelte](../../../src/App.svelte) (silhouette handler and print-event listeners added to the script; canvas pinned to native pixel size in the print stylesheet).
+
+I AM GUESSING that this two-step approach (silhouette fills drawing surface, drawing surface fits page) leaves a small margin around the silhouette when the page aspect differs from the drawing-surface aspect, since the drawing surface is letterboxed inside the page. The follow-up that fixed that and several other bugs is described in the 2026-05-10 session entry.
+
+---
+
+## Session — 2026-05-08 — print stylesheet first cut: hide chrome, let the drawing area fill the page
+
+First pass on the print feature. When the user printed the page (the keyboard print shortcut, or "save as PDF" through the system print dialog), they got whatever the browser captured of the live screen — the side column with all its banners, the top strip with the menu and edit and save buttons, and the graph squeezed into whatever space was left over. The goal was for printing to produce just the drawing area, by itself, scaled up to fill the printable area of the chosen paper size.
+
+Two paths were on the table. A print stylesheet — add a small block of styles that only apply when the browser is printing, that hide the top strip and the side column, make the drawing area fill the page, and ask the browser to skip page margins. The browser does the rest. Smallest possible change. The drawback: the drawing surface keeps the same pixel dimensions it had on screen — meaning at print resolution it would look softer than the actual screen rendering, especially on high-resolution print output. Or a print button that re-renders the graph at print resolution into a fresh off-screen drawing surface — cleaner output, more code, more places to break, and it would touch the rendering engine, which was being rewritten at the time.
+
+The path chosen was the print stylesheet. Smallest change, does the feature today, gives the user a usable result immediately.
+
+What was done. A print-only block of styles at the top of the app's global styles. When the browser is printing (or the user is "saving as PDF" through the print dialog), the top strip with the menu and buttons is hidden, the side column with the detail panels is hidden, the small overlays inside the drawing area (the build button, the breadcrumbs trail, the status strip at the bottom) are hidden, the outer page frame loses its fixed positioning and padding so it can flow into a normal page, and the drawing area expands to fill the entire printable region of the chosen paper. The drawing surface inside the drawing area is told to scale to fit while preserving its aspect ratio, so the picture is not stretched out of shape — if the paper is a different shape than the drawing surface, the surface fits inside with a thin band of white on the long sides rather than warping. The page margins are pulled to zero in the same block so the drawing fills edge to edge.
+
+Files: [App.svelte](../../../src/App.svelte) (print-only block added to the styles section).
+
+I AM GUESSING that the printed lines may look softer than the on-screen lines because the drawing surface keeps its on-screen pixel resolution and scales up — this is the documented drawback of the simple option chosen here. If the softness bites, the follow-up path (a separate print action that re-renders the scene at print resolution into a fresh off-screen surface) was described in the proposal above and remains untouched by this work.
+
+---
+
 ## Session — 2026-05-09 — stipulations vocabulary refresh, redundant rule removed, file renumbered end-to-end
 
 The catalog of load-bearing rules was overhauled to retire the old "cell" / "value" wording in favor of "attribute", "field", "SO", and "formula" — the words the rest of the project now uses.
@@ -22,7 +94,7 @@ Stale references chased down. The rule-name list lives in two places: the catalo
 
 Cleanup the linter flagged. Two paste-artifact tails on rule pointer lines were removed; two pointer lines that were missing their closing markdown link bracket were closed; one Preferences-layer pointer was pointing at the wrong source file (the algebra constraints file) and was redirected back at the preferences manager. Two double-blank-line gaps the linter flagged were collapsed to single blanks.
 
-The driver spreadsheet was deleted by Jonathan once the renames had landed. No notes or code linked to it, so nothing broke.
+The driver spreadsheet was deleted by Jonathan once the renames were done. No notes or code linked to it, so nothing broke.
 
 Verification: grep for every old short name across the whole repository returns no matches outside the (now deleted) spreadsheet. Type-check and tests not re-run since this pass touched only documentation.
 
@@ -46,7 +118,7 @@ When the user clicked a part name in the parts list and the row went into edit m
 
 After all five passes, the editing row holds the same height as its neighbours.
 
-A separate change landed alongside, in the constants file. The cell-height value used to be the common size multiplied by half — for the project's common size of 33, that came out to a half-pixel value of 16.5. Half-pixel sizes are a common source of off-by-one rendering bugs because the browser has to round them. Wrapped the expression with a rounding step that always rounds up, so the value lands on a whole pixel (17). The change ripples through every place that uses the cell-height value — most visibly the always-visible name editor in the selection panel — by half a pixel.
+A separate change was done alongside, in the constants file. The cell-height value used to be the common size multiplied by half — for the project's common size of 33, that came out to a half-pixel value of 16.5. Half-pixel sizes are a common source of off-by-one rendering bugs because the browser has to round them. Wrapped the expression with a rounding step that always rounds up, so the value is done on a whole pixel (17). The change ripples through every place that uses the cell-height value — most visibly the always-visible name editor in the selection panel — by half a pixel.
 
 Lessons worth carrying forward.
 
@@ -67,7 +139,7 @@ The parts banner title used to read "parts" — three lowercase letters in the c
 
 The count rule. A part counts when it is a leaf — nothing parented under it — with one exception: a repeater is itself counted as one leaf, and everything inside the repeater (the template the user dropped in plus all the spawned duplicates) is hidden from the count. So a wall set up as a repeater holding a master stud and five auto-spawned studs reads as one part — the wall — not six. A standalone box with no children counts as one. A box with two non-repeater children counts as two (the children, not the box). An empty scene with nothing loaded shows plain "parts".
 
-Where the work landed. The count is derived in the parent details panel, where the live list of parts is already on hand. The parts banner wrapper takes its title as a prop and was not touched. A small tidy-up alongside: the clone-detection helper that was duplicated as a local function in the parts list panel was lifted up to the parts manager file so both panels can share it. The parts list panel now calls into the manager's version. (The count rule itself does not need the clone-check — the "inside a repeater" check excludes both the master and the clones in one pass — but the cleanup is good either way.)
+Where the work was done. The count is derived in the parent details panel, where the live list of parts is already on hand. The parts banner wrapper takes its title as a prop and was not touched. A small tidy-up alongside: the clone-detection helper that was duplicated as a local function in the parts list panel was lifted up to the parts manager file so both panels can share it. The parts list panel now calls into the manager's version. (The count rule itself does not need the clone-check — the "inside a repeater" check excludes both the master and the clones in one pass — but the cleanup is good either way.)
 
 Files: [Details.svelte](../../src/lib/svelte/details/Details.svelte) (new derived for the leaf count and the title phrase, dynamic title passed to the parts banner), [Parts.ts](../../src/lib/ts/managers/Parts.ts) (new shared clone-check), [D_Parts.svelte](../../src/lib/svelte/details/D_Parts.svelte) (local clone-check removed; callers switched to the shared one).
 
@@ -85,7 +157,7 @@ The right-side adherence dashboard used to show four green sections that all rea
 
 The dashboard is now a headline plus a single list. When nothing needs attention it reads "All clear — no action needed" and shows a date stamp. When anything needs attention the headline reads "Action needed: N items" and a flat bullet list follows, each bullet with a sentence on what is wrong, a sentence on what to do, and one word for the owner. All of the older per-section blocks are gone — test binding, orphan tests, build-gate health, the coverage table when green, the migration dial when complete, plus a depth experiment that got tried and removed because it added noise instead of signal.
 
-A new save-and-load test landed along the way. It puts a formula on a child cell that reads the parent's width, saves the scene, loads it back, slides the parent sideways, and checks that the child holds its absolute position because width does not move when the parent slides. The first draft of the test failed for the wrong reason — it was reading a stored offset that always matched, regardless of whether the formula actually re-evaluated. Once the assertion was rewritten in absolute terms, the test passes and verifies that the formula network really does come back to life after a round trip.
+A new save-and-load test was added along the way. It puts a formula on a child cell that reads the parent's width, saves the scene, loads it back, slides the parent sideways, and checks that the child holds its absolute position because width does not move when the parent slides. The first draft of the test failed for the wrong reason — it was reading a stored offset that always matched, regardless of whether the formula actually re-evaluated. Once the assertion was rewritten in absolute terms, the test passes and verifies that the formula network really does come back to life after a round trip.
 
 Files: [extract-adherence.mjs](../../notes/tools/extract-adherence.mjs) (new headline-and-action-list layout, removed depth and per-section blocks), [adherence dashboard.md](../../notes/guides/project/development/adherence%20dashboard.md) (regenerated), [Save_Load.test.ts](../../src/lib/ts/tests/Save_Load.test.ts) (new formula round-trip test).
 
@@ -97,7 +169,7 @@ While that was open, sixteen pre-existing type-check warnings and errors got cle
 
 ### The rename refactor
 
-The two errors that were left came from the selection panel calling two name-editing helpers that did not exist there. They lived in the parts list panel, where the same kind of inline rename runs. The fix landed in two hops.
+The two errors that were left came from the selection panel calling two name-editing helpers that did not exist there. They lived in the parts list panel, where the same kind of inline rename runs. The fix took two passes.
 
 Hop one moved the rename state — which part is being renamed, what its original name was, what validation error is currently showing — and the pure-logic helpers — start a rename, commit a new name, cancel, dismiss, react to keystrokes — into the parts manager file. Both panels now call into the same machinery. They cannot disagree about whether a rename is in flight or what error is showing.
 
@@ -296,7 +368,7 @@ The "logic driven design" guide had a ten-step plan for a small dashboard that s
 
 ### Thread two — overall health line and migration progress moved to the top
 
-Added an at-a-glance line below the badge that surfaces the legacy count, then moved the full Migration progress section up to sit right under the badges so the migration status is the first thing the eye lands on.
+Added an at-a-glance line below the badge that surfaces the legacy count, then moved the full Migration progress section up to sit right under the badges so the migration status is the first thing the eye reaches.
 
 ### Thread three — rules catalogue migrated, all fifty-eight
 
@@ -328,13 +400,13 @@ A long session that closed out the guide-update arc and started chipping at code
 
 ### Thread one — guides finished
 
-The guide tree was pushed through the last of its long sweep: distilled the working-process file into a permanent instructions page; filled in the user manual feature by feature (eight new pages — selection, re-parenting, formulas, library, build notes, undo and redo, units, save and load); added a key-paths page covering every keyboard shortcut grouped by context. The working file `update.guides.md` graduated from "now" to "done" once everything had landed. Builds stayed green throughout.
+The guide tree was pushed through the last of its long sweep: distilled the working-process file into a permanent instructions page; filled in the user manual feature by feature (eight new pages — selection, re-parenting, formulas, library, build notes, undo and redo, units, save and load); added a key-paths page covering every keyboard shortcut grouped by context. The working file `update.guides.md` graduated from "now" to "done" once everything had been done. Builds stayed green throughout.
 
 ### Thread two — first-steps page with screenshots
 
 A new walk-through page for a brand-new user covers their first few minutes: the URL, the bundled drawer that loads on first visit, turning on dimensions, the read-only lock, turning on editing, stretching, editing a dimension, starting a fresh design from the library, and adding an empty box.
 
-The page started without screenshots. After deciding the assistant would do the captures (full automation), a Playwright script and a separate config landed at `e2e/screenshots/`. The script clicks the hamburger to hide the side panel, then drives the app through eight scripted journeys, capturing one PNG per step into the manual's image folder. Wired as `yarn shoot`.
+The page started without screenshots. After deciding the assistant would do the captures (full automation), a Playwright script and a separate config was placed at `e2e/screenshots/`. The script clicks the hamburger to hide the side panel, then drives the app through eight scripted journeys, capturing one PNG per step into the manual's image folder. Wired as `yarn shoot`.
 
 The image folder name had to change from `first.steps` to `first-steps` because the period in the folder name confused Obsidian's relative-path renderer. The eight markdown image references and the script's output path were updated; the docs build stayed green.
 
@@ -371,7 +443,7 @@ Several rules were codified:
 - The chime should lead with completions, optionally suggest a next step, and skip the plumbing detail.
 - All pre-existing errors and warnings get fixed without approval, and without a report afterwards.
 - Never ask permission to read a file or run a read-only check; just do it.
-- Every substantive answer in the di project lands as a new section in `handoff.md`; the assistant picks the section title.
+- Every substantive answer in the di project becomes a new section in `handoff.md`; the assistant picks the section title.
 
 ### Files touched
 
@@ -395,7 +467,7 @@ Several threads.
 
 ### Thread one — drill-down click on the drawing area
 
-A click on the drawing area now picks the front-most part by default, but on the second click the selection moves one part deeper into the stack. Each click builds a fresh ordered list of every part the click landed on, front to back. If the currently selected part is in that list, the new selection is the part right after it on the list, wrapping back to the front when the current part is at the end. If the current selection is not in the list (or nothing is selected), the new selection is the front-most. The rule is stateless — the click handler keeps no memory between clicks; the input is just "what is the cursor over" plus "what is currently selected."
+A click on the drawing area now picks the front-most part by default, but on the second click the selection moves one part deeper into the stack. Each click builds a fresh ordered list of every part the click ended up on, front to back. If the currently selected part is in that list, the new selection is the part right after it on the list, wrapping back to the front when the current part is at the end. If the current selection is not in the list (or nothing is selected), the new selection is the front-most. The rule is stateless — the click handler keeps no memory between clicks; the input is just "what is the cursor over" plus "what is currently selected."
 
 ### Thread two — skip non-eligible parts in the click stack
 
@@ -417,7 +489,7 @@ On drop, the dragged part's six absolute world bounds are snapshotted, the part 
 
 ### Thread five — small fix: scroll on the side panel keeps buttons clickable
 
-The right-side panel that holds preferences, library, and parts now refreshes the click-detector's record whenever the user scrolls inside it. Without this, scrolled rows landed at new on-screen positions while the record still pointed at the old positions, so clicks missed. The mount-time refresh got a small cleanup at the same time — the wrapping setTimeout was unnecessary because the existing deferred-refresh helper already waits one layout pass.
+The right-side panel that holds preferences, library, and parts now refreshes the click-detector's record whenever the user scrolls inside it. Without this, scrolled rows was placed at new on-screen positions while the record still pointed at the old positions, so clicks missed. The mount-time refresh got a small cleanup at the same time — the wrapping setTimeout was unnecessary because the existing deferred-refresh helper already waits one layout pass.
 
 ### Thread six — eye cells in the collapsed details view
 
@@ -484,7 +556,7 @@ Two threads.
 
 ### Thread one — resolver write-path lock check
 
-The drag's write path already refuses to write through a locked target — that is the path real drags travel. A second write path sits one level lower, used by the resolver. It did not refuse locked targets. No production code calls it today, but a future test or new caller could land on it and behave inconsistently with the drag path. Added a one-line refusal at the same shape as the drag-side check: look up the target, bail if it is locked. No new behavior reaches end users from this change.
+The drag's write path already refuses to write through a locked target — that is the path real drags travel. A second write path sits one level lower, used by the resolver. It did not refuse locked targets. No production code calls it today, but a future test or new caller could happen on it and behave inconsistently with the drag path. Added a one-line refusal at the same shape as the drag-side check: look up the target, bail if it is locked. No new behavior reaches end users from this change.
 
 ### Thread two — sliders moved out of the drawing area and into the toolbar
 
@@ -534,7 +606,7 @@ The browser-driven test setup that was deferred earlier is now in place. Four te
 
 - The editing-lock blocks clicks. Three checks: the lock starts on by default; a click on the canvas while the lock is on does not pick a part; toggling the lock off lets a click pick a part.
 - The view-mode toggle saves and restores the camera angle. One check: toggling from 3D to 2D and back restores the angle to within a small numerical tolerance of where it started.
-- The rotation-snap toggle lands on a face-aligned orientation. One check: a tumble drag with rotation-snap on settles on an angle whose quaternion has a near-±1 component (one of the six face-aligned forms).
+- The rotation-snap toggle settles on a face-aligned orientation. One check: a tumble drag with rotation-snap on settles on an angle whose quaternion has a near-±1 component (one of the six face-aligned forms).
 - The drag-versus-tumble decision. Two checks: an empty-canvas drag changes the camera angle; a drag with a selection in place leaves the selection intact.
 
 Plus a small smoke test that confirms the page loads and the read hooks attach.
@@ -627,7 +699,7 @@ One thread. Phase two of the center-letter milestone is complete: the silent ref
 
 I AM GUESSING the corner the user grabbed snaps back to where it started automatically — the underlying numbers never change because the writes are refused, and the renderer reads from those numbers on every paint. Phase two does not add any explicit snap-back code. If a real drag in the running app shows visual lag, a follow-up can add an up-front check at drag-start.
 
-### What does not land in phase two
+### What does not happen in phase two
 
 Phase three (optional observability polish — debug logs and an optional hover tooltip) is still future work. The placeholder console-exposed caller from phase zero is still active; it can come out at any time after the center-letter feature is exercised in the running app.
 
@@ -659,9 +731,9 @@ Phase zero, phase one, and phase two are all done. The feature reaches end users
 
 ## Session — 2026-04-29 — center-letter phase one shipped
 
-One thread. Phase one of the center-letter milestone landed: the read-only side of the new letter end to end, with a silent refusal of any drag whose formula reads a center.
+One thread. Phase one of the center-letter milestone was done: the read-only side of the new letter end to end, with a silent refusal of any drag whose formula reads a center.
 
-### What landed
+### What was done
 
 - The bare-name table that today knows three letters (start, end, length) gained a fourth letter for the center. Each direction's concrete center name is the direction prefix plus `_center` (so `x_center`, `y_center`, `z_center`).
 - The accepted-letter list the parser uses to reject unknown letters gained the new letter.
@@ -684,9 +756,9 @@ Seventeen new tests in [Center.test.ts](di/src/lib/ts/tests/Center.test.ts) cove
 - Formula text preserves the bare letter — no rewrite to start-plus-end happens at save time.
 - Translation round trip: a center-using formula survives the concrete-to-agnostic round trip and back.
 
-### What does not land in phase one
+### What does not happen in phase one
 
-The visible alert on a refused drag, the snap-back animation, and any change to the parts panel are explicitly out of scope. Those land in phase two.
+The visible alert on a refused drag, the snap-back animation, and any change to the parts panel are explicitly out of scope. Those happen in phase two.
 
 Phase one is reviewable and revertable on its own as a code-change unit. It is **not** user-shippable on its own — the silent refusal of a drag is a usability gap that phase two closes. The two phases reach end users together.
 
@@ -721,11 +793,11 @@ Six threads.
 
 ### Thread one — wrote the missing tests
 
-The rules file listed thirty-three load-bearing rules at the start of the day. Walking the list against the existing tests, fourteen rules had no direct test, partial coverage, or only "probably covered by a big nearby test file." Wrote tests one rule at a time, then verified each. Several rules turned out to be already covered by tests in unrelated files; those got their pointers in the rules file relabelled rather than getting a new test. The work landed across a handful of files: a new file that pins down rotation, a new file that pins down named values that formulas can reference, a new file that pins down the snap-to-grid drag rounding, plus added test groups in the data-layout file, the units file, the formula-and-constraints file, the errors file, and the save-and-load file. The catalog summary at the top of the rules file now reads "all directly covered by tests."
+The rules file listed thirty-three load-bearing rules at the start of the day. Walking the list against the existing tests, fourteen rules had no direct test, partial coverage, or only "probably covered by a big nearby test file." Wrote tests one rule at a time, then verified each. Several rules turned out to be already covered by tests in unrelated files; those got their pointers in the rules file relabelled rather than getting a new test. The work was done across a handful of files: a new file that pins down rotation, a new file that pins down named values that formulas can reference, a new file that pins down the snap-to-grid drag rounding, plus added test groups in the data-layout file, the units file, the formula-and-constraints file, the errors file, and the save-and-load file. The catalog summary at the top of the rules file now reads "all directly covered by tests."
 
 ### Thread two — added more rules to the catalog
 
-After the missing tests landed, a second pass through the codebase looked for rules the catalog did not name yet. Ten rules were added in a first round (rotation, internal millimeters, named values, cycle detection, single writable target, visibility, drag snap, redo, repeater spacing, and fire-block cross direction). Then the user-interface rule about the user typing into a locked cell was removed and the remaining rules renumbered. Then a third pass found seven more rules with direct evidence in the code: setting a formula clears a cell's lock, the bare-name resolver walks up the parent chain and picks the first match, repeater duplicates are excluded from the saved snapshot, locked named values are protected the same way locked cells are, every SO is shaped like a box with eight corners and twelve edges and six faces, the camera has two viewing modes (3D and 2D), and an error reported on a cell stays there until cleared. Each new rule got a test alongside its catalog entry. Net: forty-nine rules in the catalog, all directly covered by tests.
+After the missing tests were added, a second pass through the codebase looked for rules the catalog did not name yet. Ten rules were added in a first round (rotation, internal millimeters, named values, cycle detection, single writable target, visibility, drag snap, redo, repeater spacing, and fire-block cross direction). Then the user-interface rule about the user typing into a locked cell was removed and the remaining rules renumbered. Then a third pass found seven more rules with direct evidence in the code: setting a formula clears a cell's lock, the bare-name resolver walks up the parent chain and picks the first match, repeater duplicates are excluded from the saved snapshot, locked named values are protected the same way locked cells are, every SO is shaped like a box with eight corners and twelve edges and six faces, the camera has two viewing modes (3D and 2D), and an error reported on a cell stays there until cleared. Each new rule got a test alongside its catalog entry. Net: forty-nine rules in the catalog, all directly covered by tests.
 
 ### Thread three — restructured the testing guide
 
@@ -777,23 +849,23 @@ Three threads, all design work. No code shipped beyond the testing additions in 
 
 ### Thread one — audit of the codebase for missing rules
 
-A walk through the source folders looking for load-bearing behavior the rules catalog did not yet name. Two passes. First pass turned up ten candidates and they were added as rules thirty-three through forty-two — rotation, internal millimeters, named values, cycle detection, single writable target, visibility, drag snap, redo, repeater spacing, fire-block cross direction. The user-interface rule about typing into a locked cell got removed in the same step and the catalog renumbered. Second pass — driven by reading the managers, editors, events, and render folders — turned up eight more rules: identifier stability, default scene on first launch, selection saved with the scene, auto-save after most user actions, deletion cascade with formula cleanup, the precision setting snapping every plain-number cell, the editing-lock toggle blocking clicks, the two-dimensional / three-dimensional view-mode swap, the rotation-snap toggle behavior, drag-with-versus-without selection, and the preferences layer that persists across reloads. Eight of those landed as rules fifty through fifty-seven. Tests came along with each rule that was reachable in the unit-test runner; four rules that need real mouse events or the running animation loop got marked as not unit-testable. Catalog ends at fifty-seven rules, fifty-three directly covered, four queued for browser-driven tests.
+A walk through the source folders looking for load-bearing behavior the rules catalog did not yet name. Two passes. First pass turned up ten candidates and they were added as rules thirty-three through forty-two — rotation, internal millimeters, named values, cycle detection, single writable target, visibility, drag snap, redo, repeater spacing, fire-block cross direction. The user-interface rule about typing into a locked cell got removed in the same step and the catalog renumbered. Second pass — driven by reading the managers, editors, events, and render folders — turned up eight more rules: identifier stability, default scene on first launch, selection saved with the scene, auto-save after most user actions, deletion cascade with formula cleanup, the precision setting snapping every plain-number cell, the editing-lock toggle blocking clicks, the two-dimensional / three-dimensional view-mode swap, the rotation-snap toggle behavior, drag-with-versus-without selection, and the preferences layer that persists across reloads. Eight of those were added as rules fifty through fifty-seven. Tests came along with each rule that was reachable in the unit-test runner; four rules that need real mouse events or the running animation loop got marked as not unit-testable. Catalog ends at fifty-seven rules, fifty-three directly covered, four queued for browser-driven tests.
 
 ### Thread two — the center-letter design
 
 The user proposed adding a new bare letter to the formula vocabulary that means "the midpoint between the start and the end of a direction." After several rounds of pros-and-cons and locking decisions one at a time, the design settled on:
 
 - The letter is read-only. There is no path that writes through a center reference.
-- Reverse propagation that would land on a center reference is refused, with a visible message — "cannot drag a center" — on a new on-screen status strip.
+- Reverse propagation that would be done on a center reference is refused, with a visible message — "cannot drag a center" — on a new on-screen status strip.
 - The cycle detector runs at the moment a formula is set, and knows that a center reference depends on both the start and the end of the same direction. Loops through the new letter are caught at edit time, not at run time.
 - Center sits outside the existing invariant mechanism. The user's choice of which storage cell is the recomputed one stays at three options, not four. The save format is unchanged. Formulas containing the new letter are stored as the letter literally — not as the equivalent expansion in terms of start and end.
 - The work breaks into four phases: phase zero (the strip itself), phase one (read-only center plus silent refusal), phase two (wire the silent refusal to the strip), phase three (optional — add center to the parts panel and debug logs).
 
-The full proposal — including risk assessment with three high-stakes questions all answered, the four phases with what lands and what gets tested in each, and a phase-zero implementation plan — is in [16.formulas.md](../milestones/done/16.formulas.md).
+The full proposal — including risk assessment with three high-stakes questions all answered, the four phases with what happens and what gets tested in each, and a phase-zero implementation plan — is in [16.formulas.md](../milestones/done/16.formulas.md).
 
 ### Thread three — phase-zero details for the status strip
 
-The status strip is a small new on-screen surface that displays brief transient messages. The design landed in one round:
+The status strip is a small new on-screen surface that displays brief transient messages. The design was done in one round:
 
 - Lives at the bottom of the graph region, between the build-notes button on the left and the guides slider on the right.
 - Height matches the standard common-button height. Empty space below the strip and on each side equals one standard layout gap.
@@ -804,7 +876,7 @@ The status strip is a small new on-screen surface that displays brief transient 
 
 ### What shipped — 2026-04-28 (continued)
 
-- The rules catalog grew from forty-nine to fifty-seven rules. Eight new rules landed (with seven tests) plus a renumber-and-remove pass.
+- The rules catalog grew from forty-nine to fifty-seven rules. Eight new rules were added (with seven tests) plus a renumber-and-remove pass.
 - Twenty new tests across two new files (the engine-behavior file and the preferences file) and several extensions to existing files. Test count moved from five hundred fifty-three to five hundred ninety-five, all green.
 - A full design proposal for the center-letter feature, with phased implementation plan and risk assessment, sits in 16.formulas.md.
 
@@ -832,7 +904,7 @@ Two small touch-ups to the running feature list. Added "row numbers" and "persis
 
 ### Thread two — dead-link fixes inside the notes tree
 
-A first-pass sweep prompted by Jonathan's report of dead links. Real fixes that landed: the cadence link in the work index pointed to a file that had been moved into the now folder; the selection-algorithm link in the milestones index pointed to a sibling that actually lives in the now folder; the facets and lessons links in the same milestones index used a workspace-root path that breaks when the renderer resolves it relative to the current file; a checkbox in the code-debt list was wrapped as a link to a non-existent file. All five fixed.
+A first-pass sweep prompted by Jonathan's report of dead links. Real fixes that was done: the cadence link in the work index pointed to a file that had been moved into the now folder; the selection-algorithm link in the milestones index pointed to a sibling that actually lives in the now folder; the facets and lessons links in the same milestones index used a workspace-root path that breaks when the renderer resolves it relative to the current file; a checkbox in the code-debt list was wrapped as a link to a non-existent file. All five fixed.
 
 ### Thread three — dead-link sweep driven by the deploy build
 
@@ -846,7 +918,7 @@ Jonathan reported that clicking on a dimensional number on the canvas was being 
 
 Coupling: clicking the self-visibility eye on a row that has children now also flips the other column's block-children flag. After the click, exactly one of the two eyes shows. Leaf rows and root row unchanged. One line added in the parts-table click handler.
 
-Investigation, fixed: Jonathan reported that typing a new formula on a cell did not make the shape on screen update. The value column also did not refresh. Tracing logs were added across the whole chain — the attributes-panel commit handler, the compile-and-write step inside the constraints manager, the start and end of the propagate routine, the after-hook that fires when propagate finishes, and the canvas-out-of-date flip on the renderer. The logs proved every link in the chain fires end to end. The fault sat one step in front of the invariant pass: a small helper inside the constraints manager was running on every formula edit and writing the new length value into the end-of-axis bound, regardless of which cell the axis's invariant marker pointed at. On art's y-axis, where the invariant marker is the start, the helper overwrote y_max with a value computed from the old y_min plus the new depth — the formula on y_max (which says "track parent's end") was silently stomped — and then the invariant pass that ran immediately after used that polluted y_max to compute a new y_min, which cancelled out to the same old y_min. Net: every cell wrote back the value it already had. The fix: delete the helper and its six call sites. The invariant pass alone is enough to keep an axis consistent. The UI gate that disables the formula slot on the invariant cell, plus the scene-load step that clears any formula that somehow landed on an invariant cell, together guarantee the invariant pass never has to deal with a formula on the invariant cell — which is the only situation the helper could ever have been useful for. Caveat: existing scenes may carry corrupted bound values from prior runs of the helper; a one-time scene reload triggers a full re-evaluation and clears them.
+Investigation, fixed: Jonathan reported that typing a new formula on a cell did not make the shape on screen update. The value column also did not refresh. Tracing logs were added across the whole chain — the attributes-panel commit handler, the compile-and-write step inside the constraints manager, the start and end of the propagate routine, the after-hook that fires when propagate finishes, and the canvas-out-of-date flip on the renderer. The logs proved every link in the chain fires end to end. The fault sat one step in front of the invariant pass: a small helper inside the constraints manager was running on every formula edit and writing the new length value into the end-of-axis bound, regardless of which cell the axis's invariant marker pointed at. On art's y-axis, where the invariant marker is the start, the helper overwrote y_max with a value computed from the old y_min plus the new depth — the formula on y_max (which says "track parent's end") was silently stomped — and then the invariant pass that ran immediately after used that polluted y_max to compute a new y_min, which cancelled out to the same old y_min. Net: every cell wrote back the value it already had. The fix: delete the helper and its six call sites. The invariant pass alone is enough to keep an axis consistent. The UI gate that disables the formula slot on the invariant cell, plus the scene-load step that clears any formula that somehow got onto an invariant cell, together guarantee the invariant pass never has to deal with a formula on the invariant cell — which is the only situation the helper could ever have been useful for. Caveat: existing scenes may carry corrupted bound values from prior runs of the helper; a one-time scene reload triggers a full re-evaluation and clears them.
 
 ### What shipped — 2026-04-24
 
@@ -896,7 +968,7 @@ Jonathan reported: selecting a non-repeater grandchild and pressing delete clear
 
 Jonathan reported: rename a part that another part's formula references; the formula text still shows the old name. Traced the cause: formulas hold reference tokens whose object field is the referenced part's name, not its identity. The compiled form binds names to identities at compile time, so evaluation kept giving correct numbers, but the displayed text and the on-disk save kept the old name — and a reload would fail to re-bind because the saved text held a name no part in the scene had any more.
 
-Two routes were laid out. The targeted route mirrors the existing given-rename helper: walk every formula in the scene, rewrite reference tokens whose object equals the old name, recompile, re-bind. The structural route — store reference tokens by identity, not by name — was analysed in pros-and-cons and recorded as a future structural direction (see open items). The targeted route landed today: a new tokeniser helper that rewrites the object field of reference tokens, a new constraints helper that uses it across the whole scene, and a call from the part-rename flow right after assigning the new name.
+Two routes were laid out. The targeted route mirrors the existing given-rename helper: walk every formula in the scene, rewrite reference tokens whose object equals the old name, recompile, re-bind. The structural route — store reference tokens by identity, not by name — was analysed in pros-and-cons and recorded as a future structural direction (see open items). The targeted route was done today: a new tokeniser helper that rewrites the object field of reference tokens, a new constraints helper that uses it across the whole scene, and a call from the part-rename flow right after assigning the new name.
 
 A small clean-up went with it: the template-child creator was simplified to always name the new child "template" (no uniquify loop) and its now-unused argument was removed from the definition and its one caller — aligned with the new sibling-only uniqueness rule.
 
@@ -998,7 +1070,7 @@ Bumped the on-canvas face name labels from a hard-coded ten-pixel size to the pr
 
 Investigated the long-standing redo question on the code-debt list. Found that the redo machinery was fully built — the stack, the method, the keyboard chord — but a single shared call inside both step-back and step-forward asked the scene-load routine to wipe history every time either ran. The doc comment on the scene-load routine already said the call should not wipe in this case; the code did not match the comment. Two-character fix in the engine. After the fix you can step back many times and step forward to undo each step back, and the chain holds together.
 
-A small focused test landed alongside: it pretends the scene-capture call returns whatever marker we hand it, snapshots five marker values, walks back five steps, then walks forward five steps, and asserts the chain returns to where it started. A second test pins the existing rule that taking a fresh snapshot after stepping back wipes the forward chain.
+A small focused test was done alongside: it pretends the scene-capture call returns whatever marker we hand it, snapshots five marker values, walks back five steps, then walks forward five steps, and asserts the chain returns to where it started. A second test pins the existing rule that taking a fresh snapshot after stepping back wipes the forward chain.
 
 ### Thread four — attribute-table cross thickness
 

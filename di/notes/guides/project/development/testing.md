@@ -79,6 +79,8 @@ Each line names what the file in `src/lib/ts/tests/` covers.
     - **Test 9 — invariant cell is recomputed on load.** Build a saved scene where the invariant cell on a child carries a wrong stored value. Run the load-time pass. Assert: after load, the invariant cell's value matches the rule, not the wrong saved value.
 - **Preferences** — values written to browser storage round-trip on read, removed values come back as missing, and different keys do not collide.
     - stipulation: preferences-persist-via-browser-storage
+- **Print** — the math behind the print pipeline: a world point projected to the canvas's drawing-pixel space round-trips back through a screen-to-ray cast, and the fit-and-centre routine produces a uniform scale that fits the silhouette to the page along the limiting side and a translation that puts the silhouette's centre on the page.
+    - stipulation: printer-paper-geometry, print-to-fit
 - **Repeaters** — behavior of linear repeaters: clones share the template, step along the run axis, follow formulas at depth, sync is idempotent, and fireblocks fill the gaps.
     - stipulation: axis-bounds-parent-relative, repeater-first-child-is-template, repeater-clone-steps-along-run, fireblocks-fill-gaps, repeater-spacing-independent-from-master, firewall-cross-direction-matches-master
     - **Test 10 — clones have the right width.** A wall sits inside the root and is marked as a linear repeater along its x-axis. A stud template sits inside the wall with width 2. Trigger the repeater sync. Assert: each clone of the stud template has width stored value 2.
@@ -102,16 +104,18 @@ Each line names what the file in `src/lib/ts/tests/` covers.
 
 ### Browser-driven tests
 
-Live in `e2e/tests/*.spec.ts`. Each pins a user-interface flow that needs real mouse events and a real animation loop.
+Live in `e2e/tests/*.spec.ts`. Each pins behavior that needs the live DOM — real mouse events, a real animation loop, or real browser-event handlers.
 
 - **editing_lock** — the editing-lock toggle blocks canvas clicks while on; toggling off lets a click pick a part.
     - stipulation: editing-lock-blocks-canvas-clicks
 - **view_mode_switch** — toggling from the three-dimensional view to the flat view and back restores the prior orientation.
     - stipulation: view-mode-switch-saves-and-restores-orientation
-- **rotation_snap** — a tumble drag with rotation-snap on lands on a face-aligned orientation; turning snap off restores the prior orientation.
+- **rotation_snap** — a tumble drag with rotation-snap on settles on a face-aligned orientation; turning snap off restores the prior orientation.
     - stipulation: rotation-snap-aligns-to-face
 - **drag_vs_tumble** — a drag on empty canvas tumbles the camera; a drag with a selection edits the selection.
     - stipulation: drag-edits-selection-or-tumbles-camera
+- **print_notifications** — the two browser print notifications drive the silhouette and fit transform onto the canvas, and clear it again on print-end. The silhouette is non-empty and stable across repeated runs, and the resulting transform centres the silhouette on the page.
+    - stipulation: drawing-silhouette, print-two-notifications
 
 ---
 
@@ -181,8 +185,8 @@ The browser-test tree sits beside the source tree, separate from the unit tests,
 #### The four tests
 
 1. **Editing-lock blocks clicks.** Open the running app, turn the lock on through the toolbar, click somewhere on the canvas, assert that no selection exists and the cursor stayed as the open-grab-hand. Turn the lock off, click the same spot, assert that a selection appears.
-2. **View-mode switch saves and restores the angle.** Rotate the world to a known angle in three-dimensional mode. Switch to two-dimensional mode and assert the camera lands flat on the front face. Switch back and assert the angle returns to the one before the switch.
-3. **Rotation-snap animation lands on a face.** With the rotation-snap toggle on, drag the canvas to a slightly off-axis angle and release. Wait for the animation to settle, then assert the final angle is one of the six face-aligned ones. Repeat with the toggle off and assert the angle stays where the user left it.
+2. **View-mode switch saves and restores the angle.** Rotate the world to a known angle in three-dimensional mode. Switch to two-dimensional mode and assert the camera settles flat on the front face. Switch back and assert the angle returns to the one before the switch.
+3. **Rotation-snap animation settles on a face.** With the rotation-snap toggle on, drag the canvas to a slightly off-axis angle and release. Wait for the animation to settle, then assert the final angle is one of the six face-aligned ones. Repeat with the toggle off and assert the angle stays where the user left it.
 4. **Drag with versus without a selection.** Without a selection, drag the canvas, assert the world rotated and no SO moved. Click an SO to select it, drag the canvas, assert the SO's stored numbers changed and the camera angle did not.
 
 #### Read hooks the tests need
@@ -228,7 +232,7 @@ The browser tests run on every commit. A new continuous-integration step starts 
 - **Animation-timing flake.** A test that moves on before the animation has settled becomes intermittently red. The "settled" signal in the read hooks is the safeguard. If a test still flakes, lengthening the wait is the easy lever.
 - **The read hooks are a small test-only API.** Keeping them small and read-only — no write paths from tests, no shape that callers in production rely on — keeps the maintenance cost low.
 
-### Stipulation coverage after browser tests land
+### Stipulation coverage after browser tests are added
 
 The catalog summary will move from "fifty-four of fifty-seven directly covered" to "all fifty-seven directly covered." The four UI rules will list `e2e/tests/...` as their coverage source instead of the current "not unit-tested" note.
 
@@ -236,6 +240,6 @@ The catalog summary will move from "fifty-four of fifty-seven directly covered" 
 
 ## Stipulation coverage
 
-Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, fifty-eight of sixty-two rules are directly covered. (!) Fifty-four are pinned by unit tests in `src/lib/ts/tests/`; four — the user-interface flows that need real mouse events and the running animation loop — are pinned by browser-driven tests in [`e2e/tests/`](../../e2e/tests/). The browser tests run via `yarn e2e`. The remaining four (the drawing silhouette and the three printing rules) are not yet test-backed.
+Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, all sixty-two rules are directly covered. (!) Fifty-six are pinned by unit tests in `src/lib/ts/tests/`; six — the user-interface flows that need real mouse events and the running animation loop, plus the print pipeline that needs the live DOM — are pinned by browser-driven tests in [`e2e/tests/`](../../e2e/tests/). The browser tests run via `yarn e2e`.
 
 (!) ALWAYS: Always update this authoritative count each time testing is done.

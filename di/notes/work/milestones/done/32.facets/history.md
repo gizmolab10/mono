@@ -74,7 +74,7 @@ The design spec said Pass 1 should produce geometry with no identity. But the im
 
 ### Root cause
 
-Each pass created its own endpoints independently. Pass 1d tried to match its entry/exit points against intersection endpoints using a lookup table keyed by boundary edge. This only worked when both points happened to land on the same edge — a coincidence. When it failed, orphan endpoints appeared everywhere.
+Each pass created its own endpoints independently. Pass 1d tried to match its entry/exit points against intersection endpoints using a lookup table keyed by boundary edge. This only worked when both points happened to fall on the same edge — a coincidence. When it failed, orphan endpoints appeared everywhere.
 
 ### Key findings
 

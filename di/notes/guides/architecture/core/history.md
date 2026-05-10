@@ -6,7 +6,7 @@ Citation: `src/lib/ts/managers/History.ts`.
 
 ## How a step is captured
 
-Every mutation that the user can step back through asks the history module to take a snapshot first. A snapshot is a deep copy of the current scene — every part, the camera, the named values, the open-and-closed state of the parts panel — captured before the mutation lands. The snapshot goes onto the undo stack. The redo stack is wiped, since a fresh edit invalidates the redo branch.
+Every mutation that the user can step back through asks the history module to take a snapshot first. A snapshot is a deep copy of the current scene — every part, the camera, the named values, the open-and-closed state of the parts panel — captured before the mutation is done. The snapshot goes onto the undo stack. The redo stack is wiped, since a fresh edit invalidates the redo branch.
 
 The undo stack is capped at fifty entries. Older snapshots roll off the bottom.
 
@@ -47,7 +47,7 @@ In the editors that the canvas uses:
 
 In the events handler:
 
-- The first move of a drag, once a hit lands.
+- The first move of a drag, once a hit is done.
 
 In the side-panel sub-pages:
 

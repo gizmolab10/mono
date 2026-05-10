@@ -38,7 +38,7 @@ okay, we have points. SOT and derived. and lines and planes, objects and occlusi
 
 **edges** — for each visible edge, trim it against everything that might block it (the spatial index keeps this fast). tiny gaps between trims get merged. endpoints get the same identity tags, and when an edge meets an intersection line, they share the same endpoint.
 
-**cleanup** — ghost endpoints that landed on hidden stretches of edges get removed. then i find edges from one SO that pass in front of another SO's face — these are the occlusion boundaries the facet tracer needs later.
+**cleanup** — ghost endpoints that ended up on hidden stretches of edges get removed. then i find edges from one SO that pass in front of another SO's face — these are the occlusion boundaries the facet tracer needs later.
 
 ## 6. Facets
 

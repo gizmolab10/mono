@@ -36,7 +36,7 @@ Evidence (historical — before the fix):
 
 ### What shipped
 
-Three layers of coverage, all landed on 2026-04-15:
+Three layers of coverage, all done on 2026-04-15:
 
 - **Twenty-six subscriptions at setup.** Fourteen scene inputs (selection, object list, tick pulse, forward-face tracker, editing mode, decorations, persisted orientation, 2D/3D mode, line thickness, grid opacity, show-grid, solid mode, precision, persisted scale), six color inputs (hover derivation, selected, background, text, edge, accent), and six interaction inputs (pointer hover, drag pin offer, face-label editor, angular editor, dimension editor, unit system). Each subscription flips the flag to "out of date" when its source changes. Every unsubscribe is held on the renderer so hot-module-reload drops them cleanly.
 - **Three targeted marks for the paths that do not go through a reactive store.** The bound setter on every smart object, the top of the post-propagate hook, and the top of the resize method each mark the canvas out of date directly.
@@ -389,15 +389,15 @@ Proposal:
 - **Pack vertex-pair edge keys as a single number.** Every current mesh has far fewer than sixty-five thousand vertices, so `(Math.max(i,j) << 16) | Math.min(i,j)` is unambiguous. The map storing per-object edge adjacency can use `Map<number, …>` just as easily as a string key.
 - For **compound keys that cross a module boundary** (an edge key plus an object id plus an occluder id, stored in a map that outlives the call): keep them as strings, but only build the string once the map write is certain to happen. Today some keys are built before the decision to store.
 - For **ephemeral compound keys** used only to compare inside the same loop: compute the comparison as a pair of numbers and avoid the string altogether.
-- Ship this one **last**, after B lands. Its payoff is real only when allocation pressure is already the top remaining cost — if the gl-matrix scratch migration leaves allocation off the critical path, this one becomes optional.
+- Ship this one **last**, after B is done. Its payoff is real only when allocation pressure is already the top remaining cost — if the gl-matrix scratch migration leaves allocation off the critical path, this one becomes optional.
 
 ---
 
 ## Suggested ship order for second pass
 
-A first — deepest loop, biggest single allocator. B next — broadest hit, moderate mechanical effort, needed by A and D to share scratch. D after B, because it lands almost free once the scratch-array pattern from A is in place. C any time after its own loop lands — it is self-contained and blocks nothing else. E last; skip entirely if B leaves allocation off the critical path.
+A first — deepest loop, biggest single allocator. B next — broadest hit, moderate mechanical effort, needed by A and D to share scratch. D after B, because it is done almost free once the scratch-array pattern from A is in place. C any time after its own loop is done — it is self-contained and blocks nothing else. E last; skip entirely if B leaves allocation off the critical path.
 
-Measure between each landing. The skip-when-clean gate gave us a straightforward way to count paints; adding a per-paint millisecond sampler next to the existing rolling counter would let us confirm each step pays.
+Measure between each step. The skip-when-clean gate gave us a straightforward way to count paints; adding a per-paint millisecond sampler next to the existing rolling counter would let us confirm each step pays.
 
 ## Status — 2026-04-17
 

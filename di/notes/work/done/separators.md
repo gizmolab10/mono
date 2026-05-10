@@ -60,7 +60,7 @@ vertical:
 
 `--m` = `margin` prop (px), `--e` = `margin + end` prop (px). The 4px lateral margins give breathing room on the non-extension axis.
 
-The negative-margin + overcalculated-width trick makes the separator bleed past its container edges so the flares land centered on intersecting separators (same idea as the overlap rule in aesthetics.md).
+The negative-margin + overcalculated-width trick makes the separator bleed past its container edges so the flares end up centered on intersecting separators (same idea as the overlap rule in aesthetics.md).
 
 ### usage patterns
 

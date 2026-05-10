@@ -94,7 +94,7 @@ OpenClaw is open-source. Free to self-host. The money is in their cloud offering
 | **Professional** | $79/mo | 3,000/mo | All (Telegram, WhatsApp, Discord) | Email (24hr) |
 | **Executive** | $149/mo | Unlimited | All + priority routing | 4hr response, dedicated manager |
 
-Self-hosted costs $5–30/mo in API fees. Most personal users land around $6–13/mo. Teams $25–50. Heavy automation $100+.
+Self-hosted costs $5–30/mo in API fees. Most personal users typically pay around $6–13/mo. Teams $25–50. Heavy automation $100+.
 
 **What this tells us about Co's positioning:**
 

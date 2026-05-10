@@ -38,11 +38,11 @@ Keep:
 - new architectural pieces that change what the app can do ("axis-agnostic algebra", "reverse traversal", "lacemaker");
 - new screens, panels, navigation modes, or input modes ("electron multi-window", "mobile support", "arrow-key navigation");
 - significant data-model additions ("angular smart object", "axis swap", "unlockable givens");
-- shipped fix chains for long-standing flaws when the fix lands a real capability ("undo / redo").
+- shipped fix chains for long-standing flaws when the fix adds a real capability ("undo / redo").
 
 ### 4. Consolidate multi-commit chains
 
-A single feature often takes several commits to land — false starts, refactors, a "phase A" and a "phase B", then a final "done!". Collapse the chain to one entry, dated on the day the chain finally landed, and use a one-line note that names the shipped feature, not the journey. The intermediate "step 3 done" and "brain fried" commits do not get build numbers.
+A single feature often takes several commits to complete — false starts, refactors, a "phase A" and a "phase B", then a final "done!". Collapse the chain to one entry, dated on the day the chain finally was done, and use a one-line note that names the completed feature, not the journey. The intermediate "step 3 done" and "brain fried" commits do not get build numbers.
 
 ### 5. Decide on borderline commits
 

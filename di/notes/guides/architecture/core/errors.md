@@ -44,13 +44,13 @@ Errors are kept per attribute, keyed by part-and-attribute. The same store is al
 
 Citation: `Errors.ts` lines 26, 219-237.
 
-## How a name is checked before it lands
+## How a name is checked before it is added
 
 When the user types a new name for a part or a named value, the validator runs three checks: only letters, digits, underscore, and space are allowed; the name cannot collide with a reserved attribute letter; the name cannot collide with a sibling part or a named value. Cousins under different parents are allowed to share a name; named values are global.
 
 Citation: `Errors.ts` lines 300-326.
 
-## How the span lands on the right characters
+## How the span is done on the right characters
 
 When a parser throw carries a "got 'X'" or "at position N" hint, the span extractor pulls those out and widens the span across consecutive non-name characters. When the throw mentions running out of input, the span is the last non-blank character.
 

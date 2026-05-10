@@ -8,7 +8,7 @@ If the rotation pivot follows the shape's live center, and the user has tumbled 
 
 ## 2. Non-perpendicular projected edges need the full two-by-two solve
 
-A flat axis-aligned face has perpendicular bounds-space edges, but its screen projection generally tilts those edges so they are no longer perpendicular on screen. Decomposing a mouse displacement onto each tilted edge by orthogonal projection (mouse dotted with edge, divided by edge squared) double-counts the diagonal. The correct decomposition is to solve the two-by-two linear system "mouse equals A times first edge plus B times second edge" with the determinant. Cheap, exact, no special cases except when the two edges land colinear on screen (face viewed edge-on — return null and skip).
+A flat axis-aligned face has perpendicular bounds-space edges, but its screen projection generally tilts those edges so they are no longer perpendicular on screen. Decomposing a mouse displacement onto each tilted edge by orthogonal projection (mouse dotted with edge, divided by edge squared) double-counts the diagonal. The correct decomposition is to solve the two-by-two linear system "mouse equals A times first edge plus B times second edge" with the determinant. Cheap, exact, no special cases except when the two edges are colinear on screen (face viewed edge-on — return null and skip).
 
 ## 3. Recomputing the projection ratio from current state during a drag explodes
 

@@ -91,7 +91,7 @@ Two files.
 - A drag never rewrites formula text. Only raw numbers change.
 - For a max-corner drag: end-derived axes push length upstream; start-derived axes push end and length upstream; length-derived axes write the end bound.
 - For a min-corner drag: end-derived axes push length and start upstream; start-derived axes push length upstream; length-derived axes write the start bound.
-- If an axis's two targets would both land on the same raw number, the axis falls back to a direct bound write.
+- If an axis's two targets would both end up on the same raw number, the axis falls back to a direct bound write.
 - If the upstream walk hits a cycle, that target is inert and the drag is a no-op on that axis.
 
 ### Verification

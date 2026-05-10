@@ -1,6 +1,6 @@
 # Adherence log
 
-Hand-recorded sibling to the [adherence dashboard](./adherence%20dashboard.md). Each entry is one line. Entries are never edited after they are written. New entries land at the bottom of the relevant section.
+Hand-recorded sibling to the [adherence dashboard](./adherence%20dashboard.md). Each entry is one line. Entries are never edited after they are written. New entries go at the bottom of the relevant section.
 
 The log captures the three metrics the dashboard cannot read automatically:
 

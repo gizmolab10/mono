@@ -2,21 +2,21 @@
 
 Short commands and abbreviations for working with collaborator. NB: ALL urls on this page are relative to `~/GitHub/mono/`
 
-| Command                | Action                                                                                                                                     |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `help`                 | Show this table                                                                                                                            |
-| `claude`               | Reread `<current-go>`/CLAUDE.MD                                                                                                            |
-| `memory`               | Describe any useful auto-generated insights from userMemories (normally ignored)                                                           |
-| `tokens`               | crude (rough, loose) estimated percentage of context consumed (okay with me that no exact measurement is available, just give me a number) |
-| `proposal`             | describe your plan before executing                                                                                                        |
-| `undo`, `revert`       | Revert last file change                                                                                                                    |
-| `chime`                | Give observations, suggestions, corrections about the topic at hand                                                                        |
-| `summary`, `describe`  | Concisely summarize what you just did (forces verification) using plain english                                                            |
-| `learn`                | Summarize the mistake you just made, add it to learn, and report number of pending entries                                                 |
-| `shorthand`            | Read this file (`shorthand.md`)                                                                                                            |
-| `translate`, `rewrite` | Rewrite the last response using concise, plain english. Avoid jargon.                                                                      |
-| `geometric`            | use names of SO rather than obj_N, use label names of eps when describing faces, segs or eps                                               |
-| `update`               | update work journal and working features and map and file layout. simplify and tighten handoff                                             |
+| Command | Action |
+|----|----|
+| `help` | Show this table |
+| `claude` | Reread `<current-go>`/CLAUDE.MD |
+| `memory` | Describe any useful auto-generated insights from userMemories (normally ignored) |
+| `tokens` | crude (rough, loose) estimated percentage of context consumed (okay with me that no exact measurement is available, just give me a number) |
+| `proposal` | describe your plan before executing |
+| `undo`, `revert` | Revert last file change |
+| `chime` | In plain english, very briefly give observations, suggestions, corrections about the topic at hand |
+| `summary`, `describe` | Concisely summarize what you just did (forces verification) using plain english |
+| `learn` | Summarize the mistake you just made, add it to learn, and report number of pending entries |
+| `shorthand` | Read this file (`shorthand.md`) |
+| `translate`, `rewrite` | Rewrite the last response using concise, plain english. Avoid jargon. |
+| `geometric` | use names of SO rather than obj_N, use label names of eps when describing faces, segs or eps |
+| `update` | update work journal and working features and map and file layout. simplify and tighten handoff |
 
 ## Abbreviations
 
@@ -28,3 +28,4 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `pac`        | pros and cons. If there are no real cons, say "no cons found." Never pad with fabricated concerns.                               |
 | `cd`         | read code.debt.md                                                                                                                |
 | `up`         | update current handoff file, check if anything changed, update from the chat: the **Next** line and any relevant or new sections |
+| `dev`        | read all md files in notes/guides/develop (in both mono and `<current-go>)`                                                      |

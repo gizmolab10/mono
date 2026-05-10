@@ -52,12 +52,16 @@ test('with a selection in place, the selection persists after a drag', async ({ 
 	await page.waitForSelector('canvas');
 	await page.waitForFunction(() => 'di_test' in window);
 
-	// Toggle the editing-lock off so a click can pick a part.
-	const lock_button = page.getByRole('button', { name: /edit ⟳/ });
-	await lock_button.click();
-	await page.waitForFunction(() =>
-		(window as unknown as { di_test: { is_editing_allowed: () => boolean } }).di_test.is_editing_allowed() === true
+	// Editing is allowed by default. If a prior toggle left the lock on, flip it off.
+	const allowed = await page.evaluate(() =>
+		(window as unknown as { di_test: { is_editing_allowed: () => boolean } }).di_test.is_editing_allowed()
 	);
+	if (!allowed) {
+		await page.getByRole('button', { name: /edit ⟳/ }).click();
+		await page.waitForFunction(() =>
+			(window as unknown as { di_test: { is_editing_allowed: () => boolean } }).di_test.is_editing_allowed() === true
+		);
+	}
 
 	const canvas = page.locator('canvas').first();
 	const box = await canvas.boundingBox();

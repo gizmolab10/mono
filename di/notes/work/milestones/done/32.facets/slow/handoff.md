@@ -181,7 +181,7 @@ The four open questions were answered before building:
   stores added later get coverage automatically when declared through that
   wrapper.
 - Ship order: three logical steps. Wiring first, then the gate, then the
-  wrapper migration. All three landed in one session.
+  wrapper migration. All three were done in one session.
 - Keystroke override: skipped. The one-character rollback lever at the top of
   the render module is enough.
 - Targeted marks: shipped alongside the subscriptions, not as a follow-up.

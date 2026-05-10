@@ -2,8 +2,6 @@
 	import { colors } from './lib/ts/utilities/Colors';
 	import { c } from './lib/ts/common/Configuration';
 	import Main from './lib/svelte/main/Main.svelte';
-	import { camera, scene } from './lib/ts/render';
-	import { mat4, vec4 } from 'gl-matrix';
 
 	const { w_accent_color, w_background_color, w_selected_color, w_text_color } = colors;
 
@@ -12,79 +10,47 @@
 	});
 
 	// ── Silhouette-based print scaling ──
-	// Project every smart object's world-space corners through the camera to
-	// canvas pixel coordinates, take the smallest enclosing rectangle, then
-	// scale and translate the canvas so that rectangle fills the page area.
+	// Read the canvas's painted pixels and find the smallest rectangle that
+	// contains every painted (non-transparent) pixel. The painted content is
+	// what the printer captures, so the silhouette must be derived from those
+	// pixels, not from world-space corner projections — which can disagree
+	// with the painted content for perspective scenes near the camera plane.
 
 	function compute_silhouette(canvas: HTMLCanvasElement): { left: number, top: number, width: number, height: number } | null {
-		// Use the same visibility filter the renderer uses: an object counts
-		// only when its own visibility flag is on AND no ancestor has its
-		// "hide children" flag on. That excludes invisible container objects
-		// whose bounds may extend far beyond the visible scene.
-		const view_proj = mat4.create();
-		mat4.multiply(view_proj, camera.projection, camera.view);
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return null;
+		const w = canvas.width;
+		const h = canvas.height;
+		if (w === 0 || h === 0) return null;
 
-		const all     = scene.get_all();
-		const visible = all.filter(o => {
-			if (!o.so.visible) return false;
-			let cursor = o.parent;
-			while (cursor) {
-				if (cursor.so.hide_children) return false;
-				cursor = cursor.parent;
-			}
-			return true;
-		});
+		const data = ctx.getImageData(0, 0, w, h).data;
 
-		let x_lo =  Infinity, x_hi = -Infinity;
-		let y_lo =  Infinity, y_hi = -Infinity;
-		let any  =  false;
+		let x_lo = w, x_hi = -1;
+		let y_lo = h, y_hi = -1;
 
-		for (const obj of visible) {
-			const so = obj.so;
-			for (const x of [so.x_min, so.x_max]) {
-				for (const y of [so.y_min, so.y_max]) {
-					for (const z of [so.z_min, so.z_max]) {
-						const v = vec4.fromValues(x, y, z, 1);
-						vec4.transformMat4(v, v, view_proj);
-						if (v[3] === 0) continue;
-						const ndc_x = v[0] / v[3];
-						const ndc_y = v[1] / v[3];
-						const px = (ndc_x * 0.5 + 0.5) * canvas.width;
-						const py = (1 - (ndc_y * 0.5 + 0.5)) * canvas.height;
-						if (px < x_lo) x_lo = px;
-						if (px > x_hi) x_hi = px;
-						if (py < y_lo) y_lo = py;
-						if (py > y_hi) y_hi = py;
-						any = true;
-					}
-				}
+		for (let y = 0; y < h; y++) {
+			const row_offset = y * w * 4;
+			for (let x = 0; x < w; x++) {
+				const alpha = data[row_offset + x * 4 + 3];
+				if (alpha === 0) continue;
+				if (x < x_lo) x_lo = x;
+				if (x > x_hi) x_hi = x;
+				if (y < y_lo) y_lo = y;
+				if (y > y_hi) y_hi = y;
 			}
 		}
 
-		if (!any) return null;
-		console.log('[print] silhouette pre-clamp — left', x_lo, 'top', y_lo, 'right', x_hi, 'bottom', y_hi, '— from', visible.length, 'visible objects');
-		x_lo = Math.max(0, x_lo);
-		y_lo = Math.max(0, y_lo);
-		x_hi = Math.min(canvas.width,  x_hi);
-		y_hi = Math.min(canvas.height, y_hi);
-		const width  = x_hi - x_lo;
-		const height = y_hi - y_lo;
-		if (width <= 0 || height <= 0) return null;
-		return { left: x_lo, top: y_lo, width, height };
+		if (x_hi < x_lo || y_hi < y_lo) return null;
+
+		return { left: x_lo, top: y_lo, width: x_hi - x_lo + 1, height: y_hi - y_lo + 1 };
 	}
 
-	function on_before_print() {
-		console.log('[print] handler fired');
-		const canvas = document.querySelector('.region.graph canvas') as HTMLCanvasElement | null;
-		if (!canvas) { console.log('[print] no canvas found'); return; }
-
+	function apply_print_transform(canvas: HTMLCanvasElement) {
 		const sil = compute_silhouette(canvas);
-		if (!sil) { console.log('[print] silhouette is empty'); return; }
+		if (!sil) return;
 
 		const css_w = canvas.clientWidth  || canvas.width;
 		const css_h = canvas.clientHeight || canvas.height;
-		console.log('[print] canvas drawing surface', canvas.width, 'by', canvas.height, '— display box', css_w, 'by', css_h);
-		console.log('[print] silhouette in drawing pixels — left', sil.left, 'top', sil.top, 'width', sil.width, 'height', sil.height);
 
 		// The print stylesheet uses object-fit: contain — a single uniform
 		// scale that fills one direction and letterboxes the other.
@@ -101,19 +67,37 @@
 		const s  = Math.min(css_w / sil_css.width, css_h / sil_css.height);
 		const tx = css_w / 2 - (sil_css.left + sil_css.width  / 2) * s;
 		const ty = css_h / 2 - (sil_css.top  + sil_css.height / 2) * s;
-		console.log('[print] scale', s, '— translate', tx, ',', ty);
 
 		canvas.style.transformOrigin = '0 0';
 		canvas.style.transform       = `translate(${tx}px, ${ty}px) scale(${s})`;
-		canvas.style.outline         = '5px solid red';  // DEBUG: visible if handler ran
+	}
+
+	let print_resize_observer: ResizeObserver | null = null;
+
+	function on_before_print() {
+		const canvas = document.querySelector('.region.graph canvas') as HTMLCanvasElement | null;
+		if (!canvas) return;
+		// First pass: synchronous apply so something is on screen immediately.
+		// The resize observer below catches up if the layout reflows after.
+		apply_print_transform(canvas);
+		// Watch the canvas. The print stylesheet resizes it to fill the page,
+		// and that resize may happen on the same tick or a frame later.
+		// Re-apply on every observed resize.
+		print_resize_observer?.disconnect();
+		print_resize_observer = new ResizeObserver(() => {
+			console.log('[print diag] === resize observer fired ===');
+			apply_print_transform(canvas);
+		});
+		print_resize_observer.observe(canvas);
 	}
 
 	function on_after_print() {
+		print_resize_observer?.disconnect();
+		print_resize_observer = null;
 		const canvas = document.querySelector('.region.graph canvas') as HTMLCanvasElement | null;
 		if (!canvas) return;
 		canvas.style.transform       = '';
 		canvas.style.transformOrigin = '';
-		canvas.style.outline         = '';
 	}
 
 	if (typeof window !== 'undefined') {
@@ -159,9 +143,22 @@
 			margin: 0;
 		}
 
+		/* Anchor the height chain at the top: html, body, and the mount-point
+		 * div all fill the page area. Without these, percentage-height
+		 * descendants collapse to content height, and the drawing area ends up
+		 * too short on tall paper. */
+		:global(html), :global(body), :global(#app) {
+			height: 100% !important;
+		}
+
+		/* Half-inch margin on every side of the printed sheet. Implemented as
+		 * body padding with border-box sizing instead of @page margin so the
+		 * inset applies uniformly on all four sides regardless of browser. */
 		:global(body) {
 			background: white;
 			margin: 0;
+			padding: 0.5in !important;
+			box-sizing: border-box !important;
 		}
 
 		:global(.panel) {

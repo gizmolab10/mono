@@ -20,7 +20,7 @@
 
 ### rename constants as givens
 
-the givens rename landed — `constants` → `givens` everywhere. migration chain works: v5 `standard_dimensions` → v6 `constants` → v9 `givens`. bundled `.di` files still say `constants` and that's fine, the migrator handles it.
+the givens rename was done — `constants` → `givens` everywhere. migration chain works: v5 `standard_dimensions` → v6 `constants` → v9 `givens`. bundled `.di` files still say `constants` and that's fine, the migrator handles it.
 
 ### drop underscores
 

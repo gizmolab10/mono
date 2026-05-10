@@ -8,20 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "21e3ad04b1f2972e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/src/manual/reference-guide/parts list.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "parts list"
-            }
-          },
-          {
             "id": "637080e9f6da3143",
             "type": "leaf",
             "state": {
@@ -47,6 +33,20 @@
               },
               "icon": "lucide-file",
               "title": "stipulations"
+            }
+          },
+          {
+            "id": "acb98caa39c2118d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "notes/guides/pre-flight/shorthand.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "shorthand"
             }
           },
           {
@@ -106,7 +106,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -138,7 +138,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:details",
+                "query": "file:code",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -242,13 +242,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/guides/project/development/stipulations.md",
+                "file": "di/notes/work/now/handoff.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of stipulations"
+              "title": "Outline of handoff"
             }
           }
         ],
@@ -269,53 +269,54 @@
       "bases:Create new base": false
     }
   },
-  "active": "40c17ae35c4b3642",
+  "active": "a37a86f69a513cdc",
   "lastOpenFiles": [
-    "di/notes/work/now/code.debt.md",
-    "di/notes/work/now/stipulations.csv",
-    "di/notes/work/now/tipulations.csv",
+    "notes/work/done/docs/XXys6BTc",
+    "notes/tools/scripts/XXo9BZd2",
+    "notes/tools/scripts/XX6GDEqg",
+    "notes/tools/scripts/XXvrFvz8",
     "di/notes/guides/project/development/stipulations.md",
-    "di/notes/guides/project/development/logic driven design.md",
-    "di/src/App.svelte.tmp.71703.e60dce07babc",
-    "di/notes/work/now/handoff.md",
-    "ws/vite.config.js.timestamp-1778278747564-738b79c6b7129.mjs",
-    "di/notes/work/done/code.debt.paid.md",
+    "di/test-results/print-notifications-Diagno-f62d4-ify-the-resulting-transform-chromium/trace.zip",
+    "di/test-results/print-notifications-Diagno-f62d4-ify-the-resulting-transform-chromium/error-context.md",
+    "di/test-results/print-notifications-Diagno-f62d4-ify-the-resulting-transform-chromium",
+    "di/test-results/print-notifications-Rule-3-043eb-s-with-no-transform-applied-chromium/trace.zip",
+    "di/test-results/print-notifications-Rule-3-043eb-s-with-no-transform-applied-chromium/error-context.md",
+    "di/test-results/print-notifications-Rule-3-043eb-s-with-no-transform-applied-chromium",
+    "di/test-results/print-notifications-Rule-3-ba075-s-nothing-to-the-silhouette-chromium/trace.zip",
+    "di/test-results/print-notifications-Rule-3-ba075-s-nothing-to-the-silhouette-chromium/error-context.md",
+    "di/test-results/print-notifications-Rule-3-ba075-s-nothing-to-the-silhouette-chromium",
+    "di/test-results/print-notifications-Rule-3-70de0-s-nothing-to-the-silhouette-chromium/trace.zip",
+    "di/test-results/print-notifications-Rule-3-70de0-s-nothing-to-the-silhouette-chromium/error-context.md",
+    "di/test-results/print-notifications-Rule-3-a5bc4-clamped-to-the-canvas-edges-chromium/error-context.md",
+    "di/test-results/print-notifications-Rule-3-46700-lhouette-that-contains-both-chromium/error-context.md",
+    "di/test-results/print-notifications-Rules--e1976-ansform-the-rule-prescribes-chromium/error-context.md",
+    "di/test-results/print-notifications-Rule-6-0c433-f-inch-margin-on-every-side-chromium/error-context.md",
+    "di/test-results/print-notifications-Rule-6-f1489-oth-directions-during-print-chromium/error-context.md",
+    "di/test-results/print-notifications-Rule-6-52c70-he-page-height-during-print-chromium/error-context.md",
     "di/notes/guides/project/development/adherence dashboard.md",
-    "di/src/lib/svelte/details/D_Givens.svelte",
-    "di/notes/work/done/code.debt.paid.md.tmp.53060.4bb87d295971",
-    "di/notes/guides/architecture/components/Details.md",
-    "di/notes/guides/architecture/ui/hits system.md",
-    "di/notes/guides/architecture/ui/index.md",
-    "di/notes/guides/architecture/ui/details.md",
-    "ws/notes/guides/architecture/ux/details.md",
-    "di/notes/work/milestones/done/14.details.md",
-    "ws/notes/manuals/user/5.details.panel.md",
-    "di/src/lib/svelte/details/D_Selection.svelte",
-    "di/src/lib/svelte/details/D_Part.svelte",
-    "di/src/lib/svelte/details/D_Parts.svelte copy",
-    "di/src/assets/home/under the shop.di",
+    "di/notes/work/now/code.debt.md",
+    "s3/notes/work/code.debt.md",
+    "notes/guides/pre-flight/shorthand.md",
+    "di/notes/guides/project/development/vernacular.md",
+    "di/notes/work/now/specification driven development.md",
+    "di/notes/work/now/index copy.md",
+    "di/test-results/rotation-snap-a-tumble-dra-d872d--a-face-aligned-orientation-chromium/error-context.md",
+    "di/test-results/editing-lock-once-the-edit-ca125-s-on-the-canvas-pick-a-part-chromium/error-context.md",
+    "di/test-results/drag-vs-tumble-with-a-sele-cbf0e-ction-persists-after-a-drag-chromium/error-context.md",
+    "di/test-results/editing-lock-with-the-edit-cf9d9-canvas-does-not-pick-a-part-chromium/error-context.md",
+    "di/test-results/editing-lock-the-lock-toggle-starts-on-by-default-chromium/error-context.md",
+    "di/notes/guides/project/development/logic driven design.md",
+    "di/notes/work/now/handoff.md",
     "di/dist/assets/05-mid-stretch-DfF8mrVj.png",
     "di/dist/assets/06-dimension-input-BaK3RdUS.png",
     "di/dist/assets/03-locked-cursor-BNz07XWk.png",
     "di/dist/assets/02-dimensions-on-BtS89kMn.png",
     "di/dist/assets/01-opening-YRx_PPGG.png",
-    "di/notes/work/now/road.map.md",
     "di/dist/assets/07-blank-canvas-Ceuln_sh.png",
     "di/dist/assets/08-fresh-child-58x7WED6.png",
-    "notes/guides/pre-flight/shorthand.md",
-    "notes/guides/pre-flight/keywords.md",
-    "notes/guides/hub/index.md",
-    "notes/guides/hub/port.md",
-    "notes/guides/pre-flight/always.md",
-    "di/src/manual/reference-guide/parts list.md",
-    "di/src/manual/index.md",
-    "di/src/manual/reference-guide/index.md",
     "di/dist/assets/07-blank-canvas-B2Uo0KVX.png",
     "di/dist/assets/08-fresh-child-2u3Y4gkp.png",
     "di/dist/assets/06-dimension-input-D4fwGeTM.png",
-    "di/src/manual/reference-guide/units.md",
-    "di/src/manual/reference-guide/undo and redo.md",
-    "di/src/manual/reference-guide/selection.md",
     "ws/notes/work/Untitled.canvas"
   ]
 }

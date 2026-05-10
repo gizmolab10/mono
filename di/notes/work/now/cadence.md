@@ -22,4 +22,4 @@ Questions about method — "how will you do X?" — are questions, not orders. T
 
 ## Where co keeps self-corrections
 
-The shared folder at `notes/guides/collaborate/` holds the stable description of how we work. This file sits at `notes/work/cadence.md` as living-notes-in-progress. Per-moment refinements and corrections land in co's memory folder at `~/.claude/projects/-Users-sand-GitHub-mono/memory/`, one feedback file per rule, indexed from `MEMORY.md`.
+The shared folder at `notes/guides/collaborate/` holds the stable description of how we work. This file sits at `notes/work/cadence.md` as living-notes-in-progress. Per-moment refinements and corrections go in co's memory folder at `~/.claude/projects/-Users-sand-GitHub-mono/memory/`, one feedback file per rule, indexed from `MEMORY.md`.

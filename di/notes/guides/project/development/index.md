@@ -11,4 +11,5 @@
 - [Stipulations](./stipulations.md)
 - [Testing](./testing.md)
 - [Updating Guides](./updating guides.md)
+- [Vernacular](./vernacular.md)
 

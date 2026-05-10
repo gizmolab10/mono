@@ -60,7 +60,7 @@ Every arrow between phases is a proximity match that can fail.
 Phase 1 — Geometry (view-independent, world space)
   For every front-facing face pair across SOs:
     • face-face intersection line, clipped to both quads
-    • endpoints land on specific edges → register once, by identity
+    • endpoints end up on specific edges → register once, by identity
 
   For every edge vs every other-SO face:
     • edge pierces face? → pierce point registered by identity (edge + face)

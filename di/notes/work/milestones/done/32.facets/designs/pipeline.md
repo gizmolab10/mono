@@ -73,7 +73,7 @@ graph TD
         Pierce if unoccluded intersection endpoint."]
 
         P3V["Pass 3: Pierce at vertex = corner merge
-        If intersection line endpoint lands on a mesh vertex,
+        If intersection line endpoint falls on a mesh vertex,
         merge pierce key to corner key."]
 
         P3P["Pass 3: Propagate key rewrites

@@ -250,7 +250,10 @@ class Render {
 
 	init(canvas: HTMLCanvasElement): void {
 		this.canvas = canvas;
-		this.ctx = canvas.getContext('2d')!;
+		// The print pipeline reads back every pixel via getImageData each time
+		// the user prints. willReadFrequently tells the browser to keep the
+		// canvas in CPU memory so those reads are fast.
+		this.ctx = canvas.getContext('2d', { willReadFrequently: true })!;
 		this.dpr = window.devicePixelRatio || 1;
 		const w = canvas.width, h = canvas.height;
 		this.size = new Size(w, h);
@@ -647,7 +650,10 @@ class Render {
 
 		// 3D wireframe for invisible SOs (occluded by visible children in solid/2D)
 		this._phase('hidden wireframe');
-		for (const obj of all_objects) {
+		// During print, skip the dashed wireframe for invisible objects so the
+		// printed page shows only the visible drawing — not the helper bounds.
+		const is_print = typeof window !== 'undefined' && window.matchMedia('print').matches;
+		if (!is_print) for (const obj of all_objects) {
 			if (obj.so.visible) continue;
 			const projected = projected_map.get(obj.id)!;
 			const world = (solid) ? this.get_world_matrix(obj) : undefined;

@@ -97,7 +97,7 @@ If a clip endpoint was created by Pass 2 splitting:
 
 ### Shared identity rule
 
-When two endpoints from different clips land at the same screen position (within tolerance):
+When two endpoints from different clips end up at the same screen position (within tolerance):
 - They should share the same key
 - Priority: corner > fi > oc > ex
 - This replaces the current code's three registries and all the matching logic

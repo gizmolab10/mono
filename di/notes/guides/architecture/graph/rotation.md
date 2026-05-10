@@ -30,7 +30,7 @@ Formulas read world coordinates. Renderer reads camera view. They never cross.
 Two passes build the bounding box:
 
 - **World pass** — union of all descendants' absolute bounds, *excluding* any subtree rooted at a rotated direct child. Unrotated children contribute their normal resolved geometry.
-- **Rotation pass** — for each rotated direct child, collect its full subtree AABB (the child's own bounds unioned with all its descendants'). Take those 8 corners, rotate them around the child's center using its orientation quaternion, and expand the bbox with the projected positions. The rotation center matches `get_world_matrix` (center of the child's own bounds), so the projection lands in the right spot.
+- **Rotation pass** — for each rotated direct child, collect its full subtree AABB (the child's own bounds unioned with all its descendants'). Take those 8 corners, rotate them around the child's center using its orientation quaternion, and expand the bbox with the projected positions. The rotation center matches `get_world_matrix` (center of the child's own bounds), so the projection is placed in the right spot.
 
 Rotated subtrees are *excluded* from the world pass. Their unrotated bounds can be larger than the rotated camera view extent (rotation compresses some axes), so including both would inflate the camera view. Only the projected AABB matters.
 

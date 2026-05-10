@@ -41,7 +41,7 @@ These have cost real time. Avoid them.
 
 1. **Milestone files are historical, not authoritative.** A milestone may describe a flag, a use case, or a method that did not survive to the current code. Always grep for the names before documenting them. The fixed-versus-variable design from milestone thirteen is the canonical example: the design was rich, the code never carried the boolean.
 2. **Do not pad the gap list with guesses.** A gap claim that has not been verified gets the prefix "I AM GUESSING" or it does not go on the list. Padding the list to look thorough is dishonest and corrodes trust.
-3. **"Move" means relocate.** When a directive says move, that is copy plus delete. Do not split the operation into copy plus question; if there is doubt about deletion, ask before the copy lands.
+3. **"Move" means relocate.** When a directive says move, that is copy plus delete. Do not split the operation into copy plus question; if there is doubt about deletion, ask before the copy happens.
 4. **A partial read produces a wrong gap.** Reading the first eighty lines of a page and concluding it covers only the alias table will produce a wrong gap. Always read the full page before claiming what is missing.
 5. **If a directive is ambiguous, ask.** Three readings of "move key paths into arch/ui" all looked plausible; the right reading was none of them. Asking once is cheap; writing the wrong page is expensive.
 

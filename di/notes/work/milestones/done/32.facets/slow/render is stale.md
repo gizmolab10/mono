@@ -93,7 +93,7 @@ Pick one option and commit to it in the same commit that ships the gate, or the 
 
 ## Ship order
 
-This can land in one commit or three. Splitting gives faster feedback:
+This can be done in one commit or three. Splitting gives faster feedback:
 
 1. **Commit one — wire the flag but do not gate.** Add the flag, add the mark function, add the twenty-six subscriptions, add the three targeted marks. Do not add the early-return in the tick callback yet. The behavior is identical to today, but you can add one line of instrumentation (a per-frame counter that logs when the flag is stale at the top of each tick) and watch a full session to see whether the flag fires where you expect. Missing wiring will show up as "canvas changed but flag was not set at the start of the tick that painted it."
     
@@ -190,7 +190,7 @@ Evidence:
 
 ### Audit results
 
-Every call site below mutates something the canvas reflects. Each needs to call `mark_render_as_stale(true)` when the gate lands. Categories match the proposal's audit-first bullet. Line numbers were captured on the date of the audit and should be re-verified before wiring.
+Every call site below mutates something the canvas reflects. Each needs to call `mark_render_as_stale(true)` when the gate is added. Categories match the proposal's audit-first bullet. Line numbers were captured on the date of the audit and should be re-verified before wiring.
 
 **Legend:** a bullet starting with `*` writes directly to a reactive store. Unstarred bullets mutate a plain class field or data object. The split matters because every reactive-store write already fires subscribers — a single "mark stale whenever any reactive store fires" hook would cover every starred bullet at once, leaving only the unstarred bullets to be wired individually.
 

@@ -105,7 +105,7 @@ Citation: the resolver lives in `src/lib/ts/algebra/Constraints.ts` (`resolve` a
 Formulas may reference globally named numbers — for example `wall_thickness` or `door_width`. The named-value table sits beside the formula machinery; bare names that no part in the scene owns resolve to it.
 
 - Locality beats globality. If a sibling under the same parent shares the name, the sibling wins. The named-value table is the fallback when no part owns the name.
-- A named value can be locked. A locked value refuses reverse propagation, the same way a locked cell does — a drag whose downstream walk lands on a locked named value finds nothing it can move and does nothing.
+- A named value can be locked. A locked value refuses reverse propagation, the same way a locked cell does — a drag whose downstream walk is done on a locked named value finds nothing it can move and does nothing.
 - The save format carries the named-value table alongside the scene.
 
 ## Parse errors
@@ -131,7 +131,7 @@ When a child's position attribute has no formula, Constraints treats it as `pare
 
 ## Constraints during stretching
 
-When the user drags a corner or an edge, the new value has to land somewhere. The algebra has two distinct paths for absorbing that change, and the user chooses between them at the time they fill in (or leave empty) the formula cells.
+When the user drags a corner or an edge, the new value has to be placed somewhere. The algebra has two distinct paths for absorbing that change, and the user chooses between them at the time they fill in (or leave empty) the formula cells.
 
 The first path is the empty-formula offset model described above. A child whose position attribute carries no formula tracks the parent — the parent's stretch slides the child along by the same amount, and the stored offset stays the same. This is the default; it requires nothing of the user.
 
@@ -144,7 +144,7 @@ Citation: the search-and-solve helper sits in `src/lib/ts/algebra/Constraints.ts
 The tokenizer handles compound feet-inches and mixed-number inches as single literal values in formulas:
 
 | Input | Parsed as |
-|-------|-----------|
+| ----- | --------- |
 | `1 1/2"` | 1.5 inches → mm |
 | `5' 3"` | 5 feet 3 inches → mm |
 | `5' 3 1/2"` | 5 feet 3.5 inches → mm |
@@ -184,7 +184,7 @@ Without this, a persisted formula on an invariant attribute would prevent `enfor
 Four node types in `Nodes.ts`, discriminated on `type`:
 
 | Type | Fields | Example source | Example tree |
-|------|--------|----------------|--------------|
+| ---- | ------ | -------------- | ------------ |
 | `literal` | `value: number` | `42` | `{ type: 'literal', value: 42 }` |
 | `reference` | `object: string, attribute: string` | `.w` | `{ type: 'reference', object: 'parent_id', attribute: 'width' }` |
 | `unary` | `operator: '-', operand: Node` | `-x` | `{ type: 'unary', operator: '-', operand: <ref> }` |
@@ -194,7 +194,7 @@ Four node types in `Nodes.ts`, discriminated on `type`:
 
 ### Pipeline
 
-```
+```text
 formula string
   → Tokenizer.tokenize()         → Token[]
   → Tokenizer.fuse_name_tokens() → Token[] (adjacent tokens collapsed into single token)
@@ -205,7 +205,7 @@ formula string
 
 ### Grammar
 
-```
+```text
 expression  →  term (('+' | '-') term)*
 term        →  factor (('*' | '/') factor)*
 factor      →  '-' factor | atom
@@ -235,7 +235,7 @@ Used by `try_solve_given` to adjust a given so a formula evaluates to a target v
 ## Files
 
 | File | Role |
-|------|------|
+| ---- | ---- |
 | `algebra/Nodes.ts` | Node types — literal, reference, binary, unary |
 | `algebra/Tokenizer.ts` | String → token stream, unit suffixes, compound imperial |
 | `algebra/Compiler.ts` | Recursive descent parser — expression/term/factor/atom |
@@ -257,14 +257,14 @@ Used by `try_solve_given` to adjust a given so a formula evaluates to a target v
 | `Orientation.test.ts` | from_bounds: flat→identity, non-square angle, 45° around each axis, 30° staircase. Use case S: staircase orientation stable on stretch. Use case W: fixed dimensions, slides with origin. recompute_max_bounds: 45°/30° redistribution, diagonal preserved. |
 | `Center.test.ts` | Forward reads (cross-direction, cross-SO, with-literal arithmetic, mixed-form sums, freshness on changes). Self-loop rejection at edit time (start, end, length on same direction; qualified-self form). Self-loop acceptance (cross-direction same-SO; cross-SO same-direction). Both write paths refuse to write through a center reference. Status-strip messages on a refused drag — walker, resolver-level write, free-constant write — with dedup. Save-and-reparse round trip and explicit-to-agnostic round trip preserve the bare letter. |
 | `Givens.test.ts` | Define and read a named value. Reference resolution (a bare name resolves to the named-value table when no part owns the name). Reverse propagation through a formula updates the referenced named value. A locked named value refuses reverse propagation. Sibling SO name beats a same-spelled named value at the local level (locality wins). |
-| `Errors.test.ts` | Parse-error classification (unknown attribute, unknown SO, leading dot, unexpected dot, bare SO without attribute, bare-SO-as-self). Span computation lands on the offending fragment. Fuzzy-match suggestions for unknown SO names. Errors persist on a cell until the cell is edited or cleared. |
+| `Errors.test.ts` | Parse-error classification (unknown attribute, unknown SO, leading dot, unexpected dot, bare SO without attribute, bare-SO-as-self). Span computation is done on the offending fragment. Fuzzy-match suggestions for unknown SO names. Errors persist on a cell until the cell is edited or cleared. |
 
 ## Face-Axis Mapping
 
 Faces are indexed 0-5. Each pair shares an axis normal. XY = bottom/top, XZ = front/back, YZ = left/right.
 
 | Index | Name | Normal | Fixed Axis | Editable Axes | Opposite |
-|-------|--------|--------|-----------|---------------|----------|
+| ----- | ---- | ------ | ---------- | ------------- | -------- |
 | 0 | bottom | (0,0,-1) | z | x, y | 1 (top) |
 | 1 | top | (0,0,+1) | z | x, y | 0 (bottom) |
 | 2 | left | (-1,0,0) | x | y, z | 3 (right) |
