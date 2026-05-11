@@ -106,7 +106,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -242,13 +242,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/handoff.md",
+                "file": "di/notes/work/now/code.debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -269,8 +269,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "a37a86f69a513cdc",
+  "active": "a14d93139e053a32",
   "lastOpenFiles": [
+    "di/notes/work/done/code.debt.paid.md",
+    "di/notes/work/now/code.debt.md",
+    "di/notes/work/now/handoff.md",
     "notes/work/done/docs/XXys6BTc",
     "notes/tools/scripts/XXo9BZd2",
     "notes/tools/scripts/XX6GDEqg",
@@ -285,7 +288,6 @@
     "di/test-results/print-notifications-Rule-3-ba075-s-nothing-to-the-silhouette-chromium/trace.zip",
     "di/test-results/print-notifications-Rule-3-ba075-s-nothing-to-the-silhouette-chromium/error-context.md",
     "di/test-results/print-notifications-Rule-3-ba075-s-nothing-to-the-silhouette-chromium",
-    "di/test-results/print-notifications-Rule-3-70de0-s-nothing-to-the-silhouette-chromium/trace.zip",
     "di/test-results/print-notifications-Rule-3-70de0-s-nothing-to-the-silhouette-chromium/error-context.md",
     "di/test-results/print-notifications-Rule-3-a5bc4-clamped-to-the-canvas-edges-chromium/error-context.md",
     "di/test-results/print-notifications-Rule-3-46700-lhouette-that-contains-both-chromium/error-context.md",
@@ -294,7 +296,6 @@
     "di/test-results/print-notifications-Rule-6-f1489-oth-directions-during-print-chromium/error-context.md",
     "di/test-results/print-notifications-Rule-6-52c70-he-page-height-during-print-chromium/error-context.md",
     "di/notes/guides/project/development/adherence dashboard.md",
-    "di/notes/work/now/code.debt.md",
     "s3/notes/work/code.debt.md",
     "notes/guides/pre-flight/shorthand.md",
     "di/notes/guides/project/development/vernacular.md",
@@ -306,7 +307,6 @@
     "di/test-results/editing-lock-with-the-edit-cf9d9-canvas-does-not-pick-a-part-chromium/error-context.md",
     "di/test-results/editing-lock-the-lock-toggle-starts-on-by-default-chromium/error-context.md",
     "di/notes/guides/project/development/logic driven design.md",
-    "di/notes/work/now/handoff.md",
     "di/dist/assets/05-mid-stretch-DfF8mrVj.png",
     "di/dist/assets/06-dimension-input-BaK3RdUS.png",
     "di/dist/assets/03-locked-cursor-BNz07XWk.png",

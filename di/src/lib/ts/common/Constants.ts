@@ -83,19 +83,22 @@ export default class Constants {
 		long_click:	  800,
 	};
 
-	width = {
-		wrap_mobile    : 1570,
-		wrap_phone     : 720,
-		window_min     : 400,
-		details        : 350,
-		title          : 120,
-		small          : 16,
-		indent         : 12,
-		// Approximate widths of the two on-canvas neighbors of the status strip
-		// at the bottom of the graph. Used to compute the strip's left and right
-		// offsets so it sits between them with one layout gap on each side.
-		build_button   : 80,
-		guides_slider  : 40,
+	gap = {
+		tiny:  Math.round(common_size / 7),
+		small: Math.round(common_size / 5.5),
+		main:  Math.round(common_size / 5),
+		large: Math.round(common_size / 3.3),
+	};
+
+	layout = {
+		margin:         Math.round(common_size / 3.2),
+		padding_small:  Math.round(common_size / 4),
+		padding:        Math.round(common_size / 3),
+		letter_spacing: 0.5,
+		extra: {
+			main:       Math.round(common_size / 5),    // same as gap
+			content:    Math.round(common_size / 3.2),	// same as margin
+		}
 	};
 
 	thickness = {
@@ -111,19 +114,19 @@ export default class Constants {
 		tick:        1,
 	};
 
-	layout = {
-		gap_tiny:       Math.round(common_size / 7),
-		gap_small:      Math.round(common_size / 5.5),
-		gap:            Math.round(common_size / 5),
-		gap_large:      Math.round(common_size / 3.3),
-		padding_small:  Math.round(common_size / 4),
-		margin:         Math.round(common_size / 3.2),
-		padding:        Math.round(common_size / 3),
-		letter_spacing: 0.5,
-		extra: {
-			main:       Math.round(common_size / 5),    // same as gap
-			content:    Math.round(common_size / 3.2),	// same as margin
-		}
+	width = {
+		wrap_mobile    : 1570,
+		wrap_phone     : 720,
+		window_min     : 400,
+		details        : 350,
+		title          : 120,
+		small          : 16,
+		indent         : 12,
+		// Approximate widths of the two on-canvas neighbors of the status strip
+		// at the bottom of the graph. Used to compute the strip's left and right
+		// offsets so it sits between them with one layout gap on each side.
+		build_button   : 80,
+		guides_slider  : 40,
 	};
 
 	height = {

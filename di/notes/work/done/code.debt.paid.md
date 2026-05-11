@@ -259,3 +259,8 @@
     - [x] vertically center in table cell
     - [x] add a 'x' column at the right side of parts table  -> click deletes that part, undo restores it
 - [x] vertical scroll bar -> should widen details so content width stays constant
+- [x] print just the graph, scaled to fit
+- [x] area below last details -> accent color and remove fillets from under last hideable
+    - [x] convert all the hidables (content) into having rounded corners
+        - [x] exactly preserving the current look
+        - [x] remove the separators from the details

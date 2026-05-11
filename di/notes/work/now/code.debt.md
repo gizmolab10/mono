@@ -4,7 +4,12 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [x] print just the graph, scaled to fit
+- [ ] move the '?' to the right, and the 'return to design intuition' button
+- [ ] on launch, none of the `face_buttons` are selected
+- [ ] move the guides slider into the graph, bottom right corner, vertical slider
+- [ ] print
+    - [ ] wrong when scaled huge
+    - [ ] blurry, need the other solution
 - [ ] move logic driven design -> alongside always
     - [ ] convert to instructions that can do the heavy lifting
 - [ ] measure basement

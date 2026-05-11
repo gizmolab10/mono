@@ -89,12 +89,13 @@ export class Configuration {
 
 		root.setProperty('--l-letter-spacing', `${k.layout.letter_spacing}px`);
 		root.setProperty('--l-padding-small',  `${k.layout.padding_small}px`);
-		root.setProperty('--l-gap-large',      `${k.layout.gap_large}px`);
-		root.setProperty('--l-gap-small',      `${k.layout.gap_small}px`);
-		root.setProperty('--l-gap-tiny',       `${k.layout.gap_tiny}px`);
 		root.setProperty('--l-padding',        `${k.layout.padding}px`);
 		root.setProperty('--l-margin',         `${k.layout.margin}px`);
-		root.setProperty('--l-gap',            `${k.layout.gap}px`);
+
+		root.setProperty('--l-gap-large',      `${k.gap.large}px`);
+		root.setProperty('--l-gap-small',      `${k.gap.small}px`);
+		root.setProperty('--l-gap-tiny',       `${k.gap.tiny}px`);
+		root.setProperty('--l-gap',            `${k.gap.main}px`);
 
 		root.setProperty('--th-tick',          `${k.thickness.tick}px`);
 		root.setProperty('--th-track',         `${k.thickness.track}px`);

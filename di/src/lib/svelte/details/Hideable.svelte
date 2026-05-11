@@ -59,6 +59,7 @@
 
 <style>
 	.hideable {
+		gap            : var(--th-thin-sep);
 		flex-direction : column;
 		display        : flex;
 	}
@@ -70,18 +71,18 @@
 		color           : rgba(0, 0, 0, 1);
 		z-index         : var(--z-action);
 		height          : var(--h-banner);
+		background      : var(--bg);
 		text-transform  : lowercase;
 		position        : relative;
 		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
 		overflow        : hidden;
-		margin          : 3px 0;
 		display         : flex;
 		border          : none;
-		background      : var(--bg);
 		font-weight     : 300;
 		outline         : none;
+		margin          : 0;
 	}
 
 	.banner::before {
@@ -123,7 +124,7 @@
 		padding       : var(--l-margin);
 		background    : var(--bg);
 		position      : relative;
-		margin        : 0px 0 0;
+		margin        : 0;
 	}
 
 </style>

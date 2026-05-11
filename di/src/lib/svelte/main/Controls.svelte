@@ -222,13 +222,6 @@
 		left        : 0;
 	}
 
-	.sliders-row {
-		gap         : var(--l-gap-tiny);
-		flex        : 1 1 auto;
-		align-items : center;
-		display     : flex;
-	}
-
 	.guides-block {
 		flex-direction : column;
 		align-items    : center;

@@ -102,8 +102,7 @@
 	class            = 'details'
 	bind:this        = {scroll_box}
 	style:color      = 'var(--text)'
-	onscroll         = {() => hits.recalibrate()}
-	style:background = '{scrollbar_w > 0 ? "var(--accent)" : "var(--bg)"}'>
+	onscroll         = {() => hits.recalibrate()}>
 
 	<div bind:this={inner_box} class='banner-zone' style:padding-right='{scrollbar_w > 0 ? th_sep + "px" : "0"}'>
 		<Hideable title='preferences' id='preferences' detail={T_Details.preferences}>
@@ -130,7 +129,7 @@
 			<D_Parts />
 		</Hideable>
 
-		<Hideable title='edit' id='selection' detail={T_Details.selection}>
+		<Hideable title='selection' id='selection' detail={T_Details.selection}>
 			<D_Selection />
 		</Hideable>
 
@@ -165,13 +164,13 @@
 </div>
 
 <style>
-	.banner-zone :global(.hideable:last-child .slot) {
-		border-bottom : 3px solid var(--accent);
-	}
 
 	.banner-zone {
-		background : var(--accent);
-		position   : relative;
+		gap            : var(--th-sep);
+		background     : var(--accent);
+		position       : relative;
+		flex-direction : column;
+		display        : flex;
 	}
 
 	.banner-add:hover,
@@ -180,15 +179,8 @@
 		background : var(--white);
 	}
 
-	.banner-zone::after {
-		border-radius : var(--corner-banner) var(--corner-banner) 0 0;
-		height        : var(--corner-banner);
-		background    : var(--bg);
-		display       : block;
-		content       : '';
-	}
-
 	.details {
+		background : var(--accent);
 		box-sizing : border-box;
 		position   : relative;
 		overflow-x : hidden;
