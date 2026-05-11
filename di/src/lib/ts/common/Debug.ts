@@ -4,12 +4,25 @@ import { scene } from '../render/Scene';
 import { camera } from '../render/Camera';
 import Smart_Object from '../runtime/Smart_Object';
 import type { Bound } from '../types/Types';
-import { vec3 } from 'gl-matrix';
+import { quat, vec3 } from 'gl-matrix';
 
 const CUBE_EDGES: [number, number][] = [
 	[0, 1], [1, 2], [2, 3], [3, 0],
 	[4, 5], [5, 6], [6, 7], [7, 4],
 	[0, 4], [1, 5], [2, 6], [3, 7],
+];
+
+// Six faces of a cube, each as a list of vertex indices in the canonical
+// winding order used everywhere else in the project (see Topology.test.ts).
+// Required so the renderer (solid mode by default) can paint and outline the
+// box and the back-face cull picks the right ones.
+const CUBE_FACES: number[][] = [
+	[3, 2, 1, 0], // z_min
+	[4, 5, 6, 7], // z_max
+	[0, 4, 7, 3], // x_min
+	[2, 6, 5, 1], // x_max
+	[7, 6, 2, 3], // y_max
+	[0, 1, 5, 4], // y_min
 ];
 
 export class Debug {
@@ -42,17 +55,20 @@ export class Debug {
 			add_so: ((arg: unknown) => {
 				const config = arg as { name: string, bounds: Partial<Record<Bound, number>>, parent_name?: string };
 				const so = new Smart_Object(config.name);
+				const parent_node = config.parent_name
+					? scene.get_all().find(o => o.so.name === config.parent_name)
+					: undefined;
+				// Wire the scene reference BEFORE setting bounds so set_bound applies
+				// the parent-relative subtraction; otherwise the bounds get stored
+				// as absolute values and read back as doubled values.
+				const o_scene = scene.create({ so, edges: CUBE_EDGES, faces: CUBE_FACES, parent: parent_node });
+				so.scene = o_scene;
 				for (const [k, v] of Object.entries(config.bounds)) {
 					so.set_bound(k as Bound, v as number);
 				}
 				for (const axis of so.axes) {
 					axis.length.value = axis.end.value - axis.start.value;
 				}
-				const parent_node = config.parent_name
-					? scene.get_all().find(o => o.so.name === config.parent_name)
-					: undefined;
-				const o_scene = scene.create({ so, edges: CUBE_EDGES, parent: parent_node });
-				so.scene = o_scene;
 				return null;
 			}) as (...args: unknown[]) => unknown,
 			set_camera_position: ((eye: unknown, target: unknown, up: unknown) => {
@@ -67,6 +83,13 @@ export class Debug {
 				return null;
 			}) as (...args: unknown[]) => unknown,
 			set_camera_ortho: ((on: unknown) => { camera.set_ortho(Boolean(on)); return null; }) as (...args: unknown[]) => unknown,
+			set_orientation: ((q: unknown) => {
+				const a = q as [number, number, number, number];
+				stores.set_orientation(quat.fromValues(a[0], a[1], a[2], a[3]));
+				return null;
+			}) as (...args: unknown[]) => unknown,
+			set_scale: ((s: unknown) => { stores.w_scale.set(Number(s)); return null; }) as (...args: unknown[]) => unknown,
+			set_decorations: ((n: unknown) => { stores.w_decorations.set(Number(n)); return null; }) as (...args: unknown[]) => unknown,
 			set_so_visibility: ((name: unknown, visible: unknown) => {
 				const node = scene.get_all().find(o => o.so.name === (name as string));
 				if (node) node.so.visible = Boolean(visible);

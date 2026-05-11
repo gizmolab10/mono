@@ -20,23 +20,52 @@ class Events_3D {
 
 	canvas: HTMLCanvasElement | null = null;
 
+	// Listener references kept so a re-init (from hot reload or scene switch)
+	// can remove the old ones before attaching new ones. Without this, every
+	// hot reload during development piles up another set of listeners, and
+	// mouseup runs end_drag once per attached listener. The first end_drag
+	// run clears the drag target; the second run then sees no target and
+	// deselects through the click-on-background branch.
+	private listener_mouseenter: ((e: MouseEvent) => void) | null = null;
+	private listener_mouseleave: ((e: MouseEvent) => void) | null = null;
+	private listener_mousedown:  ((e: MouseEvent) => void) | null = null;
+	private listener_mouseup:    (() => void) | null = null;
+	private listener_mousemove:  ((e: MouseEvent) => void) | null = null;
+	private prev_canvas: HTMLCanvasElement | null = null;
+
 	init(canvas: HTMLCanvasElement): void {
+		// Detach any previously attached listeners before adding the new set
+		// so re-init (from hot reload or a fresh scene) doesn't accumulate
+		// duplicates. Each duplicate makes mouseup fire end_drag again,
+		// which clears the drag target the previous run set up and triggers
+		// the click-on-background deselect branch.
+		if (this.listener_mouseenter && this.prev_canvas) this.prev_canvas.removeEventListener('mouseenter', this.listener_mouseenter);
+		if (this.listener_mouseleave && this.prev_canvas) this.prev_canvas.removeEventListener('mouseleave', this.listener_mouseleave);
+		if (this.listener_mousedown  && this.prev_canvas) this.prev_canvas.removeEventListener('mousedown',  this.listener_mousedown);
+		if (this.listener_mousemove  && this.prev_canvas) this.prev_canvas.removeEventListener('mousemove',  this.listener_mousemove);
+		if (this.listener_mouseup) document.removeEventListener('mouseup', this.listener_mouseup);
+
 		this.canvas = canvas;
+		this.prev_canvas = canvas;
 
 		if ('ontouchstart' in window) return;
 
-		canvas.addEventListener('mouseenter', () => { this.mouse_in_canvas = true; });
-		canvas.addEventListener('mouseleave', () => { this.mouse_in_canvas = false; });
+		this.listener_mouseenter = () => { this.mouse_in_canvas = true; };
+		this.listener_mouseleave = () => { this.mouse_in_canvas = false; };
+		canvas.addEventListener('mouseenter', this.listener_mouseenter);
+		canvas.addEventListener('mouseleave', this.listener_mouseleave);
 
-		canvas.addEventListener('mousedown', (e) => {
+		this.listener_mousedown = (e: MouseEvent) => {
 			this.begin_drag(canvas, e.clientX, e.clientY, e);
-		});
+		};
+		canvas.addEventListener('mousedown', this.listener_mousedown);
 
-		document.addEventListener('mouseup', () => {
+		this.listener_mouseup = () => {
 			this.end_drag();
-		});
+		};
+		document.addEventListener('mouseup', this.listener_mouseup);
 
-		canvas.addEventListener('mousemove', (e) => {
+		this.listener_mousemove = (e: MouseEvent) => {
 			const rect = canvas.getBoundingClientRect();
 			const point = new Point(e.clientX - rect.left, e.clientY - rect.top);
 
@@ -62,7 +91,8 @@ class Events_3D {
 			} else if (this.on_drag) {
 				this.continue_drag(canvas, e.clientX, e.clientY, e.altKey);
 			}
-		});
+		};
+		canvas.addEventListener('mousemove', this.listener_mousemove);
 
 	}
 

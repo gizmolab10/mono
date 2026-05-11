@@ -7,9 +7,11 @@ offer a proposal for the first unchecked item, and add it to a new section at th
 - [ ] move the '?' to the right, and the 'return to design intuition' button
 - [ ] on launch, none of the `face_buttons` are selected
 - [ ] move the guides slider into the graph, bottom right corner, vertical slider
+- [ ] merge relevant constants -> configuration
 - [ ] print
     - [ ] wrong when scaled huge
     - [ ] blurry, need the other solution
+- [ ] read the app code base and write a formal, machine-readable specification, that when followed by you can reproduce the app
 - [ ] move logic driven design -> alongside always
     - [ ] convert to instructions that can do the heavy lifting
 - [ ] measure basement

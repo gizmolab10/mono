@@ -8,6 +8,20 @@
         "type": "tabs",
         "children": [
           {
+            "id": "a14d93139e053a32",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/now/specification driven development.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "specification driven development"
+            }
+          },
+          {
             "id": "637080e9f6da3143",
             "type": "leaf",
             "state": {
@@ -33,20 +47,6 @@
               },
               "icon": "lucide-file",
               "title": "stipulations"
-            }
-          },
-          {
-            "id": "acb98caa39c2118d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/guides/pre-flight/shorthand.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "shorthand"
             }
           },
           {
@@ -78,7 +78,7 @@
             }
           },
           {
-            "id": "a14d93139e053a32",
+            "id": "bdde8b0e05f453d5",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -89,6 +89,20 @@
               },
               "icon": "lucide-file",
               "title": "code.debt"
+            }
+          },
+          {
+            "id": "6784334a58b5dae6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/now/work journal.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "work journal"
             }
           },
           {
@@ -106,7 +120,7 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 6
       }
     ],
     "direction": "vertical"
@@ -163,8 +177,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 352.5024719238281,
-    "collapsed": true
+    "width": 354.5026054382324
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -242,13 +255,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/code.debt.md",
+                "file": "di/notes/work/now/work journal.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of work journal"
             }
           }
         ],
@@ -269,44 +282,44 @@
       "bases:Create new base": false
     }
   },
-  "active": "a14d93139e053a32",
+  "active": "6784334a58b5dae6",
   "lastOpenFiles": [
-    "di/notes/work/done/code.debt.paid.md",
     "di/notes/work/now/code.debt.md",
     "di/notes/work/now/handoff.md",
-    "notes/work/done/docs/XXys6BTc",
-    "notes/tools/scripts/XXo9BZd2",
-    "notes/tools/scripts/XX6GDEqg",
-    "notes/tools/scripts/XXvrFvz8",
-    "di/notes/guides/project/development/stipulations.md",
-    "di/test-results/print-notifications-Diagno-f62d4-ify-the-resulting-transform-chromium/trace.zip",
-    "di/test-results/print-notifications-Diagno-f62d4-ify-the-resulting-transform-chromium/error-context.md",
-    "di/test-results/print-notifications-Diagno-f62d4-ify-the-resulting-transform-chromium",
-    "di/test-results/print-notifications-Rule-3-043eb-s-with-no-transform-applied-chromium/trace.zip",
-    "di/test-results/print-notifications-Rule-3-043eb-s-with-no-transform-applied-chromium/error-context.md",
-    "di/test-results/print-notifications-Rule-3-043eb-s-with-no-transform-applied-chromium",
+    "di/notes/work/now/specification driven development.md",
+    "di/test-results",
+    "di/test-results/print-notifications-Rule-3-46700-lhouette-that-contains-both-chromium/trace.zip",
+    "di/test-results/print-notifications-Rule-3-46700-lhouette-that-contains-both-chromium/error-context.md",
+    "di/test-results/print-notifications-Rule-3-46700-lhouette-that-contains-both-chromium",
     "di/test-results/print-notifications-Rule-3-ba075-s-nothing-to-the-silhouette-chromium/trace.zip",
     "di/test-results/print-notifications-Rule-3-ba075-s-nothing-to-the-silhouette-chromium/error-context.md",
     "di/test-results/print-notifications-Rule-3-ba075-s-nothing-to-the-silhouette-chromium",
+    "di/test-results/print-notifications-Rules--3edbe--and-centres-it-on-the-page-chromium/trace.zip",
+    "di/test-results/print-notifications-Rules--3edbe--and-centres-it-on-the-page-chromium/error-context.md",
+    "di/test-results/print-notifications-Rules--3edbe--and-centres-it-on-the-page-chromium",
+    "di/test-results/print-notifications-Rule-3-70de0-s-nothing-to-the-silhouette-chromium/trace.zip",
     "di/test-results/print-notifications-Rule-3-70de0-s-nothing-to-the-silhouette-chromium/error-context.md",
-    "di/test-results/print-notifications-Rule-3-a5bc4-clamped-to-the-canvas-edges-chromium/error-context.md",
-    "di/test-results/print-notifications-Rule-3-46700-lhouette-that-contains-both-chromium/error-context.md",
-    "di/test-results/print-notifications-Rules--e1976-ansform-the-rule-prescribes-chromium/error-context.md",
-    "di/test-results/print-notifications-Rule-6-0c433-f-inch-margin-on-every-side-chromium/error-context.md",
-    "di/test-results/print-notifications-Rule-6-f1489-oth-directions-during-print-chromium/error-context.md",
-    "di/test-results/print-notifications-Rule-6-52c70-he-page-height-during-print-chromium/error-context.md",
-    "di/notes/guides/project/development/adherence dashboard.md",
-    "s3/notes/work/code.debt.md",
-    "notes/guides/pre-flight/shorthand.md",
-    "di/notes/guides/project/development/vernacular.md",
-    "di/notes/work/now/specification driven development.md",
-    "di/notes/work/now/index copy.md",
-    "di/test-results/rotation-snap-a-tumble-dra-d872d--a-face-aligned-orientation-chromium/error-context.md",
-    "di/test-results/editing-lock-once-the-edit-ca125-s-on-the-canvas-pick-a-part-chromium/error-context.md",
-    "di/test-results/drag-vs-tumble-with-a-sele-cbf0e-ction-persists-after-a-drag-chromium/error-context.md",
-    "di/test-results/editing-lock-with-the-edit-cf9d9-canvas-does-not-pick-a-part-chromium/error-context.md",
-    "di/test-results/editing-lock-the-lock-toggle-starts-on-by-default-chromium/error-context.md",
-    "di/notes/guides/project/development/logic driven design.md",
+    "di/test-results/print-notifications-Rule-3-70de0-s-nothing-to-the-silhouette-chromium",
+    "di/test-results/print-notifications-Rule-3-2ccc2-houette-equals-that-portion-chromium/trace.zip",
+    "di/test-results/print-notifications-Rule-3-2ccc2-houette-equals-that-portion-chromium/error-context.md",
+    "di/test-results/print-notifications-Rules--6c302-leaves-the-canvas-untouched-chromium/error-context.md",
+    "di/test-results/e2e-tests-smoke-the-runnin-495bd-he-read-hooks-are-reachable/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-64109-ands-inside-the-canvas-area/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-5621d-he-page-height-during-print/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-95f22-f-inch-margin-on-every-side/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-7b081-printable-area-during-print/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-79ca6--new-dimensions-timing-pin-/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-ee68c-leaves-the-canvas-untouched/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-80702-s-nothing-to-the-silhouette/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-74aed-s-nothing-to-the-silhouette/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-7a507-houette-equals-that-portion/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-6bea6-lhouette-that-contains-both/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-c5797--and-centres-it-on-the-page/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-14c79-clears-the-canvas-transform/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-0ed95-ulates-the-canvas-transform/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-38570-m-the-silhouette-is-stable-/error-context.md",
+    "di/test-results/e2e-tests-print-notificati-12890-pplies-a-sensible-transform/error-context.md",
+    "di/test-results/print-notifications-Diagno-f62d4-ify-the-resulting-transform-chromium/error-context.md",
     "di/dist/assets/05-mid-stretch-DfF8mrVj.png",
     "di/dist/assets/06-dimension-input-BaK3RdUS.png",
     "di/dist/assets/03-locked-cursor-BNz07XWk.png",

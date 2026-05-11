@@ -141,7 +141,9 @@
 - di/src/lib/ts/tests/Extensions.test.ts
 - di/src/lib/ts/tests/hits_3d.test.ts
 - di/src/lib/ts/tests/Testworthy_Utilities.test.ts
+- di/src/lib/ts/tests/Print.test.ts
 - di/src/lib/ts/tests/Units.test.ts
+- di/e2e/tests/print-notifications.spec.ts
 
 ## Assets
 
@@ -342,6 +344,7 @@
 - di/notes/guides/project/development/stipulations.md
 - di/notes/guides/project/development/testing.md
 - di/notes/guides/project/development/updating guides.md
+- di/notes/guides/project/development/vernacular.md
 - di/notes/guides/project/overview/index.md
 - di/notes/guides/project/overview/file layout.md
 - di/notes/guides/project/overview/map.md

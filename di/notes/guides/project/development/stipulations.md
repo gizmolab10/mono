@@ -365,3 +365,8 @@ A real example, fully written:
     - id: default-half-inch-print-margin
     - test: [print-notifications.spec.ts](../../../e2e/tests/print-notifications.spec.ts) "Rule 65 — the printed sheet carries a default half-inch margin on every side"
     - code: [src/App.svelte](../../../src/App.svelte)
+
+66. During print, every UI helper is suppressed — the background grid, the origin axes, the work-area indicator, the dashed wireframe of invisible objects, and the selection and hover dots. The renderer detects print mode and skips all of them so the printed sheet shows only the picture itself — no scene-orientation chrome carries onto the paper. The renderer also subscribes to print-media changes and flags the canvas out of date on every flip, so the next animation frame repaints under the new media. This pairs with rule 39 (silhouette is the bounding rectangle of painted pixels): with every helper suppressed, an empty scene paints nothing and the silhouette is empty.
+    - id: ui-helpers-suppressed-during-print
+    - test: [print-notifications.spec.ts](../../../e2e/tests/print-notifications.spec.ts) "Rules 39 + 66 — an empty scene paints nothing during print"
+    - code: [src/lib/ts/render/Render.ts](../../../src/lib/ts/render/Render.ts)

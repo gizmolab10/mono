@@ -1,5 +1,5 @@
-import { constraints, givens, evaluator, tokenizer } from '../algebra';
 import { scenes, stores, selection, history, status } from '../managers';
+import { constraints, givens, evaluator, tokenizer } from '../algebra';
 import { units, Units, w_unit_system } from '../types/Units';
 import type { Portable_Scene } from '../managers/Versions';
 import type { Bound, Axis_Name } from '../types/Types';

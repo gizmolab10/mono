@@ -1,3 +1,21 @@
+# Features
+
+- [ ] assemble a realistic looking drawing of a wood working project
+    - [ ] cabinetry
+    - [ ] home improvement
+    - [ ] architecture
+- [ ] derive a reliably accurate lumber shopping list
+- [ ] easily adjust dimensions
+    - [ ] recalculate all dependent dimensions accordingly
+- [ ] view drawing from any camera angle
+    - [ ] walk through an architectural drawing
+- [ ] very easily construct stairs and stud walls
+- [ ] instantaneously respond to
+    - [ ] dimension adjustments
+    - [ ] rotation
+    - [ ] drag
+    - [ ] hierarchy adjustments
+- [ ] add one smart object into another
 # Strategic use of AI
 
 Mar 29, 2026

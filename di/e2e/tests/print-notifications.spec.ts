@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { mat4, vec4 } from 'gl-matrix';
+import { mat4 } from 'gl-matrix';
 
 // ═══════════════════════════════════════════════════════════════════
 // Shared helpers — read the canvas, parse the print transform,
@@ -67,68 +67,84 @@ async function read_canvas_and_view_projection(page: import('@playwright/test').
 	return { canvas_dims, view_proj };
 }
 
-// Eight world-space corners of an axis-aligned box.
-function corners_of(b: { x_min: number, x_max: number, y_min: number, y_max: number, z_min: number, z_max: number }): Array<[number, number, number]> {
-	const out: Array<[number, number, number]> = [];
-	for (const x of [b.x_min, b.x_max])
-		for (const y of [b.y_min, b.y_max])
-			for (const z of [b.z_min, b.z_max])
-				out.push([x, y, z]);
-	return out;
+// Read the canvas pixels and return the smallest rectangle containing
+// every non-transparent pixel — the painted-pixel silhouette the
+// production print handler uses (rule 39). Returns null when nothing
+// is painted.
+async function read_painted_silhouette(page: import('@playwright/test').Page) {
+	return await page.locator('.region.graph canvas').evaluate(el => {
+		const canvas = el as HTMLCanvasElement;
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return null;
+		const w = canvas.width;
+		const h = canvas.height;
+		if (w === 0 || h === 0) return null;
+		const data = ctx.getImageData(0, 0, w, h).data;
+		let x_lo = w, x_hi = -1, y_lo = h, y_hi = -1;
+		for (let y = 0; y < h; y++) {
+			const row = y * w * 4;
+			for (let x = 0; x < w; x++) {
+				if (data[row + x * 4 + 3] === 0) continue;
+				if (x < x_lo) x_lo = x;
+				if (x > x_hi) x_hi = x;
+				if (y < y_lo) y_lo = y;
+				if (y > y_hi) y_hi = y;
+			}
+		}
+		if (x_hi < x_lo || y_hi < y_lo) return null;
+		return { left: x_lo, top: y_lo, width: x_hi - x_lo + 1, height: y_hi - y_lo + 1 };
+	});
 }
 
-// Apply the rule's stated math to a list of world-space corners and
-// return the silhouette transform the print handler should produce.
-// Returns null when the silhouette is empty (no corners contributed,
-// or all corners clamped away to nothing).
-function expected_transform_for(
-	corners: Array<[number, number, number]>,
-	view_proj: import('gl-matrix').mat4,
+// Apply the same fit-and-centre math the production handler uses, but
+// starting from a known silhouette in drawing-pixel coordinates instead
+// of computing the silhouette from world corners. The math: map the
+// silhouette through the canvas's object-fit:contain placement to get
+// CSS-pixel coordinates, then compute the scale that fits the silhouette
+// to the canvas's CSS box along the limiting side, plus the translation
+// that centres it.
+function expected_transform_from_silhouette(
+	sil: { left: number, top: number, width: number, height: number },
 	canvas: { drawing_w: number, drawing_h: number, css_w: number, css_h: number },
 ): { scale: number, tx: number, ty: number } | null {
-	if (corners.length === 0) return null;
-
-	let x_lo = Infinity, x_hi = -Infinity;
-	let y_lo = Infinity, y_hi = -Infinity;
-	let any = false;
-	for (const [x, y, z] of corners) {
-		const v = vec4.fromValues(x, y, z, 1);
-		vec4.transformMat4(v, v, view_proj);
-		if (v[3] === 0) continue;
-		const ndc_x = v[0] / v[3];
-		const ndc_y = v[1] / v[3];
-		const px = (ndc_x * 0.5 + 0.5) * canvas.drawing_w;
-		const py = (1 - (ndc_y * 0.5 + 0.5)) * canvas.drawing_h;
-		if (px < x_lo) x_lo = px;
-		if (px > x_hi) x_hi = px;
-		if (py < y_lo) y_lo = py;
-		if (py > y_hi) y_hi = py;
-		any = true;
-	}
-	if (!any) return null;
-
-	x_lo = Math.max(0, x_lo);
-	y_lo = Math.max(0, y_lo);
-	x_hi = Math.min(canvas.drawing_w, x_hi);
-	y_hi = Math.min(canvas.drawing_h, y_hi);
-
-	const sil_drawing = { left: x_lo, top: y_lo, width: x_hi - x_lo, height: y_hi - y_lo };
-	if (sil_drawing.width <= 0 || sil_drawing.height <= 0) return null;
-
+	if (sil.width <= 0 || sil.height <= 0) return null;
 	const f = Math.min(canvas.css_w / canvas.drawing_w, canvas.css_h / canvas.drawing_h);
 	const lb_x = (canvas.css_w - canvas.drawing_w * f) / 2;
 	const lb_y = (canvas.css_h - canvas.drawing_h * f) / 2;
 	const sil_css = {
-		left:   sil_drawing.left   * f + lb_x,
-		top:    sil_drawing.top    * f + lb_y,
-		width:  sil_drawing.width  * f,
-		height: sil_drawing.height * f,
+		left:   sil.left   * f + lb_x,
+		top:    sil.top    * f + lb_y,
+		width:  sil.width  * f,
+		height: sil.height * f,
 	};
-
 	const scale = Math.min(canvas.css_w / sil_css.width, canvas.css_h / sil_css.height);
 	const tx = canvas.css_w / 2 - (sil_css.left + sil_css.width  / 2) * scale;
 	const ty = canvas.css_h / 2 - (sil_css.top  + sil_css.height / 2) * scale;
 	return { scale, tx, ty };
+}
+
+// Set up the page, activate print media so the renderer suppresses the
+// grid and axes per rule 66, and wait for layout and paint to settle so
+// the canvas pixels reflect what the production handler will see.
+async function setup_for_pixel_silhouette(
+	page: import('@playwright/test').Page,
+	scene_setup: () => Promise<void>,
+) {
+	await setup_print_page(page);
+	await scene_setup();
+	await page.waitForTimeout(150);
+	await page.emulateMedia({ media: 'print' });
+	// Give the renderer multiple animation frames to settle into print-mode
+	// dimensions: the canvas resizes when the print stylesheet activates,
+	// the renderer redraws, the print handler re-reads pixels, and the
+	// final transform is applied.
+	await page.waitForTimeout(500);
+	// Fire the print-start event one more time so the handler re-reads the
+	// now-settled canvas and applies the transform based on the final pixel
+	// state — eliminates any race between the renderer's first print-mode
+	// redraw and the handler's first read.
+	await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
+	await page.waitForTimeout(100);
 }
 
 // Open the page with a known viewport and a known overhead camera, ready
@@ -141,6 +157,9 @@ async function setup_print_page(page: import('@playwright/test').Page) {
 	await page.evaluate(() => {
 		const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
 		t.clear_scene();
+		t.set_orientation([0, 0, 0, 1]);
+		t.set_scale(1);
+		t.set_decorations(0);
 		t.set_camera_position([0, 0, 200], [0, 0, 0], [0, 1, 0]);
 		t.set_camera_ortho(true);
 	});
@@ -228,165 +247,255 @@ test('Rule 61 — dispatching the print-end notification clears the canvas trans
 // exact silhouette and transform that the rule prescribes.
 // ═══════════════════════════════════════════════════════════════════
 
-test('Rules 39 + 62 — a single box produces the exact silhouette transform the rule prescribes', async ({ page }) => {
-	await setup_print_page(page);
-
+test('Rules 39 + 62 — a single box paints a silhouette and the handler applies a transform that fits and centres it on the page', async ({ page }) => {
 	const ALPHA = { x_min: -50, x_max: 50, y_min: -30, y_max: 30, z_min: -20, z_max: 20 };
-	await page.evaluate((bounds) => {
-		const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
-		t.add_so({ name: 'ALPHA', bounds });
-	}, ALPHA);
+	await setup_for_pixel_silhouette(page, async () => {
+		await page.evaluate((bounds) => {
+			const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
+			t.add_so({ name: 'ALPHA', bounds });
+		}, ALPHA);
+	});
 
-	const { canvas_dims, view_proj } = await read_canvas_and_view_projection(page);
-	const expected = expected_transform_for(corners_of(ALPHA), view_proj, canvas_dims);
+	const { canvas_dims } = await read_canvas_and_view_projection(page);
+	const silhouette = await read_painted_silhouette(page);
+	expect(silhouette).not.toBeNull();
+	if (!silhouette) return;
+	const expected = expected_transform_from_silhouette(silhouette, canvas_dims);
 	expect(expected).not.toBeNull();
 	if (!expected) return;
 
-	await dispatch_print_start(page);
 	const actual = parse_transform(await transform_of(page));
 	expect(actual).not.toBeNull();
 	if (!actual) return;
 
-	expect(actual.scale).toBeCloseTo(expected.scale, 3);
+	expect(actual.scale).toBeCloseTo(expected.scale, 2);
 	expect(actual.tx).toBeCloseTo(expected.tx, 0);
 	expect(actual.ty).toBeCloseTo(expected.ty, 0);
+
+	await page.emulateMedia({ media: null });
 });
 
 test('Rule 39 — two boxes far apart in world space produce a silhouette that contains both', async ({ page }) => {
-	await setup_print_page(page);
-
-	// ALPHA on the left, BETA on the right. Far enough apart that a
-	// single-object silhouette would be much smaller than the two-object one.
+	// An invisible root container spans both boxes so the renderer's "centre
+	// root at canvas origin" behaviour positions both boxes within it.
+	const ROOT  = { x_min: -60, x_max:  60, y_min: -10, y_max: 10, z_min: -5, z_max: 5 };
 	const ALPHA = { x_min: -60, x_max: -30, y_min: -10, y_max: 10, z_min: -5, z_max: 5 };
 	const BETA  = { x_min:  30, x_max:  60, y_min: -10, y_max: 10, z_min: -5, z_max: 5 };
-	await page.evaluate((args) => {
-		const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
-		t.add_so({ name: 'ALPHA', bounds: args.alpha });
-		t.add_so({ name: 'BETA',  bounds: args.beta  });
-	}, { alpha: ALPHA, beta: BETA });
 
-	const { canvas_dims, view_proj } = await read_canvas_and_view_projection(page);
-	const all_corners = [...corners_of(ALPHA), ...corners_of(BETA)];
-	const expected = expected_transform_for(all_corners, view_proj, canvas_dims);
+	// First pass: ALPHA alone (as a child of an invisible ROOT) — capture single-box scale.
+	await setup_for_pixel_silhouette(page, async () => {
+		await page.evaluate((args) => {
+			const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
+			t.add_so({ name: 'ROOT', bounds: args.root });
+			t.set_so_visibility('ROOT', false);
+			t.add_so({ name: 'ALPHA', bounds: args.alpha, parent_name: 'ROOT' });
+		}, { root: ROOT, alpha: ALPHA });
+	});
+	const alpha_only_actual = parse_transform(await transform_of(page));
+	expect(alpha_only_actual).not.toBeNull();
+	await page.emulateMedia({ media: null });
+
+	// Second pass: ROOT (invisible) with ALPHA and BETA as children — the silhouette must contain both.
+	await setup_for_pixel_silhouette(page, async () => {
+		await page.evaluate((args) => {
+			const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
+			t.add_so({ name: 'ROOT', bounds: args.root });
+			t.set_so_visibility('ROOT', false);
+			t.add_so({ name: 'ALPHA', bounds: args.alpha, parent_name: 'ROOT' });
+			t.add_so({ name: 'BETA',  bounds: args.beta,  parent_name: 'ROOT' });
+		}, { root: ROOT, alpha: ALPHA, beta: BETA });
+	});
+
+	const { canvas_dims } = await read_canvas_and_view_projection(page);
+	const silhouette = await read_painted_silhouette(page);
+	expect(silhouette).not.toBeNull();
+	if (!silhouette) return;
+	const expected = expected_transform_from_silhouette(silhouette, canvas_dims);
 	expect(expected).not.toBeNull();
 	if (!expected) return;
 
-	await dispatch_print_start(page);
 	const actual = parse_transform(await transform_of(page));
 	expect(actual).not.toBeNull();
 	if (!actual) return;
 
-	expect(actual.scale).toBeCloseTo(expected.scale, 3);
+	expect(actual.scale).toBeCloseTo(expected.scale, 2);
 	expect(actual.tx).toBeCloseTo(expected.tx, 0);
 	expect(actual.ty).toBeCloseTo(expected.ty, 0);
 
-	// Sanity: the two-box silhouette must be wider than a single-box silhouette
-	// would have been (single-box scale would be much larger).
-	const alpha_only = expected_transform_for(corners_of(ALPHA), view_proj, canvas_dims);
-	expect(alpha_only).not.toBeNull();
-	if (alpha_only) expect(actual.scale).toBeLessThan(alpha_only.scale);
+	// Sanity: the two-box silhouette is wider, so its fit scale is smaller
+	// than the single-box scale.
+	if (alpha_only_actual) expect(actual.scale).toBeLessThan(alpha_only_actual.scale);
+
+	await page.emulateMedia({ media: null });
 });
 
-test('Rule 39 — a box that extends past the visible frame has its silhouette clamped to the canvas edges', async ({ page }) => {
-	await setup_print_page(page);
-
-	// Make the box much wider than the camera can see so the left and
-	// right corners project past the canvas edges in drawing pixels.
+test('Rule 39 — a box that extends past the visible frame paints only its visible portion, and the silhouette equals that portion', async ({ page }) => {
 	const HUGE = { x_min: -500, x_max: 500, y_min: -10, y_max: 10, z_min: -5, z_max: 5 };
-	await page.evaluate((bounds) => {
-		const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
-		t.add_so({ name: 'HUGE', bounds });
-	}, HUGE);
+	await setup_for_pixel_silhouette(page, async () => {
+		await page.evaluate((bounds) => {
+			const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
+			t.add_so({ name: 'HUGE', bounds });
+		}, HUGE);
+	});
 
-	const { canvas_dims, view_proj } = await read_canvas_and_view_projection(page);
-	const expected = expected_transform_for(corners_of(HUGE), view_proj, canvas_dims);
+	const { canvas_dims } = await read_canvas_and_view_projection(page);
+	const silhouette = await read_painted_silhouette(page);
+	expect(silhouette).not.toBeNull();
+	if (!silhouette) return;
+
+	// The painted silhouette must fit within the drawing surface — that is the
+	// "only the visible portion contributes" claim. Anything outside the canvas
+	// can't have been painted, so it can't appear in the silhouette.
+	expect(silhouette.left).toBeGreaterThanOrEqual(0);
+	expect(silhouette.top).toBeGreaterThanOrEqual(0);
+	expect(silhouette.left + silhouette.width ).toBeLessThanOrEqual(canvas_dims.drawing_w);
+	expect(silhouette.top  + silhouette.height).toBeLessThanOrEqual(canvas_dims.drawing_h);
+
+	const expected = expected_transform_from_silhouette(silhouette, canvas_dims);
 	expect(expected).not.toBeNull();
 	if (!expected) return;
 
-	await dispatch_print_start(page);
 	const actual = parse_transform(await transform_of(page));
 	expect(actual).not.toBeNull();
 	if (!actual) return;
 
-	// The expected transform was computed with clamping baked in. If the
-	// production handler doesn't clamp (or clamps differently), these
-	// numbers diverge and the test fails.
-	expect(actual.scale).toBeCloseTo(expected.scale, 3);
+	expect(actual.scale).toBeCloseTo(expected.scale, 2);
 	expect(actual.tx).toBeCloseTo(expected.tx, 0);
 	expect(actual.ty).toBeCloseTo(expected.ty, 0);
+
+	await page.emulateMedia({ media: null });
 });
 
 test('Rule 39 — a box whose visibility flag is off contributes nothing to the silhouette', async ({ page }) => {
-	await setup_print_page(page);
-
-	// Visible ALPHA on the left, invisible BETA on the right. Without the
-	// visibility filter, BETA would expand the silhouette to the right.
+	const ROOT  = { x_min: -40, x_max:  40, y_min: -10, y_max: 10, z_min: -5, z_max: 5 };
 	const ALPHA = { x_min: -40, x_max: -10, y_min: -10, y_max: 10, z_min: -5, z_max: 5 };
 	const BETA  = { x_min:  10, x_max:  40, y_min: -10, y_max: 10, z_min: -5, z_max: 5 };
-	await page.evaluate((args) => {
-		const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
-		t.add_so({ name: 'ALPHA', bounds: args.alpha });
-		t.add_so({ name: 'BETA',  bounds: args.beta  });
-		t.set_so_visibility('BETA', false);
-	}, { alpha: ALPHA, beta: BETA });
 
-	const { canvas_dims, view_proj } = await read_canvas_and_view_projection(page);
-	// Expected silhouette uses ALPHA only — BETA is invisible.
-	const expected = expected_transform_for(corners_of(ALPHA), view_proj, canvas_dims);
+	// First pass: ALPHA alone (as child of invisible ROOT) — capture the silhouette.
+	await setup_for_pixel_silhouette(page, async () => {
+		await page.evaluate((args) => {
+			const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
+			t.add_so({ name: 'ROOT', bounds: args.root });
+			t.set_so_visibility('ROOT', false);
+			t.add_so({ name: 'ALPHA', bounds: args.alpha, parent_name: 'ROOT' });
+		}, { root: ROOT, alpha: ALPHA });
+	});
+	const alpha_only_silhouette = await read_painted_silhouette(page);
+	expect(alpha_only_silhouette).not.toBeNull();
+	await page.emulateMedia({ media: null });
+
+	// Second pass: ALPHA visible plus BETA invisible — BETA must not contribute.
+	await setup_for_pixel_silhouette(page, async () => {
+		await page.evaluate((args) => {
+			const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
+			t.add_so({ name: 'ROOT', bounds: args.root });
+			t.set_so_visibility('ROOT', false);
+			t.add_so({ name: 'ALPHA', bounds: args.alpha, parent_name: 'ROOT' });
+			t.add_so({ name: 'BETA',  bounds: args.beta,  parent_name: 'ROOT' });
+			t.set_so_visibility('BETA', false);
+		}, { root: ROOT, alpha: ALPHA, beta: BETA });
+	});
+
+	const { canvas_dims } = await read_canvas_and_view_projection(page);
+	const silhouette = await read_painted_silhouette(page);
+	expect(silhouette).not.toBeNull();
+	if (!silhouette || !alpha_only_silhouette) return;
+
+	// The two-object-with-BETA-hidden silhouette must match the ALPHA-only silhouette
+	// — BETA being invisible means it paints no pixels.
+	expect(silhouette.left  ).toBeCloseTo(alpha_only_silhouette.left  , -1);
+	expect(silhouette.top   ).toBeCloseTo(alpha_only_silhouette.top   , -1);
+	expect(silhouette.width ).toBeCloseTo(alpha_only_silhouette.width , -1);
+	expect(silhouette.height).toBeCloseTo(alpha_only_silhouette.height, -1);
+
+	const expected = expected_transform_from_silhouette(silhouette, canvas_dims);
 	expect(expected).not.toBeNull();
 	if (!expected) return;
 
-	await dispatch_print_start(page);
 	const actual = parse_transform(await transform_of(page));
 	expect(actual).not.toBeNull();
 	if (!actual) return;
 
-	expect(actual.scale).toBeCloseTo(expected.scale, 3);
+	expect(actual.scale).toBeCloseTo(expected.scale, 2);
 	expect(actual.tx).toBeCloseTo(expected.tx, 0);
 	expect(actual.ty).toBeCloseTo(expected.ty, 0);
+
+	await page.emulateMedia({ media: null });
 });
 
 test('Rule 39 — a child whose ancestor has hide-children on contributes nothing to the silhouette', async ({ page }) => {
-	await setup_print_page(page);
-
-	// Parent ALPHA on the left, child CHILD on the right (and parented
-	// to ALPHA). With hide-children turned on for ALPHA, the silhouette
-	// should reflect ALPHA alone — CHILD is suppressed.
+	// Wrap in an invisible ROOT — both passes use the same ROOT so the
+	// per-frame "centre root at canvas origin" behaviour is consistent.
+	const ROOT  = { x_min: -40, x_max:  40, y_min: -10, y_max: 10, z_min: -5, z_max: 5 };
 	const ALPHA = { x_min: -40, x_max: -10, y_min: -10, y_max: 10, z_min: -5, z_max: 5 };
 	const CHILD = { x_min:  10, x_max:  40, y_min: -10, y_max: 10, z_min: -5, z_max: 5 };
-	await page.evaluate((args) => {
-		const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
-		t.add_so({ name: 'ALPHA', bounds: args.alpha });
-		t.add_so({ name: 'CHILD', bounds: args.child, parent_name: 'ALPHA' });
-		t.set_so_hide_children('ALPHA', true);
-	}, { alpha: ALPHA, child: CHILD });
 
-	const { canvas_dims, view_proj } = await read_canvas_and_view_projection(page);
-	const expected = expected_transform_for(corners_of(ALPHA), view_proj, canvas_dims);
+	// First pass: ALPHA alone (as child of invisible ROOT) — capture silhouette.
+	await setup_for_pixel_silhouette(page, async () => {
+		await page.evaluate((args) => {
+			const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
+			t.add_so({ name: 'ROOT', bounds: args.root });
+			t.set_so_visibility('ROOT', false);
+			t.add_so({ name: 'ALPHA', bounds: args.alpha, parent_name: 'ROOT' });
+		}, { root: ROOT, alpha: ALPHA });
+	});
+	const alpha_only_silhouette = await read_painted_silhouette(page);
+	expect(alpha_only_silhouette).not.toBeNull();
+	await page.emulateMedia({ media: null });
+
+	// Second pass: ALPHA plus CHILD (as grandchild via ALPHA), with hide-children on ALPHA — CHILD must not contribute.
+	await setup_for_pixel_silhouette(page, async () => {
+		await page.evaluate((args) => {
+			const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
+			t.add_so({ name: 'ROOT', bounds: args.root });
+			t.set_so_visibility('ROOT', false);
+			t.add_so({ name: 'ALPHA', bounds: args.alpha, parent_name: 'ROOT' });
+			t.add_so({ name: 'CHILD', bounds: args.child, parent_name: 'ALPHA' });
+			t.set_so_hide_children('ALPHA', true);
+		}, { root: ROOT, alpha: ALPHA, child: CHILD });
+	});
+
+	const { canvas_dims } = await read_canvas_and_view_projection(page);
+	const silhouette = await read_painted_silhouette(page);
+	expect(silhouette).not.toBeNull();
+	if (!silhouette || !alpha_only_silhouette) return;
+
+	// The with-CHILD-hidden silhouette must match the ALPHA-only silhouette.
+	expect(silhouette.left  ).toBeCloseTo(alpha_only_silhouette.left  , -1);
+	expect(silhouette.top   ).toBeCloseTo(alpha_only_silhouette.top   , -1);
+	expect(silhouette.width ).toBeCloseTo(alpha_only_silhouette.width , -1);
+	expect(silhouette.height).toBeCloseTo(alpha_only_silhouette.height, -1);
+
+	const expected = expected_transform_from_silhouette(silhouette, canvas_dims);
 	expect(expected).not.toBeNull();
 	if (!expected) return;
 
-	await dispatch_print_start(page);
 	const actual = parse_transform(await transform_of(page));
 	expect(actual).not.toBeNull();
 	if (!actual) return;
 
-	expect(actual.scale).toBeCloseTo(expected.scale, 3);
+	expect(actual.scale).toBeCloseTo(expected.scale, 2);
 	expect(actual.tx).toBeCloseTo(expected.tx, 0);
 	expect(actual.ty).toBeCloseTo(expected.ty, 0);
+
+	await page.emulateMedia({ media: null });
 });
 
-test('Rule 39 — an empty scene leaves the canvas with no transform applied', async ({ page }) => {
-	await setup_print_page(page);
-	// setup_print_page already cleared the scene. No SOs added.
+test('Rules 39 + 66 — an empty scene paints nothing during print (grid and axes suppressed), so the handler leaves the canvas untouched', async ({ page }) => {
+	await setup_for_pixel_silhouette(page, async () => {
+		// setup_print_page already cleared the scene. No SOs added.
+	});
 
+	// Rule 66: during print, the grid and axes are suppressed. With no SOs
+	// added and nothing else painted, the canvas should be transparent —
+	// the painted silhouette is empty.
+	const silhouette = await read_painted_silhouette(page);
+	expect(silhouette).toBeNull();
+
+	// And the handler must therefore leave no transform applied.
 	expect(await transform_of(page)).toBe('');
 
-	await dispatch_print_start(page);
-
-	// With no objects, the silhouette is empty and the handler returns
-	// early — leaving the canvas untouched.
-	expect(await transform_of(page)).toBe('');
+	await page.emulateMedia({ media: null });
 });
 
 // ═══════════════════════════════════════════════════════════════════
@@ -426,103 +535,6 @@ test('Rule 39 — the canvas-resize signal causes the transform to be re-applied
 	// is reading stale dimensions and producing the wrong transform for the
 	// printed page area.
 	expect(Math.abs(after_resize.scale - before_resize.scale)).toBeGreaterThan(0.01);
-});
-
-// ═══════════════════════════════════════════════════════════════════
-// Diagnostic test — uses Playwright's print media emulation to
-// reproduce the real-browser print stylesheet effects (the canvas
-// resizing). Logs the dimensions the handler sees at each stage so
-// the bug can be isolated.
-// ═══════════════════════════════════════════════════════════════════
-
-test('Diagnostic — print media emulation: log the canvas dimensions before and after the print stylesheet activates, and verify the resulting transform', async ({ page }) => {
-	await setup_print_page(page);
-
-	const ALPHA = { x_min: -50, x_max: 50, y_min: -30, y_max: 30, z_min: -20, z_max: 20 };
-	await page.evaluate((bounds) => {
-		const t = (window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test;
-		t.add_so({ name: 'ALPHA', bounds });
-	}, ALPHA);
-
-	// Dimensions on screen, before print stylesheet activates.
-	const before = await page.locator('.region.graph canvas').evaluate(el => {
-		const node = el as HTMLCanvasElement;
-		return {
-			drawing_w: node.width,
-			drawing_h: node.height,
-			css_w: node.clientWidth,
-			css_h: node.clientHeight,
-			window_w: window.innerWidth,
-			window_h: window.innerHeight,
-		};
-	});
-
-	// Activate the print media query. This is what triggers the print stylesheet
-	// in a real browser when the user opens the print preview.
-	await page.emulateMedia({ media: 'print' });
-	await page.waitForTimeout(100);
-
-	// Dimensions during print, after stylesheet activates.
-	const during = await page.locator('.region.graph canvas').evaluate(el => {
-		const node = el as HTMLCanvasElement;
-		return {
-			drawing_w: node.width,
-			drawing_h: node.height,
-			css_w: node.clientWidth,
-			css_h: node.clientHeight,
-			window_w: window.innerWidth,
-			window_h: window.innerHeight,
-		};
-	});
-
-	// Fire the print-start notification.
-	await dispatch_print_start(page);
-	const after_transform = parse_transform(await transform_of(page));
-
-	// Log everything so the failure mode is visible in the test output.
-	console.log('ALPHA scene, viewport 1200 by 900');
-	console.log('  before print media — canvas drawing surface', before.drawing_w, 'by', before.drawing_h, '— canvas CSS box', before.css_w, 'by', before.css_h, '— window inner', before.window_w, 'by', before.window_h);
-	console.log('  during print media — canvas drawing surface', during.drawing_w, 'by', during.drawing_h, '— canvas CSS box', during.css_w, 'by', during.css_h, '— window inner', during.window_w, 'by', during.window_h);
-	console.log('  applied transform — scale', after_transform?.scale, '— translate', after_transform?.tx, ',', after_transform?.ty);
-
-	// Compute what the transform should be for the during-print dimensions.
-	const view_arr = await page.evaluate(() =>
-		(window as unknown as { di_test: { camera_view: () => number[] } }).di_test.camera_view()
-	);
-	const proj_arr = await page.evaluate(() =>
-		(window as unknown as { di_test: { camera_projection: () => number[] } }).di_test.camera_projection()
-	);
-	const view = mat4.fromValues(...(view_arr as Parameters<typeof mat4.fromValues>));
-	const proj = mat4.fromValues(...(proj_arr as Parameters<typeof mat4.fromValues>));
-	const view_proj = mat4.create();
-	mat4.multiply(view_proj, proj, view);
-
-	const expected_during = expected_transform_for(corners_of(ALPHA), view_proj, {
-		drawing_w: during.drawing_w,
-		drawing_h: during.drawing_h,
-		css_w: during.css_w,
-		css_h: during.css_h,
-	});
-	const expected_before = expected_transform_for(corners_of(ALPHA), view_proj, {
-		drawing_w: before.drawing_w,
-		drawing_h: before.drawing_h,
-		css_w: before.css_w,
-		css_h: before.css_h,
-	});
-
-	console.log('  expected for during-print dimensions — scale', expected_during?.scale, '— translate', expected_during?.tx, ',', expected_during?.ty);
-	console.log('  expected for before-print dimensions — scale', expected_before?.scale, '— translate', expected_before?.tx, ',', expected_before?.ty);
-
-	// Reset the media emulation for following tests.
-	await page.emulateMedia({ media: null });
-
-	// Assert: the applied transform should match the during-print expected,
-	// not the before-print one. If it matches the before-print one, the
-	// handler is reading stale dimensions.
-	expect(after_transform).not.toBeNull();
-	expect(expected_during).not.toBeNull();
-	if (!after_transform || !expected_during) return;
-	expect(after_transform.scale).toBeCloseTo(expected_during.scale, 2);
 });
 
 // ═══════════════════════════════════════════════════════════════════

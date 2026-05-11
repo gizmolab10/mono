@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { colors } from './lib/ts/utilities/Colors';
 	import { c } from './lib/ts/common/Configuration';
+	import { render } from './lib/ts/render';
 	import Main from './lib/svelte/main/Main.svelte';
 
 	const { w_accent_color, w_background_color, w_selected_color, w_text_color } = colors;
@@ -47,7 +48,14 @@
 
 	function apply_print_transform(canvas: HTMLCanvasElement) {
 		const sil = compute_silhouette(canvas);
-		if (!sil) return;
+		if (!sil) {
+			// Nothing painted — drop any prior transform so the canvas stays
+			// untouched. Without this, a transform applied on an earlier read
+			// (when stale pixels were still on the canvas) would persist.
+			canvas.style.transform       = '';
+			canvas.style.transformOrigin = '';
+			return;
+		}
 
 		const css_w = canvas.clientWidth  || canvas.width;
 		const css_h = canvas.clientHeight || canvas.height;
@@ -77,6 +85,12 @@
 	function on_before_print() {
 		const canvas = document.querySelector('.region.graph canvas') as HTMLCanvasElement | null;
 		if (!canvas) return;
+		// Real browsers fire this event before flipping the print media query,
+		// so the canvas still holds the on-screen render (with grid, axes, hover
+		// dots, selection dots). Force a synchronous repaint under print mode
+		// so the silhouette read below sees the clean pixels the printer will
+		// actually capture.
+		render.paint_for_print();
 		// First pass: synchronous apply so something is on screen immediately.
 		// The resize observer below catches up if the layout reflows after.
 		apply_print_transform(canvas);

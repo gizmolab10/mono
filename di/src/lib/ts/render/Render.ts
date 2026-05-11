@@ -160,6 +160,26 @@ class Render {
 	 *  whenever they change something that affects what the canvas shows. */
 	mark_stale(): void { this._is_stale = true; }
 
+	/** When set, the renderer paints as if the print media query were active
+	 *  even when it is not. The print event listener in App.svelte sets this
+	 *  before reading pixels for the silhouette, because real browsers fire
+	 *  the print event before flipping the media query, so a render that
+	 *  relied on the media query alone would still paint helpers and those
+	 *  pixels would show up on the printed page. */
+	force_print_paint = false;
+
+	/** Repaint immediately under print mode and return. Used by the print
+	 *  event listener so the canvas pixels read for silhouette computation
+	 *  are the clean print pixels, not the previous on-screen render. */
+	paint_for_print(): void {
+		this.force_print_paint = true;
+		try {
+			this.render();
+		} finally {
+			this.force_print_paint = false;
+		}
+	}
+
 	/** Mark a phase boundary in the paint. Closes the previous phase (adding
 	 *  its elapsed milliseconds to the per-paint totals) and opens a new one
 	 *  under `next_label`. Pass the empty string to close without opening. */
@@ -258,7 +278,23 @@ class Render {
 		const w = canvas.width, h = canvas.height;
 		this.size = new Size(w, h);
 		this.apply_dpr(w, h);
+		// The grid-and-axes suppression checks the print media at paint time.
+		// A media flip on its own changes no reactive store, so flag the
+		// canvas out of date here so the next frame repaints under the new
+		// media — otherwise pixels painted under the on-screen media stay on
+		// the canvas during print. Remove any earlier listener first so a
+		// re-init (from hot reload or a scene switch) doesn't accumulate
+		// duplicates.
+		if (typeof window !== 'undefined' && window.matchMedia) {
+			if (this.print_media_listener) {
+				window.matchMedia('print').removeEventListener('change', this.print_media_listener);
+			}
+			this.print_media_listener = () => this.mark_stale();
+			window.matchMedia('print').addEventListener('change', this.print_media_listener);
+		}
 	}
+
+	private print_media_listener: (() => void) | null = null;
 
 	resize(width: number, height: number): void {
 		// A window resize or device-pixel-ratio change doesn't pass through
@@ -344,8 +380,11 @@ class Render {
 			hits_3d.update_projected(obj.id, projected, world_matrix);
 		}
 
-		if (stores.grid_opacity > 0) render_back_grid(this);
-		if (!is_2d) render_root_bottom(this);
+		// During print, suppress the background grid and the work-area
+		// indicator so the printed sheet shows only the picture itself.
+		const is_print = this.force_print_paint || (typeof window !== 'undefined' && window.matchMedia('print').matches);
+		if (stores.grid_opacity > 0 && !is_print) render_back_grid(this);
+		if (!is_2d && !is_print) render_root_bottom(this);
 
 		// Solidify: fill front-facing faces (occlusion layer)
 		// In solid mode, fill with white so rear edges are hidden.
@@ -645,14 +684,14 @@ class Render {
 			k.debug.facets_logged = true;
 		}
 
-		// 2D: camera_view_extent front-face outline (after edges so it renders on top of white fill)
-		if (is_2d) render_root_bottom(this, true);
+		// 2D: camera_view_extent front-face outline (after edges so it renders on top of white fill).
+		// Suppressed during print, same as the 3D root indicator above.
+		if (is_2d && !is_print) render_root_bottom(this, true);
 
 		// 3D wireframe for invisible SOs (occluded by visible children in solid/2D)
 		this._phase('hidden wireframe');
 		// During print, skip the dashed wireframe for invisible objects so the
 		// printed page shows only the visible drawing — not the helper bounds.
-		const is_print = typeof window !== 'undefined' && window.matchMedia('print').matches;
 		if (!is_print) for (const obj of all_objects) {
 			if (obj.so.visible) continue;
 			const projected = projected_map.get(obj.id)!;
@@ -696,11 +735,15 @@ class Render {
 		}
 
 		this._phase('overlays');
-		if (stores.grid_opacity > 0) {
+		// During print, suppress every UI helper — axes, hover dots,
+		// selection dots — so the printed sheet shows only the picture.
+		if (stores.grid_opacity > 0 && !is_print) {
 			render_axes(this);
 		}
-		this.render_hover();
-		this.render_selection();
+		if (!is_print) {
+			this.render_hover();
+			this.render_selection();
+		}
 		if (stores.show_dimensionals) render_dimensions(this);
 		if (stores.show_angulars) render_angulars(this);
 		if (k.debug.show_ep_labels) this.render_front_face_label();
@@ -1697,7 +1740,15 @@ class Render {
 		const ctx = this.ctx;
 		const is_selected = selection.contains(obj.so);
 		const is_hovered = hits_3d.hover?.so.scene === obj && !is_selected;
-		ctx.lineWidth = (is_selected || is_hovered) ? stores.bold_thickness : stores.edge_thickness;
+		// During print, suppress the selected/hovered feedback on edges —
+		// the printed sheet should show the picture as if no UI helper were
+		// active. The flags above keep their normal meaning so other render
+		// paths that read them stay correct; we apply the suppression only
+		// where it changes pixels (the stroke colour and the line width).
+		const is_print = this.force_print_paint || (typeof window !== 'undefined' && window.matchMedia('print').matches);
+		const show_selected = is_selected && !is_print;
+		const show_hovered  = is_hovered  && !is_print;
+		ctx.lineWidth = (show_selected || show_hovered) ? stores.bold_thickness : stores.edge_thickness;
 		ctx.lineCap = 'square';
 
 		// In 2D or solid mode, only draw edges belonging to front-facing faces
@@ -1728,7 +1779,7 @@ class Render {
 				}
 			}
 
-			ctx.strokeStyle = is_hovered ? colors.so_hover_color : `${obj.color}1)`;
+			ctx.strokeStyle = show_hovered ? colors.so_hover_color : `${obj.color}1)`;
 			ctx.stroke(normal_path);
 			if (guidance_edges) {
 				ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
