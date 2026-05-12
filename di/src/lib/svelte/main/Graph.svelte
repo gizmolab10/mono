@@ -12,11 +12,13 @@
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 	import { onMount } from 'svelte';
+	import Slider from '../mouse/Slider.svelte';
 
 	const { w_s_dimensions } = dimensions;
 	const { w_s_face_label } = face_label;
 	const { w_selection } = selection;
 	const { w_s_angular } = angulars;
+	const { w_grid_opacity } = stores;
 
 	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 	let dim_input   = $state<HTMLInputElement>();
@@ -192,6 +194,10 @@
 	<div class='canvas-actions'>
 		<button class='build-button' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
 	</div>
+	<div class='guides-control'>
+		<Slider min={0} max={1} value={$w_grid_opacity} width={81} vertical show_steppers={false} onchange={(v) => w_grid_opacity.set(v)} />
+		<span class='guides-label'>guides</span>
+	</div>
 	<Status_Strip />
 	{#if breadcrumbs.length > 1}
 		<div
@@ -272,6 +278,24 @@
 		display  : flex;
 		bottom   : 10px;
 		left     : 10px;
+	}
+
+	.guides-control {
+		z-index        : var(--z-action);
+		position       : absolute;
+		flex-direction : column;
+		align-items    : center;
+		display        : flex;
+		bottom         : 10px;
+		right          : 10px;
+		gap            : 2px;
+	}
+
+	.guides-label {
+		letter-spacing : var(--l-letter-spacing);
+		color          : rgba(0, 0, 0, 0.65);
+		font-size      : var(--font-small);
+		line-height    : 1;
 	}
 
 	.build-button {

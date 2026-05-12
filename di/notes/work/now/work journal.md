@@ -4,6 +4,54 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-12 — user-guide "← Back" text button swapped for the reusable circular-X widget
+
+One code-debt item, visually confirmed.
+
+The user-guide overlay's top bar used to carry a small "← Back" text button on the right. It now carries the same circular-X widget that the build-notes overlay already uses. The hamburger stays on the left. The widget sits inside the top bar, anchored at its right edge, vertically centered. Hovering inverts its fill colors; clicking dismisses the overlay.
+
+How. The user-guide overlay imports the reusable close-button widget and places it inside the top bar. The top bar got "position: relative" so the absolutely-positioned widget anchors to it. The bar's right padding (which had been stripped earlier to line up the old text button with the help button's right edge in the main view) was restored to symmetric padding. The text button's stylesheet rules were removed because nothing else uses them.
+
+Jonathan tuned the widget's size to match the hamburger height (using the same shared button-height value) and pulled it tight to the corner — one pixel in from the top and right — so it visually balances against the hamburger.
+
+Files: [UserGuide.svelte](../../../src/lib/svelte/main/UserGuide.svelte) only — imported the widget, swapped the text button for it, restored symmetric bar padding, added "position: relative" to the bar, dropped the unused text-button stylesheet rules.
+
+Verification. svelte-check: 0 errors, 0 warnings. Visual: circular X at the right end of the top bar, vertically centered, hover inverts colors, clicking closes the overlay.
+
+---
+
+## Session — 2026-05-12 — guides slider moved into the drawing area as a vertical control
+
+One code-debt item, visually confirmed.
+
+The small grid-opacity slider used to sit at the top of the screen in the main controls bar, with a small "guides" label next to it. It now lives inside the drawing area itself, docked at the bottom-right corner, running up-and-down. The word "guides" sits horizontally directly below the slider. The slider's visual look — thin track, small round thumb — is unchanged from the horizontal version. Value 0 sits at the bottom, max at the top.
+
+To make this work, a new optional vertical mode was added to the shared slider component. When that mode is on, the outer box swaps its width and height (slim and tall instead of long and short), and the inner range input is rotated a quarter-turn counterclockwise with CSS. The drawing-area component now hosts the slider plus the label in an absolutely-positioned column in the bottom-right corner. The old slider, its three render calls (one per responsive layout), its handler, the label styling, and the unused store import were all removed from the main controls bar.
+
+Two gotchas worth keeping. First attempt used the browser's built-in vertical-writing setting on the range input. That produced the wrong look: the styled thin track and small round thumb were lost, the browser fell back to its default vertical-slider chrome. Switched to a CSS rotation of the input element instead — the rotation preserves the original styling exactly, just flips orientation. Second issue surfaced after that: the slider had height zero in vertical mode. Cause: the input element carried an inline style attribute setting "flex grow" and "position relative" — inline styles win over stylesheet rules, so the vertical mode's "position absolute" never took effect, and the input collapsed. Fix: the input's inline style is now conditional on the vertical flag — vertical mode emits a minimal style that does not fight the stylesheet's positioning.
+
+Files: [Slider.svelte](../../../src/lib/svelte/mouse/Slider.svelte) (new vertical mode for single-thumb sliders via CSS rotation; input's inline style is conditional on vertical so the rotation's absolute positioning is not overridden); [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte) (vertical guides slider with horizontal "guides" label, anchored bottom-right); [Controls.svelte](../../../src/lib/svelte/main/Controls.svelte) (guides slider snippet, three render calls, handler, store import, and related CSS removed).
+
+Verification. svelte-check: 0 errors, 0 warnings. Visual: slider sits in the bottom-right of the drawing area, runs vertically, drags update the background grid opacity, label reads horizontally below the slider, main controls bar no longer carries the slider at the top.
+
+---
+
+## Session — 2026-05-11 — help and return-to-app buttons docked at the right edge, face buttons highlight from first paint
+
+Two code-debt items, both visually confirmed.
+
+First item: button placement. The round question-mark button in the main toolbar used to sit on the left right after the hamburger; it now sits at the far right of the toolbar in all three responsive layouts (phone-wrap, mobile-wrap, desktop). The hamburger stayed on the left. In each layout the help button was lifted out of its old spot and dropped in as the last child of the row, after the trailing flexible space. The "← Return to Design Intuition" button at the top of the user-guide page used to sit on the left right after its own hamburger; it now sits at the far right of that page. Two small style tweaks were needed to make the return button's right edge land at the same screen position as the help button's right edge in the main view: the user-guide bar's right padding was removed, and a leftward offset baked into the button's styling was stripped.
+
+Second item: face buttons at launch. None of the six face buttons (bottom, top, left, right, back, front) showed as highlighted when the app started, even though the saved view points at a definite face. Cause: the number that tracks "which face is facing you" starts as "nothing", and the routine that would update it depends on geometry data built during drawing. At startup the routine fires once BEFORE the first paint, finds the data missing, and stashes "nothing yet" as the last seen value. After the paint clears the dirty flag, the routine never gets another chance. Fix: a tiny pure helper computes which face is facing you directly from an orientation — apply the inverse of the orientation to the camera-forward direction, then read off which of the resulting vector's three components has the largest absolute value (which names the axis) and the sign of that component (which picks the face on that axis). At app start, the helper is called once with the orientation that just loaded from saved preferences, and the highlight is set. The tick loop continues to update during tumbles after that.
+
+Friction during the second item. The proposal walked through three framings before landing on the right one. First framing imagined an order swap in the tick loop so the front-most-face routine ran AFTER the paint instead of before. The user redirected to the simpler approach: don't read the cache at all, derive the answer from the orientation directly. Second framing then over-described the math as "rotate each of the six fixed face arrows by the orientation and pick the largest Z". The user pushed back — the math is trivial, no loop, just dot products. The final form is what landed: one library call to transform the camera-forward direction by the inverse orientation, then a max-of-three with a sign check. Five lines.
+
+Files: [Controls.svelte](../../../src/lib/svelte/main/Controls.svelte) (help button moved to the right end of all three layouts); [UserGuide.svelte](../../../src/lib/svelte/main/UserGuide.svelte) (return button anchored at the right edge, bar's right padding removed, leftward button offset stripped); [Hits_3D.ts](../../../src/lib/ts/events/Hits_3D.ts) (new pure helper `front_most_face_from_orientation` alongside the existing front-most-face routine); [Engine.ts](../../../src/lib/ts/render/Engine.ts) (one-shot call in setup, right before the animation loop starts).
+
+Verification. svelte-check: 0 errors, 0 warnings. Visual: both button moves confirmed; face buttons highlight from the very first paint and match the loaded view.
+
+---
+
 ## Session — 2026-05-11 — seven red browser-driven tests rewritten against the painted-pixel silhouette, grid and axes suppressed during print, pre-existing Playwright URL-resolution blocker surfaced
 
 Carried the seven-test rewrite proposal from the handoff to done. The proposal had been written earlier, the user chose the "suppress the grid" option for test six, and asked to implement.

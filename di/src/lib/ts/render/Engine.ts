@@ -208,6 +208,8 @@ class Engine {
 			}
 		});
 
+		stores.w_forward_face.set(hits_3d.front_most_face_from_orientation(stores.current_orientation()));
+
 		animation.start();
 	}
 

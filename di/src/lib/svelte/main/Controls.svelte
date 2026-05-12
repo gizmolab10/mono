@@ -10,7 +10,7 @@
 
 	let { onshowuserguide = () => {} }: { onshowuserguide?: () => void } = $props();
 
-	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation, w_scale, w_grid_opacity } = stores;
+	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation, w_scale } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 
 	let controls_width   = $state(Infinity);
@@ -31,10 +31,6 @@
 
 	function handle_zoom_slide(value: number) {
 		w_scale.set(value);
-	}
-
-	function handle_grid_opacity(value: number) {
-		w_grid_opacity.set(value);
 	}
 
 </script>
@@ -61,13 +57,6 @@
 {#snippet scaling_slider()}
 	<div class='scale-block'>
 		<Slider min={0.01} max={10000} value={$w_scale} logarithmic fill onchange={handle_zoom_slide} onstep={handle_zoom_step} />
-	</div>
-{/snippet}
-
-{#snippet guides_slider()}
-	<div class='guides-block'>
-		<span class='guides-label'>guides</span>
-		<Slider min={0} max={1} value={$w_grid_opacity} width={81} show_steppers={false} onchange={handle_grid_opacity} />
 	</div>
 {/snippet}
 
@@ -109,7 +98,6 @@
 				{@render hamburger_button()}
 				{@render desktop_only_buttons()}
 				<span class='spacer'></span>
-				{@render guides_slider()}
 				{@render help_button()}
 			</div>
 			<div class='right-row'>
@@ -136,7 +124,6 @@
 			<div class='right-row'>
 				{@render hamburger_button()}
 				{@render desktop_only_buttons()}
-				{@render guides_slider()}
 				<span class='spacer'></span>
 				{@render mode_buttons()}
 				<span class='spacer'></span>
@@ -162,7 +149,6 @@
 				<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 			{/if}
 			{@render desktop_only_buttons()}
-			{@render guides_slider()}
 			{@render mode_buttons()}
 			<span class='spacer'></span>
 			{@render scaling_slider()}
@@ -222,27 +208,12 @@
 		left        : 0;
 	}
 
-	.guides-block {
-		flex-direction : column;
-		align-items    : center;
-		display        : flex;
-	}
-
 	.scale-block {
 		margin-right : calc(-1 * var(--l-gap-small));
 		flex         : 1 1 auto;
 		min-width    : 400px;
 		margin-left  : 4px;
 		margin-top   : 4px;
-	}
-
-	.guides-label {
-		letter-spacing : var(--l-letter-spacing);
-		color          : rgba(0, 0, 0, 0.65);
-		font-size      : var(--font-small);
-		position       : relative;
-		top            : -2px;
-		line-height    : 1;
 	}
 
 	.hamburger {
@@ -275,9 +246,9 @@
 	.toolbar-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
-		border-radius : var(--r-common);
 		font-size     : var(--font-common);
 		z-index       : var(--z-frontmost);
+		border-radius : var(--r-common);
 		background    : var(--white);
 		box-sizing    : border-box;
 		cursor        : pointer;

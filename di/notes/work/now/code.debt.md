@@ -4,13 +4,11 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] move the '?' to the right, and the 'return to design intuition' button
-- [ ] on launch, none of the `face_buttons` are selected
-- [ ] move the guides slider into the graph, bottom right corner, vertical slider
 - [ ] reverse appearance (including hover) of banners when hideable is visible
+- [ ] move axis indicator decorations to the frontmost three faces
 - [ ] merge relevant constants -> configuration
 - [ ] print
-    - [ ] wrong when scaled huge
+    - [ ] wrong when zoomed in (clipped)
     - [ ] blurry, need the other solution
 - [ ] read the app code base and write a formal, machine-readable specification, that when followed by you can reproduce the app
 - [ ] move logic driven design -> alongside always

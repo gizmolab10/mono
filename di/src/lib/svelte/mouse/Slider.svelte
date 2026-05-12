@@ -26,6 +26,7 @@
 		logarithmic = false,
 		show_steppers = true,
 		sticky_threshold = 1,
+		vertical = false,
 	}: {
 		min?: number;
 		max?: number;
@@ -41,6 +42,7 @@
 		show_steppers?: boolean;
 		style?: 'pill' | 'line';
 		sticky_threshold?: number;
+		vertical?: boolean;
 		onchange: (value: number) => void;
 		format_label?: (v: number) => string;
 		onchange_alt?: (value: number) => void;
@@ -262,9 +264,12 @@
 			<div class='slider-border'
 				class:pill={style === 'pill'}
 				class:line={style === 'line'}
-				style:width={fill ? '100%' : `${width}px`}
+				class:vertical
+				style:width={fill ? '100%' : `${vertical ? height : width}px`}
+				style:height={vertical ? `${width}px` : null}
 				style:--border={border}
 				style:--height="{height}px"
+				style:--slider-length="{width}px"
 				style:--thumb-height="{height * 0.8}px"
 				style:--thumb-color={current_thumb_color}>
 				<input class='slider-input'
@@ -280,7 +285,7 @@
 						onpress: () => is_dragging = true,
 						onrelease: () => is_dragging = false,
 					}}
-					style='flex: 1 1 auto; position: relative; min-width: 0; pointer-events: auto;'/>
+					style={vertical ? 'pointer-events: auto;' : 'flex: 1 1 auto; position: relative; min-width: 0; pointer-events: auto;'}/>
 				{#if logarithmic || sticky_ticks.length > 0}
 					<div class='tick-overlay'>
 						{#each log_ticks as tick}
@@ -628,5 +633,25 @@
 		border-radius  : 50%;
 	}
 
+	/* === Vertical orientation for single-thumb mode === */
+	/* Keep the slider's horizontal styling and rotate the input visually. The slider-border
+	   has its width and height swapped (slim and tall); the inner input keeps its horizontal
+	   box of length × thickness, gets rotated counterclockwise around its center, and is
+	   positioned so the rotated box centers inside the slider-border. */
+
+	.slider-border.vertical {
+		position : relative;
+		overflow : visible;
+	}
+
+	.slider-border.vertical input[type='range'] {
+		width            : var(--slider-length);
+		height           : var(--height);
+		position         : absolute;
+		transform        : rotate(-90deg);
+		transform-origin : center;
+		left             : calc((var(--height) - var(--slider-length)) / 2);
+		top              : calc((var(--slider-length) - var(--height)) / 2);
+	}
 
 </style>

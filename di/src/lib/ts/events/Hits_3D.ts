@@ -210,6 +210,18 @@ class Hits_3D {
 		return best;
 	}
 
+	/** Which canonical face (0-5) does this orientation point through? Pure: no cache or scene needed. */
+	front_most_face_from_orientation(orientation: quat): number {
+		const inv = quat.conjugate(quat.create(), orientation);
+		const v = vec3.transformQuat(vec3.create(), vec3.fromValues(0, 0, 1), inv);
+		const ax = Math.abs(v[0]);
+		const ay = Math.abs(v[1]);
+		const az = Math.abs(v[2]);
+		if (ax >= ay && ax >= az) return v[0] > 0 ? 3 : 2;
+		if (ay >= az) return v[1] > 0 ? 4 : 5;
+		return v[2] > 0 ? 1 : 0;
+	}
+
 	// Opposite face from front_most_face (face pairs: 0/1, 2/3, 4/5)
 	back_most_face(so: Smart_Object): number {
 		const front = this.front_most_face(so);

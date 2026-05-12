@@ -1,6 +1,6 @@
 # Code-Debt Handoff
 
-**Date:** 2026-05-11
+**Date:** 2026-05-12
 **Work stream:** items from [code.debt.md](./code.debt.md), one item at a time. Per-session detail in [work journal](./work%20journal.md).
 
 ## Open items
@@ -13,17 +13,14 @@
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
-## Proposal: move help and return-to-app buttons to the right
+## Pending visual confirmation: banners reverse appearance when their section is open
 
-First unchecked item on [code.debt.md](./code.debt.md): "move the '?' to the right, and the 'return to design intuition' button".
+Item from [code.debt.md](./code.debt.md): "reverse appearance (including hover) of banners when hideable is visible".
 
-**Where they sit now.** The round `?` help button is on the LEFT end of the main control bar — it's the second item, right after the hamburger, and it lays out that way in all three responsive layouts (desktop, mobile-wrap, phone-wrap). The `← Return to Design Intuition` button is on the LEFT end of the user-guide bar, also right after its own hamburger.
+**What changed.** When a section's content is open below its banner, the banner now shows flat light (the gradient overlay is hidden). Hovering an open banner brings the gradient back, so the dark accent fades in at the edges. Closed banners look unchanged: gradient at rest, flat light on hover.
 
-**Plan.** Move both buttons to the right end of their respective bars.
+**How.** Two new stylesheet rules were added to the hideable component, both keyed on the existing "open" class flag that the banner already toggles. The first hides the gradient when open (by setting the overlay's background to the flat light color). The second restores the gradient on hover when open. Closed-banner styling stays exactly as it was.
 
-- Main control bar (Controls.svelte). Remove the help_button call from its current spot (just after hamburger) in each of the three layout branches. Re-render it at the far right — after the face accessory buttons and after the trailing spacer — so it docks against the right edge in every layout.
-- User-guide bar (UserGuide.svelte). Push the return button to the right end while leaving the hamburger on the left. Cleanest way: drop a stretching spacer between the hamburger and the return button (or change the bar's `justify-content` from `flex-start` to `space-between`).
+**Files touched.** [Hideable.svelte](../../../src/lib/svelte/details/Hideable.svelte) only — two new CSS rules added.
 
-**One default I'm picking.** At the right edge of the main bar, the help button will sit OUTERMOST — to the right of the face buttons. If you'd rather have it tucked just left of the face buttons, say so before I edit.
-
-**Scope.** Two files, layout-only changes, no behavior changes. No styling tweaks beyond what is needed to anchor the buttons on the right.
+**Needs visual confirmation.** Open a panel in the details column and check: its banner switches from gradient-with-dark-edges to flat light. Hover the open banner and the gradient comes back. Hover a closed banner and it goes flat light (unchanged from before).

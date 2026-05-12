@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
-	import { hit_target } from '../../ts/events/Hit_Target';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { Point } from '../../ts/types/Coordinates';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { colors } from '../../ts/utilities/Colors';
+	import { Point } from '../../ts/types/Coordinates';
 	import { hits } from '../../ts/events/Hits';
 	const { w_s_hover } = hits;
 
@@ -33,7 +33,7 @@
 		<path
 			fill="none"
 			d={crossPath}
-			stroke-width="1"
+			stroke-width={size / 12}
 			stroke={isHovering ? 'white' : colors.default}
 		/>
 	</svg>

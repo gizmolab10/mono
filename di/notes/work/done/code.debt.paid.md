@@ -261,6 +261,10 @@
 - [x] vertical scroll bar -> should widen details so content width stays constant
 - [x] print just the graph, scaled to fit
 - [x] area below last details -> accent color and remove fillets from under last hideable
-    - [x] convert all the hidables (content) into having rounded corners
+    - [x] convert all the hideables (content) into having rounded corners
         - [x] exactly preserving the current look
         - [x] remove the separators from the details
+- [x] move the '?' to the right, and the 'return to design intuition' button
+- [x] on launch, none of the `face_buttons` are selected
+- [x] move the guides slider into the graph, bottom right corner, vertical slider
+- [x] `<button class='toolbar-button' onclick={onclose}>← Back</button>` in user guide -> Close Button svelte component

@@ -1,9 +1,11 @@
 <script lang='ts'>
-	import MarkdownIt from 'markdown-it';
-	import Separator from '../mouse/Separator.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import Close_Button from '../mouse/Close_Button.svelte';
+	import { Point } from '../../ts/types/Coordinates';
+	import Separator from '../mouse/Separator.svelte';
 	import { stores } from '../../ts/managers/Stores';
 	import { k } from '../../ts/common/Constants';
+	import MarkdownIt from 'markdown-it';
 	import { get } from 'svelte/store';
 
 	let { onclose } : { onclose: () => void } = $props();
@@ -139,7 +141,7 @@
 				<path d={svg_paths.hamburger(k.height.button.common + 2)}/>
 			</svg>
 		</button>
-		<button class='toolbar-button' onclick={onclose}>← Return to Design Intuition</button>
+		<Close_Button size={k.height.button.common} origin={new Point(1, 1)} {onclose} />
 	</div>
 
 	<div class='content-card'>
@@ -184,12 +186,12 @@
 	}
 
 	.controls-bar {
-		padding         : 0 0 0 var(--l-gap-large);
 		height          : var(--h-controls);
-		justify-content : space-between;
+		padding         : 0 var(--l-gap);
 		background      : var(--accent);
 		gap             : var(--l-gap);
 		box-sizing      : border-box;
+		position        : relative;
 		overflow        : visible;
 		align-items     : center;
 		width           : 100%;
@@ -233,23 +235,6 @@
 		display                 : flex;
 		flex                    : 1;
 		min-height              : 0;
-	}
-
-	.toolbar-button {
-		padding         : 0 var(--l-padding) 1px var(--l-padding);
-		border          : var(--th-border) solid currentColor;
-		height          : var(--h-button-common);
-		font-size       : var(--font-common);
-		border-radius   : var(--r-common);
-		background      : var(--white);
-		box-sizing      : border-box;
-		position        : relative;
-		cursor          : pointer;
-		color           : inherit;
-	}
-
-	.toolbar-button:hover {
-		background      : var(--hover);
 	}
 
 	.content-row {
