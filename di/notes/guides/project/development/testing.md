@@ -49,7 +49,7 @@ Each line names what the file in `src/lib/ts/tests/` covers.
     - stipulation: cut-so-in-half
 - **Coordinates** — point, size, and rectangle math; coordinate transformations.
 - **Data_Layout** — the structure each SO carries by construction: three directions, three numbers per direction, a single parent slot, plain-number cells, exactly one recomputed marker per direction, visibility flags, and the eight-corner / twelve-edge / six-face shape.
-    - stipulation: so-three-directions, axis-three-attributes, plain-number-attributes, axis-has-one-invariant, block-has-at-most-one-parent, block-visibility-flags, so-shaped-as-eight-corner-box
+    - stipulation: so-three-directions, axis-three-attributes, plain-number-attributes, axis-has-one-invariant, block-has-at-most-one-parent, block-visibility-flags, so-shaped-as-eight-r-box
 - **Drag_math** — pure math helpers used by drag (ray-plane intersection, decomposing a screen delta onto two face edges).
     - stipulation: face-drag-confined-to-plane, face-drag-ray-becomes-plane-hit, face-drag-decomposed-to-two-edges
 - **Engine_Behaviors** — engine-level rules that run end-to-end through the running app: deleting an SO removes its subtree and clears every formula that pointed at any deleted SO; changing the precision setting snaps every plain-number cell while leaving formula-driven cells alone.

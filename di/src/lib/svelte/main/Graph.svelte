@@ -279,7 +279,7 @@
 		padding       : 0 var(--l-padding) 1px var(--l-padding);
 		background    : rgba(255, 255, 255, 0.85);
 		height        : var(--h-button-common);
-		border-radius : var(--corner-common);
+		border-radius : var(--r-common);
 		font-size     : var(--font-common);
 		color         : rgba(0, 0, 0, 0.5);
 		box-sizing    : border-box;
@@ -310,7 +310,7 @@
 		height        : var(--h-button-common);
 		color         : rgba(0, 0, 0, 0.45);
 		font-size     : var(--font-common);
-		border-radius : var(--corner-box);
+		border-radius : var(--r-box);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		padding       : 0 8px;

@@ -300,11 +300,11 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	}
 
 	.segmented button:first-child {
-		border-radius : var(--corner-common) 0 0 var(--corner-common);
+		border-radius : var(--r-common) 0 0 var(--r-common);
 	}
 
 	.segmented button:last-child {
-		border-radius : 0 var(--corner-common) var(--corner-common) 0;
+		border-radius : 0 var(--r-common) var(--r-common) 0;
 	}
 
 	.segmented button:not(:first-child) {
@@ -324,7 +324,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
 		font-size     : var(--font-common);
-		border-radius : var(--corner-common);
+		border-radius : var(--r-common);
 		padding       : 0 var(--l-padding);
 		z-index       : var(--z-action);
 		background    : var(--white);

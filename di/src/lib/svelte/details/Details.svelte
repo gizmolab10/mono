@@ -236,7 +236,7 @@
 		background    : radial-gradient(ellipse at center, var(--white) 30%, var(--accent) 100%);
 		border        : var(--th-border) solid rgba(0, 0, 0, 0.3);
 		height        : var(--h-button-tiny);
-		border-radius : var(--corner-common);
+		border-radius : var(--r-common);
 		font-size     : var(--font-reset);
 		z-index       : var(--z-action);
 		box-sizing    : border-box;
@@ -304,7 +304,7 @@
 	.naming-suggestion {
 		border        : var(--th-border) solid currentColor;
 		font-size     : var(--font-small);
-		border-radius : var(--c-r-table);;
+		border-radius : var(--r-table);;
 		cursor        : pointer;
 		color         : inherit;
 		padding       : 2px 5px;

@@ -22,7 +22,7 @@
 
 	// Layout constants
 	const gap    = k.thickness.separator.main;
-	const radius = gap * 3;
+	const radius = k.radius.main;
 
 	let controlsHeight = $state(k.height.controls);
 	let details_pad    = $state(0);
@@ -126,6 +126,7 @@
 	}
 
 	.region {
+		z-index       : var(--z-layout);
 		border-radius : var(--radius);
 		position      : relative;
 		overflow      : hidden;

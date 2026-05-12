@@ -228,7 +228,7 @@
 	.action-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
-		border-radius : var(--corner-common);
+		border-radius : var(--r-common);
 		font-size     : var(--font-common);
 		z-index       : var(--z-action);
 		background    : var(--white);

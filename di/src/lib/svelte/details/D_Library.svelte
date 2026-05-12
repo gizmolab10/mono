@@ -141,11 +141,11 @@
 	}
 
 	.segmented button:first-child {
-		border-radius : var(--corner-common) 0 0 var(--corner-common);
+		border-radius : var(--r-common) 0 0 var(--r-common);
 	}
 
 	.segmented button:last-child {
-		border-radius : 0 var(--corner-common) var(--corner-common) 0;
+		border-radius : 0 var(--r-common) var(--r-common) 0;
 	}
 
 	.segmented button:not(:first-child) {
@@ -174,7 +174,7 @@
 	.action-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
-		border-radius : var(--corner-common);
+		border-radius : var(--r-common);
 		font-size     : var(--font-common);
 		z-index       : var(--z-action);
 		background    : var(--white);

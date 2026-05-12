@@ -107,10 +107,10 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
-				{@render help_button()}
 				{@render desktop_only_buttons()}
 				<span class='spacer'></span>
 				{@render guides_slider()}
+				{@render help_button()}
 			</div>
 			<div class='right-row'>
 				<span class='spacer'></span>
@@ -135,13 +135,13 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render hamburger_button()}
-				{@render help_button()}
 				{@render desktop_only_buttons()}
 				{@render guides_slider()}
 				<span class='spacer'></span>
 				{@render mode_buttons()}
 				<span class='spacer'></span>
 				<span class='spacer'></span>
+				{@render help_button()}
 			</div>
 			<div class='right-row'>
 				<span class='spacer'></span>
@@ -158,7 +158,6 @@
 	{:else}
 		<div class='desktop-row'>
 			{@render hamburger_button()}
-			{@render help_button()}
 			{#if $w_allow_editing && !root_fits}
 				<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 			{/if}
@@ -171,6 +170,7 @@
 			{@render face_buttons()}
 			{@render face_accessory_buttons()}
 			<span class='spacer'></span>
+			{@render help_button()}
 		</div>
 	{/if}
 </div>
@@ -275,9 +275,9 @@
 	.toolbar-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
+		border-radius : var(--r-common);
 		font-size     : var(--font-common);
-		border-radius : var(--corner-common);
-		z-index       : var(--z-action);
+		z-index       : var(--z-frontmost);
 		background    : var(--white);
 		box-sizing    : border-box;
 		cursor        : pointer;
@@ -285,8 +285,9 @@
 	}
 
 	.help-button {
-		font-size   : var(--font-large);
-		padding     : 1px 10px 0 9px;
+		font-size : var(--font-large);
+		padding   : 1px 10px 0 9px;
+		right     : -10px;
 	}
 
 	.toolbar-button:disabled {
@@ -322,7 +323,7 @@
 	.segmented {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-common);
-		border-radius : var(--corner-common);
+		border-radius : var(--r-common);
 		z-index       : var(--z-action);
 		box-sizing    : border-box;
 		overflow      : hidden;
@@ -330,7 +331,6 @@
 	}
 
 	.seg {
-		border      : none;
 		padding     : 0 var(--l-padding) 1px var(--l-padding);
 		border-right: var(--th-border) solid currentColor;
 		color       : rgba(0, 0, 0, 0.35);
@@ -338,6 +338,7 @@
 		background  : var(--white);
 		box-sizing  : border-box;
 		cursor      : pointer;
+		border      : none;
 		height      : 100%;
 	}
 
@@ -346,13 +347,13 @@
 	}
 
 	.seg.forward {
-		background : var(--selected);
 		color      : var(--c-default);
+		background : var(--selected);
 	}
 
 	.seg.active {
-		background : var(--selected);
 		color      : var(--c-default);
+		background : var(--selected);
 	}
 
 	.seg:global([data-hit]) {

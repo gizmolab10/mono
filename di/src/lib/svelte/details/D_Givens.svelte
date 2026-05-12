@@ -367,7 +367,7 @@
 	.naming-suggestion {
 		border        : var(--th-border) solid currentColor;
 		font-size     : var(--font-small);
-		border-radius : var(--c-r-table);;
+		border-radius : var(--r-table);;
 		cursor        : pointer;
 		color         : inherit;
 		padding       : 2px 5px;

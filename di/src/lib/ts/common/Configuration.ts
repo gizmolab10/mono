@@ -3,8 +3,8 @@ import { T_Browser } from '../types/Enumerations';
 import { colors } from '../utilities/Colors';
 import MobileDetect from 'mobile-detect';
 import { writable } from 'svelte/store';
+import { debug } from './Debug';
 import { k } from './Constants';
-import { debug } from './Debug'
 
 export enum T_Configuration_Keys {
 	clear = 'clear',
@@ -91,7 +91,6 @@ export class Configuration {
 		root.setProperty('--l-padding-small',  `${k.layout.padding_small}px`);
 		root.setProperty('--l-padding',        `${k.layout.padding}px`);
 		root.setProperty('--l-margin',         `${k.layout.margin}px`);
-
 		root.setProperty('--l-gap-large',      `${k.gap.large}px`);
 		root.setProperty('--l-gap-small',      `${k.gap.small}px`);
 		root.setProperty('--l-gap-tiny',       `${k.gap.tiny}px`);
@@ -106,21 +105,11 @@ export class Configuration {
 		root.setProperty('--th-banners-sep',   `${k.thickness.separator.banners}px`);
 		root.setProperty('--th-content-sep',   `${k.thickness.separator.content}px`);
 
-		root.setProperty('--corner-common',    `${k.corner.common}px`);
-		root.setProperty('--corner-banner',    `${k.corner.banner}px`);
-		root.setProperty('--corner-input',     `${k.corner.input}px`);
-		root.setProperty('--corner-box',       `${k.corner.box}px`);
-
-		root.setProperty('--z-common',         `${k.z.common}`);
-		root.setProperty('--z-layout',         `${k.z.layout}`);
-		root.setProperty('--z-action',         `${k.z.action}`);
-		root.setProperty('--z-frontmost',      `${k.z.frontmost}`);
-
 		root.setProperty('--h-button-tiny',    `${k.height.button.tiny}px`);
 		root.setProperty('--h-button-small',   `${k.height.button.small}px`);
 		root.setProperty('--h-button-common',  `${k.height.button.common}px`);
-		root.setProperty('--w-build-button',   `${k.width.build_button}px`);
 		root.setProperty('--w-guides-slider',  `${k.width.guides_slider}px`);
+		root.setProperty('--w-build-button',   `${k.width.build_button}px`);
 		root.setProperty('--h-controls',       `${k.height.controls}px`);
 		root.setProperty('--h-collapse',       `${k.height.collapse}px`);
 		root.setProperty('--h-banner',         `${k.height.banner}px`);
@@ -130,9 +119,17 @@ export class Configuration {
 		root.setProperty('--w-title',          `${k.width.title}px`);
 		root.setProperty('--w-small',          `${k.width.small}px`);
 
-		root.setProperty('--c-r-main',         `${k.radius.main}px`);
-		root.setProperty('--c-r-table',        `${k.radius.table}px`);
-		root.setProperty('--c-r-content',      `${k.radius.content}px`);
+		root.setProperty('--r-box',            `${k.radius.box}px`);
+		root.setProperty('--r-main',           `${k.radius.main}px`);
+		root.setProperty('--r-table',          `${k.radius.table}px`);
+		root.setProperty('--r-input',          `${k.radius.input}px`);
+		root.setProperty('--r-common',         `${k.radius.common}px`);
+		root.setProperty('--r-content',        `${k.radius.content}px`);
+
+		root.setProperty('--z-frontmost',      `${k.z.frontmost}`);
+		root.setProperty('--z-action',         `${k.z.action}`);
+		root.setProperty('--z-layout',         `${k.z.layout}`);
+		root.setProperty('--z-common',         `${k.z.common}`);
 	}
 
 	/**

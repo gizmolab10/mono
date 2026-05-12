@@ -78,7 +78,7 @@
 	.collapsed-name {
 		border        : 0.5px solid rgba(0, 0, 0, 0.6);
 		font-size     : var(--font-small);
-		border-radius : var(--c-r-table);
+		border-radius : var(--r-table);
 		z-index       : var(--z-action);
 		height        : var(--h-cell);
 		margin-bottom : var(--l-gap);
@@ -103,7 +103,7 @@
 	.action-button {
 		border        : var(--th-border) solid currentColor;
 		height        : var(--h-button-tiny);
-		border-radius : var(--corner-common);
+		border-radius : var(--r-common);
 		font-size     : var(--font-common);
 		z-index       : var(--z-action);
 		background    : var(--white);
@@ -142,11 +142,11 @@
 	}
 
 	.segmented button:first-child {
-		border-radius : var(--corner-common) 0 0 var(--corner-common);
+		border-radius : var(--r-common) 0 0 var(--r-common);
 	}
 
 	.segmented button:last-child {
-		border-radius : 0 var(--corner-common) var(--corner-common) 0;
+		border-radius : 0 var(--r-common) var(--r-common) 0;
 	}
 
 	.segmented button:not(:first-child) {

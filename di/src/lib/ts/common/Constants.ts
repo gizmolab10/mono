@@ -58,15 +58,16 @@ export default class Constants {
 
 	radius = {
 		main:	 Math.round(common_size * 0.6),
+		common:  Math.round(common_size / 2),
 		content: Math.round(common_size / 3),
 		table:   Math.round(common_size / 6),
+		box:     Math.round(common_size / 8),
+		input:   Math.round(common_size / 16),
 	};
 
 	corner = {
-		common: Math.round(common_size / 2),
-		banner: Math.round(common_size / 2),
-		input:  2,
-		box:    4,
+		input: 2,
+		box:   4,
 	};
 
 	z = {

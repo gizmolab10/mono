@@ -481,7 +481,7 @@
 
 	.line input[type='range']::-webkit-slider-runnable-track {
 		background    : rgba(0, 0, 0, 0.15);
-		border-radius : var(--corner-input);
+		border-radius : var(--r-input);
 		height        : var(--th-track);
 		border        : none;
 	}
@@ -496,7 +496,7 @@
 
 	.line input[type='range']::-moz-range-track {
 		background    : rgba(0, 0, 0, 0.15);
-		border-radius : var(--corner-input);
+		border-radius : var(--r-input);
 		height        : var(--th-track);
 		border        : none;
 	}
@@ -511,7 +511,7 @@
 	.line input[type='range']::-ms-fill-lower,
 	.line input[type='range']::-ms-fill-upper {
 		background    : rgba(0, 0, 0, 0.15);
-		border-radius : var(--corner-input);
+		border-radius : var(--r-input);
 		border        : none;
 	}
 
@@ -549,7 +549,7 @@
 
 	.range-fill {
 		background    : var(--accent, var(--c-focus));
-		border-radius : var(--corner-input);
+		border-radius : var(--r-input);
 		position      : absolute;
 		height        : 100%;
 		top           : 0;

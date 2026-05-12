@@ -7,6 +7,7 @@ offer a proposal for the first unchecked item, and add it to a new section at th
 - [ ] move the '?' to the right, and the 'return to design intuition' button
 - [ ] on launch, none of the `face_buttons` are selected
 - [ ] move the guides slider into the graph, bottom right corner, vertical slider
+- [ ] reverse appearance (including hover) of banners when hideable is visible
 - [ ] merge relevant constants -> configuration
 - [ ] print
     - [ ] wrong when scaled huge

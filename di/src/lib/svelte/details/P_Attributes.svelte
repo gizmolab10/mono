@@ -598,7 +598,7 @@
 	.error-suggestion {
 		border        : var(--th-border) solid currentColor;
 		font-size     : var(--font-small);
-		border-radius : var(--c-r-table);;
+		border-radius : var(--r-table);;
 		padding       : 2px 5px;
 		cursor        : pointer;
 		color         : inherit;

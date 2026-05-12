@@ -9,7 +9,7 @@ Background rule: everything is `var(--white)` / `var(--bg)` by default. The acti
 Every interactive control shares this core:
 
 - `border: var(--th-border) solid currentColor`
-- `border-radius: var(--corner-common)` (pill — buttons, select, action) or `var(--corner-input)` (box — input field, SO selector)
+- `border-radius: var(--r-common)` (pill — buttons, select, action) or `var(--r-input)` (box — input field, SO selector)
 - `height: var(--h-button-common)`
 - `font-size: var(--font-common)`
 - `z-index: var(--z-action)`

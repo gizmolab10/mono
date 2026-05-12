@@ -103,7 +103,7 @@
 	.segmented {
 		border         : var(--th-border) solid currentColor;
 		height         : var(--h-button-common);
-		border-radius  : var(--corner-common);
+		border-radius  : var(--r-common);
 		background     : var(--white);
 		box-sizing     : border-box;
 		overflow       : hidden;
@@ -147,7 +147,7 @@
 		background         : var(--white);
 		border             : var(--th-border) solid currentColor;
 		height             : var(--h-button-common);
-		border-radius      : var(--corner-common);
+		border-radius      : var(--r-common);
 		font-size          : var(--font-common);
 		background-position: right 6px center;
 		z-index            : var(--z-action);
@@ -195,7 +195,7 @@
 
 	.slider-group input[type='range']::-webkit-slider-runnable-track {
 		background    : rgba(0, 0, 0, 0.15);
-		border-radius : var(--corner-input);
+		border-radius : var(--r-input);
 		height        : var(--th-track);
 		border        : none;
 	}
@@ -213,7 +213,7 @@
 
 	.slider-group input[type='range']::-moz-range-track {
 		background    : rgba(0, 0, 0, 0.15);
-		border-radius : var(--corner-input);
+		border-radius : var(--r-input);
 		height        : var(--th-track);
 		border        : none;
 	}

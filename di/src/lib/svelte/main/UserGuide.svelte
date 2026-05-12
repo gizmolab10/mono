@@ -184,12 +184,12 @@
 	}
 
 	.controls-bar {
+		padding         : 0 0 0 var(--l-gap-large);
 		height          : var(--h-controls);
-		padding         : 0 var(--l-gap);
+		justify-content : space-between;
 		background      : var(--accent);
 		gap             : var(--l-gap);
 		box-sizing      : border-box;
-		justify-content : flex-start;
 		overflow        : visible;
 		align-items     : center;
 		width           : 100%;
@@ -240,13 +240,12 @@
 		border          : var(--th-border) solid currentColor;
 		height          : var(--h-button-common);
 		font-size       : var(--font-common);
-		border-radius   : var(--corner-common);
+		border-radius   : var(--r-common);
 		background      : var(--white);
 		box-sizing      : border-box;
 		position        : relative;
 		cursor          : pointer;
 		color           : inherit;
-		left            : -9px;
 	}
 
 	.toolbar-button:hover {
@@ -279,7 +278,7 @@
 
 	.sidebar button {
 		font-size       : var(--font-common);
-		border-radius   : var(--corner-input);
+		border-radius   : var(--r-input);
 		background      : transparent;
 		padding         : 6px 10px;
 		cursor          : pointer;
@@ -318,7 +317,7 @@
 
 	.page :global(img) {
 		border          : var(--th-border) solid var(--accent);
-		border-radius   : var(--corner-common);
+		border-radius   : var(--r-common);
 		display         : block;
 		margin          : 1em 0;
 		max-width       : 100%;
@@ -335,7 +334,7 @@
 
 	.page :global(code) {
 		font-family     : ui-monospace, SFMono-Regular, monospace;
-		border-radius   : var(--corner-input);
+		border-radius   : var(--r-input);
 		background      : var(--accent);
 		font-size       : 0.9em;
 		padding         : 0 4px;

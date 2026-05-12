@@ -66,7 +66,7 @@
 
 	.banner {
 		letter-spacing  : var(--l-letter-spacing);
-		border-radius   : var(--corner-banner);
+		border-radius   : var(--r-common);
 		font-size       : var(--font-common);
 		color           : rgba(0, 0, 0, 1);
 		z-index         : var(--z-action);
@@ -120,7 +120,7 @@
 	}
 
 	.slot {
-		border-radius : var(--corner-banner);
+		border-radius : var(--r-common);
 		padding       : var(--l-margin);
 		background    : var(--bg);
 		position      : relative;

@@ -35,7 +35,7 @@ A real example, fully written:
     - test: [Data_Layout.test.ts](../../../src/lib/ts/tests/Data_Layout.test.ts) "a fresh block has exactly three directions"
     - code: [src/lib/ts/runtime/Smart_Object.ts:9](../../../src/lib/ts/runtime/Smart_Object.ts)
 2. Every SO is a block with eight corners, twelve edges between them, and six faces, all at right angles.
-    - id: so-shaped-as-eight-corner-box
+    - id: so-shaped-as-eight-r-box
     - test: [Data_Layout.test.ts](../../../src/lib/ts/tests/Data_Layout.test.ts) "the standard cube wiring connects those eight corners with twelve edges"
     - code: [src/lib/ts/runtime/Smart_Object.ts:138](../../../src/lib/ts/runtime/Smart_Object.ts)
 3. Each axis has three attributes: start, length and end
