@@ -8,9 +8,9 @@ import { mat4 } from 'gl-matrix';
 import { vec3 } from 'gl-matrix';
 
 /**
- * Axis decoration arrows on the back-grid planes.
+ * Axis decoration arrows on the front-grid planes.
  * Each arrow is a 7-sided polygon (rectangle stem + triangle head)
- * lying in the plane of a back-facing grid face, offset from the outer edge.
+ * lying in the plane of a front-facing grid face, offset from the outer edge.
  * Stroke only — no fill.
  */
 
@@ -65,18 +65,10 @@ export function render_axes(host: AxesHost): void {
 
 	const all_axes: Axis_Name[] = ['x', 'y', 'z'];
 
-	// Find the back-most corner: where all 3 back-facing grid planes meet
-	const back_corner = vec3.create();
-	for (const [fi, fixed, ,] of FACE_AXES) {
-		vec3.transformQuat(rotated, root_so.face_normal(fi), orientation);
-		if (rotated[2] < 0) {
-			// This face is back-facing — its fixed value contributes to the back corner
-			set_axis(back_corner, fixed, ve_fixed_value(ve, fi));
-		}
-	}
-	const p_back = host.project_vertex(back_corner, world);
-
-	// For each axis, find the best back-facing grid face to draw on
+	// For each axis, pick the face whose normal is most aligned with the camera direction
+	// (largest absolute forward-pointing component). Back-facing faces are eligible when
+	// their alignment is stronger than any front-facing face's — this avoids landing the
+	// arrow on a nearly-edge-on front face when an opposite back face is much more face-on.
 	for (const axis of all_axes) {
 		let best_face = -1;
 		let best_visibility = -Infinity;
@@ -85,11 +77,9 @@ export function render_axes(host: AxesHost): void {
 			// Only faces that contain this axis
 			if (a !== axis && b !== axis) continue;
 
-			// Must be back-facing
 			vec3.transformQuat(rotated, root_so.face_normal(fi), orientation);
-			if (rotated[2] >= 0) continue;
 
-			const visibility = -rotated[2];
+			const visibility = Math.abs(rotated[2]);
 			if (visibility > best_visibility) {
 				best_visibility = visibility;
 				best_face = fi;
@@ -118,21 +108,23 @@ export function render_axes(host: AxesHost): void {
 			return pt;
 		};
 
-		// Pick the outer edge: furthest from the projected center of the face
-		const face_center = make_point((a_min + a_max) / 2, (p_min + p_max) / 2);
-		const p_center = host.project_vertex(face_center, world);
+		// Find this face's own corner closest to the camera. Walk the 4 corners
+		// of the picked face, rotate each by the tumble orientation, and keep
+		// the one with the largest forward-pointing component.
 		let best_perp = p_min;
-		let best_dist = -Infinity;
-		for (const p_val of [p_min, p_max]) {
-			const e1 = host.project_vertex(make_point(a_min, p_val), world);
-			const e2 = host.project_vertex(make_point(a_max, p_val), world);
-			if (e1.w < 0 || e2.w < 0 || p_center.w < 0) continue;
-			const mid_x = (e1.x + e2.x) / 2;
-			const mid_y = (e1.y + e2.y) / 2;
-			const dist = Math.sqrt((mid_x - p_center.x) ** 2 + (mid_y - p_center.y) ** 2);
-			if (dist > best_dist) {
-				best_dist = dist;
-				best_perp = p_val;
+		let best_a = a_min;
+		{
+			const scratch = vec3.create();
+			let best_corner_z = -Infinity;
+			for (const p_val of [p_min, p_max]) {
+				for (const a_val of [a_min, a_max]) {
+					vec3.transformQuat(scratch, make_point(a_val, p_val), orientation);
+					if (scratch[2] > best_corner_z) {
+						best_corner_z = scratch[2];
+						best_perp = p_val;
+						best_a = a_val;
+					}
+				}
 			}
 		}
 
@@ -159,20 +151,9 @@ export function render_axes(host: AxesHost): void {
 			perp = vec3.negate(vec3.create(), perp);
 		}
 
-		// Position near the corner furthest from the back-most corner
-		let a_pos = (a_min + a_max) / 2; // fallback: midpoint
-		if (p_back.w >= 0) {
-			const pa1 = host.project_vertex(make_point(a_min, best_perp), world);
-			const pa2 = host.project_vertex(make_point(a_max, best_perp), world);
-			if (pa1.w >= 0 && pa2.w >= 0) {
-				const d1 = (pa1.x - p_back.x) ** 2 + (pa1.y - p_back.y) ** 2;
-				const d2 = (pa2.x - p_back.x) ** 2 + (pa2.y - p_back.y) ** 2;
-				// Pick the end furthest from back corner, inset enough to avoid overlap
-				const far_val = d1 > d2 ? a_min : a_max;
-				const inset = spacing > 0 ? spacing * 7 : (a_max - a_min) * 0.2;
-				a_pos = far_val === a_min ? a_min + inset : a_max - inset;
-			}
-		}
+		// Position inset from the front-most corner of this face
+		const inset = spacing > 0 ? spacing * 7 : (a_max - a_min) * 0.2;
+		const a_pos = best_a === a_min ? a_min + inset : a_max - inset;
 		const em = make_point(a_pos, best_perp);
 
 		draw_arrow(host, em, along, perp, axis, world);

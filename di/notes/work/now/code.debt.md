@@ -4,25 +4,29 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] reverse appearance (including hover) of banners when hideable is visible
-- [ ] move axis indicator decorations to the frontmost three faces
-- [ ] merge relevant constants -> configuration
-- [ ] print
-    - [ ] wrong when zoomed in (clipped)
-    - [ ] blurry, need the other solution
+- [ ] selection banner
+    - [ ] name of selected SO
+    - [ ] 'nothing selected', ignore click / hover
+- [ ] parts table
+    - [ ] rounded corners on background of selected part
+    - [ ] rename "parts" -> contents/**structure**/hierarchy/tree/outline
+
+## big
+
 - [ ] read the app code base and write a formal, machine-readable specification, that when followed by you can reproduce the app
 - [ ] move logic driven design -> alongside always
     - [ ] convert to instructions that can do the heavy lifting
-- [ ] measure basement
-- [ ] parts table
-    - [ ] rename "parts" -> contents/structure/hierarchy/tree/outline
-    - [ ] rounded corners on background of selected part
-- [ ] disappear on relaunch -> kitchen wall
-- [ ] shrink on undo -> glass wall. relaunch fixes
 
 ## soon
 
+- [ ] shrink on undo -> glass wall. relaunch fixes
+- [ ] ref -> target is also a formula
+    - [ ] disappear on relaunch -> kitchen wall
 - [ ] cannot read guides or scaling when accent is too dark
+- [ ] measure basement
+- [ ] print
+    - [ ] wrong when zoomed in (clipped)
+    - [ ] blurry, need the other solution
 - [ ] hover graph -> name popup
 - [ ] crowded dimensionals
 - [ ] convert button 'create a template' -> stud/joist / stair segmented

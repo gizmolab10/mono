@@ -133,7 +133,8 @@
               "title": "work journal"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -269,13 +270,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/handoff.md",
+                "file": "di/notes/work/now/code.debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of code.debt"
             }
           }
         ],
@@ -296,11 +297,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "a37a86f69a513cdc",
+  "active": "af5376ef30d65de2",
   "lastOpenFiles": [
-    "notes/guides/pre-flight/shorthand.md",
     "di/notes/work/now/handoff.md",
     "di/notes/work/now/code.debt.md",
+    "notes/guides/pre-flight/shorthand.md",
     "di/notes/work/done/code.debt.paid.md",
     "di/notes/guides/project/development/adherence dashboard.md",
     "di/notes/work/now/work journal.md",

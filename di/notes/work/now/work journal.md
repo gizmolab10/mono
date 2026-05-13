@@ -4,6 +4,40 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-13 — axis indicator arrows moved to the frontmost corner of the most camera-facing face
+
+One code-debt item, visually confirmed after three iterations.
+
+The three small arrows that label X, Y, and Z directions used to draw on the three BACK-facing planes of the box (the planes tucked behind the model). They now draw on the face — front-facing or back-facing — whose normal is most aligned with the camera direction in absolute value, anchored at THAT face's own corner closest to the camera.
+
+The path to that final form took three rounds.
+
+Round one: flip the front-vs-back tests in three spots so the arrows draw on the front-facing planes instead of the back ones. Local variables renamed from "back" to "front", and the file-top comment updated to match. Worked, but on tumble Jonathan noticed the arrow anchors were near the back-most corner of each face, not the front-most.
+
+Round two: flip the "which end of the face's edge" pick so it lands closer to the box's front-most corner instead of farther from it. The perp-edge pick was also flipped to favor the perp side near the front-most corner instead of the outermost-on-screen side. Better, but in some orientations the X arrow appeared nearly edge-on — its front-facing face was barely front-facing, while the opposite back-facing face was much more face-on.
+
+Round three: drop the "front-facing only" filter and rank candidate faces by the absolute value of the forward-pointing component of their normal. A back-facing face is now eligible when it's more face-on than any front-facing candidate. Initial cut anchored at the corner closest to the box's front-most corner, which for a back-facing face placed the arrow on the FAR side of the box (the corner directly under the box's front-most corner sits at the back of a back-facing face). Final cut: for each picked face, walk the four corners, rotate each by the tumble orientation, and anchor at the corner whose rotated forward-component is largest — i.e., the face's own corner closest to the camera. For front-facing faces this is the same corner as before; for back-facing faces it is now the visible corner of that face, not the hidden one.
+
+Files: [R_Axes.ts](../../../src/lib/ts/render/R_Axes.ts) only.
+
+Verification. svelte-check: 0 errors, 0 warnings. Visual: arrows land on the most face-on plane for each axis and anchor at that plane's front-most corner across tumble.
+
+---
+
+## Session — 2026-05-12 — banner-appearance reversal tried and reverted
+
+One code-debt item explored and decided against.
+
+The code-debt item asked for banners to reverse their appearance (including hover) when their section is open. We implemented the simplest version: hide the gradient overlay when open (banner appears flat light), bring it back on hover. Two CSS rules added to the hideable component.
+
+After visual review, Jonathan decided the reversal was not an improvement — it removed the at-rest visual cue and made open banners look less anchored. Reverted the change.
+
+Files: [Hideable.svelte](../../../src/lib/svelte/details/Hideable.svelte) — reverted to the original stylesheet (no functional change).
+
+Decision logged in [code.debt.paid.md](../done/code.debt.paid.md) so the item does not resurface.
+
+---
+
 ## Session — 2026-05-12 — user-guide "← Back" text button swapped for the reusable circular-X widget
 
 One code-debt item, visually confirmed.

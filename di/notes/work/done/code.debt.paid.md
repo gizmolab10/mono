@@ -268,3 +268,5 @@
 - [x] on launch, none of the `face_buttons` are selected
 - [x] move the guides slider into the graph, bottom right corner, vertical slider
 - [x] `<button class='toolbar-button' onclick={onclose}>← Back</button>` in user guide -> Close Button svelte component
+- [x] reverse appearance (including hover) of banners when hideable is visible — **decided: not needed** (tried it, looked worse than current; reverted)
+- [x] move axis indicator decorations to the frontmost three faces

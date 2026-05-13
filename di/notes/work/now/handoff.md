@@ -1,6 +1,6 @@
 # Code-Debt Handoff
 
-**Date:** 2026-05-12
+**Date:** 2026-05-13
 **Work stream:** items from [code.debt.md](./code.debt.md), one item at a time. Per-session detail in [work journal](./work%20journal.md).
 
 ## Open items
@@ -12,15 +12,3 @@
 - **Identity-based formula storage.** A targeted rename helper closed the immediate bug, but the deeper fix is to store formula references by part identity rather than by a snapshot of the part's name. Recorded as a future structural refactor.
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
-
-## Pending visual confirmation: banners reverse appearance when their section is open
-
-Item from [code.debt.md](./code.debt.md): "reverse appearance (including hover) of banners when hideable is visible".
-
-**What changed.** When a section's content is open below its banner, the banner now shows flat light (the gradient overlay is hidden). Hovering an open banner brings the gradient back, so the dark accent fades in at the edges. Closed banners look unchanged: gradient at rest, flat light on hover.
-
-**How.** Two new stylesheet rules were added to the hideable component, both keyed on the existing "open" class flag that the banner already toggles. The first hides the gradient when open (by setting the overlay's background to the flat light color). The second restores the gradient on hover when open. Closed-banner styling stays exactly as it was.
-
-**Files touched.** [Hideable.svelte](../../../src/lib/svelte/details/Hideable.svelte) only — two new CSS rules added.
-
-**Needs visual confirmation.** Open a panel in the details column and check: its banner switches from gradient-with-dark-edges to flat light. Hover the open banner and the gradient comes back. Hover a closed banner and it goes flat light (unchanged from before).
