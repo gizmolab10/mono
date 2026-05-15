@@ -8,6 +8,7 @@
 	import { angulars } from '../../ts/editors/Angular';
 	import Status_Strip from './Status_Strip.svelte';
 	import { hits, hits_3d } from '../../ts/events';
+	import { e } from '../../ts/events/Events';
 	import { render } from '../../ts/render/Render';
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
@@ -18,7 +19,17 @@
 	const { w_s_face_label } = face_label;
 	const { w_selection } = selection;
 	const { w_s_angular } = angulars;
-	const { w_grid_opacity } = stores;
+	const { w_grid_opacity, w_scale } = stores;
+	const { w_hover } = hits_3d;
+	const { w_mouse_location } = e;
+
+	function handle_zoom_step(pointsUp: boolean) {
+		if (pointsUp) engine.scale_up();
+		else engine.scale_down();
+	}
+	function handle_zoom_slide(value: number) {
+		w_scale.set(value);
+	}
 
 	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 	let dim_input   = $state<HTMLInputElement>();
@@ -183,112 +194,155 @@
 	});
 </script>
 
-<div
-	class            = 'graph'
-	bind:this        = {container}
-	style:color      = 'var(--text)'
-	style:background = 'var(--white)'
-	use:hit_target   = {{ id: 'graph', type: T_Hit_Target.graph }}>
-	<canvas
-		bind:this = {canvas}></canvas>
-	<div class='canvas-actions'>
+<div class='graph'>
+	<div class='band top-band'>
+		<Slider min={0.01} max={10000} value={$w_scale} logarithmic fill onchange={handle_zoom_slide} onstep={handle_zoom_step} />
+	</div>
+
+	<div
+		class            = 'canvas-card'
+		bind:this        = {container}
+		style:color      = 'var(--text)'
+		style:background = 'var(--white)'
+		use:hit_target   = {{ id: 'graph', type: T_Hit_Target.graph }}>
+		<canvas
+			bind:this = {canvas}></canvas>
+		<Status_Strip />
+		{#if $w_hover && $w_mouse_location}
+			<div
+				class='name-popup'
+				style:left='{$w_mouse_location.x + 12}px'
+				style:top='{$w_mouse_location.y + 12}px'>
+				{$w_hover.so.name}
+			</div>
+		{/if}
+		{#if breadcrumbs.length > 1}
+			<div
+				class='breadcrumbs'>
+				{#each breadcrumbs as so, index (so.id)}
+					<button
+						class='crumb'
+						class:current={index === breadcrumbs.length - 1}
+						onclick={() => select_so(so)}>
+						{so.name}
+					</button>
+				{/each}
+			</div>
+		{/if}
+		{#if $w_s_dimensions}
+			<input
+				value        = {$w_s_dimensions.formatted}
+				style:left   = '{$w_s_dimensions.x}px'
+				style:top    = '{$w_s_dimensions.y}px'
+				onkeydown    = {on_dim_keydown}
+				onblur       = {on_dim_blur}
+				bind:this    = {dim_input}
+				class        = 'dim-edit'
+				type         = 'text'
+			/>
+		{/if}
+		{#if $w_s_angular}
+			<input
+				value        = {$w_s_angular.formatted}
+				style:left   = '{$w_s_angular.x}px'
+				style:top    = '{$w_s_angular.y}px'
+				onkeydown    = {on_ang_keydown}
+				onblur       = {on_ang_blur}
+				bind:this    = {ang_input}
+				class        = 'ang-edit'
+				type         = 'text'
+			/>
+		{/if}
+		{#if $w_s_face_label}
+			<input
+				style:top    = '{Math.round($w_s_face_label.y) - 0.2}px'
+				style:left   = '{Math.round($w_s_face_label.x)}px'
+				value        = {$w_s_face_label.current_name}
+				onkeydown    = {on_label_keydown}
+				oninput      = {on_label_input}
+				onfocus      = {on_label_focus}
+				onblur       = {on_label_blur}
+				bind:this    = {label_input}
+				class        = 'label-edit'
+				type         = 'text'
+			/>
+		{/if}
+	</div>
+
+	<div class='band bottom-band'>
 		<button class='build-button' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
-	</div>
-	<div class='guides-control'>
-		<Slider min={0} max={1} value={$w_grid_opacity} width={81} vertical show_steppers={false} onchange={(v) => w_grid_opacity.set(v)} />
-		<span class='guides-label'>guides</span>
-	</div>
-	<Status_Strip />
-	{#if breadcrumbs.length > 1}
-		<div
-			class='breadcrumbs'>
-			{#each breadcrumbs as so, index (so.id)}
-				<button
-					class='crumb'
-					class:current={index === breadcrumbs.length - 1}
-					onclick={() => select_so(so)}>
-					{so.name}
-				</button>
-			{/each}
+		<div class='guides-control'>
+			<Slider min={0} max={1} value={$w_grid_opacity} width={120} show_steppers={false} onchange={(v) => w_grid_opacity.set(v)} />
+			<span class='guides-label'>guides</span>
 		</div>
-	{/if}
-	{#if $w_s_dimensions}
-		<input
-			value        = {$w_s_dimensions.formatted}
-			style:left   = '{$w_s_dimensions.x}px'
-			style:top    = '{$w_s_dimensions.y}px'
-			onkeydown    = {on_dim_keydown}
-			onblur       = {on_dim_blur}
-			bind:this    = {dim_input}
-			class        = 'dim-edit'
-			type         = 'text'
-		/>
-	{/if}
-	{#if $w_s_angular}
-		<input
-			value        = {$w_s_angular.formatted}
-			style:left   = '{$w_s_angular.x}px'
-			style:top    = '{$w_s_angular.y}px'
-			onkeydown    = {on_ang_keydown}
-			onblur       = {on_ang_blur}
-			bind:this    = {ang_input}
-			class        = 'ang-edit'
-			type         = 'text'
-		/>
-	{/if}
-{#if $w_s_face_label}
-		<input
-			style:top    = '{Math.round($w_s_face_label.y) - 0.2}px'
-			style:left   = '{Math.round($w_s_face_label.x)}px'
-			value        = {$w_s_face_label.current_name}
-			onkeydown    = {on_label_keydown}
-			oninput      = {on_label_input}
-			onfocus      = {on_label_focus}
-			onblur       = {on_label_blur}
-			bind:this    = {label_input}
-			class        = 'label-edit'
-			type         = 'text'
-		/>
-	{/if}
+	</div>
 </div>
 
 <style>
 
 	.graph {
-		position : relative;
-		width    : 100%;
-		height   : 100%;
+		flex-direction : column;
+		width          : 100%;
+		height         : 100%;
+		gap            : var(--l-gap);
+		display        : flex;
 	}
 
-	.graph canvas {
+	.band {
+		height          : var(--h-controls);
+		background      : var(--accent);
+		flex-shrink     : 0;
+		padding         : 0 var(--l-gap);
+		box-sizing      : border-box;
+		align-items     : center;
+		display         : flex;
+	}
+
+	.top-band {
+		justify-content : center;
+	}
+
+	.bottom-band {
+		justify-content : space-between;
+	}
+
+	.name-popup {
+		border-radius   : var(--r-common);
+		padding         : 2px 8px;
+		background      : var(--white);
+		font-size       : var(--font-small);
+		box-shadow      : 0 1px 4px rgba(0, 0, 0, 0.18);
+		pointer-events  : none;
+		white-space     : nowrap;
+		z-index         : var(--z-frontmost);
+		position        : fixed;
+		color           : var(--c-default);
+	}
+
+	.canvas-card {
+		border-radius : var(--r-common);
+		position      : relative;
+		overflow      : hidden;
+		flex          : 1 1 auto;
+		min-height    : 0;
+	}
+
+	.canvas-card canvas {
 		background   : inherit;
 		display      : block;
 		cursor       : grab;
 		touch-action : none;
 	}
 
-	.graph canvas:active {
+	.canvas-card canvas:active {
 		cursor : grabbing;
 	}
 
-	.canvas-actions {
-		z-index  : var(--z-action);
-		gap      : var(--l-gap);
-		position : absolute;
-		display  : flex;
-		bottom   : 10px;
-		left     : 10px;
-	}
-
 	.guides-control {
-		z-index        : var(--z-action);
-		position       : absolute;
-		flex-direction : column;
+		flex-direction : row;
 		align-items    : center;
 		display        : flex;
-		bottom         : 10px;
-		right          : 10px;
-		gap            : 2px;
+		gap            : 6px;
 	}
 
 	.guides-label {

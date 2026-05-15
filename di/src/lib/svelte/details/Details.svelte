@@ -1,43 +1,36 @@
 <script lang='ts'>
+	import { scenes, stores, parts, selection } from '../../ts/managers';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { preferences } from '../../ts/managers/Preferences';
-	import { scenes, stores, parts } from '../../ts/managers';
-	import { T_Details } from '../../ts/types/Enumerations';
 	import { hit_target } from '../../ts/events/Hit_Target';
+	import { T_Details } from '../../ts/types/Enumerations';
 	import D_Preferences from './D_Preferences.svelte';
 	import Separator from '../mouse/Separator.svelte';
 	import D_Selection from './D_Selection.svelte';
 	import { k } from '../../ts/common/Constants';
 	import { hits } from '../../ts/events/Hits';
 	import D_Library from './D_Library.svelte';
+	import { engine } from '../../ts/render';
 	import D_Givens from './D_Givens.svelte';
 	import Hideable from './Hideable.svelte';
-	import { engine } from '../../ts/render';
 	import D_Parts from './D_Parts.svelte';
 	import { onMount, tick } from 'svelte';
+
+	const th_sep = k.thickness.separator.main;
+	const { w_selection_name } = selection;
+	const { w_tick, w_all_sos } = stores;
+	const { w_naming_error } = parts;
 
 	interface Props {
 		onpadchange?: (pad: number) => void;
 	}
-	let { onpadchange }: Props = $props();
 
-	const th_sep = k.thickness.separator.main;
+	let selection_title: string = $derived( $w_selection_name ?? 'nothing selected' );
 	let scroll_box: HTMLDivElement | undefined = $state();
 	let inner_box: HTMLDivElement | undefined = $state();
+	let givens_add: (() => void) | undefined = $state();
+	let { onpadchange }: Props = $props();
 	let scrollbar_w = $state(0);
-
-	function recheck_overflow() {
-		if (!scroll_box) return;
-		const overflowing = scroll_box.scrollHeight > scroll_box.clientHeight + 1;
-		const sw = overflowing ? scroll_box.offsetWidth - scroll_box.clientWidth : 0;
-		if (sw !== scrollbar_w) {
-			scrollbar_w = sw;
-			onpadchange?.(sw > 0 ? sw + th_sep : 0);
-		}
-	}
-
-	const { w_tick, w_all_sos } = stores;
-	const { w_naming_error } = parts;
 
 	// Count of leaf parts in the scene. A repeater counts as a single leaf and
 	// nothing inside it counts — the master, its descendants, and the spawned
@@ -57,7 +50,8 @@
 		const visible = sos.filter(s => !is_inside_repeater(s));
 		return visible.filter(s => s.repeater?.is_repeating || !visible.some(c => c.scene?.parent?.so === s)).length;
 	});
-	let parts_title = $derived(
+
+	let parts_title: string = $derived(
 		parts_leaf_count === 0 ? 'no parts'
 		: parts_leaf_count === 1 ? 'part (1)'
 		: `parts (${parts_leaf_count})`
@@ -73,12 +67,20 @@
 		engine.add_child_so();
 	}
 
-	let givens_add: (() => void) | undefined = $state();
-
 	async function add_given_and_show_givens() {
 		stores.w_t_details.update(v => v | T_Details.givens);
 		await tick();
 		givens_add?.();
+	}
+
+	function recheck_overflow() {
+		if (!scroll_box) return;
+		const overflowing = scroll_box.scrollHeight > scroll_box.clientHeight + 1;
+		const sw = overflowing ? scroll_box.offsetWidth - scroll_box.clientWidth : 0;
+		if (sw !== scrollbar_w) {
+			scrollbar_w = sw;
+			onpadchange?.(sw > 0 ? sw + th_sep : 0);
+		}
 	}
 
 	onMount( async () => {
@@ -129,9 +131,11 @@
 			<D_Parts />
 		</Hideable>
 
-		<Hideable title='selection' id='selection' detail={T_Details.selection}>
-			<D_Selection />
-		</Hideable>
+		{#if $w_selection_name}
+			<Hideable title={selection_title} id='selection' detail={T_Details.selection}>
+				<D_Selection />
+			</Hideable>
+		{/if}
 
 		<Hideable title='givens' id='givens' detail={T_Details.givens}>
 			{#snippet rightActions()}

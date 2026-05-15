@@ -6,6 +6,7 @@
 	import UserGuide from './UserGuide.svelte';
 	import { e } from '../../ts/events/Events';
 	import Controls from './Controls.svelte';
+	import Confirm from './Confirm.svelte';
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
 
@@ -108,6 +109,8 @@
 		</div>
 	{/if}
 </div>
+
+<Confirm />
 
 <style>
 	.panel {

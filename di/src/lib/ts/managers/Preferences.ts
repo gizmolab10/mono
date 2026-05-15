@@ -61,6 +61,9 @@ export enum T_Preference {
 	// Help overlay
 	showHelpSidebar  = 'showHelpSidebar',
 	helpPageId       = 'helpPageId',
+
+	// Confirmation popup
+	skipDeleteConfirm = 'skipDeleteConfirm',
 }
 
 const STORAGE_PREFIX = 'di:';

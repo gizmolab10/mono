@@ -270,3 +270,21 @@
 - [x] `<button class='toolbar-button' onclick={onclose}>← Back</button>` in user guide -> Close Button svelte component
 - [x] reverse appearance (including hover) of banners when hideable is visible — **decided: not needed** (tried it, looked worse than current; reverted)
 - [x] move axis indicator decorations to the frontmost three faces
+- [x] selection banner
+    - [x] name of selected SO
+        - [x] dynamically reacts to editing
+    - [x] 'nothing selected'
+        - [x] ignore click / hover
+        - [x] automatically hides when last selected item is unselected
+- [x] when nothing selected -> automatically hide selection banner
+    - [x] revert the "automatically hides when last selected item is unselected"
+- [x] parts table
+    - [x] rounded corners on background of selected part
+    - [x] same rounded shape on hover (added on completion)
+- [x] i want an "are you sure" popup to appear when user clicks or taps delete (anywhere)
+- [x] divide the graph into three views: 1) at top the scaling slider, 2) graph in the middle 3) at bottom a row with build at left and guides slider (horizontal) at right. 1 and 3 should have --accent as background color and 2 should still have rounded corners
+    - [x] move scaling slider to top of graph
+    - [x] add a dark band at the bottom for build button and guides slider
+- [x] hover on an SO in the graph -> name popup
+    - [x] hover popup also appears on the selected SO (added on completion)
+    - [x] ~~ignore if names is selected in view-mode segmented control~~ (reversed: popup shows regardless of the names decoration)

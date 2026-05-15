@@ -6,11 +6,10 @@
 	import { scenes } from '../../ts/managers/Scenes';
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
-	import Slider from '../mouse/Slider.svelte';
 
 	let { onshowuserguide = () => {} }: { onshowuserguide?: () => void } = $props();
 
-	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation, w_scale } = stores;
+	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 
 	let controls_width   = $state(Infinity);
@@ -23,15 +22,6 @@
 	let is_straightened  = $derived.by(() => { $w_orientation; $w_tick; return engine.is_straightened(); });
 
 	async function save() { await scenes.add_to_library(); }
-
-	function handle_zoom_step(pointsUp: boolean) {
-		if (pointsUp) engine.scale_up();
-		else engine.scale_down();
-	}
-
-	function handle_zoom_slide(value: number) {
-		w_scale.set(value);
-	}
 
 </script>
 
@@ -52,12 +42,6 @@
 {#snippet desktop_only_buttons()}
 	<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
 	<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
-{/snippet}
-
-{#snippet scaling_slider()}
-	<div class='scale-block'>
-		<Slider min={0.01} max={10000} value={$w_scale} logarithmic fill onchange={handle_zoom_slide} onstep={handle_zoom_step} />
-	</div>
 {/snippet}
 
 {#snippet decoration_buttons()}
@@ -109,11 +93,6 @@
 			</div>
 			<div class='right-row'>
 				<span class='spacer'></span>
-				{@render scaling_slider()}
-				<span class='spacer'></span>
-			</div>
-			<div class='right-row'>
-				<span class='spacer'></span>
 				{@render face_buttons()}
 				{@render face_accessory_buttons()}
 				<span class='spacer'></span>
@@ -132,11 +111,6 @@
 			</div>
 			<div class='right-row'>
 				<span class='spacer'></span>
-				{@render scaling_slider()}
-				<span class='spacer'></span>
-			</div>
-			<div class='right-row'>
-				<span class='spacer'></span>
 				{@render face_buttons()}
 				{@render face_accessory_buttons()}
 				<span class='spacer'></span>
@@ -149,9 +123,8 @@
 				<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 			{/if}
 			{@render desktop_only_buttons()}
-			{@render mode_buttons()}
 			<span class='spacer'></span>
-			{@render scaling_slider()}
+			{@render mode_buttons()}
 			<span class='spacer'></span>
 			{@render face_buttons()}
 			{@render face_accessory_buttons()}
@@ -206,14 +179,6 @@
 		display     : flex;
 		min-width   : 0;
 		left        : 0;
-	}
-
-	.scale-block {
-		margin-right : calc(-1 * var(--l-gap-small));
-		flex         : 1 1 auto;
-		min-width    : 400px;
-		margin-left  : 4px;
-		margin-top   : 4px;
 	}
 
 	.hamburger {

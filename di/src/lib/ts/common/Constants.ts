@@ -56,15 +56,6 @@ export default class Constants {
 		zoom_in:  1.1
 	};
 
-	radius = {
-		main:	 Math.round(common_size * 0.6),
-		common:  Math.round(common_size / 2),
-		content: Math.round(common_size / 3),
-		table:   Math.round(common_size / 6),
-		box:     Math.round(common_size / 8),
-		input:   Math.round(common_size / 16),
-	};
-
 	corner = {
 		input: 2,
 		box:   4,
@@ -89,6 +80,15 @@ export default class Constants {
 		small: Math.round(common_size / 5.5),
 		main:  Math.round(common_size / 5),
 		large: Math.round(common_size / 3.3),
+	};
+
+	radius = {
+		main:	 Math.round(common_size * 0.6),
+		common:  Math.round(common_size / 2),
+		content: Math.round(common_size / 3),
+		table:   Math.round(common_size / 6),
+		box:     Math.round(common_size / 8),
+		input:   Math.round(common_size / 16),
 	};
 
 	layout = {
@@ -116,7 +116,7 @@ export default class Constants {
 	};
 
 	width = {
-		wrap_mobile    : 1570,
+		wrap_mobile    : 1170,
 		wrap_phone     : 720,
 		window_min     : 400,
 		details        : 350,

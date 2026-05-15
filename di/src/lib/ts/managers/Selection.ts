@@ -17,6 +17,8 @@ class Selection {
 	// store keep working — the trigger surface is the same.
 	w_selection = derived(this.w_selections, list => list.length === 1 ? list[0] : null);
 
+	w_selection_name = derived(this.w_selection, selection => selection?.so.name);
+
 	get current(): Hit_3D_Result | null {
 		const list = get(this.w_selections);
 		return list.length === 1 ? list[0] : null;

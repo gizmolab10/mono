@@ -30,6 +30,7 @@
 			class     = 'collapsed-name'
 			value     = {$w_selection.so.name}
 			onkeydown = {(e) => parts.name_keydown(e, $w_selection!.so)}
+			oninput   = {(e) => parts.live_rename($w_selection!.so, (e.target as HTMLInputElement).value)}
 			onblur    = {(e) => { const inp = e.target as HTMLInputElement; parts.commit_name($w_selection!.so, inp.value, inp); }}
 		/>
 	</div>

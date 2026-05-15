@@ -80,13 +80,14 @@ class Events_3D {
 					const is_text = hit?.type === T_Hit_3D.dimension || hit?.type === T_Hit_3D.angle || hit?.type === T_Hit_3D.face_label;
 					canvas.style.cursor = is_text ? 'text' : 'grab';
 
-					// Hover shows face — convert corner/edge hits to best face
-					// But don't hover on already-selected face
+					// Hover shows face — convert corner/edge hits to best face.
+					// The renderer skips drawing hover dots and the hover edge-color
+					// when the hovered face is also the selected face, so setting
+					// the hover store on the selected face does not cause a visual
+					// regression. The name-popup overlay in the drawing-area uses
+					// this store and now appears for the selected part too.
 					const face_hit = hit ? hits_3d.hit_to_face(hit) : null;
-					const sel = selection.current;
-					const is_selected = face_hit && sel &&
-						face_hit.so === sel.so && face_hit.index === sel.index;
-					hits_3d.hover = is_selected ? null : face_hit;
+					hits_3d.hover = face_hit;
 				}
 			} else if (this.on_drag) {
 				this.continue_drag(canvas, e.clientX, e.clientY, e.altKey);
@@ -130,13 +131,6 @@ class Events_3D {
 			drag.set_target(null);
 			hits_3d.hover = null;
 			return;
-		// } else if (hit?.type === T_Hit_3D.face_label) {
-		// 	e?.preventDefault();
-		// 	// const label = face_label.hit_test(point.x, point.y);
-		// 	// if (label) face_label.begin(label);
-		// 	drag.set_target(null);
-		// 	hits_3d.hover = null;
-		// 	return;
 		}
 
 		// Snapshot for undo before any drag mutation

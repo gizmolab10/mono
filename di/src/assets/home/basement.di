@@ -528,7 +528,7 @@
           "gap_max": 304.79999999999995,
           "is_diagonal": false,
           "is_repeating": true,
-          "firewall": false
+          "firewall": true
         },
         "parent_id": "did04260a3a40843"
       },
@@ -639,7 +639,7 @@
             "origin": {
               "formula": "zen beam.s"
             },
-            "extent": 184.14999999999998,
+            "extent": 2470.15,
             "length": {
               "formula": "post th"
             },
@@ -767,7 +767,7 @@
             "extent": {
               "formula": ".e - beam th"
             },
-            "length": -285.75,
+            "length": 2609.8500000000004,
             "angle": 0
           },
           "invariant": 2
@@ -776,7 +776,7 @@
         "hide_children": true,
         "repeater": {
           "spacing": 406.4,
-          "firewall": false,
+          "firewall": true,
           "is_repeating": true,
           "run_axis": 1,
           "is_diagonal": false
@@ -817,7 +817,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -285.75,
+            "extent": 2609.8500000000004,
             "length": {
               "formula": ".l"
             },
@@ -899,7 +899,7 @@
             "extent": {
               "formula": "overhang beam.s"
             },
-            "length": 0,
+            "length": 3352.8,
             "angle": 0
           },
           "invariant": 2
@@ -932,7 +932,7 @@
             "extent": {
               "formula": "bathroom.c"
             },
-            "length": 0,
+            "length": 3155.9500000000007,
             "angle": 0
           },
           "invariant": 2
@@ -988,7 +988,7 @@
             "origin": {
               "formula": "overhang beam.s"
             },
-            "extent": 184.14999999999964,
+            "extent": 3536.95,
             "length": {
               "formula": "post th"
             },
@@ -1032,7 +1032,7 @@
             "origin": {
               "formula": "overhang beam.s"
             },
-            "extent": 184.14999999999964,
+            "extent": 3536.95,
             "length": {
               "formula": "post th"
             },
@@ -1204,7 +1204,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
+            "extent": 88.89999999999964,
             "length": {
               "formula": ".l"
             },
@@ -1297,7 +1297,7 @@
             "extent": {
               "formula": "kitchen main beam.s"
             },
-            "length": 2.536155313537236e-12,
+            "length": 4470.400000000002,
             "angle": 0
           },
           "invariant": 2
@@ -1307,7 +1307,7 @@
             "origin": {
               "formula": "zen beam.e"
             },
-            "extent": -6613.525000000001,
+            "extent": 3.175000000000182,
             "length": {
               "formula": "post th / 2"
             },
@@ -1341,7 +1341,7 @@
             "extent": {
               "formula": "kitchen main beam.s"
             },
-            "length": 0,
+            "length": 4470.4,
             "angle": 0
           },
           "invariant": 2
@@ -1400,7 +1400,7 @@
             "extent": {
               "formula": "stair beam.e"
             },
-            "length": -7527.925,
+            "length": -911.2249999999995,
             "angle": 0
           },
           "invariant": 2
@@ -1446,7 +1446,7 @@
             "extent": {
               "formula": "stair beam.e"
             },
-            "length": -7527.925,
+            "length": -911.2249999999995,
             "angle": 0
           },
           "invariant": 2
@@ -1522,7 +1522,7 @@
             "origin": {
               "formula": "zen beam.s"
             },
-            "extent": 184.14999999999998,
+            "extent": 2470.15,
             "length": {
               "formula": "post th"
             },
@@ -1714,7 +1714,7 @@
             "origin": {
               "formula": "kitchen main beam.s"
             },
-            "extent": 184.14999999999998,
+            "extent": 4654.549999999999,
             "length": {
               "formula": "post th"
             },
@@ -1801,7 +1801,7 @@
             "origin": {
               "formula": "kitchen beam.s"
             },
-            "extent": 184.14999999999998,
+            "extent": 6800.85,
             "length": {
               "formula": "post th"
             },
@@ -1936,7 +1936,7 @@
             "extent": {
               "formula": "front.e - beam th / 2"
             },
-            "length": 8512.175000000001,
+            "length": 4041.7750000000015,
             "angle": 0
           },
           "invariant": 2
@@ -2242,7 +2242,7 @@
             "extent": {
               "formula": "moose.overhang post.s"
             },
-            "length": 2743.199999999999,
+            "length": 6095.999999999999,
             "angle": 0
           },
           "invariant": 2
@@ -2317,7 +2317,7 @@
         "hide_children": true,
         "repeater": {
           "spacing": 406.4,
-          "firewall": false,
+          "firewall": true,
           "is_repeating": true,
           "run_axis": 1,
           "is_diagonal": false
@@ -2375,7 +2375,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "dia2480ebef32cfd",
-    "selected_face": 3
+    "selected_id": "die948608c4b1219",
+    "selected_face": 1
   }
 }

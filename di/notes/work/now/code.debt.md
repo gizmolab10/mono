@@ -4,13 +4,8 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] selection banner
-    - [ ] name of selected SO
-    - [ ] 'nothing selected', ignore click / hover
-- [ ] parts table
-    - [ ] rounded corners on background of selected part
-    - [ ] rename "parts" -> contents/**structure**/hierarchy/tree/outline
-
+- [ ] crowded dimensionals
+    - [ ] need to explore algorithms for placing dimensionals so they do not overlap
 ## big
 
 - [ ] read the app code base and write a formal, machine-readable specification, that when followed by you can reproduce the app
@@ -19,7 +14,8 @@ offer a proposal for the first unchecked item, and add it to a new section at th
 
 ## soon
 
-- [ ] shrink on undo -> glass wall. relaunch fixes
+- [ ] select a part, undo -> fucks with many parts. relaunch fixes
+    - [ ] HINT: problem is with snapshot/load_scene
 - [ ] ref -> target is also a formula
     - [ ] disappear on relaunch -> kitchen wall
 - [ ] cannot read guides or scaling when accent is too dark
@@ -27,8 +23,6 @@ offer a proposal for the first unchecked item, and add it to a new section at th
 - [ ] print
     - [ ] wrong when zoomed in (clipped)
     - [ ] blurry, need the other solution
-- [ ] hover graph -> name popup
-- [ ] crowded dimensionals
 - [ ] convert button 'create a template' -> stud/joist / stair segmented
 - [ ] allow segmented to flex to fill
 - [ ] option to group attributes by axis (in first column: sle -> xyz)

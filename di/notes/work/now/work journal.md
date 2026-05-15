@@ -4,6 +4,114 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-14 — hover-name popup in the drawing area
+
+A small white pill-shaped label now appears near the cursor when the user hovers over a part in the drawing area. The label shows the hovered part's name. It follows the cursor while the hover lasts and disappears as soon as the cursor leaves the part.
+
+Three reactive sources came together to drive this with no new state: the existing hover-result store from the hit-test module, the existing global cursor-location store from the events module (updated on every mouse move), and the part's name from the hover result itself. The drawing-area component adds an absolutely-positioned overlay element whose visibility and position track those three sources.
+
+The popup uses fixed positioning with the cursor's viewport coordinates plus a small offset (12 pixels right, 12 pixels down) so it does not sit directly under the pointer. Pointer events on the popup are disabled so it does not interfere with clicks below it.
+
+Two refinements after first visual review. First, the popup did not appear when hovering over the already-selected part — the hover store had been deliberately nullified on the selected face. The mouse-move handler was changed to set the hover store unconditionally; the renderer already had its own guards against drawing hover highlights on the selected face, so the visual selection-vs-hover separation continued to work. Second, the code-debt entry had asked for the popup to be suppressed when the names-on-faces decoration was active, but on visual review Jonathan reversed that — the popup should appear regardless. The names-gating logic and its imports were removed.
+
+Files: [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte) — imported the events module, destructured the hover store and the cursor-location store, added the conditional popup element, added one CSS rule for the pill. [Events_3D.ts](../../../src/lib/ts/events/Events_3D.ts) — changed one line in the mouse-move handler so the hover store gets set even when the hovered face is the selected one.
+
+Verification. svelte-check: 0 errors, 0 warnings. Visual: popup appears on any hovered part, follows the cursor, disappears on un-hover, also shows on the selected part, shows regardless of whether names-on-faces is active.
+
+---
+
+## Session — 2026-05-14 — drawing area split into three rows
+
+The drawing area used to be a single full-bleed white panel with the canvas filling it edge-to-edge. The build button floated at bottom-left, a vertical guides slider floated at bottom-right, and the scaling slider lived up top in the main controls bar.
+
+It now reads as three stacked rows. The top row has the accent color as its background and holds the scaling slider stretched across, centered. The middle row is the canvas — a white card with all four corners rounded. The bottom row also has the accent color as its background and holds the build button on the left and the guides slider on the right; the guides slider switched from vertical to horizontal.
+
+A small gap, matching the standard layout-separator thickness, sits between each band and the canvas card so all four rounded corners on the card are visible.
+
+The scaling slider moved out of the main controls bar entirely — its snippet, three responsive render sites, the related state and handlers, the unused import, and the leftover CSS rule are all gone there. The slider's state and handlers moved into the drawing-area component. The resize observer that drives canvas sizing now watches the inner canvas card instead of the whole region.
+
+Files: [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte) — restructured the template into a flex column with three rows; added scaling-slider state and handlers; observer rewired; new styles for the bands and the canvas card; the guides slider switched from vertical to horizontal; the build button and guides slider moved out of the canvas overlay. [Controls.svelte](../../../src/lib/svelte/main/Controls.svelte) — removed the scaling-slider snippet, all three render sites, scale-related state and handlers, the Slider import, and the leftover styling.
+
+Verification. svelte-check: 0 errors, 0 warnings. Visual: three bands as designed, all four canvas corners visibly rounded, scaling slider on top, build button + horizontal guides slider on bottom.
+
+---
+
+## Session — 2026-05-14 — confirmation popup before any delete action
+
+Every delete in the app now goes through a single shared confirmation dialog. Three call sites were rewired: the trash icon on a parts-table row, the trash icon on a givens row, and the keyboard Delete or Backspace key. Each one wraps its original action in a request to the shared confirm helper. The user sees a centered modal with a message naming what is about to be deleted, a "don't ask again" checkbox, and yes/no buttons.
+
+Confirming with the checkbox flipped saves a persistent preference; future deletes skip the dialog and go through silently. Confirming without the checkbox leaves the preference unchanged. Cancelling — by clicking no, clicking the dark backdrop, or pressing Escape — closes the dialog without doing anything. Pressing Enter is shorthand for clicking yes.
+
+The dialog is mounted at the top level of the main layout, sitting above everything else with a semi-transparent backdrop that absorbs clicks behind it.
+
+Files: new manager [Confirm.ts](../../../src/lib/ts/managers/Confirm.ts) holding the request store and the ask/commit/cancel helpers. New component [Confirm.svelte](../../../src/lib/svelte/main/Confirm.svelte) rendering the dialog. [Preferences.ts](../../../src/lib/ts/managers/Preferences.ts) — added the skip-confirm preference key. [managers/index.ts](../../../src/lib/ts/managers/index.ts) — exported the new helper. [Main.svelte](../../../src/lib/svelte/main/Main.svelte) — mounted the dialog. [D_Parts.svelte](../../../src/lib/svelte/details/D_Parts.svelte), [D_Givens.svelte](../../../src/lib/svelte/details/D_Givens.svelte), and [Events.ts](../../../src/lib/ts/events/Events.ts) — three call sites now route through the helper.
+
+Verification. svelte-check: 0 errors, 0 warnings. Visual: all eight scenarios (parts trash, givens trash, keyboard delete, Escape, Enter, backdrop click, "don't ask again" path, and reload persistence) confirmed.
+
+---
+
+## Session — 2026-05-14 — parts table selection and hover get a pill shape
+
+The selected row in the parts table used to show its highlight as a flat-rectangle band stretching across the row. The hover state did the same. Both now show as pill-shaped bands with rounded outer corners — the same rounded look as the banners and slots above and below the table.
+
+The trick is that table rows themselves do not respect border-radius, but individual cells do (and the table here already uses the separate-cells layout that makes per-cell radius possible). The selection background moved off the row and down to the cells; the leftmost cell rounds its left side and the rightmost cell rounds its right side. Same change applied to the hover state, with the existing not-while-hovering-an-icon clause preserved so the pill only appears when the row itself is showing the hover background.
+
+The code-debt entry asked only for the selected state; Jonathan extended the work to the hover state on visual confirmation.
+
+Files: [D_Parts.svelte](../../../src/lib/svelte/details/D_Parts.svelte) only — three new rules for the selection state, three new rules for the hover state. Existing flat-rectangle backgrounds were removed.
+
+Verification. svelte-check: 0 errors, 0 warnings. Visual: selection highlight is a rounded pill, hover highlight is a rounded pill, both share the common-radius token used by the rounded banners in the same column.
+
+---
+
+## Session — 2026-05-14 — selection banner now disappears entirely when nothing is selected
+
+The day before, the selection banner had a "disabled" state — when nothing was selected, the banner stayed visible reading "nothing selected" while the slot below it was suppressed. Jonathan reviewed and decided to simplify: the entire banner should just disappear when nothing is selected.
+
+Two parts to the change. First, the disabled-state machinery on the Hideable widget was removed — the prop is gone along with the three behaviors it gated (early-return in the click handler, the slot-rendering guard, the hover-highlight CSS override). The widget is back to its simple form. Second, the selection Hideable in the details column is now wrapped in a conditional render: when nothing is selected, it does not render at all; when something is selected, it comes back.
+
+Net effect: no special states. The banner either exists (something selected) or it doesn't (nothing selected). Simpler than the disabled approach.
+
+Files: [Hideable.svelte](../../../src/lib/svelte/details/Hideable.svelte) — removed the `disabled` prop, the early-return in `toggle`, the `class:disabled` flag, the slot-render guard, and the two `.banner.disabled` CSS rules. [Details.svelte](../../../src/lib/svelte/details/Details.svelte) — removed the `disabled` attribute from the selection Hideable usage and wrapped it in `{#if $w_selection_name}`.
+
+Verification. svelte-check: 0 errors, 0 warnings. Visual: banner vanishes when nothing is selected and reappears when a part is selected.
+
+---
+
+## Session — 2026-05-14 — selection banner finished, plus the rest of the code-debt session
+
+Two pieces of work today.
+
+First, the selection banner was finished. The three remaining sub-items collapsed into two changes. (1) The banner title now follows live typing in any of the three rename inputs — parts-list inline, selection-panel always-visible name, or the face-label drawn on the cube. All three inputs now write the typed text into the part's saved name on every keystroke (mirroring the face-label's existing sync behavior), so every UI that reads the saved name follows the typing live: the banner title, the parts-list row, the drawn face name. (2) When nothing is selected, the banner reads "nothing selected", does nothing on click or hover, and the slot under it hides — only the banner stays visible.
+
+The path through the proposal pivoted once. The first plan added an in-flight rename text store on the parts module and routed the banner through it, with the goal of making the parts-list and selection-panel inputs write the saved name only on commit. Jonathan reviewed and said he wanted live updates throughout instead — the face-label's pattern applied to the other two, not the other way around. The in-flight store was ripped out and a small live-rename helper was added on the parts module instead. The helper writes so.name, re-emits the all-parts store, and re-emits the selections store — same three calls the face-label sync routine already does. Both rename inputs call the helper on every keystroke.
+
+The disabled state on the banner is a new prop on the hideable widget. When set, it makes the click handler an early return, hides the slot regardless of the open-state flag, suppresses the hover-highlight via a CSS override, and changes the cursor to default. The selection banner passes the prop true when no selection exists.
+
+A pre-existing use-before-declaration error in the details column was fixed along the way — the parts-leaf-count derived now sits above the parts-title derived that references it.
+
+Files: [Parts.ts](../../../src/lib/ts/managers/Parts.ts) — added `live_rename` helper. [Hideable.svelte](../../../src/lib/svelte/details/Hideable.svelte) — added `disabled` prop with three gated behaviors plus CSS override. [Details.svelte](../../../src/lib/svelte/details/Details.svelte) — passed `disabled` to the selection hideable, fixed the pre-existing parts-leaf-count ordering. [D_Parts.svelte](../../../src/lib/svelte/details/D_Parts.svelte) and [D_Selection.svelte](../../../src/lib/svelte/details/D_Selection.svelte) — added one-line on-input handlers that call the live-rename helper.
+
+Second, hook infrastructure got a major overhaul. The di project's settings file at `di/.claude/settings.json` had been silently inactive — the Claude Code extension only reads hooks from the workspace root, not from subdirectories. Evidence: the snapshot-before-edit hook had been writing to a directory that did not exist (it would have been created on first invocation). All five di hook entries (inject-always, snapshot-before-edit, check-ts, plus two new ones added today: bash-command-check for blocking npx and git-worktree, and banned-words-check plus phrase-check for catching vernacular and habit-pattern violations in assistant output) were moved into the mono root settings file. The di settings file was deleted to remove the duplicate registration. After a VSCode window reload, all the di hooks are now actually firing.
+
+The two new Stop hooks (banned-words-check, phrase-check) catch specific words and phrase patterns in assistant text and force a rewrite when matched. Each turn logs one line per hook to `di/.claude/hooks/log.jsonl` recording timestamp, action, violations, and the tail of the scanned text.
+
+Verification. svelte-check: 0 errors, 0 warnings throughout. Stop hooks run in ~0.3 seconds against the live transcript. Live rename verified visually for all three input paths.
+
+---
+
+## Session — 2026-05-14 — parse error fix in the details column
+
+Tiny fix. The details component had an in-progress edit that left a stray semicolon inside a derived-value expression — the parser tripped on the semicolon since it sat where the closing paren of the expression belonged. Removed the semicolon.
+
+The constants-merge proposal from yesterday's session became stale: the code-debt item that triggered it has been reorganized out of the file, so the proposal was dropped from the handoff without being applied.
+
+Jonathan's own in-progress edits added a dynamic title to the selection banner (showing the selected part's name, or "nothing selected" when nothing is). The remaining sub-items under the selection-banner work — making the title react live during name editing, ignoring click and hover when nothing is selected, and auto-hiding the panel when nothing is selected — are the subject of today's proposal in the handoff.
+
+Files: [Details.svelte](../../../src/lib/svelte/details/Details.svelte) — one-character fix (semicolon removed).
+
+---
+
 ## Session — 2026-05-13 — axis indicator arrows moved to the frontmost corner of the most camera-facing face
 
 One code-debt item, visually confirmed after three iterations.

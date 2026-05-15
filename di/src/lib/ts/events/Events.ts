@@ -5,6 +5,7 @@ import { writable, get } from 'svelte/store';
 import { Point } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
 import { selection } from '../managers/Selection';
+import { confirm } from '../managers/Confirm';
 import { status } from '../managers/Status';
 import { parts } from '../managers/Parts';
 import { engine } from '../render/Engine';
@@ -202,7 +203,8 @@ export class Events {
 		}
 		if (event.key === 'Delete' || event.key === 'Backspace') {
 			event.preventDefault();
-			engine.delete_selected_so();
+			const so = selection.current?.so;
+			if (so) confirm.ask(`Delete "${so.name}"?`, () => engine.delete_selected_so());
 		}
 		if (event.key === ',') {
 			event.preventDefault();

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { scenes, stores, history } from '../../ts/managers';
+	import { scenes, stores, history, confirm } from '../../ts/managers';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Editing } from '../../ts/types/Enumerations';
 	import { constraints, errors } from '../../ts/algebra';
@@ -58,11 +58,14 @@
 	}
 
 	function remove_dimension(index: number): void {
-		history.snapshot();
-		const name = rows[index].name;
-		givens.remove(name);
-		rows = givens.get_all();
-		sync_and_propagate();
+		const name = rows[index]?.name;
+		if (!name) return;
+		confirm.ask(`Delete given "${name}"?`, () => {
+			history.snapshot();
+			givens.remove(name);
+			rows = givens.get_all();
+			sync_and_propagate();
+		});
 	}
 
 	function commit_name(index: number, value: string, input?: HTMLInputElement): void {

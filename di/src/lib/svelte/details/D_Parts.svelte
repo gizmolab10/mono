@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { stores, parts, selection, scenes } from '../../ts/managers';
+	import { stores, parts, selection, scenes, confirm } from '../../ts/managers';
 	import { T_Hit_3D, T_Editing } from '../../ts/types/Enumerations';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import type { O_Scene } from '../../ts/types/Interfaces';
@@ -85,8 +85,10 @@
 
 	function delete_so(so: Smart_Object): void {
 		if (!so.scene?.parent) return;
-		selection.current = { so, type: T_Hit_3D.face, index: 0 };
-		engine.delete_selected_so();
+		confirm.ask(`Delete "${so.name}"?`, () => {
+			selection.current = { so, type: T_Hit_3D.face, index: 0 };
+			engine.delete_selected_so();
+		});
 	}
 
 	// ── drag-and-drop reparenting ──
@@ -293,6 +295,7 @@
 							value              = {so.name}
 							class              = 'name-input'
 							onkeydown          = {(e) => parts.name_keydown(e, so)}
+							oninput            = {(e) => parts.live_rename(so, (e.target as HTMLInputElement).value)}
 							onfocus            = {() => stores.w_editing.set(T_Editing.value)}
 							onblur             = {(e) => { const inp = e.target as HTMLInputElement; parts.commit_name(so, inp.value, inp); if (!$w_naming_error) stores.w_editing.set(T_Editing.none); }}
 							use:autofocus
@@ -354,8 +357,18 @@
 		height : var(--h-cell);
 	}
 
-	.hierarchy-row:hover:not(:has(.hierarchy-eye.has-content:hover, .hierarchy-remove.has-content:hover)) {
+	.hierarchy-row:hover:not(:has(.hierarchy-eye.has-content:hover, .hierarchy-remove.has-content:hover)) > td {
 		background : var(--hover);
+	}
+
+	.hierarchy-row:hover:not(:has(.hierarchy-eye.has-content:hover, .hierarchy-remove.has-content:hover)) > td:first-child {
+		border-top-left-radius    : var(--r-common);
+		border-bottom-left-radius : var(--r-common);
+	}
+
+	.hierarchy-row:hover:not(:has(.hierarchy-eye.has-content:hover, .hierarchy-remove.has-content:hover)) > td:last-child {
+		border-top-right-radius    : var(--r-common);
+		border-bottom-right-radius : var(--r-common);
 	}
 
 	.hierarchy-eye.has-content:hover,
@@ -374,8 +387,18 @@
 		height          : var(--h-cell);
 	}
 
-	.hierarchy-row.selected {
+	.hierarchy-row.selected > td {
 		background : var(--selected);
+	}
+
+	.hierarchy-row.selected > td:first-child {
+		border-top-left-radius    : var(--r-common);
+		border-bottom-left-radius : var(--r-common);
+	}
+
+	.hierarchy-row.selected > td:last-child {
+		border-top-right-radius    : var(--r-common);
+		border-bottom-right-radius : var(--r-common);
 	}
 
 	.hierarchy-row.drop-active {

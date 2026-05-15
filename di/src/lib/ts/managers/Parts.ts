@@ -229,6 +229,16 @@ class Parts {
 		this.w_editing_id.set(null);
 	}
 
+	// Live rename: write the typed text directly to the part's saved name on
+	// every keystroke, mirroring the face-label sync pattern. All UI that
+	// reads so.name (parts list, drawn face name, selection banner) follows
+	// the typing live. No validation, no snapshot — those happen on commit.
+	live_rename(so: Smart_Object, value: string): void {
+		so.name = value;
+		stores.w_all_sos.update(sos => sos);
+		selection.w_selections.update(list => list.map(h => ({ ...h })));
+	}
+
 	dismiss_naming(): void {
 		this.w_naming_error.set(null);
 		if (this.naming_input) {
