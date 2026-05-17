@@ -135,14 +135,14 @@
 			<Hideable title={selection_title} id='selection' detail={T_Details.selection}>
 				<D_Selection />
 			</Hideable>
-		{/if}
 
-		<Hideable title='givens' id='givens' detail={T_Details.givens}>
-			{#snippet rightActions()}
-				<button class='banner-add' use:hit_target={{ id: 'add-given', onpress: add_given_and_show_givens }}>+</button>
-			{/snippet}
-			<D_Givens bind:add={givens_add} />
-		</Hideable>
+			<Hideable title='givens' id='givens' detail={T_Details.givens}>
+				{#snippet rightActions()}
+					<button class='banner-add' use:hit_target={{ id: 'add-given', onpress: add_given_and_show_givens }}>+</button>
+				{/snippet}
+				<D_Givens bind:add={givens_add} />
+			</Hideable>
+		{/if}
 
 		{#if $w_naming_error}
 			<!-- svelte-ignore a11y_click_events_have_key_events -->

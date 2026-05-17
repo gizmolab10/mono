@@ -34,7 +34,7 @@ export class Colors {
 
 	// Reactive colors (stores). Wrapped so every write marks the canvas out
 	// of date — color changes are canvas-visible.
-	w_so_so_hover_color   = stale_writable<string>('gray');
+	w_so_hover_color   = stale_writable<string>('gray');
 	w_selected_color   = stale_writable<string>('rgb(120, 120, 120)');
 	w_background_color = stale_writable<string>('rgb(135, 135, 135)');
 	w_text_color	   = make_stale(preferences.persistent<string>(T_Preference.textColor, 'black'));

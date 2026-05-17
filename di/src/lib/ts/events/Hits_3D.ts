@@ -1,6 +1,7 @@
 import { stale_writable } from '../common/Dirty';
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Projected } from '../types/Interfaces';
+import type { Axis_Name } from '../types/Types';
 import { mat4, quat, vec3, vec4 } from 'gl-matrix';
 import { dimensions } from '../editors/Dimension';
 import { selection } from '../managers/Selection';
@@ -35,6 +36,13 @@ class Hits_3D {
 	get hover(): Hit_3D_Result | null { return get(this.w_hover); }
 	set hover(result: Hit_3D_Result | null) { this.w_hover.set(result); }
 
+	// The dimension under the cursor (smart object + axis), so the renderer can
+	// bold the text and thicken the dimension and witness lines for that one.
+	w_hovered_dimension = stale_writable<{ so: Smart_Object; axis: Axis_Name } | null>(null);
+
+	get hovered_dimension(): { so: Smart_Object; axis: Axis_Name } | null { return get(this.w_hovered_dimension); }
+	set hovered_dimension(d: { so: Smart_Object; axis: Axis_Name } | null) { this.w_hovered_dimension.set(d); }
+
 	get_projected(scene_id: string): Projected[] | undefined {
 		return this.cache.get(scene_id)?.projected;
 	}
@@ -48,6 +56,7 @@ class Hits_3D {
 		this.objects = [];
 		this.cache.clear();
 		this.w_hover.set(null);
+		this.w_hovered_dimension.set(null);
 		selection.current = null;
 	}
 
@@ -169,6 +178,15 @@ class Hits_3D {
 	hit_to_face(hit: Hit_3D_Result): Hit_3D_Result | null {
 		if (hit.type === T_Hit_3D.face) return hit;
 		if (!hit.so.scene) return null;
+
+		// Dimension and angle hits don't point to a specific face — pick the
+		// front-most face of the smart object so the hover state still drives
+		// the smart object highlight and the name popup.
+		if (hit.type === T_Hit_3D.dimension || hit.type === T_Hit_3D.angle) {
+			const face = this.front_most_face(hit.so);
+			return face >= 0 ? { so: hit.so, type: T_Hit_3D.face, index: face } : null;
+		}
+
 		const projected = this.cache.get(hit.so.scene.id)?.projected;
 		if (!projected) return null;
 

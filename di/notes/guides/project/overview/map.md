@@ -177,6 +177,7 @@
 - di/notes/work/now/27.selection.algorithm.md
 - di/notes/work/now/cadence.md
 - di/notes/work/now/code.debt.md
+- di/notes/work/now/crowded dimensionals.md
 - di/notes/work/now/handoff.md
 - di/notes/work/now/learn.md
 - di/notes/work/now/Minimum Viable INTERSECTION app.md

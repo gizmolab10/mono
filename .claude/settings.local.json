@@ -74,6 +74,10 @@
           {
             "type": "command",
             "command": "di/.claude/hooks/inject-always.sh"
+          },
+          {
+            "type": "command",
+            "command": "di/.claude/hooks/done-checklist.sh"
           }
         ]
       }

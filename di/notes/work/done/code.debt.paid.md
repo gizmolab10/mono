@@ -288,3 +288,17 @@
 - [x] hover on an SO in the graph -> name popup
     - [x] hover popup also appears on the selected SO (added on completion)
     - [x] ~~ignore if names is selected in view-mode segmented control~~ (reversed: popup shows regardless of the names decoration)
+- [x] crowded dimensionals — 25-rule force-directed placement system
+    - [x] hand-rolled spring/repulsion/damping simulation with persistence across paints
+    - [x] dedup by text everywhere in the drawing
+    - [x] hover behavior: bold text, thicker witness and dimension lines, smart object highlight, name popup with ancestry path and axis
+    - [x] silhouette is the convex outline of all visible leaf smart objects' projected vertices
+    - [x] push each dimension outside the silhouette plus a margin, cap at 80 pixels, only use directions within 30 degrees of perpendicular to the camera, pick the one with the smallest clearance, and only if the resulting witness line fits 120 pixels
+    - [x] drop unfit dimensionals (off-canvas label, witness too long after the force simulation moves it)
+    - [x] stop-when-settled to remove background flicker
+    - [x] diagnostic statistics: rolling averages of collected / duplicate / exceed / off-canvas / drawn, console line on change, status strip showing dropped average
+    - [x] full rule set lives in [[crowded dimensionals]]
+- [x] move status line into bottom bar, white text for status, red for warning or error
+- [x] simplify crowded dimensionals
+- [x] hide givens too when nothing selected
+- [x] highlight the parts row when hovering on an SO in the drawing

@@ -53,8 +53,8 @@
 {/snippet}
 
 {#snippet mode_buttons()}
-	{@render decoration_buttons()}
 	<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
+	{@render decoration_buttons()}
 	<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 {/snippet}
 

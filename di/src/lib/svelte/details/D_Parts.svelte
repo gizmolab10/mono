@@ -4,6 +4,7 @@
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import type { O_Scene } from '../../ts/types/Interfaces';
 	import { hit_target } from '../../ts/events/Hit_Target';
+	import { hits_3d } from '../../ts/events/Hits_3D';
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 	import { get } from 'svelte/store';
@@ -11,6 +12,7 @@
 	const { w_selection, w_selections } = selection;
 	const { w_all_sos, w_tick } = stores;
 	const { w_collapsed_ids, w_naming_error, w_editing_id } = parts;
+	const { w_hover } = hits_3d;
 
 	let selected_so = $derived($w_selection?.so ?? null);
 
@@ -278,6 +280,7 @@
 			<tr
 				class='hierarchy-row'
 				class:selected={is_selected(so, $w_tick)}
+				class:graph-hovered={$w_hover?.so === so}
 				class:drop-active={row_is_drop_active(so)}
 				class:drop-line-top={row_has_top_line(so)}
 				class:drop-line-bottom={row_has_bottom_line(so)}
@@ -367,6 +370,20 @@
 	}
 
 	.hierarchy-row:hover:not(:has(.hierarchy-eye.has-content:hover, .hierarchy-remove.has-content:hover)) > td:last-child {
+		border-top-right-radius    : var(--r-common);
+		border-bottom-right-radius : var(--r-common);
+	}
+
+	.hierarchy-row.graph-hovered > td {
+		background : var(--hover);
+	}
+
+	.hierarchy-row.graph-hovered > td:first-child {
+		border-top-left-radius    : var(--r-common);
+		border-bottom-left-radius : var(--r-common);
+	}
+
+	.hierarchy-row.graph-hovered > td:last-child {
 		border-top-right-radius    : var(--r-common);
 		border-bottom-right-radius : var(--r-common);
 	}

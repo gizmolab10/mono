@@ -4,6 +4,74 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-16 — parts row highlights on drawing hover
+
+Hovering an object in the drawing already lit up the object itself and showed a name popup. Now the matching row in the parts list panel on the right also paints itself with the same hovered color the parts list already uses for its own mouse-over. The two visual cues fire together so the user can see in both places which object the cursor is on.
+
+The parts list component now reads the drawing's hovered-object signal. Each row checks if its own object matches that signal, and if so applies a class that paints the row with the same hovered color, including matching rounded corners on the leftmost and rightmost cells. No new color was introduced — the existing hovered color is reused — so the two trigger paths look identical.
+
+Files touched. [D_Parts.svelte](../../../src/lib/svelte/details/D_Parts.svelte) (added an import of the drawing's hovered-object signal, added a reactive class on each row, and three CSS rules that mirror the existing mouse-over-row paint).
+
+## Session — 2026-05-16 — done-checklist hook
+
+The shorthand definition for "done" expanded into a per-step checklist that gets injected as additional context whenever the user issues a "done" command. The fix targets a real failure from earlier the same day: the assistant collapsed the shorthand's full procedure (tighten handoff, update working features / map / file layout) into a narrower wrap-up and skipped several steps.
+
+The hook fires under three line-level rules, scanned over each line of the user's message after whitespace trimming and case-folding:
+
+1. The line is exactly `done`.
+2. The line starts with `v:` and ends with `done`.
+3. The line contains `done.` (the word followed immediately by a period) anywhere.
+
+Rules 1 and 2 cover the common bare-command and visual-confirmation patterns the user uses; rule 3 catches "done." mid-sentence so longer messages still trigger the reminder when the user signals completion. False-positive cases that intentionally do NOT fire: `done deal`, `i am done` (no period), `are you done?` (question mark, not period), `done implementing the feature` (no period after `done`).
+
+When any rule fires, the hook prints the checklist wrapped in the standard JSON envelope (`hookSpecificOutput.additionalContext`), the same shape the other user-prompt-submit hooks in this project use.
+
+Files added or changed. New hook script at [di/.claude/hooks/done-checklist.sh](../../../.claude/hooks/done-checklist.sh). Wiring added to the workspace's `.claude/settings.local.json` under `hooks.UserPromptSubmit`, after the existing `inject-always.sh` entry.
+
+Tested with eight example inputs — the four that should fire all did, and the four false-positive cases all stayed silent.
+
+## Session — 2026-05-16 — givens panel hides when nothing is selected
+
+The selection panel was already gated on whether a smart object was selected. The givens panel was not — it stayed open whether or not a smart object was selected. One-line scope: extend the existing `{#if $w_selection_name}` block that wraps the selection panel to also wrap the givens panel. Now both appear and disappear together. Parts panel still always shows.
+
+Files touched. [Details.svelte](../../../src/lib/svelte/details/Details.svelte) (one block wraps both the selection and givens panels in a single visibility guard).
+
+## Session — 2026-05-16 — status line moved into the bottom bar
+
+The status strip used to float over the canvas as an absolute overlay, sandwiched between the build button on the left and the guides slider on the right but living in a separate stacking context. It now sits IN the bottom bar — the dark accent-colored band that holds the build button and the guides slider — as a third flex child between them.
+
+Text color switched from semi-transparent black (legible only on the white canvas) to white (legible on the dark band). Error states render in a lighter red (rgb(255, 120, 120)) instead of the previous darker red, again for legibility against the dark accent background.
+
+When there's nothing to show, an empty strip still holds the middle space so the build button stays anchored to the left edge of the bar and the guides slider stays anchored to the right.
+
+Files touched. [Status_Strip.svelte](../../../src/lib/svelte/main/Status_Strip.svelte) (styles rewritten: flex:1, white default, light red on error; no more absolute positioning); [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte) (Status_Strip moved out of the canvas card and into the bottom band between the build button and the guides control).
+
+## Session — 2026-05-15 to 2026-05-16 — crowded dimensionals (25 rules, force-directed placement)
+
+A multi-day push through the "crowded dimensionals" code-debt item. The dimensions in the drawing area were stacking, drifting, and pointing nowhere; this session built a 25-rule force-directed placement system that handles separation, perspective, silhouette-relative positioning, and stability.
+
+The full ruleset lives in [crowded dimensionals.md](./crowded%20dimensionals.md). Highlights from this session:
+
+Layout phases. Every dimension now passes through a four-phase pass: collect candidates, dedup duplicates, run force simulation, drop the unfit, draw. The simulation is hand-rolled — a spring pulls each label toward an outside-the-silhouette position, repulsion pushes labels apart along the axis of least overlap, damping settles motion. Positions persist across paints so motion is smooth during tumble. 30 iterations per paint, capped.
+
+Silhouette geometry. The drawing's silhouette for placement purposes is a single convex outline of every visible leaf smart object's projected vertices. Container smart objects (basement, front, moose, etc.) are excluded — their bounding-box corners inflate the outline past the painted geometry. The outline is recomputed each paint.
+
+Witness direction selection. For each dimension, the four candidate witness directions (positive and negative along each of the two perpendicular axes) are evaluated. Any direction within 30 degrees of the camera's line of sight is rejected. For each remaining direction, the post-push witness line length is projected onto the screen; directions whose projected witness would exceed 120 pixels are also rejected. Among survivors, the direction with the smallest silhouette clearance wins. If no direction survives, the dimension is dropped.
+
+Hover behavior. The cursor sitting on a dimension's number now bolds the text, thickens both witness lines and the dimension line, highlights the corresponding smart object the same way an object hover does, and shows a name popup formatted as `front.moose.well post.width (x)` — the full ancestry path joined by dots, the semantic dimension name (width/depth/height) appended with a dot, and the raw axis letter in parens.
+
+Dedup. Identical dimension text anywhere in the drawing is collapsed to a single instance. Multiple parts that all measure 8' 6 3/4" produce one label, not many.
+
+Drop conditions (unfit dimensionals). After the simulation runs, a candidate is dropped if its label rectangle would extend off-canvas, or if its actual drawn witness lines (using the same intersect-with-witness-ray math the drawer uses, accounting for force-driven drift) exceed 120 pixels on either side.
+
+Stop-when-settled. The simulation reports the largest single-pass movement. If the previous paint's simulation made no meaningful movement (under half a pixel) AND this paint's candidates and outside-the-silhouette positions match the previous paint, the simulation is skipped entirely. This eliminated background flicker where small inter-paint movements were flipping borderline candidates in and out of the drop conditions.
+
+Diagnostic stats. A module-level stats object tracks running averages of collected, duplicate-text, exceed, off-canvas, overlap, and drawn counts. The averages use the standard incremental form (avg + (value - avg) / counter) which stores one number per counter. A summary line logs to console only when the rounded numbers change. The status strip at the bottom of the drawing area shows one number — the average of exceed plus off-canvas drops — rounded.
+
+Vocabulary corrections during the session: tick → witness line, drawer → renderer, knob → value, ray → arrow (or "witness line" when it is one), home → outside-the-silhouette position. All saved to memory.
+
+Files touched. [R_Dimensions.ts](../../../src/lib/ts/render/R_Dimensions.ts) (the entire algorithm — several hundred lines added), [Hits_3D.ts](../../../src/lib/ts/events/Hits_3D.ts) (hovered dimension store, smart object highlight on dimension hover), [Events_3D.ts](../../../src/lib/ts/events/Events_3D.ts) (mouse-move sets the hovered dimension), [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte) (name popup format), [Status_Strip.svelte](../../../src/lib/svelte/main/Status_Strip.svelte) (dropped-count readout).
+
 ## Session — 2026-05-14 — hover-name popup in the drawing area
 
 A small white pill-shaped label now appears near the cursor when the user hovers over a part in the drawing area. The label shows the hovered part's name. It follows the cursor while the hover lasts and disappears as soon as the cursor leaves the part.

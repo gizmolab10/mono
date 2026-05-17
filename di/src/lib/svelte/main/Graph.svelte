@@ -20,8 +20,24 @@
 	const { w_selection } = selection;
 	const { w_s_angular } = angulars;
 	const { w_grid_opacity, w_scale } = stores;
-	const { w_hover } = hits_3d;
+	const { w_hover, w_hovered_dimension } = hits_3d;
 	const { w_mouse_location } = e;
+
+	const axis_label: Record<'x' | 'y' | 'z', string> = { x: 'width', y: 'depth', z: 'height' };
+
+	// Walk up parents from this smart object, collect names, drop the root
+	// (the topmost ancestor), join with dots. For a smart object directly
+	// under root, this is just its own name.
+	function ancestry_path(so: Smart_Object): string {
+		const names: string[] = [];
+		let current: Smart_Object | null = so;
+		while (current) {
+			names.push(current.name);
+			current = current.scene?.parent?.so ?? null;
+		}
+		names.pop();  // drop the root
+		return names.reverse().join('.');
+	}
 
 	function handle_zoom_step(pointsUp: boolean) {
 		if (pointsUp) engine.scale_up();
@@ -207,13 +223,12 @@
 		use:hit_target   = {{ id: 'graph', type: T_Hit_Target.graph }}>
 		<canvas
 			bind:this = {canvas}></canvas>
-		<Status_Strip />
 		{#if $w_hover && $w_mouse_location}
 			<div
 				class='name-popup'
 				style:left='{$w_mouse_location.x + 12}px'
 				style:top='{$w_mouse_location.y + 12}px'>
-				{$w_hover.so.name}
+				{ancestry_path($w_hover.so)}{$w_hovered_dimension ? `.${axis_label[$w_hovered_dimension.axis]} (${$w_hovered_dimension.axis})` : ''}
 			</div>
 		{/if}
 		{#if breadcrumbs.length > 1}
@@ -271,6 +286,7 @@
 
 	<div class='band bottom-band'>
 		<button class='build-button' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
+		<Status_Strip />
 		<div class='guides-control'>
 			<Slider min={0} max={1} value={$w_grid_opacity} width={120} show_steppers={false} onchange={(v) => w_grid_opacity.set(v)} />
 			<span class='guides-label'>guides</span>

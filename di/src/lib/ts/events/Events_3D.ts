@@ -73,6 +73,7 @@ class Events_3D {
 				if (!stores.allow_editing) {
 					canvas.style.cursor = 'grab';
 					hits_3d.hover = null;
+					hits_3d.hovered_dimension = null;
 				} else {
 					const hit = hits_3d.hit_test(point);
 
@@ -88,6 +89,15 @@ class Events_3D {
 					// this store and now appears for the selected part too.
 					const face_hit = hit ? hits_3d.hit_to_face(hit) : null;
 					hits_3d.hover = face_hit;
+
+					// Track the dimension under the cursor so the renderer can
+					// bold its text and thicken its dimension and witness lines.
+					if (hit?.type === T_Hit_3D.dimension) {
+						const dim_rect = dimensions.hit_test(point.x, point.y);
+						hits_3d.hovered_dimension = dim_rect ? { so: dim_rect.so, axis: dim_rect.axis } : null;
+					} else {
+						hits_3d.hovered_dimension = null;
+					}
 				}
 			} else if (this.on_drag) {
 				this.continue_drag(canvas, e.clientX, e.clientY, e.altKey);
@@ -111,6 +121,7 @@ class Events_3D {
 		if (!stores.allow_editing) {
 			drag.set_target(null);
 			hits_3d.hover = null;
+			hits_3d.hovered_dimension = null;
 			return;
 		}
 
@@ -123,6 +134,7 @@ class Events_3D {
 			if (dim) dimensions.begin(dim);
 			drag.set_target(null);
 			hits_3d.hover = null;
+			hits_3d.hovered_dimension = null;
 			return;
 		} else if (hit?.type === T_Hit_3D.angle) {
 			e?.preventDefault();
@@ -130,6 +142,7 @@ class Events_3D {
 			if (ang) angulars.begin(ang);
 			drag.set_target(null);
 			hits_3d.hover = null;
+			hits_3d.hovered_dimension = null;
 			return;
 		}
 
@@ -141,6 +154,7 @@ class Events_3D {
 
 		// Clear hover during drag (especially rotation)
 		hits_3d.hover = null;
+		hits_3d.hovered_dimension = null;
 
 		// Face click → select that face. Command-click on a face toggles the
 		// face's part in the multi-selection list instead of replacing the

@@ -134,7 +134,7 @@ manual/                      # In-app help content (markdown + screenshots)
 
 ## Svelte components
 
-- `main/` — The four layout regions (controls, details, graph, build-notes), the in-app help overlay (UserGuide), plus the small status strip rendered inside the graph
+- `main/` — The four layout regions (controls, details, graph, build-notes), the in-app help overlay (UserGuide), plus the small status strip that sits inside the graph's bottom band (between the build button and the guides slider)
 - `details/` — The right-side panel and its three sub-panels (preferences, library, parts) plus the sub-sub-panels for the parts panel (attributes, angles, repeat, givens, selected, name)
 - `mouse/` — Reusable mouse-driven controls (sliders, steppers, separators, close button)
 - `manual/` — Markdown source for the in-app help overlay; the help component imports every file under here as raw text and renders the active page at runtime

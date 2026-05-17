@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { colors } from './lib/ts/utilities/Colors';
 	import { c } from './lib/ts/common/Configuration';
-	import { render } from './lib/ts/render';
 	import Main from './lib/svelte/main/Main.svelte';
+	import { render } from './lib/ts/render';
 
 	const { w_accent_color, w_background_color, w_selected_color, w_text_color } = colors;
 

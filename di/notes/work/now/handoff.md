@@ -13,27 +13,16 @@
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
-## Proposal: crowded dimensionals
+## Proposal: make the hover color a light version of accent
 
-Next item on [code.debt.md](./code.debt.md): "crowded dimensionals" with the sub-item "need to explore algorithms for placing dimensionals so they do not overlap".
+First unchecked item on [code.debt.md](./code.debt.md).
 
-**Where things sit now.** Dimension labels (the small text and lines drawn alongside edges to show measurements) get drawn at fixed positions relative to each edge. In a busy scene — many small parts close together, repeated parts, deep hierarchy — multiple dimension labels can land on top of each other. The renderer doesn't currently detect or resolve overlaps.
+The hovered color used across the app is independent of the accent color. The ask: derive the hovered color from the accent — specifically, a lighter version of it — so hover paint visually relates to whichever accent is in use.
 
-I AM GUESSING about the current placement details. The dimension-rendering code lives in the renderer module and tracks dimension-rectangle positions in an array.
-Evidence to verify before acting: `dimension_rects` array in the renderer (referenced from the print and hit-test code paths I've seen this session); the rendering routine that fills it. Worth a focused read before writing a plan.
+Before proposing the exact scope I want to verify:
 
-**This is an exploration item, not a code-change item.** The sub-item explicitly says "explore algorithms", which means the work is to read what exists, identify the overlap conditions, and consider candidate placement algorithms before any code is written.
+1. Where the hovered color is defined and which named variable holds it.
+2. Where the accent color is defined and whether it's already in a form that can be lightened by a color function (mix-with-white, hsl manipulation, or precomputed at theme load).
+3. Whether the lightened result needs to stay legible against the white text used elsewhere — may need a guardrail so very dark accents still produce a distinct hover.
 
-**Plan — investigation first.**
-
-1. Read the dimension-rendering routine end-to-end and describe in plain English where each dimension label sits relative to its edge.
-2. Build a small mental model of when overlaps happen: same-axis siblings, parent-vs-child dimensions, repeater clones, foreshortened views.
-3. List candidate algorithms in rough order of complexity: (a) skip labels that would overlap a prior one; (b) push labels along their edge until they fit; (c) push labels perpendicular to their edge; (d) iterative force-directed placement; (e) anchor labels to a fixed off-edge column.
-4. For each algorithm, name one or two known-good prior-art references (e.g., what CAD software does, what graph-labelling libraries do).
-5. Propose ONE candidate to try first, with the rationale.
-
-That last step is the proposal proper. Until investigation is done, any concrete code plan would be guessing.
-
-**Scope of the investigation.** Reading-only — no edits. Output is a written analysis in this proposal that we iterate on before any rendering code is touched.
-
-**Alternative.** If you'd rather skip this exploration and pick a smaller polish item from "## soon", say so and I'll read code-debt again and propose for one of those instead.
+Say "go" to investigate.

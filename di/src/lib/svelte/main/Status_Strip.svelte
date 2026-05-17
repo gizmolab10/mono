@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { status } from '../../ts/managers/Status';
+	import { w_dim_dropped_avg } from '../../ts/render/R_Dimensions';
 
 	const w_queue = status.w_queue;
 	$: current = $w_queue[0] ?? null;
@@ -11,18 +12,19 @@
 		class='status-strip'>
 		{current.text}
 	</div>
+{:else if $w_dim_dropped_avg > 0}
+	<div class='status-strip'>
+		{$w_dim_dropped_avg} dimension{$w_dim_dropped_avg === 1 ? '' : 's'} dropped (average)
+	</div>
+{:else}
+	<div class='status-strip'></div>
 {/if}
 
 <style>
 	.status-strip {
-		right           : calc(var(--w-guides-slider) + 2 * var(--l-gap));
-		left            : calc(var(--w-build-button) + 2 * var(--l-gap));
-		height          : var(--h-button-common);
+		flex            : 1;
 		font-size       : var(--font-common);
-		color           : rgba(0, 0, 0, 0.7);
-		bottom          : var(--l-padding);
-		z-index         : var(--z-action);
-		position        : absolute;
+		color           : var(--white);
 		align-items     : center;
 		justify-content : center;
 		display         : flex;
@@ -31,6 +33,6 @@
 	}
 
 	.status-strip.error {
-		color : rgb(200, 30, 30);
+		color : rgb(255, 120, 120);
 	}
 </style>
