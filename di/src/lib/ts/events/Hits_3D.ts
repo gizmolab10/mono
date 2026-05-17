@@ -99,7 +99,7 @@ class Hits_3D {
 		}
 	}
 
-	hit_test(point: Point): Hit_3D_Result | null {
+	hit_test(point: Point, option_down: boolean = false): Hit_3D_Result | null {
 		const selected_so = selection.current?.so ?? null;
 
 		// Dimension / angle labels win over everything (corners, edges, faces)
@@ -134,7 +134,7 @@ class Hits_3D {
 		for (const so of this.objects) {
 			if (!so.scene?.faces) continue;
 			if (!so.scene.parent) continue; // root is non-interactive
-			if (so.visible === false) continue; // skip parts marked not visible
+			if (so.visible === false && !option_down) continue; // skip parts marked not visible (unless OPTION is held — then they're hittable)
 			if (this.is_repeater_clone(so)) continue; // clones are derived; only the master can be hit
 			const c = this.cache.get(so.scene.id);
 			if (!c) continue;

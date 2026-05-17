@@ -13,16 +13,22 @@
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
-## Proposal: move the scaling slider row to the bottom above the build / guides row
+## Proposal: Steppers -> bigger and horizontally laid out (pointing left and right)
 
 First unchecked item on [code.debt.md](./code.debt.md).
 
-The scaling slider currently sits at the top of the drawing area. The ask: move it down to sit just above the bottom bar (which holds the build button on the left and the guides slider on the right). After the change, the drawing area has two dark bands at the bottom — the scaling slider directly above the build/guides row.
+The stepper arrows in the slider and in the build-notes modal currently point up and down and are 20 pixels tall. The ask: make them bigger and lay them out horizontally, pointing left and right instead. The stepper component already supports a horizontal mode and a left/right pair of arrows — what's needed is to switch the two callers over to it and to bump the size up.
 
-Before scoping I want to verify:
+Confirmed:
 
-1. Where the scaling slider component is mounted (the layout file for the drawing area).
-2. How the existing top-band styling is shared with the bottom band, and whether moving the slider needs a new band element or can reuse one of the existing two.
-3. Whether the slider's existing styling assumes a specific background color (light vs dark accent band) and needs adjustment for the new location.
+1. The stepper component already accepts a horizontal switch and already swaps to left/right arrows when that switch is on. No work inside the stepper component itself.
+2. Two places use steppers — the slider's compound layout, and the build-notes modal. Both will switch in the same way.
+3. The slider's layout currently puts the stepper to the right of the slider track with the two arrows stacked vertically. Switching to horizontal means the two arrows sit side by side and the whole stepper pair becomes wider but shorter. Need to confirm the slider band still looks right with the new shape.
+4. Pick a size. Currently 20 pixels. Suggest 28 or 30 — big enough to read clearly, not so big it forces the band to grow taller.
 
-Say "go" to investigate.
+Open questions:
+
+1. Both callers, or only the slider? The build-notes modal stepper currently sits in the top-left corner — a horizontal layout would change where it lives.
+2. New size — 28? 30? something else?
+
+Say "go" to apply to both with size 28, or specify which caller and which size.

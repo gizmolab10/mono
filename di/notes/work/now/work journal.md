@@ -4,6 +4,32 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-17 — sliders, scale numbers, and the guides label adapt to accent brightness
+
+When the accent picker was set to a very dark color, the slider thumb, track, focus halo, the tick numbers along the scale, and the "guides" label all blended into the band background and became unreadable. They now flip based on how bright the accent is — dark accents get bright slider parts and bright label text, bright accents get dark ones.
+
+Two pieces. First, the color module gained three new color names — one for the thumb, one for the track, and one for the focus halo. The accent watcher reads the accent's brightness, and when the brightness is below the half-way mark it sets the three new names to light values; when at or above the half-way mark it sets them to dark values. These names then flow through to the app's CSS variables, the same path the existing accent and selected colors take.
+
+Second, the slider hooked up to the new names. The outer track and the three browser-specific track styles previously had a hard-coded translucent black; they now read the new track color. The slider's number readout, the inline label, the tick numbers along the scale, the range-label, and the "guides" label in the bottom band all switched to read the new track color too. The thumb and focus halo were already reading their respective named colors, so they picked up the change automatically.
+
+Files touched. [Colors.ts](../../../src/lib/ts/utilities/Colors.ts) (three new color stores plus accent-brightness logic in the accent watcher). [Configuration.ts](../../../src/lib/ts/common/Configuration.ts) (pushes the three new colors onto the document root). [App.svelte](../../../src/App.svelte) (subscribes to the three new stores and forwards them). [Slider.svelte](../../../src/lib/svelte/mouse/Slider.svelte) (track styles and four label styles read the new track color). [Main.svelte](../../../src/lib/svelte/main/Main.svelte) (guides label reads the new track color).
+
+## Session — 2026-05-17 — OPTION key reveals invisible smart objects as wireframe
+
+A follow-on to the rule-10 rewrite. Holding the OPTION key now reveals invisible smart objects in a fully-opaque dashed wireframe — they are visible as ghost geometry overlaid on the regular drawing. Releasing OPTION fades them back to whatever the grid opacity is set to (which is normally close to invisible).
+
+Three pieces:
+
+1. The dashed wireframe paint for invisible smart objects was already there but faded to the grid opacity. While OPTION is held, the fade is overridden — paint is fully opaque.
+2. An invisible root smart object normally shows only its bottom-face rectangle (the floor reference). While OPTION is held, ALL the root's edges paint as wireframe, just like other invisible objects.
+3. The hit-test that drives the hover highlight and name popup used to skip invisible objects entirely. Now it lets them through when OPTION is held — hovering a ghost-revealed object produces the same name popup that a visible object's hover does.
+
+The OPTION signal that gates all three pieces is the same one wired during the rule-10 rewrite — it already fires on key-down, key-up, and window-blur, and it already marks the canvas out-of-date so the wireframe appears and disappears in real time as the key is pressed.
+
+Files touched. [Render.ts](../../../src/lib/ts/render/Render.ts) (wireframe paint opacity and root-edge filter both respond to the OPTION signal). [Hits_3D.ts](../../../src/lib/ts/events/Hits_3D.ts) (hit-test accepts an OPTION-down argument; passes invisible objects through when held). [Events_3D.ts](../../../src/lib/ts/events/Events_3D.ts) (mousemove and mousedown pass the live alt-key state to the hit-test).
+
+Also fixed three pre-existing errors from the slider-band move work (engine import missing in Main, obsolete onshowbuildnotes prop on Graph, unused stores in Graph's destructure).
+
 ## Session — 2026-05-17 — rule 10 rewritten (OPTION shows hidden dimensions, no leading period)
 
 Two-part rewrite of rule 10 in [[crowded dimensionals]].

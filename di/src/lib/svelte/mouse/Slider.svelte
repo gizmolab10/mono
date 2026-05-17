@@ -356,6 +356,7 @@
 		margin-bottom        : -6px;
 		line-height          : 1;
 		margin-top           : 0;
+		color                : var(--c-track);
 	}
 
 	.slider-label {
@@ -367,6 +368,7 @@
 		top                  : 4px;
 		margin-top           : 1px;
 		line-height          : 1;
+		color                : var(--c-track);
 	}
 
 	.slider-border {
@@ -401,7 +403,7 @@
 	.tick-label {
 		font-size   : var(--font-small);
 		transform   : translateX(-50%);
-		color       : var(--c-default);
+		color       : var(--c-track);
 		position    : absolute;
 		text-align  : center;
 		white-space : nowrap;
@@ -485,7 +487,7 @@
 	/* === Line style: thin track, small round thumb === */
 
 	.line input[type='range']::-webkit-slider-runnable-track {
-		background    : rgba(0, 0, 0, 0.15);
+		background    : var(--c-track);
 		border-radius : var(--r-input);
 		height        : var(--th-track);
 		border        : none;
@@ -500,7 +502,7 @@
 	}
 
 	.line input[type='range']::-moz-range-track {
-		background    : rgba(0, 0, 0, 0.15);
+		background    : var(--c-track);
 		border-radius : var(--r-input);
 		height        : var(--th-track);
 		border        : none;
@@ -515,7 +517,7 @@
 
 	.line input[type='range']::-ms-fill-lower,
 	.line input[type='range']::-ms-fill-upper {
-		background    : rgba(0, 0, 0, 0.15);
+		background    : var(--c-track);
 		border-radius : var(--r-input);
 		border        : none;
 	}
@@ -545,7 +547,7 @@
 	.range-track {
 		right      : calc(var(--h-slider) / 2);
 		left       : calc(var(--h-slider) / 2);
-		background : rgba(0, 0, 0, 0.15);
+		background : var(--c-track);
 		height     : var(--th-track);
 		position   : absolute;
 		margin-top : -2px;
@@ -579,6 +581,7 @@
 		white-space          : nowrap;
 		text-align           : center;
 		top                  : 0;
+		color                : var(--c-track);
 	}
 
 	.range-input {

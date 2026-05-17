@@ -1,16 +1,21 @@
 <script lang='ts'>
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { stores } from '../../ts/managers/Stores';
+	import Status_Strip from './Status_Strip.svelte';
 	import Details from '../details/Details.svelte';
 	import { k } from '../../ts/common/Constants';
 	import BuildNotes from './BuildNotes.svelte';
+	import Slider from '../mouse/Slider.svelte';
 	import UserGuide from './UserGuide.svelte';
 	import { e } from '../../ts/events/Events';
+	import { engine } from '../../ts/render';
 	import Controls from './Controls.svelte';
 	import Confirm from './Confirm.svelte';
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
 
 	const { w_show_details } = stores;
+	const { w_grid_opacity, w_scale } = stores;
 
 	// Initialize event system
 	onMount(() => {
@@ -36,13 +41,24 @@
 	let showBuildNotes = $state(false);
 	let showUserGuide  = $state(false);
 
+	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
+
 	// Computed dimensions
-	let mainHeight = $derived(height - controlsHeight - gap * 3);
+	let mainHeight = $derived(height - controlsHeight * 3 - gap * 4);
 	let graphWidth = $derived(width - ($w_show_details ? detailsWidth + gap : 0) - gap * 2);
 
 	function handleResize() {
 		width  = Math.max(k.width.window_min, window.innerWidth);
 		height = window.innerHeight;
+	}
+
+	function handle_zoom_step(pointsUp: boolean) {
+		if (pointsUp) engine.scale_up();
+		else engine.scale_down();
+	}
+
+	function handle_zoom_slide(value: number) {
+		w_scale.set(value);
 	}
 
 </script>
@@ -104,7 +120,18 @@
 				class        = 'region graph'
 				style:width  = '{graphWidth}px'
 				style:height = '{mainHeight}px'>
-				<Graph onshowbuildnotes={() => showBuildNotes = true} />
+				<Graph />
+			</div>
+		</div>
+		<div class='band top-band'>
+			<Slider min={0.01} max={10000} value={$w_scale} logarithmic fill onchange={handle_zoom_slide} onstep={handle_zoom_step} />
+		</div>
+		<div class='band bottom-band'>
+			<button class='build-button' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
+			<Status_Strip />
+			<div class='guides-control'>
+				<Slider min={0} max={1} value={$w_grid_opacity} width={120} show_steppers={false} onchange={(v) => w_grid_opacity.set(v)} />
+				<span class='guides-label'>guides</span>
 			</div>
 		</div>
 	{/if}
@@ -163,4 +190,57 @@
 		height          : 100%;
 		border-radius   : calc(var(--h-controls) / 2);
 	}
+
+	.band {
+		height          : (var(--h-controls));
+		background      : var(--accent);
+		padding         : 0 var(--l-gap);
+		box-sizing      : border-box;
+		align-items     : center;
+		display         : flex;
+		flex-shrink     : 0;
+	}
+
+	.top-band {
+		margin-top      : var(--l-gap);
+		justify-content : center;
+	}
+
+	.bottom-band {
+		justify-content : space-between;
+	}
+
+	.guides-control {
+		flex-direction : row;
+		align-items    : center;
+		display        : flex;
+		gap            : 6px;
+	}
+
+	.guides-label {
+		letter-spacing : var(--l-letter-spacing);
+		color          : var(--c-track);
+		font-size      : var(--font-small);
+		line-height    : 1;
+	}
+
+	.build-button {
+		border        : var(--th-border) solid rgba(0, 0, 0, 0.25);
+		padding       : 0 var(--l-padding) 1px var(--l-padding);
+		background    : rgba(255, 255, 255, 0.85);
+		height        : var(--h-button-common);
+		border-radius : var(--r-common);
+		font-size     : var(--font-common);
+		color         : rgba(0, 0, 0, 0.5);
+		box-sizing    : border-box;
+		cursor        : pointer;
+	}
+
+	.build-button:hover,
+	.build-button:global([data-hit]) {
+		border     : var(--th-border) solid rgba(0, 0, 0, 0.4);
+		color      : var(--c-default);
+		background : var(--hover);
+	}
+
 </style>

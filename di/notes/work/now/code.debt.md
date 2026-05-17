@@ -4,15 +4,11 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] move the scaling slider row to the bottom above the build / guides row
-- [ ] cabinetry SOs do not stretch
-- [ ] cannot read guides or scaling when accent is too dark
-    - [ ] turn sliders and text white
-    - [ ] thumb button drag color -> not accent
-- [ ] OPTION key shows ***invisible*** SOs using x-ray
-    - [ ] hover -> name popup
-    - [ ] dimensionals too
-- [ ] move guides slider to next to help
+- [ ] Steppers -> bigger and horizontally laid out (pointing left and right)
+- [ ] rename Controls -> Primary_Controls
+    - [ ] create a new component Secondary_Controls
+        - [ ] move both bands from Main into Secondary_Controls
+- [ ] undo redo triangle buttons in Controls, to immediate right of edit button
 - [ ] convert button 'create a template' -> stud/joist / stair segmented
 
 ## tom

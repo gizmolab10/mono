@@ -35,6 +35,9 @@ export class Colors {
 	// Reactive colors (stores). Wrapped so every write marks the canvas out
 	// of date — color changes are canvas-visible.
 	w_so_hover_color   = stale_writable<string>('gray');
+	w_thumb_color      = stale_writable<string>('white');
+	w_track_color      = stale_writable<string>('#ccc');
+	w_focus_color      = stale_writable<string>('cornflowerblue');
 	w_selected_color   = stale_writable<string>('rgb(120, 120, 120)');
 	w_background_color = stale_writable<string>('rgb(135, 135, 135)');
 	w_hover_color      = stale_writable<string>('rgb(220, 220, 220)');
@@ -86,6 +89,15 @@ export class Colors {
 			// string 'null' for a zero-luminance input.
 			const hover = this.lighterBy(color, 2);
 			this.w_hover_color.set((hover === 'null' || !hover) ? 'rgb(220, 220, 220)' : hover);
+
+			// Slider colors (thumb, track, focus) adapt to accent brightness
+			// so they stay readable on the accent-colored bands. A dark accent
+			// gets light slider parts; a light accent gets dark slider parts.
+			const accent_lume = this.luminance_ofColor(color);
+			const accent_is_dark = accent_lume < 0.4;
+			this.w_thumb_color.set(accent_is_dark ? 'rgb(255, 255, 255)' : 'rgb(60, 60, 60)');
+			this.w_track_color.set(accent_is_dark ? 'rgb(220, 220, 220)' : 'rgb(80, 80, 80)');
+			this.w_focus_color.set(accent_is_dark ? 'rgb(180, 200, 255)' : 'rgb(40, 60, 140)');
 		});
 	}
 

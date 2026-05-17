@@ -8,6 +8,8 @@ import { T_Hit_3D } from '../types/Enumerations';
 import { render_angulars } from './R_Angulars';
 import { mat4, vec3, vec4 } from 'gl-matrix';
 import { hits_3d } from '../events/Hits_3D';
+import { e } from '../events/Events';
+import { get } from 'svelte/store';
 import { Size } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
 import { selection } from '../managers/Selection';
@@ -692,17 +694,23 @@ class Render {
 		this._phase('hidden wireframe');
 		// During print, skip the dashed wireframe for invisible objects so the
 		// printed page shows only the visible drawing — not the helper bounds.
+		const option_down = get(e.w_option_down);
 		if (!is_print) for (const obj of all_objects) {
 			if (obj.so.visible) continue;
 			const projected = projected_map.get(obj.id)!;
 			const world = (solid) ? this.get_world_matrix(obj) : undefined;
-			const root_bottom = (!obj.parent && !is_2d) ? this.face_edge_keys(obj, 0) : null;
+			// Normally an invisible root shows only its bottom-face edges (the
+			// floor reference). While OPTION is held, all its edges are drawn
+			// so the user sees the full wireframe.
+			const root_bottom = (!obj.parent && !is_2d && !option_down) ? this.face_edge_keys(obj, 0) : null;
 			this.ctx.save();
 			this.ctx.setLineDash([1, 1]);
 			this.ctx.strokeStyle = 'rgba(128, 128, 128, 1)';
 			// Invisible root's bottom outline stays fully visible — it's the
-			// floor reference. Other invisible objects fade with the grid.
-			this.ctx.globalAlpha = !obj.parent ? 1 : stores.grid_opacity;
+			// floor reference. Other invisible objects fade with the grid,
+			// EXCEPT while OPTION is held, in which case they paint fully so
+			// the user can see them on demand (x-ray reveal).
+			this.ctx.globalAlpha = (!obj.parent || option_down) ? 1 : stores.grid_opacity;
 			this.ctx.lineWidth = 0.5;
 			for (const [i, j] of obj.edges) {
 				if (root_bottom && !root_bottom.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;

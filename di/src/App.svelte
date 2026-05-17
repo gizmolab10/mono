@@ -4,10 +4,10 @@
 	import Main from './lib/svelte/main/Main.svelte';
 	import { render } from './lib/ts/render';
 
-	const { w_accent_color, w_background_color, w_selected_color, w_text_color, w_hover_color } = colors;
+	const { w_accent_color, w_background_color, w_selected_color, w_text_color, w_hover_color, w_thumb_color, w_track_color, w_focus_color } = colors;
 
 	$effect(() => {
-		c.configure_reactive_colors($w_text_color, $w_accent_color, $w_selected_color, $w_background_color, $w_hover_color);
+		c.configure_reactive_colors($w_text_color, $w_accent_color, $w_selected_color, $w_background_color, $w_hover_color, $w_thumb_color, $w_track_color, $w_focus_color);
 	});
 
 	// ── Silhouette-based print scaling ──

@@ -82,7 +82,6 @@ const stats = {
 	avg_off_canvas  : 0,
 	avg_overlap     : 0,
 	avg_drawn       : 0,
-	last_log_text   : '',
 };
 export const w_dim_dropped_avg = stale_writable<number>(0);
 
@@ -506,19 +505,6 @@ export function render_dimensions(host: DimensionHost): void {
 
 	// Status strip: average of (exceed + off-canvas), rounded to nearest.
 	w_dim_dropped_avg.set(Math.round(stats.avg_exceed + stats.avg_off_canvas));
-
-	// Console summary: only emit when the rounded text changes.
-	const log_text =
-		`dimensionals: ${Math.round(stats.avg_collected)} collected, ` +
-		`${Math.round(stats.avg_dup_text)} duplicate text, ` +
-		`${Math.round(stats.avg_exceed)} exceed, ` +
-		`${Math.round(stats.avg_off_canvas)} off-canvas, ` +
-		`${Math.round(stats.avg_overlap)} overlap, ` +
-		`${Math.round(stats.avg_drawn)} drawn`;
-	if (log_text !== stats.last_log_text) {
-		console.log(log_text);
-		stats.last_log_text = log_text;
-	}
 }
 
 /** Compute everything needed to draw a dimension annotation for one

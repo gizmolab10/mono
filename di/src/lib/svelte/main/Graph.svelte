@@ -6,22 +6,18 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { dimensions } from '../../ts/editors/Dimension';
 	import { angulars } from '../../ts/editors/Angular';
-	import Status_Strip from './Status_Strip.svelte';
 	import { hits, hits_3d } from '../../ts/events';
-	import { e } from '../../ts/events/Events';
 	import { render } from '../../ts/render/Render';
-	import { k } from '../../ts/common/Constants';
+	import { e } from '../../ts/events/Events';
 	import { engine } from '../../ts/render';
 	import { onMount } from 'svelte';
-	import Slider from '../mouse/Slider.svelte';
 
+	const { w_mouse_location } = e;
+	const { w_s_angular } = angulars;
+	const { w_selection } = selection;
 	const { w_s_dimensions } = dimensions;
 	const { w_s_face_label } = face_label;
-	const { w_selection } = selection;
-	const { w_s_angular } = angulars;
-	const { w_grid_opacity, w_scale } = stores;
 	const { w_hover, w_hovered_dimension } = hits_3d;
-	const { w_mouse_location } = e;
 
 	const axis_label: Record<'x' | 'y' | 'z', string> = { x: 'width', y: 'depth', z: 'height' };
 
@@ -39,15 +35,6 @@
 		return names.reverse().join('.');
 	}
 
-	function handle_zoom_step(pointsUp: boolean) {
-		if (pointsUp) engine.scale_up();
-		else engine.scale_down();
-	}
-	function handle_zoom_slide(value: number) {
-		w_scale.set(value);
-	}
-
-	let { onshowbuildnotes = () => {} }: { onshowbuildnotes?: () => void } = $props();
 	let dim_input   = $state<HTMLInputElement>();
 	let ang_input   = $state<HTMLInputElement>();
 	let label_input = $state<HTMLInputElement>();
@@ -280,19 +267,6 @@
 			/>
 		{/if}
 	</div>
-
-	<div class='band top-band'>
-		<Slider min={0.01} max={10000} value={$w_scale} logarithmic fill onchange={handle_zoom_slide} onstep={handle_zoom_step} />
-	</div>
-
-	<div class='band bottom-band'>
-		<button class='build-button' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
-		<Status_Strip />
-		<div class='guides-control'>
-			<Slider min={0} max={1} value={$w_grid_opacity} width={120} show_steppers={false} onchange={(v) => w_grid_opacity.set(v)} />
-			<span class='guides-label'>guides</span>
-		</div>
-	</div>
 </div>
 
 <style>
@@ -303,24 +277,6 @@
 		height         : 100%;
 		gap            : var(--l-gap);
 		display        : flex;
-	}
-
-	.band {
-		height          : var(--h-controls);
-		background      : var(--accent);
-		flex-shrink     : 0;
-		padding         : 0 var(--l-gap);
-		box-sizing      : border-box;
-		align-items     : center;
-		display         : flex;
-	}
-
-	.top-band {
-		justify-content : center;
-	}
-
-	.bottom-band {
-		justify-content : space-between;
 	}
 
 	.name-popup {
@@ -353,39 +309,6 @@
 
 	.canvas-card canvas:active {
 		cursor : grabbing;
-	}
-
-	.guides-control {
-		flex-direction : row;
-		align-items    : center;
-		display        : flex;
-		gap            : 6px;
-	}
-
-	.guides-label {
-		letter-spacing : var(--l-letter-spacing);
-		color          : rgba(0, 0, 0, 0.65);
-		font-size      : var(--font-small);
-		line-height    : 1;
-	}
-
-	.build-button {
-		border        : var(--th-border) solid rgba(0, 0, 0, 0.25);
-		padding       : 0 var(--l-padding) 1px var(--l-padding);
-		background    : rgba(255, 255, 255, 0.85);
-		height        : var(--h-button-common);
-		border-radius : var(--r-common);
-		font-size     : var(--font-common);
-		color         : rgba(0, 0, 0, 0.5);
-		box-sizing    : border-box;
-		cursor        : pointer;
-	}
-
-	.build-button:hover,
-	.build-button:global([data-hit]) {
-		border     : var(--th-border) solid rgba(0, 0, 0, 0.4);
-		color      : var(--c-default);
-		background : var(--hover);
 	}
 
 	.breadcrumbs {

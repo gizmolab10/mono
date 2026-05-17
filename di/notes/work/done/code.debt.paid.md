@@ -1,5 +1,10 @@
 # Code Debt --- Paid
 
+- [x] cannot read guides or scaling when accent is too dark
+    - [x] in Colors.ts, compute luminance of accent
+        - [x] make thumb, track and focus depend on accent
+        - [x] when light, make thumb, track and focus darker
+        - [x] vice-versa (when light, make dark)
 - [x] in parts table, when a row title is focus, the row height changes
 - [x] add count of parts to parts banner title (eg, '52 parts')
 - [x] remove first column of parts table
@@ -313,3 +318,11 @@
 - [x] rewrite rule 10 from crowded dims
     - [x] show dimensions for invisible smart objects only while OPTION is held
     - [x] drop the leading period in the hover popup when the ancestry path is empty (root smart object)
+- [x] move the scaling slider row to the bottom above the build / guides row
+- [x] make top and bottom band the full window width
+    - [x] move from Graph.svelte to Main.svelte
+- [x] OPTION key shows invisible SOs using x-ray
+    - [x] wireframe paint for invisible objects is fully opaque while OPTION is held (instead of fading with grid)
+    - [x] invisible root shows ALL its edges while OPTION is held (instead of only the bottom-face floor rectangle)
+    - [x] hit-test no longer skips invisible objects while OPTION is held; hovering a revealed object produces the name popup
+    - [x] dimensions sub-bullet was already done during the rule-10 rewrite

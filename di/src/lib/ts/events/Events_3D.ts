@@ -75,7 +75,7 @@ class Events_3D {
 					hits_3d.hover = null;
 					hits_3d.hovered_dimension = null;
 				} else {
-					const hit = hits_3d.hit_test(point);
+					const hit = hits_3d.hit_test(point, e.altKey);
 
 					// Cursor: text for labels/dimensions, grab for everything else
 					const is_text = hit?.type === T_Hit_3D.dimension || hit?.type === T_Hit_3D.angle || hit?.type === T_Hit_3D.face_label;
@@ -125,7 +125,7 @@ class Events_3D {
 			return;
 		}
 
-		const hit = hits_3d.hit_test(point);
+		const hit = hits_3d.hit_test(point, e?.altKey ?? false);
 
 		// Dimension or face label hit — begin editing immediately
 		if (hit?.type === T_Hit_3D.dimension) {
