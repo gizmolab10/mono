@@ -4,12 +4,6 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] make the hover color a light version of accent
-    - [ ] define a new writable s_hover_color
-    - [ ] colors.lighterBy(w_accent_color, 0.5)
-    - [ ] App.svelte line 10 and Configuration line 140, add a new prop (s_hover_color) 
-    - [ ] propose a guardrail so very dark accents still produce a distinct hover.
-- [ ] remove rule 10 from crowded dims, and re-implement
 - [ ] move the scaling slider row to the bottom above the build / guides row
 - [ ] cabinetry SOs do not stretch
 - [ ] cannot read guides or scaling when accent is too dark
@@ -23,7 +17,8 @@ offer a proposal for the first unchecked item, and add it to a new section at th
 
 ## tom
 
-- [ ] http://littlecloudvineyard.com/
+- [ ] <http://littlecloudvineyard.com/>
+
 ## soon
 
 - [ ] option to group attributes by axis (in first column: sle -> xyz)
@@ -39,6 +34,7 @@ offer a proposal for the first unchecked item, and add it to a new section at th
     - [ ] blurry, need the other solution
 
 ---
+
 ## big
 
 - [ ] read the app code base and write a formal, machine-readable specification, that when followed by you can reproduce the app
@@ -60,7 +56,6 @@ offer a proposal for the first unchecked item, and add it to a new section at th
     - [ ] ability to combine multiple SOs
 - [ ] help
     - [ ] complete & excellent
-
 
 ## leftovers
 

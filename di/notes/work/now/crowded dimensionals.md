@@ -43,9 +43,11 @@ The popup reads `name (x | width)` for an x-axis dimension, `(y | depth)` for y,
 
 The popup shows the full ancestry path from just-below-root down to the smart object, joined with dots. For instance `front.moose.well post`. The root name is excluded. For a smart object directly under root, the path is just its own name.
 
-## 10. No dimensions on invisible smart objects
+## 10. Dimensions for invisible smart objects show only while OPTION is held
 
-A smart object whose `visible` flag is off, or whose chain of parents includes any object that hides its children, gets no dimensions at all. Matches the existing visibility rule used by the rest of the renderer.
+Visible smart objects always get their dimensions drawn. Invisible smart objects (those whose visible flag is off, or whose parent chain includes an object that hides its children) normally get no dimensions. While the user holds the OPTION key, those invisible smart objects also get their dimensions drawn, so the user can read measurements of hidden parts on demand.
+
+The drawing's silhouette outline stays built only from visible objects — invisible objects don't paint, so they shouldn't shift where other dimensions land. Only the set of candidates collected for the dimension pass widens to include invisible objects while OPTION is held.
 
 ## 11. Push everything outside the drawing's silhouette
 

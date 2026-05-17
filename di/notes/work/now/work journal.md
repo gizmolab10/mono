@@ -4,6 +4,38 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-17 — rule 10 rewritten (OPTION shows hidden dimensions, no leading period)
+
+Two-part rewrite of rule 10 in [[crowded dimensionals]].
+
+First part: dimensions for invisible smart objects now appear while the OPTION key is held. The app tracks the OPTION key state via a fresh signal that fires on key-down, key-up, and window-blur (so the signal doesn't stay stuck "held" after the user switches away). The dimension-collection pass reads that signal. When OPTION is not held, the existing visibility filter runs as before — invisible smart objects get no dimensions. When OPTION is held, the filter relaxes and invisible smart objects' dimensions get drawn alongside the visible ones. The drawing's outline used to push dimensions outside the painted geometry stays built from visible objects only, so showing the extra invisible dimensions doesn't shift the visible ones around. The signal marks the canvas as out-of-date on every change, so dimensions appear and disappear in real time as the user presses and releases OPTION.
+
+Second part: the hover popup format for a dimension on a root smart object used to read `.width (x)` — with a stray leading period — because the popup glued the ancestry path and the semantic axis name with a dot, and the root's ancestry path came out empty. The popup template now reads the ancestry path once and inserts the dot only when the path is non-empty. So the popup reads `width (x)` on the root and `front.moose.well post.width (x)` elsewhere.
+
+Files touched. [Events.ts](../../../src/lib/ts/events/Events.ts) (new OPTION-down signal that marks the canvas dirty on change; key-down, key-up, and window-blur handlers update it). [R_Dimensions.ts](../../../src/lib/ts/render/R_Dimensions.ts) (helper around the visibility check; reads the OPTION signal at the top of the dimension pass). [crowded dimensionals.md](./crowded%20dimensionals.md) (rule 10 rewritten). [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte) (popup template computes ancestry path once and prefixes the dot only when non-empty).
+
+## Session — 2026-05-17 — parts row hover lights up the matching object in the drawing
+
+The other direction of the hover link. Previously, hovering an object in the drawing already lit up the matching row in the parts list (done last session). Now hovering a row in the parts list lights up the matching object in the drawing and shows its name popup next to the cursor.
+
+Each row in the parts list now reacts to the cursor entering or leaving. On entry, it points the same hover signal the drawing already uses at its own object — using the object's most-forward-facing face the same way clicks already do. The existing drawing-side handling fires automatically: the object highlights on the canvas, and the name popup appears at the cursor position. On exit, the hover signal clears, and both effects disappear together.
+
+The reverse link (drawing-hover lights up the row) keeps working because both directions watch the same signal.
+
+Files touched. [D_Parts.svelte](../../../src/lib/svelte/details/D_Parts.svelte) (mouse-enter and mouse-leave handlers added to each row; two small helper functions to set and clear the hover signal).
+
+## Session — 2026-05-17 — hover color derived from accent
+
+The hover paint used across the app was identical to the accent color — the same value was pushed into both the accent and hover slots when the styling pipeline ran. Hovering an element thus looked the same as anything else accent-colored, with no visual separation.
+
+Now a new live hover color sits alongside the accent. Whenever the accent changes, the hover color recomputes as a lighter version of it. Specifically, it uses the existing lightener with a ratio of 2, which produces roughly halfway between the accent and white — still visibly tinted, clearly distinct from both accent and the canvas background.
+
+A guardrail handles the pitch-black edge case: when the lightener returns the literal text "null" (the function's silent failure mode for zero-luminance inputs), the hover falls back to a soft light gray.
+
+The styling pipeline that pushes colors onto the page now accepts five colors instead of four; the new hover color takes over the hover slot that previously was bound to the accent.
+
+Files touched. [Colors.ts](../../../src/lib/ts/utilities/Colors.ts) (new live hover color value; accent subscription updates it). [App.svelte](../../../src/App.svelte) (passes the new value through). [Configuration.ts](../../../src/lib/ts/common/Configuration.ts) (accepts the new parameter; uses it for the hover slot instead of the accent).
+
 ## Session — 2026-05-16 — parts row highlights on drawing hover
 
 Hovering an object in the drawing already lit up the object itself and showed a name popup. Now the matching row in the parts list panel on the right also paints itself with the same hovered color the parts list already uses for its own mouse-over. The two visual cues fire together so the user can see in both places which object the cursor is on.

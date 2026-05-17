@@ -211,10 +211,6 @@
 </script>
 
 <div class='graph'>
-	<div class='band top-band'>
-		<Slider min={0.01} max={10000} value={$w_scale} logarithmic fill onchange={handle_zoom_slide} onstep={handle_zoom_step} />
-	</div>
-
 	<div
 		class            = 'canvas-card'
 		bind:this        = {container}
@@ -224,11 +220,12 @@
 		<canvas
 			bind:this = {canvas}></canvas>
 		{#if $w_hover && $w_mouse_location}
+			{@const path = ancestry_path($w_hover.so)}
 			<div
 				class='name-popup'
 				style:left='{$w_mouse_location.x + 12}px'
 				style:top='{$w_mouse_location.y + 12}px'>
-				{ancestry_path($w_hover.so)}{$w_hovered_dimension ? `.${axis_label[$w_hovered_dimension.axis]} (${$w_hovered_dimension.axis})` : ''}
+				{path}{$w_hovered_dimension ? `${path ? '.' : ''}${axis_label[$w_hovered_dimension.axis]} (${$w_hovered_dimension.axis})` : ''}
 			</div>
 		{/if}
 		{#if breadcrumbs.length > 1}
@@ -282,6 +279,10 @@
 				type         = 'text'
 			/>
 		{/if}
+	</div>
+
+	<div class='band top-band'>
+		<Slider min={0.01} max={10000} value={$w_scale} logarithmic fill onchange={handle_zoom_slide} onstep={handle_zoom_step} />
 	</div>
 
 	<div class='band bottom-band'>

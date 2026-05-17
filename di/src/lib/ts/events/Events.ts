@@ -2,6 +2,7 @@ import { T_Details, T_Hit_3D } from '../types/Enumerations';
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Dictionary } from '../types/Types';
 import { writable, get } from 'svelte/store';
+import { stale_writable } from '../common/Dirty';
 import { Point } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
 import { selection } from '../managers/Selection';
@@ -24,6 +25,7 @@ export class Events {
 	w_mouse_button_down		= writable<boolean>(false);
 	w_scaled_movement		= writable<Point | null>(null);
 	w_mouse_location		= writable<Point>();
+	w_option_down			= stale_writable<boolean>(false);
 
 	// ===== UTILITIES =====
 
@@ -56,6 +58,12 @@ export class Events {
 
 	private subscribeTo_events() {
 		document.addEventListener('keydown', this.handle_key_down);
+		document.addEventListener('keyup', this.handle_key_up);
+		// Browsers don't always fire keyup if the user switches windows while
+		// holding option; reset on visibility loss so a stale "held" state
+		// doesn't persist.
+		document.addEventListener('blur', () => this.w_option_down.set(false));
+		window.addEventListener('blur', () => this.w_option_down.set(false));
 
 		if (this.is_touch_device) {
 			document.addEventListener('touchstart', this.handle_touch_start, { passive: false });
@@ -187,7 +195,12 @@ export class Events {
 		hits.handle_mouse_movement_at(location);
 	}
 
+	private handle_key_up = (event: KeyboardEvent) => {
+		if (!event.altKey) this.w_option_down.set(false);
+	}
+
 	private handle_key_down = (event: KeyboardEvent) => {
+		if (event.altKey) this.w_option_down.set(true);
 		if (stores.is_editing) {
 			if (event.key === 'Enter' || event.key === 'Tab') {
 				event.preventDefault();

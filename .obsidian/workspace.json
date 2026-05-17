@@ -64,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -201,13 +201,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/code.debt.md",
+                "file": "di/notes/work/now/handoff.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of handoff"
             }
           }
         ],
@@ -228,10 +228,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "af5376ef30d65de2",
+  "active": "a6f55205cbd35f61",
   "lastOpenFiles": [
-    "di/notes/work/now/handoff.md",
     "di/notes/work/now/code.debt.md",
+    "di/notes/work/now/handoff.md",
     "di/notes/work/now/crowded dimensionals.md",
     "notes/guides/pre-flight/shorthand.md",
     "di/src/lib/svelte/details/Details.svelte.tmp.5490.1d0b1a08e77c",

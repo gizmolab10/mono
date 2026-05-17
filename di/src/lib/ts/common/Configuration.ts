@@ -137,11 +137,11 @@ export class Configuration {
 	 * variables. Called from App.svelte's $effect block whenever any of
 	 * the four color stores change.
 	 */
-	configure_reactive_colors(text: string, accent: string, selected: string, bg: string): void {
+	configure_reactive_colors(text: string, accent: string, selected: string, bg: string, hover: string): void {
 		const root = document.documentElement.style;
 		root.setProperty('--selected', selected);
 		root.setProperty('--accent',   accent);
-		root.setProperty('--hover',    accent);
+		root.setProperty('--hover',    hover);
 		root.setProperty('--text',     text);
 		root.setProperty('--bg',       bg);
 	}

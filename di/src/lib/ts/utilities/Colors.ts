@@ -37,6 +37,7 @@ export class Colors {
 	w_so_hover_color   = stale_writable<string>('gray');
 	w_selected_color   = stale_writable<string>('rgb(120, 120, 120)');
 	w_background_color = stale_writable<string>('rgb(135, 135, 135)');
+	w_hover_color      = stale_writable<string>('rgb(220, 220, 220)');
 	w_text_color	   = make_stale(preferences.persistent<string>(T_Preference.textColor, 'black'));
 	w_edge_color	   = make_stale(preferences.persistent<string>(T_Preference.edgeColor, '#874efe'));
 	w_accent_color	   = make_stale(preferences.persistent<string>(T_Preference.accentColor, 'rgb(200, 200, 200)'));
@@ -79,6 +80,12 @@ export class Colors {
 			this.w_background_color.set(bg);
 			this.w_selected_color.set(this.special_blend('black', bg, 0.12) ?? bg);
 			this.banner = this.ofBannerFor(bg);
+			// Hover color: a lighter version of the accent (ratio 2 yields
+			// roughly halfway between accent and white). The pitch-black
+			// guardrail catches the case where lighterBy returns the literal
+			// string 'null' for a zero-luminance input.
+			const hover = this.lighterBy(color, 2);
+			this.w_hover_color.set((hover === 'null' || !hover) ? 'rgb(220, 220, 220)' : hover);
 		});
 	}
 

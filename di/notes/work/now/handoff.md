@@ -13,16 +13,16 @@
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
-## Proposal: make the hover color a light version of accent
+## Proposal: move the scaling slider row to the bottom above the build / guides row
 
 First unchecked item on [code.debt.md](./code.debt.md).
 
-The hovered color used across the app is independent of the accent color. The ask: derive the hovered color from the accent — specifically, a lighter version of it — so hover paint visually relates to whichever accent is in use.
+The scaling slider currently sits at the top of the drawing area. The ask: move it down to sit just above the bottom bar (which holds the build button on the left and the guides slider on the right). After the change, the drawing area has two dark bands at the bottom — the scaling slider directly above the build/guides row.
 
-Before proposing the exact scope I want to verify:
+Before scoping I want to verify:
 
-1. Where the hovered color is defined and which named variable holds it.
-2. Where the accent color is defined and whether it's already in a form that can be lightened by a color function (mix-with-white, hsl manipulation, or precomputed at theme load).
-3. Whether the lightened result needs to stay legible against the white text used elsewhere — may need a guardrail so very dark accents still produce a distinct hover.
+1. Where the scaling slider component is mounted (the layout file for the drawing area).
+2. How the existing top-band styling is shared with the bottom band, and whether moving the slider needs a new band element or can reuse one of the existing two.
+3. Whether the slider's existing styling assumes a specific background color (light vs dark accent band) and needs adjustment for the new location.
 
 Say "go" to investigate.

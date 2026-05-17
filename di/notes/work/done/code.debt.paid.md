@@ -302,3 +302,14 @@
 - [x] simplify crowded dimensionals
 - [x] hide givens too when nothing selected
 - [x] highlight the parts row when hovering on an SO in the drawing
+- [x] make the hover color a light version of accent
+    - [x] new live hover color value derived from accent (about halfway between accent and white)
+    - [x] dark-accent guardrail (fallback to soft light gray if lightener returns the null string)
+    - [x] wired as a fifth color through the styling pipeline; replaces accent in the hover slot
+- [x] when hovering on a part, highlight that SO in the drawing
+    - [x] mouse enter on parts row → drawing's hover signal set to that row's object's front-most face
+    - [x] mouse leave → hover signal cleared
+    - [x] reuses existing drawing-side highlight and name-popup machinery
+- [x] rewrite rule 10 from crowded dims
+    - [x] show dimensions for invisible smart objects only while OPTION is held
+    - [x] drop the leading period in the hover popup when the ancestry path is empty (root smart object)

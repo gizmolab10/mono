@@ -30,6 +30,20 @@
 		}
 	}
 
+	// When the cursor enters a parts row, point the drawing's hover signal at
+	// that row's smart object. The drawing's existing hover handling (object
+	// highlight plus name popup) then fires automatically. Pick the smart
+	// object's front-most face so the highlight matches what the drawing-side
+	// hover normally produces.
+	function set_drawing_hover(so: Smart_Object): void {
+		const face = hits_3d.front_most_face(so);
+		if (face < 0) { hits_3d.hover = null; return; }
+		hits_3d.hover = { so, type: T_Hit_3D.face, index: face };
+	}
+	function clear_drawing_hover(): void {
+		hits_3d.hover = null;
+	}
+
 	function is_selected(so: Smart_Object, _tick: number): boolean {
 		return $w_selections.some(h => h.so === so);
 	}
@@ -289,6 +303,8 @@
 				ondragover={(e) => handle_row_dragover(e, so)}
 				ondragend={handle_dragend}
 				ondrop={handle_row_drop}
+				onmouseenter={() => set_drawing_hover(so)}
+				onmouseleave={clear_drawing_hover}
 				onclick={(e) => select(so, e)}>
 				<td class='hierarchy-name' style:padding-left='{depth(so) * k.width.indent}px'
 					onclick={(e) => handle_name_click(e, so)}>

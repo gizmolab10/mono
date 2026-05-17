@@ -4,6 +4,8 @@ import type { O_Scene } from '../types/Interfaces';
 import type { Axis_Name } from '../types/Types';
 import { units, Units } from '../types/Units';
 import { hits_3d } from '../events/Hits_3D';
+import { e } from '../events/Events';
+import { get } from 'svelte/store';
 import { stores } from '../managers/Stores';
 import { scene } from './Scene';
 import { camera } from './Camera';
@@ -247,6 +249,16 @@ export function render_dimensions(host: DimensionHost): void {
 		return true;
 	}
 
+	// While the OPTION key is held, show dimensions even for invisible smart
+	// objects so the user can read measurements of hidden parts. The silhouette
+	// hull stays built from visible objects only — invisible objects don't
+	// paint, so they shouldn't affect where other dimensions land.
+	const option_down = get(e.w_option_down);
+	function should_draw_dimensions_for(obj: O_Scene): boolean {
+		if (is_visible(obj)) return true;
+		return option_down;
+	}
+
 	// Build a single combined outline that wraps every visible LEAF smart
 	// object's projected vertices. Containers (objects with at least one
 	// visible child) are excluded — their bounding-box corners can sit far
@@ -273,7 +285,7 @@ export function render_dimensions(host: DimensionHost): void {
 
 	// Phase A — collect
 	for (const obj of scene.get_all()) {
-		if (!is_visible(obj)) continue;
+		if (!should_draw_dimensions_for(obj)) continue;
 		if (!obj.parent) {
 			// root: skip unless it has projected geometry
 			const root_projected = hits_3d.get_projected(obj.id);

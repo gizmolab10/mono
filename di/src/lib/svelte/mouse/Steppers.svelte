@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { T_Hit_Target } from '../../ts/types/Enumerations';
-	import { hit_target } from '../../ts/events/Hit_Target';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { colors } from '../../ts/utilities/Colors';
 	import { Direction } from '../../ts/types/Angle';
 	import { Identifiable } from '../../ts/runtime';
-	import { colors } from '../../ts/utilities/Colors';
 	import { hits } from '../../ts/events/Hits';
 
 	let {
@@ -24,8 +24,8 @@
 	} = $props();
 
 	const { w_s_hover } = hits;
+	const { w_hover_color } = colors;
 	const uid = Identifiable.newID();
-	const { w_accent_color } = colors;
 	const buttonSize = $derived(size);
 	const strokeWidth = $derived(size * 0.0375);
 	const direction_A = $derived(horizontal ? Direction.left : Direction.up);
@@ -51,7 +51,7 @@
 				d={path_A}
 				stroke={colors.default}
 				stroke-width={strokeWidth}
-				fill={hover_A ? $w_accent_color : 'white'}
+				fill={hover_A ? $w_hover_color : 'white'}
 			/>
 		</svg>
 	</div>
@@ -66,7 +66,7 @@
 				d={path_B}
 				stroke={colors.default}
 				stroke-width={strokeWidth}
-				fill={hover_B ? $w_accent_color : 'white'}
+				fill={hover_B ? $w_hover_color : 'white'}
 			/>
 		</svg>
 	</div>
