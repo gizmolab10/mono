@@ -4,6 +4,28 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-17 — undo and redo arrow buttons added to the top toolbar
+
+A pair of left/right arrow buttons sits in the top toolbar, in the corner cluster next to the hamburger and the save and edit buttons. Click the left arrow to step backward through the change history, the right arrow to step forward. Each arrow fades to about a third opacity when there is nothing to step to in that direction; clicks on a faded arrow do nothing. The arrows show up in all three top-bar layouts — phone, mobile, and desktop. The keyboard shortcut for undo and redo keeps working as it always did; the buttons are an additional way to drive the same machinery.
+
+The arrows re-use the existing left/right arrow-pair component (the same one the zoom slider uses for stepping). The component grew two new optional flags, one per arrow, so the parent can say "this arrow is currently disabled" and the component handles the visual fade and skips the click.
+
+A small layout tweak: the arrow pair sits 1.5 pixels lower than the buttons around it, so the arrowheads optically line up with the centers of the surrounding pill-shaped buttons. The wrapper that holds the arrow pair is told to behave as an inline block — that turned out to be necessary because a plain inline wrapper around a block-level arrow pair caused the right arrow's hit area to land in the wrong place, breaking right-arrow clicks even though the left arrow worked fine. Inline-block fixed the right arrow.
+
+A separate cosmetic tweak in the same session: the fit button (which only shows when the drawing has grown past the visible area) became a perfect circle. The other toolbar buttons stay pill-shaped — the circle is just for fit, to give it a distinct shape since it appears only sometimes.
+
+Files touched. [Steppers.svelte](../../../src/lib/svelte/mouse/Steppers.svelte) (two new fade flags, plus a faded-state style and a click guard for each arrow). [Primary_Controls.svelte](../../../src/lib/svelte/main/Primary_Controls.svelte) (history manager imported; two derived "can step backward" and "can step forward" flags reactive on the existing refresh signal; click router; arrow pair inserted into the corner-buttons snippet at size 42, with a 1.5-pixel-down inline-block wrapper; the fit button picked up a new "fit-button" class and a circular style rule).
+
+## Session — 2026-05-17 — slider thumb back to always white; thumb border now solid 1px black
+
+A correction to the prior slider-color session. The round dragging knob on every slider was made to switch between white and dark gray based on how bright the accent is. That flip turned out to look wrong — the dark gray knob blended into the background on light accents. The fix: drop just the knob's flip. The line the knob slides along and the soft glow that appears around it when you click into it both keep their brightness-based flip — only the knob stops switching.
+
+The change is one line removed inside the accent watcher in the color module. The knob's color name keeps its starting value of plain white forever, which is what the knob's CSS reads. The line color and glow color lines stay exactly as they were.
+
+While we were in the slider, a follow-on tweak to the knob's outline: the hairline outline used to be black at 40% transparency, which read as a soft gray edge. Bumped to solid black at the same hairline thickness. Five thumb-border lines were touched — three for the standard sliders and two for the unused two-knob range mode, all kept consistent.
+
+Files touched. [Colors.ts](../../../src/lib/ts/utilities/Colors.ts) (removed the knob's brightness-flip line; kept the line and glow lines). [Slider.svelte](../../../src/lib/svelte/mouse/Slider.svelte) (five knob-border lines changed from translucent black to solid black).
+
 ## Session — 2026-05-17 — top toolbar renamed Primary; both bands moved into a sibling Secondary
 
 A two-step refactor of the top-of-window controls. The big toolbar of buttons at the top of the window kept the same look and behavior but is now called Primary. The two narrow strips that sit above and below the drawing — the strip with the zoom slider on top, and the strip with the build button, status text, and guides slider on the bottom — moved out of the main layout file and into a fresh sibling component called Secondary.

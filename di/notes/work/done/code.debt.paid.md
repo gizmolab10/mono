@@ -1,5 +1,7 @@
 # Code Debt --- Paid
 
+- [x] add undo redo horizontal Stepper buttons (size = 33) in Controls, to immediate right of edit button
+- [x] thumb buttons always white, not depend on accent color
 - [x] rename Controls -> Primary_Controls
     - [x] create a new component Secondary_Controls
         - [x] move both bands from Main into Secondary_Controls

@@ -2,10 +2,12 @@
 	import { T_Decorations } from '../../ts/types/Enumerations';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { hit_target } from '../../ts/events/Hit_Target';
+	import { history } from '../../ts/managers/History';
 	import { stores } from '../../ts/managers/Stores';
 	import { scenes } from '../../ts/managers/Scenes';
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
+	import Steppers from '../mouse/Steppers.svelte';
 
 	let { onshowuserguide = () => {} }: { onshowuserguide?: () => void } = $props();
 
@@ -20,8 +22,15 @@
 	let show_dimensions  = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
 	let root_fits        = $derived.by(() => { $w_tick; return engine.root_fits(); });
 	let is_straightened  = $derived.by(() => { $w_orientation; $w_tick; return engine.is_straightened(); });
+	let can_undo         = $derived.by(() => { $w_tick; return history.can_undo; });
+	let can_redo         = $derived.by(() => { $w_tick; return history.can_redo; });
 
 	async function save() { await scenes.add_to_library(); }
+
+	function on_undo_redo(left: boolean) {
+		if (left) engine.undo();
+		else      engine.redo();
+	}
 
 </script>
 
@@ -39,7 +48,11 @@
 		use:hit_target={{ id: 'help', onpress: onshowuserguide }}>?</button>
 {/snippet}
 
-{#snippet desktop_only_buttons()}
+{#snippet right_corner_buttons()}
+	{@render hamburger_button()}
+	<span class='undo-redo'>
+		<Steppers horizontal size={42} gap={6} disable_A={!can_undo} disable_B={!can_redo} hit_closure={on_undo_redo} />
+	</span>
 	<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
 	<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
 {/snippet}
@@ -79,8 +92,7 @@
 	{#if wrap_phone}
 		<div class='right-col'>
 			<div class='right-row'>
-				{@render hamburger_button()}
-				{@render desktop_only_buttons()}
+				{@render right_corner_buttons()}
 				<span class='spacer'></span>
 				{@render help_button()}
 			</div>
@@ -101,8 +113,7 @@
 	{:else if wrap_mobile}
 		<div class='right-col'>
 			<div class='right-row'>
-				{@render hamburger_button()}
-				{@render desktop_only_buttons()}
+				{@render right_corner_buttons()}
 				<span class='spacer'></span>
 				{@render mode_buttons()}
 				<span class='spacer'></span>
@@ -118,11 +129,10 @@
 		</div>
 	{:else}
 		<div class='desktop-row'>
-			{@render hamburger_button()}
+			{@render right_corner_buttons()}
 			{#if $w_allow_editing && !root_fits}
-				<button class='toolbar-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
+				<button class='toolbar-button fit-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 			{/if}
-			{@render desktop_only_buttons()}
 			<span class='spacer'></span>
 			{@render mode_buttons()}
 			<span class='spacer'></span>
@@ -218,6 +228,21 @@
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;
+	}
+
+	.undo-redo {
+		display  : inline-block;
+		position : relative;
+		top      : 1.5px;
+	}
+
+	.fit-button {
+		justify-content : center;
+		align-items     : center;
+		display         : inline-flex;
+		border-radius   : 50%;
+		width           : var(--h-button-common);
+		padding         : 0;
 	}
 
 	.help-button {

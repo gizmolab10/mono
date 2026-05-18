@@ -13,21 +13,19 @@
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
-## Proposal: thumb buttons always white, not depend on accent color
+## Proposal: convert "create a template" button into a stud / joist / stair segmented control
 
 First unchecked item on [code.debt.md](./code.debt.md).
 
-A correction to the last session's slider work. The slider thumb was made to flip color based on how bright the accent is — white when the accent is dark, dark gray when the accent is bright. The ask: undo just the thumb's flip and keep the thumb white at all times. The track and the focus halo keep their brightness-based flip — those still adapt to the accent.
+Right now, the selected-part panel has a single button that says "add template". Clicking it adds a child part that fills its parent exactly. The ask: replace that one button with a three-way segmented control that lets the user pick what kind of template the new child should be — a stud, a joist, or a stair.
 
-One change in the color module: the accent watcher's line that picks white or dark gray for the thumb goes away, and the thumb store stays at white forever. Nothing else changes — the track color and focus color logic stays exactly as it is.
+Three pieces:
 
-Confirmed:
+1. The shared segmented-control look already exists (used for decorations, faces, etc.). Three segments, one click handler that knows which segment was clicked. The control replaces the single button in the selected-part panel.
+2. The engine's template-child creator currently makes one generic shape. It needs to branch on which kind was picked, and shape the new child differently for each. Probably: a stud is tall and thin running vertically, a joist is wide and thin running horizontally, a stair is a stair-step shape. The current engine code already references studs and joists inside repeater logic, so the vocabulary exists — but the dimensions / orientations for a brand-new template of each kind need to be decided.
+3. The history-snapshot step that already wraps the current button stays the same — each segment click takes one snapshot before adding the child.
+4. Use sensible defaults that look reasonable inside a typical parent, then let the user tune.
+5. The new segmented control should inherit the same visibility rules.
 
-1. The thumb, the track, and the focus halo each have their own named color. They are independent — pulling the thumb out of the flip does not affect the other two.
-2. The thumb CSS already reads from the named color through a CSS variable, so setting the store to white is enough. No CSS edits needed.
 
-Open question:
-
-1. Should the thumb stay literally `white` (full bright, no transparency), or should it match what it was before the flip work — `white` with no transparency was the default. Read the file once to confirm.
-
-Say "go" to set the thumb back to plain white.
+Say "go" with answers, or "go" alone for "use sensible defaults and inherit visibility".

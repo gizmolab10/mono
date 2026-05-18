@@ -13,12 +13,16 @@
 		hit_closure,
 		show_up = true,
 		show_down = true,
+		disable_A = false,
+		disable_B = false,
 		horizontal = false
 	}: {
 		gap?: number;
 		size?: number;
 		show_up?: boolean;
 		show_down?: boolean;
+		disable_A?: boolean;
+		disable_B?: boolean;
 		horizontal?: boolean;
 		hit_closure: (pointsUp: boolean) => void;
 	} = $props();
@@ -45,13 +49,14 @@
 		role="button"
 		class='stepper-button'
 		class:hidden={!show_up}
-		use:hit_target={{ id: `stepper-${uid}-up`, onautorepeat: () => hit_closure(true) }}>
+		class:disabled={disable_A}
+		use:hit_target={{ id: `stepper-${uid}-up`, onautorepeat: () => { if (!disable_A) hit_closure(true); } }}>
 		<svg overflow='visible' width={bounds_A.width} height={bounds_A.height} viewBox="{bounds_A.minX} {bounds_A.minY} {bounds_A.width} {bounds_A.height}">
 			<path
 				d={path_A}
 				stroke={colors.default}
 				stroke-width={strokeWidth}
-				fill={hover_A ? $w_hover_color : 'white'}
+				fill={hover_A && !disable_A ? $w_hover_color : 'white'}
 			/>
 		</svg>
 	</div>
@@ -60,13 +65,14 @@
 		role="button"
 		class='stepper-button'
 		class:hidden={!show_down}
-		use:hit_target={{ id: `stepper-${uid}-down`, onautorepeat: () => hit_closure(false) }}>
+		class:disabled={disable_B}
+		use:hit_target={{ id: `stepper-${uid}-down`, onautorepeat: () => { if (!disable_B) hit_closure(false); } }}>
 		<svg overflow='visible' width={bounds_B.width} height={bounds_B.height} viewBox="{bounds_B.minX} {bounds_B.minY} {bounds_B.width} {bounds_B.height}">
 			<path
 				d={path_B}
 				stroke={colors.default}
 				stroke-width={strokeWidth}
-				fill={hover_B ? $w_hover_color : 'white'}
+				fill={hover_B && !disable_B ? $w_hover_color : 'white'}
 			/>
 		</svg>
 	</div>
@@ -101,6 +107,11 @@
 
 	.stepper-button.hidden {
 		visibility : hidden;
+	}
+
+	.stepper-button.disabled {
+		cursor  : default;
+		opacity : 0.3;
 	}
 
 </style>
