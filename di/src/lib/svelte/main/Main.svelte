@@ -12,34 +12,26 @@
 	import { onMount } from 'svelte';
 
 	const { w_show_details } = stores;
+	const gap                = k.thickness.separator.main;
+	const radius             = k.radius.main;
+
+	let width                = $state(Math.max(k.width.window_min, window.innerWidth));
+	let height               = $state(window.innerHeight);
+	let showBuildNotes       = $state(false);
+	let showUserGuide        = $state(false);
+	let details_pad          = $state(0);
+	let wrap_phone           = $derived(width < k.width.wrap_phone);
+	let detailsWidth         = $derived(
+		wrap_phone
+			? width - gap * 2
+			: k.width.details - gap * 2 + details_pad
+	);
+	let graphWidth           = $derived(width - ($w_show_details ? detailsWidth + gap : 0) - gap * 2);
 
 	// Initialize event system
 	onMount(() => {
 		e.setup();
 	});
-
-	// Reactive state for window dimensions
-	let width  = $state(Math.max(k.width.window_min, window.innerWidth));
-	let height = $state(window.innerHeight);
-
-	// Layout constants
-	const gap    = k.thickness.separator.main;
-	const radius = k.radius.main;
-
-	let controlsHeight = $state(k.height.controls);
-	let details_pad    = $state(0);
-	let wrap_phone     = $derived(width < k.width.wrap_phone);
-	let detailsWidth   = $derived(
-		wrap_phone
-			? width - gap * 2
-			: k.width.details - gap * 2 + details_pad
-	);
-	let showBuildNotes = $state(false);
-	let showUserGuide  = $state(false);
-
-	// Computed dimensions
-	let mainHeight = $derived(height - controlsHeight * 3 - gap * 4);
-	let graphWidth = $derived(width - ($w_show_details ? detailsWidth + gap : 0) - gap * 2);
 
 	function handleResize() {
 		width  = Math.max(k.width.window_min, window.innerWidth);
@@ -79,22 +71,18 @@
 		</div>
 	{:else}
 		<!-- Controls region -->
-		<div
-			bind:clientHeight={controlsHeight}
-			class = 'region controls'>
+		<div class = 'region controls'>
 			<Primary_Controls onshowuserguide={() => showUserGuide = true} />
 		</div>
 
 		<!-- Main content area -->
 		<div
 			class         = 'main'
-			style:height  = '{mainHeight}px'
 			style:margin-top = '{gap}px'>
 			{#if $w_show_details}
 				<!-- Details region -->
 				<div
 					class        = 'region details'
-					style:height = '{mainHeight}px'
 					style:width  = '{detailsWidth}px'>
 					<Details onpadchange={(v) => details_pad = v} />
 				</div>
@@ -103,8 +91,7 @@
 			<!-- Graph region -->
 			<div
 				class        = 'region graph'
-				style:width  = '{graphWidth}px'
-				style:height = '{mainHeight}px'>
+				style:width  = '{graphWidth}px'>
 				<Graph />
 			</div>
 		</div>
@@ -116,18 +103,22 @@
 
 <style>
 	.panel {
-		min-width   : var(--window-min-width);
-		font-family : system-ui, sans-serif;
-		box-sizing  : border-box;
-		position    : fixed;
-		top         : 0;
-		left        : 0;
+		min-width      : var(--window-min-width);
+		font-family    : system-ui, sans-serif;
+		flex-direction : column;
+		box-sizing     : border-box;
+		position       : fixed;
+		display        : flex;
+		top            : 0;
+		left           : 0;
 	}
 
 	.main {
-		gap      : var(--l-gap);
-		overflow : hidden;
-		display  : flex;
+		min-height : 0;
+		overflow   : hidden;
+		gap        : var(--l-gap);
+		display    : flex;
+		flex       : 1;
 	}
 
 	.region {

@@ -65,10 +65,11 @@
 	</div>
 {/snippet}
 
-{#snippet mode_buttons()}
+{#snippet loose_mode_buttons()}
 	<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
-	{@render decoration_buttons()}
 	<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
+	<button class='toolbar-button' disabled={is_straightened} use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
+	<button class='toolbar-button snap-button' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
 {/snippet}
 
 {#snippet face_buttons()}
@@ -79,9 +80,10 @@
 	</div>
 {/snippet}
 
-{#snippet face_accessory_buttons()}
-	<button class='toolbar-button' disabled={is_straightened} use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
-	<button class='toolbar-button snap-button' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
+{#snippet orientation_cluster()}
+	{@render decoration_buttons()}
+	<span class='spacer'></span>
+	{@render face_buttons()}
 {/snippet}
 
 <div
@@ -93,20 +95,24 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render right_corner_buttons()}
+				{#if $w_allow_editing && !root_fits}
+					<button class='toolbar-button fit-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
+				{/if}
+				<button class='toolbar-button' disabled={is_straightened} use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 				<span class='spacer'></span>
 				{@render help_button()}
 			</div>
 			<div class='right-row'>
-				<span class='spacer'></span>
-				{@render decoration_buttons()}
 				<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
 				<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 				<span class='spacer'></span>
+				{@render decoration_buttons()}
+				<span class='spacer'></span>
 			</div>
 			<div class='right-row'>
+				<button class='toolbar-button snap-button' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
 				<span class='spacer'></span>
 				{@render face_buttons()}
-				{@render face_accessory_buttons()}
 				<span class='spacer'></span>
 			</div>
 		</div>
@@ -114,16 +120,17 @@
 		<div class='right-col'>
 			<div class='right-row'>
 				{@render right_corner_buttons()}
+				{#if $w_allow_editing && !root_fits}
+					<button class='toolbar-button fit-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
+				{/if}
 				<span class='spacer'></span>
-				{@render mode_buttons()}
-				<span class='spacer'></span>
+				{@render loose_mode_buttons()}
 				<span class='spacer'></span>
 				{@render help_button()}
 			</div>
 			<div class='right-row'>
 				<span class='spacer'></span>
-				{@render face_buttons()}
-				{@render face_accessory_buttons()}
+				{@render orientation_cluster()}
 				<span class='spacer'></span>
 			</div>
 		</div>
@@ -134,10 +141,9 @@
 				<button class='toolbar-button fit-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 			{/if}
 			<span class='spacer'></span>
-			{@render mode_buttons()}
+			{@render loose_mode_buttons()}
 			<span class='spacer'></span>
-			{@render face_buttons()}
-			{@render face_accessory_buttons()}
+			{@render orientation_cluster()}
 			<span class='spacer'></span>
 			{@render help_button()}
 		</div>

@@ -182,9 +182,11 @@
 - di/notes/work/now/handoff.md
 - di/notes/work/now/learn.md
 - di/notes/work/now/Minimum Viable INTERSECTION app.md
+- di/notes/work/now/repeaters.mothball.md
 - di/notes/work/now/revisit.di.md
 - di/notes/work/now/road.map.md
 - di/notes/work/now/technique.md
+- di/notes/work/now/tests.suggested.md
 - di/notes/work/now/work journal.md
 - di/notes/work/now/working features.md
 

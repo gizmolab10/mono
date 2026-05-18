@@ -165,13 +165,10 @@
 		const ticks: { pct: number; label: string }[] = [];
 		const exp_min = Math.ceil(Math.log10(min));
 		const exp_max = Math.floor(Math.log10(max));
-		const total = exp_max - exp_min + 1;
-		const step = total > 5 ? 2 : 1; // skip every other when crowded
-		for (let exp = exp_min; exp <= exp_max; exp += step) {
-			const val = Math.pow(10, exp);
+		for (let exp = exp_min; exp <= exp_max; exp++) {
 			const pct = (exp - log_min_val) / log_range * 100;
-			if (pct <= 2 || pct >= 98) continue;
-			ticks.push({ pct, label: val < 1 ? val.toString() : val.toFixed(0) });
+			const power = exp + 3;
+			ticks.push({ pct, label: power.toString() });
 		}
 		return ticks;
 	});

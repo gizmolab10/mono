@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { T_Editing, T_Hit_3D, T_Hit_Target } from '../../ts/types/Enumerations';
-	import { scenes, stores, selection } from '../../ts/managers';
+	import { T_Editing, T_Hit_Target } from '../../ts/types/Enumerations';
+	import { stores } from '../../ts/managers';
 	import type Smart_Object from '../../ts/runtime/Smart_Object';
 	import { face_label } from '../../ts/editors/Face_Label';
 	import { hit_target } from '../../ts/events/Hit_Target';
@@ -14,7 +14,6 @@
 
 	const { w_mouse_location } = e;
 	const { w_s_angular } = angulars;
-	const { w_selection } = selection;
 	const { w_s_dimensions } = dimensions;
 	const { w_s_face_label } = face_label;
 	const { w_hover, w_hovered_dimension } = hits_3d;
@@ -42,28 +41,6 @@
 	let container   : HTMLDivElement;
 	let label_focused = false;
 	let initialized = false;
-
-	let selected_so = $derived($w_selection?.so ?? scenes.root_so);
-
-	// Walk from selected SO up to root — returns [root, ..., parent, selected]
-	let breadcrumbs = $derived.by(() => {
-		const trail: Smart_Object[] = [];
-		let current = selected_so;
-		while (current) {
-			trail.push(current);
-			current = current.scene?.parent?.so ?? null;
-		}
-		trail.reverse();
-		return trail;
-	});
-
-	function select_so(so: Smart_Object) {
-		const face = hits_3d.front_most_face(so);
-		if (face >= 0) {
-			selection.current = { so, type: T_Hit_3D.face, index: face };
-		}
-		scenes.save();
-	}
 
 	function initCanvas(width : number, height : number) {
 		if (!canvas || initialized) return;
@@ -215,19 +192,6 @@
 				{path}{$w_hovered_dimension ? `${path ? '.' : ''}${axis_label[$w_hovered_dimension.axis]} (${$w_hovered_dimension.axis})` : ''}
 			</div>
 		{/if}
-		{#if breadcrumbs.length > 1}
-			<div
-				class='breadcrumbs'>
-				{#each breadcrumbs as so, index (so.id)}
-					<button
-						class='crumb'
-						class:current={index === breadcrumbs.length - 1}
-						onclick={() => select_so(so)}>
-						{so.name}
-					</button>
-				{/each}
-			</div>
-		{/if}
 		{#if $w_s_dimensions}
 			<input
 				value        = {$w_s_dimensions.formatted}
@@ -309,42 +273,6 @@
 
 	.canvas-card canvas:active {
 		cursor : grabbing;
-	}
-
-	.breadcrumbs {
-		z-index         : var(--z-action);
-		flex-direction  : column;
-		align-items     : flex-start;
-		position        : absolute;
-		top             : 10px;
-		left            : 10px;
-		display         : flex;
-		gap             : 2px;
-	}
-
-	.crumb {
-		border        : var(--th-border) solid transparent;
-		background    : rgba(255, 255, 255, 0.7);
-		height        : var(--h-button-common);
-		color         : rgba(0, 0, 0, 0.45);
-		font-size     : var(--font-common);
-		border-radius : var(--r-box);
-		box-sizing    : border-box;
-		cursor        : pointer;
-		padding       : 0 8px;
-	}
-
-	.crumb:hover {
-		border     : var(--th-border) solid rgba(0, 0, 0, 0.3);
-		color      : var(--c-default);
-		background : var(--hover);
-	}
-
-	.crumb.current {
-		border      : var(--th-border) solid rgba(0, 0, 0, 0.5);
-		background  : var(--crumb-bg);
-		color       : var(--c-default);
-		font-weight : 600;
 	}
 
 	.dim-edit {

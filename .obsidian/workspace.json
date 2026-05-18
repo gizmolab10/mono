@@ -36,6 +36,20 @@
             }
           },
           {
+            "id": "5d4441d8e9b3a7c0",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "notes/guides/pre-flight/shorthand.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "shorthand"
+            }
+          },
+          {
             "id": "a6f55205cbd35f61",
             "type": "leaf",
             "state": {
@@ -64,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -117,8 +131,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -232,6 +245,11 @@
   "lastOpenFiles": [
     "di/notes/work/now/code.debt.md",
     "di/notes/work/now/handoff.md",
+    "di/notes/work/now/tests.suggested.md",
+    "di/notes/work/done/code.debt.paid.md.tmp.17328.5f5c72644e6d",
+    "notes/guides/pre-flight/shorthand.md",
+    "di/notes/work/now/repeaters.mothball.md",
+    "di/src/lib/svelte/details/P_Repeat.svelte.tmp.17328.7857b706876a",
     "di/src/lib/svelte/main/Primary_Controls.svelte.tmp.17328.f8c519cdd878",
     "di/src/lib/svelte/mouse/Slider.svelte.tmp.17328.b1156a09ca22",
     "di/src/lib/svelte/main/Secondary_Controls.svelte",
@@ -239,13 +257,10 @@
     "di/notes/work/done/code.debt.paid.md",
     "di/src/lib/ts/render/Render.ts.tmp.17328.ecfa348543b5",
     "di/notes/work/now/crowded dimensionals.md",
-    "notes/guides/pre-flight/shorthand.md",
     "di/src/lib/svelte/details/Details.svelte.tmp.5490.1d0b1a08e77c",
     "di/src/lib/ts/render/R_Dimensions.ts.tmp.73897.518f4d0d2a9b",
     "di/notes/work/now/index.md",
     "di/src/lib/svelte/main/Confirm.svelte",
-    "di/src/lib/ts/managers/Confirm.ts",
-    "di/src/lib/svelte/details/Hideable.svelte.tmp.73897.2e6f59390ab3",
     "di/notes/guides/project/development/adherence dashboard.md",
     "di/notes/work/now/work journal.md",
     "di/notes/work/now/specification driven development.md",
@@ -264,7 +279,6 @@
     "di/test-results/e2e-tests-print-notificati-ee68c-leaves-the-canvas-untouched/error-context.md",
     "di/test-results/e2e-tests-print-notificati-80702-s-nothing-to-the-silhouette/error-context.md",
     "di/test-results/e2e-tests-print-notificati-74aed-s-nothing-to-the-silhouette/error-context.md",
-    "di/test-results/e2e-tests-print-notificati-7a507-houette-equals-that-portion/error-context.md",
     "di/dist/assets/05-mid-stretch-DfF8mrVj.png",
     "di/dist/assets/06-dimension-input-BaK3RdUS.png",
     "di/dist/assets/03-locked-cursor-BNz07XWk.png",

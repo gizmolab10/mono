@@ -17,6 +17,7 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `geometric`            | use names of SO rather than obj_N, use label names of eps when describing faces, segs or eps                                                                                                             |
 | `update`, `done`       | simplify code debt by moving done things to code debt paid. simplify and tighten handoff, moving done things to work journal. update work journal, working features, map and file layout. read code debt |
 | `explain`              | produce analysis only. Do not touch code, nor propose changes, nor fix problems, nor start the next task. Stop after the analysis and wait for the next instruction                                      |
+| `mothball`             | state and confirm the context. then gather everything relevant into a mothball file                                                                                                                      |
 
 ## Abbreviations
 

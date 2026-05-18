@@ -12,20 +12,21 @@
 - **Identity-based formula storage.** A targeted rename helper closed the immediate bug, but the deeper fix is to store formula references by part identity rather than by a snapshot of the part's name. Recorded as a future structural refactor.
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
+- **Mothballed: stud / joist / stair template kinds.** First cut at the three-way segmented control needed lots of work — wrong starting proportions, name collisions, and no path from a stair template to the existing diagonal-rise repeater. See [repeaters.mothball.md](./repeaters.mothball.md) for what was attempted and the six things to think through before resuming.
 
-## Proposal: convert "create a template" button into a stud / joist / stair segmented control
+## Proposal: when option key is down, only show invisible SOs and their dimensionals
 
 First unchecked item on [code.debt.md](./code.debt.md).
 
-Right now, the selected-part panel has a single button that says "add template". Clicking it adds a child part that fills its parent exactly. The ask: replace that one button with a three-way segmented control that lets the user pick what kind of template the new child should be — a stud, a joist, or a stair.
+Right now, holding the OPTION key reveals invisible parts as a wireframe overlaid on top of the visible drawing — both are on screen at the same time. The ask: while OPTION is held, show ONLY the invisible parts (and their dimensions). The visible parts go away for the duration of the hold; release OPTION and the visible parts come back as normal.
 
-Three pieces:
+### Three pieces:
 
-1. The shared segmented-control look already exists (used for decorations, faces, etc.). Three segments, one click handler that knows which segment was clicked. The control replaces the single button in the selected-part panel.
-2. The engine's template-child creator currently makes one generic shape. It needs to branch on which kind was picked, and shape the new child differently for each. Probably: a stud is tall and thin running vertically, a joist is wide and thin running horizontally, a stair is a stair-step shape. The current engine code already references studs and joists inside repeater logic, so the vocabulary exists — but the dimensions / orientations for a brand-new template of each kind need to be decided.
-3. The history-snapshot step that already wraps the current button stays the same — each segment click takes one snapshot before adding the child.
-4. Use sensible defaults that look reasonable inside a typical parent, then let the user tune.
-5. The new segmented control should inherit the same visibility rules.
+1. The canvas drawing pass currently paints visible parts in solid form and invisible parts as a faint wireframe. While OPTION is held, the wireframe is fully opaque. The new behavior: while OPTION is held, skip the visible-parts pass entirely. Only the wireframe pass runs.
+2. The dimension layout currently collects dimensions from visible parts and (while OPTION is held) from invisible parts too. The new behavior: while OPTION is held, the dimension layout collects from invisible parts only. Dimensions for the visible parts don't show.
+3. The hit-test for hover and clicks already accepts invisible parts when OPTION is held. The new behavior keeps the same: hovering or clicking only the (now-revealed) invisible parts works while OPTION is held.
+4. If NO parts are invisible? Holding OPTION key does nothing.
+5. The grid and axis indicators (the y-arrow, the x-arrow, the z-arrow) — keep them on during OPTION-hold.
+6. The root's bottom-face rectangle (the floor reference) — currently always drawn faintly. Keep it during OPTION-hold.
 
-
-Say "go" with answers, or "go" alone for "use sensible defaults and inherit visibility".
+Say "go" with answers, or "go" alone for "blank canvas is fine, keep grid and axes, skip floor reference".

@@ -1,5 +1,11 @@
 # Code Debt --- Paid
 
+- [x] suggest tests for recent work
+- [x] add more ticks to logarithmic scaling slider (EVERY multiple of 10)
+    - [x] multiply the label values by 10
+- [x] primary controls -> put all the segmented together at the right
+- [x] narrow window -> extra rows in secondary controls
+- [x] eliminate breadcrumbs
 - [x] add undo redo horizontal Stepper buttons (size = 33) in Controls, to immediate right of edit button
 - [x] thumb buttons always white, not depend on accent color
 - [x] rename Controls -> Primary_Controls

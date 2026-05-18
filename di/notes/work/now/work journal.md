@@ -4,6 +4,60 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-18 — suggested-tests menu written for the last ten sessions
+
+A menu of test ideas covering every session in the recent stretch — the zoom slider tick rework, the primary-controls rearrangement, the flicker fix and the drawing-area auto-fill, the undo/redo arrow buttons, the breadcrumb removal, the slider thumb adjustments, the secondary-controls rename and extraction, the accent-driven color adaptation, the OPTION-key reveal of invisible parts, the rule-10 ancestry-popup fix, and the parts-row hover link. For each, one or two concrete test ideas, marked unit or browser-driven or visual-confirmation. The user wanted only the menu — no tests actually written yet — so they can pick which ones are worth the effort in a future session.
+
+Files. [tests.suggested.md](./tests.suggested.md) (new).
+
+## Session — 2026-05-18 — zoom slider ticks: every step of ten, edges included, labels go from 1 to 7
+
+The zoom slider used to thin its tick marks out to every other step of ten when the range was big enough, and it suppressed the tick at the far left and far right ends to avoid them sitting flush against the slider edge. The result was a sparse set of widely-spaced ticks with no anchor at either end of the slider track. Now every step of ten draws a tick, including the ones at the very left and very right ends.
+
+The labels also changed shape entirely. They used to print the actual underlying value at each tick (so "0.01", "0.1", "1", and so on up to "10000"). Now each label prints just the power of ten that the value reaches after being scaled up — so the seven ticks across the slider's range read "1", "2", "3", "4", "5", "6", "7", short single digits that don't crowd each other and don't fight the thumb for space.
+
+Iteration shape: the user walked the labels through three forms in quick succession — first multiplying by ten (so "0.1" through "100000"), then by a hundred (so "1" through "1000000"), then dropping the actual-value formatting entirely and showing just the power-of-ten integers. The final state is the clean single-digit version.
+
+Files. [Slider.svelte](../../../src/lib/svelte/mouse/Slider.svelte) (the tick-collection helper dropped its thinning rule and its edge-clipping skip; the label formatting now prints the step exponent plus three).
+
+## Session — 2026-05-18 — primary controls rearranged: loose buttons left, segmented sets clustered right
+
+The row of buttons at the top got reshuffled. The two grouped sets — the three-button set that toggles names, dimensions, and angles, and the six-button set that picks a forward face — are now together on the right side of the row instead of scattered. The four loose mode buttons (the 3D toggle, the solid/x-ray toggle, the straighten button, and the magnet snap toggle) are now together as a single run on the left side, joined onto the corner cluster (hamburger, undo/redo arrows, save, edit, and the optional fit button).
+
+The Svelte file picked up two new groupings to make the intent obvious in code: one snippet for the four loose mode buttons, and one cluster snippet that renders the names/dimensions/angles set and the six-face set side by side with a flexible spacer between them.
+
+On the wider window the whole arrangement fits on one row: corner cluster, loose mode buttons, spacer, names/dimensions/angles, spacer, six-face set, help button at the far corner.
+
+On narrower windows the row splits in two: the loose buttons share the top row with the corner cluster and the help button, while the two grouped sets share the bottom row. On phone-narrow widths the user split it again across three rows by hand — the corner cluster plus fit and straighten on row one, the 3D toggle, solid/x-ray, and the names/dimensions/angles set on row two, the magnet and the six-face set on row three — so everything fits at the smallest width without crowding.
+
+Files. [Primary_Controls.svelte](../../../src/lib/svelte/main/Primary_Controls.svelte) (two new snippets, three layouts rewritten).
+
+## Session — 2026-05-18 — drawing area auto-fills the space; flicker at the wrap threshold gone
+
+The original ask was: when the window is narrow, give the secondary controls extra rows so their contents don't crowd. Investigating, the actual visible problem turned out to be different and worse — a stripe of empty accent color was sitting below the secondary controls at narrow widths, and the secondary controls flickered horribly when the window crossed the wrap threshold (shrinking by one row for a fraction of a second when growing past 733-734, growing by one row when shrinking past it).
+
+Root cause: the drawing area's height was computed in code as window-height minus the primary controls' measured height minus two row heights minus four gaps. The primary controls' measured height arrived one frame late through the size-watcher, so at the exact frame the primary controls wrapped to a different row count, the math was still using the old count. That left either an empty stripe at the bottom (when the math thought primary was taller than it now is) or a one-row overflow that pushed secondary controls past the bottom of the window (when the math thought primary was shorter than it now is). On the next frame the size-watcher caught up and everything snapped into place — that snap is the flicker.
+
+Fix: stop measuring. The panel became a top-to-bottom flex column. Primary controls takes its natural height. Secondary controls takes its natural height. The drawing area gets the rest via `flex: 1; min-height: 0`. No code-side height math, no size-watcher, no one-frame lag. The empty-stripe bug is fixed and the threshold flicker is fixed by the same change.
+
+Files. [Main.svelte](../../../src/lib/svelte/main/Main.svelte) (removed the drawing-area height derive and the size-watcher binding; the panel is now a flex column; the drawing-area wrapper gets `flex: 1; min-height: 0`; the inline pixel-heights on the drawing-area wrapper, the details column, and the graph are gone).
+
+## Session — 2026-05-18 — breadcrumb chip row removed from the drawing area
+
+The row of chips that used to appear along the top-left of the drawing — one chip per ancestor of the selected part, plus the selected part itself — is gone. The chips were a click-shortcut to jump selection up the ancestry. Same jump is available through the parts list panel, so the chips were redundant.
+
+Pulled the chip row template block, the small helper that walked from the selected part up to the root building the chip list, the click handler that picked a part from a chip, the CSS rules that styled the row and the individual chips, and the print-stylesheet rule that hid the row on paper. Three local imports became unused after the removals (the selection-store import, the scene manager import, and a 3D hit-type enum import) and were also pulled out.
+
+Files. [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte) (chip row, list helper, click handler, CSS, three unused imports). [App.svelte](../../../src/App.svelte) (print-stylesheet line that hid the row).
+
+## Session — 2026-05-17 — stud / joist / stair templates: attempted, mothballed
+
+Took a first cut at replacing the single "add template" button with a three-way segmented control for stud, joist, and stair. Each kind set the new child's name and gave it a rough starting shape — a vertical post for stud, a horizontal beam for joist, a small step box for stair. Visual confirmation said the result needs lots of work: the rough proportions are wrong, the names collide as soon as there is more than one of each kind, and the stair-as-single-step approach was never wired through to the diagonal-rise repeater that turns one step into a flight.
+
+Pulled back to the original single "add template" button. Wrote a mothball note that captures what was attempted, what each kind was supposed to produce, and the six concrete things that need more thought before resuming. See [repeaters.mothball.md](./repeaters.mothball.md).
+
+Files. [Smart_Object.ts](../../../src/lib/ts/runtime/Smart_Object.ts), [Engine.ts](../../../src/lib/ts/render/Engine.ts), [P_Repeat.svelte](../../../src/lib/svelte/details/P_Repeat.svelte) all touched then reverted; [repeaters.mothball.md](./repeaters.mothball.md) written.
+
 ## Session — 2026-05-17 — undo and redo arrow buttons added to the top toolbar
 
 A pair of left/right arrow buttons sits in the top toolbar, in the corner cluster next to the hamburger and the save and edit buttons. Click the left arrow to step backward through the change history, the right arrow to step forward. Each arrow fades to about a third opacity when there is nothing to step to in that direction; clicks on a faded arrow do nothing. The arrows show up in all three top-bar layouts — phone, mobile, and desktop. The keyboard shortcut for undo and redo keeps working as it always did; the buttons are an additional way to drive the same machinery.

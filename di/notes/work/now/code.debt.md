@@ -4,15 +4,21 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] convert button 'create a template' -> stud/joist / stair segmented
+- [ ] when option key is down, only show invisible SOs and their dimensionals
+- [ ] create tests for the new dimensionals rules
 
 ## tom
 
 - [ ] <http://littlecloudvineyard.com/>
+    - [ ] wiki builder
+    - [ ] netlify
+    - [ ] mono/lc
 
 ## soon
 
 - [ ] option to group attributes by axis (in first column: sle -> xyz)
+- [ ] convert button 'create a template' -> stud/joist / stair segmented
+- [ ] slider for master separator width
 - [ ] can't edit a dimensional
     - [ ] falls apart (drawer)
 - [ ] select a part, undo -> fucks with many parts. relaunch fixes
