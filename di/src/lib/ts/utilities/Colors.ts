@@ -90,12 +90,12 @@ export class Colors {
 			const hover = this.lighterBy(color, 2);
 			this.w_hover_color.set((hover === 'null' || !hover) ? 'rgb(220, 220, 220)' : hover);
 
-			// Slider colors (thumb, track, focus) adapt to accent brightness
-			// so they stay readable on the accent-colored bands. A dark accent
-			// gets light slider parts; a light accent gets dark slider parts.
+			// Track and focus halo adapt to accent brightness so they stay
+			// readable on the accent-colored bands. A dark accent gets light
+			// parts; a light accent gets dark parts. The thumb stays white at
+			// all times — it does not flip with accent brightness.
 			const accent_lume = this.luminance_ofColor(color);
 			const accent_is_dark = accent_lume < 0.4;
-			this.w_thumb_color.set(accent_is_dark ? 'rgb(255, 255, 255)' : 'rgb(60, 60, 60)');
 			this.w_track_color.set(accent_is_dark ? 'rgb(220, 220, 220)' : 'rgb(80, 80, 80)');
 			this.w_focus_color.set(accent_is_dark ? 'rgb(180, 200, 255)' : 'rgb(40, 60, 140)');
 		});

@@ -19,7 +19,8 @@
 
 - di/src/lib/svelte/main/Main.svelte
 - di/src/lib/svelte/main/Graph.svelte
-- di/src/lib/svelte/main/Controls.svelte
+- di/src/lib/svelte/main/Primary_Controls.svelte
+- di/src/lib/svelte/main/Secondary_Controls.svelte
 - di/src/lib/svelte/main/BuildNotes.svelte
 - di/src/lib/svelte/main/UserGuide.svelte
 

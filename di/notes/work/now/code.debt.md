@@ -4,11 +4,8 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] Steppers -> bigger and horizontally laid out (pointing left and right)
-- [ ] rename Controls -> Primary_Controls
-    - [ ] create a new component Secondary_Controls
-        - [ ] move both bands from Main into Secondary_Controls
-- [ ] undo redo triangle buttons in Controls, to immediate right of edit button
+- [ ] thumb buttons always white, not depend on accent color
+- [ ] add undo redo horizontal Stepper buttons (size = 33) in Controls, to immediate right of edit button
 - [ ] convert button 'create a template' -> stud/joist / stair segmented
 
 ## tom

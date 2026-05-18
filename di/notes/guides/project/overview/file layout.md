@@ -22,7 +22,8 @@ src/
     │   │   └── P_Repeat.svelte
     │   ├── main/             # Top-level layout components
     │   │   ├── Main.svelte
-    │   │   ├── Controls.svelte
+    │   │   ├── Primary_Controls.svelte
+    │   │   ├── Secondary_Controls.svelte
     │   │   ├── Graph.svelte
     │   │   ├── BuildNotes.svelte
     │   │   ├── UserGuide.svelte

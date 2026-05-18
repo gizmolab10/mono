@@ -1,5 +1,8 @@
 # Code Debt --- Paid
 
+- [x] rename Controls -> Primary_Controls
+    - [x] create a new component Secondary_Controls
+        - [x] move both bands from Main into Secondary_Controls
 - [x] cannot read guides or scaling when accent is too dark
     - [x] in Colors.ts, compute luminance of accent
         - [x] make thumb, track and focus depend on accent
@@ -326,3 +329,4 @@
     - [x] invisible root shows ALL its edges while OPTION is held (instead of only the bottom-face floor rectangle)
     - [x] hit-test no longer skips invisible objects while OPTION is held; hovering a revealed object produces the name popup
     - [x] dimensions sub-bullet was already done during the rule-10 rewrite
+- [x] Steppers -> bigger and horizontally laid out (pointing left and right)

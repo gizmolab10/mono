@@ -4,6 +4,16 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-17 — top toolbar renamed Primary; both bands moved into a sibling Secondary
+
+A two-step refactor of the top-of-window controls. The big toolbar of buttons at the top of the window kept the same look and behavior but is now called Primary. The two narrow strips that sit above and below the drawing — the strip with the zoom slider on top, and the strip with the build button, status text, and guides slider on the bottom — moved out of the main layout file and into a fresh sibling component called Secondary.
+
+The main layout file got noticeably shorter. The two zoom handler functions, the two store reads they used, and the inline band markup all moved into the new component. The CSS rules for the bands, the build button, the guides label, and the guides control all moved with them. The main layout now contains a single tag where the two bands used to sit.
+
+Side benefit: the build button now actually opens the build-notes overlay. It was previously wired to an empty default callback at the top of the main layout — the slot for a real handler was never filled by the app shell, so clicking the button did nothing. The new component fires a callback up to the main layout, which sets the local state directly, and the overlay opens as expected.
+
+Files touched. [Primary_Controls.svelte](../../../src/lib/svelte/main/Primary_Controls.svelte) (renamed from Controls.svelte, contents unchanged). [Secondary_Controls.svelte](../../../src/lib/svelte/main/Secondary_Controls.svelte) (new — holds both bands, their helpers, and their CSS). [Main.svelte](../../../src/lib/svelte/main/Main.svelte) (import and tag updated for the rename; bands, helpers, two store reads, the broken build-notes prop, and the band CSS all removed; one tag for the new component inserted; build-notes callback wired to local state).
+
 ## Session — 2026-05-17 — sliders, scale numbers, and the guides label adapt to accent brightness
 
 When the accent picker was set to a very dark color, the slider thumb, track, focus halo, the tick numbers along the scale, and the "guides" label all blended into the band background and became unreadable. They now flip based on how bright the accent is — dark accents get bright slider parts and bright label text, bright accents get dark ones.

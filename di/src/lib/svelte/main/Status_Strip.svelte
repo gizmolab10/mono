@@ -22,14 +22,14 @@
 
 <style>
 	.status-strip {
-		flex            : 1;
 		font-size       : var(--font-common);
-		color           : var(--white);
+		color           : var(--c-track);
 		align-items     : center;
 		justify-content : center;
 		display         : flex;
 		pointer-events  : none;
 		user-select     : none;
+		flex            : 1;
 	}
 
 	.status-strip.error {

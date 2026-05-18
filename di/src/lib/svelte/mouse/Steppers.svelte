@@ -23,17 +23,17 @@
 		hit_closure: (pointsUp: boolean) => void;
 	} = $props();
 
+	const strokeWidth = 0.75;
 	const { w_s_hover } = hits;
 	const { w_hover_color } = colors;
 	const uid = Identifiable.newID();
 	const buttonSize = $derived(size);
-	const strokeWidth = $derived(size * 0.0375);
 	const direction_A = $derived(horizontal ? Direction.left : Direction.up);
 	const direction_B = $derived(horizontal ? Direction.right : Direction.down);
-	const bounds_A = $derived(svg_paths.fat_polygon_bounds(buttonSize, direction_A));
-	const bounds_B = $derived(svg_paths.fat_polygon_bounds(buttonSize, direction_B));
 	const path_A = $derived(svg_paths.fat_polygon(buttonSize, direction_A));
 	const path_B = $derived(svg_paths.fat_polygon(buttonSize, direction_B));
+	const bounds_A = $derived(svg_paths.fat_polygon_bounds(buttonSize, direction_A));
+	const bounds_B = $derived(svg_paths.fat_polygon_bounds(buttonSize, direction_B));
 	const hover_A = $derived($w_s_hover?.id === T_Hit_Target.control + '-' + `stepper-${uid}-up`);
 	const hover_B = $derived($w_s_hover?.id === T_Hit_Target.control + '-' + `stepper-${uid}-down`);
 

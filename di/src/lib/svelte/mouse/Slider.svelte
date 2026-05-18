@@ -22,11 +22,11 @@
 		fill = false,
 		style = 'line',
 		divisions = 200,
+		vertical = false,
 		show_value = false,
 		logarithmic = false,
 		show_steppers = true,
 		sticky_threshold = 1,
-		vertical = false,
 	}: {
 		min?: number;
 		max?: number;
@@ -35,6 +35,7 @@
 		fill?: boolean;
 		height?: number;
 		sticky?: number[];
+		vertical?: boolean;
 		value_alt?: number;
 		divisions?: number;
 		show_value?: boolean;
@@ -42,11 +43,10 @@
 		show_steppers?: boolean;
 		style?: 'pill' | 'line';
 		sticky_threshold?: number;
-		vertical?: boolean;
 		onchange: (value: number) => void;
+		onstep?: (smaller: boolean) => void;
 		format_label?: (v: number) => string;
 		onchange_alt?: (value: number) => void;
-		onstep?: (pointsUp: boolean) => void;
 	} = $props();
 
 	const border = `1px solid ${colors.border}`;
@@ -228,11 +228,11 @@
 						<span class='range-tick' style:left="calc(var(--h-slider) / 2 + {tick.pct} * (100% - var(--h-slider)) / 100)"></span>
 					{/each}
 					<input type='range' class='range-input'
-						id={slider_hit_id}
-						min='0' step='any' max={divisions}
-						value={slider_value}
 						style:--thumb-color={current_thumb_color}
+						min='0' step='any' max={divisions}
 						bind:this={slider_input}
+						value={slider_value}
+						id={slider_hit_id}
 						oninput={on_input}
 						use:hit_target={{
 							id: slider_id,
@@ -262,16 +262,16 @@
 		{:else}
 			<!-- Single-thumb mode -->
 			<div class='slider-border'
+			class:vertical
 				class:pill={style === 'pill'}
 				class:line={style === 'line'}
-				class:vertical
-				style:width={fill ? '100%' : `${vertical ? height : width}px`}
-				style:height={vertical ? `${width}px` : null}
 				style:--border={border}
 				style:--height="{height}px"
 				style:--slider-length="{width}px"
 				style:--thumb-height="{height * 0.8}px"
-				style:--thumb-color={current_thumb_color}>
+				style:--thumb-color={current_thumb_color}
+				style:height={vertical ? `${width}px` : null}
+				style:width={fill ? '100%' : `${vertical ? height : width}px`}>
 				<input class='slider-input'
 					min='0'
 					step='any'
@@ -311,7 +311,7 @@
 	</div>
 	{#if show_steppers && onstep}
 		<div class='steppers-wrapper'>
-			<Steppers size={20} gap={0} hit_closure={onstep} />
+			<Steppers horizontal size={33} gap={6} hit_closure={onstep} />
 		</div>
 	{/if}
 </div>
@@ -495,7 +495,7 @@
 
 	.line input[type='range']::-webkit-slider-thumb {
 		margin-top : calc((var(--th-track) - var(--h-slider)) / 2);
-		border     : 1px solid rgba(0, 0, 0, 0.4);
+		border     : 1px solid black;
 		background : var(--thumb-color);
 		width      : var(--h-slider);
 		height     : var(--h-slider);
@@ -509,7 +509,7 @@
 	}
 
 	.line input[type='range']::-moz-range-thumb {
-		border     : 1px solid rgba(0, 0, 0, 0.4);
+		border     : 1px solid black;
 		background : var(--thumb-color);
 		width      : var(--h-slider);
 		height     : var(--h-slider);
@@ -523,7 +523,7 @@
 	}
 
 	.line input[type='range']::-ms-thumb {
-		border     : 1px solid rgba(0, 0, 0, 0.4);
+		border     : 1px solid black;
 		background : var(--thumb-color);
 		width      : var(--h-slider);
 		height     : var(--h-slider);
@@ -616,7 +616,7 @@
 
 	.range-input::-webkit-slider-thumb {
 		margin-top         : calc((var(--th-track) - var(--h-slider)) / 2);
-		border             : 1px solid rgba(0, 0, 0, 0.4);
+		border             : 1px solid black;
 		background         : var(--thumb-color);
 		width              : var(--h-slider);
 		height             : var(--h-slider);
@@ -627,7 +627,7 @@
 	}
 
 	.range-input::-moz-range-thumb {
-		border         : 1px solid rgba(0, 0, 0, 0.4);
+		border         : 1px solid black;
 		background     : var(--thumb-color);
 		width          : var(--h-slider);
 		height         : var(--h-slider);
