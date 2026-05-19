@@ -28,15 +28,15 @@ Evidence: [R_Dimensions.ts:332-359](../../../src/lib/ts/render/R_Dimensions.ts#L
 
 ## Collecting candidates
 
-For every visible part, the renderer asks each of its three axes the same question: where SHOULD this label go? Each axis goes through the same six sub-steps; if any one of them fails, the next silhouette edge along the axis is tried; if every edge fails, the axis gets no label this paint.
+For every visible part, the renderer asks each of its three axes the same question: where SHOULD this label go? Each axis goes through the same five sub-steps; if any one of them fails, the next silhouette edge along the axis is tried; if every edge fails, the axis gets no label this paint.
 
-### Pick silhouette edges for each SO
+### 1. Pick silhouette edges for each SO
 
 A silhouette edge is one where, of the two faces that meet along it, one is facing the camera and the other is facing away. That's exactly the boundary where the visible side of the shape ends and the hidden side begins — the outline you would trace if you drew the shape's profile from the camera's current viewpoint. Among those, ties are broken by which face leans most directly toward the viewer; the most-toward-the-viewer face wins, and its associated edge is preferred. The step returns a list, not a single choice, because later filters can rule the first edge out and force a fallback.
 
 Evidence: [R_Dimensions.ts:892-949](../../../src/lib/ts/render/R_Dimensions.ts#L892-L949)
 
-### Pick a witness direction — the path of least resistance
+### 2. Pick a witness direction — the path of least resistance
 
 For the chosen edge, the renderer considers all four signed perpendicular axes — the two world axes other than the one being measured, each in both directions. For each candidate direction, it measures how far the label would have to travel to clear the combined outline, accounting for the label rectangle's footprint along that direction. The direction with the SMALLEST required push wins. The label leaves the drawing the way that requires the least sideways travel.
 
@@ -48,19 +48,19 @@ Two filters cull bad candidates before the clearance comparison:
 
 Evidence: [R_Dimensions.ts:629-761](../../../src/lib/ts/render/R_Dimensions.ts#L629-L761)
 
-### Apply the silhouette push
+### 3. Apply the silhouette push
 
 The winning direction's clearance is added to the base distance, plus a 30-pixel margin so the label sits clear of the outline rather than touching it. The total push is capped at 80 pixels — beyond that, the label is allowed to sit closer to the drawing rather than fly off the canvas. The witness lines and the dimension line are then projected at the pushed distance.
 
 Evidence: [R_Dimensions.ts:773-796](../../../src/lib/ts/render/R_Dimensions.ts#L773-L796)
 
-### Decide the layout case
+### 4. Decide the layout case
 
 If the dimension line is long enough to fit the text plus a pair of inward-pointing arrows, the layout is "normal". Otherwise the arrows flip outward and the dimension line is extended past each end. Lines too short for either layout are dropped.
 
 Evidence: [R_Dimensions.ts:815-821](../../../src/lib/ts/render/R_Dimensions.ts#L815-L821)
 
-### Occlusion check
+### 5. Occlusion check
 
 If another part has a front face that fully covers the label's text rectangle, AND that face is closer to the camera than the dimension line, the candidate is dropped. The label would be hidden anyway.
 

@@ -106,7 +106,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -241,13 +241,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/guides/architecture/graph/dimensionals.md",
+                "file": "notes/guides/setup/netlify.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of dimensionals"
+              "title": "Outline of netlify"
             }
           }
         ],
@@ -268,8 +268,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "d1dd371ba66bb976",
+  "active": "a6f55205cbd35f61",
   "lastOpenFiles": [
+    "di/notes/guides/architecture/graph/dimensionals.md",
     "di/notes/work/now/handoff.md",
     "di/notes/work/now/code.debt.md",
     "di/notes/work/now/crowded dimensionals.md",

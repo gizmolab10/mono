@@ -73,10 +73,6 @@
           },
           {
             "type": "command",
-            "command": "di/.claude/hooks/refer-to-current-file-check.sh"
-          },
-          {
-            "type": "command",
             "command": "di/.claude/hooks/done-checklist.sh"
           },
           {
