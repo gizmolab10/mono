@@ -373,6 +373,14 @@ class Render {
 		const is_2d = stores.current_view_mode === '2d';
 		const solid = stores.is_solid;
 
+		// X-ray mode: while OPTION is held AND at least one part is invisible,
+		// the visible parts are skipped so only the invisible parts (as a dashed
+		// wireframe) and their dimensions are shown. With no invisible parts,
+		// OPTION does nothing. Print mode never triggers x-ray.
+		const print_active = this.force_print_paint || (typeof window !== 'undefined' && window.matchMedia('print').matches);
+		const has_invisible = all_objects.some(o => !o.so.visible);
+		const xray_mode = !print_active && get(e.w_option_down) && has_invisible;
+
 		// Projection: project ALL vertices (including hidden) for hit-test caches
 		const projected_map = new Map<string, Projected[]>();
 		for (const obj of all_objects) {
@@ -391,7 +399,7 @@ class Render {
 		// Solidify: fill front-facing faces (occlusion layer)
 		// In solid mode, fill with white so rear edges are hidden.
 		// Sort all front-facing faces back-to-front by average depth.
-		if (solid) {
+		if (solid && !xray_mode) {
 			const face_draws: { face: number[]; projected: Projected[]; z_avg: number; fi: number }[] = [];
 			for (const obj of objects) {
 				const projected = projected_map.get(obj.id)!;
@@ -412,7 +420,7 @@ class Render {
 		}
 
 		// Solidify: debug face fills (non-solid mode)
-		if (!solid) {
+		if (!solid && !xray_mode) {
 			for (const obj of objects) {
 				const projected = projected_map.get(obj.id)!;
 				if (!obj.faces) continue;
@@ -431,7 +439,7 @@ class Render {
 		// Build occluding face list for edge clipping (solid or 2D mode)
 		this._phase('occluders');
 		this.occluding_faces = [];
-		if (solid) {
+		if (solid && !xray_mode) {
 			for (const obj of objects) {
 				if (!obj.parent) continue;
 				const projected = projected_map.get(obj.id)!;
@@ -624,7 +632,7 @@ class Render {
 
 		// Edges: a visible root draws all its edges. An invisible root is
 		// restricted to the bottom face further down.
-		for (const obj of objects) {
+		if (!xray_mode) for (const obj of objects) {
 			const projected = projected_map.get(obj.id)!;
 			const world = (solid) ? this.get_world_matrix(obj) : undefined;
 			this.render_edges(obj, projected, solid, world);

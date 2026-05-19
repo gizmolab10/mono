@@ -27,12 +27,40 @@
             "state": {
               "type": "markdown",
               "state": {
+                "file": "di/notes/work/now/working features.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "working features"
+            }
+          },
+          {
+            "id": "7de6b81fc250674a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
                 "file": "di/notes/work/now/code.debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
               "title": "code.debt"
+            }
+          },
+          {
+            "id": "d1dd371ba66bb976",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/guides/architecture/graph/dimensionals.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "dimensionals"
             }
           },
           {
@@ -55,12 +83,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/now/handoff.md",
+                "file": "notes/guides/setup/netlify.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "handoff"
+              "title": "netlify"
             }
           },
           {
@@ -135,8 +163,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 354.5026054382324,
-    "collapsed": true
+    "width": 354.5026054382324
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -214,13 +241,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/handoff.md",
+                "file": "di/notes/guides/architecture/graph/dimensionals.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of dimensionals"
             }
           }
         ],
@@ -241,44 +268,43 @@
       "bases:Create new base": false
     }
   },
-  "active": "a6f55205cbd35f61",
+  "active": "d1dd371ba66bb976",
   "lastOpenFiles": [
-    "di/notes/work/now/code.debt.md",
     "di/notes/work/now/handoff.md",
+    "di/notes/work/now/code.debt.md",
+    "di/notes/work/now/crowded dimensionals.md",
+    "di/notes/work/done/code.debt.paid.md",
+    "di/notes/work/now/work journal.md.tmp.41376.a9fe2b1a8ba4",
+    "di/test-results/dimensions-silhouette-memb-a43fa-ontainer-corners-contribute-chromium/trace.zip",
+    "di/test-results/dimensions-silhouette-memb-a43fa-ontainer-corners-contribute-chromium/error-context.md",
+    "di/test-results/dimensions-silhouette-memb-a43fa-ontainer-corners-contribute-chromium",
+    "di/e2e/tests/dimensions-direction-choice.spec.ts",
+    "di/e2e/tests/dimensions-silhouette-membership.spec.ts",
+    "di/test-results",
+    "di/test-results/dimensions-outside-silhoue-491d2-o-labels-inside-the-outline-chromium/trace.zip",
+    "di/test-results/dimensions-outside-silhoue-491d2-o-labels-inside-the-outline-chromium",
+    "di/e2e/tests/dimensions-outside-silhouette.spec.ts",
+    "di/e2e/tests/dimensions-witness-cap.spec.ts",
+    "di/test-results/dimensions-xray-OPTION-wit-efe90--labels-to-that-hidden-part-chromium/error-context.md",
+    "di/test-results/dimensions-floaters-drawer-cd8f7-nnected-from-their-dim-line-chromium/error-context.md",
+    "di/test-results/dimensions-off-canvas-sque-16c11-he-survivors-stay-on-canvas-chromium/error-context.md",
+    "di/test-results/dimensions-off-canvas-base-76e3e-and-reports-a-dropped-count-chromium/error-context.md",
+    "di/test-results/dimensions-force-layout-se-0467e-s-no-pairwise-label-overlap-chromium/error-context.md",
+    "di/test-results/dimensions-xray-OPTION-wit-2e0ef-ible-does-not-flip-to-x-ray-chromium/error-context.md",
+    "di/notes/work/now/working features.md",
+    "di/notes/work/now/work journal.md",
+    "di/test-results/editing-lock-with-the-edit-6c91a-canvas-does-not-pick-a-part-chromium/error-context.md",
+    "di/test-results/print-notifications-Rule-6-df86c-printable-area-during-print-chromium/error-context.md",
+    "di/test-results/dimensions-off-canvas-base-309c7-oomy-viewport-drops-nothing-chromium/error-context.md",
+    "notes/guides/setup/netlify.md",
+    "lc/CLAUDE.MD",
+    "notes/work/next/personas.md",
+    "notes/work/articles/accidental.programmer.md",
+    "notes/work/articles/write.article.md",
+    "notes/work/articles/how.to.build.it.md",
     "di/notes/work/now/tests.suggested.md",
-    "di/notes/work/done/code.debt.paid.md.tmp.17328.5f5c72644e6d",
     "notes/guides/pre-flight/shorthand.md",
     "di/notes/work/now/repeaters.mothball.md",
-    "di/src/lib/svelte/details/P_Repeat.svelte.tmp.17328.7857b706876a",
-    "di/src/lib/svelte/main/Primary_Controls.svelte.tmp.17328.f8c519cdd878",
-    "di/src/lib/svelte/mouse/Slider.svelte.tmp.17328.b1156a09ca22",
-    "di/src/lib/svelte/main/Secondary_Controls.svelte",
-    "di/src/lib/svelte/main/Primary_Controls.svelte",
-    "di/notes/work/done/code.debt.paid.md",
-    "di/src/lib/ts/render/Render.ts.tmp.17328.ecfa348543b5",
-    "di/notes/work/now/crowded dimensionals.md",
-    "di/src/lib/svelte/details/Details.svelte.tmp.5490.1d0b1a08e77c",
-    "di/src/lib/ts/render/R_Dimensions.ts.tmp.73897.518f4d0d2a9b",
-    "di/notes/work/now/index.md",
-    "di/src/lib/svelte/main/Confirm.svelte",
-    "di/notes/guides/project/development/adherence dashboard.md",
-    "di/notes/work/now/work journal.md",
-    "di/notes/work/now/specification driven development.md",
-    "di/test-results/print-notifications-Rule-3-46700-lhouette-that-contains-both-chromium/error-context.md",
-    "di/test-results/print-notifications-Rule-3-ba075-s-nothing-to-the-silhouette-chromium/error-context.md",
-    "di/test-results/print-notifications-Rules--3edbe--and-centres-it-on-the-page-chromium/error-context.md",
-    "di/test-results/print-notifications-Rule-3-70de0-s-nothing-to-the-silhouette-chromium/error-context.md",
-    "di/test-results/print-notifications-Rule-3-2ccc2-houette-equals-that-portion-chromium/error-context.md",
-    "di/test-results/print-notifications-Rules--6c302-leaves-the-canvas-untouched-chromium/error-context.md",
-    "di/test-results/e2e-tests-smoke-the-runnin-495bd-he-read-hooks-are-reachable/error-context.md",
-    "di/test-results/e2e-tests-print-notificati-64109-ands-inside-the-canvas-area/error-context.md",
-    "di/test-results/e2e-tests-print-notificati-5621d-he-page-height-during-print/error-context.md",
-    "di/test-results/e2e-tests-print-notificati-95f22-f-inch-margin-on-every-side/error-context.md",
-    "di/test-results/e2e-tests-print-notificati-7b081-printable-area-during-print/error-context.md",
-    "di/test-results/e2e-tests-print-notificati-79ca6--new-dimensions-timing-pin-/error-context.md",
-    "di/test-results/e2e-tests-print-notificati-ee68c-leaves-the-canvas-untouched/error-context.md",
-    "di/test-results/e2e-tests-print-notificati-80702-s-nothing-to-the-silhouette/error-context.md",
-    "di/test-results/e2e-tests-print-notificati-74aed-s-nothing-to-the-silhouette/error-context.md",
     "di/dist/assets/05-mid-stretch-DfF8mrVj.png",
     "di/dist/assets/06-dimension-input-BaK3RdUS.png",
     "di/dist/assets/03-locked-cursor-BNz07XWk.png",

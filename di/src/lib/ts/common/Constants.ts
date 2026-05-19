@@ -132,9 +132,9 @@ export default class Constants {
 
 	height = {
 		controls:    Math.round(common_size * 1.1),
-		slider:      Math.round(common_size * 0.8),
+		slider:      Math.round(common_size * 0.9),
 		collapse:    Math.round(common_size * 0.56),
-		cell:        Math.ceil(common_size * 0.5),
+		cell:        Math.ceil (common_size * 0.5),
 		banner:      common_size,
 		font: {
 			tiny:    Math.round(common_size / 4),

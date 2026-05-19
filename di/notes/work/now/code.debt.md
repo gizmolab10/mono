@@ -2,10 +2,15 @@
 
 Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into tangles.
 
-offer a proposal for the first unchecked item, and add it to a new section at the end of handoff
+offer a proposal (1) for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] when option key is down, only show invisible SOs and their dimensionals
-- [ ] create tests for the new dimensionals rules
+- [x] describe the complete dimensionals placement algorithm -> guides/architecture/graph/dimensionals.md
+- [ ] resume proposal 2 in handoff
+    - [ ] dimension labels are still within the silhouette
+- [ ] saved VIEWS orientation/zoom for a SO
+    - [ ] list that changes when you load a different SO
+    - [ ] remember and forget buttons
+- [ ] deceptively simple UX
 
 ## tom
 
@@ -17,7 +22,11 @@ offer a proposal for the first unchecked item, and add it to a new section at th
 ## soon
 
 - [ ] option to group attributes by axis (in first column: sle -> xyz)
-- [ ] convert button 'create a template' -> stud/joist / stair segmented
+- [ ] new information glow banner
+    - [ ] orientation, scale factor
+    - [ ] button to copy both to pasteboard
+- [ ] zoom slider beyond 5 -> blank graph
+- [ ] LONG - convert button 'create a template' -> stud/joist / stair segmented
 - [ ] slider for master separator width
 - [ ] can't edit a dimensional
     - [ ] falls apart (drawer)
@@ -27,6 +36,9 @@ offer a proposal for the first unchecked item, and add it to a new section at th
     - [ ] disappear on relaunch -> kitchen wall
 - [ ] measure basement
 - [ ] print
+    - [ ] should not print
+        - [ ] visible shelves when option is down
+        - [ ] secondary controls
     - [ ] wrong when zoomed in (clipped)
     - [ ] blurry, need the other solution
 

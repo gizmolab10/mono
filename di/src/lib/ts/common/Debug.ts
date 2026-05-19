@@ -1,10 +1,16 @@
 import { selection } from '../managers/Selection';
 import { stores } from '../managers/Stores';
+import { scenes } from '../managers/Scenes';
 import { scene } from '../render/Scene';
 import { camera } from '../render/Camera';
+import { engine } from '../render/Engine';
+import { render } from '../render/Render';
+import { w_dim_dropped_avg, set_spring_k, last_hull, last_hull_input, last_drawn_lines, push_outside_hull } from '../render/R_Dimensions';
+import { e as events } from '../events/Events';
 import Smart_Object from '../runtime/Smart_Object';
 import type { Bound } from '../types/Types';
 import { quat, vec3 } from 'gl-matrix';
+import { get } from 'svelte/store';
 
 const CUBE_EDGES: [number, number][] = [
 	[0, 1], [1, 2], [2, 3], [3, 0],
@@ -91,14 +97,85 @@ export class Debug {
 			set_scale: ((s: unknown) => { stores.w_scale.set(Number(s)); return null; }) as (...args: unknown[]) => unknown,
 			set_decorations: ((n: unknown) => { stores.w_decorations.set(Number(n)); return null; }) as (...args: unknown[]) => unknown,
 			set_so_visibility: ((name: unknown, visible: unknown) => {
-				const node = scene.get_all().find(o => o.so.name === (name as string));
-				if (node) node.so.visible = Boolean(visible);
+				// Hide every smart object that shares this name. Basement has
+				// several name-duplicates (two "wall", two "stud", etc.); the
+				// caller's intent is "hide that part", which means all of them.
+				let changed = false;
+				for (const node of scene.get_all()) {
+					if (node.so.name === (name as string)) {
+						node.so.visible = Boolean(visible);
+						changed = true;
+					}
+				}
+				if (changed) stores.tick();
+				return null;
+			}) as (...args: unknown[]) => unknown,
+			set_all_visible: (() => {
+				for (const node of scene.get_all()) node.so.visible = true;
+				stores.tick();
 				return null;
 			}) as (...args: unknown[]) => unknown,
 			set_so_hide_children: ((name: unknown, hide: unknown) => {
 				const node = scene.get_all().find(o => o.so.name === (name as string));
-				if (node) node.so.hide_children = Boolean(hide);
+				if (node) {
+					node.so.hide_children = Boolean(hide);
+					stores.tick();
+				}
 				return null;
+			}) as (...args: unknown[]) => unknown,
+
+			// ─── Dimensions hooks (test-only) ─────────────────────────────
+			// One entry per dimension label drawn this paint. The position
+			// and size are the screen-space rectangle the label occupies.
+			dim_labels: () => render.dimension_rects.map(r => ({
+				so_name: r.so.name,
+				so_visible: r.so.visible,
+				axis: r.axis,
+				x: r.x, y: r.y, w: r.w, h: r.h,
+			})),
+			// Rolling count of dropped dimension labels (off-canvas or
+			// silhouette-push exceeds the canvas size).
+			dim_dropped_count: () => get(w_dim_dropped_avg),
+			// Whether x-ray mode is currently active: OPTION is held AND at
+			// least one part in the scene is invisible.
+			is_xray_active: () => {
+				const option_down = get(events.w_option_down);
+				const has_invisible = scene.get_all().some(o => !o.so.visible);
+				return option_down && has_invisible;
+			},
+			// TEMP measurement — set the spring constant at runtime.
+			set_spring_k: ((v: unknown) => { set_spring_k(Number(v)); stores.tick(); return null; }) as (...args: unknown[]) => unknown,
+			// TEMP measurement — drawn dimension-line endpoints, one per drawn label, same order as dim_labels.
+			dim_lines: () => last_drawn_lines.slice(),
+			// TEMP measurement — every projected point that fed the silhouette outline this paint, each tagged with its source SO name.
+			dim_hull_input: () => last_hull_input.slice(),
+			// TEMP measurement — every smart object in the scene with id, name, visibility, and parent id.
+			// Use the id (not the name) for parent matching — names are not unique.
+			all_smart_objects: () => scene.get_all().map(o => ({
+				id: o.so.id,
+				name: o.so.name,
+				visible: o.so.visible,
+				parent_id: o.parent ? o.parent.so.id : null,
+			})),
+			// TEMP measurement — count drawn labels whose centre sits inside the silhouette outline.
+			dim_inside_count: () => {
+				if (last_hull.length < 3) return 0;
+				let inside = 0;
+				for (const r of render.dimension_rects) {
+					const push = push_outside_hull(r.x, r.y, last_hull, 0);
+					if (push.dx !== 0 || push.dy !== 0) inside++;
+				}
+				return inside;
+			},
+			// Load a bundled scene file by path (e.g. "home/basement").
+			load_scene: (async (arg: unknown) => {
+				const name = arg as string;
+				const raw = await scenes.load_library_file(name);
+				if (!raw) return false;
+				const parsed = scenes.parse_text(raw);
+				if (!parsed) return false;
+				engine.load_scene(parsed);
+				return true;
 			}) as (...args: unknown[]) => unknown,
 		};
 	}

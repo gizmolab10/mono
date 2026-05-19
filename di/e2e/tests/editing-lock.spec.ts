@@ -38,10 +38,16 @@ test('with the editing-lock turned on, a click on the canvas does not pick a par
 	await set_lock(page, true);
 	expect(await is_editing_allowed(page)).toBe(false);
 
+	// The default scene may restore a previously-saved selection on load,
+	// so we measure the click's effect rather than the absolute state:
+	// the click must not change whatever selection was there before.
+	const before = await current_selection(page);
+
 	const canvas = page.locator('canvas').first();
 	await canvas.click();
 
-	expect(await current_selection(page)).toBeNull();
+	const after = await current_selection(page);
+	expect(after).toEqual(before);
 });
 
 test('with the editing-lock turned off, a click on the canvas picks a part', async ({ page }) => {

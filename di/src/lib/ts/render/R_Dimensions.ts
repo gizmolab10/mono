@@ -63,6 +63,9 @@ type Label_Candidate = {
 	w2_end    : Projected;
 	d1        : Projected;       // projected dimension-line endpoints
 	d2        : Projected;
+	edge_angle: number;          // atan2 of the projected measured edge (for parallelism tests)
+	clearances: (number | null)[]; // TEMP measurement — per-candidate (four_dirs) clearance, null if rejected
+	chosen_index: number;        // TEMP measurement — winning index into four_dirs
 	flag_exceed   : boolean;     // smallest clearance > push cap (rule 25 condition 1)
 	flag_forbidden: boolean;     // all four directions filtered by camera-axis rule (rule 20 fallback)
 };
@@ -97,7 +100,18 @@ let prev_homes: number[] = [];
 // PADDING widens each label's repulsion zone; DAMPING settles motion;
 // ITERATIONS caps each layout pass; SILHOUETTE_MARGIN is the buffer
 // in screen pixels between the drawing's silhouette and any label.
-const SPRING_K          = 0.08;
+// Spring is off (default = 0) — measurements showed the spring was doing
+// very little useful work: removing it didn't increase witness-length drops
+// and in most scenes drew more labels. The runtime setter stays in place so
+// the measurement test can still flip it back on for comparison.
+export let SPRING_K     = 0;
+export function set_spring_k(v: number): void { SPRING_K = v; prev_settled = false; persisted_state.clear(); }
+// TEMP measurement — last paint's silhouette outline
+export let last_hull: Array<{ x: number; y: number }> = [];
+// TEMP measurement — every projected point that fed the silhouette hull this paint, tagged by source SO id and name.
+export let last_hull_input: Array<{ x: number; y: number; so_id: string; so_name: string }> = [];
+// TEMP measurement — last paint's drawn dimension-line endpoints + witness anchors + per-candidate clearances, one entry per drawn label, same order as render.dimension_rects.
+export let last_drawn_lines: Array<{ d1x: number; d1y: number; d2x: number; d2y: number; w1x: number; w1y: number; w2x: number; w2y: number; edge_angle: number; clearances: (number | null)[]; chosen_index: number }> = [];
 const REPULSION_K       = 0.4;
 const PADDING           = 15;
 const DAMPING           = 0.6;
@@ -107,7 +121,7 @@ const SILHOUETTE_MARGIN = 30;
 // Andrew's monotone chain convex hull. Returns the hull vertices in
 // counter-clockwise order (in screen coordinates where y grows downward,
 // this is actually clockwise — direction doesn't matter for our use).
-function convex_hull(points: Array<{ x: number; y: number }>): Array<{ x: number; y: number }> {
+export function convex_hull(points: Array<{ x: number; y: number }>): Array<{ x: number; y: number }> {
 	if (points.length <= 2) return points.slice();
 	const sorted = [...points].sort((a, b) => a.x - b.x || a.y - b.y);
 	const cross = (o: { x: number; y: number }, a: { x: number; y: number }, b: { x: number; y: number }) =>
@@ -136,7 +150,7 @@ function convex_hull(points: Array<{ x: number; y: number }>): Array<{ x: number
 // origin where the arrow line crosses any edge of the polygon (the exit
 // point), or -1 if the arrow does not pass through the polygon at all
 // or the polygon is entirely behind the arrow.
-function ray_polygon_exit(
+export function ray_polygon_exit(
 	ox: number, oy: number,
 	dx: number, dy: number,
 	poly: Array<{ x: number; y: number }>,
@@ -156,6 +170,57 @@ function ray_polygon_exit(
 		if (t >= 0 && s >= 0 && s <= 1 && t > max_t) max_t = t;
 	}
 	return max_t;
+}
+
+/** For a convex polygon (any winding), return the offset (dx, dy) to add to
+ *  (px, py) so the point sits at least `margin` units outside the polygon.
+ *  Returns { dx: 0, dy: 0 } when the point is already that far outside.
+ *  When the point is inside or within `margin` of an edge, the returned push
+ *  is perpendicular to the closest edge, in the outward direction. */
+export function push_outside_hull(
+	px: number, py: number,
+	hull: Array<{ x: number; y: number }>,
+	margin: number,
+): { dx: number; dy: number } {
+	if (hull.length < 3) return { dx: 0, dy: 0 };
+	let cx = 0, cy = 0;
+	for (const v of hull) { cx += v.x; cy += v.y; }
+	cx /= hull.length; cy /= hull.length;
+	// For a convex polygon, the signed distance to the polygon (negative when
+	// inside, positive when outside) is the MAXIMUM over all edges of the
+	// per-edge signed distance with outward-pointing normal. Outside points
+	// sit on the "inside" half-plane of several edges; only the edge they're
+	// truly outside of gives a positive distance.
+	let max_signed_dist = -Infinity;
+	let best_nx = 0, best_ny = 0;
+	for (let i = 0; i < hull.length; i++) {
+		const a = hull[i];
+		const b = hull[(i + 1) % hull.length];
+		const ex = b.x - a.x;
+		const ey = b.y - a.y;
+		const elen = Math.sqrt(ex * ex + ey * ey);
+		if (elen < 1e-9) continue;
+		// Two perpendicular unit normals to this edge; pick the one pointing
+		// away from the polygon centroid so the push moves outward.
+		const nx_raw = -ey / elen;
+		const ny_raw = ex / elen;
+		const mx = (a.x + b.x) / 2;
+		const my = (a.y + b.y) / 2;
+		const toward_centroid_x = cx - mx;
+		const toward_centroid_y = cy - my;
+		const nx = nx_raw * toward_centroid_x + ny_raw * toward_centroid_y < 0 ? nx_raw : -nx_raw;
+		const ny = nx_raw * toward_centroid_x + ny_raw * toward_centroid_y < 0 ? ny_raw : -ny_raw;
+		// Signed distance of (px, py) from this edge, measured outward.
+		const dist = (px - a.x) * nx + (py - a.y) * ny;
+		if (dist > max_signed_dist) {
+			max_signed_dist = dist;
+			best_nx = nx;
+			best_ny = ny;
+		}
+	}
+	if (!isFinite(max_signed_dist) || max_signed_dist >= margin) return { dx: 0, dy: 0 };
+	const push_amount = margin - max_signed_dist;
+	return { dx: best_nx * push_amount, dy: best_ny * push_amount };
 }
 
 function run_simulation(candidates: Label_Candidate[]): number {
@@ -225,6 +290,7 @@ function prune_persisted(active_keys: Set<string>): void {
  *  its settled position and update the persisted state. */
 export function render_dimensions(host: DimensionHost): void {
 	const candidates: Label_Candidate[] = [];
+	last_drawn_lines = [];
 
 	// Per-paint diagnostic counts. Updated as the algorithm runs, then folded
 	// into running averages at the end.
@@ -248,39 +314,49 @@ export function render_dimensions(host: DimensionHost): void {
 		return true;
 	}
 
-	// While the OPTION key is held, show dimensions even for invisible smart
-	// objects so the user can read measurements of hidden parts. The silhouette
-	// hull stays built from visible objects only — invisible objects don't
-	// paint, so they shouldn't affect where other dimensions land.
+	// X-ray mode: while OPTION is held AND at least one part is invisible,
+	// dimensions are drawn for invisible parts only — the visible parts are
+	// hidden in this mode so their dimensions should be hidden too. With no
+	// invisible parts, OPTION does nothing.
+	const all_objects = scene.get_all();
+	const has_invisible = all_objects.some(o => !o.so.visible);
 	const option_down = get(e.w_option_down);
+	const xray_mode = option_down && has_invisible;
+	function is_painted(obj: O_Scene): boolean {
+		return xray_mode ? !obj.so.visible : is_visible(obj);
+	}
 	function should_draw_dimensions_for(obj: O_Scene): boolean {
-		if (is_visible(obj)) return true;
-		return option_down;
+		return is_painted(obj);
 	}
 
-	// Build a single combined outline that wraps every visible LEAF smart
+	// Build a single combined outline that wraps every painted LEAF smart
 	// object's projected vertices. Containers (objects with at least one
-	// visible child) are excluded — their bounding-box corners can sit far
+	// painted child) are excluded — their bounding-box corners can sit far
 	// outside any actually-painted geometry and would inflate the outline
 	// past where the drawing visually ends.
-	const all_objects = scene.get_all();
-	function has_visible_child(obj: O_Scene): boolean {
+	function has_painted_child(obj: O_Scene): boolean {
 		for (const other of all_objects) {
-			if (other.parent === obj && is_visible(other)) return true;
+			if (other.parent === obj && is_painted(other)) return true;
 		}
 		return false;
 	}
 	const all_points: Array<{ x: number; y: number }> = [];
+	const tagged_points: Array<{ x: number; y: number; so_id: string; so_name: string }> = [];
 	for (const obj of all_objects) {
-		if (!is_visible(obj)) continue;
-		if (has_visible_child(obj)) continue;  // leaves only
+		if (!is_painted(obj)) continue;
+		if (has_painted_child(obj)) continue;  // leaves only
 		const projected = hits_3d.get_projected(obj.id);
 		if (!projected) continue;
 		for (const p of projected) {
-			if (p.w >= 0) all_points.push({ x: p.x, y: p.y });
+			if (p.w >= 0) {
+				all_points.push({ x: p.x, y: p.y });
+				tagged_points.push({ x: p.x, y: p.y, so_id: obj.so.id, so_name: obj.so.name });
+			}
 		}
 	}
 	const combined_hull: Array<{ x: number; y: number }> = all_points.length >= 3 ? convex_hull(all_points) : [];
+	last_hull = combined_hull;
+	last_hull_input = tagged_points;
 
 	// Phase A — collect
 	for (const obj of scene.get_all()) {
@@ -443,10 +519,18 @@ export function render_dimensions(host: DimensionHost): void {
 		}
 		const i1 = intersect_for_drop(c.w1_start.x, c.w1_start.y, c.w1_end.x - c.w1_start.x, c.w1_end.y - c.w1_start.y);
 		const i2 = intersect_for_drop(c.w2_start.x, c.w2_start.y, c.w2_end.x - c.w2_start.x, c.w2_end.y - c.w2_start.y);
-		const end1x = (i1 && i1.s > 0) ? i1.x : c.d1.x;
-		const end1y = (i1 && i1.s > 0) ? i1.y : c.d1.y;
-		const end2x = (i2 && i2.s > 0) ? i2.x : c.d2.x;
-		const end2y = (i2 && i2.s > 0) ? i2.y : c.d2.y;
+		// If either witness ray's intersection lies behind its start point, the
+		// painter would fall back to the original projected endpoint and draw a
+		// disconnected line — a floater. Drop the label instead of drawing a
+		// broken one.
+		if (!(i1 && i1.s > 0) || !(i2 && i2.s > 0)) {
+			cnt_off_canvas++;
+			continue;
+		}
+		const end1x = i1.x;
+		const end1y = i1.y;
+		const end2x = i2.x;
+		const end2y = i2.y;
 		const wlen1_drawn = Math.sqrt((end1x - c.w1_start.x) ** 2 + (end1y - c.w1_start.y) ** 2);
 		const wlen2_drawn = Math.sqrt((end2x - c.w2_start.x) ** 2 + (end2y - c.w2_start.y) ** 2);
 		if (wlen1_drawn > WITNESS_DRAWN_MAX_PX || wlen2_drawn > WITNESS_DRAWN_MAX_PX) {
@@ -597,6 +681,11 @@ function prepare_axis_dimension(
 		let best_clearance = Infinity;
 		let best_avg_wlen = 0;
 		let best_max_t = 0;
+		// TEMP measurement — record per-candidate clearance (null when the
+		// candidate was rejected) and which index won. Index space is the
+		// 4-element four_dirs array; same order used everywhere.
+		const clearances: (number | null)[] = [null, null, null, null];
+		let chosen_index = -1;
 
 		for (const dir of dirs_to_try) {
 			const v1_plus = vec3.add(vec3.create(), v1, dir);
@@ -655,6 +744,11 @@ function prepare_axis_dimension(
 			);
 			if (projected_witness_len > WITNESS_LEN_MAX) continue;
 
+			// TEMP measurement — record the clearance for this candidate's
+			// index in four_dirs. Reaches here only when no sub-filter failed.
+			const dir_idx = four_dirs.indexOf(dir);
+			if (dir_idx >= 0) clearances[dir_idx] = total_clearance;
+
 			// Smaller clearance wins. On ties, prefer the fallback direction.
 			const ties_fallback = vec3.equals(dir, fallback_dir);
 			if (total_clearance < best_clearance || (total_clearance === best_clearance && ties_fallback)) {
@@ -662,6 +756,7 @@ function prepare_axis_dimension(
 				witness_dir = dir;
 				best_avg_wlen = a_wlen;
 				best_max_t = total_clearance;
+				if (dir_idx >= 0) chosen_index = dir_idx;
 			}
 		}
 
@@ -746,6 +841,9 @@ function prepare_axis_dimension(
 			text, dim_z, so, axis,
 			layout_case,
 			w1_start, w1_end, w2_start, w2_end, d1, d2,
+			edge_angle: Math.atan2(p2.y - p1.y, p2.x - p1.x),
+			clearances,
+			chosen_index,
 			flag_exceed: flag_exceed_local,
 			flag_forbidden: flag_forbidden_local,
 		};
@@ -933,10 +1031,24 @@ function draw_dimension_candidate(host: DimensionHost, c: Label_Candidate): void
 
 	const i1 = intersect_ray(w1_start.x, w1_start.y, w1_end.x - w1_start.x, w1_end.y - w1_start.y);
 	const i2 = intersect_ray(w2_start.x, w2_start.y, w2_end.x - w2_start.x, w2_end.y - w2_start.y);
+	// TEMP trace (disabled) — re-enable to find labels whose drawn line goes non-parallel.
+	// const fb1 = !(i1 && i1.s > 0);
+	// const fb2 = !(i2 && i2.s > 0);
+	// if (fb1 || fb2) {
+	// 	const which = fb1 && fb2 ? 'both ends' : fb1 ? 'end 1' : 'end 2';
+	// 	console.log(`Label "${c.so.name}" on the ${c.axis} axis: ${which} fell behind the witness line, drew with the original endpoint(s) instead. The line direction will not stay parallel.`);
+	// }
 	const new_d1_x = (i1 && i1.s > 0) ? i1.x : d1.x;
 	const new_d1_y = (i1 && i1.s > 0) ? i1.y : d1.y;
 	const new_d2_x = (i2 && i2.s > 0) ? i2.x : d2.x;
 	const new_d2_y = (i2 && i2.s > 0) ? i2.y : d2.y;
+	last_drawn_lines.push({
+		d1x: new_d1_x, d1y: new_d1_y, d2x: new_d2_x, d2y: new_d2_y,
+		w1x: w1_start.x, w1y: w1_start.y, w2x: w2_start.x, w2y: w2_start.y,
+		edge_angle: c.edge_angle,
+		clearances: c.clearances,
+		chosen_index: c.chosen_index,
+	});
 
 	const dx = new_d2_x - new_d1_x;
 	const dy = new_d2_y - new_d1_y;

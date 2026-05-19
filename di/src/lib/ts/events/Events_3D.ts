@@ -187,8 +187,9 @@ class Events_3D {
 
 	end_drag(): void {
 		if (this.is_dragging && !this.did_drag && this.mouse_in_canvas) {
-			// Click/tap on background → deselect (but not if editing just started)
-			if (!drag.has_target && stores.editing === T_Editing.none) {
+			// Click/tap on background → deselect (but not if editing just started,
+			// and not while the lock is on — locked clicks must leave selection alone).
+			if (!drag.has_target && stores.editing === T_Editing.none && stores.allow_editing) {
 				const root = scenes.root_so;
 				if (root && selection.current?.so !== root) {
 					selection.current = { so: root, type: T_Hit_3D.face, index: 0 };

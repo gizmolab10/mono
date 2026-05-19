@@ -1,5 +1,8 @@
 # Code Debt --- Paid
 
+- [x] display the current quot in the status strip, when not showing something else
+- [x] create tests for the new dimensionals rules
+- [x] when option key is down, only show invisible SOs and their dimensionals
 - [x] suggest tests for recent work
 - [x] add more ticks to logarithmic scaling slider (EVERY multiple of 10)
     - [x] multiply the label values by 10
@@ -338,3 +341,5 @@
     - [x] hit-test no longer skips invisible objects while OPTION is held; hovering a revealed object produces the name popup
     - [x] dimensions sub-bullet was already done during the rule-10 rewrite
 - [x] Steppers -> bigger and horizontally laid out (pointing left and right)
+- [x] create tests for the new dimensionals rules
+- [x] display the current quot in the status strip, when not showing something else

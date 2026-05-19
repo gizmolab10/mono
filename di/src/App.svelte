@@ -187,7 +187,8 @@
 		:global(.region.controls),
 		:global(.region.details),
 		:global(.canvas-actions),
-		:global(.status-strip) {
+		:global(.status-strip),
+		:global(.band) {
 			display: none !important;
 		}
 

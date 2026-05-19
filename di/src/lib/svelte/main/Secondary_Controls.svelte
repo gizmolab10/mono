@@ -30,8 +30,8 @@
 	<button class='build-button' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
 	<Status_Strip />
 	<div class='guides-control'>
+		<span class='guides-label'>guides</span> 
 		<Slider min={0} max={1} value={$w_grid_opacity} width={120} show_steppers={false} onchange={(v) => w_grid_opacity.set(v)} />
-		<span class='guides-label'>guides</span>
 	</div>
 </div>
 
@@ -66,6 +66,7 @@
 		letter-spacing : var(--l-letter-spacing);
 		font-size      : var(--font-common);
 		color          : var(--c-track);
+		margin-top     : -5px;
 		line-height    : 1;
 	}
 

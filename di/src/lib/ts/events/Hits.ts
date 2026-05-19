@@ -4,6 +4,7 @@ import type { Dictionary } from '../types/Types';
 import S_Hit_Target from './S_Hit_Target';
 import { hits_3d } from './Hits_3D';
 import { selection } from '../managers/Selection';
+import { stores } from '../managers/Stores';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
 import { drag } from '../editors/Drag';
@@ -66,6 +67,9 @@ export default class Hits {
 		// If no 2D target, try 3D — only on mousedown, only inside graph, and only if Events_3D didn't already handle it
 		if (!target) {
 			if (!allow_3d || !s_mouse.isDown || drag.has_target) return false;
+			// Read-only mode: skip the 3D-fallback selection so clicks
+			// cannot change which part is selected while the lock is on.
+			if (!stores.allow_editing) return false;
 			const hit_3d = hits_3d.hit_test(point);
 			if (hit_3d) {
 				selection.current = hit_3d;

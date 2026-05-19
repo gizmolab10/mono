@@ -56,7 +56,7 @@ TEXT_TAIL=$(echo "$TEXT" | tail -c 400)
 # ones are listed here — words like "block", "cell", "value", "padding",
 # "bar" have many legitimate uses outside the banned sense and would
 # generate noisy false positives.
-BANNED_RE='\b(land|landed|lands|landing|ship|shipped|shipping|absorb|absorbed|absorbs|absorbing|scaffold|scaffolded|scaffolding|scaffolds|eyeball)\b'
+BANNED_RE='\b(land|landed|lands|landing|ship|shipped|shipping|absorb|absorbed|absorbs|absorbing|scaffold|scaffolded|scaffolding|scaffolds|eyeball|bigger lift|heavy lift|heavy lifting)\b'
 
 FOUND=$(echo "$TEXT" | grep -oiE "$BANNED_RE" | tr '[:upper:]' '[:lower:]' | sort -u | tr '\n' ' ' | sed 's/ *$//')
 if [ -z "$FOUND" ]; then

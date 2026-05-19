@@ -73,11 +73,15 @@
           },
           {
             "type": "command",
-            "command": "di/.claude/hooks/inject-always.sh"
+            "command": "di/.claude/hooks/refer-to-current-file-check.sh"
           },
           {
             "type": "command",
             "command": "di/.claude/hooks/done-checklist.sh"
+          },
+          {
+            "type": "command",
+            "command": "di/.claude/hooks/inject-always.sh"
           }
         ]
       }
@@ -128,6 +132,14 @@
           {
             "type": "command",
             "command": "di/.claude/hooks/phrase-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "di/.claude/hooks/required-disclaimer-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "di/.claude/hooks/diagnostic-citation-check.sh"
           },
           {
             "type": "command",

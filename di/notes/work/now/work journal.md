@@ -4,6 +4,59 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-19 — spring turned off, floaters fixed, eight new dimension specs, two new behavior hooks
+
+A long session chasing the "labels inside the silhouette" bug. Two wrong diagnoses fell over (spring as culprit, perspective as the slant explanation), and the eventual move was to write more tests instead of more theories.
+
+What changed in the renderer. The spring constant in the force-driven layout used to pull labels toward home; measurement showed it was doing almost nothing useful across five scenes, so it's set to zero by default. The painter used to fall back to original endpoints when its intersection math returned a parameter behind the witness start — that produced "floaters", labels painted hundreds of pixels off their line. The fallback now drops the candidate instead of painting a broken line. The visibility hook used to hide only the first match by name; basement re-uses names ("wall", "stud"), so the hook now hides every smart object that shares the name.
+
+New tests for the dimension-placement rules. Eight specs against the bundled scenes:
+
+- Force layout settles between successive frames (Rule 1).
+- Two parts of identical size produce one label per dimension text, not two (Rule 4).
+- Every drawn witness line stays within the 120-pixel cap (Rule 11).
+- Drawer at a known orientation has zero labels inside the silhouette outline (Rule 16, the postcondition added to the rule list this session).
+- Floater test — every drawn label sits on its drawn line (gap = 0).
+- Parallel test — drawn lines run within 0.3 degrees of their measured-edge angle in orthographic mode. Currently passes but the trap was real: an earlier version compared two values that came from the same projected endpoints, so it passed by construction.
+- White-box membership (Rule 9) — every point that fed the silhouette outline comes from a leaf smart object, not a container. Caught two test-design bugs along the way (name-based parent matching, missing ancestor visibility walk).
+- White-box direction choice (Rule 10) — the per-label chosen direction has the smallest clearance among the survivors.
+
+Two new behavior-guard hooks. After two wrong diagnoses in one session, two new Stop hooks were added that block stop-events when the assistant's prose contains plausibility-mode signals without backing. The first blocks hedging words ("likely", "probably", "the cause is", etc.) unless the message also contains the explicit guess disclaimer. The second blocks diagnostic claims that name a cause without an adjacent citation (file:line, markdown file link, measured value, or guess disclaimer). Both wired into the Stop chain after the existing banned-words and phrase checks.
+
+Rule list grew by two. Rule 16 (every drawn label sits on or outside the silhouette outline) was added as a postcondition Rule 9 implies but doesn't assert. Rule 17 (clicking a dimension number begins inline editing) was added because the click-to-edit behavior had no rule even though the rectangle pipeline already supports it.
+
+Files. [R_Dimensions.ts](../../../src/lib/ts/render/R_Dimensions.ts) (spring off, floater drop, more measurement exports). [Debug.ts](../../../src/lib/ts/common/Debug.ts) (new measurement hooks, hide-all-by-name fix). [dimensions-settles.spec.ts](../../../e2e/tests/dimensions-settles.spec.ts), [dimensions-duplicates.spec.ts](../../../e2e/tests/dimensions-duplicates.spec.ts), [dimensions-witness-cap.spec.ts](../../../e2e/tests/dimensions-witness-cap.spec.ts), [dimensions-outside-silhouette.spec.ts](../../../e2e/tests/dimensions-outside-silhouette.spec.ts), [dimensions-floaters.spec.ts](../../../e2e/tests/dimensions-floaters.spec.ts), [dimensions-parallel.spec.ts](../../../e2e/tests/dimensions-parallel.spec.ts), [dimensions-silhouette-membership.spec.ts](../../../e2e/tests/dimensions-silhouette-membership.spec.ts), [dimensions-direction-choice.spec.ts](../../../e2e/tests/dimensions-direction-choice.spec.ts) (new specs). [crowded dimensionals.md](../crowded%20dimensionals.md) (Rules 16, 17). [required-disclaimer-check.sh](../../../.claude/hooks/required-disclaimer-check.sh), [diagnostic-citation-check.sh](../../../.claude/hooks/diagnostic-citation-check.sh) (new hooks). [settings.local.json](../../../../.claude/settings.local.json) (hooks wired into Stop chain).
+
+## Session — 2026-05-18 — orientation numbers live in the status strip
+
+The thin strip at the bottom of the window used to sit empty whenever there was no message queued and no dimension labels had been dropped. It now always carries the camera's four orientation numbers, formatted to two decimals each and wrapped in square brackets. When the dropped-label count is on screen too, the numbers sit on the same line after a middle-dot separator and the word "tumble" at the end (Jonathan's hand-tune — the strip reads as an invitation to grab the drawing and spin it). A queued message still wins outright. The numbers update live as the camera tumbles, so the strip is a live readout while turning and a still readout when the user lets go. The strip's text is also selectable now — clicking into it picks up characters the same way any other text would.
+
+Files. [Status_Strip.svelte](../../../src/lib/svelte/main/Status_Strip.svelte) (orientation formatter, third fallback rung, selectable text and pointer-events on).
+
+## Session — 2026-05-18 — browser-driven tests for the three behavior-rich dimensional rules
+
+The pure-math helpers behind the new dimensional rules (silhouette hull, arrow-polygon exit) were already under unit tests. The three rules that only come alive in a real scene — the OPTION-held x-ray flip, dropping labels that can't fit on the canvas, and the force-driven layout that nudges crowded labels apart — were not. They are now.
+
+Five new browser-driven tests sit alongside the existing flow tests. Two for the off-canvas drop: a roomy basement viewport draws labels and reports a non-negative dropped count, and squeezing the viewport to a tiny size drops more labels while every survivor stays inside the canvas rectangle. Two for the OPTION x-ray flip: with every basement part visible, OPTION does nothing; with one part hidden, the labels that were drawing for the visible parts disappear and the hidden-part labels take their place. One for the force-driven layout: after the basement scene settles, no two label rectangles overlap.
+
+The real lift was the test-side hooks, not the assertions. A small bundle of new read-and-write hooks now lives on the test-only window object: load a bundled scene by name, read every drawn label as a rectangle plus its part name and visibility, read the rolling count of dropped labels, ask whether x-ray mode is active right now, and a set-everything-visible convenience. The existing visibility-toggle hooks also picked up the missing tick-after-write call so that changes actually propagate to the renderer.
+
+Two pre-existing bugs surfaced while running the full e2e suite for the first time in a while. The print canvas was 74 pixels short of the expected printable area — the slider bands at the top and bottom of the window were not in the print hide list, so they kept eating vertical space during print. They are hidden now. And a click on the canvas while the editing-lock was on still changed the selected part: the mouseup handler's "click on background → deselect" branch and a 3D-fallback selection path in the hit-routing layer both bypassed the lock check. Both paths respect the lock now. Full e2e suite is green again.
+
+Files. [Debug.ts](../../../src/lib/ts/common/Debug.ts) (new hooks, tick fix). [dim-helpers.ts](../../../e2e/tests/dim-helpers.ts) (new shared helpers). [dimensions-off-canvas.spec.ts](../../../e2e/tests/dimensions-off-canvas.spec.ts), [dimensions-xray.spec.ts](../../../e2e/tests/dimensions-xray.spec.ts), [dimensions-force-layout.spec.ts](../../../e2e/tests/dimensions-force-layout.spec.ts) (new specs). [App.svelte](../../../src/App.svelte) (print hide list). [Events_3D.ts](../../../src/lib/ts/events/Events_3D.ts), [Hits.ts](../../../src/lib/ts/events/Hits.ts) (lock guards). [editing-lock.spec.ts](../../../e2e/tests/editing-lock.spec.ts) (assertion measures click-effect, not absolute null, since the default scene restores a saved selection on load).
+
+## Session — 2026-05-18 — OPTION key now x-rays: shows ONLY invisible parts plus their dimensions
+
+The OPTION key used to reveal invisible parts as a fully-opaque wireframe overlaid on top of the visible drawing — both visible and invisible parts and both sets of dimensions were on screen at the same time. Now the OPTION key swaps what's on screen: while held, the visible parts vanish and only the invisible parts (as their dashed wireframe) and the dimensions of those invisible parts are shown. Release OPTION and the visible parts and their dimensions come back. Grid, axes, and the root's floor-rectangle keep drawing throughout, so the user keeps spatial anchor.
+
+A small but important safety belt: if no part is currently invisible, OPTION-hold is a no-op — the screen stays as it is rather than going blank.
+
+The canvas paint pass now gates the visible-parts edge loop, the face-fill pass, the debug-face pass, and the occluder-list build on a fresh "x-ray mode" flag (OPTION held AND at least one invisible part exists). The wireframe pass for invisible parts already runs whenever the visible flag is off, and OPTION-hold already pushed its opacity from faint to fully visible — those bits stayed as they were.
+
+The dimension layout learned a parallel rule. A new "painted" check decides whether a part's dimensions should be drawn: in x-ray mode, painted means invisible; otherwise it means visible. The silhouette outline that pushes dimension labels outside the drawing is built from the same painted set, so labels sit outside the wireframe in x-ray mode rather than outside where the (now-hidden) visible drawing used to be.
+
+Files. [Render.ts](../../../src/lib/ts/render/Render.ts) (x-ray flag computed early; four loops gated). [R_Dimensions.ts](../../../src/lib/ts/render/R_Dimensions.ts) (new painted-check; dimension filter and silhouette outline both flip in x-ray mode).
+
 ## Session — 2026-05-18 — suggested-tests menu written for the last ten sessions
 
 A menu of test ideas covering every session in the recent stretch — the zoom slider tick rework, the primary-controls rearrangement, the flicker fix and the drawing-area auto-fill, the undo/redo arrow buttons, the breadcrumb removal, the slider thumb adjustments, the secondary-controls rename and extraction, the accent-driven color adaptation, the OPTION-key reveal of invisible parts, the rule-10 ancestry-popup fix, and the parts-row hover link. For each, one or two concrete test ideas, marked unit or browser-driven or visual-confirmation. The user wanted only the menu — no tests actually written yet — so they can pick which ones are worth the effort in a future session.

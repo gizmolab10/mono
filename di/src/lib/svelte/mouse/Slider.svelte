@@ -308,7 +308,7 @@
 	</div>
 	{#if show_steppers && onstep}
 		<div class='steppers-wrapper'>
-			<Steppers horizontal size={33} gap={6} hit_closure={onstep} />
+			<Steppers horizontal size={k.height.controls} gap={6} hit_closure={onstep} />
 		</div>
 	{/if}
 </div>
@@ -419,6 +419,7 @@
 
 	.steppers-wrapper {
 		margin-left : -1px;
+		margin-top  : -2px;
 	}
 
 	/* === Native range input styling (pill/single-thumb, scoped to .slider-border) === */
@@ -431,9 +432,9 @@
 	}
 
 	.slider-border input[type='range']::-webkit-slider-runnable-track {
-		background    : var(--white);
 		height        : var(--height);
 		border        : var(--border);
+		background    : var(--white);
 		border-radius : 16px;
 	}
 
@@ -456,9 +457,9 @@
 	}
 
 	.slider-border input[type='range']::-moz-range-track {
-		background    : var(--white);
 		height        : var(--height);
 		border        : var(--border);
+		background    : var(--white);
 		border-radius : 16px;
 	}
 
@@ -484,16 +485,16 @@
 	/* === Line style: thin track, small round thumb === */
 
 	.line input[type='range']::-webkit-slider-runnable-track {
+		height        : var(--th-track);
 		background    : var(--c-track);
 		border-radius : var(--r-input);
-		height        : var(--th-track);
 		border        : none;
 	}
 
 	.line input[type='range']::-webkit-slider-thumb {
 		margin-top : calc((var(--th-track) - var(--h-slider)) / 2);
-		border     : 1px solid black;
 		background : var(--thumb-color);
+		border     : 1px solid black;
 		width      : var(--h-slider);
 		height     : var(--h-slider);
 	}
@@ -506,8 +507,8 @@
 	}
 
 	.line input[type='range']::-moz-range-thumb {
-		border     : 1px solid black;
 		background : var(--thumb-color);
+		border     : 1px solid black;
 		width      : var(--h-slider);
 		height     : var(--h-slider);
 	}
@@ -520,8 +521,8 @@
 	}
 
 	.line input[type='range']::-ms-thumb {
-		border     : 1px solid black;
 		background : var(--thumb-color);
+		border     : 1px solid black;
 		width      : var(--h-slider);
 		height     : var(--h-slider);
 	}
@@ -573,12 +574,12 @@
 	.range-label {
 		transform            : translate(-50%, calc(50% - 0.5em));
 		font-size            : var(--font-small);
+		color                : var(--c-track);
 		font-variant-numeric : tabular-nums;
 		position             : absolute;
 		white-space          : nowrap;
 		text-align           : center;
 		top                  : 0;
-		color                : var(--c-track);
 	}
 
 	.range-input {
@@ -613,8 +614,8 @@
 
 	.range-input::-webkit-slider-thumb {
 		margin-top         : calc((var(--th-track) - var(--h-slider)) / 2);
-		border             : 1px solid black;
 		background         : var(--thumb-color);
+		border             : 1px solid black;
 		width              : var(--h-slider);
 		height             : var(--h-slider);
 		cursor             : pointer;
@@ -624,8 +625,8 @@
 	}
 
 	.range-input::-moz-range-thumb {
-		border         : 1px solid black;
 		background     : var(--thumb-color);
+		border         : 1px solid black;
 		width          : var(--h-slider);
 		height         : var(--h-slider);
 		cursor         : pointer;
@@ -645,13 +646,13 @@
 	}
 
 	.slider-border.vertical input[type='range'] {
-		width            : var(--slider-length);
-		height           : var(--height);
-		position         : absolute;
-		transform        : rotate(-90deg);
-		transform-origin : center;
 		left             : calc((var(--height) - var(--slider-length)) / 2);
 		top              : calc((var(--slider-length) - var(--height)) / 2);
+		width            : var(--slider-length);
+		transform        : rotate(-90deg);
+		height           : var(--height);
+		position         : absolute;
+		transform-origin : center;
 	}
 
 </style>

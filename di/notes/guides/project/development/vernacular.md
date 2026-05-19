@@ -102,6 +102,7 @@ Do not use these words for the three numbers: *cell*, *value*. Both have been re
 - **done**, **complete** — used for finished work. Never write *ship* or *shipped*; those belong to vessels.
 - **write code** — used for the act of producing or submitting code (the back-and-forth of editing, saving, and asking for verification). Never write *ship* or *shipped* in this sense either. The English meaning of *ship* (push code out) and the project's preferred terms do not overlap; we say *write code* instead.
 - **propose** — describe the plan and wait. Never act on a proposal without explicit approval, except when the ask was already explicit.
+- **more work**, **a lot of work** — used when the next step would be heavier than the current one ("that change would be more work than this turn's scope," "a lot of work to wire up the fixture"). Never write *bigger lift*, *heavy lift*, *heavy lifting*. Reason: fitness-jargon for "more work" — the project's preferred phrasing is the plain English version.
 
 ## Banned substitutions
 
@@ -119,6 +120,7 @@ These are the swaps that have caused friction. Use the left column, never the ri
 | stub out | scaffold |
 | margin | band, bar, padding, gutter |
 | needs visual confirmation | needs eyeball |
+| more work, a lot of work | bigger lift, heavy lift, heavy lifting |
 | chime | (no synonym; do not paraphrase) |
 | pac | (no synonym; do not paraphrase) |
 | move (= relocate) | copy (when relocate was meant) |
