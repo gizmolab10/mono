@@ -4,7 +4,7 @@ Unit tests for pure logic. Vitest runner.
 
 ## Format
 
-Going forward, every entry in this index points back at the stipulations it pins. Every test in the file's tests array carries a `stipulation:` line at the head of its body, naming the stipulation slug it covers. The slug must match an entry in [stipulations.md](./stipulations.md). Existing entries will be migrated to this shape on demand as work next touches their area.
+Going forward, every entry in this index points back at the stipulations it pins. Every test in the file's tests array carries a `stipulation:` line at the head of its body, naming the stipulation slug it covers. The slug must match an entry in [stipulations.md](../../development/rules/stipulations.md). Existing entries will be migrated to this shape on demand as work next touches their area.
 
 The shape of an index entry:
 
@@ -240,6 +240,6 @@ The catalog summary will move from "fifty-four of fifty-seven directly covered" 
 
 ## Stipulation coverage
 
-Each rule in [`stipulations.md`](stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, all sixty-two rules are directly covered. (!) Fifty-six are pinned by unit tests in `src/lib/ts/tests/`; six — the user-interface flows that need real mouse events and the running animation loop, plus the print pipeline that needs the live DOM — are pinned by browser-driven tests in [`e2e/tests/`](../../e2e/tests/). The browser tests run via `yarn e2e`.
+Each rule in [`stipulations.md`](../../development/rules/stipulations.md) is annotated in place with the test file that pins it down. As of the most recent pass, all sixty-two rules are directly covered. (!) Fifty-six are pinned by unit tests in `src/lib/ts/tests/`; six — the user-interface flows that need real mouse events and the running animation loop, plus the print pipeline that needs the live DOM — are pinned by browser-driven tests in [`e2e/tests/`](../../../../e2e/tests/). The browser tests run via `yarn e2e`.
 
 (!) ALWAYS: Always update this authoritative count each time testing is done.

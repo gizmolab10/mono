@@ -53,4 +53,4 @@ The render pipeline — projection, occlusion, intersections, overlays.
 - [Components](./components/)
 - [Core](./core/)
 - [Graph](./graph/)
-- [Ui](./ui/)
+- [UI](./ui/)

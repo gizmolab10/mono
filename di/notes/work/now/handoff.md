@@ -16,20 +16,20 @@
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 - **Mothballed: stud / joist / stair template kinds.** First cut at the three-way segmented control needed lots of work — wrong starting proportions, name collisions, and no path from a stair template to the existing diagonal-rise repeater. See [repeaters.mothball.md](./repeaters.mothball.md) for what was attempted and the six things to think through before resuming.
 
-## Proposal 1 — describe the complete dimensionals placement algorithm — DONE
+## Proposal 10 — describe the complete dimensionals placement algorithm — DONE
 
 [dimensionals.md](../../guides/architecture/graph/dimensionals.md) now walks the full placement pipeline: the shared outline built from leaf parts, the four-direction path-of-least-resistance picker, the camera-forward and witness-length filters, the 80-pixel push cap, duplicate-text drop, the force simulation (spring, repulsion, damping), motion carried across paints, stop-when-settled, the late drops (off-canvas, floater, drawn witness over 120 px), the drawing step, repeater integration, the diagnostic counters, and an expanded constants table with symptom → likely-cause notes. Every section names the source-line range that backs it.
 
 Code-debt item checked off in [code.debt.md](./code.debt.md).
 
-## Proposal 2 — labels still inside silhouette in some views
+## Proposal 11 — labels still inside silhouette in some views
 
 The code-debt item "dimension labels are still within the silhouette" remains open. The session-by-session detail of how we got here is in the journal entry for 2026-05-19. Current state:
 
 - **Spring ruled out.** Spring constant turned off, no change in inside-silhouette count.
 - **Floaters fixed.** Labels whose witness intersection would fall back are now dropped instead of drawn off-line. Side effect: at orientation [0.12, 0.63, 0.69, -0.33] the labels that used to land inside the outline got dropped instead, so that specific view is now clean.
 - **Two other reported orientations not yet re-measured.** Drawer at [-0.35, -0.38, -0.57, 0.64] and [-0.48, -0.42, -0.49, 0.60] were each reported to show one label inside. Whether the floater fix also cleared these is not measured.
-- **Inside-silhouette test exists for one orientation.** [dimensions-outside-silhouette.spec.ts](../../../e2e/tests/dimensions-outside-silhouette.spec.ts) passes for orientation [0.12, 0.63, 0.69, -0.33]. Adding the other two orientations as additional cases would catch any view-specific failures.
+- **Inside-silhouette test was removed during the redesign-test sweep.** The old `dimensions-outside-silhouette.spec.ts` (which passed for orientation [0.12, 0.63, 0.69, -0.33]) was deleted because its weaker postcondition is subsumed by the new 15-pixel clearance test. The replacement [dimensions-clearance-silhouette.spec.ts](../../../e2e/tests/dimensions-clearance-silhouette.spec.ts) asserts the stricter 15-pixel rule but is currently `test.skip` pending the `dim_min_silhouette_clearance()` test hook (rule 25 of the redesign spec). Once that hook is added, the two un-measured orientations can be exercised by parametrising the test.
 
 Next moves, in order:
 

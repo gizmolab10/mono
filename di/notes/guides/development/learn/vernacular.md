@@ -129,7 +129,7 @@ These are the swaps that have caused friction. Use the left column, never the ri
 
 ## Working-discipline rules (from the learn file)
 
-Captured in the active-work [learn file](../../../work/now/learn.md) — past mistakes that should never be repeated. Listed here as well so the vocabulary file is also the one-stop reference for collaborator discipline.
+Captured in the active-work [learn file](../../../work/ai/learn.md) — past mistakes that should never be repeated. Listed here as well so the vocabulary file is also the one-stop reference for collaborator discipline.
 
 - **Don't act on guesses.** When the data shows something unexpected, investigate — don't guess the cause and write code. Two wrongs: acting on a guess, and not waiting for approval before making the change.
 - **Stop speculating about what's on screen.** When the user says something is or isn't on screen, that's evidence. The job is to find the code that contradicts that evidence, not to argue with it.

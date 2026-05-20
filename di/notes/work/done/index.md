@@ -6,7 +6,7 @@ Completed work items.
 
 - [Article First Draft](./article.first.draft.md)
 - [Chat](./chat.md)
-- [Code Debt (done)](code.debt.paid.md)
+- [Code Debt (done)](./code.debt.paid.md)
 - [Cruft](./cruft.md)
 - [Invisible Root](./invisible.root.md)
 - [Layout Algorithm](./layout-algorithm.md)
@@ -20,5 +20,6 @@ Completed work items.
 - [Skills](./skills.md)
 - [Svelte](./svelte.md)
 - [Topology](./topology.md)
+- [Update Guides](./update.guides.md)
 - [Version 9](./version.9.md)
 - [What](./what.md)

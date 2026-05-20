@@ -696,12 +696,12 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".s - closet d"
+              "formula": ".s - 18\""
             },
             "extent": {
               "formula": ".e"
             },
-            "length": 2438.3999999999996,
+            "length": 1981.2000000000007,
             "angle": 0
           },
           "invariant": 2
@@ -1782,8 +1782,8 @@
         },
         "z": {
           "attributes": {
-            "origin": 0,
-            "extent": 2609.8500000000004,
+            "origin": -10.376585960388184,
+            "extent": 2599.473414039612,
             "length": 2609.8500000000004,
             "angle": 0
           },
@@ -2183,12 +2183,12 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".e - 3'"
+              "formula": "main.outer post.e + door w"
             },
             "extent": {
-              "formula": ".e"
+              "formula": "front.moose.overhang post.s"
             },
-            "length": 914.3999999999996,
+            "length": 1339.8499999999985,
             "angle": 0
           },
           "invariant": 2
@@ -2240,9 +2240,9 @@
               "is_locked": true
             },
             "extent": {
-              "formula": "moose.overhang post.s"
+              "formula": "main.outer post.s"
             },
-            "length": 6095.999999999999,
+            "length": 3657.6000000000004,
             "angle": 0
           },
           "invariant": 2
@@ -2290,7 +2290,7 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": ".e - closet d"
+              "formula": ".e - door w"
             },
             "extent": {
               "formula": ".e"
@@ -2323,6 +2323,279 @@
           "is_diagonal": false
         },
         "parent_id": "di6e49f7949d45d3"
+      },
+      {
+        "id": "di4a401ba20be130",
+        "name": "moose wall",
+        "x": {
+          "attributes": {
+            "origin": 4178.300000000001,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": {
+              "formula": "wall th"
+            },
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "y": {
+          "attributes": {
+            "origin": {
+              "formula": "front.moose.overhang post.e"
+            },
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 1949.4500000000007,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": {
+              "formula": ".e - beam th"
+            },
+            "length": 2609.8500000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "repeater": {
+          "spacing": 406.4,
+          "firewall": true,
+          "is_repeating": false,
+          "run_axis": 1,
+          "is_diagonal": false
+        },
+        "parent_id": "die948608c4b1219"
+      },
+      {
+        "id": "di454461a607546b",
+        "name": "storage",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 4267.200000000001,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "y": {
+          "attributes": {
+            "origin": 4876.8,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 609.6000000000004,
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": {
+              "formula": ".e"
+            },
+            "length": 2895.6000000000004,
+            "angle": 0
+          },
+          "invariant": 2
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
+      },
+      {
+        "id": "dib74e24b841661d",
+        "name": "desk",
+        "x": {
+          "attributes": {
+            "origin": 2600.6698242187504,
+            "extent": 4124.66982421875,
+            "length": {
+              "value": 1524,
+              "is_locked": true
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 2057.04248046875,
+            "extent": 2971.4424804687505,
+            "length": {
+              "value": 914.4000000000005,
+              "is_locked": true
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "value": 0,
+              "is_locked": true
+            },
+            "extent": 762,
+            "length": {
+              "value": 762,
+              "is_locked": true
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
+      },
+      {
+        "id": "di4f47c5b00ca8ff",
+        "name": "bed",
+        "x": {
+          "attributes": {
+            "origin": {
+              "formula": ".s"
+            },
+            "extent": 1602.19775390625,
+            "length": {
+              "value": 1524,
+              "is_locked": true
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 1308.8075160980225,
+            "extent": 3340.8075160980234,
+            "length": {
+              "value": 2032.000000000001,
+              "is_locked": true
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 457.2,
+            "length": 457.2,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di814622bfde093a"
+      },
+      {
+        "id": "di464145a0f0448f",
+        "name": "bed wall",
+        "x": {
+          "attributes": {
+            "origin": {
+              "value": 0,
+              "is_locked": true
+            },
+            "extent": 1524,
+            "length": {
+              "value": 1524,
+              "is_locked": true
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 3448.05,
+            "extent": {
+              "formula": "overhang beam.e"
+            },
+            "length": 88.89999999999964,
+            "angle": 0
+          },
+          "invariant": 0
+        },
+        "z": {
+          "attributes": {
+            "origin": {
+              "value": 0,
+              "is_locked": true
+            },
+            "extent": 2438.4,
+            "length": 2438.4,
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": true,
+        "repeater": {
+          "spacing": 406.4,
+          "firewall": true,
+          "is_repeating": true,
+          "run_axis": 0,
+          "is_diagonal": false
+        },
+        "parent_id": "di814622bfde093a"
+      },
+      {
+        "id": "did0478f942f1b7c",
+        "name": "stud",
+        "x": {
+          "attributes": {
+            "origin": 0,
+            "extent": 38.100000000000364,
+            "length": {
+              "formula": "stud thickness"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "y": {
+          "attributes": {
+            "origin": 0,
+            "extent": 88.89999999999964,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "z": {
+          "attributes": {
+            "origin": 0,
+            "extent": 2438.4,
+            "length": {
+              "formula": ".l"
+            },
+            "angle": 0
+          },
+          "invariant": 1
+        },
+        "visible": true,
+        "hide_children": false,
+        "parent_id": "di464145a0f0448f"
       }
     ],
     "givens": [
@@ -2352,8 +2625,18 @@
         "locked": true
       },
       {
-        "name": "closet d",
+        "name": "door w",
         "value_mm": 914.4000000000001,
+        "locked": true
+      },
+      {
+        "name": "wall thickness",
+        "value_mm": 88.9,
+        "locked": true
+      },
+      {
+        "name": "stud thickness",
+        "value_mm": 38.1,
         "locked": true
       }
     ],
@@ -2375,7 +2658,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "die948608c4b1219",
+    "selected_id": "di4f47c5b00ca8ff",
     "selected_face": 1
   }
 }

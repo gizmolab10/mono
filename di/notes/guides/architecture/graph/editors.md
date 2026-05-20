@@ -39,6 +39,6 @@ Citation: `Drag.ts` lines 145-184 (target lifecycle and accessors), 304-355 (the
 ## Where each editor's deeper page lives
 
 - The drag pipeline (anchor capture, plane in parent-local frame, the upstream-walking distribution): [drag](drag.md).
-- The dimension overlays (witness lines, terminator arrows, the three picking algorithms): [dimensionals](dimensionals.md).
+- The dimension overlays (witness lines, terminator arrows, the three picking algorithms): [dimensionals](di/notes/guides/architecture/graph/dimensionals.md).
 - The angle setters and the axis-swap helper: [axes](axes.md).
 - The face-label editor has no dedicated page yet; this group page is the entry point.

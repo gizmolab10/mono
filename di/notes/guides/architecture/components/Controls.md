@@ -1,53 +1,74 @@
 # Controls
 
-The top toolbar — every global control the user can reach without opening a panel.
+The strip of global controls at the top and bottom of the screen — every command the user can reach without opening a panel. The strip is split into two components: the primary controls (a button toolbar that adapts to width) and the secondary controls (the wide zoom slider plus a status row underneath).
 
-## Location
+## Primary controls
 
-`src/lib/svelte/main/Controls.svelte`
+`src/lib/svelte/main/Primary_Controls.svelte`
 
-## What it shows
+A row of clickable controls. The component measures its own width and picks one of three layouts.
 
-A row of clickable controls across the top of the screen:
+### What it shows
 
-- A hamburger button on the left that toggles the right-side panel.
-- A "save" button that writes the current scene to the library.
+- A hamburger button that toggles the details panel.
+- An undo / redo pair of stepper buttons.
+- A save button that writes the current scene to the library.
 - An editing-lock toggle. When the lock is on, clicks on the canvas do not select or drag — only camera tumble works.
-- A "fit" button that appears only when the root part has children outside its current bounds. Clicking grows the root to enclose them.
-- Six face buttons (bottom, top, left, right, back, front) that orient the camera so the named face is the front-most.
-- A "straighten" button that snaps the current orientation to the nearest face-aligned angle.
-- A magnet button that toggles rotation-snap on or off.
+- A fit button that appears only when editing is allowed AND the root part has children outside its current bounds. Clicking grows the root to enclose them.
 - A view-mode toggle (3D ↔ 2D).
 - A solid-or-x-ray toggle.
+- A straighten button that snaps the current orientation to the nearest face-aligned angle.
+- A magnet button that toggles rotation-snap on or off.
 - Three decoration toggles for names, dimensions, and angles.
-- A small horizontal slider for the guide-line opacity, with the word "guides" above it.
-- A wide horizontal slider that zooms the drawing.
+- Six face buttons (bottom, top, left, right, back, front) that orient the camera so the named face points toward the viewer.
+- A help button that opens the user guide.
 
-## State it reads
+### State it reads
 
-The toolbar subscribes to general session values from the stores manager: the current view mode, decorations bitmask, solid flag, side-panel-open flag, forward face index, rotation-snap flag, editing-lock flag, tick counter, orientation, scale, and grid opacity. It also reads the engine to decide when the "fit" button shows and when "straighten" is enabled.
+The primary controls subscribe to general session values from the stores manager: the current view mode, decorations bitmask, solid flag, details-panel-open flag, forward face index, rotation-snap flag, editing-lock flag, tick counter, and orientation. It also reads the engine and the history manager to decide when the fit, straighten, undo, and redo buttons are enabled.
 
-## Three responsive layouts
+### Three responsive layouts
 
-The toolbar measures its own width and picks one of three layouts:
+The component measures its own width and picks one:
 
-- **Phone layout.** Width below seven hundred and twenty pixels. Three stacked rows. Top row: hamburger, face buttons, guides slider. Middle row: decorations, view-mode toggle, solid-or-x-ray toggle. Bottom row: straighten and the magnet, then the zoom slider.
-- **Mobile layout.** Width between seven hundred and twenty and fourteen hundred pixels. Two stacked rows. Top row: hamburger, save, edit-lock, the three decoration toggles plus view-mode and solid, the guides slider. Bottom row: face buttons, straighten and magnet, the zoom slider.
-- **Desktop layout.** Width above fourteen hundred pixels. One row of buttons, with the zoom slider in its own area on the right that flexes into whatever space is left after the buttons (capped at six hundred pixels wide).
+- **Phone layout.** Width below 720 pixels. Three stacked rows. Top row: hamburger, undo/redo, save, editing-lock, fit (when active), straighten, help. Middle row: view-mode, solid-or-x-ray, decorations. Bottom row: magnet, face buttons.
+- **Mobile layout.** Width between 720 and 1400 pixels. Two stacked rows. Top row: hamburger, undo/redo, save, editing-lock, fit (when active), view-mode, solid-or-x-ray, straighten, magnet, help. Bottom row: decorations and face buttons centred.
+- **Desktop layout.** Width above 1400 pixels. One row. Everything from the mobile top row plus the decorations and face buttons fits on a single line.
 
-The breakpoints come from the constants file. Citation: `src/lib/ts/common/Constants.ts` lines 86-87 — `wrap_mobile: 1400`, `wrap_phone: 720`.
+The breakpoints come from the constants file. Citation: `src/lib/ts/common/Constants.ts` — `wrap_mobile: 1400`, `wrap_phone: 720`.
 
-## How drag-targets register
+## Secondary controls
 
-Every clickable in the toolbar registers itself with the click-target detector under a string id (for example "save", "fit", "view-mode", or "face-0"). The detector keeps a spatial index of these targets and routes mouse-down events to the right handler.
+`src/lib/svelte/main/Secondary_Controls.svelte`
 
-## CSS shape
+Two bands below the primary controls. The top band holds the wide zoom slider. The bottom band runs build number, status strip, and guides slider across the width.
 
-A flex row across the full width. Inside, a desktop layout has two children: the buttons block (also a flex row) and the slider block (flexes to fill the remainder). Phone and mobile layouts use a column of flex rows instead.
+### Bands shown
+
+Top band:
+
+- A wide horizontal zoom slider that scales the drawing. Logarithmic, from 0.01 up to 10000.
+
+Bottom band:
+
+- A build-number button on the left that opens the build notes.
+- The status strip in the middle (orientation, scale, dropped-dimensions count, and other live readouts).
+- A guides cluster on the right — the word "guides" followed by a short opacity slider for the guide-line opacity.
+
+### State the secondary controls read
+
+The secondary controls subscribe to two store values: grid opacity and the current scale. The build-number text comes from the constants file.
+
+## How click targets register
+
+Every clickable in both components registers itself with the click-target detector under a string id (for example "save", "fit", "view-mode", or "face-0"). The detector keeps a spatial index of these targets and routes mouse-down events to the right handler.
 
 ## Related files
 
 - `src/lib/svelte/mouse/Slider.svelte` — the slider control used for both the zoom and guides sliders.
-- `src/lib/ts/managers/Stores.ts` — the store values the toolbar subscribes to.
-- `src/lib/ts/render/Engine.ts` — the engine methods the toolbar calls (toggle view mode, orient to face, straighten, fit to children, scale up/down, toggle rotation snap).
-- `src/lib/ts/common/Constants.ts` — the breakpoint and size constants.
+- `src/lib/svelte/mouse/Steppers.svelte` — the undo/redo stepper pair.
+- `src/lib/svelte/main/Status_Strip.svelte` — the readout strip that sits in the middle of the secondary controls' bottom band.
+- `src/lib/ts/managers/Stores.ts` — the store values both components subscribe to.
+- `src/lib/ts/render/Engine.ts` — the engine methods the primary controls call (toggle view mode, orient to face, straighten, fit to children, scale up/down, toggle rotation snap, undo, redo).
+- `src/lib/ts/managers/History.ts` — the source for undo and redo availability.
+- `src/lib/ts/common/Constants.ts` — the breakpoint, size, and build-number constants.

@@ -4,7 +4,6 @@ Everything about the project itself — how it is built, how it is organized, ho
 
 ## Contents
 
-- [Development](./development/)
 - [Overview](./overview/)
+- [Philosophy](./philosophy/)
 - [Research](./research/)
-

@@ -316,7 +316,7 @@
     - [x] drop unfit dimensionals (off-canvas label, witness too long after the force simulation moves it)
     - [x] stop-when-settled to remove background flicker
     - [x] diagnostic statistics: rolling averages of collected / duplicate / exceed / off-canvas / drawn, console line on change, status strip showing dropped average
-    - [x] full rule set lives in [[crowded dimensionals]]
+    - [x] full rule set lives in [[di/notes/guides/development/rules/dimensionals]]
 - [x] move status line into bottom bar, white text for status, red for warning or error
 - [x] simplify crowded dimensionals
 - [x] hide givens too when nothing selected
@@ -343,3 +343,4 @@
 - [x] Steppers -> bigger and horizontally laid out (pointing left and right)
 - [x] create tests for the new dimensionals rules
 - [x] display the current quot in the status strip, when not showing something else
+- [x] describe the complete dimensionals placement algorithm -> guides/architecture/graph/dimensionals.md

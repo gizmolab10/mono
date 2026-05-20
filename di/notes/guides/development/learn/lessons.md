@@ -2,7 +2,7 @@
 
 Meta-lessons distilled from the two mothballed milestones (the facet tracer and the drag rewrite). Each is a pattern that would mislead a successor on any feature, not just the one that surfaced it. The point is to spot the same shape early when it shows up somewhere new.
 
-For the case-level writing — exactly what was tried, what failed, and why — see [the facet-tracer lessons file](../../../work/milestones/done/32.facets/lessons.md) and [the drag lessons file](../../../work/milestones/33.drag/lessons.md).
+For the case-level writing — exactly what was tried, what failed, and why — see [the facet-tracer lessons file](di/notes/work/milestones/done/32.facets/lessons.md) and [the drag lessons file](di/notes/work/milestones/33.drag/lessons.md).
 
 ## Lessons
 

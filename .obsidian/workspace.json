@@ -8,31 +8,31 @@
         "type": "tabs",
         "children": [
           {
-            "id": "a37a86f69a513cdc",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/now/crowded dimensionals.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "crowded dimensionals"
-            }
-          },
-          {
             "id": "af5376ef30d65de2",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/now/working features.md",
+                "file": "di/notes/work/now/handoff.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "working features"
+              "title": "handoff"
+            }
+          },
+          {
+            "id": "0723f5f4325ff3f5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/guides/development/rules/dimensionals.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "dimensionals"
             }
           },
           {
@@ -106,7 +106,7 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -241,13 +241,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/guides/setup/netlify.md",
+                "file": "di/notes/guides/architecture/graph/dimensionals.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of netlify"
+              "title": "Outline of dimensionals"
             }
           }
         ],
@@ -268,44 +268,44 @@
       "bases:Create new base": false
     }
   },
-  "active": "a6f55205cbd35f61",
+  "active": "d1dd371ba66bb976",
   "lastOpenFiles": [
-    "lv/CLAUDE.MD",
-    "lv/notes",
-    "lv",
-    "di/notes/guides/architecture/graph/dimensionals.md",
+    "di/notes/guides/project/philosophy/index.md",
+    "di/notes/guides/development/rules/index.md",
+    "di/notes/guides/development/learn/index.md",
+    "di/notes/guides/development/adhere/index.md",
+    "di/notes/work/ai/learn.md",
+    "di/notes/work/ai/technique.md",
+    "di/notes/work/ai/cadence.md",
+    "di/notes/work/ai",
+    "di/notes/work/now/ai",
+    "di/notes/guides/project/philosophy/specification driven development.md",
+    "di/notes/guides/development/rules/dimensionals.md",
     "di/notes/work/now/handoff.md",
+    "di/notes/guides/project/research/dimensionals-research.md",
+    "di/notes/guides/architecture/graph/dimensionals.md",
+    "di/e2e/tests/dimensions-conflict-graph.spec.ts.tmp.77339.2340e823a084",
+    "di/e2e/tests/dimensions-pair-enumeration.spec.ts",
+    "di/e2e/tests/dimensions-2d-mode.spec.ts",
+    "di/e2e/tests/dimensions-repeater-clones-skip.spec.ts",
+    "di/e2e/tests/dimensions-click-to-edit.spec.ts",
+    "di/e2e/tests/dimensions-popup-format.spec.ts",
+    "di/e2e/tests/dimensions-hover.spec.ts",
+    "di/e2e/tests/dimensions-label-horizontal.spec.ts",
+    "di/notes/guides/project/philosophy/testing.md",
+    "di/notes/guides/development/adhere/dashboard guide.md",
     "di/notes/work/now/code.debt.md",
-    "di/notes/work/now/crowded dimensionals.md",
-    "di/notes/work/done/code.debt.paid.md",
-    "di/notes/work/now/work journal.md.tmp.41376.a9fe2b1a8ba4",
-    "di/test-results/dimensions-silhouette-memb-a43fa-ontainer-corners-contribute-chromium/trace.zip",
-    "di/test-results/dimensions-silhouette-memb-a43fa-ontainer-corners-contribute-chromium/error-context.md",
-    "di/test-results/dimensions-silhouette-memb-a43fa-ontainer-corners-contribute-chromium",
-    "di/e2e/tests/dimensions-direction-choice.spec.ts",
-    "di/e2e/tests/dimensions-silhouette-membership.spec.ts",
-    "di/test-results",
-    "di/test-results/dimensions-outside-silhoue-491d2-o-labels-inside-the-outline-chromium/trace.zip",
-    "di/test-results/dimensions-outside-silhoue-491d2-o-labels-inside-the-outline-chromium",
-    "di/test-results/dimensions-xray-OPTION-wit-efe90--labels-to-that-hidden-part-chromium/error-context.md",
-    "di/test-results/dimensions-floaters-drawer-cd8f7-nnected-from-their-dim-line-chromium/error-context.md",
-    "di/test-results/dimensions-off-canvas-sque-16c11-he-survivors-stay-on-canvas-chromium/error-context.md",
-    "di/test-results/dimensions-off-canvas-base-76e3e-and-reports-a-dropped-count-chromium/error-context.md",
-    "di/test-results/dimensions-force-layout-se-0467e-s-no-pairwise-label-overlap-chromium/error-context.md",
-    "di/test-results/dimensions-xray-OPTION-wit-2e0ef-ible-does-not-flip-to-x-ray-chromium/error-context.md",
-    "di/notes/work/now/working features.md",
-    "di/notes/work/now/work journal.md",
-    "di/test-results/editing-lock-with-the-edit-6c91a-canvas-does-not-pick-a-part-chromium/error-context.md",
-    "di/test-results/print-notifications-Rule-6-df86c-printable-area-during-print-chromium/error-context.md",
-    "di/test-results/dimensions-off-canvas-base-309c7-oomy-viewport-drops-nothing-chromium/error-context.md",
-    "notes/guides/setup/netlify.md",
-    "lc/CLAUDE.MD",
-    "notes/work/next/personas.md",
-    "notes/work/articles/accidental.programmer.md",
-    "notes/work/articles/write.article.md",
-    "notes/work/articles/how.to.build.it.md",
-    "di/notes/work/now/tests.suggested.md",
-    "notes/guides/pre-flight/shorthand.md",
+    "di/notes/guides/development/adhere/adherence log.md",
+    "di/notes/guides/development/adhere/adherence dashboard.md",
+    "di/notes/guides/development/learn/vernacular.md",
+    "di/notes/guides/development/learn/lessons.md",
+    "di/notes/guides/development/status/vernacular.md",
+    "di/notes/guides/development/status/lessons.md",
+    "di/notes/guides/development/status/dashboard guide.md",
+    "di/notes/guides/project/philosophy/best.practices.md",
+    "di/notes/guides/development/status/best.practices.md",
+    "di/notes/guides/development/methods/best.practices.md",
+    "di/notes/guides/development/philosophy/vernacular.md",
     "di/dist/assets/05-mid-stretch-DfF8mrVj.png",
     "di/dist/assets/06-dimension-input-BaK3RdUS.png",
     "di/dist/assets/03-locked-cursor-BNz07XWk.png",

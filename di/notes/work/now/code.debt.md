@@ -4,13 +4,15 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (1) for the first unchecked item, and add it to a new section at the end of handoff
 
-- [x] describe the complete dimensionals placement algorithm -> guides/architecture/graph/dimensionals.md
-- [ ] resume proposal 2 in handoff
+- [ ] move swap x y to attributes
+- [ ] make a new rules folder inside development
+- [ ] resume proposal 11 in handoff
     - [ ] dimension labels are still within the silhouette
 - [ ] saved VIEWS orientation/zoom for a SO
     - [ ] list that changes when you load a different SO
     - [ ] remember and forget buttons
 - [ ] deceptively simple UX
+- [ ] smaller slider circle triangle
 
 ## tom
 
