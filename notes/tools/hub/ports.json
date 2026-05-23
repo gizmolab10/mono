@@ -19,7 +19,7 @@
     "bubble": "https://bubble.io/home/plugins",
     "docsPublic": "https://docs.webseriously.org",
     "netlify": "https://webseriously.netlify.app",
-    "repo": "https://github.com/gizmolab10/mono/ws",
+    "repo": "https://github.com/gizmolab10/mono/tree/main/ws",
     "docsNetlify": "https://webseriously-documentation.netlify.app",
     "deploy": "https://app.netlify.com/projects/webseriously/deploys",
     "docsDeploy": "https://app.netlify.com/projects/webseriously-documentation/deploys"
@@ -28,7 +28,7 @@
     "port": 5175,
     "docs": 5176,
     "public": "https://designintuition.app",
-    "repo": "https://github.com/gizmolab10/mono/di",
+    "repo": "https://github.com/gizmolab10/mono/tree/main/di",
     "docsPublic": "https://docs.designintuition.app",
     "netlify": "https://designintuition.netlify.app",
     "docsNetlify": "https://designintuition-documentation.netlify.app",
@@ -39,27 +39,29 @@
     "port": 5177,
     "docs": 5178,
     "public": "https://mg.civilization2.org",
-    "repo": "https://github.com/gizmolab10/mono/ma",
+    "repo": "https://github.com/gizmolab10/mono/tree/main/ma",
     "docsPublic": "https://mgdocs.civilization2.org",
     "netlify": "https://maturity-guidance.netlify.app",
     "docsNetlify": "https://docs-maturity-guidance.netlify.app",
     "deploy": "https://app.netlify.com/projects/maturity-guidance/deploys",
     "docsDeploy": "https://app.netlify.com/projects/docs-maturity-guidance/deploys"
   },
+  "lv": {
+    "port": 5183,
+    "public": "https://littlecloudvineyard.com",
+    "netlify": "https://littlecloudvineyard.netlify.app",
+    "repo": "https://github.com/gizmolab10/mono/tree/main/lv",
+    "deploy": "https://app.netlify.com/projects/littlecloudvineyard/deploys"
+  },
   "s3": {
     "port": 5179,
     "docs": 5180,
-    "repo": "https://github.com/gizmolab10/mono/s3"
+    "repo": "https://github.com/gizmolab10/mono/tree/main/s3"
   },
   "ga": {
     "port": 5181,
     "docs": 5182,
-    "repo": "https://github.com/gizmolab10/mono/ga"
-  },
-  "lv": {
-    "port": 5183,
-    "public": "https://littlecloudvineyard.com",
-    "repo": "https://github.com/gizmolab10/mono/lv"
+    "repo": "https://github.com/gizmolab10/mono/tree/main/ga"
   },
   "me": {
     "public": "https://jonathansand.me",

@@ -195,9 +195,84 @@ export function is_edge_occluded(
 	return false;
 }
 
+/** Diagnostic-only sibling of `is_edge_occluded`. For each occluder that
+ *  hides either endpoint, returns one entry naming the blocker and which
+ *  endpoint it hides. Used to print "label X was blocked by part Y" in
+ *  the per-paint summary. Slightly slower than the boolean check (no
+ *  early-out) so the hot path keeps using `is_edge_occluded`. */
+export function find_edge_endpoint_blockers(
+	p1: { x: number; y: number; z: number; w: number },
+	p2: { x: number; y: number; z: number; w: number },
+	occluders: ReadonlyArray<{ so_name: string; projected: ReadonlyArray<{ x: number; y: number; z: number; w: number }>; faces: ReadonlyArray<ReadonlyArray<number>> }>,
+): { endpoint: 1 | 2; blocker_name: string }[] {
+	const hits: { endpoint: 1 | 2; blocker_name: string }[] = [];
+	if (occluders.length === 0) return hits;
+	const endpoints: Array<{ idx: 1 | 2; p: typeof p1 }> = [{ idx: 1, p: p1 }, { idx: 2, p: p2 }];
+	for (const ep of endpoints) {
+		for (const occ of occluders) {
+			let blocked = false;
+			for (const face of occ.faces) {
+				let face_z = 0;
+				let valid = true;
+				for (const vi of face) {
+					const pv = occ.projected[vi];
+					if (!pv || pv.w < 0) { valid = false; break; }
+					face_z += pv.z;
+				}
+				if (!valid) continue;
+				face_z /= face.length;
+				if (face_z >= ep.p.z) continue;
+				const poly = face.map(vi => occ.projected[vi]);
+				if (point_in_polygon(ep.p.x, ep.p.y, poly)) { blocked = true; break; }
+			}
+			if (blocked) hits.push({ endpoint: ep.idx, blocker_name: occ.so_name });
+		}
+	}
+	return hits;
+}
+
 /** Status-bar running average of how many dimensions get dropped per
  *  paint. The painter publishes to this. */
 export const w_dim_dropped_avg = stale_writable<number>(0);
+
+/** Per-(part, axis) tally of how each candidate edge was treated by the
+ *  filters in `compute_viable_pairs`. Populated every call to that
+ *  function. Read by `run_new_placement` to print a plain-English summary
+ *  whenever a paint loses labels. */
+export type Per_Label_Filter_Stats = {
+	edges_hidden              : number;
+	edges_too_short           : number;
+	edges_projection_broken   : number;
+	edges_no_viable_direction : number;
+	edges_yielded_pairs       : number;
+};
+export const last_filter_stats: {
+	total_edges_considered : number;
+	per_label              : Map<string, Per_Label_Filter_Stats>;
+} = {
+	total_edges_considered : 0,
+	per_label              : new Map(),
+};
+
+/** Per-label set of unique part names that hid at least one of the
+ *  label's candidate edges. Diagnostic only; populated alongside the
+ *  filter stats every call to `compute_viable_pairs`. */
+export const last_blockers_per_label: Map<string, Set<string>> = new Map();
+
+function bump_filter_stat(key: string, field: keyof Per_Label_Filter_Stats): void {
+	let s = last_filter_stats.per_label.get(key);
+	if (!s) {
+		s = {
+			edges_hidden              : 0,
+			edges_too_short           : 0,
+			edges_projection_broken   : 0,
+			edges_no_viable_direction : 0,
+			edges_yielded_pairs       : 0,
+		};
+		last_filter_stats.per_label.set(key, s);
+	}
+	s[field]++;
+}
 
 function compute_combined_hull(): void {
 	const all_objects = scene.get_all();
@@ -310,6 +385,9 @@ export type Candidate_Pair = {
  */
 export function compute_viable_pairs(): Viable_Pair[] {
 	compute_combined_hull();
+	last_filter_stats.total_edges_considered = 0;
+	last_filter_stats.per_label.clear();
+	last_blockers_per_label.clear();
 	const result: Viable_Pair[] = [];
 	if (last_hull.length < 3) return result;
 	if (!render.ctx)            return result;
@@ -320,7 +398,7 @@ export function compute_viable_pairs(): Viable_Pair[] {
 	// check. Each painted part contributes its projected vertices and the
 	// list of its faces. The check at each edge filters out the OWN part.
 	const all_objects = scene.get_all();
-	type Occluder = { so_id: string; projected: Projected[]; faces: number[][] };
+	type Occluder = { so_id: string; so_name: string; projected: Projected[]; faces: number[][] };
 	const all_occluders: Occluder[] = [];
 	for (const o of all_objects) {
 		if (!is_visible_for_dim(o)) continue;
@@ -328,7 +406,7 @@ export function compute_viable_pairs(): Viable_Pair[] {
 		if (!proj) continue;
 		const faces = o.so.scene?.faces;
 		if (!faces) continue;
-		all_occluders.push({ so_id: o.so.id, projected: proj, faces });
+		all_occluders.push({ so_id: o.so.id, so_name: o.so.name, projected: proj, faces });
 	}
 
 	for (const obj of all_objects) {
@@ -348,14 +426,36 @@ export function compute_viable_pairs(): Viable_Pair[] {
 			const label_h_px = 12 + 2;
 
 			const edges = silhouette_edges_along_axis(obj, axis, projected);
+			const lkey = `${obj.so.id}|${axis}`;
 			for (const { v1_idx, v2_idx } of edges) {
+				last_filter_stats.total_edges_considered++;
 				const p1 = projected[v1_idx];
 				const p2 = projected[v2_idx];
-				if (p1.w < 0 || p2.w < 0) continue;
+				if (p1.w < 0 || p2.w < 0) {
+					bump_filter_stat(lkey, 'edges_projection_broken');
+					continue;
+				}
+
+				// Rule 11 minimum projected edge length (pre-checked here so
+				// the per-edge filter stat is correct; compute_pair_ranges
+				// re-checks defensively).
+				if (Math.hypot(p2.x - p1.x, p2.y - p1.y) < 3) {
+					bump_filter_stat(lkey, 'edges_too_short');
+					continue;
+				}
 
 				// Rule 11 edge-visibility filter: skip edges that are
-				// partially or fully hidden behind another part.
-				if (is_edge_occluded(p1, p2, others_as_occluders)) continue;
+				// hidden behind another part at EITHER endpoint.
+				if (is_edge_occluded(p1, p2, others_as_occluders)) {
+					bump_filter_stat(lkey, 'edges_hidden');
+					// Diagnostic: record which parts blocked this edge so
+					// the per-paint summary can name them.
+					const blockers = find_edge_endpoint_blockers(p1, p2, others_as_occluders);
+					let set = last_blockers_per_label.get(lkey);
+					if (!set) { set = new Set(); last_blockers_per_label.set(lkey, set); }
+					for (const b of blockers) set.add(b.blocker_name);
+					continue;
+				}
 
 				const all_dirs = four_perpendicular_directions(obj.so, axis);
 				const allowed_dirs = all_dirs.filter(d => passes_camera_axis_filter(d, world_matrix, cam_forward));
@@ -364,6 +464,7 @@ export function compute_viable_pairs(): Viable_Pair[] {
 				// all four anyway so the label still appears (even if
 				// foreshortened). Matches the old painter's behavior.
 				const dirs_to_try = allowed_dirs.length > 0 ? allowed_dirs : all_dirs;
+				let yielded_any = false;
 				for (const dir of dirs_to_try) {
 					const pair = compute_pair_ranges({
 						so       : obj.so,
@@ -376,8 +477,9 @@ export function compute_viable_pairs(): Viable_Pair[] {
 						label_w_px, label_h_px,
 						text,
 					});
-					if (pair) result.push(pair);
+					if (pair) { result.push(pair); yielded_any = true; }
 				}
+				bump_filter_stat(lkey, yielded_any ? 'edges_yielded_pairs' : 'edges_no_viable_direction');
 			}
 		}
 	}
@@ -1815,8 +1917,92 @@ export function run_new_placement(canvas_w: number, canvas_h: number): Run_New_P
 	persistence.clear();
 	persistence.remember_all(placements);
 
+	log_dim_summary(expected_keys.size, placements.length, drop_report.dropped);
+
 	last_run_result = { placements, drop_report, search_skipped, last_search_seed: seed };
 	return last_run_result;
+}
+
+/** Last summary string we printed. The per-paint summary only fires
+ *  when the new lines differ from the previous ones — stops the console
+ *  from flooding while the user tumbles or repaints with the same state. */
+let last_logged_summary = '';
+
+/** Per-paint diagnostic. Prints a plain-English summary of how many
+ *  labels were expected, how many made it onto the canvas, and — for
+ *  the lost ones — what filter killed each. Also names the blocking
+ *  parts for the first five labels whose every edge was hidden, so
+ *  it's clear WHICH parts are doing the occluding. Logs only when the
+ *  numbers change from the previous paint. */
+function log_dim_summary(
+	expected: number,
+	placed: number,
+	dropped: readonly Drop_Entry[],
+): void {
+	const drops_by_reason = {
+		no_viable_pair     : 0,
+		duplicate_text     : 0,
+		off_canvas         : 0,
+		remaining_conflict : 0,
+	};
+	for (const d of dropped) drops_by_reason[d.reason]++;
+
+	let all_hidden = 0;
+	let all_short = 0;
+	let all_directions_rejected = 0;
+	let all_projection_broken = 0;
+	let mixed_reasons = 0;
+	for (const d of dropped) {
+		if (d.reason !== 'no_viable_pair') continue;
+		const s = last_filter_stats.per_label.get(`${d.so_id}|${d.axis}`);
+		const total = s
+			? s.edges_hidden + s.edges_too_short + s.edges_projection_broken + s.edges_no_viable_direction
+			: 0;
+		if (!s || total === 0)                          { mixed_reasons++; continue; }
+		if (s.edges_hidden              === total)      all_hidden++;
+		else if (s.edges_too_short      === total)      all_short++;
+		else if (s.edges_no_viable_direction === total) all_directions_rejected++;
+		else if (s.edges_projection_broken   === total) all_projection_broken++;
+		else                                            mixed_reasons++;
+	}
+
+	const line1 =
+		`DIM: ${expected} labels expected, ${placed} placed, ${dropped.length} dropped ` +
+		`(no viable edge ${drops_by_reason.no_viable_pair}, duplicate text ${drops_by_reason.duplicate_text}, ` +
+		`off canvas ${drops_by_reason.off_canvas}, conflict ${drops_by_reason.remaining_conflict})`;
+
+	let line2 = '';
+	if (drops_by_reason.no_viable_pair > 0) {
+		line2 =
+			`DIM: of the ${drops_by_reason.no_viable_pair} with no viable edge: ` +
+			`every edge hidden behind another part ${all_hidden}, ` +
+			`every edge too short on screen ${all_short}, ` +
+			`every direction rejected ${all_directions_rejected}, ` +
+			`every projection broken ${all_projection_broken}, ` +
+			`mixed reasons ${mixed_reasons}`;
+	}
+
+	let line3 = '';
+	const sample: string[] = [];
+	for (const d of dropped) {
+		if (d.reason !== 'no_viable_pair') continue;
+		const set = last_blockers_per_label.get(`${d.so_id}|${d.axis}`);
+		if (!set || set.size === 0) continue;
+		const names = Array.from(set).slice(0, 4).join(', ');
+		sample.push(`${d.so_name} along ${d.axis} — blocked by ${names}`);
+		if (sample.length >= 5) break;
+	}
+	if (sample.length > 0) {
+		line3 = `DIM blocker sample: ${sample.join('; ')}`;
+	}
+
+	const full = `${line1}\n${line2}\n${line3}`;
+	if (full === last_logged_summary) return;
+	last_logged_summary = full;
+
+	console.log(line1);
+	if (line2) console.log(line2);
+	if (line3) console.log(line3);
 }
 
 /** For each placement, compute the world-space direction of the measured

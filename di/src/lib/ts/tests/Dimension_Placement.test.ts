@@ -1467,11 +1467,23 @@ describe('Dimension_Placement — is_edge_occluded (rule 11 edge visibility)', (
 		expect(is_edge_occluded(p(0, 100, 0.5), p(100, 100, 0.5), [occluder])).toBe(false);
 	});
 
-	it('returns true when an occluder face IN FRONT covers the edge midpoint', () => {
-		// Edge at depth 0.5. Occluder face at depth 0.2 (in front).
-		// Occluder covers x in [40, 60], y in [50, 150] — covers the edge midpoint at (50, 100).
+	it('returns false when an in-front face covers ONLY the edge midpoint (rule 11: endpoints only)', () => {
+		// Edge at depth 0.5 with endpoints at (0,100) and (100,100). Occluder
+		// at depth 0.2 (in front) covers x in [40, 60] — covers the midpoint
+		// but neither endpoint. Rule 11 checks only the two endpoints, so
+		// this must NOT trigger rejection.
 		const occluder = {
 			projected: [p(40, 50, 0.2), p(60, 50, 0.2), p(60, 150, 0.2), p(40, 150, 0.2)],
+			faces: [[0, 1, 2, 3]],
+		};
+		expect(is_edge_occluded(p(0, 100, 0.5), p(100, 100, 0.5), [occluder])).toBe(false);
+	});
+
+	it('returns true when an in-front face covers BOTH endpoints', () => {
+		// Edge at depth 0.5. Occluder at depth 0.2 (in front) spans the
+		// whole edge, covering both endpoints.
+		const occluder = {
+			projected: [p(-50, 50, 0.2), p(150, 50, 0.2), p(150, 150, 0.2), p(-50, 150, 0.2)],
 			faces: [[0, 1, 2, 3]],
 		};
 		expect(is_edge_occluded(p(0, 100, 0.5), p(100, 100, 0.5), [occluder])).toBe(true);

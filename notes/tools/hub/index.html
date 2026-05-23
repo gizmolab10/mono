@@ -523,26 +523,26 @@
     const DNS_URL = 'https://www.dynadot.com/account/domain/name/list.html';
 
     // === DOM Elements ===
-    const modeButtons = document.querySelectorAll('.project[data-mode]');
     const projectButtons = document.querySelectorAll('.project[data-project]');
-    const btnLocal = document.getElementById('btn-local');
-    const btnNetlify = document.getElementById('btn-netlify');
-    const btnStart = document.getElementById('btn-start');
-    const btnPublic = document.getElementById('btn-public');
-    const btnRepo = document.getElementById('btn-repo');
-    const btnDeploy = document.getElementById('btn-deploy');
-    const btnRevisit = document.getElementById('btn-revisit');
-    const btnDns = document.getElementById('btn-dns');
-    const btnBubble = document.getElementById('btn-bubble');
-    const btnDocs = document.getElementById('btn-docs');
-    const btnRelay = document.getElementById('btn-relay');
-    const btnTests = document.getElementById('btn-tests');
-    const btnErrors = document.getElementById('btn-errors');
+    const modeButtons = document.querySelectorAll('.project[data-mode]');
+    const consoleOutput = document.getElementById('console-output');
     const errorsOverlay = document.getElementById('errors-overlay');
     const errorsPopup = document.getElementById('errors-popup');
-    const consoleOutput = document.getElementById('console-output');
+    const btnNetlify = document.getElementById('btn-netlify');
+    const btnRevisit = document.getElementById('btn-revisit');
     const consoleRow = document.getElementById('console-row');
+    const btnBubble = document.getElementById('btn-bubble');
+    const btnDeploy = document.getElementById('btn-deploy');
+    const btnErrors = document.getElementById('btn-errors');
+    const btnPublic = document.getElementById('btn-public');
+    const btnRelay = document.getElementById('btn-relay');
+    const btnTests = document.getElementById('btn-tests');
     const commandDiv = document.getElementById('command');
+    const btnLocal = document.getElementById('btn-local');
+    const btnStart = document.getElementById('btn-start');
+    const btnDocs = document.getElementById('btn-docs');
+    const btnRepo = document.getElementById('btn-repo');
+    const btnDns = document.getElementById('btn-dns');
 
     // === Config Initialization ===
     function initConfig() {
@@ -552,13 +552,13 @@
         if (!src) return null;
         const isApp = mode === 'app';
         const cfg = {
+          netlify: isApp ? src.netlify : src.docsNetlify,
+          public: isApp ? src.public : src.docsPublic,
+          deploy: isApp ? src.deploy : src.docsDeploy,
+          bubble: isApp ? src.bubble : null,
           port: isApp ? src.port : src.docs,
           site: isApp ? p : `${p}-docs`,
-          public: isApp ? src.public : src.docsPublic,
-          netlify: isApp ? src.netlify : src.docsNetlify,
-          repo: src.repo,
-          deploy: isApp ? src.deploy : src.docsDeploy,
-          bubble: isApp ? src.bubble : null
+          repo: src.repo
         };
         // null if no mode-specific fields (repo alone doesn't make a mode valid)
         const hasModeContent = cfg.port || cfg.public || cfg.netlify || cfg.deploy || cfg.bubble;
@@ -567,24 +567,24 @@
 
       config = {
         app: {
-          ws: buildProjectConfig('ws', 'app'),
           di: buildProjectConfig('di', 'app'),
           ga: buildProjectConfig('ga', 'app'),
           lv: buildProjectConfig('lv', 'app'),
           ma: buildProjectConfig('ma', 'app'),
           me: buildProjectConfig('me', 'app'),
           mo: buildProjectConfig('mo', 'app'),
-          s3: buildProjectConfig('s3', 'app')
+          s3: buildProjectConfig('s3', 'app'),
+          ws: buildProjectConfig('ws', 'app'),
         },
         docs: {
-          ws: buildProjectConfig('ws', 'docs'),
           di: buildProjectConfig('di', 'docs'),
           ga: buildProjectConfig('ga', 'docs'),
           lv: buildProjectConfig('lv', 'docs'),
           ma: buildProjectConfig('ma', 'docs'),
           me: buildProjectConfig('me', 'docs'),
           mo: buildProjectConfig('mo', 'docs'),
-          s3: buildProjectConfig('s3', 'docs')
+          s3: buildProjectConfig('s3', 'docs'),
+          ws: buildProjectConfig('ws', 'docs'),
         }
       };
     }
@@ -698,12 +698,12 @@
 
       const cfg = config[mode][project];
       const hasConfig = cfg !== null;
-      btnLocal.classList.toggle('disabled', !hasConfig || !cfg?.port);
       btnNetlify.classList.toggle('disabled', !hasConfig || !cfg?.netlify);
-      btnPublic.classList.toggle('disabled', !hasConfig || !cfg?.public);
-      btnRepo.classList.toggle('disabled', !hasConfig || !cfg?.repo);
-      btnDeploy.classList.toggle('disabled', !hasConfig || !cfg?.deploy);
       btnBubble.classList.toggle('disabled', !hasConfig || !cfg?.bubble);
+      btnDeploy.classList.toggle('disabled', !hasConfig || !cfg?.deploy);
+      btnPublic.classList.toggle('disabled', !hasConfig || !cfg?.public);
+      btnLocal.classList.toggle('disabled', !hasConfig || !cfg?.port);
+      btnRepo.classList.toggle('disabled', !hasConfig || !cfg?.repo);
 
       commandDiv.classList.remove('visible');
     }
@@ -856,12 +856,12 @@
     function doRevisit() {
       // Map project to revisit file path
       const revisitPaths = {
-        ws: 'ws/notes/work/revisit.ws.md',
         di: 'di/notes/work/revisit.di.md',
-        mo: 'notes/work/revisit.mo.md',
-        me: 'me/notes/work/revisit.me.md',
         ga: 'ga/notes/work/revisit.ga.md',
-        s3: 's3/notes/work/revisit.s3.md'
+        me: 'me/notes/work/revisit.me.md',
+        mo: 'notes/work/revisit.mo.md',
+        s3: 's3/notes/work/revisit.s3.md',
+        ws: 'ws/notes/work/revisit.ws.md',
       };
       const path = revisitPaths[project] || 'notes/work/revisit.mo.md';
       fetch(`http://localhost:${ports.dispatcher.port}/obsidian/${path}`)
@@ -957,14 +957,14 @@
       if (e.target === errorsOverlay) closeErrors();
     });
 
-    let pollInterval = null;
-    let restartPollInterval = null;
-    let deployPollInterval = null;
-    let pollErrorCount = 0;
     const MAX_POLL_ERRORS = 3;
-    let shouldClearConsole = false;
+    let pollErrorCount = 0;
+    let pollInterval = null;
+    let deployPollInterval = null;
+    let lastDeployStatus = null; // Track last known deploy status,
     let activeConsoleKey = null; // 'restart', 'rebuild', or 'deploy'
-    let lastDeployStatus = null; // Track last known deploy status
+    let shouldClearConsole = false;
+    let restartPollInterval = null;
     let cachedDeployData = null; // Cache for tooltip
 
     function setConsoleOutput(key, text) {
@@ -1161,12 +1161,12 @@
     // === Deploy Status Polling ===
     function formatRelativeTime(isoString) {
       if (!isoString) return '';
+      const diffDays = Math.floor(diffHours / 24);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffMins = Math.floor(diffMs / 60000);
       const date = new Date(isoString);
       const now = new Date();
       const diffMs = now - date;
-      const diffMins = Math.floor(diffMs / 60000);
-      const diffHours = Math.floor(diffMins / 60);
-      const diffDays = Math.floor(diffHours / 24);
 
       if (diffMins < 1) return '-0m';
       if (diffMins < 60) return `-${diffMins}m`;
@@ -1350,11 +1350,11 @@
       'btn-dns': () => DNS_URL,
       'btn-revisit': () => {
         const revisitPaths = {
-          ws: 'ws/notes/work/revisit.ws.md',
           di: 'di/notes/work/revisit.di.md',
-          mo: 'notes/work/revisit.mo.md',
+          ga: 'ga/notes/work/revisit.ga.md',
           me: 'me/notes/work/revisit.me.md',
-          ga: 'ga/notes/work/revisit.ga.md'
+          mo: 'notes/work/revisit.mo.md',
+          ws: 'ws/notes/work/revisit.ws.md',
         };
         const p = getDisplayProject();
         const path = revisitPaths[p] || 'notes/work/revisit.mo.md';
@@ -1441,19 +1441,19 @@
       });
     });
 
-    btnStart.addEventListener('click', doStart);
-    btnLocal.addEventListener('click', doLocal);
     btnNetlify.addEventListener('click', doNetlify);
-    btnPublic.addEventListener('click', doPublic);
-    btnRepo.addEventListener('click', doRepo);
-    btnDeploy.addEventListener('click', doDeploy);
-    btnDns.addEventListener('click', doDns);
+    btnRevisit.addEventListener('click', doRevisit);
     btnBubble.addEventListener('click', doBubble);
     btnErrors.addEventListener('click', doErrors);
-    btnRevisit.addEventListener('click', doRevisit);
-    btnDocs.addEventListener('click', doDocs);
+    btnDeploy.addEventListener('click', doDeploy);
+    btnPublic.addEventListener('click', doPublic);
+    btnStart.addEventListener('click', doStart);
+    btnLocal.addEventListener('click', doLocal);
     btnRelay.addEventListener('click', doRelay);
     btnTests.addEventListener('click', doTests);
+    btnRepo.addEventListener('click', doRepo);
+    btnDocs.addEventListener('click', doDocs);
+    btnDns.addEventListener('click', doDns);
 
     document.addEventListener('keydown', (e) => {
       // Blur any focused button so keyboard works
@@ -1478,26 +1478,26 @@
         case 'i': previewProject = 'di'; highlightProjectButton('di'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'g': { const m = getDisplayMode(); if (config[m]?.['ga'] !== null) { previewProject = 'ga'; highlightProjectButton('ga'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 's': { const m = getDisplayMode(); if (config[m]?.['s3'] !== null) { previewProject = 's3'; highlightProjectButton('s3'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
-        case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } } break;
         case 'm': { const m = getDisplayMode(); if (config[m]?.['mo'] !== null) { previewProject = 'mo'; highlightProjectButton('mo'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'j': { const m = getDisplayMode(); if (config[m]?.['me'] !== null) { previewProject = 'me'; highlightProjectButton('me'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 't': { const m = getDisplayMode(); if (config[m]?.['ma'] !== null) { previewProject = 'ma'; highlightProjectButton('ma'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'v': { const m = getDisplayMode(); if (config[m]?.['lv'] !== null) { previewProject = 'lv'; highlightProjectButton('lv'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
-        case 'escape': doStart(); break;
-        case 'enter': if (hoveredAction) { window.open(hoveredAction, '_blank'); } break;
-        case 'delete':
-        case 'backspace': doDocs(); break;
-        case 'l': hoveredActionId = 'btn-local'; hoveredAction = actionButtons['btn-local'](); highlightActionButton('btn-local'); prePublishFeedbackRow(); break;
         case 'n': hoveredActionId = 'btn-netlify'; hoveredAction = actionButtons['btn-netlify'](); highlightActionButton('btn-netlify'); prePublishFeedbackRow(); break;
-        case 'p': hoveredActionId = 'btn-public'; hoveredAction = actionButtons['btn-public'](); highlightActionButton('btn-public'); prePublishFeedbackRow(); break;
-        case 'g': hoveredActionId = 'btn-repo'; hoveredAction = actionButtons['btn-repo'](); highlightActionButton('btn-repo'); prePublishFeedbackRow(); break;
-        case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); prePublishFeedbackRow(); break;
-        case 'd': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
-        case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); prePublishFeedbackRow(); break;
-        case 'e': doErrors(); break;
         case 'r': hoveredActionId = 'btn-revisit'; hoveredAction = actionButtons['btn-revisit'](); highlightActionButton('btn-revisit'); prePublishFeedbackRow(); break;
+        case 'p': hoveredActionId = 'btn-public'; hoveredAction = actionButtons['btn-public'](); highlightActionButton('btn-public'); prePublishFeedbackRow(); break;
+        case 'y': hoveredActionId = 'btn-deploy'; hoveredAction = actionButtons['btn-deploy'](); highlightActionButton('btn-deploy'); prePublishFeedbackRow(); break;
+        case 'b': hoveredActionId = 'btn-bubble'; hoveredAction = actionButtons['btn-bubble'](); highlightActionButton('btn-bubble'); prePublishFeedbackRow(); break;
+        case 'l': hoveredActionId = 'btn-local'; hoveredAction = actionButtons['btn-local'](); highlightActionButton('btn-local'); prePublishFeedbackRow(); break;
+        case 'g': hoveredActionId = 'btn-repo'; hoveredAction = actionButtons['btn-repo'](); highlightActionButton('btn-repo'); prePublishFeedbackRow(); break;
+        case 'd': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
+        case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } } break;
+        case 'e': doErrors(); break;
         case '`': doRelay(); break;
         case ';': doTests(); break;
+        case 'delete':
+        case 'escape': doStart(); break;
+        case 'backspace': doDocs(); break;
+        case 'enter': if (hoveredAction) { window.open(hoveredAction, '_blank'); } break;
       }
     });
 

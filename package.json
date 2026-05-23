@@ -4,8 +4,16 @@
   "private": true,
   "type": "module",
   "workspaces": {
-    "packages": ["ci", "di", "ws", "s3"],
-    "nohoist": ["**/svelte", "**/svelte/**"]
+    "packages": [
+      "di",
+      "lv",
+      "s3",
+      "ws"
+    ],
+    "nohoist": [
+      "**/svelte",
+      "**/svelte/**"
+    ]
   },
   "scripts": {
     "docs:dev": "vitepress dev",
