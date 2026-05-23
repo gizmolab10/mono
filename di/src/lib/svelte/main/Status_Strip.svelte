@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { status } from '../../ts/managers/Status';
 	import { stores } from '../../ts/managers/Stores';
-	import { w_dim_dropped_avg } from '../../ts/render/R_Dimensions';
+	import { w_dim_dropped_avg } from '../../ts/render/Dimension_Placement';
 
 	const w_queue = status.w_queue;
 	const w_orientation = stores.w_orientation;

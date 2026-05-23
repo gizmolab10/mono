@@ -14,7 +14,7 @@ type Test_Window = {
 	};
 };
 
-test.skip('cold-run search on basement stays under 25 milliseconds', async ({ page }) => {
+test('cold-run search on basement stays under 25 milliseconds', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);

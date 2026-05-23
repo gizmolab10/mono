@@ -140,9 +140,10 @@ def analyze_doc_errors(errors):
 
 # Sites to restart: name, port, dir, command, env
 RESTART_SITES = [
+    ('di', 5173, 'di', 'yarn dev', None),
+    ('lv', 5183, 'di', 'yarn dev', None),
     ('ws', 5172, 'ws', 'yarn dev', None),
     ('ws-docs', 5174, 'ws', 'yarn docs:dev', {'VITE_PORT': '5174'}),
-    ('di', 5173, 'di', 'yarn dev', None),
     ('di-docs', 5175, 'di', 'yarn docs:dev', {'VITE_PORT': '5175'}),
     ('mono-docs', 5176, '.', 'yarn docs:dev', {'VITE_PORT': '5176'}),
 ]

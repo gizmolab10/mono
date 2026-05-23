@@ -19,7 +19,7 @@ async function set_view_mode(page: Page, mode: '2d' | '3d'): Promise<void> {
 	await page.waitForTimeout(300);
 }
 
-test.skip('switching to 2D mode still considers all three axes per part', async ({ page }) => {
+test('switching to 2D mode still considers all three axes per part', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);

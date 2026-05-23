@@ -19,7 +19,7 @@ type Test_Window = {
 	di_test: { dim_hover_state: () => Hover_State };
 };
 
-test.skip('hovering a dimension number bolds it and thickens the lines', async ({ page }) => {
+test('hovering a dimension number bolds it and thickens the lines', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);

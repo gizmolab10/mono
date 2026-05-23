@@ -20,7 +20,7 @@ async function popup_after_hover(page: import('@playwright/test').Page, label: D
 	);
 }
 
-test.skip('hovering a dimension shows the ancestry path with the axis info appended', async ({ page }) => {
+test('hovering a dimension shows the ancestry path with the axis info appended', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);

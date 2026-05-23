@@ -14,7 +14,7 @@ type Test_Window = {
 	di_test: { dim_conflict_graph_check: () => Mislabel[] };
 };
 
-test.skip('conflict graph flags exactly the pairs under 33 pixels', async ({ page }) => {
+test('conflict graph flags exactly the pairs under 33 pixels', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);

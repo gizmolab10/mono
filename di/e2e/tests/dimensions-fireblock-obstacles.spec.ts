@@ -33,7 +33,7 @@ function is_fireblock(kind: Tagged_Label['kind']): boolean {
 	return kind === 'fireblock-first' || kind === 'fireblock-last-shortened';
 }
 
-test.skip('non-fireblock labels keep 33 pixels clearance from fireblock labels', async ({ page }) => {
+test('non-fireblock labels keep 33 pixels clearance from fireblock labels', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);

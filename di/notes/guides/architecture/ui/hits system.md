@@ -127,7 +127,7 @@ Citation: thresholds at `src/lib/ts/common/Constants.ts` lines 79-82.
 - **Double click** — when a target carries both a single-click handler and a double-click handler, the manager waits four hundred milliseconds before delivering the single click. A second press inside the window cancels the wait and fires the double click instead.
 - **Alteration** — used by sticky-mode buttons that need to toggle a state every five hundred milliseconds while a condition holds. Less common; lives in the same timer.
 
-Citation: timer wiring at `src/lib/ts/events/Mouse_Timer.ts` (the four timer types, the autorepeat start with its long-click warm-up, the timeout-start helper); manager calls at `src/lib/ts/events/Hits.ts` lines 256-322 (the start, cancel, and stop helpers for each).
+Citation: timer wiring at `src/lib/ts/events/Mouse_Timer.ts` (the four timer types, the autorepeat start with its initial long-press hold delay, the timeout-start helper); manager calls at `src/lib/ts/events/Hits.ts` lines 256-322 (the start, cancel, and stop helpers for each).
 
 ### S_Mouse
 

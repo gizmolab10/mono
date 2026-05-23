@@ -38,6 +38,41 @@ Keep the architecture (greedy seed plus repair plus stochastic finish). Swap the
 
 Do NOT adopt a general-purpose constraint engine — the cold-init cost alone disqualifies them at the current 25-millisecond budget.
 
+## Determinism helpers
+
+Rule 21 of the spec says the search is deterministic — same scene plus same view plus same remembered values produces the same chosen values per label. Two small helpers make that practical.
+
+### The seeded pseudo-random number generator (a linear congruential generator)
+
+The stochastic finish step (rule 23) makes random switches and accepts the ones that reduce conflicts. If the random source is non-deterministic, the same scene produces a different layout each run, and the slot-determinism test fails. So a seedable generator is used in place of the browser's built-in random function.
+
+The recipe is simple: keep a running 32-bit number. To produce the next value, multiply the running number by a fixed constant, add another fixed constant, and let the result wrap around inside 32 bits. The new running number is the next "random" output. The output looks random because the multiply-and-add scrambles bits aggressively, but it's fully determined by the starting number (the seed).
+
+Two adjustments:
+
+- A starting number of zero locks the generator at zero (the multiply produces zero, the add produces the same constant, which after wraparound can repeat). The constructor bumps a zero seed to 1.
+- When the seed comes in as a string, it's first turned into a 32-bit number by the string hash below.
+
+Implementation: [Seeded_Random.ts](../../../src/lib/ts/common/Seeded_Random.ts).
+
+### The string hash (FNV-1a)
+
+When the seed needs to be derived from scene contents (a part-name list, a camera-orientation list, anything text-shaped), the helper turns the string into a 32-bit number first.
+
+The recipe:
+
+1. Start with a fixed initial number (called the "offset basis" — a value chosen for good mixing properties).
+2. For each character in the string, mix in the character's code by XOR (a bit-by-bit "exactly one of these is on?" operation). The XOR makes the running number jump around the 32-bit space rather than just creeping in one direction.
+3. After each XOR, multiply by a fixed constant (called the "prime"). The multiply spreads each bit's influence across the whole running number, so similar strings end up far apart.
+4. Let the result wrap around inside 32 bits at each step.
+5. The final running number is the hash.
+
+Why this one and not something simpler. The naive alternative — sum the character codes — puts similar strings near each other in output space. Two scenes that differ by one character would seed the random generator from nearly the same starting number, and the stochastic finish would explore nearly the same sequence of switches. The XOR-then-multiply spreads similar inputs to far-apart outputs, so a one-character change in the seed string produces a very different random sequence. Cost is twenty lines of code and two arithmetic operations per character.
+
+The pair of constants (offset basis and prime) and the order of operations (XOR-then-multiply, rather than multiply-then-XOR) are an established recipe used widely in hash-table libraries. The name attached to this exact recipe is FNV-1a, after its three creators Glenn Fowler, Landon Curt Noll, and Kiem-Phong Vo. The "1a" denotes the variant where the XOR comes before the multiply — the variant with slightly better avalanche behaviour than the original FNV-1 (which multiplies first). The recipe and the property it guarantees are what matter here, not the name; the attribution is included so a future reader can look up the published constants and confirm them. See [Fowler-Noll-Vo hash function on Wikipedia](https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function) for the published recipe and recommended constants.
+
+Implementation: [Seeded_Random.hash_string](../../../src/lib/ts/common/Seeded_Random.ts) at the bottom of the file.
+
 ## Sources
 
 - [OR-Tools WebAssembly request, issue 4443](https://github.com/google/or-tools/issues/4443)

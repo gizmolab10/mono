@@ -468,10 +468,9 @@
       <div class="project-group">
         <button class="project" data-project="mo">mo<span class="badge">M</span></button>
         <button class="project" data-project="me">me<span class="badge">J</span></button>
-        <button class="project" data-project="ma">ma<span class="badge">T</span></button>
-        <button class="project" data-project="di">di<span class="badge">I</span></button>
-        <button class="project" data-project="s3">s3<span class="badge">S</span></button>
-        <button class="project active" data-project="ws">ws<span class="badge">W</span></button>
+        <button class="project" data-project="ws">ws<span class="badge">W</span></button>
+        <button class="project" data-project="lv">lv<span class="badge">V</span></button>
+        <button class="project active" data-project="di">di<span class="badge">I</span></button>
       </div>
     </div>
 
@@ -570,19 +569,21 @@
         app: {
           ws: buildProjectConfig('ws', 'app'),
           di: buildProjectConfig('di', 'app'),
-          mo: buildProjectConfig('mo', 'app'),
-          me: buildProjectConfig('me', 'app'),
-          ma: buildProjectConfig('ma', 'app'),
           ga: buildProjectConfig('ga', 'app'),
+          lv: buildProjectConfig('lv', 'app'),
+          ma: buildProjectConfig('ma', 'app'),
+          me: buildProjectConfig('me', 'app'),
+          mo: buildProjectConfig('mo', 'app'),
           s3: buildProjectConfig('s3', 'app')
         },
         docs: {
           ws: buildProjectConfig('ws', 'docs'),
           di: buildProjectConfig('di', 'docs'),
-          mo: buildProjectConfig('mo', 'docs'),
-          me: buildProjectConfig('me', 'docs'),
-          ma: buildProjectConfig('ma', 'docs'),
           ga: buildProjectConfig('ga', 'docs'),
+          lv: buildProjectConfig('lv', 'docs'),
+          ma: buildProjectConfig('ma', 'docs'),
+          me: buildProjectConfig('me', 'docs'),
+          mo: buildProjectConfig('mo', 'docs'),
           s3: buildProjectConfig('s3', 'docs')
         }
       };
@@ -685,7 +686,7 @@
       });
 
       if (config[mode][project] === null) {
-        for (const p of ['me', 'ma', 'ga', 'mo', 'di', 'ws']) {
+        for (const p of ['me', 'ma', 'ga', 'mo', 'di', 'ws', 'lv']) {
           if (config[mode][p] !== null) {
             project = p;
             break;
@@ -1481,6 +1482,7 @@
         case 'm': { const m = getDisplayMode(); if (config[m]?.['mo'] !== null) { previewProject = 'mo'; highlightProjectButton('mo'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'j': { const m = getDisplayMode(); if (config[m]?.['me'] !== null) { previewProject = 'me'; highlightProjectButton('me'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 't': { const m = getDisplayMode(); if (config[m]?.['ma'] !== null) { previewProject = 'ma'; highlightProjectButton('ma'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
+        case 'v': { const m = getDisplayMode(); if (config[m]?.['lv'] !== null) { previewProject = 'lv'; highlightProjectButton('lv'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'escape': doStart(); break;
         case 'enter': if (hoveredAction) { window.open(hoveredAction, '_blank'); } break;
         case 'delete':

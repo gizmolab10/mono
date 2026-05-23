@@ -56,6 +56,11 @@
     "docs": 5182,
     "repo": "https://github.com/gizmolab10/mono/ga"
   },
+  "lv": {
+    "port": 5183,
+    "public": "https://littlecloudvineyard.com",
+    "repo": "https://github.com/gizmolab10/mono/lv"
+  },
   "me": {
     "public": "https://jonathansand.me",
     "repo": "https://github.com/gizmolab10/jonathansand-me"

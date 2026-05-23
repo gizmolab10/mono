@@ -11,7 +11,7 @@ type Test_Window = {
 	di_test: { dim_min_silhouette_clearance: () => number };
 };
 
-test.skip('every drawn label sits at least 15 pixels outside the combined outline', async ({ page }) => {
+test('every drawn label sits at least 15 pixels outside the combined outline', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);

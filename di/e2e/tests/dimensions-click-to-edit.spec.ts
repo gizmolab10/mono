@@ -22,7 +22,7 @@ type Test_Window = {
 	};
 };
 
-test.skip('clicking a dimension opens an editor and pauses layout; Escape reverts', async ({ page }) => {
+test('clicking a dimension opens an editor and pauses layout; Escape reverts', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);

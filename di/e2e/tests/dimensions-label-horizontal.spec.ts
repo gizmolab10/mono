@@ -12,7 +12,7 @@ type Test_Window = {
 	di_test: { dim_label_angles: () => Label_Angle[] };
 };
 
-test.skip('every drawn dimension label is drawn horizontally', async ({ page }) => {
+test('every drawn dimension label is drawn horizontally', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);

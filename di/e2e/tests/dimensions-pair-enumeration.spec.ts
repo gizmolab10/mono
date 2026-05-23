@@ -15,7 +15,7 @@ type Test_Window = {
 	di_test: { dim_viable_pair_counts: () => Pair_Report[] };
 };
 
-test.skip('every drawn label was chosen from a non-empty viable-pair set', async ({ page }) => {
+test('every drawn label was chosen from a non-empty viable-pair set', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);

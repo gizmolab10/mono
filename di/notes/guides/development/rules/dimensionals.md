@@ -2,44 +2,95 @@
 
 Everything the dimensionals layout has to do, in one place, in the simplest language. Each rule stands on its own. Rules are grouped by what they govern.
 
-**Status:** rules 1, 3, 4, 8, 9, 10, 11, 12, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26 reflect the decided redesign — a four-degrees-of-freedom (4DOF) search replacing the force-driven simulation. Rules 19, 20, 21, 22, 23, 24, 25, and 26 are entirely new for the redesign; rule 18 was rewritten to fold the redesigned fireblock-as-obstacle rule into the existing repeater integration; rule 1 was rewritten to introduce the four degrees of freedom. The current code still implements the older force-driven version; see [dimensionals.md](../../architecture/graph/dimensionals.md) for what's actually running today.
+**Status:** rules 1, 3, 4, 8, 9, 10, 11, 12, 16, 18, 19, 20, 21, 22, 23, 24, 25 reflect the decided redesign — a four-degrees-of-freedom (4DOF) search replacing the force-driven simulation. Rules 19, 20, 21, 22, 23, 24, 25, and 26 are entirely new for the redesign; rule 18 was rewritten to fold the redesigned fireblock-as-obstacle rule into the existing repeater integration; rule 1 was rewritten to introduce the four degrees of freedom. The current code still implements the older force-driven version; see [dimensionals.md](../../architecture/graph/dimensionals.md) for what's actually running today.
+
+## Glossary
+
+Every term the rest of this document leans on, in one place.
+
+- **4DOF / four degrees of freedom** — the four placement choices the search makes per label: edge, direction, witness length, slidable position. Detail in rule 1.
+- **Alphabetical** — the final tie-break when both persistence and depth tie: pick the part whose dotted ancestry path comes first alphabetically. Detail in rule 4.
+- **Clone** — every child of a repeater except the template, the first fireblock in a firewalled run, and (when shortened) the last fireblock. Clones get no dimensions of their own. Detail in rule 18.
+- **Combined silhouette outline** — the convex hull around every painted leaf part's projected vertices, recomputed each paint. Every label must sit at least 15 pixels outside it. Detail in rule 9.
+- **Dim line / dimension line** — the line that runs parallel-in-3D to the measured axis, offset outward from the part by the witness length, with the number sitting on it. Detail in rule 6.
+- **Direction** — one of the four signed perpendicular axes to which the dim line is parallel. A discrete degree of freedom. Detail in rule 1.
+- **Drift safety** — after two consecutive search-skipped paints that any check passed only by the 2-pixel tolerance, force a full search on the next paint regardless. Detail in rule 19.
+- **Edge** — which silhouette edge of the part the label anchors on. A discrete degree of freedom. Detail in rule 1.
+- **Fireblock** — a child of a firewalled repeater whose length on the repeat axis differs from the template's. The first fireblock and (if shortened) the last fireblock get the repeat-axis dimension only. Detail in rule 18.
+- **In conflict (two labels)** — no pair of 4DOF combinations across both labels keeps both rectangles at least 33 pixels apart while each stays at least 15 pixels outside the silhouette outline. A property of the pair, not of either label alone. Detail in rule 10.
+- **Inside segment** — the part of the dim line between the two witness ends. Drawn only when the label fits between the witnesses. Detail in rule 7.
+- **Outside extensions** — the parts of the dim line that stick out past the witness ends. Drawn whenever the label overhangs or is wider than the dim line. Detail in rule 7.
+- **Overhang** — the label sits outside the witness lines. the overhang distance is measured in screen pixels along the dim line direction. Detail in rule 10.
+- **Parent over child** — the second tie-break in the duplicate-text drop: prefer the part with the shallower ancestry path. Detail in rule 4.
+- **Persistence** — the first tie-break in the duplicate-text drop and the carry-over of each label's 4DOF choice between paints. Detail in rules 4 and 19.
+- **Placeable label** — a label with at least one viable enum pair (edge, direction). A label with no viable pair is dropped.
+- **Repeater** — a part type whose children repeat along one axis. Only the template draws all three axes; fireblocks may draw the repeat axis; other children are clones and draw nothing. Detail in rule 18.
+- **Seeded semantics** — inside a full search seeded by the previous paint, labels still passing strict viability stay locked at their carry-over values; only labels that lost viability are searched for fresh. Detail in rule 19.
+- **Slidable position** — where along the dim line the label sits, in screen pixels measured from the first witness anchor along the dim line direction. A continuous degree of freedom with overhang allowed at either end. Detail in rule 1.
+- **Template** — the first child of a repeater; the only one that draws all three axes. Detail in rule 18.
+- **Viable enum pair (edge, direction)** — an (edge, direction) pair for which at least one viable (witness length, slidable position) value pair exists. Equivalent to "none of the four filters has emptied its range".
+- **Viable value pair (witness length, slidable position)** — a continuous-DOF pair whose two values both sit inside the ranges set by the four filters in rule 11.
+- **Witness length** — how far the dim line sits from the part's edge, in screen pixels. A continuous degree of freedom bounded by the rule-11 filters. Detail in rule 1.
+- **Witness line** — the straight projected ray from one edge endpoint outward to and 10px (screen pixels) past the dim line. Always a projection of an axis-aligned 3D ray; the two witness lines of a dimension are world-parallel, not necessarily screen-parallel. Detail in rule 5.
 
 ## 1. Four degrees of freedom per label
 
-Every label has four degrees of freedom in placement:
+Every label has four degrees of freedom (4DOF) in placement:
 
 1. **Edge** (discrete). Which silhouette edge of the part to anchor on.
-2. **Direction** (discrete, 4 choices). Which signed perpendicular axis the dim line is pushed out along.
-3. **Witness length** (continuous). How far the dim line sits from the part's edge, in screen pixels — anywhere from the minimum needed to place the label rectangle 15 pixels outside the combined outline, up to the 80-pixel push cap.
-4. **Slidable position** (continuous). Where along the dim line the label sits — anywhere from 50 pixels before the first witness line to 50 pixels past the second, minus half the label width at each end so the rectangle stays within that span.
+2. **Direction** (discrete, 4 choices). Which signed perpendicular axis to which the dim line is parallel.
+3. **Witness length** (continuous). How far the dim line sits from the part's edge, in screen pixels — anywhere from the minimum needed to place the label rectangle 15 pixels outside the combined outline, up to the 80-pixel witness cap.
+4. **Slidable position** (continuous, *but with gaps around witness anchors*). Where along the dim line the label sits — anywhere from X pixels before the first witness line to X pixels past the second. X is 50 minus half the label width, except positions that place the label on or within Y pixels of a witness anchor (Y is tunable, starting with 20).
 
-No springs, no repulsion, no per-frame drift. What the search does with these four degrees of freedom is rule 10.
+Rule 10 describes what the search does with these four degrees of freedom.
 
 ## 2. Distance tests use rectangles, not points
 
 Every distance test — silhouette clearance, label-versus-label clearance — uses the full text rectangle, not just its centre. A centre can sit 33 pixels from another centre while the rectangles themselves overlap; a centre can sit outside the silhouette while a corner of the rectangle hangs inside. Both look broken unless the rectangle is the unit of measurement.
 
-## 3. Clearance is between label rectangles only
+Labels must also avoid overlapping ANY lines or anchors.
 
-The 33-pixel clearance rule applies between LABELS — the text rectangles. Dimension lines and witness lines may cross each other and may cross other labels' lines; the eye accepts crossing lines but not crowded numbers. This is a deliberate simplification of the old rule that tried to repel lines from lines and made parallel axes fight chaotically.
+## 3. Parallel lines need room
+
+This promotes easy reading.
 
 ## 4. Drop duplicates
 
-Same screen position AND same text → drop the later occurrence (parent and child sharing an edge, for instance). Same text anywhere in the drawing → drop the later occurrence.
+Same text AND parallel edges-being-measured → drop the later occurrence (eg, multiple SOs with a common dimension).
 
-**Tie-break under the new global search.** "Later" is determined by which label's chosen 4DOF values have been remembered between paints the longest: the older choice wins; the newer one is dropped. When neither label has a remembered choice yet (first paint of a freshly loaded scene), tie-break alphabetically by part ancestry path so the result is deterministic from run to run.
+**Tie-break under the new global search.** "Later" is determined in this order:
 
-## 5. Witness lines stay straight, in canonical planes
+1. **Persistence** — the label whose 4DOF values have been remembered between paints the longest wins; the newer one is dropped.
+2. **Parent over child**  — when neither was remembered (or both were), the part with the shallower position in the scene hierarchy wins. A measurement on a parent describes more of the drawing than the same measurement on one of its children; the child loses. The depth comparison uses the dotted ancestry path length — fewer dots wins.
+3. **Alphabetical** — when persistence and depth both tie, the part with the alphabetically earlier ancestry path wins, so the result is deterministic from run to run.
 
-Witness lines, dimension lines, and label positions are computed using real 3D projection — the same projection used for every other edge in the drawing. Witness lines may run through other parts on their way out, but they must remain perfectly straight projections of axis-aligned 3D rays. They live in one of the three canonical planes (xy, yz, xz). No 2D screen-space shifts that would put a witness endpoint off the projected ray.
+## 5. Witness and dimension lines lie in the plane of a face
 
-## 6. Dimension line is parallel-in-3D to the measured axis
+Witness lines must remain perfectly straight and may run through other parts on their way out.
 
-The dimension line is a real 3D line, parallel in 3D to the axis it measures. Under perspective it is NOT generally parallel to its measured edge on screen — that's the correct projected appearance. Pushing it outward to clear the silhouette is done in 3D (increase the outward distance, then re-project), not as a 2D screen-space translation, so perspective is preserved.
+**Each witness line is an extension of an edge.** Extend an edge to infinity, this is where a witness line goes.
+
+## 6. Each witness line must NOT touch the SO it measures
+
+Each witness line begins AFTER a gap of 5px. It must NOT touch the SO it measures.
 
 ## 7. Dimension text sits on its line, drawn horizontal
 
-The label sits ON the dimension line, not floating off to one side. The text is drawn aligned with the screen horizontal — never rotated to match the dimension line's screen angle.
+The label sits ON the dimension line (center point of the label rect is on that line). The text is drawn aligned with the screen horizontal — never rotated to match the dimension line's screen angle.
+
+**The painter places the label center on the dim line that actually gets drawn — not on the one the search used internally for scoring.** The two are slightly different in perspective..
+
+**The dim line stretches from a witness anchor to the label, even when the label overhangs.** Thus two parts, one for each witness line. Two possibilities:
+
+- **Inside segment** (between the two witness ends): drawn only when the label fits between the witnesses (label width + enough room X to draw the dim lines, X is 20px in screen pixels).
+- **Overhang**: BOTH sides get an overhang line, and the inside is left empty. The line on the side the label actually overhangs stretches from the witness line to the label; the other side gets a fixed short length so the visual reads as symmetric. The full visual pattern is: "dim line — arrow — witness line — gap — witness line — arrow — dim line — label" (or vice versa).
+
+**Dim line arrowheads sit on the same side of each witness anchor as the dim line at that anchor.**
+
+- When the label sits between the witnesses, the dim line is the inside segment. Both arrows are inside the witness anchors, pointing at each anchor.
+- When the label overhangs past a witness, no inside segment is drawn. Each arrow sits OUTSIDE its witness anchor, on the extension side, again pointing at each anchor.
+
+The arrows mean "this is the witness line for this label."
 
 ## 8. Two translations within the search, then frozen
 
@@ -54,26 +105,32 @@ Once the search converges, both translations are frozen for the paint. No frame-
 
 Before placing any dimension, compute ONE convex outline that wraps all painted leaf parts' projected vertices combined into a single point set. Container parts (parts with at least one painted child) do NOT contribute their corners — those corners can sit far outside any actually-painted geometry and would bloat the outline. Every drawn label rectangle must sit at least 15 pixels outside that single outline.
 
-Trade-off: a strongly concave drawing (a U-shape) treats the notch of the U as inside the silhouette. Dimensions in the notch are pushed past the U's overall outline rather than into the notch itself.
+Trade-off: a strongly concave drawing (a U-shape) treats the notch of the U as inside the silhouette. Dimensions in the notch are positioned outside the U's overall outline rather than into the notch itself.
 
-## 10. Pick 4DOF values by best joint clearance, not least local push
+## 10. Pick 4DOF values by best combined clearance
 
-The search picks an (edge, direction, witness length, slidable position) tuple per label such that every drawn label has 33 pixels clearance from every other drawn label and 15 pixels clearance from the combined silhouette outline. Path-of-least-resistance (the old "smallest clearance wins" rule) is gone — it produced collisions because two neighbouring labels would both pick the same easy escape direction.
+The search picks an (edge, direction, witness length, slidable position) tuple per label such that every drawn label has 33 pixels clearance from every other drawn label and 15 pixels clearance from the combined silhouette outline. Path-of-least-resistance (the old "smallest clearance wins" rule) is gone — it produced collisions because two neighboring labels would both pick the same easy escape direction.
 
-**Definition.** Two labels are "in conflict" when no pair of 4DOF combinations — one from label A's allowed ranges, one from label B's — keeps both rectangles at least 33 pixels apart while each stays at least 15 pixels outside the combined silhouette outline. Conflict is a property of LABELS, not of individual (edge, direction) pairs: it's a "no combination resolves this" check.
+Search algorithm (sketched in rule 23): enumerate discrete (edge, direction) pairs per label, run continuous avoidance over the two continuous DOF, fall back to dropping labels (rule 12) when no satisfying assignment exists.
 
-Search shape (sketched in rule 23): enumerate discrete (edge, direction) pairs per label, run continuous avoidance over the two continuous DOF, fall back to dropping labels (rule 12) when no satisfying assignment exists.
+**Prefer between-the-witnesses over overhang.** add a weighting to positions between the witness lines. Weighting is computed by subtracting the distance between the witness lines and the length of the label, in screen pixels.
+
+**Centering preference, shaped like a parabola.** When the label fits between the witnesses, a small additional penalty nudges the label toward the midpoint between the witness lines. The penalty is a parabola sized to the dim line, value is zero at the midpoint and a tunable number X at the witness anchors. Start with X = 20.
+
+**The label must NEVER cover its own witness lines.** A candidate whose label rectangle is wider than the space between the witness lines, must overhang. The overhang distance must leave room for a dimension line stretching between the label and the witness anchor on the overhang side.
+
+**Two dim lines that are real-world-parallel must sit at least 20px apart in screen pixels.** When two dim lines sit too close their pair of arrows and labels become visually indistinct. The 20-pixel value is tunable; start with 20.
 
 ## 11. Filters that bound the DOF ranges
 
-Each (edge, direction) pair has a bounded range for the two continuous DOF; the filters set those bounds:
+Each (edge, direction) pair has a bounded range for the two continuous DOF; the filters set those bounds. A label with no surviving (edge, direction) pair is dropped (rule 12):
 
 - Witness length minimum: the value that places the label rectangle exactly 15 pixels outside the combined outline along the chosen direction.
-- Witness length maximum: the smaller of (a) 80 pixels — the push cap that stops labels flying off the canvas — and (b) the witness length at which the PROJECTED witness reaches 120 pixels on screen — the limit that stops deep-perspective parts from drawing absurdly long witness lines.
-- Slidable position range: 50 pixels before the first witness to 50 pixels past the second, minus half the label width at each end.
-- Camera-axis filter (applies to direction, not to a continuous range): any direction within 30 degrees of the camera's forward (cosine of the angle 0.866 or higher) is rejected outright. A witness pointing into or out of the screen projects to a sliver.
-
-If the witness-length range collapses (max < min) OR the slidable range is empty (line too short for the text), OR the camera-axis filter rules out the direction, the (edge, direction) pair is rejected. A label with no surviving (edge, direction) pair is dropped (rule 12).
+- Witness length maximum: the smaller of (a) 80 pixels — the witness cap that stops labels flying off the canvas — and (b) the witness length at which the PROJECTED witness reaches 120 pixels on screen — the limit that stops deep-perspective parts from drawing absurdly long witness lines.
+- Slidable position range: Y pixels before the first witness to Y pixels past the second. Y is 50 minus half the label width.
+- Camera-axis filter (applies to direction, not to a continuous range): any direction within 30 degrees of the camera's forward (cosine of the angle 0.866 or higher) is rejected outright. Reject any witness pointing into or out of the screen -- it projects to an unreadable sliver.
+- Minimum projected edge length any (edge, direction) pair whose two witness anchors are closer than 3 pixels on screen is rejected outright. A measurement on a part that small reads as noise — the label would be unreadable and the dim line would be a few dots.
+- Edge visibility: any (edge, direction) pair whose measured edge has either of its two endpoints hidden behind another part is rejected outright. Both endpoints of the edge must be visible on screen. The witness lines and dim line are still free to cross over geometry on their way out (rule 3); only the two edge endpoints are checked for visibility.
 
 ## 12. Drop unfit dimensionals
 
@@ -83,7 +140,7 @@ A dimension that cannot be placed without violating the clearance rules is dropp
 - The label was forced into a true conflict by the search (rule 24, third pass) and the drop-most-conflicted policy selected it.
 - Every surviving (edge, direction) pair would put the label rectangle past the canvas edge at every reachable position.
 
-The dropped count is reported to the status strip the same way it is today.
+The dropped count is reported to the status strip.
 
 ## 13. OPTION key x-rays the drawing
 
@@ -143,7 +200,7 @@ Each label's previously chosen (edge, direction, witness length, slidable positi
 
 If every label passes all four checks, skip the search and reuse last paint's values. If any label fails any check, a full search runs — seeded with last paint's values so the result usually changes only the labels that lost viability.
 
-**Seeded semantics.** Inside a seeded full search, every label that passes the strict viability checks (the same four above, but without the 2-pixel tolerance) is LOCKED — its previous (edge, direction, witness length, slidable position) values are held fixed for the duration of this search, and the label acts as a fixed obstacle that every other label must clear. Only the labels that failed the strict checks are FREE; the greedy seed plus repair plus stochastic finish runs on the free labels alone. Locked labels contribute to the conflict graph and clearance tests but never get moved. Stable parts of the layout stay stable; affected labels are relocated.
+**Seeded semantics.** Inside a seeded full search, every label that passes the strict viability checks (the same four above, but without the 2-pixel tolerance) is LOCKED — its previous (edge, direction, witness length, slidable position) values are held fixed for the duration of this search, and the label acts as a fixed obstacle that every other label must clear. Only the labels that failed the strict checks are FREE; the greedy seed plus retry plus stochastic finish runs on the free labels alone. Locked labels contribute to the conflict graph and clearance tests but never get moved. Stable parts of the layout stay stable; affected labels are relocated.
 
 **Drift safety.** After two consecutive search-skipped paints in which any check came in under the strict threshold but within the 2-pixel tolerance, force a full search on the next paint anyway. Stops slow drift from compounding into a visibly wrong layout.
 
@@ -162,6 +219,8 @@ These map directly to the two performance tests in the e2e suite. Above 25 milli
 
 The search is deterministic. Given the same scene, same view, and the same remembered 4DOF values from the previous paint, every paint produces the same chosen values per label. Every tie-break — whether ordering labels, ordering (edge, direction) pairs, or seeding the stochastic step — uses a stated rule, with "alphabetical by part ancestry path" as the catch-all when no other rule applies. No randomness from a non-deterministic source.
 
+The stochastic finish (rule 23) reaches for the project's seeded pseudo-random number generator, never the browser's built-in random function. The generator's seed is derived from the scene contents via a string hash so the same scene at the same view produces the same random sequence. See the [determinism helpers section of the research file](../../project/research/dimensionals-research.md#determinism-helpers) for plain-English descriptions of the generator and the hash. Implementation: [Seeded_Random.ts](../../../src/lib/ts/common/Seeded_Random.ts).
+
 ## 22. 2D mode is not a special case
 
 Every part gets all three axes considered for placement, regardless of view mode. The 2D-from-the-front view does NOT restrict a part to only the two axes of its front-most face — that was a quirk of the old code and is dropped in the new design. The search, the DOF filters, the conflict definition, and the persistence map all behave identically in 2D and 3D modes. If a particular axis projects to nothing useful in the current view, the filters (camera-axis, witness-length) collapse its DOF ranges the same way they would in 3D.
@@ -174,13 +233,15 @@ The avoidance problem is rule 10. The shape is two discrete DOF per label (small
 
 **Continuous optimization inside a pair (the custom-path detail).** Divide each continuous range into 4 equal segments, giving 5 samples in each DOF — 25 (witness length, slidable position) candidate points per (edge, direction) pair. Evaluate the minimum-clearance objective at each candidate; pick the point with the largest minimum clearance. Grid sampling is deterministic by construction (same scene, same point) and bounded in cost (25 evaluations × number of viable pairs). Trades sub-grid precision for reproducibility; 25 samples gives 1 part in 4 of the witness-length range and the slidable range, which is finer than the 2-pixel persistence tolerance.
 
-**Repair (the custom-path detail).** After the greedy seed finishes, walk every label that still has a true conflict (rule 24's third pass). For each such label, try its other viable (edge, direction) pairs in best-clearance order. If switching to one of them clears the conflict without creating a new one, accept the switch. If no single-label switch resolves the conflict, look one step further: for each alternative on the conflicted label, find whether any neighbour that also has an unused alternative could swap with it to clear both labels at once. Cap the look-ahead at two labels moving — deeper chains cost more than they're worth. Repair runs once per full search.
+**Retry (the custom-path detail).** After the greedy seed finishes, walk every label that still has a true conflict (rule 24's third pass). For each such label, try its other viable (edge, direction) pairs in best-clearance order. If switching to one of them clears the conflict without creating a new one, accept the switch. If no single-label switch resolves the conflict, look one step further: for each alternative on the conflicted label, find whether any neighbour that also has an unused alternative could swap with it to clear both labels at once. Cap the look-ahead at two labels moving — deeper chains cost more than they're worth. Retry runs once per full search.
 
-**Stochastic finish (the custom-path detail).** If repair leaves any conflicts behind, run up to 200 random tries. Each try picks a random conflicted label and switches it to a random other viable (edge, direction) pair, with its continuous values re-found by the grid sample. Accept the change if the total number of remaining conflicts drops; reject if it grows. Stop when zero conflicts remain OR the iteration budget runs out OR the 25-millisecond full-search budget is about to expire. The randomness uses a deterministic seed derived from the scene contents (rule 21) so the result is reproducible across runs.
+**Stochastic finish (the custom-path detail).** If retry leaves any conflicts behind, run up to 200 random tries. Each try picks a random conflicted label and switches it to a random other viable (edge, direction) pair, with its continuous values re-found by the grid sample. Accept the change if the total number of remaining conflicts drops; reject if it grows. Stop when zero conflicts remain OR the iteration budget runs out OR the 25-millisecond full-search budget is about to expire. The randomness uses a deterministic seed derived from the scene contents (rule 21) so the result is reproducible across runs.
 
-**Decision: custom.** Research on 2026-05-20 checked browser-compatible candidate libraries against this problem; none beat the custom shape within the 25-millisecond cold-run budget. The general-purpose constraint engines (Google OR-Tools, Z3 WebAssembly, MiniZinc) either lack a browser build or carry too much cold-init weight. The lightweight label-placement libraries (d3-labeler, d3fc, cola.js, d3-force) each handle only one or two of the four DOFs. Full findings, candidate-by-candidate, in [dimensionals-research.md](../../project/research/dimensionals-research.md).
+**Polish pass (the custom-path detail).** After the drop policy removes labels, run a single pass that re-positions every surviving label given the reduced obstacle set. For each survivor, the same scoring used in the greedy step picks the best position now that the dropped labels are gone. This stops surviving labels from sitting off-center to avoid neighbours that no longer exist. The polish pass runs once; if it surfaces new conflicts, those are accepted (no second drop round). Polished positions are remembered for the next paint, so the layout stays stable across frames.
 
-**Upgrade path, if ever needed.** Keep the architecture (greedy seed plus repair plus stochastic finish). Swap the continuous inner loop for a small specialised quadratic-programming solver — for example, the gradient-projection routine from cola.js. Do NOT adopt a general-purpose constraint engine; the cold-init cost alone disqualifies them at the current budget.
+**Decision: custom.** Research on 2026-05-20 checked browser-compatible candidate libraries against this problem; none beat our custom algorithm (all exceed the 25-millisecond full-search budget). The general-purpose constraint engines (Google OR-Tools, Z3 WebAssembly, MiniZinc) either lack a browser build or take up too much initialization time. The lightweight label-placement libraries (d3-labeler, d3fc, cola.js, d3-force) each handle only one or two of the four DOFs. Full findings, candidate-by-candidate, in [dimensionals-research.md](../../project/research/dimensionals-research.md).
+
+**Upgrade path, if ever needed.** Keep the architecture (greedy seed plus retry plus stochastic finish). Swap the continuous inner loop for a small specialized quadratic-programming solver — for example, the gradient-projection routine from `cola.js`. Do NOT adopt a general-purpose constraint engine; the initialization-time cost alone disqualifies them at the current budget.
 
 ## 24. Pair-check tiers — skip the obvious, work on the rest
 
@@ -204,17 +265,7 @@ Even cheaper upstream: if two labels' parts are more than 250 pixels apart on sc
 
 Comfortable inside the 25-millisecond full-search budget. Both the survivor count and the per-test cost are guesses until measured.
 
-## 25. Definition — viable
-
-Three layered uses, each used elsewhere in the spec:
-
-- A **viable (witness length, slidable position)** value pair is one where both continuous values lie inside the ranges set by the four filters in rule 11 (witness-length min, witness-length max, slidable-position range, camera-axis check on its parent direction).
-- A **viable (edge, direction) pair** is one where at least one viable (witness length, slidable position) value pair exists inside its ranges — equivalently, none of the four filters has emptied its range.
-- A **placeable label** is one with at least one viable (edge, direction) pair. A label with no viable pair is dropped by rule 12.
-
-Whenever a rule says "viable" without qualifier, the level is inferred from context.
-
-## 26. Test-only hooks the new design must expose
+## 25. Test-only hooks the new design must expose
 
 The e2e suite verifies postconditions and budgets through functions exposed on the existing `di_test` object when the URL carries `?test=1`. The new design must keep the existing hooks and add the ones in italics.
 
@@ -234,7 +285,8 @@ The e2e suite verifies postconditions and budgets through functions exposed on t
 | *`dim_edit_state()`*               | Whether a dimension editor is currently open, plus the part name + axis being edited and whether the underlying value is editable (**rule 17**).                 |     |
 | *`dim_layout_frozen()`*            | Whether the dimension layout is currently paused — true while a dimension editor is open (**rule 17**).                                                          |     |
 | *`dim_last_cold_search_ms()`*      | Wall-clock duration of the most recent full-search run, in milliseconds.                                                                                         |     |
-| *`dim_last_warm_path_ms()`*        | Wall-clock duration of the most recent search-skipped paint, in milliseconds.                                                                                    |     |
+| *`dim_last_search_skipped_ms()`*   | Wall-clock duration of the most recent search-skipped paint, in milliseconds.                                                                                    |     |
+| *`dim_perf_breakdown()`*           | Per-phase timing breakdown for dev-mode tuning: phase name, most recent duration, running average, count. Empty until Phase 2 starts timing individual phases.   |     |
 | *`set_view_mode(mode)`*            | Input action — switches between `'2d'` and `'3d'` view modes (**rule 22**).                                                                                      |     |
 
 The e2e tests under `e2e/tests/dimensions-*.spec.ts` reference these names already; the spec listing them here is a contract that the new implementation must satisfy.

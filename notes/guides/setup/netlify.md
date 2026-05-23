@@ -96,7 +96,7 @@ Not a real error — Netlify skips builds when nothing changed. The hub filters 
 3. Set Build command (`yarn build` for app, `yarn docs:build` for docs)
 4. Set Publish directory (`dist` for app, `.vitepress/dist` for docs)
 5. Rename site to follow naming convention
-6. Add to `sites/api.py` NETLIFY_SITES dict
+6. Add to `sites/dispatcher.py` NETLIFY_SITES dict
 7. Add to `sites/index.html` config
 8. Add to `sites/ports.json` if it has a local dev server
 

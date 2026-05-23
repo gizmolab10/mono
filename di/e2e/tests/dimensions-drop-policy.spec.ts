@@ -15,7 +15,7 @@ type Test_Window = {
 	di_test: { dim_drop_report: () => { dropped: Drop_Entry[]; kept_max_conflict: number } };
 };
 
-test.skip('over-constrained basement drops the most-conflicted labels first', async ({ page }) => {
+test('over-constrained basement drops the most-conflicted labels first', async ({ page }) => {
 	await page.setViewportSize({ width: 700, height: 500 });
 	await open_app(page);
 	await load_basement(page);

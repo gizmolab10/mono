@@ -4,10 +4,9 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (1) for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] move swap x y to attributes
-- [ ] make a new rules folder inside development
-- [ ] resume proposal 11 in handoff
-    - [ ] dimension labels are still within the silhouette
+- [ ] proceed with dimensionals.work, record progress in handoff
+- [ ] move swap x y to p attributes
+- [ ] when hovering on a part or a dimensional, OPTION-C copies the label to the paste buffer
 - [ ] saved VIEWS orientation/zoom for a SO
     - [ ] list that changes when you load a different SO
     - [ ] remember and forget buttons

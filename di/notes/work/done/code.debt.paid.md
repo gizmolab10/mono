@@ -344,3 +344,4 @@
 - [x] create tests for the new dimensionals rules
 - [x] display the current quot in the status strip, when not showing something else
 - [x] describe the complete dimensionals placement algorithm -> guides/architecture/graph/dimensionals.md
+- [x] make a new rules folder inside development

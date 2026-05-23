@@ -58,6 +58,7 @@ PORT_MONO_DOCS=$(get_port "['mono']['docs']")
 PORT_DI_DOCS=$(get_port "['di']['docs']")
 PORT_GA=$(get_port "['ga']['port']")
 PORT_S3=$(get_port "['s3']['port']")
+PORT_LV=$(get_port "['lv']['port']")
 PORT_MA=$(get_port "['ma']['port']")
 PORT_MA_DOCS=$(get_port "['ma']['docs']")
 
@@ -71,6 +72,7 @@ SITES=(
   "mono-docs|$PORT_MONO_DOCS|.|yarn docs:dev"
   "ga|$PORT_GA|ga|yarn dev"
   "s3|$PORT_S3|s3|yarn dev"
+  "ma|$PORT_LV|lv|yarn dev"
   "ma|$PORT_MA|ma|yarn dev"
   "ma-docs|$PORT_MA_DOCS|ma|VITE_PORT=$PORT_MA_DOCS yarn docs:dev"
 )

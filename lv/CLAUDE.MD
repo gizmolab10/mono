@@ -1,4 +1,4 @@
-# me — Jonathan's Space
+# lv — Jonathan's Space
 
 > Ideas, research, creative exploration. Not code — concepts.
 

@@ -22,7 +22,7 @@ type Test_Window = {
 	di_test: { dim_labels_by_kind: () => Tagged_Label[] };
 };
 
-test.skip('ordinary repeater clones (non-fireblock) draw no dimensions', async ({ page }) => {
+test('ordinary repeater clones (non-fireblock) draw no dimensions', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);
