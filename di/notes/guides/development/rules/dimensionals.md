@@ -131,6 +131,9 @@ Each (edge, direction) pair has a bounded range for the two continuous DOF; the 
 - Camera-axis filter (applies to direction, not to a continuous range): any direction within 30 degrees of the camera's forward (cosine of the angle 0.866 or higher) is rejected outright. Reject any witness pointing into or out of the screen -- it projects to an unreadable sliver.
 - Minimum projected edge length any (edge, direction) pair whose two witness anchors are closer than 3 pixels on screen is rejected outright. A measurement on a part that small reads as noise — the label would be unreadable and the dim line would be a few dots.
 - Edge visibility: any (edge, direction) pair whose measured edge has either of its two endpoints hidden behind another part is rejected outright. Both endpoints of the edge must be visible on screen. The witness lines and dim line are still free to cross over geometry on their way out (rule 3); only the two edge endpoints are checked for visibility.
+- Potential-blocker set: not every smart object in the scene counts as "another part" for the edge-visibility check above. Two clarifications, both following the user's intent:
+    - A parent whose own visibility is off but which is set to show its children is being treated as see-through by the user. Its own geometry must NOT count as a potential blocker of anything.
+    - A child whose parent is set to hide its children is not drawn on screen, but its geometry is still physically present in the scene. It MUST count as a potential blocker — the parent's drawn shell would otherwise leak dimensions through it.
 
 ## 12. Drop unfit dimensionals
 

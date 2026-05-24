@@ -44,7 +44,8 @@
       "Bash(xxd:*)",
       "Bash(git grep -i \"fit\" --include=\"*.ts\" --include=\"*.svelte\")",
       "Bash(git checkout:*)",
-      "Bash(yarn test *)"
+      "Bash(yarn test *)",
+      "Bash(yarn check *)"
     ]
   },
   "hooks": {

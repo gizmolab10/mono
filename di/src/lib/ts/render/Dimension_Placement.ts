@@ -160,12 +160,58 @@ function point_in_polygon(px: number, py: number, poly: ReadonlyArray<{ x: numbe
 	return inside;
 }
 
+/** Returns the face's surface depth at an arbitrary screen point (x, y),
+ *  assuming the face is planar in 3D (so it's also planar in screen
+ *  space after the perspective divide). Returns null when the face has
+ *  fewer than three usable vertices, all its vertices are collinear in
+ *  screen space, or the face is viewed edge-on (depth varies infinitely
+ *  fast across screen). Used by rule 11's visibility filter so a face's
+ *  contribution at the endpoint reflects the actual surface there, not
+ *  the average of all four corners. */
+function face_depth_at_screen_point(
+	face: ReadonlyArray<number>,
+	projected: ReadonlyArray<{ x: number; y: number; z: number; w: number }>,
+	x: number, y: number,
+): number | null {
+	if (face.length < 3) return null;
+	const p0 = projected[face[0]];
+	if (!p0 || p0.w < 0) return null;
+	let p1: { x: number; y: number; z: number; w: number } | null = null;
+	let p2: { x: number; y: number; z: number; w: number } | null = null;
+	for (let i = 1; i < face.length; i++) {
+		const cand = projected[face[i]];
+		if (!cand || cand.w < 0) return null;
+		if (p1 === null) { p1 = cand; continue; }
+		const ax = p1.x - p0.x, ay = p1.y - p0.y;
+		const bx = cand.x - p0.x, by = cand.y - p0.y;
+		if (Math.abs(ax * by - ay * bx) > 1e-9) { p2 = cand; break; }
+	}
+	if (p1 === null || p2 === null) return null;
+	const ax = p1.x - p0.x, ay = p1.y - p0.y, az = p1.z - p0.z;
+	const bx = p2.x - p0.x, by = p2.y - p0.y, bz = p2.z - p0.z;
+	const nz = ax * by - ay * bx;
+	if (Math.abs(nz) < 1e-9) return null;
+	const nx = ay * bz - az * by;
+	const ny = az * bx - ax * bz;
+	return p0.z - (nx * (x - p0.x) + ny * (y - p0.y)) / nz;
+}
+
+/** Numerical-safety margin for the depth comparison in rule 11. A face
+ *  whose surface at the endpoint differs from the endpoint's depth by
+ *  less than this counts as "touching", not "blocking" — so shared
+ *  corners between sibling parts do not falsely trigger occlusion. NDC
+ *  depth lives roughly in [-1, 1]; 1e-4 corresponds to a few
+ *  millimetres in a room-scale scene. */
+const FACE_DEPTH_TOLERANCE = 1e-4;
+
 /** Per rule 11's edge-visibility filter: returns true when EITHER of
  *  the projected edge's two endpoints is hidden behind any of the
  *  `occluders`'s faces. Only the two endpoints are checked; the middle
  *  of the edge is allowed to pass behind other geometry. An occluder
- *  face counts as hiding an endpoint when (a) the face's average depth
- *  is in front of the endpoint (smaller z value) AND (b) the endpoint's
+ *  face counts as hiding an endpoint when (a) the face's surface depth
+ *  AT THE ENDPOINT's screen position is clearly in front of the
+ *  endpoint (depth comparison with a small numerical-safety margin so
+ *  shared corners do not falsely trigger) AND (b) the endpoint's
  *  screen position lies inside the face's projected polygon. */
 export function is_edge_occluded(
 	p1: { x: number; y: number; z: number; w: number },
@@ -177,16 +223,9 @@ export function is_edge_occluded(
 	for (const ep of endpoints) {
 		for (const occ of occluders) {
 			for (const face of occ.faces) {
-				let face_z = 0;
-				let valid = true;
-				for (const vi of face) {
-					const pv = occ.projected[vi];
-					if (!pv || pv.w < 0) { valid = false; break; }
-					face_z += pv.z;
-				}
-				if (!valid) continue;
-				face_z /= face.length;
-				if (face_z >= ep.z) continue;
+				const face_z_at_ep = face_depth_at_screen_point(face, occ.projected, ep.x, ep.y);
+				if (face_z_at_ep === null) continue;
+				if (face_z_at_ep >= ep.z - FACE_DEPTH_TOLERANCE) continue;
 				const poly = face.map(vi => occ.projected[vi]);
 				if (point_in_polygon(ep.x, ep.y, poly)) return true;
 			}
@@ -212,16 +251,9 @@ export function find_edge_endpoint_blockers(
 		for (const occ of occluders) {
 			let blocked = false;
 			for (const face of occ.faces) {
-				let face_z = 0;
-				let valid = true;
-				for (const vi of face) {
-					const pv = occ.projected[vi];
-					if (!pv || pv.w < 0) { valid = false; break; }
-					face_z += pv.z;
-				}
-				if (!valid) continue;
-				face_z /= face.length;
-				if (face_z >= ep.p.z) continue;
+				const face_z_at_ep = face_depth_at_screen_point(face, occ.projected, ep.p.x, ep.p.y);
+				if (face_z_at_ep === null) continue;
+				if (face_z_at_ep >= ep.p.z - FACE_DEPTH_TOLERANCE) continue;
 				const poly = face.map(vi => occ.projected[vi]);
 				if (point_in_polygon(ep.p.x, ep.p.y, poly)) { blocked = true; break; }
 			}
@@ -401,7 +433,7 @@ export function compute_viable_pairs(): Viable_Pair[] {
 	type Occluder = { so_id: string; so_name: string; projected: Projected[]; faces: number[][] };
 	const all_occluders: Occluder[] = [];
 	for (const o of all_objects) {
-		if (!is_visible_for_dim(o)) continue;
+		if (!is_occluder_for_dim(o)) continue;
 		const proj = hits_3d.get_projected(o.id);
 		if (!proj) continue;
 		const faces = o.so.scene?.faces;
@@ -521,6 +553,24 @@ function is_visible_for_dim(obj: O_Scene): boolean {
 		cursor = cursor.parent;
 	}
 	return true;
+}
+
+/** Visibility test for rule 11's potential-blocker set. Broader than
+ *  `is_visible_for_dim`: a part is a blocker whenever its own visibility
+ *  flag is on. Two consequences, both per the spec:
+ *    - A parent whose own visibility is off but which is set to show its
+ *      children does NOT block (its `obj.so.visible` is false).
+ *    - A child whose ancestor is set to hide its children is not drawn
+ *      on screen but IS a blocker — the ancestor's shell would otherwise
+ *      leak dimensions through where the child sits.
+ *  X-ray mode mirrors the dimension-visibility check for consistency. */
+function is_occluder_for_dim(obj: O_Scene): boolean {
+	const option_held = get(e.w_option_down);
+	const has_hidden = scene.get_all().some(o => !o.so.visible);
+	const xray_mode = option_held && has_hidden;
+	if (xray_mode) return !obj.so.visible;
+
+	return obj.so.visible;
 }
 
 /** Repeater filtering: the template gets all axes, firewalled fireblocks

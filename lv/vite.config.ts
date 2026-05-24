@@ -18,7 +18,7 @@ export default defineConfig({
     port: ports.lv.port,
     strictPort: true,
     hmr: {
-      protocol: 'lv',
+      protocol: 'ws',
       host: 'localhost',
       port: ports.lv.port,
     },

@@ -1506,5 +1506,46 @@ describe('Dimension_Placement — is_edge_occluded (rule 11 edge visibility)', (
 		};
 		expect(is_edge_occluded(p(0, 100, 0.5), p(100, 100, 0.5), [occluder])).toBe(true);
 	});
+
+	it('does NOT block when the endpoint sits on a shared corner of a tilted face (sibling parts touch)', () => {
+		// Tilted face whose top-left and bottom-left corners share screen
+		// position (50, 100) and (50, 200) with the part being measured
+		// (depth 0.5 there), and whose right side sits in front of camera
+		// at depth 0.1. The face's AVERAGE depth (0.3) is in front of the
+		// endpoint (0.5), and the endpoint sits on the face's boundary —
+		// so the old "average depth + inside polygon" check would flag it
+		// as blocked. The new check evaluates the face's surface depth AT
+		// the endpoint's screen position, which equals the endpoint's own
+		// depth, so the shared corner is NOT treated as blocking.
+		const occluder = {
+			projected: [
+				p(50,  100, 0.5),
+				p(150, 100, 0.1),
+				p(150, 200, 0.1),
+				p(50,  200, 0.5),
+			],
+			faces: [[0, 1, 2, 3]],
+		};
+		expect(is_edge_occluded(p(50, 100, 0.5), p(100, 100, 0.5), [occluder])).toBe(false);
+	});
+
+	it('does NOT block when a tilted face is only AVERAGE-in-front (its surface at the endpoint is behind)', () => {
+		// Tilted rectangle: left side at depth 0.1, right side at depth
+		// 0.9. Its average depth is 0.5. The endpoint sits at screen (90,
+		// 100), where the face's surface is at depth ~0.82 — behind the
+		// endpoint at depth 0.6. Old check would block (average 0.5 is in
+		// front of 0.6, and the endpoint is inside the screen rectangle).
+		// New check correctly sees the surface at the endpoint is behind.
+		const occluder = {
+			projected: [
+				p(0,   50,  0.1),
+				p(100, 50,  0.9),
+				p(100, 150, 0.9),
+				p(0,   150, 0.1),
+			],
+			faces: [[0, 1, 2, 3]],
+		};
+		expect(is_edge_occluded(p(90, 100, 0.6), p(95, 100, 0.6), [occluder])).toBe(false);
+	});
 });
 
