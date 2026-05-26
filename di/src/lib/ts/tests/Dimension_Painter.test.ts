@@ -187,10 +187,11 @@ describe('Dimension_Painter — label snapped to the painted dim line (rule 7)',
 
 		// w1_end = (0, 170). w2_end = (100 + 9, 170) = (109, 170).
 		// dim line goes from (0, 170) to (109, 170) — horizontal here.
-		// slidable = 50, so center = (50, 170).
+		// slidable = 50 is in EDGE-length units (edge is 100 px). The
+		// painter rescales it onto the longer dim line: 50 * 109 / 100 = 54.5.
 		const text_call = host.ctx.calls.find(c => c.op === 'fillText');
 		expect(text_call).toBeTruthy();
-		expect(text_call!.x).toBeCloseTo(50, 5);
+		expect(text_call!.x).toBeCloseTo(54.5, 5);
 		expect(text_call!.y).toBeCloseTo(170, 5);
 	});
 });

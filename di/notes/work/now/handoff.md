@@ -299,3 +299,29 @@ Negative-zero gotcha along the way: the direction canonicalization multiplies a 
 **Painter source default is now "new".** On launch the canvas paints from the new pipeline's placements (in blue). The old painter still runs its computation up to the drawing step but does not draw. The toggle remains available so the user can flip back to "old" or "both" at any time.
 
 `svelte-check` clean. 789 unit tests pass (was 782; +7).
+
+## Coordinate-frame mixing: how hard to verify the rest is clean
+
+After the painter slide-rescale bug surfaced (slide value built in edge-length units, applied to the dim line whose screen length differs from the edge), an obvious worry: how many more places mix coordinate frames silently? Three levels of verification, each more work than the last:
+
+1. **Quick grep pass (10-30 min).** Scan the placement file, the painter, and the helpers for places that multiply or compare variables in different reference frames. Things to look for: edge-length number times dim-line-length number, world 3D vector alongside a screen 2D vector with no conversion, averaged witness direction used in one line and per-endpoint witness directions in the next. Produces a list of suspicious spots to judge. Catches the obvious cases. Misses subtle ones.
+2. **Manual code walk (a couple of hours).** Trace every coordinate-using path end to end, document what frame each variable is in (edge, dim line, world, NDC), and check every multiplication/comparison for frame consistency. Catches more, still human-prone.
+3. **Branded types (a few hours of refactor).** Add TypeScript branded types like `EdgeSpacePx` and `DimLineSpacePx` so the compiler refuses to mix them silently. Forces every conversion to be explicit and named. Permanent guard, touches many files.
+
+Decision: not yet started. The next time we hit a frame-mixing bug, do level 1 first; if more than one spot turns up, escalate.
+
+## Painter slide rescale: the coordinate-frame bug that surfaced this round
+
+A label on the "16' 8 1/2"" art beam was getting placed exactly on top of a witness anchor instead of between the two witnesses. The diagnostic traces (one from the search, one from the painter) pinned down the bug.
+
+The search builds its slide value in EDGE-length units: it picks a number measured along the projected part edge, applies forbidden zones around each anchor sized against the edge length, then commits the chosen value. The painter took that same number and applied it as a distance along the DIM LINE, which is a different length on screen whenever the per-endpoint witness vectors diverge under perspective (world-parallel rays do not project to screen-parallel rays unless the edge is parallel to the image plane). For the broken case the edge was 219.6 px on screen but the dim line was only 152.5 px, so a slide of 161.2 — legal between-the-witnesses on the edge — placed the label past the W2 end of the dim line, near the W2 anchor screen position.
+
+Fix in the painter: rescale the slide from edge units to dim-line units before using it (slide_dl = slide_edge × dim_line_len / edge_len). The painter already had two other coordinate conversions and an explicit comment saying "the slide is reinterpreted as a distance along the painted dim line" — that reinterpretation was the bug; rescaling makes the reinterpretation correct. The same rescaled slide also feeds the between-vs-overhang check so the inside-segment-vs-outside-extension geometry matches where the label actually paints.
+
+One existing painter test was asserting the old broken behaviour (slide applied as-is). Updated its expected value: with a 100-px edge and a 109-px dim line, a slide of 50 now paints at x=54.5 (50 × 109 / 100), not x=50. 824 unit tests pass, svelte-check clean.
+
+## Centering pull strengthened
+
+The search's centering preference for between-the-witnesses positions was a parabolic penalty capped at 20 score-units. Compared to the clearance score (capped at 2000) and the between-bonus (often 100+), 20 was barely a tiebreaker. Labels habitually ended up at the far end of the between-region, near a witness anchor, instead of near the dim-line midpoint.
+
+Bumped the cap to 250 and moved it into `Constants.ts` as `CENTERING_MAX_PX` so it can be tuned without code edits. Labels now snap noticeably toward the middle of each dim line; verified visually in the test scene.

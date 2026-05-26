@@ -2,11 +2,15 @@
 
 Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into tangles.
 
-offer a proposal (1) for the first unchecked item, and add it to a new section at the end of handoff
+offer a proposal (#) for the first unchecked item, and add it to a new section at the end of handoff
 
 - [ ] proceed with dimensionals.work, record progress in handoff
+- [ ] on hover over a part or a dimensional
+    - [ ] OPTION-C copies the label to the paste buffer
+    - [ ] change the dimensional color to red
+    - [ ] over a part -> also highlight all its dimensionals
 - [ ] move swap x y to p attributes
-- [ ] when hovering on a part or a dimensional, OPTION-C copies the label to the paste buffer
+- [ ] rename x ray wireframe
 - [ ] saved VIEWS orientation/zoom for a SO
     - [ ] list that changes when you load a different SO
     - [ ] remember and forget buttons

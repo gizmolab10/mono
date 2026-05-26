@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/dimensionals.work.md",
+                "file": "di/notes/guides/development/rules/dimensionals.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of dimensionals.work"
+              "title": "Outline of dimensionals"
             }
           }
         ],
@@ -279,8 +279,13 @@
       }
     ]
   },
-  "active": "2978f037f8d4a560",
+  "active": "77bbab171e1a7087",
   "lastOpenFiles": [
+    "di/notes/work/now/code.debt.md",
+    "di/notes/guides/development/rules/dimensionals.md",
+    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.38303.f142881a33a5",
+    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.38303.b6aaa98fb6fd",
+    "di/notes/work/now/dimensionals.work.md",
     "node_modules/jest-config/node_modules/ts-node/node_modules",
     "node_modules/@vitest/mocker/node_modules/vite/node_modules",
     "node_modules/playwright-core/lib/tools/cli-client/skill/references/spec-driven-testing.md",
@@ -290,9 +295,6 @@
     "node_modules/@grpc/grpc-js/build/src/generated/google/protobuf/OneofOptions.js.map",
     "node_modules/@grpc/grpc-js/build/src/generated/google/protobuf/SymbolVisibility.js.map",
     "node_modules/@grpc/grpc-js/build/src/generated/google/protobuf/SymbolVisibility.js",
-    "node_modules/@grpc/grpc-js/build/src/generated/google/protobuf/SymbolVisibility.d.ts",
-    "node_modules/@grpc/grpc-js/build/src/generated/google/protobuf/SourceCodeInfo.js.map",
-    "node_modules/@grpc/grpc-js/build/src/generated/google/protobuf/ServiceOptions.js.map",
     "node_modules/playwright-core/lib/vite/dashboard/assets/firefox-1bWoP6pv.svg",
     "node_modules/playwright-core/lib/vite/dashboard/assets/firefox-nightly-Cp5nfeDT.svg",
     "node_modules/playwright-core/lib/vite/dashboard/assets/firefox-beta-k3eOH_eK.svg",
@@ -320,8 +322,6 @@
     "node_modules/uuid/CHANGELOG.md",
     "node_modules/uuid/CONTRIBUTING.md",
     "s3/node_modules/@types/trusted-types/README.md",
-    "node_modules/rolldown/README.md",
-    "node_modules/nodemon/node_modules/minimatch/LICENSE.md",
     "node_modules/dexie/testmuai-logo.svg",
     "node_modules/dexie/testmuai-logo-white.svg",
     "lv/dist/assets/icon-DQ-Yu_V3.png",

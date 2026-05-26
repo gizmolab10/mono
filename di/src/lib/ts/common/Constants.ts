@@ -152,6 +152,36 @@ export default class Constants {
 		},
 	};
 
+	dimensions = {
+		FORBIDDEN_CAM_DOT        : 0.866,
+		WITNESS_LEN_MAX_PX       : 300,
+		WITNESS_CAP_PX           : 200,
+		SLIDABLE_OVERHANG_PX     : 20,
+		SILHOUETTE_MARGIN_PX     : 10,
+		/** Buffer pixels the label rectangle must leave between itself and
+		 *  either witness anchor along the dim line (rule 1 item 4 + rule 10).
+		 *  Forbidden zone around witness 1: slidable in [-Y - label_w/2, Y + label_w/2].
+		 *  Forbidden zone around witness 2: same shape, centered on dim_line_length. */
+		WITNESS_ANCHOR_BUFFER_PX : 20,
+		/** Cap on the clearance term used in scoring. Past this, additional
+		 *  clearance doesn't matter for ranking — the between bonus and the
+		 *  centering parabola get to differentiate. */
+		CLEARANCE_SCORE_CAP_PX   : 2000,
+		/** Maximum centering penalty (score units), reached at the witness
+		 *  anchors. Zero at the midpoint between the witnesses. A parabola
+		 *  in between. Higher values pull the label more strongly toward
+		 *  the midpoint. Rule 10. */
+		CENTERING_MAX_PX         : 250,
+		NEIGHBOUR_GRID_CELL_PX   : 50,
+		WITNESS_CLEARANCE_PX     : 15,
+		PAIR_CLEARANCE_PX        : 15,
+		/** Continuous-DOF grid resolution per (edge, direction) pair. 5 × 5 = 25
+		 *  candidates per pair, per rule 23's continuous-optimization step. */
+		GRID_RESOLUTION          : 5,
+		PERSISTENCE_TOLERANCE_PX : 2,	// Persistence with 2-pixel tolerance (rule 19)
+		WITNESS_GAP_FROM_PART_PX : 5,
+	};
+
 }
 
 export const k = new Constants();

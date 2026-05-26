@@ -95,11 +95,37 @@ export function paint_one(
 	// search computed `p.center_x`/`p.center_y` using an averaged witness
 	// direction; that line and the painted dim line diverge in
 	// perspective and the label would otherwise float between them. Rule
-	// 7: the text sits ON the dim line. The slidable choice the search
-	// picked is reinterpreted as a distance along the painted dim line
-	// from the first witness end.
-	const center_x = w1_end_x + dl_ux * slidable_position;
-	const center_y = w1_end_y + dl_uy * slidable_position;
+	// 7: the text sits ON the dim line. The slidable value the search
+	// picked is in EDGE-length units (the search built its forbidden
+	// zones using the projected edge length). The painted dim line is a
+	// different length than the projected edge when the per-endpoint
+	// witnesses converge or diverge, so the slide must be RESCALED from
+	// edge units into dim-line units before being applied here.
+	const edge_len_px = Math.hypot(pair.edge_p2_x - pair.edge_p1_x, pair.edge_p2_y - pair.edge_p1_y);
+	const slide_dl = (edge_len_px > 0.001) ? slidable_position * dl_len / edge_len_px : slidable_position;
+	const center_x = w1_end_x + dl_ux * slide_dl;
+	const center_y = w1_end_y + dl_uy * slide_dl;
+
+	// One-shot trace mirroring the one in Dimension_Placement.ts so we can
+	// compare what the search picked against where the painter places the
+	// label centre. Edit the literal below to follow a different label.
+	const DBG_TRACE_TEXT = "16' 8 1/2\"";
+	if (pair.text === DBG_TRACE_TEXT) {
+		const last = (paint_one as unknown as { _last_trace?: string })._last_trace ?? '';
+		const line =
+			`DIM TRACE PAINTER [${DBG_TRACE_TEXT}]: ` +
+			`witness 1 end (${w1_end_x.toFixed(1)}, ${w1_end_y.toFixed(1)}), ` +
+			`witness 2 end (${w2_end_x.toFixed(1)}, ${w2_end_y.toFixed(1)}), ` +
+			`edge length ${edge_len_px.toFixed(1)} px, ` +
+			`dim line length ${dl_len.toFixed(1)} px, ` +
+			`slide from search ${slidable_position.toFixed(1)} (edge units), ` +
+			`slide on dim line ${slide_dl.toFixed(1)} px, ` +
+			`painted centre (${center_x.toFixed(1)}, ${center_y.toFixed(1)})`;
+		if (line !== last) {
+			(paint_one as unknown as { _last_trace?: string })._last_trace = line;
+			console.log(line);
+		}
+	}
 
 	const is_hovered = hovered !== null && hovered.so.id === p.so_id && hovered.axis === p.axis;
 
@@ -121,8 +147,10 @@ export function paint_one(
 	//                            extension goes).
 	const FIXED_SHORT_EXTENSION_PX = 30;
 	const half_w = label_w_px / 2;
-	const label_left_s  = slidable_position - half_w;
-	const label_right_s = slidable_position + half_w;
+	// Use the rescaled slide so the between-vs-overhang check matches
+	// where the label actually paints on the dim line.
+	const label_left_s  = slide_dl - half_w;
+	const label_right_s = slide_dl + half_w;
 	const label_sits_between = label_left_s >= 0 && label_right_s <= dl_len;
 	ctx.fillStyle = stroke;
 	ctx.beginPath();

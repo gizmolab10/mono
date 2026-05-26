@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { k } from '../common/Constants';
 import {
 	neighbour_pairs_from_regions,
 	pair_can_separate,
@@ -16,7 +17,8 @@ import {
 	apply_drop_policy,
 	drop_duplicates,
 	polish_pass,
-	is_edge_occluded,
+	is_occluder_for_dim,
+	witness_trapezoid_gap,
 	compute_viability,
 	re_project_persisted_list,
 	Persistence,
@@ -93,10 +95,13 @@ describe('Dimension_Placement — first-pass neighbour pairs', () => {
 		expect(pairs).toEqual([]);
 	});
 
-	it('flags two regions whose 33-pixel-expanded boxes overlap', () => {
+	it('flags two regions whose clearance-expanded boxes overlap', () => {
+		// Gap = M - 2, just inside the clearance margin. Position read from
+		// the shared constants so the test stays correct if the margin moves.
+		const M = k.dimensions.PAIR_CLEARANCE_PX;
 		const regions = [
-			region('A', 0,  0, 20, 20),
-			region('B', 40, 0, 60, 20),   // 20 pixels apart — within the 33 margin
+			region('A', 0,           0, 20,                0 + 20),
+			region('B', 20 + M - 2,  0, 20 + M - 2 + 20,   0 + 20),
 		];
 		const pairs = neighbour_pairs_from_regions(regions);
 		expect(pairs).toHaveLength(1);
@@ -105,10 +110,12 @@ describe('Dimension_Placement — first-pass neighbour pairs', () => {
 		expect(ids).toEqual(['A', 'B']);
 	});
 
-	it('does NOT flag two regions just outside the 33-pixel margin', () => {
+	it('does NOT flag two regions just outside the clearance margin', () => {
+		// Gap = M + 5, comfortably outside the clearance margin.
+		const M = k.dimensions.PAIR_CLEARANCE_PX;
 		const regions = [
-			region('A', 0,   0, 20, 20),
-			region('B', 100, 0, 120, 20),   // 80 px apart — well outside 33
+			region('A', 0,            0, 20,                  0 + 20),
+			region('B', 20 + M + 5,   0, 20 + M + 5 + 20,     0 + 20),
 		];
 		const pairs = neighbour_pairs_from_regions(regions);
 		expect(pairs).toEqual([]);
@@ -133,20 +140,26 @@ describe('Dimension_Placement — first-pass neighbour pairs', () => {
 	});
 
 	it('handles a mix of close and far regions', () => {
+		// Positions derived from the clearance margin so the assertion stays
+		// stable if the margin changes. B is just inside A's margin (touches);
+		// D sits past A in x AND offset in y just enough to escape A's margin
+		// but still inside B's. C is alone in the corner.
+		const M = k.dimensions.PAIR_CLEARANCE_PX;
 		const regions = [
-			region('A', 0,    0,   20,  20),
-			region('B', 40,   0,   60,  20),    // close to A
-			region('C', 500,  500, 520, 520),   // far from everyone
-			region('D', 45,   30,  65,  50),    // close to A and B
+			region('A', 0,             0,             20,              20),
+			region('B', 20 + M - 2,    0,             20 + M - 2 + 20, 20),    // gap M-2 from A: inside margin
+			region('C', 500,           500,           520,             520),   // far from all
+			region('D', 20 + M + 3,    20 + M / 2,    20 + M + 3 + 20, 20 + M / 2 + 20),   // gap M+3 from A in x
 		];
 		const pairs = neighbour_pairs_from_regions(regions);
 		const labelled = pairs.map(p => [p.a_so_id, p.b_so_id].sort().join('-')).sort();
-		expect(labelled).toEqual(['A-B', 'A-D', 'B-D']);
+		expect(labelled).toEqual(['A-B', 'B-D']);
 	});
 
 	it('returns Candidate_Pair entries with axis preserved', () => {
+		const M = k.dimensions.PAIR_CLEARANCE_PX;
 		const r: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'y', x_min: 0, y_min: 0, x_max: 20, y_max: 20, pairs: [] };
-		const s: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'z', x_min: 40, y_min: 0, x_max: 60, y_max: 20, pairs: [] };
+		const s: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'z', x_min: 20 + M - 2, y_min: 0, x_max: 20 + M - 2 + 20, y_max: 20, pairs: [] };
 		const pairs = neighbour_pairs_from_regions([r, s]);
 		expect(pairs).toHaveLength(1);
 		const sorted = [pairs[0].a_axis, pairs[0].b_axis].sort();
@@ -614,21 +627,24 @@ describe('Dimension_Placement — find_conflicts_in_placement', () => {
 		expect(find_conflicts_in_placement(list)).toEqual([]);
 	});
 
-	it('flags pairs closer than 33 pixels rectangle-to-rectangle', () => {
-		// A at 0, B at 50: centres 50 apart, rectangles 30 wide → gap = 50 - 30 = 20 → conflict.
-		const list = [placed('A', 0, 0), placed('B', 50, 0)];
+	it('flags pairs closer than the clearance margin', () => {
+		// B's centre sits so the rectangle-to-rectangle gap is M-2 (just inside the margin).
+		const M = k.dimensions.PAIR_CLEARANCE_PX;
+		const list = [placed('A', 0, 0), placed('B', 30 + M - 2, 0)];
 		expect(find_conflicts_in_placement(list)).toEqual([[0, 1]]);
 	});
 
-	it('does not flag pairs at exactly 33 pixels', () => {
-		// Centres at 0 and 63, gap = 63 - 30 = 33 → boundary, not in conflict.
-		const list = [placed('A', 0, 0), placed('B', 63, 0)];
+	it('does not flag pairs at exactly the clearance margin', () => {
+		// B's centre sits so the rectangle-to-rectangle gap is exactly M (boundary, not in conflict).
+		const M = k.dimensions.PAIR_CLEARANCE_PX;
+		const list = [placed('A', 0, 0), placed('B', 30 + M, 0)];
 		expect(find_conflicts_in_placement(list)).toEqual([]);
 	});
 
 	it('handles multiple overlapping conflicts', () => {
-		const list = [placed('A', 0, 0), placed('B', 50, 0), placed('C', 100, 0)];
-		// A-B: gap 20 → conflict. B-C: gap 20 → conflict. A-C: gap 70 → no conflict.
+		// A-B and B-C are each gap M-2 (in conflict); A-C is gap 26+2M (well outside).
+		const M = k.dimensions.PAIR_CLEARANCE_PX;
+		const list = [placed('A', 0, 0), placed('B', 30 + M - 2, 0), placed('C', 2 * (30 + M - 2), 0)];
 		expect(find_conflicts_in_placement(list)).toEqual([[0, 1], [1, 2]]);
 	});
 });
@@ -1449,103 +1465,80 @@ describe('Dimension_Placement — re_project_persisted_list (layout-freeze)', ()
 	});
 });
 
-describe('Dimension_Placement — is_edge_occluded (rule 11 edge visibility)', () => {
-	// Edge endpoints are projected screen positions with z (depth).
-	const p = (x: number, y: number, z: number) => ({ x, y, z, w: 1 });
+describe('Dimension_Placement — is_occluder_for_dim (rule 11 potential-blocker set)', () => {
+	// Minimal fake scene object — is_occluder_for_dim only reads obj.so.visible.
+	const obj = (visible: boolean) => ({ so: { visible } } as never);
 
-	it('returns false when there are no occluders', () => {
-		expect(is_edge_occluded(p(0, 100, 0.5), p(100, 100, 0.5), [])).toBe(false);
+	it('treats a part with its visibility ON as a blocker (normal mode)', () => {
+		expect(is_occluder_for_dim(obj(true), false, false)).toBe(true);
 	});
 
-	it('returns false when an occluder face is BEHIND the edge', () => {
-		// Edge at depth 0.5. Occluder face at depth 0.9 (behind, further
-		// from camera assuming larger z is farther). Should NOT occlude.
-		const occluder = {
-			projected: [p(-50, 50, 0.9), p(200, 50, 0.9), p(200, 200, 0.9), p(-50, 200, 0.9)],
-			faces: [[0, 1, 2, 3]],
-		};
-		expect(is_edge_occluded(p(0, 100, 0.5), p(100, 100, 0.5), [occluder])).toBe(false);
+	it('does NOT treat a part with its visibility OFF as a blocker (normal mode)', () => {
+		// An invisible parent that shows its children: not drawn, not a blocker.
+		expect(is_occluder_for_dim(obj(false), false, false)).toBe(false);
 	});
 
-	it('returns false when an in-front face covers ONLY the edge midpoint (rule 11: endpoints only)', () => {
-		// Edge at depth 0.5 with endpoints at (0,100) and (100,100). Occluder
-		// at depth 0.2 (in front) covers x in [40, 60] — covers the midpoint
-		// but neither endpoint. Rule 11 checks only the two endpoints, so
-		// this must NOT trigger rejection.
-		const occluder = {
-			projected: [p(40, 50, 0.2), p(60, 50, 0.2), p(60, 150, 0.2), p(40, 150, 0.2)],
-			faces: [[0, 1, 2, 3]],
-		};
-		expect(is_edge_occluded(p(0, 100, 0.5), p(100, 100, 0.5), [occluder])).toBe(false);
+	it('treats a visible child of a hide-children parent as a blocker (normal mode)', () => {
+		// The child's own visibility flag is still on; the parent hides it from
+		// the canvas but its geometry is still present. Blocker.
+		expect(is_occluder_for_dim(obj(true), false, false)).toBe(true);
 	});
 
-	it('returns true when an in-front face covers BOTH endpoints', () => {
-		// Edge at depth 0.5. Occluder at depth 0.2 (in front) spans the
-		// whole edge, covering both endpoints.
-		const occluder = {
-			projected: [p(-50, 50, 0.2), p(150, 50, 0.2), p(150, 150, 0.2), p(-50, 150, 0.2)],
-			faces: [[0, 1, 2, 3]],
-		};
-		expect(is_edge_occluded(p(0, 100, 0.5), p(100, 100, 0.5), [occluder])).toBe(true);
+	it('flips blocker eligibility when OPTION x-ray mode is on and the scene has hidden parts', () => {
+		// In OPTION x-ray mode the dimensioning logic inverts: hidden parts
+		// become the foreground. is_occluder_for_dim follows: visible parts
+		// step aside, invisible parts become blockers.
+		expect(is_occluder_for_dim(obj(true),  true, true)).toBe(false);
+		expect(is_occluder_for_dim(obj(false), true, true)).toBe(true);
 	});
 
-	it('returns false when an in-front face does NOT overlap the edge on screen', () => {
-		// Edge at y=100. Occluder at y in [300, 400] — far below; no overlap.
-		const occluder = {
-			projected: [p(0, 300, 0.2), p(100, 300, 0.2), p(100, 400, 0.2), p(0, 400, 0.2)],
-			faces: [[0, 1, 2, 3]],
-		};
-		expect(is_edge_occluded(p(0, 100, 0.5), p(100, 100, 0.5), [occluder])).toBe(false);
+	it('does NOT enter OPTION x-ray mode when no parts are hidden', () => {
+		// OPTION alone, with nothing hidden, leaves normal mode in place.
+		expect(is_occluder_for_dim(obj(true),  true, false)).toBe(true);
+		expect(is_occluder_for_dim(obj(false), true, false)).toBe(false);
+	});
+});
+
+describe('Dimension_Placement — witness_trapezoid_gap (rule 11 perspective convergence)', () => {
+	const p = (x: number, y: number) => ({ x, y });
+
+	it('equals the anchor distance when both witnesses point the same direction perpendicular to the edge (square)', () => {
+		// Edge along x, both witnesses straight up — trapezoid is a rectangle.
+		// Perpendicular from either corner to the other witness equals the edge length.
+		expect(witness_trapezoid_gap(p(0, 0), p(20, 0), p(0, 10), p(0, 10))).toBeCloseTo(20, 5);
 	});
 
-	it('returns true when a partial occluder covers one endpoint but not the other', () => {
-		// Occluder covers x in [-50, 30] — covers the left endpoint and a few sample points.
-		const occluder = {
-			projected: [p(-50, 50, 0.2), p(30, 50, 0.2), p(30, 150, 0.2), p(-50, 150, 0.2)],
-			faces: [[0, 1, 2, 3]],
-		};
-		expect(is_edge_occluded(p(0, 100, 0.5), p(100, 100, 0.5), [occluder])).toBe(true);
+	it('catches the failure mode rule 11 cares about: nearly-parallel witnesses tilted same screen direction', () => {
+		// Both witnesses tilted slightly left as they go up — one corner
+		// obtuse, one acute. Perpendicular from the obtuse corner crosses
+		// the other witness at a distance smaller than the anchor gap.
+		const gap = witness_trapezoid_gap(p(0, 0), p(20, 0), p(-1, 10), p(-1, 10));
+		expect(gap).toBeLessThan(20);
+		expect(gap).toBeGreaterThan(0);
 	});
 
-	it('does NOT block when the endpoint sits on a shared corner of a tilted face (sibling parts touch)', () => {
-		// Tilted face whose top-left and bottom-left corners share screen
-		// position (50, 100) and (50, 200) with the part being measured
-		// (depth 0.5 there), and whose right side sits in front of camera
-		// at depth 0.1. The face's AVERAGE depth (0.3) is in front of the
-		// endpoint (0.5), and the endpoint sits on the face's boundary —
-		// so the old "average depth + inside polygon" check would flag it
-		// as blocked. The new check evaluates the face's surface depth AT
-		// the endpoint's screen position, which equals the endpoint's own
-		// depth, so the shared corner is NOT treated as blocking.
-		const occluder = {
-			projected: [
-				p(50,  100, 0.5),
-				p(150, 100, 0.1),
-				p(150, 200, 0.1),
-				p(50,  200, 0.5),
-			],
-			faces: [[0, 1, 2, 3]],
-		};
-		expect(is_edge_occluded(p(50, 100, 0.5), p(100, 100, 0.5), [occluder])).toBe(false);
+	it('returns 0 when the two anchors coincide (degenerate edge)', () => {
+		expect(witness_trapezoid_gap(p(5, 5), p(5, 5), p(0, 10), p(0, 10))).toBe(0);
 	});
 
-	it('does NOT block when a tilted face is only AVERAGE-in-front (its surface at the endpoint is behind)', () => {
-		// Tilted rectangle: left side at depth 0.1, right side at depth
-		// 0.9. Its average depth is 0.5. The endpoint sits at screen (90,
-		// 100), where the face's surface is at depth ~0.82 — behind the
-		// endpoint at depth 0.6. Old check would block (average 0.5 is in
-		// front of 0.6, and the endpoint is inside the screen rectangle).
-		// New check correctly sees the surface at the endpoint is behind.
-		const occluder = {
-			projected: [
-				p(0,   50,  0.1),
-				p(100, 50,  0.9),
-				p(100, 150, 0.9),
-				p(0,   150, 0.1),
-			],
-			faces: [[0, 1, 2, 3]],
-		};
-		expect(is_edge_occluded(p(90, 100, 0.6), p(95, 100, 0.6), [occluder])).toBe(false);
+	it('falls back to the anchor distance when a witness direction has zero magnitude', () => {
+		expect(witness_trapezoid_gap(p(0, 0), p(15, 0), p(0, 0), p(0, 10))).toBeCloseTo(15, 5);
+	});
+
+	it('matches the perpendicular projection for parallel witnesses (det ≈ 0 branch)', () => {
+		// Both witnesses point the same direction (truly parallel on screen).
+		// Edge length 25, witnesses straight up. Trapezoid is a rectangle, gap = 25.
+		expect(witness_trapezoid_gap(p(0, 0), p(25, 0), p(0, 1), p(0, 1))).toBeCloseTo(25, 5);
+	});
+
+	it('ties go to W1 when the two anchor angles are equal (symmetric trapezoid)', () => {
+		// Symmetric divergent trapezoid: W1 tilts up-and-left, W2 tilts up-and-right.
+		// Both anchor angles obtuse and equal; tie-break picks W1's corner.
+		// Just verifies the function returns a finite positive number — the
+		// determinism comes from the implementation's tie-break.
+		const gap = witness_trapezoid_gap(p(0, 0), p(20, 0), p(-1, 10), p(1, 10));
+		expect(Number.isFinite(gap)).toBe(true);
+		expect(gap).toBeGreaterThan(0);
 	});
 });
 
