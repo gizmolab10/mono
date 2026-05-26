@@ -43,7 +43,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -507.9999999998845,
+            "extent": 101.6,
             "length": {
               "formula": "thick"
             },
@@ -93,7 +93,7 @@
               "formula": ".e"
             },
             "length": 507.9999999998845,
-            "angle": 0
+            "angle": -0.5235987755982988
           },
           "invariant": 2
         },
@@ -102,7 +102,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -508,
+            "extent": 101.6,
             "length": {
               "formula": "thick"
             },
@@ -154,6 +154,6 @@
     },
     "root_id": "did544449f3d5e57",
     "selected_id": "dib543189150f4d8",
-    "selected_face": 1
+    "selected_face": 3
   }
 }

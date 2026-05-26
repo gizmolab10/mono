@@ -133,6 +133,13 @@ export function push_outside_hull(
  *  every paint by `compute_viable_pairs`. Exported for test hooks. */
 export let last_hull: Array<{ x: number; y: number }> = [];
 export let last_hull_input: Array<{ x: number; y: number; so_id: string; so_name: string }> = [];
+/** Per-part convex hulls of each painted leaf part's projected vertices.
+ *  Replaces the single combined hull for the rule-9 silhouette pushback:
+ *  a label can sit in empty space BETWEEN parts even when the combined
+ *  outline would have wrapped that space. The witness pushback computes
+ *  the furthest distance the ray needs to travel to exit the union of
+ *  ALL these per-part hulls along the witness direction. */
+export let last_per_part_hulls: Array<{ so_id: string; hull: Array<{ x: number; y: number }> }> = [];
 
 /** Status-bar running average of how many dimensions get dropped per
  *  paint. The painter publishes to this. */
@@ -170,6 +177,21 @@ export const last_filter_stats: {
  *  filter stats every call to `compute_viable_pairs`. */
 export const last_blockers_per_label: Map<string, Set<string>> = new Map();
 
+/** Diagnostic: every (edge, direction) attempt that got rejected with
+ *  reason "silhouette too far", with the per-hull exit-t values that
+ *  drove the rejection. Cleared at the start of `compute_viable_pairs`. */
+export const last_silhouette_rejects: Array<{
+	so_name      : string;
+	axis         : Axis_Name;
+	v1_idx       : number;
+	v2_idx       : number;
+	wit_ux       : number;
+	wit_uy       : number;
+	per_hull     : Array<{ so_id: string; t: number }>;
+	witness_length_min : number;
+	cap          : number;
+}> = [];
+
 function bump_filter_stat(key: string, field: keyof Per_Label_Filter_Stats): void {
 	let s = last_filter_stats.per_label.get(key);
 	if (!s) {
@@ -194,6 +216,7 @@ function compute_combined_hull(): void {
 	const all_objects = scene.get_all();
 	const points: Array<{ x: number; y: number }> = [];
 	const tagged: Array<{ x: number; y: number; so_id: string; so_name: string }> = [];
+	const per_part: Array<{ so_id: string; hull: Array<{ x: number; y: number }> }> = [];
 	const painted = new Set<O_Scene>();
 	for (const o of all_objects) if (is_visible_for_dim(o)) painted.add(o);
 	const has_painted_child = (obj: O_Scene): boolean => {
@@ -207,15 +230,21 @@ function compute_combined_hull(): void {
 		if (has_painted_child(obj)) continue;
 		const projected = hits_3d.get_projected(obj.id);
 		if (!projected) continue;
+		const own_points: Array<{ x: number; y: number }> = [];
 		for (const p of projected) {
 			if (p.w >= 0) {
 				points.push({ x: p.x, y: p.y });
 				tagged.push({ x: p.x, y: p.y, so_id: obj.so.id, so_name: obj.so.name });
+				own_points.push({ x: p.x, y: p.y });
 			}
+		}
+		if (own_points.length >= 3) {
+			per_part.push({ so_id: obj.so.id, hull: convex_hull(own_points) });
 		}
 	}
 	last_hull = points.length >= 3 ? convex_hull(points) : [];
 	last_hull_input = tagged;
+	last_per_part_hulls = per_part;
 }
 
 /** What kind of label this is per the repeater integration in rule 18. */
@@ -266,6 +295,11 @@ export type Viable_Pair = {
 	text         : string;
 	/** NDC depth at the dim line midpoint, used by the painter for the hit-test rectangle. */
 	dim_z        : number;
+	/** True when the adjacent face this direction came from is front-facing
+	 *  on screen (its projected winding is positive). The search adds a
+	 *  bonus to front-facing candidates so dimensions land on the visible
+	 *  side of a part. Optional for back-compat with test fixtures. */
+	is_front_facing? : boolean;
 };
 
 /** The AABB of every screen position one label can occupy, across its full
@@ -304,6 +338,7 @@ export function compute_viable_pairs(): Viable_Pair[] {
 	last_filter_stats.total_edges_considered = 0;
 	last_filter_stats.per_label.clear();
 	last_blockers_per_label.clear();
+	last_silhouette_rejects.length = 0;
 	const result: Viable_Pair[] = [];
 	if (last_hull.length < 3) return result;
 	if (!render.ctx)            return result;
@@ -368,21 +403,22 @@ export function compute_viable_pairs(): Viable_Pair[] {
 					continue;
 				}
 
-				const all_dirs = two_face_outward_directions(obj.so, v1_idx, v2_idx);
-				const allowed_dirs = all_dirs.filter((d: vec3) => passes_camera_axis_filter(d, world_matrix, cam_forward));
+				const all_dirs = two_face_outward_directions(obj.so, v1_idx, v2_idx, projected);
+				const allowed_dirs = all_dirs.filter(d => passes_camera_axis_filter(d.dir, world_matrix, cam_forward));
 				// Better degenerate than missing: when every direction is
 				// rejected by the camera-angle filter, fall back to trying
 				// both anyway so the label still appears (even if
 				// foreshortened). Matches the old painter's behavior.
 				const dirs_to_try = allowed_dirs.length > 0 ? allowed_dirs : all_dirs;
 				let yielded_any = false;
-				for (const dir of dirs_to_try) {
+				for (const d of dirs_to_try) {
 					const r = compute_pair_ranges({
 						so       : obj.so,
 						kind     : classification.kind,
 						axis,
 						v1_idx, v2_idx,
-						direction: dir,
+						direction: d.dir,
+						is_front : d.is_front,
 						world_matrix,
 						p1, p2,
 						label_w_px, label_h_px,
@@ -615,14 +651,30 @@ export function witness_trapezoid_gap(
 	return Math.abs(s);
 }
 
+/** Convention: the renderer treats NEGATIVE projected winding as
+ *  front-facing on screen (see `Render.ts:452` and others). This helper
+ *  documents that convention in one place so the dimensioning code does
+ *  not invert it by accident. */
+export function is_face_front_facing(winding: number): boolean {
+	return winding < 0;
+}
+
 /** Per the rule-1 direction definition: each silhouette edge has TWO
  *  possible directions, one for each of its two adjacent faces. The
  *  direction is perpendicular to the edge, lies in the face's plane,
- *  and points away from the edge toward the face's centroid (so the
- *  witness lines extend ACROSS the face, not into thin air). All
- *  vectors are in the SO's local frame; the caller transforms them to
- *  world coordinates as needed. */
-function two_face_outward_directions(so: Smart_Object, v1_idx: number, v2_idx: number): vec3[] {
+ *  and points AWAY from the face's centroid — past the edge, into the
+ *  clear space outside the part. This is the direction an engineering-
+ *  drawing witness line actually extends. All vectors are in the SO's
+ *  local frame; the caller transforms them to world coordinates as
+ *  needed. Also reports the projected winding sign of each adjacent
+ *  face (positive = front-facing on screen) so the search can bias
+ *  toward placing dimensions on the visible side. */
+function two_face_outward_directions(
+	so: Smart_Object,
+	v1_idx: number,
+	v2_idx: number,
+	projected: Projected[],
+): Array<{ dir: vec3; is_front: boolean }> {
 	const faces = so.scene?.faces;
 	if (!faces) return [];
 	const adj = edges_to_adjacent_faces(faces, v1_idx, v2_idx);
@@ -634,7 +686,7 @@ function two_face_outward_directions(so: Smart_Object, v1_idx: number, v2_idx: n
 	vec3.normalize(edge_unit, edge_unit);
 	const mid = vec3.scale(vec3.create(), vec3.add(vec3.create(), v1, v2), 0.5);
 
-	const dirs: vec3[] = [];
+	const out: Array<{ dir: vec3; is_front: boolean }> = [];
 	for (const fi of adj) {
 		const face = faces[fi];
 		const centroid = vec3.create();
@@ -643,12 +695,17 @@ function two_face_outward_directions(so: Smart_Object, v1_idx: number, v2_idx: n
 		const offset = vec3.subtract(vec3.create(), centroid, mid);
 		const along = vec3.dot(offset, edge_unit);
 		const perp = vec3.scaleAndAdd(vec3.create(), offset, edge_unit, -along);
+		// Flip: the perp computed above points TOWARD the centroid (along
+		// the face surface, into the part body). Negate to point AWAY
+		// from the centroid — past the edge, into clear space outside.
+		vec3.negate(perp, perp);
 		if (vec3.length(perp) > 1e-6) {
 			vec3.normalize(perp, perp);
-			dirs.push(perp);
+			const is_front = is_face_front_facing(render.face_winding(face, projected));
+			out.push({ dir: perp, is_front });
 		}
 	}
-	return dirs;
+	return out;
 }
 
 function passes_camera_axis_filter(dir: vec3, world_matrix: mat4, cam_forward: vec3): boolean {
@@ -679,6 +736,7 @@ function compute_pair_ranges(args: {
 	v1_idx      : number;
 	v2_idx      : number;
 	direction   : vec3;
+	is_front    : boolean;
 	world_matrix: mat4;
 	p1          : Projected;
 	p2          : Projected;
@@ -686,7 +744,7 @@ function compute_pair_ranges(args: {
 	label_h_px  : number;
 	text        : string;
 }): Pair_Range_Result {
-	const { so, kind, axis, v1_idx, v2_idx, direction, world_matrix, p1, p2, label_w_px, label_h_px, text } = args;
+	const { so, kind, axis, v1_idx, v2_idx, direction, is_front, world_matrix, p1, p2, label_w_px, label_h_px, text } = args;
 	const v1 = so.vertices[v1_idx];
 	const v2 = so.vertices[v2_idx];
 
@@ -722,12 +780,33 @@ function compute_pair_ranges(args: {
 	const midY_init = (p1.y + p2.y) / 2;
 
 	// Witness-length min: distance from edge midpoint along the witness
-	// direction to the combined-outline exit, plus the half-rectangle
-	// footprint along the direction, plus the 15-pixel buffer.
-	const exit_t = Math.max(0, ray_polygon_exit(midX_init, midY_init, wit_ux, wit_uy, last_hull));
+	// direction to the furthest part-outline exit (across every painted
+	// part's own hull), plus the half-rectangle footprint along the
+	// direction, plus the silhouette margin. Using per-part hulls instead
+	// of the combined hull means a label can sit in empty space BETWEEN
+	// parts — it only has to push past whichever part outlines the ray
+	// actually traverses, not the convex envelope of the whole scene.
+	let exit_t = 0;
+	const per_hull_exits: Array<{ so_id: string; t: number }> = [];
+	for (const ph of last_per_part_hulls) {
+		const t = ray_polygon_exit(midX_init, midY_init, wit_ux, wit_uy, ph.hull);
+		per_hull_exits.push({ so_id: ph.so_id, t });
+		if (t > exit_t) exit_t = t;
+	}
 	const rect_radius_along_arrow = (label_w_px * Math.abs(wit_ux) + label_h_px * Math.abs(wit_uy)) / 2;
 	const witness_length_min = exit_t + rect_radius_along_arrow + k.dimensions.SILHOUETTE_MARGIN_PX;
-	if (witness_length_min > k.dimensions.WITNESS_CAP_PX) return { ok: false, reason: 'silhouette_too_far' };
+	if (witness_length_min > k.dimensions.WITNESS_CAP_PX) {
+		last_silhouette_rejects.push({
+			so_name : so.name,
+			axis,
+			v1_idx, v2_idx,
+			wit_ux, wit_uy,
+			per_hull : per_hull_exits,
+			witness_length_min,
+			cap : k.dimensions.WITNESS_CAP_PX,
+		});
+		return { ok: false, reason: 'silhouette_too_far' };
+	}
 
 	// Witness-length max: smaller of 80 and the value at which the
 	// projected witness reaches 120 px. Linear approximation: at push P
@@ -788,6 +867,7 @@ function compute_pair_ranges(args: {
 		wit_2_per3d_y : p_v2w.y - p2.y,
 		text,
 		dim_z : (p1.z + p2.z) / 2,
+		is_front_facing : is_front,
 	} };
 }
 
@@ -1137,15 +1217,23 @@ export function order_by_constrainedness(
  *  grid sample has the largest minimum clearance from already-placed
  *  rectangles. */
 function pick_best_placement(region: Reachable_Region, placed: readonly Greedy_Placement[]): Greedy_Placement | null {
-	let best: Greedy_Placement | null = null;
-	for (const pair of region.pairs) {
-		const candidate = best_candidate_in_pair(pair, placed);
-		if (!candidate) continue;
-		if (!best || candidate.min_clearance > best.min_clearance) {
-			best = candidate;
+	// Hard front-face preference (rule 10): try every pair whose face is
+	// front-facing on screen first. Only if NO front-facing pair yields a
+	// viable candidate, fall back to the back-facing pairs.
+	const front_pairs = region.pairs.filter(p => p.is_front_facing);
+	const back_pairs  = region.pairs.filter(p => !p.is_front_facing);
+	for (const group of [front_pairs, back_pairs]) {
+		let best: Greedy_Placement | null = null;
+		for (const pair of group) {
+			const candidate = best_candidate_in_pair(pair, placed);
+			if (!candidate) continue;
+			if (!best || candidate.min_clearance > best.min_clearance) {
+				best = candidate;
+			}
 		}
+		if (best) return best;
 	}
-	return best;
+	return null;
 }
 
 /** 5×5 grid sample of (witness_length, slidable_position) within the
@@ -1241,6 +1329,16 @@ export function best_candidate_in_pair(
 
 			const is_between = S > w1_forb_hi && S < w2_forb_lo;
 			let score = clearance_for_score;
+			// Front-face bias: when the adjacent face whose plane this
+			// dim line lies in points toward the camera, the dimension
+			// sits on the visible side of the part. Give it a bonus so
+			// the search prefers it over the equivalent back-face choice.
+			if (pair.is_front_facing) score += k.dimensions.FRONT_FACE_BONUS;
+			// Witness-shortness bias: penalise pushing the dim line
+			// further from the part than the silhouette requires. Without
+			// this the search picks the longest witness when clearance is
+			// otherwise equal, and labels float far from their part.
+			score -= k.dimensions.WITNESS_LENGTH_PENALTY_PER_PX * (W - pair.witness_length_min);
 			if (is_between) {
 				score += between_bonus;
 				if (half_dl > 0) {
@@ -1957,6 +2055,7 @@ export function run_new_placement(canvas_w: number, canvas_h: number): Run_New_P
 
 	log_dim_summary(expected_keys.size, placements.length, drop_report.dropped);
 	log_trace_target(placements);
+	log_trace_so(no_viable_pair_labels, placements);
 
 	last_run_result = { placements, drop_report, search_skipped, last_search_seed: seed };
 	return last_run_result;
@@ -1994,6 +2093,67 @@ function log_trace_target(placements: readonly Greedy_Placement[]): void {
 			console.log(line);
 		}
 	}
+}
+
+/** Per-part trace. Set DBG_TRACE_SO_NAME to a smart-object name (eg "A")
+ *  to print, for that part, EVERY axis's outcome — placed or dropped
+ *  with the dominant reason. Set to '' to disable. */
+const DBG_TRACE_SO_NAME: string = "B";
+let last_so_trace_logged = '';
+function log_trace_so(
+	no_viable: readonly { so_id: string; so_name: string; axis: Axis_Name }[],
+	placed: readonly Greedy_Placement[],
+): void {
+	if (DBG_TRACE_SO_NAME === '') return;
+	const lines: string[] = [];
+	const seen = new Set<string>();
+	for (const p of placed) {
+		if (p.so_name !== DBG_TRACE_SO_NAME) continue;
+		const key = `${p.so_name}|${p.axis}`;
+		if (seen.has(key)) continue;
+		seen.add(key);
+		const face_tag = p.pair.is_front_facing ? 'front face' : 'back face';
+		lines.push(`axis ${p.axis}: PLACED at (${p.center_x.toFixed(1)}, ${p.center_y.toFixed(1)}) on ${face_tag}, witness length ${p.witness_length.toFixed(1)} px, edge ${p.pair.edge_v1_idx}-${p.pair.edge_v2_idx}`);
+	}
+	for (const d of no_viable) {
+		if (d.so_name !== DBG_TRACE_SO_NAME) continue;
+		const key = `${d.so_name}|${d.axis}`;
+		if (seen.has(key)) continue;
+		seen.add(key);
+		const s = last_filter_stats.per_label.get(`${d.so_id}|${d.axis}`);
+		if (!s) { lines.push(`axis ${d.axis}: dropped, no candidate edges`); continue; }
+		const parts: string[] = [];
+		if (s.edges_too_short            > 0) parts.push(`${s.edges_too_short} edges too short`);
+		if (s.edges_projection_broken    > 0) parts.push(`${s.edges_projection_broken} projection broken`);
+		if (s.edges_no_viable_direction  > 0) parts.push(`${s.edges_no_viable_direction} edges had no viable direction`);
+		if (s.edges_yielded_pairs        > 0) parts.push(`${s.edges_yielded_pairs} edges yielded a pair (but the pair was dropped later)`);
+		if (s.directions_silhouette_too_far    > 0) parts.push(`directions killed by silhouette ${s.directions_silhouette_too_far}`);
+		if (s.directions_witness_range_empty   > 0) parts.push(`directions killed by witness range ${s.directions_witness_range_empty}`);
+		if (s.directions_slidable_range_empty  > 0) parts.push(`directions killed by slidable range ${s.directions_slidable_range_empty}`);
+		if (s.directions_projection_degenerate > 0) parts.push(`directions killed by projection ${s.directions_projection_degenerate}`);
+		if (s.directions_witnesses_converge    > 0) parts.push(`directions killed by witnesses converging ${s.directions_witnesses_converge}`);
+		lines.push(`axis ${d.axis}: dropped — ${parts.join(', ')}`);
+	}
+	// Per-direction detail for silhouette-too-far rejections on the trace SO.
+	const rej_lines: string[] = [];
+	for (const r of last_silhouette_rejects) {
+		if (r.so_name !== DBG_TRACE_SO_NAME) continue;
+		const per_hull = r.per_hull
+			.map(h => `${h.so_id}:${h.t.toFixed(1)}`)
+			.join(', ');
+		rej_lines.push(
+			`axis ${r.axis} edge ${r.v1_idx}-${r.v2_idx} dir (${r.wit_ux.toFixed(2)}, ${r.wit_uy.toFixed(2)}): ` +
+			`per-hull exit-t [${per_hull}], witness min ${r.witness_length_min.toFixed(1)} vs cap ${r.cap}`
+		);
+	}
+
+	if (lines.length === 0 && rej_lines.length === 0) return;
+	const parts_str = lines.length > 0 ? lines.join('; ') : '(no axis summary)';
+	const rej_str = rej_lines.length > 0 ? `\nDIM TRACE part [${DBG_TRACE_SO_NAME}] silhouette rejects: ${rej_lines.join('; ')}` : '';
+	const full = `DIM TRACE part [${DBG_TRACE_SO_NAME}]: ${parts_str}${rej_str}`;
+	if (full === last_so_trace_logged) return;
+	last_so_trace_logged = full;
+	console.log(full);
 }
 
 /** Last summary string we printed. The per-paint summary only fires

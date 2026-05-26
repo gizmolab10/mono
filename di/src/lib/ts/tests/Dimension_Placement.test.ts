@@ -18,6 +18,7 @@ import {
 	drop_duplicates,
 	polish_pass,
 	is_occluder_for_dim,
+	is_face_front_facing,
 	witness_trapezoid_gap,
 	compute_viability,
 	re_project_persisted_list,
@@ -1539,6 +1540,30 @@ describe('Dimension_Placement — witness_trapezoid_gap (rule 11 perspective con
 		const gap = witness_trapezoid_gap(p(0, 0), p(20, 0), p(-1, 10), p(1, 10));
 		expect(Number.isFinite(gap)).toBe(true);
 		expect(gap).toBeGreaterThan(0);
+	});
+});
+
+describe('Dimension_Placement — is_face_front_facing (rule 10 face convention)', () => {
+	// Documents the project-wide convention: the renderer treats negative
+	// projected winding as front-facing on screen. Dimensioning code must
+	// follow the same sign or it picks the wrong face. See Render.ts:452.
+
+	it('treats a NEGATIVE winding as front-facing', () => {
+		expect(is_face_front_facing(-1)).toBe(true);
+		expect(is_face_front_facing(-0.5)).toBe(true);
+		expect(is_face_front_facing(-1e-9)).toBe(true);
+	});
+
+	it('treats a POSITIVE winding as back-facing (not front)', () => {
+		expect(is_face_front_facing(1)).toBe(false);
+		expect(is_face_front_facing(0.5)).toBe(false);
+		expect(is_face_front_facing(1e-9)).toBe(false);
+	});
+
+	it('treats a ZERO winding (edge-on) as not front-facing', () => {
+		// Edge-on faces are degenerate; the dimensioning code treats them
+		// as not-front so back-facing fallback can pick a different choice.
+		expect(is_face_front_facing(0)).toBe(false);
 	});
 });
 

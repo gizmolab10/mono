@@ -172,6 +172,16 @@ export default class Constants {
 		 *  in between. Higher values pull the label more strongly toward
 		 *  the midpoint. Rule 10. */
 		CENTERING_MAX_PX         : 250,
+		/** Bonus added to a candidate's score when its dim-line direction
+		 *  came from a front-facing adjacent face (the face whose normal
+		 *  points toward the camera). Tilts the search toward placing
+		 *  dimensions on the visible side of a part. Rule 10. */
+		FRONT_FACE_BONUS         : 300,
+		/** Score penalty per pixel of witness length beyond the minimum.
+		 *  Biases the search toward SHORT witnesses when clearance is
+		 *  otherwise equal — without this, the search picks the maximum
+		 *  witness length and labels float far from the part. */
+		WITNESS_LENGTH_PENALTY_PER_PX : 2,
 		NEIGHBOUR_GRID_CELL_PX   : 50,
 		WITNESS_CLEARANCE_PX     : 15,
 		PAIR_CLEARANCE_PX        : 15,
