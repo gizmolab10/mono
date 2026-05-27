@@ -28,6 +28,7 @@ Every term the rest of this document leans on, in one place.
 - **Seeded semantics** — inside a full search seeded by the previous paint, labels still passing strict viability stay locked at their carry-over values; only labels that lost viability are searched for fresh. Detail in rule 19.
 - **Slidable position** — where along the dim line the label sits, in screen pixels measured from the first witness anchor along the dim line direction. A continuous degree of freedom with overhang allowed at either end. Detail in rule 1.
 - **Template** — the first child of a repeater; the only one that draws all three axes. Detail in rule 18.
+- **Uniface block** — a world-axis-aligned 3D box wrapping every painted non-rotated part. Each of its six faces is expanded in world units so it projects exactly SILHOUETTE_MARGIN_PX (10 px today) outside the projected silhouette of the scene. Dim lines are strongly preferred to sit ON or JUST OUTSIDE a face of this block. Recomputed every paint. Detail in rule 26 and in [uniface.dimensions.md](uniface.dimensions.md).
 - **Viable enum pair (edge, direction)** — an (edge, direction) pair for which at least one viable (witness length, slidable position) value pair exists. Equivalent to "none of the four filters has emptied its range".
 - **Viable value pair (witness length, slidable position)** — a continuous-DOF pair whose two values both sit inside the ranges set by the four filters in rule 11.
 - **Witness length** — how far the dim line sits from the part's edge, in screen pixels. A continuous degree of freedom bounded by the rule-11 filters. Detail in rule 1.
@@ -290,3 +291,13 @@ The e2e suite verifies postconditions and budgets through functions exposed on t
 | *`set_view_mode(mode)`*            | Input action — switches between `'2d'` and `'3d'` view modes (**rule 15**).                                                                                      |     |
 
 The e2e tests under `e2e/tests/dimensions-*.spec.ts` reference these names already; the spec listing them here is a contract that the new implementation must satisfy.
+
+## 26. Strongly prefer placement on or just outside the uniface block
+
+For every non-rotated part, the search strongly prefers placing the dim line either ON a face of the uniface block (defined in the Glossary) or just outside it. Concretely:
+
+- A candidate whose dim line lies within SILHOUETTE_MARGIN_PX (10 px today) of any uniface-block face — measured perpendicular to that face in screen pixels — gets a large score bonus.
+- The bonus is large enough to override the clearance score in typical cases; only when no on-or-near-face placement is viable does the search fall back to the older free-placement logic for the part.
+- Rotated parts skip this rule entirely (the uniface block excludes them) and continue under the per-edge / per-direction search until a separate algorithm for rotated parts is added.
+
+Motivation: aligning every same-axis dimension on a small set of shared faces produces a far cleaner visual layout than free per-part placement, and collapses much of the per-edge / per-direction computation. The full design context lives in [uniface.dimensions.md](uniface.dimensions.md).
