@@ -1,1 +1,5 @@
-# Another page
+> [!center] # Another page
+
+---
+
+another photo goes here

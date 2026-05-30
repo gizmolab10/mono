@@ -79,6 +79,22 @@ describe('callouts', () => {
     expect(html).not.toContain('[!note]');
     expect(html).toContain('remember this');
   });
+
+  it('centers a center line with no box and no icon', () => {
+    const html = render('> [!center] middle');
+    expect(html).toContain('class="callout center"');
+    expect(html).toContain('callout-content');
+    expect(html).toContain('middle');
+    // No icon: the centered line is just the text.
+    expect(html).not.toContain('callout-icon');
+    // Not mislabelled as a note.
+    expect(html).not.toContain('callout note');
+  });
+
+  it('still reads markdown inside a center line', () => {
+    const html = render('> [!center] a **bold** word');
+    expect(html).toContain('<strong>bold</strong>');
+  });
 });
 
 describe('image embeds', () => {
@@ -143,15 +159,5 @@ describe('rules the code does not satisfy yet', () => {
     // renders as a plain paragraph, not a table.
     const html = render('| a | b |\n| - | - |\n| 1 | 2 |');
     expect(html).toContain('<table>');
-  });
-
-  it.skip('a center callout should carry a center marker for the styling to catch', () => {
-    // Spec line 36: a `[!center]` line shows centered, no box. The styling
-    // file targets `.callout.center`, but the markdown engine maps the
-    // unknown "center" type to the default "note" style, so the HTML comes
-    // out as `class="callout note"` with a pencil icon. The center marker
-    // never reaches the page, so the centering CSS never fires.
-    const html = render('> [!center] middle');
-    expect(html).toContain('callout center');
   });
 });

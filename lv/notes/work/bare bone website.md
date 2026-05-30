@@ -93,12 +93,13 @@ Render the home page (and every page) from md files in the md folder. Full Obsid
 
 ## Not yet built
 
-Writing the tests for step 7 surfaced four rules the code does not satisfy yet. Their tests sit in the suite as skipped placeholders (each with a note), so the run stays green while the gap stays visible:
+Writing the tests for step 7 surfaced four rules the code did not satisfy. Three are still open; their tests sit in the suite as skipped placeholders (each with a note), so the run stays green while the gap stays visible:
 
 1. **Outside links opening in a new tab.** The conversion chain has no step that adds a new-tab marker, so an external link opens in the same tab.
 2. **One page body pulled inline into another.** A `![[Other Note]]` form turns into a broken image instead of showing the other page's body inline.
 3. **Tables.** The conversion stack has no table step, so a pipe table renders as a plain paragraph.
-4. **The centered line.** The styling file targets a "center" callout, but the markdown engine maps the unknown `[!center]` type to the default "note" look (box, border, pencil icon). The center marker never reaches the page, so the centering never fires.
+
+The fourth, **the centered line**, is now built. A `> [!center] text` line is caught before the callout plugin runs and rewritten into a block that matches the existing `.callout.center` styling: centered text, no box, no border, no icon, with inner markdown still parsed. The callout plugin could not be used for this, because it maps the unknown "center" type to the default "note" look and reads its own built-in type list rather than any configuration.
 
 The look-and-feel and live-click rules (the pill behind the current entry, foldable sections, scroll position surviving a click) are left to the click-through tests, not the unit suite.
 

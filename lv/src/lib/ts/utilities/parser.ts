@@ -31,6 +31,16 @@ import { resolveHref } from './resolver';
 // Once converted, remark-parse handles the rest without needing a special
 // wiki-link plugin.
 function preprocessObsidianSyntax(md: string): string {
+  // Center line: `> [!center] text` becomes a centered line with no box, no
+  // border, no icon. Handled here, before the callout plugin runs, because
+  // that plugin maps the unknown "center" type to the default "note" look and
+  // never tags it "center". The emitted block reuses the existing
+  // `.callout.center` styling. The blank lines around the text let any inner
+  // markdown (bold, links, image embeds) still parse normally.
+  md = md.replace(/^> *\[!center\] *(.*)$/gim, (_m, text: string) => {
+    return `<blockquote class="callout center"><div class="callout-content">\n\n${text}\n\n</div></blockquote>`;
+  });
+
   // Image embeds first so the `!` prefix gets consumed before the link regex
   // can grab the surrounding `[[...]]`.
   md = md.replace(/!\[\[([^\]\n|]+)(?:\|([^\]\n]+))?\]\]/g, (_m, target: string, alias?: string) => {
