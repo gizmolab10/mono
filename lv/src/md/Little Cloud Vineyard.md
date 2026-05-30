@@ -1,2 +1,3 @@
+# Little Cloud Vineyard
 
-![[lcv.label.png]]
+!![[lcv.label.png]]

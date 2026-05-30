@@ -1,0 +1,188 @@
+/* ===== Single styling file for the site =====
+   Imported once at the app's entry point (src/lib/ts/main.ts).
+   Holds every look-and-feel rule that applies to every page.
+*/
+
+/* ----- Typography (was inline in App.svelte) ----- */
+body {
+  font-family: system-ui, sans-serif;
+  user-select: none;
+  margin: 0;
+}
+
+input:focus,
+textarea:focus {
+  user-select: text;
+}
+
+/* ----- Page shell: four-piece layout =====
+   .shell wraps the entire page.
+   .shell holds three regions in a grid (sidebar | content) on top of (status across both),
+   plus the toggle button positioned over the top-left corner.
+*/
+.shell {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    "sidebar content"
+    "status status";
+  height: 100vh;
+  position: relative;
+}
+
+/* ----- Sidebar hidden / collapsed on wide screens ----- */
+.shell.sidebar-hidden {
+  grid-template-columns: 0 1fr;
+}
+
+.shell.sidebar-hidden .shell-sidebar {
+  display: none;
+}
+
+/* ----- Narrow screens: one column at a time ----- */
+@media (max-width: 700px) {
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "main"
+      "status";
+  }
+
+  /* Default mobile state: sidebar visible, content hidden. */
+  .shell .shell-sidebar {
+    grid-area: main;
+  }
+  .shell .shell-content {
+    display: none;
+  }
+
+  /* Toggled state: content visible, sidebar hidden. */
+  .shell.sidebar-hidden .shell-sidebar {
+    display: none;
+  }
+  .shell.sidebar-hidden .shell-content {
+    display: block;
+    grid-area: main;
+  }
+}
+
+.shell-sidebar {
+  grid-area: sidebar;
+  border-right: 1px solid #e5e5e5;
+  overflow-y: auto;
+  /* Leave room at the top for the toggle button. */
+  padding: 3rem 1rem 1rem 1rem;
+}
+
+.shell-content {
+  grid-area: content;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.shell-status {
+  grid-area: status;
+  border-top: 1px solid #e5e5e5;
+  padding: 0.25rem 0.75rem;
+  min-height: 1.5rem;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.status-error {
+  color: #b80000;
+}
+
+.shell-toggle {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 10;
+  width: 2rem;
+  height: 2rem;
+  background: #ffffffcc;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shell-toggle:hover {
+  background: #fff;
+}
+
+/* ----- Sidebar entries ----- */
+.shell-sidebar h1,
+.shell-sidebar h2,
+.shell-sidebar h3 {
+  margin: 0.75rem 0 0.25rem;
+}
+
+.shell-sidebar hr {
+  margin: 0.5rem 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+.shell-sidebar a {
+  display: block;
+  padding: 0.35rem 0.7rem;
+  margin: 0.1rem 0;
+  border-radius: 9999px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.shell-sidebar a:hover {
+  background: #efefef;
+}
+
+.shell-sidebar a.active {
+  background: #d8d8d8;
+}
+
+/* Section headings written as `## Section Name` collapse via <details>. */
+.shell-sidebar details {
+  margin: 0.25rem 0;
+}
+
+.shell-sidebar summary.sidebar-section {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.25rem 0.4rem;
+  list-style: none;
+}
+
+.shell-sidebar summary.sidebar-section::-webkit-details-marker {
+  display: none;
+}
+
+.shell-sidebar summary.sidebar-section::before {
+  content: "▾ ";
+  font-size: 0.8em;
+}
+
+.shell-sidebar details:not([open]) summary.sidebar-section::before {
+  content: "▸ ";
+}
+
+/* ----- Callout overrides ----- */
+/* The `[!center]` callout strips its box and centres its text. Every other
+   callout keeps the default boxed look from remark-callout. */
+.callout.center {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.callout.center .callout-title {
+  display: none;
+}
+
+.callout.center .callout-content {
+  text-align: center;
+}

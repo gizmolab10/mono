@@ -26,6 +26,9 @@
 - **Centered line.** Written as a `> [!center]` callout. The single styling file strips the box, border, icon, and padding for the `center` type, and centres the text inside. Other callout types keep their default boxed look.
 - **Single styling file.** Every look-and-feel rule for the site lives in one styling file: typography, sidebar layout, status line position, callout overrides (including the `[!center]` strip-and-center treatment), active-entry pill, home-entry treatment. The file is imported once at the app's entry point and applies to every page.
 - **CSS folder location.** A new `css/` folder lives directly under `src`, sibling to `md` and `assets`. The single styling file lives inside that folder. This keeps look-and-feel sitting at the same level as content (`md`, `assets`) rather than alongside implementation code (`lib`).
+- **Parser stack — markdown-it dropped.** `markdown-it` and `markdown-it-task-lists` were already in `package.json` from earlier work. We dropped both and committed to the unified/remark stack named in "Stack chosen" below. The two markdown-it packages will be removed; the seven remark packages will be added.
+- **Wiki-link handling — string preprocessor instead of `@portaljs/remark-wiki-link`.** The plugin crashed at runtime because its dependencies pin it to micromark v2 but the rest of the stack runs micromark v4. Every wiki-link plugin in the ecosystem (`remark-wiki-link`, `remark-wiki-link-plus`, `remark-obsidian-link`) shares the same pinning. Instead of holding the stack back to micromark v2, we wrote a small preprocessor that turns `![[name.png]]` and `[[Other Note]]` (and the `[[Target|Display]]` alias form) into standard markdown image and link syntax, using the name-resolver to fill in URLs. Standard `remark-parse` then handles the result. Trade-off: the preprocessor runs on the raw string rather than the parsed tree, so wiki-link syntax inside fenced code blocks gets transformed too. Edge case is not expected to come up; can be fixed later by walking the tree instead.
+- **Relaxed link form: spaces inside standard `[Label](URL)` allowed.** Standard markdown stops the URL at the first space, so `[Home](Little Cloud Vineyard)` would normally render as plain text. The preprocessor finds the relaxed form and replaces internal spaces with `%20` before the parser sees it. The legitimate `[Label](url "title")` form is left alone because the regex excludes the quote characters that mark a title.
 
 ## Deferred — possible future features
 
@@ -42,13 +45,24 @@ Not in scope for the first pass. Listed for the record so they are not forgotten
 
 1. `unified` plus `remark-parse` for standard markdown
 2. `remark-frontmatter` for the top three-dashed block
-3. `@portaljs/remark-wiki-link` for `[[Other Note]]` and the embed form `![[name.png]]`
+3. A small in-house preprocessor that rewrites `[[Other Note]]` and `![[name.png]]` to standard markdown link and image syntax (using the name-resolver to fill in URLs) before the parser sees the text
 4. `remark-callout` for `> [!note]` blocks
 5. `remark-rehype` plus `rehype-stringify` to produce HTML
 
 **Composable** — any piece can be swapped without rewriting the others. The wiki-link library accepts a name-resolver, so links route through the loader's map. The pieces are stable rather than freshly maintained — last releases range from 14 to 32 months ago — which fits the maturity of the underlying syntax.
 
 **Ruled out** — all-in-one alternatives like `remark-obsidian` (less recent releases than the composed pieces) and the `markdown-it` family (its Obsidian-flavoured plugins look less recently updated than the remark equivalents).
+
+## Implementation progress
+
+The six steps from the proposal's "Order of work":
+
+- [x] Step 1 — page shell with the three regions and the toggle button. CSS folder and single styling file imported at the app's entry point.
+- [x] Step 2 — loader stood up. Sees every md file under `src/md/` and every image under `src/assets/`. Visually confirmed: 2 md files (Little Cloud Vineyard, Sidebar), 2 images (icon.png, lcv.label.png).
+- [x] Step 3 — parser plus name-resolver; render the home md file in the content region.
+- [x] Step 4 — router plus click handling (link interceptor and back/forward listener).
+- [x] Step 5 — status line; read `Sidebar.md` to drive the sidebar.
+- [x] Step 6 — sidebar component (active-entry pill, collapsible sections, home-entry treatment) and the `[!center]` callout override.
 
 ## Sources
 

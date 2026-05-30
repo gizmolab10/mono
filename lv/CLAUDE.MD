@@ -1,21 +1,17 @@
-# lv — Jonathan's Space
+# lv — Tommy’s Vineyard Space
 
-> Ideas, research, creative exploration. Not code — concepts.
+> A place to share the work and fun of owning a vineyard.
 
 ## What This Is
 
-Personal sandbox. Collecting, researching, fleshing out ideas. Some wild, some practical. The throughline: curiosity.
+Represent the vineyard with descriptions and photos.
 
 ## How to Work Here
 
 READ before proposing. SEARCH before claiming nothing exists.
 
-Ideas live in `notes/ideas/`. Research in `notes/research/`. Structure emerges as needed — don't over-organize early.
+Structure emerges as needed — don't over-organize early.
 
 ## Tone
 
-Casual. First person. Short sentences. Let ideas breathe.
-
-## Defaults
-
-No code unless an idea demands it. No deadlines. No deliverables. Just exploration.
+Plain english. Casual. First person. Short sentences. Let ideas breathe.

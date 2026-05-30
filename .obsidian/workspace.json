@@ -55,16 +55,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/now/(newer than SDD) methodology.md",
+                "file": "lv/src/md/Little Cloud Vineyard.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "(newer than SDD) methodology"
+              "title": "Little Cloud Vineyard"
             }
           },
           {
-            "id": "57cff6e3a08529a4",
+            "id": "a3e88b9258229990",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -75,20 +75,6 @@
               },
               "icon": "lucide-file",
               "title": "Sidebar"
-            }
-          },
-          {
-            "id": "19fc42fcf8b7a48f",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/done/code.debt.paid.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "code.debt.paid"
             }
           }
         ],
@@ -227,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "lv/notes/work/bare bone website.md",
+                "file": "lv/src/md/Sidebar.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of bare bone website"
+              "title": "Outline of Sidebar"
             }
           }
         ],
@@ -336,44 +322,47 @@
       }
     ]
   },
-  "active": "6ebc22f3f57c9440",
+  "active": "a3e88b9258229990",
   "lastOpenFiles": [
+    "lv/src/md/Little Cloud Vineyard.md",
     "lv/src/md/Sidebar.md",
+    "lv/dist/assets/index-CaHKMBoE.css",
+    "lv/dist/assets/index-rnv8U7hS.js",
+    "lv/dist/assets/icon-DQ-Yu_V3.png",
+    "lv/dist/assets/index-ITRPjjIC.js",
+    "lv/src/lib/ts/utilities/sidebar.test.ts",
+    "lv/src/lib/ts/utilities/router.test.ts",
+    "lv/src/lib/ts/utilities/resolver.test.ts",
+    "lv/src/lib/ts/utilities/loader.test.ts",
+    "lv/src/lib/ts/utilities/parser.test.ts",
+    "lv/src/md/Page 1.md",
+    "di/notes/work/now/(newer than SDD) methodology.md",
     "lv/notes/work/bare bone website.md",
     "lv/notes/work/work journal.md",
-    "lv/notes/work/proposal.md.tmp.38516.2f20192c588c",
-    "lv/src/css",
-    "lv/src/untitled folder",
-    "di/notes/work/now/(newer than SDD) methodology.md",
-    "lv/src/md/Little Cloud Vineyard copy.md",
-    "lv/src/md/Sedebar.md",
-    "lv/src/md/untitled folder",
-    "lv/notes/work/code debt.md",
-    "di/notes/work/dimensions/dimensionals rules.md",
-    "di/notes/guides/pre-flight/lexicon.md",
     "di/notes/work/done/code.debt.paid.md",
-    "notes/guides/setup/netlify.md",
-    "di/notes/work/dimensions/uniface rules.md",
-    "di/notes/work/now/handoff.md",
-    "di/notes/guides/development/learn/lessons.md",
-    "di/notes/guides/pre-flight/always.md",
-    "di/notes/guides/pre-flight",
-    "di/notes/work/now/code.debt.md",
-    "di/notes/work/mothballs/dimensionals.md",
-    "di/notes/work/mothballs/dimensionals.work.md",
-    "di/notes/work/now/new.lexicon.md",
-    "di/notes/work/dimensions/uniface.dimensions.md",
-    "di/notes/work/now/dimensionals.work.md",
-    "di/notes/work/mothballs/dimensions.flow.md",
-    "di/notes/work/now/handoff.md.tmp.11951.56a717b9c63a",
-    "di/notes/work/now/handoff.md.tmp.11951.62f4dac405f7",
-    "in/CLAUDE.MD",
-    "in/README.md",
-    "in/src/md/Intersection.md",
+    "lv/notes/work/code debt.md",
+    "lv/dist/assets/index-BaFlnrPX.js",
+    "lv/src/lib/ts/utilities/router.svelte.ts",
+    "notes/guides/setup/creating a proposal.md",
+    "lv/dist/assets/lcv.label-BfBUnsUh.png",
+    "node_modules/unist-util-is/node_modules/@types/unist/README.md",
+    "node_modules/unist-util-visit/node_modules/unist-util-is/readme.md",
+    "ws/node_modules/@vitest/mocker/node_modules/vite/LICENSE.md",
+    "ws/node_modules/@vitest/mocker/node_modules/vite/README.md",
+    "node_modules/unist-util-visit-parents/node_modules/unist-util-is/readme.md",
+    "node_modules/unified/readme.md",
+    "node_modules/trough/readme.md",
+    "node_modules/svg-parser/README.md",
+    "node_modules/svg-parser/CHANGELOG.md",
+    "node_modules/remark-rehype/readme.md",
+    "node_modules/remark-callout/README.md",
+    "node_modules/remark-frontmatter/readme.md",
+    "node_modules/remark-parse/readme.md",
+    "node_modules/rehype-stringify/readme.md",
+    "node_modules/parse-entities/node_modules/character-entities/readme.md",
+    "node_modules/parse-entities/node_modules/character-entities-legacy/readme.md",
+    "node_modules/parse-entities/readme.md",
     "in/src/assets/lcv.label.png",
-    "in/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/utils.js",
-    "in/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/element.js",
-    "in/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/component.js",
     "in/src/assets/icon.png",
     "in/dist/assets/icon-DQ-Yu_V3.png",
     "lv copy/dist/assets/icon-DQ-Yu_V3.png",
@@ -381,8 +370,6 @@
     "node_modules/playwright-core/lib/vite/dashboard/assets/firefox-1bWoP6pv.svg",
     "node_modules/playwright-core/lib/vite/dashboard/assets/firefox-nightly-Cp5nfeDT.svg",
     "node_modules/playwright-core/lib/vite/dashboard/assets/firefox-beta-k3eOH_eK.svg",
-    "node_modules/playwright-core/lib/vite/dashboard/assets/safari-na3_-uQk.svg",
-    "node_modules/playwright-core/lib/vite/dashboard/playwright-logo.svg",
     "ws/notes/work/Untitled.canvas"
   ]
 }
