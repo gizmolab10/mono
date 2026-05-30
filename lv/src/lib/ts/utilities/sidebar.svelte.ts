@@ -3,11 +3,14 @@
 // to the content. On a narrow screen, the state picks which of the two
 // mobile modes is shown: sidebar-plus-status or content-plus-status.
 
+import { loadSidebarVisible, saveSidebarVisible } from './persistence';
+
 class SidebarUI {
-  visible = $state<boolean>(true);
+  visible = $state<boolean>(loadSidebarVisible(true));
 
   toggle(): void {
     this.visible = !this.visible;
+    saveSidebarVisible(this.visible);
   }
 }
 

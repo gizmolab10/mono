@@ -3,7 +3,7 @@
 // name without the .md ending and images by name with their extension.
 
 import { describe, it, expect } from 'vitest';
-import { loadMdFiles, loadAssets } from './loader';
+import { loadMdFiles, loadAssets, loadMdEntries } from './loader';
 
 describe('md file loader', () => {
   const map = loadMdFiles();
@@ -12,8 +12,8 @@ describe('md file loader', () => {
     expect(map.has('Little Cloud Vineyard')).toBe(true);
   });
 
-  it('finds the sidebar file', () => {
-    expect(map.has('Sidebar')).toBe(true);
+  it('finds another page', () => {
+    expect(map.has('Page 1')).toBe(true);
   });
 
   it('keys files by name without the .md ending', () => {
@@ -23,7 +23,21 @@ describe('md file loader', () => {
   });
 
   it('hands back the actual text of a file', () => {
-    expect(map.get('Sidebar')).toContain('under construction');
+    expect(map.get('Page 1')).toContain('another photo');
+  });
+});
+
+describe('md file folders', () => {
+  const entries = loadMdEntries();
+
+  it('reports the top level as no folder for the home page', () => {
+    const home = entries.find((e) => e.name === 'Little Cloud Vineyard');
+    expect(home?.folder).toBe('');
+  });
+
+  it('reports the folder name for a page inside a folder', () => {
+    const page = entries.find((e) => e.name === 'Page 1');
+    expect(page?.folder).toBe('The Vineyard');
   });
 });
 

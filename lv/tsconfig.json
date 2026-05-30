@@ -17,7 +17,8 @@
     "noUnusedLocals": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "strict": true
+    "strict": true,
+    "types": []
   },
   "include": [
     "src/**/*.svelte",

@@ -23,12 +23,26 @@ const assetModules = import.meta.glob<string>(
 export type MdMap = Map<string, string>;    // file name (no .md) -> contents
 export type AssetMap = Map<string, string>; // file name (with extension) -> URL
 
+// One page on disk: its name (no .md), the folder it sits in ('' at the top
+// level), and its raw text.
+export type MdEntry = { name: string; folder: string; text: string };
+
+const MD_ROOT = '/src/md/';
+
 function basename(path: string): string {
   return path.substring(path.lastIndexOf('/') + 1);
 }
 
 function stripMdExt(filename: string): string {
   return filename.endsWith('.md') ? filename.slice(0, -3) : filename;
+}
+
+// The folder a page sits in, relative to the md root. Top-level pages return
+// an empty string. A page one folder deep returns that folder's name.
+function folderOf(path: string): string {
+  const rel = path.startsWith(MD_ROOT) ? path.slice(MD_ROOT.length) : path;
+  const slash = rel.lastIndexOf('/');
+  return slash === -1 ? '' : rel.slice(0, slash);
 }
 
 // Returns a map from md file name (without the .md extension) to file contents.
@@ -40,6 +54,16 @@ export function loadMdFiles(): MdMap {
     map.set(name, contents);
   }
   return map;
+}
+
+// Returns one entry per md file: its name, the folder it sits in, and its
+// raw text. Folder is '' for top-level pages.
+export function loadMdEntries(): MdEntry[] {
+  const entries: MdEntry[] = [];
+  for (const [path, text] of Object.entries(rawMdModules)) {
+    entries.push({ name: stripMdExt(basename(path)), folder: folderOf(path), text });
+  }
+  return entries;
 }
 
 // Returns a map from image file name (with extension) to bundled URL.

@@ -1,3 +1,10 @@
+---
+
+title: Home
+
+home: true
+
+---
 > [!center] # Little Cloud Vineyard
 
 ---

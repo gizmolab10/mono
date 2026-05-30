@@ -18,9 +18,9 @@ describe('going to a page', () => {
   });
 
   it('changes the current name and the address together', () => {
-    navigate('Sidebar');
-    expect(router.name).toBe('Sidebar');
-    expect(window.location.pathname).toBe('/Sidebar');
+    navigate('Page 1');
+    expect(router.name).toBe('Page 1');
+    expect(window.location.pathname).toBe('/Page%201');
   });
 
   it('sends an empty name to the home page', () => {
@@ -32,7 +32,7 @@ describe('going to a page', () => {
 
 describe('the status message', () => {
   it('is blank when the page exists', () => {
-    navigate('Sidebar');
+    navigate('Page 1');
     expect(router.status).toBe('');
   });
 

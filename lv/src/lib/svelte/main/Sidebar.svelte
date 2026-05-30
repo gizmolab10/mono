@@ -1,23 +1,17 @@
 <script lang='ts'>
-  // The sidebar. Reads `Sidebar.md` from the loader and renders it through
-  // the parser. Three polish layers run after the HTML lands in the DOM:
+  // The sidebar. Builds its list at runtime from every page's top settings
+  // (no hand-written sidebar file) and renders it through the parser. Two
+  // polish layers run after the HTML lands in the DOM:
   //   - makeCollapsible: wraps each heading + its following content in a
   //     foldable section, so the writer can group entries with `## Section`.
   //   - highlightActive: marks the anchor whose target matches the current
   //     page with an "active" class for the pill background.
-  //
-  // If `Sidebar.md` is missing or empty, the sidebar shows only a link to
-  // the home file.
   import { router } from '../../ts/utilities/router.svelte';
-  import { getMdText, resolveHref } from '../../ts/utilities/resolver';
   import { render } from '../../ts/utilities/parser';
+  import { buildSidebarMd } from '../../ts/utilities/sidebar-content';
+  import { loadFolderOpen, saveFolderOpen } from '../../ts/utilities/persistence';
 
-  const HOME = 'Little Cloud Vineyard';
-
-  const sourceMd = getMdText('Sidebar');
-  const fallbackMd = `[${HOME}](${resolveHref(HOME)})`;
-  const effectiveMd = sourceMd && sourceMd.trim().length > 0 ? sourceMd : fallbackMd;
-  const html = render(effectiveMd);
+  const html = render(buildSidebarMd());
 
   // Group each heading with the elements that follow it (until the next
   // heading) inside a <details>/<summary> pair. Folding state is owned by
@@ -37,8 +31,10 @@
       }
       if (sectionChildren.length === 0) continue;
 
+      const folderName = heading.textContent?.trim() ?? '';
       const details = document.createElement('details');
-      details.open = true;
+      details.open = loadFolderOpen(folderName, true);
+      details.addEventListener('toggle', () => saveFolderOpen(folderName, details.open));
       const summary = document.createElement('summary');
       summary.className = 'sidebar-section ' + heading.tagName.toLowerCase();
       while (heading.firstChild) summary.appendChild(heading.firstChild);

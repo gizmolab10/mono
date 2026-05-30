@@ -7,3 +7,19 @@
 - [x] center text on main page
 - [x] proposal to create content in Main.svelte from files in /src/md
     - [x] images live in /src/assets
+- [x] sidebar needs folder support
+    - [x] add folders to md
+    - [x] triangle for unfold is way too small
+    - [x] indent foldaway files 
+- [x] sidebar toggle button
+    - [x] image too small
+    - [x] needs hover action
+- [x] sidebar hr is invisible
+- [x] persistence.ts
+    - [x] use local storage for:
+    - [x] which sidebar folder is unfolded
+    - [x] the state of the sidebar toggle
+- [ ] borrow svg from di project
+    - [ ] hamburger
+    - [ ] fat triangle
+- [ ] can images be sized?

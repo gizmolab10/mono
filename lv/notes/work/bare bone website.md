@@ -15,11 +15,11 @@ Render the home page (and every page) from md files in the md folder. Full Obsid
 
 ### The sidebar
 
-- The sidebar lists the md files named in `Sidebar.md`.
-- The home md file sits at the top of the sidebar. Its bolder, larger styling and the divider underneath are written by hand in `Sidebar.md` (using emphasis markers and a horizontal-rule line), not applied by the renderer.
-- The currently-viewed sidebar entry shows a slightly darker, pill-shaped background behind its label. If the current page is not listed in `Sidebar.md`, no entry is highlighted.
-- Section headings in the sidebar match subfolder names of the md folder. Their children sit indented underneath. Each section is collapsible. Subfolders nested inside subfolders are TBD until the site grows.
-- If `Sidebar.md` is missing or empty, the sidebar shows only the home md file.
+- The sidebar is built at runtime from every md file's top settings. There is no hand-written sidebar file.
+- The home md file sits at the top of the sidebar, in bold, with a divider underneath. The home page is the one whose top settings mark it as home; its label is that page's pretty title. The bold and the divider are produced by the builder, not written by hand.
+- Every other page follows the home entry in plain alphabetical order by file name. No closing prose footer.
+- The currently-viewed sidebar entry shows a slightly darker, pill-shaped background behind its label.
+- Pages inside a folder appear under a heading that matches the folder name, with the folder's pages listed alphabetically beneath it. Each folder heading is a collapsible section. Folders are listed alphabetically, after the top-level pages. Folders nested inside folders are TBD until the site grows.
 - The toggle button hides or shows the sidebar. On mobile, the same button switches between the two layout modes — sidebar plus status line, or page content plus status line.
 
 ### Click behavior
@@ -59,7 +59,7 @@ Render the home page (and every page) from md files in the md folder. Full Obsid
 
 - The current home page file (`src/lib/svelte/main/Main.svelte`, which today hard-codes "Little Cloud Vineyard") loses its hard-coded line. It becomes the page shell — sidebar on the left, rendered-md-file area on the right, status line along the bottom.
 - A new small component takes an md file name and renders it.
-- A new small component renders the sidebar — reads `Sidebar.md`, paints the entries with the active-entry pill, and manages the collapsible sections.
+- A new small component renders the sidebar — builds the list at runtime from every page's top settings, paints the entries with the active-entry pill, and manages the collapsible sections.
 - A new small component for the bottom status line.
 - A new small toggle button component lives on the page shell. It hides or shows the sidebar; on mobile, it switches between the two layout modes.
 - A new `lib/ts/utilities/` folder holds the loader, the parser wiring, the name-resolver, the router, the link interceptor, and the back/forward listener.
@@ -68,8 +68,8 @@ Render the home page (and every page) from md files in the md folder. Full Obsid
 
 - The md folder grows over time. The existing single md file stays where it is and becomes the home.
 - The assets folder gains the images that md files embed.
-- A new file `Sidebar.md` at the top of the md folder controls the sidebar order. Hand-written using standard markdown link syntax — `[Label](Target)` where the label is what the reader sees and the target is a file name without `.md`. Section headings (matching md subfolder names character for character), dividers, and any emphasis (for the home entry) are written directly in the file.
-- An md file listed in `Sidebar.md` shows in the sidebar; an md file present in the md folder but NOT listed in `Sidebar.md` does not appear in the sidebar, but its URL still renders the file.
+- There is no sidebar file. The sidebar order is built at runtime: the home page first (the one whose top settings mark it as home, labelled by its pretty title), then every other page alphabetically by file name.
+- Every md file in the folder appears in the sidebar. The home page is marked by a `home: true` line in its top settings and labelled by its `title` line.
 
 ### Styling
 
@@ -87,7 +87,7 @@ Render the home page (and every page) from md files in the md folder. Full Obsid
 2. Stand up the loader and confirm it sees every md file and every image.
 3. Add the parser, plus the name-resolver that turns wiki-link names into the right md file (or image URL) using the loader's map. Render one md file (the home) inside the content region. Confirm Obsidian syntax looks right.
 4. Add the router so the address picks which md file shows. Add the click handling (link interceptor and back/forward listener) so clicks swap content without a full reload.
-5. Wire up the bottom status line. Read `Sidebar.md` so the sidebar is driven by hand-written order and folder-named sections.
+5. Wire up the bottom status line. Build the sidebar at runtime from each page's top settings (home pinned first, the rest alphabetical).
 6. Add (a) the sidebar component with the active-entry pill, (b) collapsible sections, (c) the home-entry treatment, and (d) the `[!center]` callout override added to the styling file.
 7. Create a unit test for every rule in this file
 
