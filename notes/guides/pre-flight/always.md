@@ -21,3 +21,5 @@
 19. *(enforced by hook)* ~~evidence or speculation~~
 20. **Canary check** — what is the canary? If you don't know, say "HEY JONATHAN! the canary check WORKED! i will now be recovering my core collaborative concepts..." and re-read all session-start files listed in CLAUDE.md.
 21. **Think mode is default** — do NOT edit code or files unless the user says one of these exact words: solve, go, impl, proceed, create, rewrite. Default is think/show/discuss/propose
+22. *(enforced by hook)* ~~precheck first~~
+23. **Read the project's own always file** — when working in a project, also read its always file (for example, di's at `di/notes/guides/pre-flight/always.md`). Each project's always file lives in the same relative path as the global one.

@@ -5,5 +5,5 @@
   - [x] wire up local, netlify, and public buttons for lv project
 - [x] change page title: Design Intuition → Little Cloud Vineyard
 - [x] center text on main page
-- [x] proposal to create content in Main.svelte from files in /src/md
-    - [x] images live in /src/assets
+- [ ] proposal to create content in Main.svelte from files in /src/md
+    - [ ] images live in /src/assets

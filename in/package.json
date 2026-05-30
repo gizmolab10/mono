@@ -1,0 +1,35 @@
+{
+  "name": "little-cloud-vineyard",
+  "main": "dist/main.js",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "e2e": "playwright test --config=e2e/playwright.config.ts",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "docs:preview": "vitepress preview",
+    "docs:build": "vitepress build",
+    "docs:dev": "vitepress dev",
+    "preview": "vite preview",
+    "test:run": "vitest run",
+    "build": "vite build",
+    "test": "vitest",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.1"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "@playwright/test": "^1.59.1",
+    "@tsconfig/svelte": "^5.0.0",
+    "@types/uuid": "^11.0.0",
+    "concurrently": "^9.0.0",
+    "svelte-check": "^4.0.0",
+    "typescript": "^5.3.3",
+    "vitepress": "^1.6.4",
+    "svelte": "^5.0.0",
+    "vitest": "^4.0.0",
+    "vite": "^6.0.0"
+  }
+}

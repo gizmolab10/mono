@@ -1567,35 +1567,35 @@ describe('Dimension_Placement — is_face_front_facing (rule 10 face convention)
 	});
 });
 
-describe('Dimension_Placement — rule 26 uniface block (pending implementation)', () => {
+describe('Dimension_Placement — rule 26 uniface box (pending implementation)', () => {
 	// These tests describe the expected behaviour of the uniface design
-	// captured in dimensionals.md rule 26 and uniface.dimensions.md.
+	// captured in uniface design.md (master spec) and dimensionals.md rule 26.
 	// They are marked .todo so they show up in the suite as outstanding
 	// work without producing failures while the implementation is missing.
 	// Convert each .todo to .it once the corresponding helper exists.
 
 	it.todo('builds a world-axis-aligned 3D box that wraps every painted non-rotated part');
 
-	it.todo('excludes rotated parts from the uniface block');
+	it.todo('excludes rotated parts from the uniface box');
 
 	it.todo('expands each face in world units so its projection sits exactly SILHOUETTE_MARGIN_PX (10 px today) outside the projected silhouette of the scene');
 
-	it.todo('recomputes the uniface block every paint as the camera moves');
+	it.todo('recomputes the uniface box every paint as the camera moves');
 
-	it.todo('returns an empty block when no non-rotated parts are painted');
+	it.todo('returns an empty uniface box when no non-rotated parts are painted');
 
-	it.todo('strongly prefers a candidate whose dim line sits ON a uniface-block face — bonus large enough to override clearance score in typical cases');
+	it.todo('strongly prefers a candidate whose dim line sits ON a uniface — bonus large enough to override clearance score in typical cases');
 
-	it.todo('strongly prefers a candidate whose dim line sits within SILHOUETTE_MARGIN_PX of a uniface-block face');
+	it.todo('strongly prefers a candidate whose dim line sits within SILHOUETTE_MARGIN_PX of a uniface');
 
 	it.todo('falls back to free placement only when no on-or-near-face candidate is viable');
 
 	it.todo('skips rotated parts entirely — they continue under the per-edge / per-direction search');
 
-	it.todo('a part-axis dim line is parallel-in-3D to that axis and lies on one of the four uniface-block faces that contain that axis');
+	it.todo('a part-axis dim line is parallel-in-3D to that axis and lies on one of the four unifaces that contain that axis');
 
-	it.todo('two dims along the same axis on different parts can share the same uniface-block face when there is room');
+	it.todo('two dims along the same axis on different parts can share the same uniface when there is room');
 
-	it.todo('removes the 200-px witness cap — interior parts can have arbitrarily long witnesses reaching the buffer face');
+	it.todo('removes the 200-px witness cap — interior parts can have arbitrarily long witnesses reaching the uniface');
 });
 

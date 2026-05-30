@@ -13,54 +13,68 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/now/handoff.md",
+                "file": "lv/notes/work/work journal.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "handoff"
+              "title": "work journal"
             }
           },
           {
-            "id": "2978f037f8d4a560",
+            "id": "c47d84d8e4cccaa0",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/now/dimensionals.work.md",
+                "file": "di/notes/work/dimensions/dimensionals rules.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "dimensionals.work"
+              "title": "dimensionals rules"
             }
           },
           {
-            "id": "77bbab171e1a7087",
+            "id": "0167279ce8f60121",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/guides/development/rules/dimensions.flow.md",
-                "mode": "preview",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "dimensions.flow"
-            }
-          },
-          {
-            "id": "7de6b81fc250674a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/now/code.debt.md",
+                "file": "di/notes/guides/pre-flight/lexicon.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code.debt"
+              "title": "lexicon"
+            }
+          },
+          {
+            "id": "dc50b543bb8e59fd",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/now/(newer than SDD) methodology.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "(newer than SDD) methodology"
+            }
+          },
+          {
+            "id": "57cff6e3a08529a4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "lv/src/md/Sidebar.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Sidebar"
             }
           },
           {
@@ -78,7 +92,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -110,7 +124,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:api.py",
+                "query": "\"md files\"",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -213,13 +227,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/guides/setup/netlify.md",
+                "file": "lv/notes/work/bare bone website.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of netlify"
+              "title": "Outline of bare bone website"
             }
           }
         ],
@@ -265,68 +279,110 @@
                   "icon": "lucide-file",
                   "title": "netlify"
                 }
+              },
+              {
+                "id": "9a909d28aca5e9d0",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "lv/notes/work/code debt.md",
+                    "mode": "source",
+                    "source": false
+                  },
+                  "icon": "lucide-file",
+                  "title": "code debt"
+                }
+              },
+              {
+                "id": "6ebc22f3f57c9440",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "lv/notes/work/bare bone website.md",
+                    "mode": "source",
+                    "source": false
+                  },
+                  "icon": "lucide-file",
+                  "title": "bare bone website"
+                }
+              },
+              {
+                "id": "260096c84b8c7cb2",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "lv/notes/work/work journal.md",
+                    "mode": "source",
+                    "source": false
+                  },
+                  "icon": "lucide-file",
+                  "title": "work journal"
+                }
               }
-            ]
+            ],
+            "currentTab": 2
           }
         ],
         "direction": "vertical",
-        "x": 1103,
-        "y": 26,
-        "width": 724,
+        "x": 674,
+        "y": 25,
+        "width": 996,
         "height": 600,
         "maximize": false,
         "zoom": 1
       }
     ]
   },
-  "active": "a6f55205cbd35f61",
+  "active": "6ebc22f3f57c9440",
   "lastOpenFiles": [
-    "di/notes/guides/development/rules/dimensions.flow.md",
-    "di/notes/guides/development/rules/dimensionals.md",
-    "di/notes/guides/development/rules/uniface.dimensions.md",
+    "lv/src/md/Sidebar.md",
+    "lv/notes/work/bare bone website.md",
+    "lv/notes/work/work journal.md",
+    "lv/notes/work/proposal.md.tmp.38516.2f20192c588c",
+    "lv/src/css",
+    "lv/src/untitled folder",
+    "di/notes/work/now/(newer than SDD) methodology.md",
+    "lv/src/md/Little Cloud Vineyard copy.md",
+    "lv/src/md/Sedebar.md",
+    "lv/src/md/untitled folder",
+    "lv/notes/work/code debt.md",
+    "di/notes/work/dimensions/dimensionals rules.md",
+    "di/notes/guides/pre-flight/lexicon.md",
+    "di/notes/work/done/code.debt.paid.md",
     "notes/guides/setup/netlify.md",
-    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.38303.13a2b62e277f",
-    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.38303.e65e3d1d2bbf",
+    "di/notes/work/dimensions/uniface rules.md",
+    "di/notes/work/now/handoff.md",
+    "di/notes/guides/development/learn/lessons.md",
+    "di/notes/guides/pre-flight/always.md",
+    "di/notes/guides/pre-flight",
     "di/notes/work/now/code.debt.md",
-    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.38303.f142881a33a5",
-    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.38303.b6aaa98fb6fd",
+    "di/notes/work/mothballs/dimensionals.md",
+    "di/notes/work/mothballs/dimensionals.work.md",
+    "di/notes/work/now/new.lexicon.md",
+    "di/notes/work/dimensions/uniface.dimensions.md",
     "di/notes/work/now/dimensionals.work.md",
-    "node_modules/jest-config/node_modules/ts-node/node_modules",
-    "node_modules/@vitest/mocker/node_modules/vite/node_modules",
-    "node_modules/playwright-core/lib/tools/cli-client/skill/references/spec-driven-testing.md",
-    "node_modules/@grpc/grpc-js/build/src/generated/google/protobuf/UninterpretedOption.js.map",
-    "node_modules/@grpc/grpc-js/build/src/generated/google/protobuf/UninterpretedOption.js",
-    "node_modules/@grpc/grpc-js/build/src/generated/google/protobuf/UninterpretedOption.d.ts",
-    "node_modules/@grpc/grpc-js/build/src/generated/google/protobuf/OneofOptions.js.map",
+    "di/notes/work/mothballs/dimensions.flow.md",
+    "di/notes/work/now/handoff.md.tmp.11951.56a717b9c63a",
+    "di/notes/work/now/handoff.md.tmp.11951.62f4dac405f7",
+    "in/CLAUDE.MD",
+    "in/README.md",
+    "in/src/md/Intersection.md",
+    "in/src/assets/lcv.label.png",
+    "in/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/utils.js",
+    "in/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/element.js",
+    "in/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/component.js",
+    "in/src/assets/icon.png",
+    "in/dist/assets/icon-DQ-Yu_V3.png",
+    "lv copy/dist/assets/icon-DQ-Yu_V3.png",
+    "lv/src/assets/lcv.label.png",
     "node_modules/playwright-core/lib/vite/dashboard/assets/firefox-1bWoP6pv.svg",
     "node_modules/playwright-core/lib/vite/dashboard/assets/firefox-nightly-Cp5nfeDT.svg",
     "node_modules/playwright-core/lib/vite/dashboard/assets/firefox-beta-k3eOH_eK.svg",
     "node_modules/playwright-core/lib/vite/dashboard/assets/safari-na3_-uQk.svg",
     "node_modules/playwright-core/lib/vite/dashboard/playwright-logo.svg",
-    "node_modules/jest-config/node_modules/ts-node/dist-raw/NODE-LICENSE.md",
-    "node_modules/jest-config/node_modules/ts-node/dist-raw/README.md",
-    "node_modules/flatted/golang/README.md",
-    "node_modules/dexie/dist/README.md",
-    "ws/node_modules/@rolldown/binding-darwin-x64/README.md",
-    "ws/node_modules/vitest/node_modules/@types/estree/README.md",
-    "ws/node_modules/@oxc-project/types/README.md",
-    "ws/node_modules/@rolldown/pluginutils/README.md",
-    "ws/node_modules/undici-types/README.md",
-    "ws/node_modules/tslib/SECURITY.md",
-    "ws/node_modules/tslib/README.md",
-    "ws/node_modules/lightningcss/README.md",
-    "ws/node_modules/lightningcss-darwin-x64/README.md",
-    "ws/node_modules/detect-libc/README.md",
-    "ws/node_modules/rolldown/README.md",
-    "node_modules/vitepress/node_modules/@types/estree/README.md",
-    "ws/node_modules/@vitest/pretty-format/README.md",
-    "node_modules/vitest/node_modules/@types/estree/README.md",
-    "node_modules/vite/node_modules/@types/estree/README.md",
-    "node_modules/dexie/testmuai-logo.svg",
-    "node_modules/dexie/testmuai-logo-white.svg",
-    "lv/dist/assets/icon-DQ-Yu_V3.png",
-    "lv/src/assets/icon.png",
-    "lv/node_modules/concurrently/docs/demo.gif",
     "ws/notes/work/Untitled.canvas"
   ]
 }

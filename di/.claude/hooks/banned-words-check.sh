@@ -1,6 +1,6 @@
 #!/bin/bash
 # Stop hook: checks the last assistant message for banned words listed in
-# di/notes/guides/project/development/vernacular.md. If any are found,
+# di/notes/guides/development/learn/lexicon.md. If any are found,
 # returns a block decision so Claude is re-invoked with the violation as
 # context and must rewrite the response before stopping.
 
@@ -52,7 +52,7 @@ fi
 TEXT_TAIL=$(echo "$TEXT" | tail -c 400)
 
 # Banned words. Sourced from the "Banned substitutions" table in
-# di/notes/guides/project/development/vernacular.md. Only the unambiguous
+# di/notes/guides/development/learn/lexicon.md. Only the unambiguous
 # ones are listed here — words like "block", "cell", "value", "padding",
 # "bar" have many legitimate uses outside the banned sense and would
 # generate noisy false positives.
@@ -64,7 +64,7 @@ if [ -z "$FOUND" ]; then
   exit 0
 fi
 
-REASON="VERNACULAR VIOLATION: your previous response contains banned word(s): ${FOUND}. Rewrite that response using the approved synonyms from di/notes/guides/project/development/vernacular.md (e.g., land/landed -> add, insert, write, update, done, applied; ship/shipped -> done, complete, write code; absorb -> place, include, inserted; scaffold -> stub out; eyeball -> needs visual confirmation). Do not start the next task or add anything new — just rewrite that one response."
+REASON="LEXICON VIOLATION: your previous response contains banned word(s): ${FOUND}. Rewrite that response using the approved synonyms from di/notes/guides/development/learn/lexicon.md (e.g., land/landed -> add, insert, write, update, done, applied; ship/shipped -> done, complete, write code; absorb -> place, include, inserted; scaffold -> stub out; eyeball -> needs visual confirmation). Do not start the next task or add anything new — just rewrite that one response."
 
 log_event "block" "$FOUND" "$TEXT_TAIL"
 # Block the stop so Claude is re-invoked with the reason as additional prompt.

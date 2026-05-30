@@ -348,7 +348,7 @@
 - di/notes/guides/project/development/stipulations.md
 - di/notes/guides/project/development/testing.md
 - di/notes/guides/project/development/updating guides.md
-- di/notes/guides/project/development/vernacular.md
+- di/notes/guides/development/learn/lexicon.md
 - di/notes/guides/project/overview/index.md
 - di/notes/guides/project/overview/file layout.md
 - di/notes/guides/project/overview/map.md

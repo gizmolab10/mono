@@ -25,7 +25,7 @@ beforeEach(() => {
 // ═══════════════════════════════════════════════════════════════════
 
 describe('rotation', () => {
-	it('a fresh block has zero rotation on every direction', () => {
+	it('a fresh SO has zero rotation on every direction', () => {
 		const so = make_so('thing');
 		for (const axis of so.axes) {
 			expect(axis.angle.value).toBe(0);

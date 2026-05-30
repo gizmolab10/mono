@@ -4,7 +4,10 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] proceed with dimensionals.work, record progress in handoff
+- [x] proceed with dimensionals.work, record progress in handoff
+- [ ] begin work on dimensions/[[uniface rules]]
+    - [ ] what is missing?
+    - [ ] proposal for transition
 - [ ] on hover over a part or a dimensional
     - [ ] OPTION-C copies the label to the paste buffer
     - [ ] change the dimensional color to red

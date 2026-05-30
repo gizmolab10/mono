@@ -14,7 +14,7 @@
 - **Identity-based formula storage.** A targeted rename helper closed the immediate bug, but the deeper fix is to store formula references by part identity rather than by a snapshot of the part's name. Recorded as a future structural refactor. *Effort: multi-day — touches storage, serialization, and the formula tokenizer.*
 - **Mothballed: residual child-drag drift.** Parked in [milestone 33](../milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
-- **Mothballed: stud / joist / stair template kinds.** First cut at the three-way segmented control needed lots of work — wrong starting proportions, name collisions, and no path from a stair template to the existing diagonal-rise repeater. See [repeaters.mothball.md](./repeaters.mothball.md) for what was attempted and the six things to think through before resuming.
+- **Mothballed: stud / joist / stair template kinds.** First cut at the three-way segmented control needed lots of work — wrong starting proportions, name collisions, and no path from a stair template to the existing diagonal-rise repeater. See [repeaters.mothball.md](repeaters.mothball.md) for what was attempted and the six things to think through before resuming.
 
 ## Proposal 10 — describe the complete dimensionals placement algorithm — DONE
 
@@ -44,7 +44,7 @@ Thirteen e2e specs un-skipped (one per new hook plus combos). `svelte-check` pas
 
 One pre-existing bug fixed along the way: `notes/tools/hub/ports.json` had a trailing comma that was breaking `svelte-check`'s style processor. Now valid JSON.
 
-Tasks 1.1 and 1.2 in [dimensionals.work.md](./dimensionals.work.md) are checked off. Next step is Task 1.5.1 (deterministic seeded random-number generator) per the task plan.
+Tasks 1.1 and 1.2 in [dimensionals.work.md](dimensionals.work.md) are checked off. Next step is Task 1.5.1 (deterministic seeded random-number generator) per the task plan.
 
 ## Proposal 13 — Task 1.5.1: deterministic seeded random-number generator — DONE
 
@@ -325,3 +325,115 @@ One existing painter test was asserting the old broken behaviour (slide applied 
 The search's centering preference for between-the-witnesses positions was a parabolic penalty capped at 20 score-units. Compared to the clearance score (capped at 2000) and the between-bonus (often 100+), 20 was barely a tiebreaker. Labels habitually ended up at the far end of the between-region, near a witness anchor, instead of near the dim-line midpoint.
 
 Bumped the cap to 250 and moved it into `Constants.ts` as `CENTERING_MAX_PX` so it can be tuned without code edits. Labels now snap noticeably toward the middle of each dim line; verified visually in the test scene.
+
+## Front-face preference: hard rule, with the winding sign finally correct
+
+The dim-line direction for each silhouette edge can come from either of the two adjacent faces. The search bias evolved over several turns:
+
+1. Started as an additive score bonus (`FRONT_FACE_BONUS` = 300). The bonus was too small to override a clearance edge the back-facing direction often had, so dims kept ending up on the back of each part.
+2. Promoted to a hard preference: the greedy seed now tries every front-facing pair first and only falls back to back-facing pairs when no front-facing pair yields a viable candidate. Lives in `pick_best_placement` in `Dimension_Placement.ts`.
+3. The hard preference had ZERO visible effect on the first try — turned out the front/back detection was using the wrong sign of the projected face winding. The renderer uses NEGATIVE winding for front-facing faces (see `Render.ts:452`). My code used POSITIVE. So the "front" preference was actually preferring the back.
+
+Fix: extracted the convention into a tiny named helper `is_face_front_facing(winding) => winding < 0`. Three unit tests cover the negative, positive, and zero cases. After the sign flip, dims jump to the genuinely front-facing side.
+
+## Witness-shortness bias added
+
+The search had no preference for short witnesses, so it picked the maximum witness length whenever clearance did not differentiate samples. Labels floated far from each part. Added `WITNESS_LENGTH_PENALTY_PER_PX` (2 score units per pixel beyond the minimum) to `Constants.ts` and subtracted it from the candidate score. Witnesses now sit close to their parts unless clearance forces them longer.
+
+## Per-part hulls replace the combined hull for the witness pushback
+
+The rule-9 silhouette pushback used to use one combined convex hull of every painted leaf part's projected vertices. A label on an interior part had to push past the OUTER outline of the whole drawing, which capped out for most interior parts.
+
+Replaced with a per-part hull set: each painted leaf part gets its own convex hull. The witness pushback computes the MAX exit distance across all per-part hulls along the witness direction. For two parts where one's hull sits inside another's, the max equals the larger hull's exit — same behaviour as the combined hull. For parts whose hulls are disjoint, the witness only has to clear whichever hulls the ray actually crosses.
+
+This is partial progress toward the larger uniface design. See `uniface design.md`.
+
+## Witness-direction sign was wrong (perp-toward-centroid, should have been perp-away)
+
+The 2-direction model computes a perpendicular vector from the edge midpoint into the face plane. That vector was pointing TOWARD the face centroid — into the part body — which after projection sent the witness ACROSS the silhouette to the far side. exit-t came out as the full width of the silhouette and the cap rejected the pair.
+
+Fix: negate the perp vector. The witness now extends in the face plane AWAY from the face centroid — past the edge into the clear space outside the part — which is what an engineering-drawing witness line actually does. Found via the per-direction trace that the user requested. Single sign-flip in `two_face_outward_directions`.
+
+## Painter slide-rescale bug fixed
+
+The search built its slide value in EDGE-length units. The painter applied that same number along the DIM LINE, which has a different screen length under perspective when the per-endpoint witness vectors diverge. For one trace, the edge was 219.6 px on screen and the dim line was 152.5 px — a slide of 161.2 (between the witnesses on the edge) ended up past the W2 dim-line end (near the W2 anchor) on the dim line.
+
+Fix in the painter: rescale the slide from edge units to dim-line units (slide_dl = slide_edge × dim_line_len / edge_len) before applying. The between-vs-overhang check inside the painter now uses the rescaled slide too, so the inside-segment-vs-outside-extension geometry matches where the label actually paints. One existing painter test asserting the broken behaviour was updated.
+
+## Witness-trapezoid convergence check
+
+Two world-parallel witness lines can project to non-parallel screen rays whenever the edge is not parallel to the image plane. The old check measured distance only at the anchors — caught a sub-case but missed the typical convergence-over-length case. Replaced with `witness_trapezoid_gap`: picks the corner of the edge+dimline+witnesses trapezoid whose interior angle is larger (ties go to W1's corner), drops a perpendicular from that corner onto the OTHER witness's line, returns the length. Reject pairs whose perpendicular gap falls under `WITNESS_CLEARANCE_PX` (15 today). Six unit tests cover rectangle, converging, parallel, zero-magnitude, and the symmetric tie-break case.
+
+## Visibility check disabled per spec change
+
+The rule-11 endpoint-visibility filter (reject a dim whose measured edge has either endpoint hidden behind another part) was removed from the spec, then the call site was commented out in `Dimension_Placement.ts`. The helper functions and their tests were deleted along with the orphaned per-label blockers map. The diagnostic line that named blockers also went away. The check can be re-wired by un-commenting the block in `compute_viable_pairs` if you change your mind.
+
+## Per-paint diagnostic console summary
+
+Added `log_dim_summary` plus several supporting traces inside `Dimension_Placement.ts` and `Dimension_Painter.ts`. The summary prints expected vs placed vs dropped, a per-reason breakdown of "no viable edge" rejections (no candidate edges / every edge too short / every direction rejected / mixed reasons), and a per-direction breakdown (silhouette too far / witness range empty / slidable range empty / projection degenerate / witnesses converge). A separate trace pinned to a smart-object name (`DBG_TRACE_SO_NAME`, currently "B") prints every axis's outcome for that part. The painter has a matching trace for a specific dim text (`DBG_TRACE_TEXT`, currently "16' 8 1/2\""). Lines only re-print when the numbers change paint-to-paint.
+
+## Constants moved into one place
+
+`SILHOUETTE_MARGIN_PX`, `PAIR_CLEARANCE_PX`, `WITNESS_CAP_PX`, `WITNESS_LEN_MAX_PX`, `SLIDABLE_OVERHANG_PX`, `WITNESS_ANCHOR_BUFFER_PX`, `CLEARANCE_SCORE_CAP_PX`, `WITNESS_CLEARANCE_PX`, `WITNESS_GAP_FROM_PART_PX`, `CENTERING_MAX_PX`, `FRONT_FACE_BONUS`, `WITNESS_LENGTH_PENALTY_PER_PX`, `FACE_DEPTH_TOLERANCE`, `NEIGHBOUR_GRID_CELL_PX`, `GRID_RESOLUTION`, `PERSISTENCE_TOLERANCE_PX`, `FORBIDDEN_CAM_DOT` all live in `Constants.ts` under `k.dimensions.*` and are referenced from both the placement code and the relevant spec rules. The spec values were synced after several drifted out of date.
+
+## Uniface design captured
+
+A larger redesign was discussed and captured. The design replaces per-edge / per-direction search (for axis-aligned parts) with a single world-axis-aligned uniface box enclosing every painted non-rotated part, each uniface expanded in world units so it projects exactly `SILHOUETTE_MARGIN_PX` (10 today) outside the projected silhouette of the scene. Every dim line for a non-rotated part lies on one of the uniface box's six unifaces. Rotated parts get their own uniface box, rotated the same as the part, around a local silhouette of the part and its subparts, expanded enough to sit outside the root uniface box. The 200-px witness cap is removed under uniface.
+
+A new rule 26 in `dimensionals.md` captures the strong-prefer-uniface preference. The master spec is `uniface design.md`. The Glossary has "Uniface box" and "Uniface" entries. 12 todo tests in `Dimension_Placement.test.ts` cover the expected uniface behaviour as a checklist for the eventual implementation. No uniface code has been written yet — phase 1 (spec) is done, phase 2 (minimal end-to-end code) and phase 3 (refinement) are open.
+
+## Code flow chart captured
+
+A Mermaid flow chart of the current dimension-placement pipeline lives at `notes/guides/development/rules/dimensions.flow.md`. Six diagrams cover the top-level paint pipeline, the per-pair viability walk, the per-direction range computation with all reject reasons, the front-back greedy choice, the 5x5 grid scoring, the drop policy, and the persistence loop across paints.
+
+## Hooks added: precheck and the no-arguing memory
+
+A new pre-send check script lives at `di/.claude/hooks/precheck.sh`. It applies the same regex patterns as the three stop hooks (banned words, hedge phrases without disclaimer, diagnostic claims without citation). The assistant pipes every multi-sentence response through it before sending; clean exit means the stop hooks will not fire. A standing memory rule (`feedback_prescan_drafts.md`) makes this the required process. A separate memory (`feedback_never_argue.md`) captures the rule that when corrected, the assistant must not defend, explain, or refute — acknowledge and change behaviour.
+
+## Test suite size
+
+824 unit tests at last count, plus 12 todo tests for the uniface design. svelte-check clean.
+
+## Proposal 31 — begin work on the uniface design
+
+corrected after the first draft — the master spec is [uniface design.md](uniface%20rules.md). the secondary doc in the same folder is not source of truth. vocabulary: the whole expanded structure around the scene is the uniface box; one of its six closed-surface faces is a uniface. never "uniface block", never "uniface face", never "buffer".
+
+### What's missing from the master spec
+
+the spec is short — nine numbered rules. each rule has holes. here is what is not yet decided.
+
+**which value becomes the discrete enum, and how many values it takes.** rule 1 promotes one continuous degree of freedom to an enum of "1 and 2 and maybe 3". it does not name which degree of freedom (witness length is the obvious read, but unsaid) and does not commit on whether the enum has two values or three.
+
+**what the other three degrees of freedom are.** rule 2 says four degrees of freedom with only one of them continuous (the label's slidable position along the dim line). the three discrete ones are not enumerated. likely read: which silhouette edge of the part, which uniface contains the dim line, which enum level — but the spec is silent.
+
+**the new word "silhouette" collides with the old one.** rule 3 says silhouette is a world-3D box that exactly encloses every part. the running design already uses the word "silhouette" for a convex hull of projected leaf-part vertices. two different things now share one word. spec needs to pick: one wins, or the two get renamed apart.
+
+**how the 15-screen-pixel expansion turns into world units.** rule 4 expands the silhouette by 15 screen pixels to make the first uniface. under perspective, "15 screen pixels" is not one world-units distance — every face needs its own per-paint shift so the projected face sits at the right screen-pixel margin. the master spec does not say how to compute it. the recipe lived in the secondary doc, which is no longer master, so it has to come into the master.
+
+**reconcile the 15 with the existing 10.** rule 4 says 15 screen pixels. the running pipeline uses 10 screen pixels for the silhouette margin. one number is the new design's intent — the spec needs to pick.
+
+**rotated parts have an algorithm — rule 5 — with detail holes inside it.** the algorithm: a rotated part gets its own uniface box, rotated the same as the part, around a local silhouette of the part and its subparts, expanded enough to sit outside the enum-1 root uniface box. four detail holes inside rule 5: (a) "enough to sit outside" is a criterion, not a number — the minimum gap from the root uniface box is undefined; (b) the word "silhouette" is used in two senses (the global 3D box of rule 3, and the local part-plus-subparts of rule 5) — same word, two meanings, needs disambiguation; (c) does the root uniface box's silhouette include rotated parts, or only non-rotated parts (rule 3 says "every part" but rotated parts have their own thing); (d) what happens when two rotated parts' uniface boxes overlap.
+
+**"embedded in a uniface" is undefined.** rule 6 says compute witness length so the dim line is embedded in a uniface. on the surface? inside the volume? the spec needs to pick.
+
+**the enum cap and the fallback.** rule 9 increments the witness enum when a label conflicts everywhere. the spec does not name the cap or what happens when the cap is hit and conflict remains — drop the label, or fall back to the older free-placement search?
+
+**which existing rules survive — the big carry-over question.** the running design has rules for repeater integration, x-ray mode, persistence across paints, performance budget, drop semantics, dim-line drawing, label centering, in-place editing, deterministic tie-breaks, and test hooks. none of these appear in the uniface design. each one needs to carry over verbatim, get rewritten, or get explicitly dropped — and the spec needs to say which.
+
+**rule 4 uses "uniface" for the whole expanded structure, not for a single face.** rule 4 says "Uniface is defined as the silhouette expanded by 15 screen pixels. This is enum 1. Enum 2 expands again by the same amount." the chosen vocabulary is: the whole expanded structure is the uniface box; one of its six closed-surface faces is a uniface. so rule 4 is defining the uniface box, not a uniface. and the role of the enum levels under the chosen vocabulary is unsettled — does each enum level spawn its own uniface box (so enum 2 is a second, more-expanded box with its own six unifaces), or do the enums sit per-uniface within one box (each uniface has an enum-1 position and an enum-2 position)? rule 4 needs to be rewritten to match the chosen vocabulary and to nail down the enum semantics.
+
+partial progress already done in the code: per-part hulls replaced the combined hull for the witness pushback. that's geometry-only — not the uniface box, not the picking rule.
+
+### Proposal for transition
+
+two readings of "transition" — evolve the master spec, and roll out the code. the spec evolution gates the code, so do it first.
+
+**spec transition — close the gaps above in order.** each gap is one or two sentences of decision. bundle the decisions as version 2 of the master spec, with a "decisions taken" section at the end. once version 2 is approved, add a companion that maps every rule of the running design onto its uniface successor — three buckets: carry over verbatim, rewrite, drop.
+
+**code transition — only after the spec is closed.** three steps, each runnable in the app at every step.
+
+- **step 1 — uniface box builder, nothing calls it yet.** add a helper that, given the camera and the painted non-rotated leaf parts, returns the uniface box: a world-axis-aligned box plus, for each of its six unifaces, the world-units shift that places it at the configured screen-pixel margin past the projected silhouette. recompute every paint. new unit tests cover the bounding box, the per-uniface shift, and the screen-pixel-margin invariant.
+- **step 2 — first uniface placements for non-rotated parts, behind a flag, default off.** for each non-rotated part and each axis, pick the first viable uniface (no smart picking yet) and place the dim line on it. emit the same placement shape today's pipeline emits so the repair pass, stochastic finish, drop policy, and persistence layer all swallow it unchanged. add a button to the painter toggle so the visual diff is one click. fill the twelve todo tests as the gating contract.
+- **step 3 — refinement, then flip the default to on.** smarter uniface picking (closest, least-crowded, or stability-preferring — pick the one that settles visually). one-dimensional conflict resolution per uniface for same-axis labels that share one. drop the 200-pixel witness cap for non-rotated parts (the cap stays on for rotated parts until their algorithm shows up).
+
+rotated parts get their own uniface box per rule 5 of the master spec — same algorithm shape (build the rotated silhouette around the part and its subparts, expand to sit outside the root uniface box), implemented after the root uniface box code is stable.

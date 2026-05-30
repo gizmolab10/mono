@@ -1,4 +1,4 @@
-# Vernacular
+# Lexicon
 
 The words used in this project. When writing prose, comments, log lines, or test names, use these words exactly. Do not invent synonyms; do not substitute "near-synonyms" that sound similar.
 
@@ -34,7 +34,7 @@ Do not use these words for the three numbers: *cell*, *value*. Both have been re
 
 - **repeater** — a smart object marked to repeat along one of its directions.
 - **run** — the direction along which a repeater repeats.
-- **master** — the first child of a repeater. Acts as the template.
+- **master** — the first child of a repeater. Sets the shape that every clone copies. Never call this a "template" — older dimensioning prose used that word, but "master" is the project's term.
 - **clone** (also written **duplicate**) — a copy of the master that the repeater spawns along the run direction.
 - **fire block** (one word: **fireblock**) — a gap-filler shape that the repeater drops in between clones when the firewall option is on.
 
@@ -51,17 +51,91 @@ Do not use these words for the three numbers: *cell*, *value*. Both have been re
 
 - **drawing area** — the on-screen rectangle that holds the picture.
 - **drawing surface** (also called the **canvas**) — the pixel buffer the renderer paints into. The drawing area contains the drawing surface.
-- **silhouette** — the smallest screen rectangle that contains every visible smart object's projection. Used by the print pipeline.
 - **2D mode**, **3D mode** — the camera's two viewing modes. Flat versus normal. Never call them "ortho" or "perspective" in user-facing prose.
-- **frustum** — the visible volume of the camera. Used in rule prose ("blocks that extend beyond the frustum").
+- **frustum** — the visible volume of the camera. Used in rule prose ("SO's that extend beyond the frustum").
 
 ## Print pipeline
 
-- **silhouette** — see above.
+- **silhouette rect** — the screen rectangle (measured in screen pixels) that exactly encloses the silhouette box after it is projected onto the screen.
 - **printable area** — the area of the paper that the printer can mark. Inside the chosen sheet of paper.
 - **paper** — the printed sheet.
 - **margin** — the empty strip of paper between the picture and the edge of the printable area. Appears when the picture's shape and the paper's shape differ. Never call this a *band*, *bar*, *padding*, or *gutter*.
-- **fit** — the scale-and-translate transform applied to the drawing surface so the silhouette fills the printable area along the limiting side and is centered on the other side.
+- **fit** — the scale-and-translate transform applied to the drawing surface so the silhouette rect fills the printable area along the limiting side and is centered on the other side.
+
+## Units
+
+- **screen pixels** — distance in pixels between two points after they are projected onto the screen.
+- **world units** — units that the saved scene uses for length.
+
+## Dimensions
+
+How each dim line's position and label are chosen.
+
+- **alphabetical** — the catch-all tie-break: pick the part whose dotted ancestry path comes first alphabetically.
+- **arrowhead** — the triangle drawn at each end of a dim line. Its point sits at the witness anchor.
+- **box** — a 3D parallelepiped with all right angles.
+- **dim line** (also written **dimension line**) — the line that runs parallel-in-3D to the measured axis, offset outward from the part by the witness length, with the number sitting on it.
+- **drop** (verb, for a label) — skip drawing the label this render. Done when no four-degrees-of-freedom combination clears every other label by the pair clearance and the silhouette box by the silhouette margin.
+- **duplicate-text drop** — the rule that drops the later of two labels with the same number on parallel measured edges. The tie-breaks pick which one is "later".
+- **four degrees of freedom** (also written **4DOF**) — the four placement choices the placement algorithm uses per label: edge, uniface, witness length, label position.
+- **in conflict** (two labels) — no pair of 4DOF combinations across both labels keeps both rectangles at the pair clearance apart while each stays on a uniface. A property of the pair, not of either label alone.
+- **label** — the rectangle of text that shows a dimension's number on screen.
+- **label center point** (screen) — the exact center of the label rect.
+- **label position** (world along the dim line) — where along the dim line the label center point sits, in world units, measured either from (a) the first witness anchor when in the witness interior, (b) outward from the anchor point closest to the overhang.
+- **label rect** (screen) — the rectangle in screen coordinates that exactly encloses the label text.
+- **overhang** — the label sits outside the witness lines. The overhang distance is measured in screen pixels along the dim line.
+- **pair clearance** — the minimum screen-pixel gap between any two label rectangles. Set by the project to 15 pixels.
+- **parent-over-child** — the second tie-break in the duplicate-text drop: prefer the part with the shallower ancestry path.
+- **persistence** — the carry-over of each label's 4DOF choice from one render to the next, and the first tie-break in the duplicate-text drop. Two sub-rules govern it:
+    - **seeded placement.** inside a full placement-algorithm run, seeded by the previous render, labels that still pass strict viability stay locked at their previous values; only labels that lost viability are recomputed.
+    - **drift safety.** after two consecutive renders where the placement algorithm was skipped and any check passed only by the 2-pixel tolerance, force a full placement-algorithm run on the next render regardless.
+- **placement algorithm** — the procedure that picks the four placement choices for every label each render.
+- **render** — one frame of drawing. The placement algorithm runs once per render.
+- **silhouette box** — the box that exactly encloses every part (including those that are rotated), recomputed before each render.
+- **silhouette margin** — the screen-pixel gap between the silhouette box and the first uniface box. Set by the project to 15 pixels.
+- **tie-break** — when two labels tie on a placement criterion, the rule that picks the winner. Persistence, parent-over-child, and alphabetical are the three tie-breaks used in the duplicate-text drop.
+- **uniface** — a face of a unface box.  Never "uniface face", never "uniface block", never "buffer".
+- **uniface box** — the silhouette expanded by the silhouette margin. This is enum 1. Enum 2 expands again by the same amount. Enum 3, expands again, same amount.
+    - **excluded uniface** — a face whose normal is within 20° of pointing at the camera is excluded from the placement algorithm.
+- **viable enum pair** — an (edge, uniface) pair for which at least one viable value pair exists.
+- **viable label** — a label with at least one viable (edge, uniface) pair. A label with no viable pair is dropped.
+- **viable value pair** — a (witness length, label position) pair whose two values both sit inside the ranges allowed by the filters.
+- **witness anchor** — the point where a witness line meets the dimension line. It is also the **point** of the arrowhead.
+- **witness exterior** — the parts of the dim line that stick out past the witness ends. Drawn whenever the label overhangs or is wider than the dim line.
+- **witness index** — value of 1 corresponds to the first uniface box, 2 the box expanded by the silhouette margin. 3 another expansion (of the 2 box).
+- **witness interior** — the part of the dim line between the two witness ends. Drawn only when the label fits between the witnesses.
+- **witness length** — how far the dim line sits from the part's edge, in screen pixels.
+- **witness line** — the perpendicular line at each end of a dimension. The straight projected ray from one edge endpoint outward to and past the dim line. Two per dimension. World-parallel, not necessarily screen-parallel under perspective.
+
+### missing
+
+1. **rotated part** — used in uniface rule 4 but not defined. Plain English version: a smart object whose own rotation differs from the identity.
+    
+2. **subpart** — used in uniface rule 4 ("the rotated part and all its subparts"). Not defined.
+    
+3. **root uniface box** — used in uniface rule 4 sub-point 1. Not defined as a term.
+    
+4. **enum / enum level** — uniface rule 1 promotes a degree of freedom to an enum; rule 8 says "increment its witness enum". The lexicon defines "witness index" but does not define the bare word "enum" or what "enum level" means.
+    
+5. **measured axis** — appears in the dim line entry. Not separately defined.
+    
+6. **measured edge** — appears in the duplicate-text drop entry. Not defined.
+    
+7. **silhouette** (bare word, used in uniface rule 7) — the lexicon has "silhouette box" and "silhouette rect" but no bare "silhouette" entry. Either the uniface rule drops the bare word, or the lexicon adds an entry naming which sense the bare word resolves to.
+    
+8. **strict viability** — used in the seeded placement sub-rule. Not defined.
+    
+9. **carry-over** — used in the persistence entry. Not defined as a standalone term.
+    
+10. Typo on line 97: "a face of a unface box" — the correct spelling is "uniface".
+    
+
+## Architecture
+
+- **world pass** — union of every descendant's absolute bounds, excluding any subtree rooted at a rotated direct child.
+- **rotation pass** — for each rotated direct child, collect its full subtree's bounds, take the eight corners, rotate them around the child's center, and grow the bounds with the rotated positions.
+- **spatial index** — a fast lookup the code uses when figuring out which parts of a drawn edge are hidden behind other smart objects. Without it, every edge would have to check itself against every smart object in the scene; with it, only the few smart objects in the same neighborhood get checked.
+- **post-propagate hook** — every time the system finishes recomputing formulas, this code walks every smart object. For each one that is set up as a repeater, it rebuilds the repeater's clones so the number of clones matches what the new measurements imply.
 
 ## Editing and dragging
 
@@ -108,28 +182,35 @@ Do not use these words for the three numbers: *cell*, *value*. Both have been re
 
 These are the swaps that have caused friction. Use the left column, never the right.
 
-| Use | Never |
-| ---- | ----- |
-| smart object, SO | block |
-| attribute | cell, value (in the three-numbers-per-direction sense) |
-| done, complete | ship, shipped (in the "finished" sense) |
-| write code | ship, shipped (in the "produce or submit code" sense) |
-| add, insert, write, update | land (in the "add a thing" sense) |
-| do, perform, can be done | land, landed, lands, landing (in the "complete an action" sense) |
-| place, include, inserted | absorb, absorbed, absorbs, absorbing |
-| stub out | scaffold |
-| margin | band, bar, padding, gutter |
-| needs visual confirmation | needs eyeball |
-| more work, a lot of work | bigger lift, heavy lift, heavy lifting |
-| chime | (no synonym; do not paraphrase) |
-| pac | (no synonym; do not paraphrase) |
-| move (= relocate) | copy (when relocate was meant) |
-| ALPHA corners (primed: A') | unprimed for ALPHA |
-| BETA corners (unprimed: A) | primed for BETA |
+| Use                                 | Never                                                            |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| smart object, SO                    | block                                                            |
+| attribute                           | cell, value (in the three-numbers-per-direction sense)           |
+| done, complete                      | ship, shipped (in the "finished" sense)                          |
+| write code                          | ship, shipped (in the "produce or submit code" sense)            |
+| add, insert, write, update          | land (in the "add a thing" sense)                                |
+| do, perform, can be done            | land, landed, lands, landing (in the "complete an action" sense) |
+| place, include, inserted            | absorb, absorbed, absorbs, absorbing                             |
+| stub out                            | scaffold                                                         |
+| margin                              | band, bar, padding, gutter                                       |
+| needs visual confirmation           | needs eyeball                                                    |
+| more work, a lot of work            | bigger lift, heavy lift, heavy lifting                           |
+| chime                               | (no synonym; do not paraphrase)                                  |
+| pac                                 | (no synonym; do not paraphrase)                                  |
+| move (= relocate)                   | copy (when relocate was meant)                                   |
+| ALPHA corners (primed: A')          | unprimed for ALPHA                                               |
+| BETA corners (unprimed: A)          | primed for BETA                                                  |
+| master (= ONLY child of a repeater) | template                                                         |
+| uniface box                         | uniface block, buffer (as a shape word)                          |
+| uniface                             | uniface face                                                     |
+| render (= one frame of drawing)     | paint                                                            |
+| placement algorithm                 | the search, search (in the dimensions sense)                     |
+| uniface                             | direction (in the dimensions sense)                              |
+| approach                            | shape (in the methodology sense — geometric shape is fine)       |
 
 ## Working-discipline rules (from the learn file)
 
-Captured in the active-work [learn file](../../../work/ai/learn.md) — past mistakes that should never be repeated. Listed here as well so the vocabulary file is also the one-stop reference for collaborator discipline.
+Captured in the active-work [learn file](di/notes/work/ai/learn.md) — past mistakes that should never be repeated. Listed here as well so the vocabulary file is also the one-stop reference for collaborator discipline.
 
 - **Don't act on guesses.** When the data shows something unexpected, investigate — don't guess the cause and write code. Two wrongs: acting on a guess, and not waiting for approval before making the change.
 - **Stop speculating about what's on screen.** When the user says something is or isn't on screen, that's evidence. The job is to find the code that contradicts that evidence, not to argue with it.

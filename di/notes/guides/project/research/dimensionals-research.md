@@ -1,6 +1,6 @@
 # Dimensionals — library research (2026-05-20)
 
-Research done on whether any browser-compatible constraint-satisfaction library beats the custom four-DOF search shape described in [dimensionals.md](di/notes/guides/development/rules/dimensionals.md) rule 23 within the 25-millisecond cold-run budget. Conclusion was: **stick with the custom shape**. This file keeps the findings so the decision is revisitable when browser tooling changes.
+Research done on whether any browser-compatible constraint-satisfaction library beats the custom four-DOF search shape described in [dimensionals.md](dimensionals%20rules.md) rule 23 within the 25-millisecond cold-run budget. Conclusion was: **stick with the custom shape**. This file keeps the findings so the decision is revisitable when browser tooling changes.
 
 ## Top-line
 

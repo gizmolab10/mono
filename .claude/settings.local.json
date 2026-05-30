@@ -74,6 +74,10 @@
           },
           {
             "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"PRECHECK FIRST: Before sending any response longer than one short sentence, your FIRST tool call this turn must be a Bash invocation that pipes the draft through di/.claude/hooks/precheck.sh. If precheck returns a non-zero exit code, rewrite the draft and re-check before emitting. Running precheck is non-optional; skipping it is a process failure that costs Jonathan tokens.\"}}'"
+          },
+          {
+            "type": "command",
             "command": "di/.claude/hooks/done-checklist.sh"
           },
           {

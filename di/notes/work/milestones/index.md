@@ -4,7 +4,7 @@ A living snapshot of the arc of the project at the milestone level.
 ## Open
 | #   | Name                                             | Goal                                                                                                   |
 | --- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| 27  | [Selection Algorithm](../now/27.selection.algorithm.md) | Mouse-driven navigation — drill down on click, rubber-band zoom, recenter button, command-drag to pan. |
+| 27  | [Selection Algorithm](27.selection.algorithm.md) | Mouse-driven navigation — drill down on click, rubber-band zoom, recenter button, command-drag to pan. |
 | 28  | [Cut Lists](28.cut.lists.md)                     | Visual layout of all pieces laid flat for optimal material use.                                        |
 | 29  | [User Manual](29.user.manual.md)                 | Voice-over introduction to the app with progressive descriptions of subtle features.                   |
 | 30  | [Licensing](30.licensing.md)                     | Research licensing practices, compare options, pick one, implement it.                                 |

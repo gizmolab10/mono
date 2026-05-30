@@ -1,6 +1,6 @@
 # Dimensionals Redesign — Task List
 
-The full work needed to replace the running force-driven placement code with the four-degrees-of-freedom search specified in [guides/development/rules/dimensionals.md](../../guides/development/rules/dimensionals.md). Tasks are ordered by dependency. Every effort number is a guess (range, not a point), and every risk is named so it can be retired or escalated as work progresses.
+The full work needed to replace the running force-driven placement code with the four-degrees-of-freedom search specified in [guides/development/rules/dimensionals.md](dimensionals%20rules.md). Tasks are ordered by dependency. Every effort number is a guess (range, not a point), and every risk is named so it can be retired or escalated as work progresses.
 
 *Refresh this file as tasks finish. Move done items into [code.debt.paid.md](../done/code.debt.paid.md) and check this file off in [code.debt.md](./code.debt.md).*
 
@@ -348,7 +348,7 @@ What changes:
 
 ### Task 4.1 — Remove the old force-driven code — DONE
 
-Delete `run_simulation`, `persisted_state` (the old map keyed by SO id plus axis), the force-pass constants (`SPRING_K`, `REPULSION_K`, `DAMPING`, `ITERATIONS`), the `prev_settled` / `prev_keys` / `prev_homes` stop-when-settled state, the old early-collection statistics, the old painter (`draw_dimension_candidate`), the per-paint Phase A/B/C blocks, and the old `render_dimensions` body. Drop the feature flag and the painter sub-flag.
+Delete `run_simulation`, `persisted_state` (the old map keyed by SO id plus axis), the force-pass constants (`SPRING_K`, `REPULSION_K`, `DAMPING`, `ITERATIONS`), the `prev_settled` / `prev_keys` / `prev_homes` stop-when-settled state, the old early-collection statistics, the old painter (`draw_dimension_candidate`), the per-paint Phase A/B/C boxes, and the old `render_dimensions` body. Drop the feature flag and the painter sub-flag.
 
 - **Dependencies.** Task 4.0 (helpers must be moved first) plus at least a few days of soak with no regressions.
 - **Effort guess.** Half a day.

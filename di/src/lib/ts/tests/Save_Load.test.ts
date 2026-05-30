@@ -35,7 +35,7 @@ function make_so(name: string, bounds?: Partial<Record<Bound, number>>, parent_s
 }
 
 // Capture a small snapshot in the same shape the running app writes when it
-// saves: each block gets its serialized form plus the id of its parent (if any),
+// saves: each SO gets its serialized form plus the id of its parent (if any),
 // and the camera contributes its own snapshot.
 type Saved_SO = ReturnType<Smart_Object['serialize']> & { parent_id?: string };
 type Saved_World = {
@@ -55,7 +55,7 @@ function capture(root: Smart_Object): Saved_World {
 	};
 }
 
-// Replay a saved snapshot: rebuild every block, wire the parent links, rebind
+// Replay a saved snapshot: rebuild every SO, wire the parent links, rebind
 // formulas, recompute, restore the camera. Mirrors the load-side steps in the
 // app's load flow without depending on the rest of the engine.
 function replay(saved: Saved_World): Smart_Object[] {

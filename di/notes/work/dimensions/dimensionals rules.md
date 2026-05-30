@@ -11,13 +11,13 @@ Every term the rest of this document leans on, in one place.
 - **4DOF / four degrees of freedom** — the four placement choices the search makes per label: edge, direction, witness length, slidable position. Detail in rule 1.
 - **Alphabetical** — the final tie-break when both persistence and depth tie: pick the part whose dotted ancestry path comes first alphabetically. Detail in rule 4.
 - **Clone** — every child of a repeater except the template, the first fireblock in a firewalled run, and (when shortened) the last fireblock. Clones get no dimensions of their own. Detail in rule 18.
-- **Combined silhouette outline** — the convex hull around every painted leaf part's projected vertices, recomputed each paint. Every label must sit at least SILHOUETTE_MARGIN_PX (10 px today; value lives in `Constants.ts`) outside it. Detail in rule 9.
+- **Combined silhouette outline** — the convex hull around every painted leaf part's projected vertices, recomputed each paint. Every label must sit at least SILHOUETTE_MARGIN_PX (15 px today; value lives in `Constants.ts`) outside it. Detail in rule 9.
 - **Dim line / dimension line** — the line that runs parallel-in-3D to the measured axis, offset outward from the part by the witness length, with the number sitting on it. Detail in rule 6.
 - **Direction** — one of the four signed perpendicular axes to which the dim line is parallel. A discrete degree of freedom. Detail in rule 1.
 - **Drift safety** — after two consecutive search-skipped paints that any check passed only by the 2-pixel tolerance, force a full search on the next paint regardless. Detail in rule 19.
 - **Edge** — which silhouette edge of the part the label anchors on. A discrete degree of freedom. Detail in rule 1.
 - **Fireblock** — a child of a firewalled repeater whose length on the repeat axis differs from the template's. The first fireblock and (if shortened) the last fireblock get the repeat-axis dimension only. Detail in rule 18.
-- **In conflict (two labels)** — no pair of 4DOF combinations across both labels keeps both rectangles at least PAIR_CLEARANCE_PX (15 px today) apart while each stays at least SILHOUETTE_MARGIN_PX (10 px today) outside the silhouette outline. A property of the pair, not of either label alone. Detail in rule 10.
+- **In conflict (two labels)** — no pair of 4DOF combinations across both labels keeps both rectangles at least PAIR_CLEARANCE_PX (15 px today) apart while each stays at least SILHOUETTE_MARGIN_PX (15 px today) outside the silhouette outline. A property of the pair, not of either label alone. Detail in rule 10.
 - **Inside segment** — the part of the dim line between the two witness ends. Drawn only when the label fits between the witnesses. Detail in rule 7.
 - **Outside extensions** — the parts of the dim line that stick out past the witness ends. Drawn whenever the label overhangs or is wider than the dim line. Detail in rule 7.
 - **Overhang** — the label sits outside the witness lines. the overhang distance is measured in screen pixels along the dim line direction. Detail in rule 10.
@@ -28,7 +28,7 @@ Every term the rest of this document leans on, in one place.
 - **Seeded semantics** — inside a full search seeded by the previous paint, labels still passing strict viability stay locked at their carry-over values; only labels that lost viability are searched for fresh. Detail in rule 19.
 - **Slidable position** — where along the dim line the label sits, in screen pixels measured from the first witness anchor along the dim line direction. A continuous degree of freedom with overhang allowed at either end. Detail in rule 1.
 - **Template** — the first child of a repeater; the only one that draws all three axes. Detail in rule 18.
-- **Uniface block** — a world-axis-aligned 3D box wrapping every painted non-rotated part. Each of its six faces is expanded in world units so it projects exactly SILHOUETTE_MARGIN_PX (10 px today) outside the projected silhouette of the scene. Dim lines are strongly preferred to sit ON or JUST OUTSIDE a face of this block. Recomputed every paint. Detail in rule 26 and in [uniface.dimensions.md](uniface.dimensions.md).
+- **Uniface block** — a world-axis-aligned 3D box wrapping every painted non-rotated part. Each of its six faces is expanded in world units so it projects exactly SILHOUETTE_MARGIN_PX (15 px today) outside the projected silhouette of the scene. Dim lines are strongly preferred to sit ON or JUST OUTSIDE a face of this block. Recomputed every paint. Detail in rule 26 and in [uniface.dimensions.md](uniface.dimensions.md).
 - **Viable enum pair (edge, direction)** — an (edge, direction) pair for which at least one viable (witness length, slidable position) value pair exists. Equivalent to "none of the four filters has emptied its range".
 - **Viable value pair (witness length, slidable position)** — a continuous-DOF pair whose two values both sit inside the ranges set by the four filters in rule 11.
 - **Witness length** — how far the dim line sits from the part's edge, in screen pixels. A continuous degree of freedom bounded by the rule-11 filters. Detail in rule 1.
@@ -40,7 +40,7 @@ Every label has four degrees of freedom (4DOF) in placement:
 
 1. **Edge** (discrete). Which silhouette edge of the part to anchor on.
 2. **Direction** (discrete). Each edge has 2 possible outward directions (2 faces) for the witness lines.
-3. **Witness length** (continuous). How far the dim line sits from the part's edge, in screen pixels — anywhere from the minimum needed to place the label rectangle SILHOUETTE_MARGIN_PX (10 px today) outside the combined outline, up to the WITNESS_CAP_PX (200 px today) witness cap.
+3. **Witness length** (continuous). How far the dim line sits from the part's edge, in screen pixels — anywhere from the minimum needed to place the label rectangle SILHOUETTE_MARGIN_PX (15px today) outside the combined outline, up to the WITNESS_CAP_PX (200 px today) witness cap.
 4. **Slidable position** (continuous, *but with gaps around witness anchors*). Where along the dim line the label sits — anywhere from X pixels before the first witness line to X pixels past the second. X is SLIDABLE_OVERHANG_PX (20 px today; value lives in `Constants.ts`) minus half the label width, except positions that place the label on or within WITNESS_ANCHOR_BUFFER_PX (20 px today) of a witness anchor.
 
 Rule 10 describes what the search does with these four degrees of freedom.
@@ -104,13 +104,13 @@ Once the search converges, both translations are frozen for the paint. No frame-
 
 ## 9. Silhouette = single combined hull of leaf parts
 
-Before placing any dimension, compute ONE convex outline that wraps all painted leaf parts' projected vertices combined into a single point set. Container parts (parts with at least one painted child) do NOT contribute their corners — those corners can sit far outside any actually-painted geometry and would bloat the outline. Every drawn label rectangle must sit at least SILHOUETTE_MARGIN_PX (10 px today) outside that single outline.
+Before placing any dimension, compute ONE convex outline that wraps all painted leaf parts' projected vertices combined into a single point set. Container parts (parts with at least one painted child) do NOT contribute their corners — those corners can sit far outside any actually-painted geometry and would bloat the outline. Every drawn label rectangle must sit at least SILHOUETTE_MARGIN_PX (15 px today) outside that single outline.
 
 Trade-off: a strongly concave drawing (a U-shape) treats the notch of the U as inside the silhouette. Dimensions in the notch are positioned outside the U's overall outline rather than into the notch itself.
 
 ## 10. Pick 4DOF values by best combined clearance
 
-The search picks an (edge, direction, witness length, slidable position) tuple per label such that every drawn label has PAIR_CLEARANCE_PX (15 px today) clearance from every other drawn label and SILHOUETTE_MARGIN_PX (10 px today) clearance from the combined silhouette outline. Path-of-least-resistance (the old "smallest clearance wins" rule) is gone — it produced collisions because two neighboring labels would both pick the same easy escape direction.
+The search picks an (edge, direction, witness length, slidable position) tuple per label such that every drawn label has PAIR_CLEARANCE_PX (15 px today) clearance from every other drawn label and SILHOUETTE_MARGIN_PX (15 px today) clearance from the combined silhouette outline. Path-of-least-resistance (the old "smallest clearance wins" rule) is gone — it produced collisions because two neighboring labels would both pick the same easy escape direction.
 
 Search algorithm (sketched in rule 23): enumerate discrete (edge, direction) pairs per label, run continuous avoidance over the two continuous DOF, fall back to dropping labels (rule 12) when no satisfying assignment exists.
 
@@ -126,7 +126,7 @@ Search algorithm (sketched in rule 23): enumerate discrete (edge, direction) pai
 
 Each (edge, direction) enum pair has several disabled ranges for the value pair; the filters set those ranges. A label with no surviving (edge, direction) pair is dropped (rule 12):
 
-- Witness length minimum: the value that places the label rectangle exactly SILHOUETTE_MARGIN_PX (10 px today) outside the combined outline along the chosen direction.
+- Witness length minimum: the value that places the label rectangle exactly SILHOUETTE_MARGIN_PX (15 px today) outside the combined outline along the chosen direction.
 - Witness length maximum: the smaller of (a) WITNESS_CAP_PX (200 px today) — the witness cap that stops labels flying off the canvas — and (b) the witness length at which the PROJECTED witness reaches WITNESS_LEN_MAX_PX (300 px today) on screen — the limit that stops deep-perspective parts from drawing absurdly long witness lines.
 - Slidable position range: Y pixels before the first witness to Y pixels past the second. Y is SLIDABLE_OVERHANG_PX (20 px today) minus half the label width.
 - Camera-axis filter (applies to direction, not to a continuous range): any direction within 30 degrees of the camera's forward (cosine of the angle 0.866 or higher) is rejected outright. Reject any witness pointing into or out of the screen -- it projects to an unreadable sliver.
@@ -172,7 +172,7 @@ Hovering a dimension on a part appends the axis info. Format: `name (x | width)`
 
 Two visible-outcome assertions a test can check after the layout settles:
 
-- Every drawn label rectangle is at least SILHOUETTE_MARGIN_PX (10 px today) outside the combined silhouette outline.
+- Every drawn label rectangle is at least SILHOUETTE_MARGIN_PX (15 px today) outside the combined silhouette outline.
 - Every pair of drawn labels is at least 15 pixels apart, measured rectangle-to-rectangle.
 
 When the filters (rule 11) would force a label to violate either, the label is dropped (rule 12), not painted in the wrong place.
@@ -197,7 +197,7 @@ Each label's previously chosen (edge, direction, witness length, slidable positi
 - Previous witness length must lie within (new min − 2 px) to (new max + 2 px).
 - Previous slidable position must lie within (new range start − 2 px) to (new range end + 2 px).
 - The label's rectangle, projected at the previous values, must clear every other previously-chosen label rectangle by at least 13 pixels (PAIR_CLEARANCE_PX 15 − PERSISTENCE_TOLERANCE_PX 2).
-- The label's rectangle must clear the combined silhouette outline by at least 8 pixels (SILHOUETTE_MARGIN_PX 10 − PERSISTENCE_TOLERANCE_PX 2).
+- The label's rectangle must clear the combined silhouette outline by at least 8 pixels (SILHOUETTE_MARGIN_PX 15 − PERSISTENCE_TOLERANCE_PX 2).
 
 If every label passes all four checks, skip the search and reuse last paint's values. If any label fails any check, a full search runs — seeded with last paint's values so the result usually changes only the labels that lost viability.
 
@@ -220,7 +220,7 @@ These map directly to the two performance tests in the e2e suite. Above 25 milli
 
 The search is deterministic. Given the same scene, same view, and the same remembered 4DOF values from the previous paint, every paint produces the same chosen values per label. Every tie-break — whether ordering labels, ordering (edge, direction) pairs, or seeding the stochastic step — uses a stated rule, with "alphabetical by part ancestry path" as the catch-all when no other rule applies. No randomness from a non-deterministic source.
 
-The stochastic finish (rule 23) reaches for the project's seeded pseudo-random number generator, never the browser's built-in random function. The generator's seed is derived from the scene contents via a string hash so the same scene at the same view produces the same random sequence. See the [determinism helpers section of the research file](../../project/research/dimensionals-research.md#determinism-helpers) for plain-English descriptions of the generator and the hash. Implementation: [Seeded_Random.ts](../../../src/lib/ts/common/Seeded_Random.ts).
+The stochastic finish (rule 23) reaches for the project's seeded pseudo-random number generator, never the browser's built-in random function. The generator's seed is derived from the scene contents via a string hash so the same scene at the same view produces the same random sequence. See the [determinism helpers section of the research file](dimensionals-research.md#determinism-helpers) for plain-English descriptions of the generator and the hash. Implementation: [Seeded_Random.ts](../../../src/lib/ts/common/Seeded_Random.ts).
 
 ## 15. 2D mode is not a special case
 
@@ -240,7 +240,7 @@ The avoidance problem is rule 10. The shape is two discrete DOF per label (small
 
 **Polish pass (the custom-path detail).** After the drop policy removes labels, run a single pass that re-positions every surviving label given the reduced obstacle set. For each survivor, the same scoring used in the greedy step picks the best position now that the dropped labels are gone. This stops surviving labels from sitting off-center to avoid neighbours that no longer exist. The polish pass runs once; if it surfaces new conflicts, those are accepted (no second drop round). Polished positions are remembered for the next paint, so the layout stays stable across frames.
 
-**Decision: custom.** Research on 2026-05-20 checked browser-compatible candidate libraries against this problem; none beat our custom algorithm (all exceed the 25-millisecond full-search budget). The general-purpose constraint engines (Google OR-Tools, Z3 WebAssembly, MiniZinc) either lack a browser build or take up too much initialization time. The lightweight label-placement libraries (d3-labeler, d3fc, cola.js, d3-force) each handle only one or two of the four DOFs. Full findings, candidate-by-candidate, in [dimensionals-research.md](../../project/research/dimensionals-research.md).
+**Decision: custom.** Research on 2026-05-20 checked browser-compatible candidate libraries against this problem; none beat our custom algorithm (all exceed the 25-millisecond full-search budget). The general-purpose constraint engines (Google OR-Tools, Z3 WebAssembly, MiniZinc) either lack a browser build or take up too much initialization time. The lightweight label-placement libraries (d3-labeler, d3fc, cola.js, d3-force) each handle only one or two of the four DOFs. Full findings, candidate-by-candidate, in [dimensionals-research.md](dimensionals-research.md).
 
 **Upgrade path, if ever needed.** Keep the architecture (greedy seed plus retry plus stochastic finish). Swap the continuous inner loop for a small specialized quadratic-programming solver — for example, the gradient-projection routine from `cola.js`. Do NOT adopt a general-purpose constraint engine; the initialization-time cost alone disqualifies them at the current budget.
 
@@ -296,7 +296,7 @@ The e2e tests under `e2e/tests/dimensions-*.spec.ts` reference these names alrea
 
 For every non-rotated part, the search strongly prefers placing the dim line either ON a face of the uniface block (defined in the Glossary) or just outside it. Concretely:
 
-- A candidate whose dim line lies within SILHOUETTE_MARGIN_PX (10 px today) of any uniface-block face — measured perpendicular to that face in screen pixels — gets a large score bonus.
+- A candidate whose dim line lies within SILHOUETTE_MARGIN_PX (15 px today) of any uniface-block face — measured perpendicular to that face in screen pixels — gets a large score bonus.
 - The bonus is large enough to override the clearance score in typical cases; only when no on-or-near-face placement is viable does the search fall back to the older free-placement logic for the part.
 - Rotated parts skip this rule entirely (the uniface block excludes them) and continue under the per-edge / per-direction search until a separate algorithm for rotated parts is added.
 

@@ -25,7 +25,7 @@ Two new behavior-guard hooks. After two wrong diagnoses in one session, two new 
 
 Rule list grew by two. Rule 16 (every drawn label sits on or outside the silhouette outline) was added as a postcondition Rule 9 implies but doesn't assert. Rule 17 (clicking a dimension number begins inline editing) was added because the click-to-edit behavior had no rule even though the rectangle pipeline already supports it.
 
-Files. [R_Dimensions.ts](../../../src/lib/ts/render/R_Dimensions.ts) (spring off, floater drop, more measurement exports). [Debug.ts](../../../src/lib/ts/common/Debug.ts) (new measurement hooks, hide-all-by-name fix). [dimensions-settles.spec.ts](../../../e2e/tests/dimensions-settles.spec.ts), [dimensions-duplicates.spec.ts](../../../e2e/tests/dimensions-duplicates.spec.ts), [dimensions-witness-cap.spec.ts](../../../e2e/tests/dimensions-witness-cap.spec.ts), [dimensions-outside-silhouette.spec.ts](../../../e2e/tests/dimensions-outside-silhouette.spec.ts), [dimensions-floaters.spec.ts](../../../e2e/tests/dimensions-floaters.spec.ts), [dimensions-parallel.spec.ts](../../../e2e/tests/dimensions-parallel.spec.ts), [dimensions-silhouette-membership.spec.ts](../../../e2e/tests/dimensions-silhouette-membership.spec.ts), [dimensions-direction-choice.spec.ts](../../../e2e/tests/dimensions-direction-choice.spec.ts) (new specs). [dimensionals.md](../../guides/development/rules/dimensionals.md) (Rules 16, 17). [required-disclaimer-check.sh](../../../.claude/hooks/required-disclaimer-check.sh), [diagnostic-citation-check.sh](../../../.claude/hooks/diagnostic-citation-check.sh) (new hooks). [settings.local.json](../../../../.claude/settings.local.json) (hooks wired into Stop chain).
+Files. [R_Dimensions.ts](../../../src/lib/ts/render/R_Dimensions.ts) (spring off, floater drop, more measurement exports). [Debug.ts](../../../src/lib/ts/common/Debug.ts) (new measurement hooks, hide-all-by-name fix). [dimensions-settles.spec.ts](../../../e2e/tests/dimensions-settles.spec.ts), [dimensions-duplicates.spec.ts](../../../e2e/tests/dimensions-duplicates.spec.ts), [dimensions-witness-cap.spec.ts](../../../e2e/tests/dimensions-witness-cap.spec.ts), [dimensions-outside-silhouette.spec.ts](../../../e2e/tests/dimensions-outside-silhouette.spec.ts), [dimensions-floaters.spec.ts](../../../e2e/tests/dimensions-floaters.spec.ts), [dimensions-parallel.spec.ts](../../../e2e/tests/dimensions-parallel.spec.ts), [dimensions-silhouette-membership.spec.ts](../../../e2e/tests/dimensions-silhouette-membership.spec.ts), [dimensions-direction-choice.spec.ts](../../../e2e/tests/dimensions-direction-choice.spec.ts) (new specs). [dimensionals.md](di/notes/work/now/dimensionals.md) (Rules 16, 17). [required-disclaimer-check.sh](../../../.claude/hooks/required-disclaimer-check.sh), [diagnostic-citation-check.sh](../../../.claude/hooks/diagnostic-citation-check.sh) (new hooks). [settings.local.json](../../../../.claude/settings.local.json) (hooks wired into Stop chain).
 
 ## Session — 2026-05-18 — orientation numbers live in the status strip
 
@@ -107,9 +107,9 @@ Files. [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte) (chip row, list
 
 Took a first cut at replacing the single "add template" button with a three-way segmented control for stud, joist, and stair. Each kind set the new child's name and gave it a rough starting shape — a vertical post for stud, a horizontal beam for joist, a small step box for stair. Visual confirmation said the result needs lots of work: the rough proportions are wrong, the names collide as soon as there is more than one of each kind, and the stair-as-single-step approach was never wired through to the diagonal-rise repeater that turns one step into a flight.
 
-Pulled back to the original single "add template" button. Wrote a mothball note that captures what was attempted, what each kind was supposed to produce, and the six concrete things that need more thought before resuming. See [repeaters.mothball.md](./repeaters.mothball.md).
+Pulled back to the original single "add template" button. Wrote a mothball note that captures what was attempted, what each kind was supposed to produce, and the six concrete things that need more thought before resuming. See [repeaters.mothball.md](repeaters.mothball.md).
 
-Files. [Smart_Object.ts](../../../src/lib/ts/runtime/Smart_Object.ts), [Engine.ts](../../../src/lib/ts/render/Engine.ts), [P_Repeat.svelte](../../../src/lib/svelte/details/P_Repeat.svelte) all touched then reverted; [repeaters.mothball.md](./repeaters.mothball.md) written.
+Files. [Smart_Object.ts](../../../src/lib/ts/runtime/Smart_Object.ts), [Engine.ts](../../../src/lib/ts/render/Engine.ts), [P_Repeat.svelte](../../../src/lib/svelte/details/P_Repeat.svelte) all touched then reverted; [repeaters.mothball.md](repeaters.mothball.md) written.
 
 ## Session — 2026-05-17 — undo and redo arrow buttons added to the top toolbar
 
@@ -171,13 +171,13 @@ Also fixed three pre-existing errors from the slider-band move work (engine impo
 
 ## Session — 2026-05-17 — rule 10 rewritten (OPTION shows hidden dimensions, no leading period)
 
-Two-part rewrite of rule 10 in [[di/notes/guides/development/rules/dimensionals]].
+Two-part rewrite of rule 10 in [[di/notes/work/now/dimensionals]].
 
 First part: dimensions for invisible smart objects now appear while the OPTION key is held. The app tracks the OPTION key state via a fresh signal that fires on key-down, key-up, and window-blur (so the signal doesn't stay stuck "held" after the user switches away). The dimension-collection pass reads that signal. When OPTION is not held, the existing visibility filter runs as before — invisible smart objects get no dimensions. When OPTION is held, the filter relaxes and invisible smart objects' dimensions get drawn alongside the visible ones. The drawing's outline used to push dimensions outside the painted geometry stays built from visible objects only, so showing the extra invisible dimensions doesn't shift the visible ones around. The signal marks the canvas as out-of-date on every change, so dimensions appear and disappear in real time as the user presses and releases OPTION.
 
 Second part: the hover popup format for a dimension on a root smart object used to read `.width (x)` — with a stray leading period — because the popup glued the ancestry path and the semantic axis name with a dot, and the root's ancestry path came out empty. The popup template now reads the ancestry path once and inserts the dot only when the path is non-empty. So the popup reads `width (x)` on the root and `front.moose.well post.width (x)` elsewhere.
 
-Files touched. [Events.ts](../../../src/lib/ts/events/Events.ts) (new OPTION-down signal that marks the canvas dirty on change; key-down, key-up, and window-blur handlers update it). [R_Dimensions.ts](../../../src/lib/ts/render/R_Dimensions.ts) (helper around the visibility check; reads the OPTION signal at the top of the dimension pass). [dimensionals.md](../../guides/development/rules/dimensionals.md) (rule 10 rewritten). [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte) (popup template computes ancestry path once and prefixes the dot only when non-empty).
+Files touched. [Events.ts](../../../src/lib/ts/events/Events.ts) (new OPTION-down signal that marks the canvas dirty on change; key-down, key-up, and window-blur handlers update it). [R_Dimensions.ts](../../../src/lib/ts/render/R_Dimensions.ts) (helper around the visibility check; reads the OPTION signal at the top of the dimension pass). [dimensionals.md](di/notes/work/now/dimensionals.md) (rule 10 rewritten). [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte) (popup template computes ancestry path once and prefixes the dot only when non-empty).
 
 ## Session — 2026-05-17 — parts row hover lights up the matching object in the drawing
 
@@ -247,7 +247,7 @@ Files touched. [Status_Strip.svelte](../../../src/lib/svelte/main/Status_Strip.s
 
 A multi-day push through the "crowded dimensionals" code-debt item. The dimensions in the drawing area were stacking, drifting, and pointing nowhere; this session built a 25-rule force-directed placement system that handles separation, perspective, silhouette-relative positioning, and stability.
 
-The full ruleset lives in [dimensionals.md](../../guides/development/rules/dimensionals.md). Highlights from this session:
+The full ruleset lives in [dimensionals.md](di/notes/work/now/dimensionals.md). Highlights from this session:
 
 Layout phases. Every dimension now passes through a four-phase pass: collect candidates, dedup duplicates, run force simulation, drop the unfit, draw. The simulation is hand-rolled — a spring pulls each label toward an outside-the-silhouette position, repulsion pushes labels apart along the axis of least overlap, damping settles motion. Positions persist across paints so motion is smooth during tumble. 30 iterations per paint, capped.
 

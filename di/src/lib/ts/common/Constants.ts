@@ -157,7 +157,7 @@ export default class Constants {
 		WITNESS_LEN_MAX_PX       : 300,
 		WITNESS_CAP_PX           : 200,
 		SLIDABLE_OVERHANG_PX     : 20,
-		SILHOUETTE_MARGIN_PX     : 10,
+		SILHOUETTE_MARGIN_PX     : 15,
 		/** Buffer pixels the label rectangle must leave between itself and
 		 *  either witness anchor along the dim line (rule 1 item 4 + rule 10).
 		 *  Forbidden zone around witness 1: slidable in [-Y - label_w/2, Y + label_w/2].

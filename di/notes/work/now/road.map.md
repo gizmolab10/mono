@@ -13,16 +13,16 @@
 ## Current state (2026-05-20)
 
 - Milestones 1–26 are complete. See [completed milestones](../milestones/done/).
-- Milestones 27–31 are open. Milestone 27 (selection algorithm) has a planning file in [work/now/27.selection.algorithm.md](./27.selection.algorithm.md).
+- Milestones 27–31 are open. Milestone 27 (selection algorithm) has a planning file in [work/now/27.selection.algorithm.md](27.selection.algorithm.md).
 - Milestones 32 (facets) and 33 (drag) are mothballed.
 - Active code-debt tasks: see [code.debt.md](./code.debt.md). Each session works one unchecked item; finished items are recorded in [code.debt.paid.md](../done/code.debt.paid.md).
 - Current handoff: [handoff.md](./handoff.md).
 
 ### Dimensionals-placement redesign (decided, not yet built)
 
-The dimensions-label algorithm is being replaced with a four-degrees-of-freedom search per label (edge, direction, witness length, slidable position). The full 25-rule consolidated spec is at [guides/development/rules/dimensionals.md](../../guides/development/rules/dimensionals.md). The library-versus-custom decision was settled in favour of a custom implementation — supporting research at [guides/project/research/dimensionals-research.md](../../guides/project/research/dimensionals-research.md). Today's force-driven implementation still ships; the eighteen `dimensions-*.spec.ts` e2e files under [e2e/tests/](../../../e2e/tests/) capture the acceptance criteria, with most marked `test.skip` pending the test hooks listed in rule 25.
+The dimensions-label algorithm is being replaced with a four-degrees-of-freedom search per label (edge, direction, witness length, slidable position). The full 25-rule consolidated spec is at [guides/development/rules/dimensionals.md](di/notes/work/now/dimensionals.md). The library-versus-custom decision was settled in favour of a custom implementation — supporting research at [guides/project/research/dimensionals-research.md](../../guides/project/research/dimensionals-research.md). Today's force-driven implementation still ships; the eighteen `dimensions-*.spec.ts` e2e files under [e2e/tests/](../../../e2e/tests/) capture the acceptance criteria, with most marked `test.skip` pending the test hooks listed in rule 25.
 
-Phased task list with dependencies, effort guesses, and per-task risks at [dimensionals.work.md](./dimensionals.work.md). Progress is recorded in the handoff per the first item in [code.debt.md](./code.debt.md).
+Phased task list with dependencies, effort guesses, and per-task risks at [dimensionals.work.md](dimensionals.work.md). Progress is recorded in the handoff per the first item in [code.debt.md](./code.debt.md).
 
 ### Recent infrastructure (since 2026-04-11)
 
