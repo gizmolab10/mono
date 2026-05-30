@@ -13,12 +13,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "lv/notes/work/work journal.md",
+                "file": "lv/src/md/Little Cloud Vineyard.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "work journal"
+              "title": "Little Cloud Vineyard"
+            }
+          },
+          {
+            "id": "826d0d96e9bb5238",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "lv/notes/work/code debt.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "code debt"
             }
           },
           {
@@ -48,21 +62,9 @@
               "icon": "lucide-file",
               "title": "lexicon"
             }
-          },
-          {
-            "id": "799403a687ecbecd",
-            "type": "leaf",
-            "state": {
-              "type": "image",
-              "state": {
-                "file": "di/src/assets/icon.png"
-              },
-              "icon": "lucide-image",
-              "title": "icon"
-            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -205,9 +207,19 @@
               "icon": "lucide-list",
               "title": "Outline of code debt"
             }
+          },
+          {
+            "id": "827876cf9d832677",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
           }
         ],
-        "currentTab": 4
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
@@ -221,7 +233,8 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "obsidian-git:Open Git source control": false
     }
   },
   "floating": {
@@ -306,30 +319,29 @@
       }
     ]
   },
-  "active": "9a909d28aca5e9d0",
+  "active": "826d0d96e9bb5238",
   "lastOpenFiles": [
-    "lv/src/lib/ts/utilities/persistence.test.ts",
-    "lv/src/lib/ts/utilities/persistence.ts",
-    "lv/notes/work/bare bone website.md",
+    "lv/src/md/Little Cloud Vineyard.md",
+    "lv/notes/work/work journal.md",
+    "lv/src/lib/ts/test/parser.test.ts.tmp.19366.d55a47a97a14",
     "di/src/assets/icon.png",
     "lv/notes/work/code debt.md",
+    "lv/src/lib/svelte/Toggle.svelte",
+    "lv/src/lib/svelte/StatusLine.svelte",
+    "lv/src/lib/svelte/Sidebar.svelte",
+    "lv/src/lib/svelte/Renderer.svelte",
+    "lv/src/lib/svelte/Main.svelte",
+    "lv/src/lib/svelte/App.svelte",
+    "lv/src/lib/ts/test/sidebar.test.ts",
+    "lv/src/lib/ts/test/sidebar-content.test.ts",
+    "lv/src/lib/ts/test/router.test.ts",
+    "lv/notes/work/bare bone website.md",
     "lv/src/md/The Vineyard/Page 1.md",
-    "lv/src/md/The Vineyard",
-    "lv/src/md/untitled folder",
-    "lv/src/lib/ts/utilities/sidebar-content.test.ts",
-    "lv/src/lib/ts/utilities/sidebar-content.ts",
     "di/notes/guides/pre-flight/lexicon.md",
-    "lv/src/md/Little Cloud Vineyard.md",
     "lv/src/md/Page 1.md",
-    "ws/vite.config.js.timestamp-1780163683418-02cc86670bb94.mjs",
-    "lv/src/lib/ts/utilities/_scratch.out",
-    "lv/src/lib/ts/utilities/_scratch.test.ts",
     "lv/src/md/Sidebar.md",
-    "lv/dist/assets/index-CaHKMBoE.css",
-    "lv/dist/assets/index-rnv8U7hS.js",
     "lv/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/(newer than SDD) methodology.md",
-    "lv/notes/work/work journal.md",
     "di/notes/work/done/code.debt.paid.md",
     "notes/guides/setup/creating a proposal.md",
     "lv/dist/assets/lcv.label-BfBUnsUh.png",

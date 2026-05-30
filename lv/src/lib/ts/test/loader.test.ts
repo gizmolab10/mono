@@ -3,7 +3,7 @@
 // name without the .md ending and images by name with their extension.
 
 import { describe, it, expect } from 'vitest';
-import { loadMdFiles, loadAssets, loadMdEntries } from './loader';
+import { loadMdFiles, loadAssets, loadMdEntries } from '../utilities/loader';
 
 describe('md file loader', () => {
   const map = loadMdFiles();

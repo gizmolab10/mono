@@ -70,9 +70,9 @@ textarea:focus {
 }
 
 .shell-sidebar {
-  border-right: 1px solid #e5e5e5;
+  border-right: 0.5px solid lightgrey;
   /* Leave room at the top for the toggle button. */
-  padding: 3rem 1rem 1rem 1rem;
+  padding: calc(3rem + 12px) 1rem 1rem 1rem;
   grid-area: sidebar;
   overflow-y: auto;
 }
@@ -84,7 +84,7 @@ textarea:focus {
 }
 
 .shell-status {
-  border-top: 1px solid #e5e5e5;
+  border-top: 0.5px solid lightgrey;
   padding: 0.25rem 0.75rem;
   min-height: 1.5rem;
   grid-area: status;
@@ -104,17 +104,20 @@ textarea:focus {
   background: white;
   position: absolute;
   cursor: pointer;
-  font-size: 3em;
   display: flex;
-  height: 2rem;
+  left: 0.5rem;
+  height: 3rem;
+  width: 3rem;
   top: 0.5rem;
   z-index: 10;
-  width: 2rem;
-  left: 1rem;
 }
 
 .shell-toggle:hover {
   color: aqua;
+}
+
+.shell-toggle .toggle-icon path {
+  fill: currentColor;
 }
 
 /* ----- Sidebar entries ----- */
@@ -125,7 +128,7 @@ textarea:focus {
 }
 
 .shell-sidebar hr {
-  border-top: 0.5px solid grey;
+  border-top: 0.5px solid lightgrey;
   margin: 1rem 0 0;
 }
 
@@ -137,12 +140,7 @@ textarea:focus {
 
 /* The home row sits first; give it a little breathing room from the top. */
 .shell-sidebar p:first-child {
-  margin-top: 20px;
-}
-
-/* Pull the first entry snug against the divider. */
-.shell-sidebar hr+p a {
-  margin-top: 0;
+  margin-top: 8px;
 }
 
 .shell-sidebar a {
@@ -178,16 +176,25 @@ textarea:focus {
   display: none;
 }
 
-.shell-sidebar summary.sidebar-section::before {
+/* The fold marker is a drawn triangle. It points right when folded and
+   turns a quarter-turn to point down when the folder is open. */
+.shell-sidebar .fold-icon {
+  transition: transform 0.15s ease;
+  vertical-align: middle;
   position: relative;
-  line-height: 0;
-  font-size: 3em;
-  content: "▾";
-  top: 7px;
+  fill: currentColor;
+  height: 1.4em;
+  width: 1.4em;
+  top: -2px;
 }
 
-.shell-sidebar details:not([open]) summary.sidebar-section::before {
-  content: "▸";
+.shell-sidebar details[open] .fold-icon {
+  transform: rotate(90deg);
+}
+
+/* Hovering anywhere on a folder row greys only the triangle. */
+.shell-sidebar summary.sidebar-section:hover .fold-icon {
+  fill: lightgrey;
 }
 
 /* Pages inside an open folder sit indented under their folder name. */

@@ -9,4 +9,4 @@ home: true
 
 ---
 
-> [!center] !![[lcv.label.png]]
+> [!center] !![[lcv.label.png|400]]

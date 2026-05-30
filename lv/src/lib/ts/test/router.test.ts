@@ -6,7 +6,7 @@
 // to a missing page shows a not-found message that the next good move clears.
 
 import { describe, it, expect } from 'vitest';
-import { router, navigate } from './router.svelte';
+import { router, navigate } from '../utilities/router.svelte';
 
 const HOME = 'Little Cloud Vineyard';
 

@@ -1,5 +1,6 @@
 [
   "mcp-tools",
   "obsidian-local-rest-api",
-  "alignment"
+  "alignment",
+  "obsidian-git"
 ]

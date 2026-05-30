@@ -10,7 +10,7 @@
 // See the "Not yet built" note at the foot of the spec file.
 
 import { describe, it, expect } from 'vitest';
-import { render } from './parser';
+import { render } from '../utilities/parser';
 
 describe('standard markdown', () => {
   it('turns a hash line into a top heading', () => {
@@ -107,6 +107,20 @@ describe('image embeds', () => {
   it('uses the alias as the alt text when one is given', () => {
     const html = render('![[lcv.label.png|the label]]');
     expect(html).toContain('alt="the label"');
+  });
+
+  it('reads a single number after the bar as a width', () => {
+    const html = render('![[lcv.label.png|200]]');
+    expect(html).toContain('<img');
+    expect(html).toContain('width="200"');
+    expect(html).not.toContain('height=');
+    expect(html).not.toContain('alt="200"');
+  });
+
+  it('reads number-by-number after the bar as width and height', () => {
+    const html = render('![[lcv.label.png|200x120]]');
+    expect(html).toContain('width="200"');
+    expect(html).toContain('height="120"');
   });
 });
 

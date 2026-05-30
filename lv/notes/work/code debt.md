@@ -19,7 +19,8 @@
     - [x] use local storage for:
     - [x] which sidebar folder is unfolded
     - [x] the state of the sidebar toggle
-- [ ] borrow svg from di project
-    - [ ] hamburger
-    - [ ] fat triangle
-- [ ] can images be sized?
+- [x] borrow svg from di project
+    - [x] hamburger
+    - [x] fat triangle
+- [x] can images be sized?
+- [ ] hover changes color of fat triangle -> lightgrey

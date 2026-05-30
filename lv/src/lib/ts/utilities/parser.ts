@@ -42,12 +42,24 @@ function preprocessObsidianSyntax(md: string): string {
   });
 
   // Image embeds first so the `!` prefix gets consumed before the link regex
-  // can grab the surrounding `[[...]]`.
-  md = md.replace(/!\[\[([^\]\n|]+)(?:\|([^\]\n]+))?\]\]/g, (_m, target: string, alias?: string) => {
+  // can grab the surrounding `[[...]]`. The part after the bar is a size when
+  // it reads as a number (width) or number-by-number (width by height); the
+  // image is then drawn at that size. Any other text after the bar stays the
+  // caption, as before.
+  md = md.replace(/!\[\[([^\]\n|]+)(?:\|([^\]\n]+))?\]\]/g, (_m, target: string, extra?: string) => {
     const t = target.trim();
-    const display = (alias ?? t).trim();
     const url = resolveHref(t);
-    return `![${display}](${url})`;
+    const spec = extra?.trim();
+    if (spec) {
+      const size = /^(\d+)(?:x(\d+))?$/.exec(spec);
+      if (size) {
+        const width = ` width="${size[1]}"`;
+        const height = size[2] ? ` height="${size[2]}"` : '';
+        return `<img src="${url}" alt="${t}"${width}${height}>`;
+      }
+      return `![${spec}](${url})`;
+    }
+    return `![${t}](${url})`;
   });
 
   // Regular wiki-links.

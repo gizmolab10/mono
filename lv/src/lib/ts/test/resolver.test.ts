@@ -9,7 +9,7 @@ import {
   pageExists,
   getMdText,
   getAllPermalinks,
-} from './resolver';
+} from '../utilities/resolver';
 
 describe('turning a name into an address', () => {
   it('turns a page name into a slash address with spaces encoded', () => {

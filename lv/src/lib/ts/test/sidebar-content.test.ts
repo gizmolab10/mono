@@ -4,7 +4,7 @@
 // labelled by its title, and every other page follows alphabetically.
 
 import { describe, it, expect } from 'vitest';
-import { parseFrontMatter, composeSidebarMd, type PageInfo } from './sidebar-content';
+import { parseFrontMatter, composeSidebarMd, type PageInfo } from '../utilities/sidebar-content';
 
 describe('reading a page top settings', () => {
   it('pulls the title and home flag even with blank lines between', () => {

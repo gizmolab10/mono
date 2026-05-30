@@ -4,7 +4,7 @@
 // click-through tests.)
 
 import { describe, it, expect } from 'vitest';
-import { sidebar } from './sidebar.svelte';
+import { sidebar } from '../utilities/sidebar.svelte';
 
 describe('the sidebar show/hide value', () => {
   it('starts shown', () => {

@@ -6,10 +6,11 @@
   //     foldable section, so the writer can group entries with `## Section`.
   //   - highlightActive: marks the anchor whose target matches the current
   //     page with an "active" class for the pill background.
-  import { router } from '../../ts/utilities/router.svelte';
-  import { render } from '../../ts/utilities/parser';
-  import { buildSidebarMd } from '../../ts/utilities/sidebar-content';
-  import { loadFolderOpen, saveFolderOpen } from '../../ts/utilities/persistence';
+  import { loadFolderOpen, saveFolderOpen } from '../ts/utilities/persistence';
+  import { buildSidebarMd } from '../ts/utilities/sidebar-content';
+  import { router } from '../ts/utilities/router.svelte';
+  import { fatTriangle } from '../ts/utilities/icons';
+  import { render } from '../ts/utilities/parser';
 
   const html = render(buildSidebarMd());
 
@@ -37,6 +38,10 @@
       details.addEventListener('toggle', () => saveFolderOpen(folderName, details.open));
       const summary = document.createElement('summary');
       summary.className = 'sidebar-section ' + heading.tagName.toLowerCase();
+      summary.insertAdjacentHTML(
+        'afterbegin',
+        `<svg class="fold-icon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="${fatTriangle(24)}"/></svg>`,
+      );
       while (heading.firstChild) summary.appendChild(heading.firstChild);
       details.appendChild(summary);
       for (const child of sectionChildren) details.appendChild(child);

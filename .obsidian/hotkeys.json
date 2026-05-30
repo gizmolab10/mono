@@ -1,0 +1,19 @@
+{
+  "obsidian-git:pull": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "L"
+    }
+  ],
+  "editor:toggle-checklist-status": [],
+  "obsidian-git:commit-push-specified-message": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "U"
+    }
+  ]
+}
