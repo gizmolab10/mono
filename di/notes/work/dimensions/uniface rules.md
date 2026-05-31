@@ -7,7 +7,7 @@ The dimensionals are still challenging to interpret. Might be easier if they are
 1. Witness index is a discrete choice with values 1, 2, or 3 (the cap). It picks which uniface box holds the dim line per rule 3.
 2. 4DOF with only one continuous degree of freedom -> the position of the dimension label, which still needs complicated avoidance rules (rules 5 - 8). The other 3 are edge, uniface, and witness index.
 3. Compute witness length so as to place its dimension line in the plane of a uniface. witness index says which uniface box. if no such length exists without conflict, drop the label.
-4. For rotated parts, the silhouette box is rotated the same -> the rotated part and all its subparts.
+4. For rotated parts, the silhouette box is rotated the same -> the rotated part.
     1. The label center point is placed on the uniface closest to the rotated label's projected center. The dimension line is placed on the plane parallel to the rotated silhouette box that passes through the label center point.
     2. when rotated parts overlap, nothing special is done
 5. Every pair of labels must be at least silhouette margin apart, computed using their text rectangles.
@@ -45,9 +45,9 @@ two readings of "transition" — evolve the master spec, and roll out the code. 
 1. **create (or update) a test for each rule.**
 2. **coding steps**, each runnable in the app at every step.
 
-- **step 1 — uniface box builder, nothing calls it yet.** add a helper that, given the camera and the painted non-rotated leaf parts, returns the uniface box: a world-axis-aligned box plus, for each of its six unifaces, the world-units shift that places it at the configured screen-pixel margin past the projected silhouette. recompute every paint. new unit tests cover the bounding box, the per-uniface shift, and the screen-pixel-margin invariant.
+- **step 1 — uniface box builder, nothing calls it yet.** add a helper that, given the camera and the painted non-rotated leaf parts, returns the uniface box: a world-axis-aligned box plus, for each of its six unifaces, the world-units shift that places it at the configured screen-pixel margin past the projected silhouette box. recompute every paint. new unit tests cover the bounding box, the per-uniface shift, and the screen-pixel-margin invariant.
 - **step 2 — first uniface placements for non-rotated parts, behind a flag, default off.** for each non-rotated part and each axis, pick the first viable uniface (no smart picking yet) and place the dim line on it. emit the same placement shape today's pipeline emits so the repair pass, stochastic finish, drop policy, and persistence layer all swallow it unchanged. add a button to the painter toggle so the visual diff is one click. fill the twelve todo tests as the gating contract.
 - **step 3 — refinement, then flip the default to on.** smarter uniface picking (closest, least-crowded, or stability-preferring — pick the one that settles visually). one-dimensional conflict resolution per uniface for same-axis labels that share one. drop the 200-pixel witness cap for non-rotated parts (the cap stays on for rotated parts until step 4).
 - **step 4 — rotated parts.** implement rule 4 after steps 1 through 3 are stable.
-- **step 5 — audit the carry-over tests against the new code.** the new code path changes the placement geometry, so tests that test the carry-over rules from rule 9 may now fail. run the suite and reconcile any breakage.
+- **step 5 — audit the persistence tests against the new code.** the new code path changes the placement geometry, so tests that test the persistence rules from rule 9 may now fail. run the suite and reconcile any breakage.
 - **step 6 — remove the old code AND disable the tests for the abandoned rules (rule 10).** once the new code is the active path, the old four-degree avoidance algorithm, the pair-check tiers, and the greedy-seed plus stochastic-finish helpers can come out. their tests come out with them.

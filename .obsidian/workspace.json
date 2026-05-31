@@ -41,15 +41,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/guides/pre-flight/lexicon.md",
+                "file": "di/notes/work/dimensions/uniface rules.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "lexicon"
+              "title": "uniface rules"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -81,7 +82,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "\"md files\"",
+                "query": "carry-over",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -102,7 +103,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -304,12 +306,12 @@
       }
     ]
   },
-  "active": "f03bebfec10554e8",
+  "active": "0167279ce8f60121",
   "lastOpenFiles": [
-    "di/notes/work/dimensions/uniface rules.md.tmp.7433.dcbd70a2adc2",
     "di/notes/guides/pre-flight/lexicon.md",
-    "di/notes/work/dimensions/uniface rules.md",
     "di/notes/work/dimensions/dimensionals rules.md",
+    "di/notes/work/dimensions/uniface rules.md",
+    "di/notes/work/dimensions/uniface rules.md.tmp.7433.dcbd70a2adc2",
     "lv/notes/work/code debt.md",
     "lv/src/md/Little Cloud Vineyard.md",
     "lv/notes/work/work journal.md",
@@ -323,7 +325,6 @@
     "lv/src/lib/svelte/App.svelte",
     "lv/src/lib/ts/test/sidebar.test.ts",
     "lv/src/lib/ts/test/sidebar-content.test.ts",
-    "lv/src/lib/ts/test/router.test.ts",
     "lv/notes/work/bare bone website.md",
     "lv/src/md/The Vineyard/Page 1.md",
     "lv/src/md/Page 1.md",

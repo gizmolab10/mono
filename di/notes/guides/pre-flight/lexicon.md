@@ -74,10 +74,11 @@ How each dim line's position and label are chosen.
 - **alphabetical** — the catch-all tie-break: pick the part whose dotted ancestry path comes first alphabetically.
 - **arrowhead** — the triangle drawn at each end of a dim line. Its point sits at the witness anchor.
 - **box** — a 3D parallelepiped with all right angles.
-- **dim line** (also written **dimension line**) — the line that runs parallel-in-3D to the measured axis, offset outward from the part by the witness length, with the number sitting on it.
+- **dim line** (also written **dimension line**) — the line that runs parallel-in-3D to the axis it refers to, offset outward from the part by the witness length, with the measurement label sitting on it.
 - **drop** (verb, for a label) — skip drawing the label this render. Done when no four-degrees-of-freedom combination clears every other label by the pair clearance and the silhouette box by the silhouette margin.
-- **duplicate-text drop** — the rule that drops the later of two labels with the same number on parallel measured edges. The tie-breaks pick which one is "later".
-- **four degrees of freedom** (also written **4DOF**) — the four placement choices the placement algorithm uses per label: edge, uniface, witness length, label position.
+- **duplicate-text drop** — the rule that drops the latter of two labels with identical text.
+- **excluded uniface** — a face whose normal is either (a) within 20° of pointing at, or (b) edge on to, the camera is excluded from the placement algorithm.
+- **four degrees of freedom** (also written **4DOF**) — the four placement choices the placement algorithm uses per label: edge, uniface, witness index, label position.
 - **in conflict** (two labels) — no pair of 4DOF combinations across both labels keeps both rectangles at the pair clearance apart while each stays on a uniface. A property of the pair, not of either label alone.
 - **label** — the rectangle of text that shows a dimension's number on screen.
 - **label center point** (screen) — the exact center of the label rect.
@@ -86,17 +87,17 @@ How each dim line's position and label are chosen.
 - **overhang** — the label sits outside the witness lines. The overhang distance is measured in screen pixels along the dim line.
 - **pair clearance** — the minimum screen-pixel gap between any two label rectangles. Set by the project to 15 pixels.
 - **parent-over-child** — the second tie-break in the duplicate-text drop: prefer the part with the shallower ancestry path.
-- **persistence** — the carry-over of each label's 4DOF choice from one render to the next, and the first tie-break in the duplicate-text drop. Two sub-rules govern it:
+- **persistence** — when a label's 4DOF choice is preserved from one render to the next, and the first tie-break in the duplicate-text drop. Two sub-rules govern it:
     - **seeded placement.** inside a full placement-algorithm run, seeded by the previous render, labels that still pass strict viability stay locked at their previous values; only labels that lost viability are recomputed.
     - **drift safety.** after two consecutive renders where the placement algorithm was skipped and any check passed only by the 2-pixel tolerance, force a full placement-algorithm run on the next render regardless.
 - **placement algorithm** — the procedure that picks the four placement choices for every label each render.
 - **render** — one frame of drawing. The placement algorithm runs once per render.
+- **rotated part** — a part whose own rotation differs from the identity.
 - **silhouette box** — the box that exactly encloses every part (including those that are rotated), recomputed before each render.
 - **silhouette margin** — the screen-pixel gap between the silhouette box and the first uniface box. Set by the project to 15 pixels.
 - **tie-break** — when two labels tie on a placement criterion, the rule that picks the winner. Persistence, parent-over-child, and alphabetical are the three tie-breaks used in the duplicate-text drop.
 - **uniface** — a face of a unface box.  Never "uniface face", never "uniface block", never "buffer".
 - **uniface box** — the silhouette expanded by the silhouette margin. This is enum 1. Enum 2 expands again by the same amount. Enum 3, expands again, same amount.
-    - **excluded uniface** — a face whose normal is within 20° of pointing at the camera is excluded from the placement algorithm.
 - **viable enum pair** — an (edge, uniface) pair for which at least one viable value pair exists.
 - **viable label** — a label with at least one viable (edge, uniface) pair. A label with no viable pair is dropped.
 - **viable value pair** — a (witness length, label position) pair whose two values both sit inside the ranges allowed by the filters.
@@ -106,29 +107,6 @@ How each dim line's position and label are chosen.
 - **witness interior** — the part of the dim line between the two witness ends. Drawn only when the label fits between the witnesses.
 - **witness length** — how far the dim line sits from the part's edge, in screen pixels.
 - **witness line** — the perpendicular line at each end of a dimension. The straight projected ray from one edge endpoint outward to and past the dim line. Two per dimension. World-parallel, not necessarily screen-parallel under perspective.
-
-### missing
-
-1. **rotated part** — used in uniface rule 4 but not defined. Plain English version: a smart object whose own rotation differs from the identity.
-    
-2. **subpart** — used in uniface rule 4 ("the rotated part and all its subparts"). Not defined.
-    
-3. **root uniface box** — used in uniface rule 4 sub-point 1. Not defined as a term.
-    
-4. **enum / enum level** — uniface rule 1 promotes a degree of freedom to an enum; rule 8 says "increment its witness enum". The lexicon defines "witness index" but does not define the bare word "enum" or what "enum level" means.
-    
-5. **measured axis** — appears in the dim line entry. Not separately defined.
-    
-6. **measured edge** — appears in the duplicate-text drop entry. Not defined.
-    
-7. **silhouette** (bare word, used in uniface rule 7) — the lexicon has "silhouette box" and "silhouette rect" but no bare "silhouette" entry. Either the uniface rule drops the bare word, or the lexicon adds an entry naming which sense the bare word resolves to.
-    
-8. **strict viability** — used in the seeded placement sub-rule. Not defined.
-    
-9. **carry-over** — used in the persistence entry. Not defined as a standalone term.
-    
-10. Typo on line 97: "a face of a unface box" — the correct spelling is "uniface".
-    
 
 ## Architecture
 
