@@ -4,6 +4,35 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-05-29 — lexicon merge, uniface vocabulary locked down, precheck-first discipline wired into hooks
+
+A long session of vocabulary work, hook-discipline plumbing, and tightening the uniface specification.
+
+**Vocabulary lockdown.** Three banned words and several renames passed through every dimensions doc. The whole expanded structure around the painted scene is now called the "uniface box"; one of its six closed-surface faces is a "uniface". Three older words for the same things are banned (the storage-sounding one, the brick-sounding one for the whole, and the doubled-up word for a single face). The procedure that picks each label's placement is now called the "placement algorithm". One frame of drawing is now a "render". The second discrete placement choice for a label is now a "uniface". The methodology-sense word for an algorithm's overall plan got banned in favor of "approach". The banned-substitutions table grew by six rows.
+
+**Lexicon merge.** A draft of new dimensions and uniface terms was reviewed, polished, and merged into the running word list. New sections appeared: Uniface, Units, Dimensions, Architecture. The print-sense silhouette entry was replaced by "silhouette rect" with a tighter definition. After the merge the dimensions entries were alphabetized.
+
+**Word-list rename.** The running word list moved from "vernacular" to "lexicon". The file got renamed; every reference across hooks, indexes, the map, and the memory files followed. The hook error message now says "LEXICON VIOLATION".
+
+**Precheck-first discipline.** A new injection at the top of every turn says: the assistant's first tool call this turn must run the precheck script on the draft text. A non-zero exit forces a rewrite before sending. A new rule 22 in the global always file marks this as hook-enforced. Adopted after multiple turns of the duplicate-response failure mode where the stop hook caught a banned word and the assistant rewrote with one word changed, leaving the user staring at two near-identical messages.
+
+**Per-project always file.** A new di-specific always file at di/notes/guides/pre-flight/always.md collects lexicon enforcement, yarn-not-npx, the snap hook for reverts, and the read-on-load list. The global always file got a new rule 23 telling readers to also read each project's own always file.
+
+**Old uniface secondary doc deleted.** The pre-master uniface design notes that conflicted with the new master got removed; the running dimensions spec moved to the mothballs folder and was renamed "dimensionals stipulations". The deletion was traced through dangling references.
+
+**Uniface rules file tightened.** The master spec got every "what is missing" gap addressed. The witness-index cap is committed at 3. Rotated parts have a defined placement on the root uniface box. The carry-over rule numbers from the older dimensions spec were enumerated by category. A new rule 6 lists the seven abandoned rules from the older spec.
+
+Files touched:
+
+- The lexicon — merge plus alphabetize plus banned-table additions
+- The uniface rules file — gap closures plus carry-over and abandoned-rule enumerations
+- The global always file — rules 22 and 23 added
+- The di-specific always file — new file
+- The Claude Code settings — precheck-first injection
+- Memory files in the auto-memory folder — multiple renames following the vernacular → lexicon move
+
+---
+
 ## Session — 2026-05-19 — spring turned off, floaters fixed, eight new dimension specs, two new behavior hooks
 
 A long session chasing the "labels inside the silhouette" bug. Two wrong diagnoses fell over (spring as culprit, perspective as the slant explanation), and the eventual move was to write more tests instead of more theories.

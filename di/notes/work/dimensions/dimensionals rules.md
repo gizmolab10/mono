@@ -222,7 +222,7 @@ The search is deterministic. Given the same scene, same view, and the same remem
 
 The stochastic finish (rule 23) reaches for the project's seeded pseudo-random number generator, never the browser's built-in random function. The generator's seed is derived from the scene contents via a string hash so the same scene at the same view produces the same random sequence. See the [determinism helpers section of the research file](dimensionals-research.md#determinism-helpers) for plain-English descriptions of the generator and the hash. Implementation: [Seeded_Random.ts](../../../src/lib/ts/common/Seeded_Random.ts).
 
-## 15. 2D mode is not a special case
+## 22. 2D mode is not a special case
 
 Every part gets all three axes considered for placement, regardless of view mode. The 2D-from-the-front view does NOT restrict a part to only the two axes of its front-most face — that was a quirk of the old code and is dropped in the new design. The search, the DOF filters, the conflict definition, and the persistence map all behave identically in 2D and 3D modes. If a particular axis projects to nothing useful in the current view, the filters (camera-axis, witness-length) collapse its DOF ranges the same way they would in 3D.
 

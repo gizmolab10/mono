@@ -1567,35 +1567,50 @@ describe('Dimension_Placement — is_face_front_facing (rule 10 face convention)
 	});
 });
 
-describe('Dimension_Placement — rule 26 uniface box (pending implementation)', () => {
+describe('Dimension_Placement — uniface design (rules 1-8) (pending implementation)', () => {
 	// These tests describe the expected behaviour of the uniface design
-	// captured in uniface design.md (master spec) and dimensionals.md rule 26.
+	// captured in uniface rules.md (master spec). Rules 1 through 8 are placement
+	// rules; rules 9-10 are meta-rules (carry-over and abandoned).
 	// They are marked .todo so they show up in the suite as outstanding
 	// work without producing failures while the implementation is missing.
 	// Convert each .todo to .it once the corresponding helper exists.
 
-	it.todo('builds a world-axis-aligned 3D box that wraps every painted non-rotated part');
+	it.todo('builds a world-axis-aligned 3D box that encloses every rendered non-rotated part (the root silhouette box)');
 
-	it.todo('excludes rotated parts from the uniface box');
+	it.todo('excludes rotated parts from the root silhouette box — each rotated part gets its own silhouette box per rule 4');
 
-	it.todo('expands each face in world units so its projection sits exactly SILHOUETTE_MARGIN_PX (10 px today) outside the projected silhouette of the scene');
+	it.todo('expands each face in world units so its projection sits exactly silhouette margin (15 px per rule 8) outside the projected silhouette of the scene');
 
-	it.todo('recomputes the uniface box every paint as the camera moves');
+	it.todo('recomputes the uniface box every render as the camera moves');
 
-	it.todo('returns an empty uniface box when no non-rotated parts are painted');
+	it.todo('returns an empty uniface box when no non-rotated parts are rendered');
 
-	it.todo('strongly prefers a candidate whose dim line sits ON a uniface — bonus large enough to override clearance score in typical cases');
+	it.todo('places the dim line in the plane of a uniface (rule 3)');
 
-	it.todo('strongly prefers a candidate whose dim line sits within SILHOUETTE_MARGIN_PX of a uniface');
+	it.todo('the witness index picks which of the three nested uniface boxes (index 1, 2, or 3) holds the dim line (rule 1)');
 
-	it.todo('falls back to free placement only when no on-or-near-face candidate is viable');
+	it.todo('drops the label when no witness length places the dim line on a uniface without conflict (rule 3)');
 
-	it.todo('skips rotated parts entirely — they continue under the per-edge / per-direction search');
+	it.todo('rotated parts get their own uniface box rotated with the part, around a local silhouette of the part and its subparts (rule 4)');
 
-	it.todo('a part-axis dim line is parallel-in-3D to that axis and lies on one of the four unifaces that contain that axis');
+	it.todo('a part-axis dim line is parallel-in-3D to that axis and lies on one of the four unifaces that contain that axis (rule 3)');
 
 	it.todo('two dims along the same axis on different parts can share the same uniface when there is room');
 
-	it.todo('removes the 200-px witness cap — interior parts can have arbitrarily long witnesses reaching the uniface');
+	it.todo('removes the 200-px witness cap for non-rotated parts — interior parts can have arbitrarily long witnesses reaching the uniface');
+
+	// Coverage gaps from step 2 of the test-rollout proposal.
+
+	it.todo('the witness index cap value is 3 and is read from k.dimensions.WITNESS_INDEX_CAP (rule 1)');
+
+	it.todo('the four placement choices are exactly edge, uniface, witness index, label position (rule 2)');
+
+	it.todo('for a rotated part, the label center sits on the uniface closest to the rotated label projected center (rule 4 sub-point 1)');
+
+	it.todo('for a rotated part, the dim line lies on a plane parallel to the rotated silhouette box that passes through the label center (rule 4 sub-point 1)');
+
+	it.todo('dropping a label because its witness index exceeded the cap does not trigger re-placement for labels that depended on this one position (rule 7)');
+
+	it.todo('k.dimensions.PAIR_CLEARANCE_PX equals k.dimensions.SILHOUETTE_MARGIN_PX equals 15 (rule 8)');
 });
 

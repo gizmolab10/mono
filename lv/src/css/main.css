@@ -113,7 +113,7 @@ textarea:focus {
 }
 
 .shell-toggle:hover {
-  color: aqua;
+  color: lightgrey;
 }
 
 .shell-toggle .toggle-icon path {

@@ -156,6 +156,7 @@ export default class Constants {
 		FORBIDDEN_CAM_DOT        : 0.866,
 		WITNESS_LEN_MAX_PX       : 300,
 		WITNESS_CAP_PX           : 200,
+		WITNESS_INDEX_CAP        : 3,
 		SLIDABLE_OVERHANG_PX     : 20,
 		SILHOUETTE_MARGIN_PX     : 15,
 		/** Buffer pixels the label rectangle must leave between itself and
