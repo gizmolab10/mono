@@ -16,6 +16,15 @@
 - **Mothballed: allocation-cluster and string-key performance bullets.** Deferred in [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 - **Mothballed: stud / joist / stair template kinds.** First cut at the three-way segmented control needed lots of work — wrong starting proportions, name collisions, and no path from a stair template to the existing diagonal-rise repeater. See [repeaters.mothball.md](repeaters.mothball.md) for what was attempted and the six things to think through before resuming.
 
+10. rules from the original spec abandoned by the uniface design, DO NOT USE THESE:
+    1. four degrees of freedom per label (rule 1) — replaced by the new four placement choices (edge, uniface, witness length, label position),
+    2. two translations within the search (rule 8) — replaced by the discrete witness index,
+    3. silhouette as a single combined hull of leaf parts (rule 9) — replaced by the silhouette box (world-3D),
+    4. pick 4DOF values by best combined clearance (rule 10, mostly) — replaced by computing witness length per rule 3 and dropping on conflict. The centering preference sub-rule inside rule 10 carries over under label centering,
+    5. 4D avoidance algorithm (rule 23) — replaced; the new design does not run the old four-degree search,
+    6. pair-check tiers (rule 24) — replaced,
+    7. strongly prefer placement on or just outside the uniface block (rule 26) — fully merged into the new spec.
+
 ## Proposal 10 — describe the complete dimensionals placement algorithm — DONE
 
 [dimensionals.md](../../guides/architecture/graph/dimensionals.md) now walks the full placement pipeline: the shared outline built from leaf parts, the four-direction path-of-least-resistance picker, the camera-forward and witness-length filters, the 80-pixel push cap, duplicate-text drop, the force simulation (spring, repulsion, damping), motion carried across paints, stop-when-settled, the late drops (off-canvas, floater, drawn witness over 120 px), the drawing step, repeater integration, the diagnostic counters, and an expanded constants table with symptom → likely-cause notes. Every section names the source-line range that backs it.

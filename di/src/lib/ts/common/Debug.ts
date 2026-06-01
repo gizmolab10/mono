@@ -24,7 +24,7 @@ const CUBE_EDGES: [number, number][] = [
 
 // Six faces of a cube, each as a list of vertex indices in the canonical
 // winding order used everywhere else in the project (see Topology.test.ts).
-// Required so the renderer (solid mode by default) can paint and outline the
+// Required so the renderer (solid mode by default) can render and outline the
 // box and the back-face cull picks the right ones.
 const CUBE_FACES: number[][] = [
 	[3, 2, 1, 0], // z_min
@@ -143,7 +143,7 @@ export class Debug {
 			}) as (...args: unknown[]) => unknown,
 
 			// ─── Dimensions hooks (test-only) ─────────────────────────────
-			// One entry per dimension label drawn this paint. The position
+			// One entry per dimension label drawn this render. The position
 			// and size are the screen-space rectangle the label occupies.
 			dim_labels: () => render.dimension_rects.map(r => ({
 				so_name: r.so.name,
@@ -161,7 +161,7 @@ export class Debug {
 				const has_invisible = scene.get_all().some(o => !o.so.visible);
 				return option_down && has_invisible;
 			},
-			// TEMP measurement — every projected point that fed the silhouette outline this paint, each tagged with its source SO name.
+			// TEMP measurement — every projected point that fed the silhouette outline this render, each tagged with its source SO name.
 			dim_hull_input: () => last_hull_input.slice(),
 			// TEMP measurement — every smart object in the scene with id, name, visibility, and parent id.
 			// Use the id (not the name) for parent matching — names are not unique.
@@ -205,7 +205,7 @@ export class Debug {
 			// Per drawn label, the count of viable (edge, direction) pairs
 			// that survived the rule-11 filters. Reads from Dimension_Placement
 			// (Phase 2). Returns empty array if the combined silhouette
-			// hull hasn't been computed yet for this paint.
+			// hull hasn't been computed yet for this render.
 			dim_viable_pair_counts: () => compute_viable_pair_counts(),
 			// Any pair whose conflict-graph classification disagrees with a
 			// brute-force check of the rule-10 conflict definition. Should
@@ -225,7 +225,7 @@ export class Debug {
 				kind: p.kind,
 			})),
 			// Per drawn label, the text-glyph rotation in radians.
-			// Today's renderer always paints horizontally — rule 7 holds.
+			// Today's renderer always renders horizontally — rule 7 holds.
 			dim_label_angles: () => render.dimension_rects.map(r => ({
 				so_name: r.so.name,
 				axis: r.axis,
@@ -274,7 +274,7 @@ export class Debug {
 			// search code calls perf_timer.start('cold_search') /
 			// perf_timer.stop('cold_search') around its work.
 			dim_last_cold_search_ms: () => perf_timer.last('cold_search'),
-			// Wall-clock duration of the most recent search-skipped paint.
+			// Wall-clock duration of the most recent search-skipped render.
 			// Reads from the per-phase timer. Returns 0 until Phase 2
 			// instruments the search-skipped branch.
 			dim_last_search_skipped_ms: () => perf_timer.last('search_skipped'),

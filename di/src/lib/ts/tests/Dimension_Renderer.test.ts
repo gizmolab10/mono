@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { paint_one } from '../render/Dimension_Painter';
+import { render_one } from '../render/Dimension_Renderer';
 import type { Greedy_Placement, Viable_Pair } from '../render/Dimension_Placement';
 import type { DimensionHost } from '../render/R_Dimensions';
 
@@ -74,7 +74,7 @@ function placement(pair: Viable_Pair, witness_length: number, slidable_position:
 		so_id: pair.so_id, so_name: pair.so_name, kind: pair.kind, axis: pair.axis,
 		pair,
 		witness_length, slidable_position,
-		center_x: 0, center_y: 0,   // painter recomputes this; value here is unused
+		center_x: 0, center_y: 0,   // renderer recomputes this; value here is unused
 		label_w_px: pair.label_w_px, label_h_px: pair.label_h_px,
 		min_clearance: 0,
 	};
@@ -82,7 +82,7 @@ function placement(pair: Viable_Pair, witness_length: number, slidable_position:
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
-describe('Dimension_Painter — witness lines extend 10 px past the dim line', () => {
+describe('Dimension_Renderer — witness lines extend 10 px past the dim line', () => {
 	it('continues each witness 10 screen pixels along its own direction past the dim line', () => {
 		// Straight-up witnesses on a horizontal edge at y=200. Witness
 		// length 30 → the dim line sits at y=170. The witness line ends
@@ -97,7 +97,7 @@ describe('Dimension_Painter — witness lines extend 10 px past the dim line', (
 			avg_wlen: 1,
 		});
 		const host = fake_host();
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
 
 		const lines = host.ctx.calls.filter(c => c.op === 'lineTo');
 		const has_left_extension  = lines.some(c => c.x === 0   && c.y === 160);
@@ -107,7 +107,7 @@ describe('Dimension_Painter — witness lines extend 10 px past the dim line', (
 	});
 });
 
-describe('Dimension_Painter — witness lines start 5 px away from the part (rule 6)', () => {
+describe('Dimension_Renderer — witness lines start 5 px away from the part (rule 6)', () => {
 	it('moves the witness-line start 5 screen pixels along the witness direction, not from the part vertex', () => {
 		// Edge at y=200, witness pointing up. Per rule 6 the witness
 		// line must begin AFTER a 5-pixel gap from the part edge — so
@@ -122,7 +122,7 @@ describe('Dimension_Painter — witness lines start 5 px away from the part (rul
 			avg_wlen: 1,
 		});
 		const host = fake_host();
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
 
 		// No moveTo at (0, 200) or (200, 200) — those are the part
 		// vertices and the witness must NOT touch them.
@@ -140,10 +140,10 @@ describe('Dimension_Painter — witness lines start 5 px away from the part (rul
 	});
 });
 
-describe('Dimension_Painter — per-endpoint witness lines (rule 5)', () => {
+describe('Dimension_Renderer — per-endpoint witness lines (rule 5)', () => {
 	it('draws each witness line from its own endpoint, NOT from a shared averaged direction', () => {
 		// Two endpoints with DIFFERENT per-3D-unit screen vectors. In
-		// perspective, world-parallel rays diverge on screen. The painter
+		// perspective, world-parallel rays diverge on screen. The renderer
 		// must honor each endpoint's own vector, not the average.
 		const pair = pair_with({
 			edge_p1: [100, 200],
@@ -154,7 +154,7 @@ describe('Dimension_Painter — per-endpoint witness lines (rule 5)', () => {
 			avg_wlen: 1,
 		});
 		const host = fake_host();
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 50), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 50), 'blue', 'blue', null);
 
 		// Witness 1 end: edge_p1 + wit_1 × (30/1) = (100, 200) + (0, -30) = (100, 170)
 		// Witness 2 end: edge_p2 + wit_2 × (30/1) = (200, 200) + (15, -30) = (215, 170)
@@ -169,11 +169,11 @@ describe('Dimension_Painter — per-endpoint witness lines (rule 5)', () => {
 	});
 });
 
-describe('Dimension_Painter — label snapped to the painted dim line (rule 7)', () => {
+describe('Dimension_Renderer — label snapped to the rendered dim line (rule 7)', () => {
 	it('places the text on the actual dim line, not on the search\'s abstract averaged line', () => {
-		// Diverging witness vectors → the painted dim line direction
+		// Diverging witness vectors → the rendered dim line direction
 		// differs from the projected edge direction. The label must sit
-		// on the painted line.
+		// on the rendered line.
 		const pair = pair_with({
 			edge_p1: [0, 200],
 			edge_p2: [100, 200],
@@ -183,12 +183,12 @@ describe('Dimension_Painter — label snapped to the painted dim line (rule 7)',
 			avg_wlen: 1,
 		});
 		const host = fake_host();
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 50), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 50), 'blue', 'blue', null);
 
 		// w1_end = (0, 170). w2_end = (100 + 9, 170) = (109, 170).
 		// dim line goes from (0, 170) to (109, 170) — horizontal here.
 		// slidable = 50 is in EDGE-length units (edge is 100 px). The
-		// painter rescales it onto the longer dim line: 50 * 109 / 100 = 54.5.
+		// renderer rescales it onto the longer dim line: 50 * 109 / 100 = 54.5.
 		const text_call = host.ctx.calls.find(c => c.op === 'fillText');
 		expect(text_call).toBeTruthy();
 		expect(text_call!.x).toBeCloseTo(54.5, 5);
@@ -211,7 +211,7 @@ function segments(calls: Recorded[]): [{ x: number; y: number }, { x: number; y:
 	return out;
 }
 
-describe('Dimension_Painter — dim line layout when label fits between witnesses', () => {
+describe('Dimension_Renderer — dim line layout when label fits between witnesses', () => {
 	it('draws a single inside segment between the two witness ends and no outside extension', () => {
 		// dim line length 200 px, label 30 px wide, slidable 100 (centered).
 		// Label fits between, no overhang → just inside segment.
@@ -222,7 +222,7 @@ describe('Dimension_Painter — dim line layout when label fits between witnesse
 			label_w: 30,
 		});
 		const host = fake_host();
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
 
 		// Segments where BOTH endpoints sit on the dim line (y=170) are
 		// dim-line segments. Witness segments have one endpoint on the
@@ -235,7 +235,7 @@ describe('Dimension_Painter — dim line layout when label fits between witnesse
 	});
 });
 
-describe('Dimension_Painter — dim line layout when label fits between but overhangs anyway', () => {
+describe('Dimension_Renderer — dim line layout when label fits between but overhangs anyway', () => {
 	it('draws ONLY the two outside extensions (no inside segment) when the label overhangs, per rule 7', () => {
 		// dim line length 200 px, label 30 px wide (fits between), but
 		// search picked slidable = -25 → label overhangs LEFT. Per the
@@ -248,7 +248,7 @@ describe('Dimension_Painter — dim line layout when label fits between but over
 			label_w: 30,
 		});
 		const host = fake_host();
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, -25), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, -25), 'blue', 'blue', null);
 
 		const segs = segments(host.ctx.calls);
 		const dim_segs = segs.filter(s => s[0].y === 170 && s[1].y === 170);
@@ -271,7 +271,7 @@ describe('Dimension_Painter — dim line layout when label fits between but over
 		});
 		const host = fake_host();
 		// slidable = 100: label center at 100, label spans 85..115 — fully inside [0, 200].
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
 
 		const segs = segments(host.ctx.calls);
 		const dim_segs = segs.filter(s => s[0].y === 170 && s[1].y === 170);
@@ -279,7 +279,7 @@ describe('Dimension_Painter — dim line layout when label fits between but over
 	});
 });
 
-describe('Dimension_Painter — dim line layout when label is wider than dim line', () => {
+describe('Dimension_Renderer — dim line layout when label is wider than dim line', () => {
 	it('draws no inside segment and gives both sides an outside extension', () => {
 		// dim line length 10 px, label 60 px wide. Label can't fit
 		// between. Both sides get an extension; the label-side extension
@@ -292,7 +292,7 @@ describe('Dimension_Painter — dim line layout when label is wider than dim lin
 		});
 		const host = fake_host();
 		// slidable = -20: label center 20 px LEFT of w1_end, label spans -50 to 10 along dim line.
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, -20), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, -20), 'blue', 'blue', null);
 
 		// w1_end = (100, 170). w2_end = (110, 170). dl_len = 10.
 		// Expect TWO dim segments (both at y=170): the left extension
@@ -318,7 +318,7 @@ describe('Dimension_Painter — dim line layout when label is wider than dim lin
 	});
 });
 
-describe('Dimension_Painter — arrowheads sit on the same side of the anchor as the dim line', () => {
+describe('Dimension_Renderer — arrowheads sit on the same side of the anchor as the dim line', () => {
 	it('points arrows inward when the label sits between the two witnesses', () => {
 		const pair = pair_with({
 			edge_p1: [0, 200], edge_p2: [200, 200],
@@ -328,7 +328,7 @@ describe('Dimension_Painter — arrowheads sit on the same side of the anchor as
 		});
 		const host = fake_host();
 		// slidable = 100 → label centered between witnesses.
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
 
 		expect(host.arrows).toHaveLength(2);
 		// Left arrow at (0, 170) points right (toward right witness).
@@ -350,7 +350,7 @@ describe('Dimension_Painter — arrowheads sit on the same side of the anchor as
 		});
 		const host = fake_host();
 		// slidable = -50 → label is past the left witness anchor.
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, -50), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, -50), 'blue', 'blue', null);
 
 		const a1 = host.arrows.find(a => a.x === 0 && a.y === 170);
 		const a2 = host.arrows.find(a => a.x === 500 && a.y === 170);
@@ -369,7 +369,7 @@ describe('Dimension_Painter — arrowheads sit on the same side of the anchor as
 		});
 		const host = fake_host();
 		// slidable = 550 → label is past the right witness anchor.
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 550), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 550), 'blue', 'blue', null);
 
 		const a1 = host.arrows.find(a => a.x === 0 && a.y === 170);
 		const a2 = host.arrows.find(a => a.x === 500 && a.y === 170);
@@ -389,7 +389,7 @@ describe('Dimension_Painter — arrowheads sit on the same side of the anchor as
 		const host = fake_host();
 		// slidable = -50 → overhang left. dim line BETWEEN witnesses (y=170, x in [0, 500])
 		// should NOT appear as a drawn segment.
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, -50), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, -50), 'blue', 'blue', null);
 		const segs = segments(host.ctx.calls);
 		const inside_segs = segs.filter(s =>
 			s[0].y === 170 && s[1].y === 170 &&
@@ -399,7 +399,7 @@ describe('Dimension_Painter — arrowheads sit on the same side of the anchor as
 	});
 });
 
-describe('Dimension_Painter — text is drawn after the white box', () => {
+describe('Dimension_Renderer — text is drawn after the white box', () => {
 	it('draws a white background rectangle and then the number text at the same center', () => {
 		const pair = pair_with({
 			edge_p1: [0, 200], edge_p2: [200, 200],
@@ -407,7 +407,7 @@ describe('Dimension_Painter — text is drawn after the white box', () => {
 			avg_wlen: 1,
 		});
 		const host = fake_host();
-		paint_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
+		render_one(host.ctx as unknown as CanvasRenderingContext2D, host, placement(pair, 30, 100), 'blue', 'blue', null);
 
 		const box  = host.ctx.calls.find(c => c.op === 'fillRect');
 		const text = host.ctx.calls.find(c => c.op === 'fillText');

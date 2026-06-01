@@ -15,6 +15,7 @@ class Stores {
 	w_tick				= stale_writable<number>(0);
 	w_forward_face		= stale_writable<number>(-1);
 	w_library			= writable<number>(0);
+	w_use_uniface_placement = stale_writable<boolean>(false);
 
 	// Persistent. Ones that feed the canvas are wrapped the same way.
 	w_decorations       = make_stale(preferences.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.dimensions));
@@ -45,6 +46,8 @@ class Stores {
 	toggle_rotation_snap():					void { this.w_rotation_snap.update(v => !v); }
 	toggle_allow_editing():					void { this.w_allow_editing.update(v => !v); }
 	toggle_grid():							void { this.w_show_grid.update(v => !v); }
+	toggle_uniface_placement():				void { this.w_use_uniface_placement.update(v => !v); }
+	get use_uniface_placement():		 boolean { return get(this.w_use_uniface_placement); }
 	get current_view_mode():		 '2d' | '3d' { return get(this.w_view_mode); }
 	get editing():					   T_Editing { return get(this.w_editing); }
 	get current_scale():				  number { return get(this.w_scale); }

@@ -27,7 +27,7 @@ type Pt = { x: number; y: number };
 type OccFaceRef = typeof Render.prototype['occluding_faces'][number] | null;
 
 /** One-character rollback lever. When true, the canvas-up-to-date flag is
- *  forced off so the tick always paints — same behavior as before the gate
+ *  forced off so the tick always renders — same behavior as before the gate
  *  was wired. Flip to true to revert; next reload picks it up. */
 const ALWAYS_REDRAW = false;
 
@@ -97,21 +97,21 @@ class Render {
 	 *  rebuilds against the current camera and scene state. */
 	private world_matrix_cache = new Map<string, mat4>();
 
-	/** Per-paint time spent in each labeled phase. Cleared at the top of
+	/** Per-render time spent in each labeled phase. Cleared at the top of
 	 *  render(); filled by _phase() markers; consumed by the engine's
 	 *  per-second summary. */
-	last_paint_phase_times = new Map<string, number>();
-	/** Per-paint counters — integer tallies set inside the paint (e.g. how
+	last_render_phase_times = new Map<string, number>();
+	/** Per-render counters — integer tallies set inside the render (e.g. how
 	 *  many object pairs survived each filter in the intersection loop).
 	 *  Cleared at the top of render(); consumed by the engine's per-second
 	 *  summary as averages over the window. */
-	last_paint_counters = new Map<string, number>();
+	last_render_counters = new Map<string, number>();
 	private _phase_t0 = 0;
 	private _phase_label = '';
 
 	/** Two ping-pong scratch arrays of preallocated interval records for the
 	 *  pooled edge-vs-face clipper. Slots are created lazily and reused across
-	 *  every call to the clipper during a paint — no array or record alloc
+	 *  every call to the clipper during a render — no array or record alloc
 	 *  inside the hot occluder loop. */
 	private _clip_ivs_a: RichInterval[] = [];
 	private _clip_ivs_b: RichInterval[] = [];
@@ -148,9 +148,9 @@ class Render {
 	private size: Size = Size.zero;
 	private dpr = 1;
 
-	/** True when the canvas may be out of date and the next tick should paint.
-	 *  Starts true so the first frame always paints. Cleared at the start of
-	 *  each paint; set by any mutation source we have wired up to mark it. */
+	/** True when the canvas may be out of date and the next tick should render.
+	 *  Starts true so the first frame always renders. Cleared at the start of
+	 *  each render; set by any mutation source we have wired up to mark it. */
 	private _is_stale = true;
 
 	/** Holds the unsubscribe function for every store subscription that marks
@@ -162,40 +162,40 @@ class Render {
 	 *  whenever they change something that affects what the canvas shows. */
 	mark_stale(): void { this._is_stale = true; }
 
-	/** When set, the renderer paints as if the print media query were active
+	/** When set, the renderer renders as if the print media query were active
 	 *  even when it is not. The print event listener in App.svelte sets this
 	 *  before reading pixels for the silhouette, because real browsers fire
 	 *  the print event before flipping the media query, so a render that
-	 *  relied on the media query alone would still paint helpers and those
+	 *  relied on the media query alone would still render helpers and those
 	 *  pixels would show up on the printed page. */
-	force_print_paint = false;
+	force_print_render = false;
 
-	/** Repaint immediately under print mode and return. Used by the print
+	/** Rerender immediately under print mode and return. Used by the print
 	 *  event listener so the canvas pixels read for silhouette computation
 	 *  are the clean print pixels, not the previous on-screen render. */
-	paint_for_print(): void {
-		this.force_print_paint = true;
+	render_for_print(): void {
+		this.force_print_render = true;
 		try {
 			this.render();
 		} finally {
-			this.force_print_paint = false;
+			this.force_print_render = false;
 		}
 	}
 
-	/** Mark a phase boundary in the paint. Closes the previous phase (adding
-	 *  its elapsed milliseconds to the per-paint totals) and opens a new one
+	/** Mark a phase boundary in the render. Closes the previous phase (adding
+	 *  its elapsed milliseconds to the per-render totals) and opens a new one
 	 *  under `next_label`. Pass the empty string to close without opening. */
 	private _phase(next_label: string): void {
 		const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
 		if (this._phase_label) {
-			const prev = this.last_paint_phase_times.get(this._phase_label) ?? 0;
-			this.last_paint_phase_times.set(this._phase_label, prev + (now - this._phase_t0));
+			const prev = this.last_render_phase_times.get(this._phase_label) ?? 0;
+			this.last_render_phase_times.set(this._phase_label, prev + (now - this._phase_t0));
 		}
 		this._phase_label = next_label;
 		this._phase_t0 = now;
 	}
 
-	/** True when the next tick should paint. Reports true whenever the
+	/** True when the next tick should render. Reports true whenever the
 	 *  rollback lever is on, regardless of the internal flag. */
 	get is_stale(): boolean { return ALWAYS_REDRAW || this._is_stale; }
 
@@ -203,7 +203,7 @@ class Render {
 	add_stale_sub(unsub: () => void): void { this.stale_subs.push(unsub); }
 
 	/** Drop every wired subscription and reset the flag to stale so the
-	 *  first frame after a hot-module-reload always paints. */
+	 *  first frame after a hot-module-reload always renders. */
 	reset_stale_subs(): void {
 		for (const unsub of this.stale_subs) unsub();
 		this.stale_subs = [];
@@ -280,10 +280,10 @@ class Render {
 		const w = canvas.width, h = canvas.height;
 		this.size = new Size(w, h);
 		this.apply_dpr(w, h);
-		// The grid-and-axes suppression checks the print media at paint time.
+		// The grid-and-axes suppression checks the print media at render time.
 		// A media flip on its own changes no reactive store, so flag the
-		// canvas out of date here so the next frame repaints under the new
-		// media — otherwise pixels painted under the on-screen media stay on
+		// canvas out of date here so the next frame rerenders under the new
+		// media — otherwise pixels rendered under the on-screen media stay on
 		// the canvas during print. Remove any earlier listener first so a
 		// re-init (from hot reload or a scene switch) doesn't accumulate
 		// duplicates.
@@ -309,7 +309,7 @@ class Render {
 	}
 
 	/** Set canvas buffer to physical pixels, CSS size to logical pixels.
-	 *  Snapshots old content and paints it back offset so the buffer is never visibly blank. */
+	 *  Snapshots old content and renders it back offset so the buffer is never visibly blank. */
 	private apply_dpr(w: number, h: number): void {
 		const old_w = this.canvas.width;
 		const old_h = this.canvas.height;
@@ -332,7 +332,7 @@ class Render {
 		this.canvas.style.width = w + 'px';
 		this.canvas.style.height = h + 'px';
 
-		// Paint snapshot back, centered at new size
+		// Render snapshot back, centered at new size
 		if (this.snap && old_w > 0 && old_h > 0) {
 			const dx = (new_w - old_w) / 2;
 			const dy = (new_h - old_h) / 2;
@@ -344,10 +344,10 @@ class Render {
 
 	render(): void {
 		// Clear the canvas-out-of-date flag first. If any mutation happens
-		// during this paint, the flag flips back on and the next tick repaints.
+		// during this render, the flag flips back on and the next tick rerenders.
 		this._is_stale = false;
-		this.last_paint_phase_times.clear();
-		this.last_paint_counters.clear();
+		this.last_render_phase_times.clear();
+		this.last_render_counters.clear();
 		this._phase('setup');
 		this.ctx.clearRect(0, 0, this.size.width, this.size.height);
 		this.dimension_rects = [];
@@ -377,7 +377,7 @@ class Render {
 		// the visible parts are skipped so only the invisible parts (as a dashed
 		// wireframe) and their dimensions are shown. With no invisible parts,
 		// OPTION does nothing. Print mode never triggers x-ray.
-		const print_active = this.force_print_paint || (typeof window !== 'undefined' && window.matchMedia('print').matches);
+		const print_active = this.force_print_render || (typeof window !== 'undefined' && window.matchMedia('print').matches);
 		const has_invisible = all_objects.some(o => !o.so.visible);
 		const xray_mode = !print_active && get(e.w_option_down) && has_invisible;
 
@@ -392,7 +392,7 @@ class Render {
 
 		// During print, suppress the background grid and the work-area
 		// indicator so the printed sheet shows only the picture itself.
-		const is_print = this.force_print_paint || (typeof window !== 'undefined' && window.matchMedia('print').matches);
+		const is_print = this.force_print_render || (typeof window !== 'undefined' && window.matchMedia('print').matches);
 		if (stores.grid_opacity > 0 && !is_print) render_back_grid(this);
 		if (!is_2d && !is_print) render_root_bottom(this);
 
@@ -585,7 +585,7 @@ class Render {
 			}
 		}
 
-		// Facets: build graph, trace polys, paint
+		// Facets: build graph, trace polys, render
 		let _facets_ref: Facets | null = null;
 		let _facets_so_id = '';
 		let _facets_face_polys: Map<number, { x: number; y: number }[]> | null = null;
@@ -610,7 +610,7 @@ class Render {
 			const traced = facets.trace_facets(sel_scene?.id, undefined, objects);
 			_facets_traced = traced;
 
-			// Paint facets for selected SO
+			// Render facets for selected SO
 			if (sel_scene?.faces) {
 				const sel_projected = projected_map.get(sel_scene.id)!;
 				const face_screen_polys = new Map<number, { x: number; y: number }[]>();
@@ -619,7 +619,7 @@ class Render {
 					face_screen_polys.set(fi, sel_scene.faces[fi].map(vi => ({ x: sel_projected[vi].x, y: sel_projected[vi].y })));
 				}
 				const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#ccc';
-				facets.paint_facets(traced, this.ctx, accent, sel_scene.id, face_screen_polys);
+				facets.render_facets(traced, this.ctx, accent, sel_scene.id, face_screen_polys);
 				_facets_ref = facets;
 				_facets_so_id = sel_scene.id;
 				_facets_face_polys = face_screen_polys;
@@ -676,7 +676,7 @@ class Render {
 					}
 				}
 			}
-			_facets_ref.paint_labels(this.ctx, _facets_so_id, sel_projected, visible_verts);
+			_facets_ref.render_labels(this.ctx, _facets_so_id, sel_projected, visible_verts);
 
 			// Log facet paths using display labels — only when they change
 			const facets_ref = _facets_ref;
@@ -716,7 +716,7 @@ class Render {
 			this.ctx.strokeStyle = 'rgba(128, 128, 128, 1)';
 			// Invisible root's bottom outline stays fully visible — it's the
 			// floor reference. Other invisible objects fade with the grid,
-			// EXCEPT while OPTION is held, in which case they paint fully so
+			// EXCEPT while OPTION is held, in which case they render fully so
 			// the user can see them on demand (x-ray reveal).
 			this.ctx.globalAlpha = (!obj.parent || option_down) ? 1 : stores.grid_opacity;
 			this.ctx.lineWidth = 0.5;
@@ -1447,19 +1447,19 @@ class Render {
 				}
 			}
 		}
-		this.last_paint_phase_times.set('ix-math', _t_math);
-		this.last_paint_phase_times.set('ix-clip', _t_clip);
-		this.last_paint_phase_times.set('ix-tag', _t_tag);
-		this.last_paint_counters.set('obj pairs', _obj_pairs);
-		this.last_paint_counters.set('obj pairs box-ok', _obj_pairs_ok);
-		this.last_paint_counters.set('pairs ancestral', _pairs_ancestral);
-		this.last_paint_counters.set('pairs siblings', _pairs_siblings);
-		this.last_paint_counters.set('pairs other', _pairs_other);
-		this.last_paint_counters.set('face pairs', _fp_total);
-		this.last_paint_counters.set('face pairs box-ok', _fp_box_ok);
-		this.last_paint_counters.set('face pairs geom', _fp_with_geom);
-		this.last_paint_counters.set('fp geom ancestral', _fp_geom_ancestral);
-		this.last_paint_counters.set('face pairs seg', _fp_with_seg);
+		this.last_render_phase_times.set('ix-math', _t_math);
+		this.last_render_phase_times.set('ix-clip', _t_clip);
+		this.last_render_phase_times.set('ix-tag', _t_tag);
+		this.last_render_counters.set('obj pairs', _obj_pairs);
+		this.last_render_counters.set('obj pairs box-ok', _obj_pairs_ok);
+		this.last_render_counters.set('pairs ancestral', _pairs_ancestral);
+		this.last_render_counters.set('pairs siblings', _pairs_siblings);
+		this.last_render_counters.set('pairs other', _pairs_other);
+		this.last_render_counters.set('face pairs', _fp_total);
+		this.last_render_counters.set('face pairs box-ok', _fp_box_ok);
+		this.last_render_counters.set('face pairs geom', _fp_with_geom);
+		this.last_render_counters.set('fp geom ancestral', _fp_geom_ancestral);
+		this.last_render_counters.set('face pairs seg', _fp_with_seg);
 	}
 
 
@@ -1761,7 +1761,7 @@ class Render {
 		// active. The flags above keep their normal meaning so other render
 		// paths that read them stay correct; we apply the suppression only
 		// where it changes pixels (the stroke colour and the line width).
-		const is_print = this.force_print_paint || (typeof window !== 'undefined' && window.matchMedia('print').matches);
+		const is_print = this.force_print_render || (typeof window !== 'undefined' && window.matchMedia('print').matches);
 		const show_selected = is_selected && !is_print;
 		const show_hovered  = is_hovered  && !is_print;
 		ctx.lineWidth = (show_selected || show_hovered) ? stores.bold_thickness : stores.edge_thickness;

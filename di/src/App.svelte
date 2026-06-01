@@ -11,11 +11,11 @@
 	});
 
 	// ── Silhouette-based print scaling ──
-	// Read the canvas's painted pixels and find the smallest rectangle that
-	// contains every painted (non-transparent) pixel. The painted content is
+	// Read the canvas's rendered pixels and find the smallest rectangle that
+	// contains every rendered (non-transparent) pixel. The rendered content is
 	// what the printer captures, so the silhouette must be derived from those
 	// pixels, not from world-space corner projections — which can disagree
-	// with the painted content for perspective scenes near the camera plane.
+	// with the rendered content for perspective scenes near the camera plane.
 
 	function compute_silhouette(canvas: HTMLCanvasElement): { left: number, top: number, width: number, height: number } | null {
 		const ctx = canvas.getContext('2d');
@@ -49,7 +49,7 @@
 	function apply_print_transform(canvas: HTMLCanvasElement) {
 		const sil = compute_silhouette(canvas);
 		if (!sil) {
-			// Nothing painted — drop any prior transform so the canvas stays
+			// Nothing rendered — drop any prior transform so the canvas stays
 			// untouched. Without this, a transform applied on an earlier read
 			// (when stale pixels were still on the canvas) would persist.
 			canvas.style.transform       = '';
@@ -87,10 +87,10 @@
 		if (!canvas) return;
 		// Real browsers fire this event before flipping the print media query,
 		// so the canvas still holds the on-screen render (with grid, axes, hover
-		// dots, selection dots). Force a synchronous repaint under print mode
+		// dots, selection dots). Force a synchronous rerender under print mode
 		// so the silhouette read below sees the clean pixels the printer will
 		// actually capture.
-		render.paint_for_print();
+		render.render_for_print();
 		// First pass: synchronous apply so something is on screen immediately.
 		// The resize observer below catches up if the layout reflows after.
 		apply_print_transform(canvas);

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { convex_hull, ray_polygon_exit, push_outside_hull } from '../render/Dimension_Placement';
 
 // Rule 9 of crowded dimensionals — silhouette is one convex hull of all
-// painted leaf parts' projected vertices. Rule 10 + 11 — the chosen witness
+// rendered leaf parts' projected vertices. Rule 10 + 11 — the chosen witness
 // direction's push distance is measured by how far an arrow from the
 // candidate's home has to travel before exiting that hull.
 //

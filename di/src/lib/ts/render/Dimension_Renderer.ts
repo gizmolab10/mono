@@ -5,7 +5,7 @@ import { hits_3d } from '../events/Hits_3D';
 import { scene } from './Scene';
 
 /**
- * Canvas painter for dimensions. Reads the placement list produced by
+ * Canvas renderer for dimensions. Reads the placement list produced by
  * the new pipeline (in Dimension_Placement.ts) and turns each placement
  * into pixels: two witness lines, one dimension line with arrowheads,
  * a white box, and the number text. Also pushes a hit-test rectangle so
@@ -13,7 +13,7 @@ import { scene } from './Scene';
  * publishes the dropped-count running average into the same store the
  * status strip reads from.
  *
- * Called from render_dimensions in R_Dimensions.ts every paint.
+ * Called from render_dimensions in R_Dimensions.ts every render.
  */
 
 /** Default stroke and text color for dimension labels. */
@@ -29,7 +29,7 @@ const WITNESS_GAP_FROM_PART_PX = 5;
 
 const drop_stats = { counter: 0, avg_dropped: 0 };
 
-export function paint_new_placements(host: DimensionHost): void {
+export function render_new_placements(host: DimensionHost): void {
 	const result = get_last_run_result();
 	if (!result) return;
 
@@ -37,13 +37,13 @@ export function paint_new_placements(host: DimensionHost): void {
 	const hovered = hits_3d.hovered_dimension;
 
 	for (const p of result.placements) {
-		paint_one(ctx, host, p, NEW_STROKE, NEW_TEXT, hovered);
+		render_one(ctx, host, p, NEW_STROKE, NEW_TEXT, hovered);
 	}
 
 	publish_drop_count(result.drop_report.dropped.length);
 }
 
-export function paint_one(
+export function render_one(
 	ctx: CanvasRenderingContext2D,
 	host: DimensionHost,
 	p: Greedy_Placement,
@@ -82,7 +82,7 @@ export function paint_one(
 	const wit_2_past_x = w2_end_x + wit_2_ux * WITNESS_PAST_DIM_LINE_PX;
 	const wit_2_past_y = w2_end_y + wit_2_uy * WITNESS_PAST_DIM_LINE_PX;
 
-	// Dim line direction (along the painted dim line, not the projected
+	// Dim line direction (along the rendered dim line, not the projected
 	// edge — these differ in perspective when the per-endpoint witness
 	// vectors diverge).
 	const dl_dx = w2_end_x - w1_end_x;
@@ -91,13 +91,13 @@ export function paint_one(
 	const dl_ux = dl_len > 0 ? dl_dx / dl_len : 0;
 	const dl_uy = dl_len > 0 ? dl_dy / dl_len : 0;
 
-	// Re-snap the label center onto the actual painted dim line. The
+	// Re-snap the label center onto the actual rendered dim line. The
 	// search computed `p.center_x`/`p.center_y` using an averaged witness
-	// direction; that line and the painted dim line diverge in
+	// direction; that line and the rendered dim line diverge in
 	// perspective and the label would otherwise float between them. Rule
 	// 7: the text sits ON the dim line. The slidable value the search
 	// picked is in EDGE-length units (the search built its forbidden
-	// zones using the projected edge length). The painted dim line is a
+	// zones using the projected edge length). The rendered dim line is a
 	// different length than the projected edge when the per-endpoint
 	// witnesses converge or diverge, so the slide must be RESCALED from
 	// edge units into dim-line units before being applied here.
@@ -107,22 +107,22 @@ export function paint_one(
 	const center_y = w1_end_y + dl_uy * slide_dl;
 
 	// One-shot trace mirroring the one in Dimension_Placement.ts so we can
-	// compare what the search picked against where the painter places the
+	// compare what the search picked against where the renderer places the
 	// label centre. Edit the literal below to follow a different label.
 	const DBG_TRACE_TEXT = "16' 8 1/2\"";
 	if (pair.text === DBG_TRACE_TEXT) {
-		const last = (paint_one as unknown as { _last_trace?: string })._last_trace ?? '';
+		const last = (render_one as unknown as { _last_trace?: string })._last_trace ?? '';
 		const line =
-			`DIM TRACE PAINTER [${DBG_TRACE_TEXT}]: ` +
+			`DIM TRACE RENDERER [${DBG_TRACE_TEXT}]: ` +
 			`witness 1 end (${w1_end_x.toFixed(1)}, ${w1_end_y.toFixed(1)}), ` +
 			`witness 2 end (${w2_end_x.toFixed(1)}, ${w2_end_y.toFixed(1)}), ` +
 			`edge length ${edge_len_px.toFixed(1)} px, ` +
 			`dim line length ${dl_len.toFixed(1)} px, ` +
 			`slide from search ${slidable_position.toFixed(1)} (edge units), ` +
 			`slide on dim line ${slide_dl.toFixed(1)} px, ` +
-			`painted centre (${center_x.toFixed(1)}, ${center_y.toFixed(1)})`;
+			`rendered centre (${center_x.toFixed(1)}, ${center_y.toFixed(1)})`;
 		if (line !== last) {
-			(paint_one as unknown as { _last_trace?: string })._last_trace = line;
+			(render_one as unknown as { _last_trace?: string })._last_trace = line;
 			console.log(line);
 		}
 	}
@@ -148,7 +148,7 @@ export function paint_one(
 	const FIXED_SHORT_EXTENSION_PX = 30;
 	const half_w = label_w_px / 2;
 	// Use the rescaled slide so the between-vs-overhang check matches
-	// where the label actually paints on the dim line.
+	// where the label actually renders on the dim line.
 	const label_left_s  = slide_dl - half_w;
 	const label_right_s = slide_dl + half_w;
 	const label_sits_between = label_left_s >= 0 && label_right_s <= dl_len;
@@ -203,10 +203,10 @@ export function paint_one(
 	}
 }
 
-function publish_drop_count(dropped_this_paint: number): void {
+function publish_drop_count(dropped_this_render: number): void {
 	drop_stats.counter++;
 	const k = drop_stats.counter;
-	drop_stats.avg_dropped += (dropped_this_paint - drop_stats.avg_dropped) / k;
+	drop_stats.avg_dropped += (dropped_this_render - drop_stats.avg_dropped) / k;
 	w_dim_dropped_avg.set(Math.round(drop_stats.avg_dropped));
 }
 

@@ -23,12 +23,25 @@ import {
 	compute_viability,
 	re_project_persisted_list,
 	Persistence,
+	compute_silhouette_box,
+	compute_uniface_box_from_silhouette,
+	is_face_excluded,
+	pick_first_viable_uniface_for_axis,
+	pick_closest_uniface_for_axis,
+	UNIFACE_FACE_POS_X,
+	UNIFACE_FACE_NEG_X,
+	UNIFACE_FACE_POS_Y,
+	UNIFACE_FACE_NEG_Y,
+	UNIFACE_FACE_POS_Z,
+	UNIFACE_FACE_NEG_Z,
 	type Persisted_Placement,
 	type Reachable_Region,
 	type Viable_Pair,
 	type Greedy_Placement,
 	type Label_Key,
+	type Silhouette_Box,
 } from '../render/Dimension_Placement';
+import { vec3 } from 'gl-matrix';
 
 // Build a Viable_Pair with horizontal projected edge, perpendicular
 // witness pointing UP (negative Y on screen). Lets tests reason in
@@ -942,10 +955,10 @@ describe('Dimension_Placement — drop_duplicates (rule 4)', () => {
 		expect(dropped[0].so_id).toBe('B');
 	});
 
-	it('keeps the persisted label when one was remembered last paint and the other was not', () => {
+	it('keeps the persisted label when one was remembered last render and the other was not', () => {
 		const placed = [
-			placement_with_text('A', '8 1/2"'),   // new this paint
-			placement_with_text('B', '8 1/2"'),   // was around last paint
+			placement_with_text('A', '8 1/2"'),   // new this render
+			placement_with_text('B', '8 1/2"'),   // was around last render
 		];
 		const dirs = new Map<Label_Key, [number, number, number]>([
 			['A|x', [1, 0, 0]],
@@ -1286,10 +1299,10 @@ describe('Dimension_Placement — compute_viability', () => {
 	});
 
 	it('returns cold_run when nothing has been remembered yet (vacuous-truth guard)', () => {
-		// Reproducing the first-paint case: persisted is empty but the
+		// Reproducing the first-render case: persisted is empty but the
 		// scene has regions to dimension. Without the guard, the vacuous
 		// `every`-over-empty returns true, the function says "skip the
-		// search", and the painter draws nothing forever.
+		// search", and the renderer draws nothing forever.
 		const region = build_region('A', { w_min: 30, w_max: 30, s_min: 0, s_max: 0 });
 		const result = compute_viability([], [region]);
 		expect(result.kind).toBe('cold_run');
@@ -1364,7 +1377,7 @@ describe('Dimension_Placement — Persistence class', () => {
 		expect(p.should_force_cold_run()).toBe(false);
 	});
 
-	it('triggers force-cold-run after two consecutive slack-using paints', () => {
+	it('triggers force-cold-run after two consecutive slack-using renders', () => {
 		const p = new Persistence();
 		expect(p.should_force_cold_run()).toBe(false);
 		p.note_slack_use();
@@ -1430,7 +1443,7 @@ describe('Dimension_Placement — re_project_persisted_list (layout-freeze)', ()
 		return { so_id, so_name: so_id, kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [pair] };
 	}
 
-	it('re-projects every persisted label onto the current paint\'s pairs', () => {
+	it('re-projects every persisted label onto the current render\'s pairs', () => {
 		const pair_a = viable('A', 0, 1);
 		const pair_b = viable('B', 0, 1);
 		const placements = re_project_persisted_list(
@@ -1583,11 +1596,29 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 
 	it.todo('recomputes the uniface box every render as the camera moves');
 
-	it.todo('returns an empty uniface box when no non-rotated parts are rendered');
+	it('returns an empty silhouette box at the origin when no parts are rendered', () => {
+		const box = compute_silhouette_box([]);
+		expect(box.min).toEqual([0, 0, 0]);
+		expect(box.max).toEqual([0, 0, 0]);
+	});
 
 	it.todo('places the dim line in the plane of a uniface (rule 3)');
 
-	it.todo('the witness index picks which of the three nested uniface boxes (index 1, 2, or 3) holds the dim line (rule 1)');
+	it('the witness index picks which of the three nested uniface boxes holds the dim line (rule 1)', () => {
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		const no_exclusions = (_n: vec3) => false;
+		const box = compute_uniface_box_from_silhouette(silhouette, project, no_exclusions, 15, 3);
+		// Three nested levels exist. Each level's outward distance for a given face is larger than the previous.
+		expect(box.shifts.length).toBe(3);
+		const f = UNIFACE_FACE_POS_X;
+		expect(box.shifts[0][f]).toBeLessThan(box.shifts[1][f] as number);
+		expect(box.shifts[1][f]).toBeLessThan(box.shifts[2][f] as number);
+		// The picker accepts a witness index and returns a uniface for each level.
+		expect(pick_first_viable_uniface_for_axis('x', box, 0)).not.toBeNull();
+		expect(pick_first_viable_uniface_for_axis('x', box, 1)).not.toBeNull();
+		expect(pick_first_viable_uniface_for_axis('x', box, 2)).not.toBeNull();
+	});
 
 	it.todo('drops the label when no witness length places the dim line on a uniface without conflict (rule 3)');
 
@@ -1601,7 +1632,9 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 
 	// Coverage gaps from step 2 of the test-rollout proposal.
 
-	it.todo('the witness index cap value is 3 and is read from k.dimensions.WITNESS_INDEX_CAP (rule 1)');
+	it('the witness index cap value is 3 and is read from k.dimensions.WITNESS_INDEX_CAP (rule 1)', () => {
+		expect(k.dimensions.WITNESS_INDEX_CAP).toBe(3);
+	});
 
 	it.todo('the four placement choices are exactly edge, uniface, witness index, label position (rule 2)');
 
@@ -1611,6 +1644,151 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 
 	it.todo('dropping a label because its witness index exceeded the cap does not trigger re-placement for labels that depended on this one position (rule 7)');
 
-	it.todo('k.dimensions.PAIR_CLEARANCE_PX equals k.dimensions.SILHOUETTE_MARGIN_PX equals 15 (rule 8)');
+	it('k.dimensions.PAIR_CLEARANCE_PX equals k.dimensions.SILHOUETTE_MARGIN_PX equals 15 (rule 8)', () => {
+		expect(k.dimensions.PAIR_CLEARANCE_PX).toBe(15);
+		expect(k.dimensions.SILHOUETTE_MARGIN_PX).toBe(15);
+		expect(k.dimensions.PAIR_CLEARANCE_PX).toBe(k.dimensions.SILHOUETTE_MARGIN_PX);
+	});
+});
+
+describe('Dimension_Placement — uniface box builder (step 1)', () => {
+	it('silhouette box encloses every world corner', () => {
+		// Two parts: one centered at origin (size 2), one shifted at (10, 5, 0) (size 4).
+		const corners: vec3[] = [
+			vec3.fromValues(-1, -1, -1), vec3.fromValues(1, -1, -1), vec3.fromValues(1, 1, -1), vec3.fromValues(-1, 1, -1),
+			vec3.fromValues(-1, -1,  1), vec3.fromValues(1, -1,  1), vec3.fromValues(1, 1,  1), vec3.fromValues(-1, 1,  1),
+			vec3.fromValues(8, 3, -2), vec3.fromValues(12, 3, -2), vec3.fromValues(12, 7, -2), vec3.fromValues(8, 7, -2),
+			vec3.fromValues(8, 3,  2), vec3.fromValues(12, 3,  2), vec3.fromValues(12, 7,  2), vec3.fromValues(8, 7,  2),
+		];
+		const box = compute_silhouette_box(corners);
+		expect(box.min).toEqual([-1, -1, -2]);
+		expect(box.max).toEqual([12, 7, 2]);
+	});
+
+	it('per-uniface shift equals margin when projection is 1 pixel per world unit (no exclusions)', () => {
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		// Identity-scale projection: drop z, copy x and y to screen.
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		const no_exclusions = (_n: vec3) => false;
+		const box = compute_uniface_box_from_silhouette(silhouette, project, no_exclusions, 15, 3);
+		// +x face moves along world +x; projection sees screen +x change by 1 per world unit.
+		// shift at level 1 should equal margin (15).
+		expect(box.shifts[0][UNIFACE_FACE_POS_X]).toBeCloseTo(15, 6);
+		expect(box.shifts[0][UNIFACE_FACE_NEG_X]).toBeCloseTo(15, 6);
+		expect(box.shifts[0][UNIFACE_FACE_POS_Y]).toBeCloseTo(15, 6);
+		expect(box.shifts[0][UNIFACE_FACE_NEG_Y]).toBeCloseTo(15, 6);
+		// +z and -z faces move along world z, which the identity-xy projection drops.
+		// screen_per_world is zero → shift is zero per the safety guard.
+		expect(box.shifts[0][UNIFACE_FACE_POS_Z]).toBe(0);
+		expect(box.shifts[0][UNIFACE_FACE_NEG_Z]).toBe(0);
+	});
+
+	it('per-uniface shift scales linearly with the enum level (no exclusions)', () => {
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: 2 * w[0], y: 2 * w[1] }); // 2 px per world unit
+		const no_exclusions = (_n: vec3) => false;
+		const box = compute_uniface_box_from_silhouette(silhouette, project, no_exclusions, 15, 3);
+		// Enum 1: shift = 15 / 2 = 7.5
+		// Enum 2: shift = 30 / 2 = 15
+		// Enum 3: shift = 45 / 2 = 22.5
+		expect(box.shifts[0][UNIFACE_FACE_POS_X]).toBeCloseTo(7.5, 6);
+		expect(box.shifts[1][UNIFACE_FACE_POS_X]).toBeCloseTo(15, 6);
+		expect(box.shifts[2][UNIFACE_FACE_POS_X]).toBeCloseTo(22.5, 6);
+	});
+
+	it('excluded faces get null shifts at every enum level', () => {
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		// Exclude only the +x face.
+		const is_excluded = (n: vec3) => n[0] === 1 && n[1] === 0 && n[2] === 0;
+		const box = compute_uniface_box_from_silhouette(silhouette, project, is_excluded, 15, 3);
+		expect(box.shifts[0][UNIFACE_FACE_POS_X]).toBeNull();
+		expect(box.shifts[1][UNIFACE_FACE_POS_X]).toBeNull();
+		expect(box.shifts[2][UNIFACE_FACE_POS_X]).toBeNull();
+		// Other faces still get numeric shifts.
+		expect(box.shifts[0][UNIFACE_FACE_NEG_X]).toBeCloseTo(15, 6);
+	});
+
+	it('the excluded-face rule excludes faces whose normal is within 20° of parallel to the camera forward in either direction', () => {
+		// Camera looks straight down +z (forward = (0,0,1)).
+		const forward = vec3.fromValues(0, 0, 1);
+		// Within 20° of parallel — face normal points at the camera (opposite to forward).
+		expect(is_face_excluded(vec3.fromValues(0, 0, -1), forward, 20)).toBe(true);
+		// Within 20° of parallel — face normal points AWAY from camera (same direction as forward).
+		expect(is_face_excluded(vec3.fromValues(0, 0, 1), forward, 20)).toBe(true);
+		// Edge-on (perpendicular to forward): NOT excluded by this rule.
+		expect(is_face_excluded(vec3.fromValues(1, 0, 0), forward, 20)).toBe(false);
+		expect(is_face_excluded(vec3.fromValues(0, 1, 0), forward, 20)).toBe(false);
+		// Just inside the parallel tolerance (19° off from pointing-at): excluded.
+		const at_19_deg = vec3.fromValues(Math.sin(19 * Math.PI / 180), 0, -Math.cos(19 * Math.PI / 180));
+		expect(is_face_excluded(at_19_deg, forward, 20)).toBe(true);
+		// Just outside the parallel tolerance (21°): not excluded.
+		const at_21_deg = vec3.fromValues(Math.sin(21 * Math.PI / 180), 0, -Math.cos(21 * Math.PI / 180));
+		expect(is_face_excluded(at_21_deg, forward, 20)).toBe(false);
+	});
+
+	it('per-axis uniface picker returns the first uniface that is not excluded and contains the axis', () => {
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		// All six faces are non-excluded.
+		const no_exclusions = (_n: vec3) => false;
+		const box = compute_uniface_box_from_silhouette(silhouette, project, no_exclusions, 15, 3);
+		// For each axis, picker should return the first candidate in its preferred order.
+		expect(pick_first_viable_uniface_for_axis('x', box, 0)).toBe(UNIFACE_FACE_POS_Y);
+		expect(pick_first_viable_uniface_for_axis('y', box, 0)).toBe(UNIFACE_FACE_POS_X);
+		expect(pick_first_viable_uniface_for_axis('z', box, 0)).toBe(UNIFACE_FACE_POS_X);
+	});
+
+	it('per-axis uniface picker skips excluded faces and falls back to the next candidate', () => {
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		// Exclude +y (the first candidate for x-axis).
+		const is_excluded = (n: vec3) => n[1] === 1 && n[0] === 0 && n[2] === 0;
+		const box = compute_uniface_box_from_silhouette(silhouette, project, is_excluded, 15, 3);
+		// x-axis picker falls back from +y to -y.
+		expect(pick_first_viable_uniface_for_axis('x', box, 0)).toBe(UNIFACE_FACE_NEG_Y);
+	});
+
+	it('per-axis uniface picker returns null when every candidate is excluded', () => {
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		// Exclude every face that could contain the x-axis: +y, -y, +z, -z.
+		const is_excluded = (n: vec3) => n[0] === 0; // every non-x-axis-normal face
+		const box = compute_uniface_box_from_silhouette(silhouette, project, is_excluded, 15, 3);
+		expect(pick_first_viable_uniface_for_axis('x', box, 0)).toBeNull();
+	});
+
+	it('closest-uniface picker picks the candidate with the smallest screen distance to the seed (step 3a)', () => {
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		const no_exclusions = (_n: vec3) => false;
+		const box = compute_uniface_box_from_silhouette(silhouette, project, no_exclusions, 15, 3);
+		// x-axis candidates: +y, -y, +z, -z. Set -z smallest among them.
+		// +x and -x entries are not candidates for the x-axis so their values are ignored.
+		const dists: number[] = [];
+		dists[UNIFACE_FACE_POS_X] = 0;
+		dists[UNIFACE_FACE_NEG_X] = 0;
+		dists[UNIFACE_FACE_POS_Y] = 50;
+		dists[UNIFACE_FACE_NEG_Y] = 20;
+		dists[UNIFACE_FACE_POS_Z] = 30;
+		dists[UNIFACE_FACE_NEG_Z] = 5;
+		expect(pick_closest_uniface_for_axis('x', box, 0, dists)).toBe(UNIFACE_FACE_NEG_Z);
+	});
+
+	it('closest-uniface picker skips excluded candidates even when their distance would win (step 3a)', () => {
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		// Exclude the -z face only.
+		const exclude_neg_z = (n: vec3) => n[0] === 0 && n[1] === 0 && n[2] === -1;
+		const box = compute_uniface_box_from_silhouette(silhouette, project, exclude_neg_z, 15, 3);
+		const dists: number[] = [];
+		dists[UNIFACE_FACE_POS_X] = 0;
+		dists[UNIFACE_FACE_NEG_X] = 0;
+		dists[UNIFACE_FACE_POS_Y] = 50;
+		dists[UNIFACE_FACE_NEG_Y] = 20;
+		dists[UNIFACE_FACE_POS_Z] = 30;
+		dists[UNIFACE_FACE_NEG_Z] = 5;  // would win but is excluded
+		expect(pick_closest_uniface_for_axis('x', box, 0, dists)).toBe(UNIFACE_FACE_NEG_Y);
+	});
 });
 

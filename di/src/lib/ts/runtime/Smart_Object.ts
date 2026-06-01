@@ -18,7 +18,7 @@ export default class Smart_Object extends Identifiable {
 	static snap: (mm: number) => number = (v) => v;
 
 	// Called whenever any bound changes. Setup wires this to mark the canvas
-	// as out of date so the next tick paints. Noop by default so unit tests
+	// as out of date so the next tick renders. Noop by default so unit tests
 	// that construct smart objects without running setup stay decoupled.
 	static on_bound_change: () => void = () => {};
 

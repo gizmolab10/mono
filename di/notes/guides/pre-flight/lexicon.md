@@ -77,7 +77,7 @@ How each dim line's position and label are chosen.
 - **dim line** (also written **dimension line**) — the line that runs parallel-in-3D to the axis it refers to, offset outward from the part by the witness length, with the measurement label sitting on it.
 - **drop** (verb, for a label) — skip drawing the label this render. Done when no four-degrees-of-freedom combination clears every other label by the pair clearance and the silhouette box by the silhouette margin.
 - **duplicate-text drop** — the rule that drops the latter of two labels with identical text.
-- **excluded uniface** — a face whose normal is either (a) within 20° of pointing at, or (b) edge on to, the camera is excluded from the placement algorithm.
+- **excluded face** — a face whose normal is within 20° of pointing towards (or away from) the camera -> is excluded from consideration/further processing.
 - **four degrees of freedom** (also written **4DOF**) — the four placement choices the placement algorithm uses per label: edge, uniface, witness index, label position.
 - **in conflict** (two labels) — no pair of 4DOF combinations across both labels keeps both rectangles at the pair clearance apart while each stays on a uniface. A property of the pair, not of either label alone.
 - **label** — the rectangle of text that shows a dimension's number on screen.
@@ -93,7 +93,7 @@ How each dim line's position and label are chosen.
 - **placement algorithm** — the procedure that picks the four placement choices for every label each render.
 - **render** — one frame of drawing. The placement algorithm runs once per render.
 - **rotated part** — a part whose own rotation differs from the identity.
-- **silhouette box** — the box that exactly encloses every part (including those that are rotated), recomputed before each render.
+- **silhouette box** — the box that exactly encloses every part (including those that are rotated), recomputed before each render. It is world aligned (parallel to the axes).
 - **silhouette margin** — the screen-pixel gap between the silhouette box and the first uniface box. Set by the project to 15 pixels.
 - **tie-break** — when two labels tie on a placement criterion, the rule that picks the winner. Persistence, parent-over-child, and alphabetical are the three tie-breaks used in the duplicate-text drop.
 - **uniface** — a face of a unface box.  Never "uniface face", never "uniface block", never "buffer".

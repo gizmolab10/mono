@@ -6,6 +6,7 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `help`                 | Show this table                                                                                                                                                                                          |
 | `claude`               | Reread `<current-go>`/CLAUDE.MD                                                                                                                                                                          |
+| `egads`                | Jonathan is extremely disappointed and has far less trust that you and he can succeed                                                                                                                    |
 | `memory`               | Describe any useful auto-generated insights from userMemories (normally ignored)                                                                                                                         |
 | `tokens`               | crude (rough, loose) estimated percentage of context consumed (okay with me that no exact measurement is available, just give me a number)                                                               |
 | `proposal`             | describe your plan before executing                                                                                                                                                                      |
@@ -19,15 +20,16 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `explain`              | produce analysis only. Do not touch code, nor propose changes, nor fix problems, nor start the next task. Stop after the analysis and wait for the next instruction                                      |
 | `mothball`             | state and confirm the context. then gather everything relevant into a mothball file                                                                                                                      |
 
+
 ## Abbreviations
 
-| Abbreviation | Meaning                                                                                                                          |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| `ex`         | Execute mode — skip proposals, just do it                                                                                        |
-| `rs`         | Reserved mode — propose before file changes                                                                                      |
-| `ni`         | No improvement, try something different                                                                                          |
-| `pac`        | pros and cons. If there are no real cons, say "no cons found." Never pad with fabricated concerns.                               |
-| `cd`         | read code.debt.md                                                                                                                |
-| `up`         | update current handoff file, check if anything changed, update from the chat: the **Next** line and any relevant or new sections |
-| `dev`        | read all md files in notes/guides/develop (in both mono and `<current-go>)`                                                      |
-| `v`          | visual observations and confirmations                                                                                            |
+| Abbreviation | Meaning                                                                                                                                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ex`         | Execute mode — skip proposals, just do it                                                                                                                                                                          |
+| `rs`         | Reserved mode — propose before file changes                                                                                                                                                                        |
+| `ni`         | No improvement, try something different                                                                                                                                                                            |
+| `pac`        | pros and cons. If there are no real cons, say "no cons found." Never pad with fabricated concerns.                                                                                                                 |
+| `cd`         | read code.debt.md                                                                                                                                                                                                  |
+| `up`         | update current handoff file, check if anything changed, update from the chat: the **Next** line and any relevant or new sections                                                                                   |
+| `dev`        | read all md files in notes/guides/develop (in both mono and `<current-go>)`                                                                                                                                        |
+| `v`, `v:`    | visual report. The user just looked at the app; if what follows is "good" or "perfect" or "done" interpret this as a sign off. anything else is a criticism. "egads" indicates extreme disappointment and distrust |

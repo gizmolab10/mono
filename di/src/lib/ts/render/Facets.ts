@@ -86,7 +86,7 @@ export interface Endpoint {
 	ordering: string[];       // segment IDs in cyclic order (computed from 3D topology)
 	screen: { x: number; y: number };  // screen coords for drawing
 	world: vec3;              // world coords for occlusion testing
-	label: string;            // debug display label (assigned during paint_labels)
+	label: string;            // debug display label (assigned during render_labels)
 }
 
 // --- Graph ---
@@ -455,7 +455,7 @@ export class Facets {
 		const facets: Facet[] = [];
 		const log = !k.debug.trace_logged;
 
-		// Assign labels matching paint_labels — same filters, same order
+		// Assign labels matching render_labels — same filters, same order
 		if (log) {
 			// Corners first
 			for (const ep of this.endpoints.values()) {
@@ -465,7 +465,7 @@ export class Facets {
 					ep.label = vtx(ep.id.vertex, oi);
 				}
 			}
-			// Non-corners: same filters as paint_labels
+			// Non-corners: same filters as render_labels
 			let next_lower = 0;
 			for (const ep of this.endpoints.values()) {
 				if (ep.label) continue;
@@ -864,10 +864,10 @@ export class Facets {
 		return facets;
 	}
 
-	/** Paint facets that pass the occlusion test.
+	/** Render facets that pass the occlusion test.
 	 *  For each facet, test one vertex: unproject to the face's world plane,
 	 *  check depth against occluding faces. If not occluded, fill. */
-	paint_facets(
+	render_facets(
 		traced: Facet[],
 		ctx: CanvasRenderingContext2D,
 		color: string,
@@ -932,7 +932,7 @@ export class Facets {
 	}
 
 	/** Draw debug labels — call AFTER all lines are drawn so backgrounds aren't covered. */
-	paint_labels(
+	render_labels(
 		ctx: CanvasRenderingContext2D,
 		so_id: string,
 		sel_projected?: Projected[],

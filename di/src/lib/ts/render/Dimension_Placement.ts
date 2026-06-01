@@ -31,7 +31,7 @@ import { scene } from './Scene';
  * (and any future test hook that wants pair data). It does NOT yet replace
  * the running force-driven placement code; that swap is Phase 3 work.
  *
- * Reads `last_hull` from R_Dimensions, which is set every paint by the
+ * Reads `last_hull` from R_Dimensions, which is set every render by the
  * running force-driven code. When the new code becomes the only path
  * (Phase 4), the hull computation moves here.
  */
@@ -129,11 +129,11 @@ export function push_outside_hull(
 	return { dx: push_dx, dy: push_dy };
 }
 
-/** Combined silhouette outline of every painted leaf part. Recomputed
- *  every paint by `compute_viable_pairs`. Exported for test hooks. */
+/** Combined silhouette outline of every rendered leaf part. Recomputed
+ *  every render by `compute_viable_pairs`. Exported for test hooks. */
 export let last_hull: Array<{ x: number; y: number }> = [];
 export let last_hull_input: Array<{ x: number; y: number; so_id: string; so_name: string }> = [];
-/** Per-part convex hulls of each painted leaf part's projected vertices.
+/** Per-part convex hulls of each rendered leaf part's projected vertices.
  *  Replaces the single combined hull for the rule-9 silhouette pushback:
  *  a label can sit in empty space BETWEEN parts even when the combined
  *  outline would have wrapped that space. The witness pushback computes
@@ -142,13 +142,13 @@ export let last_hull_input: Array<{ x: number; y: number; so_id: string; so_name
 export let last_per_part_hulls: Array<{ so_id: string; hull: Array<{ x: number; y: number }> }> = [];
 
 /** Status-bar running average of how many dimensions get dropped per
- *  paint. The painter publishes to this. */
+ *  render. The renderer publishes to this. */
 export const w_dim_dropped_avg = stale_writable<number>(0);
 
 /** Per-(part, axis) tally of how each candidate edge was treated by the
  *  filters in `compute_viable_pairs`. Populated every call to that
  *  function. Read by `run_new_placement` to print a plain-English summary
- *  whenever a paint loses labels. */
+ *  whenever a render loses labels. */
 export type Per_Label_Filter_Stats = {
 	edges_hidden              : number;
 	edges_too_short           : number;
@@ -217,17 +217,17 @@ function compute_combined_hull(): void {
 	const points: Array<{ x: number; y: number }> = [];
 	const tagged: Array<{ x: number; y: number; so_id: string; so_name: string }> = [];
 	const per_part: Array<{ so_id: string; hull: Array<{ x: number; y: number }> }> = [];
-	const painted = new Set<O_Scene>();
-	for (const o of all_objects) if (is_visible_for_dim(o)) painted.add(o);
-	const has_painted_child = (obj: O_Scene): boolean => {
+	const rendered = new Set<O_Scene>();
+	for (const o of all_objects) if (is_visible_for_dim(o)) rendered.add(o);
+	const has_rendered_child = (obj: O_Scene): boolean => {
 		for (const other of all_objects) {
-			if (other.parent === obj && painted.has(other)) return true;
+			if (other.parent === obj && rendered.has(other)) return true;
 		}
 		return false;
 	};
 	for (const obj of all_objects) {
-		if (!painted.has(obj)) continue;
-		if (has_painted_child(obj)) continue;
+		if (!rendered.has(obj)) continue;
+		if (has_rendered_child(obj)) continue;
 		const projected = hits_3d.get_projected(obj.id);
 		if (!projected) continue;
 		const own_points: Array<{ x: number; y: number }> = [];
@@ -284,16 +284,16 @@ export type Viable_Pair = {
 	wit_ux       : number;
 	wit_uy       : number;
 	/** Per-endpoint screen vectors for one 3D unit of witness direction.
-	 *  The painter reads these so the two witness lines diverge correctly
+	 *  The renderer reads these so the two witness lines diverge correctly
 	 *  in perspective — world-parallel rays do not project to screen-
 	 *  parallel rays unless the edge is parallel to the image plane. */
 	wit_1_per3d_x : number;
 	wit_1_per3d_y : number;
 	wit_2_per3d_x : number;
 	wit_2_per3d_y : number;
-	/** Formatted number text the painter will draw. Computed once when the pair is built. */
+	/** Formatted number text the renderer will draw. Computed once when the pair is built. */
 	text         : string;
-	/** NDC depth at the dim line midpoint, used by the painter for the hit-test rectangle. */
+	/** NDC depth at the dim line midpoint, used by the renderer for the hit-test rectangle. */
 	dim_z        : number;
 	/** True when the adjacent face this direction came from is front-facing
 	 *  on screen (its projected winding is positive). The search adds a
@@ -330,8 +330,8 @@ export type Candidate_Pair = {
 
 /**
  * Compute every viable (edge, direction) pair for every visible smart
- * object's three axes at the current paint. Reads the combined hull from
- * the most recent paint of R_Dimensions.
+ * object's three axes at the current render. Reads the combined hull from
+ * the most recent render of R_Dimensions.
  */
 export function compute_viable_pairs(): Viable_Pair[] {
 	compute_combined_hull();
@@ -346,7 +346,7 @@ export function compute_viable_pairs(): Viable_Pair[] {
 	const cam_forward = compute_camera_forward();
 
 	// Pre-build the list of potential occluders for rule 11's edge-visibility
-	// check. Each painted part contributes its projected vertices and the
+	// check. Each rendered part contributes its projected vertices and the
 	// list of its faces. The check at each edge filters out the OWN part.
 	const all_objects = scene.get_all();
 	type Occluder = { so_id: string; so_name: string; projected: Projected[]; faces: number[][] };
@@ -408,7 +408,7 @@ export function compute_viable_pairs(): Viable_Pair[] {
 				// Better degenerate than missing: when every direction is
 				// rejected by the camera-angle filter, fall back to trying
 				// both anyway so the label still appears (even if
-				// foreshortened). Matches the old painter's behavior.
+				// foreshortened). Matches the old renderer's behavior.
 				const dirs_to_try = allowed_dirs.length > 0 ? allowed_dirs : all_dirs;
 				let yielded_any = false;
 				for (const d of dirs_to_try) {
@@ -780,7 +780,7 @@ function compute_pair_ranges(args: {
 	const midY_init = (p1.y + p2.y) / 2;
 
 	// Witness-length min: distance from edge midpoint along the witness
-	// direction to the furthest part-outline exit (across every painted
+	// direction to the furthest part-outline exit (across every rendered
 	// part's own hull), plus the half-rectangle footprint along the
 	// direction, plus the silhouette margin. Using per-part hulls instead
 	// of the combined hull means a label can sit in empty space BETWEEN
@@ -1176,7 +1176,7 @@ export function greedy_seed(): Greedy_Placement[] {
 }
 
 /** Pure greedy seed — testable without a scene. `locked_placements` is
- *  the set of labels carried over from the previous paint that should
+ *  the set of labels carried over from the previous render that should
  *  stay exactly where they are. They are added to `placed` up front so
  *  every non-locked label sees them as obstacles, and their regions are
  *  skipped during the search. */
@@ -1493,9 +1493,9 @@ function try_paired_swap(i: number, j: number, placed: Greedy_Placement[], regio
 const STRICT_PAIRWISE_PX       = k.dimensions.PAIR_CLEARANCE_PX;
 const TOL_PAIRWISE_PX          = k.dimensions.PAIR_CLEARANCE_PX - k.dimensions.PERSISTENCE_TOLERANCE_PX;
 
-/** A label's chosen four-DOF values from the previous paint. The pair
+/** A label's chosen four-DOF values from the previous render. The pair
  *  identity is reconstructed by matching `edge_v1_idx`, `edge_v2_idx`,
- *  and `direction` against the current paint's regions. */
+ *  and `direction` against the current render's regions. */
 export type Persisted_Placement = {
 	so_id            : string;
 	so_name          : string;
@@ -1509,7 +1509,7 @@ export type Persisted_Placement = {
 	label_h_px       : number;
 };
 
-/** Outcome of the viability check at the start of a paint. Either the
+/** Outcome of the viability check at the start of a render. Either the
  *  search can be skipped entirely (all labels still viable within the
  *  2-pixel tolerance), OR a cold-run search is needed with some labels
  *  LOCKED (still strict-viable) and others FREE (to be re-placed). */
@@ -1518,7 +1518,7 @@ export type Viability_Result =
 	| { kind: 'cold_run'; locked: Greedy_Placement[]; free_label_keys: Label_Key[] };
 
 /** Run rule 19's viability checks for every persisted label against the
- *  current paint's regions. Returns either a skip-search outcome (all
+ *  current render's regions. Returns either a skip-search outcome (all
  *  labels OK) or a cold-run outcome (with the still-viable labels marked
  *  as locked obstacles for the search). */
 export function compute_viability(
@@ -1576,7 +1576,7 @@ export function compute_viability(
 	}
 
 	// Vacuous-truth guard: `every` over an empty array returns true. With
-	// nothing remembered yet (the first paint after scene load), that
+	// nothing remembered yet (the first render after scene load), that
 	// would mistakenly say "all good, skip the search" and hand back an
 	// empty layout — so nothing ever gets drawn. Require at least one
 	// remembered label before considering a skip.
@@ -1599,7 +1599,7 @@ export function compute_viability(
 	return { kind: 'cold_run', locked, free_label_keys };
 }
 
-/** Holds the per-label remembered four-DOF values between paints, plus
+/** Holds the per-label remembered four-DOF values between renders, plus
  *  the drift-safety counter. */
 export class Persistence {
 	private remembered = new Map<Label_Key, Persisted_Placement>();
@@ -1631,12 +1631,12 @@ export class Persistence {
 
 	get_all(): Persisted_Placement[] { return Array.from(this.remembered.values()); }
 
-	/** Bump the drift counter after a slack-using search-skipped paint.
-	 *  After two such paints, the next call to should_force_cold_run() returns
+	/** Bump the drift counter after a slack-using search-skipped render.
+	 *  After two such renders, the next call to should_force_cold_run() returns
 	 *  true and the streak resets. */
 	note_slack_use(): void { this.slack_streak += 1; }
 
-	/** Reset the streak. Called after any cold-run paint, since cold-runs
+	/** Reset the streak. Called after any cold-run render, since cold-runs
 	 *  re-establish strict viability. */
 	clear_slack_streak(): void { this.slack_streak = 0; }
 
@@ -1656,10 +1656,10 @@ function find_matching_pair(persisted: Persisted_Placement, region: Reachable_Re
 	return null;
 }
 
-/** Project every persisted placement onto the current paint's regions
+/** Project every persisted placement onto the current render's regions
  *  without re-running the search. Used by the layout-freeze path when a
  *  dimension is being edited. Persisted entries whose region or pair no
- *  longer exists are silently dropped from this paint. */
+ *  longer exists are silently dropped from this render. */
 export function re_project_persisted_list(
 	persisted_list: readonly Persisted_Placement[],
 	regions: readonly Reachable_Region[],
@@ -1729,7 +1729,7 @@ export type Drop_Report = {
 
 /** Rule 4 dedup. Two labels are duplicates when they have the same text
  *  AND their measured edges are parallel in 3D. The kept one is whichever
- *  has been remembered between paints the longest; on a first paint with
+ *  has been remembered between renders the longest; on a first render with
  *  neither remembered, the alphabetical-by-ancestry-path tie-break makes
  *  the result deterministic across runs.
  *
@@ -1913,7 +1913,7 @@ function rectangle_off_canvas(p: Greedy_Placement, canvas_w: number, canvas_h: n
 
 // ─── Full pipeline (Task 2.11 — feature-flag-gated entry point) ───────────────
 
-/** Module-level persistence state. Survives between paints. Reset on
+/** Module-level persistence state. Survives between renders. Reset on
  *  scene load via `persistence.clear()`. */
 export const persistence = new Persistence();
 
@@ -1935,7 +1935,7 @@ export type Run_New_Placement_Result = {
 	drop_report     : Drop_Report;
 	/** True when the viability check passed and the search was skipped. */
 	search_skipped  : boolean;
-	/** Seed string fed to the stochastic finish on the most recent cold run. Empty on search-skipped paints. */
+	/** Seed string fed to the stochastic finish on the most recent cold run. Empty on search-skipped renders. */
 	last_search_seed: string;
 };
 
@@ -1943,11 +1943,11 @@ export type Run_New_Placement_Result = {
  *  Called from the renderer when `w_use_new_placement` is on.
  *
  *  Step 1 — gather reachable regions.
- *  Step 2 — check viability against the previous paint's choices.
+ *  Step 2 — check viability against the previous render's choices.
  *  Step 3 — either reuse those choices (search skipped) OR run the full
  *           cold search (greedy seed → retry → stochastic finish).
  *  Step 4 — apply the drop policy.
- *  Step 5 — remember the result for the next paint.
+ *  Step 5 — remember the result for the next render.
  */
 export function run_new_placement(canvas_w: number, canvas_h: number): Run_New_Placement_Result {
 	const regions = compute_reachable_regions();
@@ -1979,7 +1979,7 @@ export function run_new_placement(canvas_w: number, canvas_h: number): Run_New_P
 		perf_timer.stop('search_skipped');
 	} else {
 		// Cold run — full greedy + retry + stochastic. When the previous
-		// paint left some labels still strictly viable AND drift-safety
+		// render left some labels still strictly viable AND drift-safety
 		// hasn't fired, those labels are locked: they stay where they
 		// were, act as obstacles for the rest, and never get a fresh
 		// search slot. When drift-safety forced this run, no labels are
@@ -2034,7 +2034,7 @@ export function run_new_placement(canvas_w: number, canvas_h: number): Run_New_P
 	// Rule 4: drop duplicates (same text + parallel measured edges).
 	// Done BEFORE the rest of the drop policy so off-canvas / conflict
 	// checks operate on the deduplicated set. Persisted-status comes from
-	// the snapshot BEFORE we replace the persistence with this paint's
+	// the snapshot BEFORE we replace the persistence with this render's
 	// remember_all call below.
 	const persisted_before = new Set<Label_Key>();
 	for (const p of persisted_list) persisted_before.add(label_key(p.so_id, p.axis));
@@ -2062,9 +2062,9 @@ export function run_new_placement(canvas_w: number, canvas_h: number): Run_New_P
 }
 
 /** One-shot debug trace. Edit DBG_TRACE_TEXT below to the formatted
- *  dimension text you want to follow through the search/painter pipeline.
+ *  dimension text you want to follow through the search/renderer pipeline.
  *  When a placement matches, this prints the four chosen values plus the
- *  search's computed centre so we can compare against where the painter
+ *  search's computed centre so we can compare against where the renderer
  *  ends up drawing the label. Set to '' to disable. */
 const DBG_TRACE_TEXT: string = "16' 8 1/2\"";
 let last_trace_logged = '';
@@ -2156,17 +2156,17 @@ function log_trace_so(
 	console.log(full);
 }
 
-/** Last summary string we printed. The per-paint summary only fires
+/** Last summary string we printed. The per-render summary only fires
  *  when the new lines differ from the previous ones — stops the console
- *  from flooding while the user tumbles or repaints with the same state. */
+ *  from flooding while the user tumbles or rerenders with the same state. */
 let last_logged_summary = '';
 
-/** Per-paint diagnostic. Prints a plain-English summary of how many
+/** Per-render diagnostic. Prints a plain-English summary of how many
  *  labels were expected, how many made it onto the canvas, and — for
  *  the lost ones — what filter killed each. Also names the blocking
  *  parts for the first five labels whose every edge was hidden, so
  *  it's clear WHICH parts are doing the occluding. Logs only when the
- *  numbers change from the previous paint. */
+ *  numbers change from the previous render. */
 function log_dim_summary(
 	expected: number,
 	placed: number,
@@ -2318,7 +2318,7 @@ function log_dim_summary(
 
 /** For each placement, compute the world-space direction of the measured
  *  edge as a unit 3-tuple. Looks up the smart object and transforms the
- *  edge into world coordinates once per paint. */
+ *  edge into world coordinates once per render. */
 function compute_world_edge_directions(placed: readonly Greedy_Placement[]): Map<Label_Key, [number, number, number]> {
 	const out = new Map<Label_Key, [number, number, number]>();
 	const sos = new Map<string, ReturnType<typeof scene.get_all>[number]>();
@@ -2445,4 +2445,352 @@ export function check_conflict_graph(): { a: Label_Key; b: Label_Key; brute_can_
 		}
 	}
 	return mismatches;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// UNIFACE BOX — step 1 of the uniface transition (see uniface rules.md).
+// Helper that builds the silhouette box and the three nested uniface
+// boxes' per-uniface shifts. Nothing in the running placement code
+// calls these yet; the unit tests below pin the geometry.
+// ═══════════════════════════════════════════════════════════════════
+
+/** Box that exactly encloses every corner of every rendered leaf object,
+ *  world-axis-aligned. Per the lexicon entry for "silhouette box". */
+export type Silhouette_Box = {
+	min: [number, number, number]; // [x_min, y_min, z_min] in world units
+	max: [number, number, number]; // [x_max, y_max, z_max] in world units
+};
+
+/** Uniface-face index. Six faces of the uniface box, named by their
+ *  outward world-axis direction. */
+export const UNIFACE_FACE_POS_X = 0;
+export const UNIFACE_FACE_NEG_X = 1;
+export const UNIFACE_FACE_POS_Y = 2;
+export const UNIFACE_FACE_NEG_Y = 3;
+export const UNIFACE_FACE_POS_Z = 4;
+export const UNIFACE_FACE_NEG_Z = 5;
+
+/** The uniface box family: the silhouette box plus three nested
+ *  expansion levels (enum 1, 2, 3 per rule 1 of uniface rules.md).
+ *  shifts[enum_index_zero_based][face_index] = world-units displacement
+ *  from the silhouette box face along that face's outward normal, or
+ *  null for an excluded face (per the lexicon entry "excluded uniface":
+ *  a face whose normal points within angle_deg of the camera or within
+ *  angle_deg of edge-on is excluded from the placement algorithm).
+ *  Computed every render so the projected face sits at the configured
+ *  screen-pixel margin (silhouette margin per enum level) past the
+ *  silhouette rect on that side. */
+export type Uniface_Box = {
+	silhouette: Silhouette_Box;
+	shifts: (number | null)[][]; // shifts[0..cap-1][0..5]; null = excluded
+};
+
+/** Whether a face is excluded from the placement algorithm. True when
+ *  the face's outward normal is within angle_deg of pointing TOWARDS
+ *  OR AWAY from the camera (within angle_deg of parallel to the camera
+ *  forward direction in either sense). Per the lexicon entry
+ *  "excluded face". */
+export function is_face_excluded(
+	face_normal: vec3,
+	camera_forward: vec3,
+	angle_deg: number,
+): boolean {
+	const n = vec3.create();
+	vec3.normalize(n, face_normal);
+	const f = vec3.create();
+	vec3.normalize(f, camera_forward);
+	const dot = vec3.dot(n, f);
+	const cos_angle = Math.cos((angle_deg * Math.PI) / 180);
+	// Within angle_deg of parallel to forward, either direction: |dot| > cos(angle_deg).
+	return Math.abs(dot) > cos_angle;
+}
+
+/** Compute the silhouette box from an explicit list of world-space
+ *  corners. Pure function; test-friendly. Returns a zero-extent box at
+ *  the origin when the input is empty. */
+export function compute_silhouette_box(world_corners: readonly vec3[]): Silhouette_Box {
+	if (world_corners.length === 0) {
+		return { min: [0, 0, 0], max: [0, 0, 0] };
+	}
+	let min_x =  Infinity, min_y =  Infinity, min_z =  Infinity;
+	let max_x = -Infinity, max_y = -Infinity, max_z = -Infinity;
+	for (const v of world_corners) {
+		if (v[0] < min_x) min_x = v[0];
+		if (v[1] < min_y) min_y = v[1];
+		if (v[2] < min_z) min_z = v[2];
+		if (v[0] > max_x) max_x = v[0];
+		if (v[1] > max_y) max_y = v[1];
+		if (v[2] > max_z) max_z = v[2];
+	}
+	return { min: [min_x, min_y, min_z], max: [max_x, max_y, max_z] };
+}
+
+/** Build the per-uniface shifts for a given silhouette box, projection,
+ *  per-face exclusion test, margin, and enum cap. The shift for each
+ *  uniface at enum level N is computed by local linearization: project
+ *  the face center, project the face center plus one world-unit outward
+ *  along the face normal, measure the screen distance, then scale so
+ *  the projected face sits exactly N * margin_px past the silhouette
+ *  rect on that side. Excluded faces (per the is_excluded callback)
+ *  produce null shifts at every enum level. Pure function;
+ *  test-friendly via the injected projection and exclusion test. */
+export function compute_uniface_box_from_silhouette(
+	silhouette: Silhouette_Box,
+	project: (world_point: vec3) => { x: number; y: number },
+	is_excluded: (face_normal: vec3) => boolean,
+	margin_px: number,
+	cap: number,
+): Uniface_Box {
+	const cx = (silhouette.min[0] + silhouette.max[0]) / 2;
+	const cy = (silhouette.min[1] + silhouette.max[1]) / 2;
+	const cz = (silhouette.min[2] + silhouette.max[2]) / 2;
+	const faces: Array<{ center: vec3; normal: vec3 }> = [
+		{ center: vec3.fromValues(silhouette.max[0], cy, cz), normal: vec3.fromValues( 1, 0, 0) }, // +x
+		{ center: vec3.fromValues(silhouette.min[0], cy, cz), normal: vec3.fromValues(-1, 0, 0) }, // -x
+		{ center: vec3.fromValues(cx, silhouette.max[1], cz), normal: vec3.fromValues(0,  1, 0) }, // +y
+		{ center: vec3.fromValues(cx, silhouette.min[1], cz), normal: vec3.fromValues(0, -1, 0) }, // -y
+		{ center: vec3.fromValues(cx, cy, silhouette.max[2]), normal: vec3.fromValues(0, 0,  1) }, // +z
+		{ center: vec3.fromValues(cx, cy, silhouette.min[2]), normal: vec3.fromValues(0, 0, -1) }, // -z
+	];
+	const face_excluded = faces.map(f => is_excluded(f.normal));
+	const shifts: (number | null)[][] = [];
+	for (let lvl = 1; lvl <= cap; lvl++) {
+		const target = margin_px * lvl;
+		const row: (number | null)[] = [];
+		for (let i = 0; i < faces.length; i++) {
+			if (face_excluded[i]) {
+				row.push(null);
+				continue;
+			}
+			const f = faces[i];
+			const p0 = project(f.center);
+			const test = vec3.create();
+			vec3.add(test, f.center, f.normal);
+			const p1 = project(test);
+			const screen_per_world = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+			row.push(screen_per_world > 1e-9 ? target / screen_per_world : 0);
+		}
+		shifts.push(row);
+	}
+	return { silhouette, shifts };
+}
+
+/** Scene-side wrapper. Gathers the world-space corners of every
+ *  rendered leaf object (every part, rotated or not, per the silhouette
+ *  box definition in the lexicon), builds the silhouette box, then
+ *  builds the uniface box family using the renderer's projection and
+ *  the camera's forward direction for the excluded-face test. */
+export function build_uniface_box_for_scene(rendered_leaves: readonly O_Scene[]): Uniface_Box {
+	const corners: vec3[] = [];
+	for (const obj of rendered_leaves) {
+		const wm = render.get_world_matrix(obj);
+		for (const local_v of obj.so.vertices) {
+			const world_v = vec3.create();
+			vec3.transformMat4(world_v, local_v, wm);
+			corners.push(world_v);
+		}
+	}
+	const silhouette = compute_silhouette_box(corners);
+	const project = (world_point: vec3) => {
+		const identity = mat4.create();
+		const p = render.project_vertex(world_point, identity);
+		return { x: p.x, y: p.y };
+	};
+	const cam_forward = compute_camera_forward();
+	const is_excluded = (face_normal: vec3) =>
+		is_face_excluded(face_normal, cam_forward, k.dimensions.EXCLUDED_FACE_ANGLE_DEG);
+	return compute_uniface_box_from_silhouette(
+		silhouette,
+		project,
+		is_excluded,
+		k.dimensions.SILHOUETTE_MARGIN_PX,
+		k.dimensions.WITNESS_INDEX_CAP,
+	);
+}
+
+/** Per-axis uniface picker (step 2a of the uniface transition).
+ *
+ *  Given an axis being measured and a uniface box, return the index of
+ *  the first uniface that is BOTH (a) not excluded — its shift is not
+ *  null at the chosen enum level — AND (b) contains the measured axis
+ *  (its outward normal is perpendicular to that axis, so the dim line
+ *  parallel to the axis can lie in the uniface's plane).
+ *
+ *  Returns null if no such uniface exists. Order of preference for the
+ *  four candidate unifaces per axis:
+ *    x-axis: +y, -y, +z, -z
+ *    y-axis: +x, -x, +z, -z
+ *    z-axis: +x, -x, +y, -y
+ *
+ *  "First viable" picking only. Smarter picking (closest, least-crowded,
+ *  stability-preferring) is step 3 of the transition. Conflict checking
+ *  against other labels is the higher-level placement loop that wraps
+ *  this picker. */
+/** Per-axis candidate unifaces: the four faces of the uniface box whose
+ *  outward normal is perpendicular to the named axis. A dim line
+ *  parallel to that axis can sit in any of them. Shared by all per-axis
+ *  pickers below. */
+const UNIFACE_CANDIDATES_PER_AXIS: Record<Axis_Name, number[]> = {
+	x: [UNIFACE_FACE_POS_Y, UNIFACE_FACE_NEG_Y, UNIFACE_FACE_POS_Z, UNIFACE_FACE_NEG_Z],
+	y: [UNIFACE_FACE_POS_X, UNIFACE_FACE_NEG_X, UNIFACE_FACE_POS_Z, UNIFACE_FACE_NEG_Z],
+	z: [UNIFACE_FACE_POS_X, UNIFACE_FACE_NEG_X, UNIFACE_FACE_POS_Y, UNIFACE_FACE_NEG_Y],
+};
+
+export function pick_first_viable_uniface_for_axis(
+	axis: Axis_Name,
+	uniface_box: Uniface_Box,
+	enum_index_zero_based: number,
+): number | null {
+	const row = uniface_box.shifts[enum_index_zero_based];
+	if (!row) return null;
+	for (const face_idx of UNIFACE_CANDIDATES_PER_AXIS[axis]) {
+		if (row[face_idx] !== null) return face_idx;
+	}
+	return null;
+}
+
+/** Per-axis closest-uniface picker (step 3a of the uniface transition).
+ *
+ *  Given the four candidate unifaces for this axis, return the one
+ *  whose face center is closest, in screen pixels, to the natural label
+ *  position (the seed point). The caller supplies the screen distance
+ *  from the seed to each face center as a six-entry array indexed by
+ *  UNIFACE_FACE_*; excluded faces (null shift at this enum level) are
+ *  skipped regardless of their distance entry. Returns null if no
+ *  candidate is viable. Pure; the caller does all projection. */
+export function pick_closest_uniface_for_axis(
+	axis: Axis_Name,
+	uniface_box: Uniface_Box,
+	enum_index_zero_based: number,
+	screen_distance_per_face: readonly number[],
+): number | null {
+	const row = uniface_box.shifts[enum_index_zero_based];
+	if (!row) return null;
+	let best_idx: number | null = null;
+	let best_dist = Infinity;
+	for (const face_idx of UNIFACE_CANDIDATES_PER_AXIS[axis]) {
+		if (row[face_idx] === null) continue;
+		const d = screen_distance_per_face[face_idx];
+		if (d < best_dist) {
+			best_dist = d;
+			best_idx = face_idx;
+		}
+	}
+	return best_idx;
+}
+
+/** Result of one render of the uniface placement path. Holds the
+ *  uniface box plus a per-(object, axis) record of which uniface was
+ *  picked at the chosen witness index (0-based). Null means the picker
+ *  could not find a viable uniface for that pair. Step 2c's stub
+ *  orchestrator returns this; downstream rendering comes in later
+ *  sub-steps. */
+export type Uniface_Placement_Result = {
+	uniface_box: Uniface_Box | null;
+	picks: Array<{
+		so_id    : string;
+		so_name  : string;
+		axis     : Axis_Name;
+		uniface  : number | null;
+	}>;
+};
+
+let last_uniface_placement: Uniface_Placement_Result = { uniface_box: null, picks: [] };
+
+export function get_last_uniface_placement(): Uniface_Placement_Result {
+	return last_uniface_placement;
+}
+
+/** Stub orchestrator for the uniface placement path (step 2c).
+ *
+ *  Gathers every rendered leaf object, builds the uniface box, and
+ *  for each (object, axis) at witness index 1 calls the picker.
+ *  Records the result for diagnostics. Does NOT yet emit anything the
+ *  renderer consumes — when the flag is on and this runs, no dim lines
+ *  draw. That intentional blank is the visual diff against the old
+ *  path. */
+export function run_uniface_placement(): Uniface_Placement_Result {
+	const all_objects = scene.get_all();
+	const visible = new Set<O_Scene>();
+	for (const o of all_objects) if (is_visible_for_dim(o)) visible.add(o);
+	const has_visible_child = (obj: O_Scene): boolean => {
+		for (const other of all_objects) {
+			if (other.parent === obj && visible.has(other)) return true;
+		}
+		return false;
+	};
+	const rendered_leaves: O_Scene[] = [];
+	for (const obj of all_objects) {
+		if (!visible.has(obj)) continue;
+		if (has_visible_child(obj)) continue;
+		rendered_leaves.push(obj);
+	}
+	const uniface_box = build_uniface_box_for_scene(rendered_leaves);
+
+	// Project the six face centers of the uniface box at witness index 1
+	// to screen pixels. Excluded faces (null shift) project to null and
+	// are never chosen by the picker.
+	const enum_idx = 0;
+	const sb = uniface_box.silhouette;
+	const cx = (sb.min[0] + sb.max[0]) / 2;
+	const cy = (sb.min[1] + sb.max[1]) / 2;
+	const cz = (sb.min[2] + sb.max[2]) / 2;
+	const row = uniface_box.shifts[enum_idx] ?? [];
+	const identity = mat4.create();
+	const project_screen = (w: vec3) => render.project_vertex(w, identity);
+	const face_center_world = (i: number, s: number): vec3 => {
+		switch (i) {
+			case UNIFACE_FACE_POS_X: return vec3.fromValues(sb.max[0] + s, cy, cz);
+			case UNIFACE_FACE_NEG_X: return vec3.fromValues(sb.min[0] - s, cy, cz);
+			case UNIFACE_FACE_POS_Y: return vec3.fromValues(cx, sb.max[1] + s, cz);
+			case UNIFACE_FACE_NEG_Y: return vec3.fromValues(cx, sb.min[1] - s, cz);
+			case UNIFACE_FACE_POS_Z: return vec3.fromValues(cx, cy, sb.max[2] + s);
+			default                : return vec3.fromValues(cx, cy, sb.min[2] - s); // UNIFACE_FACE_NEG_Z
+		}
+	};
+	const face_centers_screen: ({ x: number; y: number } | null)[] = [];
+	for (let i = 0; i < 6; i++) {
+		const s = row[i];
+		if (s === null || s === undefined) {
+			face_centers_screen.push(null);
+			continue;
+		}
+		const p = project_screen(face_center_world(i, s));
+		face_centers_screen.push({ x: p.x, y: p.y });
+	}
+
+	const picks: Uniface_Placement_Result['picks'] = [];
+	const axes: Axis_Name[] = ['x', 'y', 'z'];
+	for (const obj of rendered_leaves) {
+		// Natural label position: projected centroid of the part's
+		// world-space corners. For a box-shaped part this equals the
+		// projected midpoint of any axis-spanning edge of the part.
+		const wm = render.get_world_matrix(obj);
+		let sx = 0, sy = 0, sz = 0, n = 0;
+		for (const local_v of obj.so.vertices) {
+			const wv = vec3.create();
+			vec3.transformMat4(wv, local_v, wm);
+			sx += wv[0]; sy += wv[1]; sz += wv[2]; n++;
+		}
+		const seed = n > 0 ? project_screen(vec3.fromValues(sx / n, sy / n, sz / n)) : null;
+		const screen_distance_per_face: number[] = [];
+		for (let i = 0; i < 6; i++) {
+			const c = face_centers_screen[i];
+			if (c === null || seed === null) {
+				screen_distance_per_face.push(Infinity);
+			} else {
+				screen_distance_per_face.push(Math.hypot(c.x - seed.x, c.y - seed.y));
+			}
+		}
+		for (const axis of axes) {
+			picks.push({
+				so_id   : obj.so.id,
+				so_name : obj.so.name,
+				axis,
+				uniface : pick_closest_uniface_for_axis(axis, uniface_box, enum_idx, screen_distance_per_face),
+			});
+		}
+	}
+	last_uniface_placement = { uniface_box, picks };
+	return last_uniface_placement;
 }

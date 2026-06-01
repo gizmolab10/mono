@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/dimensions/uniface rules.md",
+                "file": "di/notes/work/now/handoff.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "uniface rules"
+              "title": "handoff"
             }
           },
           {
@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/dimensions/uniface rules.md",
+                "file": "notes/guides/pre-flight/shorthand.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "uniface rules"
+              "title": "shorthand"
             }
           }
         ],
@@ -82,7 +82,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "carry-over",
+                "query": "file:short",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -186,13 +186,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/dimensions/uniface rules.md",
+                "file": "notes/guides/pre-flight/shorthand.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of uniface rules"
+              "title": "Outline of shorthand"
             }
           },
           {
@@ -308,23 +308,27 @@
   },
   "active": "0167279ce8f60121",
   "lastOpenFiles": [
+    "di/src/fubar/ts/utilities/index.ts",
+    "di/src/fubar/ts/utilities/Testworthy_Utilities.ts",
+    "di/src/fubar/ts/utilities/SVG_Paths.ts",
+    "di/src/fubar/ts/utilities/Colors.ts",
+    "di/src/fubar/ts/types/index.ts",
+    "di/src/fubar/ts/types/Units.ts",
+    "di/src/fubar/ts/types/Types.ts",
+    "di/src/fubar/ts/types/Interfaces.ts",
+    "di/src/fubar/ts/types/Enumerations.ts",
+    "di/src/fubar/ts/types/Attribute.ts",
+    "di/src/fubar/ts/types/Coordinates.ts",
+    "di/src/fubar/md/builds.md",
+    "di/src/lib copy/md/builds.md",
     "di/notes/guides/pre-flight/lexicon.md",
-    "di/notes/work/dimensions/dimensionals rules.md",
+    "di/notes/work/now/handoff.md",
     "di/notes/work/dimensions/uniface rules.md",
-    "di/notes/work/dimensions/uniface rules.md.tmp.7433.dcbd70a2adc2",
+    "di/notes/work/dimensions/dimensionals rules.md",
     "lv/notes/work/code debt.md",
     "lv/src/md/Little Cloud Vineyard.md",
     "lv/notes/work/work journal.md",
-    "lv/src/lib/ts/test/parser.test.ts.tmp.19366.d55a47a97a14",
     "di/src/assets/icon.png",
-    "lv/src/lib/svelte/Toggle.svelte",
-    "lv/src/lib/svelte/StatusLine.svelte",
-    "lv/src/lib/svelte/Sidebar.svelte",
-    "lv/src/lib/svelte/Renderer.svelte",
-    "lv/src/lib/svelte/Main.svelte",
-    "lv/src/lib/svelte/App.svelte",
-    "lv/src/lib/ts/test/sidebar.test.ts",
-    "lv/src/lib/ts/test/sidebar-content.test.ts",
     "lv/notes/work/bare bone website.md",
     "lv/src/md/The Vineyard/Page 1.md",
     "lv/src/md/Page 1.md",
@@ -343,9 +347,6 @@
     "node_modules/trough/readme.md",
     "node_modules/svg-parser/README.md",
     "node_modules/svg-parser/CHANGELOG.md",
-    "node_modules/remark-rehype/readme.md",
-    "node_modules/remark-callout/README.md",
-    "node_modules/remark-frontmatter/readme.md",
     "in/src/assets/lcv.label.png",
     "in/src/assets/icon.png",
     "in/dist/assets/icon-DQ-Yu_V3.png",
