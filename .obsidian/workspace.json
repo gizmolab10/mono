@@ -8,7 +8,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "f03bebfec10554e8",
+            "id": "526f7d572bbbed0e",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -22,21 +22,63 @@
             }
           },
           {
-            "id": "c47d84d8e4cccaa0",
+            "id": "0167279ce8f60121",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/dimensions/dimensionals rules.md",
+                "file": "di/notes/work/now/code.debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "dimensionals rules"
+              "title": "code.debt"
             }
           },
           {
-            "id": "0167279ce8f60121",
+            "id": "6d7b1f302f5396ec",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/done/code.debt.paid.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "code.debt.paid"
+            }
+          },
+          {
+            "id": "876011a6d2c2b0e6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/dimensions/uniface rules.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "uniface rules"
+            }
+          },
+          {
+            "id": "a2ba6627f6f79c18",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/dimensions/uniface proposal.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "uniface proposal"
+            }
+          },
+          {
+            "id": "0aaf6d9eae7b1c5d",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -48,9 +90,23 @@
               "icon": "lucide-file",
               "title": "shorthand"
             }
+          },
+          {
+            "id": "8579aeeb610f04e1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "notes/guides/collaborate/creating a design.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "creating a design"
+            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -82,7 +138,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:short",
+                "query": "file:always",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -103,12 +159,12 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 354.5026054382324
+    "width": 354.5026054382324,
+    "collapsed": true
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -186,13 +242,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/guides/pre-flight/shorthand.md",
+                "file": "di/notes/work/dimensions/uniface proposal.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of shorthand"
+              "title": "Outline of uniface proposal"
             }
           },
           {
@@ -206,11 +262,12 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
-    "width": 324.5
+    "width": 324.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -248,20 +305,6 @@
                   },
                   "icon": "lucide-file",
                   "title": "netlify"
-                }
-              },
-              {
-                "id": "9a909d28aca5e9d0",
-                "type": "leaf",
-                "state": {
-                  "type": "markdown",
-                  "state": {
-                    "file": "lv/notes/work/code debt.md",
-                    "mode": "source",
-                    "source": false
-                  },
-                  "icon": "lucide-file",
-                  "title": "code debt"
                 }
               },
               {
@@ -306,47 +349,47 @@
       }
     ]
   },
-  "active": "0167279ce8f60121",
+  "active": "a2ba6627f6f79c18",
   "lastOpenFiles": [
-    "di/src/fubar/ts/utilities/index.ts",
-    "di/src/fubar/ts/utilities/Testworthy_Utilities.ts",
-    "di/src/fubar/ts/utilities/SVG_Paths.ts",
-    "di/src/fubar/ts/utilities/Colors.ts",
-    "di/src/fubar/ts/types/index.ts",
-    "di/src/fubar/ts/types/Units.ts",
-    "di/src/fubar/ts/types/Types.ts",
-    "di/src/fubar/ts/types/Interfaces.ts",
-    "di/src/fubar/ts/types/Enumerations.ts",
-    "di/src/fubar/ts/types/Attribute.ts",
-    "di/src/fubar/ts/types/Coordinates.ts",
+    "di/notes/work/now/code.debt.md",
+    "di/notes/work/done/code.debt.paid.md",
+    "di/notes/work/dimensions/uniface proposal.md",
+    "di/src/lib/ts/events/Hits_3D.ts.tmp.69885.0ac8d5bd9437",
+    "di/notes/work/dimensions/uniface rules.md",
+    "di/src/lib/ts/render/Dimension_Renderer.ts.tmp.69885.1d3a94c94650",
+    "di/src/lib/ts/render/Dimension_Renderer.ts.tmp.69885.00c1299b693c",
+    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.69885.22ecce802f87",
+    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.69885.26ceec554338",
+    "logs/dimensionals.log",
+    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.69885.407ec7222aa3",
+    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.16218.775e4d591501",
+    "di/src/lib/ts/common/Constants.ts.tmp.16218.474ff9ab328c",
+    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.16218.6a6ba3bd4007",
+    "lv/notes/work/bare bone website.md",
+    "notes/guides/pre-flight/shorthand.md",
+    "di/notes/guides/pre-flight/always.md",
+    "notes/guides/pre-flight/always.md",
+    "di/notes/guides/pre-flight/lexicon.md",
+    "lv/notes/work/code debt.md",
+    "notes/guides/collaborate/creating a design.md",
+    "di/notes/work/now/handoff.md",
+    "notes/guides/synopsis.md",
+    "notes/guides/collaborate/shop keeping.md",
+    "di/notes/work/now/open items.md",
+    "di/notes/guides/development/running e2e tests.md",
+    "notes/guides/philosophy/limitations.md",
+    "di/notes/work/now/shop keeping.md",
+    "di/notes/work/now/work journal.md",
+    "di/notes/work/dimensions/dimensionals rules.md",
+    "di/notes/work/now/each query.md",
+    "di/notes/work/refresh.md",
+    "di/notes/tools/index.md",
     "di/src/fubar/md/builds.md",
     "di/src/lib copy/md/builds.md",
-    "di/notes/guides/pre-flight/lexicon.md",
-    "di/notes/work/now/handoff.md",
-    "di/notes/work/dimensions/uniface rules.md",
-    "di/notes/work/dimensions/dimensionals rules.md",
-    "lv/notes/work/code debt.md",
     "lv/src/md/Little Cloud Vineyard.md",
-    "lv/notes/work/work journal.md",
     "di/src/assets/icon.png",
-    "lv/notes/work/bare bone website.md",
-    "lv/src/md/The Vineyard/Page 1.md",
-    "lv/src/md/Page 1.md",
-    "lv/src/md/Sidebar.md",
     "lv/dist/assets/icon-DQ-Yu_V3.png",
-    "di/notes/work/now/(newer than SDD) methodology.md",
-    "di/notes/work/done/code.debt.paid.md",
-    "notes/guides/setup/creating a proposal.md",
     "lv/dist/assets/lcv.label-BfBUnsUh.png",
-    "node_modules/unist-util-is/node_modules/@types/unist/README.md",
-    "node_modules/unist-util-visit/node_modules/unist-util-is/readme.md",
-    "ws/node_modules/@vitest/mocker/node_modules/vite/LICENSE.md",
-    "ws/node_modules/@vitest/mocker/node_modules/vite/README.md",
-    "node_modules/unist-util-visit-parents/node_modules/unist-util-is/readme.md",
-    "node_modules/unified/readme.md",
-    "node_modules/trough/readme.md",
-    "node_modules/svg-parser/README.md",
-    "node_modules/svg-parser/CHANGELOG.md",
     "in/src/assets/lcv.label.png",
     "in/src/assets/icon.png",
     "in/dist/assets/icon-DQ-Yu_V3.png",

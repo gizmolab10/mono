@@ -82,6 +82,12 @@ When updating a work doc (milestones, notes, plans):
 4. **Design notes are not clutter.** Type definitions, rationale, lifecycle rules, error source mappings — these are decisions, not noise. They stay.
 5. **When in doubt, add a section.** A new "synopsis" or "open items" section at the top costs nothing. Gutting the middle to make room costs everything.
 
+## Diagnostic Logging
+
+Every time you add new code, also add ample diagnostic logging that prints enough information to verify what goes right and what goes wrong. For every decision the code makes (filter, threshold, branch), the log must carry the actual values that drove the decision — the measured number, the input, the chosen path — not just a name. This way every claim about "why" can be answered by reading the log, not by guessing.
+
+Log lines must be readable by a human who does not know the code — use real names (e.g. ALPHA, BETA), descriptive labels (e.g. edge CG, face ABCD), and short sentences, not key dumps.
+
 ## Writing Design Documents
 
 See [design.md](creating%20a%20design.md).

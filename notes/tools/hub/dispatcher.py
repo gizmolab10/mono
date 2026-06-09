@@ -555,6 +555,25 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
+        elif self.path.startswith('/log-dimensionals'):
+            # Append or overwrite ~/GitHub/mono/logs/dimensionals.log with the request body.
+            # ?fresh=1 in the query string overwrites (first call per browser session);
+            # otherwise the body is appended to the existing file.
+            try:
+                content_length = int(self.headers.get('Content-Length', 0))
+                body = self.rfile.read(content_length).decode()
+                log_path = os.path.join(GITHUB_DIR, 'logs', 'dimensionals.log')
+                os.makedirs(os.path.dirname(log_path), exist_ok=True)
+                fresh = 'fresh=1' in self.path
+                mode = 'w' if fresh else 'a'
+                with open(log_path, mode) as f:
+                    f.write(body)
+                    if not body.endswith('\n'):
+                        f.write('\n')
+                self._send_response(200, {'success': True, 'path': log_path, 'fresh': fresh})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         elif self.path == '/restart-dispatcher' or self.path == '/restart-api':  # /restart-api for backwards compat
             log_file = os.path.join(GITHUB_DIR, 'logs', 'dispatcher-restart.log')
             os.makedirs(os.path.dirname(log_file), exist_ok=True)

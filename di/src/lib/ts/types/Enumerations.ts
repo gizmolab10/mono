@@ -28,6 +28,7 @@ export enum T_Hit_3D {
 	dimension,
 	angle,
 	face_label,
+	uniface_line,
 	none,
 }
 

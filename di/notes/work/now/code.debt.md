@@ -4,16 +4,16 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the end of handoff
 
-- [x] proceed with dimensionals.work, record progress in handoff
-- [ ] begin work on dimensions/[[uniface rules]]
-    - [ ] what is missing?
-    - [ ] proposal for transition
+- [ ] analyze dimensionals code and write a new file "dim.spec.md" with a complete description of what it does, written in the form of numbered rules
+- [ ] for a selected SO also highlight its dimensionals
+- [ ] when a dimensional is being edited, also highlight its SO and its other dimensionals
+- [ ] Gemini pro is only $20
 - [ ] on hover over a part or a dimensional
     - [ ] OPTION-C copies the label to the paste buffer
-    - [ ] change the dimensional color to red
-    - [ ] over a part -> also highlight all its dimensionals
+    - [x] change the dimensional color to red
+    - [x] over a part -> also highlight all its dimensionals
 - [ ] move swap x y to p attributes
-- [ ] rename x ray wireframe
+- [ ] rename x ray -> wireframe
 - [ ] saved VIEWS orientation/zoom for a SO
     - [ ] list that changes when you load a different SO
     - [ ] remember and forget buttons

@@ -64,6 +64,9 @@ export enum T_Preference {
 
 	// Confirmation popup
 	skipDeleteConfirm = 'skipDeleteConfirm',
+
+	// Dimensions
+	useUnifaceRules  = 'useUnifaceRules',
 }
 
 const STORAGE_PREFIX = 'di:';

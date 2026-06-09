@@ -30,6 +30,7 @@ export default class Constants {
 		merge_logged     : false,
 		trace_logged     : false,
 		clip_debug       : false,
+		diagnose_dims    : true,
 		last_label_log   : '',
 		last_facet_log   : '',
 	};
@@ -156,8 +157,13 @@ export default class Constants {
 		FORBIDDEN_CAM_DOT        : 0.866,
 		WITNESS_LEN_MAX_PX       : 300,
 		WITNESS_CAP_PX           : 200,
-		WITNESS_INDEX_CAP        : 3,
+		WITNESS_INDEX_CAP        : 4,
+		/** Absolute dot threshold below which the dim's flat plane is
+		 *  considered edge-on to the camera and rejected by filter 0.
+		 *  0.174 corresponds to within about ten degrees of edge-on. */
+		EDGE_ON_DOT_THRESHOLD    : 0.174,
 		EXCLUDED_FACE_ANGLE_DEG  : 20,
+		EXCLUDED_BACK_FACE_ANGLE_DEG : 45,
 		SLIDABLE_OVERHANG_PX     : 20,
 		SILHOUETTE_MARGIN_PX     : 15,
 		/** Buffer pixels the label rectangle must leave between itself and
@@ -186,7 +192,7 @@ export default class Constants {
 		WITNESS_LENGTH_PENALTY_PER_PX : 2,
 		NEIGHBOUR_GRID_CELL_PX   : 50,
 		WITNESS_CLEARANCE_PX     : 15,
-		PAIR_CLEARANCE_PX        : 15,
+		PAIR_CLEARANCE_PX        : 5,
 		/** Continuous-DOF grid resolution per (edge, direction) pair. 5 × 5 = 25
 		 *  candidates per pair, per rule 23's continuous-optimization step. */
 		GRID_RESOLUTION          : 5,

@@ -53,3 +53,11 @@ If the face's screen-space edges are recomputed every frame from the shape's cur
 The pattern: when a live drag depends on a quantity derived from the shape's current state, any path where the quantity affects the next state will feed back. The fix is to capture the quantity once at drag start and hold it for the duration, or to drop the screen-space derivation in favour of a world-space one that does not depend on the shape's current matrix.
 
 Source: drag.
+
+### Minus-zero appears wherever you multiply a component by minus one, and it breaks string-formatted grouping keys
+
+The new placement algorithm groups labels by a canonical direction string so duplicate text on parallel edges can collapse to one drawn label. The canonical direction was built by negating one component when the direction pointed the wrong way, then formatting the three components into a key. Some inputs produced negative zero (-0) as the negated component. The string formatter renders 0 and -0 differently. Two directions that were geometrically identical produced different keys and the dedup failed silently.
+
+The pattern: any time you multiply a number by minus one, the result can be negative zero. When the number then becomes part of a key (a string, a hash, an equality test), negative zero compares unequal to positive zero in ways that look correct but miss matches. Normalize negative zero to zero immediately after the negation, before any use that treats the value as text.
+
+Source: the duplicate-text drop in the dimension placement rewrite.

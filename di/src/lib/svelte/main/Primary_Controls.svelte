@@ -11,7 +11,7 @@
 
 	let { onshowuserguide = () => {} }: { onshowuserguide?: () => void } = $props();
 
-	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation, w_use_uniface_placement } = stores;
+	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation, w_use_uniface_rules } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 
 	let controls_width   = $state(Infinity);
@@ -70,7 +70,7 @@
 	<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
 	<button class='toolbar-button' disabled={is_straightened} use:hit_target={{ id: 'straighten', onpress: () => engine.straighten() }}>straighten</button>
 	<button class='toolbar-button snap-button' class:snap-off={!$w_rotation_snap} use:hit_target={{ id: 'rotation-snap', onpress: () => engine.toggle_rotation_snap() }}>🧲</button>
-	<button class='toolbar-button' class:active={$w_use_uniface_placement} use:hit_target={{ id: 'uniface-placement', onpress: () => stores.toggle_uniface_placement() }}>uniface ⟳</button>
+	<button class='toolbar-button' class:active={$w_use_uniface_rules} use:hit_target={{ id: 'uniface-rules', onpress: () => stores.toggle_uniface_rules() }}>{$w_use_uniface_rules ? 'uniface' : 'old dim'} ⟳</button>
 {/snippet}
 
 {#snippet face_buttons()}

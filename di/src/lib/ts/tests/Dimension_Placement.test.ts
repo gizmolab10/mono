@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { k } from '../common/Constants';
+import { preferences, T_Preference } from '../managers/Preferences';
+
+// Read the same persisted flag the running app reads. When true, the
+// Group B describe blocks below skip — they pin the abandoned placement
+// algorithm and the new spec has dropped its shape. The setup file
+// bridges process.env.USE_UNIFACE_RULES into local storage at startup.
+const USE_UNIFACE_RULES = preferences.read<boolean>(T_Preference.useUnifaceRules) ?? false;
 import {
 	neighbour_pairs_from_regions,
 	pair_can_separate,
@@ -28,6 +35,21 @@ import {
 	is_face_excluded,
 	pick_first_viable_uniface_for_axis,
 	pick_closest_uniface_for_axis,
+	distance_from_point_to_line_2d,
+	rectangles_overlap_2d,
+	distance_between_rectangles_2d,
+	rectangle_inside_rectangle_2d,
+	bounding_rectangle_of_points_2d,
+	distance_from_rect_to_segment_2d,
+	min_distance_between_segments_2d,
+	distance_point_to_segment_2d,
+	segments_intersect_2d,
+	candidate_passes_clearances,
+	evaluate_clearances,
+	SLIDE_ELIGIBLE_FILTERS,
+	point_in_convex_polygon_2d,
+	rect_intersects_convex_polygon_2d,
+	distance_from_rect_to_convex_polygon_2d,
 	UNIFACE_FACE_POS_X,
 	UNIFACE_FACE_NEG_X,
 	UNIFACE_FACE_POS_Y,
@@ -98,7 +120,7 @@ function region(so_id: string, x_min: number, y_min: number, x_max: number, y_ma
 	return { so_id, so_name: so_id, kind: 'regular', axis: 'x', x_min, y_min, x_max, y_max, pairs: [] };
 }
 
-describe('Dimension_Placement — first-pass neighbour pairs', () => {
+describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — first-pass neighbour pairs', () => {
 	it('returns no pairs when no regions overlap', () => {
 		const regions = [
 			region('A', 0,   0,   20,  20),
@@ -181,7 +203,7 @@ describe('Dimension_Placement — first-pass neighbour pairs', () => {
 	});
 });
 
-describe('Dimension_Placement — second-pass closed-form separation', () => {
+describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — second-pass closed-form separation', () => {
 	it('says two pairs CAN separate when their slidable ranges are far apart on the same level', () => {
 		// Both labels at witness_length = 30 (so y = -30 in screen coords).
 		// Label A slides between x=0 and x=20; label B between x=200 and x=220.
@@ -215,7 +237,7 @@ describe('Dimension_Placement — second-pass closed-form separation', () => {
 	});
 });
 
-describe('Dimension_Placement — labels_can_separate_via_some_combination', () => {
+describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — labels_can_separate_via_some_combination', () => {
 	it('returns true if ANY combination of the input pair-sets can separate', () => {
 		// Label A has two pairs: one that overlaps B, one that does not.
 		// The non-overlapping pair lets the labels separate.
@@ -240,7 +262,7 @@ describe('Dimension_Placement — labels_can_separate_via_some_combination', () 
 	});
 });
 
-describe('Conflict_Graph', () => {
+describe.skipIf(USE_UNIFACE_RULES)('Conflict_Graph', () => {
 	it('starts empty', () => {
 		const g = new Conflict_Graph();
 		expect(g.size()).toBe(0);
@@ -289,7 +311,7 @@ describe('Conflict_Graph', () => {
 	});
 });
 
-describe('Dimension_Placement — min_distance_to_placed', () => {
+describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — min_distance_to_placed', () => {
 	function placed_label(cx: number, cy: number, w: number, h: number): Greedy_Placement {
 		// Most fields are unused by min_distance_to_placed; only center and size matter.
 		return {
@@ -327,7 +349,7 @@ describe('Dimension_Placement — min_distance_to_placed', () => {
 	});
 });
 
-describe('Dimension_Placement — best_candidate_in_pair', () => {
+describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — best_candidate_in_pair', () => {
 	it('picks the safe position farthest from a single placed label', () => {
 		// Horizontal edge from (0,0) to (500,0) — long enough that the
 		// 20-pixel buffer around each witness anchor still leaves a wide
@@ -545,7 +567,7 @@ describe('Dimension_Placement — order_by_constrainedness', () => {
 	});
 });
 
-describe('Dimension_Placement — greedy_seed_for_regions', () => {
+describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — greedy_seed_for_regions', () => {
 	function simple_region(so_id: string, slidable_start: number): Reachable_Region {
 		// Long dim line (500 px) so the 20-pixel witness-anchor buffer
 		// leaves a usable between-region after the forbidden-zone filter.
@@ -663,7 +685,7 @@ describe('Dimension_Placement — find_conflicts_in_placement', () => {
 	});
 });
 
-describe('Dimension_Placement — retry_pass', () => {
+describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — retry_pass', () => {
 	function build_pair_at(slidable_start: number, slidable_end: number): Viable_Pair {
 		return {
 			so_id: 'X', so_name: 'X', kind: 'regular', axis: 'x',
@@ -756,7 +778,7 @@ describe('Dimension_Placement — retry_pass', () => {
 	});
 });
 
-describe('Dimension_Placement — stochastic_finish', () => {
+describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — stochastic_finish', () => {
 	function build_pair_at(slidable_start: number, slidable_end: number, so_id: string): Viable_Pair {
 		return {
 			so_id, so_name: so_id, kind: 'regular', axis: 'x',
@@ -1632,8 +1654,8 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 
 	// Coverage gaps from step 2 of the test-rollout proposal.
 
-	it('the witness index cap value is 3 and is read from k.dimensions.WITNESS_INDEX_CAP (rule 1)', () => {
-		expect(k.dimensions.WITNESS_INDEX_CAP).toBe(3);
+	it('the witness index cap value is 4 and is read from k.dimensions.WITNESS_INDEX_CAP (rule 1)', () => {
+		expect(k.dimensions.WITNESS_INDEX_CAP).toBe(4);
 	});
 
 	it.todo('the four placement choices are exactly edge, uniface, witness index, label position (rule 2)');
@@ -1644,11 +1666,53 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 
 	it.todo('dropping a label because its witness index exceeded the cap does not trigger re-placement for labels that depended on this one position (rule 7)');
 
-	it('k.dimensions.PAIR_CLEARANCE_PX equals k.dimensions.SILHOUETTE_MARGIN_PX equals 15 (rule 8)', () => {
-		expect(k.dimensions.PAIR_CLEARANCE_PX).toBe(15);
+	it('k.dimensions.PAIR_CLEARANCE_PX is 5 and k.dimensions.SILHOUETTE_MARGIN_PX is 15', () => {
+		expect(k.dimensions.PAIR_CLEARANCE_PX).toBe(5);
 		expect(k.dimensions.SILHOUETTE_MARGIN_PX).toBe(15);
-		expect(k.dimensions.PAIR_CLEARANCE_PX).toBe(k.dimensions.SILHOUETTE_MARGIN_PX);
 	});
+
+	// Rule 19 — depth-concentration vote.
+	// After the full sweep finds viable depths per (part, direction), each
+	// direction tallies how many parts found each depth viable. The two
+	// depths with the longest lists win that direction; every other
+	// (part, direction, depth) viability record is discarded. Parts viable
+	// in a direction only at a losing depth lose that direction entirely.
+	it.todo('per direction, only the two witness indices with the most viable parts survive the depth-concentration vote (rule 19)');
+
+	it.todo('a part viable in a direction only at a witness index that lost the depth-concentration vote loses that direction (rule 19)');
+
+	it.todo('the depth-concentration vote leaves each direction with at most two surviving witness indices (rule 19)');
+
+	// Rule 18 — dim line and arrow drawing (renderer behaviour pinned by visual review).
+	// Tests live here because the rule is owned by the placement spec; the
+	// behaviour itself is implemented in Dimension_Renderer.ts.
+	it.todo('the arrowhead tip touches the witness line at the anchor in both the inside case and the overhang case (rule 18)');
+
+	it.todo('an inside arrow that fits between the label box and the witness line points inward at the anchor with no outside extension (rule 18)');
+
+	it.todo('an inside arrow that does NOT fit between the label box and the witness line flips outward, draws a SLIDABLE_OVERHANG_PX extension outside its witness, and the arrow sits on that extension pointing outward (rule 18)');
+
+	it.todo('the inside dim segment between the two anchors is dropped whenever EITHER side flips to outside (rule 18)');
+
+	it.todo('each side of the dim line decides independently whether to flip — one side can be inside while the other is outside (rule 18)');
+
+	it.todo('when the label fully covers an arrowhead (anchor and arrow base both inside the label box at the chosen position), the PLACEMENT SEARCH slides the label past that witness anchor by half-label-width + SLIDABLE_OVERHANG_PX + arrow-length BEFORE running the cross-label clearance check (rule 18)');
+
+	it.todo('two labels whose natural positions would overlap each other after the slide are caught by the label-vs-label clearance check because the slide happens BEFORE the check (rule 18 + rule 19 filter 2)');
+
+	it.todo('the renderer does NOT re-slide the label — it draws at whatever final position placement chose (rule 18)');
+
+	it.todo('an inside arrowhead has the half of the dim line on its side drawn inside, from the anchor toward the label near edge or the other anchor (rule 18)');
+
+	it.todo('a flipped (outside) arrowhead draws NO inside dim line on its side (rule 18)');
+
+	it.todo('once the label has been slid past a witness anchor, BOTH arrows flip outside and BOTH sides of the dim line go outside, regardless of per-side fit (rule 18)');
+
+	it.todo('every outside arrow gets a dim-line extension of EXACTLY SLIDABLE_OVERHANG_PX (20 screen pixels) — no special cases for the slid label (rule 18)');
+
+	it.todo('on the slid side, a connector dim line runs from the extension end to the label near edge (rule 18)');
+
+	it.todo('hovering on the label number box triggers the same red highlight and popup as hovering on a dim line, witness line, or part (rule 18 + rule 20)');
 });
 
 describe('Dimension_Placement — uniface box builder (step 1)', () => {
@@ -1709,22 +1773,34 @@ describe('Dimension_Placement — uniface box builder (step 1)', () => {
 		expect(box.shifts[0][UNIFACE_FACE_NEG_X]).toBeCloseTo(15, 6);
 	});
 
-	it('the excluded-face rule excludes faces whose normal is within 20° of parallel to the camera forward in either direction', () => {
-		// Camera looks straight down +z (forward = (0,0,1)).
+	it('the excluded-face rule rejects front-facing within 20° of pointing AT the camera and back-facing within 45° of pointing AWAY', () => {
+		// Camera looks in +z (forward = (0,0,1)).
+		// Back-facing = normal points AWAY from camera (same direction as forward).
+		// Front-facing = normal points TOWARD camera (opposite to forward).
 		const forward = vec3.fromValues(0, 0, 1);
-		// Within 20° of parallel — face normal points at the camera (opposite to forward).
-		expect(is_face_excluded(vec3.fromValues(0, 0, -1), forward, 20)).toBe(true);
-		// Within 20° of parallel — face normal points AWAY from camera (same direction as forward).
-		expect(is_face_excluded(vec3.fromValues(0, 0, 1), forward, 20)).toBe(true);
-		// Edge-on (perpendicular to forward): NOT excluded by this rule.
-		expect(is_face_excluded(vec3.fromValues(1, 0, 0), forward, 20)).toBe(false);
-		expect(is_face_excluded(vec3.fromValues(0, 1, 0), forward, 20)).toBe(false);
-		// Just inside the parallel tolerance (19° off from pointing-at): excluded.
-		const at_19_deg = vec3.fromValues(Math.sin(19 * Math.PI / 180), 0, -Math.cos(19 * Math.PI / 180));
-		expect(is_face_excluded(at_19_deg, forward, 20)).toBe(true);
-		// Just outside the parallel tolerance (21°): not excluded.
-		const at_21_deg = vec3.fromValues(Math.sin(21 * Math.PI / 180), 0, -Math.cos(21 * Math.PI / 180));
-		expect(is_face_excluded(at_21_deg, forward, 20)).toBe(false);
+
+		// BACK-facing within 45° of straight-back: rejected.
+		expect(is_face_excluded(vec3.fromValues(0, 0, 1), forward, 20, 45)).toBe(true);  // straight back
+		const back_at_44 = vec3.fromValues(Math.sin(44 * Math.PI / 180), 0, Math.cos(44 * Math.PI / 180));
+		expect(is_face_excluded(back_at_44, forward, 20, 45)).toBe(true);  // 44° off — just inside
+		// BACK-facing past 45° (closer to perpendicular): kept.
+		const back_at_46 = vec3.fromValues(Math.sin(46 * Math.PI / 180), 0, Math.cos(46 * Math.PI / 180));
+		expect(is_face_excluded(back_at_46, forward, 20, 45)).toBe(false);  // 46° off — just outside
+
+		// FRONT-facing within 20° of pointing AT the camera: rejected.
+		expect(is_face_excluded(vec3.fromValues(0, 0, -1), forward, 20, 45)).toBe(true);  // straight at camera
+		const front_at_19 = vec3.fromValues(Math.sin(19 * Math.PI / 180), 0, -Math.cos(19 * Math.PI / 180));
+		expect(is_face_excluded(front_at_19, forward, 20, 45)).toBe(true);  // 19° off, just inside
+
+		// FRONT-facing more than 20° off from head-on: kept (useful glancing front faces).
+		const front_at_21 = vec3.fromValues(Math.sin(21 * Math.PI / 180), 0, -Math.cos(21 * Math.PI / 180));
+		expect(is_face_excluded(front_at_21, forward, 20, 45)).toBe(false);  // 21° off, just outside
+		const front_glancing = vec3.fromValues(Math.sin(80 * Math.PI / 180), 0, -Math.cos(80 * Math.PI / 180));
+		expect(is_face_excluded(front_glancing, forward, 20, 45)).toBe(false);  // 80° off — very glancing
+
+		// Edge-on (perpendicular to forward) — past both thresholds — kept.
+		expect(is_face_excluded(vec3.fromValues(1, 0, 0), forward, 20, 45)).toBe(false);
+		expect(is_face_excluded(vec3.fromValues(0, 1, 0), forward, 20, 45)).toBe(false);
 	});
 
 	it('per-axis uniface picker returns the first uniface that is not excluded and contains the axis', () => {
@@ -1789,6 +1865,566 @@ describe('Dimension_Placement — uniface box builder (step 1)', () => {
 		dists[UNIFACE_FACE_POS_Z] = 30;
 		dists[UNIFACE_FACE_NEG_Z] = 5;  // would win but is excluded
 		expect(pick_closest_uniface_for_axis('x', box, 0, dists)).toBe(UNIFACE_FACE_NEG_Y);
+	});
+});
+
+describe('Dimension_Placement — distance_from_point_to_line_2d (step 3a edge-to-anchor)', () => {
+	it('zero distance when the point sits on the line', () => {
+		const p = { x: 5, y: 0 };
+		const a = { x: 0, y: 0 };
+		const b = { x: 10, y: 0 };
+		expect(distance_from_point_to_line_2d(p, a, b)).toBeCloseTo(0, 6);
+	});
+
+	it('measures perpendicular distance from point to horizontal line', () => {
+		const p = { x: 5, y: 7 };
+		const a = { x: 0, y: 0 };
+		const b = { x: 10, y: 0 };
+		expect(distance_from_point_to_line_2d(p, a, b)).toBeCloseTo(7, 6);
+	});
+
+	it('measures perpendicular distance from point to vertical line', () => {
+		const p = { x: 3, y: 100 };
+		const a = { x: 0, y: 0 };
+		const b = { x: 0, y: 10 };
+		expect(distance_from_point_to_line_2d(p, a, b)).toBeCloseTo(3, 6);
+	});
+
+	it('measures perpendicular distance from point to a diagonal line', () => {
+		// Line y = x (through origin and (1,1)). Point (0, 2) is sqrt(2) away.
+		const p = { x: 0, y: 2 };
+		const a = { x: 0, y: 0 };
+		const b = { x: 1, y: 1 };
+		expect(distance_from_point_to_line_2d(p, a, b)).toBeCloseTo(Math.SQRT2, 6);
+	});
+
+	it('falls back to point-to-endpoint distance when the line is degenerate', () => {
+		const p = { x: 3, y: 4 };
+		const a = { x: 0, y: 0 };
+		const b = { x: 0, y: 0 };
+		expect(distance_from_point_to_line_2d(p, a, b)).toBeCloseTo(5, 6);
+	});
+
+	it('uses the infinite line, not the segment — point off the end still measures perpendicular', () => {
+		const p = { x: 100, y: 5 };  // far to the right of the segment, 5 above
+		const a = { x: 0, y: 0 };
+		const b = { x: 10, y: 0 };
+		expect(distance_from_point_to_line_2d(p, a, b)).toBeCloseTo(5, 6);
+	});
+});
+
+describe('Dimension_Placement — rectangle helpers (step 3a clearance checks)', () => {
+	it('rectangles overlap when their interiors intersect', () => {
+		const a = { x_min: 0, y_min: 0, x_max: 10, y_max: 10 };
+		const b = { x_min: 5, y_min: 5, x_max: 15, y_max: 15 };
+		expect(rectangles_overlap_2d(a, b)).toBe(true);
+	});
+
+	it('rectangles do not overlap when only touching at an edge', () => {
+		const a = { x_min: 0, y_min: 0, x_max: 10, y_max: 10 };
+		const b = { x_min: 10, y_min: 0, x_max: 20, y_max: 10 };
+		expect(rectangles_overlap_2d(a, b)).toBe(false);
+	});
+
+	it('rectangles do not overlap when fully separated', () => {
+		const a = { x_min: 0, y_min: 0, x_max: 10, y_max: 10 };
+		const b = { x_min: 20, y_min: 20, x_max: 30, y_max: 30 };
+		expect(rectangles_overlap_2d(a, b)).toBe(false);
+	});
+
+	it('distance between rectangles is zero when they overlap', () => {
+		const a = { x_min: 0, y_min: 0, x_max: 10, y_max: 10 };
+		const b = { x_min: 5, y_min: 5, x_max: 15, y_max: 15 };
+		expect(distance_between_rectangles_2d(a, b)).toBeCloseTo(0, 6);
+	});
+
+	it('distance between rectangles is the side gap when one is purely to the right', () => {
+		const a = { x_min: 0, y_min: 0, x_max: 10, y_max: 10 };
+		const b = { x_min: 17, y_min: 0, x_max: 27, y_max: 10 };
+		expect(distance_between_rectangles_2d(a, b)).toBeCloseTo(7, 6);
+	});
+
+	it('distance between rectangles is the diagonal gap when one is corner-offset from the other', () => {
+		const a = { x_min: 0, y_min: 0, x_max: 10, y_max: 10 };
+		const b = { x_min: 13, y_min: 14, x_max: 20, y_max: 20 };
+		// horizontal gap 3, vertical gap 4 → diagonal 5
+		expect(distance_between_rectangles_2d(a, b)).toBeCloseTo(5, 6);
+	});
+
+	it('rectangle-inside-rectangle is true when the inner sits fully inside', () => {
+		const outer = { x_min: 0, y_min: 0, x_max: 100, y_max: 100 };
+		const inner = { x_min: 10, y_min: 10, x_max: 50, y_max: 50 };
+		expect(rectangle_inside_rectangle_2d(inner, outer)).toBe(true);
+	});
+
+	it('rectangle-inside-rectangle is true when the inner exactly matches the outer (touching counts)', () => {
+		const r = { x_min: 0, y_min: 0, x_max: 100, y_max: 100 };
+		expect(rectangle_inside_rectangle_2d(r, r)).toBe(true);
+	});
+
+	it('rectangle-inside-rectangle is false when the inner extends past one side', () => {
+		const outer = { x_min: 0, y_min: 0, x_max: 100, y_max: 100 };
+		const inner = { x_min: 90, y_min: 50, x_max: 110, y_max: 60 };
+		expect(rectangle_inside_rectangle_2d(inner, outer)).toBe(false);
+	});
+
+	it('bounding rectangle of points returns the tight axis-aligned envelope', () => {
+		const points = [{ x: 1, y: 2 }, { x: 5, y: -1 }, { x: 3, y: 4 }];
+		const r = bounding_rectangle_of_points_2d(points);
+		expect(r.x_min).toBeCloseTo(1, 6);
+		expect(r.y_min).toBeCloseTo(-1, 6);
+		expect(r.x_max).toBeCloseTo(5, 6);
+		expect(r.y_max).toBeCloseTo(4, 6);
+	});
+
+	it('bounding rectangle of an empty list returns a zero-extent rectangle at the origin', () => {
+		const r = bounding_rectangle_of_points_2d([]);
+		expect(r.x_min).toBe(0);
+		expect(r.y_min).toBe(0);
+		expect(r.x_max).toBe(0);
+		expect(r.y_max).toBe(0);
+	});
+
+	it('rect-to-segment distance is zero when the segment passes through the rectangle', () => {
+		const r = { x_min: 0, y_min: 0, x_max: 10, y_max: 10 };
+		const a = { x: -5, y: 5 };
+		const b = { x: 20, y: 5 };
+		expect(distance_from_rect_to_segment_2d(r, a, b)).toBeCloseTo(0, 6);
+	});
+
+	it('rect-to-segment distance is the perpendicular gap when the segment runs parallel above the rectangle', () => {
+		const r = { x_min: 0, y_min: 0, x_max: 10, y_max: 10 };
+		const a = { x: 0, y: 17 };
+		const b = { x: 10, y: 17 };
+		expect(distance_from_rect_to_segment_2d(r, a, b)).toBeCloseTo(7, 6);
+	});
+
+	it('rect-to-segment distance is the corner-to-endpoint gap when the segment sits off-corner', () => {
+		const r = { x_min: 0, y_min: 0, x_max: 10, y_max: 10 };
+		const a = { x: 13, y: 14 };
+		const b = { x: 20, y: 20 };
+		// closest segment point to the rect is endpoint a; rect corner is (10,10); gap = hypot(3,4) = 5
+		expect(distance_from_rect_to_segment_2d(r, a, b)).toBeCloseTo(5, 1);
+	});
+});
+
+describe('Dimension_Placement — candidate_passes_clearances (step 3a full clearance suite)', () => {
+	// Common setup: a candidate label centred at (200, 200), 40x14, well away
+	// from a silhouette rect at (0..100, 0..100). The candidate's witness
+	// anchors are at (170, 200) and (230, 200); the edge endpoints are at
+	// (170, 250) and (230, 250). With no previously placed picks, everything
+	// should pass.
+	const base = () => ({
+		candidate_label_rect    : { x_min: 180, x_max: 220, y_min: 193, y_max: 207 } as const,
+		candidate_anchor_1      : { x: 170, y: 200 },
+		candidate_anchor_2      : { x: 230, y: 200 },
+		candidate_edge_p1_screen: { x: 170, y: 250 },
+		candidate_edge_p2_screen: { x: 230, y: 250 },
+		silhouette              : [
+			{ x:   0, y:   0 },
+			{ x: 100, y:   0 },
+			{ x: 100, y: 100 },
+			{ x:   0, y: 100 },
+		] as const,
+		placed_label_rects      : [] as const,
+		placed_anchors          : [] as const,
+		placed_witness_segments : [] as const,
+		placed_dim_segments     : [] as const,
+		pair_clearance_px       : 15,
+		silhouette_margin_px    : 15,
+	});
+
+	it('passes when nothing else is placed and the silhouette is well away', () => {
+		expect(candidate_passes_clearances(base())).toBe(true);
+	});
+
+	it('fails when the candidate label rect sits inside the silhouette rect', () => {
+		const in_ = { ...base(),
+			candidate_label_rect: { x_min: 30, x_max: 70, y_min: 30, y_max: 70 } };
+		expect(candidate_passes_clearances(in_)).toBe(false);
+	});
+
+	it('fails when the candidate label rect is within 15 px of a placed label rect', () => {
+		const in_ = { ...base(),
+			placed_label_rects: [{ x_min: 230, x_max: 270, y_min: 193, y_max: 207 }] };
+		// gap is 10 px (220 to 230), less than 15
+		expect(candidate_passes_clearances(in_)).toBe(false);
+	});
+
+	// Symmetric clearance — the new requirement.
+	it('fails when the candidate ANCHOR sits within 15 px of a previously placed label rect', () => {
+		const in_ = { ...base(),
+			placed_label_rects: [{ x_min: 160, x_max: 175, y_min: 195, y_max: 205 }] };
+		// anchor_1 at (170, 200) is INSIDE that rect, distance 0
+		expect(candidate_passes_clearances(in_)).toBe(false);
+	});
+
+	it('fails when the candidate ANCHOR sits within 15 px of a previously placed anchor', () => {
+		const in_ = { ...base(),
+			placed_anchors: [{ x: 180, y: 200 }] };
+		// anchor_1 at (170, 200) is 10 away from (180, 200), less than 15
+		expect(candidate_passes_clearances(in_)).toBe(false);
+	});
+
+	it('fails when the candidate DIM LINE passes within 15 px of a previously placed label rect', () => {
+		const in_ = { ...base(),
+			placed_label_rects: [{ x_min: 195, x_max: 205, y_min: 210, y_max: 215 }] };
+		// dim line from (170,200) to (230,200) is the horizontal line y=200; placed rect top is y=210; gap = 10 < 15
+		expect(candidate_passes_clearances(in_)).toBe(false);
+	});
+
+	it('fails when the candidate DIM LINE passes within 15 px of a previously placed anchor', () => {
+		const in_ = { ...base(),
+			placed_anchors: [{ x: 200, y: 212 }] };
+		// dim line is y=200 from x=170..230; anchor at (200, 212) is 12 perpendicular pixels away; less than 15
+		expect(candidate_passes_clearances(in_)).toBe(false);
+	});
+
+	it('passes the symmetric checks when the placed obstacles are well away', () => {
+		const in_ = { ...base(),
+			placed_label_rects: [{ x_min: 500, x_max: 540, y_min: 500, y_max: 514 }],
+			placed_anchors    : [{ x: 600, y: 600 }] };
+		expect(candidate_passes_clearances(in_)).toBe(true);
+	});
+
+	it('fails when the candidate\'s two witness lines come within 15 px of each other', () => {
+		// Bring the second witness's edge endpoint very close to the first witness.
+		// Edge p1 is at (170, 250) → anchor_1 (170, 200): vertical line at x = 170.
+		// Edge p2 at (180, 250) → anchor_2 (180, 200): vertical line at x = 180.
+		// Distance between them = 10 px, which is less than 15.
+		const in_ = { ...base(),
+			candidate_edge_p2_screen: { x: 180, y: 250 },
+			candidate_anchor_2      : { x: 180, y: 200 },
+			candidate_label_rect    : { x_min: 175, x_max: 215, y_min: 193, y_max: 207 } };
+		expect(candidate_passes_clearances(in_)).toBe(false);
+	});
+
+	it('passes when the two witness lines are at least 15 px apart', () => {
+		// Same as base — witnesses are at x = 170 and x = 230, 60 px apart.
+		expect(candidate_passes_clearances(base())).toBe(true);
+	});
+});
+
+describe('Dimension_Placement — convex polygon helpers (silhouette hexagon)', () => {
+	const square = [
+		{ x:   0, y:   0 },
+		{ x: 100, y:   0 },
+		{ x: 100, y: 100 },
+		{ x:   0, y: 100 },
+	];
+	const hexagon = [
+		{ x:  50, y:   0 },
+		{ x: 100, y:  30 },
+		{ x: 100, y:  70 },
+		{ x:  50, y: 100 },
+		{ x:   0, y:  70 },
+		{ x:   0, y:  30 },
+	];
+
+	it('point inside a square is detected', () => {
+		expect(point_in_convex_polygon_2d({ x: 50, y: 50 }, square)).toBe(true);
+	});
+	it('point outside a square returns false', () => {
+		expect(point_in_convex_polygon_2d({ x: 150, y: 50 }, square)).toBe(false);
+	});
+	it('point in the corner cut off by a hexagon returns false', () => {
+		// (5, 5) sits inside the square but outside the hexagon (the hex
+		// trims the corners of the square).
+		expect(point_in_convex_polygon_2d({ x:   5, y:   5 }, hexagon)).toBe(false);
+	});
+	it('point in the center of the hexagon returns true', () => {
+		expect(point_in_convex_polygon_2d({ x: 50, y: 50 }, hexagon)).toBe(true);
+	});
+
+	it('rectangle inside the polygon counts as intersecting', () => {
+		const rect = { x_min: 40, x_max: 60, y_min: 40, y_max: 60 };
+		expect(rect_intersects_convex_polygon_2d(rect, hexagon)).toBe(true);
+	});
+	it('rectangle far outside the polygon does not intersect', () => {
+		const rect = { x_min: 200, x_max: 220, y_min: 200, y_max: 220 };
+		expect(rect_intersects_convex_polygon_2d(rect, hexagon)).toBe(false);
+	});
+	it('rectangle in the cut corner of the hexagon (inside the bounding rectangle) does NOT intersect the hexagon', () => {
+		const rect = { x_min: 1, x_max: 9, y_min: 1, y_max: 9 };
+		// The rect sits in the corner the hexagon trims off the square.
+		expect(rect_intersects_convex_polygon_2d(rect, hexagon)).toBe(false);
+	});
+
+	it('distance from rectangle to polygon is zero when they overlap', () => {
+		const rect = { x_min: 40, x_max: 60, y_min: 40, y_max: 60 };
+		expect(distance_from_rect_to_convex_polygon_2d(rect, hexagon)).toBe(0);
+	});
+	it('distance from rectangle to polygon equals the screen gap when they are separated', () => {
+		// Square hexagon is at x_max = 100. Rect starts at x_min = 110, gap 10.
+		const rect = { x_min: 110, x_max: 120, y_min: 40, y_max: 60 };
+		expect(distance_from_rect_to_convex_polygon_2d(rect, square)).toBeCloseTo(10, 6);
+	});
+	it('distance from a corner-cut rectangle to the hexagon is positive', () => {
+		// Rect sits in the trimmed corner of the hexagon — close to the
+		// nearest hex edge but not touching it. Distance is small but > 0.
+		const rect = { x_min: 1, x_max: 9, y_min: 1, y_max: 9 };
+		const d = distance_from_rect_to_convex_polygon_2d(rect, hexagon);
+		expect(d).toBeGreaterThan(0);
+	});
+});
+
+describe('Dimension_Placement — evaluate_clearances (named filter rejection)', () => {
+	// Same base as the boolean suite above. Each test forces one filter to
+	// reject and confirms the returned name plus shortfall.
+	const base = () => ({
+		candidate_label_rect    : { x_min: 180, x_max: 220, y_min: 193, y_max: 207 } as const,
+		candidate_anchor_1      : { x: 170, y: 200 },
+		candidate_anchor_2      : { x: 230, y: 200 },
+		candidate_edge_p1_screen: { x: 170, y: 250 },
+		candidate_edge_p2_screen: { x: 230, y: 250 },
+		silhouette              : [
+			{ x:   0, y:   0 },
+			{ x: 100, y:   0 },
+			{ x: 100, y: 100 },
+			{ x:   0, y: 100 },
+		] as const,
+		placed_label_rects      : [] as const,
+		placed_anchors          : [] as const,
+		placed_witness_segments : [] as const,
+		placed_dim_segments     : [] as const,
+		pair_clearance_px       : 15,
+		silhouette_margin_px    : 15,
+	});
+
+	it('passes with ok:true when nothing is in the way', () => {
+		const r = evaluate_clearances(base());
+		expect(r.ok).toBe(true);
+	});
+
+	it('rejects with name silhouette when the label sits inside the silhouette rect', () => {
+		const in_ = { ...base(),
+			candidate_label_rect: { x_min: 30, x_max: 70, y_min: 30, y_max: 70 } };
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('silhouette');
+			expect(r.shortfall_px).toBe(15);
+		}
+	});
+
+	it('rejects with name label-vs-label when the label rect is within 15 px of a placed label', () => {
+		const in_ = { ...base(),
+			placed_label_rects: [{ x_min: 230, x_max: 270, y_min: 193, y_max: 207 }] };
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('label-vs-label');
+			expect(r.shortfall_px).toBeCloseTo(5, 6);  // 15 - 10
+		}
+	});
+
+	it('rejects with name label-vs-placed-anchor when a placed anchor sits within 15 px of the label rect', () => {
+		const in_ = { ...base(),
+			placed_anchors: [{ x: 225, y: 200 }] };
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('label-vs-placed-anchor');
+			expect(r.shortfall_px).toBeCloseTo(10, 6);  // 15 - 5
+		}
+	});
+
+	// DISABLED pending visual review: filter 5 (label-vs-placed-witness)
+	// was removed in Dimension_Placement.ts; this test still pins its
+	// behaviour. If the filter is reinstated, drop the .skip.
+	it.skip('rejects with name label-vs-placed-witness when a placed witness passes within 15 px of the label rect', () => {
+		const in_ = { ...base(),
+			placed_witness_segments: [[{ x: 200, y: 215 }, { x: 200, y: 300 }] as [{ x: number; y: number }, { x: number; y: number }]] };
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('label-vs-placed-witness');
+			expect(r.shortfall_px).toBeCloseTo(7, 6);  // 15 - 8
+		}
+	});
+
+	it('rejects with name label-vs-placed-dim when a placed dim line passes within 15 px of the label rect', () => {
+		const in_ = { ...base(),
+			placed_dim_segments: [[{ x: 100, y: 215 }, { x: 300, y: 215 }] as [{ x: number; y: number }, { x: number; y: number }]] };
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('label-vs-placed-dim');
+			expect(r.shortfall_px).toBeCloseTo(7, 6);  // 15 - 8
+		}
+	});
+
+	it('rejects with name own-anchor-vs-placed when a candidate anchor sits within 15 px of a placed label rect (label rect itself is clear)', () => {
+		// Placed rect's right edge is exactly 15 px from the candidate label
+		// (label rect distance check passes at 15) but only 5 px from the
+		// candidate anchor — so own-anchor-vs-placed fires.
+		const in_ = { ...base(),
+			placed_label_rects: [{ x_min: 155, x_max: 165, y_min: 195, y_max: 205 }] };
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('own-anchor-vs-placed');
+		}
+	});
+
+	it('rejects with name own-dim-vs-placed when the dim line passes within 15 px of a placed label rect (label rect and anchors are clear)', () => {
+		// Long dim line so anchors are far from the obstacle. Obstacle sits
+		// just below the dim line beyond the candidate label — close enough
+		// for the dim line to fail by 9 px short, but x-clear of the label
+		// rect by 20 px.
+		const in_ = { ...base(),
+			candidate_anchor_1 : { x: 50, y: 200 },
+			candidate_anchor_2 : { x: 350, y: 200 },
+			placed_label_rects: [{ x_min: 240, x_max: 280, y_min: 209, y_max: 217 }] };
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('own-dim-vs-placed');
+			expect(r.shortfall_px).toBeCloseTo(6, 6);  // 15 - 9
+		}
+	});
+
+	it('rejects with name own-witness-convergence when the two witness lines come within 15 px of each other', () => {
+		const in_ = { ...base(),
+			candidate_edge_p2_screen: { x: 180, y: 250 },
+			candidate_anchor_2      : { x: 180, y: 200 },
+			candidate_label_rect    : { x_min: 175, x_max: 215, y_min: 193, y_max: 207 } };
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('own-witness-convergence');
+			expect(r.shortfall_px).toBeCloseTo(5, 6);  // 15 - 10
+		}
+	});
+
+	it('lists exactly the five label-rectangle filters as slide-eligible', () => {
+		expect(SLIDE_ELIGIBLE_FILTERS.has('silhouette')).toBe(true);
+		expect(SLIDE_ELIGIBLE_FILTERS.has('label-vs-label')).toBe(true);
+		expect(SLIDE_ELIGIBLE_FILTERS.has('label-vs-placed-anchor')).toBe(true);
+		expect(SLIDE_ELIGIBLE_FILTERS.has('label-vs-placed-witness')).toBe(true);
+		expect(SLIDE_ELIGIBLE_FILTERS.has('label-vs-placed-dim')).toBe(true);
+		expect(SLIDE_ELIGIBLE_FILTERS.has('own-anchor-vs-placed')).toBe(false);
+		expect(SLIDE_ELIGIBLE_FILTERS.has('own-dim-vs-placed')).toBe(false);
+		expect(SLIDE_ELIGIBLE_FILTERS.has('own-witness-convergence')).toBe(false);
+	});
+
+	it('sliding the label by the reported shortfall plus one pixel makes the candidate pass — simulating the slide-and-retry branch', () => {
+		// Long dim line so anchors are far from the obstacle. Obstacle is a
+		// placed label rect at (230-270, 215-229): just to the right of and
+		// below the candidate label, far enough from the dim line and both
+		// anchors to clear those filters. Distance from candidate label rect
+		// to placed = sqrt(100 + 64) ≈ 12.81; shortfall ≈ 2.19. Sliding LEFT
+		// along the dim line by 3.19 px clears the 15 px requirement.
+		const in_ = { ...base(),
+			candidate_anchor_1 : { x: 170, y: 200 },
+			candidate_anchor_2 : { x: 470, y: 200 },
+			placed_label_rects: [{ x_min: 230, x_max: 270, y_min: 215, y_max: 229 }] };
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('label-vs-label');
+			const shift = r.shortfall_px + 1;
+			const shifted_rect = {
+				x_min: in_.candidate_label_rect.x_min - shift,
+				x_max: in_.candidate_label_rect.x_max - shift,
+				y_min: in_.candidate_label_rect.y_min,
+				y_max: in_.candidate_label_rect.y_max,
+			};
+			const retry = evaluate_clearances({ ...in_, candidate_label_rect: shifted_rect });
+			expect(retry.ok).toBe(true);
+		}
+	});
+});
+
+describe('Dimension_Placement — min_distance_between_segments_2d', () => {
+	it('zero when the two segments cross', () => {
+		const a1 = { x: 0, y: 0 };
+		const a2 = { x: 10, y: 10 };
+		const b1 = { x: 0, y: 10 };
+		const b2 = { x: 10, y: 0 };
+		expect(min_distance_between_segments_2d(a1, a2, b1, b2)).toBeCloseTo(0, 6);
+	});
+
+	it('equals the parallel gap when both segments run side by side', () => {
+		const a1 = { x: 0, y: 0 };
+		const a2 = { x: 100, y: 0 };
+		const b1 = { x: 0, y: 7 };
+		const b2 = { x: 100, y: 7 };
+		expect(min_distance_between_segments_2d(a1, a2, b1, b2)).toBeCloseTo(7, 1);
+	});
+
+	it('equals the closest endpoint pair when the segments are well separated', () => {
+		const a1 = { x: 0, y: 0 };
+		const a2 = { x: 5, y: 0 };
+		const b1 = { x: 15, y: 0 };  // 10 px to the right of a2
+		const b2 = { x: 20, y: 0 };
+		expect(min_distance_between_segments_2d(a1, a2, b1, b2)).toBeCloseTo(10, 6);
+	});
+
+	it('returns the perpendicular gap exactly for long parallel segments — closed form, no sampling error', () => {
+		// Two parallel segments, each 1000 pixels long, gap of 7 pixels.
+		const a1 = { x: 0, y: 0 };
+		const a2 = { x: 1000, y: 0 };
+		const b1 = { x: 0, y: 7 };
+		const b2 = { x: 1000, y: 7 };
+		expect(min_distance_between_segments_2d(a1, a2, b1, b2)).toBeCloseTo(7, 6);
+	});
+
+	it('catches a near-touch that the old eleven-sample method would miss', () => {
+		// First segment is 1000 long horizontally; second is a short vertical
+		// dipping down to within 3 px of the first, centred at x=500. The old
+		// sampling at every 100 px would never sample exactly x=500 and would
+		// miss the close point. Closed form catches it.
+		const a1 = { x: 0, y: 0 };
+		const a2 = { x: 1000, y: 0 };
+		const b1 = { x: 500, y: 3 };
+		const b2 = { x: 500, y: 50 };
+		expect(min_distance_between_segments_2d(a1, a2, b1, b2)).toBeCloseTo(3, 6);
+	});
+});
+
+describe('Dimension_Placement — distance_point_to_segment_2d', () => {
+	it('zero when the point is on the segment', () => {
+		const a = { x: 0, y: 0 };
+		const b = { x: 10, y: 0 };
+		const p = { x: 5, y: 0 };
+		expect(distance_point_to_segment_2d(p, a, b)).toBeCloseTo(0, 6);
+	});
+
+	it('perpendicular distance when the projection lands inside the segment', () => {
+		const a = { x: 0, y: 0 };
+		const b = { x: 10, y: 0 };
+		const p = { x: 5, y: 4 };
+		expect(distance_point_to_segment_2d(p, a, b)).toBeCloseTo(4, 6);
+	});
+
+	it('distance to the nearer endpoint when the projection lands past the segment', () => {
+		const a = { x: 0, y: 0 };
+		const b = { x: 10, y: 0 };
+		const p = { x: 20, y: 4 };
+		// closest point is endpoint b at (10, 0); gap = hypot(10, 4) ≈ 10.77
+		expect(distance_point_to_segment_2d(p, a, b)).toBeCloseTo(Math.hypot(10, 4), 6);
+	});
+
+	it('point-to-endpoint distance when the segment is degenerate', () => {
+		const a = { x: 5, y: 5 };
+		const b = { x: 5, y: 5 };
+		const p = { x: 5, y: 9 };
+		expect(distance_point_to_segment_2d(p, a, b)).toBeCloseTo(4, 6);
+	});
+});
+
+describe('Dimension_Placement — segments_intersect_2d', () => {
+	it('true when segments cross', () => {
+		expect(segments_intersect_2d({ x: 0, y: 0 }, { x: 10, y: 10 }, { x: 0, y: 10 }, { x: 10, y: 0 })).toBe(true);
+	});
+
+	it('false when segments are parallel', () => {
+		expect(segments_intersect_2d({ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 0, y: 5 }, { x: 10, y: 5 })).toBe(false);
+	});
+
+	it('false when segments would cross only if extended past their endpoints', () => {
+		expect(segments_intersect_2d({ x: 0, y: 0 }, { x: 5, y: 5 }, { x: 6, y: 0 }, { x: 7, y: 7 })).toBe(false);
 	});
 });
 

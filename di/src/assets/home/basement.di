@@ -1395,12 +1395,12 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": "well beam.s"
-            },
-            "extent": {
               "formula": "stair beam.e"
             },
-            "length": -911.2249999999995,
+            "extent": {
+              "formula": "well beam.s"
+            },
+            "length": 911.2249999999995,
             "angle": 0
           },
           "invariant": 2
@@ -1441,12 +1441,12 @@
         "y": {
           "attributes": {
             "origin": {
-              "formula": "well beam.s"
-            },
-            "extent": {
               "formula": "stair beam.e"
             },
-            "length": -911.2249999999995,
+            "extent": {
+              "formula": "well beam.s"
+            },
+            "length": 911.2249999999995,
             "angle": 0
           },
           "invariant": 2
@@ -2236,13 +2236,13 @@
         "y": {
           "attributes": {
             "origin": {
-              "value": 1828.8000000000002,
+              "value": 1828.799755859346,
               "is_locked": true
             },
             "extent": {
               "formula": "main.outer post.s"
             },
-            "length": 3657.6000000000004,
+            "length": 3657.6002441406545,
             "angle": 0
           },
           "invariant": 2
@@ -2471,7 +2471,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 1602.19775390625,
+            "extent": 1524,
             "length": {
               "value": 1524,
               "is_locked": true
@@ -2658,7 +2658,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "di4f47c5b00ca8ff",
-    "selected_face": 1
+    "selected_id": "di924c72b6770461",
+    "selected_face": 5
   }
 }

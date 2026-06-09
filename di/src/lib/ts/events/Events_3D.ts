@@ -74,6 +74,7 @@ class Events_3D {
 					canvas.style.cursor = 'grab';
 					hits_3d.hover = null;
 					hits_3d.hovered_dimension = null;
+					hits_3d.hovered_uniface_pick = null;
 				} else {
 					const hit = hits_3d.hit_test(point, e.altKey);
 
@@ -92,10 +93,12 @@ class Events_3D {
 
 					// Track the dimension under the cursor so the renderer can
 					// bold its text and thicken its dimension and witness lines.
+					// Uniface-line hits set this store themselves inside the
+					// hits system, so do not clear it here on that branch.
 					if (hit?.type === T_Hit_3D.dimension) {
 						const dim_rect = dimensions.hit_test(point.x, point.y);
-						hits_3d.hovered_dimension = dim_rect ? { so: dim_rect.so, axis: dim_rect.axis } : null;
-					} else {
+						hits_3d.hovered_dimension = dim_rect ? { so: dim_rect.so, axis: dim_rect.axis, witness_index: dim_rect.witness_index } : null;
+					} else if (hit?.type !== T_Hit_3D.uniface_line) {
 						hits_3d.hovered_dimension = null;
 					}
 				}

@@ -345,3 +345,7 @@
 - [x] display the current quot in the status strip, when not showing something else
 - [x] describe the complete dimensionals placement algorithm -> guides/architecture/graph/dimensionals.md
 - [x] make a new rules folder inside development
+- [x] proceed with dimensionals.work, record progress in handoff
+- [x] begin work on dimensions/[[uniface rules]]
+    - [x] what is missing?
+    - [x] proposal for transition

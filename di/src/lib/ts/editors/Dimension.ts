@@ -1,19 +1,19 @@
 import type { Dimension_Rect, S_SO } from '../types/Interfaces';
-import type { Axis_Name } from '../types/Types';
-
-interface S_Dimensions extends S_SO {
-	axis: Axis_Name;
-	formatted: string;
-}
 import { constraints, compiler, evaluator } from '../algebra';
-import { history } from '../managers/History';
-import { units, Units } from '../types/Units';
 import { T_Units, T_Editing } from '../types/Enumerations';
 import { stale_writable } from '../common/Dirty';
-import { get } from 'svelte/store';
+import type { Axis_Name } from '../types/Types';
+import { history } from '../managers/History';
+import { units, Units } from '../types/Units';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
 import { render } from '../render/Render';
+import { get } from 'svelte/store';
+
+interface S_Dimensions extends S_SO {
+	formatted: string;
+	axis: Axis_Name;
+}
 
 class Dimensions {
 	w_s_dimensions = stale_writable<S_Dimensions | null>(null);

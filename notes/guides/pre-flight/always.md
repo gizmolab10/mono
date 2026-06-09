@@ -23,3 +23,4 @@
 21. **Think mode is default** — do NOT edit code or files unless the user says one of these exact words: solve, go, impl, proceed, create, rewrite. Default is think/show/discuss/propose
 22. *(enforced by hook)* ~~precheck first~~
 23. **Read the project's own always file** — when working in a project, also read its always file (for example, di's at `di/notes/guides/pre-flight/always.md`). Each project's always file lives in the same relative path as the global one.
+24. **Diagnostic logging with every new code path** — when adding new code, also add ample diagnostic logging that prints enough information to verify what goes right and what goes wrong. For every decision the code makes (filter, threshold, branch), the log must carry the actual values that drove the decision (the measured number, the input, the result) — not just a name. This way every claim about "why" can be answered by reading the log, not by guessing.

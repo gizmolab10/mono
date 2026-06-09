@@ -10,7 +10,10 @@ import { angulars } from '../editors/Angular';
 import { Point } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
 import { camera } from '../render/Camera';
+import { distance_point_to_segment_2d, get_last_uniface_placement } from '../render/Dimension_Placement';
 import { get } from 'svelte/store';
+
+export type Uniface_Pick_Entry = ReturnType<typeof get_last_uniface_placement>['picks'][number];
 
 export interface Hit_3D_Result {
 	so: Smart_Object;
@@ -38,10 +41,21 @@ class Hits_3D {
 
 	// The dimension under the cursor (smart object + axis), so the renderer can
 	// bold the text and thicken the dimension and witness lines for that one.
-	w_hovered_dimension = stale_writable<{ so: Smart_Object; axis: Axis_Name } | null>(null);
+	// witness_index is one-based; only the uniface-line hover sets it; the
+	// old-path dimension hover leaves it undefined.
+	w_hovered_dimension = stale_writable<{ so: Smart_Object; axis: Axis_Name; witness_index?: number } | null>(null);
 
-	get hovered_dimension(): { so: Smart_Object; axis: Axis_Name } | null { return get(this.w_hovered_dimension); }
-	set hovered_dimension(d: { so: Smart_Object; axis: Axis_Name } | null) { this.w_hovered_dimension.set(d); }
+	get hovered_dimension(): { so: Smart_Object; axis: Axis_Name; witness_index?: number } | null { return get(this.w_hovered_dimension); }
+	set hovered_dimension(d: { so: Smart_Object; axis: Axis_Name; witness_index?: number } | null) { this.w_hovered_dimension.set(d); }
+
+	// The uniface-path pick whose dim line OR witness lines lie within 3
+	// pixels of the cursor. Set by hit_test on every mouse-move; read by
+	// the dimension renderer to draw the matched pick's three lines and
+	// the measured part's outline in red.
+	w_hovered_uniface_pick = stale_writable<Uniface_Pick_Entry | null>(null);
+
+	get hovered_uniface_pick(): Uniface_Pick_Entry | null { return get(this.w_hovered_uniface_pick); }
+	set hovered_uniface_pick(p: Uniface_Pick_Entry | null) { this.w_hovered_uniface_pick.set(p); }
 
 	get_projected(scene_id: string): Projected[] | undefined {
 		return this.cache.get(scene_id)?.projected;
@@ -57,6 +71,7 @@ class Hits_3D {
 		this.cache.clear();
 		this.w_hover.set(null);
 		this.w_hovered_dimension.set(null);
+		this.w_hovered_uniface_pick.set(null);
 		selection.current = null;
 	}
 
@@ -101,6 +116,14 @@ class Hits_3D {
 
 	hit_test(point: Point, option_down: boolean = false): Hit_3D_Result | null {
 		const selected_so = selection.current?.so ?? null;
+
+		// Evaluate uniface-line proximity FIRST so the renderer's red
+		// highlight store is updated on every hover regardless of what
+		// the rest of the hit-test returns. Otherwise a dim or angle
+		// short-circuit below leaves a stale uniface-pick in the store
+		// and the previous hover target never un-hovers.
+		const uniface_hit = stores.show_dimensionals ? this.test_uniface_lines(point) : null;
+		this.w_hovered_uniface_pick.set(uniface_hit);
 
 		// Dimension / angle labels win over everything (corners, edges, faces)
 		if (stores.show_dimensionals) {
@@ -164,7 +187,23 @@ class Hits_3D {
 			}
 		}
 
-		if (stack.length === 0) return null;
+		if (stack.length === 0) {
+			// Nothing in the SO stack — fall back to the uniface line hit
+			// (if any). This is the LAST resort, so an SO under the cursor
+			// always wins over the dim/witness lines that float around it.
+			if (uniface_hit) {
+				const so_for_hit = this.objects.find(o => o.id === uniface_hit.so_id) ?? null;
+				if (so_for_hit) {
+					this.w_hovered_dimension.set({
+						so: so_for_hit,
+						axis: uniface_hit.axis,
+						witness_index: uniface_hit.pick.witness_index,
+					});
+					return { so: so_for_hit, type: T_Hit_3D.uniface_line, index: 0 };
+				}
+			}
+			return null;
+		}
 		stack.sort((a, b) => a.z - b.z);
 
 		if (selected_so) {
@@ -174,15 +213,41 @@ class Hits_3D {
 		return stack[0].result;
 	}
 
+	/** Finds the closest uniface-path pick whose dim line or either witness
+	 *  line lies within three pixels of the given point. Returns the
+	 *  matched pick entry, or null when nothing is within reach. The test
+	 *  treats each line as a fat segment three pixels wide. */
+	private test_uniface_lines(point: Point): Uniface_Pick_Entry | null {
+		const result = get_last_uniface_placement();
+		if (result.picks.length === 0) return null;
+		const cursor = { x: point.x, y: point.y };
+		const HIT_RADIUS_PX = 10;
+		let best: Uniface_Pick_Entry | null = null;
+		let best_dist = Infinity;
+		for (const entry of result.picks) {
+			const p = entry.pick;
+			if (p.uniface === null) continue;
+			if (!p.edge_p1_screen || !p.edge_p2_screen) continue;
+			if (!p.anchor_1_screen || !p.anchor_2_screen) continue;
+			const d_dim = distance_point_to_segment_2d(cursor, p.anchor_1_screen, p.anchor_2_screen);
+			const d_w1  = distance_point_to_segment_2d(cursor, p.edge_p1_screen, p.anchor_1_screen);
+			const d_w2  = distance_point_to_segment_2d(cursor, p.edge_p2_screen, p.anchor_2_screen);
+			const d = Math.min(d_dim, d_w1, d_w2);
+			if (d < best_dist) { best_dist = d; best = entry; }
+		}
+		if (best === null || best_dist > HIT_RADIUS_PX) return null;
+		return best;
+	}
+
 	// Convert corner/edge hit to best face for hover
 	hit_to_face(hit: Hit_3D_Result): Hit_3D_Result | null {
 		if (hit.type === T_Hit_3D.face) return hit;
 		if (!hit.so.scene) return null;
 
-		// Dimension and angle hits don't point to a specific face — pick the
-		// front-most face of the smart object so the hover state still drives
-		// the smart object highlight and the name popup.
-		if (hit.type === T_Hit_3D.dimension || hit.type === T_Hit_3D.angle) {
+		// Dimension, angle, and uniface-line hits don't point to a specific
+		// face — pick the front-most face of the smart object so the hover
+		// state still drives the smart object highlight and the name popup.
+		if (hit.type === T_Hit_3D.dimension || hit.type === T_Hit_3D.angle || hit.type === T_Hit_3D.uniface_line) {
 			const face = this.front_most_face(hit.so);
 			return face >= 0 ? { so: hit.so, type: T_Hit_3D.face, index: face } : null;
 		}

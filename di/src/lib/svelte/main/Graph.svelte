@@ -189,7 +189,7 @@
 				class='name-popup'
 				style:left='{$w_mouse_location.x + 12}px'
 				style:top='{$w_mouse_location.y + 12}px'>
-				{path}{$w_hovered_dimension ? `${path ? '.' : ''}${axis_label[$w_hovered_dimension.axis]} (${$w_hovered_dimension.axis})` : ''}
+				{path}{$w_hovered_dimension ? `${path ? '.' : ''}${axis_label[$w_hovered_dimension.axis]} (${$w_hovered_dimension.axis}${$w_hovered_dimension.witness_index !== undefined ? `, ${$w_hovered_dimension.witness_index}` : ''})` : ''}
 			</div>
 		{/if}
 		{#if $w_s_dimensions}

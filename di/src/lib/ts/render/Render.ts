@@ -37,59 +37,60 @@ const ALWAYS_REDRAW = false;
 const USE_POOLED_CLIPPER = true;
 
 interface RichInterval {
-	a: number;
-	b: number;
 	a_cause: OccFaceRef;
 	b_cause: OccFaceRef;
 	a_poly_edge: number;
 	b_poly_edge: number;
+	a: number;
+	b: number;
 }
 
 interface ClipInterval {
-	start: Pt; end: Pt;
-	start_cause: OccFaceRef;  // null = original endpoint (corner)
-	end_cause: OccFaceRef;    // null = original endpoint (corner)
 	start_poly_edge?: number; // polygon edge index where visibility starts
+	start_cause: OccFaceRef;  // null = original endpoint (corner)
 	end_poly_edge?: number;   // polygon edge index where visibility ends
+	end_cause: OccFaceRef;    // null = original endpoint (corner)
+	start: Pt; end: Pt;
 }
 
 interface ComputedEdgeSeg {
+	endpoint_keys: [string, string][];  // per visible clip: [start_key, end_key]
+	visible: [Pt, Pt][];
 	edge_key: string;
 	so: string;
-	visible: [Pt, Pt][];
-	endpoint_keys: [string, string][];  // per visible clip: [start_key, end_key]
 }
 
 interface ComputedIntersectionSeg {
-	visible: [Pt, Pt][];
-	endpoint_keys: [string, string][];
-	color: string;
-	so_a: string;  face_a: number;  // first face
-	so_b: string;  face_b: number;  // second face
 	/** Which SO edge the unclipped intersection line starts/ends on. */
 	start_on_edge?: { so: string; edge_key: string; t: number };
 	end_on_edge?: { so: string; edge_key: string; t: number };
+	so_b: string;  face_b: number;  // second face
+	so_a: string;  face_a: number;  // first face
+	endpoint_keys: [string, string][];
+	visible: [Pt, Pt][];
+	color: string;
 }
 
 interface ComputedEndpoint {
-	key: string;
 	id: EndpointID;
-	screen: Pt;
+	key: string;
 	world: vec3;
+	screen: Pt;
 }
 
 class Render {
-	private topology_simple = new Topology();
 	private topology_endpoints = new Map<string, { key: string; id: EndpointID; screen: { x: number; y: number }; world: vec3 }>();
 	private topology_edge_segments = new Map<string, { edge_key: string; so: string; visible: [{ x: number; y: number }, { x: number; y: number }][]; endpoint_keys: [string, string][] }[]>();
 	private topology_intersection_segments: { visible: [{ x: number; y: number }, { x: number; y: number }][]; endpoint_keys: [string, string][]; color: string; so_a: string; face_a: number; so_b: string; face_b: number }[] = [];
 	private topology_occluding_segments: { so: string; face: number; screen: [{ x: number; y: number }, { x: number; y: number }]; endpoint_keys: [string, string] }[] = [];
-	// static _clip_debug = false;
 	private occluding_index: Flatbush | null = null;  /** Spatial index for screen-space face bounding boxes (rebuilt each frame). */
-	ctx!: CanvasRenderingContext2D;
-	private mvp_matrix = mat4.create();
 	private cached_world: mat4 | null = null;  /** Last world matrix passed to project_vertex (by reference). */
+	private topology_simple = new Topology();
+	private mvp_matrix = mat4.create();
 	private cached_mvp = mat4.create();        /** MVP computed from cached_world — reused when world matrix hasn't changed. */
+	// static _clip_debug = false;
+	private _phase_t0 = 0;
+	private _phase_label = '';
 
 	/** World matrix for each object in the current frame, keyed by object id.
 	 *  Filled on first request, reused on every subsequent request within the
@@ -97,17 +98,11 @@ class Render {
 	 *  rebuilds against the current camera and scene state. */
 	private world_matrix_cache = new Map<string, mat4>();
 
-	/** Per-render time spent in each labeled phase. Cleared at the top of
-	 *  render(); filled by _phase() markers; consumed by the engine's
-	 *  per-second summary. */
-	last_render_phase_times = new Map<string, number>();
-	/** Per-render counters — integer tallies set inside the render (e.g. how
-	 *  many object pairs survived each filter in the intersection loop).
-	 *  Cleared at the top of render(); consumed by the engine's per-second
-	 *  summary as averages over the window. */
-	last_render_counters = new Map<string, number>();
-	private _phase_t0 = 0;
-	private _phase_label = '';
+	/** Same lifecycle as world_matrix_cache but holds the world matrix WITHOUT
+	 *  the root tumble applied. Used by the silhouette-box builder so the
+	 *  bounding box sits in the static room frame and tumbles with the scene
+	 *  when projected through the camera. */
+	private static_world_matrix_cache = new Map<string, mat4>();
 
 	/** Two ping-pong scratch arrays of preallocated interval records for the
 	 *  pooled edge-vs-face clipper. Slots are created lazily and reused across
@@ -157,6 +152,17 @@ class Render {
 	 *  the flag. Walked on reset so hot-module-reload doesn't pile up
 	 *  duplicate subscriptions across reloads. */
 	private stale_subs: Array<() => void> = [];
+
+	ctx!: CanvasRenderingContext2D;
+	/** Per-render time spent in each labeled phase. Cleared at the top of
+	 *  render(); filled by _phase() markers; consumed by the engine's
+	 *  per-second summary. */
+	last_render_phase_times = new Map<string, number>();
+	/** Per-render counters — integer tallies set inside the render (e.g. how
+	 *  many object pairs survived each filter in the intersection loop).
+	 *  Cleared at the top of render(); consumed by the engine's per-second
+	 *  summary as averages over the window. */
+	last_render_counters = new Map<string, number>();
 
 	/** Mark the canvas as possibly out of date. Callers should invoke this
 	 *  whenever they change something that affects what the canvas shows. */
@@ -355,6 +361,7 @@ class Render {
 		this.angular_rects = [];
 		this.cached_world = null;  // invalidate MVP cache (camera may have moved)
 		this.world_matrix_cache.clear();  // per-frame world-matrix memo starts fresh
+		this.static_world_matrix_cache.clear();
 
 		const all_objects = scene.get_all();
 		this.update_camera_view_extent(all_objects);
@@ -855,32 +862,55 @@ class Render {
 		// is identical across the several passes that ask for it in one frame.
 		const cached = this.world_matrix_cache.get(obj.id);
 		if (cached) return cached;
+		const m = this.build_world_matrix(obj, true);
+		this.world_matrix_cache.set(obj.id, m);
+		return m;
+	}
 
+	/** Same as get_world_matrix but omits the root tumble (the camera-driven
+	 *  rotation stored at the root via stores.current_orientation()). Children
+	 *  still rotate by their own per-part orientation. Used by the silhouette-
+	 *  box builder so the bounding box sits in the static room frame and
+	 *  tumbles with the scene when projected through get_world_matrix output. */
+	get_static_world_matrix(obj: O_Scene): mat4 {
+		const cached = this.static_world_matrix_cache.get(obj.id);
+		if (cached) return cached;
+		const m = this.build_world_matrix(obj, false);
+		this.static_world_matrix_cache.set(obj.id, m);
+		return m;
+	}
+
+	private build_world_matrix(obj: O_Scene, root_tumble: boolean): mat4 {
 		const so = obj.so;
 		const center: vec3 = [
 			(so.x_min + so.x_max) / 2,
 			(so.y_min + so.y_max) / 2,
 			(so.z_min + so.z_max) / 2,
 		];
-		// Root: tumble only (from store). Child: so.orientation (tumble inherited via parent).
-		const orientation = obj.parent ? so.orientation : stores.current_orientation();
 
-		// Move SO center to origin, rotate, then:
-		//   Root: scale + position (center stays at origin for screen centering)
-		//   Child: translate back (rotate around own center in parent space)
 		const local = mat4.create();
 		mat4.fromTranslation(local, [-center[0], -center[1], -center[2]]);
-		const rot = mat4.create();
-		mat4.fromQuat(rot, orientation);
-		mat4.multiply(local, rot, local);
 
 		if (obj.parent) {
-			// Child: uncenter so rotation is around own center within parent space
+			// Child: always rotate by its own per-part orientation.
+			const rot = mat4.create();
+			mat4.fromQuat(rot, so.orientation);
+			mat4.multiply(local, rot, local);
+			// Uncenter so the rotation pivots around the part's own center
+			// in parent space.
 			const from_center = mat4.create();
 			mat4.fromTranslation(from_center, center);
 			mat4.multiply(local, from_center, local);
 		} else {
-			// Root: keep center at origin → scale around origin → position (for pan)
+			// Root: rotate by the tumble ONLY when root_tumble is true. The
+			// static variant skips this step so its output sits in the
+			// static room frame.
+			if (root_tumble) {
+				const rot = mat4.create();
+				mat4.fromQuat(rot, stores.current_orientation());
+				mat4.multiply(local, rot, local);
+			}
+			// Root: keep center at origin → scale around origin → position (for pan).
 			const s = stores.current_scale;
 			const scale_mat = mat4.create();
 			mat4.fromScaling(scale_mat, [s, s, s]);
@@ -892,11 +922,12 @@ class Render {
 		mat4.multiply(local, pos_mat, local);
 
 		if (obj.parent) {
-			const parent_world = this.get_world_matrix(obj.parent);
+			const parent_world = root_tumble
+				? this.get_world_matrix(obj.parent)
+				: this.get_static_world_matrix(obj.parent);
 			mat4.multiply(local, parent_world, local);
 		}
 
-		this.world_matrix_cache.set(obj.id, local);
 		return local;
 	}
 

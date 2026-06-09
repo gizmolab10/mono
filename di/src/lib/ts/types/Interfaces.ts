@@ -36,6 +36,10 @@ export interface S_Name extends S_SO {
 // axis = which dimension (x/y/z) this label measures.
 export interface Dimension_Rect extends Label_Rect {
 	axis: Axis_Name;
+	/** One-based witness index of the uniface this dimension's dim line
+	 *  sits on, when the new-path renderer produced it. Old-path picks
+	 *  leave this undefined. Surfaced in the hover popup. */
+	witness_index?: number;
 }
 
 export interface Angle_Rect extends Label_Rect {

@@ -4,6 +4,111 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-06-09 — uniface phase 2 step 3 finished
+
+Step 3 of the uniface transition went from "search built" to "feature complete" across this multi-day window. Visual review on the last image of the day signed off as "perfect," so the substep that was waiting on visual confirmation (3f) closed too. The full set of dim lines, witness lines, arrowheads, label text, label-vs-everything clearance, and hover behaviour now runs on the new path behind the flag.
+
+**Search (3a).** The four-degree-of-freedom search per rule 19 runs every render: per (part, axis), for every (edge, uniface direction, witness index, label position) tuple, the seven hard filters run in order with early exit, then survivors score on between-the-witnesses bonus, parabolic centring penalty, witness-length penalty, percent-of-witness-inside-the-silhouette penalty, and world-distance-to-uniface penalty. Slide-and-retry recovers a candidate that just misses on a position-sensitive filter.
+
+**Cap removal (3b).** The two-hundred-pixel witness-length cap that lived in the old path is not applied on the new path. Interior parts can reach the uniface at any length.
+
+**Renderer (3c).** Each pick draws the two witness lines, the dim line (in blue), the arrowheads, and the white-boxed dim number text. Hover highlights everything belonging to the hovered part in red and the hovered part's own outline draws on top.
+
+**Filters ported (3d).** Repeater filter, duplicate-text drop, off-canvas drop, no-viable-pair drop — all ported. Parts are walked alphabetically so the duplicate-text tiebreak is deterministic.
+
+**Label text + renderer refinements (3e).** White-boxed dim number sits centred on the dim line at the chosen position. The arrowhead tip always touches the witness line at the anchor. Each side of the dim line independently decides whether its arrow needs to flip outward (the trigger is "an inside arrow at this anchor would not fit between the label box and the witness line, measured along the dim direction"). A flipped side draws a twenty-pixel extension outside its witness and the arrow points outward along it; the inside half of the dim line on that side is dropped. If at the algorithm's chosen position the label fully covers an arrowhead, the placement search slides the label past that witness BEFORE running the cross-label clearance check, so two labels that would have slid into each other no longer survive. The slid case also gets a connector dim line from the extension's outer end to the label's near edge. The label is registered with the existing hit-test list so hovering on the number box turns the whole dim red and surfaces the popup, same as hovering on a dim or witness line or the part itself. The popup parentheses now include the witness index alongside the axis id.
+
+**Witness-index vote (3g).** A pre-loop sweep records per (part, axis, direction, witness index) whether at least one position passes the candidate-vs-itself and candidate-vs-silhouette filters. Per direction, the two witness indices with the longest viable-part lists win that direction; the main placement loop skips any cell whose witness index lost. The vote is order-independent — it uses self-only filters during the sweep, with the cross-part filters running during the main loop.
+
+**Diagnostic logging.** Every per-direction count, every drop reason, every vote skip ends up in the dispatcher log at `/Users/sand/GitHub/mono/logs/dimensionals.log`. Truncated on first render of each session, appended thereafter. The same file is the source for explaining any "why was this dim placed/rejected here" question in future sessions.
+
+**Bug fixes during the window.**
+
+- The hover store for the uniface pick was not cleared when the cursor moved onto a label. Moving the uniface-pick lookup to the top of the hit-test so every mouse move updates it before any short-circuit return.
+- The renderer used to do the label-slide check; the placement search did not. Two labels could pass the cross-label clearance check at their natural positions and then collide once the renderer slid them. Moved the slide into placement at the position-evaluation step so the cross-label check sees the final rectangle.
+- The per-side flip check used screen-axis rectangle padding, which missed diagonal cases. Switched to a projection along the dim line: the anchor must sit at least half-label-width + 2 + arrow-length away from the label centre along the dim direction.
+- Filter 5 (label vs every previously placed witness line) was disabled at Jonathan's call pending visual review — the unit test for it stays as a skipped placeholder.
+
+**Where it sits.** Step 3 marked DONE in the proposal. Step 4 (rotated parts) is the next phase 2 chunk. Tests: 903 pass, 1 skipped (filter 5), 31 pending (rule 18 + rule 19 placeholders waiting on per-rule unit tests).
+
+---
+
+## Session — 2026-06-03 — silhouette + uniface diagnostic, asymmetric exclusion, group-B gating
+
+Phase 2 of the uniface transition advanced through several pieces, with two real bug fixes along the way.
+
+**Step 1b — diagnostic draw of the silhouette box and the three nested uniface boxes.** The silhouette box draws as a red wireframe (twelve edges of the world-axis-aligned bounding box around every rendered part). The three nested uniface boxes draw on top, one box outline per witness level. Two boolean toggles at the top of the drawing block control whether kept faces (solid blue) and excluded faces (dashed grey) are drawn — current settings: excluded on, kept off. The diagnostic only runs when the new-path toggle is on; the old path is unaffected.
+
+**Static-frame fix for the silhouette box.** The first version of the silhouette box rotated with the screen instead of with the scene. The cause: the part transforms in this codebase already include the tumble at the root, so the corners passed to the bounding-box code were in a rotated-by-tumble frame. The fix added a second world-matrix variant — one without the root tumble — and used it to gather corners. The diagnostic then projects those static-frame corners through a "tumble matrix" (the difference between the full and static root matrices) so they appear on screen in the correct rotated position. Implementation: a new public method on the renderer for the static matrix, with its own per-frame cache, and a helper at the top of the placement file that builds the tumble matrix from the difference between the two root matrices. The silhouette box now sits in the static room and tumbles with the parts.
+
+**Camera-axis filter rewritten.** The exclusion test previously used the camera's looking direction in the camera's own fixed frame; in this codebase the camera never moves (the world rotates instead), so the test always picked the same two opposite world faces regardless of view. The rewrite reads the camera-looking direction, rotates it backward by the current tumble to land in the room frame, and compares face normals to that. As the view changes, the set of excluded unifaces now tracks which faces actually point at the camera.
+
+**Asymmetric exclusion thresholds.** The placement code now uses two angles, not one. A uniface is rejected when its outward direction sits within twenty degrees of pointing straight AT the camera OR within forty-five degrees of pointing straight AWAY. The wider back tolerance reflects that even partly-back faces are hidden by the box itself, while only nearly-head-on front faces project to slivers. The unit test was rewritten to pin both thresholds on each side and the keep-zone in between. New constant added for the back angle.
+
+**Placement-output description restructure.** The per-pick record now holds a named inner block — the four placement choices the algorithm decides each render — separately from the identity fields (part, axis) that sit as siblings. The named block today carries only the chosen uniface; edge, witness index, and label position are added inside step 3a when the full search needs them.
+
+**Group B test gating.** All Group B tests skip when the new-path flag is on (`USE_UNIFACE_RULES=true yarn vitest` skips forty-one tests; default `yarn vitest` runs all eight hundred forty-one).
+
+**Renames.** The toggle method and the button id now use the same `_rules` suffix as the persisted flag.
+
+---
+
+## Session — 2026-06-02 — shop keeping, guide-corpus audit, and three new working rules
+
+A session devoted to keeping the active-work notes in shape and stepping back to look at the corpus of guides as a whole.
+
+**Active-work shuffle.** The handoff file had grown to twenty-plus completed proposals plus many unnumbered bug-fix sections built up over weeks. The completed content moved out: three consolidated session-window entries in the work journal cover the algorithm rewrite, the painter and parity gaps, and the uniface design capture. Four entries in the open-items file cover the four threads of work still ongoing — labels still inside the silhouette at two un-measured drawer orientations, the new canvas painter's open tail (geometry unit test and arrows-inside threshold), the coordinate-frame mixing audit (with the three escalating levels inlined), and the uniface implementation (which points at the uniface proposal as the blueprint). The handoff itself shrank to its header plus a current-focus line.
+
+**Salvaged content into the right homes.** The negative-zero canonicalization gotcha from the duplicate-text drop work moved into the project lessons file. The Playwright run prerequisites moved into a new note under the development guides folder. Three other handoff-only items (the cold-run-branch known-shortcut history, the implementation file-line references, the seventeen-constants list) were assessed as findable from the code itself and accepted as losses.
+
+**Shop keeping practice written down.** A new file at notes/guides/collaborate/shop keeping.md describes the practice in the abstract — what shop keeping does, when it matters, why notes are infrastructure — with the day's work on the uniface rules and the uniface proposal as the running case study.
+
+**Three new rules in the design-creation guide.** Rules added: quote the architect's compound terms intact (do not paraphrase to the bare head word); emotional reactions from the architect are problem reports, not redesign authority; any plan whose acceptance criterion is human visual inspection must state a rejection branch. All three came directly out of the trust crisis on 2026-06-01.
+
+**Guide-corpus audit.** Read every markdown file under the project's guides folder and ranked it as settled, partial, or thin. Result: 25 settled, 10 partial, 4 thin, plus ten structural gaps (topics a reader would expect a guide for but no file covers — context-compaction protocol, error-handling discipline, when-to-stop protocol, dependency management, session handoff, documentation-as-coordination level criteria, recovery from a misapplied guide, velocity-versus-depth trade-off, identifying the assistant's knowledge gaps, multi-project coherence). Two design-creation and migration files were found to have literal STOP markers mid-document where the author cut off — fillable in a focused session.
+
+Files touched:
+
+- The handoff file — trimmed to header plus current-focus line.
+- The work journal — three consolidated session-window entries inserted between 2026-05-29 and 2026-05-19, plus this entry at top.
+- The open-items file — four new entries added before the mothballed ones.
+- New notes/guides/collaborate/shop keeping.md (moved from di/notes/work/now/ to the project-wide guides folder).
+- The design-creation guide at notes/guides/collaborate/creating a design.md — three new rules added.
+- The project lessons file at di/notes/guides/development/learn/lessons.md — negative-zero pitfall appended.
+- New di/notes/guides/development/running e2e tests.md — Playwright run prerequisites.
+
+---
+
+## Session — 2026-06-01 — uniface code attempt, full revert, transition proposal rebuilt with structure
+
+A heavy session. The new uniface placement code was built through six rollout sub-steps and then fully reverted after visual confirmation showed the picture was far from what the spec was meant to produce. The lasting output of the day is a written transition proposal that future sessions can follow without inheriting the mistakes that made the revert necessary.
+
+**Code built and then reverted.** New helpers for the silhouette box and the per-uniface shifts. A picker that returns the closest uniface to the natural label position. A one-dimensional packer that slides same-axis labels along a shared uniface so their text rectangles do not overlap. Four filters ported from the old path (repeater filtering, duplicate-text drop, off-canvas drop, no-viable drop). A renderer that drew the dim line and witness lines in blue. The new pipeline produced visible dim lines on the canvas behind a toggle. Visual confirmation reported massive clutter, then later that the boxes looked axis-aligned in the wrong way for the camera angle. Several rounds of debugging followed; none closed the gap. The session ended with a full revert of the production code path back to before the new placement was wired in. The uniface helpers in the placement file and the placeholder unit tests are still on disk as reference material.
+
+**A trust crisis surfaced.** Handling of the visual feedback compounded an underlying coordinate-system confusion. An emotional reaction ("egads") got read as a design directive, and alternatives the user had not asked for were proposed. The phrase "the silhouette is screen-aligned" was put in the user's mouth — he had never said it that way. The collapse of his compound terms (silhouette box, silhouette rect, silhouette margin) into the bare word "silhouette" erased a distinction the lexicon spent care to make. The cost was hours of debugging time and a stated loss of trust. Working principles surfaced from the apology: the written spec governs over in-the-moment emotional signals; emotional signals point at problems but do not redesign; per-rule pasting of the relevant lexicon entry above any design statement is the forcing function against the bias that caused this.
+
+**Shorthand entries.** Two new entries on the running command list: "v" / "v:" means "visual report — the user just looked at the app; positive words 'good' / 'perfect' / 'done' are sign-off, anything else is criticism; 'egads' marks extreme disappointment and lost trust". And "egads" itself is on the list so the assistant cannot misread it again.
+
+**Compaction-resilient context.** A new PostCompact hook fires after the running conversation gets summarised and re-injects the contents of di/notes/work/refresh.md. The refresh file lists the two files the assistant must read on every fresh start: the uniface rules and the lexicon. So a session that runs long and gets compressed still reloads the spec verbatim before continuing.
+
+**Render-not-paint memory entry.** A standing memory rule bans "paint" / "painter" / "painting" in di in favour of "render" / "renderer" / "rendering" — in code, comments, test names, identifiers, and chat. A row added to the lexicon's banned-substitution table records the same rule.
+
+**Transition proposal rebuilt.** A long file at di/notes/work/dimensions/uniface proposal.md now holds the full plan. Preparation: persist the new-path flag through local storage; reconcile the related names. Phase 1: split surviving tests into Group A (pin the new spec) and Group B (revert candidates that pin abandoned algorithm pieces). Each group has a per-rule or per-line-range breakdown. Phase 2: numbered code steps 1 through 8, each with stated dependencies and exit criteria. Steps originally missing got added during a "do you find ambiguities" review pass: a renderer-wiring step for the dim-text labels (was implicit, now numbered as step 3f), a visual review pass after the default-flip (step 3h), sub-steps for the overlapping-rotated-parts case (steps 4a and 4b), an interactive-layer audit (step 5.5), and a future placeholder for a manual user override (step 8). A "considerations" section calls out eight gaps the proposal might leave a reader with; six were closed by adding phase 2 steps; the remaining two — the implicit assumption that the world-aligned design produces clear visuals at all camera angles, and the lack of automated acceptance criteria per step — are now owned by the user: per-step visual inspection with an explicit accept-or-reject report.
+
+**Where the code stands at session end.** The placement file's bottom still holds the uniface helpers, the per-axis pickers (first-viable and closest), and the orchestrator function. The renderer file is back to the pre-uniface state with no uniface-render function. The control button still exists on the toolbar row and its session-level store still toggles a flag. Unit tests: the closest-picker test and the cap-equals-three test pass; placeholder tests sit under the "uniface design" describe block until phase 2 fills them.
+
+Files touched:
+
+- di/notes/work/dimensions/uniface proposal.md — new file with preparation, phase 1, phase 2, and considerations
+- di/notes/work/refresh.md — new file listing the refresh-on-compact files
+- The Claude Code project settings file — new PostCompact hook
+- Memory in the auto-memory folder — new entry banning "paint" anywhere in the project; description fix on the older drawer-renderer entry
+- The lexicon — new banned-substitution row for paint → render
+- The shorthand file — entries for "v" / "v:" and "egads"
+- Source code — built and then reverted to pre-uniface state on the entry function, the renderer file, and the toolbar control
+
+---
+
 ## Session — 2026-05-29 — lexicon merge, uniface vocabulary locked down, precheck-first discipline wired into hooks
 
 A long session of vocabulary work, hook-discipline plumbing, and tightening the uniface specification.
@@ -30,6 +135,54 @@ Files touched:
 - The di-specific always file — new file
 - The Claude Code settings — precheck-first injection
 - Memory files in the auto-memory folder — multiple renames following the vernacular → lexicon move
+
+---
+
+## Session window — 2026-05-19 through 2026-05-28 — the dimension-placement rewrite (algorithm pieces)
+
+A multi-session push that rebuilt the placement algorithm from scratch, behind a feature flag, alongside the old force-driven code. The flag flipped from off to on partway through. By the end of the window the new pipeline was the active path on launch, the old code lived in a thin wrapper, and the unit-test suite had grown by about a hundred tests.
+
+**Test scaffolding (first.)** Twelve new test hooks on the test-only window object covered min-silhouette-clearance, viable-pair counts, conflict-graph verification, drop reports, per-kind label tagging, label angles, hover state, popup text, edit state, layout freeze, cold-search timing, and search-skipped timing — plus two input actions for view-mode switch and forced-cold-search. Thirteen end-to-end specs were un-skipped at the same time. A trailing-comma bug in a JSON config file was fixed along the way.
+
+**Determinism helpers.** A seeded random-number generator (linear congruential, with an FNV-1a hash for string seeds) gave reproducible randomness for the stochastic step. A per-phase timing helper exposed millisecond breakdowns for cold-search, search-skipped, greedy, repair, and stochastic. The performance hooks now read from the timer.
+
+**The four-degrees-of-freedom search.** The new placement walks every visible part, every axis, every silhouette edge, every signed perpendicular outward direction. Four filters reject most candidates: a camera-axis filter (anything within thirty degrees of the camera forward), a witness-length-minimum filter (must clear the combined outline by fifteen pixels), a witness-length-maximum filter (the eighty-pixel push cap), and a slidable-position range. Survivors get a coarse spatial-grid first pass (which throws out pairs of labels too far apart to ever collide), a closed-form rectangle-separation second pass (up to sixty-four edge-direction combinations per pair), and any pair that fails every combination enters the conflict graph. A greedy seed picks each label's four-degree tuple in most-constrained-first order using a five-by-five grid sample. A repair pass tries single-label switches then paired swaps for any still-conflicting label. A stochastic finish does up to two hundred random tries to break the rest. A drop policy removes labels that cannot be placed without violating the clearance rules.
+
+**Persistence and seeded semantics.** Each label's chosen tuple is remembered between renders. The viability check on the next render uses a two-pixel tolerance on the continuous degrees of freedom. If every label still passes the strict check, the search is skipped; otherwise a full search runs, seeded with last render's values so strict-pass labels stay locked and only the broken ones get a fresh seat. A drift-safety counter forces a full search after two consecutive renders where any check passed only by the two-pixel slack.
+
+**Wiring under a flag.** A session store gates the new path. With the flag off, today's force-driven code runs unchanged. With the flag on, the new search runs at the end of every render alongside the old drawing, and the test hooks read real new-pipeline data. The flag flipped to on default partway through the window. Two known gaps got closed in the same window: the repeater-aware filter (clones, fireblocks, templates classified the same way the old code did) and the locked-labels-never-move semantics (locked labels stay put through greedy, repair, and stochastic; drift-safety overrides to a full re-derive).
+
+Suite grew from 698 unit tests at the start to 778 at the end. svelte-check clean throughout.
+
+---
+
+## Session window — 2026-05-23 through 2026-05-28 — new canvas painter and parity gaps
+
+After the algorithm was producing good placements behind the flag, the next stretch of sessions wrote the new canvas painter, fixed bugs the painter surfaced, and closed the parity gaps with the old force-driven code so the new path could take over default rendering.
+
+**New canvas painter.** A new renderer file reads the carry-over placement list and draws each label: two witness lines (each computed from its own endpoint's projection so they correctly diverge in perspective), a dim line between them, arrows in two layout cases (arrows inside when the line is long enough, arrows outside on short lines), a white box behind the number, and the number text. The label center is re-snapped onto the actually-drawn dim line so the text sits on the line in every camera angle. Hover state is honoured. The new painter draws in blue so it is visually distinguishable from the old path. A toggle in the bottom-left of the graph area selected old / both / new; on launch the default was "new" by the end of the window.
+
+**Three visual-confirmation bugs caught on first run.** A first-render-nothing-drawn bug: the viability check treated the empty-remembered case as a vacuous pass and skipped the search. Fix: require at least one remembered label before considering a skip. A screen-parallel witness lines bug: the painter was averaging the two endpoint's witness directions into one, which made them screen-parallel under perspective. Fix: each pair stores per-endpoint per-3D-unit screen vectors and each witness is drawn from its own endpoint. A floating-labels bug: the label center was computed from the averaged witness direction, then drawn against the per-endpoint dim line. Fix: re-snap the label center onto the painted dim line at the search's slidable choice as the distance from the first witness end.
+
+**Parity gaps closed.** Camera-angle fallback so a label still appears when every direction fails the thirty-degree camera filter (degenerate beats missing). 2D-mode axis restriction so a front-on view only measures the front face's two axes. X-ray visibility so OPTION-with-one-part-hidden draws dim lines for the hidden parts only. Layout-freeze while editing so the search is bypassed during inline edit and persisted placements re-project onto the current pairs. Rule-4 duplicate-text drop so two labels with the same number AND a 3D-parallel measured edge collapse to one keeper (alphabetical tiebreak, persistence-aware). A negative-zero gotcha in the canonical-direction grouping key got fixed along the way.
+
+**Old code removed.** The force-driven simulation, persisted force state, the spring / repulsion / damping constants, the stop-when-settled state, the duplicate-text drop, the off-canvas drop, the candidate prep, the silhouette push helpers, the occlusion check, the old painter, and the per-render stats were all deleted. R_Dimensions.ts shrank to a thin wrapper that clears hit-test rectangles, calls the new search, and asks the new painter to draw. Toggle store values for use-new-placement and painter-source went away. The bottom-left toggle UI and CSS were removed from Graph.svelte. Two stale test hooks (set_spring_k, dim_lines) went out of Debug.
+
+**Tuning passes during visual confirmation.** Centering pull went from a cap of 20 to a cap of 250 so labels actually settle near the middle of each dim line. The front-face preference got promoted from a score bonus (which lost to clearance) to a hard preference (front-facing pairs tried first, only fall back when no front pair has a viable candidate), and one round of confusion was caused by the renderer's front-facing winding sign convention being negative while the new code used positive — fixed by extracting the convention into a named helper. A witness-shortness bias was added: two score units per pixel beyond the minimum, so labels do not float far from their parts unless clearance forces them. Per-part hulls replaced the single combined hull for the witness pushback, so a label on an interior part can sit in empty space between parts rather than pushing past the outer envelope of the whole drawing. A witness-direction sign fix corrected a perp-toward-centroid bug that was sending witnesses across the silhouette to the far side. A witness-trapezoid convergence check rejects pairs whose witnesses crowd each other on screen under perspective. A painter slide-rescale bug surfaced where the search built the slide in edge-length units and the painter applied it in dim-line units — fixed by rescaling at the painter (slide_dl = slide_edge × dim_line_len / edge_len). The endpoint-visibility filter was removed from the spec; the helper functions and tests went out with it. A per-render diagnostic console summary plus traces pinned to a named part and a specific dim text was added. Seventeen tuning constants moved to a single Constants.ts location.
+
+Suite grew to 824 unit tests. svelte-check clean. The rest of phase 3 (e2e suite triage) remained for a session with a browser plus dev server running.
+
+---
+
+## Session window — late 2026-05 — uniface design captured; supporting docs and hooks
+
+A short session window captured the uniface redesign as written documents and added two supporting pieces.
+
+**Uniface design captured as documents.** A new rule in the dimensions rules file captured the strong-prefer-uniface placement preference. The uniface design master spec was written. The glossary added entries for "uniface box" and "uniface". Twelve placeholder unit tests covering the expected uniface behaviour were stubbed out in the test file as the checklist for the eventual implementation. The implementation itself was not started.
+
+**Code flow chart captured.** Six Mermaid diagrams cover the top-level paint pipeline, the per-pair viability walk, the per-direction range computation with all reject reasons, the front-back greedy choice, the five-by-five grid scoring, the drop policy, and the persistence loop across renders. Lives at notes/guides/development/rules/dimensions.flow.md.
+
+**Pre-send check hook.** A pre-send script applies the same regex patterns as the three stop hooks (banned words, hedge phrases without disclaimer, diagnostic claims without citation). Every multi-sentence response gets piped through it before sending; clean exit means the stop hooks will not fire. A standing memory rule made this the required process. A separate memory captured the rule that when corrected, the assistant must not defend, explain, or refute — acknowledge and change behaviour.
 
 ---
 
@@ -1682,3 +1835,25 @@ Instrumentation was wired in so we could see where the paint actually spends its
 - Type-checker: zero errors, zero warnings across every intermediate step.
 - Test suite: five hundred fourteen of five hundred fourteen tests pass.
 - Real-world tumble measured on a roughly hundred-part scene before handing back.
+
+## Session — 2026-05-01 — final preparation to start again from scratch implementing the uniface proposal
+
+After much work to implement the uniface rules, it failed to achieve what I want. We carefully revised the rules and proposal to raise the likelihood that we will succeed this time.
+
+### Where the proposal is reliable:
+
+- The phase split (tests first, then code) is sound. The Group A and Group B partition tells the reader which tests survive and which do not.
+- The phase 2 step ordering has its dependencies stated. A reader can follow step 1 through step 7 and produce working code at each step.
+- The four-filter step (step 3e) addresses the visible-clutter cause from the earlier session — too many dim lines per part — by porting the repeater, duplicate-text, off-canvas, and no-viable filters.
+- Cross-references to the rule numbers in the rules file are now consistent with the current rule numbering.
+
+### Where the proposal falls short of "reduce clutter, maximize clarity":
+
+- **Issue 1.** The proposal trusts the rules file and the lexicon as the source of design truth. The rules file describes a world-axis-aligned silhouette box. When the camera is tilted, projecting that box gives tilted brackets on screen. The earlier session's visual showed this and you reacted strongly. Whether the world-aligned design produces a clear picture under all camera angles is not addressed in this proposal — it is assumed. I will visually inspect and report my acceptance or rejection.
+- **Issue 2.** There is no acceptance criterion. No step says "after step X, the reference scene should look like Y, measured by Z." A reader who follows all seven steps cannot tell from this proposal alone whether the result is clean enough. I will visually inspect on completion of each step and report my acceptance or rejection.
+- **Issue 3.** (addressed by step 3h.) Step 3a commits to the "closest" picker without revisiting the other two options after the cleanup steps arrive. The two deferred options are deferred to "until visual confirmation says they are needed", but the criterion for that confirmation is not stated.
+- **Issue 4.** (addressed by step 3f's exit criteria.) Step 3e's four filters reduce the COUNT of drawn dim lines. They do not address per-dim clarity — whether each drawn line is readable, well-placed relative to the part, and well-spaced from witness anchors. Rules 5, 6, 7, 18 in the rules file cover those, but this proposal does not map a step to "labels are readable" or "witness-line convergence is checked at runtime".
+- **Issue 5.** (addressed by step 3f.) Step 3d says the dim-line text labels come "in a later step" without naming the step. The dim-text formatter wiring is missing as a numbered step.
+- **Issue 6.** (addressed by steps 4a and 4b.) Rotated parts (step 4) get their own silhouette boxes per rule 4. Rule 4 sub-point 2 says "when rotated parts overlap, nothing special is done". A scene with several overlapping rotated parts produces several overlapping rotated boxes. this proposal does not address whether that produces clutter or how to handle it.
+- **Issue 7.** (addressed by step 5.5.) The interactive layer — hover, name popup, click-to-edit, OPTION x-ray — is part of the carry-over rules but does not appear in any phase 2 step. this proposal assumes those keep working as the new placement arrives. They might not, since the placement geometry changes.
+- **Issue 8.** (addressed by step 8.) There is no explicit user-override mechanism for cases the algorithm gets wrong. If a label sits in a position the user does not like, the new design has no manual escape hatch.
