@@ -4,14 +4,15 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] analyze dimensionals code and write a new file "dim.spec.md" with a complete description of what it does, written in the form of numbered rules
 - [ ] for a selected SO also highlight its dimensionals
 - [ ] when a dimensional is being edited, also highlight its SO and its other dimensionals
-- [ ] Gemini pro is only $20
+- [ ] add a string (called label) to each length Attribute that holds the text version of the value
 - [ ] on hover over a part or a dimensional
     - [ ] OPTION-C copies the label to the paste buffer
     - [x] change the dimensional color to red
     - [x] over a part -> also highlight all its dimensionals
+- [ ] analyze dimensionals code and write a new file "dim.spec.md" with a complete description of what it does, written in the form of numbered rules
+- [ ] Gemini pro is only $20
 - [ ] move swap x y to p attributes
 - [ ] rename x ray -> wireframe
 - [ ] saved VIEWS orientation/zoom for a SO

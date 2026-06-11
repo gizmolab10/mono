@@ -5,6 +5,7 @@ import type { TopologyInput, Pt, OccludingFace } from '../render/Topology';
 import { Facets } from '../render/Facets';
 import type { Projected, O_Scene } from '../types/Interfaces';
 import Smart_Object from '../runtime/Smart_Object';
+import { cube_edges, cube_faces, make_so, make_scene } from './helpers/scene_mock';
 
 // ═══════════════════════════════════════════════════════════════════
 // PURE GEOMETRY HELPERS (extracted from Topology for direct testing)
@@ -287,41 +288,7 @@ describe('Layer 2: Clipping', () => {
 	// We test via the public compute() by constructing scenes where
 	// the clipping behavior is predictable.
 
-	const cube_edges: [number, number][] = [
-		[0, 1], [1, 2], [2, 3], [3, 0],
-		[4, 5], [5, 6], [6, 7], [7, 4],
-		[0, 4], [1, 5], [2, 6], [3, 7],
-	];
-	const cube_faces: number[][] = [
-		[3, 2, 1, 0],  // bottom
-		[4, 5, 6, 7],  // top
-		[0, 4, 7, 3],  // left
-		[2, 6, 5, 1],  // right
-		[7, 6, 2, 3],  // front
-		[0, 1, 5, 4],  // back
-	];
-
-	function make_so(name: string, x_min: number, x_max: number, y_min: number, y_max: number, z_min: number, z_max: number): Smart_Object {
-		const so = new Smart_Object(name);
-		so.set_bound('x_min', x_min);
-		so.set_bound('x_max', x_max);
-		so.set_bound('y_min', y_min);
-		so.set_bound('y_max', y_max);
-		so.set_bound('z_min', z_min);
-		so.set_bound('z_max', z_max);
-		return so;
-	}
-
-	function make_scene(so: Smart_Object, id: string): O_Scene {
-		return {
-			id,
-			so,
-			edges: cube_edges,
-			faces: cube_faces,
-			position: vec3.fromValues(0, 0, 0),
-			color: 'rgba(0,0,0,',
-		};
-	}
+	// scene-mock helpers lifted to ./helpers/scene_mock.ts
 
 	// Simple orthographic-like projection: just use identity for world,
 	// project by dropping z and scaling to a 100x100 viewport
@@ -611,34 +578,7 @@ describe('Layer 3: Splitting', () => {
 // ═══════════════════════════════════════════════════════════════════
 
 describe('Layer 4: Two-object scenes', () => {
-	const cube_edges: [number, number][] = [
-		[0, 1], [1, 2], [2, 3], [3, 0],
-		[4, 5], [5, 6], [6, 7], [7, 4],
-		[0, 4], [1, 5], [2, 6], [3, 7],
-	];
-	const cube_faces: number[][] = [
-		[3, 2, 1, 0],
-		[4, 5, 6, 7],
-		[0, 4, 7, 3],
-		[2, 6, 5, 1],
-		[7, 6, 2, 3],
-		[0, 1, 5, 4],
-	];
-
-	function make_so(name: string, x_min: number, x_max: number, y_min: number, y_max: number, z_min: number, z_max: number): Smart_Object {
-		const so = new Smart_Object(name);
-		so.set_bound('x_min', x_min);
-		so.set_bound('x_max', x_max);
-		so.set_bound('y_min', y_min);
-		so.set_bound('y_max', y_max);
-		so.set_bound('z_min', z_min);
-		so.set_bound('z_max', z_max);
-		return so;
-	}
-
-	function make_scene(so: Smart_Object, id: string): O_Scene {
-		return { id, so, edges: cube_edges, faces: cube_faces, position: vec3.fromValues(0, 0, 0), color: 'rgba(0,0,0,' };
-	}
+	// scene-mock helpers lifted to ./helpers/scene_mock.ts
 
 	const _rot4 = mat4.create();
 	mat4.rotateX(_rot4, _rot4, 0.3);
@@ -936,15 +876,8 @@ describe('Layer 5: Golden test (ALPHA + BETA)', () => {
 	// When the new Topology_Simple is built, this test validates it
 	// produces equivalent results.
 
-	const cube_edges: [number, number][] = [
-		[0, 1], [1, 2], [2, 3], [3, 0],
-		[4, 5], [5, 6], [6, 7], [7, 4],
-		[0, 4], [1, 5], [2, 6], [3, 7],
-	];
-	const cube_faces: number[][] = [
-		[3, 2, 1, 0], [4, 5, 6, 7], [0, 4, 7, 3],
-		[2, 6, 5, 1], [7, 6, 2, 3], [0, 1, 5, 4],
-	];
+	// cube_edges and cube_faces lifted to ./helpers/scene_mock.ts; make_so
+	// here takes a bounds tuple — distinct signature from the lifted helper.
 
 	function make_so(name: string, bounds: [number, number, number, number, number, number]): Smart_Object {
 		const so = new Smart_Object(name);

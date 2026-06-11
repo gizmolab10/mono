@@ -10,10 +10,10 @@ import { angulars } from '../editors/Angular';
 import { Point } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
 import { camera } from '../render/Camera';
-import { distance_point_to_segment_2d, get_last_uniface_placement } from '../render/Dimension_Placement';
+import { distance_point_to_segment_2d, get_last_uniface_placement_result } from '../render/Dimension_Placement';
 import { get } from 'svelte/store';
 
-export type Uniface_Pick_Entry = ReturnType<typeof get_last_uniface_placement>['picks'][number];
+export type Uniface_Placement_Entry = ReturnType<typeof get_last_uniface_placement_result>['placements'][number];
 
 export interface Hit_3D_Result {
 	so: Smart_Object;
@@ -52,10 +52,10 @@ class Hits_3D {
 	// pixels of the cursor. Set by hit_test on every mouse-move; read by
 	// the dimension renderer to draw the matched pick's three lines and
 	// the measured part's outline in red.
-	w_hovered_uniface_pick = stale_writable<Uniface_Pick_Entry | null>(null);
+	w_hovered_uniface_placement = stale_writable<Uniface_Placement_Entry | null>(null);
 
-	get hovered_uniface_pick(): Uniface_Pick_Entry | null { return get(this.w_hovered_uniface_pick); }
-	set hovered_uniface_pick(p: Uniface_Pick_Entry | null) { this.w_hovered_uniface_pick.set(p); }
+	get hovered_uniface_placement(): Uniface_Placement_Entry | null { return get(this.w_hovered_uniface_placement); }
+	set hovered_uniface_placement(p: Uniface_Placement_Entry | null) { this.w_hovered_uniface_placement.set(p); }
 
 	get_projected(scene_id: string): Projected[] | undefined {
 		return this.cache.get(scene_id)?.projected;
@@ -71,7 +71,7 @@ class Hits_3D {
 		this.cache.clear();
 		this.w_hover.set(null);
 		this.w_hovered_dimension.set(null);
-		this.w_hovered_uniface_pick.set(null);
+		this.w_hovered_uniface_placement.set(null);
 		selection.current = null;
 	}
 
@@ -123,7 +123,7 @@ class Hits_3D {
 		// short-circuit below leaves a stale uniface-pick in the store
 		// and the previous hover target never un-hovers.
 		const uniface_hit = stores.show_dimensionals ? this.test_uniface_lines(point) : null;
-		this.w_hovered_uniface_pick.set(uniface_hit);
+		this.w_hovered_uniface_placement.set(uniface_hit);
 
 		// Dimension / angle labels win over everything (corners, edges, faces)
 		if (stores.show_dimensionals) {
@@ -197,7 +197,7 @@ class Hits_3D {
 					this.w_hovered_dimension.set({
 						so: so_for_hit,
 						axis: uniface_hit.axis,
-						witness_index: uniface_hit.pick.witness_index,
+						witness_index: uniface_hit.witness_index,
 					});
 					return { so: so_for_hit, type: T_Hit_3D.uniface_line, index: 0 };
 				}
@@ -213,27 +213,26 @@ class Hits_3D {
 		return stack[0].result;
 	}
 
-	/** Finds the closest uniface-path pick whose dim line or either witness
-	 *  line lies within three pixels of the given point. Returns the
-	 *  matched pick entry, or null when nothing is within reach. The test
-	 *  treats each line as a fat segment three pixels wide. */
-	private test_uniface_lines(point: Point): Uniface_Pick_Entry | null {
-		const result = get_last_uniface_placement();
-		if (result.picks.length === 0) return null;
+	/** Finds the closest uniface-path placement whose dim line or either
+	 *  witness line lies within three pixels of the given point. Returns
+	 *  the matched placement, or null when nothing is within reach. The
+	 *  test treats each line as a fat segment three pixels wide. */
+	private test_uniface_lines(point: Point): Uniface_Placement_Entry | null {
+		const result = get_last_uniface_placement_result();
+		if (result.placements.length === 0) return null;
 		const cursor = { x: point.x, y: point.y };
 		const HIT_RADIUS_PX = 10;
-		let best: Uniface_Pick_Entry | null = null;
+		let best: Uniface_Placement_Entry | null = null;
 		let best_dist = Infinity;
-		for (const entry of result.picks) {
-			const p = entry.pick;
-			if (p.uniface === null) continue;
-			if (!p.edge_p1_screen || !p.edge_p2_screen) continue;
-			if (!p.anchor_1_screen || !p.anchor_2_screen) continue;
-			const d_dim = distance_point_to_segment_2d(cursor, p.anchor_1_screen, p.anchor_2_screen);
-			const d_w1  = distance_point_to_segment_2d(cursor, p.edge_p1_screen, p.anchor_1_screen);
-			const d_w2  = distance_point_to_segment_2d(cursor, p.edge_p2_screen, p.anchor_2_screen);
+		for (const placement of result.placements) {
+			if (placement.uniface === null) continue;
+			if (!placement.edge_p1_screen || !placement.edge_p2_screen) continue;
+			if (!placement.anchor_1_screen || !placement.anchor_2_screen) continue;
+			const d_dim = distance_point_to_segment_2d(cursor, placement.anchor_1_screen, placement.anchor_2_screen);
+			const d_w1  = distance_point_to_segment_2d(cursor, placement.edge_p1_screen, placement.anchor_1_screen);
+			const d_w2  = distance_point_to_segment_2d(cursor, placement.edge_p2_screen, placement.anchor_2_screen);
 			const d = Math.min(d_dim, d_w1, d_w2);
-			if (d < best_dist) { best_dist = d; best = entry; }
+			if (d < best_dist) { best_dist = d; best = placement; }
 		}
 		if (best === null || best_dist > HIT_RADIUS_PX) return null;
 		return best;

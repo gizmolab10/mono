@@ -17,7 +17,6 @@ class Stores {
 	w_library			= writable<number>(0);
 
 	// Persistent. Ones that feed the canvas are wrapped the same way.
-	w_use_uniface_rules = make_stale(preferences.persistent<boolean>(T_Preference.useUnifaceRules, false));
 	w_decorations       = make_stale(preferences.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.dimensions));
 	w_orientation		= make_stale(preferences.persistent<number[]>(T_Preference.orientation, [-0.49, -0.28, -0.1, 0.8]));
 	w_parts_tab			= preferences.persistent<T_Parts_Tab>(T_Preference.partsTab, T_Parts_Tab.attributes);
@@ -41,7 +40,6 @@ class Stores {
 	toggle_angulars():    					void { this.w_decorations.update(v => v ^ T_Decorations.angles); }
 	toggle_names():							void { this.w_decorations.update(v => v ^ T_Decorations.names); }
 	set_orientation(q: quat):			    void { this.w_orientation.set([q[0], q[1], q[2], q[3]]); }
-	toggle_uniface_rules():					void { this.w_use_uniface_rules.update(v => !v); }
 	toggle_rotation_snap():					void { this.w_rotation_snap.update(v => !v); }
 	toggle_allow_editing():					void { this.w_allow_editing.update(v => !v); }
 	toggle_details():						void { this.w_show_details.update(v => !v); }
@@ -56,7 +54,6 @@ class Stores {
 	get show_angulars():      			 boolean { return (get(this.w_decorations) & T_Decorations.angles) !== 0; }
 	get show_names():					 boolean { return (get(this.w_decorations) & T_Decorations.names) !== 0; }
 	get is_editing():					 boolean { return get(this.w_editing) !== T_Editing.none; }
-	get use_uniface_rules():			 boolean { return get(this.w_use_uniface_rules); }
 	get rotation_snap():				 boolean { return get(this.w_rotation_snap); }
 	get allow_editing():				 boolean { return get(this.w_allow_editing); }
 	get show_details():					 boolean { return get(this.w_show_details); }

@@ -1,14 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { open_app, load_basement } from './dim-helpers';
 
-// New-design rule 18 — fireblock labels (first-fireblock repeat-axis,
+// New-design rule 9 — fireblock labels (first-fireblock repeat-axis,
 // shortened-last-fireblock repeat-axis) keep being selected by the
 // repeater rule, NOT by the search. Every other label must still
-// respect the 33-pixel clearance from a fireblock label. Needs the
-// new test hook dim_labels_by_kind() (rule 25) that tags each drawn
-// label as 'template' | 'clone' | 'fireblock-first' |
-// 'fireblock-last-shortened' | 'regular'. Skipped until the hook
-// exists.
+// respect PAIR_CLEARANCE_PX (5 screen pixels today) clearance from a
+// fireblock label. Needs the new test hook dim_labels_by_kind()
+// (rule 25) that tags each drawn label as 'template' | 'clone' |
+// 'fireblock-first' | 'fireblock-last-shortened' | 'regular'. Skipped
+// until the hook exists.
 
 type Tagged_Label = {
 	so_name: string;
@@ -33,7 +33,7 @@ function is_fireblock(kind: Tagged_Label['kind']): boolean {
 	return kind === 'fireblock-first' || kind === 'fireblock-last-shortened';
 }
 
-test('non-fireblock labels keep 33 pixels clearance from fireblock labels', async ({ page }) => {
+test('non-fireblock labels keep 5 pixels clearance from fireblock labels', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);
@@ -51,7 +51,7 @@ test('non-fireblock labels keep 33 pixels clearance from fireblock labels', asyn
 	for (const fb of fireblocks) {
 		for (const other of others) {
 			const gap = rect_distance(fb, other);
-			if (gap < 33) {
+			if (gap < 5) {
 				too_close.push({ fireblock: `${fb.so_name}:${fb.axis}`, other: `${other.so_name}:${other.axis}`, gap: Math.round(gap) });
 			}
 		}

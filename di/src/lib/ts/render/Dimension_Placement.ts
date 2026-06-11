@@ -1,8 +1,6 @@
 import type { O_Scene, Projected } from '../types/Interfaces';
-import { perf_timer } from '../common/Performance_Timer';
 import { Seeded_Random } from '../common/Seeded_Random';
 import type Smart_Object from '../runtime/Smart_Object';
-import { dimensions } from '../editors/Dimension';
 import { stale_writable } from '../common/Dirty';
 import type { Axis_Name } from '../types/Types';
 import { units, Units } from '../types/Units';
@@ -1163,18 +1161,6 @@ export type Greedy_Placement = {
 	min_clearance    : number;
 };
 
-/** Greedy seed for the live scene. Walks every label in most-constrained-first order,
- *  picks each label's best four-DOF combination given everything already placed. */
-export function greedy_seed(): Greedy_Placement[] {
-	const regions = compute_reachable_regions();
-	const ancestry = new Map<string, string>();
-	for (const r of regions) {
-		const obj = scene.get_all().find(o => o.so.id === r.so_id);
-		ancestry.set(r.so_id, obj ? ancestry_path_of(obj.so) : '');
-	}
-	return greedy_seed_for_regions(regions, ancestry);
-}
-
 /** Pure greedy seed — testable without a scene. `locked_placements` is
  *  the set of labels carried over from the previous render that should
  *  stay exactly where they are. They are added to `placed` up front so
@@ -1911,446 +1897,6 @@ function rectangle_off_canvas(p: Greedy_Placement, canvas_w: number, canvas_h: n
 	       (p.center_y - half_h < 0) || (p.center_y + half_h > canvas_h);
 }
 
-// ─── Full pipeline (Task 2.11 — feature-flag-gated entry point) ───────────────
-
-/** Module-level persistence state. Survives between renders. Reset on
- *  scene load via `persistence.clear()`. */
-export const persistence = new Persistence();
-
-/** What `run_new_placement` returned on the most recent call. Test hooks
- *  read from this without needing to re-run the search. */
-let last_run_result: Run_New_Placement_Result = {
-	placements        : [],
-	drop_report       : { dropped: [], kept_max_conflict: 0 },
-	search_skipped    : false,
-	last_search_seed  : '',
-};
-
-export function get_last_run_result(): Run_New_Placement_Result {
-	return last_run_result;
-}
-
-export type Run_New_Placement_Result = {
-	placements      : Greedy_Placement[];
-	drop_report     : Drop_Report;
-	/** True when the viability check passed and the search was skipped. */
-	search_skipped  : boolean;
-	/** Seed string fed to the stochastic finish on the most recent cold run. Empty on search-skipped renders. */
-	last_search_seed: string;
-};
-
-/** Compose every Phase-2 piece into a single end-to-end placement run.
- *  Called from the renderer when `w_use_new_placement` is on.
- *
- *  Step 1 — gather reachable regions.
- *  Step 2 — check viability against the previous render's choices.
- *  Step 3 — either reuse those choices (search skipped) OR run the full
- *           cold search (greedy seed → retry → stochastic finish).
- *  Step 4 — apply the drop policy.
- *  Step 5 — remember the result for the next render.
- */
-export function run_new_placement(canvas_w: number, canvas_h: number): Run_New_Placement_Result {
-	const regions = compute_reachable_regions();
-	const persisted_list = persistence.get_all();
-
-	const viability = compute_viability(persisted_list, regions);
-	const force_cold = persistence.should_force_cold_run();
-	// Rule: while a dimension number is being edited, the layout is
-	// frozen — no re-search, no reshuffle. Labels still re-project onto
-	// the current pair data so dim and witness lines follow the camera,
-	// but each label's four-DOF choice stays put.
-	const is_editing = dimensions.state !== null;
-
-	let placements: Greedy_Placement[];
-	let search_skipped = false;
-	let seed = '';
-
-	if (is_editing && persisted_list.length > 0) {
-		perf_timer.start('search_skipped');
-		placements = re_project_persisted_list(persisted_list, regions);
-		search_skipped = true;
-		perf_timer.stop('search_skipped');
-	} else if (viability.kind === 'skip_search' && !force_cold) {
-		perf_timer.start('search_skipped');
-		placements = [...viability.placements];
-		search_skipped = true;
-		if (viability.any_slack_used) persistence.note_slack_use();
-		else                          persistence.clear_slack_streak();
-		perf_timer.stop('search_skipped');
-	} else {
-		// Cold run — full greedy + retry + stochastic. When the previous
-		// render left some labels still strictly viable AND drift-safety
-		// hasn't fired, those labels are locked: they stay where they
-		// were, act as obstacles for the rest, and never get a fresh
-		// search slot. When drift-safety forced this run, no labels are
-		// locked — the whole layout is re-derived.
-		const locked_placements: Greedy_Placement[] =
-			(viability.kind === 'cold_run' && !force_cold) ? viability.locked : [];
-		const locked_keys = new Set<Label_Key>();
-		for (const p of locked_placements) locked_keys.add(label_key(p.so_id, p.axis));
-
-		perf_timer.start('cold_search');
-		const ancestry = ancestry_map_for_regions(regions);
-		perf_timer.start('greedy');
-		placements = greedy_seed_for_regions(regions, ancestry, locked_placements);
-		perf_timer.stop('greedy');
-		perf_timer.start('retry');
-		retry_pass(placements, regions, locked_keys);
-		perf_timer.stop('retry');
-		seed = seed_string_from_regions(regions);
-		perf_timer.start('stochastic');
-		stochastic_finish(placements, regions, seed, 200, locked_keys);
-		perf_timer.stop('stochastic');
-		persistence.clear_slack_streak();
-		perf_timer.stop('cold_search');
-	}
-
-	// Identify labels rejected by rule-11 filters before the search ever
-	// considered them — every (part, axis) the scene expected, minus the
-	// (part, axis) pairs that the search actually placed. The dropped
-	// count in the status bar then includes filter rejections too.
-	const expected_keys = new Set<Label_Key>();
-	const expected_meta = new Map<Label_Key, { so_id: string; so_name: string; axis: Axis_Name }>();
-	for (const o of scene.get_all()) {
-		if (!is_visible_for_dim(o)) continue;
-		const cls = classify_so(o);
-		if (!cls.eligible) continue;
-		for (const ax of cls.axes_allowed) {
-			const k = label_key(o.so.id, ax);
-			expected_keys.add(k);
-			expected_meta.set(k, { so_id: o.so.id, so_name: o.so.name, axis: ax });
-		}
-	}
-	const placed_keys_now = new Set<Label_Key>();
-	for (const p of placements) placed_keys_now.add(label_key(p.so_id, p.axis));
-	const no_viable_pair_labels: { so_id: string; so_name: string; axis: Axis_Name }[] = [];
-	for (const k of expected_keys) {
-		if (!placed_keys_now.has(k)) {
-			const meta = expected_meta.get(k);
-			if (meta) no_viable_pair_labels.push(meta);
-		}
-	}
-
-	// Rule 4: drop duplicates (same text + parallel measured edges).
-	// Done BEFORE the rest of the drop policy so off-canvas / conflict
-	// checks operate on the deduplicated set. Persisted-status comes from
-	// the snapshot BEFORE we replace the persistence with this render's
-	// remember_all call below.
-	const persisted_before = new Set<Label_Key>();
-	for (const p of persisted_list) persisted_before.add(label_key(p.so_id, p.axis));
-	const world_dirs = compute_world_edge_directions(placements);
-	const ancestry_for_drops = ancestry_map_for_regions(regions);
-	const duplicate_drops = drop_duplicates(placements, persisted_before, world_dirs, ancestry_for_drops);
-
-	const drop_report = apply_drop_policy(placements, canvas_w, canvas_h, no_viable_pair_labels);
-	drop_report.dropped.unshift(...duplicate_drops);
-
-	// Polish pass (rule 23): re-position every survivor against the
-	// reduced obstacle set so labels that moved off-center to avoid a
-	// now-dropped neighbour can return to a better position.
-	polish_pass(placements, regions);
-
-	persistence.clear();
-	persistence.remember_all(placements);
-
-	// log_dim_summary(expected_keys.size, placements.length, drop_report.dropped);
-	// log_trace_target(placements);
-	// log_trace_so(no_viable_pair_labels, placements);
-
-	last_run_result = { placements, drop_report, search_skipped, last_search_seed: seed };
-	return last_run_result;
-}
-
-/** One-shot debug trace. Edit DBG_TRACE_TEXT below to the formatted
- *  dimension text you want to follow through the search/renderer pipeline.
- *  When a placement matches, this prints the four chosen values plus the
- *  search's computed centre so we can compare against where the renderer
- *  ends up drawing the label. Set to '' to disable. */
-const DBG_TRACE_TEXT: string = "16' 8 1/2\"";
-let last_trace_logged = '';
-export function log_trace_target(placements: readonly Greedy_Placement[]): void {
-	if (DBG_TRACE_TEXT === '') return;
-	for (const p of placements) {
-		if (p.pair.text !== DBG_TRACE_TEXT) continue;
-		const edge_dx = p.pair.edge_p2_x - p.pair.edge_p1_x;
-		const edge_dy = p.pair.edge_p2_y - p.pair.edge_p1_y;
-		const edge_len = Math.hypot(edge_dx, edge_dy);
-		const half_w = p.label_w_px / 2;
-		const Y_BUF = k.dimensions.WITNESS_ANCHOR_BUFFER_PX;
-		const line =
-			`DIM TRACE [${DBG_TRACE_TEXT}] on ${p.so_name} axis ${p.axis}: ` +
-			`edge ends (${p.pair.edge_p1_x.toFixed(1)}, ${p.pair.edge_p1_y.toFixed(1)}) → ` +
-			`(${p.pair.edge_p2_x.toFixed(1)}, ${p.pair.edge_p2_y.toFixed(1)}), ` +
-			`edge length ${edge_len.toFixed(1)} px; ` +
-			`label width ${p.label_w_px.toFixed(1)} px (half ${half_w.toFixed(1)}); ` +
-			`witness length ${p.witness_length.toFixed(1)} px; ` +
-			`slide ${p.slidable_position.toFixed(1)} px; ` +
-			`forbidden zones [${(-Y_BUF - half_w).toFixed(1)}, ${(Y_BUF + half_w).toFixed(1)}] and ` +
-			`[${(edge_len - Y_BUF - half_w).toFixed(1)}, ${(edge_len + Y_BUF + half_w).toFixed(1)}]; ` +
-			`search centre (${p.center_x.toFixed(1)}, ${p.center_y.toFixed(1)})`;
-		if (line !== last_trace_logged) {
-			last_trace_logged = line;
-			if (k.debug.diagnose_dims) console.log(line);
-		}
-	}
-}
-
-/** Per-part trace. Set DBG_TRACE_SO_NAME to a smart-object name (eg "A")
- *  to print, for that part, EVERY axis's outcome — placed or dropped
- *  with the dominant reason. Set to '' to disable. */
-const DBG_TRACE_SO_NAME: string = "B";
-let last_so_trace_logged = '';
-export function log_trace_so(
-	no_viable: readonly { so_id: string; so_name: string; axis: Axis_Name }[],
-	placed: readonly Greedy_Placement[],
-): void {
-	if (DBG_TRACE_SO_NAME === '') return;
-	const lines: string[] = [];
-	const seen = new Set<string>();
-	for (const p of placed) {
-		if (p.so_name !== DBG_TRACE_SO_NAME) continue;
-		const key = `${p.so_name}|${p.axis}`;
-		if (seen.has(key)) continue;
-		seen.add(key);
-		const face_tag = p.pair.is_front_facing ? 'front face' : 'back face';
-		lines.push(`axis ${p.axis}: PLACED at (${p.center_x.toFixed(1)}, ${p.center_y.toFixed(1)}) on ${face_tag}, witness length ${p.witness_length.toFixed(1)} px, edge ${p.pair.edge_v1_idx}-${p.pair.edge_v2_idx}`);
-	}
-	for (const d of no_viable) {
-		if (d.so_name !== DBG_TRACE_SO_NAME) continue;
-		const key = `${d.so_name}|${d.axis}`;
-		if (seen.has(key)) continue;
-		seen.add(key);
-		const s = last_filter_stats.per_label.get(`${d.so_id}|${d.axis}`);
-		if (!s) { lines.push(`axis ${d.axis}: dropped, no candidate edges`); continue; }
-		const parts: string[] = [];
-		if (s.edges_too_short            > 0) parts.push(`${s.edges_too_short} edges too short`);
-		if (s.edges_projection_broken    > 0) parts.push(`${s.edges_projection_broken} projection broken`);
-		if (s.edges_no_viable_direction  > 0) parts.push(`${s.edges_no_viable_direction} edges had no viable direction`);
-		if (s.edges_yielded_pairs        > 0) parts.push(`${s.edges_yielded_pairs} edges yielded a pair (but the pair was dropped later)`);
-		if (s.directions_silhouette_too_far    > 0) parts.push(`directions killed by silhouette ${s.directions_silhouette_too_far}`);
-		if (s.directions_witness_range_empty   > 0) parts.push(`directions killed by witness range ${s.directions_witness_range_empty}`);
-		if (s.directions_slidable_range_empty  > 0) parts.push(`directions killed by slidable range ${s.directions_slidable_range_empty}`);
-		if (s.directions_projection_degenerate > 0) parts.push(`directions killed by projection ${s.directions_projection_degenerate}`);
-		if (s.directions_witnesses_converge    > 0) parts.push(`directions killed by witnesses converging ${s.directions_witnesses_converge}`);
-		lines.push(`axis ${d.axis}: dropped — ${parts.join(', ')}`);
-	}
-	// Per-direction detail for silhouette-too-far rejections on the trace SO.
-	const rej_lines: string[] = [];
-	for (const r of last_silhouette_rejects) {
-		if (r.so_name !== DBG_TRACE_SO_NAME) continue;
-		const per_hull = r.per_hull
-			.map(h => `${h.so_id}:${h.t.toFixed(1)}`)
-			.join(', ');
-		rej_lines.push(
-			`axis ${r.axis} edge ${r.v1_idx}-${r.v2_idx} dir (${r.wit_ux.toFixed(2)}, ${r.wit_uy.toFixed(2)}): ` +
-			`per-hull exit-t [${per_hull}], witness min ${r.witness_length_min.toFixed(1)} vs cap ${r.cap}`
-		);
-	}
-
-	if (lines.length === 0 && rej_lines.length === 0) return;
-	const parts_str = lines.length > 0 ? lines.join('; ') : '(no axis summary)';
-	const rej_str = rej_lines.length > 0 ? `\nDIM TRACE part [${DBG_TRACE_SO_NAME}] silhouette rejects: ${rej_lines.join('; ')}` : '';
-	const full = `DIM TRACE part [${DBG_TRACE_SO_NAME}]: ${parts_str}${rej_str}`;
-	if (full === last_so_trace_logged) return;
-	last_so_trace_logged = full;
-	if (k.debug.diagnose_dims) console.log(full);
-}
-
-/** Last summary string we printed. The per-render summary only fires
- *  when the new lines differ from the previous ones — stops the console
- *  from flooding while the user tumbles or rerenders with the same state. */
-let last_logged_summary = '';
-
-/** Per-render diagnostic. Prints a plain-English summary of how many
- *  labels were expected, how many made it onto the canvas, and — for
- *  the lost ones — what filter killed each. Also names the blocking
- *  parts for the first five labels whose every edge was hidden, so
- *  it's clear WHICH parts are doing the occluding. Logs only when the
- *  numbers change from the previous render. */
-export function log_dim_summary(
-	expected: number,
-	placed: number,
-	dropped: readonly Drop_Entry[],
-): void {
-	const drops_by_reason = {
-		no_viable_pair     : 0,
-		duplicate_text     : 0,
-		off_canvas         : 0,
-		remaining_conflict : 0,
-	};
-	for (const d of dropped) drops_by_reason[d.reason]++;
-
-	let no_candidate_edges = 0;
-	let all_short = 0;
-	let all_directions_rejected = 0;
-	let all_projection_broken = 0;
-	let mixed_reasons = 0;
-	// Track every TRUE mixed-reasons label so we can print a per-label
-	// breakdown and aggregate totals. The "no candidate edges" labels
-	// (which never had any edge tally created) go to their own bucket.
-	const mixed_labels: {
-		so_name: string;
-		axis: Axis_Name;
-		short: number;
-		proj: number;
-		nodir: number;
-	}[] = [];
-	for (const d of dropped) {
-		if (d.reason !== 'no_viable_pair') continue;
-		const s = last_filter_stats.per_label.get(`${d.so_id}|${d.axis}`);
-		if (!s) { no_candidate_edges++; continue; }
-		const total = s.edges_too_short + s.edges_projection_broken + s.edges_no_viable_direction;
-		if (total === 0)                                { no_candidate_edges++; continue; }
-		if (s.edges_too_short      === total)           all_short++;
-		else if (s.edges_no_viable_direction === total) all_directions_rejected++;
-		else if (s.edges_projection_broken   === total) all_projection_broken++;
-		else {
-			mixed_reasons++;
-			mixed_labels.push({
-				so_name : d.so_name,
-				axis    : d.axis,
-				short   : s.edges_too_short,
-				proj    : s.edges_projection_broken,
-				nodir   : s.edges_no_viable_direction,
-			});
-		}
-	}
-
-	const line1 =
-		`DIM: ${expected} labels expected, ${placed} placed, ${dropped.length} dropped ` +
-		`(no viable edge ${drops_by_reason.no_viable_pair}, duplicate text ${drops_by_reason.duplicate_text}, ` +
-		`off canvas ${drops_by_reason.off_canvas}, conflict ${drops_by_reason.remaining_conflict})`;
-
-	let line2 = '';
-	if (drops_by_reason.no_viable_pair > 0) {
-		line2 =
-			`DIM: of the ${drops_by_reason.no_viable_pair} with no viable edge: ` +
-			`no candidate edges ${no_candidate_edges}, ` +
-			`every edge too short on screen ${all_short}, ` +
-			`every direction rejected ${all_directions_rejected}, ` +
-			`every projection broken ${all_projection_broken}, ` +
-			`mixed reasons ${mixed_reasons}`;
-	}
-
-	let line3 = '';
-	const sample: string[] = [];
-	for (const d of dropped) {
-		if (d.reason !== 'no_viable_pair') continue;
-		const set = last_blockers_per_label.get(`${d.so_id}|${d.axis}`);
-		if (!set || set.size === 0) continue;
-		const names = Array.from(set).slice(0, 4).join(', ');
-		sample.push(`${d.so_name} along ${d.axis} — blocked by ${names}`);
-		if (sample.length >= 5) break;
-	}
-	if (sample.length > 0) {
-		line3 = `DIM blocker sample: ${sample.join('; ')}`;
-	}
-
-	// Aggregate per-direction rejection counts across every label that
-	// had at least one direction killed. Tells us which downstream filter
-	// is the dominant cause of "every direction rejected" / "mixed reasons".
-	let dir_silhouette = 0;
-	let dir_witness_range = 0;
-	let dir_slidable_range = 0;
-	let dir_projection = 0;
-	let dir_converge = 0;
-	for (const s of last_filter_stats.per_label.values()) {
-		dir_silhouette    += s.directions_silhouette_too_far;
-		dir_witness_range += s.directions_witness_range_empty;
-		dir_slidable_range += s.directions_slidable_range_empty;
-		dir_projection    += s.directions_projection_degenerate;
-		dir_converge      += s.directions_witnesses_converge;
-	}
-	let line4 = '';
-	const dir_total = dir_silhouette + dir_witness_range + dir_slidable_range + dir_projection + dir_converge;
-	if (dir_total > 0) {
-		line4 =
-			`DIM direction rejections: silhouette too far ${dir_silhouette}, ` +
-			`witness range empty ${dir_witness_range}, ` +
-			`slidable range empty ${dir_slidable_range}, ` +
-			`projection degenerate ${dir_projection}, ` +
-			`witnesses converge ${dir_converge}`;
-	}
-
-	// Per-label sample for the mixed-reasons bucket — names up to five
-	// labels with their per-edge breakdown so the cause inside "mixed"
-	// is concrete, not opaque.
-	let line5 = '';
-	if (mixed_labels.length > 0) {
-		const sample_mixed = mixed_labels.slice(0, 5).map(m => {
-			const parts: string[] = [];
-			if (m.short > 0) parts.push(`${m.short} short`);
-			if (m.proj  > 0) parts.push(`${m.proj} projection`);
-			if (m.nodir > 0) parts.push(`${m.nodir} no-direction`);
-			return `${m.so_name} along ${m.axis} (${parts.join(', ')})`;
-		});
-		line5 = `DIM mixed sample: ${sample_mixed.join('; ')}`;
-	}
-
-	// Aggregate totals across every mixed-reasons label — tells the reader
-	// which failure kind dominates inside the mixed bucket overall.
-	let line6 = '';
-	if (mixed_labels.length > 0) {
-		let total_short = 0, total_proj = 0, total_nodir = 0;
-		for (const m of mixed_labels) {
-			total_short += m.short;
-			total_proj  += m.proj;
-			total_nodir += m.nodir;
-		}
-		line6 =
-			`DIM mixed totals across ${mixed_labels.length} labels: ` +
-			`${total_short} edges too short, ` +
-			`${total_proj} projection broken, ` +
-			`${total_nodir} every direction rejected`;
-	}
-
-	const full = `${line1}\n${line2}\n${line3}\n${line4}\n${line5}\n${line6}`;
-	if (full === last_logged_summary) return;
-	last_logged_summary = full;
-
-	if (k.debug.diagnose_dims) {
-		console.log(line1);
-		if (line2) console.log(line2);
-		if (line3) console.log(line3);
-		if (line4) console.log(line4);
-		if (line5) console.log(line5);
-		if (line6) console.log(line6);
-	}
-}
-
-/** For each placement, compute the world-space direction of the measured
- *  edge as a unit 3-tuple. Looks up the smart object and transforms the
- *  edge into world coordinates once per render. */
-function compute_world_edge_directions(placed: readonly Greedy_Placement[]): Map<Label_Key, [number, number, number]> {
-	const out = new Map<Label_Key, [number, number, number]>();
-	const sos = new Map<string, ReturnType<typeof scene.get_all>[number]>();
-	for (const o of scene.get_all()) sos.set(o.so.id, o);
-	for (const p of placed) {
-		const o = sos.get(p.so_id);
-		if (!o) { out.set(label_key(p.so_id, p.axis), [0, 0, 0]); continue; }
-		const wm = render.get_world_matrix(o);
-		const v1 = o.so.vertices[p.pair.edge_v1_idx];
-		const v2 = o.so.vertices[p.pair.edge_v2_idx];
-		const v1_w = vec3.transformMat4(vec3.create(), v1, wm);
-		const v2_w = vec3.transformMat4(vec3.create(), v2, wm);
-		const dir = vec3.subtract(vec3.create(), v2_w, v1_w);
-		const len = Math.hypot(dir[0], dir[1], dir[2]);
-		if (len < 1e-6) { out.set(label_key(p.so_id, p.axis), [0, 0, 0]); continue; }
-		out.set(label_key(p.so_id, p.axis), [dir[0] / len, dir[1] / len, dir[2] / len]);
-	}
-	return out;
-}
-
-function ancestry_map_for_regions(regions: readonly Reachable_Region[]): Map<string, string> {
-	const map = new Map<string, string>();
-	for (const r of regions) {
-		const obj = scene.get_all().find(o => o.so.id === r.so_id);
-		map.set(r.so_id, obj ? ancestry_path_of(obj.so) : '');
-	}
-	return map;
-}
-
-// ─── Stochastic finish (rule 23 stochastic step) ───────────────────────────────
 
 /** A stable seed string derived from the current scene's drawn labels.
  *  Same labels → same seed → same random sequence → same final layout. */
@@ -2411,43 +1957,6 @@ export function stochastic_finish(
 	return placed;
 }
 
-/** Ancestry path of a smart object, dotted, root excluded. Duplicated
- *  here because Dimension_Placement must not depend on Debug. */
-function ancestry_path_of(so: Smart_Object): string {
-	const names: string[] = [];
-	let current: Smart_Object | null = so;
-	while (current) {
-		names.push(current.name);
-		current = current.scene?.parent?.so ?? null;
-	}
-	names.pop();
-	return names.reverse().join('.');
-}
-
-/** Brute-force-verify the conflict graph against the rule-10 definition:
- *  walk every pair of labels in the current scene, compute "can separate"
- *  the direct way (`labels_can_separate_via_some_combination`), compare
- *  with the graph. Returns any pairs the graph disagrees with the
- *  brute-force result on. Used by the test hook `dim_conflict_graph_check`. */
-export function check_conflict_graph(): { a: Label_Key; b: Label_Key; brute_can_separate: boolean; graph_says_in_conflict: boolean }[] {
-	const regions = compute_reachable_regions();
-	const graph = build_conflict_graph();
-	const mismatches: { a: Label_Key; b: Label_Key; brute_can_separate: boolean; graph_says_in_conflict: boolean }[] = [];
-	for (let i = 0; i < regions.length; i++) {
-		for (let j = i + 1; j < regions.length; j++) {
-			const a = regions[i], b = regions[j];
-			const brute_can_separate = labels_can_separate_via_some_combination(a.pairs, b.pairs);
-			const a_key = label_key(a.so_id, a.axis);
-			const b_key = label_key(b.so_id, b.axis);
-			const graph_says_in_conflict = graph.has_edge(a_key, b_key);
-			// The two should agree: brute "cannot separate" ↔ graph "in conflict".
-			if ((!brute_can_separate) !== graph_says_in_conflict) {
-				mismatches.push({ a: a_key, b: b_key, brute_can_separate, graph_says_in_conflict });
-			}
-		}
-	}
-	return mismatches;
-}
 
 // ═══════════════════════════════════════════════════════════════════
 // UNIFACE BOX — step 1 of the uniface transition (see uniface rules.md).
@@ -2723,6 +2232,244 @@ export function pick_closest_uniface_for_axis(
 /** A 2D axis-aligned rectangle in screen pixels. Used by the clearance
  *  checks of rules 5, 6, and 19. */
 export type Rect_2d = { x_min: number; y_min: number; x_max: number; y_max: number };
+
+/** Tally how many parts marked each (direction, witness index) cell viable
+ *  in the rule-19 first-look sweep. Keys of the input map identify the
+ *  part-axis; values are the set of "face|wi" cells it found viable. The
+ *  output keys "face|wi" map to the count of parts that included that cell.
+ *  Pure. */
+export function tally_cell_counts_for_vote(
+	cell_viability: ReadonlyMap<string, ReadonlySet<string>>,
+): Map<string, number> {
+	const counts = new Map<string, number>();
+	for (const cells of cell_viability.values()) {
+		for (const cell of cells) counts.set(cell, (counts.get(cell) ?? 0) + 1);
+	}
+	return counts;
+}
+
+/** Decide whether the inside arrow at an anchor would fit between the
+ *  label box and the witness line on this side (rule 18). The arrow's
+ *  tip sits at the anchor; it points along `arrow_dir_sign` * (a2 - a1).
+ *  Returns true when the inside arrow does NOT fit — the renderer should
+ *  flip this side to draw the outside extension and the outward arrow.
+ *  Measured along the dim line direction itself so diagonal dims work.
+ *  Pure. */
+export function is_inside_arrow_blocked_at_anchor(
+	anchor: { x: number; y: number },
+	label_center: { x: number; y: number },
+	dim_unit_dx: number,
+	dim_unit_dy: number,
+	arrow_dir_sign: number,
+	half_label_width_px: number,
+	arrow_size_px: number,
+): boolean {
+	const min_gap_along_dim = half_label_width_px + 2 + arrow_size_px;
+	const anchor_proj = (anchor.x - label_center.x) * dim_unit_dx + (anchor.y - label_center.y) * dim_unit_dy;
+	const signed_distance_outside_label = -arrow_dir_sign * anchor_proj;
+	return signed_distance_outside_label < min_gap_along_dim;
+}
+
+/** Detect "label fully covers the inside arrow at this anchor" (rule 18's
+ *  label-slide trigger). Returns true when BOTH the anchor itself AND the
+ *  arrow's base point sit inside the (padded) label rect at the natural
+ *  position. The slide moves the label past the witness anchor by
+ *  half-label-width + 2 + SLIDABLE_OVERHANG_PX + arrow-length, so the
+ *  cross-label clearance check sees the FINAL position. Pure. */
+export function does_label_fully_cover_inside_arrow(
+	anchor: { x: number; y: number },
+	label_center: { x: number; y: number },
+	dim_unit_dx: number,
+	dim_unit_dy: number,
+	arrow_dir_sign: number,
+	half_label_width_px: number,
+	half_label_height_px: number,
+	arrow_size_px: number,
+): boolean {
+	const x_min = label_center.x - half_label_width_px - 2;
+	const x_max = label_center.x + half_label_width_px + 2;
+	const y_min = label_center.y - half_label_height_px - 1;
+	const y_max = label_center.y + half_label_height_px + 1;
+	const inside = (pt: { x: number; y: number }): boolean =>
+		pt.x >= x_min && pt.x <= x_max && pt.y >= y_min && pt.y <= y_max;
+	const arrow_base = {
+		x: anchor.x + arrow_dir_sign * dim_unit_dx * arrow_size_px,
+		y: anchor.y + arrow_dir_sign * dim_unit_dy * arrow_size_px,
+	};
+	return inside(anchor) && inside(arrow_base);
+}
+
+/** Everything a renderer needs to draw one placement on the canvas — all
+ *  the line segments, the two arrowheads (tip and direction), the white
+ *  label box, and the text position. Pure geometry, no canvas calls. The
+ *  rule-18 tests can build a placement and assert the shapes this helper
+ *  returns. */
+export type Dim_Render_Geometry = {
+	/** Two line segments for the two witness lines (each starts past the
+	 *  part edge and ends past the anchor). Always two segments. */
+	witness_segments: Array<{ from: { x: number; y: number }; to: { x: number; y: number } }>;
+	/** Pieces of the dim line — between zero and three segments depending
+	 *  on the inside / outside / slid case. */
+	dim_line_segments: Array<{ from: { x: number; y: number }; to: { x: number; y: number } }>;
+	/** The two arrowheads, one per anchor. `tip` is where the triangle's
+	 *  point sits; `direction` is the (dx, dy) the arrowhead's base
+	 *  extends in. The renderer's draw_arrow expects this exact shape. */
+	arrows: Array<{ tip: { x: number; y: number }; direction: { x: number; y: number } }>;
+	/** The white label box. Render this filled white, then draw the text
+	 *  centred on `label_text_position`. */
+	label_box: { x_min: number; y_min: number; x_max: number; y_max: number };
+	/** Centre point for the dim text. The text is drawn horizontally
+	 *  centred (textAlign center, textBaseline middle). */
+	label_text_position: { x: number; y: number };
+	/** Whether the placement was slid past either witness anchor — used
+	 *  by hover code and tests to know which case fired. */
+	slid_past_anchor: 'a1' | 'a2' | null;
+	/** Whether each side flipped to outside arrow / outside extension. */
+	a1_outside: boolean;
+	a2_outside: boolean;
+};
+
+/** Pure geometry helper — given a placement plus the measured label
+ *  width and height, returns every line, arrowhead, and label box the
+ *  renderer needs to draw. The label position is taken from the placement
+ *  itself (placement has already done rule 18's slide). Rule 18's per-
+ *  side flip decision runs here. Pure — no canvas required. */
+export function compute_dim_render_geometry(
+	placement: Placement_Details,
+	label_w_px: number,
+	label_h_px: number,
+	witness_gap_from_part_px: number,
+	witness_past_dim_line_px: number,
+	overhang_px: number,
+	arrow_size_px: number,
+): Dim_Render_Geometry | null {
+	const a1 = placement.anchor_1_screen;
+	const a2 = placement.anchor_2_screen;
+	const e1 = placement.edge_p1_screen;
+	const e2 = placement.edge_p2_screen;
+	const label_pos = placement.natural_label_position;
+	if (!a1 || !a2 || !e1 || !e2 || !label_pos) return null;
+	const dx = a2.x - a1.x;
+	const dy = a2.y - a1.y;
+	const dl_len = Math.hypot(dx, dy);
+	if (dl_len < 1e-9) return null;
+	const ux = dx / dl_len;
+	const uy = dy / dl_len;
+	const half_w = label_w_px / 2;
+	const half_h = label_h_px / 2;
+	// Witness line segments — each runs from a point just past the part
+	// edge to a point just past its anchor.
+	const w1_dx = a1.x - e1.x;
+	const w1_dy = a1.y - e1.y;
+	const w1_len = Math.hypot(w1_dx, w1_dy);
+	const w1_ux = w1_len > 1e-9 ? w1_dx / w1_len : 0;
+	const w1_uy = w1_len > 1e-9 ? w1_dy / w1_len : 0;
+	const w2_dx = a2.x - e2.x;
+	const w2_dy = a2.y - e2.y;
+	const w2_len = Math.hypot(w2_dx, w2_dy);
+	const w2_ux = w2_len > 1e-9 ? w2_dx / w2_len : 0;
+	const w2_uy = w2_len > 1e-9 ? w2_dy / w2_len : 0;
+	const witness_segments = [
+		{
+			from: { x: e1.x + w1_ux * witness_gap_from_part_px, y: e1.y + w1_uy * witness_gap_from_part_px },
+			to  : { x: a1.x + w1_ux * witness_past_dim_line_px, y: a1.y + w1_uy * witness_past_dim_line_px },
+		},
+		{
+			from: { x: e2.x + w2_ux * witness_gap_from_part_px, y: e2.y + w2_uy * witness_gap_from_part_px },
+			to  : { x: a2.x + w2_ux * witness_past_dim_line_px, y: a2.y + w2_uy * witness_past_dim_line_px },
+		},
+	];
+	// Slide detection — label past a1 means slid past a1; past a2 means
+	// past a2. Placement already did the slide; the renderer reads the
+	// final position.
+	const proj_label = (label_pos.x - a1.x) * ux + (label_pos.y - a1.y) * uy;
+	const slid_past_a1 = proj_label < 0;
+	const slid_past_a2 = proj_label > dl_len;
+	const slid = slid_past_a1 || slid_past_a2;
+	const slid_past_anchor: 'a1' | 'a2' | null = slid_past_a1 ? 'a1' : slid_past_a2 ? 'a2' : null;
+	// Per-side flip — slid forces both sides outside; otherwise the per-
+	// anchor projection check decides.
+	const a1_outside = slid || is_inside_arrow_blocked_at_anchor(a1, label_pos, ux, uy, +1, half_w, arrow_size_px);
+	const a2_outside = slid || is_inside_arrow_blocked_at_anchor(a2, label_pos, ux, uy, -1, half_w, arrow_size_px);
+	// Label near-edge points for the inside half-line case and for the
+	// slid case's connector line.
+	const proj_a1 = (a1.x - label_pos.x) * ux + (a1.y - label_pos.y) * uy;
+	const proj_a2 = (a2.x - label_pos.x) * ux + (a2.y - label_pos.y) * uy;
+	const sign_a1 = proj_a1 >= 0 ? 1 : -1;
+	const sign_a2 = proj_a2 >= 0 ? 1 : -1;
+	const label_near_a1 = { x: label_pos.x + sign_a1 * (half_w + 2) * ux, y: label_pos.y + sign_a1 * (half_w + 2) * uy };
+	const label_near_a2 = { x: label_pos.x + sign_a2 * (half_w + 2) * ux, y: label_pos.y + sign_a2 * (half_w + 2) * uy };
+	const dim_line_segments: Array<{ from: { x: number; y: number }; to: { x: number; y: number } }> = [];
+	if (slid) {
+		dim_line_segments.push({ from: { x: a1.x - ux * overhang_px, y: a1.y - uy * overhang_px }, to: a1 });
+		dim_line_segments.push({ from: a2, to: { x: a2.x + ux * overhang_px, y: a2.y + uy * overhang_px } });
+		if (slid_past_a1) {
+			dim_line_segments.push({ from: { x: a1.x - ux * overhang_px, y: a1.y - uy * overhang_px }, to: label_near_a1 });
+		} else {
+			dim_line_segments.push({ from: { x: a2.x + ux * overhang_px, y: a2.y + uy * overhang_px }, to: label_near_a2 });
+		}
+	} else if (!a1_outside && !a2_outside) {
+		dim_line_segments.push({ from: a1, to: a2 });
+	} else if (!a1_outside && a2_outside) {
+		dim_line_segments.push({ from: a1, to: label_near_a1 });
+		dim_line_segments.push({ from: a2, to: { x: a2.x + ux * overhang_px, y: a2.y + uy * overhang_px } });
+	} else if (a1_outside && !a2_outside) {
+		dim_line_segments.push({ from: { x: a1.x - ux * overhang_px, y: a1.y - uy * overhang_px }, to: a1 });
+		dim_line_segments.push({ from: label_near_a2, to: a2 });
+	} else {
+		dim_line_segments.push({ from: { x: a1.x - ux * overhang_px, y: a1.y - uy * overhang_px }, to: a1 });
+		dim_line_segments.push({ from: a2, to: { x: a2.x + ux * overhang_px, y: a2.y + uy * overhang_px } });
+	}
+	const arrows = [
+		a1_outside
+			? { tip: a1, direction: { x: -dx, y: -dy } }
+			: { tip: a1, direction: { x:  dx, y:  dy } },
+		a2_outside
+			? { tip: a2, direction: { x:  dx, y:  dy } }
+			: { tip: a2, direction: { x: -dx, y: -dy } },
+	];
+	const label_box = {
+		x_min: label_pos.x - half_w - 2,
+		x_max: label_pos.x + half_w + 2,
+		y_min: label_pos.y - half_h - 1,
+		y_max: label_pos.y + half_h + 1,
+	};
+	return {
+		witness_segments,
+		dim_line_segments,
+		arrows,
+		label_box,
+		label_text_position: { x: label_pos.x, y: label_pos.y },
+		slid_past_anchor,
+		a1_outside,
+		a2_outside,
+	};
+}
+
+/** Pick the two highest-count witness indices per direction (rule 19's
+ *  depth-concentration vote). For each of the six directions, return the
+ *  set of winning witness indices (at most two; zero when the direction
+ *  had no viable parts). Ties are broken by the smaller witness index
+ *  first so the result is deterministic. Pure. */
+export function pick_top_two_witness_indices_per_face(
+	cell_count: ReadonlyMap<string, number>,
+	num_witness_indices: number,
+): Map<number, Set<number>> {
+	const winners = new Map<number, Set<number>>();
+	for (let face_idx = 0; face_idx < 6; face_idx++) {
+		const ranking: Array<{ wi: number; count: number }> = [];
+		for (let wi = 0; wi < num_witness_indices; wi++) {
+			ranking.push({ wi, count: cell_count.get(`${face_idx}|${wi}`) ?? 0 });
+		}
+		ranking.sort((a, b) => b.count - a.count || a.wi - b.wi);
+		const top: Set<number> = new Set();
+		for (let i = 0; i < Math.min(2, ranking.length); i++) {
+			if (ranking[i].count > 0) top.add(ranking[i].wi);
+		}
+		winners.set(face_idx, top);
+	}
+	return winners;
+}
 
 /** True when two axis-aligned rectangles share any interior area. Touching
  *  edges only do not count as overlap (strict inequality). Pure. */
@@ -3319,8 +3066,7 @@ export type Placement_Details = {
 
 export type Uniface_Placement_Result = {
 	uniface_box: Uniface_Box | null;
-	picks: Array<{
-		pick     : Placement_Details;
+	placements: Array<Placement_Details & {
 		so_id    : string;
 		so_name  : string;
 		axis     : Axis_Name;
@@ -3331,13 +3077,13 @@ export type Uniface_Placement_Result = {
 	silhouette_polygon_screen: Array<{ x: number; y: number }>;
 };
 
-let last_uniface_placement: Uniface_Placement_Result = { uniface_box: null, picks: [], silhouette_polygon_screen: [] };
+let last_uniface_placement_result: Uniface_Placement_Result = { uniface_box: null, placements: [], silhouette_polygon_screen: [] };
 
 /** Last diagnostic output emitted by run_uniface_placement. Used to
  *  suppress repeat logs when the scene state hasn't changed — every
  *  mouse-move re-renders, but the picks and rejection counts are
  *  identical, so logging the same text again is just noise. */
-let last_diag_output: string | null = null;
+let last_diagnostic_output: string | null = null;
 
 /** Have we sent the very first dimensionals log POST this browser session?
  *  The first POST overwrites the on-disk file; later POSTs append. */
@@ -3357,8 +3103,8 @@ function dispatch_dim_log_to_file(text: string): void {
 	}
 }
 
-export function get_last_uniface_placement(): Uniface_Placement_Result {
-	return last_uniface_placement;
+export function get_last_uniface_placement_result(): Uniface_Placement_Result {
+	return last_uniface_placement_result;
 }
 
 /** Stub orchestrator for the uniface placement path (step 2c).
@@ -3490,28 +3236,28 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	const WORLD_DISTANCE_WEIGHT        = 100; // each world unit of perpendicular distance from the part to the uniface plane reduces the score by this much. Strong enough to dominate every pixel-based term, so the closest uniface in world space wins by default; pixel terms only break ties.
 	const NUM_WITNESS_INDICES = uniface_box.shifts.length;
 
-	const picks: Uniface_Placement_Result['picks'] = [];
+	const placements: Uniface_Placement_Result['placements'] = [];
 	const axes: Axis_Name[] = ['x', 'y', 'z'];
 	// Hovered part — read once per render. Used to gate the verbose
 	// per-dimension diagnostic AND to record sample failing candidates.
-	const hovered_so_id_for_diag = hits_3d.hover?.so?.id ?? hits_3d.hovered_uniface_pick?.so_id ?? null;
+	const hovered_so_id_for_diag = hits_3d.hover?.so?.id ?? hits_3d.hovered_uniface_placement?.so_id ?? null;
 	// Already-picked (text, axis) pairs from earlier dimensions this
 	// render. The duplicate-text filter reads this to reject a new
 	// dimension whose label text and axis match one already kept.
 	const placed_dimensions: Array<{ text: string; axis: 'x' | 'y' | 'z' }> = [];
 	// Diagnostic counters — printed once at the end of the function.
-	let diag_total = 0;
-	let diag_with_any_candidate = 0;
-	let diag_with_winner = 0;
-	const diag_rejection_counts: Map<Clearance_Filter, number> = new Map();
-	const diag_log_buffer: string[] = [];
+	let diagnostic_total = 0;
+	let diagnostic_with_any_candidate = 0;
+	let diagnostic_with_winner = 0;
+	const diagnostic_rejection_counts: Map<Clearance_Filter, number> = new Map();
+	const diagnostic_log_buffer: string[] = [];
 	// Step 3d counters — one per ported old-path filter so the
 	// end-of-render summary names exactly how many parts each filter
 	// removed and which parts those were.
-	let diag_repeater_dropped_parts = 0;
-	let diag_repeater_dropped_axes = 0;
-	const diag_repeater_dropped_names: string[] = [];
-	let diag_null_picks_removed = 0;
+	let diagnostic_repeater_dropped_parts = 0;
+	let diagnostic_repeater_dropped_axes = 0;
+	const diagnostic_repeater_dropped_names: string[] = [];
+	let diagnostic_null_picks_removed = 0;
 	// When any part is hovered, log the silhouette six-sided shape's
 	// screen vertices once — needed to interpret sample-rect coordinates
 	// of failing candidates below.
@@ -3519,7 +3265,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 		const poly_str = silhouette_polygon
 			.map(p => `(${Math.round(p.x)},${Math.round(p.y)})`)
 			.join(' → ');
-		diag_log_buffer.push(`[uniface pick] silhouette six-sided shape on screen: ${poly_str}`);
+		diagnostic_log_buffer.push(`[uniface placement] silhouette six-sided shape on screen: ${poly_str}`);
 	}
 	// ─── Rule 19 witness-index vote (step 3g) ─────────────────────────
 	// Phase 1: look at every (part, axis, direction, witness index)
@@ -3654,11 +3400,8 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	// Phase 2 & 3 — count parts viable at each (direction, witness index)
 	// cell, then keep the two witness indices with the highest counts
 	// per direction. A direction with zero viable parts has no winners.
-	const cell_count: Map<string, number> = new Map();
-	for (const cells of cell_viability.values()) {
-		for (const cell of cells) cell_count.set(cell, (cell_count.get(cell) ?? 0) + 1);
-	}
-	const winners_per_face: Map<number, Set<number>> = new Map();
+	const cell_count = tally_cell_counts_for_vote(cell_viability);
+	const winners_per_face = pick_top_two_witness_indices_per_face(cell_count, NUM_WITNESS_INDICES);
 	const VOTE_SIDE_NAMES: Record<number, string> = {
 		[UNIFACE_FACE_POS_X]: 'RIGHT',
 		[UNIFACE_FACE_NEG_X]: 'LEFT',
@@ -3671,25 +3414,17 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 		`[uniface vote] witness-index counts per direction (parts that found a position viable in isolation):`,
 	];
 	for (let face_idx_v = 0; face_idx_v < 6; face_idx_v++) {
-		const ranking: Array<{ wi: number; count: number }> = [];
-		for (let wi_v = 0; wi_v < NUM_WITNESS_INDICES; wi_v++) {
-			ranking.push({ wi: wi_v, count: cell_count.get(`${face_idx_v}|${wi_v}`) ?? 0 });
-		}
-		const sorted_for_pick = ranking.slice().sort((a, b) => b.count - a.count || a.wi - b.wi);
-		const top: Set<number> = new Set();
-		for (let i = 0; i < Math.min(2, sorted_for_pick.length); i++) {
-			if (sorted_for_pick[i].count > 0) top.add(sorted_for_pick[i].wi);
-		}
-		winners_per_face.set(face_idx_v, top);
-		const counts_str = ranking.map(r => `wi${r.wi + 1}=${r.count}`).join(' ');
-		const winners_str = [...top].sort((a, b) => a - b).map(w => `wi${w + 1}`).join(', ') || 'none';
+		const counts_str = Array.from({ length: NUM_WITNESS_INDICES }, (_, wi) =>
+			`wi${wi + 1}=${cell_count.get(`${face_idx_v}|${wi}`) ?? 0}`,
+		).join(' ');
+		const winners_str = [...(winners_per_face.get(face_idx_v) ?? [])].sort((a, b) => a - b).map(w => `wi${w + 1}`).join(', ') || 'none';
 		vote_log_lines.push(`  ${VOTE_SIDE_NAMES[face_idx_v].padEnd(6)}: ${counts_str}   winners: ${winners_str}`);
 	}
-	diag_log_buffer.push(vote_log_lines.join('\n'));
+	diagnostic_log_buffer.push(vote_log_lines.join('\n'));
 	// Counter for the end-of-render summary: how many candidates the
 	// main loop below skipped because their (direction, witness index)
 	// cell lost the vote.
-	let diag_vote_skipped = 0;
+	let diagnostic_vote_skipped = 0;
 	for (const obj of rendered_leaves) {
 		// Step 3d filter 1: repeater filter. Clones inside a non-firewall
 		// repeater and middle fireblocks inside a firewall repeater get
@@ -3697,8 +3432,8 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 		// — fireblocks only along the repeat axis.
 		const classification = classify_so(obj);
 		if (!classification.eligible) {
-			diag_repeater_dropped_parts++;
-			diag_repeater_dropped_names.push(`${obj.so.name} (${classification.kind})`);
+			diagnostic_repeater_dropped_parts++;
+			diagnostic_repeater_dropped_names.push(`${obj.so.name} (${classification.kind})`);
 			continue;
 		}
 		// Natural label position: projected centroid of the part's
@@ -3731,7 +3466,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 			// Step 3d filter 1 continued: a firewalled fireblock gets dim
 			// lines only along the repeat axis. Skip every other axis.
 			if (!classification.axes_allowed.includes(axis)) {
-				diag_repeater_dropped_axes++;
+				diagnostic_repeater_dropped_axes++;
 				continue;
 			}
 			// Dimension-level check FIRST — duplicate-text rejects this
@@ -3761,22 +3496,20 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 					placed_dimensions,
 				});
 				if (!dim_check.ok) {
-					diag_total++;
-					diag_rejection_counts.set(dim_check.filter, (diag_rejection_counts.get(dim_check.filter) ?? 0) + 1);
-					picks.push({
-						pick: {
-							uniface: null,
-							edge_v1_idx: null,
-							edge_v2_idx: null,
-							natural_label_position: null,
-							witness_index: 1,
-							witness_length_px: null,
-							edge_p1_screen: null,
-							edge_p2_screen: null,
-							anchor_1_screen: null,
-							anchor_2_screen: null,
-							label_text: candidate_dim_text,
-						},
+					diagnostic_total++;
+					diagnostic_rejection_counts.set(dim_check.filter, (diagnostic_rejection_counts.get(dim_check.filter) ?? 0) + 1);
+					placements.push({
+						uniface: null,
+						edge_v1_idx: null,
+						edge_v2_idx: null,
+						natural_label_position: null,
+						witness_index: 1,
+						witness_length_px: null,
+						edge_p1_screen: null,
+						edge_p2_screen: null,
+						anchor_1_screen: null,
+						anchor_2_screen: null,
+						label_text: candidate_dim_text,
 						so_id   : obj.so.id,
 						so_name : obj.so.name,
 						axis,
@@ -3912,7 +3645,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 						// on at most two shared witness indices.
 						const winners_for_face = winners_per_face.get(face_idx);
 						if (!winners_for_face || !winners_for_face.has(wi)) {
-							diag_vote_skipped++;
+							diagnostic_vote_skipped++;
 							continue;
 						}
 						// Cross product of edge direction and side outward
@@ -3957,7 +3690,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 						};
 						const shape_result = evaluate_shape_clearances(shape_inputs);
 						if (!shape_result.ok) {
-							diag_rejection_counts.set(shape_result.filter, (diag_rejection_counts.get(shape_result.filter) ?? 0) + 1);
+							diagnostic_rejection_counts.set(shape_result.filter, (diagnostic_rejection_counts.get(shape_result.filter) ?? 0) + 1);
 							let fc = per_side_rejections.get(face_idx);
 							if (!fc) { fc = new Map(); per_side_rejections.set(face_idx, fc); }
 							fc.set(shape_result.filter, (fc.get(shape_result.filter) ?? 0) + 1);
@@ -3998,19 +3731,14 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 								const ARROW_PX = 6;
 								const overhang_px = k.dimensions.SLIDABLE_OVERHANG_PX;
 								const half_w = label_w_px / 2;
+								const half_h = LABEL_H_PX / 2;
 								const dl_len_check = Math.hypot(a2.x - a1.x, a2.y - a1.y);
 								if (dl_len_check > 1e-9) {
 									const ux_check = (a2.x - a1.x) / dl_len_check;
 									const uy_check = (a2.y - a1.y) / dl_len_check;
-									const inside_rect = (pt: { x: number; y: number }, rx: number, ry: number): boolean =>
-										pt.x >= rx - half_w - 2 && pt.x <= rx + half_w + 2 &&
-										pt.y >= ry - LABEL_H_PX / 2 - 1 && pt.y <= ry + LABEL_H_PX / 2 + 1;
-									const fully_a1 =
-										inside_rect(a1, cx_s, cy_s) &&
-										inside_rect({ x: a1.x + ux_check * ARROW_PX, y: a1.y + uy_check * ARROW_PX }, cx_s, cy_s);
-									const fully_a2 =
-										inside_rect(a2, cx_s, cy_s) &&
-										inside_rect({ x: a2.x - ux_check * ARROW_PX, y: a2.y - uy_check * ARROW_PX }, cx_s, cy_s);
+									const label_center = { x: cx_s, y: cy_s };
+									const fully_a1 = does_label_fully_cover_inside_arrow(a1, label_center, ux_check, uy_check, +1, half_w, half_h, ARROW_PX);
+									const fully_a2 = does_label_fully_cover_inside_arrow(a2, label_center, ux_check, uy_check, -1, half_w, half_h, ARROW_PX);
 									if (fully_a1 || fully_a2) {
 										const target = fully_a1 ? a1 : a2;
 										const sign_away = fully_a1 ? -1 : +1;
@@ -4047,7 +3775,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 								// Count the ORIGINAL rejection per candidate, for the
 								// diagnostic. Slide-retry rejections are not counted —
 								// we want to know what initially required a slide.
-								diag_rejection_counts.set(result.filter, (diag_rejection_counts.get(result.filter) ?? 0) + 1);
+								diagnostic_rejection_counts.set(result.filter, (diagnostic_rejection_counts.get(result.filter) ?? 0) + 1);
 								let fc = per_side_rejections.get(face_idx);
 								if (!fc) { fc = new Map(); per_side_rejections.set(face_idx, fc); }
 								fc.set(result.filter, (fc.get(result.filter) ?? 0) + 1);
@@ -4207,20 +3935,20 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 				);
 			}
 
-			// Diagnostic: one entry per (part, axis) — but only when at least
+			// Diagnostic: one log entry per (part, axis) — but only when at least
 			// one of the four candidate sides has a passing candidate. The
 			// final summary line counts every dimension whether or not it
 			// printed an entry. Output is buffered and compared against the
 			// previous render's output — same scene state → no log.
-			diag_total++;
+			diagnostic_total++;
 			if (per_side_best.size > 0) {
-				diag_with_any_candidate++;
-				if (winner !== null) diag_with_winner++;
+				diagnostic_with_any_candidate++;
+				if (winner !== null) diagnostic_with_winner++;
 			}
 			// Print the full per-dimension block ONLY when the part is
 			// currently hovered. Everything else stays out of the log;
 			// the summary at the end still counts the whole scene.
-			const hovered_so_id = hits_3d.hover?.so?.id ?? hits_3d.hovered_uniface_pick?.so_id ?? null;
+			const hovered_so_id = hits_3d.hover?.so?.id ?? hits_3d.hovered_uniface_placement?.so_id ?? null;
 			const is_hovered_part = hovered_so_id !== null && obj.so.id === hovered_so_id;
 			if (is_hovered_part) {
 				const SIDE_NAMES_BY_FACE: Record<number, string> = {
@@ -4234,7 +3962,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 				const AXIS_LABELS: Record<Axis_Name, string> = { x: 'width', y: 'depth', z: 'height' };
 				const winner_side = winner ? SIDE_NAMES_BY_FACE[winner.face] : 'NONE';
 				const lines: string[] = [];
-				lines.push(`[uniface pick] ${obj.so.name} (${AXIS_LABELS[axis]}): chose ${winner_side}`);
+				lines.push(`[uniface placement] ${obj.so.name} (${AXIS_LABELS[axis]}): chose ${winner_side}`);
 				for (const face_idx of UNIFACE_CANDIDATES_PER_AXIS[axis]) {
 					const sname = SIDE_NAMES_BY_FACE[face_idx];
 					const s = per_side_best.get(face_idx);
@@ -4277,7 +4005,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 						);
 					}
 				}
-				diag_log_buffer.push(lines.join('\n'));
+				diagnostic_log_buffer.push(lines.join('\n'));
 			}
 
 			// Witness length in screen pixels: perpendicular distance from
@@ -4286,62 +4014,60 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 			const witness_length_px = winner
 				? distance_from_point_to_line_2d(winner.anchor_1, winner.edge_p1_screen, winner.edge_p2_screen)
 				: null;
-			picks.push({
-				pick: {
-					uniface                : winner ? winner.face : null,
-					edge_v1_idx            : null,
-					edge_v2_idx            : null,
-					natural_label_position : winner ? winner.label_pos : null,
-					witness_index          : winner ? winner.witness_index + 1 : 1,
-					witness_length_px      : witness_length_px,
-					edge_p1_screen         : winner ? winner.edge_p1_screen : null,
-					edge_p2_screen         : winner ? winner.edge_p2_screen : null,
-					anchor_1_screen        : winner ? winner.anchor_1 : null,
-					anchor_2_screen        : winner ? winner.anchor_2 : null,
-					label_text             : candidate_dim_text,
-				},
+			placements.push({
+				uniface                : winner ? winner.face : null,
+				edge_v1_idx            : null,
+				edge_v2_idx            : null,
+				natural_label_position : winner ? winner.label_pos : null,
+				witness_index          : winner ? winner.witness_index + 1 : 1,
+				witness_length_px      : witness_length_px,
+				edge_p1_screen         : winner ? winner.edge_p1_screen : null,
+				edge_p2_screen         : winner ? winner.edge_p2_screen : null,
+				anchor_1_screen        : winner ? winner.anchor_1 : null,
+				anchor_2_screen        : winner ? winner.anchor_2 : null,
+				label_text             : candidate_dim_text,
 				so_id   : obj.so.id,
 				so_name : obj.so.name,
 				axis,
 			});
 		}
 	}
-	// Step 3d filter 4 (no-viable-pair drop): remove every pick whose
-	// search yielded no winning uniface — they cannot draw anything.
-	const picks_with_winner = picks.filter(entry => {
-		if (entry.pick.uniface === null) {
-			diag_null_picks_removed++;
+	// Step 3d filter 4 (no-viable-pair drop): remove every placement
+	// whose search yielded no winning uniface — they cannot draw.
+	const placements_with_winner = placements.filter(placement => {
+		if (placement.uniface === null) {
+			diagnostic_null_picks_removed++;
 			return false;
 		}
 		return true;
 	});
 	{
-		const histogram = Array.from(diag_rejection_counts.entries())
+		const histogram = Array.from(diagnostic_rejection_counts.entries())
 			.sort((a, b) => b[1] - a[1])
 			.map(([f, c]) => `  ${f}: ${c}`)
 			.join('\n');
-		const total_rejections = Array.from(diag_rejection_counts.values()).reduce((s, c) => s + c, 0);
-		const repeater_names = diag_repeater_dropped_names.length > 0
-			? `\n    parts removed by the repeater filter: ${diag_repeater_dropped_names.join(', ')}`
+		const total_rejections = Array.from(diagnostic_rejection_counts.values()).reduce((s, c) => s + c, 0);
+		const repeater_names = diagnostic_repeater_dropped_names.length > 0
+			? `\n    parts removed by the repeater filter: ${diagnostic_repeater_dropped_names.join(', ')}`
 			: '';
 		const summary =
-			`[uniface pick] summary: ${diag_total} dimensions, ${diag_with_any_candidate} had at least one passing candidate, ${diag_with_winner} were picked`
+			`[uniface placement] summary: ${diagnostic_total} dimensions, ${diagnostic_with_any_candidate} had at least one passing candidate, ${diagnostic_with_winner} were picked`
 			+ `\n  step 3d filter drops:`
-			+ `\n    repeater filter removed ${diag_repeater_dropped_parts} part(s) and ${diag_repeater_dropped_axes} extra axis sweep(s)${repeater_names}`
-			+ `\n    no-viable-pair drop removed ${diag_null_picks_removed} pick(s) with no chosen uniface`
-			+ `\n  step 3g witness-index vote: skipped ${diag_vote_skipped} candidate cell(s) whose witness index lost the per-direction vote`
+			+ `\n    repeater filter removed ${diagnostic_repeater_dropped_parts} part(s) and ${diagnostic_repeater_dropped_axes} extra axis sweep(s)${repeater_names}`
+			+ `\n    no-viable-pair drop removed ${diagnostic_null_picks_removed} pick(s) with no chosen uniface`
+			+ `\n  step 3g witness-index vote: skipped ${diagnostic_vote_skipped} candidate cell(s) whose witness index lost the per-direction vote`
 			+ `\n  rejections by filter (${total_rejections} total across all dimensions):\n${histogram || '  (none)'}`;
-		const full_output = diag_log_buffer.length > 0
-			? diag_log_buffer.join('\n') + '\n' + summary
+		const full_output = diagnostic_log_buffer.length > 0
+			? diagnostic_log_buffer.join('\n') + '\n' + summary
 			: summary;
-		if (full_output !== last_diag_output) {
-			last_diag_output = full_output;
+		if (full_output !== last_diagnostic_output) {
+			last_diagnostic_output = full_output;
 			if (k.debug.diagnose_dims) {
 				console.log(full_output);
 				dispatch_dim_log_to_file(full_output);
 			}
 		}
 	}
-	last_uniface_placement = { uniface_box, picks: picks_with_winner, silhouette_polygon_screen: silhouette_polygon };
-	return last_uniface_placement;
+	last_uniface_placement_result = { uniface_box, placements: placements_with_winner, silhouette_polygon_screen: silhouette_polygon };
+	return last_uniface_placement_result;
 }

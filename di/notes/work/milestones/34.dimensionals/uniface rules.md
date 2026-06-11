@@ -101,6 +101,8 @@ The dimensionals are still challenging to interpret. Might be easier if they are
 
     **A candidate is a possible (edge, uniface, witness index, label position) four-degree-of-freedom tuple — NOT the label itself.** The label only exists once a candidate wins. A rejected candidate is discarded; the search moves to the next combination.
 
+    **Traversal order — largest measurement first.** The placement algorithm visits every (part, axis) entry in DESCENDING ORDER of the measurement's value in millimetres. Each (part, axis) pair is treated as one work item: the part with width 100 mm and height 5000 mm has its height visited far earlier than its width. The traversal is implemented as a priority queue (or any tree-like structure) keyed by descending millimetres. Each pop runs the full filter pipeline against whatever has already been placed; commit on a passing candidate, drop the (part, axis) on no candidate. The traversal continues until the queue is empty. Equal millimetre values mean equal formatted text — the duplicate-text drop (rule 13) handles those before they reach the traversal.
+
     **Filter pipeline (early exit).** Each candidate is tested against the seven hard filters in a fixed order (cheap and most-discriminating first). The first filter the candidate fails causes immediate rejection; remaining filters do not run. The rejection records which filter killed it (useful for debugging). The seven filters, in order:
     1. Label rectangle clears the silhouette rect by at least SILHOUETTE_MARGIN_PX.
     2. Label rectangle clears every previously placed label rectangle by at least PAIR_CLEARANCE_PX.

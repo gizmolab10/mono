@@ -56,6 +56,7 @@ Do not use these words for the three numbers: *cell*, *value*. Both have been re
 - **render** — the last step of a frame.
 - **screen** — the on-screen rectangle that holds the rendered scene.
 - **tumble** — apply the scene rotation to the root object to produce part position information that can then be projected onto the screen. Caused by nothing-is-selected drag.
+- **fully visible part** — an SO whose visible faces are entirely within the frustum.
 
 ## Print pipeline
 
@@ -96,7 +97,7 @@ How each dim line's position and label are chosen.
     - **drift safety.** after two consecutive renders where the placement algorithm was skipped and any check passed only by the 2-pixel tolerance, force a full placement-algorithm run on the next render regardless.
 - **placement algorithm** — the procedure that picks the four placement choices for every label each render. Done once per render.
 - **rotated part** — a part whose own rotation differs from the identity.
-- **silhouette box** — the box that exactly encloses every part (including those that are rotated), recomputed before each render. World aligned (untumbled).
+- **silhouette box** — the box that exactly encloses every fully visible part (including those that are rotated), recomputed before each render. World aligned (untumbled).
 - **silhouette margin** — the screen-pixel gap between the silhouette box and the first uniface box. Set by the project to 15 pixels.
 - **tie-break** — when two labels tie on a placement criterion, the rule that picks the winner. Persistence, parent-over-child, and alphabetical are the three tie-breaks used in the duplicate-text drop.
 - **uniface** — a face of a unface box.  Never "uniface face", never "uniface block", never "buffer".

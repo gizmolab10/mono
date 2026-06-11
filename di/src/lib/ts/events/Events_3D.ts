@@ -74,7 +74,7 @@ class Events_3D {
 					canvas.style.cursor = 'grab';
 					hits_3d.hover = null;
 					hits_3d.hovered_dimension = null;
-					hits_3d.hovered_uniface_pick = null;
+					hits_3d.hovered_uniface_placement = null;
 				} else {
 					const hit = hits_3d.hit_test(point, e.altKey);
 

@@ -80,6 +80,8 @@ src/
         │   ├── index.ts
         │   ├── Animation.ts
         │   ├── Camera.ts
+        │   ├── Dimension_Placement.ts
+        │   ├── Dimension_Renderer.ts
         │   ├── Engine.ts
         │   ├── Facets.ts
         │   ├── R_Angulars.ts
@@ -96,6 +98,7 @@ src/
         │   └── Smart_Object.ts
         ├── tests/            # Unit tests
         │   ├── setup.ts
+        │   ├── helpers/      # Shared test scaffolding (scene mock, placement integration harness)
         │   └── *.test.ts (about thirty files)
         ├── types/            # Type aliases and interfaces
         │   ├── index.ts
@@ -208,7 +211,9 @@ The canvas rendering pipeline.
 - `Facets.ts` — Face-pair intersection helper
 - `R_Grid.ts` — The background grid
 - `R_Axes.ts` — The axis indicators
-- `R_Dimensions.ts` — The dimension labels around the selected part
+- `R_Dimensions.ts` — Entry point for dim-label rendering; clears hit rects, runs the uniface placement, then asks the renderer to draw
+- `Dimension_Placement.ts` — The uniface placement algorithm — silhouette box, nested uniface boxes, four-degree-of-freedom search, hard filters, witness-index vote, label slide
+- `Dimension_Renderer.ts` — Walks the placement record and draws each dim line, witness lines, arrowheads, and white-boxed label
 - `R_Angulars.ts` — The angle labels around the selected part
 
 ## Runtime

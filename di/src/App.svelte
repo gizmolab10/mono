@@ -99,7 +99,7 @@
 		// Re-apply on every observed resize.
 		print_resize_observer?.disconnect();
 		print_resize_observer = new ResizeObserver(() => {
-			console.log('[print diag] === resize observer fired ===');
+			console.log('[print diagnostic] === resize observer fired ===');
 			apply_print_transform(canvas);
 		});
 		print_resize_observer.observe(canvas);

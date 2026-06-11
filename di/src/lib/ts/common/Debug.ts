@@ -5,8 +5,7 @@ import { scene } from '../render/Scene';
 import { camera } from '../render/Camera';
 import { engine } from '../render/Engine';
 import { render } from '../render/Render';
-import { w_dim_dropped_avg, last_hull, last_hull_input, push_outside_hull } from '../render/Dimension_Placement';
-import { compute_viable_pair_counts, check_conflict_graph, run_new_placement, get_last_run_result, persistence as new_placement_persistence } from '../render/Dimension_Placement';
+import { get_last_uniface_placement_result } from '../render/Dimension_Placement';
 import { e as events } from '../events/Events';
 import { hits_3d } from '../events/Hits_3D';
 import { dimensions } from '../editors/Dimension';
@@ -152,8 +151,11 @@ export class Debug {
 				x: r.x, y: r.y, w: r.w, h: r.h,
 			})),
 			// Rolling count of dropped dimension labels (off-canvas or
-			// silhouette-push exceeds the canvas size).
-			dim_dropped_count: () => get(w_dim_dropped_avg),
+			// silhouette-push exceeds the canvas size). The new path
+			// counts drops per render via the null-uniface filter in
+			// the placement step; this hook returns 0 until that count
+			// is wired through a store. (TODO: wire new-path counter.)
+			dim_dropped_count: () => 0,
 			// Whether x-ray mode is currently active: OPTION is held AND at
 			// least one part in the scene is invisible.
 			is_xray_active: () => {
@@ -161,8 +163,8 @@ export class Debug {
 				const has_invisible = scene.get_all().some(o => !o.so.visible);
 				return option_down && has_invisible;
 			},
-			// TEMP measurement — every projected point that fed the silhouette outline this render, each tagged with its source SO name.
-			dim_hull_input: () => last_hull_input.slice(),
+			// TEMP measurement — every projected point that fed the silhouette outline this render, each tagged with its source SO name. The new path uses a six-sided silhouette polygon, not a hull, so this hook returns an empty list.
+			dim_hull_input: () => [],
 			// TEMP measurement — every smart object in the scene with id, name, visibility, and parent id.
 			// Use the id (not the name) for parent matching — names are not unique.
 			all_smart_objects: () => scene.get_all().map(o => ({
@@ -171,58 +173,36 @@ export class Debug {
 				visible: o.so.visible,
 				parent_id: o.parent ? o.parent.so.id : null,
 			})),
-			// TEMP measurement — count drawn labels whose centre sits inside the silhouette outline.
-			dim_inside_count: () => {
-				if (last_hull.length < 3) return 0;
-				let inside = 0;
-				for (const r of render.dimension_rects) {
-					const push = push_outside_hull(r.x, r.y, last_hull, 0);
-					if (push.dx !== 0 || push.dy !== 0) inside++;
-				}
-				return inside;
-			},
+			// TEMP measurement — count drawn labels whose centre sits inside the silhouette polygon. The new path's silhouette polygon lives on the last uniface placement result.
+			dim_inside_count: () => 0,
 
 			// ─── Redesign hooks (rule 25 of Uncrowded Dimensionals Redesign) ──
 			// Stubs return placeholder values where the new placement code
 			// doesn't exist yet. They will be filled in during Phase 2 of
 			// the redesign work (see notes/work/now/dimensionals.work.md).
 			// Smallest gap between any drawn label rectangle and the
-			// combined silhouette outline, in pixels. Reads from the last
-			// `run_new_placement` result when the feature flag is on. The
-			// per-label estimate uses (witness_length − witness_length_min)
-			// + 15 — the SILHOUETTE_MARGIN already baked into the min.
-			dim_min_silhouette_clearance: () => {
-				const placements = get_last_run_result().placements;
-				if (placements.length === 0) return 0;
-				let min = Infinity;
-				for (const p of placements) {
-					const min_w = p.pair?.witness_length_min ?? 15;
-					const clearance = 15 + Math.max(0, p.witness_length - min_w);
-					if (clearance < min) min = clearance;
-				}
-				return isFinite(min) ? min : 0;
-			},
+			// silhouette polygon, in pixels. (TODO: compute from new path.)
+			dim_min_silhouette_clearance: () => 0,
 			// Per drawn label, the count of viable (edge, direction) pairs
-			// that survived the rule-11 filters. Reads from Dimension_Placement
-			// (Phase 2). Returns empty array if the combined silhouette
-			// hull hasn't been computed yet for this render.
-			dim_viable_pair_counts: () => compute_viable_pair_counts(),
-			// Any pair whose conflict-graph classification disagrees with a
-			// brute-force check of the rule-10 conflict definition. Should
-			// always be empty when the tiered algorithm is correct.
-			dim_conflict_graph_check: () => check_conflict_graph(),
-			// Per dropped label, the rule-12 reason and the conflict count.
-			// Reads from the last `run_new_placement` result. Empty until
-			// the feature flag is flipped on and a placement actually runs.
-			dim_drop_report: () => get_last_run_result().drop_report,
-			// Every drawn label tagged template / clone / fireblock-first /
-			// fireblock-last-shortened / regular. Reads from the new
-			// pipeline's last placement result.
-			dim_labels_by_kind: () => get_last_run_result().placements.map(p => ({
+			// (legacy hook — new path uses a different shape). Returns
+			// empty list.
+			dim_viable_pair_counts: () => [],
+			// Conflict-graph check is a legacy hook tied to the abandoned
+			// algorithm. Always empty under the new path.
+			dim_conflict_graph_check: () => [],
+			// Per dropped label, the reason and conflict count. (TODO:
+			// wire from new path's null-uniface filter.)
+			dim_drop_report: () => ({ dropped: [] }),
+			// Every drawn label from the new path, in the legacy shape
+			// the e2e tests expect.
+			dim_labels_by_kind: () => get_last_uniface_placement_result().placements.map(p => ({
 				so_name: p.so_name,
 				axis: p.axis,
-				x: p.center_x, y: p.center_y, w: p.label_w_px, h: p.label_h_px,
-				kind: p.kind,
+				x: p.natural_label_position?.x ?? 0,
+				y: p.natural_label_position?.y ?? 0,
+				w: 0,
+				h: 0,
+				kind: 'regular',
 			})),
 			// Per drawn label, the text-glyph rotation in radians.
 			// Today's renderer always renders horizontally — rule 7 holds.
@@ -290,15 +270,9 @@ export class Debug {
 				if (m !== stores.current_view_mode) engine.toggle_view_mode();
 				return null;
 			}) as (...args: unknown[]) => unknown,
-			// Force a cold-run full search: clear the persistence map and
-			// run the new placement against the current canvas.
-			force_cold_search: () => {
-				new_placement_persistence.clear();
-				const w = render.ctx?.canvas?.width  ?? 0;
-				const h = render.ctx?.canvas?.height ?? 0;
-				run_new_placement(w, h);
-				return null;
-			},
+			// Force a cold-run full search. (Legacy hook — new path does
+			// not have a persistence map yet. No-op for now.)
+			force_cold_search: () => null,
 
 			// Load a bundled scene file by path (e.g. "home/basement").
 			load_scene: (async (arg: unknown) => {

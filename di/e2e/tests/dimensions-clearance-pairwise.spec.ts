@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { open_app, load_basement, dim_labels, type Dim_Label } from './dim-helpers';
 
-// New-design rule 16 (second postcondition) — every pair of drawn labels
-// is at least 33 screen pixels apart, measured rectangle-to-rectangle.
-// Currently expected to fail against the running force-driven code; will
-// pass once the four-DOF search is added.
+// New-design rule 5 — every pair of drawn labels keeps at least
+// PAIR_CLEARANCE_PX (5 screen pixels today) apart, measured
+// rectangle-to-rectangle. Step 6 salvage: threshold tracks the new
+// rule 5; the old 33-px number from the abandoned algorithm is gone.
 
 function rect_distance(a: Dim_Label, b: Dim_Label): number {
 	const a_left   = a.x - a.w / 2;
@@ -20,7 +20,7 @@ function rect_distance(a: Dim_Label, b: Dim_Label): number {
 	return Math.sqrt(dx * dx + dy * dy);
 }
 
-test('every pair of drawn labels on basement keeps at least 33 pixels apart', async ({ page }) => {
+test('every pair of drawn labels on basement keeps at least 5 pixels apart', async ({ page }) => {
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await open_app(page);
 	await load_basement(page);
@@ -32,7 +32,7 @@ test('every pair of drawn labels on basement keeps at least 33 pixels apart', as
 	for (let i = 0; i < labels.length; i++) {
 		for (let j = i + 1; j < labels.length; j++) {
 			const gap = rect_distance(labels[i], labels[j]);
-			if (gap < 33) {
+			if (gap < 5) {
 				too_close.push({
 					a: `${labels[i].so_name}:${labels[i].axis}`,
 					b: `${labels[j].so_name}:${labels[j].axis}`,
@@ -42,5 +42,5 @@ test('every pair of drawn labels on basement keeps at least 33 pixels apart', as
 		}
 	}
 
-	expect(too_close, `pairs under 33 pixels: ${JSON.stringify(too_close)}`).toEqual([]);
+	expect(too_close, `pairs under 5 pixels: ${JSON.stringify(too_close)}`).toEqual([]);
 });

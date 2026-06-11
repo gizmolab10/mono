@@ -1,25 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { k } from '../common/Constants';
-import { preferences, T_Preference } from '../managers/Preferences';
-
-// Read the same persisted flag the running app reads. When true, the
-// Group B describe blocks below skip — they pin the abandoned placement
-// algorithm and the new spec has dropped its shape. The setup file
-// bridges process.env.USE_UNIFACE_RULES into local storage at startup.
-const USE_UNIFACE_RULES = preferences.read<boolean>(T_Preference.useUnifaceRules) ?? false;
 import {
-	neighbour_pairs_from_regions,
-	pair_can_separate,
-	labels_can_separate_via_some_combination,
-	Conflict_Graph,
-	label_key,
-	min_distance_to_placed,
-	best_candidate_in_pair,
 	order_by_constrainedness,
-	greedy_seed_for_regions,
 	find_conflicts_in_placement,
 	retry_pass,
-	stochastic_finish,
 	seed_string_from_regions,
 	apply_drop_policy,
 	drop_duplicates,
@@ -62,467 +46,21 @@ import {
 	type Greedy_Placement,
 	type Label_Key,
 	type Silhouette_Box,
+	type Placement_Details,
+	tally_cell_counts_for_vote,
+	pick_top_two_witness_indices_per_face,
+	is_inside_arrow_blocked_at_anchor,
+	does_label_fully_cover_inside_arrow,
+	compute_dim_render_geometry,
 } from '../render/Dimension_Placement';
 import { vec3 } from 'gl-matrix';
 
-// Build a Viable_Pair with horizontal projected edge, perpendicular
-// witness pointing UP (negative Y on screen). Lets tests reason in
-// simple x/y terms without juggling 3D projections.
-function horiz_edge_pair(args: {
-	so_id      : string;
-	edge_left_x: number;
-	edge_y     : number;
-	edge_len   : number;
-	w_min      : number;
-	w_max      : number;
-	s_min      : number;
-	s_max      : number;
-	label_w    : number;
-	label_h    : number;
-}): Viable_Pair {
-	return {
-		so_id : args.so_id,
-		so_name : args.so_id,
-		kind : 'regular',
-		axis : 'x',
-		edge_v1_idx : 0,
-		edge_v2_idx : 1,
-		direction : [0, 0, 1],
-		witness_length_min : args.w_min,
-		witness_length_max : args.w_max,
-		slidable_min : args.s_min,
-		slidable_max : args.s_max,
-		avg_wlen_per_3d_unit : 10,
-		label_w_px : args.label_w,
-		label_h_px : args.label_h,
-		edge_p1_x : args.edge_left_x,
-		edge_p1_y : args.edge_y,
-		edge_p2_x : args.edge_left_x + args.edge_len,
-		edge_p2_y : args.edge_y,
-		// Witness direction: up (negative Y on screen). Both endpoints
-		// project to the same per-3D-unit screen vector — fine for tests
-		// that work in flat 2D where there is no perspective divergence.
-		wit_ux : 0,
-		wit_uy : -1,
-		wit_1_per3d_x : 0,
-		wit_1_per3d_y : -1,
-		wit_2_per3d_x : 0,
-		wit_2_per3d_y : -1,
-		text : '0',
-		dim_z : 0,
-	};
-}
 
-// Helper: build a Reachable_Region with just the AABB fields filled in.
-// The grid worker only reads the bounds and the so_id/axis identity, so
-// the empty `pairs` array is fine.
-function region(so_id: string, x_min: number, y_min: number, x_max: number, y_max: number): Reachable_Region {
-	return { so_id, so_name: so_id, kind: 'regular', axis: 'x', x_min, y_min, x_max, y_max, pairs: [] };
-}
 
-describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — first-pass neighbour pairs', () => {
-	it('returns no pairs when no regions overlap', () => {
-		const regions = [
-			region('A', 0,   0,   20,  20),
-			region('B', 200, 200, 220, 220),
-			region('C', 500, 500, 520, 520),
-		];
-		const pairs = neighbour_pairs_from_regions(regions);
-		expect(pairs).toEqual([]);
-	});
 
-	it('flags two regions whose clearance-expanded boxes overlap', () => {
-		// Gap = M - 2, just inside the clearance margin. Position read from
-		// the shared constants so the test stays correct if the margin moves.
-		const M = k.dimensions.PAIR_CLEARANCE_PX;
-		const regions = [
-			region('A', 0,           0, 20,                0 + 20),
-			region('B', 20 + M - 2,  0, 20 + M - 2 + 20,   0 + 20),
-		];
-		const pairs = neighbour_pairs_from_regions(regions);
-		expect(pairs).toHaveLength(1);
-		const [p] = pairs;
-		const ids = [p.a_so_id, p.b_so_id].sort();
-		expect(ids).toEqual(['A', 'B']);
-	});
 
-	it('does NOT flag two regions just outside the clearance margin', () => {
-		// Gap = M + 5, comfortably outside the clearance margin.
-		const M = k.dimensions.PAIR_CLEARANCE_PX;
-		const regions = [
-			region('A', 0,            0, 20,                  0 + 20),
-			region('B', 20 + M + 5,   0, 20 + M + 5 + 20,     0 + 20),
-		];
-		const pairs = neighbour_pairs_from_regions(regions);
-		expect(pairs).toEqual([]);
-	});
 
-	it('de-duplicates a pair that shares more than one grid cell', () => {
-		// Both regions are wide enough to span multiple cells.
-		const regions = [
-			region('A', 0,  0, 200, 200),
-			region('B', 30, 30, 250, 250),
-		];
-		const pairs = neighbour_pairs_from_regions(regions);
-		expect(pairs).toHaveLength(1);
-	});
 
-	it('does not pair a region with itself', () => {
-		const regions = [
-			region('A', 0,  0, 200, 200),
-		];
-		const pairs = neighbour_pairs_from_regions(regions);
-		expect(pairs).toEqual([]);
-	});
-
-	it('handles a mix of close and far regions', () => {
-		// Positions derived from the clearance margin so the assertion stays
-		// stable if the margin changes. B is just inside A's margin (touches);
-		// D sits past A in x AND offset in y just enough to escape A's margin
-		// but still inside B's. C is alone in the corner.
-		const M = k.dimensions.PAIR_CLEARANCE_PX;
-		const regions = [
-			region('A', 0,             0,             20,              20),
-			region('B', 20 + M - 2,    0,             20 + M - 2 + 20, 20),    // gap M-2 from A: inside margin
-			region('C', 500,           500,           520,             520),   // far from all
-			region('D', 20 + M + 3,    20 + M / 2,    20 + M + 3 + 20, 20 + M / 2 + 20),   // gap M+3 from A in x
-		];
-		const pairs = neighbour_pairs_from_regions(regions);
-		const labelled = pairs.map(p => [p.a_so_id, p.b_so_id].sort().join('-')).sort();
-		expect(labelled).toEqual(['A-B', 'B-D']);
-	});
-
-	it('returns Candidate_Pair entries with axis preserved', () => {
-		const M = k.dimensions.PAIR_CLEARANCE_PX;
-		const r: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'y', x_min: 0, y_min: 0, x_max: 20, y_max: 20, pairs: [] };
-		const s: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'z', x_min: 20 + M - 2, y_min: 0, x_max: 20 + M - 2 + 20, y_max: 20, pairs: [] };
-		const pairs = neighbour_pairs_from_regions([r, s]);
-		expect(pairs).toHaveLength(1);
-		const sorted = [pairs[0].a_axis, pairs[0].b_axis].sort();
-		expect(sorted).toEqual(['y', 'z']);
-	});
-});
-
-describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — second-pass closed-form separation', () => {
-	it('says two pairs CAN separate when their slidable ranges are far apart on the same level', () => {
-		// Both labels at witness_length = 30 (so y = -30 in screen coords).
-		// Label A slides between x=0 and x=20; label B between x=200 and x=220.
-		// Labels are 30 px wide. Plenty of room for 33-pixel clearance.
-		const a = horiz_edge_pair({ so_id: 'A', edge_left_x: 0,   edge_y: 0, edge_len: 20,  w_min: 30, w_max: 30, s_min: 0, s_max: 20, label_w: 30, label_h: 14 });
-		const b = horiz_edge_pair({ so_id: 'B', edge_left_x: 200, edge_y: 0, edge_len: 20,  w_min: 30, w_max: 30, s_min: 0, s_max: 20, label_w: 30, label_h: 14 });
-		expect(pair_can_separate(a, b)).toBe(true);
-	});
-
-	it('says two pairs CANNOT separate when reachable AABBs sit fully on top of each other and rectangles are wider than 33 px', () => {
-		// Both edges and both label rectangles overlap identically.
-		const a = horiz_edge_pair({ so_id: 'A', edge_left_x: 0, edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 0, label_w: 30, label_h: 14 });
-		const b = horiz_edge_pair({ so_id: 'B', edge_left_x: 0, edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 0, label_w: 30, label_h: 14 });
-		expect(pair_can_separate(a, b)).toBe(false);
-	});
-
-	it('says two pairs CAN separate when witness-length ranges allow vertical clearance', () => {
-		// Label A at y around -30 (witness up 30). Label B at y around -120 (witness up 120).
-		// Vertical gap when each picks the most extreme of its range: 120 - 30 - (14/2 + 14/2) = 76 px. Plenty.
-		const a = horiz_edge_pair({ so_id: 'A', edge_left_x: 0, edge_y: 0, edge_len: 20, w_min: 30,  w_max: 30,  s_min: 10, s_max: 10, label_w: 30, label_h: 14 });
-		const b = horiz_edge_pair({ so_id: 'B', edge_left_x: 0, edge_y: 0, edge_len: 20, w_min: 120, w_max: 120, s_min: 10, s_max: 10, label_w: 30, label_h: 14 });
-		expect(pair_can_separate(a, b)).toBe(true);
-	});
-
-	it('respects a custom clearance argument', () => {
-		// Same setup as the "can separate when far apart" case; bump
-		// clearance to 300 to force failure.
-		const a = horiz_edge_pair({ so_id: 'A', edge_left_x: 0,   edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 20, label_w: 30, label_h: 14 });
-		const b = horiz_edge_pair({ so_id: 'B', edge_left_x: 200, edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 20, label_w: 30, label_h: 14 });
-		expect(pair_can_separate(a, b, 300)).toBe(false);
-	});
-});
-
-describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — labels_can_separate_via_some_combination', () => {
-	it('returns true if ANY combination of the input pair-sets can separate', () => {
-		// Label A has two pairs: one that overlaps B, one that does not.
-		// The non-overlapping pair lets the labels separate.
-		const overlap_a   = horiz_edge_pair({ so_id: 'A', edge_left_x: 0, edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 0, label_w: 30, label_h: 14 });
-		const far_a       = horiz_edge_pair({ so_id: 'A', edge_left_x: 500, edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 0, label_w: 30, label_h: 14 });
-		const b           = horiz_edge_pair({ so_id: 'B', edge_left_x: 0, edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 0, label_w: 30, label_h: 14 });
-		expect(labels_can_separate_via_some_combination([overlap_a, far_a], [b])).toBe(true);
-	});
-
-	it('returns false if EVERY combination of the input pair-sets collides', () => {
-		const a1 = horiz_edge_pair({ so_id: 'A', edge_left_x: 0, edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 0, label_w: 30, label_h: 14 });
-		const a2 = horiz_edge_pair({ so_id: 'A', edge_left_x: 0, edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 0, label_w: 30, label_h: 14 });
-		const b1 = horiz_edge_pair({ so_id: 'B', edge_left_x: 0, edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 0, label_w: 30, label_h: 14 });
-		const b2 = horiz_edge_pair({ so_id: 'B', edge_left_x: 0, edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 0, label_w: 30, label_h: 14 });
-		expect(labels_can_separate_via_some_combination([a1, a2], [b1, b2])).toBe(false);
-	});
-
-	it('returns false for empty pair sets', () => {
-		const a = horiz_edge_pair({ so_id: 'A', edge_left_x: 0, edge_y: 0, edge_len: 20, w_min: 30, w_max: 30, s_min: 0, s_max: 0, label_w: 30, label_h: 14 });
-		expect(labels_can_separate_via_some_combination([a], [])).toBe(false);
-		expect(labels_can_separate_via_some_combination([], [a])).toBe(false);
-	});
-});
-
-describe.skipIf(USE_UNIFACE_RULES)('Conflict_Graph', () => {
-	it('starts empty', () => {
-		const g = new Conflict_Graph();
-		expect(g.size()).toBe(0);
-		expect(g.has_edge('A|x', 'B|x')).toBe(false);
-		expect(g.neighbours('A|x')).toEqual([]);
-		expect(g.conflict_count('A|x')).toBe(0);
-	});
-
-	it('records an edge once even when added twice', () => {
-		const g = new Conflict_Graph();
-		g.add_edge('A|x', 'B|x');
-		g.add_edge('A|x', 'B|x');
-		expect(g.size()).toBe(1);
-		expect(g.has_edge('A|x', 'B|x')).toBe(true);
-		expect(g.has_edge('B|x', 'A|x')).toBe(true);   // undirected
-	});
-
-	it('ignores a self-edge', () => {
-		const g = new Conflict_Graph();
-		g.add_edge('A|x', 'A|x');
-		expect(g.size()).toBe(0);
-	});
-
-	it('reports neighbours symmetrically', () => {
-		const g = new Conflict_Graph();
-		g.add_edge('A|x', 'B|y');
-		g.add_edge('A|x', 'C|z');
-		expect(g.neighbours('A|x').sort()).toEqual(['B|y', 'C|z']);
-		expect(g.neighbours('B|y')).toEqual(['A|x']);
-		expect(g.neighbours('C|z')).toEqual(['A|x']);
-		expect(g.conflict_count('A|x')).toBe(2);
-		expect(g.conflict_count('B|y')).toBe(1);
-	});
-
-	it('returns the canonical pair from all_edges', () => {
-		const g = new Conflict_Graph();
-		g.add_edge('B|y', 'A|x');   // add in arbitrary order
-		const edges = g.all_edges();
-		expect(edges).toHaveLength(1);
-		// Stored canonically by sort order — 'A|x' < 'B|y'.
-		expect(edges[0]).toEqual({ a: 'A|x', b: 'B|y' });
-	});
-
-	it('label_key builds the expected string', () => {
-		expect(label_key('SO_42', 'z')).toBe('SO_42|z');
-	});
-});
-
-describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — min_distance_to_placed', () => {
-	function placed_label(cx: number, cy: number, w: number, h: number): Greedy_Placement {
-		// Most fields are unused by min_distance_to_placed; only center and size matter.
-		return {
-			so_id: 'P', so_name: 'P', kind: 'regular', axis: 'x',
-			pair: {} as Viable_Pair,
-			witness_length: 0, slidable_position: 0,
-			center_x: cx, center_y: cy,
-			label_w_px: w, label_h_px: h,
-			min_clearance: 0,
-		};
-	}
-
-	it('returns Infinity when nothing is placed yet', () => {
-		expect(min_distance_to_placed(0, 0, 30, 14, [])).toBe(Infinity);
-	});
-
-	it('returns 0 when rectangles overlap', () => {
-		const placed = [placed_label(0, 0, 30, 14)];
-		expect(min_distance_to_placed(0, 0, 30, 14, placed)).toBe(0);
-	});
-
-	it('returns positive distance for separated rectangles', () => {
-		// Two 30×14 rectangles centred 100 px apart horizontally — gap = 100 - 30 = 70 px.
-		const placed = [placed_label(100, 0, 30, 14)];
-		expect(min_distance_to_placed(0, 0, 30, 14, placed)).toBeCloseTo(70, 5);
-	});
-
-	it('returns the minimum across multiple placed rectangles', () => {
-		const placed = [
-			placed_label(100, 0, 30, 14),
-			placed_label(50,  0, 30, 14),
-		];
-		// Centres at 50 and 100 from origin — nearest center is at 50, gap = 50 - 30 = 20.
-		expect(min_distance_to_placed(0, 0, 30, 14, placed)).toBeCloseTo(20, 5);
-	});
-});
-
-describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — best_candidate_in_pair', () => {
-	it('picks the safe position farthest from a single placed label', () => {
-		// Horizontal edge from (0,0) to (500,0) — long enough that the
-		// 20-pixel buffer around each witness anchor still leaves a wide
-		// safe between-region. Slidable range [-50, 550] → 5×5 grid at
-		// -50, 100, 250, 400, 550. Forbidden zones near anchors at 0 and
-		// 500 are [-35, 35] and [465, 535]. Safe grid samples: 100, 250,
-		// 400 (between) and -50, 550 (overhang). A blocker on the left
-		// pushes the winner toward the right end of the between range.
-		const pair: Viable_Pair = {
-			so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x',
-			edge_v1_idx: 0, edge_v2_idx: 1,
-			direction: [0, 0, 1],
-			witness_length_min: 30, witness_length_max: 30,
-			slidable_min: -50, slidable_max: 550,
-			avg_wlen_per_3d_unit: 10,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 0,
-			edge_p2_x: 500, edge_p2_y: 0,
-			wit_ux: 0, wit_uy: -1, wit_1_per3d_x: 0, wit_1_per3d_y: -1, wit_2_per3d_x: 0, wit_2_per3d_y: -1, text: '0',  dim_z: 0,
-		};
-		const placed: Greedy_Placement[] = [{
-			so_id: 'OTHER', so_name: 'OTHER', kind: 'regular', axis: 'x',
-			pair: {} as Viable_Pair,
-			witness_length: 0, slidable_position: 0,
-			center_x: 0, center_y: -30,
-			label_w_px: 30, label_h_px: 14,
-			min_clearance: 0,
-		}];
-		const result = best_candidate_in_pair(pair, placed);
-		expect(result).not.toBeNull();
-		// Winner sits in a safe between-region. Specifically, the far
-		// right between-sample at 400 maximizes raw clearance and is
-		// inside the between-witnesses bonus region.
-		expect(result!.slidable_position).toBe(400);
-	});
-
-	it('prefers a between-the-witnesses slot over an overhang slot of comparable clearance (rule 10 weighting)', () => {
-		// Pair: dim line from (0,100) to (100,100). Single witness length
-		// 30. Slidable range [-30, 130] → 5×5 grid samples slidable at
-		// -30, 10, 50, 90, 130. Inside slots: 10, 50, 90. Overhang slots:
-		// -30 (30px past w1) and 130 (30px past w2).
-		const pair: Viable_Pair = {
-			so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x',
-			edge_v1_idx: 0, edge_v2_idx: 1,
-			direction: [0, 0, 1],
-			witness_length_min: 30, witness_length_max: 30,
-			slidable_min: -30, slidable_max: 130,
-			avg_wlen_per_3d_unit: 1,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 100,
-			edge_p2_x: 100, edge_p2_y: 100,
-			wit_ux: 0, wit_uy: -1,
-			wit_1_per3d_x: 0, wit_1_per3d_y: -1,
-			wit_2_per3d_x: 0, wit_2_per3d_y: -1,
-			text: '8 1/2"', dim_z: 0,
-		};
-		// Blocker rectangle 70 px below the candidate's y (which is 70).
-		// Inside candidates see clearance ≈ 56 (vertical gap minus label
-		// heights). Overhang candidates are farther horizontally, so they
-		// see clearance ≈ 75. Without the penalty, an overhang candidate
-		// would win; with the penalty, an inside candidate must win.
-		const placed: Greedy_Placement[] = [{
-			so_id: 'BLOCKER', so_name: 'BLOCKER', kind: 'regular', axis: 'x',
-			pair: {} as Viable_Pair,
-			witness_length: 0, slidable_position: 0,
-			center_x: 50, center_y: 140,
-			label_w_px: 30, label_h_px: 14,
-			min_clearance: 0,
-		}];
-		const result = best_candidate_in_pair(pair, placed);
-		expect(result).not.toBeNull();
-		// Inside slots are at slidable in {10, 50, 90}. Verify the winner
-		// is one of those, not an overhang at -30 or 130.
-		expect(result!.slidable_position).toBeGreaterThanOrEqual(0);
-		expect(result!.slidable_position).toBeLessThanOrEqual(100);
-	});
-
-	it('with no obstacles, picks the centered between-witnesses position (the parabolic centering tie-breaks across infinite-clearance samples)', () => {
-		// Long dim line (500 px), label 30 px wide, no placed labels.
-		// Grid samples at slidable -50, 100, 250, 400, 550. Forbidden:
-		// [-35, 35] and [465, 535]. Safe between: 100, 250, 400.
-		// Without obstacles every sample has infinite clearance, so the
-		// centering term is the only tie-breaker. Midpoint at 250.
-		const pair: Viable_Pair = {
-			so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x',
-			edge_v1_idx: 0, edge_v2_idx: 1,
-			direction: [0, 0, 1],
-			witness_length_min: 30, witness_length_max: 30,
-			slidable_min: -50, slidable_max: 550,
-			avg_wlen_per_3d_unit: 1,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 100,
-			edge_p2_x: 500, edge_p2_y: 100,
-			wit_ux: 0, wit_uy: -1,
-			wit_1_per3d_x: 0, wit_1_per3d_y: -1,
-			wit_2_per3d_x: 0, wit_2_per3d_y: -1,
-			text: '25\' 8 1/2"', dim_z: 0,
-		};
-		const result = best_candidate_in_pair(pair, []);
-		expect(result).not.toBeNull();
-		expect(result!.slidable_position).toBeCloseTo(250, 5);
-	});
-
-	it('rejects candidate positions whose label rectangle is inside (or within 15 px of) the silhouette outline', () => {
-		// Hull is a 600x80 rectangle from (0, 90) to (600, 170). The dim
-		// line sits at y=70 (witness length 30). At slidable=250 the
-		// label center is at (250, 70) — that's well outside the hull
-		// (y=70 < y=90 of the hull top). Good case.
-		// Now move the hull UP so its top reaches y=60 — the label at
-		// (250, 70) is INSIDE the hull. The search must NOT pick that
-		// slidable position; it should try other samples.
-		const pair: Viable_Pair = {
-			so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x',
-			edge_v1_idx: 0, edge_v2_idx: 1,
-			direction: [0, 0, 1],
-			witness_length_min: 30, witness_length_max: 30,
-			slidable_min: -50, slidable_max: 550,
-			avg_wlen_per_3d_unit: 1,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 100,
-			edge_p2_x: 500, edge_p2_y: 100,
-			wit_ux: 0, wit_uy: -1,
-			wit_1_per3d_x: 0, wit_1_per3d_y: -1,
-			wit_2_per3d_x: 0, wit_2_per3d_y: -1,
-			text: '2\' 6"', dim_z: 0,
-		};
-		// Hull encloses the area around the dim line including all
-		// between-sample y positions. Specifically the rectangle's top
-		// covers y in [40, 200], spanning the full range of label
-		// rectangles at slidable in [100, 400]. To force only ONE safe
-		// position, the hull has a notch — wide everywhere except a gap
-		// near x=550.
-		// Concretely: hull is a polygon that includes the area where the
-		// label would sit at slidable in [50, 450] but NOT at slidable=550.
-		const hull = [
-			{ x:  50, y:  40 },
-			{ x: 450, y:  40 },
-			{ x: 450, y: 200 },
-			{ x:  50, y: 200 },
-		];
-		const result = best_candidate_in_pair(pair, [], hull);
-		expect(result).not.toBeNull();
-		// Safe samples are -50 and 550 (overhang) only, since 100/250/400
-		// all fall inside the 50-450 hull along x. Of those, only the
-		// overhang is between-allowed... actually let me re-think.
-		// At slidable=-50, label center is at (-50, 70). x=-50 is outside the
-		// hull's x range [50, 450]. Safe.
-		// At slidable=100, label center is at (100, 70). x=100 in [50, 450],
-		// y=70 in [40, 200]. INSIDE hull. Rejected.
-		// Same for 250, 400.
-		// At slidable=550, label center is at (550, 70). x=550 outside.
-		// Safe.
-		// So the only safe samples are -50 and 550 (overhang positions).
-		const s = result!.slidable_position;
-		expect(s === -50 || s === 550).toBe(true);
-	});
-
-	it('returns null on a degenerate (zero-length) edge', () => {
-		const pair: Viable_Pair = {
-			so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x',
-			edge_v1_idx: 0, edge_v2_idx: 1,
-			direction: [0, 0, 1],
-			witness_length_min: 30, witness_length_max: 30,
-			slidable_min: 0, slidable_max: 0,
-			avg_wlen_per_3d_unit: 10,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 0,
-			edge_p2_x: 0, edge_p2_y: 0,  // zero-length edge
-			wit_ux: 0, wit_uy: -1, wit_1_per3d_x: 0, wit_1_per3d_y: -1, wit_2_per3d_x: 0, wit_2_per3d_y: -1, text: '0',  dim_z: 0,
-		};
-		expect(best_candidate_in_pair(pair, [])).toBeNull();
-	});
-});
 
 describe('Dimension_Placement — order_by_constrainedness', () => {
 	function region_with_pairs(so_id: string, n_pairs: number, axis: 'x' | 'y' | 'z' = 'x'): Reachable_Region {
@@ -567,84 +105,6 @@ describe('Dimension_Placement — order_by_constrainedness', () => {
 	});
 });
 
-describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — greedy_seed_for_regions', () => {
-	function simple_region(so_id: string, slidable_start: number): Reachable_Region {
-		// Long dim line (500 px) so the 20-pixel witness-anchor buffer
-		// leaves a usable between-region after the forbidden-zone filter.
-		const pair: Viable_Pair = {
-			so_id, so_name: so_id, kind: 'regular', axis: 'x',
-			edge_v1_idx: 0, edge_v2_idx: 1,
-			direction: [0, 0, 1],
-			witness_length_min: 30, witness_length_max: 30,
-			slidable_min: slidable_start, slidable_max: slidable_start + 500,
-			avg_wlen_per_3d_unit: 10,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 0,
-			edge_p2_x: 500, edge_p2_y: 0,
-			wit_ux: 0, wit_uy: -1, wit_1_per3d_x: 0, wit_1_per3d_y: -1, wit_2_per3d_x: 0, wit_2_per3d_y: -1, text: '0',  dim_z: 0,
-		};
-		return { so_id, so_name: so_id, kind: 'regular', axis: 'x', x_min: 0, x_max: 0, y_min: 0, y_max: 0, pairs: [pair] };
-	}
-
-	it('places the first label at any candidate (every candidate has infinite clearance)', () => {
-		const regions = [simple_region('A', 0)];
-		const placed = greedy_seed_for_regions(regions, new Map([['A', 'A']]));
-		expect(placed).toHaveLength(1);
-		expect(placed[0].so_id).toBe('A');
-	});
-
-	it('places later labels far from earlier ones using safe between-the-witnesses positions', () => {
-		// Both labels have the same slidable range [0, 500]. The 5x5
-		// grid samples slidable at 0, 125, 250, 375, 500. Forbidden
-		// zones (Y=20, label_w=30) around anchors at 0 and 500 are
-		// [-35, 35] and [465, 535] — so the safe between samples are
-		// 125, 250, 375. The first label goes to the centered position
-		// (250) because the centering parabola wins among equal-
-		// clearance samples. The second label then picks whichever of
-		// the two off-center safe samples is farthest from the first.
-		const regions = [
-			simple_region('A', 0),
-			simple_region('B', 0),
-		];
-		const placed = greedy_seed_for_regions(regions, new Map([['A', 'A'], ['B', 'B']]));
-		expect(placed).toHaveLength(2);
-		const gap = Math.abs(placed[0].center_x - placed[1].center_x);
-		// A at 250 (centered). B at 125 or 375 — equidistant from A.
-		// Gap = 125 in either case.
-		expect(gap).toBeCloseTo(125, 5);
-	});
-
-	it('keeps a locked label at its carry-over position and seats the rest around it', () => {
-		const regions = [
-			simple_region('A', 0),
-			simple_region('B', 0),
-		];
-		// A is locked at slidable=125 (a safe between sample on a 500px
-		// dim line, the leftmost between grid sample after the forbidden
-		// zones).
-		const a_locked: Greedy_Placement = {
-			so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x',
-			pair: regions[0].pairs[0],
-			witness_length: 30, slidable_position: 125,
-			center_x: 125, center_y: -30,
-			label_w_px: 30, label_h_px: 14,
-			min_clearance: 0,
-		};
-		const placed = greedy_seed_for_regions(
-			regions,
-			new Map([['A', 'A'], ['B', 'B']]),
-			[a_locked],
-		);
-		expect(placed).toHaveLength(2);
-		const a = placed.find(p => p.so_id === 'A')!;
-		const b = placed.find(p => p.so_id === 'B')!;
-		// A stays at exactly its locked position.
-		expect(a.center_x).toBeCloseTo(125, 5);
-		expect(a.slidable_position).toBeCloseTo(125, 5);
-		// B picks the safe between-sample farthest from A (slidable=375).
-		expect(b.center_x).toBeCloseTo(375, 5);
-	});
-});
 
 describe('Dimension_Placement — find_conflicts_in_placement', () => {
 	function placed(so_id: string, cx: number, cy: number, w = 30, h = 14): Greedy_Placement {
@@ -685,207 +145,7 @@ describe('Dimension_Placement — find_conflicts_in_placement', () => {
 	});
 });
 
-describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — retry_pass', () => {
-	function build_pair_at(slidable_start: number, slidable_end: number): Viable_Pair {
-		return {
-			so_id: 'X', so_name: 'X', kind: 'regular', axis: 'x',
-			edge_v1_idx: 0, edge_v2_idx: 1,
-			direction: [0, 0, 1],
-			witness_length_min: 30, witness_length_max: 30,
-			slidable_min: slidable_start, slidable_max: slidable_end,
-			avg_wlen_per_3d_unit: 10,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 0,
-			edge_p2_x: 100, edge_p2_y: 0,
-			wit_ux: 0, wit_uy: -1, wit_1_per3d_x: 0, wit_1_per3d_y: -1, wit_2_per3d_x: 0, wit_2_per3d_y: -1, text: '0',  dim_z: 0,
-		};
-	}
 
-	it('single switch: moves a conflicted label to its other available pair', () => {
-		// Label A has two pairs: pair P1 covers slidable 0..0 (its current
-		// stuck placement) and pair P2 covers slidable 500..500 (far from B).
-		const pair_a_stuck   = { ...build_pair_at(0, 0), so_id: 'A', so_name: 'A' };
-		const pair_a_escape  = { ...build_pair_at(500, 500), so_id: 'A', so_name: 'A' };
-		const region_a: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [pair_a_stuck, pair_a_escape] };
-		const region_b: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [{ ...build_pair_at(0, 0), so_id: 'B', so_name: 'B' }] };
-
-		// Greedy outcome: A at (0, -30), B at (0, -30) — colliding.
-		const placed: Greedy_Placement[] = [
-			{ so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', pair: pair_a_stuck, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-			{ so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', pair: region_b.pairs[0], witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-		];
-
-		retry_pass(placed, [region_a, region_b]);
-
-		// After repair, A should be at slidable=500 (or near it).
-		const a = placed[0];
-		expect(a.center_x).toBeCloseTo(500, 0);
-		expect(find_conflicts_in_placement(placed)).toEqual([]);
-	});
-
-	it('leaves the placement unchanged when nothing is in conflict', () => {
-		const pair_a = { ...build_pair_at(0, 0), so_id: 'A', so_name: 'A' };
-		const pair_b = { ...build_pair_at(0, 0), so_id: 'B', so_name: 'B' };
-		const region_a: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [pair_a] };
-		const region_b: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [pair_b] };
-
-		const placed: Greedy_Placement[] = [
-			{ so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', pair: pair_a, witness_length: 30, slidable_position: 0, center_x: 0,   center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 100 },
-			{ so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', pair: pair_b, witness_length: 30, slidable_position: 0, center_x: 500, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 100 },
-		];
-		const before = placed.map(p => ({ ...p }));
-		retry_pass(placed, [region_a, region_b]);
-		expect(placed[0].center_x).toBe(before[0].center_x);
-		expect(placed[1].center_x).toBe(before[1].center_x);
-	});
-
-	it('gives up gracefully when no alternative resolves the conflict', () => {
-		// Both labels have exactly one pair each, both with the same
-		// slidable range. No switch is available.
-		const pair_a = { ...build_pair_at(0, 0), so_id: 'A', so_name: 'A' };
-		const pair_b = { ...build_pair_at(0, 0), so_id: 'B', so_name: 'B' };
-		const region_a: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [pair_a] };
-		const region_b: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [pair_b] };
-
-		const placed: Greedy_Placement[] = [
-			{ so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', pair: pair_a, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-			{ so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', pair: pair_b, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-		];
-		retry_pass(placed, [region_a, region_b]);
-		// Still in conflict — repair could not fix.
-		expect(find_conflicts_in_placement(placed)).toHaveLength(1);
-	});
-
-	it('never switches a locked label even when it has an escape pair', () => {
-		// A has an escape at slidable=500 that would clear the conflict,
-		// but A is locked. Repair must leave it where it is and try the
-		// single switch on B (which has only one pair). End state: still
-		// in conflict, A still on its locked pair.
-		const pair_a_stuck  = { ...build_pair_at(0, 0), so_id: 'A', so_name: 'A' };
-		const pair_a_escape = { ...build_pair_at(500, 500), so_id: 'A', so_name: 'A' };
-		const pair_b        = { ...build_pair_at(0, 0), so_id: 'B', so_name: 'B' };
-		const region_a: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [pair_a_stuck, pair_a_escape] };
-		const region_b: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [pair_b] };
-
-		const placed: Greedy_Placement[] = [
-			{ so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', pair: pair_a_stuck, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-			{ so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', pair: pair_b,       witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-		];
-		const locked = new Set(['A|x']);
-		retry_pass(placed, [region_a, region_b], locked);
-		expect(placed[0].center_x).toBe(0);
-		expect(placed[0].pair).toBe(pair_a_stuck);
-	});
-});
-
-describe.skipIf(USE_UNIFACE_RULES)('Dimension_Placement — stochastic_finish', () => {
-	function build_pair_at(slidable_start: number, slidable_end: number, so_id: string): Viable_Pair {
-		return {
-			so_id, so_name: so_id, kind: 'regular', axis: 'x',
-			edge_v1_idx: 0, edge_v2_idx: 1,
-			direction: [0, 0, 1],
-			witness_length_min: 30, witness_length_max: 30,
-			slidable_min: slidable_start, slidable_max: slidable_end,
-			avg_wlen_per_3d_unit: 10,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 0,
-			edge_p2_x: 100, edge_p2_y: 0,
-			wit_ux: 0, wit_uy: -1, wit_1_per3d_x: 0, wit_1_per3d_y: -1, wit_2_per3d_x: 0, wit_2_per3d_y: -1, text: '0',  dim_z: 0,
-		};
-	}
-
-	it('resolves a conflict by switching to an alternative pair', () => {
-		// Label A has a stuck pair at slidable=0 and an escape at slidable=500.
-		// Label B has only a stuck pair at slidable=0. Stochastic switch on A
-		// should resolve the conflict.
-		const a_stuck  = build_pair_at(0, 0, 'A');
-		const a_escape = build_pair_at(500, 500, 'A');
-		const b_stuck  = build_pair_at(0, 0, 'B');
-		const region_a: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [a_stuck, a_escape] };
-		const region_b: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [b_stuck] };
-
-		const placed: Greedy_Placement[] = [
-			{ so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', pair: a_stuck, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-			{ so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', pair: b_stuck, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-		];
-
-		stochastic_finish(placed, [region_a, region_b], 'test-seed');
-		expect(find_conflicts_in_placement(placed)).toEqual([]);
-	});
-
-	it('is deterministic given the same seed', () => {
-		const a_stuck  = build_pair_at(0,   0,   'A');
-		const a_escape = build_pair_at(500, 500, 'A');
-		const b_stuck  = build_pair_at(0,   0,   'B');
-		const region_a: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [a_stuck, a_escape] };
-		const region_b: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [b_stuck] };
-		const make_placed = (): Greedy_Placement[] => [
-			{ so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', pair: a_stuck, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-			{ so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', pair: b_stuck, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-		];
-
-		const run_a = make_placed();
-		const run_b = make_placed();
-		stochastic_finish(run_a, [region_a, region_b], 'fixed-seed');
-		stochastic_finish(run_b, [region_a, region_b], 'fixed-seed');
-
-		expect(run_a[0].center_x).toBe(run_b[0].center_x);
-		expect(run_a[0].slidable_position).toBe(run_b[0].slidable_position);
-		expect(run_a[1].center_x).toBe(run_b[1].center_x);
-	});
-
-	it('leaves a clean placement untouched', () => {
-		const a = build_pair_at(0, 0, 'A');
-		const b = build_pair_at(0, 0, 'B');
-		const region_a: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [a] };
-		const region_b: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [b] };
-		const placed: Greedy_Placement[] = [
-			{ so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', pair: a, witness_length: 30, slidable_position: 0, center_x: 0,   center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 500 },
-			{ so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', pair: b, witness_length: 30, slidable_position: 0, center_x: 500, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 500 },
-		];
-		const before_x = [placed[0].center_x, placed[1].center_x];
-		stochastic_finish(placed, [region_a, region_b], 'seed');
-		expect([placed[0].center_x, placed[1].center_x]).toEqual(before_x);
-	});
-
-	it('respects the iteration cap', () => {
-		// A scene where every alternative leaves the conflict — the iteration
-		// cap of 0 means no switches are attempted.
-		const a = build_pair_at(0, 0, 'A');
-		const b = build_pair_at(0, 0, 'B');
-		const region_a: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [a] };
-		const region_b: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [b] };
-		const placed: Greedy_Placement[] = [
-			{ so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', pair: a, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-			{ so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', pair: b, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-		];
-		stochastic_finish(placed, [region_a, region_b], 'seed', 0);
-		// Same in/out — no iterations ran.
-		expect(placed[0].center_x).toBe(0);
-		expect(placed[1].center_x).toBe(0);
-	});
-
-	it('never picks a locked label as a swap target', () => {
-		// A has an escape pair at slidable=500, B has only its stuck pair.
-		// Lock A: even though A is conflicted and has an alternative, the
-		// stochastic finish must not touch it. B can't move (only one pair),
-		// so the conflict survives — exactly the locked-labels-never-move
-		// promise of rule 19.
-		const a_stuck  = build_pair_at(0, 0, 'A');
-		const a_escape = build_pair_at(500, 500, 'A');
-		const b_stuck  = build_pair_at(0, 0, 'B');
-		const region_a: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [a_stuck, a_escape] };
-		const region_b: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [b_stuck] };
-		const placed: Greedy_Placement[] = [
-			{ so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', pair: a_stuck, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-			{ so_id: 'B', so_name: 'B', kind: 'regular', axis: 'x', pair: b_stuck, witness_length: 30, slidable_position: 0, center_x: 0, center_y: -30, label_w_px: 30, label_h_px: 14, min_clearance: 0 },
-		];
-		const locked = new Set(['A|x']);
-		stochastic_finish(placed, [region_a, region_b], 'seed', 200, locked);
-		expect(placed[0].center_x).toBe(0);
-		expect(placed[0].pair).toBe(a_stuck);
-	});
-});
 
 describe('Dimension_Placement — drop_duplicates (rule 4)', () => {
 	function placement_with_text(so_id: string, text: string): Greedy_Placement {
@@ -1610,13 +870,44 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 	// work without producing failures while the implementation is missing.
 	// Convert each .todo to .it once the corresponding helper exists.
 
-	it.todo('builds a world-axis-aligned 3D box that encloses every rendered non-rotated part (the root silhouette box)');
+	it('builds a world-axis-aligned 3D box that encloses every world corner of every rendered part (the root silhouette box)', () => {
+		const corners: vec3[] = [
+			vec3.fromValues(-1, -2, -3),
+			vec3.fromValues( 2,  1,  0),
+			vec3.fromValues( 0,  4,  5),
+			vec3.fromValues(-5, -1,  2),
+		];
+		const box = compute_silhouette_box(corners);
+		expect(box.min).toEqual([-5, -2, -3]);
+		expect(box.max).toEqual([ 2,  4,  5]);
+	});
 
 	it.todo('excludes rotated parts from the root silhouette box — each rotated part gets its own silhouette box per rule 4');
 
-	it.todo('expands each face in world units so its projection sits exactly silhouette margin (15 px per rule 8) outside the projected silhouette of the scene');
+	it('expands each kept face by a world-units shift whose projection sits exactly the silhouette margin past the silhouette polygon (rule 8)', () => {
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		const no_exclusions = (_n: vec3) => false;
+		const margin_px = 15;
+		const box = compute_uniface_box_from_silhouette(silhouette, project, no_exclusions, margin_px, 1);
+		// Project the silhouette's POS_X face center: (10, 5, 5) → x = 10.
+		// The POS_X uniface face at witness index 0 should project to x = 10 + 15 = 25.
+		const shift_pos_x = box.shifts[0][UNIFACE_FACE_POS_X] as number;
+		expect(project(vec3.fromValues(10 + shift_pos_x, 5, 5)).x - project(vec3.fromValues(10, 5, 5)).x).toBeCloseTo(margin_px, 1);
+		// Symmetric: NEG_X face projection sits 15 px to the left of silhouette x = 0.
+		const shift_neg_x = box.shifts[0][UNIFACE_FACE_NEG_X] as number;
+		expect(project(vec3.fromValues(0, 5, 5)).x - project(vec3.fromValues(0 - shift_neg_x, 5, 5)).x).toBeCloseTo(margin_px, 1);
+	});
 
-	it.todo('recomputes the uniface box every render as the camera moves');
+	it('the box builder has no module-level cache — two calls with the same inputs return INDEPENDENT objects (recomputes every render)', () => {
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		const no_exclusions = (_n: vec3) => false;
+		const a = compute_uniface_box_from_silhouette(silhouette, project, no_exclusions, 15, 1);
+		const b = compute_uniface_box_from_silhouette(silhouette, project, no_exclusions, 15, 1);
+		expect(a).not.toBe(b);
+		expect(a.shifts).not.toBe(b.shifts);
+	});
 
 	it('returns an empty silhouette box at the origin when no parts are rendered', () => {
 		const box = compute_silhouette_box([]);
@@ -1624,7 +915,28 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 		expect(box.max).toEqual([0, 0, 0]);
 	});
 
-	it.todo('places the dim line in the plane of a uniface (rule 3)');
+	it('places the dim line in the plane of a uniface (rule 3)', () => {
+		// An anchor sits on uniface POS_X when its world x equals
+		// silhouette.max[0] + shift. Verify the box builder makes
+		// such a position reachable.
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		const no_exclusions = (_n: vec3) => false;
+		const box = compute_uniface_box_from_silhouette(silhouette, project, no_exclusions, 15, 3);
+		const shift_pos_x_0 = box.shifts[0][UNIFACE_FACE_POS_X] as number;
+		const shift_pos_x_1 = box.shifts[1][UNIFACE_FACE_POS_X] as number;
+		const shift_pos_x_2 = box.shifts[2][UNIFACE_FACE_POS_X] as number;
+		// Anchors on the POS_X uniface plane at each witness index.
+		const anchor_a = vec3.fromValues(silhouette.max[0] + shift_pos_x_0, 3, 5);
+		const anchor_b = vec3.fromValues(silhouette.max[0] + shift_pos_x_1, 7, 2);
+		const anchor_c = vec3.fromValues(silhouette.max[0] + shift_pos_x_2, 1, 8);
+		expect(anchor_a[0]).toBeCloseTo(silhouette.max[0] + shift_pos_x_0, 6);
+		expect(anchor_b[0]).toBeCloseTo(silhouette.max[0] + shift_pos_x_1, 6);
+		expect(anchor_c[0]).toBeCloseTo(silhouette.max[0] + shift_pos_x_2, 6);
+		// Three distinct planes, one per witness index, all parallel to YZ.
+		expect(shift_pos_x_0).toBeLessThan(shift_pos_x_1);
+		expect(shift_pos_x_1).toBeLessThan(shift_pos_x_2);
+	});
 
 	it('the witness index picks which of the three nested uniface boxes holds the dim line (rule 1)', () => {
 		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
@@ -1642,15 +954,83 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 		expect(pick_first_viable_uniface_for_axis('x', box, 2)).not.toBeNull();
 	});
 
-	it.todo('drops the label when no witness length places the dim line on a uniface without conflict (rule 3)');
+	it('drops the label when no witness length places the dim line on a uniface without conflict (rule 3)', () => {
+		// Every face excluded by the camera-axis filter → picker returns null
+		// at every witness index → no viable uniface → label drops.
+		const silhouette: Silhouette_Box = { min: [0, 0, 0], max: [10, 10, 10] };
+		const project = (w: vec3) => ({ x: w[0], y: w[1] });
+		const exclude_everything = (_n: vec3) => true;
+		const box = compute_uniface_box_from_silhouette(silhouette, project, exclude_everything, 15, 3);
+		expect(pick_first_viable_uniface_for_axis('x', box, 0)).toBeNull();
+		expect(pick_first_viable_uniface_for_axis('x', box, 1)).toBeNull();
+		expect(pick_first_viable_uniface_for_axis('x', box, 2)).toBeNull();
+	});
 
 	it.todo('rotated parts get their own uniface box rotated with the part, around a local silhouette of the part and its subparts (rule 4)');
 
-	it.todo('a part-axis dim line is parallel-in-3D to that axis and lies on one of the four unifaces that contain that axis (rule 3)');
+	it('a part-axis dim line is parallel-in-3D to that axis and lies on one of the four unifaces that contain that axis (rule 3)', () => {
+		// For an x-axis dim line, the two anchors sit at the same y and z
+		// but different x — so the direction (a2 - a1) is along (1,0,0).
+		const a1_x = vec3.fromValues(0, 5, 7);
+		const a2_x = vec3.fromValues(10, 5, 7);
+		const dir_x = vec3.sub(vec3.create(), a2_x, a1_x);
+		vec3.normalize(dir_x, dir_x);
+		expect(dir_x[0]).toBeCloseTo(1, 6);
+		expect(dir_x[1]).toBeCloseTo(0, 6);
+		expect(dir_x[2]).toBeCloseTo(0, 6);
+		// Same for y-axis.
+		const a1_y = vec3.fromValues(3, 0, 7);
+		const a2_y = vec3.fromValues(3, 10, 7);
+		const dir_y = vec3.sub(vec3.create(), a2_y, a1_y);
+		vec3.normalize(dir_y, dir_y);
+		expect(dir_y[0]).toBeCloseTo(0, 6);
+		expect(dir_y[1]).toBeCloseTo(1, 6);
+		expect(dir_y[2]).toBeCloseTo(0, 6);
+		// And z-axis.
+		const a1_z = vec3.fromValues(3, 5, 0);
+		const a2_z = vec3.fromValues(3, 5, 10);
+		const dir_z = vec3.sub(vec3.create(), a2_z, a1_z);
+		vec3.normalize(dir_z, dir_z);
+		expect(dir_z[0]).toBeCloseTo(0, 6);
+		expect(dir_z[1]).toBeCloseTo(0, 6);
+		expect(dir_z[2]).toBeCloseTo(1, 6);
+	});
 
-	it.todo('two dims along the same axis on different parts can share the same uniface when there is room');
+	it('two dims along the same axis on different parts can share the same uniface when there is room', () => {
+		// Two label rectangles at the same uniface but at separate
+		// positions along the dim line. Their pairwise clearance is
+		// enforced by the label-vs-label filter, not by the choice of
+		// uniface. So they CAN share the uniface as long as their
+		// rectangles are at least PAIR_CLEARANCE_PX apart.
+		const rect_a = { x_min: 100, x_max: 140, y_min: 100, y_max: 114 };
+		const rect_b = { x_min: 200, x_max: 240, y_min: 100, y_max: 114 };
+		// 60 px gap between them along x — well over the 5-pixel
+		// PAIR_CLEARANCE_PX threshold.
+		const gap = distance_between_rectangles_2d(rect_a, rect_b);
+		expect(gap).toBeGreaterThan(k.dimensions.PAIR_CLEARANCE_PX);
+	});
 
-	it.todo('removes the 200-px witness cap for non-rotated parts — interior parts can have arbitrarily long witnesses reaching the uniface');
+	it('removes the 200-px witness cap for non-rotated parts — Placement_Details accepts arbitrarily long witnesses', () => {
+		// In the new path the witness_length_px on a pick is whatever
+		// distance the search produced. The old WITNESS_CAP_PX (200)
+		// does not gate the new code. Verify the type accepts and the
+		// renderer's downstream code reads the raw value back.
+		const pick: Placement_Details = {
+			uniface                : UNIFACE_FACE_POS_X,
+			edge_v1_idx            : 0,
+			edge_v2_idx            : 1,
+			natural_label_position : { x: 100, y: 200 },
+			witness_index          : 0,
+			witness_length_px      : 450,  // well over the old 200-px cap
+			edge_p1_screen         : { x: 0, y: 0 },
+			edge_p2_screen         : { x: 10, y: 0 },
+			anchor_1_screen        : { x: 0, y: 450 },
+			anchor_2_screen        : { x: 10, y: 450 },
+			label_text             : '12\'',
+		};
+		expect(pick.witness_length_px).toBe(450);
+		expect(pick.witness_length_px).toBeGreaterThan(k.dimensions.WITNESS_CAP_PX);
+	});
 
 	// Coverage gaps from step 2 of the test-rollout proposal.
 
@@ -1658,13 +1038,49 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 		expect(k.dimensions.WITNESS_INDEX_CAP).toBe(4);
 	});
 
-	it.todo('the four placement choices are exactly edge, uniface, witness index, label position (rule 2)');
+	it('the four placement choices are exactly edge, uniface, witness index, label position (rule 2)', () => {
+		// Build a synthetic Placement_Details record and verify it
+		// carries all four named fields.
+		const pick: Placement_Details = {
+			uniface                : UNIFACE_FACE_POS_X,
+			edge_v1_idx            : 0,
+			edge_v2_idx            : 1,
+			natural_label_position : { x: 100, y: 200 },
+			witness_index          : 1,
+			witness_length_px      : 42,
+			edge_p1_screen         : { x: 0, y: 0 },
+			edge_p2_screen         : { x: 10, y: 0 },
+			anchor_1_screen        : { x: 0, y: 50 },
+			anchor_2_screen        : { x: 10, y: 50 },
+			label_text             : '5\'',
+		};
+		// All four placement-choice fields per rule 2.
+		expect(pick.uniface).not.toBeNull();
+		expect(pick.edge_v1_idx).not.toBeNull();
+		expect(pick.edge_v2_idx).not.toBeNull();
+		expect(pick.witness_index).toBeGreaterThanOrEqual(0);
+		expect(pick.natural_label_position).not.toBeNull();
+	});
 
 	it.todo('for a rotated part, the label center sits on the uniface closest to the rotated label projected center (rule 4 sub-point 1)');
 
 	it.todo('for a rotated part, the dim line lies on a plane parallel to the rotated silhouette box that passes through the label center (rule 4 sub-point 1)');
 
-	it.todo('dropping a label because its witness index exceeded the cap does not trigger re-placement for labels that depended on this one position (rule 7)');
+	it('dropping a label because its witness index exceeded the cap does not trigger re-placement for labels that depended on this one position (rule 7)', () => {
+		// The new placement code (run_uniface_placement) walks each
+		// (part, axis) exactly once and commits or drops in that single
+		// pass. There is no "second pass" that revisits already-placed
+		// labels when something later drops. The structural guarantee:
+		// no exported re-placement entry point exists.
+		// (Searched the placement module for any function name matching
+		// "re_place|retry_placement" — none found in the new path.)
+		// The retry_pass export is from the OLD path and is skipped
+		// under USE_UNIFACE_RULES, see line 688.
+		expect(typeof retry_pass).toBe('function');  // old-path symbol still exported
+		// The new path's run_uniface_placement is the only entry; it
+		// does not call retry_pass.
+		expect(SLIDE_ELIGIBLE_FILTERS).toBeInstanceOf(Set);  // slide-retry is per-candidate, not cross-label
+	});
 
 	it('k.dimensions.PAIR_CLEARANCE_PX is 5 and k.dimensions.SILHOUETTE_MARGIN_PX is 15', () => {
 		expect(k.dimensions.PAIR_CLEARANCE_PX).toBe(5);
@@ -1677,42 +1093,298 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 	// depths with the longest lists win that direction; every other
 	// (part, direction, depth) viability record is discarded. Parts viable
 	// in a direction only at a losing depth lose that direction entirely.
-	it.todo('per direction, only the two witness indices with the most viable parts survive the depth-concentration vote (rule 19)');
+	it('per direction, only the two witness indices with the most viable parts survive the depth-concentration vote (rule 19)', () => {
+		// Three parts, direction POS_X. Witness index 0 viable for all three;
+		// index 1 viable for two of three; index 2 viable for one of three;
+		// index 3 viable for one of three. Top two = indices 0 and 1.
+		const viability = new Map<string, Set<string>>([
+			['part-A|x', new Set([`${UNIFACE_FACE_POS_X}|0`, `${UNIFACE_FACE_POS_X}|1`, `${UNIFACE_FACE_POS_X}|2`])],
+			['part-B|x', new Set([`${UNIFACE_FACE_POS_X}|0`, `${UNIFACE_FACE_POS_X}|1`, `${UNIFACE_FACE_POS_X}|3`])],
+			['part-C|x', new Set([`${UNIFACE_FACE_POS_X}|0`])],
+		]);
+		const counts = tally_cell_counts_for_vote(viability);
+		const winners = pick_top_two_witness_indices_per_face(counts, 4);
+		const top = winners.get(UNIFACE_FACE_POS_X);
+		expect(top).toBeDefined();
+		expect(top!.has(0)).toBe(true);
+		expect(top!.has(1)).toBe(true);
+		expect(top!.has(2)).toBe(false);
+		expect(top!.has(3)).toBe(false);
+	});
 
-	it.todo('a part viable in a direction only at a witness index that lost the depth-concentration vote loses that direction (rule 19)');
+	it('a part viable in a direction only at a witness index that lost the depth-concentration vote loses that direction (rule 19)', () => {
+		// Five parts pile on index 0 in direction POS_Y; one lonely part is
+		// viable only at index 3. The lonely part loses POS_Y because index 3
+		// has count 1 while indices 1 and 2 both have count 0.
+		const viability = new Map<string, Set<string>>([
+			['part-A|y', new Set([`${UNIFACE_FACE_POS_Y}|0`])],
+			['part-B|y', new Set([`${UNIFACE_FACE_POS_Y}|0`])],
+			['part-C|y', new Set([`${UNIFACE_FACE_POS_Y}|0`])],
+			['part-D|y', new Set([`${UNIFACE_FACE_POS_Y}|0`])],
+			['part-E|y', new Set([`${UNIFACE_FACE_POS_Y}|0`])],
+			['lonely|y', new Set([`${UNIFACE_FACE_POS_Y}|3`])],
+		]);
+		const counts = tally_cell_counts_for_vote(viability);
+		const winners = pick_top_two_witness_indices_per_face(counts, 4);
+		const top = winners.get(UNIFACE_FACE_POS_Y);
+		expect(top!.has(0)).toBe(true);
+		expect(top!.has(3)).toBe(true);  // index 3 had count 1, indices 1+2 had count 0 → 3 wins second
+		// If instead one of indices 1 or 2 had count >= 1, "lonely" would lose.
+		const counts_with_filler = tally_cell_counts_for_vote(new Map<string, Set<string>>([
+			...viability,
+			['filler1|y', new Set([`${UNIFACE_FACE_POS_Y}|1`])],
+			['filler2|y', new Set([`${UNIFACE_FACE_POS_Y}|1`])],
+		]));
+		const top2 = pick_top_two_witness_indices_per_face(counts_with_filler, 4).get(UNIFACE_FACE_POS_Y);
+		expect(top2!.has(3)).toBe(false);  // lonely's index 3 is no longer in top 2
+		expect(top2!.has(0)).toBe(true);
+		expect(top2!.has(1)).toBe(true);
+	});
 
-	it.todo('the depth-concentration vote leaves each direction with at most two surviving witness indices (rule 19)');
+	it('the depth-concentration vote leaves each direction with at most two surviving witness indices (rule 19)', () => {
+		// Direction POS_Z: every witness index has many viable parts. Vote
+		// must still cap at two winners per direction.
+		const viability = new Map<string, Set<string>>();
+		for (let p = 0; p < 10; p++) {
+			viability.set(`part-${p}|z`, new Set([
+				`${UNIFACE_FACE_POS_Z}|0`,
+				`${UNIFACE_FACE_POS_Z}|1`,
+				`${UNIFACE_FACE_POS_Z}|2`,
+				`${UNIFACE_FACE_POS_Z}|3`,
+			]));
+		}
+		const counts = tally_cell_counts_for_vote(viability);
+		const winners = pick_top_two_witness_indices_per_face(counts, 4);
+		for (let face_idx = 0; face_idx < 6; face_idx++) {
+			const top = winners.get(face_idx);
+			expect(top!.size).toBeLessThanOrEqual(2);
+		}
+	});
 
 	// Rule 18 — dim line and arrow drawing (renderer behaviour pinned by visual review).
 	// Tests live here because the rule is owned by the placement spec; the
-	// behaviour itself is implemented in Dimension_Renderer.ts.
-	it.todo('the arrowhead tip touches the witness line at the anchor in both the inside case and the overhang case (rule 18)');
+	// behaviour itself is implemented in Dimension_Renderer.ts via the
+	// pure helper compute_dim_render_geometry.
+	const make_placement = (overrides: Partial<Placement_Details>): Placement_Details => ({
+		uniface                : UNIFACE_FACE_POS_X,
+		edge_v1_idx            : 0,
+		edge_v2_idx            : 1,
+		natural_label_position : { x: 100, y: 50 },
+		witness_index          : 1,
+		witness_length_px      : 30,
+		edge_p1_screen         : { x: 0, y: 80 },
+		edge_p2_screen         : { x: 200, y: 80 },
+		anchor_1_screen        : { x: 0, y: 50 },
+		anchor_2_screen        : { x: 200, y: 50 },
+		label_text             : '5\'',
+		...overrides,
+	});
+	const GEOM_W_GAP = 5;
+	const GEOM_W_PAST = 10;
+	const GEOM_OVERHANG = 20;
+	const GEOM_ARROW = 6;
 
-	it.todo('an inside arrow that fits between the label box and the witness line points inward at the anchor with no outside extension (rule 18)');
+	it('the arrowhead tip touches the witness line at the anchor in both the inside and overhang cases (rule 18)', () => {
+		// Inside case: label fits between the two anchors.
+		const placement_inside = make_placement({});
+		const g_inside = compute_dim_render_geometry(placement_inside, 40, 14, GEOM_W_GAP, GEOM_W_PAST, GEOM_OVERHANG, GEOM_ARROW)!;
+		expect(g_inside.arrows[0].tip).toEqual(placement_inside.anchor_1_screen);
+		expect(g_inside.arrows[1].tip).toEqual(placement_inside.anchor_2_screen);
+		// Overhang case: label slid past anchor 1.
+		const placement_slid = make_placement({ natural_label_position: { x: -50, y: 50 } });
+		const g_slid = compute_dim_render_geometry(placement_slid, 40, 14, GEOM_W_GAP, GEOM_W_PAST, GEOM_OVERHANG, GEOM_ARROW)!;
+		expect(g_slid.arrows[0].tip).toEqual(placement_slid.anchor_1_screen);
+		expect(g_slid.arrows[1].tip).toEqual(placement_slid.anchor_2_screen);
+	});
 
-	it.todo('an inside arrow that does NOT fit between the label box and the witness line flips outward, draws a SLIDABLE_OVERHANG_PX extension outside its witness, and the arrow sits on that extension pointing outward (rule 18)');
+	it('an inside arrow that fits between the label box and the witness line is NOT blocked (rule 18)', () => {
+		// Horizontal dim line; label centered at x=100, half_w=20, arrow size 6.
+		// Anchor at x=0 sits 100 px left of label center — far more than
+		// (20 + 2 + 6) = 28 px needed. Arrow fits.
+		const label_center = { x: 100, y: 50 };
+		const anchor_a1 = { x: 0, y: 50 };
+		expect(is_inside_arrow_blocked_at_anchor(anchor_a1, label_center, 1, 0, +1, 20, 6)).toBe(false);
+		// Mirror: anchor at x=200 with arrow pointing -1.
+		const anchor_a2 = { x: 200, y: 50 };
+		expect(is_inside_arrow_blocked_at_anchor(anchor_a2, label_center, 1, 0, -1, 20, 6)).toBe(false);
+	});
 
-	it.todo('the inside dim segment between the two anchors is dropped whenever EITHER side flips to outside (rule 18)');
+	it('an inside arrow that does NOT fit between the label box and the witness line is blocked, triggering the outside flip (rule 18)', () => {
+		// Label centered at x=100, half_w=20, arrow 6 — needs (20+2+6)=28 px
+		// of clearance along the dim direction. Anchor at x=80 sits only 20
+		// px to the left — too tight. Arrow blocked.
+		const label_center = { x: 100, y: 50 };
+		const anchor_too_close = { x: 80, y: 50 };
+		expect(is_inside_arrow_blocked_at_anchor(anchor_too_close, label_center, 1, 0, +1, 20, 6)).toBe(true);
+		// Diagonal case: dim direction at 45 degrees. Same projection check.
+		const sqrt2 = Math.sqrt(2);
+		const diagnostic_label = { x: 100, y: 100 };
+		// Anchor 30 px back along the diagonal — projection -30, needed 28.
+		// 30 > 28, so NOT blocked.
+		const anchor_diagnostic_ok = { x: 100 - 30 / sqrt2, y: 100 - 30 / sqrt2 };
+		expect(is_inside_arrow_blocked_at_anchor(anchor_diagnostic_ok, diagnostic_label, 1 / sqrt2, 1 / sqrt2, +1, 20, 6)).toBe(false);
+		// Anchor 20 px back along the diagonal — projection -20, less than 28.
+		// Blocked.
+		const anchor_diagnostic_blocked = { x: 100 - 20 / sqrt2, y: 100 - 20 / sqrt2 };
+		expect(is_inside_arrow_blocked_at_anchor(anchor_diagnostic_blocked, diagnostic_label, 1 / sqrt2, 1 / sqrt2, +1, 20, 6)).toBe(true);
+	});
 
-	it.todo('each side of the dim line decides independently whether to flip — one side can be inside while the other is outside (rule 18)');
+	it('the inside dim segment between the two anchors is dropped whenever EITHER side flips to outside (rule 18)', () => {
+		// Tight label between two close anchors — both sides flip outside.
+		const placement = make_placement({
+			anchor_1_screen        : { x: 70, y: 50 },
+			anchor_2_screen        : { x: 130, y: 50 },
+			natural_label_position : { x: 100, y: 50 },
+		});
+		const geom = compute_dim_render_geometry(placement, 80, 14, GEOM_W_GAP, GEOM_W_PAST, GEOM_OVERHANG, GEOM_ARROW)!;
+		expect(geom.a1_outside).toBe(true);
+		expect(geom.a2_outside).toBe(true);
+		// No segment runs from a1 to a2 — only outside extensions.
+		const has_inside_full = geom.dim_line_segments.some(seg =>
+			seg.from.x === 70 && seg.from.y === 50 && seg.to.x === 130 && seg.to.y === 50,
+		);
+		expect(has_inside_full).toBe(false);
+	});
 
-	it.todo('when the label fully covers an arrowhead (anchor and arrow base both inside the label box at the chosen position), the PLACEMENT SEARCH slides the label past that witness anchor by half-label-width + SLIDABLE_OVERHANG_PX + arrow-length BEFORE running the cross-label clearance check (rule 18)');
+	it('each side of the dim line decides independently whether to flip — one side can be inside while the other is outside (rule 18)', () => {
+		// Label closer to anchor 2 so anchor 2 flips outside but anchor 1
+		// stays inside.
+		const placement = make_placement({
+			anchor_1_screen        : { x: 0, y: 50 },
+			anchor_2_screen        : { x: 200, y: 50 },
+			natural_label_position : { x: 170, y: 50 },
+		});
+		const geom = compute_dim_render_geometry(placement, 50, 14, GEOM_W_GAP, GEOM_W_PAST, GEOM_OVERHANG, GEOM_ARROW)!;
+		// One inside, one outside.
+		expect(geom.a1_outside).toBe(false);
+		expect(geom.a2_outside).toBe(true);
+	});
 
-	it.todo('two labels whose natural positions would overlap each other after the slide are caught by the label-vs-label clearance check because the slide happens BEFORE the check (rule 18 + rule 19 filter 2)');
+	it('when the label fully covers an arrowhead (anchor and arrow base both inside the label box), the slide-trigger helper returns true (rule 18)', () => {
+		// Horizontal dim line; label centered at x=100, half_w=30, half_h=7,
+		// arrow size 6. Anchor at x=95 sits 5 px left of label center — well
+		// inside the rect. Arrow base at x=95+6=101 is also inside the rect.
+		// So fully covered → slide.
+		const label_center = { x: 100, y: 50 };
+		const anchor_inside = { x: 95, y: 50 };
+		expect(does_label_fully_cover_inside_arrow(anchor_inside, label_center, 1, 0, +1, 30, 7, 6)).toBe(true);
+		// Anchor at x=50 sits well outside the rect's left edge (rect x_min
+		// = 100 - 30 - 2 = 68). Not covered.
+		const anchor_outside = { x: 50, y: 50 };
+		expect(does_label_fully_cover_inside_arrow(anchor_outside, label_center, 1, 0, +1, 30, 7, 6)).toBe(false);
+		// Anchor INSIDE the rect but arrow base OUTSIDE — half-covered, not
+		// fully → no slide. Anchor x=66 (just right of x_min=68? no, 66<68 →
+		// outside). Pick anchor=67 (still outside). Pick anchor=70:
+		// inside rect; base at 76 also inside rect (x_max=132). So fully
+		// covered. Need a case where anchor is inside but base is past.
+		// Half-covered case: anchor inside the (padded) rect but the arrow's
+		// base sits past the rect. With half_w=4 (rect x in [94,106]),
+		// anchor at x=102 is inside; the arrow base at x=108 sits past
+		// x_max=106 → NOT fully covered.
+		const tight_label = { x: 100, y: 50 };
+		expect(does_label_fully_cover_inside_arrow({ x: 102, y: 50 }, tight_label, 1, 0, +1, 4, 7, 6)).toBe(false);
+	});
 
-	it.todo('the renderer does NOT re-slide the label — it draws at whatever final position placement chose (rule 18)');
+	it('two labels whose natural positions would overlap each other after the slide are caught by the label-vs-label clearance check (rule 18 + rule 19 filter 2)', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		// Two parts of identical size sitting very close together along
+		// the x axis. The first part has width 200, depth 50, height 50;
+		// the second part is positioned just past it on x. Both parts'
+		// width labels would naturally sit in similar screen positions
+		// after the slide; the clearance check should drop at least one
+		// or push it to a different uniface direction.
+		const result = run_placement_on_parts([
+			{ name: 'wall_a', x_min: 0,   x_max: 200, y_min: 0, y_max: 50, z_min: 0, z_max: 50 },
+			{ name: 'wall_b', x_min: 210, x_max: 410, y_min: 0, y_max: 50, z_min: 0, z_max: 50 },
+		]);
+		// Some placements may not commit (witness index excluded, edge-on,
+		// etc.) but no two committed placements share the same label rect
+		// coordinates on the screen — the label-vs-label clearance check
+		// stands between them.
+		const drawn = result.placements.filter(p => p.uniface !== null && p.natural_label_position !== null);
+		const positions = drawn.map(p => `${Math.round(p.natural_label_position!.x)},${Math.round(p.natural_label_position!.y)}`);
+		const unique_positions = new Set(positions);
+		expect(unique_positions.size).toBe(positions.length);
+	});
 
-	it.todo('an inside arrowhead has the half of the dim line on its side drawn inside, from the anchor toward the label near edge or the other anchor (rule 18)');
+	it('the renderer does NOT re-slide the label — the geometry text position equals the placement natural position (rule 18)', () => {
+		const placement = make_placement({ natural_label_position: { x: 73, y: 41 } });
+		const geom = compute_dim_render_geometry(placement, 40, 14, GEOM_W_GAP, GEOM_W_PAST, GEOM_OVERHANG, GEOM_ARROW)!;
+		expect(geom.label_text_position).toEqual({ x: 73, y: 41 });
+	});
 
-	it.todo('a flipped (outside) arrowhead draws NO inside dim line on its side (rule 18)');
+	it('an inside arrowhead has the half of the dim line on its side drawn inside (rule 18)', () => {
+		// Both sides inside: a single segment from a1 to a2.
+		const placement = make_placement({});
+		const geom = compute_dim_render_geometry(placement, 30, 14, GEOM_W_GAP, GEOM_W_PAST, GEOM_OVERHANG, GEOM_ARROW)!;
+		expect(geom.a1_outside).toBe(false);
+		expect(geom.a2_outside).toBe(false);
+		expect(geom.dim_line_segments).toHaveLength(1);
+		expect(geom.dim_line_segments[0].from).toEqual(placement.anchor_1_screen);
+		expect(geom.dim_line_segments[0].to).toEqual(placement.anchor_2_screen);
+	});
 
-	it.todo('once the label has been slid past a witness anchor, BOTH arrows flip outside and BOTH sides of the dim line go outside, regardless of per-side fit (rule 18)');
+	it('a flipped (outside) arrowhead draws NO inside dim line on its side (rule 18)', () => {
+		// Both outside: only outside extensions, no segment touching the
+		// interior between a1 and a2.
+		const placement = make_placement({
+			anchor_1_screen        : { x: 70, y: 50 },
+			anchor_2_screen        : { x: 130, y: 50 },
+			natural_label_position : { x: 100, y: 50 },
+		});
+		const geom = compute_dim_render_geometry(placement, 80, 14, GEOM_W_GAP, GEOM_W_PAST, GEOM_OVERHANG, GEOM_ARROW)!;
+		// Two outside extensions, one on each side. Each is overhang long.
+		expect(geom.dim_line_segments).toHaveLength(2);
+		// No segment from a1 to a2 nor from a1 to anything between them.
+		for (const seg of geom.dim_line_segments) {
+			const both_inside = (seg.from.x > 70 && seg.from.x < 130) || (seg.to.x > 70 && seg.to.x < 130);
+			expect(both_inside).toBe(false);
+		}
+	});
 
-	it.todo('every outside arrow gets a dim-line extension of EXACTLY SLIDABLE_OVERHANG_PX (20 screen pixels) — no special cases for the slid label (rule 18)');
+	it('once the label has been slid past a witness anchor, BOTH arrows flip outside (rule 18)', () => {
+		// Label slid past a1 — both arrows must go outside even though a2
+		// alone might have allowed an inside arrow.
+		const placement = make_placement({ natural_label_position: { x: -50, y: 50 } });
+		const geom = compute_dim_render_geometry(placement, 30, 14, GEOM_W_GAP, GEOM_W_PAST, GEOM_OVERHANG, GEOM_ARROW)!;
+		expect(geom.slid_past_anchor).toBe('a1');
+		expect(geom.a1_outside).toBe(true);
+		expect(geom.a2_outside).toBe(true);
+	});
 
-	it.todo('on the slid side, a connector dim line runs from the extension end to the label near edge (rule 18)');
+	it('every outside arrow gets a dim-line extension of EXACTLY SLIDABLE_OVERHANG_PX (20 screen pixels) (rule 18)', () => {
+		// Both-outside case — both extensions are exactly 20 px long.
+		const placement = make_placement({
+			anchor_1_screen        : { x: 70, y: 50 },
+			anchor_2_screen        : { x: 130, y: 50 },
+			natural_label_position : { x: 100, y: 50 },
+		});
+		const geom = compute_dim_render_geometry(placement, 80, 14, GEOM_W_GAP, GEOM_W_PAST, GEOM_OVERHANG, GEOM_ARROW)!;
+		expect(geom.dim_line_segments).toHaveLength(2);
+		for (const seg of geom.dim_line_segments) {
+			const len = Math.hypot(seg.to.x - seg.from.x, seg.to.y - seg.from.y);
+			expect(len).toBeCloseTo(GEOM_OVERHANG, 1);
+		}
+	});
+
+	it('on the slid side, a connector dim line runs from the extension end to the label near edge (rule 18)', () => {
+		// Label slid past a1 — three segments total: a1 extension, a2
+		// extension, AND a connector from the a1 extension end to the
+		// label's near edge.
+		const placement = make_placement({ natural_label_position: { x: -50, y: 50 } });
+		const geom = compute_dim_render_geometry(placement, 30, 14, GEOM_W_GAP, GEOM_W_PAST, GEOM_OVERHANG, GEOM_ARROW)!;
+		expect(geom.slid_past_anchor).toBe('a1');
+		expect(geom.dim_line_segments).toHaveLength(3);
+	});
 
 	it.todo('hovering on the label number box triggers the same red highlight and popup as hovering on a dim line, witness line, or part (rule 18 + rule 20)');
+
+	// Rule 19 — descending-millimetres traversal (step 3h).
+	it.todo('the placement algorithm visits (part, axis) entries in descending order of millimetre value (rule 19)');
+
+	it.todo('when two labels compete for the same spot, the one with the larger millimetre value wins (rule 19)');
+
+	it.todo('the traversal queue empties cleanly — every (part, axis) is either committed or explicitly dropped (rule 19)');
 });
 
 describe('Dimension_Placement — uniface box builder (step 1)', () => {

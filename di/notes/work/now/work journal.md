@@ -4,6 +4,36 @@ Record work performed during chat sessions, in reverse chronological order.
 
 ---
 
+## Session — 2026-06-10 — uniface phase 2 step 7b done; flag removed; old orchestrator deleted; picks renamed to placements
+
+The new placement path stopped being "the new path" today and became the only path. The work cut across renaming, deletion, and a small amount of new code to fill the gaps the deletion would have left.
+
+**Flag gone.** The session-level store for the new-path toggle, its getter, its toggle method, the preference enum entry, the test-setup env-var bridge, and the toolbar button that drove it — all removed. The R_Dimensions entry point now unconditionally calls the uniface placement, the diagnostic draw, and the uniface renderer in sequence.
+
+**Old per-dim renderer gone.** The function that drew one label's witness lines, dim line, arrows, and text — plus the drop-counter helpers it ran alongside — went out. The whole Dimension_Renderer test file (about four hundred lines, all pinning the old path) went out with it. The new renderer file walks the placement record and draws each entry through compute_dim_render_geometry — a pure helper that takes the entry plus screen geometry and returns the line segments, arrow polygons, and label rectangle ready for stroking.
+
+**Group B describe blocks gone.** Nine describe blocks in the placement test file (about seven hundred lines, all pinning algorithm pieces that the new path does not use) were sliced out, along with the helpers they referenced (neighbour_pairs_from_regions, pair_can_separate, the horiz_edge_pair / region helpers, the USE_UNIFACE_RULES env-var gate).
+
+**Old orchestrator and trace helpers gone.** run_new_placement — the top-level function that ran the old four-degree-of-freedom search, the conflict graph, the greedy seed, the retry pass, the stochastic finish, and the persistence — and its result type, its result accessor, and the diagnostic helpers (log_trace_target, log_trace_so, log_dim_summary, check_conflict_graph) all deleted. The greedy-seed-for-the-live-scene wrapper went out too. The internal helpers that still have non-Group-B unit tests (compute_reachable_regions, retry_pass, drop_duplicates, polish_pass, apply_drop_policy, compute_viability, re_project_persisted_list, the Persistence class, seed_string_from_regions, stochastic_finish, the witness_trapezoid_gap and is_face_front_facing utilities, is_occluder_for_dim, plus the Greedy_Placement/Viable_Pair/Reachable_Region/Candidate_Pair types) stay on disk for now — they are dead but tested, kept as salvage coverage until a future pass decides whether the tests are worth porting or just retiring.
+
+**Picks renamed to placements; record flattened.** The output record's per-entry shape changed twice. First the per-entry name went from "pick" (after an extended pros-and-cons pass through "dimension line", "choice", "assignment", "located", "location", "candidate", "placement" — placement won) to "placement" everywhere — in the type names, the record fields, the renderer's iterator variable, the hit-test entry type, the hovered-store name, the chime explanation strings, and the dispatcher log. Second, the per-entry record was flattened: the four-degree-of-freedom choices used to live nested under `placements[i].placement.field`, which read awkwardly at every call site, and now sit flat as `placements[i].field`. Every reading site — the placement code's own scoring loop, the renderer's draw walk, the diagnostic logging, the hover-popup label builder, the hit-test entry construction — updated to the flat shape.
+
+**Per-side flip switched to projection along the dim line.** The check that decides whether each end's arrow should flip outward used to use a rectangle-with-padding test in screen-axis space, which missed diagonal layouts. It now projects the anchor and the label centre along the dim direction and requires at least half-label-width plus arrow-length plus two pixels of clearance; the check runs independently per side so one end can flip while the other does not.
+
+**Label slide moved from renderer into placement.** When the label, at its natural centre, fully covers an inside arrow, the placement now slides the label past that witness BEFORE running the cross-label clearance check. The renderer used to do the slide, which meant two labels that passed the cross-label check at their natural positions could collide once the renderer slid them. With the slide running during placement, the cross-label check sees the final rectangle. A connector dim line draws from the extension's outer end to the slid label's near edge.
+
+**Hover-staleness fix.** The hover store for the uniface placement was not cleared when the cursor moved onto a label or any other hit type — the lookup that wrote the store sat below a short-circuit return for the other hit types. Moved it to the top of the hit-test so every mouse move updates it before any short-circuit return.
+
+**Other renderer refinements during the window.** The arrowhead tip always touches the witness line at the anchor. Outside arrows draw a twenty-pixel extension on the dim line. Inside arrows draw no overhang. The popup parentheses now show the witness index alongside the axis id.
+
+**Integration harness.** A new test helper at tests/helpers/scene_mock.ts exports the cube-edge and cube-face constants and a smart-object factory; a second helper at tests/helpers/placement_harness.ts wires the scene singleton, identity camera matrices, a default 800×600 render size, and a unit-quaternion orientation, then calls the placement entry point and returns the result. An integration test at the bottom of the placement test file uses the harness to pin a single-child scene's expected placement record.
+
+**Pure geometry extraction.** compute_dim_render_geometry was lifted out of the renderer's draw loop into a pure helper that takes one placement entry plus screen geometry and returns every line segment, arrow polygon, and label rectangle the renderer will stroke. Several smaller helpers came along: tally_cell_counts_for_vote, pick_top_two_witness_indices_per_face, is_inside_arrow_blocked_at_anchor, does_label_fully_cover_inside_arrow.
+
+**Where it sits at session end.** All four flag-removal surfaces clean. svelte-check clean. 875 unit tests pass, one skipped (filter 5 stays parked pending visual review), eight pending (placeholder per-rule unit tests). The status strip's dropped-count store reads zero — the new path's drop-counter wiring was not ported. The strip falls back to its orientation-numbers idle state, which is the desired display, so no UI gap shows.
+
+---
+
 ## Session — 2026-06-09 — uniface phase 2 step 3 finished
 
 Step 3 of the uniface transition went from "search built" to "feature complete" across this multi-day window. Visual review on the last image of the day signed off as "perfect," so the substep that was waiting on visual confirmation (3f) closed too. The full set of dim lines, witness lines, arrowheads, label text, label-vs-everything clearance, and hover behaviour now runs on the new path behind the flag.
