@@ -4,13 +4,10 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the end of handoff
 
-- [x] analyze dimensionals code and write a new file "now/dim.spec.md" with a complete, well organized description of what it does, written in the form of numbered rules
-    - [x] clean it up, dead wood, open issues, lexicon, tests
-- [ ] controls -> segs first
+- [ ] for a selected SO also highlight its dimensionals, even when dimensions are invisible
 - [ ] ability to export an SO -> file
     - [ ] export button below part name, with duplicate and divide
     - [ ] when the selection is the root, change it to save
-- [ ] for a selected SO also highlight its dimensionals, even when dimensions are invisible
 - [ ] slider for how many dimensionals appear
 - [ ] when a dimensional is being edited, also highlight its SO and its other dimensionals
 - [ ] pac add a string (called label) to each length Attribute that holds the text version of the value
@@ -29,10 +26,11 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
 
 ## tom
 
-- [ ] <http://littlecloudvineyard.com/>
-    - [ ] wiki builder
-    - [ ] netlify
-    - [ ] mono/lc
+- [x] <http://littlecloudvineyard.com/>
+    - [x] wiki builder
+    - [x] netlify
+    - [x] mono/lv
+    - [ ] bring tom up to speed
 
 ## soon
 

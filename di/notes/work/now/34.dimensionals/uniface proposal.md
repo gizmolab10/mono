@@ -118,7 +118,7 @@ Forward-looking work. The running code today does NOT do any of these. Listed he
 
 ### DONE step 3.1 — Persistence between renders. Tolerance = 5 pixels (2026-06-11)
 
-Encoded as rule 2a of [dim.spec.md](./dim.spec.md), in section A.
+Encoded as rule 2a of [dim.spec.md](dimensionals%20spec.md), in section A.
 
 Done across four slices, each leaving the running app working and each its own commit-worthy unit:
 
@@ -144,7 +144,7 @@ If every label passes all four checks, the full search is skipped; the remembere
 
 ### DONE step 3.2 — Label-position forbidden range. 20 pixels before and after each witness anchor (2026-06-11)
 
-Encoded as rule 32a of [dim.spec.md](./dim.spec.md), at the tail of section H's position-filter list.
+Encoded as rule 32a of [dim.spec.md](dimensionals%20spec.md), at the tail of section H's position-filter list.
 
 Added as the new last position filter at the tail of the position-filter pipeline. Three new unit tests: rejection when the candidate label overlaps the zone around its own anchor, rejection when it overlaps the zone around an already-placed label's anchor, and confirmation that the filter is NOT in the slide-eligible set. Three pre-existing tests had their fixtures adjusted because the new filter rejects labels that pre-existing fixtures placed close to anchors; the adjustment moves the anchors further out or the placed obstacles closer, depending on which behaviour each test pins. svelte-check clean, 826 unit tests pass.
 

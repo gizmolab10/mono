@@ -349,3 +349,6 @@
 - [x] begin work on dimensions/[[uniface rules]]
     - [x] what is missing?
     - [x] proposal for transition
+- [x] analyze dimensionals code and write a new file "now/dim.spec.md" with a complete, well organized description of what it does, written in the form of numbered rules
+    - [x] clean it up, dead wood, open issues, lexicon, tests
+- [x] controls -> segs first
