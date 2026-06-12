@@ -4,14 +4,20 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] for a selected SO also highlight its dimensionals
+- [x] analyze dimensionals code and write a new file "now/dim.spec.md" with a complete, well organized description of what it does, written in the form of numbered rules
+    - [x] clean it up, dead wood, open issues, lexicon, tests
+- [ ] controls -> segs first
+- [ ] ability to export an SO -> file
+    - [ ] export button below part name, with duplicate and divide
+    - [ ] when the selection is the root, change it to save
+- [ ] for a selected SO also highlight its dimensionals, even when dimensions are invisible
+- [ ] slider for how many dimensionals appear
 - [ ] when a dimensional is being edited, also highlight its SO and its other dimensionals
-- [ ] add a string (called label) to each length Attribute that holds the text version of the value
+- [ ] pac add a string (called label) to each length Attribute that holds the text version of the value
 - [ ] on hover over a part or a dimensional
     - [ ] OPTION-C copies the label to the paste buffer
     - [x] change the dimensional color to red
     - [x] over a part -> also highlight all its dimensionals
-- [ ] analyze dimensionals code and write a new file "dim.spec.md" with a complete description of what it does, written in the form of numbered rules
 - [ ] Gemini pro is only $20
 - [ ] move swap x y to p attributes
 - [ ] rename x ray -> wireframe

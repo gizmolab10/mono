@@ -8,21 +8,21 @@
         "type": "tabs",
         "children": [
           {
-            "id": "526f7d572bbbed0e",
+            "id": "d68b807152589346",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "di/notes/work/now/handoff.md",
+                "file": "di/notes/work/now/34.dimensionals/dim.spec.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "handoff"
+              "title": "dim.spec"
             }
           },
           {
-            "id": "0167279ce8f60121",
+            "id": "b04ded75fddd6efd",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -36,49 +36,7 @@
             }
           },
           {
-            "id": "6d7b1f302f5396ec",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/work/done/code.debt.paid.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "code.debt.paid"
-            }
-          },
-          {
-            "id": "0aaf6d9eae7b1c5d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/guides/pre-flight/shorthand.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "shorthand"
-            }
-          },
-          {
-            "id": "8579aeeb610f04e1",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/guides/collaborate/creating a design.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "creating a design"
-            }
-          },
-          {
-            "id": "7112080f9a7cd785",
+            "id": "9e9a058d83aa8ecb",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -92,7 +50,7 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -145,8 +103,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -228,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/guides/pre-flight/lexicon.md",
+                "file": "di/notes/work/now/code.debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of lexicon"
+              "title": "Outline of code.debt"
             }
           },
           {
@@ -248,12 +205,11 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
-    "width": 324.5,
-    "collapsed": true
+    "width": 324.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -335,44 +291,46 @@
       }
     ]
   },
-  "active": "7112080f9a7cd785",
+  "active": "b04ded75fddd6efd",
   "lastOpenFiles": [
-    "di/notes/work/milestones/34.dimensionals/uniface rules.md",
-    "di/notes/work/milestones/34.dimensionals/uniface proposal.md",
-    "di/notes/work/milestones/34.dimensionals/dimensionals rules.md",
-    "di/notes/work/milestones/34.dimensionals",
+    "di/notes/work/now/34.dimensionals/dim.spec.md",
+    "di/notes/work/now/open items.md",
+    "lv/src/md/The Vineyard/Page 1.md",
+    "lv/src/md/Little Cloud Vineyard.md",
+    "lv/src/assets/lcv.label.png",
+    "Untitled.base",
+    "2026-06-11.md",
+    "Untitled.canvas",
+    "di/notes/work/now/code.debt.md",
+    "di/notes/guides/pre-flight/lexicon.md",
+    "di/notes/work/now/34.dimensionals/uniface proposal.md",
+    "di/src/lib/ts/tests/Dimension_Placement.test.ts.tmp.84807.4fc72fe13225",
+    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.84807.711ce9cd8f0e",
+    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.84807.9b2f1546d688",
+    "di/notes/work/now/index.md",
+    "di/notes/work/done/code.debt.paid.md",
+    "34.dimensionals/uniface.md",
+    "34.dimensionals",
+    "uniface.md",
+    "di/notes/work/milestones/index.md",
+    "di/notes/work/now/34.dimensionals/uniface rules.md",
+    "di/notes/work/now/34.dimensionals/dimensionals rules.md",
+    "di/notes/work/now/34.dimensionals",
     "di/src/lib/ts/render/Dimension_Placement.ts.bak",
     "notes/guides/collaborate/creating a design.md",
-    "di/notes/work/now/code.debt.md",
     "notes/guides/pre-flight/shorthand.md",
     "di/src/lib/ts/tests/Dimension_Placement.test.ts.bak",
     "di/notes/work/dimensions/uniface proposal.md",
     "di/src/lib/ts/tests/helpers/placement_harness.ts",
     "di/src/lib/ts/render/Dimension_Placement.ts.tmp.69885.2eb31123239f",
-    "di/src/lib/ts/tests/helpers/scene_mock.ts",
-    "di/src/lib/ts/tests/helpers",
     "di/notes/work/now/handoff.md",
-    "di/notes/work/dimensions/uniface proposal.md.tmp.69885.511dcfc3de3a",
-    "di/notes/work/done/code.debt.paid.md",
-    "di/src/lib/ts/events/Hits_3D.ts.tmp.69885.0ac8d5bd9437",
     "di/notes/work/dimensions/uniface rules.md",
-    "di/src/lib/ts/render/Dimension_Renderer.ts.tmp.69885.1d3a94c94650",
     "lv/notes/work/bare bone website.md",
     "di/notes/guides/pre-flight/always.md",
     "notes/guides/pre-flight/always.md",
-    "di/notes/guides/pre-flight/lexicon.md",
     "lv/notes/work/code debt.md",
     "notes/guides/synopsis.md",
     "notes/guides/collaborate/shop keeping.md",
-    "di/notes/work/now/open items.md",
-    "di/notes/guides/development/running e2e tests.md",
-    "notes/guides/philosophy/limitations.md",
-    "di/notes/work/now/shop keeping.md",
-    "di/notes/work/now/work journal.md",
-    "di/notes/work/dimensions/dimensionals rules.md",
-    "di/notes/work/now/each query.md",
-    "di/notes/work/refresh.md",
-    "di/notes/tools/index.md",
     "di/src/assets/icon.png",
     "lv/dist/assets/icon-DQ-Yu_V3.png",
     "lv/dist/assets/lcv.label-BfBUnsUh.png",
@@ -380,7 +338,6 @@
     "in/src/assets/icon.png",
     "in/dist/assets/icon-DQ-Yu_V3.png",
     "lv copy/dist/assets/icon-DQ-Yu_V3.png",
-    "lv/src/assets/lcv.label.png",
     "node_modules/playwright-core/lib/vite/dashboard/assets/firefox-1bWoP6pv.svg",
     "node_modules/playwright-core/lib/vite/dashboard/assets/firefox-nightly-Cp5nfeDT.svg",
     "ws/notes/work/Untitled.canvas"
