@@ -29,7 +29,7 @@ import {
 	UNIFACE_FACE_NEG_Z,
 	type Silhouette_Box,
 	type Placement_Details,
-	tally_cell_counts_for_vote,
+	tally_candidate_counts_for_vote,
 	pick_top_two_witness_indices_per_face,
 	is_inside_arrow_blocked_at_anchor,
 	does_label_fully_cover_inside_arrow,
@@ -220,8 +220,8 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 
 	// Coverage gaps from step 2 of the test-rollout proposal.
 
-	it('the witness index cap value is 4 and is read from k.dimensions.WITNESS_INDEX_CAP (rule 1)', () => {
-		expect(k.dimensions.WITNESS_INDEX_CAP).toBe(4);
+	it('the witness index cap value is 6 and is read from k.dimensions.WITNESS_INDEX_CAP (rule 1)', () => {
+		expect(k.dimensions.WITNESS_INDEX_CAP).toBe(6);
 	});
 
 	it('the four placement choices are exactly edge, uniface, witness index, label position (rule 2)', () => {
@@ -279,7 +279,7 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 			['part-B|x', new Set([`${UNIFACE_FACE_POS_X}|0`, `${UNIFACE_FACE_POS_X}|1`, `${UNIFACE_FACE_POS_X}|3`])],
 			['part-C|x', new Set([`${UNIFACE_FACE_POS_X}|0`])],
 		]);
-		const counts = tally_cell_counts_for_vote(viability);
+		const counts = tally_candidate_counts_for_vote(viability);
 		const winners = pick_top_two_witness_indices_per_face(counts, 4);
 		const top = winners.get(UNIFACE_FACE_POS_X);
 		expect(top).toBeDefined();
@@ -301,13 +301,13 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 			['part-E|y', new Set([`${UNIFACE_FACE_POS_Y}|0`])],
 			['lonely|y', new Set([`${UNIFACE_FACE_POS_Y}|3`])],
 		]);
-		const counts = tally_cell_counts_for_vote(viability);
+		const counts = tally_candidate_counts_for_vote(viability);
 		const winners = pick_top_two_witness_indices_per_face(counts, 4);
 		const top = winners.get(UNIFACE_FACE_POS_Y);
 		expect(top!.has(0)).toBe(true);
 		expect(top!.has(3)).toBe(true);  // index 3 had count 1, indices 1+2 had count 0 → 3 wins second
 		// If instead one of indices 1 or 2 had count >= 1, "lonely" would lose.
-		const counts_with_filler = tally_cell_counts_for_vote(new Map<string, Set<string>>([
+		const counts_with_filler = tally_candidate_counts_for_vote(new Map<string, Set<string>>([
 			...viability,
 			['filler1|y', new Set([`${UNIFACE_FACE_POS_Y}|1`])],
 			['filler2|y', new Set([`${UNIFACE_FACE_POS_Y}|1`])],
@@ -330,7 +330,7 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 				`${UNIFACE_FACE_POS_Z}|3`,
 			]));
 		}
-		const counts = tally_cell_counts_for_vote(viability);
+		const counts = tally_candidate_counts_for_vote(viability);
 		const winners = pick_top_two_witness_indices_per_face(counts, 4);
 		for (let face_idx = 0; face_idx < 6; face_idx++) {
 			const top = winners.get(face_idx);

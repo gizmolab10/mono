@@ -4,7 +4,7 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] for a selected SO also highlight its dimensionals, even when dimensions are invisible
+- [ ] selection highlight color must be derived from part color, contrasting it AND white background
 - [ ] ability to export an SO -> file
     - [ ] export button below part name, with duplicate and divide
     - [ ] when the selection is the root, change it to save

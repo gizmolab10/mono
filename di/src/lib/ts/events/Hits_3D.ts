@@ -225,7 +225,7 @@ class Hits_3D {
 		let best: Uniface_Placement_Entry | null = null;
 		let best_dist = Infinity;
 		for (const placement of result.placements) {
-			if (placement.uniface === null) continue;
+			if (placement.uniface === null && !placement.is_last_resort) continue;
 			if (!placement.edge_p1_screen || !placement.edge_p2_screen) continue;
 			if (!placement.anchor_1_screen || !placement.anchor_2_screen) continue;
 			const d_dim = distance_point_to_segment_2d(cursor, placement.anchor_1_screen, placement.anchor_2_screen);

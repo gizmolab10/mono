@@ -10,14 +10,15 @@ This is a numbered description of what the dimensions code DOES today, written b
 2. A diagnostic overlay can also draw at the start: a red silhouette-box wireframe, dashed grey rejected-face outlines, and blue outlines of the kept faces. All three are gated by hard-coded flags in the renderer; current setting is all OFF, so nothing diagnostic draws by default.
    - Source: di/src/lib/ts/render/Dimension_Renderer.ts:292-322, 382-383
 
-2a. Persistence between renders. The second step from rule 1 (run the placement search) gets a conditional branch around it. Each label's last-render values — which edge, which face, which witness index, which label position — are remembered. On the next render, four viability checks per label decide whether the full search can be skipped:
+2a. Persistence between renders. The second step from rule 1 (run the placement search) gets a conditional branch around it. Each label's last-render values — which edge, which face, which witness index, which label position — are remembered. On the next render, three viability checks per label decide whether the full search can be skipped:
 
-    - The label's previous witness index is still on the post-vote winners list for its face.
     - The label's previous position along the dim line is within (new range start − 5 px) to (new range end + 5 px).
     - At the remembered position, the label rectangle still clears every other label's remembered rectangle by the pair-clearance value.
     - At the remembered position, the label rectangle does not cross inside the silhouette polygon (touching from outside is fine — matches the main search path's silhouette filter; rule 26).
 
-    If every label passes all four, the full search is skipped and the remembered values are reused for this render. If any label fails any check, the full search runs seeded with last render's values: labels that pass the STRICT (no-tolerance) versions of the same four checks are LOCKED in place and act as fixed obstacles; only labels that failed get re-placed.
+    A FOURTH check used to gate this path — "the previous witness index is still on the post-vote winners list" — but the main search no longer restricts to the winners list (see rule 18), so that gate would only ever bail the skip path falsely and was removed.
+
+    If every label passes all three, the full search is skipped and the remembered values are reused for this render. If any label fails any check, the full search runs seeded with last render's values: labels that pass the STRICT (no-tolerance) versions of the same three checks are LOCKED in place and act as fixed obstacles; only labels that failed get re-placed.
 
     Drift safety: after two consecutive skip-renders in which any check passed only by the 5-pixel tolerance (would have failed without it), force a full search on the next render anyway.
 
@@ -25,13 +26,13 @@ This is a numbered description of what the dimensions code DOES today, written b
 
 ## B. Which parts get dimensioned
 
-3. A part is eligible when it is currently visible AND none of its ancestors is set to hide its children AND it has no visible child of its own (it is a leaf in the visible tree).
+3. A part is eligible when it is currently visible AND none of its ancestors is set to hide its children AND it has a parent (the root smart object is excluded — it is the scene container, not a real part). Parents with visible children ARE eligible; the placement search dimensions every part in the visible tree below the root.
    - Source: di/src/lib/ts/render/Dimension_Placement.ts:462-480, 3129-3142
 
 4. X-RAY MODE: when the OPTION key is held AND the scene has at least one hidden part, the eligibility flips — only HIDDEN parts get dimensioned and visible parts get nothing. With no hidden part present, OPTION-hold is a no-op.
    - Source: di/src/lib/ts/render/Dimension_Placement.ts:468-471
 
-5. Eligible parts are walked alphabetically by part name. This walk order is what makes the duplicate-text drop deterministic (the alphabetically earliest part claims any given text-on-axis pair).
+5. Eligible parts are walked by depth-from-the-root first (the root's direct children before their children, and so on), with name alphabetical order as the tiebreaker among parts at the same depth. This walk order is what makes the duplicate-text drop deterministic AND makes a parent win over its child when they happen to carry the same number text on the same axis (the parent sits closer to the root, so it is walked first and claims the (text, axis) pair).
    - Source: di/src/lib/ts/render/Dimension_Placement.ts:3147
 
 ## C. Repeater filter
@@ -53,13 +54,13 @@ This is a numbered description of what the dimensions code DOES today, written b
 
 ## D. Silhouette box and uniface box
 
-10. The silhouette box is the world-axis-aligned bounding box of every corner of every rendered eligible part. It is computed in the room's STATIC (untumbled) frame, so it stays glued to the parts and tumbles with the view rather than swinging around with the screen.
+10. The silhouette box is the world-axis-aligned bounding box of every corner of every visible LEAF part whose eight bounding-box corners ALL project inside the visible canvas after tumble and projection. Container parts (parts with visible children) do NOT feed the silhouette — only their leaf descendants do (the leaves-only rule for silhouette membership). Parts whose corners fall partly off the canvas are skipped. The box is computed in the room's STATIC (untumbled) frame, so it stays glued to the parts and tumbles with the view rather than swinging around with the screen. When the qualifying-part set is empty (heavy zoom — no part is fully on canvas), the box collapses to a single point at the origin; the silhouette-clearance filter then becomes a no-op (its target polygon is empty) and parts fall through to the last-resort step (rule 20a).
     - Source: di/src/lib/ts/render/Dimension_Placement.ts:2031-2046, 2120-2135
 
 11. The uniface box has six faces, one per world-axis outward direction (LEFT, RIGHT, FRONT, BACK, TOP, BOTTOM). Each face sits OUTSIDE the matching side of the silhouette box by a configured SCREEN-pixel margin (15 px). The shift in world units to achieve that screen distance is computed once per face by projecting one world-unit-along-the-outward-normal and measuring the resulting screen distance.
     - Source: di/src/lib/ts/render/Dimension_Placement.ts:2057-2096
 
-12. There are FOUR nested uniface boxes, at screen distances 1×margin, 2×margin, 3×margin, 4×margin from the silhouette box. The witness-index cap is 4.
+12. There are SIX nested uniface boxes, at screen distances 1×margin, 2×margin, 3×margin, 4×margin, 5×margin, 6×margin from the silhouette box. The witness-index cap is 6.
     - Source: di/src/lib/ts/render/Dimension_Placement.ts:2077-2094, di/src/lib/ts/common/Constants.ts:160
 
 13. FACE EXCLUSION. A face is excluded for the entire nested-box family when its outward normal points WITHIN 20° of straight at the camera, OR WITHIN 45° of straight away from the camera. The camera direction is expressed in the room's static frame (the camera never actually moves — the room rotates around it instead).
@@ -88,24 +89,21 @@ This is a numbered description of what the dimensions code DOES today, written b
 17. After the sweep, every (face, witness-index) cell has a count: how many distinct (part, axis) records marked it viable. Per face, the two cells with the highest counts win the vote; ties break toward the smaller witness index. A face with zero viable parts has no winners.
     - Source: di/src/lib/ts/render/Dimension_Placement.ts:3403, pick_top_two at 2454-2472
 
-18. The main search later REFUSES to enter any (face, witness-index) cell that lost the vote. Each face concentrates its labels onto at most two shared witness indices.
+18. The vote tally is recorded in the diagnostic log (winners and per-witness-index counts per direction) but it does NOT restrict the main search. Every (face, witness-index) candidate is considered, including those that lost the vote. The vote remains useful as a signal for "what the bulk of the scene wants" but a part that needs a less-popular witness-index to find a viable position is free to use one.
     - Source: di/src/lib/ts/render/Dimension_Placement.ts:3646-3650
 
 ## G. Main search loop
 
-19. For each (part, axis), the main loop walks the witness indices in order (1, 2, 3, 4). Inside one witness index it walks the four candidate edges; inside each edge it walks the four candidate faces; inside each (edge, face) combination, the shape filters run once and if they pass, the loop tries the five sampled label positions.
+19. For each (part, axis), the main loop walks the witness indices in order (1, 2, 3, 4, 5, 6). Inside one witness index it walks the four candidate edges; inside each edge it walks the four candidate faces; inside each (edge, face) combination, the shape filters run once and if they pass, the loop tries the five sampled label positions.
     - Source: di/src/lib/ts/render/Dimension_Placement.ts:3631-3919
 
-20. The loop RETURNS THE FIRST WITNESS INDEX with at least one passing candidate. As soon as one witness index yields a winner, deeper witness indices are not visited at all. Within the winning witness index, the highest-scoring candidate (across all edge/face/position combinations) wins.
-    - Source: di/src/lib/ts/render/Dimension_Placement.ts:3918 ("first witness index with a winner wins")
+20. The loop visits EVERY witness index — there is no first-winner break. The highest-scoring candidate across every (edge, face, witness-index, label-position) combination wins. A part that fits viably at a low witness index typically still wins there because the witness-length term punishes long witnesses, but deeper witness indices are always considered too, so a part that needs a far-out uniface to clear an obstacle can find one.
+    - Source: di/src/lib/ts/render/Dimension_Placement.ts:3918
 
-20a. NO-CANDIDATE SILENT DROP. When a (part, axis) finishes the main loop without a winner — every witness index in 1, 2, 3, 4 was tried and no edge/face/position combination passed — run_uniface_placement still pushes a placement record for that (part, axis), but with no chosen face. The record carries the formatted number text (for the diagnostic log) but no anchors, no edge endpoints, no label position. The renderer never sees this record; the cleanup pass below strips it.
-    - Source: di/src/lib/ts/render/Dimension_Placement.ts:4017-4032
+20a. LAST-RESORT FALL-BACK. When a (part, axis) finishes the main loop without a winner — every witness index, edge, face, and label position was tried and none passed — a fall-back step runs. The fall-back ignores the silhouette and the uniface boxes; it picks one of EIGHT candidate shifts per axis (four edges of the part along the measured axis paired with two outward perpendicular directions per edge — the directions along the two non-measured local axes that point away from the part). For each candidate, a binary search picks the largest millimetre shift along the perpendicular such that, after the part's world matrix plus tumble plus projection are applied, the bounding box of every drawn mark of the dimensional (witness starts, witness ends, dim line, label box including padding, witness extension past the anchors) sits at least ten pixels inside the canvas on every side. Candidates whose two projected witness lines run closer than fifteen pixels apart (the same threshold the normal search uses) are dropped. The winning candidate is the one with the shortest projected witness length; a small tiebreaker favours offsets that point toward the camera over offsets that point away. If no candidate clears every check, the (part, axis) gets no dimensional this render.
+    - Source: di/src/lib/ts/render/Dimension_Placement.ts — compute_last_resort_placement helper and its call site after the main loop.
 
-20b. FINAL CLEANUP PASS. Before returning, run_uniface_placement filters out every placement whose chosen face is null. That removes:
-    - the no-winner drops from rule 20a,
-    - the duplicate-text drops from rule 22 (which also push a null-face record),
-    - any other dimension-level rejection that records a null-face placement.
+20b. FINAL CLEANUP PASS. Before returning, run_uniface_placement filters out every placement that has no chosen face AND is not a last-resort placement. That removes the duplicate-text drops from rule 22 (which push a null-face record on purpose) and any other dimension-level rejection that records a null-face placement. Last-resort placements are KEPT even though their chosen-face field is null because their anchors and edges are real screen coordinates.
 
     The diagnostic counter "no-viable-pair drop removed N placements" reports how many got stripped on this render.
     - Source: di/src/lib/ts/render/Dimension_Placement.ts:4037-4043
@@ -176,15 +174,15 @@ This is a numbered description of what the dimensions code DOES today, written b
     - MINUS: a centering penalty, 20 × (off-center percent)², zero at the midpoint and 20 at either anchor.
     - MINUS: a witness-length penalty, 1 × average screen length of the two witnesses.
     - MINUS: an inside-silhouette penalty, 200 × average percent of each witness line that lies inside the silhouette polygon (sampled at 11 points per witness).
-    - MINUS: a world-distance penalty, 100 × the world-coordinate perpendicular distance from the part edge to the chosen face.
+    - PLUS: a SCREEN-ROOM REWARD, 2 × the distance in screen pixels from the candidate's anchor midpoint to the canvas edge, walking along the perpendicular to the dim line that points away from the silhouette centre. The direction with more empty canvas past the candidate wins, even when its witness line is longer.
 
-    The world-distance term dominates by design — the closest face in 3D world space wins by default; the other terms only break ties.
+    The previous version of this rule had a "world-distance penalty" weighted at 100 per world unit, which dominated every other term. It was removed and replaced by the screen-room reward in this session; the spec now reflects the new term.
 
     As one equation:
 
-    **S = (L − W) − α·u² − β·(W₁ + W₂)/2 − γ·(I₁ + I₂)/2 − δ·max(0, D)**
+    **S = (L − W) − α·u² − β·(W₁ + W₂)/2 − γ·(I₁ + I₂)/2 + ε·R**
 
-    Legend (all screen distances in pixels; world distances in world units):
+    Legend (all screen distances in pixels):
     - S = the candidate's score; higher wins
     - L = dim line length on screen
     - W = label width on screen
@@ -194,11 +192,11 @@ This is a numbered description of what the dimensions code DOES today, written b
     - W₂ = second witness line's screen length
     - I₁ = percent of the first witness line inside the silhouette polygon, sampled at 11 evenly spaced points (0 to 100)
     - I₂ = same, for the second witness line
-    - D = world-coordinate perpendicular distance from the part's bounding-box face to the chosen uniface face's plane (clamped to zero from below)
+    - R = screen-pixel distance from the candidate's anchor midpoint to the nearest canvas edge, measured along the perpendicular to the dim line that points away from the silhouette centre; clamped to zero from below when the candidate is already past the canvas edge in that direction
     - α = 20 (centering-penalty cap, in score units, reached at either anchor)
     - β = 1 (witness-length weight, in score units per screen pixel)
     - γ = 200 (inside-silhouette weight, in score units per percent)
-    - δ = 100 (world-distance weight, in score units per world unit)
+    - ε = 2 (screen-room weight, in score units per screen pixel of empty canvas past the candidate)
 
     - Source: di/src/lib/ts/render/Dimension_Placement.ts:3232-3236 (the four weights), 3845-3885 (the formula)
 
@@ -263,7 +261,7 @@ This is a numbered description of what the dimensions code DOES today, written b
 
 The actual values driving the behavior, copied from di/src/lib/ts/common/Constants.ts:156-201:
 
-- Witness-index cap: **4** nested uniface boxes
+- Witness-index cap: **6** nested uniface boxes
 - Excluded-face front angle: **20°** (face pointing within 20° of the camera is rejected)
 - Excluded-face back angle: **45°** (face pointing within 45° away is rejected)
 - Edge-on dot threshold: **0.174** (about 10° off edge-on; below = rejected)
@@ -279,7 +277,7 @@ Scoring weights (hard-coded inside `run_uniface_placement`, di/src/lib/ts/render
 - Centering penalty at the anchors: **20**
 - Witness-length penalty per pixel: **1**
 - Witness-inside-silhouette percent penalty: **200**
-- World-distance penalty per world unit: **100**
+- Screen-room reward per pixel: **2**  (replaces the previous "world-distance penalty per world unit" weight of 100; see rule 34)
 
 Label rendering (di/src/lib/ts/render/Dimension_Renderer.ts and 2431-2436):
 

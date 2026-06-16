@@ -767,7 +767,7 @@ class Render {
 			this.render_hover();
 			this.render_selection();
 		}
-		if (stores.show_dimensionals) render_dimensions(this);
+		if (stores.show_dimensionals || selection.all.length > 0) render_dimensions(this);
 		if (stores.show_angulars) render_angulars(this);
 		if (k.debug.show_ep_labels) this.render_front_face_label();
 		this._phase('');

@@ -157,7 +157,7 @@ export default class Constants {
 		FORBIDDEN_CAM_DOT        : 0.866,
 		WITNESS_LEN_MAX_PX       : 300,
 		WITNESS_CAP_PX           : 200,
-		WITNESS_INDEX_CAP        : 4,
+		WITNESS_INDEX_CAP        : 6,
 		/** Absolute dot threshold below which the dim's flat plane is
 		 *  considered edge-on to the camera and rejected by filter 0.
 		 *  0.174 corresponds to within about ten degrees of edge-on. */

@@ -111,6 +111,7 @@ How each dim line's position and label are chosen.
 - **label center point** (screen) — the exact center of the label rect.
 - **label position** (world along the dim line) — where along the dim line the label center point sits, in world units, measured either from (a) the first witness anchor when in the witness interior, (b) outward from the anchor point closest to the overhang.
 - **label rect** (screen) — the rectangle in screen coordinates that exactly encloses the label text.
+- **mark** — any rendered component of a dimensional (witness line, arrow head, dimension line, label rect).
 - **overhang** — the label sits outside the witness lines. The overhang distance is measured in screen pixels along the dim line.
 - **pair clearance** — the minimum screen-pixel gap between any two label rectangles. Set by the project to 15 pixels.
 - **parent-over-child** — the second tie-break in the duplicate-text drop: prefer the part with the shallower ancestry path.
@@ -119,7 +120,7 @@ How each dim line's position and label are chosen.
     - **drift safety.** after two consecutive renders where the placement algorithm was skipped and any check passed only by the 2-pixel tolerance, force a full placement-algorithm run on the next render regardless.
 - **placement algorithm** — the procedure that picks the four placement choices for every label each render. Done once per render.
 - **rotated part** — a part whose own rotation differs from the identity.
-- **silhouette box** — the box that exactly encloses every fully visible part (including those that are rotated), recomputed before each render. World aligned (untumbled).
+- **silhouette box** — the box that exactly encloses every part that, when tumbled and projected) is completely inside the screen (including those that are rotated), recomputed before each render. World aligned (untumbled).
 - **silhouette margin** — the screen-pixel gap between the silhouette box and the first uniface box. Set by the project to 15 pixels.
 - **tie-break** — when two labels tie on a placement criterion, the rule that picks the winner. Persistence, parent-over-child, and alphabetical are the three tie-breaks used in the duplicate-text drop.
 - **uniface** — a face of a unface box.  Never "uniface face", never "uniface block", never "buffer".
