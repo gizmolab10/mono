@@ -43,6 +43,9 @@ Every word earns its place AND nothing essential is missing.
 * Research, plan, details, verify
 * Then the solution, punchy
 * Interesting details if they are spicy
+* well organized
+* easy to absorb
+* plain english (avoid banned words, prefer lexicon)
 
 Lose the filler, love the flavor.
 

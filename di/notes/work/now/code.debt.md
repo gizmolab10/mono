@@ -2,14 +2,26 @@
 
 Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into tangles.
 
+
 offer a proposal (#) for the first unchecked item, and add it to a new section at the end of handoff
 
+- [ ] read and implement open items line 111
+- [ ] add a new slider -> controls, default = 2
+    - [ ] remove dimensions from the segmented control
+- [ ] sliders have two modes --
+    - [ ] (1) click moves an increment 
+    - [ ] (2) option click moves the thumb to that position
+    - [ ] scaling -> eliminate triangles
+- [ ] not draw any part that is larger than the screen (after tumble and projection)
+- [ ] hover should work with edit turned off
+- [ ] clean up guides again
+    - [ ] does our current organization make sense?
+- [ ] when a dimensional is being edited, also highlight its SO and its other dimensionals
 - [ ] selection highlight color must be derived from part color, contrasting it AND white background
 - [ ] ability to export an SO -> file
     - [ ] export button below part name, with duplicate and divide
     - [ ] when the selection is the root, change it to save
 - [ ] slider for how many dimensionals appear
-- [ ] when a dimensional is being edited, also highlight its SO and its other dimensionals
 - [ ] pac add a string (called label) to each length Attribute that holds the text version of the value
 - [ ] on hover over a part or a dimensional
     - [ ] OPTION-C copies the label to the paste buffer
@@ -128,6 +140,6 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
 
 ## AI
 
-- [ ] read all the di work md files and summarize the organization
+- [ ] read all the work md files and summarize the organization
 - [ ] [[cadence]]
 - [ ] AI coolness: <https://medium.com/@gaddamnaveen192/ai-replaced-80-of-coding-only-these-7-skills-are-left-128e13d3020d>

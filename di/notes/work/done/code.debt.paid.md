@@ -352,3 +352,6 @@
 - [x] analyze dimensionals code and write a new file "now/dim.spec.md" with a complete, well organized description of what it does, written in the form of numbered rules
     - [x] clean it up, dead wood, open issues, lexicon, tests
 - [x] controls -> segs first
+- [x] scan all notes in di and mono and update all links and file name references
+- [x] major filename overhaul -> remove the 'di ' wherever it was added, updating all refs
+- [x] rewrite the banned words hook to read the md file

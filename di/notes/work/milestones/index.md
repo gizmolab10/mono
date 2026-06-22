@@ -12,17 +12,17 @@ A living snapshot of the arc of the project at the milestone level.
 ## Mothballed
 | #   | Name                           | Outcome                                                                                          |
 | --- | ------------------------------ | ------------------------------------------------------------------------------------------------ |
-| 32  | [Facets](./done/32.facets/handoff.md) | Mothballed after multiple attempts. Lessons captured in [lessons](./done/32.facets/lessons.md).         |
-| 33  | [Drag](33.drag/handoff.md)     | Mothballed mid-investigation. Code shipped and stable. Lessons in [lessons](33.drag/lessons.md). |
+| 32  | [Facets](di/di%20notes/di%20work/milestones/done/32.facets/handoff.md) | Mothballed after multiple attempts. Lessons captured in [lessons](di/di%20notes/di%20work/milestones/done/32.facets/lessons.md).         |
+| 33  | [Drag](di/di%20notes/di%20work/milestones/33.drag/handoff.md)     | Mothballed mid-investigation. Code shipped and stable. Lessons in [lessons](di/di%20notes/di%20work/milestones/33.drag/lessons.md). |
 ## Done
-- [Completed milestones 1-26](./done/index.md)
+- [Completed milestones 1-26](di/di%20notes/di%20work/milestones/done/index.md)
 
 ## Contents
 
 - [33.drag](./33.drag/)
 - [Done](./done/)
-- [28.cut.lists](./28.cut.lists.md)
-- [29.user.manual](./29.user.manual.md)
-- [30.licensing](./30.licensing.md)
-- [31.marketing](./31.marketing.md)
+- [28.cut.lists](28.cut.lists.md)
+- [29.user.manual](29.user.manual.md)
+- [30.licensing](30.licensing.md)
+- [31.marketing](31.marketing.md)
 

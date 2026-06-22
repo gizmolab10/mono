@@ -639,11 +639,13 @@ class Render {
 
 		// Edges: a visible root draws all its edges. An invisible root is
 		// restricted to the bottom face further down.
+		const sel_scene_for_axes = selection.current?.so?.scene ?? null;
 		if (!xray_mode) for (const obj of objects) {
 			const projected = projected_map.get(obj.id)!;
 			const world = (solid) ? this.get_world_matrix(obj) : undefined;
 			this.render_edges(obj, projected, solid, world);
 			if (stores.show_names) this.render_face_names(obj, projected, world);
+			if (sel_scene_for_axes && obj.id === sel_scene_for_axes.id) this.render_face_axes(obj, projected);
 		}
 
 		// Facets debug labels — after all lines so backgrounds aren't covered
@@ -2353,6 +2355,41 @@ class Render {
 		return [t_min, t_max, enter_edge, leave_edge];
 	}
 
+
+	/** For the SELECTED part: draw a small "x" / "y" / "z" letter at the
+	 *  centroid of every front-facing face. The letter names the LOCAL
+	 *  axis the face's normal lies along, so a non-rotated part shows
+	 *  "x" on its left and right faces, "y" on front and back, "z" on
+	 *  top and bottom. Used while talking about dimensional placement
+	 *  to refer to a specific face by its axis. */
+	private render_face_axes(obj: O_Scene, projected: Projected[]): void {
+		if (!obj.faces) return;
+		const ctx = this.ctx;
+		const font_size = k.height.font.large;
+		ctx.font = `${font_size}px sans-serif`;
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		for (let fi = 0; fi < obj.faces.length; fi++) {
+			const face = obj.faces[fi];
+			if (this.face_winding(face, projected) >= 0) continue;  // back-facing
+			let cx = 0, cy = 0, behind = false;
+			for (const vi of face) {
+				if (projected[vi].w < 0) { behind = true; break; }
+				cx += projected[vi].x;
+				cy += projected[vi].y;
+			}
+			if (behind) continue;
+			cx /= face.length;
+			cy /= face.length;
+			const letter = obj.so.face_fixed_axis(fi);
+			const tw = ctx.measureText(letter).width;
+			const box_h = font_size + 2;
+			ctx.fillStyle = 'white';
+			ctx.fillRect(Math.round(cx) - tw / 2 - 2, Math.round(cy) - box_h / 2, tw + 4, box_h);
+			ctx.fillStyle = 'red';
+			ctx.fillText(letter, Math.round(cx), Math.round(cy));
+		}
+	}
 
 	private render_face_names(obj: O_Scene, projected: Projected[], world?: mat4): void {
 		if (!obj.faces) return;

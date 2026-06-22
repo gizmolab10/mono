@@ -1,6 +1,64 @@
+<!-- markdownlint-disable MD024 -->
+
 # Session logs
 
-Record work performed during chat sessions, in reverse chronological order.
+Record work performed during chat sessions, in reverse chronological order. Each session uses the same sub-headings ("### Files touched", "### Verification"), so MD024 is disabled for this file.
+
+---
+
+## Session — 2026-06-22 — filename overhaul: dropped the "di " prefix
+
+Removed the "di " prefix from six folders and four files, swept every reference (twelve files), and confirmed the word-check still passes 8 of 8 at the new paths.
+
+---
+
+## Session — 2026-06-18 — dim score iteration + persistence/vote simplification + spec cleanup
+
+A long, iterative session driven by visual quality of the dim placements. Each round: try a rule, render, read the on-disk diagnostic, adjust. Several mid-session reverts when a tried weight did not move the visual.
+
+**Camera-side penalty (normal search).** Score now subtracts a heavy penalty when the candidate silhouette face's outward direction points AWAY from the camera — the label would sit on the back side of the part, hidden. Weight fifty thousand per unit of away-alignment. Front-side candidates always beat back-side ones when both exist.
+
+**Lies-flat reward.** Score now adds a reward when the candidate outward direction lies in the plane of the part's front-most face — the face whose normal points most toward the camera. Weight five hundred, scaled by how strongly that front face points at the camera so faces nearly perpendicular to the view earn little. Per-side detail prints the reward.
+
+**Score weights flipped.** Witness-length penalty raised from one to two per pixel; empty-canvas reward lowered from two to one. Shorter witnesses now win over more empty outward canvas when the two are comparable.
+
+**Persistence skip path retired.** Slice B (the "every persisted entry still fits, reuse the whole result, bail" short-circuit) is gone from spec and code. The seeded run alone handles every render. Drift counter and drift-tolerance gymnastics retired. About two hundred forty lines of try_skip body deleted; two tests rewritten to expect skip=false (the seeded run takes over).
+
+**Vote retired.** Spec section 4.6 deleted. Code computation (one hundred fifty lines that visited every candidate in isolation, tallied counts, and picked top-two per direction) removed. The "step 3g witness-index vote: skipped N" summary line dropped. Was strictly informational.
+
+**Spec contradictions fixed.** Section 5.3 used to duplicate scoring weights with stale values; now keeps only the canvas inset and the witness-line spacing. Section 4.5's contradictory pair of sentences ("first viable position is recorded" vs "all surviving positions are scored") collapsed into one.
+
+**Spec 7.2 translated to lexicon.** "Label slide" → OVERHANG. "Per-side flip" → PER-SIDE EXTERIOR. The dim-line segments table now uses witness interior / witness exterior / outside-extension overhang consistently.
+
+**Diagnostic richer.** Every picked dim's per-axis log block now prints the screen direction the silhouette face sits in, the camera-side dot, the back-side penalty applied, and the lies-flat reward applied. Score breakdowns also print the camera-side and lies-flat terms.
+
+**Face axis labels.** The selected part now shows the axis letter (x / y / z) at the centroid of every front-facing face, in red on a small white background. Lets a viewer talk about a face by its axis instead of by its world cardinal direction.
+
+**Hover eligibility (chapter 2).** A hovered part is now eligible for dim placement even when the dim toggle is off. Persistence map clears when the hovered part changes. Spec rule 2.1.2 updated.
+
+**Hit test extended.** The dim-line / witness-line / label-rectangle hit test no longer bails out when the dim toggle is off. The eligibility filter already gates which dims exist in the result; the hit test trusts that.
+
+**Conciseness hook.** Precheck now flags common verbose phrases ("let me know if", "going forward", "in summary", "ok to go", etc.) and word counts past one hundred twenty (prose with no list) or three hundred (anything). My responses had grown long; the hook keeps them short.
+
+**Last-resort rewrite + revert.** Tried option FOUR (push each candidate to the canvas edge for the longest possible witness), then reverted to the original "smallest shift that fits" after the user observed witnesses had become too long. Added a "label rectangle not inside the part's projected bounding box" drop to the fits test. Picking now also uses shortest projected witness as the PRIMARY, with lies-flat-against-front and camera-side as tiebreakers.
+
+**Paused at on-plane reward.** The user wants a reward for "the entire dimensional sits ON the plane of the part's front-most face". The silhouette box wraps the whole scene, so its faces are parallel-but-offset from the wall's face — geometrically impossible unless we switch to per-PART silhouette boxes or use a graded distance reward. Two options posed, no answer yet.
+
+### Files touched
+
+- [Dimension_Placement.ts](di/src/lib/ts/render/Dimension_Placement.ts) — most of the iteration: skip-path body deleted, vote computation deleted, score formula updated, lies-flat reward and front-normal computation added, per-side detail extended, persistence drift counter retired.
+- [Dimension_Renderer.ts](di/src/lib/ts/render/Dimension_Renderer.ts) — diagnostic POST sent from the renderer side.
+- [Render.ts](di/src/lib/ts/render/Render.ts) — `render_face_axes` method draws the axis letters on the selected part.
+- [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts) — toggle gate removed from both hit tests.
+- [Dimension_Placement.test.ts](di/src/lib/ts/tests/Dimension_Placement.test.ts) — two skip-path tests updated to expect skip=false.
+- [dimensions.latest.spec.md](dimensions.latest.spec.md) — chapters 4, 5, 6, 7, 8 each reworked. Score formula table grew n_front and the lies-flat weight row.
+- [precheck.sh](di/.claude/hooks/precheck.sh) — conciseness check added.
+
+### Verification
+
+- svelte-check zero errors at every intermediate step.
+- vitest 827 passing every step.
+- Visual tumble after each scoring change; Jonathan eyeballed every render before deciding the next move.
 
 ---
 
@@ -619,7 +677,7 @@ After visual review, Jonathan decided the reversal was not an improvement — it
 
 Files: [Hideable.svelte](../../../src/lib/svelte/details/Hideable.svelte) — reverted to the original stylesheet (no functional change).
 
-Decision logged in [code.debt.paid.md](../done/code.debt.paid.md) so the item does not resurface.
+Decision logged in [code.debt.paid.md](code.debt.paid.md) so the item does not resurface.
 
 ---
 
@@ -685,7 +743,7 @@ With the runner invoked correctly, the six rewrites still failed for real reason
 
 A real-browser visual pass turned up three more issues. First, hover and selection dots showed up on the printed sheet even after the gates were added. The cause: the print event fires before the print media query flips on, so the canvas the print handler read still had the on-screen render with helpers on it. Fix: the print handler now asks the renderer for a fresh, synchronous, helper-suppressed paint before reading the canvas. Second, the colour and bolded thickness applied to the part the cursor was on (or that was selected) also showed up on the printed sheet — the edge-drawing code styles selected and hovered parts with bold strokes and a hover colour, and that path was not gated on print. Fix: edges drawn under print mode use the regular stroke colour and the regular line width regardless of selection or hover. Third — and this took the longest to find — after a series of source-file saves during the session, clicks on a part were running the click-on-background deselect branch on mouse-up. The probe showed mousedown finding the part correctly but mouseup seeing no drag target. The cause: every hot reload during the session ran the canvas setup again, and the setup attached a fresh mouseup listener without removing the previous one. On mouseup, all the accumulated listeners ran end_drag in turn — the first run cleared the drag target, the next runs found no target and triggered the deselect-by-root branch. Fix: the setup now keeps a reference to each listener it attaches, removes the previous one before attaching a new one, and does the same for the print-media subscription the renderer added.
 
-Files: [Render.ts](../../../src/lib/ts/render/Render.ts) (grid, axes, and root-bottom helper gated on print media; selection and hover dots gated on print media; edge stroke colour and width ignore selection and hover under print media; renderer subscribes to print-media flips and flags itself out of date — and now removes the previous subscriber before adding a new one; a new method paints synchronously under a print-mode override flag so the print handler reads clean canvas pixels; the three is_print declarations collapsed to one); [App.svelte](../../../src/App.svelte) (print handler asks the renderer for a synchronous print-mode paint before reading the canvas, and clears the CSS transform when no silhouette is found); [Events_3D.ts](../../../src/lib/ts/events/Events_3D.ts) (the canvas setup now records each mouse listener and removes the previous one before attaching a new one, so hot reloads and scene switches don't accumulate duplicates that would otherwise cause mouseup to deselect through the click-on-background branch); [Debug.ts](../../../src/lib/ts/common/Debug.ts) (test write hook now wires scene reference before bounds, attaches faces alongside edges, and exposes set_orientation, set_scale, set_decorations); [print-notifications.spec.ts](../../../e2e/tests/print-notifications.spec.ts) (setup_print_page resets orientation, scale, and decorations; setup_for_pixel_silhouette waits long enough for the renderer to redraw under print media and re-fires the print event so the handler reads the settled canvas; tests two, four, and five now use an invisible ROOT container; three new helpers; one diagnostic test deleted; two old corner-projection helpers removed); [stipulations.md](../../guides/development/rules/stipulations.md) (rule 66 broadened to cover every UI helper, including hover and selection dots, and to mention the renderer's repaint on media flip); [handoff.md](./handoff.md) (the seven-test proposal removed, no new open items).
+Files: [Render.ts](../../../src/lib/ts/render/Render.ts) (grid, axes, and root-bottom helper gated on print media; selection and hover dots gated on print media; edge stroke colour and width ignore selection and hover under print media; renderer subscribes to print-media flips and flags itself out of date — and now removes the previous subscriber before adding a new one; a new method paints synchronously under a print-mode override flag so the print handler reads clean canvas pixels; the three is_print declarations collapsed to one); [App.svelte](../../../src/App.svelte) (print handler asks the renderer for a synchronous print-mode paint before reading the canvas, and clears the CSS transform when no silhouette is found); [Events_3D.ts](../../../src/lib/ts/events/Events_3D.ts) (the canvas setup now records each mouse listener and removes the previous one before attaching a new one, so hot reloads and scene switches don't accumulate duplicates that would otherwise cause mouseup to deselect through the click-on-background branch); [Debug.ts](../../../src/lib/ts/common/Debug.ts) (test write hook now wires scene reference before bounds, attaches faces alongside edges, and exposes set_orientation, set_scale, set_decorations); [print-notifications.spec.ts](../../../e2e/tests/print-notifications.spec.ts) (setup_print_page resets orientation, scale, and decorations; setup_for_pixel_silhouette waits long enough for the renderer to redraw under print media and re-fires the print event so the handler reads the settled canvas; tests two, four, and five now use an invisible ROOT container; three new helpers; one diagnostic test deleted; two old corner-projection helpers removed); [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md) (rule 66 broadened to cover every UI helper, including hover and selection dots, and to mention the renderer's repaint on media flip); [handoff.md](di/di%20notes/di%20work/now/handoff.md) (the seven-test proposal removed, no new open items).
 
 Verification. svelte-check: 0 errors, 0 warnings. Unit tests: 680 pass. E2e: 23 of 23 pass — every test in every spec file. Visual confirmation: the printed sheet shows just the picture, hover and selection feedback do not appear on it, and clicking parts in the editor selects them and keeps them selected through mouseup.
 
@@ -707,7 +765,7 @@ Details column reshaped. Two code-debt items addressed. First: the empty area be
 
 Handoff trim. The handoff went from 101 lines to roughly 50. Removed two superseded proposals (the older "accent below the last hideable" proposal and the older pill proposal with three open questions), the duplicated print-rule-39 open-items bullet, the "bundled work" paragraph from the test proposal, the no-cons line, and the test-plan sentence on the pill proposal. The remaining content: open items plus the rewrite-the-seven-red-tests proposal plus the simple pill proposal.
 
-Files: [App.svelte](../../../src/App.svelte) (body-padding margin, dashed-wireframe suppression, no diagnostic logs); [Render.ts](../../../src/lib/ts/render/Render.ts) (willReadFrequently on the 2D context, print-mode skip on the dashed-wireframe phase); [Details.svelte](../../../src/lib/svelte/details/Details.svelte) (banner-zone is a flex column with 5-pixel gap, accent background on the column, pseudo-element fillet gone); [Hideable.svelte](../../../src/lib/svelte/details/Hideable.svelte) (hideable is a flex column with 5-pixel gap, banner and slot margins both zero); [stipulations.md](../../guides/development/rules/stipulations.md) (rule 65 added, rule 63 prose refined); [vernacular.md](../../guides/development/learn/vernacular.md) (three new banned-substitution rows plus a working-discipline section); [learn.md](../ai/learn.md) (entries four and five); [handoff.md](./handoff.md) (trimmed); [mono CLAUDE.md](../../../../CLAUDE.md) and [di CLAUDE.md](../../../CLAUDE.md) (cross-project learn paths spelled out).
+Files: [App.svelte](../../../src/App.svelte) (body-padding margin, dashed-wireframe suppression, no diagnostic logs); [Render.ts](../../../src/lib/ts/render/Render.ts) (willReadFrequently on the 2D context, print-mode skip on the dashed-wireframe phase); [Details.svelte](../../../src/lib/svelte/details/Details.svelte) (banner-zone is a flex column with 5-pixel gap, accent background on the column, pseudo-element fillet gone); [Hideable.svelte](../../../src/lib/svelte/details/Hideable.svelte) (hideable is a flex column with 5-pixel gap, banner and slot margins both zero); [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md) (rule 65 added, rule 63 prose refined); [vernacular.md](../../guides/development/learn/vernacular.md) (three new banned-substitution rows plus a working-discipline section); [learn.md](di/di%20notes/di%20work/ai/learn.md) (entries four and five); [handoff.md](di/di%20notes/di%20work/now/handoff.md) (trimmed); [mono CLAUDE.md](../../../../CLAUDE.md) and [di CLAUDE.md](../../../CLAUDE.md) (cross-project learn paths spelled out).
 
 Verification. Tests: 20-of-23 e2e green; six rule-39 corner-projection tests still red (tracked as the open follow-up in the handoff). Visual: print preview shows the picture filling the page along the limiting side, centred on the other, with a half-inch white border. Details column visually unchanged from before the pill restructure — same look, simpler innards.
 
@@ -739,13 +797,13 @@ Production code now. The compute-silhouette function does a getImageData call ag
 
 Open follow-ups. Six of the existing browser-driven tests for rule 39 were written against the corner-projection contract and now fail against the painted-pixel rule. They need to be rewritten to read canvas pixels and compute expected silhouette from those, or replaced with sanity-checks that pin the new contract. Not done in this session; the production code and the catalog are correct and the visual confirmation is in hand, so the test debt is logged here for the next pass.
 
-Files: [App.svelte](../../../src/App.svelte) (compute_silhouette rewritten as pixel scan, diagnostic logs removed, html/body/#app height anchor added to print stylesheet); [stipulations.md](../../guides/development/rules/stipulations.md) (rule 39 prose rewritten; rules 63 and 64 added); [working features.md](./working%20features.md) (adherence row updated to 64 rules total).
+Files: [App.svelte](../../../src/App.svelte) (compute_silhouette rewritten as pixel scan, diagnostic logs removed, html/body/#app height anchor added to print stylesheet); [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md) (rule 39 prose rewritten; rules 63 and 64 added); [working features.md](working%20features.md) (adherence row updated to 64 rules total).
 
 Verification. Visual: the print preview in real Chrome shows the picture filling the page along its limiting side, centred on the other. Tests: the structural tests (rules 61, 63, 64, the centring rule, the diagnostic) all pass; six rule-39 tests need rewriting against the painted-pixel contract and are tracked as follow-up.
 
 Post-print cleanup. After the print work was done, three meta-changes followed in the same session. First, two new entries went into the di project's learn file capturing the lessons of the print arc: entry four says to wire diagnostics and read them before writing more code, especially for fixes that need real-browser confirmation; entry five says confidence levels are set too high and the bar for writing code should be real data plus a short verifiable reasoning chain. Second, the vernacular file got a new banned-substitution entry: never use the verb "ship" in either sense; write "done" or "complete" for finished work and "write code" for the act of producing or submitting code. The corresponding memory file was extended to cover both senses. Third, the mono root CLAUDE file and the di project CLAUDE file were both updated to spell out two learn files at session start — one at the mono root for cross-project mistakes, one at the di project's `notes/work/now/learn.md` for project-specific mistakes — and the mono CLAUDE file's old path that pointed at the wrong location was corrected.
 
-Files (post-print): [learn.md](../ai/learn.md) (two new entries about evidence and confidence); [vernacular.md](../../guides/development/learn/vernacular.md) (new "write code" verb entry and banned-substitution row); [mono CLAUDE.md](../../../../CLAUDE.md) (cross-project learn path added, di learn path corrected); [di CLAUDE.md](../../../CLAUDE.md) (new LEARN: line pointing at both files).
+Files (post-print): [learn.md](di/di%20notes/di%20work/ai/learn.md) (two new entries about evidence and confidence); [vernacular.md](../../guides/development/learn/vernacular.md) (new "write code" verb entry and banned-substitution row); [mono CLAUDE.md](../../../../CLAUDE.md) (cross-project learn path added, di learn path corrected); [di CLAUDE.md](../../../CLAUDE.md) (new LEARN: line pointing at both files).
 
 ---
 
@@ -807,7 +865,7 @@ The driver spreadsheet was deleted by Jonathan once the renames were done. No no
 
 Verification: grep for every old short name across the whole repository returns no matches outside the (now deleted) spreadsheet. Type-check and tests not re-run since this pass touched only documentation.
 
-Files: [stipulations.md](../../guides/development/rules/stipulations.md) (renames, prose swaps, redundant rule removed, renumbered, header refreshed, link tails repaired); [testing.md](../../guides/project/philosophy/testing.md) (eight short-name updates, removed reference, coverage summary refreshed); [working features.md](./working%20features.md) (adherence row updated to 58 of 62 with TBD callout).
+Files: [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md) (renames, prose swaps, redundant rule removed, renumbered, header refreshed, link tails repaired); [testing.md](di/di%20notes/di%20guides/project/philosophy/testing.md) (eight short-name updates, removed reference, coverage summary refreshed); [working features.md](working%20features.md) (adherence row updated to 58 of 62 with TBD callout).
 
 ---
 
@@ -868,7 +926,7 @@ The dashboard is now a headline plus a single list. When nothing needs attention
 
 A new save-and-load test was added along the way. It puts a formula on a child cell that reads the parent's width, saves the scene, loads it back, slides the parent sideways, and checks that the child holds its absolute position because width does not move when the parent slides. The first draft of the test failed for the wrong reason — it was reading a stored offset that always matched, regardless of whether the formula actually re-evaluated. Once the assertion was rewritten in absolute terms, the test passes and verifies that the formula network really does come back to life after a round trip.
 
-Files: [extract-adherence.mjs](../../tools/extract-adherence.mjs) (new headline-and-action-list layout, removed depth and per-section blocks), [adherence dashboard.md](../../guides/development/adhere/adherence%20dashboard.md) (regenerated), [Save_Load.test.ts](../../../src/lib/ts/tests/Save_Load.test.ts) (new formula round-trip test).
+Files: [extract-adherence.mjs](extract-adherence.mjs) (new headline-and-action-list layout, removed depth and per-section blocks), [adherence dashboard.md](adherence%20dashboard.md) (regenerated), [Save_Load.test.ts](../../../src/lib/ts/tests/Save_Load.test.ts) (new formula round-trip test).
 
 ### The parts list trim
 
@@ -939,12 +997,12 @@ A new "cut" button sits to the left of the existing "duplicate" button on the se
 
 ### Files touched — 2026-05-05 (continued)
 
-- New stipulation added to [stipulations.md](../../guides/development/rules/stipulations.md), in a new section "Cutting a smart object in half." Coverage summary at the top updated to fifty-nine total, fifty-five unit-pinned, four browser-driven.
+- New stipulation added to [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md), in a new section "Cutting a smart object in half." Coverage summary at the top updated to fifty-nine total, fifty-five unit-pinned, four browser-driven.
 - New test file [Cut.test.ts](../../src/lib/ts/tests/Cut.test.ts) — thirty-nine tests, all green.
 - Engine refactor and new routines at [Engine.ts](../../src/lib/ts/render/Engine.ts) — extracted `clone_subtree_as_sibling`; added `can_cut_selected()` and `cut_selected_so()`.
 - Cut button and derived flag added to [D_Parts.svelte](../../src/lib/svelte/details/D_Parts.svelte).
 - Areas list at [areas.json](areas.json) — bumped the Cutting area from zero to one module.
-- Testing index at [testing.md](../../guides/project/philosophy/testing.md) — Cut entry now describes the real test groups instead of pending todos. Coverage summary updated.
+- Testing index at [testing.md](di/di%20notes/di%20guides/project/philosophy/testing.md) — Cut entry now describes the real test groups instead of pending todos. Coverage summary updated.
 
 ### Verification — 2026-05-05 (continued)
 
@@ -956,7 +1014,7 @@ A new "cut" button sits to the left of the existing "duplicate" button on the se
 
 - The "leave the invariant formula alone" rule in the spec is honored case by case in the routine. For invariant-on-length, only end and start are written. For invariant-on-start, length and end are written on the original (the new sibling's start derives from its end and the halved length). For invariant-on-end, length is written on both halves and start is written on the new sibling (the original's end derives from its start and the halved length).
 - The geometry assumes no user-typed formula on the derived (invariant) attribute. If the user types a formula on the derived attribute, the formula evaluates and may pin the value away from the geometric expectation — this matches the design choice the user made on 2026-05-05 about the contradiction in the length-invariant case.
-- The code-debt item still shows the sub-bullets unchecked in [code.debt.md](../now/code.debt.md). The user marks them off when they're satisfied.
+- The code-debt item still shows the sub-bullets unchecked in [code.debt.md](di/di%20notes/di%20work/now/code.debt.md). The user marks them off when they're satisfied.
 
 ---
 
@@ -998,7 +1056,7 @@ The shared-guides folder at `notes/guides/design/` is now `notes/guides/hub/`. F
 - [UserGuide.svelte](../../src/lib/svelte/main/UserGuide.svelte) replaced its previous local rune-state for the active page with the persistent store everywhere; added a one-time fix-up for stale stored ids at mount.
 - [Details.svelte](../../src/lib/svelte/details/Details.svelte) gained a small wrapper helper for the parts plus button (panel auto-open + add-child) and a new derived flag that decides whether to render the plus button at all.
 - [Engine.ts](../../src/lib/ts/render/Engine.ts) gained the repeater-or-clone refusal at the top of the add-a-child routine, with the status-strip message; the history snapshot moved below the refusal check; the post-add comment flipped from "keep parent selected" to "select the new child".
-- New tooling: [sync-next.mjs](../../tools/sync-next.mjs). The adherence chain in package.json now runs sync-next first.
+- New tooling: [sync-next.mjs](sync-next.mjs). The adherence chain in package.json now runs sync-next first.
 - The shared-guides folder was renamed; the cross-references in the parent index, the section's index, the vitepress sidebar, and the pre-flight keywords table were updated.
 
 ### Verification — 2026-05-05
@@ -1092,9 +1150,9 @@ Four new browser-driven test entries went into the test index — for the editin
 
 ### Files touched — 2026-05-04
 
-- New tools: [extract-adherence.mjs](../../tools/extract-adherence.mjs), [build-with-status.mjs](../../tools/build-with-status.mjs), [validate-adherence.mjs](../../tools/validate-adherence.mjs).
-- New guides: [adherence dashboard.md](../../guides/development/adhere/adherence%20dashboard.md) (generated), [adherence log.md](../../guides/development/adhere/adherence%20log.md), [dashboard guide.md](../../guides/development/adhere/dashboard%20guide.md).
-- Edited: [stipulations.md](../../guides/development/rules/stipulations.md), [testing.md](../../guides/project/philosophy/testing.md), [logic driven design.md](../../guides/project/philosophy/logic%20driven%20design.md), `notes/guides/project/development/areas.json`, [development index](../../guides/development/index.md), [project index](../../guides/project/index.md), [guides.layout.md](../../guides/guides.layout.md), [overview map.md](../../guides/project/overview/map.md), `.vitepress/config.mts`, `package.json`.
+- New tools: [extract-adherence.mjs](extract-adherence.mjs), [build-with-status.mjs](build-with-status.mjs), [validate-adherence.mjs](validate-adherence.mjs).
+- New guides: [adherence dashboard.md](adherence%20dashboard.md) (generated), [adherence log.md](adherence%20log.md), [dashboard guide.md](dashboard%20guide.md).
+- Edited: [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md), [testing.md](di/di%20notes/di%20guides/project/philosophy/testing.md), [logic driven design.md](logic%20driven%20design.md), `notes/guides/project/development/areas.json`, [development index](di/di%20notes/di%20guides/di%20development/index.md), [project index](di/di%20notes/di%20guides/project/index.md), [guides.layout.md](guides.layout.md), [overview map.md](di/di%20notes/di%20guides/project/overview/map.md), `.vitepress/config.mts`, `package.json`.
 
 ### Verification — 2026-05-04
 
@@ -1249,7 +1307,7 @@ When a formula error overlay appears, the attributes table is split into two phy
 - Toolbar unused-import cleanup: [Controls.svelte](di/src/lib/svelte/main/Controls.svelte).
 - Formula token-joiner extension for multi-word names: [Tokenizer.ts](di/src/lib/ts/algebra/Tokenizer.ts).
 - Attributes-table split-row letter column: [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte).
-- Code-debt list: [code.debt.md](./code.debt.md) — parts-table drag-and-drop is now off the list.
+- Code-debt list: [code.debt.md](di/di%20notes/di%20work/now/code.debt.md) — parts-table drag-and-drop is now off the list.
 
 ### Verification — 2026-04-30
 
@@ -1292,7 +1350,7 @@ The drawing area no longer carries any slider markup, any slider styles, or any 
 - Resolver write-path lock check: [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts).
 - Toolbar additions: [Controls.svelte](di/src/lib/svelte/main/Controls.svelte).
 - Drawing-area removals: [Graph.svelte](di/src/lib/svelte/main/Graph.svelte).
-- Code-debt list: [code.debt.md](./code.debt.md) — the slider-move item is now off the list.
+- Code-debt list: [code.debt.md](di/di%20notes/di%20work/now/code.debt.md) — the slider-move item is now off the list.
 
 ### Verification — 2026-04-29 (continued, fifth)
 
@@ -1339,8 +1397,8 @@ The browser tests run with `yarn e2e`. The runner starts the development server 
 - New config: [`playwright.config.ts`](di/e2e/playwright.config.ts).
 - Page-startup script: [`App.svelte`](di/src/App.svelte) — temporary console helper removed; read-only test hooks added gated by `?test=1`.
 - Package manifest: [`package.json`](di/package.json) — added Playwright as a development dependency and an `e2e` script.
-- Catalog: [stipulations.md](../../guides/development/rules/stipulations.md).
-- Testing guide: [testing.md](../../guides/project/philosophy/testing.md).
+- Catalog: [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md).
+- Testing guide: [testing.md](di/di%20notes/di%20guides/project/philosophy/testing.md).
 
 ### Verification — 2026-04-29 (continued, fourth)
 
@@ -1382,8 +1440,8 @@ All four phases are done. The feature is complete end to end. The next concrete 
 
 - The Smart_Object class (the new debug-summary method): [Smart_Object.ts](di/src/lib/ts/runtime/Smart_Object.ts).
 - The center test file (two new tests): [Center.test.ts](di/src/lib/ts/tests/Center.test.ts).
-- Catalog: [stipulations.md](../../guides/development/rules/stipulations.md).
-- Testing guide: [testing.md](../../guides/project/philosophy/testing.md).
+- Catalog: [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md).
+- Testing guide: [testing.md](di/di%20notes/di%20guides/project/philosophy/testing.md).
 
 ### Verification — 2026-04-29 (continued, third)
 
@@ -1427,8 +1485,8 @@ Phase zero, phase one, and phase two are all done. The feature reaches end users
 
 - Constraints manager (the upstream walker, the resolver-level write, the free-constant write): [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts).
 - Center test file (five new tests): [Center.test.ts](di/src/lib/ts/tests/Center.test.ts).
-- Catalog: [stipulations.md](../../guides/development/rules/stipulations.md).
-- Testing guide: [testing.md](../../guides/project/philosophy/testing.md).
+- Catalog: [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md).
+- Testing guide: [testing.md](di/di%20notes/di%20guides/project/philosophy/testing.md).
 
 ### Verification — 2026-04-29 (continued)
 
@@ -1484,8 +1542,8 @@ Phase one is reviewable and revertable on its own as a code-change unit. It is *
 - New test file: [Center.test.ts](di/src/lib/ts/tests/Center.test.ts).
 - Constraints manager (the bare-name table, translation maps, resolver, write paths, self-loop check): [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts).
 - Accepted-letter list: [Errors.ts](di/src/lib/ts/algebra/Errors.ts).
-- Catalog: [stipulations.md](../../guides/development/rules/stipulations.md).
-- Testing guide: [testing.md](../../guides/project/philosophy/testing.md).
+- Catalog: [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md).
+- Testing guide: [testing.md](di/di%20notes/di%20guides/project/philosophy/testing.md).
 - Cleanup of unused parts-panel code: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte), [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte), [Preferences.ts](di/src/lib/ts/managers/Preferences.ts).
 
 ### Verification — 2026-04-29
@@ -1539,8 +1597,8 @@ A wording convention was also established for new content about this project: wr
 
 - New tests: [Rotation.test.ts](di/src/lib/ts/tests/Rotation.test.ts), [Givens.test.ts](di/src/lib/ts/tests/Givens.test.ts), [Snap.test.ts](di/src/lib/ts/tests/Snap.test.ts).
 - Test files extended with new groups: [Data_Layout.test.ts](di/src/lib/ts/tests/Data_Layout.test.ts), [Units.test.ts](di/src/lib/ts/tests/Units.test.ts), [Constraints.test.ts](di/src/lib/ts/tests/Constraints.test.ts), [Errors.test.ts](di/src/lib/ts/tests/Errors.test.ts), [Save_Load.test.ts](di/src/lib/ts/tests/Save_Load.test.ts), [Camera.test.ts](di/src/lib/ts/tests/Camera.test.ts), [Hierarchy.test.ts](di/src/lib/ts/tests/Hierarchy.test.ts), [Root.test.ts](di/src/lib/ts/tests/Root.test.ts).
-- Catalog: [stipulations.md](../../guides/development/rules/stipulations.md).
-- Testing guide: [testing.md](../../guides/project/philosophy/testing.md).
+- Catalog: [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md).
+- Testing guide: [testing.md](di/di%20notes/di%20guides/project/philosophy/testing.md).
 - Markdown-linter config: `di/.markdownlint.json`.
 - Dead-link fix in this handoff (docs config reference).
 
@@ -1570,7 +1628,7 @@ The user proposed adding a new bare letter to the formula vocabulary that means 
 - Center sits outside the existing invariant mechanism. The user's choice of which storage cell is the recomputed one stays at three options, not four. The save format is unchanged. Formulas containing the new letter are stored as the letter literally — not as the equivalent expansion in terms of start and end.
 - The work breaks into four phases: phase zero (the strip itself), phase one (read-only center plus silent refusal), phase two (wire the silent refusal to the strip), phase three (optional — add center to the parts panel and debug logs).
 
-The full proposal — including risk assessment with three high-stakes questions all answered, the four phases with what happens and what gets tested in each, and a phase-zero implementation plan — is in [16.formulas.md](../milestones/done/16.formulas.md).
+The full proposal — including risk assessment with three high-stakes questions all answered, the four phases with what happens and what gets tested in each, and a phase-zero implementation plan — is in [16.formulas.md](16.formulas.md).
 
 ### Thread three — phase-zero details for the status strip
 
@@ -1591,11 +1649,11 @@ The status strip is a small new on-screen surface that displays brief transient 
 
 ### Files touched — 2026-04-28 (continued)
 
-- Catalog: [stipulations.md](../../guides/development/rules/stipulations.md).
-- Testing guide: [testing.md](../../guides/project/philosophy/testing.md).
+- Catalog: [stipulations.md](di/di%20notes/di%20guides/di%20development/rules/stipulations.md).
+- Testing guide: [testing.md](di/di%20notes/di%20guides/project/philosophy/testing.md).
 - New tests: [Engine_Behaviors.test.ts](di/src/lib/ts/tests/Engine_Behaviors.test.ts), [Preferences.test.ts](di/src/lib/ts/tests/Preferences.test.ts).
 - Test extensions: [Data_Layout.test.ts](di/src/lib/ts/tests/Data_Layout.test.ts).
-- Center-letter and status-strip proposal: [16.formulas.md](../milestones/done/16.formulas.md).
+- Center-letter and status-strip proposal: [16.formulas.md](16.formulas.md).
 
 ### Verification — 2026-04-28 (continued)
 
@@ -1641,9 +1699,9 @@ Investigation, fixed: Jonathan reported that typing a new formula on a cell did 
 ### Files touched — 2026-04-24
 
 - Eyeball coupling: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
-- Working features: [working features.md](./working%20features.md).
-- Dead-link fixes (first pass): [work index](../index.md), [milestones index](../milestones/index.md), [code-debt list](./code.debt.md).
-- Dead-link sweep (second pass): docs config `di/.vitepress/config.mts`, [26.lacemaker.md](../milestones/done/26.lacemaker.md), [32.facets.md](../milestones/done/32.facets/32.facets.md), [theory.md](../milestones/done/32.facets/designs/theory.md), [32.facets handoff](../milestones/done/32.facets/handoff.md), [32.facets history](../milestones/done/32.facets/history.md), [bottlenecks](../milestones/done/32.facets/slow/bottlenecks.md), [slow handoff](../milestones/done/32.facets/slow/handoff.md), [current work handoff](./handoff.md), [road map](./road.map.md).
+- Working features: [working features.md](working%20features.md).
+- Dead-link fixes (first pass): [work index](di/di%20notes/di%20work/index.md), [milestones index](di/di%20notes/di%20work/milestones/index.md), [code-debt list](di/di%20notes/di%20work/now/code.debt.md).
+- Dead-link sweep (second pass): docs config `di/.vitepress/config.mts`, [26.lacemaker.md](26.lacemaker.md), [32.facets.md](32.facets.md), [theory.md](theory.md), [32.facets handoff](di/di%20notes/di%20work/milestones/done/32.facets/handoff.md), [32.facets history](di/di%20notes/di%20work/milestones/done/32.facets/history.md), [bottlenecks](bottlenecks.md), [slow handoff](di/di%20notes/di%20work/milestones/done/32.facets/slow/handoff.md), [current work handoff](di/di%20notes/di%20work/now/handoff.md), [road map](road.map.md).
 - Tracing logs (still wired): [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte), [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Render.ts](di/src/lib/ts/render/Render.ts).
 - Propagate-skip guard removed: [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts) — the loop in propagate no longer skips the edited object. Useful side fix during the investigation.
 - Length-syncing helper deleted along with its six call sites: [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts). The invariant pass alone keeps each axis consistent.
@@ -1683,7 +1741,7 @@ A small clean-up went with it: the template-child creator was simplified to alwa
 
 ### Thread five — key-paths reference doc
 
-A two-column table of every keyboard binding in the app, grouped by the context the key fires in. Keys mean different things on the canvas, inside a value cell, inside a name cell, inside a dimension or angle input, and inside the build-notes modal. Lives at [key paths.md](../../guides/architecture/ui/key%20paths.md).
+A two-column table of every keyboard binding in the app, grouped by the context the key fires in. Keys mean different things on the canvas, inside a value cell, inside a name cell, inside a dimension or angle input, and inside the build-notes modal. Lives at [key paths.md](key%20paths.md).
 
 ### What shipped — 2026-04-20
 
@@ -1699,8 +1757,8 @@ A two-column table of every keyboard binding in the app, grouped by the context 
 - Repeat panel button: [di/src/lib/svelte/details/P_Repeat.svelte](di/src/lib/svelte/details/P_Repeat.svelte).
 - Sibling-only name rule and its tests: [di/src/lib/ts/algebra/Errors.ts](di/src/lib/ts/algebra/Errors.ts), [di/src/lib/ts/tests/Errors.test.ts](di/src/lib/ts/tests/Errors.test.ts).
 - Token-rename helper: [di/src/lib/ts/algebra/Tokenizer.ts](di/src/lib/ts/algebra/Tokenizer.ts). Constraints helper that uses it: [di/src/lib/ts/algebra/Constraints.ts](di/src/lib/ts/algebra/Constraints.ts). Called from: [di/src/lib/svelte/details/D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
-- New reference doc: [key paths.md](../../guides/architecture/ui/key%20paths.md).
-- Code-debt list: [code.debt.md](./code.debt.md).
+- New reference doc: [key paths.md](key%20paths.md).
+- Code-debt list: [code.debt.md](di/di%20notes/di%20work/now/code.debt.md).
 
 ### Verification — 2026-04-20
 
@@ -1755,7 +1813,7 @@ A small shared font-size constant for these buttons was added in the constants t
 - Triangle hit area: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
 - Banner left slot: [Hideable.svelte](di/src/lib/svelte/details/Hideable.svelte), [Details.svelte](di/src/lib/svelte/details/Details.svelte). Removed buttons from [D_Preferences.svelte](di/src/lib/svelte/details/D_Preferences.svelte) and [D_Library.svelte](di/src/lib/svelte/details/D_Library.svelte). Helper added in [Scenes.ts](di/src/lib/ts/managers/Scenes.ts).
 - Constants and root variables: [Constants.ts](di/src/lib/ts/common/Constants.ts), [App.svelte](di/src/App.svelte).
-- Code-debt list: [code.debt.md](./code.debt.md).
+- Code-debt list: [code.debt.md](di/di%20notes/di%20work/now/code.debt.md).
 
 ### Verification — 2026-04-19
 
@@ -1802,13 +1860,13 @@ A couple of small clean-ups along the way: removed an unused separator import fr
 
 ### Files touched — 2026-04-19 (continued)
 
-- File rename: [Dirty.ts](di/src/lib/ts/common/Dirty.ts) (was Stale_Writable.ts). Imports updated in [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts), [Units.ts](di/src/lib/ts/types/Units.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Stores.ts](di/src/lib/ts/managers/Stores.ts), [Selection.ts](di/src/lib/ts/managers/Selection.ts), [Angular.ts](di/src/lib/ts/editors/Angular.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts), [Drag.ts](di/src/lib/ts/editors/Drag.ts), [Dimension.ts](di/src/lib/ts/editors/Dimension.ts), [Colors.ts](di/src/lib/ts/utilities/Colors.ts). File map: [map.md](../../guides/project/overview/map.md).
+- File rename: [Dirty.ts](di/src/lib/ts/common/Dirty.ts) (was Stale_Writable.ts). Imports updated in [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts), [Units.ts](di/src/lib/ts/types/Units.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Stores.ts](di/src/lib/ts/managers/Stores.ts), [Selection.ts](di/src/lib/ts/managers/Selection.ts), [Angular.ts](di/src/lib/ts/editors/Angular.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts), [Drag.ts](di/src/lib/ts/editors/Drag.ts), [Dimension.ts](di/src/lib/ts/editors/Dimension.ts), [Colors.ts](di/src/lib/ts/utilities/Colors.ts). File map: [map.md](di/di%20notes/di%20guides/project/overview/map.md).
 - Face label font: [Render.ts](di/src/lib/ts/render/Render.ts).
 - Undo/redo fix: [Engine.ts](di/src/lib/ts/render/Engine.ts). New test: [History.test.ts](di/src/lib/ts/tests/History.test.ts).
 - Cross thickness: [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte). Unused import removed in the same file.
 - Build notes: [builds.md](../../../src/lib/md/builds.md).
 - Constants and root variables: [Constants.ts](di/src/lib/ts/common/Constants.ts), [App.svelte](di/src/App.svelte).
-- Code-debt list: [code.debt.md](./code.debt.md).
+- Code-debt list: [code.debt.md](di/di%20notes/di%20work/now/code.debt.md).
 
 ### Verification — 2026-04-19 (continued)
 
@@ -1857,8 +1915,8 @@ Instrumentation was wired in so we could see where the paint actually spends its
 - Preferences (new key and set-persistence helper): [Preferences.ts](di/src/lib/ts/managers/Preferences.ts).
 - Parts table component (triangle click, hide-children count, parts-count): [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
 - Events (keyboard arrows defer to generational helpers): [Events.ts](di/src/lib/ts/events/Events.ts).
-- Bottlenecks write-up: [bottlenecks.md](../milestones/done/32.facets/slow/bottlenecks.md).
-- Code-debt list ticking items off: [code.debt.md](./code.debt.md).
+- Bottlenecks write-up: [bottlenecks.md](bottlenecks.md).
+- Code-debt list ticking items off: [code.debt.md](di/di%20notes/di%20work/now/code.debt.md).
 
 ### Verification
 

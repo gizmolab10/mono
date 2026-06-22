@@ -518,10 +518,11 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 		expect(first_winners).toBeGreaterThan(0);
 		expect(get_last_persisted().size).toBe(first_winners);
 		// Re-run on the SAME scene (no re-clear): identical scene, identical
-		// view → skip path must take over.
+		// view. The standalone skip path is retired; the seeded run handles
+		// reuse instead. The picked placements must still be unchanged.
 		const second = run_uniface_placement();
-		expect(get_last_skip_used()).toBe(true);
-		// The skip result reproduces the same set of placements with the
+		expect(get_last_skip_used()).toBe(false);
+		// The seeded run reproduces the same set of placements with the
 		// same chosen face and witness index per (part, axis).
 		expect(second.placements.length).toBe(first.placements.length);
 		for (let i = 0; i < first.placements.length; i++) {
@@ -589,12 +590,12 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 		// Full search just ran; the drift counter is zero after every
 		// full-search render.
 		expect(get_drift_within_tolerance_count()).toBe(0);
-		// Run the same scene three more times. With identical geometry,
-		// no label's position should drift past the strict range, so the
-		// counter stays at zero across every skip.
+		// Run the same scene three more times. The standalone skip path is
+		// retired (so skip is always false) and the drift counter is no
+		// longer incremented — it stays at zero across every render.
 		for (let i = 0; i < 3; i++) {
 			run_uniface_placement();
-			expect(get_last_skip_used()).toBe(true);
+			expect(get_last_skip_used()).toBe(false);
 			expect(get_drift_within_tolerance_count()).toBe(0);
 		}
 	});

@@ -1,6 +1,4 @@
-# Tools
-
-Gotchas and workarounds for Claude Code tools.
+# Gotchas and workarounds for Claude Code tools.
 
 ## File Operations
 

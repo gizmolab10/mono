@@ -2,7 +2,7 @@
 
 The root layout shape: a fixed-position, full-viewport container that holds four regions (toolbar, side panel, drawing area, build-notes overlay).
 
-For the user-facing description, see the [Main component page](../components/Main.md). This page covers the layout decisions.
+For the user-facing description, see the [Main component page](Main.md). This page covers the layout decisions.
 
 ## Diagram
 
@@ -77,6 +77,6 @@ Citation: `src/lib/svelte/main/Main.svelte` lines 19-33.
 
 ## Related files
 
-- [components/Main](../components/Main.md) — the layout component itself.
+- [components/Main](Main.md) — the layout component itself.
 - `src/lib/ts/common/Constants.ts` — sizes and breakpoints.
 - `src/lib/ts/managers/Stores.ts` — the side-panel-open flag.

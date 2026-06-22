@@ -179,7 +179,7 @@ cp -r ~/GitHub/work-backup-* ~/GitHub/work
 **🔴 Panic button:**
 ```bash
 # Revert to before extraction
-git checkout HEAD~1 -- work/core work/di work/ws
+git checkout HEAD~1 -- work/core work/work/ws
 
 # Or restore specific files from backup
 cp ~/GitHub/work-backup-*/di/src/lib/ts/common/Extensions.ts work/di/src/lib/ts/common/

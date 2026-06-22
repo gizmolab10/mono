@@ -33,4 +33,4 @@
 
 | #   | Name                                              | Status                                                                           |
 | --- | ------------------------------------------------- | -------------------------------------------------------------------------------- |
-| 32  | [Facets](32.facets/handoff.md)                    | Mothballed after multiple attempts. Lessons in [lessons](32.facets/lessons.md).  |
+| 32  | [Facets](di/di%20notes/di%20work/milestones/done/32.facets/handoff.md)                    | Mothballed after multiple attempts. Lessons in [lessons](di/di%20notes/di%20work/milestones/done/32.facets/lessons.md).  |

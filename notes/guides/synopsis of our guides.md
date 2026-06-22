@@ -1,4 +1,4 @@
-# Synopsis of the generic guide files repository
+# Synopsis of the main guide files
 
 Generic in the sense of "can apply to any development project." These guides are intended to allow hyper fast construction of high quality software.
 

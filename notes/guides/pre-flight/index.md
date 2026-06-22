@@ -14,5 +14,5 @@ At session start, also read:
 - [Kinds.of.tasks](./kinds.of.tasks.md)
 - [Pitfalls](./pitfalls.md)
 - [Shorthand](./shorthand.md)
-- [Tools](./tools.md)
+- [Tools](notes/guides/pre-flight/gotchas.md)
 

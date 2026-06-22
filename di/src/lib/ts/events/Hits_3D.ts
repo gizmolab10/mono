@@ -121,12 +121,19 @@ class Hits_3D {
 		// highlight store is updated on every hover regardless of what
 		// the rest of the hit-test returns. Otherwise a dim or angle
 		// short-circuit below leaves a stale uniface-pick in the store
-		// and the previous hover target never un-hovers.
-		const uniface_hit = stores.show_dimensionals ? this.test_uniface_lines(point) : null;
+		// and the previous hover target never un-hovers. Runs regardless
+		// of the dimensions toggle: when the toggle is off, the only
+		// placements in the search result are those for selected parts
+		// (eligibility rule 2.1.2), so the hit test naturally only finds
+		// hits on the dimensionals that are actually drawn.
+		const uniface_hit = this.test_uniface_lines(point);
 		this.w_hovered_uniface_placement.set(uniface_hit);
 
-		// Dimension / angle labels win over everything (corners, edges, faces)
-		if (stores.show_dimensionals) {
+		// Dimension / angle labels win over everything (corners, edges,
+		// faces). Same reasoning as above — the label rectangles in
+		// render.dimension_rects only get pushed for drawn dimensionals,
+		// so the hit test is safe without the toggle gate.
+		{
 			const dim = dimensions.hit_test(point.x, point.y);
 			if (dim) return { so: dim.so, type: T_Hit_3D.dimension, index: 0 };
 		}

@@ -12,13 +12,13 @@ Top-level index for everything in this folder.
 
 ## Quick jumps
 
-* [Current handoff](./now/handoff.md) — what was done in the most recent session and what is next.
-* [Code debt](./now/code.debt.md) — running list of small items.
-* [Revisit list](./now/revisit.di.md) — items to return to.
-* [Working features](./now/working%20features.md) — current feature status.
-* [Learn](./ai/learn.md) — lessons from mistakes and corrections.
-* [Technique](./ai/technique.md) — notes on approach and methodology.
-* [Cadence](./ai/cadence.md) — how Jonathan and co work together; turn-taking, propose-first, explicit-asks.
+* [Current handoff](di/di%20notes/di%20work/now/handoff.md) — what was done in the most recent session and what is next.
+* [Code debt](di/di%20notes/di%20work/now/code.debt.md) — running list of small items.
+* [Revisit list](revisit.di.md) — items to return to.
+* [Working features](working%20features.md) — current feature status.
+* [Learn](di/di%20notes/di%20work/ai/learn.md) — lessons from mistakes and corrections.
+* [Technique](technique.md) — notes on approach and methodology.
+* [Cadence](cadence.md) — how Jonathan and co work together; turn-taking, propose-first, explicit-asks.
 
 ## Contents
 

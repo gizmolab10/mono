@@ -51,7 +51,7 @@ The command `yarn docs:build` catches dead links, lint warnings, and broken page
 
 ## Where pages live
 
-The current folder shape is documented in [the guides layout map](../../guides.layout.md). The layout map is the canonical answer to "where does a new page belong" — read it before placing.
+The current folder shape is documented in [the guides layout map](guides.layout.md). The layout map is the canonical answer to "where does a new page belong" — read it before placing.
 
 ## Citation hygiene
 

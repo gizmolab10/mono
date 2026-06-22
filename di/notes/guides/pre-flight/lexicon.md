@@ -4,6 +4,8 @@ The words used in this project. When writing prose, comments, log lines, or test
 
 If a thing has a name here, that is its name. If you find yourself reaching for a word that's not in this file, check this file first.
 
+[[banned words]] contains a list of words that are meaningless to me, alongside their meaningful equivalent, ones that easily convey the intended meaning.
+
 ## The world
 
 - **smart object** (also written **SO**) — the basic building block. The world is made of smart objects. Never call one a *block* in writing or in logs, even though "block" appears casually in some older conversation. Test scenes name their objects in plain capitals like ALPHA, BETA, CHILD.
@@ -189,37 +191,3 @@ How each dim line's position and label are chosen.
 - **write code** — used for the act of producing or submitting code (the back-and-forth of editing, saving, and asking for verification). Never write *ship* or *shipped* in this sense either. The English meaning of *ship* (push code out) and the project's preferred terms do not overlap; we say *write code* instead.
 - **propose** — describe the plan and wait. Never act on a proposal without explicit approval, except when the ask was already explicit.
 - **more work**, **a lot of work** — used when the next step would be heavier than the current one ("that change would be more work than this turn's scope," "a lot of work to wire up the fixture"). Never write *bigger lift*, *heavy lift*, *heavy lifting*. Reason: fitness-jargon for "more work" — the project's preferred phrasing is the plain English version.
-
-## Banned substitutions
-
-These are the swaps that have caused friction. Use the left column, never the right.
-
-| Use                                 | Never                                                               |
-| ----------------------------------- | ------------------------------------------------------------------- |
-| smart object, SO                    | block                                                               |
-| attribute                           | cell, value (in the three-numbers-per-direction sense)              |
-| done, complete                      | ship, shipped (in the "finished" sense)                             |
-| write code                          | ship, shipped (in the "produce or submit code" sense)               |
-| add, insert, write, update          | land (in the "add a thing" sense)                                   |
-| do, perform, can be done            | land, landed, lands, landing (in the "complete an action" sense)    |
-| place, include, inserted            | absorb, absorbed, absorbs, absorbing                                |
-| stub out                            | scaffold                                                            |
-| margin                              | band, bar, padding, gutter                                          |
-| needs visual confirmation           | needs eyeball                                                       |
-| more work, a lot of work            | bigger lift, heavy lift, heavy lifting                              |
-| chime                               | (no synonym; do not paraphrase)                                     |
-| pac                                 | (no synonym; do not paraphrase)                                     |
-| move (= relocate)                   | copy (when relocate was meant)                                      |
-| ALPHA corners (primed: A')          | unprimed for ALPHA                                                  |
-| BETA corners (unprimed: A)          | primed for BETA                                                     |
-| master (= ONLY child of a repeater) | template                                                            |
-| uniface box                         | uniface block, buffer (as a shape word)                             |
-| uniface                             | uniface face                                                        |
-| render (= one frame of drawing)     | paint                                                               |
-| placement algorithm                 | the search, search (in the dimensions sense)                        |
-| uniface                             | direction (in the dimensions sense)                                 |
-| approach                            | shape (in the methodology sense — geometric shape is fine)          |
-| details                             | panel (as the name of a sub-section in the left-hand vertical pane) |
-| mock                                | repro, reproduction (in the small-scene-to-trigger-bug sense)       |
-| drawer SO                           | drawer (when the kitchen-cabinet smart object is meant)             |
-| mm, px, fraction                    | branded type, branded TypeScript type, frame tag                    |
