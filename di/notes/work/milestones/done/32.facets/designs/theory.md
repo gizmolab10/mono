@@ -5,9 +5,9 @@ Right now i want to do a rational assessment of facets. my curiosity and vanity 
 **Date:** 2026-04-03
 
 **Reading order — companion files:**
-- [handoff.md](di/di%20notes/di%20work/milestones/done/32.facets/slow/handoff.md) — what's being worked on right now, what's blocked, what was just solved
+- [handoff.md](di/notes/work/milestones/done/32.facets/slow/handoff.md) — what's being worked on right now, what's blocked, what was just solved
 - [done/topology.md](topology.md) — how the pipeline works step by step (the *how*)
-- [lessons.md](di/di%20notes/di%20work/milestones/33.drag/lessons.md) — mistakes not to repeat
+- [lessons.md](di/notes/work/milestones/33.drag/lessons.md) — mistakes not to repeat
 - [simpler design.md](simpler%20design.md) — the design spec for the simpler topology rewrite
 - This file — the *why* and *whether*: theory, sources, trajectory, and the folly-or-summit question
 

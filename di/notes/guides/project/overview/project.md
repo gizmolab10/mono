@@ -64,4 +64,4 @@ A phase-by-phase breakdown lives in [Three Dimensions](three.dimensions.md). The
 
 ## Selection
 
-The current selection is a list of parts, not a single part. An empty list means nothing is selected; one item means single selection (the historic case); two or more means a multi-selection set built up by command-clicks. Renderers and panels read this list either through a backwards-compatible "the only selected part" view or directly as a list. Details lives in [Hits_3D](Hits_3D.md) and the [Selection manager](di/di%20notes/di%20guides/di%20architecture/core/managers.md).
+The current selection is a list of parts, not a single part. An empty list means nothing is selected; one item means single selection (the historic case); two or more means a multi-selection set built up by command-clicks. Renderers and panels read this list either through a backwards-compatible "the only selected part" view or directly as a list. Details lives in [Hits_3D](Hits_3D.md) and the [Selection manager](di/notes/guides/architecture/core/managers.md).

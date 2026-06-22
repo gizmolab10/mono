@@ -117,7 +117,7 @@ Every item below is either disapproved, mothballed, or marked "future" in phase 
 
 ### 4.1 Residual child-drag drift
 
-Parked in [milestone 33](di/di%20notes/di%20work/milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
+Parked in [milestone 33](di/notes/work/milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 
 ### 4.2 Allocation-cluster and string-key performance bullets
 

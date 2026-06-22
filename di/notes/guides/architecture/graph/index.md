@@ -8,10 +8,10 @@
 - [Editors](editors.md)
 - [Hits_3D](Hits_3D.md)
 - [Intersecting.faces](intersecting.faces.md)
-- [Render](di/di%20notes/di%20guides/di%20architecture/graph/render.md)
+- [Render](di/notes/guides/architecture/graph/render.md)
 - [Rendering.types](rendering.types.md)
-- [Repeaters](di/di%20notes/di%20guides/di%20architecture/graph/repeaters.md)
-- [Rotation](di/di%20notes/di%20guides/di%20architecture/graph/rotation.md)
+- [Repeaters](di/notes/guides/architecture/graph/repeaters.md)
+- [Rotation](di/notes/guides/architecture/graph/rotation.md)
 - [Three.dimensions](three.dimensions.md)
 - [Two.dimensions](two.dimensions.md)
 

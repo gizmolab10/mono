@@ -13,22 +13,22 @@ Start here. One page, whole app.
 Where things live, what they do.
 
 - [Core](./core/) — singletons and systems
-    - [Managers](di/di%20notes/di%20guides/di%20architecture/core/managers.md) — who owns what
+    - [Managers](di/notes/guides/architecture/core/managers.md) — who owns what
     - [Algebra](algebra.md) — constraints, expressions, reverse propagation
-    - [Errors](di/di%20notes/di%20guides/di%20architecture/core/errors.md) — structured errors, suggestion buttons, name validation
-    - [History](di/di%20notes/di%20guides/di%20architecture/core/history.md) — undo and redo, snapshot sites, restore path
-    - [Preferences](di/di%20notes/di%20guides/di%20architecture/core/Preferences.md) — local-storage wrapper
+    - [Errors](di/notes/guides/architecture/core/errors.md) — structured errors, suggestion buttons, name validation
+    - [History](di/notes/guides/architecture/core/history.md) — undo and redo, snapshot sites, restore path
+    - [Preferences](di/notes/guides/architecture/core/Preferences.md) — local-storage wrapper
     - [Scenes](scenes.md) — scene loading and the two-phase build pattern
     - [Smart_Objects](Smart_Objects.md) — part data shape
-    - [Units](di/di%20notes/di%20guides/di%20architecture/core/units.md) — millimetre storage, four families, formatting and parsing
+    - [Units](di/notes/guides/architecture/core/units.md) — millimetre storage, four families, formatting and parsing
     - [Versions](versions.md) — file format migration
 - [Components](./components/) — per-file reference pages for layout components
-    - [Details](di/di%20notes/di%20guides/di%20architecture/components/Details.md) — sidebar: preferences, library, parts, part
+    - [Details](di/notes/guides/architecture/components/Details.md) — sidebar: preferences, library, parts, part
 - [UI](./ui/) — what the user sees
     - [Panel layout](panel.layout.md) — three regions, CSS, separators
     - [Hits](hits%20system.md) — click and hover dispatch
     - [Key paths](key%20paths.md) — keyboard shortcuts grouped by context
-    - [Style](di/di%20notes/di%20guides/di%20architecture/ui/style.md) — CSS conventions and design tokens
+    - [Style](di/notes/guides/architecture/ui/style.md) — CSS conventions and design tokens
 
 ## 3. Deep dive
 
@@ -44,9 +44,9 @@ The render pipeline — projection, occlusion, intersections, overlays.
     - [Dimensionals](./graph/dimensionals.md) — measurement labels with witness lines
     - [Editors](editors.md) — canvas input editors and their shared lifecycle
     - [Hits_3D](Hits_3D.md) — three-dimensional hit testing
-    - [Rotation](di/di%20notes/di%20guides/di%20architecture/graph/rotation.md) — the world-versus-camera split and the camera-view extent
-    - [Render](di/di%20notes/di%20guides/di%20architecture/graph/render.md) — the per-frame pipeline overview
-    - [Repeaters](di/di%20notes/di%20guides/di%20architecture/graph/repeaters.md) — clone generation for studs, joists, stairs
+    - [Rotation](di/notes/guides/architecture/graph/rotation.md) — the world-versus-camera split and the camera-view extent
+    - [Render](di/notes/guides/architecture/graph/render.md) — the per-frame pipeline overview
+    - [Repeaters](di/notes/guides/architecture/graph/repeaters.md) — clone generation for studs, joists, stairs
 
 ## Contents
 

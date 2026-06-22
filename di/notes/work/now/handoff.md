@@ -1,7 +1,7 @@
 # Handoff
 
 **Date:** 2026-06-18
-**Work stream:** dim placement scoring + spec cleanup. Per-session detail in [work journal](di/di%20notes/di%20work/now/work%20journal.md).
+**Work stream:** dim placement scoring + spec cleanup. Per-session detail in [work journal](di/notes/work/now/work%20journal.md).
 
 ## Current focus — paused mid-proposal
 

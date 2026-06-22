@@ -182,4 +182,4 @@ Screen-only crossings (two edges at different depths that appear to cross in 2D)
 
 The remaining structural problem — the across-face inconsistency in clockwise direction — was not resolvable with a local fix. The tracer could paint correctly on some faces and wrong on others depending on face orientation relative to the screen, and no single index-offset rule worked universally.
 
-The codepath was left in place, gated off by the master debug switch. Tests remained green. See the Meta lessons section in [lessons.md](di/di%20notes/di%20work/milestones/done/32.facets/lessons.md) for the distilled convergence-vs-uncovering rule that came out of this work.
+The codepath was left in place, gated off by the master debug switch. Tests remained green. See the Meta lessons section in [lessons.md](di/notes/work/milestones/done/32.facets/lessons.md) for the distilled convergence-vs-uncovering rule that came out of this work.
