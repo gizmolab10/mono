@@ -74,7 +74,7 @@
 
 {#snippet loose_mode_buttons()}
 	<button class='toolbar-button' use:hit_target={{ id: 'view-mode', onpress: () => engine.toggle_view_mode() }}>{$w_view_mode.toUpperCase()} ⟳</button>
-	<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'x-ray'} ⟳</button>
+	<button class='toolbar-button' use:hit_target={{ id: 'solid', onpress: () => stores.toggle_solid() }}>{$w_solid ? 'solid' : 'wireframe'} ⟳</button>
 	{#if $w_allow_editing && !root_fits}
 		<button class='toolbar-button fit-button' use:hit_target={{ id: 'fit', onpress: () => engine.fit_to_children() }}>fit</button>
 	{/if}
@@ -147,9 +147,13 @@
 <style>
 
 	.dim-count-slider {
-		position : relative;
-		top      : 2.5px;
-		left     : -4px;
+		position     : relative;
+		top          : 2.5px;
+		left         : -4px;
+		/* Pull the next group 8px closer. When the row has room the spacer grows
+		   to refill, so wide layouts are unchanged; only the collapsed floor
+		   tightens — that gap was ~25px, now ~17px. */
+		margin-right : -8px;
 	}
 
 	.controls {
@@ -185,6 +189,7 @@
 
 	.spacer {
 		flex      : 1 1 0px;
+		margin    : 0 -6px;
 		min-width : 0;
 	}
 

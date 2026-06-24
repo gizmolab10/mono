@@ -47,6 +47,10 @@ You own _taste and intent_; I own _execution and documentation_. Concretely:
     1. number of dimensions
     2. largest first
 
+
+## another
+
+How can one of us detect when we are climbing too high a mountain?
 ## vocabulary
 
 We put fierce energy into being stuck. Seemed to me our vocabularies need synching, clarity and single truth. Now we need to go further. We have lexicon, banned, voice, always and hooks. Needs tidying.

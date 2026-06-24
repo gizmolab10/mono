@@ -117,8 +117,8 @@ export default class Constants {
 	};
 
 	width = {
-		wrap_mobile    : 1150,
-		wrap_phone     : 590,
+		wrap_mobile    : 1190,
+		wrap_phone     : 620,
 		window_min     : 400,
 		details        : 350,
 		title          : 120,

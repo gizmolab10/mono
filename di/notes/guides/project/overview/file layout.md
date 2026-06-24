@@ -49,7 +49,8 @@ src/
         │   ├── Configuration.ts
         │   ├── Constants.ts
         │   ├── Dirty.ts
-        │   └── Extensions.ts
+        │   ├── Extensions.ts
+        │   └── Names.ts
         ├── editors/          # Inline editing for canvas labels
         │   ├── index.ts
         │   ├── Angular.ts
@@ -162,6 +163,7 @@ Formula language used inside attribute cells. Compile a typed expression to a tr
 - `Configuration.ts` — Run-time configuration values
 - `Dirty.ts` — A writable that also flags the canvas as out-of-date
 - `Extensions.ts` — Number and String prototype extensions
+- `Names.ts` — Builds a part's root-to-part dotted name and a dimensional's name (used by the copy-name feature and the debug readout)
 
 ## Editors
 

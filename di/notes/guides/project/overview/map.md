@@ -102,6 +102,7 @@
 - di/src/lib/ts/common/Constants.ts
 - di/src/lib/ts/common/Extensions.ts
 - di/src/lib/ts/common/Dirty.ts
+- di/src/lib/ts/common/Names.ts
 
 ## TS — Editors
 
@@ -144,6 +145,7 @@
 - di/src/lib/ts/tests/Testworthy_Utilities.test.ts
 - di/src/lib/ts/tests/Print.test.ts
 - di/src/lib/ts/tests/Units.test.ts
+- di/src/lib/ts/tests/Names.test.ts
 - di/e2e/tests/print-notifications.spec.ts
 
 ## Assets

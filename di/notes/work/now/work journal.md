@@ -6,6 +6,61 @@ Record work performed during chat sessions, in reverse chronological order. Each
 
 ---
 
+## Session — 2026-06-24 — CLAUDE path fixes + per-project map convention
+
+Fixed three broken references in di/CLAUDE.md (the file assumed di lived at mono/projects/di; it lives at mono/di):
+
+- COMMON "../../CLAUDE.MD" → "../CLAUDE.md" (shared file is one level up, not two).
+- REPO "~/GitHub/mono/projects/di" → "~/GitHub/mono/di".
+- di learn path "di/notes/work/now/learn.md" → "di/notes/work/ai/learn.md".
+- Added a MAP line naming di's real map: notes/guides/project/overview/map.md.
+
+Map convention (decided: one map each, per project). Checked all eight projects — none used the shared root's generic `<X>/notes/map.md`: di's map is at notes/guides/project/overview/map.md, ga's at notes/work/map.md, the other six have none. Reworded the shared root CLAUDE map line to "one per project, at the path that project's own CLAUDE names (locations vary; not every project has one)". di names its map; ga has a map but no CLAUDE, so its map is unnamed until ga is next worked.
+
+Also added two learn entries (answer honestly when asked if hung, with a prevention; say "needs your visual confirmation") and lexicon terms ("part", "subpart", a Trust section with "mistrust point"/"mistrust issue").
+
+### Files touched
+
+- CLAUDE.md (shared root), di/CLAUDE.md
+- di/notes/guides/pre-flight/lexicon.md, di/notes/work/ai/learn.md
+- di/notes/guides/project/overview/map.md
+
+### Verification
+
+Every path the CLAUDE files name checked against the tree before editing.
+
+---
+
+## Session — 2026-06-23 — controls polish, copy-name, locked hover/pick, frame-loop fix
+
+A long UI-and-fixes session driven by visual checks, working the code-debt list with /cd between tasks.
+
+### Done
+
+- **Dimensions count slider.** The on/off "dimensions" segment became a count slider (0–100, default 2, logarithmic so small counts spread out, ticks every ten, the count rides inside the thumb in black). 0 means off; the placement gate keeps the biggest N dimensionals; the thumb shows the requested number.
+- **Frame loop made unkillable.** A throw in one frame used to stop the whole screen loop until a page refresh — the "zoom to the far right, slide back, canvas blank" bug. Each frame step now runs guarded, so one bad frame is logged and skipped and the next frame is still asked for.
+- **Hover and pick while the edit lock is on.** With the lock on you can light up the part under the cursor and click to pick it; a press-and-drag still tumbles; dragging, resizing, and dimension edits stay locked. Clicking a part's dimensional picks the part that owns it.
+- **COMMAND-C puts the hovered thing's full name on the clipboard.** A part puts its root-to-part name; a dimensional puts that plus its measurement word. New shared name builder in common/Names, also used by the debug readout.
+- **Editing a dimensional lights its part and that part's other dimensionals.**
+- **"x-ray" view renamed to "wireframe."**
+- **Scaling slider:** "out" and "in" end words, tick marks now sit under the thumb, and the can't-shrink gap floor tightened from about 25px to about 17px.
+- **Words:** lexicon gained "part" (a smart object) and "subpart" (a corner, edge, face, or dimensional), plus a measurement-name helper; two learn entries added (answer honestly when asked if hung and propose a prevention; say "needs your visual confirmation").
+
+### Files touched
+
+- Slider.svelte, Primary_Controls.svelte, Secondary_Controls.svelte
+- Animation.ts (frame-loop guard)
+- Events_3D.ts (locked hover/pick, COMMAND-C, cursor tracking, tumble-regression fix)
+- Names.ts and Names.test.ts (new), Debug.ts (now calls the shared builder)
+- Dimension_Renderer.ts (edit highlight), Stores.ts and Dimension_Placement.ts (count slider)
+- lexicon.md, learn.md, code.debt.md, handoff.md
+
+### Verification
+
+svelte-check clean throughout; the dimension and name-builder tests pass; each visual change confirmed by Jonathan.
+
+---
+
 ## Session — 2026-06-22 — filename overhaul: dropped the "di " prefix
 
 Removed the "di " prefix from six folders and four files, swept every reference (twelve files), and confirmed the word-check still passes 8 of 8 at the new paths.

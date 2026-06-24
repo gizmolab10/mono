@@ -5,32 +5,20 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] move swap x y to p attributes
-- [ ] rename x ray -> wireframe
+- [ ] mouse hover should be turned off when mouse leaves canvas
+- [ ] width constants need to depend on browser's zoom factor
 - [ ] arrowheads should be drawn in perspective, not flat relative to the screen
 - [ ] sliders have two modes --
     - [ ] (1) option click moves one increment in the direction towards the location of the click
     - [ ] (2) click moves the thumb to that position
-    - [x] scaling -> eliminate triangles
-- [ ] write steve melville
-    - [ ] i've been thinking about this for nearly 15 years, ideas keep popping up and i wonder if you would like me to pass some of them to you? for example...
-    - [ ] economy of scale and profit motive are destructive, we need them but also need some wisdom and reasonable limitations
-    - [ ] as i understand it, your MAP system is designed to support thought leaders with outside research, observation, factual reporting, so they can have the most impact and influence on policy, projects and funding. this is genius. i wonder does your MAP system incorporate a way of measuring that impact and influence? later in a second email: my brother and i would love to help with this.
-    - [ ] seriously
-    - [ ] i lost your last reply, it was fantastic and intimidatingly thorough
-- [ ] clean up guides again
-    - [ ] does our current organization make sense?
+- [ ] ability to wander through a design
 - [ ] selection highlight color must be derived from part color, contrasting it AND white background
 - [ ] ability to export an SO -> file
     - [ ] export button below part name, with duplicate and divide
     - [ ] when the selection is the root, change it to save
 - [ ] pac add a string (called label) to each length Attribute that holds the text version of the value
-- [ ] Gemini pro is only $20
-- [ ] saved VIEWS orientation/zoom for a SO
-    - [ ] list that changes when you load a different SO
-    - [ ] remember and forget buttons
-- [ ] deceptively simple UX
-- [ ] smaller slider circle triangle
+- [ ] move swap x y to p attributes
+    - [ ] needs careful thinking about x/z and y/z
 
 ## tom
 
@@ -43,10 +31,6 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
 ## soon
 
 - [ ] option to group attributes by axis (in first column: sle -> xyz)
-- [ ] new information glow banner
-    - [ ] orientation, scale factor
-    - [ ] button to copy both to pasteboard
-- [ ] zoom slider beyond 5 -> blank graph
 - [ ] LONG - convert button 'create a template' -> stud/joist / stair segmented
 - [ ] slider for master separator width
 - [ ] can't edit a dimensional
@@ -68,6 +52,8 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
 ## big
 
 - [ ] read the app code base and write a formal, machine-readable specification, that when followed by you can reproduce the app
+- [ ] clean up guides again
+    - [ ] does our current organization make sense?
 - [ ] move logic driven design -> alongside always
     - [ ] convert to instructions that can do the heavy lifting
 - [ ] layers -> wall, beam, post, stairs, generic
@@ -138,4 +124,5 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
 
 - [ ] read all the work md files and summarize the organization
 - [ ] [[cadence]]
+- [ ] Gemini pro is only $20
 - [ ] AI coolness: <https://medium.com/@gaddamnaveen192/ai-replaced-80-of-coding-only-these-7-skills-are-left-128e13d3020d>

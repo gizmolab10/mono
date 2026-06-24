@@ -370,3 +370,5 @@
     - [x] change the dimensional color to red
     - [x] over a part -> also highlight all its dimensionals
 - [x] when a dimensional is being edited, also highlight its SO and its other dimensionals
+- [x] rename x ray -> wireframe
+- [x] sliders: scaling -> eliminate triangles

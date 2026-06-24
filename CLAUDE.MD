@@ -29,7 +29,7 @@ Also read:
 
 - `notes/work/learn.md` — past mistakes that apply across every project; never repeat them. Read at session start, not on every response.
 - `<X>/notes/work/now/learn.md` — past mistakes specific to the active project; never repeat them. If ten or more entries, say: "Feedstock: \[N\] — time to distill."
-- `<X>/notes/map.md` — the project's file map. Read instead of globbing. Update when files are added, moved, or removed. Skip folders listed in `notes/guides/collaborate/exclude.md` (when building maps; not for general searching).
+- The project's file map — one per project, at the path that project's own CLAUDE names (locations vary; not every project has one). Read it instead of globbing. Update it when files are added, moved, or removed. Skip folders listed in `notes/guides/collaborate/exclude.md` (when building maps; not for general searching).
 
 If any keyword matches, read the listed guide(s). If any shorthand matches, perform the action.
 

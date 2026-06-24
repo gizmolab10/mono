@@ -193,3 +193,8 @@ How each dim line's position and label are chosen.
 - **write code** — used for the act of producing or submitting code (the back-and-forth of editing, saving, and asking for verification). Never write *ship* or *shipped* in this sense either. The English meaning of *ship* (push code out) and the project's preferred terms do not overlap; we say *write code* instead.
 - **propose** — describe the plan and wait. Never act on a proposal without explicit approval, except when the ask was already explicit.
 - **more work**, **a lot of work** — used when the next step would be heavier than the current one ("that change would be more work than this turn's scope," "a lot of work to wire up the fixture"). Never write *bigger lift*, *heavy lift*, *heavy lifting*. Reason: fitness-jargon for "more work" — the project's preferred phrasing is the plain English version.
+
+## Trust
+
+- **mistrust point** (also **distrust point**) — a mark Jonathan adds against trust when I state something as fact without verifying it, or report work as done while steps remain. The running count tells him how hard to double-check what I say.
+- **mistrust issue** — an instance of the behaviour that earns a mistrust point: an unverified claim stated as certain, an absolute drawn from a single partial check, or "done" claimed too early.
