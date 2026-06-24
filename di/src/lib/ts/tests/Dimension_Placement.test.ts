@@ -493,9 +493,11 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 		const after_first = new Set(get_last_persisted().keys());
 		expect(after_first.size).toBeGreaterThan(0);
 		// Second render with a different part — wall_old's keys must NOT
-		// survive into this render's persistence map.
+		// survive into this render's persistence map. Kept near the origin so
+		// at least one corner lands on the (identity-projection) canvas — the
+		// count-gate candidate test (spec 2.1.6) needs a part in the frustum.
 		run_placement_on_parts([
-			{ name: 'wall_new', x_min: 100, x_max: 300, y_min: 100, y_max: 150, z_min: 100, z_max: 150 },
+			{ name: 'wall_new', x_min: 0, x_max: 150, y_min: 0, y_max: 40, z_min: 0, z_max: 40 },
 		]);
 		const after_second = get_last_persisted();
 		for (const key of after_first) {

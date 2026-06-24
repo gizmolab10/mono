@@ -44,17 +44,31 @@ The diagnostic log (chapter 8) writes one block per render summarising what happ
 
 ### 2.1 Eligibility
 
-A part feeds the search when ALL hold:
+A part feeds the placement when ALL hold:
 
-- 2.1.1 It is currently visible.
-- 2.1.2 Dimensions flag is true OR the part is selected OR the part is hovered.
+- 2.1.1 It is currently visible, and NOT hidden by the near-occluder peel (zoom cluster C). A peeled part gets no dimensionals. *(PENDING — peel not yet built.)*
+- 2.1.2 It passes the count gate (2.1.6): the part is among the dimensionals the count slider shows, OR the part is selected, OR the part is hovered. *(PENDING — replaces the old dimensions on/off flag, which stays the current behavior until the slider is built.)*
 - 2.1.3 No ancestor is set to hide its children.
 - 2.1.4 It has a parent (the root smart object is excluded — it is the scene container, not a real part). Parents with visible children ARE eligible.
 - 2.1.5 The repeater filter does not drop it (see 2.3).
 
+#### 2.1.6 The count gate *(PENDING — not yet built)*
+
+A control sets how many dimensionals show: a whole number from 0 to 100, default 2, persisted across reload. It replaces the old on/off flag. The control is a slider just to the right of the names/angles segmented control; it moves continuously with tick marks every 10, and its setting is rounded to the whole count shown.
+
+- Candidates are every allowed axis of every part where at least one is within the frustum (leaf or parent, NOT root); each part offers up to three (width, depth, height).
+- Order the candidates biggest-first (step 3h) and keep that many; the rest drop.
+- 0 shows none.
+- The selected part is ALWAYS shown in full whenever it is fully within the frustum, regardless of the number.
+- A hovered part ALWAYS shows its own, even at 0.
+
+"at least one is within the frustum" = any of the eight of a part's box corners project inside the canvas and in front of the camera. Which parts qualify shifts as you zoom, and differs between the flat scale and the dolly (zoom cluster A and B).
+
 ### 2.2 X-ray mode
 
 When the OPTION key is held AND at least one part in the scene is hidden, the visibility test flips — only HIDDEN parts are eligible. With no hidden part, OPTION is a no-op.
+
+X-ray and the near-occluder peel are independent: x-ray flips which parts are visible by the OPTION rule above; the peel hides near parts by depth as you zoom in. The peel never hides the selected or hovered part. *(PENDING — peel not yet built.)*
 
 ### 2.3 Repeater filter
 

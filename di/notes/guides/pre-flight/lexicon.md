@@ -8,7 +8,9 @@ If a thing has a name here, that is its name. If you find yourself reaching for 
 
 ## The world
 
-- **smart object** (also written **SO**) — the basic building block. The world is made of smart objects. Never call one a *block* in writing or in logs, even though "block" appears casually in some older conversation. Test scenes name their objects in plain capitals like ALPHA, BETA, CHILD.
+- **smart object** (also written **SO**, also **part**) — the basic building block. The world is made of smart objects. Never call one a *block* in writing or in logs, even though "block" appears casually in some older conversation. Test scenes name their objects in plain capitals like ALPHA, BETA, CHILD.
+- **part** — synonym for smart object (SO): the whole object.
+- **subpart** — a piece of one smart object: a corner, an edge, a face, or a dimensional. Never write *part of part* or *element*.
 - **root** — the topmost smart object. It has no parent.
 - **child** — a smart object that sits inside another smart object's frame.
 - **parent** — the smart object a child sits inside.

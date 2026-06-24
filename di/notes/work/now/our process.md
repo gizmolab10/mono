@@ -55,6 +55,8 @@ meaning, bans, tone, behavior, enforcement
 
 ## dimensions flag off
 
+_Paused 2026-06-22 (code-debt item 1). Where it stands and how to resume: handoff "Paused — flag-off / simplify arc". Bug 001 captured, not yet diagnosed._
+
 - [ ] proposal: gather many use cases
     - [ ] for each one, we need:
         - [ ] selected part

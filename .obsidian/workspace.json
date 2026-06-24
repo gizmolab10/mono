@@ -8,20 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "14298fecf63e593e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/guides/collaborate/workflow.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "workflow"
-            }
-          },
-          {
             "id": "95be7d8ffa2839e8",
             "type": "leaf",
             "state": {
@@ -33,6 +19,34 @@
               },
               "icon": "lucide-file",
               "title": "code.debt"
+            }
+          },
+          {
+            "id": "59e5eba68c0bd9c9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/now/handoff.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "handoff"
+            }
+          },
+          {
+            "id": "5ec6838c4c407b38",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/work/now/34.dimensionals/dimensions.latest.spec.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "dimensions.latest.spec"
             }
           },
           {
@@ -49,8 +63,7 @@
               "title": "code.debt.paid"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -82,7 +95,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:",
+                "query": "file:builds",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -294,9 +307,20 @@
   },
   "active": "95be7d8ffa2839e8",
   "lastOpenFiles": [
-    "di/notes/work/now/open items.md",
-    "di/notes/work/now/code.debt.md",
     "di/notes/work/done/code.debt.paid.md",
+    "di/notes/work/now/code.debt.md",
+    "di/src/lib/ts/render/Dimension_Renderer.ts.tmp.92303.0e2edcf0602c",
+    "di/src/lib/md/builds.md",
+    "di/src/lib/ts/tests/Names.test.ts",
+    "di/src/lib/ts/common/Names.ts",
+    "di/notes/work/now/code.debt.md.tmp.81219.473afe359ec2",
+    "di/notes/work/now/34.dimensionals/dimensions.latest.spec.md",
+    "di/src/lib/svelte/mouse/Slider.svelte.tmp.81219.a5c7d3a01778",
+    "ws/vite.config.js.timestamp-1782242823228-9851e815dc977.mjs",
+    "di/src/lib/ts/render/Dimension_Placement.ts.tmp.81219.c6ea885e7984",
+    "di/notes/work/now/handoff.md",
+    "di/src/lib/ts/tests/Dimension_Step3h.test.ts",
+    "di/notes/work/now/open items.md",
     "notes/guides/collaborate/workflow.md",
     "lv/notes/work/code debt.md",
     "in/notes/work/code debt.md",
@@ -319,18 +343,6 @@
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",
     "di/notes/work/now/bugs/001 dim is inside silho/dimensionals.log",
     "di/notes/work/now/bugs/001 dim is inside silho/data.json",
-    "di/notes/work/now/34.dimensionals/done/uniface rules.md",
-    "di/notes/work/now/34.dimensionals/done/uniface proposal.md",
-    "di/notes/work/now/34.dimensionals/done/old dimensionals rules.md",
-    "di/notes/work/now/34.dimensionals/done/dimensionals spec.md",
-    "di/notes/work/milestones/done/32.facets/use cases",
-    "di/notes/work/milestones/done/32.facets/slow",
-    "di/notes/work/milestones/done/32.facets/designs",
-    "di/notes/work/now/bugs/001 dim is inside silho",
-    "di/notes/work/now/bugs/done",
-    "di/notes/work/now/34.dimensionals/done",
-    "di/notes/work/milestones/done/32.facets",
-    "di/notes/work/now/bugs",
     "di/di notes/di work/now/bugs/001 dim is inside silho/screenshot.png",
     "lv/src/assets/lcv.label.png",
     "Untitled.canvas",

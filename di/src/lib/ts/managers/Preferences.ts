@@ -27,6 +27,7 @@ export enum T_Preference {
 	edgeThickness    = 'edgeThickness',
 	gridOpacity      = 'gridOpacity',
 	decorations      = 'decorations',
+	dimensionCount   = 'dimensionCount',
 	precision        = 'precision',
 	edgeColor        = 'edgeColor',
 	viewMode         = 'viewMode',

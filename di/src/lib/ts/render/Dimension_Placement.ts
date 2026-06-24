@@ -37,6 +37,32 @@ import { scene } from './Scene';
  *  the hull vertices in counter-clockwise order (in screen coordinates
  *  where y grows downward, this is actually clockwise — direction does
  *  not matter for our use). */
+/** Step 3h (rule 19): order (part, axis) entries by descending millimetre
+ *  measurement, so the biggest dimensions get first pick of each spot and the
+ *  smaller ones fit around them or drop. A copy is returned; equal millimetres
+ *  keep their incoming order (stable). Pure. */
+export function order_part_axis_by_descending_mm<T extends { mm: number }>(entries: readonly T[]): T[] {
+	return [...entries].sort((a, b) => b.mm - a.mm);
+}
+
+/** Count gate (spec 2.1.6). Given entries already ordered biggest-first, keep
+ *  the first `count` that are in-frustum candidates (`base`), plus EVERY
+ *  `forced` entry (the selected part when fully in frustum, or the hovered
+ *  part) — forced entries are kept on top of the count and do not consume a
+ *  slot. count 0 shows only the forced ones. Pure. */
+export function select_within_count<T extends { forced: boolean; base: boolean }>(
+	ordered: readonly T[],
+	count: number,
+): T[] {
+	const kept: T[] = [];
+	let nonforced_kept = 0;
+	for (const e of ordered) {
+		if (e.forced) { kept.push(e); continue; }
+		if (e.base && nonforced_kept < count) { kept.push(e); nonforced_kept++; }
+	}
+	return kept;
+}
+
 export function convex_hull(points: Array<{ x: number; y: number }>): Array<{ x: number; y: number }> {
 	if (points.length <= 2) return points.slice();
 	const sorted = [...points].sort((a, b) => a.x - b.x || a.y - b.y);
@@ -373,6 +399,37 @@ export function is_fully_visible_on_screen(obj: O_Scene): boolean {
 		}
 	}
 	return true;
+}
+
+/** True when AT LEAST ONE corner of the part's bounding box, after tumble
+ *  plus projection, lies within the visible canvas rectangle AND in front of
+ *  the camera. The count-gate candidate test (spec 2.1.6): a part is a
+ *  candidate when any part of its box is on screen, not only when the whole
+ *  box is. */
+export function is_partly_visible_on_screen(obj: O_Scene): boolean {
+	const wm = render.get_static_world_matrix(obj);
+	const tumble = compute_root_tumble_matrix();
+	const w = render.logical_size.width;
+	const h = render.logical_size.height;
+	for (let xi = 0; xi < 2; xi++) {
+		for (let yi = 0; yi < 2; yi++) {
+			for (let zi = 0; zi < 2; zi++) {
+				const local = vec3.fromValues(
+					xi === 0 ? obj.so.x_min : obj.so.x_max,
+					yi === 0 ? obj.so.y_min : obj.so.y_max,
+					zi === 0 ? obj.so.z_min : obj.so.z_max,
+				);
+				const world = vec3.create();
+				vec3.transformMat4(world, local, wm);
+				const p = render.project_vertex(world, tumble);
+				if (p.w < 0) continue;
+				if (p.x < 0 || p.x > w) continue;
+				if (p.y < 0 || p.y > h) continue;
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 export function build_uniface_box_for_scene(rendered_leaves: readonly O_Scene[]): Uniface_Box {
@@ -1892,6 +1949,10 @@ export function set_off_canvas_filter_enabled_for_tests(value: boolean): void {
  *  sentinel so the first render of a session does not falsely trigger a
  *  clear. */
 let last_dim_flag_on: boolean | null = null;
+/** The dimension-count slider value at the end of the previous render. A
+ *  change (for example 2 to 5) shifts which dimensionals show, so it clears
+ *  persistence the same way a selection change does. */
+let last_dim_count: number | null = null;
 /** Identifiers of the parts that were selected at the end of the previous
  *  render. Same purpose as last_dim_flag_on — when the selected set
  *  changes between renders, the lock pass must NOT reuse last render's
@@ -2039,15 +2100,23 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	const selected_names_for_log = selection.all.map(h => h.so.name).join(', ') || '(none)';
 	const hovered_name_for_log = hits_3d.hover?.so?.name ?? '(none)';
 	const total_visible_below_root = all_objects.filter(o => visible.has(o) && !!o.parent).length;
+	// Count gate (spec 2.1.6): the candidate pool is every part with at least
+	// one corner in the frustum; the selected part (only when FULLY in the
+	// frustum) and the hovered part are force-kept on top of the count. The
+	// cap to N is applied per (part, axis) after the biggest-first ordering,
+	// in the work-list build below.
+	const dim_count = stores.current_dimension_count;
+	const is_forced_part = (o: O_Scene): boolean =>
+		(selected_so_ids.has(o.so.id) && is_fully_visible_on_screen(o))
+		|| o.so.id === hovered_so_id_for_eligibility;
 	const rendered_leaves: O_Scene[] = all_objects.filter(o =>
 		visible.has(o)
 		&& !!o.parent
-		&& (dim_flag_on || selected_so_ids.has(o.so.id) || o.so.id === hovered_so_id_for_eligibility),
+		&& (is_partly_visible_on_screen(o) || is_forced_part(o)),
 	);
 	// Diagnostic message for the eligibility filter. Pushed into the main
-	// diagnostic-log buffer below once the buffer is constructed. Kept as a
-	// string here so the message survives until then.
-	const eligibility_log_line = `[uniface placement] eligibility filter: dimensions flag = ${dim_flag_on ? 'on' : 'off'}, selected parts = [${selected_names_for_log}], hovered part = ${hovered_name_for_log}, kept ${rendered_leaves.length} of ${total_visible_below_root} visible parts below the root.`;
+	// diagnostic-log buffer below once the buffer is constructed.
+	const eligibility_log_line = `[uniface placement] eligibility filter: dimension count = ${dim_count}, selected parts = [${selected_names_for_log}], hovered part = ${hovered_name_for_log}, candidate parts ${rendered_leaves.length} of ${total_visible_below_root} visible below the root.`;
 	// Context-change check. When the dimensions flag flips OR the selection
 	// changes OR the hovered part changes, the eligible part list shrinks
 	// or grows; the lock pass would otherwise reuse previous placements at
@@ -2056,14 +2125,16 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	const selected_so_ids_serialised = [...selected_so_ids].sort().join(',');
 	const context_changed =
 		(last_dim_flag_on !== null && last_dim_flag_on !== dim_flag_on)
+		|| (last_dim_count !== null && last_dim_count !== dim_count)
 		|| last_selected_so_ids_serialised !== selected_so_ids_serialised
 		|| last_hovered_so_id !== hovered_so_id_for_eligibility;
 	if (context_changed) {
 		last_persisted.clear();
 		last_eligible_pairs.clear();
-		if (k.debug.diagnose_dims) console.log(`[uniface placement] context change — dimensions flag or selection changed since last render; persistence cleared.`);
+		if (k.debug.diagnose_dims) console.log(`[uniface placement] context change — dimension count or selection changed since last render; persistence cleared.`);
 	}
 	last_dim_flag_on = dim_flag_on;
+	last_dim_count = dim_count;
 	last_selected_so_ids_serialised = selected_so_ids_serialised;
 	last_hovered_so_id = hovered_so_id_for_eligibility;
 	rendered_leaves.sort((a, b) => {
@@ -2474,6 +2545,12 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	// Full search path: record this render's eligible (part, axis) set so
 	// next render's skip path can detect a scene change.
 	last_eligible_pairs.clear();
+	// Step 3h (rule 19): build the (part, axis) work list, then process it
+	// biggest-measurement-first so large dimensions claim their spots before
+	// small ones. The repeater filter and the eligible-pair bookkeeping run
+	// once, here, while the list is built; the main loop below then walks the
+	// list in descending-millimetre order.
+	const part_axis_entries: { obj: O_Scene; axis: Axis_Name; mm: number; forced: boolean; base: boolean }[] = [];
 	for (const obj of rendered_leaves) {
 		// Step 3d filter 1: repeater filter. Clones inside a non-firewall
 		// repeater and middle fireblocks inside a firewall repeater get
@@ -2488,6 +2565,29 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 		for (const ax_p of classification.axes_allowed) {
 			last_eligible_pairs.add(persisted_key(obj.so.id, ax_p));
 		}
+		const forced = is_forced_part(obj);
+		const base = is_partly_visible_on_screen(obj);
+		for (const axis of axes) {
+			if (!classification.axes_allowed.includes(axis)) { diagnostic_repeater_dropped_axes++; continue; }
+			const mm = axis === 'x' ? obj.so.width : axis === 'y' ? obj.so.depth : obj.so.height;
+			part_axis_entries.push({ obj, axis, mm, forced, base });
+		}
+	}
+	const part_axis_ordered = order_part_axis_by_descending_mm(part_axis_entries);
+	// Count gate (spec 2.1.6): walking biggest-first, keep the first N entries
+	// that are in-frustum candidates; every forced entry (the selected part
+	// when fully in frustum, or the hovered part) is kept on top of the N and
+	// does not consume a slot. N is the dimension-count slider.
+	const part_axis_kept = select_within_count(part_axis_ordered, dim_count);
+	if (k.debug.diagnose_dims) {
+		const order_str = part_axis_kept
+			.map(e => `${e.obj.so.name}/${e.axis} ${Math.round(e.mm)}mm${e.forced ? ' (forced)' : ''}`)
+			.join(', ');
+		diagnostic_log_buffer.push(`[uniface placement] count gate: count ${dim_count}, ${part_axis_entries.length} candidate dimensionals, ${part_axis_kept.length} shown (biggest first): ${order_str}`);
+	}
+	for (const __pa of part_axis_kept) {
+		const obj = __pa.obj;
+		const classification = classify_so(obj);
 		// Natural label position: projected centroid of the part's
 		// static-frame corners. For a box-shaped part this equals the
 		// projected midpoint of any axis-spanning edge of the part.
@@ -2541,7 +2641,10 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 		// lies-flat reward — a face that points straight at the camera
 		// pays full weight; a face only weakly toward the camera pays less.
 		const front_face_camera_alignment = Math.max(0, -vec3.dot(front_normal_sw, cam_dir_in_room));
-		for (const axis of axes) {
+		// Step 3h: the work list already holds one entry per (part, axis) in
+		// descending-millimetre order, so this loop runs once, for this
+		// entry's axis. The skip below stays as a guard but never fires here.
+		for (const axis of [__pa.axis]) {
 			// Step 3d filter 1 continued: a firewalled fireblock gets dim
 			// lines only along the repeat axis. Skip every other axis.
 			if (!classification.axes_allowed.includes(axis)) {

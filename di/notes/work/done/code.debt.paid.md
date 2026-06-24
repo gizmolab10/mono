@@ -355,3 +355,18 @@
 - [x] scan all notes in di and mono and update all links and file name references
 - [x] major filename overhaul -> remove the 'di ' wherever it was added, updating all refs
 - [x] rewrite the banned words hook to read the md file
+- [x] pause work on "simplify and perfect the flag-off case"
+- [x] implement 'open items' line 111
+- [x] add a new slider -> controls, default = 2
+    - [x] remove dimensions from the segmented control
+- [x] slide thumb all the way right, slide it back to original position -> canvas is blank. refresh -> drawing reappears
+- [x] for parts -> hover and select should work with edit turned off
+- [x] paste buffer, COMMAND-C puts
+    - [x] when a dimensional is hovered -> the full name from root to {width, depth, height}
+    - [x] when a part is hovered -> the full name from root to part name
+- [x] slider for how many dimensionals appear
+- [x] on hover over a part or a dimensional
+    - [x] OPTION-C copies the label to the paste buffer
+    - [x] change the dimensional color to red
+    - [x] over a part -> also highlight all its dimensionals
+- [x] when a dimensional is being edited, also highlight its SO and its other dimensionals

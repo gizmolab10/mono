@@ -8,10 +8,11 @@
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 	import Steppers from '../mouse/Steppers.svelte';
+	import Slider from '../mouse/Slider.svelte';
 
 	let { onshowuserguide = () => {} }: { onshowuserguide?: () => void } = $props();
 
-	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation } = stores;
+	const { w_view_mode, w_decorations, w_solid, w_show_details, w_forward_face, w_rotation_snap, w_allow_editing, w_tick, w_orientation, w_dimension_count } = stores;
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 
 	let controls_width   = $state(Infinity);
@@ -19,7 +20,6 @@
 	let wrap_mobile      = $derived(controls_width < (k.width.wrap_mobile));
 	let show_names       = $derived(($w_decorations & T_Decorations.names) !== 0);
 	let show_angles      = $derived(($w_decorations & T_Decorations.angles) !== 0);
-	let show_dimensions  = $derived(($w_decorations & T_Decorations.dimensions) !== 0);
 	let root_fits        = $derived.by(() => { $w_tick; return engine.root_fits(); });
 	let is_straightened  = $derived.by(() => { $w_orientation; $w_tick; return engine.is_straightened(); });
 	let can_undo         = $derived.by(() => { $w_tick; return history.can_undo; });
@@ -62,9 +62,14 @@
 {#snippet decoration_buttons()}
 	<div class='segmented'>
 		<button class='seg' class:active={show_names} use:hit_target={{ id: 'names', onpress: () => stores.toggle_names() }}>names</button>
-		<button class='seg' class:active={show_dimensions} use:hit_target={{ id: 'dimensionals', onpress: () => stores.toggle_dimensionals() }}>dimensions</button>
 		<button class='seg' class:active={show_angles} use:hit_target={{ id: 'angulars', onpress: () => stores.toggle_angulars() }}>angles</button>
 	</div>
+	<span class='dim-count-slider' title='how many dimensionals show'>
+		<Slider min={0.4} max={100} logarithmic tick_interval={10} width={140}
+			value={$w_dimension_count}
+			thumb_label={(v) => String(Math.round(v))}
+			onchange={(v) => w_dimension_count.set(v)} />
+	</span>
 {/snippet}
 
 {#snippet loose_mode_buttons()}
@@ -140,6 +145,12 @@
 </div>
 
 <style>
+
+	.dim-count-slider {
+		position : relative;
+		top      : 2.5px;
+		left     : -4px;
+	}
 
 	.controls {
 		background      : var(--accent);

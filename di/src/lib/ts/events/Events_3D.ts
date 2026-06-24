@@ -8,6 +8,7 @@ import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
 import { drag } from '../editors/Drag';
 import { hits_3d } from './Hits_3D';
+import { full_name, dimensional_name } from '../common/Names';
 
 type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point, alt_key: boolean) => void;
 class Events_3D {
@@ -31,6 +32,7 @@ class Events_3D {
 	private listener_mousedown:  ((e: MouseEvent) => void) | null = null;
 	private listener_mouseup:    (() => void) | null = null;
 	private listener_mousemove:  ((e: MouseEvent) => void) | null = null;
+	private listener_keydown:    ((e: KeyboardEvent) => void) | null = null;
 	private prev_canvas: HTMLCanvasElement | null = null;
 
 	init(canvas: HTMLCanvasElement): void {
@@ -43,6 +45,7 @@ class Events_3D {
 		if (this.listener_mouseleave && this.prev_canvas) this.prev_canvas.removeEventListener('mouseleave', this.listener_mouseleave);
 		if (this.listener_mousedown  && this.prev_canvas) this.prev_canvas.removeEventListener('mousedown',  this.listener_mousedown);
 		if (this.listener_mousemove  && this.prev_canvas) this.prev_canvas.removeEventListener('mousemove',  this.listener_mousemove);
+		if (this.listener_keydown) window.removeEventListener('keydown', this.listener_keydown);
 		if (this.listener_mouseup) document.removeEventListener('mouseup', this.listener_mouseup);
 
 		this.canvas = canvas;
@@ -70,11 +73,21 @@ class Events_3D {
 			const point = new Point(e.clientX - rect.left, e.clientY - rect.top);
 
 			if (!this.is_dragging) {
+				// Remember where the cursor is over the drawing, so a COMMAND-C key
+				// press knows what it is pointing at. Track it ONLY while not
+				// dragging — during a drag, continue_drag owns this value (it reads
+				// the PREVIOUS point to measure the move), so writing it here would
+				// zero every move and kill tumble.
+				this.last_canvas_position = point;
 				if (!stores.allow_editing) {
-					canvas.style.cursor = 'grab';
-					hits_3d.hover = null;
+					// Locked: still light up the part under the cursor so you can
+					// see what you'd pick, but keep the tumble hand and arm no edit
+					// affordance (no dimension bolding, no text cursor).
+					const hit = hits_3d.hit_test(point, e.altKey);
+					hits_3d.hover = hit ? hits_3d.hit_to_face(hit) : null;
 					hits_3d.hovered_dimension = null;
 					hits_3d.hovered_uniface_placement = null;
+					canvas.style.cursor = 'grab';
 				} else {
 					const hit = hits_3d.hit_test(point, e.altKey);
 
@@ -108,6 +121,52 @@ class Events_3D {
 		};
 		canvas.addEventListener('mousemove', this.listener_mousemove);
 
+		// COMMAND-C, while the cursor is over the drawing, puts the full name of
+		// the thing under it on the clipboard: a part's root-to-part name, or a
+		// dimensional's name plus its measurement word. It steps aside whenever a
+		// text field is focused or page text is selected, so ordinary copy still
+		// works everywhere else. Works whether or not the edit lock is on.
+		this.listener_keydown = (e: KeyboardEvent) => {
+			if (!e.metaKey || (e.key !== 'c' && e.code !== 'KeyC')) return;
+			const el = document.activeElement as HTMLElement | null;
+			const in_field = !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
+			const text_selected = (window.getSelection?.()?.toString().length ?? 0) > 0;
+			if (in_field || text_selected || !this.mouse_in_canvas) return;
+
+			const p = this.last_canvas_position;
+			// A dimensional under the cursor wins over its part.
+			const dim_rect = dimensions.hit_test(p.x, p.y);
+			let name: string | null = null;
+			let what = 'nothing';
+			if (dim_rect) {
+				name = dimensional_name(dim_rect.so, dim_rect.axis);
+				what = 'dimensional';
+			} else {
+				const hit = hits_3d.hit_test(p, false);
+				const is_part = hit?.type === T_Hit_3D.corner || hit?.type === T_Hit_3D.edge || hit?.type === T_Hit_3D.face;
+				if (hit && is_part) {
+					name = full_name(hit.so);
+					what = 'part';
+				}
+			}
+
+			if (!name) {
+				console.log('COMMAND-C over the drawing: nothing under the cursor — clipboard left alone.');
+				return;
+			}
+			e.preventDefault();
+			const text = name;
+			if (navigator.clipboard?.writeText) {
+				navigator.clipboard.writeText(text).then(
+					() => console.log(`COMMAND-C: ${what} under the cursor. Put on the clipboard: "${text}".`),
+					(err) => console.log(`COMMAND-C: could not reach the clipboard for "${text}".`, err),
+				);
+			} else {
+				console.log(`COMMAND-C: this browser context has no clipboard; "${text}" was not put.`);
+			}
+		};
+		window.addEventListener('keydown', this.listener_keydown);
+
 	}
 
 	// ── Shared drag logic ──
@@ -120,11 +179,11 @@ class Events_3D {
 		const point = new Point(clientX - rect.left, clientY - rect.top);
 		this.last_canvas_position = point;
 
-		// Read-only mode: only allow tumble (no editing, no drag, no selection)
+		// Locked: tumble only — no edit target. Keep the hover highlight on press
+		// so a click does not flash it off; selection happens on release in
+		// end_drag, hover keeps tracking the cursor in the mouse-move handler.
 		if (!stores.allow_editing) {
 			drag.set_target(null);
-			hits_3d.hover = null;
-			hits_3d.hovered_dimension = null;
 			return;
 		}
 
@@ -190,9 +249,31 @@ class Events_3D {
 
 	end_drag(): void {
 		if (this.is_dragging && !this.did_drag && this.mouse_in_canvas) {
-			// Click/tap on background → deselect (but not if editing just started,
-			// and not while the lock is on — locked clicks must leave selection alone).
-			if (!drag.has_target && stores.editing === T_Editing.none && stores.allow_editing) {
+			if (!stores.allow_editing) {
+				// Locked, and the mouse did not move — a look-and-pick click.
+				// Selects the part under the cursor. Clicking that part's dimension
+				// label (or any measurement) selects the part that owns it, since
+				// the hit-to-face map resolves a measurement to its owner's face.
+				// The background clears the selection (to root, then to none). A
+				// press-and-drag never reaches here (did_drag is true), so a tumble
+				// selects nothing. Editing stays locked throughout.
+				const point = this.last_canvas_position;
+				const hit = hits_3d.hit_test(point, false);
+				const face_hit = hit ? hits_3d.hit_to_face(hit) : null;
+				if (face_hit) {
+					selection.current = face_hit;
+				} else {
+					const root = scenes.root_so;
+					if (root && selection.current?.so !== root) {
+						selection.current = { so: root, type: T_Hit_3D.face, index: 0 };
+					} else {
+						selection.current = null;
+					}
+				}
+				console.log(`Locked click — moved: no. Under cursor: ${hit ? T_Hit_3D[hit.type] : 'background'}. Owner selected: ${selection.current?.so?.name ?? 'none'}.`);
+			} else if (!drag.has_target && stores.editing === T_Editing.none) {
+				// Editing mode: click on background → deselect (part-select happens
+				// on press, in begin_drag).
 				const root = scenes.root_so;
 				if (root && selection.current?.so !== root) {
 					selection.current = { so: root, type: T_Hit_3D.face, index: 0 };

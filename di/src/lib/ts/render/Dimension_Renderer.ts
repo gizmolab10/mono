@@ -5,6 +5,7 @@ import { hits_3d } from '../events/Hits_3D';
 import { scene } from './Scene';
 import { selection } from '../managers/Selection';
 import { stores } from '../managers/Stores';
+import { dimensions } from '../editors/Dimension';
 import { k } from '../common/Constants';
 import { vec3 } from 'gl-matrix';
 
@@ -87,6 +88,14 @@ export function render_uniface_picks(host: DimensionHost): void {
 		?? null;
 	const highlighted_so_ids: Set<string> = new Set(selected_so_ids);
 	if (hovered_so_id !== null) highlighted_so_ids.add(hovered_so_id);
+	// While a dimensional is being edited, light up its part too — that outlines
+	// the part and turns every one of its dimensionals red (the edited one and
+	// the others), the same look a hovered part gets.
+	const editing_so = dimensions.state?.so ?? null;
+	if (editing_so) {
+		highlighted_so_ids.add(editing_so.id);
+		append_dim_log_line(`edit highlight: editing ${editing_so.name}'s ${dimensions.state?.axis} side — lighting its part and all its dimensionals.`);
+	}
 	const dim_toggle_on = stores.show_dimensionals;
 	// Build the list of picks that survive the off-canvas filter, then
 	// draw in three layers so the label box sits on top of the red hover

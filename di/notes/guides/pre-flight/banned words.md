@@ -13,7 +13,7 @@ These are the \[to be banned\] words that have caused friction. Use the left col
 | place, include, inserted   | y      | absorb                                           |
 | stub out                   | y      | scaffold                                         |
 | margin                     | y      | band, bar, padding, gutter                       |
-| visual confirmation        | y      | eyeball                                          |
+| visual confirmation        | y      | eyeball, nod                                     |
 | more work, a lot of work   | y      | bigger lift, heavy lift, heavy lifting           |
 | move                       | y      | copy                                             |
 | master                     |        | template                                         |

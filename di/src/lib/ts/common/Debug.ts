@@ -10,6 +10,7 @@ import { e as events } from '../events/Events';
 import { hits_3d } from '../events/Hits_3D';
 import { dimensions } from '../editors/Dimension';
 import { perf_timer } from './Performance_Timer';
+import { full_name } from './Names';
 import Smart_Object from '../runtime/Smart_Object';
 import type { Bound } from '../types/Types';
 import { quat, vec3 } from 'gl-matrix';
@@ -47,19 +48,9 @@ export class Debug {
 		if (typeof window === 'undefined') return;
 		if (queryStrings.get('test') !== '1') return;
 		const axis_label: Record<'x' | 'y' | 'z', string> = { x: 'width', y: 'depth', z: 'height' };
-		// Walk up parents from this smart object, collect names, drop the
-		// topmost ancestor (root), join with dots. For a smart object
-		// directly under root, this is just its own name.
-		const ancestry_path = (so: Smart_Object): string => {
-			const names: string[] = [];
-			let current: Smart_Object | null = so;
-			while (current) {
-				names.push(current.name);
-				current = current.scene?.parent?.so ?? null;
-			}
-			names.pop();
-			return names.reverse().join('.');
-		};
+		// Root-to-part dotted name. Shared with the COMMAND-C copy-name feature
+		// so there is one source of truth — see common/Names.
+		const ancestry_path = full_name;
 		(window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test = {
 			// ─── Read hooks ───────────────────────────────────────────────
 			orientation: () => Array.from(stores.current_orientation()),

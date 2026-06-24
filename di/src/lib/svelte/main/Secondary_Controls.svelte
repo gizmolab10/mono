@@ -24,7 +24,11 @@
 </script>
 
 <div class='band top-band'>
-	<Slider min={0.01} max={10000} value={$w_scale} logarithmic fill onchange={handle_zoom_slide} onstep={handle_zoom_step} />
+	<span class='zoom-edge zoom-out'>shrink</span>
+	<div class='zoom-slider-wrap'>
+		<Slider min={0.0001} max={10000} value={$w_scale} logarithmic fill tick_labels={false} show_steppers={false} onchange={handle_zoom_slide} onstep={handle_zoom_step} />
+	</div>
+	<span class='zoom-edge zoom-in'>enlarge</span>
 </div>
 <div class='band bottom-band'>
 	<button class='build-button' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
@@ -47,8 +51,28 @@
 	}
 
 	.top-band {
-		margin-top      : var(--l-gap);
-		justify-content : center;
+		margin-top : var(--l-gap);
+	}
+
+	/* The slider grows to fill the middle. Its visible track stops half a thumb
+	   short of the wrap edge (so the thumb never runs off the end), so pull the
+	   wrap outward by that half-thumb less 12px —> the visible track then lands
+	   8px from each word. min-width 0 lets it shrink below its content. */
+	.zoom-slider-wrap {
+		margin    : 0 calc(12px - var(--h-slider) / 2);
+		flex      : 1 1 0;
+		display   : flex;
+		min-width : 0;
+	}
+
+	/* Endpoint words. Raised 4px to sit level with the track. */
+	.zoom-edge {
+		font-size      : var(--font-common);
+		transform      : translateY(-3px);
+		flex           : 0 0 auto;
+		color          : black;
+		pointer-events : none;
+		line-height    : 1;
 	}
 
 	.bottom-band {

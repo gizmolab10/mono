@@ -17,13 +17,16 @@
 		value_alt,
 		width = 120,
 		height = 20,
+		thumb_label,
 		onchange_alt,
 		format_label,
 		fill = false,
+		tick_interval,
 		style = 'line',
 		divisions = 200,
 		vertical = false,
 		show_value = false,
+		tick_labels = true,
 		logarithmic = false,
 		show_steppers = true,
 		sticky_threshold = 1,
@@ -39,11 +42,14 @@
 		value_alt?: number;
 		divisions?: number;
 		show_value?: boolean;
+		tick_labels?: boolean;
 		logarithmic?: boolean;
+		tick_interval?: number;
 		show_steppers?: boolean;
 		style?: 'pill' | 'line';
 		sticky_threshold?: number;
 		onchange: (value: number) => void;
+		thumb_label?: (v: number) => string;
 		onstep?: (smaller: boolean) => void;
 		format_label?: (v: number) => string;
 		onchange_alt?: (value: number) => void;
@@ -59,8 +65,13 @@
 
 	// Logarithmic: map [0..divisions] to [log10(min)..log10(max)]
 	// Linear: map [0..divisions] to [min..max]
-	const log_min_val = $derived(logarithmic ? Math.log10(min) : 0);
-	const log_max_val = $derived(logarithmic ? Math.log10(max) : 0);
+	// When the floor is 0 or below, a plain log10 blows up (log10(0) = -∞),
+	// so shift everything by `log_offset` and take the log of (x + offset).
+	// That keeps 0 reachable at the far left and still spaces small numbers
+	// out. For a positive floor the offset is 0 — the pure-log path, unchanged.
+	const log_offset = $derived(logarithmic && min <= 0 ? 1 - min : 0);
+	const log_min_val = $derived(logarithmic ? Math.log10(min + log_offset) : 0);
+	const log_max_val = $derived(logarithmic ? Math.log10(max + log_offset) : 0);
 	const log_range = $derived(log_max_val - log_min_val);
 	const step_size = $derived(logarithmic ? log_range / divisions : (max - min) / divisions);
 
@@ -91,13 +102,13 @@
 	// Value → slider position (0..divisions)
 	let slider_value = $derived(
 		logarithmic
-			? (value <= min ? 0 : (Math.log10(value) - log_min_val) / step_size)
+			? (value <= min ? 0 : (Math.log10(value + log_offset) - log_min_val) / step_size)
 			: Math.max(0, Math.min(divisions, (value - min) / step_size))
 	);
 	let slider_value_alt = $derived(
 		value_alt === undefined ? 0 :
 		logarithmic
-			? (value_alt <= min ? 0 : (Math.log10(value_alt) - log_min_val) / step_size)
+			? (value_alt <= min ? 0 : (Math.log10(value_alt + log_offset) - log_min_val) / step_size)
 			: Math.max(0, Math.min(divisions, (value_alt - min) / step_size))
 	);
 
@@ -110,7 +121,7 @@
 	// Slider position → value
 	function position_to_value(pos: number): number {
 		if (logarithmic) {
-			return Math.max(min, Math.pow(10, log_min_val + pos * step_size));
+			return Math.max(min, Math.pow(10, log_min_val + pos * step_size) - log_offset);
 		}
 		const raw = min + pos * step_size;
 		return Math.max(min, Math.min(max, Math.round(raw * 100) / 100));
@@ -161,7 +172,9 @@
 
 	// Power-of-10 tick marks for logarithmic sliders
 	const log_ticks = $derived.by(() => {
-		if (!logarithmic) return [];
+		// When the caller supplies explicit ticks (tick_interval), use those —
+		// don't also draw the power-of-10 labelled ticks.
+		if (!logarithmic || log_offset > 0 || tick_interval) return [];
 		const ticks: { pct: number; label: string }[] = [];
 		const exp_min = Math.ceil(Math.log10(min));
 		const exp_max = Math.floor(Math.log10(max));
@@ -178,6 +191,21 @@
 		if (!sticky?.length) return [];
 		const range = max - min;
 		return sticky.map(s => ({ pct: (s - min) / range * 100 }));
+	});
+
+	// Evenly-spaced tick marks (e.g. every 10). Visual only — they do NOT snap.
+	const regular_ticks = $derived.by(() => {
+		if (!tick_interval) return [];
+		const range = max - min;
+		if (range <= 0) return [];
+		const ticks: { pct: number }[] = [];
+		for (let v = min; v <= max + 1e-9; v += tick_interval) {
+			const pct = logarithmic
+				? (Math.log10(v + log_offset) - log_min_val) / log_range * 100
+				: (v - min) / range * 100;
+			ticks.push({ pct });
+		}
+		return ticks;
 	});
 
 	function near_thumb(element: HTMLElement | null, sv: number, point: { x: number; y: number }): boolean {
@@ -269,6 +297,9 @@
 				style:--thumb-color={current_thumb_color}
 				style:height={vertical ? `${width}px` : null}
 				style:width={fill ? '100%' : `${vertical ? height : width}px`}>
+				{#if style === 'line' && !vertical}
+					<div class='track-line-bg'></div>
+				{/if}
 				<input class='slider-input'
 					min='0'
 					step='any'
@@ -282,16 +313,26 @@
 						onpress: () => is_dragging = true,
 						onrelease: () => is_dragging = false,
 					}}
-					style={vertical ? 'pointer-events: auto;' : 'flex: 1 1 auto; position: relative; min-width: 0; pointer-events: auto;'}/>
-				{#if logarithmic || sticky_ticks.length > 0}
+					style={vertical ? 'pointer-events: auto;' : 'flex: 1 1 auto; position: relative; min-width: 0; pointer-events: auto; z-index: 2;'}/>
+				{#if thumb_label}
+					<span class='thumb-label' style:left="calc(var(--h-slider) / 2 + {fill_left_pct} * (100% - var(--h-slider)) / 100)">{thumb_label(value)}</span>
+				{/if}
+				{#if logarithmic || sticky_ticks.length > 0 || regular_ticks.length > 0}
 					<div class='tick-overlay'>
 						{#each log_ticks as tick}
 							<div class='tick' style:left="{tick.pct}%">
 								<div class='tick-line'></div>
-								<span class='tick-label'>{tick.label}</span>
+								{#if tick_labels}
+									<span class='tick-label'>{tick.label}</span>
+								{/if}
 							</div>
 						{/each}
 						{#each sticky_ticks as tick}
+							<div class='tick' style:left="{tick.pct}%">
+								<div class='tick-line'></div>
+							</div>
+						{/each}
+						{#each regular_ticks as tick}
 							<div class='tick' style:left="{tick.pct}%">
 								<div class='tick-line'></div>
 							</div>
@@ -373,6 +414,7 @@
 		overflow    : visible;
 		align-items : center;
 		display     : flex;
+		z-index     : 0;
 	}
 
 	.tick-overlay {
@@ -381,13 +423,43 @@
 		position       : absolute;
 		overflow       : visible;
 		pointer-events : none;
+		z-index        : 1;
 		top            : 50%;
 		height         : 0;
+	}
+
+	/* Visible track line, drawn as its own layer UNDER the ticks so the ticks
+	   sit on top of the track but the (higher) thumb still covers them. */
+	.track-line-bg {
+		left          : calc(var(--h-slider) / 2);
+		right         : calc(var(--h-slider) / 2);
+		height        : var(--th-track);
+		background    : var(--c-track);
+		border-radius : var(--r-input);
+		transform     : translateY(-50%);
+		pointer-events: none;
+		position      : absolute;
+		z-index       : 0;
+		top           : 50%;
 	}
 
 	.tick {
 		position  : absolute;
 		transform : translateX(-50%);
+	}
+
+	.thumb-label {
+		transform            : translate(-50%, -50%);
+		font-variant-numeric : tabular-nums;
+		position             : absolute;
+		white-space          : nowrap;
+		text-align           : center;
+		color                : black;
+		pointer-events       : none;
+		font-size            : 12px;
+		top                  : 50%;
+		z-index              : 10;
+		line-height          : 1;
 	}
 
 	.tick-line {
@@ -486,7 +558,7 @@
 
 	.line input[type='range']::-webkit-slider-runnable-track {
 		height        : var(--th-track);
-		background    : var(--c-track);
+		background    : transparent;
 		border-radius : var(--r-input);
 		border        : none;
 	}
@@ -500,7 +572,7 @@
 	}
 
 	.line input[type='range']::-moz-range-track {
-		background    : var(--c-track);
+		background    : transparent;
 		border-radius : var(--r-input);
 		height        : var(--th-track);
 		border        : none;

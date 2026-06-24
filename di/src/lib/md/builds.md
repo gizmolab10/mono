@@ -2,6 +2,7 @@
 
 | Build | Date         | Note                                            |
 | ----- | ------------ | ----------------------------------------------- |
+| 69    | Jun 23, 2026 | logarithmic slider for # of visible dimensions  |
 | 68    | Jun 10, 2026 | uniface proposal done                           |
 | 67    | May 15, 2026 | reorganize controls, details, graph views       |
 | 66    | May 10, 2026 | print the drawing                               |

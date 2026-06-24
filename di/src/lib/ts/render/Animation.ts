@@ -33,8 +33,16 @@ class Animation {
 		const dt = (now - this.last_time) / 1000;
 		this.last_time = now;
 
+		// Run each frame callback in its own guard. If one throws, log it and
+		// move on — never let a single bad frame stop the next from being asked
+		// for. Before this guard, a throw here skipped the request below and the
+		// whole screen loop died until a page refresh.
 		for (const cb of this.callbacks) {
-			cb(dt);
+			try {
+				cb(dt);
+			} catch (e) {
+				console.error('A drawing step threw this frame. Skipping it and keeping the screen loop alive so the canvas can recover.', e);
+			}
 		}
 
 		requestAnimationFrame(this.loop);

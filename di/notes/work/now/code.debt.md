@@ -5,31 +5,27 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the end of handoff
 
-- [ ] read and implement open items line 111
-- [ ] add a new slider -> controls, default = 2
-    - [ ] remove dimensions from the segmented control
+- [ ] move swap x y to p attributes
+- [ ] rename x ray -> wireframe
+- [ ] arrowheads should be drawn in perspective, not flat relative to the screen
 - [ ] sliders have two modes --
-    - [ ] (1) click moves an increment 
-    - [ ] (2) option click moves the thumb to that position
-    - [ ] scaling -> eliminate triangles
-- [ ] not draw any part that is larger than the screen (after tumble and projection)
-- [ ] hover should work with edit turned off
+    - [ ] (1) option click moves one increment in the direction towards the location of the click
+    - [ ] (2) click moves the thumb to that position
+    - [x] scaling -> eliminate triangles
+- [ ] write steve melville
+    - [ ] i've been thinking about this for nearly 15 years, ideas keep popping up and i wonder if you would like me to pass some of them to you? for example...
+    - [ ] economy of scale and profit motive are destructive, we need them but also need some wisdom and reasonable limitations
+    - [ ] as i understand it, your MAP system is designed to support thought leaders with outside research, observation, factual reporting, so they can have the most impact and influence on policy, projects and funding. this is genius. i wonder does your MAP system incorporate a way of measuring that impact and influence? later in a second email: my brother and i would love to help with this.
+    - [ ] seriously
+    - [ ] i lost your last reply, it was fantastic and intimidatingly thorough
 - [ ] clean up guides again
     - [ ] does our current organization make sense?
-- [ ] when a dimensional is being edited, also highlight its SO and its other dimensionals
 - [ ] selection highlight color must be derived from part color, contrasting it AND white background
 - [ ] ability to export an SO -> file
     - [ ] export button below part name, with duplicate and divide
     - [ ] when the selection is the root, change it to save
-- [ ] slider for how many dimensionals appear
 - [ ] pac add a string (called label) to each length Attribute that holds the text version of the value
-- [ ] on hover over a part or a dimensional
-    - [ ] OPTION-C copies the label to the paste buffer
-    - [x] change the dimensional color to red
-    - [x] over a part -> also highlight all its dimensionals
 - [ ] Gemini pro is only $20
-- [ ] move swap x y to p attributes
-- [ ] rename x ray -> wireframe
 - [ ] saved VIEWS orientation/zoom for a SO
     - [ ] list that changes when you load a different SO
     - [ ] remember and forget buttons
