@@ -3,11 +3,13 @@
 #   di/notes/guides/pre-flight/banned words.md
 # That table is the SINGLE SOURCE OF TRUTH — no word list is hardcoded here.
 #
-# The middle "hooked" column decides how each row is enforced:
-#   y      -> hard block. The word is always wrong; the reply must be rewritten.
-#   blank  -> sense check. The word is banned only in one meaning, so the hook
-#             blocks ONCE and asks the model to judge: rewrite if it carries the
-#             banned meaning, otherwise resend unchanged.
+# Two columns decide how each row is enforced:
+#   hard block  -> the hooked column is "y" AND the Meaning column is blank. The
+#                  word is always wrong; the reply must be rewritten.
+#   sense check -> any row whose Meaning column is filled in (the word is banned
+#                  only in that meaning), OR a row with a blank hooked column. The
+#                  hook blocks ONCE and asks the model to judge: rewrite if it
+#                  carries the banned meaning, otherwise resend unchanged.
 # Plural, past-tense and gerund forms are generated here, per the note in the file.
 #
 # A per-chain counter (keyed by transcript) caps retries at CAP, so a match the
@@ -85,7 +87,7 @@ while IFS=$'\t' read -r type never; do
     forms="$(inflect_term "$term")"
     if [ "$type" = "hard" ]; then HARD_FORMS+="$forms"$'\n'; else SOFT_FORMS+="$forms"$'\n'; fi
   done
-done < <(awk -F'|' '{h=$3;n=$4;gsub(/^[ \t]+|[ \t]+$/,"",h);gsub(/^[ \t]+|[ \t]+$/,"",n);if(n==""||n=="Never")next;if(n ~ /^-+$/)next;print ((h=="y")?"hard":"soft") "\t" n}' "$BANNED_FILE")
+done < <(awk -F'|' '{h=$3;n=$4;m=$5;gsub(/^[ \t]+|[ \t]+$/,"",h);gsub(/^[ \t]+|[ \t]+$/,"",n);gsub(/^[ \t]+|[ \t]+$/,"",m);if(n==""||n=="Never")next;if(n ~ /^-+$/)next;print (((h=="y")&&(m==""))?"hard":"soft") "\t" n}' "$BANNED_FILE")
 
 build_alt() { printf '%s\n' "$1" | sed '/^$/d' | sort -u | paste -sd'|' -; }
 HARD_ALT="$(build_alt "$HARD_FORMS")"

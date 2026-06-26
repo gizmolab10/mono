@@ -3,14 +3,13 @@
 Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into tangles.
 
 
-offer a proposal (#) for the first unchecked item, and add it to a new section at the end of handoff
+offer a proposal (#) for the first unchecked item, and add it to a new section at the end of open items.
 
-- [ ] mouse hover should be turned off when mouse leaves canvas
-- [ ] width constants need to depend on browser's zoom factor
 - [ ] arrowheads should be drawn in perspective, not flat relative to the screen
 - [ ] sliders have two modes --
     - [ ] (1) option click moves one increment in the direction towards the location of the click
     - [ ] (2) click moves the thumb to that position
+- [ ] done calls shopkeeping
 - [ ] ability to wander through a design
 - [ ] selection highlight color must be derived from part color, contrasting it AND white background
 - [ ] ability to export an SO -> file

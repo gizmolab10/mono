@@ -15,13 +15,13 @@ If a thing has a name here, that is its name. If you find yourself reaching for 
 - **child** — a smart object that sits inside another smart object's frame.
 - **parent** — the smart object a child sits inside.
 
-## Each smart object's three directions
+## Each smart object's three axes
 
-- **direction** (also written **axis**) — every smart object has three of these, named x, y, and z. Each direction carries three numbers and an angle.
-- **start**, **length**, **end** — the three numbers per direction. Together they describe how the smart object extends along that direction.
-- **attribute** — a generic word for one of the three numbers per direction. Each attribute has flavors: a plain number, a locked number, or a number computed by a formula.
+- **axis** — every smart object has three of these, named x, y, and z. Each axis carries three numbers and an angle.
+- **start**, **length**, **end** — the three numbers per axis. Together they describe how the smart object extends along that axis.
+- **attribute** — a generic word for one of the three numbers per axis. Each attribute has flavors: a plain number, a locked number, or a number computed by a formula.
 - **field** — used in two of the rule names ("locked number field", "value field"). Treat as a synonym for attribute when paired with one of those flavors. In running prose, prefer "attribute" unless the rule itself uses "field".
-- **invariant** — exactly one of the three attributes per direction is invariant. Its value is recomputed from the other two via a built-in formula.
+- **invariant** — exactly one of the three attributes per axis is invariant. Its value is recomputed from the other two via a built-in formula.
 - **lock** — a flag that protects a value from being overwritten by propagation or by reverse propagation.
 
 Do not use these words for the three numbers: *cell*, *value*. Both have been retired in favor of *attribute*.
@@ -56,6 +56,7 @@ Do not use these words for the three numbers: *cell*, *value*. Both have been re
 - **overlay** — a small region drawn ON TOP of the main details column or canvas. Used for transient messages (validation errors, popups). Lives above the regular content, not inside it.
 - **banner** — the always-visible header at the top of each details sub-section. Names the sub-section and holds its action buttons.
 - **status-strip warning** — diagnostic text the status strip at the bottom of the canvas shows when the placement code wants to flag a non-fatal condition for the user.
+- **threshold** — a width limit that switches the layout between its desktop, compact, and phone forms (the wrap_mobile and wrap_phone limits). Never call this a *breakpoint*; "breakpoint" is a debugging term (a spot where the debugger pauses).
 
 ## Camera and view
 

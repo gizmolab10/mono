@@ -23,20 +23,20 @@
 	}
 </script>
 
-<div class='band top-band'>
-	<span class='zoom-edge zoom-out'>shrink</span>
-	<div class='zoom-slider-wrap'>
-		<Slider min={0.0001} max={10000} value={$w_scale} logarithmic fill tick_labels={false} show_steppers={false} onchange={handle_zoom_slide} onstep={handle_zoom_step} />
-	</div>
-	<span class='zoom-edge zoom-in'>enlarge</span>
-</div>
-<div class='band bottom-band'>
+<div class='band status-band'>
 	<button class='build-button' use:hit_target={{ id: 'build', onpress: onshowbuildnotes }}>build {k.build_number}</button>
 	<Status_Strip />
 	<div class='guides-control'>
 		<span class='guides-label'>guides</span> 
 		<Slider min={0} max={1} value={$w_grid_opacity} width={120} show_steppers={false} onchange={(v) => w_grid_opacity.set(v)} />
 	</div>
+</div>
+<div class='band zoom-band'>
+	<span class='zoom-edge zoom-out'>shrink</span>
+	<div class='zoom-slider-wrap'>
+		<Slider min={0.0001} max={10000} value={$w_scale} logarithmic fill tick_labels={false} show_steppers={false} onchange={handle_zoom_slide} onstep={handle_zoom_step} />
+	</div>
+	<span class='zoom-edge zoom-in'>enlarge</span>
 </div>
 
 <style>
@@ -50,7 +50,7 @@
 		flex-shrink     : 0;
 	}
 
-	.top-band {
+	.zoom-band {
 		margin-top : var(--l-gap);
 	}
 
@@ -75,8 +75,9 @@
 		line-height    : 1;
 	}
 
-	.bottom-band {
+	.status-band {
 		justify-content : space-between;
+		margin-top      : 8px;
 	}
 
 	.guides-control {

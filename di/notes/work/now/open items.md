@@ -16,7 +16,7 @@ Could not reproduce from reading the code. Need more detail about the scene befo
 
 ### 1.4 Labels still inside silhouette in some views
 
-The 2026-05-19 work fixed floaters and ruled out the spring as a cause. Two reported drawer-SO orientations — [-0.35, -0.38, -0.57, 0.64] and [-0.48, -0.42, -0.49, 0.60] — have not been re-measured since the floater fix. Next moves: visually re-check at those two orientations; if labels still sit inside, add the orientations to the inside-silhouette spec. If the bug still reproduces in code, the two remaining causal candidates are repulsion shoving labels across the outline (crowded views) or the eighty-pixel push cap leaving labels partly inside from the start (deep-clearance views). The richer diagnostic that names outside-the-silhouette position, after-push, and final positions per label would separate the two. *Effort: visual recheck ~5 minutes; diagnostic ~1 hour; fix ~half a day.*
+The 2026-05-19 work fixed floaters and ruled out the spring as a cause. Two reported drawer-SO orientations — [-0.35, -0.38, -0.57, 0.64] and [-0.48, -0.42, -0.49, 0.60] — have not been re-measured since the floater fix. Next moves: visually re-check at those two orientations; if labels still sit inside, add the orientations to the inside-silhouette spec. If the bug still reproduces in code, the two remaining causal candidates are repulsion shoving labels across the outline (crowded views) or the eighty-pixel push cap leaving labels partly inside from the start (deep-clearance views). The richer diagnostic that names outside-the-silhouette position, after-push, and final positions per label would separate the two. *Effort: visual recheck ~5 minutes; diagnostic ~1 hour; fix ~half a day.* See §3.6 (bug 001) for the captured case and current synopsis.
 
 ## 2. Code quality
 
@@ -113,16 +113,70 @@ Every item below is either disapproved, mothballed, or marked "future" in phase 
     - **3.4.3a step 4a — build the rotated silhouette and uniface boxes per rule 4.** Each rotated part gets its own box, aligned with the part, expanded by the silhouette margin. Exit: unit tests pass.
     - **3.4.3b step 4b — visual confirmation on a scene with two or more overlapping rotated parts.** If clutter results (labels stacked unreadably or witnesses crossing the rotated boxes' edges visibly), address by one of: sharing a uniface between overlapping rotated boxes, dropping one label per overlapping group, or widening the rotated-box silhouette margin. Decide between those options after the visual shows the problem, not before.
 
-## 4. Mothballed
+### 3.5 Wrong-side scoring iteration
 
-### 4.1 Residual child-drag drift
+We are tuning where the placement parks a dimension line. Several scoring rules have piled up, but the latest picture still puts the line on the far side of the drawing from the wall it measures, instead of right along it. Jonathan wants one more rule: reward a placement where the whole dimension lies flat against the front face of the part being measured.
+
+The app cannot tell that yet. The outline it compares against wraps the whole scene, not the single part, so that outline's near face floats in front of the wall by the depth of everything behind it — never on the wall itself. Two ways forward:
+
+- ONE — reward by how close the dimension line is to the part's front face: closer earns more (a sliding scale).
+- TWO — build the comparison outline around the ONE part being measured, not the whole scene. Then its face is the part's face, so "lies on the face" is a clean yes or no.
+
+Next: pick one, build it, look at the result, then keep tuning.
+
+Notes:
+
+- The lies-flat term scales by `max(0, −n_camera · n_front)`. When the front-most face points sideways, the term collapses to zero — intentional, but worth eyeballing across scenes.
+- The on-plane reward probably requires deciding between graded distance and per-part silhouette boxes. The per-part choice is the bigger structural change.
+- The "label inside part box" reject in the last-resort step assumes one part box per dim. Multi-part dims would need a different check.
+
+### 3.6 Bug 001 — dim inside silhouette
+
+From the bugs assemblage (one numbered folder per bug under `work/now/bugs`, no tracker; described in [our process](our%20process.md)). Folder: `notes/work/now/bugs/001 dim is inside silho/` — screenshot, render log, and `data.json` (the part, the view, what is wrong, what was expected).
+
+The bug: at the captured view (part front.moose.kitchen wall, orientation and zoom in `data.json`), the 10' 4 1/4" label sits well inside the silhouette box. Expected: it should pass the first filter (dimensions.latest.spec, line 160).
+
+Synopsis:
+
+- The guard that decides "inside or outside the silhouette" tests the label against the outline built from the parts' box corners after projection. Under perspective that outline does NOT match the silhouette the eye sees, so a label can read as inside the visible silhouette while the guard calls it outside.
+- Every diagnosis tried so far has been wrong against the visual. Standing rule: trust the eye over the log and the guard.
+- Captured, not yet diagnosed; no code changed. Paused as part of the "simplify and perfect the flag-off case" arc (code-debt item 1) — nothing to revert.
+- Same symptom as §1.4 (older 2026-05-19 notes there).
+
+## 4. Zoom (proposed)
+
+Three connected proposals about zoom. All still design — no code yet. Today zoom scales the model around the origin (a scale matrix on the root); the camera eye is fixed at 2750 mm. Evidence: root scale matrix, Drag.ts 747–750; camera eye, Camera.ts line 8.
+
+### 4.1 Dolly zoom — move the camera in and out instead of scaling the model
+
+- The model keeps true world size; the eye moves along its line of sight toward the center.
+- Must clamp the near plane (10 mm) or near parts clip away. Evidence: Camera.ts near = 10.
+- Migration: retire the stored scale amount; re-derive the default, the status read-out, saved views, and the dimensions slider's frustum basis from eye distance.
+
+### 4.2 Flat-or-dolly toggle
+
+A persisted flag plus a control that switches between today's flat scale and the dolly. Default flat; dolly behind the flag. Define a flat-amount to eye-distance mapping so switching mid-scene does not jump the view. Cost: two zoom paths to keep and test, and one more control.
+
+### 4.3 Near-occluder peel
+
+As you zoom in, HIDE parts closer to the camera than a zoom-driven depth, so front layers peel away and inner parts show.
+
+- Chosen flavor: blanket near-plane peel. Hide outright (not fade). Never peel the selected or hovered part.
+- Depth = distance from the eye along the view axis to a part's nearest box corner; the peel depth ramps with zoom, tuned by a curve.
+- Focus-targeted peel (hide only the true occluders of a focus part) is the fallback if the blanket peels the wrong things; the renderer already tracks occluding faces. Evidence: Render.ts line 27.
+
+Order to build: 4.1 (dolly) first, then 4.3 (peel) which leans on the dolly's depth, then 4.2 (toggle) if both are wanted. Each needs tests and a log line of what it culled or moved.
+
+## 5. Mothballed
+
+### 5.1 Residual child-drag drift
 
 Parked in [milestone 33](di/notes/work/milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 
-### 4.2 Allocation-cluster and string-key performance bullets
+### 5.2 Allocation-cluster and string-key performance bullets
 
 Deferred in [bottlenecks.md](bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
-### 4.3 Stud / joist / stair master kinds
+### 5.3 Stud / joist / stair master kinds
 
 First cut at the three-way segmented control needed lots of work — wrong starting proportions, name collisions, and no path from a stair master to the existing diagonal-rise repeater. See [repeaters.mothball.md](repeaters.mothball.md) for what was attempted and the six things to think through before resuming.

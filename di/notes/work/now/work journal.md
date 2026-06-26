@@ -6,6 +6,95 @@ Record work performed during chat sessions, in reverse chronological order. Each
 
 ---
 
+## Session — 2026-06-25 — Rename Testworthy_Utilities to Utilities; Bash-popup tooling
+
+- Renamed utilities/Testworthy_Utilities.ts to Utilities.ts (class Utilities), export tu to u; test renamed to Utilities.test.ts; utilities/index.ts and types/Units.ts repointed. svelte-check clean, tests pass. map.md and file layout.md updated.
+- Permissions: settings.local.json allow-list pruned and broadened (mv, rm, yarn, printf, xxd, awk, echo as Bash globs); kept git / npx / node / bash / xargs scoped, not blanket, per the no-git and no-npx rules.
+- Added di always rule 10: never chain destructive Bash (sed -i / mv / rm with each other or cd); use the Edit tool for in-file changes and a lone mv for renames. Chained destructive commands trip a permission popup because the auto-approve hook refuses them and the allow-list matches only by lead command.
+
+### Files touched
+
+- di/src/lib/ts/utilities/Utilities.ts (renamed), utilities/index.ts, types/Units.ts, tests/Utilities.test.ts
+- map.md, file layout.md, .claude/settings.local.json, di/notes/guides/pre-flight/always.md
+
+### Verification
+
+- yarn svelte-check: 0 errors. yarn vitest run: pass.
+
+---
+
+## Session — 2026-06-25 — Print and Versions moved to utilities
+
+- Moved Print.ts and Versions.ts from managers/ into utilities/. Both folders sit at the same depth under ts/, so the moved files' own imports needed no change. Dropped their exports from managers/index, added them to utilities/index. Repointed importers: App.svelte (Print), Engine.ts, Versions.test.ts, History.ts, Scenes.ts (Versions). Status stays in managers — it owns a writable store (Status.ts:12).
+- svelte-check clean (594 files), all 842 tests pass. map.md and file layout.md updated.
+- Permissions: added Bash(mv:*) and Bash(rm:*) to settings.local.json so file moves and deletes stop prompting (Jonathan chose to allow both).
+
+### Files touched
+
+- di/src/lib/ts/utilities/Print.ts, utilities/Versions.ts (moved in), managers/index.ts, utilities/index.ts
+- di/src/App.svelte, render/Engine.ts, managers/History.ts, managers/Scenes.ts, tests/Versions.test.ts (import repoints)
+- map.md, file layout.md, .claude/settings.local.json
+
+### Verification
+
+- yarn svelte-check: 0 errors, 594 files.
+- yarn vitest run: 842 passed.
+
+---
+
+## Session — 2026-06-25 — Layout re-flows on browser zoom + checker fixes
+
+Layout-on-zoom (code debt "width constants need to depend on browser's zoom factor"):
+
+- First built it backwards — multiplied the measured width by a page-zoom factor, which cancelled zoom and stopped the re-flow. Reverted.
+- The fix: the limits compare the plain measured width, which already shrinks on browser zoom, so zoom-in crosses the phone/compact limits and the controls re-flow. Visually confirmed by Jonathan.
+- Added flip-only diagnostic logs in Main.svelte and Primary_Controls.svelte (print the measured width and the limits when a layout switch flips).
+- Removed the now-unused Zoom.ts / browser_zoom() — it had no caller after the revert.
+
+Checker and lexicon:
+
+- banned-words-check.sh: a row with a filled-in Meaning column is now a sense-check, not a hard-stop; hard only when hooked "y" AND Meaning blank. This ended the repeated false hard-stops (and the duplicate replies) on a word that is also a Use word.
+- Lexicon: the term for an SO's three things is now "axis"; swapped the leftover old word to axis/axes through that section.
+- learn entry 10: never state a file location as fact without quoting it first (a wrong line-number claim cost a trust point).
+
+### Files touched
+
+- di/src/lib/svelte/main/Main.svelte, Primary_Controls.svelte (plain-width limits + flip logs)
+- di/src/lib/ts/utilities/Zoom.ts (deleted), utilities/index.ts (export removed)
+- di/.claude/hooks/banned-words-check.sh (Meaning-driven hard/soft)
+- lexicon.md, banned words.md, learn.md
+
+### Verification
+
+- yarn svelte-check: 0 errors, 594 files.
+- Browser-zoom re-flow: visually confirmed by Jonathan.
+
+---
+
+## Session — 2026-06-24 — Print manager + app.css extraction
+
+The "remove dead print code" item turned out wrong: the print code is reachable. The browser fires its print events to the listeners the app registers, so Cmd+P (or File -> Print) runs it. Reverted the App.svelte print removal (restored exactly from a pre-edit snapshot), then relocated instead of removing.
+
+- New Print manager (managers/Print.ts): a `print` singleton holding the silhouette-fit print scaling; `print.register()` wires the browser print events plus the print media-query. Exported from the managers index. App.svelte calls register() once, so Cmd+P behaves as before.
+- All App.svelte global styles moved into css/app.css (base body/input, the narrow-width gap override, the print stylesheet), imported once by main.ts. The `:global()` wrappers dropped (a plain stylesheet is already global). App.svelte now holds only the color effect, the print registration, and the layout component.
+- Considered moving print.register() into the color effect — declined (couples unrelated concerns, would run on every color change); left as a top-level call.
+
+### Files touched
+
+- di/src/lib/ts/managers/Print.ts (new)
+- di/src/lib/ts/managers/index.ts (export print)
+- di/src/css/app.css (new)
+- di/src/main.ts (import app.css)
+- di/src/App.svelte (thin: color effect + register + Main)
+- map.md, file layout.md (list Print.ts, app.css)
+
+### Verification
+
+- yarn svelte-check: 0 errors, 0 warnings, 594 files.
+- Print output via Cmd+P needs Jonathan's visual confirmation.
+
+---
+
 ## Session — 2026-06-24 — CLAUDE path fixes + per-project map convention
 
 Fixed three broken references in di/CLAUDE.md (the file assumed di lived at mono/projects/di; it lives at mono/di):
@@ -18,6 +107,13 @@ Fixed three broken references in di/CLAUDE.md (the file assumed di lived at mono
 Map convention (decided: one map each, per project). Checked all eight projects — none used the shared root's generic `<X>/notes/map.md`: di's map is at notes/guides/project/overview/map.md, ga's at notes/work/map.md, the other six have none. Reworded the shared root CLAUDE map line to "one per project, at the path that project's own CLAUDE names (locations vary; not every project has one)". di names its map; ga has a map but no CLAUDE, so its map is unnamed until ga is next worked.
 
 Also added two learn entries (answer honestly when asked if hung, with a prevention; say "needs your visual confirmation") and lexicon terms ("part", "subpart", a Trust section with "mistrust point"/"mistrust issue").
+
+Same day, more:
+
+- Hover now clears when the cursor leaves the canvas (the leave handler clears the hover signals, skips mid-drag). svelte-check clean; visually confirmed.
+- Status band moved down 8px (the main area gains that space above it). Visually confirmed.
+- Precheck moved into a Stop hook (new conciseness-check.sh: filler + length); removed the manual "PRECHECK FIRST" instruction. This ends the per-reply Bash popup and the draft-shown-twice doubling. The banned-word check in precheck.sh was removed earlier (the Stop hook reading banned words.md is the sole gate). A third learn entry added (a trailing "continue" never cancels a pending request).
+- Handoff slimmed to a thin index: its open, paused, and proposal sections moved into open items (§3.5 wrong-side scoring, §3.6 bug 001, §5 zoom proposed; §1.4 cross-links §3.6).
 
 ### Files touched
 

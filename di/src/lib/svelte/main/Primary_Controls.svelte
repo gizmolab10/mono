@@ -16,8 +16,17 @@
 	const face_labels = ['bottom', 'top', 'left', 'right', 'back', 'front'];
 
 	let controls_width   = $state(Infinity);
-	let wrap_phone       = $derived(controls_width < (k.width.wrap_phone));
-	let wrap_mobile      = $derived(controls_width < (k.width.wrap_mobile));
+	let wrap_phone       = $derived(controls_width < k.width.wrap_phone);
+	let wrap_mobile      = $derived(controls_width < k.width.wrap_mobile);
+
+	// Log only when a layout switch actually flips, with the numbers behind it.
+	let last_wrap_log = '';
+	$effect(() => {
+		const line = `phone ${wrap_phone} compact ${wrap_mobile}`;
+		if (line === last_wrap_log) return;
+		last_wrap_log = line;
+		console.log(`controls layout: measured ${Math.round(controls_width)} layout pixels — phone-stack ${wrap_phone}, compact ${wrap_mobile} (limits: phone ${k.width.wrap_phone}, compact ${k.width.wrap_mobile}).`);
+	});
 	let show_names       = $derived(($w_decorations & T_Decorations.names) !== 0);
 	let show_angles      = $derived(($w_decorations & T_Decorations.angles) !== 0);
 	let root_fits        = $derived.by(() => { $w_tick; return engine.root_fits(); });

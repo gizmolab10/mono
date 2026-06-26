@@ -372,3 +372,19 @@
 - [x] when a dimensional is being edited, also highlight its SO and its other dimensionals
 - [x] rename x ray -> wireframe
 - [x] sliders: scaling -> eliminate triangles
+- [x] mouse hover should be turned off when mouse leaves canvas
+- [x] move all paused, open and proposals from handoff to open items
+- [x] app.svelte has stale cruft (browser DOES invoke it via Cmd+P)
+    - [x] move the print code into a new Print manager (managers/Print.ts), wired by print.register()
+    - [x] move all App.svelte global styles into css/app.css, imported by main.ts
+    - [x] App.svelte now holds only the color effect, print registration, and the layout component
+- [x] width constants need to depend on browser's zoom factor (the layout now re-flows on browser zoom)
+    - [x] the limits compare the plain measured width, which already shrinks on zoom, so zoom-in crosses the limit and re-flows
+    - [x] visually confirmed re-flow on zoom
+- [x] move from managers to utilities: Print, Status, and Versions
+    - [x] moved Print and Versions into utilities (files, both index barrels, all importers repointed)
+    - [x] Status kept in managers by decision — it owns a writable store (Status.ts:12)
+    - [x] svelte-check clean, all 842 tests pass
+- [x] rename Testworthy_Utilities -> Utilities
+    - [x] file and class renamed; export renamed tu -> u; test renamed; index and Units.ts repointed
+    - [x] svelte-check clean, all tests pass

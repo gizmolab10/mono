@@ -1,6 +1,6 @@
 import { type Dictionary } from '../types/Types'
 
-export class Testworthy_Utilities {
+export class Utilities {
 	private orderedKeysCache = new WeakMap<object, string[]>();
 
 	ignore(_event: Event)							{}
@@ -133,4 +133,4 @@ export class Testworthy_Utilities {
 
 }
 
-export const tu = new Testworthy_Utilities();
+export const u = new Utilities();

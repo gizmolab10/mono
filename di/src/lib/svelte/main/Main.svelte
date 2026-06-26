@@ -33,6 +33,15 @@
 		e.setup();
 	});
 
+	// Log only when the phone-layout switch flips, with the numbers behind it.
+	let last_phone_log = '';
+	$effect(() => {
+		const line = `phone ${wrap_phone}`;
+		if (line === last_phone_log) return;
+		last_phone_log = line;
+		console.log(`window layout: measured ${Math.round(width)} window pixels — phone layout ${wrap_phone} (limit: ${k.width.wrap_phone}).`);
+	});
+
 	function handleResize() {
 		width  = Math.max(k.width.window_min, window.innerWidth);
 		height = window.innerHeight;

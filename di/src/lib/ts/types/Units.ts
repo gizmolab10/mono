@@ -1,5 +1,5 @@
 import { preferences, T_Preference } from '../managers/Preferences';
-import { tu } from '../utilities/Testworthy_Utilities';
+import { u } from '../utilities/Utilities';
 import { T_Unit, T_Units } from './Enumerations';
 import { stale_writable } from '../common/Dirty';
 import { get } from 'svelte/store';
@@ -348,7 +348,7 @@ export class Units {
 		if (raw_numerator >= max_denominator) {
 			return { whole: whole + 1, numerator: 0, denominator: 1 };
 		}
-		const divisor = tu.gcd(raw_numerator, max_denominator);
+		const divisor = u.gcd(raw_numerator, max_denominator);
 		return { whole, numerator: raw_numerator / divisor, denominator: max_denominator / divisor };
 	}
 

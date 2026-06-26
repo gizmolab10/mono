@@ -54,7 +54,20 @@ class Events_3D {
 		if ('ontouchstart' in window) return;
 
 		this.listener_mouseenter = () => { this.mouse_in_canvas = true; };
-		this.listener_mouseleave = () => { this.mouse_in_canvas = false; };
+		this.listener_mouseleave = () => {
+			this.mouse_in_canvas = false;
+			// Cursor left the drawing — stop lighting up whatever it last pointed
+			// at. Skip mid-drag: a drag that wanders off the canvas keeps going,
+			// and hover is already cleared during a drag. The hover signal marks
+			// the canvas out of date, so the highlight redraws away on its own.
+			if (this.is_dragging) return;
+			const had_hover = hits_3d.hover !== null || hits_3d.hovered_dimension !== null;
+			hits_3d.hover = null;
+			hits_3d.hovered_dimension = null;
+			hits_3d.hovered_uniface_placement = null;
+			canvas.style.cursor = '';
+			if (had_hover) console.log('cursor left the canvas — cleared the hover highlight.');
+		};
 		canvas.addEventListener('mouseenter', this.listener_mouseenter);
 		canvas.addEventListener('mouseleave', this.listener_mouseleave);
 

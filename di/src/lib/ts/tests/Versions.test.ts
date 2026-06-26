@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { versions } from '../managers/Versions';
+import { versions } from '../utilities/Versions';
 
 // Minimal SO stub — migrations need at least one entry in smart_objects
 const stub_so = { id: 'a', name: 'box', x: { attributes: {} }, y: { attributes: {} }, z: { attributes: {} } };

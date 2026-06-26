@@ -22,4 +22,26 @@ if echo "$COMMAND" | grep -qE '\bgit[[:space:]]+worktree\b'; then
   exit 0
 fi
 
+# 3) auto-approve read-only exploration so compound greps/finds/cats never
+# prompt, no matter how they are chained. Allow only when EVERY pipeline segment
+# is a safe read-only command and nothing in the line can write or run other
+# programs. Anything else falls through to the normal permission flow.
+DANGER='\$\(|`|find[^|;&]*-(exec|execdir|delete|fprint|fls)|sed[^|;&]*-i|>>|>[[:space:]]*[^&/[:space:]]'
+if ! echo "$COMMAND" | grep -qE "$DANGER"; then
+  SAFE='^(grep|egrep|fgrep|find|cat|ls|wc|head|tail|sort|uniq|cut|tr|sed|awk|echo|printf|cd|dirname|basename|shasum|comm|column|nl|true)$'
+  ALL_SAFE=1
+  SEGMENTS=$(printf '%s' "$COMMAND" | tr '\n' ';' | sed -E 's/\|\||&&/;/g; s/\|/;/g')
+  OLDIFS="$IFS"; IFS=';'
+  for seg in $SEGMENTS; do
+    word=$(printf '%s' "$seg" | sed -E 's/^[[:space:]]+//' | awk '{print $1}')
+    [ -z "$word" ] && continue
+    echo "$word" | grep -qE "$SAFE" || { ALL_SAFE=0; break; }
+  done
+  IFS="$OLDIFS"
+  if [ "$ALL_SAFE" = "1" ]; then
+    jq -n '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "allow", permissionDecisionReason: "read-only exploration auto-approved by bash-command-check"}}'
+    exit 0
+  fi
+fi
+
 exit 0

@@ -1,6 +1,4 @@
-export type { Portable_Scene, Portable_SO, Exported_File } from './Versions';
 export { preferences, T_Preference } from './Preferences';
-export { CURRENT_VERSION, versions } from './Versions';
 export { selection } from './Selection';
 export { history } from './History';
 export { scenes } from './Scenes';
