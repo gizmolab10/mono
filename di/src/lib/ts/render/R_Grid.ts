@@ -229,7 +229,7 @@ export function render_root_bottom(host: GridHost, is_2d = false): void {
 		if (!face) return;
 		ctx.save();
 		ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.5)`;
-		ctx.lineWidth = 1;
+		ctx.lineWidth = stores.heavy_thickness;
 		ctx.setLineDash([4, 4]);
 		for (let i = 0; i < face.length; i++) {
 			const a = pts[face[i]], bp = pts[face[(i + 1) % face.length]];
@@ -247,7 +247,7 @@ export function render_root_bottom(host: GridHost, is_2d = false): void {
 		];
 		ctx.save();
 		ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.35)`;
-		ctx.lineWidth = 0.5;
+		ctx.lineWidth = stores.edge_thickness;
 		for (const [i, j] of edges) {
 			const a = pts[i], bp = pts[j];
 			if (a.w < 0 || bp.w < 0) continue;
@@ -299,7 +299,7 @@ export function render_back_grid(host: GridHost): void {
 	ctx.save();
 	ctx.globalAlpha = stores.grid_opacity;
 	ctx.strokeStyle = 'rgba(128, 128, 128, 0.12)';
-	ctx.lineWidth = 1;
+	ctx.lineWidth = stores.heavy_thickness;
 	ctx.lineCap = 'round';
 
 	for (let fi = 0; fi < 6; fi++) {
@@ -385,7 +385,7 @@ export function render_back_grid(host: GridHost): void {
 					ctx.fillStyle = `rgba(${shadow_r}, ${shadow_g}, ${shadow_b}, 0.3)`;
 					ctx.fill();
 					ctx.strokeStyle = `rgba(${shadow_r}, ${shadow_g}, ${shadow_b}, 0.8)`;
-					ctx.lineWidth = 1;
+					ctx.lineWidth = stores.heavy_thickness;
 					ctx.stroke();
 					// Restore grid style for next face
 					ctx.globalAlpha = stores.grid_opacity;

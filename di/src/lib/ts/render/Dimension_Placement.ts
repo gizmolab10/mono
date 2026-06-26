@@ -1860,7 +1860,7 @@ let dispatched_dim_log_fresh: boolean = false;
  *  from the placement code's batched per-render block. Always appends
  *  (never the fresh-overwrite first POST), so any subsequent placement
  *  POST appends after these renderer lines. */
-export function append_dim_log_line(text: string): void {
+export function dimensionals_log(text: string): void {
 	try {
 		fetch('http://localhost:5171/log-dimensionals', { method: 'POST', body: text + '\n' }).catch(() => { /* silent */ });
 	} catch {

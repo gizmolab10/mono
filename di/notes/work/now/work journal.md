@@ -6,6 +6,33 @@ Record work performed during chat sessions, in reverse chronological order. Each
 
 ---
 
+## Session — 2026-06-25 — Line-thickness consolidation (store-driven)
+
+- The renderer's canvas line widths, once hand-coded numbers, now read from the thickness stores: stores.edge_thickness (most lines), stores.heavy_thickness (the heavier strokes), stores.bold_thickness (selection / hover and the selection-dot outline), and stores.edge_thickness / 2 (the faint reveal edges). Across Dimension_Renderer, R_Grid, R_Axes, R_Angulars, Render.
+- Those stores all scale from one preference: edge_thickness (default 2); bold = edge × 2.5, heavy = edge × 4.0 (Stores.ts:51-53 reading k.thickness.bold / k.thickness.heavy). So every stroke width follows the user's edge-thickness setting.
+- I first did this as fixed Constants tokens (a `line` set); Jonathan reworked it to the store-based form so the widths stay user-tunable, and removed the `line` set from Constants. I then removed the two now-unused `k` imports the rework orphaned (R_Grid, R_Axes).
+- No hand-coded numeric ctx.lineWidth literals remain in render/. Because the widths are now store-driven, the strokes can differ from the old fixed numbers — needs Jonathan's eye.
+
+### Files touched
+
+- Dimension_Renderer.ts, R_Grid.ts, R_Axes.ts, R_Angulars.ts, Render.ts, Constants.ts (final store-based rework by Jonathan)
+
+### Verification
+
+- yarn svelte-check: 0 errors. yarn vitest run: 842 passed (current state).
+
+---
+
+## Session — 2026-06-25 — Perspective arrowheads: built, disapproved, reverted
+
+- Built dimension arrowheads as 3D triangles lying in the dim line's plane (tip at the anchor, base along the witness direction), projected, sized to a near-constant ~6px on screen. Plumbed the untumbled anchors plus one edge point onto the placement record.
+- First attempt populated only the full-search path, so the steady state stayed flat and only blinked 3D on hover (the seeded/locked path lacked the world anchors). Fixed by populating the locked path too (Dimension_Placement.ts:2525).
+- Jonathan's verdict on the image: the arrowheads took on too many different triangle variations across the drawing — not worth it. DISAPPROVED. Reverted to the original flat arrowheads.
+- Net code change: none (fully reverted). svelte-check clean, 842 tests pass.
+- If ever revisited: a per-dimension 3D arrowhead at small screen size reads as inconsistent triangles; try a single consistent 3D form, not a per-dim-plane orientation.
+
+---
+
 ## Session — 2026-06-25 — Rename Testworthy_Utilities to Utilities; Bash-popup tooling
 
 - Renamed utilities/Testworthy_Utilities.ts to Utilities.ts (class Utilities), export tu to u; test renamed to Utilities.test.ts; utilities/index.ts and types/Units.ts repointed. svelte-check clean, tests pass. map.md and file layout.md updated.

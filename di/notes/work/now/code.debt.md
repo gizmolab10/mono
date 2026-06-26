@@ -5,19 +5,26 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the end of open items.
 
-- [ ] arrowheads should be drawn in perspective, not flat relative to the screen
-- [ ] sliders have two modes --
-    - [ ] (1) option click moves one increment in the direction towards the location of the click
-    - [ ] (2) click moves the thumb to that position
-- [ ] done calls shopkeeping
-- [ ] ability to wander through a design
+- [ ] unpause item 3.6 of 'open items.md' line 133
+    - [ ] first move that item to Current thread in handoff.md
 - [ ] selection highlight color must be derived from part color, contrasting it AND white background
+    - [ ] three colors around the color wheel
+        - [ ] parts, selection, dimensions
+- [ ] play with it
+    - [ ] two door cabinet
+    - [ ] two blocks
 - [ ] ability to export an SO -> file
     - [ ] export button below part name, with duplicate and divide
     - [ ] when the selection is the root, change it to save
 - [ ] pac add a string (called label) to each length Attribute that holds the text version of the value
 - [ ] move swap x y to p attributes
     - [ ] needs careful thinking about x/z and y/z
+- [ ] sliders have two modes --
+    - [ ] (1) option click moves one increment in the direction towards the location of the click
+    - [ ] (2) click moves the thumb to that position
+- [ ] done calls shopkeeping
+- [ ] ability to wander through a design
+- [ ] read article. analyze code -> write according to it
 
 ## tom
 

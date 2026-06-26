@@ -50,6 +50,7 @@ class Stores {
 	get grid_opacity():					  number { return get(this.w_grid_opacity); }
 	get edge_thickness():				  number { return get(this.w_edge_thickness); }
 	get bold_thickness():				  number { return get(this.w_edge_thickness) * k.thickness.bold; }
+	get heavy_thickness():				  number { return get(this.w_edge_thickness) * k.thickness.heavy; }
 	get current_dimension_count():		  number { return Math.round(get(this.w_dimension_count)); }
 	get show_dimensionals(): 			 boolean { return this.current_dimension_count > 0; }
 	get show_angulars():      			 boolean { return (get(this.w_decorations) & T_Decorations.angles) !== 0; }

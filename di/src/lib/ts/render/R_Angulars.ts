@@ -4,6 +4,7 @@ import type { O_Scene } from '../types/Interfaces';
 import { mat4, quat, vec3, vec4 } from 'gl-matrix';
 import type { Axis_Name } from '../types/Types';
 import { hits_3d } from '../events/Hits_3D';
+import { stores } from '../managers/Stores';
 import { scene } from './Scene';
 
 /**
@@ -251,7 +252,7 @@ function render_angular(
 
 	// Draw
 	ctx.strokeStyle = 'rgba(100, 100, 100, 0.7)';
-	ctx.lineWidth = 1;
+	ctx.lineWidth = stores.heavy_thickness;
 
 	// Witness lines from hinge
 	ctx.beginPath();

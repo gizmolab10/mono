@@ -5,10 +5,11 @@
 
 ## Current thread
 
-Zoom feature work is proposed in open items §4.
+None active — the line-thickness consolidation is done (see work journal).
 
 ## Paused threads
 
+Zoom feature work is proposed in open items §4.
 Dimension placement. Paused threads in [[open items]]:
 
 - §3.5 — wrong-side scoring iteration (pick the on-plane-reward approach, build, verify, keep tuning).

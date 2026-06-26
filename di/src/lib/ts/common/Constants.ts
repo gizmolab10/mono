@@ -113,6 +113,7 @@ export default class Constants {
 		track:       Math.round(common_size / 8),
 		border:      0.5,
 		bold:        2.5,
+		heavy:		 4.0,
 		tick:        1,
 	};
 

@@ -728,7 +728,7 @@ class Render {
 			// EXCEPT while OPTION is held, in which case they render fully so
 			// the user can see them on demand (x-ray reveal).
 			this.ctx.globalAlpha = (!obj.parent || option_down) ? 1 : stores.grid_opacity;
-			this.ctx.lineWidth = 0.5;
+			this.ctx.lineWidth = stores.edge_thickness / 2;
 			for (const [i, j] of obj.edges) {
 				if (root_bottom && !root_bottom.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
 				const a = projected[i], b = projected[j];
@@ -2566,7 +2566,7 @@ class Render {
 			this.ctx.arc(p.x, p.y, stores.bold_thickness, 0, Math.PI * 2);
 			this.ctx.fillStyle = 'white';
 			this.ctx.fill();
-			this.ctx.lineWidth = 2;
+			this.ctx.lineWidth = stores.bold_thickness;
 			this.ctx.strokeStyle = color;
 			this.ctx.lineJoin = 'round';
 			this.ctx.stroke();

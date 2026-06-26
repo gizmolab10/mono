@@ -388,3 +388,8 @@
 - [x] rename Testworthy_Utilities -> Utilities
     - [x] file and class renamed; export renamed tu -> u; test renamed; index and Units.ts repointed
     - [x] svelte-check clean, all tests pass
+- [x] **DISAPPROVED:** arrowheads should be drawn in perspective, not flat relative to the screen
+    - [x] built it (3D triangle in the dim line's plane, near-constant ~6px); Jonathan disapproved — the arrowheads took on too many different triangle variations and the effect was not worth it
+    - [x] reverted to the original flat arrowheads; svelte-check clean, 842 tests pass
+- [x] thicknesses for lines, see [[di/notes/work/now/handoff]]
+    - [x] The code has lots of thicknesses hand coded. Let's use Constants line 114

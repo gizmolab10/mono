@@ -1,13 +1,13 @@
-import { compute_root_tumble_matrix, get_last_uniface_placement_result, convex_hull, compute_dim_render_geometry, append_dim_log_line } from './Dimension_Placement';
+import { compute_root_tumble_matrix, get_last_uniface_placement_result, convex_hull, compute_dim_render_geometry, dimensionals_log } from './Dimension_Placement';
 import type { Placement_Details, Silhouette_Box } from './Dimension_Placement';
 import type { DimensionHost } from './R_Dimensions';
-import { hits_3d } from '../events/Hits_3D';
-import { scene } from './Scene';
 import { selection } from '../managers/Selection';
-import { stores } from '../managers/Stores';
 import { dimensions } from '../editors/Dimension';
+import { hits_3d } from '../events/Hits_3D';
+import { stores } from '../managers/Stores';
 import { k } from '../common/Constants';
 import { vec3 } from 'gl-matrix';
+import { scene } from './Scene';
 
 /**
  * Canvas renderer for dimensions. Reads the placement list produced by
@@ -57,7 +57,7 @@ export function render_uniface_picks(host: DimensionHost): void {
 		if (poly.length < 3) return;
 		ctx.save();
 		ctx.strokeStyle = SILHOUETTE_HEX_STROKE;
-		ctx.lineWidth = 1;
+		ctx.lineWidth = stores.edge_thickness;
 		ctx.setLineDash(dashed ? [4, 4] : []);
 		ctx.beginPath();
 		for (let i = 0; i < poly.length; i++) {
@@ -72,7 +72,7 @@ export function render_uniface_picks(host: DimensionHost): void {
 	draw_polygon_green(result.silhouette_polygon_screen, false);
 	draw_polygon_green(result.silhouette_box_polygon_screen, true);
 	ctx.strokeStyle = UNIFACE_PICK_STROKE;
-	ctx.lineWidth = 0.75;
+	ctx.lineWidth = stores.edge_thickness;
 	const canvas_w = ctx.canvas.width;
 	const canvas_h = ctx.canvas.height;
 	let dropped_off_canvas = 0;
@@ -94,7 +94,7 @@ export function render_uniface_picks(host: DimensionHost): void {
 	const editing_so = dimensions.state?.so ?? null;
 	if (editing_so) {
 		highlighted_so_ids.add(editing_so.id);
-		append_dim_log_line(`edit highlight: editing ${editing_so.name}'s ${dimensions.state?.axis} side — lighting its part and all its dimensionals.`);
+		dimensionals_log(`edit highlight: editing ${editing_so.name}'s ${dimensions.state?.axis} side — lighting its part and all its dimensionals.`);
 	}
 	const dim_toggle_on = stores.show_dimensionals;
 	// Build the list of picks that survive the off-canvas filter, then
@@ -169,7 +169,7 @@ function render_uniface_highlights(
 	ctx.save();
 	ctx.strokeStyle = UNIFACE_HOVER_STROKE;
 	ctx.fillStyle = UNIFACE_HOVER_STROKE;
-	ctx.lineWidth = 1.5;
+	ctx.lineWidth = stores.edge_thickness;
 	// Lines: every placement on a highlighted part draws in red.
 	for (const placement of placements) {
 		if (!highlighted_so_ids.has(placement.so_id)) continue;
@@ -252,7 +252,7 @@ function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details
 	// Dim line — walk every segment in the geometry record.
 	ctx.save();
 	ctx.strokeStyle = color;
-	ctx.lineWidth = 0.75;
+	ctx.lineWidth = stores.edge_thickness;
 	ctx.beginPath();
 	for (const seg of geom.dim_line_segments) {
 		ctx.moveTo(seg.from.x, seg.from.y);
@@ -282,7 +282,7 @@ function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details
 		const so_name_diag = so_o_diag ? so_o_diag.so.name : so_id;
 		const line = `[uniface render] ${so_name_diag} (${axis}): white box (${lb.x_min.toFixed(1)}, ${lb.y_min.toFixed(1)}) to (${lb.x_max.toFixed(1)}, ${lb.y_max.toFixed(1)}); anchor 1 (${a1d.x.toFixed(1)}, ${a1d.y.toFixed(1)}) inside box: ${a1_in ? 'YES (erases arrow)' : 'no'}; anchor 2 (${a2d.x.toFixed(1)}, ${a2d.y.toFixed(1)}) inside box: ${a2_in ? 'YES (erases arrow)' : 'no'}.`;
 		console.log(line);
-		append_dim_log_line(line);
+		dimensionals_log(line);
 	}
 	ctx.save();
 	ctx.fillStyle = 'white';
@@ -385,7 +385,7 @@ function draw_world_axis_aligned_box(
 		[0, 4], [1, 5], [2, 6], [3, 7],
 	];
 	ctx.strokeStyle = stroke;
-	ctx.lineWidth = 1;
+	ctx.lineWidth = stores.heavy_thickness;
 	ctx.beginPath();
 	for (const [a, b] of edges) {
 		ctx.moveTo(corners[a].x, corners[a].y);
@@ -427,7 +427,7 @@ function draw_uniface_faces(
 	// any code below. Both flags off means no uniface faces draw at all.
 	const SHOW_KEPT     = false;
 	const SHOW_EXCLUDED = false;
-	ctx.lineWidth = 1;
+	ctx.lineWidth = stores.edge_thickness;
 	for (const face of faces) {
 		const excluded = face_excluded[face.shift_idx];
 		if (excluded && !SHOW_EXCLUDED) continue;
