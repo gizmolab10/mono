@@ -34,16 +34,17 @@ export class Colors {
 
 	// Reactive colors (stores). Wrapped so every write marks the canvas out
 	// of date — color changes are canvas-visible.
-	w_so_hover_color   = stale_writable<string>('gray');
-	w_thumb_color      = stale_writable<string>('white');
-	w_track_color      = stale_writable<string>('#ccc');
-	w_focus_color      = stale_writable<string>('cornflowerblue');
-	w_selected_color   = stale_writable<string>('rgb(120, 120, 120)');
-	w_background_color = stale_writable<string>('rgb(135, 135, 135)');
-	w_hover_color      = stale_writable<string>('rgb(220, 220, 220)');
-	w_text_color	   = make_stale(preferences.persistent<string>(T_Preference.textColor, 'black'));
-	w_edge_color	   = make_stale(preferences.persistent<string>(T_Preference.edgeColor, '#874efe'));
-	w_accent_color	   = make_stale(preferences.persistent<string>(T_Preference.accentColor, 'rgb(200, 200, 200)'));
+	w_so_hover_color    = stale_writable<string>('gray');
+	w_thumb_color       = stale_writable<string>('white');
+	w_track_color       = stale_writable<string>('#ccc');
+	w_focus_color       = stale_writable<string>('cornflowerblue');
+	w_selected_color    = stale_writable<string>('rgb(120, 120, 120)');
+	w_so_selected_color = stale_writable<string>('rgb(120, 120, 120)');
+	w_background_color  = stale_writable<string>('rgb(135, 135, 135)');
+	w_hover_color       = stale_writable<string>('rgb(220, 220, 220)');
+	w_text_color	    = make_stale(preferences.persistent<string>(T_Preference.textColor, 'black'));
+	w_edge_color	    = make_stale(preferences.persistent<string>(T_Preference.edgeColor, '#874efe'));
+	w_accent_color	    = make_stale(preferences.persistent<string>(T_Preference.accentColor, 'rgb(200, 200, 200)'));
 
 	// Precomputed: a contrasting color derived from the edge color, used for hover highlights.
 	// Recomputed whenever the edge color changes.
@@ -85,18 +86,20 @@ export class Colors {
 			// Colors from the edge color (the single source), each rotated on the
 			// wheel and darkened if needed to read against white: selection +90,
 			// dimensionals -90, hover +180.
-			const selected = this.rotate_hue_for_contrast(color, 90);
-			this.w_selected_color.set(selected);
-			this.selected_color = selected;
 			this.dimension_color = this.rotate_hue_for_contrast(color, -90);
 			this.so_hover_color = this.rotate_hue_for_contrast(color, 180);
+			const so_selected = this.rotate_hue_for_contrast(color, 90);
+			this.w_so_selected_color.set(so_selected);
 		});
 
 		this.w_accent_color.subscribe((color : string) => {
 			preferences.write(T_Preference.accentColor, color);
 			const bg = this.accent_to_background(color);
+			const selected = this.special_blend('black', bg, 0.12) ?? bg;
+			this.selected_color = selected;
 			this.w_background_color.set(bg);
 			this.banner = this.ofBannerFor(bg);
+			this.w_selected_color.set(selected);
 			// Hover color: a lighter version of the accent (ratio 2 yields
 			// roughly halfway between accent and white). The pitch-black
 			// guardrail catches the case where lighterBy returns the literal

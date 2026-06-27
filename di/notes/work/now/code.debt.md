@@ -4,11 +4,11 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the top of open items.
 
-- [ ] re-pause item 3.6 of 'open items.md' line 133
-    - [x] first move that item to Current thread in handoff.md
 - [ ] play with it
     - [ ] two door cabinet
     - [ ] two blocks
+- [ ] re-pause item 3.6 of 'open items.md' line 133
+    - [x] first move that item to Current thread in handoff.md
 - [ ] ability to export an SO -> file
     - [ ] export button below part name, with duplicate and divide
     - [ ] when the selection is the root, change it to save
