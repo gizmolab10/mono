@@ -190,7 +190,7 @@ export default class Constants {
 		 *  Biases the search toward SHORT witnesses when clearance is
 		 *  otherwise equal — without this, the search picks the maximum
 		 *  witness length and labels float far from the part. */
-		WITNESS_LENGTH_PENALTY_PER_PX : 2,
+		WITNESS_LENGTH_PENALTY_PER_PX : 3,
 		NEIGHBOUR_GRID_CELL_PX   : 50,
 		WITNESS_CLEARANCE_PX     : 15,
 		PAIR_CLEARANCE_PX        : 5,

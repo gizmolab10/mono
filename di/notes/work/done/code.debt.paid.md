@@ -1,5 +1,8 @@
 # Code Debt --- Paid
 
+- [x] selection / dimension / hover colors derived from the edge color, contrasting it and white
+    - [x] edge is the single source; colors rotate around the wheel from it: selection +90°, dimensionals -90°, hover +180°, each darkened if too light for white
+    - note: final design used the edge color as source (not the part color) with three rotations; the accent/polygon and angle variants were not pursued
 - [x] display the current quot in the status strip, when not showing something else
 - [x] create tests for the new dimensionals rules
 - [x] when option key is down, only show invisible SOs and their dimensionals

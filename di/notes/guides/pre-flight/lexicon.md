@@ -71,7 +71,7 @@ Do not use these words for the three numbers: *cell*, *value*. Both have been re
 
 ## Print pipeline
 
-- **silhouette rect** — the screen rectangle (measured in screen pixels) that exactly encloses the silhouette box after it is projected onto the screen.
+- **silhouette rect** — the screen rectangle (measured in screen pixels and aligned with the screen edges) that exactly encloses the silhouette polygon after it is projected onto the screen.
 - **printable area** — the area of the paper that the printer can mark. Inside the chosen sheet of paper.
 - **paper** — the printed sheet.
 - **margin** — the empty strip of paper between the picture and the edge of the printable area. Appears when the picture's shape and the paper's shape differ. Never call this a *band*, *bar*, *padding*, or *gutter*.
@@ -89,7 +89,7 @@ Every number in the code that carries a unit lives in exactly one of three coord
 
 - **mm** (millimetres) — a length in the saved scene's world units, before tumble and before projection. Synonym of "world units".
 - **px** (pixels) — a distance on screen, after both tumble and projection. Synonym of "screen pixels".
-- **fraction** — a number between 0 and 1. The label's position along its dim line and the share of a witness line that lies inside the silhouette are both fractions.
+- **fraction** — a number between 0 and 1. The label's position along its dim line and the share of a witness line that lies inside the silhouette polygon are both fractions.
 
 The only ways to cross from one system to another:
 
@@ -107,7 +107,7 @@ How each dim line's position and label are chosen.
 - **arrowhead** — the triangle drawn at each end of a dim line. Its point sits at the witness anchor.
 - **box** — a 3D parallelepiped with all right angles.
 - **dim line** (also written **dimension line**) — the line that runs parallel-in-3D to the axis it refers to, offset outward from the part by the witness length, with the measurement label sitting on it.
-- **drop** (verb, for a label) — skip rendering the label this render. Done when no four-degrees-of-freedom combination clears every other label by the pair clearance and the silhouette box by the silhouette margin.
+- **drop** (verb, for a label) — skip rendering the label this render. Done when no four-degrees-of-freedom combination clears every other label by the pair clearance and the silhouette polygon by the silhouette margin.
 - **duplicate-text drop** — the rule that drops the latter of two labels with identical text.
 - **excluded uniface** — a uniface whose normal is within 20° of pointing towards (or with 45° away from) the camera -> is excluded from consideration/further processing.
 - **four degrees of freedom** (also written **4DOF**) — the four placement choices the placement algorithm uses per label: edge, uniface, witness index, label position.
@@ -127,9 +127,10 @@ How each dim line's position and label are chosen.
 - **rotated part** — a part whose own rotation differs from the identity.
 - **silhouette box** — the box that exactly encloses every part that, when tumbled and projected) is completely inside the screen (including those that are rotated), recomputed before each render. World aligned (untumbled).
 - **silhouette margin** — the screen-pixel gap between the silhouette box and the first uniface box. Set by the project to 15 pixels.
+- **silhouette polygon** — the polygon that exactly encloses every tumbled and projected part that is completely inside the screen (including those that are rotated), recomputed before each render. Screen coordinates.
 - **tie-break** — when two labels tie on a placement criterion, the rule that picks the winner. Persistence, parent-over-child, and alphabetical are the three tie-breaks used in the duplicate-text drop.
 - **uniface** — a face of a unface box.  Never "uniface face", never "uniface block", never "buffer".
-- **uniface box** — the silhouette expanded by the silhouette margin. This is enum 1. Enum 2 expands again by the same amount. Enum 3, expands again, same amount.
+- **uniface box** — the silhouette box expanded by the silhouette margin. This is enum 1. Enum 2 expands again by the same amount. Enum 3, expands again, same amount.
 - **viable enum pair** — an (edge, uniface) pair for which at least one viable value pair exists.
 - **viable label** — a label with at least one viable (edge, uniface) pair. A label with no viable pair is dropped.
 - **viable value pair** — a (witness length, label position) pair whose two values both sit inside the ranges allowed by the filters.

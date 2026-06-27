@@ -2197,7 +2197,11 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	// eight corners on the canvas), the polygon is empty. Every helper
 	// that consumes it returns "no overlap" / Infinity for an empty
 	// polygon, so the silhouette-clearance filter is implicitly skipped.
-	const silhouette_corners_screen: { x: number; y: number }[] = [];
+	// Box-corner hull — the convex hull of the silhouette box's eight projected
+	// corners. Kept ONLY for the wider green diagnostic outline. It is built
+	// from synthetic max-of-each-axis corners, so under perspective it does NOT
+	// match the visible parts; it must not drive label rejection.
+	const silhouette_box_corners_screen: { x: number; y: number }[] = [];
 	if (!silhouette_empty) {
 		for (let xi = 0; xi < 2; xi++) {
 			for (let yi = 0; yi < 2; yi++) {
@@ -2208,20 +2212,19 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 						zi === 0 ? sb.min[2] : sb.max[2],
 					);
 					const p = project_screen(cw);
-					silhouette_corners_screen.push({ x: p.x, y: p.y });
+					silhouette_box_corners_screen.push({ x: p.x, y: p.y });
 				}
 			}
 		}
 	}
-	const silhouette_polygon = silhouette_empty ? [] : convex_hull(silhouette_corners_screen);
+	const silhouette_box_hull_screen = silhouette_empty ? [] : convex_hull(silhouette_box_corners_screen);
 
-	// Diagnostic green outline: convex hull of every projected vertex of
-	// every qualifying part. Tighter than the projected silhouette box
-	// (which uses synthetic max-of-each-axis corners) so the outline hugs
-	// the qualifying parts and stops covering non-qualifying parts on
-	// screen. Visualization only — the silhouette filter above still uses
-	// the silhouette box for label rejection so that placement behavior
-	// does not change with this diagnostic.
+	// THE silhouette every inside/outside test uses: the convex hull of every
+	// projected VERTEX of every qualifying leaf part — the outline the eye
+	// actually sees. Bug 001 fix: the inside/outside guard previously used the
+	// box-corner hull above, which under perspective does not match the visible
+	// silhouette, so a label could read inside the visible outline while the
+	// guard called it outside (notes/work/now/bugs/001 dim is inside silho).
 	const qualifying_parts_corners_screen: { x: number; y: number }[] = [];
 	if (!silhouette_empty) {
 		for (const obj_q of fully_visible_leaves) {
@@ -2234,7 +2237,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 			}
 		}
 	}
-	const qualifying_parts_hull_screen = qualifying_parts_corners_screen.length > 0
+	const silhouette_polygon = qualifying_parts_corners_screen.length > 0
 		? convex_hull(qualifying_parts_corners_screen)
 		: [];
 
@@ -2324,7 +2327,11 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 		const poly_str = silhouette_polygon
 			.map(p => `(${Math.round(p.x)},${Math.round(p.y)})`)
 			.join(' → ');
-		diagnostic_log_buffer.push(`[uniface placement] silhouette six-sided shape on screen: ${poly_str}`);
+		diagnostic_log_buffer.push(`[uniface placement] visible silhouette (parts' vertices) the guard now uses: ${poly_str}`);
+		const box_str = silhouette_box_hull_screen
+			.map(p => `(${Math.round(p.x)},${Math.round(p.y)})`)
+			.join(' → ');
+		diagnostic_log_buffer.push(`[uniface placement] old box-corner outline (diagnostic only, no longer used by the guard): ${box_str}`);
 	}
 	// ─── Slice B of step 3.1 — persistence skip path ──────────────────
 	// After the vote and BEFORE the main loop, check whether every
@@ -3495,6 +3502,6 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	for (const key of Array.from(last_persisted.keys())) {
 		if (!seen_persisted_keys.has(key)) last_persisted.delete(key);
 	}
-	last_uniface_placement_result = { uniface_box, placements: placements_with_winner, silhouette_polygon_screen: qualifying_parts_hull_screen, silhouette_box_polygon_screen: silhouette_polygon };
+	last_uniface_placement_result = { uniface_box, placements: placements_with_winner, silhouette_polygon_screen: silhouette_polygon, silhouette_box_polygon_screen: silhouette_box_hull_screen };
 	return last_uniface_placement_result;
 }

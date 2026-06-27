@@ -6,6 +6,7 @@ import { dimensions } from '../editors/Dimension';
 import { hits_3d } from '../events/Hits_3D';
 import { stores } from '../managers/Stores';
 import { k } from '../common/Constants';
+import { colors } from '../utilities/Colors';
 import { vec3 } from 'gl-matrix';
 import { scene } from './Scene';
 
@@ -32,9 +33,7 @@ const WITNESS_GAP_FROM_PART_PX = 5;
 const SILHOUETTE_BOX_STROKE          = 'rgba(220, 60, 60, 0.9)';
 const UNIFACE_BOX_STROKE             = 'rgba(60, 120, 220, 0.9)';
 const UNIFACE_BOX_EXCLUDED_STROKE    = 'rgba(120, 120, 120, 0.55)';
-const UNIFACE_PICK_STROKE            = 'rgba(60, 120, 220, 0.95)';
-const UNIFACE_HOVER_STROKE           = 'rgba(220, 30, 30, 1.0)';
-const SILHOUETTE_HEX_STROKE          = 'rgba(40, 170, 60, 0.9)';
+const SILHOUETTE_HEX_STROKE          = 'rgba(240, 147, 6, 0.9)';
 
 // Step 3c — for each pick in the last uniface placement, draw the two
 // witness lines (from the part edge to its anchor) and the dim line
@@ -53,11 +52,11 @@ export function render_uniface_picks(host: DimensionHost): void {
 	//    projected corners. Drawn with a dashed line so it is visible
 	//    alongside the tighter outline. The witness lines end fifteen
 	//    pixels (times witness index) past this wider outline.
-	const draw_polygon_green = (poly: ReadonlyArray<{ x: number; y: number }>, dashed: boolean) => {
+	const draw_polygon = (poly: ReadonlyArray<{ x: number; y: number }>, dashed: boolean) => {
 		if (poly.length < 3) return;
 		ctx.save();
 		ctx.strokeStyle = SILHOUETTE_HEX_STROKE;
-		ctx.lineWidth = stores.edge_thickness;
+		ctx.lineWidth = stores.bold_thickness;
 		ctx.setLineDash(dashed ? [4, 4] : []);
 		ctx.beginPath();
 		for (let i = 0; i < poly.length; i++) {
@@ -69,10 +68,10 @@ export function render_uniface_picks(host: DimensionHost): void {
 		ctx.stroke();
 		ctx.restore();
 	};
-	draw_polygon_green(result.silhouette_polygon_screen, false);
-	draw_polygon_green(result.silhouette_box_polygon_screen, true);
-	ctx.strokeStyle = UNIFACE_PICK_STROKE;
-	ctx.lineWidth = stores.edge_thickness;
+	draw_polygon(result.silhouette_polygon_screen, false);
+	// draw_polygon(result.silhouette_box_polygon_screen, true);
+	ctx.strokeStyle = colors.dimension_color;
+	ctx.lineWidth = stores.bold_thickness;
 	const canvas_w = ctx.canvas.width;
 	const canvas_h = ctx.canvas.height;
 	let dropped_off_canvas = 0;
@@ -96,6 +95,17 @@ export function render_uniface_picks(host: DimensionHost): void {
 		highlighted_so_ids.add(editing_so.id);
 		dimensionals_log(`edit highlight: editing ${editing_so.name}'s ${dimensions.state?.axis} side — lighting its part and all its dimensionals.`);
 	}
+	// Highlight color per part (the triad, all edge-derived): a hovered or
+	// edited part's dimensionals use the hover color; a selected part's use
+	// the selection color. Hover wins when a part is both, matching the
+	// part-edge highlight. Returns null when the part is not highlighted.
+	const hover_like_so_ids: Set<string> = new Set();
+	if (hovered_so_id !== null) hover_like_so_ids.add(hovered_so_id);
+	if (editing_so) hover_like_so_ids.add(editing_so.id);
+	const dim_highlight_stroke = (so_id: string): string | null =>
+		hover_like_so_ids.has(so_id) ? colors.so_hover_color
+		: selected_so_ids.has(so_id) ? colors.selected_color
+		: null;
 	const dim_toggle_on = stores.show_dimensionals;
 	// Build the list of picks that survive the off-canvas filter, then
 	// draw in three layers so the label box sits on top of the red hover
@@ -139,22 +149,23 @@ export function render_uniface_picks(host: DimensionHost): void {
 			`[uniface render] off-canvas drop removed ${dropped_off_canvas} pick(s): ${dropped_off_canvas_names.join(', ')}`,
 		);
 	}
-	// Highlight pass — every placement on a highlighted part (selected or
-	// hovered) gets its lines re-stroked in red and its part outlined.
-	render_uniface_highlights(host, result.placements, highlighted_so_ids);
+	// Highlight pass — every placement on a highlighted part gets its lines
+	// re-stroked in its highlight color (selection or hover) and its part outlined.
+	render_uniface_highlights(host, result.placements, highlighted_so_ids, dim_highlight_stroke);
 	// Step 3e: arrowheads + white-boxed number text drawn last so the
 	// label box sits on top of every dim and witness line, including the
 	// red highlight overlay. With the toggle off, only highlighted parts'
 	// labels draw.
 	for (const d of drawable) {
-		const is_highlighted = highlighted_so_ids.has(d.so_id);
-		if (!dim_toggle_on && !is_highlighted) continue;
-		const color = is_highlighted ? UNIFACE_HOVER_STROKE : UNIFACE_PICK_STROKE;
+		const stroke = dim_highlight_stroke(d.so_id);
+		if (!dim_toggle_on && stroke === null) continue;
+		const color = stroke ?? colors.dimension_color;
 		draw_uniface_arrows_and_label(host, d, color, d.so_id, d.axis);
 	}
 }
 
-/** Redraws highlights in red for every selected or hovered part. For each
+/** Redraws highlights for every selected or hovered part, each in its own
+ *  highlight color (selection or hover, both edge-derived). For each
  *  highlighted part: re-stroke every one of its placement's dim and witness
  *  lines on top of the blue pass; draw the part's outline (convex hull of
  *  its projected vertices). Selection keeps the highlight visible after the
@@ -163,29 +174,32 @@ function render_uniface_highlights(
 	host: DimensionHost,
 	placements: ReturnType<typeof get_last_uniface_placement_result>['placements'],
 	highlighted_so_ids: ReadonlySet<string>,
+	stroke_for: (so_id: string) => string | null,
 ): void {
 	if (highlighted_so_ids.size === 0) return;
 	const ctx = host.ctx;
 	ctx.save();
-	ctx.strokeStyle = UNIFACE_HOVER_STROKE;
-	ctx.fillStyle = UNIFACE_HOVER_STROKE;
 	ctx.lineWidth = stores.edge_thickness;
-	// Lines: every placement on a highlighted part draws in red.
+	// Lines: every placement on a highlighted part draws in its highlight color.
 	for (const placement of placements) {
-		if (!highlighted_so_ids.has(placement.so_id)) continue;
+		const stroke = stroke_for(placement.so_id);
+		if (stroke === null) continue;
 		const p = placement;
 		if (p.uniface === null && !p.is_last_resort) continue;
 		if (!p.edge_p1_screen || !p.edge_p2_screen || !p.anchor_1_screen || !p.anchor_2_screen) continue;
+		ctx.strokeStyle = stroke;
 		draw_witness_and_dim_lines(
 			ctx,
 			p.edge_p1_screen, p.anchor_1_screen,
 			p.edge_p2_screen, p.anchor_2_screen,
 		);
 	}
-	// Outlines: one red outline per highlighted part, drawn from the convex
-	// hull of its projected vertices.
+	// Outlines: one outline per highlighted part in its highlight color, drawn
+	// from the convex hull of its projected vertices.
 	const all_objs = scene.get_all();
 	for (const so_id of highlighted_so_ids) {
+		const stroke = stroke_for(so_id);
+		if (stroke === null) continue;
 		const obj = all_objs.find(o => o.so.id === so_id);
 		if (!obj) continue;
 		const projected = hits_3d.get_projected(obj.id);
@@ -193,6 +207,7 @@ function render_uniface_highlights(
 		const pts: { x: number; y: number }[] = [];
 		for (const pp of projected) if (pp.w >= 0) pts.push({ x: pp.x, y: pp.y });
 		if (pts.length < 3) continue;
+		ctx.strokeStyle = stroke;
 		const hull = convex_hull(pts);
 		ctx.beginPath();
 		for (let i = 0; i < hull.length; i++) {

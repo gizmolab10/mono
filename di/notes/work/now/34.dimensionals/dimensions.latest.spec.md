@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD060 -->
 
-# Dimensions placement spec
+# Dimensions placement latest spec
 
 This spec describes what the dimensions code does every time the canvas redraws. The spine is the per-render data pipeline. Each chapter is one stage of that pipeline; chapter one shows the whole flow, chapters two through seven walk it stage by stage, chapter eight covers the log.
 
@@ -25,7 +25,7 @@ Every render runs this flow, top to bottom:
    filter chain: each part-axis         (chapter 4)
        |
        v
-   scoring  /  last-resort fall-back    (chapter 5)
+   scoring                              (chapter 5)
        |
        v
    placements
@@ -93,7 +93,7 @@ Eligible parts are walked by depth from the root (shallow first), then by name a
 
 A world-axis-aligned box. Its corners are every corner of every visible LEAF part whose eight corners ALL project inside the visible canvas after tumble plus projection. Container parts (parents with visible children) do not feed the silhouette. Parts partly off canvas are skipped. The box is computed in the room's STATIC (untumbled) frame, so it stays glued to the parts and tumbles with the view.
 
-When zero parts qualify (heavy zoom), the box collapses to a single point at the origin and the silhouette-clearance filter (chapter 4) becomes a no-op; everything that fails the search falls through to the last-resort step (chapter 5).
+When zero parts qualify (heavy zoom), the box collapses to a single point at the origin and the silhouette-clearance filter (chapter 4) becomes a no-op.
 
 ### 3.2 Uniface boxes
 
@@ -110,7 +110,24 @@ Six nested boxes, each one face-by-face offset from the silhouette box. Offset d
 
 Each box has six faces (LEFT, RIGHT, FRONT, BACK, TOP, BOTTOM). Per face, the millimetre shift is computed once by projecting the face centre and one world-unit-along-the-outward-normal, then scaling.
 
-### 3.3 Face exclusion
+### 3.3 Outer edge candidates
+
+Besides the uniface candidates above, each part-axis also offers OUTER EDGE candidates. They are added to the same candidate set the placement algorithm traverses — filtered in chapter 4 and scored in chapter 5, alongside the uniface candidates. They are NOT a fall-back that runs only when nothing else is viable.
+
+EIGHT per axis: four edges of the part along the measured axis, paired with two outward perpendicular directions per edge (the two non-measured local axes pointing away from the part).
+
+For each, a binary search finds the SMALLEST shift along the witness (perpendicular) line such that, after the part's world matrix plus tumble plus projection are applied, every drawn mark of the dimensional sits at least 10 px inside its nearest canvas edge AND the label rectangle does not overlap the part's projected bounding box on screen. Smallest shift means shortest **tumbled and projected** witnesses.
+
+Candidates whose two projected witness lines run closer than 15 px apart are dropped (same threshold as the uniface candidates).
+
+These candidates carry no special winner rule: chapter 5 scores them the same way it scores the uniface candidates, so the best candidate overall — uniface or outer edge — wins.
+
+### 3.4 Outer edge constants
+
+- Outer edge canvas inset: **10 px** on every side
+- Outer edge witness-line spacing minimum: **15 px**
+
+### 3.5 Face exclusion
 
 A face is excluded from EVERY witness-index level when its outward normal points:
 
@@ -119,7 +136,7 @@ A face is excluded from EVERY witness-index level when its outward normal points
 
 Camera direction is expressed in the room's static frame.
 
-### 3.4 Per-axis candidate faces
+### 3.6 Per-axis candidate faces
 
 The four candidate faces for each measured axis are the faces whose outward normal is perpendicular to that axis:
 
@@ -129,11 +146,11 @@ The four candidate faces for each measured axis are the faces whose outward norm
 | y  (depth)       | LEFT, RIGHT, TOP, BOTTOM    |
 | z  (height)      | LEFT, RIGHT, FRONT, BACK    |
 
-### 3.5 Off-Canvas exclusion
+### 3.7 Off-Canvas exclusion
 
 Every mark of every dimensional MUST be inside the canvas. Any candidate placement with a mark outside is NOT viable -> dropped.
 
-### 3.6 Geometry constants
+### 3.8 Geometry constants
 
 - Witness-index cap: **6** nested boxes
 - Silhouette margin (per witness-index step): **15 px**
@@ -151,7 +168,7 @@ For each eligible part, for each axis, the search picks ONE of each of four thin
 3. which of the six nested uniface boxes to use (witness-index 1 to 6)
 4. the label's position along the dim line.
 
-Every combination is a CANDIDATE. The candidate goes through a chain of filters. A candidate that passes every filter is VIABLE. A part-axis that produces at least one viable candidate goes on to scoring (chapter 5). A part-axis with zero viable candidates goes to the last-resort step.
+Every combination is a CANDIDATE — and the outer edge candidates from §3.3 join this same set. Each candidate goes through a chain of filters. A candidate that passes every filter is VIABLE. A part-axis that produces at least one viable candidate goes on to scoring (chapter 5). A part-axis with zero viable candidates produces no dimensional on that axis.
 
 The chain runs filters in three groups, cheapest first. The first failure stops the chain for that candidate.
 
@@ -201,9 +218,7 @@ Each (edge, face, witness-index) combination tries five label positions along th
 
 ---
 
-## 5. Scoring and last-resort
-
-### 5.1 Scoring
+## 5. Scoring
 
 For a part-axis with at least one viable candidate, every viable candidate gets a score; the highest wins.
 
@@ -224,7 +239,7 @@ S = (L - W) - α·u² - β·(W₁ + W₂)/2 - γ·(I₁ + I₂)/2 + ε·R - ζ·
 | n_camera | camera-forward direction in static-world coords (points from camera into the scene) | unit  |
 | n_out    | outward direction of this candidate's silhouette-box face in static-world coords | unit  |
 | α      | centering-penalty cap                                                            | 20    |
-| β      | witness-length weight per px                                                     | 2     |
+| β      | witness-length weight per px                                                     | 3     |
 | γ      | inside-silhouette weight per percent                                             | 200   |
 | ε      | screen-room weight per px                                                        | 1     |
 | n_front  | part's front-most face normal in static-world coords (the face most aligned with the camera) | unit  |
@@ -237,52 +252,19 @@ The lies-flat term (η·(1 − |n_front · n_out|)·max(0, −n_camera · n_fron
 
 The empty-canvas-room term (ε·R) is what gives the search its bias for directions with more empty space outside the silhouette; the witness-length penalty (β) holds short witnesses still attractive when the room is similar; the inside-silhouette penalty (γ) protects against witness lines drawn over the building.
 
-### 5.2 Last-resort fall-back
-
-A part-axis with ZERO viable candidates runs a separate step. It IGNORES the silhouette and uniface boxes.
-
-EIGHT candidates per axis: four edges of the part along the measured axis, paired with two outward perpendicular directions per edge (the two non-measured local axes pointing away from the part).
-
-For each candidate, a binary search finds the SMALLEST shift along the witness (perpendicular) line such that: after the part's world matrix plus tumble plus projection are applied, every drawn mark of the dimensional sits at least 10 px inside its nearest canvas edge AND the label rectangle does not overlap the part's projected bounding box on screen. Smallest shift means shortest projected witnesses.
-
-Candidates whose two projected witness lines run closer than 15 px apart are dropped (same threshold as the normal search).
-
-The winner is picked in this order:
-
-1. PRIMARY — the SHORTEST projected witness length wins. The weight on witness length dominates the two tiebreakers below, so this is a HARD preference: even a fraction of a pixel of witness savings outranks any alignment penalty.
-2. TIEBREAKER 1 — among candidates that tie on witness length, penalise those whose outward direction pops STRAIGHT OUT of the part's front-most face (the face whose normal points most toward the camera). A candidate whose outward direction lies flat in that face's plane pays zero.
-3. TIEBREAKER 2 — penalise candidates whose outward direction points AWAY from the camera (the label would sit behind the part). A candidate whose outward direction points toward the camera pays zero.
-
-If no candidate clears every check, the part-axis has no viable candidates.
-
-### 5.3 Last-resort constants
-
-(Scoring weights live in the 5.1 table — single source of truth.)
-
-- Last-resort canvas inset: **10 px** on every side
-- Last-resort witness-line spacing minimum: **15 px**
-
----
-
 ## 6. Persistence between renders
 
 The pipeline's output (the placements) is remembered for one render. On the next render, every persisted placement is re-projected and viability-checked. The ones that still fit are LOCKED and contribute their geometry as fixed obstacles to the filter chain; the ones that fail get re-placed by the main loop. There is no separate "skip everything if nothing changed" short-circuit — the lock-and-re-place path runs every render.
 
-### 6.1 Seeded run
-
 Each persisted placement records: the chosen edge, face, witness-index, and label position. On the next render, the placement is re-projected and three viability checks run (STRICT, no tolerance):
 
 - The previous label position is within [0, 1] along the new dim line range. (Slid placements are exempt — their saved fraction stays outside [0, 1] by design.)
-- The label rectangle still clears every other previously-locked label rectangle by 5 px.
+- Pair clearance (label vs label): **5 px**. The label rectangle still clears every other previously-locked label rectangle by 5 px.
 - The label rectangle does not cross inside the new silhouette polygon.
 
 Plus: the off-canvas check from chapter 3 — every drawn mark of the dim must stay inside the canvas. If a persisted placement drifts past a canvas edge after tumble, it fails and gets re-placed.
 
 A persisted placement that passes ALL checks is LOCKED. Its rectangle, witnesses, dim line, and anchors join the placed-obstacles set before the main loop runs. The free placements (failed checks, or part-axes that never had a winner last render) search around the locked ones.
-
-### 6.2 Persistence constants
-
-- Pair clearance (label vs label): **5 px**
 
 ---
 
@@ -341,21 +323,9 @@ Each rendered label registers a clickable rectangle (axis, owning part, screen p
 
 Every render builds one log block. The block has, in order:
 
-1. One line per part-axis: whether the normal search picked it (and at which witness index), whether it fell to the last-resort step, or whether it was dropped.
+1. One line per part-axis: whether the placement algorithm picked it (and, for a uniface candidate, at which witness index), or whether it was dropped.
 2. The summary line: total dimensions considered, how many had at least one viable candidate, how many were picked.
 3. Filter-rejection histogram: count per filter.
 4. Per-side detail (only when one part is hovered): for each candidate side, the score components if it passed, or "no passing candidate (N tried, mostly rejected by FILTER)" with a sample failing label rectangle and a plain-English "why" line.
 
 REPEAT SUPPRESSION: if the block matches the last render's block exactly, no log is emitted (mouse-move-only renders stay quiet). Otherwise the block is written to the browser console AND sent by POST to the local dispatcher at `localhost:5171/log-dimensionals`, which writes it to `logs/dimensionals.log`. The first POST per browser session adds `?fresh=1` to overwrite the file; subsequent POSTs append.
-
----
-
-## Changelog (this session)
-
-- Witness-index cap raised from 4 to 6.
-- Eligible parts now include parents (formerly leaves only); the root is excluded.
-- Walk order now depth-from-root then name alphabetical (formerly name only); a parent wins duplicate-text over its child.
-- Search no longer breaks at the first winning witness-index; every (edge, face, witness-index, label-position) candidate is considered and the best score wins.
-- Vote no longer restricts the main search; it is now informational only. The persistence skip path lost its corresponding winners-list check for the same reason.
-- Scoring: the world-distance penalty (weight 100 per world unit) was removed. A screen-room reward (weight 2 per pixel) was added.
-- Last-resort fall-back replaces the silent null-face drop; eight candidates per axis, binary search on millimetre shift, fits inside the canvas with 10 px clearance, drops candidates whose witness lines run under 15 px apart.

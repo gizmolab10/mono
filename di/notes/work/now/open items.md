@@ -1,46 +1,44 @@
 # Open items
 
-## 1. UI and interaction
+New items push on top. From June 26, 26 onward, it is out of order.
 
-### 1.1 Validation-error overlay placement after the rename refactor
+## 1. Mothballed
 
-Hop two of the rename refactor moved the validation overlay out of the parts list and up into the parent details. The overlay now lives at the bottom of the details column, below all the sub-details banners, rather than tucked inside the parts banner. This was not visually confirmed in a running browser. Worth a one-minute visual confirmation: trigger a name-validation error and check that the red-bordered message appears in a sensible spot whether the parts list is open or collapsed. If the placement looks off when the parts list is collapsed, the overlay can be repositioned without changing any of the wiring. *Effort: ~5 min to look, up to ~30 min if it needs nudging.*
+### 1.1 Residual child-drag drift
 
-### 1.2 Delete on a non-repeater grandchild leaves the part still listed
+Parked in [milestone 33](di/notes/work/milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
 
-Jonathan reports: select a child of a child of root, press delete, the selection clears but the part stays in the parts table. Static analysis ruled out the repeater-regeneration angle and the early-return paths. Most likely cause is an exception thrown between selection-clear and the parts-list rewrite — the formula-reference walker is the most fragile step. Need a console error message or a small mock scene to pin the failing step. *Effort: blocked on a mock; once a mock exists, ~half a day to track down and fix.*
+### 1.2 Allocation-cluster and string-key performance bullets
 
-### 1.3 Up/down arrow in the parts table skips two rows per press on Jonathan's scene
+Deferred in [bottlenecks.md](bottlenecks.md). Revisit only if profiling points back at allocation pressure.
 
-Could not reproduce from reading the code. Need more detail about the scene before a fix can be made. *Effort: blocked on scene detail; once seen, likely ~1 hour.*
+### 1.3 Stud / joist / stair master kinds
 
-### 1.4 Labels still inside silhouette in some views
+First cut at the three-way segmented control needed lots of work — wrong starting proportions, name collisions, and no path from a stair master to the existing diagonal-rise repeater. See [repeaters.mothball.md](repeaters.mothball.md) for what was attempted and the six things to think through before resuming.
 
-The 2026-05-19 work fixed floaters and ruled out the spring as a cause. Two reported drawer-SO orientations — [-0.35, -0.38, -0.57, 0.64] and [-0.48, -0.42, -0.49, 0.60] — have not been re-measured since the floater fix. Next moves: visually re-check at those two orientations; if labels still sit inside, add the orientations to the inside-silhouette spec. If the bug still reproduces in code, the two remaining causal candidates are repulsion shoving labels across the outline (crowded views) or the eighty-pixel push cap leaving labels partly inside from the start (deep-clearance views). The richer diagnostic that names outside-the-silhouette position, after-push, and final positions per label would separate the two. *Effort: visual recheck ~5 minutes; diagnostic ~1 hour; fix ~half a day.* See §3.6 (bug 001) for the captured case and current synopsis.
+## 2. Zoom (proposed)
 
-## 2. Code quality
+Three connected proposals about zoom. All still design — no code yet. Today zoom scales the model around the origin (a scale matrix on the root); the camera eye is fixed at 2750 mm. Evidence: root scale matrix, Drag.ts 747–750; camera eye, Camera.ts line 8.
 
-### 2.1 Stray trace log from the formula-bug investigation
+### 2.1 Dolly zoom — move the camera in and out instead of scaling the model
 
-A single console.log inside the algebra constraints file announces an aborted cycle walk. Pull it (or convert it into a real status-strip warning) before the next feature pass. The renderer's many logs are part of the topology rewrite and should be left alone. *Effort: ~2 min to pull, ~30 min to convert into a real warning.*
+- The model keeps true world size; the eye moves along its line of sight toward the center.
+- Must clamp the near plane (10 mm) or near parts clip away. Evidence: Camera.ts near = 10.
+- Migration: retire the stored scale amount; re-derive the default, the status read-out, saved views, and the dimensions slider's frustum basis from eye distance.
 
-### 2.2 Identity-based formula storage
+### 2.2 Flat-or-dolly toggle
 
-A targeted rename helper closed the immediate bug, but the deeper fix is to store formula references by part identity rather than by a snapshot of the part's name. Recorded as a future structural refactor. *Effort: multi-day — touches storage, serialization, and the formula tokenizer.*
+A persisted flag plus a control that switches between today's flat scale and the dolly. Default flat; dolly behind the flag. Define a flat-amount to eye-distance mapping so switching mid-scene does not jump the view. Cost: two zoom paths to keep and test, and one more control.
 
-### 2.3 New canvas renderer open tail
+### 2.3 Near-occluder peel
 
-Two items left from the renderer rewrite. Add a unit test for the renderer's geometry; needs canvas mocking. Adjust the "arrows inside" threshold if more visual diffing reveals the wrong layout case (arrows-inside chosen when arrows-outside would read better, or vice versa). *Effort: test ~2 hours; threshold tweak ~15 minutes per round.*
+As you zoom in, HIDE parts closer to the camera than a zoom-driven depth, so front layers peel away and inner parts show.
 
-### 2.4 Coordinate system mixing audit
+- Chosen flavor: blanket near-plane peel. Hide outright (not fade). Never peel the selected or hovered part.
+- Depth = distance from the eye along the view axis to a part's nearest box corner; the peel depth ramps with zoom, tuned by a curve.
+- Focus-targeted peel (hide only the true occluders of a focus part) is the fallback if the blanket peels the wrong things; the renderer already tracks occluding faces. Evidence: Render.ts line 27.
 
-Standing item, fires on the next coordinate bug (a place where a number in one coordinate system is multiplied or compared with a number in another, with no conversion). Three escalating levels:
-
-1. **Quick grep pass** (10-30 minutes). Scan the placement file, the renderer, and the helpers for places that multiply or compare numbers in different coordinate systems. **Things to look for:** a mm length multiplied by a px length with no tumble-then-projection between them, a px value treated as a fraction (or vice versa) without an explicit divide-or-multiply by a length, a dimensionless integer combined with a mm or px length without an explicit scale.
-2. **Manual code walk** (a couple of hours). Trace every coordinate-using path end to end, document what system each variable lives in (mm, px, fraction), check every multiplication and comparison for system consistency.
-3. **Compiler-checked coordinate tags** (a few hours of refactor). Tag every coordinate-bearing number with the system it lives in (mm, px, fraction) so the compiler refuses to mix tags silently. Permanent guard, touches many files.
-
-On the next surface, do level 1 first. Escalate to level 2 only if more than one suspicious spot turns up. Level 3 is reserved for a separate refactor session. *Effort: trigger-driven; level 1 ten to thirty minutes.*
+Order to build: 2.1 (dolly) first, then 2.3 (peel) which leans on the dolly's depth, then 2.2 (toggle) if both are wanted. Each needs tests and a log line of what it culled or moved.
 
 ## 3. Remaining uniface work
 
@@ -128,55 +126,62 @@ Notes:
 
 - The lies-flat term scales by `max(0, −n_camera · n_front)`. When the front-most face points sideways, the term collapses to zero — intentional, but worth eyeballing across scenes.
 - The on-plane reward probably requires deciding between graded distance and per-part silhouette boxes. The per-part choice is the bigger structural change.
-- The "label inside part box" reject in the last-resort step assumes one part box per dim. Multi-part dims would need a different check.
+- The "label inside part box" reject in the outer-edge step assumes one part box per dim. Multi-part dims would need a different check.
 
 ### 3.6 Bug 001 — dim inside silhouette
 
-From the bugs assemblage (one numbered folder per bug under `work/now/bugs`, no tracker; described in [our process](our%20process.md)). Folder: `notes/work/now/bugs/001 dim is inside silho/` — screenshot, render log, and `data.json` (the part, the view, what is wrong, what was expected).
+Paused mid-fix. A label can sit inside the visible silhouette. Captured view: part front.moose.kitchen wall (orientation + zoom in `notes/work/now/bugs/001 dim is inside silho/data.json`).
 
-The bug: at the captured view (part front.moose.kitchen wall, orientation and zoom in `data.json`), the 10' 4 1/4" label sits well inside the silhouette box. Expected: it should pass the first filter (dimensions.latest.spec, line 160).
+Done so far:
 
-Synopsis:
+- The inside/outside guard now tests against the visible silhouette polygon (the convex hull of the qualifying parts' projected vertices), not the box-corner outline that disagreed with the eye under perspective (Dimension_Placement.ts).
+- Spec reframed: outer-edge candidates merge into the one scored candidate set (filtered in ch4, scored in ch5); β raised 2 → 3; section renamed last-resort → outer edge; constants moved to chapter 3.
+- β = 3 is in code (Constants.ts).
 
-- The guard that decides "inside or outside the silhouette" tests the label against the outline built from the parts' box corners after projection. Under perspective that outline does NOT match the silhouette the eye sees, so a label can read as inside the visible silhouette while the guard calls it outside.
-- Every diagnosis tried so far has been wrong against the visual. Standing rule: trust the eye over the log and the guard.
-- Captured, not yet diagnosed; no code changed. Paused as part of the "simplify and perfect the flag-off case" arc (code-debt item 1) — nothing to revert.
-- Same symptom as §1.4 (older 2026-05-19 notes there).
+Remaining (the structural code merge):
 
-## 4. Zoom (proposed)
+- Fold outer-edge candidates into the one scored set so they compete with the uniface candidates (staged plan: extract the ch5 score into a shared helper, then score outer-edge candidates with it and keep the max). See the 2026-06-25 work-journal entry.
+- Base the witness length and candidate anchors on the silhouette polygon, not the silhouette box (witnesses currently overshoot).
+- Same symptom as §5.4 (older 2026-05-19 notes there).
 
-Three connected proposals about zoom. All still design — no code yet. Today zoom scales the model around the origin (a scale matrix on the root); the camera eye is fixed at 2750 mm. Evidence: root scale matrix, Drag.ts 747–750; camera eye, Camera.ts line 8.
+## 4. Code quality
 
-### 4.1 Dolly zoom — move the camera in and out instead of scaling the model
+### 4.1 Stray trace log from the formula-bug investigation
 
-- The model keeps true world size; the eye moves along its line of sight toward the center.
-- Must clamp the near plane (10 mm) or near parts clip away. Evidence: Camera.ts near = 10.
-- Migration: retire the stored scale amount; re-derive the default, the status read-out, saved views, and the dimensions slider's frustum basis from eye distance.
+A single console.log inside the algebra constraints file announces an aborted cycle walk. Pull it (or convert it into a real status-strip warning) before the next feature pass. The renderer's many logs are part of the topology rewrite and should be left alone. *Effort: ~2 min to pull, ~30 min to convert into a real warning.*
 
-### 4.2 Flat-or-dolly toggle
+### 4.2 Identity-based formula storage
 
-A persisted flag plus a control that switches between today's flat scale and the dolly. Default flat; dolly behind the flag. Define a flat-amount to eye-distance mapping so switching mid-scene does not jump the view. Cost: two zoom paths to keep and test, and one more control.
+A targeted rename helper closed the immediate bug, but the deeper fix is to store formula references by part identity rather than by a snapshot of the part's name. Recorded as a future structural refactor. *Effort: multi-day — touches storage, serialization, and the formula tokenizer.*
 
-### 4.3 Near-occluder peel
+### 4.3 New canvas renderer open tail
 
-As you zoom in, HIDE parts closer to the camera than a zoom-driven depth, so front layers peel away and inner parts show.
+Two items left from the renderer rewrite. Add a unit test for the renderer's geometry; needs canvas mocking. Adjust the "arrows inside" threshold if more visual diffing reveals the wrong layout case (arrows-inside chosen when arrows-outside would read better, or vice versa). *Effort: test ~2 hours; threshold tweak ~15 minutes per round.*
 
-- Chosen flavor: blanket near-plane peel. Hide outright (not fade). Never peel the selected or hovered part.
-- Depth = distance from the eye along the view axis to a part's nearest box corner; the peel depth ramps with zoom, tuned by a curve.
-- Focus-targeted peel (hide only the true occluders of a focus part) is the fallback if the blanket peels the wrong things; the renderer already tracks occluding faces. Evidence: Render.ts line 27.
+### 4.4 Coordinate system mixing audit
 
-Order to build: 4.1 (dolly) first, then 4.3 (peel) which leans on the dolly's depth, then 4.2 (toggle) if both are wanted. Each needs tests and a log line of what it culled or moved.
+Standing item, fires on the next coordinate bug (a place where a number in one coordinate system is multiplied or compared with a number in another, with no conversion). Three escalating levels:
 
-## 5. Mothballed
+1. **Quick grep pass** (10-30 minutes). Scan the placement file, the renderer, and the helpers for places that multiply or compare numbers in different coordinate systems. **Things to look for:** a mm length multiplied by a px length with no tumble-then-projection between them, a px value treated as a fraction (or vice versa) without an explicit divide-or-multiply by a length, a dimensionless integer combined with a mm or px length without an explicit scale.
+2. **Manual code walk** (a couple of hours). Trace every coordinate-using path end to end, document what system each variable lives in (mm, px, fraction), check every multiplication and comparison for system consistency.
+3. **Compiler-checked coordinate tags** (a few hours of refactor). Tag every coordinate-bearing number with the system it lives in (mm, px, fraction) so the compiler refuses to mix tags silently. Permanent guard, touches many files.
 
-### 5.1 Residual child-drag drift
+On the next surface, do level 1 first. Escalate to level 2 only if more than one suspicious spot turns up. Level 3 is reserved for a separate refactor session. *Effort: trigger-driven; level 1 ten to thirty minutes.*
 
-Parked in [milestone 33](di/notes/work/milestones/33.drag/handoff.md). Pick back up if Jonathan wants to revisit drag work.
+## 5. UI and interaction
 
-### 5.2 Allocation-cluster and string-key performance bullets
+### 5.1 Validation-error overlay placement after the rename refactor
 
-Deferred in [bottlenecks.md](bottlenecks.md). Revisit only if profiling points back at allocation pressure.
+Hop two of the rename refactor moved the validation overlay out of the parts list and up into the parent details. The overlay now lives at the bottom of the details column, below all the sub-details banners, rather than tucked inside the parts banner. This was not visually confirmed in a running browser. Worth a one-minute visual confirmation: trigger a name-validation error and check that the red-bordered message appears in a sensible spot whether the parts list is open or collapsed. If the placement looks off when the parts list is collapsed, the overlay can be repositioned without changing any of the wiring. *Effort: ~5 min to look, up to ~30 min if it needs nudging.*
 
-### 5.3 Stud / joist / stair master kinds
+### 5.2 Delete on a non-repeater grandchild leaves the part still listed
 
-First cut at the three-way segmented control needed lots of work — wrong starting proportions, name collisions, and no path from a stair master to the existing diagonal-rise repeater. See [repeaters.mothball.md](repeaters.mothball.md) for what was attempted and the six things to think through before resuming.
+Jonathan reports: select a child of a child of root, press delete, the selection clears but the part stays in the parts table. Static analysis ruled out the repeater-regeneration angle and the early-return paths. Most likely cause is an exception thrown between selection-clear and the parts-list rewrite — the formula-reference walker is the most fragile step. Need a console error message or a small mock scene to pin the failing step. *Effort: blocked on a mock; once a mock exists, ~half a day to track down and fix.*
+
+### 5.3 Up/down arrow in the parts table skips two rows per press on Jonathan's scene
+
+Could not reproduce from reading the code. Need more detail about the scene before a fix can be made. *Effort: blocked on scene detail; once seen, likely ~1 hour.*
+
+### 5.4 Labels still inside silhouette in some views
+
+The 2026-05-19 work fixed floaters and ruled out the spring as a cause. Two reported drawer-SO orientations — [-0.35, -0.38, -0.57, 0.64] and [-0.48, -0.42, -0.49, 0.60] — have not been re-measured since the floater fix. Next moves: visually re-check at those two orientations; if labels still sit inside, add the orientations to the inside-silhouette spec. If the bug still reproduces in code, the two remaining causal candidates are repulsion shoving labels across the outline (crowded views) or the eighty-pixel push cap leaving labels partly inside from the start (deep-clearance views). The richer diagnostic that names outside-the-silhouette position, after-push, and final positions per label would separate the two. *Effort: visual recheck ~5 minutes; diagnostic ~1 hour; fix ~half a day.* See §3.6 (bug 001) for the captured case and current synopsis.

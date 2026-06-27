@@ -2,14 +2,10 @@
 
 Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into tangles.
 
+offer a proposal (#) for the first unchecked item, and add it to a new section at the top of open items.
 
-offer a proposal (#) for the first unchecked item, and add it to a new section at the end of open items.
-
-- [ ] unpause item 3.6 of 'open items.md' line 133
-    - [ ] first move that item to Current thread in handoff.md
-- [ ] selection highlight color must be derived from part color, contrasting it AND white background
-    - [ ] three colors around the color wheel
-        - [ ] parts, selection, dimensions
+- [ ] re-pause item 3.6 of 'open items.md' line 133
+    - [x] first move that item to Current thread in handoff.md
 - [ ] play with it
     - [ ] two door cabinet
     - [ ] two blocks

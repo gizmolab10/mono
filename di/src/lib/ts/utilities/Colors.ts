@@ -12,8 +12,8 @@ import { get } from 'svelte/store';
 //                        (--white, --c-default, --c-thumb, --c-focus, etc.)
 //                        and then consumed in scoped <style> blocks.
 //
-//   Reactive stores    — user-editable / theme-derived values (accent, bg,
-//                        text, selected). Watched in App.svelte via $effect;
+//   Reactive stores    — user-editable / theme-derived values -> accent (bg),
+//                        text, selected. Watched in App.svelte via $effect;
 //                        each change calls root.setProperty('--accent', …)
 //                        so components only ever see CSS vars, never JS values.
 //
@@ -49,6 +49,14 @@ export class Colors {
 	// Recomputed whenever the edge color changes.
 	so_hover_color = 'red';
 
+	// Dimensional line color: the edge hue rotated -120 degrees on the wheel.
+	// Recomputed whenever the edge color changes. Canvas-only (read directly).
+	dimension_color = 'rgb(60, 120, 220)';
+
+	// Selection highlight color: the edge hue rotated +120 degrees on the wheel.
+	// Recomputed on edge change. Canvas reads this; the CSS var uses the store.
+	selected_color = 'rgb(120, 120, 120)';
+
 	constructor() {
 		this.subscribe_to_changes();
 	}
@@ -74,14 +82,20 @@ export class Colors {
 		});
 
 		this.w_edge_color.subscribe((color : string) => {
-			this.so_hover_color = this.compute_so_hover_color(color);
+			// Colors from the edge color (the single source), each rotated on the
+			// wheel and darkened if needed to read against white: selection +90,
+			// dimensionals -90, hover +180.
+			const selected = this.rotate_hue_for_contrast(color, 90);
+			this.w_selected_color.set(selected);
+			this.selected_color = selected;
+			this.dimension_color = this.rotate_hue_for_contrast(color, -90);
+			this.so_hover_color = this.rotate_hue_for_contrast(color, 180);
 		});
 
 		this.w_accent_color.subscribe((color : string) => {
 			preferences.write(T_Preference.accentColor, color);
 			const bg = this.accent_to_background(color);
 			this.w_background_color.set(bg);
-			this.w_selected_color.set(this.special_blend('black', bg, 0.12) ?? bg);
 			this.banner = this.ofBannerFor(bg);
 			// Hover color: a lighter version of the accent (ratio 2 yields
 			// roughly halfway between accent and white). The pitch-black
@@ -102,28 +116,17 @@ export class Colors {
 	}
 
 	/**
-	 * Derive a contrasting hover color from the edge color.
-	 * Shifts hue by +/- 120 degrees and picks whichever has lower luminance.
-	 * Floors saturation at 50 so near-gray source colors still produce a visible hue.
-	 * Does not touch brightness.
+	 * One of the triad colors: the edge hue rotated by `hue_offset` on the
+	 * wheel, saturation floored so a near-gray edge still shows a hue, then
+	 * darkened if it would be too light to read against the white background.
 	 */
-	private compute_so_hover_color(color : string) : string {
+	private rotate_hue_for_contrast(color : string, hue_offset : number) : string {
 		const hsba = this.color_toHSBA(color);
-		if (!hsba) return 'red';
-
-		const make = (hue_offset : number) : { hex: string; lum: number } => {
-			const h = (hsba.h + hue_offset + 360) % 360;
-			const s = Math.max(hsba.s, 50);
-			const candidate = new HSBA(h, s, hsba.b, hsba.a);
-			const rgba = this.HSBA_toRGBA(candidate);
-			const hex = this.RGBA_toHex(rgba);
-			const lum = this.luminance_ofRGBA(rgba);
-			return { hex, lum };
-		};
-
-		const a = make(120);
-		const b = make(-120);
-		return a.lum <= b.lum ? a.hex : b.hex;
+		if (!hsba) return color;
+		const h = (hsba.h + hue_offset + 360) % 360;
+		const s = Math.max(hsba.s, 50);
+		const hex = this.RGBA_toHex(this.HSBA_toRGBA(new HSBA(h, s, hsba.b, hsba.a)));
+		return this.luminance_ofColor(hex) > 0.6 ? this.darkerBy(hex, 1) : hex;
 	}
 
 	ofBackgroundFor(color : string) : string { return this.lighterBy(color, 10); }

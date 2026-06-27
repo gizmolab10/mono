@@ -6,6 +6,45 @@ Record work performed during chat sessions, in reverse chronological order. Each
 
 ---
 
+## Session — 2026-06-27 — Color triad from the edge color
+
+- The edge color is now the single source for three derived colors, each made by rotating the edge hue on the wheel and darkening it if it would be too light to read against white: selection = edge +90°, dimensionals = edge −90°, hover = edge +180° (Colors.ts). A shared helper does the rotate-and-darken; the old hover derivation (edge ±120°, darker of the two) is retired.
+- Selection used to come from the accent color and a selected part drew only bolder in its own color — no distinct selection color. Now a selected part's edges draw in the selection color (Render.ts, solid and wireframe passes), and its dimensionals + outline match the part: a selected part's dims use the selection color, a hovered or edited part's use the hover color (hover wins when both). The hardcoded blue dim color and red highlight are gone (Dimension_Renderer.ts).
+- The CSS selection variable now follows edge +90° too (it used to follow accent), so selected-state UI chrome shifts with the edge color. Accent still drives the rest of the UI chrome (background, hover, track, focus).
+- Design evolved live in open items §1: edge-as-source confirmed, angles moved from ±120 to +90 / −90 / +180, hover added as an explicit third rotation. Jonathan confirmed the result visually.
+
+### Files touched
+
+- di/src/lib/ts/utilities/Colors.ts (edge-derived triad, retired compute_so_hover_color)
+- di/src/lib/ts/render/Render.ts (selected-part stroke), di/src/lib/ts/render/Dimension_Renderer.ts (per-part dim highlight color)
+- di/src/lib/ts/tests/Colors.test.ts (hover block updated to the +180 behavior)
+
+### Verification
+
+- yarn svelte-check: 0 errors. yarn vitest run: 842 passed.
+- Visual: confirmed good by Jonathan.
+
+---
+
+## Session — 2026-06-25 — Dimensions: silhouette-polygon guard + outer-edge spec reframe
+
+- Bug 001 (a dim label reading inside the silhouette): the inside/outside guard tested labels against the silhouette BOX's projected corners, which under perspective do not match the visible parts. Switched the guard (the filter and the inside-penalty scoring) to the visible silhouette polygon — the convex hull of the qualifying parts' projected vertices (Dimension_Placement.ts). On screen it surfaced two follow-ons: a label still inside (it fell to the outer-edge step, which ignores the silhouette) and witnesses overshooting (witness length still based on the box). The structural code fix — anchors and witness offsets based on the silhouette polygon, and outer-edge candidates folded into the one scored candidate set — is designed in the spec but not yet implemented.
+- Spec (dimensions.latest.spec): moved the outer-edge section from §5.2 to §3.3 and renumbered; renamed last-resort → outer edge; reframed §3.3 so outer-edge candidates join the normal candidate set (filtered in ch4, scored in ch5) instead of a separate fall-back; moved the outer-edge constants into chapter 3 (§3.4); raised the witness-length weight β from 2 to 3.
+- Code: β raised to 3 (Constants.ts:193). The outer-edge merge code is the pending follow-on.
+- Moved the spec's changelog into this journal (deduped — the older bullets were already in the 2026-06-18 and earlier entries).
+
+### Files touched
+
+- di/src/lib/ts/render/Dimension_Placement.ts (silhouette-polygon guard), di/src/lib/ts/common/Constants.ts (β = 3)
+- dimensions.latest.spec.md (outer-edge reorg; changelog removed)
+
+### Verification
+
+- yarn svelte-check: 0 errors. yarn vitest run: 842 passed.
+- Bug 001 still open visually — needs the structural code fix.
+
+---
+
 ## Session — 2026-06-25 — Line-thickness consolidation (store-driven)
 
 - The renderer's canvas line widths, once hand-coded numbers, now read from the thickness stores: stores.edge_thickness (most lines), stores.heavy_thickness (the heavier strokes), stores.bold_thickness (selection / hover and the selection-dot outline), and stores.edge_thickness / 2 (the faint reveal edges). Across Dimension_Renderer, R_Grid, R_Axes, R_Angulars, Render.

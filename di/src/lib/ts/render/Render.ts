@@ -1828,7 +1828,7 @@ class Render {
 				}
 			}
 
-			ctx.strokeStyle = show_hovered ? colors.so_hover_color : `${obj.color}1)`;
+			ctx.strokeStyle = show_hovered ? colors.so_hover_color : show_selected ? colors.selected_color : `${obj.color}1)`;
 			ctx.stroke(normal_path);
 			if (guidance_edges) {
 				ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
@@ -1864,7 +1864,7 @@ class Render {
 				path.lineTo(bx, by);
 			}
 
-			ctx.strokeStyle = is_hovered ? colors.so_hover_color : `${obj.color}1)`;
+			ctx.strokeStyle = is_hovered ? colors.so_hover_color : is_selected ? colors.selected_color : `${obj.color}1)`;
 			ctx.stroke(normal_path);
 
 			if (guidance_edges) {
