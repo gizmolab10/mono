@@ -27,6 +27,7 @@
 		vertical = false,
 		show_value = false,
 		tick_labels = true,
+		tick_thickness = 1,
 		logarithmic = false,
 		show_steppers = true,
 		sticky_threshold = 1,
@@ -45,6 +46,7 @@
 		tick_labels?: boolean;
 		logarithmic?: boolean;
 		tick_interval?: number;
+		tick_thickness?: number;
 		show_steppers?: boolean;
 		style?: 'pill' | 'line';
 		sticky_threshold?: number;
@@ -321,7 +323,7 @@
 					<div class='tick-overlay'>
 						{#each log_ticks as tick}
 							<div class='tick' style:left="{tick.pct}%">
-								<div class='tick-line'></div>
+								<div class='tick-line' style:width="{tick_thickness}px"></div>
 								{#if tick_labels}
 									<span class='tick-label'>{tick.label}</span>
 								{/if}
@@ -329,12 +331,12 @@
 						{/each}
 						{#each sticky_ticks as tick}
 							<div class='tick' style:left="{tick.pct}%">
-								<div class='tick-line'></div>
+								<div class='tick-line' style:width="{tick_thickness}px"></div>
 							</div>
 						{/each}
 						{#each regular_ticks as tick}
 							<div class='tick' style:left="{tick.pct}%">
-								<div class='tick-line'></div>
+								<div class='tick-line' style:width="{tick_thickness}px"></div>
 							</div>
 						{/each}
 					</div>
@@ -366,9 +368,9 @@
 	}
 
 	.fill {
-		flex        : 1;
-		min-width   : 0;
 		margin-left : 0;
+		min-width   : 0;
+		flex        : 1;
 	}
 
 	.fill .slider-with-label {
@@ -388,17 +390,18 @@
 
 	.current-value {
 		font-size            : var(--font-small);
+		color                : var(--c-track);
 		font-variant-numeric : tabular-nums;
 		text-align           : center;
 		font-weight          : bold;
 		margin-bottom        : -6px;
 		line-height          : 1;
 		margin-top           : 0;
-		color                : var(--c-track);
 	}
 
 	.slider-label {
 		font-size            : var(--font-small);
+		color                : var(--c-track);
 		font-variant-numeric : tabular-nums;
 		position             : relative;
 		text-align           : center;
@@ -406,7 +409,6 @@
 		top                  : 4px;
 		margin-top           : 1px;
 		line-height          : 1;
-		color                : var(--c-track);
 	}
 
 	.slider-border {
@@ -423,8 +425,8 @@
 		position       : absolute;
 		overflow       : visible;
 		pointer-events : none;
-		z-index        : 1;
 		top            : 50%;
+		z-index        : 1;
 		height         : 0;
 	}
 
@@ -433,19 +435,19 @@
 	.track-line-bg {
 		left          : calc(var(--h-slider) / 2);
 		right         : calc(var(--h-slider) / 2);
+		transform     : translateY(-50%);
 		height        : var(--th-track);
 		background    : var(--c-track);
 		border-radius : var(--r-input);
-		transform     : translateY(-50%);
-		pointer-events: none;
 		position      : absolute;
-		z-index       : 0;
+		pointer-events: none;
 		top           : 50%;
+		z-index       : 0;
 	}
 
 	.tick {
-		position  : absolute;
 		transform : translateX(-50%);
+		position  : absolute;
 	}
 
 	.thumb-label {
@@ -465,8 +467,7 @@
 	.tick-line {
 		margin-top : calc(-1 * var(--th-track));
 		height     : calc(var(--th-track) * 2);
-		background : rgba(0, 0, 0, 0.5);
-		width      : 1px;
+		background : var(--c-tick);
 	}
 
 	.tick-label {
@@ -537,8 +538,8 @@
 
 	.slider-border input[type='range']::-ms-fill-lower,
 	.slider-border input[type='range']::-ms-fill-upper {
-		background    : var(--white);
 		border        : var(--border);
+		background    : var(--white);
 		border-radius : 16px;
 	}
 
@@ -572,17 +573,17 @@
 	}
 
 	.line input[type='range']::-moz-range-track {
-		background    : transparent;
-		border-radius : var(--r-input);
 		height        : var(--th-track);
+		border-radius : var(--r-input);
+		background    : transparent;
 		border        : none;
 	}
 
 	.line input[type='range']::-moz-range-thumb {
 		background : var(--thumb-color);
-		border     : 1px solid black;
 		width      : var(--h-slider);
 		height     : var(--h-slider);
+		border     : 1px solid black;
 	}
 
 	.line input[type='range']::-ms-fill-lower,
@@ -617,8 +618,8 @@
 	.range-track {
 		right      : calc(var(--h-slider) / 2);
 		left       : calc(var(--h-slider) / 2);
-		background : var(--c-track);
 		height     : var(--th-track);
+		background : var(--c-track);
 		position   : absolute;
 		margin-top : -2px;
 		top        : 50%;

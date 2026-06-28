@@ -237,10 +237,10 @@ class Engine {
 		render.add_stale_sub(stores.w_precision.subscribe(mark));
 		render.add_stale_sub(stores.w_scale.subscribe(mark));
 
-		// Color stores — six inputs that change how the canvas looks.
-		render.add_stale_sub(colors.w_so_hover_color.subscribe(mark));
+		// Color stores that change how the canvas looks. The SO hover / selected
+		// and dimension colors derive from the edge color, so the edge subscription
+		// below already marks the canvas stale when they change.
 		render.add_stale_sub(colors.w_selected_color.subscribe(mark));
-		render.add_stale_sub(colors.w_so_selected_color.subscribe(mark));
 		render.add_stale_sub(colors.w_background_color.subscribe(mark));
 		render.add_stale_sub(colors.w_text_color.subscribe(mark));
 		render.add_stale_sub(colors.w_edge_color.subscribe(mark));

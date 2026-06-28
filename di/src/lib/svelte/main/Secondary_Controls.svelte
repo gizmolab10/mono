@@ -34,9 +34,9 @@
 <div class='band zoom-band'>
 	<span class='zoom-edge zoom-out'>shrink</span>
 	<div class='zoom-slider-wrap'>
-		<Slider min={0.0001} max={10000} value={$w_scale} logarithmic fill tick_labels={false} show_steppers={false} onchange={handle_zoom_slide} onstep={handle_zoom_step} />
+		<Slider min={0.0001} max={10000} value={$w_scale} logarithmic fill tick_labels={false} tick_thickness={3} show_steppers={false} onchange={handle_zoom_slide} onstep={handle_zoom_step} />
 	</div>
-	<span class='zoom-edge zoom-in'>enlarge</span>
+	<span class='zoom-edge zoom-in'>grow</span>
 </div>
 
 <style>
@@ -69,8 +69,8 @@
 	.zoom-edge {
 		font-size      : var(--font-common);
 		transform      : translateY(-3px);
+		color          : var(--c-track);
 		flex           : 0 0 auto;
-		color          : black;
 		pointer-events : none;
 		line-height    : 1;
 	}

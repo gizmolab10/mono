@@ -247,7 +247,7 @@ export function render_root_bottom(host: GridHost, is_2d = false): void {
 		];
 		ctx.save();
 		ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.35)`;
-		ctx.lineWidth = stores.edge_thickness;
+		ctx.lineWidth = stores.edge_thickness / 2;
 		for (const [i, j] of edges) {
 			const a = pts[i], bp = pts[j];
 			if (a.w < 0 || bp.w < 0) continue;

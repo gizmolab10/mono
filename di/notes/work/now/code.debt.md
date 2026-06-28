@@ -4,6 +4,7 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the top of open items.
 
+- [ ] on hover -> draw a pill border around dimension text
 - [ ] play with it
     - [ ] two door cabinet
     - [ ] two blocks

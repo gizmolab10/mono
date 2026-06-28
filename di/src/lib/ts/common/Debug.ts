@@ -149,7 +149,7 @@ export class Debug {
 			dim_dropped_count: () => 0,
 			// Whether x-ray mode is currently active: OPTION is held AND at
 			// least one part in the scene is invisible.
-			is_xray_active: () => {
+			is_wireframe_active: () => {
 				const option_down = get(events.w_option_down);
 				const has_invisible = scene.get_all().some(o => !o.so.visible);
 				return option_down && has_invisible;

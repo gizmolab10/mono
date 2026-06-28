@@ -386,7 +386,7 @@ class Render {
 		// OPTION does nothing. Print mode never triggers x-ray.
 		const print_active = this.force_print_render || (typeof window !== 'undefined' && window.matchMedia('print').matches);
 		const has_invisible = all_objects.some(o => !o.so.visible);
-		const xray_mode = !print_active && get(e.w_option_down) && has_invisible;
+		const wireframe_mode = !print_active && get(e.w_option_down) && has_invisible;
 
 		// Projection: project ALL vertices (including hidden) for hit-test caches
 		const projected_map = new Map<string, Projected[]>();
@@ -406,7 +406,7 @@ class Render {
 		// Solidify: fill front-facing faces (occlusion layer)
 		// In solid mode, fill with white so rear edges are hidden.
 		// Sort all front-facing faces back-to-front by average depth.
-		if (solid && !xray_mode) {
+		if (solid && !wireframe_mode) {
 			const face_draws: { face: number[]; projected: Projected[]; z_avg: number; fi: number }[] = [];
 			for (const obj of objects) {
 				const projected = projected_map.get(obj.id)!;
@@ -427,7 +427,7 @@ class Render {
 		}
 
 		// Solidify: debug face fills (non-solid mode)
-		if (!solid && !xray_mode) {
+		if (!solid && !wireframe_mode) {
 			for (const obj of objects) {
 				const projected = projected_map.get(obj.id)!;
 				if (!obj.faces) continue;
@@ -446,7 +446,7 @@ class Render {
 		// Build occluding face list for edge clipping (solid or 2D mode)
 		this._phase('occluders');
 		this.occluding_faces = [];
-		if (solid && !xray_mode) {
+		if (solid && !wireframe_mode) {
 			for (const obj of objects) {
 				if (!obj.parent) continue;
 				const projected = projected_map.get(obj.id)!;
@@ -640,7 +640,7 @@ class Render {
 		// Edges: a visible root draws all its edges. An invisible root is
 		// restricted to the bottom face further down.
 		const sel_scene_for_axes = selection.current?.so?.scene ?? null;
-		if (!xray_mode) for (const obj of objects) {
+		if (!wireframe_mode) for (const obj of objects) {
 			const projected = projected_map.get(obj.id)!;
 			const world = (solid) ? this.get_world_matrix(obj) : undefined;
 			this.render_edges(obj, projected, solid, world);
@@ -1828,7 +1828,7 @@ class Render {
 				}
 			}
 
-			ctx.strokeStyle = show_hovered ? colors.so_hover_color : show_selected ? get(colors.w_so_selected_color) : `${obj.color}1)`;
+			ctx.strokeStyle = show_hovered ? colors.so_hover_color : show_selected ? colors.so_selected_color : `${obj.color}1)`;
 			ctx.stroke(normal_path);
 			if (guidance_edges) {
 				ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
@@ -1864,7 +1864,7 @@ class Render {
 				path.lineTo(bx, by);
 			}
 
-			ctx.strokeStyle = is_hovered ? colors.so_hover_color : is_selected ? get(colors.w_so_selected_color) : `${obj.color}1)`;
+			ctx.strokeStyle = is_hovered ? colors.so_hover_color : is_selected ? colors.so_selected_color : `${obj.color}1)`;
 			ctx.stroke(normal_path);
 
 			if (guidance_edges) {
@@ -2363,7 +2363,7 @@ class Render {
 	 *  top and bottom. Used while talking about dimensional placement
 	 *  to refer to a specific face by its axis. */
 	private render_face_axes(obj: O_Scene, projected: Projected[]): void {
-		if (!obj.faces) return;
+		if (!obj.faces || !k.debug.diagnose_dims) return;
 		const ctx = this.ctx;
 		const font_size = k.height.font.large;
 		ctx.font = `${font_size}px sans-serif`;
@@ -2563,7 +2563,7 @@ class Render {
 		const draw = (p: Projected) => {
 			if (p.w < 0) return;
 			this.ctx.beginPath();
-			this.ctx.arc(p.x, p.y, stores.bold_thickness, 0, Math.PI * 2);
+			this.ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
 			this.ctx.fillStyle = 'white';
 			this.ctx.fill();
 			this.ctx.lineWidth = stores.bold_thickness;

@@ -68,16 +68,11 @@ export class Configuration {
 	configure_css(): void {
 		const root = document.documentElement.style;
 
-		root.setProperty('--focus-outline',    `1.5px solid ${colors.focus}`);
-
 		root.setProperty('--window-min-width',  `${k.width.window_min}`);
 
 		root.setProperty('--white',             'white');
 		root.setProperty('--c-default',         colors.default);
 		root.setProperty('--c-slider-border',   colors.border);
-		root.setProperty('--c-focus',           colors.focus);
-		root.setProperty('--c-thumb',           colors.thumb);
-		root.setProperty('--c-track',           colors.track);
 
 		root.setProperty('--font-monster',     `${k.height.font.monster}px`);
 		root.setProperty('--font-common',      `${k.height.font.common}px`);
@@ -137,17 +132,28 @@ export class Configuration {
 	 * variables. Called from App.svelte's $effect block whenever any of
 	 * the four color stores change.
 	 */
-	configure_reactive_colors(text: string, accent: string, selected: string, so_selected: string, bg: string, hover: string, thumb: string, track: string, focus: string): void {
+	configure_reactive_colors(
+		background: string,
+		selected: string,
+		accent: string,
+		hover: string,
+		thumb: string,
+		track: string,
+		focus: string,
+		text: string,
+		tick: string
+	): void {
 		const root = document.documentElement.style;
-		root.setProperty('--so_selected', so_selected);
-		root.setProperty('--selected',    selected);
-		root.setProperty('--accent',      accent);
-		root.setProperty('--hover',       hover);
-		root.setProperty('--text',        text);
-		root.setProperty('--bg',          bg);
-		root.setProperty('--c-thumb',     thumb);
-		root.setProperty('--c-track',     track);
-		root.setProperty('--c-focus',     focus);
+		root.setProperty('--focus-outline', `1.5px solid ${focus}`);
+		root.setProperty('--bg',             background);
+		root.setProperty('--selected',       selected);
+		root.setProperty('--accent',         accent);
+		root.setProperty('--hover',          hover);
+		root.setProperty('--c-thumb',        thumb);
+		root.setProperty('--c-track',        track);
+		root.setProperty('--c-focus',        focus);
+		root.setProperty('--c-tick',         tick);
+		root.setProperty('--text',           text);
 	}
 
 }

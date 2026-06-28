@@ -39,7 +39,7 @@
 		const line = `phone ${wrap_phone}`;
 		if (line === last_phone_log) return;
 		last_phone_log = line;
-		console.log(`window layout: measured ${Math.round(width)} window pixels — phone layout ${wrap_phone} (limit: ${k.width.wrap_phone}).`);
+		// console.log(`window layout: measured ${Math.round(width)} window pixels — phone layout ${wrap_phone} (limit: ${k.width.wrap_phone}).`);
 	});
 
 	function handleResize() {

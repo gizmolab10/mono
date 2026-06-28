@@ -6,6 +6,25 @@ Record work performed during chat sessions, in reverse chronological order. Each
 
 ---
 
+## Session — 2026-06-27 — Color triad follow-on: tick lines, selection color, single sources
+
+- Slider tick marks: the tick line width now reads the slider's `tick_thickness` prop on the element (Svelte styles can't read a prop), and its fill reads the tick color var `--c-tick` (it was wrongly set to the tick-thickness length, so the line had no fill and was invisible).
+- Selection color, single source: the SO hover / selected / dimension colors each lived in two places (a live plain property and a store, one of them dead or duplicate). Collapsed each to one holder by who reads it — the canvas colors are plain properties on Colors (edge-derived), the UI selection color is the one store that feeds the CSS variable. Removed the dead `w_so_hover_color`, the duplicate `w_so_selected_color`, the unread `selected_color`, and two redundant canvas-stale subscriptions.
+- A selected part's witness lines were the wrong color: they were drawn once in the dimension color at full (bold) width, then re-stroked thinner in the highlight color, so the bold base showed around the thinner recolor and the line read as the dimension color. Removed the second draw — each placement's witness lines now draw once in their final color (the same source the dim line uses), so a selected part's witness lines, dim line, and edges all match. `render_uniface_highlights` now draws only the part outline.
+
+### Files touched
+
+- di/src/lib/svelte/mouse/Slider.svelte (tick width + fill), di/src/lib/ts/common/Configuration.ts + di/src/App.svelte + di/src/lib/ts/utilities/Colors.ts (tick color var, single color sources — final wiring by Jonathan)
+- di/src/lib/ts/render/Render.ts (part edge reads the plain SO-selected color), di/src/lib/ts/render/Dimension_Renderer.ts (witness lines drawn once in final color), di/src/lib/ts/render/Engine.ts (dropped redundant stale-subs)
+- di/src/lib/ts/tests/Colors.test.ts (hover block already on the +180 behavior)
+
+### Verification
+
+- yarn svelte-check: 0 errors. yarn vitest run: 842 passed.
+- Visual: tick marks visible; selected part's witness lines match its edges — confirmed by Jonathan.
+
+---
+
 ## Session — 2026-06-27 — Color triad from the edge color
 
 - The edge color is now the single source for three derived colors, each made by rotating the edge hue on the wheel and darkening it if it would be too light to read against white: selection = edge +90°, dimensionals = edge −90°, hover = edge +180° (Colors.ts). A shared helper does the rotate-and-darken; the old hover derivation (edge ±120°, darker of the two) is retired.

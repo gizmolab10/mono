@@ -1,13 +1,13 @@
 # Handoff
 
-**Date:** 2026-06-24
+**Date:** 2026-06-27
 **Work stream:** finished work is in the [work journal](di/notes/work/now/work%20journal.md); open and paused threads now live in [[open items]]. This file is a thin index.
 
 ## Current thread
 
 None active.
 
-**Proposed next (from code.debt):** "re-pause item 3.6 of open items.md" — looks already satisfied: bug 001 is parked in open items §3.6 (Paused threads below) and the Current thread is None active. Recommend checking it off in code.debt. The next actionable cd item after it is "play with it" (manual test — two-door cabinet, two parts), then "export an SO → file".
+**Proposed next (from code.debt):** "draw a border around dimension" — give each dimension label a thin outline so it reads against the model behind it. Likely a stroke around the white label box in Dimension_Renderer (the arrows-and-label helper), color from the same per-placement source as the lines. Say go to flesh out and implement.
 
 ## Paused threads
 

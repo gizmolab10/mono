@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { open_app, load_basement, dim_labels, is_xray_active, set_so_visibility, set_all_visible } from './dim-helpers';
+import { open_app, load_basement, dim_labels, is_wireframe_active, set_so_visibility, set_all_visible } from './dim-helpers';
 
 // Rule 13 — while OPTION is held AND at least one part is invisible,
 // dimensions flip to draw only for the invisible parts. With every part
@@ -14,13 +14,13 @@ test('OPTION with every part visible does not flip to x-ray', async ({ page }) =
 	await set_all_visible(page);
 	await page.waitForTimeout(300);
 
-	expect(await is_xray_active(page)).toBe(false);
+	expect(await is_wireframe_active(page)).toBe(false);
 
 	await page.keyboard.down('Alt');
 	await page.waitForTimeout(200);
 
 	// No invisible part, so x-ray does not engage even with OPTION held.
-	expect(await is_xray_active(page)).toBe(false);
+	expect(await is_wireframe_active(page)).toBe(false);
 
 	await page.keyboard.up('Alt');
 });
@@ -53,13 +53,13 @@ test('OPTION with one part hidden flips labels to that hidden part', async ({ pa
 	await page.keyboard.down('Alt');
 	await page.waitForTimeout(400);
 
-	expect(await is_xray_active(page)).toBe(true);
+	expect(await is_wireframe_active(page)).toBe(true);
 
-	const xray_labels = await dim_labels(page);
-	expect(xray_labels.length).toBeGreaterThan(0);
+	const wireframe_labels = await dim_labels(page);
+	expect(wireframe_labels.length).toBeGreaterThan(0);
 	// In x-ray mode every drawn label belongs to a part whose visible
 	// flag is off — the labels flipped to the hidden side of the drawing.
-	expect(xray_labels.every(l => !l.so_visible)).toBe(true);
+	expect(wireframe_labels.every(l => !l.so_visible)).toBe(true);
 
 	await page.keyboard.up('Alt');
 });

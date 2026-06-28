@@ -163,8 +163,8 @@ function is_visible_for_dim(obj: O_Scene): boolean {
 	// OPTION does nothing.
 	const option_held = get(e.w_option_down);
 	const has_hidden = scene.get_all().some(o => !o.so.visible);
-	const xray_mode = option_held && has_hidden;
-	if (xray_mode) return !obj.so.visible;
+	const wireframe_mode = option_held && has_hidden;
+	if (wireframe_mode) return !obj.so.visible;
 
 	if (!obj.so.visible) return false;
 	let cursor = obj.parent;
@@ -1861,6 +1861,7 @@ let dispatched_dim_log_fresh: boolean = false;
  *  (never the fresh-overwrite first POST), so any subsequent placement
  *  POST appends after these renderer lines. */
 export function dimensionals_log(text: string): void {
+	if (!k.debug.diagnose_dims) return;
 	try {
 		fetch('http://localhost:5171/log-dimensionals', { method: 'POST', body: text + '\n' }).catch(() => { /* silent */ });
 	} catch {
