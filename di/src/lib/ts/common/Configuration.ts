@@ -76,6 +76,7 @@ export class Configuration {
 
 		root.setProperty('--font-monster',     `${k.height.font.monster}px`);
 		root.setProperty('--font-common',      `${k.height.font.common}px`);
+		root.setProperty('--font-graph',       `${k.height.font.graph}px`);
 		root.setProperty('--font-large',       `${k.height.font.large}px`);
 		root.setProperty('--font-small',       `${k.height.font.small}px`);
 		root.setProperty('--font-reset',       `${k.height.font.reset}px`);

@@ -1,5 +1,6 @@
 # Code Debt --- Paid
 
+- [x] on hover, draw a pill (rounded-rect) border around the hovered dimension's label, in the hover color — only the dim under the cursor (matched by part + axis)
 - [x] selection / dimension / hover colors derived from the edge color, contrasting it and white
     - [x] edge is the single source; colors rotate around the wheel from it: selection +90°, dimensionals -90°, hover +180°, each darkened if too light for white
     - note: final design used the edge color as source (not the part color) with three rotations; the accent/polygon and angle variants were not pursued
@@ -396,3 +397,7 @@
     - [x] reverted to the original flat arrowheads; svelte-check clean, 842 tests pass
 - [x] thicknesses for lines, see [[di/notes/work/now/handoff]]
     - [x] The code has lots of thicknesses hand coded. Let's use Constants line 114
+- [x] edit dimension labels
+    - [x] retain font size
+    - [x] pill border -> dashed
+    - [x] can grow/shrink as text changes

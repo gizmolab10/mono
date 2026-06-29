@@ -65,7 +65,7 @@ Do not use these words for the three numbers: *cell*, *value*. Both have been re
 - **frame** — the entire process of position computation, projection and render on the screen.
 - **frustum** — the visible volume of the camera. Used in rule prose ("SO's that extend beyond the frustum").
 - **render** — the last step of a frame.
-- **screen** — the on-screen rectangle that holds the rendered scene.
+- **screen** — the on-screen rectangle that holds the rendered scene. tumbled and projected from world. eg screen area
 - **tumble** — apply the scene rotation to the root object to produce part position information that can then be projected onto the screen. Caused by nothing-is-selected drag.
 - **fully visible part** — an SO whose visible faces are entirely within the frustum.
 

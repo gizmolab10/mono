@@ -84,24 +84,17 @@ export function render_uniface_picks(host: DimensionHost): void {
 	// hover color (see dim_highlight_stroke). Selection persists after the
 	// cursor leaves; hover is transient and wins when a part is both.
 	const selected_so_ids: Set<string> = new Set(selection.all.map(h => h.so.id));
-	const hovered_placement = hits_3d.hovered_uniface_placement;
-	const hovered_so_id =
-		hovered_placement?.so_id
-		?? hits_3d.hover?.so?.id
-		?? null;
-	// While a dimensional is being edited, light up its part's dimensionals too —
-	// they take the hover color (added to the hover-like set below).
+	// Editing a dimensional selects its part (see dimensions.begin), so its
+	// dimensionals take the selection color through selected_so_ids. Just log it.
 	const editing_so = dimensions.state?.so ?? null;
 	if (editing_so) {
-		dimensionals_log(`edit highlight: editing ${editing_so.name}'s ${dimensions.state?.axis} side — lighting all its dimensionals.`);
+		dimensionals_log(`edit highlight: editing ${editing_so.name}'s ${dimensions.state?.axis} side — its part is selected, so its dimensionals use the selection color.`);
 	}
-	// Highlight color per part (the triad, all edge-derived): a hovered or
-	// edited part's dimensionals use the hover color; a selected part's use
-	// the selection color. Hover wins when a part is both, matching the
-	// part-edge highlight. Returns null when the part is not highlighted.
+	// Hover color: only the one part the central rule (Hits_3D) marks as hovered,
+	// weighing label vs line vs body against selection/edit state.
 	const hover_like_so_ids: Set<string> = new Set();
-	if (hovered_so_id !== null) hover_like_so_ids.add(hovered_so_id);
-	if (editing_so) hover_like_so_ids.add(editing_so.id);
+	const hover_hi_id = hits_3d.hover_highlight_so_id;
+	if (hover_hi_id) hover_like_so_ids.add(hover_hi_id);
 	const dim_toggle_on = stores.show_dimensionals;
 	// Build the list of picks that survive the off-canvas filter, then draw
 	// in two layers so the label box sits on top of every line: witness lines
@@ -154,9 +147,7 @@ export function render_uniface_picks(host: DimensionHost): void {
 		const stroke = dim_highlight_stroke(d.so_id);
 		if (!dim_toggle_on && stroke === null) continue;
 		const color = stroke ?? colors.dimension_color;
-		// Pill border only on the dim directly under the cursor (matched by part + axis).
-		const is_hovered_dim = hovered_placement?.so_id === d.so_id && hovered_placement?.axis === d.axis;
-		draw_uniface_arrows_and_label(host, d, color, d.so_id, d.axis, is_hovered_dim);
+		draw_uniface_arrows_and_label(host, d, color, d.so_id, d.axis);
 	}
 }
 
@@ -189,17 +180,17 @@ function draw_witness_and_dim_lines(
  *  Arrows point inward when the label fits between the two anchors, and
  *  outward when the label overhangs past one end. The label sits centred
  *  on the chosen position along the dim line. */
-function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details, color: string, so_id: string, axis: 'x' | 'y' | 'z', pill: boolean): void {
+function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details, color: string, so_id: string, axis: 'x' | 'y' | 'z'): void {
 	const text = p.label_text;
 	if (text === null) return;
 	const ctx = host.ctx;
-	const LABEL_H_PX = 14;
-	ctx.font = '10px sans-serif';
+	const label_h_px = k.height.font.graph;
+	ctx.font = `${label_h_px}px sans-serif`;
 	const label_w_px = ctx.measureText(text).width + 4;
 	const geom = compute_dim_render_geometry(
 		p,
 		label_w_px,
-		LABEL_H_PX,
+		label_h_px,
 		WITNESS_GAP_FROM_PART_PX,
 		WITNESS_PAST_DIM_LINE_PX,
 		k.dimensions.SLIDABLE_OVERHANG_PX,
@@ -237,8 +228,7 @@ function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details
 		const a2_in = inside(a2d.x, a2d.y);
 		const so_o_diag = scene.get_all().find(o => o.so.id === so_id);
 		const so_name_diag = so_o_diag ? so_o_diag.so.name : so_id;
-		const line = `[uniface render] ${so_name_diag} (${axis}): white box (${lb.x_min.toFixed(1)}, ${lb.y_min.toFixed(1)}) to (${lb.x_max.toFixed(1)}, ${lb.y_max.toFixed(1)}); anchor 1 (${a1d.x.toFixed(1)}, ${a1d.y.toFixed(1)}) inside box: ${a1_in ? 'YES (erases arrow)' : 'no'}; anchor 2 (${a2d.x.toFixed(1)}, ${a2d.y.toFixed(1)}) inside box: ${a2_in ? 'YES (erases arrow)' : 'no'}; hover pill: ${pill ? 'yes' : 'no'}.`;
-		console.log(line);
+		const line = `[uniface render] ${so_name_diag} (${axis}): white box (${lb.x_min.toFixed(1)}, ${lb.y_min.toFixed(1)}) to (${lb.x_max.toFixed(1)}, ${lb.y_max.toFixed(1)}); anchor 1 (${a1d.x.toFixed(1)}, ${a1d.y.toFixed(1)}) inside box: ${a1_in ? 'YES (erases arrow)' : 'no'}; anchor 2 (${a2d.x.toFixed(1)}, ${a2d.y.toFixed(1)}) inside box: ${a2_in ? 'YES (erases arrow)' : 'no'}.`;
 		dimensionals_log(line);
 	}
 	ctx.save();
@@ -252,17 +242,8 @@ function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details
 	ctx.fillStyle = color;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
+	ctx.font = `${label_h_px}px sans-serif`;
 	ctx.fillText(text, geom.label_text_position.x, geom.label_text_position.y);
-	// On hover, a pill (rounded-rect) border around the label box, in the
-	// hover color. Only the dim directly under the cursor gets it.
-	if (pill) {
-		const lb = geom.label_box;
-		ctx.strokeStyle = color;
-		ctx.lineWidth = stores.edge_thickness;
-		ctx.beginPath();
-		ctx.roundRect(lb.x_min, lb.y_min, lb.x_max - lb.x_min, lb.y_max - lb.y_min, (lb.y_max - lb.y_min) / 2);
-		ctx.stroke();
-	}
 	ctx.restore();
 	// Register the label rect for hit-testing so hovering on the label
 	// triggers the same red highlight as hovering on a dim or witness
@@ -275,7 +256,7 @@ function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details
 			x: geom.label_text_position.x,
 			y: geom.label_text_position.y,
 			w: label_w_px,
-			h: LABEL_H_PX,
+			h: label_h_px,
 			z: 0,
 			face_index: -1,
 			witness_index: p.witness_index,

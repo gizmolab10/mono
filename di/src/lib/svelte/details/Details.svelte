@@ -136,7 +136,7 @@
 				<D_Selection />
 			</Hideable>
 
-			<Hideable title='givens' id='givens' detail={T_Details.givens}>
+			<Hideable title='constants' id='givens' detail={T_Details.givens}>
 				{#snippet rightActions()}
 					<button class='banner-add' use:hit_target={{ id: 'add-given', onpress: add_given_and_show_givens }}>+</button>
 				{/snippet}

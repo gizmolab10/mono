@@ -1,13 +1,13 @@
 # Handoff
 
-**Date:** 2026-06-27
+**Date:** 2026-06-28
 **Work stream:** finished work is in the [work journal](di/notes/work/now/work%20journal.md); open and paused threads now live in [[open items]]. This file is a thin index.
 
 ## Current thread
 
 None active.
 
-**Proposed next (from code.debt):** "draw a border around dimension" — give each dimension label a thin outline so it reads against the model behind it. Likely a stroke around the white label box in Dimension_Renderer (the arrows-and-label helper), color from the same per-placement source as the lines. Say go to flesh out and implement.
+**Proposed next (from code.debt):** "hover and select included in dim slider count" — the dimension-count slider's number should count the dimensionals shown by hover and by selection, not just the toggle-driven set. Likely the count source the slider reads excludes the hover/selection-only dims that the renderer still draws; reconcile them. Say go to investigate and propose.
 
 ## Paused threads
 

@@ -140,6 +140,7 @@ export default class Constants {
 		banner:      common_size,
 		font: {
 			tiny:    Math.round(common_size / 4),
+			graph:   Math.round(common_size / 2.6),
 			reset:   Math.round(common_size / 2.75),
 			small:   Math.round(common_size / 2.5),
 			large:   Math.round(common_size / 1.5),

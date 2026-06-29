@@ -65,6 +65,7 @@ class Events_3D {
 			hits_3d.hover = null;
 			hits_3d.hovered_dimension = null;
 			hits_3d.hovered_uniface_placement = null;
+			hits_3d.hovered_dim_target = null;
 			canvas.style.cursor = '';
 			if (had_hover) console.log('cursor left the canvas — cleared the hover highlight.');
 		};
@@ -100,6 +101,7 @@ class Events_3D {
 					hits_3d.hover = hit ? hits_3d.hit_to_face(hit) : null;
 					hits_3d.hovered_dimension = null;
 					hits_3d.hovered_uniface_placement = null;
+					hits_3d.hovered_dim_target = null;
 					canvas.style.cursor = 'grab';
 				} else {
 					const hit = hits_3d.hit_test(point, e.altKey);
@@ -116,6 +118,13 @@ class Events_3D {
 					// this store and now appears for the selected part too.
 					const face_hit = hit ? hits_3d.hit_to_face(hit) : null;
 					hits_3d.hover = face_hit;
+
+					// What within a dimensional is under the cursor: its label, one
+					// of its lines, or neither — drives the state-dependent hover rule.
+					hits_3d.hovered_dim_target =
+						hit?.type === T_Hit_3D.dimension ? 'label'
+						: hit?.type === T_Hit_3D.uniface_line ? 'line'
+						: null;
 
 					// Track the dimension under the cursor so the renderer can
 					// bold its text and thicken its dimension and witness lines.
@@ -210,6 +219,7 @@ class Events_3D {
 			drag.set_target(null);
 			hits_3d.hover = null;
 			hits_3d.hovered_dimension = null;
+			hits_3d.hovered_dim_target = null;
 			return;
 		} else if (hit?.type === T_Hit_3D.angle) {
 			e?.preventDefault();
@@ -218,6 +228,7 @@ class Events_3D {
 			drag.set_target(null);
 			hits_3d.hover = null;
 			hits_3d.hovered_dimension = null;
+			hits_3d.hovered_dim_target = null;
 			return;
 		}
 
@@ -230,6 +241,7 @@ class Events_3D {
 		// Clear hover during drag (especially rotation)
 		hits_3d.hover = null;
 		hits_3d.hovered_dimension = null;
+		hits_3d.hovered_dim_target = null;
 
 		// Face click → select that face. Command-click on a face toggles the
 		// face's part in the multi-selection list instead of replacing the

@@ -1788,7 +1788,10 @@ class Render {
 	private render_edges(obj: O_Scene, projected: Projected[], solid: boolean, world?: mat4, restrict_face?: number): void {
 		const ctx = this.ctx;
 		const is_selected = selection.contains(obj.so);
-		const is_hovered = hits_3d.hover?.so.scene === obj && !is_selected;
+		// One central rule (Hits_3D) decides which part is hover-highlighted,
+		// weighing label vs line vs body against selection/edit state. Hover wins
+		// over selection in the strokeStyle below.
+		const is_hovered = hits_3d.hover_highlight_so_id === obj.so.id;
 		// During print, suppress the selected/hovered feedback on edges —
 		// the printed sheet should show the picture as if no UI helper were
 		// active. The flags above keep their normal meaning so other render
@@ -2507,19 +2510,21 @@ class Render {
 	private render_selection(): void {
 		const sel = selection.current;
 		if (!sel || !sel.so.scene) return;
+		// When the selected part is the one being hover-highlighted, let the hover
+		// dots win — skip its selection dots.
+		if (hits_3d.hover_highlight_so_id === sel.so.id) return;
 
 		const projected = hits_3d.get_projected(sel.so.scene.id);
 		if (!projected) return;
 
-		this.render_hit_dots(sel, projected, `${sel.so.scene.color}1)`);
+		this.render_hit_dots(sel, projected, colors.so_selected_color);
 	}
 
 	private render_hover(): void {
 		const hover = hits_3d.hover;
 		if (!hover || !hover.so.scene) return;
-		// Don't draw hover dots when hovering sub-elements of the selected face
-		const sel = selection.current;
-		if (sel && sel.so === hover.so && sel.type === T_Hit_3D.face) return;
+		// Only draw hover dots for the part the central rule marks as hovered.
+		if (hits_3d.hover_highlight_so_id !== hover.so.id) return;
 
 		const projected = hits_3d.get_projected(hover.so.scene.id);
 		if (!projected) return;
@@ -2563,13 +2568,13 @@ class Render {
 		const draw = (p: Projected) => {
 			if (p.w < 0) return;
 			this.ctx.beginPath();
-			this.ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-			this.ctx.fillStyle = 'white';
-			this.ctx.fill();
-			this.ctx.lineWidth = stores.bold_thickness;
+			this.ctx.fillStyle = colors.lighterBy(color, 5);
+			this.ctx.lineWidth = stores.edge_thickness;
+			this.ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
 			this.ctx.strokeStyle = color;
 			this.ctx.lineJoin = 'round';
 			this.ctx.stroke();
+			this.ctx.fill();
 		};
 
 		switch (hit.type) {

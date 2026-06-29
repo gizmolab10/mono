@@ -6,6 +6,44 @@ Record work performed during chat sessions, in reverse chronological order. Each
 
 ---
 
+## Session — 2026-06-28 — Dimension label: edit box, pill, and a unified hover rule
+
+- Dimension font: a new `k.height.font.graph` token (≈17) sizes the drawn label and the edit box; fixed a reversed/typo'd canvas font string so the drawn number renders at the token size instead of the 10px default.
+- Edit box: it grows to fit the text as you type (the text width is remeasured each keystroke into its own store, kept separate from the edit state so it no longer re-selects the text). Its dashed pill border and the number text use the SO-selected color; its line-height is pinned so it matches the hover pill's height. Earlier, the per-keystroke pill width tracked on the canvas, but the white edit box covered it, so the pill became a DOM element instead.
+- Hover pill: a transparent DOM element over the hovered dim's label, sharing one CSS class with the edit box (same radius and inner spacing), so the two always match. Its border uses the hover color. The edge-derived colors a DOM element needs are exposed as CSS variables (`--so-hover`, `--so-selected`); the rest stay canvas-only.
+- Editing a dimensional now selects its part, so while editing, its witness/dim lines and arrowheads use the selection color.
+- One central rule decides which single part shows the hover color, weighing what the cursor is over (a new label/line/body signal) against selection and edit state: not-selected → any hover highlights; selected, not editing → only its label-hover; editing → only its non-label (line/body) hover. The rule drives every surface — part edges, the corner dots, the dim lines/label, the hover pill, and the edit box — and replaced the scattered per-surface hover checks. The old canvas hover pill and the duplicate convex-hull outline were removed.
+
+### Files touched
+
+- di/src/lib/ts/utilities/Colors.ts (CSS vars for hover/selected), di/src/lib/ts/common/Configuration.ts + Constants.ts (graph font token)
+- di/src/lib/ts/editors/Dimension.ts (select on edit, live width store), di/src/lib/svelte/main/Graph.svelte (edit box, hover pill, derived rules)
+- di/src/lib/ts/events/Hits_3D.ts (hovered_dim_target + hover_highlight_so_id), di/src/lib/ts/events/Events_3D.ts (set the target on hover)
+- di/src/lib/ts/render/Render.ts (edges + dots use the central rule), di/src/lib/ts/render/Dimension_Renderer.ts (font fix, dim colors use the central rule)
+
+### Verification
+
+- yarn svelte-check: 0 errors. yarn vitest run: 842 passed.
+- Visual: confirmed perfect by Jonathan across the hover/edit/selection states.
+
+---
+
+## Session — 2026-06-27 — Hover pill around the dimension label
+
+- On hover, the dimension directly under the cursor now gets a pill (rounded-rectangle) outline around its number's white box, in the hover color. Only that one dimension gets it — matched by part id and axis against the hovered dimension — not the whole part's set (Dimension_Renderer.ts, the arrows-and-label helper; the label loop passes a per-dimension hover flag).
+- The pill radius is half the box height, stroked at edge width, drawn after the white box and number so it frames them.
+
+### Files touched
+
+- di/src/lib/ts/render/Dimension_Renderer.ts (per-dimension hover flag + pill border + diagnostic line)
+
+### Verification
+
+- yarn svelte-check: 0 errors. yarn vitest run: 842 passed.
+- Visual: confirmed perfect by Jonathan.
+
+---
+
 ## Session — 2026-06-27 — Color triad follow-on: tick lines, selection color, single sources
 
 - Slider tick marks: the tick line width now reads the slider's `tick_thickness` prop on the element (Svelte styles can't read a prop), and its fill reads the tick color var `--c-tick` (it was wrongly set to the tick-thickness length, so the line had no fill and was invisible).

@@ -57,6 +57,33 @@ class Hits_3D {
 	get hovered_uniface_placement(): Uniface_Placement_Entry | null { return get(this.w_hovered_uniface_placement); }
 	set hovered_uniface_placement(p: Uniface_Placement_Entry | null) { this.w_hovered_uniface_placement.set(p); }
 
+	// What the cursor is over within a dimensional: its label, one of its lines,
+	// or neither. Drives the state-dependent hover rule (hover_highlight_so_id).
+	w_hovered_dim_target = stale_writable<'label' | 'line' | null>(null);
+
+	get hovered_dim_target(): 'label' | 'line' | null { return get(this.w_hovered_dim_target); }
+	set hovered_dim_target(t: 'label' | 'line' | null) { this.w_hovered_dim_target.set(t); }
+
+	/** The single part to draw in the hover color, by state:
+	 *  - hovering a dim LABEL highlights that part, unless it is being edited;
+	 *  - hovering a dim LINE or the part BODY highlights it, unless it is
+	 *    selected and not being edited.
+	 *  Returns null when nothing should be hover-highlighted. */
+	get hover_highlight_so_id(): string | null {
+		const target = this.hovered_dim_target;
+		const dim_so = this.hovered_dimension?.so ?? null;
+		const body_so = this.hover?.so ?? null;
+		const editing_so = dimensions.state?.so ?? null;
+		if (target === 'label' && dim_so) {
+			return dim_so === editing_so ? null : dim_so.id;
+		}
+		const part = (target === 'line' ? dim_so : null) ?? body_so;
+		if (!part) return null;
+		const is_selected = selection.contains(part);
+		const is_editing = part === editing_so;
+		return (!is_selected || is_editing) ? part.id : null;
+	}
+
 	get_projected(scene_id: string): Projected[] | undefined {
 		return this.cache.get(scene_id)?.projected;
 	}

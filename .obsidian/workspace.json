@@ -91,7 +91,8 @@
               "title": "code.debt.paid"
             }
           }
-        ]
+        ],
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -148,7 +149,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 354.5026054382324
+    "width": 354.5026054382324,
+    "collapsed": true
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -226,13 +228,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "di/notes/work/now/code.debt.md",
+                "file": "di/notes/work/done/code.debt.paid.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code.debt"
+              "title": "Outline of code.debt.paid"
             }
           },
           {
@@ -250,7 +252,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 464.5
+    "width": 464.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -264,27 +267,27 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "95be7d8ffa2839e8",
+  "active": "d564f137b1193a19",
   "lastOpenFiles": [
+    "di/src/lib/ts/events/Events_3D.ts.tmp.2892.b0e6818b9b44",
+    "di/notes/work/now/code.debt.md",
+    "ws/vite.config.js.timestamp-1782687076843-6c9b395243c43.mjs",
+    "di/notes/work/now/handoff.md",
+    "di/notes/guides/pre-flight/lexicon.md",
     "di/src/lib/ts/render/Render.ts.tmp.3665.f9b3391a8266",
     "di/src/lib/ts/utilities/Colors.ts.tmp.3665.cd2ef12de8e3",
     "di/src/lib/ts/utilities/Colors.ts.tmp.3665.333ad1c0c085",
     "di/src/lib/svelte/mouse/Slider.svelte.tmp.3665.1a6456af04fe",
-    "di/notes/work/now/handoff.md",
     "di/notes/work/now/open items.md",
     "di/src/lib/ts/utilities/Colors.ts.tmp.53903.cb94cd4ecc1c",
-    "di/notes/work/now/code.debt.md",
     "di/notes/work/now/handoff.md.tmp.53903.4292355910bd",
     "di/notes/work/now/34.dimensionals/dimensions.latest.spec.md",
-    "di/notes/guides/pre-flight/lexicon.md",
     "di/notes/work/now/work journal.md",
     "di/notes/work/done/code.debt.paid.md",
     "lv/notes/work/bare bone website.md",
     "di/notes/work/ai/learn.md.tmp.17584.8834a3af63f8",
     "di/src/lib/ts/tests/Utilities.test.ts",
     "di/src/lib/ts/utilities/Utilities.ts",
-    "di/notes/work/now/work journal.md.tmp.3680.881ade49e324",
-    "di/src/lib/ts/utilities/Versions.ts",
     "di/notes/guides/pre-flight/banned words.md",
     "di/notes/work/now/our process.md",
     "notes/guides/pre-flight/shorthand.md",

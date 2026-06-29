@@ -76,6 +76,14 @@ export class Colors {
 			this.dimension_color = this.rotate_hue_for_contrast(color, -90);
 			this.so_hover_color = this.rotate_hue_for_contrast(color, 180);
 			this.so_selected_color = this.rotate_hue_for_contrast(color, 90);
+			// Expose the edge-derived colors the DOM pills (Graph.svelte) need:
+			// the hover pill uses the dimension color, the edit pill the SO
+			// selection color. The rest stay canvas-only.
+			if (typeof document !== 'undefined') {
+				const root = document.documentElement.style;
+				root.setProperty('--so-hover', this.so_hover_color);
+				root.setProperty('--so-selected', this.so_selected_color);
+			}
 		});
 
 		this.w_accent_color.subscribe((color : string) => {
