@@ -2,7 +2,7 @@
 
 # Dimensions placement latest spec
 
-This spec describes what the dimensions code does every time the canvas redraws. The spine is the per-render data pipeline. Each chapter is one stage of that pipeline; chapter one shows the whole flow, chapters two through seven walk it stage by stage, chapter eight covers the log.
+This spec describes what the dimensions code does every time the canvas redraws. The spine is the per-render data pipeline. Each chapter is one stage of that pipeline; chapter one shows the whole flow, chapters two through eight walk it stage by stage, chapter nine covers the log, and chapter ten lists the constants.
 
 Source root: `di/src/lib/ts/render/Dimension_Placement.ts` and `di/src/lib/ts/render/Dimension_Renderer.ts`.
 
@@ -16,61 +16,67 @@ Every render runs this flow, top to bottom:
    scene parts
        |
        v
-   eligible parts                       (chapter 2)
+   eligible parts                          (chapter 2)
        |
        v
-   silhouette box  +  uniface boxes     (chapter 3)
+   silhouette box  +  uniface boxes        (chapter 3)
        |
        v
-   filter chain: each part-axis         (chapter 4)
+   traversal order: all eligible part-axes (chapter 4)
        |
        v
-   scoring                              (chapter 5)
+   filter chain: each part-axis            (chapter 5)
+       |
+       v
+   scoring                                 (chapter 6)
        |
        v
    placements
        |
        v
-   render                               (chapter 7)
+   render                                  (chapter 8)
 ```
 
-Persistence (chapter 6) wraps the whole pipeline: when the scene is stable, the placements from last render are reused and the chain in the middle is skipped.
+Persistence (chapter 7) wraps the whole pipeline: when the scene is stable, the placements from last render are reused and the chain in the middle is skipped.
 
-The diagnostic log (chapter 8) writes one block per render summarising what happened.
+The diagnostic log (chapter 9) writes one block per render summarising what happened.
 
 ---
 
-## 2. Eligible parts
+## 2. Candidates (eligibility)
 
-### 2.1 Eligibility
+Selected and hovered parts are always eligible.
 
-A part feeds the placement when ALL hold:
+A placement is one (edge, face, witness-index) choice. Each eligible part has three axes; each axis has four candidate edges (12 per part). Each edge borders two faces (up to 24 per part). Each face offers seven placements (up to 168 per part): the six witness-index levels (3.2) plus the outer edge (3.3). Each placement is then sampled at five label positions — 50%, 30%, 70%, 15%, 85% along the dim line (up to 840 per part).
 
-- 2.1.1 It is currently visible, and NOT hidden by the near-occluder peel (zoom cluster C). A peeled part gets no dimensionals. *(PENDING — peel not yet built.)*
-- 2.1.2 It passes the count gate (2.1.6): the part is among the dimensionals the count slider shows, OR the part is selected, OR the part is hovered. *(PENDING — replaces the old dimensions on/off flag, which stays the current behavior until the slider is built.)*
-- 2.1.3 No ancestor is set to hide its children.
-- 2.1.4 It has a parent (the root smart object is excluded — it is the scene container, not a real part). Parents with visible children ARE eligible.
-- 2.1.5 The repeater filter does not drop it (see 2.3).
+### 2.1 Per-axis candidate faces (planes)
 
-#### 2.1.6 The count gate *(PENDING — not yet built)*
+Each part has six faces. Dimensionals are drawn in the plane of a face that contains the edge being measured. For each axis, the candidate faces are those whose outward normal is perpendicular to that axis (see table). Each axis can contain 0, 1 or 2 dimensionals, out of a possible 8.
 
-A control sets how many dimensionals show: a whole number from 0 to 100, default 2, persisted across reload. It replaces the old on/off flag. The control is a slider just to the right of the names/angles segmented control; it moves continuously with tick marks every 10, and its setting is rounded to the whole count shown.
+| Axis (label)     | Candidate faces             |
+| ---------------- | --------------------------- |
+| x  (width)       | FRONT, BACK, TOP, BOTTOM    |
+| y  (depth)       | LEFT, RIGHT, TOP, BOTTOM    |
+| z  (height)      | LEFT, RIGHT, FRONT, BACK    |
 
-- Candidates are every allowed axis of every part where at least one is within the frustum (leaf or parent, NOT root); each part offers up to three (width, depth, height).
-- Order the candidates biggest-first (step 3h) and keep that many; the rest drop.
-- 0 shows none.
-- The selected part is ALWAYS shown in full whenever it is fully within the frustum, regardless of the number.
-- A hovered part ALWAYS shows its own, even at 0.
+### 2.2 Face exclusion
 
-"at least one is within the frustum" = any of the eight of a part's box corners project inside the canvas and in front of the camera. Which parts qualify shifts as you zoom, and differs between the flat scale and the dolly (zoom cluster A and B).
+A face is excluded from EVERY witness-index level when its outward normal points:
 
-### 2.2 X-ray mode
+- within 20 degrees of straight AT the camera, OR
+- within 45 degrees of straight AWAY from the camera.
 
-When the OPTION key is held AND at least one part in the scene is hidden, the visibility test flips — only HIDDEN parts are eligible. With no hidden part, OPTION is a no-op.
+Camera direction is expressed in the room's static frame.
 
-X-ray and the near-occluder peel are independent: x-ray flips which parts are visible by the OPTION rule above; the peel hides near parts by depth as you zoom in. The peel never hides the selected or hovered part. *(PENDING — peel not yet built.)*
+### 2.3 Frustum exclusion
 
-### 2.3 Repeater filter
+A part is eligible only when ALL eight of its box corners project inside the canvas and in front of the camera; if even one corner is off-screen or behind the camera, the part is dropped. Which parts qualify shifts as you zoom, and differs between the flat scale and the dolly (zoom cluster A and B).
+
+### 2.4 Off-Canvas exclusion
+
+Every mark (line, label, arrowhead) of every dimensional MUST be inside the canvas. Any placement with a mark outside is NOT viable -> dropped.
+
+### 2.5 Repeater filter
 
 | Part is...                                            | Eligible? | Axes              |
 | ----------------------------------------------------- | --------- | ----------------- |
@@ -81,10 +87,6 @@ X-ray and the near-occluder peel are independent: x-ray flips which parts are vi
 | Inside a firewall repeater, first/last fireblock      | yes       | repeat axis only  |
 | Inside a firewall repeater, middle fireblock          | no (clone)| —                 |
 
-### 2.4 Walk order
-
-Eligible parts are walked by depth from the root (shallow first), then by name alphabetical at each depth. The duplicate-text drop (chapter 4) walks parts in this order and keeps the first claimant of each (text, axis) pair — so a parent wins over its child when their dim text agrees.
-
 ---
 
 ## 3. Geometry
@@ -93,7 +95,7 @@ Eligible parts are walked by depth from the root (shallow first), then by name a
 
 A world-axis-aligned box. Its corners are every corner of every visible LEAF part whose eight corners ALL project inside the visible canvas after tumble plus projection. Container parts (parents with visible children) do not feed the silhouette. Parts partly off canvas are skipped. The box is computed in the room's STATIC (untumbled) frame, so it stays glued to the parts and tumbles with the view.
 
-When zero parts qualify (heavy zoom), the box collapses to a single point at the origin and the silhouette-clearance filter (chapter 4) becomes a no-op.
+When zero parts qualify (heavy zoom), the box collapses to a single point at the origin and the silhouette-clearance filter (chapter 5) becomes a no-op.
 
 ### 3.2 Uniface boxes
 
@@ -108,151 +110,123 @@ Six nested boxes, each one face-by-face offset from the silhouette box. Offset d
 | 5             | 75                                 |
 | 6             | 90                                 |
 
-Each box has six faces (LEFT, RIGHT, FRONT, BACK, TOP, BOTTOM). Per face, the millimetre shift is computed once by projecting the face centre and one world-unit-along-the-outward-normal, then scaling.
+Each box has six faces (LEFT, RIGHT, FRONT, BACK, TOP, BOTTOM). Per face, the millimeter shift is computed once by projecting the face center and one world-unit-along-the-outward-normal, then scaling.
 
-### 3.3 Outer edge candidates
+### 3.3 Outer edge placements
 
-Besides the uniface candidates above, each part-axis also offers OUTER EDGE candidates. They are added to the same candidate set the placement algorithm traverses — filtered in chapter 4 and scored in chapter 5, alongside the uniface candidates. They are NOT a fall-back that runs only when nothing else is viable.
+Besides the uniface placements above, each part-axis also offers OUTER EDGE placements. They are added to the same placement set the placement algorithm traverses — filtered in chapter 5 and scored in chapter 6, alongside the uniface placements. They are NOT a fall-back that runs only when nothing else is viable.
 
 EIGHT per axis: four edges of the part along the measured axis, paired with two outward perpendicular directions per edge (the two non-measured local axes pointing away from the part).
 
 For each, a binary search finds the SMALLEST shift along the witness (perpendicular) line such that, after the part's world matrix plus tumble plus projection are applied, every drawn mark of the dimensional sits at least 10 px inside its nearest canvas edge AND the label rectangle does not overlap the part's projected bounding box on screen. Smallest shift means shortest **tumbled and projected** witnesses.
 
-Candidates whose two projected witness lines run closer than 15 px apart are dropped (same threshold as the uniface candidates).
+Placements whose two projected witness lines run closer than 15 px apart are dropped (same threshold as the uniface placements).
 
-These candidates carry no special winner rule: chapter 5 scores them the same way it scores the uniface candidates, so the best candidate overall — uniface or outer edge — wins.
+These placements carry no special winner rule: chapter 6 scores them the same way it scores the uniface placements, so the best placement overall — uniface or outer edge — wins.
 
-### 3.4 Outer edge constants
+For scoring, an outer-edge placement's outward direction (n_out) is its edge's outward perpendicular (the way its witnesses point); its screen-room (R) and witness lengths come from the binary-search geometry above, not a silhouette-box face.
 
-- Outer edge canvas inset: **10 px** on every side
-- Outer edge witness-line spacing minimum: **15 px**
+## 4. Traversal order
 
-### 3.5 Face exclusion
+Selected and hovered parts are traversed first. If the dimensions count N is non zero, traversal examines each remaining eligible part, passing each of its 168 placements through the filter chain (see 5).
 
-A face is excluded from EVERY witness-index level when its outward normal points:
+Build the traversal order (of part-axes) by scanning every part on all three of its axes. Collect all of these part axes in an array, largest dimensions first.
 
-- within 20 degrees of straight AT the camera, OR
-- within 45 degrees of straight AWAY from the camera.
+For those part-axes with equal lengths select just one and drop the rest according to this rule -> the parent (when it matches one of its children) or select the one whose name appears alphabetically first.
 
-Camera direction is expressed in the room's static frame.
+### 4.1 Count threshold
 
-### 3.6 Per-axis candidate faces
+A logarithmic slider to set a number N -> how many dimensionals are visible, shown rounded to nearest integer. Range from 0 to 100, default 2. Tick marks every 10 units. Slides continuously. N persists across reload. Just to the right of the names/angles segmented control.
 
-The four candidate faces for each measured axis are the faces whose outward normal is perpendicular to that axis:
+Traversal stops after the first N part-axes (those with the largest dimensions). Forced parts (selected or hovered) are always drawn, on top of those N; they are NOT counted toward N.
 
-| Axis (label)     | Candidate faces             |
-| ---------------- | --------------------------- |
-| x  (width)       | FRONT, BACK, TOP, BOTTOM    |
-| y  (depth)       | LEFT, RIGHT, TOP, BOTTOM    |
-| z  (height)      | LEFT, RIGHT, FRONT, BACK    |
-
-### 3.7 Off-Canvas exclusion
-
-Every mark of every dimensional MUST be inside the canvas. Any candidate placement with a mark outside is NOT viable -> dropped.
-
-### 3.8 Geometry constants
-
-- Witness-index cap: **6** nested boxes
-- Silhouette margin (per witness-index step): **15 px**
-- Front-face exclusion angle: **20°**
-- Back-face exclusion angle: **45°**
+### 4.2 Low pass threshold (not yet designed)
 
 ---
 
-## 4. Filter chain: each part-axis -> any viable candidate?
+## 5. Filter chain
 
-For each eligible part, for each axis, the search picks ONE of each of four things at once:
+Each part has three part-axes. Each part-axis has up to 56 placements (168 / 3). Only one viable label position is needed.
 
-1. which of the part's four parallel edges to anchor the witness lines from
-2. which of the four candidate faces to lay the dim line in
-3. which of the six nested uniface boxes to use (witness-index 1 to 6)
-4. the label's position along the dim line.
+Each placement runs through the chain of filters, cheapest first: the orientation and overlap filters per placement, then the witness-length filters per label position; the first failure stops the chain. A placement with at least one label position that passes every filter is VIABLE, and that label position goes on to scoring (chapter 6). A part-axis with zero viable label positions produces no dimensional on that axis.
 
-Every combination is a CANDIDATE — and the outer edge candidates from §3.3 join this same set. Each candidate goes through a chain of filters. A candidate that passes every filter is VIABLE. A part-axis that produces at least one viable candidate goes on to scoring (chapter 5). A part-axis with zero viable candidates produces no dimensional on that axis.
+### 5.1 Orientation filter
 
-The chain runs filters in three groups, cheapest first. The first failure stops the chain for that candidate.
+Run once per placement (edge / face / witness-index).
 
-### 4.1 Duplication filters (run once per part-axis)
+| Filter          | What it checks                                                                                    | Threshold                    |
+| --------------- | ------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `edge-on-plane` | The dim's flat plane is too close to edge-on toward the camera (label would draw nearly side-on). | 0.174 dot (~10° off edge-on) |
 
-| Filter            | What it checks                                                    | Threshold        |
-| ----------------- | ----------------------------------------------------------------- | ---------------- |
-| `duplicate-text`  | Another already-placed dim shows the same number text on this axis. | exact match    |
+### 5.2 Overlap filters
 
-### 4.2 Shape filters (run once per edge / face / witness-index)
+Run once per placement (edge / face / witness-index).
 
-| Filter                    | What it checks                                                                 | Threshold                    |
-| ------------------------- | ------------------------------------------------------------------------------ | ---------------------------- |
-| `edge-on-plane`           | Dim's flat-plane normal is too close to perpendicular to the camera direction. | 0.174 dot (~10° off edge-on) |
-| `witness-overlaps-placed` | A witness line runs too close to an already-placed witness line on screen.     | 5px                          |
-| `own-witness-convergence` | The two witness lines for THIS candidate run too close on screen.              | 15 px                        |
+| Filter                    | What it checks                                                             | Threshold |
+| ------------------------- | -------------------------------------------------------------------------- | --------- |
+| `witness-overlaps-placed` | A witness line runs too close to an already-placed witness line on screen. | 5px       |
+| `own-witness-convergence` | The two witness lines for THIS placement run too close on screen.          | 15 px     |
 
-### 4.3 Witness length filters (run once per label position)
+### 5.3 Witness length filters
 
-| Filter                   | What it checks                                                                 | Threshold                                               |
-| ------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------- |
-| `silhouette`             | Label rectangle crosses INSIDE the silhouette polygon.                         | 0 px (touching from outside allowed; crossing rejected) |
-| `label-vs-label`         | Label rectangle clears every already-placed label rectangle.                   | 5 px                                                    |
-| `label-vs-placed-anchor` | Label rectangle clears every already-placed witness anchor.                    | 5 px                                                    |
-| `label-vs-placed-dim`    | Label rectangle clears every already-placed dim line.                          | 5 px                                                    |
-| `own-anchor-vs-placed`   | This candidate's own two anchors clear every already-placed label rectangle.   | 5 px                                                    |
-| `own-dim-vs-placed`      | This candidate's own dim line clears every already-placed label rectangle.     | 5 px                                                    |
-| `label-vs-anchor-zone`   | Label rectangle does not overlap a 20 px zone past any anchor (own or placed). | 20 px                                                   |
+These are run once per label position.
 
-`label-vs-placed-witness` is documented in the dim-spec but currently DISABLED in code — the white label box covers any witness line passing behind it, so the visual case for the filter does not hold.
+| Filter                   | What it checks                                                                 | Threshold |
+| ------------------------ | ------------------------------------------------------------------------------ | --------- |
+| `silhouette`             | Label rectangle crosses INSIDE the silhouette polygon.                         | 0 px      |
+| `label-vs-label`         | Label rectangle clears every already-placed label rectangle.                   | 5 px      |
+| `label-vs-placed-anchor` | Label rectangle clears every already-placed witness anchor.                    | 5 px      |
+| `label-vs-placed-dim`    | Label rectangle clears every already-placed dim line.                          | 5 px      |
+| `own-anchor-vs-placed`   | This placement's own two anchors clear every already-placed label rectangle.   | 5 px      |
+| `own-dim-vs-placed`      | This placement's own dim line clears every already-placed label rectangle.     | 5 px      |
+| `label-vs-anchor-zone`   | Label rectangle does not overlap a 20 px zone past any anchor (own or placed). | 20 px     |
 
-### 4.4 Slide-and-retry
+`label-vs-placed-witness` is documented in the dim-spec but currently ***DISABLED*** in code. ***It needs to be enabled***. When enabled it joins these witness-length filters.
 
-When a position filter rejects (silhouette, label-vs-label, label-vs-placed-anchor, label-vs-placed-dim only), the search shifts the label by (the rejection's shortfall + 1 px) along the dim line — once in each direction — and re-runs the position filters on the shifted label. The first direction that passes wins. Shape filters and the own-anchor / own-dim / anchor-zone filters are NOT slide-eligible: sliding moves the label, not the witnesses or anchors, so those rejections cannot be helped that way.
+### 5.4 Slide-and-retry
 
-### 4.5 Canonical label positions
+When a label position fails the entire filter chain, the search shifts the label by (the rejection's shortfall + 1 px) along the dim line — once in each direction — and re-runs the witness-length filters on the shifted label. The reposition that passes wins; if both directions pass, the first one tried wins.
 
-Each (edge, face, witness-index) combination tries five label positions along the dim line: 50%, 30%, 70%, 15%, 85%. EVERY position that passes the filter chain is scored; the highest score wins. The five fixed positions are the search's sample set — they are not ranked or short-circuited.
-
-### 4.6 Filter-chain constants
-
-- Witness-line convergence minimum: **15 px**
-- Edge-on dot threshold: **0.174** (~10° off edge-on)
-- Pair clearance (label vs label / anchor / dim / own-anchor / own-dim): **5 px**
-- Anchor-zone half-width: **20 px**
-- Label-position samples: **5** at 50%, 30%, 70%, 15%, 85%
+Sliding moves the label, not the witnesses or anchors. So the orientation and overlap filters (5.1, 5.2) and the own-anchor / own-dim / anchor-zone filters are NOT slide-eligible and are not invoked during this slide filter.
 
 ---
 
-## 5. Scoring
+## 6. Scoring
 
-For a part-axis with at least one viable candidate, every viable candidate gets a score; the highest wins.
+For a part-axis with at least one viable label position, every viable label position gets a score; the highest wins.
 
 ```text
-S = (L - W) - α·u² - β·(W₁ + W₂)/2 - γ·(I₁ + I₂)/2 + ε·R - ζ·max(0, n_camera · n_out) + η·(1 − |n_front · n_out|)·max(0, −n_camera · n_front)
+S = (L - W) - α·((t − 0.5) / 0.5)² - β·(W₁ + W₂)/2 - γ·(I₁ + I₂)/2 + ε·R - ζ·max(0, n_camera · n_out) + η·(1 − |n_front · n_out|)·max(0, −n_camera · n_front)
 ```
 
-| Symbol | Meaning                                                                          | Value |
-| ------ | -------------------------------------------------------------------------------- | ----- |
-| S      | candidate's score; higher wins                                                   |       |
-| L      | dim line length on screen (px)                                                   |       |
-| W      | label width on screen (px)                                                       |       |
-| t      | label's sampled position along the dim line, 0 at anchor 1 to 1 at anchor 2      |       |
-| u      | off-center fraction `\|t − 0.5\| / 0.5`                                          |       |
-| W₁, W₂ | screen lengths of the two witness lines (px)                                     |       |
-| I₁, I₂ | percent of each witness line inside the silhouette polygon, sampled 11 times     | 0–100 |
-| R      | screen-pixel distance from anchor midpoint to canvas edge along the outward perpendicular; clamped to zero from below | px |
-| n_camera | camera-forward direction in static-world coords (points from camera into the scene) | unit  |
-| n_out    | outward direction of this candidate's silhouette-box face in static-world coords | unit  |
-| α      | centering-penalty cap                                                            | 20    |
-| β      | witness-length weight per px                                                     | 3     |
-| γ      | inside-silhouette weight per percent                                             | 200   |
-| ε      | screen-room weight per px                                                        | 1     |
-| n_front  | part's front-most face normal in static-world coords (the face most aligned with the camera) | unit  |
-| ζ      | camera-side penalty weight                                                       | 50000 |
-| η      | lies-flat reward weight                                                          | 500   |
+| Symbol   | Meaning                                                                                                               | Value |
+| -------- | --------------------------------------------------------------------------------------------------------------------- | ----- |
+| S        | the label position's score; higher wins                                                                               |       |
+| L        | dim line length on screen (px)                                                                                        |       |
+| W        | label width on screen (px)                                                                                            |       |
+| t        | label's sampled position along the dim line, 0 at anchor 1 to 1 at anchor 2                                           |       |
+| W₁, W₂   | screen lengths of the two witness lines (px)                                                                          |       |
+| I₁, I₂   | percent of each witness line inside the silhouette polygon, sampled 11 times                                          | 0–100 |
+| R        | screen-pixel distance from anchor midpoint to canvas edge along the outward perpendicular; clamped to zero from below | px    |
+| n_camera | camera-forward direction in static-world coords (points from camera into the scene)                                   | unit  |
+| n_out    | outward direction of this placement's silhouette-box face in static-world coords                                      | unit  |
+| α        | centering-penalty cap                                                                                                 | 20    |
+| β        | witness-length weight per px                                                                                          | 3     |
+| γ        | inside-silhouette weight per percent                                                                                  | 200   |
+| ε        | screen-room weight per px                                                                                             | 1     |
+| n_front  | part's front-most face normal in static-world coords (the face most aligned with the camera)                          | unit  |
+| ζ        | face-orientation penalty weight                                                                                            | 50000 |
+| η        | lies-flat reward weight                                                                                               | 500   |
 
-The camera-side term (ζ·max(0, n_camera · n_out)) penalises candidates whose outward direction points AWAY from the camera — the label would sit on the back side of the part, behind it. A candidate whose outward direction points toward the camera pays zero. Weight fifty thousand outranks the empty-canvas reward by enough that no plausible amount of open canvas can rescue a back-side candidate when any front-side candidate is viable.
+The face-orientation penalty (ζ·max(0, n_camera · n_out)) penalises label positions whose outward direction points AWAY from the camera — the label would sit on the back side of the part, behind it. A label position whose outward direction points toward the camera pays zero. Weight fifty thousand outranks the empty-canvas reward by enough that no plausible amount of open canvas can rescue a back-side label position when any front-side one is viable.
 
-The lies-flat term (η·(1 − |n_front · n_out|)·max(0, −n_camera · n_front)) rewards candidates whose outward direction lies in the plane of the part's front-most face. The reward also scales with how strongly that face points toward the camera — a face perpendicular to the view earns nothing; a face pointing straight at the camera earns full weight. The reward favours in-plane choices in lightly congested areas without overriding the camera-side rule or witness-length term.
+The lies-flat term (η·(1 − |n_front · n_out|)·max(0, −n_camera · n_front)) rewards label positions whose outward direction lies in the plane of the part's front-most face. The reward also scales with how strongly that face points toward the camera — a face perpendicular to the view earns nothing; a face pointing straight at the camera earns full weight. The reward favours in-plane choices in lightly congested areas without overriding the face-orientation penalty or witness-length term.
 
 The empty-canvas-room term (ε·R) is what gives the search its bias for directions with more empty space outside the silhouette; the witness-length penalty (β) holds short witnesses still attractive when the room is similar; the inside-silhouette penalty (γ) protects against witness lines drawn over the building.
 
-## 6. Persistence between renders
+---
+
+## 7. Persistence between renders
 
 The pipeline's output (the placements) is remembered for one render. On the next render, every persisted placement is re-projected and viability-checked. The ones that still fit are LOCKED and contribute their geometry as fixed obstacles to the filter chain; the ones that fail get re-placed by the main loop. There is no separate "skip everything if nothing changed" short-circuit — the lock-and-re-place path runs every render.
 
@@ -262,31 +236,28 @@ Each persisted placement records: the chosen edge, face, witness-index, and labe
 - Pair clearance (label vs label): **5 px**. The label rectangle still clears every other previously-locked label rectangle by 5 px.
 - The label rectangle does not cross inside the new silhouette polygon.
 
-Plus: the off-canvas check from chapter 3 — every drawn mark of the dim must stay inside the canvas. If a persisted placement drifts past a canvas edge after tumble, it fails and gets re-placed.
+Plus: If a persisted placement drifts past a canvas edge after tumble, the traversal (chapter 4) runs again.
 
 A persisted placement that passes ALL checks is LOCKED. Its rectangle, witnesses, dim line, and anchors join the placed-obstacles set before the main loop runs. The free placements (failed checks, or part-axes that never had a winner last render) search around the locked ones.
 
 ---
 
-## 7. Render
+## 8. Render
 
-### 7.1 Paint order
+### 8.1 Paint order
 
 For every kept placement the renderer draws, in this paint order:
 
-1. Witness lines (blue).
-2. Dim line segments (blue).
-3. Hover overlay — every line on a hovered or selected part repainted in red, plus the part's outline.
-4. Arrowheads.
-5. White label box and the dim text inside it.
+1. Parts
+2. Witness lines
+3. Dimension lines
+4. Arrowheads
+5. White label box and the dimension text inside it
+6. Selection/drag dots
 
-WITNESS LINES start 5 px past the part edge and end 10 px past the anchor. ARROWS sit at each anchor; per-side flip and label slide decide whether they point inward or outward (see 7.2).
+WITNESS LINES start 5 px past the part edge and end 10 px past the anchor. ARROWS sit at each anchor; per-side flip and label slide decide whether they point inward or outward (see 8.2).
 
-OFF-CANVAS DROP: if BOTH anchors of a placement sit outside the visible canvas, nothing draws for that placement. With at least one anchor on canvas, the whole geometry draws (canvas clipping handles the rest).
-
-TOGGLE OFF + selection: the renderer draws only placements whose part is selected; placements for non-selected parts are skipped at this step (the placement search still ran for all parts).
-
-### 7.2 Label position relative to the witness anchors
+### 8.2 Label geometry relative to the witness anchors
 
 The label position determines whether the label sits in the witness INTERIOR (between the two witness anchors), in the witness EXTERIOR (past one of them), or straddles both witness anchors. The render geometry follows from the position.
 
@@ -303,11 +274,40 @@ DIM LINE SEGMENTS:
 | ONE SIDE IN WITNESS INTERIOR, ONE SIDE OUT    | half-line from the interior witness anchor to the label's near edge on that side, plus outside-extension overhang past the exterior witness anchor. |
 | BOTH SIDES IN THE WITNESS EXTERIOR            | two outside-extension overhangs, one past each witness anchor; label sits between with no line through it. |
 
-### 7.3 Hit-testing
+### 8.3 Hit-testing
 
 Each rendered label registers a clickable rectangle (axis, owning part, screen position, size, witness index). Hover and click-to-edit consume this list.
 
-### 7.4 Render constants
+## 9. Diagnostic log
+
+Every render builds one log block. The block has, in order:
+
+1. One line per part-axis: whether the placement algorithm picked it (and, for a uniface label position, at which witness index), or whether it was dropped.
+2. The summary line: total dimensions considered, how many had at least one viable label position, how many were picked.
+3. Filter-rejection histogram: count per filter.
+4. Per-side detail (only when one part is hovered): for each label position side, the score components if it passed, or "no passing label position (N tried, mostly rejected by FILTER)" with a sample failing label rectangle and a plain-English "why" line.
+
+REPEAT SUPPRESSION: if the block matches the last render's block exactly, no log is emitted (mouse-move-only renders stay quiet). Otherwise the block is written to the browser console AND sent by POST to the local dispatcher at `localhost:5171/log-dimensionals`, which writes it to `logs/dimensionals.log`. The first POST per browser session adds `?fresh=1` to overwrite the file; subsequent POSTs append.
+
+---
+
+## 10. Constants
+
+Each constant lives inline where it is used; this chapter indexes where. The render constants (10.4) have no inline home, so they live here.
+
+### 10.1 Outer edge constants
+
+Inline in 3.3: outer edge canvas inset, outer edge witness-line spacing minimum.
+
+### 10.2 Geometry constants
+
+Inline: witness-index cap and silhouette margin in 3.2; front-face and back-face exclusion angles in 2.2.
+
+### 10.3 Filter-chain constants
+
+Inline: edge-on dot threshold in 5.1; witness-line convergence in 5.2; pair clearance and anchor-zone half-width in 5.3; label-position samples in chapter 2.
+
+### 10.4 Render constants
 
 - Witness gap from part edge: **5 px**
 - Witness overhang past anchor: **10 px**
@@ -318,14 +318,3 @@ Each rendered label registers a clickable rectangle (axis, owning part, screen p
 - Arrow size: **6 px**
 
 ---
-
-## 8. Diagnostic log
-
-Every render builds one log block. The block has, in order:
-
-1. One line per part-axis: whether the placement algorithm picked it (and, for a uniface candidate, at which witness index), or whether it was dropped.
-2. The summary line: total dimensions considered, how many had at least one viable candidate, how many were picked.
-3. Filter-rejection histogram: count per filter.
-4. Per-side detail (only when one part is hovered): for each candidate side, the score components if it passed, or "no passing candidate (N tried, mostly rejected by FILTER)" with a sample failing label rectangle and a plain-English "why" line.
-
-REPEAT SUPPRESSION: if the block matches the last render's block exactly, no log is emitted (mouse-move-only renders stay quiet). Otherwise the block is written to the browser console AND sent by POST to the local dispatcher at `localhost:5171/log-dimensionals`, which writes it to `logs/dimensionals.log`. The first POST per browser session adds `?fresh=1` to overwrite the file; subsequent POSTs append.

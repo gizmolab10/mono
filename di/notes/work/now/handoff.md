@@ -5,9 +5,7 @@
 
 ## Current thread
 
-None active.
-
-**Proposed next (from code.debt):** "hover and select included in dim slider count" — the dimension-count slider's number should count the dimensionals shown by hover and by selection, not just the toggle-driven set. Likely the count source the slider reads excludes the hover/selection-only dims that the renderer still draws; reconcile them. Say go to investigate and propose.
+**Proposed next (from code.debt):** "hover and select included in dim slider count" — the spec has been heavily revised. Awaiting implementation of tests and code.
 
 ## Paused threads
 

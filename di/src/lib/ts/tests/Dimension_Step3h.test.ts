@@ -44,8 +44,9 @@ describe('order_part_axis_by_descending_mm', () => {
 	});
 });
 
-// Count gate (spec 2.1.6): keep the first N in-frustum candidates biggest-first,
-// plus every forced (selected-fully-in-frustum or hovered) entry on top.
+// Count gate (spec 2.1.6): keep the biggest in-frustum candidates up to the
+// count. Forced (selected-fully-in-frustum or hovered) entries are always kept
+// AND count toward the cap, reducing how many non-forced ones fit.
 describe('select_within_count', () => {
 	const E = (mm: number, base = true, forced = false) => ({ mm, base, forced });
 
@@ -65,10 +66,17 @@ describe('select_within_count', () => {
 		expect(select_within_count(ordered, 99).map(e => e.mm)).toEqual([300, 200, 100]);
 	});
 
-	it('forced entries are kept on top of the count and do not consume a slot', () => {
-		// biggest-first: 300 base, 250 forced, 200 base, 100 base
+	it('forced entries count toward the cap (always kept, take a slot)', () => {
+		// biggest-first: 300 base, 250 forced, 200 base, 100 base; cap 2.
+		// the forced 250 takes one slot, leaving one for the biggest base (300).
 		const kept = select_within_count([E(300), E(250, true, true), E(200), E(100)], 2);
-		expect(kept.map(e => e.mm)).toEqual([300, 250, 200]);
+		expect(kept.map(e => e.mm)).toEqual([300, 250]);
+	});
+
+	it('forced beyond the cap are still all shown (never dropped)', () => {
+		// two forced, cap 1: both forced shown, no room left for the base 200.
+		const kept = select_within_count([E(300, true, true), E(250, true, true), E(200)], 1);
+		expect(kept.map(e => e.mm)).toEqual([300, 250]);
 	});
 
 	it('excludes non-forced entries that are not in-frustum candidates', () => {
