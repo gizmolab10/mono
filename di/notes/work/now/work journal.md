@@ -6,6 +6,31 @@ Record work performed during chat sessions, in reverse chronological order. Each
 
 ---
 
+## Session — 2026-07-01 — Dimensionals: outer edge, occlusion, and the count threshold
+
+- **Outer edge is one more option in the same loop.** The outer-edge placement is now an extra witness level evaluated on each edge's two outward directions, run through the same filters and score as the uniface options; the best score draws. The old "last-resort fall-back" (which forced a placement past the filters and caused labels to sit on witnesses and other labels) is gone.
+- **Persistence stores one locator, never both.** A uniface placement saves its box level; an outer edge saves its outward distance in mm. The prior-valid pass rebuilds an outer edge's anchors from that distance, so outer-edge winners reuse like any other.
+- **Occlusion now uses the renderer's own hidden-line clipper.** The dimension code was testing corners in the untumbled frame while the hiding faces were in the tumbled frame, so hidden edges were measured. It now asks `render.edge_partly_hidden` (new), which clips the edge in the same frame the drawing uses and catches partly-hidden edges too, not just corners. The old per-corner test and its unit test were removed. The prior-valid pass re-checks occlusion, so a dimension whose edge goes behind another part after a tumble drops instead of lingering.
+- **Count threshold rebuilt to "draw the largest N".** Every valid placement is computed first (positions held steady by the prior valid list); the very last step (`draw_largest_n`) draws the N largest by length plus every always-eligible one. The count no longer gates the compute, so the biggest always win their spots; moving the slider only re-picks from the kept list and moves nothing. Fixed: a selected part among the largest is now one of the N (was an extra → N+1), and the N are the actual largest, not stale smaller ones filled by reuse.
+- **Hover, selection, and the slider no longer reposition.** None of them clears the prior valid list; each only adds or removes its own part's dimensions.
+- **Diagnostics kept (log-only).** The detailed per-side log now also prints for the selected part, and the edge-on line now carries the view vector, the plane normal, and the on-screen angle between the dim line and its witnesses. With these we confirmed that a selected part showing no dimension at extreme zoom-out is correct, not a defect: its length edges are hidden behind other parts, and its width/height marks either collapse (on-screen witnesses 6–9° off the dim line) or fall under the 15 px witness-separation because the part is a few pixels on screen. The code is right; nothing to fix there.
+- **"forced" → "always eligible"** in code and spec; **"lock/re-lock" → "viable"**, **"picked" → "drew"**.
+- Spec: removed the two redundant outer-edge lines, reworded the outward-direction row and the persistence chapter (one locator), rewrote 4.1 (largest-N) and 2.4 (an edge hidden in whole or part is excluded). Added di always rules 12 (test the failing case of a defined term) and 13 (say "viable", never "lock").
+
+### Files touched
+
+- di/src/lib/ts/render/Dimension_Placement.ts (outer edge as an option, `draw_largest_n`, persistence locator, occlusion via the renderer, prior-valid occlusion re-check, always-eligible rename, selected-part per-side diagnostic + edge-on view/normal/on-screen-angle numbers)
+- di/src/lib/ts/render/Render.ts (`edge_partly_hidden`), Dimension_Renderer.ts + events/Hits_3D.ts (draw-gate no longer needs the fall-back flag)
+- di/notes/work/now/34.dimensionals/dimensions.latest.spec.md; di/notes/guides/pre-flight/always.md
+- tests: count_threshold.test.ts (draw_largest_n), Dimension_Placement.test.ts (hover/selection stay put, outer edge as candidate, occluded edge not reused), reuse_cross_check.test.ts; removed occlusion_exclusion.test.ts
+
+### Verification
+
+- yarn svelte-check: 0 errors, 0 warnings. yarn vitest run: 851 passed, 1 skipped, 8 todo.
+- Visual: Jonathan confirmed each fix on screen (overlaps gone, hidden edges not measured, hover/selection/slider steady, N correct).
+
+---
+
 ## Session — 2026-06-28 — Dimension label: edit box, pill, and a unified hover rule
 
 - Dimension font: a new `k.height.font.graph` token (≈17) sizes the drawn label and the edit box; fixed a reversed/typo'd canvas font string so the drawn number renders at the token size instead of the 10px default.

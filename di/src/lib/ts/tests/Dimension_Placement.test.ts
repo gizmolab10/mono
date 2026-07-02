@@ -465,7 +465,7 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 	it('step 3.1 slice A — every winning (part, axis) writes a persistence record after a successful placement run', async () => {
 		const { run_placement_on_parts } = await import('./helpers/placement_harness');
 		const result = run_placement_on_parts([
-			{ name: 'wall_a', x_min: 0, x_max: 200, y_min: 0, y_max: 50, z_min: 0, z_max: 50 },
+			{ name: 'wall_a', x_min: -0.2, x_max: 0.2, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.1 },
 		]);
 		const persisted = get_last_persisted();
 		// Every winner in the placement result should have a matching key in
@@ -477,7 +477,14 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 			const entry = persisted.get(key);
 			expect(entry).toBeDefined();
 			expect(entry!.face).toBe(w.uniface);
-			expect(entry!.witness_index).toBe(w.witness_index - 1);  // proposal stores 0-based; placement result is 1-based
+			// A uniface winner stores its box level; an outer-edge winner stores
+			// its outward distance in mm instead (level is null). Never both.
+			if (entry!.witness_index === null) {
+				expect(entry!.witness_length_mm).not.toBeNull();
+			} else {
+				expect(entry!.witness_index).toBe(w.witness_index - 1);  // proposal stores 0-based; placement result is 1-based
+				expect(entry!.witness_length_mm).toBeNull();
+			}
 			expect(entry!.label_position_t).toBeGreaterThanOrEqual(0);
 			expect(entry!.label_position_t).toBeLessThanOrEqual(1);
 			expect(entry!.edge_corner_pair_idx).toBeGreaterThanOrEqual(0);
@@ -488,16 +495,16 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 	it('step 3.1 slice A — persistence keys for parts no longer rendered are pruned on the next render', async () => {
 		const { run_placement_on_parts } = await import('./helpers/placement_harness');
 		run_placement_on_parts([
-			{ name: 'wall_old', x_min: 0, x_max: 200, y_min: 0, y_max: 50, z_min: 0, z_max: 50 },
+			{ name: 'wall_old', x_min: -0.2, x_max: 0.2, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.1 },
 		]);
 		const after_first = new Set(get_last_persisted().keys());
 		expect(after_first.size).toBeGreaterThan(0);
 		// Second render with a different part — wall_old's keys must NOT
-		// survive into this render's persistence map. Kept near the origin so
-		// at least one corner lands on the (identity-projection) canvas — the
-		// count-gate candidate test (spec 2.1.6) needs a part in the frustum.
+		// survive into this render's persistence map. Kept within the on-screen
+		// region (x, y in [-1, 1]) so the part is fully visible — strict
+		// eligibility (spec 2.3) needs all eight corners on screen.
 		run_placement_on_parts([
-			{ name: 'wall_new', x_min: 0, x_max: 150, y_min: 0, y_max: 40, z_min: 0, z_max: 40 },
+			{ name: 'wall_new', x_min: -0.18, x_max: 0.18, y_min: -0.12, y_max: 0.12, z_min: 0, z_max: 0.08 },
 		]);
 		const after_second = get_last_persisted();
 		for (const key of after_first) {
@@ -513,7 +520,7 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 		// Cubic part — all three axes should commit a winner so eligible
 		// pairs match persisted entries.
 		const first = run_placement_on_parts([
-			{ name: 'box_skip', x_min: 0, x_max: 120, y_min: 0, y_max: 90, z_min: 0, z_max: 60 },
+			{ name: 'box_skip', x_min: -0.2, x_max: 0.2, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.18 },
 		]);
 		expect(get_last_skip_used()).toBe(false);  // first call had nothing to skip from
 		const first_winners = first.placements.filter(p => p.uniface !== null).length;
@@ -543,13 +550,14 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 		// Render a scene with one part. Capture the persistence so we can
 		// later check the original entries are preserved by the lock.
 		run_placement_on_parts([
-			{ name: 'box_lock_a', x_min: 0, x_max: 120, y_min: 0, y_max: 90, z_min: 0, z_max: 60 },
+			{ name: 'box_lock_a', x_min: -0.2, x_max: -0.02, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.12 },
 		]);
-		const original_persisted_snapshot = new Map<string, { face: number; witness_index: number; edge_corner_pair_idx: number; label_position_t: number }>();
+		const original_persisted_snapshot = new Map<string, { face: number; witness_index: number | null; witness_length_mm: number | null; edge_corner_pair_idx: number; label_position_t: number }>();
 		for (const [key, entry] of get_last_persisted()) {
 			original_persisted_snapshot.set(key, {
 				face                 : entry.face,
 				witness_index        : entry.witness_index,
+				witness_length_mm    : entry.witness_length_mm,
 				edge_corner_pair_idx : entry.edge_corner_pair_idx,
 				label_position_t     : entry.label_position_t,
 			});
@@ -557,7 +565,7 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 		expect(original_persisted_snapshot.size).toBeGreaterThan(0);
 		// Add a second part to the existing scene (no clear).
 		const root = scene.get_all().find(o => !o.parent)!;
-		const new_so = make_so('box_lock_b', 150, 250, 0, 75, 0, 50);
+		const new_so = make_so('box_lock_b', 0.02, 0.2, -0.1, 0.1, 0, 0.1);
 		scene.create({ so: new_so, edges: cube_edges, faces: cube_faces, parent: root });
 		// Re-render. The skip cannot fire because the eligible set changed;
 		// slice C locks the original part's entries and the main loop
@@ -574,12 +582,97 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 			expect(after).toBeDefined();
 			expect(after!.face).toBe(before.face);
 			expect(after!.witness_index).toBe(before.witness_index);
+			expect(after!.witness_length_mm).toBe(before.witness_length_mm);
 			expect(after!.edge_corner_pair_idx).toBe(before.edge_corner_pair_idx);
 			expect(after!.label_position_t).toBe(before.label_position_t);
 		}
 		// Whether the new part wins is up to the main search; the slice-C
 		// contract is only that the previously persisted entries are
 		// locked and unchanged.
+	});
+
+	it('hovering a part keeps every other placement where it was (hover is not a context change)', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		const { run_uniface_placement } = await import('../render/Dimension_Placement');
+		const { scene } = await import('../render/Scene');
+		const { hits_3d } = await import('../events/Hits_3D');
+		// Two parts, both fully on screen so both place on the first render.
+		const first = run_placement_on_parts([
+			{ name: 'hover_a', x_min: -0.2, x_max: -0.02, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.12 },
+			{ name: 'hover_b', x_min: 0.02, x_max: 0.2, y_min: -0.1, y_max: 0.1, z_min: 0, z_max: 0.1 },
+		]);
+		const a_before = first.placements
+			.filter(p => p.so_name === 'hover_a' && p.uniface !== null)
+			.map(p => ({ axis: p.axis, x: p.anchor_1_screen!.x, y: p.anchor_1_screen!.y }));
+		expect(a_before.length).toBeGreaterThan(0);
+		// Hover the OTHER part. No geometry change — only the hovered id.
+		const b_scene = scene.get_all().find(o => o.so.name === 'hover_b')!;
+		hits_3d.hover = { so: b_scene.so } as unknown as typeof hits_3d.hover;
+		try {
+			const second = run_uniface_placement();
+			// The saved placements survived the hover and were re-locked —
+			// they were NOT cleared and re-placed from scratch.
+			expect(get_last_locked_count()).toBeGreaterThan(0);
+			// Part A (not hovered) keeps every anchor exactly where it was.
+			for (const before of a_before) {
+				const after = second.placements.find(p => p.so_name === 'hover_a' && p.axis === before.axis && p.uniface !== null);
+				expect(after).toBeDefined();
+				expect(after!.anchor_1_screen!.x).toBe(before.x);
+				expect(after!.anchor_1_screen!.y).toBe(before.y);
+			}
+		} finally {
+			hits_3d.hover = null;
+		}
+	});
+
+	it('selecting a part keeps every other placement where it was (selection is not a context change)', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		const { run_uniface_placement } = await import('../render/Dimension_Placement');
+		const { scene } = await import('../render/Scene');
+		const { selection } = await import('../managers/Selection');
+		const first = run_placement_on_parts([
+			{ name: 'sel_a', x_min: -0.2, x_max: -0.02, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.12 },
+			{ name: 'sel_b', x_min: 0.02, x_max: 0.2, y_min: -0.1, y_max: 0.1, z_min: 0, z_max: 0.1 },
+		]);
+		const a_before = first.placements
+			.filter(p => p.so_name === 'sel_a' && p.uniface !== null)
+			.map(p => ({ axis: p.axis, x: p.anchor_1_screen!.x, y: p.anchor_1_screen!.y }));
+		expect(a_before.length).toBeGreaterThan(0);
+		const b_scene = scene.get_all().find(o => o.so.name === 'sel_b')!;
+		selection.current = { so: b_scene.so } as unknown as typeof selection.current;
+		try {
+			const second = run_uniface_placement();
+			expect(get_last_locked_count()).toBeGreaterThan(0);
+			for (const before of a_before) {
+				const after = second.placements.find(p => p.so_name === 'sel_a' && p.axis === before.axis && p.uniface !== null);
+				expect(after).toBeDefined();
+				expect(after!.anchor_1_screen!.x).toBe(before.x);
+				expect(after!.anchor_1_screen!.y).toBe(before.y);
+			}
+		} finally {
+			selection.current = null;
+		}
+	});
+
+	it('a saved placement whose edge becomes hidden after a view change is not reused', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		const { run_uniface_placement } = await import('../render/Dimension_Placement');
+		const { render } = await import('../render/Render');
+		// First render: nothing hidden, so the part places and is saved.
+		const first = run_placement_on_parts([
+			{ name: 'occ_a', x_min: -0.2, x_max: -0.02, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.12 },
+		]);
+		expect(first.placements.some(p => p.so_name === 'occ_a' && p.uniface !== null)).toBe(true);
+		// Now every edge reports hidden — as if another part moved in front of it
+		// after a tumble. The reuse pass must not reuse the saved placement.
+		const original = render.edge_partly_hidden.bind(render);
+		(render as unknown as { edge_partly_hidden: () => boolean }).edge_partly_hidden = () => true;
+		try {
+			const second = run_uniface_placement();
+			expect(second.placements.some(p => p.so_name === 'occ_a' && p.uniface !== null)).toBe(false);
+		} finally {
+			(render as unknown as { edge_partly_hidden: typeof original }).edge_partly_hidden = original;
+		}
 	});
 
 	it('step 3.1 slice D — clean skip-path renders keep the drift counter at zero', async () => {
@@ -1293,6 +1386,19 @@ describe('Dimension_Placement — evaluate_clearances (named filter rejection)',
 		if (!r.ok) {
 			expect(r.filter).toBe('own-dim-vs-placed');
 			expect(r.shortfall_px).toBeCloseTo(6, 6);  // 15 - 9
+		}
+	});
+
+	it('rejects with name own-witness-vs-placed when a witness line passes within 15 px of a placed label rect (label, anchors, dim line clear)', () => {
+		// Placed rect straddles witness 1 (x=140, y 200..250) at its middle
+		// (y 218..232): clear of anchor 1 (y=200), the dim line (y=200), and the
+		// candidate label (30 px in x) — only the witness line hits it.
+		const in_ = { ...base(),
+			placed_label_rects: [{ x_min: 130, x_max: 150, y_min: 218, y_max: 232 }] };
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('own-witness-vs-placed');
 		}
 	});
 

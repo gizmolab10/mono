@@ -102,7 +102,7 @@ export function render_uniface_picks(host: DimensionHost): void {
 	// label (so the label box covers any line passing through it).
 	const drawable: typeof result.placements[number][] = [];
 	for (const placement of result.placements) {
-		if (placement.uniface === null && !placement.is_last_resort) continue;
+		if (placement.uniface === null) continue;
 		if (!placement.edge_p1_screen || !placement.edge_p2_screen) continue;
 		if (!placement.anchor_1_screen || !placement.anchor_2_screen) continue;
 		// Step 3d filter 3: off-canvas drop. Skip drawing a dim whose

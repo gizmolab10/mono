@@ -4,19 +4,20 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the top of open items.
 
-- [ ] dimensions redraw on hover
-- [ ] dimension slider with toggle
-    - [ ] band / cutoff
-    - [ ] hover and select included in dimension slider count
+
 - [ ] COMMAND drag -> translate camera
+    - [ ] mouse wheel zoom in
+    - [ ] pan = wheel and command
 - [ ] selection dots
     - [x] solid
     - [ ] painted on top
     - [ ] place on face -> largest screen area?
         - [ ] drag dots move in THAT face's plane
 - [ ] finer ticks -> line thickness slider
+- [ ] dimension slider with toggle
+    - [ ] band / cutoff
 - [ ] convert to a type -> Record<Axis_Name, number>
-    - [ ] deploy it
+    - [ ] implement it
 - [ ] play with it
     - [ ] two door cabinet
     - [ ] two blocks

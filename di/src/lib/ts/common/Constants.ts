@@ -30,7 +30,7 @@ export default class Constants {
 		merge_logged     : false,
 		trace_logged     : false,
 		clip_debug       : false,
-		diagnose_dims    : false,
+		diagnose_dims    : true,
 		last_label_log   : '',
 		last_facet_log   : '',
 	};

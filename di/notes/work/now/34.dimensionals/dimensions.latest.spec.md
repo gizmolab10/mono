@@ -72,9 +72,11 @@ Camera direction is expressed in the room's static frame.
 
 A part is eligible only when ALL eight of its box corners project inside the canvas and in front of the camera; if even one corner is off-screen or behind the camera, the part is dropped. Which parts qualify shifts as you zoom, and differs between the flat scale and the dolly (zoom cluster A and B).
 
-### 2.4 Off-Canvas exclusion
-
 Every mark (line, label, arrowhead) of every dimensional MUST be inside the canvas. Any placement with a mark outside is NOT viable -> dropped.
+
+### 2.4 Occlusion exclusion
+
+An edge of a part is excluded (not measured) when any stretch of it is hidden behind another part. This uses the renderer's own hidden-line result — the same clipping that decides which parts of an edge are drawn — so a partly hidden edge (its middle behind another part, its ends showing) is excluded too, not only edges whose end corners are hidden.
 
 ### 2.5 Repeater filter
 
@@ -114,17 +116,13 @@ Each box has six faces (LEFT, RIGHT, FRONT, BACK, TOP, BOTTOM). Per face, the mi
 
 ### 3.3 Outer edge placements
 
-Besides the uniface placements above, each part-axis also offers OUTER EDGE placements. They are added to the same placement set the placement algorithm traverses — filtered in chapter 5 and scored in chapter 6, alongside the uniface placements. They are NOT a fall-back that runs only when nothing else is viable.
+Outer edge is JUST ANOTHER OPTION, checked in the same loop as the unifaces (filtered in chapter 5 and scored in chapter 6). They are NOT a fall-back that runs only when nothing else is viable.
 
-EIGHT per axis: four edges of the part along the measured axis, paired with two outward perpendicular directions per edge (the two non-measured local axes pointing away from the part).
+Each part-axis can place a dimension at the OUTER EDGE, at eight different locations. Each direction has four edges it can measure (anchor the wit lines). Each edge has two outward perpendicular directions (pointing away from the part).
 
-For each, a binary search finds the SMALLEST shift along the witness (perpendicular) line such that, after the part's world matrix plus tumble plus projection are applied, every drawn mark of the dimensional sits at least 10 px inside its nearest canvas edge AND the label rectangle does not overlap the part's projected bounding box on screen. Smallest shift means shortest **tumbled and projected** witnesses.
+For each, a binary search finds the SMALLEST shift along the wit line such that, after the part's world matrix plus tumble plus projection are applied, every drawn mark of the dimensional sits at least 10 px inside its nearest canvas edge AND all the other rules. Smallest shift means shortest **tumbled and projected** wit lines.
 
 Placements whose two projected witness lines run closer than 15 px apart are dropped (same threshold as the uniface placements).
-
-These placements carry no special winner rule: chapter 6 scores them the same way it scores the uniface placements, so the best placement overall — uniface or outer edge — wins.
-
-For scoring, an outer-edge placement's outward direction (n_out) is its edge's outward perpendicular (the way its witnesses point); its screen-room (R) and witness lengths come from the binary-search geometry above, not a silhouette-box face.
 
 ## 4. Traversal order
 
@@ -134,11 +132,13 @@ Build the traversal order (of part-axes) by scanning every part on all three of 
 
 For those part-axes with equal lengths select just one and drop the rest according to this rule -> the parent (when it matches one of its children) or select the one whose name appears alphabetically first.
 
+Each step of the traversal results in one or fewer valid placements.
+
 ### 4.1 Count threshold
 
 A logarithmic slider to set a number N -> how many dimensionals are visible, shown rounded to nearest integer. Range from 0 to 100, default 2. Tick marks every 10 units. Slides continuously. N persists across reload. Just to the right of the names/angles segmented control.
 
-Traversal stops after the first N part-axes (those with the largest dimensions). Forced parts (selected or hovered) are always drawn, on top of those N; they are NOT counted toward N.
+N counts the largest dimensions: walking largest-first, the first N valid placements draw and use up the N — whether or not their parts are selected or hovered (a selected part among the largest uses one of the N). Beyond the N, a selected or hovered part still draws every valid dimension it has, whatever its length; an ordinary part draws nothing more. Selected or hovered parts are also always eligible — candidates even when only partly on screen.
 
 ### 4.2 Low pass threshold (not yet designed)
 
@@ -177,11 +177,11 @@ These are run once per label position.
 | `label-vs-label`         | Label rectangle clears every already-placed label rectangle.                   | 5 px      |
 | `label-vs-placed-anchor` | Label rectangle clears every already-placed witness anchor.                    | 5 px      |
 | `label-vs-placed-dim`    | Label rectangle clears every already-placed dim line.                          | 5 px      |
+| `label-vs-placed-witness`| Label rectangle clears every already-placed witness line.                      | 5 px      |
+| `label-vs-anchor-zone`   | Label rectangle does not overlap a 20 px zone past any anchor (own or placed). | 20 px     |
 | `own-anchor-vs-placed`   | This placement's own two anchors clear every already-placed label rectangle.   | 5 px      |
 | `own-dim-vs-placed`      | This placement's own dim line clears every already-placed label rectangle.     | 5 px      |
-| `label-vs-anchor-zone`   | Label rectangle does not overlap a 20 px zone past any anchor (own or placed). | 20 px     |
-
-`label-vs-placed-witness` is documented in the dim-spec but currently ***DISABLED*** in code. ***It needs to be enabled***. When enabled it joins these witness-length filters.
+| `own-witness-vs-placed`  | This placement's own witness lines clear every already-placed label rectangle. | 5 px      |
 
 ### 5.4 Slide-and-retry
 
@@ -199,24 +199,24 @@ For a part-axis with at least one viable label position, every viable label posi
 S = (L - W) - α·((t − 0.5) / 0.5)² - β·(W₁ + W₂)/2 - γ·(I₁ + I₂)/2 + ε·R - ζ·max(0, n_camera · n_out) + η·(1 − |n_front · n_out|)·max(0, −n_camera · n_front)
 ```
 
-| Symbol   | Meaning                                                                                                               | Value |
-| -------- | --------------------------------------------------------------------------------------------------------------------- | ----- |
-| S        | the label position's score; higher wins                                                                               |       |
-| L        | dim line length on screen (px)                                                                                        |       |
-| W        | label width on screen (px)                                                                                            |       |
-| t        | label's sampled position along the dim line, 0 at anchor 1 to 1 at anchor 2                                           |       |
-| W₁, W₂   | screen lengths of the two witness lines (px)                                                                          |       |
-| I₁, I₂   | percent of each witness line inside the silhouette polygon, sampled 11 times                                          | 0–100 |
-| R        | screen-pixel distance from anchor midpoint to canvas edge along the outward perpendicular; clamped to zero from below | px    |
-| n_camera | camera-forward direction in static-world coords (points from camera into the scene)                                   | unit  |
-| n_out    | outward direction of this placement's silhouette-box face in static-world coords                                      | unit  |
-| α        | centering-penalty cap                                                                                                 | 20    |
-| β        | witness-length weight per px                                                                                          | 3     |
-| γ        | inside-silhouette weight per percent                                                                                  | 200   |
-| ε        | screen-room weight per px                                                                                             | 1     |
-| n_front  | part's front-most face normal in static-world coords (the face most aligned with the camera)                          | unit  |
-| ζ        | face-orientation penalty weight                                                                                            | 50000 |
-| η        | lies-flat reward weight                                                                                               | 500   |
+| Symbol   | Meaning                                                                                                                                       | Value |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| S        | the label position's score; higher wins                                                                                                       |       |
+| L        | dim line length on screen (px)                                                                                                                |       |
+| W        | label width on screen (px)                                                                                                                    |       |
+| t        | label's sampled position along the dim line, 0 at anchor 1 to 1 at anchor 2                                                                   |       |
+| W₁, W₂   | screen lengths of the two witness lines (px)                                                                                                  |       |
+| I₁, I₂   | percent of each witness line inside the silhouette polygon, sampled 11 times                                                                  | 0–100 |
+| R        | screen-pixel distance from anchor midpoint to canvas edge along the outward perpendicular; clamped to zero from below                         | px    |
+| n_camera | camera-forward direction in static-world coords (points from camera into the scene)                                                           | unit  |
+| n_out    | perpendicular to the measured edge, lies in the plane of one of the two faces that meet at that edge, and points outward (away from the part) | unit  |
+| α        | centering-penalty cap                                                                                                                         | 20    |
+| β        | witness-length weight per px                                                                                                                  | 3     |
+| γ        | inside-silhouette weight per percent                                                                                                          | 200   |
+| ε        | screen-room weight per px                                                                                                                     | 1     |
+| n_front  | part's front-most face normal in static-world coords (the face most aligned with the camera)                                                  | unit  |
+| ζ        | face-orientation penalty weight                                                                                                               | 50000 |
+| η        | lies-flat reward weight                                                                                                                       | 500   |
 
 The face-orientation penalty (ζ·max(0, n_camera · n_out)) penalises label positions whose outward direction points AWAY from the camera — the label would sit on the back side of the part, behind it. A label position whose outward direction points toward the camera pays zero. Weight fifty thousand outranks the empty-canvas reward by enough that no plausible amount of open canvas can rescue a back-side label position when any front-side one is viable.
 
@@ -228,18 +228,33 @@ The empty-canvas-room term (ε·R) is what gives the search its bias for directi
 
 ## 7. Persistence between renders
 
-The pipeline's output (the placements) is remembered for one render. On the next render, every persisted placement is re-projected and viability-checked. The ones that still fit are LOCKED and contribute their geometry as fixed obstacles to the filter chain; the ones that fail get re-placed by the main loop. There is no separate "skip everything if nothing changed" short-circuit — the lock-and-re-place path runs every render.
+The pipeline's output (the placements) is remembered for one render. On the next render, every persisted placement is re-projected and viability-checked. The ones that still fit are thus valid and contribute their geometry ***"as fixed obstacles to the filter chain"***; the ones that fail are repositioned by ***"the main loop"***. There is no separate "skip everything if nothing changed" short-circuit — the validate-and-reposition path runs every render.
 
-Each persisted placement records: the chosen edge, face, witness-index, and label position. On the next render, the placement is re-projected and three viability checks run (STRICT, no tolerance):
+Each persisted placement records: the chosen edge, face, label position, and one outward locator — the witness-index for a uniface placement, OR the outward distance in mm from the edge to the anchor for an outer-edge placement. Never both. (An outer edge has no uniface-box shift to read, so it stores the distance instead; the reuse pass rebuilds its anchors by shifting the edge that far along the outward direction.) On the next render, the placement is re-projected and the following four viability checks run (STRICT, no tolerance):
 
 - The previous label position is within [0, 1] along the new dim line range. (Slid placements are exempt — their saved fraction stays outside [0, 1] by design.)
-- Pair clearance (label vs label): **5 px**. The label rectangle still clears every other previously-locked label rectangle by 5 px.
+- Pair clearance (label vs label): **5 px**. The label rectangle still clears every other previously-valid label rectangle by 5 px.
 - The label rectangle does not cross inside the new silhouette polygon.
+- Pair clearance (label vs witness, witness vs label): **5 px**. The label rectangle clears every previously-valid witness line, and its own witness lines clear every previously-valid label rectangle.
 
-Plus: If a persisted placement drifts past a canvas edge after tumble, the traversal (chapter 4) runs again.
+Plus: If a persisted placement drifts past a canvas edge after tumble, the entire traversal (chapter 4) runs again.
 
-A persisted placement that passes ALL checks is LOCKED. Its rectangle, witnesses, dim line, and anchors join the placed-obstacles set before the main loop runs. The free placements (failed checks, or part-axes that never had a winner last render) search around the locked ones.
+A persisted placement that passes ALL checks is valid. Its rectangle, witnesses, dim line, and anchors join the placed-obstacles set before the main loop runs. The free placements (failed checks, or part-axes that never had a winner last render) filter around the valid ones.
 
+### 7.1 Which events reposition, which do not
+
+These events rebuild positions:
+
+- **First render (no prior valid list)** — every placement is computed fresh; there is nothing to keep in place yet.
+- **A scene change** — tumble, zoom, or an edit to the parts re-projects every placement; each keeps its prior-valid spot when that spot is still valid, and only the ones that fail a check are repositioned, minimal movement.
+
+
+These events do NOT reposition any dimension — they keep the prior valid list, so every placement stays exactly where it is:
+
+- **Hover** — only adds or removes the hovered part's own dimensions and the highlight.
+- **Selection** — only adds or removes the selected part's own dimensions.
+- **The dimension-count slider** — every valid placement is already computed regardless of N; moving N only re-determines which of them draw (the largest N plus always-eligible), so dimensions do not move.
+- **The dimensions on/off flag** — retains the prior valid list; turning dimensions back on shows them where they were.
 ---
 
 ## 8. Render

@@ -276,6 +276,13 @@ class Render {
 	/** Logical (CSS) size — for external consumers like camera init. */
 	get logical_size(): Size { return this.size; }
 
+	/** Read-only view of this frame's occluding faces (world plane n·p = d plus
+	 *  screen polygon and owning part id), for the dimension placement's
+	 *  occlusion exclusion (spec 2.4). Empty until the render pass builds them. */
+	get_occluding_faces(): readonly { n: vec3; d: number; poly: { x: number; y: number }[]; obj_id: string }[] {
+		return this.occluding_faces;
+	}
+
 	init(canvas: HTMLCanvasElement): void {
 		this.canvas = canvas;
 		// The print pipeline reads back every pixel via getImageData each time
@@ -2479,6 +2486,31 @@ class Render {
 			if (this.point_in_polygon_2d(sx, sy, occ.poly)) return true;
 		}
 		return false;
+	}
+
+	/** True when any stretch of an edge is hidden behind another part's face
+	 *  in the current solid view. The edge is given by its two ends in the
+	 *  static (untumbled) room frame plus the current tumble matrix, so this
+	 *  matches exactly the hidden-line clipping the renderer draws with —
+	 *  correct frame, and it catches an edge whose middle is hidden, not only
+	 *  its ends. Returns false when nothing occludes (wireframe builds no
+	 *  faces). The dimension placement algorithm calls this to skip edges it
+	 *  must not measure. */
+	edge_partly_hidden(static_p1: vec3, static_p2: vec3, tumble: mat4, skip_id: string): boolean {
+		if (this.occluding_faces.length === 0) return false;
+		const w1 = vec3.transformMat4(vec3.create(), static_p1, tumble);
+		const w2 = vec3.transformMat4(vec3.create(), static_p2, tumble);
+		const s1 = this.project_vertex(static_p1, tumble);
+		const s2 = this.project_vertex(static_p2, tumble);
+		if (s1.w < 0 || s2.w < 0) return false;
+		const p1 = { x: s1.x, y: s1.y };
+		const p2 = { x: s2.x, y: s2.y };
+		const full = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+		if (full < 1e-6) return false;
+		const visible = this.clip_segment_for_occlusion_rich(p1, p2, w1, w2, skip_id);
+		let visible_len = 0;
+		for (const iv of visible) visible_len += Math.hypot(iv.end.x - iv.start.x, iv.end.y - iv.start.y);
+		return visible_len < full - 1;   // more than ~1 px of the edge is hidden
 	}
 
 	/** Ray-casting point-in-polygon test (2D screen space). */
