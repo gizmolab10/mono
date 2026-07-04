@@ -1,13 +1,13 @@
 # Handoff
 
-**Date:** 2026-07-01
+**Date:** 2026-07-03
 **Work stream:** finished work is in the [work journal](di/notes/work/now/work%20journal.md); open and paused threads now live in [[open items]]. This file is a thin index.
 
 ## Current thread
 
-Dimensionals count/hover work is done (2026-07-01 work-journal entry; moved to [[code.debt.paid]]): outer edge is a normal scored option, occlusion uses the renderer's hidden-line clipper, and the count draws the largest N of the whole valid list — hover, selection, and the slider no longer reposition.
+Attributes-editor grouping toggle is done (2026-07-03 work-journal entry; moved to [[code.debt.paid]]): a saved button flips the nine-row table between start/length/end grouping and by-axis grouping, and the root/derived cell-merges were reworked to hold under either. Visual-confirmed.
 
-**Proposed next (from code.debt):** "dimension slider — band / cutoff" (the low-pass threshold, spec 4.2, marked *not yet designed*). Propose the design first: a second slider or handle that hides dimensions whose on-screen length is below a pixel cutoff, so tiny dimensions drop out before the N-largest count is applied. Needs a spec section and a plain-English rule before code.
+**Proposed next (from code.debt, first bug):** "dimensionals for root should appear." Today the root part shows no dimensions. Investigate first: find where the dimension pass excludes the root (the placement loop over parts) and why — is root skipped on purpose, or does it fall out because it has no parent frame or its edges read as hidden? Then decide the fix and the plain-English rule for which root edges get dimensioned. Design before code.
 
 ## Paused threads
 

@@ -56,7 +56,7 @@ class Scenes {
 		givens.clear();
 		if (!scene_data.givens?.length) return;
 		for (const entry of scene_data.givens) {
-			if (entry.name) { givens.set(entry.name, entry.value_mm); givens.set_locked(entry.name, entry.locked ?? true); }
+			if (entry.name) { givens.set(entry.name, entry.value_mm, entry.is_scalar ?? false); givens.set_locked(entry.name, entry.locked ?? true); }
 		}
 	}
 

@@ -1,11 +1,12 @@
 import type { O_Scene } from '../types/Interfaces';
+import { selection } from '../managers/Selection';
 import type { Axis_Name } from '../types/Types';
 import { units, Units } from '../types/Units';
+import { vec3, mat4, quat } from 'gl-matrix';
 import { hits_3d } from '../events/Hits_3D';
-import { selection } from '../managers/Selection';
 import { stores } from '../managers/Stores';
 import { k } from '../common/Constants';
-import { vec3, mat4, quat } from 'gl-matrix';
+import { debug } from '../common/Debug';
 import { e } from '../events/Events';
 import { get } from 'svelte/store';
 import { render } from './Render';
@@ -170,7 +171,10 @@ function is_visible_for_dim(obj: O_Scene): boolean {
 	const wireframe_mode = option_held && has_hidden;
 	if (wireframe_mode) return !obj.so.visible;
 
-	if (!obj.so.visible) return false;
+	// The root part (no parent) is dimensioned even when it is invisible — its
+	// dims show the overall span of the whole design, so its own visible flag
+	// never gates it. Every other part still needs its own visible flag on.
+	if (obj.parent && !obj.so.visible) return false;
 	let cursor = obj.parent;
 	while (cursor) {
 		if (cursor.so.hide_children) return false;
@@ -1517,11 +1521,8 @@ let dispatched_dim_log_fresh: boolean = false;
  *  (never the fresh-overwrite first POST), so any subsequent placement
  *  POST appends after these renderer lines. */
 export function dimensionals_log(text: string): void {
-	if (!k.debug.diagnose_dims) return;
-	try {
-		fetch('http://localhost:5171/log-dimensionals', { method: 'POST', body: text + '\n' }).catch(() => { /* silent */ });
-	} catch {
-		// silent
+	if (k.debug.diagnose_dims) {
+		debug.log(text, 'dimensionals');
 	}
 }
 
@@ -1705,9 +1706,10 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	// not just leaves. A parent part with visible children gets its own
 	// dim lines for its bounding box. The "leaves only" filter above is
 	// for the silhouette (rule 9), not for which parts get dimensioned.
-	// The root smart object IS excluded — it is the scene container, not
-	// a real part. The duplicate-text drop sorts these by depth-from-root
-	// first, so a parent wins over its child when their dim text agrees.
+	// The root smart object is included too — it shows the overall span of
+	// the whole design. The duplicate-text drop sorts these by depth-from-root
+	// first, so a parent wins over its child when their dim text agrees — and
+	// the root, at depth 0, wins every such tie.
 	const depth_from_root = (obj: O_Scene): number => {
 		let depth = 0;
 		let cursor: O_Scene | undefined = obj.parent;
@@ -1723,7 +1725,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	const hovered_so_id_for_eligibility = hits_3d.hover?.so?.id ?? null;
 	const selected_names_for_log = selection.all.map(h => h.so.name).join(', ') || '(none)';
 	const hovered_name_for_log = hits_3d.hover?.so?.name ?? '(none)';
-	const total_visible_below_root = all_objects.filter(o => visible.has(o) && !!o.parent).length;
+	const total_visible = all_objects.filter(o => visible.has(o)).length;
 	// Count threshold (spec 4.1): a part is eligible only when all eight
 	// corners are on screen; the selected part (only when FULLY in the
 	// frustum) and the hovered part are force-kept on top of the count. The
@@ -1735,12 +1737,17 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 		|| o.so.id === hovered_so_id_for_eligibility;
 	const rendered_leaves: O_Scene[] = all_objects.filter(o =>
 		visible.has(o)
-		&& !!o.parent
 		&& (is_fully_visible_on_screen(o) || is_always_eligible_part(o)),
 	);
+	// Root part visibility trace: the root now flows through the same rules as
+	// any part, so log why it is or is not a candidate this frame.
+	const root_obj = all_objects.find(o => !o.parent);
+	if (k.debug.diagnose_dims && root_obj) {
+		console.log(`[uniface placement] root part "${root_obj.so.name}": dimensioned this frame = ${rendered_leaves.includes(root_obj)} — visible = ${visible.has(root_obj)}, all corners on screen = ${is_fully_visible_on_screen(root_obj)}, selected or hovered = ${is_always_eligible_part(root_obj)}.`);
+	}
 	// Diagnostic message for the eligibility filter. Pushed into the main
 	// diagnostic-log buffer below once the buffer is constructed.
-	const eligibility_log_line = `[uniface placement] eligibility filter: dimension count = ${dim_count}, selected parts = [${selected_names_for_log}], hovered part = ${hovered_name_for_log}, candidate parts ${rendered_leaves.length} of ${total_visible_below_root} visible below the root.`;
+	const eligibility_log_line = `[uniface placement] eligibility filter: dimension count = ${dim_count}, selected parts = [${selected_names_for_log}], hovered part = ${hovered_name_for_log}, candidate parts ${rendered_leaves.length} of ${total_visible} visible parts (root included).`;
 	// Nothing here clears the prior valid list. Hover, selection, the count
 	// slider, and the dimensions on/off flag all keep it — the reuse pass
 	// re-projects every saved placement and drops only the ones that no longer

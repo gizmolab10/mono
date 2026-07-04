@@ -401,3 +401,6 @@
     - [x] retain font size
     - [x] pill border -> dashed
     - [x] can grow/shrink as text changes
+- [x] allow constants to be pure numbers
+    - [x] convert decimals to fractions
+- [x] dimensionals for root should appear

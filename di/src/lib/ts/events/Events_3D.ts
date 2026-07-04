@@ -95,11 +95,13 @@ class Events_3D {
 				this.last_canvas_position = point;
 				if (!stores.allow_editing) {
 					// Locked: still light up the part under the cursor so you can
-					// see what you'd pick, but keep the tumble hand and arm no edit
-					// affordance (no dimension bolding, no text cursor).
+					// see what you'd pick, and keep the hovered-dimension store that
+					// hit_test just filled — so the floating tag still reads
+					// "width (x)" and the hovered dimensional's number bolds. Only
+					// the red-line highlight and hover-color stores are cleared, so
+					// locked mode keeps the tumble hand and no text cursor.
 					const hit = hits_3d.hit_test(point, e.altKey);
 					hits_3d.hover = hit ? hits_3d.hit_to_face(hit) : null;
-					hits_3d.hovered_dimension = null;
 					hits_3d.hovered_uniface_placement = null;
 					hits_3d.hovered_dim_target = null;
 					canvas.style.cursor = 'grab';
@@ -126,16 +128,11 @@ class Events_3D {
 						: hit?.type === T_Hit_3D.uniface_line ? 'line'
 						: null;
 
-					// Track the dimension under the cursor so the renderer can
-					// bold its text and thicken its dimension and witness lines.
-					// Uniface-line hits set this store themselves inside the
-					// hits system, so do not clear it here on that branch.
-					if (hit?.type === T_Hit_3D.dimension) {
-						const dim_rect = dimensions.hit_test(point.x, point.y);
-						hits_3d.hovered_dimension = dim_rect ? { so: dim_rect.so, axis: dim_rect.axis, witness_index: dim_rect.witness_index } : null;
-					} else if (hit?.type !== T_Hit_3D.uniface_line) {
-						hits_3d.hovered_dimension = null;
-					}
+					// The dimension under the cursor (for bolding its text and
+					// thickening its lines, and for the floating tag's "width (x)")
+					// is set inside hits_3d.hit_test — it fills the store whenever
+					// the cursor is over a dimensional's label OR any of its lines,
+					// even when a part face wins the click. Nothing to set here.
 				}
 			} else if (this.on_drag) {
 				this.continue_drag(canvas, e.clientX, e.clientY, e.altKey);

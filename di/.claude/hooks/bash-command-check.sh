@@ -8,6 +8,16 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // ""')
 [ -z "$COMMAND" ] && exit 0
 
+# 0) no batching — deny commands that join separate actions with ; && ||
+#    Forces one action per Bash call. A lone pipe is one action and is allowed.
+#    Strips quoted text first so a ';' inside a string does not trip it.
+STRIPPED=$(printf '%s' "$COMMAND" | sed -E "s/'[^']*'//g; s/\"[^\"]*\"//g")
+if printf '%s' "$STRIPPED" | grep -qE '(&&|\|\||;)'; then
+  REASON="BATCHING BLOCKED: this Bash command joins separate actions with ; && or ||. Run ONE action per call. For file exploration prefer Glob/Read/Grep tools instead of Bash. If you truly need a single pipeline, a lone | is allowed."
+  jq -n --arg reason "$REASON" '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: $reason}}'
+  exit 0
+fi
+
 # 1) npx — block when the npx binary is invoked at a word boundary
 if echo "$COMMAND" | grep -qE '(^|[[:space:]]|;|&|\||\()npx([[:space:]]|$)'; then
   REASON="BANNED COMMAND: the command uses npx. In the di project, run package binaries through yarn instead (e.g., \`yarn <bin>\` or \`yarn run <script>\`). Rewrite the command without npx."

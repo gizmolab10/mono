@@ -273,7 +273,7 @@ class Engine {
 			// Restore givens before deserialization (formulas may reference them during rebind)
 			if (saved.givens?.length) {
 				for (const entry of saved.givens) {
-					if (entry.name) { givens.set(entry.name, entry.value_mm); givens.set_locked(entry.name, entry.locked ?? true); }
+					if (entry.name) { givens.set(entry.name, entry.value_mm, entry.is_scalar ?? false); givens.set_locked(entry.name, entry.locked ?? true); }
 				}
 			}
 			for (const data of saved.smart_objects) {
@@ -666,7 +666,7 @@ class Engine {
 		if (parsed.givens?.length) {
 			for (const entry of parsed.givens) {
 				if (entry.name && !givens.has(entry.name)) {
-					givens.set(entry.name, entry.value_mm);
+					givens.set(entry.name, entry.value_mm, entry.is_scalar ?? false);
 					givens.set_locked(entry.name, entry.locked ?? true);
 				}
 			}

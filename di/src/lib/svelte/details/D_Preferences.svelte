@@ -53,7 +53,7 @@
 	<input
 		max     = {4}
 		min     = {0.25}
-		step    = {0.25}
+		step    = {0.01}
 		type    = 'range'
 		value   = {$w_edge_thickness}
 		oninput = {(e) => w_edge_thickness.set(Number((e.target as HTMLInputElement).value))}

@@ -26,9 +26,9 @@
               "value": 0,
               "is_locked": true
             },
-            "extent": 11582.4,
+            "extent": 12039.6,
             "length": {
-              "value": 11582.4,
+              "value": 12039.6,
               "is_locked": true
             },
             "angle": 0
@@ -75,7 +75,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 11582.4,
+            "extent": 12039.6,
             "length": {
               "formula": ".l"
             },
@@ -124,7 +124,7 @@
             "extent": {
               "formula": "jog.s"
             },
-            "length": 10058.4,
+            "length": 10515.6,
             "angle": 0
           },
           "invariant": 2
@@ -164,7 +164,7 @@
         },
         "y": {
           "attributes": {
-            "origin": 10058.4,
+            "origin": 10515.6,
             "extent": {
               "formula": ".e"
             },
@@ -211,7 +211,7 @@
         },
         "y": {
           "attributes": {
-            "origin": 4571.999999999999,
+            "origin": 5029.2,
             "extent": {
               "formula": ".e"
             },
@@ -258,7 +258,7 @@
         },
         "y": {
           "attributes": {
-            "origin": 7620,
+            "origin": 8077.200000000001,
             "extent": {
               "formula": ".e"
             },
@@ -305,13 +305,12 @@
         },
         "y": {
           "attributes": {
-            "origin": 6705.6,
+            "origin": 7219.950000000001,
             "extent": {
               "formula": "art.s"
             },
             "length": {
-              "value": 914.3999999999996,
-              "is_locked": true
+              "formula": "well w"
             },
             "angle": 0
           },
@@ -356,7 +355,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 914.3999999999996,
+            "extent": 857.25,
             "length": {
               "formula": ".l"
             },
@@ -408,11 +407,13 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": 914.3999999999996,
-            "length": 914.3999999999996,
+            "extent": 857.25,
+            "length": {
+              "formula": ".l"
+            },
             "angle": 0
           },
-          "invariant": 2
+          "invariant": 1
         },
         "z": {
           "attributes": {
@@ -453,7 +454,7 @@
             "extent": {
               "formula": "well.s"
             },
-            "length": 6705.6,
+            "length": 7219.950000000001,
             "angle": 0
           },
           "invariant": 2
@@ -494,7 +495,7 @@
         },
         "y": {
           "attributes": {
-            "origin": 6616.700000000001,
+            "origin": 7131.050000000001,
             "extent": {
               "formula": ".e"
             },
@@ -666,9 +667,9 @@
               "formula": ".s"
             },
             "extent": {
-              "formula": ".e - 11\""
+              "formula": ".e - beam th"
             },
-            "length": 2616.2000000000003,
+            "length": 2609.8500000000004,
             "angle": 0
           },
           "invariant": 2
@@ -1266,7 +1267,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 11582.4,
+            "length": 12039.6,
             "angle": 0
           },
           "invariant": 2
@@ -1351,7 +1352,7 @@
             "origin": {
               "formula": "back.well.e"
             },
-            "extent": 1006.4749999999995,
+            "extent": 949.3249999999998,
             "length": {
               "formula": "post th / 2"
             },
@@ -1400,7 +1401,7 @@
             "extent": {
               "formula": "well beam.s"
             },
-            "length": 911.2249999999995,
+            "length": 854.0749999999998,
             "angle": 0
           },
           "invariant": 2
@@ -1446,7 +1447,7 @@
             "extent": {
               "formula": "well beam.s"
             },
-            "length": 911.2249999999995,
+            "length": 854.0749999999998,
             "angle": 0
           },
           "invariant": 2
@@ -1535,7 +1536,7 @@
             "origin": {
               "formula": "back.well.s - post th"
             },
-            "extent": 6705.6,
+            "extent": 7219.950000000001,
             "length": {
               "formula": "post th"
             },
@@ -1584,7 +1585,7 @@
             "extent": {
               "formula": ".e - wall th"
             },
-            "length": 7835.900000000001,
+            "length": 8350.250000000002,
             "angle": 0
           },
           "invariant": 2
@@ -1626,7 +1627,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 11582.4,
+            "length": 12039.6,
             "angle": 0
           },
           "invariant": 2
@@ -1725,10 +1726,9 @@
         "y": {
           "attributes": {
             "origin": {
-              "value": 5486.400000000001,
-              "is_locked": true
+              "formula": "front.Y - moose w"
             },
-            "extent": 5670.55,
+            "extent": 6127.75,
             "length": {
               "formula": "post th"
             },
@@ -1772,7 +1772,7 @@
             "origin": {
               "formula": "post.s"
             },
-            "extent": 5670.55,
+            "extent": 6127.75,
             "length": {
               "formula": "post th"
             },
@@ -1814,7 +1814,7 @@
             "origin": {
               "formula": "post.s"
             },
-            "extent": 5670.55,
+            "extent": 6127.75,
             "length": {
               "formula": "post th"
             },
@@ -1857,7 +1857,7 @@
             "extent": {
               "formula": "post.c"
             },
-            "length": 6797.675,
+            "length": 7254.875,
             "angle": 0
           },
           "invariant": 2
@@ -1903,7 +1903,7 @@
             "extent": {
               "formula": ".e + 4'"
             },
-            "length": 7223.125,
+            "length": 7223.125000000001,
             "angle": 0
           },
           "invariant": 2
@@ -1946,7 +1946,7 @@
             "origin": {
               "formula": "post.s"
             },
-            "extent": 5670.55,
+            "extent": 6127.75,
             "length": {
               "formula": "post th"
             },
@@ -1995,7 +1995,7 @@
             "extent": {
               "formula": "overhang beam.s"
             },
-            "length": 6705.6,
+            "length": 7162.8,
             "angle": 0
           },
           "invariant": 2
@@ -2039,7 +2039,7 @@
             "extent": {
               "formula": "front.moose.overhang beam.s"
             },
-            "length": 9144,
+            "length": 9601.2,
             "angle": 0
           },
           "invariant": 2
@@ -2086,7 +2086,7 @@
             "extent": {
               "formula": ".e"
             },
-            "length": 8839.19999999999,
+            "length": 9296.39999999999,
             "angle": 0
           },
           "invariant": 2
@@ -2188,7 +2188,7 @@
             "extent": {
               "formula": "front.moose.overhang post.s"
             },
-            "length": 1339.8499999999985,
+            "length": 1339.8500000000004,
             "angle": 0
           },
           "invariant": 2
@@ -2242,7 +2242,7 @@
             "extent": {
               "formula": "main.outer post.s"
             },
-            "length": 3657.6002441406545,
+            "length": 4114.800244140654,
             "angle": 0
           },
           "invariant": 2
@@ -2540,8 +2540,10 @@
               "value": 0,
               "is_locked": true
             },
-            "extent": 2438.4,
-            "length": 2438.4,
+            "extent": 2609.8500000000004,
+            "length": {
+              "formula": ".e - beam th"
+            },
             "angle": 0
           },
           "invariant": 1
@@ -2565,7 +2567,7 @@
             "origin": 0,
             "extent": 38.100000000000364,
             "length": {
-              "formula": "stud thickness"
+              "formula": "stud th"
             },
             "angle": 0
           },
@@ -2585,7 +2587,7 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 2438.4,
+            "extent": 2609.8500000000004,
             "length": {
               "formula": ".l"
             },
@@ -2602,42 +2604,50 @@
       {
         "name": "wall th",
         "value_mm": 88.89999999999999,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       },
       {
         "name": "stud th",
         "value_mm": 38.099999999999994,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       },
       {
         "name": "post th",
         "value_mm": 184.14999999999998,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       },
       {
         "name": "beam th",
         "value_mm": 285.75,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       },
       {
         "name": "overhang",
         "value_mm": 1219.2,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       },
       {
         "name": "door w",
         "value_mm": 914.4000000000001,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       },
       {
-        "name": "wall thickness",
-        "value_mm": 88.9,
-        "locked": true
+        "name": "well w",
+        "value_mm": 857.25,
+        "locked": true,
+        "is_scalar": false
       },
       {
-        "name": "stud thickness",
-        "value_mm": 38.1,
-        "locked": true
+        "name": "moose w",
+        "value_mm": 4572,
+        "locked": true,
+        "is_scalar": false
       }
     ],
     "camera": {
@@ -2658,7 +2668,7 @@
       ]
     },
     "root_id": "dia2480ebef32cfd",
-    "selected_id": "di924c72b6770461",
-    "selected_face": 5
+    "selected_id": "di464145a0f0448f",
+    "selected_face": 1
   }
 }

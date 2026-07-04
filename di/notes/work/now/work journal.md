@@ -6,6 +6,26 @@ Record work performed during chat sessions, in reverse chronological order. Each
 
 ---
 
+## Session — 2026-07-03 — Attributes editor: group by start/length/end or by axis
+
+- **New grouping toggle.** A small button sits between the attributes/angles/repeats control and the attributes table, shown only on the attributes tab. Its label reads the current mode ("sle" or "xyz") and clicking flips it. The choice is saved and survives a reload; the default is the old start/length/end layout, so nothing changes until you ask for it.
+- **Two ways to read the nine rows.** In start/length/end mode the table is unchanged: the left key column shows s/l/e (one per group of three) and the name column shows the axis letters. In by-axis mode the nine rows regroup into x, then y, then z; the left key shows x/y/z and the name column shows start/length/end repeating down each group.
+- **Cell-merging made mode-safe.** The blank-formula merge at the root part and the merged-cell run for a derived attribute used to assume the start/length/end row order (hard-coded row numbers). They were rewritten to work from each row's own kind and from which rows sit next to each other, so both groupings merge correctly.
+- **Also this session:** added a guard that stops me chaining separate shell actions in one call, and reverted a tried-and-rejected icon on the toggle button (kept the plain ⟳ character).
+
+### Files touched
+
+- di/src/lib/ts/types/Types.ts (grouping type), managers/Preferences.ts (saved key), managers/Stores.ts (saved store + flip method with a plain-English log)
+- di/src/lib/svelte/details/D_Selection.svelte (toggle row + styles), P_Attributes.svelte (row reorder, key label, name label, root/derived merge rework)
+- di/.claude/hooks/bash-command-check.sh (deny chained shell actions)
+
+### Verification
+
+- yarn svelte-check: 0 errors, 0 warnings. yarn vitest run: 851 passed, 1 skipped, 8 todo.
+- Visual: Jonathan confirmed the by-axis grouping and the s/l/e name column on screen.
+
+---
+
 ## Session — 2026-07-01 — Dimensionals: outer edge, occlusion, and the count threshold
 
 - **Outer edge is one more option in the same loop.** The outer-edge placement is now an extra witness level evaluated on each edge's two outward directions, run through the same filters and score as the uniface options; the best score draws. The old "last-resort fall-back" (which forced a placement past the filters and caused labels to sit on witnesses and other labels) is gone.

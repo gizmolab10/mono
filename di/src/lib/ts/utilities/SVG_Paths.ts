@@ -27,6 +27,31 @@ export class SVG_Paths {
 		return `M ${start} ${start} L ${end} ${end} M ${start} ${end} L ${end} ${start}`;
 	}
 
+	toggle(size: number = 20): string {
+
+		// @returns SVG path string that renders a toggle icon
+		//	a latching push button, side view, in the pressed (down) state
+		//	three filled subpaths: base plate, compressed body, cap
+
+		const pill = (cx: number, cy: number, width: number, height: number): string => {
+			const r = height / 2;
+			const half = width / 2 - r;
+			const L = cx - half;
+			const R = cx + half;
+			return `M ${L} ${cy - r} L ${R} ${cy - r} A ${r} ${r} 0 0 1 ${R} ${cy + r} L ${L} ${cy + r} A ${r} ${r} 0 0 1 ${L} ${cy - r} Z`;
+		};
+		const center_x = size / 2;
+		const base_height = size * 0.14;
+		const cap_height = size * 0.16;
+		const body_width = size * 0.36;
+		const body_top = size * 0.62;
+		const base_top = size - base_height;
+		const base = pill(center_x, size - base_height / 2, size, base_height);
+		const cap = pill(center_x, body_top - cap_height / 2, size * 0.6, cap_height);
+		const body = `M ${center_x - body_width / 2} ${body_top} L ${center_x + body_width / 2} ${body_top} L ${center_x + body_width / 2} ${base_top} L ${center_x - body_width / 2} ${base_top} Z`;
+		return [base, body, cap].join(' ');
+	}
+
 	fat_polygon(size: number, angle: number, vertices: number = 3): string {
 		const segmentAngle = Math.PI / vertices;
 		const offset = Point.square(size / 2);

@@ -47,6 +47,8 @@ The diagnostic log (chapter 9) writes one block per render summarising what happ
 
 Selected and hovered parts are always eligible.
 
+The root part is eligible too — it shows the overall span of the whole design. Being depth 0, it wins any duplicate-text tie against a descendant (see the duplicate-text drop in chapter 4).
+
 A placement is one (edge, face, witness-index) choice. Each eligible part has three axes; each axis has four candidate edges (12 per part). Each edge borders two faces (up to 24 per part). Each face offers seven placements (up to 168 per part): the six witness-index levels (3.2) plus the outer edge (3.3). Each placement is then sampled at five label positions — 50%, 30%, 70%, 15%, 85% along the dim line (up to 840 per part).
 
 ### 2.1 Per-axis candidate faces (planes)

@@ -11,7 +11,7 @@
 
 	const { w_precision, w_tick } = stores;
 
-	type Row = { name: string; value_mm: number; locked?: boolean };
+	type Row = { name: string; value_mm: number; locked?: boolean; is_scalar?: boolean };
 
 	let rows: Row[] = $state(givens.get_all());
 	let naming_error: string | null = $state(null);
@@ -53,8 +53,53 @@
 		scenes.save();
 	}
 
-	function format_value(mm: number): string {
-		return units.format_for_system(mm, $w_unit_system, $w_precision);
+	// Nearest simple fraction to a number, via continued fractions. Returns null
+	// when no fraction with a small-enough bottom lands within tolerance.
+	function nearest_fraction(x: number, max_bottom: number, tolerance: number): { top: number; bottom: number } | null {
+		let top_prev = 0, top_cur = 1;
+		let bottom_prev = 1, bottom_cur = 0;
+		let b = x;
+		for (let i = 0; i < 40; i++) {
+			const a = Math.floor(b);
+			const top_next = a * top_cur + top_prev;
+			const bottom_next = a * bottom_cur + bottom_prev;
+			if (bottom_next > max_bottom) break;
+			top_prev = top_cur; top_cur = top_next;
+			bottom_prev = bottom_cur; bottom_cur = bottom_next;
+			if (bottom_cur > 0 && Math.abs(x - top_cur / bottom_cur) < tolerance) return { top: top_cur, bottom: bottom_cur };
+			const rest = b - a;
+			if (rest < 1e-12) break;
+			b = 1 / rest;
+		}
+		return null;
+	}
+
+	// A scalar whose decimal repeats (1/3, 2/3, 1/6 …) shows as a fraction,
+	// mixed when bigger than one; a terminating decimal (0.23, 0.5) shows as the
+	// plain number.
+	function format_scalar(n: number): string {
+		const plain = String(+n.toPrecision(12));
+		if (!Number.isFinite(n)) return plain;
+		const sign = n < 0 ? '-' : '';
+		const abs = Math.abs(n);
+		const whole = Math.floor(abs);
+		const frac = abs - whole;
+		if (frac < 1e-9) return plain;                       // whole number
+		const found = nearest_fraction(frac, 10000, 1e-9);
+		if (!found) return plain;                            // no simple fraction → decimal
+		// Terminating decimal? reduced bottom has only 2s and 5s as factors.
+		let d = found.bottom;
+		while (d % 2 === 0) d /= 2;
+		while (d % 5 === 0) d /= 5;
+		if (d === 1) return plain;                           // terminates → decimal
+		return whole > 0 ? `${sign}${whole} ${found.top}/${found.bottom}` : `${sign}${found.top}/${found.bottom}`;
+	}
+
+	function format_value(row: Row): string {
+		// A pure scalar shows as a number (repeating decimals as fractions); a
+		// measurement stays formatted in the current unit system.
+		if (row.is_scalar) return format_scalar(row.value_mm);
+		return units.format_for_system(row.value_mm, $w_unit_system, $w_precision);
 	}
 
 	function remove_dimension(index: number): void {
@@ -99,11 +144,12 @@
 	function commit_value(index: number, value: string): void {
 		if (!rows[index]) return;
 		history.snapshot();
-		const mm = units.parse_for_system(value, $w_unit_system);
-		if (mm === null) return;
+		const parsed = units.parse_constant(value, $w_unit_system);
+		if (parsed === null) return;
 		const name = rows[index].name;
 		if (!name) return;
-		givens.set(name, mm);
+		console.log(`Constant "${name}": typed "${value}" → ${parsed.is_scalar ? 'pure number' : 'measurement'}, stored ${parsed.value}${parsed.is_scalar ? '' : ' mm'}.`);
+		givens.set(name, parsed.value, parsed.is_scalar);
 		rows = givens.get_all();
 		sync_and_propagate();
 	}
@@ -178,7 +224,7 @@
 							type      = 'text'
 							onkeydown = {cell_keydown}
 							class     = 'cell-input right'
-							value     = {format_value(row.value_mm)}
+							value     = {format_value(row)}
 							onfocus   = {() => stores.w_editing.set(T_Editing.value)}
 							onblur    = {(e) => { commit_value(index, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
 						/>

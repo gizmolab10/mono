@@ -1,16 +1,17 @@
-import { stale_writable } from '../common/Dirty';
+import { distance_point_to_segment_2d, get_last_uniface_placement_result } from '../render/Dimension_Placement';
 import type Smart_Object from '../runtime/Smart_Object';
 import type { Projected } from '../types/Interfaces';
-import type { Axis_Name } from '../types/Types';
 import { mat4, quat, vec3, vec4 } from 'gl-matrix';
 import { dimensions } from '../editors/Dimension';
 import { selection } from '../managers/Selection';
 import { T_Hit_3D } from '../types/Enumerations';
+import { stale_writable } from '../common/Dirty';
+import type { Axis_Name } from '../types/Types';
 import { angulars } from '../editors/Angular';
 import { Point } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
 import { camera } from '../render/Camera';
-import { distance_point_to_segment_2d, get_last_uniface_placement_result } from '../render/Dimension_Placement';
+import { k } from '../common/Constants';
 import { get } from 'svelte/store';
 
 export type Uniface_Placement_Entry = ReturnType<typeof get_last_uniface_placement_result>['placements'][number];
@@ -41,8 +42,8 @@ class Hits_3D {
 
 	// The dimension under the cursor (smart object + axis), so the renderer can
 	// bold the text and thicken the dimension and witness lines for that one.
-	// witness_index is one-based; only the uniface-line hover sets it; the
-	// old-path dimension hover leaves it undefined.
+	// Set whenever the cursor is over a dimensional's label OR any of its lines
+	// (see hit_test). witness_index is one-based and undefined for a label hit.
 	w_hovered_dimension = stale_writable<{ so: Smart_Object; axis: Axis_Name; witness_index?: number } | null>(null);
 
 	get hovered_dimension(): { so: Smart_Object; axis: Axis_Name; witness_index?: number } | null { return get(this.w_hovered_dimension); }
@@ -156,14 +157,30 @@ class Hits_3D {
 		const uniface_hit = this.test_uniface_lines(point);
 		this.w_hovered_uniface_placement.set(uniface_hit);
 
-		// Dimension / angle labels win over everything (corners, edges,
-		// faces). Same reasoning as above — the label rectangles in
-		// render.dimension_rects only get pushed for drawn dimensionals,
-		// so the hit test is safe without the toggle gate.
-		{
-			const dim = dimensions.hit_test(point.x, point.y);
-			if (dim) return { so: dim.so, type: T_Hit_3D.dimension, index: 0 };
+		// The cursor counts as "over a dimensional" when it is over that
+		// dimensional's label OR any of its lines. Fill the hovered-dimension
+		// store from either, so the hover pill, the bold text, and the floating
+		// tag's "width (x)" all light up over ANY part of a dimensional — even
+		// when a part face sits behind it and wins the click below. The label
+		// wins over a line when both are under the cursor.
+		const dim_label = dimensions.hit_test(point.x, point.y);
+		let hovered_dim: { so: Smart_Object; axis: Axis_Name; witness_index?: number } | null = null;
+		if (dim_label) {
+			hovered_dim = { so: dim_label.so, axis: dim_label.axis, witness_index: dim_label.witness_index };
+		} else if (uniface_hit) {
+			const so_for_line = this.objects.find(o => o.id === uniface_hit.so_id) ?? null;
+			if (so_for_line) hovered_dim = { so: so_for_line, axis: uniface_hit.axis, witness_index: uniface_hit.witness_index };
 		}
+		this.w_hovered_dimension.set(hovered_dim);
+		if (k.debug.diagnose_dims) {
+			console.log(`[hover] over dimensional: ${hovered_dim ? `${hovered_dim.so.name} ${hovered_dim.axis}` : 'none'} — label under cursor: ${dim_label ? 'yes' : 'no'}, line under cursor: ${uniface_hit ? 'yes' : 'no'}.`);
+		}
+
+		// Dimension / angle labels win over everything (corners, edges,
+		// faces) for the click target too. Same reasoning as above — the label
+		// rectangles in render.dimension_rects only get pushed for drawn
+		// dimensionals, so the hit test is safe without the toggle gate.
+		if (dim_label) return { so: dim_label.so, type: T_Hit_3D.dimension, index: 0 };
 		if (stores.show_angulars) {
 			const ang = angulars.hit_test(point.x, point.y);
 			if (ang) return { so: ang.so, type: T_Hit_3D.angle, index: 0 };
@@ -225,16 +242,11 @@ class Hits_3D {
 			// Nothing in the SO stack — fall back to the uniface line hit
 			// (if any). This is the LAST resort, so an SO under the cursor
 			// always wins over the dim/witness lines that float around it.
+			// The hovered-dimension store is already set above (label-or-line),
+			// so this branch only needs to return the click target.
 			if (uniface_hit) {
 				const so_for_hit = this.objects.find(o => o.id === uniface_hit.so_id) ?? null;
-				if (so_for_hit) {
-					this.w_hovered_dimension.set({
-						so: so_for_hit,
-						axis: uniface_hit.axis,
-						witness_index: uniface_hit.witness_index,
-					});
-					return { so: so_for_hit, type: T_Hit_3D.uniface_line, index: 0 };
-				}
+				if (so_for_hit) return { so: so_for_hit, type: T_Hit_3D.uniface_line, index: 0 };
 			}
 			return null;
 		}

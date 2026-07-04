@@ -45,7 +45,8 @@
       "Bash(sed -i '' 's/Testworthy_Utilities/Utilities/g; s/{ tu }/{ u }/g; s/tu\\\\./u./g' tests/Utilities.test.ts)",
       "Bash(sed -i '' 's|utilities/Testworthy_Utilities|utilities/Utilities|; s/{ tu }/{ u }/; s/tu\\\\.gcd/u.gcd/' types/Units.ts)",
       "Bash(sed -i '' 's|utilities/Testworthy_Utilities.ts|utilities/Utilities.ts|' map.md)",
-      "Bash(sed -i '' 's/Testworthy_Utilities/Utilities/g' \"file layout.md\")"
+      "Bash(sed -i '' 's/Testworthy_Utilities/Utilities/g' \"file layout.md\")",
+      "Bash(bash ~/GitHub/mono/di/.claude/hooks/bash-command-check.sh)"
     ]
   },
   "hooks": {

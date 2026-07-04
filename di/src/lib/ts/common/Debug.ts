@@ -1,19 +1,19 @@
+import { get_last_uniface_placement_result } from '../render/Dimension_Placement';
+import Smart_Object from '../runtime/Smart_Object';
 import { selection } from '../managers/Selection';
+import { dimensions } from '../editors/Dimension';
+import { perf_timer } from './Performance_Timer';
+import { e as events } from '../events/Events';
+import type { Bound } from '../types/Types';
+import { hits_3d } from '../events/Hits_3D';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
-import { scene } from '../render/Scene';
 import { camera } from '../render/Camera';
 import { engine } from '../render/Engine';
 import { render } from '../render/Render';
-import { get_last_uniface_placement_result } from '../render/Dimension_Placement';
-import { e as events } from '../events/Events';
-import { hits_3d } from '../events/Hits_3D';
-import { dimensions } from '../editors/Dimension';
-import { perf_timer } from './Performance_Timer';
-import { full_name } from './Names';
-import Smart_Object from '../runtime/Smart_Object';
-import type { Bound } from '../types/Types';
+import { scene } from '../render/Scene';
 import { quat, vec3 } from 'gl-matrix';
+import { full_name } from './Names';
 import { get } from 'svelte/store';
 
 const CUBE_EDGES: [number, number][] = [
@@ -36,6 +36,15 @@ const CUBE_FACES: number[][] = [
 ];
 
 export class Debug {
+
+	// Append one extra line to the stated log file
+	log(text: string, filename: string = 'debug'): void {
+		try {
+			fetch(`http://localhost:5171/log-${filename}`, { method: 'POST', body: text + '\n' }).catch(() => { /* silent */ });
+		} catch {
+			// silent
+		}
+	}
 
 	/**
 	 * Attach the test hooks the browser-driven test suite needs.

@@ -8,8 +8,8 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 623.6602178573609,
-            "length": 623.6602178573609,
+            "extent": 717.55,
+            "length": 717.55,
             "angle": 0
           },
           "invariant": 1
@@ -26,8 +26,8 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 990.5999999999999,
-            "length": 990.5999999999999,
+            "extent": 736.5999999999999,
+            "length": 736.5999999999999,
             "angle": 0
           },
           "invariant": 1
@@ -43,7 +43,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
+            "extent": 717.55,
             "length": {
               "formula": ".l"
             },
@@ -56,7 +56,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
+            "extent": 660.400000000001,
             "length": {
               "formula": ".l"
             },
@@ -67,12 +67,12 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": ".e - top h"
+              "formula": ".e - (.l * top fraction)"
             },
             "extent": {
               "formula": ".e"
             },
-            "length": 381,
+            "length": 147.31999999999994,
             "angle": 0
           },
           "invariant": 2
@@ -89,7 +89,7 @@
             "origin": {
               "formula": "side th"
             },
-            "extent": -598.2602178573609,
+            "extent": 25.4,
             "length": {
               "formula": "side th"
             },
@@ -102,7 +102,7 @@
             "origin": {
               "formula": "front th - dado"
             },
-            "extent": 1.1368683772161603e-13,
+            "extent": 660.4000000000011,
             "length": {
               "formula": ".l - front th + dado"
             },
@@ -113,9 +113,9 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": "inset"
+              "formula": ".s + inset"
             },
-            "extent": -6.349999999999909,
+            "extent": 140.97000000000003,
             "length": {
               "formula": ".l - inset * 2"
             },
@@ -133,7 +133,7 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 0,
+            "extent": 717.55,
             "length": {
               "formula": ".l"
             },
@@ -144,7 +144,7 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": -641.3500000000007,
+            "extent": 19.050000000000296,
             "length": 19.050000000000296,
             "angle": 0
           },
@@ -153,7 +153,7 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 0,
+            "extent": 147.31999999999994,
             "length": {
               "formula": ".l"
             },
@@ -170,7 +170,7 @@
         "name": "right",
         "x": {
           "attributes": {
-            "origin": 598.2602178573608,
+            "origin": 692.1499999999999,
             "extent": {
               "formula": ".l - inset * 2"
             },
@@ -186,7 +186,7 @@
             "origin": {
               "formula": "front th - dado"
             },
-            "extent": 1.1368683772161603e-13,
+            "extent": 660.4000000000011,
             "length": {
               "formula": ".l - front th + dado"
             },
@@ -197,9 +197,9 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": "inset"
+              "formula": ".s + inset"
             },
-            "extent": -6.349999999999909,
+            "extent": 140.97000000000003,
             "length": {
               "formula": ".l - inset * 2"
             },
@@ -219,7 +219,7 @@
             "origin": {
               "formula": "side th + inset"
             },
-            "extent": -19.050000000000068,
+            "extent": 698.4999999999999,
             "length": {
               "formula": ".l - (side th + inset) * 2"
             },
@@ -243,9 +243,9 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": "inset"
+              "formula": ".s + inset"
             },
-            "extent": -6.349999999999909,
+            "extent": 140.97000000000003,
             "length": {
               "formula": ".l - inset * 2"
             },
@@ -265,7 +265,7 @@
             "origin": {
               "formula": "side th + inset"
             },
-            "extent": -19.050000000000068,
+            "extent": 698.4999999999999,
             "length": {
               "formula": ".l - (side th + inset) * 2"
             },
@@ -278,7 +278,7 @@
             "origin": {
               "formula": "front th - dado"
             },
-            "extent": -6.349999999999909,
+            "extent": 654.0500000000011,
             "length": {
               "formula": ".l - inset * 3"
             },
@@ -289,9 +289,9 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": "inset * 2"
+              "formula": ".s + inset * 2"
             },
-            "extent": -361.94999999999993,
+            "extent": 19.050000000000068,
             "length": {
               "formula": "bottom th"
             },
@@ -311,7 +311,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
+            "extent": 717.55,
             "length": {
               "formula": ".l"
             },
@@ -324,7 +324,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
+            "extent": 660.400000000001,
             "length": {
               "formula": ".l"
             },
@@ -335,12 +335,12 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": ".s + bottom h"
+              "formula": ".s + bottom fraction"
             },
             "extent": {
-              "formula": ".l - top h"
+              "formula": ".l - top fraction"
             },
-            "length": 292.0999999999999,
+            "length": 735.8999999999999,
             "angle": 0
           },
           "invariant": 2
@@ -357,7 +357,7 @@
             "origin": {
               "formula": "side th"
             },
-            "extent": -598.2602178573609,
+            "extent": 25.4,
             "length": {
               "formula": "side th"
             },
@@ -370,7 +370,7 @@
             "origin": {
               "formula": "front th - dado"
             },
-            "extent": 1.1368683772161603e-13,
+            "extent": 660.4000000000011,
             "length": {
               "formula": ".l - front th + dado"
             },
@@ -381,9 +381,9 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": "inset"
+              "formula": ".s + inset"
             },
-            "extent": -6.349999999999909,
+            "extent": 729.5499999999998,
             "length": {
               "formula": ".l - inset * 2"
             },
@@ -401,7 +401,7 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 0,
+            "extent": 717.55,
             "length": {
               "formula": ".l"
             },
@@ -412,7 +412,7 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": -641.350000000001,
+            "extent": 19.049999999999955,
             "length": 19.049999999999955,
             "angle": 0
           },
@@ -421,7 +421,7 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 0,
+            "extent": 735.8999999999999,
             "length": {
               "formula": ".l"
             },
@@ -438,7 +438,7 @@
         "name": "right",
         "x": {
           "attributes": {
-            "origin": 598.2602178573608,
+            "origin": 692.1499999999999,
             "extent": {
               "formula": ".l - inset * 2"
             },
@@ -454,7 +454,7 @@
             "origin": {
               "formula": "front th - dado"
             },
-            "extent": 1.1368683772161603e-13,
+            "extent": 660.4000000000011,
             "length": {
               "formula": ".l - front th + dado"
             },
@@ -465,9 +465,9 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": "inset"
+              "formula": ".s + inset"
             },
-            "extent": -6.349999999999909,
+            "extent": 729.5499999999998,
             "length": {
               "formula": ".l - inset * 2"
             },
@@ -487,7 +487,7 @@
             "origin": {
               "formula": "side th + inset"
             },
-            "extent": -19.050000000000068,
+            "extent": 698.4999999999999,
             "length": {
               "formula": ".l - (side th + inset) * 2"
             },
@@ -511,9 +511,9 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": "inset"
+              "formula": ".s + inset"
             },
-            "extent": -6.349999999999909,
+            "extent": 729.5499999999998,
             "length": {
               "formula": ".l - inset * 2"
             },
@@ -533,7 +533,7 @@
             "origin": {
               "formula": "side th + inset"
             },
-            "extent": -19.050000000000068,
+            "extent": 698.4999999999999,
             "length": {
               "formula": ".l - (side th + inset) * 2"
             },
@@ -546,7 +546,7 @@
             "origin": {
               "formula": "front th - dado"
             },
-            "extent": -6.349999999999909,
+            "extent": 654.0500000000011,
             "length": {
               "formula": ".l - inset * 3"
             },
@@ -557,9 +557,9 @@
         "z": {
           "attributes": {
             "origin": {
-              "formula": "inset * 2"
+              "formula": ".s + inset * 2"
             },
-            "extent": -273.0499999999999,
+            "extent": 19.049999999999997,
             "length": {
               "formula": "bottom th"
             },
@@ -579,7 +579,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
+            "extent": 717.55,
             "length": {
               "formula": ".l"
             },
@@ -592,7 +592,7 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": 0,
+            "extent": 660.400000000001,
             "length": {
               "formula": ".l"
             },
@@ -605,9 +605,9 @@
             "origin": {
               "formula": ".s"
             },
-            "extent": -673.0999999999999,
+            "extent": 368.29999999999995,
             "length": {
-              "formula": "bottom h"
+              "formula": ".l * bottom fraction"
             },
             "angle": 0
           },
@@ -625,7 +625,7 @@
             "origin": {
               "formula": "side th"
             },
-            "extent": -598.2602178573609,
+            "extent": 25.4,
             "length": {
               "formula": "side th"
             },
@@ -638,7 +638,7 @@
             "origin": {
               "formula": "front th - dado"
             },
-            "extent": 1.1368683772161603e-13,
+            "extent": 660.4000000000011,
             "length": {
               "formula": ".l - front th + dado"
             },
@@ -651,7 +651,7 @@
             "origin": {
               "formula": "inset"
             },
-            "extent": -6.349999999999966,
+            "extent": 361.95,
             "length": {
               "formula": ".l - inset * 2"
             },
@@ -669,7 +669,7 @@
         "x": {
           "attributes": {
             "origin": 0,
-            "extent": 0,
+            "extent": 717.55,
             "length": {
               "formula": ".l"
             },
@@ -680,7 +680,7 @@
         "y": {
           "attributes": {
             "origin": 0,
-            "extent": -641.350000000001,
+            "extent": 19.049999999999955,
             "length": 19.049999999999955,
             "angle": 0
           },
@@ -689,7 +689,7 @@
         "z": {
           "attributes": {
             "origin": 0,
-            "extent": 0,
+            "extent": 368.29999999999995,
             "length": {
               "formula": ".l"
             },
@@ -706,7 +706,7 @@
         "name": "right",
         "x": {
           "attributes": {
-            "origin": 598.2602178573608,
+            "origin": 692.1499999999999,
             "extent": {
               "formula": ".l - inset * 2"
             },
@@ -722,7 +722,7 @@
             "origin": {
               "formula": "front th - dado"
             },
-            "extent": 1.1368683772161603e-13,
+            "extent": 660.4000000000011,
             "length": {
               "formula": ".l - front th + dado"
             },
@@ -735,7 +735,7 @@
             "origin": {
               "formula": "inset"
             },
-            "extent": -6.349999999999966,
+            "extent": 361.95,
             "length": {
               "formula": ".l - inset * 2"
             },
@@ -755,7 +755,7 @@
             "origin": {
               "formula": "side th + inset"
             },
-            "extent": -19.050000000000068,
+            "extent": 698.4999999999999,
             "length": {
               "formula": ".l - (side th + inset) * 2"
             },
@@ -781,7 +781,7 @@
             "origin": {
               "formula": "inset"
             },
-            "extent": -6.349999999999966,
+            "extent": 361.95,
             "length": {
               "formula": ".l - inset * 2"
             },
@@ -801,7 +801,7 @@
             "origin": {
               "formula": "side th + inset"
             },
-            "extent": -19.050000000000068,
+            "extent": 698.4999999999999,
             "length": {
               "formula": ".l - (side th + inset) * 2"
             },
@@ -814,7 +814,7 @@
             "origin": {
               "formula": "front th - dado"
             },
-            "extent": -6.349999999999909,
+            "extent": 654.0500000000011,
             "length": {
               "formula": ".l - inset * 3"
             },
@@ -827,7 +827,7 @@
             "origin": {
               "formula": "inset * 2"
             },
-            "extent": -298.45,
+            "extent": 19.049999999999997,
             "length": {
               "formula": "bottom th"
             },
@@ -844,47 +844,56 @@
       {
         "name": "inset",
         "value_mm": 6.35,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       },
       {
         "name": "dado",
         "value_mm": 6.35,
-        "locked": true
-      },
-      {
-        "name": "top h",
-        "value_mm": 381,
-        "locked": false
-      },
-      {
-        "name": "bottom h",
-        "value_mm": 317.5,
-        "locked": false
+        "locked": true,
+        "is_scalar": false
       },
       {
         "name": "bottom Inset",
         "value_mm": 19.049999999999997,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       },
       {
         "name": "side th",
         "value_mm": 12.7,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       },
       {
         "name": "front th",
         "value_mm": 19.049999999999997,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       },
       {
         "name": "back th",
         "value_mm": 12.7,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       },
       {
         "name": "bottom th",
         "value_mm": 6.35,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
+      },
+      {
+        "name": "top fraction",
+        "value_mm": 0.2,
+        "locked": true,
+        "is_scalar": true
+      },
+      {
+        "name": "bottom fraction",
+        "value_mm": 0.5,
+        "locked": true,
+        "is_scalar": true
       }
     ],
     "camera": {
@@ -905,7 +914,7 @@
       ]
     },
     "root_id": "dicb460b903642b9",
-    "selected_id": "di2b4406bdfb2163",
+    "selected_id": "dicb460b903642b9",
     "selected_face": 5
   }
 }

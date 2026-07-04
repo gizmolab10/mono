@@ -45,6 +45,7 @@ export enum T_Preference {
 	showGivens       = 'showConstants',
 	showParts        = 'showParts',
 	partsTab         = 'partsTab',
+	attributeKeys    = 'attributeKeys',
 
 	// Mode
 	allowEditing     = 'allowEditing',

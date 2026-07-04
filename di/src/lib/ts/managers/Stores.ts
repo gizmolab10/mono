@@ -1,4 +1,5 @@
 import { T_Editing, T_Decorations, T_Parts_Tab } from '../types/Enumerations';
+import type { Attribute_Keys } from '../types/Types';
 import { preferences, T_Preference } from './Preferences';
 import { stale_writable, make_stale } from '../common/Dirty';
 import { k } from '../../ts/common/Constants';
@@ -21,6 +22,7 @@ class Stores {
 	w_dimension_count   = make_stale(preferences.persistent<number>(T_Preference.dimensionCount, 2));
 	w_orientation		= make_stale(preferences.persistent<number[]>(T_Preference.orientation, [-0.49, -0.28, -0.1, 0.8]));
 	w_parts_tab			= preferences.persistent<T_Parts_Tab>(T_Preference.partsTab, T_Parts_Tab.attributes);
+	w_attribute_keys	= preferences.persistent<Attribute_Keys>(T_Preference.attributeKeys, 'sle');
 	w_view_mode			= make_stale(preferences.persistent<'2d' | '3d'>(T_Preference.viewMode, '3d'));
 	w_edge_thickness	= make_stale(preferences.persistent<number>(T_Preference.edgeThickness, 2));
 	w_grid_opacity		= make_stale(preferences.persistent<number>(T_Preference.gridOpacity, 0.5));
@@ -43,6 +45,11 @@ class Stores {
 	toggle_rotation_snap():					void { this.w_rotation_snap.update(v => !v); }
 	toggle_allow_editing():					void { this.w_allow_editing.update(v => !v); }
 	toggle_details():						void { this.w_show_details.update(v => !v); }
+	toggle_attribute_keys():				void { this.w_attribute_keys.update(v => {
+												const next = v === 'sle' ? 'xyz' : 'sle';
+												console.log(`Attribute editor grouping switched to "${next}" (was "${v}") — start/length/end vs by axis.`);
+												return next;
+											}); }
 	toggle_grid():							void { this.w_show_grid.update(v => !v); }
 	toggle_solid():							void { this.w_solid.update(v => !v); }
 	get current_scale():				  number { return get(this.w_scale); }

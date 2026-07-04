@@ -19,7 +19,7 @@ declare const __ASSETS_DIR__: string;
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
-const common_size = 33;		// minimum fingertip touch size
+const common_size = 33;				// minimum fingertip touch size
 
 export default class Constants {
 
@@ -30,7 +30,7 @@ export default class Constants {
 		merge_logged     : false,
 		trace_logged     : false,
 		clip_debug       : false,
-		diagnose_dims    : true,
+		diagnose_dims    : false,
 		last_label_log   : '',
 		last_facet_log   : '',
 	};

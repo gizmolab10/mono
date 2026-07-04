@@ -8,7 +8,7 @@
 	import P_Repeat from './P_Repeat.svelte';
 	import { engine } from '../../ts/render';
 
-	const { w_tick, w_parts_tab } = stores;
+	const { w_tick, w_parts_tab, w_attribute_keys } = stores;
 	const { w_selection } = selection;
 
 	// Reactive: re-evaluate the cut-button visibility on every state tick and
@@ -50,6 +50,11 @@
 			<button class:active={$w_parts_tab === 'repeater'}   onclick={() => w_parts_tab.set(T_Parts_Tab.repeater)}>repeats</button>
 		</div>
 	</div>
+	{#if $w_parts_tab === 'attributes'}
+		<div class='keys-row'>
+			<button class='keys-toggle' title='group attributes by start/length/end, or by axis' onclick={() => stores.toggle_attribute_keys()}>{$w_attribute_keys} ⟳</button>
+		</div>
+	{/if}
 	<div class='tab-content'>
 		{#if $w_parts_tab === 'attributes'}
 			<P_Attributes />
@@ -160,6 +165,31 @@
 	}
 
 	.segmented button:hover:not(.active) {
+		background : var(--hover);
+	}
+
+	.keys-row {
+		justify-content : center;
+		display         : flex;
+		margin-top      : var(--l-gap-tiny);
+	}
+
+	.keys-toggle {
+		border        : var(--th-border) solid currentColor;
+		height        : var(--h-button-tiny);
+		border-radius : var(--r-common);
+		font-size     : var(--font-common);
+		z-index       : var(--z-action);
+		background    : var(--white);
+		box-sizing    : border-box;
+		cursor        : pointer;
+		color         : inherit;
+		white-space   : nowrap;
+		padding       : 0 10px;
+		min-width     : 3em;
+	}
+
+	.keys-toggle:hover {
 		background : var(--hover);
 	}
 

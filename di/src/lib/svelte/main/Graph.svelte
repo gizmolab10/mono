@@ -61,7 +61,8 @@
 
 	// Walk up parents from this smart object, collect names, drop the root
 	// (the topmost ancestor), join with dots. For a smart object directly
-	// under root, this is just its own name.
+	// under root, this is just its own name. For the root itself, show the
+	// root's own name (the file / design name) instead of an empty path.
 	function ancestry_path(so: Smart_Object): string {
 		const names: string[] = [];
 		let current: Smart_Object | null = so;
@@ -69,7 +70,8 @@
 			names.push(current.name);
 			current = current.scene?.parent?.so ?? null;
 		}
-		names.pop();  // drop the root
+		if (names.length <= 1) return so.name;  // the root part: its own name
+		names.pop();  // drop the root for descendants — the path is relative to it
 		return names.reverse().join('.');
 	}
 
@@ -236,8 +238,7 @@
 				style:left='{$w_mouse_location.x + 12}px'
 				style:top='{$w_mouse_location.y + 12}px'
 				class='name-popup'>
-				{path}
-				{$w_hovered_dimension ? `${path ? '.' : ''}${axis_label[$w_hovered_dimension.axis]} (${$w_hovered_dimension.axis}${$w_hovered_dimension.witness_index !== undefined ? `, ${$w_hovered_dimension.witness_index}` : ''})` : ''}
+				{path}{$w_hovered_dimension ? `${path ? '.' : ''}${axis_label[$w_hovered_dimension.axis]} (${$w_hovered_dimension.axis})` : ''}
 			</div>
 		{/if}
 		{#if show_hover_pill && hovered_dim_rect}
