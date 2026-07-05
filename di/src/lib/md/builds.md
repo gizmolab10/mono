@@ -2,6 +2,7 @@
 
 | Build | Date         | Note                                            |
 | ----- | ------------ | ----------------------------------------------- |
+| 71    | Jul 4, 2026  | edit lock                                       |
 | 70    | Jul 1, 2026  | final dimensions                                |
 | 69    | Jun 23, 2026 | logarithmic slider for # of visible dimensions  |
 | 68    | Jun 10, 2026 | uniface proposal done                           |

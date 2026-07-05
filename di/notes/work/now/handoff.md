@@ -1,13 +1,13 @@
 # Handoff
 
-**Date:** 2026-07-03
+**Date:** 2026-07-04
 **Work stream:** finished work is in the [work journal](di/notes/work/now/work%20journal.md); open and paused threads now live in [[open items]]. This file is a thin index.
 
 ## Current thread
 
-Attributes-editor grouping toggle is done (2026-07-03 work-journal entry; moved to [[code.debt.paid]]): a saved button flips the nine-row table between start/length/end grouping and by-axis grouping, and the root/derived cell-merges were reworked to hold under either. Visual-confirmed.
+Edit lock now covers the whole details column (2026-07-04 work-journal entry; moved to [[code.debt.paid]]): with the lock on, every edit path in attributes, angles, constants, repeats, and the selection name refuses and greys, the shared slider has a disabled state, and the dimensional hover pill is suppressed. The add-child plus also moved to the selection banner. Earlier this session: selection dots on top, midpoint hover + COMMAND-C, save/edit move, root dimensions, pure-number constants (all visual-confirmed).
 
-**Proposed next (from code.debt, first bug):** "dimensionals for root should appear." Today the root part shows no dimensions. Investigate first: find where the dimension pass excludes the root (the placement loop over parts) and why — is root skipped on purpose, or does it fall out because it has no parent frame or its edges read as hidden? Then decide the fix and the plain-English rule for which root edges get dimensioned. Design before code.
+**Proposed next (from code.debt, first bug):** "two door cabinet — stretch top drawer up → fubar." A stretch bug in a specific scene. First reproduce: load/build a two-door cabinet, stretch the top drawer upward, and capture what breaks (which bound goes wrong, whether it is the drag-solve or the invariant pass). Diagnose from the drag path (try_solve_given / reverse propagation) with logging before any fix. Needs the failing scene first.
 
 ## Paused threads
 

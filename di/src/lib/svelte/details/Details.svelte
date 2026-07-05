@@ -18,7 +18,7 @@
 
 	const th_sep = k.thickness.separator.main;
 	const { w_selection_name } = selection;
-	const { w_tick, w_all_sos } = stores;
+	const { w_tick, w_all_sos, w_allow_editing } = stores;
 	const { w_naming_error } = parts;
 
 	interface Props {
@@ -51,11 +51,13 @@
 		return visible.filter(s => s.repeater?.is_repeating || !visible.some(c => c.scene?.parent?.so === s)).length;
 	});
 
-	let parts_title: string = $derived(
-		parts_leaf_count === 0 ? 'no parts'
-		: parts_leaf_count === 1 ? 'part (1)'
-		: `parts (${parts_leaf_count})`
-	);
+	// Banner title: the root smart object's name, with the leaf-part count in
+	// parentheses — e.g. "kitchen wall (3)".
+	let parts_title: string = $derived.by(() => {
+		$w_tick;
+		const root_name = scenes.root_so?.name ?? 'parts';
+		return `${root_name} (${parts_leaf_count})`;
+	});
 
 	function factory_reset() {
 		preferences.reset();
@@ -63,11 +65,13 @@
 	}
 
 	function add_child_and_show_parts() {
+		if (!stores.allow_editing) return;
 		stores.w_t_details.update(v => v | T_Details.parts);
 		engine.add_child_so();
 	}
 
 	async function add_given_and_show_givens() {
+		if (!stores.allow_editing) return;
 		stores.w_t_details.update(v => v | T_Details.givens);
 		await tick();
 		givens_add?.();
@@ -125,20 +129,26 @@
 		</Hideable>
 
 		<Hideable title={parts_title} id='parts' detail={T_Details.parts}>
+			{#snippet leftActions()}
+				<button class='action-button' use:hit_target={{ id: 'save', onpress: () => scenes.add_to_library() }}>save</button>
+			{/snippet}
 			{#snippet rightActions()}
-				<button class='banner-add' use:hit_target={{ id: 'add-child', onpress: add_child_and_show_parts }}>+</button>
+				<button class='action-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
 			{/snippet}
 			<D_Parts />
 		</Hideable>
 
 		{#if $w_selection_name}
 			<Hideable title={selection_title} id='selection' detail={T_Details.selection}>
+				{#snippet rightActions()}
+					<button class='banner-add' disabled={!$w_allow_editing} use:hit_target={{ id: 'add-child', onpress: add_child_and_show_parts }}>+</button>
+				{/snippet}
 				<D_Selection />
 			</Hideable>
 
 			<Hideable title='constants' id='givens' detail={T_Details.givens}>
 				{#snippet rightActions()}
-					<button class='banner-add' use:hit_target={{ id: 'add-given', onpress: add_given_and_show_givens }}>+</button>
+					<button class='banner-add' disabled={!$w_allow_editing} use:hit_target={{ id: 'add-given', onpress: add_given_and_show_givens }}>+</button>
 				{/snippet}
 				<D_Givens bind:add={givens_add} />
 			</Hideable>
@@ -177,8 +187,13 @@
 		display        : flex;
 	}
 
-	.banner-add:hover,
-	.banner-add:active {
+	.banner-add:disabled {
+		opacity : 0.4;
+		cursor  : default;
+	}
+
+	.banner-add:hover:not(:disabled),
+	.banner-add:active:not(:disabled) {
 		color      : var(--c-default);
 		background : var(--white);
 	}
@@ -240,9 +255,9 @@
 		background    : radial-gradient(ellipse at center, var(--white) 30%, var(--accent) 100%);
 		border        : var(--th-border) solid rgba(0, 0, 0, 0.3);
 		height        : var(--h-button-tiny);
-		border-radius : var(--r-common);
-		font-size     : var(--font-reset);
+		font-size     : var(--font-small);
 		z-index       : var(--z-action);
+		border-radius : var(--r-common);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		color         : inherit;

@@ -10,7 +10,7 @@
 	import { get } from 'svelte/store';
 
 	const { w_selection, w_selections } = selection;
-	const { w_all_sos, w_tick } = stores;
+	const { w_all_sos, w_tick, w_allow_editing } = stores;
 	const { w_collapsed_ids, w_naming_error, w_editing_id } = parts;
 	const { w_hover } = hits_3d;
 
@@ -141,8 +141,8 @@
 	}
 
 	function handle_dragstart(e: DragEvent, so: Smart_Object) {
-		// Root cannot be moved.
-		if (!so.scene?.parent) { e.preventDefault(); return; }
+		// Root cannot be moved; nothing can be moved with the edit lock on.
+		if (!so.scene?.parent || !stores.allow_editing) { e.preventDefault(); return; }
 		drag_so = so;
 		if (e.dataTransfer) {
 			e.dataTransfer.effectAllowed = 'move';
@@ -208,7 +208,7 @@
 	function handle_row_drop(e: DragEvent) {
 		e.preventDefault();
 		e.stopPropagation();
-		if (drag_so && drop_target_so && drop_mode) {
+		if (drag_so && drop_target_so && drop_mode && stores.allow_editing) {
 			engine.reparent_so(drag_so, drop_target_so, drop_mode);
 		}
 		handle_dragend();
@@ -228,7 +228,7 @@
 
 	function handle_outside_drop(e: DragEvent) {
 		e.preventDefault();
-		if (drag_so && drop_target_so && drop_mode) {
+		if (drag_so && drop_target_so && drop_mode && stores.allow_editing) {
 			engine.reparent_so(drag_so, drop_target_so, drop_mode);
 		}
 		handle_dragend();
@@ -298,7 +298,7 @@
 				class:drop-active={row_is_drop_active(so)}
 				class:drop-line-top={row_has_top_line(so)}
 				class:drop-line-bottom={row_has_bottom_line(so)}
-				draggable={true}
+				draggable={$w_allow_editing}
 				ondragstart={(e) => handle_dragstart(e, so)}
 				ondragover={(e) => handle_row_dragover(e, so)}
 				ondragend={handle_dragend}

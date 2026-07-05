@@ -4,7 +4,6 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { history } from '../../ts/managers/History';
 	import { stores } from '../../ts/managers/Stores';
-	import { scenes } from '../../ts/managers/Scenes';
 	import { k } from '../../ts/common/Constants';
 	import { engine } from '../../ts/render';
 	import Steppers from '../mouse/Steppers.svelte';
@@ -34,8 +33,6 @@
 	let can_undo         = $derived.by(() => { $w_tick; return history.can_undo; });
 	let can_redo         = $derived.by(() => { $w_tick; return history.can_redo; });
 
-	async function save() { await scenes.add_to_library(); }
-
 	function on_undo_redo(left: boolean) {
 		if (left) engine.undo();
 		else      engine.redo();
@@ -55,11 +52,6 @@
 {#snippet help_button()}
 	<button class='toolbar-button help-button' aria-label='Open user guide'
 		use:hit_target={{ id: 'help', onpress: onshowuserguide }}>?</button>
-{/snippet}
-
-{#snippet save_edit_buttons()}
-	<button class='toolbar-button' use:hit_target={{ id: 'save', onpress: save }}>save</button>
-	<button class='toolbar-button' use:hit_target={{ id: 'allow-editing', onpress: () => stores.toggle_allow_editing() }}>{$w_allow_editing ? 'edit' : '🔒 edit'} ⟳</button>
 {/snippet}
 
 {#snippet right_corner_buttons()}
@@ -135,7 +127,6 @@
 			<div class='right-row'>
 				{@render orientation_cluster()}
 				<span class='spacer'></span>
-				{@render save_edit_buttons()}
 			</div>
 		</div>
 	{:else}
@@ -144,8 +135,6 @@
 			{@render decoration_buttons()}
 			<span class='spacer'></span>
 			{@render orientation_cluster()}
-			<span class='spacer'></span>
-			{@render save_edit_buttons()}
 			<span class='spacer'></span>
 			{@render loose_mode_buttons()}
 			{@render help_button()}

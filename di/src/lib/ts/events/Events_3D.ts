@@ -5,6 +5,7 @@ import { angulars } from '../editors/Angular';
 import { history } from '../managers/History';
 import { Point } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
+import { k } from '../common/Constants';
 import { scenes } from '../managers/Scenes';
 import { drag } from '../editors/Drag';
 import { hits_3d } from './Hits_3D';
@@ -66,6 +67,7 @@ class Events_3D {
 			hits_3d.hovered_dimension = null;
 			hits_3d.hovered_uniface_placement = null;
 			hits_3d.hovered_dim_target = null;
+			hits_3d.hovered_edge_axis = null;
 			canvas.style.cursor = '';
 			if (had_hover) console.log('cursor left the canvas — cleared the hover highlight.');
 		};
@@ -104,6 +106,7 @@ class Events_3D {
 					hits_3d.hover = hit ? hits_3d.hit_to_face(hit) : null;
 					hits_3d.hovered_uniface_placement = null;
 					hits_3d.hovered_dim_target = null;
+					hits_3d.hovered_edge_axis = null;
 					canvas.style.cursor = 'grab';
 				} else {
 					const hit = hits_3d.hit_test(point, e.altKey);
@@ -127,6 +130,15 @@ class Events_3D {
 						hit?.type === T_Hit_3D.dimension ? 'label'
 						: hit?.type === T_Hit_3D.uniface_line ? 'line'
 						: null;
+
+					// A hovered edge is a midpoint drag dot; record the axis it runs
+					// along so the floating tag names that axis — the same axis a
+					// dimensional measured along that edge would show.
+					const edge_axis = hit?.type === T_Hit_3D.edge ? hit.so.edge_along_axis(hit.index) : null;
+					hits_3d.hovered_edge_axis = edge_axis;
+					if (k.debug.diagnose_dims && hit?.type === T_Hit_3D.edge) {
+						console.log(`[hover] midpoint of an edge on "${hit.so.name}" — runs along the ${edge_axis} axis.`);
+					}
 
 					// The dimension under the cursor (for bolding its text and
 					// thickening its lines, and for the floating tag's "width (x)")
@@ -162,8 +174,13 @@ class Events_3D {
 				what = 'dimensional';
 			} else {
 				const hit = hits_3d.hit_test(p, false);
-				const is_part = hit?.type === T_Hit_3D.corner || hit?.type === T_Hit_3D.edge || hit?.type === T_Hit_3D.face;
-				if (hit && is_part) {
+				if (hit?.type === T_Hit_3D.edge) {
+					// A midpoint (an edge): put the part name plus the short axis
+					// letter it runs along — w for width, d for depth, h for height.
+					const short = { x: 'w', y: 'd', z: 'h' } as const;
+					name = `${full_name(hit.so)}.${short[hit.so.edge_along_axis(hit.index)]}`;
+					what = 'midpoint';
+				} else if (hit?.type === T_Hit_3D.corner || hit?.type === T_Hit_3D.face) {
 					name = full_name(hit.so);
 					what = 'part';
 				}

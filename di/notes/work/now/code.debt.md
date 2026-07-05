@@ -4,15 +4,32 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the top of open items.
 
+## bugs
+
+- [ ] SHIFT arrows browse the parts list even when it is closed
+- [x] title of parts -> root so name, keep number in parentheses
+    - [ ]  ellipsis in name
+- [ ] two door cabinet
+    - [ ] stretch top drawer up -> fubar!
+- [ ] drawer
+    - [ ] can't edit a dimensional -> fubar!
+- [ ] ref -> target is also a formula
+    - [ ] disappear on relaunch -> kitchen wall
+- [ ] select a part, undo -> fucks with many parts. relaunch fixes
+    - [ ] HINT: problem is with snapshot/load_scene
+- [ ] cannot rotate basement around z axis
+    - [ ] rear wall -> funky location
+- [ ] two blocks
+- [ ] buy a lot of AI generated most common misspellings of highest SEO ranking domains
+    - [ ] ask ai to build an ai
+
+---
+
 ## small
 
-- [ ] move save button to left side of parts banner
-    - [ ] move edit button to right side (left of plus button)
-- [ ] hover on a midpoint -> popup include axis
-    - [ ] same as hover on a dimensional
 - [ ] selection dots
     - [x] solid
-    - [ ] painted on top
+    - [x] painted on top
     - [ ] place on face -> largest screen area?
         - [ ] drag dots move in THAT face's plane
 - [ ] print
@@ -39,22 +56,6 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
     - [ ] [[18.givens]]
     - [ ] help
         - [ ] complete & excellent
-
----
-
-## bugs
-
-- [ ] two door cabinet
-    - [ ] stretch top drawer up -> fubar!
-- [ ] drawer
-    - [ ] can't edit a dimensional -> fubar!
-- [ ] ref -> target is also a formula
-    - [ ] disappear on relaunch -> kitchen wall
-- [ ] select a part, undo -> fucks with many parts. relaunch fixes
-    - [ ] HINT: problem is with snapshot/load_scene
-- [ ] cannot rotate basement around z axis
-    - [ ] rear wall -> funky location
-- [ ] two blocks
 
 ---
 

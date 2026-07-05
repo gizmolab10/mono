@@ -7,7 +7,7 @@
 	import Slider from '../mouse/Slider.svelte';
 
 	const { w_mouse_button_down } = e;
-	const { w_tick, w_forward_face } = stores;
+	const { w_tick, w_forward_face, w_allow_editing } = stores;
 	const { w_selection } = selection;
 
 	const SWAP_LABELS:  Record<Axis_Name, string>           = { z: 'swap x | y', x: 'swap y | z', y: 'swap x | z' };
@@ -56,6 +56,7 @@
 
 	function commit_angle(axis: 'x' | 'y' | 'z', value: string) {
 		if (!selected_so) return;
+		if (!stores.allow_editing) { console.log('Edit lock is on — angle change refused.'); return; }
 		history.snapshot();
 		const degrees = parseFloat(value.replace('°', ''));
 		if (isNaN(degrees)) return;
@@ -90,7 +91,7 @@
 	}
 
 	function rotate_90(sign: 1 | -1) {
-		if (!selected_so) return;
+		if (!selected_so || !stores.allow_editing) return;
 		history.snapshot();
 		if (is_root) {
 			engine.rotate_root_90(rot_axis, sign);
@@ -108,7 +109,7 @@
 	}
 
 	function swap() {
-		if (!selected_so) return;
+		if (!selected_so || !stores.allow_editing) return;
 		history.snapshot();
 		const [a, b] = SWAP_INDICES[rot_axis];
 		engine.swap_axes(selected_so, a, b);
@@ -119,7 +120,7 @@
 	}
 
 	function reset_angle() {
-		if (!selected_so) return;
+		if (!selected_so || !stores.allow_editing) return;
 		history.snapshot();
 		selected_so.touch_axis(rot_axis, 0);
 		constraints.propagate(selected_so);
@@ -129,7 +130,7 @@
 	}
 
 	function demote_axis(axis: Axis_Name) {
-		if (!selected_so) return;
+		if (!selected_so || !stores.allow_editing) return;
 		const idx = ALL_AXES.indexOf(axis);
 		const ro = selected_so.rotation_order;
 		const pos = ro.indexOf(idx);
@@ -147,7 +148,7 @@
 	}
 
 	function handle_angle(deg: number) {
-		if (!selected_so) return;
+		if (!selected_so || !stores.allow_editing) return;
 		if (!slider_snapshotted) { history.snapshot(); slider_snapshotted = true; }
 		selected_so.touch_axis(rot_axis, (base_deg() + deg) * Math.PI / 180);
 		constraints.propagate(selected_so);
@@ -160,7 +161,7 @@
 
 {#if !is_root}
 	<div class='rotation-section'>
-		<table class='angles'>
+		<table class='angles' class:locked={!$w_allow_editing}>
 			<tbody>
 				{#each ordered_axes as axis}
 					<tr class:active-axis={axis === rot_axis} onclick={() => rot_axis = axis}>
@@ -171,6 +172,7 @@
 								onblur    = {(e) => commit_angle(axis, (e.target as HTMLInputElement).value)}
 								onkeydown = {angle_keydown}
 								value     = {angles[axis]}
+								disabled  = {!$w_allow_editing}
 								class     = 'angle-cell'
 								type      = 'text'
 							/>
@@ -179,19 +181,19 @@
 				{/each}
 			</tbody>
 		</table>
-		<div class='rotation-row'>
+		<div class='rotation-row' class:locked={!$w_allow_editing}>
 			<span class='slider-label'>-45°</span>
-			<Slider min={-45} max={45} divisions={180} style='line' fill sticky={STICKY_ANGLES} sticky_threshold={STICKY_THRESHOLD} onchange={handle_angle} value={angle_deg} />
+			<Slider min={-45} max={45} divisions={180} style='line' fill sticky={STICKY_ANGLES} sticky_threshold={STICKY_THRESHOLD} disabled={!$w_allow_editing} onchange={handle_angle} value={angle_deg} />
 			<span class='slider-label'>+45°</span>
 		</div>
 	</div>
 {/if}
 <div class='rotation-row' style:margin-top='var(--l-gap-tiny)'>
-	<button class='action-button' onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
-	{#if !is_root && !angle_is_zero}<span class='spacer'></span><button class='action-button' onclick={reset_angle}>reset</button><span class='spacer'></span>{/if}
+	<button class='action-button' disabled={!$w_allow_editing} onclick={swap}>{SWAP_LABELS[rot_axis]}</button>
+	{#if !is_root && !angle_is_zero}<span class='spacer'></span><button class='action-button' disabled={!$w_allow_editing} onclick={reset_angle}>reset</button><span class='spacer'></span>{/if}
 	<span class='far-right'>
-		<button class='action-button' onclick={() => rotate_90(-1)}>-90°</button>
-		<button class='action-button' onclick={() => rotate_90(1)}>+90°</button>
+		<button class='action-button' disabled={!$w_allow_editing} onclick={() => rotate_90(-1)}>-90°</button>
+		<button class='action-button' disabled={!$w_allow_editing} onclick={() => rotate_90(1)}>+90°</button>
 	</span>
 </div>
 
@@ -206,6 +208,11 @@
 		gap         : var(--l-gap-small);
 		align-items : center;
 		display     : flex;
+	}
+
+	.rotation-row.locked {
+		pointer-events : none;
+		opacity        : 0.4;
 	}
 
 	.spacer {
@@ -243,6 +250,19 @@
 		background : var(--hover);
 	}
 
+	.action-button:disabled {
+		opacity : 0.4;
+		cursor  : default;
+	}
+
+	.action-button:disabled:hover {
+		background : var(--white);
+	}
+
+	.angle-cell:disabled {
+		cursor : default;
+	}
+
 	.angles {
 		font-size       : var(--font-small);
 		border-collapse : collapse;
@@ -265,6 +285,16 @@
 
 	.angle-arrow:hover {
 		background : var(--hover);
+	}
+
+	/* Locked: grey the whole table, and make the rotation-order arrow (an edit)
+	   inert — no hover, no click. Switching which axis is shown stays live. */
+	.angles.locked {
+		opacity : 0.4;
+	}
+
+	.angles.locked .angle-arrow {
+		pointer-events : none;
 	}
 
 	.angle-name {
@@ -302,7 +332,7 @@
 		margin               : 0;
 	}
 
-	.angle-cell:not(:focus):hover {
+	.angle-cell:not(:disabled):not(:focus):hover {
 		background : var(--hover);
 	}
 

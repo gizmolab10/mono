@@ -37,7 +37,7 @@
       },
       {
         "id": "diba47a18c85ba9d",
-        "name": "A",
+        "name": "a",
         "x": {
           "attributes": {
             "origin": {
@@ -83,7 +83,7 @@
       },
       {
         "id": "dib543189150f4d8",
-        "name": "B",
+        "name": "b",
         "x": {
           "attributes": {
             "origin": {
@@ -93,7 +93,7 @@
               "formula": ".e"
             },
             "length": 507.9999999998845,
-            "angle": -0.5235987755982988
+            "angle": 0.39269908169872414
           },
           "invariant": 2
         },
@@ -106,7 +106,7 @@
             "length": {
               "formula": "thick"
             },
-            "angle": 0
+            "angle": 0.7853981633974483
           },
           "invariant": 1
         },
@@ -125,6 +125,11 @@
         },
         "visible": true,
         "hide_children": false,
+        "rotation_order": [
+          2,
+          0,
+          1
+        ],
         "parent_id": "did544449f3d5e57"
       }
     ],
@@ -132,7 +137,8 @@
       {
         "name": "thick",
         "value_mm": 101.6,
-        "locked": true
+        "locked": true,
+        "is_scalar": false
       }
     ],
     "camera": {
@@ -153,7 +159,7 @@
       ]
     },
     "root_id": "did544449f3d5e57",
-    "selected_id": "dib543189150f4d8",
-    "selected_face": 3
+    "selected_id": "diba47a18c85ba9d",
+    "selected_face": 5
   }
 }

@@ -8,7 +8,7 @@
 	import { units } from '../../ts/types/Units';
 
 	const { w_selection } = selection;
-	const { w_precision, w_tick, w_attribute_keys } = stores;
+	const { w_precision, w_tick, w_attribute_keys, w_allow_editing } = stores;
 
 	type BoundsRow = { label: string; bound: string | null; value: string; formula: string; has_formula: boolean; is_locked: boolean; is_invariant: boolean; axis_index: number; attr_index: number };
 
@@ -123,6 +123,7 @@
 
 	function commit_formula(row: BoundsRow, value: string, input?: HTMLInputElement) {
 		if (!selected_so || !row.bound) return;
+		if (!stores.allow_editing) { console.log('Edit lock is on — attribute change refused.'); return; }
 		history.snapshot();
 		const trimmed = value.trim().replace(/\.(\s*\.)+/g, '.').replace(/\.(\s*[+\-*/])/g, '$1').replace(/\.+$/, '');
 		const parent_id = selected_so.scene?.parent?.so.id;
@@ -170,6 +171,7 @@
 
 	function commit_value(row: BoundsRow, value: string, input?: HTMLInputElement) {
 		if (!selected_so || !row.bound) return;
+		if (!stores.allow_editing) return;
 		history.snapshot();
 		let mm = units.parse_for_system(value, $w_unit_system);
 		if (mm === null) {
@@ -218,7 +220,7 @@
 	}
 
 	function set_invariant(row: BoundsRow) {
-		if (!selected_so || is_root) return;
+		if (!selected_so || is_root || !stores.allow_editing) return;
 		stores.w_editing.set(T_Editing.none);
 		if (error_state.show_overlay) dismiss_overlay();
 		history.snapshot();
@@ -242,7 +244,7 @@
 	}
 
 	function toggle_lock(row: BoundsRow) {
-		if (!selected_so || !row.bound) return;
+		if (!selected_so || !row.bound || !stores.allow_editing) return;
 		if (row.has_formula || row.is_invariant) return;
 		const attr = selected_so.attributes_dict_byName[row.bound];
 		if (!attr) return;
@@ -328,7 +330,7 @@
 		<td class='attr-name'>
 			{row.label}
 		</td>
-		<td class='attr-invariant' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
+		<td class='attr-invariant' class:cross={row.is_invariant} class:disabled={is_root || !$w_allow_editing} onclick={() => set_invariant(row)}></td>
 		{#if !(is_merge_cont || root_formula_cont)}
 			{@const formula_disabled = is_root || row.is_invariant}
 			<td class='attr-formula' class:merged={is_root || merge_span >= 2} class:cell-disabled={formula_disabled} rowspan={is_root ? (mode === 'xyz' ? 3 : (i === 0 ? 6 : 3)) : merge_span || undefined}>
@@ -337,7 +339,7 @@
 					class     = 'cell-input'
 					class:cell-error={has_formula_error}
 					value     = {row.formula}
-					disabled  = {formula_disabled}
+					disabled  = {formula_disabled || !$w_allow_editing}
 					onfocus   = {(e) => { error_state.saved_formula = (e.target as HTMLInputElement).value; stores.w_editing.set(T_Editing.formula); }}
 					onblur    = {(e) => { const input = e.target as HTMLInputElement; if (!skip_blur_commit) commit_formula(row, input.value, input); skip_blur_commit = false; stores.w_editing.set(T_Editing.none); }}
 					onkeydown = {(e) => cell_keydown(e, row)}
@@ -353,14 +355,14 @@
 					class     = 'cell-input right'
 					class:cell-error={has_value_error}
 					value     = {is_root && row.attr_index === 0 ? '0' : row.value}
-					disabled  = {row_disabled}
+					disabled  = {row_disabled || !$w_allow_editing}
 					onfocus   = {() => stores.w_editing.set(T_Editing.value)}
 					onblur    = {(e) => { const input = e.target as HTMLInputElement; commit_value(row, input.value, input); stores.w_editing.set(T_Editing.none); }}
 					onkeydown = {cell_keydown}
 				/>
 			</td>
 		{/if}
-		<td class='attr-trailing' class:lockable={!row.has_formula && !row.is_invariant} class:cell-disabled={row.has_formula || row.is_invariant} onclick={() => toggle_lock(row)}>
+		<td class='attr-trailing' class:lockable={!row.has_formula && !row.is_invariant && $w_allow_editing} class:cell-disabled={row.has_formula || row.is_invariant} onclick={() => toggle_lock(row)}>
 			{row.has_formula || row.is_invariant ? '' : (row.is_locked ? '🔒' : ' ')}
 		</td>
 	</tr>

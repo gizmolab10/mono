@@ -31,7 +31,9 @@
 		logarithmic = false,
 		show_steppers = true,
 		sticky_threshold = 1,
+		disabled = false,
 	}: {
+		disabled?: boolean;
 		min?: number;
 		max?: number;
 		value?: number;
@@ -90,15 +92,18 @@
 	const is_sticky_alt = $derived(!!sticky?.some(s => Math.abs((value_alt ?? 0) - s) < 0.01));
 	const sticky_dot       = 'radial-gradient(circle, rgba(0,0,0,0.25) 4px, var(--white) 5px)';
 	const sticky_dot_hover = 'radial-gradient(circle, white 4px, var(--hover) 5px)';
+	// When disabled, the thumb never takes the hover color — the app's hover is
+	// tracked by cursor position, so it would otherwise light up even with the
+	// input inert.
 	const current_thumb_color = $derived(
 		is_sticky
-			? (isHoveringOn_slider && !is_dragging) ? sticky_dot_hover : sticky_dot
-			: (isHoveringOn_slider && !is_dragging) ? 'var(--hover)' : 'var(--c-thumb)'
+			? (isHoveringOn_slider && !is_dragging && !disabled) ? sticky_dot_hover : sticky_dot
+			: (isHoveringOn_slider && !is_dragging && !disabled) ? 'var(--hover)' : 'var(--c-thumb)'
 	);
 	const current_thumb_color_alt = $derived(
 		is_sticky_alt
-			? (isHoveringOn_slider_alt && !is_dragging_alt) ? sticky_dot_hover : sticky_dot
-			: (isHoveringOn_slider_alt && !is_dragging_alt) ? 'var(--hover)' : 'var(--c-thumb)'
+			? (isHoveringOn_slider_alt && !is_dragging_alt && !disabled) ? sticky_dot_hover : sticky_dot
+			: (isHoveringOn_slider_alt && !is_dragging_alt && !disabled) ? 'var(--hover)' : 'var(--c-thumb)'
 	);
 
 	// Value → slider position (0..divisions)
@@ -257,6 +262,8 @@
 					<input type='range' class='range-input'
 						style:--thumb-color={current_thumb_color}
 						min='0' step='any' max={divisions}
+						disabled={disabled}
+						style:pointer-events={disabled ? 'none' : null}
 						bind:this={slider_input}
 						value={slider_value}
 						id={slider_hit_id}
@@ -274,6 +281,8 @@
 						id={slider_hit_id_alt}
 						min='0' step='any' max={divisions}
 						value={slider_value_alt}
+						disabled={disabled}
+						style:pointer-events={disabled ? 'none' : null}
 						style:--thumb-color={current_thumb_color_alt}
 						bind:this={slider_input_alt}
 						oninput={on_input_alt}
@@ -308,6 +317,7 @@
 					type='range'
 					max={divisions}
 					value={slider_value}
+					disabled={disabled}
 					bind:this={slider_input}
 					oninput={on_input}
 					use:hit_target={{
@@ -315,7 +325,7 @@
 						onpress: () => is_dragging = true,
 						onrelease: () => is_dragging = false,
 					}}
-					style={vertical ? 'pointer-events: auto;' : 'flex: 1 1 auto; position: relative; min-width: 0; pointer-events: auto; z-index: 2;'}/>
+					style={vertical ? `pointer-events: ${disabled ? 'none' : 'auto'};` : `flex: 1 1 auto; position: relative; min-width: 0; pointer-events: ${disabled ? 'none' : 'auto'}; z-index: 2;`}/>
 				{#if thumb_label}
 					<span class='thumb-label' style:left="calc(var(--h-slider) / 2 + {fill_left_pct} * (100% - var(--h-slider)) / 100)">{thumb_label(value)}</span>
 				{/if}

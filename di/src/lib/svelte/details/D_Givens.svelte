@@ -9,7 +9,7 @@
 
 	let { add = $bindable<(() => void) | undefined>() }: { add?: () => void } = $props();
 
-	const { w_precision, w_tick } = stores;
+	const { w_precision, w_tick, w_allow_editing } = stores;
 
 	type Row = { name: string; value_mm: number; locked?: boolean; is_scalar?: boolean };
 
@@ -19,6 +19,7 @@
 	let pending_focus = $state(false);
 
 	function add_constant(): void {
+		if (!stores.allow_editing) return;
 		const active = document.activeElement;
 		if (active instanceof HTMLInputElement) active.blur();
 		if (naming_error) return;
@@ -104,7 +105,7 @@
 
 	function remove_dimension(index: number): void {
 		const name = rows[index]?.name;
-		if (!name) return;
+		if (!name || !stores.allow_editing) return;
 		confirm.ask(`Delete given "${name}"?`, () => {
 			history.snapshot();
 			givens.remove(name);
@@ -115,7 +116,7 @@
 
 	function commit_name(index: number, value: string, input?: HTMLInputElement): void {
 		if (naming_error) return;
-		if (!rows[index]) return;
+		if (!rows[index] || !stores.allow_editing) return;
 		const old_name = rows[index].name;
 		const new_name = value.replace(/_/g, ' ').trim();
 		if (old_name === new_name) { naming_error = null; return; }
@@ -142,7 +143,7 @@
 	}
 
 	function commit_value(index: number, value: string): void {
-		if (!rows[index]) return;
+		if (!rows[index] || !stores.allow_editing) return;
 		history.snapshot();
 		const parsed = units.parse_constant(value, $w_unit_system);
 		if (parsed === null) return;
@@ -155,6 +156,7 @@
 	}
 
 	function toggle_lock(index: number): void {
+		if (!stores.allow_editing) return;
 		const name = rows[index].name;
 		givens.set_locked(name, !givens.is_locked(name));
 		rows = givens.get_all();
@@ -204,7 +206,7 @@
 
 {#if rows.length > 0}
 	<div class='givens-wrap'>
-		<table class='givens'><tbody>
+		<table class='givens' class:locked={!$w_allow_editing}><tbody>
 			{#each rows as row, index}
 				<tr>
 					<td class='givens-name'>
@@ -213,6 +215,7 @@
 							placeholder = 'name'
 							value       = {row.name}
 							class       = 'cell-input'
+							disabled     = {!$w_allow_editing}
 							use:focus_if_target={pending_focus && index === rows.length - 1}
 							onkeydown   = {(e) => cell_keydown(e, index)}
 							onfocus     = {() => stores.w_editing.set(T_Editing.value)}
@@ -225,6 +228,7 @@
 							onkeydown = {cell_keydown}
 							class     = 'cell-input right'
 							value     = {format_value(row)}
+							disabled  = {!$w_allow_editing}
 							onfocus   = {() => stores.w_editing.set(T_Editing.value)}
 							onblur    = {(e) => { commit_value(index, (e.target as HTMLInputElement).value); stores.w_editing.set(T_Editing.none); }}
 						/>
@@ -270,6 +274,16 @@
 		font-size       : var(--font-small);
 		border-collapse : collapse;
 		width           : 100%;
+	}
+
+	/* Locked: grey the whole constants table and make every cell inert — no
+	   hover, no typing, no lock/remove. Inputs also carry the disabled flag. */
+	.givens.locked {
+		opacity : 0.4;
+	}
+
+	.givens.locked td {
+		pointer-events : none;
 	}
 
 	.givens td {

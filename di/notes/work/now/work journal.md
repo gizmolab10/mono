@@ -6,6 +6,38 @@ Record work performed during chat sessions, in reverse chronological order. Each
 
 ---
 
+## Session — 2026-07-04 — Root dimensions, hover tag, and pure-number constants
+
+- **Root part now gets dimensions.** The dimension pass used to exclude the root outright (it required every part to have a parent). Now the root flows through the same rules as any part and wins duplicate-text ties (it is depth 0, so it shows the overall span). It is also dimensioned even when the root itself is invisible — its own visible flag no longer gates it.
+- **Hover tag fixes.** For the root, the floating tag reads the root's own name (the file name) at full size, instead of a tiny single space. And the tag's "width (x)" text now appears whenever the cursor is over any part of a dimensional — its label OR any of its lines — even when a part face sits behind and wins the click, and even with edit locked. The store that drives it is now filled inside the hit-test from label-or-line, and the locked-mode path no longer wipes it.
+- **Constants can be pure numbers.** A constant entered as a bare number is kept as a plain scalar (0.23 stays 0.23 and multiplies as 0.23 in formulas); anything with a unit stays a measurement. A repeating-decimal scalar (1/3, 2/3, 1/6) shows as a fraction, mixed when bigger than one; a terminating decimal stays decimal.
+- **Constant bugs fixed along the way.** A leading-dot number (.23) failed to parse and silently discarded the edit — the decimal check now accepts it. The pure-number kind is preserved when a formula re-writes a constant during propagation, and carried through the localStorage save, the scene file, and both scene-load paths (the engine loader was the one that kept dropping it on relaunch).
+- **Save/edit buttons moved into the parts banner.** Save sits on the banner's left, edit on the right just before the plus; both were pulled out of the top toolbar (desktop and mobile rows). The phone layout never carried them, so it gains them now.
+- **Midpoint hover names its axis.** Hovering an edge's midpoint drag-dot now shows the floating tag with that edge's axis and length word, the same way a dimensional does (a new store carries the hovered edge's axis; the tag reads it when no dimensional is hovered). And COMMAND-C over a midpoint puts the part name plus the short axis letter (name.w / .d / .h) on the clipboard, matching the dimensional COMMAND-C.
+- **Selection dots draw on top.** The selection and hover dots now render after the dimensions and angulars (they already drew after the part geometry), so where a dimension line or label crosses a dot, the dot sits above it.
+- **Edit lock now covers the whole details column.** With the lock on, every edit path refuses and every control greys/disables: the angles editor (typed value, slider, ±90, swap, reset, rotation-order arrow, hover), the attributes table (formula/number inputs, invariant marker, lock toggle, hover), the selection name field, the constants table (name/value/lock/remove), the repeat editor (repeat/unrepeat, run/rise axes, spacing and gap sliders, firewall, wall/stairs, add-master), the dimensional hover pill, and the parts/constants plus buttons. The shared slider gained a `disabled` prop — its thumb can't drag and no longer takes the position-based hover colour. Each mutating handler is also guarded, since the app's hover/click is tracked by cursor position and a disabled DOM control alone would not stop it.
+- **Plus button moved.** The add-child plus moved off the parts banner onto the selection banner.
+- **Also:** added a guard that blocks chaining separate shell actions in one call.
+
+### Files touched
+
+- di/src/lib/svelte/details/Details.svelte (save + edit buttons in the parts banner), main/Primary_Controls.svelte (removed the toolbar save/edit snippet + its unused helper and import), main/Graph.svelte (tag shows a hovered edge's axis)
+- di/src/lib/ts/events/Hits_3D.ts (hovered-edge-axis store), events/Events_3D.ts (set the edge axis on hover; midpoint COMMAND-C puts name + short axis letter)
+- di/src/lib/ts/render/Render.ts (selection/hover dots drawn after dimensions and angulars)
+- edit lock: di/src/lib/svelte/mouse/Slider.svelte (disabled prop + thumb-hover gate), details/P_Angles.svelte, details/P_Attributes.svelte, details/D_Selection.svelte (name field), details/D_Givens.svelte (constants table), details/P_Repeat.svelte (repeat controls), details/Details.svelte (plus buttons + plus moved to selection banner), main/Graph.svelte (hover pill gated)
+- di/src/lib/ts/render/Dimension_Placement.ts (root included in the dimensioned set + visible-for-dim exemption), events/Hits_3D.ts (hover-dimension store filled from label-or-line), events/Events_3D.ts (removed the conflicting/locked-mode clears)
+- di/src/lib/ts/types/Units.ts (parse_constant; leading-dot decimal fix), algebra/Givens.ts (is_scalar kind + preserve on re-set), managers/Scenes.ts + render/Engine.ts (carry the kind through save/load/import)
+- di/src/lib/svelte/main/Graph.svelte (root name in the tag), details/D_Givens.svelte (parse + display by kind, repeating-decimal fractions)
+- di/notes/work/milestones/done/34.dimensionals/dimensions.latest.spec.md (chapter 2: root eligible)
+- tests: Units.test.ts (parse_constant, leading-dot); di/.claude/hooks/bash-command-check.sh (no-chaining guard)
+
+### Verification
+
+- yarn svelte-check: 0 errors, 0 warnings. yarn vitest run: 859 passed, 1 skipped, 8 todo.
+- Visual: Jonathan confirmed root dimensions (visible when root invisible), the root-name tag at full size, the "width (x)" tag on hover with lock on, pure-number constants surviving relaunch, and repeating decimals shown as fractions.
+
+---
+
 ## Session — 2026-07-03 — Attributes editor: group by start/length/end or by axis
 
 - **New grouping toggle.** A small button sits between the attributes/angles/repeats control and the attributes table, shown only on the attributes tab. Its label reads the current mode ("sle" or "xyz") and clicking flips it. The choice is saved and survives a reload; the default is the old start/length/end layout, so nothing changes until you ask for it.

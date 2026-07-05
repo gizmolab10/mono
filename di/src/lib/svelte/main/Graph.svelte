@@ -16,7 +16,7 @@
 	const { w_mouse_location } = e;
 	const { w_s_angular } = angulars;
 	const { w_s_face_label } = face_label;
-	const { w_hover, w_hovered_dimension, w_hovered_dim_target } = hits_3d;
+	const { w_hover, w_hovered_dimension, w_hovered_dim_target, w_hovered_edge_axis } = hits_3d;
 	const { w_s_dimensions, w_dim_edit_width } = dimensions;
 
 	const axis_label: Record<'x' | 'y' | 'z', string> = { x: 'width', y: 'depth', z: 'height' };
@@ -238,7 +238,11 @@
 				style:left='{$w_mouse_location.x + 12}px'
 				style:top='{$w_mouse_location.y + 12}px'
 				class='name-popup'>
-				{path}{$w_hovered_dimension ? `${path ? '.' : ''}${axis_label[$w_hovered_dimension.axis]} (${$w_hovered_dimension.axis})` : ''}
+				{path}{$w_hovered_dimension
+					? `${path ? '.' : ''}${axis_label[$w_hovered_dimension.axis]} (${$w_hovered_dimension.axis})`
+					: $w_hovered_edge_axis
+					? `${path ? '.' : ''}${axis_label[$w_hovered_edge_axis]} (${$w_hovered_edge_axis})`
+					: ''}
 			</div>
 		{/if}
 		{#if show_hover_pill && hovered_dim_rect}

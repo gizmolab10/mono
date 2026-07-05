@@ -772,12 +772,14 @@ class Render {
 		if (stores.grid_opacity > 0 && !is_print) {
 			render_axes(this);
 		}
+		if (stores.show_dimensionals || selection.all.length > 0) render_dimensions(this);
+		if (stores.show_angulars) render_angulars(this);
+		// Selection and hover dots draw last, so they sit on top of the
+		// dimensions and angulars too — not just the part geometry.
 		if (!is_print) {
 			this.render_hover();
 			this.render_selection();
 		}
-		if (stores.show_dimensionals || selection.all.length > 0) render_dimensions(this);
-		if (stores.show_angulars) render_angulars(this);
 		if (k.debug.show_ep_labels) this.render_front_face_label();
 		this._phase('');
 	}

@@ -2648,6 +2648,12 @@
         "value_mm": 4572,
         "locked": true,
         "is_scalar": false
+      },
+      {
+        "name": "moose fraction",
+        "value_mm": 0.3333333333333333,
+        "locked": true,
+        "is_scalar": true
       }
     ],
     "camera": {

@@ -10,16 +10,16 @@
 		id,
 		title,
 		detail,
-		rightActions,
-		leftActions,
 		children,
+		leftActions,
+		rightActions,
 	} : {
 		id            : string;
 		title         : string;
 		detail        : T_Details;
 		children      : import('svelte').Snippet;
-		rightActions? : import('svelte').Snippet;
 		leftActions?  : import('svelte').Snippet;
+		rightActions? : import('svelte').Snippet;
 	} = $props();
 
 	let is_visible = $derived(($w_t_details & detail) !== 0);
@@ -66,9 +66,9 @@
 
 	.banner {
 		letter-spacing  : var(--l-letter-spacing);
-		border-radius   : var(--r-common);
 		font-size       : var(--font-common);
 		color           : rgba(0, 0, 0, 1);
+		border-radius   : var(--r-common);
 		z-index         : var(--z-action);
 		height          : var(--h-banner);
 		background      : var(--bg);

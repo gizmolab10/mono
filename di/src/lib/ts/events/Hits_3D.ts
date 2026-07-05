@@ -65,6 +65,13 @@ class Hits_3D {
 	get hovered_dim_target(): 'label' | 'line' | null { return get(this.w_hovered_dim_target); }
 	set hovered_dim_target(t: 'label' | 'line' | null) { this.w_hovered_dim_target.set(t); }
 
+	// The axis a hovered edge (its midpoint drag dot) runs along, so the floating
+	// tag can name that axis — the same axis a dimensional along that edge shows.
+	w_hovered_edge_axis = stale_writable<Axis_Name | null>(null);
+
+	get hovered_edge_axis(): Axis_Name | null { return get(this.w_hovered_edge_axis); }
+	set hovered_edge_axis(a: Axis_Name | null) { this.w_hovered_edge_axis.set(a); }
+
 	/** The single part to draw in the hover color, by state:
 	 *  - hovering a dim LABEL highlights that part, unless it is being edited;
 	 *  - hovering a dim LINE or the part BODY highlights it, unless it is
@@ -100,6 +107,7 @@ class Hits_3D {
 		this.w_hover.set(null);
 		this.w_hovered_dimension.set(null);
 		this.w_hovered_uniface_placement.set(null);
+		this.w_hovered_edge_axis.set(null);
 		selection.current = null;
 	}
 
