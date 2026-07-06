@@ -46,7 +46,10 @@
       "Bash(sed -i '' 's|utilities/Testworthy_Utilities|utilities/Utilities|; s/{ tu }/{ u }/; s/tu\\\\.gcd/u.gcd/' types/Units.ts)",
       "Bash(sed -i '' 's|utilities/Testworthy_Utilities.ts|utilities/Utilities.ts|' map.md)",
       "Bash(sed -i '' 's/Testworthy_Utilities/Utilities/g' \"file layout.md\")",
-      "Bash(bash ~/GitHub/mono/di/.claude/hooks/bash-command-check.sh)"
+      "Bash(bash ~/GitHub/mono/di/.claude/hooks/bash-command-check.sh)",
+      "Bash(dig +short intersection.lol A)",
+      "Bash(dig +short intersection.lol AAAA)",
+      "Bash(dig +short intersection.lol CAA)"
     ]
   },
   "hooks": {
