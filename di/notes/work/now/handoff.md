@@ -5,9 +5,9 @@
 
 ## Current thread
 
-Edit lock now covers the whole details column (2026-07-04 work-journal entry; moved to [[code.debt.paid]]): with the lock on, every edit path in attributes, angles, constants, repeats, and the selection name refuses and greys, the shared slider has a disabled state, and the dimensional hover pill is suppressed. The add-child plus also moved to the selection banner. Earlier this session: selection dots on top, midpoint hover + COMMAND-C, save/edit move, root dimensions, pure-number constants (all visual-confirmed).
+Edit-lock hardening extended and a banner colour fix (2026-07-04/05 work-journal entry; moved to [[code.debt.paid]]): the lock now also covers divide/duplicate, unrepeat, and parts-list drag-and-drop; and the banner is now a `<div>` (was a `<button>` wrapping the action buttons — invalid), so the banner button text reads black again. Earlier: whole-details lock coverage, plus-button move, selection dots on top, root dimensions, pure-number constants (all visual-confirmed).
 
-**Proposed next (from code.debt, first bug):** "two door cabinet — stretch top drawer up → fubar." A stretch bug in a specific scene. First reproduce: load/build a two-door cabinet, stretch the top drawer upward, and capture what breaks (which bound goes wrong, whether it is the drag-solve or the invariant pass). Diagnose from the drag path (try_solve_given / reverse propagation) with logging before any fix. Needs the failing scene first.
+**Proposed next (from code.debt):** the first bug line reads "stop → Jeff" — that looks like a personal note, not a code task; skip it. The first code bug is **"two door cabinet — stretch top drawer up → fubar."** A stretch bug in a specific scene. First reproduce: build a two-door cabinet, stretch the top drawer upward, capture what breaks (which bound goes wrong, drag-solve vs invariant pass). Diagnose from the drag path (try_solve_given / reverse propagation) with logging before any fix. Needs the failing scene first.
 
 ## Paused threads
 

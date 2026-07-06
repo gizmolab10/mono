@@ -15,12 +15,12 @@ export default defineConfig({
     },
   },
   server: {
-    port: ports.lv.port,
+    port: ports.in.port,
     strictPort: true,
     hmr: {
       protocol: 'ws',
       host: 'localhost',
-      port: ports.lv.port,
+      port: ports.in.port,
     },
   },
   define: {

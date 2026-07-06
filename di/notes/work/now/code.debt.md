@@ -6,9 +6,9 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
 
 ## bugs
 
-- [ ] SHIFT arrows browse the parts list even when it is closed
-- [x] title of parts -> root so name, keep number in parentheses
-    - [ ]  ellipsis in name
+- [ ] stop -> Jeff
+- [x] SHIFT arrows browse the parts list even when it is closed
+    - [ ] strange behavior left, up, right, down
 - [ ] two door cabinet
     - [ ] stretch top drawer up -> fubar!
 - [ ] drawer
@@ -21,12 +21,14 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
     - [ ] rear wall -> funky location
 - [ ] two blocks
 - [ ] buy a lot of AI generated most common misspellings of highest SEO ranking domains
-    - [ ] ask ai to build an ai
+    - [ ] ask ai to build an ai that will sell them at a slight markup
 
 ---
 
 ## small
 
+- [x] title of parts -> root so name, keep number in parentheses
+    - [ ]  ellipsis in name
 - [ ] selection dots
     - [x] solid
     - [x] painted on top

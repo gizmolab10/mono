@@ -41,7 +41,10 @@
 
 <div class='hideable'
 	bind:this={hideable_el}>
-	<button
+	<!-- A div, not a button: the banner holds action <button>s, and a button
+	     may not contain buttons. Toggle runs through the position-based hit
+	     system, so no native button element is needed. -->
+	<div
 		class='banner'
 		class:open={is_visible}
 		style:--banner={colors.banner}
@@ -49,7 +52,7 @@
 		{#if leftActions}<span class='banner-actions-left'>{@render leftActions()}</span>{/if}
 		<span class='banner-title'>{title}</span>
 		{#if rightActions}<span class='banner-actions-right'>{@render rightActions()}</span>{/if}
-	</button>
+	</div>
 	{#if is_visible}
 		<div class='slot'>
 			{@render children()}

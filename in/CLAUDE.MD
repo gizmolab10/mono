@@ -1,3 +1,3 @@
-# lv — Jeffrey's Space
+# in — Jeffrey's Space
 
-> Ideas, research, creative exploration. Not code — concepts.
+> implementation of Jeff's intersection project
