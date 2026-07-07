@@ -1,0 +1,164 @@
+import type { Writable } from 'svelte/store';
+import { writable } from 'svelte/store';
+
+/**
+ * Preferences — persistent storage for user settings
+ *
+ * Simple localStorage wrapper with type-safe keys.
+ * All keys are prefixed with 'di:' for namespace isolation.
+ */
+
+export enum T_Preference {
+	// Layout
+	showDetails  	= 'showDetails',
+
+	// Colors
+	backgroundColor = 'backgroundColor',
+	accentColor     = 'accentColor',
+	textColor       = 'textColor',
+
+	// Units
+	unitSystem 		= 'unitSystem',
+
+	// Hideables
+	visibleDetails   = 'visibleDetails',
+
+	// View
+	edgeThickness    = 'edgeThickness',
+	gridOpacity      = 'gridOpacity',
+	decorations      = 'decorations',
+	dimensionCount   = 'dimensionCount',
+	precision        = 'precision',
+	edgeColor        = 'edgeColor',
+	viewMode         = 'viewMode',
+	showGrid         = 'showGrid',
+	solid            = 'solid',
+
+	// Rotation
+	rotationSnap     = 'rotationSnap',
+
+	// Render
+	orientation      = 'orientation',
+	scale            = 'scale',
+
+	// Parts
+	showGivens       = 'showConstants',
+	showParts        = 'showParts',
+	partsTab         = 'partsTab',
+	attributeKeys    = 'attributeKeys',
+
+	// Mode
+	allowEditing     = 'allowEditing',
+
+	// Scenes
+	scene            = 'scene',
+
+	// Library
+	libraryFolder    = 'libraryFolder',
+	library          = 'library',
+
+	// Parts table
+	collapsedIds     = 'collapsedIds',
+
+	// Help overlay
+	showHelpSidebar  = 'showHelpSidebar',
+	helpPageId       = 'helpPageId',
+
+	// Confirmation popup
+	skipDeleteConfirm = 'skipDeleteConfirm',
+
+}
+
+const STORAGE_PREFIX = 'di:';
+
+class Preferences {
+
+	apply_queryStrings(queryStrings: URLSearchParams): void {
+		const clear_options = queryStrings.get('clear')?.split(',') ?? [];
+		if (clear_options.includes('preferences')) {
+			preferences.reset();
+		}
+	}
+
+	/**
+	 * Read a preference from localStorage
+	 */
+	read<T>(key : T_Preference) : T | null {
+		try {
+			const raw = localStorage.getItem(STORAGE_PREFIX + key);
+			if (raw == null || raw == 'undefined') {
+				return null;
+			}
+			return JSON.parse(raw) as T;
+		} catch {
+			return null;
+		}
+	}
+
+	/**
+	 * Write a preference to localStorage
+	 */
+	write<T>(key : T_Preference, value : T) : void {
+		try {
+			const json = JSON.stringify(value);
+			localStorage.setItem(STORAGE_PREFIX + key, json);
+		} catch (e) {
+			console.warn(`Failed to write preference ${key}:`, e);
+		}
+	}
+
+	/**
+	 * Remove a preference from localStorage
+	 */
+	remove(key : T_Preference) : void {
+		localStorage.removeItem(STORAGE_PREFIX + key);
+	}
+
+	/**
+	 * Clear all di preferences
+	 */
+	clear() : void {
+		const keys = Object.values(T_Preference);
+		for (const key of keys) {
+			this.remove(key);
+		}
+	}
+
+	/**
+	 * Reset preferences to defaults (preserves scene and library data)
+	 */
+	reset() : void {
+		const preserve = new Set([T_Preference.scene, T_Preference.library]);
+		for (const key of Object.values(T_Preference)) {
+			if (!preserve.has(key)) this.remove(key);
+		}
+	}
+
+	/**
+	 * Debug: dump all di preferences to console
+	 */
+	dump() : void {
+		const keys  = Object.values(T_Preference);
+		const prefs : Record<string, unknown> = {};
+		for (const key of keys) {
+			prefs[key] = this.read(key);
+		}
+		console.log('Preferences:', prefs);
+	}
+
+	persistent<T>(key: T_Preference, fallback: T): Writable<T> {
+		const w = writable<T>(this.read<T>(key) ?? fallback);
+		w.subscribe((v) => this.write(key, v));
+		return w;
+	}
+
+	persistent_set(key: T_Preference): Writable<Set<string>> {
+		const initial = this.read<string[]>(key) ?? [];
+		const w = writable<Set<string>>(new Set(initial));
+		w.subscribe((s) => this.write(key, Array.from(s)));
+		return w;
+	}
+
+}
+
+export const preferences = new Preferences();

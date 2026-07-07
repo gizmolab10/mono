@@ -63,10 +63,12 @@
     "docs": 5183,
     "repo": "https://github.com/gizmolab10/mono/tree/main/s3"
   },
-  "in": {
+  "ji": {
     "port": 5184,
     "public": "https://intersection.lol",
-    "repo": "https://github.com/gizmolab10/mono/tree/main/in"
+    "netlify": "https://jeff-intersection.netlify.app",
+    "deploy": "https://app.netlify.com/projects/jeff-intersection/deploys",
+    "repo": "https://github.com/gizmolab10/mono/tree/main/ji"
   },
   "me": {
     "public": "https://jonathansand.me",

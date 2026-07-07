@@ -1,5 +1,5 @@
 {
-  "name": "intersection",
+  "name": "ji",
   "main": "dist/main.js",
   "version": "0.0.0",
   "type": "module",
@@ -16,6 +16,7 @@
     "dev": "vite"
   },
   "dependencies": {
+    "color2k": "^2.0.3",
     "markdown-it": "^14.1.1"
   },
   "devDependencies": {

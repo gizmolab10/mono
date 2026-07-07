@@ -4,4 +4,6 @@
 - [x] wire up public site
     - [x] github
     - [x] netlify
-- [ ] port build notes from di
+- [x] port build notes from di
+- [ ] change 'in' to 'ji'
+    - [ ] push to netlify

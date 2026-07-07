@@ -6,7 +6,7 @@
   "workspaces": {
     "packages": [
       "di",
-      "in",
+      "ji",
       "lv",
       "s3",
       "ws"

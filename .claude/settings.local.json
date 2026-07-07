@@ -49,7 +49,11 @@
       "Bash(bash ~/GitHub/mono/di/.claude/hooks/bash-command-check.sh)",
       "Bash(dig +short intersection.lol A)",
       "Bash(dig +short intersection.lol AAAA)",
-      "Bash(dig +short intersection.lol CAA)"
+      "Bash(dig +short intersection.lol CAA)",
+      "Bash(rm /Users/sand/GitHub/mono/.claude/commands/in.md)"
+    ],
+    "additionalDirectories": [
+      "/Users/sand/GitHub/mono/.claude/commands"
     ]
   },
   "hooks": {

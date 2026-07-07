@@ -1,6 +1,15 @@
-declare const __BUILD_NOTES__: Array<{ build: number; date: string; note: string }>;
-declare const __BUILD_NUMBER__: number;
+import buildsRaw from '../../md/builds.md?raw';
+
 declare const __ASSETS_DIR__: string;
+
+const parsed_build_notes = buildsRaw.split('\n')
+	.filter(l => /^\|\s*\d+/.test(l))
+	.map(l => {
+		const [_, build, date, note] = l.split('|').map(s => s.trim());
+		return { build: parseInt(build), date, note };
+	});
+const parsed_build_number = Math.max(...parsed_build_notes.map(n => n.build));
+console.log(`Build notes: di read ${parsed_build_notes.length} rows from the markdown file, newest build ${parsed_build_number}.`);
 
 // ─── Design token source of truth ────────────────────────────────────────────
 //
@@ -36,8 +45,8 @@ export default class Constants {
 	};
 
 	assets_directory = __ASSETS_DIR__;
-	build_number = __BUILD_NUMBER__;
-	build_notes = __BUILD_NOTES__;
+	build_number = parsed_build_number;
+	build_notes = parsed_build_notes;
 
 	halfIncrement = 0.5;
 	coplanar_epsilon = 1e-3;

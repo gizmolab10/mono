@@ -15,12 +15,12 @@ export default defineConfig({
     },
   },
   server: {
-    port: ports.in.port,
+    port: ports.ji.port,
     strictPort: true,
     hmr: {
       protocol: 'ws',
       host: 'localhost',
-      port: ports.in.port,
+      port: ports.ji.port,
     },
   },
   define: {
