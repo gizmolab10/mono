@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "in/notes/work/code debt.md",
+                "file": "in/src/lib/md/builds.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code debt"
+              "title": "builds"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "in/notes/work/code debt.md",
+                "file": "in/src/lib/md/builds.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of builds"
             }
           },
           {
@@ -197,20 +197,23 @@
   },
   "active": "899821425998ce1c",
   "lastOpenFiles": [
+    "in/src/lib/ts/utilities/SVG_Paths.ts",
+    "in/src/lib/ts/utilities",
+    "in/src/lib/ts/types/Coordinates.ts",
+    "in/src/lib/ts/types/Angle.ts",
+    "in/src/lib/ts/common/Extensions.ts",
+    "in/src/lib/ts/types/Types.ts",
+    "in/src/lib/ts/types",
+    "in/src/vite-env.d.ts",
+    "in/notes/work/code debt.md",
+    "in/src/lib/md/builds.html",
+    "in/convert.mjs",
+    "in/svelte copy.config.js",
+    "in/src/lib/md/builds.md",
     "in/notes/work/roadmap.md",
-    "logs/in.log",
-    "ws/vite.config.js.timestamp-1783293623549-d578957645058.mjs",
-    "ws/vite.config.js.timestamp-1783293409998-577509b615909.mjs",
-    "notes/tools/hub/index.html.tmp.76947.3676fbec0f85",
     "di/notes/work/now/code.debt.md",
     "in/notes/work/Minimum Viable INTERSECTION app.md",
     "in/Minimum Viable INTERSECTION app.md",
-    "di/src/assets/debug/sphere 45.di",
-    "di/src/assets/debug/sphere 30 x.di",
-    "di/src/assets/debug/sphere 30 x yz.di",
-    "di/src/assets/debug/gears 2.di",
-    "di/src/assets/debug/gear.di",
-    "di/src/assets/debug/rotations/sphere 45.di",
     "di/notes/work/done/code.debt.paid.md",
     "di/notes/work/now/30.licensing.md",
     "di/notes/work/milestones/done/34.dimensionals/dimensions.latest.spec.md",
@@ -227,11 +230,9 @@
     "di/src/lib/md/builds.md",
     "notes/guides/collaborate/workflow.md",
     "lv/notes/work/code debt.md",
-    "in/notes/work/code debt.md",
     "s3/notes/work/code.debt.md",
     "di/di notes/di work/now/code.debt.md",
     "di/notes/work/milestones/done/32.facets/use cases/use case 6.md",
-    "di/notes/work/milestones/done/32.facets/use cases/use case 5.md",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",
     "di/di notes/di work/now/bugs/001 dim is inside silho/screenshot.png",
     "lv/src/assets/lcv.label.png",

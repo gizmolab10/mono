@@ -1,6 +1,7 @@
 # Coding needed
 
 - [x] add ‘in’ to hub
-- [ ] wire up public site
-    - [ ] github
-    - [ ] netlify
+- [x] wire up public site
+    - [x] github
+    - [x] netlify
+- [ ] port build notes from di
