@@ -19,7 +19,7 @@
 	const DETAILS_WIDTH = 350;
 	const WINDOW_MIN = 400;
 	const WRAP_PHONE = 620;
-	const D_WIDTH = 28;        // width of the collapsed details tab (the "D" button)
+	const hamburgerButtonWidth = 28;        // width of the collapsed details tab (the "D" button)
 
 	let width = $state(Math.max(WINDOW_MIN, window.innerWidth));
 	let height = $state(window.innerHeight);
@@ -48,7 +48,7 @@
 	function toggleDetails() {
 		const next = !$w_show_details;
 		w_show_details.set(next);
-		console.log(`Details region ${next ? 'shown' : 'hidden'} — ${next ? Math.round(detailsWidth) : D_WIDTH} pixels wide. (saved to preferences)`);
+		console.log(`Details region ${next ? 'shown' : 'hidden'} — ${next ? Math.round(detailsWidth) : hamburgerButtonWidth} pixels wide. (saved to preferences)`);
 	}
 
 	// While the build-notes popup is open, the details and content regions hide.

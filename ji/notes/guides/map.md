@@ -5,7 +5,7 @@ The intersection project's files. Update this when files are added, moved, or re
 ## Root config
 
 - `vite.config.ts` — dev server (port 5184) and build.
-- `package.json` — dependencies (markdown-it, color2k).
+- `package.json` — dependencies (markdown-it, color2k, @fontsource/montserrat).
 - `CLAUDE.md` — project entry point.
 
 ## src/lib/svelte/ — components
@@ -19,7 +19,7 @@ The intersection project's files. Update this when files are added, moved, or re
 
 ## src/lib/ts/ — logic
 
-- `main.ts` — app entry point.
+- `main.ts` — app entry point; also imports the self-hosted Montserrat font (weights 300, 400).
 - `common/Configuration.ts` — pushes the color CSS variables (`--bg`, `--accent`, `--hover`, …) onto the page. **⟵di** (trimmed to the color setter only).
 - `common/Dirty.ts` — store wrappers that mark the canvas out of date. **⟵di**.
 - `common/Extensions.ts` — String and Number prototype additions. **⟵di**.

@@ -27,10 +27,18 @@
 <Main />
 
 <style>
+	:global(:root) {
+		--font: 'Montserrat', system-ui, sans-serif;
+	}
+
 	:global(body) {
-		font-family: system-ui, sans-serif;
+		font-family: var(--font);
 		user-select: none;
 		margin: 0;
+	}
+
+	:global(button, input, select, textarea) {
+		font-family: var(--font);
 	}
 
 	:global(input:focus, textarea:focus) {

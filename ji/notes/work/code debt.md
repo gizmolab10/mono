@@ -1,5 +1,8 @@
 # Coding needed
 
+- [ ] button with my name as author
+    - [ ] links -> my other work
+    - [ ] bottom right corner
 - [x] when the build notes show, hide the details and the content
 - [x] port preferences from di and put show details flag into it
 - [x] reverse the order of the main checkboxes (retain order of sub items)
