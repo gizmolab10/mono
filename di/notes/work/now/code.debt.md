@@ -4,9 +4,15 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the top of open items.
 
+## resume
+
+- [ ] **Move** di's `road.map.md` out of `work/now/` into `guides/` (a roadmap is reference).
+- [ ] **Create** a notes-map for di — it has none, unlike ji's.
+- [ ] **Rename/revise** (marked _I AM GUESSING_ — Jonathan's call, not settled): shallow di's `map.md` from the deep `guides/project/overview/` to `guides/`, and reconcile di's dotted filenames against ji's spaced style.
+
 ## bugs
 
-- [ ] stop -> Jeff
+- [x] stop -> Jeff
 - [x] SHIFT arrows browse the parts list even when it is closed
     - [ ] strange behavior left, up, right, down
 - [ ] two door cabinet

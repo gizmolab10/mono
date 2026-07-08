@@ -1,0 +1,33 @@
+# Work journal
+
+Reverse chronological log of finished work on ji (the Jeff intersection project).
+
+## 2026-07-07 — content, hamburger, preferences
+
+- **Content component.** Pulled the centered "Intersection" text and the "Build N" opener into their own Content component; the opener moved to Content's bottom-left corner, white background.
+- **Popup takes over.** While the build-notes popup is open, the details and content regions hide (only the popup shows over the frame). Its open/closed flag lifted up to the frame so it can hide them.
+- **di's hamburger.** The details toggle now draws di's exact hamburger icon (from the ported path utility) as a reusable snippet, shown at the same top-left spot whether details is open or closed; transparent background, white on hover, and an overflow fix so its left edge isn't clipped.
+- **Show-details persists.** The show/hide state is now a saved preference (through the ported Preferences), so it survives a reload.
+
+## 2026-07-07 — details toggle
+
+- **Details region collapses.** A "details" banner atop the region hides it on click, so the content fills the full width. A fixed button in the upper-left corner (colored to match) brings it back.
+
+## 2026-07-07 — rename
+
+- **Renamed `in` → `ji`** across the folder, hub references, workspace list, the project's own config/package/guide, and the slash command. Re-linked the workspace and confirmed a clean type-check. Netlify base directory and the git commit left for Jonathan.
+
+## 2026-07-06 — build notes, the cross, and theming
+
+- **Two-line title.** Split the centered "Intersection / Hey, bro!" onto two lines.
+- **Build notes popup, ported from di.** A "Build N" opener button (pill border, hover fills light gray) opens a modal listing build history, paged ten at a time with up/down arrows and a close button. The build data comes straight from a markdown table read at runtime, so editing it refreshes live. Applied the same direct-read change back to di.
+- **The close cross.** Ported di's full SVG-path utility (plus its geometry and prototype-extension files) and used it to draw di's real X in the close button, inside a circular border.
+- **di's color system.** Ported di's Colors plus its preferences and canvas-stale helpers, added the color2k package, and lifted just the CSS-variable setter out of di's Configuration (leaving its engine behind). Wired it so the color stores push `--bg` / `--accent` / `--hover` onto the page — the theme variables di components expect.
+- **di's layout skeleton.** Rebuilt Main around di's frame: a fixed full-window frame with a details region and a content region (di's "graph", renamed), di's spacing numbers inlined.
+- **Preferences banner + accent picker.** A collapsible "preferences" banner in the details region holds di's accent color picker, wired to the ported Colors — choosing an accent recolors the theme live. Fixed a "missing bottoms" report by giving the details region the accent color so the banner and body stand out against it.
+
+## 2026-07-05 — into the hub, onto the web
+
+- **Added the project to the hub.** New entry in the hub's ports list (port 5184), a button + keyboard shortcut in the hub page, and a dev-server line in the launcher script. Fixed a leftover port clash — the project's dev config still pointed at lv's port — and added it to the repo's workspace list.
+- **Wired the public site.** Pointed intersection.lol (via Dynadot DNS) at the Netlify site, set Netlify's base directory and build, and worked through a stuck Let's Encrypt certificate by removing and re-adding the domain.
+

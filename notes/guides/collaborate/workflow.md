@@ -50,6 +50,33 @@ What success looks like.
 ```
 Update status and checkboxes as work progresses.
 
+## The handoff pieces
+
+The living work of a project sits in its work area — `notes/work/` for a light project (flat), `notes/work/now/` for a larger one. A small set of files, each with one job:
+
+- **`handoff.md`** — current status and the single **Next** action, the baton; read first each session.
+- **`code.debt.md`** — open coding tasks, as checkboxes.
+- **`code.debt.paid.md`** — finished tasks, archived out of code.debt.
+- **`work journal.md`** — chronological log of finished proposals.
+- **`working features.md`** — running list of what currently works.
+
+When to move things between these — done work to the journal, the active surface kept short — is [shop keeping](shop%20keeping.md)'s job.
+
+Two more are reference, kept in the project's `guides/` (`guides/` for a light project, `guides/project/overview/` for a larger one):
+
+- **`map.md`** — the file map; read instead of globbing, update when files move.
+- **`file layout.md`** — where paths live; update when paths change.
+
+**Locations vary; `done` and `up` don't care.** They act on whichever of these a project has, wherever it keeps them — so ji (flat in `notes/work/`, `guides/` sibling to work) and di (active files in `notes/work/now/`, map deep under `guides/project/overview/`) are both handled without hard-coding either path.
+
+**Minimal set.** A new project needs only `code.debt.md` to start — a list of what to build. Add `handoff.md` once sessions span more than one sitting, then the rest as the project grows. Don't create files a light project won't feed: the `done` and `up` steps skip pieces that don't exist. (ji, for one, keeps `code debt.md`, `handoff.md`, and a work journal flat in `notes/work/`, with maps in `notes/guides/`.)
+
+**Reference implementation (di) — reconcile.** di is the model these conventions came from, but it predates them and drifted. To bring it into line:
+
+- **Move** di's `road.map.md` out of `notes/work/now/` into `guides/` — a roadmap is reference, not active work (as ji keeps it).
+- **Create** a notes-map for di; it has none, unlike ji's `guides/notes map.md`.
+- **Rename / revise** (Jonathan's call, not an established need — I AM GUESSING these are wanted): shallow di's `map.md` from `guides/project/overview/` up to `guides/`, and reconcile di's dotted names (`code.debt.md`, `road.map.md`) against ji's spaced/plain style.
+
 ## Finishing work
 When work is complete, one of two destinations:
 

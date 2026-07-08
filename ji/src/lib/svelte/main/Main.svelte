@@ -1,12 +1,15 @@
 <script lang='ts'>
 	import Hideable from '../details/Hideable.svelte';
 	import D_Preferences from '../details/D_Preferences.svelte';
+	import Content from './Content.svelte';
 	import BuildNotes from './BuildNotes.svelte';
-	import buildsRaw from '../../md/builds.md?raw';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 
-	const buildNumber = Math.max(...buildsRaw.split('\n')
-		.filter(l => /^\|\s*\d+/.test(l))
-		.map(l => parseInt(l.split('|')[1].trim())));
+	// di's hamburger icon, built exactly as di's Primary_Controls toggle does:
+	// path sized common+2 (35), drawn in a common-square viewBox. common = 33.
+	const hamburgerPath = svg_paths.hamburger(35);
+	console.log(`Details toggle: hamburger icon uses di's exact path (length ${hamburgerPath.length}).`);
 
 	// Layout numbers ported from di's Constants (common_size 33): the inset/gap,
 	// the corner radius, the fixed width of the details region, the smallest
@@ -16,15 +19,17 @@
 	const DETAILS_WIDTH = 350;
 	const WINDOW_MIN = 400;
 	const WRAP_PHONE = 620;
+	const D_WIDTH = 28;        // width of the collapsed details tab (the "D" button)
 
 	let width = $state(Math.max(WINDOW_MIN, window.innerWidth));
 	let height = $state(window.innerHeight);
+	// Show-details is a persistent preference (survives reload), saved via the ported Preferences.
+	const w_show_details = preferences.persistent<boolean>(T_Preference.showDetails, false);
 	let showBuildNotes = $state(false);
-	let showDetails = $state(true);
 
 	let wrap_phone = $derived(width < WRAP_PHONE);
 	let detailsWidth = $derived(wrap_phone ? width - gap * 2 : DETAILS_WIDTH - gap * 2);
-	let contentWidth = $derived(width - (showDetails ? detailsWidth + gap : 0) - gap * 2);
+	let contentWidth = $derived(width - ($w_show_details ? detailsWidth + gap : 0) - gap * 2);
 
 	// Log only when the narrow-wrap switch flips, with the numbers behind it.
 	let last_phone_log = '';
@@ -39,49 +44,69 @@
 		width = Math.max(WINDOW_MIN, window.innerWidth);
 		height = window.innerHeight;
 	}
+
+	function toggleDetails() {
+		const next = !$w_show_details;
+		w_show_details.set(next);
+		console.log(`Details region ${next ? 'shown' : 'hidden'} — ${next ? Math.round(detailsWidth) : D_WIDTH} pixels wide. (saved to preferences)`);
+	}
+
+	// While the build-notes popup is open, the details and content regions hide.
+	let last_notes_log = false;
+	$effect(() => {
+		if (showBuildNotes === last_notes_log) return;
+		last_notes_log = showBuildNotes;
+		console.log(`Build notes popup ${showBuildNotes ? 'open' : 'closed'} — regions ${showBuildNotes ? 'hidden' : 'shown'}.`);
+	});
 </script>
 
 <svelte:window onresize={handleResize} />
 
+{#snippet hamburgerButton()}
+	<button class='d-button' onclick={toggleDetails} aria-label='toggle details'>
+		<svg class='hamburger-icon' viewBox='0 0 33 33' width='33' height='33'>
+			<path d={hamburgerPath} />
+		</svg>
+	</button>
+{/snippet}
+
 <div
 	class='panel'
+	style:--l-gap='{gap}px'
+	style:padding='{gap}px'
 	style:width='{width}px'
 	style:height='{height}px'
-	style:padding='{gap}px'
 	style:--radius='{radius}px'
-	style:--l-gap='{gap}px'
 	style:background-color='var(--accent)'>
 
 	<div class='main'>
-		{#if showDetails}
-			<div class='region details' style:width='{detailsWidth}px'>
-				<Hideable title='preferences'>
-					<D_Preferences />
-				</Hideable>
+		{#if !showBuildNotes}
+			{#if $w_show_details}
+				<div class='region details' style:width='{detailsWidth}px'>
+					<div class='details-banner'>Controls go here</div>
+					{@render hamburgerButton()}
+					<Hideable title='preferences'>
+						<D_Preferences />
+					</Hideable>
+				</div>
+			{/if}
+			<div class='region content' style:width='{contentWidth}px'>
+				{#if !$w_show_details}
+					{@render hamburgerButton()}
+				{/if}
+				<Content bind:showBuildNotes />
 			</div>
 		{/if}
-		<div class='region content' style:width='{contentWidth}px'>
-			<div class='centered'>
-				<div>Intersection</div>
-				<div>Hey, bro!</div>
-			</div>
-		</div>
 	</div>
 </div>
 
-<button
-	class='build-opener'
-	onclick={() => { showBuildNotes = true; console.log(`Build notes: opener clicked, current build is ${buildNumber}.`); }}>
-	Build {buildNumber}
-</button>
-
 {#if showBuildNotes}
 	<div
-		class='build-backdrop'
 		role='button'
 		tabindex='-1'
-		onclick={() => showBuildNotes = false}
-		onkeyup={() => {}}>
+		onkeyup={() => {}}
+		class='build-backdrop'
+		onclick={() => showBuildNotes = false}>
 		<BuildNotes onclose={() => showBuildNotes = false} />
 	</div>
 {/if}
@@ -97,10 +122,10 @@
 	}
 
 	.main {
-		min-height : 0;
-		overflow   : hidden;
 		gap        : var(--l-gap);
+		overflow   : hidden;
 		display    : flex;
+		min-height : 0;
 		flex       : 1;
 	}
 
@@ -111,39 +136,60 @@
 	}
 
 	.details {
-		background  : var(--accent);
-		flex-shrink : 0;
+		background     : var(--accent);
+		flex-direction : column;
+		display        : flex;
+		flex-shrink    : 0;
+		gap            : 2px;
+	}
+
+	.details-banner {
+		background      : var(--accent);
+		text-transform  : lowercase;
+		color           : #1a1a1a;
+		cursor          : pointer;
+		align-items     : center;
+		justify-content : center;
+		border-radius   : 10px;
+		font-size       : 14px;
+		height          : 42px;
+		width           : 100%;
+		display         : flex;
+		border          : none;
+	}
+
+	.d-button {
+		background      : transparent;
+		color           : #1a1a1a;
+		cursor          : pointer;
+		padding         : 2px 6px;
+		align-items     : center;
+		justify-content : center;
+		position        : fixed;
+		border-radius   : 10px;
+		display         : flex;
+		border          : none;
+		left            : 8px;
+		top             : 8px;
+		z-index         : 5;
+	}
+
+	.hamburger-icon {
+		overflow : visible;
+	}
+
+	.d-button .hamburger-icon path {
+		fill   : currentColor;
+		stroke : currentColor;
+	}
+
+	.d-button:hover .hamburger-icon path {
+		fill : white;
 	}
 
 	.content {
 		background : var(--bg);
 		flex       : 1;
-	}
-
-	.centered {
-		justify-content : center;
-		flex-direction  : column;
-		align-items     : center;
-		height          : 100%;
-		font-size       : 8em;
-		display         : flex;
-	}
-
-	.build-opener {
-		border: 1px solid black;
-		border-radius: 999px;
-		padding: 2px 10px;
-		background: none;
-		position: fixed;
-		font-size: 13px;
-		cursor: pointer;
-		color: #888;
-		bottom: 12px;
-		left: 16px;
-	}
-
-	.build-opener:hover {
-		background: var(--hover);
 	}
 
 	.build-backdrop {
