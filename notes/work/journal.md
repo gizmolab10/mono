@@ -4,6 +4,9 @@
 
 ---
 
+**July 8, 2026** (mo) Hooks overhaul. Ended the doubled-reply problem: the reply-checking Stop hooks (banned words, conciseness, disclaimer, citation, phrase) are now warn-only — they log to `log.jsonl` and never reject, since a reject regenerates the reply and shows it twice. Hard banned words instead get rewritten on screen by a new MessageDisplay hook (`display-fix.sh`). Confirmed via the docs helper that Claude Code has no built-in banned-words feature and the doubled reply is unavoidable when a Stop hook rejects. Rewrote the hooks guide — added the MessageDisplay event, the real output fields, a "doubled-reply trap" section, and an inventory of all 18 live hooks. Moved the guide from `tools/` into `collaborate/` (so it loads every session), fixed all references, refreshed the synopsis assessment.
+
+
 **February 18-19, 2026** (di) **Milestone 17** — SO Library. Library panel in details: bundled defaults via glob import, user-created files in IndexedDB. Click loads, option-click inserts as child. Save writes IDB + downloads backup file. Reorganized details UX — unified slot padding, disabled cells use accent color, moved add-child to far right, moved show/hide back to name-row. Reset preferences button (clears localStorage except scene/library). (mo) Guide reorganization — absorbed `simplicity.md` into `workflow.md` and `motive.md`, moved co discipline rules (approval gate, implementation, debugging, refactoring, file ops) from `workflow.md` to `chat.md`, moved origin story and philosophy to `motive.md`. Updated cross-references in `gates.md` and `kinds.of.tasks.md`.
 
 

@@ -45,12 +45,13 @@ STATE="$HOOK_DIR/.cc-state-$KEY"
 if [ "$STOP_ACTIVE" = "true" ]; then COUNT=$(cat "$STATE" 2>/dev/null || echo 0); else COUNT=0; fi
 case "$COUNT" in *[!0-9]*|"") COUNT=0;; esac
 
-# Clean -> let it stand and clear the counter.
+# Clean -> nothing to note.
 if [ -z "$VIOL" ]; then rm -f "$STATE"; exit 0; fi
-# Cap reached -> give up so the chain cannot spin.
-if [ "$COUNT" -ge "$CAP" ]; then rm -f "$STATE"; exit 0; fi
 
-echo $((COUNT+1)) > "$STATE"
-REASON="CONCISENESS: your previous reply has $VIOL. Tighten that one reply — cut the filler, keep facts only, use a short list if it helps. Do not add anything new or start the next task."
-jq -n --arg r "$REASON" '{decision:"block",reason:$r}'
+# WARN-ONLY: rejecting here regenerates the reply, so the user sees it twice (the
+# doubled reply). Instead we log the violation and let the reply stand — no reject,
+# no double. Enforcement becomes advisory; the log keeps a record.
+jq -nc --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --arg v "$VIOL" \
+  '{timestamp:$ts,hook:"conciseness-check",action:"warn",violation:$v}' >> "$LOG_FILE" 2>/dev/null
+rm -f "$STATE"
 exit 0

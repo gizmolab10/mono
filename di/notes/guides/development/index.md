@@ -2,6 +2,8 @@
 
 ## Contents
 
-- [Adhere](./adhere/) — adherence dashboard, log, and the reading guide
-- [Learn](./learn/) — lessons distilled from past sessions; the project lexicon
-- [Rules](./rules/) — stipulations, dimensionals
+- [Adhere](./adhere/)
+- [Learn](./learn/)
+- [Rules](./rules/)
+- [Running E2e Tests](./running e2e tests.md)
+

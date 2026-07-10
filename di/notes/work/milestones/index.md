@@ -21,8 +21,7 @@ A living snapshot of the arc of the project at the milestone level.
 
 - [33.drag](./33.drag/)
 - [Done](./done/)
-- [28.cut.lists](28.cut.lists.md)
-- [29.user.manual](29.user.manual.md)
-- [30.licensing](30.licensing.md)
-- [31.marketing](31.marketing.md)
+- [28.cut.lists](./28.cut.lists.md)
+- [29.user.manual](./29.user.manual.md)
+- [31.marketing](./31.marketing.md)
 

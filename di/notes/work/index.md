@@ -1,17 +1,13 @@
 # Work
 
 Top-level index for everything in this folder.
-
 ## Where current work lives
-
 * [Now](./now/) — active non-milestone work (code debt, general session work). Start here.
 * [Milestones](./milestones/) — work bundled into named milestones, both open and completed.
 * [Next](./next/) — planned work not yet started.
 * [Done](./done/) — archived notes, historical sessions, finished features.
 * [AI](./ai/) — collaborator cadence, technique, learn file.
-
 ## Quick jumps
-
 * [Current handoff](di/notes/work/now/handoff.md) — what was done in the most recent session and what is next.
 * [Code debt](di/notes/work/now/code.debt.md) — running list of small items.
 * [Revisit list](revisit.di.md) — items to return to.
@@ -22,8 +18,10 @@ Top-level index for everything in this folder.
 
 ## Contents
 
-* [AI](./ai/)
-* [Done](./done/)
-* [Milestones](./milestones/)
-* [Next](./next/)
-* [Now](./now/)
+- [Ai](./ai/)
+- [Done](./done/)
+- [Milestones](./milestones/)
+- [Mothballs](./mothballs/)
+- [Next](./next/)
+- [Now](./now/)
+

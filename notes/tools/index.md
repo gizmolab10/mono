@@ -4,6 +4,5 @@ Scripts and utilities for development workflow.
 
 ## Contents
 
-- [Hub](./hub/)
 - [Scripts](./scripts/)
 

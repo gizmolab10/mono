@@ -1,17 +1,11 @@
 # Architecture
 
 How Design Intuition is built. Read top to bottom — each layer builds on the last.
-
 ## 1. Orient
-
 Start here. One page, whole app.
-
 - See the [Overview](../project/overview/) folder for the project shape, file layout, and the entry-flow walk-through.
-
 ## 2. Understand
-
 Where things live, what they do.
-
 - [Core](./core/) — singletons and systems
     - [Managers](di/notes/guides/architecture/core/managers.md) — who owns what
     - [Algebra](algebra.md) — constraints, expressions, reverse propagation
@@ -29,11 +23,8 @@ Where things live, what they do.
     - [Hits](hits%20system.md) — click and hover dispatch
     - [Key paths](key%20paths.md) — keyboard shortcuts grouped by context
     - [Style](di/notes/guides/architecture/ui/style.md) — CSS conventions and design tokens
-
 ## 3. Deep dive
-
 The render pipeline — projection, occlusion, intersections, overlays.
-
 - [Graph](./graph/) — start with [Three Dimensions](three.dimensions.md), then explore:
     - [Two Dimensions](two.dimensions.md) — 2D mode, face snapping
     - [Three Dimensions](three.dimensions.md) — the full render pipeline
@@ -53,4 +44,5 @@ The render pipeline — projection, occlusion, intersections, overlays.
 - [Components](./components/)
 - [Core](./core/)
 - [Graph](./graph/)
-- [UI](./ui/)
+- [Ui](./ui/)
+

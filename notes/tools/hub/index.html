@@ -1164,12 +1164,12 @@
     // === Deploy Status Polling ===
     function formatRelativeTime(isoString) {
       if (!isoString) return '';
-      const diffDays = Math.floor(diffHours / 24);
-      const diffHours = Math.floor(diffMins / 60);
-      const diffMins = Math.floor(diffMs / 60000);
       const date = new Date(isoString);
       const now = new Date();
       const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffDays = Math.floor(diffHours / 24);
 
       if (diffMins < 1) return '-0m';
       if (diffMins < 60) return `-${diffMins}m`;
@@ -1312,7 +1312,10 @@
           // If nothing building and wasn't building before, keep existing console
         })
         .catch(err => {
-          // Silently fail - deploy status is optional
+          // Deploy status is optional, but log the failure so a broken
+          // render (e.g. a thrown error while building the tooltip) is
+          // visible instead of leaving the tooltip stuck on "Loading...".
+          console.error('deploy-status poll failed:', err);
         });
     }
 

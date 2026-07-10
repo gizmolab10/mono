@@ -15,11 +15,22 @@
 		<div>Hey, bro!</div>
 	</div>
 
-	<button
-		class='build-opener'
-		onclick={() => { showBuildNotes = true; console.log(`Build notes: opener clicked, current build is ${buildNumber}.`); }}>
-		Build {buildNumber}
-	</button>
+	<div class='corner-stack'>
+		<button
+			class='build-opener'
+			onclick={() => { showBuildNotes = true; console.log(`Build notes: opener clicked, current build is ${buildNumber}.`); }}>
+			Build {buildNumber}
+		</button>
+
+		<a
+			class='author-credit'
+			href='https://jonathansand.me'
+			target='_blank'
+			rel='noopener'
+			onclick={() => console.log('Author credit clicked — opening jonathansand.me.')}>
+			author: jonathan sand
+		</a>
+	</div>
 </div>
 
 <style>
@@ -43,15 +54,33 @@
 		border-radius: 999px;
 		padding: 2px 10px;
 		background: white;
-		position: absolute;
 		font-size: 13px;
 		cursor: pointer;
 		color: #888;
-		bottom: 12px;
-		left: 16px;
 	}
 
 	.build-opener:hover {
 		background: var(--hover);
+	}
+
+	.corner-stack {
+		align-items     : flex-start;
+		position        : absolute;
+		flex-direction  : column;
+		bottom          : 12px;
+		left            : 16px;
+		display         : flex;
+		gap             : 4px;
+	}
+
+	.author-credit {
+		color           : var(--accent);
+		text-decoration : underline;
+		cursor          : pointer;
+		font-size       : 8.6px;
+	}
+
+	.author-credit:hover {
+		color           : var(--hover);
 	}
 </style>

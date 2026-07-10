@@ -10,7 +10,7 @@ Generic in the sense of "can apply to any development project." These guides are
 - **One acknowledged conflict** between guides: develop/migration.md and develop/refactoring.md disagree on whether to bundle changes (migration bundles, refactoring scatters per change). The conflict is named in kinds-of-tasks.md so it does not surprise a reader.
 - **Two overlapping setup files** (setup/access.md and setup/onboarding.md) cover different scopes: access.md is filesystem access for the Claude Desktop app; onboarding.md is the developer's full machine setup.
 - **Two siblings** develop/build.md and develop/build notes.md are siblings with split purpose: one is the tooling reference, the other is the maintenance process for the build-notes log.
-- **Two files overlap** on enforcement: tools/hooks.md describes the mechanism, pre-flight/always.md lists what the mechanism enforces. They are designed to be read together.
+- **Two files overlap** on enforcement: collaborate/hooks.md describes the mechanism, pre-flight/always.md lists what the mechanism enforces. They are designed to be read together.
 
 ## Still needed
 
@@ -33,7 +33,7 @@ The split is: 25 settled, 10 partial, 4 thin. Plus ten structural gaps the corpu
 - develop/migration.md — structure is comprehensive but the file is cut at the same "STOP WRITING DOCUMENT" marker at line 76; phases 6 to 9 are listed without implementation. Missing: the phases past the cut, plus a real-world example of a completed migration with its work-performed sections filled in.
 - setup/creating a proposal.md — the proposal-versus-journal split is documented. Missing: how to pull deferred items back when priorities shift, when a proposal is too long, how to split it.
 - test/testing.md — quick reference present. Missing: organisation at scale, patterns for cross-component integration tests, when mocking is necessary versus when it couples tests to implementation.
-- tools/hooks.md — mechanism documentation is strong. Missing: when a hook is the right tool versus a guide versus a settings entry, patterns for common automation scenarios beyond the debugging reminder.
+- collaborate/hooks.md — mechanism, the full live hook suite (all 18 wired-up hooks), and the doubled-reply / warn-only design are documented. Missing: guidance on when a hook is the right tool versus a guide versus a settings entry.
 - philosophy/motive.md — foundational philosophy is laid out. Missing: how the approach scales with team size, failure modes when the discipline slips, what to do if context compaction loses something critical.
 
 ### Structural gaps (topics a reader would expect a guide to exist for but no file covers):

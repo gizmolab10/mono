@@ -119,23 +119,10 @@ if [ "$COUNT" -ge "$CAP" ]; then
   rm -f "$STATE"; log_event exit-cap "" "${HARD_FOUND} ${SOFT_FOUND}" "$TAIL"; exit 0
 fi
 
-# Hard words take priority and are re-checked every cycle (bounded by CAP).
-if [ -n "$HARD_FOUND" ]; then
-  echo $((COUNT+1)) > "$STATE"
-  REASON="BANNED WORD(S): your previous reply uses: ${HARD_FOUND}. These are hard-banned in banned words.md. Rewrite that one reply — swap each for the matching left-column (Use) word in that file. Do not add anything new or start the next task."
-  log_event block hard "$HARD_FOUND" "$TAIL"
-  jq -n --arg r "$REASON" '{decision:"block",reason:$r}'
-  exit 0
-fi
-
-# Only sense-sensitive words remain.
-if [ "$COUNT" -eq 0 ]; then
-  echo 1 > "$STATE"
-  REASON="SENSE CHECK: your previous reply uses: ${SOFT_FOUND}. In banned words.md these sit in sense-sensitive rows (blank middle column) — banned only in one meaning. For each: if you used the banned meaning, rewrite that one reply with the matching left-column (Use) word; if you used a plain, innocent meaning, resend the reply UNCHANGED. Do not add anything new."
-  log_event block soft "$SOFT_FOUND" "$TAIL"
-  jq -n --arg r "$REASON" '{decision:"block",reason:$r}'
-  exit 0
-else
-  # The sense verdict was already requested this chain — accept the reply.
-  rm -f "$STATE"; log_event exit-soft-accepted soft "$SOFT_FOUND" "$TAIL"; exit 0
-fi
+# WARN-ONLY, no reject. Hard words are corrected on screen by the MessageDisplay
+# hook (display-fix.sh). Sense-sensitive words need a judgment that can't be a
+# deterministic swap, so they stay as-is. Either way we do NOT reject: rejecting
+# regenerates the reply and shows it twice (the doubled reply). We log and move on.
+rm -f "$STATE"
+log_event warn "hard=${HARD_FOUND} soft=${SOFT_FOUND}" "$TAIL"
+exit 0

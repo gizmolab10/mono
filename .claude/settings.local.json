@@ -157,6 +157,17 @@
           }
         ]
       }
+    ],
+    "MessageDisplay": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "di/.claude/hooks/display-fix.sh",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "prefersReducedMotion": false

@@ -76,9 +76,7 @@ if [ -z "$VIOLATIONS" ]; then
   exit 0
 fi
 
-REASON="HABIT VIOLATION: your previous response contained the following pattern(s):${VIOLATIONS}
-
-Rewrite the response to remove these patterns. Do not start the next task or add anything new — just rewrite that one response."
-
-log_event "block" "$VIOLATIONS" "$TEXT_TAIL"
-jq -n --arg reason "$REASON" '{decision: "block", reason: $reason}'
+# WARN-ONLY: rejecting here regenerates the reply, so the user sees it twice.
+# We log the habit pattern and let the reply stand — no reject, no double.
+log_event "warn" "$VIOLATIONS" "$TEXT_TAIL"
+exit 0

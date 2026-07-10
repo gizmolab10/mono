@@ -71,7 +71,7 @@ if [ -z "$FOUND" ]; then
   exit 0
 fi
 
-REASON="PLAUSIBILITY-MODE VIOLATION: your previous response contains hedging word(s) [${FOUND}] without the required disclaimer. Either cite the evidence (file:line, measured value, tool output) and remove the hedging language, or prefix the relevant statement(s) with 'I AM GUESSING' so the uncertainty is explicit. Do not start the next task — just rewrite that one response."
-
-log_event "block" "$FOUND" "$TEXT_TAIL"
-jq -n --arg reason "$REASON" '{decision: "block", reason: $reason}'
+# WARN-ONLY: rejecting here regenerates the reply, so the user sees it twice.
+# We log the hedge-without-disclaimer and let the reply stand — no reject, no double.
+log_event "warn" "$FOUND" "$TEXT_TAIL"
+exit 0

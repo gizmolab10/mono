@@ -2,6 +2,10 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-09 — author credit
+
+- **Author credit.** Added a small "author: jonathan sand" link in the content region, stacked under the "Build N" opener in the bottom-left corner — 4px gap, left-aligned, font two-thirds the opener's size. It opens jonathansand.me in a new tab and turns the accent color on hover.
+
 ## 2026-07-07 — content, hamburger, preferences
 
 - **Content component.** Pulled the centered "Intersection" text and the "Build N" opener into their own Content component; the opener moved to Content's bottom-left corner, white background.
@@ -30,4 +34,3 @@ Reverse chronological log of finished work on ji (the Jeff intersection project)
 
 - **Added the project to the hub.** New entry in the hub's ports list (port 5184), a button + keyboard shortcut in the hub page, and a dev-server line in the launcher script. Fixed a leftover port clash — the project's dev config still pointed at lv's port — and added it to the repo's workspace list.
 - **Wired the public site.** Pointed intersection.lol (via Dynadot DNS) at the Netlify site, set Netlify's base directory and build, and worked through a stuck Let's Encrypt certificate by removing and re-adding the domain.
-

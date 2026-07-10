@@ -77,7 +77,7 @@ fi
 
 FOUND=$(echo "$TEXT" | grep -oiE "$DIAG_RE" | tr '[:upper:]' '[:lower:]' | sort -u | tr '\n' ' ' | sed 's/ *$//')
 
-REASON="DIAGNOSTIC WITHOUT EVIDENCE: your previous response makes a diagnostic claim [${FOUND}] with no adjacent evidence. Either add a citation (file:line, a [name](path) markdown link, a measured value, or a tool-output reference), or prefix the diagnostic statement with 'I AM GUESSING' to mark it as a hypothesis. Do not start the next task — just rewrite that one response."
-
-log_event "block" "$FOUND" "$TEXT_TAIL"
-jq -n --arg reason "$REASON" '{decision: "block", reason: $reason}'
+# WARN-ONLY: rejecting here regenerates the reply, so the user sees it twice.
+# We log the uncited diagnostic and let the reply stand — no reject, no double.
+log_event "warn" "$FOUND" "$TEXT_TAIL"
+exit 0

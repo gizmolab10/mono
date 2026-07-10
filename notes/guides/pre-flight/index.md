@@ -10,9 +10,9 @@ At session start, also read:
 
 - [Always](./always.md)
 - [Gates](./gates.md)
+- [Gotchas](./gotchas.md)
 - [Keywords](./keywords.md)
 - [Kinds.of.tasks](./kinds.of.tasks.md)
 - [Pitfalls](./pitfalls.md)
 - [Shorthand](./shorthand.md)
-- [Tools](notes/guides/pre-flight/gotchas.md)
 
