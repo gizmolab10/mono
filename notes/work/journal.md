@@ -4,6 +4,9 @@
 
 ---
 
+**July 10, 2026** (mo) Three build and hub fixes. **Hub deploy-status tooltip** was frozen on "Loading…": the relative-time helper used its variables before declaring them, so it threw on any real timestamp — and a silent catch hid the error. Reordered the declarations and made the catch log, so a render crash surfaces instead of hiding. **uuid types** — removed the deprecated `@types/uuid` stub from five workspaces (di, ji, lv, s3, ws); with no tsconfig setting an explicit types list, TypeScript auto-loaded the empty stub and failed with TS2688. Real uuid self-types, so nothing broke. **di-docs deploy** — its VitePress build failed on ~200 Obsidian-style dead links across `work/` and `guides/`; turned off the dead-link check in di's config. Local build passed and the Netlify deploy went green.
+
+
 **July 8, 2026** (mo) Hooks overhaul. Ended the doubled-reply problem: the reply-checking Stop hooks (banned words, conciseness, disclaimer, citation, phrase) are now warn-only — they log to `log.jsonl` and never reject, since a reject regenerates the reply and shows it twice. Hard banned words instead get rewritten on screen by a new MessageDisplay hook (`display-fix.sh`). Confirmed via the docs helper that Claude Code has no built-in banned-words feature and the doubled reply is unavoidable when a Stop hook rejects. Rewrote the hooks guide — added the MessageDisplay event, the real output fields, a "doubled-reply trap" section, and an inventory of all 18 live hooks. Moved the guide from `tools/` into `collaborate/` (so it loads every session), fixed all references, refreshed the synopsis assessment.
 
 
