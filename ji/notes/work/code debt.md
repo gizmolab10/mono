@@ -4,20 +4,20 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] make netlify only build a single project in response to git push
 - [ ] new UX for adding documents
-    - [ ] button in controls "add"
-    - [ ] new add.svelte in content area
     - [ ] new state store for content area (add, search, browse)
-    - [ ] large drop here rectangle
-    - [ ] add categories.svelte panel for tags
-        - [ ] categories panel for choosing one or more
+    - [ ] button "add" next to hamburger
+    - [ ] new add.svelte in content area
+        - [ ] large drop here rectangle
+    - [ ] add_categories.svelte for creating new
+        - [ ] categories.svelte for choosing one or more
     - [ ] database repository
 - [ ] change --text-color (white/black)
     - [ ] depending on luminance of bk color
 
 ## done
 
+- [x] make netlify only build a single project in response to git push
 - [x] button with my name as author
     - [x] click opens my other work (jonathansand.me)
     - [x] bottom right corner

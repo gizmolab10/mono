@@ -40,11 +40,7 @@
     "docs": 5178,
     "public": "https://mg.civilization2.org",
     "repo": "https://github.com/gizmolab10/mono/tree/main/ma",
-    "docsPublic": "https://mgdocs.civilization2.org",
-    "netlify": "https://maturity-guidance.netlify.app",
-    "docsNetlify": "https://docs-maturity-guidance.netlify.app",
-    "deploy": "https://app.netlify.com/projects/maturity-guidance/deploys",
-    "docsDeploy": "https://app.netlify.com/projects/docs-maturity-guidance/deploys"
+    "docsPublic": "https://mgdocs.civilization2.org"
   },
   "lv": {
     "port": 5179,
