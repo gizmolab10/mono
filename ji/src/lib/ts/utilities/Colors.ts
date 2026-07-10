@@ -109,6 +109,24 @@ export class Colors {
 			this.w_tick_color.set(accent_is_dark ? 'rgb(80, 80, 80)' : 'rgb(220, 220, 220)');
 			this.w_track_color.set(accent_is_dark ? 'rgb(220, 220, 220)' : 'rgb(80, 80, 80)');
 			this.w_focus_color.set(accent_is_dark ? 'rgb(180, 200, 255)' : 'rgb(40, 60, 140)');
+
+			// Text flips to white on a dark background so it stays readable. There
+			// are two backgrounds: the content region sits on --bg, the details
+			// region sits on the accent itself, so each gets its own text color.
+			// Threshold 0.5 is the readable midpoint (0 = black … 1 = white).
+			const bg_lume = this.luminance_ofColor(bg);
+			const text_on_bg = bg_lume < 0.5 ? 'white' : 'black';
+			const text_on_accent = accent_lume < 0.3 ? 'white' : 'black';
+			// The hamburger's hover color is the opposite of its normal color, so
+			// a white icon darkens on hover and a dark icon lightens.
+			const text_on_accent_hover = text_on_accent === 'white' ? 'black' : 'white';
+			this.w_text_color.set(text_on_bg);
+			if (typeof document !== 'undefined') {
+				const root = document.documentElement.style;
+				root.setProperty('--text-on-accent', text_on_accent);
+				root.setProperty('--text-on-accent-hover', text_on_accent_hover);
+			}
+			console.log(`Text color: background luminance ${bg_lume.toFixed(2)} -> ${text_on_bg} text; accent luminance ${accent_lume.toFixed(2)} -> ${text_on_accent} text (hamburger hover ${text_on_accent_hover}).`);
 		});
 	}
 

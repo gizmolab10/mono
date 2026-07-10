@@ -46,6 +46,7 @@
 		align-items     : center;
 		height          : 100%;
 		font-size       : 8em;
+		color           : var(--text);
 		display         : flex;
 	}
 

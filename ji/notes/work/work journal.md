@@ -2,6 +2,11 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-10 — auto text color
+
+- **Text adapts to the theme.** Text flips white/black by background luminance so it stays readable at any accent. Two derived colors, computed in Colors when the accent changes: the content text from `--bg`, the details-region text from the accent (`--text-on-accent`). Wired the "Intersection" text to `--text` and the details banner to `--text-on-accent`.
+- **Hamburger recolor.** On the content (details hidden) it's fixed black, turning the accent color on hover. On the accent (details shown) it flips with the accent and hovers to its opposite (`--text-on-accent-hover`). The build-notes popup is left alone — a fixed white card.
+
 ## 2026-07-09 — author credit
 
 - **Author credit.** Added a small "author: jonathan sand" link in the content region, stacked under the "Build N" opener in the bottom-left corner — 4px gap, left-aligned, font two-thirds the opener's size. It opens jonathansand.me in a new tab and turns the accent color on hover.

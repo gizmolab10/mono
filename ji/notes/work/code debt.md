@@ -12,11 +12,10 @@ write a proposal for the first unchecked item to the top of handoff.
     - [ ] add_categories.svelte for creating new
         - [ ] categories.svelte for choosing one or more
     - [ ] database repository
-- [ ] change --text-color (white/black)
-    - [ ] depending on luminance of bk color
 
 ## done
 
+- [x] change --text-color (white/black) — flips by background luminance; content text from bg, details text from accent
 - [x] make netlify only build a single project in response to git push
 - [x] button with my name as author
     - [x] click opens my other work (jonathansand.me)

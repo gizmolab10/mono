@@ -139,14 +139,14 @@
 		background     : var(--accent);
 		flex-direction : column;
 		display        : flex;
-		flex-shrink    : 0;
 		gap            : 2px;
+		flex-shrink    : 0;
 	}
 
 	.details-banner {
+		color           : var(--text-on-accent);
 		background      : var(--accent);
 		text-transform  : lowercase;
-		color           : #1a1a1a;
 		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
@@ -159,8 +159,8 @@
 	}
 
 	.d-button {
+		color           : var(--text-on-accent);
 		background      : transparent;
-		color           : #1a1a1a;
 		cursor          : pointer;
 		padding         : 2px 6px;
 		align-items     : center;
@@ -183,8 +183,20 @@
 		stroke : currentColor;
 	}
 
-	.d-button:hover .hamburger-icon path {
-		fill : white;
+	/* Details hidden: the hamburger sits on the content and is always black. */
+	.content .d-button {
+		color : black;
+	}
+
+	/* Details hidden: black hamburger, accent-colored on hover. */
+	.content .d-button:hover .hamburger-icon path {
+		fill   : var(--accent);
+		stroke : var(--accent);
+	}
+
+	.details .d-button:hover .hamburger-icon path {
+		fill   : var(--text-on-accent-hover);
+		stroke : var(--text-on-accent-hover);
 	}
 
 	.content {

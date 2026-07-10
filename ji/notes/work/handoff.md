@@ -4,10 +4,8 @@
 
 ## Next
 
-Three coding tasks remain in [code debt](code%20debt.md) under "work":
+One coding task remains in [code debt](code%20debt.md) under "work":
 
-1. **Netlify single build** — build only the project that changed on a push.
-2. **Add-document flow** — an "add" button in controls, an add view in the content area, a content-area mode store (add / search / browse), a large drop target, a tags chooser, a document store.
-3. **Auto text color** — flip `--text-color` white/black by the background's luminance.
+1. **Add-document flow** — a content-area mode store (add / search / browse), an "add" button next to the hamburger, a new add view with a large drop-here rectangle, a categories chooser (create + pick one or more), and a document store.
 
-**Next:** the Netlify single-project build (item 1).
+**Next:** the add-document flow.
