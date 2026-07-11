@@ -1,13 +1,11 @@
 <script lang='ts'>
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import buildsRaw from '../../md/builds.md?raw';
+	import { k } from '../../ts/common/Constants';
 
-	const crossSize = 22;
-	const crossPath = svg_paths.x_cross(crossSize, crossSize / 6);
-	console.log(`Close button: cross drawn from di path generator, size ${crossSize}, path ${crossPath}.`);
+	const crossPath = svg_paths.x_cross(k.width.cross, k.width.cross / 6);
+	console.log(`Close button: cross drawn from di path generator, size ${k.width.cross}, path ${crossPath}.`);
 
-	const pageSize = 10;
-	const modalWidth = 600;
 	const allNotes = buildsRaw.split('\n')
 		.filter(l => /^\|\s*\d+/.test(l))
 		.map(l => {
@@ -19,25 +17,25 @@
 	console.log(`Build notes: read ${notesLimit} build rows from the markdown file. Newest first: ${isNewestFirst}.`);
 
 	let { onclose } : { onclose: () => void } = $props();
-	let title = $state(isNewestFirst ? `Build Notes (${pageSize} most recent)` : 'Build Notes');
-	let notes = $state(allNotes.slice(0, pageSize));
-	let show_down = $state(notesLimit > pageSize);
+	let title = $state(isNewestFirst ? `Build Notes (${k.width.page} most recent)` : 'Build Notes');
+	let notes = $state(allNotes.slice(0, k.width.page));
+	let show_down = $state(notesLimit > k.width.page);
 	let show_up = $state(false);
 	let notesIndex = $state(0);
 
 	function updateNotes() {
-		const end = Math.min(notesLimit, notesIndex + pageSize);
+		const end = Math.min(notesLimit, notesIndex + k.width.page);
 		notes = allNotes.slice(notesIndex, end);
 		const showingMostRecent = isNewestFirst && notesIndex === 0;
-		title = showingMostRecent ? `Build Notes (${pageSize} most recent)` : 'Build Notes';
+		title = showingMostRecent ? `Build Notes (${k.width.page} most recent)` : 'Build Notes';
 		show_up = notesIndex > 0;
-		show_down = notesIndex < notesLimit - pageSize;
+		show_down = notesIndex < notesLimit - k.width.page;
 		console.log(`Build notes: showing rows ${notesIndex + 1} to ${end} of ${notesLimit}. Up arrow ${show_up ? 'on' : 'off'}, down arrow ${show_down ? 'on' : 'off'}.`);
 	}
 
 	function hit_closure(pointsUp: boolean) {
-		const nextIndex = notesIndex + (pageSize * (pointsUp ? -1 : 1));
-		notesIndex = Math.max(0, Math.min(nextIndex, notesLimit - pageSize));
+		const nextIndex = notesIndex + (k.width.page * (pointsUp ? -1 : 1));
+		notesIndex = Math.max(0, Math.min(nextIndex, notesLimit - k.width.page));
 		console.log(`Build notes: ${pointsUp ? 'up' : 'down'} arrow clicked, new top row is ${notesIndex + 1}.`);
 		updateNotes();
 	}
@@ -56,7 +54,7 @@
 	role="dialog"
 	tabindex="-1"
 	onkeyup={() => {}}
-	style:width="{modalWidth}px"
+	style:width="{k.width.modal}px"
 	onclick={(e) => e.stopPropagation()}>
 	<div class='steppers'>
 		{#if show_up}
@@ -67,8 +65,8 @@
 		{/if}
 	</div>
 	<button class='close' aria-label='close' onclick={onclose}>
-		<svg class='cross' width='16' height='16' viewBox='0 0 {crossSize} {crossSize}'>
-			<path d={crossPath} fill='none' stroke='#1a1a1a' stroke-width={crossSize / 12} stroke-linecap='round' />
+		<svg class='cross' width='16' height='16' viewBox='0 0 {k.width.cross} {k.width.cross}'>
+			<path d={crossPath} fill='none' stroke='#1a1a1a' stroke-width={k.width.cross / 12} stroke-linecap='round' />
 		</svg>
 	</button>
 	<div class='header'>
@@ -99,7 +97,7 @@
 		box-shadow : 0 2px 8px rgba(0, 0, 0, 0.2);
 		background : #ffffff;
 		color      : #1a1a1a;
-		border-radius: 12px;
+		border-radius: var(--radius-build);
 		padding: 16px 20px;
 		position: relative;
 		font-size: 14px;
@@ -134,9 +132,9 @@
 		justify-content: center;
 		box-sizing: border-box;
 		align-items: center;
-		border-radius: 50%;
+		border-radius: var(--radius-percent);
 		display: flex;
-		height: 22px;
+		height: var(--h-build);
 		width: 22px;
 		padding: 0;
 	}

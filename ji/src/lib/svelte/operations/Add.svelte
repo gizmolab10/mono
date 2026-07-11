@@ -48,7 +48,7 @@
 		box-sizing      : border-box;
 		height          : 100%;
 		border          : 2px dashed var(--accent);
-		border-radius   : 16px;
+		border-radius   : var(--radius);
 		align-items     : center;
 		justify-content : center;
 		display         : flex;

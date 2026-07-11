@@ -23,8 +23,9 @@ The intersection project's files. Update this when files are added, moved, or re
 
 ## src/lib/ts/ — logic
 
-- `main.ts` — app entry point; also imports the self-hosted Montserrat font (weights 300, 400).
-- `common/Configuration.ts` — pushes the color CSS variables (`--bg`, `--accent`, `--hover`, …) onto the page. **⟵di** (trimmed to the color setter only).
+- `main.ts` — app entry point; preloads the fonts, imports the Montserrat font CSS (weights 300, 400) and the global `main.css`, and pushes the stacking-layer and layout-size variables before mounting.
+- `utilities/Fonts.ts` — injects preload hints for the latin Montserrat files (300, 400) so the browser fetches them in parallel and can have them ready by the first paint, avoiding the late-swap reflow of the segments. URLs come from importing the same files the font CSS uses, so nothing hardcoded goes stale.
+- `common/Configuration.ts` — pushes CSS variables onto the page: the reactive color tokens (`--bg`, `--accent`, `--hover`, …), the static stacking-layer numbers (`--z-common` … `--z-intersection`), and the layout sizes (`--l-gap`, `--radius`, `--gap-details`, `--gap-preferences`, `--radius-banner`, `--radius-build`, `--radius-pill`, `--radius-percent`, `--h-banner`, `--h-build`, `--h-hideable`, `--h-pill`, `--size-button`) from Constants, so the stylesheets read them from one place. **⟵di** (trimmed to the color setter, plus the layer and metric pushes).
 - `common/Dirty.ts` — store wrappers that mark the canvas out of date. **⟵di**.
 - `common/Enumerations.ts` — app enums; holds `T_Operation` (browse / add / search) as a string enum.
 - `common/Extensions.ts` — String and Number prototype additions. **⟵di**.
@@ -33,6 +34,10 @@ The intersection project's files. Update this when files are added, moved, or re
 - `types/Operations.ts` — the `T_Operations` type and the shared `w_operation` store for which view the content area shows (`browse` / `add` / `search`).
 - `utilities/Colors.ts` — the color math and the reactive theme stores. **⟵di**.
 - `utilities/SVG_Paths.ts` — SVG path generators, including the close-button cross. **⟵di**.
+
+## src/lib/ — global styles
+
+- `main.css` — the global stylesheet; holds the stacking-layer classes (`layer-common` … `layer-intersection`) that read the layer variables Configuration pushes from Constants. Add a layer to an element with its class; the z number stays in Constants.
 
 ## src/lib/md/ and src/md/
 

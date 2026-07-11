@@ -2,6 +2,14 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-11 — segmented control, arrival default, font twitch
+
+- **Renames + reshuffle.** The layout frame is now Intersection (was Main), the content region is Activity (was Content), and the details-toggle icon is Controls (was Hamburger). The operation names moved into their own file under common as a small enum (browse / add / search, stored as one-letter codes).
+- **Segmented control.** The old "add" pill became one segmented control driven off a single list of the operations. It then moved into the Controls cluster, so the hamburger and the segments sit together as one fixed group at the top-left, visible whether details are open or closed.
+- **Arrival default + toggle-off.** Clicking the segment that's already on clears the selection to nothing, which drops the content to the arrival landing. The app now opens with nothing selected (arrival), and a chosen operation still survives a reload.
+- **Add view trim.** Removed the back arrow from the add view (and its now-dead click wiring); getting back to browse is the browse segment. The drop rectangle keeps top room so it clears the control cluster.
+- **Font twitch fixed.** On refresh the segment pill twitched a few pixels because the web font swapped in after the first paint. Fixed by preloading the two Montserrat weights the instant the bundle runs, so the font is ready before first paint — no late swap, no reflow. The preload paths come from importing the same font files the CSS uses, so nothing hardcoded goes stale.
+
 ## 2026-07-10 — add-document flow (skeleton) and picker polish
 
 - **Add flow, Phase 1.** New content-mode store (browse / add / search); an "add" pill next to the hamburger switches to add mode; the content area swaps to a new Add view with a large drop-here rectangle that logs the dropped files. Persistence, categories, and the document store are still to come.

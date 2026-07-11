@@ -145,8 +145,8 @@ textarea:focus {
 
 .shell-sidebar a {
   text-decoration: none;
-  border-radius: 9999px;
   padding: 0.6px 0.7rem;
+  border-radius: 999px;
   margin: 0.1rem 0;
   display: block;
   color: inherit;

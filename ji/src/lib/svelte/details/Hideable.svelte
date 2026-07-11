@@ -16,7 +16,7 @@
 
 <div class='hideable'>
 	<button class='banner' class:open onclick={toggle}>
-		<span class='banner-title'>{title}</span>
+		<span class='banner-title layer-hideable'>{title}</span>
 	</button>
 	{#if open}
 		<div class='slot'>
@@ -29,15 +29,11 @@
 	.hideable {
 		flex-direction : column;
 		display        : flex;
-		gap            : 2px;
+		gap            : var(--gap-details);
 	}
 
 	.banner {
-		letter-spacing  : 0.03em;
-		font-size       : 14px;
 		color           : rgba(0, 0, 0, 1);
-		border-radius   : 10px;
-		height          : 28px;
 		background      : var(--bg);
 		text-transform  : lowercase;
 		position        : relative;
@@ -45,11 +41,15 @@
 		align-items     : center;
 		justify-content : center;
 		overflow        : hidden;
+		letter-spacing  : 0.03em;
+		font-size       : 14px;
+		border-radius   : var(--radius-banner);
+		height          : var(--h-hideable);
 		display         : flex;
 		border          : none;
-		font-weight     : 300;
 		outline         : none;
 		width           : 100%;
+		font-weight     : 300;
 	}
 
 	.banner::before {
@@ -66,13 +66,12 @@
 
 	.banner-title {
 		position : relative;
-		z-index  : 1;
 	}
 
 	.slot {
-		border-radius : 10px;
 		background    : var(--bg);
 		position      : relative;
+		border-radius : var(--radius-banner);
 		padding       : 8px;
 	}
 </style>

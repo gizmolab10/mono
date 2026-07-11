@@ -59,7 +59,7 @@
 
 	.build-opener {
 		border: 1px solid black;
-		border-radius: 999px;
+		border-radius: var(--radius-pill);
 		padding: 2px 10px;
 		background: white;
 		font-size: 13px;

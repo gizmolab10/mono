@@ -27,12 +27,14 @@ write a proposal for the first unchecked item to the top of handoff.
         - [x] large drop here rectangle
     - [x] not wired in, not visible, just empty stubs, design TBD
     - [x] remove <- from add
-    - [ ] click on current operation segment -> sets w_operation to null
+    - [x] click on current operation segment -> sets w_operation to null
     - [ ] database repository
         - [ ] port all DB code and D_Data.svelte from ws
     - [ ] determine design and wire in
         - [ ] add_categories.svelte for creating new
         - [ ] categories.svelte for choosing one or more
+- [ ] port the diagnostic log feature from di
+- [ ] remove all unused T_Preference items
 - [ ] write a new file: stipulations based on current code
 
 ## done

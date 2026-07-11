@@ -27,7 +27,7 @@
 	.color-row {
 		align-items : center;
 		display     : flex;
-		gap         : 16px;
+		gap         : var(--gap-preferences);
 	}
 
 	.color-group {
@@ -43,15 +43,15 @@
 
 	/* The visible button is this circle — we own its color fully. */
 	.picker {
+		border-radius : var(--radius-percent);
 		border        : 1px solid black;
 		background    : var(--accent);
 		box-sizing    : border-box;
 		position      : relative;
 		cursor        : pointer;
 		overflow      : hidden;
-		width         : 28px;
-		height        : 28px;
-		border-radius : 50%;
+		width         : var(--size-button);
+		height        : var(--size-button);
 	}
 
 	.picker:hover {

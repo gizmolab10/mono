@@ -28,7 +28,7 @@
 		background     : var(--accent);
 		flex-direction : column;
 		display        : flex;
-		gap            : 2px;
+		gap            : var(--gap-details);
 		flex-shrink    : 0;
 	}
 
@@ -36,8 +36,8 @@
 		background      : var(--accent);
 		align-items     : center;
 		justify-content : center;
-		border-radius   : 10px;
-		height          : 42px;
+		border-radius   : var(--radius-banner);
+		height          : var(--h-banner);
 		width           : 100%;
 		display         : flex;
 		border          : none;
