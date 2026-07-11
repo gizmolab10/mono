@@ -22,7 +22,7 @@
             }
           },
           {
-            "id": "d47069a0ff80e160",
+            "id": "b9af425fc56f232b",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -110,7 +110,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:workflow",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -251,8 +251,20 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "d47069a0ff80e160",
+  "active": "b9af425fc56f232b",
   "lastOpenFiles": [
+    "ji/src/lib/ts/types/Operation.ts",
+    "ji/notes/work/work journal.md",
+    "ji/src/lib/md/builds.md",
+    "ji/src/lib/ts/state/Current_Op.ts",
+    "ji/src/lib/svelte/main/Main.svelte.tmp.15558.ee9a805a72ce",
+    "ji/notes/work/code debt.md",
+    "ji/src/lib/svelte/main/Main.svelte.tmp.15558.c8fb2b528c1c",
+    "ji/notes/guides/map.md.tmp.15558.9a4f922b5087",
+    "ji/src/lib/svelte/main/Main.svelte.tmp.15558.6a80385189fe",
+    "ji/src/lib/svelte/main/Add.svelte",
+    "ji/src/lib/ts/state/Content_Mode.ts",
+    "ji/src/lib/ts/state",
     "logs/update-docs.error.mono.log",
     "di/notes/work/now/34.dimensionals/index.md",
     "di/notes/work/mothballs/index.md",
@@ -260,17 +272,8 @@
     "di/notes/guides/pre-flight/index.md",
     "notes/tools/hub/index.md",
     "ws/node_modules/@vitest/utils/node_modules/@vitest/pretty-format/dist/index.js",
-    "ws/node_modules/@vitest/snapshot/node_modules/@vitest/pretty-format/dist/index.js",
-    "ws/node_modules/@vitest/utils/node_modules/@vitest/pretty-format/dist/index.d.ts",
-    "ws/node_modules/@vitest/snapshot/node_modules/@vitest/pretty-format/dist/index.d.ts",
-    "node_modules/vitest/node_modules/@vitest/pretty-format/dist/index.js",
-    "node_modules/vitest/node_modules/@vitest/pretty-format/dist/index.d.ts",
-    "ws/node_modules/@vitest/utils/node_modules/@vitest/pretty-format/package.json",
     "ws/node_modules/@vitest/utils/node_modules/@vitest/pretty-format/README.md",
-    "ws/node_modules/@vitest/snapshot/node_modules/@vitest/pretty-format/LICENSE",
-    "ws/node_modules/@vitest/snapshot/node_modules/@vitest/pretty-format/package.json",
     "ws/node_modules/@vitest/snapshot/node_modules/@vitest/pretty-format/README.md",
-    "ws/node_modules/@vitest/utils/node_modules/@vitest/pretty-format/LICENSE",
     "node_modules/vitest/node_modules/@vitest/pretty-format/README.md",
     "notes/guides/collaborate/hooks.md",
     "ws/node_modules/@vitest/mocker/node_modules/vite/LICENSE.md",
@@ -285,10 +288,7 @@
     "notes/guides/collaborate/workflow.md",
     "ji/notes/guides/map.md",
     "ji/notes/guides/notes map.md",
-    "ji/notes/work/work journal.md",
     "ji/notes/guides/roadmap.md",
-    "ji/notes/guides/Minimum Viable INTERSECTION app.md",
-    "ji/notes/work/roadmap.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

@@ -1,5 +1,7 @@
 <script lang='ts'>
 	import buildsRaw from '../../md/builds.md?raw';
+	import Add from './Add.svelte';
+	import { w_operation } from '../../ts/types/Operation';
 
 	// Shared with the layout frame so it can hide the regions while the popup shows.
 	let { showBuildNotes = $bindable(false) }: { showBuildNotes?: boolean } = $props();
@@ -10,27 +12,31 @@
 </script>
 
 <div class='content-body'>
-	<div class='centered'>
-		<div>Intersection</div>
-		<div>Hey, bro!</div>
-	</div>
+	{#if $w_operation === 'add'}
+		<Add onback={() => { w_operation.set('browse'); console.log('Content mode -> browse.'); }} />
+	{:else}
+		<div class='centered'>
+			<div>Intersection</div>
+			<div>Hey, bro!</div>
+		</div>
 
-	<div class='corner-stack'>
-		<button
-			class='build-opener'
-			onclick={() => { showBuildNotes = true; console.log(`Build notes: opener clicked, current build is ${buildNumber}.`); }}>
-			Build {buildNumber}
-		</button>
+		<div class='corner-stack'>
+			<button
+				class='build-opener'
+				onclick={() => { showBuildNotes = true; console.log(`Build notes: opener clicked, current build is ${buildNumber}.`); }}>
+				Build {buildNumber}
+			</button>
 
-		<a
-			class='author-credit'
-			href='https://jonathansand.me'
-			target='_blank'
-			rel='noopener'
-			onclick={() => console.log('Author credit clicked — opening jonathansand.me.')}>
-			author: jonathan sand
-		</a>
-	</div>
+			<a
+				class='author-credit'
+				href='https://jonathansand.me'
+				target='_blank'
+				rel='noopener'
+				onclick={() => console.log('Author credit clicked — opening jonathansand.me.')}>
+				author: jonathan sand
+			</a>
+		</div>
+	{/if}
 </div>
 
 <style>

@@ -60,7 +60,7 @@
 	}
 
 	.banner:hover::before {
-		background : var(--bg);
+		background : var(--hover);
 		opacity    : 1;
 	}
 

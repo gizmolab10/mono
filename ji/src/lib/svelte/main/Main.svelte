@@ -1,10 +1,14 @@
 <script lang='ts'>
-	import Hideable from '../details/Hideable.svelte';
-	import D_Preferences from '../details/D_Preferences.svelte';
-	import Content from './Content.svelte';
-	import BuildNotes from './BuildNotes.svelte';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import D_Preferences from '../details/D_Preferences.svelte';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { w_operation } from '../../ts/types/Operation';
+	import Hideable from '../details/Hideable.svelte';
+	import BuildNotes from './BuildNotes.svelte';
+	import Content from './Content.svelte';
+
+	// The content-area modes, shown as segments in the mode control.
+	const modes = ['browse', 'add', 'search'] as const;
 
 	// di's hamburger icon, built exactly as di's Primary_Controls toggle does:
 	// path sized common+2 (35), drawn in a common-square viewBox. common = 33.
@@ -63,11 +67,22 @@
 <svelte:window onresize={handleResize} />
 
 {#snippet hamburgerButton()}
-	<button class='d-button' onclick={toggleDetails} aria-label='toggle details'>
+	<button class='hamburger-button' onclick={toggleDetails} aria-label='toggle details'>
 		<svg class='hamburger-icon' viewBox='0 0 33 33' width='33' height='33'>
 			<path d={hamburgerPath} />
 		</svg>
 	</button>
+{/snippet}
+
+{#snippet modeControl()}
+	<div class='mode-control'>
+		{#each modes as m}
+			<button
+				class='segment'
+				class:current={$w_operation === m}
+				onclick={() => { w_operation.set(m); console.log(`Content mode -> ${m}.`); }}>{m}</button>
+		{/each}
+	</div>
 {/snippet}
 
 <div
@@ -83,8 +98,9 @@
 		{#if !showBuildNotes}
 			{#if $w_show_details}
 				<div class='region details' style:width='{detailsWidth}px'>
-					<div class='details-banner'>Controls go here</div>
+					<div class='details-banner'></div>
 					{@render hamburgerButton()}
+					{@render modeControl()}
 					<Hideable title='preferences'>
 						<D_Preferences />
 					</Hideable>
@@ -93,6 +109,7 @@
 			<div class='region content' style:width='{contentWidth}px'>
 				{#if !$w_show_details}
 					{@render hamburgerButton()}
+					{@render modeControl()}
 				{/if}
 				<Content bind:showBuildNotes />
 			</div>
@@ -158,7 +175,7 @@
 		border          : none;
 	}
 
-	.d-button {
+	.hamburger-button {
 		color           : var(--text-on-accent);
 		background      : transparent;
 		cursor          : pointer;
@@ -178,25 +195,56 @@
 		overflow : visible;
 	}
 
-	.d-button .hamburger-icon path {
-		fill   : currentColor;
-		stroke : currentColor;
+	.hamburger-button .hamburger-icon path {
+		fill         : currentColor;
+		stroke       : black;
+		stroke-width : 0.5px;
 	}
 
 	/* Details hidden: the hamburger sits on the content and is always black. */
-	.content .d-button {
+	.content .hamburger-button {
 		color : black;
 	}
 
-	/* Details hidden: black hamburger, accent-colored on hover. */
-	.content .d-button:hover .hamburger-icon path {
-		fill   : var(--accent);
-		stroke : var(--accent);
+	/* Hamburger hover changes only the fill (--hover); the black outline stays. */
+	.hamburger-button:hover .hamburger-icon path {
+		fill : var(--hover);
 	}
 
-	.details .d-button:hover .hamburger-icon path {
-		fill   : var(--text-on-accent-hover);
-		stroke : var(--text-on-accent-hover);
+	/* The mode control replaces the single add button: one pill with a segment
+	   per content mode, sitting where the add pill was. The current mode's
+	   segment fills with --accent. */
+	.mode-control {
+		position      : fixed;
+		top           : 15px;
+		left          : 56px;
+		z-index       : 5;
+		display       : flex;
+		background    : var(--bg);
+		border        : 1px solid black;
+		border-radius : 999px;
+		overflow      : hidden;
+		font-size     : 13px;
+	}
+
+	.segment {
+		background : transparent;
+		color      : var(--text);
+		border     : none;
+		cursor     : pointer;
+		padding    : 2px 10px;
+	}
+
+	.segment:not(:last-child) {
+		border-right : 1px solid black;
+	}
+
+	.segment.current {
+		background : var(--accent);
+	}
+
+	.segment:hover {
+		background : var(--hover);
 	}
 
 	.content {

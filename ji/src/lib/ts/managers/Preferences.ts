@@ -50,6 +50,9 @@ export enum T_Preference {
 	// Mode
 	allowEditing     = 'allowEditing',
 
+	// Content
+	current_op      = 'current_op',
+
 	// Scenes
 	scene            = 'scene',
 

@@ -4,8 +4,6 @@
 
 ## Next
 
-One coding task remains in [code debt](code%20debt.md) under "work":
+Add-document flow, **Phase 1 skeleton done**: a content-mode store (browse / add / search), an "add" button, and an Add view with a drop-here rectangle (dropped files are logged, not yet saved). Remaining work is listed in [code debt](code%20debt.md) — persist the mode, turn the add button into a segmented control (segment for the current mode, bg `--accent`), add the categories components, and the local document store.
 
-1. **Add-document flow** — a content-area mode store (add / search / browse), an "add" button next to the hamburger, a new add view with a large drop-here rectangle, a categories chooser (create + pick one or more), and a document store.
-
-**Next:** the add-document flow.
+**Next:** persist the content-mode state, then the segmented control.

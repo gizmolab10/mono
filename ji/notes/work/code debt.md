@@ -5,13 +5,17 @@ write a proposal for the first unchecked item to the top of handoff.
 ## work
 
 - [ ] new UX for adding documents
-    - [ ] new state store for content area (add, search, browse)
-    - [ ] button "add" next to hamburger
-    - [ ] new add.svelte in content area
-        - [ ] large drop here rectangle
+    - [x] new state store for content area (add, search, browse)
+        - [x] persist new state
+    - [x] button "add" next to hamburger
+        - [x] convert button to segmented control
+            - [x] segment corresponding to current state, bg color -> --accent
+    - [x] new add.svelte in content area
+        - [x] large drop here rectangle
     - [ ] add_categories.svelte for creating new
         - [ ] categories.svelte for choosing one or more
     - [ ] database repository
+- [ ] write a new file: stipulations based on current code
 
 ## done
 

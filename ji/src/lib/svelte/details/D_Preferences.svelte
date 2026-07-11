@@ -17,7 +17,9 @@
 <div class='color-row'>
 	<div class='color-group'>
 		<span class='label'>accent</span>
-		<input type='color' value={$w_accent_color} oninput={pick} />
+		<label class='picker'>
+			<input class='accent' type='color' value={$w_accent_color} oninput={pick} />
+		</label>
 	</div>
 </div>
 
@@ -39,29 +41,35 @@
 		opacity   : 0.8;
 	}
 
-	.color-group input[type='color'] {
-		border             : 1px solid currentColor;
-		width              : 28px;
-		height             : 28px;
-		cursor             : pointer;
-		appearance         : none;
-		-webkit-appearance : none;
-		background         : none;
-		border-radius      : 50%;
-		padding            : 0;
-	}
-
-	.color-group input[type='color']::-webkit-color-swatch-wrapper {
-		padding : 0;
-	}
-
-	.color-group input[type='color']::-webkit-color-swatch {
-		border        : none;
+	/* The visible button is this circle — we own its color fully. */
+	.picker {
+		border        : 1px solid black;
+		background    : var(--accent);
+		box-sizing    : border-box;
+		position      : relative;
+		cursor        : pointer;
+		overflow      : hidden;
+		width         : 28px;
+		height        : 28px;
 		border-radius : 50%;
 	}
 
-	.color-group input[type='color']::-moz-color-swatch {
-		border        : none;
-		border-radius : 50%;
+	.picker:hover {
+		background : var(--hover);
+	}
+
+	/* The real color input lies invisibly on top: it catches the click to open
+	   the native picker, but shows nothing — so there is no browser swatch to
+	   fight, and the circle above is the only thing seen. */
+	.accent {
+		position : absolute;
+		cursor   : pointer;
+		width    : 100%;
+		height   : 100%;
+		border   : none;
+		inset    : 0;
+		padding  : 0;
+		margin   : 0;
+		opacity  : 0;
 	}
 </style>

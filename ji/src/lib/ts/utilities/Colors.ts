@@ -117,16 +117,11 @@ export class Colors {
 			const bg_lume = this.luminance_ofColor(bg);
 			const text_on_bg = bg_lume < 0.5 ? 'white' : 'black';
 			const text_on_accent = accent_lume < 0.3 ? 'white' : 'black';
-			// The hamburger's hover color is the opposite of its normal color, so
-			// a white icon darkens on hover and a dark icon lightens.
-			const text_on_accent_hover = text_on_accent === 'white' ? 'black' : 'white';
 			this.w_text_color.set(text_on_bg);
 			if (typeof document !== 'undefined') {
-				const root = document.documentElement.style;
-				root.setProperty('--text-on-accent', text_on_accent);
-				root.setProperty('--text-on-accent-hover', text_on_accent_hover);
+				document.documentElement.style.setProperty('--text-on-accent', text_on_accent);
 			}
-			console.log(`Text color: background luminance ${bg_lume.toFixed(2)} -> ${text_on_bg} text; accent luminance ${accent_lume.toFixed(2)} -> ${text_on_accent} text (hamburger hover ${text_on_accent_hover}).`);
+			console.log(`Text color: background luminance ${bg_lume.toFixed(2)} -> ${text_on_bg} text; accent luminance ${accent_lume.toFixed(2)} -> ${text_on_accent} text.`);
 		});
 	}
 
