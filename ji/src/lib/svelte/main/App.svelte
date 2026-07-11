@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { colors } from '../../ts/utilities/Colors';
 	import { c } from '../../ts/common/Configuration';
-	import Main from './Main.svelte';
+	import Intersection from './Intersection.svelte';
 
 	const {
 		w_background_color, w_selected_color, w_accent_color, w_hover_color,
@@ -24,7 +24,7 @@
 	});
 </script>
 
-<Main />
+<Intersection />
 
 <style>
 	:global(:root) {

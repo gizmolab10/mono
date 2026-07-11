@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { w_operation } from '../../ts/managers/Operations';
+	import { T_Operation } from '../../ts/common/Enumerations';
 	import buildsRaw from '../../md/builds.md?raw';
 	import Add from '../operations/Add.svelte';
 
@@ -12,8 +13,8 @@
 </script>
 
 <div class='content-body'>
-	{#if $w_operation === 'add'}
-		<Add onback={() => { w_operation.set('browse'); console.log('Content mode -> browse.'); }} />
+	{#if $w_operation === T_Operation.add}
+		<Add />
 	{:else}
 		<div class='centered'>
 			<div>Intersection</div>

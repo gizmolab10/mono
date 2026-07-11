@@ -4,6 +4,19 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
+- [x] hamburger
+    - [x] separate singleton
+    - [x] rename it -> controls
+    - [x] include segmented control
+    - [x] move back -> main
+    - [x] remove from details
+    - [x] colors depend on details are hidden ->
+        - [x] background
+        - [x] hover
+        - [x] text 
+    - [x] intersection draws details below controls
+    - [x] owned by intersection
+    - [x] rename main -> intersection
 - [ ] new UX for adding documents
     - [x] new state store for content area (add, search, browse)
         - [x] persist new state
@@ -12,11 +25,14 @@ write a proposal for the first unchecked item to the top of handoff.
             - [x] segment corresponding to current state, bg color -> --accent
     - [x] new add.svelte in content area
         - [x] large drop here rectangle
-    - [ ] not wired in, not visible, just empty stubs, design TBD
-        - [ ] add_categories.svelte for creating new
-        - [ ] categories.svelte for choosing one or more
+    - [x] not wired in, not visible, just empty stubs, design TBD
+    - [x] remove <- from add
+    - [ ] click on current operation segment -> sets w_operation to null
     - [ ] database repository
         - [ ] port all DB code and D_Data.svelte from ws
+    - [ ] determine design and wire in
+        - [ ] add_categories.svelte for creating new
+        - [ ] categories.svelte for choosing one or more
 - [ ] write a new file: stipulations based on current code
 
 ## done

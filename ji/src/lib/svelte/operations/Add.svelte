@@ -1,7 +1,6 @@
 <script lang='ts'>
 	// Phase 1 skeleton: a drop target that logs the dropped files. Saving them
 	// to the document store lands in a later phase.
-	let { onback }: { onback: () => void } = $props();
 	let dragging = $state(false);
 
 	function handleDrop(event: DragEvent) {
@@ -23,8 +22,6 @@
 </script>
 
 <div class='add-view'>
-	<button class='back' onclick={onback} aria-label='back to browse'>←</button>
-
 	<div
 		class='drop'
 		class:dragging
@@ -39,22 +36,12 @@
 
 <style>
 	.add-view {
+		/* Top room clears the fixed control cluster (hamburger + segments). */
 		box-sizing : border-box;
 		position   : relative;
 		height     : 100%;
 		width      : 100%;
 		padding    : 52px 24px 24px;
-	}
-
-	.back {
-		position   : absolute;
-		top        : 12px;
-		left       : 16px;
-		background : none;
-		border     : none;
-		cursor     : pointer;
-		font-size  : 22px;
-		color      : var(--text);
 	}
 
 	.drop {
