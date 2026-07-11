@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import D_Preferences from '../details/D_Preferences.svelte';
+	import { w_operation } from '../../ts/managers/Operations';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { w_operation } from '../../ts/types/Operation';
 	import Hideable from '../details/Hideable.svelte';
 	import BuildNotes from './BuildNotes.svelte';
-	import Content from './Content.svelte';
+	import Activity from './Activity.svelte';
 
 	// The content-area modes, shown as segments in the mode control.
 	const modes = ['browse', 'add', 'search'] as const;
@@ -111,7 +111,7 @@
 					{@render hamburgerButton()}
 					{@render modeControl()}
 				{/if}
-				<Content bind:showBuildNotes />
+				<Activity bind:showBuildNotes />
 			</div>
 		{/if}
 	</div>

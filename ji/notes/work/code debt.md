@@ -12,9 +12,11 @@ write a proposal for the first unchecked item to the top of handoff.
             - [x] segment corresponding to current state, bg color -> --accent
     - [x] new add.svelte in content area
         - [x] large drop here rectangle
-    - [ ] add_categories.svelte for creating new
+    - [ ] not wired in, not visible, just empty stubs, design TBD
+        - [ ] add_categories.svelte for creating new
         - [ ] categories.svelte for choosing one or more
     - [ ] database repository
+        - [ ] port all DB code and D_Data.svelte from ws
 - [ ] write a new file: stipulations based on current code
 
 ## done

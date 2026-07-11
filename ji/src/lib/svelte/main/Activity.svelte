@@ -1,7 +1,7 @@
 <script lang='ts'>
+	import { w_operation } from '../../ts/managers/Operations';
 	import buildsRaw from '../../md/builds.md?raw';
-	import Add from './Add.svelte';
-	import { w_operation } from '../../ts/types/Operation';
+	import Add from '../operations/Add.svelte';
 
 	// Shared with the layout frame so it can hide the regions while the popup shows.
 	let { showBuildNotes = $bindable(false) }: { showBuildNotes?: boolean } = $props();

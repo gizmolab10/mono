@@ -12,8 +12,9 @@ The intersection project's files. Update this when files are added, moved, or re
 
 - `main/App.svelte` — root component; on mount, pushes the theme colors onto the page.
 - `main/Main.svelte` — the layout frame: the details + content regions and the hamburger toggle; hides both regions and shows the build-notes overlay while the popup is open.
-- `main/Content.svelte` — the content region's body; switches on the content mode: `browse` shows the "Intersection" text and "Build N" opener, `add` shows the Add view.
+- `main/Activity.svelte` — the content region's body; switches on the current operation: `browse` shows the "Intersection" text and "Build N" opener, `add` shows the Add view.
 - `main/Add.svelte` — the add-document view: a large drop-here rectangle (Phase 1 logs the dropped files; persistence comes later) with a back arrow to browse.
+- `main/add_categories.svelte`, `main/categories.svelte` — empty stubs (create a category / pick categories); not wired in or visible yet, design TBD.
 - `main/BuildNotes.svelte` — the build-history popup: a paged table read from the markdown data file, with close and up/down arrows.
 - `details/Hideable.svelte` — a collapsible titled banner. **⟵di** (trimmed: plain toggle, no di engine).
 - `details/D_Preferences.svelte` — the accent color picker, wired to Colors. **⟵di** (trimmed).
@@ -26,7 +27,7 @@ The intersection project's files. Update this when files are added, moved, or re
 - `common/Extensions.ts` — String and Number prototype additions. **⟵di**.
 - `managers/Preferences.ts` — settings saved to the browser. **⟵di**.
 - `types/Angle.ts`, `types/Coordinates.ts`, `types/Types.ts` — angle math, points/sizes/rects, shared types. **⟵di**.
-- `types/Operation.ts` — the `T_Operation` type and the shared `w_operation` store for which view the content area shows (`browse` / `add` / `search`).
+- `types/Operations.ts` — the `T_Operations` type and the shared `w_operation` store for which view the content area shows (`browse` / `add` / `search`).
 - `utilities/Colors.ts` — the color math and the reactive theme stores. **⟵di**.
 - `utilities/SVG_Paths.ts` — SVG path generators, including the close-button cross. **⟵di**.
 
