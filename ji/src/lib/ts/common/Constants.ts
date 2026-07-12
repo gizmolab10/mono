@@ -1,26 +1,47 @@
 
-export const common_size = 35;				// minimum fingertip touch size
+const common_size = 35;				// minimum fingertip touch size
+const common_gap = common_size / 5;
+const common_thickness = common_gap / 7;
 
 // missing: 50% circles
 
 export default class Constants {
-	width = {
-		hamburger	 : common_size,
-		phone		 : 620,
-		modal	 	 : 600,
-		window		 : 400,
-		details		 : 350,
-		cross	  	 : 22,
-		page	   	 : 10,
+	font = {
+		credit		 : common_size * 0.25,		// 8.75
+		label		 : common_size * 0.35,		// 12.25
+		base		 : common_size * 0.375,		// 13.13
+		banner		 : common_size * 0.4,		// 14
+		large		 : common_size / 2,			// 17.5
+		em : {
+			small	 : 1.4,
+			big		 : 8,
+		},
+	};
+	pad = {
+		slot		 : 8,
+		hamburger	 : { y: 2, x: 6 },
+		segment		 : { y: 2, x: 10 },
+		opener		 : { y: 2, x: 10 },
+		modal		 : { y: 16, x: 20 },
+		view		 : { top: 52, x: 24 },
+		stepper		 : { y: 0, x: 4 },
+		cell		 : { y: common_gap / 2, x: common_gap },		// left is 0
 	};
 	radius = {
 		corner		 : {
 			banner	 : common_size / 3.5,
 			build	 : common_size / 3,
-			main	 : common_size / 2,		// also for Add drop box
+			main	 : common_size / 2,			// also for Add drop box
 			pill	 : 999,
 		},
 		percent		 : 50,
+	};
+	width = {
+		phone		 : 620,
+		modal	 	 : 600,
+		window		 : 400,
+		details		 : 350,
+		page	   	 : 10,
 	};
 	layer = {
 		intersection : 10,
@@ -31,16 +52,37 @@ export default class Constants {
 	height = {
 		banner		 : common_size * 1.2,
 		hideable	 : common_size * 0.8,
-		build		 : common_size / 1.6,
+		group		 : common_size / 1.6,
 		pill		 : common_size / 2,
 	};
 	gap = {
-		preferences	 : common_size / 2.1,
-		intersection : common_size / 5,
-		details		 : 2,
+		preferences	 : common_gap * 2.1,
+		tight		 : common_gap / 2,
+		details		 : common_gap / 4,
+		intersection : common_gap,
 	}
+	inset = {
+		cluster		 : common_size * 0.25,												// 8.75
+		pill		 : { top: common_size * 0.48,    left: common_size * 1.6 },			// 16.8, 56
+		popup		 : { edge: common_size * 0.3,    side: common_size * 0.375 },		// 10.5, 13.13
+		credit		 : { bottom: common_size * 0.35, left: common_size * 0.45 },		// 12.25, 15.75
+	};
+	thickness = {
+		bold		 : common_thickness * 1.5,
+		faint		 : common_thickness / 2,
+		fat			 : common_thickness * 2,
+		normal		 : common_thickness,
+	};
 	size = {
 		button		 : common_size / 1.25,
+		cross	  	 : common_size / 1.6,
+		hamburger	 : common_size,
+	};
+	margin = {
+		header		 : common_gap * 1.7,
+	};
+	svg = {
+		cross		 : common_size / 1.4,
 	};
 }
 

@@ -19,11 +19,3 @@ for (const href of [url400, url300]) {
 	link.href        = href;
 	document.head.appendChild(link);
 }
-
-console.log(`Fonts: preload requested for Montserrat 400 and 300, so they can be ready before first paint. Weight-400 file: ${url400}.`);
-
-// Report whether the font was ready by the time layout settled.
-document.fonts.ready.then(() => {
-	const ready = document.fonts.check('16px Montserrat');
-	console.log(`Fonts: after load, Montserrat ${ready ? 'is available' : 'is NOT available'} — twitch avoided when it was ready before the first paint.`);
-});

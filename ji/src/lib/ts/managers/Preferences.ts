@@ -146,7 +146,6 @@ class Preferences {
 		for (const key of keys) {
 			prefs[key] = this.read(key);
 		}
-		console.log('Preferences:', prefs);
 	}
 
 	persistent<T>(key: T_Preference, fallback: T): Writable<T> {

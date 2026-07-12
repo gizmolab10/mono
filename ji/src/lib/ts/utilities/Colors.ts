@@ -121,7 +121,6 @@ export class Colors {
 			if (typeof document !== 'undefined') {
 				document.documentElement.style.setProperty('--text-on-accent', text_on_accent);
 			}
-			console.log(`Text color: background luminance ${bg_lume.toFixed(2)} -> ${text_on_bg} text; accent luminance ${accent_lume.toFixed(2)} -> ${text_on_accent} text.`);
 		});
 	}
 

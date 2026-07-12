@@ -3,8 +3,7 @@
 	import buildsRaw from '../../md/builds.md?raw';
 	import { k } from '../../ts/common/Constants';
 
-	const crossPath = svg_paths.x_cross(k.width.cross, k.width.cross / 6);
-	console.log(`Close button: cross drawn from di path generator, size ${k.width.cross}, path ${crossPath}.`);
+	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
 
 	const allNotes = buildsRaw.split('\n')
 		.filter(l => /^\|\s*\d+/.test(l))
@@ -14,7 +13,6 @@
 		});
 	const notesLimit = allNotes.length;
 	const isNewestFirst = allNotes.length > 1 && allNotes[0].build > allNotes[1].build;
-	console.log(`Build notes: read ${notesLimit} build rows from the markdown file. Newest first: ${isNewestFirst}.`);
 
 	let { onclose } : { onclose: () => void } = $props();
 	let title = $state(isNewestFirst ? `Build Notes (${k.width.page} most recent)` : 'Build Notes');
@@ -30,13 +28,11 @@
 		title = showingMostRecent ? `Build Notes (${k.width.page} most recent)` : 'Build Notes';
 		show_up = notesIndex > 0;
 		show_down = notesIndex < notesLimit - k.width.page;
-		console.log(`Build notes: showing rows ${notesIndex + 1} to ${end} of ${notesLimit}. Up arrow ${show_up ? 'on' : 'off'}, down arrow ${show_down ? 'on' : 'off'}.`);
 	}
 
 	function hit_closure(pointsUp: boolean) {
 		const nextIndex = notesIndex + (k.width.page * (pointsUp ? -1 : 1));
 		notesIndex = Math.max(0, Math.min(nextIndex, notesLimit - k.width.page));
-		console.log(`Build notes: ${pointsUp ? 'up' : 'down'} arrow clicked, new top row is ${notesIndex + 1}.`);
 		updateNotes();
 	}
 
@@ -65,8 +61,8 @@
 		{/if}
 	</div>
 	<button class='close' aria-label='close' onclick={onclose}>
-		<svg class='cross' width='16' height='16' viewBox='0 0 {k.width.cross} {k.width.cross}'>
-			<path d={crossPath} fill='none' stroke='#1a1a1a' stroke-width={k.width.cross / 12} stroke-linecap='round' />
+		<svg class='cross' width={k.svg.cross} height={k.svg.cross} viewBox='0 0 {k.size.cross} {k.size.cross}'>
+			<path d={crossPath} fill='none' stroke='#1a1a1a' stroke-width={k.size.cross / 12} stroke-linecap='round' />
 		</svg>
 	</button>
 	<div class='header'>
@@ -94,88 +90,92 @@
 
 <style>
 	.modal {
-		box-shadow : 0 2px 8px rgba(0, 0, 0, 0.2);
-		background : #ffffff;
-		color      : #1a1a1a;
-		border-radius: var(--radius-build);
-		padding: 16px 20px;
-		position: relative;
-		font-size: 14px;
+		border-radius	: var(--radius-build);
+		box-shadow	 	: 0 2px 8px rgba(0, 0, 0, 0.2);
+		font-size	 	: var(--font-banner);
+		background	 	: #ffffff;
+		color		 	: #1a1a1a;
+		padding		 	: 16px 20px;
+		position	 	: relative;
 	}
 
 	.steppers {
-		position : absolute;
-		top      : 11px;
-		left     : 13px;
-		display  : flex;
-		gap      : 4px;
+		top      		: var(--inset-popup-edge);
+		left     		: var(--inset-popup-side);
+		gap      		: var(--gap-tight);
+		position 		: absolute;
+		display  		: flex;
 	}
 
 	.close {
-		position : absolute;
-		top      : 11px;
-		right    : 13px;
+		position 		: absolute;
+		top      		: var(--inset-popup-edge);
+		right    		: var(--inset-popup-side);
 	}
 
 	.stepper, .close {
-		color      : #1a1a1a;
-		cursor     : pointer;
-		padding    : 0 4px;
-		background : none;
-		border     : none;
-		font-size  : 18px;
-		line-height: 1;
+		font-size  		: var(--font-large);
+		color      		: #1a1a1a;
+		cursor     		: pointer;
+		padding    		: 0 4px;
+		background 		: none;
+		border     		: none;
+		line-height		: 1;
 	}
 
 	.close {
-		border: 1px solid #1a1a1a;
-		justify-content: center;
-		box-sizing: border-box;
-		align-items: center;
-		border-radius: var(--radius-percent);
-		display: flex;
-		height: var(--h-build);
-		width: 22px;
-		padding: 0;
+		border			: var(--thickness-normal) solid #1a1a1a;
+		border-radius	: var(--radius-percent);
+		width			: var(--size-cross);
+		height			: var(--size-cross);
+		box-sizing		: border-box;
+		justify-content	: center;
+		align-items		: center;
+		display			: flex;
+		padding			: 0;
+	}
+
+	.close:hover {
+		background		: var(--hover);
 	}
 
 	.cross {
-		display: block;
+		display			: block;
 	}
 
 	.header {
-		justify-content: center;
-		align-items: center;
-		margin-bottom: 12px;
-		display: flex;
+		justify-content	: center;
+		align-items		: center;
+		margin-bottom	: 12px;
+		display			: flex;
 	}
 
 	.title {
-		font-weight: 300;
-		font-size: 18px;
+		font-size		: var(--font-large);
+		font-weight		: 300;
 	}
 
 	table {
-		border-collapse: collapse;
-		width: 100%;
+		border-collapse	: collapse;
+		width			: 100%;
 	}
 
 	th {
-		border-bottom: 1px solid currentColor;
-		padding: 4px 8px 4px 0;
-		text-align: left;
-		opacity: 0.7;
+		border-bottom	: var(--thickness-normal) solid currentColor;
+		padding			: 4px 8px 4px 0;
+		text-align		: left;
+		opacity			: 0.7;
 	}
 
 	td {
-		padding: 4px 8px 4px 0;
+		padding			: 4px 8px 4px 0;
 	}
 
 	th:first-child, td:first-child {
-		width: 50px;
+		width			: 50px;
 	}
 
 	th:nth-child(2), td:nth-child(2) {
-		width: 120px;
+		width			: 120px;
 	}
 </style>

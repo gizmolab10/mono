@@ -4,6 +4,30 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
+- [ ] nudge text inside segmented control up 2 px
+- [ ] port the diagnostic log feature from di
+- [ ] remove all unused T_Preference items
+- [ ] new UX for adding documents phase 2
+    - [ ] database repository
+        - [ ] port all DB code and D_Data.svelte from ws
+    - [ ] determine design and wire in
+        - [ ] add_categories.svelte for creating new
+        - [ ] categories.svelte for choosing one or more
+- [ ] write a new file: stipulations based on current code
+
+## done
+
+- [x] phase 1 -> new UX for adding documents
+    - [x] new state store for content area (add, search, browse)
+        - [x] persist new state
+    - [x] button "add" next to hamburger
+        - [x] convert button to segmented control
+            - [x] segment corresponding to current state, bg color -> --accent
+    - [x] new add.svelte in content area
+        - [x] large drop here rectangle
+    - [x] not wired in, not visible, just empty stubs, design TBD
+    - [x] remove <- from add
+    - [x] click on current operation segment -> sets w_operation to null
 - [x] hamburger
     - [x] separate singleton
     - [x] rename it -> controls
@@ -17,28 +41,6 @@ write a proposal for the first unchecked item to the top of handoff.
     - [x] intersection draws details below controls
     - [x] owned by intersection
     - [x] rename main -> intersection
-- [ ] new UX for adding documents
-    - [x] new state store for content area (add, search, browse)
-        - [x] persist new state
-    - [x] button "add" next to hamburger
-        - [x] convert button to segmented control
-            - [x] segment corresponding to current state, bg color -> --accent
-    - [x] new add.svelte in content area
-        - [x] large drop here rectangle
-    - [x] not wired in, not visible, just empty stubs, design TBD
-    - [x] remove <- from add
-    - [x] click on current operation segment -> sets w_operation to null
-    - [ ] database repository
-        - [ ] port all DB code and D_Data.svelte from ws
-    - [ ] determine design and wire in
-        - [ ] add_categories.svelte for creating new
-        - [ ] categories.svelte for choosing one or more
-- [ ] port the diagnostic log feature from di
-- [ ] remove all unused T_Preference items
-- [ ] write a new file: stipulations based on current code
-
-## done
-
 - [x] change --text-color (white/black) — flips by background luminance; content text from bg, details text from accent
 - [x] make netlify only build a single project in response to git push
 - [x] button with my name as author

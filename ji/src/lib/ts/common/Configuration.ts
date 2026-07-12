@@ -28,15 +28,34 @@ class Configuration {
 		root.setProperty('--radius',          `${k.radius.corner.main}px`);
 		root.setProperty('--gap-details',     `${k.gap.details}px`);
 		root.setProperty('--gap-preferences', `${k.gap.preferences}px`);
+		root.setProperty('--gap-tight',       `${k.gap.tight}px`);
 		root.setProperty('--radius-banner',   `${k.radius.corner.banner}px`);
 		root.setProperty('--radius-build',    `${k.radius.corner.build}px`);
 		root.setProperty('--radius-pill',     `${k.radius.corner.pill}px`);
 		root.setProperty('--radius-percent',  `${k.radius.percent}%`);
 		root.setProperty('--h-banner',        `${k.height.banner}px`);
-		root.setProperty('--h-build',         `${k.height.build}px`);
+		root.setProperty('--h-group',         `${k.height.group}px`);
 		root.setProperty('--h-hideable',      `${k.height.hideable}px`);
 		root.setProperty('--h-pill',          `${k.height.pill}px`);
 		root.setProperty('--size-button',     `${k.size.button}px`);
+		root.setProperty('--size-cross',      `${k.size.cross}px`);
+		root.setProperty('--font-credit',     `${k.font.credit}px`);
+		root.setProperty('--font-label',      `${k.font.label}px`);
+		root.setProperty('--font-base',       `${k.font.base}px`);
+		root.setProperty('--font-banner',     `${k.font.banner}px`);
+		root.setProperty('--font-large',      `${k.font.large}px`);
+		root.setProperty('--font-hero',       `${k.font.em.big}em`);
+		root.setProperty('--font-drop',       `${k.font.em.small}em`);
+		root.setProperty('--inset-cluster',      `${k.inset.cluster}px`);
+		root.setProperty('--inset-pill-top',     `${k.inset.pill.top}px`);
+		root.setProperty('--inset-pill-left',    `${k.inset.pill.left}px`);
+		root.setProperty('--inset-popup-edge',   `${k.inset.popup.edge}px`);
+		root.setProperty('--inset-popup-side',   `${k.inset.popup.side}px`);
+		root.setProperty('--inset-credit-bottom',`${k.inset.credit.bottom}px`);
+		root.setProperty('--inset-credit-left',  `${k.inset.credit.left}px`);
+		root.setProperty('--thickness-normal',   `${k.thickness.normal}px`);
+		root.setProperty('--thickness-faint',    `${k.thickness.faint}px`);
+		root.setProperty('--thickness-fat',      `${k.thickness.fat}px`);
 	}
 
 	/**
@@ -57,7 +76,7 @@ class Configuration {
 		tick: string
 	): void {
 		const root = document.documentElement.style;
-		root.setProperty('--focus-outline', `1.5px solid ${focus}`);
+		root.setProperty('--focus-outline', `${k.thickness.bold}px solid ${focus}`);
 		root.setProperty('--bg',             background);
 		root.setProperty('--selected',       selected);
 		root.setProperty('--accent',         accent);

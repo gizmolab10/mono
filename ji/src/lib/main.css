@@ -16,6 +16,7 @@
      --radius          the region corner radius (also the Add drop box)
      --gap-details     the gap in the details stack
      --gap-preferences the gap in the preferences row
+     --gap-tight       the tight gap (stepper stack, author corner)
      --radius-banner   the small (banner / button) corner radius
      --radius-build    the build-notes card corner radius
      --radius-pill     the pill corner radius (segments, openers)
@@ -23,5 +24,18 @@
      --h-banner        the details banner height
      --h-build         the build-notes close button height
      --h-hideable      the collapsible banner button height
-     --h-pill          the operation pill height
-     --size-button     the square button size (the color-picker circle) */
+     --h-group         the operation pill height
+     --size-button     the square button size (the color-picker circle)
+     --size-cross      the close-button size (the cross drawing size)
+     --font-credit / --font-label / --font-base / --font-banner / --font-large
+                       the pixel font sizes
+     --font-hero / --font-drop
+                       the relative (em) font sizes — landing text, drop prompt
+     --inset-cluster   the hamburger corner offset
+     --inset-pill-top / --inset-pill-left        the operation pill position
+     --inset-popup-edge / --inset-popup-side     the build-notes corner controls
+     --inset-credit-bottom / --inset-credit-left the author corner
+     --thickness-normal   the standard 1px border width
+     --thickness-faint    the hairline stroke width (hamburger outline)
+     --thickness-fat      the heavy border width (drop box)
+     (thickness.bold, 1.5, is read directly by the focus-outline color push) */

@@ -10,7 +10,7 @@
 	// the show-details state is a single store the frame owns.
 	let { onAccent = false, onclick }: { onAccent?: boolean; onclick: () => void } = $props();
 
-	const hamburgerPath = svg_paths.hamburger(k.width.hamburger);
+	const hamburgerPath = svg_paths.hamburger(k.size.hamburger);
 
 	// The operations as [name, value] pairs: the label is the name (browse), the
 	// stored and compared value is the enum's letter.
@@ -18,7 +18,7 @@
 </script>
 
 <button class='hamburger-button layer-controls' class:on-accent={onAccent} {onclick} aria-label='toggle details'>
-	<svg class='hamburger-icon' viewBox='0 0 33 33' width='33' height='33'>
+	<svg class='hamburger-icon' viewBox='0 0 {k.size.hamburger} {k.size.hamburger}' width={k.size.hamburger} height={k.size.hamburger}>
 		<path d={hamburgerPath} />
 	</svg>
 </button>
@@ -37,6 +37,9 @@
 
 <style>
 	.hamburger-button {
+		border-radius   : var(--radius-banner);
+		left            : var(--inset-cluster);
+		top             : var(--inset-cluster);
 		background      : transparent;
 		cursor          : pointer;
 		padding         : 2px 6px;
@@ -44,25 +47,18 @@
 		justify-content : center;
 		color           : black;
 		position        : fixed;
-		border-radius   : var(--radius-banner);
 		display         : flex;
 		border          : none;
-		left            : 8px;
-		top             : 8px;
 	}
 
 	.hamburger-button.on-accent {
 		color : var(--text-on-accent);
 	}
 
-	.hamburger-icon {
-		overflow : visible;
-	}
-
 	.hamburger-button .hamburger-icon path {
 		fill         : currentColor;
 		stroke       : black;
-		stroke-width : 0.5px;
+		stroke-width : var(--thickness-faint);
 	}
 
 	.hamburger-button:hover .hamburger-icon path {
@@ -72,15 +68,15 @@
 	/* One pill with a segment per operation; the current segment fills --accent.
 	   Fixed beside the hamburger, so the cluster reads the same in both states. */
 	.operation {
-		border        : 1px solid black;
+		left          : var(--inset-pill-left);
+		top           : var(--inset-pill-top);
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-base);
+		border        : var(--thickness-normal) solid black;
+		height        : var(--h-group);
 		background    : var(--bg);
 		overflow      : hidden;
 		position      : fixed;
-		border-radius : var(--radius-pill);
-		height        : var(--h-pill);
-		top           : 17px;
-		left          : 56px;
-		font-size     : 13px;
 		display       : flex;
 	}
 
@@ -93,7 +89,7 @@
 	}
 
 	.segment:not(:last-child) {
-		border-right : 1px solid black;
+		border-right : var(--thickness-normal) solid black;
 	}
 
 	.segment.current {

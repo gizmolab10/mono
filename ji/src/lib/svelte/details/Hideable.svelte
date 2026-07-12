@@ -10,7 +10,6 @@
 
 	function toggle() {
 		open = !open;
-		console.log(`Banner "${title}" toggled ${open ? 'open' : 'closed'}.`);
 	}
 </script>
 
@@ -42,7 +41,7 @@
 		justify-content : center;
 		overflow        : hidden;
 		letter-spacing  : 0.03em;
-		font-size       : 14px;
+		font-size       : var(--font-banner);
 		border-radius   : var(--radius-banner);
 		height          : var(--h-hideable);
 		display         : flex;

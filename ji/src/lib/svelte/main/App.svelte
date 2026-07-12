@@ -20,7 +20,6 @@
 			$w_text_color,
 			$w_tick_color
 		);
-		console.log(`Colors: pushed theme variables. hover is ${$w_hover_color}, background is ${$w_background_color}.`);
 	});
 </script>
 

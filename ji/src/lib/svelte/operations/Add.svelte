@@ -7,8 +7,7 @@
 		event.preventDefault();
 		dragging = false;
 		const files = Array.from(event.dataTransfer?.files ?? []);
-		const summary = files.map(f => `${f.name} (${f.type || 'unknown type'}, ${f.size} bytes)`).join('; ') || 'none';
-		console.log(`Add view: dropped ${files.length} file(s): ${summary}. Not saved yet — persistence lands in a later phase.`);
+		console.log(`Add drop: received ${files.length} file(s). Saving them comes in a later phase.`);
 	}
 
 	function handleDragOver(event: DragEvent) {
@@ -47,13 +46,13 @@
 	.drop {
 		box-sizing      : border-box;
 		height          : 100%;
-		border          : 2px dashed var(--accent);
+		border          : var(--thickness-fat) dashed var(--accent);
 		border-radius   : var(--radius);
 		align-items     : center;
 		justify-content : center;
 		display         : flex;
 		color           : var(--text);
-		font-size       : 1.4em;
+		font-size       : var(--font-drop);
 		opacity         : 0.6;
 	}
 

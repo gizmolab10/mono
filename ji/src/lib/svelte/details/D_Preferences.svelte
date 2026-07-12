@@ -10,7 +10,6 @@
 		const raw = (e.target as HTMLInputElement).value;
 		const clamped = colors.clamp_luminance(raw, 0.2);
 		w_accent_color.set(clamped);
-		console.log(`Accent picker: chose ${raw}, clamped to ${clamped}.`);
 	}
 </script>
 
@@ -33,18 +32,18 @@
 	.color-group {
 		align-items : center;
 		display     : flex;
-		gap         : 8px;
+		gap         : var(--l-gap);
 	}
 
 	.label {
-		font-size : 12px;
+		font-size : var(--font-label);
 		opacity   : 0.8;
 	}
 
 	/* The visible button is this circle — we own its color fully. */
 	.picker {
 		border-radius : var(--radius-percent);
-		border        : 1px solid black;
+		border        : var(--thickness-normal) solid black;
 		background    : var(--accent);
 		box-sizing    : border-box;
 		position      : relative;

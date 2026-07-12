@@ -24,7 +24,7 @@
 		<div class='corner-stack'>
 			<button
 				class='build-opener'
-				onclick={() => { showBuildNotes = true; console.log(`Build notes: opener clicked, current build is ${buildNumber}.`); }}>
+				onclick={() => { showBuildNotes = true;  (`Build notes: opener clicked, current build is ${buildNumber}.`); }}>
 				Build {buildNumber}
 			</button>
 
@@ -32,8 +32,7 @@
 				class='author-credit'
 				href='https://jonathansand.me'
 				target='_blank'
-				rel='noopener'
-				onclick={() => console.log('Author credit clicked — opening jonathansand.me.')}>
+				rel='noopener' >
 				author: jonathan sand
 			</a>
 		</div>
@@ -52,17 +51,17 @@
 		flex-direction  : column;
 		align-items     : center;
 		height          : 100%;
-		font-size       : 8em;
+		font-size       : var(--font-hero);
 		color           : var(--text);
 		display         : flex;
 	}
 
 	.build-opener {
-		border: 1px solid black;
+		border: var(--thickness-normal) solid black;
 		border-radius: var(--radius-pill);
 		padding: 2px 10px;
 		background: white;
-		font-size: 13px;
+		font-size: var(--font-base);
 		cursor: pointer;
 		color: #888;
 	}
@@ -75,17 +74,17 @@
 		align-items     : flex-start;
 		position        : absolute;
 		flex-direction  : column;
-		bottom          : 12px;
-		left            : 16px;
+		bottom          : var(--inset-credit-bottom);
+		left            : var(--inset-credit-left);
 		display         : flex;
-		gap             : 4px;
+		gap             : var(--gap-tight);
 	}
 
 	.author-credit {
 		color           : var(--accent);
 		text-decoration : underline;
 		cursor          : pointer;
-		font-size       : 8.6px;
+		font-size       : var(--font-credit);
 	}
 
 	.author-credit:hover {
