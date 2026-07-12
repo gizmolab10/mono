@@ -31,12 +31,14 @@
 	}
 
 	:global(body) {
+		font-weight: var(--fw-normal);
 		font-family: var(--font);
 		user-select: none;
 		margin: 0;
 	}
 
 	:global(button, input, select, textarea) {
+		font-weight: var(--fw-normal);
 		font-family: var(--font);
 	}
 

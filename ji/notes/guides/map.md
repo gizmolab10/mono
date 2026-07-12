@@ -23,16 +23,17 @@ The intersection project's files. Update this when files are added, moved, or re
 
 ## src/lib/ts/ — logic
 
-- `main.ts` — app entry point; preloads the fonts, imports the Montserrat font CSS (weights 300, 400) and the global `main.css`, and pushes the stacking-layer and layout-size variables before mounting.
-- `utilities/Fonts.ts` — injects preload hints for the latin Montserrat files (300, 400) so the browser fetches them in parallel and can have them ready by the first paint, avoiding the late-swap reflow of the segments. URLs come from importing the same files the font CSS uses, so nothing hardcoded goes stale.
-- `common/Configuration.ts` — pushes CSS variables onto the page: the reactive color tokens (`--bg`, `--accent`, `--hover`, …), the static stacking-layer numbers (`--z-common` … `--z-intersection`), and the layout sizes (`--l-gap`, `--radius`, `--gap-details`, `--gap-preferences`, `--radius-banner`, `--radius-build`, `--radius-pill`, `--radius-percent`, `--h-banner`, `--h-build`, `--h-hideable`, `--h-pill`, `--size-button`, the font sizes `--font-*`, and the positions `--inset-*`) from Constants, so the stylesheets read them from one place. **⟵di** (trimmed to the color setter, plus the layer and metric pushes).
+- `main.ts` — app entry point; preloads the fonts, imports the Montserrat font CSS (weights 300, 400, 500) and the global `main.css`, and pushes the stacking-layer and layout-size variables before mounting.
+- `utilities/Fonts.ts` — injects preload hints for the latin Montserrat files (300, 400, 500) so the browser fetches them in parallel and can have them ready by the first paint, avoiding the late-swap reflow of the segments. URLs come from importing the same files the font CSS uses, so nothing hardcoded goes stale.
+- `common/Constants.ts` — the single source for sizes. A base "comfortable tap" number (35) plus groups (`font`, `pad`, `margin`, `gap`, `inset`, `radius`, `thickness`, `height`, `width`, `size`, `svg`, `layer`, `table`, `shadow`, `opacity`), most derived as fractions/multiples of the base. Change the base and the interface rescales together.
+- `common/Configuration.ts` — mirrors values onto the page as CSS variables so plain stylesheets can read them: from Constants, the stacking layers (`--z-*`) and layout sizes (`--gap`, `--radius`, `--font-*`, `--inset-*`, `--thickness-*`, `--size-*`, …) at startup; from Colors, the fixed ink colors (`--black`, `--gray`) at startup and the reactive theme tokens (`--bg`, `--accent`, `--hover`, …) whenever a color store changes. **⟵di** (trimmed to the color setter, plus the layer, metric, and ink pushes).
 - `common/Dirty.ts` — store wrappers that mark the canvas out of date. **⟵di**.
 - `common/Enumerations.ts` — app enums; holds `T_Operation` (browse / add / search) as a string enum.
 - `common/Extensions.ts` — String and Number prototype additions. **⟵di**.
 - `managers/Preferences.ts` — settings saved to the browser. **⟵di**.
+- `managers/Operations.ts` — the shared `w_operation` store for which view the content area shows (`browse` / `add` / `search`, or null for the arrival landing); persisted, defaults to null.
 - `types/Angle.ts`, `types/Coordinates.ts`, `types/Types.ts` — angle math, points/sizes/rects, shared types. **⟵di**.
-- `types/Operations.ts` — the `T_Operations` type and the shared `w_operation` store for which view the content area shows (`browse` / `add` / `search`).
-- `utilities/Colors.ts` — the color math and the reactive theme stores. **⟵di**.
+- `utilities/Colors.ts` — the color math, the reactive theme stores, and the fixed design colors including the ink `black` (`#1a1a1a`, never `#000`) and `gray`. **⟵di**.
 - `utilities/SVG_Paths.ts` — SVG path generators, including the close-button cross. **⟵di**.
 
 ## src/lib/ — global styles

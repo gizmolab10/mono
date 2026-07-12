@@ -32,7 +32,7 @@
 	}
 
 	.banner {
-		color           : rgba(0, 0, 0, 1);
+		color           : var(--black);
 		background      : var(--bg);
 		text-transform  : lowercase;
 		position        : relative;
@@ -40,15 +40,15 @@
 		align-items     : center;
 		justify-content : center;
 		overflow        : hidden;
-		letter-spacing  : 0.03em;
+		letter-spacing  : var(--tracking);
 		font-size       : var(--font-banner);
 		border-radius   : var(--radius-banner);
-		height          : var(--h-hideable);
+		height          : var(--height-hideable);
 		display         : flex;
 		border          : none;
 		outline         : none;
 		width           : 100%;
-		font-weight     : 300;
+		font-weight     : var(--fw-banner);
 	}
 
 	.banner::before {
@@ -71,6 +71,6 @@
 		background    : var(--bg);
 		position      : relative;
 		border-radius : var(--radius-banner);
-		padding       : 8px;
+		padding       : var(--pad-slot);
 	}
 </style>

@@ -1,4 +1,5 @@
 import { k } from './Constants';
+import { colors } from '../utilities/Colors';
 
 class Configuration {
 
@@ -24,28 +25,31 @@ class Configuration {
 	 */
 	configure_metrics(): void {
 		const root = document.documentElement.style;
-		root.setProperty('--l-gap',           `${k.gap.intersection}px`);
-		root.setProperty('--radius',          `${k.radius.corner.main}px`);
-		root.setProperty('--gap-details',     `${k.gap.details}px`);
-		root.setProperty('--gap-preferences', `${k.gap.preferences}px`);
-		root.setProperty('--gap-tight',       `${k.gap.tight}px`);
-		root.setProperty('--radius-banner',   `${k.radius.corner.banner}px`);
-		root.setProperty('--radius-build',    `${k.radius.corner.build}px`);
-		root.setProperty('--radius-pill',     `${k.radius.corner.pill}px`);
-		root.setProperty('--radius-percent',  `${k.radius.percent}%`);
-		root.setProperty('--h-banner',        `${k.height.banner}px`);
-		root.setProperty('--h-group',         `${k.height.group}px`);
-		root.setProperty('--h-hideable',      `${k.height.hideable}px`);
-		root.setProperty('--h-pill',          `${k.height.pill}px`);
-		root.setProperty('--size-button',     `${k.size.button}px`);
-		root.setProperty('--size-cross',      `${k.size.cross}px`);
-		root.setProperty('--font-credit',     `${k.font.credit}px`);
-		root.setProperty('--font-label',      `${k.font.label}px`);
-		root.setProperty('--font-base',       `${k.font.base}px`);
-		root.setProperty('--font-banner',     `${k.font.banner}px`);
-		root.setProperty('--font-large',      `${k.font.large}px`);
-		root.setProperty('--font-hero',       `${k.font.em.big}em`);
-		root.setProperty('--font-drop',       `${k.font.em.small}em`);
+		root.setProperty('--gap',                `${k.gap.intersection}px`);
+		root.setProperty('--gap-preferences',    `${k.gap.preferences}px`);
+		root.setProperty('--gap-details',        `${k.gap.details}px`);
+		root.setProperty('--gap-tight',          `${k.gap.tight}px`);
+		root.setProperty('--radius',             `${k.radius.corner.main}px`);
+		root.setProperty('--radius-banner',      `${k.radius.corner.banner}px`);
+		root.setProperty('--radius-build',       `${k.radius.corner.build}px`);
+		root.setProperty('--radius-pill',        `${k.radius.corner.pill}px`);
+		root.setProperty('--radius-percent',     `${k.radius.percent}%`);
+		root.setProperty('--height-hideable',    `${k.height.hideable}px`);
+		root.setProperty('--height-banner',      `${k.height.banner}px`);
+		root.setProperty('--height-group',       `${k.height.group}px`);
+		root.setProperty('--height-pill',        `${k.height.pill}px`);
+		root.setProperty('--size-button',        `${k.size.button}px`);
+		root.setProperty('--size-cross',         `${k.size.cross}px`);
+		root.setProperty('--font-credit',        `${k.font.credit}px`);
+		root.setProperty('--font-label',         `${k.font.label}px`);
+		root.setProperty('--font-base',          `${k.font.base}px`);
+		root.setProperty('--font-banner',        `${k.font.banner}px`);
+		root.setProperty('--font-large',         `${k.font.large}px`);
+		root.setProperty('--font-hero',          `${k.font.em.big}em`);
+		root.setProperty('--font-drop',          `${k.font.em.small}em`);
+		root.setProperty('--fw-normal',          `${k.font.weight.normal}`);
+		root.setProperty('--fw-banner',          `${k.font.weight.banner}`);
+		root.setProperty('--fw-title',           `${k.font.weight.title}`);
 		root.setProperty('--inset-cluster',      `${k.inset.cluster}px`);
 		root.setProperty('--inset-pill-top',     `${k.inset.pill.top}px`);
 		root.setProperty('--inset-pill-left',    `${k.inset.pill.left}px`);
@@ -56,6 +60,34 @@ class Configuration {
 		root.setProperty('--thickness-normal',   `${k.thickness.normal}px`);
 		root.setProperty('--thickness-faint',    `${k.thickness.faint}px`);
 		root.setProperty('--thickness-fat',      `${k.thickness.fat}px`);
+		root.setProperty('--tracking',           `${k.font.em.tracking}em`);
+		// Paddings pushed as ready-to-use shorthands (top/right/bottom/left where needed).
+		root.setProperty('--pad-slot',           `${k.pad.slot}px`);
+		root.setProperty('--pad-hamburger',      `${k.pad.hamburger.y}px ${k.pad.hamburger.x}px`);
+		root.setProperty('--pad-segment',        `${k.pad.segment.y}px ${k.pad.segment.x}px`);
+		root.setProperty('--pad-opener',         `${k.pad.opener.y}px ${k.pad.opener.x}px`);
+		root.setProperty('--pad-modal',          `${k.pad.modal.y}px ${k.pad.modal.x}px`);
+		root.setProperty('--pad-stepper',        `${k.pad.stepper.y}px ${k.pad.stepper.x}px`);
+		root.setProperty('--pad-view',           `${k.pad.view.top}px ${k.pad.view.x}px ${k.pad.view.x}px`);
+		root.setProperty('--pad-cell',           `${k.pad.cell.y}px ${k.pad.cell.x}px ${k.pad.cell.y}px 0`);
+		root.setProperty('--margin-header',      `${k.margin.header}px`);
+		root.setProperty('--notes-build',        `${k.table.build}px`);
+		root.setProperty('--notes-date',         `${k.table.date}px`);
+		root.setProperty('--shadow-modal',       `0 ${k.shadow.y}px ${k.shadow.blur}px color-mix(in srgb, var(--black) ${k.shadow.ink}%, transparent)`);
+		root.setProperty('--opacity-drop',       `${k.opacity.drop}`);
+		root.setProperty('--opacity-header',     `${k.opacity.header}`);
+		root.setProperty('--opacity-label',      `${k.opacity.label}`);
+	}
+
+	/**
+	 * Push the fixed (non-theme) ink colors onto the document root — one black for
+	 * everything (never #000) and the muted gray. Static, so pushed once at startup.
+	 */
+	configure_inks(): void {
+		const root = document.documentElement.style;
+		root.setProperty('--black', colors.black);
+		root.setProperty('--white', colors.white);
+		root.setProperty('--gray',  colors.gray);
 	}
 
 	/**

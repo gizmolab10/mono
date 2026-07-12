@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ji/notes/work/handoff.md",
+                "file": "ji/notes/work/db spec.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "handoff"
+              "title": "db spec"
             }
           },
           {
@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ji/notes/work/code debt.md",
+                "file": "ji/notes/work/intersection spec.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code debt"
+              "title": "intersection spec"
             }
           },
           {
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/code debt.md",
+                "file": "ji/notes/work/intersection spec.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of intersection spec"
             }
           },
           {
@@ -253,6 +253,11 @@
   },
   "active": "b9af425fc56f232b",
   "lastOpenFiles": [
+    "ji/src/lib/svelte/main/BuildNotes.svelte.tmp.10633.5e15bba66bb5",
+    "ji/notes/work/handoff.md",
+    "ji/notes/work/intersection spec.md",
+    "ji/notes/work/db spec.md",
+    "ji/notes/work/code debt.md",
     "ji/src/lib/svelte/operations/Add.svelte.tmp.10633.4b3212f4645f",
     "ji/src/lib/ts/common/Configuration.ts.tmp.10633.4d1dca2f1066",
     "ji/src/lib/main.css.tmp.10633.0530f2c03f27",
@@ -263,10 +268,8 @@
     "ji/src/lib/ts/utilities/Fonts.ts",
     "ji/src/lib/ts/managers/Fonts.ts",
     "ji/src/lib/svelte/main/Intersection.svelte.tmp.15558.0b2bef164507",
-    "ji/src/lib/svelte/main/Controls.svelte",
     "ji/notes/work/work journal.md",
     "ji/src/lib/md/builds.md",
-    "ji/notes/work/code debt.md",
     "di/notes/work/now/34.dimensionals/index.md",
     "di/notes/work/mothballs/index.md",
     "di/notes/work/ai/index.md",
@@ -283,12 +286,9 @@
     "node_modules/@vitest/mocker/node_modules/vite/README.md",
     "node_modules/@fontsource/montserrat/README.md",
     "node_modules/@fontsource/montserrat/CHANGELOG.md",
-    "ji/notes/work/handoff.md",
     "di/notes/work/now/code.debt.md",
     "notes/guides/collaborate/workflow.md",
     "ji/notes/guides/map.md",
-    "ji/notes/guides/notes map.md",
-    "ji/notes/guides/roadmap.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

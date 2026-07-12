@@ -37,7 +37,7 @@
 		align-items     : center;
 		justify-content : center;
 		border-radius   : var(--radius-banner);
-		height          : var(--h-banner);
+		height          : var(--height-banner);
 		width           : 100%;
 		display         : flex;
 		border          : none;

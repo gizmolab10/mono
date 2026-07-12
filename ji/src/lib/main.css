@@ -5,14 +5,25 @@
    these classes read them. Put an element on a layer by adding its class — the
    number stays in one place. */
 
-.layer-common       { z-index: var(--z-common); }
-.layer-hideable     { z-index: var(--z-hideable); }
-.layer-controls     { z-index: var(--z-controls); }
-.layer-intersection { z-index: var(--z-intersection); }
+.layer-common {
+   z-index: var(--z-common);
+}
+
+.layer-hideable {
+   z-index: var(--z-hideable);
+}
+
+.layer-controls {
+   z-index: var(--z-controls);
+}
+
+.layer-intersection {
+   z-index: var(--z-intersection);
+}
 
 /* Layout sizes, also pushed from Constants at startup (see
    Configuration.configure_metrics), read by component styles as:
-     --l-gap           the frame inset / gap between regions
+     --gap           the frame inset / gap between regions
      --radius          the region corner radius (also the Add drop box)
      --gap-details     the gap in the details stack
      --gap-preferences the gap in the preferences row
@@ -21,10 +32,10 @@
      --radius-build    the build-notes card corner radius
      --radius-pill     the pill corner radius (segments, openers)
      --radius-percent  the circle radius (50%)
-     --h-banner        the details banner height
-     --h-build         the build-notes close button height
-     --h-hideable      the collapsible banner button height
-     --h-group         the operation pill height
+     --height-banner        the details banner height
+     --height-build         the build-notes close button height
+     --height-hideable      the collapsible banner button height
+     --height-group         the operation pill height
      --size-button     the square button size (the color-picker circle)
      --size-cross      the close-button size (the cross drawing size)
      --font-credit / --font-label / --font-base / --font-banner / --font-large
@@ -38,4 +49,18 @@
      --thickness-normal   the standard 1px border width
      --thickness-faint    the hairline stroke width (hamburger outline)
      --thickness-fat      the heavy border width (drop box)
-     (thickness.bold, 1.5, is read directly by the focus-outline color push) */
+     --fw-normal          the base font weight (body + controls) — the one bold knob
+     --fw-banner          one step lighter — the collapsible banner
+     --fw-title           two steps lighter — the popup title
+     --tracking           the banner letter-spacing (em)
+     --pad-slot / --pad-hamburger / --pad-segment / --pad-opener /
+       --pad-modal / --pad-stepper / --pad-view / --pad-cell
+                          ready-to-use padding shorthands
+     --margin-header      the build-notes header bottom margin
+     --notes-build / --notes-date   the build-notes column widths
+     --shadow-modal       the popup drop shadow (offset/blur + a mix of --black)
+     --opacity-drop / --opacity-header / --opacity-label   the dimming levels
+     (thickness.bold, 1.5, is read directly by the focus-outline color push)
+
+   Ink colors, pushed from Colors (see Configuration.configure_inks):
+     --black  #1a1a1a (never #000)   --white  #ffffff   --gray  #888 */

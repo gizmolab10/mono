@@ -57,13 +57,13 @@
 
 	<div class='main'>
 		{#if !showBuildNotes}
+			<Controls onclick={toggleDetails} onAccent={$w_show_details} />
 			{#if $w_show_details}
 				<Details width={detailsWidth} />
 			{/if}
 			<div class='region content' style:width='{contentWidth}px'>
 				<Activity bind:showBuildNotes />
 			</div>
-			<Controls onclick={toggleDetails} onAccent={$w_show_details} />
 		{/if}
 	</div>
 </div>
@@ -85,13 +85,13 @@
 		flex-direction : column;
 		position       : fixed;
 		display        : flex;
-		padding        : var(--l-gap);
+		padding        : var(--gap);
 		top            : 0;
 		left           : 0;
 	}
 
 	.main {
-		gap        : var(--l-gap);
+		gap        : var(--gap);
 		overflow   : hidden;
 		display    : flex;
 		min-height : 0;
@@ -110,7 +110,7 @@
 	}
 
 	.build-backdrop {
-		background: color-mix(in srgb, #000 40%, transparent);
+		background: color-mix(in srgb, var(--black) 40%, transparent);
 		justify-content: center;
 		align-items: center;
 		position: fixed;

@@ -2,6 +2,23 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-12 — design tokens complete + ws store scouted
+
+- **Everything is a token now.** Extended the one-source system past sizes to cover every remaining design value: paddings and the header margin, the table column widths, font weight, letter-spacing, the two ink blacks/whites/gray, the popup shadow, and the dimming opacities. Each lives once in Constants (or Colors), is mirrored to a CSS variable at startup, and read with `var(...)`. No size, color, font, weight, spacing, border, radius, inset, shadow, or opacity is hardcoded in a component anymore — only structural `100%` fills and `0` resets remain.
+- **One knob for bold.** Font weight is a single base number with two derived weights (banner, title); the whole interface's weight moves with it.
+- **Ink colors joined the color pattern.** `black` (`#1a1a1a`, never `#000`), `white`, and `gray` live in Colors and push through Configuration, same as the theme tokens.
+- **Fonts read bolder.** Loaded the medium Montserrat weight and preload it, so the heavier text is a real face, not browser-faked. (A wider bold range would want the variable font, which isn't installed.)
+- **Small UI.** The build-notes close button fills with the hover color on pointer-over.
+- **Scouted ws's document store** and wrote `notes/work/db spec.md` — what the ws persistence engine does (registry, base CRUD, the kept backends, the localStorage primitive), minus airtable/bubble/hierarchy. Finding: don't port the framework (it drags in Firebase + a large engine); ji needs only the local pattern — one localStorage key holding a JSON list of records.
+
+## 2026-07-11 — design tokens: every size derived from one base number
+
+- **One source for all sizes.** Every hardcoded number in the components — corner radii, heights, gaps, insets, font sizes, border widths, icon sizes — now comes from a single Constants file, where almost everything is a fraction or multiple of one base "comfortable tap" size (35). Change that one number and the whole interface rescales together.
+- **The bridge.** Plain stylesheets can't read the TypeScript Constants, so a startup step mirrors the values onto the page as CSS variables (stacking layers, then all the layout sizes). A small global stylesheet (`main.css`) holds the stacking-layer classes; every component reads the rest with `var(...)`. Colors already worked this way; layers, metrics, fonts, insets, thicknesses, and icon sizes now do too.
+- **Swept in waves.** Went value-family by value-family (radii, heights, gaps, fonts, insets, borders, icon sizes), each time finding every occurrence, routing it through the bridge, and confirming none were left. A few values shifted a fraction of a pixel where a tidy ratio replaced a round number — intended.
+- **Icons on the size scale.** The hamburger and close-cross svgs now take their drawing and render sizes from the size constants; the hamburger box was made to match its drawing, so the old "let it spill over" setting could go.
+- **Small UI.** The build-notes close button now fills with the hover color on pointer-over.
+
 ## 2026-07-11 — segmented control, arrival default, font twitch
 
 - **Renames + reshuffle.** The layout frame is now Intersection (was Main), the content region is Activity (was Content), and the details-toggle icon is Controls (was Hamburger). The operation names moved into their own file under common as a small enum (browse / add / search, stored as one-letter codes).

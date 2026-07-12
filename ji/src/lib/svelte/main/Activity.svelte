@@ -18,7 +18,6 @@
 	{:else}
 		<div class='centered'>
 			<div>Intersection</div>
-			<div>Hey, bro!</div>
 		</div>
 
 		<div class='corner-stack'>
@@ -30,10 +29,10 @@
 
 			<a
 				class='author-credit'
-				href='https://jonathansand.me'
+				href='https://designintuition.app'
 				target='_blank'
 				rel='noopener' >
-				author: jonathan sand
+				also by: jonathan sand
 			</a>
 		</div>
 	{/if}
@@ -47,23 +46,23 @@
 	}
 
 	.centered {
+		font-size       : var(--font-hero);
+		color           : var(--text);
 		justify-content : center;
 		flex-direction  : column;
 		align-items     : center;
 		height          : 100%;
-		font-size       : var(--font-hero);
-		color           : var(--text);
 		display         : flex;
 	}
 
 	.build-opener {
-		border: var(--thickness-normal) solid black;
+		border: var(--thickness-normal) solid var(--black);
 		border-radius: var(--radius-pill);
-		padding: 2px 10px;
-		background: white;
 		font-size: var(--font-base);
+		padding: var(--pad-opener);
+		background: var(--white);
+		color: var(--gray);
 		cursor: pointer;
-		color: #888;
 	}
 
 	.build-opener:hover {
@@ -71,20 +70,20 @@
 	}
 
 	.corner-stack {
+		bottom          : var(--inset-credit-bottom);
+		left            : var(--inset-credit-left);
+		gap             : var(--gap-tight);
 		align-items     : flex-start;
 		position        : absolute;
 		flex-direction  : column;
-		bottom          : var(--inset-credit-bottom);
-		left            : var(--inset-credit-left);
 		display         : flex;
-		gap             : var(--gap-tight);
 	}
 
 	.author-credit {
-		color           : var(--accent);
+		font-size       : var(--font-credit);
+		color           : var(--text);
 		text-decoration : underline;
 		cursor          : pointer;
-		font-size       : var(--font-credit);
 	}
 
 	.author-credit:hover {

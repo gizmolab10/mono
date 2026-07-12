@@ -42,10 +42,10 @@
 		top             : var(--inset-cluster);
 		background      : transparent;
 		cursor          : pointer;
-		padding         : 2px 6px;
+		padding         : var(--pad-hamburger);
 		align-items     : center;
 		justify-content : center;
-		color           : black;
+		color           : var(--black);
 		position        : fixed;
 		display         : flex;
 		border          : none;
@@ -57,7 +57,7 @@
 
 	.hamburger-button .hamburger-icon path {
 		fill         : currentColor;
-		stroke       : black;
+		stroke       : var(--black);
 		stroke-width : var(--thickness-faint);
 	}
 
@@ -72,9 +72,9 @@
 		top           : var(--inset-pill-top);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-base);
-		border        : var(--thickness-normal) solid black;
-		height        : var(--h-group);
-		background    : var(--bg);
+		border        : var(--thickness-normal) solid var(--black);
+		height        : var(--height-group);
+		background    : var(--white);
 		overflow      : hidden;
 		position      : fixed;
 		display       : flex;
@@ -83,13 +83,13 @@
 	.segment {
 		background : transparent;
 		color      : var(--text);
-		padding    : 2px 10px;
+		padding    : var(--pad-segment);
 		cursor     : pointer;
 		border     : none;
 	}
 
 	.segment:not(:last-child) {
-		border-right : var(--thickness-normal) solid black;
+		border-right : var(--thickness-normal) solid var(--black);
 	}
 
 	.segment.current {

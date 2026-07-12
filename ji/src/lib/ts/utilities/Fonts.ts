@@ -9,8 +9,9 @@
 
 import url300 from '@fontsource/montserrat/files/montserrat-latin-300-normal.woff2';
 import url400 from '@fontsource/montserrat/files/montserrat-latin-400-normal.woff2';
+import url500 from '@fontsource/montserrat/files/montserrat-latin-500-normal.woff2';
 
-for (const href of [url400, url300]) {
+for (const href of [url500, url400, url300]) {
 	const link = document.createElement('link');
 	link.rel         = 'preload';
 	link.as          = 'font';

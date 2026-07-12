@@ -2,6 +2,7 @@
 const common_size = 35;				// minimum fingertip touch size
 const common_gap = common_size / 5;
 const common_thickness = common_gap / 7;
+const bold = 550;					// single source of truth about bold
 
 // missing: 50% circles
 
@@ -13,18 +14,24 @@ export default class Constants {
 		banner		 : common_size * 0.4,		// 14
 		large		 : common_size / 2,			// 17.5
 		em : {
+			tracking : 0.03,			// em — the banner letter-spacing
 			small	 : 1.4,
 			big		 : 8,
+		},
+		weight : {
+			normal	 : bold,			// 550 — body + controls
+			banner	 : bold + 100,		// 650 — the collapsible banner
+			title	 : bold + 200,		// 750 — the popup title
 		},
 	};
 	pad = {
 		slot		 : 8,
 		hamburger	 : { y: 2, x: 6 },
+		stepper		 : { y: 0, x: 4 },
 		segment		 : { y: 2, x: 10 },
 		opener		 : { y: 2, x: 10 },
 		modal		 : { y: 16, x: 20 },
 		view		 : { top: 52, x: 24 },
-		stepper		 : { y: 0, x: 4 },
 		cell		 : { y: common_gap / 2, x: common_gap },		// left is 0
 	};
 	radius = {
@@ -77,6 +84,20 @@ export default class Constants {
 		button		 : common_size / 1.25,
 		cross	  	 : common_size / 1.6,
 		hamburger	 : common_size,
+	};
+	shadow = {
+		y			 : 2,
+		blur		 : 8,
+		ink			 : 20,		// % of --black mixed into the drop shadow
+	};
+	opacity = {
+		drop		 : 0.6,		// the faded drop-here prompt
+		header		 : 0.7,		// the muted table header
+		label		 : 0.8,		// the preferences label
+	};
+	table = {
+		build		 : 50,
+		date		 : 120,
 	};
 	margin = {
 		header		 : common_gap * 1.7,

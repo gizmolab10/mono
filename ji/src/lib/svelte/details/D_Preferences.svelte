@@ -32,18 +32,18 @@
 	.color-group {
 		align-items : center;
 		display     : flex;
-		gap         : var(--l-gap);
+		gap         : var(--gap);
 	}
 
 	.label {
 		font-size : var(--font-label);
-		opacity   : 0.8;
+		opacity   : var(--opacity-label);
 	}
 
 	/* The visible button is this circle — we own its color fully. */
 	.picker {
 		border-radius : var(--radius-percent);
-		border        : var(--thickness-normal) solid black;
+		border        : var(--thickness-normal) solid var(--black);
 		background    : var(--accent);
 		box-sizing    : border-box;
 		position      : relative;

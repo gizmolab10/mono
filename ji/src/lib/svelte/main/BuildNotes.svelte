@@ -62,7 +62,7 @@
 	</div>
 	<button class='close' aria-label='close' onclick={onclose}>
 		<svg class='cross' width={k.svg.cross} height={k.svg.cross} viewBox='0 0 {k.size.cross} {k.size.cross}'>
-			<path d={crossPath} fill='none' stroke='#1a1a1a' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+			<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
 		</svg>
 	</button>
 	<div class='header'>
@@ -91,11 +91,11 @@
 <style>
 	.modal {
 		border-radius	: var(--radius-build);
-		box-shadow	 	: 0 2px 8px rgba(0, 0, 0, 0.2);
+		box-shadow	 	: var(--shadow-modal);
 		font-size	 	: var(--font-banner);
-		background	 	: #ffffff;
-		color		 	: #1a1a1a;
-		padding		 	: 16px 20px;
+		background	 	: var(--white);
+		color		 	: var(--black);
+		padding		 	: var(--pad-modal);
 		position	 	: relative;
 	}
 
@@ -115,16 +115,16 @@
 
 	.stepper, .close {
 		font-size  		: var(--font-large);
-		color      		: #1a1a1a;
+		color      		: var(--black);
 		cursor     		: pointer;
-		padding    		: 0 4px;
+		padding    		: var(--pad-stepper);
 		background 		: none;
 		border     		: none;
 		line-height		: 1;
 	}
 
 	.close {
-		border			: var(--thickness-normal) solid #1a1a1a;
+		border			: var(--thickness-normal) solid var(--black);
 		border-radius	: var(--radius-percent);
 		width			: var(--size-cross);
 		height			: var(--size-cross);
@@ -143,16 +143,20 @@
 		display			: block;
 	}
 
+	.cross path {
+		stroke			: var(--black);
+	}
+
 	.header {
 		justify-content	: center;
 		align-items		: center;
-		margin-bottom	: 12px;
+		margin-bottom	: var(--margin-header);
 		display			: flex;
 	}
 
 	.title {
 		font-size		: var(--font-large);
-		font-weight		: 300;
+		font-weight		: var(--fw-title);
 	}
 
 	table {
@@ -162,20 +166,20 @@
 
 	th {
 		border-bottom	: var(--thickness-normal) solid currentColor;
-		padding			: 4px 8px 4px 0;
+		padding			: var(--pad-cell);
 		text-align		: left;
-		opacity			: 0.7;
+		opacity			: var(--opacity-header);
 	}
 
 	td {
-		padding			: 4px 8px 4px 0;
+		padding			: var(--pad-cell);
 	}
 
 	th:first-child, td:first-child {
-		width			: 50px;
+		width			: var(--notes-build);
 	}
 
 	th:nth-child(2), td:nth-child(2) {
-		width			: 120px;
+		width			: var(--notes-date);
 	}
 </style>

@@ -40,7 +40,7 @@
 		position   : relative;
 		height     : 100%;
 		width      : 100%;
-		padding    : 52px 24px 24px;
+		padding    : var(--pad-view);
 	}
 
 	.drop {
@@ -53,7 +53,7 @@
 		display         : flex;
 		color           : var(--text);
 		font-size       : var(--font-drop);
-		opacity         : 0.6;
+		opacity         : var(--opacity-drop);
 	}
 
 	.drop.dragging {

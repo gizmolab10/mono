@@ -25,10 +25,10 @@ import { get } from 'svelte/store';
 
 export class Colors {
 	so_hover_color	  = 'red';					 // derived from edge color
-	default			  = 'black';
-	border			  = 'darkgray';
+	gray			  = '#888';
 	banner			  = '#f8f8f8';
-	focus			  = 'cornflowerblue';
+	black			  = '#1a1a1a';				// the one ink black — never #000
+	white			  = '#ffffff';
 	dimension_color	  = 'rgb(60, 120, 220)';	// derived from edge color
 	so_selected_color = 'rgb(120, 120, 120)';	// derived from edge color
 
@@ -55,8 +55,8 @@ export class Colors {
 	private accent_to_background(accent : string) : string {
 		const hsba = this.color_toHSBA(accent);
 		if (!hsba) return '#F9E4BE';
-		hsba.s = hsba.s * 0.25;   // much less saturation
-		hsba.b = Math.min(100, hsba.b * 1.3 + 20);  // push toward bright
+		hsba.s = hsba.s * 0.35;   // much less saturation
+		hsba.b = Math.min(95, hsba.b * 1.3 + 20);  // push toward bright
 		const rgba = this.HSBA_toRGBA(hsba);
 		return this.RGBA_toHex(rgba);
 	}
@@ -200,7 +200,7 @@ export class Colors {
 			}
 			return this.RGBA_toHex(rgba);
 		}
-		return this.default;
+		return this.black;
 	}
 
 	// ═══════════════════════════════════════════════════════════════════════════
