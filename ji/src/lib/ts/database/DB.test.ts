@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { DB_Local } from './DB_Local';
 import { T_DocumentKind } from './DB_Records';
 
-// A tiny in-memory stand-in for browser storage, so the local backend runs
+// A tiny in-memory stand-in for browser storage, so the local storage runs
 // under a plain node test.
 class Fake_Storage {
 	private map = new Map<string, string>();
@@ -22,7 +22,7 @@ describe('local document store', () => {
 		db.fetch_all();
 		const doc = db.add_document('notes.txt', T_DocumentKind.text, 'hello');
 
-		// a fresh backend reads the same browser storage — the document survives
+		// a fresh storage reads the same browser storage — the document survives
 		const reloaded = new DB_Local();
 		reloaded.fetch_all();
 		const listed = reloaded.list_documents();

@@ -2,6 +2,14 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-13 — document store built
+
+- **Built the database repository** from [[db spec]] and [[db proposal]]. It's the ws plugin store ported whole — a registry that swaps storages, a shared base carrying the save / load / add / delete, thin storage subclasses — but the data is ji's own: five records (documents, tags, tagging, relationships, predicates) plus the document bytes kept outside the store.
+- **Records live in browser storage,** each storage under its own name so two never collide. The bytes go through a read-by-id / write-by-id seam; the local storage parks them in browser storage for now (real files on disk come later).
+- **Reads run off in-memory lookups** rebuilt on load — never saved. List documents walks the parent graph from each root (a node can have many parents; the walk won't loop). Filter by category is one lookup. An inbox lists the untagged. Delete is a cascade: drop the links and the bytes, no orphans left.
+- **Only the local storage is built;** the cloud one (firestore + Google's file store) is a drop-in for later, no changes to the base. Proven with a driven test — save a document and list it back after a reload, tag and filter, ordered children under a parent, delete leaves nothing behind. Type-check clean.
+- **Killed the earlier flat one-record store** — it was the wrong shape (a plugin engine, not a single localStorage call).
+
 ## 2026-07-12 — design tokens complete + ws store scouted
 
 - **Everything is a token now.** Extended the one-source system past sizes to cover every remaining design value: paddings and the header margin, the table column widths, font weight, letter-spacing, the two ink blacks/whites/gray, the popup shadow, and the dimming opacities. Each lives once in Constants (or Colors), is mirrored to a CSS variable at startup, and read with `var(...)`. No size, color, font, weight, spacing, border, radius, inset, shadow, or opacity is hardcoded in a component anymore — only structural `100%` fills and `0` resets remain.
@@ -9,7 +17,7 @@ Reverse chronological log of finished work on ji (the Jeff intersection project)
 - **Ink colors joined the color pattern.** `black` (`#1a1a1a`, never `#000`), `white`, and `gray` live in Colors and push through Configuration, same as the theme tokens.
 - **Fonts read bolder.** Loaded the medium Montserrat weight and preload it, so the heavier text is a real face, not browser-faked. (A wider bold range would want the variable font, which isn't installed.)
 - **Small UI.** The build-notes close button fills with the hover color on pointer-over.
-- **Scouted ws's document store** and wrote `notes/work/db spec.md` — what the ws persistence engine does (registry, base CRUD, the kept backends, the localStorage primitive), minus airtable/bubble/hierarchy. Finding: don't port the framework (it drags in Firebase + a large engine); ji needs only the local pattern — one localStorage key holding a JSON list of records.
+- **Scouted ws's document store** and wrote `notes/work/db spec.md` — what the ws persistence engine does (registry, base CRUD, the kept storages, the localStorage primitive), minus airtable/bubble/hierarchy. Finding: don't port the framework (it drags in Firebase + a large engine); ji needs only the local pattern — one localStorage key holding a JSON list of records.
 
 ## 2026-07-11 — design tokens: every size derived from one base number
 

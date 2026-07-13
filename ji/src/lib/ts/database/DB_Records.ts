@@ -1,11 +1,11 @@
-// The five db record shapes plus the backend/kind/predicate enumerations.
+// The five db record shapes plus the storage/kind/predicate enumerations.
 // A document's bytes (its blob) live outside the db and are reached by the
-// document's id through the backend's blob seam — see DB_Common.
+// document's id through the storage's blob seam — see DB_Common.
 
-// Which backend holds a document's blob.
-export enum T_Backend {
-	remote = 'remote',
-	local  = 'local',
+// Which storage holds a document's blob.
+export enum T_Storage {
+	firebase = 'firebase',
+	local = 'local',
 }
 
 // What a document's bytes are, so the UI can open or show it.
@@ -28,9 +28,9 @@ export enum T_Record {
 // A stored document: a handle to its blob plus what we show about it.
 export interface Document {
 	kind     : T_DocumentKind;
-	backend  : T_Backend;
+	storage  : T_Storage;
 	id       : string;
-	blob_id  : string;         // reference the backend resolves to the actual bytes
+	blob_id  : string;         // reference the storage resolves to the actual bytes
 	name     : string;
 	date     : number;         // created/modified, milliseconds since epoch
 }

@@ -1,8 +1,8 @@
 import { T_Record } from './DB_Records';
 
 // Per-record bookkeeping, held only in memory (never saved). It tracks which
-// records still need saving, grouped by record kind. A local backend re-saves
-// every record and just clears this; a remote backend saves only what is dirty.
+// records still need saving, grouped by record kind. A local storage re-saves
+// every record and just clears this; a remote storage saves only what is dirty.
 // The last-modified date lives on the Document record itself, so it survives a
 // reload — this object holds only the throwaway dirty state.
 

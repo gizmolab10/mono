@@ -6,14 +6,14 @@ How to build the store [[db spec]] describes: the ws plugin architecture ported 
 
 Three layers plus bookkeeping, exactly as the spec's Layers 1–3:
 
-- **Registry** — holds one live backend instance per kind, tracks the active one in a store, reads the choice from a saved setting, swaps and rebuilds on change.
+- **Registry** — holds one live storage instance per kind, tracks the active one in a store, reads the choice from a saved setting, swaps and rebuilds on change.
 - **Shared base** — the common load-all / save-all, the per-record create/change/delete hooks, the local save and load loops, and the read-blob / write-blob seam. Carries a persistence kind (local or remote) and the flags read off it.
 - **Backends** — thin subclasses. ji builds two: local (records in browser storage, blobs as files on disk) and firestore (records in the cloud, blobs in the Google blob store). Each fills the blob seam its own way.
 - **Per-record bookkeeping** — a small object per record holding the in-memory dirty flag. The last-modified date lives on the Document record itself, not here (so it survives a reload).
 
 ## The data (five records + external blob)
 
-- **Document** — id, blob reference, name, backend type, kind, created/modified date.
+- **Document** — id, blob reference, name, storage type, kind, created/modified date.
 - **Tag** — id, name.
 - **Tagging** — id, tag id, document id (many-to-many).
 - **Relationship** — id, predicate id, parent id, child id, sort position (ordered graph, many parents allowed).
@@ -37,22 +37,22 @@ A cascade: drop the tagging rows, drop the relationship rows (as parent or child
 ## Proposed files (ji)
 
 - `database/DB_Common.ts` — the shared base: kind, flags, load-all / save-all, per-record hooks, local save/load loops, blob seam.
-- `database/DB_Local.ts` — local backend: records in browser storage, blobs as files on disk.
-- `database/DB_Firestore.ts` — firestore backend: records in the cloud, blobs in the Google blob store, the Document's blob reference holding the path.
-- `database/Databases.ts` — the registry: instance cache, active-backend store, saved choice, the ring.
+- `database/DB_Local.ts` — local storage: records in browser storage, blobs as files on disk.
+- `database/DB_Firestore.ts` — firestore storage: records in the cloud, blobs in the Google blob store, the Document's blob reference holding the path.
+- `database/Databases.ts` — the registry: instance cache, active-storage store, saved choice, the ring.
 - `database/Indexes.ts` — the three in-memory indexes and the derived roots / untagged sets.
 - `persistable/Persistable.ts` — per-record dirty-flag bookkeeping.
 - `types/` — the five record shapes.
-- `managers/Preferences.ts` — per-backend namespaced read/write, plus the active-backend setting key.
+- `managers/Preferences.ts` — per-storage namespaced read/write, plus the active-storage setting key.
 
 ## Build order
 
-1. Record shapes + the base with the local backend and local save/load loops. Prove save-a-document-and-list-it-back with browser storage.
+1. Record shapes + the base with the local storage and local save/load loops. Prove save-a-document-and-list-it-back with browser storage.
 2. Indexes + the three reads.
 3. Relationships + the graph walk + delete cascade.
 4. The blob seam: local blobs as files on disk.
-5. Registry + backend switching.
-6. Firestore backend + the Google blob store (future; the seam and registry make it a drop-in).
+5. Registry + storage switching.
+6. Firestore storage + the Google blob store (future; the seam and registry make it a drop-in).
 
 ## Verify
 

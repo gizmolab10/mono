@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import Hideable from './Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
+	import D_Data from './D_Data.svelte';
 
 	// The collapsible details region. The frame computes its width. The hamburger
 	// is a separate fixed overlay owned by the frame. This component owns the
@@ -14,6 +15,9 @@
 	<div class='details-banner'></div>
 	<Hideable title='preferences'>
 		<D_Preferences />
+	</Hideable>
+	<Hideable title='data'>
+		<D_Data />
 	</Hideable>
 </div>
 

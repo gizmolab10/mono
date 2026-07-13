@@ -20,6 +20,7 @@ The intersection project's files. Update this when files are added, moved, or re
 - `details/Details.svelte` — the collapsible details region: its (empty) banner and the preferences panel. The frame passes the width; the control cluster is a separate fixed overlay.
 - `details/Hideable.svelte` — a collapsible titled banner. **⟵di** (trimmed: plain toggle, no di engine).
 - `details/D_Preferences.svelte` — the accent color picker, wired to Colors. **⟵di** (trimmed).
+- `details/D_Data.svelte` — the document-store readout: document / tag / unsaved counts, plus a storage switcher (segmented control) hidden behind a clickable "show other stores" separator. Reads the registry's active storage; the cloud segment is a dimmed placeholder until firestore. **⟵ws** (trimmed).
 
 ## src/lib/ts/ — logic
 
@@ -30,9 +31,21 @@ The intersection project's files. Update this when files are added, moved, or re
 - `common/Dirty.ts` — store wrappers that mark the canvas out of date. **⟵di**.
 - `common/Enumerations.ts` — app enums; holds `T_Operation` (browse / add / search) as a string enum.
 - `common/Extensions.ts` — String and Number prototype additions. **⟵di**.
-- `managers/Preferences.ts` — settings saved to the browser. **⟵di**.
+- `managers/Preferences.ts` — settings saved to the browser (**⟵di**), plus per-storage namespaced list read/write for the document store and the active-storage key.
 - `managers/Operations.ts` — the shared `w_operation` store for which view the content area shows (`browse` / `add` / `search`, or null for the arrival landing); persisted, defaults to null.
 - `types/Angle.ts`, `types/Coordinates.ts`, `types/Types.ts` — angle math, points/sizes/rects, shared types. **⟵di**.
+
+## src/lib/ts/database/ — the document store
+
+The ported plugin store, trimmed to ji's data. See [db spec](../work/db%20spec.md) and [db proposal](../work/db%20proposal.md).
+
+- `DB_Records.ts` — the five stored record shapes (Document, Tag, Tagging, Relationship, Predicate) plus the storage / document-kind / record-kind enums.
+- `DB_Common.ts` — the shared base every storage inherits: the in-memory record lists, load-all / save-all, the add hooks, the read/write/delete-blob seam, the three reads (list documents by graph walk, filter by tag, untagged inbox), and the delete cascade.
+- `DB_Local.ts` — the local storage: record lists in browser storage (namespaced per storage), document bytes in browser storage by id (stand-in until real disk files).
+- `Databases.ts` — the registry: one live instance per storage, the active-storage store, the saved choice, the ring. Local only for now; the cloud slot is open.
+- `Indexes.ts` — the in-memory lookups (tagging by tag id, tagging by document id, relationships by parent and by child) rebuilt on every change; source of the derived roots and untagged set.
+- `Persistable.ts` — the in-memory per-record dirty flag (the modify date lives on the Document itself).
+- `DB.test.ts` — driven checks: save/reload/list, tag/filter, ordered children, delete cascade.
 - `utilities/Colors.ts` — the color math, the reactive theme stores, and the fixed design colors including the ink `black` (`#1a1a1a`, never `#000`) and `gray`. **⟵di**.
 - `utilities/SVG_Paths.ts` — SVG path generators, including the close-button cross. **⟵di**.
 

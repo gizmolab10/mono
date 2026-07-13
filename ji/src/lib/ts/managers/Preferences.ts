@@ -152,12 +152,12 @@ class Preferences {
 	}
 
 	/**
-	 * Read one stored list for a record kind, namespaced by the active backend so
-	 * two backends never collide. Returns an empty array when nothing is stored.
+	 * Read one stored list for a record kind, namespaced by the active storage so
+	 * two storages never collide. Returns an empty array when nothing is stored.
 	 */
-	readDB<T>(backend: string, record: string): T[] {
+	readDB<T>(storage: string, record: string): T[] {
 		try {
-			const raw = localStorage.getItem(`${STORAGE_PREFIX}${backend}/${record}`);
+			const raw = localStorage.getItem(`${STORAGE_PREFIX}${storage}/${record}`);
 			if (raw == null || raw == 'undefined') { return []; }
 			return JSON.parse(raw) as T[];
 		} catch {
@@ -165,18 +165,18 @@ class Preferences {
 		}
 	}
 
-	/** Write one record kind's whole list back, namespaced by the active backend. */
-	writeDB<T>(backend: string, record: string, list: T[]): void {
+	/** Write one record kind's whole list back, namespaced by the active storage. */
+	writeDB<T>(storage: string, record: string, list: T[]): void {
 		try {
-			localStorage.setItem(`${STORAGE_PREFIX}${backend}/${record}`, JSON.stringify(list));
+			localStorage.setItem(`${STORAGE_PREFIX}${storage}/${record}`, JSON.stringify(list));
 		} catch (e) {
-			console.warn(`Failed to save the ${record} list for the ${backend} backend:`, e);
+			console.warn(`Failed to save the ${record} list for the ${storage} storage:`, e);
 		}
 	}
 
-	/** Remove one record kind's stored list for a backend. */
-	removeDB(backend: string, record: string): void {
-		localStorage.removeItem(`${STORAGE_PREFIX}${backend}/${record}`);
+	/** Remove one record kind's stored list for a storage. */
+	removeDB(storage: string, record: string): void {
+		localStorage.removeItem(`${STORAGE_PREFIX}${storage}/${record}`);
 	}
 
 	persistent<T>(key: T_Preference, fallback: T): Writable<T> {

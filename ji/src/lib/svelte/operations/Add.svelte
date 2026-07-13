@@ -7,7 +7,7 @@
 		event.preventDefault();
 		dragging = false;
 		const files = Array.from(event.dataTransfer?.files ?? []);
-		console.log(`Add drop: received ${files.length} file(s). Saving them comes in a later phase.`);
+		// console.log(`Add drop: received ${files.length} file(s). Saving them comes in a later phase.`);
 	}
 
 	function handleDragOver(event: DragEvent) {

@@ -5,11 +5,7 @@ write a proposal for the first unchecked item to the top of handoff.
 ## work
 
 - [ ] phase 2 -> new UX for adding documents
-    - [ ] database repository
-        - [ ] port (rewrite) all DB code and D_Data.svelte from ws
-        - [x] using [[db spec]] as single source of truth
-        - [x] write db proposal -> to implement [[db spec]]
-        - [ ] implement db proposal and track progress in db handoff
+    - [x] port D_Data.svelte from ws
     - [ ] determine design and wire in
         - [ ] add_categories.svelte for creating new
         - [ ] share with search
@@ -22,6 +18,12 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+
+- [x] phase 2 -> database repository
+    - [x] port (rewrite) all DB code from ws
+    - [x] using [[db spec]] as single source of truth
+    - [x] write db proposal -> to implement [[db spec]]
+    - [x] implement db proposal and track progress in db handoff
 - [x] nudge text inside segmented control up 2 px
 - [x] phase 1 -> new UX for adding documents
     - [x] new state store for content area (add, search, browse)
