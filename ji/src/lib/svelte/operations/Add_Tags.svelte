@@ -1,36 +1,50 @@
 <script lang='ts'>
-	// Create a new tag, then choose which tags a drop gets. The create
-	// row adds to the active store's tags; the chip picker below (Tags) shares
-	// the chosen set with the parent (the add flow tags the drop with them).
+	// Choose which tags a drop gets, and create new ones. Normally shows the tag
+	// chips with an "add" button after the last one. Clicking add hides the chips
+	// and shows a name field; adding a name creates the tag and returns to chips.
 	import { databases } from '../../ts/database/Databases';
 	import Tags from './Tags.svelte';
 
 	let { selected = $bindable(new Set<string>()) }: { selected?: Set<string> } = $props();
 
-	let name = $state('');
+	let adding = $state(false);
+	let name   = $state('');
+
+	function begin() {
+		adding = true;
+	}
 
 	function add() {
 		const trimmed = name.trim();
-		if (trimmed.length === 0) {
+		if (trimmed.length > 0) {
+			databases.active.add_tag(trimmed);
+			console.log(`Created tag "${trimmed}".`);
+		} else {
 			console.log('Create tag: nothing typed, so nothing added.');
-			return;
 		}
-		databases.active.add_tag(trimmed);
-		console.log(`Created tag "${trimmed}".`);
 		name = '';
+		adding = false;                                   // back to the chips
 	}
 </script>
 
-<div class='add-tag'>
-	<input
-		class='field'
-		placeholder='new tag'
-		bind:value={name}
-		onkeydown={(e) => { if (e.key === 'Enter') { add(); } }} />
-	<button class='add' onclick={add}>add</button>
-</div>
+{#if adding}
+	<div class='add-tag'>
+		<!-- svelte-ignore a11y_autofocus -->
+		<input
+			class='field'
+			placeholder='new tag'
+			autofocus
+			bind:value={name}
+			onkeydown={(e) => { if (e.key === 'Enter') { add(); } }} />
+		<button class='button' onclick={add}>add</button>
+	</div>
+{:else}
+	<Tags bind:selected {trailing} />
+{/if}
 
-<Tags bind:selected />
+{#snippet trailing()}
+	<button class='button after-tags' onclick={begin}>add</button>
+{/snippet}
 
 <style>
 	.add-tag {
@@ -39,7 +53,7 @@
 		display     : flex;
 	}
 
-	.field {
+	.field, .button {
 		border        : var(--thickness-normal) solid var(--black);
 		border-radius : 999px;
 		padding       : var(--pad-control);
@@ -48,17 +62,16 @@
 		color         : var(--text);
 	}
 
-	.add {
-		border        : var(--thickness-normal) solid var(--black);
-		border-radius : 999px;
-		padding       : var(--pad-control);
-		font-size     : var(--font-label);
-		background    : var(--white);
-		color         : var(--text);
-		cursor        : pointer;
+	.button {
+		cursor : pointer;
 	}
 
-	.add:hover {
+	/* Sit further from the last chip: the flex gap is one unit, add two more = 3x. */
+	.after-tags {
+		margin-left : calc(var(--gap-tight) * 2);
+	}
+
+	.button:hover {
 		background : var(--hover);
 	}
 </style>

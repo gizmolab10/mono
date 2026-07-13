@@ -4,19 +4,12 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] phase 2 -> new UX for adding documents
-  - [x] add -> more file types
-    - [x] pdf
-    - [x] jpg
-    - [x] show type in browse table
-    - [x] show all acceptable types in drop here, smaller font, below drop here, centered
-  - [ ] determine design and wire in
-    - [x] add_tags.svelte for creating new
-    - [x] tags.svelte for choosing one or more
-      - [ ] share with search
-    - [x] in browse
-      - [x] show tags and an 'edit tags' button
-  - [ ] add firebase support
+- [ ] Activities
+    - [ ] add/search/browse -> documents/tags
+        - [ ] move it into Activities, centered
+    - [ ] always show tags list with add button
+    - [ ] add button at top -> click shows drop box and tags list
+- [ ] add firebase support
     - [ ] use person's id
     - [ ] authorization
 - [ ] port the diagnostic log feature from di
@@ -28,16 +21,27 @@ write a proposal for the first unchecked item to the top of handoff.
 ## done
 
 - [x] phase 2 -> database repository
-  - [x] what is unsaved?
-  - [x] persist more/less choice
-  - [x] add an 'erase all data' button
-    - [x] same row as segmented control, far right
-    - [x] click -> show an 'are you sure' dialog
-  - [x] port D_Data.svelte from ws
-  - [x] port (rewrite) all DB code from ws
-  - [x] using [[db spec]] as single source of truth
-  - [x] write db proposal -> to implement [[db spec]]
-  - [x] implement db proposal and track progress in db handoff
+    - [x] add -> more file types
+        - [x] pdf
+        - [x] jpg
+        - [x] show type in browse table
+    - [x] show all acceptable types in drop here, smaller font, below drop here, centered
+        - [x] determine design and wire in
+            - [x] add_tags.svelte for creating new
+            - [x] tags.svelte for choosing one or more
+        - [x] share with search
+            - [x] in browse
+            - [x] show tags and an 'edit tags' button
+    - [x] what is unsaved?
+    - [x] persist more/less choice
+    - [x] add an 'erase all data' button
+        - [x] same row as segmented control, far right
+        - [x] click -> show an 'are you sure' dialog
+    - [x] port D_Data.svelte from ws
+    - [x] port (rewrite) all DB code from ws
+    - [x] using [[db spec]] as single source of truth
+    - [x] write db proposal -> to implement [[db spec]]
+    - [x] implement db proposal and track progress in db handoff
 - [x] nudge text inside segmented control up 2 px
 - [x] phase 1 -> new UX for adding documents
   - [x] new state store for content area (add, search, browse)

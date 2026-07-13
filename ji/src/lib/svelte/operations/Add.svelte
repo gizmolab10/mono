@@ -87,7 +87,7 @@
 
 	.tags {
 		gap            : var(--gap-tight);
-		padding-bottom : var(--gap);
+		padding-bottom : var(--gap-fat);
 		align-items    : center;
 		flex-direction : column;
 		display        : flex;

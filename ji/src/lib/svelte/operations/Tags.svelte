@@ -2,17 +2,21 @@
 	// Pick one or more tags. Shows every tag in the active store as a chip;
 	// clicking toggles it. The chosen tag ids are shared with the parent (the add
 	// flow tags a drop, search filters). Live off the store-changed tick.
+	import type { Snippet } from 'svelte';
 	import { databases } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/database/Signal';
 
 	// `selected` is the chosen set (the add flow binds it). `ontoggle` lets a caller
 	// react to each click directly — browse uses it to add/remove a tag right away.
-	let { selected = $bindable(new Set<string>()), ontoggle }:
-		{ selected?: Set<string>; ontoggle?: (id: string, on: boolean) => void } = $props();
+	// `trailing` renders after the last chip, in the same row (the add button).
+	let { selected = $bindable(new Set<string>()), ontoggle, trailing }:
+		{ selected?: Set<string>; ontoggle?: (id: string, on: boolean) => void; trailing?: Snippet } = $props();
 
+	// Copy the list so each change yields a new array — the store mutates its list
+	// in place, and a same-reference return would be seen as unchanged (no redraw).
 	const tags = $derived.by(() => {
 		$w_db_changed;
-		return databases.active.tags;
+		return [...databases.active.tags];
 	});
 
 	function toggle(id: string) {
@@ -29,6 +33,7 @@
 	{#each tags as tag}
 		<button class='chip' class:on={selected.has(tag.id)} onclick={() => toggle(tag.id)}>{tag.name}</button>
 	{/each}
+	{@render trailing?.()}
 </div>
 
 <style>

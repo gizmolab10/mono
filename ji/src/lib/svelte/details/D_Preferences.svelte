@@ -26,7 +26,7 @@
 	.color-row {
 		align-items : center;
 		display     : flex;
-		gap         : var(--gap-preferences);
+		gap         : var(--gap-fat);
 	}
 
 	.color-group {

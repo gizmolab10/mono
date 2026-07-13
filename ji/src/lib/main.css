@@ -26,7 +26,7 @@
      --gap           the frame inset / gap between regions
      --radius          the region corner radius (also the Add drop box)
      --gap-details     the gap in the details stack
-     --gap-preferences the gap in the preferences row
+     --gap-fat the gap in the preferences row
      --gap-tight       the tight gap (stepper stack, author corner)
      --radius-banner   the small (banner / button) corner radius
      --radius-build    the build-notes card corner radius

@@ -89,7 +89,7 @@
 	}
 
 	.row {
-		gap             : var(--gap-preferences);
+		gap             : var(--gap-fat);
 		justify-content : space-between;
 		align-items     : center;
 		display         : flex;

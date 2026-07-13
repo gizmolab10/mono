@@ -61,11 +61,10 @@ export default class Constants {
 	};
 
 	gap = {
-		preferences	 : common_gap * 2.1,
+		fat	         : common_gap * 2.1,
 		tight		 : common_gap / 2,
 		details		 : common_gap / 4,
 		default      : common_gap,
-		slot		 : 8,
 	}
 
 	inset = {
