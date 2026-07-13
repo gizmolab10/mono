@@ -4,21 +4,24 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [x] nudge text inside segmented control up 2 px
-- [ ] front page
 - [ ] phase 2 -> new UX for adding documents
     - [ ] database repository
-        - [ ] port all DB code and D_Data.svelte from ws
+        - [ ] port (rewrite) all DB code and D_Data.svelte from ws
+        - [x] using [[db spec]] as single source of truth
+        - [x] write db proposal -> to implement [[db spec]]
     - [ ] determine design and wire in
         - [ ] add_categories.svelte for creating new
         - [ ] share with search
             - [ ] categories.svelte for choosing one or more
 - [ ] port the diagnostic log feature from di
 - [ ] remove all unused T_Preference items
+- [ ] move di hooks -> mono
+- [ ] front page
 - [ ] write a new file: stipulations based on current code
 
 ## done
 
+- [x] nudge text inside segmented control up 2 px
 - [x] phase 1 -> new UX for adding documents
     - [x] new state store for content area (add, search, browse)
         - [x] persist new state

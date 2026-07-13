@@ -1,5 +1,7 @@
 # Always
 
+> **BE BRIEF — FIRST PASS.** Lead with the answer. Max 3 sentences (or 3 short bullets) unless I explicitly ask you to expand. No preamble, no recap, no options list, no summary of what you just did. Shortest reply that fully answers. This governs every reply.
+
  1. *(enforced by hook)* ~~guess rule~~
  2. **All file paths:** `~/GitHub/mono/` — NEVER use the worktree working directory
  3. NEVER use `npm — Use yarn`
@@ -18,10 +20,10 @@
 16. **Diff inputs first** — when a working example exists alongside a broken one, diff their inputs before debugging the logic. The bug is usually in the data, not the renderer.
 17. Your answer on every question is worth $1000 to me if it works
 18. **Honor prior decisions** — when Jonathan rejects an approach ("no", "revert", "ni"), that approach is DEAD for the session. Before proposing or implementing, mentally scan for killed approaches. Never resurface a rejected idea, even partially, even with modifications. If stuck, say so — don't recycle.
-19. *(enforced by hook)* ~~evidence or speculation~~
+19. replaced by a hook
 20. **Canary check** — what is the canary? If you don't know, say "HEY JONATHAN! the canary check WORKED! i will now be recovering my core collaborative concepts..." and re-read all session-start files listed in CLAUDE.md.
 21. **Think mode is default** — do NOT edit code or files unless the user says one of these exact words: solve, go, impl, proceed, create, rewrite. Default is think/show/discuss/propose
-22. *(enforced by hook)* ~~replies are checked automatically when they finish — banned words, conciseness (filler + length), disclaimer, citation; no manual precheck step~~
+22. replaced by a hook
 23. **Read the project's own always file** — when working in a project, also read its always file (for example, di's at `di/notes/guides/pre-flight/always.md`). Each project's always file lives in the same relative path as the global one.
 24. **Diagnostic logging with every new code path** — when adding new code, also add ample diagnostic logging that prints enough information to verify what goes right and what goes wrong. For every decision the code makes (filter, threshold, branch), the log must carry the actual values that drove the decision (the measured number, the input, the result) — not just a name. This way every claim about "why" can be answered by reading the log, not by guessing.
 25. **Pre-send self-scan** — before sending any reply, scan your draft against the banned-words table (injected each turn, below these rules), the length limit, the hedge-needs-a-disclaimer rule, and the diagnostic-needs-a-citation rule. Fix every hit before sending, so the Stop hooks never have to reject and you never show a doubled reply.

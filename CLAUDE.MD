@@ -41,5 +41,5 @@ If any keyword matches, read the listed guide(s). If any shorthand matches, perf
 - **Undo.** Before `write_file`, always `read_file` first and hold the content. On "undo", restore it.
 - **Memory.** Use `conversation_search` / `recent_chats` before claiming no context. Ignore the userMemories surface entirely (stale-data risk outweighs serendipity; use the `memory` command if curious).
 - **Work tracking.** Keep `notes/work/<file>.md` updated as work moves.
-- **Tone.** Follow `voice.md` — first person, casual, punchy.
+- **Tone.** Replies: plain, brief, direct — no voice styling. Voice (`voice.md`: first person, casual, punchy) applies only to prose written into files.
 - **Docs.** Update `index.md` files when adding, moving, or removing files.

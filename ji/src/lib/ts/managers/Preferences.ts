@@ -53,6 +53,9 @@ export enum T_Preference {
 	// Content
 	current_op      = 'current_op',
 
+	// Documents
+	documents        = 'documents',
+
 	// Scenes
 	scene            = 'scene',
 
