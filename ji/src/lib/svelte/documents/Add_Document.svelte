@@ -1,11 +1,12 @@
 <script lang='ts'>
+	import { T_DocumentKind } from '../../ts/database/DB_Records';
+	import { databases } from '../../ts/database/Databases';
+	import Add_Tag from '../tags/Add_Tag.svelte';
+
 	// A drop target that saves each dropped file into the active document store.
 	// Text saves as its plain contents; images and pdfs save as a data-URL (their
 	// bytes base64-wrapped), which a picture tag or a pdf frame can show directly.
 	// Unknown types are skipped with a message.
-	import { databases } from '../../ts/database/Databases';
-	import { T_DocumentKind } from '../../ts/database/DB_Records';
-	import Add_Tags from './Add_Tags.svelte';
 
 	let dragging = $state(false);
 
@@ -68,7 +69,7 @@
 
 <div class='add-view'>
 	<div class='tags'>
-		<Add_Tags bind:selected={chosen} />
+		<Add_Tag bind:selected={chosen} />
 	</div>
 	<div
 		class='drop'

@@ -1,6 +1,5 @@
 <script lang='ts'>
-	import { T_Operation } from '../../ts/common/Enumerations';
-	import { w_operation } from '../../ts/managers/Operations';
+	import { T_Operation, w_operation } from '../../ts/managers/Operations';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
 
@@ -12,9 +11,9 @@
 	const size = k.size.hamburger;
 	const hamburgerPath = svg_paths.hamburger(size);
 
-	// The operations as [name, value] pairs: the label is the name (browse), the
-	// stored and compared value is the enum's letter.
-	const operations = Object.entries(T_Operation) as [string, T_Operation][];
+	// The operations to show as segments; each value is both the label and the
+	// stored/compared value.
+	const operations = Object.values(T_Operation);
 </script>
 
 <button class='hamburger-button layer-controls' class:on-accent={onAccent} {onclick} aria-label='toggle details'>
@@ -24,28 +23,28 @@
 </button>
 
 <div class='operation layer-controls'>
-	{#each operations as [name, op]}
+	{#each operations as op}
 		<button
 			class='segment'
 			class:current={$w_operation === op}
 			onclick={() => {
 				const wasCurrent = $w_operation === op;
 				w_operation.set(wasCurrent ? null : op);
-			}}>{name}</button>
+			}}>{op}</button>
 	{/each}
 </div>
 
 <style>
 	.hamburger-button {
 		border-radius   : var(--radius-banner);
+		padding         : var(--pad-hamburger);
 		left            : var(--inset-cluster);
 		top             : var(--inset-cluster);
+		color           : var(--black);
 		background      : transparent;
 		cursor          : pointer;
-		padding         : var(--pad-hamburger);
 		align-items     : center;
 		justify-content : center;
-		color           : var(--black);
 		position        : fixed;
 		display         : flex;
 		border          : none;
@@ -56,9 +55,9 @@
 	}
 
 	.hamburger-button .hamburger-icon path {
-		fill         : currentColor;
-		stroke       : var(--black);
 		stroke-width : var(--thickness-faint);
+		stroke       : var(--black);
+		fill         : currentColor;
 	}
 
 	.hamburger-button:hover .hamburger-icon path {
@@ -68,12 +67,13 @@
 	/* One pill with a segment per operation; the current segment fills --accent.
 	   Fixed beside the hamburger, so the cluster reads the same in both states. */
 	.operation {
-		left          : var(--inset-pill-left);
+		border        : var(--thickness-normal) solid var(--black);
+		left          : 50%;
+		transform     : translateX(-50%);      /* center the pill in the window */
 		top           : var(--inset-pill-top);
+		height        : var(--height-control);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-base);
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
 		background    : var(--white);
 		overflow      : hidden;
 		position      : fixed;
@@ -81,9 +81,9 @@
 	}
 
 	.segment {
+		padding    : var(--pad-control);
 		background : transparent;
 		color      : var(--text);
-		padding    : var(--pad-control);
 		cursor     : pointer;
 		border     : none;
 	}

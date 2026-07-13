@@ -21,6 +21,7 @@
   },
   "include": [
     "src/**/*.svelte",
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "notes/aside/Activity.svelte"
   ]
 }

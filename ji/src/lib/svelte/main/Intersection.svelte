@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import Documents from '../documents/Documents.svelte';
 	import Details from '../details/Details.svelte';
 	import { k } from '../../ts/common/Constants';
 	import BuildNotes from './BuildNotes.svelte';
-	import Activity from './Activity.svelte';
 	import Controls from './Controls.svelte';
 
 	// Layout numbers ported from di's Constants (common_size 33): the inset/gap,
@@ -62,7 +62,7 @@
 				<Details width={detailsWidth} />
 			{/if}
 			<div class='region content' style:width='{contentWidth}px'>
-				<Activity bind:showBuildNotes />
+				<Documents bind:showBuildNotes />
 			</div>
 		{/if}
 	</div>

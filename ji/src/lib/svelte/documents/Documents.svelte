@@ -1,10 +1,15 @@
 <script lang='ts'>
+	import { databases } from '../../ts/database/Databases';
+	import { w_db_changed } from '../../ts/database/Signal';
+	import Tags from '../tags/Tags.svelte';
+
 	// The browse view: every file in the active store as type + name + its tags,
 	// each row with an "edit tags" button that opens the tag picker for that
 	// document. Live off the store-changed tick.
-	import { databases } from '../../ts/database/Databases';
-	import { w_db_changed } from '../../ts/database/Signal';
-	import Tags from './Tags.svelte';
+
+	// The build-notes opener lives in this view's corner; the frame owns the flag.
+	let { showBuildNotes = $bindable(false), buildNumber = 0 }:
+		{ showBuildNotes?: boolean; buildNumber?: number } = $props();
 
 	let editing = $state<string | null>(null);
 
@@ -64,10 +69,20 @@
 			</tbody>
 		</table>
 	{/if}
+
+	<div class='corner-stack'>
+		<button class='build-opener' onclick={() => showBuildNotes = true}>
+			Build {buildNumber}
+		</button>
+		<a class='author-credit' href='https://designintuition.app' target='_blank' rel='noopener'>
+			built by: jonathan sand
+		</a>
+	</div>
 </div>
 
 <style>
 	.browse {
+		position   : relative;
 		padding    : var(--pad-view);
 		box-sizing : border-box;
 		height     : 100%;
@@ -127,5 +142,40 @@
 
 	.editor td {
 		padding-bottom : var(--gap);
+	}
+
+	.corner-stack {
+		bottom         : var(--inset-credit-bottom);
+		left           : var(--inset-credit-left);
+		gap            : var(--gap-tight);
+		align-items    : flex-start;
+		position       : absolute;
+		flex-direction : column;
+		display        : flex;
+	}
+
+	.build-opener {
+		border        : var(--thickness-normal) solid var(--black);
+		border-radius : var(--radius-pill);
+		padding       : var(--pad-control);
+		font-size     : var(--font-base);
+		background    : var(--white);
+		color         : var(--gray);
+		cursor        : pointer;
+	}
+
+	.build-opener:hover {
+		background : var(--hover);
+	}
+
+	.author-credit {
+		font-size       : var(--font-credit);
+		color           : var(--text);
+		text-decoration : underline;
+		cursor          : pointer;
+	}
+
+	.author-credit:hover {
+		color : var(--hover);
 	}
 </style>

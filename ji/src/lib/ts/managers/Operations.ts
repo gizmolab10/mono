@@ -1,5 +1,9 @@
 import { preferences, T_Preference } from './Preferences';
-import { T_Operation } from '../common/Enumerations';
+
+export enum T_Operation {
+	document = 'add new document',
+	tag      = 'add new tag',
+}
 
 // The current operation (which view the content area shows), or null when none
 // is selected — clicking the active segment clears it and the content falls back
