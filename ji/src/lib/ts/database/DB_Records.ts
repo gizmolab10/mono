@@ -5,15 +5,18 @@
 // Which storage holds a document's blob.
 export enum T_Storage {
 	firebase = 'firebase',
-	local = 'local',
+	local    = 'local',
 }
 
 // What a document's bytes are, so the UI can open or show it.
 export enum T_DocumentKind {
-	other = 'other',
-	image = 'image',
-	text  = 'text',
-	pdf   = 'pdf',
+	unknown = 'unknown',
+	jpeg    = 'jpeg',
+	txt     = 'txt',
+	bmp     = 'bmp',
+	pdf     = 'pdf',
+	png     = 'png',
+	gif     = 'gif',
 }
 
 // The five stored record kinds, so save/load loops can walk them by name.

@@ -3,6 +3,7 @@
 	import { T_Operation } from '../../ts/common/Enumerations';
 	import buildsRaw from '../../md/builds.md?raw';
 	import Add from '../operations/Add.svelte';
+	import Browse from '../operations/Browse.svelte';
 
 	// Shared with the layout frame so it can hide the regions while the popup shows.
 	let { showBuildNotes = $bindable(false) }: { showBuildNotes?: boolean } = $props();
@@ -15,6 +16,8 @@
 <div class='content-body'>
 	{#if $w_operation === T_Operation.add}
 		<Add />
+	{:else if $w_operation === T_Operation.browse}
+		<Browse />
 	{:else}
 		<div class='centered'>
 			<div>Intersection</div>

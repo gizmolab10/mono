@@ -35,9 +35,8 @@ class Configuration {
 		root.setProperty('--radius-pill',        `${k.radius.corner.pill}px`);
 		root.setProperty('--radius-percent',     `${k.radius.percent}%`);
 		root.setProperty('--height-hideable',    `${k.height.hideable}px`);
+		root.setProperty('--height-control',     `${k.height.control}px`);
 		root.setProperty('--height-banner',      `${k.height.banner}px`);
-		root.setProperty('--height-group',       `${k.height.group}px`);
-		root.setProperty('--height-pill',        `${k.height.pill}px`);
 		root.setProperty('--size-button',        `${k.size.button}px`);
 		root.setProperty('--size-cross',         `${k.size.cross}px`);
 		root.setProperty('--font-credit',        `${k.font.credit}px`);
@@ -64,8 +63,7 @@ class Configuration {
 		// Paddings pushed as ready-to-use shorthands (top/right/bottom/left where needed).
 		root.setProperty('--pad-slot',           `${k.pad.slot}px`);
 		root.setProperty('--pad-hamburger',      `${k.pad.hamburger.y}px ${k.pad.hamburger.x}px`);
-		root.setProperty('--pad-segment',        `${k.pad.segment.y}px ${k.pad.segment.x}px`);
-		root.setProperty('--pad-opener',         `${k.pad.opener.y}px ${k.pad.opener.x}px`);
+		root.setProperty('--pad-control',        `${k.pad.control.y}px ${k.pad.control.x}px`);
 		root.setProperty('--pad-modal',          `${k.pad.modal.y}px ${k.pad.modal.x}px`);
 		root.setProperty('--pad-stepper',        `${k.pad.stepper.y}px ${k.pad.stepper.x}px`);
 		root.setProperty('--pad-view',           `${k.pad.view.top}px ${k.pad.view.x}px ${k.pad.view.x}px`);

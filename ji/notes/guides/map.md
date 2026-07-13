@@ -13,14 +13,15 @@ The intersection project's files. Update this when files are added, moved, or re
 - `main/App.svelte` — root component; on mount, pushes the theme colors onto the page.
 - `main/Intersection.svelte` — the layout frame (the app root under App): the details + content regions and the fixed Controls overlay; hides both regions and shows the build-notes overlay while the popup is open.
 - `main/Controls.svelte` — the fixed top-left control cluster: the details-toggle hamburger plus the operation segments beside it. An `onAccent` prop colors the hamburger for the accent banner vs black on the content, and the frame passes the click.
-- `main/Activity.svelte` — the content region's body; switches on the current operation: `browse` shows the "Intersection" text and "Build N" opener, `add` shows the Add view.
-- `operations/Add.svelte` — the add-document view: a large drop-here rectangle (Phase 1 logs the dropped files; persistence comes later), with top room clearing the control cluster. Back to browse is the browse segment.
+- `main/Activity.svelte` — the content region's body; switches on the current operation: `add` shows the Add view, `browse` shows the Browse view, and the arrival landing (nothing picked) shows the "Intersection" text and "Build N" opener.
+- `operations/Add.svelte` — the add-document view: a large drop-here rectangle that saves each dropped text file into the active store (images/pdfs skipped until binary is decided), with top room clearing the control cluster.
+- `operations/Browse.svelte` — the browse view: a live list of every saved document's name from the active store (derived off the store-changed tick), with a "no documents yet" empty state. Search filter and click-to-open come later.
 - `main/add_categories.svelte`, `main/categories.svelte` — empty stubs (create a category / pick categories); not wired in or visible yet, design TBD.
 - `main/BuildNotes.svelte` — the build-history popup: a paged table read from the markdown data file, with close and up/down arrows.
 - `details/Details.svelte` — the collapsible details region: its (empty) banner and the preferences panel. The frame passes the width; the control cluster is a separate fixed overlay.
 - `details/Hideable.svelte` — a collapsible titled banner. **⟵di** (trimmed: plain toggle, no di engine).
 - `details/D_Preferences.svelte` — the accent color picker, wired to Colors. **⟵di** (trimmed).
-- `details/D_Data.svelte` — the document-store readout: document / tag / unsaved counts, plus a storage switcher (segmented control) hidden behind a clickable "show other stores" separator. Reads the registry's active storage; the cloud segment is a dimmed placeholder until firestore. **⟵ws** (trimmed).
+- `details/D_Data.svelte` — the document-store readout: document / tag counts, plus a storage switcher and a far-left "erase" button (inline "are you sure" confirm; wipes only the active store) on one row, hidden behind a clickable "more / less" separator whose choice is saved. Reads the registry's active storage; the cloud segment is a dimmed placeholder until firestore. **⟵ws** (trimmed).
 
 ## src/lib/ts/ — logic
 
@@ -45,6 +46,7 @@ The ported plugin store, trimmed to ji's data. See [db spec](../work/db%20spec.m
 - `Databases.ts` — the registry: one live instance per storage, the active-storage store, the saved choice, the ring. Local only for now; the cloud slot is open.
 - `Indexes.ts` — the in-memory lookups (tagging by tag id, tagging by document id, relationships by parent and by child) rebuilt on every change; source of the derived roots and untagged set.
 - `Persistable.ts` — the in-memory per-record dirty flag (the modify date lives on the Document itself).
+- `Signal.ts` — a "the store changed" tick the store bumps on every save and switch; views that show store contents derive off it to stay live.
 - `DB.test.ts` — driven checks: save/reload/list, tag/filter, ordered children, delete cascade.
 - `utilities/Colors.ts` — the color math, the reactive theme stores, and the fixed design colors including the ink `black` (`#1a1a1a`, never `#000`) and `gray`. **⟵di**.
 - `utilities/SVG_Paths.ts` — SVG path generators, including the close-button cross. **⟵di**.

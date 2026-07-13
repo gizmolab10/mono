@@ -9,8 +9,8 @@
 	// details banner, otherwise black over the content. The click is passed in —
 	// the show-details state is a single store the frame owns.
 	let { onAccent = false, onclick }: { onAccent?: boolean; onclick: () => void } = $props();
-
-	const hamburgerPath = svg_paths.hamburger(k.size.hamburger);
+	const size = k.size.hamburger;
+	const hamburgerPath = svg_paths.hamburger(size);
 
 	// The operations as [name, value] pairs: the label is the name (browse), the
 	// stored and compared value is the enum's letter.
@@ -18,7 +18,7 @@
 </script>
 
 <button class='hamburger-button layer-controls' class:on-accent={onAccent} {onclick} aria-label='toggle details'>
-	<svg class='hamburger-icon' viewBox='0 0 {k.size.hamburger} {k.size.hamburger}' width={k.size.hamburger} height={k.size.hamburger}>
+	<svg class='hamburger-icon' viewBox='0 0 {size} {size}' width={size} height={size}>
 		<path d={hamburgerPath} />
 	</svg>
 </button>
@@ -73,7 +73,7 @@
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-base);
 		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-group);
+		height        : var(--height-control);
 		background    : var(--white);
 		overflow      : hidden;
 		position      : fixed;
@@ -83,7 +83,7 @@
 	.segment {
 		background : transparent;
 		color      : var(--text);
-		padding    : var(--pad-segment);
+		padding    : var(--pad-control);
 		cursor     : pointer;
 		border     : none;
 	}

@@ -1,13 +1,49 @@
 <script lang='ts'>
-	// Phase 1 skeleton: a drop target that logs the dropped files. Saving them
-	// to the document store lands in a later phase.
+	// A drop target that saves each dropped file into the active document store.
+	// Text saves as its plain contents; images and pdfs save as a data-URL (their
+	// bytes base64-wrapped), which a picture tag or a pdf frame can show directly.
+	// Unknown types are skipped with a message.
+	import { databases } from '../../ts/database/Databases';
+	import { T_DocumentKind } from '../../ts/database/DB_Records';
+
 	let dragging = $state(false);
 
-	function handleDrop(event: DragEvent) {
+	// Turn a file's reported type into one of our document kinds.
+	function kind_of(file: File): T_DocumentKind {
+		if (file.type.startsWith('text/'))   { return T_DocumentKind.txt; }
+		if (file.type === 'image/jpeg')      { return T_DocumentKind.jpeg; }
+		if (file.type === 'image/png')       { return T_DocumentKind.png; }
+		if (file.type === 'image/gif')       { return T_DocumentKind.gif; }
+		if (file.type === 'image/bmp')       { return T_DocumentKind.bmp; }
+		if (file.type === 'application/pdf') { return T_DocumentKind.pdf; }
+		return T_DocumentKind.unknown;
+	}
+
+	// Read the bytes we store: plain text for a text file, a data-URL for the rest.
+	function bytes_of(file: File, kind: T_DocumentKind): Promise<string> {
+		if (kind === T_DocumentKind.txt) { return file.text(); }
+		return new Promise<string>((resolve) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result as string);
+			reader.readAsDataURL(file);
+		});
+	}
+
+	async function handleDrop(event: DragEvent) {
 		event.preventDefault();
 		dragging = false;
 		const files = Array.from(event.dataTransfer?.files ?? []);
-		// console.log(`Add drop: received ${files.length} file(s). Saving them comes in a later phase.`);
+		console.log(`Dropped ${files.length} file(s).`);
+		for (const file of files) {
+			const kind = kind_of(file);
+			if (kind === T_DocumentKind.unknown) {
+				console.log(`Skipping "${file.name}" — its type (${file.type || 'unknown'}) is not one we save yet.`);
+				continue;
+			}
+			const content = await bytes_of(file, kind);
+			databases.active.add_document(file.name, kind, content);
+			console.log(`Saved "${file.name}" as a ${kind} document (${content.length} character(s) stored).`);
+		}
 	}
 
 	function handleDragOver(event: DragEvent) {

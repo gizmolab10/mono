@@ -35,7 +35,7 @@
      --height-banner        the details banner height
      --height-build         the build-notes close button height
      --height-hideable      the collapsible banner button height
-     --height-group         the operation pill height
+     --height-control         the operation pill height
      --size-button     the square button size (the color-picker circle)
      --size-cross      the close-button size (the cross drawing size)
      --font-credit / --font-label / --font-base / --font-banner / --font-large
@@ -53,7 +53,7 @@
      --fw-banner          one step lighter — the collapsible banner
      --fw-title           two steps lighter — the popup title
      --tracking           the banner letter-spacing (em)
-     --pad-slot / --pad-hamburger / --pad-segment / --pad-opener /
+     --pad-slot / --pad-hamburger / --pad-control / --pad-opener /
        --pad-modal / --pad-stepper / --pad-view / --pad-cell
                           ready-to-use padding shorthands
      --margin-header      the build-notes header bottom margin

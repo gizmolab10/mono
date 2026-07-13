@@ -2,6 +2,21 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-13 — erase, a remembered toggle, and data-panel polish
+
+- **Erase all.** A far-left "erase" button on the switcher row wipes the active store after an inline "erase all your data? yes / no"; while it asks, the erase button and the switcher both hide. Only the active store is touched — the wipe clears every record and every blob and saves it empty. A driven test proves it stays empty after a reload.
+- **Remembered more / less.** Whether the storage switcher is shown is now a saved setting, so the choice survives a reload.
+- **Dropped the unsaved readout.** It always read zero — the local store saves each change the instant it happens — so it was pulled until it means something for a cloud store.
+- **Layout tidy.** The switcher row got a fixed height so clicking erase no longer squashes it, the erase button was matched to the switcher's height, and the rule and the row were nudged a few pixels tighter without changing the space below.
+
+## 2026-07-13 — the store meets the screen
+
+- **Drop to save.** Dropping files on the add view now saves each text file into the active store — its name, its kind, its contents. Images and pdfs are skipped with a note until we decide how to hold binary bytes.
+- **Browse lists names.** The browse view shows every saved file's name, live: a drop or a delete updates it at once, with a quiet "no documents yet" when empty. The browse segment shows it now; the arrival text still shows when nothing is picked.
+- **A data readout.** A "data" panel in the details region reports the document, tag, and unsaved counts, plus a storage switcher tucked behind a small "more / less" label that floats on a broken rule. Only the local store is built, so the cloud segment sits dimmed until firestore.
+- **One live tick.** All three stay current off a single "the store changed" signal the store nudges on every save and every switch.
+- **A freeze, caught.** The browse list first locked the page — it rebuilt a brand-new list inside a repeating step, which the framework saw as "changed" and ran again, forever. Fixed by making the names and the counts derived values — pure formulas that can't retrigger themselves.
+
 ## 2026-07-13 — document store built
 
 - **Built the database repository** from [[db spec]] and [[db proposal]]. It's the ws plugin store ported whole — a registry that swaps storages, a shared base carrying the save / load / add / delete, thin storage subclasses — but the data is ji's own: five records (documents, tags, tagging, relationships, predicates) plus the document bytes kept outside the store.

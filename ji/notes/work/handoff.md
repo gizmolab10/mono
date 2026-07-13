@@ -1,16 +1,16 @@
 # Handoff
 
-**Status:** active. Layout frame (Intersection) with a collapsible details region (di hamburger toggle, persists across reload), an Activity region holding the arrival text + the "Build N" opener, and a build-notes popup that hides both regions while open. Accent picker themes the page live. A fixed control cluster (Controls) sits top-left in both states: the hamburger plus the operation segments. **Design tokens complete.** **Document store built** — the ported plugin engine, ji-trimmed (five records + external bytes, local storage only, driven test green); design in [db spec](db%20spec.md) / [db proposal](db%20proposal.md), status in [db handoff](db%20handoff.md).
+**Status:** active. Layout frame (Intersection) with a collapsible details region, an Activity region that switches on the operation (add / browse / arrival), and a build-notes popup. Accent picker themes the page live. **Document store built and wired to the screen:** dropping files on the add view saves them; the browse view lists saved names live; the details region's data panel shows counts and a storage switcher. Design in [db spec](db%20spec.md) / [db proposal](db%20proposal.md); store status in [db handoff](db%20handoff.md).
 
-## Proposal — next: port D_Data.svelte from ws
+## Proposal — next: more file types (pdf, jpg) + show type in browse
 
-The store now exists but nothing shows its state. ws's D_Data is a storage details readout; trimmed to ji it becomes a small panel in the details region reporting the document store and letting you switch storages.
+Today the drop saves only text; images and pdfs are skipped. This adds them and shows each file's type in the browse list.
 
-1. **What survives the trim.** Keep the **storage switcher** (drives the registry's change-storage) and a **count readout** (documents, tags, and how many still need saving). Drop ws's import/export and its graph-model counts.
-2. **Where it lives.** A new details panel, shown inside the Details region alongside the preferences panel — a details view, not part of the repository.
-3. **What it reads.** The registry's active storage: its record counts and the dirty count from the bookkeeping; the active-storage store for the switcher's current pick.
-4. **Open question for Jonathan:** with only the local storage built, the switcher has one option — include it now (ready for the cloud storage) or defer the switcher and show just the counts?
+1. **Binary bytes.** The blob seam holds a string. Read a non-text file as a data-URL (its bytes base64-wrapped) and store that string; on open, hand the data-URL straight to an image tag or a pdf frame. This is the "binary blobs" decision made concrete — no seam change.
+2. **Stop skipping.** The kind detector already maps pdf and jpg; drop the text-only guard in the drop handler so those save too.
+3. **Show the type in browse.** The browse list becomes name + type (each Document already carries its kind). Reads for a small table layout — the code-debt line calls it a browse table.
+4. **Open question for Jonathan:** store the whole data-URL, or just the base64 with the kind kept separately? Data-URL is simplest to show; raw base64 is smaller but needs the kind to rebuild it.
 
 ## Later (from code debt)
 
-The categories UI (`add_categories.svelte`, `categories.svelte`) and wiring the Add flow to actually save through the store — the sibling "determine design and wire in" subpart. Deferred store work (disk-file blobs, the firestore storage) is tracked in [db handoff](db%20handoff.md).
+The categories UI and search, plus the deferred store work — disk-file blobs and the firestore storage — tracked in [db handoff](db%20handoff.md).

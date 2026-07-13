@@ -2,6 +2,7 @@
 const common_size = 35;				// minimum fingertip touch size
 const common_gap = common_size / 5;
 const common_thickness = common_gap / 7;
+const control_height = common_size / 1.6;
 const bold = 550;					// single source of truth about bold
 
 // missing: 50% circles
@@ -28,8 +29,7 @@ export default class Constants {
 		slot		 : 8,
 		hamburger	 : { y: 2, x: 6 },
 		stepper		 : { y: 0, x: 4 },
-		segment		 : { y: 2, x: 10 },
-		opener		 : { y: 2, x: 10 },
+		control		 : { y: 2, x: 10 },
 		modal		 : { y: 16, x: 20 },
 		view		 : { top: 52, x: 24 },
 		cell		 : { y: common_gap / 2, x: common_gap },		// left is 0
@@ -58,9 +58,8 @@ export default class Constants {
 	};
 	height = {
 		banner		 : common_size * 1.2,
-		hideable	 : common_size * 0.8,
-		group		 : common_size / 1.6,
-		pill		 : common_size / 2,
+		hideable	 : control_height * 1.3,
+		control		 : control_height,
 	};
 	gap = {
 		preferences	 : common_gap * 2.1,
@@ -76,13 +75,13 @@ export default class Constants {
 	};
 	thickness = {
 		bold		 : common_thickness * 1.5,
-		faint		 : common_thickness / 2,
 		fat			 : common_thickness * 2,
+		faint		 : common_thickness / 2,
 		normal		 : common_thickness,
 	};
 	size = {
 		button		 : common_size / 1.25,
-		cross	  	 : common_size / 1.6,
+		cross	  	 : control_height,
 		hamburger	 : common_size,
 	};
 	shadow = {

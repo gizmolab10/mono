@@ -20,7 +20,7 @@ describe('local document store', () => {
 	it('saves a document and lists it back after a reload', () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const doc = db.add_document('notes.txt', T_DocumentKind.text, 'hello');
+		const doc = db.add_document('notes.txt', T_DocumentKind.txt, 'hello');
 
 		// a fresh storage reads the same browser storage — the document survives
 		const reloaded = new DB_Local();
@@ -33,8 +33,8 @@ describe('local document store', () => {
 	it('filters by tag and reports the untagged', () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const a = db.add_document('a.txt', T_DocumentKind.text, 'A');
-		const b = db.add_document('b.txt', T_DocumentKind.text, 'B');
+		const a = db.add_document('a.txt', T_DocumentKind.txt, 'A');
+		const b = db.add_document('b.txt', T_DocumentKind.txt, 'B');
 		const red = db.add_tag('red');
 		db.add_tagging(red.id, a.id);
 
@@ -46,9 +46,9 @@ describe('local document store', () => {
 	it('orders children by a parent relationship', () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const parent = db.add_document('parent', T_DocumentKind.text, 'P');
-		const first  = db.add_document('first', T_DocumentKind.text, '1');
-		const second = db.add_document('second', T_DocumentKind.text, '2');
+		const parent = db.add_document('parent', T_DocumentKind.txt, 'P');
+		const first  = db.add_document('first', T_DocumentKind.txt, '1');
+		const second = db.add_document('second', T_DocumentKind.txt, '2');
 		const owns = db.add_predicate('parent-of');
 		db.add_relationship(owns.id, parent.id, first.id);
 		db.add_relationship(owns.id, parent.id, second.id);
@@ -58,10 +58,26 @@ describe('local document store', () => {
 		expect(names).toEqual(['parent', 'first', 'second']);
 	});
 
+	it('erases the whole store — records and bytes gone, stays empty after reload', () => {
+		const db = new DB_Local();
+		db.fetch_all();
+		const doc = db.add_document('wipe.txt', T_DocumentKind.txt, 'data');
+		db.add_tag('keep');
+
+		db.erase_all();
+		expect(db.list_documents()).toHaveLength(0);
+		expect(db.read_blob(doc.id)).toBeNull();
+
+		const reloaded = new DB_Local();
+		reloaded.fetch_all();
+		expect(reloaded.list_documents()).toHaveLength(0);
+		expect(reloaded.tags).toHaveLength(0);
+	});
+
 	it('deletes a document as a cascade, leaving no orphans', () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const doc = db.add_document('gone.txt', T_DocumentKind.text, 'bye');
+		const doc = db.add_document('gone.txt', T_DocumentKind.txt, 'bye');
 		const tag = db.add_tag('keep');
 		db.add_tagging(tag.id, doc.id);
 

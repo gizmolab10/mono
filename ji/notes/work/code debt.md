@@ -5,11 +5,17 @@ write a proposal for the first unchecked item to the top of handoff.
 ## work
 
 - [ ] phase 2 -> new UX for adding documents
-    - [x] port D_Data.svelte from ws
+    - [x] add -> more file types
+        - [x] pdf
+        - [x] jpg
+        - [x] show type in browse table
+        - [ ] show all acceptable types in drop here, smaller font, below drop here, centered
     - [ ] determine design and wire in
         - [ ] add_categories.svelte for creating new
-        - [ ] share with search
-            - [ ] categories.svelte for choosing one or more
+        - [ ] categories.svelte for choosing one or more
+            - [ ] share with search
+        - [ ] in browse
+            - [ ] show tags and an 'edit tags' button
 - [ ] port the diagnostic log feature from di
 - [ ] remove all unused T_Preference items
 - [ ] move di hooks -> mono
@@ -18,8 +24,13 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
-
 - [x] phase 2 -> database repository
+    - [x] what is unsaved?
+    - [x] persist more/less choice
+    - [x] add an 'erase all data' button
+        - [x] same row as segmented control, far right
+        - [x] click -> show an 'are you sure' dialog
+    - [x] port D_Data.svelte from ws
     - [x] port (rewrite) all DB code from ws
     - [x] using [[db spec]] as single source of truth
     - [x] write db proposal -> to implement [[db spec]]

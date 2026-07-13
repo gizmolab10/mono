@@ -237,7 +237,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 585.5
+    "width": 200
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -251,12 +251,20 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "80f39175f0ae8aca",
   "lastOpenFiles": [
+    "ji/src/lib/svelte/details/D_Data.svelte.tmp.12754.5871b23ef630",
+    "ji/src/lib/svelte/details/D_Data.svelte.tmp.12754.516460474079",
+    "ji/notes/work/handoff.md",
+    "ji/notes/work/code debt.md",
+    "ji/notes/work/handoff.md.tmp.12754.0ecb8cb30ef5",
+    "ji/notes/work/work journal.md.tmp.12754.e31e868ccfd2",
+    "ji/src/lib/svelte/operations/Browse.svelte",
+    "ji/src/lib/svelte/operations/Categories.svelte copy",
+    "ji/src/lib/ts/database/Signal.ts",
     "ji/src/lib/svelte/details/D_Data.svelte",
     "ji/notes/work/db handoff.md",
     "ji/notes/work/done/db/db handoff.md",
-    "ji/notes/work/code debt.md",
     "ji/notes/work/done/db/db proposal.md",
     "ji/notes/work/done/db/db spec.md",
     "ji/notes/work/done/db",
@@ -265,16 +273,8 @@
     "ji/src/md/Intersection.md",
     "ji/src/assets/icon.png",
     "ji/src/lib/md/builds.md",
-    "ji/src/lib/ts/database/DB_Records.ts",
-    "ji/src/lib/ts/database/DB.test.ts",
-    "ji/src/lib/ts/database/Databases.ts",
-    "ji/src/lib/ts/database/DB_Local.ts",
-    "ji/src/lib/ts/database/DB_Common.ts",
-    "ji/src/lib/ts/database/Indexes.ts",
-    "ji/src/lib/ts/database/Persistable.ts",
     "ji/notes/work/db/db handoff.md",
     "ji/notes/work/db/db proposal.md",
-    "ji/notes/work/handoff.md",
     "ji/notes/work/db spec.md",
     "ji/notes/work/db/db spec.md",
     "ji/notes/work/db proposal.md",

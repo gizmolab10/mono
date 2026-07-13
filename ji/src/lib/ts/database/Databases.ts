@@ -4,6 +4,7 @@ import { DB_Common } from './DB_Common';
 import { DB_Local } from './DB_Local';
 import { T_Storage } from './DB_Records';
 import { preferences, T_Preference } from '../managers/Preferences';
+import { db_changed } from './Signal';
 
 // The registry. Holds one live storage instance per kind, tracks which is
 // active, remembers the choice, and rebuilds on a switch. Only the local
@@ -43,6 +44,7 @@ class Databases {
 		this.active.fetch_all();
 		preferences.write(T_Preference.database, storage);
 		this.w_storage.set(storage);
+		db_changed();                                    // the active store's contents changed
 		// console.log(`Switched to the ${storage} storage.`);
 	}
 

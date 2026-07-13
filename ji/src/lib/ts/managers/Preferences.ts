@@ -55,6 +55,7 @@ export enum T_Preference {
 
 	// Database
 	database         = 'database',
+	showOtherStores  = 'showOtherStores',
 
 	// Scenes
 	scene            = 'scene',

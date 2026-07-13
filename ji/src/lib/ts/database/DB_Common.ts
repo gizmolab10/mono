@@ -2,6 +2,7 @@ import { T_Record, T_Storage, T_DocumentKind } from './DB_Records';
 import type { Document, Tag, Tagging, Relationship, Predicate } from './DB_Records';
 import { Persistable } from './Persistable';
 import { Indexes } from './Indexes';
+import { db_changed } from './Signal';
 
 // A document paired with the ids of the tags on it — what a listing returns.
 export interface Listed_Document {
@@ -56,6 +57,7 @@ export abstract class DB_Common {
 	protected persist(record: T_Record): void {
 		this.save_list(record, this.list_forRecord(record));
 		this.persistable.clear(record);
+		db_changed();
 	}
 
 	private reindex(): void {
@@ -164,7 +166,6 @@ export abstract class DB_Common {
 
 	// Remove a document and everything that points at it, then its bytes.
 	delete_document(document_id: string): void {
-		const before = this.documents.length;
 		this.taggings      = this.taggings.filter((t) => t.document_id !== document_id);
 		this.relationships = this.relationships.filter((r) => r.parent_id !== document_id && r.child_id !== document_id);
 		this.documents     = this.documents.filter((d) => d.id !== document_id);
@@ -186,5 +187,21 @@ export abstract class DB_Common {
 		this.persist(T_Record.tags);
 		this.reindex();
 		// console.log(`Deleted tag ${tag_id} and its tagging and relationship rows.`);
+	}
+
+	// Wipe this store: every document's bytes, then every record list, then the
+	// indexes. Only this active store is touched; other stores are untouched.
+	erase_all(): void {
+		const had = this.documents.length;
+		for (const document of this.documents) { this.delete_blob(document.id); }
+		this.documents     = [];
+		this.tags          = [];
+		this.taggings      = [];
+		this.relationships = [];
+		this.predicates    = [];
+		this.persistable.clear_all();
+		for (const record of Object.values(T_Record)) { this.persist(record); }
+		this.reindex();
+		console.log(`Erased the ${this.storage} store: removed ${had} document(s) and every tag, link, and blob.`);
 	}
 }
