@@ -9,6 +9,7 @@ write a proposal for the first unchecked item to the top of handoff.
         - [ ] port (rewrite) all DB code and D_Data.svelte from ws
         - [x] using [[db spec]] as single source of truth
         - [x] write db proposal -> to implement [[db spec]]
+        - [ ] implement db proposal and track progress in db handoff
     - [ ] determine design and wire in
         - [ ] add_categories.svelte for creating new
         - [ ] share with search

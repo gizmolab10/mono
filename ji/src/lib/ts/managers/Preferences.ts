@@ -53,8 +53,8 @@ export enum T_Preference {
 	// Content
 	current_op      = 'current_op',
 
-	// Documents
-	documents        = 'documents',
+	// Database
+	database         = 'database',
 
 	// Scenes
 	scene            = 'scene',
@@ -149,6 +149,34 @@ class Preferences {
 		for (const key of keys) {
 			prefs[key] = this.read(key);
 		}
+	}
+
+	/**
+	 * Read one stored list for a record kind, namespaced by the active backend so
+	 * two backends never collide. Returns an empty array when nothing is stored.
+	 */
+	readDB<T>(backend: string, record: string): T[] {
+		try {
+			const raw = localStorage.getItem(`${STORAGE_PREFIX}${backend}/${record}`);
+			if (raw == null || raw == 'undefined') { return []; }
+			return JSON.parse(raw) as T[];
+		} catch {
+			return [];
+		}
+	}
+
+	/** Write one record kind's whole list back, namespaced by the active backend. */
+	writeDB<T>(backend: string, record: string, list: T[]): void {
+		try {
+			localStorage.setItem(`${STORAGE_PREFIX}${backend}/${record}`, JSON.stringify(list));
+		} catch (e) {
+			console.warn(`Failed to save the ${record} list for the ${backend} backend:`, e);
+		}
+	}
+
+	/** Remove one record kind's stored list for a backend. */
+	removeDB(backend: string, record: string): void {
+		localStorage.removeItem(`${STORAGE_PREFIX}${backend}/${record}`);
 	}
 
 	persistent<T>(key: T_Preference, fallback: T): Writable<T> {

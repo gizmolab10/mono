@@ -1,5 +1,3 @@
-# db implementation proposal
+# db implementation
 
-## database repository (phase 2, first subpart) — PROPOSAL
-
-**Single source of truth:** [[db spec]], as code debt states. It describes a **pluggable store**. Port that whole design into ji.
+**Single source of truth:** [[db spec]], as code debt states. It describes a **pluggable store**. Port that whole design into ji. This file tracks the progress.
