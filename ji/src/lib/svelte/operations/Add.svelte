@@ -8,6 +8,11 @@
 
 	let dragging = $state(false);
 
+	// The file types a drop will save — every kind except the catch-all "unknown".
+	const accepted = Object.values(T_DocumentKind)
+		.filter((kind) => kind !== T_DocumentKind.unknown)
+		.join(', ');
+
 	// Turn a file's reported type into one of our document kinds.
 	function kind_of(file: File): T_DocumentKind {
 		if (file.type.startsWith('text/'))   { return T_DocumentKind.txt; }
@@ -66,30 +71,38 @@
 		ondragover={handleDragOver}
 		ondragleave={handleDragLeave}>
 		drop documents here
+		<span class='types'>({accepted})</span>
 	</div>
 </div>
 
 <style>
 	.add-view {
 		/* Top room clears the fixed control cluster (hamburger + segments). */
+		padding    : var(--pad-view);
 		box-sizing : border-box;
 		position   : relative;
 		height     : 100%;
 		width      : 100%;
-		padding    : var(--pad-view);
 	}
 
 	.drop {
-		box-sizing      : border-box;
-		height          : 100%;
 		border          : var(--thickness-fat) dashed var(--accent);
+		opacity         : var(--opacity-drop);
+		font-size       : var(--font-drop);
 		border-radius   : var(--radius);
+		color           : var(--text);
+		box-sizing      : border-box;
 		align-items     : center;
 		justify-content : center;
+		flex-direction  : column;
+		height          : 100%;
 		display         : flex;
-		color           : var(--text);
-		font-size       : var(--font-drop);
-		opacity         : var(--opacity-drop);
+	}
+
+	.types {
+		font-size  : var(--font-label);
+		margin-top : var(--gap);
+		text-align : center;
 	}
 
 	.drop.dragging {

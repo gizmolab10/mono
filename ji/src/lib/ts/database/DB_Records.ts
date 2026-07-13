@@ -11,12 +11,12 @@ export enum T_Storage {
 // What a document's bytes are, so the UI can open or show it.
 export enum T_DocumentKind {
 	unknown = 'unknown',
-	jpeg    = 'jpeg',
-	txt     = 'txt',
 	bmp     = 'bmp',
+	gif     = 'gif',
+	jpeg    = 'jpeg',
 	pdf     = 'pdf',
 	png     = 'png',
-	gif     = 'gif',
+	txt     = 'txt',
 }
 
 // The five stored record kinds, so save/load loops can walk them by name.
@@ -36,6 +36,7 @@ export interface Document {
 	blob_id  : string;         // reference the storage resolves to the actual bytes
 	name     : string;
 	date     : number;         // created/modified, milliseconds since epoch
+	metadata : any;
 }
 
 // A category.

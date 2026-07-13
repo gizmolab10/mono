@@ -2,6 +2,13 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-13 — more file types, and a hint of what's accepted
+
+- **More types save.** A drop now keeps text, jpeg, png, gif, bmp, and pdf — text as its plain contents, the rest as a data-URL (their bytes base64-wrapped, ready to show). Anything else is skipped with a note.
+- **Accepted-types hint.** Under "drop documents here" sits a smaller centered line listing the types a drop will keep, read straight from the type list so it can never go stale.
+- **Browse shows the type.** The browse view is now a two-column table — each document's type beside its name.
+- **Erase names the store.** The confirm reads "erase all your local data?" (or firebase), the buttons pinned left and the question centered in the space beside them.
+
 ## 2026-07-13 — erase, a remembered toggle, and data-panel polish
 
 - **Erase all.** A far-left "erase" button on the switcher row wipes the active store after an inline "erase all your data? yes / no"; while it asks, the erase button and the switcher both hide. Only the active store is touched — the wipe clears every record and every blob and saves it empty. A driven test proves it stays empty after a reload.

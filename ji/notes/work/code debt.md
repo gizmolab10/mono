@@ -9,13 +9,16 @@ write a proposal for the first unchecked item to the top of handoff.
         - [x] pdf
         - [x] jpg
         - [x] show type in browse table
-        - [ ] show all acceptable types in drop here, smaller font, below drop here, centered
+        - [x] show all acceptable types in drop here, smaller font, below drop here, centered
     - [ ] determine design and wire in
         - [ ] add_categories.svelte for creating new
         - [ ] categories.svelte for choosing one or more
             - [ ] share with search
         - [ ] in browse
             - [ ] show tags and an 'edit tags' button
+    - [ ] add firebase support
+        - [ ] use person's id
+        - [ ] authorization
 - [ ] port the diagnostic log feature from di
 - [ ] remove all unused T_Preference items
 - [ ] move di hooks -> mono

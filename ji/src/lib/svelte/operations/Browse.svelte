@@ -21,8 +21,8 @@
 			<tbody>
 				{#each rows as row}
 					<tr class='file'>
-						<td class='name'>{row.name}</td>
 						<td class='kind'>{row.kind}</td>
+						<td class='name'>{row.name}</td>
 					</tr>
 				{/each}
 			</tbody>
@@ -32,21 +32,21 @@
 
 <style>
 	.browse {
+		padding    : var(--pad-view);
 		box-sizing : border-box;
 		height     : 100%;
 		width      : 100%;
-		padding    : var(--pad-view);
 		overflow-y : auto;
 	}
 
 	.empty {
-		color       : var(--text);
-		opacity     : var(--opacity-label);
-		font-size   : var(--font-base);
-		align-items : center;
-		display     : flex;
-		height      : 100%;
+		opacity         : var(--opacity-label);
+		font-size       : var(--font-base);
+		color           : var(--text);
+		align-items     : center;
 		justify-content : center;
+		display         : flex;
+		height          : 100%;
 	}
 
 	.files {
@@ -55,15 +55,15 @@
 	}
 
 	.name, .kind {
-		color         : var(--text);
-		font-size     : var(--font-base);
-		padding       : var(--gap-tight) 0;
-		text-align    : left;
-		vertical-align: baseline;
+		padding        : var(--gap-tight) 0;
+		font-size      : var(--font-base);
+		color          : var(--text);
+		vertical-align : baseline;
+		text-align     : left;
 	}
 
 	.kind {
-		opacity    : var(--opacity-label);
-		text-align : right;
+		opacity : var(--opacity-label);
+		width   : 30px;
 	}
 </style>
