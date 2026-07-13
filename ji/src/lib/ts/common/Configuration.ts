@@ -11,10 +11,10 @@ class Configuration {
 	 */
 	configure_layers(): void {
 		const root = document.documentElement.style;
-		root.setProperty('--z-common',       `${k.layer.common}`);
-		root.setProperty('--z-hideable',     `${k.layer.hideable}`);
-		root.setProperty('--z-controls',     `${k.layer.controls}`);
-		root.setProperty('--z-intersection', `${k.layer.intersection}`);
+		root.setProperty('--z-common',           `${k.layer.common}`);
+		root.setProperty('--z-hideable',         `${k.layer.hideable}`);
+		root.setProperty('--z-controls',         `${k.layer.controls}`);
+		root.setProperty('--z-frontmost',        `${k.layer.frontmost}`);
 	}
 
 	/**
@@ -25,10 +25,10 @@ class Configuration {
 	 */
 	configure_metrics(): void {
 		const root = document.documentElement.style;
-		root.setProperty('--gap',                `${k.gap.intersection}px`);
-		root.setProperty('--gap-preferences',    `${k.gap.preferences}px`);
-		root.setProperty('--gap-details',        `${k.gap.details}px`);
 		root.setProperty('--gap-tight',          `${k.gap.tight}px`);
+		root.setProperty('--gap',                `${k.gap.default}px`);
+		root.setProperty('--gap-details',        `${k.gap.details}px`);
+		root.setProperty('--gap-preferences',    `${k.gap.preferences}px`);
 		root.setProperty('--radius',             `${k.radius.corner.main}px`);
 		root.setProperty('--radius-banner',      `${k.radius.corner.banner}px`);
 		root.setProperty('--radius-build',       `${k.radius.corner.build}px`);
@@ -61,7 +61,6 @@ class Configuration {
 		root.setProperty('--thickness-fat',      `${k.thickness.fat}px`);
 		root.setProperty('--tracking',           `${k.font.em.tracking}em`);
 		// Paddings pushed as ready-to-use shorthands (top/right/bottom/left where needed).
-		root.setProperty('--pad-slot',           `${k.pad.slot}px`);
 		root.setProperty('--pad-hamburger',      `${k.pad.hamburger.y}px ${k.pad.hamburger.x}px`);
 		root.setProperty('--pad-control',        `${k.pad.control.y}px ${k.pad.control.x}px`);
 		root.setProperty('--pad-modal',          `${k.pad.modal.y}px ${k.pad.modal.x}px`);

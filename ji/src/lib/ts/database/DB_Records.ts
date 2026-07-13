@@ -39,7 +39,7 @@ export interface Document {
 	metadata : any;
 }
 
-// A category.
+// A tag.
 export interface Tag {
 	id   : string;
 	name : string;

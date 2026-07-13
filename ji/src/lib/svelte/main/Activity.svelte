@@ -35,7 +35,7 @@
 				href='https://designintuition.app'
 				target='_blank'
 				rel='noopener' >
-				also by: jonathan sand
+				built by: jonathan sand
 			</a>
 		</div>
 	{/if}
@@ -59,13 +59,13 @@
 	}
 
 	.build-opener {
-		border: var(--thickness-normal) solid var(--black);
-		border-radius: var(--radius-pill);
-		font-size: var(--font-base);
-		padding: var(--pad-opener);
-		background: var(--white);
-		color: var(--gray);
-		cursor: pointer;
+		border        : var(--thickness-normal) solid var(--black);
+		border-radius : var(--radius-pill);
+		padding       : var(--pad-control);
+		font-size     : var(--font-base);
+		background    : var(--white);
+		color         : var(--gray);
+		cursor        : pointer;
 	}
 
 	.build-opener:hover {

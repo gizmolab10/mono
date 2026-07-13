@@ -5,8 +5,12 @@
 	// Unknown types are skipped with a message.
 	import { databases } from '../../ts/database/Databases';
 	import { T_DocumentKind } from '../../ts/database/DB_Records';
+	import Add_Tags from './Add_Tags.svelte';
 
 	let dragging = $state(false);
+
+	// Tags chosen for this drop batch — every saved file gets tagged with them.
+	let chosen = $state(new Set<string>());
 
 	// The file types a drop will save — every kind except the catch-all "unknown".
 	const accepted = Object.values(T_DocumentKind)
@@ -46,8 +50,9 @@
 				continue;
 			}
 			const content = await bytes_of(file, kind);
-			databases.active.add_document(file.name, kind, content);
-			console.log(`Saved "${file.name}" as a ${kind} document (${content.length} character(s) stored).`);
+			const doc = databases.active.add_document(file.name, kind, content);
+			for (const tag_id of chosen) { databases.active.add_tagging(tag_id, doc.id); }
+			console.log(`Saved "${file.name}" as a ${kind} document with ${chosen.size} tag tag(s).`);
 		}
 	}
 
@@ -62,11 +67,14 @@
 </script>
 
 <div class='add-view'>
+	<div class='tags'>
+		<Add_Tags bind:selected={chosen} />
+	</div>
 	<div
 		class='drop'
-		class:dragging
-		role='button'
 		tabindex='0'
+		role='button'
+		class:dragging
 		ondrop={handleDrop}
 		ondragover={handleDragOver}
 		ondragleave={handleDragLeave}>
@@ -76,13 +84,24 @@
 </div>
 
 <style>
+
+	.tags {
+		gap            : var(--gap-tight);
+		padding-bottom : var(--gap);
+		align-items    : center;
+		flex-direction : column;
+		display        : flex;
+	}
+
 	.add-view {
 		/* Top room clears the fixed control cluster (hamburger + segments). */
-		padding    : var(--pad-view);
-		box-sizing : border-box;
-		position   : relative;
-		height     : 100%;
-		width      : 100%;
+		padding        : var(--pad-view);
+		box-sizing     : border-box;
+		position       : relative;
+		flex-direction : column;
+		display        : flex;
+		height         : 100%;
+		width          : 100%;
 	}
 
 	.drop {
@@ -92,11 +111,12 @@
 		border-radius   : var(--radius);
 		color           : var(--text);
 		box-sizing      : border-box;
+		position        : relative;
 		align-items     : center;
 		justify-content : center;
 		flex-direction  : column;
-		height          : 100%;
 		display         : flex;
+		flex            : 1;                   /* fill to the bottom, so its bottom margin equals the sides */
 	}
 
 	.types {

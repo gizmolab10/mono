@@ -26,8 +26,8 @@ Three indexes, rebuilt from the records on load, updated as rows change: tagging
 
 ## The three reads
 
-- **List documents** — walk the graph from each root down, categories per document from the tagging index.
-- **Filter by category** — tagging-by-tag-id lookup.
+- **List documents** — walk the graph from each root down, tags per document from the tagging index.
+- **Filter by tag** — tagging-by-tag-id lookup.
 - **Untagged (inbox)** — all documents minus the keys of tagging-by-document-id.
 
 ## Delete

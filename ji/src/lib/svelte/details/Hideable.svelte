@@ -26,12 +26,17 @@
 
 <style>
 	.hideable {
+		gap            : var(--gap-details);
 		flex-direction : column;
 		display        : flex;
-		gap            : var(--gap-details);
 	}
 
 	.banner {
+		height          : var(--height-hideable);
+		border-radius   : var(--radius-banner);
+		font-size       : var(--font-banner);
+		font-weight     : var(--fw-banner);
+		letter-spacing  : var(--tracking);
 		color           : var(--black);
 		background      : var(--bg);
 		text-transform  : lowercase;
@@ -40,15 +45,10 @@
 		align-items     : center;
 		justify-content : center;
 		overflow        : hidden;
-		letter-spacing  : var(--tracking);
-		font-size       : var(--font-banner);
-		border-radius   : var(--radius-banner);
-		height          : var(--height-hideable);
 		display         : flex;
 		border          : none;
 		outline         : none;
 		width           : 100%;
-		font-weight     : var(--fw-banner);
 	}
 
 	.banner::before {
@@ -68,9 +68,9 @@
 	}
 
 	.slot {
+		border-radius : var(--radius-banner);
+		padding       : var(--gap);
 		background    : var(--bg);
 		position      : relative;
-		border-radius : var(--radius-banner);
-		padding       : var(--pad-slot);
 	}
 </style>

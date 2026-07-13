@@ -5,7 +5,7 @@ Intersection stores documents. They are hierarchal and tagged. Support for fires
 > Where save/fetch touch that model, this spec just says "the records" and leaves the model's internals alone.
 > All file paths below are under `ws/src/lib/ts/`.
 
-Goal: "save a named document with one or more category tags and/or parents, and list them back."
+Goal: "save a named document with one or more tag tags and/or parents, and list them back."
 
 ## Big picture
 
@@ -80,12 +80,12 @@ Removing a document is a cascade: delete its tagging rows, delete any relationsh
 
 ### The three reads
 
-- **List documents** — walk the graph from each root down by parent ids, and for each id read its tag records to know its categories. A blob is fetched by document id only when it is actually opened.
-- **Filter by category** — read the tagging records for a tag id to get the document ids associated with it, then read those blobs.
+- **List documents** — walk the graph from each root down by parent ids, and for each id read its tag records to know its tags. A blob is fetched by document id only when it is actually opened.
+- **Filter by tag** — read the tagging records for a tag id to get the document ids associated with it, then read those blobs.
 - **Untagged (inbox)** — gather every document id that appears in any tagging record, then list the documents whose id is not in that set. A parent link does not count as a tag, so a document with parents but no tag still appears here.
 
 These are accomplished by indexing, each of them updates when a tagging or relationship row is added or deleted:
 
-- **Tagging by tag id** → the document ids wearing that tag. Powers **filter by category** in one lookup.
-- **Tagging by document id** → a document's tags. Powers the per-document categories in **list documents**, and its set of keys is exactly the tagged documents — so **untagged** is all document ids minus that key set.
+- **Tagging by tag id** → the document ids wearing that tag. Powers **filter by tag** in one lookup.
+- **Tagging by document id** → a document's tags. Powers the per-document tags in **list documents**, and its set of keys is exactly the tagged documents — so **untagged** is all document ids minus that key set.
 - **Relationships by parent id** → a node's children, already in sort order. Powers the downward walk in **list documents**. A companion **relationships by child id** gives each node's parents and, by its key set, the non-roots — so the roots are all nodes minus that set.

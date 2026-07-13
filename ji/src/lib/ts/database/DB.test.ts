@@ -43,6 +43,20 @@ describe('local document store', () => {
 		expect(b.id).toBeTruthy();
 	});
 
+	it('adds and removes a tag on a document', () => {
+		const db = new DB_Local();
+		db.fetch_all();
+		const doc = db.add_document('a.txt', T_DocumentKind.txt, 'A');
+		const red = db.add_tag('red');
+
+		db.add_tagging(red.id, doc.id);
+		expect(db.filter_by_tag(red.id).map((d) => d.name)).toEqual(['a.txt']);
+
+		db.remove_tagging(red.id, doc.id);
+		expect(db.filter_by_tag(red.id)).toHaveLength(0);
+		expect(db.untagged().map((d) => d.name)).toEqual(['a.txt']);
+	});
+
 	it('orders children by a parent relationship', () => {
 		const db = new DB_Local();
 		db.fetch_all();

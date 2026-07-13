@@ -48,7 +48,7 @@ The AI writes like *you*, not like a help desk. Captured from examples, enforced
 
 ### Task taxonomy
 
-Different kinds of work need different discipline. Refactoring needs search-first. Debugging needs hypotheses. Prose needs voice. Co lets you define your categories, each with its own rules and gates.
+Different kinds of work need different discipline. Refactoring needs search-first. Debugging needs hypotheses. Prose needs voice. Co lets you define your tags, each with its own rules and gates.
 
 ### Shorthand
 
@@ -136,6 +136,6 @@ Self-hosted costs $5–30/mo in API fees. Most personal users typically pay arou
 ## Open questions
 
 - [ ] ask it the right qs -> lean into learning
-	- [ ] are you leading me down the garden path?
+ 	- [ ] are you leading me down the garden path?
 - [ ] is this a template? a tool? an app?
 - [ ] who's the audience — developers? creatives? both?

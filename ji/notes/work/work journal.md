@@ -28,7 +28,7 @@ Reverse chronological log of finished work on ji (the Jeff intersection project)
 
 - **Built the database repository** from [[db spec]] and [[db proposal]]. It's the ws plugin store ported whole — a registry that swaps storages, a shared base carrying the save / load / add / delete, thin storage subclasses — but the data is ji's own: five records (documents, tags, tagging, relationships, predicates) plus the document bytes kept outside the store.
 - **Records live in browser storage,** each storage under its own name so two never collide. The bytes go through a read-by-id / write-by-id seam; the local storage parks them in browser storage for now (real files on disk come later).
-- **Reads run off in-memory lookups** rebuilt on load — never saved. List documents walks the parent graph from each root (a node can have many parents; the walk won't loop). Filter by category is one lookup. An inbox lists the untagged. Delete is a cascade: drop the links and the bytes, no orphans left.
+- **Reads run off in-memory lookups** rebuilt on load — never saved. List documents walks the parent graph from each root (a node can have many parents; the walk won't loop). Filter by tag is one lookup. An inbox lists the untagged. Delete is a cascade: drop the links and the bytes, no orphans left.
 - **Only the local storage is built;** the cloud one (firestore + Google's file store) is a drop-in for later, no changes to the base. Proven with a driven test — save a document and list it back after a reload, tag and filter, ordered children under a parent, delete leaves nothing behind. Type-check clean.
 - **Killed the earlier flat one-record store** — it was the wrong shape (a plugin engine, not a single localStorage call).
 
@@ -59,7 +59,7 @@ Reverse chronological log of finished work on ji (the Jeff intersection project)
 
 ## 2026-07-10 — add-document flow (skeleton) and picker polish
 
-- **Add flow, Phase 1.** New content-mode store (browse / add / search); an "add" pill next to the hamburger switches to add mode; the content area swaps to a new Add view with a large drop-here rectangle that logs the dropped files. Persistence, categories, and the document store are still to come.
+- **Add flow, Phase 1.** New content-mode store (browse / add / search); an "add" pill next to the hamburger switches to add mode; the content area swaps to a new Add view with a large drop-here rectangle that logs the dropped files. Persistence, tags, and the document store are still to come.
 - **Color picker rebuilt.** The accent picker no longer leans on the native color swatch — the visible circle is our own element (background `--accent`, `--hover` on hover) with the real color input laid invisibly on top to catch the click. That fixed the hover the native swatch kept ignoring.
 - **Polish.** The hamburger paths gained a permanent black 0.5px outline (hover changes only the fill). The add pill got a black border and `--hover` fill. The preferences banner fills `--hover` on hover.
 

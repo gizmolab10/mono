@@ -16,7 +16,7 @@ The intersection project's files. Update this when files are added, moved, or re
 - `main/Activity.svelte` — the content region's body; switches on the current operation: `add` shows the Add view, `browse` shows the Browse view, and the arrival landing (nothing picked) shows the "Intersection" text and "Build N" opener.
 - `operations/Add.svelte` — the add-document view: a large drop-here rectangle that saves each dropped file into the active store — text as its contents, jpeg/png/gif/bmp/pdf as a data-URL, anything else skipped. A smaller centered line under the prompt lists the accepted types (read from the kind enum).
 - `operations/Browse.svelte` — the browse view: a live two-column table (type + name) of every saved document from the active store, derived off the store-changed tick, with a "no documents yet" empty state. Search filter and click-to-open come later.
-- `main/add_categories.svelte`, `main/categories.svelte` — empty stubs (create a category / pick categories); not wired in or visible yet, design TBD.
+- `main/add_tags.svelte`, `main/tags.svelte` — empty stubs (create a tag / pick tags); not wired in or visible yet, design TBD.
 - `main/BuildNotes.svelte` — the build-history popup: a paged table read from the markdown data file, with close and up/down arrows.
 - `details/Details.svelte` — the collapsible details region: its (empty) banner and the preferences panel. The frame passes the width; the control cluster is a separate fixed overlay.
 - `details/Hideable.svelte` — a collapsible titled banner. **⟵di** (trimmed: plain toggle, no di engine).

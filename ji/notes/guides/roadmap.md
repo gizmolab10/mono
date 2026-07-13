@@ -107,7 +107,7 @@ User accounts to track individual pledge history
   
 Public leaderboards showing top issues and total solidarity counts  
   
-Basic tagging of articles to Peace, Equality, or Sustainability categories  
+Basic tagging of articles to Peace, Equality, or Sustainability tags  
   
 Optional newsletter digest remains as an onboarding channel  
   
@@ -287,7 +287,6 @@ PhaseNameDurationUser ScaleCore ValueCost Level
 8. Virtuous EconomyOngoing250,000+Self-sustaining institutionRevenue positive
 9. Autonomous CollectiveOngoing1,000,000+Mature democratic platformSelf-sustaining
 
-  
 The Pitch  
   
 "Start with a private AI for five scholars. End with a million citizens wielding quantified solidarity to pass legislation. Each ## Phase pays for the next. The data is the asset. The collective is the owner. The democracy is the outcome."

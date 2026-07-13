@@ -79,7 +79,7 @@ export abstract class DB_Common {
 	// Save a new document: write its bytes through the blob seam, add the record.
 	add_document(name: string, kind: T_DocumentKind, content: string): Document {
 		const id = crypto.randomUUID();
-		const document: Document = { id, blob_id: id, name, storage: this.storage, kind, date: Date.now() };
+		const document: Document = { id, blob_id: id, name, storage: this.storage, kind, date: Date.now(), metadata: {} };
 		this.write_blob(id, content);
 		this.documents.push(document);
 		this.persistable.mark_dirty(T_Record.documents, id);
@@ -104,6 +104,15 @@ export abstract class DB_Common {
 		this.reindex();
 		// console.log(`Tagged document ${document_id} with tag ${tag_id}; ${this.taggings.length} tagging link(s) total.`);
 		return tagging;
+	}
+
+	// Take a tag off a document (remove the one link between them).
+	remove_tagging(tag_id: string, document_id: string): void {
+		const before = this.taggings.length;
+		this.taggings = this.taggings.filter((t) => !(t.tag_id === tag_id && t.document_id === document_id));
+		this.persist(T_Record.taggings);
+		this.reindex();
+		console.log(`Removed tag ${tag_id} from document ${document_id}; tagging links went from ${before} to ${this.taggings.length}.`);
 	}
 
 	add_predicate(type: string): Predicate {

@@ -77,8 +77,7 @@
               "title": "workflow"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -213,13 +212,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/code debt.md",
+                "file": "ji/notes/work/handoff.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of handoff"
             }
           },
           {
@@ -251,12 +250,15 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "80f39175f0ae8aca",
+  "active": "3e1ddbde653729de",
   "lastOpenFiles": [
+    "ji/src/lib/svelte/operations/Tags.svelte",
+    "ji/src/lib/svelte/operations/Add_Tags.svelte",
+    "ji/src/lib/svelte/operations/Add.svelte.tmp.12754.1e4a63cecb77",
+    "ji/notes/work/code debt.md",
     "ji/src/lib/svelte/details/D_Data.svelte.tmp.12754.5871b23ef630",
     "ji/src/lib/svelte/details/D_Data.svelte.tmp.12754.516460474079",
     "ji/notes/work/handoff.md",
-    "ji/notes/work/code debt.md",
     "ji/notes/work/handoff.md.tmp.12754.0ecb8cb30ef5",
     "ji/notes/work/work journal.md.tmp.12754.e31e868ccfd2",
     "ji/src/lib/svelte/operations/Browse.svelte",
@@ -267,9 +269,6 @@
     "ji/notes/work/done/db/db handoff.md",
     "ji/notes/work/done/db/db proposal.md",
     "ji/notes/work/done/db/db spec.md",
-    "ji/notes/work/done/db",
-    "ji/notes/work/done",
-    "ji/notes/work/untitled folder",
     "ji/src/md/Intersection.md",
     "ji/src/assets/icon.png",
     "ji/src/lib/md/builds.md",

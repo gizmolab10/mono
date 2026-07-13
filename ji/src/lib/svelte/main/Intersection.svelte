@@ -9,7 +9,7 @@
 	// Layout numbers ported from di's Constants (common_size 33): the inset/gap,
 	// the corner radius, the fixed width of the details region, the smallest
 	// window we allow, and the window width below which details wraps full-width.
-	const gap = k.gap.intersection;
+	const gap = k.gap.default;
 
 	let width = $state(Math.max(k.width.window, window.innerWidth));
 	let height = $state(window.innerHeight);
@@ -55,7 +55,7 @@
 	style:height='{height}px'
 	style:background-color='var(--accent)'>
 
-	<div class='main'>
+	<div class='panel'>
 		{#if !showBuildNotes}
 			<Controls onclick={toggleDetails} onAccent={$w_show_details} />
 			{#if $w_show_details}
@@ -81,16 +81,16 @@
 
 <style>
 	.intersection {
+		padding        : var(--gap);
 		box-sizing     : border-box;
 		flex-direction : column;
 		position       : fixed;
 		display        : flex;
-		padding        : var(--gap);
 		top            : 0;
 		left           : 0;
 	}
 
-	.main {
+	.panel {
 		gap        : var(--gap);
 		overflow   : hidden;
 		display    : flex;
