@@ -4,16 +4,16 @@
 	// import/export, and the switcher; here we keep the counts that survive ji's
 	// data (documents, tags, unsaved) and the switcher. Only the local store is
 	// built, so the cloud segment is a dimmed placeholder until firestore lands.
-	import { databases } from '../../ts/database/Databases';
-	import { T_Storage } from '../../ts/database/DB_Records';
-	import { w_db_changed } from '../../ts/database/Signal';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { T_Storage } from '../../ts/database/DB_Records';
+	import { databases } from '../../ts/database/Databases';
+	import { w_db_changed } from '../../ts/database/Signal';
 
 	const { w_storage } = databases;
 
 	// Every storage the app knows, in switch order; local is built, remote is not.
 	const storages = Object.values(T_Storage);
-	const built = new Set<T_Storage>([T_Storage.local]);
+	const built = new Set<T_Storage>([T_Storage.private]);
 
 	// The more/less choice, remembered across reloads.
 	const w_show_others = preferences.persistent<boolean>(T_Preference.showOtherStores, false);
@@ -61,7 +61,7 @@
 				<div class='confirm'>
 					<button class='no' onclick={cancel_erase}>no</button>
 					<button class='yes' onclick={do_erase}>yes</button>
-					<span class='sure'>erase all your {$w_storage} data?</span>
+					<span class='sure'>erase {$w_storage} data?</span>
 				</div>
 			{:else}
 				<button class='erase' title='erase all data' onclick={ask_erase}>erase</button>

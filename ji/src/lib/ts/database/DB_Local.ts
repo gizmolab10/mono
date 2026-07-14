@@ -8,7 +8,7 @@ import { preferences } from '../managers/Preferences';
 // real files on disk (proposal step 4).
 
 export class DB_Local extends DB_Common {
-	readonly storage = T_Storage.local;
+	readonly storage = T_Storage.private;
 
 	protected load_list<T>(record: T_Record): T[] {
 		return preferences.readDB<T>(this.storage, record);

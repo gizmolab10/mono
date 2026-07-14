@@ -55,7 +55,7 @@ export class Colors {
 	private accent_to_background(accent : string) : string {
 		const hsba = this.color_toHSBA(accent);
 		if (!hsba) return '#F9E4BE';
-		hsba.s = hsba.s * 0.35;   // much less saturation
+		hsba.s = hsba.s * 0.1;   // much less saturation
 		hsba.b = Math.min(95, hsba.b * 1.3 + 20);  // push toward bright
 		const rgba = this.HSBA_toRGBA(hsba);
 		return this.RGBA_toHex(rgba);

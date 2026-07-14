@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import Documents from '../documents/Documents.svelte';
+	import Documents from './Documents.svelte';
 	import Details from '../details/Details.svelte';
 	import { k } from '../../ts/common/Constants';
 	import buildsRaw from '../../md/builds.md?raw';

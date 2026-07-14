@@ -9,6 +9,12 @@ Reverse chronological log of finished work on ji (the Jeff intersection project)
 - **Browse shows the type.** The browse view is now a two-column table — each document's type beside its name.
 - **Erase names the store.** The confirm reads "erase all your local data?" (or firebase), the buttons pinned left and the question centered in the space beside them.
 
+## 2026-07-13 — a live filter, one source of truth
+
+- **Search state in one place.** A small `Search` module now holds the picked tags, the filter text, and the all/any mode, plus one function that narrows the documents. Every view reads it, so nothing keeps its own copy.
+- **All or any.** A little segmented control at the far left of the tag row switches whether a document must carry every picked tag or just one of them.
+- **Filter as you type.** A "filter by name" box sits under the tags; typing narrows the list at once, alongside the tag filter.
+
 ## 2026-07-13 — the always-on layout
 
 - **One screen, no view-switching.** Rebuilt the content area to the intersection spec: a full-width accent controls row at the top (hamburger left, "Add a new document / tag" centered, help button right), then the tag chips, a rule, and the documents table — all always shown. Clicking "add new document" swaps the table for the drop box; clicking it again returns.

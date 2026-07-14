@@ -1,6 +1,9 @@
 <script lang='ts'>
-	// Create a new tag: type a name and add it to the active store's tags.
+	// Create a new tag: type a name and add it to the active store's tags. `ondone`
+	// lets the caller close this view (the documents view returns to the list).
 	import { databases } from '../../ts/database/Databases';
+
+	let { ondone }: { ondone?: () => void } = $props();
 
 	let name = $state('');
 
@@ -25,6 +28,7 @@
 		bind:value={name}
 		onkeydown={(e) => { if (e.key === 'Enter') { add(); } }} />
 	<button class='button' onclick={add}>add</button>
+	<button class='button' onclick={() => { console.log('Done adding tags — closing the new-tag view.'); ondone?.(); }}>done</button>
 </div>
 
 <style>

@@ -47,7 +47,7 @@ export default class Constants {
 
 	width = {
 		modal	 	 : common_size * 17.3,
-		details		 : common_size * 6.5,
+		details		 : common_size * 7,
 		phone		 : 620,
 		window		 : 400,
 		page	   	 : 10,

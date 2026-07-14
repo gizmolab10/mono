@@ -4,8 +4,8 @@
 
 // Which storage holds a document's blob.
 export enum T_Storage {
-	firebase = 'firebase',
-	local    = 'local',
+	shared  = 'shared',
+	private = 'private',
 }
 
 // What a document's bytes are, so the UI can open or show it.

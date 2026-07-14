@@ -4,29 +4,37 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [x] move build opener and written by to bottom of intersection, at layer frontmost
-- [x] details view
-    - [x] remove the empty space at top
-- [x] remove the empty space at top of documents view
-- [x] Implement search.ts
-    - [x] keeps single source of truth for selected tags and input filter text
-- [x] always show tags at top of documents
-    - [x] click on a tag
-        - [x] toggles it
-        - [x] applies it as a filter
-- [ ] always show input field for filter text, below tags
-    - [ ] show results as you type
+- [x] add a "any/all" segmented control at far left of Tags
+- [x] always show input field for filter text, below tags
+    - [x] show results as you type
+- [x] add "format", "file name", "tags" and "edit tags" on top of hr
+    - [x] same as d data more/less,
+    - [x] positioned so as to be ***left-aligned*** wrt the columns of the table
+- [x] move any alongside tags, --gap-fat
+- [ ] add md, html, tiff, webp, svg, rtf
 - [ ] add firebase support
     - [ ] use person's id
     - [ ] authorization
 - [ ] port the diagnostic log feature from di
-- [ ] remove all unused T_Preference items
+- [ ] remove all unused
+    - [ ] T_Preference items
+    - [ ] colors
 - [ ] move di hooks -> mono
 - [ ] front page
 - [ ] write a new file: stipulations based on current code
 
 ## done
 
+- [x] Implement search.ts
+    - [x] keeps single source of truth for selected tags and input filter text
+- [x] always show tags at top of documents
+    - [x] click on a tag
+        - [x] toggles it
+        - [x] applies it as a filter
+- [x] move build opener and written by to bottom of intersection, at layer frontmost
+- [x] details view
+    - [x] remove the empty space at top
+- [x] remove the empty space at top of documents view
 - [x] clicking on add new document -> hide documents list, show drop box
 - [x] controls row
     - [x] always visible
