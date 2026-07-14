@@ -47,7 +47,7 @@ export default class Constants {
 
 	width = {
 		modal	 	 : common_size * 17.3,
-		details		 : common_size * 7.3,
+		details		 : common_size * 6.5,
 		phone		 : 620,
 		window		 : 400,
 		page	   	 : 10,
@@ -82,15 +82,15 @@ export default class Constants {
 	};
 
 	height = {
-		banner		 : common_size * 1.2,
 		hideable	 : control_height * 1.3,
+		banner		 : common_size * 1.2,
 		control		 : control_height,
 	};
 
 	size = {
 		button		 : common_size / 1.25,
+		hamburger	 : common_size * 0.7,
 		cross	  	 : control_height,
-		hamburger	 : common_size,
 	};
 
 	shadow = {
@@ -106,8 +106,8 @@ export default class Constants {
 	};
 
 	table = {
-		build		 : 50,
 		date		 : 120,
+		build		 : 50,
 	};
 
 	margin = {

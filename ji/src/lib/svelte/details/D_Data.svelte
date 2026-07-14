@@ -150,12 +150,12 @@
 		background : var(--white);
 	}
 
-	/* The switcher sits centered; the erase control is pinned to the far right. */
+	/* The switcher sits at the far right; the erase control is pinned to the left. */
 	.switcher-row {
 		height          : var(--height-control);
 		position        : relative;
 		align-items     : center;
-		justify-content : center;
+		justify-content : flex-end;
 		display         : flex;
 		width           : 100%;
 		margin-top      : -3px;                /* pull the erase + switcher 3px closer to the rule */

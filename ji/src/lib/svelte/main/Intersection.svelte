@@ -3,8 +3,14 @@
 	import Documents from '../documents/Documents.svelte';
 	import Details from '../details/Details.svelte';
 	import { k } from '../../ts/common/Constants';
+	import buildsRaw from '../../md/builds.md?raw';
 	import BuildNotes from './BuildNotes.svelte';
 	import Controls from './Controls.svelte';
+
+	// The latest build number, read from the build-notes data table.
+	const buildNumber = Math.max(...buildsRaw.split('\n')
+		.filter((line) => /^\|\s*\d+/.test(line))
+		.map((line) => parseInt(line.split('|')[1].trim())));
 
 	// Layout numbers ported from di's Constants (common_size 33): the inset/gap,
 	// the corner radius, the fixed width of the details region, the smallest
@@ -55,17 +61,26 @@
 	style:height='{height}px'
 	style:background-color='var(--accent)'>
 
-	<div class='panel'>
-		{#if !showBuildNotes}
-			<Controls onclick={toggleDetails} onAccent={$w_show_details} />
+	{#if !showBuildNotes}
+		<Controls onclick={toggleDetails} />
+		<div class='panel'>
 			{#if $w_show_details}
 				<Details width={detailsWidth} />
 			{/if}
 			<div class='region content' style:width='{contentWidth}px'>
-				<Documents bind:showBuildNotes />
+				<Documents />
 			</div>
-		{/if}
-	</div>
+		</div>
+
+		<div class='corner-stack layer-intersection'>
+			<button class='build-opener' onclick={() => showBuildNotes = true}>
+				Build {buildNumber}
+			</button>
+			<a class='author-credit' href='https://designintuition.app' target='_blank' rel='noopener'>
+				built by: jonathan sand
+			</a>
+		</div>
+	{/if}
 </div>
 
 {#if showBuildNotes}
@@ -91,6 +106,7 @@
 	}
 
 	.panel {
+		margin-top : var(--gap);               /* a gap below the controls row */
 		gap        : var(--gap);
 		overflow   : hidden;
 		display    : flex;
@@ -107,6 +123,42 @@
 	.content {
 		background : var(--bg);
 		flex       : 1;
+	}
+
+	/* Pinned to the bottom-left of the whole frame, above everything. */
+	.corner-stack {
+		bottom         : var(--inset-credit-bottom);
+		left           : var(--inset-credit-left);
+		gap            : var(--gap-tight);
+		align-items    : flex-start;
+		flex-direction : column;
+		position       : fixed;
+		display        : flex;
+	}
+
+	.build-opener {
+		border        : var(--thickness-normal) solid var(--black);
+		border-radius : var(--radius-pill);
+		padding       : var(--pad-control);
+		font-size     : var(--font-base);
+		background    : var(--white);
+		color         : var(--gray);
+		cursor        : pointer;
+	}
+
+	.build-opener:hover {
+		background : var(--hover);
+	}
+
+	.author-credit {
+		font-size       : var(--font-credit);
+		color           : var(--text);
+		text-decoration : underline;
+		cursor          : pointer;
+	}
+
+	.author-credit:hover {
+		color : var(--hover);
 	}
 
 	.build-backdrop {

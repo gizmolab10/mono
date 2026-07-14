@@ -1,13 +1,14 @@
 <script lang='ts'>
+	import { databases } from '../../ts/database/Databases';
+	import { w_db_changed } from '../../ts/database/Signal';
+	import type { Snippet } from 'svelte';
+	
 	// Pick one or more tags. Shows every tag in the active store as a chip;
 	// clicking toggles it. The chosen tag ids are shared with the parent (the add
 	// flow tags a drop, search filters). Live off the store-changed tick.
-	import type { Snippet } from 'svelte';
-	import { databases } from '../../ts/database/Databases';
-	import { w_db_changed } from '../../ts/database/Signal';
 
 	// `selected` is the chosen set (the add flow binds it). `ontoggle` lets a caller
-	// react to each click directly — browse uses it to add/remove a tag right away.
+	// react to each click directly — documents uses it to add/remove a tag right away.
 	// `trailing` renders after the last chip, in the same row (the add button).
 	let { selected = $bindable(new Set<string>()), ontoggle, trailing }:
 		{ selected?: Set<string>; ontoggle?: (id: string, on: boolean) => void; trailing?: Snippet } = $props();
@@ -38,10 +39,11 @@
 
 <style>
 	.tags {
-		flex-wrap   : wrap;
-		align-items : center;
-		gap         : var(--gap-tight);
-		display     : flex;
+		flex-wrap       : wrap;
+		align-items     : center;
+		justify-content : center;
+		gap             : var(--gap-tight);
+		display         : flex;
 	}
 
 	.chip {

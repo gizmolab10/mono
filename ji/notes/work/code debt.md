@@ -4,11 +4,18 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] Activities
-    - [ ] add/search/browse -> documents/tags
-        - [ ] move it into Activities, centered
-    - [ ] always show tags list with add button
-    - [ ] add button at top -> click shows drop box and tags list
+- [x] move build opener and written by to bottom of intersection, at layer frontmost
+- [x] details view
+    - [x] remove the empty space at top
+- [x] remove the empty space at top of documents view
+- [x] Implement search.ts
+    - [x] keeps single source of truth for selected tags and input filter text
+- [x] always show tags at top of documents
+    - [x] click on a tag
+        - [x] toggles it
+        - [x] applies it as a filter
+- [ ] always show input field for filter text, below tags
+    - [ ] show results as you type
 - [ ] add firebase support
     - [ ] use person's id
     - [ ] authorization
@@ -20,6 +27,11 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] clicking on add new document -> hide documents list, show drop box
+- [x] controls row
+    - [x] always visible
+    - [x] extend it to full width, bg color -> accent
+    - [x] a help button at far right
 - [x] phase 2 -> database repository
     - [x] add -> more file types
         - [x] pdf

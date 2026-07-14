@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { T_DocumentKind } from '../../ts/database/DB_Records';
 	import { databases } from '../../ts/database/Databases';
-	import Add_Tag from '../tags/Add_Tag.svelte';
 
 	// A drop target that saves each dropped file into the active document store.
 	// Text saves as its plain contents; images and pdfs save as a data-URL (their
@@ -67,48 +66,24 @@
 	}
 </script>
 
-<div class='add-view'>
-	<div class='tags'>
-		<Add_Tag bind:selected={chosen} />
-	</div>
-	<div
-		class='drop'
-		tabindex='0'
-		role='button'
-		class:dragging
-		ondrop={handleDrop}
-		ondragover={handleDragOver}
-		ondragleave={handleDragLeave}>
-		drop documents here
-		<span class='types'>({accepted})</span>
-	</div>
+<div class='drop'
+	tabindex='0'
+	role='button'
+	class:dragging
+	ondrop={handleDrop}
+	ondragover={handleDragOver}
+	ondragleave={handleDragLeave}>
+	drop documents here
+	<span class='types'>({accepted})</span>
 </div>
 
 <style>
-
-	.tags {
-		gap            : var(--gap-tight);
-		padding-bottom : var(--gap-fat);
-		align-items    : center;
-		flex-direction : column;
-		display        : flex;
-	}
-
-	.add-view {
-		/* Top room clears the fixed control cluster (hamburger + segments). */
-		padding        : var(--pad-view);
-		box-sizing     : border-box;
-		position       : relative;
-		flex-direction : column;
-		display        : flex;
-		height         : 100%;
-		width          : 100%;
-	}
 
 	.drop {
 		border          : var(--thickness-fat) dashed var(--accent);
 		opacity         : var(--opacity-drop);
 		font-size       : var(--font-drop);
+		padding         : var(--pad-view);
 		border-radius   : var(--radius);
 		color           : var(--text);
 		box-sizing      : border-box;
@@ -117,7 +92,9 @@
 		justify-content : center;
 		flex-direction  : column;
 		display         : flex;
-		flex            : 1;                   /* fill to the bottom, so its bottom margin equals the sides */
+		flex            : 1;                   /* fill the height so its bottom margin equals the sides */
+		/* documents already insets by --gap; add the rest so all three sides = --gap-fat */
+		margin          : 0 calc(var(--gap-fat) - var(--gap)) calc(var(--gap-fat) - var(--gap));
 	}
 
 	.types {

@@ -1,18 +1,16 @@
 # Handoff
 
-**Status:** active. Layout frame (Intersection) with a collapsible details region, an Activity region that switches on the operation (add / browse / arrival), and a build-notes popup. Accent picker themes the page live. **Document store built and wired to the screen:** dropping files on the add view saves them; the browse view lists saved names live; the details region's data panel shows counts and a storage switcher. Design in [db spec](db%20spec.md) / [db proposal](db%20proposal.md); store status in [db handoff](db%20handoff.md).
+**Status:** active. One always-on screen: a full-width accent controls row (hamburger, "Add a new document / tag", help), then tag chips (a filter — all picked tags must match), a rule, and the documents table; "add new document" swaps the table for the drop box. Details region (preferences + data panels) collapses from the hamburger; build opener + credit pinned to the frame's bottom-left. **Document store** built and wired — design in [db spec](db%20spec.md) / [db proposal](db%20proposal.md), status in [db handoff](db%20handoff.md).
 
-## Proposal — next: the tags UI
+## Proposal — next: search.ts (one source of truth for the filter)
 
-The store already holds tags and the tag↔document link; this is UI over that. Three code-debt pieces: create a tag, choose tags, and show/edit a document's tags in browse.
+Right now the filter state is scattered — the picked tags live as local state inside Documents, and the filter-text box isn't built yet. This gathers both into one small module so every view reads the same thing.
 
-1. **Create a tag** (`add_tags.svelte`) — a name field + add; on submit call the store's add-tag. Show the existing tags so a duplicate is obvious.
-2. **Choose tags** (`tags.svelte`) — a multi-select over the store's tags, shared between the add flow (tag a document) and search (filter). Emits the chosen tag ids.
-3. **In browse** — beside each document's name, show its tags and an "edit tags" button that opens the chooser; picking calls the store's add-tagging / a remove.
-4. **Placement** — The chooser
-    1. above the drop box, in place of 'add tags goes here'
-    2. is for the whole drop batch
+1. **The module** (`ts/managers/Search.ts`) — two stores: the picked tag ids (a set) and the filter text (a string). Plus a derived "matches" that, given the store's documents, keeps only those carrying every picked tag **and** whose name contains the text.
+2. **Documents reads it** — the top chips bind the tag set; the table iterates the derived matches instead of its own local filter. Removes the ad-hoc filter now living in Documents.
+3. **Sets up the next item** — the filter-text input (below the tags, live-as-you-type) just binds the text store; results update for free.
+4. **Open question for Jonathan:** name match — plain substring (case-insensitive) to start, or something fancier later?
 
 ## Later (from code debt)
 
-Search (the `share with search` line), plus the deferred store work — disk-file blobs and the firestore storage — tracked in [db handoff](db%20handoff.md).
+The filter-text input + live results, firebase support, the diagnostic-log port, and the deferred store work (disk-file blobs, firestore) — tracked in [code debt](code%20debt.md) and [db handoff](db%20handoff.md).

@@ -1,15 +1,15 @@
 <script lang='ts'>
 	import { databases } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/database/Signal';
+	import { w_operation, T_Operation } from '../../ts/managers/Operations';
+	import { w_filter_tags, w_filter_text, filter_rows } from '../../ts/managers/Search';
 	import Tags from '../tags/Tags.svelte';
+	import Add_Document from './Add_Document.svelte';
 
-	// The browse view: every file in the active store as type + name + its tags,
+	// The documents view: every file in the active store as type + name + its tags,
 	// each row with an "edit tags" button that opens the tag picker for that
-	// document. Live off the store-changed tick.
-
-	// The build-notes opener lives in this view's corner; the frame owns the flag.
-	let { showBuildNotes = $bindable(false), buildNumber = 0 }:
-		{ showBuildNotes?: boolean; buildNumber?: number } = $props();
+	// document. Live off the store-changed tick. The filter (picked tags + text)
+	// is the shared Search state.
 
 	let editing = $state<string | null>(null);
 
@@ -23,10 +23,15 @@
 				id        : d.id,
 				name      : d.name,
 				kind      : d.kind,
+				tag_ids,
 				tag_names : tag_ids.map((id) => name_of.get(id) ?? '?').join(', '),
 			};
 		});
 	});
+
+	// Narrowed by the shared filter: every picked tag must match, and the name must
+	// contain the filter text.
+	const shown = $derived(filter_rows(rows, $w_filter_tags, $w_filter_text));
 
 	function toggle_tag(document_id: string, tag_id: string, on: boolean) {
 		if (on) { databases.active.add_tagging(tag_id, document_id); }
@@ -39,55 +44,68 @@
 	}
 </script>
 
-<div class='browse'>
-	{#if rows.length === 0}
-		<div class='empty'>no documents yet</div>
+<div class='documents'>
+	<div class='chips'>
+		<Tags bind:selected={$w_filter_tags} />
+	</div>
+	<hr>
+	{#if $w_operation === T_Operation.document}
+		<Add_Document />
 	{:else}
-		<table class='files'>
-			<tbody>
-				{#each rows as row}
-					<tr class='file'>
-						<td class='kind'>{row.kind}</td>
-						<td class='name'>{row.name}</td>
-						<td class='tags'>{row.tag_names}</td>
-						<td class='edit'>
-							<button class='edit-button' onclick={() => editing = editing === row.id ? null : row.id}>
-								{editing === row.id ? 'done' : 'edit tags'}
-							</button>
-						</td>
-					</tr>
-					{#if editing === row.id}
-						<tr class='editor'>
-							<td colspan='4'>
-								<Tags
-									selected={chosen_for(row.id)}
-									ontoggle={(tag_id, on) => toggle_tag(row.id, tag_id, on)} />
+		{#if rows.length === 0}
+			<div class='empty'>no documents yet</div>
+		{:else}
+			<table class='files'>
+				<tbody>
+					{#each shown as row}
+						<tr class='file'>
+							<td class='kind'>{row.kind}</td>
+							<td class='name'>{row.name}</td>
+							<td class='tags'>{row.tag_names}</td>
+							<td class='edit'>
+								<button class='edit-button' onclick={() => editing = editing === row.id ? null : row.id}>
+									{editing === row.id ? 'done' : 'edit tags'}
+								</button>
 							</td>
 						</tr>
-					{/if}
-				{/each}
-			</tbody>
-		</table>
+						{#if editing === row.id}
+							<tr class='editor'>
+								<td colspan='4'>
+									<Tags
+										selected={chosen_for(row.id)}
+										ontoggle={(tag_id, on) => toggle_tag(row.id, tag_id, on)} />
+								</td>
+							</tr>
+						{/if}
+					{/each}
+				</tbody>
+			</table>
+		{/if}
 	{/if}
-
-	<div class='corner-stack'>
-		<button class='build-opener' onclick={() => showBuildNotes = true}>
-			Build {buildNumber}
-		</button>
-		<a class='author-credit' href='https://designintuition.app' target='_blank' rel='noopener'>
-			built by: jonathan sand
-		</a>
-	</div>
 </div>
 
 <style>
-	.browse {
-		position   : relative;
-		padding    : var(--pad-view);
-		box-sizing : border-box;
-		height     : 100%;
-		width      : 100%;
-		overflow-y : auto;
+	.documents {
+		position       : relative;
+		padding        : var(--gap);           /* an even --gap margin around the content */
+		box-sizing     : border-box;
+		flex-direction : column;
+		display        : flex;
+		height         : 100%;
+		width          : 100%;
+		overflow-y     : auto;
+	}
+
+	.chips {
+		padding-bottom : var(--gap);
+	}
+
+	hr {
+		border      : none;
+		border-top  : var(--thickness-faint) solid var(--black);
+		margin      : 0 0 var(--gap);
+		flex-shrink : 0;
+		width       : 100%;
 	}
 
 	.empty {
@@ -142,40 +160,5 @@
 
 	.editor td {
 		padding-bottom : var(--gap);
-	}
-
-	.corner-stack {
-		bottom         : var(--inset-credit-bottom);
-		left           : var(--inset-credit-left);
-		gap            : var(--gap-tight);
-		align-items    : flex-start;
-		position       : absolute;
-		flex-direction : column;
-		display        : flex;
-	}
-
-	.build-opener {
-		border        : var(--thickness-normal) solid var(--black);
-		border-radius : var(--radius-pill);
-		padding       : var(--pad-control);
-		font-size     : var(--font-base);
-		background    : var(--white);
-		color         : var(--gray);
-		cursor        : pointer;
-	}
-
-	.build-opener:hover {
-		background : var(--hover);
-	}
-
-	.author-credit {
-		font-size       : var(--font-credit);
-		color           : var(--text);
-		text-decoration : underline;
-		cursor          : pointer;
-	}
-
-	.author-credit:hover {
-		color : var(--hover);
 	}
 </style>

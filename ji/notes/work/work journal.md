@@ -9,6 +9,14 @@ Reverse chronological log of finished work on ji (the Jeff intersection project)
 - **Browse shows the type.** The browse view is now a two-column table — each document's type beside its name.
 - **Erase names the store.** The confirm reads "erase all your local data?" (or firebase), the buttons pinned left and the question centered in the space beside them.
 
+## 2026-07-13 — the always-on layout
+
+- **One screen, no view-switching.** Rebuilt the content area to the intersection spec: a full-width accent controls row at the top (hamburger left, "Add a new document / tag" centered, help button right), then the tag chips, a rule, and the documents table — all always shown. Clicking "add new document" swaps the table for the drop box; clicking it again returns.
+- **Chips filter, all-must-match.** The tag chips at the top double as a filter — picking chips keeps only documents that carry **every** picked tag.
+- **Build + credit moved to the frame.** The "Build N" opener and "built by" credit now pin to the frame's bottom-left at the frontmost layer; the details region lost its empty top banner.
+- **Files reorganized.** The old `operations/` folder became `documents/`; the tag pieces moved to a `tags/` folder; Add → Add_Document, Browse → Documents. Activity and the Enumerations file are gone (the operation enum lives in Operations now).
+- **A pile of hand-tweaks.** Controls row sized to its controls with no vertical gaps; documents content gets an even `--gap` margin; the drop box a `--gap-fat` inset on three sides; the tag chips centered; the storage switcher moved to the far right of its row; the divider rule made visible again after the flex-column change hid it.
+
 ## 2026-07-13 — erase, a remembered toggle, and data-panel polish
 
 - **Erase all.** A far-left "erase" button on the switcher row wipes the active store after an inline "erase all your data? yes / no"; while it asks, the erase button and the switcher both hide. Only the active store is touched — the wipe clears every record and every blob and saves it empty. A driven test proves it stays empty after a reload.
