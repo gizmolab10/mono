@@ -36,7 +36,7 @@ If any keyword matches, read the listed guide(s). If any shorthand matches, perf
 ## Defaults
 
 - **Tooling.** Always use yarn (`yarn vitest`, `yarn svelte-check`, `yarn <script>`). Never npm or npx — no exceptions.
-- **Filesystem.** Full read/write/execute inside `~/GitHub/mono`. All persistent notes live there. Never use Claude's own memory or config directories (e.g. `.claude/projects/`).
+- **Filesystem.** Full read/write/execute inside `~/GitHub/mono`. All persistent notes live there. Never store notes or memory in Claude's own directories (e.g. `.claude/projects/`). Editing `.claude/hooks/` and `.claude/settings.local.json` is expected work — do it when asked, no flagging.
 - **Execution.** Hybrid — reads and searches immediately; propose file changes before executing.
 - **Undo.** Before `write_file`, always `read_file` first and hold the content. On "undo", restore it.
 - **Memory.** Use `conversation_search` / `recent_chats` before claiming no context. Ignore the userMemories surface entirely (stale-data risk outweighs serendipity; use the `memory` command if curious).

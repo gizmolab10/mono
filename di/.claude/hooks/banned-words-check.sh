@@ -17,7 +17,10 @@
 
 HOOK_DIR="$(dirname "$0")"
 LOG_FILE="$HOOK_DIR/log.jsonl"
-BANNED_FILE="$HOOK_DIR/../../notes/guides/pre-flight/banned words.md"
+# Both lists: the shared every-project one and di's own. This hook only warns
+# (never rejects), so carrying di's vocabulary everywhere costs nothing.
+BANNED_MONO="$HOOK_DIR/../../../notes/guides/pre-flight/banned words.md"
+BANNED_DI="$HOOK_DIR/../../notes/guides/pre-flight/banned words.md"
 CAP=3
 
 log_event() {
@@ -36,7 +39,10 @@ INPUT=$(cat)
 STOP_ACTIVE=$(echo "$INPUT" | jq -r '.stop_hook_active // false')
 TRANSCRIPT=$(echo "$INPUT" | jq -r '.transcript_path // ""')
 if [ -z "$TRANSCRIPT" ] || [ ! -f "$TRANSCRIPT" ]; then log_event exit-no-transcript "" "" ""; exit 0; fi
-if [ ! -f "$BANNED_FILE" ]; then log_event exit-no-banned-file "" "" ""; exit 0; fi
+BANNED_FILES=()
+[ -f "$BANNED_MONO" ] && BANNED_FILES+=("$BANNED_MONO")
+[ -f "$BANNED_DI" ] && BANNED_FILES+=("$BANNED_DI")
+if [ ${#BANNED_FILES[@]} -eq 0 ]; then log_event exit-no-banned-file "" "" ""; exit 0; fi
 
 LAST=$(jq -c 'select(.type=="assistant")' "$TRANSCRIPT" 2>/dev/null | tail -1)
 if [ -z "$LAST" ]; then log_event exit-no-assistant "" "" ""; exit 0; fi
@@ -87,7 +93,7 @@ while IFS=$'\t' read -r type never; do
     forms="$(inflect_term "$term")"
     if [ "$type" = "hard" ]; then HARD_FORMS+="$forms"$'\n'; else SOFT_FORMS+="$forms"$'\n'; fi
   done
-done < <(awk -F'|' '{h=$3;n=$4;m=$5;gsub(/^[ \t]+|[ \t]+$/,"",h);gsub(/^[ \t]+|[ \t]+$/,"",n);gsub(/^[ \t]+|[ \t]+$/,"",m);if(n==""||n=="Never")next;if(n ~ /^-+$/)next;print (((h=="y")&&(m==""))?"hard":"soft") "\t" n}' "$BANNED_FILE")
+done < <(awk -F'|' '{h=$3;n=$4;m=$5;gsub(/^[ \t]+|[ \t]+$/,"",h);gsub(/^[ \t]+|[ \t]+$/,"",n);gsub(/^[ \t]+|[ \t]+$/,"",m);if(n==""||n=="Never")next;if(n ~ /^-+$/)next;print (((h=="y")&&(m==""))?"hard":"soft") "\t" n}' "${BANNED_FILES[@]}")
 
 build_alt() { printf '%s\n' "$1" | sed '/^$/d' | sort -u | paste -sd'|' -; }
 HARD_ALT="$(build_alt "$HARD_FORMS")"

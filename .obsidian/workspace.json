@@ -69,16 +69,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/guides/collaborate/workflow.md",
+                "file": "notes/guides/pre-flight/always.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "workflow"
+              "title": "always"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/code debt.md",
+                "file": "notes/guides/pre-flight/always.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of always"
             }
           },
           {
@@ -251,8 +251,16 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "6e994b42bb32ccdf",
   "lastOpenFiles": [
+    "notes/work/learn.md",
+    "notes/guides/pre-flight/always.md",
+    "notes/guides/collaborate/workflow.md",
+    "ji/notes/work/code debt.md",
+    "notes/guides/pre-flight/banned words.md",
+    "ji/notes/work/code debt.md.tmp.64703.e17e64f06266",
+    "notes/guides/pre-flight/mono banned words.md",
+    "ji/notes/work/mono banned words.md",
     "logs/designintuition.log",
     "logs/intersection.log",
     "ji/src/lib/ts/common/Debug.ts",
@@ -261,12 +269,9 @@
     "notes/tools/hub/__pycache__",
     "ji/notes/work/Systems_Map.md",
     "ji/notes/work/Compass.md",
-    "ji/notes/work/code debt.md",
     "ji/src/lib/svelte/details/Details.svelte",
     "ji/src/lib/svelte/main/Details.svelte",
     "ji/src/lib/svelte/main/Documents.svelte",
-    "ji/src/lib/svelte/actions/Add_Document.svelte",
-    "ji/src/lib/svelte/actions/Tags.svelte",
     "ji/notes/work/db handoff.md",
     "ji/notes/work/intersection spec.md",
     "ji/src/lib/md/builds.md",
@@ -281,15 +286,10 @@
     "ji/notes/work/db spec.md",
     "ji/notes/work/db/db spec.md",
     "ji/notes/work/db proposal.md",
-    "notes/guides/collaborate/workflow.md",
     "notes/guides/collaborate/exclude.md",
     "notes/guides/pre-flight/shorthand.md",
     "notes/guides/pre-flight/keywords.md",
-    "notes/guides/pre-flight/always.md",
     "notes/guides/collaborate/hooks.md",
-    "ji/notes/work/work journal.md",
-    "di/notes/work/now/34.dimensionals/index.md",
-    "di/notes/work/mothballs/index.md",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",
     "di/di notes/di work/now/bugs/001 dim is inside silho/screenshot.png",

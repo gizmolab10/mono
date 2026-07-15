@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash /Users/sand/GitHub/mono/di/.claude/hooks/banned-words-check.sh)",
+      "Bash(mv /Users/sand/GitHub/mono/di/.claude/hooks/display-fix.sh /Users/sand/GitHub/mono/.claude/hooks/display-fix.sh)",
+      "Bash(bash /Users/sand/GitHub/mono/.claude/hooks/display-fix.sh)"
+    ],
+    "additionalDirectories": [
+      "/Users/sand/GitHub/mono/di/.claude/hooks"
+    ]
+  }
+}

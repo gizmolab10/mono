@@ -14,12 +14,24 @@
 # Omitting displayContent shows the original delta.
 
 HOOK_DIR="$(dirname "$0")"
-BANNED_FILE="$HOOK_DIR/../../notes/guides/pre-flight/banned words.md"
+REPO="$HOOK_DIR/../.."
+# Two lists: the shared every-project one, plus the list belonging to whichever
+# project is being worked on. Every project keeps its list at the same relative
+# spot, exactly like the always files — so no project is named here. A project's
+# own words must not leak into another's prose: this hook swaps silently on
+# screen, and di bans "shape" and "glass", ordinary words elsewhere.
+BANNED_SHARED="$REPO/notes/guides/pre-flight/banned words.md"
+PROJECT=$(cat "$REPO/.working_project" 2>/dev/null | tr -d '[:space:]')
+BANNED_PROJECT="$REPO/$PROJECT/notes/guides/pre-flight/banned words.md"
+
+BANNED_FILES=()
+[ -f "$BANNED_SHARED" ] && BANNED_FILES+=("$BANNED_SHARED")
+[ -n "$PROJECT" ] && [ -f "$BANNED_PROJECT" ] && BANNED_FILES+=("$BANNED_PROJECT")
 
 INPUT=$(cat)
 DELTA=$(printf '%s' "$INPUT" | jq -r '.delta // ""')
 [ -z "$DELTA" ] && exit 0
-[ ! -f "$BANNED_FILE" ] && exit 0
+[ ${#BANNED_FILES[@]} -eq 0 ] && exit 0
 
 # --- inflect one bare word: print the word and its plausible endings ---------
 inflect_word() {
@@ -59,7 +71,7 @@ PAIRS=$(awk -F'|' '{
   split(u,ua,","); use=ua[1]; gsub(/^[ \t]+|[ \t]+$/,"",use);
   if(use=="")next;
   print use "\t" n
-}' "$BANNED_FILE")
+}' "${BANNED_FILES[@]}")
 
 # Build the "neverform<TAB>useword" map, expanding each never word to its forms.
 MAP=""

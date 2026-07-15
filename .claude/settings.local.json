@@ -33,8 +33,6 @@
       "Bash(git -C ~/GitHub/mono ls-files:*)",
       "Bash(node_modules/.bin/svelte-check:*)",
       "Bash(git -C ~/GitHub/mono status notes/ws/)",
-      "Bash(bash /Users/sand/GitHub/mono/di/.claude/hooks/conciseness-check.sh)",
-      "Bash(bash /Users/sand/GitHub/mono/di/.claude/hooks/bash-command-check.sh)",
       "Bash(xargs -I{} sh -c 'echo \"\"=== {} ===\"\"; python3 -c \"\"import json; d=json.load\\(open\\(\\\\\"\"{}\\\\\"\"\\\\\\)\\); print\\(d[\\\\\"\"version\\\\\"\"]\\)\"\"')",
       "WebFetch(domain:monorepo-documentation.netlify.app)",
       "WebFetch(domain:docs.gizmolab.com)",
@@ -46,12 +44,19 @@
       "Bash(sed -i '' 's|utilities/Testworthy_Utilities|utilities/Utilities|; s/{ tu }/{ u }/; s/tu\\\\.gcd/u.gcd/' types/Units.ts)",
       "Bash(sed -i '' 's|utilities/Testworthy_Utilities.ts|utilities/Utilities.ts|' map.md)",
       "Bash(sed -i '' 's/Testworthy_Utilities/Utilities/g' \"file layout.md\")",
-      "Bash(bash ~/GitHub/mono/di/.claude/hooks/bash-command-check.sh)",
       "Bash(dig +short intersection.lol A)",
       "Bash(dig +short intersection.lol AAAA)",
       "Bash(dig +short intersection.lol CAA)",
       "Bash(rm /Users/sand/GitHub/mono/.claude/commands/in.md)",
-      "Bash(bash /Users/sand/GitHub/mono/.claude/hooks/inject-always.sh)"
+      "Bash(bash /Users/sand/GitHub/mono/.claude/hooks/inject-always.sh)",
+      "Bash(bash /Users/sand/GitHub/mono/.claude/hooks/mark-ts-check-pending.sh)",
+      "Bash(bash /Users/sand/GitHub/mono/.claude/hooks/check-ts.sh)",
+      "Bash(bash /Users/sand/GitHub/mono/.claude/hooks/conciseness-check.sh)",
+      "Bash(perl -i -pe 'if \\($. >= 85\\) { s/^\\( +\\)\\(- \\)/\\(\" \" x \\(length\\($1\\)*2\\)\\) . $2/e }' \"/Users/sand/GitHub/mono/ji/notes/work/code debt.md\")",
+      "Bash(bash /Users/sand/GitHub/mono/di/.claude/hooks/display-fix.sh)",
+      "Bash(perl -i -pe 'if \\($. >= 17 && $. <= 40\\) { s{^\\( +\\)\\(- \\)}{\\(\" \" x \\(length\\($1\\)\\\\/2\\)\\) . $2}e }' \"/Users/sand/GitHub/mono/ji/notes/work/code debt.md\")",
+      "Bash(perl -i -pe 'if \\($. >= 17 && $. <= 40\\) { s{^\\( +\\)\\(- \\)}{\\(\" \" x \\(length\\($1\\)/2\\)\\) . $2}e }' \"/Users/sand/GitHub/mono/ji/notes/work/code debt.md\")",
+      "Bash(bash -n /Users/sand/GitHub/mono/di/.claude/hooks/banned-words-check.sh)"
     ],
     "additionalDirectories": [
       "/Users/sand/GitHub/mono/.claude/commands"
@@ -141,23 +146,23 @@
           },
           {
             "type": "command",
-            "command": "bash di/.claude/hooks/conciseness-check.sh"
+            "command": "bash .claude/hooks/conciseness-check.sh"
           },
           {
             "type": "command",
-            "command": "di/.claude/hooks/phrase-check.sh"
+            "command": ".claude/hooks/phrase-check.sh"
           },
           {
             "type": "command",
-            "command": "di/.claude/hooks/required-disclaimer-check.sh"
+            "command": ".claude/hooks/required-disclaimer-check.sh"
           },
           {
             "type": "command",
-            "command": "di/.claude/hooks/diagnostic-citation-check.sh"
+            "command": ".claude/hooks/diagnostic-citation-check.sh"
           },
           {
             "type": "command",
-            "command": "di/.claude/hooks/check-ts.sh",
+            "command": ".claude/hooks/check-ts.sh",
             "timeout": 30
           }
         ]
