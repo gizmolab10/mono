@@ -2,6 +2,7 @@
 	import { databases } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/database/Signal';
 	import type { T_Match } from '../../ts/managers/Search';
+	import { debug } from '../../ts/common/Debug';
 	import type { Snippet } from 'svelte';
 
 	// Pick one or more tags. Shows every tag in the active store as a chip;
@@ -31,18 +32,18 @@
 		if (on) { next.add(id); } else { next.delete(id); }
 		selected = next;
 		ontoggle?.(id, on);
-		console.log(`Tag picker: ${next.size} of ${tags.length} tag(s) now chosen.`);
+		debug.log(`Tag picker: ${next.size} of ${tags.length} tag(s) now chosen.`);
 	}
 
 	function toggle_mode() {
 		const next = mode === 'all' ? 'any' : 'all';
-		console.log(`Match mode toggled from ${mode} to ${next}.`);
+		debug.log(`Match mode toggled from ${mode} to ${next}.`);
 		mode = next;
 	}
 
 	function add_clicked(event: MouseEvent) {
 		event.stopPropagation();                          // don't let this reach the background clearer
-		console.log('Add-a-tag button clicked — opening the new-tag view.');
+		debug.log('Add-a-tag button clicked — opening the new-tag view.');
 		onadd?.();
 	}
 </script>
@@ -57,16 +58,19 @@
 			{/each}
 		</div>
 	{/if}
-	<div class='tags'>
-		{#each tags as tag}
-			<button class='chip' class:on={selected.has(tag.id)} onclick={() => toggle(tag.id)}>{tag.name}</button>
-		{/each}
-		{@render trailing?.()}
-		{#if onadd}
-			<!-- Always at the right of the chips: opens the new-tag view. -->
-			<button class='add' onclick={(e) => add_clicked(e)}>add a tag</button>
-		{/if}
-	</div>
+	{#if tags.length > 0}
+		<!-- The tags as one joined segmented pill; several segments can be lit at once. -->
+		<div class='tags'>
+			{#each tags as tag}
+				<button class='chip' class:on={selected.has(tag.id)} onclick={() => toggle(tag.id)}>{tag.name}</button>
+			{/each}
+		</div>
+	{/if}
+	{@render trailing?.()}
+	{#if onadd}
+		<!-- A separate button to the right of the pill: opens the new-tag view. -->
+		<button class='add' onclick={(e) => add_clicked(e)}>add a tag</button>
+	{/if}
 </div>
 
 <style>
@@ -107,29 +111,36 @@
 		background : var(--hover);
 	}
 
+	/* The tags as one joined segmented pill, like the all/any control — but any
+	   number of segments can be lit. Wraps to more rows when the tags are many. */
 	.tags {
-		gap             : var(--gap-tight);
-		align-items     : center;
-		justify-content : center;
-		flex-wrap       : wrap;
-		display         : flex;
+		border        : var(--thickness-normal) solid var(--black);
+		border-radius : var(--radius-pill);
+		min-height    : var(--height-control);
+		background    : var(--white);
+		overflow      : hidden;
+		flex-wrap     : wrap;
+		display       : flex;
 	}
 
 	.chip {
-		border        : var(--thickness-normal) solid var(--black);
-		padding       : var(--pad-control);
-		font-size     : var(--font-label);
-		background    : var(--white);
-		color         : var(--text);
-		cursor        : pointer;
-		border-radius : 999px;
+		padding    : var(--pad-control);
+		font-size  : var(--font-label);
+		background : transparent;
+		color      : var(--text);
+		cursor     : pointer;
+		border     : none;
+	}
+
+	.chip:not(:last-child) {
+		border-right : var(--thickness-normal) solid var(--black);
 	}
 
 	.chip.on {
 		background : var(--accent);
 	}
 
-	.chip:hover {
+	.chip:not(.on):hover {
 		background : var(--hover);
 	}
 
@@ -143,8 +154,6 @@
 		color         : var(--text);
 		cursor        : pointer;
 		border-radius : 999px;
-		/* container gap is --gap-tight; top it up so the chips-to-add space is --gap-fat */
-		margin-left   : calc(var(--gap-fat) - var(--gap-tight));
 	}
 
 	.add:hover {

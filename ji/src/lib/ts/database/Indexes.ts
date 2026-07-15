@@ -30,7 +30,7 @@ export class Indexes {
 		for (const edges of this.relationships_by_parent.values()) {
 			edges.sort((a, b) => a.sort_order - b.sort_order);
 		}
-		// console.log(`Indexes rebuilt: ${taggings.length} tagging link(s), ${relationships.length} relationship edge(s), ${this.relationships_by_parent.size} parent(s) with children.`);
+		// debug.log(`Indexes rebuilt: ${taggings.length} tagging link(s), ${relationships.length} relationship edge(s), ${this.relationships_by_parent.size} parent(s) with children.`);
 	}
 
 	// The child edges under one parent, already sorted.
@@ -51,14 +51,14 @@ export class Indexes {
 	// Roots of a graph: the given node ids that never appear as a child.
 	roots_among(node_ids: string[]): string[] {
 		const roots = node_ids.filter((id) => !this.relationships_by_child.has(id));
-		// console.log(`Roots: ${roots.length} of ${node_ids.length} node(s) have no parent.`);
+		// debug.log(`Roots: ${roots.length} of ${node_ids.length} node(s) have no parent.`);
 		return roots;
 	}
 
 	// Untagged documents: the given ids with no tagging record.
 	untagged_among(document_ids: string[]): string[] {
 		const untagged = document_ids.filter((id) => !this.tagging_by_document.has(id));
-		// console.log(`Untagged: ${untagged.length} of ${document_ids.length} document(s) carry no tag.`);
+		// debug.log(`Untagged: ${untagged.length} of ${document_ids.length} document(s) carry no tag.`);
 		return untagged;
 	}
 

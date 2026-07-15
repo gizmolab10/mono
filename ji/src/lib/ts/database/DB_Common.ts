@@ -1,4 +1,5 @@
 import { T_Record, T_Storage, T_DocumentKind } from './DB_Records';
+import { debug } from '../common/Debug';
 import type { Document, Tag, Tagging, Relationship, Predicate } from './DB_Records';
 import { Persistable } from './Persistable';
 import { Indexes } from './Indexes';
@@ -50,7 +51,7 @@ export abstract class DB_Common {
 		this.predicates    = this.load_list<Predicate>(T_Record.predicates);
 		this.persistable.clear_all();
 		this.reindex();
-		// console.log(`Loaded from the ${this.storage} storage: ${this.documents.length} document(s), ${this.tags.length} tag(s), ${this.taggings.length} tagging(s), ${this.relationships.length} relationship(s).`);
+		// debug.log(`Loaded from the ${this.storage} storage: ${this.documents.length} document(s), ${this.tags.length} tag(s), ${this.taggings.length} tagging(s), ${this.relationships.length} relationship(s).`);
 	}
 
 	// Save one record kind's whole list and mark it clean.
@@ -84,7 +85,7 @@ export abstract class DB_Common {
 		this.documents.push(document);
 		this.persistable.mark_dirty(T_Record.documents, id);
 		this.persist(T_Record.documents);
-		// console.log(`Added document "${name}" (${kind}); the document list is now ${this.documents.length} long.`);
+		// debug.log(`Added document "${name}" (${kind}); the document list is now ${this.documents.length} long.`);
 		return document;
 	}
 
@@ -92,7 +93,7 @@ export abstract class DB_Common {
 		const tag: Tag = { id: crypto.randomUUID(), name };
 		this.tags.push(tag);
 		this.persist(T_Record.tags);
-		// console.log(`Added tag "${name}"; the tag list is now ${this.tags.length} long.`);
+		// debug.log(`Added tag "${name}"; the tag list is now ${this.tags.length} long.`);
 		return tag;
 	}
 
@@ -102,7 +103,7 @@ export abstract class DB_Common {
 		this.taggings.push(tagging);
 		this.persist(T_Record.taggings);
 		this.reindex();
-		// console.log(`Tagged document ${document_id} with tag ${tag_id}; ${this.taggings.length} tagging link(s) total.`);
+		// debug.log(`Tagged document ${document_id} with tag ${tag_id}; ${this.taggings.length} tagging link(s) total.`);
 		return tagging;
 	}
 
@@ -112,7 +113,7 @@ export abstract class DB_Common {
 		this.taggings = this.taggings.filter((t) => !(t.tag_id === tag_id && t.document_id === document_id));
 		this.persist(T_Record.taggings);
 		this.reindex();
-		console.log(`Removed tag ${tag_id} from document ${document_id}; tagging links went from ${before} to ${this.taggings.length}.`);
+		debug.log(`Removed tag ${tag_id} from document ${document_id}; tagging links went from ${before} to ${this.taggings.length}.`);
 	}
 
 	add_predicate(type: string): Predicate {
@@ -129,7 +130,7 @@ export abstract class DB_Common {
 		this.relationships.push(relationship);
 		this.persist(T_Record.relationships);
 		this.reindex();
-		// console.log(`Linked parent ${parent_id} → child ${child_id} at position ${siblings}; ${this.relationships.length} edge(s) total.`);
+		// debug.log(`Linked parent ${parent_id} → child ${child_id} at position ${siblings}; ${this.relationships.length} edge(s) total.`);
 		return relationship;
 	}
 
@@ -153,7 +154,7 @@ export abstract class DB_Common {
 		};
 		for (const root of roots) { walk(root); }
 
-		// console.log(`Listed ${ordered.length} document(s) by walking from ${roots.length} root(s).`);
+		// debug.log(`Listed ${ordered.length} document(s) by walking from ${roots.length} root(s).`);
 		return ordered;
 	}
 
@@ -161,7 +162,7 @@ export abstract class DB_Common {
 	filter_by_tag(tag_id: string): Document[] {
 		const wanted = new Set(this.indexes.documents_withTag(tag_id));
 		const matches = this.documents.filter((d) => wanted.has(d.id));
-		// console.log(`Filter by tag ${tag_id}: ${matches.length} matching document(s).`);
+		// debug.log(`Filter by tag ${tag_id}: ${matches.length} matching document(s).`);
 		return matches;
 	}
 
@@ -183,7 +184,7 @@ export abstract class DB_Common {
 		this.persist(T_Record.relationships);
 		this.persist(T_Record.documents);
 		this.reindex();
-		// console.log(`Deleted document ${document_id}: documents ${before} → ${this.documents.length}, plus its tagging and relationship rows and its blob.`);
+		// debug.log(`Deleted document ${document_id}: documents ${before} → ${this.documents.length}, plus its tagging and relationship rows and its blob.`);
 	}
 
 	// Remove a tag and everything that points at it.
@@ -195,7 +196,7 @@ export abstract class DB_Common {
 		this.persist(T_Record.relationships);
 		this.persist(T_Record.tags);
 		this.reindex();
-		// console.log(`Deleted tag ${tag_id} and its tagging and relationship rows.`);
+		// debug.log(`Deleted tag ${tag_id} and its tagging and relationship rows.`);
 	}
 
 	// Wipe this store: every document's bytes, then every record list, then the
@@ -211,6 +212,6 @@ export abstract class DB_Common {
 		this.persistable.clear_all();
 		for (const record of Object.values(T_Record)) { this.persist(record); }
 		this.reindex();
-		console.log(`Erased the ${this.storage} store: removed ${had} document(s) and every tag, link, and blob.`);
+		debug.log(`Erased the ${this.storage} store: removed ${had} document(s) and every tag, link, and blob.`);
 	}
 }

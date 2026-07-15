@@ -2,6 +2,7 @@
 	// Create a new tag: type a name and add it to the active store's tags. `ondone`
 	// lets the caller close this view (the documents view returns to the list).
 	import { databases } from '../../ts/database/Databases';
+	import { debug } from '../../ts/common/Debug';
 
 	let { ondone }: { ondone?: () => void } = $props();
 
@@ -11,9 +12,9 @@
 		const trimmed = name.trim();
 		if (trimmed.length > 0) {
 			databases.active.add_tag(trimmed);
-			console.log(`Created tag "${trimmed}".`);
+			debug.log(`Created tag "${trimmed}".`);
 		} else {
-			console.log('Create tag: nothing typed, so nothing added.');
+			debug.log('Create tag: nothing typed, so nothing added.');
 		}
 		name = '';
 	}
@@ -22,13 +23,14 @@
 <div class='add-tag'>
 	<!-- svelte-ignore a11y_autofocus -->
 	<input
-		class='field'
-		placeholder='new tag'
 		autofocus
+		class='field'
+		type='search' 
 		bind:value={name}
+		placeholder='new tag'
 		onkeydown={(e) => { if (e.key === 'Enter') { add(); } }} />
 	<button class='button' onclick={add}>add</button>
-	<button class='button' onclick={() => { console.log('Done adding tags — closing the new-tag view.'); ondone?.(); }}>done</button>
+	<button class='button' onclick={() => { debug.log('Done adding tags — closing the new-tag view.'); ondone?.(); }}>done</button>
 </div>
 
 <style>
@@ -46,6 +48,11 @@
 		font-size     : var(--font-label);
 		background    : var(--white);
 		color         : var(--text);
+	}
+
+	.field {
+		height     : var(--height-control);
+		box-sizing : border-box;
 	}
 
 	.button {

@@ -23,7 +23,7 @@ class Databases {
 		this.w_storage = writable<T_Storage>(saved);
 		this.active = this.db_forBackend(saved);
 		this.active.fetch_all();
-		// console.log(`Database registry started on the ${saved} storage.`);
+		// debug.log(`Database registry started on the ${saved} storage.`);
 	}
 
 	// One live instance per storage, built on first use.
@@ -45,7 +45,7 @@ class Databases {
 		preferences.write(T_Preference.database, storage);
 		this.w_storage.set(storage);
 		db_changed();                                    // the active store's contents changed
-		// console.log(`Switched to the ${storage} storage.`);
+		// debug.log(`Switched to the ${storage} storage.`);
 	}
 
 	// Step to the next storage in the ring.

@@ -1511,33 +1511,22 @@ let last_uniface_placement_result: Uniface_Placement_Result = { uniface_box: nul
  *  identical, so logging the same text again is just noise. */
 let last_diagnostic_output: string | null = null;
 
-/** Have we sent the very first dimensionals log POST this browser session?
- *  The first POST overwrites the on-disk file; later POSTs append. */
-let dispatched_dim_log_fresh: boolean = false;
-
 /** Append one extra line to the dimensionals log file. The renderer uses
  *  this to record what the white label box actually paints — separately
- *  from the placement code's batched per-render block. Always appends
- *  (never the fresh-overwrite first POST), so any subsequent placement
- *  POST appends after these renderer lines. */
+ *  from the placement code's batched per-render block. Never erases
+ *  (erases: false), so only the placement block's first line overwrites
+ *  the file each session; these renderer lines always append. */
 export function dimensionals_log(text: string): void {
 	if (k.debug.diagnose_dims) {
-		debug.log(text, 'dimensionals');
+		debug.log(text, 'dimensionals', false);
 	}
 }
 
 /** Fire-and-forget POST of one render's diagnostic text to the hub
  *  dispatcher, which writes it to ~/GitHub/mono/logs/dimensionals.log.
- *  Silent on failure (the dispatcher may not be running). */
+ *  The log helper overwrites on the first line of the session, appends after. */
 function dispatch_dim_log_to_file(text: string): void {
-	const base = 'http://localhost:5171/log-dimensionals';
-	const url = dispatched_dim_log_fresh ? base : `${base}?fresh=1`;
-	dispatched_dim_log_fresh = true;
-	try {
-		fetch(url, { method: 'POST', body: text }).catch(() => { /* silent */ });
-	} catch {
-		// silent
-	}
+	debug.log(text, 'dimensionals');
 }
 
 export function get_last_uniface_placement_result(): Uniface_Placement_Result {

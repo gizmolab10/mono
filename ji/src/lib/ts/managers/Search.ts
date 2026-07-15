@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { debug } from '../common/Debug';
 
 // One source of truth for narrowing the documents list: which tags are picked
 // and what filter text is typed. Views bind these; the filter function below
@@ -26,6 +27,6 @@ export function filter_rows<T extends Filterable>(rows: T[], tag_ids: Set<string
 		|| (mode === 'all' ? wanted.every((id) => row.tag_ids.includes(id))
 		                   : wanted.some((id) => row.tag_ids.includes(id)));
 	const kept = rows.filter((row) => tag_ok(row) && (needle === '' || row.name.toLowerCase().includes(needle)));
-	console.log(`Search: ${wanted.length} tag(s) [${mode}] + text "${needle}" kept ${kept.length} of ${rows.length} document(s).`);
+	debug.log(`Search: ${wanted.length} tag(s) [${mode}] + text "${needle}" kept ${kept.length} of ${rows.length} document(s).`);
 	return kept;
 }

@@ -2,6 +2,22 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-14 — a diagnostic log that lives in a file
+
+- **One log address for every project.** The hub's little log server used to answer a separate address per topic (only di's, hard-wired to one file). It now answers a single address and reads the file name from the request — send `where=intersection` and it writes `logs/intersection.log`. The name is checked so it can't point outside the logs folder. di's two log senders moved to the new address; the old one is gone.
+- **ji writes to its own log now.** A tiny helper sends each line to that address (overwrites once at the start of a session, appends the rest), so a whole session's reasoning ends up in one file you can read afterward instead of only in the browser console.
+- **Every log line ji already prints now goes to the file.** Swapped all the console prints over to the helper (the two failure warnings left as-is). Confirmed end-to-end: lines land in `logs/intersection.log`, the first one truncates and the rest append, and a bad file name is refused.
+
+## 2026-07-14 — the table headers become the controls
+
+- **Header row on the rule.** Above the documents table sits a row of column labels — format, document name, tags, edit tags — each a pill floating on the rule (the same look as the data panel's more/less), left-aligned to its column. Format and the last one are inert; the middle two light up on hover, where their text swaps to "add a document" / "add a tag".
+- **Headers open the add flows.** Clicking "document name" shows the drop box, clicking "tags" shows the new-tag field. So I pulled the old "Add a new document / tag" control out of the top bar entirely — the headers are the entry point now, and the top bar is just the hamburger and help.
+- **A click on the empty background closes an add flow** back to the list, leaving the picked filters alone. The new-tag view also has its own "done".
+- **Empty store leads with the drop box.** With no documents, the view opens straight to the drop box and hides the filter, the search box, and the headers — nothing to filter or list yet.
+- **Tags are one joined control now.** The tag chips became a single segmented pill (still multi-select — several can be lit), used both in the filter and in a row's edit-tags picker. The all/any toggle moved inside it and hides when there are no tags, and an "add a tag" button sits just to its right.
+- **Search box.** Switched it to the browser's own search field so it draws its own clear ×; gave it a set width; and made both text fields share the standard control height.
+- **Tidied the folders.** Renamed the tags folder to actions, moved the drop box in beside the tag pieces, moved the documents view into main, and deleted the emptied documents folder.
+
 ## 2026-07-13 — more file types, and a hint of what's accepted
 
 - **More types save.** A drop now keeps text, jpeg, png, gif, bmp, and pdf — text as its plain contents, the rest as a data-URL (their bytes base64-wrapped, ready to show). Anything else is skipped with a note.

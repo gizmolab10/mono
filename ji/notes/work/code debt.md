@@ -4,6 +4,29 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
+- [ ] remove all unused
+    - [ ] T_Preference items
+    - [ ] colors
+- [ ] move di hooks -> mono
+- [ ] add remote support
+    - [ ] supabase not firebase
+    - [ ] use person's id
+    - [ ] authorization
+- [ ] add md, html, tiff, webp, svg, rtf
+- [ ] front page
+- [ ] write a new file: stipulations based on current code
+- [ ] wendy
+    - [ ] New app for your brother: Intersection
+    - [ ] give me weak signals / info from the tails (of a bell curve), not just the clusters
+    - [ ] give me the signals that repeat over time or across multiple people — this is a stronger signal.
+    - [ ] present me with these signals in a way that I can sense into each one, and decide if I want to keep them, highlight them or discard them as unimportant.
+
+## done
+
+- [x] port the diagnostic log feature from di
+    - [x] one log server address `/log?where=<name>` -> `logs/<name>.log`
+    - [x] ji's Debug.ts posts there (where=intersection)
+    - [x] every console.log now routes through it
 - [x] add a "any/all" segmented control at far left of Tags
 - [x] always show input field for filter text, below tags
     - [x] show results as you type
@@ -11,20 +34,6 @@ write a proposal for the first unchecked item to the top of handoff.
     - [x] same as d data more/less,
     - [x] positioned so as to be ***left-aligned*** wrt the columns of the table
 - [x] move any alongside tags, --gap-fat
-- [ ] add md, html, tiff, webp, svg, rtf
-- [ ] add firebase support
-    - [ ] use person's id
-    - [ ] authorization
-- [ ] port the diagnostic log feature from di
-- [ ] remove all unused
-    - [ ] T_Preference items
-    - [ ] colors
-- [ ] move di hooks -> mono
-- [ ] front page
-- [ ] write a new file: stipulations based on current code
-
-## done
-
 - [x] Implement search.ts
     - [x] keeps single source of truth for selected tags and input filter text
 - [x] always show tags at top of documents

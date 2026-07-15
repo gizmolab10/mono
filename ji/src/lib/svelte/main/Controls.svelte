@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
+	import { debug } from '../../ts/common/Debug';
 
 	// The controls row: always visible, full width, accent background. The
 	// details-toggle hamburger sits at the left and a help button at the far right.
@@ -10,7 +11,7 @@
 	const hamburgerPath = svg_paths.hamburger(size);
 
 	function help() {
-		console.log('Help button clicked — help view is not built yet.');
+		debug.log('Help button clicked — help view is not built yet.');
 	}
 </script>
 

@@ -20,7 +20,7 @@ export class DB_Local extends DB_Common {
 
 	write_blob(document_id: string, content: string): void {
 		preferences.writeDB<string>(this.storage, `blob/${document_id}`, [content]);
-		// console.log(`Stored the bytes for document ${document_id} (${content.length} character(s)) in browser storage.`);
+		// debug.log(`Stored the bytes for document ${document_id} (${content.length} character(s)) in browser storage.`);
 	}
 
 	read_blob(document_id: string): string | null {

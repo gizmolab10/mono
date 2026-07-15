@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { T_DocumentKind } from '../../ts/database/DB_Records';
 	import { databases } from '../../ts/database/Databases';
+	import { debug } from '../../ts/common/Debug';
 
 	// A drop target that saves each dropped file into the active document store.
 	// Text saves as its plain contents; images and pdfs save as a data-URL (their
@@ -42,17 +43,17 @@
 		event.preventDefault();
 		dragging = false;
 		const files = Array.from(event.dataTransfer?.files ?? []);
-		console.log(`Dropped ${files.length} file(s).`);
+		debug.log(`Dropped ${files.length} file(s).`);
 		for (const file of files) {
 			const kind = kind_of(file);
 			if (kind === T_DocumentKind.unknown) {
-				console.log(`Skipping "${file.name}" — its type (${file.type || 'unknown'}) is not one we save yet.`);
+				debug.log(`Skipping "${file.name}" — its type (${file.type || 'unknown'}) is not one we save yet.`);
 				continue;
 			}
 			const content = await bytes_of(file, kind);
 			const doc = databases.active.add_document(file.name, kind, content);
 			for (const tag_id of chosen) { databases.active.add_tagging(tag_id, doc.id); }
-			console.log(`Saved "${file.name}" as a ${kind} document with ${chosen.size} tag tag(s).`);
+			debug.log(`Saved "${file.name}" as a ${kind} document with ${chosen.size} tag tag(s).`);
 		}
 	}
 

@@ -6,6 +6,7 @@
 	import Tags from '../actions/Tags.svelte';
 	import Add_Document from '../actions/Add_Document.svelte';
 	import Add_Tag from '../actions/Add_Tag.svelte';
+	import { debug } from '../../ts/common/Debug';
 
 	// The documents view: every file in the active store as type + name + its tags,
 	// each row with an "edit tags" button that opens the tag picker for that
@@ -38,7 +39,7 @@
 	// The guard stops this from re-firing once the drop box is already up.
 	$effect(() => {
 		if (rows.length === 0 && $w_operation !== T_Operation.document) {
-			console.log('No documents in the store — opening the drop box to add the first one.');
+			debug.log('No documents in the store — opening the drop box to add the first one.');
 			w_operation.set(T_Operation.document);
 		}
 	});
@@ -73,11 +74,11 @@
 		event.stopPropagation();                              // don't let this reach the background clearer
 		const op = columns[col].op;
 		if (!op) {
-			console.log(`The "${columns[col].label}" header does nothing — no add view for it.`);
+			debug.log(`The "${columns[col].label}" header does nothing — no add view for it.`);
 			return;
 		}
 		w_operation.set(op);
-		console.log(`Clicked "${columns[col].label}" — content area now showing "${op}".`);
+		debug.log(`Clicked "${columns[col].label}" — content area now showing "${op}".`);
 	}
 
 	// A click on the empty background leaves the add view and returns to the list.
@@ -88,7 +89,7 @@
 		const target = event.target as HTMLElement;
 		if (target.closest('.drop, .add-tag')) { return; }   // click landed inside the add view
 		w_operation.set(null);
-		console.log('Clicked the background — closed the add view, back to the document list.');
+		debug.log('Clicked the background — closed the add view, back to the document list.');
 	}
 </script>
 
@@ -182,6 +183,8 @@
 	.search-text {
 		border        : var(--thickness-normal) solid var(--black);
 		border-radius : var(--radius-pill);
+		height        : var(--height-control);
+		box-sizing    : border-box;
 		padding       : var(--pad-control);
 		font-size     : var(--font-label);
 		background    : var(--white);
@@ -189,6 +192,7 @@
 		margin-bottom : var(--gap);
 		align-self    : center;
 		margin-top    : -2px;                  /* nudge the search box up 2px */
+		width         : 200px;
 	}
 
 	hr {

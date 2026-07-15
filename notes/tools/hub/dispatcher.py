@@ -13,6 +13,7 @@ import threading
 import time
 import urllib.request
 import urllib.error
+import urllib.parse
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEV_SERVERS = os.path.join(SCRIPT_DIR, 'servers.sh')
@@ -555,22 +556,29 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
-        elif self.path.startswith('/log-dimensionals'):
-            # Append or overwrite ~/GitHub/mono/logs/dimensionals.log with the request body.
-            # ?fresh=1 in the query string overwrites (first call per browser session);
-            # otherwise the body is appended to the existing file.
+        elif urllib.parse.urlparse(self.path).path == '/log':
+            # Append or overwrite ~/GitHub/mono/logs/<where>.log with the request body.
+            # /log?where=<name> picks the file (defaults to "debug"); ?erase=1 overwrites
+            # (first call per browser session), otherwise the body is appended. <name>
+            # must be a bare filename (letters, digits, dash, underscore) so it can't
+            # point outside the logs folder.
             try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                where = params.get('where', ['debug'])[0]
+                if not where or not all(c.isalnum() or c in '-_' for c in where):
+                    self._send_response(400, {'success': False, 'error': f'bad where: {where!r}'})
+                    return
                 content_length = int(self.headers.get('Content-Length', 0))
                 body = self.rfile.read(content_length).decode()
-                log_path = os.path.join(GITHUB_DIR, 'logs', 'dimensionals.log')
+                log_path = os.path.join(GITHUB_DIR, 'logs', f'{where}.log')
                 os.makedirs(os.path.dirname(log_path), exist_ok=True)
-                fresh = 'fresh=1' in self.path
-                mode = 'w' if fresh else 'a'
+                erase = params.get('erase', ['0'])[0] == '1'
+                mode = 'w' if erase else 'a'
                 with open(log_path, mode) as f:
                     f.write(body)
                     if not body.endswith('\n'):
                         f.write('\n')
-                self._send_response(200, {'success': True, 'path': log_path, 'fresh': fresh})
+                self._send_response(200, {'success': True, 'path': log_path, 'erase': erase})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 

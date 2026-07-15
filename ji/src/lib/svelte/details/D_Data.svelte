@@ -25,7 +25,7 @@
 
 	function choose(storage: T_Storage) {
 		if (!built.has(storage)) {
-			// console.log(`The ${storage} store is not built yet — staying on the ${$w_storage} store.`);
+			// debug.log(`The ${storage} store is not built yet — staying on the ${$w_storage} store.`);
 			return;
 		}
 		if (storage === $w_storage) { return; }
