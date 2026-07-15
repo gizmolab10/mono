@@ -12,11 +12,18 @@ export enum T_Storage {
 export enum T_DocumentKind {
 	unknown = 'unknown',
 	bmp     = 'bmp',
+	doc     = 'doc',
+	docx    = 'docx',
 	gif     = 'gif',
+	html    = 'html',
 	jpeg    = 'jpeg',
+	md      = 'md',
 	pdf     = 'pdf',
 	png     = 'png',
+	rtf     = 'rtf',
+	svg     = 'svg',
 	txt     = 'txt',
+	webp    = 'webp',
 }
 
 // The five stored record kinds, so save/load loops can walk them by name.

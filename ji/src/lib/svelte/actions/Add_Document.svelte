@@ -18,20 +18,35 @@
 		.filter((kind) => kind !== T_DocumentKind.unknown)
 		.join(', ');
 
-	// Turn a file's reported type into one of our document kinds.
+	// Kinds we store as their plain text (the rest store as a data-URL).
+	const text_kinds = new Set<T_DocumentKind>([
+		T_DocumentKind.txt, T_DocumentKind.md, T_DocumentKind.html,
+		T_DocumentKind.rtf, T_DocumentKind.svg,
+	]);
+
+	// Turn a file's reported type into one of our document kinds. The specific
+	// text-based types (markdown, html, rtf, svg) must be checked before the
+	// plain-text catch-all, or they would be saved as plain text.
 	function kind_of(file: File): T_DocumentKind {
-		if (file.type.startsWith('text/'))   { return T_DocumentKind.txt; }
-		if (file.type === 'image/jpeg')      { return T_DocumentKind.jpeg; }
-		if (file.type === 'image/png')       { return T_DocumentKind.png; }
-		if (file.type === 'image/gif')       { return T_DocumentKind.gif; }
-		if (file.type === 'image/bmp')       { return T_DocumentKind.bmp; }
-		if (file.type === 'application/pdf') { return T_DocumentKind.pdf; }
+		if (file.type === 'text/markdown')                               { return T_DocumentKind.md; }
+		if (file.type === 'text/html')                                   { return T_DocumentKind.html; }
+		if (file.type === 'application/rtf' || file.type === 'text/rtf') { return T_DocumentKind.rtf; }
+		if (file.type === 'application/pdf')                             { return T_DocumentKind.pdf; }
+		if (file.type === 'image/svg+xml')                               { return T_DocumentKind.svg; }
+		if (file.type.startsWith('text/'))                               { return T_DocumentKind.txt; }
+		if (file.type === 'image/jpeg')                                  { return T_DocumentKind.jpeg; }
+		if (file.type === 'image/png')                                   { return T_DocumentKind.png; }
+		if (file.type === 'image/gif')                                   { return T_DocumentKind.gif; }
+		if (file.type === 'image/bmp')                                   { return T_DocumentKind.bmp; }
+		if (file.type === 'image/webp')                                  { return T_DocumentKind.webp; }
+		if (file.type === 'application/msword')                          { return T_DocumentKind.doc; }
+		if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') { return T_DocumentKind.docx; }
 		return T_DocumentKind.unknown;
 	}
 
-	// Read the bytes we store: plain text for a text file, a data-URL for the rest.
+	// Read the bytes we store: plain text for the text kinds, a data-URL for the rest.
 	function bytes_of(file: File, kind: T_DocumentKind): Promise<string> {
-		if (kind === T_DocumentKind.txt) { return file.text(); }
+		if (text_kinds.has(kind)) { return file.text(); }
 		return new Promise<string>((resolve) => {
 			const reader = new FileReader();
 			reader.onload = () => resolve(reader.result as string);

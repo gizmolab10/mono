@@ -2,6 +2,15 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-14 — more file types a drop keeps
+
+- **Seven more formats.** A drop now also saves markdown, html, rich text, and svg (kept as their plain text), plus webp images and Word doc / docx files (kept as wrapped bytes). The specific text types are matched before the plain-text catch-all so markdown and html aren't flattened to plain text. Tiff was left out — a browser can't show one, so there'd be no preview later; Word files store the same way but we accepted them anyway. The "accepted types" hint under the drop box lists them all straight from the type list, so it stays current on its own.
+
+## 2026-07-14 — cutting the di leftovers
+
+- **Trimmed the saved settings.** The settings list came over whole from di, carrying dozens of keys ji never touches (edge thickness, grid opacity, view mode, orientation, help sidebar, and more). Cut every key with no reader — the list is down to the seven ji actually uses (the details toggle, the current add-mode, the active store, the more/less choice, and the accent and text colors). Also renamed the saved-settings name-tag from "di:" to "ji:", so old di-era settings are ignored and everything starts fresh.
+- **Cut the unused colors.** ji copied di's whole color engine — slider thumb/track/tick, focus halo, selection, and an edge color that fed 3D-part tints. Nothing on ji's screen reads any of those. Removed them and the machinery that derived and published them; only the accent, its lightened background, the hover shade, and the text color remain, and the color publisher now sets just the four page-variables something reads.
+
 ## 2026-07-14 — a diagnostic log that lives in a file
 
 - **One log address for every project.** The hub's little log server used to answer a separate address per topic (only di's, hard-wired to one file). It now answers a single address and reads the file name from the request — send `where=intersection` and it writes `logs/intersection.log`. The name is checked so it can't point outside the logs folder. di's two log senders moved to the new address; the old one is gone.

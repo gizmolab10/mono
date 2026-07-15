@@ -2,14 +2,17 @@
 
 **Status:** active. One always-on screen: a short top bar (hamburger + help), then a live filter (a joined tag pill with an all/any toggle, and a "search by name" box), a rule, and the documents table. The table's own column labels double as the controls — hovering "document name" or "tags" reveals "add a document" / "add a tag", and clicking opens that add flow below the rule; a click on the empty background closes it. An empty store leads straight with the drop box. Details region (preferences + data panels) collapses from the hamburger; build opener + credit pinned to the frame's bottom-left. **Document store** built and wired — design in [db spec](done/db/db%20spec.md) / [db proposal](done/db/db%20proposal.md), status in [db handoff](db%20handoff.md).
 
-## Proposal — next: remove unused preferences and colors
+## Proposal — next: move di's hooks up to mono
 
-ji's Preferences and Colors were ported whole from di, so both carry a pile of keys and colors ji never touches (edge thickness, grid opacity, dimension count, view mode, orientation, scale, parts tabs, help-sidebar, and so on). Cut what ji doesn't use.
+The shared session-behavior hooks (the brief-reply check, banned-words, plain-English, guess/citation, the done-checklist, the always-file injection, the pre-edit snapshot, and so on) live under `di/.claude/hooks/` and are wired by di's own settings. But those behaviors fire in *every* project (they're active in this ji session), so they belong at the repo root, not inside di. Move them to `mono/.claude/hooks/` and wire them from mono's settings, so one copy serves all projects.
 
-1. **Preferences.** For each `T_Preference` key, search ji for a read or write. ji really uses only a handful — the details toggle, the current add-mode, the active storage, the more/less choice, and the theme colors. Delete every key with no reference, and drop the matching saved-value handling. (Also: the storage prefix is still `di:` — rename to `ji:` while here, or leave — Jonathan's call.)
-2. **Colors.** Same pass over the ported color definitions: keep the ink, the theme tokens the app actually pushes (`--bg`, `--accent`, `--hover`, `--black`, …), and remove any color that nothing reads.
-3. **Verify.** A clean `svelte-check` after each deletion catches anything still referenced; delete in small batches so a missed use surfaces immediately.
+1. **Sort di-only from shared.** Walk `di/.claude/hooks/`. Most are project-neutral (brief, banned-words, plain-English, citation, done-checklist, inject-always, snapshot, ts-check). A few are di-specific (e.g. `block-di-files.sh`) and stay put. List which is which before moving anything.
+2. **Move the shared scripts** to `mono/.claude/hooks/`, then point mono's `settings.local.json` at the moved paths. Remove the duplicated wiring from di's settings so a hook doesn't fire twice.
+3. **Fix hardcoded di assumptions.** Any script that hardcodes a di path or reads di's always-file must take the project from the working directory (each project already keeps its own always-file at the same relative path), so the same script works from ji, ws, ga, di.
+4. **Verify from two projects.** After the move, run a small edit in both ji and di and confirm each hook still fires once (not zero, not twice).
+
+**Decision for Jonathan:** move-and-rewire wholesale, or move one hook at a time (safer, since a mis-wired hook can block every turn)? I lean one-at-a-time.
 
 ## Later (from code debt)
 
-Move di's hooks into mono, remote support (supabase, person id, authorization), more file formats (md, html, tiff, webp, svg, rtf), the front page, a stipulations file, and the "wendy" signals work — all tracked in [code debt](code%20debt.md).
+Matching control heights (segmented controls, buttons, inputs), remote support (supabase, person id, authorization), the front page, a stipulations file, and the "wendy" signals work — all tracked in [code debt](code%20debt.md).

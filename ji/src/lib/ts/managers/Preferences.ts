@@ -5,7 +5,7 @@ import { writable } from 'svelte/store';
  * Preferences — persistent storage for user settings
  *
  * Simple localStorage wrapper with type-safe keys.
- * All keys are prefixed with 'di:' for namespace isolation.
+ * All keys are prefixed with 'ji:' for namespace isolation.
  */
 
 export enum T_Preference {
@@ -13,42 +13,8 @@ export enum T_Preference {
 	showDetails  	= 'showDetails',
 
 	// Colors
-	backgroundColor = 'backgroundColor',
 	accentColor     = 'accentColor',
 	textColor       = 'textColor',
-
-	// Units
-	unitSystem 		= 'unitSystem',
-
-	// Hideables
-	visibleDetails   = 'visibleDetails',
-
-	// View
-	edgeThickness    = 'edgeThickness',
-	gridOpacity      = 'gridOpacity',
-	decorations      = 'decorations',
-	dimensionCount   = 'dimensionCount',
-	precision        = 'precision',
-	edgeColor        = 'edgeColor',
-	viewMode         = 'viewMode',
-	showGrid         = 'showGrid',
-	solid            = 'solid',
-
-	// Rotation
-	rotationSnap     = 'rotationSnap',
-
-	// Render
-	orientation      = 'orientation',
-	scale            = 'scale',
-
-	// Parts
-	showGivens       = 'showConstants',
-	showParts        = 'showParts',
-	partsTab         = 'partsTab',
-	attributeKeys    = 'attributeKeys',
-
-	// Mode
-	allowEditing     = 'allowEditing',
 
 	// Content
 	current_op      = 'current_op',
@@ -57,26 +23,9 @@ export enum T_Preference {
 	database         = 'database',
 	showOtherStores  = 'showOtherStores',
 
-	// Scenes
-	scene            = 'scene',
-
-	// Library
-	libraryFolder    = 'libraryFolder',
-	library          = 'library',
-
-	// Parts table
-	collapsedIds     = 'collapsedIds',
-
-	// Help overlay
-	showHelpSidebar  = 'showHelpSidebar',
-	helpPageId       = 'helpPageId',
-
-	// Confirmation popup
-	skipDeleteConfirm = 'skipDeleteConfirm',
-
 }
 
-const STORAGE_PREFIX = 'di:';
+const STORAGE_PREFIX = 'ji:';
 
 class Preferences {
 
@@ -122,7 +71,7 @@ class Preferences {
 	}
 
 	/**
-	 * Clear all di preferences
+	 * Clear all ji preferences
 	 */
 	clear() : void {
 		const keys = Object.values(T_Preference);
@@ -132,17 +81,16 @@ class Preferences {
 	}
 
 	/**
-	 * Reset preferences to defaults (preserves scene and library data)
+	 * Reset preferences to defaults (removes every stored key)
 	 */
 	reset() : void {
-		const preserve = new Set([T_Preference.scene, T_Preference.library]);
 		for (const key of Object.values(T_Preference)) {
-			if (!preserve.has(key)) this.remove(key);
+			this.remove(key);
 		}
 	}
 
 	/**
-	 * Debug: dump all di preferences to console
+	 * Debug: dump all ji preferences to console
 	 */
 	dump() : void {
 		const keys  = Object.values(T_Preference);

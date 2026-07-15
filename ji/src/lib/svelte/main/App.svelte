@@ -3,22 +3,14 @@
 	import { c } from '../../ts/common/Configuration';
 	import Intersection from './Intersection.svelte';
 
-	const {
-		w_background_color, w_selected_color, w_accent_color, w_hover_color,
-		w_thumb_color, w_track_color, w_focus_color, w_text_color, w_tick_color
-	} = colors;
+	const { w_background_color, w_accent_color, w_hover_color, w_text_color } = colors;
 
 	$effect(() => {
 		c.configure_reactive_colors(
 			$w_background_color,
-			$w_selected_color,
 			$w_accent_color,
 			$w_hover_color,
-			$w_thumb_color,
-			$w_track_color,
-			$w_focus_color,
-			$w_text_color,
-			$w_tick_color
+			$w_text_color
 		);
 	});
 </script>

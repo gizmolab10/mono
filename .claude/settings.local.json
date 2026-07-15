@@ -50,7 +50,8 @@
       "Bash(dig +short intersection.lol A)",
       "Bash(dig +short intersection.lol AAAA)",
       "Bash(dig +short intersection.lol CAA)",
-      "Bash(rm /Users/sand/GitHub/mono/.claude/commands/in.md)"
+      "Bash(rm /Users/sand/GitHub/mono/.claude/commands/in.md)",
+      "Bash(bash /Users/sand/GitHub/mono/.claude/hooks/inject-always.sh)"
     ],
     "additionalDirectories": [
       "/Users/sand/GitHub/mono/.claude/commands"
@@ -86,11 +87,11 @@
           },
           {
             "type": "command",
-            "command": "di/.claude/hooks/done-checklist.sh"
+            "command": ".claude/hooks/done-checklist.sh"
           },
           {
             "type": "command",
-            "command": "di/.claude/hooks/inject-always.sh"
+            "command": ".claude/hooks/inject-always.sh"
           }
         ]
       }
@@ -101,7 +102,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "di/.claude/hooks/snapshot-before-edit.sh"
+            "command": ".claude/hooks/snapshot-before-edit.sh"
           }
         ]
       },
@@ -110,7 +111,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "di/.claude/hooks/bash-command-check.sh"
+            "command": ".claude/hooks/bash-command-check.sh"
           }
         ]
       }
@@ -126,7 +127,7 @@
           },
           {
             "type": "command",
-            "command": "di/.claude/hooks/mark-ts-check-pending.sh"
+            "command": ".claude/hooks/mark-ts-check-pending.sh"
           }
         ]
       }
@@ -167,7 +168,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "di/.claude/hooks/display-fix.sh",
+            "command": ".claude/hooks/display-fix.sh",
             "timeout": 5
           }
         ]
