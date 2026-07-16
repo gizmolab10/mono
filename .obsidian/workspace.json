@@ -267,6 +267,7 @@
   },
   "active": "03b8fd6e0c6714dc",
   "lastOpenFiles": [
+    "ji/notes/work/code debt.md.tmp.18207.09d8062f215f",
     "ji/src/lib/svelte/main/Documents.svelte.tmp.18207.8f646ee3223b",
     "ji/notes/work/handoff.md",
     "ji/src/lib/svelte/main/View_Document.svelte",
@@ -279,7 +280,6 @@
     "ji/src/lib/ts/database/Databases.ts.tmp.18207.d7ba4cd8430e",
     "ji/src/lib/ts/types/Signal.ts",
     "ji/src/lib/ts/database/DB_Common.ts.tmp.18207.3dc1e4561dd7",
-    "ji/src/lib/ts/types/DB_Records.ts",
     "ji/notes/work/db handoff.md",
     "notes/guides/pre-flight/banned words.md",
     "di/notes/guides/pre-flight/banned words.md",

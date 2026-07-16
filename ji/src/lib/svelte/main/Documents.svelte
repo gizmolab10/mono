@@ -2,14 +2,14 @@
 	import { w_filter_tags, w_filter_text, w_filter_mode, filter_rows } from '../../ts/managers/Search';
 	import { w_operation, w_view_document, T_Operation } from '../../ts/managers/Operations';
 	import { T_DocumentKind, view_mode } from '../../ts/types/DB_Records';
-	import Add_Document from '../actions/Add_Document.svelte';
 	import View_Document from '../actions/View_Document.svelte';
+	import Add_Document from '../actions/Add_Document.svelte';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { databases } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/types/Signal';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { k } from '../../ts/common/Constants';
 	import Add_Tag from '../actions/Add_Tag.svelte';
 	import { debug } from '../../ts/common/Debug';
+	import { k } from '../../ts/common/Constants';
 	import Tags from '../actions/Tags.svelte';
 
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
@@ -287,7 +287,7 @@
 	/* The cell is transparent so the rule shows through; only the label pill
 	   below masks it. Labels align left, except format and edit-tags hug right. */
 	.head th {
-		padding    : var(--gap-tight) 0 var(--gap);
+		padding    : 0 0 var(--gap);
 		text-align : left;
 	}
 
@@ -361,25 +361,34 @@
 	/* The per-row actions: edit tags, view, delete — quiet icon buttons, no border
 	   and a see-through background, sitting at the right end of the row. */
 	.row-actions {
-		gap             : var(--gap);
 		height          : calc(var(--height-control) - 4px);   /* constant, so the row doesn't grow when the confirm buttons appear */
-		min-height      : 0;            /* as a flex child, honor that height cap instead of stretching to the taller confirm buttons */
+		gap             : var(--gap-tight);
 		justify-content : flex-end;
 		align-items     : center;
 		display         : flex;
+		min-height      : 0;            /* as a flex child, honor that height cap instead of stretching to the taller confirm buttons */
 	}
 
 	.row-button {
-		font-size  : var(--font-label);
-		background : transparent;
-		cursor     : pointer;
-		padding    : 0;
-		border     : none;
-		opacity    : var(--opacity-label);
+		border          : var(--thickness-normal) solid transparent;   /* reserved, so hover adds no shift */
+		height          : calc(var(--height-control) - 4px);
+		width           : calc(var(--height-control) - 4px);
+		border-radius   : var(--radius-percent);
+		opacity         : var(--opacity-label);
+		font-size       : var(--font-label);
+		background      : transparent;
+		box-sizing      : border-box;
+		cursor          : pointer;
+		align-items     : center;
+		justify-content : center;
+		display         : flex;
+		padding         : 0;
 	}
 
 	.row-button:not(:disabled):hover {
-		opacity : 1;
+		border-color : var(--black);
+		background   : var(--hover);
+		opacity      : 1;
 	}
 
 	.row-button:disabled {
@@ -400,13 +409,13 @@
 	.row-danger {
 		border        : var(--thickness-normal) solid var(--black);
 		height        : var(--height-control);
-		box-sizing    : border-box;
 		padding       : var(--pad-control);
+		border-radius : var(--radius-pill);
 		font-size     : var(--font-label);
 		background    : var(--white);
 		color         : var(--text);
+		box-sizing    : border-box;
 		cursor        : pointer;
-		border-radius : var(--radius-pill);
 	}
 
 	/* The keep button is a circle holding the shared cross: equal width and height,
@@ -414,10 +423,10 @@
 	.row-x {
 		border-radius   : var(--radius-percent);
 		width           : var(--height-control);
-		padding         : 0;
 		align-items     : center;
 		justify-content : center;
 		display         : flex;
+		padding         : 0;
 	}
 
 	.row-cross {

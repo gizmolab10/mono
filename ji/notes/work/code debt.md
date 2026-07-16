@@ -4,28 +4,29 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] far-right, per-row buttons -> no border, transparent bg
-    - [ ] change 'edit tags' to ✏️ Pencil (U+270F)
-    - [ ] add a trash can button
-        - [ ] two confirmation buttons bordered, white bg, hover --hover, "erase" and "cancel" -- temporarily replaces all three far right buttons
-    - [ ] eyeball -- click to view a document
-        - [ ] detect when not supported by browsers (eg, doc, docx, tiff)
+- [ ] flesh out view document
 - [ ] raise documents view up to top
     - [ ] add video file formats
     - [ ] not scroll controls and header
+    - [ ] show a loading status below the 'dro ...' file types
 - [ ] add remote support
     - [ ] supabase not firebase
     - [ ] use person's id
     - [ ] authorization
 - [ ] write a new file: stipulations based on current code
-- [ ] wendy
-    - [ ] New app for your brother: Intersection
+- [ ] wendy -- new app for your brother: Intersection
     - [ ] give me weak signals / info from the tails (of a bell curve), not just the clusters
     - [ ] give me the signals that repeat over time or across multiple people — this is a stronger signal.
     - [ ] present me with these signals in a way that I can sense into each one, and decide if I want to keep them, highlight them or discard them as unimportant.
 
 ## done
 
+- [x] far-right per-row buttons -> borderless icons in one column with the tags
+    - [x] view (eye), edit tags (✏️), trash (🗑) — the eye is disabled on unshowable types and blank on folders
+    - [x] trash asks first: erase + x (the shared cross) bordered buttons replace all three icons, row height held steady
+    - [x] a document opens in the content area (new "view document" operation) and renders images, pdfs, and text
+    - [x] trashing a folder cascades to everything inside (new delete-subtree in the store, drops every touched link)
+    - [x] tags and buttons share one column, tags right-justified; rows trimmed shorter
 - [x] document bytes moved from browser storage (~5MB cap) to IndexedDB — a folder of real files no longer overflows; save path is now async through the drop and erase
 - [x] tidied the database folder — store-changed tick and record shapes into shared spots, save-tracker with the plain types, the test into a tests folder; byte-store helper folded into the local store
 - [x] click on doc drop box -> set op to null
