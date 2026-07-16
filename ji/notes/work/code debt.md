@@ -4,15 +4,19 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] convert "documents (click +)" into a button with --height-control
-- [ ] move corner stack to intersection
-- [ ] ability to drop a folder or multiple files
+- [ ] ability to drop a folder
+    - [ ] create each of its files
+        - [ ] if a child is a folder, recurse
+    - [ ] create a do-nothing folder document
+    - [ ] create a relationship for each of its files
 - [ ] "Autofocus processing was blocked because a document already has a focused element."
 - [ ] add remote support
     - [ ] supabase not firebase
     - [ ] use person's id
     - [ ] authorization
-- [ ] front page
+- [ ] raise documents up to top
+- [ ] click on a document to view it
+    - [ ] detect when not supported by browsers (eg, doc, docx, tiff)
 - [ ] write a new file: stipulations based on current code
 - [ ] wendy
     - [ ] New app for your brother: Intersection
@@ -22,6 +26,10 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] the "add documents" header reads as a real button
+    - [x] control height, solid black edge, white at rest, hover to --hover, nudged down 1px to line up
+    - [x] fixed the rule going invisible (a border reset was cancelling its line) and a faint ghost line (the label was see-through, so the rule bled through — mask made solid, only the text fades)
+    - [x] dropped the rule + table 5px together
 - [x] details controls -> matched heights, and control text lifted off its low baseline
     - [x] color swatch drawn from the shared control height, not the bigger square-button size
     - [x] erase, switcher, yes/no now count their border inside — all match the rest

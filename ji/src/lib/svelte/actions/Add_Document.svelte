@@ -80,6 +80,7 @@
 	function handleDragLeave() {
 		dragging = false;
 	}
+
 </script>
 
 <div class='drop'
@@ -96,6 +97,8 @@
 <style>
 
 	.drop {
+		/* documents already insets by --gap; add the rest so all three sides = --gap-fat */
+		margin          : 0 calc(var(--gap-fat) - var(--gap)) calc(var(--gap-fat) - var(--gap));
 		border          : var(--thickness-fat) dashed var(--accent);
 		opacity         : var(--opacity-drop);
 		font-size       : var(--font-drop);
@@ -109,8 +112,6 @@
 		flex-direction  : column;
 		display         : flex;
 		flex            : 1;                   /* fill the height so its bottom margin equals the sides */
-		/* documents already insets by --gap; add the rest so all three sides = --gap-fat */
-		margin          : 0 calc(var(--gap-fat) - var(--gap)) calc(var(--gap-fat) - var(--gap));
 	}
 
 	.types {
@@ -123,4 +124,5 @@
 		background : var(--hover);
 		opacity    : 1;
 	}
+
 </style>

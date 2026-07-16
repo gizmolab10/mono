@@ -1,12 +1,12 @@
 <script lang='ts'>
+	import { w_filter_tags, w_filter_text, w_filter_mode, filter_rows } from '../../ts/managers/Search';
+	import { w_operation, T_Operation } from '../../ts/managers/Operations';
+	import Add_Document from '../actions/Add_Document.svelte';
 	import { databases } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/database/Signal';
-	import { w_operation, T_Operation } from '../../ts/managers/Operations';
-	import { w_filter_tags, w_filter_text, w_filter_mode, filter_rows } from '../../ts/managers/Search';
-	import Tags from '../actions/Tags.svelte';
-	import Add_Document from '../actions/Add_Document.svelte';
 	import Add_Tag from '../actions/Add_Tag.svelte';
 	import { debug } from '../../ts/common/Debug';
+	import Tags from '../actions/Tags.svelte';
 
 	// The documents view: every file in the active store as type + name + its tags,
 	// each row with an "edit tags" button that opens the tag picker for that
@@ -106,54 +106,56 @@
 	{#if rows.length > 0}
 		<input class='search-text' type='search' placeholder='search by name' bind:value={$w_filter_text} />
 	{/if}
-	<hr>
 	{#if $w_operation === T_Operation.document}
 		<Add_Document />
-	{:else if $w_operation === T_Operation.tag}
-		<Add_Tag ondone={() => w_operation.set(null)} />
 	{:else}
-		{#if rows.length === 0}
-			<div class='empty'>no documents yet</div>
+		<hr>
+		{#if $w_operation === T_Operation.tag}
+			<Add_Tag ondone={() => w_operation.set(null)} />
 		{:else}
-			<table class='blobs-table'>
-				<thead>
-					<tr class='head'>
-						{#each columns as col, i}
-							<th class:right={col.right}>
-								<button
-									class='head-label'
-									class:interactive={col.hover}
-									onmouseenter={() => { if (col.hover) { hovered = i; } }}
-									onmouseleave={() => { if (hovered === i) { hovered = null; } }}
-									onclick={(e) => head_click(e, i)}>{hovered === i && col.hover ? col.hover : col.label}</button>
-							</th>
-						{/each}
-					</tr>
-				</thead>
-				<tbody>
-					{#each shown as row}
-						<tr class='file'>
-							<td class='kind'>{row.kind}</td>
-							<td class='name'>{row.name}</td>
-							<td class='tags'>{row.tag_names}</td>
-							<td class='edit'>
-								<button class='edit-button' onclick={() => editing = editing === row.id ? null : row.id}>
-									{editing === row.id ? 'done' : 'edit tags'}
-								</button>
-							</td>
+			{#if rows.length === 0}
+				<div class='empty'>no documents yet</div>
+			{:else}
+				<table class='blobs-table'>
+					<thead>
+						<tr class='head'>
+							{#each columns as col, i}
+								<th class:right={col.right}>
+									<button
+										class='head-label'
+										class:interactive={col.hover}
+										onmouseenter={() => { if (col.hover) { hovered = i; } }}
+										onmouseleave={() => { if (hovered === i) { hovered = null; } }}
+										onclick={(e) => head_click(e, i)}>{hovered === i && col.hover ? col.hover : col.label}</button>
+								</th>
+							{/each}
 						</tr>
-						{#if editing === row.id}
-							<tr class='editor'>
-								<td colspan='4'>
-									<Tags
-										selected={chosen_for(row.id)}
-										ontoggle={(tag_id, on) => toggle_tag(row.id, tag_id, on)} />
+					</thead>
+					<tbody>
+						{#each shown as row}
+							<tr class='file'>
+								<td class='kind'>{row.kind}</td>
+								<td class='name'>{row.name}</td>
+								<td class='tags'>{row.tag_names}</td>
+								<td class='edit'>
+									<button class='edit-button' onclick={() => editing = editing === row.id ? null : row.id}>
+										{editing === row.id ? 'done' : 'edit tags'}
+									</button>
 								</td>
 							</tr>
-						{/if}
-					{/each}
-				</tbody>
-			</table>
+							{#if editing === row.id}
+								<tr class='editor'>
+									<td colspan='4'>
+										<Tags
+											selected={chosen_for(row.id)}
+											ontoggle={(tag_id, on) => toggle_tag(row.id, tag_id, on)} />
+									</td>
+								</tr>
+							{/if}
+						{/each}
+					</tbody>
+				</table>
+			{/if}
 		{/if}
 	{/if}
 </div>

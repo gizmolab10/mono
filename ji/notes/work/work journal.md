@@ -2,6 +2,12 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-16 — the "add documents" header becomes a real button
+
+- **The middle header is now a button, not just text on the rule.** It stands at the shared control height with a solid black edge, sits white at rest, lights to the hover shade, and rides a dot lower so its text lines up with the plain headings beside it.
+- **Two rule bugs, chased in the wrong order first.** The line vanished, then a faint ghost line appeared. My first guesses (row height, then the browser's default line) were both wrong. The line vanished because a reset was wiping out the line set right before it. The faint ghost was the black rule showing through the header labels — the labels were partly see-through, so their masking cover let the rule bleed through. The cover was made solid and only the label text fades now.
+- **Lesson, again:** every wrong guess here was a claim about cause I couldn't see. The real causes only showed once I read the exact lines and reasoned from what the page must be doing — not from the first plausible story.
+
 ## 2026-07-16 — the details controls fall in line, and text rides right
 
 - **Three controls in the data area finally agree.** The color swatch was drawn from a different size than the rest — a bigger token meant for square buttons — so it stood taller than the erase button and the storage switcher beside it. It now uses the shared control height. The erase button and the switcher also weren't counting their border inside, so they sat a hair tall; both now do, along with the yes/no buttons that appear when you confirm an erase. All four match the rest of the app.
