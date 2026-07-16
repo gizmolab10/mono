@@ -99,6 +99,30 @@ describe('local document store', () => {
 		expect(db.predicates.filter((p) => p.type === 'contains')).toHaveLength(1);
 	});
 
+	it('deletes a folder as a subtree — its files, nested folders, links, and bytes all go', async () => {
+		const db = new DB_Local();
+		db.fetch_all();
+		const top    = await db.add_document('top',      T_DocumentKind.folder, '');
+		const inside = await db.add_document('inside.txt', T_DocumentKind.txt, 'I');
+		const sub    = await db.add_document('sub',      T_DocumentKind.folder, '');
+		const deep   = await db.add_document('deep.txt',   T_DocumentKind.txt, 'D');
+		await db.add_document('loose.txt', T_DocumentKind.txt, 'L');   // outside the folder — should survive
+		const contains = db.predicate_for('contains');
+		db.add_relationship(contains.id, top.id, inside.id);
+		db.add_relationship(contains.id, top.id, sub.id);
+		db.add_relationship(contains.id, sub.id, deep.id);
+		const red = db.add_tag('red');
+		db.add_tagging(red.id, deep.id);
+
+		await db.delete_subtree(top.id);
+
+		// only the loose file outside the folder survives
+		expect(db.list_documents().map((l) => l.document.name)).toEqual(['loose.txt']);
+		expect(await db.read_blob(deep.id)).toBeNull();
+		expect(db.relationships).toHaveLength(0);              // every link touching the folder is gone
+		expect(db.filter_by_tag(red.id)).toHaveLength(0);      // the deep file's tag link is gone too
+	});
+
 	it('erases the whole store — records and bytes gone, stays empty after reload', async () => {
 		const db = new DB_Local();
 		db.fetch_all();

@@ -4,14 +4,19 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] click on doc drop box -> set op to null
+- [ ] far-right, per-row buttons -> no border, transparent bg
+    - [ ] change 'edit tags' to ✏️ Pencil (U+270F)
+    - [ ] add a trash can button
+        - [ ] two confirmation buttons bordered, white bg, hover --hover, "erase" and "cancel" -- temporarily replaces all three far right buttons
+    - [ ] eyeball -- click to view a document
+        - [ ] detect when not supported by browsers (eg, doc, docx, tiff)
+- [ ] raise documents view up to top
+    - [ ] add video file formats
+    - [ ] not scroll controls and header
 - [ ] add remote support
     - [ ] supabase not firebase
     - [ ] use person's id
     - [ ] authorization
-- [ ] raise documents up to top
-- [ ] click on a document to view it
-    - [ ] detect when not supported by browsers (eg, doc, docx, tiff)
 - [ ] write a new file: stipulations based on current code
 - [ ] wendy
     - [ ] New app for your brother: Intersection
@@ -21,6 +26,9 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] document bytes moved from browser storage (~5MB cap) to IndexedDB — a folder of real files no longer overflows; save path is now async through the drop and erase
+- [x] tidied the database folder — store-changed tick and record shapes into shared spots, save-tracker with the plain types, the test into a tests folder; byte-store helper folded into the local store
+- [x] click on doc drop box -> set op to null
 - [x] "Autofocus processing was blocked" warning gone — new-tag field focuses itself on mount instead of leaning on the browser's auto-focus mark
 - [x] ability to drop a folder
     - [x] a folder becomes a do-nothing folder document named for the folder; shows blank format

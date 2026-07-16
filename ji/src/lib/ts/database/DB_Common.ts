@@ -200,6 +200,29 @@ export abstract class DB_Common {
 		// debug.log(`Deleted document ${document_id}: documents ${before} → ${this.documents.length}, plus its tagging and relationship rows and its blob.`);
 	}
 
+	// Delete a document and everything under it — its files, and any folder within,
+	// all the way down — plus every tag link and every relationship that touched any
+	// of them, and each one's bytes. For a plain file (no children) this removes just
+	// that one document, so it is the single delete the row's trash always calls.
+	async delete_subtree(document_id: string): Promise<void> {
+		const doomed = new Set<string>();
+		const collect = (id: string): void => {
+			if (doomed.has(id)) { return; }
+			doomed.add(id);
+			for (const edge of this.indexes.children_of(id)) { collect(edge.child_id); }
+		};
+		collect(document_id);
+		this.taggings      = this.taggings.filter((t) => !doomed.has(t.document_id));
+		this.relationships = this.relationships.filter((r) => !doomed.has(r.parent_id) && !doomed.has(r.child_id));
+		this.documents     = this.documents.filter((d) => !doomed.has(d.id));
+		for (const id of doomed) { await this.delete_blob(id); }
+		this.persist(T_Record.taggings);
+		this.persist(T_Record.relationships);
+		this.persist(T_Record.documents);
+		this.reindex();
+		debug.log(`Deleted a group of ${doomed.size} document(s) starting at ${document_id}, plus their tag links, relationships, and bytes.`);
+	}
+
 	// Remove a tag and everything that points at it.
 	delete_tag(tag_id: string): void {
 		this.taggings      = this.taggings.filter((t) => t.tag_id !== tag_id);

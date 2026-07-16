@@ -27,6 +27,34 @@ export enum T_DocumentKind {
 	webp    = 'webp',
 }
 
+// How a document's bytes are stored: these kinds save as their plain text; every
+// other kind saves as a data-URL (its bytes base64-wrapped). The drop reads this
+// to store the right way; the viewer reads it to interpret what it reads back.
+export const TEXT_KINDS: ReadonlySet<T_DocumentKind> = new Set([
+	T_DocumentKind.txt, T_DocumentKind.md, T_DocumentKind.html,
+	T_DocumentKind.rtf, T_DocumentKind.svg,
+]);
+
+// How a document shows in the viewer, or null when a browser can't show it here
+// (Word doc, docx, tiff, and the non-file kinds) — the view button stays disabled.
+export type T_ViewMode = 'image' | 'pdf' | 'text';
+export function view_mode(kind: T_DocumentKind): T_ViewMode | null {
+	switch (kind) {
+		case T_DocumentKind.bmp:
+		case T_DocumentKind.gif:
+		case T_DocumentKind.jpeg:
+		case T_DocumentKind.png:
+		case T_DocumentKind.svg:
+		case T_DocumentKind.webp: return 'image';
+		case T_DocumentKind.pdf:  return 'pdf';
+		case T_DocumentKind.txt:
+		case T_DocumentKind.md:
+		case T_DocumentKind.html:
+		case T_DocumentKind.rtf:  return 'text';
+		default:                  return null;    // doc, docx, folder, unknown (tiff isn't a kind we store)
+	}
+}
+
 // The five stored record kinds, so save/load loops can walk them by name.
 export enum T_Record {
 	relationships = 'relationships',

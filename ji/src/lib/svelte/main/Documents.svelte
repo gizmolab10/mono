@@ -1,19 +1,26 @@
 <script lang='ts'>
 	import { w_filter_tags, w_filter_text, w_filter_mode, filter_rows } from '../../ts/managers/Search';
-	import { w_operation, T_Operation } from '../../ts/managers/Operations';
+	import { w_operation, w_view_document, T_Operation } from '../../ts/managers/Operations';
+	import { T_DocumentKind, view_mode } from '../../ts/types/DB_Records';
 	import Add_Document from '../actions/Add_Document.svelte';
+	import View_Document from '../actions/View_Document.svelte';
 	import { databases } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/types/Signal';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { k } from '../../ts/common/Constants';
 	import Add_Tag from '../actions/Add_Tag.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import Tags from '../actions/Tags.svelte';
+
+	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
 
 	// The documents view: every file in the active store as type + name + its tags,
 	// each row with an "edit tags" button that opens the tag picker for that
 	// document. Live off the store-changed tick. The search-text (picked tags + text)
 	// is the shared Search state.
 
-	let editing = $state<string | null>(null);
+	let editing = $state<string | null>(null);      // which row's tag editor is open
+	let confirming = $state<string | null>(null);   // which row is asking for delete?
 
 	const rows = $derived.by(() => {
 		$w_db_changed;                                   // re-read on every store change
@@ -55,6 +62,33 @@
 		}
 	});
 
+	// The view operation is persisted but the document it points at is not, so a
+	// reload can land on "view" with nothing to show. Fall back to the list then.
+	$effect(() => {
+		if ($w_operation === T_Operation.view && $w_view_document === null) {
+			w_operation.set(null);
+		}
+	});
+
+	// Open the view for one document; close it back to the list.
+	function open_view(document_id: string) {
+		w_view_document.set(document_id);
+		w_operation.set(T_Operation.view);
+		debug.log(`Viewing document ${document_id}.`);
+	}
+	function close_view() {
+		w_view_document.set(null);
+		if ($w_operation === T_Operation.view) { w_operation.set(null); }
+	}
+
+	// Trash one document — and, for a folder, everything under it. Asked first.
+	function delete_byID(document_id: string) {
+		databases.active.delete_subtree(document_id);
+		confirming = null;
+		if ($w_view_document === document_id) { close_view(); }
+		debug.log(`Trashed document ${document_id} (and anything under it).`);
+	}
+
 	function toggle_tag(document_id: string, tag_id: string, on: boolean) {
 		if (on) { databases.active.add_tagging(tag_id, document_id); }
 		else    { databases.active.remove_tagging(tag_id, document_id); }
@@ -65,15 +99,14 @@
 		return new Set(databases.active.indexes.tags_of(document_id));
 	}
 
-	// The four table columns, in order. Format and edit-tags hug the right edge to
-	// match their cells; the middle two hug the left. The middle two also react to
-	// hover — the label reads its "hover" text instead — and clicking them opens the
-	// matching add view; format and edit-tags stay inert.
+	// The three table columns, in order: format hugs the right edge of its cell, the
+	// other two hug the left. Only "add documents" reacts to hover — the label reads
+	// its hover text and clicking opens that add view; format and tags stay inert.
+	// The tags column also carries each row's per-document buttons at its right end.
 	const columns = [
 		{ label: 'format',        right: true,  hover: null,            op: null                 },
 		{ label: 'add documents', right: false, hover: 'add documents', op: T_Operation.document },
-		{ label: 'tags',          right: true,  hover: null,            op: null                 },
-		{ label: ' ',             right: true,  hover: null,            op: null                 },
+		{ label: 'tags',          right: false, hover: null,            op: null                 },
 	];
 
 	let hovered = $state<number | null>(null);
@@ -99,8 +132,9 @@
 		if (!$w_operation) { return; }                        // already showing the list
 		if (rows.length === 0) { return; }                   // empty store stays on the drop box — nothing to return to
 		const target = event.target as HTMLElement;
-		if (target.closest('.add-tag')) { return; }          // keep clicks inside the new-tag field; a drop-box click clears the operation
+		if (target.closest('.add-tag, .viewer')) { return; }  // keep clicks inside the new-tag field or the open document
 		w_operation.set(null);
+		w_view_document.set(null);                            // a background click also leaves the view
 		debug.log(`Clicked out of the add view with ${rows.length} document(s) in the store — back to the list.`);
 	}
 </script>
@@ -118,54 +152,71 @@
 	{/if}
 	{#if $w_operation === T_Operation.document}
 		<Add_Document />
+	{:else if $w_operation === T_Operation.tag}
+		<Add_Tag ondone={() => w_operation.set(null)} />
+	{:else if $w_operation === T_Operation.view && $w_view_document}
+		<View_Document document_id={$w_view_document} onclose={close_view} />
 	{:else}
-		{#if $w_operation === T_Operation.tag}
-			<Add_Tag ondone={() => w_operation.set(null)} />
+		<hr>
+		{#if rows.length === 0}
+			<div class='empty'>no documents yet</div>
 		{:else}
-			<hr>
-			{#if rows.length === 0}
-				<div class='empty'>no documents yet</div>
-			{:else}
-				<table class='blobs-table'>
-					<thead>
-						<tr class='head'>
-							{#each columns as col, i}
-								<th class:right={col.right}>
-									<button
-										class='head-label'
-										class:interactive={col.hover}
-										onmouseenter={() => { if (col.hover) { hovered = i; } }}
-										onmouseleave={() => { if (hovered === i) { hovered = null; } }}
-										onclick={(e) => head_click(e, i)}>{hovered === i && col.hover ? col.hover : col.label}</button>
-								</th>
-							{/each}
+			<table class='blobs-table'>
+				<thead>
+					<tr class='head'>
+						{#each columns as col, i}
+							<th class:right={col.right}>
+								<button
+									class='head-label'
+									class:interactive={col.hover}
+									onmouseenter={() => { if (col.hover) { hovered = i; } }}
+									onmouseleave={() => { if (hovered === i) { hovered = null; } }}
+									onclick={(e) => head_click(e, i)}>{hovered === i && col.hover ? col.hover : col.label}</button>
+							</th>
+						{/each}
+					</tr>
+				</thead>
+				<tbody>
+					{#each shown as row}
+						<tr class='file'>
+							<td class='kind'>{row.kind === 'folder' ? '---' : row.kind}</td>
+							<td class='name' style:padding-left='{row.depth * 20}px'>{row.name}</td>
+							<td class='tag-actions'>
+								<div class='tag-actions-row'>
+									<span class='tag-names'>{row.tag_names}</span>
+									<div class='row-actions'>
+										{#if confirming === row.id}
+											<button class='row-danger' onclick={() => delete_byID(row.id)}>delete</button>
+											<button class='row-danger row-x' title='keep' onclick={() => confirming = null}>
+												<svg class='row-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
+													<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+												</svg>
+											</button>
+										{:else}
+											<button class='row-button' title='edit tags'
+												onclick={() => editing = editing === row.id ? null : row.id}>✏️</button>
+											<button class='row-button' class:blank={row.kind === T_DocumentKind.folder} title='view'
+												disabled={row.kind === T_DocumentKind.folder || view_mode(row.kind) === null}
+												onclick={() => open_view(row.id)}>👁</button>
+											<button class='row-button' title='delete'
+												onclick={() => confirming = row.id}>🗑</button>
+										{/if}
+									</div>
+								</div>
+							</td>
 						</tr>
-					</thead>
-					<tbody>
-						{#each shown as row}
-							<tr class='file'>
-								<td class='kind'>{row.kind === 'folder' ? '---' : row.kind}</td>
-								<td class='name' style:padding-left='{row.depth * 20}px'>{row.name}</td>
-								<td class='tags'>{row.tag_names}</td>
-								<td class='edit'>
-									<button class='edit-button' onclick={() => editing = editing === row.id ? null : row.id}>
-										{editing === row.id ? 'done' : 'edit tags'}
-									</button>
+						{#if editing === row.id}
+							<tr class='editor'>
+								<td colspan='3'>
+									<Tags
+										selected={chosen_for(row.id)}
+										ontoggle={(tag_id, on) => toggle_tag(row.id, tag_id, on)} />
 								</td>
 							</tr>
-							{#if editing === row.id}
-								<tr class='editor'>
-									<td colspan='4'>
-										<Tags
-											selected={chosen_for(row.id)}
-											ontoggle={(tag_id, on) => toggle_tag(row.id, tag_id, on)} />
-									</td>
-								</tr>
-							{/if}
-						{/each}
-					</tbody>
-				</table>
-			{/if}
+						{/if}
+					{/each}
+				</tbody>
+			</table>
 		{/if}
 	{/if}
 </div>
@@ -278,8 +329,8 @@
 		background   : var(--hover);
 	}
 
-	.kind, .name, .tags, .edit {
-		padding        : var(--gap-tight) 0;
+	.kind, .name, .tag-actions {
+		padding        : calc(var(--gap-tight) - 1.5px) 0;   /* trimmed 1.5px each side — rows 3px shorter */
 		font-size      : var(--font-base);
 		color          : var(--text);
 		vertical-align : baseline;
@@ -293,26 +344,93 @@
 		width         : 60px;
 	}
 
-	.tags {
-		opacity       : var(--opacity-label);
-		text-align    : right;
+	/* One cell holds the tag names on the left and the per-row buttons on the right. */
+	.tag-actions-row {
+		gap             : var(--gap);
+		justify-content : space-between;
+		align-items     : center;
+		display         : flex;
 	}
 
-	.edit {
-		text-align    : right;
+	.tag-names {
+		opacity    : var(--opacity-label);
+		text-align : right;             /* the tags sit to the right, just left of the buttons */
+		flex       : 1;
 	}
 
-	.edit-button {
+	/* The per-row actions: edit tags, view, delete — quiet icon buttons, no border
+	   and a see-through background, sitting at the right end of the row. */
+	.row-actions {
+		gap             : var(--gap);
+		height          : calc(var(--height-control) - 4px);   /* constant, so the row doesn't grow when the confirm buttons appear */
+		min-height      : 0;            /* as a flex child, honor that height cap instead of stretching to the taller confirm buttons */
+		justify-content : flex-end;
+		align-items     : center;
+		display         : flex;
+	}
+
+	.row-button {
+		font-size  : var(--font-label);
+		background : transparent;
+		cursor     : pointer;
+		padding    : 0;
+		border     : none;
+		opacity    : var(--opacity-label);
+	}
+
+	.row-button:not(:disabled):hover {
+		opacity : 1;
+	}
+
+	.row-button:disabled {
+		opacity : calc(var(--opacity-label) / 2);
+		cursor  : default;
+	}
+
+	/* A folder has nothing to show, so its eye is invisible — but still holds its
+	   place, so edit and delete line up across every row. */
+	.row-button.blank {
+		visibility : hidden;
+	}
+
+	/* While confirming a delete, these two bordered buttons replace all three icons:
+	   "delete" does it, "x" backs out. */
+	/* Standard control height, even though the action row is capped 4px shorter —
+	   they overflow that cap by 2px each side so the table row never grows. */
+	.row-danger {
 		border        : var(--thickness-normal) solid var(--black);
+		height        : var(--height-control);
+		box-sizing    : border-box;
 		padding       : var(--pad-control);
 		font-size     : var(--font-label);
 		background    : var(--white);
 		color         : var(--text);
 		cursor        : pointer;
-		border-radius : 999px;
+		border-radius : var(--radius-pill);
 	}
 
-	.edit-button:hover {
+	/* The keep button is a circle holding the shared cross: equal width and height,
+	   no side padding, its svg centered. */
+	.row-x {
+		border-radius   : var(--radius-percent);
+		width           : var(--height-control);
+		padding         : 0;
+		align-items     : center;
+		justify-content : center;
+		display         : flex;
+	}
+
+	.row-cross {
+		width   : calc(var(--height-control) * 0.5);
+		height  : calc(var(--height-control) * 0.5);
+		display : block;
+	}
+
+	.row-cross path {
+		stroke : var(--black);
+	}
+
+	.row-danger:hover {
 		background : var(--hover);
 	}
 

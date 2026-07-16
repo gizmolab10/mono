@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_DocumentKind } from '../../ts/types/DB_Records';
+	import { T_DocumentKind, TEXT_KINDS } from '../../ts/types/DB_Records';
 	import { databases } from '../../ts/database/Databases';
 	import { debug } from '../../ts/common/Debug';
 
@@ -17,12 +17,6 @@
 	const accepted = Object.values(T_DocumentKind)
 		.filter((kind) => kind !== T_DocumentKind.unknown)
 		.join(', ');
-
-	// Kinds we store as their plain text (the rest store as a data-URL).
-	const text_kinds = new Set<T_DocumentKind>([
-		T_DocumentKind.txt, T_DocumentKind.md, T_DocumentKind.html,
-		T_DocumentKind.rtf, T_DocumentKind.svg,
-	]);
 
 	// Turn a file's reported type into one of our document kinds. The specific
 	// text-based types (markdown, html, rtf, svg) must be checked before the
@@ -46,7 +40,7 @@
 
 	// Read the bytes we store: plain text for the text kinds, a data-URL for the rest.
 	function bytes_of(file: File, kind: T_DocumentKind): Promise<string> {
-		if (text_kinds.has(kind)) { return file.text(); }
+		if (TEXT_KINDS.has(kind)) { return file.text(); }
 		return new Promise<string>((resolve) => {
 			const reader = new FileReader();
 			reader.onload = () => resolve(reader.result as string);
