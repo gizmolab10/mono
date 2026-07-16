@@ -18,14 +18,21 @@
 		}
 		name = '';
 	}
+
+	// Put the cursor in the field as soon as it appears. Doing it ourselves works
+	// even though the "add tags" button still holds focus from the click that
+	// opened this view — the browser's own auto-focus is refused in that case and
+	// warns, so we focus by hand instead.
+	function focus_on_mount(field: HTMLInputElement) {
+		field.focus();
+	}
 </script>
 
 <div class='add-tag'>
-	<!-- svelte-ignore a11y_autofocus -->
 	<input
-		autofocus
+		use:focus_on_mount
 		class='field'
-		type='search' 
+		type='search'
 		bind:value={name}
 		placeholder='new tag'
 		onkeydown={(e) => { if (e.key === 'Enter') { add(); } }} />

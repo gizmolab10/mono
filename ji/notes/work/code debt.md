@@ -4,12 +4,7 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] ability to drop a folder
-    - [ ] create each of its files
-        - [ ] if a child is a folder, recurse
-    - [ ] create a do-nothing folder document
-    - [ ] create a relationship for each of its files
-- [ ] "Autofocus processing was blocked because a document already has a focused element."
+- [ ] click on doc drop box -> set op to null
 - [ ] add remote support
     - [ ] supabase not firebase
     - [ ] use person's id
@@ -26,6 +21,13 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] "Autofocus processing was blocked" warning gone — new-tag field focuses itself on mount instead of leaning on the browser's auto-focus mark
+- [x] ability to drop a folder
+    - [x] a folder becomes a do-nothing folder document named for the folder; shows blank format
+    - [x] each file inside is saved and linked under its folder; subfolders recurse all the way down
+    - [x] every document made (files and folders, any depth) gets the tags chosen at drop time
+    - [x] the list walks folders-first and indents each row 20px per depth; a filtered match keeps its parent folders on screen
+    - [x] one reused "contains" link-meaning; two new store tests plus the drop, all green
 - [x] the "add documents" header reads as a real button
     - [x] control height, solid black edge, white at rest, hover to --hover, nudged down 1px to line up
     - [x] fixed the rule going invisible (a border reset was cancelling its line) and a faint ghost line (the label was see-through, so the rule bled through — mask made solid, only the text fades)

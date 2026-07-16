@@ -5,9 +5,9 @@
 	// data (documents, tags, unsaved) and the switcher. Only the local store is
 	// built, so the cloud segment is a dimmed placeholder until firestore lands.
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { T_Storage } from '../../ts/database/DB_Records';
 	import { databases } from '../../ts/database/Databases';
-	import { w_db_changed } from '../../ts/database/Signal';
+	import { T_Storage } from '../../ts/types/DB_Records';
+	import { w_db_changed } from '../../ts/types/Signal';
 
 	const { w_storage } = databases;
 
@@ -40,8 +40,8 @@
 	let confirming = $state(false);
 	function ask_erase()    { confirming = true; }
 	function cancel_erase() { confirming = false; }
-	function do_erase() {
-		databases.active.erase_all();
+	async function do_erase() {
+		await databases.active.erase_all();
 		confirming = false;
 	}
 </script>

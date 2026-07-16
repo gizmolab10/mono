@@ -1,4 +1,4 @@
-import type { Tagging, Relationship } from './DB_Records';
+import type { Tagging, Relationship } from '../types/DB_Records';
 
 // The in-memory indexes. Never saved — rebuilt from the stored records on load
 // and after any change. Each is a fast lookup so a read jumps to its answer

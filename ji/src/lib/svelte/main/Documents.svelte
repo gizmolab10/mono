@@ -3,7 +3,7 @@
 	import { w_operation, T_Operation } from '../../ts/managers/Operations';
 	import Add_Document from '../actions/Add_Document.svelte';
 	import { databases } from '../../ts/database/Databases';
-	import { w_db_changed } from '../../ts/database/Signal';
+	import { w_db_changed } from '../../ts/types/Signal';
 	import Add_Tag from '../actions/Add_Tag.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import Tags from '../actions/Tags.svelte';
@@ -19,21 +19,32 @@
 		$w_db_changed;                                   // re-read on every store change
 		const db = databases.active;
 		const name_of = new Map(db.tags.map((t) => [t.id, t.name]));
-		return db.documents.map((d) => {
-			const tag_ids = db.indexes.tags_of(d.id);
+		// Walk parent-first, child-next so folders lead their contents; each row
+		// carries how deep it sits (for the indent) and its folder chain above
+		// (so a filtered-in file can keep its parent folders on screen).
+		return db.list_documents().map((listed) => {
+			const tag_ids = listed.tag_ids;
 			return {
-				id        : d.id,
-				name      : d.name,
-				kind      : d.kind,
+				id           : listed.document.id,
+				name         : listed.document.name,
+				kind         : listed.document.kind,
+				depth        : listed.depth,
+				ancestor_ids : listed.ancestor_ids,
 				tag_ids,
-				tag_names : tag_ids.map((id) => name_of.get(id) ?? '?').join(', '),
+				tag_names    : tag_ids.map((id) => name_of.get(id) ?? '?').join(', '),
 			};
 		});
 	});
 
 	// Narrowed by the shared search-text: every picked tag must logic-choice, and the name must
-	// contain the search-text text.
-	const shown = $derived(filter_rows(rows, $w_filter_tags, $w_filter_text, $w_filter_mode));
+	// contain the search-text text. A matched file keeps its folder chain on screen too,
+	// so it never shows indented under nothing — the ancestors ride along even if they miss.
+	const shown = $derived.by(() => {
+		const matched = filter_rows(rows, $w_filter_tags, $w_filter_text, $w_filter_mode);
+		const keep = new Set(matched.map((r) => r.id));
+		for (const r of matched) { for (const a of r.ancestor_ids) { keep.add(a); } }
+		return rows.filter((r) => keep.has(r.id));       // original walk order, ancestors included
+	});
 
 	// With no documents to show, open the drop box so the first one can be added.
 	// The guard stops this from re-firing once the drop box is already up.
@@ -86,33 +97,32 @@
 	// mid-interaction. The picked filters are untouched — only the add view clears.
 	function background_click(event: MouseEvent) {
 		if (!$w_operation) { return; }                        // already showing the list
+		if (rows.length === 0) { return; }                   // empty store stays on the drop box — nothing to return to
 		const target = event.target as HTMLElement;
-		if (target.closest('.drop, .add-tag')) { return; }   // click landed inside the add view
+		if (target.closest('.add-tag')) { return; }          // keep clicks inside the new-tag field; a drop-box click clears the operation
 		w_operation.set(null);
-		debug.log('Clicked the background — closed the add view, back to the document list.');
+		debug.log(`Clicked out of the add view with ${rows.length} document(s) in the store — back to the list.`);
 	}
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 <div class='documents' onclick={background_click}>
-	{#if rows.length > 0}
+	{#if rows.length > 0 && $w_operation === null}
 		<div class='logic'>
 			<Tags
 				bind:selected={$w_filter_tags}
 				bind:mode={$w_filter_mode}
 				onadd={$w_operation === T_Operation.tag ? undefined : () => w_operation.set(T_Operation.tag)} />
 		</div>
-	{/if}
-	{#if rows.length > 0}
 		<input class='search-text' type='search' placeholder='search by name' bind:value={$w_filter_text} />
 	{/if}
 	{#if $w_operation === T_Operation.document}
 		<Add_Document />
 	{:else}
-		<hr>
 		{#if $w_operation === T_Operation.tag}
 			<Add_Tag ondone={() => w_operation.set(null)} />
 		{:else}
+			<hr>
 			{#if rows.length === 0}
 				<div class='empty'>no documents yet</div>
 			{:else}
@@ -134,8 +144,8 @@
 					<tbody>
 						{#each shown as row}
 							<tr class='file'>
-								<td class='kind'>{row.kind}</td>
-								<td class='name'>{row.name}</td>
+								<td class='kind'>{row.kind === 'folder' ? '---' : row.kind}</td>
+								<td class='name' style:padding-left='{row.depth * 20}px'>{row.name}</td>
 								<td class='tags'>{row.tag_names}</td>
 								<td class='edit'>
 									<button class='edit-button' onclick={() => editing = editing === row.id ? null : row.id}>

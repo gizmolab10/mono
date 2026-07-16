@@ -1,130 +1,3 @@
-{"filler":513}
-{"filler":514}
-{"filler":515}
-{"filler":516}
-{"filler":517}
-{"filler":518}
-{"filler":519}
-{"filler":520}
-{"filler":521}
-{"filler":522}
-{"filler":523}
-{"filler":524}
-{"filler":525}
-{"filler":526}
-{"filler":527}
-{"filler":528}
-{"filler":529}
-{"filler":530}
-{"filler":531}
-{"filler":532}
-{"filler":533}
-{"filler":534}
-{"filler":535}
-{"filler":536}
-{"filler":537}
-{"filler":538}
-{"filler":539}
-{"filler":540}
-{"filler":541}
-{"filler":542}
-{"filler":543}
-{"filler":544}
-{"filler":545}
-{"filler":546}
-{"filler":547}
-{"filler":548}
-{"filler":549}
-{"filler":550}
-{"filler":551}
-{"filler":552}
-{"filler":553}
-{"filler":554}
-{"filler":555}
-{"filler":556}
-{"filler":557}
-{"filler":558}
-{"filler":559}
-{"filler":560}
-{"filler":561}
-{"filler":562}
-{"filler":563}
-{"filler":564}
-{"filler":565}
-{"filler":566}
-{"filler":567}
-{"filler":568}
-{"filler":569}
-{"filler":570}
-{"filler":571}
-{"filler":572}
-{"filler":573}
-{"filler":574}
-{"filler":575}
-{"filler":576}
-{"filler":577}
-{"filler":578}
-{"filler":579}
-{"filler":580}
-{"filler":581}
-{"filler":582}
-{"filler":583}
-{"filler":584}
-{"filler":585}
-{"filler":586}
-{"filler":587}
-{"filler":588}
-{"filler":589}
-{"filler":590}
-{"filler":591}
-{"filler":592}
-{"filler":593}
-{"filler":594}
-{"filler":595}
-{"filler":596}
-{"filler":597}
-{"filler":598}
-{"filler":599}
-{"filler":600}
-{"filler":601}
-{"filler":602}
-{"filler":603}
-{"filler":604}
-{"filler":605}
-{"filler":606}
-{"filler":607}
-{"filler":608}
-{"filler":609}
-{"filler":610}
-{"filler":611}
-{"filler":612}
-{"filler":613}
-{"filler":614}
-{"filler":615}
-{"filler":616}
-{"filler":617}
-{"filler":618}
-{"filler":619}
-{"filler":620}
-{"filler":621}
-{"filler":622}
-{"filler":623}
-{"filler":624}
-{"filler":625}
-{"filler":626}
-{"filler":627}
-{"filler":628}
-{"filler":629}
-{"filler":630}
-{"filler":631}
-{"filler":632}
-{"filler":633}
-{"filler":634}
-{"filler":635}
-{"filler":636}
-{"filler":637}
-{"filler":638}
-{"filler":639}
 {"filler":640}
 {"filler":641}
 {"filler":642}
@@ -498,3 +371,130 @@
 {"timestamp":"2026-07-16T16:10:56Z","hook":"conciseness-check","action":"warn","violation":"too long: 121 words (soft limit 120 for prose with no list) — strip fluff or use a list"}
 {"timestamp":"2026-07-16T16:10:57Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
 {"timestamp":"2026-07-16T16:10:57Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"ent kind (so a stand-in can't be told apart from a real file), and asking for a link-meaning always makes a new one (so I'd add a find-or-reuse step for a single \"contains\" meaning).\n\n**Two questions I need answered before building** (both in the proposal): do the deep-inside files and the folder stand-in get the chosen tags, and should folder stand-ins show as their own table row or stay hidden?"}
+{"timestamp":"2026-07-16T16:18:06Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"t-first walk and switch the documents view to read from it; today it reads a flat list with no depth. Folders show as their own rows.\n- **Indent:** push each row right 20px per folder it sits inside.\n\nOne store gap to add (find-or-reuse the \"contains\" meaning) and one minor knock-on I flagged (filtering can orphan an indented match). Say **go** and I'll build it, one piece proven before the next."}
+{"timestamp":"2026-07-16T16:18:06Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"t-first walk and switch the documents view to read from it; today it reads a flat list with no depth. Folders show as their own rows.\n- **Indent:** push each row right 20px per folder it sits inside.\n\nOne store gap to add (find-or-reuse the \"contains\" meaning) and one minor knock-on I flagged (filtering can orphan an indented match). Say **go** and I'll build it, one piece proven before the next."}
+{"timestamp":"2026-07-16T16:18:06Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"t-first walk and switch the documents view to read from it; today it reads a flat list with no depth. Folders show as their own rows.\n- **Indent:** push each row right 20px per folder it sits inside.\n\nOne store gap to add (find-or-reuse the \"contains\" meaning) and one minor knock-on I flagged (filtering can orphan an indented match). Say **go** and I'll build it, one piece proven before the next."}
+{"timestamp":"2026-07-16T16:18:06Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T16:18:06Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"t-first walk and switch the documents view to read from it; today it reads a flat list with no depth. Folders show as their own rows.\n- **Indent:** push each row right 20px per folder it sits inside.\n\nOne store gap to add (find-or-reuse the \"contains\" meaning) and one minor knock-on I flagged (filtering can orphan an indented match). Say **go** and I'll build it, one piece proven before the next."}
+{"timestamp":"2026-07-16T16:27:08Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"s lead their contents), each name cell indents 20px per depth, and filtering keeps a match's parent folders on screen so nothing shows indented under nothing.\n\n**One thing only your eye can confirm:** the actual folder drop and the indented rows in the browser — the entry-walking API can't run in a node test. Drop a folder and check the tree reads right; tell me and I'll run the done checklist."}
+{"timestamp":"2026-07-16T16:27:08Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"s lead their contents), each name cell indents 20px per depth, and filtering keeps a match's parent folders on screen so nothing shows indented under nothing.\n\n**One thing only your eye can confirm:** the actual folder drop and the indented rows in the browser — the entry-walking API can't run in a node test. Drop a folder and check the tree reads right; tell me and I'll run the done checklist."}
+{"timestamp":"2026-07-16T16:27:08Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"s lead their contents), each name cell indents 20px per depth, and filtering keeps a match's parent folders on screen so nothing shows indented under nothing.\n\n**One thing only your eye can confirm:** the actual folder drop and the indented rows in the browser — the entry-walking API can't run in a node test. Drop a folder and check the tree reads right; tell me and I'll run the done checklist."}
+{"timestamp":"2026-07-16T16:27:08Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T16:27:09Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"s lead their contents), each name cell indents 20px per depth, and filtering keeps a match's parent folders on screen so nothing shows indented under nothing.\n\n**One thing only your eye can confirm:** the actual folder drop and the indented rows in the browser — the entry-walking API can't run in a node test. Drop a folder and check the tree reads right; tell me and I'll run the done checklist."}
+{"timestamp":"2026-07-16T16:29:15Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"The kind cell shows `{row.kind}`; for folders I'll show blank. Change it to `{row.kind === 'folder' ? '' : row.kind}` at the format cell ([Documents.svelte:148](ji/src/lib/svelte/main/Documents.svelte#L148)).\n\nHolding — **go**?"}
+{"timestamp":"2026-07-16T16:29:15Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"The kind cell shows `{row.kind}`; for folders I'll show blank. Change it to `{row.kind === 'folder' ? '' : row.kind}` at the format cell ([Documents.svelte:148](ji/src/lib/svelte/main/Documents.svelte#L148)).\n\nHolding — **go**?"}
+{"timestamp":"2026-07-16T16:29:15Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"The kind cell shows `{row.kind}`; for folders I'll show blank. Change it to `{row.kind === 'folder' ? '' : row.kind}` at the format cell ([Documents.svelte:148](ji/src/lib/svelte/main/Documents.svelte#L148)).\n\nHolding — **go**?"}
+{"timestamp":"2026-07-16T16:29:15Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T16:29:15Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"The kind cell shows `{row.kind}`; for folders I'll show blank. Change it to `{row.kind === 'folder' ? '' : row.kind}` at the format cell ([Documents.svelte:148](ji/src/lib/svelte/main/Documents.svelte#L148)).\n\nHolding — **go**?"}
+{"timestamp":"2026-07-16T16:29:46Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Done, clean. Folder rows now show blank in the format column; every other kind still shows its type."}
+{"timestamp":"2026-07-16T16:29:46Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"Done, clean. Folder rows now show blank in the format column; every other kind still shows its type."}
+{"timestamp":"2026-07-16T16:29:46Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Done, clean. Folder rows now show blank in the format column; every other kind still shows its type."}
+{"timestamp":"2026-07-16T16:29:47Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T16:29:47Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"Done, clean. Folder rows now show blank in the format column; every other kind still shows its type."}
+{"timestamp":"2026-07-16T16:35:00Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":", proposed in [handoff.md](ji/notes/work/handoff.md#L5):** the \"autofocus was blocked\" warning. I traced it — the new-tag field uses the browser's auto-focus mark, which only fires when nothing is focused; but the field opens right after a click leaves the \"add tags\" button focused, so the browser refuses and warns. Fix is to focus the field ourselves when it appears. Say **go** and I'll do it."}
+{"timestamp":"2026-07-16T16:35:00Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":", proposed in [handoff.md](ji/notes/work/handoff.md#L5):** the \"autofocus was blocked\" warning. I traced it — the new-tag field uses the browser's auto-focus mark, which only fires when nothing is focused; but the field opens right after a click leaves the \"add tags\" button focused, so the browser refuses and warns. Fix is to focus the field ourselves when it appears. Say **go** and I'll do it."}
+{"timestamp":"2026-07-16T16:35:00Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":", proposed in [handoff.md](ji/notes/work/handoff.md#L5):** the \"autofocus was blocked\" warning. I traced it — the new-tag field uses the browser's auto-focus mark, which only fires when nothing is focused; but the field opens right after a click leaves the \"add tags\" button focused, so the browser refuses and warns. Fix is to focus the field ourselves when it appears. Say **go** and I'll do it."}
+{"timestamp":"2026-07-16T16:35:00Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T16:35:00Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":", proposed in [handoff.md](ji/notes/work/handoff.md#L5):** the \"autofocus was blocked\" warning. I traced it — the new-tag field uses the browser's auto-focus mark, which only fires when nothing is focused; but the field opens right after a click leaves the \"add tags\" button focused, so the browser refuses and warns. Fix is to focus the field ourselves when it appears. Say **go** and I'll do it."}
+{"timestamp":"2026-07-16T16:38:39Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"Done, clean. The new-tag field now focuses itself when it appears instead of relying on the browser's auto-focus mark, so the cursor still lands there and the \"autofocus was blocked\" warning is gone.\n\nConfirm by eye: open the add-a-tag view and check the cursor is in the field with no console warning."}
+{"timestamp":"2026-07-16T16:38:39Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Done, clean. The new-tag field now focuses itself when it appears instead of relying on the browser's auto-focus mark, so the cursor still lands there and the \"autofocus was blocked\" warning is gone.\n\nConfirm by eye: open the add-a-tag view and check the cursor is in the field with no console warning."}
+{"timestamp":"2026-07-16T16:38:39Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Done, clean. The new-tag field now focuses itself when it appears instead of relying on the browser's auto-focus mark, so the cursor still lands there and the \"autofocus was blocked\" warning is gone.\n\nConfirm by eye: open the add-a-tag view and check the cursor is in the field with no console warning."}
+{"timestamp":"2026-07-16T16:38:39Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T16:38:39Z","hook":"banned-words-check","action":"warn","kind":"hard= soft=lands","words":"Done, clean. The new-tag field now focuses itself when it appears instead of relying on the browser's auto-focus mark, so the cursor still lands there and the \"autofocus was blocked\" warning is gone.\n\nConfirm by eye: open the add-a-tag view and check the cursor is in the field with no console warning.","text_tail":""}
+{"timestamp":"2026-07-16T16:48:28Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"posed in [handoff.md](ji/notes/work/handoff.md#L5):** a click on the drop box returns to the list. Today background clicks close the add view but drop-box clicks are deliberately kept; this item wants the drop box itself to close it too. One thing to confirm — I read it as only the drop box closing on click (the new-tag field keeps its clicks). Say **go** if that reading's right, or correct me."}
+{"timestamp":"2026-07-16T16:48:28Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"posed in [handoff.md](ji/notes/work/handoff.md#L5):** a click on the drop box returns to the list. Today background clicks close the add view but drop-box clicks are deliberately kept; this item wants the drop box itself to close it too. One thing to confirm — I read it as only the drop box closing on click (the new-tag field keeps its clicks). Say **go** if that reading's right, or correct me."}
+{"timestamp":"2026-07-16T16:48:28Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"posed in [handoff.md](ji/notes/work/handoff.md#L5):** a click on the drop box returns to the list. Today background clicks close the add view but drop-box clicks are deliberately kept; this item wants the drop box itself to close it too. One thing to confirm — I read it as only the drop box closing on click (the new-tag field keeps its clicks). Say **go** if that reading's right, or correct me."}
+{"timestamp":"2026-07-16T16:48:28Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T16:48:28Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"posed in [handoff.md](ji/notes/work/handoff.md#L5):** a click on the drop box returns to the list. Today background clicks close the add view but drop-box clicks are deliberately kept; this item wants the drop box itself to close it too. One thing to confirm — I read it as only the drop box closing on click (the new-tag field keeps its clicks). Say **go** if that reading's right, or correct me."}
+{"timestamp":"2026-07-16T16:50:09Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"Done, clean. A click on the drop box now sets the operation to null and returns to the document list; the new-tag field still keeps its clicks, and dragging files in still works (a drop isn't a click).\n\nOne thing to confirm by eye: on an empty store the drop box should stay put — the auto-open effect re-sets the operation right back, so a click there won't strand you on an empty list."}
+{"timestamp":"2026-07-16T16:50:09Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Done, clean. A click on the drop box now sets the operation to null and returns to the document list; the new-tag field still keeps its clicks, and dragging files in still works (a drop isn't a click).\n\nOne thing to confirm by eye: on an empty store the drop box should stay put — the auto-open effect re-sets the operation right back, so a click there won't strand you on an empty list."}
+{"timestamp":"2026-07-16T16:50:09Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Done, clean. A click on the drop box now sets the operation to null and returns to the document list; the new-tag field still keeps its clicks, and dragging files in still works (a drop isn't a click).\n\nOne thing to confirm by eye: on an empty store the drop box should stay put — the auto-open effect re-sets the operation right back, so a click there won't strand you on an empty list."}
+{"timestamp":"2026-07-16T16:50:10Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T16:50:10Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"Done, clean. A click on the drop box now sets the operation to null and returns to the document list; the new-tag field still keeps its clicks, and dragging files in still works (a drop isn't a click).\n\nOne thing to confirm by eye: on an empty store the drop box should stay put — the auto-open effect re-sets the operation right back, so a click there won't strand you on an empty list."}
+{"timestamp":"2026-07-16T16:51:58Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Done, clean. Now the operation only clears to null when the store has at least one document — an empty store stays on the drop box, so a click there doesn't strand you. This guards both the drop-box click and the background click."}
+{"timestamp":"2026-07-16T16:51:58Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"Done, clean. Now the operation only clears to null when the store has at least one document — an empty store stays on the drop box, so a click there doesn't strand you. This guards both the drop-box click and the background click."}
+{"timestamp":"2026-07-16T16:51:58Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Done, clean. Now the operation only clears to null when the store has at least one document — an empty store stays on the drop box, so a click there doesn't strand you. This guards both the drop-box click and the background click."}
+{"timestamp":"2026-07-16T16:51:59Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T16:51:59Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"Done, clean. Now the operation only clears to null when the store has at least one document — an empty store stays on the drop box, so a click there doesn't strand you. This guards both the drop-box click and the background click."}
+{"timestamp":"2026-07-16T17:03:33Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":", so saving a document becomes a wait-for-it step and that ripples into the drop loop (already a wait-for-it, so manageable) and anything else that saves.\n\n**A quick stopgap** if you want the drop to stop throwing today: catch the \"too big\" error per file, skip that file, and tell you which — no data past 5MB, but no crash. \n\nWhich do you want — the IndexedDB move, the stopgap first, or both?"}
+{"timestamp":"2026-07-16T17:03:33Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":", so saving a document becomes a wait-for-it step and that ripples into the drop loop (already a wait-for-it, so manageable) and anything else that saves.\n\n**A quick stopgap** if you want the drop to stop throwing today: catch the \"too big\" error per file, skip that file, and tell you which — no data past 5MB, but no crash. \n\nWhich do you want — the IndexedDB move, the stopgap first, or both?"}
+{"timestamp":"2026-07-16T17:03:33Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":", so saving a document becomes a wait-for-it step and that ripples into the drop loop (already a wait-for-it, so manageable) and anything else that saves.\n\n**A quick stopgap** if you want the drop to stop throwing today: catch the \"too big\" error per file, skip that file, and tell you which — no data past 5MB, but no crash. \n\nWhich do you want — the IndexedDB move, the stopgap first, or both?"}
+{"timestamp":"2026-07-16T17:03:33Z","hook":"conciseness-check","action":"warn","violation":"too long: 149 words (soft limit 120 for prose with no list) — strip fluff or use a list"}
+{"timestamp":"2026-07-16T17:03:33Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T17:03:33Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":", so saving a document becomes a wait-for-it step and that ripples into the drop loop (already a wait-for-it, so manageable) and anything else that saves.\n\n**A quick stopgap** if you want the drop to stop throwing today: catch the \"too big\" error per file, skip that file, and tell you which — no data past 5MB, but no crash. \n\nWhich do you want — the IndexedDB move, the stopgap first, or both?"}
+{"timestamp":"2026-07-16T17:09:36Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"issed.\n\n**Two things to know:**\n- **Only your eye can confirm the real fix:** drop that same folder again and check it saves with no quota error.\n- **Old bytes:** documents saved before this change kept their bytes in localStorage; those won't be found in IndexedDB. Since it's dev data, erase-and-re-add clears it up — say the word if you'd rather I write a one-time move of the old bytes across."}
+{"timestamp":"2026-07-16T17:09:36Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"issed.\n\n**Two things to know:**\n- **Only your eye can confirm the real fix:** drop that same folder again and check it saves with no quota error.\n- **Old bytes:** documents saved before this change kept their bytes in localStorage; those won't be found in IndexedDB. Since it's dev data, erase-and-re-add clears it up — say the word if you'd rather I write a one-time move of the old bytes across."}
+{"timestamp":"2026-07-16T17:09:36Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"issed.\n\n**Two things to know:**\n- **Only your eye can confirm the real fix:** drop that same folder again and check it saves with no quota error.\n- **Old bytes:** documents saved before this change kept their bytes in localStorage; those won't be found in IndexedDB. Since it's dev data, erase-and-re-add clears it up — say the word if you'd rather I write a one-time move of the old bytes across."}
+{"timestamp":"2026-07-16T17:09:36Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T17:09:36Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"issed.\n\n**Two things to know:**\n- **Only your eye can confirm the real fix:** drop that same folder again and check it saves with no quota error.\n- **Old bytes:** documents saved before this change kept their bytes in localStorage; those won't be found in IndexedDB. Since it's dev data, erase-and-re-add clears it up — say the word if you'd rather I write a one-time move of the old bytes across."}
+{"timestamp":"2026-07-16T19:34:45Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"session after you drop the file, the app can read its bytes. But that grant doesn't survive a reload — to read the same file in a later session, the browser makes the user approve again (a permission click) before the reference works.\n\nSo a stored reference never gives silent access. Every new session needs a fresh approval before it can read anything; without that click, the reference is dead."}
+{"timestamp":"2026-07-16T19:34:45Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"session after you drop the file, the app can read its bytes. But that grant doesn't survive a reload — to read the same file in a later session, the browser makes the user approve again (a permission click) before the reference works.\n\nSo a stored reference never gives silent access. Every new session needs a fresh approval before it can read anything; without that click, the reference is dead."}
+{"timestamp":"2026-07-16T19:34:45Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"session after you drop the file, the app can read its bytes. But that grant doesn't survive a reload — to read the same file in a later session, the browser makes the user approve again (a permission click) before the reference works.\n\nSo a stored reference never gives silent access. Every new session needs a fresh approval before it can read anything; without that click, the reference is dead."}
+{"timestamp":"2026-07-16T19:34:45Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T19:34:45Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"session after you drop the file, the app can read its bytes. But that grant doesn't survive a reload — to read the same file in a later session, the browser makes the user approve again (a permission click) before the reference works.\n\nSo a stored reference never gives silent access. Every new session needs a fresh approval before it can read anything; without that click, the reference is dead."}
+{"timestamp":"2026-07-16T19:37:41Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":", and the low-level IndexedDB plumbing — so the module reads a bit busier. The only real reason to keep it split is if another storage later wants the same on-device byte cache, but shared storage is planned as remote, so that's unlikely.\n- **Caveat:** you're rethinking private storage away from IndexedDB; whatever lands there rewrites this code anyway, so this is low-stakes cleanup either way."}
+{"timestamp":"2026-07-16T19:37:41Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":", and the low-level IndexedDB plumbing — so the module reads a bit busier. The only real reason to keep it split is if another storage later wants the same on-device byte cache, but shared storage is planned as remote, so that's unlikely.\n- **Caveat:** you're rethinking private storage away from IndexedDB; whatever lands there rewrites this code anyway, so this is low-stakes cleanup either way."}
+{"timestamp":"2026-07-16T19:37:41Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":", and the low-level IndexedDB plumbing — so the module reads a bit busier. The only real reason to keep it split is if another storage later wants the same on-device byte cache, but shared storage is planned as remote, so that's unlikely.\n- **Caveat:** you're rethinking private storage away from IndexedDB; whatever lands there rewrites this code anyway, so this is low-stakes cleanup either way."}
+{"timestamp":"2026-07-16T19:37:42Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T19:37:42Z","hook":"banned-words-check","action":"warn","kind":"hard= soft=lands split","words":", and the low-level IndexedDB plumbing — so the module reads a bit busier. The only real reason to keep it split is if another storage later wants the same on-device byte cache, but shared storage is planned as remote, so that's unlikely.\n- **Caveat:** you're rethinking private storage away from IndexedDB; whatever lands there rewrites this code anyway, so this is low-stakes cleanup either way.","text_tail":""}
+{"timestamp":"2026-07-16T19:39:03Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"ib/ts/database/Blob_Store.ts) into [DB_Local.ts](ji/src/lib/ts/database/DB_Local.ts) as module-level helpers above the class (the open-once promise, the node in-memory fallback, and put/get/delete), have `write_blob`/`read_blob`/`delete_blob` call them directly, and delete Blob_Store.ts. Same keys, same behavior — then svelte-check and the DB tests to prove nothing shifted.\n\nHolding — **go**?"}
+{"timestamp":"2026-07-16T19:39:03Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"ib/ts/database/Blob_Store.ts) into [DB_Local.ts](ji/src/lib/ts/database/DB_Local.ts) as module-level helpers above the class (the open-once promise, the node in-memory fallback, and put/get/delete), have `write_blob`/`read_blob`/`delete_blob` call them directly, and delete Blob_Store.ts. Same keys, same behavior — then svelte-check and the DB tests to prove nothing shifted.\n\nHolding — **go**?"}
+{"timestamp":"2026-07-16T19:39:03Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"ib/ts/database/Blob_Store.ts) into [DB_Local.ts](ji/src/lib/ts/database/DB_Local.ts) as module-level helpers above the class (the open-once promise, the node in-memory fallback, and put/get/delete), have `write_blob`/`read_blob`/`delete_blob` call them directly, and delete Blob_Store.ts. Same keys, same behavior — then svelte-check and the DB tests to prove nothing shifted.\n\nHolding — **go**?"}
+{"timestamp":"2026-07-16T19:39:03Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T19:39:03Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"ib/ts/database/Blob_Store.ts) into [DB_Local.ts](ji/src/lib/ts/database/DB_Local.ts) as module-level helpers above the class (the open-once promise, the node in-memory fallback, and put/get/delete), have `write_blob`/`read_blob`/`delete_blob` call them directly, and delete Blob_Store.ts. Same keys, same behavior — then svelte-check and the DB tests to prove nothing shifted.\n\nHolding — **go**?"}
+{"timestamp":"2026-07-16T19:40:33Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"Merged. The IndexedDB plumbing now lives in [DB_Local.ts](ji/src/lib/ts/database/DB_Local.ts) and Blob_Store.ts is gone — type-check clean, 8/8 tests pass, behavior unchanged."}
+{"timestamp":"2026-07-16T19:40:33Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Merged. The IndexedDB plumbing now lives in [DB_Local.ts](ji/src/lib/ts/database/DB_Local.ts) and Blob_Store.ts is gone — type-check clean, 8/8 tests pass, behavior unchanged."}
+{"timestamp":"2026-07-16T19:40:33Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Merged. The IndexedDB plumbing now lives in [DB_Local.ts](ji/src/lib/ts/database/DB_Local.ts) and Blob_Store.ts is gone — type-check clean, 8/8 tests pass, behavior unchanged."}
+{"timestamp":"2026-07-16T19:40:33Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T19:40:33Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"Merged. The IndexedDB plumbing now lives in [DB_Local.ts](ji/src/lib/ts/database/DB_Local.ts) and Blob_Store.ts is gone — type-check clean, 8/8 tests pass, behavior unchanged."}
+{"timestamp":"2026-07-16T19:42:49Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"Fixed the two imports to point up into `database/`, and the 8 tests pass from the new `tests/` folder."}
+{"timestamp":"2026-07-16T19:42:49Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Fixed the two imports to point up into `database/`, and the 8 tests pass from the new `tests/` folder."}
+{"timestamp":"2026-07-16T19:42:49Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Fixed the two imports to point up into `database/`, and the 8 tests pass from the new `tests/` folder."}
+{"timestamp":"2026-07-16T19:42:49Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T19:42:49Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"Fixed the two imports to point up into `database/`, and the 8 tests pass from the new `tests/` folder."}
+{"timestamp":"2026-07-16T19:44:38Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"Signal.ts now lives in [common/](ji/src/lib/ts/common/Signal.ts); all five importers updated and the old copy deleted. Type-check clean."}
+{"timestamp":"2026-07-16T19:44:38Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Signal.ts now lives in [common/](ji/src/lib/ts/common/Signal.ts); all five importers updated and the old copy deleted. Type-check clean."}
+{"timestamp":"2026-07-16T19:44:38Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Signal.ts now lives in [common/](ji/src/lib/ts/common/Signal.ts); all five importers updated and the old copy deleted. Type-check clean."}
+{"timestamp":"2026-07-16T19:44:39Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T19:44:39Z","hook":"banned-words-check","action":"warn","kind":"hard=copy soft=","words":"Signal.ts now lives in [common/](ji/src/lib/ts/common/Signal.ts); all five importers updated and the old copy deleted. Type-check clean.","text_tail":""}
+{"timestamp":"2026-07-16T19:46:00Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"Persistable.ts now in [types/](ji/src/lib/ts/types/Persistable.ts); its `T_Record` import repointed to `../database/`, the one importer (DB_Common) updated, old copy deleted. Type-check clean."}
+{"timestamp":"2026-07-16T19:46:00Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Persistable.ts now in [types/](ji/src/lib/ts/types/Persistable.ts); its `T_Record` import repointed to `../database/`, the one importer (DB_Common) updated, old copy deleted. Type-check clean."}
+{"timestamp":"2026-07-16T19:46:00Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Persistable.ts now in [types/](ji/src/lib/ts/types/Persistable.ts); its `T_Record` import repointed to `../database/`, the one importer (DB_Common) updated, old copy deleted. Type-check clean."}
+{"timestamp":"2026-07-16T19:46:00Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T19:46:00Z","hook":"banned-words-check","action":"warn","kind":"hard=copy soft=","words":"Persistable.ts now in [types/](ji/src/lib/ts/types/Persistable.ts); its `T_Record` import repointed to `../database/`, the one importer (DB_Common) updated, old copy deleted. Type-check clean.","text_tail":""}
+{"timestamp":"2026-07-16T19:48:18Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"DB_Records.ts moved to [types/](ji/src/lib/ts/types/DB_Records.ts); all eight importers repointed (including Persistable's, which is now a local `./` since both live in types/). Type-check clean, 8/8 tests pass."}
+{"timestamp":"2026-07-16T19:48:18Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"DB_Records.ts moved to [types/](ji/src/lib/ts/types/DB_Records.ts); all eight importers repointed (including Persistable's, which is now a local `./` since both live in types/). Type-check clean, 8/8 tests pass."}
+{"timestamp":"2026-07-16T19:48:18Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"DB_Records.ts moved to [types/](ji/src/lib/ts/types/DB_Records.ts); all eight importers repointed (including Persistable's, which is now a local `./` since both live in types/). Type-check clean, 8/8 tests pass."}
+{"timestamp":"2026-07-16T19:48:19Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T19:48:19Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"DB_Records.ts moved to [types/](ji/src/lib/ts/types/DB_Records.ts); all eight importers repointed (including Persistable's, which is now a local `./` since both live in types/). Type-check clean, 8/8 tests pass."}
+{"timestamp":"2026-07-16T19:49:53Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"al.ts) says it's kept separate \"so the base can bump it without importing the registry (which would be a cycle).\"\n\nTwo honest ways forward — which do you want?\n- **Leave them in Signal** (the file exists for this reason).\n- **Move them into Databases.ts anyway**, but then the base can't import the registry — I'd inject the bump into each store instead. Bigger change, and I'd propose it first."}
+{"timestamp":"2026-07-16T19:49:53Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"al.ts) says it's kept separate \"so the base can bump it without importing the registry (which would be a cycle).\"\n\nTwo honest ways forward — which do you want?\n- **Leave them in Signal** (the file exists for this reason).\n- **Move them into Databases.ts anyway**, but then the base can't import the registry — I'd inject the bump into each store instead. Bigger change, and I'd propose it first."}
+{"timestamp":"2026-07-16T19:49:53Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"al.ts) says it's kept separate \"so the base can bump it without importing the registry (which would be a cycle).\"\n\nTwo honest ways forward — which do you want?\n- **Leave them in Signal** (the file exists for this reason).\n- **Move them into Databases.ts anyway**, but then the base can't import the registry — I'd inject the bump into each store instead. Bigger change, and I'd propose it first."}
+{"timestamp":"2026-07-16T19:49:53Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T19:49:53Z","hook":"banned-words-check","action":"warn","kind":"hard= soft=split","words":"al.ts) says it's kept separate \"so the base can bump it without importing the registry (which would be a cycle).\"\n\nTwo honest ways forward — which do you want?\n- **Leave them in Signal** (the file exists for this reason).\n- **Move them into Databases.ts anyway**, but then the base can't import the registry — I'd inject the bump into each store instead. Bigger change, and I'd propose it first.","text_tail":""}
+{"timestamp":"2026-07-16T19:51:19Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Signal.ts now in [types/](ji/src/lib/ts/types/Signal.ts); all five importers updated. Type-check clean."}
+{"timestamp":"2026-07-16T19:51:19Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"Signal.ts now in [types/](ji/src/lib/ts/types/Signal.ts); all five importers updated. Type-check clean."}
+{"timestamp":"2026-07-16T19:51:19Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Signal.ts now in [types/](ji/src/lib/ts/types/Signal.ts); all five importers updated. Type-check clean."}
+{"timestamp":"2026-07-16T19:51:19Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T19:51:19Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"Signal.ts now in [types/](ji/src/lib/ts/types/Signal.ts); all five importers updated. Type-check clean."}
+{"timestamp":"2026-07-16T19:55:51Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"cord holds no content (`metadata: {}`), so the records list is small; localStorage could only be full from the old blob copies.\n\n**Fix I propose:** a one-time sweep on load that deletes the stale `ji:private/blob/*` keys from localStorage — they're dead weight now that bytes live in IndexedDB. Then re-drop the folder. Holding — **go**, or would you rather just clear the store and start fresh?"}
+{"timestamp":"2026-07-16T19:55:51Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"cord holds no content (`metadata: {}`), so the records list is small; localStorage could only be full from the old blob copies.\n\n**Fix I propose:** a one-time sweep on load that deletes the stale `ji:private/blob/*` keys from localStorage — they're dead weight now that bytes live in IndexedDB. Then re-drop the folder. Holding — **go**, or would you rather just clear the store and start fresh?"}
+{"timestamp":"2026-07-16T19:55:51Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"cord holds no content (`metadata: {}`), so the records list is small; localStorage could only be full from the old blob copies.\n\n**Fix I propose:** a one-time sweep on load that deletes the stale `ji:private/blob/*` keys from localStorage — they're dead weight now that bytes live in IndexedDB. Then re-drop the folder. Holding — **go**, or would you rather just clear the store and start fresh?"}
+{"timestamp":"2026-07-16T19:55:51Z","hook":"conciseness-check","action":"warn","violation":"too long: 135 words (soft limit 120 for prose with no list) — strip fluff or use a list"}
+{"timestamp":"2026-07-16T19:55:52Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T19:55:52Z","hook":"banned-words-check","action":"warn","kind":"hard=copies soft=","words":"cord holds no content (`metadata: {}`), so the records list is small; localStorage could only be full from the old blob copies.\n\n**Fix I propose:** a one-time sweep on load that deletes the stale `ji:private/blob/*` keys from localStorage — they're dead weight now that bytes live in IndexedDB. Then re-drop the folder. Holding — **go**, or would you rather just clear the store and start fresh?","text_tail":""}
+{"timestamp":"2026-07-16T20:03:30Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"browser storage, freeing the quota; then re-drop the folder.\n\nTwo things to know:\n- **Reload first** — the sweep runs when the store starts up, so refresh before re-dropping.\n- Any documents saved *before* the IndexedDB move keep their record but their bytes are gone (they were the copies just swept). If you want a clean slate, erase the store; otherwise those old rows will show but can't open."}
+{"timestamp":"2026-07-16T20:03:30Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"browser storage, freeing the quota; then re-drop the folder.\n\nTwo things to know:\n- **Reload first** — the sweep runs when the store starts up, so refresh before re-dropping.\n- Any documents saved *before* the IndexedDB move keep their record but their bytes are gone (they were the copies just swept). If you want a clean slate, erase the store; otherwise those old rows will show but can't open."}
+{"timestamp":"2026-07-16T20:03:30Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"browser storage, freeing the quota; then re-drop the folder.\n\nTwo things to know:\n- **Reload first** — the sweep runs when the store starts up, so refresh before re-dropping.\n- Any documents saved *before* the IndexedDB move keep their record but their bytes are gone (they were the copies just swept). If you want a clean slate, erase the store; otherwise those old rows will show but can't open."}
+{"timestamp":"2026-07-16T20:03:30Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T20:03:30Z","hook":"banned-words-check","action":"warn","kind":"hard=copies soft=","words":"browser storage, freeing the quota; then re-drop the folder.\n\nTwo things to know:\n- **Reload first** — the sweep runs when the store starts up, so refresh before re-dropping.\n- Any documents saved *before* the IndexedDB move keep their record but their bytes are gone (they were the copies just swept). If you want a clean slate, erase the store; otherwise those old rows will show but can't open.","text_tail":""}
+{"timestamp":"2026-07-16T20:10:32Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"y that: it shows a row that can't open. Dead weight.\n\nSince your private store right now holds only these dead rows, the erase button clears them in one click — no code needed. If you'd rather they clean themselves up (so any future byte-gap self-heals on load), I'll add a one-time prune that drops any document whose bytes are missing, sparing folders since theirs are legitimately empty. Which?"}
+{"timestamp":"2026-07-16T20:10:32Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"y that: it shows a row that can't open. Dead weight.\n\nSince your private store right now holds only these dead rows, the erase button clears them in one click — no code needed. If you'd rather they clean themselves up (so any future byte-gap self-heals on load), I'll add a one-time prune that drops any document whose bytes are missing, sparing folders since theirs are legitimately empty. Which?"}
+{"timestamp":"2026-07-16T20:10:32Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"y that: it shows a row that can't open. Dead weight.\n\nSince your private store right now holds only these dead rows, the erase button clears them in one click — no code needed. If you'd rather they clean themselves up (so any future byte-gap self-heals on load), I'll add a one-time prune that drops any document whose bytes are missing, sparing folders since theirs are legitimately empty. Which?"}
+{"timestamp":"2026-07-16T20:10:33Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T20:10:33Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"y that: it shows a row that can't open. Dead weight.\n\nSince your private store right now holds only these dead rows, the erase button clears them in one click — no code needed. If you'd rather they clean themselves up (so any future byte-gap self-heals on load), I'll add a one-time prune that drops any document whose bytes are missing, sparing folders since theirs are legitimately empty. Which?"}
+{"timestamp":"2026-07-16T20:13:08Z","hook":"diagnostic-citation-check","stop_hook_active":"false","action":"exit-no-diagnostic","violations":"","text_tail":"Removed — both the constructor sweep in DB_Local and the `removeDB_byPrefix` method in Preferences are gone. Type-check clean, no leftover unused imports. You'll clear the old data with the erase button instead."}
+{"timestamp":"2026-07-16T20:13:08Z","hook":"required-disclaimer-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Removed — both the constructor sweep in DB_Local and the `removeDB_byPrefix` method in Preferences are gone. Type-check clean, no leftover unused imports. You'll clear the old data with the erase button instead."}
+{"timestamp":"2026-07-16T20:13:08Z","hook":"phrase-check","stop_hook_active":"false","action":"exit-clean","violations":"","text_tail":"Removed — both the constructor sweep in DB_Local and the `removeDB_byPrefix` method in Preferences are gone. Type-check clean, no leftover unused imports. You'll clear the old data with the erase button instead."}
+{"timestamp":"2026-07-16T20:13:09Z","hook":"banned-words-check","action":"parsed","kind":"","words":"hard_forms=133 soft_forms=22","text_tail":""}
+{"timestamp":"2026-07-16T20:13:09Z","hook":"banned-words-check","action":"exit-clean","kind":"","words":"","text_tail":"Removed — both the constructor sweep in DB_Local and the `removeDB_byPrefix` method in Preferences are gone. Type-check clean, no leftover unused imports. You'll clear the old data with the erase button instead."}

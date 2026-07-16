@@ -2,6 +2,17 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-16 — the "autofocus was blocked" warning, gone
+
+- **The cursor lands in the new-tag field without a warning.** Opening that view put the cursor in the field using the browser's own auto-focus mark. But the browser only honors that mark when nothing is focused, and the field opens right after a click that leaves the "add tags" button holding focus — so the browser refused and warned each time. Now the field focuses itself the moment it appears, which works even while the button still holds focus. Same result on screen, no warning.
+
+## 2026-07-16 — dropping a folder keeps its shape
+
+- **A dropped folder now comes in whole.** Before, a folder landing on the drop box was ignored — the drop could only see a flat list of files. It now reads through the door the browser offers for folders, so it can step inside. Each folder becomes a stand-in document named for the folder, every file inside is saved and linked under it, and any folder within is handled the same way, all the way down.
+- **The list shows the tree.** Documents are listed folders-first, each contents following its folder, and every row is pushed right 20px for each folder it sits inside — so the nesting reads at a glance. A folder row shows nothing in the format column. Every document the drop makes, folders and files at any depth, wears the tags chosen at drop time.
+- **Filtering never orphans a match.** When a search or tag filter keeps a file, its folder chain is kept on screen too, so a match never shows indented under nothing.
+- **One small store addition, and it's tested.** A folder link needs a named meaning ("contains"); the store now reuses the one meaning instead of making a fresh copy each time. Two new store tests cover the depth-and-chain walk and the reused meaning; all eight pass, and the type check is clean. The one thing only a browser can confirm — the actual folder drop and the indented rows — Jonathan checked by eye.
+
 ## 2026-07-16 — the "add documents" header becomes a real button
 
 - **The middle header is now a button, not just text on the rule.** It stands at the shared control height with a solid black edge, sits white at rest, lights to the hover shade, and rides a dot lower so its text lines up with the plain headings beside it.

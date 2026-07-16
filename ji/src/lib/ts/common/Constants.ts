@@ -68,10 +68,10 @@ export default class Constants {
 	}
 
 	inset = {
-		cluster		 : common_size * 0.25,												// 8.75
-		pill		 : { top: common_size * 0.48,    left: common_size * 1.6 },			// 16.8, 56
 		popup		 : { edge: common_size * 0.3,    side: common_size * 0.375 },		// 10.5, 13.13
+		pill		 : { top: common_size * 0.48,    left: common_size * 1.6 },			// 16.8, 56
 		credit		 : { bottom: common_size * 0.35, left: common_size * 0.45 },		// 12.25, 15.75
+		cluster		 : common_size / 4,												// 8.75
 	};
 
 	thickness = {

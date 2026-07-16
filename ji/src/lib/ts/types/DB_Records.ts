@@ -10,10 +10,10 @@ export enum T_Storage {
 
 // What a document's bytes are, so the UI can open or show it.
 export enum T_DocumentKind {
-	unknown = 'unknown',
 	bmp     = 'bmp',
 	doc     = 'doc',
 	docx    = 'docx',
+	folder  = 'folder',
 	gif     = 'gif',
 	html    = 'html',
 	jpeg    = 'jpeg',
@@ -23,6 +23,7 @@ export enum T_DocumentKind {
 	rtf     = 'rtf',
 	svg     = 'svg',
 	txt     = 'txt',
+	unknown = 'unknown',
 	webp    = 'webp',
 }
 

@@ -1,9 +1,9 @@
 import { preferences, T_Preference } from '../managers/Preferences';
 import type { Writable } from 'svelte/store';
-import { T_Storage } from './DB_Records';
+import { T_Storage } from '../types/DB_Records';
 import { writable } from 'svelte/store';
 import { DB_Common } from './DB_Common';
-import { db_changed } from './Signal';
+import { db_changed } from '../types/Signal';
 import { DB_Local } from './DB_Local';
 
 // The registry. Holds one live storage instance per kind, tracks which is

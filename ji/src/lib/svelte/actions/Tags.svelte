@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { databases } from '../../ts/database/Databases';
-	import { w_db_changed } from '../../ts/database/Signal';
 	import type { T_Match } from '../../ts/managers/Search';
+	import { w_db_changed } from '../../ts/types/Signal';
 	import { debug } from '../../ts/common/Debug';
 	import type { Snippet } from 'svelte';
 

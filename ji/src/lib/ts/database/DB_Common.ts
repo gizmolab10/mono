@@ -1,14 +1,16 @@
-import { T_Record, T_Storage, T_DocumentKind } from './DB_Records';
+import type { Document, Tag, Tagging, Relationship, Predicate } from '../types/DB_Records';
+import { T_Record, T_Storage, T_DocumentKind } from '../types/DB_Records';
+import { Persistable } from '../types/Persistable';
 import { debug } from '../common/Debug';
-import type { Document, Tag, Tagging, Relationship, Predicate } from './DB_Records';
-import { Persistable } from './Persistable';
+import { db_changed } from '../types/Signal';
 import { Indexes } from './Indexes';
-import { db_changed } from './Signal';
 
 // A document paired with the ids of the tags on it — what a listing returns.
 export interface Listed_Document {
-	document : Document;
-	tag_ids  : string[];
+	document     : Document;
+	tag_ids      : string[];
+	depth        : number;      // how many folders deep it sits (a root is 0)
+	ancestor_ids : string[];    // the folder chain above it, root-first
 }
 
 // The shared base every storage inherits. It owns the in-memory record lists,
@@ -35,10 +37,11 @@ export abstract class DB_Common {
 	protected abstract load_list<T>(record: T_Record): T[];
 	protected abstract save_list<T>(record: T_Record, list: T[]): void;
 
-	// The blob seam: the document's bytes, by document id.
-	abstract write_blob(document_id: string, content: string): void;
-	abstract read_blob(document_id: string): string | null;
-	abstract delete_blob(document_id: string): void;
+	// The blob seam: the document's bytes, by document id. Async because the bytes
+	// live in IndexedDB, which is asked-and-waited-for, not instant.
+	abstract write_blob(document_id: string, content: string): Promise<void>;
+	abstract read_blob(document_id: string): Promise<string | null>;
+	abstract delete_blob(document_id: string): Promise<void>;
 
 	// --- load & save ---------------------------------------------------------
 
@@ -77,11 +80,12 @@ export abstract class DB_Common {
 
 	// --- per-record create hooks ---------------------------------------------
 
-	// Save a new document: write its bytes through the blob seam, add the record.
-	add_document(name: string, kind: T_DocumentKind, content: string): Document {
+	// Save a new document: write its bytes (awaited, so the record never lands
+	// without them), then add the record.
+	async add_document(name: string, kind: T_DocumentKind, content: string): Promise<Document> {
 		const id = crypto.randomUUID();
 		const document: Document = { id, blob_id: id, name, storage: this.storage, kind, date: Date.now(), metadata: {} };
-		this.write_blob(id, content);
+		await this.write_blob(id, content);
 		this.documents.push(document);
 		this.persistable.mark_dirty(T_Record.documents, id);
 		this.persist(T_Record.documents);
@@ -123,6 +127,15 @@ export abstract class DB_Common {
 		return predicate;
 	}
 
+	// The one relationship-meaning with this type, made only the first time it is
+	// asked for. Reusing it keeps a folder drop from piling up duplicate meanings.
+	predicate_for(type: string): Predicate {
+		const found = this.predicates.find((p) => p.type === type);
+		if (found) { return found; }
+		debug.log(`No "${type}" relationship-meaning yet — making the first one.`);
+		return this.add_predicate(type);
+	}
+
 	// Link a parent to a child under a predicate, at the end of the child order.
 	add_relationship(predicate_id: string, parent_id: string, child_id: string): Relationship {
 		const siblings = this.indexes.children_of(parent_id).length;
@@ -145,14 +158,14 @@ export abstract class DB_Common {
 		const visited = new Set<string>();
 		const ordered: Listed_Document[] = [];
 
-		const walk = (id: string): void => {
+		const walk = (id: string, depth: number, ancestors: string[]): void => {
 			if (visited.has(id)) { return; }
 			visited.add(id);
 			const document = by_id.get(id);
-			if (document) { ordered.push({ document, tag_ids: this.indexes.tags_of(id) }); }
-			for (const edge of this.indexes.children_of(id)) { walk(edge.child_id); }
+			if (document) { ordered.push({ document, tag_ids: this.indexes.tags_of(id), depth, ancestor_ids: ancestors }); }
+			for (const edge of this.indexes.children_of(id)) { walk(edge.child_id, depth + 1, [...ancestors, id]); }
 		};
-		for (const root of roots) { walk(root); }
+		for (const root of roots) { walk(root, 0, []); }
 
 		// debug.log(`Listed ${ordered.length} document(s) by walking from ${roots.length} root(s).`);
 		return ordered;
@@ -175,11 +188,11 @@ export abstract class DB_Common {
 	// --- delete cascade ------------------------------------------------------
 
 	// Remove a document and everything that points at it, then its bytes.
-	delete_document(document_id: string): void {
+	async delete_document(document_id: string): Promise<void> {
 		this.taggings      = this.taggings.filter((t) => t.document_id !== document_id);
 		this.relationships = this.relationships.filter((r) => r.parent_id !== document_id && r.child_id !== document_id);
 		this.documents     = this.documents.filter((d) => d.id !== document_id);
-		this.delete_blob(document_id);
+		await this.delete_blob(document_id);
 		this.persist(T_Record.taggings);
 		this.persist(T_Record.relationships);
 		this.persist(T_Record.documents);
@@ -201,9 +214,9 @@ export abstract class DB_Common {
 
 	// Wipe this store: every document's bytes, then every record list, then the
 	// indexes. Only this active store is touched; other stores are untouched.
-	erase_all(): void {
+	async erase_all(): Promise<void> {
 		const had = this.documents.length;
-		for (const document of this.documents) { this.delete_blob(document.id); }
+		for (const document of this.documents) { await this.delete_blob(document.id); }
 		this.documents     = [];
 		this.tags          = [];
 		this.taggings      = [];
