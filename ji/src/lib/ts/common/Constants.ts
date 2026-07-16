@@ -29,7 +29,7 @@ export default class Constants {
 	pad = {
 		hamburger	 : { y: 2, x: 6 },
 		stepper		 : { y: 0, x: 4 },
-		control		 : { y: 2, x: 10 },
+		control		 : { top: 1, bottom: 3, x: 10 },		// top-light: lifts control text ~2px off the low baseline
 		modal		 : { y: 16, x: 20 },
 		view		 : { top: 52, x: 24 },
 		cell		 : { y: common_gap / 2, x: common_gap },		// left is 0

@@ -8,6 +8,48 @@
         "type": "tabs",
         "children": [
           {
+            "id": "4a0b51776fddc3ec",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "notes/guides/pre-flight/banned words.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "banned words"
+            }
+          },
+          {
+            "id": "80f39175f0ae8aca",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "di/notes/guides/pre-flight/banned words.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "banned words"
+            }
+          },
+          {
+            "id": "03b8fd6e0c6714dc",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ji/notes/work/code debt.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "code debt"
+            }
+          },
+          {
             "id": "3e1ddbde653729de",
             "type": "leaf",
             "state": {
@@ -19,20 +61,6 @@
               },
               "icon": "lucide-file",
               "title": "handoff"
-            }
-          },
-          {
-            "id": "80f39175f0ae8aca",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ji/notes/work/code debt.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "code debt"
             }
           },
           {
@@ -62,23 +90,9 @@
               "icon": "lucide-file",
               "title": "work journal"
             }
-          },
-          {
-            "id": "6e994b42bb32ccdf",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/guides/pre-flight/always.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "always"
-            }
           }
         ],
-        "currentTab": 4
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -110,7 +124,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "file:banned",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -213,13 +227,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/guides/pre-flight/always.md",
+                "file": "ji/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of always"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -251,13 +265,19 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "6e994b42bb32ccdf",
+  "active": "03b8fd6e0c6714dc",
   "lastOpenFiles": [
+    "ji/src/lib/svelte/main/Documents.svelte.tmp.18207.d8632f7ab825",
+    "ji/notes/work/handoff.md.tmp.18207.538cd24757d3",
+    "ji/notes/work/handoff.md",
+    "ji/notes/work/code debt.md",
+    "ji/notes/work/db handoff.md",
+    "notes/guides/pre-flight/banned words.md",
+    "di/notes/guides/pre-flight/banned words.md",
+    "di/notes/guides/pre-flight/always.md",
+    "notes/guides/collaborate/workflow.md",
     "notes/work/learn.md",
     "notes/guides/pre-flight/always.md",
-    "notes/guides/collaborate/workflow.md",
-    "ji/notes/work/code debt.md",
-    "notes/guides/pre-flight/banned words.md",
     "ji/notes/work/code debt.md.tmp.64703.e17e64f06266",
     "notes/guides/pre-flight/mono banned words.md",
     "ji/notes/work/mono banned words.md",
@@ -271,11 +291,8 @@
     "ji/notes/work/Compass.md",
     "ji/src/lib/svelte/details/Details.svelte",
     "ji/src/lib/svelte/main/Details.svelte",
-    "ji/src/lib/svelte/main/Documents.svelte",
-    "ji/notes/work/db handoff.md",
     "ji/notes/work/intersection spec.md",
     "ji/src/lib/md/builds.md",
-    "ji/notes/work/handoff.md",
     "ji/notes/work/done/db/db handoff.md",
     "ji/notes/work/done/db/db proposal.md",
     "ji/notes/work/done/db/db spec.md",
@@ -287,9 +304,6 @@
     "ji/notes/work/db/db spec.md",
     "ji/notes/work/db proposal.md",
     "notes/guides/collaborate/exclude.md",
-    "notes/guides/pre-flight/shorthand.md",
-    "notes/guides/pre-flight/keywords.md",
-    "notes/guides/collaborate/hooks.md",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",
     "di/di notes/di work/now/bugs/001 dim is inside silho/screenshot.png",

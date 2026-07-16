@@ -74,10 +74,10 @@
 
 		<div class='corner-stack layer-intersection'>
 			<button class='build-opener' onclick={() => showBuildNotes = true}>
-				Build {buildNumber}
+				build {buildNumber}
 			</button>
 			<a class='author-credit' href='https://designintuition.app' target='_blank' rel='noopener'>
-				built by: jonathan sand
+				author: jonathan sand
 			</a>
 		</div>
 	{/if}
@@ -139,6 +139,8 @@
 	.build-opener {
 		border        : var(--thickness-normal) solid var(--black);
 		border-radius : var(--radius-pill);
+		height        : var(--height-control);
+		box-sizing    : border-box;
 		padding       : var(--pad-control);
 		font-size     : var(--font-base);
 		background    : var(--white);

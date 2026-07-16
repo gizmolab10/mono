@@ -4,7 +4,7 @@ Rules specific to the di project. Read alongside the global always file at `~/Gi
 
 > **TOP RULE — every reply, no exceptions: plain English only.** Use only everyday words or terms written in `lexicon.md` / `banned words.md`. Never invent a term, never bend a word to a private meaning. Never state a fact or a cause you cannot quote from the spec, the code, or a tool result — if you cannot quote it, say "I don't know." This overrides any urge to sound precise.
 
-1. **Lexicon enforcement** — replies are checked automatically when they finish, by the Stop hooks (banned words, conciseness, required disclaimer, diagnostic citation). There is no manual precheck step; if a Stop hook rejects a reply, rewrite it and it re-checks. `di/notes/guides/pre-flight/banned words.md` and `di/notes/guides/pre-flight/lexicon.md` are the source of truth for word choice.
+1. **Lexicon enforcement** — replies are checked automatically when they finish, by the Stop hooks (banned words, conciseness, required disclaimer, diagnostic citation). There is no manual precheck step; if a Stop hook rejects a reply, rewrite it and it re-checks. Word choice has two sources of truth, both live: `notes/guides/pre-flight/banned words.md` at the repo root holds the words banned in every project, and `di/notes/guides/pre-flight/banned words.md` holds di's own vocabulary (smart objects, unifaces, placement, measurements). `di/notes/guides/pre-flight/lexicon.md` covers the rest.
 2. **Yarn, never npx** — every package binary call uses yarn.
 3. **Snap hook for reverts** — `di/.claude/hooks/snap.sh` handles file reverts; never restore files manually.
 4. **Read on load** — these four `di` files

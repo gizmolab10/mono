@@ -1,4 +1,4 @@
-# Build Notes
+# build notes
 
 | Build | Date         | Note             |
 | ----- | ------------ | ---------------- |

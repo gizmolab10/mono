@@ -29,7 +29,6 @@
       "Bash(node --version:*)",
       "Bash(npx vitest run:*)",
       "Bash(git -C ~/GitHub/mono status:*)",
-      "Bash(di/.claude/hooks/precheck.sh:*)",
       "Bash(git -C ~/GitHub/mono ls-files:*)",
       "Bash(node_modules/.bin/svelte-check:*)",
       "Bash(git -C ~/GitHub/mono status notes/ws/)",
@@ -142,7 +141,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "di/.claude/hooks/banned-words-check.sh"
+            "command": ".claude/hooks/banned-words-check.sh"
           },
           {
             "type": "command",

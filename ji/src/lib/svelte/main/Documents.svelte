@@ -59,10 +59,10 @@
 	// hover — the label reads its "hover" text instead — and clicking them opens the
 	// matching add view; format and edit-tags stay inert.
 	const columns = [
-		{ label: 'format',             right: true,  hover: null,             op: null                 },
-		{ label: 'document (click +)', right: false, hover: 'add a document', op: T_Operation.document },
-		{ label: 'tags',               right: true,  hover: null,             op: null                 },
-		{ label: ' ',                  right: true,  hover: null,             op: null                 },
+		{ label: 'format',        right: true,  hover: null,            op: null                 },
+		{ label: 'add documents', right: false, hover: 'add documents', op: T_Operation.document },
+		{ label: 'tags',          right: true,  hover: null,            op: null                 },
+		{ label: ' ',             right: true,  hover: null,            op: null                 },
 	];
 
 	let hovered = $state<number | null>(null);
@@ -182,23 +182,23 @@
 	   right once there is text. */
 	.search-text {
 		border        : var(--thickness-normal) solid var(--black);
-		border-radius : var(--radius-pill);
 		height        : var(--height-control);
-		box-sizing    : border-box;
+		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
 		font-size     : var(--font-label);
 		background    : var(--white);
 		color         : var(--text);
+		box-sizing    : border-box;
 		margin-bottom : var(--gap);
 		align-self    : center;
-		margin-top    : -2px;                  /* nudge the search box up 2px */
 		width         : 200px;
+		margin-top    : -2px;                  /* nudge the search box up 2px */
 	}
 
 	hr {
-		border-top  : var(--thickness-faint) solid var(--black);
-		margin      : 2px 0 var(--gap);        /* nudge the rule (and table below) down 2px */
-		border      : none;
+		border      : none;                    /* clear the browser-default hr line... */
+		border-top  : var(--thickness-normal) solid var(--black);   /* ...leaving only this */
+		margin      : 8px 0 var(--gap);
 		width       : 100%;
 		flex-shrink : 0;
 	}
@@ -217,7 +217,7 @@
 		border-collapse : collapse;
 		position        : relative;
 		/* Lift the table so each header label rides up onto the rule above it. */
-		margin-top      : -1.5em;
+		margin-top      : -1.6em;
 		width           : 100%;
 	}
 
@@ -237,7 +237,6 @@
 	   reads as text sitting on a broken rule; hovering lights it up the same. */
 	.head-label {
 		border        : var(--thickness-faint) solid var(--bg);
-		opacity       : var(--opacity-label);
 		font-size     : var(--font-label);
 		padding       : 0 var(--gap);
 		color         : var(--text);
@@ -247,14 +246,24 @@
 		border-radius : 999px;
 	}
 
-	/* Only file name and tags react to hover; format and edit-tags stay inert. */
+	/* Only add documents header reacts to hover; format and edit-tags stay inert. */
 	.head-label:not(.interactive) {
 		cursor : default;
 	}
 
+	/* The document header reads as a real button: control height, solid black edge. */
+	.head-label.interactive {
+		border     : var(--thickness-normal) solid var(--black);
+		height     : var(--height-control);
+		box-sizing : border-box;
+		background : var(--white);
+		position   : relative;
+		top        : 1px;                      /* nudge down so its text lines up with the other headings */
+	}
+
 	.head-label.interactive:hover {
 		border-color : var(--black);
-		background   : var(--white);
+		background   : var(--hover);
 	}
 
 	.kind, .name, .tags, .edit {

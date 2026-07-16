@@ -1,135 +1,145 @@
-# Coding needed
+# Code debt
 
 write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] move remaining di hook -> mono
-    - [x] split the word list: shared one at `notes/guides/pre-flight/banned words.md`, di's own at the same spot under di
-    - [x] display-fix now lives in mono and names no project — it reads the shared list plus whichever project the marker says you're in
-    - [x] banned-words-check reads both lists (it only warns, so carrying di's words costs nothing)
-    - [ ] the always-injector still reads only di's list, so the 19 shared rules reach me nowhere — give it display-fix's logic (shared list + the marker's project)
-    - [ ] banned-words-check still names di; same marker logic would free it to move to mono as well
-    - [ ] di's guide notes still point at the list's old home
-    - [ ] decide the leftovers in di's hooks folder that nothing calls: block-di-files.sh (di-only, likely stays), precheck.sh, refer-to-current-file-check.sh, banned-words-check.test.sh, snap
-- [ ] segmented controls, buttons and input fields -> identical heights
+- [ ] convert "documents (click +)" into a button with --height-control
+- [ ] move corner stack to intersection
+- [ ] ability to drop a folder or multiple files
+- [ ] "Autofocus processing was blocked because a document already has a focused element."
 - [ ] add remote support
-- [ ] supabase not firebase
+    - [ ] supabase not firebase
     - [ ] use person's id
     - [ ] authorization
 - [ ] front page
 - [ ] write a new file: stipulations based on current code
 - [ ] wendy
-  - [ ] New app for your brother: Intersection
-  - [ ] give me weak signals / info from the tails (of a bell curve), not just the clusters
-  - [ ] give me the signals that repeat over time or across multiple people — this is a stronger signal.
-  - [ ] present me with these signals in a way that I can sense into each one, and decide if I want to keep them, highlight them or discard them as unimportant.
+    - [ ] New app for your brother: Intersection
+    - [ ] give me weak signals / info from the tails (of a bell curve), not just the clusters
+    - [ ] give me the signals that repeat over time or across multiple people — this is a stronger signal.
+    - [ ] present me with these signals in a way that I can sense into each one, and decide if I want to keep them, highlight them or discard them as unimportant.
 
 ## done
 
+- [x] details controls -> matched heights, and control text lifted off its low baseline
+    - [x] color swatch drawn from the shared control height, not the bigger square-button size
+    - [x] erase, switcher, yes/no now count their border inside — all match the rest
+    - [x] control text rides up ~2px via top-light shared padding (1 top / 3 bottom), by eye
+- [x] segmented controls, buttons and input fields -> identical heights
+    - [x] one shared rule: count each control's border inside its height, as the two inputs already did
+    - [x] six brought into line — all/any toggle, tag pill, help button, add-a-tag button, done button, build-opener
 - [x] move di hooks -> mono
-  - [x] hooks 1-11 moved to .claude/hooks, rewired, verified live after restart
-  - [x] check-ts.sh had hardcoded di — now checks whichever project you edited
-  - [x] cleared the stale di paths from the permissions allow-list
+    - [x] a word pair that is the same kind of word can carry its ending across — "copies" becomes "moves"; marked on seven rows
+    - [x] all three reply-checkers write to the moved log; di's old copy is gone
+    - [x] the leftovers are decided: two dead hooks deleted, the test moved beside what it tests, di keeps only its own two
+    - [x] split the word list: shared one at `notes/guides/pre-flight/banned words.md`, di's own at the same spot under di
+    - [x] display-fix now lives in mono and names no project — it reads the shared list plus whichever project the marker says you're in
+    - [x] banned-words-check reads both lists (it only warns, so carrying di's words costs nothing)
+    - [x] the always-injector now uses display-fix's logic — shared list plus the marker's project; the shared rules reach me again
+    - [x] banned-words-check now names no project either — moved to mono with its log, which self-trims to the newest 500 lines
+    - [x] hooks 1-11 moved to .claude/hooks, rewired, verified live after restart
+    - [x] check-ts.sh had hardcoded di — now checks whichever project you edited
+    - [x] cleared the stale di paths from the permissions allow-list
 - [x] add md, html, webp, svg, rtf (tiff deferred — browsers can't preview it)
-  - [x] doc, docx (stored, no in-browser preview)
+    - [x] doc, docx (stored, no in-browser preview)
 - [x] remove all unused
-  - [x] T_Preference items
-  - [x] colors
-  - [x] rename storage prefix di: -> ji:
+    - [x] T_Preference items
+    - [x] colors
+    - [x] rename storage prefix di: -> ji:
 - [x] port the diagnostic log feature from di
-  - [x] one log server address `/log?where=<name>` -> `logs/<name>.log`
-  - [x] ji's Debug.ts posts there (where=intersection)
-  - [x] every console.log now routes through it
+    - [x] one log server address `/log?where=<name>` -> `logs/<name>.log`
+    - [x] ji's Debug.ts posts there (where=intersection)
+    - [x] every console.log now routes through it
 - [x] add a "any/all" segmented control at far left of Tags
 - [x] always show input field for filter text, below tags
-  - [x] show results as you type
+    - [x] show results as you type
 - [x] add "format", "file name", "tags" and "edit tags" on top of hr
-  - [x] same as d data more/less,
-  - [x] positioned so as to be ***left-aligned*** wrt the columns of the table
+    - [x] same as d data more/less,
+    - [x] positioned so as to be ***left-aligned*** wrt the columns of the table
 - [x] move any alongside tags, --gap-fat
 - [x] Implement search.ts
-  - [x] keeps single source of truth for selected tags and input filter text
+    - [x] keeps single source of truth for selected tags and input filter text
 - [x] always show tags at top of documents
-  - [x] click on a tag
+    - [x] click on a tag
     - [x] toggles it
     - [x] applies it as a filter
 - [x] move build opener and written by to bottom of intersection, at layer frontmost
 - [x] details view
-  - [x] remove the empty space at top
+    - [x] remove the empty space at top
 - [x] remove the empty space at top of documents view
 - [x] clicking on add new document -> hide documents list, show drop box
 - [x] controls row
-  - [x] always visible
-  - [x] extend it to full width, bg color -> accent
-  - [x] a help button at far right
+    - [x] always visible
+    - [x] extend it to full width, bg color -> accent
+    - [x] a help button at far right
 - [x] phase 2 -> database repository
-  - [x] add -> more file types
+    - [x] add -> more file types
     - [x] pdf
     - [x] jpg
     - [x] show type in browse table
-  - [x] show all acceptable types in drop here, smaller font, below drop here, centered
-    - [x] determine design and wire in
-      - [x] add_tags.svelte for creating new
-      - [x] tags.svelte for choosing one or more
-    - [x] share with search
-      - [x] in browse
-      - [x] show tags and an 'edit tags' button
-  - [x] what is unsaved?
-  - [x] persist more/less choice
-  - [x] add an 'erase all data' button
-    - [x] same row as segmented control, far right
-    - [x] click -> show an 'are you sure' dialog
-  - [x] port D_Data.svelte from ws
-  - [x] port (rewrite) all DB code from ws
-  - [x] using [[db spec]] as single source of truth
-  - [x] write db proposal -> to implement [[db spec]]
-  - [x] implement db proposal and track progress in db handoff
+    - [x] show all acceptable types in drop here, smaller font, below drop here, centered
+        - [x] determine design and wire in
+            - [x] add_tags.svelte for creating new
+            - [x] tags.svelte for choosing one or more
+        - [x] share with search
+            - [x] in browse
+            - [x] show tags and an 'edit tags' button
+    - [x] what is unsaved?
+    - [x] persist more/less choice
+    - [x] add an 'erase all data' button
+        - [x] same row as segmented control, far right
+        - [x] click -> show an 'are you sure' dialog
+    - [x] port D_Data.svelte from ws
+    - [x] port (rewrite) all DB code from ws
+    - [x] using [[db spec]] as single source of truth
+    - [x] write db proposal -> to implement [[db spec]]
+    - [x] implement db proposal and track progress in db handoff
 - [x] nudge text inside segmented control up 2 px
 - [x] phase 1 -> new UX for adding documents
-  - [x] new state store for content area (add, search, browse)
-    - [x] persist new state
-  - [x] button "add" next to hamburger
-    - [x] convert button to segmented control
-      - [x] segment corresponding to current state, bg color -> --accent
-  - [x] new add.svelte in content area
-    - [x] large drop here rectangle
-  - [x] not wired in, not visible, just empty stubs, design TBD
-  - [x] remove <- from add
-  - [x] click on current operation segment -> sets w_operation to null
+    - [x] new state store for content area (add, search, browse)
+        - [x] persist new state
+    - [x] button "add" next to hamburger
+        - [x] convert button to segmented control
+            - [x] segment corresponding to current state, bg color -> --accent
+    - [x] new add.svelte in content area
+        - [x] large drop here rectangle
+    - [x] not wired in, not visible, just empty stubs, design TBD
+    - [x] remove <- from add
+    - [x] click on current operation segment -> sets w_operation to null
 - [x] hamburger
-  - [x] separate singleton
-  - [x] rename it -> controls
-  - [x] include segmented control
-  - [x] move back -> main
-  - [x] remove from details
-  - [x] colors depend on details are hidden ->
-    - [x] background
-    - [x] hover
-    - [x] text
-  - [x] intersection draws details below controls
-  - [x] owned by intersection
-  - [x] rename main -> intersection
+    - [x] separate singleton
+    - [x] rename it -> controls
+    - [x] include segmented control
+    - [x] move back -> main
+    - [x] remove from details
+    - [x] colors depend on details are hidden ->
+        - [x] background
+        - [x] hover
+        - [x] text
+    - [x] intersection draws details below controls
+    - [x] owned by intersection
+    - [x] rename main -> intersection
 - [x] change --text-color (white/black) — flips by background luminance; content text from bg, details text from accent
 - [x] make netlify only build a single project in response to git push
 - [x] button with my name as author
-  - [x] click opens my other work (jonathansand.me)
-  - [x] bottom right corner
+    - [x] click opens my other work (jonathansand.me)
+    - [x] bottom right corner
 - [x] when the build notes show, hide the details and the content
 - [x] port preferences from di and put show details flag into it
 - [x] reverse the order of the main checkboxes (retain order of sub items)
 - [x] replace the 'D' button with the hamburger svg, exactly the same as di
-  - [x] convert it to a snippet
-  - [x] show it in the details button/banner so it is at the identical same spot
+    - [x] convert it to a snippet
+    - [x] show it in the details button/banner so it is at the identical same spot
 - [x] move builds button to bottom left corner of Content
-  - [x] make its bg color white
+    - [x] make its bg color white
 - [x] add a new banner at top of details
-  - [x] click on it toggles the details visibility
-  - [x] when hidden, shrink details to a button with "D" on it
+    - [x] click on it toggles the details visibility
+    - [x] when hidden, shrink details to a button with "D" on it
 - [x] change 'in' to 'ji'
-  - [x] push to netlify
+    - [x] push to netlify
 - [x] port build notes from di
 - [x] wire up public site
-  - [x] github
-  - [x] netlify
+    - [x] github
+    - [x] netlify
 - [x] add ‘in’ to hub

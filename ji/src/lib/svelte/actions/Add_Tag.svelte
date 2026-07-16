@@ -56,7 +56,9 @@
 	}
 
 	.button {
-		cursor : pointer;
+		height     : var(--height-control);
+		box-sizing : border-box;
+		cursor     : pointer;
 	}
 
 	.button:hover {

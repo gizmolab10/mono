@@ -62,6 +62,7 @@
 		border-radius : var(--radius-percent);
 		height        : var(--height-control);
 		width         : var(--height-control);
+		box-sizing    : border-box;
 		font-size     : var(--font-base);
 		background    : var(--white);
 		color         : var(--text);

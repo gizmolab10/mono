@@ -61,31 +61,99 @@ inflect_term() {
   fi
 }
 
-# Hard rows only (hooked col "y" AND blank meaning). Emit "use<TAB>never".
+# --- the same ending, tagged, so it can be carried to the replacement ---------
+# Each line is "ending<TAB>spelling". Several spellings can share one ending —
+# the banned side is matched generously, the replacement side is not.
+inflect_tagged() {
+  local w="$1" last
+  printf 'base\t%s\n'   "$w"
+  printf 'plural\t%ss\n'  "$w"
+  printf 'plural\t%ses\n' "$w"
+  printf 'past\t%sed\n'   "$w"
+  printf 'past\t%sd\n'    "$w"
+  printf 'gerund\t%sing\n' "$w"
+  case "$w" in
+    *e) printf 'gerund\t%sing\n' "${w%e}"; printf 'past\t%sed\n' "${w%e}"; printf 'plural\t%ses\n' "${w%e}" ;;
+  esac
+  case "$w" in
+    *[bcdfghjklmnpqrstvwxz]y) printf 'plural\t%sies\n' "${w%y}"; printf 'past\t%sied\n' "${w%y}" ;;
+  esac
+  if [[ "$w" =~ [bcdfghjklmnpqrstvwxz][aeiou][bcdfghjklmnpqrstvz]$ ]]; then
+    last="${w: -1}"
+    printf 'past\t%s%sed\n'   "$w" "$last"
+    printf 'gerund\t%s%sing\n' "$w" "$last"
+  fi
+}
+
+# --- the one right spelling of a word for a given ending ----------------------
+form_for() {
+  local w="$1" ending="$2" last
+  case "$ending" in
+    base) printf '%s' "$w" ;;
+    plural)
+      case "$w" in
+        *[bcdfghjklmnpqrstvwxz]y) printf '%sies' "${w%y}" ;;
+        *s|*x|*z|*ch|*sh)         printf '%ses'  "$w" ;;
+        *)                        printf '%ss'   "$w" ;;
+      esac ;;
+    past)
+      case "$w" in
+        *e)                       printf '%sd'   "$w" ;;
+        *[bcdfghjklmnpqrstvwxz]y) printf '%sied' "${w%y}" ;;
+        *)
+          if [[ "$w" =~ [bcdfghjklmnpqrstvwxz][aeiou][bcdfghjklmnpqrstvz]$ ]]; then
+            last="${w: -1}"; printf '%s%sed' "$w" "$last"
+          else printf '%sed' "$w"; fi ;;
+      esac ;;
+    gerund)
+      case "$w" in
+        *e) printf '%sing' "${w%e}" ;;
+        *)
+          if [[ "$w" =~ [bcdfghjklmnpqrstvwxz][aeiou][bcdfghjklmnpqrstvz]$ ]]; then
+            last="${w: -1}"; printf '%s%sing' "$w" "$last"
+          else printf '%sing' "$w"; fi ;;
+      esac ;;
+  esac
+}
+
+# Hard rows only (hooked col "y" AND blank meaning). Emit "use<TAB>same<TAB>never".
 PAIRS=$(awk -F'|' '{
-  u=$2; h=$3; n=$4; m=$5;
-  gsub(/^[ \t]+|[ \t]+$/,"",u); gsub(/^[ \t]+|[ \t]+$/,"",h);
+  u=$2; h=$3; s=$4; n=$5; m=$6;
+  gsub(/^[ \t]+|[ \t]+$/,"",u); gsub(/^[ \t]+|[ \t]+$/,"",h); gsub(/^[ \t]+|[ \t]+$/,"",s);
   gsub(/^[ \t]+|[ \t]+$/,"",n); gsub(/^[ \t]+|[ \t]+$/,"",m);
   if(n==""||n=="Never")next; if(n ~ /^-+$/)next;
   if(!((h=="y")&&(m=="")))next;
   split(u,ua,","); use=ua[1]; gsub(/^[ \t]+|[ \t]+$/,"",use);
   if(use=="")next;
-  print use "\t" n
+  print use "\037" s "\037" n
 }' "${BANNED_FILES[@]}")
 
 # Build the "neverform<TAB>useword" map, expanding each never word to its forms.
+# A row marked "same" carries the ending across, so "copies" becomes "moves".
+# Any other row swaps every form to the plain replacement, as it always has —
+# carrying an ending there would invent words ("ship" to "done" gives "doned").
 MAP=""
-while IFS=$'\t' read -r use never; do
+while IFS=$'\037' read -r use same never; do
   [ -z "$never" ] && continue
   never="$(printf '%s' "$never" | sed 's/([^)]*)//g')"   # drop parentheticals
   IFS=',' read -ra parts <<< "$never"
   for p in "${parts[@]}"; do
     term="$(printf '%s' "$p" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | tr '[:upper:]' '[:lower:]')"
     [ -z "$term" ] && continue
-    while IFS= read -r f; do
-      [ -z "$f" ] && continue
-      MAP+="$f	$use"$'\n'
-    done < <(inflect_term "$term")
+    # Carry endings only when the row says the two sides are the same kind of
+    # word, and only when both sides are one word — an ending on a phrase
+    # ("more work" + "ing") is nonsense.
+    if [ "$same" = "y" ] && [[ "$term" != *" "* ]] && [[ "$use" != *" "* ]]; then
+      while IFS=$'\t' read -r ending form; do
+        [ -z "$form" ] && continue
+        MAP+="$form	$(form_for "$use" "$ending")"$'\n'
+      done < <(inflect_tagged "$term")
+    else
+      while IFS= read -r f; do
+        [ -z "$f" ] && continue
+        MAP+="$f	$use"$'\n'
+      done < <(inflect_term "$term")
+    fi
   done
 done <<< "$PAIRS"
 

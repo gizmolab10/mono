@@ -15,7 +15,7 @@
 	const isNewestFirst = allNotes.length > 1 && allNotes[0].build > allNotes[1].build;
 
 	let { onclose } : { onclose: () => void } = $props();
-	let title = $state(isNewestFirst ? `Build Notes (${k.width.page} most recent)` : 'Build Notes');
+	let title = $state(isNewestFirst ? `build notes (${k.width.page} most recent)` : 'build notes');
 	let notes = $state(allNotes.slice(0, k.width.page));
 	let show_down = $state(notesLimit > k.width.page);
 	let show_up = $state(false);
@@ -25,7 +25,7 @@
 		const end = Math.min(notesLimit, notesIndex + k.width.page);
 		notes = allNotes.slice(notesIndex, end);
 		const showingMostRecent = isNewestFirst && notesIndex === 0;
-		title = showingMostRecent ? `Build Notes (${k.width.page} most recent)` : 'Build Notes';
+		title = showingMostRecent ? `build notes (${k.width.page} most recent)` : 'build notes';
 		show_up = notesIndex > 0;
 		show_down = notesIndex < notesLimit - k.width.page;
 	}

@@ -12,7 +12,7 @@
 	// `selected` is the chosen set (the add flow binds it). `mode` is the all/any
 	// match; a caller that binds it gets the toggle shown beside the chips (the
 	// filter does), one that omits it (the per-row edit picker) gets no toggle.
-	// `onadd` gives a caller that wants it an always-shown "add a tag" button at the
+	// `onadd` gives a caller that wants it an always-shown "add tags" button at the
 	// right of the chips (the filter opens the new-tag view with it). `ontoggle` lets
 	// a caller react to each click directly — documents uses it to add/remove a tag
 	// right away. `trailing` renders after the last chip, same row.
@@ -69,7 +69,7 @@
 	{@render trailing?.()}
 	{#if onadd}
 		<!-- A separate button to the right of the pill: opens the new-tag view. -->
-		<button class='add' onclick={(e) => add_clicked(e)}>add a tag</button>
+		<button class='add' onclick={(e) => add_clicked(e)}>add tags</button>
 	{/if}
 </div>
 
@@ -84,6 +84,7 @@
 	.logic-choice {
 		border        : var(--thickness-normal) solid var(--black);
 		height        : var(--height-control);
+		box-sizing    : border-box;
 		border-radius : var(--radius-pill);
 		background    : var(--white);
 		overflow      : hidden;
@@ -117,6 +118,7 @@
 		border        : var(--thickness-normal) solid var(--black);
 		border-radius : var(--radius-pill);
 		min-height    : var(--height-control);
+		box-sizing    : border-box;
 		background    : var(--white);
 		overflow      : hidden;
 		flex-wrap     : wrap;
@@ -148,6 +150,8 @@
 	   rather than a tag. */
 	.add {
 		border        : var(--thickness-normal) solid var(--black);
+		height        : var(--height-control);
+		box-sizing    : border-box;
 		padding       : var(--pad-control);
 		font-size     : var(--font-label);
 		background    : var(--white);

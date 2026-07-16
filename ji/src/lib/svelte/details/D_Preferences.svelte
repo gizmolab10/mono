@@ -49,8 +49,8 @@
 		position      : relative;
 		cursor        : pointer;
 		overflow      : hidden;
-		width         : var(--size-button);
-		height        : var(--size-button);
+		width         : var(--height-control);
+		height        : var(--height-control);
 	}
 
 	.picker:hover {

@@ -165,6 +165,7 @@
 	.erase {
 		border        : var(--thickness-normal) solid var(--black);
 		height        : var(--height-control);
+		box-sizing    : border-box;
 		padding       : var(--pad-control);
 		font-size     : var(--font-label);
 		background    : var(--white);
@@ -191,6 +192,8 @@
 
 	.yes, .no {
 		border        : var(--thickness-normal) solid var(--black);
+		height        : var(--height-control);
+		box-sizing    : border-box;
 		padding       : var(--pad-control);
 		background    : var(--white);
 		cursor        : pointer;
@@ -205,6 +208,7 @@
 	.switcher {
 		border        : var(--thickness-normal) solid var(--black);
 		height        : var(--height-control);
+		box-sizing    : border-box;
 		font-size     : var(--font-base);
 		background    : var(--white);
 		align-self    : center;

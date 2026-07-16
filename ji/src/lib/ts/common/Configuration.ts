@@ -62,7 +62,7 @@ class Configuration {
 		root.setProperty('--tracking',           `${k.font.em.tracking}em`);
 		// Paddings pushed as ready-to-use shorthands (top/right/bottom/left where needed).
 		root.setProperty('--pad-hamburger',      `${k.pad.hamburger.y}px ${k.pad.hamburger.x}px`);
-		root.setProperty('--pad-control',        `${k.pad.control.y}px ${k.pad.control.x}px`);
+		root.setProperty('--pad-control',        `${k.pad.control.top}px ${k.pad.control.x}px ${k.pad.control.bottom}px`);
 		root.setProperty('--pad-modal',          `${k.pad.modal.y}px ${k.pad.modal.x}px`);
 		root.setProperty('--pad-stepper',        `${k.pad.stepper.y}px ${k.pad.stepper.x}px`);
 		root.setProperty('--pad-view',           `${k.pad.view.top}px ${k.pad.view.x}px ${k.pad.view.x}px`);
