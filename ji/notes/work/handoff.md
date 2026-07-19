@@ -2,20 +2,19 @@
 
 **Status:** active. One always-on screen: a short top bar (hamburger + help), then a live filter (a joined tag pill with an all/any toggle, and a "search by name" box), a rule, and the documents table. The table's own column labels double as the controls — hovering "document name" or "tags" reveals "add a document" / "add a tag", and clicking opens that add flow below the rule; a click on the empty background closes it. An empty store leads straight with the drop box. Details region (preferences + data panels) collapses from the hamburger; build opener + credit pinned to the frame's bottom-left. **Document store** built and wired — design in [db spec](done/db/db%20spec.md) / [db proposal](done/db/db%20proposal.md), status in [db handoff](db%20handoff.md).
 
-## Proposal — next: flesh out the document viewer (needs your read)
+## Proposal — next: say something while a drop is saving
 
-The row buttons landed, including a first document viewer ([View_Document.svelte](../../src/lib/svelte/actions/View_Document.svelte)): it reads a document's bytes and shows pictures in an image, pdfs in a frame, and text types as raw text, with a close button. It's deliberately basic, and the next item is to flesh it out.
+The document-type redesign is done. The one drop-file part left: under the "drop documents and folders here" line, show a short status while a drop is being saved, so a big folder doesn't look frozen.
 
-Before I design, I need your read on what "fleshed out" means to you — likely candidates:
+Plan:
 
-- **Text types shown better.** Markdown rendered instead of raw, rich text shown readably, html shown as a page rather than its source (html-as-page is an injection surface — worth a note before doing it).
-- **Getting the file out.** A download button to save the original back to disk.
-- **Moving between documents.** Previous / next through the list without closing.
-- **Fit and zoom.** For images and pdfs — fit-to-width, actual size, zoom.
+1. The saving already walks files one at a time and already counts how many sit in each folder, so it can report progress — how many saved out of how many seen — without new bookkeeping.
+2. Give the drop box a small piece of shared state to show: nothing when idle, a count while working, cleared shortly after it finishes.
+3. Feed it from the saving path, which today only writes to the log.
 
-Tell me which of these (or others) you want, and I'll propose the specific build.
+Two calls to confirm before building: whether the line shows a running count ("saving 12 of 40") or just "saving…", and whether it also reports what was skipped — unrecognized files are passed over silently today, which is worth surfacing right here.
 
-Method that worked, and should hold: one at a time, prove it before the next. Every silent breakage this session came from a path I changed without re-running the proof — the word-swapper sat dead for hours that way, and the new ending-carry mark quietly killed every swap until the check caught it.
+Method that worked, and should hold: one at a time, prove it before the next. Every silent breakage came from a path changed without re-running the proof — the erase looked fine until the log showed it clearing zero while the store held tens of megabytes.
 
 ## Later (from code debt)
 

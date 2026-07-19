@@ -11,6 +11,8 @@ import { writable } from 'svelte/store';
 export enum T_Preference {
 	// Layout
 	showDetails  	= 'showDetails',
+	detailsPreferencesOpen = 'detailsPreferencesOpen',
+	detailsDataOpen        = 'detailsDataOpen',
 
 	// Colors
 	accentColor     = 'accentColor',

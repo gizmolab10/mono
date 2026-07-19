@@ -1,8 +1,9 @@
-import type { Document, Tag, Tagging, Relationship, Predicate } from '../types/DB_Records';
-import { T_Record, T_Storage, T_DocumentKind } from '../types/DB_Records';
+import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records';
+import { Document, S_Document, T_DocumentExtension, T_DocumentFamily, READY_KINDS } from '../types/Document';
+import { T_Record, T_Storage } from '../types/DB_Records';
 import { Persistable } from '../types/Persistable';
-import { debug } from '../common/Debug';
 import { db_changed } from '../types/Signal';
+import { debug } from '../common/Debug';
 import { Indexes } from './Indexes';
 
 // A document paired with the ids of the tags on it — what a listing returns.
@@ -42,6 +43,9 @@ export abstract class DB_Common {
 	abstract write_blob(document_id: string, content: string): Promise<void>;
 	abstract read_blob(document_id: string): Promise<string | null>;
 	abstract delete_blob(document_id: string): Promise<void>;
+	// Drop every stored byte belonging to this store — including orphans with no
+	// matching document — and report how many were removed.
+	abstract clear_blobs(): Promise<number>;
 
 	// --- load & save ---------------------------------------------------------
 
@@ -80,17 +84,50 @@ export abstract class DB_Common {
 
 	// --- per-record create hooks ---------------------------------------------
 
-	// Save a new document: write its bytes (awaited, so the record never lands
-	// without them), then add the record.
-	async add_document(name: string, kind: T_DocumentKind, content: string): Promise<Document> {
+	// The shared start of every new document: a fresh id and the fields every one
+	// carries. What makes it a file or a folder is passed in.
+	private create_document(name: string, fields: Partial<Document>): Document {
 		const id = crypto.randomUUID();
-		const document: Document = { id, blob_id: id, name, storage: this.storage, kind, date: Date.now(), metadata: {} };
-		await this.write_blob(id, content);
+		// A drop hands us no original path, so the source is this document's own
+		// place in the store — stable, and unique across storages.
+		const url = `ji://${this.storage}/${id}`;
+		return { id, name, url, storage: this.storage, status: S_Document.ready, metadata: {}, ...fields };
+	}
+
+	// The shared finish: add it to the list and save.
+	private register_document(document: Document): Document {
 		this.documents.push(document);
-		this.persistable.mark_dirty(T_Record.documents, id);
+		this.persistable.mark_dirty(T_Record.documents, document.id);
 		this.persist(T_Record.documents);
-		// debug.log(`Added document "${name}" (${kind}); the document list is now ${this.documents.length} long.`);
+		debug.log(`the document list is now ${this.documents.length} long.`);
 		return document;
+	}
+
+	// What the dropped file itself told us — kept together so the three can't be
+	// mixed up, and so a caller without a real file (the tests) can leave them out.
+	// Missing values fall back: the date to now, the family to what the extension implies.
+	async add_document(name: string, extension: T_DocumentExtension, content: string,
+		from_file: { last_modified_date?: number; size?: number; reported_type?: string } = {}): Promise<Document> {
+		const last_modified_date = from_file.last_modified_date ?? Date.now();
+		const reported_type      = from_file.reported_type ?? '';
+		const size               = from_file.size;
+		const family             = Document.family_of(reported_type, extension);
+		// Plain text and markdown are already readable words; everything else waits
+		// for a text-extraction step before it can be searched or read by a model.
+		const status = READY_KINDS.has(extension) ? S_Document.ready : S_Document.needsText;
+		const document = this.create_document(name, { extension, last_modified_date, status, family, size, reported_type });
+		document.blob_id = document.id;
+		await this.write_blob(document.id, content);
+		debug.log(`Added document "${name}" (${extension}), dated ${new Date(last_modified_date).toISOString()}, ${size ?? 'unknown'} bytes, reported as "${reported_type || 'nothing'}" -> family ${family}, ${status === S_Document.ready ? 'text already readable' : 'still needs its text pulled out'}.`);
+		return this.register_document(document);
+	}
+
+	// A folder is a do-nothing document: no bytes and no extension — its family
+	// marks it as a folder, and its contents are linked under it by relationships.
+	add_folder(name: string): Document {
+		const document = this.create_document(name, { family: T_DocumentFamily.folder, last_modified_date: null });
+		debug.log(`Added folder "${name}".`);
+		return this.register_document(document);
 	}
 
 	add_tag(name: string): Tag {
@@ -137,9 +174,9 @@ export abstract class DB_Common {
 	}
 
 	// Link a parent to a child under a predicate, at the end of the child order.
-	add_relationship(predicate_id: string, parent_id: string, child_id: string): Relationship {
+	add_document_relationship(predicate_id: string, parent_id: string, child_id: string): Relationship {
 		const siblings = this.indexes.children_of(parent_id).length;
-		const relationship: Relationship = { id: crypto.randomUUID(), predicate_id, parent_id, child_id, sort_order: siblings };
+		const relationship: Relationship = { id: crypto.randomUUID(), predicate_id, parent_id, child_id, isDocument: true, sort_order: siblings };
 		this.relationships.push(relationship);
 		this.persist(T_Record.relationships);
 		this.reindex();
@@ -235,11 +272,11 @@ export abstract class DB_Common {
 		// debug.log(`Deleted tag ${tag_id} and its tagging and relationship rows.`);
 	}
 
-	// Wipe this store: every document's bytes, then every record list, then the
-	// indexes. Only this active store is touched; other stores are untouched.
+	// Wipe this store: every stored byte (orphans included), then every record
+	// list, then the indexes. Only this active store is touched; others are not.
 	async erase_all(): Promise<void> {
 		const had = this.documents.length;
-		for (const document of this.documents) { await this.delete_blob(document.id); }
+		await this.clear_blobs();   // wipes the whole byte-database; it logs its own outcome
 		this.documents     = [];
 		this.tags          = [];
 		this.taggings      = [];
@@ -248,6 +285,6 @@ export abstract class DB_Common {
 		this.persistable.clear_all();
 		for (const record of Object.values(T_Record)) { this.persist(record); }
 		this.reindex();
-		debug.log(`Erased the ${this.storage} store: removed ${had} document(s) and every tag, link, and blob.`);
+		debug.log(`Erased the ${this.storage} store: removed ${had} document(s) and every tag and link; byte-database cleared.`);
 	}
 }

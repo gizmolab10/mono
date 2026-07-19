@@ -88,6 +88,7 @@ export default class Constants {
 	};
 
 	size = {
+		svg			 : control_height * 0.9,	// the shared drawn-cross size
 		button		 : common_size / 1.25,
 		hamburger	 : common_size * 0.7,
 		cross	  	 : control_height,

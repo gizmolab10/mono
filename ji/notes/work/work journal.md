@@ -2,6 +2,55 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-19 — what a document knows about itself
+
+- **A document now records what it is, not just what to call it.** Alongside its name it keeps: the family it belongs to (picture, video, sound, pdf, web page, text, other), its file ending, the exact type the browser reported, its size in bytes, when the file was last changed, its own address in the store, and whether its words have been pulled out yet. Most of these are only knowable at the moment of the drop — the browser hands them over once and never again — so they're captured there and everything else is worked out later from what's kept.
+- **Folders stopped pretending to be a file type.** "Folder" and "unknown" were entries in the list of file endings, which was a lie: neither is an ending. A folder is now marked by its family, with no ending and no bytes at all; an unrecognized file simply has no ending (and is skipped on the way in, as before). This needed an erase and re-drop, agreed in advance.
+- **One idea instead of two.** The separate "how do we show this" list was the same four words as four of the families, so it's gone — asking a document how to show it now answers with a family, or nothing when a browser can't show it here. That also means adding a video or sound player later needs no new vocabulary.
+- **The file knowledge moved onto the document itself.** Deciding a dropped file's kind, reading its bytes, and trimming a redundant ending all used to live with the drop handling; they now sit with the document, which is what they describe. The drop keeps only the browser wrangling — reading entries, walking folders — so the document stays free of any database ties. The two ways a document gets made (a file, a folder) now share one start and one finish, instead of repeating the same four lines.
+- **Aimed at what comes next.** I read AnythingLLM's own source to see what it stores per document: the text body drives everything, and the rest — title, address, date, author, description — rides along on every piece and becomes the citation you see in an answer. The fields it fills with "Unknown" unless told otherwise are exactly the ones ji can now supply. The one real gap left is the extracted text, which each document now flags for itself.
+
+## 2026-07-18 — the filter and header stay put while the list scrolls
+
+- **Controls and header pinned.** The tag filter, the search box, and the column header now stay in place; only the list of documents scrolls beneath them. The rows moved into their own scrolling area and the header cells are held at the top.
+- **Two table quirks solved.** The header wouldn't stay put at first: this table draws its grid as single shared lines between cells, and in that mode the browser ignores "stay pinned" on the header as a whole — so each header cell is pinned on its own instead. The closing line under the header kept scrolling away too, because a shared line between the header and the first row belongs to both; it's now drawn as its own line that stays with the header. A page-colored gap below that line also stays pinned, and the header text sits a few pixels higher.
+- **Search box reacts to hover.** Hovering the search field lights it to the hover shade, matching the other controls. (A hover effect for the scroll bar was tried and taken back out — the browser drops the list's hover the moment the pointer reaches the bar, so it couldn't work cleanly.)
+
+## 2026-07-17 — the details sections remember whether they were open
+
+- **Preferences and data stay the way you leave them.** Inside the details region are two collapsible sections, "preferences" and "data". They opened fresh every reload. Now each remembers whether it was open or closed and comes back that way (open the first time), saved next to the other small settings. The whole region's show/hide was already remembered; this covers the two sections within it.
+
+## 2026-07-17 — a jpeg counts as a jpg, and the tags title sits right
+
+- **The extension drop now knows its aliases.** A "photo.jpg" in a jpeg row shows as "photo" now, not just "photo.jpeg". Rather than compare the ending to the format word, it reuses the same table that decides a dropped file's kind — so any extension that maps to the row's format is trimmed, which also covers htm/html and md/markdown. Folders and unmatched names still show whole.
+- **Tags title moved right.** The heading over the tags column now hugs the right, lining up with the tags and buttons that sit at the right of each row.
+
+## 2026-07-17 — filenames read cleaner, headers centered
+
+- **A redundant extension drops off.** When a file's name ends in the same thing as its format ("notes.txt" in a text row), that ending is noise, so the list shows just "notes". Only an exact match is trimmed, and folders (which have no format) are left whole. The full name is still there for filtering and on hover. Making a jpeg count as a jpg is a small follow-up still open.
+- **Long names cut off cleanly.** A name is capped at about 40% of the table's width and ends in an ellipsis when it runs long, its full text on hover. The cut-off is done on an inner piece of each row rather than the row cell itself, because cutting off at the cell was unreliable — that's why folder names were spilling while short file names looked fine.
+- **Headers centered.** Each column's heading now sits centered over its column.
+- **Empty ENTER backs out of adding a tag.** In the new-tag field, pressing RETURN with nothing typed closes the add-a-tag view instead of doing nothing.
+
+## 2026-07-17 — a row only lights when its file can be opened
+
+- **Hover highlight, narrowed.** A row now lights on hover only when its document can actually be shown. Folders and the kinds a browser can't open (documents, spreadsheets, tiff pictures) stay dark, so the highlight promises what the click delivers. It rides the same can-be-shown check that already decides whether the name opens and shows the pointer. The edit-tags and trash buttons still work on every row, showable or not.
+
+## 2026-07-17 — erasing truly empties the file store
+
+- **Erase now clears every stored file, not only the ones still listed.** Before, erase deleted the bytes of each document the app currently knew about — so bytes left behind by an older save scheme, or by a save that failed partway, kept sitting in the browser's large store taking space. The log proved it: an erase reported clearing zero while the store held tens of megabytes. Erase now deletes the whole file-store outright, so nothing survives however or whenever it was written, and the space is given back at once — the store came down from 27 MB to about 31 KB.
+- **When another tab blocks it, you're told.** The browser refuses to delete the file-store while another tab has the same app open, and that used to fail silently and look like erase did nothing. Now a plain alert names the app's address and asks you to close your other tabs of it and erase again. The browser gives no way to name each tab, so it points at the shared address.
+- **Proven.** A test plants a stray file-entry with no matching document and confirms erase clears it; ten store tests pass and the type check is clean.
+
+## 2026-07-17 — the document rows get quieter and clearer
+
+- **The whole row lights on hover, as a pill.** Hovering a row fills it with the hover shade, its ends rounded into a pill. Moving onto the small action buttons at the right drops that fill — they act on their own, not the row. The highlight is tracked in code rather than the usual hover, because the buttons stand a hair taller than the row and the plain hover kept dropping out over them.
+- **Click a name to open it.** A showable document opens by clicking its name — the eye button is gone. The name shows a pointer and lights on hover only when the file can actually be shown; other names and folders stay plain.
+- **The bin, drawn and colored.** The trash icon is a drawn bin, not the multicolor emoji (which ignores color), stroked in a new darker, more vivid accent. That shade is derived from the accent — 30% less true luminance and 30% more saturation — and recomputed whenever the accent changes.
+- **Adding tags when there are none yet.** When the store holds no tags to pick from, a row's pencil offers an "add tags" button that opens the tag view, the same as the top control. Its click was reaching the background clearer and undoing itself the instant it fired; stopped that.
+- **One click on a tag, and done.** Picking a tag in a row's picker now toggles it and closes the picker in a single click.
+- **Cleared the row-measuring scaffolding.** The debug flag and the code that logged each row's height are gone; the faint line under each row stays.
+
 ## 2026-07-16 — the "autofocus was blocked" warning, gone
 
 - **The cursor lands in the new-tag field without a warning.** Opening that view put the cursor in the field using the browser's own auto-focus mark. But the browser only honors that mark when nothing is focused, and the field opens right after a click that leaves the "add tags" button holding focus — so the browser refused and warned each time. Now the field focuses itself the moment it appears, which works even while the button still holds focus. Same result on screen, no warning.
@@ -12,6 +61,12 @@ Reverse chronological log of finished work on ji (the Jeff intersection project)
 - **The list shows the tree.** Documents are listed folders-first, each contents following its folder, and every row is pushed right 20px for each folder it sits inside — so the nesting reads at a glance. A folder row shows nothing in the format column. Every document the drop makes, folders and files at any depth, wears the tags chosen at drop time.
 - **Filtering never orphans a match.** When a search or tag filter keeps a file, its folder chain is kept on screen too, so a match never shows indented under nothing.
 - **One small store addition, and it's tested.** A folder link needs a named meaning ("contains"); the store now reuses the one meaning instead of making a fresh copy each time. Two new store tests cover the depth-and-chain walk and the reused meaning; all eight pass, and the type check is clean. The one thing only a browser can confirm — the actual folder drop and the indented rows — Jonathan checked by eye.
+
+## 2026-07-16 — html views as a page, and a file's kind stops guessing wrong
+
+- **HTML opens as a page, safely.** An html document now renders in its own frame, sandboxed with no scripts — so the file's own markup and any scripts can't reach the app; it just shows as a page. Text, markdown, and rich text still show as text.
+- **The view kept closing itself, found by the log.** Clicking the eye opened the view and then instantly shut it: the same click bubbled up to the click-anywhere-clears-it handler. The log told the story plainly — "Viewing document" was always followed by "Clicked out." The eye's click now stops there. (Then, on purpose, a click anywhere on an open document closes it, and the close became the shared cross in a black circle.)
+- **A file's kind was decided only by its reported type, which lies.** A page from Chrome's "Save page as," and files that come in through the folder-reading path, often carry an empty or wrong type, so a .html never got the html kind and the viewer said "can't show." Now the kind is read from the filename extension first, with the reported type only as a fallback. The drop logs its kind decision, and the viewer logs the kind when it can't show something, so "can't show" is never a mystery again. Documents saved before this fix keep their old wrong kind — erase and re-drop to correct them.
 
 ## 2026-07-16 — each row gets view, edit, and trash
 

@@ -26,3 +26,4 @@ The **same** column marks a row whose two sides are the same kind of word, so an
 | who does what              |        |      | split                                  |                    |
 | detour                     | y      | y    | side-build                             |                    |
 | useless cruft              | y      |      | padded                                 |                    |
+| easy to misuse             | y      |      | footgun                                | self-inflicted     |

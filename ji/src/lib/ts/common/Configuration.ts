@@ -39,6 +39,7 @@ class Configuration {
 		root.setProperty('--height-banner',      `${k.height.banner}px`);
 		root.setProperty('--size-button',        `${k.size.button}px`);
 		root.setProperty('--size-cross',         `${k.size.cross}px`);
+		root.setProperty('--size-svg',           `${k.size.svg}px`);
 		root.setProperty('--font-credit',        `${k.font.credit}px`);
 		root.setProperty('--font-label',         `${k.font.label}px`);
 		root.setProperty('--font-base',          `${k.font.base}px`);

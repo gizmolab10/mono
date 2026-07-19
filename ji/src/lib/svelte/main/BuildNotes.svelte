@@ -140,6 +140,8 @@
 	}
 
 	.cross {
+		width			: var(--size-svg);
+		height			: var(--size-svg);
 		display			: block;
 	}
 

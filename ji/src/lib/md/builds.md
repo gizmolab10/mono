@@ -2,6 +2,7 @@
 
 | Build | Date | Note |
 |----|----|----|
+| 8 | Jul 19, 2026 | expand document definition |
 | 7 | Jul 16, 2026 | add folders of documents |
 | 6 | Jul 13, 2026 | simplify layout |
 | 5 | Jul 13, 2026 | add db storage |

@@ -40,6 +40,21 @@ export class Colors {
 	}
 
 	/**
+	 * Derive a darker, more vivid accent: same hue, 30% less true luminance, 30%
+	 * more saturation. Used where the accent needs to read stronger than on its
+	 * own background — e.g. the delete-bin outline.
+	 */
+	private accent_to_accentDark(accent : string) : string {
+		const hsba = this.color_toHSBA(accent);
+		if (!hsba) return accent;
+		hsba.s = Math.min(100, hsba.s * 1.4);   // 30% more saturated
+		const saturated = this.color_toRGBA(this.RGBA_toHex(this.HSBA_toRGBA(hsba)));
+		if (!saturated) return accent;
+		const target = this.luminance_ofColor(accent) * 0.6;   // 30% less luminous
+		return this.set_darkness_toRGBA(saturated, 1 - target);
+	}
+
+	/**
 	 * Derive background from accent: same hue, much less saturation, lighter.
 	 */
 	private accent_to_background(accent : string) : string {
@@ -82,6 +97,7 @@ export class Colors {
 			this.w_text_color.set(text_on_bg);
 			if (typeof document !== 'undefined') {
 				document.documentElement.style.setProperty('--text-on-accent', text_on_accent);
+				document.documentElement.style.setProperty('--accent-dark', this.accent_to_accentDark(color));
 			}
 		});
 	}

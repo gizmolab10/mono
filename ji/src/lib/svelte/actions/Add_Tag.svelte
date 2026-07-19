@@ -30,31 +30,35 @@
 
 <div class='add-tag'>
 	<input
-		use:focus_on_mount
 		class='field'
 		type='search'
 		bind:value={name}
-		placeholder='new tag'
-		onkeydown={(e) => { if (e.key === 'Enter') { add(); } }} />
-	<button class='button' onclick={add}>add</button>
+		use:focus_on_mount
+		placeholder='type a tag & ENTER'
+		onkeydown={(e) => {
+			if (e.key === 'Enter') {
+				if (name.trim().length === 0) { debug.log('Empty new-tag field on ENTER — closing the new-tag view.'); ondone?.(); }
+				else { add(); }
+			}
+		}} />
 	<button class='button' onclick={() => { debug.log('Done adding tags — closing the new-tag view.'); ondone?.(); }}>done</button>
 </div>
 
 <style>
 	.add-tag {
+		gap             : var(--gap-tight);
 		align-items     : center;
 		justify-content : center;
-		gap             : var(--gap-tight);
 		display         : flex;
 	}
 
 	.field, .button {
 		border        : var(--thickness-normal) solid var(--black);
-		border-radius : 999px;
 		padding       : var(--pad-control);
 		font-size     : var(--font-label);
 		background    : var(--white);
 		color         : var(--text);
+		border-radius : 999px;
 	}
 
 	.field {

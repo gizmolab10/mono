@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { T_DocumentKind } from '../types/DB_Records';
+import { T_DocumentExtension } from '../types/Document';
 import { DB_Local } from '../database/DB_Local';
 
 // A tiny in-memory stand-in for browser storage, so the local storage runs
@@ -21,7 +21,7 @@ describe('local document store', () => {
 	it('saves a document and lists it back after a reload', async () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const doc = await db.add_document('notes.txt', T_DocumentKind.txt, 'hello');
+		const doc = await db.add_document('notes.txt', T_DocumentExtension.txt, 'hello');
 
 		// a fresh storage reads the same browser storage — the document survives
 		const reloaded = new DB_Local();
@@ -34,8 +34,8 @@ describe('local document store', () => {
 	it('filters by tag and reports the untagged', async () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const a = await db.add_document('a.txt', T_DocumentKind.txt, 'A');
-		const b = await db.add_document('b.txt', T_DocumentKind.txt, 'B');
+		const a = await db.add_document('a.txt', T_DocumentExtension.txt, 'A');
+		const b = await db.add_document('b.txt', T_DocumentExtension.txt, 'B');
 		const red = db.add_tag('red');
 		db.add_tagging(red.id, a.id);
 
@@ -47,7 +47,7 @@ describe('local document store', () => {
 	it('adds and removes a tag on a document', async () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const doc = await db.add_document('a.txt', T_DocumentKind.txt, 'A');
+		const doc = await db.add_document('a.txt', T_DocumentExtension.txt, 'A');
 		const red = db.add_tag('red');
 
 		db.add_tagging(red.id, doc.id);
@@ -61,12 +61,12 @@ describe('local document store', () => {
 	it('orders children by a parent relationship', async () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const parent = await db.add_document('parent', T_DocumentKind.txt, 'P');
-		const first  = await db.add_document('first', T_DocumentKind.txt, '1');
-		const second = await db.add_document('second', T_DocumentKind.txt, '2');
+		const parent = await db.add_document('parent', T_DocumentExtension.txt, 'P');
+		const first  = await db.add_document('first', T_DocumentExtension.txt, '1');
+		const second = await db.add_document('second', T_DocumentExtension.txt, '2');
 		const owns = db.add_predicate('parent-of');
-		db.add_relationship(owns.id, parent.id, first.id);
-		db.add_relationship(owns.id, parent.id, second.id);
+		db.add_document_relationship(owns.id, parent.id, first.id);
+		db.add_document_relationship(owns.id, parent.id, second.id);
 
 		// parent is a root; children follow in insertion order under it
 		const names = db.list_documents().map((l) => l.document.name);
@@ -76,12 +76,12 @@ describe('local document store', () => {
 	it('reports each document depth and its folder chain when walking', async () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const top    = await db.add_document('top',    T_DocumentKind.folder, '');
-		const sub    = await db.add_document('sub',    T_DocumentKind.folder, '');
-		const deep   = await db.add_document('deep.txt', T_DocumentKind.txt, 'D');
+		const top    = db.add_folder('top');
+		const sub    = db.add_folder('sub');
+		const deep   = await db.add_document('deep.txt', T_DocumentExtension.txt, 'D');
 		const contains = db.predicate_for('contains');
-		db.add_relationship(contains.id, top.id, sub.id);
-		db.add_relationship(contains.id, sub.id, deep.id);
+		db.add_document_relationship(contains.id, top.id, sub.id);
+		db.add_document_relationship(contains.id, sub.id, deep.id);
 
 		const listed = db.list_documents();
 		expect(listed.map((l) => l.document.name)).toEqual(['top', 'sub', 'deep.txt']);
@@ -102,15 +102,15 @@ describe('local document store', () => {
 	it('deletes a folder as a subtree — its files, nested folders, links, and bytes all go', async () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const top    = await db.add_document('top',      T_DocumentKind.folder, '');
-		const inside = await db.add_document('inside.txt', T_DocumentKind.txt, 'I');
-		const sub    = await db.add_document('sub',      T_DocumentKind.folder, '');
-		const deep   = await db.add_document('deep.txt',   T_DocumentKind.txt, 'D');
-		await db.add_document('loose.txt', T_DocumentKind.txt, 'L');   // outside the folder — should survive
+		const top    = db.add_folder('top');
+		const inside = await db.add_document('inside.txt', T_DocumentExtension.txt, 'I');
+		const sub    = db.add_folder('sub');
+		const deep   = await db.add_document('deep.txt',   T_DocumentExtension.txt, 'D');
+		await db.add_document('loose.txt', T_DocumentExtension.txt, 'L');   // outside the folder — should survive
 		const contains = db.predicate_for('contains');
-		db.add_relationship(contains.id, top.id, inside.id);
-		db.add_relationship(contains.id, top.id, sub.id);
-		db.add_relationship(contains.id, sub.id, deep.id);
+		db.add_document_relationship(contains.id, top.id, inside.id);
+		db.add_document_relationship(contains.id, top.id, sub.id);
+		db.add_document_relationship(contains.id, sub.id, deep.id);
 		const red = db.add_tag('red');
 		db.add_tagging(red.id, deep.id);
 
@@ -126,7 +126,7 @@ describe('local document store', () => {
 	it('erases the whole store — records and bytes gone, stays empty after reload', async () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const doc = await db.add_document('wipe.txt', T_DocumentKind.txt, 'data');
+		const doc = await db.add_document('wipe.txt', T_DocumentExtension.txt, 'data');
 		db.add_tag('keep');
 
 		await db.erase_all();
@@ -139,10 +139,23 @@ describe('local document store', () => {
 		expect(reloaded.tags).toHaveLength(0);
 	});
 
+	it('erasing clears orphan bytes too — bytes with no matching document', async () => {
+		const db = new DB_Local();
+		db.fetch_all();
+		const kept = await db.add_document('kept.txt', T_DocumentExtension.txt, 'data');
+		// a stray byte-entry with no document record — like a save that wrote bytes then failed
+		await db.write_blob('orphan-id', 'left behind');
+		expect(await db.read_blob('orphan-id')).toBe('left behind');
+
+		await db.erase_all();
+		expect(await db.read_blob(kept.id)).toBeNull();       // the tracked document's bytes go
+		expect(await db.read_blob('orphan-id')).toBeNull();   // and the orphan the old loop would have missed
+	});
+
 	it('deletes a document as a cascade, leaving no orphans', async () => {
 		const db = new DB_Local();
 		db.fetch_all();
-		const doc = await db.add_document('gone.txt', T_DocumentKind.txt, 'bye');
+		const doc = await db.add_document('gone.txt', T_DocumentExtension.txt, 'bye');
 		const tag = db.add_tag('keep');
 		db.add_tagging(tag.id, doc.id);
 
