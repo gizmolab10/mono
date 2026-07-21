@@ -122,6 +122,8 @@ describe('local document store', () => {
 		expect(listed.map((l) => l.depth)).toEqual([0, 1, 2]);
 		// the deepest file names its whole folder chain, root-first
 		expect(listed[2].ancestor_ids).toEqual([top.id, sub.id]);
+		// the two folders hold something (so they get an open/close triangle); the file doesn't
+		expect(listed.map((l) => l.has_children)).toEqual([true, true, false]);
 	});
 
 	it('lists a thing under every parent — a duplicate shows under its folder and under its original', async () => {
@@ -141,7 +143,9 @@ describe('local document store', () => {
 		const echo = copy_rows.find((l) => l.ancestor_ids.includes(original.id))!;
 		expect(home.is_echo).toBe(false);                             // the folder place is the solid home
 		expect(echo.is_echo).toBe(true);                              // the original place is the lighter echo
-		expect(listed.filter((l) => l.document.id === original.id)).toHaveLength(1);   // the original shows once
+		const original_row = listed.filter((l) => l.document.id === original.id);
+		expect(original_row).toHaveLength(1);                         // the original shows once
+		expect(original_row[0].has_children).toBe(true);             // and gets a triangle — the duplicate hangs under it
 	});
 
 	it('a loop below a root does not hang the walk', async () => {

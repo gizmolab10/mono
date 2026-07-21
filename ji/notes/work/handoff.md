@@ -4,18 +4,17 @@
 
 Finished work moves to [work journal](work%20journal.md); what's left is in [code debt](code%20debt.md).
 
-## Proposal — next: open and close a folder
+## Proposal — next: show tags as a tree
 
-Done just now (see the [work journal](work%20journal.md)): the table lists a thing under every parent it links to, so a kept-both new item shows both under its folder and under its original, the echo reading lighter — code debt line 16. Next is the first of the remaining visible-tree pieces: **open and close a folder**.
+Done just now (see the [work journal](work%20journal.md)): a fat triangle leads each folder that holds something — down when open, right when shut — and shutting one drops its contents from the table; the shut folders are saved across reloads. That closes the folder side of the visible tree. Next is the tag side: **show tags as a tree**.
 
-A folder row gets a triangle; closed, its whole subtree drops out of the walk. It needs one saved set of "closed ids" — the id of the link that leads into each closed place — and the walk skips a closed folder's children. No ancestry yet: a document has one folder home, so a folder is simply open or closed. The closed set survives a reload, the way the details region's open sections already do.
+Today tags are a flat row of chips (the filter, and each document's tag list). The data already lets a tag sit under another tag — the relationship record carries a "these are tags, not documents" flag, and its parent and child are tag ids ([hierarchy spec](hierarchy%20spec.md) §4). What's missing is the read that draws tags nested, and — the piece the spec flags as still open — **the act that nests one tag under another** (how a tag comes to have a parent tag is TBD).
 
-Two things to settle:
+Start single-parent (a tag has at most one parent tag), matching the folder tree just built: a tag walk by depth, the same open/close triangle, reusing the shut-set machinery. Multi-parent tags (a tag under two parents at once, the ancestry case) come after, as their own piece — that's the one place ji needs ws's full "one identity, several places" idea.
 
-- **The triangle's spot and look** — leading each folder row, pointing down when open, right when closed; drawn or a plain glyph?
-- **Where the closed set is saved** — a single stored list of ids (matches the spec: one set covers both trees later). Confirm it rides in preferences like the other saved flags.
+One thing to settle first: **how a tag gets a parent** — the spec leaves this open, and the tree can't be made without it. Options to weigh when we start: drag a chip onto another, a "nest under…" pick on the tag, or something simpler.
 
-After this: show tags as a tree, then tag ancestries (the multi-parent case) — the two remaining [hierarchy spec](hierarchy%20spec.md) pieces. The [records-as-Persistables plan](persistables.md) stays paused; it's independent of the visible tree.
+After this: tag ancestries (the multi-parent case) — the last [hierarchy spec](hierarchy%20spec.md) piece. The [records-as-Persistables plan](persistables.md) stays paused; it's independent of the visible tree.
 
 ## Method that holds
 

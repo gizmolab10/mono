@@ -7,6 +7,12 @@ Reverse chronological log of finished work on ji (the Jeff intersection project)
 - **Our own hover hint, because the browser's waits a second.** The browser's built-in hover text pauses about a second before it shows, and that pause can't be shortened — it belongs to the browser. So a small shared hint is drawn ourselves: any element hands it the thing being pointed at and the words to show, and it appears the instant the cursor arrives, sitting just below, running as wide as it needs, pulling back only off the window's right edge.
 - **Only the drop box's family words use it so far.** Their endings now show at once instead of after a wait; their old browser hover text is gone. The clipped file names in the table keep their plain browser hint for now.
 
+## 2026-07-21 — open and close a folder
+
+- **A triangle leads any row that holds something nested.** The fat three-corner mark, 15 across, points down when open and right when shut. A folder holding files earns one; so does the original of a kept-both pair, since the duplicate hangs under it. Rows with nothing nested (plain files, empty folders) get an empty slot the same width, so every name still lines up at its indent.
+- **Shutting a folder drops its contents from the table.** A row is hidden when any folder above it is shut, worked out before the search even looks, so a shut branch is fully out of play. Clicking the triangle flips that one folder.
+- **The shut folders survive a reload.** One saved list of folder ids, kept the way the details region's open sections are. Reopen ji and the tree is folded as you left it.
+
 ## 2026-07-21 — a thing shows under every parent it links to
 
 - **The table lists a thing once per parent.** The walk used to show a thing only the first place it was reached and skip it everywhere after. Now it lists a thing under each parent that leads to it, so a kept-both new item shows in both places at once — under its folder and under its original. The kept-both name also tucks the number in before the ending now ("notes (2).txt"), matching the spec.

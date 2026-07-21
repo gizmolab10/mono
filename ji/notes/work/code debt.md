@@ -9,7 +9,7 @@ write a proposal for the first unchecked item to the top of handoff.
     - [x] reach the active tree via `w_hierarchy` (screen) and `h` (code)
     - [x] find-or-create everywhere (meanings, links, tags, tag-on-document)
     - [x] store-wide dedup by name; instant name + id lookups (no linear scans)
-    - [ ] open and close a folder, remembered
+    - [x] open and close a folder, remembered — a fat triangle (15px) leads any row with something nested (a folder over its files, or a duplicate's original over the copy), down when open, right when shut; shutting one drops its nested rows from the table; one saved list of shut ids, kept across reloads
     - [ ] show tags as a tree (single-parent first)
     - [ ] tag ancestries — multi-parent tags
 - [ ] documents table

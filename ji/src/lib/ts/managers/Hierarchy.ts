@@ -21,6 +21,7 @@ export interface Listed_Document {
 	depth        : number;      // how many folders deep it sits (a root is 0)
 	ancestor_ids : string[];    // the folder chain above it, root-first
 	is_echo      : boolean;     // a second-or-later home — reads lighter, an "also here"
+	has_children : boolean;     // holds anything nested under it (folder contents, or a duplicate under its original) — so it can open and close
 }
 
 // The store's records and the living tree over them. It owns the in-memory record
@@ -211,8 +212,10 @@ export class Hierarchy {
 				return;
 			}
 			const document = this.document_byID(id);
-			if (document) { ordered.push({ document, tag_ids: this.indexes.tags_of(id), depth, ancestor_ids: ancestors, is_echo: false, via_contains }); }
-			for (const edge of this.indexes.children_of(id)) { walk(edge.child_id, depth + 1, [...ancestors, id], edge.predicate_id === contains_id); }
+			const children = this.indexes.children_of(id);
+			const has_children = children.length > 0;   // holds anything nested — a folder's files, or a duplicate under its original — so it can open and close
+			if (document) { ordered.push({ document, tag_ids: this.indexes.tags_of(id), depth, ancestor_ids: ancestors, is_echo: false, has_children, via_contains }); }
+			for (const edge of children) { walk(edge.child_id, depth + 1, [...ancestors, id], edge.predicate_id === contains_id); }
 		};
 		for (const root of roots) { walk(root, 0, [], true); }   // a root has no parent link — it is its own home
 
@@ -233,7 +236,7 @@ export class Hierarchy {
 			const many = (counts.get(row.document.id) ?? 0) >= 2;
 			const is_echo = many && home_at.get(row.document.id) !== i;
 			if (is_echo) { debug.log(`Tree walk: "${row.document.name}" shown again under a second parent (depth ${row.depth}) — the lighter "also here".`); }
-			return { document: row.document, tag_ids: row.tag_ids, depth: row.depth, ancestor_ids: row.ancestor_ids, is_echo };
+			return { document: row.document, tag_ids: row.tag_ids, depth: row.depth, ancestor_ids: row.ancestor_ids, is_echo, has_children: row.has_children };
 		});
 	}
 

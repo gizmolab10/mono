@@ -50,7 +50,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/hierarchy spec.md",
+                "file": "ji/notes/work/handoff.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of hierarchy spec"
+              "title": "Outline of handoff"
             }
           },
           {
@@ -223,11 +223,11 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "8f98213a7fd028b3",
+  "active": "3e1ddbde653729de",
   "lastOpenFiles": [
+    "ji/notes/work/hierarchy spec.md",
     "ji/notes/work/code debt.md",
     "ji/notes/work/handoff.md.tmp.71617.e0a45af2dcb2",
-    "ji/notes/work/hierarchy spec.md",
     "ji/src/lib/ts/types/Persistence.ts",
     "ji/notes/work/persistables.md",
     "ji/src/lib/ts/managers/Hierarchy.ts.tmp.71617.ca836ae70a26",

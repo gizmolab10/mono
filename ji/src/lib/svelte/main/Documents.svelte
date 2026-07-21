@@ -5,15 +5,40 @@
 	import { Document, T_DocumentFamily } from '../../ts/types/Document';
 	import View_Document from '../actions/View_Document.svelte';
 	import Add_Document from '../actions/Add_Document.svelte';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { w_hierarchy } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/types/Signal';
 	import Add_Tag from '../actions/Add_Tag.svelte';
+	import { Direction } from '../../ts/types/Angle';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import Tags from '../actions/Tags.svelte';
 
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
+
+	// Which folders are shut. One saved list of folder ids, kept across reloads the
+	// way the details region's open sections are. A shut folder's contents drop from
+	// the table until it's opened again.
+	const w_closed = preferences.persistent_set(T_Preference.closedFolders);
+
+	// The open/close triangle: the fat three-corner mark, pointing down when the
+	// folder is open, right when it's shut. 15 across.
+	const TRIANGLE = 15;
+	function triangle_path(open: boolean): string {
+		return svg_paths.fat_polygon(TRIANGLE, open ? Direction.down : Direction.right);
+	}
+	function triangle_bounds(open: boolean): { minX: number; minY: number; width: number; height: number } {
+		return svg_paths.fat_polygon_bounds(TRIANGLE, open ? Direction.down : Direction.right);
+	}
+	function toggle_folder(id: string) {
+		w_closed.update((shut) => {
+			const next = new Set(shut);
+			if (next.has(id)) { next.delete(id); debug.log(`Opened the folder ${id} — its contents come back.`); }
+			else              { next.add(id);    debug.log(`Shut the folder ${id} — its contents drop from the table.`); }
+			return next;
+		});
+	}
 
 	// The documents view: every file in the active store as type + name + its tags,
 	// each row with an "edit tags" button that opens the tag picker for that
@@ -49,20 +74,27 @@
 				depth        : listed.depth,
 				ancestor_ids : listed.ancestor_ids,
 				is_echo      : listed.is_echo,
+				has_children : listed.has_children,
 				tag_ids,
 				tag_names    : tag_ids.map((id) => name_of.get(id) ?? '?').join(', '),
 			};
 		});
 	});
 
+	// Drop everything sitting under a shut folder, before the search even looks. A
+	// row is under a shut folder when any of its folder chain is in the shut set.
+	const open_rows = $derived.by(() => {
+		return rows.filter((r) => !r.ancestor_ids.some((a) => $w_closed.has(a)));
+	});
+
 	// Narrowed by the shared search-text: every picked tag must logic-choice, and the name must
 	// contain the search-text text. A matched file keeps its folder chain on screen too,
 	// so it never shows indented under nothing — the ancestors ride along even if they miss.
 	const shown = $derived.by(() => {
-		const matched = filter_rows(rows, $w_filter_tags, $w_filter_text, $w_filter_mode);
+		const matched = filter_rows(open_rows, $w_filter_tags, $w_filter_text, $w_filter_mode);
 		const keep = new Set(matched.map((r) => r.id));
 		for (const r of matched) { for (const a of r.ancestor_ids) { keep.add(a); } }
-		return rows.filter((r) => keep.has(r.id));       // original walk order, ancestors included
+		return open_rows.filter((r) => keep.has(r.id));       // original walk order, ancestors included
 	});
 
 	// How many tags exist in the store to pick from. When zero, the row's pencil
@@ -232,7 +264,7 @@
 							<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 							<td class='name' class:viewable={Document.view_mode(row.extension) !== null}
 								style:padding-left='{row.depth * 20}px'
-								onclick={(e) => { if (Document.view_mode(row.extension) !== null) { e.stopPropagation(); open_view(row.id); } }}><span class='name-text'>{#if row.is_echo}<span class='echo-mark' title='also here — the same file, shown under another parent'>↳ </span>{/if}{row.display_name}</span></td>
+								onclick={(e) => { if (Document.view_mode(row.extension) !== null) { e.stopPropagation(); open_view(row.id); } }}><span class='name-line'><span class='tri-slot'>{#if row.has_children}{@const open = !$w_closed.has(row.id)}{@const b = triangle_bounds(open)}<button class='tri' title={open ? 'close this folder' : 'open this folder'} onclick={(e) => { e.stopPropagation(); toggle_folder(row.id); }}><svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'><path d={triangle_path(open)} /></svg></button>{/if}</span><span class='name-text'>{#if row.is_echo}<span class='echo-mark' title='also here — the same file, shown under another parent'>↳ </span>{/if}{row.display_name}</span></span></td>
 							<td class='tag-actions'>
 								<div class='tag-actions-row'>
 									{#if editing === row.id}
@@ -463,11 +495,50 @@
 		text-align     : left;
 	}
 
+	/* The name row: a fixed triangle slot, then the name. The slot is always there
+	   (even for files and childless folders) so every name lines up at its indent. */
+	.name-line {
+		align-items : center;
+		display     : flex;
+		min-width   : 0;
+	}
+
+	.tri-slot {
+		width           : 16px;
+		flex            : 0 0 auto;
+		align-items     : center;
+		justify-content : center;
+		display         : flex;
+	}
+
+	/* The open/close triangle: page-colored inside with an accent outline, filling
+	   to the hover color under the cursor. */
+	.tri {
+		border          : none;
+		background      : transparent;
+		padding         : 0;
+		cursor          : pointer;
+		align-items     : center;
+		justify-content : center;
+		display         : flex;
+	}
+
+	.tri path {
+		fill         : var(--bg);
+		stroke       : var(--accent);
+		stroke-width : 1;
+	}
+
+	.tri:hover path {
+		fill : var(--hover);
+	}
+
 	/* The name is capped by its 40%-wide column. Clipping lives on an inner block
 	   (not the table cell — cell-level ellipsis is unreliable), so both file and
 	   folder names cut off with an ellipsis, full text on hover. */
 	.name-text {
-		display       : block;
+		flex          : 1;
+		min-width     : 0;
 		white-space   : nowrap;
 		overflow      : hidden;
 		text-overflow : ellipsis;
