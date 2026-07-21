@@ -7,6 +7,21 @@ Reverse chronological log of finished work on ji (the Jeff intersection project)
 - **Our own hover hint, because the browser's waits a second.** The browser's built-in hover text pauses about a second before it shows, and that pause can't be shortened — it belongs to the browser. So a small shared hint is drawn ourselves: any element hands it the thing being pointed at and the words to show, and it appears the instant the cursor arrives, sitting just below, running as wide as it needs, pulling back only off the window's right edge.
 - **Only the drop box's family words use it so far.** Their endings now show at once instead of after a wait; their old browser hover text is gone. The clipped file names in the table keep their plain browser hint for now.
 
+## 2026-07-21 — readable text on an accent-filled button
+
+- **A button filled with the picked color gets readable text.** The color code already worked out white-or-black text for anything sitting on the accent (dark accent → white, light accent → black); that value is now named `text_forAccent` in the code. Every button whose own fill is the accent reads it — the all/any current segment, a lit tag chip, the chosen storage segment — so a dark accent no longer leaves near-black text on a near-black button. The hamburger already read this value; the CSS name for it stays as it was.
+
+## 2026-07-21 — step to the previous / next file while viewing
+
+- **Two fat triangles at the viewer's top-far-left step through the files.** Left goes back, right goes forward, wrapping around at both ends. They match the folder triangles — page-colored inside, accent outline, filling on hover — and 20 across. When only one file on screen can be shown, both go quiet.
+- **The left and right arrow keys do the same** (up also steps back, down steps forward). A key that lands on a focused sound or clip player, a text field, or the sandboxed page is left alone, so seeking a video still works. **Escape closes the viewer** — caught before the stepping guards, so it works even when there's only one file.
+- **Holding a triangle down keeps stepping.** One step at once, a pause, then a steady patter until the mouse is let go or drifts off the button. (The arrow keys already repeat — the operating system holds them down.)
+- **The run is what's on screen and showable.** It follows the current search and folds, and skips folders and kinds the viewer can't show. A duplicate that shows in two places is two stops, so the viewer tracks *where in the run* it is, not just which file it holds — one file can sit at two spots.
+
+## 2026-07-21 — the chosen storage ignores hover
+
+- **The storage already in use no longer lights under the cursor**, and shows the plain arrow instead of a clickable one — clicking it would do nothing, so it now reads as inert. Only a different, built storage lights and invites a click. A one-line change to which storages the hover rule skips.
+
 ## 2026-07-21 — open and close a folder
 
 - **A triangle leads any row that holds something nested.** The fat three-corner mark, 15 across, points down when open and right when shut. A folder holding files earns one; so does the original of a kept-both pair, since the duplicate hangs under it. Rows with nothing nested (plain files, empty folders) get an empty slot the same width, so every name still lines up at its indent.

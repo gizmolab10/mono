@@ -106,6 +106,7 @@
 
 	.logic-choice-segment.current {
 		background : var(--accent);
+		color      : var(--text-on-accent);
 	}
 
 	.logic-choice-segment:not(.current):hover {
@@ -140,6 +141,7 @@
 
 	.chip.on {
 		background : var(--accent);
+		color      : var(--text-on-accent);
 	}
 
 	.chip:not(.on):hover {

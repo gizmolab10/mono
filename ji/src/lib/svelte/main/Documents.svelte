@@ -1,16 +1,16 @@
 <script lang='ts'>
 	import { w_filter_tags, w_filter_text, w_filter_mode, filter_rows } from '../../ts/managers/Search';
 	import { w_operation, w_view_document, T_Operation } from '../../ts/managers/Operations';
-	import { save_drop } from '../../ts/managers/Drop';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { Document, T_DocumentFamily } from '../../ts/types/Document';
 	import View_Document from '../actions/View_Document.svelte';
 	import Add_Document from '../actions/Add_Document.svelte';
-	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { w_hierarchy } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/types/Signal';
-	import Add_Tag from '../actions/Add_Tag.svelte';
+	import { save_drop } from '../../ts/managers/Drop';
 	import { Direction } from '../../ts/types/Angle';
+	import Add_Tag from '../actions/Add_Tag.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import Tags from '../actions/Tags.svelte';
@@ -121,12 +121,38 @@
 		}
 	});
 
-	// Open the view for one document; close it back to the list.
-	function open_view(document_id: string) {
-		w_view_document.set(document_id);
+	// The run the viewer steps through: the rows on screen right now (search and
+	// folds already applied) that the viewer can actually show — folders and
+	// unshowable kinds are skipped. A duplicate that shows twice is two stops, so
+	// this is a list of places, kept as the very row objects from the table.
+	const viewable_run = $derived(shown.filter((r) => Document.view_mode(r.extension) !== null));
+
+	// Where in that run the open document sits. Stepping moves this, not the id,
+	// since one file can sit at two places. There is more than one stop to move
+	// between only when the run holds more than one.
+	let view_pos = $state(0);
+	const can_step = $derived(viewable_run.length > 1);
+
+	// Open the view for one row; close it back to the list. Opening also marks where
+	// that row sits in the run, so the triangles know where they are.
+	function open_view(row: { id: string; name: string }) {
+		const pos = viewable_run.indexOf(row as (typeof viewable_run)[number]);
+		view_pos = pos < 0 ? 0 : pos;
+		w_view_document.set(row.id);
 		w_operation.set(T_Operation.view);
-		debug.log(`Viewing document ${document_id}.`);
+		debug.log(`Viewing "${row.name}" — stop ${view_pos + 1} of ${viewable_run.length} showable on screen.`);
 	}
+
+	// Step to the file before or after, wrapping around at both ends. Nothing to do
+	// when there's only one showable file.
+	function step(delta: number) {
+		const run = viewable_run;
+		if (run.length < 2) { debug.log(`Step ignored — only ${run.length} showable file on screen.`); return; }
+		view_pos = (view_pos + delta + run.length) % run.length;
+		w_view_document.set(run[view_pos].id);
+		debug.log(`Stepped ${delta > 0 ? 'forward' : 'back'} to "${run[view_pos].name}" — stop ${view_pos + 1} of ${run.length}.`);
+	}
+
 	function close_view() {
 		w_view_document.set(null);
 		if ($w_operation === T_Operation.view) { w_operation.set(null); }
@@ -232,7 +258,8 @@
 	{:else if $w_operation === T_Operation.tag}
 		<Add_Tag ondone={() => w_operation.set(null)} />
 	{:else if $w_operation === T_Operation.view && $w_view_document}
-		<View_Document document_id={$w_view_document} onclose={close_view} />
+		<View_Document document_id={$w_view_document} onclose={close_view}
+			can_step={can_step} onprev={() => step(-1)} onnext={() => step(1)} />
 	{:else}
 		<hr>
 		{#if rows.length === 0}
@@ -264,7 +291,7 @@
 							<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 							<td class='name' class:viewable={Document.view_mode(row.extension) !== null}
 								style:padding-left='{row.depth * 20}px'
-								onclick={(e) => { if (Document.view_mode(row.extension) !== null) { e.stopPropagation(); open_view(row.id); } }}><span class='name-line'><span class='tri-slot'>{#if row.has_children}{@const open = !$w_closed.has(row.id)}{@const b = triangle_bounds(open)}<button class='tri' title={open ? 'close this folder' : 'open this folder'} onclick={(e) => { e.stopPropagation(); toggle_folder(row.id); }}><svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'><path d={triangle_path(open)} /></svg></button>{/if}</span><span class='name-text'>{#if row.is_echo}<span class='echo-mark' title='also here — the same file, shown under another parent'>↳ </span>{/if}{row.display_name}</span></span></td>
+								onclick={(e) => { if (Document.view_mode(row.extension) !== null) { e.stopPropagation(); open_view(row); } }}><span class='name-line'><span class='tri-slot'>{#if row.has_children}{@const open = !$w_closed.has(row.id)}{@const b = triangle_bounds(open)}<button class='tri' title={open ? 'close this folder' : 'open this folder'} onclick={(e) => { e.stopPropagation(); toggle_folder(row.id); }}><svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'><path d={triangle_path(open)} /></svg></button>{/if}</span><span class='name-text'>{#if row.is_echo}<span class='echo-mark' title='also here — the same file, shown under another parent'>↳ </span>{/if}{row.display_name}</span></span></td>
 							<td class='tag-actions'>
 								<div class='tag-actions-row'>
 									{#if editing === row.id}

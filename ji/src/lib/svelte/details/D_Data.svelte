@@ -231,6 +231,8 @@
 
 	.segment.current {
 		background : var(--accent);
+		color      : var(--text-on-accent);
+		cursor     : default;             /* already chosen — nothing to click */
 	}
 
 	.segment.disabled {
@@ -238,7 +240,9 @@
 		cursor  : not-allowed;
 	}
 
-	.segment:not(.disabled):hover {
+	/* Light a segment under the cursor — but not the one already chosen, and not a
+	   segment that isn't built. */
+	.segment:not(.disabled):not(.current):hover {
 		background : var(--hover);
 	}
 

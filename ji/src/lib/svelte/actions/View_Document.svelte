@@ -1,7 +1,9 @@
 <script lang='ts'>
 	import { T_DocumentExtension, T_DocumentFamily, Document } from '../../ts/types/Document';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { w_operation } from '../../ts/managers/Operations';
 	import { databases, w_hierarchy } from '../../ts/database/Databases';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { Direction } from '../../ts/types/Angle';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 
@@ -10,7 +12,63 @@
 	// Show one document in the content area: its bytes read back and rendered by
 	// type. The row's view button only lights for types a browser can show, so the
 	// "can't show" branch is a guard, not the usual path.
-	let { document_id, onclose }: { document_id: string; onclose: () => void } = $props();
+	//
+	// Two triangles step to the file before or after in the on-screen run, wrapping
+	// at both ends; the left and right arrow keys do the same. Both are quiet when
+	// there's only one showable file. The stepping itself lives with the list (it
+	// knows the run and the position); here we only draw the controls and call back.
+	let { document_id, onclose, can_step = false, onprev = () => {}, onnext = () => {} }:
+		{ document_id: string; onclose: () => void; can_step?: boolean; onprev?: () => void; onnext?: () => void } = $props();
+
+	// The step triangles: the same fat mark as the folder rows, pointing left and
+	// right. 20 across.
+	const STEP_TRIANGLE = 20;
+	const prev_path   = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.left);
+	const next_path   = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.right);
+	const prev_bounds = svg_paths.fat_polygon_bounds(STEP_TRIANGLE, Direction.left);
+	const next_bounds = svg_paths.fat_polygon_bounds(STEP_TRIANGLE, Direction.right);
+
+	// The left and right arrow keys step too, while the viewer is open. A media
+	// player owns the arrows when it's the focus (to seek), so a key landing on the
+	// player, an input, or the sandboxed page is left alone.
+	function on_key(event: KeyboardEvent) {
+		const key = event.key;
+		// Escape closes the viewer, always — before the arrow-only and can-step guards
+		// below, so it is caught even when there is nothing to step to.
+		if (key === 'Escape') { debug.log('Escape key: close the viewer.'); w_operation.set(null); return; }
+		if (key !== 'ArrowLeft' && key !== 'ArrowUp' && key !== 'ArrowRight' && key !== 'ArrowDown') { return; }
+		const tag = (event.target as HTMLElement | null)?.tagName;
+		if (tag === 'VIDEO' || tag === 'AUDIO' || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'IFRAME') { return; }
+		if (!can_step) { return; }
+		event.preventDefault();
+		if (key === 'ArrowLeft' || key === 'ArrowUp') { debug.log('Arrow key: step back.');    onprev(); }
+		else                                          { debug.log('Arrow key: step forward.'); onnext(); }
+	}
+
+	$effect(() => {
+		window.addEventListener('keydown', on_key);
+		return () => window.removeEventListener('keydown', on_key);
+	});
+
+	// Holding the mouse down on a step keeps stepping: one step at once, a pause,
+	// then a steady patter until the mouse is let go or leaves the button. The
+	// arrow keys already repeat on their own — the operating system holds them down.
+	const HOLD_PAUSE = 400;         // wait before the patter starts
+	const HOLD_TICK  = 120;         // one step per this many while held
+	let hold_wait: ReturnType<typeof setTimeout>  | null = null;
+	let hold_tick: ReturnType<typeof setInterval> | null = null;
+	function start_hold(fn: () => void) {
+		if (!can_step) { return; }
+		stop_hold();                // never two runs at once
+		fn();                       // the first step, right away
+		hold_wait = setTimeout(() => { hold_tick = setInterval(fn, HOLD_TICK); }, HOLD_PAUSE);
+		debug.log('Held a step button down — repeating until let go.');
+	}
+	function stop_hold() {
+		if (hold_wait !== null) { clearTimeout(hold_wait); hold_wait = null; }
+		if (hold_tick !== null) { clearInterval(hold_tick); hold_tick = null; }
+	}
+	$effect(() => stop_hold);       // let go if the viewer closes mid-hold
 
 	const doc  = $derived($w_hierarchy.document_byID(document_id));
 	const mode = $derived(doc ? Document.view_mode(doc.extension) : null);
@@ -67,6 +125,20 @@
 
 <div class='viewer'>
 	<div class='view-head'>
+		<div class='view-steps'>
+			<button class='step' class:quiet={!can_step} aria-label='previous file' disabled={!can_step}
+				onmousedown={(e) => { e.stopPropagation(); start_hold(onprev); }}
+				onmouseup={stop_hold} onmouseleave={stop_hold}
+				onclick={(e) => { e.stopPropagation(); if (e.detail === 0) { onprev(); } }}>
+				<svg overflow='visible' width={prev_bounds.width} height={prev_bounds.height} viewBox='{prev_bounds.minX} {prev_bounds.minY} {prev_bounds.width} {prev_bounds.height}'><path d={prev_path} /></svg>
+			</button>
+			<button class='step' class:quiet={!can_step} aria-label='next file' disabled={!can_step}
+				onmousedown={(e) => { e.stopPropagation(); start_hold(onnext); }}
+				onmouseup={stop_hold} onmouseleave={stop_hold}
+				onclick={(e) => { e.stopPropagation(); if (e.detail === 0) { onnext(); } }}>
+				<svg overflow='visible' width={next_bounds.width} height={next_bounds.height} viewBox='{next_bounds.minX} {next_bounds.minY} {next_bounds.width} {next_bounds.height}'><path d={next_path} /></svg>
+			</button>
+		</div>
 		<span class='view-name'>{doc?.name ?? ''}</span>
 		<button class='view-close' aria-label='close' onclick={onclose}>
 			<svg class='view-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
@@ -107,15 +179,54 @@
 	}
 
 	.view-head {
-		align-items     : center;
 		justify-content : space-between;
 		padding-bottom  : var(--gap);
+		align-items     : center;
 		display         : flex;
 	}
 
 	.view-name {
 		font-size : var(--font-label);
 		color     : var(--text);
+	}
+
+	/* The two step triangles, pinned together at the top-far-left. */
+	.view-steps {
+		gap         : var(--gap);
+		align-items : center;
+		display     : flex;
+	}
+
+	/* A step triangle: page-colored inside with an accent outline, filling to the
+	   hover color under the cursor — the same look as the folder triangles. */
+	.step {
+		border          : none;
+		background      : transparent;
+		padding         : 0;
+		cursor          : pointer;
+		align-items     : center;
+		justify-content : center;
+		display         : flex;
+	}
+
+	.step path {
+		fill         : var(--bg);
+		stroke       : var(--accent);
+		stroke-width : 1;
+	}
+
+	.step:hover path {
+		fill : var(--hover);
+	}
+
+	/* Only one showable file — nothing to step to, so the triangles dim and go dead. */
+	.step.quiet {
+		opacity : var(--opacity-label);
+		cursor  : default;
+	}
+
+	.step.quiet:hover path {
+		fill : var(--bg);
 	}
 
 	.view-close {

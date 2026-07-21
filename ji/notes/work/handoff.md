@@ -4,17 +4,23 @@
 
 Finished work moves to [work journal](work%20journal.md); what's left is in [code debt](code%20debt.md).
 
-## Proposal — next: show tags as a tree
+## Proposal — next: the table remembers where it was scrolled
 
-Done just now (see the [work journal](work%20journal.md)): a fat triangle leads each folder that holds something — down when open, right when shut — and shutting one drops its contents from the table; the shut folders are saved across reloads. That closes the folder side of the visible tree. Next is the tag side: **show tags as a tree**.
+Done just now (see the [work journal](work%20journal.md)): every accent-filled button now carries readable text. Next is the first open piece under the documents table: **the table keeps its scroll place.**
 
-Today tags are a flat row of chips (the filter, and each document's tag list). The data already lets a tag sit under another tag — the relationship record carries a "these are tags, not documents" flag, and its parent and child are tag ids ([hierarchy spec](hierarchy%20spec.md) §4). What's missing is the read that draws tags nested, and — the piece the spec flags as still open — **the act that nests one tag under another** (how a tag comes to have a parent tag is TBD).
+Only the rows scroll — they sit in their own scroll area under the pinned filter, search, and header ([Documents.svelte](../../ji/src/lib/svelte/main/Documents.svelte) `.table-scroll`). Open a file and come back, or reload, and the table jumps to the top; a person who was deep in a long list loses their place. The fix: note how far down the rows are scrolled and put them back there.
 
-Start single-parent (a tag has at most one parent tag), matching the folder tree just built: a tag walk by depth, the same open/close triangle, reusing the shut-set machinery. Multi-parent tags (a tag under two parents at once, the ancestry case) come after, as their own piece — that's the one place ji needs ws's full "one identity, several places" idea.
+The build:
 
-One thing to settle first: **how a tag gets a parent** — the spec leaves this open, and the tree can't be made without it. Options to weigh when we start: drag a chip onto another, a "nest under…" pick on the tag, or something simpler.
+- **Note the scroll place as it changes** — the rows' scroll distance from the top, saved like the other remembered flags (the details sections, the shut folders).
+- **Put it back when the table returns** — after opening a file and closing it, and after a reload, the rows start where they were left.
 
-After this: tag ancestries (the multi-parent case) — the last [hierarchy spec](hierarchy%20spec.md) piece. The [records-as-Persistables plan](persistables.md) stays paused; it's independent of the visible tree.
+Two things to settle:
+
+- **Does it survive a reload, or only within a session?** Saving it across reloads matches how the folds and the open/closed sections already persist — lean there. A session-only place is simpler but forgets on reload.
+- **What happens when the list changes underneath it?** If rows were added, removed, or filtered while away, the old distance may point somewhere else. Simplest is to put back the same distance and let it settle where it lands; pinning to a particular row is more work for a rare case.
+
+After this the tree returns: **show tags as a tree** (single-parent first — a tag walk reusing the folder triangle and shut-set), then **tag ancestries** (the multi-parent case, ws's "one identity, several places"). The [records-as-Persistables plan](persistables.md) stays paused; it's independent of the visible tree.
 
 ## Method that holds
 

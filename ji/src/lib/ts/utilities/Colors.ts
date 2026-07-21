@@ -94,10 +94,13 @@ export class Colors {
 			const accent_lume = this.luminance_ofColor(color);
 			const bg_lume = this.luminance_ofColor(bg);
 			const text_on_bg = bg_lume < 0.5 ? 'white' : 'black';
-			const text_on_accent = accent_lume < 0.3 ? 'white' : 'black';
+			// The readable text for anything sitting on the accent itself — white on a
+			// dark accent, black on a light one. Named text_onAccent (--text-on-accent);
+			// the hamburger already reads it, and every accent-filled button does too.
+			const text_onAccent = accent_lume < 0.4 ? 'white' : 'black';
 			this.w_text_color.set(text_on_bg);
 			if (typeof document !== 'undefined') {
-				document.documentElement.style.setProperty('--text-on-accent', text_on_accent);
+				document.documentElement.style.setProperty('--text-on-accent', text_onAccent);
 				document.documentElement.style.setProperty('--accent-dark', this.accent_to_accentDark(color));
 			}
 		});

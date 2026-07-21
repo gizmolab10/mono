@@ -4,32 +4,20 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] port hierarchy from ws to ji ([spec](hierarchy%20spec.md))
-    - [x] the tree owns the records; the store shrank to load/save/blobs (two-step: wrap, then own)
-    - [x] reach the active tree via `w_hierarchy` (screen) and `h` (code)
-    - [x] find-or-create everywhere (meanings, links, tags, tag-on-document)
-    - [x] store-wide dedup by name; instant name + id lookups (no linear scans)
-    - [x] open and close a folder, remembered — a fat triangle (15px) leads any row with something nested (a folder over its files, or a duplicate's original over the copy), down when open, right when shut; shutting one drops its nested rows from the table; one saved list of shut ids, kept across reloads
-    - [ ] show tags as a tree (single-parent first)
-    - [ ] tag ancestries — multi-parent tags
 - [ ] documents table
     - [x] show all relationships (including multiple parents) — a thing shows once per parent (a duplicate under its folder and under its original); the later appearance reads lighter as an "also here"; the walk stops a real loop
     - [ ] remember scroll position
     - [ ] during scroll, stick the immediate parent folder rows at the top
     - [ ] add a "download" unichar to the far right unichar buttons
-- [ ] left/right fat triangles at top-far-left of view document
-    - [ ] retreat/advance the content to the previous/next viewable file
-    - [ ] also left and right arrow keys
-- [ ] new tags seg control
-    - [ ] if more tags than will fit, use new tags view instead
-    - [ ] new tags view. replaces entire documents view. stub for now
-- [ ] in the DB selector (shared/local), ignore hover on the selected DB
+- [ ] tags
+    - [ ] show tags as a tree (single-parent first)
+    - [ ] tag ancestries — multi-parent tags
 - [ ] add remote support
     - [ ] supabase not firebase
     - [ ] use person's id
     - [ ] authorization
 - [ ] write a new file: spec rules based on current code
-- [ ] view rtf document
+- [ ] view rtf and md documents
 - [ ] wendy -- new app for your brother: Intersection
     - [ ] give me weak signals / info from the tails (of a bell curve), not just the clusters
     - [ ] give me the signals that repeat over time or across multiple people — this is a stronger signal.
@@ -37,6 +25,18 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] button text color -> the color named `text_forAccent` in code (CSS var stays `--text-on-accent`), white or black by the accent's luminosity at the existing flip point — the same value the hamburger already read; now given to every button whose own background is the accent — the all/any current segment, a lit tag chip, the chosen storage segment
+- [x] left/right fat triangles at top-far-left of view document — two fat triangles (20px, accent outline, hover fill) step through the on-screen showable run (search and folds applied, folders and unshowable kinds skipped, a duplicate's two spots counting twice), wrapping at both ends; quiet when only one showable file
+    - [x] retreat/advance the content to the previous/next viewable file
+    - [x] also left and right arrow keys — but a key on a focused player/input/page is left alone
+    - [x] holding a triangle down auto-repeats (one step, a pause, then a steady patter until let go)
+- [x] in the DB selector (shared/local), ignore hover on the selected DB — the chosen storage no longer lights or shows a clickable cursor; unbuilt and current both skip the hover
+- [x] port hierarchy from ws to ji ([spec](hierarchy%20spec.md))
+    - [x] the tree owns the records; the store shrank to load/save/blobs (two-step: wrap, then own)
+    - [x] reach the active tree via `w_hierarchy` (screen) and `h` (code)
+    - [x] find-or-create everywhere (meanings, links, tags, tag-on-document)
+    - [x] store-wide dedup by name; instant name + id lookups (no linear scans)
+    - [x] open and close a folder, remembered — a fat triangle (15px) leads any row with something nested (a folder over its files, or a duplicate's original over the copy), down when open, right when shut; shutting one drops its nested rows from the table; one saved list of shut ids, kept across reloads
 - [x] records as Persistables ([plan](persistables.md), paused) — records become classes extending Persistable extending Identifiable; brings back rehydration on load
 - [x] predicate isDuplicateOf — keep-both makes one "is-duplicate-of" link (parent the original, child the copy); two-way meaning, stored once; meaning reused
 - [x] tooltips appear instantly — the browser's own hover text waits a second and can't be hurried, so a shared ToolTip is drawn ourselves; the drop box's family words use it (clipped file names keep the plain browser title)

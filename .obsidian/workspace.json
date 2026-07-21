@@ -49,8 +49,7 @@
               "title": "handoff"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -185,13 +184,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/handoff.md",
+                "file": "ji/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -223,8 +222,12 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "3e1ddbde653729de",
+  "active": "03b8fd6e0c6714dc",
   "lastOpenFiles": [
+    "ji/src/lib/svelte/actions/View_Document.svelte.tmp.71617.0923bd7f2732",
+    "ji/notes/work/code debt.md.tmp.71617.6c8feadad110",
+    "ji/notes/work/code debt.md.tmp.71617.796d9fabce14",
+    "ji/notes/work/handoff.md",
     "ji/notes/work/hierarchy spec.md",
     "ji/notes/work/code debt.md",
     "ji/notes/work/handoff.md.tmp.71617.e0a45af2dcb2",
@@ -236,9 +239,6 @@
     "ji/src/lib/ts/managers/Hierarchy.ts",
     "ji/src/lib/ts/tests/DB.test.ts.tmp.36118.b484dc558883",
     "ji/notes/work/hierarchy spec.md.tmp.36118.2d4ac3907c6d",
-    "ji/notes/work/handoff.md",
-    "ji/notes/work/code debt.md.tmp.34850.c62e5bebbf95",
-    "ji/src/lib/svelte/actions/ToolTip.svelte",
     "notes/guides/pre-flight/banned words.md",
     "ji/notes/work/work journal.md",
     "ji/notes/work/db handoff.md",
