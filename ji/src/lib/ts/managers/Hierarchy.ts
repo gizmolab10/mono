@@ -2,10 +2,15 @@ import { Document, S_Document, T_DocumentExtension, T_DocumentFamily, READY_KIND
 import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records';
 import type { DB_Common } from '../database/DB_Common';
 import { T_Record } from '../types/DB_Records';
-import { Persistable } from '../types/Persistable';
+import { Persistence } from '../types/Persistence';
 import { db_changed } from '../types/Signal';
 import { debug } from '../common/Debug';
 import { Indexes } from '../database/Indexes';
+
+// Any stored record. They all carry a unique id, and ids never collide across the
+// kinds, so one id lookup can hold every record and each id resolves to the one
+// kind its reference expects.
+export type DB_Record = Document | Tag | Tagging | Relationship | Predicate;
 
 // A document paired with the ids of the tags on it — what a listing returns.
 export interface Listed_Document {
@@ -29,8 +34,14 @@ export class Hierarchy {
 	relationships: Relationship[] = [];
 	predicates:    Predicate[]    = [];
 
-	persistable = new Persistable();
+	persistence = new Persistence();
 	indexes     = new Indexes();
+
+	// Two instant lookups: a document by its name, and any record by its id. Both are
+	// one-to-one — names are unique across the store, ids across every kind. Rebuilt
+	// on load and on delete; a newly made record adds itself.
+	private documents_byName = new Map<string, Document>();
+	private records_byID     = new Map<string, DB_Record>();
 
 	constructor(private db: DB_Common) {}
 
@@ -43,14 +54,26 @@ export class Hierarchy {
 		this.taggings      = this.db.load_list<Tagging>(T_Record.taggings);
 		this.relationships = this.db.load_list<Relationship>(T_Record.relationships);
 		this.predicates    = this.db.load_list<Predicate>(T_Record.predicates);
-		this.persistable.clear_all();
+		this.persistence.clear_all();
+		this.rebuild_lookups();
 		this.reindex();
+	}
+
+	// Rebuild both lookups from the current records. Cheap and only on load or a
+	// delete; the hot paths (a drop's name check, the viewer's id fetch) never
+	// rebuild — they read. The id lookup holds every record kind.
+	private rebuild_lookups(): void {
+		this.documents_byName = new Map(this.documents.map((d) => [d.name ?? '', d]));
+		this.records_byID     = new Map();
+		for (const record of [...this.documents, ...this.tags, ...this.taggings, ...this.relationships, ...this.predicates]) {
+			this.records_byID.set(record.id, record);
+		}
 	}
 
 	// Save one record kind's whole list and mark it clean.
 	persist(record: T_Record): void {
 		this.db.save_list(record, this.list_forRecord(record));
-		this.persistable.clear(record);
+		this.persistence.clear(record);
 		db_changed();
 	}
 
@@ -81,7 +104,9 @@ export class Hierarchy {
 	// The shared finish: add it to the list and save.
 	private register_document(document: Document): Document {
 		this.documents.push(document);
-		this.persistable.mark_dirty(T_Record.documents, document.id);
+		this.documents_byName.set(document.name ?? '', document);
+		this.records_byID.set(document.id, document);
+		this.persistence.mark_dirty(T_Record.documents, document.id);
 		this.persist(T_Record.documents);
 		debug.log(`the document list is now ${this.documents.length} long.`);
 		return document;
@@ -127,7 +152,7 @@ export class Hierarchy {
 		document.status             = READY_KINDS.has(extension) ? S_Document.ready : S_Document.needsText;
 		document.blob_id            = document.id;
 		await this.db.write_blob(document.id, content);
-		this.persistable.mark_dirty(T_Record.documents, document.id);
+		this.persistence.mark_dirty(T_Record.documents, document.id);
 		this.persist(T_Record.documents);
 		debug.log(`Replaced the contents of "${document.name}" — was ${was_size ?? 'unknown'} bytes, now ${document.size ?? 'unknown'}; its tags and its folder are untouched.`);
 		return document;
@@ -151,7 +176,9 @@ export class Hierarchy {
 		this.taggings      = [];
 		this.relationships = [];
 		this.predicates    = [];
-		this.persistable.clear_all();
+		this.documents_byName.clear();
+		this.records_byID.clear();
+		this.persistence.clear_all();
 		for (const record of Object.values(T_Record)) { this.persist(record); }
 		this.reindex();
 		debug.log(`Erased the ${this.db.storage} store: removed ${had} document(s) and every tag and link; byte-database cleared.`);
@@ -162,7 +189,6 @@ export class Hierarchy {
 	// Walk the document graph from each root down, gathering each document with
 	// its tags. A visited set makes the walk acyclic (never loop back).
 	list_documents(): Listed_Document[] {
-		const by_id = new Map(this.documents.map((d) => [d.id, d]));
 		const document_ids = this.documents.map((d) => d.id);
 		const roots = this.indexes.roots_among(document_ids);
 		const visited = new Set<string>();
@@ -171,7 +197,7 @@ export class Hierarchy {
 		const walk = (id: string, depth: number, ancestors: string[]): void => {
 			if (visited.has(id)) { return; }
 			visited.add(id);
-			const document = by_id.get(id);
+			const document = this.document_byID(id);
 			if (document) { ordered.push({ document, tag_ids: this.indexes.tags_of(id), depth, ancestor_ids: ancestors }); }
 			for (const edge of this.indexes.children_of(id)) { walk(edge.child_id, depth + 1, [...ancestors, id]); }
 		};
@@ -194,10 +220,17 @@ export class Hierarchy {
 
 	// The document with this name anywhere in the store — the place it sits does not
 	// matter. This is what decides whether a dropped file is one we already hold: a
-	// document is unique by its name across the whole store.
+	// document is unique by its name across the whole store. A map lookup, so a big
+	// folder drop stays fast no matter how many documents are already held.
 	document_byName(name: string): Document | null {
-		return this.documents.find((d) => d.name === name) ?? null;
+		return this.documents_byName.get(name) ?? null;
 	}
+
+	// A record by its id. A document id resolves to a Document, a tag id to a Tag,
+	// and so on — the reference's own kind is what it holds, so a typed getter casts
+	// to that one kind and the caller never meets the union. (Only the document
+	// getter is needed today; a tag / relationship one is a one-liner when it is.)
+	document_byID(id: string): Document | null { return (this.records_byID.get(id) as Document) ?? null; }
 
 	// The document with this name sitting in one particular place — inside the named
 	// folder, or at the top level when no folder is given. Used to tell whether a
@@ -214,6 +247,7 @@ export class Hierarchy {
 	add_predicate(type: string): Predicate {
 		const predicate: Predicate = { id: crypto.randomUUID(), type };
 		this.predicates.push(predicate);
+		this.records_byID.set(predicate.id, predicate);
 		this.persist(T_Record.predicates);
 		return predicate;
 	}
@@ -236,6 +270,7 @@ export class Hierarchy {
 		const siblings = this.indexes.children_of(parent_id).length;
 		const relationship: Relationship = { id: crypto.randomUUID(), predicate_id, parent_id, child_id, isDocument: true, sort_order: siblings };
 		this.relationships.push(relationship);
+		this.records_byID.set(relationship.id, relationship);
 		this.persist(T_Record.relationships);
 		this.reindex();
 		return relationship;
@@ -249,6 +284,7 @@ export class Hierarchy {
 		if (found) { return found; }
 		const tag: Tag = { id: crypto.randomUUID(), name };
 		this.tags.push(tag);
+		this.records_byID.set(tag.id, tag);
 		this.persist(T_Record.tags);
 		return tag;
 	}
@@ -261,6 +297,7 @@ export class Hierarchy {
 		if (found) { return found; }
 		const tagging: Tagging = { id: crypto.randomUUID(), tag_id, document_id };
 		this.taggings.push(tagging);
+		this.records_byID.set(tagging.id, tagging);
 		this.persist(T_Record.taggings);
 		this.reindex();
 		return tagging;
@@ -270,6 +307,7 @@ export class Hierarchy {
 	remove_tagging(tag_id: string, document_id: string): void {
 		const before = this.taggings.length;
 		this.taggings = this.taggings.filter((t) => !(t.tag_id === tag_id && t.document_id === document_id));
+		this.rebuild_lookups();
 		this.persist(T_Record.taggings);
 		this.reindex();
 		debug.log(`Removed tag ${tag_id} from document ${document_id}; tagging links went from ${before} to ${this.taggings.length}.`);
@@ -283,6 +321,7 @@ export class Hierarchy {
 		this.relationships = this.relationships.filter((r) => r.parent_id !== document_id && r.child_id !== document_id);
 		this.documents     = this.documents.filter((d) => d.id !== document_id);
 		await this.db.delete_blob(document_id);
+		this.rebuild_lookups();
 		this.persist(T_Record.taggings);
 		this.persist(T_Record.relationships);
 		this.persist(T_Record.documents);
@@ -305,6 +344,7 @@ export class Hierarchy {
 		this.relationships = this.relationships.filter((r) => !doomed.has(r.parent_id) && !doomed.has(r.child_id));
 		this.documents     = this.documents.filter((d) => !doomed.has(d.id));
 		for (const id of doomed) { await this.db.delete_blob(id); }
+		this.rebuild_lookups();
 		this.persist(T_Record.taggings);
 		this.persist(T_Record.relationships);
 		this.persist(T_Record.documents);
@@ -317,6 +357,7 @@ export class Hierarchy {
 		this.taggings      = this.taggings.filter((t) => t.tag_id !== tag_id);
 		this.relationships = this.relationships.filter((r) => r.parent_id !== tag_id && r.child_id !== tag_id);
 		this.tags          = this.tags.filter((t) => t.id !== tag_id);
+		this.rebuild_lookups();
 		this.persist(T_Record.taggings);
 		this.persist(T_Record.relationships);
 		this.persist(T_Record.tags);

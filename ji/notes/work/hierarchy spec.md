@@ -86,7 +86,7 @@ Because a document is unique by name across the whole store, a drop whose name i
 - **Same name, a different date** — only a person can answer, so the processing pauses and presents a dialog line. The file is mentioned along with a checkbox for each pair of size and date. one or both checkboxes can be checked. An additional checkbox is presented "Always do this", which if checked no longer pauses for subsequent dedups. The OK button is disabled until one of the checkboxes is checked. Nothing is saved or removed until OK is clicked. OK dismisses the dialog and resumes the process.
     - **keep the one already here** — the dropped one is thrown away.
     - **keep the new one** — its words, size, date, and bytes are poured into the row that's already there, so that row's tags and folder survive; no second row appears.
-    - **keep both** — the dropped one joins under a numbered name ("notes.txt (2)").
+    - **keep both** — the dropped one joins under a numbered name ("notes.txt (2)"), and **one** "is-duplicate-of" link is made between the two: parent the original, child the new copy. The meaning is two-way (either is a duplicate of the other), but it is stored as a single link, not one in each direction. The meaning itself is made once and reused; the link between a given pair is made once.
 
 ### Folders
 

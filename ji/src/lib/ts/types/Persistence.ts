@@ -6,7 +6,7 @@ import { T_Record } from './DB_Records';
 // The last-modified date lives on the Document record itself, so it survives a
 // reload — this object holds only the throwaway dirty state.
 
-export class Persistable {
+export class Persistence {
 	private dirty_ids: Map<T_Record, Set<string>> = new Map();
 
 	// Mark one record of a kind as needing a save.

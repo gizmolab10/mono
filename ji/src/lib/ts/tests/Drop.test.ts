@@ -162,6 +162,24 @@ describe('dropping files', () => {
 		expect(names()).toEqual(['notes.txt', 'notes.txt (2)', 'notes.txt (3)']);
 	});
 
+	it('keeping both records one "is a duplicate of" link — original the parent, meaning reused', async () => {
+		await save_drop(drop_of(file_entry('notes.txt', 'first', 1000)), new Set());
+		const original = h.document_byName('notes.txt')!;
+		const reply = answers(T_Keep.both);
+		await save_drop(drop_of(file_entry('notes.txt', 'second', 2000)), new Set());
+		await save_drop(drop_of(file_entry('notes.txt', 'third', 3000)), new Set());
+		reply.stop();
+
+		const dup = h.predicate_for('is-duplicate-of');
+		const copy2 = h.document_byName('notes.txt (2)')!;
+		const copy3 = h.document_byName('notes.txt (3)')!;
+		const links = h.relationships.filter((r) => r.predicate_id === dup.id);
+		expect(links).toHaveLength(2);                                   // one per kept-both, no reverse rows
+		expect(h.predicates.filter((p) => p.type === 'is-duplicate-of')).toHaveLength(1);   // meaning reused
+		for (const link of links) { expect(link.parent_id).toBe(original.id); }             // original is the parent
+		expect(links.map((r) => r.child_id).sort()).toEqual([copy2.id, copy3.id].sort());
+	});
+
 	it('"do the same for the rest" answers the rest of that drop without asking again', async () => {
 		await save_drop(drop_of(
 			file_entry('a.txt', 'A', 1000),

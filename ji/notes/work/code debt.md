@@ -4,11 +4,20 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] port hierarchy from ws to ji
+- [ ] port hierarchy from ws to ji ([spec](hierarchy%20spec.md))
+    - [x] the tree owns the records; the store shrank to load/save/blobs (two-step: wrap, then own)
+    - [x] reach the active tree via `w_hierarchy` (screen) and `h` (code)
+    - [x] find-or-create everywhere (meanings, links, tags, tag-on-document)
+    - [x] store-wide dedup by name; instant name + id lookups (no linear scans)
+    - [ ] open and close a folder, remembered
+    - [ ] show tags as a tree (single-parent first)
+    - [ ] tag ancestries — multi-parent tags
+- [ ] records as Persistables ([plan](persistables.md), paused) — records become classes extending Persistable extending Identifiable; brings back rehydration on load
+- [x] predicate isDuplicateOf — keep-both makes one "is-duplicate-of" link (parent the original, child the copy); two-way meaning, stored once; meaning reused
 - [ ] documents table
     - [ ] remember scroll position
     - [ ] during scroll, stick the immediate parent folder rows at the top
-    - [ ] add a download unichar to the far right unichar buttons
+    - [ ] add a "download" unichar to the far right unichar buttons
 - [ ] left/right fat triangles at top-far-left of view document
     - [ ] retreat/advance the content to the previous/next viewable file
     - [ ] also left and right arrow keys

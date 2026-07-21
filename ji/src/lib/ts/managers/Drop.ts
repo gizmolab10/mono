@@ -113,12 +113,15 @@ async function save_file(file: File, parent_id: string | null, contains: () => s
 		drop_captured();
 		return;
 	}
-	// both — the dropped one joins under a numbered name
+	// both — the dropped one joins under a numbered name, and a single "is a
+	// duplicate of" link records the pair (the original is the parent, the new
+	// copy the child). The meaning is two-way, but stored once.
 	const name = free_name(file.name);
 	const doc = await h.add_document(name, kind, content, from_file);
 	for (const tag_id of chosen) { h.add_tagging(tag_id, doc.id); }
 	if (parent_id) { h.add_document_relationship(contains(), parent_id, doc.id); }
-	debug.log(`Kept both copies of "${file.name}" — the dropped one is now called "${name}".`);
+	h.add_document_relationship(h.predicate_for('is-duplicate-of').id, held.id, doc.id);
+	debug.log(`Kept both copies of "${file.name}" — the dropped one is now called "${name}", linked as a duplicate of the one already held.`);
 	drop_captured();
 }
 

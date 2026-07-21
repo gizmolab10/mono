@@ -12,7 +12,7 @@
 	// "can't show" branch is a guard, not the usual path.
 	let { document_id, onclose }: { document_id: string; onclose: () => void } = $props();
 
-	const doc  = $derived($w_hierarchy.documents.find((d) => d.id === document_id) ?? null);
+	const doc  = $derived($w_hierarchy.document_byID(document_id));
 	const mode = $derived(doc ? Document.view_mode(doc.extension) : null);
 
 	// When a document can't be shown, say which kind it is — so "can't show" is never a mystery.
