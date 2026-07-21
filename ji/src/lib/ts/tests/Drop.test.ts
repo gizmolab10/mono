@@ -159,7 +159,7 @@ describe('dropping files', () => {
 		await save_drop(drop_of(file_entry('notes.txt', 'third', 3000)), new Set());
 		reply.stop();
 
-		expect(names()).toEqual(['notes.txt', 'notes.txt (2)', 'notes.txt (3)']);
+		expect(names()).toEqual(['notes.txt', 'notes (2).txt', 'notes (3).txt']);
 	});
 
 	it('keeping both records one "is a duplicate of" link — original the parent, meaning reused', async () => {
@@ -171,8 +171,8 @@ describe('dropping files', () => {
 		reply.stop();
 
 		const dup = h.predicate_for('is-duplicate-of');
-		const copy2 = h.document_byName('notes.txt (2)')!;
-		const copy3 = h.document_byName('notes.txt (3)')!;
+		const copy2 = h.document_byName('notes (2).txt')!;
+		const copy3 = h.document_byName('notes (3).txt')!;
 		const links = h.relationships.filter((r) => r.predicate_id === dup.id);
 		expect(links).toHaveLength(2);                                   // one per kept-both, no reverse rows
 		expect(h.predicates.filter((p) => p.type === 'is-duplicate-of')).toHaveLength(1);   // meaning reused

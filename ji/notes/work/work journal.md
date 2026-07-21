@@ -7,6 +7,12 @@ Reverse chronological log of finished work on ji (the Jeff intersection project)
 - **Our own hover hint, because the browser's waits a second.** The browser's built-in hover text pauses about a second before it shows, and that pause can't be shortened — it belongs to the browser. So a small shared hint is drawn ourselves: any element hands it the thing being pointed at and the words to show, and it appears the instant the cursor arrives, sitting just below, running as wide as it needs, pulling back only off the window's right edge.
 - **Only the drop box's family words use it so far.** Their endings now show at once instead of after a wait; their old browser hover text is gone. The clipped file names in the table keep their plain browser hint for now.
 
+## 2026-07-21 — a thing shows under every parent it links to
+
+- **The table lists a thing once per parent.** The walk used to show a thing only the first place it was reached and skip it everywhere after. Now it lists a thing under each parent that leads to it, so a kept-both new item shows in both places at once — under its folder and under its original. The kept-both name also tucks the number in before the ending now ("notes (2).txt"), matching the spec.
+- **The second appearance reads lighter.** Both appearances are one record — edit or trash either and the one thing changes — but the later one dims and wears a small turn-in mark, an "also here" that defers to the home. The home is the appearance reached through a folder link; the duplicate place is the echo.
+- **A real loop still can't hang the walk.** The old guard was "seen anywhere", which is exactly what hid the second place. The new guard is narrower — "already above me on the branch I'm walking now" — so a thing can show in two branches but a folder that somehow sits inside its own branch stops the walk instead of spinning. A driven check builds a loop below a root and proves it terminates.
+
 ## 2026-07-21 — the hierarchy port: records, uniqueness, fast lookups
 
 Foundational half of the ws hierarchy port — the data layer, not yet the visible tree behaviors (open/close, tag tree, ancestries are still ahead).

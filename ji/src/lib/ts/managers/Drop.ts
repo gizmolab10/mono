@@ -35,12 +35,17 @@ async function count_entry(entry: FileSystemEntry): Promise<number> {
 
 // --- pass two: saving ------------------------------------------------------
 
-// A name that isn't taken in this place yet: "notes.txt", then "notes.txt (2)",
-// "notes.txt (3)", and so on. Used when a person chooses to keep both.
+// A name that isn't taken yet, with the number tucked in before the ending so
+// the ending stays put: "notes.txt", then "notes (2).txt", "notes (3).txt". A
+// name without an ending (a folder) just gets the number at the end: "trip (2)".
 function free_name(name: string): string {
+	const dot = name.lastIndexOf('.');
+	const has_ending = dot > 0;                                // a leading dot is a hidden name, not an ending
+	const base = has_ending ? name.slice(0, dot) : name;
+	const ending = has_ending ? name.slice(dot) : '';
 	let n = 2;
-	while (h.document_byName(`${name} (${n})`) !== null) { n = n + 1; }
-	return `${name} (${n})`;
+	while (h.document_byName(`${base} (${n})${ending}`) !== null) { n = n + 1; }
+	return `${base} (${n})${ending}`;
 }
 
 // Save one file as a document, tag it, and — inside a dropped folder — link it

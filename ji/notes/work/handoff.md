@@ -6,16 +6,16 @@ Finished work moves to [work journal](work%20journal.md); what's left is in [cod
 
 ## Proposal — next: open and close a folder
 
-The hierarchy's foundation is in — the tree owns the records, find-or-create is the rule, dedup is store-wide, and the name and id lookups are instant (see the [work journal](work%20journal.md) and [hierarchy spec](hierarchy%20spec.md) §6). What's left is the visible tree, smallest-first, and the first piece is **open and close a folder**.
+Done just now (see the [work journal](work%20journal.md)): the table lists a thing under every parent it links to, so a kept-both new item shows both under its folder and under its original, the echo reading lighter — code debt line 16. Next is the first of the remaining visible-tree pieces: **open and close a folder**.
 
-A folder row gets a triangle; closed, its whole subtree drops out of the walk. It needs one saved set of "closed ids" — the id of the link that leads into each closed place — and the walk skips a closed folder's children. No ancestry yet: a document has one parent, so a folder is simply open or closed. The closed set survives a reload, the way the details region's open sections already do.
+A folder row gets a triangle; closed, its whole subtree drops out of the walk. It needs one saved set of "closed ids" — the id of the link that leads into each closed place — and the walk skips a closed folder's children. No ancestry yet: a document has one folder home, so a folder is simply open or closed. The closed set survives a reload, the way the details region's open sections already do.
 
 Two things to settle:
 
 - **The triangle's spot and look** — leading each folder row, pointing down when open, right when closed; drawn or a plain glyph?
 - **Where the closed set is saved** — a single stored list of ids (matches the spec: one set covers both trees later). Confirm it rides in preferences like the other saved flags.
 
-After this: show tags as a tree, then tag ancestries (the multi-parent case) — the two remaining spec pieces. The [records-as-Persistables plan](persistables.md) stays paused; it's independent of the visible tree.
+After this: show tags as a tree, then tag ancestries (the multi-parent case) — the two remaining [hierarchy spec](hierarchy%20spec.md) pieces. The [records-as-Persistables plan](persistables.md) stays paused; it's independent of the visible tree.
 
 ## Method that holds
 

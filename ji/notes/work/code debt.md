@@ -12,9 +12,8 @@ write a proposal for the first unchecked item to the top of handoff.
     - [ ] open and close a folder, remembered
     - [ ] show tags as a tree (single-parent first)
     - [ ] tag ancestries — multi-parent tags
-- [ ] records as Persistables ([plan](persistables.md), paused) — records become classes extending Persistable extending Identifiable; brings back rehydration on load
-- [x] predicate isDuplicateOf — keep-both makes one "is-duplicate-of" link (parent the original, child the copy); two-way meaning, stored once; meaning reused
 - [ ] documents table
+    - [x] show all relationships (including multiple parents) — a thing shows once per parent (a duplicate under its folder and under its original); the later appearance reads lighter as an "also here"; the walk stops a real loop
     - [ ] remember scroll position
     - [ ] during scroll, stick the immediate parent folder rows at the top
     - [ ] add a "download" unichar to the far right unichar buttons
@@ -38,6 +37,8 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] records as Persistables ([plan](persistables.md), paused) — records become classes extending Persistable extending Identifiable; brings back rehydration on load
+- [x] predicate isDuplicateOf — keep-both makes one "is-duplicate-of" link (parent the original, child the copy); two-way meaning, stored once; meaning reused
 - [x] tooltips appear instantly — the browser's own hover text waits a second and can't be hurried, so a shared ToolTip is drawn ourselves; the drop box's family words use it (clipped file names keep the plain browser title)
 - [x] a drop on the table opens the add-documents view first, so the count and any question report in the drop box (where there's room) — the table header never changes during a drop
 - [x] the drop box's edge is drawn, not bordered — 4 on, 2 off, going solid while a drag is over it (a plain dashed border leaves the dash length to the browser; the old border had no line style set at all, so nothing was drawn)

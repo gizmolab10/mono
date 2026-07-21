@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ji/notes/work/hierarchy spec.md",
+                "file": "ji/notes/work/code debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "hierarchy spec"
+              "title": "code debt"
             }
           },
           {
@@ -49,7 +49,8 @@
               "title": "handoff"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -222,14 +223,15 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "03b8fd6e0c6714dc",
+  "active": "8f98213a7fd028b3",
   "lastOpenFiles": [
     "ji/notes/work/code debt.md",
+    "ji/notes/work/handoff.md.tmp.71617.e0a45af2dcb2",
+    "ji/notes/work/hierarchy spec.md",
     "ji/src/lib/ts/types/Persistence.ts",
     "ji/notes/work/persistables.md",
     "ji/src/lib/ts/managers/Hierarchy.ts.tmp.71617.ca836ae70a26",
     "ji/src/lib/ts/tests/Drop.test.ts.tmp.71617.db0034ae0a54",
-    "ji/notes/work/hierarchy spec.md",
     "ji/src/lib/ts/managers/Drop.ts.tmp.36118.fad8124afead",
     "ji/src/lib/ts/managers/Hierarchy.ts",
     "ji/src/lib/ts/tests/DB.test.ts.tmp.36118.b484dc558883",
@@ -237,7 +239,6 @@
     "ji/notes/work/handoff.md",
     "ji/notes/work/code debt.md.tmp.34850.c62e5bebbf95",
     "ji/src/lib/svelte/actions/ToolTip.svelte",
-    "ji/src/lib/ts/tests/Mock_Storage.ts",
     "notes/guides/pre-flight/banned words.md",
     "ji/notes/work/work journal.md",
     "ji/notes/work/db handoff.md",

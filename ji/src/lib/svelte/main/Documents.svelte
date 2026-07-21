@@ -48,6 +48,7 @@
 				family,
 				depth        : listed.depth,
 				ancestor_ids : listed.ancestor_ids,
+				is_echo      : listed.is_echo,
 				tag_ids,
 				tag_names    : tag_ids.map((id) => name_of.get(id) ?? '?').join(', '),
 			};
@@ -224,14 +225,14 @@
 				<tbody>
 					{#each shown as row}
 						<!-- svelte-ignore a11y_mouse_events_have_key_events -->
-						<tr class='file' class:hovered={hovered_row === row.id}
+						<tr class='file' class:hovered={hovered_row === row.id} class:echo={row.is_echo}
 							onmouseenter={() => { if (Document.view_mode(row.extension) !== null) { hovered_row = row.id; } }}
 							onmouseleave={() => { if (hovered_row === row.id) { hovered_row = null; } }}>
 							<td class='extension'><span>{row.family === T_DocumentFamily.folder ? '---' : (row.extension ?? '')}</span></td>
 							<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 							<td class='name' class:viewable={Document.view_mode(row.extension) !== null}
 								style:padding-left='{row.depth * 20}px'
-								onclick={(e) => { if (Document.view_mode(row.extension) !== null) { e.stopPropagation(); open_view(row.id); } }}><span class='name-text'>{row.display_name}</span></td>
+								onclick={(e) => { if (Document.view_mode(row.extension) !== null) { e.stopPropagation(); open_view(row.id); } }}><span class='name-text'>{#if row.is_echo}<span class='echo-mark' title='also here — the same file, shown under another parent'>↳ </span>{/if}{row.display_name}</span></td>
 							<td class='tag-actions'>
 								<div class='tag-actions-row'>
 									{#if editing === row.id}
@@ -474,6 +475,17 @@
 
 	.name.viewable {
 		cursor : pointer;
+	}
+
+	/* A second appearance of the same file (its "also here" echo under another
+	   parent) reads lighter, so the home row is clearly the solid one. */
+	.blobs-table .file.echo td {
+		opacity : var(--opacity-label);
+	}
+
+	/* The little turn-in mark before an echo's name. */
+	.echo-mark {
+		opacity : var(--opacity-label);
 	}
 
 	/* Hovering any row lights the whole row as a row-sized pill — every row has

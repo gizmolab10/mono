@@ -13,11 +13,14 @@ import { Indexes } from '../database/Indexes';
 export type DB_Record = Document | Tag | Tagging | Relationship | Predicate;
 
 // A document paired with the ids of the tags on it — what a listing returns.
+// A thing linked to more than one parent is listed once per parent, so the same
+// document can come back more than once, each time with its own depth and chain.
 export interface Listed_Document {
 	document     : Document;
 	tag_ids      : string[];
 	depth        : number;      // how many folders deep it sits (a root is 0)
 	ancestor_ids : string[];    // the folder chain above it, root-first
+	is_echo      : boolean;     // a second-or-later home — reads lighter, an "also here"
 }
 
 // The store's records and the living tree over them. It owns the in-memory record
@@ -187,23 +190,51 @@ export class Hierarchy {
 	// --- the three reads -----------------------------------------------------
 
 	// Walk the document graph from each root down, gathering each document with
-	// its tags. A visited set makes the walk acyclic (never loop back).
+	// its tags. A thing linked to more than one parent is listed once under EACH
+	// parent — so a kept-both new item shows both under its folder and under its
+	// original. The only thing the walk must never do is follow a thing back into
+	// itself, so the guard is "already on the chain I'm walking now" (a real loop),
+	// not "seen anywhere" (which would hide the second home). When a thing appears
+	// more than once, one appearance is its home and the rest read as echoes: the
+	// home is the one reached through a "contains" link (its folder), so the folder
+	// place is solid and the duplicate place is the lighter "also here".
 	list_documents(): Listed_Document[] {
+		const contains_id = this.predicates.find((p) => p.type === 'contains')?.id ?? null;
 		const document_ids = this.documents.map((d) => d.id);
 		const roots = this.indexes.roots_among(document_ids);
-		const visited = new Set<string>();
-		const ordered: Listed_Document[] = [];
+		const ordered: Array<Listed_Document & { via_contains: boolean }> = [];
 
-		const walk = (id: string, depth: number, ancestors: string[]): void => {
-			if (visited.has(id)) { return; }
-			visited.add(id);
+		const walk = (id: string, depth: number, ancestors: string[], via_contains: boolean): void => {
+			if (ancestors.includes(id)) {
+				const document = this.document_byID(id);
+				debug.log(`Tree walk: "${document?.name ?? id}" already sits above itself on this branch (depth ${depth}) — a loop, so not following it deeper.`);
+				return;
+			}
 			const document = this.document_byID(id);
-			if (document) { ordered.push({ document, tag_ids: this.indexes.tags_of(id), depth, ancestor_ids: ancestors }); }
-			for (const edge of this.indexes.children_of(id)) { walk(edge.child_id, depth + 1, [...ancestors, id]); }
+			if (document) { ordered.push({ document, tag_ids: this.indexes.tags_of(id), depth, ancestor_ids: ancestors, is_echo: false, via_contains }); }
+			for (const edge of this.indexes.children_of(id)) { walk(edge.child_id, depth + 1, [...ancestors, id], edge.predicate_id === contains_id); }
 		};
-		for (const root of roots) { walk(root, 0, []); }
+		for (const root of roots) { walk(root, 0, [], true); }   // a root has no parent link — it is its own home
 
-		return ordered;
+		// Of a thing's several appearances, its home is the one reached through a
+		// folder ("contains") link; failing that, the first one walked. Every other
+		// appearance is an echo.
+		const counts = new Map<string, number>();
+		for (const row of ordered) { counts.set(row.document.id, (counts.get(row.document.id) ?? 0) + 1); }
+		const home_at = new Map<string, number>();
+		ordered.forEach((row, i) => {
+			if ((counts.get(row.document.id) ?? 0) < 2) { return; }        // shown once — no echo, no home to pick
+			const chosen = home_at.get(row.document.id);
+			if (chosen === undefined) { home_at.set(row.document.id, i); return; }
+			if (row.via_contains && !ordered[chosen].via_contains) { home_at.set(row.document.id, i); }
+		});
+
+		return ordered.map((row, i) => {
+			const many = (counts.get(row.document.id) ?? 0) >= 2;
+			const is_echo = many && home_at.get(row.document.id) !== i;
+			if (is_echo) { debug.log(`Tree walk: "${row.document.name}" shown again under a second parent (depth ${row.depth}) — the lighter "also here".`); }
+			return { document: row.document, tag_ids: row.tag_ids, depth: row.depth, ancestor_ids: row.ancestor_ids, is_echo };
+		});
 	}
 
 	// The documents wearing one tag.

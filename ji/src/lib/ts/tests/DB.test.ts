@@ -124,6 +124,40 @@ describe('local document store', () => {
 		expect(listed[2].ancestor_ids).toEqual([top.id, sub.id]);
 	});
 
+	it('lists a thing under every parent — a duplicate shows under its folder and under its original', async () => {
+		const { h } = make();
+		const folder   = h.add_folder('trip');
+		const original = await h.add_document('notes.txt', T_DocumentExtension.txt, 'first');
+		const copy     = await h.add_document('notes (2).txt', T_DocumentExtension.txt, 'second');
+		const contains = h.predicate_for('contains').id;
+		const dup      = h.predicate_for('is-duplicate-of').id;
+		h.add_document_relationship(contains, folder.id, copy.id);     // the new item lives in the folder
+		h.add_document_relationship(dup, original.id, copy.id);        // and echoes under its original
+
+		const listed = h.list_documents();
+		const copy_rows = listed.filter((l) => l.document.id === copy.id);
+		expect(copy_rows).toHaveLength(2);                             // shown twice, once per parent
+		const home = copy_rows.find((l) => l.ancestor_ids.includes(folder.id))!;
+		const echo = copy_rows.find((l) => l.ancestor_ids.includes(original.id))!;
+		expect(home.is_echo).toBe(false);                             // the folder place is the solid home
+		expect(echo.is_echo).toBe(true);                              // the original place is the lighter echo
+		expect(listed.filter((l) => l.document.id === original.id)).toHaveLength(1);   // the original shows once
+	});
+
+	it('a loop below a root does not hang the walk', async () => {
+		const { h } = make();
+		const root = h.add_folder('root');
+		const a    = h.add_folder('a');
+		const b    = h.add_folder('b');
+		const contains = h.predicate_for('contains').id;
+		h.add_document_relationship(contains, root.id, a.id);
+		h.add_document_relationship(contains, a.id, b.id);
+		h.add_document_relationship(contains, b.id, a.id);            // b links back up to a — a loop
+
+		const names = h.list_documents().map((l) => l.document.name);
+		expect(names).toEqual(['root', 'a', 'b']);                   // walked down, then stopped at the loop
+	});
+
 	it('reuses the one "contains" meaning instead of making duplicates', () => {
 		const { h } = make();
 		const first  = h.predicate_for('contains');
