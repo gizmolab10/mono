@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_DocumentExtension, T_DocumentFamily, Document } from '../../ts/types/Document';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { databases } from '../../ts/database/Databases';
+	import { databases, w_hierarchy } from '../../ts/database/Databases';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 
@@ -12,7 +12,7 @@
 	// "can't show" branch is a guard, not the usual path.
 	let { document_id, onclose }: { document_id: string; onclose: () => void } = $props();
 
-	const doc  = $derived(databases.active.documents.find((d) => d.id === document_id) ?? null);
+	const doc  = $derived($w_hierarchy.documents.find((d) => d.id === document_id) ?? null);
 	const mode = $derived(doc ? Document.view_mode(doc.extension) : null);
 
 	// When a document can't be shown, say which kind it is — so "can't show" is never a mystery.
@@ -21,7 +21,9 @@
 	});
 
 	// Read the bytes for the shown document, and re-read when the document changes.
-	let content = $state<string | null>(null);
+	// A words document comes back as text; every other kind comes back as its raw
+	// bytes, which are never copied into memory here.
+	let content = $state<string | Blob | null>(null);
 	let loaded  = $state(false);
 	$effect(() => {
 		const id = document_id;
@@ -30,15 +32,36 @@
 		databases.active.read_blob(id).then((bytes) => {
 			content = bytes;
 			loaded  = true;
-			debug.log(`Viewer: read ${bytes?.length ?? 0} character(s) for document ${id}.`);
+			const measure = (bytes == null) ? 'nothing' : (typeof bytes === 'string') ? `${bytes.length} character(s) of text` : `${bytes.size} raw byte(s)`;
+			debug.log(`Viewer: read ${measure} for document ${id}.`);
 		});
 	});
 
-	// An svg is stored as its text; wrap it into a data-URL an image tag can show.
-	// Every other image kind is already stored as a data-URL, so it is used as-is.
+	// The words, when this document is held as words — otherwise nothing to show as text.
+	const as_text = $derived(typeof content === 'string' ? content : null);
+
+	// What a picture, page, or player points at. Raw bytes get a short-lived link,
+	// handed back the moment another document is shown so nothing is left open.
+	// Bytes stored the old way — as one long piece of text — are already a usable
+	// link, so they are pointed at directly.
+	let source = $state('');
+	$effect(() => {
+		const held = content;
+		if (held == null)              { source = ''; return; }
+		if (typeof held === 'string')  { source = held; return; }
+		const link = URL.createObjectURL(held);
+		source = link;
+		debug.log(`Viewer: made a temporary link for ${held.size} raw byte(s), type "${held.type || 'unstated'}".`);
+		return () => URL.revokeObjectURL(link);
+	});
+
+	// An svg is held as its own words; wrap them into a link an image tag can show.
+	// Every other picture already has a link from above.
 	const image_src = $derived.by(() => {
-		if (content == null || doc == null) { return ''; }
-		return doc.extension === T_DocumentExtension.svg ? `data:image/svg+xml,${encodeURIComponent(content)}` : content;
+		if (doc == null) { return ''; }
+		return (doc.extension === T_DocumentExtension.svg && as_text != null)
+			? `data:image/svg+xml,${encodeURIComponent(as_text)}`
+			: source;
 	});
 </script>
 
@@ -58,13 +81,18 @@
 	{:else if mode === T_DocumentFamily.image}
 		<img class='view-image' src={image_src} alt={doc?.name} />
 	{:else if mode === T_DocumentFamily.pdf}
-		<iframe class='view-frame' src={content} title={doc?.name}></iframe>
+		<iframe class='view-frame' src={source} title={doc?.name}></iframe>
 	{:else if mode === T_DocumentFamily.html}
 		<!-- Sandboxed and script-free, so the file's own markup and scripts can't
 		     reach the app; it just renders as a page. -->
-		<iframe class='view-frame' sandbox='' srcdoc={content} title={doc?.name}></iframe>
+		<iframe class='view-frame' sandbox='' srcdoc={as_text ?? ''} title={doc?.name}></iframe>
+	{:else if mode === T_DocumentFamily.video}
+		<!-- svelte-ignore a11y_media_has_caption -->
+		<video class='view-player' src={source} controls></video>
+	{:else if mode === T_DocumentFamily.audio}
+		<audio class='view-player' src={source} controls></audio>
 	{:else if mode === T_DocumentFamily.text}
-		<pre class='view-text'>{content}</pre>
+		<pre class='view-text'>{as_text}</pre>
 	{:else}
 		<div class='view-note'>can't show this type here</div>
 	{/if}
@@ -129,6 +157,15 @@
 		border : none;
 		width  : 100%;
 		flex   : 1;
+	}
+
+	/* A clip fills the space it's given without stretching out of shape; a sound
+	   player is a single strip, so it sits at the top at full width. */
+	.view-player {
+		max-height : 100%;
+		max-width  : 100%;
+		align-self : center;
+		width      : 100%;
 	}
 
 	.view-text {

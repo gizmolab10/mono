@@ -24,6 +24,7 @@ import { get } from 'svelte/store';
 
 export class Colors {
 	gray			  = '#888';
+	lightgray         = '#ccc';
 	banner			  = '#f8f8f8';
 	black			  = '#1a1a1a';				// the one ink black — never #000
 	white			  = '#ffffff';

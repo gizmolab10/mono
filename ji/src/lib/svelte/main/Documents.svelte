@@ -6,7 +6,7 @@
 	import View_Document from '../actions/View_Document.svelte';
 	import Add_Document from '../actions/Add_Document.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { databases } from '../../ts/database/Databases';
+	import { w_hierarchy } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/types/Signal';
 	import Add_Tag from '../actions/Add_Tag.svelte';
 	import { debug } from '../../ts/common/Debug';
@@ -26,12 +26,11 @@
 
 	const rows = $derived.by(() => {
 		$w_db_changed;                                   // re-read on every store change
-		const db = databases.active;
-		const name_of = new Map(db.tags.map((t) => [t.id, t.name]));
+		const name_of = new Map($w_hierarchy.tags.map((t) => [t.id, t.name]));
 		// Walk parent-first, child-next so folders lead their contents; each row
 		// carries how deep it sits (for the indent) and its folder chain above
 		// (so a filtered-in file can keep its parent folders on screen).
-		return db.list_documents().map((listed) => {
+		return $w_hierarchy.list_documents().map((listed) => {
 			const tag_ids = listed.tag_ids;
 			const name      = listed.document.name ?? '';
 			const extension = listed.document.extension ?? null;
@@ -69,7 +68,7 @@
 	// has nothing to offer, so it shows an "add tags" button instead of the picker.
 	const tag_count = $derived.by(() => {
 		$w_db_changed;
-		return databases.active.tags.length;
+		return $w_hierarchy.tags.length;
 	});
 
 	// With no documents to show, open the drop box so the first one can be added.
@@ -102,20 +101,20 @@
 
 	// Trash one document — and, for a folder, everything under it. Asked first.
 	function delete_byID(document_id: string) {
-		databases.active.delete_subtree(document_id);
+		$w_hierarchy.delete_subtree(document_id);
 		confirming = null;
 		if ($w_view_document === document_id) { close_view(); }
 		debug.log(`Trashed document ${document_id} (and anything under it).`);
 	}
 
 	function toggle_tag(document_id: string, tag_id: string, on: boolean) {
-		if (on) { databases.active.add_tagging(tag_id, document_id); }
-		else    { databases.active.remove_tagging(tag_id, document_id); }
+		if (on) { $w_hierarchy.add_tagging(tag_id, document_id); }
+		else    { $w_hierarchy.remove_tagging(tag_id, document_id); }
 	}
 
 	// The tag ids currently on one document — the picker's starting selection.
 	function chosen_for(document_id: string): Set<string> {
-		return new Set(databases.active.indexes.tags_of(document_id));
+		return new Set($w_hierarchy.indexes.tags_of(document_id));
 	}
 
 	// The three table columns, in order: format, name, tags — each label centered
@@ -162,12 +161,16 @@
 		debug.log(`Clicked out of the add view with ${rows.length} document(s) in the store — back to the list.`);
 	}
 
-	// A drop anywhere on the documents view adds it — no tags (the drop box handles
-	// its own, tagged, drops and stops them from reaching here).
+	// A drop anywhere on the documents view opens the add-documents view first, then
+	// saves — no tags (the drop box handles its own, tagged, drops and stops them
+	// from reaching here). Opening the drop box means the count and any question
+	// report there, where there's room for them, rather than on the table.
 	let dragging = $state(false);
 	async function documents_drop(event: DragEvent) {
 		event.preventDefault();
 		dragging = false;
+		debug.log('Dropped on the table — opening the add-documents view so the drop reports there.');
+		w_operation.set(T_Operation.document);
 		await save_drop(event.dataTransfer, new Set());
 	}
 	function documents_dragover(event: DragEvent) {
@@ -226,7 +229,7 @@
 							onmouseleave={() => { if (hovered_row === row.id) { hovered_row = null; } }}>
 							<td class='extension'><span>{row.family === T_DocumentFamily.folder ? '---' : (row.extension ?? '')}</span></td>
 							<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-							<td class='name' class:viewable={Document.view_mode(row.extension) !== null} title={row.name}
+							<td class='name' class:viewable={Document.view_mode(row.extension) !== null}
 								style:padding-left='{row.depth * 20}px'
 								onclick={(e) => { if (Document.view_mode(row.extension) !== null) { e.stopPropagation(); open_view(row.id); } }}><span class='name-text'>{row.display_name}</span></td>
 							<td class='tag-actions'>

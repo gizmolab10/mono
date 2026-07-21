@@ -16,7 +16,7 @@ const BLOB_DB    = 'ji-blobs';
 const BLOB_STORE = 'blobs';
 
 const has_idb = typeof indexedDB !== 'undefined';
-const memory  = new Map<string, string>();   // the node-test stand-in
+const memory  = new Map<string, string | Blob>();   // the node-test stand-in
 
 let open_promise: Promise<IDBDatabase> | null = null;
 
@@ -45,11 +45,11 @@ function run_blob<T>(mode: IDBTransactionMode, body: (store: IDBObjectStore) => 
 export class DB_Local extends DB_Common {
 	readonly storage = T_Storage.private;
 
-	protected load_list<T>(record: T_Record): T[] {
+	load_list<T>(record: T_Record): T[] {
 		return preferences.readDB<T>(this.storage, record);
 	}
 
-	protected save_list<T>(record: T_Record, list: T[]): void {
+	save_list<T>(record: T_Record, list: T[]): void {
 		preferences.writeDB<T>(this.storage, record, list);
 	}
 
@@ -57,19 +57,22 @@ export class DB_Local extends DB_Common {
 		return `${this.storage}/blob/${document_id}`;
 	}
 
-	// Store a document's bytes, overwriting any already there.
-	async write_blob(document_id: string, content: string): Promise<void> {
+	// Store a document's bytes, overwriting any already there. Words arrive as text;
+	// everything else arrives as the file's own raw bytes, which IndexedDB keeps
+	// as-is — no copy is made, so a movie of any size costs nothing to hand over.
+	async write_blob(document_id: string, content: string | Blob): Promise<void> {
 		const key = this.blob_key(document_id);
 		if (!has_idb) { memory.set(key, content); return; }
 		await run_blob<void>('readwrite', (store) => store.put(content, key));
-		debug.log(`Stored bytes for "${key}" (${content.length} character(s)) in IndexedDB.`);
+		const measure = (typeof content === 'string') ? `${content.length} character(s) of text` : `${content.size} raw byte(s)`;
+		debug.log(`Stored bytes for "${key}" (${measure}) in IndexedDB.`);
 	}
 
 	// Read a document's bytes, or null when nothing is stored.
-	async read_blob(document_id: string): Promise<string | null> {
+	async read_blob(document_id: string): Promise<string | Blob | null> {
 		const key = this.blob_key(document_id);
 		if (!has_idb) { return memory.has(key) ? memory.get(key)! : null; }
-		const held = await run_blob<string | undefined>('readonly', (store) => store.get(key));
+		const held = await run_blob<string | Blob | undefined>('readonly', (store) => store.get(key));
 		return held ?? null;
 	}
 

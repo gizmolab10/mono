@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { databases } from '../../ts/database/Databases';
+	import { w_hierarchy } from '../../ts/database/Databases';
 	import type { T_Match } from '../../ts/managers/Search';
 	import { w_db_changed } from '../../ts/types/Signal';
 	import { debug } from '../../ts/common/Debug';
@@ -23,7 +23,7 @@
 	// in place, and a same-reference return would be seen as unchanged (no redraw).
 	const tags = $derived.by(() => {
 		$w_db_changed;
-		return [...databases.active.tags];
+		return [...$w_hierarchy.tags];
 	});
 
 	function toggle(id: string) {

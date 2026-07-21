@@ -8,34 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "4a0b51776fddc3ec",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/guides/pre-flight/banned words.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "banned words"
-            }
-          },
-          {
-            "id": "80f39175f0ae8aca",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "di/notes/guides/pre-flight/banned words.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "banned words"
-            }
-          },
-          {
             "id": "03b8fd6e0c6714dc",
             "type": "leaf",
             "state": {
@@ -47,6 +19,20 @@
               },
               "icon": "lucide-file",
               "title": "code debt"
+            }
+          },
+          {
+            "id": "8f98213a7fd028b3",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ji/notes/work/hierarchy spec.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "hierarchy spec"
             }
           },
           {
@@ -62,37 +48,8 @@
               "icon": "lucide-file",
               "title": "handoff"
             }
-          },
-          {
-            "id": "37585bd5528b548e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ji/notes/work/db handoff.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "db handoff"
-            }
-          },
-          {
-            "id": "f3b779eb38539429",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ji/notes/work/work journal.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "work journal"
-            }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -267,20 +224,21 @@
   },
   "active": "03b8fd6e0c6714dc",
   "lastOpenFiles": [
-    "ji/src/lib/ts/database/DB_Common.ts.tmp.34850.a37443f530ce",
-    "notes/guides/pre-flight/banned words.md.tmp.18207.e3b67e0b6911",
-    "ji/src/lib/svelte/main/Documents.svelte.tmp.18207.e5ee165111b4",
-    "ji/src/lib/ts/database/DB_Common.ts.tmp.18207.20471af6814d",
-    "ji/src/lib/svelte/main/Documents.svelte.tmp.18207.be854b2c0e95",
-    "ji/src/lib/ts/types/Document.ts.tmp.18207.bb838f4bb65d",
-    "ji/src/lib/ts/types/Document.ts.tmp.18207.b46b7870dbdf",
-    "notes/guides/pre-flight/banned words.md",
+    "ji/src/lib/ts/tests/Drop.test.ts.tmp.71617.db0034ae0a54",
+    "ji/notes/work/hierarchy spec.md",
+    "ji/src/lib/ts/managers/Drop.ts.tmp.36118.fad8124afead",
+    "ji/src/lib/ts/managers/Hierarchy.ts",
+    "ji/src/lib/ts/tests/DB.test.ts.tmp.36118.b484dc558883",
+    "ji/notes/work/hierarchy spec.md.tmp.36118.2d4ac3907c6d",
     "ji/notes/work/handoff.md",
     "ji/notes/work/code debt.md",
-    "ji/src/lib/ts/types/Document.ts",
-    "ji/src/lib/ts/types/Persistable copy.ts",
-    "ji/src/lib/svelte/main/Documents.svelte.tmp.18207.a14d54ec583d",
-    "ji/notes/work/code debt.md.tmp.18207.36b71a152618",
+    "ji/notes/work/code debt.md.tmp.34850.c62e5bebbf95",
+    "ji/src/lib/svelte/actions/ToolTip.svelte",
+    "ji/src/lib/ts/tests/Mock_Storage.ts",
+    "ji/src/lib/svelte/actions/Drop_Status.svelte.tmp.34850.61592a09912d",
+    "ji/src/lib/ts/tests/Drop.test.ts",
+    "ji/src/lib/ts/tests/Fake_Storage.ts",
+    "notes/guides/pre-flight/banned words.md",
     "ji/notes/work/work journal.md",
     "ji/notes/work/db handoff.md",
     "di/notes/guides/pre-flight/banned words.md",
@@ -303,7 +261,6 @@
     "ji/notes/work/db/db proposal.md",
     "ji/notes/work/db spec.md",
     "ji/notes/work/db/db spec.md",
-    "ji/notes/work/db proposal.md",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",
     "di/di notes/di work/now/bugs/001 dim is inside silho/screenshot.png",

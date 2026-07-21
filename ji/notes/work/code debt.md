@@ -4,17 +4,23 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] drop files
-    - [ ] show a loading status below the 'dro ...' file types
-- [ ] raise documents view up to top
+- [ ] port hierarchy from ws to ji
+- [ ] documents table
+    - [ ] remember scroll position
+    - [ ] during scroll, stick the immediate parent folder rows at the top
+    - [ ] add a download unichar to the far right unichar buttons
+- [ ] left/right fat triangles at top-far-left of view document
+    - [ ] retreat/advance the content to the previous/next viewable file
+    - [ ] also left and right arrow keys
 - [ ] new tags seg control
     - [ ] if more tags than will fit, use new tags view instead
     - [ ] new tags view. replaces entire documents view. stub for now
+- [ ] in the DB selector (shared/local), ignore hover on the selected DB
 - [ ] add remote support
     - [ ] supabase not firebase
     - [ ] use person's id
     - [ ] authorization
-- [ ] write a new file: stipulations based on current code
+- [ ] write a new file: spec rules based on current code
 - [ ] view rtf document
 - [ ] wendy -- new app for your brother: Intersection
     - [ ] give me weak signals / info from the tails (of a bell curve), not just the clusters
@@ -23,6 +29,20 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] tooltips appear instantly — the browser's own hover text waits a second and can't be hurried, so a shared ToolTip is drawn ourselves; the drop box's family words use it (clipped file names keep the plain browser title)
+- [x] a drop on the table opens the add-documents view first, so the count and any question report in the drop box (where there's room) — the table header never changes during a drop
+- [x] the drop box's edge is drawn, not bordered — 4 on, 2 off, going solid while a drag is over it (a plain dashed border leaves the dash length to the browser; the old border had no line style set at all, so nothing was drawn)
+- [x] the family words light on hover — accent text on a --bg pill, quiet while a drag is over the box
+- [x] no duplicate documents during a drop — a file is known by its name and date, among the documents in the same place; same date replaces the bytes in place, a different date asks; the address field is gone
+- [x] count everything a drop holds first (folders, repeats and skips), then save — a status line stands where the family words stand and says "captured n of x" with a filling ring
+- [x] a dialog line below it: the two-copies question and the too-big refusal (which moved off a browser alert), each waiting on OK
+- [x] thirteen driven checks for the drop — the browser's dropped entries stood in for, questions answered through the same shared state the screen reads
+- [x] add audio and video support (all the popular types)
+- [x] store raw bytes, not one giant piece of text (a 2 GB movie killed the tab)
+- [x] refuse one file over 1 GB, with a clear message
+- [x] list the families, not the extensions
+- [x] different popup for each family listed
+- [x] mark the endings the reading tool won't take as they stand (verified against its own source); each one still has words or speech, so it needs converting, not discarding
 - [x] new design for document types
     - [x] family
         - [x] use in place of view type — the view-mode list was the same four words as four families, so it's gone; asking a document how to show it answers with a family (or nothing)

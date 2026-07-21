@@ -36,18 +36,67 @@ export enum T_DocumentExtension {
 	svg     = 'svg',
 	txt     = 'txt',
 	webp    = 'webp',
+
+	avi     = 'avi',
+	flv     = 'flv',
+	m4v     = 'm4v',
+	mkv     = 'mkv',
+	mov     = 'mov',
+	mp4     = 'mp4',
+	mpg     = 'mpg',
+	ogv     = 'ogv',
+	webm    = 'webm',
+	wmv     = 'wmv',
+
+	aiff    = 'aiff',
+	aac     = 'aac',
+	flac    = 'flac',
+	mp3     = 'mp3',
+	wav     = 'wav',
+	m4a     = 'm4a',
+	ogg     = 'ogg',
+	wma     = 'wma',
 }
 
-// How a document's bytes are stored: these extensions save as their plain text;
-// every other saves as a data-URL (its bytes base64-wrapped). The drop reads this
-// to store the right way; the viewer reads it to interpret what it reads back.
+// Which endings are moving pictures and which are sound. Kept apart from what a
+// browser can play: an avi belongs to the video family even though no browser
+// will show it — it still has speech a transcriber can turn into words.
+export const VIDEO_KINDS: ReadonlySet<T_DocumentExtension> =
+	new Set([
+		T_DocumentExtension.avi,
+		T_DocumentExtension.flv,
+		T_DocumentExtension.mp4,
+		T_DocumentExtension.m4v,
+		T_DocumentExtension.mkv,
+		T_DocumentExtension.mpg,
+		T_DocumentExtension.mov,
+		T_DocumentExtension.ogv,
+		T_DocumentExtension.wmv,
+		T_DocumentExtension.webm,
+]);
+
+export const AUDIO_KINDS: ReadonlySet<T_DocumentExtension> =
+	new Set([
+		T_DocumentExtension.aac,
+		T_DocumentExtension.aiff,
+		T_DocumentExtension.flac,
+		T_DocumentExtension.m4a,
+		T_DocumentExtension.mp3,
+		T_DocumentExtension.ogg,
+		T_DocumentExtension.wav,
+		T_DocumentExtension.wma,
+]);
+
+// How a document's bytes are stored: these extensions save as their plain words;
+// every other saves as the file's own raw bytes, untouched. The drop reads this to
+// store the right way; the viewer reads it to interpret what it reads back.
 export const TEXT_KINDS: ReadonlySet<T_DocumentExtension> =
 	new Set([
-		T_DocumentExtension.txt,
-		T_DocumentExtension.md,
 		T_DocumentExtension.html,
+		T_DocumentExtension.md,
 		T_DocumentExtension.rtf,
 		T_DocumentExtension.svg,
+		T_DocumentExtension.txt,
 ]);
 
 // The extensions whose stored bytes are already plain, readable words — nothing
@@ -56,9 +105,55 @@ export const TEXT_KINDS: ReadonlySet<T_DocumentExtension> =
 // need their words recognized.
 export const READY_KINDS: ReadonlySet<T_DocumentExtension> =
 	new Set([
-		T_DocumentExtension.txt,
 		T_DocumentExtension.md,
+		T_DocumentExtension.txt,
 ]);
+
+// The endings the reading tool won't take as they stand. Everything here holds
+// words or speech — a clip has talking, a picture can have writing on it, a Word
+// file and rich text have words wrapped in markup — but each has to be turned into
+// something the reading tool accepts before it can be handed over. Its own list is
+// short: plain words, web pages, pdf, docx, png, jpg, webp, and only mp3, wav,
+// mp4, mpeg, ogg, oga, m4a, webm for sound and clips.
+// Source: https://github.com/Mintplex-Labs/anything-llm/blob/master/collector/utils/constants.js
+export const NEEDS_CONVERTING: ReadonlySet<T_DocumentExtension> =
+	new Set([
+		// clips it won't take — the speech has to be transcribed first
+		T_DocumentExtension.mov,
+		T_DocumentExtension.m4v,
+		T_DocumentExtension.ogv,
+		T_DocumentExtension.avi,
+		T_DocumentExtension.mkv,
+		T_DocumentExtension.wmv,
+		T_DocumentExtension.flv,
+		// sound it won't take — same, transcribed first
+		T_DocumentExtension.flac,
+		T_DocumentExtension.aac,
+		T_DocumentExtension.wma,
+		T_DocumentExtension.aiff,
+		// pictures it won't take — re-saved as png, then its reader finds the writing
+		T_DocumentExtension.gif,
+		T_DocumentExtension.bmp,
+		// words wrapped in markup — stripped down to plain words first
+		T_DocumentExtension.svg,
+		T_DocumentExtension.rtf,
+		T_DocumentExtension.doc,
+]);
+
+// The largest single file we take in. Raw bytes are stored as-is, so nothing is
+// held in memory while saving — but a browser's own storage puts a ceiling on one
+// stored item, and refusing above this line with a clear message beats hitting
+// that ceiling partway through a save.
+export const MAX_FILE_BYTES = 1024 * 1024 * 1024;   // one gigabyte
+
+// A byte count said the way a person reads it — "1.7 GB", "340 MB".
+export function say_bytes(bytes: number): string {
+	const units = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+	let size = bytes;
+	let unit = 0;
+	while (size >= 1024 && unit < units.length - 1) { size = size / 1024; unit = unit + 1; }
+	return `${unit === 0 ? size : size.toFixed(1)} ${units[unit]}`;
+}
 
 export class Document {
 
@@ -72,7 +167,6 @@ export class Document {
 	status              = S_Document.needsText;
 	id                  : string = '';
 	blob_id?            : string;         // reference the storage resolves to the actual bytes
-	url?                : string;
 	name?               : string;
 	text?               : string;
 	last_modified_date? : number | null;   // when the file was last changed, milliseconds since epoch; null for a folder
@@ -84,19 +178,69 @@ export class Document {
 	// loaded from storage, which aren't real Document instances.
 	static view_mode(extension: T_DocumentExtension | null | undefined): T_DocumentFamily | null {
 		switch (extension) {
+			case T_DocumentExtension.pdf:  return T_DocumentFamily.pdf;
+			case T_DocumentExtension.html: return T_DocumentFamily.html;
+			case T_DocumentExtension.txt:
+			case T_DocumentExtension.md:
+			case T_DocumentExtension.rtf:  return T_DocumentFamily.text;
 			case T_DocumentExtension.bmp:
 			case T_DocumentExtension.gif:
 			case T_DocumentExtension.jpeg:
 			case T_DocumentExtension.png:
 			case T_DocumentExtension.svg:
 			case T_DocumentExtension.webp: return T_DocumentFamily.image;
-			case T_DocumentExtension.pdf:  return T_DocumentFamily.pdf;
-			case T_DocumentExtension.html: return T_DocumentFamily.html;
-			case T_DocumentExtension.txt:
-			case T_DocumentExtension.md:
-			case T_DocumentExtension.rtf:  return T_DocumentFamily.text;
-			default:                       return null;    // doc, docx, folder, unknown
+			// only the clips a browser will actually play; the rest (avi, mkv, wmv,
+			// flv, mpg, wma, aiff) are stored and transcribable but not showable here
+			case T_DocumentExtension.mp4:
+			case T_DocumentExtension.m4v:
+			case T_DocumentExtension.mov:
+			case T_DocumentExtension.webm:
+			case T_DocumentExtension.ogv:  return T_DocumentFamily.video;
+			case T_DocumentExtension.mp3:
+			case T_DocumentExtension.wav:
+			case T_DocumentExtension.ogg:
+			case T_DocumentExtension.m4a:
+			case T_DocumentExtension.aac:
+			case T_DocumentExtension.flac: return T_DocumentFamily.audio;
+			default:                       return null;    // doc, docx, the unplayable clips, no ending
 		}
+	}
+
+	// A plain, friendly word for each family — what the drop box shows instead of
+	// a list of file endings.
+	static family_label(family: T_DocumentFamily): string {
+		switch (family) {
+			case T_DocumentFamily.image:  return 'image';
+			case T_DocumentFamily.video:  return 'video';
+			case T_DocumentFamily.audio:  return 'sound';
+			case T_DocumentFamily.pdf:    return 'pdf';
+			case T_DocumentFamily.html:   return 'web page';
+			case T_DocumentFamily.text:   return 'text';
+			case T_DocumentFamily.folder: return 'folder';
+			case T_DocumentFamily.other:  return 'other';
+		}
+	}
+
+	// The families a drop will save, worked out from the endings we accept — so the
+	// list stays true by itself as new endings are added. Folders are left out (the
+	// drop box already says it takes them); "other" trails at the end.
+	static accepted_families(): T_DocumentFamily[] {
+		const accepted = new Set<T_DocumentFamily>();
+		for (const extension of Object.values(T_DocumentExtension)) {
+			accepted.add(Document.family_of('', extension));
+		}
+		accepted.delete(T_DocumentFamily.folder);
+		const named = Object.values(T_DocumentFamily).filter((family) => accepted.has(family) && family !== T_DocumentFamily.other);
+		return accepted.has(T_DocumentFamily.other) ? [...named, T_DocumentFamily.other] : named;
+	}
+
+	// Every file ending that belongs to one family, in the order they are written
+	// down — the same knowledge as "what family is this ending", read backwards.
+	// Alternate spellings are included, since a drop accepts them too. Worked out
+	// from what we accept, so a newly accepted ending shows up here by itself.
+	static endings_of(family: T_DocumentFamily): string[] {
+		return Object.keys(Document.kind_byExtension)
+			.filter((ending) => Document.family_of('', Document.kind_byExtension[ending]) === family);
 	}
 
 	// Which broad family a file belongs to. The browser's reported type decides it
@@ -113,6 +257,8 @@ export class Document {
 			case 'audio': return T_DocumentFamily.audio;
 			case 'text':  return T_DocumentFamily.text;
 		}
+		if (extension && VIDEO_KINDS.has(extension)) { return T_DocumentFamily.video; }
+		if (extension && AUDIO_KINDS.has(extension)) { return T_DocumentFamily.audio; }
 		return Document.view_mode(extension) ?? T_DocumentFamily.other;
 	}
 
@@ -133,6 +279,23 @@ export class Document {
 		webp: T_DocumentExtension.webp,
 		doc: T_DocumentExtension.doc,
 		docx: T_DocumentExtension.docx,
+		mp4: T_DocumentExtension.mp4, m4v: T_DocumentExtension.m4v,
+		mov: T_DocumentExtension.mov, qt: T_DocumentExtension.mov,
+		webm: T_DocumentExtension.webm,
+		ogv: T_DocumentExtension.ogv,
+		avi: T_DocumentExtension.avi,
+		mkv: T_DocumentExtension.mkv,
+		wmv: T_DocumentExtension.wmv,
+		flv: T_DocumentExtension.flv,
+		mpg: T_DocumentExtension.mpg, mpeg: T_DocumentExtension.mpg,
+		mp3: T_DocumentExtension.mp3,
+		wav: T_DocumentExtension.wav, wave: T_DocumentExtension.wav,
+		ogg: T_DocumentExtension.ogg, oga: T_DocumentExtension.ogg,
+		m4a: T_DocumentExtension.m4a,
+		aac: T_DocumentExtension.aac,
+		flac: T_DocumentExtension.flac,
+		wma: T_DocumentExtension.wma,
+		aiff: T_DocumentExtension.aiff, aif: T_DocumentExtension.aiff,
 	};
 
 	// The reported type as a fallback when the extension names no kind. The
@@ -152,6 +315,23 @@ export class Document {
 		if (type === 'image/webp')                             { return T_DocumentExtension.webp; }
 		if (type === 'application/msword')                     { return T_DocumentExtension.doc; }
 		if (type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') { return T_DocumentExtension.docx; }
+		if (type === 'video/mp4')                              { return T_DocumentExtension.mp4; }
+		if (type === 'video/quicktime')                        { return T_DocumentExtension.mov; }
+		if (type === 'video/webm')                             { return T_DocumentExtension.webm; }
+		if (type === 'video/ogg')                              { return T_DocumentExtension.ogv; }
+		if (type === 'video/x-msvideo')                        { return T_DocumentExtension.avi; }
+		if (type === 'video/x-matroska')                       { return T_DocumentExtension.mkv; }
+		if (type === 'video/x-ms-wmv')                         { return T_DocumentExtension.wmv; }
+		if (type === 'video/x-flv')                            { return T_DocumentExtension.flv; }
+		if (type === 'video/mpeg')                             { return T_DocumentExtension.mpg; }
+		if (type === 'audio/mpeg' || type === 'audio/mp3')     { return T_DocumentExtension.mp3; }
+		if (type === 'audio/wav'  || type === 'audio/x-wav')   { return T_DocumentExtension.wav; }
+		if (type === 'audio/ogg')                              { return T_DocumentExtension.ogg; }
+		if (type === 'audio/mp4' || type === 'audio/x-m4a')    { return T_DocumentExtension.m4a; }
+		if (type === 'audio/aac')                              { return T_DocumentExtension.aac; }
+		if (type === 'audio/flac' || type === 'audio/x-flac')  { return T_DocumentExtension.flac; }
+		if (type === 'audio/x-ms-wma')                         { return T_DocumentExtension.wma; }
+		if (type === 'audio/aiff' || type === 'audio/x-aiff')  { return T_DocumentExtension.aiff; }
 		return null;
 	}
 
@@ -165,15 +345,14 @@ export class Document {
 		return kind;
 	}
 
-	// The bytes to store for a file: plain text for the text kinds, a data-URL for
-	// the rest.
-	static bytes_of(file: File, kind: T_DocumentExtension): Promise<string> {
+	// What to store for a file: readable words for the text kinds, and for every
+	// other kind the file's own raw bytes, handed over untouched. Nothing is copied
+	// into memory — a big movie used to be turned into one enormous piece of text
+	// about a third larger than the file, which a browser cannot hold, and the tab
+	// died. Raw bytes have no such ceiling.
+	static bytes_of(file: File, kind: T_DocumentExtension): Promise<string | Blob> {
 		if (TEXT_KINDS.has(kind)) { return file.text(); }
-		return new Promise<string>((resolve) => {
-			const reader = new FileReader();
-			reader.onload = () => resolve(reader.result as string);
-			reader.readAsDataURL(file);
-		});
+		return Promise.resolve(file as Blob);
 	}
 
 	// Remove a trailing extension from a name when that extension is one this kind

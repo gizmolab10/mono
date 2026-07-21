@@ -5,7 +5,7 @@
 	// data (documents, tags, unsaved) and the switcher. Only the local store is
 	// built, so the cloud segment is a dimmed placeholder until firestore lands.
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { databases } from '../../ts/database/Databases';
+	import { databases, w_hierarchy } from '../../ts/database/Databases';
 	import { T_Storage } from '../../ts/types/DB_Records';
 	import { w_db_changed } from '../../ts/types/Signal';
 
@@ -20,8 +20,8 @@
 
 	// Pure derived counts — recomputed on every store change (a save or a storage
 	// switch bumps the tick). No write-inside-effect, so nothing can loop.
-	const documents = $derived.by(() => { $w_db_changed; return databases.active.documents.length; });
-	const tags      = $derived.by(() => { $w_db_changed; return databases.active.tags.length; });
+	const documents = $derived.by(() => { $w_db_changed; return $w_hierarchy.documents.length; });
+	const tags      = $derived.by(() => { $w_db_changed; return $w_hierarchy.tags.length; });
 
 	function choose(storage: T_Storage) {
 		if (!built.has(storage)) {
@@ -41,7 +41,7 @@
 	function ask_erase()    { confirming = true; }
 	function cancel_erase() { confirming = false; }
 	async function do_erase() {
-		await databases.active.erase_all();
+		await $w_hierarchy.erase_all();
 		confirming = false;
 	}
 </script>

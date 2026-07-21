@@ -83,9 +83,10 @@ class Configuration {
 	 */
 	configure_inks(): void {
 		const root = document.documentElement.style;
-		root.setProperty('--black', colors.black);
-		root.setProperty('--white', colors.white);
-		root.setProperty('--gray',  colors.gray);
+		root.setProperty('--gray',       colors.gray);
+		root.setProperty('--black',      colors.black);
+		root.setProperty('--white',      colors.white);
+		root.setProperty('--lightgray',  colors.lightgray);
 	}
 
 	/**

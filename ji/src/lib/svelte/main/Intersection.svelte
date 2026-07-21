@@ -154,7 +154,7 @@
 
 	.author-credit {
 		font-size       : var(--font-credit);
-		color           : var(--text);
+		color           : var(--white);
 		text-decoration : underline;
 		cursor          : pointer;
 	}

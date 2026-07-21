@@ -2,6 +2,39 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-20 — a hover hint that shows at once
+
+- **Our own hover hint, because the browser's waits a second.** The browser's built-in hover text pauses about a second before it shows, and that pause can't be shortened — it belongs to the browser. So a small shared hint is drawn ourselves: any element hands it the thing being pointed at and the words to show, and it appears the instant the cursor arrives, sitting just below, running as wide as it needs, pulling back only off the window's right edge.
+- **Only the drop box's family words use it so far.** Their endings now show at once instead of after a wait; their old browser hover text is gone. The clipped file names in the table keep their plain browser hint for now.
+
+## 2026-07-20 — a drop on the table opens the drop box
+
+- **A drop that lands on the table now opens the add-documents view first**, then saves — so the count and any question report in the drop box, where there's room for two lines. Reporting in the table's column-label row was tried and taken back out: a question is taller than one row and the columns re-measured when the labels stepped aside, so the whole table shrank and shifted for the length of a drop.
+
+## 2026-07-20 — the drop box gets an edge
+
+- **The edge is drawn, not bordered.** A dashed border leaves the dash length to the browser, and this one is 4 on and 2 off, so the line is a shape laid over the box's edge instead: rounded to the same corner, in the accent color, and going solid the moment a drag is over the box.
+- **What was there before drew nothing at all.** The old border named a thickness and a color but never said what kind of line to draw, so the browser drew none. The box has been edgeless this whole time.
+
+## 2026-07-19 — dropping the same thing twice
+
+- **The address field is gone.** Every document carried an address, but it was minted from a fresh random name at the moment of the drop — it said where that copy lived, never where the file came from, so it could never recognize a repeat. A browser refuses to tell a web page a dropped file's real location, so there was nothing true to put there.
+- **A file is recognized by its name and the moment it was last changed**, among the documents sitting in the same place — two files called "notes.txt" in different folders stay two documents. Same name and same moment means the same file: its row is left exactly as it is, tags and folder included, and only its bytes are written again. No message.
+- **Same name, a different moment, and the drop stops and asks.** The two are shown side by side with their sizes and dates, and either or both can be kept. Keeping the one already here throws the dropped one away; keeping the dropped one pours it into the row that is already there, so its tags and its folder survive; keeping both saves the dropped one as "notes.txt (2)". Nothing is saved or removed until OK. From the second question onward it offers to answer the rest of the drop the same way.
+- **A repeated folder is examined before it is trusted.** If nothing inside it is already held there, it's treated as a different folder and gets a numbered name; otherwise it is the same folder, and its contents are worked through one at a time by the rules above.
+- **A drop now counts itself first.** It walks everything without saving, to learn the total, then saves — so a status line stands where the family words stand and says "captured 3 of 40", with a ring filling beside it. Folders, repeats, and files we don't take are all counted, so the number always arrives at the total. The status line shows above the table too, for drops that land there with no drop box open.
+- **A dialog line below it, rarely seen.** It carries the two-copies question, and anything else the drop has to say — the refusal of a file over a gigabyte moved here from a browser alert, so a drop is never interrupted by a window from outside the app. Each waits on OK, then vanishes.
+- **Thirteen driven checks for the drop.** The browser's dropped entries are stood in for — each one only ever says whether it's a file or a folder, hands back the file, or lists what's inside — and the questions are answered through the same shared state the strip on screen reads, which proves the drop really does stop and wait. They cover every same-name rule, the standing "do the same for the rest" answer (and that it doesn't leak into the next drop), the counting, a refused ending, a file over the limit, and the folder rules. Writing them caught nothing in the drop; the one thing that broke was my stand-in reader, which answered before marking itself finished and so asked itself forever.
+- **A repeated folder is compared by name and date, not name alone.** A folder whose files merely share names with an existing one is treated as a different folder and gets a numbered name; only a real match by date says it is the same folder.
+
+## 2026-07-19 — clips, sound, and a movie that killed the tab
+
+- **Audio and video are taken and played.** Every popular ending is accepted — mp4, m4v, mov, webm, ogv, avi, mkv, wmv, flv, mpg for clips, mp3, wav, ogg, m4a, aac, flac, wma, aiff for sound. The ones a browser can play open in a player; the rest are stored and grouped correctly but stay dark, the way Word files already do. They all still have speech in them, which is the point: a transcriber turns any of them into words later.
+- **A 2 GB movie killed the tab, and the cause was ours.** Every file that wasn't words used to be turned into one enormous piece of text about a third larger than the file itself. A browser can't hold a piece of text that big, so the tab died outright. Now a file's raw bytes go into storage untouched — nothing is copied into memory at all — and the viewer points a player, picture, or page at a short-lived link to them, handed back the moment another document is shown. Documents saved the old way still open, because a stored piece of text is already a usable link.
+- **One file over a gigabyte is refused out loud**, naming the file, its size, and the limit. Storage has a ceiling somewhere; a clear refusal beats hitting it partway through a save.
+- **The drop box says what it takes, family by family.** Each family word now carries its own list of endings, shown on hover, worked out from what we accept — so a newly accepted ending appears in the right list by itself. Each word lights as a pill under the cursor, which is the only hint the list is there at all. The words stay quiet while a drag is over the box.
+- **We accept more than the reading tool does.** I read AnythingLLM's own source: it takes plain words, web pages, pdf, docx, png, jpg, webp, and only mp3, wav, mp4, mpeg, ogg, oga, m4a, webm among sound and clips — and it does read words off pictures, which I had wrongly said it didn't. Everything else we accept (mov, avi, mkv, flac, gif, bmp, svg, rtf, doc and friends) is now marked as needing converting first. None of it is worthless: each one holds words or speech. Every dropped file now says in the log which of the three it is — already plain words, the tool pulls the words out itself, or it must be converted first.
+
 ## 2026-07-19 — what a document knows about itself
 
 - **A document now records what it is, not just what to call it.** Alongside its name it keeps: the family it belongs to (picture, video, sound, pdf, web page, text, other), its file ending, the exact type the browser reported, its size in bytes, when the file was last changed, its own address in the store, and whether its words have been pulled out yet. Most of these are only knowable at the moment of the drop — the browser hands them over once and never again — so they're captured there and everything else is worked out later from what's kept.

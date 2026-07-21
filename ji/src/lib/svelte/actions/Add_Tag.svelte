@@ -1,7 +1,7 @@
 <script lang='ts'>
 	// Create a new tag: type a name and add it to the active store's tags. `ondone`
 	// lets the caller close this view (the documents view returns to the list).
-	import { databases } from '../../ts/database/Databases';
+	import { w_hierarchy } from '../../ts/database/Databases';
 	import { debug } from '../../ts/common/Debug';
 
 	let { ondone }: { ondone?: () => void } = $props();
@@ -11,7 +11,7 @@
 	function add() {
 		const trimmed = name.trim();
 		if (trimmed.length > 0) {
-			databases.active.add_tag(trimmed);
+			$w_hierarchy.add_tag(trimmed);
 			debug.log(`Created tag "${trimmed}".`);
 		} else {
 			debug.log('Create tag: nothing typed, so nothing added.');
