@@ -21,6 +21,7 @@ export enum T_Preference {
 	// Content
 	current_op      = 'current_op',
 	closedFolders   = 'closedFolders',
+	tableTopId      = 'tableTopId',
 
 	// Database
 	database         = 'database',

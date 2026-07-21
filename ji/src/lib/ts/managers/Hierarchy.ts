@@ -16,12 +16,13 @@ export type DB_Record = Document | Tag | Tagging | Relationship | Predicate;
 // A thing linked to more than one parent is listed once per parent, so the same
 // document can come back more than once, each time with its own depth and chain.
 export interface Listed_Document {
-	document     : Document;
-	tag_ids      : string[];
-	depth        : number;      // how many folders deep it sits (a root is 0)
-	ancestor_ids : string[];    // the folder chain above it, root-first
-	is_echo      : boolean;     // a second-or-later home — reads lighter, an "also here"
-	has_children : boolean;     // holds anything nested under it (folder contents, or a duplicate under its original) — so it can open and close
+	document        : Document;
+	tag_ids         : string[];
+	depth           : number;             // how many folders deep it sits (a root is 0)
+	ancestor_ids    : string[];           // the folder chain above it, root-first
+	is_dedup        : boolean;            // a second-or-later home — reads lighter, an "also here"
+	has_children    : boolean;            // holds anything nested under it (folder contents, or a duplicate under its original) — so it can open and close
+	relationship_id : string | null;      // the id of the link that led into this row; null for a top-level row (no parent link) — tells a thing's two appearances apart
 }
 
 // The store's records and the living tree over them. It owns the in-memory record
@@ -196,7 +197,7 @@ export class Hierarchy {
 	// original. The only thing the walk must never do is follow a thing back into
 	// itself, so the guard is "already on the chain I'm walking now" (a real loop),
 	// not "seen anywhere" (which would hide the second home). When a thing appears
-	// more than once, one appearance is its home and the rest read as echoes: the
+	// more than once, one appearance is its home and the rest read as dedupes: the
 	// home is the one reached through a "contains" link (its folder), so the folder
 	// place is solid and the duplicate place is the lighter "also here".
 	list_documents(): Listed_Document[] {
@@ -205,7 +206,7 @@ export class Hierarchy {
 		const roots = this.indexes.roots_among(document_ids);
 		const ordered: Array<Listed_Document & { via_contains: boolean }> = [];
 
-		const walk = (id: string, depth: number, ancestors: string[], via_contains: boolean): void => {
+		const walk = (id: string, depth: number, ancestors: string[], via_contains: boolean, via_edge_id: string | null): void => {
 			if (ancestors.includes(id)) {
 				const document = this.document_byID(id);
 				debug.log(`Tree walk: "${document?.name ?? id}" already sits above itself on this branch (depth ${depth}) — a loop, so not following it deeper.`);
@@ -214,19 +215,19 @@ export class Hierarchy {
 			const document = this.document_byID(id);
 			const children = this.indexes.children_of(id);
 			const has_children = children.length > 0;   // holds anything nested — a folder's files, or a duplicate under its original — so it can open and close
-			if (document) { ordered.push({ document, tag_ids: this.indexes.tags_of(id), depth, ancestor_ids: ancestors, is_echo: false, has_children, via_contains }); }
-			for (const edge of children) { walk(edge.child_id, depth + 1, [...ancestors, id], edge.predicate_id === contains_id); }
+			if (document) { ordered.push({ document, tag_ids: this.indexes.tags_of(id), depth, ancestor_ids: ancestors, is_dedup: false, has_children, relationship_id: via_edge_id, via_contains }); }
+			for (const edge of children) { walk(edge.child_id, depth + 1, [...ancestors, id], edge.predicate_id === contains_id, edge.id); }
 		};
-		for (const root of roots) { walk(root, 0, [], true); }   // a root has no parent link — it is its own home
+		for (const root of roots) { walk(root, 0, [], true, null); }   // a root has no parent link — it is its own home
 
 		// Of a thing's several appearances, its home is the one reached through a
 		// folder ("contains") link; failing that, the first one walked. Every other
-		// appearance is an echo.
+		// appearance is an dedup.
 		const counts = new Map<string, number>();
 		for (const row of ordered) { counts.set(row.document.id, (counts.get(row.document.id) ?? 0) + 1); }
 		const home_at = new Map<string, number>();
 		ordered.forEach((row, i) => {
-			if ((counts.get(row.document.id) ?? 0) < 2) { return; }        // shown once — no echo, no home to pick
+			if ((counts.get(row.document.id) ?? 0) < 2) { return; }        // shown once — no dedup, no home to pick
 			const chosen = home_at.get(row.document.id);
 			if (chosen === undefined) { home_at.set(row.document.id, i); return; }
 			if (row.via_contains && !ordered[chosen].via_contains) { home_at.set(row.document.id, i); }
@@ -234,9 +235,9 @@ export class Hierarchy {
 
 		return ordered.map((row, i) => {
 			const many = (counts.get(row.document.id) ?? 0) >= 2;
-			const is_echo = many && home_at.get(row.document.id) !== i;
-			if (is_echo) { debug.log(`Tree walk: "${row.document.name}" shown again under a second parent (depth ${row.depth}) — the lighter "also here".`); }
-			return { document: row.document, tag_ids: row.tag_ids, depth: row.depth, ancestor_ids: row.ancestor_ids, is_echo, has_children: row.has_children };
+			const is_dedup = many && home_at.get(row.document.id) !== i;
+			if (is_dedup) { debug.log(`Tree walk: "${row.document.name}" shown again under a second parent (depth ${row.depth}) — the lighter "also here".`); }
+			return { document: row.document, tag_ids: row.tag_ids, depth: row.depth, ancestor_ids: row.ancestor_ids, is_dedup, has_children: row.has_children, relationship_id: row.relationship_id };
 		});
 	}
 

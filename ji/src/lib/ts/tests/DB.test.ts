@@ -134,18 +134,25 @@ describe('local document store', () => {
 		const contains = h.predicate_for('contains').id;
 		const dup      = h.predicate_for('is-duplicate-of').id;
 		h.add_document_relationship(contains, folder.id, copy.id);     // the new item lives in the folder
-		h.add_document_relationship(dup, original.id, copy.id);        // and echoes under its original
+		h.add_document_relationship(dup, original.id, copy.id);        // and dedupes under its original
 
 		const listed = h.list_documents();
 		const copy_rows = listed.filter((l) => l.document.id === copy.id);
 		expect(copy_rows).toHaveLength(2);                             // shown twice, once per parent
 		const home = copy_rows.find((l) => l.ancestor_ids.includes(folder.id))!;
-		const echo = copy_rows.find((l) => l.ancestor_ids.includes(original.id))!;
-		expect(home.is_echo).toBe(false);                             // the folder place is the solid home
-		expect(echo.is_echo).toBe(true);                              // the original place is the lighter echo
+		const dedup = copy_rows.find((l) => l.ancestor_ids.includes(original.id))!;
+		expect(home.is_dedup).toBe(false);                             // the folder place is the solid home
+		expect(dedup.is_dedup).toBe(true);                              // the original place is the lighter dedup
 		const original_row = listed.filter((l) => l.document.id === original.id);
 		expect(original_row).toHaveLength(1);                         // the original shows once
 		expect(original_row[0].has_children).toBe(true);             // and gets a triangle — the duplicate hangs under it
+		// the two appearances carry the id of the link that led into each — different
+		// links, so the two rows are told apart (which is how the table restores the
+		// exact row it was scrolled to, not the wrong twin)
+		expect(home.relationship_id).not.toBeNull();
+		expect(dedup.relationship_id).not.toBeNull();
+		expect(home.relationship_id).not.toBe(dedup.relationship_id);
+		expect(original_row[0].relationship_id).toBeNull();          // a top-level row has no link into it
 	});
 
 	it('a loop below a root does not hang the walk', async () => {

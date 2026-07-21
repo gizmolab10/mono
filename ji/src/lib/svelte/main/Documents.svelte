@@ -13,6 +13,8 @@
 	import Add_Tag from '../actions/Add_Tag.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
+	import { flushSync } from 'svelte';
+	import { get } from 'svelte/store';
 	import Tags from '../actions/Tags.svelte';
 
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
@@ -73,8 +75,9 @@
 				family,
 				depth        : listed.depth,
 				ancestor_ids : listed.ancestor_ids,
-				is_echo      : listed.is_echo,
+				is_dedup      : listed.is_dedup,
 				has_children : listed.has_children,
+				place_key    : `${listed.document.id}|${listed.relationship_id ?? ''}`,   // this row's spot: its doc plus the link that put it here (empty for a top-level row)
 				tag_ids,
 				tag_names    : tag_ids.map((id) => name_of.get(id) ?? '?').join(', '),
 			};
@@ -95,6 +98,193 @@
 		const keep = new Set(matched.map((r) => r.id));
 		for (const r of matched) { for (const a of r.ancestor_ids) { keep.add(a); } }
 		return open_rows.filter((r) => keep.has(r.id));       // original walk order, ancestors included
+	});
+
+	// --- remembering where the table was scrolled -----------------------------
+
+	// A fast lookup from a row's spot to its row number, rebuilt whenever the shown
+	// rows change. A spot is a document paired with the link that put it in that row,
+	// so a file that shows twice (a duplicate) has two distinct spots — no clash.
+	// Used to turn the saved top spot back into a row number at once, no scanning.
+	const row_number_byPlace = $derived.by(() => {
+		const map = new Map<string, number>();
+		shown.forEach((r, i) => { map.set(r.place_key, i); });
+		return map;
+	});
+
+	// For each folder row, the row number of the last row inside it — its subtree
+	// runs from just after it up to (but not including) the next row at its own depth
+	// or shallower. Used to keep a folder pinned until the bottom of its last child
+	// scrolls past the header.
+	const subtree_end_byRow = $derived.by(() => {
+		const end = new Map<number, number>();
+		shown.forEach((r, i) => {
+			if (!r.has_children) { return; }
+			let j = i + 1;
+			while (j < shown.length && shown[j].depth > r.depth) { j++; }
+			end.set(i, j - 1);
+		});
+		return end;
+	});
+
+	// The spot at the top of the scrolled rows — saved across reloads, so the table
+	// can return to the same place. A spot (document + its link), not a pixel distance
+	// and not a bare document id, so a duplicate returns to the very row left.
+	const w_table_top_id = preferences.persistent<string | null>(T_Preference.tableTopId, null);
+
+	let scroller  = $state<HTMLElement | null>(null);   // the scrolling rows area
+	let restored  = $state(false);                      // did this table showing already jump to the saved place?
+	let save_wait: ReturnType<typeof setTimeout> | null = null;
+
+	// The folders the visible rows sit inside — pinned just under the header while
+	// scrolling, so it stays clear where you are. The whole chain of open folders above
+	// the top row, root-first. Holds the full rows, so a pinned folder is drawn — and
+	// behaves — exactly like its own row (its triangle and buttons still work).
+	const PIN_LIFT = 1;                                  // lift the pinned markers (and the pin line) 1px so they sit flush under the header
+	// Each pinned folder plus the exact top (in the region's own coordinates) its marker
+	// sits at — so the marker is placed right on its pin line, never off by the small
+	// difference between a rendered marker's height and the real row's height.
+	let pinned    = $state<Array<(typeof rows)[number]>>([]);
+	let header_px  = $state(0);                          // the header's height, for placing the pinned markers below it
+	let content_px = $state(0);                          // the scroll area's content width (minus the scrollbar), for the pinned overlay's width
+	let pin_frame: number | null = null;
+
+	// The height of the pinned header, so a row can be placed just below it rather
+	// than hidden behind it.
+	function header_height(): number {
+		return (scroller?.querySelector('thead') as HTMLElement | null)?.offsetHeight ?? 0;
+	}
+
+	// The row now at the top: the first one sitting fully below the header line (its
+	// top at or past it). A folder whose top has begun to slide under the header is
+	// no longer this row — so it becomes a pinned marker the instant it starts to go,
+	// with no gap where it is neither shown nor pinned.
+	function top_row_element(): HTMLElement | null {
+		if (!scroller) { return null; }
+		const cutoff = scroller.getBoundingClientRect().top + header_height();
+		for (const tr of scroller.querySelectorAll('tbody tr')) {
+			if (tr.getBoundingClientRect().top >= cutoff - 1) { return tr as HTMLElement; }
+		}
+		return null;
+	}
+
+	// The spot now at the top, saved (a short wait after scrolling settles, so a fast
+	// scroll saves once).
+	function remember_top() {
+		const tr = top_row_element();
+		if (!tr) { return; }
+		const key = tr.dataset.key ?? null;
+		w_table_top_id.set(key);
+		debug.log(`Table scroll: top spot is now "${tr.dataset.name ?? key}" (row ${tr.dataset.n}).`);
+	}
+
+	// The folders to pin, and the stack they form. Walking the rows outer-folder-first,
+	// a running line starts at the header's bottom. A folder pins when its own row has
+	// slid above that line but its last child is still below it — and once pinned, the
+	// line drops by that marker's height, so the next (inner) folder only begins to
+	// stick when its top slides behind the marker already pinned above it. A folder
+	// stays pinned until the bottom of its whole subtree passes the line.
+	function update_pins(): boolean {
+		header_px = header_height();
+		if (!scroller) { const had = pinned.length > 0; if (had) { pinned = []; } return had; }
+		content_px = scroller.clientWidth;                              // the content width, minus the scrollbar
+		// At the very top nothing is scrolled off, so nothing pins.
+		if (scroller.scrollTop <= 0) { const had = pinned.length > 0; if (had) { pinned = []; } return had; }
+		const table_rows = scroller.querySelectorAll('tbody tr');
+		const chain: Array<(typeof rows)[number]> = [];
+		// `offset` is the top of the next marker in the region's own coordinates; the pin
+		// line is that same place in viewport coordinates. Each marker is placed AT its
+		// pin line (offset), so its screen position matches exactly, and the next marker
+		// stacks below by this row's real height — no gap from a marker rendering a hair
+		// taller or shorter than its row.
+		const region_top = scroller.getBoundingClientRect().top;
+		let offset = header_px - PIN_LIFT;
+		shown.forEach((r, i) => {
+			if (!r.has_children) { return; }
+			const folder_tr = table_rows[i] as HTMLElement | undefined;
+			const last_tr   = table_rows[subtree_end_byRow.get(i) ?? i] as HTMLElement | undefined;
+			if (!folder_tr || !last_tr) { return; }
+			const rect        = folder_tr.getBoundingClientRect();
+			const subtree_bot = last_tr.getBoundingClientRect().bottom;
+			const line = region_top + offset;
+			if (rect.top < line && subtree_bot > line) {
+				chain.push(r);
+				offset += rect.height;   // advance the pin line for the next (inner) folder
+			}
+		});
+		// Only touch the state when the pinned set actually changes, to avoid needless redraws.
+		const changed = chain.length !== pinned.length
+			|| chain.some((c, i) => c.id !== pinned[i]?.id);
+		if (changed) {
+			pinned = chain;
+		}
+		return changed;
+	}
+
+	function on_scroll() {
+		if (save_wait !== null) { clearTimeout(save_wait); }
+		save_wait = setTimeout(remember_top, 150);       // save once the scrolling settles
+		// Once per frame: on the first scroll event of a frame, measure and place the
+		// markers now — in the same frame as the scroll — and paint them with flushSync,
+		// so a marker never lands a frame after the row moved (that reads as a 1px flick).
+		// Later events in the same frame are skipped, so a fast drag can't storm it.
+		// Decide the pinned set on every scroll event, so a marker never lands a frame
+		// after the row already crossed the line (that's the up-then-down flick). Only
+		// force a same-frame paint when the set actually changed — which happens only at
+		// a crossing, so a fast drag never storms the browser with forced layouts.
+		if (update_pins()) { flushSync(); }
+	}
+
+	// Recompute the pinned folders whenever the shown rows change (a fold, a filter,
+	// a delete) — the top row, and so its chain, may be different now. Deferred a frame
+	// so it measures a settled layout: on a fresh load the header height, the row
+	// positions, and the scrollbar width aren't ready yet, and measuring too early both
+	// pins folders that shouldn't be and overruns the scrollbar.
+	$effect(() => {
+		shown;
+		if (!scroller) { return; }
+		if (pin_frame === null) { pin_frame = requestAnimationFrame(() => { pin_frame = null; update_pins(); }); }
+	});
+
+	// Put the rows back where they were: turn the saved id into a row number through
+	// the map, find that row, and place it just under the header. If the saved item
+	// is gone from the list, start at the top.
+	//
+	// On a fresh load the scroll area often has no height yet, so setting how far
+	// down it is scrolled clamps to the top. So it tries on the next frame, and keeps
+	// trying (up to a few frames) until the area is tall enough to actually hold the
+	// place asked for — then the position takes.
+	function restore_top() {
+		if (!scroller) { return; }
+		const key = get(w_table_top_id);
+		if (!key) { return; }
+		const n = row_number_byPlace.get(key);
+		if (n === undefined) { scroller.scrollTop = 0; debug.log(`Table scroll: saved top spot ${key} is not in the list now — starting at the top.`); return; }
+
+		let tries = 0;
+		const apply = () => {
+			if (!scroller) { return; }
+			const tr = scroller.querySelectorAll('tbody tr')[n] as HTMLElement | undefined;
+			if (!tr) { if (tries++ < 10) { requestAnimationFrame(apply); } return; }   // rows not painted yet
+			const want = Math.max(0, tr.offsetTop - header_height());
+			scroller.scrollTop = want;
+			// It clamped short of where we asked — the area isn't tall enough yet, so try again.
+			if (want > 0 && scroller.scrollTop < want - 1 && tries++ < 10) {
+				requestAnimationFrame(apply);
+			} else {
+				debug.log(`Table scroll: restored to "${tr.dataset.name ?? key}" (row ${n}) — scrolled ${scroller.scrollTop} of a wanted ${want}, after ${tries} extra frame(s).`);
+				update_pins();                              // the pinned folders match the restored place
+			}
+		};
+		requestAnimationFrame(apply);
+	}
+
+	// Jump to the saved place once each time the table is shown (after a reload, or
+	// after closing a viewed file). The scroller binding clears when the table is
+	// swapped out, which arms the next showing to restore again.
+	$effect(() => {
+		if (!scroller) { restored = false; return; }
+		if (!restored && shown.length > 0) { restore_top(); restored = true; }
 	});
 
 	// How many tags exist in the store to pick from. When zero, the row's pencil
@@ -241,6 +431,62 @@
 	}
 </script>
 
+<!-- The three cells of a file/folder row: format, name (with the open/close triangle),
+     and tags + the per-row buttons. Shared by the scrolling rows and the pinned folder
+     markers, so a pinned folder behaves exactly like its own row. -->
+{#snippet file_cells(row: (typeof rows)[number])}
+	<td class='extension'><span>{row.family === T_DocumentFamily.folder ? '---' : (row.extension ?? '')}</span></td>
+	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+	<td class='name' class:viewable={Document.view_mode(row.extension) !== null}
+		style:padding-left='{row.depth * 5}px'
+		onclick={(e) => { if (Document.view_mode(row.extension) !== null) { e.stopPropagation(); open_view(row); } }}><span class='name-line'><span class='tri-slot'>{#if row.has_children}{@const open = !$w_closed.has(row.id)}{@const b = triangle_bounds(open)}<button class='tri' title={open ? 'close this folder' : 'open this folder'} onclick={(e) => { e.stopPropagation(); toggle_folder(row.id); }}><svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'><path d={triangle_path(open)} /></svg></button>{/if}</span><span class='name-text'>{#if row.is_dedup}<span class='dedup-mark' title='also here — the same file, shown under another parent'>↳ </span>{/if}{row.display_name}</span></span></td>
+	<td class='tag-actions'>
+		<div class='tag-actions-row'>
+			{#if editing === row.id}
+				{#if tag_count === 0}
+					<!-- No tags exist yet to pick from — offer to create some. Same
+					     action as the top add-tags control: switch to the tag view. -->
+					<button class='add-tags-inline'
+						onclick={(e) => { e.stopPropagation(); debug.log(`No tags in the store yet — opening the add-tags view from row ${row.id}.`); $w_operation = T_Operation.tag; }}>add tags</button>
+				{:else}
+					<!-- The tag picker takes the buttons' place on the row, right-justified;
+					     a click outside it (handled by the background) closes it. -->
+					<Tags
+						selected={chosen_for(row.id)}
+						ontoggle={(tag_id, on) => { toggle_tag(row.id, tag_id, on); debug.log(`Toggled a tag on row ${row.id} ${on ? 'on' : 'off'} — closing the picker.`); editing = null; }} />
+				{/if}
+			{:else}
+				<span class='tag-names'>{row.tag_names}</span>
+				<!-- Over the buttons, drop the row highlight — they act on their own, not the row. -->
+				<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+				<div class='row-actions' role='group'
+					onmouseenter={() => hovered_row = null}
+					onmouseleave={() => hovered_row = row.id}>
+					{#if confirming === row.id}
+						<button class='row-danger' onclick={() => delete_byID(row.id)}>delete</button>
+						<button class='row-danger row-x' title='keep' onclick={() => confirming = null}>
+							<svg class='row-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
+								<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+							</svg>
+						</button>
+					{:else}
+						<button class='row-button' title='edit tags'
+							onclick={(e) => { e.stopPropagation(); editing = row.id; }}>✏️</button>
+						<button class='row-button trash' title='delete'
+							onclick={() => confirming = row.id}>
+							<svg class='row-bin' viewBox='0 0 24 24'>
+								<path d='M4 6 H20 M9 6 V4 H15 V6 M6 6 L7 20 H17 L18 6 M10 10 V17 M14 10 V17'
+									fill='none' stroke='currentColor' stroke-width='1.6'
+									stroke-linecap='round' stroke-linejoin='round' />
+							</svg>
+						</button>
+					{/if}
+				</div>
+			{/if}
+		</div>
+	</td>
+{/snippet}
+
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 <div class='documents' class:dragging onclick={background_click}
 	ondrop={documents_drop} ondragover={documents_dragover} ondragleave={documents_dragleave}>
@@ -265,7 +511,8 @@
 		{#if rows.length === 0}
 			<div class='empty'>no documents yet</div>
 		{:else}
-			<div class='table-scroll'>
+			<div class='table-region'>
+			<div class='table-scroll' bind:this={scroller} onscroll={on_scroll}>
 			<table class='blobs-table'>
 				<thead>
 					<tr class='head'>
@@ -282,65 +529,34 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each shown as row}
+					{#each shown as row, row_number}
 						<!-- svelte-ignore a11y_mouse_events_have_key_events -->
-						<tr class='file' class:hovered={hovered_row === row.id} class:echo={row.is_echo}
+						<tr class='file' class:hovered={hovered_row === row.id} class:dedup={row.is_dedup}
+							data-key={row.place_key} data-n={row_number} data-name={row.display_name}
 							onmouseenter={() => { if (Document.view_mode(row.extension) !== null) { hovered_row = row.id; } }}
 							onmouseleave={() => { if (hovered_row === row.id) { hovered_row = null; } }}>
-							<td class='extension'><span>{row.family === T_DocumentFamily.folder ? '---' : (row.extension ?? '')}</span></td>
-							<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-							<td class='name' class:viewable={Document.view_mode(row.extension) !== null}
-								style:padding-left='{row.depth * 20}px'
-								onclick={(e) => { if (Document.view_mode(row.extension) !== null) { e.stopPropagation(); open_view(row); } }}><span class='name-line'><span class='tri-slot'>{#if row.has_children}{@const open = !$w_closed.has(row.id)}{@const b = triangle_bounds(open)}<button class='tri' title={open ? 'close this folder' : 'open this folder'} onclick={(e) => { e.stopPropagation(); toggle_folder(row.id); }}><svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'><path d={triangle_path(open)} /></svg></button>{/if}</span><span class='name-text'>{#if row.is_echo}<span class='echo-mark' title='also here — the same file, shown under another parent'>↳ </span>{/if}{row.display_name}</span></span></td>
-							<td class='tag-actions'>
-								<div class='tag-actions-row'>
-									{#if editing === row.id}
-										{#if tag_count === 0}
-											<!-- No tags exist yet to pick from — offer to create some. Same
-											     action as the top add-tags control: switch to the tag view. -->
-											<button class='add-tags-inline'
-												onclick={(e) => { e.stopPropagation(); debug.log(`No tags in the store yet — opening the add-tags view from row ${row.id}.`); $w_operation = T_Operation.tag; }}>add tags</button>
-										{:else}
-											<!-- The tag picker takes the buttons' place on the row, right-justified;
-											     a click outside it (handled by the background) closes it. -->
-											<Tags
-												selected={chosen_for(row.id)}
-												ontoggle={(tag_id, on) => { toggle_tag(row.id, tag_id, on); debug.log(`Toggled a tag on row ${row.id} ${on ? 'on' : 'off'} — closing the picker.`); editing = null; }} />
-										{/if}
-									{:else}
-										<span class='tag-names'>{row.tag_names}</span>
-										<!-- Over the buttons, drop the row highlight — they act on their own, not the row. -->
-										<!-- svelte-ignore a11y_mouse_events_have_key_events -->
-										<div class='row-actions'
-											onmouseenter={() => hovered_row = null}
-											onmouseleave={() => hovered_row = row.id}>
-											{#if confirming === row.id}
-												<button class='row-danger' onclick={() => delete_byID(row.id)}>delete</button>
-												<button class='row-danger row-x' title='keep' onclick={() => confirming = null}>
-													<svg class='row-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
-														<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
-													</svg>
-												</button>
-											{:else}
-												<button class='row-button' title='edit tags'
-													onclick={(e) => { e.stopPropagation(); editing = row.id; }}>✏️</button>
-												<button class='row-button trash' title='delete'
-													onclick={() => confirming = row.id}>
-													<svg class='row-bin' viewBox='0 0 24 24'>
-														<path d='M4 6 H20 M9 6 V4 H15 V6 M6 6 L7 20 H17 L18 6 M10 10 V17 M14 10 V17'
-															fill='none' stroke='currentColor' stroke-width='1.6'
-															stroke-linecap='round' stroke-linejoin='round' />
-													</svg>
-												</button>
-											{/if}
-										</div>
-									{/if}
-								</div>
-							</td>
+							{@render file_cells(row)}
 						</tr>
 					{/each}
 				</tbody>
 			</table>
+			</div>
+			{#if pinned.length > 0}
+				<!-- The pinned folders in one stacked block just under the header, so
+				     neighbours share a single collapsed border (a clean line between each).
+				     Each is a copy of its own folder row (same cells, so its triangle and
+				     buttons work). Stops short of the scrollbar. -->
+				<table class='blobs-table sticky-parents' style:top='{header_px - PIN_LIFT}px' style:width='{content_px}px'>
+					<colgroup><col style='width:60px' /><col style='width:40%' /><col style='width:auto' /></colgroup>
+					<tbody>
+						{#each pinned as parent (parent.place_key)}
+							<tr class='file pinned'>
+								{@render file_cells(parent)}
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			{/if}
 			</div>
 		{/if}
 	{/if}
@@ -352,21 +568,73 @@
 		box-sizing     : border-box;
 		position       : relative;
 		flex-direction : column;
+		overflow       : hidden;               /* the filter, search and header stay put; only the rows scroll */
 		display        : flex;
 		height         : 100%;
 		width          : 100%;
 		min-height     : 0;
-		overflow       : hidden;               /* the filter, search and header stay put; only the rows scroll */
+	}
+
+	/* Holds the scrolling rows and the pinned-folder overlay stacked on top of them. */
+	.table-region {
+		flex           : 1 1 auto;
+		position       : relative;
+		flex-direction : column;
+		display        : flex;
+		width          : 100%;
+		min-height     : 0;
 	}
 
 	/* Only the table body scrolls; it fills the space under the pinned controls. */
 	.table-scroll {
 		flex       : 1 1 auto;
-		min-height : 0;
 		overflow-y : auto;
 		width      : 100%;
-		margin-top : -3px;                     /* nudge the header content up 3px */
+		min-height : 0;
 	}
+
+	/* A real 20px scrollbar that reserves its own width, so the content (and the
+	   pinned-folder overlay measured from it) ends cleanly at the scrollbar instead of
+	   running under a floating one. */
+	.table-scroll::-webkit-scrollbar {
+		width : 20px;
+	}
+
+	.table-scroll::-webkit-scrollbar-thumb {
+		background    : var(--accent);
+		border-radius : 999px;
+	}
+
+	.table-scroll::-webkit-scrollbar-track {
+		background : transparent;
+	}
+
+	/* The pinned folders: a copy of the table sitting just below the column header,
+	   holding one row per pinned folder. Stops short of the scrollbar (right is set to
+	   its width). Can't be clicked — only shows where you are. */
+	table.sticky-parents {
+		box-sizing : border-box;               /* the inline height holds the row + its bottom line, so markers stack flush */
+		position   : absolute;                 /* qualified with the tag so it beats .blobs-table's position: relative */
+		left       : 0;
+		z-index    : 2;                        /* above the rows; the header (z 1) sits above it */
+		/* takes pointer events so a pinned folder's triangle and buttons still work;
+		   width is set inline to the scroll content width, so it ends at the scrollbar */
+	}
+
+	/* Each pinned row is solid page-colored so the scrolling rows don't show through,
+	   and carries a faint accent line under every cell (the table qualifier wins over
+	   the see-through bottoms rows normally have on the format cell and the last row),
+	   so the pinned stack reads as its own set of rows. */
+	table.sticky-parents .file.pinned td {
+		border-bottom : var(--thickness-faint) solid var(--accent);
+		background    : var(--bg);
+	}
+
+	/* Hovering a pinned row lights it to the hover color, like a row in the list. */
+	table.sticky-parents .file.pinned:hover td {
+		background : var(--hover);
+	}
+
 
 	/* A drag over the whole view — an accent frame says a drop will land. */
 	.documents.dragging {
@@ -575,14 +843,14 @@
 		cursor : pointer;
 	}
 
-	/* A second appearance of the same file (its "also here" echo under another
+	/* A second appearance of the same file (its "also here" dedup under another
 	   parent) reads lighter, so the home row is clearly the solid one. */
-	.blobs-table .file.echo td {
+	.blobs-table .file.dedup td {
 		opacity : var(--opacity-label);
 	}
 
-	/* The little turn-in mark before an echo's name. */
-	.echo-mark {
+	/* The little turn-in mark before an dedup's name. */
+	.dedup-mark {
 		opacity : var(--opacity-label);
 	}
 

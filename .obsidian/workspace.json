@@ -49,7 +49,8 @@
               "title": "handoff"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -184,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/code debt.md",
+                "file": "ji/notes/work/handoff.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of handoff"
             }
           },
           {
@@ -222,23 +223,22 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "03b8fd6e0c6714dc",
+  "active": "3e1ddbde653729de",
   "lastOpenFiles": [
-    "ji/src/lib/svelte/actions/View_Document.svelte.tmp.71617.0923bd7f2732",
-    "ji/notes/work/code debt.md.tmp.71617.6c8feadad110",
-    "ji/notes/work/code debt.md.tmp.71617.796d9fabce14",
-    "ji/notes/work/handoff.md",
-    "ji/notes/work/hierarchy spec.md",
     "ji/notes/work/code debt.md",
-    "ji/notes/work/handoff.md.tmp.71617.e0a45af2dcb2",
-    "ji/src/lib/ts/types/Persistence.ts",
+    "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.aa406ba70923",
+    "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.4de001130f07",
+    "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.1e30d67edb74",
+    "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.de53d239d447",
+    "ji/notes/work/work journal.md.tmp.71617.c9113ad1d83e",
+    "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.d77ade8aab5d",
+    "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.fcf2aea73552",
+    "ji/notes/work/handoff.md",
+    "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.21fe6cea1673",
+    "ji/notes/guides/map.md.tmp.71617.b1ffccaa18ef",
+    "ji/src/lib/svelte/actions/View_Document.svelte.tmp.71617.0923bd7f2732",
+    "ji/notes/work/hierarchy spec.md",
     "ji/notes/work/persistables.md",
-    "ji/src/lib/ts/managers/Hierarchy.ts.tmp.71617.ca836ae70a26",
-    "ji/src/lib/ts/tests/Drop.test.ts.tmp.71617.db0034ae0a54",
-    "ji/src/lib/ts/managers/Drop.ts.tmp.36118.fad8124afead",
-    "ji/src/lib/ts/managers/Hierarchy.ts",
-    "ji/src/lib/ts/tests/DB.test.ts.tmp.36118.b484dc558883",
-    "ji/notes/work/hierarchy spec.md.tmp.36118.2d4ac3907c6d",
     "notes/guides/pre-flight/banned words.md",
     "ji/notes/work/work journal.md",
     "ji/notes/work/db handoff.md",

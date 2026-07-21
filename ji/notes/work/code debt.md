@@ -6,18 +6,21 @@ write a proposal for the first unchecked item to the top of handoff.
 
 - [ ] documents table
     - [x] show all relationships (including multiple parents) — a thing shows once per parent (a duplicate under its folder and under its original); the later appearance reads lighter as an "also here"; the walk stops a real loop
-    - [ ] remember scroll position
-    - [ ] during scroll, stick the immediate parent folder rows at the top
-    - [ ] add a "download" unichar to the far right unichar buttons
-- [ ] tags
-    - [ ] show tags as a tree (single-parent first)
-    - [ ] tag ancestries — multi-parent tags
+    - [x] remember scroll position — saves the spot at the top of the scrolled rows (survives reload, like the shut folders): a spot is a document paired with the link that put it in that row, so a duplicate's two rows are told apart and reload returns to the exact one; a fast spot→row-number map turns it back into a row, placed just under the pinned header; if the spot is gone, starts at the top
+    - [x] during scroll, stick the immediate parent folder row(s) at the top — the whole chain of open folders above the top row is pinned just under the header, each a live copy of its own row (shared markup, so its triangle and buttons work), lined up under the same columns; nested folders stack, each pins the instant its top slides under and stays until its subtree passes
+    - [ ] add a 'cancel capture' button to the add documents view
+    - [ ] add a 'download' unichar to the far right unichar buttons
+    - [ ] when viewing a video or audio item -> begin playing it
+- [ ] debug.log does nothing when not launched on localhost
 - [ ] add remote support
     - [ ] supabase not firebase
     - [ ] use person's id
     - [ ] authorization
 - [ ] write a new file: spec rules based on current code
 - [ ] view rtf and md documents
+- [ ] tags
+    - [ ] show tags as a tree (single-parent first)
+    - [ ] tag ancestries — multi-parent tags
 - [ ] wendy -- new app for your brother: Intersection
     - [ ] give me weak signals / info from the tails (of a bell curve), not just the clusters
     - [ ] give me the signals that repeat over time or across multiple people — this is a stronger signal.

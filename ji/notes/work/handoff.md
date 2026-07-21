@@ -4,21 +4,21 @@
 
 Finished work moves to [work journal](work%20journal.md); what's left is in [code debt](code%20debt.md).
 
-## Proposal — next: the table remembers where it was scrolled
+## Proposal — next: let the browser pin the folders (the div rewrite)
 
-Done just now (see the [work journal](work%20journal.md)): every accent-filled button now carries readable text. Next is the first open piece under the documents table: **the table keeps its scroll place.**
+The pinned-folders feature works, with one stubborn flaw: as the first folders pin when you leave the very top, the top row flicks 1px — up, then back. It survived every fix (exact placement, one-frame flush, per-event updates) because the cause isn't placement or our timing — **it's the browser's.** Scrolling runs on the compositor and paints first; our scroll handler runs afterwards, so any position we compute in JavaScript lands one frame behind the scroll. A JavaScript-placed pinned row can't stay glued to a native scroll — it will always trail it by a frame at a crossing.
 
-Only the rows scroll — they sit in their own scroll area under the pinned filter, search, and header ([Documents.svelte](../../ji/src/lib/svelte/main/Documents.svelte) `.table-scroll`). Open a file and come back, or reload, and the table jumps to the top; a person who was deep in a long list loses their place. The fix: note how far down the rows are scrolled and put them back there.
+Today the pinned folders are exactly that: a copy of each folder row, absolutely placed by JavaScript on every scroll ([Documents.svelte](../../ji/src/lib/svelte/main/Documents.svelte) — `update_pins`, the `sticky-parents` overlay). The list itself is one `<table>`, and a table can't do this natively: a sticky row in a table stays stuck until the whole table scrolls past, not until its own folder's contents end.
 
-The build:
+**The fix is to stop placing anything ourselves and let the browser stick the rows** — CSS `position: sticky`, which the compositor keeps glued to the scroll with no JavaScript and no lag, so the whole 1px class of flaws is gone by construction. That means rebuilding the documents list as a **nested tree of divs** instead of one table:
 
-- **Note the scroll place as it changes** — the rows' scroll distance from the top, saved like the other remembered flags (the details sections, the shut folders).
-- **Put it back when the table returns** — after opening a file and closing it, and after a reload, the rows start where they were left.
+- Each folder becomes a block that holds its own children (its subtree), with the folder's row as a `position: sticky` header inside it. When that block's bottom scrolls past, the browser slides the folder out on its own — the "give way" we've been faking. Nesting the blocks stacks the sticky folders for free.
+- Columns (format, name, tags) move from table layout to a CSS grid so the three line up as they do now.
+- The walk already carries depth and the folder chain, so building the nested tree from `shown` is a small step; the per-row cells (triangle, name, tags, buttons) stay as they are (the shared `file_cells` snippet).
 
-Two things to settle:
+Scope and cost, honestly: this touches the whole documents-list rendering and its styling (hover pill, the "also here" dim, the ellipsis, the tag picker, the per-row buttons, the saved scroll place which reads rows from the DOM). It is a real rewrite of one screen, and will want a pass of visual touch-ups after. But it ends the fight for good and drops all the scroll-time JavaScript (the pin math, the flush, the measuring).
 
-- **Does it survive a reload, or only within a session?** Saving it across reloads matches how the folds and the open/closed sections already persist — lean there. A session-only place is simpler but forgets on reload.
-- **What happens when the list changes underneath it?** If rows were added, removed, or filtered while away, the old distance may point somewhere else. Simplest is to put back the same distance and let it settle where it lands; pinning to a particular row is more work for a rare case.
+One thing to settle: **the sticky stack needs a fixed row height** (so each folder's stick point sits exactly below the one above). Confirm rows can be a fixed height — they already look uniform.
 
 After this the tree returns: **show tags as a tree** (single-parent first — a tag walk reusing the folder triangle and shut-set), then **tag ancestries** (the multi-parent case, ws's "one identity, several places"). The [records-as-Persistables plan](persistables.md) stays paused; it's independent of the visible tree.
 
