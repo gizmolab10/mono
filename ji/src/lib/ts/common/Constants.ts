@@ -14,7 +14,8 @@ export default class Constants {
 		label		 : common_size * 0.35,		// 12.25
 		base		 : common_size * 0.375,		// 13.13
 		banner		 : common_size * 0.4,		// 14
-		large		 : common_size / 2,			// 17.5
+		large		 : common_size * 0.5,		// 17.5
+		huge         : common_size * 0.7,		// 24.5
 		em           : {
 			tracking : 0.03,			// em — the banner letter-spacing
 			small	 : 1.4,

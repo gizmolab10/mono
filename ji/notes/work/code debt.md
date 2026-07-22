@@ -4,7 +4,11 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] debug.log should do nothing when not launched on localhost
+- [ ] view document -> pin fat triangles to the top
+- [ ] set op to null -> very, very slow
+- [ ] debug.log
+    - [ ] should do nothing when not launched on localhost
+    - [ ] list the cruft, move it to work journal? or somewhere else
 - [ ] add remote support
     - [ ] supabase not firebase
     - [ ] use person's id

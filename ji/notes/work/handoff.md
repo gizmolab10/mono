@@ -4,23 +4,32 @@
 
 Finished work moves to [work journal](work%20journal.md); what's left is in [code debt](code%20debt.md).
 
-## Proposal — next: let the browser pin the folders (the div rewrite)
+## Phase 1 — assign each document's "viewable" and "status" — DONE 2026-07-22
 
-The pinned-folders feature works, with one stubborn flaw: as the first folders pin when you leave the very top, the top row flicks 1px — up, then back. It survived every fix (exact placement, one-frame flush, per-event updates) because the cause isn't placement or our timing — **it's the browser's.** Scrolling runs on the compositor and paints first; our scroll handler runs afterwards, so any position we compute in JavaScript lands one frame behind the scroll. A JavaScript-placed pinned row can't stay glued to a native scroll — it will always trail it by a frame at a crossing.
+Groundwork for feeding documents to a model (AnythingLLM) later. Every document carries two **independent** facts, and phase 1 is only to set them right — no extraction yet. **Built and green** (svelte-check clean, 31 tests): the two facts are derived by `Document.is_viewable` / `Document.status_of` (plus a `QUICK_KINDS` set), set on the add/replace paths, folders forced to not-viewable, both recomputed on load (`derive_document_flags`), and the rows/eye/stepper now read the stored `viewable`.
 
-Today the pinned folders are exactly that: a copy of each folder row, absolutely placed by JavaScript on every scroll ([Documents.svelte](../../ji/src/lib/svelte/main/Documents.svelte) — `update_pins`, the `sticky-parents` overlay). The list itself is one `<table>`, and a table can't do this natively: a sticky row in a table stays stuck until the whole table scrolls past, not until its own folder's contents end.
+- **viewable** — can the user open it and look at it in the app. Nothing to do with text.
+- **status** — how ready its words are for the model: **ready** (words in hand), **quick** (a quick words-pull still owed), **heavy** (a heavy pull still owed — recognizing writing in a picture, transcribing speech). Nothing to do with viewing.
 
-**The fix is to stop placing anything ourselves and let the browser stick the rows** — CSS `position: sticky`, which the compositor keeps glued to the scroll with no JavaScript and no lag, so the whole 1px class of flaws is gone by construction. That means rebuilding the documents list as a **nested tree of divs** instead of one table:
+They cross freely: a picture is viewable **and** heavy; a pdf is viewable **and** quick; a Word file (were it re-accepted) is not-viewable **and** quick.
 
-- Each folder becomes a block that holds its own children (its subtree), with the folder's row as a `position: sticky` header inside it. When that block's bottom scrolls past, the browser slides the folder out on its own — the "give way" we've been faking. Nesting the blocks stacks the sticky folders for free.
-- Columns (format, name, tags) move from table layout to a CSS grid so the three line up as they do now.
-- The walk already carries depth and the folder chain, so building the nested tree from `shown` is a small step; the per-row cells (triangle, name, tags, buttons) stay as they are (the shared `file_cells` snippet).
+**The rules (both are pure functions of the document, so they recompute — no stored-flag migration):**
 
-Scope and cost, honestly: this touches the whole documents-list rendering and its styling (hover pill, the "also here" dim, the ellipsis, the tag picker, the per-row buttons, the saved scroll place which reads rows from the DOM). It is a real rewrite of one screen, and will want a pass of visual touch-ups after. But it ends the fight for good and drops all the scroll-time JavaScript (the pin math, the flush, the measuring).
+- **viewable** = true when the app can render the kind, false otherwise. A folder is false.
+- **status** = **ready** if it is a plain-text kind (txt, md) **or** its text is already filled; otherwise by extension — **quick** for the quick-pull kinds (pdf, html, rtf, svg), **heavy** for the recognize/transcribe kinds (images, audio, video). The "or its text is already filled" clause is what lets a document flip to ready once extraction lands, just by recomputing.
+- **folders** are neither viewed nor fed to the model (no bytes, no words) — left out of both, marked by their family, not by a status value.
 
-One thing to settle: **the sticky stack needs a fixed row height** (so each folder's stick point sits exactly below the one above). Confirm rows can be a fixed height — they already look uniform.
+**Where the code changes:** set both when a document is made (the add path), recompute both on load (records saved before these fields carry no value), point the rows / eye / stepper at the stored `viewable` instead of recomputing the render test, split the current two-way status pick ([Hierarchy.ts:131](../../ji/src/lib/ts/managers/Hierarchy.ts#L131)) into the three tiers, and report the two axes separately in the arrival log.
 
-After this the tree returns: **show tags as a tree** (single-parent first — a tag walk reusing the folder triangle and shut-set), then **tag ancestries** (the multi-parent case, ws's "one identity, several places"). The [records-as-Persistables plan](persistables.md) stays paused; it's independent of the visible tree.
+**Phase 2 - extraction pass** — the quick/heavy words-pull that fills `text` and flips status to ready.
+
+## Sticky parent-folders — removed 2026-07-22
+
+The feature that kept a scrolled row's parent folders pinned at the top is **gone**. It fought us end to end: a 1px flick at every crossing (the browser paints scroll on its own thread, so a JavaScript-placed row always trails a frame), then a click-steal (a pinned triangle's clickable box poked below the strip and caught clicks meant for the row beneath). A one-line clip did not settle it. Jonathan called it a bad design and pulled it.
+
+What was cut from [Documents.svelte](../../ji/src/lib/svelte/main/Documents.svelte): the pinned overlay table, `update_pins`, the pin state and its recompute, the scroll-time pin math. What stayed: the sticky **column header**, the remembered scroll place, and folder open/close.
+
+If parent-orientation is ever wanted again, do it natively — rebuild the list as a nested tree of divs with each folder row `position: sticky` inside its own block (the compositor keeps it glued, no JavaScript, no flick, no overlap). That is a real rewrite of the list, so only for a deliberate pass, not a quick add.
 
 ## Method that holds
 

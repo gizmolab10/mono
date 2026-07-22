@@ -7,7 +7,7 @@ export class Debug {
 	// first line for that file this session overwrite; pass false to always append,
 	// even on the first line. A non-erasing call never marks the file, so it can't
 	// eat a later erasing call's one-shot overwrite.
-	log(text: string, filename: string = 'designintuition', erases: boolean = true): void {
+	log(text: string, filename: string = 'intersection', erases: boolean = true): void {
 		const base = `http://localhost:5171/log?where=${filename}`;
 		const erasing = erases && !this.logs_erased.get(filename);
 		if (erases) { this.logs_erased.set(filename, true); }

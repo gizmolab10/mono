@@ -6,8 +6,9 @@ import { debug } from '../common/Debug';
 // for older imports.
 
 export enum S_Document {
-	ready     = 0,
-	needsText = 1,
+	ready = 0,
+	quick = 1,
+	heavy = 2,
 }
 
 // The broad family a document falls into, from its reported type.
@@ -108,6 +109,20 @@ export const READY_KINDS: ReadonlySet<T_DocumentExtension> =
 		T_DocumentExtension.txt,
 ]);
 
+// The extensions whose words come out with a quick pull — strip the markup or read
+// the document, no picture-reading or transcription. Everything else that isn't
+// already plain words needs the heavy step (a picture's writing recognized, a clip's
+// speech transcribed).
+export const QUICK_KINDS: ReadonlySet<T_DocumentExtension> =
+	new Set([
+		T_DocumentExtension.pdf,
+		T_DocumentExtension.html,
+		T_DocumentExtension.rtf,
+		T_DocumentExtension.svg,
+		T_DocumentExtension.doc,
+		T_DocumentExtension.docx,
+]);
+
 // The endings the reading tool won't take as they stand. Everything here holds
 // words or speech — a clip has talking, a picture can have writing on it, a Word
 // file and rich text have words wrapped in markup — but each has to be turned into
@@ -163,11 +178,12 @@ export class Document {
 	extension?          : T_DocumentExtension;
 	reported_type?      : string;          // what the browser said the file was, verbatim
 	size?               : number;          // how many bytes the file reported at drop time
-	status              = S_Document.needsText;
+	viewable            = false;
+	status              = S_Document.ready;
 	id                  : string = '';
-	blob_id?            : string;         // reference the storage resolves to the actual bytes
+	blob_id?            : string;          // refers to the storage of the actual bytes
 	name?               : string;
-	text?               : string;
+	text?               : string;          // from extraction (quick or heavy)
 	last_modified_date? : number | null;   // when the file was last changed, milliseconds since epoch; null for a folder
 	metadata?           : any;
 
@@ -203,6 +219,23 @@ export class Document {
 			case T_DocumentExtension.flac: return T_DocumentFamily.audio;
 			default:                       return null;    // doc, docx, the unplayable clips, no ending
 		}
+	}
+
+	// Can the user open and look at this kind here? Purely about showing — nothing to
+	// do with whether its words have been pulled. A folder (no extension) is false.
+	static is_viewable(extension: T_DocumentExtension | null | undefined): boolean {
+		return Document.view_mode(extension) !== null;
+	}
+
+	// How ready a document's words are for the model. Ready when it is already plain
+	// words (txt, md) or its text has already been pulled; otherwise a quick pull
+	// (markup stripped, a pdf or word file read) or a heavy one (a picture's writing
+	// recognized, a clip's speech transcribed). Purely about words — nothing to do
+	// with viewing. Folders are handled by their family, not passed here.
+	static status_of(extension: T_DocumentExtension | null | undefined, has_text: boolean): S_Document {
+		if (has_text || (extension != null && READY_KINDS.has(extension))) { return S_Document.ready; }
+		if (extension != null && QUICK_KINDS.has(extension)) { return S_Document.quick; }
+		return S_Document.heavy;
 	}
 
 	// A plain, friendly word for each family — what the drop box shows instead of

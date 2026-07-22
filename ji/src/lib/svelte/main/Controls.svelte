@@ -21,6 +21,7 @@
 			<path d={hamburgerPath} />
 		</svg>
 	</button>
+	<span class='title'>Intersection</span>
 	<button class='help' onclick={help} aria-label='help'>?</button>
 </div>
 
@@ -31,9 +32,21 @@
 		background      : var(--accent);
 		justify-content : space-between;
 		box-sizing      : border-box;
+		position        : relative;
 		align-items     : center;
 		display         : flex;
 		width           : 100%;
+	}
+
+	/* The app name, centered in the row regardless of the side controls' widths. */
+	.title {
+		color          : var(--text-on-accent);
+		transform      : translateX(-50%);
+		font-size      : var(--font-huge);
+		position       : absolute;
+		white-space    : nowrap;
+		pointer-events : none;
+		left           : 50%;
 	}
 
 	.hamburger-button {
@@ -62,10 +75,10 @@
 		border-radius : var(--radius-percent);
 		height        : var(--height-control);
 		width         : var(--height-control);
-		box-sizing    : border-box;
 		font-size     : var(--font-base);
 		background    : var(--white);
 		color         : var(--text);
+		box-sizing    : border-box;
 		cursor        : pointer;
 	}
 

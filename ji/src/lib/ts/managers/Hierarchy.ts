@@ -1,11 +1,11 @@
-import { Document, S_Document, T_DocumentExtension, T_DocumentFamily, READY_KINDS, NEEDS_CONVERTING } from '../types/Document';
+import { Document, S_Document, T_DocumentExtension, T_DocumentFamily } from '../types/Document';
 import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records';
 import type { DB_Common } from '../database/DB_Common';
-import { T_Record } from '../types/DB_Records';
 import { Persistence } from '../types/Persistence';
+import { T_Record } from '../types/DB_Records';
+import { Indexes } from '../database/Indexes';
 import { db_changed } from '../types/Signal';
 import { debug } from '../common/Debug';
-import { Indexes } from '../database/Indexes';
 
 // Any stored record. They all carry a unique id, and ids never collide across the
 // kinds, so one id lookup can hold every record and each id resolves to the one
@@ -59,6 +59,7 @@ export class Hierarchy {
 		this.taggings      = this.db.load_list<Tagging>(T_Record.taggings);
 		this.relationships = this.db.load_list<Relationship>(T_Record.relationships);
 		this.predicates    = this.db.load_list<Predicate>(T_Record.predicates);
+		this.derive_document_flags();
 		this.persistence.clear_all();
 		this.rebuild_lookups();
 		this.reindex();
@@ -72,6 +73,19 @@ export class Hierarchy {
 		this.records_byID     = new Map();
 		for (const record of [...this.documents, ...this.tags, ...this.taggings, ...this.relationships, ...this.predicates]) {
 			this.records_byID.set(record.id, record);
+		}
+	}
+
+	// Whether a document can be viewed, and how ready its words are, are both worked
+	// out from the kind (and, for the words, whether its text has been pulled yet).
+	// Recomputed on load so records saved before these fields carry the right values,
+	// and so a document flips to ready on its own the moment its text is filled. A
+	// folder is never viewed nor fed to the model — its family marks it.
+	private derive_document_flags(): void {
+		for (const d of this.documents) {
+			const is_folder = d.family === T_DocumentFamily.folder;
+			d.viewable = is_folder ? false : Document.is_viewable(d.extension);
+			d.status   = is_folder ? S_Document.ready : Document.status_of(d.extension, !!d.text);
 		}
 	}
 
@@ -103,7 +117,7 @@ export class Hierarchy {
 	// carries. What makes it a file or a folder is passed in.
 	private create_document(name: string, fields: Partial<Document>): Document {
 		const id = crypto.randomUUID();
-		return { id, name, storage: this.db.storage, status: S_Document.ready, metadata: {}, ...fields };
+		return { id, name, storage: this.db.storage, viewable:true, status: S_Document.ready, metadata: {}, ...fields };
 	}
 
 	// The shared finish: add it to the list and save.
@@ -126,20 +140,17 @@ export class Hierarchy {
 		const reported_type      = from_file.reported_type ?? '';
 		const size               = from_file.size;
 		const family             = Document.family_of(reported_type, extension);
-		// Plain text and markdown are already readable words; everything else waits
-		// for a text-extraction step before it can be searched or read by a model.
-		const status = READY_KINDS.has(extension) ? S_Document.ready : S_Document.needsText;
-		const document = this.create_document(name, { extension, last_modified_date, status, family, size, reported_type });
+		// Two independent facts, both worked out from the kind: can the user look at it,
+		// and how ready its words are for the model. A fresh drop has no pulled text yet.
+		const viewable = Document.is_viewable(extension);
+		const status   = Document.status_of(extension, false);
+		const document = this.create_document(name, { extension, last_modified_date, viewable, status, family, size, reported_type });
 		document.blob_id = document.id;
 		await this.db.write_blob(document.id, content);
-		// Whether the reading tool will take this file as it stands, or whether it has
-		// to be turned into something else first (a clip transcribed, a picture
-		// re-saved, markup stripped). Logged so a document that will need extra work
-		// later says so the moment it arrives.
-		const handover = (status === S_Document.ready) ? 'already plain words'
-			: NEEDS_CONVERTING.has(extension) ? 'must be converted before the reading tool will take it'
-			: 'the reading tool will pull its words out itself';
-		debug.log(`Added document "${name}" (${extension}), dated ${new Date(last_modified_date).toISOString()}, ${size ?? 'unknown'} bytes, reported as "${reported_type || 'nothing'}" -> family ${family}, ${handover}.`);
+		const words = status === S_Document.ready ? 'words ready for the model'
+			: status === S_Document.quick ? 'words need a quick pull first'
+			: 'words need a heavy pull first (picture read or speech transcribed)';
+		debug.log(`Added document "${name}" (${extension}), dated ${new Date(last_modified_date).toISOString()}, ${size ?? 'unknown'} bytes, reported as "${reported_type || 'nothing'}" -> family ${family}, ${viewable ? 'user can view' : 'not viewable'}, ${words}.`);
 		return this.register_document(document);
 	}
 
@@ -154,7 +165,8 @@ export class Hierarchy {
 		document.size               = from_file.size;
 		document.reported_type      = from_file.reported_type ?? '';
 		document.family             = Document.family_of(document.reported_type, extension);
-		document.status             = READY_KINDS.has(extension) ? S_Document.ready : S_Document.needsText;
+		document.viewable           = Document.is_viewable(extension);
+		document.status             = Document.status_of(extension, !!document.text);
 		document.blob_id            = document.id;
 		await this.db.write_blob(document.id, content);
 		this.persistence.mark_dirty(T_Record.documents, document.id);
@@ -166,7 +178,7 @@ export class Hierarchy {
 	// A folder is a do-nothing document: no bytes and no extension — its family
 	// marks it as a folder, and its contents are linked under it by relationships.
 	add_folder(name: string): Document {
-		const document = this.create_document(name, { family: T_DocumentFamily.folder, last_modified_date: null });
+		const document = this.create_document(name, { family: T_DocumentFamily.folder, last_modified_date: null, viewable: false });
 		debug.log(`Added folder "${name}".`);
 		return this.register_document(document);
 	}
@@ -233,12 +245,28 @@ export class Hierarchy {
 			if (row.via_contains && !ordered[chosen].via_contains) { home_at.set(row.document.id, i); }
 		});
 
-		return ordered.map((row, i) => {
+		const listed = ordered.map((row, i) => {
 			const many = (counts.get(row.document.id) ?? 0) >= 2;
 			const is_dedup = many && home_at.get(row.document.id) !== i;
 			if (is_dedup) { debug.log(`Tree walk: "${row.document.name}" shown again under a second parent (depth ${row.depth}) — the lighter "also here".`); }
 			return { document: row.document, tag_ids: row.tag_ids, depth: row.depth, ancestor_ids: row.ancestor_ids, is_dedup, has_children: row.has_children, relationship_id: row.relationship_id };
 		});
+
+		// Print the list top-to-bottom with each row's nesting depth and the parent it
+		// sits under, so a depth that jumps the wrong way (a child no deeper than its
+		// parent) shows up plainly in the log instead of being guessed at from the screen.
+		let previous_depth = 0;
+		for (const row of listed) {
+			const parent_id = row.ancestor_ids[row.ancestor_ids.length - 1];
+			const parent = parent_id ? this.document_byID(parent_id)?.name ?? parent_id : 'none (root)';
+			const step = row.depth === previous_depth + 1 ? 'in one'
+				: row.depth === previous_depth ? 'same'
+				: row.depth < previous_depth ? `out ${previous_depth - row.depth}`
+				: `IN ${row.depth - previous_depth} (jumped more than one)`;
+			debug.log(`List: "${row.document.name}" — depth ${row.depth} (${step}), under ${parent}.`);
+			previous_depth = row.depth;
+		}
+		return listed;
 	}
 
 	// The documents wearing one tag.

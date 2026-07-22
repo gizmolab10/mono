@@ -43,6 +43,7 @@ class Configuration {
 		root.setProperty('--font-credit',        `${k.font.credit}px`);
 		root.setProperty('--font-label',         `${k.font.label}px`);
 		root.setProperty('--font-base',          `${k.font.base}px`);
+		root.setProperty('--font-huge',          `${k.font.huge}px`);
 		root.setProperty('--font-banner',        `${k.font.banner}px`);
 		root.setProperty('--font-large',         `${k.font.large}px`);
 		root.setProperty('--font-hero',          `${k.font.em.big}em`);
