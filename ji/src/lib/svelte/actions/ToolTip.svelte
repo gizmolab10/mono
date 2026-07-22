@@ -21,7 +21,7 @@
 		if (message == null || anchor == null || label == null) { return; }
 		const at = anchor.getBoundingClientRect();
 		const own = label.getBoundingClientRect();
-		let x = at.left;
+		let x = at.left - 5;   // sit a touch left of the pointed-at thing
 		if (x + own.width > window.innerWidth - MARGIN) {   // would run off the right — pull it back in
 			x = Math.max(MARGIN, window.innerWidth - MARGIN - own.width);
 		}
@@ -38,10 +38,10 @@
 
 	.tooltip {
 		z-index        : calc(var(--z-frontmost) + 1);   /* above everything, including the pinned frame */
-		padding        : var(--gap-tight) var(--gap);
+		padding        : calc(var(--gap-tight) - 2.5px) var(--gap);   /* 5px shorter overall */
 		box-shadow     : var(--shadow-modal);
 		font-size      : var(--font-credit);
-		background     : var(--lightgray);
+		background     : var(--offwhite);
 		color          : var(--black);
 		white-space    : nowrap;
 		position       : fixed;

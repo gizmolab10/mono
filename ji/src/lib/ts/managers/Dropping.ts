@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
 // What a drop in progress looks like to the rest of the app. The saving happens
 // in Drop; this is only what the screen needs to show it, plus the one way the
@@ -41,7 +41,20 @@ export const w_drop_total    = writable<number>(0);           // how many things
 export const w_drop_captured = writable<number>(0);           // how many have been dealt with so far
 export const w_drop_question = writable<Drop_Question | null>(null);
 
+// Set the moment a person presses "cancel" on the strip; the saving checks it before
+// each item and stops. Cleared when a new drop begins, so it never carries over.
+let cancel_requested = false;
+export function request_drop_cancel(): void {
+	cancel_requested = true;
+	// If the drop is paused on a question or a message, let it go so the saving wakes
+	// up and stops at the cancel check. The choice handed in is never saved.
+	get(w_drop_question)?.answer(T_Keep.old, false);
+	get(w_drop_message)?.answer();
+}
+export function drop_was_cancelled(): boolean { return cancel_requested; }
+
 export function drop_started(total: number): void {
+	cancel_requested = false;
 	w_drop_total.set(total);
 	w_drop_captured.set(0);
 	w_drop_question.set(null);

@@ -25,9 +25,10 @@ import { get } from 'svelte/store';
 export class Colors {
 	gray			  = '#888';
 	lightgray         = '#ccc';
+	offwhite          = '#eee';
+	white			  = '#fff';
 	banner			  = '#f8f8f8';
 	black			  = '#1a1a1a';				// the one ink black — never #000
-	white			  = '#ffffff';
 
 	// Reactive colors (stores). Wrapped so every write marks the canvas out
 	// of date — color changes are canvas-visible.

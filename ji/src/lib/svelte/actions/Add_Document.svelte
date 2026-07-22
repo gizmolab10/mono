@@ -66,15 +66,19 @@
 	<svg class='drop-edge' aria-hidden='true'>
 		<rect class='edge-line' x='0' y='0' width='100%' height='100%' />
 	</svg>
+	<!-- Holds the instruction line 30% of the way down, not dead centre. -->
+	<div class='top-space'></div>
 	drop documents & folders here
 	{#if $w_drop_total > 0}
+		<!-- a line between the instruction above and the running count below -->
+		<hr class='drop-divider' />
 		<!-- while a drop is running, the count stands where the families stand -->
 		<span class='types'><Drop_Status /></span>
 	{:else}
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<span class='types'>({#each families as family}<span class='family'
+		<span class='types'>{#each families as family}<span class='family'
 			onmouseenter={(e) => show_hint(e.currentTarget, family.endings)}
-			onmouseleave={hide_hint}>{family.label}</span>{/each})</span>
+			onmouseleave={hide_hint}>{family.label}</span>{/each}</span>
 	{/if}
 </div>
 
@@ -94,10 +98,16 @@
 		box-sizing      : border-box;
 		position        : relative;
 		align-items     : center;
-		justify-content : center;
+		justify-content : flex-start;
 		flex-direction  : column;
 		display         : flex;
 		flex            : 1;                   /* fill the height so its bottom margin equals the sides */
+	}
+
+	/* Empty space above the instruction, three tenths of the box tall. */
+	.top-space {
+		height     : 30%;
+		flex-shrink : 0;
 	}
 
 	/* Sits half a line-width in from the box's edge, with the stroke straddling
@@ -124,6 +134,13 @@
 
 	.drop.dragging .edge-line {
 		stroke-dasharray : none;               /* a whole line while the box is ready to catch */
+	}
+
+	.drop-divider {
+		border     : none;
+		border-top : var(--thickness-normal) solid var(--accent);
+		margin     : var(--gap) 0 0;
+		width      : 100%;
 	}
 
 	.types {

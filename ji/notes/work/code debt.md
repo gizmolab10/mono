@@ -4,20 +4,20 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] documents table
-    - [x] show all relationships (including multiple parents) — a thing shows once per parent (a duplicate under its folder and under its original); the later appearance reads lighter as an "also here"; the walk stops a real loop
-    - [x] remember scroll position — saves the spot at the top of the scrolled rows (survives reload, like the shut folders): a spot is a document paired with the link that put it in that row, so a duplicate's two rows are told apart and reload returns to the exact one; a fast spot→row-number map turns it back into a row, placed just under the pinned header; if the spot is gone, starts at the top
-    - [x] during scroll, stick the immediate parent folder row(s) at the top — the whole chain of open folders above the top row is pinned just under the header, each a live copy of its own row (shared markup, so its triangle and buttons work), lined up under the same columns; nested folders stack, each pins the instant its top slides under and stays until its subtree passes
-    - [ ] add a 'cancel capture' button to the add documents view
-    - [ ] add a 'download' unichar to the far right unichar buttons
-    - [ ] when viewing a video or audio item -> begin playing it
-- [ ] debug.log does nothing when not launched on localhost
+- [ ] debug.log should do nothing when not launched on localhost
 - [ ] add remote support
     - [ ] supabase not firebase
     - [ ] use person's id
     - [ ] authorization
 - [ ] write a new file: spec rules based on current code
-- [ ] view rtf and md documents
+- [ ] documents table
+    - [ ] when viewing a video or audio item -> begin playing it
+    - [ ] add a 'download' unichar to the far right unichar buttons
+- [ ] add support for:
+    - [ ] **Word:** doc, docx
+    - [ ] **Video (unplayable in-browser):** avi, flv, mkv, mpg, wmv
+    - [ ] **Audio (unplayable in-browser):** aiff, wma
+    - [ ] **Text:** rtf and md
 - [ ] tags
     - [ ] show tags as a tree (single-parent first)
     - [ ] tag ancestries — multi-parent tags
@@ -28,6 +28,15 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] if the user chooses to NOT do the same, leave repeat false for the next dedup — "do the same" keeps its setting through a drop (turn it off once and later questions stay off); a new drop starts it back on
+- [x] make the progress circle's progress arc into a pie shape, easier to see — a light disc with a solid wedge that sweeps from the top like a clock hand, filling to a full disc when done
+- [x] draw an hr between status line and dedup dialog — an accent line, shown only while the dedup question is up
+- [x] stop support for other, doc and docs are text — the "other" family is gone (nothing lands there anymore); .doc and .docx count as the text family for listing but stay non-viewable (no eye, skipped when stepping)
+- [x] add a 'cancel capture' button to the add documents view — a "cancel" pill in the drop's status strip; pressing it stops the save between items (what's already saved stays), and the strip clears
+- [x] documents table
+    - [x] show all relationships (including multiple parents) — a thing shows once per parent (a duplicate under its folder and under its original); the later appearance reads lighter as an "also here"; the walk stops a real loop
+    - [x] remember scroll position — saves the spot at the top of the scrolled rows (survives reload, like the shut folders): a spot is a document paired with the link that put it in that row, so a duplicate's two rows are told apart and reload returns to the exact one; a fast spot→row-number map turns it back into a row, placed just under the pinned header; if the spot is gone, starts at the top
+    - [x] during scroll, stick the immediate parent folder row(s) at the top — the whole chain of open folders above the top row is pinned just under the header, each a live copy of its own row (shared markup, so its triangle and buttons work), lined up under the same columns; nested folders stack, each pins the instant its top slides under and stays until its subtree passes
 - [x] button text color -> the color named `text_forAccent` in code (CSS var stays `--text-on-accent`), white or black by the accent's luminosity at the existing flip point — the same value the hamburger already read; now given to every button whose own background is the accent — the all/any current segment, a lit tag chip, the chosen storage segment
 - [x] left/right fat triangles at top-far-left of view document — two fat triangles (20px, accent outline, hover fill) step through the on-screen showable run (search and folds applied, folders and unshowable kinds skipped, a duplicate's two spots counting twice), wrapping at both ends; quiet when only one showable file
     - [x] retreat/advance the content to the previous/next viewable file

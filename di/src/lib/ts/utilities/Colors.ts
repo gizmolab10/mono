@@ -146,7 +146,7 @@ export class Colors {
 	}
 
 	blend(color : string, background : string, saturation : number = 7) : string {
-		let blended : string | null = 'lightgray';
+		let blended : string | null = 'offwhite';
 		if (!this.colors_areIdentical(background, get(this.w_background_color))) {
 			if (this.isGray(background)) {
 				blended = this.darkerBy(background, 1 / saturation);

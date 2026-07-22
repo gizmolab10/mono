@@ -1,4 +1,4 @@
-import { drop_started, drop_captured, drop_finished, drop_asks, drop_tells, T_Keep } from './Dropping';
+import { drop_started, drop_captured, drop_finished, drop_asks, drop_tells, drop_was_cancelled, T_Keep } from './Dropping';
 import { Document, MAX_FILE_BYTES, say_bytes } from '../types/Document';
 import { h } from '../database/Databases';
 import { debug } from '../common/Debug';
@@ -196,6 +196,7 @@ async function folder_for(entry: FileSystemDirectoryEntry, parent_id: string | n
 // Save one dropped entry: a file becomes a document; a folder becomes a folder
 // document with its files — and any folders within — saved under it, all the way down.
 async function save_entry(entry: FileSystemEntry, parent_id: string | null, contains: () => string, chosen: Set<string>): Promise<void> {
+	if (drop_was_cancelled()) { return; }                     // a "cancel" press stops the drop between items, folders and all
 	if (entry.isFile) {
 		const file = await file_of(entry as FileSystemFileEntry);
 		await save_file(file, parent_id, contains, chosen);
@@ -229,7 +230,10 @@ export async function save_drop(data: DataTransfer | null, chosen: Set<string>):
 		debug.log(`Dropped ${entries.length} top-level item(s); ${total} thing(s) in all, folders and skips included.`);
 		drop_started(total);
 		try {
-			for (const entry of entries) { await save_entry(entry, null, contains, chosen); }
+			for (const entry of entries) {
+				if (drop_was_cancelled()) { debug.log(`Drop cancelled — stopped after saving some of the ${total} thing(s).`); break; }
+				await save_entry(entry, null, contains, chosen);
+			}
 		} finally {
 			drop_finished();
 		}
@@ -239,7 +243,10 @@ export async function save_drop(data: DataTransfer | null, chosen: Set<string>):
 	debug.log(`Dropped ${files.length} file(s) (this browser offered no folder entries).`);
 	drop_started(files.length);
 	try {
-		for (const file of files) { await save_file(file, null, contains, chosen); }
+		for (const file of files) {
+			if (drop_was_cancelled()) { debug.log(`Drop cancelled — stopped after saving some of the ${files.length} file(s).`); break; }
+			await save_file(file, null, contains, chosen);
+		}
 	} finally {
 		drop_finished();
 	}

@@ -12,14 +12,13 @@ export enum S_Document {
 
 // The broad family a document falls into, from its reported type.
 export enum T_DocumentFamily {
+    video  = 'video',
     audio  = 'audio',
 	folder = 'folder',
     image  = 'image',
-	html   = 'html',
-	other  = 'other',
-    pdf    = 'pdf',
     text   = 'text',
-    video  = 'video',
+	html   = 'html',
+    pdf    = 'pdf',
 }
 
 export enum T_DocumentExtension {
@@ -217,21 +216,19 @@ export class Document {
 			case T_DocumentFamily.html:   return 'web page';
 			case T_DocumentFamily.text:   return 'text';
 			case T_DocumentFamily.folder: return 'folder';
-			case T_DocumentFamily.other:  return 'other';
 		}
 	}
 
 	// The families a drop will save, worked out from the endings we accept — so the
 	// list stays true by itself as new endings are added. Folders are left out (the
-	// drop box already says it takes them); "other" trails at the end.
+	// drop box already says it takes them).
 	static accepted_families(): T_DocumentFamily[] {
 		const accepted = new Set<T_DocumentFamily>();
 		for (const extension of Object.values(T_DocumentExtension)) {
 			accepted.add(Document.family_of('', extension));
 		}
 		accepted.delete(T_DocumentFamily.folder);
-		const named = Object.values(T_DocumentFamily).filter((family) => accepted.has(family) && family !== T_DocumentFamily.other);
-		return accepted.has(T_DocumentFamily.other) ? [...named, T_DocumentFamily.other] : named;
+		return Object.values(T_DocumentFamily).filter((family) => accepted.has(family));
 	}
 
 	// Every file ending that belongs to one family, in the order they are written
@@ -240,14 +237,16 @@ export class Document {
 	// from what we accept, so a newly accepted ending shows up here by itself.
 	static endings_of(family: T_DocumentFamily): string[] {
 		return Object.keys(Document.kind_byExtension)
-			.filter((ending) => Document.family_of('', Document.kind_byExtension[ending]) === family);
+			.filter((ending) => Document.family_of('', Document.kind_byExtension[ending]) === family)
+			.filter((ending) => Document.view_mode(Document.kind_byExtension[ending]) !== null);   // for now, hide the kinds we can't show
 	}
 
 	// Which broad family a file belongs to. The browser's reported type decides it
 	// when that type says something useful (its first word — picture, video, sound,
 	// text — plus pdf and web page as named cases). When the type is empty or
-	// unhelpful, the extension decides instead, and anything still unplaced (Word
-	// files and the like) falls to "other".
+	// unhelpful, the extension decides instead. Anything unrecognized is skipped on
+	// the way in, so a saved file always lands in a real family; text is the last
+	// resort only for a call with no known ending.
 	static family_of(reported_type: string, extension: T_DocumentExtension | null | undefined): T_DocumentFamily {
 		if (reported_type === 'application/pdf') { return T_DocumentFamily.pdf; }
 		if (reported_type === 'text/html')       { return T_DocumentFamily.html; }
@@ -259,7 +258,9 @@ export class Document {
 		}
 		if (extension && VIDEO_KINDS.has(extension)) { return T_DocumentFamily.video; }
 		if (extension && AUDIO_KINDS.has(extension)) { return T_DocumentFamily.audio; }
-		return Document.view_mode(extension) ?? T_DocumentFamily.other;
+		// Word files count as text for listing, but stay non-viewable (view_mode is null).
+		if (extension === T_DocumentExtension.doc || extension === T_DocumentExtension.docx) { return T_DocumentFamily.text; }
+		return Document.view_mode(extension) ?? T_DocumentFamily.text;
 	}
 
 	// A file extension → the kind we store it as. The primary signal, because a
@@ -342,6 +343,12 @@ export class Document {
 		const byExt = Document.kind_byExtension[ext];
 		const kind = byExt ?? Document.kind_byType(file.type);
 		debug.log(`Kind of "${file.name}": extension ".${ext}" -> ${byExt ?? 'none'}, type "${file.type || 'none'}" -> chose ${kind}.`);
+		// For now, a kind we can't show here (Word files, the unplayable clips) is left
+		// out entirely — treated as unknown, so the drop skips it and never saves it.
+		if (kind !== null && Document.view_mode(kind) === null) {
+			debug.log(`Ignoring "${file.name}" for now — ".${ext}" is a ${kind} file, which can't be shown here.`);
+			return null;
+		}
 		return kind;
 	}
 

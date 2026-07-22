@@ -1,6 +1,7 @@
 <script lang='ts'>
-	import { w_drop_total, w_drop_captured, w_drop_question, w_drop_message, T_Keep } from '../../ts/managers/Dropping';
+	import { w_drop_total, w_drop_captured, w_drop_question, w_drop_message, request_drop_cancel, T_Keep } from '../../ts/managers/Dropping';
 	import { say_bytes } from '../../ts/types/Document';
+	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 
 	// Two lines that only appear while something is being dropped.
@@ -16,19 +17,46 @@
 	const busy     = $derived($w_drop_total > 0);
 	const fraction = $derived($w_drop_total > 0 ? $w_drop_captured / $w_drop_total : 0);
 
-	// The ring: one circle drawn as a dashed line whose dash is as long as the part
-	// already done, so it fills up as the count climbs.
-	const radius        = k.size.svg / 2 - 2;
-	const circumference = 2 * Math.PI * radius;
-	const drawn         = $derived(circumference * fraction);
+	// The ring: a light disc with a solid wedge that sweeps around like a clock hand,
+	// growing from nothing to a full disc as the count climbs — a pie, easier to read
+	// at a glance than a thin arc. The svg is turned so the wedge starts at the top.
+	const radius = k.size.svg / 2 - 2;
+	const wedge  = $derived.by(() => {
+		const c = k.size.svg / 2;
+		const r = radius;
+		const f = Math.max(0, Math.min(1, fraction));
+		if (f <= 0) { return ''; }                                    // nothing done yet: no wedge
+		if (f >= 1) {                                                 // all done: a full disc (two half arcs)
+			return `M ${c} ${c - r} A ${r} ${r} 0 1 1 ${c} ${c + r} A ${r} ${r} 0 1 1 ${c} ${c - r} Z`;
+		}
+		const angle = 2 * Math.PI * f;
+		const end_x = c + r * Math.cos(angle);
+		const end_y = c + r * Math.sin(angle);
+		const long  = f > 0.5 ? 1 : 0;                                // past halfway, take the long way round
+		return `M ${c} ${c} L ${c + r} ${c} A ${r} ${r} 0 ${long} 1 ${end_x} ${end_y} Z`;
+	});
 
-	// Which copies the person has picked. Starts with the dropped one alone — the
-	// common wish is "take the newer one" — and OK is dead if neither is picked.
+	// Which copies the person has picked. Each new question starts with the more recent
+	// copy checked (the common wish is "take the newer one"). "Do the same for the rest"
+	// starts checked, but keeps whatever it was last set to: turn it off on one question
+	// and it stays off for the next, so a person is never re-asked to opt out. OK is dead
+	// if neither copy is picked.
 	let keep_stored  = $state(false);
 	let keep_dropped = $state(true);
-	let repeat       = $state(false);
+	let repeat       = $state(true);
+	// The more recent copy shows on top; when the dropped one is newer, it leads.
+	const dropped_newer = $derived($w_drop_question ? ($w_drop_question.dropped.date ?? 0) >= ($w_drop_question.stored.date ?? 0) : true);
 	$effect(() => {
-		if ($w_drop_question) { keep_stored = false; keep_dropped = true; repeat = false; }
+		if ($w_drop_question) {
+			keep_dropped = dropped_newer;
+			keep_stored  = !dropped_newer;
+		}
+	});
+	// A new drop starts with "do the same" back on; within one drop it keeps its setting.
+	let was_busy = false;
+	$effect(() => {
+		if (busy && !was_busy) { repeat = true; }
+		was_busy = busy;
 	});
 
 	function say_date(date?: number | null): string {
@@ -48,10 +76,16 @@
 		captured {$w_drop_captured} of {$w_drop_total}
 		<svg class='drop-ring' viewBox='0 0 {k.size.svg} {k.size.svg}'>
 			<circle cx={k.size.svg / 2} cy={k.size.svg / 2} r={radius} class='ring-track' />
-			<circle cx={k.size.svg / 2} cy={k.size.svg / 2} r={radius} class='ring-done'
-				stroke-dasharray='{drawn} {circumference}' />
+			<path d={wedge} class='ring-done' />
 		</svg>
+		<!-- Stops the drop between items; whatever is already saved stays. -->
+		<button class='drop-cancel' onclick={(event) => { event.stopPropagation(); debug.log('Drop cancel pressed — stopping the capture.'); request_drop_cancel(); }}>cancel</button>
 	</div>
+{/if}
+
+<!-- A line between the counting line above and the dedup question below. -->
+{#if busy && $w_drop_question}
+	<hr class='drop-divider' />
 {/if}
 
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
@@ -61,14 +95,25 @@
 	{@const question = $w_drop_question}
 	<div class='drop-dialog' onclick={(event) => event.stopPropagation()}>
 		<div class='dialog-text'>"{question.name}" is already here, with a different date. Which do you want to keep?</div>
-		<label class='dialog-choice'>
-			<input type='checkbox' bind:checked={keep_stored} />
-			the one already here — {say_bytes(question.stored.size ?? 0)}, {say_date(question.stored.date)}
-		</label>
-		<label class='dialog-choice'>
-			<input type='checkbox' bind:checked={keep_dropped} />
-			the one just dropped — {say_bytes(question.dropped.size ?? 0)}, {say_date(question.dropped.date)}
-		</label>
+		{#snippet stored_choice()}
+			<label class='dialog-choice'>
+				<input type='checkbox' bind:checked={keep_stored} />
+				the one already here, {dropped_newer ? 'older' : 'newer'} — {say_bytes(question.stored.size ?? 0)}, {say_date(question.stored.date)}
+			</label>
+		{/snippet}
+		{#snippet dropped_choice()}
+			<label class='dialog-choice'>
+				<input type='checkbox' bind:checked={keep_dropped} />
+				the one just dropped, {dropped_newer ? 'newer' : 'older'} — {say_bytes(question.dropped.size ?? 0)}, {say_date(question.dropped.date)}
+			</label>
+		{/snippet}
+		{#if dropped_newer}
+			{@render dropped_choice()}
+			{@render stored_choice()}
+		{:else}
+			{@render stored_choice()}
+			{@render dropped_choice()}
+		{/if}
 		{#if question.offer_repeat}
 			<label class='dialog-choice'>
 				<input type='checkbox' bind:checked={repeat} />
@@ -101,16 +146,36 @@
 		transform : rotate(-90deg);        /* start the fill at the top, not the right */
 	}
 
+	/* A small pill to stop the drop; matches the OK button below. */
+	.drop-cancel {
+		border        : var(--thickness-normal) solid var(--black);
+		border-radius : var(--radius-pill);
+		height        : var(--height-control);
+		font-size     : var(--font-label);
+		background    : transparent;
+		cursor        : pointer;
+		padding       : 0 var(--gap);
+	}
+
+	.drop-cancel:hover {
+		background : var(--hover);
+	}
+
 	.ring-track {
-		stroke       : var(--hover);
-		stroke-width : 2;
-		fill         : none;
+		fill         : var(--white);
+		stroke       : var(--accent);
+		stroke-width : 1;
 	}
 
 	.ring-done {
-		stroke       : var(--accent-dark);
-		stroke-width : 2;
-		fill         : none;
+		fill : var(--accent-dark);
+	}
+
+	.drop-divider {
+		border     : none;
+		border-top : var(--thickness-normal) solid var(--accent);
+		margin     : var(--gap) 0 0;
+		width      : 100%;
 	}
 
 	.drop-dialog {

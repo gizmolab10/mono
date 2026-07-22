@@ -2,6 +2,10 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-21 — a drop can be cancelled
+
+- **A "cancel" pill sits in the drop's status strip** while a drop is saving, beside the "captured n of x" count and its ring. Pressing it stops the save between items — folders and all — and whatever was already saved stays. The strip clears the moment it stops. A flag set on the press is checked before each item; it's wiped when the next drop begins, so it never carries over.
+
 ## 2026-07-20 — a hover hint that shows at once
 
 - **Our own hover hint, because the browser's waits a second.** The browser's built-in hover text pauses about a second before it shows, and that pause can't be shortened — it belongs to the browser. So a small shared hint is drawn ourselves: any element hands it the thing being pointed at and the words to show, and it appears the instant the cursor arrives, sitting just below, running as wide as it needs, pulling back only off the window's right edge.
