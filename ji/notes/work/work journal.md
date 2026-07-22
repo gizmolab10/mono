@@ -2,6 +2,24 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-22 — each document knows if it can be shown and how ready its words are (phase 1)
+
+- **Two independent facts on every document.** *viewable* — can a person open and look at it here. *status* — how ready its words are for a model: ready (words in hand), quick (a light words-pull still owed — pdf, web page, rich text, svg), or heavy (a picture's writing recognized or a clip's speech transcribed — pictures, sound, video). The two cross freely: a picture is viewable **and** heavy; a pdf is viewable **and** quick.
+- **Both are worked out from the kind, never trusted from storage.** A quick helper reads "can it be shown", another reads the words-tier (ready if it's plain text or its words are already pulled, else quick or heavy by extension). They are set when a document is dropped or replaced, folders forced to not-viewable, and recomputed on every load — so old records land right and a document turns "ready" on its own the moment its words get filled in. The rows, the eye, and the viewer stepper now read the stored "viewable".
+- **No extraction yet** — that words-pull is the next phase; the slot to hold the pulled words already exists.
+
+## 2026-07-22 — the sticky parent-folders feature was removed
+
+- **Gone for good.** Keeping a scrolled row's parent folders pinned at the top fought us end to end — a 1px flick at every crossing (the browser paints the scroll a frame ahead of any hand-placed row) and then a click-steal (a pinned triangle caught clicks meant for the row beneath it). A clip didn't settle it, so the whole feature came out: the pinned overlay, its scroll-time math, all of it. The sticky column header, the remembered scroll place, and folder open/close all stayed. If parent-orientation is ever wanted again, it should be done natively (each folder row sticky inside its own block), not hand-placed.
+
+## 2026-07-22 — the app's name shows, and the drop and dedup boxes read cleaner
+
+- **"Intersection" sits centered in the top bar** at hero size, held dead-center regardless of the side controls' widths.
+- **The dedup question reads by date.** When a dropped file shares a name but not a date, the two choices are ordered newest-on-top, each marked older/newer; the newer one is picked by default. "Do the same for the rest" starts on and keeps its setting through a drop — turn it off once and later questions stay off; a new drop starts it back on.
+- **The drop box's progress is a filling pie** (a wedge sweeping like a clock hand, white face, accent rim) instead of a thin arc. A line sets the running count off from the instruction above and, when it shows, off from the dedup question below. The instruction sits a third of the way down.
+- **Kinds we can't show are ignored for now** — a drop skips them and the drop box's ending lists leave them out. The "other" family is gone; Word files count as text for listing but stay non-viewable.
+- **The hover hint is a touch shorter and sits a little left.**
+
 ## 2026-07-21 — a drop can be cancelled
 
 - **A "cancel" pill sits in the drop's status strip** while a drop is saving, beside the "captured n of x" count and its ring. Pressing it stops the save between items — folders and all — and whatever was already saved stays. The strip clears the moment it stops. A flag set on the press is checked before each item; it's wiped when the next drop begins, so it never carries over.

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ji/notes/work/code debt.md",
+                "file": "ji/notes/guides/roadmap.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code debt"
+              "title": "roadmap"
             }
           },
           {
@@ -49,8 +49,7 @@
               "title": "handoff"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -185,13 +184,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/handoff.md",
+                "file": "ji/notes/guides/roadmap.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of roadmap"
             }
           },
           {
@@ -223,12 +222,14 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "3e1ddbde653729de",
+  "active": "03b8fd6e0c6714dc",
   "lastOpenFiles": [
-    "ji/src/lib/svelte/main/Documents.svelte.tmp.10699.936a34166b4f",
+    "ji/src/lib/svelte/main/ToolTip.svelte",
+    "ji/src/lib/svelte/actions/Drop_Documents.svelte",
     "ji/notes/work/code debt.md",
-    "ji/notes/work/code debt.md.tmp.10699.0204352a6d2b",
     "ji/notes/work/handoff.md",
+    "ji/src/lib/svelte/main/Documents.svelte.tmp.10699.936a34166b4f",
+    "ji/notes/work/code debt.md.tmp.10699.0204352a6d2b",
     "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.1bb7ff3d6411",
     "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.e78edd793923",
     "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.aa406ba70923",
@@ -236,8 +237,6 @@
     "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.1e30d67edb74",
     "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.de53d239d447",
     "ji/notes/work/work journal.md.tmp.71617.c9113ad1d83e",
-    "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.d77ade8aab5d",
-    "ji/src/lib/svelte/main/Documents.svelte.tmp.71617.fcf2aea73552",
     "ji/notes/work/hierarchy spec.md",
     "ji/notes/work/persistables.md",
     "notes/guides/pre-flight/banned words.md",

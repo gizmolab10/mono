@@ -4,32 +4,13 @@
 
 Finished work moves to [work journal](work%20journal.md); what's left is in [code debt](code%20debt.md).
 
-## Phase 1 — assign each document's "viewable" and "status" — DONE 2026-07-22
+## Proposal — next: pin the viewer's step triangles to the top
 
-Groundwork for feeding documents to a model (AnythingLLM) later. Every document carries two **independent** facts, and phase 1 is only to set them right — no extraction yet. **Built and green** (svelte-check clean, 31 tests): the two facts are derived by `Document.is_viewable` / `Document.status_of` (plus a `QUICK_KINDS` set), set on the add/replace paths, folders forced to not-viewable, both recomputed on load (`derive_document_flags`), and the rows/eye/stepper now read the stored `viewable`.
+First unchecked in [code debt](code%20debt.md): **view document → pin the fat step triangles to the top.** In the open-document viewer, the previous/next fat triangles should stay put at the top of the view while the document itself scrolls under them, instead of scrolling away with the content. Likely a small change in [View_Document.svelte](../../ji/src/lib/svelte/actions/View_Document.svelte): give the triangle cluster a fixed spot at the top of the viewer (sticky or absolute within the scroll area), leaving the content to scroll beneath. Confirm by eye that they hold while a long document scrolls and still step and auto-repeat.
 
-- **viewable** — can the user open it and look at it in the app. Nothing to do with text.
-- **status** — how ready its words are for the model: **ready** (words in hand), **quick** (a quick words-pull still owed), **heavy** (a heavy pull still owed — recognizing writing in a picture, transcribing speech). Nothing to do with viewing.
+**Recently finished** (details in [work journal](work%20journal.md)): phase 1 — each document's *viewable* and *status* worked out and stored; the sticky parent-folders feature removed; the "Intersection" title; the dedup question ordered by date; the drop-progress pie; non-viewable kinds ignored for now.
 
-They cross freely: a picture is viewable **and** heavy; a pdf is viewable **and** quick; a Word file (were it re-accepted) is not-viewable **and** quick.
-
-**The rules (both are pure functions of the document, so they recompute — no stored-flag migration):**
-
-- **viewable** = true when the app can render the kind, false otherwise. A folder is false.
-- **status** = **ready** if it is a plain-text kind (txt, md) **or** its text is already filled; otherwise by extension — **quick** for the quick-pull kinds (pdf, html, rtf, svg), **heavy** for the recognize/transcribe kinds (images, audio, video). The "or its text is already filled" clause is what lets a document flip to ready once extraction lands, just by recomputing.
-- **folders** are neither viewed nor fed to the model (no bytes, no words) — left out of both, marked by their family, not by a status value.
-
-**Where the code changes:** set both when a document is made (the add path), recompute both on load (records saved before these fields carry no value), point the rows / eye / stepper at the stored `viewable` instead of recomputing the render test, split the current two-way status pick ([Hierarchy.ts:131](../../ji/src/lib/ts/managers/Hierarchy.ts#L131)) into the three tiers, and report the two axes separately in the arrival log.
-
-**Phase 2 - extraction pass** — the quick/heavy words-pull that fills `text` and flips status to ready.
-
-## Sticky parent-folders — removed 2026-07-22
-
-The feature that kept a scrolled row's parent folders pinned at the top is **gone**. It fought us end to end: a 1px flick at every crossing (the browser paints scroll on its own thread, so a JavaScript-placed row always trails a frame), then a click-steal (a pinned triangle's clickable box poked below the strip and caught clicks meant for the row beneath). A one-line clip did not settle it. Jonathan called it a bad design and pulled it.
-
-What was cut from [Documents.svelte](../../ji/src/lib/svelte/main/Documents.svelte): the pinned overlay table, `update_pins`, the pin state and its recompute, the scroll-time pin math. What stayed: the sticky **column header**, the remembered scroll place, and folder open/close.
-
-If parent-orientation is ever wanted again, do it natively — rebuild the list as a nested tree of divs with each folder row `position: sticky` inside its own block (the compositor keeps it glued, no JavaScript, no flick, no overlap). That is a real rewrite of the list, so only for a deliberate pass, not a quick add.
+**Phase 2 (later) — extraction pass:** the quick/heavy words-pull that fills `text` and flips a document's status to ready.
 
 ## Method that holds
 

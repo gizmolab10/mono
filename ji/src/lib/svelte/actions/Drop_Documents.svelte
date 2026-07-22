@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_drop_total } from '../../ts/managers/Dropping';
 	import Drop_Status from './Drop_Status.svelte';
-	import ToolTip from './ToolTip.svelte';
+	import ToolTip from '../main/ToolTip.svelte';
 	import { save_drop } from '../../ts/managers/Drop';
 	import { Document } from '../../ts/types/Document';
 	import { debug } from '../../ts/common/Debug';

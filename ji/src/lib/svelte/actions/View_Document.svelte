@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_DocumentExtension, T_DocumentFamily, Document } from '../../ts/types/Document';
-	import { w_operation } from '../../ts/managers/Operations';
 	import { databases, w_hierarchy } from '../../ts/database/Databases';
+	import { w_operation } from '../../ts/managers/Operations';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { Direction } from '../../ts/types/Angle';
 	import { debug } from '../../ts/common/Debug';
@@ -173,6 +173,7 @@
 <style>
 	.viewer {
 		flex-direction : column;
+		position       : relative;   /* anchor for the pinned close button */
 		display        : flex;
 		min-height     : 0;
 		flex           : 1;
@@ -181,13 +182,15 @@
 	.view-head {
 		justify-content : space-between;
 		padding-bottom  : var(--gap);
-		align-items     : center;
+		padding-right   : calc(var(--height-control) + var(--gap));   /* clear the pinned close */
+		align-items     : flex-start;   /* triangles hold at the top; a long title grows downward */
 		display         : flex;
 	}
 
 	.view-name {
 		font-size : var(--font-label);
 		color     : var(--text);
+		margin    : 0 var(--gap);   /* keep a gap between the title and the triangles / close */
 	}
 
 	/* The two step triangles, pinned together at the top-far-left. */
@@ -240,6 +243,9 @@
 		padding         : 0;
 		align-items     : center;
 		justify-content : center;
+		position        : absolute;   /* pinned to the viewer's top-right, never moves */
+		top             : 0;
+		right           : 0;
 		display         : flex;
 	}
 

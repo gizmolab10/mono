@@ -4,7 +4,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { Document, T_DocumentFamily } from '../../ts/types/Document';
 	import View_Document from '../actions/View_Document.svelte';
-	import Add_Document from '../actions/Add_Document.svelte';
+	import Drop_Documents from '../actions/Drop_Documents.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { w_hierarchy } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/types/Signal';
@@ -209,11 +209,16 @@
 		}
 	});
 
-	// The view operation is persisted but the document it points at is not, so a
-	// reload can land on "view" with nothing to show. Fall back to the list then.
+	// Both the view operation and the document it shows are persisted, so a reload
+	// returns to the same open document. If that document is gone (nothing picked, or
+	// it was erased), fall back to the list.
 	$effect(() => {
-		if ($w_operation === T_Operation.view && $w_view_document === null) {
+		if ($w_operation !== T_Operation.view) { return; }
+		const id = $w_view_document;
+		if (id === null || !$w_hierarchy.document_byID(id)) {
+			if (id !== null) { debug.log(`View points at a document that is no longer in the store (${id}) — back to the list.`); }
 			w_operation.set(null);
+			w_view_document.set(null);
 		}
 	});
 
@@ -405,7 +410,7 @@
 		<input class='search-text' type='search' placeholder='search by name' bind:value={$w_filter_text} />
 	{/if}
 	{#if $w_operation === T_Operation.document}
-		<Add_Document />
+		<Drop_Documents />
 	{:else if $w_operation === T_Operation.tag}
 		<Add_Tag ondone={() => w_operation.set(null)} />
 	{:else if $w_operation === T_Operation.view && $w_view_document}
