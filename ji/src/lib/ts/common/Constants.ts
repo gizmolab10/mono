@@ -1,10 +1,10 @@
 // single source of truth for entire UX
 
 const bold = 550;
-const common_size = 35;				// minimum fingertip touch size
-const common_gap = common_size / 4.5;
-const common_thickness = common_gap / 7;
-const control_height = common_size / 1.6;
+const common_size = 35;						// minimum fingertip touch size
+const common_gap = common_size / 4.5;		// 7.8
+const common_thickness = common_gap / 7;	// 5
+const control_height = common_size / 1.6;	// 21.875
 
 // missing: 50% circles
 

@@ -22,11 +22,11 @@
 
 	// The step triangles: the same fat mark as the folder rows, pointing left and
 	// right. 20 across.
-	const STEP_TRIANGLE = 20;
-	const prev_path   = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.left);
-	const next_path   = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.right);
-	const prev_bounds = svg_paths.fat_polygon_bounds(STEP_TRIANGLE, Direction.left);
-	const next_bounds = svg_paths.fat_polygon_bounds(STEP_TRIANGLE, Direction.right);
+	const STEP_TRIANGLE = k.size.cross * 1.1;
+	const prev_path     = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.left);
+	const next_path     = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.right);
+	const prev_bounds   = svg_paths.fat_polygon_bounds(STEP_TRIANGLE, Direction.left);
+	const next_bounds   = svg_paths.fat_polygon_bounds(STEP_TRIANGLE, Direction.right);
 
 	// The left and right arrow keys step too, while the viewer is open. A media
 	// player owns the arrows when it's the focus (to seek), so a key landing on the
@@ -179,22 +179,27 @@
 		flex           : 1;
 	}
 
+	/* Three columns: triangles | title | balance. The two outer columns are equal, so
+	   the title's middle column centers across the whole header. The pinned close sits
+	   over the right space; the left is padded to match so the centering stays true. */
 	.view-head {
-		justify-content : space-between;
-		padding-bottom  : var(--gap);
-		padding-right   : calc(var(--height-control) + var(--gap));   /* clear the pinned close */
-		align-items     : flex-start;   /* triangles hold at the top; a long title grows downward */
-		display         : flex;
+		display               : grid;
+		grid-template-columns  : 1fr auto 1fr;
+		column-gap            : var(--gap);
+		align-items           : start;   /* triangles hold at the top; a wrapped title grows downward */
+		padding               : 0 calc(var(--height-control) + var(--gap)) var(--gap) 0;   /* clear the pinned close on the right; triangles hug the far left */
+		position              : relative;
 	}
 
 	.view-name {
-		font-size : var(--font-label);
-		color     : var(--text);
-		margin    : 0 var(--gap);   /* keep a gap between the title and the triangles / close */
+		font-size  : var(--font-label);
+		color      : var(--text);
+		text-align : center;
 	}
 
 	/* The two step triangles, pinned together at the top-far-left. */
 	.view-steps {
+		justify-self : start;
 		gap         : var(--gap);
 		align-items : center;
 		display     : flex;

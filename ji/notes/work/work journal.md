@@ -2,6 +2,13 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-22 — the document viewer's header settles, and a viewed document survives a reload
+
+- **The step triangles hold at the top, the close is pinned to the corner.** The viewer's two fat step triangles sit at the top-far-left and stay there; the close button is pinned to the viewer's top-right corner so it never moves. A long file name now grows downward beside them instead of pushing them around.
+- **The file name is centered across the header.** The header is three columns — triangles, name, balance — so the name centers across the whole width, sits in the flow (so it reserves its height and no longer overlaps the document), and keeps a gap from the triangles and the close.
+- **A viewed document survives a reload.** Which document the viewer is showing is now remembered, so a reload returns to the same open document. If that document has since been erased, the view falls back to the list. Leaving every operation also drops whatever document was open, so the two never disagree.
+- **Two files were tidied:** the drop-box component is now named for what it does (dropping documents), and the shared hover hint moved in with the other always-present pieces.
+
 ## 2026-07-22 — each document knows if it can be shown and how ready its words are (phase 1)
 
 - **Two independent facts on every document.** *viewable* — can a person open and look at it here. *status* — how ready its words are for a model: ready (words in hand), quick (a light words-pull still owed — pdf, web page, rich text, svg), or heavy (a picture's writing recognized or a clip's speech transcribed — pictures, sound, video). The two cross freely: a picture is viewable **and** heavy; a pdf is viewable **and** quick.

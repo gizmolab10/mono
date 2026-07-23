@@ -4,13 +4,15 @@
 
 Finished work moves to [work journal](work%20journal.md); what's left is in [code debt](code%20debt.md).
 
-## Proposal — next: pin the viewer's step triangles to the top
+## Proposal — build DB_AnythingLLM
 
-First unchecked in [code debt](code%20debt.md): **view document → pin the fat step triangles to the top.** In the open-document viewer, the previous/next fat triangles should stay put at the top of the view while the document itself scrolls under them, instead of scrolling away with the content. Likely a small change in [View_Document.svelte](../../ji/src/lib/svelte/actions/View_Document.svelte): give the triangle cluster a fixed spot at the top of the viewer (sticky or absolute within the scroll area), leaving the content to scroll beneath. Confirm by eye that they hold while a long document scrolls and still step and auto-repeat.
+First unchecked in [code debt](code%20debt.md): **add AnythingLLM into the databases.** This is the real payoff of phase 1: with every document already tagged *viewable* and *status* (ready / quick / heavy), the next step is to pull each document's words out and hand them to a model so the store can be searched and questioned. Rough shape: run the extraction pass (the quick or heavy words-pull) to fill each document's `text` and flip its status to ready; chunk that text into passages; turn each passage into numbers that capture its meaning and store them; then, on a question, find the closest passages and answer from them.
 
-**Recently finished** (details in [work journal](work%20journal.md)): phase 1 — each document's *viewable* and *status* worked out and stored; the sticky parent-folders feature removed; the "Intersection" title; the dedup question ordered by date; the drop-progress pie; non-viewable kinds ignored for now.
+AnythingLLM's own pipeline is the reference — but it does the finding-and-answering, not the labeling, so ji keeps its own tags and viewable/status. This is a phase of its own; scope it before building (local vs remote model, where the passage-numbers live, how much runs in the browser).
 
-**Phase 2 (later) — extraction pass:** the quick/heavy words-pull that fills `text` and flips a document's status to ready.
+btw, a quick unrelated one also waiting: **set operation to null is very, very slow** — worth a look on its own.
+
+**Recently finished** (details in [work journal](work%20journal.md)): the viewer header settled (triangles top-left, close pinned, title centered, survives-reload); phase 1 — each document's *viewable* and *status* worked out and stored; the sticky parent-folders feature removed; the "Intersection" title; the dedup question ordered by date.
 
 ## Method that holds
 

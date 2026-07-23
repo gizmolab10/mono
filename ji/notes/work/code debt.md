@@ -4,7 +4,7 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] view document -> pin fat triangles to the top
+- [ ] create DB_AnythingLLM
 - [ ] set op to null -> very, very slow
 - [ ] debug.log
     - [ ] should do nothing when not launched on localhost
@@ -32,6 +32,10 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] view document -> pin the fat step triangles to the top — the viewer header holds the triangles at the top-far-left and the close pinned to the top-right; a long title grows downward beside them; the title is centered across the header in its own column and no longer overlaps the document
+- [x] install and configure anything llm on my mac
+- [x] each document knows if it can be shown and how ready its words are (phase 1) — a "viewable" flag and a ready/quick/heavy words-status, both worked out from the kind and recomputed on load; folders are neither; the rows/eye/stepper read the stored viewable
+- [x] persist the open document — the view operation and which document it shows both survive a reload; a null operation drops the open document; a view of a since-erased document falls back to the list
 - [x] if the user chooses to NOT do the same, leave repeat false for the next dedup — "do the same" keeps its setting through a drop (turn it off once and later questions stay off); a new drop starts it back on
 - [x] make the progress circle's progress arc into a pie shape, easier to see — a light disc with a solid wedge that sweeps from the top like a clock hand, filling to a full disc when done
 - [x] draw an hr between status line and dedup dialog — an accent line, shown only while the dedup question is up

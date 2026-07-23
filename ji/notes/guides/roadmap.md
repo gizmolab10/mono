@@ -14,6 +14,7 @@ Duration: 1 to 2 months
 Core Features:  
   
 - [ ] Private, local LLM (DeepSeek) running on researcher laptops
+    - [ ] AnythingLLM
 - [ ] Curated library of 50 to 100 foundational documents (UN Charter, Universal Declaration of Human Rights, Geneva Conventions, scholar texts)  
 - [ ] RAG (Retrieval-Augmented Generation) with clustered retrieval for reasoning across document types
 - [ ] Simple chat interface for querying the library
