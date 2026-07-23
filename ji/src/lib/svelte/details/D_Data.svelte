@@ -1,27 +1,29 @@
 <script lang='ts'>
-	// Trimmed port of ws's D_Data: a readout of the document store plus a storage
-	// switcher hidden behind a clickable separator. ws showed graph-model counts,
-	// import/export, and the switcher; here we keep the counts that survive ji's
-	// data (documents, tags, unsaved) and the switcher. Only the local store is
-	// built, so the cloud segment is a dimmed placeholder until firestore lands.
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { databases, w_hierarchy } from '../../ts/database/Databases';
 	import { T_Storage } from '../../ts/types/DB_Records';
 	import { w_db_changed } from '../../ts/types/Signal';
 
+	// Trimmed port of ws's D_Data: a readout of the document store plus a storage
+	// db-storage hidden behind a clickable separator. ws showed graph-model counts,
+	// import/export, and the db-storage; here we keep the counts that survive ji's
+	// data (documents, tags, unsaved) and the db-storage. Only the local store is
+	// built, so the cloud segment is a dimmed placeholder until firestore lands.
+
 	const { w_storage } = databases;
 
 	// Every storage the app knows, in switch order; local is built, remote is not.
 	const storages = Object.values(T_Storage);
-	const built = new Set<T_Storage>([T_Storage.private]);
+	const built = new Set<T_Storage>([T_Storage.mine, T_Storage.llm]);
 
 	// The more/less choice, remembered across reloads.
 	const w_show_others = preferences.persistent<boolean>(T_Preference.showOtherStores, false);
 
 	// Pure derived counts — recomputed on every store change (a save or a storage
 	// switch bumps the tick). No write-inside-effect, so nothing can loop.
-	const documents = $derived.by(() => { $w_db_changed; return $w_hierarchy.documents.length; });
-	const tags      = $derived.by(() => { $w_db_changed; return $w_hierarchy.tags.length; });
+	const documents    = $derived.by(() => { $w_db_changed; return $w_hierarchy.documents.length; });
+	const tags         = $derived.by(() => { $w_db_changed; return $w_hierarchy.tags.length; });
+	const db_adjective = $derived.by(() => { $w_db_changed; return derive_adjective(); });
 
 	function choose(storage: T_Storage) {
 		if (!built.has(storage)) {
@@ -44,28 +46,43 @@
 		await $w_hierarchy.erase_all();
 		confirming = false;
 	}
+	function derive_adjective(): string {
+		switch ($w_storage) {
+			case T_Storage.mine: return 'my';
+			// case T_Storage.ours: return 'our';
+			case T_Storage.llm:  return 'LLM';
+		}
+	}
 </script>
 
 <div class='data'>
 	<div class='row'><span class='label'>documents</span><span class='count'>{documents}</span></div>
 	<div class='row'><span class='label'>tags</span><span class='count'>{tags}</span></div>
 
-	<!-- The separator doubles as a clickable toggle for the storage switcher. -->
+	<!-- The separator doubles as a clickable toggle for the storage db-storage. -->
 	<button class='separator' onclick={toggle_others}>
 		<span class='separator-label'>{$w_show_others ? 'less' : 'more'}</span>
 	</button>
 
 	{#if $w_show_others}
-		<div class='switcher-row'>
+		<div class='db-controls'>
 			{#if confirming}
 				<div class='confirm'>
 					<button class='no' onclick={cancel_erase}>no</button>
 					<button class='yes' onclick={do_erase}>yes</button>
-					<span class='sure'>erase {$w_storage} data?</span>
+					<span class='sure'>erase {db_adjective} data?</span>
 				</div>
 			{:else}
-				<button class='erase' title='erase all data' onclick={ask_erase}>erase</button>
-				<div class='switcher'>
+				{#if documents > 0}
+					<button class='erase' title='erase all data' onclick={ask_erase}>
+						<svg class='erase-bin' viewBox='0 0 24 24'>
+							<path d='M4 6 H20 M9 6 V4 H15 V6 M6 6 L7 20 H17 L18 6 M10 10 V17 M14 10 V17'
+								fill='none' stroke='currentColor' stroke-width='1.6'
+								stroke-linecap='round' stroke-linejoin='round' />
+						</svg>
+					</button>
+				{/if}
+				<div class='db-storage'>
 					{#each storages as storage}
 						<button
 							class='segment'
@@ -150,32 +167,46 @@
 		background : var(--white);
 	}
 
-	/* The switcher sits at the far right; the erase control is pinned to the left. */
-	.switcher-row {
+	/* The db-storage is centered in the row; the erase control is pinned to the left. */
+	.db-controls {
 		height          : var(--height-control);
 		position        : relative;
+		justify-content : center;
 		align-items     : center;
-		justify-content : flex-end;
 		display         : flex;
 		width           : 100%;
-		margin-top      : -3px;                /* pull the erase + switcher 3px closer to the rule */
+		margin-top      : -3px;                /* pull the erase + db-storage 3px closer to the rule */
 		margin-bottom   : 2px;                 /* give back the 6px pulled up, keeping the space below */
 	}
 
+	/* The erase control is the same drawn trashcan as the documents table's row delete;
+	   on hover it lights to a round --accent-outlined --hover pill. The transparent
+	   border is always there so the hover outline doesn't nudge the icon. */
 	.erase {
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
-		box-sizing    : border-box;
-		padding       : var(--pad-control);
-		font-size     : var(--font-label);
-		background    : var(--white);
-		position      : absolute;
-		cursor        : pointer;
-		border-radius : 999px;
-		left          : 0;
+		border          : var(--thickness-normal) solid transparent;
+		height          : var(--height-control);
+		width           : var(--height-control);
+		border-radius   : var(--radius-percent);
+		color           : var(--accent-dark);
+		background      : transparent;
+		box-sizing      : border-box;
+		position        : absolute;
+		cursor          : pointer;
+		align-items     : center;
+		justify-content : center;
+		display         : flex;
+		padding         : 0;
+		left            : 0;
+	}
+
+	.erase-bin {
+		width   : var(--size-svg);
+		height  : var(--size-svg);
+		display : block;
 	}
 
 	.erase:hover {
+		border     : var(--thickness-normal) solid var(--accent);
 		background : var(--hover);
 	}
 
@@ -205,12 +236,12 @@
 	}
 
 	/* One pill with a segment per storage; the active one fills --accent. */
-	.switcher {
+	.db-storage {
 		border        : var(--thickness-normal) solid var(--black);
 		height        : var(--height-control);
-		box-sizing    : border-box;
 		font-size     : var(--font-base);
 		background    : var(--white);
+		box-sizing    : border-box;
 		align-self    : center;
 		overflow      : hidden;
 		border-radius : 999px;

@@ -4,8 +4,8 @@ Make every stored record a real object with an identity and a dirty flag, the wa
 
 ## What ws has (the model)
 
-- **Identifiable** — the root. Carries `id` and `hid` (the id's hash, for fast keying), a `newID()` maker, and `equals`. Source: [ws Identifiable.ts](../../../ws/src/lib/ts/runtime/Identifiable.ts).
-- **Persistable extends Identifiable** — adds the save state: a dirty flag and a `persist()`. Source: [ws Persistable.ts](../../../ws/src/lib/ts/persistable/Persistable.ts). (ws's is heavy — bulk aliases, a persistence state object, closures. ji wants only the dirty flag.)
+- **Identifiable** — the root. Carries `id` and `hid` (the id's hash, for fast keying), a `newID()` maker, and `equals`. Source: [ws Identifiable.ts](ws/src/lib/ts/runtime/Identifiable.ts).
+- **Persistable extends Identifiable** — adds the save state: a dirty flag and a `persist()`. Source: [ws Persistable.ts](ws/src/lib/ts/persistable/Persistable.ts). (ws's is heavy — bulk aliases, a persistence state object, closures. ji wants only the dirty flag.)
 - Every record (Thing, Tag, Relationship, …) extends Persistable, so each one *is* an Identifiable with its own dirty flag. On load, ws builds real instances from the stored dicts (`new Thing(dict)`), so the methods and the flag are there.
 
 ## What ji has now

@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { T_DocumentExtension } from '../types/Document';
 import { Hierarchy } from '../managers/Hierarchy';
 import { DB_Local } from '../database/DB_Local';
+import { T_Storage } from '../types/DB_Records';
 
 // A tiny in-memory stand-in for browser storage, so the local storage runs
 // under a plain node test. A document's bytes live in the blob store, which
@@ -17,7 +18,7 @@ class Mock_Storage {
 // A persistence backend (db, for the bytes) and the tree that owns its records
 // (h). A reload is a fresh make() reading the same browser storage.
 function make(): { db: DB_Local; h: Hierarchy } {
-	const db = new DB_Local();
+	const db = new DB_Local(T_Storage.mine);
 	const h = new Hierarchy(db);
 	h.fetch_all();
 	return { db, h };

@@ -43,9 +43,7 @@ function run_blob<T>(mode: IDBTransactionMode, body: (store: IDBObjectStore) => 
 }
 
 export class DB_Local extends DB_Common {
-	// Each storage keeps its records and bytes under its own namespace, so the stores
-	// don't read or write each other's data.
-	constructor(readonly storage: T_Storage) { super(); }
+	readonly storage = T_Storage.mine;
 
 	load_list<T>(record: T_Record): T[] {
 		return preferences.readDB<T>(this.storage, record);

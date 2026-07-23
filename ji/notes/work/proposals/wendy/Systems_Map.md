@@ -1,5 +1,3 @@
-# Systems Map — Wendy McLean
-
 *This document is the connective tissue between the Compass portrait and all sector work. For each sector, the Compass is the silent common factor — every reading, every pattern, every question is understood as "[Sector] + Compass." Subheadings are generated from the intersection of this person's Compass with this sector's specific content, and will vary across sectors and across individuals using this method.*
 
 *Living document. Grows as sectors are added.*

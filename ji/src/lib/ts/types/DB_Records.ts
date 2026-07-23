@@ -4,8 +4,9 @@
 
 // Which storage holds a document's blob.
 export enum T_Storage {
-	shared  = 'shared',
-	private = 'private',
+	mine = 'mine',
+	// ours = 'ours',
+	llm  = 'LLM',
 }
 
 // The five stored record kinds, so save/load loops can walk them by name.

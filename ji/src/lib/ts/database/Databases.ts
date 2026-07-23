@@ -20,7 +20,7 @@ interface Store {
 
 class Databases {
 	private cache: Map<T_Storage, Store> = new Map();
-	private ordered: T_Storage[] = [T_Storage.private];   // the ring; remote joins later
+	private ordered: T_Storage[] = [T_Storage.mine, T_Storage.llm];   // the ring the "next" step cycles through
 
 	w_storage: Writable<T_Storage>;
 	// The active store's tree — where the records and every operation on them live.
@@ -31,7 +31,7 @@ class Databases {
 	active: DB_Common;
 
 	constructor() {
-		const saved = (preferences.read<T_Storage>(T_Preference.database) ?? T_Storage.private);
+		const saved = (preferences.read<T_Storage>(T_Preference.database) ?? T_Storage.mine);
 		const store = this.store_forBackend(saved);
 		store.hierarchy.fetch_all();
 		this.w_storage   = writable<T_Storage>(saved);
@@ -42,7 +42,7 @@ class Databases {
 	// One live backend-and-tree per storage, built on first use.
 	private store_forBackend(storage: T_Storage): Store {
 		if (!this.cache.has(storage)) {
-			const db: DB_Common = new DB_Local();   // only the local backend for now
+			const db: DB_Common = new DB_Local(storage);   // each storage gets its own namespace
 			this.cache.set(storage, { db, hierarchy: new Hierarchy(db) });
 		}
 		return this.cache.get(storage)!;

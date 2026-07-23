@@ -4,7 +4,14 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] create DB_AnythingLLM
+- [ ] create DB_LLM
+    - [ ] implement write_blob and its underpinnings
+- [ ] write a zsh script that installs and configures
+    - [ ] Docker
+    - [ ] Qwen
+    - [ ] AnythingLLM
+    - [ ] write a windows script that installs WSL
+    - [ ] propose code that downloads both, and builds it into ji, invoked by a button
 - [ ] set op to null -> very, very slow
 - [ ] debug.log
     - [ ] should do nothing when not launched on localhost
@@ -32,6 +39,7 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] replace erase button in data details with trashcan (same as used in documents table)
 - [x] view document -> pin the fat step triangles to the top — the viewer header holds the triangles at the top-far-left and the close pinned to the top-right; a long title grows downward beside them; the title is centered across the header in its own column and no longer overlaps the document
 - [x] install and configure anything llm on my mac
 - [x] each document knows if it can be shown and how ready its words are (phase 1) — a "viewable" flag and a ready/quick/heavy words-status, both worked out from the kind and recomputed on load; folders are neither; the rows/eye/stepper read the stored viewable
@@ -57,7 +65,7 @@ write a proposal for the first unchecked item to the top of handoff.
     - [x] find-or-create everywhere (meanings, links, tags, tag-on-document)
     - [x] store-wide dedup by name; instant name + id lookups (no linear scans)
     - [x] open and close a folder, remembered — a fat triangle (15px) leads any row with something nested (a folder over its files, or a duplicate's original over the copy), down when open, right when shut; shutting one drops its nested rows from the table; one saved list of shut ids, kept across reloads
-- [x] records as Persistables ([plan](persistables.md), paused) — records become classes extending Persistable extending Identifiable; brings back rehydration on load
+- [x] records as Persistables ([plan](persistables%20proposal.md), paused) — records become classes extending Persistable extending Identifiable; brings back rehydration on load
 - [x] predicate isDuplicateOf — keep-both makes one "is-duplicate-of" link (parent the original, child the copy); two-way meaning, stored once; meaning reused
 - [x] tooltips appear instantly — the browser's own hover text waits a second and can't be hurried, so a shared ToolTip is drawn ourselves; the drop box's family words use it (clipped file names keep the plain browser title)
 - [x] a drop on the table opens the add-documents view first, so the count and any question report in the drop box (where there's room) — the table header never changes during a drop

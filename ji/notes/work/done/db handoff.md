@@ -30,7 +30,7 @@ Tracks the build of [[db proposal]] against [[db spec]]. Design lives in the pro
 
 ## Next
 
-- [ ] create DB_AnythingLLM
+- [ ] create DB_LLM
 - [ ] **Blobs as real files on disk** (proposal step 4) — the local blob seam is browser storage for now; the File System Access API path is pending (needs a user gesture).
 - [ ] **Firestore storage + Google blob store** (proposal step 6) — the seam and registry make it a drop-in; not started.
 - [ ] **Binary blobs** — the blob seam holds text (a string) today; binary needs an encoding decision.
