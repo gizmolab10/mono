@@ -1,4 +1,4 @@
-# Kinds of Tasks
+ # Kinds of Tasks
 
 Task types and which guides to read before starting. Collaborator will declare one or more of these, assess and state conflicts and update the column below.
 

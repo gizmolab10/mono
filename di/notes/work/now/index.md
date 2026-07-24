@@ -4,12 +4,19 @@ Active non-milestone work. The files in this folder are the current working docu
 
 ## Contents
 
-- [27.selection.algorithm](27.selection.algorithm.md)
+- [34.dimensionals](./34.dimensionals/)
+- [(newer Than SDD) Methodology](./(newer than SDD) methodology.md)
+- [27.selection.algorithm](./27.selection.algorithm.md)
+- [30.licensing](./30.licensing.md)
 - [Code.debt](./code.debt.md)
+- [Code.debt.paid](./code.debt.paid.md)
 - [Handoff](./handoff.md)
-- [Minimum Viable INTERSECTION App](Minimum%20Viable%20INTERSECTION%20app.md)
-- [Repeaters.mothball](repeaters.mothball.md)
+- [Open Items](./open items.md)
+- [Our Process](./our process.md)
 - [Revisit.di](./revisit.di.md)
 - [Road.map](./road.map.md)
-- [Work Journal](./work%20journal.md)
-- [Working Features](./working%20features.md)
+- [Steve Melville](./steve melville.md)
+- [Talk](./talk.md)
+- [Work Journal](./work journal.md)
+- [Working Features](./working features.md)
+

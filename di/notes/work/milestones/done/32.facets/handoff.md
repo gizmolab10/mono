@@ -3,11 +3,11 @@
 ## **Vital conclusion:** Abysmally slow!
 
 **Status:** MOTHBALLED. 498 tests passing, svelte-check clean. Feature disabled via `k.debug.show_facets = false` in Constants.ts. Set to `true` to re-enable.
-**Design spec:** [simpler design.md](./designs/simpler%20design.md)
-**Stipulations:** [stipulations.md](./designs/stipulations.md)
-**Pipeline:** [pipeline.md](./designs/pipeline.md)
-**History:** [facets/history.md](./history.md)
-**Milestone 26:** [lacemaker](../26.lacemaker.md)
+**Design spec:** [simpler design.md](simpler%20design.md)
+**Stipulations:** [stipulations.md](di/notes/work/milestones/done/32.facets/designs/stipulations.md)
+**Pipeline:** [pipeline.md](di/notes/work/milestones/done/32.facets/designs/pipeline.md)
+**History:** [facets/history.md](di/notes/work/milestones/done/32.facets/history.md)
+**Milestone 26:** [lacemaker](26.lacemaker.md)
 
 ## Why mothballed
 
@@ -81,13 +81,13 @@ All in `k.debug` (Constants.ts):
 
 ## Use case 5 — duplicate cross point
 
-See [use case 5.md](./use%20cases/use%20case%205.md). Stipulation 11.
+See [use case 5.md](use%20case%205.md). Stipulation 11.
 
 **Fixed** by the nearby split point merge. Multiple discovery paths that find the same point on the same edge get merged into one key. Cross wins over occlude wins over pierce.
 
 ## Use case 6 — wrong segment claims
 
-See [use case 6.md](./use%20cases/use%20case%206.md).
+See [use case 6.md](use%20case%206.md).
 
 **Fixed** by the depth test. Screen-only crossings (lines at different depths) get occlude keys instead of cross keys. Eliminates bogus edge splits from projection coincidences.
 
@@ -151,7 +151,7 @@ See [use case 6.md](./use%20cases/use%20case%206.md).
 
 ## Use case 3 — fixed
 
-Three faces were painting in full when they should be partially painted. See [use case 3.md](./use%20cases/use%20case%203.md).
+Three faces were painting in full when they should be partially painted. See [use case 3.md](use%20case%203.md).
 
 **Root cause:** BETA silhouette edge segments ending at BETA corners (`L`, `O`) were imported to ALPHA faces even though the corners were outside ALPHA's face on screen.
 

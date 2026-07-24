@@ -9,9 +9,12 @@ const STORAGE_KEY = 'di:standardDimensions';
 /** Reserved object id for given references in the AST. */
 export const GIVENS_ID = '$std';
 
-export type Portable_Given = { name: string; value_mm: number; locked?: boolean };
+// value_mm holds mm for a measurement constant, or the raw number for a pure
+// scalar (is_scalar true). is_scalar is optional/absent on older data → treated
+// as a measurement, so existing constants are unchanged.
+export type Portable_Given = { name: string; value_mm: number; locked?: boolean; is_scalar?: boolean };
 
-interface Given { value_mm: number; locked: boolean }
+interface Given { value_mm: number; locked: boolean; is_scalar: boolean }
 
 class Givens {
 
@@ -35,17 +38,28 @@ class Givens {
 		return this.dimensions.get(name)?.locked ?? false;
 	}
 
+	is_scalar(name: string): boolean {
+		return this.dimensions.get(name)?.is_scalar ?? false;
+	}
+
 	get_all(): Portable_Given[] {
 		return Array.from(this.dimensions.entries()).map(([name, v]) => {
-			return { name, value_mm: v.value_mm, locked: v.locked };
+			return { name, value_mm: v.value_mm, locked: v.locked, is_scalar: v.is_scalar };
 		});
 	}
 
 	// ── mutate ──
 
-	set(name: string, value_mm: number): void {
+	// is_scalar is optional: when omitted (e.g. a formula re-writes a constant's
+	// number during propagation), keep the constant's existing kind instead of
+	// silently reverting it to a measurement.
+	set(name: string, value_mm: number, is_scalar?: boolean): void {
 		const existing = this.dimensions.get(name);
-		this.dimensions.set(name, { value_mm, locked: existing?.locked ?? true });
+		this.dimensions.set(name, {
+			value_mm,
+			locked: existing?.locked ?? true,
+			is_scalar: is_scalar ?? existing?.is_scalar ?? false,
+		});
 		this.save();
 	}
 
@@ -64,8 +78,8 @@ class Givens {
 		this.save();
 	}
 
-	add(name: string, value_mm: number): void {
-		this.dimensions.set(name, { value_mm, locked: true });
+	add(name: string, value_mm: number, is_scalar: boolean = false): void {
+		this.dimensions.set(name, { value_mm, locked: true, is_scalar });
 		this.save();
 	}
 
@@ -87,7 +101,7 @@ class Givens {
 			if (!raw) return;
 			const entries: Portable_Given[] = JSON.parse(raw);
 			for (const entry of entries) {
-				if (entry.name) this.dimensions.set(entry.name, { value_mm: entry.value_mm, locked: entry.locked ?? true });
+				if (entry.name) this.dimensions.set(entry.name, { value_mm: entry.value_mm, locked: entry.locked ?? true, is_scalar: entry.is_scalar ?? false });
 			}
 		} catch { /* ignore corrupt data */ }
 	}

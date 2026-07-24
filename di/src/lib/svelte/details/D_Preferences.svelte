@@ -52,8 +52,8 @@
 	<span class='label'>line thickness</span>
 	<input
 		max     = {4}
-		min     = {0.5}
-		step    = {0.5}
+		min     = {0.25}
+		step    = {0.01}
 		type    = 'range'
 		value   = {$w_edge_thickness}
 		oninput = {(e) => w_edge_thickness.set(Number((e.target as HTMLInputElement).value))}

@@ -1,5 +1,9 @@
 # Code Debt --- Paid
 
+- [x] on hover, draw a pill (rounded-rect) border around the hovered dimension's label, in the hover color — only the dim under the cursor (matched by part + axis)
+- [x] selection / dimension / hover colors derived from the edge color, contrasting it and white
+    - [x] edge is the single source; colors rotate around the wheel from it: selection +90°, dimensionals -90°, hover +180°, each darkened if too light for white
+    - note: final design used the edge color as source (not the part color) with three rotations; the accent/polygon and angle variants were not pursued
 - [x] display the current quot in the status strip, when not showing something else
 - [x] create tests for the new dimensionals rules
 - [x] when option key is down, only show invisible SOs and their dimensionals
@@ -349,3 +353,54 @@
 - [x] begin work on dimensions/[[uniface rules]]
     - [x] what is missing?
     - [x] proposal for transition
+- [x] analyze dimensionals code and write a new file "now/dim.spec.md" with a complete, well organized description of what it does, written in the form of numbered rules
+    - [x] clean it up, dead wood, open issues, lexicon, tests
+- [x] controls -> segs first
+- [x] scan all notes in di and mono and update all links and file name references
+- [x] major filename overhaul -> remove the 'di ' wherever it was added, updating all refs
+- [x] rewrite the banned words hook to read the md file
+- [x] pause work on "simplify and perfect the flag-off case"
+- [x] implement 'open items' line 111
+- [x] add a new slider -> controls, default = 2
+    - [x] remove dimensions from the segmented control
+- [x] slide thumb all the way right, slide it back to original position -> canvas is blank. refresh -> drawing reappears
+- [x] for parts -> hover and select should work with edit turned off
+- [x] paste buffer, COMMAND-C puts
+    - [x] when a dimensional is hovered -> the full name from root to {width, depth, height}
+    - [x] when a part is hovered -> the full name from root to part name
+- [x] slider for how many dimensionals appear
+- [x] on hover over a part or a dimensional
+    - [x] OPTION-C copies the label to the paste buffer
+    - [x] change the dimensional color to red
+    - [x] over a part -> also highlight all its dimensionals
+- [x] when a dimensional is being edited, also highlight its SO and its other dimensionals
+- [x] rename x ray -> wireframe
+- [x] sliders: scaling -> eliminate triangles
+- [x] mouse hover should be turned off when mouse leaves canvas
+- [x] move all paused, open and proposals from handoff to open items
+- [x] app.svelte has stale cruft (browser DOES invoke it via Cmd+P)
+    - [x] move the print code into a new Print manager (managers/Print.ts), wired by print.register()
+    - [x] move all App.svelte global styles into css/app.css, imported by main.ts
+    - [x] App.svelte now holds only the color effect, print registration, and the layout component
+- [x] width constants need to depend on browser's zoom factor (the layout now re-flows on browser zoom)
+    - [x] the limits compare the plain measured width, which already shrinks on zoom, so zoom-in crosses the limit and re-flows
+    - [x] visually confirmed re-flow on zoom
+- [x] move from managers to utilities: Print, Status, and Versions
+    - [x] moved Print and Versions into utilities (files, both index barrels, all importers repointed)
+    - [x] Status kept in managers by decision — it owns a writable store (Status.ts:12)
+    - [x] svelte-check clean, all 842 tests pass
+- [x] rename Testworthy_Utilities -> Utilities
+    - [x] file and class renamed; export renamed tu -> u; test renamed; index and Units.ts repointed
+    - [x] svelte-check clean, all tests pass
+- [x] **DISAPPROVED:** arrowheads should be drawn in perspective, not flat relative to the screen
+    - [x] built it (3D triangle in the dim line's plane, near-constant ~6px); Jonathan disapproved — the arrowheads took on too many different triangle variations and the effect was not worth it
+    - [x] reverted to the original flat arrowheads; svelte-check clean, 842 tests pass
+- [x] thicknesses for lines, see [[di/notes/work/now/handoff]]
+    - [x] The code has lots of thicknesses hand coded. Let's use Constants line 114
+- [x] edit dimension labels
+    - [x] retain font size
+    - [x] pill border -> dashed
+    - [x] can grow/shrink as text changes
+- [x] allow constants to be pure numbers
+    - [x] convert decimals to fractions
+- [x] dimensionals for root should appear

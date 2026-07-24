@@ -276,6 +276,13 @@ class Render {
 	/** Logical (CSS) size — for external consumers like camera init. */
 	get logical_size(): Size { return this.size; }
 
+	/** Read-only view of this frame's occluding faces (world plane n·p = d plus
+	 *  screen polygon and owning part id), for the dimension placement's
+	 *  occlusion exclusion (spec 2.4). Empty until the render pass builds them. */
+	get_occluding_faces(): readonly { n: vec3; d: number; poly: { x: number; y: number }[]; obj_id: string }[] {
+		return this.occluding_faces;
+	}
+
 	init(canvas: HTMLCanvasElement): void {
 		this.canvas = canvas;
 		// The print pipeline reads back every pixel via getImageData each time
@@ -386,7 +393,7 @@ class Render {
 		// OPTION does nothing. Print mode never triggers x-ray.
 		const print_active = this.force_print_render || (typeof window !== 'undefined' && window.matchMedia('print').matches);
 		const has_invisible = all_objects.some(o => !o.so.visible);
-		const xray_mode = !print_active && get(e.w_option_down) && has_invisible;
+		const wireframe_mode = !print_active && get(e.w_option_down) && has_invisible;
 
 		// Projection: project ALL vertices (including hidden) for hit-test caches
 		const projected_map = new Map<string, Projected[]>();
@@ -406,7 +413,7 @@ class Render {
 		// Solidify: fill front-facing faces (occlusion layer)
 		// In solid mode, fill with white so rear edges are hidden.
 		// Sort all front-facing faces back-to-front by average depth.
-		if (solid && !xray_mode) {
+		if (solid && !wireframe_mode) {
 			const face_draws: { face: number[]; projected: Projected[]; z_avg: number; fi: number }[] = [];
 			for (const obj of objects) {
 				const projected = projected_map.get(obj.id)!;
@@ -427,7 +434,7 @@ class Render {
 		}
 
 		// Solidify: debug face fills (non-solid mode)
-		if (!solid && !xray_mode) {
+		if (!solid && !wireframe_mode) {
 			for (const obj of objects) {
 				const projected = projected_map.get(obj.id)!;
 				if (!obj.faces) continue;
@@ -446,7 +453,7 @@ class Render {
 		// Build occluding face list for edge clipping (solid or 2D mode)
 		this._phase('occluders');
 		this.occluding_faces = [];
-		if (solid && !xray_mode) {
+		if (solid && !wireframe_mode) {
 			for (const obj of objects) {
 				if (!obj.parent) continue;
 				const projected = projected_map.get(obj.id)!;
@@ -639,11 +646,13 @@ class Render {
 
 		// Edges: a visible root draws all its edges. An invisible root is
 		// restricted to the bottom face further down.
-		if (!xray_mode) for (const obj of objects) {
+		const sel_scene_for_axes = selection.current?.so?.scene ?? null;
+		if (!wireframe_mode) for (const obj of objects) {
 			const projected = projected_map.get(obj.id)!;
 			const world = (solid) ? this.get_world_matrix(obj) : undefined;
 			this.render_edges(obj, projected, solid, world);
 			if (stores.show_names) this.render_face_names(obj, projected, world);
+			if (sel_scene_for_axes && obj.id === sel_scene_for_axes.id) this.render_face_axes(obj, projected);
 		}
 
 		// Facets debug labels — after all lines so backgrounds aren't covered
@@ -726,7 +735,7 @@ class Render {
 			// EXCEPT while OPTION is held, in which case they render fully so
 			// the user can see them on demand (x-ray reveal).
 			this.ctx.globalAlpha = (!obj.parent || option_down) ? 1 : stores.grid_opacity;
-			this.ctx.lineWidth = 0.5;
+			this.ctx.lineWidth = stores.edge_thickness / 2;
 			for (const [i, j] of obj.edges) {
 				if (root_bottom && !root_bottom.has(`${Math.min(i, j)}-${Math.max(i, j)}`)) continue;
 				const a = projected[i], b = projected[j];
@@ -763,12 +772,14 @@ class Render {
 		if (stores.grid_opacity > 0 && !is_print) {
 			render_axes(this);
 		}
+		if (stores.show_dimensionals || selection.all.length > 0) render_dimensions(this);
+		if (stores.show_angulars) render_angulars(this);
+		// Selection and hover dots draw last, so they sit on top of the
+		// dimensions and angulars too — not just the part geometry.
 		if (!is_print) {
 			this.render_hover();
 			this.render_selection();
 		}
-		if (stores.show_dimensionals) render_dimensions(this);
-		if (stores.show_angulars) render_angulars(this);
 		if (k.debug.show_ep_labels) this.render_front_face_label();
 		this._phase('');
 	}
@@ -1786,7 +1797,10 @@ class Render {
 	private render_edges(obj: O_Scene, projected: Projected[], solid: boolean, world?: mat4, restrict_face?: number): void {
 		const ctx = this.ctx;
 		const is_selected = selection.contains(obj.so);
-		const is_hovered = hits_3d.hover?.so.scene === obj && !is_selected;
+		// One central rule (Hits_3D) decides which part is hover-highlighted,
+		// weighing label vs line vs body against selection/edit state. Hover wins
+		// over selection in the strokeStyle below.
+		const is_hovered = hits_3d.hover_highlight_so_id === obj.so.id;
 		// During print, suppress the selected/hovered feedback on edges —
 		// the printed sheet should show the picture as if no UI helper were
 		// active. The flags above keep their normal meaning so other render
@@ -1826,7 +1840,7 @@ class Render {
 				}
 			}
 
-			ctx.strokeStyle = show_hovered ? colors.so_hover_color : `${obj.color}1)`;
+			ctx.strokeStyle = show_hovered ? colors.so_hover_color : show_selected ? colors.so_selected_color : `${obj.color}1)`;
 			ctx.stroke(normal_path);
 			if (guidance_edges) {
 				ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
@@ -1862,7 +1876,7 @@ class Render {
 				path.lineTo(bx, by);
 			}
 
-			ctx.strokeStyle = is_hovered ? colors.so_hover_color : `${obj.color}1)`;
+			ctx.strokeStyle = is_hovered ? colors.so_hover_color : is_selected ? colors.so_selected_color : `${obj.color}1)`;
 			ctx.stroke(normal_path);
 
 			if (guidance_edges) {
@@ -2354,6 +2368,41 @@ class Render {
 	}
 
 
+	/** For the SELECTED part: draw a small "x" / "y" / "z" letter at the
+	 *  centroid of every front-facing face. The letter names the LOCAL
+	 *  axis the face's normal lies along, so a non-rotated part shows
+	 *  "x" on its left and right faces, "y" on front and back, "z" on
+	 *  top and bottom. Used while talking about dimensional placement
+	 *  to refer to a specific face by its axis. */
+	private render_face_axes(obj: O_Scene, projected: Projected[]): void {
+		if (!obj.faces || !k.debug.diagnose_dims) return;
+		const ctx = this.ctx;
+		const font_size = k.height.font.large;
+		ctx.font = `${font_size}px sans-serif`;
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		for (let fi = 0; fi < obj.faces.length; fi++) {
+			const face = obj.faces[fi];
+			if (this.face_winding(face, projected) >= 0) continue;  // back-facing
+			let cx = 0, cy = 0, behind = false;
+			for (const vi of face) {
+				if (projected[vi].w < 0) { behind = true; break; }
+				cx += projected[vi].x;
+				cy += projected[vi].y;
+			}
+			if (behind) continue;
+			cx /= face.length;
+			cy /= face.length;
+			const letter = obj.so.face_fixed_axis(fi);
+			const tw = ctx.measureText(letter).width;
+			const box_h = font_size + 2;
+			ctx.fillStyle = 'white';
+			ctx.fillRect(Math.round(cx) - tw / 2 - 2, Math.round(cy) - box_h / 2, tw + 4, box_h);
+			ctx.fillStyle = 'red';
+			ctx.fillText(letter, Math.round(cx), Math.round(cy));
+		}
+	}
+
 	private render_face_names(obj: O_Scene, projected: Projected[], world?: mat4): void {
 		if (!obj.faces) return;
 		const ctx = this.ctx;
@@ -2441,6 +2490,31 @@ class Render {
 		return false;
 	}
 
+	/** True when any stretch of an edge is hidden behind another part's face
+	 *  in the current solid view. The edge is given by its two ends in the
+	 *  static (untumbled) room frame plus the current tumble matrix, so this
+	 *  matches exactly the hidden-line clipping the renderer draws with —
+	 *  correct frame, and it catches an edge whose middle is hidden, not only
+	 *  its ends. Returns false when nothing occludes (wireframe builds no
+	 *  faces). The dimension placement algorithm calls this to skip edges it
+	 *  must not measure. */
+	edge_partly_hidden(static_p1: vec3, static_p2: vec3, tumble: mat4, skip_id: string): boolean {
+		if (this.occluding_faces.length === 0) return false;
+		const w1 = vec3.transformMat4(vec3.create(), static_p1, tumble);
+		const w2 = vec3.transformMat4(vec3.create(), static_p2, tumble);
+		const s1 = this.project_vertex(static_p1, tumble);
+		const s2 = this.project_vertex(static_p2, tumble);
+		if (s1.w < 0 || s2.w < 0) return false;
+		const p1 = { x: s1.x, y: s1.y };
+		const p2 = { x: s2.x, y: s2.y };
+		const full = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+		if (full < 1e-6) return false;
+		const visible = this.clip_segment_for_occlusion_rich(p1, p2, w1, w2, skip_id);
+		let visible_len = 0;
+		for (const iv of visible) visible_len += Math.hypot(iv.end.x - iv.start.x, iv.end.y - iv.start.y);
+		return visible_len < full - 1;   // more than ~1 px of the edge is hidden
+	}
+
 	/** Ray-casting point-in-polygon test (2D screen space). */
 	point_in_polygon_2d(px: number, py: number, poly: { x: number; y: number }[]): boolean {
 		let inside = false;
@@ -2470,19 +2544,21 @@ class Render {
 	private render_selection(): void {
 		const sel = selection.current;
 		if (!sel || !sel.so.scene) return;
+		// When the selected part is the one being hover-highlighted, let the hover
+		// dots win — skip its selection dots.
+		if (hits_3d.hover_highlight_so_id === sel.so.id) return;
 
 		const projected = hits_3d.get_projected(sel.so.scene.id);
 		if (!projected) return;
 
-		this.render_hit_dots(sel, projected, `${sel.so.scene.color}1)`);
+		this.render_hit_dots(sel, projected, colors.so_selected_color);
 	}
 
 	private render_hover(): void {
 		const hover = hits_3d.hover;
 		if (!hover || !hover.so.scene) return;
-		// Don't draw hover dots when hovering sub-elements of the selected face
-		const sel = selection.current;
-		if (sel && sel.so === hover.so && sel.type === T_Hit_3D.face) return;
+		// Only draw hover dots for the part the central rule marks as hovered.
+		if (hits_3d.hover_highlight_so_id !== hover.so.id) return;
 
 		const projected = hits_3d.get_projected(hover.so.scene.id);
 		if (!projected) return;
@@ -2526,13 +2602,13 @@ class Render {
 		const draw = (p: Projected) => {
 			if (p.w < 0) return;
 			this.ctx.beginPath();
-			this.ctx.arc(p.x, p.y, stores.bold_thickness, 0, Math.PI * 2);
-			this.ctx.fillStyle = 'white';
-			this.ctx.fill();
-			this.ctx.lineWidth = 2;
+			this.ctx.fillStyle = colors.lighterBy(color, 5);
+			this.ctx.lineWidth = stores.edge_thickness;
+			this.ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
 			this.ctx.strokeStyle = color;
 			this.ctx.lineJoin = 'round';
 			this.ctx.stroke();
+			this.ctx.fill();
 		};
 
 		switch (hit.type) {

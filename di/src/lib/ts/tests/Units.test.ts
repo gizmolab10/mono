@@ -273,6 +273,48 @@ describe('Units', () => {
 	});
 
 	// ═══════════════════════════════════════════════════════════════════
+	// PARSE — constant (bare number = pure scalar, unit = measurement)
+	// ═══════════════════════════════════════════════════════════════════
+
+	describe('parse_constant', () => {
+		it('bare number is a pure scalar, kept as typed', () => {
+			expect(units.parse_constant('0.3', T_Units.imperial)).toEqual({ value: 0.3, is_scalar: true });
+		});
+
+		it('bare number is NOT multiplied by the default unit', () => {
+			// 0.3 stays 0.3, not 0.3 feet (91.44 mm)
+			expect(units.parse_constant('0.3', T_Units.metric)).toEqual({ value: 0.3, is_scalar: true });
+		});
+
+		it('bare fraction is a scalar', () => {
+			expect(units.parse_constant('1/2', T_Units.imperial)).toEqual({ value: 0.5, is_scalar: true });
+		});
+
+		it('leading-dot decimal is a scalar (not null)', () => {
+			expect(units.parse_constant('.23', T_Units.imperial)).toEqual({ value: 0.23, is_scalar: true });
+			expect(units.parse_constant('.54', T_Units.metric)).toEqual({ value: 0.54, is_scalar: true });
+		});
+
+		it('with a metric unit is a measurement in mm', () => {
+			expect(units.parse_constant('18mm', T_Units.metric)).toEqual({ value: 18, is_scalar: false });
+		});
+
+		it('with feet is a measurement in mm', () => {
+			const r = units.parse_constant("0.3'", T_Units.imperial);
+			expect(r?.is_scalar).toBe(false);
+			expect(r?.value).toBeCloseTo(91.44);
+		});
+
+		it('returns null for garbage', () => {
+			expect(units.parse_constant('abc', T_Units.metric)).toBeNull();
+		});
+
+		it('returns null for empty', () => {
+			expect(units.parse_constant('   ', T_Units.metric)).toBeNull();
+		});
+	});
+
+	// ═══════════════════════════════════════════════════════════════════
 	// Rule 34 — internal storage is in millimeters
 	// Whatever the user types, the parser hands back a value already in mm.
 	// ═══════════════════════════════════════════════════════════════════

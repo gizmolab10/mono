@@ -8,7 +8,7 @@
 	import P_Repeat from './P_Repeat.svelte';
 	import { engine } from '../../ts/render';
 
-	const { w_tick, w_parts_tab } = stores;
+	const { w_tick, w_parts_tab, w_attribute_keys, w_allow_editing } = stores;
 	const { w_selection } = selection;
 
 	// Reactive: re-evaluate the cut-button visibility on every state tick and
@@ -29,6 +29,7 @@
 			type      = 'text'
 			class     = 'collapsed-name'
 			value     = {$w_selection.so.name}
+			disabled  = {!$w_allow_editing}
 			onkeydown = {(e) => parts.name_keydown(e, $w_selection!.so)}
 			oninput   = {(e) => parts.live_rename($w_selection!.so, (e.target as HTMLInputElement).value)}
 			onblur    = {(e) => { const inp = e.target as HTMLInputElement; parts.commit_name($w_selection!.so, inp.value, inp); }}
@@ -37,9 +38,9 @@
 	{#if $w_selection.so.scene?.parent}
 		<div class='duplicate-row'>
 			{#if can_cut(_can_cut_tick)}
-				<button class='action-button' use:hit_target={{ id: 'cut', onpress: () => engine.cut_selected_so() }}>divide in half</button>
+				<button class='action-button' disabled={!$w_allow_editing} use:hit_target={{ id: 'cut', onpress: () => { if (stores.allow_editing) engine.cut_selected_so(); } }}>divide in half</button>
 			{/if}
-			<button class='action-button' use:hit_target={{ id: 'duplicate', onpress: () => engine.duplicate_so() }}>duplicate</button>
+			<button class='action-button' disabled={!$w_allow_editing} use:hit_target={{ id: 'duplicate', onpress: () => { if (stores.allow_editing) engine.duplicate_so(); } }}>duplicate</button>
 		</div>
 	{/if}
 	<Separator />
@@ -50,6 +51,11 @@
 			<button class:active={$w_parts_tab === 'repeater'}   onclick={() => w_parts_tab.set(T_Parts_Tab.repeater)}>repeats</button>
 		</div>
 	</div>
+	{#if $w_parts_tab === 'attributes'}
+		<div class='keys-row'>
+			<button class='keys-toggle' title='group attributes by start/length/end, or by axis' onclick={() => stores.toggle_attribute_keys()}>{$w_attribute_keys} ⟳</button>
+		</div>
+	{/if}
 	<div class='tab-content'>
 		{#if $w_parts_tab === 'attributes'}
 			<P_Attributes />
@@ -94,6 +100,11 @@
 		padding-left  : 6px;
 	}
 
+	.collapsed-name:disabled {
+		opacity : 0.6;
+		cursor  : default;
+	}
+
 	.actions-row {
 		gap           : var(--l-gap-tiny);
 		display       : flex;
@@ -114,8 +125,13 @@
 		padding       : 0 8px;
 	}
 
-	.action-button:hover {
+	.action-button:hover:not(:disabled) {
 		background : var(--hover);
+	}
+
+	.action-button:disabled {
+		opacity : 0.4;
+		cursor  : default;
 	}
 
 	.duplicate-row {
@@ -160,6 +176,31 @@
 	}
 
 	.segmented button:hover:not(.active) {
+		background : var(--hover);
+	}
+
+	.keys-row {
+		justify-content : center;
+		display         : flex;
+		margin-top      : var(--l-gap-tiny);
+	}
+
+	.keys-toggle {
+		border        : var(--th-border) solid currentColor;
+		height        : var(--h-button-tiny);
+		border-radius : var(--r-common);
+		font-size     : var(--font-common);
+		z-index       : var(--z-action);
+		background    : var(--white);
+		box-sizing    : border-box;
+		cursor        : pointer;
+		color         : inherit;
+		white-space   : nowrap;
+		padding       : 0 10px;
+		min-width     : 3em;
+	}
+
+	.keys-toggle:hover {
 		background : var(--hover);
 	}
 

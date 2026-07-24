@@ -1,0 +1,66 @@
+/* Global stylesheet.
+
+   Stacking layers. The z numbers live once in Constants; a startup step pushes
+   them onto the page as CSS variables (see Configuration.configure_layers), and
+   these classes read them. Put an element on a layer by adding its class — the
+   number stays in one place. */
+
+.layer-common {
+   z-index: var(--z-common);
+}
+
+.layer-hideable {
+   z-index: var(--z-hideable);
+}
+
+.layer-controls {
+   z-index: var(--z-controls);
+}
+
+.layer-default {
+   z-index: var(--z-frontmost);
+}
+
+/* Layout sizes, also pushed from Constants at startup (see
+   Configuration.configure_metrics), read by component styles as:
+     --gap           the frame inset / gap between regions
+     --radius          the region corner radius (also the Add drop box)
+     --gap-details     the gap in the details stack
+     --gap-fat the gap in the preferences row
+     --gap-tight       the tight gap (stepper stack, author corner)
+     --radius-banner   the small (banner / button) corner radius
+     --radius-build    the build-notes card corner radius
+     --radius-pill     the pill corner radius (segments, openers)
+     --radius-percent  the circle radius (50%)
+     --height-banner        the details banner height
+     --height-build         the build-notes close button height
+     --height-hideable      the collapsible banner button height
+     --height-control         the operation pill height
+     --size-button     the square button size (the color-picker circle)
+     --size-cross      the close-button size (the cross drawing size)
+     --font-credit / --font-label / --font-base / --font-banner / --font-large
+                       the pixel font sizes
+     --font-hero / --font-drop
+                       the relative (em) font sizes — landing text, drop prompt
+     --inset-cluster   the hamburger corner offset
+     --inset-pill-top / --inset-pill-left        the operation pill position
+     --inset-popup-edge / --inset-popup-side     the build-notes corner controls
+     --inset-credit-bottom / --inset-credit-left the author corner
+     --thickness-normal   the standard 1px border width
+     --thickness-faint    the hairline stroke width (hamburger outline)
+     --thickness-fat      the heavy border width (drop box)
+     --fw-normal          the base font weight (body + controls) — the one bold knob
+     --fw-banner          one step lighter — the collapsible banner
+     --fw-title           two steps lighter — the popup title
+     --tracking           the banner letter-spacing (em)
+     --pad-slot / --pad-hamburger / --pad-control / --pad-opener /
+       --pad-modal / --pad-stepper / --pad-view / --pad-cell
+                          ready-to-use padding shorthands
+     --margin-header      the build-notes header bottom margin
+     --notes-build / --notes-date   the build-notes column widths
+     --shadow-modal       the popup drop shadow (offset/blur + a mix of --black)
+     --opacity-drop / --opacity-header / --opacity-label   the dimming levels
+     (thickness.bold, 1.5, is read directly by the focus-outline color push)
+
+   Ink colors, pushed from Colors (see Configuration.configure_inks):
+     --black  #1a1a1a (never #000)   --white  #ffffff   --gray  #888 */

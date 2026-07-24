@@ -3,7 +3,7 @@ import { scene } from '../../render/Scene';
 import { camera } from '../../render/Camera';
 import { render } from '../../render/Render';
 import { stores } from '../../managers/Stores';
-import { run_uniface_placement } from '../../render/Dimension_Placement';
+import { run_uniface_placement, set_off_canvas_filter_enabled_for_tests } from '../../render/Dimension_Placement';
 import type { Uniface_Placement_Result } from '../../render/Dimension_Placement';
 import { cube_edges, cube_faces, make_so } from './scene_mock';
 import Smart_Object from '../../runtime/Smart_Object';
@@ -44,6 +44,10 @@ export function run_placement_on_parts(parts: readonly Part_Definition[]): Unifa
 	// Ensure the orientation store starts at identity quaternion so the
 	// edge-on filter sees no tumble.
 	stores.w_orientation.set([0, 0, 0, 1]);
+	// Tests use identity projection matrices, which put every anchor far
+	// off the synthetic canvas; the off-canvas filter would otherwise
+	// reject every candidate. Disable it for tests.
+	set_off_canvas_filter_enabled_for_tests(false);
 	return run_uniface_placement();
 }
 

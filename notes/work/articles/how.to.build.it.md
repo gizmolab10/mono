@@ -2,11 +2,9 @@
 
 *A practical guide to building your own AI collaborator*
 
-
 ---
 
-I hope you are curious, and skeptical. I am, too. 
-
+I hope you are curious, and skeptical. I am, too.
 
 This is all technical stuff, where details matter. I'll try my best to take your hand and guide you through this handicraft. I can't know where your pinch points will be, and of course there will be some. Here's what i actually did. Take whatever appeals.
 
@@ -115,8 +113,7 @@ Working Google OAuth flow.
 
 Fill in the specific details. Of course, you only need enough to jog your memory of the problem. Update it as you go. Check boxes. Add notes. Pause a week or a month and give it no thought. Read it when you resume. Usually the generated material is brief and interesting.
 
-Once the problem is resolved, consider whether you want to keep it. The ones I keep are ones that capture an important lesson. I sort them into three categories, moving them out of `work`:
-
+Once the problem is resolved, consider whether you want to keep it. The ones I keep are ones that capture an important lesson. I sort them into three tags, moving them out of `work`:
 
 | Folder | Purpose |
 |--------|---------|  
@@ -158,9 +155,7 @@ It's not a replacement for thinking. It's a multiplier for doing.
 
 Some days it's magic. Some days it's frustrating. The AI hallucinates. The context window fills up. The MCP connection drops. I growl.
 
-
 But the baseline keeps rising. Each guide you write, each pattern you capture, each gotcha you document — it accumulates. The AI you work with in a few weeks is meaningfully better than the one you started with. Not because the model changed. Because you taught it.
-
 
 Your’e building a knowledge base of what, how, and the daily grind. Only corporations with deep pockets create such things, and they typically quickly go stale, wrong, useless. With a habit of proceeding this way, yours can always be updated by asking “review my code. Then review the notes and tell me what is out-of-date, disorganized or redundant.” Personally, I find that the experience is breathtaking.
 
@@ -172,7 +167,6 @@ Your’e building a knowledge base of what, how, and the daily grind. Only corpo
 4. **After your next "aha" moment, write it down.** First guide entry.
 
 Don't overthink it. The system will evolve. Let it be messy at first. AI strikes me as a very capable janitor.
-
 
 ---
 

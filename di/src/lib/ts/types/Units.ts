@@ -1,5 +1,5 @@
 import { preferences, T_Preference } from '../managers/Preferences';
-import { tu } from '../utilities/Testworthy_Utilities';
+import { u } from '../utilities/Utilities';
 import { T_Unit, T_Units } from './Enumerations';
 import { stale_writable } from '../common/Dirty';
 import { get } from 'svelte/store';
@@ -323,6 +323,25 @@ export class Units {
 		return value * mm_per[default_unit];
 	}
 
+	/** Parse a constant's typed value. A bare number (no unit) is kept as a
+	 *  pure scalar exactly as typed; anything carrying a unit (or ' ") is a
+	 *  measurement and is converted to mm. Returns the number plus which kind
+	 *  it is, or null when the text cannot be read at all. */
+	parse_constant(input: string, unit_system: T_Units): { value: number; is_scalar: boolean } | null {
+		const trimmed = input.trim();
+		if (trimmed === '') return null;
+		const lower = trimmed.toLowerCase();
+		const has_unit =
+			trimmed.includes("'") || trimmed.includes('"') ||
+			Object.values(symbol).some(sym => { const s = sym.trim().toLowerCase(); return s !== '' && lower.endsWith(s); });
+		if (has_unit) {
+			const mm = this.parse_for_system(trimmed, unit_system);
+			return mm === null ? null : { value: mm, is_scalar: false };
+		}
+		const scalar = this.parse_fraction(trimmed);
+		return scalar === null ? null : { value: scalar, is_scalar: true };
+	}
+
 	/** Default display unit for a system (used when parsing bare numbers) */
 	default_unit_for_system(unit_system: T_Units): T_Unit {
 		switch (unit_system) {
@@ -348,7 +367,7 @@ export class Units {
 		if (raw_numerator >= max_denominator) {
 			return { whole: whole + 1, numerator: 0, denominator: 1 };
 		}
-		const divisor = tu.gcd(raw_numerator, max_denominator);
+		const divisor = u.gcd(raw_numerator, max_denominator);
 		return { whole, numerator: raw_numerator / divisor, denominator: max_denominator / divisor };
 	}
 
@@ -384,8 +403,9 @@ export class Units {
 			if (d === 0) return null;
 			return n / d;
 		}
-		// decimal: "5.25" or "5" (must be the entire string, not just a prefix)
-		if (!/^-?\d+(\.\d+)?$/.test(trimmed)) return null;
+		// decimal: "5.25", "5", or a leading-dot decimal ".23" (must be the
+		// entire string, not just a prefix)
+		if (!/^-?(\d+(\.\d+)?|\.\d+)$/.test(trimmed)) return null;
 		return parseFloat(trimmed);
 	}
 

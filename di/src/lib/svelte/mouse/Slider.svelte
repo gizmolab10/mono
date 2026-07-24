@@ -17,17 +17,23 @@
 		value_alt,
 		width = 120,
 		height = 20,
+		thumb_label,
 		onchange_alt,
 		format_label,
 		fill = false,
+		tick_interval,
 		style = 'line',
 		divisions = 200,
 		vertical = false,
 		show_value = false,
+		tick_labels = true,
+		tick_thickness = 1,
 		logarithmic = false,
 		show_steppers = true,
 		sticky_threshold = 1,
+		disabled = false,
 	}: {
+		disabled?: boolean;
 		min?: number;
 		max?: number;
 		value?: number;
@@ -39,11 +45,15 @@
 		value_alt?: number;
 		divisions?: number;
 		show_value?: boolean;
+		tick_labels?: boolean;
 		logarithmic?: boolean;
+		tick_interval?: number;
+		tick_thickness?: number;
 		show_steppers?: boolean;
 		style?: 'pill' | 'line';
 		sticky_threshold?: number;
 		onchange: (value: number) => void;
+		thumb_label?: (v: number) => string;
 		onstep?: (smaller: boolean) => void;
 		format_label?: (v: number) => string;
 		onchange_alt?: (value: number) => void;
@@ -59,8 +69,13 @@
 
 	// Logarithmic: map [0..divisions] to [log10(min)..log10(max)]
 	// Linear: map [0..divisions] to [min..max]
-	const log_min_val = $derived(logarithmic ? Math.log10(min) : 0);
-	const log_max_val = $derived(logarithmic ? Math.log10(max) : 0);
+	// When the floor is 0 or below, a plain log10 blows up (log10(0) = -∞),
+	// so shift everything by `log_offset` and take the log of (x + offset).
+	// That keeps 0 reachable at the far left and still spaces small numbers
+	// out. For a positive floor the offset is 0 — the pure-log path, unchanged.
+	const log_offset = $derived(logarithmic && min <= 0 ? 1 - min : 0);
+	const log_min_val = $derived(logarithmic ? Math.log10(min + log_offset) : 0);
+	const log_max_val = $derived(logarithmic ? Math.log10(max + log_offset) : 0);
 	const log_range = $derived(log_max_val - log_min_val);
 	const step_size = $derived(logarithmic ? log_range / divisions : (max - min) / divisions);
 
@@ -77,27 +92,30 @@
 	const is_sticky_alt = $derived(!!sticky?.some(s => Math.abs((value_alt ?? 0) - s) < 0.01));
 	const sticky_dot       = 'radial-gradient(circle, rgba(0,0,0,0.25) 4px, var(--white) 5px)';
 	const sticky_dot_hover = 'radial-gradient(circle, white 4px, var(--hover) 5px)';
+	// When disabled, the thumb never takes the hover color — the app's hover is
+	// tracked by cursor position, so it would otherwise light up even with the
+	// input inert.
 	const current_thumb_color = $derived(
 		is_sticky
-			? (isHoveringOn_slider && !is_dragging) ? sticky_dot_hover : sticky_dot
-			: (isHoveringOn_slider && !is_dragging) ? 'var(--hover)' : 'var(--c-thumb)'
+			? (isHoveringOn_slider && !is_dragging && !disabled) ? sticky_dot_hover : sticky_dot
+			: (isHoveringOn_slider && !is_dragging && !disabled) ? 'var(--hover)' : 'var(--c-thumb)'
 	);
 	const current_thumb_color_alt = $derived(
 		is_sticky_alt
-			? (isHoveringOn_slider_alt && !is_dragging_alt) ? sticky_dot_hover : sticky_dot
-			: (isHoveringOn_slider_alt && !is_dragging_alt) ? 'var(--hover)' : 'var(--c-thumb)'
+			? (isHoveringOn_slider_alt && !is_dragging_alt && !disabled) ? sticky_dot_hover : sticky_dot
+			: (isHoveringOn_slider_alt && !is_dragging_alt && !disabled) ? 'var(--hover)' : 'var(--c-thumb)'
 	);
 
 	// Value → slider position (0..divisions)
 	let slider_value = $derived(
 		logarithmic
-			? (value <= min ? 0 : (Math.log10(value) - log_min_val) / step_size)
+			? (value <= min ? 0 : (Math.log10(value + log_offset) - log_min_val) / step_size)
 			: Math.max(0, Math.min(divisions, (value - min) / step_size))
 	);
 	let slider_value_alt = $derived(
 		value_alt === undefined ? 0 :
 		logarithmic
-			? (value_alt <= min ? 0 : (Math.log10(value_alt) - log_min_val) / step_size)
+			? (value_alt <= min ? 0 : (Math.log10(value_alt + log_offset) - log_min_val) / step_size)
 			: Math.max(0, Math.min(divisions, (value_alt - min) / step_size))
 	);
 
@@ -110,7 +128,7 @@
 	// Slider position → value
 	function position_to_value(pos: number): number {
 		if (logarithmic) {
-			return Math.max(min, Math.pow(10, log_min_val + pos * step_size));
+			return Math.max(min, Math.pow(10, log_min_val + pos * step_size) - log_offset);
 		}
 		const raw = min + pos * step_size;
 		return Math.max(min, Math.min(max, Math.round(raw * 100) / 100));
@@ -161,7 +179,9 @@
 
 	// Power-of-10 tick marks for logarithmic sliders
 	const log_ticks = $derived.by(() => {
-		if (!logarithmic) return [];
+		// When the caller supplies explicit ticks (tick_interval), use those —
+		// don't also draw the power-of-10 labelled ticks.
+		if (!logarithmic || log_offset > 0 || tick_interval) return [];
 		const ticks: { pct: number; label: string }[] = [];
 		const exp_min = Math.ceil(Math.log10(min));
 		const exp_max = Math.floor(Math.log10(max));
@@ -178,6 +198,21 @@
 		if (!sticky?.length) return [];
 		const range = max - min;
 		return sticky.map(s => ({ pct: (s - min) / range * 100 }));
+	});
+
+	// Evenly-spaced tick marks (e.g. every 10). Visual only — they do NOT snap.
+	const regular_ticks = $derived.by(() => {
+		if (!tick_interval) return [];
+		const range = max - min;
+		if (range <= 0) return [];
+		const ticks: { pct: number }[] = [];
+		for (let v = min; v <= max + 1e-9; v += tick_interval) {
+			const pct = logarithmic
+				? (Math.log10(v + log_offset) - log_min_val) / log_range * 100
+				: (v - min) / range * 100;
+			ticks.push({ pct });
+		}
+		return ticks;
 	});
 
 	function near_thumb(element: HTMLElement | null, sv: number, point: { x: number; y: number }): boolean {
@@ -227,6 +262,8 @@
 					<input type='range' class='range-input'
 						style:--thumb-color={current_thumb_color}
 						min='0' step='any' max={divisions}
+						disabled={disabled}
+						style:pointer-events={disabled ? 'none' : null}
 						bind:this={slider_input}
 						value={slider_value}
 						id={slider_hit_id}
@@ -244,6 +281,8 @@
 						id={slider_hit_id_alt}
 						min='0' step='any' max={divisions}
 						value={slider_value_alt}
+						disabled={disabled}
+						style:pointer-events={disabled ? 'none' : null}
 						style:--thumb-color={current_thumb_color_alt}
 						bind:this={slider_input_alt}
 						oninput={on_input_alt}
@@ -269,12 +308,16 @@
 				style:--thumb-color={current_thumb_color}
 				style:height={vertical ? `${width}px` : null}
 				style:width={fill ? '100%' : `${vertical ? height : width}px`}>
+				{#if style === 'line' && !vertical}
+					<div class='track-line-bg'></div>
+				{/if}
 				<input class='slider-input'
 					min='0'
 					step='any'
 					type='range'
 					max={divisions}
 					value={slider_value}
+					disabled={disabled}
 					bind:this={slider_input}
 					oninput={on_input}
 					use:hit_target={{
@@ -282,18 +325,28 @@
 						onpress: () => is_dragging = true,
 						onrelease: () => is_dragging = false,
 					}}
-					style={vertical ? 'pointer-events: auto;' : 'flex: 1 1 auto; position: relative; min-width: 0; pointer-events: auto;'}/>
-				{#if logarithmic || sticky_ticks.length > 0}
+					style={vertical ? `pointer-events: ${disabled ? 'none' : 'auto'};` : `flex: 1 1 auto; position: relative; min-width: 0; pointer-events: ${disabled ? 'none' : 'auto'}; z-index: 2;`}/>
+				{#if thumb_label}
+					<span class='thumb-label' style:left="calc(var(--h-slider) / 2 + {fill_left_pct} * (100% - var(--h-slider)) / 100)">{thumb_label(value)}</span>
+				{/if}
+				{#if logarithmic || sticky_ticks.length > 0 || regular_ticks.length > 0}
 					<div class='tick-overlay'>
 						{#each log_ticks as tick}
 							<div class='tick' style:left="{tick.pct}%">
-								<div class='tick-line'></div>
-								<span class='tick-label'>{tick.label}</span>
+								<div class='tick-line' style:width="{tick_thickness}px"></div>
+								{#if tick_labels}
+									<span class='tick-label'>{tick.label}</span>
+								{/if}
 							</div>
 						{/each}
 						{#each sticky_ticks as tick}
 							<div class='tick' style:left="{tick.pct}%">
-								<div class='tick-line'></div>
+								<div class='tick-line' style:width="{tick_thickness}px"></div>
+							</div>
+						{/each}
+						{#each regular_ticks as tick}
+							<div class='tick' style:left="{tick.pct}%">
+								<div class='tick-line' style:width="{tick_thickness}px"></div>
 							</div>
 						{/each}
 					</div>
@@ -325,9 +378,9 @@
 	}
 
 	.fill {
-		flex        : 1;
-		min-width   : 0;
 		margin-left : 0;
+		min-width   : 0;
+		flex        : 1;
 	}
 
 	.fill .slider-with-label {
@@ -347,17 +400,18 @@
 
 	.current-value {
 		font-size            : var(--font-small);
+		color                : var(--c-track);
 		font-variant-numeric : tabular-nums;
 		text-align           : center;
 		font-weight          : bold;
 		margin-bottom        : -6px;
 		line-height          : 1;
 		margin-top           : 0;
-		color                : var(--c-track);
 	}
 
 	.slider-label {
 		font-size            : var(--font-small);
+		color                : var(--c-track);
 		font-variant-numeric : tabular-nums;
 		position             : relative;
 		text-align           : center;
@@ -365,7 +419,6 @@
 		top                  : 4px;
 		margin-top           : 1px;
 		line-height          : 1;
-		color                : var(--c-track);
 	}
 
 	.slider-border {
@@ -373,6 +426,7 @@
 		overflow    : visible;
 		align-items : center;
 		display     : flex;
+		z-index     : 0;
 	}
 
 	.tick-overlay {
@@ -382,19 +436,48 @@
 		overflow       : visible;
 		pointer-events : none;
 		top            : 50%;
+		z-index        : 1;
 		height         : 0;
 	}
 
+	/* Visible track line, drawn as its own layer UNDER the ticks so the ticks
+	   sit on top of the track but the (higher) thumb still covers them. */
+	.track-line-bg {
+		left          : calc(var(--h-slider) / 2);
+		right         : calc(var(--h-slider) / 2);
+		transform     : translateY(-50%);
+		height        : var(--th-track);
+		background    : var(--c-track);
+		border-radius : var(--r-input);
+		position      : absolute;
+		pointer-events: none;
+		top           : 50%;
+		z-index       : 0;
+	}
+
 	.tick {
-		position  : absolute;
 		transform : translateX(-50%);
+		position  : absolute;
+	}
+
+	.thumb-label {
+		transform            : translate(-50%, -50%);
+		font-variant-numeric : tabular-nums;
+		position             : absolute;
+		white-space          : nowrap;
+		text-align           : center;
+		color                : black;
+		pointer-events       : none;
+		font-size            : 12px;
+		top                  : 50%;
+		z-index              : 10;
+		line-height          : 1;
 	}
 
 	.tick-line {
 		margin-top : calc(-1 * var(--th-track));
 		height     : calc(var(--th-track) * 2);
-		background : rgba(0, 0, 0, 0.5);
-		width      : 1px;
+		background : var(--c-tick);
 	}
 
 	.tick-label {
@@ -465,8 +548,8 @@
 
 	.slider-border input[type='range']::-ms-fill-lower,
 	.slider-border input[type='range']::-ms-fill-upper {
-		background    : var(--white);
 		border        : var(--border);
+		background    : var(--white);
 		border-radius : 16px;
 	}
 
@@ -486,7 +569,7 @@
 
 	.line input[type='range']::-webkit-slider-runnable-track {
 		height        : var(--th-track);
-		background    : var(--c-track);
+		background    : transparent;
 		border-radius : var(--r-input);
 		border        : none;
 	}
@@ -500,17 +583,17 @@
 	}
 
 	.line input[type='range']::-moz-range-track {
-		background    : var(--c-track);
-		border-radius : var(--r-input);
 		height        : var(--th-track);
+		border-radius : var(--r-input);
+		background    : transparent;
 		border        : none;
 	}
 
 	.line input[type='range']::-moz-range-thumb {
 		background : var(--thumb-color);
-		border     : 1px solid black;
 		width      : var(--h-slider);
 		height     : var(--h-slider);
+		border     : 1px solid black;
 	}
 
 	.line input[type='range']::-ms-fill-lower,
@@ -545,8 +628,8 @@
 	.range-track {
 		right      : calc(var(--h-slider) / 2);
 		left       : calc(var(--h-slider) / 2);
-		background : var(--c-track);
 		height     : var(--th-track);
+		background : var(--c-track);
 		position   : absolute;
 		margin-top : -2px;
 		top        : 50%;

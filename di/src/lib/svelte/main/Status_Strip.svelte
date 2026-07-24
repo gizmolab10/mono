@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { status } from '../../ts/managers/Status';
 	import { stores } from '../../ts/managers/Stores';
-	import { w_dim_dropped_avg } from '../../ts/render/Dimension_Placement';
 
 	const w_queue = status.w_queue;
 	const w_orientation = stores.w_orientation;
@@ -27,10 +26,6 @@
 		class:error={current.kind === 'error'}
 		class='status-strip'>
 		{current.text}
-	</div>
-{:else if $w_dim_dropped_avg > 0}
-	<div class='status-strip'>
-		{$w_dim_dropped_avg} dimension{$w_dim_dropped_avg === 1 ? '' : 's'} dropped · {quat_text} tumble · zoom {scale_text}
 	</div>
 {:else}
 	<div class='status-strip'>{quat_text} · zoom {scale_text}</div>

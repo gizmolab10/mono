@@ -1,11 +1,14 @@
-import { compute_root_tumble_matrix, get_last_uniface_placement_result, convex_hull, compute_dim_render_geometry } from './Dimension_Placement';
+import { compute_root_tumble_matrix, get_last_uniface_placement_result, compute_dim_render_geometry, dimensionals_log } from './Dimension_Placement';
 import type { Placement_Details, Silhouette_Box } from './Dimension_Placement';
 import type { DimensionHost } from './R_Dimensions';
+import { selection } from '../managers/Selection';
+import { dimensions } from '../editors/Dimension';
 import { hits_3d } from '../events/Hits_3D';
-import { scene } from './Scene';
 import { stores } from '../managers/Stores';
 import { k } from '../common/Constants';
+import { colors } from '../utilities/Colors';
 import { vec3 } from 'gl-matrix';
+import { scene } from './Scene';
 
 /**
  * Canvas renderer for dimensions. Reads the placement list produced by
@@ -26,13 +29,10 @@ const WITNESS_PAST_DIM_LINE_PX = 10;
  *  from the part edge, never touching the part itself. */
 const WITNESS_GAP_FROM_PART_PX = 5;
 
-
 const SILHOUETTE_BOX_STROKE          = 'rgba(220, 60, 60, 0.9)';
 const UNIFACE_BOX_STROKE             = 'rgba(60, 120, 220, 0.9)';
 const UNIFACE_BOX_EXCLUDED_STROKE    = 'rgba(120, 120, 120, 0.55)';
-const UNIFACE_PICK_STROKE            = 'rgba(60, 120, 220, 0.95)';
-const UNIFACE_HOVER_STROKE           = 'rgba(220, 30, 30, 1.0)';
-const SILHOUETTE_HEX_STROKE          = 'rgba(40, 170, 60, 0.9)';
+const SILHOUETTE_HEX_STROKE          = 'rgba(240, 147, 6, 0.9)';
 
 // Step 3c — for each pick in the last uniface placement, draw the two
 // witness lines (from the part edge to its anchor) and the dim line
@@ -44,33 +44,61 @@ export function render_uniface_picks(host: DimensionHost): void {
 	const result = get_last_uniface_placement_result();
 	if (result.placements.length === 0) return;
 	const ctx = host.ctx;
-	// Diagnostic: the silhouette six-sided shape in green so the eye can
-	// see what the silhouette filter is comparing every label rectangle
-	// against.
-	if (result.silhouette_polygon_screen.length >= 3) {
+	// Diagnostic: two green outlines.
+	// 1. Tighter green outline — convex hull of every projected vertex of
+	//    every qualifying part. Drawn with a solid line.
+	// 2. Wider green outline — convex hull of the silhouette box's eight
+	//    projected corners. Drawn with a dashed line so it is visible
+	//    alongside the tighter outline. The witness lines end fifteen
+	//    pixels (times witness index) past this wider outline.
+	const draw_polygon = (poly: ReadonlyArray<{ x: number; y: number }>, dashed: boolean) => {
+		if (poly.length < 3) return;
 		ctx.save();
 		ctx.strokeStyle = SILHOUETTE_HEX_STROKE;
-		ctx.lineWidth = 1;
+		ctx.lineWidth = stores.edge_thickness;
+		ctx.setLineDash(dashed ? [4, 4] : []);
 		ctx.beginPath();
-		for (let i = 0; i < result.silhouette_polygon_screen.length; i++) {
-			const v = result.silhouette_polygon_screen[i];
+		for (let i = 0; i < poly.length; i++) {
+			const v = poly[i];
 			if (i === 0) ctx.moveTo(v.x, v.y);
 			else         ctx.lineTo(v.x, v.y);
 		}
 		ctx.closePath();
-		// ctx.stroke();
+		ctx.stroke();
 		ctx.restore();
+	};
+	const dim_highlight_stroke = (so_id: string): string | null =>
+		hover_like_so_ids.has(so_id) ? colors.so_hover_color
+		: selected_so_ids.has(so_id) ? colors.so_selected_color
+		: null;
+	if (k.debug.diagnose_dims) {
+		draw_polygon(result.silhouette_polygon_screen, false);
+		draw_polygon(result.silhouette_box_polygon_screen, true);
 	}
-	ctx.strokeStyle = UNIFACE_PICK_STROKE;
-	ctx.lineWidth = 0.75;
+	ctx.lineWidth = stores.edge_thickness;
 	const canvas_w = ctx.canvas.width;
 	const canvas_h = ctx.canvas.height;
 	let dropped_off_canvas = 0;
 	const dropped_off_canvas_names: string[] = [];
-	// Build the list of picks that survive the off-canvas filter, then
-	// draw in three layers so the label box sits on top of the red hover
-	// stroke: blue dim and witness lines first, then the red hover lines
-	// (so they overlay the blue), then the arrows and white-boxed number
+	// Selected and hovered parts: their dimensionals draw in the selection or
+	// hover color (see dim_highlight_stroke). Selection persists after the
+	// cursor leaves; hover is transient and wins when a part is both.
+	const selected_so_ids: Set<string> = new Set(selection.all.map(h => h.so.id));
+	// Editing a dimensional selects its part (see dimensions.begin), so its
+	// dimensionals take the selection color through selected_so_ids. Just log it.
+	const editing_so = dimensions.state?.so ?? null;
+	if (editing_so) {
+		dimensionals_log(`edit highlight: editing ${editing_so.name}'s ${dimensions.state?.axis} side — its part is selected, so its dimensionals use the selection color.`);
+	}
+	// Hover color: only the one part the central rule (Hits_3D) marks as hovered,
+	// weighing label vs line vs body against selection/edit state.
+	const hover_like_so_ids: Set<string> = new Set();
+	const hover_hi_id = hits_3d.hover_highlight_so_id;
+	if (hover_hi_id) hover_like_so_ids.add(hover_hi_id);
+	const dim_toggle_on = stores.show_dimensionals;
+	// Build the list of picks that survive the off-canvas filter, then draw
+	// in two layers so the label box sits on top of every line: witness lines
+	// first (each in its final color), then the arrows and white-boxed number
 	// label (so the label box covers any line passing through it).
 	const drawable: typeof result.placements[number][] = [];
 	for (const placement of result.placements) {
@@ -91,12 +119,19 @@ export function render_uniface_picks(host: DimensionHost): void {
 		}
 		drawable.push(placement);
 	}
+	// Witness pass — each placement's witness lines drawn once, in their final
+	// color: the highlight color (selection or hover) when the part is
+	// highlighted, else the dimension color. With the toggle off, only
+	// highlighted parts draw, so a selection-only render hides the rest.
 	for (const d of drawable) {
-		const p = d;
+		const stroke = dim_highlight_stroke(d.so_id);
+		if (!dim_toggle_on && stroke === null) continue;
+		const color = stroke ?? colors.dimension_color;
 		draw_witness_and_dim_lines(
 			ctx,
-			p.edge_p1_screen!, p.anchor_1_screen!,
-			p.edge_p2_screen!, p.anchor_2_screen!,
+			d.edge_p1_screen!, d.anchor_1_screen!,
+			d.edge_p2_screen!, d.anchor_2_screen!,
+			color,
 		);
 	}
 	if (dropped_off_canvas > 0 && k.debug.diagnose_dims) {
@@ -104,82 +139,23 @@ export function render_uniface_picks(host: DimensionHost): void {
 			`[uniface render] off-canvas drop removed ${dropped_off_canvas} pick(s): ${dropped_off_canvas_names.join(', ')}`,
 		);
 	}
-	render_uniface_hover(host, result.placements);
 	// Step 3e: arrowheads + white-boxed number text drawn last so the
 	// label box sits on top of every dim and witness line, including the
-	// red hover overlay. The hovered part's labels switch to the red
-	// hover colour so the label matches the dim line beneath it.
-	const hovered_so_id =
-		hits_3d.hovered_uniface_placement?.so_id
-		?? hits_3d.hover?.so?.id
-		?? null;
+	// red highlight overlay. With the toggle off, only highlighted parts'
+	// labels draw.
 	for (const d of drawable) {
-		const color = d.so_id === hovered_so_id ? UNIFACE_HOVER_STROKE : UNIFACE_PICK_STROKE;
+		const stroke = dim_highlight_stroke(d.so_id);
+		if (!dim_toggle_on && stroke === null) continue;
+		const color = stroke ?? colors.dimension_color;
 		draw_uniface_arrows_and_label(host, d, color, d.so_id, d.axis);
 	}
-}
-
-/** Redraws hover highlights in red. Two cases:
- *  1. Cursor is on a uniface dim or witness line — highlight just that
- *     pick's three lines plus the measured part's outline.
- *  2. Cursor is on a part (corner/edge/face hover) — highlight every
- *     uniface pick that belongs to that part, plus the part's outline.
- *  When both stores point at the same part, the pick-specific lines also
- *  draw (case 1's union with case 2). */
-function render_uniface_hover(host: DimensionHost, placements: ReturnType<typeof get_last_uniface_placement_result>['placements']): void {
-	const hovered_placement = hits_3d.hovered_uniface_placement;
-	const general_hover = hits_3d.hover;
-	const hovered_so_id =
-		hovered_placement?.so_id
-		?? general_hover?.so.id
-		?? null;
-	if (hovered_so_id === null) return;
-	const ctx = host.ctx;
-	ctx.save();
-	ctx.strokeStyle = UNIFACE_HOVER_STROKE;
-	ctx.fillStyle = UNIFACE_HOVER_STROKE;
-	ctx.lineWidth = 1.5;
-	// Draw every placement on the hovered part in red. When the cursor
-	// is on a specific dim/witness line, that placement is among them;
-	// when the cursor is on the part itself, all the part's placements
-	// turn red.
-	for (const placement of placements) {
-		if (placement.so_id !== hovered_so_id) continue;
-		const p = placement;
-		if (p.uniface === null) continue;
-		if (!p.edge_p1_screen || !p.edge_p2_screen || !p.anchor_1_screen || !p.anchor_2_screen) continue;
-		draw_witness_and_dim_lines(
-			ctx,
-			p.edge_p1_screen, p.anchor_1_screen,
-			p.edge_p2_screen, p.anchor_2_screen,
-		);
-	}
-	// Outline the part itself with the convex hull of its projected vertices.
-	const obj = scene.get_all().find(o => o.so.id === hovered_so_id);
-	if (obj) {
-		const projected = hits_3d.get_projected(obj.id);
-		if (projected && projected.length >= 3) {
-			const pts: { x: number; y: number }[] = [];
-			for (const pp of projected) if (pp.w >= 0) pts.push({ x: pp.x, y: pp.y });
-			if (pts.length >= 3) {
-				const hull = convex_hull(pts);
-				ctx.beginPath();
-				for (let i = 0; i < hull.length; i++) {
-					if (i === 0) ctx.moveTo(hull[i].x, hull[i].y);
-					else         ctx.lineTo(hull[i].x, hull[i].y);
-				}
-				ctx.closePath();
-				ctx.stroke();
-			}
-		}
-	}
-	ctx.restore();
 }
 
 function draw_witness_and_dim_lines(
 	ctx: CanvasRenderingContext2D,
 	edge_p1: { x: number; y: number }, anchor_1: { x: number; y: number },
 	edge_p2: { x: number; y: number }, anchor_2: { x: number; y: number },
+	color: string,
 ): void {
 	const w1 = unit_vec(edge_p1, anchor_1);
 	const w2 = unit_vec(edge_p2, anchor_2);
@@ -190,6 +166,7 @@ function draw_witness_and_dim_lines(
 	// Witness lines only. The dim line itself is drawn by the arrows-
 	// and-label helper because the dim line's shape (inside segment vs.
 	// outside extensions) depends on whether the label covers the anchors.
+	ctx.strokeStyle = color;
 	ctx.beginPath();
 	ctx.moveTo(w1_start.x, w1_start.y);
 	ctx.lineTo(w1_past.x, w1_past.y);
@@ -207,13 +184,13 @@ function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details
 	const text = p.label_text;
 	if (text === null) return;
 	const ctx = host.ctx;
-	const LABEL_H_PX = 14;
-	ctx.font = '12px sans-serif';
+	const label_h_px = k.height.font.graph;
+	ctx.font = `${label_h_px}px sans-serif`;
 	const label_w_px = ctx.measureText(text).width + 4;
 	const geom = compute_dim_render_geometry(
 		p,
 		label_w_px,
-		LABEL_H_PX,
+		label_h_px,
 		WITNESS_GAP_FROM_PART_PX,
 		WITNESS_PAST_DIM_LINE_PX,
 		k.dimensions.SLIDABLE_OVERHANG_PX,
@@ -223,7 +200,7 @@ function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details
 	// Dim line — walk every segment in the geometry record.
 	ctx.save();
 	ctx.strokeStyle = color;
-	ctx.lineWidth = 0.75;
+	ctx.lineWidth = stores.edge_thickness;
 	ctx.beginPath();
 	for (const seg of geom.dim_line_segments) {
 		ctx.moveTo(seg.from.x, seg.from.y);
@@ -238,6 +215,22 @@ function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details
 	}
 	ctx.restore();
 	// White label box + number text.
+	// DIAG: print the exact screen rectangle the white box is about to paint,
+	// plus the two anchor positions, so the dim log and what is on screen
+	// can be diffed.
+	if (k.debug.diagnose_dims) {
+		const a1d = p.anchor_1_screen!;
+		const a2d = p.anchor_2_screen!;
+		const lb = geom.label_box;
+		const inside = (x: number, y: number) =>
+			x >= lb.x_min && x <= lb.x_max && y >= lb.y_min && y <= lb.y_max;
+		const a1_in = inside(a1d.x, a1d.y);
+		const a2_in = inside(a2d.x, a2d.y);
+		const so_o_diag = scene.get_all().find(o => o.so.id === so_id);
+		const so_name_diag = so_o_diag ? so_o_diag.so.name : so_id;
+		const line = `[uniface render] ${so_name_diag} (${axis}): white box (${lb.x_min.toFixed(1)}, ${lb.y_min.toFixed(1)}) to (${lb.x_max.toFixed(1)}, ${lb.y_max.toFixed(1)}); anchor 1 (${a1d.x.toFixed(1)}, ${a1d.y.toFixed(1)}) inside box: ${a1_in ? 'YES (erases arrow)' : 'no'}; anchor 2 (${a2d.x.toFixed(1)}, ${a2d.y.toFixed(1)}) inside box: ${a2_in ? 'YES (erases arrow)' : 'no'}.`;
+		dimensionals_log(line);
+	}
 	ctx.save();
 	ctx.fillStyle = 'white';
 	ctx.fillRect(
@@ -249,6 +242,7 @@ function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details
 	ctx.fillStyle = color;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
+	ctx.font = `${label_h_px}px sans-serif`;
 	ctx.fillText(text, geom.label_text_position.x, geom.label_text_position.y);
 	ctx.restore();
 	// Register the label rect for hit-testing so hovering on the label
@@ -262,7 +256,7 @@ function draw_uniface_arrows_and_label(host: DimensionHost, p: Placement_Details
 			x: geom.label_text_position.x,
 			y: geom.label_text_position.y,
 			w: label_w_px,
-			h: LABEL_H_PX,
+			h: label_h_px,
 			z: 0,
 			face_index: -1,
 			witness_index: p.witness_index,
@@ -339,7 +333,7 @@ function draw_world_axis_aligned_box(
 		[0, 4], [1, 5], [2, 6], [3, 7],
 	];
 	ctx.strokeStyle = stroke;
-	ctx.lineWidth = 1;
+	ctx.lineWidth = stores.heavy_thickness;
 	ctx.beginPath();
 	for (const [a, b] of edges) {
 		ctx.moveTo(corners[a].x, corners[a].y);
@@ -381,7 +375,7 @@ function draw_uniface_faces(
 	// any code below. Both flags off means no uniface faces draw at all.
 	const SHOW_KEPT     = false;
 	const SHOW_EXCLUDED = false;
-	ctx.lineWidth = 1;
+	ctx.lineWidth = stores.edge_thickness;
 	for (const face of faces) {
 		const excluded = face_excluded[face.shift_idx];
 		if (excluded && !SHOW_EXCLUDED) continue;

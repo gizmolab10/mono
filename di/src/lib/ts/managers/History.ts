@@ -1,4 +1,4 @@
-import type { Portable_Scene } from './Versions';
+import type { Portable_Scene } from '../utilities/Versions';
 import { scenes } from './Scenes';
 
 const MAX_STACK = 50;

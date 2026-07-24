@@ -451,7 +451,7 @@
               class="badge">esc</span></button>
           <button class="action" id="btn-docs" data-tooltip="build all documentation">docs<span
               class="badge">⌫</span></button>
-          <button class="action" id="btn-relay" data-tooltip="restart local bash executor">relay<span
+          <button class="action" id="btn-dispatcher" data-tooltip="restart local bash executor">dispatcher<span
               class="badge">`</span></button>
           <button class="action" id="btn-tests" data-tooltip="run all tests">tests<span class="badge">;</span></button>
         </div>
@@ -471,6 +471,7 @@
         <button class="project" data-project="ws">ws<span class="badge">W</span></button>
         <button class="project" data-project="lv">lv<span class="badge">V</span></button>
         <button class="project active" data-project="di">di<span class="badge">I</span></button>
+        <button class="project" data-project="ji">ji<span class="badge">Z</span></button>
       </div>
     </div>
 
@@ -527,6 +528,7 @@
     const modeButtons = document.querySelectorAll('.project[data-mode]');
     const consoleOutput = document.getElementById('console-output');
     const errorsOverlay = document.getElementById('errors-overlay');
+    const btnDispatcher = document.getElementById('btn-dispatcher');
     const errorsPopup = document.getElementById('errors-popup');
     const btnNetlify = document.getElementById('btn-netlify');
     const btnRevisit = document.getElementById('btn-revisit');
@@ -535,7 +537,6 @@
     const btnDeploy = document.getElementById('btn-deploy');
     const btnErrors = document.getElementById('btn-errors');
     const btnPublic = document.getElementById('btn-public');
-    const btnRelay = document.getElementById('btn-relay');
     const btnTests = document.getElementById('btn-tests');
     const commandDiv = document.getElementById('command');
     const btnLocal = document.getElementById('btn-local');
@@ -569,6 +570,7 @@
         app: {
           di: buildProjectConfig('di', 'app'),
           ga: buildProjectConfig('ga', 'app'),
+          ji: buildProjectConfig('ji', 'app'),
           lv: buildProjectConfig('lv', 'app'),
           ma: buildProjectConfig('ma', 'app'),
           me: buildProjectConfig('me', 'app'),
@@ -579,6 +581,7 @@
         docs: {
           di: buildProjectConfig('di', 'docs'),
           ga: buildProjectConfig('ga', 'docs'),
+          ji: buildProjectConfig('ji', 'docs'),
           lv: buildProjectConfig('lv', 'docs'),
           ma: buildProjectConfig('ma', 'docs'),
           me: buildProjectConfig('me', 'docs'),
@@ -1001,9 +1004,9 @@
         consoleOutput.textContent = getConsoleOutput('rebuild');
       }
     });
-    btnRelay.addEventListener('mouseenter', () => {
+    btnDispatcher.addEventListener('mouseenter', () => {
       if (!restartPollInterval && !pollInterval) {
-        consoleOutput.textContent = getConsoleOutput('relay');
+        consoleOutput.textContent = getConsoleOutput('dispatcher');
       }
     });
     btnTests.addEventListener('mouseenter', () => {
@@ -1075,12 +1078,12 @@
         });
     }
 
-    function doRelay() {
+    function doDispatcher() {
       if (pollInterval || restartPollInterval || testsPollInterval) return; // Operation in progress
 
-      setTitleButtonsWorking(btnRelay);
-      btnRelay.innerHTML = 'restarting<span class="badge">`</span>';
-      setConsoleOutput('relay', 'Restarting relay...');
+      setTitleButtonsWorking(btnDispatcher);
+      btnDispatcher.innerHTML = 'restarting<span class="badge">`</span>';
+      setConsoleOutput('dispatcher', 'Restarting dispatcher...');
       matchRowWidths();
 
       fetch(`http://localhost:${ports.dispatcher.port}/restart-dispatcher`, {
@@ -1088,9 +1091,9 @@
         headers: { 'Content-Type': 'application/json' }
       }).catch(() => { });
 
-      // Relay takes ~1 second to restart, then reload page
+      // dispatcher takes ~1 second to restart, then reload page
       setTimeout(() => {
-        setConsoleOutput('relay', '✓ Relay restarted');
+        setConsoleOutput('dispatcher', '✓ dispatcher restarted');
         setTimeout(() => location.reload(), 500);
       }, 2500);
     }
@@ -1161,17 +1164,17 @@
     // === Deploy Status Polling ===
     function formatRelativeTime(isoString) {
       if (!isoString) return '';
-      const diffDays = Math.floor(diffHours / 24);
-      const diffHours = Math.floor(diffMins / 60);
-      const diffMins = Math.floor(diffMs / 60000);
       const date = new Date(isoString);
       const now = new Date();
       const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffDays = Math.floor(diffHours / 24);
 
-      if (diffMins < 1) return '-0m';
-      if (diffMins < 60) return `-${diffMins}m`;
-      if (diffHours < 24) return `-${diffHours}h`;
-      return `-${diffDays}d`;
+      if (diffMins < 1) return '(0m)';
+      if (diffMins < 60) return `(${diffMins}m)`;
+      if (diffHours < 24) return `(${diffHours}h)`;
+      return `(${diffDays}d)`;
     }
 
     function updateDeployTooltip(data) {
@@ -1309,7 +1312,10 @@
           // If nothing building and wasn't building before, keep existing console
         })
         .catch(err => {
-          // Silently fail - deploy status is optional
+          // Deploy status is optional, but log the failure so a broken
+          // render (e.g. a thrown error while building the tooltip) is
+          // visible instead of leaving the tooltip stuck on "Loading...".
+          console.error('deploy-status poll failed:', err);
         });
     }
 
@@ -1363,7 +1369,7 @@
     };
 
     // === Title Button State Management ===
-    const titleButtons = [btnStart, btnDocs, btnRelay, btnTests];
+    const titleButtons = [btnStart, btnDocs, btnDispatcher, btnTests];
 
     function setTitleButtonsWorking(activeBtn) {
       titleButtons.forEach(btn => {
@@ -1449,7 +1455,7 @@
     btnPublic.addEventListener('click', doPublic);
     btnStart.addEventListener('click', doStart);
     btnLocal.addEventListener('click', doLocal);
-    btnRelay.addEventListener('click', doRelay);
+    btnDispatcher.addEventListener('click', doDispatcher);
     btnTests.addEventListener('click', doTests);
     btnRepo.addEventListener('click', doRepo);
     btnDocs.addEventListener('click', doDocs);
@@ -1482,6 +1488,7 @@
         case 'j': { const m = getDisplayMode(); if (config[m]?.['me'] !== null) { previewProject = 'me'; highlightProjectButton('me'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 't': { const m = getDisplayMode(); if (config[m]?.['ma'] !== null) { previewProject = 'ma'; highlightProjectButton('ma'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'v': { const m = getDisplayMode(); if (config[m]?.['lv'] !== null) { previewProject = 'lv'; highlightProjectButton('lv'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
+        case 'z': { const m = getDisplayMode(); if (config[m]?.['ji'] !== null) { previewProject = 'ji'; highlightProjectButton('ji'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'n': hoveredActionId = 'btn-netlify'; hoveredAction = actionButtons['btn-netlify'](); highlightActionButton('btn-netlify'); prePublishFeedbackRow(); break;
         case 'r': hoveredActionId = 'btn-revisit'; hoveredAction = actionButtons['btn-revisit'](); highlightActionButton('btn-revisit'); prePublishFeedbackRow(); break;
         case 'p': hoveredActionId = 'btn-public'; hoveredAction = actionButtons['btn-public'](); highlightActionButton('btn-public'); prePublishFeedbackRow(); break;
@@ -1492,7 +1499,7 @@
         case 'd': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
         case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } } break;
         case 'e': doErrors(); break;
-        case '`': doRelay(); break;
+        case '`': doDispatcher(); break;
         case ';': doTests(); break;
         case 'delete':
         case 'escape': doStart(); break;

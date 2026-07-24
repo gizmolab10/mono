@@ -58,7 +58,7 @@ A single override constant at the top of the renderer forces the flag to always 
 - Debug flag flips that are not wired through anything reactive do not mark the canvas.
 - Any mutation site the audit missed will be silent. Tumble was verified on 2026-04-15 and passed; the remaining interaction types on the verify list still need walking through by eye.
 
-Full session narrative: [handoff.md](./handoff.md).
+Full session narrative: [handoff.md](di/notes/work/milestones/done/32.facets/slow/handoff.md).
 
 ## 3.  ✅ DONE The world transform for every object is rebuilt from scratch several times per frame
 

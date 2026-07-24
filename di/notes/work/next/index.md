@@ -2,11 +2,13 @@
 
 ## Contents
 
-- [Collaboration Priorities](./collaboration%20priorities.md)
+- [Collaboration Priorities](./collaboration priorities.md)
 - [Colors](./colors.md)
-- [Data Schema For Wendy](./data%20schema%20for%20wendy.md)
+- [Data Schema For Wendy](./data schema for wendy.md)
+- [Musi Capp](./musi capp.md)
 - [Pacing](./pacing.md)
-- [Punch List](./punch%20list.md)
+- [Punch List](./punch list.md)
 - [Roots](./roots.md)
 - [Separators](./separators.md)
 - [Snap.pin](./snap.pin.md)
+

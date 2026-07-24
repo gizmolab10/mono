@@ -1,18 +1,19 @@
+import { get_last_uniface_placement_result } from '../render/Dimension_Placement';
+import Smart_Object from '../runtime/Smart_Object';
 import { selection } from '../managers/Selection';
+import { dimensions } from '../editors/Dimension';
+import { perf_timer } from './Performance_Timer';
+import { e as events } from '../events/Events';
+import type { Bound } from '../types/Types';
+import { hits_3d } from '../events/Hits_3D';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
-import { scene } from '../render/Scene';
 import { camera } from '../render/Camera';
 import { engine } from '../render/Engine';
 import { render } from '../render/Render';
-import { get_last_uniface_placement_result } from '../render/Dimension_Placement';
-import { e as events } from '../events/Events';
-import { hits_3d } from '../events/Hits_3D';
-import { dimensions } from '../editors/Dimension';
-import { perf_timer } from './Performance_Timer';
-import Smart_Object from '../runtime/Smart_Object';
-import type { Bound } from '../types/Types';
+import { scene } from '../render/Scene';
 import { quat, vec3 } from 'gl-matrix';
+import { full_name } from './Names';
 import { get } from 'svelte/store';
 
 const CUBE_EDGES: [number, number][] = [
@@ -36,6 +37,25 @@ const CUBE_FACES: number[][] = [
 
 export class Debug {
 
+	// Per log file: true once we've sent its first (erasing) line this session.
+	logs_erased = new Map<string, boolean>();
+
+	// Append one extra line to the stated log file. `erases` (the default) lets the
+	// first line for that file this session overwrite (erase=1); pass false to always
+	// append, even on the first line. A non-erasing call never marks the file, so it
+	// can't eat a later erasing call's one-shot overwrite.
+	log(text: string, filename: string = 'debug', erases: boolean = true): void {
+		const base = `http://localhost:5171/log?where=${filename}`;
+		const erasing = erases && !this.logs_erased.get(filename);
+		if (erases) { this.logs_erased.set(filename, true); }
+		const url = erasing ? `${base}&erase=1` : base;
+		try {
+			fetch(url, { method: 'POST', body: text }).catch(() => { /* silent */ });
+		} catch {
+			// silent
+		}
+	}
+
 	/**
 	 * Attach the test hooks the browser-driven test suite needs.
 	 * Only fires when the URL carries `?test=1`. A normal user session sees
@@ -47,19 +67,9 @@ export class Debug {
 		if (typeof window === 'undefined') return;
 		if (queryStrings.get('test') !== '1') return;
 		const axis_label: Record<'x' | 'y' | 'z', string> = { x: 'width', y: 'depth', z: 'height' };
-		// Walk up parents from this smart object, collect names, drop the
-		// topmost ancestor (root), join with dots. For a smart object
-		// directly under root, this is just its own name.
-		const ancestry_path = (so: Smart_Object): string => {
-			const names: string[] = [];
-			let current: Smart_Object | null = so;
-			while (current) {
-				names.push(current.name);
-				current = current.scene?.parent?.so ?? null;
-			}
-			names.pop();
-			return names.reverse().join('.');
-		};
+		// Root-to-part dotted name. Shared with the COMMAND-C copy-name feature
+		// so there is one source of truth — see common/Names.
+		const ancestry_path = full_name;
 		(window as unknown as { di_test: Record<string, (...args: unknown[]) => unknown> }).di_test = {
 			// ─── Read hooks ───────────────────────────────────────────────
 			orientation: () => Array.from(stores.current_orientation()),
@@ -158,7 +168,7 @@ export class Debug {
 			dim_dropped_count: () => 0,
 			// Whether x-ray mode is currently active: OPTION is held AND at
 			// least one part in the scene is invisible.
-			is_xray_active: () => {
+			is_wireframe_active: () => {
 				const option_down = get(events.w_option_down);
 				const has_invisible = scene.get_all().some(o => !o.so.visible);
 				return option_down && has_invisible;

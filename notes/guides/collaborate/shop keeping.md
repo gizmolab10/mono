@@ -2,6 +2,8 @@
 
 The project's notes are infrastructure. They guide every session that comes after the one that wrote them. When a session ends with notes in the wrong shape — content in the wrong file, old gaps marked as gaps that have already been closed, completed work cluttering the active-work area — the next session starts at a disadvantage. Shop keeping is the work of fixing that shape so the notes keep guiding well.
 
+For what each file is — handoff, work journal, code debt, and the rest — see the handoff pieces in [workflow.md](workflow.md).
+
 ## What shop keeping does
 
 - **Moves completed work to where it belongs.** Done work belongs in the work journal as a session entry, not in the handoff under the word "open" or in the open-items file.

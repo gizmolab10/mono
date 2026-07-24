@@ -8,7 +8,7 @@
 	import { units } from '../../ts/types/Units';
 
 	const { w_selection } = selection;
-	const { w_precision, w_tick } = stores;
+	const { w_precision, w_tick, w_attribute_keys, w_allow_editing } = stores;
 
 	type BoundsRow = { label: string; bound: string | null; value: string; formula: string; has_formula: boolean; is_locked: boolean; is_invariant: boolean; axis_index: number; attr_index: number };
 
@@ -49,7 +49,15 @@
 		];
 	}
 
-	let bounds_rows = $derived(selected_so ? get_bounds(selected_so, tick) : []);
+	// get_bounds returns rows in start/length/end order: starts (x,y,z),
+	// then lengths (w,d,h), then ends (X,Y,Z). When the editor is set to group
+	// by axis, regroup into x(start,length,end), y(...), z(...) instead.
+	const XYZ_ORDER = [0, 3, 6, 1, 4, 7, 2, 5, 8];
+	let bounds_rows = $derived.by(() => {
+		if (!selected_so) return [];
+		const rows = get_bounds(selected_so, tick);
+		return $w_attribute_keys === 'xyz' ? XYZ_ORDER.map(i => rows[i]) : rows;
+	});
 
 	// Error overlay state
 	let error_state: { saved_formula: string; active_bound: string; show_overlay: boolean; active_error: S_Error | null; source: 'formula' | 'value'; input: HTMLInputElement | null } =
@@ -115,6 +123,7 @@
 
 	function commit_formula(row: BoundsRow, value: string, input?: HTMLInputElement) {
 		if (!selected_so || !row.bound) return;
+		if (!stores.allow_editing) { console.log('Edit lock is on — attribute change refused.'); return; }
 		history.snapshot();
 		const trimmed = value.trim().replace(/\.(\s*\.)+/g, '.').replace(/\.(\s*[+\-*/])/g, '$1').replace(/\.+$/, '');
 		const parent_id = selected_so.scene?.parent?.so.id;
@@ -162,6 +171,7 @@
 
 	function commit_value(row: BoundsRow, value: string, input?: HTMLInputElement) {
 		if (!selected_so || !row.bound) return;
+		if (!stores.allow_editing) return;
 		history.snapshot();
 		let mm = units.parse_for_system(value, $w_unit_system);
 		if (mm === null) {
@@ -210,7 +220,7 @@
 	}
 
 	function set_invariant(row: BoundsRow) {
-		if (!selected_so || is_root) return;
+		if (!selected_so || is_root || !stores.allow_editing) return;
 		stores.w_editing.set(T_Editing.none);
 		if (error_state.show_overlay) dismiss_overlay();
 		history.snapshot();
@@ -234,7 +244,7 @@
 	}
 
 	function toggle_lock(row: BoundsRow) {
-		if (!selected_so || !row.bound) return;
+		if (!selected_so || !row.bound || !stores.allow_editing) return;
 		if (row.has_formula || row.is_invariant) return;
 		const attr = selected_so.attributes_dict_byName[row.bound];
 		if (!attr) return;
@@ -299,32 +309,37 @@
 
 {#snippet attr_row(row: typeof bounds_rows[0], i: number, split_start: boolean = false)}
 	{@const row_disabled = is_root ? row.attr_index !== 2 : (row.is_invariant || row.has_formula)}
+	{@const mode = $w_attribute_keys}
 	{@const gpos = i % 3}
 	{@const prev_inv = i > 0 && bounds_rows[i - 1]?.is_invariant}
 	{@const is_merge_cont = row.is_invariant && prev_inv}
 	{@const merge_span = row.is_invariant && !prev_inv ? (() => { let n = 1; while (i + n < bounds_rows.length && bounds_rows[i + n].is_invariant) n++; return n > 1 ? n : 0; })() : 0}
-	{@const root_formula_cont = is_root && i !== 0 && i !== 6}
-	{@const root_start_cont = is_root && row.attr_index === 0 && gpos > 0}
+	<!-- Root has no editable formulas; merge the blank formula column. In sle order the merge runs 6 then 3; in axis order it merges per axis group (each group starts at gpos 0). -->
+	{@const root_formula_anchor = mode === 'xyz' ? gpos === 0 : (i === 0 || i === 6)}
+	{@const root_formula_cont = is_root && !root_formula_anchor}
+	<!-- Root start rows all read 0; merge only a contiguous run of them (three-in-a-row in sle order, isolated in axis order). -->
+	{@const root_start_cont = is_root && row.attr_index === 0 && i > 0 && bounds_rows[i - 1]?.attr_index === 0}
+	{@const root_start_span = (() => { let n = 1; while (i + n < bounds_rows.length && bounds_rows[i + n].attr_index === 0) n++; return n; })()}
 	{@const has_error_base = !!(selected_so && row.bound && error_state.active_error && error_state.active_bound === row.bound)}
 	{@const has_formula_error = has_error_base && error_state.source === 'formula'}
 	{@const has_value_error = has_error_base && error_state.source === 'value'}
 	<tr class:merge-cont={is_merge_cont || root_formula_cont || root_start_cont}>
 		{#if formula_mode === 'agnostic' && (gpos === 0 || split_start)}
-			<td class='attr-key' rowspan={3 - gpos}>{['s', 'l', 'e'][Math.floor(i / 3)]}</td>
+			<td class='attr-key' rowspan={3 - gpos}>{(mode === 'xyz' ? ['x', 'y', 'z'] : ['s', 'l', 'e'])[Math.floor(i / 3)]}</td>
 		{/if}
 		<td class='attr-name'>
 			{row.label}
 		</td>
-		<td class='attr-invariant' class:cross={row.is_invariant} class:disabled={is_root} onclick={() => set_invariant(row)}></td>
+		<td class='attr-invariant' class:cross={row.is_invariant} class:disabled={is_root || !$w_allow_editing} onclick={() => set_invariant(row)}></td>
 		{#if !(is_merge_cont || root_formula_cont)}
 			{@const formula_disabled = is_root || row.is_invariant}
-			<td class='attr-formula' class:merged={is_root || merge_span >= 2} class:cell-disabled={formula_disabled} rowspan={is_root ? (i === 0 ? 6 : 3) : merge_span || undefined}>
+			<td class='attr-formula' class:merged={is_root || merge_span >= 2} class:cell-disabled={formula_disabled} rowspan={is_root ? (mode === 'xyz' ? 3 : (i === 0 ? 6 : 3)) : merge_span || undefined}>
 				<input
 					type      = 'text'
 					class     = 'cell-input'
 					class:cell-error={has_formula_error}
 					value     = {row.formula}
-					disabled  = {formula_disabled}
+					disabled  = {formula_disabled || !$w_allow_editing}
 					onfocus   = {(e) => { error_state.saved_formula = (e.target as HTMLInputElement).value; stores.w_editing.set(T_Editing.formula); }}
 					onblur    = {(e) => { const input = e.target as HTMLInputElement; if (!skip_blur_commit) commit_formula(row, input.value, input); skip_blur_commit = false; stores.w_editing.set(T_Editing.none); }}
 					onkeydown = {(e) => cell_keydown(e, row)}
@@ -334,20 +349,20 @@
 		{#if root_start_cont}
 			<!-- spanned by first start row -->
 		{:else}
-			<td class='attr-value' class:cell-disabled={row_disabled} rowspan={is_root && row.attr_index === 0 && gpos === 0 ? 3 : undefined}>
+			<td class='attr-value' class:cell-disabled={row_disabled} rowspan={is_root && row.attr_index === 0 && !root_start_cont && root_start_span > 1 ? root_start_span : undefined}>
 				<input
 					type      = 'text'
 					class     = 'cell-input right'
 					class:cell-error={has_value_error}
 					value     = {is_root && row.attr_index === 0 ? '0' : row.value}
-					disabled  = {row_disabled}
+					disabled  = {row_disabled || !$w_allow_editing}
 					onfocus   = {() => stores.w_editing.set(T_Editing.value)}
 					onblur    = {(e) => { const input = e.target as HTMLInputElement; commit_value(row, input.value, input); stores.w_editing.set(T_Editing.none); }}
 					onkeydown = {cell_keydown}
 				/>
 			</td>
 		{/if}
-		<td class='attr-trailing' class:lockable={!row.has_formula && !row.is_invariant} class:cell-disabled={row.has_formula || row.is_invariant} onclick={() => toggle_lock(row)}>
+		<td class='attr-trailing' class:lockable={!row.has_formula && !row.is_invariant && $w_allow_editing} class:cell-disabled={row.has_formula || row.is_invariant} onclick={() => toggle_lock(row)}>
 			{row.has_formula || row.is_invariant ? '' : (row.is_locked ? '🔒' : ' ')}
 		</td>
 	</tr>

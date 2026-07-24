@@ -1,0 +1,248 @@
+# Code debt
+
+write a proposal for the first unchecked item to the top of handoff.
+
+## work
+
+- [ ] port hierarchy from ws to ji ([spec](hierarchy%20spec.md))
+    - [x] the tree owns the records; the store shrank to load/save/blobs (two-step: wrap, then own)
+    - [x] reach the active tree via `w_hierarchy` (screen) and `h` (code)
+    - [x] find-or-create everywhere (meanings, links, tags, tag-on-document)
+    - [x] store-wide dedup by name; instant name + id lookups (no linear scans)
+    - [x] open and close a folder, remembered — a fat triangle (15px) leads any row with something nested (a folder over its files, or a duplicate's original over the copy), down when open, right when shut; shutting one drops its nested rows from the table; one saved list of shut ids, kept across reloads
+    - [ ] show tags as a tree (single-parent first)
+    - [ ] tag ancestries — multi-parent tags
+- [ ] documents table
+    - [x] show all relationships (including multiple parents) — a thing shows once per parent (a duplicate under its folder and under its original); the later appearance reads lighter as an "also here"; the walk stops a real loop
+    - [ ] remember scroll position
+    - [ ] during scroll, stick the immediate parent folder rows at the top
+    - [ ] add a "download" unichar to the far right unichar buttons
+- [ ] left/right fat triangles at top-far-left of view document
+    - [ ] retreat/advance the content to the previous/next viewable file
+    - [ ] also left and right arrow keys
+- [ ] new tags seg control
+    - [ ] if more tags than will fit, use new tags view instead
+    - [ ] new tags view. replaces entire documents view. stub for now
+- [ ] in the DB selector (shared/local), ignore hover on the selected DB
+- [ ] add remote support
+    - [ ] supabase not firebase
+    - [ ] use person's id
+    - [ ] authorization
+- [ ] write a new file: spec rules based on current code
+- [ ] view rtf document
+- [ ] wendy -- new app for your brother: Intersection
+    - [ ] give me weak signals / info from the tails (of a bell curve), not just the clusters
+    - [ ] give me the signals that repeat over time or across multiple people — this is a stronger signal.
+    - [ ] present me with these signals in a way that I can sense into each one, and decide if I want to keep them, highlight them or discard them as unimportant.
+
+## done
+
+- [x] records as Persistables ([plan](persistables.md), paused) — records become classes extending Persistable extending Identifiable; brings back rehydration on load
+- [x] predicate isDuplicateOf — keep-both makes one "is-duplicate-of" link (parent the original, child the copy); two-way meaning, stored once; meaning reused
+- [x] tooltips appear instantly — the browser's own hover text waits a second and can't be hurried, so a shared ToolTip is drawn ourselves; the drop box's family words use it (clipped file names keep the plain browser title)
+- [x] a drop on the table opens the add-documents view first, so the count and any question report in the drop box (where there's room) — the table header never changes during a drop
+- [x] the drop box's edge is drawn, not bordered — 4 on, 2 off, going solid while a drag is over it (a plain dashed border leaves the dash length to the browser; the old border had no line style set at all, so nothing was drawn)
+- [x] the family words light on hover — accent text on a --bg pill, quiet while a drag is over the box
+- [x] no duplicate documents during a drop — a file is known by its name and date, among the documents in the same place; same date replaces the bytes in place, a different date asks; the address field is gone
+- [x] count everything a drop holds first (folders, repeats and skips), then save — a status line stands where the family words stand and says "captured n of x" with a filling ring
+- [x] a dialog line below it: the two-copies question and the too-big refusal (which moved off a browser alert), each waiting on OK
+- [x] thirteen driven checks for the drop — the browser's dropped entries stood in for, questions answered through the same shared state the screen reads
+- [x] add audio and video support (all the popular types)
+- [x] store raw bytes, not one giant piece of text (a 2 GB movie killed the tab)
+- [x] refuse one file over 1 GB, with a clear message
+- [x] list the families, not the extensions
+- [x] different popup for each family listed
+- [x] mark the endings the reading tool won't take as they stand (verified against its own source); each one still has words or speech, so it needs converting, not discarding
+- [x] new design for document types
+    - [x] family
+        - [x] use in place of view type — the view-mode list was the same four words as four families, so it's gone; asking a document how to show it answers with a family (or nothing)
+        - [x] set for files too, from the reported type, falling back to the extension; anything unplaced becomes "other"
+    - [x] extension — "folder" and "unknown" removed (neither is a real ending); a folder is marked by family with no extension and no bytes, an unrecognized file has no extension and is skipped on the way in
+    - [x] url — every document gets its own address in the store (`ji://<storage>/<id>`), since a drop leaves no original path
+    - [x] size — bytes, as the file reported at drop time
+    - [x] date originated -> renamed last modified date — carried from the file's own stamp; null for a folder
+    - [x] reported type — kept verbatim (a lookup table was weighed and rejected: ji's ids are longer than the strings they'd replace)
+    - [x] text extraction has not yet been performed — each document flags itself ready or needing text; only plain text and markdown are ready as-is
+    - [x] move from Drop to Document -> kind_byExtension and kind_byType, plus deciding a file's kind, reading its bytes, and trimming a redundant ending; the drop keeps only browser wrangling, so the document stays free of database ties
+    - [x] the two ways a document is made (file, folder) share one start and one finish
+    - [x] read AnythingLLM's source: the text body drives everything, the rest rides along on each piece and becomes the citation; its "Unknown" defaults are exactly what ji can now supply
+    - [x] needed an erase and re-drop, agreed in advance
+- [x] not scroll controls and header
+    - [x] filter, search and header stay pinned; only the rows scroll (rows in their own scroll area, header cells sticky)
+    - [x] a collapsed-border table ignores sticky on the header group, so the cells are pinned instead; the closing rule is a positioned line (a shared border scrolls off with the first row)
+    - [x] a --gap of page-colored space below the rule also stays pinned; header content nudged up 3px
+    - [x] the search input lights to --hover like the other controls
+- [x] persist details view open/close state — the two sections inside details ("preferences", "data") now remember open/closed across reloads, each bound to its own stored flag (open the first time); the whole region's show/hide was already saved
+- [x] header labels centered in each column (was left, with format right)
+- [x] file names capped at 40% of the table with an ellipsis; folder names clip the same way (clip moved to an inner element — cell-level ellipsis was unreliable, which is why folders spilled)
+- [x] a trailing extension is dropped when it is one the row's format is stored under ("notes.txt" -> "notes", "photo.jpg"/"photo.jpeg" -> "photo", htm/html and md/markdown too); reuses the extension->format map; folders untouched
+- [x] the tags column title hugs the right, matching the tags and buttons below
+- [x] new-tag field: pressing RETURN while empty closes the add-tag view
+- [x] documents table -> ignore hover when can not view that row's doc (ie, folders and doc and tiff)
+    - [x] a row lights on hover only when its document can be shown; folders, doc/docx, tiff stay dark
+    - [x] gated on the same can-be-shown check that decides the name click and pointer; buttons still work on every row
+- [x] local storage fills up -- does erase work?
+    - [x] erase deleted only bytes for documents it still listed — leftovers from an old save scheme or a half-finished save kept taking space (log showed erase clearing 0 while the store held tens of MB)
+    - [x] erase now deletes the whole byte-database, so nothing survives whatever key or scheme it was written under, and the space is reclaimed at once (27 MB -> ~31 KB)
+    - [x] when another open tab blocks the delete, a plain alert names the app's address and asks to close other tabs and erase again (used to fail silently)
+    - [x] a test plants an orphan byte-entry and proves erase clears it
+- [x] document rows get quieter and clearer
+    - [x] whole row lights on hover as a pill; over the far-right buttons the fill drops (buttons act on their own)
+    - [x] hover tracked in code, not CSS :hover — the buttons stand a touch taller than the row and kept dropping the plain hover
+    - [x] click a name to open it; the eye button removed; name shows pointer + hover only when showable
+    - [x] trash is a drawn bin (emoji ignores color), stroked in a new --accent-dark (30% less luminance, 30% more saturation, tracks the accent)
+    - [x] with no tags in the store, the pencil shows an "add tags" button that opens the tag view; stopped its click undoing itself on the background
+    - [x] one click on a tag in a row's picker toggles it and closes the picker
+    - [x] removed the debug flag and the row-height logging scaffolding; the faint row lines stay
+- [x] debug.documents = true
+    - [x] draw a line at the bottom of each row in the table
+- [x] documents
+    - [x] drag and drop anywhere -> adds it
+    - [x] a row with a tag is drawn 2px too low
+    - [x] during tags op, replace the far-right buttons with the tags segmented control
+- [x] view html as html in its own sandboxed, script-free frame — the file's markup and scripts stay isolated from the app
+    - [x] the eye's click no longer bubbles to the background clearer (was closing the view the instant it opened)
+    - [x] a file's kind is decided by its filename extension first, reported type as fallback — a page from "Save page as" now opens as html
+    - [x] viewer close is the shared cross in a black circle (hover --hover); a click anywhere on the open document closes it
+    - [x] the three crosses share one size token (--size-svg)
+- [x] far-right per-row buttons -> borderless icons in one column with the tags
+    - [x] view (eye), edit tags (✏️), trash (🗑) — the eye is disabled on unshowable types and blank on folders
+    - [x] trash asks first: erase + x (the shared cross) bordered buttons replace all three icons, row height held steady
+    - [x] a document opens in the content area (new "view document" operation) and renders images, pdfs, and text
+    - [x] trashing a folder cascades to everything inside (new delete-subtree in the store, drops every touched link)
+    - [x] tags and buttons share one column, tags right-justified; rows trimmed shorter
+- [x] document bytes moved from browser storage (~5MB cap) to IndexedDB — a folder of real files no longer overflows; save path is now async through the drop and erase
+- [x] tidied the database folder — store-changed tick and record shapes into shared spots, save-tracker with the plain types, the test into a tests folder; byte-store helper folded into the local store
+- [x] click on doc drop box -> set op to null
+- [x] "Autofocus processing was blocked" warning gone — new-tag field focuses itself on mount instead of leaning on the browser's auto-focus mark
+- [x] ability to drop a folder
+    - [x] a folder becomes a do-nothing folder document named for the folder; shows blank format
+    - [x] each file inside is saved and linked under its folder; subfolders recurse all the way down
+    - [x] every document made (files and folders, any depth) gets the tags chosen at drop time
+    - [x] the list walks folders-first and indents each row 20px per depth; a filtered match keeps its parent folders on screen
+    - [x] one reused "contains" link-meaning; two new store tests plus the drop, all green
+- [x] the "add documents" header reads as a real button
+    - [x] control height, solid black edge, white at rest, hover to --hover, nudged down 1px to line up
+    - [x] fixed the rule going invisible (a border reset was cancelling its line) and a faint ghost line (the label was see-through, so the rule bled through — mask made solid, only the text fades)
+    - [x] dropped the rule + table 5px together
+- [x] details controls -> matched heights, and control text lifted off its low baseline
+    - [x] color swatch drawn from the shared control height, not the bigger square-button size
+    - [x] erase, switcher, yes/no now count their border inside — all match the rest
+    - [x] control text rides up ~2px via top-light shared padding (1 top / 3 bottom), by eye
+- [x] segmented controls, buttons and input fields -> identical heights
+    - [x] one shared rule: count each control's border inside its height, as the two inputs already did
+    - [x] six brought into line — all/any toggle, tag pill, help button, add-a-tag button, done button, build-opener
+- [x] move di hooks -> mono
+    - [x] a word pair that is the same kind of word can carry its ending across — "copies" becomes "moves"; marked on seven rows
+    - [x] all three reply-checkers write to the moved log; di's old copy is gone
+    - [x] the leftovers are decided: two dead hooks deleted, the test moved beside what it tests, di keeps only its own two
+    - [x] split the word list: shared one at `notes/guides/pre-flight/banned words.md`, di's own at the same spot under di
+    - [x] display-fix now lives in mono and names no project — it reads the shared list plus whichever project the marker says you're in
+    - [x] banned-words-check reads both lists (it only warns, so carrying di's words costs nothing)
+    - [x] the always-injector now uses display-fix's logic — shared list plus the marker's project; the shared rules reach me again
+    - [x] banned-words-check now names no project either — moved to mono with its log, which self-trims to the newest 500 lines
+    - [x] hooks 1-11 moved to .claude/hooks, rewired, verified live after restart
+    - [x] check-ts.sh had hardcoded di — now checks whichever project you edited
+    - [x] cleared the stale di paths from the permissions allow-list
+- [x] add md, html, webp, svg, rtf (tiff deferred — browsers can't preview it)
+    - [x] doc, docx (stored, no in-browser preview)
+- [x] remove all unused
+    - [x] T_Preference items
+    - [x] colors
+    - [x] rename storage prefix di: -> ji:
+- [x] port the diagnostic log feature from di
+    - [x] one log server address `/log?where=<name>` -> `logs/<name>.log`
+    - [x] ji's Debug.ts posts there (where=intersection)
+    - [x] every console.log now routes through it
+- [x] add a "any/all" segmented control at far left of Tags
+- [x] always show input field for filter text, below tags
+    - [x] show results as you type
+- [x] add "format", "file name", "tags" and "edit tags" on top of hr
+    - [x] same as d data more/less,
+    - [x] positioned so as to be ***left-aligned*** wrt the columns of the table
+- [x] move any alongside tags, --gap-fat
+- [x] Implement search.ts
+    - [x] keeps single source of truth for selected tags and input filter text
+- [x] always show tags at top of documents
+    - [x] click on a tag
+    - [x] toggles it
+    - [x] applies it as a filter
+- [x] move build opener and written by to bottom of intersection, at layer frontmost
+- [x] details view
+    - [x] remove the empty space at top
+- [x] remove the empty space at top of documents view
+- [x] clicking on add new document -> hide documents list, show drop box
+- [x] controls row
+    - [x] always visible
+    - [x] extend it to full width, bg color -> accent
+    - [x] a help button at far right
+- [x] phase 2 -> database repository
+    - [x] add -> more file types
+    - [x] pdf
+    - [x] jpg
+    - [x] show type in browse table
+    - [x] show all acceptable types in drop here, smaller font, below drop here, centered
+        - [x] determine design and wire in
+            - [x] add_tags.svelte for creating new
+            - [x] tags.svelte for choosing one or more
+        - [x] share with search
+            - [x] in browse
+            - [x] show tags and an 'edit tags' button
+    - [x] what is unsaved?
+    - [x] persist more/less choice
+    - [x] add an 'erase all data' button
+        - [x] same row as segmented control, far right
+        - [x] click -> show an 'are you sure' dialog
+    - [x] port D_Data.svelte from ws
+    - [x] port (rewrite) all DB code from ws
+    - [x] using [[db spec]] as single source of truth
+    - [x] write db proposal -> to implement [[db spec]]
+    - [x] implement db proposal and track progress in db handoff
+- [x] nudge text inside segmented control up 2 px
+- [x] phase 1 -> new UX for adding documents
+    - [x] new state store for content area (add, search, browse)
+        - [x] persist new state
+    - [x] button "add" next to hamburger
+        - [x] convert button to segmented control
+            - [x] segment corresponding to current state, bg color -> --accent
+    - [x] new add.svelte in content area
+        - [x] large drop here rectangle
+    - [x] not wired in, not visible, just empty stubs, design TBD
+    - [x] remove <- from add
+    - [x] click on current operation segment -> sets w_operation to null
+- [x] hamburger
+    - [x] separate singleton
+    - [x] rename it -> controls
+    - [x] include segmented control
+    - [x] move back -> main
+    - [x] remove from details
+    - [x] colors depend on details are hidden ->
+        - [x] background
+        - [x] hover
+        - [x] text
+    - [x] intersection draws details below controls
+    - [x] owned by intersection
+    - [x] rename main -> intersection
+- [x] change --text-color (white/black) — flips by background luminance; content text from bg, details text from accent
+- [x] make netlify only build a single project in response to git push
+- [x] button with my name as author
+    - [x] click opens my other work (jonathansand.me)
+    - [x] bottom right corner
+- [x] when the build notes show, hide the details and the content
+- [x] port preferences from di and put show details flag into it
+- [x] reverse the order of the main checkboxes (retain order of sub items)
+- [x] replace the 'D' button with the hamburger svg, exactly the same as di
+    - [x] convert it to a snippet
+    - [x] show it in the details button/banner so it is at the identical same spot
+- [x] move builds button to bottom left corner of Content
+    - [x] make its bg color white
+- [x] add a new banner at top of details
+    - [x] click on it toggles the details visibility
+    - [x] when hidden, shrink details to a button with "D" on it
+- [x] change 'in' to 'ji'
+    - [x] push to netlify
+- [x] port build notes from di
+- [x] wire up public site
+    - [x] github
+    - [x] netlify
+- [x] add ‘in’ to hub

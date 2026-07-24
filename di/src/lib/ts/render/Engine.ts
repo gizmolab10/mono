@@ -1,7 +1,7 @@
 import { scenes, stores, selection, history, status } from '../managers';
 import { constraints, givens, evaluator, tokenizer } from '../algebra';
 import { units, Units, w_unit_system } from '../types/Units';
-import type { Portable_Scene } from '../managers/Versions';
+import type { Portable_Scene } from '../utilities/Versions';
 import type { Bound, Axis_Name } from '../types/Types';
 import { register_stale_mark } from '../common/Dirty';
 import { scene, camera, render, animation } from '.';
@@ -237,8 +237,9 @@ class Engine {
 		render.add_stale_sub(stores.w_precision.subscribe(mark));
 		render.add_stale_sub(stores.w_scale.subscribe(mark));
 
-		// Color stores — six inputs that change how the canvas looks.
-		render.add_stale_sub(colors.w_so_hover_color.subscribe(mark));
+		// Color stores that change how the canvas looks. The SO hover / selected
+		// and dimension colors derive from the edge color, so the edge subscription
+		// below already marks the canvas stale when they change.
 		render.add_stale_sub(colors.w_selected_color.subscribe(mark));
 		render.add_stale_sub(colors.w_background_color.subscribe(mark));
 		render.add_stale_sub(colors.w_text_color.subscribe(mark));
@@ -272,7 +273,7 @@ class Engine {
 			// Restore givens before deserialization (formulas may reference them during rebind)
 			if (saved.givens?.length) {
 				for (const entry of saved.givens) {
-					if (entry.name) { givens.set(entry.name, entry.value_mm); givens.set_locked(entry.name, entry.locked ?? true); }
+					if (entry.name) { givens.set(entry.name, entry.value_mm, entry.is_scalar ?? false); givens.set_locked(entry.name, entry.locked ?? true); }
 				}
 			}
 			for (const data of saved.smart_objects) {
@@ -665,7 +666,7 @@ class Engine {
 		if (parsed.givens?.length) {
 			for (const entry of parsed.givens) {
 				if (entry.name && !givens.has(entry.name)) {
-					givens.set(entry.name, entry.value_mm);
+					givens.set(entry.name, entry.value_mm, entry.is_scalar ?? false);
 					givens.set_locked(entry.name, entry.locked ?? true);
 				}
 			}

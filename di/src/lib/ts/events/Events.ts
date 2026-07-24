@@ -223,25 +223,23 @@ export class Events {
 			event.preventDefault();
 			stores.toggle_details();
 		}
-		if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-			if ((get(stores.w_t_details) & T_Details.parts) === 0) return;
-			event.preventDefault();
-			this.navigate_parts(event.key === 'ArrowUp' ? -1 : 1);
-		}
-		if (event.key === 'ArrowLeft') {
-			if ((get(stores.w_t_details) & T_Details.parts) === 0) return;
-			event.preventDefault();
-			this.collapse_selected();
-		}
-		if (event.key === 'ArrowRight') {
-			if ((get(stores.w_t_details) & T_Details.parts) === 0) return;
-			event.preventDefault();
-			this.expand_selected();
-		}
-		if (event.key === 'Tab') {
-			if ((get(stores.w_t_details) & T_Details.parts) === 0) return;
-			event.preventDefault();
-			this.navigate_parts(event.shiftKey ? -1 : 1);
+		if (event.shiftKey || (get(stores.w_t_details) & T_Details.parts) !== 0) {
+			if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+				event.preventDefault();
+				this.navigate_parts(event.key === 'ArrowUp' ? -1 : 1);
+			}
+			if (event.key === 'ArrowLeft') {
+				event.preventDefault();
+				this.collapse_selected();
+			}
+			if (event.key === 'ArrowRight') {
+				event.preventDefault();
+				this.expand_selected();
+			}
+			if (event.key === 'Tab') {
+				event.preventDefault();
+				this.navigate_parts(event.shiftKey ? -1 : 1);
+			}
 		}
 	}
 

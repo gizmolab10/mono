@@ -40,28 +40,31 @@
     "docs": 5178,
     "public": "https://mg.civilization2.org",
     "repo": "https://github.com/gizmolab10/mono/tree/main/ma",
-    "docsPublic": "https://mgdocs.civilization2.org",
-    "netlify": "https://maturity-guidance.netlify.app",
-    "docsNetlify": "https://docs-maturity-guidance.netlify.app",
-    "deploy": "https://app.netlify.com/projects/maturity-guidance/deploys",
-    "docsDeploy": "https://app.netlify.com/projects/docs-maturity-guidance/deploys"
+    "docsPublic": "https://mgdocs.civilization2.org"
   },
   "lv": {
-    "port": 5183,
+    "port": 5179,
     "public": "https://littlecloudvineyard.com",
     "netlify": "https://littlecloudvineyard.netlify.app",
     "repo": "https://github.com/gizmolab10/mono/tree/main/lv",
     "deploy": "https://app.netlify.com/projects/littlecloudvineyard/deploys"
   },
+  "ga": {
+    "port": 5180,
+    "docs": 5181,
+    "repo": "https://github.com/gizmolab10/mono/tree/main/ga"
+  },
   "s3": {
-    "port": 5179,
-    "docs": 5180,
+    "port": 5182,
+    "docs": 5183,
     "repo": "https://github.com/gizmolab10/mono/tree/main/s3"
   },
-  "ga": {
-    "port": 5181,
-    "docs": 5182,
-    "repo": "https://github.com/gizmolab10/mono/tree/main/ga"
+  "ji": {
+    "port": 5184,
+    "public": "https://intersection.lol",
+    "netlify": "https://jeff-intersection.netlify.app",
+    "deploy": "https://app.netlify.com/projects/jeff-intersection/deploys",
+    "repo": "https://github.com/gizmolab10/mono/tree/main/ji"
   },
   "me": {
     "public": "https://jonathansand.me",

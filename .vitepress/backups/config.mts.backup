@@ -54,8 +54,12 @@ export default defineConfig({
     sidebar: {
       '/ws/': [
         {
-          text: 'Mj',
-          link: '/mj'
+          text: '2026 06 11',
+          link: '/2026-06-11'
+        },
+        {
+          text: 'Uniface',
+          link: '/uniface'
         },
         {
           text: 'Di >',
@@ -164,10 +168,6 @@ export default defineConfig({
                               link: '/di/notes/guides/architecture/graph/axes'
                             },
                             {
-                              text: 'Dimensionals',
-                              link: '/di/notes/guides/architecture/graph/dimensionals'
-                            },
-                            {
                               text: 'Drag',
                               link: '/di/notes/guides/architecture/graph/drag'
                             },
@@ -215,12 +215,8 @@ export default defineConfig({
                           collapsed: true,
                           items: [
                             {
-                              text: 'Details',
-                              link: '/di/notes/guides/architecture/ui/details'
-                            },
-                            {
-                              text: 'Hits',
-                              link: '/di/notes/guides/architecture/ui/hits'
+                              text: 'Hits System',
+                              link: '/di/notes/guides/architecture/ui/hits system'
                             },
                             {
                               text: 'Key Paths',
@@ -239,53 +235,85 @@ export default defineConfig({
                       ]
                     },
                     {
-                      text: 'Project >',
-                      link: '/di/notes/guides/project/',
+                      text: 'Development >',
+                      link: '/di/notes/guides/development/',
                       collapsed: true,
                       items: [
                         {
-                          text: 'Development >',
-                          link: '/di/notes/guides/project/development/',
+                          text: 'Running E2e Tests',
+                          link: '/di/notes/guides/development/running e2e tests'
+                        },
+                        {
+                          text: 'Adhere >',
+                          link: '/di/notes/guides/development/adhere/',
                           collapsed: true,
                           items: [
                             {
                               text: 'Adherence Dashboard',
-                              link: '/di/notes/guides/project/development/adherence dashboard'
+                              link: '/di/notes/guides/development/adhere/adherence dashboard'
                             },
                             {
                               text: 'Adherence Log',
-                              link: '/di/notes/guides/project/development/adherence log'
-                            },
-                            {
-                              text: 'Best.practices',
-                              link: '/di/notes/guides/project/development/best.practices'
+                              link: '/di/notes/guides/development/adhere/adherence log'
                             },
                             {
                               text: 'Dashboard Guide',
-                              link: '/di/notes/guides/project/development/dashboard guide'
-                            },
-                            {
-                              text: 'Lessons',
-                              link: '/di/notes/guides/project/development/lessons'
-                            },
-                            {
-                              text: 'Logic Driven Design',
-                              link: '/di/notes/guides/project/development/logic driven design'
-                            },
-                            {
-                              text: 'Stipulations',
-                              link: '/di/notes/guides/project/development/stipulations'
-                            },
-                            {
-                              text: 'Testing',
-                              link: '/di/notes/guides/project/development/testing'
-                            },
-                            {
-                              text: 'Updating Guides',
-                              link: '/di/notes/guides/project/development/updating guides'
+                              link: '/di/notes/guides/development/adhere/dashboard guide'
                             }
                           ]
                         },
+                        {
+                          text: 'Learn >',
+                          link: '/di/notes/guides/development/learn/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Lessons',
+                              link: '/di/notes/guides/development/learn/lessons'
+                            }
+                          ]
+                        },
+                        {
+                          text: 'Rules >',
+                          link: '/di/notes/guides/development/rules/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Stipulations',
+                              link: '/di/notes/guides/development/rules/stipulations'
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      text: 'Pre Flight >',
+                      link: '/di/notes/guides/pre-flight/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Always',
+                          link: '/di/notes/guides/pre-flight/always'
+                        },
+                        {
+                          text: 'Banned Words',
+                          link: '/di/notes/guides/pre-flight/banned words'
+                        },
+                        {
+                          text: 'Lexicon',
+                          link: '/di/notes/guides/pre-flight/lexicon'
+                        },
+                        {
+                          text: 'Wordsmithing',
+                          link: '/di/notes/guides/pre-flight/wordsmithing'
+                        }
+                      ]
+                    },
+                    {
+                      text: 'Project >',
+                      link: '/di/notes/guides/project/',
+                      collapsed: true,
+                      items: [
                         {
                           text: 'Overview >',
                           link: '/di/notes/guides/project/overview/',
@@ -306,6 +334,33 @@ export default defineConfig({
                           ]
                         },
                         {
+                          text: 'Philosophy >',
+                          link: '/di/notes/guides/project/philosophy/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Best.practices',
+                              link: '/di/notes/guides/project/philosophy/best.practices'
+                            },
+                            {
+                              text: 'Logic Driven Design',
+                              link: '/di/notes/guides/project/philosophy/logic driven design'
+                            },
+                            {
+                              text: 'Specification Driven Development',
+                              link: '/di/notes/guides/project/philosophy/specification driven development'
+                            },
+                            {
+                              text: 'Testing',
+                              link: '/di/notes/guides/project/philosophy/testing'
+                            },
+                            {
+                              text: 'Updating Guides',
+                              link: '/di/notes/guides/project/philosophy/updating guides'
+                            }
+                          ]
+                        },
+                        {
                           text: 'Research >',
                           link: '/di/notes/guides/project/research/',
                           collapsed: true,
@@ -313,6 +368,10 @@ export default defineConfig({
                             {
                               text: '3D.primer',
                               link: '/di/notes/guides/project/research/3D.primer'
+                            },
+                            {
+                              text: 'Dimensionals Research',
+                              link: '/di/notes/guides/project/research/dimensionals-research'
                             },
                             {
                               text: 'Library Versioning',
@@ -333,6 +392,25 @@ export default defineConfig({
                   link: '/di/notes/work/',
                   collapsed: true,
                   items: [
+                    {
+                      text: 'Ai >',
+                      link: '/di/notes/work/ai/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Cadence',
+                          link: '/di/notes/work/ai/cadence'
+                        },
+                        {
+                          text: 'Learn',
+                          link: '/di/notes/work/ai/learn'
+                        },
+                        {
+                          text: 'Technique',
+                          link: '/di/notes/work/ai/technique'
+                        }
+                      ]
+                    },
                     {
                       text: 'Done >',
                       link: '/di/notes/work/done/',
@@ -428,10 +506,6 @@ export default defineConfig({
                         {
                           text: '29.user.manual',
                           link: '/di/notes/work/milestones/29.user.manual'
-                        },
-                        {
-                          text: '30.licensing',
-                          link: '/di/notes/work/milestones/30.licensing'
                         },
                         {
                           text: '31.marketing',
@@ -656,8 +730,63 @@ export default defineConfig({
                                   ]
                                 }
                               ]
+                            },
+                            {
+                              text: '34.dimensionals >',
+                              collapsed: true,
+                              items: [
+                                {
+                                  text: 'Dimensions.latest.spec',
+                                  link: '/di/notes/work/milestones/done/34.dimensionals/dimensions.latest.spec'
+                                },
+                                {
+                                  text: 'Done >',
+                                  collapsed: true,
+                                  items: [
+                                    {
+                                      text: 'Dimensionals Spec',
+                                      link: '/di/notes/work/milestones/done/34.dimensionals/done/dimensionals spec'
+                                    },
+                                    {
+                                      text: 'Old Dimensionals Rules',
+                                      link: '/di/notes/work/milestones/done/34.dimensionals/done/old dimensionals rules'
+                                    },
+                                    {
+                                      text: 'Uniface Proposal',
+                                      link: '/di/notes/work/milestones/done/34.dimensionals/done/uniface proposal'
+                                    },
+                                    {
+                                      text: 'Uniface Rules',
+                                      link: '/di/notes/work/milestones/done/34.dimensionals/done/uniface rules'
+                                    }
+                                  ]
+                                }
+                              ]
                             }
                           ]
+                        }
+                      ]
+                    },
+                    {
+                      text: 'Mothballs >',
+                      link: '/di/notes/work/mothballs/',
+                      collapsed: true,
+                      items: [
+                        {
+                          text: 'Dimensionals',
+                          link: '/di/notes/work/mothballs/dimensionals'
+                        },
+                        {
+                          text: 'Dimensionals.work',
+                          link: '/di/notes/work/mothballs/dimensionals.work'
+                        },
+                        {
+                          text: 'Dimensions.flow',
+                          link: '/di/notes/work/mothballs/dimensions.flow'
+                        },
+                        {
+                          text: 'Repeaters.mothball',
+                          link: '/di/notes/work/mothballs/repeaters.mothball'
                         }
                       ]
                     },
@@ -677,6 +806,10 @@ export default defineConfig({
                         {
                           text: 'Data Schema For Wendy',
                           link: '/di/notes/work/next/data schema for wendy'
+                        },
+                        {
+                          text: 'Musi Capp',
+                          link: '/di/notes/work/next/musi capp'
                         },
                         {
                           text: 'Pacing',
@@ -706,28 +839,36 @@ export default defineConfig({
                       collapsed: true,
                       items: [
                         {
+                          text: '(newer Than SDD) Methodology',
+                          link: '/di/notes/work/now/(newer than SDD) methodology'
+                        },
+                        {
                           text: '27.selection.algorithm',
                           link: '/di/notes/work/now/27.selection.algorithm'
                         },
                         {
-                          text: 'Cadence',
-                          link: '/di/notes/work/now/cadence'
+                          text: '30.licensing',
+                          link: '/di/notes/work/now/30.licensing'
                         },
                         {
                           text: 'Code.debt',
                           link: '/di/notes/work/now/code.debt'
                         },
                         {
+                          text: 'Code.debt.paid',
+                          link: '/di/notes/work/now/code.debt.paid'
+                        },
+                        {
                           text: 'Handoff',
                           link: '/di/notes/work/now/handoff'
                         },
                         {
-                          text: 'Learn',
-                          link: '/di/notes/work/now/learn'
+                          text: 'Open Items',
+                          link: '/di/notes/work/now/open items'
                         },
                         {
-                          text: 'Minimum Viable INTERSECTION App',
-                          link: '/di/notes/work/now/Minimum Viable INTERSECTION app'
+                          text: 'Our Process',
+                          link: '/di/notes/work/now/our process'
                         },
                         {
                           text: 'Revisit.di',
@@ -738,8 +879,12 @@ export default defineConfig({
                           link: '/di/notes/work/now/road.map'
                         },
                         {
-                          text: 'Technique',
-                          link: '/di/notes/work/now/technique'
+                          text: 'Steve Melville',
+                          link: '/di/notes/work/now/steve melville'
+                        },
+                        {
+                          text: 'Talk',
+                          link: '/di/notes/work/now/talk'
                         },
                         {
                           text: 'Work Journal',
@@ -748,6 +893,17 @@ export default defineConfig({
                         {
                           text: 'Working Features',
                           link: '/di/notes/work/now/working features'
+                        },
+                        {
+                          text: '34.dimensionals >',
+                          link: '/di/notes/work/now/34.dimensionals/',
+                          collapsed: true,
+                          items: [
+                            {
+                              text: 'Uniface',
+                              link: '/di/notes/work/now/34.dimensionals/uniface'
+                            }
+                          ]
                         }
                       ]
                     }
@@ -825,6 +981,88 @@ export default defineConfig({
           ]
         },
         {
+          text: 'Ji >',
+          collapsed: true,
+          items: [
+            {
+              text: 'Notes >',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Guides >',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Map',
+                      link: '/ji/notes/guides/map'
+                    },
+                    {
+                      text: 'Minimum Viable INTERSECTION App',
+                      link: '/ji/notes/guides/Minimum Viable INTERSECTION app'
+                    },
+                    {
+                      text: 'Notes Map',
+                      link: '/ji/notes/guides/notes map'
+                    },
+                    {
+                      text: 'Roadmap',
+                      link: '/ji/notes/guides/roadmap'
+                    }
+                  ]
+                },
+                {
+                  text: 'Work >',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Code Debt',
+                      link: '/ji/notes/work/code debt'
+                    },
+                    {
+                      text: 'Handoff',
+                      link: '/ji/notes/work/handoff'
+                    },
+                    {
+                      text: 'Work Journal',
+                      link: '/ji/notes/work/work journal'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          text: 'Lv >',
+          collapsed: true,
+          items: [
+            {
+              text: 'Notes >',
+              collapsed: true,
+              items: [
+                {
+                  text: 'Work >',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Bare Bone Website',
+                      link: '/lv/notes/work/bare bone website'
+                    },
+                    {
+                      text: 'Code Debt',
+                      link: '/lv/notes/work/code debt'
+                    },
+                    {
+                      text: 'Work Journal',
+                      link: '/lv/notes/work/work journal'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           text: 'Ma >',
           collapsed: true,
           items: [
@@ -888,6 +1126,16 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
+                  text: 'Research >',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Mj',
+                      link: '/me/notes/research/mj'
+                    }
+                  ]
+                },
+                {
                   text: 'Work >',
                   collapsed: true,
                   items: [
@@ -930,6 +1178,10 @@ export default defineConfig({
                   link: '/notes/guides/jonathan'
                 },
                 {
+                  text: 'Synopsis Of Our Guides',
+                  link: '/notes/guides/synopsis of our guides'
+                },
+                {
                   text: 'Collaborate >',
                   link: '/notes/guides/collaborate/',
                   collapsed: true,
@@ -941,6 +1193,10 @@ export default defineConfig({
                     {
                       text: 'Creating A Design',
                       link: '/notes/guides/collaborate/creating a design'
+                    },
+                    {
+                      text: 'Creating A Proposal',
+                      link: '/notes/guides/collaborate/creating a proposal'
                     },
                     {
                       text: 'Exclude',
@@ -955,8 +1211,16 @@ export default defineConfig({
                       link: '/notes/guides/collaborate/framing filters'
                     },
                     {
+                      text: 'Hooks',
+                      link: '/notes/guides/collaborate/hooks'
+                    },
+                    {
                       text: 'Journals',
                       link: '/notes/guides/collaborate/journals'
+                    },
+                    {
+                      text: 'Shop Keeping',
+                      link: '/notes/guides/collaborate/shop keeping'
                     },
                     {
                       text: 'Voice',
@@ -965,17 +1229,6 @@ export default defineConfig({
                     {
                       text: 'Workflow',
                       link: '/notes/guides/collaborate/workflow'
-                    }
-                  ]
-                },
-                {
-                  text: 'Design >',
-                  link: '/notes/guides/design/',
-                  collapsed: true,
-                  items: [
-                    {
-                      text: 'Port',
-                      link: '/notes/guides/design/port'
                     }
                   ]
                 },
@@ -1019,6 +1272,17 @@ export default defineConfig({
                   ]
                 },
                 {
+                  text: 'Hub >',
+                  link: '/notes/guides/hub/',
+                  collapsed: true,
+                  items: [
+                    {
+                      text: 'Port',
+                      link: '/notes/guides/hub/port'
+                    }
+                  ]
+                },
+                {
                   text: 'Philosophy >',
                   link: '/notes/guides/philosophy/',
                   collapsed: true,
@@ -1047,6 +1311,10 @@ export default defineConfig({
                       link: '/notes/guides/pre-flight/gates'
                     },
                     {
+                      text: 'Gotchas',
+                      link: '/notes/guides/pre-flight/gotchas'
+                    },
+                    {
                       text: 'Keywords',
                       link: '/notes/guides/pre-flight/keywords'
                     },
@@ -1061,10 +1329,6 @@ export default defineConfig({
                     {
                       text: 'Shorthand',
                       link: '/notes/guides/pre-flight/shorthand'
-                    },
-                    {
-                      text: 'Tools',
-                      link: '/notes/guides/pre-flight/tools'
                     }
                   ]
                 },

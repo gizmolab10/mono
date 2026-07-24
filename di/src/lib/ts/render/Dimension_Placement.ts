@@ -1,16 +1,14 @@
-import type { O_Scene, Projected } from '../types/Interfaces';
-import { Seeded_Random } from '../common/Seeded_Random';
-import type Smart_Object from '../runtime/Smart_Object';
-import { stale_writable } from '../common/Dirty';
+import type { O_Scene } from '../types/Interfaces';
+import { selection } from '../managers/Selection';
 import type { Axis_Name } from '../types/Types';
 import { units, Units } from '../types/Units';
+import { vec3, mat4, quat } from 'gl-matrix';
 import { hits_3d } from '../events/Hits_3D';
 import { stores } from '../managers/Stores';
 import { k } from '../common/Constants';
-import { vec3, mat4, quat } from 'gl-matrix';
+import { debug } from '../common/Debug';
 import { e } from '../events/Events';
 import { get } from 'svelte/store';
-import { camera } from './Camera';
 import { render } from './Render';
 import { scene } from './Scene';
 
@@ -40,6 +38,36 @@ import { scene } from './Scene';
  *  the hull vertices in counter-clockwise order (in screen coordinates
  *  where y grows downward, this is actually clockwise — direction does
  *  not matter for our use). */
+/** Step 3h (rule 19): order (part, axis) entries by descending millimetre
+ *  measurement, so the biggest dimensions get first pick of each spot and the
+ *  smaller ones fit around them or drop. A copy is returned; equal millimetres
+ *  keep their incoming order (stable). Pure. */
+export function order_part_axis_by_descending_mm<T extends { mm: number }>(entries: readonly T[]): T[] {
+	return [...entries].sort((a, b) => b.mm - a.mm);
+}
+
+/** Count threshold (spec 4.1). The traverse-and-filter step first produces the
+ *  WHOLE list of valid placements (every part-axis that has one), with positions
+ *  already fixed. This is the LAST step over that kept list: draw the N largest
+ *  by length, plus every always-eligible one (selected part fully in frustum, or
+ *  hovered part) — an always-eligible one among the N largest counts as one of
+ *  the N; below the cut it draws on top. Moving the slider re-runs only this
+ *  step over the same kept list, so nothing repositions. Pure; input order does
+ *  not matter (it sorts by length itself). */
+export function draw_largest_n<T extends { mm: number; always_eligible: boolean }>(
+	entries: readonly T[],
+	count: number,
+): T[] {
+	const sorted = [...entries].sort((a, b) => b.mm - a.mm);
+	const kept: T[] = [];
+	let n = 0;
+	for (const e of sorted) {
+		if (n < count) { kept.push(e); n++; continue; }   // among the N largest
+		if (e.always_eligible) kept.push(e);              // below the cut, but always drawn
+	}
+	return kept;
+}
+
 export function convex_hull(points: Array<{ x: number; y: number }>): Array<{ x: number; y: number }> {
 	if (points.length <= 2) return points.slice();
 	const sorted = [...points].sort((a, b) => a.x - b.x || a.y - b.y);
@@ -129,335 +157,8 @@ export function push_outside_hull(
 
 /** Combined silhouette outline of every rendered leaf part. Recomputed
  *  every render by `compute_viable_pairs`. Exported for test hooks. */
-export let last_hull: Array<{ x: number; y: number }> = [];
-export let last_hull_input: Array<{ x: number; y: number; so_id: string; so_name: string }> = [];
-/** Per-part convex hulls of each rendered leaf part's projected vertices.
- *  Replaces the single combined hull for the rule-9 silhouette pushback:
- *  a label can sit in empty space BETWEEN parts even when the combined
- *  outline would have wrapped that space. The witness pushback computes
- *  the furthest distance the ray needs to travel to exit the union of
- *  ALL these per-part hulls along the witness direction. */
-export let last_per_part_hulls: Array<{ so_id: string; hull: Array<{ x: number; y: number }> }> = [];
-
-/** Status-bar running average of how many dimensions get dropped per
- *  render. The renderer publishes to this. */
-export const w_dim_dropped_avg = stale_writable<number>(0);
-
-/** Per-(part, axis) tally of how each candidate edge was treated by the
- *  filters in `compute_viable_pairs`. Populated every call to that
- *  function. Read by `run_new_placement` to print a plain-English summary
- *  whenever a render loses labels. */
-export type Per_Label_Filter_Stats = {
-	edges_hidden              : number;
-	edges_too_short           : number;
-	edges_projection_broken   : number;
-	edges_no_viable_direction : number;
-	edges_yielded_pairs       : number;
-	// Per-direction-attempt rejection counters inside compute_pair_ranges.
-	// Counted alongside the edge counters so the summary can show what
-	// kills directions for labels that survived the per-edge filters.
-	directions_silhouette_too_far    : number;
-	directions_witness_range_empty   : number;
-	directions_slidable_range_empty  : number;
-	directions_projection_degenerate : number;
-	directions_witnesses_converge    : number;
-};
-export const last_filter_stats: {
-	total_edges_considered : number;
-	per_label              : Map<string, Per_Label_Filter_Stats>;
-} = {
-	total_edges_considered : 0,
-	per_label              : new Map(),
-};
-
-/** Per-label set of unique part names that hid at least one of the
- *  label's candidate edges. Diagnostic only; populated alongside the
- *  filter stats every call to `compute_viable_pairs`. */
-export const last_blockers_per_label: Map<string, Set<string>> = new Map();
-
-/** Diagnostic: every (edge, direction) attempt that got rejected with
- *  reason "silhouette too far", with the per-hull exit-t values that
- *  drove the rejection. Cleared at the start of `compute_viable_pairs`. */
-export const last_silhouette_rejects: Array<{
-	so_name      : string;
-	axis         : Axis_Name;
-	v1_idx       : number;
-	v2_idx       : number;
-	wit_ux       : number;
-	wit_uy       : number;
-	per_hull     : Array<{ so_id: string; t: number }>;
-	witness_length_min : number;
-	cap          : number;
-}> = [];
-
-function bump_filter_stat(key: string, field: keyof Per_Label_Filter_Stats): void {
-	let s = last_filter_stats.per_label.get(key);
-	if (!s) {
-		s = {
-			edges_hidden                     : 0,
-			edges_too_short                  : 0,
-			edges_projection_broken          : 0,
-			edges_no_viable_direction        : 0,
-			edges_yielded_pairs              : 0,
-			directions_silhouette_too_far    : 0,
-			directions_witness_range_empty   : 0,
-			directions_slidable_range_empty  : 0,
-			directions_projection_degenerate : 0,
-			directions_witnesses_converge    : 0,
-		};
-		last_filter_stats.per_label.set(key, s);
-	}
-	s[field]++;
-}
-
-function compute_combined_hull(): void {
-	const all_objects = scene.get_all();
-	const points: Array<{ x: number; y: number }> = [];
-	const tagged: Array<{ x: number; y: number; so_id: string; so_name: string }> = [];
-	const per_part: Array<{ so_id: string; hull: Array<{ x: number; y: number }> }> = [];
-	const rendered = new Set<O_Scene>();
-	for (const o of all_objects) if (is_visible_for_dim(o)) rendered.add(o);
-	const has_rendered_child = (obj: O_Scene): boolean => {
-		for (const other of all_objects) {
-			if (other.parent === obj && rendered.has(other)) return true;
-		}
-		return false;
-	};
-	for (const obj of all_objects) {
-		if (!rendered.has(obj)) continue;
-		if (has_rendered_child(obj)) continue;
-		const projected = hits_3d.get_projected(obj.id);
-		if (!projected) continue;
-		const own_points: Array<{ x: number; y: number }> = [];
-		for (const p of projected) {
-			if (p.w >= 0) {
-				points.push({ x: p.x, y: p.y });
-				tagged.push({ x: p.x, y: p.y, so_id: obj.so.id, so_name: obj.so.name });
-				own_points.push({ x: p.x, y: p.y });
-			}
-		}
-		if (own_points.length >= 3) {
-			per_part.push({ so_id: obj.so.id, hull: convex_hull(own_points) });
-		}
-	}
-	last_hull = points.length >= 3 ? convex_hull(points) : [];
-	last_hull_input = tagged;
-	last_per_part_hulls = per_part;
-}
-
 /** What kind of label this is per the repeater integration in rule 18. */
 export type Label_Kind = 'template' | 'clone' | 'fireblock-first' | 'fireblock-last-shortened' | 'regular';
-
-/** A viable (edge, direction) pair for one label. Both continuous DOF
- *  ranges are in screen pixels. */
-export type Viable_Pair = {
-	so_id        : string;
-	so_name      : string;
-	kind         : Label_Kind;
-	axis         : Axis_Name;
-	edge_v1_idx  : number;
-	edge_v2_idx  : number;
-	/** 3D unit direction along the perpendicular axis, in the smart object's local frame. */
-	direction    : [number, number, number];
-	/** Smallest witness length, in pixels, that puts the label rectangle 15 px outside the combined outline. */
-	witness_length_min  : number;
-	/** Largest witness length, in pixels, that respects the 80-pixel push cap AND keeps the projected witness ≤ 120 px. */
-	witness_length_max  : number;
-	/** Slidable-position range along the dim line, in pixels, measured from the projected witness-1 anchor. */
-	slidable_min : number;
-	slidable_max : number;
-	/** Average projected length of a 1-unit 3D witness vector, in pixels. Phase 2 uses this to convert pixel pushes back to 3D distances. */
-	avg_wlen_per_3d_unit : number;
-	// Geometry the pair-check passes (rule 24) need:
-	label_w_px   : number;
-	label_h_px   : number;
-	/** Projected edge endpoint 1, in screen pixels. */
-	edge_p1_x    : number;
-	edge_p1_y    : number;
-	/** Projected edge endpoint 2, in screen pixels. */
-	edge_p2_x    : number;
-	edge_p2_y    : number;
-	/** Averaged unit witness direction in screen pixels. The search-side
-	 *  math (label center, AABB, clearance) reads this. */
-	wit_ux       : number;
-	wit_uy       : number;
-	/** Per-endpoint screen vectors for one 3D unit of witness direction.
-	 *  The renderer reads these so the two witness lines diverge correctly
-	 *  in perspective — world-parallel rays do not project to screen-
-	 *  parallel rays unless the edge is parallel to the image plane. */
-	wit_1_per3d_x : number;
-	wit_1_per3d_y : number;
-	wit_2_per3d_x : number;
-	wit_2_per3d_y : number;
-	/** Formatted number text the renderer will draw. Computed once when the pair is built. */
-	text         : string;
-	/** NDC depth at the dim line midpoint, used by the renderer for the hit-test rectangle. */
-	dim_z        : number;
-	/** True when the adjacent face this direction came from is front-facing
-	 *  on screen (its projected winding is positive). The search adds a
-	 *  bonus to front-facing candidates so dimensions land on the visible
-	 *  side of a part. Optional for back-compat with test fixtures. */
-	is_front_facing? : boolean;
-};
-
-/** The AABB of every screen position one label can occupy, across its full
- *  four-DOF range. Used by rule 24's first pass to skip pairs that can't
- *  possibly conflict no matter what the search picks. */
-export type Reachable_Region = {
-	so_id      : string;
-	so_name    : string;
-	kind       : Label_Kind;
-	axis       : Axis_Name;
-	x_min      : number;
-	x_max      : number;
-	y_min      : number;
-	y_max      : number;
-	pairs      : Viable_Pair[];
-};
-
-/** A candidate pair of labels that might end up too close — both regions
- *  overlap when expanded by 33 pixels. Most "candidate" pairs will be
- *  cleared by rule 24's later passes; this list is just the cheap first
- *  cull. */
-export type Candidate_Pair = {
-	a_so_id : string;
-	a_axis  : Axis_Name;
-	b_so_id : string;
-	b_axis  : Axis_Name;
-};
-
-/**
- * Compute every viable (edge, direction) pair for every visible smart
- * object's three axes at the current render. Reads the combined hull from
- * the most recent render of R_Dimensions.
- */
-export function compute_viable_pairs(): Viable_Pair[] {
-	compute_combined_hull();
-	last_filter_stats.total_edges_considered = 0;
-	last_filter_stats.per_label.clear();
-	last_blockers_per_label.clear();
-	last_silhouette_rejects.length = 0;
-	const result: Viable_Pair[] = [];
-	if (last_hull.length < 3) return result;
-	if (!render.ctx)            return result;
-
-	const cam_forward = compute_camera_forward();
-
-	// Pre-build the list of potential occluders for rule 11's edge-visibility
-	// check. Each rendered part contributes its projected vertices and the
-	// list of its faces. The check at each edge filters out the OWN part.
-	const all_objects = scene.get_all();
-	type Occluder = { so_id: string; so_name: string; projected: Projected[]; faces: number[][] };
-	const all_occluders: Occluder[] = [];
-	// Rule 11 edge-visibility filter only fires in solid render mode. In
-	// x-ray render mode no face is drawn solidly, so no face can hide an
-	// edge — leave the blocker list empty and the per-edge check returns
-	// false outright.
-	if (stores.is_solid) {
-		for (const o of all_objects) {
-			if (!is_occluder_for_dim(o)) continue;
-			const proj = hits_3d.get_projected(o.id);
-			if (!proj) continue;
-			const faces = o.so.scene?.faces;
-			if (!faces) continue;
-			all_occluders.push({ so_id: o.so.id, so_name: o.so.name, projected: proj, faces });
-		}
-	}
-
-	for (const obj of all_objects) {
-		if (!is_visible_for_dim(obj)) continue;
-		const classification = classify_so(obj);
-		if (!classification.eligible) continue;
-		const projected = hits_3d.get_projected(obj.id);
-		if (!projected) continue;
-		const world_matrix = render.get_world_matrix(obj);
-		// Input the disabled rule-11 visibility check used. Kept commented
-		// alongside the check itself so re-wiring is a one-step uncomment.
-		// const others_as_occluders = all_occluders.filter(o => o.so_id !== obj.so.id);
-
-		for (const axis of classification.axes_allowed) {
-			const value = axis === 'x' ? obj.so.width : axis === 'y' ? obj.so.depth : obj.so.height;
-			render.ctx.font = '12px sans-serif';
-			const text       = units.format_for_system(value, Units.current_unit_system(), stores.current_precision);
-			const label_w_px = render.ctx.measureText(text).width + 4;
-			const label_h_px = 12 + 2;
-
-			const edges = silhouette_edges_along_axis(obj, axis, projected);
-			const lkey = `${obj.so.id}|${axis}`;
-			for (const { v1_idx, v2_idx } of edges) {
-				last_filter_stats.total_edges_considered++;
-				const p1 = projected[v1_idx];
-				const p2 = projected[v2_idx];
-				if (p1.w < 0 || p2.w < 0) {
-					bump_filter_stat(lkey, 'edges_projection_broken');
-					continue;
-				}
-
-				// Rule 11 minimum projected edge length (pre-checked here so
-				// the per-edge filter stat is correct; compute_pair_ranges
-				// re-checks defensively).
-				if (Math.hypot(p2.x - p1.x, p2.y - p1.y) < k.dimensions.WITNESS_CLEARANCE_PX) {
-					bump_filter_stat(lkey, 'edges_too_short');
-					continue;
-				}
-
-				const all_dirs = two_face_outward_directions(obj.so, v1_idx, v2_idx, projected);
-				const allowed_dirs = all_dirs.filter(d => passes_camera_axis_filter(d.dir, world_matrix, cam_forward));
-				// Better degenerate than missing: when every direction is
-				// rejected by the camera-angle filter, fall back to trying
-				// both anyway so the label still appears (even if
-				// foreshortened). Matches the old renderer's behavior.
-				const dirs_to_try = allowed_dirs.length > 0 ? allowed_dirs : all_dirs;
-				let yielded_any = false;
-				for (const d of dirs_to_try) {
-					const r = compute_pair_ranges({
-						so       : obj.so,
-						kind     : classification.kind,
-						axis,
-						v1_idx, v2_idx,
-						direction: d.dir,
-						is_front : d.is_front,
-						world_matrix,
-						p1, p2,
-						label_w_px, label_h_px,
-						text,
-					});
-					if (r.ok) { result.push(r.pair); yielded_any = true; }
-					else {
-						// Count which downstream filter killed this direction
-						// so the diagnostic can name the dominant cause.
-						const field =
-							r.reason === 'silhouette_too_far'    ? 'directions_silhouette_too_far'    :
-							r.reason === 'witness_range_empty'   ? 'directions_witness_range_empty'   :
-							r.reason === 'slidable_range_empty'  ? 'directions_slidable_range_empty'  :
-							r.reason === 'witnesses_converge'    ? 'directions_witnesses_converge'    :
-							                                       'directions_projection_degenerate';
-						bump_filter_stat(lkey, field);
-					}
-				}
-				bump_filter_stat(lkey, yielded_any ? 'edges_yielded_pairs' : 'edges_no_viable_direction');
-			}
-		}
-	}
-	return result;
-}
-
-/** Per-label pair count — what `dim_viable_pair_counts()` exposes. */
-export function compute_viable_pair_counts(): { so_name: string; axis: Axis_Name; pair_count: number }[] {
-	const counts = new Map<string, number>();
-	for (const p of compute_viable_pairs()) {
-		const key = `${p.so_name}|${p.axis}`;
-		counts.set(key, (counts.get(key) ?? 0) + 1);
-	}
-	const result: { so_name: string; axis: Axis_Name; pair_count: number }[] = [];
-	for (const [key, count] of counts) {
-		const [so_name, axis] = key.split('|') as [string, Axis_Name];
-		result.push({ so_name, axis, pair_count: count });
-	}
-	return result;
-}
-
-// ─── internals ──────────────────────────────────────────────────────────
 
 function is_visible_for_dim(obj: O_Scene): boolean {
 	// X-ray mode: when the user holds OPTION AND at least one part in the
@@ -467,39 +168,19 @@ function is_visible_for_dim(obj: O_Scene): boolean {
 	// OPTION does nothing.
 	const option_held = get(e.w_option_down);
 	const has_hidden = scene.get_all().some(o => !o.so.visible);
-	const xray_mode = option_held && has_hidden;
-	if (xray_mode) return !obj.so.visible;
+	const wireframe_mode = option_held && has_hidden;
+	if (wireframe_mode) return !obj.so.visible;
 
-	if (!obj.so.visible) return false;
+	// The root part (no parent) is dimensioned even when it is invisible — its
+	// dims show the overall span of the whole design, so its own visible flag
+	// never gates it. Every other part still needs its own visible flag on.
+	if (obj.parent && !obj.so.visible) return false;
 	let cursor = obj.parent;
 	while (cursor) {
 		if (cursor.so.hide_children) return false;
 		cursor = cursor.parent;
 	}
 	return true;
-}
-
-/** Visibility test for rule 11's potential-blocker set. Broader than
- *  `is_visible_for_dim`: a part is a blocker whenever its own visibility
- *  flag is on. Two consequences, both per the spec:
- *    - A parent whose own visibility is off but which is set to show its
- *      children does NOT block (its `obj.so.visible` is false).
- *    - A child whose ancestor is set to hide its children is not drawn
- *      on screen but IS a blocker — the ancestor's shell would otherwise
- *      leak dimensions through where the child sits.
- *  X-ray mode mirrors the dimension-visibility check for consistency.
- *
- *  The two boolean params default to the live scene/keyboard state. Tests
- *  pass them explicitly to avoid touching globals. */
-export function is_occluder_for_dim(
-	obj: O_Scene,
-	option_held: boolean = get(e.w_option_down),
-	has_hidden_in_scene: boolean = scene.get_all().some(o => !o.so.visible),
-): boolean {
-	const xray_mode = option_held && has_hidden_in_scene;
-	if (xray_mode) return !obj.so.visible;
-
-	return obj.so.visible;
 }
 
 /** Repeater filtering: the template gets all axes, firewalled fireblocks
@@ -537,1424 +218,6 @@ function classify_so(obj: O_Scene): { eligible: boolean; kind: Label_Kind; axes_
 	if (is_first)        return { eligible: true,  kind: 'fireblock-first',            axes_allowed: [axis_name] };
 	if (last_shortened)  return { eligible: true,  kind: 'fireblock-last-shortened',   axes_allowed: [axis_name] };
 	return { eligible: false, kind: 'clone', axes_allowed: [] };
-}
-
-function compute_camera_forward(): vec3 {
-	const f = vec3.create();
-	vec3.subtract(f, camera.center_pos, camera.eye);
-	vec3.normalize(f, f);
-	return f;
-}
-
-/** Edges where one adjacent face is front-facing and the other back-facing. */
-function silhouette_edges_along_axis(obj: O_Scene, axis: Axis_Name, projected: Projected[]): { v1_idx: number; v2_idx: number }[] {
-	const so = obj.so;
-	if (!so.scene?.faces) return [];
-	const verts = so.vertices;
-	const faces = so.scene.faces;
-	const edges = so.scene.edges;
-
-	const result: { v1_idx: number; v2_idx: number }[] = [];
-	for (const [v1, v2] of edges) {
-		if (edge_axis(verts[v1], verts[v2]) !== axis) continue;
-		const adj = edges_to_adjacent_faces(faces, v1, v2);
-		if (adj.length !== 2) continue;
-		const w0 = render.face_winding(faces[adj[0]], projected);
-		const w1 = render.face_winding(faces[adj[1]], projected);
-		if ((w0 < 0 && w1 >= 0) || (w1 < 0 && w0 >= 0)) {
-			result.push({ v1_idx: v1, v2_idx: v2 });
-		}
-	}
-	return result;
-}
-
-function edges_to_adjacent_faces(faces: number[][], v1: number, v2: number): number[] {
-	const out: number[] = [];
-	for (let fi = 0; fi < faces.length; fi++) {
-		const face = faces[fi];
-		for (let i = 0; i < face.length; i++) {
-			const a = face[i], b = face[(i + 1) % face.length];
-			if ((a === v1 && b === v2) || (a === v2 && b === v1)) {
-				out.push(fi);
-				break;
-			}
-		}
-	}
-	return out;
-}
-
-function edge_axis(v1: vec3, v2: vec3): Axis_Name | null {
-	const dx = Math.abs(v2[0] - v1[0]);
-	const dy = Math.abs(v2[1] - v1[1]);
-	const dz = Math.abs(v2[2] - v1[2]);
-	const eps = 0.01;
-	if (dx > eps && dy < eps && dz < eps) return 'x';
-	if (dy > eps && dx < eps && dz < eps) return 'y';
-	if (dz > eps && dx < eps && dy < eps) return 'z';
-	return null;
-}
-
-/** Gap between the two witness lines on screen, treating the edge,
- *  the dim line, and the two witnesses as an irregular trapezoid.
- *  Picks the corner with the LARGER interior angle (the more-obtuse one),
- *  drops a perpendicular from that corner onto the OTHER witness's
- *  infinite line, and returns the length of that perpendicular. Ties go
- *  to W1's corner. The number captures the visible gap independent of
- *  where along the witness length you sample. Used by rule 11 to reject
- *  (edge, direction) pairs whose witnesses get closer than the WITNESS
- *  clearance. */
-export function witness_trapezoid_gap(
-	p1: { x: number; y: number },
-	p2: { x: number; y: number },
-	wit_1_dir: { x: number; y: number },
-	wit_2_dir: { x: number; y: number },
-): number {
-	const m1 = Math.hypot(wit_1_dir.x, wit_1_dir.y);
-	const m2 = Math.hypot(wit_2_dir.x, wit_2_dir.y);
-	if (m1 < 1e-9 || m2 < 1e-9) return Math.hypot(p2.x - p1.x, p2.y - p1.y);
-	const u1x = wit_1_dir.x / m1, u1y = wit_1_dir.y / m1;
-	const u2x = wit_2_dir.x / m2, u2y = wit_2_dir.y / m2;
-
-	const edx = p2.x - p1.x, edy = p2.y - p1.y;
-	const elen = Math.hypot(edx, edy);
-	if (elen < 1e-9) return 0;
-	const ex = edx / elen, ey = edy / elen;
-
-	// Cosines of the interior angles at each anchor. Larger angle = smaller cosine.
-	const cos_at_p1 =  ex * u1x +  ey * u1y;
-	const cos_at_p2 = -ex * u2x + -ey * u2y;
-
-	// Pick the corner with the larger angle. Tie → pick W1's corner (p1).
-	let obs_x: number, obs_y: number, u_obs_x: number, u_obs_y: number;
-	let oth_x: number, oth_y: number, u_oth_x: number, u_oth_y: number;
-	if (cos_at_p1 <= cos_at_p2) {
-		obs_x = p1.x; obs_y = p1.y; u_obs_x = u1x; u_obs_y = u1y;
-		oth_x = p2.x; oth_y = p2.y; u_oth_x = u2x; u_oth_y = u2y;
-	} else {
-		obs_x = p2.x; obs_y = p2.y; u_obs_x = u2x; u_obs_y = u2y;
-		oth_x = p1.x; oth_y = p1.y; u_oth_x = u1x; u_oth_y = u1y;
-	}
-
-	// Perpendicular to the obtuse witness (rotate 90°).
-	const perp_x = -u_obs_y, perp_y = u_obs_x;
-	// Solve `obs + s*perp = other + t*u_other` for s. Distance = |s|.
-	const Dx = oth_x - obs_x;
-	const Dy = oth_y - obs_y;
-	const det = perp_x * (-u_oth_y) - perp_y * (-u_oth_x);
-	if (Math.abs(det) < 1e-9) {
-		// Witnesses parallel — fall back to the perpendicular projection of D.
-		return Math.abs(perp_x * Dx + perp_y * Dy);
-	}
-	const s = (Dx * (-u_oth_y) - Dy * (-u_oth_x)) / det;
-	return Math.abs(s);
-}
-
-/** Convention: the renderer treats NEGATIVE projected winding as
- *  front-facing on screen (see `Render.ts:452` and others). This helper
- *  documents that convention in one place so the dimensioning code does
- *  not invert it by accident. */
-export function is_face_front_facing(winding: number): boolean {
-	return winding < 0;
-}
-
-/** Per the rule-1 direction definition: each silhouette edge has TWO
- *  possible directions, one for each of its two adjacent faces. The
- *  direction is perpendicular to the edge, lies in the face's plane,
- *  and points AWAY from the face's centroid — past the edge, into the
- *  clear space outside the part. This is the direction an engineering-
- *  drawing witness line actually extends. All vectors are in the SO's
- *  local frame; the caller transforms them to world coordinates as
- *  needed. Also reports the projected winding sign of each adjacent
- *  face (positive = front-facing on screen) so the search can bias
- *  toward placing dimensions on the visible side. */
-function two_face_outward_directions(
-	so: Smart_Object,
-	v1_idx: number,
-	v2_idx: number,
-	projected: Projected[],
-): Array<{ dir: vec3; is_front: boolean }> {
-	const faces = so.scene?.faces;
-	if (!faces) return [];
-	const adj = edges_to_adjacent_faces(faces, v1_idx, v2_idx);
-	if (adj.length !== 2) return [];
-	const v1 = so.vertices[v1_idx];
-	const v2 = so.vertices[v2_idx];
-	const edge_unit = vec3.subtract(vec3.create(), v2, v1);
-	if (vec3.length(edge_unit) < 1e-9) return [];
-	vec3.normalize(edge_unit, edge_unit);
-	const mid = vec3.scale(vec3.create(), vec3.add(vec3.create(), v1, v2), 0.5);
-
-	const out: Array<{ dir: vec3; is_front: boolean }> = [];
-	for (const fi of adj) {
-		const face = faces[fi];
-		const centroid = vec3.create();
-		for (const vi of face) vec3.add(centroid, centroid, so.vertices[vi]);
-		vec3.scale(centroid, centroid, 1 / face.length);
-		const offset = vec3.subtract(vec3.create(), centroid, mid);
-		const along = vec3.dot(offset, edge_unit);
-		const perp = vec3.scaleAndAdd(vec3.create(), offset, edge_unit, -along);
-		// Flip: the perp computed above points TOWARD the centroid (along
-		// the face surface, into the part body). Negate to point AWAY
-		// from the centroid — past the edge, into clear space outside.
-		vec3.negate(perp, perp);
-		if (vec3.length(perp) > 1e-6) {
-			vec3.normalize(perp, perp);
-			const is_front = is_face_front_facing(render.face_winding(face, projected));
-			out.push({ dir: perp, is_front });
-		}
-	}
-	return out;
-}
-
-function passes_camera_axis_filter(dir: vec3, world_matrix: mat4, cam_forward: vec3): boolean {
-	const origin = vec3.create();
-	const tip    = vec3.create();
-	vec3.transformMat4(tip, dir, world_matrix);
-	vec3.transformMat4(origin, vec3.create(), world_matrix);
-	const world_dir = vec3.create();
-	vec3.subtract(world_dir, tip, origin);
-	vec3.normalize(world_dir, world_dir);
-	return Math.abs(vec3.dot(world_dir, cam_forward)) <= k.dimensions.FORBIDDEN_CAM_DOT;
-}
-
-/** Compute the (witness length, slidable position) DOF ranges for one (edge, direction) pair. Returns null if any range collapses (line too short, off-canvas, projection breaks). */
-/** Discriminated outcome of `compute_pair_ranges`. The success case
- *  carries the pair; the failure cases carry a tag the diagnostic can
- *  count. Tags are coarser than the in-function checks: any projection
- *  or magnitude degeneracy lumps into 'projection_degenerate' because
- *  the user-visible cause is the same. */
-type Pair_Range_Result =
-	| { ok: true; pair: Viable_Pair }
-	| { ok: false; reason: 'projection_degenerate' | 'silhouette_too_far' | 'witness_range_empty' | 'slidable_range_empty' | 'witnesses_converge' };
-
-function compute_pair_ranges(args: {
-	so          : Smart_Object;
-	kind        : Label_Kind;
-	axis        : Axis_Name;
-	v1_idx      : number;
-	v2_idx      : number;
-	direction   : vec3;
-	is_front    : boolean;
-	world_matrix: mat4;
-	p1          : Projected;
-	p2          : Projected;
-	label_w_px  : number;
-	label_h_px  : number;
-	text        : string;
-}): Pair_Range_Result {
-	const { so, kind, axis, v1_idx, v2_idx, direction, is_front, world_matrix, p1, p2, label_w_px, label_h_px, text } = args;
-	const v1 = so.vertices[v1_idx];
-	const v2 = so.vertices[v2_idx];
-
-	// Defensive: the outer loop pre-checks edge length, but other callers
-	// may not. A sub-3-pixel projected edge counts as a degenerate
-	// projection here.
-	if (Math.hypot(p2.x - p1.x, p2.y - p1.y) < k.dimensions.WITNESS_CLEARANCE_PX) return { ok: false, reason: 'projection_degenerate' };
-
-	// Project the 1-unit-offset versions of the two edge endpoints to find
-	// the pixels-per-3D-unit conversion factor along this direction.
-	const v1_plus = vec3.add(vec3.create(), v1, direction);
-	const v2_plus = vec3.add(vec3.create(), v2, direction);
-	const p_v1w = render.project_vertex(v1_plus, world_matrix);
-	const p_v2w = render.project_vertex(v2_plus, world_matrix);
-	if (p_v1w.w < 0 || p_v2w.w < 0) return { ok: false, reason: 'projection_degenerate' };
-
-	const wlen1 = Math.hypot(p_v1w.x - p1.x, p_v1w.y - p1.y);
-	const wlen2 = Math.hypot(p_v2w.x - p2.x, p_v2w.y - p2.y);
-	if (wlen1 < 0.001 || wlen2 < 0.001) return { ok: false, reason: 'projection_degenerate' };
-	const avg_wlen_per_3d_unit = (wlen1 + wlen2) / 2;
-
-	// Witness direction on screen (unit vector along the projected witness ray).
-	const wit_dx = p_v1w.x - p1.x;
-	const wit_dy = p_v1w.y - p1.y;
-	const wit_screen_len = Math.hypot(wit_dx, wit_dy);
-	if (wit_screen_len < 0.001) return { ok: false, reason: 'projection_degenerate' };
-	const wit_ux = wit_dx / wit_screen_len;
-	const wit_uy = wit_dy / wit_screen_len;
-
-	// Midpoint of the projected edge, in screen pixels — the starting point
-	// of the dim line at zero push.
-	const midX_init = (p1.x + p2.x) / 2;
-	const midY_init = (p1.y + p2.y) / 2;
-
-	// Witness-length min: distance from edge midpoint along the witness
-	// direction to the furthest part-outline exit (across every rendered
-	// part's own hull), plus the half-rectangle footprint along the
-	// direction, plus the silhouette margin. Using per-part hulls instead
-	// of the combined hull means a label can sit in empty space BETWEEN
-	// parts — it only has to push past whichever part outlines the ray
-	// actually traverses, not the convex envelope of the whole scene.
-	let exit_t = 0;
-	const per_hull_exits: Array<{ so_id: string; t: number }> = [];
-	for (const ph of last_per_part_hulls) {
-		const t = ray_polygon_exit(midX_init, midY_init, wit_ux, wit_uy, ph.hull);
-		per_hull_exits.push({ so_id: ph.so_id, t });
-		if (t > exit_t) exit_t = t;
-	}
-	const rect_radius_along_arrow = (label_w_px * Math.abs(wit_ux) + label_h_px * Math.abs(wit_uy)) / 2;
-	const witness_length_min = exit_t + rect_radius_along_arrow + k.dimensions.SILHOUETTE_MARGIN_PX;
-	if (witness_length_min > k.dimensions.WITNESS_CAP_PX) {
-		last_silhouette_rejects.push({
-			so_name : so.name,
-			axis,
-			v1_idx, v2_idx,
-			wit_ux, wit_uy,
-			per_hull : per_hull_exits,
-			witness_length_min,
-			cap : k.dimensions.WITNESS_CAP_PX,
-		});
-		return { ok: false, reason: 'silhouette_too_far' };
-	}
-
-	// Witness-length max: smaller of 80 and the value at which the
-	// projected witness reaches 120 px. Linear approximation: at push P
-	// the projected witness is ~ P (because avg_wlen is the per-3D-unit
-	// projected length and P/avg_wlen is the 3D-distance equivalent, then
-	// times avg_wlen back to projection ≈ P; for short pushes the linear
-	// approximation is exact, for long ones perspective foreshortening
-	// makes the line shorter than P, so 120 px ≈ 120 px of push).
-	let witness_length_max = k.dimensions.WITNESS_CAP_PX;
-	if (witness_length_max > k.dimensions.WITNESS_LEN_MAX_PX) witness_length_max = k.dimensions.WITNESS_LEN_MAX_PX;
-	if (witness_length_max < witness_length_min) return { ok: false, reason: 'witness_range_empty' };
-
-	// Perspective convergence: world-parallel witness lines project to
-	// non-parallel screen rays when the edge is not parallel to the image
-	// plane. Treat the edge + dim line + two witnesses as an irregular
-	// trapezoid; measure the perpendicular gap from the wider-angle
-	// corner to the opposite witness. Reject pairs whose visible
-	// witnesses get closer than the WITNESS clearance.
-	const trap_gap = witness_trapezoid_gap(
-		{ x: p1.x, y: p1.y },
-		{ x: p2.x, y: p2.y },
-		{ x: p_v1w.x - p1.x, y: p_v1w.y - p1.y },
-		{ x: p_v2w.x - p2.x, y: p_v2w.y - p2.y },
-	);
-	if (trap_gap < k.dimensions.WITNESS_CLEARANCE_PX) return { ok: false, reason: 'witnesses_converge' };
-
-	// Slidable-position range, along the dim line (which runs from the
-	// projected witness-1 anchor to the projected witness-2 anchor).
-	const dim_line_length_px = Math.hypot(p2.x - p1.x, p2.y - p1.y);
-	const slidable_min = label_w_px / 2 - k.dimensions.SLIDABLE_OVERHANG_PX;
-	const slidable_max = dim_line_length_px + k.dimensions.SLIDABLE_OVERHANG_PX - label_w_px / 2;
-	if (slidable_max <= slidable_min) return { ok: false, reason: 'slidable_range_empty' };
-
-	return { ok: true, pair: {
-		so_id : so.id,
-		so_name : so.name,
-		kind,
-		axis,
-		edge_v1_idx : v1_idx,
-		edge_v2_idx : v2_idx,
-		direction : [direction[0], direction[1], direction[2]],
-		witness_length_min,
-		witness_length_max,
-		slidable_min,
-		slidable_max,
-		avg_wlen_per_3d_unit,
-		label_w_px,
-		label_h_px,
-		edge_p1_x : p1.x,
-		edge_p1_y : p1.y,
-		edge_p2_x : p2.x,
-		edge_p2_y : p2.y,
-		wit_ux,
-		wit_uy,
-		wit_1_per3d_x : p_v1w.x - p1.x,
-		wit_1_per3d_y : p_v1w.y - p1.y,
-		wit_2_per3d_x : p_v2w.x - p2.x,
-		wit_2_per3d_y : p_v2w.y - p2.y,
-		text,
-		dim_z : (p1.z + p2.z) / 2,
-		is_front_facing : is_front,
-	} };
-}
-
-// ─── Reachable regions and first-pass pair candidates (rule 24 first pass) ──────
-
-/** Group every viable pair by (so_id, axis) and compute the AABB of every
- *  reachable label-rectangle position across that label's full four-DOF
- *  range. Conservative: the AABB tightly contains every reachable position
- *  but is slightly looser than the actual region (which is the union of
- *  parallelograms, one per (edge, direction) pair). */
-export function compute_reachable_regions(): Reachable_Region[] {
-	const all_pairs = compute_viable_pairs();
-	const grouped = new Map<string, { so_id: string; so_name: string; kind: Label_Kind; axis: Axis_Name; pairs: Viable_Pair[] }>();
-	for (const p of all_pairs) {
-		const key = `${p.so_id}|${p.axis}`;
-		const g = grouped.get(key);
-		if (g) { g.pairs.push(p); }
-		else   { grouped.set(key, { so_id: p.so_id, so_name: p.so_name, kind: p.kind, axis: p.axis, pairs: [p] }); }
-	}
-	const result: Reachable_Region[] = [];
-	for (const g of grouped.values()) {
-		const aabb = aabb_of_reachable_positions(g.pairs);
-		if (!aabb) continue;
-		result.push({ so_id: g.so_id, so_name: g.so_name, kind: g.kind, axis: g.axis, ...aabb, pairs: g.pairs });
-	}
-	return result;
-}
-
-/** Union AABB across every viable pair on this label, of the
- *  label-rectangle position that pair allows. */
-function aabb_of_reachable_positions(pairs: readonly Viable_Pair[]): { x_min: number; x_max: number; y_min: number; y_max: number } | null {
-	let x_min = Infinity, x_max = -Infinity, y_min = Infinity, y_max = -Infinity;
-	for (const p of pairs) {
-		// Edge direction in screen space (unit vector p1 -> p2).
-		const edge_dx = p.edge_p2_x - p.edge_p1_x;
-		const edge_dy = p.edge_p2_y - p.edge_p1_y;
-		const edge_len = Math.hypot(edge_dx, edge_dy);
-		if (edge_len < 0.001) continue;
-		const edge_ux = edge_dx / edge_len;
-		const edge_uy = edge_dy / edge_len;
-		// At the four corners of (witness_length × slidable), the label
-		// CENTER sits at p1 + wit*W + edge_dir*S. The label RECTANGLE
-		// extends half_w to the left/right and half_h to the up/down.
-		const half_w = p.label_w_px / 2;
-		const half_h = p.label_h_px / 2;
-		for (const W of [p.witness_length_min, p.witness_length_max]) {
-			for (const S of [p.slidable_min, p.slidable_max]) {
-				const cx = p.edge_p1_x + p.wit_ux * W + edge_ux * S;
-				const cy = p.edge_p1_y + p.wit_uy * W + edge_uy * S;
-				if (cx - half_w < x_min) x_min = cx - half_w;
-				if (cx + half_w > x_max) x_max = cx + half_w;
-				if (cy - half_h < y_min) y_min = cy - half_h;
-				if (cy + half_h > y_max) y_max = cy + half_h;
-			}
-		}
-	}
-	if (!isFinite(x_min)) return null;
-	return { x_min, x_max, y_min, y_max };
-}
-
-/** Rule 24's first pass: find every pair of labels whose reachable
- *  regions overlap when expanded by 22 pixels. Uses a coarse grid so
- *  the cost is order of (label count) times log (label count), not
- *  label count squared. */
-export function compute_neighbour_pairs(): Candidate_Pair[] {
-	const regions = compute_reachable_regions();
-	return neighbour_pairs_from_regions(regions);
-}
-
-/** The cell-grid worker. Exposed for unit-tests; the real call site goes
- *  through `compute_neighbour_pairs`. */
-export function neighbour_pairs_from_regions(regions: readonly Reachable_Region[]): Candidate_Pair[] {
-	const cell = k.dimensions.NEIGHBOUR_GRID_CELL_PX;
-	const margin = k.dimensions.PAIR_CLEARANCE_PX;
-	// Map each cell to the set of region indices whose expanded AABB
-	// overlaps that cell.
-	const buckets = new Map<string, number[]>();
-	for (let i = 0; i < regions.length; i++) {
-		const r = regions[i];
-		const cx0 = Math.floor((r.x_min - margin) / cell);
-		const cx1 = Math.floor((r.x_max + margin) / cell);
-		const cy0 = Math.floor((r.y_min - margin) / cell);
-		const cy1 = Math.floor((r.y_max + margin) / cell);
-		for (let cx = cx0; cx <= cx1; cx++) {
-			for (let cy = cy0; cy <= cy1; cy++) {
-				const key = `${cx},${cy}`;
-				const arr = buckets.get(key);
-				if (arr) arr.push(i);
-				else     buckets.set(key, [i]);
-			}
-		}
-	}
-	// Every pair of regions sharing a cell is a candidate. De-dup by
-	// keeping a Set of "i,j" with i < j.
-	const seen = new Set<string>();
-	const pairs: Candidate_Pair[] = [];
-	for (const bucket of buckets.values()) {
-		for (let a = 0; a < bucket.length; a++) {
-			for (let b = a + 1; b < bucket.length; b++) {
-				const i = bucket[a], j = bucket[b];
-				const key = i < j ? `${i},${j}` : `${j},${i}`;
-				if (seen.has(key)) continue;
-				seen.add(key);
-				// Re-verify the expanded AABBs actually overlap (a label
-				// can share a cell with another but live in the opposite
-				// corner without overlapping the expanded box).
-				if (aabbs_overlap_with_margin(regions[i], regions[j], margin)) {
-					pairs.push({ a_so_id: regions[i].so_id, a_axis: regions[i].axis, b_so_id: regions[j].so_id, b_axis: regions[j].axis });
-				}
-			}
-		}
-	}
-	return pairs;
-}
-
-function aabbs_overlap_with_margin(a: Reachable_Region, b: Reachable_Region, margin: number): boolean {
-	return !(a.x_max + margin < b.x_min || b.x_max + margin < a.x_min ||
-	         a.y_max + margin < b.y_min || b.y_max + margin < a.y_min);
-}
-
-// ─── Tier 2 — closed-form rectangle separation (rule 24 second pass) ──────────
-
-/** Can the two viable pairs achieve at least `clearance_px` of
- *  rectangle-to-rectangle clearance, given each label's center can move
- *  anywhere inside its per-pair (witness_length × slidable_position)
- *  region? Conservative AABB check — returns true if the rectangles can
- *  be axis-aligned-separated. Will sometimes return false on pairs that
- *  could diagonally separate; the safe direction (keeps borderline pairs
- *  in the conflict graph instead of dropping them prematurely). */
-export function pair_can_separate(pair_a: Viable_Pair, pair_b: Viable_Pair, clearance_px = k.dimensions.PAIR_CLEARANCE_PX): boolean {
-	const a = center_aabb_of_pair(pair_a);
-	const b = center_aabb_of_pair(pair_b);
-	if (!a || !b) return false;
-	const wA = pair_a.label_w_px, hA = pair_a.label_h_px;
-	const wB = pair_b.label_w_px, hB = pair_b.label_h_px;
-	// Max achievable centroid distance along each axis, minus the half-rectangle
-	// extents along that axis, gives the max achievable gap.
-	const max_x_gap = Math.max(b.x_max - a.x_min, a.x_max - b.x_min) - (wA + wB) / 2;
-	if (max_x_gap >= clearance_px) return true;
-	const max_y_gap = Math.max(b.y_max - a.y_min, a.y_max - b.y_min) - (hA + hB) / 2;
-	if (max_y_gap >= clearance_px) return true;
-	return false;
-}
-
-/** Center AABB for a single pair — every label-center position the
- *  (witness_length × slidable_position) range allows. */
-function center_aabb_of_pair(p: Viable_Pair): { x_min: number; x_max: number; y_min: number; y_max: number } | null {
-	const edge_dx = p.edge_p2_x - p.edge_p1_x;
-	const edge_dy = p.edge_p2_y - p.edge_p1_y;
-	const edge_len = Math.hypot(edge_dx, edge_dy);
-	if (edge_len < 0.001) return null;
-	const edge_ux = edge_dx / edge_len;
-	const edge_uy = edge_dy / edge_len;
-	let x_min = Infinity, x_max = -Infinity, y_min = Infinity, y_max = -Infinity;
-	for (const W of [p.witness_length_min, p.witness_length_max]) {
-		for (const S of [p.slidable_min, p.slidable_max]) {
-			const cx = p.edge_p1_x + p.wit_ux * W + edge_ux * S;
-			const cy = p.edge_p1_y + p.wit_uy * W + edge_uy * S;
-			if (cx < x_min) x_min = cx;
-			if (cx > x_max) x_max = cx;
-			if (cy < y_min) y_min = cy;
-			if (cy > y_max) y_max = cy;
-		}
-	}
-	return { x_min, x_max, y_min, y_max };
-}
-
-/** Walk every (pair_A, pair_B) combination. If any combination lets the
- *  rectangles separate by `clearance_px`, the two LABELS are not in
- *  conflict no matter what the search picks. */
-export function labels_can_separate_via_some_combination(
-	pairs_a: readonly Viable_Pair[],
-	pairs_b: readonly Viable_Pair[],
-	clearance_px = k.dimensions.PAIR_CLEARANCE_PX,
-): boolean {
-	for (const a of pairs_a) {
-		for (const b of pairs_b) {
-			if (pair_can_separate(a, b, clearance_px)) return true;
-		}
-	}
-	return false;
-}
-
-/** Filter the first-pass candidates through the second pass: drop any
- *  whose labels can separate via some combination. The survivors are the
- *  "stubborn" pairs that enter the conflict graph (rule 24 third pass). */
-export function compute_tier2_survivors(): Candidate_Pair[] {
-	const regions = compute_reachable_regions();
-	const region_index = new Map<string, Reachable_Region>();
-	for (const r of regions) region_index.set(`${r.so_id}|${r.axis}`, r);
-
-	const first_pass = neighbour_pairs_from_regions(regions);
-	const survivors: Candidate_Pair[] = [];
-	for (const c of first_pass) {
-		const a = region_index.get(`${c.a_so_id}|${c.a_axis}`);
-		const b = region_index.get(`${c.b_so_id}|${c.b_axis}`);
-		if (!a || !b) continue;
-		if (!labels_can_separate_via_some_combination(a.pairs, b.pairs)) {
-			survivors.push(c);
-		}
-	}
-	return survivors;
-}
-
-// ─── Conflict graph (rule 24 third pass + rule 10 conflict definition) ─────────
-
-/** A stable string identifier for a label — `${so_id}|${axis}`. */
-export type Label_Key = string;
-
-export function label_key(so_id: string, axis: Axis_Name): Label_Key {
-	return `${so_id}|${axis}`;
-}
-
-/** Edges between labels that are in true conflict — pairs that cannot
- *  separate by 33 pixels no matter which (edge, direction, witness
- *  length, slidable position) combination the search picks. */
-export class Conflict_Graph {
-	private edges_set : Set<string>                = new Set();
-	private neighbours_of: Map<Label_Key, Set<Label_Key>> = new Map();
-
-	add_edge(a: Label_Key, b: Label_Key): void {
-		if (a === b) return;
-		const key = a < b ? `${a}|${b}` : `${b}|${a}`;
-		if (this.edges_set.has(key)) return;
-		this.edges_set.add(key);
-		this.add_neighbour(a, b);
-		this.add_neighbour(b, a);
-	}
-
-	has_edge(a: Label_Key, b: Label_Key): boolean {
-		const key = a < b ? `${a}|${b}` : `${b}|${a}`;
-		return this.edges_set.has(key);
-	}
-
-	neighbours(label: Label_Key): Label_Key[] {
-		const set = this.neighbours_of.get(label);
-		return set ? Array.from(set) : [];
-	}
-
-	conflict_count(label: Label_Key): number {
-		return this.neighbours_of.get(label)?.size ?? 0;
-	}
-
-	all_edges(): { a: Label_Key; b: Label_Key }[] {
-		const out: { a: Label_Key; b: Label_Key }[] = [];
-		for (const key of this.edges_set) {
-			const i = key.indexOf('|', key.indexOf('|') + 1);  // skip past so_id|axis to find the splitter
-			// Edge keys are `${a_so_id}|${a_axis}|${b_so_id}|${b_axis}` — split into two label keys by the middle pipe.
-			const parts = key.split('|');
-			out.push({ a: `${parts[0]}|${parts[1]}`, b: `${parts[2]}|${parts[3]}` });
-			void i;
-		}
-		return out;
-	}
-
-	size(): number {
-		return this.edges_set.size;
-	}
-
-	private add_neighbour(a: Label_Key, b: Label_Key): void {
-		let set = this.neighbours_of.get(a);
-		if (!set) { set = new Set(); this.neighbours_of.set(a, set); }
-		set.add(b);
-	}
-}
-
-/** Build the conflict graph from the current scene. Walks every pair
- *  that survived the second pass and adds it as an edge. */
-export function build_conflict_graph(): Conflict_Graph {
-	const graph = new Conflict_Graph();
-	for (const c of compute_tier2_survivors()) {
-		graph.add_edge(label_key(c.a_so_id, c.a_axis), label_key(c.b_so_id, c.b_axis));
-	}
-	return graph;
-}
-
-// ─── Greedy seed (rule 23 greedy step) ─────────────────────────────────────────
-
-/** The four-DOF tuple a label gets committed to by the greedy seed. */
-export type Greedy_Placement = {
-	so_id            : string;
-	so_name          : string;
-	kind             : Label_Kind;
-	axis             : Axis_Name;
-	pair             : Viable_Pair;
-	witness_length   : number;
-	slidable_position: number;
-	center_x         : number;
-	center_y         : number;
-	label_w_px       : number;
-	label_h_px       : number;
-	/** Minimum distance from this label's rectangle to every previously-placed label's rectangle. Infinity when this is the first label. */
-	min_clearance    : number;
-};
-
-/** Pure greedy seed — testable without a scene. `locked_placements` is
- *  the set of labels carried over from the previous render that should
- *  stay exactly where they are. They are added to `placed` up front so
- *  every non-locked label sees them as obstacles, and their regions are
- *  skipped during the search. */
-export function greedy_seed_for_regions(
-	regions: readonly Reachable_Region[],
-	ancestry: ReadonlyMap<string, string>,
-	locked_placements: readonly Greedy_Placement[] = [],
-): Greedy_Placement[] {
-	const locked_keys = new Set<Label_Key>();
-	for (const p of locked_placements) locked_keys.add(label_key(p.so_id, p.axis));
-	const placed: Greedy_Placement[] = [...locked_placements];
-	const free_regions = regions.filter(r => !locked_keys.has(label_key(r.so_id, r.axis)));
-	const ordered = order_by_constrainedness(free_regions, ancestry);
-	for (const region of ordered) {
-		const placement = pick_best_placement(region, placed);
-		if (placement) placed.push(placement);
-	}
-	return placed;
-}
-
-/** Most-constrained-first label ordering. Ties broken by alphabetical
- *  part ancestry path (rule 21 catch-all). Within a label, the per-axis
- *  tie-break is the axis letter — stable and deterministic. */
-export function order_by_constrainedness(
-	regions: readonly Reachable_Region[],
-	ancestry: ReadonlyMap<string, string>,
-): Reachable_Region[] {
-	return [...regions].sort((a, b) => {
-		if (a.pairs.length !== b.pairs.length) return a.pairs.length - b.pairs.length;
-		const a_path = ancestry.get(a.so_id) ?? '';
-		const b_path = ancestry.get(b.so_id) ?? '';
-		if (a_path !== b_path) return a_path < b_path ? -1 : 1;
-		return a.axis < b.axis ? -1 : a.axis > b.axis ? 1 : 0;
-	});
-}
-
-/** Walk every viable pair on this label; pick the one whose best 5×5
- *  grid sample has the largest minimum clearance from already-placed
- *  rectangles. */
-function pick_best_placement(region: Reachable_Region, placed: readonly Greedy_Placement[]): Greedy_Placement | null {
-	// Hard front-face preference (rule 10): try every pair whose face is
-	// front-facing on screen first. Only if NO front-facing pair yields a
-	// viable candidate, fall back to the back-facing pairs.
-	const front_pairs = region.pairs.filter(p => p.is_front_facing);
-	const back_pairs  = region.pairs.filter(p => !p.is_front_facing);
-	for (const group of [front_pairs, back_pairs]) {
-		let best: Greedy_Placement | null = null;
-		for (const pair of group) {
-			const candidate = best_candidate_in_pair(pair, placed);
-			if (!candidate) continue;
-			if (!best || candidate.min_clearance > best.min_clearance) {
-				best = candidate;
-			}
-		}
-		if (best) return best;
-	}
-	return null;
-}
-
-/** 5×5 grid sample of (witness_length, slidable_position) within the
- *  pair's ranges. Returns the candidate with the largest effective score
- *  (raw clearance minus overhang penalty — see rule 10's between-the-
- *  witnesses preference). The stored `min_clearance` is the RAW value;
- *  the score is used only to rank candidates inside this function. */
-export function best_candidate_in_pair(
-	pair: Viable_Pair,
-	placed: readonly Greedy_Placement[],
-	hull: ReadonlyArray<{ x: number; y: number }> = last_hull,
-): Greedy_Placement | null {
-	const edge_dx = pair.edge_p2_x - pair.edge_p1_x;
-	const edge_dy = pair.edge_p2_y - pair.edge_p1_y;
-	const edge_len = Math.hypot(edge_dx, edge_dy);
-	if (edge_len < 0.001) return null;
-	const edge_ux = edge_dx / edge_len;
-	const edge_uy = edge_dy / edge_len;
-
-	// Forbidden zones around each witness anchor: rule 1 item 4 says the
-	// slidable range excludes positions within Y pixels of an anchor;
-	// rule 10 says the label rectangle must never cover its witness
-	// lines. The combined rule: forbidden when the label rectangle
-	// reaches within Y of an anchor, which expands the zone by half the
-	// label width on each side of the anchor.
-	const Y_BUF = k.dimensions.WITNESS_ANCHOR_BUFFER_PX;
-	const half_w = pair.label_w_px / 2;
-	const w1_forb_lo = -Y_BUF - half_w;
-	const w1_forb_hi =  Y_BUF + half_w;
-	const w2_forb_lo = edge_len - Y_BUF - half_w;
-	const w2_forb_hi = edge_len + Y_BUF + half_w;
-
-	// Rule 10 scoring: between-positions get a bonus equal to the room
-	// they have between the witnesses (witness distance minus label
-	// width). Overhang positions get no bonus. Inside between-positions
-	// a parabolic centering penalty (zero at midpoint, X at witness
-	// anchors) breaks ties toward the center.
-	const between_bonus = Math.max(0, edge_len - pair.label_w_px);
-	const midpoint = edge_len / 2;
-	const half_dl  = edge_len / 2;
-
-	let best: Greedy_Placement | null = null;
-	let best_score = -Infinity;
-	const W_step = (pair.witness_length_max - pair.witness_length_min) / Math.max(1, k.dimensions.GRID_RESOLUTION - 1);
-	const S_step = (pair.slidable_max - pair.slidable_min) / Math.max(1, k.dimensions.GRID_RESOLUTION - 1);
-
-	for (let i = 0; i < k.dimensions.GRID_RESOLUTION; i++) {
-		const W = pair.witness_length_min + W_step * i;
-		for (let j = 0; j < k.dimensions.GRID_RESOLUTION; j++) {
-			const S = pair.slidable_min + S_step * j;
-			// Skip slidable positions that put the label rectangle over
-			// or within Y pixels of either witness anchor.
-			const forbidden_w1 = S >= w1_forb_lo && S <= w1_forb_hi;
-			const forbidden_w2 = S >= w2_forb_lo && S <= w2_forb_hi;
-			if (forbidden_w1 || forbidden_w2) continue;
-
-			const cx = pair.edge_p1_x + pair.wit_ux * W + edge_ux * S;
-			const cy = pair.edge_p1_y + pair.wit_uy * W + edge_uy * S;
-
-			// Rule 9 enforcement: skip candidates whose label rectangle
-			// is inside the silhouette outline or within 15 pixels of
-			// any edge of it. The witness-length minimum only checks
-			// clearance along the witness direction at the edge midpoint;
-			// the slidable can move the label sideways into a part of
-			// the silhouette the minimum didn't see.
-			if (hull.length >= 3) {
-				const hw = pair.label_w_px / 2;
-				const hh = pair.label_h_px / 2;
-				const corners: Array<[number, number]> = [
-					[cx - hw, cy - hh],
-					[cx + hw, cy - hh],
-					[cx + hw, cy + hh],
-					[cx - hw, cy + hh],
-				];
-				let too_close = false;
-				for (const [px, py] of corners) {
-					const push = push_outside_hull(px, py, hull as Array<{ x: number; y: number }>, k.dimensions.SILHOUETTE_MARGIN_PX);
-					if (push.dx !== 0 || push.dy !== 0) { too_close = true; break; }
-				}
-				if (too_close) continue;
-			}
-
-			const min_clearance = min_distance_to_placed(cx, cy, pair.label_w_px, pair.label_h_px, placed);
-
-			// Cap the clearance contribution to the score so the between
-			// bonus and the centering parabola can still differentiate
-			// samples when the raw clearance is huge (or infinite, which
-			// it is for the first label placed when no others have been
-			// seated yet). Without this cap, every safe sample with
-			// no nearby labels would tie at infinity and iteration
-			// order would pick the leftmost — defeating the centering.
-			const clearance_for_score = Math.min(min_clearance, k.dimensions.CLEARANCE_SCORE_CAP_PX);
-
-			const is_between = S > w1_forb_hi && S < w2_forb_lo;
-			let score = clearance_for_score;
-			// Front-face bias: when the adjacent face whose plane this
-			// dim line lies in points toward the camera, the dimension
-			// sits on the visible side of the part. Give it a bonus so
-			// the search prefers it over the equivalent back-face choice.
-			if (pair.is_front_facing) score += k.dimensions.FRONT_FACE_BONUS;
-			// Witness-shortness bias: penalise pushing the dim line
-			// further from the part than the silhouette requires. Without
-			// this the search picks the longest witness when clearance is
-			// otherwise equal, and labels float far from their part.
-			score -= k.dimensions.WITNESS_LENGTH_PENALTY_PER_PX * (W - pair.witness_length_min);
-			if (is_between) {
-				score += between_bonus;
-				if (half_dl > 0) {
-					const norm_d = Math.abs(S - midpoint) / half_dl;
-					score -= k.dimensions.CENTERING_MAX_PX * norm_d * norm_d;
-				}
-			}
-			if (score > best_score) {
-				best_score = score;
-				best = {
-					so_id            : pair.so_id,
-					so_name          : pair.so_name,
-					kind             : pair.kind,
-					axis             : pair.axis,
-					pair,
-					witness_length   : W,
-					slidable_position: S,
-					center_x         : cx,
-					center_y         : cy,
-					label_w_px       : pair.label_w_px,
-					label_h_px       : pair.label_h_px,
-					min_clearance,
-				};
-			}
-		}
-	}
-	return best;
-}
-
-/** Minimum rectangle-to-rectangle distance from a candidate label
- *  rectangle (centered at cx/cy with size w/h) to every already-placed
- *  label's rectangle. Returns Infinity when no labels are placed yet. */
-export function min_distance_to_placed(cx: number, cy: number, w: number, h: number, placed: readonly Greedy_Placement[]): number {
-	if (placed.length === 0) return Infinity;
-	const half_w = w / 2, half_h = h / 2;
-	let min = Infinity;
-	for (const p of placed) {
-		const p_half_w = p.label_w_px / 2, p_half_h = p.label_h_px / 2;
-		const dx = Math.max(0, Math.abs(cx - p.center_x) - half_w - p_half_w);
-		const dy = Math.max(0, Math.abs(cy - p.center_y) - half_h - p_half_h);
-		const d = Math.hypot(dx, dy);
-		if (d < min) min = d;
-	}
-	return min;
-}
-
-// ─── Retry pass (rule 23 retry step) ────────────────────────────────────────
-
-/** Walk every label still in a true conflict after the greedy seed.
- *  Try single-label switches first; if no single switch clears the
- *  conflict, look one step further for a paired swap. Cap at two labels
- *  moving. The input is mutated in place; the same array is returned
- *  for convenience. `locked_keys` names labels that may not be moved —
- *  they still count as obstacles, but switches and swaps skip them. */
-export function retry_pass(
-	placed: Greedy_Placement[],
-	regions: readonly Reachable_Region[],
-	locked_keys: ReadonlySet<Label_Key> = new Set(),
-): Greedy_Placement[] {
-	const region_index = new Map<string, Reachable_Region>();
-	for (const r of regions) region_index.set(label_key(r.so_id, r.axis), r);
-
-	const conflicts = find_conflicts_in_placement(placed);
-	for (const [i, j] of conflicts) {
-		// The labels may already have been moved by an earlier retry —
-		// re-check whether this pair is still in conflict before trying.
-		if (placed_pair_distance(placed[i], placed[j]) >= k.dimensions.PAIR_CLEARANCE_PX) continue;
-		const i_locked = locked_keys.has(label_key(placed[i].so_id, placed[i].axis));
-		const j_locked = locked_keys.has(label_key(placed[j].so_id, placed[j].axis));
-		if (!i_locked && try_single_switch(i, placed, region_index)) continue;
-		if (!j_locked && try_single_switch(j, placed, region_index)) continue;
-		if (!i_locked && !j_locked) try_paired_swap(i, j, placed, region_index);
-	}
-	return placed;
-}
-
-/** Every pair of placed labels closer than 33 pixels rectangle-to-rectangle. */
-export function find_conflicts_in_placement(placed: readonly Greedy_Placement[]): [number, number][] {
-	const out: [number, number][] = [];
-	for (let i = 0; i < placed.length; i++) {
-		for (let j = i + 1; j < placed.length; j++) {
-			if (placed_pair_distance(placed[i], placed[j]) < k.dimensions.PAIR_CLEARANCE_PX) {
-				out.push([i, j]);
-			}
-		}
-	}
-	return out;
-}
-
-/** Rectangle-to-rectangle distance between two placed labels. */
-function placed_pair_distance(a: Greedy_Placement, b: Greedy_Placement): number {
-	const dx = Math.max(0, Math.abs(a.center_x - b.center_x) - (a.label_w_px + b.label_w_px) / 2);
-	const dy = Math.max(0, Math.abs(a.center_y - b.center_y) - (a.label_h_px + b.label_h_px) / 2);
-	return Math.hypot(dx, dy);
-}
-
-/** Try every unused viable pair on this label in best-clearance order.
- *  Accept the first whose best candidate clears 33 pixels from every
- *  other placed label. */
-function try_single_switch(idx: number, placed: Greedy_Placement[], region_index: Map<string, Reachable_Region>): boolean {
-	const current = placed[idx];
-	const region = region_index.get(label_key(current.so_id, current.axis));
-	if (!region) return false;
-	const others = placed.filter((_, k) => k !== idx);
-
-	const scored: { best: Greedy_Placement | null }[] = [];
-	for (const pair of region.pairs) {
-		if (pair === current.pair) continue;
-		scored.push({ best: best_candidate_in_pair(pair, others) });
-	}
-	scored.sort((a, b) => (b.best?.min_clearance ?? -Infinity) - (a.best?.min_clearance ?? -Infinity));
-
-	for (const { best } of scored) {
-		if (best && best.min_clearance >= k.dimensions.PAIR_CLEARANCE_PX) {
-			placed[idx] = best;
-			return true;
-		}
-	}
-	return false;
-}
-
-/** Try every (unused pair on A) × (unused pair on B) combination.
- *  Accept the first where both labels clear 33 pixels from everything
- *  including each other. */
-function try_paired_swap(i: number, j: number, placed: Greedy_Placement[], region_index: Map<string, Reachable_Region>): boolean {
-	const a = placed[i], b = placed[j];
-	const region_a = region_index.get(label_key(a.so_id, a.axis));
-	const region_b = region_index.get(label_key(b.so_id, b.axis));
-	if (!region_a || !region_b) return false;
-
-	const others = placed.filter((_, k) => k !== i && k !== j);
-
-	for (const pair_a of region_a.pairs) {
-		if (pair_a === a.pair) continue;
-		const best_a = best_candidate_in_pair(pair_a, others);
-		if (!best_a || best_a.min_clearance < k.dimensions.PAIR_CLEARANCE_PX) continue;
-
-		for (const pair_b of region_b.pairs) {
-			if (pair_b === b.pair) continue;
-			const best_b = best_candidate_in_pair(pair_b, [...others, best_a]);
-			if (!best_b || best_b.min_clearance < k.dimensions.PAIR_CLEARANCE_PX) continue;
-			placed[i] = best_a;
-			placed[j] = best_b;
-			return true;
-		}
-	}
-	return false;
-}
-
-// ─── Persistence with 2-pixel tolerance (rule 19) ─────────────────────────────
-
-const STRICT_PAIRWISE_PX       = k.dimensions.PAIR_CLEARANCE_PX;
-const TOL_PAIRWISE_PX          = k.dimensions.PAIR_CLEARANCE_PX - k.dimensions.PERSISTENCE_TOLERANCE_PX;
-
-/** A label's chosen four-DOF values from the previous render. The pair
- *  identity is reconstructed by matching `edge_v1_idx`, `edge_v2_idx`,
- *  and `direction` against the current render's regions. */
-export type Persisted_Placement = {
-	so_id            : string;
-	so_name          : string;
-	axis             : Axis_Name;
-	edge_v1_idx      : number;
-	edge_v2_idx      : number;
-	direction        : [number, number, number];
-	witness_length   : number;
-	slidable_position: number;
-	label_w_px       : number;
-	label_h_px       : number;
-};
-
-/** Outcome of the viability check at the start of a render. Either the
- *  search can be skipped entirely (all labels still viable within the
- *  2-pixel tolerance), OR a cold-run search is needed with some labels
- *  LOCKED (still strict-viable) and others FREE (to be re-placed). */
-export type Viability_Result =
-	| { kind: 'skip_search'; placements: Greedy_Placement[]; any_slack_used: boolean }
-	| { kind: 'cold_run'; locked: Greedy_Placement[]; free_label_keys: Label_Key[] };
-
-/** Run rule 19's viability checks for every persisted label against the
- *  current render's regions. Returns either a skip-search outcome (all
- *  labels OK) or a cold-run outcome (with the still-viable labels marked
- *  as locked obstacles for the search). */
-export function compute_viability(
-	persisted_list: readonly Persisted_Placement[],
-	regions: readonly Reachable_Region[],
-): Viability_Result {
-	type Status = {
-		persisted        : Persisted_Placement;
-		re_projected     : Greedy_Placement | null;
-		passes_strict    : boolean;
-		passes_tolerance : boolean;
-	};
-
-	const region_index = new Map<string, Reachable_Region>();
-	for (const r of regions) region_index.set(label_key(r.so_id, r.axis), r);
-
-	const statuses: Status[] = [];
-	for (const persisted of persisted_list) {
-		const region = region_index.get(label_key(persisted.so_id, persisted.axis));
-		if (!region) {
-			statuses.push({ persisted, re_projected: null, passes_strict: false, passes_tolerance: false });
-			continue;
-		}
-		const pair = find_matching_pair(persisted, region);
-		if (!pair) {
-			statuses.push({ persisted, re_projected: null, passes_strict: false, passes_tolerance: false });
-			continue;
-		}
-		const re_proj = re_project_persisted(persisted, pair);
-		const w = persisted.witness_length;
-		const s = persisted.slidable_position;
-		const strict_w = (w >= pair.witness_length_min) && (w <= pair.witness_length_max);
-		const strict_s = (s >= pair.slidable_min) && (s <= pair.slidable_max);
-		const tol_w = (w >= pair.witness_length_min - k.dimensions.PERSISTENCE_TOLERANCE_PX) && (w <= pair.witness_length_max + k.dimensions.PERSISTENCE_TOLERANCE_PX);
-		const tol_s = (s >= pair.slidable_min - k.dimensions.PERSISTENCE_TOLERANCE_PX) && (s <= pair.slidable_max + k.dimensions.PERSISTENCE_TOLERANCE_PX);
-		statuses.push({
-			persisted,
-			re_projected: re_proj,
-			passes_strict: strict_w && strict_s,
-			passes_tolerance: tol_w && tol_s,
-		});
-	}
-
-	// Pairwise clearance — every label must clear every other by 33 px (strict) or 31 (tolerance).
-	for (let i = 0; i < statuses.length; i++) {
-		const a = statuses[i];
-		if (!a.re_projected) continue;
-		for (let j = i + 1; j < statuses.length; j++) {
-			const b = statuses[j];
-			if (!b.re_projected) continue;
-			const d = placed_pair_distance(a.re_projected, b.re_projected);
-			if (d < STRICT_PAIRWISE_PX) { a.passes_strict = false; b.passes_strict = false; }
-			if (d < TOL_PAIRWISE_PX)    { a.passes_tolerance = false; b.passes_tolerance = false; }
-		}
-	}
-
-	// Vacuous-truth guard: `every` over an empty array returns true. With
-	// nothing remembered yet (the first render after scene load), that
-	// would mistakenly say "all good, skip the search" and hand back an
-	// empty layout — so nothing ever gets drawn. Require at least one
-	// remembered label before considering a skip.
-	const all_tolerance = persisted_list.length > 0 && statuses.every(s => s.re_projected !== null && s.passes_tolerance);
-	if (all_tolerance) {
-		const any_slack = statuses.some(s => s.passes_tolerance && !s.passes_strict);
-		return {
-			kind: 'skip_search',
-			placements: statuses.map(s => s.re_projected!).filter(p => p !== null),
-			any_slack_used: any_slack,
-		};
-	}
-
-	const locked: Greedy_Placement[] = [];
-	const free_label_keys: Label_Key[] = [];
-	for (const s of statuses) {
-		if (s.passes_strict && s.re_projected) locked.push(s.re_projected);
-		else                                   free_label_keys.push(label_key(s.persisted.so_id, s.persisted.axis));
-	}
-	return { kind: 'cold_run', locked, free_label_keys };
-}
-
-/** Holds the per-label remembered four-DOF values between renders, plus
- *  the drift-safety counter. */
-export class Persistence {
-	private remembered = new Map<Label_Key, Persisted_Placement>();
-	private slack_streak = 0;
-
-	remember(p: Greedy_Placement): void {
-		this.remembered.set(label_key(p.so_id, p.axis), {
-			so_id            : p.so_id,
-			so_name          : p.so_name,
-			axis             : p.axis,
-			edge_v1_idx      : p.pair.edge_v1_idx,
-			edge_v2_idx      : p.pair.edge_v2_idx,
-			direction        : p.pair.direction,
-			witness_length   : p.witness_length,
-			slidable_position: p.slidable_position,
-			label_w_px       : p.label_w_px,
-			label_h_px       : p.label_h_px,
-		});
-	}
-
-	remember_all(placements: readonly Greedy_Placement[]): void {
-		for (const p of placements) this.remember(p);
-	}
-
-	forget(key: Label_Key): void { this.remembered.delete(key); }
-	clear(): void { this.remembered.clear(); this.slack_streak = 0; }
-	has(key: Label_Key): boolean { return this.remembered.has(key); }
-	size(): number { return this.remembered.size; }
-
-	get_all(): Persisted_Placement[] { return Array.from(this.remembered.values()); }
-
-	/** Bump the drift counter after a slack-using search-skipped render.
-	 *  After two such renders, the next call to should_force_cold_run() returns
-	 *  true and the streak resets. */
-	note_slack_use(): void { this.slack_streak += 1; }
-
-	/** Reset the streak. Called after any cold-run render, since cold-runs
-	 *  re-establish strict viability. */
-	clear_slack_streak(): void { this.slack_streak = 0; }
-
-	/** Did rule 19's drift-safety condition fire? */
-	should_force_cold_run(): boolean { return this.slack_streak >= 2; }
-}
-
-function find_matching_pair(persisted: Persisted_Placement, region: Reachable_Region): Viable_Pair | null {
-	for (const p of region.pairs) {
-		if (p.edge_v1_idx !== persisted.edge_v1_idx) continue;
-		if (p.edge_v2_idx !== persisted.edge_v2_idx) continue;
-		const dx = Math.abs(p.direction[0] - persisted.direction[0]);
-		const dy = Math.abs(p.direction[1] - persisted.direction[1]);
-		const dz = Math.abs(p.direction[2] - persisted.direction[2]);
-		if (dx < 0.001 && dy < 0.001 && dz < 0.001) return p;
-	}
-	return null;
-}
-
-/** Project every persisted placement onto the current render's regions
- *  without re-running the search. Used by the layout-freeze path when a
- *  dimension is being edited. Persisted entries whose region or pair no
- *  longer exists are silently dropped from this render. */
-export function re_project_persisted_list(
-	persisted_list: readonly Persisted_Placement[],
-	regions: readonly Reachable_Region[],
-): Greedy_Placement[] {
-	const region_index = new Map<string, Reachable_Region>();
-	for (const r of regions) region_index.set(label_key(r.so_id, r.axis), r);
-	const out: Greedy_Placement[] = [];
-	for (const p of persisted_list) {
-		const r = region_index.get(label_key(p.so_id, p.axis));
-		if (!r) continue;
-		const pair = find_matching_pair(p, r);
-		if (!pair) continue;
-		out.push(re_project_persisted(p, pair));
-	}
-	return out;
-}
-
-function re_project_persisted(persisted: Persisted_Placement, pair: Viable_Pair): Greedy_Placement {
-	const edge_dx = pair.edge_p2_x - pair.edge_p1_x;
-	const edge_dy = pair.edge_p2_y - pair.edge_p1_y;
-	const edge_len = Math.hypot(edge_dx, edge_dy);
-	const edge_ux = edge_len > 0.001 ? edge_dx / edge_len : 0;
-	const edge_uy = edge_len > 0.001 ? edge_dy / edge_len : 0;
-	const cx = pair.edge_p1_x + pair.wit_ux * persisted.witness_length + edge_ux * persisted.slidable_position;
-	const cy = pair.edge_p1_y + pair.wit_uy * persisted.witness_length + edge_uy * persisted.slidable_position;
-	return {
-		so_id            : persisted.so_id,
-		so_name          : persisted.so_name,
-		kind             : pair.kind,
-		axis             : persisted.axis,
-		pair,
-		witness_length   : persisted.witness_length,
-		slidable_position: persisted.slidable_position,
-		center_x         : cx,
-		center_y         : cy,
-		label_w_px       : persisted.label_w_px,
-		label_h_px       : persisted.label_h_px,
-		min_clearance    : 0,
-	};
-}
-
-// ─── Drop policy (rule 12) ─────────────────────────────────────────────────────
-
-/** Reason a label was dropped. Mirrors the three drop conditions in rule 12. */
-export type Drop_Reason = 'no_viable_pair' | 'remaining_conflict' | 'off_canvas' | 'duplicate_text';
-
-/** One dropped label and the reason it went. `conflict_count_at_drop` is
- *  populated for the `remaining_conflict` reason — it's the count of other
- *  labels this one was in conflict with at the moment it was selected to
- *  go. For the other two reasons it's 0. */
-export type Drop_Entry = {
-	so_id : string;
-	so_name : string;
-	axis : Axis_Name;
-	reason : Drop_Reason;
-	conflict_count_at_drop : number;
-};
-
-/** Output of the drop policy. `kept_max_conflict` should always be 0 by
- *  construction — every conflict was resolved by dropping the most
- *  conflicted label. The field exists so the drop-policy test can verify
- *  the policy didn't keep any conflict-carrying labels. */
-export type Drop_Report = {
-	dropped : Drop_Entry[];
-	kept_max_conflict : number;
-};
-
-/** Rule 4 dedup. Two labels are duplicates when they have the same text
- *  AND their measured edges are parallel in 3D. The kept one is whichever
- *  has been remembered between renders the longest; on a first render with
- *  neither remembered, the alphabetical-by-ancestry-path tie-break makes
- *  the result deterministic across runs.
- *
- *  Mutates `placed` in place. Returns a list of dropped labels with
- *  reason `'duplicate_text'`. The caller folds these into the drop report.
- */
-export function drop_duplicates(
-	placed: Greedy_Placement[],
-	persisted_before: ReadonlySet<Label_Key>,
-	world_dirs: ReadonlyMap<Label_Key, [number, number, number]>,
-	ancestry: ReadonlyMap<string, string>,
-): Drop_Entry[] {
-	type Entry = {
-		idx        : number;
-		text       : string;
-		dir        : [number, number, number];
-		persisted  : boolean;
-		ancestry   : string;
-	};
-	const entries: Entry[] = [];
-	for (let i = 0; i < placed.length; i++) {
-		const p = placed[i];
-		const key = label_key(p.so_id, p.axis);
-		const dir = world_dirs.get(key) ?? [0, 0, 0];
-		entries.push({
-			idx        : i,
-			text       : p.pair.text,
-			dir        : canonical_direction(dir),
-			persisted  : persisted_before.has(key),
-			ancestry   : ancestry.get(p.so_id) ?? '',
-		});
-	}
-
-	// Group by (text, direction-with-tolerance). Use canonical direction so
-	// v1->v2 and v2->v1 match. Bucket by a quantized key for the direction
-	// (3 decimal places ≈ 0.06° resolution, well below the 2° tolerance the
-	// rule needs).
-	const groups = new Map<string, Entry[]>();
-	for (const e of entries) {
-		const dir_key = `${e.dir[0].toFixed(3)},${e.dir[1].toFixed(3)},${e.dir[2].toFixed(3)}`;
-		const key = `${e.text}|${dir_key}`;
-		const g = groups.get(key);
-		if (g) g.push(e);
-		else   groups.set(key, [e]);
-	}
-
-	const drop_idxs = new Set<number>();
-	const dropped: Drop_Entry[] = [];
-	for (const group of groups.values()) {
-		if (group.length < 2) continue;
-		// Sort per rule 4: persisted first, then parent-over-child
-		// (shallower ancestry path wins — fewer dots), then alphabetical
-		// by ancestry. The HEAD of the sorted list is the keeper;
-		// everything else is dropped.
-		group.sort((a, b) => {
-			if (a.persisted !== b.persisted) return a.persisted ? -1 : 1;
-			const a_depth = a.ancestry === '' ? 0 : a.ancestry.split('.').length;
-			const b_depth = b.ancestry === '' ? 0 : b.ancestry.split('.').length;
-			if (a_depth !== b_depth) return a_depth - b_depth;
-			return a.ancestry < b.ancestry ? -1 : a.ancestry > b.ancestry ? 1 : 0;
-		});
-		for (let i = 1; i < group.length; i++) {
-			const p = placed[group[i].idx];
-			drop_idxs.add(group[i].idx);
-			dropped.push({ so_id: p.so_id, so_name: p.so_name, axis: p.axis, reason: 'duplicate_text', conflict_count_at_drop: 0 });
-		}
-	}
-
-	// Remove dropped indices in reverse so the remaining indices stay valid.
-	const sorted_drops = Array.from(drop_idxs).sort((a, b) => b - a);
-	for (const i of sorted_drops) placed.splice(i, 1);
-
-	return dropped;
-}
-
-/** Make a unit direction unique up to sign — flip if the first non-zero
- *  component is negative. Lets the dedup treat `v1 -> v2` and `v2 -> v1`
- *  as the same direction. The `+ 0` on each component normalizes any
- *  negative-zero result of the multiplication back to positive zero so
- *  the string key downstream doesn't differ between matching directions. */
-function canonical_direction(d: [number, number, number]): [number, number, number] {
-	const eps = 1e-6;
-	let sign = 1;
-	if (Math.abs(d[0]) > eps) sign = d[0] < 0 ? -1 : 1;
-	else if (Math.abs(d[1]) > eps) sign = d[1] < 0 ? -1 : 1;
-	else if (Math.abs(d[2]) > eps) sign = d[2] < 0 ? -1 : 1;
-	return [(d[0] * sign) + 0, (d[1] * sign) + 0, (d[2] * sign) + 0];
-}
-
-/** Polish pass (rule 23). After the drop policy removes labels, re-run
- *  the per-label position pick using only the surviving labels as
- *  obstacles. Stops surviving labels from sitting off-center to avoid
- *  neighbours that no longer exist. Mutates `placed` in place. Runs
- *  once; any new conflicts it surfaces are accepted. */
-export function polish_pass(
-	placed: Greedy_Placement[],
-	regions: readonly Reachable_Region[],
-): void {
-	const region_index = new Map<string, Reachable_Region>();
-	for (const r of regions) region_index.set(label_key(r.so_id, r.axis), r);
-
-	for (let i = 0; i < placed.length; i++) {
-		const current = placed[i];
-		const region = region_index.get(label_key(current.so_id, current.axis));
-		if (!region) continue;
-		const others = placed.filter((_, k) => k !== i);
-		let best: Greedy_Placement | null = null;
-		for (const pair of region.pairs) {
-			const cand = best_candidate_in_pair(pair, others);
-			if (!cand) continue;
-			if (!best || cand.min_clearance > best.min_clearance) best = cand;
-		}
-		if (best) placed[i] = best;
-	}
-}
-
-/** Apply rule 12's drop policy. Mutates `placed` in place — labels chosen
- *  to drop are removed. Returns a report of which labels were dropped and
- *  why. */
-export function apply_drop_policy(
-	placed: Greedy_Placement[],
-	canvas_w: number,
-	canvas_h: number,
-	no_viable_pair_labels: readonly { so_id: string; so_name: string; axis: Axis_Name }[] = [],
-): Drop_Report {
-	const dropped: Drop_Entry[] = [];
-
-	// Reason 1 — labels that had no viable pair from the start.
-	for (const l of no_viable_pair_labels) {
-		dropped.push({ so_id: l.so_id, so_name: l.so_name, axis: l.axis, reason: 'no_viable_pair', conflict_count_at_drop: 0 });
-	}
-
-	// Reason 3 — labels whose rectangle would extend past the canvas edge.
-	for (let i = placed.length - 1; i >= 0; i--) {
-		if (rectangle_off_canvas(placed[i], canvas_w, canvas_h)) {
-			const p = placed[i];
-			dropped.push({ so_id: p.so_id, so_name: p.so_name, axis: p.axis, reason: 'off_canvas', conflict_count_at_drop: 0 });
-			placed.splice(i, 1);
-		}
-	}
-
-	// Reason 2 — iteratively drop the label with the most current conflicts
-	// until no conflicts remain.
-	let conflicts = find_conflicts_in_placement(placed);
-	while (conflicts.length > 0) {
-		const counts = new Map<number, number>();
-		for (const [i, j] of conflicts) {
-			counts.set(i, (counts.get(i) ?? 0) + 1);
-			counts.set(j, (counts.get(j) ?? 0) + 1);
-		}
-		let max_idx = -1, max_count = -1;
-		for (const [idx, c] of counts) {
-			// Ties broken by alphabetical part ancestry path (rule 21 catch-all)
-			// — operationalized as so_name + axis since this function doesn't
-			// have access to the full ancestry path. Stable and deterministic.
-			if (c > max_count) {
-				max_count = c; max_idx = idx;
-			} else if (c === max_count && max_idx >= 0) {
-				const a = placed[max_idx], b = placed[idx];
-				const a_key = `${a.so_name}|${a.axis}`;
-				const b_key = `${b.so_name}|${b.axis}`;
-				// Drop the alphabetically LATER one (so the earlier one survives).
-				if (b_key > a_key) { max_idx = idx; }
-			}
-		}
-		if (max_idx < 0) break;
-		const victim = placed[max_idx];
-		dropped.push({ so_id: victim.so_id, so_name: victim.so_name, axis: victim.axis, reason: 'remaining_conflict', conflict_count_at_drop: max_count });
-		placed.splice(max_idx, 1);
-		conflicts = find_conflicts_in_placement(placed);
-	}
-
-	return { dropped, kept_max_conflict: 0 };
-}
-
-function rectangle_off_canvas(p: Greedy_Placement, canvas_w: number, canvas_h: number): boolean {
-	const half_w = p.label_w_px / 2, half_h = p.label_h_px / 2;
-	return (p.center_x - half_w < 0) || (p.center_x + half_w > canvas_w) ||
-	       (p.center_y - half_h < 0) || (p.center_y + half_h > canvas_h);
-}
-
-
-/** A stable seed string derived from the current scene's drawn labels.
- *  Same labels → same seed → same random sequence → same final layout. */
-export function seed_string_from_regions(regions: readonly Reachable_Region[]): string {
-	return regions.map(r => label_key(r.so_id, r.axis)).sort().join(',');
-}
-
-/** Up to 200 random switches. Each step picks a random conflicted label
- *  and swaps it to a random other viable pair. Accept the change if the
- *  total conflict count drops; reject if it stays the same or grows.
- *  Deterministic given the same seed string. Returns the same array
- *  it was given, mutated in place. `locked_keys` names labels that may
- *  not be picked as a swap target — they still count as obstacles. */
-export function stochastic_finish(
-	placed: Greedy_Placement[],
-	regions: readonly Reachable_Region[],
-	seed: string,
-	max_iterations: number = 200,
-	locked_keys: ReadonlySet<Label_Key> = new Set(),
-): Greedy_Placement[] {
-	const rng = new Seeded_Random(seed);
-	const region_index = new Map<string, Reachable_Region>();
-	for (const r of regions) region_index.set(label_key(r.so_id, r.axis), r);
-
-	let conflicts = find_conflicts_in_placement(placed);
-	for (let iter = 0; iter < max_iterations && conflicts.length > 0; iter++) {
-		// Pick a random label currently in conflict.
-		const conflicted_indices_set = new Set<number>();
-		for (const [i, j] of conflicts) { conflicted_indices_set.add(i); conflicted_indices_set.add(j); }
-		for (const idx of Array.from(conflicted_indices_set)) {
-			if (locked_keys.has(label_key(placed[idx].so_id, placed[idx].axis))) conflicted_indices_set.delete(idx);
-		}
-		const conflicted_indices = Array.from(conflicted_indices_set).sort((a, b) => a - b);
-		if (conflicted_indices.length === 0) break;
-		const target_idx = rng.pick_one(conflicted_indices);
-
-		const current = placed[target_idx];
-		const region = region_index.get(label_key(current.so_id, current.axis));
-		if (!region) continue;
-
-		const other_pairs = region.pairs.filter(p => p !== current.pair);
-		if (other_pairs.length === 0) continue;
-		const new_pair = rng.pick_one(other_pairs);
-
-		const others = placed.filter((_, k) => k !== target_idx);
-		const candidate = best_candidate_in_pair(new_pair, others);
-		if (!candidate) continue;
-
-		const saved = placed[target_idx];
-		placed[target_idx] = candidate;
-		const new_conflicts = find_conflicts_in_placement(placed);
-		if (new_conflicts.length < conflicts.length) {
-			conflicts = new_conflicts;
-		} else {
-			placed[target_idx] = saved;
-		}
-	}
-	return placed;
 }
 
 
@@ -2117,6 +380,35 @@ export function compute_root_tumble_matrix(): mat4 {
  *  the real-world axes and tumbles with the scene when projected. The
  *  projection callback maps a static-frame point to screen pixels by
  *  applying the current root tumble first. */
+/** True when every corner of the part's bounding box, after tumble plus
+ *  projection, lies within the visible canvas rectangle AND in front of
+ *  the camera. The lexicon's "fully visible part" rule — only such parts
+ *  contribute to the silhouette box. */
+export function is_fully_visible_on_screen(obj: O_Scene): boolean {
+	const wm = render.get_static_world_matrix(obj);
+	const tumble = compute_root_tumble_matrix();
+	const w = render.logical_size.width;
+	const h = render.logical_size.height;
+	for (let xi = 0; xi < 2; xi++) {
+		for (let yi = 0; yi < 2; yi++) {
+			for (let zi = 0; zi < 2; zi++) {
+				const local = vec3.fromValues(
+					xi === 0 ? obj.so.x_min : obj.so.x_max,
+					yi === 0 ? obj.so.y_min : obj.so.y_max,
+					zi === 0 ? obj.so.z_min : obj.so.z_max,
+				);
+				const world = vec3.create();
+				vec3.transformMat4(world, local, wm);
+				const p = render.project_vertex(world, tumble);
+				if (p.w < 0) return false;
+				if (p.x < 0 || p.x > w) return false;
+				if (p.y < 0 || p.y > h) return false;
+			}
+		}
+	}
+	return true;
+}
+
 export function build_uniface_box_for_scene(rendered_leaves: readonly O_Scene[]): Uniface_Box {
 	const corners: vec3[] = [];
 	for (const obj of rendered_leaves) {
@@ -2233,17 +525,17 @@ export function pick_closest_uniface_for_axis(
  *  checks of rules 5, 6, and 19. */
 export type Rect_2d = { x_min: number; y_min: number; x_max: number; y_max: number };
 
-/** Tally how many parts marked each (direction, witness index) cell viable
- *  in the rule-19 first-look sweep. Keys of the input map identify the
- *  part-axis; values are the set of "face|wi" cells it found viable. The
- *  output keys "face|wi" map to the count of parts that included that cell.
- *  Pure. */
-export function tally_cell_counts_for_vote(
-	cell_viability: ReadonlyMap<string, ReadonlySet<string>>,
+/** Tally how many parts marked each (direction, witness index) candidate
+ *  viable in the rule-19 first-look sweep. Keys of the input map identify
+ *  the part-axis; values are the set of "face|wi" candidates it found
+ *  viable. The output keys "face|wi" map to the count of parts that
+ *  included that candidate. Pure. */
+export function tally_candidate_counts_for_vote(
+	candidate_viability: ReadonlyMap<string, ReadonlySet<string>>,
 ): Map<string, number> {
 	const counts = new Map<string, number>();
-	for (const cells of cell_viability.values()) {
-		for (const cell of cells) counts.set(cell, (counts.get(cell) ?? 0) + 1);
+	for (const candidates of candidate_viability.values()) {
+		for (const candidate of candidates) counts.set(candidate, (counts.get(candidate) ?? 0) + 1);
 	}
 	return counts;
 }
@@ -2452,14 +744,14 @@ export function compute_dim_render_geometry(
  *  had no viable parts). Ties are broken by the smaller witness index
  *  first so the result is deterministic. Pure. */
 export function pick_top_two_witness_indices_per_face(
-	cell_count: ReadonlyMap<string, number>,
+	candidate_count: ReadonlyMap<string, number>,
 	num_witness_indices: number,
 ): Map<number, Set<number>> {
 	const winners = new Map<number, Set<number>>();
 	for (let face_idx = 0; face_idx < 6; face_idx++) {
 		const ranking: Array<{ wi: number; count: number }> = [];
 		for (let wi = 0; wi < num_witness_indices; wi++) {
-			ranking.push({ wi, count: cell_count.get(`${face_idx}|${wi}`) ?? 0 });
+			ranking.push({ wi, count: candidate_count.get(`${face_idx}|${wi}`) ?? 0 });
 		}
 		ranking.sort((a, b) => b.count - a.count || a.wi - b.wi);
 		const top: Set<number> = new Set();
@@ -2559,6 +851,13 @@ export type Clearance_Inputs = {
 	 *  when checking three-dimensional witness coincidence. Defaults to
 	 *  one-thousandth of a world unit. */
 	witness_world_tolerance?          : number;
+	/** Canvas size in screen pixels. When both are supplied, the off-canvas
+	 *  position filter (spec rule 3.5) rejects any candidate whose drawn
+	 *  marks (witness lines, dim line, label rect with padding, witness
+	 *  extension past each anchor) extend past any canvas edge. When
+	 *  undefined, the filter is skipped (useful for tests). */
+	canvas_w?                         : number;
+	canvas_h?                         : number;
 };
 
 /** Names the filter that rejected a candidate. Read by the slide-and-retry
@@ -2578,7 +877,10 @@ export type Clearance_Filter =
 	| 'label-vs-placed-dim'
 	| 'own-anchor-vs-placed'
 	| 'own-dim-vs-placed'
-	| 'own-witness-convergence';
+	| 'own-witness-vs-placed'
+	| 'own-witness-convergence'
+	| 'label-vs-anchor-zone'
+	| 'off-canvas';
 
 /** Discriminated outcome of `evaluate_clearances`. On rejection,
  *  `shortfall_px` is how many pixels of separation the rejecting filter
@@ -2616,6 +918,8 @@ export const POSITION_FILTERS: ReadonlySet<Clearance_Filter> = new Set<Clearance
 	'label-vs-placed-dim',
 	'own-anchor-vs-placed',
 	'own-dim-vs-placed',
+	'label-vs-anchor-zone',
+	'off-canvas',
 ]);
 
 /** The five filters whose rejection sliding the label along the dim line
@@ -2719,6 +1023,31 @@ export function evaluate_shape_clearances(in_: Clearance_Inputs): Clearance_Resu
 	return { ok: true };
 }
 
+/** Cross-check for the persistence reuse pass (spec 7). True when this
+ *  placement's label rectangle comes within `clearance` px of any already-kept
+ *  witness line, OR its own witness lines come within `clearance` px of any
+ *  already-kept label rectangle. Mirrors the chapter-5 filters
+ *  label-vs-placed-witness and own-witness-vs-placed so a reused placement is
+ *  held to the same witness/label clearance the fresh placement algorithm uses.
+ *  Pure. */
+export function placement_crosses_placed(
+	label_rect: Rect_2d,
+	own_witnesses: ReadonlyArray<[{ x: number; y: number }, { x: number; y: number }]>,
+	kept_label_rects: ReadonlyArray<Rect_2d>,
+	kept_witness_segments: ReadonlyArray<[{ x: number; y: number }, { x: number; y: number }]>,
+	clearance: number,
+): boolean {
+	for (const [sa, sb] of kept_witness_segments) {
+		if (distance_from_rect_to_segment_2d(label_rect, sa, sb) < clearance) return true;
+	}
+	for (const rect of kept_label_rects) {
+		for (const [wa, wb] of own_witnesses) {
+			if (distance_from_rect_to_segment_2d(rect, wa, wb) < clearance) return true;
+		}
+	}
+	return false;
+}
+
 /** Runs the seven POSITION checks (silhouette + label-vs-* + own-anchor +
  *  own-dim). Returns the first failure. Pure. Re-called for every label
  *  position the search tries; the slide-and-retry wraps this function. */
@@ -2735,6 +1064,46 @@ export function evaluate_position_clearances(in_: Clearance_Inputs): Clearance_R
 		pair_clearance_px,
 		silhouette_margin_px,
 	} = in_;
+	// Spec rule 3.5 — off-canvas exclusion. Every drawn mark of the
+	// dimensional has to sit inside the canvas; any candidate with a mark
+	// outside is dropped. Marks per the lexicon: witness lines, dim line,
+	// label rect (with the renderer's padding), and the witness extension
+	// past each anchor. Skipped when the caller does not supply canvas
+	// dimensions (tests).
+	if (in_.canvas_w !== undefined && in_.canvas_h !== undefined) {
+		const cw = in_.canvas_w;
+		const ch = in_.canvas_h;
+		const e1 = in_.candidate_edge_p1_screen;
+		const e2 = in_.candidate_edge_p2_screen;
+		const w1_dx = a1.x - e1.x, w1_dy = a1.y - e1.y;
+		const w1_len = Math.hypot(w1_dx, w1_dy);
+		const w1_ux = w1_len > 1e-9 ? w1_dx / w1_len : 0;
+		const w1_uy = w1_len > 1e-9 ? w1_dy / w1_len : 0;
+		const w2_dx = a2.x - e2.x, w2_dy = a2.y - e2.y;
+		const w2_len = Math.hypot(w2_dx, w2_dy);
+		const w2_ux = w2_len > 1e-9 ? w2_dx / w2_len : 0;
+		const w2_uy = w2_len > 1e-9 ? w2_dy / w2_len : 0;
+		const w1_past = { x: a1.x + w1_ux * 10, y: a1.y + w1_uy * 10 };
+		const w2_past = { x: a2.x + w2_ux * 10, y: a2.y + w2_uy * 10 };
+		const pts = [
+			e1, e2, a1, a2, w1_past, w2_past,
+			{ x: rect.x_min - 2, y: rect.y_min - 1 },
+			{ x: rect.x_max + 2, y: rect.y_min - 1 },
+			{ x: rect.x_max + 2, y: rect.y_max + 1 },
+			{ x: rect.x_min - 2, y: rect.y_max + 1 },
+		];
+		let bb_x_min = Infinity, bb_x_max = -Infinity, bb_y_min = Infinity, bb_y_max = -Infinity;
+		for (const p of pts) {
+			if (p.x < bb_x_min) bb_x_min = p.x;
+			if (p.x > bb_x_max) bb_x_max = p.x;
+			if (p.y < bb_y_min) bb_y_min = p.y;
+			if (p.y > bb_y_max) bb_y_max = p.y;
+		}
+		const shortfall = Math.max(0 - bb_x_min, 0 - bb_y_min, bb_x_max - cw, bb_y_max - ch);
+		if (shortfall > 0) {
+			return { ok: false, filter: 'off-canvas', shortfall_px: shortfall };
+		}
+	}
 	// Silhouette clearance (rule 6). The silhouette is the six-sided
 	// projected outline of the silhouette box on screen, NOT the axis-
 	// aligned rectangle around it — the rectangle would over-reject
@@ -2768,18 +1137,14 @@ export function evaluate_position_clearances(in_: Clearance_Inputs): Clearance_R
 			return { ok: false, filter: 'label-vs-placed-anchor', shortfall_px: pair_clearance_px - d };
 		}
 	}
-	// Filter 5 (rule 19) DISABLED pending visual review: label rect vs
-	// every previously placed witness line at PAIR_CLEARANCE_PX. Removed
-	// to let more candidates survive; the label box paints solid white
-	// over any witness line that passes behind it. If the layout reads
-	// poorly, uncomment.
-	// for (const [sa, sb] of placed_witness_segments) {
-	// 	const d = distance_from_rect_to_segment_2d(rect, sa, sb);
-	// 	if (d < pair_clearance_px) {
-	// 		return { ok: false, filter: 'label-vs-placed-witness', shortfall_px: pair_clearance_px - d };
-	// 	}
-	// }
-	void placed_witness_segments;
+	// Filter 5 (rule 19): label rect vs every previously placed witness
+	// line at PAIR_CLEARANCE_PX (spec 5.3).
+	for (const [sa, sb] of placed_witness_segments) {
+		const d = distance_from_rect_to_segment_2d(rect, sa, sb);
+		if (d < pair_clearance_px) {
+			return { ok: false, filter: 'label-vs-placed-witness', shortfall_px: pair_clearance_px - d };
+		}
+	}
 	// Filter 6 (rule 19): label rect vs every previously placed dim line
 	// at PAIR_CLEARANCE_PX.
 	for (const [sa, sb] of placed_dim_segments) {
@@ -2805,6 +1170,54 @@ export function evaluate_position_clearances(in_: Clearance_Inputs): Clearance_R
 		const d = distance_from_rect_to_segment_2d(placed, a1, a2);
 		if (d < pair_clearance_px) {
 			return { ok: false, filter: 'own-dim-vs-placed', shortfall_px: pair_clearance_px - d };
+		}
+	}
+	// Own witness lines vs every previously placed label rectangle (spec 5.3,
+		// the reverse of label-vs-placed-witness): an always-eligible part is
+		// traversed first, so its label is placed before later witnesses exist; the new
+		// witness must clear placed labels too. Skipped when edge endpoints are
+		// not supplied.
+		if (in_.candidate_edge_p1_screen && in_.candidate_edge_p2_screen) {
+			for (const placed of placed_label_rects) {
+				if (distance_from_rect_to_segment_2d(placed, in_.candidate_edge_p1_screen, a1) < pair_clearance_px
+					|| distance_from_rect_to_segment_2d(placed, in_.candidate_edge_p2_screen, a2) < pair_clearance_px) {
+					return { ok: false, filter: 'own-witness-vs-placed', shortfall_px: 1 };
+				}
+			}
+		}
+		// Step 3.2 — label-position forbidden range (PENDING rule 32a).
+	// The candidate label rectangle must NOT overlap a 20-pixel zone
+	// extending along the dim line BEFORE OR AFTER each witness anchor
+	// in (a) the candidate's own two anchors (measured along the
+	// candidate's own dim line) AND (b) every already-placed label's two
+	// anchors (each measured along that placed label's own dim line).
+	// NOT slide-eligible — sliding the candidate moves it relative to
+	// the same anchors that gate it.
+	const ZONE_PX = k.dimensions.WITNESS_ANCHOR_BUFFER_PX;  // 20 px today.
+	const check_anchor_zone = (
+		anchor: { x: number; y: number },
+		dim_start: { x: number; y: number },
+		dim_end: { x: number; y: number },
+	): boolean => {
+		const dx = dim_end.x - dim_start.x;
+		const dy = dim_end.y - dim_start.y;
+		const len = Math.hypot(dx, dy);
+		if (len < 1e-9) return false;
+		const ux = dx / len;
+		const uy = dy / len;
+		const zone_start = { x: anchor.x - ux * ZONE_PX, y: anchor.y - uy * ZONE_PX };
+		const zone_end   = { x: anchor.x + ux * ZONE_PX, y: anchor.y + uy * ZONE_PX };
+		return distance_from_rect_to_segment_2d(rect, zone_start, zone_end) === 0;
+	};
+	// (a) Candidate's own anchors along the candidate's own dim line.
+	if (check_anchor_zone(a1, a1, a2) || check_anchor_zone(a2, a1, a2)) {
+		return { ok: false, filter: 'label-vs-anchor-zone', shortfall_px: 1 };
+	}
+	// (b) Every already-placed dim line's two endpoints (anchors) along
+	// that dim line's own direction.
+	for (const [pa1, pa2] of placed_dim_segments) {
+		if (check_anchor_zone(pa1, pa1, pa2) || check_anchor_zone(pa2, pa1, pa2)) {
+			return { ok: false, filter: 'label-vs-anchor-zone', shortfall_px: 1 };
 		}
 	}
 	return { ok: true };
@@ -3070,14 +1483,27 @@ export type Uniface_Placement_Result = {
 		so_id    : string;
 		so_name  : string;
 		axis     : Axis_Name;
+		// Length of this dimension in mm, and whether its part is always
+		// eligible (selected fully in frustum, or hovered). Used by the final
+		// draw-the-largest-N step to rank the whole valid list.
+		mm              : number;
+		always_eligible : boolean;
 	}>;
-	/** The six-sided projected outline of the silhouette box on screen,
-	 *  in canvas pixels. Read by the diagnostics renderer to draw it in
-	 *  green so its shape is visible. */
+	/** Tighter green outline — convex hull of every projected vertex of
+	 *  every qualifying part. Sits inside the silhouette-box outline.
+	 *  Drawn in green for diagnostic purposes; the placement code does NOT
+	 *  use this shape for any filter or uniface offset. */
 	silhouette_polygon_screen: Array<{ x: number; y: number }>;
+	/** Wider green outline — convex hull of the silhouette box's eight
+	 *  projected corners. This IS the shape the uniface faces are derived
+	 *  from, so witness lines end fifteen pixels (times witness index) past
+	 *  this outline. Drawn in green so it can be seen alongside the tighter
+	 *  hull. */
+	silhouette_box_polygon_screen: Array<{ x: number; y: number }>;
 };
 
-let last_uniface_placement_result: Uniface_Placement_Result = { uniface_box: null, placements: [], silhouette_polygon_screen: [] };
+let last_uniface_placement_result: Uniface_Placement_Result = { uniface_box: null, placements: [], silhouette_polygon_screen: [], silhouette_box_polygon_screen: [] };
+
 
 /** Last diagnostic output emitted by run_uniface_placement. Used to
  *  suppress repeat logs when the scene state hasn't changed — every
@@ -3085,26 +1511,144 @@ let last_uniface_placement_result: Uniface_Placement_Result = { uniface_box: nul
  *  identical, so logging the same text again is just noise. */
 let last_diagnostic_output: string | null = null;
 
-/** Have we sent the very first dimensionals log POST this browser session?
- *  The first POST overwrites the on-disk file; later POSTs append. */
-let dispatched_dim_log_fresh: boolean = false;
+/** Append one extra line to the dimensionals log file. The renderer uses
+ *  this to record what the white label box actually paints — separately
+ *  from the placement code's batched per-render block. Never erases
+ *  (erases: false), so only the placement block's first line overwrites
+ *  the file each session; these renderer lines always append. */
+export function dimensionals_log(text: string): void {
+	if (k.debug.diagnose_dims) {
+		debug.log(text, 'dimensionals', false);
+	}
+}
 
 /** Fire-and-forget POST of one render's diagnostic text to the hub
  *  dispatcher, which writes it to ~/GitHub/mono/logs/dimensionals.log.
- *  Silent on failure (the dispatcher may not be running). */
+ *  The log helper overwrites on the first line of the session, appends after. */
 function dispatch_dim_log_to_file(text: string): void {
-	const base = 'http://localhost:5171/log-dimensionals';
-	const url = dispatched_dim_log_fresh ? base : `${base}?fresh=1`;
-	dispatched_dim_log_fresh = true;
-	try {
-		fetch(url, { method: 'POST', body: text }).catch(() => { /* silent */ });
-	} catch {
-		// silent
-	}
+	debug.log(text, 'dimensionals');
 }
 
 export function get_last_uniface_placement_result(): Uniface_Placement_Result {
 	return last_uniface_placement_result;
+}
+
+/** One label's chosen values from last render — the four discrete plus one
+ *  continuous degree of freedom that fully identify what the search picked.
+ *  On the next render, the four viability checks read from these so the
+ *  full search can be skipped when the picture is stable.
+ *
+ *  - `edge_corner_pair_idx` is the index into edge_endpoints_world (0 to 3),
+ *    which the part's bounding box generates deterministically each render.
+ *    Encoded as an index rather than world-space points because parts move
+ *    between renders; the index identifies the corner pair regardless of
+ *    where the part has been dragged to.
+ *  - `label_position_t` is the fraction along the dim line, 0 at anchor 1,
+ *    1 at anchor 2. Survives slide-and-retry because the slid t value is
+ *    what gets stored.
+ *
+ *  Encodes step 3.1 of the uniface proposal AND PENDING rule 2a of the dim
+ *  spec. Slice A: storage only — no skip logic, no seeded run, no drift
+ *  safety. Those come in slices B, C, D. */
+export type Persisted_Label = {
+	so_id                : string;
+	so_name              : string;
+	axis                 : Axis_Name;
+	face                 : number;  // 0 to 5 (UNIFACE_FACE_*)
+	// Exactly one of the next two identifies the outward position; never both.
+	// A uniface placement records its box level (witness_index); an outer-edge
+	// placement records the outward distance in mm from the edge to the anchor.
+	witness_index        : number | null;  // uniface box level (0-based), null for an outer edge
+	witness_length_mm    : number | null;  // outer-edge outward distance in mm, null for a uniface
+	edge_corner_pair_idx : number;  // 0 to 3
+	// Fraction along the dim line at the time of the original placement:
+	// label_pos = anchor_1 + (anchor_2 - anchor_1) * label_position_t. When
+	// the slide pre-check fired this fraction sits outside [0, 1] (negative
+	// for slid past anchor 1, greater than 1 for slid past anchor 2). The
+	// persistence skip path multiplies by the NEW anchor span every render
+	// so the slid label tracks tumble.
+	label_position_t     : number;
+	// True when the original placement was past one of the anchors. Lets
+	// the next-render viability check accept t values outside [0, 1] only
+	// when this was a known slid placement, not a drifted one.
+	was_slid             : boolean;
+};
+
+/** Per-(part, axis) persistence record. Key is `${so_id}|${axis}`. Updated
+ *  at the end of every successful run of run_uniface_placement: entries are
+ *  added or overwritten for parts that picked something, and entries are
+ *  pruned for parts that did not pick anything this render (part hidden,
+ *  removed from the scene, or had no winning candidate). */
+const last_persisted: Map<string, Persisted_Label> = new Map();
+
+/** When false, the placement code does NOT pass canvas dimensions into
+ *  the position-filter check, which disables the off-canvas filter
+ *  (spec rule 3.5). Used by the test harness — tests run with identity
+ *  projection matrices that place every anchor far off the synthetic
+ *  canvas; without this flag the filter would reject every candidate.
+ *  Production always leaves this true. */
+let off_canvas_filter_enabled: boolean = true;
+export function set_off_canvas_filter_enabled_for_tests(value: boolean): void {
+	off_canvas_filter_enabled = value;
+}
+
+
+/** Read-only view of the persistence map. Exposed for tests and for the
+ *  future slice-B skip path. */
+export function get_last_persisted(): ReadonlyMap<string, Persisted_Label> {
+	return last_persisted;
+}
+
+/** Whether the most recent run_uniface_placement call took the skip path
+ *  (returned a result built from the persistence map) rather than running
+ *  the full main search loop. Reset to false at the start of every call. */
+let last_skip_used: boolean = false;
+
+/** Set of (part, axis) keys that were ELIGIBLE last render — every
+ *  rendered leaf's allowed axes, even ones that did not commit a winner.
+ *  The skip path uses this to detect changes in the scene: if the current
+ *  frame's eligible set differs from last render's, a new part appeared
+ *  or an old one became ineligible, and the full search must run. */
+const last_eligible_pairs: Set<string> = new Set();
+
+/** Test-only accessor for the skip-path flag. */
+export function get_last_skip_used(): boolean {
+	return last_skip_used;
+}
+
+/** Count of persisted labels the most recent run_uniface_placement call
+ *  locked during the seeded run (slice C of step 3.1). Zero on skip-path
+ *  renders, zero on the first render, and zero when no persisted entry
+ *  passed the strict viability checks against the current frame. */
+let last_locked_count: number = 0;
+
+/** Test-only accessor for the seeded-run lock count. */
+export function get_last_locked_count(): number {
+	return last_locked_count;
+}
+
+/** Drift-safety counter (slice D of step 3.1). Counts consecutive skip-
+ *  path renders in which at least one label's viability check passed
+ *  only by the 5-pixel tolerance — i.e., the check would have failed
+ *  under the STRICT version. Reset to zero whenever a skip succeeds with
+ *  no tolerance-only passes, OR whenever the full search runs. Reaching
+ *  2 forces a full search on the next render to flush accumulated drift. */
+let drift_within_tolerance_count: number = 0;
+
+/** Per-render flag — was the most recent skip-path success only possible
+ *  because at least one label passed by the 5-pixel tolerance? Slice B
+ *  sets this; the post-skip block uses it to update the drift counter. */
+let last_skip_drifted: boolean = false;
+
+/** Test-only accessor for the drift counter. */
+export function get_drift_within_tolerance_count(): number {
+	return drift_within_tolerance_count;
+}
+
+/** Stable key for the persistence map. Same identifier the duplicate-text
+ *  drop uses to compare across (part, axis) pairs. */
+function persisted_key(so_id: string, axis: Axis_Name): string {
+	return `${so_id}|${axis}`;
 }
 
 /** Stub orchestrator for the uniface placement path (step 2c).
@@ -3116,6 +1660,9 @@ export function get_last_uniface_placement_result(): Uniface_Placement_Result {
  *  draw. That intentional blank is the visual diff against the old
  *  path. */
 export function run_uniface_placement(): Uniface_Placement_Result {
+	last_skip_used = false;
+	last_locked_count = 0;
+	last_skip_drifted = false;
 	const all_objects = scene.get_all();
 	// Camera looking direction expressed in the room's static (untumbled)
 	// axes. Read once per render; reused by the edge-on filter for every
@@ -3134,18 +1681,83 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 		}
 		return false;
 	};
-	const rendered_leaves: O_Scene[] = [];
+	// All visible leaves. Used to build the silhouette box and the uniface
+	// box — only leaf parts contribute (rule 9 / silhouette membership), so
+	// container parts do not inflate the silhouette past the painted
+	// geometry of their children.
+	const all_visible_leaves: O_Scene[] = [];
 	for (const obj of all_objects) {
 		if (!visible.has(obj)) continue;
 		if (has_visible_child(obj)) continue;
-		rendered_leaves.push(obj);
+		all_visible_leaves.push(obj);
 	}
-	// Alphabetical by part name — the duplicate-text drop (rule 4) walks
-	// parts in this order and keeps the FIRST one to claim each
-	// (text, axis) pair, so the order has to be deterministic and
-	// alphabetical per step 3d of the proposal.
-	rendered_leaves.sort((a, b) => a.so.name.localeCompare(b.so.name));
-	const uniface_box = build_uniface_box_for_scene(rendered_leaves);
+	// Parts the placement search actually dimensions — every visible part,
+	// not just leaves. A parent part with visible children gets its own
+	// dim lines for its bounding box. The "leaves only" filter above is
+	// for the silhouette (rule 9), not for which parts get dimensioned.
+	// The root smart object is included too — it shows the overall span of
+	// the whole design. The duplicate-text drop sorts these by depth-from-root
+	// first, so a parent wins over its child when their dim text agrees — and
+	// the root, at depth 0, wins every such tie.
+	const depth_from_root = (obj: O_Scene): number => {
+		let depth = 0;
+		let cursor: O_Scene | undefined = obj.parent;
+		while (cursor) { depth++; cursor = cursor.parent; }
+		return depth;
+	};
+	// Eligibility per the spec (chapter 2): visible AND below the root AND
+	// (the dimensions toggle is on OR this part is selected OR this part
+	// is hovered). When the toggle is off and a part is selected or
+	// hovered, the search runs ONLY for those parts — the renderer would
+	// not draw the rest anyway.
+	const selected_so_ids = new Set(selection.all.map(h => h.so.id));
+	const hovered_so_id_for_eligibility = hits_3d.hover?.so?.id ?? null;
+	const selected_names_for_log = selection.all.map(h => h.so.name).join(', ') || '(none)';
+	const hovered_name_for_log = hits_3d.hover?.so?.name ?? '(none)';
+	const total_visible = all_objects.filter(o => visible.has(o)).length;
+	// Count threshold (spec 4.1): a part is eligible only when all eight
+	// corners are on screen; the selected part (only when FULLY in the
+	// frustum) and the hovered part are force-kept on top of the count. The
+	// cap to N is applied per (part, axis) after the biggest-first ordering,
+	// in the work-list build below.
+	const dim_count = stores.current_dimension_count;
+	const is_always_eligible_part = (o: O_Scene): boolean =>
+		(selected_so_ids.has(o.so.id) && is_fully_visible_on_screen(o))
+		|| o.so.id === hovered_so_id_for_eligibility;
+	const rendered_leaves: O_Scene[] = all_objects.filter(o =>
+		visible.has(o)
+		&& (is_fully_visible_on_screen(o) || is_always_eligible_part(o)),
+	);
+	// Root part visibility trace: the root now flows through the same rules as
+	// any part, so log why it is or is not a candidate this frame.
+	const root_obj = all_objects.find(o => !o.parent);
+	if (k.debug.diagnose_dims && root_obj) {
+		console.log(`[uniface placement] root part "${root_obj.so.name}": dimensioned this frame = ${rendered_leaves.includes(root_obj)} — visible = ${visible.has(root_obj)}, all corners on screen = ${is_fully_visible_on_screen(root_obj)}, selected or hovered = ${is_always_eligible_part(root_obj)}.`);
+	}
+	// Diagnostic message for the eligibility filter. Pushed into the main
+	// diagnostic-log buffer below once the buffer is constructed.
+	const eligibility_log_line = `[uniface placement] eligibility filter: dimension count = ${dim_count}, selected parts = [${selected_names_for_log}], hovered part = ${hovered_name_for_log}, candidate parts ${rendered_leaves.length} of ${total_visible} visible parts (root included).`;
+	// Nothing here clears the prior valid list. Hover, selection, the count
+	// slider, and the dimensions on/off flag all keep it — the reuse pass
+	// re-projects every saved placement and drops only the ones that no longer
+	// fit, so positions hold steady across every event except a scene change.
+	rendered_leaves.sort((a, b) => {
+		const da = depth_from_root(a), db = depth_from_root(b);
+		if (da !== db) return da - db;
+		return a.so.name.localeCompare(b.so.name);
+	});
+	// Silhouette box: per the lexicon, only parts that are fully on
+	// screen (every corner inside the canvas after tumble plus projection)
+	// contribute. When the set is empty (heavy zoom — nothing qualifies),
+	// the silhouette stays empty and the silhouette-clearance filter becomes
+	// a no-op; the outer-edge placements, which do not depend on the
+	// silhouette box, can still be chosen.
+	const fully_visible_leaves = all_visible_leaves.filter(is_fully_visible_on_screen);
+	const silhouette_empty = fully_visible_leaves.length === 0;
+	const uniface_box = build_uniface_box_for_scene(fully_visible_leaves);
+	if (k.debug.diagnose_dims) {
+		console.log(`[uniface placement] silhouette source — ${fully_visible_leaves.length} of ${all_visible_leaves.length} visible parts have all eight corners inside the canvas`);
+	}
 
 	// Project the six face centers of the uniface box at witness index 1
 	// to screen pixels. Excluded faces (null shift) project to null and
@@ -3184,21 +1796,53 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	// Silhouette rect on screen: bounding box of the eight projected
 	// corners of the silhouette box. Used to reject candidate placements
 	// whose label rectangle would sit entirely inside the silhouette.
-	const silhouette_corners_screen: { x: number; y: number }[] = [];
-	for (let xi = 0; xi < 2; xi++) {
-		for (let yi = 0; yi < 2; yi++) {
-			for (let zi = 0; zi < 2; zi++) {
-				const cw = vec3.fromValues(
-					xi === 0 ? sb.min[0] : sb.max[0],
-					yi === 0 ? sb.min[1] : sb.max[1],
-					zi === 0 ? sb.min[2] : sb.max[2],
-				);
-				const p = project_screen(cw);
-				silhouette_corners_screen.push({ x: p.x, y: p.y });
+	// When the silhouette source is empty (heavy zoom — no part has all
+	// eight corners on the canvas), the polygon is empty. Every helper
+	// that consumes it returns "no overlap" / Infinity for an empty
+	// polygon, so the silhouette-clearance filter is implicitly skipped.
+	// Box-corner hull — the convex hull of the silhouette box's eight projected
+	// corners. Kept ONLY for the wider green diagnostic outline. It is built
+	// from synthetic max-of-each-axis corners, so under perspective it does NOT
+	// match the visible parts; it must not drive label rejection.
+	const silhouette_box_corners_screen: { x: number; y: number }[] = [];
+	if (!silhouette_empty) {
+		for (let xi = 0; xi < 2; xi++) {
+			for (let yi = 0; yi < 2; yi++) {
+				for (let zi = 0; zi < 2; zi++) {
+					const cw = vec3.fromValues(
+						xi === 0 ? sb.min[0] : sb.max[0],
+						yi === 0 ? sb.min[1] : sb.max[1],
+						zi === 0 ? sb.min[2] : sb.max[2],
+					);
+					const p = project_screen(cw);
+					silhouette_box_corners_screen.push({ x: p.x, y: p.y });
+				}
 			}
 		}
 	}
-	const silhouette_polygon = convex_hull(silhouette_corners_screen);
+	const silhouette_box_hull_screen = silhouette_empty ? [] : convex_hull(silhouette_box_corners_screen);
+
+	// THE silhouette every inside/outside test uses: the convex hull of every
+	// projected VERTEX of every qualifying leaf part — the outline the eye
+	// actually sees. Bug 001 fix: the inside/outside guard previously used the
+	// box-corner hull above, which under perspective does not match the visible
+	// silhouette, so a label could read inside the visible outline while the
+	// guard called it outside (notes/work/now/bugs/001 dim is inside silho).
+	const qualifying_parts_corners_screen: { x: number; y: number }[] = [];
+	if (!silhouette_empty) {
+		for (const obj_q of fully_visible_leaves) {
+			const wm_q = render.get_static_world_matrix(obj_q);
+			for (const local_v_q of obj_q.so.vertices) {
+				const world_v_q = vec3.create();
+				vec3.transformMat4(world_v_q, local_v_q, wm_q);
+				const p_q = project_screen(world_v_q);
+				qualifying_parts_corners_screen.push({ x: p_q.x, y: p_q.y });
+			}
+		}
+	}
+	const silhouette_polygon = qualifying_parts_corners_screen.length > 0
+		? convex_hull(qualifying_parts_corners_screen)
+		: [];
 
 	// Label sizes from the dim-text formatter — same recipe the old path
 	// uses today: format the numeric value with the current unit system
@@ -3231,12 +1875,27 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 
 	const POSITION_SAMPLES = [0.5, 0.3, 0.7, 0.15, 0.85];
 	const CENTERING_PENALTY_AT_ANCHOR  = 20;
-	const WITNESS_LENGTH_WEIGHT        = 1;   // each screen pixel of witness reduces the score by this much.
+	const WITNESS_LENGTH_WEIGHT        = 2;   // each screen pixel of witness reduces the score by this much.
 	const WITNESS_INSIDE_SILHOUETTE_WEIGHT = 200;  // score points per percentage of witness length inside the silhouette polygon (averaged over the two witnesses). Camera-zoom-independent.
-	const WORLD_DISTANCE_WEIGHT        = 100; // each world unit of perpendicular distance from the part to the uniface plane reduces the score by this much. Strong enough to dominate every pixel-based term, so the closest uniface in world space wins by default; pixel terms only break ties.
+	const SCREEN_ROOM_WEIGHT           = 1;   // each screen pixel of empty canvas room past the candidate's anchor midpoint (along the outward perpendicular) raises the score by this much. Now SMALLER than the witness-length penalty so shorter witnesses outrank empty-room-outward by default.
+	const canvas_w_for_score = render.logical_size.width;
+	const canvas_h_for_score = render.logical_size.height;
+	// Silhouette centroid on screen — used to choose which side of the dim
+	// line points "outward" for the screen-room reward.
+	const silhouette_center_x = silhouette_polygon.length > 0
+		? silhouette_polygon.reduce((s, p) => s + p.x, 0) / silhouette_polygon.length
+		: canvas_w_for_score / 2;
+	const silhouette_center_y = silhouette_polygon.length > 0
+		? silhouette_polygon.reduce((s, p) => s + p.y, 0) / silhouette_polygon.length
+		: canvas_h_for_score / 2;
 	const NUM_WITNESS_INDICES = uniface_box.shifts.length;
 
 	const placements: Uniface_Placement_Result['placements'] = [];
+	// Slice A of step 3.1 — set of persistence-map keys touched this
+	// render. After the main loop, every key in last_persisted that is
+	// NOT in this set gets pruned (its part is no longer rendered or
+	// no longer picked anything).
+	const seen_persisted_keys: Set<string> = new Set();
 	const axes: Axis_Name[] = ['x', 'y', 'z'];
 	// Hovered part — read once per render. Used to gate the verbose
 	// per-dimension diagnostic AND to record sample failing candidates.
@@ -3251,6 +1910,12 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	let diagnostic_with_winner = 0;
 	const diagnostic_rejection_counts: Map<Clearance_Filter, number> = new Map();
 	const diagnostic_log_buffer: string[] = [];
+	// First line of every diagnostic block — the eligibility filter's view
+	// of the world: which dimensions flag, which selection, how many parts
+	// it kept. Stable across mouse-move renders only if the flag and
+	// selection are stable, so the suppression check naturally re-emits
+	// the log when either changes.
+	diagnostic_log_buffer.push(eligibility_log_line);
 	// Step 3d counters — one per ported old-path filter so the
 	// end-of-render summary names exactly how many parts each filter
 	// removed and which parts those were.
@@ -3265,166 +1930,273 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 		const poly_str = silhouette_polygon
 			.map(p => `(${Math.round(p.x)},${Math.round(p.y)})`)
 			.join(' → ');
-		diagnostic_log_buffer.push(`[uniface placement] silhouette six-sided shape on screen: ${poly_str}`);
+		diagnostic_log_buffer.push(`[uniface placement] visible silhouette (parts' vertices) the guard now uses: ${poly_str}`);
+		const box_str = silhouette_box_hull_screen
+			.map(p => `(${Math.round(p.x)},${Math.round(p.y)})`)
+			.join(' → ');
+		diagnostic_log_buffer.push(`[uniface placement] old box-corner outline (diagnostic only, no longer used by the guard): ${box_str}`);
 	}
-	// ─── Rule 19 witness-index vote (step 3g) ─────────────────────────
-	// Phase 1: look at every (part, axis, direction, witness index)
-	// combination in isolation and record whether any position passes
-	// the candidate-vs-itself and candidate-vs-silhouette filters. Cross-
-	// part filters do NOT run here — the running placed-things state is
-	// empty by design. The records feed the vote that picks the two
-	// witness indices to keep per direction. The main loop below then
-	// runs the full filter pipeline restricted to the winning cells.
-	const SWEEP_SIDE_NORMAL: readonly vec3[] = [
-		vec3.fromValues( 1, 0, 0),
-		vec3.fromValues(-1, 0, 0),
-		vec3.fromValues(0,  1, 0),
-		vec3.fromValues(0, -1, 0),
-		vec3.fromValues(0, 0,  1),
-		vec3.fromValues(0, 0, -1),
-	];
-	const SWEEP_ANCHOR_WORLD = (face_idx: number, edge_end: vec3, s: number): vec3 => {
-		const w = vec3.create();
-		const sbs = uniface_box.silhouette;
-		if      (face_idx === UNIFACE_FACE_POS_X) vec3.set(w, sbs.max[0] + s, edge_end[1], edge_end[2]);
-		else if (face_idx === UNIFACE_FACE_NEG_X) vec3.set(w, sbs.min[0] - s, edge_end[1], edge_end[2]);
-		else if (face_idx === UNIFACE_FACE_POS_Y) vec3.set(w, edge_end[0], sbs.max[1] + s, edge_end[2]);
-		else if (face_idx === UNIFACE_FACE_NEG_Y) vec3.set(w, edge_end[0], sbs.min[1] - s, edge_end[2]);
-		else if (face_idx === UNIFACE_FACE_POS_Z) vec3.set(w, edge_end[0], edge_end[1], sbs.max[2] + s);
-		else                                       vec3.set(w, edge_end[0], edge_end[1], sbs.min[2] - s);
-		return w;
+	// ─── Slice B of step 3.1 — persistence skip path ──────────────────
+	// After the vote and BEFORE the main loop, check whether every
+	// persisted (part, axis) entry can be re-projected from the current
+	// frame and passes the four viability checks. If yes, build a result
+	// from the re-projected entries and return early — the main loop is
+	// skipped this render. If any check fails or the eligible set
+	// differs from last render's persisted set, fall through to the
+	// main loop. PENDING rule 2a of dim.spec.
+	const try_skip = (): Uniface_Placement_Result | null => {
+		// PERSISTENCE SKIP PATH RETIRED — always returns null so the seeded
+		// run below executes every render. The seeded run already re-projects
+		// every persisted entry and locks the ones that still pass strict
+		// viability checks, which covered what this short-circuit used to do.
+		// One re-projection pass per render saved a few microseconds; the
+		// second source of subtle reuse bugs was not worth keeping. The body
+		// below is preserved as a reference but is unreachable.
+		return null;
 	};
-	const cell_viability: Map<string, Set<string>> = new Map();
-	for (const obj of rendered_leaves) {
-		const c = classify_so(obj);
-		if (!c.eligible) continue;
-		const wm_static_s = render.get_static_world_matrix(obj);
-		const bb_min_s = vec3.create();
-		const bb_max_s = vec3.create();
-		vec3.transformMat4(bb_min_s, vec3.fromValues(obj.so.x_min, obj.so.y_min, obj.so.z_min), wm_static_s);
-		vec3.transformMat4(bb_max_s, vec3.fromValues(obj.so.x_max, obj.so.y_max, obj.so.z_max), wm_static_s);
-		for (const axis of axes) {
-			if (!c.axes_allowed.includes(axis)) continue;
-			const part_axis_key = `${obj.so.id}|${axis}`;
-			const edge_endpoints_world_s: Array<[vec3, vec3]> = [];
-			if (axis === 'x') {
-				for (const yp of [bb_min_s[1], bb_max_s[1]]) for (const zp of [bb_min_s[2], bb_max_s[2]]) {
-					edge_endpoints_world_s.push([vec3.fromValues(bb_min_s[0], yp, zp), vec3.fromValues(bb_max_s[0], yp, zp)]);
+	const skip_result = try_skip();
+	if (skip_result !== null) {
+		last_skip_used = true;
+		last_uniface_placement_result = skip_result;
+		// Slice D — drift safety counter. A skip that succeeded only by
+		// the 5-pixel tolerance bumps the counter; a clean skip resets it.
+		if (last_skip_drifted) {
+			drift_within_tolerance_count++;
+			if (k.debug.diagnose_dims) console.log(`[uniface placement] skipped, but at least one label passed only by the 5-pixel tolerance; drift count now ${drift_within_tolerance_count}.`);
+		} else {
+			drift_within_tolerance_count = 0;
+			if (k.debug.diagnose_dims) console.log(`[uniface placement] skipped — all ${last_persisted.size} persistent entries still viable`);
+		}
+		// last_eligible_pairs stays as-is — same scene means same eligible set.
+		return skip_result;
+	}
+	// Slice D — full search clears any accumulated drift.
+	drift_within_tolerance_count = 0;
+	// ─── Slice C of step 3.1 — seeded run ─────────────────────────────
+	// The skip path didn't fire. Re-project every persisted entry and
+	// lock the ones that pass the STRICT (no-tolerance) versions of the
+	// four viability checks. Locked labels become fixed obstacles before
+	// the main loop runs; the free labels search around them.
+	const locked_keys: Set<string> = new Set();
+	if (last_persisted.size > 0) {
+		const entries_sorted = Array.from(last_persisted.values()).sort((a, b) =>
+			a.so_name.localeCompare(b.so_name) || a.axis.localeCompare(b.axis),
+		);
+		for (const entry of entries_sorted) {
+			const obj = rendered_leaves.find(o => o.so.id === entry.so_id);
+			if (!obj) continue;
+			const cls = classify_so(obj);
+			if (!cls.eligible) continue;
+			if (!cls.axes_allowed.includes(entry.axis)) continue;
+			const wm_l = render.get_static_world_matrix(obj);
+			const bb_min_l = vec3.create();
+			const bb_max_l = vec3.create();
+			vec3.transformMat4(bb_min_l, vec3.fromValues(obj.so.x_min, obj.so.y_min, obj.so.z_min), wm_l);
+			vec3.transformMat4(bb_max_l, vec3.fromValues(obj.so.x_max, obj.so.y_max, obj.so.z_max), wm_l);
+			const edges_l: Array<[vec3, vec3]> = [];
+			if (entry.axis === 'x') {
+				for (const yp of [bb_min_l[1], bb_max_l[1]]) for (const zp of [bb_min_l[2], bb_max_l[2]]) {
+					edges_l.push([vec3.fromValues(bb_min_l[0], yp, zp), vec3.fromValues(bb_max_l[0], yp, zp)]);
 				}
-			} else if (axis === 'y') {
-				for (const xp of [bb_min_s[0], bb_max_s[0]]) for (const zp of [bb_min_s[2], bb_max_s[2]]) {
-					edge_endpoints_world_s.push([vec3.fromValues(xp, bb_min_s[1], zp), vec3.fromValues(xp, bb_max_s[1], zp)]);
+			} else if (entry.axis === 'y') {
+				for (const xp of [bb_min_l[0], bb_max_l[0]]) for (const zp of [bb_min_l[2], bb_max_l[2]]) {
+					edges_l.push([vec3.fromValues(xp, bb_min_l[1], zp), vec3.fromValues(xp, bb_max_l[1], zp)]);
 				}
 			} else {
-				for (const xp of [bb_min_s[0], bb_max_s[0]]) for (const yp of [bb_min_s[1], bb_max_s[1]]) {
-					edge_endpoints_world_s.push([vec3.fromValues(xp, yp, bb_min_s[2]), vec3.fromValues(xp, yp, bb_max_s[2])]);
+				for (const xp of [bb_min_l[0], bb_max_l[0]]) for (const yp of [bb_min_l[1], bb_max_l[1]]) {
+					edges_l.push([vec3.fromValues(xp, yp, bb_min_l[2]), vec3.fromValues(xp, yp, bb_max_l[2])]);
 				}
 			}
-			const dim_value_s = axis === 'x' ? obj.so.width : axis === 'y' ? obj.so.depth : obj.so.height;
-			const label_w_px_s = measure_label_width(dim_value_s);
-			const edge_dir_world_s: vec3 = axis === 'x' ? vec3.fromValues(1, 0, 0)
-				: axis === 'y' ? vec3.fromValues(0, 1, 0)
-				: vec3.fromValues(0, 0, 1);
-			for (let wi_s = 0; wi_s < NUM_WITNESS_INDICES; wi_s++) {
-				const shifts_row_s = uniface_box.shifts[wi_s];
-				if (!shifts_row_s) continue;
-				for (const [edge_w_p1_s, edge_w_p2_s] of edge_endpoints_world_s) {
-					const ep1s = project_screen(edge_w_p1_s);
-					const ep2s = project_screen(edge_w_p2_s);
-					const e1s = { x: ep1s.x, y: ep1s.y };
-					const e2s = { x: ep2s.x, y: ep2s.y };
-					for (const face_idx_s of UNIFACE_CANDIDATES_PER_AXIS[axis]) {
-						const cell_key = `${face_idx_s}|${wi_s}`;
-						if (cell_viability.get(part_axis_key)?.has(cell_key)) continue;
-						const ss = shifts_row_s[face_idx_s];
-						if (ss === null || ss === undefined) continue;
-						const pnorm = vec3.create();
-						vec3.cross(pnorm, edge_dir_world_s, SWEEP_SIDE_NORMAL[face_idx_s]);
-						vec3.normalize(pnorm, pnorm);
-						const pcd = Math.abs(vec3.dot(pnorm, cam_dir_in_room));
-						const a1ws = SWEEP_ANCHOR_WORLD(face_idx_s, edge_w_p1_s, ss);
-						const a2ws = SWEEP_ANCHOR_WORLD(face_idx_s, edge_w_p2_s, ss);
-						const a1ps = project_screen(a1ws);
-						const a2ps = project_screen(a2ws);
-						const a1s = { x: a1ps.x, y: a1ps.y };
-						const a2s = { x: a2ps.x, y: a2ps.y };
-						const sweep_shape: Clearance_Inputs = {
-							candidate_label_rect    : { x_min: 0, x_max: 0, y_min: 0, y_max: 0 },
-							candidate_anchor_1      : a1s,
-							candidate_anchor_2      : a2s,
-							candidate_edge_p1_screen: e1s,
-							candidate_edge_p2_screen: e2s,
-							silhouette              : silhouette_polygon,
-							placed_label_rects      : [],
-							placed_anchors          : [],
-							placed_witness_segments : [],
-							placed_dim_segments     : [],
-							pair_clearance_px       : k.dimensions.PAIR_CLEARANCE_PX,
-							silhouette_margin_px    : k.dimensions.SILHOUETTE_MARGIN_PX,
-							plane_camera_dot        : pcd,
-							candidate_witness_world_segments: [
-								[[edge_w_p1_s[0], edge_w_p1_s[1], edge_w_p1_s[2]], [a1ws[0], a1ws[1], a1ws[2]]],
-								[[edge_w_p2_s[0], edge_w_p2_s[1], edge_w_p2_s[2]], [a2ws[0], a2ws[1], a2ws[2]]],
-							],
-							placed_witness_world_segments: [],
-						};
-						const sres = evaluate_shape_clearances(sweep_shape);
-						if (!sres.ok) continue;
-						let any_pos_ok = false;
-						for (const t of POSITION_SAMPLES) {
-							const cxsv = a1s.x + (a2s.x - a1s.x) * t;
-							const cysv = a1s.y + (a2s.y - a1s.y) * t;
-							const rect_s: Rect_2d = {
-								x_min: cxsv - label_w_px_s / 2,
-								x_max: cxsv + label_w_px_s / 2,
-								y_min: cysv - LABEL_H_PX / 2,
-								y_max: cysv + LABEL_H_PX / 2,
-							};
-							const pos_in: Clearance_Inputs = {
-								...sweep_shape,
-								candidate_label_rect: rect_s,
-								silhouette_clearance_px: 0,
-							};
-							const pres = evaluate_position_clearances(pos_in);
-							if (pres.ok) { any_pos_ok = true; break; }
-						}
-						if (any_pos_ok) {
-							if (!cell_viability.has(part_axis_key)) cell_viability.set(part_axis_key, new Set());
-							cell_viability.get(part_axis_key)!.add(cell_key);
-						}
-					}
+			if (entry.edge_corner_pair_idx < 0 || entry.edge_corner_pair_idx >= edges_l.length) continue;
+			const [edge_w_p1_l, edge_w_p2_l] = edges_l[entry.edge_corner_pair_idx];
+			let a1_w_l: vec3, a2_w_l: vec3;
+			if (entry.witness_length_mm !== null) {
+				// Outer-edge reuse: rebuild anchors from the stored outward
+				// distance in mm along the face's outward direction — the outer
+				// edge has no uniface-box shift to read.
+				const dir = vec3.create();
+				if      (entry.face === UNIFACE_FACE_POS_X) vec3.set(dir,  1, 0, 0);
+				else if (entry.face === UNIFACE_FACE_NEG_X) vec3.set(dir, -1, 0, 0);
+				else if (entry.face === UNIFACE_FACE_POS_Y) vec3.set(dir, 0,  1, 0);
+				else if (entry.face === UNIFACE_FACE_NEG_Y) vec3.set(dir, 0, -1, 0);
+				else if (entry.face === UNIFACE_FACE_POS_Z) vec3.set(dir, 0, 0,  1);
+				else                                         vec3.set(dir, 0, 0, -1);
+				a1_w_l = vec3.create(); vec3.scaleAndAdd(a1_w_l, edge_w_p1_l, dir, entry.witness_length_mm);
+				a2_w_l = vec3.create(); vec3.scaleAndAdd(a2_w_l, edge_w_p2_l, dir, entry.witness_length_mm);
+			} else {
+				if (entry.witness_index === null) continue;
+				const shifts_row_l = uniface_box.shifts[entry.witness_index];
+				if (!shifts_row_l) continue;
+				const s_l = shifts_row_l[entry.face];
+				if (s_l === null || s_l === undefined) continue;
+				const sb_l = uniface_box.silhouette;
+				const anchor_world_l = (edge_end: vec3): vec3 => {
+					const w = vec3.create();
+					if      (entry.face === UNIFACE_FACE_POS_X) vec3.set(w, sb_l.max[0] + s_l, edge_end[1], edge_end[2]);
+					else if (entry.face === UNIFACE_FACE_NEG_X) vec3.set(w, sb_l.min[0] - s_l, edge_end[1], edge_end[2]);
+					else if (entry.face === UNIFACE_FACE_POS_Y) vec3.set(w, edge_end[0], sb_l.max[1] + s_l, edge_end[2]);
+					else if (entry.face === UNIFACE_FACE_NEG_Y) vec3.set(w, edge_end[0], sb_l.min[1] - s_l, edge_end[2]);
+					else if (entry.face === UNIFACE_FACE_POS_Z) vec3.set(w, edge_end[0], edge_end[1], sb_l.max[2] + s_l);
+					else                                         vec3.set(w, edge_end[0], edge_end[1], sb_l.min[2] - s_l);
+					return w;
+				};
+				a1_w_l = anchor_world_l(edge_w_p1_l);
+				a2_w_l = anchor_world_l(edge_w_p2_l);
+			}
+			const ep1_l = project_screen(edge_w_p1_l);
+			const ep2_l = project_screen(edge_w_p2_l);
+			const a1p_l = project_screen(a1_w_l);
+			const a2p_l = project_screen(a2_w_l);
+			const e1_l = { x: ep1_l.x, y: ep1_l.y };
+			const e2_l = { x: ep2_l.x, y: ep2_l.y };
+			const a1_l = { x: a1p_l.x, y: a1p_l.y };
+			const a2_l = { x: a2p_l.x, y: a2p_l.y };
+			const dim_len_l = Math.hypot(a2_l.x - a1_l.x, a2_l.y - a1_l.y);
+			if (dim_len_l < 1e-6) continue;
+			const dim_value_l = entry.axis === 'x' ? obj.so.width : entry.axis === 'y' ? obj.so.depth : obj.so.height;
+			const label_w_l = measure_label_width(dim_value_l);
+			const label_text_l = render.ctx
+				? units.format_for_system(dim_value_l, Units.current_unit_system(), stores.current_precision)
+				: '';
+			const label_pos_l = {
+				x: a1_l.x + (a2_l.x - a1_l.x) * entry.label_position_t,
+				y: a1_l.y + (a2_l.y - a1_l.y) * entry.label_position_t,
+			};
+			const label_rect_l: Rect_2d = {
+				x_min: label_pos_l.x - label_w_l / 2,
+				x_max: label_pos_l.x + label_w_l / 2,
+				y_min: label_pos_l.y - LABEL_H_PX / 2,
+				y_max: label_pos_l.y + LABEL_H_PX / 2,
+			};
+			// STRICT viability check 1 — formerly checked the per-direction
+			// winners list. The main search no longer restricts to the
+			// winners list, so this check is moot.
+			// STRICT viability check 2 — label position strictly in [0, 1].
+			// Slid placements (intentionally past one anchor) are exempt:
+			// their fraction lives outside [0, 1] by design.
+			if (!entry.was_slid && (entry.label_position_t < 0 || entry.label_position_t > 1)) {
+				if (k.debug.diagnose_dims) console.log(`[uniface placement] lock skipped: ${entry.so_name} (${entry.axis}) label position ${entry.label_position_t.toFixed(2)} along the dim line is outside the new range. Will run the full search for this dimension.`);
+				continue;
+			}
+			// STRICT viability check 3 — clears every already-locked label by pair clearance.
+			let pair_violates_l = false;
+			for (let pi = 0; pi < placed_label_rects.length; pi++) {
+				const d_pair = distance_between_rectangles_2d(label_rect_l, placed_label_rects[pi]);
+				if (d_pair < k.dimensions.PAIR_CLEARANCE_PX) {
+					pair_violates_l = true;
+					if (k.debug.diagnose_dims) console.log(`[uniface placement] lock skipped: ${entry.so_name} (${entry.axis}) would sit ${d_pair.toFixed(1)} px from an already-locked ${placed_label_owners[pi]}, below the ${k.dimensions.PAIR_CLEARANCE_PX} px pair clearance. Will run the full search for this dimension.`);
+					break;
 				}
 			}
+			if (pair_violates_l) continue;
+			// STRICT viability check 4 — does not cross inside silhouette.
+			const d_sil_l = distance_from_rect_to_convex_polygon_2d(label_rect_l, silhouette_polygon);
+			const inside_sil_l = d_sil_l === 0 && rect_intersects_convex_polygon_2d(label_rect_l, silhouette_polygon);
+			if (inside_sil_l) {
+				if (k.debug.diagnose_dims) console.log(`[uniface placement] lock skipped: ${entry.so_name} (${entry.axis}) crosses inside the silhouette outline. Will run the full search for this dimension.`);
+				continue;
+			}
+			// STRICT viability check 5 — spec rule 3.5 off-canvas exclusion.
+			// After tumble, a persisted placement may now poke off canvas.
+			// Skip the lock so the full search re-places this dimension
+			// under the new canvas-fit filter.
+			if (off_canvas_filter_enabled) {
+				const cw_l = render.logical_size.width;
+				const ch_l = render.logical_size.height;
+				const w1_dx_l = a1_l.x - e1_l.x, w1_dy_l = a1_l.y - e1_l.y;
+				const w1_len_l = Math.hypot(w1_dx_l, w1_dy_l);
+				const w1_ux_l = w1_len_l > 1e-9 ? w1_dx_l / w1_len_l : 0;
+				const w1_uy_l = w1_len_l > 1e-9 ? w1_dy_l / w1_len_l : 0;
+				const w2_dx_l = a2_l.x - e2_l.x, w2_dy_l = a2_l.y - e2_l.y;
+				const w2_len_l = Math.hypot(w2_dx_l, w2_dy_l);
+				const w2_ux_l = w2_len_l > 1e-9 ? w2_dx_l / w2_len_l : 0;
+				const w2_uy_l = w2_len_l > 1e-9 ? w2_dy_l / w2_len_l : 0;
+				const w1_past_l = { x: a1_l.x + w1_ux_l * 10, y: a1_l.y + w1_uy_l * 10 };
+				const w2_past_l = { x: a2_l.x + w2_ux_l * 10, y: a2_l.y + w2_uy_l * 10 };
+				const off_pts_l = [
+					e1_l, e2_l, a1_l, a2_l, w1_past_l, w2_past_l,
+					{ x: label_rect_l.x_min - 2, y: label_rect_l.y_min - 1 },
+					{ x: label_rect_l.x_max + 2, y: label_rect_l.y_min - 1 },
+					{ x: label_rect_l.x_max + 2, y: label_rect_l.y_max + 1 },
+					{ x: label_rect_l.x_min - 2, y: label_rect_l.y_max + 1 },
+				];
+				let off_l = false;
+				for (const p of off_pts_l) {
+					if (p.x < 0 || p.x > cw_l || p.y < 0 || p.y > ch_l) { off_l = true; break; }
+				}
+				if (off_l) {
+					if (k.debug.diagnose_dims) console.log(`[uniface placement] lock skipped: ${entry.so_name} (${entry.axis}) would draw off canvas after tumble. Will run the full search for this dimension.`);
+					continue;
+				}
+			}
+				// Viability check 6 — occlusion (spec 2.4). After a view change the
+				// measured edge may now be hidden behind another part. If it is,
+				// this placement is not viable; skip it so the full traversal
+				// re-runs and drops it, matching the fresh path.
+				if (render.edge_partly_hidden(edge_w_p1_l, edge_w_p2_l, tumble, entry.so_id)) {
+					if (k.debug.diagnose_dims) console.log(`[uniface placement] reuse skipped: ${entry.so_name} (${entry.axis}) measured edge is now hidden behind another part. Will re-place via the full placement algorithm.`);
+					continue;
+				}
+				// Cross-check (spec 7): a reused placement's label must clear every
+				// already-kept witness line, and its own witness lines must clear every
+				// already-kept label rectangle — the same witness/label clearance the
+				// fresh placement algorithm applies. If it crosses, skip reuse and let
+				// the full placement algorithm re-place this dimension.
+				if (placement_crosses_placed(label_rect_l, [[e1_l, a1_l], [e2_l, a2_l]], placed_label_rects, placed_witness_segments, k.dimensions.PAIR_CLEARANCE_PX)) {
+					if (k.debug.diagnose_dims) console.log(`[uniface placement] reuse skipped: ${entry.so_name} (${entry.axis}) label or witness overlaps an already-kept witness or label (spec 7). Will re-place via the full placement algorithm.`);
+					continue;
+				}
+				// All checks pass — keep this placement.
+			const candidate_dim_text_l = label_text_l;
+			placed_label_rects.push(label_rect_l);
+			placed_label_owners.push(`${obj.so.name} (${entry.axis}=${candidate_dim_text_l}) [locked]`);
+			placed_anchors.push(a1_l, a2_l);
+			placed_witness_segments.push([e1_l, a1_l], [e2_l, a2_l]);
+			placed_dim_segments.push([a1_l, a2_l]);
+			placed_dimensions.push({ text: candidate_dim_text_l, axis: entry.axis });
+			placed_witness_world_segments.push(
+				[[edge_w_p1_l[0], edge_w_p1_l[1], edge_w_p1_l[2]], [a1_w_l[0], a1_w_l[1], a1_w_l[2]]],
+				[[edge_w_p2_l[0], edge_w_p2_l[1], edge_w_p2_l[2]], [a2_w_l[0], a2_w_l[1], a2_w_l[2]]],
+			);
+			const witness_length_l = distance_from_point_to_line_2d(a1_l, e1_l, e2_l);
+			placements.push({
+				uniface                : entry.face,
+				edge_v1_idx            : null,
+				edge_v2_idx            : null,
+				natural_label_position : label_pos_l,
+				witness_index          : (entry.witness_index ?? uniface_box.shifts.length) + 1,
+				witness_length_px      : witness_length_l,
+				edge_p1_screen         : e1_l,
+				edge_p2_screen         : e2_l,
+				anchor_1_screen        : a1_l,
+				anchor_2_screen        : a2_l,
+				label_text             : label_text_l,
+				so_id                  : entry.so_id,
+				so_name                : entry.so_name,
+				axis                   : entry.axis,
+				mm                     : dim_value_l,
+				always_eligible        : is_always_eligible_part(obj),
+			});
+			seen_persisted_keys.add(persisted_key(entry.so_id, entry.axis));
+			locked_keys.add(persisted_key(entry.so_id, entry.axis));
+			diagnostic_total++;
+			diagnostic_with_any_candidate++;
+			diagnostic_with_winner++;
+		}
+		last_locked_count = locked_keys.size;
+		if (k.debug.diagnose_dims && locked_keys.size > 0) {
+			console.log(`[uniface placement] seeded run — ${locked_keys.size} of ${last_persisted.size} persisted dimensions locked in place; free dimensions search around them.`);
 		}
 	}
-	// Phase 2 & 3 — count parts viable at each (direction, witness index)
-	// cell, then keep the two witness indices with the highest counts
-	// per direction. A direction with zero viable parts has no winners.
-	const cell_count = tally_cell_counts_for_vote(cell_viability);
-	const winners_per_face = pick_top_two_witness_indices_per_face(cell_count, NUM_WITNESS_INDICES);
-	const VOTE_SIDE_NAMES: Record<number, string> = {
-		[UNIFACE_FACE_POS_X]: 'RIGHT',
-		[UNIFACE_FACE_NEG_X]: 'LEFT',
-		[UNIFACE_FACE_POS_Y]: 'FRONT',
-		[UNIFACE_FACE_NEG_Y]: 'BACK',
-		[UNIFACE_FACE_POS_Z]: 'TOP',
-		[UNIFACE_FACE_NEG_Z]: 'BOTTOM',
-	};
-	const vote_log_lines: string[] = [
-		`[uniface vote] witness-index counts per direction (parts that found a position viable in isolation):`,
-	];
-	for (let face_idx_v = 0; face_idx_v < 6; face_idx_v++) {
-		const counts_str = Array.from({ length: NUM_WITNESS_INDICES }, (_, wi) =>
-			`wi${wi + 1}=${cell_count.get(`${face_idx_v}|${wi}`) ?? 0}`,
-		).join(' ');
-		const winners_str = [...(winners_per_face.get(face_idx_v) ?? [])].sort((a, b) => a - b).map(w => `wi${w + 1}`).join(', ') || 'none';
-		vote_log_lines.push(`  ${VOTE_SIDE_NAMES[face_idx_v].padEnd(6)}: ${counts_str}   winners: ${winners_str}`);
-	}
-	diagnostic_log_buffer.push(vote_log_lines.join('\n'));
-	// Counter for the end-of-render summary: how many candidates the
-	// main loop below skipped because their (direction, witness index)
-	// cell lost the vote.
-	let diagnostic_vote_skipped = 0;
+	// Full search path: record this render's eligible (part, axis) set so
+	// next render's skip path can detect a scene change.
+	last_eligible_pairs.clear();
+	// Step 3h (rule 19): build the (part, axis) work list, then process it
+	// biggest-measurement-first so large dimensions claim their spots before
+	// small ones. The repeater filter and the eligible-pair bookkeeping run
+	// once, here, while the list is built; the main loop below then walks the
+	// list in descending-millimetre order.
+	const part_axis_entries: { obj: O_Scene; axis: Axis_Name; mm: number; always_eligible: boolean; base: boolean }[] = [];
 	for (const obj of rendered_leaves) {
 		// Step 3d filter 1: repeater filter. Clones inside a non-firewall
 		// repeater and middle fireblocks inside a firewall repeater get
@@ -3436,6 +2208,32 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 			diagnostic_repeater_dropped_names.push(`${obj.so.name} (${classification.kind})`);
 			continue;
 		}
+		for (const ax_p of classification.axes_allowed) {
+			last_eligible_pairs.add(persisted_key(obj.so.id, ax_p));
+		}
+		const always_eligible = is_always_eligible_part(obj);
+		const base = is_fully_visible_on_screen(obj);
+		for (const axis of axes) {
+			if (!classification.axes_allowed.includes(axis)) { diagnostic_repeater_dropped_axes++; continue; }
+			const mm = axis === 'x' ? obj.so.width : axis === 'y' ? obj.so.depth : obj.so.height;
+			part_axis_entries.push({ obj, axis, mm, always_eligible, base });
+		}
+	}
+	const part_axis_ordered = order_part_axis_by_descending_mm(part_axis_entries);
+	// Traverse-and-filter (spec 4.1): compute EVERY part-axis that has a valid
+	// placement, biggest-first, positions fixed. The N largest are chosen from
+	// this whole list at the very end (draw_largest_n) — the count does NOT gate
+	// the compute, so the biggest always win their spots and the slider only
+	// re-picks from the kept list.
+	if (k.debug.diagnose_dims) {
+		const order_str = part_axis_ordered
+			.map(e => `${e.obj.so.name}/${e.axis} ${Math.round(e.mm)}mm${e.always_eligible ? ' (always eligible)' : ''}`)
+			.join(', ');
+		diagnostic_log_buffer.push(`[uniface placement] count threshold: count ${dim_count}, ${part_axis_entries.length} candidate part-axes (biggest first): ${order_str}`);
+	}
+	for (const __pa of part_axis_ordered) {
+		const obj = __pa.obj;
+		const classification = classify_so(obj);
 		// Natural label position: projected centroid of the part's
 		// static-frame corners. For a box-shaped part this equals the
 		// projected midpoint of any axis-spanning edge of the part.
@@ -3462,13 +2260,47 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 		// corner points, not through the centroid. The screen-centroid
 		// seed below is still useful for any downstream consumers.
 		void sx; void sy; void sz; void n;
-		for (const axis of axes) {
+		// Front-most face normal of the PART in static world. Used by the
+		// lies-flat reward in the score formula: candidate outward
+		// directions perpendicular to this normal lie flat against the
+		// face the camera is looking at and earn the reward.
+		const front_normal_sw = vec3.create();
+		{
+			const origin_sw = vec3.create();
+			vec3.transformMat4(origin_sw, vec3.fromValues(0, 0, 0), wm);
+			const fn_sw = vec3.create();
+			let best_dot = Infinity;
+			for (let i = 0; i < 6; i++) {
+				vec3.transformMat4(fn_sw, obj.so.face_normal(i), wm);
+				vec3.subtract(fn_sw, fn_sw, origin_sw);
+				const len = Math.hypot(fn_sw[0], fn_sw[1], fn_sw[2]);
+				if (len < 1e-9) continue;
+				vec3.scale(fn_sw, fn_sw, 1 / len);
+				const d = vec3.dot(fn_sw, cam_dir_in_room);
+				if (d < best_dot) {
+					best_dot = d;
+					vec3.copy(front_normal_sw, fn_sw);
+				}
+			}
+		}
+		// Strength of the front-face normal's camera-alignment scales the
+		// lies-flat reward — a face that points straight at the camera
+		// pays full weight; a face only weakly toward the camera pays less.
+		const front_face_camera_alignment = Math.max(0, -vec3.dot(front_normal_sw, cam_dir_in_room));
+		// Step 3h: the work list already holds one entry per (part, axis) in
+		// descending-millimetre order, so this loop runs once, for this
+		// entry's axis. The skip below stays as a guard but never fires here.
+		for (const axis of [__pa.axis]) {
 			// Step 3d filter 1 continued: a firewalled fireblock gets dim
 			// lines only along the repeat axis. Skip every other axis.
 			if (!classification.axes_allowed.includes(axis)) {
 				diagnostic_repeater_dropped_axes++;
 				continue;
 			}
+			// Slice C of step 3.1 — this (part, axis) was already locked
+			// from persistence in the seeded-run pre-pass. Skip the full
+			// search for it.
+			if (locked_keys.has(persisted_key(obj.so.id, axis))) continue;
 			// Dimension-level check FIRST — duplicate-text rejects this
 			// whole (part, axis) when another already-picked dimension
 			// shows the same text on the same axis. Counts as one
@@ -3513,6 +2345,8 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 						so_id   : obj.so.id,
 						so_name : obj.so.name,
 						axis,
+						mm              : __pa.mm,
+						always_eligible : __pa.always_eligible,
 					});
 					continue;
 				}
@@ -3549,6 +2383,24 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 					]);
 				}
 			}
+			// The two directions that point AWAY from the part at each edge —
+			// the outer-edge options (spec 3.3). Picked from which side of the
+			// part box the edge sits on along the two non-measured axes.
+			const nearer_max = (v: number, lo: number, hi: number) => Math.abs(v - hi) < Math.abs(v - lo);
+			const edge_outward_faces: number[][] = edge_endpoints_world.map(([e1]) => {
+				if (axis === 'x') return [
+					nearer_max(e1[1], bb_min[1], bb_max[1]) ? UNIFACE_FACE_POS_Y : UNIFACE_FACE_NEG_Y,
+					nearer_max(e1[2], bb_min[2], bb_max[2]) ? UNIFACE_FACE_POS_Z : UNIFACE_FACE_NEG_Z,
+				];
+				if (axis === 'y') return [
+					nearer_max(e1[0], bb_min[0], bb_max[0]) ? UNIFACE_FACE_POS_X : UNIFACE_FACE_NEG_X,
+					nearer_max(e1[2], bb_min[2], bb_max[2]) ? UNIFACE_FACE_POS_Z : UNIFACE_FACE_NEG_Z,
+				];
+				return [
+					nearer_max(e1[0], bb_min[0], bb_max[0]) ? UNIFACE_FACE_POS_X : UNIFACE_FACE_NEG_X,
+					nearer_max(e1[1], bb_min[1], bb_max[1]) ? UNIFACE_FACE_POS_Y : UNIFACE_FACE_NEG_Y,
+				];
+			});
 			const dim_value = axis === 'x' ? obj.so.width : axis === 'y' ? obj.so.depth : obj.so.height;
 			const label_w_px = measure_label_width(dim_value);
 
@@ -3583,12 +2435,92 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 				return w;
 			};
 
+			// Projected screen box of the part itself. An outer-edge label must
+			// not sit inside it, or the part would cover the label.
+			let part_box_x_min = Infinity, part_box_x_max = -Infinity;
+			let part_box_y_min = Infinity, part_box_y_max = -Infinity;
+			{
+				const cw = vec3.create();
+				for (const cx of [obj.so.x_min, obj.so.x_max])
+				for (const cy of [obj.so.y_min, obj.so.y_max])
+				for (const cz of [obj.so.z_min, obj.so.z_max]) {
+					vec3.transformMat4(cw, vec3.fromValues(cx, cy, cz), wm_static);
+					const p = project_screen(cw);
+					if (p.w < 0) continue;
+					if (p.x < part_box_x_min) part_box_x_min = p.x;
+					if (p.x > part_box_x_max) part_box_x_max = p.x;
+					if (p.y < part_box_y_min) part_box_y_min = p.y;
+					if (p.y > part_box_y_max) part_box_y_max = p.y;
+				}
+			}
+			const have_part_box = part_box_x_min < part_box_x_max && part_box_y_min < part_box_y_max;
+			// Outer-edge anchors (spec 3.3): the smallest world shift of the edge
+			// along `outward_dir` such that every mark sits 10 px inside the
+			// canvas and the label box clears the part. Returns null when nothing
+			// fits. The 15-px witness-spacing rule and every other rule are left
+			// to the shared filter chain that runs on the result.
+			const outer_edge_anchor_world = (
+				edge_w_p1: vec3, edge_w_p2: vec3, outward_dir: vec3, lbl_w: number,
+			): { a1_w: vec3; a2_w: vec3 } | null => {
+				const CLEAR = 10;   // px inside the canvas
+				const PAST  = 10;   // px the witnesses run past the anchor
+				const evaluate = (shift: number): { fits: boolean; a1_w: vec3; a2_w: vec3 } => {
+					const a1w = vec3.create(); vec3.scaleAndAdd(a1w, edge_w_p1, outward_dir, shift);
+					const a2w = vec3.create(); vec3.scaleAndAdd(a2w, edge_w_p2, outward_dir, shift);
+					const e1 = project_screen(edge_w_p1), e2 = project_screen(edge_w_p2);
+					const a1 = project_screen(a1w), a2 = project_screen(a2w);
+					if (e1.w < 0 || e2.w < 0 || a1.w < 0 || a2.w < 0) return { fits: false, a1_w: a1w, a2_w: a2w };
+					const lx = (a1.x + a2.x) / 2, ly = (a1.y + a2.y) / 2;
+					const w1 = Math.hypot(a1.x - e1.x, a1.y - e1.y);
+					const w2 = Math.hypot(a2.x - e2.x, a2.y - e2.y);
+					const u1x = w1 > 1e-9 ? (a1.x - e1.x) / w1 : 0, u1y = w1 > 1e-9 ? (a1.y - e1.y) / w1 : 0;
+					const u2x = w2 > 1e-9 ? (a2.x - e2.x) / w2 : 0, u2y = w2 > 1e-9 ? (a2.y - e2.y) / w2 : 0;
+					const pts = [
+						{ x: e1.x, y: e1.y }, { x: e2.x, y: e2.y }, { x: a1.x, y: a1.y }, { x: a2.x, y: a2.y },
+						{ x: a1.x + u1x * PAST, y: a1.y + u1y * PAST }, { x: a2.x + u2x * PAST, y: a2.y + u2y * PAST },
+						{ x: lx - lbl_w / 2 - 2, y: ly - LABEL_H_PX / 2 - 1 }, { x: lx + lbl_w / 2 + 2, y: ly + LABEL_H_PX / 2 + 1 },
+					];
+					let xmn = Infinity, xmx = -Infinity, ymn = Infinity, ymx = -Infinity;
+					for (const p of pts) { if (p.x < xmn) xmn = p.x; if (p.x > xmx) xmx = p.x; if (p.y < ymn) ymn = p.y; if (p.y > ymx) ymx = p.y; }
+					let label_over_part = false;
+					if (have_part_box) {
+						label_over_part =
+							lx + lbl_w / 2 > part_box_x_min && lx - lbl_w / 2 < part_box_x_max
+							&& ly + LABEL_H_PX / 2 > part_box_y_min && ly - LABEL_H_PX / 2 < part_box_y_max;
+					}
+					const fits = xmn >= CLEAR && xmx <= canvas_w_for_score - CLEAR
+						&& ymn >= CLEAR && ymx <= canvas_h_for_score - CLEAR && !label_over_part;
+					return { fits, a1_w: a1w, a2_w: a2w };
+				};
+				const part_size = Math.max(obj.so.x_max - obj.so.x_min, obj.so.y_max - obj.so.y_min, obj.so.z_max - obj.so.z_min);
+				const min_shift = part_size * 0.01 + 1e-3;
+				const max_shift = Math.max(part_size, 1) * 100;
+				let s_no = 0, s_yes = -1;
+				let geom: { a1_w: vec3; a2_w: vec3 } | null = null;
+				let probe = min_shift, iters = 0;
+				while (probe < max_shift && iters < 30) {
+					const r = evaluate(probe);
+					if (r.fits) { s_yes = probe; geom = { a1_w: r.a1_w, a2_w: r.a2_w }; break; }
+					s_no = probe; probe *= 2; iters++;
+				}
+				if (s_yes < 0 || geom === null) return null;
+				let lo = s_no, hi = s_yes;
+				for (let i = 0; i < 30; i++) {
+					const mid = (lo + hi) / 2;
+					const r = evaluate(mid);
+					if (r.fits) { hi = mid; geom = { a1_w: r.a1_w, a2_w: r.a2_w }; } else { lo = mid; }
+				}
+				return geom;
+			};
+
 			// Search: outermost loop over witness indices (cascade on cap),
 			// then over each candidate edge of the part, then over candidate
 			// faces and sampled positions.
 			type Best_Candidate = {
 				face: number;
 				witness_index: number;
+				edge_corner_pair_idx: number;
+				label_position_t: number;
 				label_pos: { x: number; y: number };
 				label_rect: Rect_2d;
 				anchor_1: { x: number; y: number };
@@ -3600,6 +2532,11 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 				anchor_1_world: [number, number, number];
 				anchor_2_world: [number, number, number];
 				score: number;
+				slid_by_precheck: boolean;
+				slid_by_retry: boolean;
+				diag_cam_dot: number;
+				diag_back_side_penalty: number;
+				is_outer_edge: boolean;
 			};
 			let best: Best_Candidate | null = null;
 			// Per-side best-passing candidate, broken into score components.
@@ -3610,7 +2547,9 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 				centering_penalty: number;
 				witness_length_penalty: number;
 				inside_penalty: number;
-				world_distance_penalty: number;
+				screen_room_reward: number;
+				back_side_penalty: number;
+				flat_reward: number;
 				witness_index: number;
 			};
 			const per_side_best: Map<number, Per_Side_Score> = new Map();
@@ -3622,32 +2561,46 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 			// When this part is hovered, store one sample rejected
 			// candidate's label rectangle per side, so the diagnostic can
 			// show actual screen coordinates the silhouette filter judged.
-			const is_hovered_for_samples = hovered_so_id_for_diag !== null && obj.so.id === hovered_so_id_for_diag;
+			const is_hovered_for_samples = (hovered_so_id_for_diag !== null && obj.so.id === hovered_so_id_for_diag) || selected_so_ids.has(obj.so.id);
 			const per_side_sample_rect: Map<number, Rect_2d> = new Map();
 			// Plain-English description of the actual numbers behind one
 			// rejected candidate per side, for the hovered part only.
 			const per_side_sample_detail: Map<number, string> = new Map();
 
-			for (let wi = 0; wi < NUM_WITNESS_INDICES; wi++) {
-				const shifts_row = uniface_box.shifts[wi];
-				if (!shifts_row) continue;
-				for (const [edge_w_p1, edge_w_p2] of edge_endpoints_world) {
+			// Occlusion exclusion (spec 2.4): a candidate edge is dropped when either
+				// endpoint vertex is hidden behind another part's face. Independent of
+				// witness index, so test once per edge here.
+				const edge_occluded: boolean[] = edge_endpoints_world.map(([ew1, ew2]) =>
+					render.edge_partly_hidden(ew1, ew2, tumble, obj.so.id),
+				);
+				if (k.debug.diagnose_dims) {
+					const n_occ = edge_occluded.filter(Boolean).length;
+					if (n_occ > 0) diagnostic_log_buffer.push(`[uniface placement] occlusion (spec 2.4): ${obj.so.name}/${axis} dropped ${n_occ} of ${edge_endpoints_world.length} candidate edges (part of the edge hidden behind another part).`);
+				}
+				for (let wi = 0; wi <= NUM_WITNESS_INDICES; wi++) {
+				const is_outer_edge = wi === NUM_WITNESS_INDICES;
+				const shifts_row = is_outer_edge ? null : uniface_box.shifts[wi];
+				if (!is_outer_edge && !shifts_row) continue;
+				for (let edge_idx = 0; edge_idx < edge_endpoints_world.length; edge_idx++) {
+					const [edge_w_p1, edge_w_p2] = edge_endpoints_world[edge_idx];
+						if (edge_occluded[edge_idx]) continue;  // spec 2.4: endpoint hidden behind another part
 					const ep1 = project_screen(edge_w_p1);
 					const ep2 = project_screen(edge_w_p2);
 					const edge_p1_screen = { x: ep1.x, y: ep1.y };
 					const edge_p2_screen = { x: ep2.x, y: ep2.y };
 					for (const face_idx of UNIFACE_CANDIDATES_PER_AXIS[axis]) {
-						const s = shifts_row[face_idx];
-						if (s === null || s === undefined) continue;
-						// Rule 19 witness-index vote (step 3g): skip this
-						// cell if its witness index lost the vote for this
-						// direction. Labels in the same direction cluster
-						// on at most two shared witness indices.
-						const winners_for_face = winners_per_face.get(face_idx);
-						if (!winners_for_face || !winners_for_face.has(wi)) {
-							diagnostic_vote_skipped++;
-							continue;
-						}
+						// Outer edge only takes the two directions pointing away
+						// from the part at this edge; a uniface takes the box shift.
+						if (is_outer_edge && !edge_outward_faces[edge_idx].includes(face_idx)) continue;
+						const s = is_outer_edge ? 0 : shifts_row![face_idx];
+						if (!is_outer_edge && (s === null || s === undefined)) continue;
+						// Rule 19 witness-index vote — the popular-uniface-index
+						// vote is computed and logged for diagnostics, but the
+						// main search is no longer restricted by it: every
+						// candidate at every uniface index is considered.
+						// Parts that need a less-popular uniface index to fit
+						// can use one; the score still naturally prefers
+						// shorter witnesses and bigger empty-room rewards.
 						// Cross product of edge direction and side outward
 						// normal gives the dim's flat plane normal. Dot with
 						// the camera direction (both in static-world frame)
@@ -3657,8 +2610,15 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 						vec3.cross(plane_normal, edge_dir_world, SIDE_NORMAL_WORLD[face_idx]);
 						vec3.normalize(plane_normal, plane_normal);
 						const plane_camera_dot = Math.abs(vec3.dot(plane_normal, cam_dir_in_room));
-						const a1_w = anchor_world(face_idx, edge_w_p1, s);
-						const a2_w = anchor_world(face_idx, edge_w_p2, s);
+						let a1_w: vec3, a2_w: vec3;
+						if (is_outer_edge) {
+							const oa = outer_edge_anchor_world(edge_w_p1, edge_w_p2, SIDE_NORMAL_WORLD[face_idx], label_w_px);
+							if (oa === null) continue;
+							a1_w = oa.a1_w; a2_w = oa.a2_w;
+						} else {
+							a1_w = anchor_world(face_idx, edge_w_p1, s as number);
+							a2_w = anchor_world(face_idx, edge_w_p2, s as number);
+						}
 						const a1p = project_screen(a1_w);
 						const a2p = project_screen(a2_w);
 						const a1 = { x: a1p.x, y: a1p.y };
@@ -3697,9 +2657,18 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 							if (is_hovered_for_samples && !per_side_sample_detail.has(face_idx)) {
 								if (shape_result.filter === 'edge-on-plane') {
 									const angle_deg_from_edge_on = Math.asin(Math.max(0, Math.min(1, plane_camera_dot))) * 180 / Math.PI;
+									// On-screen cross-check: the angle between the dim line and a
+									// witness. Near 0° means the marks collapse onto one line (truly
+									// edge-on on screen); near 90° means the plane reads fine and the
+									// world-space test disagrees with the picture.
+									const dlx = a2.x - a1.x, dly = a2.y - a1.y;
+									const wlx = a1.x - edge_p1_screen.x, wly = a1.y - edge_p1_screen.y;
+									const dl_len = Math.hypot(dlx, dly), wl_len = Math.hypot(wlx, wly);
+									const cosang = (dl_len > 1e-6 && wl_len > 1e-6) ? Math.abs(dlx * wlx + dly * wly) / (dl_len * wl_len) : 1;
+									const onscreen_angle = Math.acos(Math.max(0, Math.min(1, cosang))) * 180 / Math.PI;
 									per_side_sample_detail.set(
 										face_idx,
-										`plane-vs-camera dot=${plane_camera_dot.toFixed(3)} (about ${angle_deg_from_edge_on.toFixed(1)}° off edge-on; rejected below 10°)`,
+										`plane-vs-camera dot=${plane_camera_dot.toFixed(3)} (about ${angle_deg_from_edge_on.toFixed(1)}° off edge-on; rejected below 10°); view=(${cam_dir_in_room[0].toFixed(2)},${cam_dir_in_room[1].toFixed(2)},${cam_dir_in_room[2].toFixed(2)}) plane-normal=(${plane_normal[0].toFixed(2)},${plane_normal[1].toFixed(2)},${plane_normal[2].toFixed(2)}); on-screen dim-line-to-witness angle=${onscreen_angle.toFixed(1)}°`,
 									);
 								} else if (shape_result.filter === 'own-witness-convergence') {
 									const wit_gap = k.dimensions.SILHOUETTE_MARGIN_PX - shape_result.shortfall_px;
@@ -3719,6 +2688,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 						for (const t of POSITION_SAMPLES) {
 							let cx_s = a1.x + (a2.x - a1.x) * t;
 							let cy_s = a1.y + (a2.y - a1.y) * t;
+							let did_precheck_slide = false;
 							// Rule 18 label slide: if the natural position
 							// would have the label box fully cover either
 							// arrowhead (anchor + arrow base both inside the
@@ -3745,6 +2715,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 										const shift = half_w + 2 + overhang_px + ARROW_PX;
 										cx_s = target.x + sign_away * ux_check * shift;
 										cy_s = target.y + sign_away * uy_check * shift;
+										did_precheck_slide = true;
 									}
 								}
 							}
@@ -3755,20 +2726,22 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 								y_max: cy_s + LABEL_H_PX / 2,
 							};
 							const inputs: Clearance_Inputs = {
-								candidate_label_rect    : rect,
-								candidate_anchor_1      : a1,
-								candidate_anchor_2      : a2,
-								candidate_edge_p1_screen: edge_p1_screen,
-								candidate_edge_p2_screen: edge_p2_screen,
-								silhouette              : silhouette_polygon,
+								candidate_label_rect     : rect,
+								candidate_anchor_1       : a1,
+								candidate_anchor_2       : a2,
+								candidate_edge_p1_screen : edge_p1_screen,
+								candidate_edge_p2_screen : edge_p2_screen,
+								silhouette               : silhouette_polygon,
 								placed_label_rects,
 								placed_anchors,
 								placed_witness_segments,
 								placed_dim_segments,
-								pair_clearance_px       : k.dimensions.PAIR_CLEARANCE_PX,
-								silhouette_margin_px    : k.dimensions.SILHOUETTE_MARGIN_PX,
-								silhouette_clearance_px : 0,
-								plane_camera_dot        : plane_camera_dot,
+								pair_clearance_px        : k.dimensions.PAIR_CLEARANCE_PX,
+								silhouette_margin_px     : k.dimensions.SILHOUETTE_MARGIN_PX,
+								silhouette_clearance_px  : 0,
+								plane_camera_dot         : plane_camera_dot,
+								canvas_w                 : off_canvas_filter_enabled ? render.logical_size.width : undefined,
+								canvas_h                 : off_canvas_filter_enabled ? render.logical_size.height : undefined,
 							};
 							const result = evaluate_position_clearances(inputs);
 							if (!result.ok) {
@@ -3813,6 +2786,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 							// candidate's own anchors, dim line, or witnesses cannot
 							// be helped by sliding — drop those candidates outright.
 							let use_cx = cx_s, use_cy = cy_s, use_rect = rect, use_t = t;
+							let did_retry_slide = false;
 							if (!result.ok) {
 								if (!SLIDE_ELIGIBLE_FILTERS.has(result.filter)) continue;
 								if (dim_len < 1e-9) continue;
@@ -3837,6 +2811,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 										use_rect = cand_rect;
 										use_t = t + shift / dim_len;
 										recovered = true;
+										did_retry_slide = true;
 										break;
 									}
 								}
@@ -3871,22 +2846,60 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 							};
 							const inside_penalty = WITNESS_INSIDE_SILHOUETTE_WEIGHT
 								* (inside_percent(edge_p1_screen, a1) + inside_percent(edge_p2_screen, a2)) / 2;
-							// World-coordinate distance from the part to the
-							// chosen uniface plane. Dominates the score so the
-							// closest uniface in world space wins by default.
-							let world_distance = 0;
-							if      (face_idx === UNIFACE_FACE_POS_X) world_distance = (sb.max[0] + s) - bb_max[0];
-							else if (face_idx === UNIFACE_FACE_NEG_X) world_distance = bb_min[0] - (sb.min[0] - s);
-							else if (face_idx === UNIFACE_FACE_POS_Y) world_distance = (sb.max[1] + s) - bb_max[1];
-							else if (face_idx === UNIFACE_FACE_NEG_Y) world_distance = bb_min[1] - (sb.min[1] - s);
-							else if (face_idx === UNIFACE_FACE_POS_Z) world_distance = (sb.max[2] + s) - bb_max[2];
-							else                                       world_distance = bb_min[2] - (sb.min[2] - s);
-							const world_distance_penalty = WORLD_DISTANCE_WEIGHT * Math.max(0, world_distance);
-							const score = between_bonus - centering_penalty - witness_length_penalty - inside_penalty - world_distance_penalty;
+							// Screen-room reward. Distance in screen pixels from
+							// the candidate's anchor midpoint to the canvas edge,
+							// walking along the perpendicular to the dim line that
+							// points away from the silhouette center. The
+							// direction with more empty canvas space "outward"
+							// from the silhouette gets a bigger reward.
+							const mid_x_sr = (a1.x + a2.x) / 2;
+							const mid_y_sr = (a1.y + a2.y) / 2;
+							const dx_sr = a2.x - a1.x, dy_sr = a2.y - a1.y;
+							const dim_len_screen_sr = Math.hypot(dx_sr, dy_sr);
+							let screen_room_reward = 0;
+							if (dim_len_screen_sr > 1e-9) {
+								let perp_x = -dy_sr / dim_len_screen_sr;
+								let perp_y = dx_sr / dim_len_screen_sr;
+								const to_sil_x = silhouette_center_x - mid_x_sr;
+								const to_sil_y = silhouette_center_y - mid_y_sr;
+								if (perp_x * to_sil_x + perp_y * to_sil_y > 0) {
+									perp_x = -perp_x; perp_y = -perp_y;
+								}
+								let t_to_edge = Infinity;
+								if (perp_x > 1e-9) t_to_edge = Math.min(t_to_edge, (canvas_w_for_score - mid_x_sr) / perp_x);
+								else if (perp_x < -1e-9) t_to_edge = Math.min(t_to_edge, -mid_x_sr / perp_x);
+								if (perp_y > 1e-9) t_to_edge = Math.min(t_to_edge, (canvas_h_for_score - mid_y_sr) / perp_y);
+								else if (perp_y < -1e-9) t_to_edge = Math.min(t_to_edge, -mid_y_sr / perp_y);
+								if (isFinite(t_to_edge) && t_to_edge > 0) screen_room_reward = SCREEN_ROOM_WEIGHT * t_to_edge;
+							}
+							// Camera-side penalty: any candidate whose outward direction
+							// (the silhouette face's outward normal in static world)
+							// points AWAY from the camera (positive dot with the
+							// camera-forward direction) gets a heavy penalty so
+							// front-side candidates win whenever they exist. Weight
+							// fifty thousand per unit of away-alignment — large
+							// enough to outweigh the empty-canvas reward even when
+							// the back side has hundreds of pixels more open room.
+							const outward_sw = SIDE_NORMAL_WORLD[face_idx];
+							const cam_dot_for_back = vec3.dot(outward_sw, cam_dir_in_room);
+							const back_side_penalty = 50000 * Math.max(0, cam_dot_for_back);
+							// Lies-flat reward: candidate outward directions
+							// perpendicular to the part's front-face normal
+							// earn the reward. Direction along the normal
+							// (popping straight out of the front face) earns
+							// zero. The reward also scales with how strongly
+							// the front face points at the camera, so faces
+							// nearly perpendicular to the view get a smaller
+							// pull than faces that point straight at it.
+							const flat_alignment = 1 - Math.abs(vec3.dot(outward_sw, front_normal_sw));
+							const flat_reward = 500 * flat_alignment * front_face_camera_alignment;
+							const score = between_bonus - centering_penalty - witness_length_penalty - inside_penalty + screen_room_reward - back_side_penalty + flat_reward;
 							if (best === null || score > best.score) {
 								best = {
 									face: face_idx,
 									witness_index: wi,
+									edge_corner_pair_idx: edge_idx,
+									label_position_t: use_t,
 									label_pos: { x: use_cx, y: use_cy },
 									label_rect: use_rect,
 									anchor_1: a1,
@@ -3898,6 +2911,11 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 									anchor_1_world: [a1_w[0], a1_w[1], a1_w[2]],
 									anchor_2_world: [a2_w[0], a2_w[1], a2_w[2]],
 									score,
+									slid_by_precheck: did_precheck_slide,
+									slid_by_retry   : did_retry_slide,
+									diag_cam_dot           : cam_dot_for_back,
+									diag_back_side_penalty : back_side_penalty,
+										is_outer_edge,
 								};
 							}
 							const existing = per_side_best.get(face_idx);
@@ -3908,14 +2926,20 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 									centering_penalty,
 									witness_length_penalty,
 									inside_penalty,
-									world_distance_penalty,
+									screen_room_reward,
+									back_side_penalty,
+									flat_reward,
 									witness_index: wi,
 								});
 							}
 						}
 					}
 				}
-				if (best !== null) break;  // first witness index with a winner wins.
+				// Examine every uniface-index level. Per Jonathan: the search
+				// should NOT stop until it has looked at all eight per-axis
+				// (edge, perpendicular direction) candidates AT EVERY index-
+				// derived uniface level, then pick the highest score across
+				// the whole field.
 			}
 
 			const winner = best as Best_Candidate | null;
@@ -3933,6 +2957,44 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 					[winner.edge_p1_world, winner.anchor_1_world],
 					[winner.edge_p2_world, winner.anchor_2_world],
 				);
+				// Slice A of step 3.1 — record this (part, axis) winner's
+				// chosen values in the persistence map. Future renders will
+				// read these for the four viability checks (slice B).
+				// Compute the actual fraction along the dim line for the
+				// final label position. Includes the slide pre-check shift,
+				// which the per-sample t value (use_t) does NOT reflect.
+				// Negative when slid past anchor 1, > 1 when slid past
+				// anchor 2.
+				const dx_persist = winner.anchor_2.x - winner.anchor_1.x;
+				const dy_persist = winner.anchor_2.y - winner.anchor_1.y;
+				const dim_len_sq_persist = dx_persist * dx_persist + dy_persist * dy_persist;
+				const actual_t_persist = dim_len_sq_persist > 1e-9
+					? ((winner.label_pos.x - winner.anchor_1.x) * dx_persist
+					 + (winner.label_pos.y - winner.anchor_1.y) * dy_persist) / dim_len_sq_persist
+					: winner.label_position_t;
+				const was_slid_persist = actual_t_persist < 0 || actual_t_persist > 1;
+					// Store exactly one outward locator, never both. An outer edge
+					// records its outward distance in mm from the edge to the anchor
+					// (reuse rebuilds the anchor from it); a uniface records its level.
+					const outward_length_mm_persist = winner.is_outer_edge
+						? Math.hypot(
+							winner.anchor_1_world[0] - winner.edge_p1_world[0],
+							winner.anchor_1_world[1] - winner.edge_p1_world[1],
+							winner.anchor_1_world[2] - winner.edge_p1_world[2],
+						)
+						: null;
+				last_persisted.set(persisted_key(obj.so.id, axis), {
+					so_id                : obj.so.id,
+					so_name              : obj.so.name,
+					axis,
+					face                 : winner.face,
+					witness_index        : winner.is_outer_edge ? null : winner.witness_index,
+					witness_length_mm    : outward_length_mm_persist,
+					edge_corner_pair_idx : winner.edge_corner_pair_idx,
+					label_position_t     : actual_t_persist,
+					was_slid             : was_slid_persist,
+				});
+				seen_persisted_keys.add(persisted_key(obj.so.id, axis));
 			}
 
 			// Diagnostic: one log entry per (part, axis) — but only when at least
@@ -3949,7 +3011,9 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 			// currently hovered. Everything else stays out of the log;
 			// the summary at the end still counts the whole scene.
 			const hovered_so_id = hits_3d.hover?.so?.id ?? hits_3d.hovered_uniface_placement?.so_id ?? null;
-			const is_hovered_part = hovered_so_id !== null && obj.so.id === hovered_so_id;
+			// Print the per-side detail for the hovered part AND the selected part,
+			// so a selected part with no drawn dimension shows why each side failed.
+			const is_hovered_part = (hovered_so_id !== null && obj.so.id === hovered_so_id) || selected_so_ids.has(obj.so.id);
 			if (is_hovered_part) {
 				const SIDE_NAMES_BY_FACE: Record<number, string> = {
 					[UNIFACE_FACE_POS_X]: 'RIGHT',
@@ -4000,7 +3064,9 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 							+ ` - off-center ${s.centering_penalty.toFixed(1)}`
 							+ ` - line-length ${s.witness_length_penalty.toFixed(1)}`
 							+ ` - crosses-design ${s.inside_penalty.toFixed(1)}`
-							+ ` - distance-from-part ${s.world_distance_penalty.toFixed(1)}`
+							+ ` + screen-room ${s.screen_room_reward.toFixed(1)}`
+							+ ` - back-side ${s.back_side_penalty.toFixed(1)}`
+							+ ` + lies-flat ${s.flat_reward.toFixed(1)}`
 							+ ` (witness index ${s.witness_index + 1})${marker}`
 						);
 					}
@@ -4020,7 +3086,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 				edge_v2_idx            : null,
 				natural_label_position : winner ? winner.label_pos : null,
 				witness_index          : winner ? winner.witness_index + 1 : 1,
-				witness_length_px      : witness_length_px,
+				witness_length_px      : winner ? witness_length_px : null,
 				edge_p1_screen         : winner ? winner.edge_p1_screen : null,
 				edge_p2_screen         : winner ? winner.edge_p2_screen : null,
 				anchor_1_screen        : winner ? winner.anchor_1 : null,
@@ -4029,11 +3095,104 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 				so_id   : obj.so.id,
 				so_name : obj.so.name,
 				axis,
+				mm              : __pa.mm,
+				always_eligible : __pa.always_eligible,
 			});
+			// One-liner per dimension so the user can see at a glance which
+			// witness level each chose (lower means closer to the silhouette),
+			// or that it chose the outer edge.
+			if (k.debug.diagnose_dims) {
+				if (winner !== null) {
+					diagnostic_log_buffer.push(`[uniface placement] ${obj.so.name} (${axis}): ${winner.is_outer_edge ? 'outer edge' : `witness index ${winner.witness_index + 1}`}`);
+					// Geometry trace for the winning candidate. Plain-English
+					// numbers so the next "label overlaps arrows" report can be
+					// answered by reading the log. Distances are measured along
+					// the dim line: positive means past the anchor in the
+					// outward direction, negative means inside the dim line
+					// span (which is where the arrow body sits).
+					const dl_dx = winner.anchor_2.x - winner.anchor_1.x;
+					const dl_dy = winner.anchor_2.y - winner.anchor_1.y;
+					const dl_len = Math.hypot(dl_dx, dl_dy);
+					const ux_d = dl_len > 1e-9 ? dl_dx / dl_len : 0;
+					const uy_d = dl_len > 1e-9 ? dl_dy / dl_len : 0;
+					// Project the label rect corners onto the dim line; the
+					// smallest projection from anchor 1 is the rect's inner
+					// edge toward anchor 1, the largest is the inner edge
+					// toward anchor 2.
+					const rect_pts = [
+						{ x: winner.label_rect.x_min, y: winner.label_rect.y_min },
+						{ x: winner.label_rect.x_max, y: winner.label_rect.y_min },
+						{ x: winner.label_rect.x_max, y: winner.label_rect.y_max },
+						{ x: winner.label_rect.x_min, y: winner.label_rect.y_max },
+					];
+					let min_proj_from_a1 =  Infinity;
+					let max_proj_from_a1 = -Infinity;
+					for (const p of rect_pts) {
+						const proj = (p.x - winner.anchor_1.x) * ux_d + (p.y - winner.anchor_1.y) * uy_d;
+						if (proj < min_proj_from_a1) min_proj_from_a1 = proj;
+						if (proj > max_proj_from_a1) max_proj_from_a1 = proj;
+					}
+					// Distance from the label rect's NEAREST edge to each
+					// anchor, measured along the dim direction. Negative means
+					// the rect overhangs past that anchor on the outward side.
+					const gap_a1 = min_proj_from_a1;             // a1 is at 0 along dim line
+					const gap_a2 = dl_len - max_proj_from_a1;    // a2 is at dl_len along dim line
+					const slide_note =
+						winner.slid_by_precheck ? 'pre-check (label past one anchor)'
+						: winner.slid_by_retry ? 'retry (label shifted within span)'
+						: 'no slide (label between anchors)';
+					diagnostic_log_buffer.push(
+						`    geometry: dim line ${dl_len.toFixed(1)} px, position fraction ${winner.label_position_t.toFixed(2)}, ` +
+						`label rect gap from anchor 1 = ${gap_a1.toFixed(1)} px, gap from anchor 2 = ${gap_a2.toFixed(1)} px, ` +
+						`slide = ${slide_note}`,
+					);
+					diagnostic_log_buffer.push(
+						`    screen positions: anchor 1 = (${winner.anchor_1.x.toFixed(1)}, ${winner.anchor_1.y.toFixed(1)}), ` +
+						`anchor 2 = (${winner.anchor_2.x.toFixed(1)}, ${winner.anchor_2.y.toFixed(1)}), ` +
+						`label center = (${winner.label_pos.x.toFixed(1)}, ${winner.label_pos.y.toFixed(1)}), ` +
+						`label rect = (${winner.label_rect.x_min.toFixed(1)}, ${winner.label_rect.y_min.toFixed(1)}) to (${winner.label_rect.x_max.toFixed(1)}, ${winner.label_rect.y_max.toFixed(1)})`,
+					);
+					// Is each anchor inside the label rectangle? If yes, the
+					// white box will paint over and erase the arrowhead at
+					// that anchor.
+					const inside_rect = (p: { x: number; y: number }, r: Rect_2d) =>
+						p.x >= r.x_min && p.x <= r.x_max && p.y >= r.y_min && p.y <= r.y_max;
+					const a1_inside = inside_rect(winner.anchor_1, winner.label_rect);
+					const a2_inside = inside_rect(winner.anchor_2, winner.label_rect);
+					diagnostic_log_buffer.push(
+						`    anchor 1 inside label rect: ${a1_inside ? 'YES (arrow erased)' : 'no'}, ` +
+						`anchor 2 inside label rect: ${a2_inside ? 'YES (arrow erased)' : 'no'}`,
+					);
+					// Camera-side diagnostic — describes the silhouette face
+					// the dim sits on by its screen position relative to the
+					// silhouette centre (where you SEE it on the canvas),
+					// not by its world-axis name. Plus the front/back side
+					// relative to the camera and the penalty applied.
+					const fc_screen = face_centers_screen[winner.face];
+					let screen_dir = 'unknown';
+					if (fc_screen) {
+						const ddx = fc_screen.x - silhouette_center_x;
+						const ddy = fc_screen.y - silhouette_center_y;
+						const adx = Math.abs(ddx);
+						const ady = Math.abs(ddy);
+						const horiz = adx > ady * 0.4 ? (ddx > 0 ? 'screen right' : 'screen left') : '';
+						const vert  = ady > adx * 0.4 ? (ddy > 0 ? 'screen bottom' : 'screen top') : '';
+						screen_dir = vert && horiz ? `${vert}-${horiz.split(' ')[1]}` : (vert || horiz || 'screen centre');
+					}
+					const side_label = winner.diag_cam_dot > 0 ? 'back (away from camera)' : winner.diag_cam_dot < 0 ? 'front (toward camera)' : 'edge-on';
+					diagnostic_log_buffer.push(
+						`    silhouette face sits at: ${screen_dir}, side relative to camera: ${side_label}, ` +
+						`camera dot = ${winner.diag_cam_dot.toFixed(3)}, ` +
+						`back-side penalty applied = ${winner.diag_back_side_penalty.toFixed(0)}`,
+					);
+				} else {
+					diagnostic_log_buffer.push(`[uniface placement] ${obj.so.name} (${axis}): dropped (no placement passed every filter)`);
+				}
+			}
 		}
 	}
-	// Step 3d filter 4 (no-viable-pair drop): remove every placement
-	// whose search yielded no winning uniface — they cannot draw.
+	// Step 3d filter 4 (no-viable-pair drop): remove every placement whose
+	// search found no winning placement — they have no anchors to draw.
 	const placements_with_winner = placements.filter(placement => {
 		if (placement.uniface === null) {
 			diagnostic_null_picks_removed++;
@@ -4041,6 +3200,10 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 		}
 		return true;
 	});
+	// Draw-the-largest-N step (spec 4.1): from the whole valid list, draw the N
+	// largest by length plus every always-eligible one. The slider N takes effect
+	// ONLY here; it re-picks from the same list and moves nothing.
+	const placements_to_draw = draw_largest_n(placements_with_winner, dim_count);
 	{
 		const histogram = Array.from(diagnostic_rejection_counts.entries())
 			.sort((a, b) => b[1] - a[1])
@@ -4051,11 +3214,10 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 			? `\n    parts removed by the repeater filter: ${diagnostic_repeater_dropped_names.join(', ')}`
 			: '';
 		const summary =
-			`[uniface placement] summary: ${diagnostic_total} dimensions, ${diagnostic_with_any_candidate} had at least one passing candidate, ${diagnostic_with_winner} were picked`
+			`[uniface placement] summary: ${diagnostic_total} dimensions, ${diagnostic_with_any_candidate} had at least one viable candidate, ${diagnostic_with_winner} valid; drew the ${placements_to_draw.length} shown (${dim_count} largest plus always-eligible)`
 			+ `\n  step 3d filter drops:`
 			+ `\n    repeater filter removed ${diagnostic_repeater_dropped_parts} part(s) and ${diagnostic_repeater_dropped_axes} extra axis sweep(s)${repeater_names}`
 			+ `\n    no-viable-pair drop removed ${diagnostic_null_picks_removed} pick(s) with no chosen uniface`
-			+ `\n  step 3g witness-index vote: skipped ${diagnostic_vote_skipped} candidate cell(s) whose witness index lost the per-direction vote`
 			+ `\n  rejections by filter (${total_rejections} total across all dimensions):\n${histogram || '  (none)'}`;
 		const full_output = diagnostic_log_buffer.length > 0
 			? diagnostic_log_buffer.join('\n') + '\n' + summary
@@ -4068,6 +3230,13 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 			}
 		}
 	}
-	last_uniface_placement_result = { uniface_box, placements: placements_with_winner, silhouette_polygon_screen: silhouette_polygon };
+	// Slice A of step 3.1 — prune persistence entries for (part, axis)
+	// pairs that were not touched this render. A part that disappeared
+	// (hidden, removed, or no winner this render) loses its persisted
+	// record so the next render does not try to skip on a stale entry.
+	for (const key of Array.from(last_persisted.keys())) {
+		if (!seen_persisted_keys.has(key)) last_persisted.delete(key);
+	}
+	last_uniface_placement_result = { uniface_box, placements: placements_to_draw, silhouette_polygon_screen: silhouette_polygon, silhouette_box_polygon_screen: silhouette_box_hull_screen };
 	return last_uniface_placement_result;
 }

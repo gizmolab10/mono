@@ -5,12 +5,13 @@ I am trying here to convey a way of being that persists from chat to chat. Not s
 ## Contents
 
 - [Collaborate](./collaborate/)
-- [Hub](./hub/)
 - [Develop](./develop/)
+- [Hub](./hub/)
 - [Philosophy](./philosophy/)
 - [Pre Flight](./pre-flight/)
 - [Setup](./setup/)
 - [Test](./test/)
 - [Tools](./tools/)
 - [Jonathan](./jonathan.md)
+- [Synopsis Of Our Guides](./synopsis of our guides.md)
 

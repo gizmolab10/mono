@@ -3,6 +3,7 @@
 This document defines naming, formatting, and organization patterns. Follow these strictly for consistency across projects.
 
 ## Table of Contents
+
 - [Names](#names)
   - [Prefixes](#prefixes)
   - [Variable Naming](#variable-naming)
@@ -112,12 +113,13 @@ This document defines naming, formatting, and organization patterns. Follow thes
 ### Alignment
 
 - **Align equals signs** in property declarations when in a group:
+
 ```typescript
-w_t_cluster_pager		= writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
-w_t_breadcrumbs			= writable<T_Breadcrumbs>(T_Breadcrumbs.ancestry);
-w_t_auto_adjust_graph	= writable<T_Auto_Adjust_Graph | null>(null);
-w_show_details			= writable<boolean>(true);
-w_show_tiny_dots		= writable<boolean>(true);
+w_t_cluster_pager  = writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
+w_t_breadcrumbs   = writable<T_Breadcrumbs>(T_Breadcrumbs.ancestry);
+w_t_auto_adjust_graph = writable<T_Auto_Adjust_Graph | null>(null);
+w_show_details   = writable<boolean>(true);
+w_show_tiny_dots  = writable<boolean>(true);
 ```
 
 ### Spacing
@@ -133,35 +135,39 @@ w_show_tiny_dots		= writable<boolean>(true);
 - **Single quotes** for strings in TypeScript: `'string'`, `'key'`
 - **Single quotes** in Svelte script tags: `<script lang='ts'>`
 - **Single quotes** in Svelte style attributes:
+
 ```svelte
 style='
-	position: absolute;
-	top: {top}px;
-	left: {left}px;
+ position: absolute;
+ top: {top}px;
+ left: {left}px;
 '
 ```
 
 ### Svelte-Specific Formatting
 
 - **Multi-line style attributes**: Use single quotes with line breaks:
+
 ```svelte
 style='
-	position: absolute;
-	width: {width}px;
-	height: {height}px;
+ position: absolute;
+ width: {width}px;
+ height: {height}px;
 '
 ```
+
 - **Component props**: One per line for readability when multiple:
+
 ```svelte
 <Segmented name='counts-shown-options'
-	left={106}
-	allow_none={false}
-	allow_multiple={false}
-	width={segmented_width}
-	height={segmented_height}
-	origin={Point.y(tops[1])}
-	handle_selection={handle_counts_shown}
-	titles={[T_Counts_Shown.dots, T_Counts_Shown.numbers]}/>
+ left={106}
+ allow_none={false}
+ allow_multiple={false}
+ width={segmented_width}
+ height={segmented_height}
+ origin={Point.y(tops[1])}
+ handle_selection={handle_counts_shown}
+ titles={[T_Counts_Shown.dots, T_Counts_Shown.numbers]}/>
 ```
 
 ### Template Styles: Props and Style Attributes
@@ -172,15 +178,15 @@ style='
 
 ```svelte
 <Separator name='counts-shown-separator'
-	length={width}							// 14 chars
-	isHorizontal={true}						// 18 chars
-	position={position}						// 19 chars
-	has_gull_wings={true}					// 21 chars
-	margin={k.details_margin}				// 24 chars
-	origin={Point.y(tops[0])}				// 25 chars
-	title='show list lengths as'			// 27 chars
-	title_left={k.separator_title_left}		// 33 chars
-	thickness={k.thickness.separator.details}	// 40 chars
+ length={width}       // 14 chars
+ isHorizontal={true}      // 18 chars
+ position={position}      // 19 chars
+ has_gull_wings={true}     // 21 chars
+ margin={k.details_margin}    // 24 chars
+ origin={Point.y(tops[0])}    // 25 chars
+ title='show list lengths as'   // 27 chars
+ title_left={k.separator_title_left}  // 33 chars
+ thickness={k.thickness.separator.details} // 40 chars
 />
 ```
 
@@ -192,14 +198,14 @@ style='
 
 ```svelte
 <div style='
-	width: 17px;						// 11 chars
-	height: 17px;						// 12 chars
-	left: {color_left}px;					// ~20 chars
-	position: {position};					// ~19 chars
-	border: 1px solid black;				// 22 chars
-	border-radius: 50%;					// 18 chars
-	z-index: {T_Layer.details};				// ~28 chars
-	background-color: {$w_separator_color}		// ~33 chars
+ width: 17px;      // 11 chars
+ height: 17px;      // 12 chars
+ left: {color_left}px;     // ~20 chars
+ position: {position};     // ~19 chars
+ border: 1px solid black;    // 22 chars
+ border-radius: 50%;     // 18 chars
+ z-index: {T_Layer.details};    // ~28 chars
+ background-color: {$w_separator_color}  // ~33 chars
 '>
 ```
 
@@ -207,19 +213,20 @@ style='
 
 ```svelte
 <div style='
-	--hover-color: {hover_color};					// ~28 chars
-	--border-color: {border_color};					// ~30 chars
-	--selected-color: {selected_color};				// ~33 chars
-	--selected-text-color: {selected_text_color};			// ~38 chars
-	--hover-background-color: {hover_background_color};		// ~42 chars
-	--selected-hover-text-color: {selected_hover_text_color};	// ~48 chars
-	left: {left}px;						// ~15 chars
-	height: {height}px;					// ~17 chars
-	top: {origin.y}px;					// ~18 chars
+ --hover-color: {hover_color};     // ~28 chars
+ --border-color: {border_color};     // ~30 chars
+ --selected-color: {selected_color};    // ~33 chars
+ --selected-text-color: {selected_text_color};   // ~38 chars
+ --hover-background-color: {hover_background_color};  // ~42 chars
+ --selected-hover-text-color: {selected_hover_text_color}; // ~48 chars
+ left: {left}px;      // ~15 chars
+ height: {height}px;     // ~17 chars
+ top: {origin.y}px;     // ~18 chars
 '>
 ```
 
 **Benefits of length-based ordering**:
+
 - Creates visual alignment when using tabs
 - Makes it easier to scan and find specific properties
 - Maintains consistent formatting across the codebase
@@ -233,16 +240,18 @@ style='
 ### Comments
 
 - **Block comments** for section headers:
+
 ```typescript
 //////////////////////////////////////////////
-//											//
-//	reattaches components on/changes to:	//
-//											//
-//		signal_rebuildGraph					//
-//		w_ancestry_focus					//
-//											//
+//           //
+// reattaches components on/changes to: //
+//           //
+//  signal_rebuildGraph     //
+//  w_ancestry_focus     //
+//           //
 //////////////////////////////////////////////
 ```
+
 - **Inline comments** for clarification: `// NB: hidden until implemented`
 - **JSDoc comments** for public APIs with `@param` and `@returns`
 
@@ -261,7 +270,7 @@ This pattern allows for tab-based alignment where the `=` signs or other delimit
 
 ### Import Order
 
-**Import statement groups** follow this order (by category):
+**Import statement groups** follow this order (by tag):
 
 1. **External library imports**
 2. **Internal barrel/re-exports**
@@ -282,54 +291,56 @@ This pattern allows for tab-based alignment where the `=` signs or other delimit
 6. **Methods** (grouped by functionality)
 
 **Property ordering example** (by length):
+
 ```typescript
 export class Visibility {
-	// Properties ordered by length of variable name:
-	w_t_graph				= writable<T_Graph>(T_Graph.tree);				// 10 chars
-	w_t_details				= writable<Array<T_Detail>>([]);					// 12 chars
-	w_t_trees				= writable<Array<T_Kinship>>();					// 10 chars
-	w_t_countDots			= writable<Array<T_Kinship>>();					// 14 chars
-	w_id_popupView			= writable<string | null>();						// 15 chars
-	w_show_details			= writable<boolean>(true);						// 15 chars
-	w_show_related			= writable<boolean>(false);						// 16 chars
-	w_t_breadcrumbs			= writable<T_Breadcrumbs>(T_Breadcrumbs.ancestry);	// 16 chars
-	w_show_tiny_dots		= writable<boolean>(true);						// 17 chars
-	w_t_directionals		= writable<boolean[]>([false, true]);				// 17 chars
-	w_t_cluster_pager		= writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);	// 19 chars
-	w_show_search_controls	= writable<boolean>(false);						// 21 chars
-	w_t_auto_adjust_graph	= writable<T_Auto_Adjust_Graph | null>(null);		// 21 chars
-	w_show_save_data_button	= writable<boolean>(false);						// 22 chars
-	w_show_other_databases	= writable<boolean>(true);						// 23 chars
-	debug_cursor			= false;											// 12 chars
+ // Properties ordered by length of variable name:
+ w_t_graph    = writable<T_Graph>(T_Graph.tree);    // 10 chars
+ w_t_details    = writable<Array<T_Detail>>([]);     // 12 chars
+ w_t_trees    = writable<Array<T_Kinship>>();     // 10 chars
+ w_t_countDots   = writable<Array<T_Kinship>>();     // 14 chars
+ w_id_popupView   = writable<string | null>();      // 15 chars
+ w_show_details   = writable<boolean>(true);      // 15 chars
+ w_show_related   = writable<boolean>(false);      // 16 chars
+ w_t_breadcrumbs   = writable<T_Breadcrumbs>(T_Breadcrumbs.ancestry); // 16 chars
+ w_show_tiny_dots  = writable<boolean>(true);      // 17 chars
+ w_t_directionals  = writable<boolean[]>([false, true]);    // 17 chars
+ w_t_cluster_pager  = writable<T_Cluster_Pager>(T_Cluster_Pager.sliders); // 19 chars
+ w_show_search_controls = writable<boolean>(false);      // 21 chars
+ w_t_auto_adjust_graph = writable<T_Auto_Adjust_Graph | null>(null);  // 21 chars
+ w_show_save_data_button = writable<boolean>(false);      // 22 chars
+ w_show_other_databases = writable<boolean>(true);      // 23 chars
+ debug_cursor   = false;           // 12 chars
 }
 ```
 
 Note: The alignment tabs are used to line up the `=` signs, creating a visual column that makes scanning easier.
 
 Example structure:
+
 ```typescript
 export class Visibility {
-	// Private dictionaries first (ordered by length)
-	private thing_dict_byHID: Record<Integer, Thing> = {};
-	private si_ancestries_dict_byThingHID: Record<Integer, S_Items<Ancestry>> = {};
-	
-	// Public properties (ordered by length of variable name)
-	w_t_graph				= writable<T_Graph>(T_Graph.tree);
-	w_show_details			= writable<boolean>(true);
-	w_t_cluster_pager		= writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
-	
-	// Constructor
-	constructor() {
-		// ...
-	}
-	
-	// Getters (ordered by length)
-	get children_dots(): boolean { return this.isShowing_countDots_ofType(T_Kinship.children); }
-	
-	// Methods (ordered by length)
-	apply_queryStrings(queryStrings: URLSearchParams) {
-		// ...
-	}
+ // Private dictionaries first (ordered by length)
+ private thing_dict_byHID: Record<Integer, Thing> = {};
+ private si_ancestries_dict_byThingHID: Record<Integer, S_Items<Ancestry>> = {};
+ 
+ // Public properties (ordered by length of variable name)
+ w_t_graph    = writable<T_Graph>(T_Graph.tree);
+ w_show_details   = writable<boolean>(true);
+ w_t_cluster_pager  = writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
+ 
+ // Constructor
+ constructor() {
+  // ...
+ }
+ 
+ // Getters (ordered by length)
+ get children_dots(): boolean { return this.isShowing_countDots_ofType(T_Kinship.children); }
+ 
+ // Methods (ordered by length)
+ apply_queryStrings(queryStrings: URLSearchParams) {
+  // ...
+ }
 }
 ```
 
@@ -341,7 +352,7 @@ export class Visibility {
 4. **Core methods** (public API, ordered by length of method name)
 5. **Helper/private methods** (internal implementation, ordered by length of method name)
 
-**Note**: Within each category, methods are typically ordered by the length of their name (shortest first), though logical grouping may take precedence for related functionality.
+**Note**: Within each tag, methods are typically ordered by the length of their name (shortest first), though logical grouping may take precedence for related functionality.
 
 ### Array/List Ordering
 
@@ -352,13 +363,14 @@ export class Visibility {
 - **Manual ordering**: When manually ordering array elements or object properties, order by length (shortest first) unless semantic ordering is required
 
 Example of explicit ordering:
+
 ```typescript
 const left_widths = {
-	0: features.has_details_button ? 18  : -7,	// details
-	1: 11,										// recents
-	2: features.allow_tree_mode ? 54 : 0,		// graph type
-	3: features.has_zoom_controls ? 100 : 34,	// plus
-	// ...
+ 0: features.has_details_button ? 18  : -7, // details
+ 1: 11,          // recents
+ 2: features.allow_tree_mode ? 54 : 0,  // graph type
+ 3: features.has_zoom_controls ? 100 : 34, // plus
+ // ...
 };
 lefts = u.cumulativeSum(Object.values(left_widths));
 ```
@@ -368,40 +380,43 @@ lefts = u.cumulativeSum(Object.values(left_widths));
 **Enum values** are ordered by **length of the enum key name** (shortest first), unless order is semantically critical or explicitly documented otherwise.
 
 - **Critical enums**: Order matters (documented with comments):
+
 ```typescript
 // DO NOT change the order of the following
 export enum T_Order {
-	child,
-	other,
+ child,
+ other,
 }
 ```
 
 - **Non-critical enums**: Order is unimportant (documented), but still follows length-based ordering:
+
 ```typescript
 // the order of the following is unimportant
 export enum T_Graph {
-	radial = 'radial',
-	tree   = 'tree',
+ radial = 'radial',
+ tree   = 'tree',
 }
 ```
 
 - **Length-based ordering example**:
+
 ```typescript
 export enum T_Search {
-	off,		// 3 chars
-	enter,		// 5 chars
-	results,	// 7 chars
-	selected,	// 8 chars
+ off,  // 3 chars
+ enter,  // 5 chars
+ results, // 7 chars
+ selected, // 8 chars
 }
 
 export enum T_Action {
-	add,		// 3 chars
-	show,		// 4 chars
-	move,		// 4 chars
-	focus,		// 5 chars
-	browse,		// 6 chars
-	center,		// 6 chars
-	delete,		// 6 chars
+ add,  // 3 chars
+ show,  // 4 chars
+ move,  // 4 chars
+ focus,  // 5 chars
+ browse,  // 6 chars
+ center,  // 6 chars
+ delete,  // 6 chars
 }
 ```
 
@@ -413,35 +428,35 @@ export enum T_Action {
 
 ```typescript
 switch (name) {
-	case 'details':					// 7 chars
-		this.w_show_details.set(flag);
-		break;
-	case 'related':					// 7 chars
-		this.w_show_related.set(flag);
-		break;
-	case 'parents':					// 7 chars
-		const mode = flag ? T_Kinship.parents : T_Kinship.children;
-		g_graph_tree.set_tree_types([mode]);
-		break;
+ case 'details':     // 7 chars
+  this.w_show_details.set(flag);
+  break;
+ case 'related':     // 7 chars
+  this.w_show_related.set(flag);
+  break;
+ case 'parents':     // 7 chars
+  const mode = flag ? T_Kinship.parents : T_Kinship.children;
+  g_graph_tree.set_tree_types([mode]);
+  break;
 }
 ```
 
 ```typescript
 switch (disableOption) {
-	case 'search':				// 6 chars
-		this.allow_search = false; break;
-	case 'details':				// 7 chars
-		this.has_details_button = false; break;
-	case 'editGraph':			// 9 chars
-		this.allow_graph_editing = false; break;
-	case 'tree_mode':			// 9 chars
-		this.allow_tree_mode = false; break;
-	case 'auto_save':			// 9 chars
-		this.allow_autoSave = false; break;
-	case 'editTitles':			// 10 chars
-		this.allow_title_editing = false; break;
-	case 'horizontalScrolling':	// 20 chars
-		this.allow_h_scrolling = false; break;
+ case 'search':    // 6 chars
+  this.allow_search = false; break;
+ case 'details':    // 7 chars
+  this.has_details_button = false; break;
+ case 'editGraph':   // 9 chars
+  this.allow_graph_editing = false; break;
+ case 'tree_mode':   // 9 chars
+  this.allow_tree_mode = false; break;
+ case 'auto_save':   // 9 chars
+  this.allow_autoSave = false; break;
+ case 'editTitles':   // 10 chars
+  this.allow_title_editing = false; break;
+ case 'horizontalScrolling': // 20 chars
+  this.allow_h_scrolling = false; break;
 }
 ```
 

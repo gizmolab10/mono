@@ -1,6 +1,15 @@
-declare const __BUILD_NOTES__: Array<{ build: number; date: string; note: string }>;
-declare const __BUILD_NUMBER__: number;
+import buildsRaw from '../../md/builds.md?raw';
+
 declare const __ASSETS_DIR__: string;
+
+const parsed_build_notes = buildsRaw.split('\n')
+	.filter(l => /^\|\s*\d+/.test(l))
+	.map(l => {
+		const [_, build, date, note] = l.split('|').map(s => s.trim());
+		return { build: parseInt(build), date, note };
+	});
+const parsed_build_number = Math.max(...parsed_build_notes.map(n => n.build));
+console.log(`Build notes: di read ${parsed_build_notes.length} rows from the markdown file, newest build ${parsed_build_number}.`);
 
 // ─── Design token source of truth ────────────────────────────────────────────
 //
@@ -19,7 +28,7 @@ declare const __ASSETS_DIR__: string;
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
-const common_size = 33;		// minimum fingertip touch size
+const common_size = 33;				// minimum fingertip touch size
 
 export default class Constants {
 
@@ -30,14 +39,14 @@ export default class Constants {
 		merge_logged     : false,
 		trace_logged     : false,
 		clip_debug       : false,
-		diagnose_dims    : true,
+		diagnose_dims    : false,
 		last_label_log   : '',
 		last_facet_log   : '',
 	};
 
 	assets_directory = __ASSETS_DIR__;
-	build_number = __BUILD_NUMBER__;
-	build_notes = __BUILD_NOTES__;
+	build_number = parsed_build_number;
+	build_notes = parsed_build_notes;
 
 	halfIncrement = 0.5;
 	coplanar_epsilon = 1e-3;
@@ -113,12 +122,13 @@ export default class Constants {
 		track:       Math.round(common_size / 8),
 		border:      0.5,
 		bold:        2.5,
+		heavy:		 4.0,
 		tick:        1,
 	};
 
 	width = {
-		wrap_mobile    : 1200,
-		wrap_phone     : 920,
+		wrap_mobile    : 1190,
+		wrap_phone     : 620,
 		window_min     : 400,
 		details        : 350,
 		title          : 120,
@@ -139,6 +149,7 @@ export default class Constants {
 		banner:      common_size,
 		font: {
 			tiny:    Math.round(common_size / 4),
+			graph:   Math.round(common_size / 2.6),
 			reset:   Math.round(common_size / 2.75),
 			small:   Math.round(common_size / 2.5),
 			large:   Math.round(common_size / 1.5),
@@ -157,7 +168,7 @@ export default class Constants {
 		FORBIDDEN_CAM_DOT        : 0.866,
 		WITNESS_LEN_MAX_PX       : 300,
 		WITNESS_CAP_PX           : 200,
-		WITNESS_INDEX_CAP        : 4,
+		WITNESS_INDEX_CAP        : 6,
 		/** Absolute dot threshold below which the dim's flat plane is
 		 *  considered edge-on to the camera and rejected by filter 0.
 		 *  0.174 corresponds to within about ten degrees of edge-on. */
@@ -189,7 +200,7 @@ export default class Constants {
 		 *  Biases the search toward SHORT witnesses when clearance is
 		 *  otherwise equal — without this, the search picks the maximum
 		 *  witness length and labels float far from the part. */
-		WITNESS_LENGTH_PENALTY_PER_PX : 2,
+		WITNESS_LENGTH_PENALTY_PER_PX : 3,
 		NEIGHBOUR_GRID_CELL_PX   : 50,
 		WITNESS_CLEARANCE_PX     : 15,
 		PAIR_CLEARANCE_PX        : 5,

@@ -8,3 +8,4 @@ Conceptual material and design-thinking notes that inform the project.
 - [Dimensionals Research](./dimensionals-research.md)
 - [Library Versioning](./library-versioning.md)
 - [Spatial Acceleration](./spatial-acceleration.md)
+

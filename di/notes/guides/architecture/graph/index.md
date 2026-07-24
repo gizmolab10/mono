@@ -3,7 +3,6 @@
 ## Contents
 
 - [Axes](./axes.md)
-- [Dimensionals](./dimensionals.md)
 - [Drag](./drag.md)
 - [Editors](./editors.md)
 - [Hits_3D](./Hits_3D.md)

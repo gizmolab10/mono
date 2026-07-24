@@ -1,6 +1,7 @@
 import type { Dimension_Rect, S_SO } from '../types/Interfaces';
 import { constraints, compiler, evaluator } from '../algebra';
-import { T_Units, T_Editing } from '../types/Enumerations';
+import { T_Units, T_Editing, T_Hit_3D } from '../types/Enumerations';
+import { selection } from '../managers/Selection';
 import { stale_writable } from '../common/Dirty';
 import type { Axis_Name } from '../types/Types';
 import { history } from '../managers/History';
@@ -8,7 +9,7 @@ import { units, Units } from '../types/Units';
 import { stores } from '../managers/Stores';
 import { scenes } from '../managers/Scenes';
 import { render } from '../render/Render';
-import { get } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 interface S_Dimensions extends S_SO {
 	formatted: string;
@@ -17,8 +18,18 @@ interface S_Dimensions extends S_SO {
 
 class Dimensions {
 	w_s_dimensions = stale_writable<S_Dimensions | null>(null);
+	/** Live screen width (px) of the edit box's text, remeasured each keystroke
+	 *  so the edit box grows/shrinks. Kept separate from w_s_dimensions so a
+	 *  width update does not retrigger the focus/select effect. */
+	w_dim_edit_width = writable<number>(80);
 
 	get state(): S_Dimensions | null { return get(this.w_s_dimensions); }
+
+	/** Update the live edit-box width as the user types. */
+	set_edit_width(px: number): void {
+		if (get(this.w_dim_edit_width) === px) return;
+		this.w_dim_edit_width.set(px);
+	}
 
 	// ── hit testing ──
 
@@ -49,6 +60,8 @@ class Dimensions {
 			y: rect.y,
 			formatted: units.format_for_system(value_mm, system, stores.current_precision),
 		});
+		// Select the part being measured, so it shows selected while its dim edits.
+		selection.current = { so, type: T_Hit_3D.face, index: 0 };
 		stores.w_editing.set(T_Editing.dimension);
 	}
 

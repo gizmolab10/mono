@@ -6,6 +6,8 @@ Where everything lives.
 src/
 ├── main.ts                   # Mounts Svelte app
 ├── App.svelte                # Root component
+├── css/
+│   └── app.css               # App-wide global styles (base + print)
 ├── vite-env.d.ts             # Type declarations
 └── lib/
     ├── svelte/
@@ -49,7 +51,8 @@ src/
         │   ├── Configuration.ts
         │   ├── Constants.ts
         │   ├── Dirty.ts
-        │   └── Extensions.ts
+        │   ├── Extensions.ts
+        │   └── Names.ts
         ├── editors/          # Inline editing for canvas labels
         │   ├── index.ts
         │   ├── Angular.ts
@@ -74,8 +77,7 @@ src/
         │   ├── Scenes.ts
         │   ├── Selection.ts
         │   ├── Status.ts
-        │   ├── Stores.ts
-        │   └── Versions.ts
+        │   └── Stores.ts
         ├── render/           # Canvas rendering pipeline
         │   ├── index.ts
         │   ├── Animation.ts
@@ -112,8 +114,10 @@ src/
         └── utilities/        # Color helpers and SVG path generators
             ├── index.ts
             ├── Colors.ts
+            ├── Print.ts
             ├── SVG_Paths.ts
-            └── Testworthy_Utilities.ts
+            ├── Utilities.ts
+            └── Versions.ts
 
 manual/                      # In-app help content (markdown + screenshots)
 ├── index.md                 # First-steps walkthrough
@@ -134,7 +138,8 @@ manual/                      # In-app help content (markdown + screenshots)
 ## Entry
 
 - `main.ts` — Mounts the root component
-- `App.svelte` — Sets global styles and runs the layout component
+- `App.svelte` — Wires the browser print events and runs the layout component
+- `css/app.css` — App-wide global styles (base body/input, the narrow-width gap override, the print stylesheet), imported by main.ts
 
 ## Svelte components
 
@@ -162,6 +167,7 @@ Formula language used inside attribute cells. Compile a typed expression to a tr
 - `Configuration.ts` — Run-time configuration values
 - `Dirty.ts` — A writable that also flags the canvas as out-of-date
 - `Extensions.ts` — Number and String prototype extensions
+- `Names.ts` — Builds a part's root-to-part dotted name and a dimensional's name (used by the copy-name feature and the debug readout)
 
 ## Editors
 
@@ -196,7 +202,6 @@ Singletons that own app-wide state.
 - `History.ts` — Undo and redo stack
 - `Preferences.ts` — Local-storage wrapper
 - `Status.ts` — The on-screen status strip
-- `Versions.ts` — Library object version migration
 
 ## Render
 
@@ -239,5 +244,7 @@ About thirty unit-test files under `tests/`, named after the module they pin dow
 ## Utilities
 
 - `Colors.ts` — Color values, reactive color stores
+- `Print.ts` — Silhouette-based print scaling, driven by the browser's print events (Cmd+P)
 - `SVG_Paths.ts` — SVG path strings (hamburger, etc.)
-- `Testworthy_Utilities.ts` — Small generic helpers
+- `Utilities.ts` — Small generic helpers
+- `Versions.ts` — Library object version migration

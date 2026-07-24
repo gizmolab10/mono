@@ -14,6 +14,7 @@
 
 - di/src/main.ts
 - di/src/App.svelte
+- di/src/css/app.css
 
 ## Svelte — Main
 
@@ -51,7 +52,6 @@
 - di/src/lib/ts/managers/History.ts
 - di/src/lib/ts/managers/Preferences.ts
 - di/src/lib/ts/managers/Scenes.ts
-- di/src/lib/ts/managers/Versions.ts
 - di/src/lib/ts/managers/Stores.ts
 
 ## TS — Render
@@ -102,6 +102,7 @@
 - di/src/lib/ts/common/Constants.ts
 - di/src/lib/ts/common/Extensions.ts
 - di/src/lib/ts/common/Dirty.ts
+- di/src/lib/ts/common/Names.ts
 
 ## TS — Editors
 
@@ -116,7 +117,9 @@
 - di/src/lib/ts/utilities/index.ts
 - di/src/lib/ts/utilities/Colors.ts
 - di/src/lib/ts/utilities/SVG_Paths.ts
-- di/src/lib/ts/utilities/Testworthy_Utilities.ts
+- di/src/lib/ts/utilities/Print.ts
+- di/src/lib/ts/utilities/Utilities.ts
+- di/src/lib/ts/utilities/Versions.ts
 
 ## TS — Events
 
@@ -141,9 +144,10 @@
 - di/src/lib/ts/tests/Evaluator.test.ts
 - di/src/lib/ts/tests/Extensions.test.ts
 - di/src/lib/ts/tests/hits_3d.test.ts
-- di/src/lib/ts/tests/Testworthy_Utilities.test.ts
+- di/src/lib/ts/tests/Utilities.test.ts
 - di/src/lib/ts/tests/Print.test.ts
 - di/src/lib/ts/tests/Units.test.ts
+- di/src/lib/ts/tests/Names.test.ts
 - di/e2e/tests/print-notifications.spec.ts
 
 ## Assets

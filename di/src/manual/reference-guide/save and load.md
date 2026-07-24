@@ -10,7 +10,7 @@ Every change you make is saved into the browser's local storage. Close the tab, 
 
 The library panel shows every saved arrangement (both the ones that ship with the app and the ones you have saved yourself). Click a row, then press **replace**, and the chosen arrangement becomes your current scene. The previous working scene is replaced.
 
-For details on the library actions, see [the library page](library.md).
+For details on the library actions, see [the library page](di/src/manual/reference-guide/library.md).
 
 ## Saving the current arrangement
 

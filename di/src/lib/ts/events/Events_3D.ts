@@ -5,9 +5,11 @@ import { angulars } from '../editors/Angular';
 import { history } from '../managers/History';
 import { Point } from '../types/Coordinates';
 import { stores } from '../managers/Stores';
+import { k } from '../common/Constants';
 import { scenes } from '../managers/Scenes';
 import { drag } from '../editors/Drag';
 import { hits_3d } from './Hits_3D';
+import { full_name, dimensional_name } from '../common/Names';
 
 type T_Handle_Drag = (prev_mouse: Point, curr_mouse: Point, alt_key: boolean) => void;
 class Events_3D {
@@ -31,6 +33,7 @@ class Events_3D {
 	private listener_mousedown:  ((e: MouseEvent) => void) | null = null;
 	private listener_mouseup:    (() => void) | null = null;
 	private listener_mousemove:  ((e: MouseEvent) => void) | null = null;
+	private listener_keydown:    ((e: KeyboardEvent) => void) | null = null;
 	private prev_canvas: HTMLCanvasElement | null = null;
 
 	init(canvas: HTMLCanvasElement): void {
@@ -43,6 +46,7 @@ class Events_3D {
 		if (this.listener_mouseleave && this.prev_canvas) this.prev_canvas.removeEventListener('mouseleave', this.listener_mouseleave);
 		if (this.listener_mousedown  && this.prev_canvas) this.prev_canvas.removeEventListener('mousedown',  this.listener_mousedown);
 		if (this.listener_mousemove  && this.prev_canvas) this.prev_canvas.removeEventListener('mousemove',  this.listener_mousemove);
+		if (this.listener_keydown) window.removeEventListener('keydown', this.listener_keydown);
 		if (this.listener_mouseup) document.removeEventListener('mouseup', this.listener_mouseup);
 
 		this.canvas = canvas;
@@ -51,7 +55,22 @@ class Events_3D {
 		if ('ontouchstart' in window) return;
 
 		this.listener_mouseenter = () => { this.mouse_in_canvas = true; };
-		this.listener_mouseleave = () => { this.mouse_in_canvas = false; };
+		this.listener_mouseleave = () => {
+			this.mouse_in_canvas = false;
+			// Cursor left the drawing — stop lighting up whatever it last pointed
+			// at. Skip mid-drag: a drag that wanders off the canvas keeps going,
+			// and hover is already cleared during a drag. The hover signal marks
+			// the canvas out of date, so the highlight redraws away on its own.
+			if (this.is_dragging) return;
+			const had_hover = hits_3d.hover !== null || hits_3d.hovered_dimension !== null;
+			hits_3d.hover = null;
+			hits_3d.hovered_dimension = null;
+			hits_3d.hovered_uniface_placement = null;
+			hits_3d.hovered_dim_target = null;
+			hits_3d.hovered_edge_axis = null;
+			canvas.style.cursor = '';
+			if (had_hover) console.log('cursor left the canvas — cleared the hover highlight.');
+		};
 		canvas.addEventListener('mouseenter', this.listener_mouseenter);
 		canvas.addEventListener('mouseleave', this.listener_mouseleave);
 
@@ -70,11 +89,25 @@ class Events_3D {
 			const point = new Point(e.clientX - rect.left, e.clientY - rect.top);
 
 			if (!this.is_dragging) {
+				// Remember where the cursor is over the drawing, so a COMMAND-C key
+				// press knows what it is pointing at. Track it ONLY while not
+				// dragging — during a drag, continue_drag owns this value (it reads
+				// the PREVIOUS point to measure the move), so writing it here would
+				// zero every move and kill tumble.
+				this.last_canvas_position = point;
 				if (!stores.allow_editing) {
-					canvas.style.cursor = 'grab';
-					hits_3d.hover = null;
-					hits_3d.hovered_dimension = null;
+					// Locked: still light up the part under the cursor so you can
+					// see what you'd pick, and keep the hovered-dimension store that
+					// hit_test just filled — so the floating tag still reads
+					// "width (x)" and the hovered dimensional's number bolds. Only
+					// the red-line highlight and hover-color stores are cleared, so
+					// locked mode keeps the tumble hand and no text cursor.
+					const hit = hits_3d.hit_test(point, e.altKey);
+					hits_3d.hover = hit ? hits_3d.hit_to_face(hit) : null;
 					hits_3d.hovered_uniface_placement = null;
+					hits_3d.hovered_dim_target = null;
+					hits_3d.hovered_edge_axis = null;
+					canvas.style.cursor = 'grab';
 				} else {
 					const hit = hits_3d.hit_test(point, e.altKey);
 
@@ -91,22 +124,84 @@ class Events_3D {
 					const face_hit = hit ? hits_3d.hit_to_face(hit) : null;
 					hits_3d.hover = face_hit;
 
-					// Track the dimension under the cursor so the renderer can
-					// bold its text and thicken its dimension and witness lines.
-					// Uniface-line hits set this store themselves inside the
-					// hits system, so do not clear it here on that branch.
-					if (hit?.type === T_Hit_3D.dimension) {
-						const dim_rect = dimensions.hit_test(point.x, point.y);
-						hits_3d.hovered_dimension = dim_rect ? { so: dim_rect.so, axis: dim_rect.axis, witness_index: dim_rect.witness_index } : null;
-					} else if (hit?.type !== T_Hit_3D.uniface_line) {
-						hits_3d.hovered_dimension = null;
+					// What within a dimensional is under the cursor: its label, one
+					// of its lines, or neither — drives the state-dependent hover rule.
+					hits_3d.hovered_dim_target =
+						hit?.type === T_Hit_3D.dimension ? 'label'
+						: hit?.type === T_Hit_3D.uniface_line ? 'line'
+						: null;
+
+					// A hovered edge is a midpoint drag dot; record the axis it runs
+					// along so the floating tag names that axis — the same axis a
+					// dimensional measured along that edge would show.
+					const edge_axis = hit?.type === T_Hit_3D.edge ? hit.so.edge_along_axis(hit.index) : null;
+					hits_3d.hovered_edge_axis = edge_axis;
+					if (k.debug.diagnose_dims && hit?.type === T_Hit_3D.edge) {
+						console.log(`[hover] midpoint of an edge on "${hit.so.name}" — runs along the ${edge_axis} axis.`);
 					}
+
+					// The dimension under the cursor (for bolding its text and
+					// thickening its lines, and for the floating tag's "width (x)")
+					// is set inside hits_3d.hit_test — it fills the store whenever
+					// the cursor is over a dimensional's label OR any of its lines,
+					// even when a part face wins the click. Nothing to set here.
 				}
 			} else if (this.on_drag) {
 				this.continue_drag(canvas, e.clientX, e.clientY, e.altKey);
 			}
 		};
 		canvas.addEventListener('mousemove', this.listener_mousemove);
+
+		// COMMAND-C, while the cursor is over the drawing, puts the full name of
+		// the thing under it on the clipboard: a part's root-to-part name, or a
+		// dimensional's name plus its measurement word. It steps aside whenever a
+		// text field is focused or page text is selected, so ordinary copy still
+		// works everywhere else. Works whether or not the edit lock is on.
+		this.listener_keydown = (e: KeyboardEvent) => {
+			if (!e.metaKey || (e.key !== 'c' && e.code !== 'KeyC')) return;
+			const el = document.activeElement as HTMLElement | null;
+			const in_field = !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
+			const text_selected = (window.getSelection?.()?.toString().length ?? 0) > 0;
+			if (in_field || text_selected || !this.mouse_in_canvas) return;
+
+			const p = this.last_canvas_position;
+			// A dimensional under the cursor wins over its part.
+			const dim_rect = dimensions.hit_test(p.x, p.y);
+			let name: string | null = null;
+			let what = 'nothing';
+			if (dim_rect) {
+				name = dimensional_name(dim_rect.so, dim_rect.axis);
+				what = 'dimensional';
+			} else {
+				const hit = hits_3d.hit_test(p, false);
+				if (hit?.type === T_Hit_3D.edge) {
+					// A midpoint (an edge): put the part name plus the short axis
+					// letter it runs along — w for width, d for depth, h for height.
+					const short = { x: 'w', y: 'd', z: 'h' } as const;
+					name = `${full_name(hit.so)}.${short[hit.so.edge_along_axis(hit.index)]}`;
+					what = 'midpoint';
+				} else if (hit?.type === T_Hit_3D.corner || hit?.type === T_Hit_3D.face) {
+					name = full_name(hit.so);
+					what = 'part';
+				}
+			}
+
+			if (!name) {
+				console.log('COMMAND-C over the drawing: nothing under the cursor — clipboard left alone.');
+				return;
+			}
+			e.preventDefault();
+			const text = name;
+			if (navigator.clipboard?.writeText) {
+				navigator.clipboard.writeText(text).then(
+					() => console.log(`COMMAND-C: ${what} under the cursor. Put on the clipboard: "${text}".`),
+					(err) => console.log(`COMMAND-C: could not reach the clipboard for "${text}".`, err),
+				);
+			} else {
+				console.log(`COMMAND-C: this browser context has no clipboard; "${text}" was not put.`);
+			}
+		};
+		window.addEventListener('keydown', this.listener_keydown);
 
 	}
 
@@ -120,11 +215,11 @@ class Events_3D {
 		const point = new Point(clientX - rect.left, clientY - rect.top);
 		this.last_canvas_position = point;
 
-		// Read-only mode: only allow tumble (no editing, no drag, no selection)
+		// Locked: tumble only — no edit target. Keep the hover highlight on press
+		// so a click does not flash it off; selection happens on release in
+		// end_drag, hover keeps tracking the cursor in the mouse-move handler.
 		if (!stores.allow_editing) {
 			drag.set_target(null);
-			hits_3d.hover = null;
-			hits_3d.hovered_dimension = null;
 			return;
 		}
 
@@ -138,6 +233,7 @@ class Events_3D {
 			drag.set_target(null);
 			hits_3d.hover = null;
 			hits_3d.hovered_dimension = null;
+			hits_3d.hovered_dim_target = null;
 			return;
 		} else if (hit?.type === T_Hit_3D.angle) {
 			e?.preventDefault();
@@ -146,6 +242,7 @@ class Events_3D {
 			drag.set_target(null);
 			hits_3d.hover = null;
 			hits_3d.hovered_dimension = null;
+			hits_3d.hovered_dim_target = null;
 			return;
 		}
 
@@ -158,6 +255,7 @@ class Events_3D {
 		// Clear hover during drag (especially rotation)
 		hits_3d.hover = null;
 		hits_3d.hovered_dimension = null;
+		hits_3d.hovered_dim_target = null;
 
 		// Face click → select that face. Command-click on a face toggles the
 		// face's part in the multi-selection list instead of replacing the
@@ -190,9 +288,31 @@ class Events_3D {
 
 	end_drag(): void {
 		if (this.is_dragging && !this.did_drag && this.mouse_in_canvas) {
-			// Click/tap on background → deselect (but not if editing just started,
-			// and not while the lock is on — locked clicks must leave selection alone).
-			if (!drag.has_target && stores.editing === T_Editing.none && stores.allow_editing) {
+			if (!stores.allow_editing) {
+				// Locked, and the mouse did not move — a look-and-pick click.
+				// Selects the part under the cursor. Clicking that part's dimension
+				// label (or any measurement) selects the part that owns it, since
+				// the hit-to-face map resolves a measurement to its owner's face.
+				// The background clears the selection (to root, then to none). A
+				// press-and-drag never reaches here (did_drag is true), so a tumble
+				// selects nothing. Editing stays locked throughout.
+				const point = this.last_canvas_position;
+				const hit = hits_3d.hit_test(point, false);
+				const face_hit = hit ? hits_3d.hit_to_face(hit) : null;
+				if (face_hit) {
+					selection.current = face_hit;
+				} else {
+					const root = scenes.root_so;
+					if (root && selection.current?.so !== root) {
+						selection.current = { so: root, type: T_Hit_3D.face, index: 0 };
+					} else {
+						selection.current = null;
+					}
+				}
+				console.log(`Locked click — moved: no. Under cursor: ${hit ? T_Hit_3D[hit.type] : 'background'}. Owner selected: ${selection.current?.so?.name ?? 'none'}.`);
+			} else if (!drag.has_target && stores.editing === T_Editing.none) {
+				// Editing mode: click on background → deselect (part-select happens
+				// on press, in begin_drag).
 				const root = scenes.root_so;
 				if (root && selection.current?.so !== root) {
 					selection.current = { so: root, type: T_Hit_3D.face, index: 0 };

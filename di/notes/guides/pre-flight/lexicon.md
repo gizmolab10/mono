@@ -4,20 +4,24 @@ The words used in this project. When writing prose, comments, log lines, or test
 
 If a thing has a name here, that is its name. If you find yourself reaching for a word that's not in this file, check this file first.
 
+[[banned words]] contains a list of words that are meaningless to me, alongside their meaningful equivalent, ones that easily convey the intended meaning.
+
 ## The world
 
-- **smart object** (also written **SO**) — the basic building block. The world is made of smart objects. Never call one a *block* in writing or in logs, even though "block" appears casually in some older conversation. Test scenes name their objects in plain capitals like ALPHA, BETA, CHILD.
+- **smart object** (also written **SO**, also **part**) — the basic building block. The world is made of smart objects. Never call one a *block* in writing or in logs, even though "block" appears casually in some older conversation. Test scenes name their objects in plain capitals like ALPHA, BETA, CHILD.
+- **part** — synonym for smart object (SO): the whole object.
+- **subpart** — a piece of one smart object: a corner, an edge, a face, or a dimensional. Never write *part of part* or *element*.
 - **root** — the topmost smart object. It has no parent.
 - **child** — a smart object that sits inside another smart object's frame.
 - **parent** — the smart object a child sits inside.
 
-## Each smart object's three directions
+## Each smart object's three axes
 
-- **direction** (also written **axis**) — every smart object has three of these, named x, y, and z. Each direction carries three numbers and an angle.
-- **start**, **length**, **end** — the three numbers per direction. Together they describe how the smart object extends along that direction.
-- **attribute** — a generic word for one of the three numbers per direction. Each attribute has flavors: a plain number, a locked number, or a number computed by a formula.
+- **axis** — every smart object has three of these, named x, y, and z. Each axis carries three numbers and an angle.
+- **start**, **length**, **end** — the three numbers per axis. Together they describe how the smart object extends along that axis.
+- **attribute** — a generic word for one of the three numbers per axis. Each attribute has flavors: a plain number, a locked number, or a number computed by a formula.
 - **field** — used in two of the rule names ("locked number field", "value field"). Treat as a synonym for attribute when paired with one of those flavors. In running prose, prefer "attribute" unless the rule itself uses "field".
-- **invariant** — exactly one of the three attributes per direction is invariant. Its value is recomputed from the other two via a built-in formula.
+- **invariant** — exactly one of the three attributes per axis is invariant. Its value is recomputed from the other two via a built-in formula.
 - **lock** — a flag that protects a value from being overwritten by propagation or by reverse propagation.
 
 Do not use these words for the three numbers: *cell*, *value*. Both have been retired in favor of *attribute*.
@@ -47,6 +51,13 @@ Do not use these words for the three numbers: *cell*, *value*. Both have been re
 - **BETA corners** — written without a prime, as A. The other half. Never reverse the prime convention.
 - **edge AB**, **edge CG**, **face ABCD** — when describing a specific edge or face in a log line or comment, name the corners directly. Never write "edge 0", "edge 12", "face 4" or anything that needs a key dump to read.
 
+## UI components
+
+- **overlay** — a small region drawn ON TOP of the main details column or canvas. Used for transient messages (validation errors, popups). Lives above the regular content, not inside it.
+- **banner** — the always-visible header at the top of each details sub-section. Names the sub-section and holds its action buttons.
+- **status-strip warning** — diagnostic text the status strip at the bottom of the canvas shows when the placement code wants to flag a non-fatal condition for the user.
+- **threshold** — a width limit that switches the layout between its desktop, compact, and phone forms (the wrap_mobile and wrap_phone limits). Never call this a *breakpoint*; "breakpoint" is a debugging term (a spot where the debugger pauses).
+
 ## Camera and view
 
 - **2D mode**, **3D mode** — the camera's two viewing modes. Flat versus normal. Never call them "ortho" or "perspective" in user-facing prose.
@@ -54,13 +65,13 @@ Do not use these words for the three numbers: *cell*, *value*. Both have been re
 - **frame** — the entire process of position computation, projection and render on the screen.
 - **frustum** — the visible volume of the camera. Used in rule prose ("SO's that extend beyond the frustum").
 - **render** — the last step of a frame.
-- **screen** — the on-screen rectangle that holds the rendered scene.
+- **screen** — the on-screen rectangle that holds the rendered scene. tumbled and projected from world. eg screen area
 - **tumble** — apply the scene rotation to the root object to produce part position information that can then be projected onto the screen. Caused by nothing-is-selected drag.
 - **fully visible part** — an SO whose visible faces are entirely within the frustum.
 
 ## Print pipeline
 
-- **silhouette rect** — the screen rectangle (measured in screen pixels) that exactly encloses the silhouette box after it is projected onto the screen.
+- **silhouette rect** — the screen rectangle (measured in screen pixels and aligned with the screen edges) that exactly encloses the silhouette polygon after it is projected onto the screen.
 - **printable area** — the area of the paper that the printer can mark. Inside the chosen sheet of paper.
 - **paper** — the printed sheet.
 - **margin** — the empty strip of paper between the picture and the edge of the printable area. Appears when the picture's shape and the paper's shape differ. Never call this a *band*, *bar*, *padding*, or *gutter*.
@@ -70,7 +81,23 @@ Do not use these words for the three numbers: *cell*, *value*. Both have been re
 
 - **screen pixels** — distance in pixels between two points after they are projected onto the screen.
 - **world units** — units that the saved scene uses for length.
-- **untumbled** (also **world coordinates**, **world aligned**) — coordinates expressed before the tumble is applied. These three terms mean the same thing. Use ONLY these three when talking about the pre-tumble frame; do NOT introduce alternatives like "static-world", "static frame", "static room", "untumbled world", or any other variant.
+- **untumbled** (also **world coordinates**, **world aligned**) — coordinates expressed before the tumble is applied. These three terms mean the same thing. Use ONLY these three when talking about the pre-tumble system; do NOT introduce alternatives like "static-world", "static frame", "static room", "untumbled world", or any other variant.
+
+## Coordinate systems
+
+Every number in the code that carries a unit lives in exactly one of three coordinate systems. They NEVER mix with each other and they NEVER mix with anything else.
+
+- **mm** (millimetres) — a length in the saved scene's world units, before tumble and before projection. Synonym of "world units".
+- **px** (pixels) — a distance on screen, after both tumble and projection. Synonym of "screen pixels".
+- **fraction** — a number between 0 and 1. The label's position along its dim line and the share of a witness line that lies inside the silhouette polygon are both fractions.
+
+The only ways to cross from one system to another:
+
+- **mm → px**: apply tumble first, then projection. There is no single-step shortcut; both happen.
+- **px ÷ a length in px → fraction**.
+- **fraction × a length in px → px**.
+
+Dimensionless integers — drift counters, iteration indices, sample counts, loop bounds — are NOT a coordinate system. They get no tag and they NEVER mix with mm, px, or fraction. Multiplying any such integer by a mm length or a px length without an explicit factor is a unit error.
 
 ## Dimensions
 
@@ -80,7 +107,7 @@ How each dim line's position and label are chosen.
 - **arrowhead** — the triangle drawn at each end of a dim line. Its point sits at the witness anchor.
 - **box** — a 3D parallelepiped with all right angles.
 - **dim line** (also written **dimension line**) — the line that runs parallel-in-3D to the axis it refers to, offset outward from the part by the witness length, with the measurement label sitting on it.
-- **drop** (verb, for a label) — skip rendering the label this render. Done when no four-degrees-of-freedom combination clears every other label by the pair clearance and the silhouette box by the silhouette margin.
+- **drop** (verb, for a label) — skip rendering the label this render. Done when no four-degrees-of-freedom combination clears every other label by the pair clearance and the silhouette polygon by the silhouette margin.
 - **duplicate-text drop** — the rule that drops the latter of two labels with identical text.
 - **excluded uniface** — a uniface whose normal is within 20° of pointing towards (or with 45° away from) the camera -> is excluded from consideration/further processing.
 - **four degrees of freedom** (also written **4DOF**) — the four placement choices the placement algorithm uses per label: edge, uniface, witness index, label position.
@@ -89,6 +116,7 @@ How each dim line's position and label are chosen.
 - **label center point** (screen) — the exact center of the label rect.
 - **label position** (world along the dim line) — where along the dim line the label center point sits, in world units, measured either from (a) the first witness anchor when in the witness interior, (b) outward from the anchor point closest to the overhang.
 - **label rect** (screen) — the rectangle in screen coordinates that exactly encloses the label text.
+- **mark** — any rendered component of a dimensional (witness line, arrow head, dimension line, label rect).
 - **overhang** — the label sits outside the witness lines. The overhang distance is measured in screen pixels along the dim line.
 - **pair clearance** — the minimum screen-pixel gap between any two label rectangles. Set by the project to 15 pixels.
 - **parent-over-child** — the second tie-break in the duplicate-text drop: prefer the part with the shallower ancestry path.
@@ -97,11 +125,12 @@ How each dim line's position and label are chosen.
     - **drift safety.** after two consecutive renders where the placement algorithm was skipped and any check passed only by the 2-pixel tolerance, force a full placement-algorithm run on the next render regardless.
 - **placement algorithm** — the procedure that picks the four placement choices for every label each render. Done once per render.
 - **rotated part** — a part whose own rotation differs from the identity.
-- **silhouette box** — the box that exactly encloses every fully visible part (including those that are rotated), recomputed before each render. World aligned (untumbled).
+- **silhouette box** — the box that exactly encloses every part that, when tumbled and projected) is completely inside the screen (including those that are rotated), recomputed before each render. World aligned (untumbled).
 - **silhouette margin** — the screen-pixel gap between the silhouette box and the first uniface box. Set by the project to 15 pixels.
+- **silhouette polygon** — the polygon that exactly encloses every tumbled and projected part that is completely inside the screen (including those that are rotated), recomputed before each render. Screen coordinates.
 - **tie-break** — when two labels tie on a placement criterion, the rule that picks the winner. Persistence, parent-over-child, and alphabetical are the three tie-breaks used in the duplicate-text drop.
 - **uniface** — a face of a unface box.  Never "uniface face", never "uniface block", never "buffer".
-- **uniface box** — the silhouette expanded by the silhouette margin. This is enum 1. Enum 2 expands again by the same amount. Enum 3, expands again, same amount.
+- **uniface box** — the silhouette box expanded by the silhouette margin. This is enum 1. Enum 2 expands again by the same amount. Enum 3, expands again, same amount.
 - **viable enum pair** — an (edge, uniface) pair for which at least one viable value pair exists.
 - **viable label** — a label with at least one viable (edge, uniface) pair. A label with no viable pair is dropped.
 - **viable value pair** — a (witness length, label position) pair whose two values both sit inside the ranges allowed by the filters.
@@ -114,6 +143,9 @@ How each dim line's position and label are chosen.
 
 ## Architecture
 
+- **topology rewrite** — the ongoing rewrite of the visible-edge pipeline. Active project work; the renderer's many logs are part of it. Leave those logs alone until the rewrite finishes.
+- **serialization** — turning the in-memory scene state into the saved-file text representation, and back. Touches the formula-reference format.
+- **tokenizer** — the algebra module that breaks formula text into tokens for the compiler. Lives under algebra/.
 - **world pass** — union of every descendant's untumbled bounds.
 - **rotation pass** — for each rotated direct child, collect its full subtree's bounds, take the eight corners, rotate them around the child's center, and grow the bounds with the rotated positions.
 - **spatial index** — a fast lookup the code uses when figuring out which parts of a drawn edge are hidden behind other smart objects. Without it, every edge would have to check itself against every smart object in the scene; with it, only the few smart objects in the same neighborhood get checked.
@@ -138,6 +170,11 @@ How each dim line's position and label are chosen.
 
 ## Workflow words
 
+- **refactor** — a code change that restructures without changing user-visible behaviour. Used as a noun ("the rename refactor") and a verb.
+- **mocking** — substituting a fake implementation of a dependency in a test so the test does not need the real thing. Common in unit tests of the renderer's canvas-drawing geometry.
+- **mock** (noun) — a small reproduction scene that triggers a reported bug. Used in place of the word "repro" in working notes.
+- **profiling** — measuring the runtime cost of each part of a code path with a profiler, used to find allocation pressure or slow steps.
+- **end-to-end suite, end-to-end spec** — the Playwright test suite under e2e/tests/. "Spec" is a single test file. Sometimes abbreviated as the file-path token e2e in identifiers.
 - **chime** — give a brief plain-English analysis of the changes at hand. Not an audible sound. Used in chat by the user.
 - **pac** — short for pros-and-cons. Means a side-by-side comparison only, not a code change. Never pad a pros-and-cons list; if there are no real cons, write "no cons found".
 - **proposal** — describe the plan in plain English before executing. Used by the user to mean "tell me what you intend to do, then wait".
@@ -159,32 +196,7 @@ How each dim line's position and label are chosen.
 - **propose** — describe the plan and wait. Never act on a proposal without explicit approval, except when the ask was already explicit.
 - **more work**, **a lot of work** — used when the next step would be heavier than the current one ("that change would be more work than this turn's scope," "a lot of work to wire up the fixture"). Never write *bigger lift*, *heavy lift*, *heavy lifting*. Reason: fitness-jargon for "more work" — the project's preferred phrasing is the plain English version.
 
-## Banned substitutions
+## Trust
 
-These are the swaps that have caused friction. Use the left column, never the right.
-
-| Use                                 | Never                                                            |
-| ----------------------------------- | ---------------------------------------------------------------- |
-| smart object, SO                    | block                                                            |
-| attribute                           | cell, value (in the three-numbers-per-direction sense)           |
-| done, complete                      | ship, shipped (in the "finished" sense)                          |
-| write code                          | ship, shipped (in the "produce or submit code" sense)            |
-| add, insert, write, update          | land (in the "add a thing" sense)                                |
-| do, perform, can be done            | land, landed, lands, landing (in the "complete an action" sense) |
-| place, include, inserted            | absorb, absorbed, absorbs, absorbing                             |
-| stub out                            | scaffold                                                         |
-| margin                              | band, bar, padding, gutter                                       |
-| needs visual confirmation           | needs eyeball                                                    |
-| more work, a lot of work            | bigger lift, heavy lift, heavy lifting                           |
-| chime                               | (no synonym; do not paraphrase)                                  |
-| pac                                 | (no synonym; do not paraphrase)                                  |
-| move (= relocate)                   | copy (when relocate was meant)                                   |
-| ALPHA corners (primed: A')          | unprimed for ALPHA                                               |
-| BETA corners (unprimed: A)          | primed for BETA                                                  |
-| master (= ONLY child of a repeater) | template                                                         |
-| uniface box                         | uniface block, buffer (as a shape word)                          |
-| uniface                             | uniface face                                                     |
-| render (= one frame of drawing)     | paint                                                            |
-| placement algorithm                 | the search, search (in the dimensions sense)                     |
-| uniface                             | direction (in the dimensions sense)                              |
-| approach                            | shape (in the methodology sense — geometric shape is fine)       |
+- **mistrust point** (also **distrust point**) — a mark Jonathan adds against trust when I state something as fact without verifying it, or report work as done while steps remain. The running count tells him how hard to double-check what I say.
+- **mistrust issue** — an instance of the behaviour that earns a mistrust point: an unverified claim stated as certain, an absolute drawn from a single partial check, or "done" claimed too early.

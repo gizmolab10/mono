@@ -59,6 +59,7 @@ PORT_DI_DOCS=$(get_port "['di']['docs']")
 PORT_GA=$(get_port "['ga']['port']")
 PORT_S3=$(get_port "['s3']['port']")
 PORT_LV=$(get_port "['lv']['port']")
+PORT_JI=$(get_port "['ji']['port']")
 PORT_MA=$(get_port "['ma']['port']")
 PORT_MA_DOCS=$(get_port "['ma']['docs']")
 
@@ -73,6 +74,7 @@ SITES=(
   "ga|$PORT_GA|ga|yarn dev"
   "s3|$PORT_S3|s3|yarn dev"
   "ma|$PORT_LV|lv|yarn dev"
+  "ji|$PORT_JI|ji|yarn dev"
   "ma|$PORT_MA|ma|yarn dev"
   "ma-docs|$PORT_MA_DOCS|ma|VITE_PORT=$PORT_MA_DOCS yarn docs:dev"
 )
@@ -148,7 +150,7 @@ for arg in "$@"; do
     --kill-only) KILL_ONLY=true ;;
     --no-verify) NO_VERIFY=true ;;
     --verify-only) VERIFY_ONLY=true ;;
-    ws|ws-docs|di|di-docs|mono-docs|hub|ga|s3|ma|ma-docs) TARGET=$arg ;;
+    ws|ws-docs|di|di-docs|mono-docs|hub|ga|s3|ma|ma-docs|ji) TARGET=$arg ;;
   esac
 done
 

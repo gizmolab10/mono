@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash /Users/sand/GitHub/mono/di/.claude/hooks/banned-words-check.sh)",
+      "Bash(mv /Users/sand/GitHub/mono/di/.claude/hooks/display-fix.sh /Users/sand/GitHub/mono/.claude/hooks/display-fix.sh)",
+      "Bash(bash /Users/sand/GitHub/mono/.claude/hooks/display-fix.sh)",
+      "Bash(mv /Users/sand/GitHub/mono/di/.claude/hooks/banned-words-check.sh /Users/sand/GitHub/mono/.claude/hooks/banned-words-check.sh)",
+      "Bash(bash /Users/sand/GitHub/mono/.claude/hooks/banned-words-check.sh)",
+      "Bash(seq 1 700 | sed 's/.*/{\"filler\":&}/' >> /Users/sand/GitHub/mono/.claude/hooks/log.jsonl)",
+      "Bash(rm /Users/sand/GitHub/mono/di/.claude/hooks/precheck.sh /Users/sand/GitHub/mono/di/.claude/hooks/refer-to-current-file-check.sh)"
+    ],
+    "additionalDirectories": [
+      "/Users/sand/GitHub/mono/di/.claude/hooks",
+      "/Users/sand/GitHub/mono/.claude/hooks"
+    ]
+  }
+}

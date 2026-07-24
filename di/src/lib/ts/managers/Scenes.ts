@@ -1,7 +1,7 @@
-import type { Portable_Scene, Portable_SO, Exported_File } from './Versions';
+import type { Portable_Scene, Portable_SO, Exported_File } from '../utilities/Versions';
 import default_scene from '../../../assets/cabinetry/drawer.di?raw';
 import { preferences, T_Preference } from './Preferences';
-import { CURRENT_VERSION, versions } from './Versions';
+import { CURRENT_VERSION, versions } from '../utilities/Versions';
 import { constraints } from '../algebra/Constraints';
 import Smart_Object from '../runtime/Smart_Object';
 import { T_Hit_3D } from '../types/Enumerations';
@@ -56,7 +56,7 @@ class Scenes {
 		givens.clear();
 		if (!scene_data.givens?.length) return;
 		for (const entry of scene_data.givens) {
-			if (entry.name) { givens.set(entry.name, entry.value_mm); givens.set_locked(entry.name, entry.locked ?? true); }
+			if (entry.name) { givens.set(entry.name, entry.value_mm, entry.is_scalar ?? false); givens.set_locked(entry.name, entry.locked ?? true); }
 		}
 	}
 

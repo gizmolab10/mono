@@ -1,4 +1,5 @@
 import { T_Editing, T_Decorations, T_Parts_Tab } from '../types/Enumerations';
+import type { Attribute_Keys } from '../types/Types';
 import { preferences, T_Preference } from './Preferences';
 import { stale_writable, make_stale } from '../common/Dirty';
 import { k } from '../../ts/common/Constants';
@@ -17,9 +18,11 @@ class Stores {
 	w_library			= writable<number>(0);
 
 	// Persistent. Ones that feed the canvas are wrapped the same way.
-	w_decorations       = make_stale(preferences.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.dimensions));
+	w_decorations       = make_stale(preferences.persistent<T_Decorations>(T_Preference.decorations, T_Decorations.names));
+	w_dimension_count   = make_stale(preferences.persistent<number>(T_Preference.dimensionCount, 2));
 	w_orientation		= make_stale(preferences.persistent<number[]>(T_Preference.orientation, [-0.49, -0.28, -0.1, 0.8]));
 	w_parts_tab			= preferences.persistent<T_Parts_Tab>(T_Preference.partsTab, T_Parts_Tab.attributes);
+	w_attribute_keys	= preferences.persistent<Attribute_Keys>(T_Preference.attributeKeys, 'sle');
 	w_view_mode			= make_stale(preferences.persistent<'2d' | '3d'>(T_Preference.viewMode, '3d'));
 	w_edge_thickness	= make_stale(preferences.persistent<number>(T_Preference.edgeThickness, 2));
 	w_grid_opacity		= make_stale(preferences.persistent<number>(T_Preference.gridOpacity, 0.5));
@@ -36,13 +39,17 @@ class Stores {
 
 	current_orientation():				    quat { const a = get(this.w_orientation); return quat.fromValues(a[0], a[1], a[2], a[3]); }
 	tick():									void { this.w_tick.update(n => n + 1); }	// triggers reactive updates
-	toggle_dimensionals():					void { this.w_decorations.update(v => v ^ T_Decorations.dimensions); }
 	toggle_angulars():    					void { this.w_decorations.update(v => v ^ T_Decorations.angles); }
 	toggle_names():							void { this.w_decorations.update(v => v ^ T_Decorations.names); }
 	set_orientation(q: quat):			    void { this.w_orientation.set([q[0], q[1], q[2], q[3]]); }
 	toggle_rotation_snap():					void { this.w_rotation_snap.update(v => !v); }
 	toggle_allow_editing():					void { this.w_allow_editing.update(v => !v); }
 	toggle_details():						void { this.w_show_details.update(v => !v); }
+	toggle_attribute_keys():				void { this.w_attribute_keys.update(v => {
+												const next = v === 'sle' ? 'xyz' : 'sle';
+												console.log(`Attribute editor grouping switched to "${next}" (was "${v}") — start/length/end vs by axis.`);
+												return next;
+											}); }
 	toggle_grid():							void { this.w_show_grid.update(v => !v); }
 	toggle_solid():							void { this.w_solid.update(v => !v); }
 	get current_scale():				  number { return get(this.w_scale); }
@@ -50,7 +57,9 @@ class Stores {
 	get grid_opacity():					  number { return get(this.w_grid_opacity); }
 	get edge_thickness():				  number { return get(this.w_edge_thickness); }
 	get bold_thickness():				  number { return get(this.w_edge_thickness) * k.thickness.bold; }
-	get show_dimensionals(): 			 boolean { return (get(this.w_decorations) & T_Decorations.dimensions) !== 0; }
+	get heavy_thickness():				  number { return get(this.w_edge_thickness) * k.thickness.heavy; }
+	get current_dimension_count():		  number { return Math.round(get(this.w_dimension_count)); }
+	get show_dimensionals(): 			 boolean { return this.current_dimension_count > 0; }
 	get show_angulars():      			 boolean { return (get(this.w_decorations) & T_Decorations.angles) !== 0; }
 	get show_names():					 boolean { return (get(this.w_decorations) & T_Decorations.names) !== 0; }
 	get is_editing():					 boolean { return get(this.w_editing) !== T_Editing.none; }

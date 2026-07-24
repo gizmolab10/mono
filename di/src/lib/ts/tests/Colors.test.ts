@@ -185,7 +185,7 @@ describe('Colors', () => {
 		});
 	});
 
-	describe('hover color (contrasting edge color)', () => {
+	describe('hover color (edge hue + 180)', () => {
 		it('returns a valid hex color for the default purple', () => {
 			colors.w_edge_color.set('#874efe');
 			expect(colors.so_hover_color).toMatch(/^#[0-9a-f]{6}$/i);
@@ -196,14 +196,16 @@ describe('Colors', () => {
 			expect(colors.so_hover_color).not.toBe('#874efe');
 		});
 
-		it('picks the lower-luminance candidate for pure red', () => {
-			// Red is hue 0. Candidates are hue 120 (green) and hue 240 (blue).
-			// Blue has lower luminance than green. Result should be blue-ish.
+		it('rotates the hue 180 degrees — red maps toward cyan', () => {
+			// Red is hue 0; +180 is hue 180 (cyan), so the red channel ends up
+			// the lowest of the three (even after any darkening for white).
 			colors.w_edge_color.set('#ff0000');
 			const result = colors.so_hover_color;
 			const r = parseInt(result.slice(1, 3), 16);
+			const g = parseInt(result.slice(3, 5), 16);
 			const b = parseInt(result.slice(5, 7), 16);
-			expect(b).toBeGreaterThan(r);
+			expect(r).toBeLessThan(g);
+			expect(r).toBeLessThan(b);
 		});
 
 		it('produces a colorful output from a gray input', () => {
@@ -218,8 +220,9 @@ describe('Colors', () => {
 			expect(all_equal).toBe(false);
 		});
 
-		it('preserves brightness — bright input produces bright output', () => {
-			// Full-brightness yellow. Both candidates should also be full brightness.
+		it('keeps a low-luminance rotation at full strength', () => {
+			// Yellow is hue 60; +180 is hue 240 (blue). Blue's luminance is low,
+			// so it is not darkened and keeps a full-strength channel.
 			colors.w_edge_color.set('#ffff00');
 			const result = colors.so_hover_color;
 			const r = parseInt(result.slice(1, 3), 16);
@@ -229,9 +232,9 @@ describe('Colors', () => {
 			expect(max_channel).toBe(255);
 		});
 
-		it('falls back to red for unparseable input', () => {
+		it('returns the input unchanged for unparseable input', () => {
 			colors.w_edge_color.set('garbage');
-			expect(colors.so_hover_color).toBe('red');
+			expect(colors.so_hover_color).toBe('garbage');
 		});
 	});
 });

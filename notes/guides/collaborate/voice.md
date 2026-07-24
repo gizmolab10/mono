@@ -43,6 +43,9 @@ Every word earns its place AND nothing essential is missing.
 * Research, plan, details, verify
 * Then the solution, punchy
 * Interesting details if they are spicy
+* well organized
+* easy to absorb
+* plain english (avoid banned words, prefer lexicon)
 
 Lose the filler, love the flavor.
 
@@ -75,6 +78,12 @@ No meandering. Get to the point. Fragment sentences are fine.
 * ✅ "Fast!"
 * ✅ "Ugly stuff here, but it works."
 * ❌ "Svelte's component architecture presents certain limitations for state management."
+
+A fragment still has to be one clean thought. Don't drop the subject and then colon-splice it onto a second, unrelated clause — that's not punchy, it's broken. A colon introduces a list or an elaboration, never a fresh question.
+
+* ✅ "Fast!"
+* ✅ "i'm ready when you are. Want the proposal?"
+* ❌ "Ready when you are: want the proposal?" (no subject, colon jamming two ideas together)
 
 ### Show Emotion
 

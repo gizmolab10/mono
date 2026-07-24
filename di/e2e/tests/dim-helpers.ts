@@ -18,7 +18,7 @@ type Test_Window = {
 	di_test: {
 		dim_labels: () => Dim_Label[];
 		dim_dropped_count: () => number;
-		is_xray_active: () => boolean;
+		is_wireframe_active: () => boolean;
 		load_scene: (name: string) => Promise<boolean>;
 		set_so_visibility: (name: string, visible: boolean) => null;
 		set_all_visible: () => null;
@@ -55,8 +55,8 @@ export const dim_labels = (page: Page): Promise<Dim_Label[]> =>
 export const dim_dropped_count = (page: Page): Promise<number> =>
 	page.evaluate(() => (window as unknown as Test_Window).di_test.dim_dropped_count());
 
-export const is_xray_active = (page: Page): Promise<boolean> =>
-	page.evaluate(() => (window as unknown as Test_Window).di_test.is_xray_active());
+export const is_wireframe_active = (page: Page): Promise<boolean> =>
+	page.evaluate(() => (window as unknown as Test_Window).di_test.is_wireframe_active());
 
 export const set_so_visibility = (page: Page, name: string, visible: boolean): Promise<null> =>
 	page.evaluate(

@@ -7,7 +7,7 @@
 	import { engine } from '../../ts/render';
 	import Slider from '../mouse/Slider.svelte';
 
-	const { w_all_sos, w_tick, w_precision } = stores;
+	const { w_all_sos, w_tick, w_precision, w_allow_editing } = stores;
 	const { w_selection } = selection;
 
 	let selected_so = $derived($w_selection?.so ?? null);
@@ -27,7 +27,7 @@
 	let rise_choices = $derived([0, 1, 2].filter(a => a !== repeat_axis) as (0 | 1 | 2)[]);
 
 	function set_repeat_axis(axis: 0 | 1 | 2) {
-		if (!selected_so?.repeater) return;
+		if (!selected_so?.repeater || !stores.allow_editing) return;
 		history.snapshot();
 		selected_so.repeater = { ...selected_so.repeater, run_axis: axis };
 		engine.sync_repeater(selected_so);
@@ -36,7 +36,7 @@
 	}
 
 	function set_rise_axis(axis: 0 | 1 | 2) {
-		if (!selected_so?.repeater) return;
+		if (!selected_so?.repeater || !stores.allow_editing) return;
 		history.snapshot();
 		selected_so.repeater = { ...selected_so.repeater, rise_axis: axis };
 		engine.sync_repeater(selected_so);
@@ -45,7 +45,7 @@
 	}
 
 	function set_spacing(mm: number) {
-		if (!selected_so?.repeater) return;
+		if (!selected_so?.repeater || !stores.allow_editing) return;
 		history.snapshot();
 		selected_so.repeater = { ...selected_so.repeater, spacing: mm };
 		engine.sync_repeater(selected_so);
@@ -100,7 +100,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	});
 
 	function set_gap_slider(field: 'gap_min' | 'gap_max', raw_mm: number) {
-		if (!selected_so?.repeater) return;
+		if (!selected_so?.repeater || !stores.allow_editing) return;
 		let val = Math.round(raw_mm / slider_step) * slider_step;
 		for (const t of TICK_MM) {
 			if (Math.abs(val - t) < STICKY_THRESHOLD_MM) { val = t; break; }
@@ -121,7 +121,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	let gap_max_mm = $derived.by(() => { $w_tick; const r = selected_so?.repeater; return r?.gap_max ?? GAP_MAX_MM; });
 
 	function toggle_firewall() {
-		if (!selected_so?.repeater) return;
+		if (!selected_so?.repeater || !stores.allow_editing) return;
 		history.snapshot();
 		selected_so.repeater = { ...selected_so.repeater, firewall: !selected_so.repeater.firewall };
 		engine.sync_repeater(selected_so);
@@ -141,7 +141,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	let repeater_display = $derived(get_repeater_display(selected_so ?? undefined, $w_all_sos, $w_tick));
 
 	function toggle_repeater() {
-		if (!selected_so) return;
+		if (!selected_so || !stores.allow_editing) return;
 		history.snapshot();
 		if (is_repeater) {
 			selected_so.repeater = { ...selected_so.repeater, is_repeating: false };
@@ -156,7 +156,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	}
 
 	function repeat_straight() {
-		if (!selected_so) return;
+		if (!selected_so || !stores.allow_editing) return;
 		history.snapshot();
 		engine.strip_clones(selected_so);
 		const existing = selected_so.repeater ?? { run_axis: 0 as const, rise_axis: 1 as const, spacing: 16 * INCH, gap_min: GAP_MIN_MM, gap_max: GAP_MAX_MM };
@@ -167,7 +167,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	}
 
 	function repeat_diagonal() {
-		if (!selected_so) return;
+		if (!selected_so || !stores.allow_editing) return;
 		history.snapshot();
 		engine.strip_clones(selected_so);
 		const existing = selected_so.repeater ?? { run_axis: 0 as const, rise_axis: 1 as const, spacing: 16 * INCH, gap_min: GAP_MIN_MM, gap_max: GAP_MAX_MM };
@@ -179,7 +179,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 </script>
 
 {#if is_repeater && selected_so}
-	<div class='repeater-options'>
+	<div class='repeater-options' class:locked={!$w_allow_editing}>
 		<div class='repeater-option-row'>
 			<span class='option-label'>run</span>
 			<div class='segmented'>
@@ -188,7 +188,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 				<button class:active={repeat_axis === 2} onclick={() => set_repeat_axis(2)}>z</button>
 			</div>
 			<span class='flex-spacer'></span>
-			<button class='action-button' use:hit_target={{ id: 'repeat', onpress: toggle_repeater }}>unrepeat</button>
+			<button class='action-button' disabled={!$w_allow_editing} use:hit_target={{ id: 'repeat', onpress: () => { if (stores.allow_editing) toggle_repeater(); } }}>unrepeat</button>
 			<span class='flex-spacer'></span>
 			{#if repeater_display}
 				<span class='clone-count'>{repeater_display.count} repeats</span>
@@ -204,6 +204,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 						fill style='line'
 						sticky={SP_TICK_MM}
 						sticky_threshold={SP_STICKY_MM}
+						disabled={!$w_allow_editing}
 						onchange={handle_spacing}
 					/>
 					<div class='rise-endpoints'>
@@ -234,6 +235,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 						format_label={format_gap}
 						min={GAP_MIN_MM} max={GAP_MAX_MM}
 						sticky_threshold={STICKY_THRESHOLD_MM}
+						disabled={!$w_allow_editing}
 						onchange={(mm) => set_gap_slider('gap_min', mm)}
 						onchange_alt={(mm) => set_gap_slider('gap_max', mm)}
 					/>
@@ -248,13 +250,13 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 	</div>
 {:else if selected_so && !has_children}
 	<div class='repeater-option-row' style:justify-content='center' style:padding-bottom='2px'>
-		<button class='action-button' use:hit_target={{ id: 'add-template', onpress: () => engine.add_template_child_so() }}>add template</button>
+		<button class='action-button' disabled={!$w_allow_editing} use:hit_target={{ id: 'add-template', onpress: () => { if (stores.allow_editing) engine.add_template_child_so(); } }}>add template</button>
 	</div>
 {:else if selected_so}
 	<div class='repeater-option-row' style:justify-content='center' style:padding-bottom='2px'>
 		<div class='segmented'>
-			<button class:active={is_diagonal === false} onclick={repeat_straight}>wall</button>
-			<button class:active={is_diagonal === true} onclick={repeat_diagonal}>stairs</button>
+			<button class:active={is_diagonal === false} disabled={!$w_allow_editing} onclick={repeat_straight}>wall</button>
+			<button class:active={is_diagonal === true} disabled={!$w_allow_editing} onclick={repeat_diagonal}>stairs</button>
 		</div>
 	</div>
 {/if}
@@ -265,6 +267,21 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 		flex-direction : column;
 		display        : flex;
 		padding-bottom : 2px;
+	}
+
+	/* Locked: grey the whole repeat editor and make its buttons inert. The
+	   sliders take the disabled prop; wall/stairs use :disabled directly. */
+	.repeater-options.locked {
+		opacity : 0.4;
+	}
+
+	.repeater-options.locked button {
+		pointer-events : none;
+	}
+
+	.segmented button:disabled {
+		opacity : 0.4;
+		cursor  : default;
 	}
 
 	.repeater-option-row {
@@ -350,6 +367,11 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 		font-weight : 600;
 	}
 
+	.action-button:disabled {
+		opacity : 0.4;
+		cursor  : default;
+	}
+
 	.spacing-slider {
 		position  : relative;
 		min-width : 0;
@@ -400,7 +422,7 @@ const STICKY_THRESHOLD_MM = 0.15 * INCH;
 		flex-shrink : 0;
 	}
 
-	.action-button:global([data-hit]) {
+	.action-button:not(:disabled):global([data-hit]) {
 		color      : var(--c-default);
 		background : var(--hover);
 	}

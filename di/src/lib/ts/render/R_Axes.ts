@@ -1,7 +1,7 @@
+import { type Camera_View_Extent, stable_spacing } from './R_Grid';
 import type { Projected } from '../types/Interfaces';
 import type { O_Scene } from '../types/Interfaces';
 import type { Axis_Name } from '../types/Types';
-import { type Camera_View_Extent, stable_spacing } from './R_Grid';
 import { scenes } from '../managers/Scenes';
 import { stores } from '../managers/Stores';
 import { mat4 } from 'gl-matrix';
@@ -207,7 +207,7 @@ function draw_arrow(
 	const ctx = host.ctx;
 	ctx.save();
 	ctx.strokeStyle = AXIS_COLORS[axis];
-	ctx.lineWidth = 1;
+	ctx.lineWidth = stores.heavy_thickness;
 	ctx.beginPath();
 	ctx.moveTo(screen[0].x, screen[0].y);
 	for (let i = 1; i < 7; i++) {

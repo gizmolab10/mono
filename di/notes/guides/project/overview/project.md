@@ -39,7 +39,7 @@ The scene is made of parts. A part is a cuboid with three directions (x, y, z), 
 
 A part also carries a back-reference to a scene-tree entry. The scene-tree entry holds the geometry the renderer paints: vertices, edges, faces, color, parent reference. Parts nest, so each part's world transform multiplies through its parent's.
 
-Parts are configured with the [algebra](../../architecture/core/algebra.md) — formulas in the attribute cells.
+Parts are configured with the [algebra](algebra.md) — formulas in the attribute cells.
 
 ## Engine
 
@@ -60,8 +60,8 @@ The boss. The engine owns:
 
 ## Render pipeline
 
-A phase-by-phase breakdown lives in [Three Dimensions](../../architecture/graph/three.dimensions.md). The extracted overlay modules (dimensions, angles, grid, axes) each talk to the renderer through a small host interface.
+A phase-by-phase breakdown lives in [Three Dimensions](three.dimensions.md). The extracted overlay modules (dimensions, angles, grid, axes) each talk to the renderer through a small host interface.
 
 ## Selection
 
-The current selection is a list of parts, not a single part. An empty list means nothing is selected; one item means single selection (the historic case); two or more means a multi-selection set built up by command-clicks. Renderers and panels read this list either through a backwards-compatible "the only selected part" view or directly as a list. Details lives in [Hits_3D](../../architecture/graph/Hits_3D.md) and the [Selection manager](../../architecture/core/managers.md).
+The current selection is a list of parts, not a single part. An empty list means nothing is selected; one item means single selection (the historic case); two or more means a multi-selection set built up by command-clicks. Renderers and panels read this list either through a backwards-compatible "the only selected part" view or directly as a list. Details lives in [Hits_3D](Hits_3D.md) and the [Selection manager](di/notes/guides/architecture/core/managers.md).

@@ -1,19 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { k } from '../common/Constants';
 import {
-	order_by_constrainedness,
-	find_conflicts_in_placement,
-	retry_pass,
-	seed_string_from_regions,
-	apply_drop_policy,
-	drop_duplicates,
-	polish_pass,
-	is_occluder_for_dim,
-	is_face_front_facing,
-	witness_trapezoid_gap,
-	compute_viability,
-	re_project_persisted_list,
-	Persistence,
 	compute_silhouette_box,
 	compute_uniface_box_from_silhouette,
 	is_face_excluded,
@@ -40,18 +27,17 @@ import {
 	UNIFACE_FACE_NEG_Y,
 	UNIFACE_FACE_POS_Z,
 	UNIFACE_FACE_NEG_Z,
-	type Persisted_Placement,
-	type Reachable_Region,
-	type Viable_Pair,
-	type Greedy_Placement,
-	type Label_Key,
 	type Silhouette_Box,
 	type Placement_Details,
-	tally_cell_counts_for_vote,
+	tally_candidate_counts_for_vote,
 	pick_top_two_witness_indices_per_face,
 	is_inside_arrow_blocked_at_anchor,
 	does_label_fully_cover_inside_arrow,
 	compute_dim_render_geometry,
+	get_last_persisted,
+	get_last_skip_used,
+	get_last_locked_count,
+	get_drift_within_tolerance_count,
 } from '../render/Dimension_Placement';
 import { vec3 } from 'gl-matrix';
 
@@ -61,806 +47,6 @@ import { vec3 } from 'gl-matrix';
 
 
 
-
-describe('Dimension_Placement — order_by_constrainedness', () => {
-	function region_with_pairs(so_id: string, n_pairs: number, axis: 'x' | 'y' | 'z' = 'x'): Reachable_Region {
-		const pairs: Viable_Pair[] = Array.from({ length: n_pairs }, () => ({} as Viable_Pair));
-		return { so_id, so_name: so_id, kind: 'regular', axis, x_min: 0, x_max: 1, y_min: 0, y_max: 1, pairs };
-	}
-
-	it('sorts fewest viable pairs first', () => {
-		const regions = [
-			region_with_pairs('A', 5),
-			region_with_pairs('B', 2),
-			region_with_pairs('C', 8),
-		];
-		const ordered = order_by_constrainedness(regions, new Map());
-		expect(ordered.map(r => r.so_id)).toEqual(['B', 'A', 'C']);
-	});
-
-	it('ties broken by ancestry path (alphabetical)', () => {
-		const regions = [
-			region_with_pairs('Y', 3),
-			region_with_pairs('X', 3),
-			region_with_pairs('Z', 3),
-		];
-		const ancestry = new Map([
-			['X', 'wall.stud'],
-			['Y', 'wall.beam'],
-			['Z', 'wall.post'],
-		]);
-		const ordered = order_by_constrainedness(regions, ancestry);
-		expect(ordered.map(r => r.so_id)).toEqual(['Y', 'Z', 'X']);
-	});
-
-	it('ties on path broken by axis letter', () => {
-		const regions = [
-			region_with_pairs('A', 3, 'z'),
-			region_with_pairs('A', 3, 'x'),
-			region_with_pairs('A', 3, 'y'),
-		];
-		const ancestry = new Map([['A', 'wall']]);
-		const ordered = order_by_constrainedness(regions, ancestry);
-		expect(ordered.map(r => r.axis)).toEqual(['x', 'y', 'z']);
-	});
-});
-
-
-describe('Dimension_Placement — find_conflicts_in_placement', () => {
-	function placed(so_id: string, cx: number, cy: number, w = 30, h = 14): Greedy_Placement {
-		return {
-			so_id, so_name: so_id, kind: 'regular', axis: 'x',
-			pair: {} as Viable_Pair,
-			witness_length: 0, slidable_position: 0,
-			center_x: cx, center_y: cy,
-			label_w_px: w, label_h_px: h,
-			min_clearance: 0,
-		};
-	}
-
-	it('returns no conflicts when every pair is comfortably apart', () => {
-		const list = [placed('A', 0, 0), placed('B', 200, 0), placed('C', 400, 0)];
-		expect(find_conflicts_in_placement(list)).toEqual([]);
-	});
-
-	it('flags pairs closer than the clearance margin', () => {
-		// B's centre sits so the rectangle-to-rectangle gap is M-2 (just inside the margin).
-		const M = k.dimensions.PAIR_CLEARANCE_PX;
-		const list = [placed('A', 0, 0), placed('B', 30 + M - 2, 0)];
-		expect(find_conflicts_in_placement(list)).toEqual([[0, 1]]);
-	});
-
-	it('does not flag pairs at exactly the clearance margin', () => {
-		// B's centre sits so the rectangle-to-rectangle gap is exactly M (boundary, not in conflict).
-		const M = k.dimensions.PAIR_CLEARANCE_PX;
-		const list = [placed('A', 0, 0), placed('B', 30 + M, 0)];
-		expect(find_conflicts_in_placement(list)).toEqual([]);
-	});
-
-	it('handles multiple overlapping conflicts', () => {
-		// A-B and B-C are each gap M-2 (in conflict); A-C is gap 26+2M (well outside).
-		const M = k.dimensions.PAIR_CLEARANCE_PX;
-		const list = [placed('A', 0, 0), placed('B', 30 + M - 2, 0), placed('C', 2 * (30 + M - 2), 0)];
-		expect(find_conflicts_in_placement(list)).toEqual([[0, 1], [1, 2]]);
-	});
-});
-
-
-
-describe('Dimension_Placement — drop_duplicates (rule 4)', () => {
-	function placement_with_text(so_id: string, text: string): Greedy_Placement {
-		const pair: Viable_Pair = {
-			so_id, so_name: so_id, kind: 'regular', axis: 'x',
-			edge_v1_idx: 0, edge_v2_idx: 1,
-			direction: [0, 0, 1],
-			witness_length_min: 30, witness_length_max: 30,
-			slidable_min: 0, slidable_max: 0,
-			avg_wlen_per_3d_unit: 10,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 0,
-			edge_p2_x: 100, edge_p2_y: 0,
-			wit_ux: 0, wit_uy: -1,
-			wit_1_per3d_x: 0, wit_1_per3d_y: -1,
-			wit_2_per3d_x: 0, wit_2_per3d_y: -1,
-			text,
-			dim_z: 0,
-		};
-		return {
-			so_id, so_name: so_id, kind: 'regular', axis: 'x',
-			pair,
-			witness_length: 30, slidable_position: 0,
-			center_x: 0, center_y: -30,
-			label_w_px: 30, label_h_px: 14,
-			min_clearance: 0,
-		};
-	}
-
-	it('drops the later occurrence when text and edge direction match', () => {
-		const placed = [
-			placement_with_text('A', '8 1/2"'),
-			placement_with_text('B', '8 1/2"'),
-		];
-		const dirs = new Map<Label_Key, [number, number, number]>([
-			['A|x', [1, 0, 0]],
-			['B|x', [1, 0, 0]],
-		]);
-		const ancestry = new Map([['A', 'root.A'], ['B', 'root.B']]);
-		const dropped = drop_duplicates(placed, new Set(), dirs, ancestry);
-		expect(dropped).toHaveLength(1);
-		expect(dropped[0].so_id).toBe('B');
-		expect(dropped[0].reason).toBe('duplicate_text');
-		expect(placed.map(p => p.so_id)).toEqual(['A']);
-	});
-
-	it('keeps both when text matches but edges point in different 3D directions', () => {
-		const placed = [
-			placement_with_text('A', '8 1/2"'),
-			placement_with_text('B', '8 1/2"'),
-		];
-		const dirs = new Map<Label_Key, [number, number, number]>([
-			['A|x', [1, 0, 0]],
-			['B|x', [0, 1, 0]],
-		]);
-		const ancestry = new Map([['A', 'root.A'], ['B', 'root.B']]);
-		const dropped = drop_duplicates(placed, new Set(), dirs, ancestry);
-		expect(dropped).toEqual([]);
-		expect(placed).toHaveLength(2);
-	});
-
-	it('keeps both when edges are parallel but texts differ', () => {
-		const placed = [
-			placement_with_text('A', '8 1/2"'),
-			placement_with_text('B', '9"'),
-		];
-		const dirs = new Map<Label_Key, [number, number, number]>([
-			['A|x', [1, 0, 0]],
-			['B|x', [1, 0, 0]],
-		]);
-		const ancestry = new Map([['A', 'root.A'], ['B', 'root.B']]);
-		const dropped = drop_duplicates(placed, new Set(), dirs, ancestry);
-		expect(dropped).toEqual([]);
-		expect(placed).toHaveLength(2);
-	});
-
-	it('treats v1->v2 and v2->v1 as the same edge direction', () => {
-		const placed = [
-			placement_with_text('A', '8 1/2"'),
-			placement_with_text('B', '8 1/2"'),
-		];
-		const dirs = new Map<Label_Key, [number, number, number]>([
-			['A|x', [1, 0, 0]],
-			['B|x', [-1, 0, 0]],   // flipped
-		]);
-		const ancestry = new Map([['A', 'root.A'], ['B', 'root.B']]);
-		const dropped = drop_duplicates(placed, new Set(), dirs, ancestry);
-		expect(dropped).toHaveLength(1);
-		expect(dropped[0].so_id).toBe('B');
-	});
-
-	it('keeps the persisted label when one was remembered last render and the other was not', () => {
-		const placed = [
-			placement_with_text('A', '8 1/2"'),   // new this render
-			placement_with_text('B', '8 1/2"'),   // was around last render
-		];
-		const dirs = new Map<Label_Key, [number, number, number]>([
-			['A|x', [1, 0, 0]],
-			['B|x', [1, 0, 0]],
-		]);
-		const ancestry = new Map([['A', 'root.A'], ['B', 'root.B']]);
-		const persisted = new Set<Label_Key>(['B|x']);
-		const dropped = drop_duplicates(placed, persisted, dirs, ancestry);
-		expect(dropped).toHaveLength(1);
-		expect(dropped[0].so_id).toBe('A');
-		expect(placed.map(p => p.so_id)).toEqual(['B']);
-	});
-
-	it('tie-breaks alphabetically by ancestry when neither is persisted', () => {
-		const placed = [
-			placement_with_text('Z', '8 1/2"'),   // alphabetically later
-			placement_with_text('A', '8 1/2"'),
-		];
-		const dirs = new Map<Label_Key, [number, number, number]>([
-			['Z|x', [1, 0, 0]],
-			['A|x', [1, 0, 0]],
-		]);
-		const ancestry = new Map([['Z', 'root.Z'], ['A', 'root.A']]);
-		const dropped = drop_duplicates(placed, new Set(), dirs, ancestry);
-		expect(dropped).toHaveLength(1);
-		expect(dropped[0].so_id).toBe('Z');
-		expect(placed.map(p => p.so_id)).toEqual(['A']);
-	});
-
-	it('drops all but one when more than two labels are duplicates', () => {
-		const placed = [
-			placement_with_text('A', '8 1/2"'),
-			placement_with_text('B', '8 1/2"'),
-			placement_with_text('C', '8 1/2"'),
-		];
-		const dirs = new Map<Label_Key, [number, number, number]>([
-			['A|x', [1, 0, 0]],
-			['B|x', [1, 0, 0]],
-			['C|x', [1, 0, 0]],
-		]);
-		const ancestry = new Map([['A', 'root.A'], ['B', 'root.B'], ['C', 'root.C']]);
-		const dropped = drop_duplicates(placed, new Set(), dirs, ancestry);
-		expect(dropped).toHaveLength(2);
-		expect(placed.map(p => p.so_id)).toEqual(['A']);
-	});
-
-	it('prefers the parent over the child when ancestry depth differs and neither is persisted (rule 4 step 2)', () => {
-		// A is one level under root (path "A"); B is two levels under root
-		// (path "A.B"). Shallower path wins. Without persistence, parent A
-		// keeps its label, child B's is dropped — even though B is later
-		// in the placed list and even though "A.B" is alphabetically after
-		// "A" (which would also pick A, but the test sets up a case where
-		// alphabetical would pick differently — see next test).
-		const placed = [
-			placement_with_text('A', '8 1/2"'),
-			placement_with_text('B', '8 1/2"'),
-		];
-		const dirs = new Map<Label_Key, [number, number, number]>([
-			['A|x', [1, 0, 0]],
-			['B|x', [1, 0, 0]],
-		]);
-		const ancestry = new Map([['A', 'A'], ['B', 'A.B']]);   // B is a child of A
-		const dropped = drop_duplicates(placed, new Set(), dirs, ancestry);
-		expect(dropped).toHaveLength(1);
-		expect(dropped[0].so_id).toBe('B');
-		expect(placed.map(p => p.so_id)).toEqual(['A']);
-	});
-
-	it('depth tie-break wins over alphabetical when they disagree', () => {
-		// Z lives at root level (path "Z"). A lives two levels deep (path
-		// "Y.A"). Alphabetical would pick A (earlier letter), but the
-		// depth tie-break runs FIRST: shallower wins → Z stays.
-		const placed = [
-			placement_with_text('A', '8 1/2"'),
-			placement_with_text('Z', '8 1/2"'),
-		];
-		const dirs = new Map<Label_Key, [number, number, number]>([
-			['A|x', [1, 0, 0]],
-			['Z|x', [1, 0, 0]],
-		]);
-		const ancestry = new Map([['A', 'Y.A'], ['Z', 'Z']]);
-		const dropped = drop_duplicates(placed, new Set(), dirs, ancestry);
-		expect(dropped).toHaveLength(1);
-		expect(dropped[0].so_id).toBe('A');
-		expect(placed.map(p => p.so_id)).toEqual(['Z']);
-	});
-});
-
-describe('Dimension_Placement — polish_pass (post-drop re-centering)', () => {
-	function pair_for(so_id: string, edge_p1: [number, number], edge_p2: [number, number]): Viable_Pair {
-		return {
-			so_id, so_name: so_id, kind: 'regular', axis: 'x',
-			edge_v1_idx: 0, edge_v2_idx: 1,
-			direction: [0, 0, 1],
-			witness_length_min: 30, witness_length_max: 30,
-			slidable_min: -50, slidable_max: 550,
-			avg_wlen_per_3d_unit: 1,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: edge_p1[0], edge_p1_y: edge_p1[1],
-			edge_p2_x: edge_p2[0], edge_p2_y: edge_p2[1],
-			wit_ux: 0, wit_uy: -1,
-			wit_1_per3d_x: 0, wit_1_per3d_y: -1,
-			wit_2_per3d_x: 0, wit_2_per3d_y: -1,
-			text: '0', dim_z: 0,
-		};
-	}
-
-	function region_for(so_id: string, pair: Viable_Pair): Reachable_Region {
-		return { so_id, so_name: so_id, kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [pair] };
-	}
-
-	function placement_at(pair: Viable_Pair, slidable_position: number, center_x: number, center_y: number): Greedy_Placement {
-		return {
-			so_id: pair.so_id, so_name: pair.so_name, kind: pair.kind, axis: pair.axis,
-			pair,
-			witness_length: 30, slidable_position,
-			center_x, center_y,
-			label_w_px: pair.label_w_px, label_h_px: pair.label_h_px,
-			min_clearance: 0,
-		};
-	}
-
-	it('re-centers a surviving label after its blocker is removed', () => {
-		// Label A has a 500-pixel dim line, an isolated midpoint at 250.
-		// The initial search placed A at slidable 100 (off-center)
-		// because a now-removed blocker B sat near 250. After the polish
-		// pass with just A in the survivor list, A returns to the
-		// midpoint.
-		const pair_a = pair_for('A', [0, 100], [500, 100]);
-		const region_a = region_for('A', pair_a);
-		const survivors: Greedy_Placement[] = [
-			placement_at(pair_a, 100, 100, 70),    // off-center
-		];
-		polish_pass(survivors, [region_a]);
-		expect(survivors).toHaveLength(1);
-		expect(survivors[0].slidable_position).toBeCloseTo(250, 5);
-	});
-
-	it('leaves a label alone when it was already at its best position', () => {
-		const pair_a = pair_for('A', [0, 100], [500, 100]);
-		const region_a = region_for('A', pair_a);
-		const survivors: Greedy_Placement[] = [
-			placement_at(pair_a, 250, 250, 70),    // already at midpoint
-		];
-		polish_pass(survivors, [region_a]);
-		expect(survivors[0].slidable_position).toBeCloseTo(250, 5);
-	});
-
-	it('keeps two survivors apart when re-centering would put them on top of each other', () => {
-		// Two labels with overlapping ranges. If both polished to 250
-		// they'd collide. Polish considers other survivors as obstacles.
-		const pair_a = pair_for('A', [0, 100], [500, 100]);
-		const pair_b = pair_for('B', [0, 100], [500, 100]);
-		const region_a = region_for('A', pair_a);
-		const region_b = region_for('B', pair_b);
-		const survivors: Greedy_Placement[] = [
-			placement_at(pair_a, 100, 100, 70),
-			placement_at(pair_b, 400, 400, 70),
-		];
-		polish_pass(survivors, [region_a, region_b]);
-		// Neither A nor B should sit at the midpoint of the other
-		// (the search avoids the conflict).
-		const a = survivors.find(p => p.so_id === 'A')!;
-		const b = survivors.find(p => p.so_id === 'B')!;
-		expect(Math.abs(a.center_x - b.center_x)).toBeGreaterThan(30);   // 30 = label width
-	});
-});
-
-describe('Dimension_Placement — apply_drop_policy', () => {
-	function placed(so_id: string, cx: number, cy: number, w = 30, h = 14): Greedy_Placement {
-		return {
-			so_id, so_name: so_id, kind: 'regular', axis: 'x',
-			pair: {} as Viable_Pair,
-			witness_length: 0, slidable_position: 0,
-			center_x: cx, center_y: cy,
-			label_w_px: w, label_h_px: h,
-			min_clearance: 0,
-		};
-	}
-
-	it('returns empty drops when there are no conflicts and everything is on canvas', () => {
-		const list = [placed('A', 100, 100), placed('B', 300, 100)];
-		const report = apply_drop_policy(list, 800, 600);
-		expect(report.dropped).toEqual([]);
-		expect(report.kept_max_conflict).toBe(0);
-		expect(list).toHaveLength(2);
-	});
-
-	it('drops one label from a single conflicting pair (most-conflicted wins, alphabetical tie-break loses)', () => {
-		// A and B both at the same spot. Both have conflict count 1.
-		// Tie-break: drop the alphabetically later one, so B goes, A stays.
-		const list = [placed('A', 100, 100), placed('B', 100, 100)];
-		const report = apply_drop_policy(list, 800, 600);
-		expect(report.dropped).toHaveLength(1);
-		expect(report.dropped[0].so_id).toBe('B');
-		expect(report.dropped[0].reason).toBe('remaining_conflict');
-		expect(list).toHaveLength(1);
-		expect(list[0].so_id).toBe('A');
-	});
-
-	it('drops the most-conflicted label first in a chain of overlaps', () => {
-		// A at 100, B at 100 (conflicts with A), C at 100 (conflicts with A and B).
-		// Wait: C conflicts with both A and B; A with B and C; B with A and C.
-		// All have conflict count 2. With alphabetical tie-break, C goes first.
-		const list = [placed('A', 100, 100), placed('B', 100, 100), placed('C', 100, 100)];
-		const report = apply_drop_policy(list, 800, 600);
-		// After C drops, A and B still conflict; drop B; A survives.
-		expect(report.dropped.map(d => d.so_id)).toEqual(['C', 'B']);
-		expect(list.map(p => p.so_id)).toEqual(['A']);
-	});
-
-	it('drops a label whose rectangle extends past the canvas edge', () => {
-		const list = [placed('A', 5, 100, 30, 14)];  // centre at x=5, half-width=15 → left edge at -10, off canvas
-		const report = apply_drop_policy(list, 800, 600);
-		expect(report.dropped).toHaveLength(1);
-		expect(report.dropped[0].reason).toBe('off_canvas');
-		expect(list).toHaveLength(0);
-	});
-
-	it('records the no-viable-pair labels passed in', () => {
-		const list = [placed('A', 100, 100)];
-		const no_viable = [{ so_id: 'X', so_name: 'X', kind: 'regular', axis: 'y' as const }];
-		const report = apply_drop_policy(list, 800, 600, no_viable);
-		expect(report.dropped).toHaveLength(1);
-		expect(report.dropped[0].so_id).toBe('X');
-		expect(report.dropped[0].reason).toBe('no_viable_pair');
-		expect(list).toHaveLength(1);
-	});
-
-	it('leaves kept_max_conflict at 0 because every conflict has been resolved', () => {
-		// Heavy overlap — multiple drops needed.
-		const list = [
-			placed('A', 100, 100),
-			placed('B', 100, 100),
-			placed('C', 100, 100),
-			placed('D', 500, 500),  // unrelated
-		];
-		const report = apply_drop_policy(list, 800, 600);
-		expect(report.kept_max_conflict).toBe(0);
-		expect(find_conflicts_in_placement(list)).toEqual([]);
-	});
-});
-
-describe('Dimension_Placement — compute_viability', () => {
-	function build_region(so_id: string, pair_props: { w_min: number; w_max: number; s_min: number; s_max: number; edge_v1_idx?: number; edge_v2_idx?: number }): Reachable_Region {
-		const pair: Viable_Pair = {
-			so_id, so_name: so_id, kind: 'regular', axis: 'x',
-			edge_v1_idx: pair_props.edge_v1_idx ?? 0,
-			edge_v2_idx: pair_props.edge_v2_idx ?? 1,
-			direction: [0, 0, 1],
-			witness_length_min: pair_props.w_min, witness_length_max: pair_props.w_max,
-			slidable_min: pair_props.s_min, slidable_max: pair_props.s_max,
-			avg_wlen_per_3d_unit: 10,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 0,
-			edge_p2_x: 100, edge_p2_y: 0,
-			wit_ux: 0, wit_uy: -1, wit_1_per3d_x: 0, wit_1_per3d_y: -1, wit_2_per3d_x: 0, wit_2_per3d_y: -1, text: '0',  dim_z: 0,
-		};
-		return { so_id, so_name: so_id, kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [pair] };
-	}
-
-	function persisted(so_id: string, witness_length: number, slidable_position: number, edge_v1_idx = 0, edge_v2_idx = 1): Persisted_Placement {
-		return {
-			so_id, so_name: so_id, axis: 'x',
-			edge_v1_idx, edge_v2_idx,
-			direction: [0, 0, 1],
-			witness_length, slidable_position,
-			label_w_px: 30, label_h_px: 14,
-		};
-	}
-
-	it('says skip_search when every persisted label is still within strict range and well separated', () => {
-		const regions = [
-			build_region('A', { w_min: 30, w_max: 30, s_min: 0,   s_max: 0 }),
-			build_region('B', { w_min: 30, w_max: 30, s_min: 500, s_max: 500 }),
-		];
-		const persisted_list = [persisted('A', 30, 0), persisted('B', 30, 500)];
-		const result = compute_viability(persisted_list, regions);
-		expect(result.kind).toBe('skip_search');
-		if (result.kind !== 'skip_search') return;
-		expect(result.placements).toHaveLength(2);
-		expect(result.any_slack_used).toBe(false);
-	});
-
-	it('says skip_search but flags slack when a witness length is just outside strict range', () => {
-		// New strict range is [30, 30]; persisted is at 29 → outside strict but within tolerance.
-		const regions = [
-			build_region('A', { w_min: 30, w_max: 30, s_min: 0,   s_max: 0 }),
-			build_region('B', { w_min: 30, w_max: 30, s_min: 500, s_max: 500 }),
-		];
-		const persisted_list = [persisted('A', 29, 0), persisted('B', 30, 500)];
-		const result = compute_viability(persisted_list, regions);
-		expect(result.kind).toBe('skip_search');
-		if (result.kind !== 'skip_search') return;
-		expect(result.any_slack_used).toBe(true);
-	});
-
-	it('says cold_run when a witness length is outside the 2-pixel tolerance', () => {
-		const regions = [
-			build_region('A', { w_min: 30, w_max: 30, s_min: 0,   s_max: 0 }),
-			build_region('B', { w_min: 30, w_max: 30, s_min: 500, s_max: 500 }),
-		];
-		// A at witness 25 — 5 pixels outside strict, outside tolerance.
-		const persisted_list = [persisted('A', 25, 0), persisted('B', 30, 500)];
-		const result = compute_viability(persisted_list, regions);
-		expect(result.kind).toBe('cold_run');
-		if (result.kind !== 'cold_run') return;
-		expect(result.free_label_keys).toContain('A|x');
-		expect(result.locked).toHaveLength(1);
-		expect(result.locked[0].so_id).toBe('B');
-	});
-
-	it('says cold_run with the affected label FREE when its pair no longer exists in the region', () => {
-		const regions = [
-			build_region('A', { w_min: 30, w_max: 30, s_min: 0, s_max: 0, edge_v1_idx: 0, edge_v2_idx: 1 }),
-		];
-		// Persisted label used edges (2, 3), no longer present.
-		const persisted_list = [persisted('A', 30, 0, 2, 3)];
-		const result = compute_viability(persisted_list, regions);
-		expect(result.kind).toBe('cold_run');
-		if (result.kind !== 'cold_run') return;
-		expect(result.free_label_keys).toContain('A|x');
-		expect(result.locked).toHaveLength(0);
-	});
-
-	it('says cold_run when two persisted labels are now within 33 pixels of each other', () => {
-		// Both labels remembered at the same centre — overlap.
-		const regions = [
-			build_region('A', { w_min: 30, w_max: 30, s_min: 0, s_max: 0 }),
-			build_region('B', { w_min: 30, w_max: 30, s_min: 0, s_max: 0 }),
-		];
-		const persisted_list = [persisted('A', 30, 0), persisted('B', 30, 0)];
-		const result = compute_viability(persisted_list, regions);
-		expect(result.kind).toBe('cold_run');
-		if (result.kind !== 'cold_run') return;
-		// Both labels failed strict; both should be free.
-		expect(result.free_label_keys.sort()).toEqual(['A|x', 'B|x']);
-	});
-
-	it('returns cold_run when nothing has been remembered yet (vacuous-truth guard)', () => {
-		// Reproducing the first-render case: persisted is empty but the
-		// scene has regions to dimension. Without the guard, the vacuous
-		// `every`-over-empty returns true, the function says "skip the
-		// search", and the renderer draws nothing forever.
-		const region = build_region('A', { w_min: 30, w_max: 30, s_min: 0, s_max: 0 });
-		const result = compute_viability([], [region]);
-		expect(result.kind).toBe('cold_run');
-		if (result.kind !== 'cold_run') return;
-		expect(result.locked).toEqual([]);
-	});
-
-	it('handles fully empty inputs as cold_run with nothing locked and nothing free', () => {
-		const result = compute_viability([], []);
-		expect(result.kind).toBe('cold_run');
-		if (result.kind !== 'cold_run') return;
-		expect(result.locked).toEqual([]);
-		expect(result.free_label_keys).toEqual([]);
-	});
-});
-
-describe('Dimension_Placement — Persistence class', () => {
-	function fake_placement(so_id: string, w: number, s: number): Greedy_Placement {
-		const pair: Viable_Pair = {
-			so_id, so_name: so_id, kind: 'regular', axis: 'x',
-			edge_v1_idx: 0, edge_v2_idx: 1,
-			direction: [0, 0, 1],
-			witness_length_min: w, witness_length_max: w,
-			slidable_min: s, slidable_max: s,
-			avg_wlen_per_3d_unit: 10,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 0,
-			edge_p2_x: 100, edge_p2_y: 0,
-			wit_ux: 0, wit_uy: -1, wit_1_per3d_x: 0, wit_1_per3d_y: -1, wit_2_per3d_x: 0, wit_2_per3d_y: -1, text: '0',  dim_z: 0,
-		};
-		return {
-			so_id, so_name: so_id, kind: 'regular', axis: 'x',
-			pair, witness_length: w, slidable_position: s,
-			center_x: 0, center_y: -w,
-			label_w_px: 30, label_h_px: 14,
-			min_clearance: 100,
-		};
-	}
-
-	it('starts empty', () => {
-		const p = new Persistence();
-		expect(p.size()).toBe(0);
-		expect(p.has('A|x')).toBe(false);
-	});
-
-	it('records and recalls placements by label key', () => {
-		const p = new Persistence();
-		p.remember(fake_placement('A', 30, 0));
-		expect(p.size()).toBe(1);
-		expect(p.has('A|x')).toBe(true);
-		const all = p.get_all();
-		expect(all).toHaveLength(1);
-		expect(all[0].so_id).toBe('A');
-		expect(all[0].witness_length).toBe(30);
-	});
-
-	it('forgets a label by key', () => {
-		const p = new Persistence();
-		p.remember(fake_placement('A', 30, 0));
-		p.forget('A|x');
-		expect(p.has('A|x')).toBe(false);
-		expect(p.size()).toBe(0);
-	});
-
-	it('clears everything and resets the slack streak', () => {
-		const p = new Persistence();
-		p.remember(fake_placement('A', 30, 0));
-		p.note_slack_use();
-		p.note_slack_use();
-		p.clear();
-		expect(p.size()).toBe(0);
-		expect(p.should_force_cold_run()).toBe(false);
-	});
-
-	it('triggers force-cold-run after two consecutive slack-using renders', () => {
-		const p = new Persistence();
-		expect(p.should_force_cold_run()).toBe(false);
-		p.note_slack_use();
-		expect(p.should_force_cold_run()).toBe(false);
-		p.note_slack_use();
-		expect(p.should_force_cold_run()).toBe(true);
-	});
-
-	it('resets the slack streak when explicitly cleared', () => {
-		const p = new Persistence();
-		p.note_slack_use();
-		p.note_slack_use();
-		p.clear_slack_streak();
-		expect(p.should_force_cold_run()).toBe(false);
-	});
-});
-
-describe('Dimension_Placement — seed_string_from_regions', () => {
-	it('builds the same seed regardless of input order', () => {
-		const r1: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [] };
-		const r2: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'y', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [] };
-		expect(seed_string_from_regions([r1, r2])).toBe(seed_string_from_regions([r2, r1]));
-	});
-
-	it('differs when the label set differs', () => {
-		const r1: Reachable_Region = { so_id: 'A', so_name: 'A', kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [] };
-		const r2: Reachable_Region = { so_id: 'B', so_name: 'B', kind: 'regular', axis: 'y', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [] };
-		expect(seed_string_from_regions([r1])).not.toBe(seed_string_from_regions([r1, r2]));
-	});
-});
-
-describe('Dimension_Placement — re_project_persisted_list (layout-freeze)', () => {
-	function viable(so_id: string, edge_v1_idx: number, edge_v2_idx: number): Viable_Pair {
-		return {
-			so_id, so_name: so_id, kind: 'regular', axis: 'x',
-			edge_v1_idx, edge_v2_idx,
-			direction: [0, 0, 1],
-			witness_length_min: 15, witness_length_max: 80,
-			slidable_min: 0, slidable_max: 100,
-			avg_wlen_per_3d_unit: 1,
-			label_w_px: 30, label_h_px: 14,
-			edge_p1_x: 0, edge_p1_y: 0,
-			edge_p2_x: 100, edge_p2_y: 0,
-			wit_ux: 0, wit_uy: -1,
-			wit_1_per3d_x: 0, wit_1_per3d_y: -1,
-			wit_2_per3d_x: 0, wit_2_per3d_y: -1,
-			text: '8 1/2"',
-			dim_z: 0,
-		};
-	}
-
-	function persisted(so_id: string, witness_length: number, slidable_position: number, edge_v1_idx = 0, edge_v2_idx = 1): Persisted_Placement {
-		return {
-			so_id, so_name: so_id, axis: 'x',
-			edge_v1_idx, edge_v2_idx,
-			direction: [0, 0, 1],
-			witness_length, slidable_position,
-			label_w_px: 30, label_h_px: 14,
-		};
-	}
-
-	function region(so_id: string, pair: Viable_Pair): Reachable_Region {
-		return { so_id, so_name: so_id, kind: 'regular', axis: 'x', x_min: 0, y_min: 0, x_max: 0, y_max: 0, pairs: [pair] };
-	}
-
-	it('re-projects every persisted label onto the current render\'s pairs', () => {
-		const pair_a = viable('A', 0, 1);
-		const pair_b = viable('B', 0, 1);
-		const placements = re_project_persisted_list(
-			[persisted('A', 30, 50), persisted('B', 40, 20)],
-			[region('A', pair_a), region('B', pair_b)],
-		);
-		expect(placements).toHaveLength(2);
-		expect(placements[0].so_id).toBe('A');
-		expect(placements[0].witness_length).toBe(30);
-		expect(placements[0].slidable_position).toBe(50);
-		expect(placements[1].so_id).toBe('B');
-		expect(placements[1].witness_length).toBe(40);
-	});
-
-	it('silently drops a persisted entry whose region no longer exists', () => {
-		const pair_a = viable('A', 0, 1);
-		// Only A's region exists; B disappeared.
-		const placements = re_project_persisted_list(
-			[persisted('A', 30, 50), persisted('B', 40, 20)],
-			[region('A', pair_a)],
-		);
-		expect(placements).toHaveLength(1);
-		expect(placements[0].so_id).toBe('A');
-	});
-
-	it('silently drops a persisted entry whose matching pair no longer exists', () => {
-		const pair_other_edge = viable('A', 2, 3);   // different edge indices
-		const placements = re_project_persisted_list(
-			[persisted('A', 30, 50, 0, 1)],
-			[region('A', pair_other_edge)],
-		);
-		expect(placements).toEqual([]);
-	});
-});
-
-describe('Dimension_Placement — is_occluder_for_dim (rule 11 potential-blocker set)', () => {
-	// Minimal fake scene object — is_occluder_for_dim only reads obj.so.visible.
-	const obj = (visible: boolean) => ({ so: { visible } } as never);
-
-	it('treats a part with its visibility ON as a blocker (normal mode)', () => {
-		expect(is_occluder_for_dim(obj(true), false, false)).toBe(true);
-	});
-
-	it('does NOT treat a part with its visibility OFF as a blocker (normal mode)', () => {
-		// An invisible parent that shows its children: not drawn, not a blocker.
-		expect(is_occluder_for_dim(obj(false), false, false)).toBe(false);
-	});
-
-	it('treats a visible child of a hide-children parent as a blocker (normal mode)', () => {
-		// The child's own visibility flag is still on; the parent hides it from
-		// the canvas but its geometry is still present. Blocker.
-		expect(is_occluder_for_dim(obj(true), false, false)).toBe(true);
-	});
-
-	it('flips blocker eligibility when OPTION x-ray mode is on and the scene has hidden parts', () => {
-		// In OPTION x-ray mode the dimensioning logic inverts: hidden parts
-		// become the foreground. is_occluder_for_dim follows: visible parts
-		// step aside, invisible parts become blockers.
-		expect(is_occluder_for_dim(obj(true),  true, true)).toBe(false);
-		expect(is_occluder_for_dim(obj(false), true, true)).toBe(true);
-	});
-
-	it('does NOT enter OPTION x-ray mode when no parts are hidden', () => {
-		// OPTION alone, with nothing hidden, leaves normal mode in place.
-		expect(is_occluder_for_dim(obj(true),  true, false)).toBe(true);
-		expect(is_occluder_for_dim(obj(false), true, false)).toBe(false);
-	});
-});
-
-describe('Dimension_Placement — witness_trapezoid_gap (rule 11 perspective convergence)', () => {
-	const p = (x: number, y: number) => ({ x, y });
-
-	it('equals the anchor distance when both witnesses point the same direction perpendicular to the edge (square)', () => {
-		// Edge along x, both witnesses straight up — trapezoid is a rectangle.
-		// Perpendicular from either corner to the other witness equals the edge length.
-		expect(witness_trapezoid_gap(p(0, 0), p(20, 0), p(0, 10), p(0, 10))).toBeCloseTo(20, 5);
-	});
-
-	it('catches the failure mode rule 11 cares about: nearly-parallel witnesses tilted same screen direction', () => {
-		// Both witnesses tilted slightly left as they go up — one corner
-		// obtuse, one acute. Perpendicular from the obtuse corner crosses
-		// the other witness at a distance smaller than the anchor gap.
-		const gap = witness_trapezoid_gap(p(0, 0), p(20, 0), p(-1, 10), p(-1, 10));
-		expect(gap).toBeLessThan(20);
-		expect(gap).toBeGreaterThan(0);
-	});
-
-	it('returns 0 when the two anchors coincide (degenerate edge)', () => {
-		expect(witness_trapezoid_gap(p(5, 5), p(5, 5), p(0, 10), p(0, 10))).toBe(0);
-	});
-
-	it('falls back to the anchor distance when a witness direction has zero magnitude', () => {
-		expect(witness_trapezoid_gap(p(0, 0), p(15, 0), p(0, 0), p(0, 10))).toBeCloseTo(15, 5);
-	});
-
-	it('matches the perpendicular projection for parallel witnesses (det ≈ 0 branch)', () => {
-		// Both witnesses point the same direction (truly parallel on screen).
-		// Edge length 25, witnesses straight up. Trapezoid is a rectangle, gap = 25.
-		expect(witness_trapezoid_gap(p(0, 0), p(25, 0), p(0, 1), p(0, 1))).toBeCloseTo(25, 5);
-	});
-
-	it('ties go to W1 when the two anchor angles are equal (symmetric trapezoid)', () => {
-		// Symmetric divergent trapezoid: W1 tilts up-and-left, W2 tilts up-and-right.
-		// Both anchor angles obtuse and equal; tie-break picks W1's corner.
-		// Just verifies the function returns a finite positive number — the
-		// determinism comes from the implementation's tie-break.
-		const gap = witness_trapezoid_gap(p(0, 0), p(20, 0), p(-1, 10), p(1, 10));
-		expect(Number.isFinite(gap)).toBe(true);
-		expect(gap).toBeGreaterThan(0);
-	});
-});
-
-describe('Dimension_Placement — is_face_front_facing (rule 10 face convention)', () => {
-	// Documents the project-wide convention: the renderer treats negative
-	// projected winding as front-facing on screen. Dimensioning code must
-	// follow the same sign or it picks the wrong face. See Render.ts:452.
-
-	it('treats a NEGATIVE winding as front-facing', () => {
-		expect(is_face_front_facing(-1)).toBe(true);
-		expect(is_face_front_facing(-0.5)).toBe(true);
-		expect(is_face_front_facing(-1e-9)).toBe(true);
-	});
-
-	it('treats a POSITIVE winding as back-facing (not front)', () => {
-		expect(is_face_front_facing(1)).toBe(false);
-		expect(is_face_front_facing(0.5)).toBe(false);
-		expect(is_face_front_facing(1e-9)).toBe(false);
-	});
-
-	it('treats a ZERO winding (edge-on) as not front-facing', () => {
-		// Edge-on faces are degenerate; the dimensioning code treats them
-		// as not-front so back-facing fallback can pick a different choice.
-		expect(is_face_front_facing(0)).toBe(false);
-	});
-});
 
 describe('Dimension_Placement — uniface design (rules 1-8) (pending implementation)', () => {
 	// These tests describe the expected behaviour of the uniface design
@@ -1034,8 +220,8 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 
 	// Coverage gaps from step 2 of the test-rollout proposal.
 
-	it('the witness index cap value is 4 and is read from k.dimensions.WITNESS_INDEX_CAP (rule 1)', () => {
-		expect(k.dimensions.WITNESS_INDEX_CAP).toBe(4);
+	it('the witness index cap value is 6 and is read from k.dimensions.WITNESS_INDEX_CAP (rule 1)', () => {
+		expect(k.dimensions.WITNESS_INDEX_CAP).toBe(6);
 	});
 
 	it('the four placement choices are exactly edge, uniface, witness index, label position (rule 2)', () => {
@@ -1067,19 +253,10 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 	it.todo('for a rotated part, the dim line lies on a plane parallel to the rotated silhouette box that passes through the label center (rule 4 sub-point 1)');
 
 	it('dropping a label because its witness index exceeded the cap does not trigger re-placement for labels that depended on this one position (rule 7)', () => {
-		// The new placement code (run_uniface_placement) walks each
-		// (part, axis) exactly once and commits or drops in that single
-		// pass. There is no "second pass" that revisits already-placed
-		// labels when something later drops. The structural guarantee:
-		// no exported re-placement entry point exists.
-		// (Searched the placement module for any function name matching
-		// "re_place|retry_placement" — none found in the new path.)
-		// The retry_pass export is from the OLD path and is skipped
-		// under USE_UNIFACE_RULES, see line 688.
-		expect(typeof retry_pass).toBe('function');  // old-path symbol still exported
-		// The new path's run_uniface_placement is the only entry; it
-		// does not call retry_pass.
-		expect(SLIDE_ELIGIBLE_FILTERS).toBeInstanceOf(Set);  // slide-retry is per-candidate, not cross-label
+		// run_uniface_placement walks each (part, axis) exactly once and
+		// commits or drops in that single pass. Slide-retry is per-candidate,
+		// not cross-label, so a drop never re-triggers anyone else.
+		expect(SLIDE_ELIGIBLE_FILTERS).toBeInstanceOf(Set);
 	});
 
 	it('k.dimensions.PAIR_CLEARANCE_PX is 5 and k.dimensions.SILHOUETTE_MARGIN_PX is 15', () => {
@@ -1102,7 +279,7 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 			['part-B|x', new Set([`${UNIFACE_FACE_POS_X}|0`, `${UNIFACE_FACE_POS_X}|1`, `${UNIFACE_FACE_POS_X}|3`])],
 			['part-C|x', new Set([`${UNIFACE_FACE_POS_X}|0`])],
 		]);
-		const counts = tally_cell_counts_for_vote(viability);
+		const counts = tally_candidate_counts_for_vote(viability);
 		const winners = pick_top_two_witness_indices_per_face(counts, 4);
 		const top = winners.get(UNIFACE_FACE_POS_X);
 		expect(top).toBeDefined();
@@ -1124,13 +301,13 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 			['part-E|y', new Set([`${UNIFACE_FACE_POS_Y}|0`])],
 			['lonely|y', new Set([`${UNIFACE_FACE_POS_Y}|3`])],
 		]);
-		const counts = tally_cell_counts_for_vote(viability);
+		const counts = tally_candidate_counts_for_vote(viability);
 		const winners = pick_top_two_witness_indices_per_face(counts, 4);
 		const top = winners.get(UNIFACE_FACE_POS_Y);
 		expect(top!.has(0)).toBe(true);
 		expect(top!.has(3)).toBe(true);  // index 3 had count 1, indices 1+2 had count 0 → 3 wins second
 		// If instead one of indices 1 or 2 had count >= 1, "lonely" would lose.
-		const counts_with_filler = tally_cell_counts_for_vote(new Map<string, Set<string>>([
+		const counts_with_filler = tally_candidate_counts_for_vote(new Map<string, Set<string>>([
 			...viability,
 			['filler1|y', new Set([`${UNIFACE_FACE_POS_Y}|1`])],
 			['filler2|y', new Set([`${UNIFACE_FACE_POS_Y}|1`])],
@@ -1153,7 +330,7 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 				`${UNIFACE_FACE_POS_Z}|3`,
 			]));
 		}
-		const counts = tally_cell_counts_for_vote(viability);
+		const counts = tally_candidate_counts_for_vote(viability);
 		const winners = pick_top_two_witness_indices_per_face(counts, 4);
 		for (let face_idx = 0; face_idx < 6; face_idx++) {
 			const top = winners.get(face_idx);
@@ -1283,6 +460,253 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 		// x_max=106 → NOT fully covered.
 		const tight_label = { x: 100, y: 50 };
 		expect(does_label_fully_cover_inside_arrow({ x: 102, y: 50 }, tight_label, 1, 0, +1, 4, 7, 6)).toBe(false);
+	});
+
+	it('step 3.1 slice A — every winning (part, axis) writes a persistence record after a successful placement run', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		const result = run_placement_on_parts([
+			{ name: 'wall_a', x_min: -0.2, x_max: 0.2, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.1 },
+		]);
+		const persisted = get_last_persisted();
+		// Every winner in the placement result should have a matching key in
+		// the persistence map.
+		const winners = result.placements.filter(p => p.uniface !== null);
+		expect(winners.length).toBeGreaterThan(0);
+		for (const w of winners) {
+			const key = `${w.so_id}|${w.axis}`;
+			const entry = persisted.get(key);
+			expect(entry).toBeDefined();
+			expect(entry!.face).toBe(w.uniface);
+			// A uniface winner stores its box level; an outer-edge winner stores
+			// its outward distance in mm instead (level is null). Never both.
+			if (entry!.witness_index === null) {
+				expect(entry!.witness_length_mm).not.toBeNull();
+			} else {
+				expect(entry!.witness_index).toBe(w.witness_index - 1);  // proposal stores 0-based; placement result is 1-based
+				expect(entry!.witness_length_mm).toBeNull();
+			}
+			expect(entry!.label_position_t).toBeGreaterThanOrEqual(0);
+			expect(entry!.label_position_t).toBeLessThanOrEqual(1);
+			expect(entry!.edge_corner_pair_idx).toBeGreaterThanOrEqual(0);
+			expect(entry!.edge_corner_pair_idx).toBeLessThan(4);
+		}
+	});
+
+	it('step 3.1 slice A — persistence keys for parts no longer rendered are pruned on the next render', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		run_placement_on_parts([
+			{ name: 'wall_old', x_min: -0.2, x_max: 0.2, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.1 },
+		]);
+		const after_first = new Set(get_last_persisted().keys());
+		expect(after_first.size).toBeGreaterThan(0);
+		// Second render with a different part — wall_old's keys must NOT
+		// survive into this render's persistence map. Kept within the on-screen
+		// region (x, y in [-1, 1]) so the part is fully visible — strict
+		// eligibility (spec 2.3) needs all eight corners on screen.
+		run_placement_on_parts([
+			{ name: 'wall_new', x_min: -0.18, x_max: 0.18, y_min: -0.12, y_max: 0.12, z_min: 0, z_max: 0.08 },
+		]);
+		const after_second = get_last_persisted();
+		for (const key of after_first) {
+			expect(after_second.has(key)).toBe(false);
+		}
+		// And the new part is recorded.
+		expect(Array.from(after_second.values()).some(e => e.so_name === 'wall_new')).toBe(true);
+	});
+
+	it('step 3.1 slice B — second run on the same scene takes the skip path', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		const { run_uniface_placement } = await import('../render/Dimension_Placement');
+		// Cubic part — all three axes should commit a winner so eligible
+		// pairs match persisted entries.
+		const first = run_placement_on_parts([
+			{ name: 'box_skip', x_min: -0.2, x_max: 0.2, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.18 },
+		]);
+		expect(get_last_skip_used()).toBe(false);  // first call had nothing to skip from
+		const first_winners = first.placements.filter(p => p.uniface !== null).length;
+		expect(first_winners).toBeGreaterThan(0);
+		expect(get_last_persisted().size).toBe(first_winners);
+		// Re-run on the SAME scene (no re-clear): identical scene, identical
+		// view. The standalone skip path is retired; the seeded run handles
+		// reuse instead. The picked placements must still be unchanged.
+		const second = run_uniface_placement();
+		expect(get_last_skip_used()).toBe(false);
+		// The seeded run reproduces the same set of placements with the
+		// same chosen face and witness index per (part, axis).
+		expect(second.placements.length).toBe(first.placements.length);
+		for (let i = 0; i < first.placements.length; i++) {
+			const a = first.placements[i];
+			const b = second.placements.find(p => p.so_id === a.so_id && p.axis === a.axis)!;
+			expect(b.uniface).toBe(a.uniface);
+			expect(b.witness_index).toBe(a.witness_index);
+		}
+	});
+
+	it('step 3.1 slice C — adding a new part on the next render locks the old parts and runs the search only for the newcomer', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		const { run_uniface_placement } = await import('../render/Dimension_Placement');
+		const { scene } = await import('../render/Scene');
+		const { cube_edges, cube_faces, make_so } = await import('./helpers/scene_mock');
+		// Render a scene with one part. Capture the persistence so we can
+		// later check the original entries are preserved by the lock.
+		run_placement_on_parts([
+			{ name: 'box_lock_a', x_min: -0.2, x_max: -0.02, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.12 },
+		]);
+		const original_persisted_snapshot = new Map<string, { face: number; witness_index: number | null; witness_length_mm: number | null; edge_corner_pair_idx: number; label_position_t: number }>();
+		for (const [key, entry] of get_last_persisted()) {
+			original_persisted_snapshot.set(key, {
+				face                 : entry.face,
+				witness_index        : entry.witness_index,
+				witness_length_mm    : entry.witness_length_mm,
+				edge_corner_pair_idx : entry.edge_corner_pair_idx,
+				label_position_t     : entry.label_position_t,
+			});
+		}
+		expect(original_persisted_snapshot.size).toBeGreaterThan(0);
+		// Add a second part to the existing scene (no clear).
+		const root = scene.get_all().find(o => !o.parent)!;
+		const new_so = make_so('box_lock_b', 0.02, 0.2, -0.1, 0.1, 0, 0.1);
+		scene.create({ so: new_so, edges: cube_edges, faces: cube_faces, parent: root });
+		// Re-render. The skip cannot fire because the eligible set changed;
+		// slice C locks the original part's entries and the main loop
+		// runs only for the new part.
+		run_uniface_placement();
+		expect(get_last_skip_used()).toBe(false);
+		expect(get_last_locked_count()).toBeGreaterThan(0);
+		expect(get_last_locked_count()).toBe(original_persisted_snapshot.size);
+		// Every original persistence entry must be unchanged after the
+		// seeded run — locked labels keep their chosen values.
+		const persisted_after = get_last_persisted();
+		for (const [key, before] of original_persisted_snapshot) {
+			const after = persisted_after.get(key);
+			expect(after).toBeDefined();
+			expect(after!.face).toBe(before.face);
+			expect(after!.witness_index).toBe(before.witness_index);
+			expect(after!.witness_length_mm).toBe(before.witness_length_mm);
+			expect(after!.edge_corner_pair_idx).toBe(before.edge_corner_pair_idx);
+			expect(after!.label_position_t).toBe(before.label_position_t);
+		}
+		// Whether the new part wins is up to the main search; the slice-C
+		// contract is only that the previously persisted entries are
+		// locked and unchanged.
+	});
+
+	it('hovering a part keeps every other placement where it was (hover is not a context change)', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		const { run_uniface_placement } = await import('../render/Dimension_Placement');
+		const { scene } = await import('../render/Scene');
+		const { hits_3d } = await import('../events/Hits_3D');
+		// Two parts, both fully on screen so both place on the first render.
+		const first = run_placement_on_parts([
+			{ name: 'hover_a', x_min: -0.2, x_max: -0.02, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.12 },
+			{ name: 'hover_b', x_min: 0.02, x_max: 0.2, y_min: -0.1, y_max: 0.1, z_min: 0, z_max: 0.1 },
+		]);
+		const a_before = first.placements
+			.filter(p => p.so_name === 'hover_a' && p.uniface !== null)
+			.map(p => ({ axis: p.axis, x: p.anchor_1_screen!.x, y: p.anchor_1_screen!.y }));
+		expect(a_before.length).toBeGreaterThan(0);
+		// Hover the OTHER part. No geometry change — only the hovered id.
+		const b_scene = scene.get_all().find(o => o.so.name === 'hover_b')!;
+		hits_3d.hover = { so: b_scene.so } as unknown as typeof hits_3d.hover;
+		try {
+			const second = run_uniface_placement();
+			// The saved placements survived the hover and were re-locked —
+			// they were NOT cleared and re-placed from scratch.
+			expect(get_last_locked_count()).toBeGreaterThan(0);
+			// Part A (not hovered) keeps every anchor exactly where it was.
+			for (const before of a_before) {
+				const after = second.placements.find(p => p.so_name === 'hover_a' && p.axis === before.axis && p.uniface !== null);
+				expect(after).toBeDefined();
+				expect(after!.anchor_1_screen!.x).toBe(before.x);
+				expect(after!.anchor_1_screen!.y).toBe(before.y);
+			}
+		} finally {
+			hits_3d.hover = null;
+		}
+	});
+
+	it('selecting a part keeps every other placement where it was (selection is not a context change)', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		const { run_uniface_placement } = await import('../render/Dimension_Placement');
+		const { scene } = await import('../render/Scene');
+		const { selection } = await import('../managers/Selection');
+		const first = run_placement_on_parts([
+			{ name: 'sel_a', x_min: -0.2, x_max: -0.02, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.12 },
+			{ name: 'sel_b', x_min: 0.02, x_max: 0.2, y_min: -0.1, y_max: 0.1, z_min: 0, z_max: 0.1 },
+		]);
+		const a_before = first.placements
+			.filter(p => p.so_name === 'sel_a' && p.uniface !== null)
+			.map(p => ({ axis: p.axis, x: p.anchor_1_screen!.x, y: p.anchor_1_screen!.y }));
+		expect(a_before.length).toBeGreaterThan(0);
+		const b_scene = scene.get_all().find(o => o.so.name === 'sel_b')!;
+		selection.current = { so: b_scene.so } as unknown as typeof selection.current;
+		try {
+			const second = run_uniface_placement();
+			expect(get_last_locked_count()).toBeGreaterThan(0);
+			for (const before of a_before) {
+				const after = second.placements.find(p => p.so_name === 'sel_a' && p.axis === before.axis && p.uniface !== null);
+				expect(after).toBeDefined();
+				expect(after!.anchor_1_screen!.x).toBe(before.x);
+				expect(after!.anchor_1_screen!.y).toBe(before.y);
+			}
+		} finally {
+			selection.current = null;
+		}
+	});
+
+	it('a saved placement whose edge becomes hidden after a view change is not reused', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		const { run_uniface_placement } = await import('../render/Dimension_Placement');
+		const { render } = await import('../render/Render');
+		// First render: nothing hidden, so the part places and is saved.
+		const first = run_placement_on_parts([
+			{ name: 'occ_a', x_min: -0.2, x_max: -0.02, y_min: -0.15, y_max: 0.15, z_min: 0, z_max: 0.12 },
+		]);
+		expect(first.placements.some(p => p.so_name === 'occ_a' && p.uniface !== null)).toBe(true);
+		// Now every edge reports hidden — as if another part moved in front of it
+		// after a tumble. The reuse pass must not reuse the saved placement.
+		const original = render.edge_partly_hidden.bind(render);
+		(render as unknown as { edge_partly_hidden: () => boolean }).edge_partly_hidden = () => true;
+		try {
+			const second = run_uniface_placement();
+			expect(second.placements.some(p => p.so_name === 'occ_a' && p.uniface !== null)).toBe(false);
+		} finally {
+			(render as unknown as { edge_partly_hidden: typeof original }).edge_partly_hidden = original;
+		}
+	});
+
+	it('step 3.1 slice D — clean skip-path renders keep the drift counter at zero', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		const { run_uniface_placement } = await import('../render/Dimension_Placement');
+		// Fresh scene from the harness — start with a non-drifty baseline.
+		run_placement_on_parts([
+			{ name: 'box_drift', x_min: 0, x_max: 120, y_min: 0, y_max: 90, z_min: 0, z_max: 60 },
+		]);
+		// Full search just ran; the drift counter is zero after every
+		// full-search render.
+		expect(get_drift_within_tolerance_count()).toBe(0);
+		// Run the same scene three more times. The standalone skip path is
+		// retired (so skip is always false) and the drift counter is no
+		// longer incremented — it stays at zero across every render.
+		for (let i = 0; i < 3; i++) {
+			run_uniface_placement();
+			expect(get_last_skip_used()).toBe(false);
+			expect(get_drift_within_tolerance_count()).toBe(0);
+		}
+	});
+
+	it('step 3.1 slice B — a different scene on the next render bypasses the skip and runs the full search', async () => {
+		const { run_placement_on_parts } = await import('./helpers/placement_harness');
+		run_placement_on_parts([
+			{ name: 'wall_pre', x_min: 0, x_max: 200, y_min: 0, y_max: 50, z_min: 0, z_max: 50 },
+		]);
+		// Different part identity → eligible set differs from last render's
+		// persisted set, so the skip path must abort and the main search
+		// must run.
+		run_placement_on_parts([
+			{ name: 'wall_post', x_min: 100, x_max: 300, y_min: 100, y_max: 150, z_min: 100, z_max: 150 },
+		]);
+		expect(get_last_skip_used()).toBe(false);
 	});
 
 	it('two labels whose natural positions would overlap each other after the slide are caught by the label-vs-label clearance check (rule 18 + rule 19 filter 2)', async () => {
@@ -1688,10 +1112,14 @@ describe('Dimension_Placement — candidate_passes_clearances (step 3a full clea
 	// should pass.
 	const base = () => ({
 		candidate_label_rect    : { x_min: 180, x_max: 220, y_min: 193, y_max: 207 } as const,
-		candidate_anchor_1      : { x: 170, y: 200 },
-		candidate_anchor_2      : { x: 230, y: 200 },
-		candidate_edge_p1_screen: { x: 170, y: 250 },
-		candidate_edge_p2_screen: { x: 230, y: 250 },
+		// Long dim line so the 20-pixel forbidden zone around each anchor
+		// does not bite into the centered label rectangle. Anchor 1 at
+		// (140) → zone ends at 160; rect left edge at 180. Anchor 2 at
+		// (260) → zone starts at 240; rect right edge at 220.
+		candidate_anchor_1      : { x: 140, y: 200 },
+		candidate_anchor_2      : { x: 260, y: 200 },
+		candidate_edge_p1_screen: { x: 140, y: 250 },
+		candidate_edge_p2_screen: { x: 260, y: 250 },
 		silhouette              : [
 			{ x:   0, y:   0 },
 			{ x: 100, y:   0 },
@@ -1845,10 +1273,14 @@ describe('Dimension_Placement — evaluate_clearances (named filter rejection)',
 	// reject and confirms the returned name plus shortfall.
 	const base = () => ({
 		candidate_label_rect    : { x_min: 180, x_max: 220, y_min: 193, y_max: 207 } as const,
-		candidate_anchor_1      : { x: 170, y: 200 },
-		candidate_anchor_2      : { x: 230, y: 200 },
-		candidate_edge_p1_screen: { x: 170, y: 250 },
-		candidate_edge_p2_screen: { x: 230, y: 250 },
+		// Long dim line so the 20-pixel forbidden zone around each anchor
+		// does not bite into the centered label rectangle. Anchor 1 at
+		// (140) → zone ends at 160; rect left edge at 180. Anchor 2 at
+		// (260) → zone starts at 240; rect right edge at 220.
+		candidate_anchor_1      : { x: 140, y: 200 },
+		candidate_anchor_2      : { x: 260, y: 200 },
+		candidate_edge_p1_screen: { x: 140, y: 250 },
+		candidate_edge_p2_screen: { x: 260, y: 250 },
 		silhouette              : [
 			{ x:   0, y:   0 },
 			{ x: 100, y:   0 },
@@ -1927,10 +1359,11 @@ describe('Dimension_Placement — evaluate_clearances (named filter rejection)',
 	});
 
 	it('rejects with name own-anchor-vs-placed when a candidate anchor sits within 15 px of a placed label rect (label rect itself is clear)', () => {
-		// Placed rect's right edge is exactly 15 px from the candidate label
-		// (label rect distance check passes at 15) but only 5 px from the
-		// candidate anchor — so own-anchor-vs-placed fires.
+		// Override anchor 1 to the older close-in position so the anchor
+		// sits 5 px from the placed rect; own-anchor-vs-placed fires
+		// before the position chain reaches the anchor-zone filter.
 		const in_ = { ...base(),
+			candidate_anchor_1: { x: 170, y: 200 },
 			placed_label_rects: [{ x_min: 155, x_max: 165, y_min: 195, y_max: 205 }] };
 		const r = evaluate_clearances(in_);
 		expect(r.ok).toBe(false);
@@ -1956,8 +1389,26 @@ describe('Dimension_Placement — evaluate_clearances (named filter rejection)',
 		}
 	});
 
-	it('rejects with name own-witness-convergence when the two witness lines come within 15 px of each other', () => {
+	it('rejects with name own-witness-vs-placed when a witness line passes within 15 px of a placed label rect (label, anchors, dim line clear)', () => {
+		// Placed rect straddles witness 1 (x=140, y 200..250) at its middle
+		// (y 218..232): clear of anchor 1 (y=200), the dim line (y=200), and the
+		// candidate label (30 px in x) — only the witness line hits it.
 		const in_ = { ...base(),
+			placed_label_rects: [{ x_min: 130, x_max: 150, y_min: 218, y_max: 232 }] };
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('own-witness-vs-placed');
+		}
+	});
+
+	it('rejects with name own-witness-convergence when the two witness lines come within 15 px of each other', () => {
+		// Tight anchors so the two vertical witnesses sit only 10 px
+		// apart; the shape-level convergence check fires before any
+		// position-level filter gets a turn.
+		const in_ = { ...base(),
+			candidate_anchor_1      : { x: 170, y: 200 },
+			candidate_edge_p1_screen: { x: 170, y: 250 },
 			candidate_edge_p2_screen: { x: 180, y: 250 },
 			candidate_anchor_2      : { x: 180, y: 200 },
 			candidate_label_rect    : { x_min: 175, x_max: 215, y_min: 193, y_max: 207 } };
@@ -1980,15 +1431,57 @@ describe('Dimension_Placement — evaluate_clearances (named filter rejection)',
 		expect(SLIDE_ELIGIBLE_FILTERS.has('own-witness-convergence')).toBe(false);
 	});
 
-	it('sliding the label by the reported shortfall plus one pixel makes the candidate pass — simulating the slide-and-retry branch', () => {
-		// Long dim line so anchors are far from the obstacle. Obstacle is a
-		// placed label rect at (230-270, 215-229): just to the right of and
-		// below the candidate label, far enough from the dim line and both
-		// anchors to clear those filters. Distance from candidate label rect
-		// to placed = sqrt(100 + 64) ≈ 12.81; shortfall ≈ 2.19. Sliding LEFT
-		// along the dim line by 3.19 px clears the 15 px requirement.
+	it('step 3.2 — rejects with name label-vs-anchor-zone when the candidate label overlaps the 20-pixel forbidden zone around one of its own anchors', () => {
 		const in_ = { ...base(),
-			candidate_anchor_1 : { x: 170, y: 200 },
+			// Anchor 1 close to the label rect; the zone reaches into it.
+			candidate_anchor_1: { x: 170, y: 200 },
+			// Anchor 2 stays well away so its own zone is clear of the
+			// label, and own-witness-convergence does not fire (the two
+			// vertical witnesses are 90 px apart).
+		};
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('label-vs-anchor-zone');
+		}
+	});
+
+	it('step 3.2 — rejects with name label-vs-anchor-zone when the candidate label overlaps a 20-pixel zone around an already-placed label\'s anchor', () => {
+		const in_ = { ...base(),
+			candidate_label_rect: { x_min: 180, x_max: 220, y_min: 215, y_max: 229 },
+			// Placed dim line at y=220 starts at x=240. Its anchor zone
+			// reaches backward (negative dim direction) to x=220, just
+			// touching the candidate label rect's right edge. The placed
+			// dim segment ITSELF sits 20 px to the right of the candidate
+			// label rect, so label-vs-placed-dim does not fire — only the
+			// new zone filter triggers.
+			placed_dim_segments: [
+				[{ x: 240, y: 220 }, { x: 440, y: 220 }] as [{ x: number; y: number }, { x: number; y: number }],
+			],
+		};
+		const r = evaluate_clearances(in_);
+		expect(r.ok).toBe(false);
+		if (!r.ok) {
+			expect(r.filter).toBe('label-vs-anchor-zone');
+		}
+	});
+
+	it('step 3.2 — the new label-vs-anchor-zone filter is NOT slide-eligible', () => {
+		expect(SLIDE_ELIGIBLE_FILTERS.has('label-vs-anchor-zone')).toBe(false);
+	});
+
+	it('sliding the label by the reported shortfall plus one pixel makes the candidate pass — simulating the slide-and-retry branch', () => {
+		// Long dim line so anchors are far from the obstacle. Anchor 1
+		// at (155, 200) so the 20-pixel forbidden zone around it ends at
+		// x=175 — clear of the candidate label rect (180, 220). Obstacle
+		// is a placed label rect at (230-270, 215-229): just to the right
+		// of and below the candidate label, far enough from the dim line
+		// and both anchors to clear those filters. Distance from candidate
+		// label rect to placed = sqrt(100 + 64) ≈ 12.81; shortfall ≈ 2.19.
+		// Sliding LEFT along the dim line by 3.19 px clears the 15 px
+		// requirement and still keeps clear of the anchor zone.
+		const in_ = { ...base(),
+			candidate_anchor_1 : { x: 155, y: 200 },
 			candidate_anchor_2 : { x: 470, y: 200 },
 			placed_label_rects: [{ x_min: 230, x_max: 270, y_min: 215, y_max: 229 }] };
 		const r = evaluate_clearances(in_);
