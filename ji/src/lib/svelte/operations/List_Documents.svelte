@@ -1,22 +1,40 @@
 <script lang='ts'>
-	import { w_filter_tags, w_filter_text, w_filter_mode, filter_rows } from '../../ts/managers/Search';
+	import { w_filter_tags, w_filter_text, w_filter_mode, w_filter_families, filter_rows } from '../../ts/managers/Filter_Documents';
 	import { w_operation, w_view_document, T_Operation } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { Document, T_DocumentFamily } from '../../ts/types/Document';
-	import View_Document from '../actions/View_Document.svelte';
-	import Drop_Documents from '../actions/Drop_Documents.svelte';
+	import { w_hierarchy, databases } from '../../ts/database/Databases';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { w_hierarchy } from '../../ts/database/Databases';
+	import { T_Storage } from '../../ts/types/DB_Records';
+	import Drop_Documents from './Drop_Documents.svelte';
+	import View_Document from './View_Document.svelte';
+	import Ask_LLM from '../support/Ask_LLM.svelte';
+
+	// Which store is active — the ask box shows only for the LLM store.
+	const w_storage = databases.w_storage;
 	import { w_db_changed } from '../../ts/types/Signal';
 	import { save_drop } from '../../ts/managers/Drop';
 	import { Direction } from '../../ts/types/Angle';
-	import Add_Tag from '../actions/Add_Tag.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
+	import Tags from '../support/Tags.svelte';
 	import { get } from 'svelte/store';
-	import Tags from '../actions/Tags.svelte';
 
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
+
+	// The family filter's segments: one per document family, in enum order, minus
+	// "folder" (not a filterable content family here). Clicking a segment toggles that
+	// family in the saved list (adds it if off, removes it if on). An empty list means
+	// no family filter is applied.
+	const families = Object.values(T_DocumentFamily).filter((f) => f !== T_DocumentFamily.folder);
+	function toggle_family(family: string) {
+		w_filter_families.update((list) => {
+			const has  = list.includes(family);
+			const next = has ? list.filter((f) => f !== family) : [...list, family];
+			debug.log(`Family filter: "${family}" ${has ? 'removed' : 'added'} — now [${next.join(', ')}].`);
+			return next;
+		});
+	}
 
 	// Which folders are shut. One saved list of folder ids, kept across reloads the
 	// way the details region's open sections are. A shut folder's contents drop from
@@ -90,11 +108,12 @@
 		return rows.filter((r) => !r.ancestor_ids.some((a) => $w_closed.has(a)));
 	});
 
-	// Narrowed by the shared search-text: every picked tag must logic-choice, and the name must
-	// contain the search-text text. A matched file keeps its folder chain on screen too,
-	// so it never shows indented under nothing — the ancestors ride along even if they miss.
+	// Narrowed by the shared search: picked tags, name text, and picked families all
+	// narrow together. filter_rows returns only surviving content rows (never folders);
+	// here each such row pulls its folder chain back on screen, so a matched file never
+	// shows indented under nothing — and a folder left with no surviving row drops.
 	const shown = $derived.by(() => {
-		const matched = filter_rows(open_rows, $w_filter_tags, $w_filter_text, $w_filter_mode);
+		const matched = filter_rows(open_rows, $w_filter_tags, $w_filter_text, $w_filter_mode, $w_filter_families);
 		const keep = new Set(matched.map((r) => r.id));
 		for (const r of matched) { for (const a of r.ancestor_ids) { keep.add(a); } }
 		return open_rows.filter((r) => keep.has(r.id));       // original walk order, ancestors included
@@ -121,10 +140,10 @@
 	let restored  = $state(false);                      // did this table showing already jump to the saved place?
 	let save_wait: ReturnType<typeof setTimeout> | null = null;
 
-	// The height of the column header, so a restored row can be placed just below it
-	// rather than hidden behind it.
+	// The header is its own table above the scroller now, so the top of the scroller is
+	// already just below it — a restored row needs no extra offset.
 	function header_height(): number {
-		return (scroller?.querySelector('thead') as HTMLElement | null)?.offsetHeight ?? 0;
+		return 0;
 	}
 
 	// The row now at the top: the first one sitting fully below the header line (its
@@ -203,9 +222,9 @@
 	// With no documents to show, open the drop box so the first one can be added.
 	// The guard stops this from re-firing once the drop box is already up.
 	$effect(() => {
-		if (rows.length === 0 && $w_operation !== T_Operation.document) {
+		if (rows.length === 0 && $w_operation !== T_Operation.drop) {
 			debug.log('No documents in the store — opening the drop box to add the first one.');
-			w_operation.set(T_Operation.document);
+			w_operation.set(T_Operation.drop);
 		}
 	});
 
@@ -217,7 +236,7 @@
 		const id = $w_view_document;
 		if (id === null || !$w_hierarchy.document_byID(id)) {
 			if (id !== null) { debug.log(`View points at a document that is no longer in the store (${id}) — back to the list.`); }
-			w_operation.set(null);
+			w_operation.set(T_Operation.list);
 			w_view_document.set(null);
 		}
 	});
@@ -256,7 +275,7 @@
 
 	function close_view() {
 		w_view_document.set(null);
-		if ($w_operation === T_Operation.view) { w_operation.set(null); }
+		if ($w_operation === T_Operation.view) { w_operation.set(T_Operation.list); }
 	}
 
 	// Trash one document — and, for a folder, everything under it. Asked first.
@@ -282,9 +301,9 @@
 	// hover text and clicking opens that add view; format and tags stay inert.
 	// The tags column also carries each row's per-document buttons at its right end.
 	const columns = [
-		{ label: 'format',             hover: null,                 op: null,                 width: '60px' },
-		{ label: 'add more documents', hover: 'add more documents', op: T_Operation.document, width: '40%'  },
-		{ label: 'tags',               hover: null,                 op: null,                 width: 'auto' },
+		{ label: 'format',    hover: null, op: null, width: '60px' },
+		{ label: 'documents', hover: null, op: null, width: '40%'  },
+		{ label: 'tags',      hover: null, op: null, width: 'auto' },
 	];
 
 	let hovered = $state<number | null>(null);
@@ -316,7 +335,7 @@
 		if (!$w_operation) { return; }                        // already showing the list
 		if (rows.length === 0) { return; }                   // empty store stays on the drop box — nothing to return to
 		if (target.closest('.add-tag')) { return; }          // keep clicks inside the new-tag field; a click anywhere on the open document closes it
-		w_operation.set(null);
+		w_operation.set(T_Operation.list);
 		w_view_document.set(null);                            // a background click also leaves the view
 		debug.log(`Clicked out of the add view with ${rows.length} document(s) in the store — back to the list.`);
 	}
@@ -330,7 +349,7 @@
 		event.preventDefault();
 		dragging = false;
 		debug.log('Dropped on the table — opening the add-documents view so the drop reports there.');
-		w_operation.set(T_Operation.document);
+		w_operation.set(T_Operation.drop);
 		await save_drop(event.dataTransfer, new Set());
 	}
 	function documents_dragover(event: DragEvent) {
@@ -353,12 +372,7 @@
 	<td class='tag-actions'>
 		<div class='tag-actions-row'>
 			{#if editing === row.id}
-				{#if tag_count === 0}
-					<!-- No tags exist yet to pick from — offer to create some. Same
-					     action as the top add-tags control: switch to the tag view. -->
-					<button class='add-tags-inline'
-						onclick={(e) => { e.stopPropagation(); debug.log(`No tags in the store yet — opening the add-tags view from row ${row.id}.`); $w_operation = T_Operation.tag; }}>add tags</button>
-				{:else}
+				{#if tag_count > 0}
 					<!-- The tag picker takes the buttons' place on the row, right-justified;
 					     a click outside it (handled by the background) closes it. -->
 					<Tags
@@ -400,19 +414,28 @@
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 <div class='documents' class:dragging onclick={background_click}
 	ondrop={documents_drop} ondragover={documents_dragover} ondragleave={documents_dragleave}>
-	{#if rows.length > 0 && $w_operation === null}
+	{#if rows.length > 0 && $w_operation === T_Operation.list}
+		{#if $w_storage === T_Storage.llm}
+			<Ask_LLM />
+		{/if}
 		<div class='logic'>
 			<Tags
 				bind:selected={$w_filter_tags}
-				bind:mode={$w_filter_mode}
-				onadd={$w_operation === T_Operation.tag ? undefined : () => w_operation.set(T_Operation.tag)} />
+				bind:mode={$w_filter_mode} />
+		</div>
+		<div class='families'>
+			{#each families as family}
+				<button
+					class='segment'
+					class:current={$w_filter_families.includes(family)}
+					title={family}
+					onclick={() => toggle_family(family)}>{family}</button>
+			{/each}
 		</div>
 		<input class='search-text' type='search' placeholder='search by name' bind:value={$w_filter_text} />
 	{/if}
-	{#if $w_operation === T_Operation.document}
+	{#if $w_operation === T_Operation.drop}
 		<Drop_Documents />
-	{:else if $w_operation === T_Operation.tag}
-		<Add_Tag ondone={() => w_operation.set(null)} />
 	{:else if $w_operation === T_Operation.view && $w_view_document}
 		<View_Document document_id={$w_view_document} onclose={close_view}
 			can_step={can_step} onprev={() => step(-1)} onnext={() => step(1)} />
@@ -422,12 +445,15 @@
 			<div class='empty'>no documents yet</div>
 		{:else}
 			<div class='table-region'>
-			<div class='table-scroll' bind:this={scroller} onscroll={on_scroll}>
+			<!-- The header is its own table, sitting still above the scroller, so the
+			     scrollbar runs only beside the document rows — not past the title row. -->
+			<div class='table-head'>
 			<table class='blobs-table'>
+				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
 				<thead>
 					<tr class='head'>
 						{#each columns as col, i}
-							<th style:width={col.width}>
+							<th>
 								<button
 									class='head-label'
 									class:interactive={col.hover}
@@ -438,6 +464,11 @@
 						{/each}
 					</tr>
 				</thead>
+			</table>
+			</div>
+			<div class='table-scroll' bind:this={scroller} onscroll={on_scroll}>
+			<table class='blobs-table'>
+				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
 				<tbody>
 					{#each shown as row, row_number (row.place_key)}
 						<!-- svelte-ignore a11y_mouse_events_have_key_events -->
@@ -479,12 +510,23 @@
 		min-height     : 0;
 	}
 
-	/* Only the table body scrolls; it fills the space under the pinned controls. */
+	/* The header table sits still above the scroller. It reserves the same 20px on the
+	   right that the scroller gives its scrollbar, so the two tables' columns line up. */
+	.table-head {
+		box-sizing    : border-box;
+		padding-right : 20px;
+		flex-shrink   : 0;
+		width         : 100%;
+	}
+
+	/* Only the table body scrolls; it fills the space under the fixed header. The gutter
+	   is always reserved (even with few rows) so the header's 20px inset always matches. */
 	.table-scroll {
-		flex       : 1 1 auto;
-		overflow-y : auto;
-		width      : 100%;
-		min-height : 0;
+		scrollbar-gutter : stable;
+		flex             : 1 1 auto;
+		overflow-y       : auto;
+		width            : 100%;
+		min-height       : 0;
 	}
 
 	/* A real 20px scrollbar that reserves its own width, so the content ends cleanly at
@@ -534,6 +576,43 @@
 	}
 
 	.search-text:hover {
+		background : var(--hover);
+	}
+
+	/* One pill under the search box with a segment per family; each toggles on its
+	   own, filling --accent when picked. A whole family list can be on at once. */
+	.families {
+		border        : var(--thickness-normal) solid var(--black);
+		height        : var(--height-control);
+		font-size     : var(--font-base);
+		background    : var(--white);
+		box-sizing    : border-box;
+		margin-bottom : var(--gap);
+		align-self    : center;
+		overflow      : hidden;
+		border-radius : var(--radius-pill);
+		flex-shrink   : 0;                     /* hold full height; a full table must not squeeze (and clip) the pill */
+		display       : flex;
+	}
+
+	.families .segment {
+		padding    : var(--pad-control);
+		background : transparent;
+		color      : var(--text);
+		cursor     : pointer;
+		border     : none;
+	}
+
+	.families .segment:not(:last-child) {
+		border-right : var(--thickness-normal) solid var(--black);
+	}
+
+	.families .segment.current {
+		background : var(--accent);
+		color      : var(--text-on-accent);
+	}
+
+	.families .segment:not(.current):hover {
 		background : var(--hover);
 	}
 

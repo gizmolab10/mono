@@ -6,6 +6,7 @@ import type { Writable } from 'svelte/store';
 import { writable } from 'svelte/store';
 import { DB_Common } from './DB_Common';
 import { DB_Local } from './DB_Local';
+import { DB_LLM } from './DB_LLM';
 
 // One storage backend paired with the tree that owns its records.
 interface Store {
@@ -20,7 +21,7 @@ interface Store {
 
 class Databases {
 	private cache: Map<T_Storage, Store> = new Map();
-	private ordered: T_Storage[] = [T_Storage.mine, T_Storage.llm];   // the ring the "next" step cycles through
+	private ordered: T_Storage[] = [T_Storage.private, T_Storage.llm];   // the ring the "next" step cycles through
 
 	w_storage: Writable<T_Storage>;
 	// The active store's tree — where the records and every operation on them live.
@@ -31,7 +32,7 @@ class Databases {
 	active: DB_Common;
 
 	constructor() {
-		const saved = (preferences.read<T_Storage>(T_Preference.database) ?? T_Storage.mine);
+		const saved = (preferences.read<T_Storage>(T_Preference.database) ?? T_Storage.private);
 		const store = this.store_forBackend(saved);
 		store.hierarchy.fetch_all();
 		this.w_storage   = writable<T_Storage>(saved);
@@ -42,7 +43,9 @@ class Databases {
 	// One live backend-and-tree per storage, built on first use.
 	private store_forBackend(storage: T_Storage): Store {
 		if (!this.cache.has(storage)) {
-			const db: DB_Common = new DB_Local(storage);   // each storage gets its own namespace
+			// The LLM store is its own backend (local for now, AnythingLLM hooks later);
+			// every other storage is the plain local backend under its own namespace.
+			const db: DB_Common = storage === T_Storage.llm ? new DB_LLM() : new DB_Local(storage);
 			this.cache.set(storage, { db, hierarchy: new Hierarchy(db) });
 		}
 		return this.cache.get(storage)!;

@@ -77,8 +77,7 @@
               "title": "handoff"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -213,13 +212,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/proposals/build LLM proposal.md",
+                "file": "ji/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of build LLM proposal"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -251,44 +250,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "fcf965dae4b151c6",
+  "active": "e12ef46c3c5f7c0a",
   "lastOpenFiles": [
+    "ji/src/lib/svelte/support/Tags.svelte.tmp.39200.ee9c7b4480c4",
+    "ji/src/lib/ts/managers/Filter_Documents.ts",
+    "ji/src/lib/svelte/support/Ask_LLM.svelte",
+    "ji/src/lib/svelte/operations/Drop_Documents.svelte.tmp.39200.2d361c63adc9",
+    "ji/src/lib/svelte/support/Add_Tag.svelte",
+    "ji/src/lib/svelte/support/Tags.svelte",
+    "ji/src/lib/svelte/support/Drop_Status.svelte",
+    "ji/src/lib/svelte/support/ToolTip.svelte",
+    "ji/src/lib/svelte/support",
+    "ji/src/lib/svelte/operations/Ask_LLM.svelte",
+    "ji/src/lib/svelte/operations/Manage_Tags.svelte",
+    "ji/notes/work/proposals/RAG consistency proposal.md",
+    "ji/notes/design/research.md",
+    "ji/notes/design/Minimum Viable INTERSECTION app.md",
+    "ji/notes/work/code debt.md",
+    "ji/notes/work/proposals/build LLM proposal.md",
     "ji/notes/work/proposals/script proposal -> install LLM.md",
     "ji/notes/work/proposals/persistables proposal.md",
     "ji/notes/guides/setup/manually install AnythingLLM.md",
-    "ji/notes/guides/setup",
-    "ji/notes/guides/untitled folder",
     "ji/notes/guides/specifications/intersection spec.md",
     "ji/notes/guides/specifications/hierarchy spec.md",
     "ji/notes/guides/specifications/db spec.md",
-    "ji/notes/guides/specifications",
     "ji/notes/design/New Folder With Items/intersection spec.md",
     "ji/notes/design/New Folder With Items/hierarchy spec.md",
     "ji/notes/design/New Folder With Items/db spec.md",
-    "ji/notes/design/New Folder With Items",
-    "ji/notes/work/proposals/build LLM proposal.md",
     "ji/notes/guides/manually install AnythingLLM.md",
     "ji/notes/work/proposals/thin proxy proposal.md",
     "ji/notes/design/proposals/Systems_Map.md",
     "ji/notes/work/proposals/wendy/Systems_Map.md",
     "ji/notes/work/proposals/wendy/Compass.md",
-    "ji/notes/work/proposals/wendy",
     "ji/notes/design/proposals/New Folder With Items/Systems_Map.md",
     "ji/notes/design/proposals/New Folder With Items/Compass.md",
-    "ji/notes/design/proposals/New Folder With Items",
-    "ji/notes/work/code debt.md",
-    "ji/notes/work/proposals",
-    "ji/notes/design/untitled folder",
-    "ji/notes/work/llm_proposal.md.tmp.39200.a0d1f063ad6f",
-    "ji/notes/design/research/research.md",
-    "ji/notes/design/research",
-    "ji/notes/design/Minimum Viable INTERSECTION app.md",
     "ji/notes/design/intersection spec.md",
     "ji/notes/design/hierarchy spec.md",
     "ji/notes/design/db spec.md",
     "ji/notes/work/handoff.md",
-    "ji/notes/work/done/db handoff.md",
-    "ji/notes/guides/research.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

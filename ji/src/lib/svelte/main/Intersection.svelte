@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import Documents from './Documents.svelte';
+	import List_Documents from '../operations/List_Documents.svelte';
 	import Details from '../details/Details.svelte';
 	import { k } from '../../ts/common/Constants';
 	import buildsRaw from '../../md/builds.md?raw';
@@ -55,20 +55,29 @@
 
 <svelte:window onresize={handleResize} />
 
-<div
-	class='intersection'
-	style:width='{width}px'
-	style:height='{height}px'
-	style:background-color='var(--accent)'>
 
-	{#if !showBuildNotes}
+{#if showBuildNotes}
+	<div
+		role='button'
+		tabindex='-1'
+		onkeyup={() => {}}
+		class='build-backdrop layer-intersection'
+		onclick={() => showBuildNotes = false}>
+		<BuildNotes onclose={() => showBuildNotes = false} />
+	</div>
+{:else}
+	<div
+		class='intersection'
+		style:width='{width}px'
+		style:height='{height}px'
+		style:background-color='var(--accent)'>
 		<Controls onclick={toggleDetails} />
 		<div class='panel'>
 			{#if $w_show_details}
 				<Details width={detailsWidth} />
 			{/if}
 			<div class='region content' style:width='{contentWidth}px'>
-				<Documents />
+				<List_Documents />
 			</div>
 		</div>
 
@@ -80,17 +89,6 @@
 				author: jonathan sand
 			</a>
 		</div>
-	{/if}
-</div>
-
-{#if showBuildNotes}
-	<div
-		role='button'
-		tabindex='-1'
-		onkeyup={() => {}}
-		class='build-backdrop layer-intersection'
-		onclick={() => showBuildNotes = false}>
-		<BuildNotes onclose={() => showBuildNotes = false} />
 	</div>
 {/if}
 

@@ -2,6 +2,7 @@
 
 | Build | Date | Note |
 |----|----|----|
+| 10 | Jul 23, 2026 | query asked and answered by LLM |
 | 9 | Jul 20, 2026 | added hierarchy manager |
 | 8 | Jul 19, 2026 | expand document definition |
 | 7 | Jul 16, 2026 | add folders of documents |

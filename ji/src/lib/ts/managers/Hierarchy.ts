@@ -146,7 +146,7 @@ export class Hierarchy {
 		const status   = Document.status_of(extension, false);
 		const document = this.create_document(name, { extension, last_modified_date, viewable, status, family, size, reported_type });
 		document.blob_id = document.id;
-		await this.db.write_blob(document.id, content);
+		await this.db.write_blob(document.id, content, name);
 		const words = status === S_Document.ready ? 'words ready for the model'
 			: status === S_Document.quick ? 'words need a quick pull first'
 			: 'words need a heavy pull first (picture read or speech transcribed)';
@@ -168,7 +168,7 @@ export class Hierarchy {
 		document.viewable           = Document.is_viewable(extension);
 		document.status             = Document.status_of(extension, !!document.text);
 		document.blob_id            = document.id;
-		await this.db.write_blob(document.id, content);
+		await this.db.write_blob(document.id, content, document.name);
 		this.persistence.mark_dirty(T_Record.documents, document.id);
 		this.persist(T_Record.documents);
 		debug.log(`Replaced the contents of "${document.name}" — was ${was_size ?? 'unknown'} bytes, now ${document.size ?? 'unknown'}; its tags and its folder are untouched.`);

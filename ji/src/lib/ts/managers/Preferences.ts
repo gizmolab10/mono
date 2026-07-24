@@ -23,10 +23,17 @@ export enum T_Preference {
 	viewDocument    = 'viewDocument',
 	closedFolders   = 'closedFolders',
 	tableTopId      = 'tableTopId',
+	families        = 'families',
 
 	// Database
 	database         = 'database',
 	showOtherStores  = 'showOtherStores',
+
+	// LLM store — the connection to a locally-running AnythingLLM (local-only; never in a build)
+	llmUrl           = 'llmUrl',
+	llmKey           = 'llmKey',
+	llmWorkspace     = 'llmWorkspace',
+	llmDocMap        = 'llmDocMap',
 
 }
 

@@ -4,8 +4,13 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] create DB_LLM
-    - [ ] implement write_blob and its underpinnings
+- [x] create DB_LLM (phase A) — its own backend, the local store under the "LLM" namespace (no AnythingLLM yet); the registry builds it for the LLM storage. Phases B (mirror to AnythingLLM) and C (ask) still open — see [llm_proposal](llm_proposal.md)
+    - [x] implement write_blob and its underpinnings
+    - [x] send as files, with filenames
+- [ ] add a segmented control next to the hamburger -> all the operations
+    - [ ] improve the ask ux
+        - [ ] operation == null -> ask
+- [ ] table row -> folders show number of progeny (instead of ---)
 - [ ] write a zsh script that installs and configures
     - [ ] Docker
     - [ ] Qwen

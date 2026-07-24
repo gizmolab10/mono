@@ -13,8 +13,10 @@ export abstract class DB_Common {
 
 	// The blob seam: the document's bytes, by document id. Async because the bytes
 	// live in IndexedDB, which is asked-and-waited-for, not instant. A text document
-	// is held as its words; every other kind is held as its raw bytes, untouched.
-	abstract write_blob(document_id: string, content: string | Blob): Promise<void>;
+	// is held as its words; every other kind is held as its raw bytes, untouched. The
+	// name rides along for backends that show it (the LLM store names its uploads by it);
+	// the plain local store ignores it.
+	abstract write_blob(document_id: string, content: string | Blob, name?: string): Promise<void>;
 	abstract read_blob(document_id: string): Promise<string | Blob | null>;
 	abstract delete_blob(document_id: string): Promise<void>;
 	// Drop every stored byte belonging to this store — including orphans with no

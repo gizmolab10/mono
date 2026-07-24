@@ -18,7 +18,7 @@ class Mock_Storage {
 // A persistence backend (db, for the bytes) and the tree that owns its records
 // (h). A reload is a fresh make() reading the same browser storage.
 function make(): { db: DB_Local; h: Hierarchy } {
-	const db = new DB_Local(T_Storage.mine);
+	const db = new DB_Local(T_Storage.private);
 	const h = new Hierarchy(db);
 	h.fetch_all();
 	return { db, h };

@@ -4,9 +4,9 @@
 
 // Which storage holds a document's blob.
 export enum T_Storage {
-	mine = 'mine',
+	private = 'private',
 	// ours = 'ours',
-	llm  = 'LLM',
+	llm     = 'LLM',
 }
 
 // The five stored record kinds, so save/load loops can walk them by name.
@@ -46,4 +46,9 @@ export interface Relationship {
 export interface Predicate {
 	id   : string;
 	type : string;
+}
+
+export interface Exchange {
+	question : string;
+	reply    : string;
 }

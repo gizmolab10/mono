@@ -14,7 +14,7 @@
 
 	// Every storage the app knows, in switch order; local is built, remote is not.
 	const storages = Object.values(T_Storage);
-	const built = new Set<T_Storage>([T_Storage.mine, T_Storage.llm]);
+	const built = new Set<T_Storage>([T_Storage.private, T_Storage.llm]);
 
 	// The more/less choice, remembered across reloads.
 	const w_show_others = preferences.persistent<boolean>(T_Preference.showOtherStores, false);
@@ -48,7 +48,7 @@
 	}
 	function derive_adjective(): string {
 		switch ($w_storage) {
-			case T_Storage.mine: return 'my';
+			case T_Storage.private: return 'my';
 			// case T_Storage.ours: return 'our';
 			case T_Storage.llm:  return 'LLM';
 		}

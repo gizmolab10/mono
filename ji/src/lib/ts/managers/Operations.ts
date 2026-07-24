@@ -1,9 +1,11 @@
 import { preferences, T_Preference } from './Preferences';
 
 export enum T_Operation {
-	document = 'add new document',
-	view     = 'view document',
-	tag      = 'add new tag',
+	ask  = 'history of exchanges',
+	drop = 'add new document',
+	list = 'table of documents',
+	tag  = 'add new tag',
+	view = 'view document',
 }
 
 // The current operation (which view the content area shows), or null when none

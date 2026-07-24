@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import type { T_Match } from '../../ts/managers/Filter_Documents';
 	import { w_hierarchy } from '../../ts/database/Databases';
-	import type { T_Match } from '../../ts/managers/Search';
 	import { w_db_changed } from '../../ts/types/Signal';
 	import { debug } from '../../ts/common/Debug';
 	import type { Snippet } from 'svelte';
@@ -12,12 +12,10 @@
 	// `selected` is the chosen set (the add flow binds it). `mode` is the all/any
 	// match; a caller that binds it gets the toggle shown beside the chips (the
 	// filter does), one that omits it (the per-row edit picker) gets no toggle.
-	// `onadd` gives a caller that wants it an always-shown "add tags" button at the
-	// right of the chips (the filter opens the new-tag view with it). `ontoggle` lets
-	// a caller react to each click directly — documents uses it to add/remove a tag
-	// right away. `trailing` renders after the last chip, same row.
-	let { selected = $bindable(new Set<string>()), mode = $bindable<T_Match | undefined>(undefined), onadd, ontoggle, trailing }:
-		{ selected?: Set<string>; mode?: T_Match; onadd?: () => void; ontoggle?: (id: string, on: boolean) => void; trailing?: Snippet } = $props();
+	// `ontoggle` lets a caller react to each click directly — documents uses it to
+	// add/remove a tag right away. `trailing` renders after the last chip, same row.
+	let { selected = $bindable(new Set<string>()), mode = $bindable<T_Match | undefined>(undefined), ontoggle, trailing }:
+		{ selected?: Set<string>; mode?: T_Match; ontoggle?: (id: string, on: boolean) => void; trailing?: Snippet } = $props();
 
 	// Copy the list so each change yields a new array — the store mutates its list
 	// in place, and a same-reference return would be seen as unchanged (no redraw).
@@ -40,12 +38,6 @@
 		debug.log(`Match mode toggled from ${mode} to ${next}.`);
 		mode = next;
 	}
-
-	function add_clicked(event: MouseEvent) {
-		event.stopPropagation();                          // don't let this reach the background clearer
-		debug.log('Add-a-tag button clicked — opening the new-tag view.');
-		onadd?.();
-	}
 </script>
 
 <div class='picker'>
@@ -67,10 +59,6 @@
 		</div>
 	{/if}
 	{@render trailing?.()}
-	{#if onadd}
-		<!-- A separate button to the right of the pill: opens the new-tag view. -->
-		<button class='add' onclick={(e) => add_clicked(e)}>add tags</button>
-	{/if}
 </div>
 
 <style>
@@ -145,24 +133,6 @@
 	}
 
 	.chip:not(.on):hover {
-		background : var(--hover);
-	}
-
-	/* The add-a-tag button, quieter than a chip (no fill) so it reads as an action
-	   rather than a tag. */
-	.add {
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
-		box-sizing    : border-box;
-		padding       : var(--pad-control);
-		font-size     : var(--font-label);
-		background    : var(--white);
-		color         : var(--text);
-		cursor        : pointer;
-		border-radius : 999px;
-	}
-
-	.add:hover {
 		background : var(--hover);
 	}
 </style>

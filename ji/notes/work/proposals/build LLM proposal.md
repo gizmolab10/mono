@@ -57,13 +57,23 @@ Each seam method, for `DB_LLM`:
 
 **Order within Phase B**
 
-- **B1 — local bytes for LLM.** Switch to LLM, drop a text file: it stores and views. No AnythingLLM yet.
-- **B2 — the client + upload.** `write_blob` pushes ready-text words to the workspace on save; every push logs the id, name, and length. `delete_blob` / erase remove the id.
+- **B1 — (DONE) local bytes for LLM.** Switch to LLM, drop a text file: it stores and views. No AnythingLLM yet.
+- **B2 — the client + upload.** `write_blob` pushes ready-text words to the workspace on drop; every drop logs the id, name, and length. `delete_blob` / erase remove the id.
 - **B3 — pending + sync.** The pending marker and the sync pass; wire phase-2 extraction into it so quick/heavy kinds upload once their words exist.
 
 ### Phase C — ask
 
 A query path that questions the workspace and returns an answer with citations back to ji documents.
+
+### Phase D — CORS thin proxy
+
+On my machine, expose an endpoint ([[thin proxy proposal]]) that accepts data and passes it to AnythingLLM with the authentication key, thus avoiding public access to the key.
+
+### Phase E — install individual AnythingLLM
+
+1. unix script (Docker, AnythingLLM, Qwen)
+2. windows support (wsl)
+3. manual configuration
 
 ## Decisions (settled)
 
