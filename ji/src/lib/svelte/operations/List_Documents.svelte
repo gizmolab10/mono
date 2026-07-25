@@ -1,17 +1,10 @@
 <script lang='ts'>
 	import { w_filter_tags, w_filter_text, w_filter_mode, w_filter_families, filter_rows } from '../../ts/managers/Filter_Documents';
-	import { w_operation, w_view_document, T_Operation } from '../../ts/managers/Operations';
+	import { w_operation, w_view_document, T_Operation, w_viewable_run, open_view, close_view } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { Document, T_DocumentFamily } from '../../ts/types/Document';
-	import { w_hierarchy, databases } from '../../ts/database/Databases';
+	import { w_hierarchy } from '../../ts/database/Databases';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { T_Storage } from '../../ts/types/DB_Records';
-	import Drop_Documents from './Drop_Documents.svelte';
-	import View_Document from './View_Document.svelte';
-	import Ask_LLM from '../support/Ask_LLM.svelte';
-
-	// Which store is active — the ask box shows only for the LLM store.
-	const w_storage = databases.w_storage;
 	import { w_db_changed } from '../../ts/types/Signal';
 	import { save_drop } from '../../ts/managers/Drop';
 	import { Direction } from '../../ts/types/Angle';
@@ -228,55 +221,13 @@
 		}
 	});
 
-	// Both the view operation and the document it shows are persisted, so a reload
-	// returns to the same open document. If that document is gone (nothing picked, or
-	// it was erased), fall back to the list.
+	// Keep the viewer's run in sync: the on-screen showable rows (search and folds
+	// applied), in table order. The viewer lives outside the list now, so it reads
+	// this shared run to step. A duplicate that shows twice is two stops, told apart
+	// by the row's place key.
 	$effect(() => {
-		if ($w_operation !== T_Operation.view) { return; }
-		const id = $w_view_document;
-		if (id === null || !$w_hierarchy.document_byID(id)) {
-			if (id !== null) { debug.log(`View points at a document that is no longer in the store (${id}) — back to the list.`); }
-			w_operation.set(T_Operation.list);
-			w_view_document.set(null);
-		}
+		w_viewable_run.set(shown.filter((r) => r.viewable).map((r) => ({ id: r.id, name: r.name, place_key: r.place_key })));
 	});
-
-	// The run the viewer steps through: the rows on screen right now (search and
-	// folds already applied) that the viewer can actually show — folders and
-	// unshowable kinds are skipped. A duplicate that shows twice is two stops, so
-	// this is a list of places, kept as the very row objects from the table.
-	const viewable_run = $derived(shown.filter((r) => r.viewable));
-
-	// Where in that run the open document sits. Stepping moves this, not the id,
-	// since one file can sit at two places. There is more than one stop to move
-	// between only when the run holds more than one.
-	let view_pos = $state(0);
-	const can_step = $derived(viewable_run.length > 1);
-
-	// Open the view for one row; close it back to the list. Opening also marks where
-	// that row sits in the run, so the triangles know where they are.
-	function open_view(row: { id: string; name: string }) {
-		const pos = viewable_run.indexOf(row as (typeof viewable_run)[number]);
-		view_pos = pos < 0 ? 0 : pos;
-		w_view_document.set(row.id);
-		w_operation.set(T_Operation.view);
-		debug.log(`Viewing "${row.name}" — stop ${view_pos + 1} of ${viewable_run.length} showable on screen.`);
-	}
-
-	// Step to the file before or after, wrapping around at both ends. Nothing to do
-	// when there's only one showable file.
-	function step(delta: number) {
-		const run = viewable_run;
-		if (run.length < 2) { debug.log(`Step ignored — only ${run.length} showable file on screen.`); return; }
-		view_pos = (view_pos + delta + run.length) % run.length;
-		w_view_document.set(run[view_pos].id);
-		debug.log(`Stepped ${delta > 0 ? 'forward' : 'back'} to "${run[view_pos].name}" — stop ${view_pos + 1} of ${run.length}.`);
-	}
-
-	function close_view() {
-		w_view_document.set(null);
-		if ($w_operation === T_Operation.view) { w_operation.set(T_Operation.list); }
-	}
 
 	// Trash one document — and, for a folder, everything under it. Asked first.
 	function delete_byID(document_id: string) {
@@ -363,7 +314,7 @@
 
 <!-- The three cells of a file/folder row: format, name (with the open/close triangle),
      and tags + the per-row buttons. -->
-{#snippet file_cells(row: (typeof rows)[number])}
+{#snippet document_row(row: (typeof rows)[number])}
 	<td class='extension'><span>{row.family === T_DocumentFamily.folder ? '---' : (row.extension ?? '')}</span></td>
 	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 	<td class='name' class:viewable={row.viewable}
@@ -415,14 +366,13 @@
 <div class='documents' class:dragging onclick={background_click}
 	ondrop={documents_drop} ondragover={documents_dragover} ondragleave={documents_dragleave}>
 	{#if rows.length > 0 && $w_operation === T_Operation.list}
-		{#if $w_storage === T_Storage.llm}
-			<Ask_LLM />
+		{#if tag_count > 0}
+			<div class='logic'>
+				<Tags
+					bind:selected={$w_filter_tags}
+					bind:mode={$w_filter_mode} />
+			</div>
 		{/if}
-		<div class='logic'>
-			<Tags
-				bind:selected={$w_filter_tags}
-				bind:mode={$w_filter_mode} />
-		</div>
 		<div class='families'>
 			{#each families as family}
 				<button
@@ -434,56 +384,49 @@
 		</div>
 		<input class='search-text' type='search' placeholder='search by name' bind:value={$w_filter_text} />
 	{/if}
-	{#if $w_operation === T_Operation.drop}
-		<Drop_Documents />
-	{:else if $w_operation === T_Operation.view && $w_view_document}
-		<View_Document document_id={$w_view_document} onclose={close_view}
-			can_step={can_step} onprev={() => step(-1)} onnext={() => step(1)} />
+	<hr>
+	{#if rows.length === 0}
+		<div class='empty'>no documents yet</div>
 	{:else}
-		<hr>
-		{#if rows.length === 0}
-			<div class='empty'>no documents yet</div>
-		{:else}
-			<div class='table-region'>
-			<!-- The header is its own table, sitting still above the scroller, so the
-			     scrollbar runs only beside the document rows — not past the title row. -->
-			<div class='table-head'>
-			<table class='blobs-table'>
-				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
-				<thead>
-					<tr class='head'>
-						{#each columns as col, i}
-							<th>
-								<button
-									class='head-label'
-									class:interactive={col.hover}
-									onmouseenter={() => { if (col.hover) { hovered = i; } }}
-									onmouseleave={() => { if (hovered === i) { hovered = null; } }}
-									onclick={(e) => head_click(e, i)}>{hovered === i && col.hover ? col.hover : col.label}</button>
-							</th>
-						{/each}
-					</tr>
-				</thead>
-			</table>
-			</div>
-			<div class='table-scroll' bind:this={scroller} onscroll={on_scroll}>
-			<table class='blobs-table'>
-				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
-				<tbody>
-					{#each shown as row, row_number (row.place_key)}
-						<!-- svelte-ignore a11y_mouse_events_have_key_events -->
-						<tr class='file' class:hovered={hovered_row === row.id} class:dedup={row.is_dedup}
-							data-key={row.place_key} data-n={row_number} data-name={row.display_name}
-							onmouseenter={() => { if (row.viewable) { hovered_row = row.id; } }}
-							onmouseleave={() => { if (hovered_row === row.id) { hovered_row = null; } }}>
-							{@render file_cells(row)}
-						</tr>
+		<div class='table-region'>
+		<!-- The header is its own table, sitting still above the scroller, so the
+		     scrollbar runs only beside the document rows — not past the title row. -->
+		<div class='table-head'>
+		<table class='blobs-table'>
+			<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
+			<thead>
+				<tr class='head'>
+					{#each columns as col, i}
+						<th>
+							<button
+								class='head-label'
+								class:interactive={col.hover}
+								onmouseenter={() => { if (col.hover) { hovered = i; } }}
+								onmouseleave={() => { if (hovered === i) { hovered = null; } }}
+								onclick={(e) => head_click(e, i)}>{hovered === i && col.hover ? col.hover : col.label}</button>
+						</th>
 					{/each}
-				</tbody>
-			</table>
-			</div>
-			</div>
-		{/if}
+				</tr>
+			</thead>
+		</table>
+		</div>
+		<div class='table-scroll' bind:this={scroller} onscroll={on_scroll}>
+		<table class='blobs-table'>
+			<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
+			<tbody>
+				{#each shown as row, row_number (row.place_key)}
+					<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+					<tr class='file' class:hovered={hovered_row === row.id} class:dedup={row.is_dedup}
+						data-key={row.place_key} data-n={row_number} data-name={row.display_name}
+						onmouseenter={() => { if (row.viewable) { hovered_row = row.id; } }}
+						onmouseleave={() => { if (hovered_row === row.id) { hovered_row = null; } }}>
+						{@render document_row(row)}
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+		</div>
+		</div>
 	{/if}
 </div>
 
@@ -901,8 +844,7 @@
 	   "delete" does it, "x" backs out. */
 	/* Standard control height, even though the action row is capped 4px shorter —
 	   they overflow that cap by 2px each side so the table row never grows. */
-	.row-danger,
-	.add-tags-inline {
+	.row-danger {
 		border        : var(--thickness-normal) solid var(--black);
 		height        : var(--height-control);
 		padding       : var(--pad-control);
@@ -912,10 +854,6 @@
 		color         : var(--text);
 		box-sizing    : border-box;
 		cursor        : pointer;
-	}
-
-	.add-tags-inline:hover {
-		background : var(--hover);
 	}
 
 	/* The keep button is a circle holding the shared cross: equal width and height,

@@ -45,7 +45,7 @@
 <style>
 	.ask {
 		flex-direction : column;
-		margin-bottom  : var(--gap);
+		padding        : var(--gap);
 		display        : flex;
 		gap            : var(--gap);
 	}

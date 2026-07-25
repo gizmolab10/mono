@@ -41,9 +41,10 @@
 </script>
 
 <div class='picker'>
-	{#if mode !== undefined && tags.length > 0}
+	{#if mode !== undefined && tags.length >= 2}
 		<!-- The any/all toggle sits right beside the chips; only shown to a caller
-		     that binds the match mode (the filter), and only when there are tags. -->
+		     that binds the match mode (the filter), and only with two or more tags —
+		     with one tag or none, all vs any makes no difference. -->
 		<div class='logic-choice'>
 			{#each (['all', 'any'] as const) as m}
 				<button class='logic-choice-segment' class:current={mode === m} onclick={toggle_mode}>{m}</button>

@@ -1,11 +1,27 @@
 <script lang='ts'>
+	import { w_operation, w_view_document, T_Operation } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import List_Documents from '../operations/List_Documents.svelte';
+	import Show_Operation from '../operations/Show_Operation.svelte';
+	import { w_hierarchy } from '../../ts/database/Databases';
 	import Details from '../details/Details.svelte';
+	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import buildsRaw from '../../md/builds.md?raw';
 	import BuildNotes from './BuildNotes.svelte';
 	import Controls from './Controls.svelte';
+
+	// Both the view operation and the document it shows are persisted, so a reload
+	// returns to the same open document. If that document is gone (nothing picked, or
+	// it was erased), fall back to the list.
+	$effect(() => {
+		if ($w_operation !== T_Operation.view) { return; }
+		const id = $w_view_document;
+		if (id === null || !$w_hierarchy.document_byID(id)) {
+			if (id !== null) { debug.log(`View points at a document that is no longer in the store (${id}) — back to the list.`); }
+			w_operation.set(T_Operation.list);
+			w_view_document.set(null);
+		}
+	});
 
 	// The latest build number, read from the build-notes data table.
 	const buildNumber = Math.max(...buildsRaw.split('\n')
@@ -76,9 +92,7 @@
 			{#if $w_show_details}
 				<Details width={detailsWidth} />
 			{/if}
-			<div class='region content' style:width='{contentWidth}px'>
-				<List_Documents />
-			</div>
+			<Show_Operation width={contentWidth} />
 		</div>
 
 		<div class='corner-stack layer-intersection'>
@@ -109,17 +123,6 @@
 		overflow   : hidden;
 		display    : flex;
 		min-height : 0;
-		flex       : 1;
-	}
-
-	.region {
-		border-radius : var(--radius);
-		position      : relative;
-		overflow      : hidden;
-	}
-
-	.content {
-		background : var(--bg);
 		flex       : 1;
 	}
 

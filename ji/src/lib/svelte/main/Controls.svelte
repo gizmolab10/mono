@@ -1,8 +1,12 @@
 <script lang='ts'>
 	import { w_operation, T_Operation } from '../../ts/managers/Operations';
+	import { databases } from '../../ts/database/Databases';
+	import { T_Storage } from '../../ts/types/DB_Records';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
 	import { debug } from '../../ts/common/Debug';
+
+	const w_storage = databases.w_storage;
 
 	// The controls row: always visible, full width, accent background. The
 	// details-toggle hamburger sits at the left, a segmented control of the
@@ -16,14 +20,21 @@
 	// it only opens when a document is picked from the table, so a segment for it
 	// would have nothing to show.
 	const operations: { op: T_Operation; label: string }[] = [
-		{ op: T_Operation.list, label: 'list' },
-		{ op: T_Operation.drop, label: 'drop' },
 		{ op: T_Operation.ask,  label: 'ask'  },
-		{ op: T_Operation.tag,  label: 'tag'  },
+		{ op: T_Operation.drop, label: 'drop' },
+		{ op: T_Operation.list, label: 'list' },
+		{ op: T_Operation.tags, label: 'tags' },
 	];
 
-	// Click a segment to switch to that operation.
+	// The "ask" segment only works on the LLM store; on any other store it is inert —
+	// no click, no hover — since there is nothing to ask.
+	function is_inert(op: T_Operation): boolean {
+		return op === T_Operation.ask && $w_storage !== T_Storage.llm;
+	}
+
+	// Click a segment to switch to that operation — unless it is the inert "ask".
 	function choose(op: T_Operation) {
+		if (is_inert(op)) { debug.log(`Controls: "ask" is inert on the "${$w_storage}" store — click ignored.`); return; }
 		debug.log(`Controls: clicked "${op}" — was "${$w_operation ?? 'landing'}", now "${op}".`);
 		w_operation.set(op);
 	}
@@ -39,17 +50,18 @@
 			<path d={hamburgerPath} />
 		</svg>
 	</button>
+	<span class='title'>Intersection</span>
+	<span class='spacer'></span>
 	<div class='operations'>
 		{#each operations as { op, label }}
 			<button
 				class='segment'
 				class:current={$w_operation === op}
+				class:inert={is_inert(op)}
 				title={op}
 				onclick={() => choose(op)}>{label}</button>
 		{/each}
 	</div>
-	<span class='spacer'></span>
-	<span class='title'>Intersection</span>
 	<span class='spacer'></span>
 	<button class='help' onclick={help} aria-label='help'>?</button>
 </div>
@@ -113,8 +125,14 @@
 		cursor     : default;
 	}
 
-	/* Light a segment under the cursor — but not the one already chosen. */
-	.segment:not(.current):hover {
+	/* The inert "ask" segment (off the LLM store): dimmed, and it does not react. */
+	.segment.inert {
+		opacity : var(--opacity-label);
+		cursor  : default;
+	}
+
+	/* Light a segment under the cursor — but not the one already chosen, nor an inert one. */
+	.segment:not(.current):not(.inert):hover {
 		background : var(--hover);
 	}
 

@@ -1,9 +1,10 @@
+import { w_operation, T_Operation } from '../managers/Operations';
 import { preferences, T_Preference } from '../managers/Preferences';
 import { Hierarchy } from '../managers/Hierarchy';
 import { T_Storage } from '../types/DB_Records';
 import { db_changed } from '../types/Signal';
 import type { Writable } from 'svelte/store';
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import { DB_Common } from './DB_Common';
 import { DB_Local } from './DB_Local';
 import { DB_LLM } from './DB_LLM';
@@ -59,6 +60,10 @@ class Databases {
 		preferences.write(T_Preference.database, storage);
 		this.w_storage.set(storage);
 		this.w_hierarchy.set(store.hierarchy);   // the active store's tree changed
+		// "ask" only works on the LLM store — leaving it drops the user back to the list.
+		if (storage !== T_Storage.llm && get(w_operation) === T_Operation.ask) {
+			w_operation.set(T_Operation.list);
+		}
 		db_changed();                            // the active store's contents changed
 	}
 
