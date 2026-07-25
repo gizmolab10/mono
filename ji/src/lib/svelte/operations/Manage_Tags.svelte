@@ -1,4 +1,5 @@
 <script lang='ts'>
+	import Add_Tag from '../support/Add_Tag.svelte';
 	import { debug } from '../../ts/common/Debug';
 
 	// Stub: the manage-tags operation — rename, merge, and remove tags across the
@@ -6,7 +7,9 @@
 	debug.log('Manage-tags view opened — stub only, not built yet.');
 </script>
 
-<div class='manage-tags'>manage tags — not built yet</div>
+<div class='manage-tags'>
+	<Add_Tag />
+</div>
 
 <style>
 	.manage-tags {

@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { w_drop_total } from '../../ts/managers/Dropping';
 	import Drop_Status from '../support/Drop_Status.svelte';
-	import ToolTip from '../support/ToolTip.svelte';
 	import { save_drop } from '../../ts/managers/Drop';
 	import { Document } from '../../ts/types/Document';
+	import ToolTip from '../support/ToolTip.svelte';
 	import { debug } from '../../ts/common/Debug';
 
 	// The drop box: saves each dropped file (and folder) into the active store,
@@ -91,7 +91,7 @@
 		opacity         : var(--opacity-drop);
 		font-size       : var(--font-drop);
 		padding         : var(--pad-view);
-		margin          : var(--gap-huge);
+		margin          : var(--gap-fat);
 		border-radius   : var(--radius);
 		background      : var(--white);
 		color           : var(--text);

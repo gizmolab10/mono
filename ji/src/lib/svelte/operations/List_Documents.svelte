@@ -5,12 +5,12 @@
 	import { Document, T_DocumentFamily } from '../../ts/types/Document';
 	import { w_hierarchy } from '../../ts/database/Databases';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import Select_Tags from '../support/Select_Tags.svelte';
 	import { w_db_changed } from '../../ts/types/Signal';
 	import { save_drop } from '../../ts/managers/Drop';
 	import { Direction } from '../../ts/types/Angle';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
-	import Tags from '../support/Tags.svelte';
 	import { get } from 'svelte/store';
 
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
@@ -326,7 +326,7 @@
 				{#if tag_count > 0}
 					<!-- The tag picker takes the buttons' place on the row, right-justified;
 					     a click outside it (handled by the background) closes it. -->
-					<Tags
+					<Select_Tags
 						selected={chosen_for(row.id)}
 						ontoggle={(tag_id, on) => { toggle_tag(row.id, tag_id, on); debug.log(`Toggled a tag on row ${row.id} ${on ? 'on' : 'off'} — closing the picker.`); editing = null; }} />
 				{/if}
@@ -368,7 +368,7 @@
 	{#if rows.length > 0 && $w_operation === T_Operation.list}
 		{#if tag_count > 0}
 			<div class='logic'>
-				<Tags
+				<Select_Tags
 					bind:selected={$w_filter_tags}
 					bind:mode={$w_filter_mode} />
 			</div>

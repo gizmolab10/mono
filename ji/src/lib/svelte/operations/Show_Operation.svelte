@@ -5,8 +5,8 @@
 	import Drop_Documents from './Drop_Documents.svelte';
 	import List_Documents from './List_Documents.svelte';
 	import View_Document from './View_Document.svelte';
-	import Ask_LLM from '../support/Ask_LLM.svelte';
-	import Tags from './Tags.svelte';
+	import Manage_Tags from './Manage_Tags.svelte';
+	import Chat from './Chat.svelte';
 
 	// The content region: shows exactly one view for the current operation — the drop
 	// box when adding, the document viewer when viewing (handed the step callbacks), the
@@ -24,9 +24,9 @@
 		<View_Document document_id={$w_view_document} onclose={close_view}
 			can_step={$w_can_step} onprev={() => step_view(-1)} onnext={() => step_view(1)} />
 	{:else if $w_storage === T_Storage.llm && $w_operation === T_Operation.ask}
-		<Ask_LLM />
+		<Chat />
 	{:else if $w_operation === T_Operation.tags}
-		<Tags />
+		<Manage_Tags />
 	{:else}
 		<List_Documents />
 	{/if}
