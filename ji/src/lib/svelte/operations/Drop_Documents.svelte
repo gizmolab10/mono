@@ -88,17 +88,17 @@
 
 	.drop {
 		/* documents already insets by --gap; add the rest so all three sides = --gap-fat */
-		margin          : var(--gap) var(--gap) var(--gap);
 		opacity         : var(--opacity-drop);
 		font-size       : var(--font-drop);
 		padding         : var(--pad-view);
+		margin          : var(--gap-huge);
 		border-radius   : var(--radius);
 		background      : var(--white);
 		color           : var(--text);
 		box-sizing      : border-box;
+		justify-content : flex-start;
 		position        : relative;
 		align-items     : center;
-		justify-content : flex-start;
 		flex-direction  : column;
 		display         : flex;
 		flex            : 1;                   /* fill the height so its bottom margin equals the sides */

@@ -2,6 +2,16 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-24 — the operations move to the top bar, and the content region becomes a switcher
+
+- **A pill of operations sits in the top bar.** Beside the hamburger: list, drop, ask, tag. The active one fills the accent; a click switches the content region to it. The "ask" segment only works on the LLM store — on any other store it is inert (dimmed, no click, no hover), and switching to a non-LLM store while asking drops you back to the list.
+- **The content region is its own switcher now.** One small piece (Show_Operation) shows exactly one view for the current operation — the drop box when adding, the document viewer when viewing, the LLM ask box when the ask store is asking, else the documents list. So the drop box and the viewer moved out of the list and into the frame; the list shrank to just the list.
+- **The viewer's stepping moved to one shared home.** The run of showable rows, the position in it, and step / close now live in the operations manager, so the list (which keeps the run updated as it filters and folds) and the separate viewer share one source of truth. A side benefit: the "the open document is gone, fall back to the list" guard now runs from the frame, so it works even on a reload straight into a since-deleted document.
+- **A family filter under the search box.** A pill with a segment per family — video, audio, image, text, html, pdf (folder left out) — each toggles on its own and is saved across reloads. The list narrows by tags, name text, and picked families together; folders always pass the family test, but a folder left with no surviving row drops.
+- **The table's scrollbar runs beside the rows only.** The column header is its own table above the scroller now, so the scrollbar no longer reaches up past the title row; the two tables' columns line up through a shared column sizing and a reserved scrollbar gutter.
+- **The files were reorganized.** `actions/` became `operations/`; a new `support/` folder holds the shared pieces (the hover hint, the tag picker, the drop status, the add-tag field, the ask box); the documents list is now `List_Documents`. The shared filter file is `Filter_Documents`.
+- **Smaller touches.** The all/any toggle hides with fewer than two tags; the tag filter hides when the store holds no tags; the "add tags" button came off the picker (the tag segment reaches that view now); the ask box gained a gap around it; the drop rectangle stretches to full height. The build opener and author credit now sit on one line and moved into the details region — still pinned bottom-left, but shown only while details is open.
+
 ## 2026-07-22 — the document viewer's header settles, and a viewed document survives a reload
 
 - **The step triangles hold at the top, the close is pinned to the corner.** The viewer's two fat step triangles sit at the top-far-left and stay there; the close button is pinned to the viewer's top-right corner so it never moves. A long file name now grows downward beside them instead of pushing them around.

@@ -62,6 +62,7 @@ export default class Constants {
 	};
 
 	gap = {
+		huge         : common_gap * 4,
 		fat	         : common_gap * 2.1,
 		tight		 : common_gap / 2,
 		details		 : common_gap / 4,
@@ -71,7 +72,7 @@ export default class Constants {
 	inset = {
 		popup		 : { edge: common_size * 0.3,    side: common_size * 0.375 },		// 10.5, 13.13
 		pill		 : { top: common_size * 0.48,    left: common_size * 1.6 },			// 16.8, 56
-		credit		 : { bottom: common_size * 0.35, left: common_size * 0.45 },		// 12.25, 15.75
+		credit		 : { bottom: common_size * 0.35, left: common_size * 0.35 },		// 12.25, 15.75
 		cluster		 : common_size / 4,												// 8.75
 	};
 

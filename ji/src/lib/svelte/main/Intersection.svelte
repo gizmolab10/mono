@@ -90,18 +90,9 @@
 		<Controls onclick={toggleDetails} />
 		<div class='panel'>
 			{#if $w_show_details}
-				<Details width={detailsWidth} />
+				<Details width={detailsWidth} {buildNumber} onBuildOpen={() => showBuildNotes = true} />
 			{/if}
 			<Show_Operation width={contentWidth} />
-		</div>
-
-		<div class='corner-stack layer-intersection'>
-			<button class='build-opener' onclick={() => showBuildNotes = true}>
-				build {buildNumber}
-			</button>
-			<a class='author-credit' href='https://designintuition.app' target='_blank' rel='noopener'>
-				author: jonathan sand
-			</a>
 		</div>
 	</div>
 {/if}
@@ -124,44 +115,6 @@
 		display    : flex;
 		min-height : 0;
 		flex       : 1;
-	}
-
-	/* Pinned to the bottom-left of the whole frame, above everything. */
-	.corner-stack {
-		bottom         : var(--inset-credit-bottom);
-		left           : var(--inset-credit-left);
-		gap            : var(--gap-tight);
-		align-items    : flex-start;
-		flex-direction : column;
-		position       : fixed;
-		display        : flex;
-	}
-
-	.build-opener {
-		border        : var(--thickness-normal) solid var(--black);
-		border-radius : var(--radius-pill);
-		height        : var(--height-control);
-		box-sizing    : border-box;
-		padding       : var(--pad-control);
-		font-size     : var(--font-base);
-		background    : var(--white);
-		color         : var(--gray);
-		cursor        : pointer;
-	}
-
-	.build-opener:hover {
-		background : var(--hover);
-	}
-
-	.author-credit {
-		font-size       : var(--font-credit);
-		color           : var(--white);
-		text-decoration : underline;
-		cursor          : pointer;
-	}
-
-	.author-credit:hover {
-		color : var(--hover);
 	}
 
 	.build-backdrop {

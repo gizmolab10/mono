@@ -4,8 +4,8 @@
 
 // Which storage holds a document's blob.
 export enum T_Storage {
-	private = 'private',
-	llm     = 'LLM',
+	private = 'files',
+	llm     = 'AI',
 }
 
 // The five stored record kinds, so save/load loops can walk them by name.
@@ -50,4 +50,6 @@ export interface Predicate {
 export interface Exchange {
 	question : string;
 	reply    : string;
+	sources  : string[];   // the names of the documents the reply drew from
+	time     : number;
 }

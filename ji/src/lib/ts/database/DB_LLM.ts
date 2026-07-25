@@ -1,7 +1,7 @@
 import { T_Storage } from '../types/DB_Records';
 import { anything_llm } from './AnythingLLM';
-import { DB_Local } from './DB_Local';
 import { debug } from '../common/Debug';
+import { DB_Local } from './DB_Local';
 
 // The LLM store. Its records and bytes live locally, keyed by this storage (so the mine
 // store is untouched); on top of that, a document's words are mirrored to a locally-

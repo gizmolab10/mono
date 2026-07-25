@@ -20,7 +20,7 @@
 	// it only opens when a document is picked from the table, so a segment for it
 	// would have nothing to show.
 	const operations: { op: T_Operation; label: string }[] = [
-		{ op: T_Operation.ask,  label: 'ask'  },
+		{ op: T_Operation.ask,  label: 'chat' },
 		{ op: T_Operation.drop, label: 'drop' },
 		{ op: T_Operation.list, label: 'list' },
 		{ op: T_Operation.tags, label: 'tags' },

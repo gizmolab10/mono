@@ -1,4 +1,5 @@
 import { preferences, T_Preference } from '../managers/Preferences';
+import { Exchange } from '../types/DB_Records';
 import { debug } from '../common/Debug';
 
 // The transport to a locally-running AnythingLLM. The connection — base URL, API key,
@@ -169,4 +170,44 @@ export const anything_llm = {
 		set_doc_map({});
 		debug.log(`AnythingLLM: cleared ${ids.length} uploaded document(s) from the workspace.`);
 	},
+
+	// Fetch the workspace's saved exchanges, newest first. AnythingLLM keeps the chat
+	// history itself, so this pairs each stored question with the reply that follows it
+	// and the documents that reply drew from. "limit" is a count of exchanges (each is
+	// two stored messages). Cannot fetch in pages, does not support 'offset'. 
+	// Returns [] on any failure (logged).
+	async get_exchanges(limit = 20): Promise<Exchange[]> {
+		const cfg = config();
+		if (!cfg) { debug.log('AnythingLLM not set up — no exchanges to read.'); return []; }
+		const slug = await resolve_workspace(cfg);
+		if (!slug) { return []; }
+		try {
+			const result = await call(cfg, `/workspace/${slug}/chats?orderBy=desc&limit=${limit}`, null, 'GET');
+			const history: any[] = result?.history ?? [];
+			// Walk the flat message list: a "user" line opens an exchange, the "assistant"
+			// line that follows fills its reply, sources, and time.
+			const exchanges: Exchange[] = [];
+			let current: Exchange | null = null;
+			for (const message of history) {
+				if (message.role === 'user') {
+					current = { question: String(message.content ?? ''), reply: '', sources: [], time: Number(message.sentAt ?? 0) };
+					exchanges.push(current);
+				} else if (message.role === 'assistant' && current) {
+					current.reply = String(message.content ?? '');
+					current.time  = Number(message.sentAt ?? current.time);
+					const seen = new Set<string>();
+					current.sources = (message.sources ?? [])
+						.map((s: any) => String(s.title ?? s.name ?? '').trim())
+						.filter((title: string) => title && !seen.has(title) && seen.add(title));
+					current = null;
+				}
+			}
+			debug.log(`AnythingLLM: read ${exchanges.length} exchange(s) from ${history.length} stored message(s) (newest first, limit ${limit}).`);
+			return exchanges;
+		} catch (e) {
+			debug.log(`AnythingLLM: reading exchanges failed — ${(e as Error).message}.`);
+			return [];
+		}
+	},
+
 };
