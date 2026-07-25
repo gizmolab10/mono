@@ -15,6 +15,7 @@ A small server process that sits between ji-in-the-browser and AnythingLLM and f
 - It **holds the AnythingLLM address and key** on the server side. The browser never sees them.
 - The browser calls the **proxy**; the proxy attaches the key and forwards to AnythingLLM; the answer comes back the same way.
 - It runs **on the mac**, next to AnythingLLM — one box, one hop.
+- **Not the work-sites hub's dispatch server (decided).** ji's own small proxy, kept separate.
 
 ## Getting to the mac from outside
 
@@ -23,13 +24,14 @@ The mac has no public address (home network, behind NAT). Two ways to give the p
 - **A tunnel** (a service that exposes one port as a stable https URL). Public doorway; the proxy's own auth is the lock. Use when ji must reach it from anywhere.
 - **A private mesh** (only your own devices join a private network; nothing is public at all). Use if only your devices ever need the LLM store — the safest option, no public exposure.
 
-Recommend starting with the private mesh (no public surface); move to a tunnel only if others must reach it.
+Decision: tunnel. **Constraint: it must be free — zero cost.**
 
 ## Building the tunnel
 
 A tunnel gives the proxy on the mac a **stable public https address**, even though the mac has no public IP. Use it only when someone *other than your own devices* must reach the LLM store — a private mesh can't hand a link to an outsider.
 
-- **The tool.** A tunnel service (Cloudflare Tunnel is the common, free, stable-name choice; ngrok is quicker but its free names churn). A small client on the mac makes an **outbound** connection to the service's edge; requests to the public name are relayed back down that connection to the proxy. **No router ports opened.**
+- **The tool.** A tunnel service (Cloudflare Tunnel is the common, free choice; ngrok is quicker but its free names churn). A small client on the mac makes an **outbound** connection to the service's edge; requests to the public name are relayed back down that connection to the proxy. **No router ports opened.**
+- **Cost: must be free — and that pulls against a stable name.** Cloudflare Tunnel itself is free, but a *fixed, custom* hostname needs a domain on Cloudflare, and a domain has a yearly cost. At truly zero cost with no domain, the free "quick tunnel" names are random and churn (like ngrok's free tier). So resolve this before building: either (a) accept a churning name and have ji rediscover the current URL through a free stable pointer (**decided — see "Finding the churning address" below**), or (b) find a free service that hands out a fixed subdomain, or (c) if a spare/free domain turns up, Cloudflare's fixed name becomes free. No zero-cost path gives a guaranteed stable name on its own.
 - **The mac's address.** The service binds a name you control (like `https://ji-llm.your-domain`) to the proxy's local port. https is terminated at the service's edge with a real certificate, so the browser's secure-context demand is satisfied for free.
 - **How ji reaches it.** ji's LLM store points at that public name whenever it isn't on localhost.
 - **The doorway is public — the token is the only lock.** Unlike the mesh, anyone can hit this URL, so the proxy's token and its narrow forwarded-call list are all that stand between the internet and AnythingLLM. Keep the token strong and rotate it if leaked.
@@ -37,6 +39,60 @@ A tunnel gives the proxy on the mac a **stable public https address**, even thou
 - **When it's off.** If the mac is asleep or off, the public name simply doesn't answer — the same graceful "not reachable" fallback; drop/view/tag still work.
 
 **Build:** install the tunnel client on the mac, point it at the proxy's local port, bind a hostname; point ji's LLM store there off-localhost. Optionally turn on the provider's access layer in front.
+
+### Behind NAT — configuring the mac
+
+The mac sits behind NAT (a home router; no public address, no inbound reach). The tunnel is exactly what solves this: **the tunnel client on the mac dials OUT to the tunnel service, and traffic to the public name rides back down that same outbound connection.** So there is **no router config at all** — no port forwarding, no static IP, no firewall inbound rule, no UPnP. That is the whole reason to use a tunnel rather than opening a port.
+
+Concrete steps (Cloudflare Tunnel via `cloudflared`, macOS):
+
+1. **Install the client:** `brew install cloudflared` (Homebrew — not npm).
+2. **Zero-cost, no domain (churning name):** run `cloudflared tunnel --url http://localhost:<proxy-port>`. It opens the outbound connection and prints a temporary `https://…trycloudflare.com` address. Point ji's LLM URL at that address (off localhost). The name changes every run — see the free-vs-stable note above; ji reads the current URL from a small lookup, or you paste it into ji's settings each session.
+3. **Keep it running across reboots:** run `cloudflared` as a background service (a `launchd` agent, or `brew services`), so it re-dials on wake and after a restart without a terminal open.
+4. **Fixed name (only if a domain is on hand — has a cost):** `cloudflared tunnel login`, `cloudflared tunnel create ji-llm`, route a hostname to it (`cloudflared tunnel route dns ji-llm ji-llm.your-domain`), then run the named tunnel as the service. This gives a stable `https://ji-llm.your-domain` and drops the churn, but needs the domain.
+
+Router note: nothing to change on the router. If a strict outbound firewall is in play, allow the client's outbound https (443) to the tunnel service — that single outbound allowance is all it needs.
+
+### Finding the churning address (a free, stable pointer)
+
+The free tunnel's name changes on every restart, but ji needs one fixed thing to look at. Put a **stable pointer** in front of the churning name — a tiny file at a fixed, free URL that always holds the current tunnel address:
+
+- **Where the pointer lives.** A fixed free spot: a GitHub Gist (its raw URL never changes), or a small file on the same free static host ji already deploys to. Free, and its address is permanent.
+- **The mac keeps it current.** A small wrapper around the tunnel client captures the URL the tunnel prints on start and writes it to the pointer (one write, only on a restart). So the pointer always names the live tunnel.
+- **ji reads it once.** On start, ji fetches the pointer, learns the current tunnel address, and uses it for the session — caching it, not re-reading per call. (Performance: one small fetch at load, a few bytes; nothing per request.)
+- **The result.** A stable entry point at zero cost — only the name behind the pointer churns, and ji never sees the churn. If a fetch of the pointer fails or the mac is off, ji falls back to "not reachable" and drop/view/tag still work.
+
+### Setting up the fixed pointer (a GitHub gist)
+
+A gist is a tiny free web page for a scrap of text — a public sticky note with its own permanent link. You paste some text, anyone with the link can read it, and you (or the mac) can change what it says while the link stays the same. That fixed link is what ji reads to find the mac's current address. Do this once, in order:
+
+**A. Sign in to GitHub.** If you don't have an account, make one free at github.com, then sign in.
+
+**B. Make the gist.**
+
+1. Go to **gist.github.com**.
+2. In the "Filename including extension…" box, type `ji-address.txt`.
+3. In the big text box below it, type anything — for example `placeholder`.
+4. Click the green **Create public gist** button (lower right).
+
+**C. Build the link that stays the same.** (You build it from the gist's own address — no button to hunt for.)
+
+1. On your gist's page, copy the web address from the browser's address bar. It looks like `https://gist.github.com/yourname/abc123…`.
+2. Change two things in it: replace `gist.github.com` with `gist.githubusercontent.com`, and add `/raw/ji-address.txt` at the end. Result: `https://gist.githubusercontent.com/yourname/abc123…/raw/ji-address.txt`.
+3. That link always shows the newest text — it's the fixed link ji will use. Paste it into a browser to check it shows your placeholder.
+
+**D. Make a key that lets the mac update the gist.**
+
+1. Top-right of GitHub, click your picture → **Settings**.
+2. In the left list, scroll to the bottom → **Developer settings**.
+3. Click **Personal access tokens** → **Tokens (classic)**.
+4. Click **Generate new token** → **Generate new token (classic)** (it may ask for your password).
+5. Give it a note like `ji proxy address`, set Expiration to **No expiration** (or a long one), and tick the **gist** checkbox.
+6. Click **Generate token** at the bottom, then copy the token it shows — you only see it once. (Keep it out of the repo — hand it over privately; it goes only in the gitignored `.env`.)
+
+**E. Hand me two things:** the fixed link from step C, and the token from step D. I'll set the mac to write the live address into the gist on each change, and set ji to read that link on start.
+
+After that, nothing to paste again — ji finds the live address on its own each time it loads.
 
 ## Building the private mesh
 
@@ -64,7 +120,8 @@ The proxy forwards only the handful of calls ji actually makes:
 
 - upload a document's words to the workspace,
 - remove a document from the workspace,
-- ask a question and return the answer with its citations.
+- ask a question and return the answer with its citations,
+- read the workspace's saved chat exchanges (the chat history).
 
 Everything else is refused. So even a valid token can only do ji-shaped things — it can't drive AnythingLLM arbitrarily.
 

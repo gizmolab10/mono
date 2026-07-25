@@ -11,8 +11,35 @@ import { debug } from '../common/Debug';
 
 type Config = { base: string; key: string; workspace: string };
 
+// When the proxy is reached through a free tunnel, its address changes on each restart,
+// so ji doesn't store the address itself — it stores a fixed "pointer" link (a gist)
+// that always holds the current address. On the first call, ji reads that pointer once
+// and remembers the address it found; every call after uses it. If there's no pointer,
+// or reading it fails, ji falls back to the stored URL (or localhost).
+let discovered_base: string | null = null;   // the address read from the pointer
+let discovered_for:  string | null = null;   // which pointer link it was read from
+
+async function ensure_base(): Promise<void> {
+	const pointer = preferences.read<string>(T_Preference.llmPointer)?.trim();
+	if (!pointer) { discovered_base = null; discovered_for = null; return; }
+	if (discovered_base && discovered_for === pointer) { return; }   // already read this pointer
+	try {
+		// A cache-buster, because the pointer host serves the link through a short cache.
+		const url = `${pointer}${pointer.includes('?') ? '&' : '?'}t=${Date.now()}`;
+		const response = await fetch(url, { cache: 'no-store' });
+		if (!response.ok) { throw new Error(`${response.status} ${response.statusText}`); }
+		const found = (await response.text()).trim().replace(/\/+$/, '');
+		if (!/^https?:\/\//.test(found)) { throw new Error('the pointer did not hold a web address'); }
+		discovered_base = found; discovered_for = pointer;
+		debug.log(`AnythingLLM: read the current address "${found}" from the pointer.`);
+	} catch (e) {
+		discovered_base = null; discovered_for = null;
+		debug.log(`AnythingLLM: could not read the address pointer — ${(e as Error).message}; using the stored URL instead.`);
+	}
+}
+
 function config(): Config | null {
-	const base      = preferences.read<string>(T_Preference.llmUrl)?.replace(/\/+$/, '') || 'http://localhost:3001';
+	const base      = discovered_base || (preferences.read<string>(T_Preference.llmUrl)?.replace(/\/+$/, '') || 'http://localhost:3001');
 	const key       = preferences.read<string>(T_Preference.llmKey) ?? '';   // never hardcode a real key — it would ship in a build
 	const workspace = preferences.read<string>(T_Preference.llmWorkspace) ?? 'intersection';
 	if (!base || !key || !workspace) { return null; }
@@ -91,6 +118,7 @@ export const anything_llm = {
 	// Remembers the location it was given, for a later remove. Returns true on success; on
 	// any failure it logs and returns false — never throws, so a save is never lost.
 	async put_words(id: string, words: string, name?: string): Promise<boolean> {
+		await ensure_base();
 		const cfg = config();
 		if (!cfg) { debug.log(`AnythingLLM not set up — "${id}" stored locally only, not uploaded.`); return false; }
 		const slug = await resolve_workspace(cfg);
@@ -121,6 +149,7 @@ export const anything_llm = {
 	// drew from. "query" mode keeps the answer grounded in the embedded documents. Each
 	// source is the uploaded file's name (the ji document name). Returns null on any failure.
 	async ask(question: string): Promise<{ answer: string; sources: string[] } | null> {
+		await ensure_base();
 		const cfg = config();
 		if (!cfg) { debug.log('AnythingLLM not set up — cannot ask.'); return null; }
 		const slug = await resolve_workspace(cfg);
@@ -143,6 +172,7 @@ export const anything_llm = {
 	// Remove one document from the workspace and delete it, by its remembered location.
 	// A document that was never uploaded is a quiet success (nothing to remove).
 	async remove(id: string): Promise<boolean> {
+		await ensure_base();
 		const cfg = config();
 		if (!cfg) { return false; }
 		const map = doc_map();
@@ -164,6 +194,7 @@ export const anything_llm = {
 
 	// Remove every document this store uploaded — used by erase.
 	async clear(): Promise<void> {
+		await ensure_base();
 		const ids = Object.keys(doc_map());
 		if (config() == null || ids.length === 0) { set_doc_map({}); return; }
 		for (const id of ids) { await this.remove(id); }
@@ -177,6 +208,7 @@ export const anything_llm = {
 	// two stored messages). Cannot fetch in pages, does not support 'offset'. 
 	// Returns [] on any failure (logged).
 	async get_exchanges(limit = 20): Promise<Exchange[]> {
+		await ensure_base();
 		const cfg = config();
 		if (!cfg) { debug.log('AnythingLLM not set up — no exchanges to read.'); return []; }
 		const slug = await resolve_workspace(cfg);

@@ -2,6 +2,13 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-25 — folders show a count, and a few smaller touches
+
+- **A folder tells you how much it holds.** In place of the "---" its format cell used to draw, a folder now shows how many things sit under it — files and subfolders — after the current filter, counting the ones on screen plus whatever a shut fold is hiding. The filter runs over the whole tree, so a shut folder still shows its full matching count, and with nothing filtered it's the folder's entire nested total. It's read straight from the already-filtered rows, so it follows the search.
+- **Clicking a big surface returns to the list.** A click on the drop box, or on an open document in the viewer, goes back to the documents list.
+- **The viewer's step arrows hide when there's nothing to step to** — fewer than two showable files on screen and the two triangles disappear (the title stays centered).
+- **Chat spacing and the chat segment.** In the chat, the gap between exchanges shows only under a collapsed answer, so an open one sits snug against the next. The top-bar "chat" segment grays its text when the store isn't the AI one (still inert there).
+
 ## 2026-07-25 — the ask view becomes a running chat (chat history, phase 1)
 
 - **AnythingLLM already keeps the conversation, so we read it back.** A new reader fetches the workspace's saved chat newest-first and pairs each question with its reply and the documents that reply drew from, into simple "exchange" records. AnythingLLM's own history is the store for now — the endpoint has no page-back, so we take the newest batch (fifty) and leave a local copy for later.

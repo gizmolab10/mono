@@ -1,0 +1,9 @@
+{
+	"name": "ji-proxy",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "node proxy.mjs",
+		"serve": "bash run.sh"
+	}
+}

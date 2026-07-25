@@ -79,7 +79,7 @@
 
 	{#if exchanges.length > 0}
 		<div class='chat-controls'>
-			<button class='toggle-all' onclick={toggle_all}>{all_collapsed ? 'expand' : 'collapse'} all</button>
+			<button class='toggle-all' onclick={toggle_all}>{all_collapsed ? 'show' : 'hide'} responses</button>
 		</div>
 	{/if}
 

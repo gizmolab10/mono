@@ -4,7 +4,7 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] table row -> folders show number of progeny (instead of ---)
+- [ ] thin proxy
 - [ ] merge constants -> configuration
 - [ ] shrink the insets at corners of app
 - [ ] write a zsh script that installs and configures
@@ -40,6 +40,7 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] table row -> folders show number of progeny (instead of ---) — a folder's format cell shows the count of its nested items (files and subfolders) that match the active filter, on screen plus whatever a shut fold is hiding; the filter runs over the full walk, so a shut folder still shows its whole matching count, and with no filter it's the folder's entire nested total. Derived from the filtered rows, so it follows the search. Alongside: clicking the drop box or the open document returns to the list; the viewer's step triangles hide when fewer than two showable files are on screen; the chat's exchange spacing shows only under collapsed answers, and the "chat" segment grays out off the AI store.
 - [x] create DB_LLM (phase A) — its own backend, the local store under the "LLM" namespace (no AnythingLLM yet); the registry builds it for the LLM storage. Phases B (mirror to AnythingLLM) and C (ask) still open — see [llm_proposal](llm_proposal.md)
     - [x] implement write_blob and its underpinnings
     - [x] send as files, with filenames

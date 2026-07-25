@@ -34,6 +34,7 @@ export enum T_Preference {
 	llmKey           = 'llmKey',
 	llmWorkspace     = 'llmWorkspace',
 	llmDocMap        = 'llmDocMap',
+	llmPointer       = 'llmPointer',
 
 }
 

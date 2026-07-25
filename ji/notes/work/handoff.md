@@ -2,9 +2,9 @@
 
 My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md).
 
-## Next — folders show their count instead of "---"
+## Next — a thin proxy between ji and AnythingLLM
 
-First unchecked in [code debt](code%20debt.md): **a folder row shows how many things are under it, in place of the "---" its format cell now draws.** The row already knows it has children, and the tree can walk a subtree (delete does). Rough shape: a small "how many under this" read on the hierarchy, shown in the format cell for folders only. Count everything nested, follow the active filter.
+First unchecked in [code debt](code%20debt.md): **thin proxy** — a small server on the mac that holds the AnythingLLM key and address (the browser never sees them) and forwards only ji's calls, reached from off-mac through a tunnel. Full design in [thin proxy proposal](proposals/thin%20proxy%20proposal.md). Two updates since it was written: the forwarded-call list must add `get_exchanges` (read chat history), and **the tunnel must be free — zero cost** (see the cost note there, which flags the free-vs-stable-name tension).
 
 ## Context
 
