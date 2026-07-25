@@ -61,7 +61,7 @@ class Databases {
 		this.w_storage.set(storage);
 		this.w_hierarchy.set(store.hierarchy);   // the active store's tree changed
 		// "ask" only works on the LLM store — leaving it drops the user back to the list.
-		if (storage !== T_Storage.llm && get(w_operation) === T_Operation.ask) {
+		if (storage !== T_Storage.llm && get(w_operation) === T_Operation.chat) {
 			w_operation.set(T_Operation.list);
 		}
 		db_changed();                            // the active store's contents changed

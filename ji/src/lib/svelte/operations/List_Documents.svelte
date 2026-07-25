@@ -112,6 +112,24 @@
 		return open_rows.filter((r) => keep.has(r.id));       // original walk order, ancestors included
 	});
 
+	// How many things under each folder match the active filter — the ones on screen
+	// plus the ones a shut fold is hiding. The filter runs over the full walk (not the
+	// folded, on-screen set), so a shut folder still shows its whole matching count; a
+	// folder's tally is its nested items (matching files, plus the folders that hold
+	// them) after the filter. Shown in the folder's format cell in place of "---".
+	const folder_count = $derived.by(() => {
+		const matched = filter_rows(rows, $w_filter_tags, $w_filter_text, $w_filter_mode, $w_filter_families);
+		const keep = new Set(matched.map((r) => r.id));
+		for (const r of matched) { for (const a of r.ancestor_ids) { keep.add(a); } }
+		const map = new Map<string, number>();
+		for (const r of rows) {
+			if (!keep.has(r.id)) { continue; }
+			for (const a of r.ancestor_ids) { map.set(a, (map.get(a) ?? 0) + 1); }
+		}
+		debug.log(`Folder counts: ${map.size} folder(s); ${matched.length} of ${rows.length} row(s) match the filter.`);
+		return map;
+	});
+
 	// --- remembering where the table was scrolled -----------------------------
 
 	// A fast lookup from a row's spot to its row number, rebuilt whenever the shown
@@ -315,7 +333,7 @@
 <!-- The three cells of a file/folder row: format, name (with the open/close triangle),
      and tags + the per-row buttons. -->
 {#snippet document_row(row: (typeof rows)[number])}
-	<td class='extension'><span>{row.family === T_DocumentFamily.folder ? '---' : (row.extension ?? '')}</span></td>
+	<td class='extension'><span>{row.family === T_DocumentFamily.folder ? (folder_count.get(row.id) ?? 0) : (row.extension ?? '')}</span></td>
 	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 	<td class='name' class:viewable={row.viewable}
 		style:padding-left='{row.depth * 5}px'

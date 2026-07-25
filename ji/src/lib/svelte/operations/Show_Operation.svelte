@@ -23,7 +23,7 @@
 	{:else if $w_operation === T_Operation.view && $w_view_document}
 		<View_Document document_id={$w_view_document} onclose={close_view}
 			can_step={$w_can_step} onprev={() => step_view(-1)} onnext={() => step_view(1)} />
-	{:else if $w_storage === T_Storage.llm && $w_operation === T_Operation.ask}
+	{:else if $w_storage === T_Storage.llm && $w_operation === T_Operation.chat}
 		<Chat />
 	{:else if $w_operation === T_Operation.tags}
 		<Manage_Tags />

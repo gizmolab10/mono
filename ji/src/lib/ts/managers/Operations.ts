@@ -3,7 +3,7 @@ import { writable, derived, get } from 'svelte/store';
 import { debug } from '../common/Debug';
 
 export enum T_Operation {
-	ask  = 'history of exchanges',
+	chat = 'chat history',
 	drop = 'add new document',
 	list = 'table of documents',
 	tags = 'add new tag',

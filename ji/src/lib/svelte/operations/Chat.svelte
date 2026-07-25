@@ -85,7 +85,7 @@
 
 	<div class='conversation'>
 		{#each exchanges as ex, i (i)}
-			<div class='exchange'>
+			<div class='exchange' class:collapsed={collapsed.has(ex.time)}>
 				<button class='question' onclick={() => toggle_one(ex.time)} title={collapsed.has(ex.time) ? 'show answer' : 'hide answer'}>
 					<span class='q-text'>{ex.question}</span>
 					<span class='q-when'>{when(ex.time)}</span>
@@ -185,7 +185,6 @@
 	/* The running conversation scrolls; the question box and controls stay put. The
 	   right padding sets a --gap between the exchanges and the scrollbar. */
 	.conversation {
-		gap            : var(--gap);
 		padding-right  : var(--gap);
 		flex-direction : column;
 		overflow-y     : auto;
@@ -213,6 +212,12 @@
 		gap            : var(--gap-tight);
 		flex-direction : column;
 		display        : flex;
+	}
+
+	/* Space below only when the answer is hidden, so collapsed exchanges read as a list
+	   while an open one sits snug against the next. */
+	.exchange.collapsed {
+		margin-bottom : var(--gap);
 	}
 
 	/* The question reads as a header over its answer, lit in the accent; a click hides

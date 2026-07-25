@@ -1,4 +1,5 @@
 <script lang='ts'>
+	import { w_operation, T_Operation } from '../../ts/managers/Operations';
 	import { w_drop_total } from '../../ts/managers/Dropping';
 	import Drop_Status from '../support/Drop_Status.svelte';
 	import { save_drop } from '../../ts/managers/Drop';
@@ -53,10 +54,12 @@
 
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div class='drop'
 	tabindex='0'
 	role='button'
 	class:dragging
+	onclick={() => { debug.log('Drop box clicked — back to the list.'); w_operation.set(T_Operation.list); }}
 	ondrop={handleDrop}
 	ondragover={handleDragOver}
 	ondragleave={handleDragLeave}>

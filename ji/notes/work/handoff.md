@@ -1,6 +1,10 @@
 # Handoff
 
-My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md). Right now: a saved history of the ask exchanges. Proposal in [chat history proposal](chat%20history%20proposal.md)..
+My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md).
+
+## Next — folders show their count instead of "---"
+
+First unchecked in [code debt](code%20debt.md): **a folder row shows how many things are under it, in place of the "---" its format cell now draws.** The row already knows it has children, and the tree can walk a subtree (delete does). Rough shape: a small "how many under this" read on the hierarchy, shown in the format cell for folders only. Count everything nested, follow the active filter.
 
 ## Context
 

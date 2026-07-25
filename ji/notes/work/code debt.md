@@ -4,13 +4,9 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [x] create DB_LLM (phase A) — its own backend, the local store under the "LLM" namespace (no AnythingLLM yet); the registry builds it for the LLM storage. Phases B (mirror to AnythingLLM) and C (ask) still open — see [llm_proposal](llm_proposal.md)
-    - [x] implement write_blob and its underpinnings
-    - [x] send as files, with filenames
-- [ ] pac a functioin in AnythingLLM.ts that gets these messages and builds an array of Exchange records
+- [ ] table row -> folders show number of progeny (instead of ---)
 - [ ] merge constants -> configuration
 - [ ] shrink the insets at corners of app
-- [ ] table row -> folders show number of progeny (instead of ---)
 - [ ] write a zsh script that installs and configures
     - [ ] Docker
     - [ ] Qwen
@@ -44,6 +40,10 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] create DB_LLM (phase A) — its own backend, the local store under the "LLM" namespace (no AnythingLLM yet); the registry builds it for the LLM storage. Phases B (mirror to AnythingLLM) and C (ask) still open — see [llm_proposal](llm_proposal.md)
+    - [x] implement write_blob and its underpinnings
+    - [x] send as files, with filenames
+- [x] a function in AnythingLLM.ts that reads the saved chat and builds Exchange records (chat history, phase 1) — `get_exchanges` fetches the workspace's stored conversation newest-first (AnythingLLM keeps it; the endpoint has no offset, so a newest-N limit for now), pairs each question with its reply and the documents it drew from into Exchange records. The ask view became the chat: a question box on top, then the running conversation — each question a header lit in the accent over its collapsible answer, with one expand/collapse-all pill toggle; it reads the saved history on mount (so a refresh resumes) and after each ask. The IndexedDB offline copy stays future.
 - [x] add a segmented control next to the hamburger -> all the operations — a pill of operation segments (list, drop, ask, tag) in the top bar beside the hamburger; the active one fills the accent, a click switches the content region to it. The "ask" segment is inert (dimmed, no click, no hover) on any non-LLM store, and switching to a non-LLM store while asking drops back to the list. The content region became its own switcher (Show_Operation) — drop box, viewer, ask box, or list, one at a time — so the viewer and drop box moved out of the list into the frame; the viewer's stepping (the run of showable rows, the position, step/close) moved to the operations manager as shared state, the list only keeping the run updated. Alongside: a family filter under the search box, the table's scrollbar now runs beside the rows only, and the files were reorganized (actions -> operations, a new support folder).
 - [x] replace erase button in data details with trashcan (same as used in documents table)
 - [x] view document -> pin the fat step triangles to the top — the viewer header holds the triangles at the top-far-left and the close pinned to the top-right; a long title grows downward beside them; the title is centered across the header in its own column and no longer overlaps the document

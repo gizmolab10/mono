@@ -123,22 +123,29 @@
 	});
 </script>
 
-<div class='viewer'>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div class='viewer' role='button' tabindex='0' onclick={() => { debug.log('Viewer clicked — back to the list.'); onclose(); }}>
 	<div class='view-head'>
-		<div class='view-steps'>
-			<button class='step' class:quiet={!can_step} aria-label='previous file' disabled={!can_step}
-				onmousedown={(e) => { e.stopPropagation(); start_hold(onprev); }}
-				onmouseup={stop_hold} onmouseleave={stop_hold}
-				onclick={(e) => { e.stopPropagation(); if (e.detail === 0) { onprev(); } }}>
-				<svg overflow='visible' width={prev_bounds.width} height={prev_bounds.height} viewBox='{prev_bounds.minX} {prev_bounds.minY} {prev_bounds.width} {prev_bounds.height}'><path d={prev_path} /></svg>
-			</button>
-			<button class='step' class:quiet={!can_step} aria-label='next file' disabled={!can_step}
-				onmousedown={(e) => { e.stopPropagation(); start_hold(onnext); }}
-				onmouseup={stop_hold} onmouseleave={stop_hold}
-				onclick={(e) => { e.stopPropagation(); if (e.detail === 0) { onnext(); } }}>
-				<svg overflow='visible' width={next_bounds.width} height={next_bounds.height} viewBox='{next_bounds.minX} {next_bounds.minY} {next_bounds.width} {next_bounds.height}'><path d={next_path} /></svg>
-			</button>
-		</div>
+		<!-- Only worth showing the step triangles when there's more than one showable file
+		     on screen to step between; with fewer than two, hide the whole thing. -->
+		{#if can_step}
+			<div class='view-steps'>
+				<button class='step' aria-label='previous file'
+					onmousedown={(e) => { e.stopPropagation(); start_hold(onprev); }}
+					onmouseup={stop_hold} onmouseleave={stop_hold}
+					onclick={(e) => { e.stopPropagation(); if (e.detail === 0) { onprev(); } }}>
+					<svg overflow='visible' width={prev_bounds.width} height={prev_bounds.height} viewBox='{prev_bounds.minX} {prev_bounds.minY} {prev_bounds.width} {prev_bounds.height}'><path d={prev_path} /></svg>
+				</button>
+				<button class='step' aria-label='next file'
+					onmousedown={(e) => { e.stopPropagation(); start_hold(onnext); }}
+					onmouseup={stop_hold} onmouseleave={stop_hold}
+					onclick={(e) => { e.stopPropagation(); if (e.detail === 0) { onnext(); } }}>
+					<svg overflow='visible' width={next_bounds.width} height={next_bounds.height} viewBox='{next_bounds.minX} {next_bounds.minY} {next_bounds.width} {next_bounds.height}'><path d={next_path} /></svg>
+				</button>
+			</div>
+		{:else}
+			<span></span>
+		{/if}
 		<span class='view-name'>{doc?.name ?? ''}</span>
 		<button class='view-close' aria-label='close' onclick={onclose}>
 			<svg class='view-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
@@ -172,8 +179,9 @@
 
 <style>
 	.viewer {
-		flex-direction : column;
+		padding        : var(--gap);
 		position       : relative;   /* anchor for the pinned close button */
+		flex-direction : column;
 		display        : flex;
 		min-height     : 0;
 		flex           : 1;
@@ -184,7 +192,7 @@
 	   over the right space; the left is padded to match so the centering stays true. */
 	.view-head {
 		display               : grid;
-		grid-template-columns  : 1fr auto 1fr;
+		grid-template-columns : 1fr auto 1fr;
 		column-gap            : var(--gap);
 		align-items           : start;   /* triangles hold at the top; a wrapped title grows downward */
 		padding               : 0 calc(var(--height-control) + var(--gap)) var(--gap) 0;   /* clear the pinned close on the right; triangles hug the far left */
@@ -225,16 +233,6 @@
 
 	.step:hover path {
 		fill : var(--hover);
-	}
-
-	/* Only one showable file — nothing to step to, so the triangles dim and go dead. */
-	.step.quiet {
-		opacity : var(--opacity-label);
-		cursor  : default;
-	}
-
-	.step.quiet:hover path {
-		fill : var(--bg);
 	}
 
 	.view-close {

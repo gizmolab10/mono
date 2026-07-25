@@ -2,6 +2,12 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-25 — the ask view becomes a running chat (chat history, phase 1)
+
+- **AnythingLLM already keeps the conversation, so we read it back.** A new reader fetches the workspace's saved chat newest-first and pairs each question with its reply and the documents that reply drew from, into simple "exchange" records. AnythingLLM's own history is the store for now — the endpoint has no page-back, so we take the newest batch (fifty) and leave a local copy for later.
+- **The ask view is now the chat.** A question box sits on top; below it the running conversation, newest first. Each question reads as a header lit in the accent, over its answer; a click on the question hides or shows that answer, and one pill toggle expands or collapses them all. The saved history is read on arrival — so a refresh returns you to the same conversation — and again after each new question.
+- **Small fixes along the way.** Long unbroken strings (like a full key) now wrap instead of pushing a sideways scrollbar; the conversation's scrollbar is a set width with a clear gap from the text.
+
 ## 2026-07-24 — the operations move to the top bar, and the content region becomes a switcher
 
 - **A pill of operations sits in the top bar.** Beside the hamburger: list, drop, ask, tag. The active one fills the accent; a click switches the content region to it. The "ask" segment only works on the LLM store — on any other store it is inert (dimmed, no click, no hover), and switching to a non-LLM store while asking drops you back to the list.

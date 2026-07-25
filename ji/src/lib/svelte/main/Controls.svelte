@@ -20,7 +20,7 @@
 	// it only opens when a document is picked from the table, so a segment for it
 	// would have nothing to show.
 	const operations: { op: T_Operation; label: string }[] = [
-		{ op: T_Operation.ask,  label: 'chat' },
+		{ op: T_Operation.chat,  label: 'chat' },
 		{ op: T_Operation.drop, label: 'drop' },
 		{ op: T_Operation.list, label: 'list' },
 		{ op: T_Operation.tags, label: 'tags' },
@@ -29,7 +29,7 @@
 	// The "ask" segment only works on the LLM store; on any other store it is inert —
 	// no click, no hover — since there is nothing to ask.
 	function is_inert(op: T_Operation): boolean {
-		return op === T_Operation.ask && $w_storage !== T_Storage.llm;
+		return op === T_Operation.chat && $w_storage !== T_Storage.llm;
 	}
 
 	// Click a segment to switch to that operation — unless it is the inert "ask".
@@ -125,10 +125,10 @@
 		cursor     : default;
 	}
 
-	/* The inert "ask" segment (off the LLM store): dimmed, and it does not react. */
+	/* The inert "chat" segment (off the AI store): grayed text, and it does not react. */
 	.segment.inert {
-		opacity : var(--opacity-label);
-		cursor  : default;
+		color  : var(--lightgray);
+		cursor : default;
 	}
 
 	/* Light a segment under the cursor — but not the one already chosen, nor an inert one. */

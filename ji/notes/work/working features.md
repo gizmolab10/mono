@@ -2,6 +2,7 @@
 
 | # | Feature |
 |----|----|
+| 24 | The ask view is a running chat — the saved conversation newest-first, each question a header over its collapsible answer (with an expand/collapse-all toggle), resuming on refresh |
 | 23 | Operations control in the top bar — list, drop, ask, tag; "ask" is inert off the LLM store |
 | 22 | The content region shows one view for the current operation — the list, the drop box, the viewer, or the ask box |
 | 21 | Filter the list by family, alongside the tag and name filters |
