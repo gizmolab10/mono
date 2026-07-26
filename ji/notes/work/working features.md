@@ -1,7 +1,8 @@
 # working features
 
 | # | Feature |
-|----|----|
+| --- | --- |
+| 27 | The AI store shows what AnythingLLM actually holds — the true document count in the data readout and the AI's own documents as read-only rows in the table — the same on every machine, not only the one that dropped the files |
 | 26 | Any browser, on any computer, reaches the mac's AnythingLLM through a small key-holding server and a free tunnel; two computers share one workspace, its changing address found through a fixed pointer link |
 | 25 | A folder shows how many things are under it (after the filter, counting hidden ones too) in place of "---"; clicking the drop box or an open document returns to the list |
 | 24 | The ask view is a running chat — the saved conversation newest-first, each question a header over its collapsible answer (with an expand/collapse-all toggle), resuming on refresh |

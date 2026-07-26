@@ -4,11 +4,13 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] add fetch documents to anything llm ts file
+- [ ] i added .init op and Initialize_LocalStorage.svelte (empty)
+    - [ ] when t storage == .ai, and the creds are missing
+    - [ ] set op to .init
+    - [ ] show operation shows Initialize_LocalStorage for .init
+    - [ ] has a single input field centered in view
+    - [ ] user types in password, if it is "suchness" add the values to local storage and set the op to .list
 - [ ] store tags in allm?
-- [ ] write a tiny standalone executable that installs the two local storage llm values
-    - [ ] for mac
-    - [ ] for windows
 - [ ] shrink the insets at outside edges of controls and details bottom row
     - [ ] when responses are hidden in chat, remove the right-side gap
 - [ ] merge constants -> configuration
@@ -45,6 +47,7 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] add fetch documents to the AnythingLLM file — a read that asks AnythingLLM what the workspace already holds (each document's readable name plus the location a remove uses). Pulled app-wide into one shared readout, filled whenever the AI store becomes active and after this browser adds, removes, or erases one (a running number drops a stale read if a newer one started), so the number is right on every machine, not only the one that dropped the files. The data readout's "documents" count reflects it on the AI store (the local count still gates the erase button). The documents table shows the AI's own documents as read-only rows — "AI" in the format cell, dimmed, no open/edit/delete, since their bytes aren't on this browser — leaving out any the local table already lists by name so a file dropped here isn't doubled; the name search narrows them, a tag or family filter hides them. The workspace-detail read was added to the proxy's allowed calls (restart needed) so the off-mac path works. Superseded the earlier list-view-only fetch.
 - [x] thin proxy — a small key-holding server on the mac forwards only ji's own calls to AnythingLLM, reached from any off-mac browser through a free tunnel. The browser never sees the AnythingLLM key: it sends a separate share token the server checks, and the server swaps in the real key. The tunnel's address changes each restart, so the server writes its current address to a fixed pointer link (a public gist) and ji reads that pointer to find the address (with a cache-buster, since the pointer is served through a short cache). The server survives a reboot (a launch job that restarts it and the tunnel), and it publishes its new address to the pointer on every start. Two browsers on different computers now share one AnythingLLM workspace (ji defaults every store to the workspace named "intersection"); only the document list stays per-browser. Verified end-to-end: a second computer, given the pointer link and the share token in its stored settings, reads the same chat history. Design in [thin proxy proposal](proposals/thin%20proxy%20proposal.md).
 - [x] table row -> folders show number of progeny (instead of ---) — a folder's format cell shows the count of its nested items (files and subfolders) that match the active filter, on screen plus whatever a shut fold is hiding; the filter runs over the full walk, so a shut folder still shows its whole matching count, and with no filter it's the folder's entire nested total. Derived from the filtered rows, so it follows the search. Alongside: clicking the drop box or the open document returns to the list; the viewer's step triangles hide when fewer than two showable files are on screen; the chat's exchange spacing shows only under collapsed answers, and the "chat" segment grays out off the AI store.
 - [x] create DB_LLM (phase A) — its own backend, the local store under the "LLM" namespace (no AnythingLLM yet); the registry builds it for the LLM storage. Phases B (mirror to AnythingLLM) and C (ask) still open — see [llm_proposal](llm_proposal.md)

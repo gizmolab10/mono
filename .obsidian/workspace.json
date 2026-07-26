@@ -226,6 +226,8 @@
   },
   "active": "e12ef46c3c5f7c0a",
   "lastOpenFiles": [
+    "ji/src/lib/svelte/operations/Initialize_LocalStorage.svelte",
+    "ji/src/lib/svelte/operations/Manage_Tags.svelte copy",
     "ji/src/lib/svelte/operations/List_Documents.svelte.tmp.39200.729fb8623ba5",
     "ji/src/lib/ts/database/DB_LLM.ts.tmp.39200.be8987ee3a43",
     "ji/src/lib/ts/database/LLM_Docs.ts",
@@ -238,8 +240,6 @@
     "ji/notes/work/proposals/thin proxy proposal.md",
     "ji/src/lib/ts/database/AnythingLLM.ts.tmp.39200.af4c98c1a0d3",
     "ji/proxy/publish-url.sh",
-    "ji/proxy/current-url.txt",
-    "ji/proxy/tunnel.log",
     "ji/proxy/README.md",
     "ji/notes/work/working features.md",
     "ji/notes/work/work journal.md",

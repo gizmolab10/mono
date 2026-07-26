@@ -41,8 +41,21 @@ class Databases {
 		this.active      = store.db;
 		this.w_hierarchy = writable<Hierarchy>(store.hierarchy);
 		// On the AI store, read back what AnythingLLM holds so the count is right from the
-		// first paint, whatever view is showing.
-		if (saved === T_Storage.llm) { refresh_llm_docs(); }
+		// first paint, whatever view is showing; if its two settings are missing, open the
+		// screen that asks for them.
+		if (saved === T_Storage.llm) {
+			refresh_llm_docs();
+			if (this.llm_creds_missing()) { w_operation.set(T_Operation.init); }
+		}
+	}
+
+	// The AI store needs two stored settings — the address pointer and the share token —
+	// to reach AnythingLLM. Missing either means the store can't work, so the init screen
+	// asks for them.
+	private llm_creds_missing(): boolean {
+		const pointer = preferences.read<string>(T_Preference.llmPointer)?.trim();
+		const key     = preferences.read<string>(T_Preference.llmKey)?.trim();
+		return !pointer || !key;
 	}
 
 	// One live backend-and-tree per storage, built on first use.
@@ -64,9 +77,16 @@ class Databases {
 		preferences.write(T_Preference.database, storage);
 		this.w_storage.set(storage);
 		this.w_hierarchy.set(store.hierarchy);   // the active store's tree changed
-		// Switching onto the AI store reads back what AnythingLLM holds; leaving it forgets
-		// those, so another store never shows the AI's count.
-		if (storage === T_Storage.llm) { refresh_llm_docs(); } else { clear_llm_docs(); }
+		// Switching onto the AI store reads back what AnythingLLM holds, and opens the init
+		// screen if its two settings are missing; leaving it forgets those docs and drops
+		// the init screen (it means nothing off the AI store).
+		if (storage === T_Storage.llm) {
+			refresh_llm_docs();
+			if (this.llm_creds_missing()) { w_operation.set(T_Operation.init); }
+		} else {
+			clear_llm_docs();
+			if (get(w_operation) === T_Operation.init) { w_operation.set(T_Operation.list); }
+		}
 		// "ask" only works on the LLM store — leaving it drops the user back to the list.
 		if (storage !== T_Storage.llm && get(w_operation) === T_Operation.chat) {
 			w_operation.set(T_Operation.list);

@@ -2,6 +2,7 @@
 	import { w_operation, w_view_document, T_Operation, w_can_step, step_view, close_view } from '../../ts/managers/Operations';
 	import { databases } from '../../ts/database/Databases';
 	import { T_Storage } from '../../ts/types/DB_Records';
+	import Initialize_LocalStorage from './Initialize_LocalStorage.svelte';
 	import Drop_Documents from './Drop_Documents.svelte';
 	import List_Documents from './List_Documents.svelte';
 	import View_Document from './View_Document.svelte';
@@ -18,7 +19,9 @@
 </script>
 
 <div class='region content' style:width='{width}px'>
-	{#if $w_operation === T_Operation.drop}
+	{#if $w_operation === T_Operation.init}
+		<Initialize_LocalStorage />
+	{:else if $w_operation === T_Operation.drop}
 		<Drop_Documents />
 	{:else if $w_operation === T_Operation.view && $w_view_document}
 		<View_Document document_id={$w_view_document} onclose={close_view}

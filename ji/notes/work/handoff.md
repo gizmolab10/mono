@@ -2,26 +2,20 @@
 
 My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md).
 
-## Next — add fetch-documents to the AnythingLLM file, then merge constants into configuration
+## Next — a one-click way to point a new browser at the shared AI
 
-First unchecked in [code debt](code%20debt.md): **add fetch documents to the AnythingLLM file** — a call that reads back the list of documents the workspace already holds (so a fresh browser could show what's embedded, rather than only its own local list).
+First unchecked in [code debt](code%20debt.md): **a tiny standalone installer for the two settings** — today, wiring a new browser to the shared AI means hand-editing two stored settings (the pointer link and the share token), quoted just so. The goal is to make that a single, foolproof step, for mac and windows.
 
-### Proposal — read back the workspace's embedded documents
+### Proposal — one click, not a native executable
 
-**Why.** Today a browser only knows about documents it uploaded itself — the map from a ji document to its AnythingLLM location is saved per-browser. So a second computer, sharing the same AI workspace, sees an empty document list even though the workspace holds documents. This call asks AnythingLLM what's actually embedded.
+**The catch, first.** A native program (a mac or windows executable) **cannot** reach into a website's browser storage — the browser walls each site's storage off from the rest of the computer. So an installed app can't write ji's two settings. Chasing that shape is a dead end; the workable forms all run *inside the browser, at ji's own address*:
 
-**The call.** A new read in the AnythingLLM file, shaped exactly like the existing chat-history reader: find the workspace, ask for its detail, pull the embedded documents out of the answer, hand back a small list. Returns an empty list on any trouble, logs plainly, never throws — the same safe pattern as the rest of that file.
+- **A link ji understands (recommended).** ji already reads instructions off the web address on load (it clears settings when the address says so). Extend that: if the address carries the pointer link and the share token, ji saves them and then strips them back off the address (so the token isn't left showing). The "installer" becomes one link a newcomer opens once — no download, works the same on mac and windows. One care point: the token rides in a link, so treat it as private (open it yourself, don't post it).
+- **A bookmarklet.** A saved bit that, run while ji is open, writes the two settings. Also cross-machine, but fiddlier to set up than clicking a link.
 
-- **Endpoint to verify first.** AnythingLLM's workspace-detail read (its address is the workspace slug on its own) returns the workspace including the documents embedded in it. **Verify the exact address and the fields on each document against the running instance before writing** — I have not confirmed them, so the field names below are a guess to be checked.
-- **What each document offers (to confirm):** a readable name (the filename ji uploaded it under) and its storage location (the same string ji already keeps to remove one). A size and a date may ride along.
-- **Return shape.** A small record per document — at least name and location. Reuse or add a plain type beside the exchange type.
+**Recommendation.** Do the link form. It reuses the address-reading ji already has, needs no executable at all, and is genuinely one step. Scope: ji reads the two values off the address, saves them (quoted correctly, so the hand-editing mistake can't happen), logs what it set, and clears them from the address. The mac/windows split in the debt item falls away — a link has no platform.
 
-**Two things that gate it:**
-
-1. **The proxy must be told about this call.** The proxy only forwards ji's known handful of calls — the workspace-detail read is not one of them, so through the proxy it would be refused (a "not allowed" answer). Add one matching rule to the proxy's allow list for the workspace-detail address, then restart the running proxy so it picks it up. (Directly on localhost this isn't needed — only the off-mac path goes through the proxy.)
-2. **Read-only for now — decide before going further.** The fetched list is AnythingLLM's own view (names and locations), not ji documents. A fresh browser has no local record for them and no way to open their bytes (the bytes live in whatever browser first dropped them). So the first step is display-only: show the names of what's embedded. Turning that list back into real, openable ji documents (rebuilding the local records, re-linking, re-fetching bytes) is a separate, larger step — do not fold it in.
-
-**Success.** On the second computer, the call returns the same document names the first computer uploaded; the number matches what AnythingLLM's own document picker shows. Proven by reading the log line the new call writes (how many documents it found).
+**Decide before building:** confirm the link form is acceptable (it puts the token in a URL you keep private) rather than an actual downloadable installer, which can't do the job.
 
 ## Context
 

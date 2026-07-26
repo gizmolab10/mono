@@ -5,6 +5,7 @@ import { debug } from '../common/Debug';
 export enum T_Operation {
 	chat = 'chat history',
 	drop = 'add new document',
+	init = 'add LLM credentials',
 	list = 'table of documents',
 	tags = 'add new tag',
 	view = 'view document',

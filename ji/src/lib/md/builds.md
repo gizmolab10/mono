@@ -2,6 +2,7 @@
 
 | Build | Date | Note |
 |----|----|----|
+| 13 | Jul 25, 2026 | new credentials installer |
 | 12 | Jul 25, 2026 | new chat view |
 | 11 | Jul 24, 2026 | new operations control and new layout |
 | 10 | Jul 23, 2026 | query asked and answered by LLM |

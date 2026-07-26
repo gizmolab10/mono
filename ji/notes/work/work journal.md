@@ -2,6 +2,15 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-25 — every browser sees the AI's own documents, and its true count
+
+- **The gap.** A browser only knew about documents it had dropped itself — where each one lives in the AI is remembered per-browser. So a second computer, sharing the same AI, showed an empty document list and a count of zero, even though the AI held plenty.
+- **A read that asks the AI what it holds.** A new call asks AnythingLLM for the workspace's own list — each document's readable name and the location a remove would use. It's shaped like the chat-history reader: safe, logs plainly, hands back an empty list on any trouble.
+- **One shared count, pulled app-wide.** That list is read into one shared place, refreshed whenever the AI store becomes active and after this browser adds, removes, or erases one — so the number is the same everywhere and right on every machine, not only the one that dropped the files. A running number throws away a slow read if a newer one has started, so the count can't flick backwards.
+- **The data readout shows the AI's real number.** On the AI store, the "documents" count is what the AI actually holds; every other store still shows its own local count. (The local count still decides whether the erase button appears, since erase only clears this browser.)
+- **The documents table lists the AI's own documents.** They show as read-only rows — "AI" in the format cell, dimmed, with no open, edit, or delete, because their contents aren't on this browser. Any the local table already lists (matched by name) are left out, so a file dropped here isn't shown twice; the name search still narrows them, and a tag or family filter hides them.
+- **The proxy was told about the new call.** The key-holding server forwards only ji's known calls; the workspace-detail read was added to that list (it needs a restart to take), so the off-mac path works. On the mac itself nothing extra was needed.
+
 ## 2026-07-25 — a thin proxy lets any browser reach the mac's AnythingLLM
 
 - **The problem.** AnythingLLM runs only on the mac, and its key can't be put in a browser build (anyone could read it). So a deployed ji, in a browser on another computer, had no safe way to reach it.
