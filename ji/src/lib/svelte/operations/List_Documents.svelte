@@ -64,8 +64,8 @@
 
 	// What the AI workspace already holds — read app-wide into a shared store (filled when
 	// the AI store becomes active and after this browser adds or removes one), so the list
-	// and the data readout show the same number. Shown read-only below the table, only on
-	// the AI store; these are not openable rows.
+	// and the data readout show the same number. Shown as read-only rows in the table, only
+	// on the AI store; these can't be opened (their bytes aren't on this browser).
 	const on_ai_store = $derived($w_storage === T_Storage.llm);
 	let hovered_row = $state<string | null>(null);  // which row the cursor is over — tracked in code, not CSS :hover, so the per-row buttons (which stand a touch taller than the row) still count as "on the row"
 
@@ -118,6 +118,20 @@
 		const keep = new Set(matched.map((r) => r.id));
 		for (const r of matched) { for (const a of r.ancestor_ids) { keep.add(a); } }
 		return open_rows.filter((r) => keep.has(r.id));       // original walk order, ancestors included
+	});
+
+	// The AI's own documents, shown as read-only rows below the local ones — only on the AI
+	// store. Any the local table already lists (matched by name) is left out, so a file
+	// dropped here isn't doubled. A tag or family filter can't match a plain name, so it
+	// hides these; the name search still narrows them.
+	const ai_rows = $derived.by(() => {
+		if (!on_ai_store) { return []; }
+		if ($w_filter_tags.size > 0 || $w_filter_families.length > 0) { return []; }
+		const local_names = new Set(rows.map((r) => r.name));
+		const needle = $w_filter_text.trim().toLowerCase();
+		const list = $w_llm_docs.filter((d) => !local_names.has(d.name) && (needle === '' || d.name.toLowerCase().includes(needle)));
+		debug.log(`AI rows: showing ${list.length} of ${$w_llm_docs.length} embedded document(s) as read-only rows (local matches and filters removed).`);
+		return list;
 	});
 
 	// How many things under each folder match the active filter — the ones on screen
@@ -415,7 +429,7 @@
 		<input class='search-text' type='search' placeholder='search by name' bind:value={$w_filter_text} />
 	{/if}
 	<hr>
-	{#if rows.length === 0}
+	{#if rows.length === 0 && ai_rows.length === 0}
 		<div class='empty'>no documents yet</div>
 	{:else}
 		<div class='table-region'>
@@ -453,25 +467,19 @@
 						{@render document_row(row)}
 					</tr>
 				{/each}
+				<!-- The AI's own documents as read-only rows: no triangle, no buttons, and
+				     no click to open — their bytes aren't on this browser. "AI" in the
+				     format cell marks where they come from. -->
+				{#each ai_rows as doc, i (`ai:${i}`)}
+					<tr class='file ai-file'>
+						<td class='extension'><span>AI</span></td>
+						<td class='name'><span class='name-line'><span class='tri-slot'></span><span class='name-text' title={doc.location}>{doc.name}</span></span></td>
+						<td class='tag-actions'></td>
+					</tr>
+				{/each}
 			</tbody>
 		</table>
 		</div>
-		</div>
-	{/if}
-	{#if on_ai_store && ($w_llm_docs_loading || $w_llm_docs.length > 0)}
-		<!-- What the AI already holds, read-only — not openable rows, so it sits apart
-		     from the table above. -->
-		<div class='embedded'>
-			<div class='embedded-title'>the AI holds{$w_llm_docs.length > 0 ? ` ${$w_llm_docs.length}` : ''}:</div>
-			{#if $w_llm_docs_loading && $w_llm_docs.length === 0}
-				<div class='embedded-note'>reading…</div>
-			{:else}
-				<ul class='embedded-list'>
-					{#each $w_llm_docs as doc, i (i)}
-						<li title={doc.location}>{doc.name}</li>
-					{/each}
-				</ul>
-			{/if}
 		</div>
 	{/if}
 </div>
@@ -927,33 +935,13 @@
 		background : var(--hover);
 	}
 
-	/* A quiet, read-only list of what the AI workspace holds, shown below the table on
-	   the AI store. It sits apart from the rows above and never grows the view — it caps
-	   its height and scrolls on its own. */
-	.embedded {
-		flex-shrink : 0;
-		margin-top  : var(--gap);
-		max-height  : 120px;
-		overflow-y  : auto;
-		font-size   : var(--font-label);
-		color       : var(--text);
-	}
-
-	.embedded-title {
-		opacity       : var(--opacity-label);
-		margin-bottom : var(--gap-tight);
-	}
-
-	.embedded-note {
+	/* The AI's own documents, shown as read-only rows: dimmed like a dedup echo, and never
+	   lit or given a pointer, because they can't be opened here. */
+	.blobs-table .file.ai-file td {
 		opacity : var(--opacity-label);
 	}
 
-	.embedded-list {
-		margin       : 0;
-		padding-left : var(--gap-fat);
-	}
-
-	.embedded-list li {
-		opacity : var(--opacity-label);
+	.blobs-table .file.ai-file .name {
+		cursor : default;
 	}
 </style>
