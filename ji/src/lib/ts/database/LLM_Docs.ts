@@ -38,3 +38,22 @@ export function clear_llm_docs(): void {
 	w_llm_docs.set([]);
 	w_llm_docs_loading.set(false);
 }
+
+// A heartbeat: while the AI store is active, quietly re-read every few seconds. It does
+// double duty — a read that fails flips the connection to "lost" (so an idle drop is noticed
+// even when nothing else is calling), and a later read that succeeds flips it back and clears
+// the note. Started and stopped by the registry as the AI store comes and goes.
+let heartbeat: ReturnType<typeof setInterval> | null = null;
+
+export function start_llm_heartbeat(): void {
+	if (heartbeat !== null) { return; }
+	debug.log('AI connection: heartbeat on — checking every 8 seconds.');
+	heartbeat = setInterval(() => { refresh_llm_docs(); }, 8000);
+}
+
+export function stop_llm_heartbeat(): void {
+	if (heartbeat === null) { return; }
+	clearInterval(heartbeat);
+	heartbeat = null;
+	debug.log('AI connection: heartbeat off (left the AI store).');
+}

@@ -2,7 +2,7 @@ import { w_operation, T_Operation } from '../managers/Operations';
 import { preferences, T_Preference } from '../managers/Preferences';
 import { Hierarchy } from '../managers/Hierarchy';
 import { T_Storage } from '../types/DB_Records';
-import { refresh_llm_docs, clear_llm_docs } from './LLM_Docs';
+import { refresh_llm_docs, clear_llm_docs, start_llm_heartbeat, stop_llm_heartbeat } from './LLM_Docs';
 import { db_changed } from '../types/Signal';
 import type { Writable } from 'svelte/store';
 import { writable, get } from 'svelte/store';
@@ -45,6 +45,7 @@ class Databases {
 		// screen that asks for them.
 		if (saved === T_Storage.llm) {
 			refresh_llm_docs();
+			start_llm_heartbeat();   // notice an idle connection drop even when nothing's calling
 			if (this.llm_creds_missing()) { w_operation.set(T_Operation.init); }
 		}
 	}
@@ -82,9 +83,11 @@ class Databases {
 		// the init screen (it means nothing off the AI store).
 		if (storage === T_Storage.llm) {
 			refresh_llm_docs();
+			start_llm_heartbeat();   // notice an idle connection drop even when nothing's calling
 			if (this.llm_creds_missing()) { w_operation.set(T_Operation.init); }
 		} else {
 			clear_llm_docs();
+			stop_llm_heartbeat();
 			if (get(w_operation) === T_Operation.init) { w_operation.set(T_Operation.list); }
 		}
 		// "ask" only works on the LLM store — leaving it drops the user back to the list.

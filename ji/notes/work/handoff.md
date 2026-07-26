@@ -2,20 +2,26 @@
 
 My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md).
 
-## Next — a one-click way to point a new browser at the shared AI
+## Next — a help page, modeled on di's user guide
 
-First unchecked in [code debt](code%20debt.md): **a tiny standalone installer for the two settings** — today, wiring a new browser to the shared AI means hand-editing two stored settings (the pointer link and the share token), quoted just so. The goal is to make that a single, foolproof step, for mac and windows.
+First unchecked in [code debt](code%20debt.md): **write a help page**. The help button (top-right of the controls row) does nothing yet — its click handler in `main/Controls.svelte` only logs. Build it like di's user guide (`di/src/lib/svelte/main/UserGuide.svelte`), trimmed to ji's needs.
 
-### Proposal — one click, not a native executable
+### Proposal — an in-app help overlay
 
-**The catch, first.** A native program (a mac or windows executable) **cannot** reach into a website's browser storage — the browser walls each site's storage off from the rest of the computer. So an installed app can't write ji's two settings. Chasing that shape is a dead end; the workable forms all run *inside the browser, at ji's own address*:
+**Shape (recommended).** The help button opens a full-screen overlay over the app (a new `main/Help.svelte`, placed by the frame like the build-notes popup already is):
 
-- **A link ji understands (recommended).** ji already reads instructions off the web address on load (it clears settings when the address says so). Extend that: if the address carries the pointer link and the share token, ji saves them and then strips them back off the address (so the token isn't left showing). The "installer" becomes one link a newcomer opens once — no download, works the same on mac and windows. One care point: the token rides in a link, so treat it as private (open it yourself, don't post it).
-- **A bookmarklet.** A saved bit that, run while ji is open, writes the two settings. Also cross-machine, but fiddlier to set up than clicking a link.
+- **Pages are markdown files** in a new `ji/src/manual/` folder, mimicking di (di keeps them at `di/src/manual/`): `manual/index.md` (the welcome), further pages flat or in a subfolder like di's `reference-guide/`, and a `manual/images/` folder for pictures later. The overlay lives at `ji/src/lib/svelte/main/Help.svelte` and pulls the pages in at build with a glob relative to itself — `../../../manual/**/*.md` — exactly as di's user guide does. ji already renders markdown (markdown-it is a dependency and the build-notes popup reads a markdown file), so this reuses what's here. Each page's title is its first heading; a hand-set order lists them, anything unlisted falls to the end (so a new file still shows).
+- **A hamburger-toggled sidebar** lists the pages; clicking one shows it; links from one page to another switch in place; a close cross and the Escape key shut the overlay.
+- **Remember** which page was open and whether the sidebar is showing (two saved flags, like di).
+- **Seed pages:** `index` — "hello, this is just the beginning" (a short welcome); `what's broken` — the current rough edges.
 
-**Recommendation.** Do the link form. It reuses the address-reading ji already has, needs no executable at all, and is genuinely one step. Scope: ji reads the two values off the address, saves them (quoted correctly, so the hand-editing mistake can't happen), logs what it set, and clears them from the address. The mac/windows split in the debt item falls away — a link has no platform.
+**Where help lives — decided: in-app overlay.** One build, works offline, matches di, no new deploy; the address stays intersection.lol. (A separate site at `help.intersection.lol` was weighed and set aside — it's another thing to deploy and keep in step; the same markdown folder could feed it later if wanted.)
 
-**Decide before building:** confirm the link form is acceptable (it puts the token in a URL you keep private) rather than an actual downloadable installer, which can't do the job.
+**Kept out (add later if wanted):** search, images, versioned pages.
+
+**Success.** Clicking help opens the overlay on the welcome page; the sidebar switches pages; Escape or the close cross returns to the app; both seed pages read correctly. Proven by a log line on open/close and by reading the two pages.
+
+The newcomer-setup need is already handled by the AI store's password screen (the `init` operation), so the one-click-installer idea stays retired.
 
 ## Context
 

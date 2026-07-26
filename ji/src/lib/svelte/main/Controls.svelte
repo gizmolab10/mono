@@ -12,7 +12,7 @@
 	// details-toggle hamburger sits at the left, a segmented control of the
 	// operations sits next to it, the title floats between spacers, and a help
 	// button anchors the far right. The hamburger click toggles the details region.
-	let { onclick }: { onclick: () => void } = $props();
+	let { onclick, onHelp }: { onclick: () => void; onHelp: () => void } = $props();
 	const size = k.size.hamburger;
 	const hamburgerPath = svg_paths.hamburger(size);
 
@@ -40,7 +40,8 @@
 	}
 
 	function help() {
-		debug.log('Help button clicked — help view is not built yet.');
+		debug.log('Help button clicked — opening the help overlay.');
+		onHelp();
 	}
 </script>
 

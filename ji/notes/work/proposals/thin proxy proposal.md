@@ -62,6 +62,18 @@ The free tunnel's name changes on every restart, but ji needs one fixed thing to
 - **ji reads it once.** On start, ji fetches the pointer, learns the current tunnel address, and uses it for the session — caching it, not re-reading per call. (Performance: one small fetch at load, a few bytes; nothing per request.)
 - **The result.** A stable entry point at zero cost — only the name behind the pointer churns, and ji never sees the churn. If a fetch of the pointer fails or the mac is off, ji falls back to "not reachable" and drop/view/tag still work.
 
+### Recovering when the address changes (done) and shortening the lag (proposal)
+
+**Re-read on a lost connection — done.** ji used to read the pointer once and cache the address for the whole session, so after the tunnel churned it stayed stuck on the dead address until a reload. Now, the moment a call can't reach the server, ji forgets the cached address and re-reads the pointer on the next try; a background retry runs every few seconds, so the "reconnecting" note clears on its own once a fresh address is found. (The supervisor on the mac already brings up a new tunnel and re-publishes within ~15s.)
+
+**The remaining lag — and how to shorten it.** The gist's raw link is served through GitHub's CDN with a roughly one-minute cache. ji cache-busts its read (a changing query plus a no-store fetch), which *may* not fully beat that CDN — so after a churn, ji can keep seeing the old, dead address for up to ~1 minute before the new one shows. Options, cheapest first:
+
+- **Confirm the cache-buster is enough (free, first).** Measure whether ji's cache-busted read actually gets the fresh gist content quickly. If GitHub honors it, there's nothing to fix. *(Unknown — verify before building anything.)*
+- **Point at a host with a short cache (reliable).** Swap the gist for a tiny endpoint we control that serves the address with a short (or no) cache — a small file on the same free static host ji already deploys to, a free Cloudflare KV/Worker, or the work-sites hub dispatcher. Same shape (the mac writes the current address; ji reads it), but the lag drops from ~1 minute to seconds. Cost: one more small piece to keep running.
+- **A fixed tunnel name (removes the churn entirely).** With a domain on Cloudflare, the tunnel keeps one address and there's no pointer to lag at all — but a domain has a yearly cost (see the cost note above).
+
+Recommendation: measure the cache-buster first; if the lag is real, move the pointer to a short-cache host we control.
+
 ### Setting up the fixed pointer (a GitHub gist)
 
 A gist is a tiny free web page for a scrap of text — a public sticky note with its own permanent link. You paste some text, anyone with the link can read it, and you (or the mac) can change what it says while the link stays the same. That fixed link is what ji reads to find the mac's current address. Do this once, in order:

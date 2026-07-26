@@ -8,7 +8,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "e12ef46c3c5f7c0a",
+            "id": "abe0d848a5fe3e12",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -19,20 +19,6 @@
               },
               "icon": "lucide-file",
               "title": "code debt"
-            }
-          },
-          {
-            "id": "a6cfa3414be067ed",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ji/notes/work/proposals/thin proxy proposal.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "thin proxy proposal"
             }
           },
           {
@@ -47,6 +33,34 @@
               },
               "icon": "lucide-file",
               "title": "handoff"
+            }
+          },
+          {
+            "id": "e02c70cc2ac80259",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ji/notes/work/Minimum Viable INTERSECTION app.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Minimum Viable INTERSECTION app"
+            }
+          },
+          {
+            "id": "cda470ea7a48dc42",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ji/src/lib/md/manual/index.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "index"
             }
           }
         ]
@@ -106,8 +120,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 354.5026054382324,
-    "collapsed": true
+    "width": 354.5026054382324
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -209,8 +222,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 352.5,
-    "collapsed": true
+    "width": 352.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -224,24 +236,34 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e12ef46c3c5f7c0a",
+  "active": "abe0d848a5fe3e12",
   "lastOpenFiles": [
-    "ji/src/lib/svelte/operations/Initialize_LocalStorage.svelte",
-    "ji/src/lib/svelte/operations/Manage_Tags.svelte copy",
-    "ji/src/lib/svelte/operations/List_Documents.svelte.tmp.39200.729fb8623ba5",
-    "ji/src/lib/ts/database/DB_LLM.ts.tmp.39200.be8987ee3a43",
-    "ji/src/lib/ts/database/LLM_Docs.ts",
-    "ji/src/lib/ts/database/DB_LLM.ts.tmp.39200.8f5081963fc4",
-    "ji/src/lib/ts/database/AnythingLLM.ts.tmp.39200.4265df030153",
+    "ji/src/lib/svelte/support/Separator.svelte.tmp.39200.710657ae586a",
+    "ji/notes/guides/map.md.tmp.39200.966b7a97a1c3",
+    "ji/src/lib/svelte/support/Separator.svelte",
     "ji/notes/work/handoff.md",
-    "ji/notes/work/code debt.md",
-    "ji/notes/work/code debt.md.tmp.39200.95aab8d0f515",
-    "ji/notes/work/code debt.md.tmp.39200.e99d011b1e86",
-    "ji/notes/work/proposals/thin proxy proposal.md",
-    "ji/src/lib/ts/database/AnythingLLM.ts.tmp.39200.af4c98c1a0d3",
-    "ji/proxy/publish-url.sh",
-    "ji/proxy/README.md",
     "ji/notes/work/working features.md",
+    "ji/notes/work/prime directive.md",
+    "ji/src/lib/svelte/operations/Chat.svelte.tmp.39200.634c9e132319",
+    "ji/src/lib/svelte/operations/Chat.svelte.tmp.39200.1f748234440a",
+    "ji/src/lib/ts/database/Databases.ts.tmp.39200.27eded728dde",
+    "ji/src/lib/svelte/operations/Chat.svelte.tmp.39200.0e181823e7e2",
+    "ji/src/lib/ts/database/AnythingLLM.ts.tmp.39200.7f6ce4936f36",
+    "ji/src/lib/ts/database/AnythingLLM.ts.tmp.39200.35298a0d735c",
+    "ji/src/lib/md/manual/index.md",
+    "ji/src/lib/md/manual/what's broken.md",
+    "ji/notes/work/Minimum Viable INTERSECTION app.md",
+    "ji/notes/work/code debt.md",
+    "ji/src/lib/svelte/main/Intersection.svelte.tmp.39200.9f2919aaa922",
+    "ji/src/lib/md/md/index.md",
+    "ji/src/lib/md/manual/Intersection.md",
+    "ji/src/manual/what's broken.md",
+    "ji/src/lib/md/manual",
+    "ji/src/lib/md/md/Intersection.md",
+    "ji/src/md/Intersection.md",
+    "ji/src/manual/index.md",
+    "ji/notes/work/proposals/thin proxy proposal.md",
+    "ji/proxy/README.md",
     "ji/notes/work/work journal.md",
     "ji/notes/work/chat history proposal.md",
     "ji/notes/work/proposals/chat history proposal.md",
@@ -252,16 +274,6 @@
     "ji/notes/guides/Minimum Viable INTERSECTION app.md",
     "ji/notes/work/proposals/RAG consistency proposal.md",
     "ji/notes/design/research.md",
-    "ji/notes/design/Minimum Viable INTERSECTION app.md",
-    "ji/notes/work/proposals/persistables proposal.md",
-    "ji/notes/guides/setup/manually install AnythingLLM.md",
-    "ji/notes/guides/specifications/intersection spec.md",
-    "ji/notes/guides/specifications/hierarchy spec.md",
-    "ji/notes/guides/specifications/db spec.md",
-    "ji/notes/design/New Folder With Items/intersection spec.md",
-    "ji/notes/design/New Folder With Items/hierarchy spec.md",
-    "ji/notes/design/New Folder With Items/db spec.md",
-    "ji/notes/guides/manually install AnythingLLM.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

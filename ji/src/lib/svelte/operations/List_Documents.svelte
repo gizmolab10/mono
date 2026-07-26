@@ -34,7 +34,7 @@
 	// Which folders are shut. One saved list of folder ids, kept across reloads the
 	// way the details region's open sections are. A shut folder's contents drop from
 	// the table until it's opened again.
-	const w_closed = preferences.persistent_set(T_Preference.closedFolders);
+	const w_closed = preferences.persistent_set(T_Preference.collapsed);
 
 	// The open/close triangle: the fat three-corner mark, pointing down when the
 	// folder is open, right when it's shut. 15 across.

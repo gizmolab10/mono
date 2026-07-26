@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { w_operation, T_Operation } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { w_operation, T_Operation } from '../../ts/managers/Operations';
 	import { refresh_llm_docs } from '../../ts/database/LLM_Docs';
 	import { debug } from '../../ts/common/Debug';
 

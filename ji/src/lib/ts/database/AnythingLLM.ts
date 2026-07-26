@@ -1,6 +1,13 @@
 import { preferences, T_Preference } from '../managers/Preferences';
 import { Exchange, EmbeddedDoc } from '../types/DB_Records';
 import { debug } from '../common/Debug';
+import { writable, get } from 'svelte/store';
+
+// True while AnythingLLM answers, false the moment a call can't reach it (the address is
+// dead, e.g. while the tunnel is being restarted). Set here, in the one place every call
+// goes through: reaching the server (any status) means reachable; a network failure (the
+// fetch itself throwing) means not. Views read it to show a "reconnecting" note.
+export const w_llm_reachable = writable<boolean>(true);
 
 // The transport to a locally-running AnythingLLM. The connection — base URL, API key,
 // workspace — lives in local preferences only, never in a build. When it isn't set,
@@ -36,6 +43,16 @@ async function ensure_base(): Promise<void> {
 		discovered_base = null; discovered_for = null;
 		debug.log(`AnythingLLM: could not read the address pointer — ${(e as Error).message}; using the stored URL instead.`);
 	}
+}
+
+// A call couldn't reach the server at all — the address is dead (the tunnel churned). Mark
+// the connection lost AND forget the cached address, so the next call re-reads the pointer
+// for a fresh one; without this ji would stay stuck on the dead address until a reload. The
+// log is only written on the drop, not on every retry while it's down.
+function on_unreachable(): void {
+	discovered_base = null; discovered_for = null;
+	if (get(w_llm_reachable)) { debug.log('AnythingLLM: connection lost — forgetting the address, will re-read the pointer for a fresh one.'); }
+	w_llm_reachable.set(false);
 }
 
 function config(): Config | null {
@@ -88,11 +105,18 @@ async function resolve_workspace(cfg: Config): Promise<string | null> {
 // One REST call to AnythingLLM, with the key attached. Throws on a non-ok status so the
 // callers below can log and return false without ever throwing themselves.
 async function call(cfg: Config, path: string, body: unknown, method = 'POST'): Promise<any> {
-	const response = await fetch(`${cfg.base}/api/v1${path}`, {
-		method,
-		headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${cfg.key}` },
-		body: body == null ? undefined : JSON.stringify(body),
-	});
+	let response: Response;
+	try {
+		response = await fetch(`${cfg.base}/api/v1${path}`, {
+			method,
+			headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${cfg.key}` },
+			body: body == null ? undefined : JSON.stringify(body),
+		});
+	} catch (e) {
+		on_unreachable();   // couldn't reach the server — mark lost and forget the dead address
+		throw e;
+	}
+	w_llm_reachable.set(true);        // the server answered (whatever the status)
 	if (!response.ok) { throw new Error(`${method} ${path} -> ${response.status} ${response.statusText}`); }
 	return response.status === 204 ? null : response.json();
 }
@@ -100,11 +124,18 @@ async function call(cfg: Config, path: string, body: unknown, method = 'POST'): 
 // Upload a real file (multipart), so it shows in AnythingLLM's own document picker.
 // No Content-Type header — the browser sets the multipart boundary itself.
 async function upload_file(cfg: Config, path: string, form: FormData): Promise<any> {
-	const response = await fetch(`${cfg.base}/api/v1${path}`, {
-		method: 'POST',
-		headers: { Authorization: `Bearer ${cfg.key}` },
-		body: form,
-	});
+	let response: Response;
+	try {
+		response = await fetch(`${cfg.base}/api/v1${path}`, {
+			method: 'POST',
+			headers: { Authorization: `Bearer ${cfg.key}` },
+			body: form,
+		});
+	} catch (e) {
+		on_unreachable();
+		throw e;
+	}
+	w_llm_reachable.set(true);
 	if (!response.ok) { throw new Error(`POST ${path} -> ${response.status} ${response.statusText}`); }
 	return response.json();
 }

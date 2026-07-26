@@ -10,20 +10,26 @@ import { writable } from 'svelte/store';
 
 export enum T_Preference {
 	// Layout
-	showDetails  	= 'showDetails',
 	detailsPreferencesOpen = 'detailsPreferencesOpen',
 	detailsDataOpen        = 'detailsDataOpen',
+	showDetails  	       = 'showDetails',
+	appMode                = 'appMode',
 
 	// Colors
 	accentColor     = 'accentColor',
 	textColor       = 'textColor',
 
 	// Content
-	current_op      = 'current_op',
 	viewDocument    = 'viewDocument',
-	closedFolders   = 'closedFolders',
+	current_op      = 'current_op',
 	tableTopId      = 'tableTopId',
+	collapsed       = 'collapsed',
 	families        = 'families',
+	showChatReplies = 'showChatReplies',
+
+	// Help
+	helpPage        = 'helpPage',
+	helpSidebar     = 'helpSidebar',
 
 	// Database
 	database         = 'database',

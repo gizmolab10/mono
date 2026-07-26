@@ -4,6 +4,7 @@
 	import { w_llm_docs } from '../../ts/database/LLM_Docs';
 	import { T_Storage } from '../../ts/types/DB_Records';
 	import { w_db_changed } from '../../ts/types/Signal';
+	import Separator from '../support/Separator.svelte';
 
 	// Trimmed port of ws's D_Data: a readout of the document store plus a storage
 	// db-storage hidden behind a clickable separator. ws showed graph-model counts,
@@ -65,10 +66,11 @@
 	<div class='row'><span class='label'>documents</span><span class='count'>{documents}</span></div>
 	<div class='row'><span class='label'>tags</span><span class='count'>{tags}</span></div>
 
-	<!-- The separator doubles as a clickable toggle for the storage db-storage. -->
-	<button class='separator' onclick={toggle_others}>
-		<span class='separator-label'>{$w_show_others ? 'less' : 'more'}</span>
-	</button>
+	<!-- The divider's title doubles as the more / less toggle for the storage controls.
+	     Wrapped to add a --gap of space below the divider. -->
+	<div class='sep-wrap'>
+		<Separator title={$w_show_others ? 'less' : 'more'} onclick={toggle_others} />
+	</div>
 
 	{#if $w_show_others}
 		<div class='db-controls'>
@@ -127,50 +129,14 @@
 		font-size : var(--font-label);
 	}
 
-	/* A full-width rule with the centered label floating over it; the label's
-	   background masks the line so it reads as text sitting on a broken line. */
-	.separator {
-		padding         : var(--pad-control);
-		background      : transparent;
-		position        : relative;
-		cursor          : pointer;
-		align-items     : center;
-		justify-content : center;
-		margin-top      : -3px;                /* nudge the rule (and all below) up 3px */
-		border          : none;
-		display         : flex;
-		width           : 100%;
-	}
-
-	.separator::before {
-		height     : var(--thickness-faint);
-		background : var(--black);
-		position   : absolute;
-		top        : 50%;
-		content    : '';
-		right      : 0;
-		left       : 0;
-	}
-
 	.sure {
 		flex       : 1;                        /* fill the space left of the buttons... */
 		text-align : center;                   /* ...and center the question within it */
 	}
 
-	.separator-label {
-		border        : var(--thickness-faint) solid var(--bg);
-		opacity    	  : var(--opacity-label);
-		font-size  	  : var(--font-label);
-		padding    	  : 0 var(--gap);
-		background 	  : var(--bg);
-		position   	  : relative;
-		border-radius : 999px;
-		opacity       : 1;
-	}
-
-	.separator:hover .separator-label {
-		border     : var(--thickness-faint) solid var(--black);
-		background : var(--white);
+	/* A --gap of space below the divider. */
+	.sep-wrap {
+		margin-bottom : var(--gap);
 	}
 
 	/* The db-storage is centered in the row; the erase control is pinned to the left. */

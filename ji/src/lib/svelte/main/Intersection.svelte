@@ -9,6 +9,7 @@
 	import buildsRaw from '../../md/builds.md?raw';
 	import BuildNotes from './BuildNotes.svelte';
 	import Controls from './Controls.svelte';
+	import Help from './Help.svelte';
 
 	// Both the view operation and the document it shows are persisted, so a reload
 	// returns to the same open document. If that document is gone (nothing picked, or
@@ -38,6 +39,12 @@
 	// Show-details is a persistent preference (survives reload), saved via the ported Preferences.
 	const w_show_details = preferences.persistent<boolean>(T_Preference.showDetails, false);
 	let showBuildNotes = $state(false);
+	// Which top-level thing is showing — the help overlay or the app itself. A named mode
+	// (not a boolean, whose true/false meaning was easy to flip), guarded to these two
+	// values. Persisted, and "help" by default, so a first-time visitor lands on the
+	// welcome page until they close it, which reveals the app.
+	type App_Mode = 'help' | 'app';
+	const w_app_mode = preferences.persistent<App_Mode>(T_Preference.appMode, 'help');
 
 	let wrap_phone = $derived(width < k.width.phone);
 	let detailsWidth = $derived(wrap_phone ? width - gap * 2 : k.width.details - gap * 2);
@@ -72,7 +79,9 @@
 <svelte:window onresize={handleResize} />
 
 
-{#if showBuildNotes}
+{#if $w_app_mode === 'help'}
+	<Help onclose={() => w_app_mode.set('app')} />
+{:else if showBuildNotes}
 	<div
 		role='button'
 		tabindex='-1'
@@ -87,7 +96,7 @@
 		style:width='{width}px'
 		style:height='{height}px'
 		style:background-color='var(--accent)'>
-		<Controls onclick={toggleDetails} />
+		<Controls onclick={toggleDetails} onHelp={() => w_app_mode.set('help')} />
 		<div class='panel'>
 			{#if $w_show_details}
 				<Details width={detailsWidth} {buildNumber} onBuildOpen={() => showBuildNotes = true} />

@@ -3,8 +3,9 @@
 # up (see com.ji.proxy.plist). It starts the proxy, starts the tunnel in front of it,
 # captures the tunnel's public address the moment it appears, writes it to a local
 # pointer (current-url.txt), and runs the optional publish hook so a fixed remote pointer
-# can be kept current. If the tunnel exits, this script exits and launchd restarts it —
-# a fresh address, re-published.
+# can be kept current. It then watches the whole chain — if either the proxy or the tunnel
+# stops, or the public address stops answering (a free tunnel can silently expire), this
+# script exits and launchd restarts it, so a fresh address gets captured and re-published.
 
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -45,8 +46,31 @@ if [ -n "$url" ]; then
 		URL="$url" sh -c "$PUBLISH_URL_CMD" || echo "[run] publish hook failed"
 	fi
 else
-	echo "[run] no tunnel address after 30s — check tunnel.log"
+	# No address means the free tunnel wouldn't start — often Cloudflare rate-limiting quick
+	# tunnels after too many were made too fast (a 429 in tunnel.log). Restarting straight away
+	# just asks for another and keeps the limit alive, so back off well before exiting. This
+	# turns a hammering ~30s retry into a gentle few-minutes one, letting the limit clear.
+	echo "[run] no tunnel address after 30s — likely rate-limited (see tunnel.log); backing off 3 minutes before restart"
+	sleep 180
+	exit 1
 fi
 
-# Stay alive as long as the tunnel does; when it drops, exit so launchd restarts us.
-wait "$TUNNEL_PID"
+# Stay up only while the whole chain is actually working. Every 5s: the proxy and the tunnel
+# must both still be running, and the public address must answer. The address check tolerates
+# blips — a free tunnel can be briefly slow — so it takes three misses in a row (~15s) to
+# count as dead; only then do we exit so launchd restarts us with a fresh, re-published
+# address. (A single slow probe used to cause needless restarts that churned the address.)
+misses=0
+while true; do
+	sleep 5
+	if ! kill -0 "$PROXY_PID" 2>/dev/null; then echo "[run] proxy exited — restarting"; exit 1; fi
+	if ! kill -0 "$TUNNEL_PID" 2>/dev/null; then echo "[run] tunnel exited — restarting"; exit 1; fi
+	if [ -z "$url" ]; then continue; fi
+	if curl -fsS -m 8 -o /dev/null "$url/health"; then
+		misses=0
+	else
+		misses=$((misses + 1))
+		echo "[run] tunnel address didn't answer (${misses}/3)"
+		if [ "$misses" -ge 3 ]; then echo "[run] tunnel address dead — restarting with a fresh one"; exit 1; fi
+	fi
+done

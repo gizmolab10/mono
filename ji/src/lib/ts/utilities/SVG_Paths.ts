@@ -76,6 +76,27 @@ export class SVG_Paths {
 		return 'M' + start.description + ' ' + arcs.join(' ') + 'Z';
 	}
 
+	// A cog centered on the middle of a `size`×`size` box (so rotating it spins in place,
+	// no wobble): flat-topped teeth stepped evenly around the circle, plus a round center
+	// hole shown by an even-odd fill. Render with viewBox `0 0 size size` and fill-rule
+	// evenodd. Defaults look gear-like; tune the tooth count if wanted.
+	gear(size: number, teeth: number = 7): string {
+		const c    = size / 2;
+		const ro   = size * 0.46;   // outer (tooth tip) radius
+		const ri   = size * 0.32;   // root radius between teeth
+		const hole = size * 0.14;   // center hole radius
+		const slice = (Math.PI * 2) / teeth;
+		const pt = (r: number, a: number) => `${(c + r * Math.cos(a)).toFixed(2)},${(c + r * Math.sin(a)).toFixed(2)}`;
+		const seg: string[] = [];
+		for (let i = 0; i < teeth; i++) {
+			const a = i * slice;
+			seg.push(pt(ri, a), pt(ro, a + slice * 0.15), pt(ro, a + slice * 0.35), pt(ri, a + slice * 0.5));
+		}
+		const body = 'M' + seg.join(' L') + ' Z';
+		const center_hole = ` M${(c + hole).toFixed(2)},${c} A${hole} ${hole} 0 1 0 ${(c - hole).toFixed(2)},${c} A${hole} ${hole} 0 1 0 ${(c + hole).toFixed(2)},${c} Z`;
+		return body + center_hole;
+	}
+
 	hamburger(size: number): string {
 		const w   = size * 0.8;
 		const h   = size * 0.125;

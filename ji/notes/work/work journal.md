@@ -2,6 +2,13 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-25 — a password screen sets up a new browser for the shared AI
+
+- **The problem it solves.** Pointing a new browser at the shared AI meant hand-editing two stored settings, quoted just so — easy to get wrong, and it leaves the share token lying in a settings screen. A native installer can't help: a program on the computer can't reach into a website's browser storage.
+- **A one-field setup screen instead.** When the AI store is active but this browser is missing the two settings (the address pointer and the share token), the app shows a single centered password box. Typing the word writes both settings — saved the right way, so the quoting mistake can't happen — reads back what the AI holds, and drops you to the list. A wrong word says "that isn't it" and clears the box.
+- **When it appears.** On opening the app already on the AI store, or on switching to it, if either setting is missing. Leaving the AI store drops the screen (it means nothing elsewhere).
+- **Honest limit.** The two settings and the password live in the build, so anyone who loads the site and types the word gets the share token — a low-stakes gate to keep casual visitors out, not a real secret.
+
 ## 2026-07-25 — every browser sees the AI's own documents, and its true count
 
 - **The gap.** A browser only knew about documents it had dropped itself — where each one lives in the AI is remembered per-browser. So a second computer, sharing the same AI, showed an empty document list and a count of zero, even though the AI held plenty.

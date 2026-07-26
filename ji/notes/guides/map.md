@@ -24,8 +24,10 @@ The intersection project's files. Update this when files are added, moved, or re
 - `operations/Chat.svelte` — stub for the chat operation (a running history of questions and answers over the store). Not built yet.
 - `operations/Manage_Tags.svelte` — stub for the manage-tags operation (rename, merge, remove tags across the store). Not built yet.
 - `operations/Initialize_LocalStorage.svelte` — the AI store's setup screen (the `init` operation): shown when the AI store is active but this browser lacks the two settings that reach the shared AnythingLLM (the address pointer and the share token). One centered password field; the right word (`suchness`) writes both settings — saved as quoted text, so the hand-editing mistake can't happen — reads what the AI holds, and drops to the list; a wrong word says so. The settings and the password ride in the build (a low-stakes gate, not a secret). The registry (`database/Databases.ts`) opens this screen on load or on switching to the AI store when either setting is missing, and drops it when leaving that store.
+- `support/Separator.svelte` — a colored divider (a thin accent bar, horizontal or vertical) with little rounded gussets at its ends so it meets a rounded panel cleanly; or, vertical-only, a growing spacer that just takes up room. Color from `--accent`; thickness and fillet radius are props. Its ends auto-extend by `reach` (default `var(--gap)`) so they land exactly on the inner edge of the app's `--gap` accent frame with no hand-tuning — override `reach` for a spot whose margin isn't the app gap. **⟵di** (trimmed: no color-store or layer deps; the manual overhang became the auto `reach`). Not wired in yet.
 - `support/ToolTip.svelte` — a hover hint that shows the instant the cursor arrives, drawn ourselves because the browser's own hover text waits a second and can't be hurried. Any element hands it the thing being pointed at and the words to show; it sits just below, runs as wide as it needs, and only nudges back off the window's right edge. Used by the drop box's family words.
 - `main/BuildNotes.svelte` — the build-history popup: a paged table read from the markdown data file, with close and up/down arrows.
+- `main/Help.svelte` — the help overlay (modeled on di's user guide), opened by the controls-row help button: a full-screen page over the app whose content is the markdown files under `src/lib/md/manual/`, pulled in at build (`../../md/manual/**/*.md`) and rendered with markdown-it. A hamburger-toggled sidebar lists the pages (a hand-set order first, the rest alphabetical), each page's title its first heading; clicking one shows it, an in-page link to another switches in place, a close cross or the Escape key shuts it. The open page and whether the sidebar shows are both saved. The frame (`main/Intersection.svelte`) shows it in place of the app while open.
 - `details/Details.svelte` — the collapsible details region: the preferences and data panels (no top banner). The frame passes the width. Also holds the "Build N" opener + author credit, pinned bottom-left (so they show only while details is open); it's passed the build number and an open callback.
 - `details/Hideable.svelte` — a collapsible titled banner. **⟵di** (trimmed: plain toggle, no di engine).
 - `details/D_Preferences.svelte` — the accent color picker, wired to Colors. **⟵di** (trimmed).
@@ -78,6 +80,14 @@ The ported plugin store, trimmed to ji's data. See [db spec](../work/db%20spec.m
 
 - `lib/md/builds.md` — the build-notes data table, read at runtime.
 - `md/Intersection.md` — project content doc.
+
+### lib/md/manual/ — the help pages
+
+The markdown behind the help overlay (`lib/svelte/main/Help.svelte`). Each file is one page; its title is its first heading.
+
+- `index.md` — the welcome ("hello, this is just the beginning").
+- `what's broken.md` — the current rough edges.
+- (an `images/` folder for pictures later, when the overlay grows to resolve them.)
 
 ## src/ other
 
