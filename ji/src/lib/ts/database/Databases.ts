@@ -83,3 +83,6 @@ export const databases = new Databases();
 export const w_hierarchy = databases.w_hierarchy;
 export let h: Hierarchy;
 w_hierarchy.subscribe((value) => { h = value; });
+
+// Which storage is active, reachable as `$w_storage` in a component.
+export const w_storage = databases.w_storage;

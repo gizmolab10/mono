@@ -3,7 +3,9 @@
 	import { w_operation, w_view_document, T_Operation, w_viewable_run, open_view, close_view } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { Document, T_DocumentFamily } from '../../ts/types/Document';
-	import { w_hierarchy } from '../../ts/database/Databases';
+	import { w_hierarchy, w_storage, databases } from '../../ts/database/Databases';
+	import { T_Storage, type EmbeddedDoc } from '../../ts/types/DB_Records';
+	import type { DB_LLM } from '../../ts/database/DB_LLM';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import Select_Tags from '../support/Select_Tags.svelte';
 	import { w_db_changed } from '../../ts/types/Signal';
@@ -59,6 +61,26 @@
 
 	let editing = $state<string | null>(null);      // which row's tag editor is open
 	let confirming = $state<string | null>(null);   // which row is asking for delete?
+
+	// What the AI workspace already holds, read back over the network — its own view, not
+	// local ji documents. Shown read-only below the table, only on the AI store, so a
+	// browser that dropped none of them can still see what's embedded. Not openable rows.
+	let embedded = $state<EmbeddedDoc[]>([]);
+	let embedded_loading = $state(false);
+	const on_ai_store = $derived($w_storage === T_Storage.llm);
+
+	// On the AI store, ask AnythingLLM what it holds — once, each time that store becomes
+	// active. A guard drops a stale answer if the store switched while the read was still
+	// in flight, so a slow read can't overwrite a newer store's list.
+	$effect(() => {
+		if (!on_ai_store) { embedded = []; return; }
+		let current = true;
+		embedded_loading = true;
+		(databases.active as DB_LLM).load_embedded()
+			.then((docs) => { if (current) { embedded = docs; debug.log(`Documents list: AI holds ${docs.length} embedded document(s).`); } })
+			.finally(() => { if (current) { embedded_loading = false; } });
+		return () => { current = false; };
+	});
 	let hovered_row = $state<string | null>(null);  // which row the cursor is over — tracked in code, not CSS :hover, so the per-row buttons (which stand a touch taller than the row) still count as "on the row"
 
 	const rows = $derived.by(() => {
@@ -444,6 +466,22 @@
 			</tbody>
 		</table>
 		</div>
+		</div>
+	{/if}
+	{#if on_ai_store && (embedded_loading || embedded.length > 0)}
+		<!-- What the AI already holds, read-only — not openable rows, so it sits apart
+		     from the table above. -->
+		<div class='embedded'>
+			<div class='embedded-title'>the AI holds{embedded.length > 0 ? ` ${embedded.length}` : ''}:</div>
+			{#if embedded_loading && embedded.length === 0}
+				<div class='embedded-note'>reading…</div>
+			{:else}
+				<ul class='embedded-list'>
+					{#each embedded as doc, i (i)}
+						<li title={doc.location}>{doc.name}</li>
+					{/each}
+				</ul>
+			{/if}
 		</div>
 	{/if}
 </div>
@@ -897,5 +935,35 @@
 
 	.row-danger:hover {
 		background : var(--hover);
+	}
+
+	/* A quiet, read-only list of what the AI workspace holds, shown below the table on
+	   the AI store. It sits apart from the rows above and never grows the view — it caps
+	   its height and scrolls on its own. */
+	.embedded {
+		flex-shrink : 0;
+		margin-top  : var(--gap);
+		max-height  : 120px;
+		overflow-y  : auto;
+		font-size   : var(--font-label);
+		color       : var(--text);
+	}
+
+	.embedded-title {
+		opacity       : var(--opacity-label);
+		margin-bottom : var(--gap-tight);
+	}
+
+	.embedded-note {
+		opacity : var(--opacity-label);
+	}
+
+	.embedded-list {
+		margin       : 0;
+		padding-left : var(--gap-fat);
+	}
+
+	.embedded-list li {
+		opacity : var(--opacity-label);
 	}
 </style>

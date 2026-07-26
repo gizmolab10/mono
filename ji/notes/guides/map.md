@@ -56,6 +56,8 @@ The ported plugin store, trimmed to ji's data. See [db spec](../work/db%20spec.m
 - `DB_Records.ts` — the five stored record shapes (Document, Tag, Tagging, Relationship, Predicate) plus the storage and record-kind lists. What a document *is* now lives in `types/Document.ts`; this file re-exports it for older imports.
 - `DB_Common.ts` — the persistence seam every storage fills its own way: read/write one record kind's whole list, and read/write/delete/clear the document bytes. Holds no records and no tree logic — those live on the Hierarchy that wraps it. A subclass only decides where the lists and the bytes actually live.
 - `DB_Local.ts` — the local storage: record lists in browser storage (namespaced per storage); document bytes in the browser's larger store by id — words as words, everything else as the file's own raw bytes, handed over without a copy. Erase deletes the whole byte-database so nothing survives under an old key, and says plainly when another open tab is blocking it.
+- `DB_LLM.ts` — the LLM ("AI") storage: everything the local storage does (it extends it, so records and bytes always live locally first and a drop never fails), plus a mirror to a running AnythingLLM — on save a text document's words are uploaded, on delete or erase they're removed. Binary kinds wait for the words-extraction pass before any upload. All AnythingLLM trouble is logged, never thrown.
+- `AnythingLLM.ts` — the one place that talks to AnythingLLM (directly on localhost, or through the thin proxy when off-mac). The connection (address, key, workspace) lives only in the browser's stored settings, never in the build; when it isn't set every call is a safe do-nothing. Finds or makes the workspace named in settings, uploads and embeds a document's words, removes one, asks a question and returns the answer plus the documents it drew from, and reads back the saved chat as newest-first exchanges. When settings hold a pointer link (see the `proxy/` folder), it reads that link once to learn the proxy's current address, with a cache-buster, and falls back to the stored address if the read fails.
 - `Databases.ts` — the registry: one live instance per storage, the active-storage store, the saved choice, the ring. Local only for now; the cloud slot is open. Also publishes the active store's tree two ways — `w_hierarchy` (a store, for `$w_hierarchy.X` in components) and the plain `h` (for ordinary code like Drop) — each changing only when the active store changes.
 - `Indexes.ts` — the in-memory lookups (tagging by tag id, tagging by document id, relationships by parent and by child) rebuilt on every change; source of the derived roots and untagged set.
 - `Persistence.ts` — the in-memory dirty-tracking manager (which record ids of each kind still need saving; the modify date lives on the Document itself). Named to free "Persistable" for the planned record base class — see [persistables plan](persistables%20proposal.md).
@@ -79,3 +81,14 @@ The ported plugin store, trimmed to ji's data. See [db spec](../work/db%20spec.m
 
 - `vite-env.d.ts` — Vite ambient types (lets `?raw` text imports typecheck).
 - `assets/icon.png` — app icon.
+
+## proxy/ — the key-holding server (runs on the mac, not shipped in the build)
+
+Lets a browser on any computer reach the mac's AnythingLLM without ever seeing its key. See [thin proxy proposal](../work/proposals/thin%20proxy%20proposal.md). Secrets live only in the gitignored `.env`.
+
+- `proxy.mjs` — the server: checks ji's share token, and on a match forwards only ji's own handful of AnythingLLM calls, swapping in the real key. Refuses every other request.
+- `run.sh` — the supervisor: starts the server and a free tunnel, reads the tunnel's current public address, and runs the publish step so the address reaches the pointer link.
+- `publish-url.sh` — writes the current address into the fixed pointer (a public gist) that ji reads to find the server.
+- `com.ji.proxy.plist` — the launch job that restarts the server and tunnel on reboot.
+- `package.json` — the `start` (run the server) and `serve` (run the supervisor) yarn scripts.
+- `.env.example`, `README.md` — the settings template and the run/wire notes.

@@ -49,8 +49,7 @@
               "title": "handoff"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -186,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/proposals/thin proxy proposal.md",
+                "file": "ji/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of thin proxy proposal"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -225,8 +224,15 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "a6cfa3414be067ed",
+  "active": "e12ef46c3c5f7c0a",
   "lastOpenFiles": [
+    "ji/src/lib/ts/database/DB_LLM.ts.tmp.39200.8f5081963fc4",
+    "ji/src/lib/ts/database/AnythingLLM.ts.tmp.39200.4265df030153",
+    "ji/notes/work/handoff.md",
+    "ji/notes/work/code debt.md",
+    "ji/notes/work/code debt.md.tmp.39200.95aab8d0f515",
+    "ji/notes/work/code debt.md.tmp.39200.e99d011b1e86",
+    "ji/notes/work/proposals/thin proxy proposal.md",
     "ji/src/lib/ts/database/AnythingLLM.ts.tmp.39200.af4c98c1a0d3",
     "ji/proxy/publish-url.sh",
     "ji/proxy/current-url.txt",
@@ -234,14 +240,7 @@
     "ji/proxy/run.log",
     "ji/proxy/README.md.tmp.39200.682f7ab66fc0",
     "ji/proxy/package.json",
-    "ji/proxy/com.ji.proxy.plist",
-    "ji/proxy/run.sh",
-    "ji/proxy/run.sh.tmp.39200.edcf73a5e3f8",
     "ji/proxy/README.md",
-    "ji/proxy/proxy.mjs",
-    "ji/notes/work/handoff.md",
-    "ji/notes/work/proposals/thin proxy proposal.md",
-    "ji/notes/work/code debt.md",
     "ji/notes/work/working features.md",
     "ji/notes/work/work journal.md",
     "ji/notes/work/chat history proposal.md",

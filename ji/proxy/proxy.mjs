@@ -34,6 +34,7 @@ if (!ANYTHINGLLM_KEY || !PROXY_TOKEN) {
 // path is matched without its query string; the query rides along when forwarded.
 const ALLOW = [
 	{ method: 'GET',    re: /^\/api\/v1\/workspaces$/ },                         // find the workspace
+	{ method: 'GET',    re: /^\/api\/v1\/workspace\/[^/]+$/ },                   // read its embedded documents
 	{ method: 'POST',   re: /^\/api\/v1\/workspace\/new$/ },                     // make the workspace
 	{ method: 'POST',   re: /^\/api\/v1\/document\/upload$/ },                   // upload a document's words
 	{ method: 'POST',   re: /^\/api\/v1\/workspace\/[^/]+\/update-embeddings$/ },// embed / un-embed it

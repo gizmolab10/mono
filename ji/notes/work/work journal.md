@@ -2,6 +2,16 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-25 — a thin proxy lets any browser reach the mac's AnythingLLM
+
+- **The problem.** AnythingLLM runs only on the mac, and its key can't be put in a browser build (anyone could read it). So a deployed ji, in a browser on another computer, had no safe way to reach it.
+- **A small server holds the key; the browser holds a separate token.** A tiny server on the mac keeps the AnythingLLM address and key. ji sends it a different shared token, which the server checks; if it matches, the server swaps in the real key and forwards only ji's own handful of calls (add a document, ask, read the chat, and so on) — nothing else gets through. So the browser never sees the real key.
+- **Reached from anywhere through a free tunnel.** The mac sits behind a home router, so a free tunnel gives the server a public web address without touching the router. That address changes every time the tunnel restarts.
+- **A fixed pointer solves the changing address.** The server writes its current address into one unchanging link (a public gist). ji reads that link to learn where the server is right now (asking fresh each time, since the link is served through a short cache). So the address can churn freely and ji still finds it.
+- **It survives a reboot.** A launch job restarts the server and the tunnel on their own, and the server republishes its new address to the pointer on every start.
+- **Two computers, one shared workspace.** Because every ji store defaults to the workspace named "intersection", two browsers on different computers now share one AnythingLLM workspace — the same questions, answers, and embedded documents. Only the document *list* stays per-browser (that list has never traveled through the proxy). Proven end-to-end: a second computer, given the pointer link and the share token in its stored settings, read the same chat history.
+- **Setup, in plain steps.** On the browser side, two stored settings turn it on — the pointer link and the share token — both saved as quoted text (a bare, unquoted value reads as nothing and silently fails to connect). Full design and the newcomer setup steps are in [thin proxy proposal](proposals/thin%20proxy%20proposal.md).
+
 ## 2026-07-25 — folders show a count, and a few smaller touches
 
 - **A folder tells you how much it holds.** In place of the "---" its format cell used to draw, a folder now shows how many things sit under it — files and subfolders — after the current filter, counting the ones on screen plus whatever a shut fold is hiding. The filter runs over the whole tree, so a shut folder still shows its full matching count, and with nothing filtered it's the folder's entire nested total. It's read straight from the already-filtered rows, so it follows the search.

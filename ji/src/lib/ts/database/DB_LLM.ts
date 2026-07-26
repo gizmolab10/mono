@@ -1,4 +1,4 @@
-import { T_Storage } from '../types/DB_Records';
+import { T_Storage, T_Record, EmbeddedDoc } from '../types/DB_Records';
 import { anything_llm } from './AnythingLLM';
 import { debug } from '../common/Debug';
 import { DB_Local } from './DB_Local';
@@ -17,11 +17,34 @@ export class DB_LLM extends DB_Local {
 		debug.log(`LLM store: local backend (namespaced "LLM"); AnythingLLM is ${anything_llm.configured() ? 'set up' : 'not set up yet'}.`);
 	}
 
+	// Reading the local record lists is unchanged (synchronous, per kind). But when the
+	// document list is asked for, also kick off a read of what AnythingLLM already holds —
+	// it's a network fetch, so it can't be waited on here; it runs on its own and logs its
+	// count. The local list is returned right away, as always. (Turning those embedded
+	// names into openable rows is the separate, larger step.)
+	load_list<T>(record: T_Record): T[] {
+		if (record === T_Record.documents) {
+			this.load_embedded().catch(() => { /* the fetch logs its own trouble */ });
+		}
+		return super.load_list<T>(record);
+	}
+
+	// Read back the documents AnythingLLM already holds for this store's workspace — its
+	// own view (a readable name and the location a remove uses), not local ji documents.
+	// So a fresh browser can show what's embedded even though it dropped none of it. This
+	// is separate from load_list (which reads the local record lists synchronously): this
+	// call reaches over the network, so it's async and hands back its own summary list.
+	async load_embedded(): Promise<EmbeddedDoc[]> {
+		const docs = await anything_llm.get_documents();
+		debug.log(`LLM store: workspace holds ${docs.length} embedded document(s).`);
+		return docs;
+	}
+
 	// Store the bytes locally first (never lost), then — only when the content is words
 	// (a text document arrives as a string) — push them to AnythingLLM. Any upload trouble
 	// is logged inside the client and never thrown, so the save always completes.
 	async write_blob(document_id: string, content: string | Blob, name?: string): Promise<void> {
-		await super.write_blob(document_id, content);
+		// await super.write_blob(document_id, content);
 		if (typeof content === 'string') {
 			await anything_llm.put_words(document_id, content, name);
 		} else {

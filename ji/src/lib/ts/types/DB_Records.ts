@@ -53,3 +53,10 @@ export interface Exchange {
 	sources  : string[];   // the names of the documents the reply drew from
 	time     : number;
 }
+
+// One document AnythingLLM already holds in the workspace, as read back from it (not a
+// local ji document): a readable name, and the storage location ji removes it by.
+export interface EmbeddedDoc {
+	name     : string;
+	location : string;
+}

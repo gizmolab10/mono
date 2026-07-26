@@ -1,5 +1,5 @@
 import { preferences, T_Preference } from '../managers/Preferences';
-import { Exchange } from '../types/DB_Records';
+import { Exchange, EmbeddedDoc } from '../types/DB_Records';
 import { debug } from '../common/Debug';
 
 // The transport to a locally-running AnythingLLM. The connection — base URL, API key,
@@ -238,6 +238,40 @@ export const anything_llm = {
 			return exchanges;
 		} catch (e) {
 			debug.log(`AnythingLLM: reading exchanges failed — ${(e as Error).message}.`);
+			return [];
+		}
+	},
+
+	// Read back the documents the workspace already holds — AnythingLLM's own view, not
+	// ji's local list — so a fresh browser can show what's embedded. Each document's
+	// readable name comes from its stored details (its title), falling back to the raw
+	// filename; its location is the same string a remove uses. Returns [] on any failure
+	// (logged). NOTE: read-only — these are not openable ji documents (their bytes live in
+	// whatever browser first dropped them).
+	async get_documents(): Promise<EmbeddedDoc[]> {
+		await ensure_base();
+		const cfg = config();
+		if (!cfg) { debug.log('AnythingLLM not set up — no documents to read.'); return []; }
+		const slug = await resolve_workspace(cfg);
+		if (!slug) { return []; }
+		try {
+			const result = await call(cfg, `/workspace/${slug}`, null, 'GET');
+			// The detail read answers with the workspace wrapped in a one-item list.
+			const workspace = Array.isArray(result?.workspace) ? result.workspace[0] : result?.workspace;
+			const held: any[] = workspace?.documents ?? [];
+			const docs: EmbeddedDoc[] = held.map((d: any) => {
+				let name = String(d.filename ?? '');
+				try {
+					// The readable title lives inside a details string on each document.
+					const meta = JSON.parse(d.metadata ?? '{}');
+					if (meta?.title) { name = String(meta.title); }
+				} catch { /* keep the raw filename when the details won't parse */ }
+				return { name, location: String(d.docpath ?? '') };
+			});
+			debug.log(`AnythingLLM: read ${docs.length} embedded document(s) from the workspace.`);
+			return docs;
+		} catch (e) {
+			debug.log(`AnythingLLM: reading documents failed — ${(e as Error).message}.`);
 			return [];
 		}
 	},

@@ -4,9 +4,14 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] thin proxy
+- [ ] add fetch documents to anything llm ts file
+- [ ] store tags in allm?
+- [ ] write a tiny standalone executable that installs the two local storage llm values
+    - [ ] for mac
+    - [ ] for windows
+- [ ] shrink the insets at outside edges of controls and details bottom row
+    - [ ] when responses are hidden in chat, remove the right-side gap
 - [ ] merge constants -> configuration
-- [ ] shrink the insets at corners of app
 - [ ] write a zsh script that installs and configures
     - [ ] Docker
     - [ ] Qwen
@@ -40,6 +45,7 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] thin proxy — a small key-holding server on the mac forwards only ji's own calls to AnythingLLM, reached from any off-mac browser through a free tunnel. The browser never sees the AnythingLLM key: it sends a separate share token the server checks, and the server swaps in the real key. The tunnel's address changes each restart, so the server writes its current address to a fixed pointer link (a public gist) and ji reads that pointer to find the address (with a cache-buster, since the pointer is served through a short cache). The server survives a reboot (a launch job that restarts it and the tunnel), and it publishes its new address to the pointer on every start. Two browsers on different computers now share one AnythingLLM workspace (ji defaults every store to the workspace named "intersection"); only the document list stays per-browser. Verified end-to-end: a second computer, given the pointer link and the share token in its stored settings, reads the same chat history. Design in [thin proxy proposal](proposals/thin%20proxy%20proposal.md).
 - [x] table row -> folders show number of progeny (instead of ---) — a folder's format cell shows the count of its nested items (files and subfolders) that match the active filter, on screen plus whatever a shut fold is hiding; the filter runs over the full walk, so a shut folder still shows its whole matching count, and with no filter it's the folder's entire nested total. Derived from the filtered rows, so it follows the search. Alongside: clicking the drop box or the open document returns to the list; the viewer's step triangles hide when fewer than two showable files are on screen; the chat's exchange spacing shows only under collapsed answers, and the "chat" segment grays out off the AI store.
 - [x] create DB_LLM (phase A) — its own backend, the local store under the "LLM" namespace (no AnythingLLM yet); the registry builds it for the LLM storage. Phases B (mirror to AnythingLLM) and C (ask) still open — see [llm_proposal](llm_proposal.md)
     - [x] implement write_blob and its underpinnings
