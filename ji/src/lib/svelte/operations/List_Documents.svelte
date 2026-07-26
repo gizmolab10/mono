@@ -3,9 +3,9 @@
 	import { w_operation, w_view_document, T_Operation, w_viewable_run, open_view, close_view } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { Document, T_DocumentFamily } from '../../ts/types/Document';
-	import { w_hierarchy, w_storage, databases } from '../../ts/database/Databases';
-	import { T_Storage, type EmbeddedDoc } from '../../ts/types/DB_Records';
-	import type { DB_LLM } from '../../ts/database/DB_LLM';
+	import { w_hierarchy, w_storage } from '../../ts/database/Databases';
+	import { w_llm_docs, w_llm_docs_loading } from '../../ts/database/LLM_Docs';
+	import { T_Storage } from '../../ts/types/DB_Records';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import Select_Tags from '../support/Select_Tags.svelte';
 	import { w_db_changed } from '../../ts/types/Signal';
@@ -62,25 +62,11 @@
 	let editing = $state<string | null>(null);      // which row's tag editor is open
 	let confirming = $state<string | null>(null);   // which row is asking for delete?
 
-	// What the AI workspace already holds, read back over the network — its own view, not
-	// local ji documents. Shown read-only below the table, only on the AI store, so a
-	// browser that dropped none of them can still see what's embedded. Not openable rows.
-	let embedded = $state<EmbeddedDoc[]>([]);
-	let embedded_loading = $state(false);
+	// What the AI workspace already holds — read app-wide into a shared store (filled when
+	// the AI store becomes active and after this browser adds or removes one), so the list
+	// and the data readout show the same number. Shown read-only below the table, only on
+	// the AI store; these are not openable rows.
 	const on_ai_store = $derived($w_storage === T_Storage.llm);
-
-	// On the AI store, ask AnythingLLM what it holds — once, each time that store becomes
-	// active. A guard drops a stale answer if the store switched while the read was still
-	// in flight, so a slow read can't overwrite a newer store's list.
-	$effect(() => {
-		if (!on_ai_store) { embedded = []; return; }
-		let current = true;
-		embedded_loading = true;
-		(databases.active as DB_LLM).load_embedded()
-			.then((docs) => { if (current) { embedded = docs; debug.log(`Documents list: AI holds ${docs.length} embedded document(s).`); } })
-			.finally(() => { if (current) { embedded_loading = false; } });
-		return () => { current = false; };
-	});
 	let hovered_row = $state<string | null>(null);  // which row the cursor is over — tracked in code, not CSS :hover, so the per-row buttons (which stand a touch taller than the row) still count as "on the row"
 
 	const rows = $derived.by(() => {
@@ -253,10 +239,14 @@
 	});
 
 	// With no documents to show, open the drop box so the first one can be added.
-	// The guard stops this from re-firing once the drop box is already up.
+	// The guard stops this from re-firing once the drop box is already up. But on the AI
+	// store, hold on the list while the AI's own documents are still being read, or once
+	// any are found — so a browser with nothing local still sees what the AI holds instead
+	// of being bounced to the drop box.
 	$effect(() => {
-		if (rows.length === 0 && $w_operation !== T_Operation.drop) {
-			debug.log('No documents in the store — opening the drop box to add the first one.');
+		const ai_holds = on_ai_store && ($w_llm_docs_loading || $w_llm_docs.length > 0);
+		if (rows.length === 0 && !ai_holds && $w_operation !== T_Operation.drop) {
+			debug.log(`No documents to show (local rows 0, AI holds ${on_ai_store ? $w_llm_docs.length : 'n/a'}) — opening the drop box to add the first one.`);
 			w_operation.set(T_Operation.drop);
 		}
 	});
@@ -468,16 +458,16 @@
 		</div>
 		</div>
 	{/if}
-	{#if on_ai_store && (embedded_loading || embedded.length > 0)}
+	{#if on_ai_store && ($w_llm_docs_loading || $w_llm_docs.length > 0)}
 		<!-- What the AI already holds, read-only — not openable rows, so it sits apart
 		     from the table above. -->
 		<div class='embedded'>
-			<div class='embedded-title'>the AI holds{embedded.length > 0 ? ` ${embedded.length}` : ''}:</div>
-			{#if embedded_loading && embedded.length === 0}
+			<div class='embedded-title'>the AI holds{$w_llm_docs.length > 0 ? ` ${$w_llm_docs.length}` : ''}:</div>
+			{#if $w_llm_docs_loading && $w_llm_docs.length === 0}
 				<div class='embedded-note'>reading…</div>
 			{:else}
 				<ul class='embedded-list'>
-					{#each embedded as doc, i (i)}
+					{#each $w_llm_docs as doc, i (i)}
 						<li title={doc.location}>{doc.name}</li>
 					{/each}
 				</ul>

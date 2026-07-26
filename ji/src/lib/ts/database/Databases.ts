@@ -2,6 +2,7 @@ import { w_operation, T_Operation } from '../managers/Operations';
 import { preferences, T_Preference } from '../managers/Preferences';
 import { Hierarchy } from '../managers/Hierarchy';
 import { T_Storage } from '../types/DB_Records';
+import { refresh_llm_docs, clear_llm_docs } from './LLM_Docs';
 import { db_changed } from '../types/Signal';
 import type { Writable } from 'svelte/store';
 import { writable, get } from 'svelte/store';
@@ -39,6 +40,9 @@ class Databases {
 		this.w_storage   = writable<T_Storage>(saved);
 		this.active      = store.db;
 		this.w_hierarchy = writable<Hierarchy>(store.hierarchy);
+		// On the AI store, read back what AnythingLLM holds so the count is right from the
+		// first paint, whatever view is showing.
+		if (saved === T_Storage.llm) { refresh_llm_docs(); }
 	}
 
 	// One live backend-and-tree per storage, built on first use.
@@ -60,6 +64,9 @@ class Databases {
 		preferences.write(T_Preference.database, storage);
 		this.w_storage.set(storage);
 		this.w_hierarchy.set(store.hierarchy);   // the active store's tree changed
+		// Switching onto the AI store reads back what AnythingLLM holds; leaving it forgets
+		// those, so another store never shows the AI's count.
+		if (storage === T_Storage.llm) { refresh_llm_docs(); } else { clear_llm_docs(); }
 		// "ask" only works on the LLM store — leaving it drops the user back to the list.
 		if (storage !== T_Storage.llm && get(w_operation) === T_Operation.chat) {
 			w_operation.set(T_Operation.list);

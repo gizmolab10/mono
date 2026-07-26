@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { databases, w_hierarchy } from '../../ts/database/Databases';
+	import { w_llm_docs } from '../../ts/database/LLM_Docs';
 	import { T_Storage } from '../../ts/types/DB_Records';
 	import { w_db_changed } from '../../ts/types/Signal';
 
@@ -21,9 +22,14 @@
 
 	// Pure derived counts — recomputed on every store change (a save or a storage
 	// switch bumps the tick). No write-inside-effect, so nothing can loop.
-	const documents    = $derived.by(() => { $w_db_changed; return $w_hierarchy.documents.length; });
-	const tags         = $derived.by(() => { $w_db_changed; return $w_hierarchy.tags.length; });
-	const db_adjective = $derived.by(() => { $w_db_changed; return derive_adjective(); });
+	const local_documents = $derived.by(() => { $w_db_changed; return $w_hierarchy.documents.length; });
+	const tags            = $derived.by(() => { $w_db_changed; return $w_hierarchy.tags.length; });
+	const db_adjective    = $derived.by(() => { $w_db_changed; return derive_adjective(); });
+
+	// The documents count shown: on the AI store it's what AnythingLLM actually holds
+	// (pulled app-wide into a shared store, so it's right on every machine, not only the
+	// one that dropped the files); every other store shows its own local count.
+	const documents = $derived($w_storage === T_Storage.llm ? $w_llm_docs.length : local_documents);
 
 	function choose(storage: T_Storage) {
 		if (!built.has(storage)) {
@@ -73,7 +79,7 @@
 					<span class='sure'>erase {db_adjective} data?</span>
 				</div>
 			{:else}
-				{#if documents > 0}
+				{#if local_documents > 0}
 					<button class='erase' title='erase all data' onclick={ask_erase}>
 						<svg class='erase-bin' viewBox='0 0 24 24'>
 							<path d='M4 6 H20 M9 6 V4 H15 V6 M6 6 L7 20 H17 L18 6 M10 10 V17 M14 10 V17'

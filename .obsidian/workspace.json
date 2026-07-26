@@ -226,6 +226,8 @@
   },
   "active": "e12ef46c3c5f7c0a",
   "lastOpenFiles": [
+    "ji/src/lib/ts/database/DB_LLM.ts.tmp.39200.be8987ee3a43",
+    "ji/src/lib/ts/database/LLM_Docs.ts",
     "ji/src/lib/ts/database/DB_LLM.ts.tmp.39200.8f5081963fc4",
     "ji/src/lib/ts/database/AnythingLLM.ts.tmp.39200.4265df030153",
     "ji/notes/work/handoff.md",
@@ -238,8 +240,6 @@
     "ji/proxy/current-url.txt",
     "ji/proxy/tunnel.log",
     "ji/proxy/run.log",
-    "ji/proxy/README.md.tmp.39200.682f7ab66fc0",
-    "ji/proxy/package.json",
     "ji/proxy/README.md",
     "ji/notes/work/working features.md",
     "ji/notes/work/work journal.md",
