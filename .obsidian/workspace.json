@@ -63,8 +63,7 @@
               "title": "index"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "vertical"
@@ -121,7 +120,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 354.5026054382324
+    "width": 354.5026054382324,
+    "collapsed": true
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -199,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/src/lib/md/manual/index.md",
+                "file": "ji/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of index"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -223,7 +223,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 352.5
+    "width": 352.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -237,8 +238,9 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "cda470ea7a48dc42",
+  "active": "abe0d848a5fe3e12",
   "lastOpenFiles": [
+    "ji/src/lib/md/manual/index.md",
     "ji/src/lib/svelte/operations/Chat.svelte.tmp.39200.20b00b6ead3a",
     "ji/src/lib/svelte/support/Separator.svelte.tmp.39200.34665e00b1fe",
     "ji/src/lib/svelte/operations/List_Documents.svelte.tmp.39200.6defab06dfcd",
@@ -253,8 +255,6 @@
     "ji/src/lib/svelte/operations/Chat.svelte.tmp.39200.1f748234440a",
     "ji/src/lib/ts/database/Databases.ts.tmp.39200.27eded728dde",
     "ji/src/lib/svelte/operations/Chat.svelte.tmp.39200.0e181823e7e2",
-    "ji/src/lib/ts/database/AnythingLLM.ts.tmp.39200.7f6ce4936f36",
-    "ji/src/lib/md/manual/index.md",
     "ji/src/lib/md/manual/what's broken.md",
     "ji/notes/work/Minimum Viable INTERSECTION app.md",
     "ji/src/lib/md/md/index.md",

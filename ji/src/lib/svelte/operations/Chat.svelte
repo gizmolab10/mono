@@ -52,20 +52,28 @@
 		was_reachable = reachable;
 	});
 
+	// The question-and-answer being written right now: the answer grows word by word as the
+	// model streams it, shown at the top of the conversation until it's stored and reloaded.
+	let pending = $state<{ question: string; reply: string } | null>(null);
+
 	async function ask() {
 		const q = question.trim();
 		if (!q || asking) { return; }
 		asking = true; error = null;
-		debug.log(`Chat: asking "${q}".`);
-		const result = await anything_llm.ask(q);
+		pending = { question: q, reply: '' };
+		question = '';
+		debug.log(`Chat: asking "${q}" (streaming).`);
+		const result = await anything_llm.ask_stream(q, (word) => {
+			if (pending) { pending = { question: pending.question, reply: pending.reply + word }; }
+		});
 		asking = false;
+		pending = null;
 		if (!result) {
 			error = "Couldn't reach the model — is AnythingLLM set up and its model running?";
-			debug.log('Chat: ask failed — model unreachable.');
+			debug.log('Chat: streaming ask failed — model unreachable.');
 			return;
 		}
-		question = '';
-		await load();   // the new exchange is now stored — refresh to show it at the top
+		await load();   // the finished exchange is now stored — refresh to show it with its sources
 	}
 
 	function on_key(event: KeyboardEvent) {
@@ -109,9 +117,13 @@
 		</div>
 	{:else}
 		<div class='ask-row'>
-			<input class='ask-input' type='text' placeholder='ask a question'
+			{#if asking}
+				<svg class='gear' viewBox='0 0 {GEAR_BOX} {GEAR_BOX}' aria-hidden='true'><path d={gearPath} fill-rule='evenodd' /></svg>
+			{:else}
+				<button class='ask-go' onclick={ask} disabled={!question.trim()}>ask</button>
+			{/if}
+			<input class='ask-input' type='search' placeholder='ask a question'
 				bind:value={question} onkeydown={on_key} disabled={asking} />
-			<button class='ask-go' onclick={ask} disabled={asking || !question.trim()}>{asking ? '…' : 'ask'}</button>
 		</div>
 
 		{#if error}
@@ -123,6 +135,12 @@
 		{/if}
 
 		<div class='conversation'>
+			{#if pending}
+				<div class='exchange'>
+					<div class='question pending-question'><span class='q-text'>{pending.question}</span></div>
+					<div class='answer'>{pending.reply}</div>
+				</div>
+			{/if}
 			{#each exchanges as ex, i (i)}
 				<div class='exchange' class:collapsed={collapsed.has(ex.time)}>
 					<button class='question' onclick={() => toggle_one(ex.time)} title={collapsed.has(ex.time) ? 'show answer' : 'hide answer'}>
@@ -294,6 +312,12 @@
 		cursor          : pointer;
 		display         : flex;
 		text-align      : left;
+	}
+
+	/* The question being answered right now reads the same as a stored one, but isn't a
+	   button — nothing to collapse yet. */
+	.pending-question {
+		cursor : default;
 	}
 
 	/* Let the question text take the room and wrap, even a long unbroken key, so a wide

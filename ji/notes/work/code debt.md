@@ -4,38 +4,25 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] add a "drop here ..." message in front of upper hr in list documents
-- [ ] write a help page
-    - [ ] landing page
-    - [ ] who are you?
-    - [ ] what's broken?
-- [ ] prime directive
-    - [ ] trigger on each put
-- [ ] hide intersection when screen too narrow
-- [ ] port separators from di
-    - [ ] make them easy to plug and play
 - [ ] shrink the insets at outside edges
     - [ ] controls and details bottom row
     - [ ] chat -> remove the right-side gap
         - [ ] when responses are hidden
+- [ ] hide 'intersection' **title** when screen too narrow
 - [ ] chats
-    - [ ] line above
-    - [ ] softer color half wsay between accent and bg
-- [ ] ask button
-    - [ ] move -> far left
-    - [ ] change to a spinning gear
-    - [ ] is there a way to guess how long a reply will take?
-- [ ] button to mark question as hidden/visible
-    - [ ] show/hide hidden questions
-    - [ ] button to delete hidden question
-- [ ] auto update from allm?
+    - [ ] q pill bg color -> softer color half way between accent and bg
+    - [ ] button on each question to mark it as hidden/visible
+        - [ ] show/hide hidden questions
+        - [ ] button to delete hidden question
+    - [ ] grab the relevant file refs and clips
+        - [ ] show them -> clips highlighted within (w op =) view document
 - [ ] sideband storage in allm
     - [ ] tags
     - [ ] messages channel
-- [ ] merge drop -> list
-    - [ ] dashed border with text overlay along top
-        - [ ] "drop files or folders here"
-        - [ ] status/dialog gos where?
+- [ ] set op to list -> very, very slow
+- [ ] debug.log
+    - [ ] should do nothing when not launched on localhost
+    - [ ] list the cruft, move it to work journal? or somewhere else
 - [ ] merge constants -> configuration
 - [ ] build into ji -> install and configure
     - [ ] WSL on windows
@@ -43,10 +30,8 @@ write a proposal for the first unchecked item to the top of handoff.
     - [ ] Qwen
     - [ ] AnythingLLM
     - [ ] configure -> automatic and manual 
-- [ ] set op to list -> very, very slow
-- [ ] debug.log
-    - [ ] should do nothing when not launched on localhost
-    - [ ] list the cruft, move it to work journal? or somewhere else
+- [ ] prime directive
+    - [ ] trigger on each put
 - [ ] add remote support
     - [ ] supabase not firebase
     - [ ] use person's id
@@ -70,6 +55,22 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] auto update from allm?
+- [x] merge drop -> list
+    - [x] dashed border with text overlay along top
+        - [x] "drop files or folders here"
+        - [x] status/dialog gos where?
+- [x] ask button
+    - [x] move -> far left
+    - [x] change to a spinning gear
+    - [x] is there a way to guess how long a reply will take?
+- [x] add a "drop here ..." message in front of upper hr in list documents
+- [x] write a help page
+    - [x] landing page
+    - [x] who are you?
+    - [x] what's broken?
+- [x] port separators from di
+    - [x] make them easy to plug and play
 - [x] the AI store's password-gated setup screen (`init` operation) — when the AI store is active but this browser lacks the two settings that reach the shared AnythingLLM (the address pointer and the share token), the app opens a screen with one centered password field. The right word ("suchness") writes both settings (saved as quoted text, so the hand-editing mistake can't happen), re-reads what the AI holds, and drops to the list; a wrong word says so and clears. The registry opens the screen on load or on switching to the AI store when either setting is missing, and drops it when leaving that store. The settings and the password ride in the build — a low-stakes gate, not a secret.
 - [x] add fetch documents to the AnythingLLM file — a read that asks AnythingLLM what the workspace already holds (each document's readable name plus the location a remove uses). Pulled app-wide into one shared readout, filled whenever the AI store becomes active and after this browser adds, removes, or erases one (a running number drops a stale read if a newer one started), so the number is right on every machine, not only the one that dropped the files. The data readout's "documents" count reflects it on the AI store (the local count still gates the erase button). The documents table shows the AI's own documents as read-only rows — "AI" in the format cell, dimmed, no open/edit/delete, since their bytes aren't on this browser — leaving out any the local table already lists by name so a file dropped here isn't doubled; the name search narrows them, a tag or family filter hides them. The workspace-detail read was added to the proxy's allowed calls (restart needed) so the off-mac path works. Superseded the earlier list-view-only fetch.
 - [x] thin proxy — a small key-holding server on the mac forwards only ji's own calls to AnythingLLM, reached from any off-mac browser through a free tunnel. The browser never sees the AnythingLLM key: it sends a separate share token the server checks, and the server swaps in the real key. The tunnel's address changes each restart, so the server writes its current address to a fixed pointer link (a public gist) and ji reads that pointer to find the address (with a cache-buster, since the pointer is served through a short cache). The server survives a reboot (a launch job that restarts it and the tunnel), and it publishes its new address to the pointer on every start. Two browsers on different computers now share one AnythingLLM workspace (ji defaults every store to the workspace named "intersection"); only the document list stays per-browser. Verified end-to-end: a second computer, given the pointer link and the share token in its stored settings, reads the same chat history. Design in [thin proxy proposal](proposals/thin%20proxy%20proposal.md).

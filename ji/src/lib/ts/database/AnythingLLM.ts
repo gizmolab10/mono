@@ -200,6 +200,73 @@ export const anything_llm = {
 		}
 	},
 
+	// Ask the workspace a question and receive the answer live — each piece is handed to
+	// `on_word` the instant it arrives (the server pushes; ji never polls), and the finished
+	// answer plus the documents it drew from come back when the stream closes. Returns null
+	// on any failure (logged), so the caller can fall back to the all-at-once ask. "query"
+	// mode keeps the answer grounded in the embedded documents.
+	async ask_stream(question: string, on_word: (word: string) => void): Promise<{ answer: string; sources: string[] } | null> {
+		await ensure_base();
+		const cfg = config();
+		if (!cfg) { debug.log('AnythingLLM not set up — cannot ask.'); return null; }
+		const slug = await resolve_workspace(cfg);
+		if (!slug) { return null; }
+		let response: Response;
+		try {
+			response = await fetch(`${cfg.base}/api/v1/workspace/${slug}/stream-chat`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${cfg.key}` },
+				body: JSON.stringify({ message: question, mode: 'query' }),
+			});
+		} catch (e) {
+			on_unreachable();   // couldn't reach the server — mark lost and forget the dead address
+			debug.log(`AnythingLLM: streaming ask couldn't reach the server — ${(e as Error).message}.`);
+			return null;
+		}
+		w_llm_reachable.set(true);
+		if (!response.ok || !response.body) {
+			debug.log(`AnythingLLM: streaming ask -> ${response.status} ${response.statusText} (no live body).`);
+			return null;
+		}
+		// Read the stream piece by piece. Each "data:" line is one JSON packet carrying a bit
+		// of the answer (or the closing packet with the sources). A packet can split across
+		// reads, so hold the leftover text and only act on whole lines.
+		const reader  = response.body.getReader();
+		const decoder = new TextDecoder();
+		let buffer = '';
+		let answer = '';
+		let pieces = 0;
+		const seen = new Set<string>();
+		const sources: string[] = [];
+		try {
+			for (;;) {
+				const { value, done } = await reader.read();
+				if (done) { break; }
+				buffer += decoder.decode(value, { stream: true });
+				let nl: number;
+				while ((nl = buffer.indexOf('\n')) >= 0) {
+					const line = buffer.slice(0, nl).trim();
+					buffer = buffer.slice(nl + 1);
+					if (!line.startsWith('data:')) { continue; }
+					const payload = line.slice(5).trim();
+					if (!payload || payload === '[DONE]') { continue; }
+					let packet: any;
+					try { packet = JSON.parse(payload); } catch { continue; }
+					const piece = String(packet.textResponse ?? '');
+					if (piece) { answer += piece; pieces += 1; on_word(piece); }
+					for (const s of packet.sources ?? []) {
+						const title = String(s.title ?? s.name ?? '').trim();
+						if (title && !seen.has(title)) { seen.add(title); sources.push(title); }
+					}
+				}
+			}
+		} catch (e) {
+			debug.log(`AnythingLLM: streaming ask broke mid-answer after ${pieces} piece(s) — ${(e as Error).message}. Keeping what arrived.`);
+		}
+		debug.log(`AnythingLLM: streamed answer to "${question.slice(0, 60)}" — ${pieces} piece(s), ${answer.length} char(s), ${sources.length} source(s).`);
+		return { answer, sources };
+	},
+
 	// Remove one document from the workspace and delete it, by its remembered location.
 	// A document that was never uploaded is a quiet success (nothing to remove).
 	async remove(id: string): Promise<boolean> {

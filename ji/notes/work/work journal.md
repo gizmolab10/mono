@@ -2,6 +2,24 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-26 — the AI answers live, word by word
+
+- **The wait was blind.** Asking a question showed a spinning gear and nothing else until the whole answer landed at once — and there's no honest way to guess how long that takes, since the time is mostly the model writing an answer whose length isn't known until it's written.
+- **So the answer streams instead.** AnythingLLM can hand back the answer in small pieces as it's written; a quick test against the running one confirmed it (the words "Hello", "!", "It", "was"… arrived one at a time). ji now uses that: each piece is pushed to the chat the instant it arrives — the server pushes, ji never polls — and the answer writes itself at the top of the conversation. When the last piece lands, the finished exchange settles into the saved history with its sources.
+- **The gear stays for the whole answer.** It stands in for the ask button from the click until the stream closes (the last word), then the button returns.
+- **The key-holding server had to stop hoarding.** It used to collect the entire reply before sending any of it — which would have swallowed the streaming. It now forwards each piece as it arrives, and tells every hop in between not to hold pieces back. The streaming call was added to its short list of allowed calls. Verified live through the tunnel after a restart — words appear one at a time in the browser.
+- **The all-at-once ask stays** as a fallback, untouched.
+
+## 2026-07-26 — an in-app help overlay (was the handoff's next item)
+
+- **The help button now opens something.** A full-screen overlay over the app, placed by the frame like the build-notes popup. Its pages are markdown files under `lib/md/manual/`, pulled in at build; each page's title is its first heading, with a hand-set order and anything unlisted falling to the end. A hamburger-toggled sidebar lists the pages; a page can link to another and switch in place; a close cross returns to the app. Which page was open and whether the sidebar shows are both remembered. Seed pages: a short welcome and a "what's broken" list. A markdown link can carry an `action:` that switches the app's operation (e.g. jump to the chat).
+- **Setup stayed retired.** The newcomer need is already met by the AI store's password screen, so the one-click-installer idea stays off.
+
+## 2026-07-26 — reusable dividers, and a pass over the chat and list
+
+- **A divider ported from di.** A thin accent bar (horizontal or vertical) with little rounded ends so it meets a rounded panel cleanly; it auto-extends to touch the accent frame, can carry a centered title, and the title can be a button. Used across the app: the list's "drop files & folders anywhere below" divider (a click opens the drop view), the list's header divider (replacing the old drawn underline), the data readout's more/less toggle, the chat's show/hide-responses divider, and the manage-tags view.
+- **Chat touches.** The ask button moved to the far left with the input filling to its right; the input gained the same clear "x" as the list's search; the show/hide-responses control became the divider's title.
+
 ## 2026-07-25 — a password screen sets up a new browser for the shared AI
 
 - **The problem it solves.** Pointing a new browser at the shared AI meant hand-editing two stored settings, quoted just so — easy to get wrong, and it leaves the share token lying in a settings screen. A native installer can't help: a program on the computer can't reach into a website's browser storage.

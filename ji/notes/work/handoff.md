@@ -2,26 +2,17 @@
 
 My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md).
 
-## Next — a help page, modeled on di's user guide
+## Next — hide the "Intersection" title when the screen is too narrow
 
-First unchecked in [code debt](code%20debt.md): **write a help page**. The help button (top-right of the controls row) does nothing yet — its click handler in `main/Controls.svelte` only logs. Build it like di's user guide (`di/src/lib/svelte/main/UserGuide.svelte`), trimmed to ji's needs.
+First unchecked in [code debt](code%20debt.md): **hide the centered "Intersection" title when the screen is too narrow**, so the top bar's hamburger, operations pill, and help button never crowd or overlap it on a phone-width window.
 
-### Proposal — an in-app help overlay
+### Proposal
 
-**Shape (recommended).** The help button opens a full-screen overlay over the app (a new `main/Help.svelte`, placed by the frame like the build-notes popup already is):
+The frame already knows the width and a phone-narrow flag (`wrap_phone`, from `k.width.phone`) in `main/Intersection.svelte`; the title lives in `main/Controls.svelte`. Pass a "room for the title" signal down (reuse `wrap_phone`, or a dedicated narrower threshold if the pill + buttons need more room than the phone-wrap point), and drop the title from the layout when there isn't room — not just hidden, so it reclaims no space. Keep it centered when shown.
 
-- **Pages are markdown files** in a new `ji/src/manual/` folder, mimicking di (di keeps them at `di/src/manual/`): `manual/index.md` (the welcome), further pages flat or in a subfolder like di's `reference-guide/`, and a `manual/images/` folder for pictures later. The overlay lives at `ji/src/lib/svelte/main/Help.svelte` and pulls the pages in at build with a glob relative to itself — `../../../manual/**/*.md` — exactly as di's user guide does. ji already renders markdown (markdown-it is a dependency and the build-notes popup reads a markdown file), so this reuses what's here. Each page's title is its first heading; a hand-set order lists them, anything unlisted falls to the end (so a new file still shows).
-- **A hamburger-toggled sidebar** lists the pages; clicking one shows it; links from one page to another switch in place; a close cross and the Escape key shut the overlay.
-- **Remember** which page was open and whether the sidebar is showing (two saved flags, like di).
-- **Seed pages:** `index` — "hello, this is just the beginning" (a short welcome); `what's broken` — the current rough edges.
+**Open question for Jonathan:** hide at the existing phone-wrap width, or set a separate (likely wider) threshold tuned to when the pill and buttons actually reach the title? I'd measure and pick the point by eye.
 
-**Where help lives — decided: in-app overlay.** One build, works offline, matches di, no new deploy; the address stays intersection.lol. (A separate site at `help.intersection.lol` was weighed and set aside — it's another thing to deploy and keep in step; the same markdown folder could feed it later if wanted.)
-
-**Kept out (add later if wanted):** search, images, versioned pages.
-
-**Success.** Clicking help opens the overlay on the welcome page; the sidebar switches pages; Escape or the close cross returns to the app; both seed pages read correctly. Proven by a log line on open/close and by reading the two pages.
-
-The newcomer-setup need is already handled by the AI store's password screen (the `init` operation), so the one-click-installer idea stays retired.
+**Success.** Narrowing the window past the chosen point removes the title cleanly with no overlap and no reserved gap; widening brings it back centered.
 
 ## Context
 

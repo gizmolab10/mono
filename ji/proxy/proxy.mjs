@@ -18,6 +18,7 @@
 //   PORT              the port this listens on          (default 3017)
 
 import http from 'node:http';
+import { Readable } from 'node:stream';
 
 const ANYTHINGLLM_URL = (process.env.ANYTHINGLLM_URL || 'http://localhost:3001').replace(/\/+$/, '');
 const ANYTHINGLLM_KEY = process.env.ANYTHINGLLM_KEY || '';
@@ -39,6 +40,7 @@ const ALLOW = [
 	{ method: 'POST',   re: /^\/api\/v1\/document\/upload$/ },                   // upload a document's words
 	{ method: 'POST',   re: /^\/api\/v1\/workspace\/[^/]+\/update-embeddings$/ },// embed / un-embed it
 	{ method: 'POST',   re: /^\/api\/v1\/workspace\/[^/]+\/chat$/ },             // ask a question
+	{ method: 'POST',   re: /^\/api\/v1\/workspace\/[^/]+\/stream-chat$/ },      // ask, answer word-by-word
 	{ method: 'GET',    re: /^\/api\/v1\/workspace\/[^/]+\/chats$/ },            // read the saved chat
 	{ method: 'DELETE', re: /^\/api\/v1\/system\/remove-documents$/ },          // delete the document
 ];
@@ -107,11 +109,32 @@ const server = http.createServer(async (req, res) => {
 		const type    = req.headers['content-type'];
 		if (type) { headers['Content-Type'] = type; }
 
-		const upstream = await fetch(`${ANYTHINGLLM_URL}${path}`, { method, headers, body });
-		const answer   = Buffer.from(await upstream.arrayBuffer());
-		res.writeHead(upstream.status, { 'Content-Type': upstream.headers.get('content-type') || 'application/octet-stream' });
-		res.end(answer);
-		log(`${method} ${pathname} -> ${upstream.status} (${answer.length} byte(s)).`);
+		const upstream    = await fetch(`${ANYTHINGLLM_URL}${path}`, { method, headers, body });
+		const contentType = upstream.headers.get('content-type') || 'application/octet-stream';
+		const out         = { 'Content-Type': contentType };
+
+		// A live answer (the streaming ask) comes as a run of small pieces. Forward each the
+		// instant it arrives, and tell every hop in between not to hold pieces back — so the
+		// browser sees words appear one at a time instead of the whole answer at once.
+		const streaming = contentType.includes('text/event-stream');
+		if (streaming) {
+			out['Cache-Control']     = 'no-cache';
+			out['Connection']        = 'keep-alive';
+			out['X-Accel-Buffering']  = 'no';
+		}
+		res.writeHead(upstream.status, out);
+
+		if (!upstream.body) {
+			res.end();
+			log(`${method} ${pathname} -> ${upstream.status} (no body).`);
+		} else {
+			let bytes = 0;
+			const stream = Readable.fromWeb(upstream.body);
+			stream.on('data', (chunk) => { bytes += chunk.length; });
+			stream.on('end',   () => log(`${method} ${pathname} -> ${upstream.status} (${streaming ? 'streamed ' : ''}${bytes} byte(s)).`));
+			stream.on('error', (err) => { log(`stream from ${pathname} broke — ${err.message}.`); res.end(); });
+			stream.pipe(res);
+		}
 	} catch (e) {
 		log(`forwarding ${method} ${pathname} failed — ${e.message}.`);
 		res.writeHead(502, { 'Content-Type': 'application/json' });

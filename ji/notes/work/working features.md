@@ -2,6 +2,7 @@
 
 | # | Feature |
 | --- | --- |
+| 29 | The AI answers a question live — words appear one at a time as the model writes them (pushed through the key-holding server, no polling), the spinning gear standing in for the ask button until the last word; the finished answer then settles into the saved conversation with its sources |
 | 28 | A password screen sets up a new browser for the shared AI — on the AI store with the two settings missing, one field takes a password that writes them and drops to the list |
 | 27 | The AI store shows what AnythingLLM actually holds — the true document count in the data readout and the AI's own documents as read-only rows in the table — the same on every machine, not only the one that dropped the files |
 | 26 | Any browser, on any computer, reaches the mac's AnythingLLM through a small key-holding server and a free tunnel; two computers share one workspace, its changing address found through a fixed pointer link |
