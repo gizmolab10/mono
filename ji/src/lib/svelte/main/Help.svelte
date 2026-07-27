@@ -82,7 +82,7 @@
 		if (href.startsWith('action:')) {
 			event.preventDefault();
 			if (href === 'action:list') {
-				w_operation.set(T_Operation.list);
+				w_operation.set(T_Operation.files);
 				onclose();
 				debug.log('Help: an "action:list" link switched to the list and closed help.');
 			} else if (href === 'action:chat') {

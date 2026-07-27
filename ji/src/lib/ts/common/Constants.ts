@@ -4,6 +4,7 @@ const bold = 550;
 const common_size = 35;						// minimum fingertip touch size
 const common_gap = common_size / 4.5;		// 7.8
 const common_thickness = common_gap / 7;	// 5
+const common_separator = common_gap / 5;	// 7
 const control_height = common_size / 1.6;	// 21.875
 
 // missing: 50% circles
@@ -81,6 +82,11 @@ export default class Constants {
 		fat			 : common_thickness * 2,
 		faint		 : common_thickness / 2,
 		normal		 : common_thickness,
+	};
+
+	separator = {
+		normal : common_separator,
+		fat    : common_separator * 2,
 	};
 
 	height = {

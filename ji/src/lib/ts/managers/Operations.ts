@@ -3,12 +3,12 @@ import { writable, derived, get } from 'svelte/store';
 import { debug } from '../common/Debug';
 
 export enum T_Operation {
-	chat = 'chat history',
-	drop = 'add new document',
-	init = 'add LLM credentials',
-	list = 'table of documents',
-	tags = 'add new tag',
-	view = 'view document',
+	chat  = 'chat history',
+	drop  = 'add new document',
+	files = 'browse files',
+	init  = 'add LLM credentials',
+	tags  = 'add new tag',
+	view  = 'view document',
 }
 
 export const w_operation = preferences.persistent<T_Operation | null>(T_Preference.current_op, null);
@@ -59,5 +59,5 @@ export function step_view(delta: number): void {
 // Close the viewer, back to the list.
 export function close_view(): void {
 	w_view_document.set(null);
-	if (get(w_operation) === T_Operation.view) { w_operation.set(T_Operation.list); }
+	if (get(w_operation) === T_Operation.view) { w_operation.set(T_Operation.files); }
 }

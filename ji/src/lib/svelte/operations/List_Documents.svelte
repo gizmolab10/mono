@@ -8,6 +8,7 @@
 	import { T_Storage } from '../../ts/types/DB_Records';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import Select_Tags from '../support/Select_Tags.svelte';
+	import Separator from '../support/Separator.svelte';
 	import { w_db_changed } from '../../ts/types/Signal';
 	import { save_drop } from '../../ts/managers/Drop';
 	import { Direction } from '../../ts/types/Angle';
@@ -296,9 +297,9 @@
 	// hover text and clicking opens that add view; format and tags stay inert.
 	// The tags column also carries each row's per-document buttons at its right end.
 	const columns = [
-		{ label: 'format',    hover: null, op: null, width: '60px' },
-		{ label: 'documents', hover: null, op: null, width: '40%'  },
-		{ label: 'tags',      hover: null, op: null, width: 'auto' },
+		{ label: 'format', hover: null, op: null, width: '60px' },
+		{ label: 'name',   hover: null, op: null, width: '40%'  },
+		{ label: 'tags',   hover: null, op: null, width: 'auto' },
 	];
 
 	let hovered = $state<number | null>(null);
@@ -327,10 +328,10 @@
 			debug.log(`Clicked out of the tag editor for document ${editing} — closing it.`);
 			editing = null;
 		}
-		if (!$w_operation) { return; }                        // already showing the list
+		if ($w_operation !== T_Operation.drop) { return; }    // only a click while adding returns to the list
 		if (rows.length === 0) { return; }                   // empty store stays on the drop box — nothing to return to
 		if (target.closest('.add-tag')) { return; }          // keep clicks inside the new-tag field; a click anywhere on the open document closes it
-		w_operation.set(T_Operation.list);
+		w_operation.set(T_Operation.files);
 		w_view_document.set(null);                            // a background click also leaves the view
 		debug.log(`Clicked out of the add view with ${rows.length} document(s) in the store — back to the list.`);
 	}
@@ -409,7 +410,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 <div class='documents' class:dragging onclick={background_click}
 	ondrop={documents_drop} ondragover={documents_dragover} ondragleave={documents_dragleave}>
-	{#if rows.length > 0 && $w_operation === T_Operation.list}
+	{#if rows.length > 0 && $w_operation === T_Operation.files}
 		{#if tag_count > 0}
 			<div class='logic'>
 				<Select_Tags
@@ -428,7 +429,9 @@
 		</div>
 		<input class='search-text' type='search' placeholder='search by name' bind:value={$w_filter_text} />
 	{/if}
-	<hr>
+	<div class='top-sep'>
+		<Separator thickness={k.separator.fat} title='drop files & folders anywhere below' onclick={(e) => { e.stopPropagation(); w_operation.set(T_Operation.drop); }} />
+	</div>
 	{#if rows.length === 0 && ai_rows.length === 0}
 		<div class='empty'>no documents yet</div>
 	{:else}
@@ -436,7 +439,7 @@
 		<!-- The header is its own table, sitting still above the scroller, so the
 		     scrollbar runs only beside the document rows — not past the title row. -->
 		<div class='table-head'>
-		<table class='blobs-table'>
+		<table class='files-table'>
 			<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
 			<thead>
 				<tr class='head'>
@@ -454,32 +457,33 @@
 			</thead>
 		</table>
 		</div>
-		<div class='table-scroll' bind:this={scroller} onscroll={on_scroll}>
-		<table class='blobs-table'>
-			<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
-			<tbody>
-				{#each shown as row, row_number (row.place_key)}
-					<!-- svelte-ignore a11y_mouse_events_have_key_events -->
-					<tr class='file' class:hovered={hovered_row === row.id} class:dedup={row.is_dedup}
-						data-key={row.place_key} data-n={row_number} data-name={row.display_name}
-						onmouseenter={() => { if (row.viewable) { hovered_row = row.id; } }}
-						onmouseleave={() => { if (hovered_row === row.id) { hovered_row = null; } }}>
-						{@render document_row(row)}
-					</tr>
-				{/each}
-				<!-- The AI's own documents as read-only rows: no triangle, no buttons, and
-				     no click to open — their bytes aren't on this browser. "AI" in the
-				     format cell marks where they come from. -->
-				{#each ai_rows as doc, i (`ai:${i}`)}
-					<tr class='file ai-file'>
-						<td class='extension'><span>AI</span></td>
-						<td class='name'><span class='name-line'><span class='tri-slot'></span><span class='name-text' title={doc.location}>{doc.name}</span></span></td>
-						<td class='tag-actions'></td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-		</div>
+			<div class='head-sep'><Separator /></div>
+			<div class='table-scroll' bind:this={scroller} onscroll={on_scroll}>
+				<table class='files-table'>
+					<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
+					<tbody>
+						{#each shown as row, row_number (row.place_key)}
+							<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+							<tr class='file' class:hovered={hovered_row === row.id} class:dedup={row.is_dedup}
+								data-key={row.place_key} data-n={row_number} data-name={row.display_name}
+								onmouseenter={() => { if (row.viewable) { hovered_row = row.id; } }}
+								onmouseleave={() => { if (hovered_row === row.id) { hovered_row = null; } }}>
+								{@render document_row(row)}
+							</tr>
+						{/each}
+						<!-- The AI's own documents as read-only rows: no triangle, no buttons, and
+							no click to open — their bytes aren't on this browser. "AI" in the
+							format cell marks where they come from. -->
+						{#each ai_rows as doc, i (`ai:${i}`)}
+							<tr class='file ai-file'>
+								<td class='extension'><span>AI</span></td>
+								<td class='name'><span class='name-line'><span class='tri-slot'></span><span class='name-text' title={doc.location}>{doc.name}</span></span></td>
+								<td class='tag-actions'></td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	{/if}
 </div>
@@ -512,15 +516,15 @@
 	.table-head {
 		box-sizing    : border-box;
 		padding-right : 20px;
-		flex-shrink   : 0;
 		width         : 100%;
+		flex-shrink   : 0;
 	}
 
 	/* Only the table body scrolls; it fills the space under the fixed header. The gutter
 	   is always reserved (even with few rows) so the header's 20px inset always matches. */
 	.table-scroll {
-		scrollbar-gutter : stable;
 		flex             : 1 1 auto;
+		scrollbar-gutter : stable;
 		overflow-y       : auto;
 		width            : 100%;
 		min-height       : 0;
@@ -581,15 +585,15 @@
 	.families {
 		border        : var(--thickness-normal) solid var(--black);
 		height        : var(--height-control);
+		border-radius : var(--radius-pill);
 		font-size     : var(--font-base);
 		background    : var(--white);
 		box-sizing    : border-box;
 		margin-bottom : var(--gap);
 		align-self    : center;
 		overflow      : hidden;
-		border-radius : var(--radius-pill);
-		flex-shrink   : 0;                     /* hold full height; a full table must not squeeze (and clip) the pill */
 		display       : flex;
+		flex-shrink   : 0;                     /* hold full height; a full table must not squeeze (and clip) the pill */
 	}
 
 	.families .segment {
@@ -613,12 +617,11 @@
 		background : var(--hover);
 	}
 
-	hr {
-		border      : none;                    /* clear the browser-default hr line... */
-		border-top  : var(--thickness-faint) solid var(--accent);   /* ...leaving only this */
-		margin      : 8px 0 var(--gap);
-		width       : 100%;
-		flex-shrink : 0;
+	/* A --gap-huge of space below the top divider, before the table. */
+	.top-sep {
+		margin-bottom : var(--gap);
+		margin-top    : var(--gap);
+		flex-shrink   : 0;
 	}
 
 	.empty {
@@ -631,57 +634,49 @@
 		height          : 100%;
 	}
 
-	.blobs-table {
+	.files-table {
 		border-collapse : collapse;
-		table-layout    : fixed;             /* honor the column widths set on the header, so the name can be capped */
 		position        : relative;
+		table-layout    : fixed;             /* honor the column widths set on the header, so the name can be capped */
 		width           : 100%;
 	}
 
 	/* The header ignores scroll. Sticky must go on the cells, not the <thead>
-	   -> a collapsed-border table ignores sticky on the row group. 
-	   Solid page-colored cells keep scrolling rows from showing through,
-	   and the bottom rule closes off the pinned part, matching the one above. */
+	   -> a collapsed-border table ignores sticky on the row group.
+	   Solid page-colored cells keep scrolling rows from showing through. The
+	   closing line below the header is a Separator, sitting outside the scroller. */
 	.head th {
 		background  : var(--bg);
 		position    : sticky;
-		top         : 0;
 		z-index     : 1;
 	}
 
-	/* The closing rule sits a --gap above the cell's bottom, so a --gap of
-	   page-colored space below it also stays pinned. Drawn as a positioned line,
-	   not a collapsed border — a collapsed border here is shared with the first
-	   row and would scroll away with it. */
-	.head th::after {
-		content    : '';
-		position   : absolute;
-		left       : 0;
-		right      : 0;
-		bottom     : var(--gap);
-		height     : var(--thickness-faint);
-		background : var(--accent);
+	/* The divider under the header — a title-less Separator where the old rule sat,
+	   with a --gap of space below it before the rows, matching what was there. */
+	.head-sep {
+		margin-bottom : var(--gap);
+		flex-shrink   : 0;
 	}
 
 	/* A faint accent line under each row. */
-	.blobs-table .file td {
+	.files-table .file td {
 		border-bottom : var(--thickness-faint) solid var(--accent);
 	}
 
 	/* ...but not under the last row — its bottom line is see-through. */
-	.blobs-table .file:last-child td {
+	.files-table .file:last-child td {
 		border-bottom-color : transparent;
 	}
 
 	/* ...and not under the first column (format) — its bottom stays see-through. */
-	.blobs-table .file td.extension {
+	.files-table .file td.extension {
 		border-bottom-color : transparent;
 	}
 
 	/* The cell is transparent so the rule shows through; only the label pill
 	   below masks it. Each label is centered in its column. */
 	.head th {
-		padding    : 0 0 calc(var(--gap) * 2);   /* content, then room for the rule plus a --gap below it, all pinned */
+		padding    : 0 0 var(--gap);   /* content, then a --gap of pinned space down to the divider below */
 		text-align : center;
 	}
 
@@ -787,7 +782,7 @@
 
 	/* A second appearance of the same file (its "also here" dedup under another
 	   parent) reads lighter, so the home row is clearly the solid one. */
-	.blobs-table .file.dedup td {
+	.files-table .file.dedup td {
 		opacity : var(--opacity-label);
 	}
 
@@ -801,17 +796,17 @@
 	   hover state (not CSS :hover) so the slightly-taller buttons still count as
 	   being on the row. (Click-to-view and the pointer cursor stay on viewable
 	   names only.) */
-	.blobs-table .file.hovered td {
+	.files-table .file.hovered td {
 		background          : var(--hover);
 		border-bottom-color : transparent;
 	}
 
-	.blobs-table .file.hovered td:first-child {
+	.files-table .file.hovered td:first-child {
 		border-top-left-radius    : var(--radius-pill);
 		border-bottom-left-radius : var(--radius-pill);
 	}
 
-	.blobs-table .file.hovered td:last-child {
+	.files-table .file.hovered td:last-child {
 		border-top-right-radius    : var(--radius-pill);
 		border-bottom-right-radius : var(--radius-pill);
 	}
@@ -937,11 +932,11 @@
 
 	/* The AI's own documents, shown as read-only rows: dimmed like a dedup echo, and never
 	   lit or given a pointer, because they can't be opened here. */
-	.blobs-table .file.ai-file td {
+	.files-table .file.ai-file td {
 		opacity : var(--opacity-label);
 	}
 
-	.blobs-table .file.ai-file .name {
+	.files-table .file.ai-file .name {
 		cursor : default;
 	}
 </style>

@@ -8,7 +8,7 @@
 
 	let {
 		radius    = k.radius.corner.banner,
-		thickness = k.thickness.normal,
+		thickness = k.separator.normal,
 		reach     = 'var(--gap)',
 		onclick   = undefined,
 		vertical  = false,
@@ -22,7 +22,7 @@
 		radius?    : number;           // the fillet radius in px
 		reach?     : string;           // how far each end extends so it meets the accent frame's inner edge; the app --gap by default
 		title?     : string | null;    // when set, a label sits centered on the bar, its --bg mask breaking the line
-		onclick?   : (() => void) | undefined;   // when set, the title is a button that runs this
+		onclick?   : ((event: MouseEvent) => void) | undefined;   // when set, the title is a button that runs this (given the click, so it can stop it bubbling)
 		z_layer?   : number;           // optional stacking layer
 	} = $props();
 
@@ -70,8 +70,8 @@
 	</div>
 {:else}
 	<div
-		style:z-index={z_layer}
 		class='separator horizontal'
+		style:z-index={z_layer}
 		style:height='{thickness}px'
 		style:margin='0 calc(-1 * {reach})'
 		style:width='calc(100% + 2 * {reach})'>
@@ -113,8 +113,8 @@
 	.title {
 		transform   : translate(-50%, -50%);
 		font-size   : var(--font-label);
+		color       : var(--darkgray);
 		padding     : 0 var(--gap);
-		color       : var(--text);
 		background  : var(--bg);
 		position    : absolute;
 		font-family : inherit;
@@ -124,15 +124,15 @@
 		left        : 50%;
 	}
 
-	/* When it's a button, it looks the same but takes the cursor and lights on hover. */
+	/* When a click handler is given, the title is a button — it takes the cursor and lights on hover. */
 	.title.clickable {
 		border-radius : var(--radius-pill);
 		cursor        : pointer;
 	}
 
 	.title.clickable:hover {
-		border     : 0.5px solid black;
 		background : var(--hover);
+		border     : 0.5px solid var(--darkgray);
 	}
 
 	.vertical {

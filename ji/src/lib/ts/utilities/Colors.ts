@@ -24,6 +24,7 @@ import { get } from 'svelte/store';
 
 export class Colors {
 	gray			  = '#888';
+	darkgray          = '#666';
 	lightgray         = '#ccc';
 	offwhite          = '#eee';
 	white			  = '#fff';

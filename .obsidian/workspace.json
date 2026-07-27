@@ -63,7 +63,8 @@
               "title": "index"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -198,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/code debt.md",
+                "file": "ji/src/lib/md/manual/index.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of index"
             }
           },
           {
@@ -236,8 +237,12 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "abe0d848a5fe3e12",
+  "active": "cda470ea7a48dc42",
   "lastOpenFiles": [
+    "ji/src/lib/svelte/operations/Chat.svelte.tmp.39200.20b00b6ead3a",
+    "ji/src/lib/svelte/support/Separator.svelte.tmp.39200.34665e00b1fe",
+    "ji/src/lib/svelte/operations/List_Documents.svelte.tmp.39200.6defab06dfcd",
+    "ji/notes/work/code debt.md",
     "ji/src/lib/svelte/support/Separator.svelte.tmp.39200.710657ae586a",
     "ji/notes/guides/map.md.tmp.39200.966b7a97a1c3",
     "ji/src/lib/svelte/support/Separator.svelte",
@@ -249,16 +254,12 @@
     "ji/src/lib/ts/database/Databases.ts.tmp.39200.27eded728dde",
     "ji/src/lib/svelte/operations/Chat.svelte.tmp.39200.0e181823e7e2",
     "ji/src/lib/ts/database/AnythingLLM.ts.tmp.39200.7f6ce4936f36",
-    "ji/src/lib/ts/database/AnythingLLM.ts.tmp.39200.35298a0d735c",
     "ji/src/lib/md/manual/index.md",
     "ji/src/lib/md/manual/what's broken.md",
     "ji/notes/work/Minimum Viable INTERSECTION app.md",
-    "ji/notes/work/code debt.md",
-    "ji/src/lib/svelte/main/Intersection.svelte.tmp.39200.9f2919aaa922",
     "ji/src/lib/md/md/index.md",
     "ji/src/lib/md/manual/Intersection.md",
     "ji/src/manual/what's broken.md",
-    "ji/src/lib/md/manual",
     "ji/src/lib/md/md/Intersection.md",
     "ji/src/md/Intersection.md",
     "ji/src/manual/index.md",

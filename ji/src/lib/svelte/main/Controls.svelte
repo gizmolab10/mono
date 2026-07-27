@@ -21,9 +21,8 @@
 	// would have nothing to show.
 	const operations: { op: T_Operation; label: string }[] = [
 		{ op: T_Operation.chat,  label: 'chat' },
-		{ op: T_Operation.drop, label: 'drop' },
-		{ op: T_Operation.list, label: 'list' },
-		{ op: T_Operation.tags, label: 'tags' },
+		{ op: T_Operation.files, label: 'files' },
+		{ op: T_Operation.tags,  label: 'tags' },
 	];
 
 	// The "ask" segment only works on the LLM store; on any other store it is inert —

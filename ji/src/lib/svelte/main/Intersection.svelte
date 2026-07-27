@@ -19,7 +19,7 @@
 		const id = $w_view_document;
 		if (id === null || !$w_hierarchy.document_byID(id)) {
 			if (id !== null) { debug.log(`View points at a document that is no longer in the store (${id}) — back to the list.`); }
-			w_operation.set(T_Operation.list);
+			w_operation.set(T_Operation.files);
 			w_view_document.set(null);
 		}
 	});

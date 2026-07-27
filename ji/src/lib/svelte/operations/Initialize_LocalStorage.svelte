@@ -32,7 +32,7 @@
 		preferences.write(T_Preference.llmKey, KEY);
 		debug.log('AI credentials: password accepted — saved the address pointer and the share token; reading what the AI holds.');
 		refresh_llm_docs();
-		w_operation.set(T_Operation.list);
+		w_operation.set(T_Operation.files);
 	}
 
 	function on_key(event: KeyboardEvent) {

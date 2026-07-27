@@ -1,11 +1,11 @@
 # Welcome
 
 ---
-Let's say you have a lot of stuff and want some AI help with it, while it remains hidden and private. This place gives you that.
+Let's say you have a lot of stuff and want some AI help with it, while it remains securely hidden and private. This site gives you that.
 
 ## Two simple steps
 
-1. [Drop your files and folders](action:list)
+1. [Drop your files and folders](action:files)
 2. [Ask questions about it](action:chat)
 
 ## What is not supported yet

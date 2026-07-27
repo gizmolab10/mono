@@ -88,11 +88,11 @@ class Databases {
 		} else {
 			clear_llm_docs();
 			stop_llm_heartbeat();
-			if (get(w_operation) === T_Operation.init) { w_operation.set(T_Operation.list); }
+			if (get(w_operation) === T_Operation.init) { w_operation.set(T_Operation.files); }
 		}
 		// "ask" only works on the LLM store — leaving it drops the user back to the list.
 		if (storage !== T_Storage.llm && get(w_operation) === T_Operation.chat) {
-			w_operation.set(T_Operation.list);
+			w_operation.set(T_Operation.files);
 		}
 		db_changed();                            // the active store's contents changed
 	}

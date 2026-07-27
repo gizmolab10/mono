@@ -2,6 +2,7 @@
 	import { anything_llm, w_llm_reachable } from '../../ts/database/AnythingLLM';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import Separator from '../support/Separator.svelte';
 	import type { Exchange } from '../../ts/types/DB_Records';
 	import { debug } from '../../ts/common/Debug';
 	import { get } from 'svelte/store';
@@ -118,9 +119,7 @@
 		{/if}
 
 		{#if exchanges.length > 0}
-			<div class='chat-controls'>
-				<button class='toggle-all' onclick={toggle_all}>{all_collapsed ? 'show' : 'hide'} responses</button>
-			</div>
+			<div class='replies-sep'><Separator title='{all_collapsed ? "show" : "hide"} responses' onclick={toggle_all} /></div>
 		{/if}
 
 		<div class='conversation'>
@@ -235,26 +234,10 @@
 		from { transform: rotate(0deg); }
 	}
 
-	.chat-controls {
-		gap         : var(--gap);
-		display     : flex;
+	/* A --gap of space above and below the show/hide-responses divider. */
+	.replies-sep {
+		margin      : var(--gap) 0;
 		flex-shrink : 0;
-	}
-
-	.toggle-all {
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
-		border-radius : var(--radius-pill);
-		font-size     : var(--font-label);
-		padding       : 0 var(--gap-fat);
-		background    : var(--white);
-		color         : var(--text);
-		box-sizing    : border-box;
-		cursor        : pointer;
-	}
-
-	.toggle-all:hover {
-		background : var(--hover);
 	}
 
 	/* The running conversation scrolls; the question box and controls stay put. The

@@ -59,7 +59,7 @@
 	tabindex='0'
 	role='button'
 	class:dragging
-	onclick={() => { debug.log('Drop box clicked — back to the list.'); w_operation.set(T_Operation.list); }}
+	onclick={() => { debug.log('Drop box clicked — back to the list.'); w_operation.set(T_Operation.files); }}
 	ondrop={handleDrop}
 	ondragover={handleDragOver}
 	ondragleave={handleDragLeave}>
@@ -71,7 +71,7 @@
 	</svg>
 	<!-- Holds the instruction line 30% of the way down, not dead centre. -->
 	<div class='top-space'></div>
-	drop documents & folders here
+	drop files & folders here
 	{#if $w_drop_total > 0}
 		<!-- a line between the instruction above and the running count below -->
 		<hr class='drop-divider' />
