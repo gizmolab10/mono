@@ -26,6 +26,27 @@ Each seam method, for `DB_LLM`:
 
 **AnythingLLM, concretely.** It runs locally (installed) and exposes a developer REST API — a base URL and an API key. Documents live in a **workspace**: upload a document, it chunks and embeds it; chat against the workspace and get answers with sources. Use **one workspace per LLM store** for now (per-person workspaces come with remote support). Each ji document is identified inside AnythingLLM by its **id**, so a cited passage maps straight back to the document it came from.
 
+### Threads
+
+A workspace isn't limited to one conversation. It can hold many named **threads**, each its own separate chat with its own history — all sharing the same documents and embeddings. The plain workspace chat ji uses today is the workspace's *default* conversation; threads sit alongside it.
+
+The moves (from AnythingLLM's own API spec):
+
+- **Make one:** `POST /v1/workspace/{slug}/thread/new` — returns a thread `slug` that names it from then on.
+- **Talk in it:** `POST /v1/workspace/{slug}/thread/{threadSlug}/chat` — the same shape as the default chat, but its history is kept separate.
+- **Read its history:** `GET /v1/workspace/{slug}/thread/{threadSlug}/chats`.
+- **Rename:** `POST /v1/workspace/{slug}/thread/{threadSlug}/update`.
+- **Delete the whole thread:** `DELETE /v1/workspace/{slug}/thread/{threadSlug}` — removes that thread and its entire history.
+
+Why this matters to ji, later:
+
+- **Separate conversations instead of one running log** — a thread per topic, per person, or per session.
+- **A real delete.** AnythingLLM can't remove a single exchange (only wipe a whole chat) — but it *can* delete a whole thread. So "start fresh" or "throw this conversation away" is one call, without touching the others.
+
+Not a phase-A concern — the current build uses the single default chat. Noted here so the thread path is on the map when the chat grows past one conversation.
+
+Source: [AnythingLLM OpenAPI spec](https://raw.githubusercontent.com/Mintplex-Labs/anything-llm/master/server/swagger/openapi.json).
+
 ## The build, in phases
 
 ### Phase A — stand up the store

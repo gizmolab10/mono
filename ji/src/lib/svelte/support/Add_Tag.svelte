@@ -41,7 +41,9 @@
 				else { add(); }
 			}
 		}} />
-	<button class='button' onclick={() => { debug.log('Done adding tags — closing the new-tag view.'); ondone?.(); }}>done</button>
+	{#if ondone}
+		<button class='button' onclick={() => { debug.log('Done adding tags — closing the new-tag view.'); ondone(); }}>done</button>
+	{/if}
 </div>
 
 <style>

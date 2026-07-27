@@ -4,9 +4,9 @@
 	import Show_Operation from '../operations/Show_Operation.svelte';
 	import { w_hierarchy } from '../../ts/database/Databases';
 	import Details from '../details/Details.svelte';
+	import buildsRaw from '../../md/builds.md?raw';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
-	import buildsRaw from '../../md/builds.md?raw';
 	import BuildNotes from './BuildNotes.svelte';
 	import Controls from './Controls.svelte';
 	import Help from './Help.svelte';
@@ -32,7 +32,8 @@
 	// Layout numbers ported from di's Constants (common_size 33): the inset/gap,
 	// the corner radius, the fixed width of the details region, the smallest
 	// window we allow, and the window width below which details wraps full-width.
-	const gap = k.gap.default;
+	const gap   = k.gap.default;
+	const inset = k.gap.tight;   // the outer margin at the window's four edges — tight, so the app hugs the window
 
 	let width = $state(Math.max(k.width.window, window.innerWidth));
 	let height = $state(window.innerHeight);
@@ -46,16 +47,25 @@
 	type App_Mode = 'help' | 'app';
 	const w_app_mode = preferences.persistent<App_Mode>(T_Preference.appMode, 'help');
 
-	let wrap_phone = $derived(width < k.width.phone);
-	let detailsWidth = $derived(wrap_phone ? width - gap * 2 : k.width.details - gap * 2);
-	let contentWidth = $derived(width - ($w_show_details ? detailsWidth + gap : 0) - gap * 2);
+	// Is there room for both the details column (its fixed width) and the operations view
+	// beside it (its own smallest useful width), with the two outer margins and the one
+	// between? Measured from the real window width, so it tracks resize and browser zoom.
+	let both_fit = $derived(width - inset * 2 - gap >= k.width.details + k.width.operations);
+	// When details are open but both can't fit, the operations view is dropped and details
+	// fill the width; otherwise details keep their fixed column and the operations view fills
+	// the rest (and with details closed, the operations view has the whole width to itself).
+	let details_only = $derived($w_show_details && !both_fit);
+	let detailsWidth = $derived(details_only ? width - inset * 2 : k.width.details - gap * 2);
+	let contentWidth = $derived(width - ($w_show_details ? detailsWidth + gap : 0) - inset * 2);
 
-	// Log only when the narrow-wrap switch flips, with the numbers behind it.
-	let last_phone_log = '';
+	// Log only when the show-both / details-only switch flips, with the numbers behind it.
+	let last_layout_log = '';
 	$effect(() => {
-		const line = `phone ${wrap_phone}`;
-		if (line === last_phone_log) return;
-		last_phone_log = line;
+		const line = `details-only ${details_only}`;
+		if (line === last_layout_log) { return; }
+		last_layout_log = line;
+		const need = k.width.details + k.width.operations + inset * 2 + gap;
+		debug.log(`Panel layout: window ${width}px vs ${Math.round(need)}px needed for both (details ${k.width.details} + operations ${k.width.operations} + outer ${Math.round(inset * 2)} + between ${Math.round(gap)}) — ${details_only ? 'operations view hidden, details fill the width' : 'both side by side'}.`);
 	});
 
 	function handleResize() {
@@ -101,7 +111,9 @@
 			{#if $w_show_details}
 				<Details width={detailsWidth} {buildNumber} onBuildOpen={() => showBuildNotes = true} />
 			{/if}
-			<Show_Operation width={contentWidth} />
+			{#if !details_only}
+				<Show_Operation width={contentWidth} />
+			{/if}
 		</div>
 	</div>
 {/if}

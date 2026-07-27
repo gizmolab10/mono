@@ -4,19 +4,20 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] shrink the insets at outside edges
-    - [ ] controls and details bottom row
-    - [ ] chat -> remove the right-side gap
-        - [ ] when responses are hidden
-- [ ] hide 'intersection' **title** when screen too narrow
 - [ ] chats
-    - [ ] q pill bg color -> softer color half way between accent and bg
-    - [ ] button on each question to mark it as hidden/visible
+    - [ ] question pill bg color -> --mild-accent half way between accent and bg
+    - [ ] round button at left of each question to mark it as hidden/visible
         - [ ] show/hide hidden questions
         - [ ] button to delete hidden question
-    - [ ] grab the relevant file refs and clips
-        - [ ] show them -> clips highlighted within (w op =) view document
-- [ ] sideband storage in allm
+    - [ ] click the relevant file ref in the reply
+        - [ ] hover adds pill around file name ref, bg --hover, border 0.5px solid --darkgray
+        - [ ] show it -> clips highlighted
+            - [ ] within (w op =) view document
+                - [ ] when w op is set to view, save the current op
+                - [ ] click in view doc -> set w op back to saved
+- [ ] what is inset for in intersection.svelte?
+- [ ] sideband storage in allm — mechanism proven, see [sideband storage proposal](sideband%20storage%20proposal.md) (un-embedded raw-text doc, payload in its `description`)
+    - [ ] hidden chat exchanges (first use — a `ji-hidden` note; clears the chat hidden/delete items above)
     - [ ] tags
     - [ ] messages channel
 - [ ] set op to list -> very, very slow
@@ -55,6 +56,11 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] shrink the insets at outside edges
+    - [x] chat -> remove the right-side gap
+        - [x] when v scrollbar is hidden
+    - [x] controls and details bottom row (no gap)
+- [x] hide 'intersection' **title** when screen too narrow
 - [x] auto update from allm?
 - [x] merge drop -> list
     - [x] dashed border with text overlay along top

@@ -346,7 +346,9 @@ export const anything_llm = {
 	// filename; its location is the same string a remove uses. Returns [] on any failure
 	// (logged). NOTE: read-only — these are not openable ji documents (their bytes live in
 	// whatever browser first dropped them).
-	async get_documents(): Promise<EmbeddedDoc[]> {
+	// `quiet` (used by the every-few-seconds heartbeat) skips the logging, so the log isn't
+	// flooded with an identical line on every idle tick.
+	async get_documents(quiet = false): Promise<EmbeddedDoc[]> {
 		await ensure_base();
 		const cfg = config();
 		if (!cfg) { debug.log('AnythingLLM not set up — no documents to read.'); return []; }
@@ -366,10 +368,10 @@ export const anything_llm = {
 				} catch { /* keep the raw filename when the details won't parse */ }
 				return { name, location: String(d.docpath ?? '') };
 			});
-			debug.log(`AnythingLLM: read ${docs.length} embedded document(s) from the workspace.`);
+			if (!quiet) { debug.log(`AnythingLLM: read ${docs.length} embedded document(s) from the workspace.`); }
 			return docs;
 		} catch (e) {
-			debug.log(`AnythingLLM: reading documents failed — ${(e as Error).message}.`);
+			if (!quiet) { debug.log(`AnythingLLM: reading documents failed — ${(e as Error).message}.`); }
 			return [];
 		}
 	},

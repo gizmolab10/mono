@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { w_operation, T_Operation } from '../../ts/managers/Operations';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { databases } from '../../ts/database/Databases';
 	import { T_Storage } from '../../ts/types/DB_Records';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
 	import { debug } from '../../ts/common/Debug';
 
@@ -42,17 +42,55 @@
 		debug.log('Help button clicked — opening the help overlay.');
 		onHelp();
 	}
+
+	// Hide the centered title when the row is too narrow to hold it without crowding the
+	// hamburger, the operations pill, and the help button. Measured from the real widths on
+	// screen — not a fixed break-point — so it reacts to browser zoom and any label change
+	// too. When hidden, the title is lifted out of the flow (so it frees its space) but stays
+	// on the page, so its own width is still measurable and the decision can't flip-flop.
+	let row_el:       HTMLDivElement | undefined;
+	let title_el:     HTMLSpanElement | undefined;
+	let hamburger_el: HTMLButtonElement | undefined;
+	let ops_el:       HTMLDivElement | undefined;
+	let help_el:      HTMLButtonElement | undefined;
+	let show_title = $state(true);
+
+	function measure() {
+		if (!row_el || !title_el || !hamburger_el || !ops_el || !help_el) { return; }
+		const style = getComputedStyle(row_el);
+		const gap   = parseFloat(style.columnGap || style.gap || '0') || 0;
+		const room  = row_el.clientWidth;
+		// The fixed pieces plus the title, and the five gaps that sit between the six items
+		// (the two flex spacers can shrink to nothing, but their gaps still count).
+		const title_w = title_el.offsetWidth;
+		const need    = hamburger_el.offsetWidth + title_w + ops_el.offsetWidth + help_el.offsetWidth + gap * 5;
+		const fits    = room >= need;
+		if (fits !== show_title) {
+			show_title = fits;
+			debug.log(`Controls title: row ${Math.round(room)}px vs needed ${Math.round(need)}px (hamburger ${hamburger_el.offsetWidth} + title ${title_w} + operations ${ops_el.offsetWidth} + help ${help_el.offsetWidth} + gaps ${Math.round(gap * 5)}) — title ${fits ? 'shown' : 'hidden'}.`);
+		}
+	}
+
+	// Re-measure whenever the row changes size — a window resize, the details region opening,
+	// or a browser zoom all fire this.
+	$effect(() => {
+		measure();
+		if (!row_el) { return; }
+		const observer = new ResizeObserver(() => measure());
+		observer.observe(row_el);
+		return () => observer.disconnect();
+	});
 </script>
 
-<div class='controls-row layer-controls'>
-	<button class='hamburger-button' {onclick} aria-label='toggle details'>
+<div class='controls-row layer-controls' bind:this={row_el}>
+	<button class='hamburger-button' {onclick} bind:this={hamburger_el} aria-label='toggle details'>
 		<svg class='hamburger-icon' viewBox='0 0 {size} {size}' width={size} height={size}>
 			<path d={hamburgerPath} />
 		</svg>
 	</button>
-	<span class='title'>Intersection</span>
+	<span class='title' class:hidden={!show_title} bind:this={title_el}>Intersection</span>
 	<span class='spacer'></span>
-	<div class='operations'>
+	<div class='operations' bind:this={ops_el}>
 		{#each operations as { op, label }}
 			<button
 				class='segment'
@@ -63,7 +101,7 @@
 		{/each}
 	</div>
 	<span class='spacer'></span>
-	<button class='help' onclick={help} aria-label='help'>?</button>
+	<button class='help' onclick={help} bind:this={help_el} aria-label='help'>?</button>
 </div>
 
 <style>
@@ -91,6 +129,13 @@
 		font-size      : var(--font-huge);
 		white-space    : nowrap;
 		pointer-events : none;
+	}
+
+	/* Too narrow for the title: lift it out of the flow so it frees its space, but keep it
+	   on the page (invisible) so its width can still be measured. */
+	.title.hidden {
+		position   : absolute;
+		visibility : hidden;
 	}
 
 	/* One pill with a segment per operation; the active one fills --accent, standing

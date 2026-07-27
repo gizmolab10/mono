@@ -2,17 +2,17 @@
 
 My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md).
 
-## Next — hide the "Intersection" title when the screen is too narrow
+## Next — soften the chat question pill's color
 
-First unchecked in [code debt](code%20debt.md): **hide the centered "Intersection" title when the screen is too narrow**, so the top bar's hamburger, operations pill, and help button never crowd or overlap it on a phone-width window.
+First unchecked in [code debt](code%20debt.md) (under **chats**): the chat question header sits on full `--accent`; make it a softer `--mild-accent`, a color halfway between `--accent` and `--bg`.
 
 ### Proposal
 
-The frame already knows the width and a phone-narrow flag (`wrap_phone`, from `k.width.phone`) in `main/Intersection.svelte`; the title lives in `main/Controls.svelte`. Pass a "room for the title" signal down (reuse `wrap_phone`, or a dedicated narrower threshold if the pill + buttons need more room than the phone-wrap point), and drop the title from the layout when there isn't room — not just hidden, so it reclaims no space. Keep it centered when shown.
+Add a `--mild-accent` token — a mix of `--accent` and `--bg` (`color-mix(in srgb, var(--accent) 30%, var(--bg))`, tuned by eye) — beside the other color tokens, and use it for the question header's background in `operations/Chat.svelte` (the `.question` rule). Keep the header's text readable against the lighter fill (its text is currently `--text-on-accent`, chosen for the strong accent — on a mild fill `--text` may read better; pick by eye). One place changes; the collapsed/expanded behavior is untouched.
 
-**Open question for Jonathan:** hide at the existing phone-wrap width, or set a separate (likely wider) threshold tuned to when the pill and buttons actually reach the title? I'd measure and pick the point by eye.
+**Open question for Jonathan:** exact midpoint, or lean nearer the accent? I'd set the mix and adjust to taste.
 
-**Success.** Narrowing the window past the chosen point removes the title cleanly with no overlap and no reserved gap; widening brings it back centered.
+**Success.** The question pills read softer, halfway to the page color, with the text still legible; nothing else about the chat changes.
 
 ## Context
 

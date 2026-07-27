@@ -16,15 +16,17 @@ export const w_llm_docs_loading = writable<boolean>(false);
 let sequence = 0;
 
 // Ask AnythingLLM what it holds now and publish the answer for everyone to read.
-export async function refresh_llm_docs(): Promise<void> {
+// `quiet` (passed by the heartbeat) does the read without logging, so an idle tick every
+// few seconds doesn't flood the log; the one-off refreshes (store switch, add/remove) log.
+export async function refresh_llm_docs(quiet = false): Promise<void> {
 	const mine = ++sequence;
 	w_llm_docs_loading.set(true);
 	try {
-		const docs = await anything_llm.get_documents();
+		const docs = await anything_llm.get_documents(quiet);
 		if (mine === sequence) {
 			w_llm_docs.set(docs);
-			debug.log(`AI documents: the workspace holds ${docs.length}.`);
-		} else {
+			if (!quiet) { debug.log(`AI documents: the workspace holds ${docs.length}.`); }
+		} else if (!quiet) {
 			debug.log(`AI documents: dropped a stale read of ${docs.length} — a newer read had started.`);
 		}
 	} finally {
@@ -48,7 +50,7 @@ let heartbeat: ReturnType<typeof setInterval> | null = null;
 export function start_llm_heartbeat(): void {
 	if (heartbeat !== null) { return; }
 	debug.log('AI connection: heartbeat on — checking every 8 seconds.');
-	heartbeat = setInterval(() => { refresh_llm_docs(); }, 8000);
+	heartbeat = setInterval(() => { refresh_llm_docs(true); }, 8000);
 }
 
 export function stop_llm_heartbeat(): void {

@@ -5,7 +5,7 @@
 	import { debug } from '../../ts/common/Debug';
 	import type { Snippet } from 'svelte';
 
-	// Pick one or more tags. Shows every tag in the active store as a chip;
+	// Pick one or more tags. Shows every tag in the active store as a tag;
 	// clicking toggles it. The chosen tag ids are shared with the parent (the add
 	// flow tags a drop, search filters). Live off the store-changed tick.
 
@@ -13,7 +13,7 @@
 	// match; a caller that binds it gets the toggle shown beside the chips (the
 	// filter does), one that omits it (the per-row edit picker) gets no toggle.
 	// `ontoggle` lets a caller react to each click directly — documents uses it to
-	// add/remove a tag right away. `trailing` renders after the last chip, same row.
+	// add/remove a tag right away. `trailing` renders after the last tag, same row.
 	let { selected = $bindable(new Set<string>()), mode = $bindable<T_Match | undefined>(undefined), ontoggle, trailing }:
 		{ selected?: Set<string>; mode?: T_Match; ontoggle?: (id: string, on: boolean) => void; trailing?: Snippet } = $props();
 
@@ -45,9 +45,9 @@
 		<!-- The any/all toggle sits right beside the chips; only shown to a caller
 		     that binds the match mode (the filter), and only with two or more tags —
 		     with one tag or none, all vs any makes no difference. -->
-		<div class='logic-choice'>
+		<div class='all-any'>
 			{#each (['all', 'any'] as const) as m}
-				<button class='logic-choice-segment' class:current={mode === m} onclick={toggle_mode}>{m}</button>
+				<button class='all-any-segment' class:current={mode === m} onclick={toggle_mode}>{m}</button>
 			{/each}
 		</div>
 	{/if}
@@ -55,7 +55,7 @@
 		<!-- The tags as one joined segmented pill; several segments can be lit at once. -->
 		<div class='tags'>
 			{#each tags as tag}
-				<button class='chip' class:on={selected.has(tag.id)} onclick={() => toggle(tag.id)}>{tag.name}</button>
+				<button class='tag' class:on={selected.has(tag.id)} onclick={() => toggle(tag.id)}>{tag.name}</button>
 			{/each}
 		</div>
 	{/if}
@@ -70,17 +70,17 @@
 		display         : flex;
 	}
 
-	.logic-choice {
+	.all-any {
 		border        : var(--thickness-normal) solid var(--black);
 		height        : var(--height-control);
-		box-sizing    : border-box;
 		border-radius : var(--radius-pill);
 		background    : var(--white);
+		box-sizing    : border-box;
 		overflow      : hidden;
 		display       : flex;
 	}
 
-	.logic-choice-segment {
+	.all-any-segment {
 		padding    : var(--pad-control);
 		font-size  : var(--font-label);
 		background : transparent;
@@ -89,16 +89,16 @@
 		border     : none;
 	}
 
-	.logic-choice-segment:not(:last-child) {
+	.all-any-segment:not(:last-child) {
 		border-right : var(--thickness-normal) solid var(--black);
 	}
 
-	.logic-choice-segment.current {
-		background : var(--accent);
+	.all-any-segment.current {
 		color      : var(--text-on-accent);
+		background : var(--accent);
 	}
 
-	.logic-choice-segment:not(.current):hover {
+	.all-any-segment:not(.current):hover {
 		background : var(--hover);
 	}
 
@@ -106,16 +106,16 @@
 	   number of segments can be lit. Wraps to more rows when the tags are many. */
 	.tags {
 		border        : var(--thickness-normal) solid var(--black);
-		border-radius : var(--radius-pill);
 		min-height    : var(--height-control);
-		box-sizing    : border-box;
+		border-radius : var(--radius-pill);
 		background    : var(--white);
+		box-sizing    : border-box;
 		overflow      : hidden;
 		flex-wrap     : wrap;
 		display       : flex;
 	}
 
-	.chip {
+	.tag {
 		padding    : var(--pad-control);
 		font-size  : var(--font-label);
 		background : transparent;
@@ -124,16 +124,16 @@
 		border     : none;
 	}
 
-	.chip:not(:last-child) {
+	.tag:not(:last-child) {
 		border-right : var(--thickness-normal) solid var(--black);
 	}
 
-	.chip.on {
+	.tag.on {
 		background : var(--accent);
 		color      : var(--text-on-accent);
 	}
 
-	.chip:not(.on):hover {
+	.tag:not(.on):hover {
 		background : var(--hover);
 	}
 </style>

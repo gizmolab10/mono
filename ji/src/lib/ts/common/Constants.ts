@@ -16,7 +16,7 @@ export default class Constants {
 		base		 : common_size * 0.375,		// 13.13
 		banner		 : common_size * 0.4,		// 14
 		large		 : common_size * 0.5,		// 17.5
-		huge         : common_size * 0.7,		// 24.5
+		huge         : common_size * 0.63,		// 24.5
 		em           : {
 			tracking : 0.03,			// em — the banner letter-spacing
 			small	 : 1.4,
@@ -50,9 +50,8 @@ export default class Constants {
 	width = {
 		modal	 	 : common_size * 17.3,
 		details		 : common_size * 7,
-		phone		 : 620,
-		window		 : 400,
-		page	   	 : 10,
+		window		 : 350,
+		operations   : 300,
 	};
 
 	layer = {
@@ -65,6 +64,7 @@ export default class Constants {
 	gap = {
 		huge         : common_gap * 4,
 		fat	         : common_gap * 2.1,
+		small		 : common_gap / 1.5,
 		tight		 : common_gap / 2,
 		details		 : common_gap / 4,
 		default      : common_gap,
@@ -125,6 +125,10 @@ export default class Constants {
 
 	svg = {
 		cross		 : common_size / 1.4,
+	};
+
+	paging = {
+		notes   	 : 10,
 	};
 }
 

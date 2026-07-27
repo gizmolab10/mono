@@ -15,24 +15,24 @@
 	const isNewestFirst = allNotes.length > 1 && allNotes[0].build > allNotes[1].build;
 
 	let { onclose } : { onclose: () => void } = $props();
-	let title = $state(isNewestFirst ? `build notes (${k.width.page} most recent)` : 'build notes');
-	let notes = $state(allNotes.slice(0, k.width.page));
-	let show_down = $state(notesLimit > k.width.page);
+	let title = $state(isNewestFirst ? `build notes (${k.paging.notes} most recent)` : 'build notes');
+	let notes = $state(allNotes.slice(0, k.paging.notes));
+	let show_down = $state(notesLimit > k.paging.notes);
 	let show_up = $state(false);
 	let notesIndex = $state(0);
 
 	function updateNotes() {
-		const end = Math.min(notesLimit, notesIndex + k.width.page);
+		const end = Math.min(notesLimit, notesIndex + k.paging.notes);
 		notes = allNotes.slice(notesIndex, end);
 		const showingMostRecent = isNewestFirst && notesIndex === 0;
-		title = showingMostRecent ? `build notes (${k.width.page} most recent)` : 'build notes';
+		title = showingMostRecent ? `build notes (${k.paging.notes} most recent)` : 'build notes';
 		show_up = notesIndex > 0;
-		show_down = notesIndex < notesLimit - k.width.page;
+		show_down = notesIndex < notesLimit - k.paging.notes;
 	}
 
 	function hit_closure(pointsUp: boolean) {
-		const nextIndex = notesIndex + (k.width.page * (pointsUp ? -1 : 1));
-		notesIndex = Math.max(0, Math.min(nextIndex, notesLimit - k.width.page));
+		const nextIndex = notesIndex + (k.paging.notes * (pointsUp ? -1 : 1));
+		notesIndex = Math.max(0, Math.min(nextIndex, notesLimit - k.paging.notes));
 		updateNotes();
 	}
 

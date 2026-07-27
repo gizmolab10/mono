@@ -12,3 +12,8 @@ Every file under `notes/`. Update when notes files are added, moved, or removed.
 - `code debt.md` — open coding tasks, as checkboxes.
 - `handoff.md` — current status and the single **Next** action; read first each session.
 - `work journal.md` — reverse-chronological log of finished work.
+- `working features.md` — the running list of shipped features, newest first.
+- `external AnythingLLM storage.md` — how-to: put the Docker AnythingLLM store on an external drive.
+- `proposals/` — design proposals (sideband storage, thin proxy, build LLM, chat history, db, persistables, RAG consistency).
+
+(Note: this map lists what recent work touched; older work/ files — e.g. `prime directive.md`, `future/` — aren't all indexed yet.)

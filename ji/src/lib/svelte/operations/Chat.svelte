@@ -105,6 +105,36 @@
 	// always sits at the box center; the style scales it on screen to --size-svg (the size knob).
 	const GEAR_BOX = 100;
 	const gearPath = svg_paths.gear(GEAR_BOX);
+
+	// The conversation keeps a gap on its right so the exchanges clear the scrollbar. When the
+	// list is short enough that there's no scrollbar, that gap is dead space — so drop it then
+	// and give it back the moment the scrollbar returns. Measured from the real content vs box
+	// height, re-checked on every resize and whenever the conversation's contents change.
+	let convo_el = $state<HTMLDivElement | undefined>(undefined);
+	let overflowing = $state(false);
+
+	function measure_scroll() {
+		if (!convo_el) { return; }
+		const over = convo_el.scrollHeight > convo_el.clientHeight + 1;   // +1 shrugs off sub-pixel rounding
+		if (over !== overflowing) {
+			overflowing = over;
+			debug.log(`Chat scroll: content ${convo_el.scrollHeight}px vs box ${convo_el.clientHeight}px — ${over ? 'scrollbar showing, keep the right gap' : 'no scrollbar, drop the right gap'}.`);
+		}
+	}
+
+	// Re-measure when the contents change (a new answer, a collapse, the streaming reply growing).
+	$effect(() => {
+		exchanges.length; collapsed; pending;   // read so this re-runs on any of them
+		measure_scroll();
+	});
+
+	// Re-measure when the box itself resizes (window, details opening, zoom).
+	$effect(() => {
+		if (!convo_el) { return; }
+		const observer = new ResizeObserver(() => measure_scroll());
+		observer.observe(convo_el);
+		return () => observer.disconnect();
+	});
 </script>
 
 <div class='chat'>
@@ -134,7 +164,7 @@
 			<div class='replies-sep'><Separator title='{all_collapsed ? "show" : "hide"} responses' onclick={toggle_all} /></div>
 		{/if}
 
-		<div class='conversation'>
+		<div class='conversation' class:flush-right={!overflowing} bind:this={convo_el}>
 			{#if pending}
 				<div class='exchange'>
 					<div class='question pending-question'><span class='q-text'>{pending.question}</span></div>
@@ -267,6 +297,11 @@
 		display        : flex;
 		min-height     : 0;
 		flex           : 1;
+	}
+
+	/* No scrollbar showing: drop the right gap so the answers reach the edge. */
+	.conversation.flush-right {
+		padding-right : 0;
 	}
 
 	/* Width alone is ignored on the overlay scrollbar — styling the thumb forces the

@@ -412,7 +412,7 @@
 	ondrop={documents_drop} ondragover={documents_dragover} ondragleave={documents_dragleave}>
 	{#if rows.length > 0 && $w_operation === T_Operation.files}
 		{#if tag_count > 0}
-			<div class='logic'>
+			<div class='tags'>
 				<Select_Tags
 					bind:selected={$w_filter_tags}
 					bind:mode={$w_filter_mode} />
@@ -439,23 +439,23 @@
 		<!-- The header is its own table, sitting still above the scroller, so the
 		     scrollbar runs only beside the document rows — not past the title row. -->
 		<div class='table-head'>
-		<table class='files-table'>
-			<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
-			<thead>
-				<tr class='head'>
-					{#each columns as col, i}
-						<th>
-							<button
-								class='head-label'
-								class:interactive={col.hover}
-								onmouseenter={() => { if (col.hover) { hovered = i; } }}
-								onmouseleave={() => { if (hovered === i) { hovered = null; } }}
-								onclick={(e) => head_click(e, i)}>{hovered === i && col.hover ? col.hover : col.label}</button>
-						</th>
-					{/each}
-				</tr>
-			</thead>
-		</table>
+			<table class='files-table'>
+				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
+				<thead>
+					<tr class='head'>
+						{#each columns as col, i}
+							<th>
+								<button
+									class='head-label'
+									class:interactive={col.hover}
+									onmouseenter={() => { if (col.hover) { hovered = i; } }}
+									onmouseleave={() => { if (hovered === i) { hovered = null; } }}
+									onclick={(e) => head_click(e, i)}>{hovered === i && col.hover ? col.hover : col.label}</button>
+							</th>
+						{/each}
+					</tr>
+				</thead>
+			</table>
 		</div>
 			<div class='head-sep'><Separator /></div>
 			<div class='table-scroll' bind:this={scroller} onscroll={on_scroll}>
@@ -552,8 +552,8 @@
 	}
 
 	/* Wraps the filter (toggle + chips); the bottom space sets it off the rule. */
-	.logic {
-		padding-bottom  : var(--gap);
+	.tags {
+		padding-bottom  : var(--gap-small);
 		justify-content : center;
 		display         : flex;
 	}
@@ -573,7 +573,6 @@
 		margin-bottom : var(--gap);
 		align-self    : center;
 		width         : 200px;
-		margin-top    : -2px;                  /* nudge the search box up 2px */
 	}
 
 	.search-text:hover {
@@ -587,9 +586,9 @@
 		height        : var(--height-control);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-base);
+		margin-bottom : var(--gap-small);
 		background    : var(--white);
 		box-sizing    : border-box;
-		margin-bottom : var(--gap);
 		align-self    : center;
 		overflow      : hidden;
 		display       : flex;

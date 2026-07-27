@@ -2,6 +2,24 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-27 — a top bar that measures itself, and tighter edges
+
+- **The title bows out when there's no room.** The centered "Intersection" title now hides when the top row is too narrow to hold it beside the hamburger, the operations pill, and the help button — measured from the real on-screen widths (not a fixed break-point), so it reacts to a resize *and* to browser zoom. When hidden it leaves the layout entirely, freeing its space; it returns, centered, the moment there's room.
+- **The operations view bows out too.** When the details region is open and the window can't fit both it and the operations view (each at its own least width), the operations view drops and details fill the width — again measured from the live window width, so zoom counts. A log line records the window-vs-needed numbers on each flip.
+- **The app hugs the window.** The outer margin on all four edges tightened to half its old size; the frame's width math was moved to match, so no dead sliver is left at the sides.
+- **The chat drops its right gap when nothing's scrolling.** The conversation keeps a gap on its right for the scrollbar; when the list is short enough that there's no scrollbar, that gap now goes away and the answers reach the edge — restored the moment the scrollbar returns.
+- **Quieter log, fewer timeouts.** The every-eight-seconds AI heartbeat used to log two lines each tick, and those log posts sometimes timed out against the little local log server. The heartbeat now reads silently; the one-off refreshes still log.
+- **Small tidy.** The manage-tags view lost its dead "done" button (it had no close action there).
+
+## 2026-07-27 — research: what AnythingLLM can store and how it's built
+
+Several questions answered against the live instance and AnythingLLM's own docs/spec, written up rather than guessed:
+
+- **Sideband storage** — AnythingLLM has no key-value store, but an *un-embedded* raw-text document can carry a payload in its `description` details field, which round-trips exactly (proven to 4 MB). The document *body* is never returned by the API — only the details — so `description` is the seam. Design, read-merge-write safety, whole-database-as-payload, and the SQLite-store background are in [sideband storage proposal](proposals/sideband%20storage%20proposal.md); the code-debt sideband item points at it.
+- **Threads** — a workspace holds many named threads, each its own chat history sharing the same documents; a whole thread can be deleted (a single exchange can't). Written into [build LLM proposal](proposals/build%20LLM%20proposal.md) as a subsection.
+- **No per-exchange delete** — the developer API can only wipe a workspace's whole chat; confirmed from the OpenAPI spec. (So "delete a question" becomes hide-in-ji, via the sideband note.)
+- **External-drive storage** — the Docker AnythingLLM's whole store can live on an external drive by pointing its one bind-mount at a folder there; steps in [external AnythingLLM storage](external%20AnythingLLM%20storage.md).
+
 ## 2026-07-26 — the AI answers live, word by word
 
 - **The wait was blind.** Asking a question showed a spinning gear and nothing else until the whole answer landed at once — and there's no honest way to guess how long that takes, since the time is mostly the model writing an answer whose length isn't known until it's written.

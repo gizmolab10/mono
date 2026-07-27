@@ -18,9 +18,20 @@ Keep each ask exchange — the question, its answer, and the relevant documents 
     - [x] sources
     - [x] when — stored as `time`
 
+## Chunk retrieval
+
+two ways:
+
+- **With the answer:** the chat/stream-chat reply's sources already carry each matched chunk's **text** (plus its file title and metadata), not just the filename — ji today reads only the title and throws the text away. (The "sources contains a large amount of data" complaint is exactly that chunk text: [issue #3209](https://github.com/Mintplex-Labs/anything-llm/issues/3209).)
+- **Without spending an answer:** there's a dedicated **vector-search** endpoint — you send a query and it returns the top matching chunks as a `results` array, each with `text` (the chunk), `score`, `distance`, and `metadata` (title, source, etc.) — files and chunks, no LLM reply, no tokens burned ([issue #2811](https://github.com/Mintplex-Labs/anything-llm/issues/2811), [Similarity Search – DeepWiki](https://deepwiki.com/Mintplex-Labs/anything-llm/6.4-similarity-search-and-reranking)).
+
+Caveat: in your workspace the chat path is returning zero sources right now, so that route needs the similarity-threshold looked at first; the vector-search endpoint is a clean alternative.
+
+Sources: [issue #2811 – vector search via Workspace API](https://github.com/Mintplex-Labs/anything-llm/issues/2811), [Similarity Search and Reranking – DeepWiki](https://deepwiki.com/Mintplex-Labs/anything-llm/6.4-similarity-search-and-reranking), [issue #3209 – stream-chat sources](https://github.com/Mintplex-Labs/anything-llm/issues/3209).
+
 ## Workspaces
 
-Right now we only have one workspace "Intersection" in AnythingLLM. That's to be ours forever. Each group using ji will their own workspace. Future ->
+Right now we only have one workspace "Intersection" in AnythingLLM. That's to be ours forever. Each group using ji will their own workspace.
 
 ## Future
 

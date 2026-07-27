@@ -2,6 +2,7 @@
 
 | # | Feature |
 | --- | --- |
+| 30 | The top bar and panel measure themselves — the centered title hides when the row is too narrow to hold it, and the operations view drops (details fill the width) when the window can't fit both; both measured from real on-screen widths, so a resize or a browser zoom triggers them |
 | 29 | The AI answers a question live — words appear one at a time as the model writes them (pushed through the key-holding server, no polling), the spinning gear standing in for the ask button until the last word; the finished answer then settles into the saved conversation with its sources |
 | 28 | A password screen sets up a new browser for the shared AI — on the AI store with the two settings missing, one field takes a password that writes them and drops to the list |
 | 27 | The AI store shows what AnythingLLM actually holds — the true document count in the data readout and the AI's own documents as read-only rows in the table — the same on every machine, not only the one that dropped the files |
