@@ -125,7 +125,7 @@
 {/if}
 
 <!-- The one hover hint for the whole app; each element opts in with use:tip={'words'}. -->
-<ToolTip message={$w_tip.message} mouseX={$w_tip.x} mouseY={$w_tip.y} />
+<ToolTip message={$w_tip.message} mouseX={$w_tip.x} mouseY={$w_tip.y} appearance={$w_tip.appearance} />
 
 <style>
 	.intersection {

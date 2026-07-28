@@ -4,6 +4,10 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
+- [ ] db -> Anything LLM
+    - [ ] vital
+    - [ ] small
+    - [ ] vulnerable to overwrite
 - [ ] port hits from di (not 3D!)
     - [ ] so tooltips & hover work more reliably (leave events often do not happen)
 - [ ] debug.log
@@ -27,6 +31,7 @@ write a proposal for the first unchecked item to the top of handoff.
         - [ ] tags
         - [ ] messages channel
 - [ ] what is "inset" constant?
+- [ ] operation.threads or projects
 - [ ] set op to list -> very, very slow
 - [ ] merge constants -> configuration
 - [ ] build into ji -> install and configure

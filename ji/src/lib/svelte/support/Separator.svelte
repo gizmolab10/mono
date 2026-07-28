@@ -14,6 +14,7 @@
 		vertical  = false,
 		spacer    = false,
 		title     = null,
+		hovered   = false,
 		z_layer,
 	}: {
 		vertical?  : boolean;          // runs top-to-bottom instead of left-to-right
@@ -23,6 +24,7 @@
 		reach?     : string;           // how far each end extends so it meets the accent frame's inner edge; the app --gap by default
 		title?     : string | null;    // when set, a label sits centered on the bar, its --bg mask breaking the line
 		onclick?   : ((event: MouseEvent) => void) | undefined;   // when set, the title is a button that runs this (given the click, so it can stop it bubbling)
+		hovered?   : boolean;          // force the title-button's hover look on, even when the cursor isn't on it (a surrounding area can light it)
 		z_layer?   : number;           // optional stacking layer
 	} = $props();
 
@@ -36,7 +38,7 @@
 <!-- The centered label: a button when a click handler is given, else plain text. -->
 {#snippet title_tag()}
 	{#if onclick}
-		<button type='button' class='title clickable' {onclick}>{title}</button>
+		<button type='button' class='title clickable' class:forced={hovered} {onclick}>{title}</button>
 	{:else}
 		<span class='title'>{title}</span>
 	{/if}
@@ -130,7 +132,8 @@
 		cursor        : pointer;
 	}
 
-	.title.clickable:hover {
+	.title.clickable:hover,
+	.title.clickable.forced {
 		background : var(--hover);
 		border     : 0.5px solid var(--darkgray);
 	}

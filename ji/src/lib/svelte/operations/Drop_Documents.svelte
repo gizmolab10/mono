@@ -6,8 +6,10 @@
 	import Drop_Status from '../support/Drop_Status.svelte';
 	import { save_drop } from '../../ts/managers/Drop';
 	import { Document } from '../../ts/types/Document';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
+	import { k } from '../../ts/common/Constants';
 
 	// The drop box: saves each dropped file (and folder) into the active store,
 	// tagged with whatever tags are chosen for this batch. The saving itself lives
@@ -24,9 +26,26 @@
 		void $w_db_changed;   // recompute whenever the store's contents change
 		return $w_hierarchy.documents.length === 0
 			? 'drop files & folders here'
-			: 'drop files & folders here, or click to go back';
+			: 'click to show files';
 	});
 	$effect(() => { debug.log(`Drop box hint: ${$w_hierarchy.documents.length} document(s) held, so hint reads "${drop_hint}".`); });
+
+	// The close button (top-left) appears only once the store has documents — with an empty store
+	// the list it would return to is itself this drop box, so there'd be nowhere to go. Reads the
+	// content-changed signal so it appears the moment the first document lands.
+	let has_docs = $derived.by(() => {
+		void $w_db_changed;   // recompute whenever the store's contents change
+		return $w_hierarchy.documents.length > 0;
+	});
+
+	// The cross drawing for the close button.
+	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
+
+	// Leave the drop box and show the file list.
+	function show_files(): void {
+		debug.log('Drop box close button clicked — back to the file list.');
+		w_operation.set(T_Operation.files);
+	}
 
 	// Tags chosen for this drop batch — every saved document gets tagged with them.
 	let chosen_tags = $state(new Set<string>());
@@ -61,16 +80,21 @@
 
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class='drop'
-	tabindex='0'
-	role='button'
 	class:dragging
 	use:tip={drop_hint}
-	onclick={() => { debug.log('Drop box clicked — back to the list.'); w_operation.set(T_Operation.files); }}
 	ondrop={handleDrop}
 	ondragover={handleDragOver}
 	ondragleave={handleDragLeave}>
+	{#if has_docs}
+		<!-- Top-left, a --gap in from the dashed edge: leaves the drop box and shows the file list. -->
+		<button class='close' onclick={show_files} aria-label='show the file list' use:tip={'show files'}>
+			<svg class='cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
+				<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+			</svg>
+		</button>
+	{/if}
 	<!-- The edge, drawn rather than bordered: a plain dashed border leaves the dash
 	     length to the browser, and this one is 4 on, 2 off. It straddles where the
 	     border would sit, and goes solid while a drag is over the box. -->
@@ -109,6 +133,38 @@
 		flex-direction  : column;
 		display         : flex;
 		flex            : 1;                   /* fill the height so its bottom margin equals the sides */
+	}
+
+	/* The close cross, a --gap in from the box's top-left corner (just inside the dashed edge). */
+	.close {
+		position        : absolute;
+		top             : var(--gap);
+		left            : var(--gap);
+		height          : var(--height-control);
+		width           : var(--height-control);
+		border          : var(--thickness-normal) solid var(--black);
+		border-radius   : var(--radius-percent);
+		background      : var(--white);
+		box-sizing      : border-box;
+		cursor          : pointer;
+		align-items     : center;
+		justify-content : center;
+		display         : flex;
+		padding         : 0;
+		z-index         : 1;
+	}
+
+	.close:hover {
+		background : var(--hover);
+	}
+
+	.cross {
+		width  : var(--size-svg);
+		height : var(--size-svg);
+	}
+
+	.cross path {
+		stroke : var(--black);
 	}
 
 	/* Empty space above the instruction, three tenths of the box tall. */

@@ -89,6 +89,33 @@ export class SVG_Paths {
 		return 'M' + start.description + ' ' + arcs.join(' ') + 'Z';
 	}
 
+	// The three tips of a soft-pointer: a plain isosceles triangle inside the `size` box, one corner
+	// pointing in `direction`. All three sit on the box's circle; the two back corners are 45° either
+	// side of the back (90° apart — narrower than an even triangle's 120°, so the point reads as a
+	// pointer). Straight sides, no curves. Shared by soft_pointer and soft_pointer_bounds.
+	private soft_pointer_points(size: number, direction: number): Point[] {
+		const offset = Point.square(size / 2);
+		const radius = Point.x(size / 2);
+		const half   = (90 * Math.PI / 180) / 2;   // half the 90° gap between the two back corners
+		const point  = direction + Math.PI;        // the tip points opposite the given direction
+		const angles = [point, point + Math.PI - half, point + Math.PI + half];
+		return angles.map(a => this.rotated(radius, a).offsetBy(offset));
+	}
+
+	soft_pointer(size: number, direction: number): string {
+		const [tip, left, right] = this.soft_pointer_points(size, direction);
+		return `M ${tip.description} L ${left.description} L ${right.description} Z`;
+	}
+
+	soft_pointer_bounds(size: number, direction: number): { minX: number; minY: number; width: number; height: number } {
+		const points = this.soft_pointer_points(size, direction);
+		const xs   = points.map(p => p.x);
+		const ys   = points.map(p => p.y);
+		const minX = Math.min(...xs);
+		const minY = Math.min(...ys);
+		return { minX, minY, width: Math.max(...xs) - minX, height: Math.max(...ys) - minY };
+	}
+
 	// A cog centered on the middle of a `size`×`size` box (so rotating it spins in place,
 	// no wobble): flat-topped teeth stepped evenly around the circle, plus a round center
 	// hole shown by an even-odd fill. Render with viewBox `0 0 size size` and fill-rule

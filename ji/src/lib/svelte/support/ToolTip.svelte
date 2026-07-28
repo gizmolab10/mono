@@ -9,8 +9,14 @@
 	// Two ways to place it: give it the mouse position (`mouseX`/`mouseY`) and it sits
 	// centered just under the cursor; or give it the `anchor` element and it sits just below
 	// that. Mouse position wins when both are given. Passing no message shows nothing.
-	let { message = null, anchor = null, mouseX = null, mouseY = null }:
-		{ message?: string | null; anchor?: HTMLElement | null; mouseX?: number | null; mouseY?: number | null } = $props();
+	// `delay` (seconds) is the pause before the tooltip starts to appear; it then fades from clear
+	// to solid over half that time. The pause means a quick flick past something never flashes a
+	// hint. It restarts each time a tooltip appears from nothing.
+	// `appearance` changes whenever the cursor lands on a different hinted thing; keying the tooltip
+	// on it remounts the hint so its opening pause and fade start over on each new one — even when
+	// neighbors share the same words (a column of rows all reading "open this file").
+	let { message = null, anchor = null, mouseX = null, mouseY = null, delay = 1 / 3, appearance = 0 }:
+		{ message?: string | null; anchor?: HTMLElement | null; mouseX?: number | null; mouseY?: number | null; delay?: number; appearance?: number } = $props();
 
 	let label = $state<HTMLElement | null>(null);
 	let left  = $state(0);
@@ -47,7 +53,9 @@
 </script>
 
 {#if message != null && (anchor != null || has_mouse)}
-	<div class='tooltip' bind:this={label} style:left='{left}px' style:top='{top}px'>{message}</div>
+	{#key appearance}
+		<div class='tooltip' bind:this={label} style:left='{left}px' style:top='{top}px' style:--tip-time='{delay}s'>{message}</div>
+	{/key}
 {/if}
 
 <style>
@@ -64,6 +72,14 @@
 		position       : fixed;
 		pointer-events : none;                           /* never steals the hover from what it names */
 		border-radius  : 6px;
+		/* Hold clear for --tip-time, then fade to solid over half that span. Fill 'both' keeps it
+		   transparent through the opening pause and solid once the fade is done. */
+		animation      : tip-fade calc(var(--tip-time) / 2) ease var(--tip-time) both;
+	}
+
+	@keyframes tip-fade {
+		from { opacity : 0; }
+		to   { opacity : 1; }
 	}
 
 </style>

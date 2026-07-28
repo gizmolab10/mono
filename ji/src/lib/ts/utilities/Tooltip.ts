@@ -1,11 +1,14 @@
 import { writable } from 'svelte/store';
+import { debug } from '../common/Debug';
 
 // The one hover hint shown at a time. A single ToolTip mounted at the app root reads this and
-// draws the hint centered just below the mouse, appearing the instant the cursor arrives (the
-// browser's own title text waits about a second and can't be hurried). Message null shows nothing.
-export type Tip = { message: string | null; x: number; y: number };
+// draws the hint centered just below the mouse, appearing after a short pause (the browser's own
+// title text waits about a second and can't be hurried). Message null shows nothing. `appearance`
+// counts up every time the cursor lands on a different hinted element, so the hint's opening pause
+// can restart even when two neighbors (rows all reading "open this file") carry the same words.
+export type Tip = { message: string | null; x: number; y: number; appearance: number };
 
-export const w_tip = writable<Tip>({ message: null, x: 0, y: 0 });
+export const w_tip = writable<Tip>({ message: null, x: 0, y: 0, appearance: 0 });
 
 // The action: mark an element with the words to show on hover. Empty, null, or false means "no
 // tip here" (a thing that's only sometimes clickable, or simply needs none). It only sets an
@@ -25,13 +28,20 @@ export function tip(node: HTMLElement, message?: string | null | false) {
 // element that carries its own words (or a child of one), it shows those words and follows the
 // mouse; over anything else it clears. Returns a teardown.
 export function start_tips(): () => void {
+	let current: HTMLElement | null = null;   // the hinted element the cursor is over right now
+	let appearance = 0;                        // bumps each time that element changes, to restart the pause
 	function on_move(event: MouseEvent) {
 		const target = event.target as HTMLElement | null;
 		const el = target?.closest?.('[data-tip]') as HTMLElement | null;
+		if (el !== current) {
+			current = el;
+			appearance++;
+			debug.log(`Tooltip: cursor moved onto a ${el ? `new hint ("${el.dataset.tip}")` : 'plain spot'} — appearance ${appearance}, its opening pause restarts.`);
+		}
 		const message = el?.dataset.tip ?? null;
-		w_tip.set({ message, x: event.clientX, y: event.clientY });
+		w_tip.set({ message, x: event.clientX, y: event.clientY, appearance });
 	}
-	function clear() { w_tip.set({ message: null, x: 0, y: 0 }); }
+	function clear() { current = null; w_tip.set({ message: null, x: 0, y: 0, appearance }); }
 
 	document.addEventListener('mousemove', on_move);
 	document.addEventListener('mouseleave', clear);   // cursor left the window

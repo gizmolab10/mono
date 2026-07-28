@@ -37,14 +37,14 @@
 	// the table until it's opened again.
 	const w_closed = preferences.persistent_set(T_Preference.collapsed);
 
-	// The open/close triangle: the fat three-corner mark, pointing down when the
-	// folder is open, right when it's shut. 15 across.
-	const TRIANGLE = 15;
+	// The open/close triangle: a plain isosceles pointer, pointing down when the
+	// folder is open, right when it's shut. 11 across.
+	const TRIANGLE = 11;
 	function triangle_path(open: boolean): string {
-		return svg_paths.fat_polygon(TRIANGLE, open ? Direction.down : Direction.right);
+		return svg_paths.soft_pointer(TRIANGLE, open ? Direction.down : Direction.right);
 	}
 	function triangle_bounds(open: boolean): { minX: number; minY: number; width: number; height: number } {
-		return svg_paths.fat_polygon_bounds(TRIANGLE, open ? Direction.down : Direction.right);
+		return svg_paths.soft_pointer_bounds(TRIANGLE, open ? Direction.down : Direction.right);
 	}
 	function toggle_folder(id: string) {
 		w_closed.update((shut) => {
@@ -274,6 +274,22 @@
 
 	let hovered = $state<number | null>(null);
 
+	// While the cursor is anywhere over the drop-opener zone — the two dividers and the column
+	// header between them — the "drop files below" tab lights as if the cursor were on it. The
+	// whole zone acts as one large hover target for that one tab.
+	let drop_opener_hovered = $state(false);
+	function set_drop_opener_hover(on: boolean): void {
+		drop_opener_hovered = on;
+		debug.log(`Drop-opener zone hover: cursor ${on ? 'entered' : 'left'}; the "drop files below" tab shows ${on ? 'lit' : 'normal'}.`);
+	}
+	// A click anywhere in the zone opens the drop box — the same action the tab runs. Stopped so
+	// the background click-clearer below doesn't see it and bounce straight back to the list.
+	function open_drop(event: MouseEvent): void {
+		event.stopPropagation();
+		w_operation.set(T_Operation.drop);
+		debug.log('Drop-opener clicked — switching to the drop box.');
+	}
+
 	// One click handler for every header, told which column it was. The two middle
 	// headers switch the content area to their add view; format and edit-tags do
 	// nothing.
@@ -400,13 +416,25 @@
 		</div>
 		<input class='search-text' type='search' placeholder='search file names' bind:value={$w_filter_text} />
 	{/if}
-	<div class='top-sep'>
-		<Separator thickness={k.separator.fat} title='drop files & folders anywhere below' onclick={(e) => { e.stopPropagation(); w_operation.set(T_Operation.drop); }} />
-	</div>
 	{#if rows.length === 0}
+		<div class='top-sep'>
+			<Separator thickness={k.separator.fat} title='drop files below' onclick={open_drop} />
+		</div>
 		<div class='empty'>no documents yet</div>
 	{:else}
 		<div class='table-region'>
+		<!-- The two dividers and the column header between them form one zone: pointing anywhere in
+		     here lights the "drop files below" tab, and clicking anywhere in it opens the drop box —
+		     the same action the tab runs. The zone sits in a layer in front of the rows. -->
+		<!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
+		<div class='drop-opener'
+			use:tip={'click to drop files'}
+			onclick={open_drop}
+			onmouseenter={() => set_drop_opener_hover(true)}
+			onmouseleave={() => set_drop_opener_hover(false)}>
+		<div class='top-sep'>
+			<Separator thickness={k.separator.fat} title='drop files below' hovered={drop_opener_hovered} onclick={open_drop} />
+		</div>
 		<!-- The header is its own table, sitting still above the scroller, so the
 		     scrollbar runs only beside the document rows — not past the title row. -->
 		<div class='table-head'>
@@ -429,6 +457,7 @@
 			</table>
 		</div>
 			<div class='head-sep'><Separator /></div>
+			</div>
 			<div class='table-scroll' bind:this={scroller} onscroll={on_scroll}>
 				<table class='files-table'>
 					<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
@@ -536,7 +565,7 @@
 		width         : 200px;
 	}
 
-	.search-text:hover {
+	.search-text:hover:not(:focus) {
 		background : var(--hover);
 	}
 
@@ -582,6 +611,16 @@
 		margin-bottom : var(--gap);
 		margin-top    : var(--gap);
 		flex-shrink   : 0;
+	}
+
+	/* The two dividers plus the header between them. Sits in a layer in front of the rows so its
+	   whole area is one target: hovering lights the "drop files below" tab, clicking opens the
+	   drop box. */
+	.drop-opener {
+		position    : relative;
+		z-index     : 2;
+		cursor      : pointer;
+		flex-shrink : 0;
 	}
 
 	.empty {
@@ -716,7 +755,7 @@
 	}
 
 	.tri path {
-		fill         : var(--bg);
+		fill         : var(--accent);
 		stroke       : var(--accent);
 		stroke-width : 1;
 	}
@@ -731,6 +770,7 @@
 	.name-text {
 		flex          : 1;
 		min-width     : 0;
+		margin-left   : var(--gap);
 		white-space   : nowrap;
 		overflow      : hidden;
 		text-overflow : ellipsis;

@@ -68,10 +68,12 @@
 		box-sizing : border-box;
 	}
 
-	.field:hover,
-	.field:focus {
+	.field:hover:not(:focus) {
 		background : var(--hover);
-		outline    : none;
+	}
+
+	.field:focus {
+		outline : none;
 	}
 
 	.button {
