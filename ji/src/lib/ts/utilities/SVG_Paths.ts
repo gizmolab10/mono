@@ -1,6 +1,10 @@
 import { Point } from '../types/Coordinates';
 import Angle from '../types/Angle';
 
+// How far, as a fraction of each side, the soft-pointer pulls back from every tip before the corner
+// curves: 0 = sharp tips, toward 0.5 = the pull-backs meet mid-side and it's all curve.
+const POINTER_SOFTEN = 0.44;
+
 export class SVG_Paths {
 
 	private rotated(p: Point, angle: number): Point { const [rx, ry] = Angle.rotate_xy(p.x, p.y, angle); return new Point(rx, ry); }
@@ -89,28 +93,65 @@ export class SVG_Paths {
 		return 'M' + start.description + ' ' + arcs.join(' ') + 'Z';
 	}
 
-	// The three tips of a soft-pointer: a plain isosceles triangle inside the `size` box, one corner
+	// The three tips of a soft-pointer: an isosceles triangle inside the `size` box, one corner
 	// pointing in `direction`. All three sit on the box's circle; the two back corners are 45° either
 	// side of the back (90° apart — narrower than an even triangle's 120°, so the point reads as a
-	// pointer). Straight sides, no curves. Shared by soft_pointer and soft_pointer_bounds.
+	// pointer). These are the sharp tips; soft_pointer rounds them. Shared with soft_pointer_bounds.
 	private soft_pointer_points(size: number, direction: number): Point[] {
 		const offset = Point.square(size / 2);
 		const radius = Point.x(size / 2);
-		const half   = (90 * Math.PI / 180) / 2;   // half the 90° gap between the two back corners
+		const half   = (90 * Math.PI / 180) / 1.75;   // half the 90° gap between the two back corners
 		const point  = direction + Math.PI;        // the tip points opposite the given direction
 		const angles = [point, point + Math.PI - half, point + Math.PI + half];
 		return angles.map(a => this.rotated(radius, a).offsetBy(offset));
 	}
 
-	soft_pointer(size: number, direction: number): string {
-		const [tip, left, right] = this.soft_pointer_points(size, direction);
-		return `M ${tip.description} L ${left.description} L ${right.description} Z`;
+	// Each rounded corner of the soft-pointer: the tip (used only as the curve's control point, never
+	// touched by the outline) and the two pull-back points on its neighboring sides where the curve
+	// starts and ends. `soften` is the pull-back fraction (see POINTER_SOFTEN). Shared by
+	// soft_pointer and soft_pointer_bounds so the drawing and its measured size stay in step.
+	private soft_pointer_corners(size: number, direction: number, soften: number): { tip: Point; arrive: Point; leave: Point }[] {
+		const tips = this.soft_pointer_points(size, direction);
+		const towards = (from: Point, to: Point) => new Point(from.x + soften * (to.x - from.x), from.y + soften * (to.y - from.y));
+		return tips.map((tip, i) => ({
+			tip,
+			arrive: towards(tip, tips[(i + 2) % 3]),   // on the incoming side, short of this tip
+			leave:  towards(tip, tips[(i + 1) % 3]),   // on the outgoing side, short of this tip
+		}));
 	}
 
-	soft_pointer_bounds(size: number, direction: number): { minX: number; minY: number; width: number; height: number } {
-		const points = this.soft_pointer_points(size, direction);
-		const xs   = points.map(p => p.x);
-		const ys   = points.map(p => p.y);
+	// The pointer with its three corners gently rounded and its three sides left straight: six
+	// pull-back points, a short curve bending around each tip between its pair. See POINTER_SOFTEN.
+	soft_pointer(size: number, direction: number, soften: number = POINTER_SOFTEN): string {
+		const corners = this.soft_pointer_corners(size, direction, soften);
+		const parts: string[] = [];
+		corners.forEach((c, i) => {
+			parts.push(`${i === 0 ? 'M' : 'L'} ${c.arrive.description}`);   // straight side into the corner
+			parts.push(`Q ${c.tip.description} ${c.leave.description}`);    // round the corner, the tip its control point
+		});
+		return parts.join(' ') + ' Z';
+	}
+
+	// The box of the actual drawn outline (not the sharp tips, which the curves never reach), so the
+	// mark fills its slot whatever the softness. Each corner is a curve from `arrive` to `leave` with
+	// the tip as control; its real reach along each axis is the two ends plus, where the curve bows
+	// out between them, one interior high point — so we include that too.
+	soft_pointer_bounds(size: number, direction: number, soften: number = POINTER_SOFTEN): { minX: number; minY: number; width: number; height: number } {
+		const xs: number[] = [];
+		const ys: number[] = [];
+		const bow = (a: number, control: number, b: number): number | null => {   // the curve's turning point along one axis, if it lies between the ends
+			const denom = a - 2 * control + b;
+			if (denom === 0) { return null; }
+			const t = (a - control) / denom;
+			if (t <= 0 || t >= 1) { return null; }
+			return (1 - t) * (1 - t) * a + 2 * (1 - t) * t * control + t * t * b;
+		};
+		for (const c of this.soft_pointer_corners(size, direction, soften)) {
+			xs.push(c.arrive.x, c.leave.x);
+			ys.push(c.arrive.y, c.leave.y);
+			const bx = bow(c.arrive.x, c.tip.x, c.leave.x); if (bx !== null) { xs.push(bx); }
+			const by = bow(c.arrive.y, c.tip.y, c.leave.y); if (by !== null) { ys.push(by); }
+		}
 		const minX = Math.min(...xs);
 		const minY = Math.min(...ys);
 		return { minX, minY, width: Math.max(...xs) - minX, height: Math.max(...ys) - minY };

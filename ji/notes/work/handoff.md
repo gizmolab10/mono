@@ -2,17 +2,21 @@
 
 My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md).
 
-## Next — drop the "or click to go back" hint when the store is empty
+## Next — mildly softer triangles (round the pointer's corners)
 
-First unchecked in [code debt](code%20debt.md) (under **in drop documents**): the drop box's hover hint reads "drop files & folders here, or click to go back". When the hierarchy holds no documents there's nowhere to go back to (the drop box *is* the only view), so the hint should read just "drop files & folders here".
+First unchecked in [code debt](code%20debt.md): **mildly softer triangles** — a six-point shape with three highly-curved corners and three barely-curved sides.
+
+**Where it stands.** The folder mark is now `soft_pointer` in `utilities/SVG_Paths.ts` — a plain straight-sided isosceles pointer (one tip in the given direction, the two back corners 90° apart). The sides are straight and the corners are sharp; this item softens just the corners.
 
 ### Proposal
 
-In `operations/Drop_Documents.svelte`, the hint is a fixed string on the box (line 55: `use:tip={'drop files & folders here, or click to go back'}`). Make it depend on whether the hierarchy has documents — `$w_hierarchy.documents.length === 0 ? 'drop files & folders here' : 'drop files & folders here, or click to go back'`. The visible instruction line (line 68) is already just "drop files & folders here", so only the hover hint changes. One line; nothing else about the box moves.
+Give `soft_pointer` a corner-radius knob (default small). Keep its three tips where they are, but at each tip pull back a short distance along both sides to two points — six points in all — then round the tip with a short bezier between that pair. The three sides between corners stay straight (hardly curved); only the corners round. One number controls how soft. Mirror the change in `soft_pointer_bounds` (already sharing `soft_pointer_points`, so extend that shared builder). Straight corners at radius 0 keep today's look.
 
-**Steel-man the misread.** The item could mean the *visible* label — but that already says just "drop files & folders here" (line 68); only the hover hint carries the extra clause, so that's what changes.
+**Steel-man the misread.** "Sides hardly curved" could tempt bulging the sides like the old `fat_polygon` — but the note pairs it with "corners highly curved", so the sides stay near-straight and only the corners soften.
 
-**Success.** On an empty store the drop box's hover hint reads "drop files & folders here" with no "or click to go back"; once there's at least one document, the full hint returns.
+**Success.** The folder pointer keeps its shape and size but its three corners are gently rounded, the sides still read as straight, tunable by one knob.
+
+**Open question for Jonathan:** how soft — just enough to take the sharp edge off, or clearly rounded nubs?
 
 ## Context
 

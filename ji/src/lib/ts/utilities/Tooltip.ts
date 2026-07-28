@@ -42,12 +42,18 @@ export function start_tips(): () => void {
 		w_tip.set({ message, x: event.clientX, y: event.clientY, appearance });
 	}
 	function clear() { current = null; w_tip.set({ message: null, x: 0, y: 0, appearance }); }
+	function clear_on_click() {
+		if (current) { debug.log('Tooltip: mouse pressed — hint hidden until the cursor moves again.'); }
+		clear();
+	}
 
 	document.addEventListener('mousemove', on_move);
-	document.addEventListener('mouseleave', clear);   // cursor left the window
+	document.addEventListener('mouseleave', clear);        // cursor left the window
+	document.addEventListener('mousedown', clear_on_click);   // a click hides the hint (it comes back on the next move)
 	return () => {
 		document.removeEventListener('mousemove', on_move);
 		document.removeEventListener('mouseleave', clear);
+		document.removeEventListener('mousedown', clear_on_click);
 		clear();
 	};
 }

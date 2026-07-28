@@ -18,18 +18,6 @@
 
 	let dragging = $state(false);
 
-	// The drop box's hover hint drops its "or click to go back" clause while the store holds no
-	// documents — there's nowhere to go back to. Adding the first one changes the count inside the
-	// same hierarchy without replacing it, so this leans on the content-changed signal to recompute
-	// (reading the count alone would never notice the 0 → 1 change).
-	let drop_hint = $derived.by(() => {
-		void $w_db_changed;   // recompute whenever the store's contents change
-		return $w_hierarchy.documents.length === 0
-			? 'drop files & folders here'
-			: 'click to show files';
-	});
-	$effect(() => { debug.log(`Drop box hint: ${$w_hierarchy.documents.length} document(s) held, so hint reads "${drop_hint}".`); });
-
 	// The close button (top-left) appears only once the store has documents — with an empty store
 	// the list it would return to is itself this drop box, so there'd be nowhere to go. Reads the
 	// content-changed signal so it appears the moment the first document lands.
@@ -47,6 +35,20 @@
 		w_operation.set(T_Operation.files);
 	}
 
+	// While the drop box is showing, Escape or Enter/Return leaves it for the file list. The
+	// listener lives only as long as this view is on screen (it mounts only for the drop operation),
+	// so it can't fire from any other view.
+	$effect(() => {
+		const on_key = (event: KeyboardEvent): void => {
+			if (event.key === 'Escape' || event.key === 'Enter') {
+				debug.log(`Drop box: "${event.key}" key pressed — back to the file list.`);
+				w_operation.set(T_Operation.files);
+			}
+		};
+		window.addEventListener('keydown', on_key);
+		return () => window.removeEventListener('keydown', on_key);
+	});
+
 	// Tags chosen for this drop batch — every saved document gets tagged with them.
 	let chosen_tags = $state(new Set<string>());
 
@@ -56,7 +58,7 @@
 	// every ending we accept in one breath.
 	const families = Document.accepted_families().map((family) => ({
 		label   : Document.family_label(family),
-		endings : Document.endings_of(family).join('  '),
+		endings : Document.endings_of(family).join(', '),
 	}));
 	for (const family of families) {
 		debug.log(`Drop box: "${family.label}" covers these endings — ${family.endings || 'none'}.`);
@@ -83,7 +85,6 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class='drop'
 	class:dragging
-	use:tip={drop_hint}
 	ondrop={handleDrop}
 	ondragover={handleDragOver}
 	ondragleave={handleDragLeave}>

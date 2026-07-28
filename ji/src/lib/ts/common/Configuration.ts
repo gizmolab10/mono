@@ -1,5 +1,5 @@
-import { k } from './Constants';
 import { colors } from '../utilities/Colors';
+import { k } from './Constants';
 
 class Configuration {
 

@@ -70,7 +70,7 @@ The ported plugin store, trimmed to ji's data. See [db spec](../work/db%20spec.m
 - `Drop.test.ts` — the drop's rules driven the way the screen drives them: the browser's dropped entries are stood in for, and the questions are answered through the same shared state the strip on screen reads. Covers the same-name rules, the standing "do the same for the rest" answer, counting (folders, skips and refusals included), and the folder rules.
 - `Mock_Storage.ts` — browser storage stood in for node, installed on import so the database registry can be built at all.
 - `utilities/Colors.ts` — the color math, the reactive theme stores, and the fixed design colors including the ink `black` (`#1a1a1a`, never `#000`) and `gray`. **⟵di**.
-- `utilities/SVG_Paths.ts` — SVG path generators, including the close-button cross and the trashcan (bin) glyph scaled to a given size. **⟵di**.
+- `utilities/SVG_Paths.ts` — SVG path generators, including the close-button cross, the trashcan (bin) glyph, the fat rounded polygon, and `soft_pointer` — a plain straight-sided isosceles pointer (one tip in a given direction, the two back corners drawn closer together) used for the folder open/close mark. **⟵di**.
 - `utilities/Tooltip.ts` — the instant-tooltip plumbing behind `ToolTip.svelte`: the `tip` action any element uses to name its hint (an empty/false value means no hint), a store holding what's pointed at, and one document-wide watcher that follows the cursor and finds the nearest hinted element under it. Replaces the browser's slow native hover text everywhere.
 
 ## src/lib/ — global styles

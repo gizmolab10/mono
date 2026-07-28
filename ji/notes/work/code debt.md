@@ -4,6 +4,10 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
+- [ ] mildly softer triangles
+    - [ ] bezier curves 6 points
+        - [ ] 3 corners highly curved
+        - [ ] 3 sides hardly curved
 - [ ] db -> Anything LLM
     - [ ] vital
     - [ ] small

@@ -2,6 +2,8 @@
 
 | # | Feature |
 | --- | --- |
+| 35 | Tooltips are paced — a hint holds clear for a short pause, then fades in over half that, so a quick flick past shows nothing; sweeping a column of rows restarts the pause on each one even when they share the same words |
+| 34 | The documents list opens the drop box from a whole zone — pointing anywhere across the two dividers and the header between lights the "drop files below" tab, and clicking there opens the drop box; the drop box itself has a top-left close button (shown only when there are documents to return to) instead of a whole-box click |
 | 33 | Too-big files are turned away from the AI store with a message and a "do not ask again" tick that quiets the rest of that one drop, then resets for the next |
 | 32 | Instant tooltips everywhere — one app tooltip that appears at once, centered just below the cursor, replacing the browser's slow native hints across the whole app |
 | 31 | The AI store keeps its own content — each document's body and the whole record list are saved beside the documents in AnythingLLM (the body never comes back from its API) and read in at launch, so the store fills itself from AnythingLLM on any machine; screens hold their "empty store" decision until that read finishes, and an empty store opens the drop box in place of the list |

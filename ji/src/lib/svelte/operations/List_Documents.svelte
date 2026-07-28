@@ -38,8 +38,8 @@
 	const w_closed = preferences.persistent_set(T_Preference.collapsed);
 
 	// The open/close triangle: a plain isosceles pointer, pointing down when the
-	// folder is open, right when it's shut. 11 across.
-	const TRIANGLE = 11;
+	// folder is open, right when it's shut. Sized to the shared drawn-glyph size (~19.7).
+	const TRIANGLE = k.size.svg;
 	function triangle_path(open: boolean): string {
 		return svg_paths.soft_pointer(TRIANGLE, open ? Direction.down : Direction.right);
 	}
@@ -268,7 +268,7 @@
 	// The tags column also carries each row's per-document buttons at its right end.
 	const columns = [
 		{ label: 'format', hover: null, op: null, width: '60px' },
-		{ label: 'name',   hover: null, op: null, width: '40%'  },
+		{ label: 'name',   hover: null, op: null, width: '60%'  },
 		{ label: 'tags',   hover: null, op: null, width: 'auto' },
 	];
 
@@ -351,7 +351,21 @@
 	<td class='name' class:viewable={row.viewable}
 		style:padding-left='{row.depth * 5}px'
 		use:tip={row.viewable ? 'open ' + row.name : false}
-		onclick={(e) => { if (row.viewable) { e.stopPropagation(); open_view(row); } }}><span class='name-line'><span class='tri-slot'>{#if row.has_children}{@const open = !$w_closed.has(row.id)}{@const b = triangle_bounds(open)}<button class='tri' aria-label={open ? 'close folder' : 'open folder'} use:tip={(open ? 'close ' : 'open ') + row.name} onclick={(e) => { e.stopPropagation(); toggle_folder(row.id); }}><svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'><path d={triangle_path(open)} /></svg></button>{/if}</span><span class='name-text'>{#if row.is_dedup}<span class='dedup-mark' use:tip={'also here — the same file, shown under another parent'}>↳ </span>{/if}{row.display_name}</span></span></td>
+		onclick={(e) => { if (row.viewable) { e.stopPropagation(); open_view(row); } }}>
+		<span class='name-line'>
+			<span class='tri-slot' style:width='{TRIANGLE}px'>
+				{#if row.has_children}
+					{@const open = !$w_closed.has(row.id)}
+					{@const b = triangle_bounds(open)}
+					<button class='tri' aria-label={open ? 'close folder' : 'open folder'} use:tip={(open ? 'close ' : 'open ') + row.name} onclick={(e) => { e.stopPropagation(); toggle_folder(row.id); }}>
+						<svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'>
+							<path d={triangle_path(open)} />
+						</svg>
+					</button>
+				{/if}
+			</span><span class='name-text'>{#if row.is_dedup}<span class='dedup-mark' use:tip={'also here — the same file, shown under another parent'}>↳ </span>{/if}{row.display_name}</span>
+		</span>
+	</td>
 	<td class='tag-actions'>
 		<div class='tag-actions-row'>
 			{#if editing === row.id}
@@ -546,6 +560,7 @@
 		padding-bottom  : var(--gap-small);
 		justify-content : center;
 		display         : flex;
+		flex-shrink     : 0;                     /* hold full height; a full table must not squeeze it */
 	}
 
 	/* The search box: centered under the tags, narrows the list as you type. Its
@@ -563,6 +578,7 @@
 		margin-bottom : var(--gap);
 		align-self    : center;
 		width         : 200px;
+		flex-shrink   : 0;                     /* hold full height; a full table must not squeeze it */
 	}
 
 	.search-text:hover:not(:focus) {
@@ -735,8 +751,7 @@
 	}
 
 	.tri-slot {
-		width           : 16px;
-		flex            : 0 0 auto;
+		flex            : 0 0 auto;   /* width is set inline to the triangle size, so the slot always fits it */
 		align-items     : center;
 		justify-content : center;
 		display         : flex;

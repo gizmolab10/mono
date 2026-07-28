@@ -2,6 +2,25 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-28 — the build-notes popup fits itself to the window
+
+**How the popup is sized and placed** (the rules, so it never spills off-screen):
+
+- **Width.** The lesser of its full width (~605px) and the window minus a `--gap` on each side. Roomy window → full width, centered. Narrow window → it shrinks so both edges sit exactly a `--gap` in. Sizing counts the padding (border-box), so the gaps hold.
+- **The note column clips.** Fixed table layout; the note truncates to one line with an ellipsis rather than wrapping, so rows stay one line tall as the popup narrows.
+- **Height / row count.** Shows as many rows as the window allows, capped at 10 (a page). Any spill past the window drops enough rows to fit; one row is added back only when a whole row's worth of slack opens (so shrinking and growing never flip-flop). The up/down steppers page through the rest by whatever count currently fits.
+- **Vertical placement.** Centered while all 10 fit; the moment fewer than 10 fit, it pins 20px from the top and grows downward — so shrinking the window stops the centered popup from jittering.
+
+The popup is absolutely positioned inside the fixed backdrop and placed by inline top/left/transform, so nothing about the backdrop's centering can squeeze the rows or fight the pinning.
+
+## 2026-07-28 — a sharper folder pointer, a drop-open zone, and a paced tooltip
+
+- **The folder mark is a clean pointer now.** The old fat curved triangle became a plain straight-sided isosceles pointer: one corner points the way (down when open, right when shut), the other two sit closer together (90° apart) for a crisper point. It's a touch smaller and filled solid in the accent color instead of hollow.
+- **The "drop files below" tab lights and clicks across a whole zone.** In the documents list, the two dividers and the column header between them are one area: pointing anywhere in it lights the "drop files below" tab as if the cursor were on it, and clicking anywhere in it opens the drop box. The area carries a "click to drop files" hint. (The header's own name/tags buttons keep their own actions.)
+- **The drop box gets a close button instead of a whole-box click.** Dropping no longer means the whole box is a click target; a round close cross sits at the top-left, a small gap in from the dashed edge, and returns to the file list. It shows only when there are documents to go back to.
+- **Tooltips wait, then fade.** A hint now holds clear for a short pause (a third of a second) before fading in over half that time, so a quick flick past something never flashes a hint. Sweeping across a column of rows restarts the pause on each new one, even when neighbors share the same words.
+- **Smaller touches.** The file/folder name sits a gap in from the triangle; the drop box's hover hint reads "click to show files" once there's something to show; the tag field and the list's name search only light on hover when they aren't focused.
+
 ## 2026-07-27 — the AI store keeps its own content, live answers, tooltips everywhere
 
 - **The AI store now holds the document itself, not just its name.** AnythingLLM's API never hands a document's body back, so each document's content is saved beside it in AnythingLLM as an extra, un-searched note keyed by the ji id (text as-is, binary as base64), and read back when the document is opened. This fixed the "this document's bytes are missing" error when opening a file on the AI store.
