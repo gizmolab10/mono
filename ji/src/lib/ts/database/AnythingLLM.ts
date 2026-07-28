@@ -140,6 +140,64 @@ async function upload_file(cfg: Config, path: string, form: FormData): Promise<a
 	return response.json();
 }
 
+// --- content side-store -----------------------------------------------------------------
+//
+// AnythingLLM's API never hands a document's body back (only its details and, through search,
+// a few chunks). So the AI store keeps no local bytes and instead stashes each document's real
+// content in AnythingLLM itself — as a small *un-embedded* side document (so it never enters
+// search or answers), named by the ji id, with the content living in the side document's
+// `description` (the one detail field that reads back byte-for-byte). A fresh browser then opens
+// the document by fetching that content back. Bound by the details field's size (a few MB).
+
+const blob_title = (id: string) => `ji-blob-${id}`;   // one document's content side document
+const INDEX_TITLE = 'ji-index';                       // the whole record index side document
+
+// A Blob's bytes as base64 (chunked, so a big file doesn't overflow the argument list).
+async function blob_to_base64(blob: Blob): Promise<string> {
+	const bytes = new Uint8Array(await blob.arrayBuffer());
+	let binary = '';
+	for (let i = 0; i < bytes.length; i += 0x8000) { binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); }
+	return btoa(binary);
+}
+function base64_to_blob(base64: string, type: string): Blob {
+	const binary = atob(base64);
+	const bytes = new Uint8Array(binary.length);
+	for (let i = 0; i < binary.length; i += 1) { bytes[i] = binary.charCodeAt(i); }
+	return new Blob([bytes], { type });
+}
+
+// Find a side document by its marker title: list every stored document and match. Returns the
+// file name (to read it) and its location (to remove it), or null. AnythingLLM lower-cases a
+// title, so match without regard to case.
+async function find_side_doc(cfg: Config, title: string): Promise<{ name: string; location: string } | null> {
+	const listed = await call(cfg, '/documents', null, 'GET');
+	const want = title.toLowerCase();
+	const files: any[] = [];
+	const walk = (node: any) => { if (!node) { return; } if (node.type === 'file') { files.push(node); } (node.items ?? []).forEach(walk); };
+	walk(listed?.localFiles);
+	const hit = files.find((f) => { const t = String(f.title ?? '').toLowerCase(); return t === want || t === `${want}.txt`; });
+	if (!hit) { return null; }
+	const name = String(hit.name);
+	return { name, location: `custom-documents/${name}` };   // raw-text side docs always live here
+}
+
+// Store a JSON blob in a side document's details, replacing any earlier one under this title. Not
+// embedded, so it never enters search. Used for the content side docs and the record index.
+async function write_side_doc(cfg: Config, title: string, description: string, textContent: string): Promise<void> {
+	const existing = await find_side_doc(cfg, title);
+	if (existing) { await call(cfg, '/system/remove-documents', { names: [existing.location] }, 'DELETE'); }
+	await call(cfg, '/document/raw-text', { textContent, metadata: { title, description } });
+}
+
+// Read a side document's details string by title, or null.
+async function read_side_doc(cfg: Config, title: string): Promise<string | null> {
+	const found = await find_side_doc(cfg, title);
+	if (!found) { return null; }
+	const doc = await call(cfg, `/document/${found.name}`, null, 'GET');
+	const detail = doc?.document ?? doc;
+	return detail?.description ?? null;
+}
+
 export const anything_llm = {
 	// Is the connection set up? Used by the store to decide whether to even try.
 	configured(): boolean { return config() != null; },
@@ -373,6 +431,132 @@ export const anything_llm = {
 		} catch (e) {
 			if (!quiet) { debug.log(`AnythingLLM: reading documents failed — ${(e as Error).message}.`); }
 			return [];
+		}
+	},
+
+	// Stash a document's real content in AnythingLLM (un-embedded), so any browser can open it
+	// later. Text goes in as-is; raw bytes go in as base64 with their type. Replaces any earlier
+	// copy for this id. Never throws — a failure just means the content can't be opened elsewhere.
+	async put_blob(id: string, content: string | Blob): Promise<boolean> {
+		await ensure_base();
+		const cfg = config();
+		if (!cfg) { return false; }
+		try {
+			const payload = (typeof content === 'string')
+				? { id, kind: 't', data: content }
+				: { id, kind: 'b', type: content.type, data: await blob_to_base64(content) };
+			await write_side_doc(cfg, blob_title(id), JSON.stringify(payload), `ji content store for ${id}`);
+			debug.log(`AnythingLLM: stored the content for "${id}" (${payload.kind === 't' ? `${payload.data.length} char(s) of text` : `${payload.data.length} base64 char(s)`}) in a side document — not embedded.`);
+			return true;
+		} catch (e) {
+			debug.log(`AnythingLLM: storing the content for "${id}" failed — ${(e as Error).message}.`);
+			return false;
+		}
+	},
+
+	// Fetch a document's content back from its side document. Text comes back as a string, raw
+	// bytes as a Blob (with their type). Null if there's no stored content or the read fails.
+	async get_blob(id: string): Promise<string | Blob | null> {
+		await ensure_base();
+		const cfg = config();
+		if (!cfg) { return null; }
+		try {
+			const raw = await read_side_doc(cfg, blob_title(id));
+			if (!raw) { debug.log(`AnythingLLM: no stored content found for "${id}".`); return null; }
+			const payload = JSON.parse(raw);
+			if (payload.kind === 'b') {
+				debug.log(`AnythingLLM: fetched ${String(payload.data).length} base64 char(s) of content for "${id}".`);
+				return base64_to_blob(String(payload.data), String(payload.type ?? ''));
+			}
+			debug.log(`AnythingLLM: fetched ${String(payload.data).length} char(s) of text for "${id}".`);
+			return String(payload.data);
+		} catch (e) {
+			debug.log(`AnythingLLM: fetching the content for "${id}" failed — ${(e as Error).message}.`);
+			return null;
+		}
+	},
+
+	// Remove a document's stored content (its side document). A missing one is a quiet success.
+	async remove_blob(id: string): Promise<void> {
+		await ensure_base();
+		const cfg = config();
+		if (!cfg) { return; }
+		try {
+			const found = await find_side_doc(cfg, blob_title(id));
+			if (!found) { return; }
+			await call(cfg, '/system/remove-documents', { names: [found.location] }, 'DELETE');
+			debug.log(`AnythingLLM: removed the stored content for "${id}".`);
+		} catch (e) {
+			debug.log(`AnythingLLM: removing the stored content for "${id}" failed — ${(e as Error).message}.`);
+		}
+	},
+
+	// The record index — the AI store's whole record list (documents, folders, tags, links) as
+	// one JSON blob in a side document, so every browser reads the same records. Read on launch.
+	async get_index(): Promise<Record<string, unknown[]> | null> {
+		await ensure_base();
+		const cfg = config();
+		if (!cfg) { return null; }
+		try {
+			const raw = await read_side_doc(cfg, INDEX_TITLE);
+			if (!raw) { debug.log('AnythingLLM: no record index yet.'); return null; }
+			const data = JSON.parse(raw);
+			debug.log(`AnythingLLM: read the record index (${Object.keys(data).map((k) => `${k} ${(data[k]?.length ?? 0)}`).join(', ')}).`);
+			return data;
+		} catch (e) {
+			debug.log(`AnythingLLM: reading the record index failed — ${(e as Error).message}.`);
+			return null;
+		}
+	},
+
+	// Replace the record index with a fresh one.
+	async put_index(data: Record<string, unknown[]>): Promise<boolean> {
+		await ensure_base();
+		const cfg = config();
+		if (!cfg) { return false; }
+		try {
+			const body = JSON.stringify(data);
+			await write_side_doc(cfg, INDEX_TITLE, body, 'ji record index');
+			debug.log(`AnythingLLM: wrote the record index (${body.length} char(s); ${Object.keys(data).map((k) => `${k} ${(data[k]?.length ?? 0)}`).join(', ')}).`);
+			return true;
+		} catch (e) {
+			debug.log(`AnythingLLM: writing the record index failed — ${(e as Error).message}.`);
+			return false;
+		}
+	},
+
+	// Remove the record index (used by erase).
+	async remove_index(): Promise<void> {
+		await ensure_base();
+		const cfg = config();
+		if (!cfg) { return; }
+		try {
+			const found = await find_side_doc(cfg, INDEX_TITLE);
+			if (!found) { return; }
+			await call(cfg, '/system/remove-documents', { names: [found.location] }, 'DELETE');
+			debug.log('AnythingLLM: removed the record index.');
+		} catch (e) {
+			debug.log(`AnythingLLM: removing the record index failed — ${(e as Error).message}.`);
+		}
+	},
+
+	// Remove every stored-content side document (used by erase). Returns how many were cleared.
+	async clear_blobs(): Promise<number> {
+		await ensure_base();
+		const cfg = config();
+		if (!cfg) { return 0; }
+		try {
+			const listed = await call(cfg, '/documents', null, 'GET');
+			const files: any[] = [];
+			const walk = (node: any) => { if (!node) { return; } if (node.type === 'file') { files.push(node); } (node.items ?? []).forEach(walk); };
+			walk(listed?.localFiles);
+			const ours = files.filter((f) => String(f.title ?? '').startsWith('ji-blob-'));
+			for (const f of ours) { await call(cfg, '/system/remove-documents', { names: [`custom-documents/${String(f.name)}`] }, 'DELETE'); }
+			debug.log(`AnythingLLM: cleared ${ours.length} stored-content side document(s).`);
+			return ours.length;
+		} catch (e) {
+			debug.log(`AnythingLLM: clearing stored content failed — ${(e as Error).message}.`);
+			return 0;
 		}
 	},
 

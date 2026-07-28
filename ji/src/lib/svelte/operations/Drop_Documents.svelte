@@ -1,10 +1,12 @@
 <script lang='ts'>
 	import { w_operation, T_Operation } from '../../ts/managers/Operations';
+	import { w_hierarchy } from '../../ts/database/Databases';
+	import { w_db_changed } from '../../ts/types/Signal';
 	import { w_drop_total } from '../../ts/managers/Dropping';
 	import Drop_Status from '../support/Drop_Status.svelte';
 	import { save_drop } from '../../ts/managers/Drop';
 	import { Document } from '../../ts/types/Document';
-	import ToolTip from '../support/ToolTip.svelte';
+	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 
 	// The drop box: saves each dropped file (and folder) into the active store,
@@ -13,6 +15,18 @@
 	// same way (just without the chosen tags).
 
 	let dragging = $state(false);
+
+	// The drop box's hover hint drops its "or click to go back" clause while the store holds no
+	// documents — there's nowhere to go back to. Adding the first one changes the count inside the
+	// same hierarchy without replacing it, so this leans on the content-changed signal to recompute
+	// (reading the count alone would never notice the 0 → 1 change).
+	let drop_hint = $derived.by(() => {
+		void $w_db_changed;   // recompute whenever the store's contents change
+		return $w_hierarchy.documents.length === 0
+			? 'drop files & folders here'
+			: 'drop files & folders here, or click to go back';
+	});
+	$effect(() => { debug.log(`Drop box hint: ${$w_hierarchy.documents.length} document(s) held, so hint reads "${drop_hint}".`); });
 
 	// Tags chosen for this drop batch — every saved document gets tagged with them.
 	let chosen_tags = $state(new Set<string>());
@@ -28,13 +42,6 @@
 	for (const family of families) {
 		debug.log(`Drop box: "${family.label}" covers these endings — ${family.endings || 'none'}.`);
 	}
-
-	// The family word the cursor is over, and its endings — shown at once by our own
-	// hint below it, instead of the browser's own hover text (which waits a second).
-	let hint_anchor  = $state<HTMLElement | null>(null);
-	let hint_message = $state<string | null>(null);
-	function show_hint(element: HTMLElement, endings: string) { hint_anchor = element; hint_message = endings; }
-	function hide_hint() { hint_anchor = null; hint_message = null; }
 
 	async function handleDrop(event: DragEvent) {
 		event.preventDefault();
@@ -59,6 +66,7 @@
 	tabindex='0'
 	role='button'
 	class:dragging
+	use:tip={drop_hint}
 	onclick={() => { debug.log('Drop box clicked — back to the list.'); w_operation.set(T_Operation.files); }}
 	ondrop={handleDrop}
 	ondragover={handleDragOver}
@@ -79,13 +87,9 @@
 		<span class='types'><Drop_Status /></span>
 	{:else}
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<span class='types'>{#each families as family}<span class='family'
-			onmouseenter={(e) => show_hint(e.currentTarget, family.endings)}
-			onmouseleave={hide_hint}>{family.label}</span>{/each}</span>
+		<span class='types'>{#each families as family}<span class='family' use:tip={family.endings}>{family.label}</span>{/each}</span>
 	{/if}
 </div>
-
-<ToolTip message={hint_message} anchor={hint_anchor} />
 
 <style>
 

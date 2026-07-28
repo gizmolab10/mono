@@ -3,6 +3,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import Separator from '../support/Separator.svelte';
+	import { tip } from '../../ts/utilities/Tooltip';
 	import type { Exchange } from '../../ts/types/DB_Records';
 	import { debug } from '../../ts/common/Debug';
 	import { get } from 'svelte/store';
@@ -135,6 +136,7 @@
 		observer.observe(convo_el);
 		return () => observer.disconnect();
 	});
+
 </script>
 
 <div class='chat'>
@@ -150,7 +152,7 @@
 			{#if asking}
 				<svg class='gear' viewBox='0 0 {GEAR_BOX} {GEAR_BOX}' aria-hidden='true'><path d={gearPath} fill-rule='evenodd' /></svg>
 			{:else}
-				<button class='ask-go' onclick={ask} disabled={!question.trim()}>ask</button>
+				<button class='ask-go' onclick={ask} disabled={!question.trim()} use:tip={'ask the AI'}>ask</button>
 			{/if}
 			<input class='ask-input' type='search' placeholder='ask a question'
 				bind:value={question} onkeydown={on_key} disabled={asking} />
@@ -161,7 +163,7 @@
 		{/if}
 
 		{#if exchanges.length > 0}
-			<div class='replies-sep'><Separator title='{all_collapsed ? "show" : "hide"} responses' onclick={toggle_all} /></div>
+			<div class='replies-sep'><Separator title='{all_collapsed ? "show" : "hide"} all responses' onclick={toggle_all} /></div>
 		{/if}
 
 		<div class='conversation' class:flush-right={!overflowing} bind:this={convo_el}>
@@ -173,7 +175,8 @@
 			{/if}
 			{#each exchanges as ex, i (i)}
 				<div class='exchange' class:collapsed={collapsed.has(ex.time)}>
-					<button class='question' onclick={() => toggle_one(ex.time)} title={collapsed.has(ex.time) ? 'show answer' : 'hide answer'}>
+					<button class='question' onclick={() => toggle_one(ex.time)}
+						use:tip={collapsed.has(ex.time) ? 'show response' : 'hide answer'}>
 						<span class='q-text'>{ex.question}</span>
 						<span class='q-when'>{when(ex.time)}</span>
 					</button>
@@ -218,6 +221,7 @@
 		flex          : 1;
 	}
 
+	.ask-input:hover,
 	.ask-input:focus {
 		background : var(--hover);
 		outline    : none;
@@ -236,8 +240,9 @@
 	}
 
 	.ask-go:disabled {
-		opacity : var(--opacity-label);
-		cursor  : default;
+		background : var(--lightgray);
+		color      : var(--darkgray);
+		cursor     : default;
 	}
 
 	.chat-error {
@@ -331,22 +336,28 @@
 		margin-bottom : var(--gap);
 	}
 
-	/* The question reads as a header over its answer, lit in the accent; a click hides
-	   or shows the answer. */
+	/* The question reads as a header over its answer, on a soft accent fill; a click hides
+	   or shows the answer. The fill sits close to the page color, so the plain text color
+	   reads better than the on-accent one. */
 	.question {
 		border          : var(--thickness-normal) solid var(--black);
-		color           : var(--text-on-accent);
 		padding         : var(--pad-control);
+		background      : var(--mild-accent);
 		font-size       : var(--font-label);
-		border-radius   : var(--radius);
-		background      : var(--accent);
 		justify-content : space-between;
+		border-radius   : var(--radius);
+		color           : var(--text);
 		box-sizing      : border-box;
 		gap             : var(--gap);
 		align-items     : baseline;
 		cursor          : pointer;
 		display         : flex;
 		text-align      : left;
+	}
+
+	/* Hovering a question (a real, collapsible one) lifts it to the shared hover color. */
+	.question:not(.pending-question):hover {
+		background : var(--hover);
 	}
 
 	/* The question being answered right now reads the same as a stored one, but isn't a

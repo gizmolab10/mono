@@ -2,6 +2,7 @@
 	import type { T_Match } from '../../ts/managers/Filter_Documents';
 	import { w_hierarchy } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/types/Signal';
+	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 	import type { Snippet } from 'svelte';
 
@@ -47,7 +48,7 @@
 		     with one tag or none, all vs any makes no difference. -->
 		<div class='all-any'>
 			{#each (['all', 'any'] as const) as m}
-				<button class='all-any-segment' class:current={mode === m} onclick={toggle_mode}>{m}</button>
+				<button class='all-any-segment' class:current={mode === m} use:tip={m === 'all' ? 'match files having every chosen tag' : 'match files having any chosen tag'} onclick={toggle_mode}>{m}</button>
 			{/each}
 		</div>
 	{/if}
@@ -55,7 +56,7 @@
 		<!-- The tags as one joined segmented pill; several segments can be lit at once. -->
 		<div class='tags'>
 			{#each tags as tag}
-				<button class='tag' class:on={selected.has(tag.id)} onclick={() => toggle(tag.id)}>{tag.name}</button>
+				<button class='tag' class:on={selected.has(tag.id)} use:tip={'filter by this tag'} onclick={() => toggle(tag.id)}>{tag.name}</button>
 			{/each}
 		</div>
 	{/if}

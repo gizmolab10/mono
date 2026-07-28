@@ -3,11 +3,11 @@ import { writable, derived, get } from 'svelte/store';
 import { debug } from '../common/Debug';
 
 export enum T_Operation {
-	chat  = 'chat history',
+	chat  = 'AI exchanges',
 	drop  = 'add new document',
-	files = 'browse files',
+	files = 'files',
 	init  = 'add LLM credentials',
-	tags  = 'add new tag',
+	tags  = 'tags',
 	view  = 'view document',
 }
 

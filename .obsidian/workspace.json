@@ -22,20 +22,6 @@
             }
           },
           {
-            "id": "34e9429fba4cfbdb",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ji/notes/work/proposals/chat history proposal.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "chat history proposal"
-            }
-          },
-          {
             "id": "3e1ddbde653729de",
             "type": "leaf",
             "state": {
@@ -63,8 +49,7 @@
               "title": "index"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -200,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/handoff.md",
+                "file": "ji/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -238,32 +223,32 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "3e1ddbde653729de",
+  "active": "abe0d848a5fe3e12",
   "lastOpenFiles": [
     "ji/src/lib/md/manual/index.md",
-    "ji/notes/work/work journal.md.tmp.34585.d55f8aa48a77",
+    "ji/src/lib/ts/managers/Preferences.ts.tmp.34585.e2e1a1887b87",
     "ji/notes/work/code debt.md",
+    "ji/src/lib/svelte/operations/List_Documents.svelte.tmp.34585.ed43b363e933",
+    "ji/src/lib/svelte/operations/List_Documents.svelte.tmp.34585.a9df600a27c9",
+    "ji/src/lib/ts/database/Databases.ts.tmp.34585.2d91980b1316",
+    "ji/notes/work/handoff.md",
+    "ji/src/lib/svelte/support/Select_Tags.svelte.tmp.34585.349a3ed4df74",
+    "ji/src/lib/svelte/operations/View_Document.svelte.tmp.34585.558b430ff5db",
+    "ji/src/lib/svelte/details/D_Data.svelte.tmp.34585.1dc6b7e68d59",
+    "ji/src/lib/svelte/operations/List_Documents.svelte.tmp.34585.cb27d145f3df",
+    "ji/src/lib/svelte/operations/Chat.svelte.tmp.34585.4b1eb25e3865",
+    "ji/src/lib/ts/utilities/Tooltip.ts",
+    "ji/notes/work/proposals/chat history proposal.md",
     "ji/notes/work/future/sideband storage proposal.md",
     "ji/notes/work/future/wendy/Systems_Map.md",
     "ji/notes/work/future/wendy/Compass.md",
-    "ji/notes/work/future/wendy",
     "ji/notes/work/future/external AnythingLLM storage.md",
     "ji/notes/work/future/prime directive.md",
     "ji/notes/work/future/Minimum Viable INTERSECTION app.md",
-    "ji/notes/work/future",
     "ji/notes/work/proposals/New Folder With Items/prime directive.md",
     "ji/notes/work/proposals/New Folder With Items/Minimum Viable INTERSECTION app.md",
     "ji/notes/work/proposals/New Folder With Items/external AnythingLLM storage.md",
-    "ji/notes/work/proposals/New Folder With Items",
     "ji/notes/work/proposals/external AnythingLLM storage.md",
-    "ji/notes/work/proposals/chat history proposal.md",
-    "ji/src/lib/svelte/main/Intersection.svelte.tmp.34585.b2d37002385d",
-    "ji/src/lib/svelte/operations/Chat.svelte.tmp.39200.20b00b6ead3a",
-    "ji/src/lib/svelte/support/Separator.svelte.tmp.39200.34665e00b1fe",
-    "ji/src/lib/svelte/operations/List_Documents.svelte.tmp.39200.6defab06dfcd",
-    "ji/src/lib/svelte/support/Separator.svelte.tmp.39200.710657ae586a",
-    "ji/notes/guides/map.md.tmp.39200.966b7a97a1c3",
-    "ji/notes/work/handoff.md",
     "ji/notes/work/working features.md",
     "ji/notes/work/proposals/prime directive.md",
     "ji/src/lib/md/manual/what's broken.md",

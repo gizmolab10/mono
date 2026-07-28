@@ -3,20 +3,20 @@
 	import { w_operation, w_view_document, T_Operation, w_viewable_run, open_view, close_view } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { Document, T_DocumentFamily } from '../../ts/types/Document';
-	import { w_hierarchy, w_storage } from '../../ts/database/Databases';
-	import { w_llm_docs, w_llm_docs_loading } from '../../ts/database/LLM_Docs';
-	import { T_Storage } from '../../ts/types/DB_Records';
+	import { w_hierarchy } from '../../ts/database/Databases';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import Select_Tags from '../support/Select_Tags.svelte';
-	import Separator from '../support/Separator.svelte';
 	import { w_db_changed } from '../../ts/types/Signal';
+	import Separator from '../support/Separator.svelte';
 	import { save_drop } from '../../ts/managers/Drop';
 	import { Direction } from '../../ts/types/Angle';
+	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import { get } from 'svelte/store';
 
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
+	const trash_svgpath = svg_paths.trashcan();
 
 	// The family filter's segments: one per document family, in enum order, minus
 	// "folder" (not a filterable content family here). Clicking a segment toggles that
@@ -63,11 +63,6 @@
 	let editing = $state<string | null>(null);      // which row's tag editor is open
 	let confirming = $state<string | null>(null);   // which row is asking for delete?
 
-	// What the AI workspace already holds — read app-wide into a shared store (filled when
-	// the AI store becomes active and after this browser adds or removes one), so the list
-	// and the data readout show the same number. Shown as read-only rows in the table, only
-	// on the AI store; these can't be opened (their bytes aren't on this browser).
-	const on_ai_store = $derived($w_storage === T_Storage.llm);
 	let hovered_row = $state<string | null>(null);  // which row the cursor is over — tracked in code, not CSS :hover, so the per-row buttons (which stand a touch taller than the row) still count as "on the row"
 
 	const rows = $derived.by(() => {
@@ -121,19 +116,6 @@
 		return open_rows.filter((r) => keep.has(r.id));       // original walk order, ancestors included
 	});
 
-	// The AI's own documents, shown as read-only rows below the local ones — only on the AI
-	// store. Any the local table already lists (matched by name) is left out, so a file
-	// dropped here isn't doubled. A tag or family filter can't match a plain name, so it
-	// hides these; the name search still narrows them.
-	const ai_rows = $derived.by(() => {
-		if (!on_ai_store) { return []; }
-		if ($w_filter_tags.size > 0 || $w_filter_families.length > 0) { return []; }
-		const local_names = new Set(rows.map((r) => r.name));
-		const needle = $w_filter_text.trim().toLowerCase();
-		const list = $w_llm_docs.filter((d) => !local_names.has(d.name) && (needle === '' || d.name.toLowerCase().includes(needle)));
-		debug.log(`AI rows: showing ${list.length} of ${$w_llm_docs.length} embedded document(s) as read-only rows (local matches and filters removed).`);
-		return list;
-	});
 
 	// How many things under each folder match the active filter — the ones on screen
 	// plus the ones a shut fold is hiding. The filter runs over the full walk (not the
@@ -253,18 +235,6 @@
 		return $w_hierarchy.tags.length;
 	});
 
-	// With no documents to show, open the drop box so the first one can be added.
-	// The guard stops this from re-firing once the drop box is already up. But on the AI
-	// store, hold on the list while the AI's own documents are still being read, or once
-	// any are found — so a browser with nothing local still sees what the AI holds instead
-	// of being bounced to the drop box.
-	$effect(() => {
-		const ai_holds = on_ai_store && ($w_llm_docs_loading || $w_llm_docs.length > 0);
-		if (rows.length === 0 && !ai_holds && $w_operation !== T_Operation.drop) {
-			debug.log(`No documents to show (local rows 0, AI holds ${on_ai_store ? $w_llm_docs.length : 'n/a'}) — opening the drop box to add the first one.`);
-			w_operation.set(T_Operation.drop);
-		}
-	});
 
 	// Keep the viewer's run in sync: the on-screen showable rows (search and folds
 	// applied), in table order. The viewer lives outside the list now, so it reads
@@ -364,7 +334,8 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 	<td class='name' class:viewable={row.viewable}
 		style:padding-left='{row.depth * 5}px'
-		onclick={(e) => { if (row.viewable) { e.stopPropagation(); open_view(row); } }}><span class='name-line'><span class='tri-slot'>{#if row.has_children}{@const open = !$w_closed.has(row.id)}{@const b = triangle_bounds(open)}<button class='tri' title={open ? 'close this folder' : 'open this folder'} onclick={(e) => { e.stopPropagation(); toggle_folder(row.id); }}><svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'><path d={triangle_path(open)} /></svg></button>{/if}</span><span class='name-text'>{#if row.is_dedup}<span class='dedup-mark' title='also here — the same file, shown under another parent'>↳ </span>{/if}{row.display_name}</span></span></td>
+		use:tip={row.viewable ? 'open ' + row.name : false}
+		onclick={(e) => { if (row.viewable) { e.stopPropagation(); open_view(row); } }}><span class='name-line'><span class='tri-slot'>{#if row.has_children}{@const open = !$w_closed.has(row.id)}{@const b = triangle_bounds(open)}<button class='tri' aria-label={open ? 'close folder' : 'open folder'} use:tip={(open ? 'close ' : 'open ') + row.name} onclick={(e) => { e.stopPropagation(); toggle_folder(row.id); }}><svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'><path d={triangle_path(open)} /></svg></button>{/if}</span><span class='name-text'>{#if row.is_dedup}<span class='dedup-mark' use:tip={'also here — the same file, shown under another parent'}>↳ </span>{/if}{row.display_name}</span></span></td>
 	<td class='tag-actions'>
 		<div class='tag-actions-row'>
 			{#if editing === row.id}
@@ -383,19 +354,19 @@
 					onmouseenter={() => hovered_row = null}
 					onmouseleave={() => hovered_row = row.id}>
 					{#if confirming === row.id}
-						<button class='row-danger' onclick={() => delete_byID(row.id)}>delete</button>
-						<button class='row-danger row-x' title='keep' onclick={() => confirming = null}>
+						<button class='row-danger' use:tip={'delete for good'} onclick={() => delete_byID(row.id)}>delete</button>
+						<button class='row-danger row-x' aria-label='keep' use:tip={'cancel'} onclick={() => confirming = null}>
 							<svg class='row-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
 								<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
 							</svg>
 						</button>
 					{:else}
-						<button class='row-button' title='edit tags'
+						<button class='row-button' aria-label='edit tags' use:tip={'edit tags assigned to ' + row.name}
 							onclick={(e) => { e.stopPropagation(); editing = row.id; }}>✏️</button>
-						<button class='row-button trash' title='delete'
+						<button class='row-button trash' aria-label='delete' use:tip={'remove ' + row.name}
 							onclick={() => confirming = row.id}>
 							<svg class='row-bin' viewBox='0 0 24 24'>
-								<path d='M4 6 H20 M9 6 V4 H15 V6 M6 6 L7 20 H17 L18 6 M10 10 V17 M14 10 V17'
+								<path d={trash_svgpath}
 									fill='none' stroke='currentColor' stroke-width='1.6'
 									stroke-linecap='round' stroke-linejoin='round' />
 							</svg>
@@ -410,7 +381,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 <div class='documents' class:dragging onclick={background_click}
 	ondrop={documents_drop} ondragover={documents_dragover} ondragleave={documents_dragleave}>
-	{#if rows.length > 0 && $w_operation === T_Operation.files}
+	{#if rows.length > 0}
 		{#if tag_count > 0}
 			<div class='tags'>
 				<Select_Tags
@@ -423,16 +394,16 @@
 				<button
 					class='segment'
 					class:current={$w_filter_families.includes(family)}
-					title={family}
+					use:tip={family}
 					onclick={() => toggle_family(family)}>{family}</button>
 			{/each}
 		</div>
-		<input class='search-text' type='search' placeholder='search by name' bind:value={$w_filter_text} />
+		<input class='search-text' type='search' placeholder='search file names' bind:value={$w_filter_text} />
 	{/if}
 	<div class='top-sep'>
 		<Separator thickness={k.separator.fat} title='drop files & folders anywhere below' onclick={(e) => { e.stopPropagation(); w_operation.set(T_Operation.drop); }} />
 	</div>
-	{#if rows.length === 0 && ai_rows.length === 0}
+	{#if rows.length === 0}
 		<div class='empty'>no documents yet</div>
 	{:else}
 		<div class='table-region'>
@@ -469,16 +440,6 @@
 								onmouseenter={() => { if (row.viewable) { hovered_row = row.id; } }}
 								onmouseleave={() => { if (hovered_row === row.id) { hovered_row = null; } }}>
 								{@render document_row(row)}
-							</tr>
-						{/each}
-						<!-- The AI's own documents as read-only rows: no triangle, no buttons, and
-							no click to open — their bytes aren't on this browser. "AI" in the
-							format cell marks where they come from. -->
-						{#each ai_rows as doc, i (`ai:${i}`)}
-							<tr class='file ai-file'>
-								<td class='extension'><span>AI</span></td>
-								<td class='name'><span class='name-line'><span class='tri-slot'></span><span class='name-text' title={doc.location}>{doc.name}</span></span></td>
-								<td class='tag-actions'></td>
 							</tr>
 						{/each}
 					</tbody>
@@ -927,15 +888,5 @@
 
 	.row-danger:hover {
 		background : var(--hover);
-	}
-
-	/* The AI's own documents, shown as read-only rows: dimmed like a dedup echo, and never
-	   lit or given a pointer, because they can't be opened here. */
-	.files-table .file.ai-file td {
-		opacity : var(--opacity-label);
-	}
-
-	.files-table .file.ai-file .name {
-		cursor : default;
 	}
 </style>

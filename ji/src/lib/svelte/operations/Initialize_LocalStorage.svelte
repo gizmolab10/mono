@@ -79,6 +79,7 @@
 		width         : 220px;
 	}
 
+	.entry:hover,
 	.entry:focus {
 		background : var(--hover);
 		outline    : none;

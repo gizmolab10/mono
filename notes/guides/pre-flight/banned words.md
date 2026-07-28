@@ -27,3 +27,5 @@ The **same** column marks a row whose two sides are the same kind of word, so an
 | detour                     | y      | y    | side-build                             |                    |
 | useless cruft              | y      |      | padded                                 |                    |
 | easy to misuse             | y      |      | footgun                                | self-inflicted     |
+| hierarchy                  | y      | y    | tree                                   | ji structure       |
+| plugin architecture        | y      |      | seam                                   | storage interface  |

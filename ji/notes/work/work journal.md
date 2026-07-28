@@ -2,6 +2,17 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-27 — the AI store keeps its own content, live answers, tooltips everywhere
+
+- **The AI store now holds the document itself, not just its name.** AnythingLLM's API never hands a document's body back, so each document's content is saved beside it in AnythingLLM as an extra, un-searched note keyed by the ji id (text as-is, binary as base64), and read back when the document is opened. This fixed the "this document's bytes are missing" error when opening a file on the AI store.
+- **The whole AI record list lives in one note too.** The list of documents/folders/tags — everything the hierarchy shows — is saved as a single note in AnythingLLM and read back at launch, so the AI store fills itself from AnythingLLM instead of from anything on this mac. The screens hold off their "the store is empty" decision until that read finishes, so a still-loading store isn't mistaken for an empty one.
+- **The list no longer cares where a row came from.** Removed the separate read-only "AI files" rows; every row is one hierarchy row now, whether its data came from this mac or from AnythingLLM.
+- **When the store has no documents, the drop box takes over.** Asking for the list on an empty store now switches to the drop box instead — enforced in one place, so it holds for the pill, a help link, a background click, or deleting the last document.
+- **Answers arrive word by word.** The ask box now shows the AI's reply building up live as it streams, with the spinning gear held until the last word lands.
+- **Instant tooltips, one style, everywhere.** Replaced the browser's slow native tooltips with a single app tooltip that appears at once, centered just below the cursor; every hover hint across the app now uses it.
+- **A softer chat question pill.** The question header sits on a color halfway between the accent and the page, easier on the eye, text still legible.
+- **Too-big files on the AI store are refused with a dialog.** A file over the AI store's size limit is turned away with a message and a "do not ask again" tick that quiets the rest of that one drop, then resets for the next drop.
+
 ## 2026-07-27 — a top bar that measures itself, and tighter edges
 
 - **The title bows out when there's no room.** The centered "Intersection" title now hides when the top row is too narrow to hold it beside the hamburger, the operations pill, and the help button — measured from the real on-screen widths (not a fixed break-point), so it reacts to a resize *and* to browser zoom. When hidden it leaves the layout entirely, freeing its space; it returns, centered, the moment there's room.

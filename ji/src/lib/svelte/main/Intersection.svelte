@@ -9,6 +9,8 @@
 	import { k } from '../../ts/common/Constants';
 	import BuildNotes from './BuildNotes.svelte';
 	import Controls from './Controls.svelte';
+	import ToolTip from '../support/ToolTip.svelte';
+	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
 	import Help from './Help.svelte';
 
 	// Both the view operation and the document it shows are persisted, so a reload
@@ -73,6 +75,10 @@
 		height = window.innerHeight;
 	}
 
+	// The one hover-hint watcher for the whole app: an element carrying its own words (set with
+	// use:tip) shows them, drawn by the ToolTip at the bottom of this file.
+	$effect(() => start_tips());
+
 	function toggleDetails() {
 		const next = !$w_show_details;
 		w_show_details.set(next);
@@ -106,7 +112,7 @@
 		style:width='{width}px'
 		style:height='{height}px'
 		style:background-color='var(--accent)'>
-		<Controls onclick={toggleDetails} onHelp={() => w_app_mode.set('help')} />
+		<Controls onclick={toggleDetails} onHelp={() => w_app_mode.set('help')} detailsShown={$w_show_details} />
 		<div class='panel'>
 			{#if $w_show_details}
 				<Details width={detailsWidth} {buildNumber} onBuildOpen={() => showBuildNotes = true} />
@@ -117,6 +123,9 @@
 		</div>
 	</div>
 {/if}
+
+<!-- The one hover hint for the whole app; each element opts in with use:tip={'words'}. -->
+<ToolTip message={$w_tip.message} mouseX={$w_tip.x} mouseY={$w_tip.y} />
 
 <style>
 	.intersection {

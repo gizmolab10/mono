@@ -3,6 +3,7 @@
 	// the ported Colors. Choosing an accent drives Colors' subscribers, which
 	// re-push --bg / --accent / --hover onto the page.
 	import { colors } from '../../ts/utilities/Colors';
+	import { tip } from '../../ts/utilities/Tooltip';
 
 	const { w_accent_color } = colors;
 
@@ -16,7 +17,7 @@
 <div class='color-row'>
 	<div class='color-group'>
 		<span class='label'>accent</span>
-		<label class='picker'>
+		<label class='picker' use:tip={'pick the accent color'}>
 			<input class='accent' type='color' value={$w_accent_color} oninput={pick} />
 		</label>
 	</div>

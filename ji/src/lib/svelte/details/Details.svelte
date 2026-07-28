@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { tip } from '../../ts/utilities/Tooltip';
 	import D_Preferences from './D_Preferences.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import Hideable from './Hideable.svelte';
@@ -31,10 +32,10 @@
 <!-- Pinned to the bottom-left of the whole frame (fixed to the window), so it holds
      its spot even though the details region owns it now — shown only while details is. -->
 <div class='bottom-row layer-intersection'>
-	<button class='build-button' onclick={onBuildOpen}>
+	<button class='build-button' onclick={onBuildOpen} use:tip={'build notes'}>
 		build {buildNumber}
 	</button>
-	<a class='author-credit' href='https://designintuition.app' target='_blank' rel='nobutton'>
+	<a class='author-credit' href='https://designintuition.app' target='_blank' rel='nobutton' use:tip={'my other work'}>
 		author: jonathan sand
 	</a>
 </div>

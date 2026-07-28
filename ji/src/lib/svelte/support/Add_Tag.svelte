@@ -68,6 +68,12 @@
 		box-sizing : border-box;
 	}
 
+	.field:hover,
+	.field:focus {
+		background : var(--hover);
+		outline    : none;
+	}
+
 	.button {
 		height     : var(--height-control);
 		box-sizing : border-box;

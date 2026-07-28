@@ -4,6 +4,7 @@
 	import { databases } from '../../ts/database/Databases';
 	import { T_Storage } from '../../ts/types/DB_Records';
 	import { k } from '../../ts/common/Constants';
+	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 
 	const w_storage = databases.w_storage;
@@ -12,7 +13,7 @@
 	// details-toggle hamburger sits at the left, a segmented control of the
 	// operations sits next to it, the title floats between spacers, and a help
 	// button anchors the far right. The hamburger click toggles the details region.
-	let { onclick, onHelp }: { onclick: () => void; onHelp: () => void } = $props();
+	let { onclick, onHelp, detailsShown }: { onclick: () => void; onHelp: () => void; detailsShown: boolean } = $props();
 	const size = k.size.hamburger;
 	const hamburgerPath = svg_paths.hamburger(size);
 
@@ -83,7 +84,7 @@
 </script>
 
 <div class='controls-row layer-controls' bind:this={row_el}>
-	<button class='hamburger-button' {onclick} bind:this={hamburger_el} aria-label='toggle details'>
+	<button class='hamburger-button' {onclick} bind:this={hamburger_el} aria-label='toggle details' use:tip={detailsShown ? 'hide the details' : 'show the details'}>
 		<svg class='hamburger-icon' viewBox='0 0 {size} {size}' width={size} height={size}>
 			<path d={hamburgerPath} />
 		</svg>
@@ -94,14 +95,14 @@
 		{#each operations as { op, label }}
 			<button
 				class='segment'
-				class:current={$w_operation === op}
+				use:tip={`manage ${op}`}
 				class:inert={is_inert(op)}
-				title={op}
+				class:current={$w_operation === op}
 				onclick={() => choose(op)}>{label}</button>
 		{/each}
 	</div>
 	<span class='spacer'></span>
-	<button class='help' onclick={help} bind:this={help_el} aria-label='help'>?</button>
+	<button class='help' onclick={help} bind:this={help_el} aria-label='help' use:tip={'help'}>?</button>
 </div>
 
 <style>

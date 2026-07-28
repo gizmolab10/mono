@@ -104,6 +104,9 @@ export class Colors {
 			if (typeof document !== 'undefined') {
 				document.documentElement.style.setProperty('--text-on-accent', text_onAccent);
 				document.documentElement.style.setProperty('--accent-dark', this.accent_to_accentDark(color));
+				// A soft accent — 30% of the way from the page color to the accent — for a fill
+				// that reads gentler than the full accent (the chat question header uses it).
+				document.documentElement.style.setProperty('--mild-accent', `color-mix(in srgb, ${color} 30%, ${bg})`);
 			}
 		});
 	}

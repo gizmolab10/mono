@@ -1,6 +1,7 @@
-import { drop_started, drop_captured, drop_finished, drop_asks, drop_tells, drop_was_cancelled, T_Keep } from './Dropping';
-import { Document, MAX_FILE_BYTES, say_bytes } from '../types/Document';
-import { h } from '../database/Databases';
+import { drop_started, drop_captured, drop_finished, drop_asks, drop_tells, drop_tells_cap, drop_was_cancelled, T_Keep } from './Dropping';
+import { Document, MAX_FILE_BYTES, MAX_AI_FILE_BYTES, say_bytes } from '../types/Document';
+import { h, databases } from '../database/Databases';
+import { T_Storage } from '../types/DB_Records';
 import { debug } from '../common/Debug';
 
 // Saving dropped files and folders into the active store. Shared so both the
@@ -19,6 +20,10 @@ import { debug } from '../common/Debug';
 // What one answer to a same-name question applies to: this file, or the rest of
 // the drop too. Held for the length of one drop only.
 let standing_answer: T_Keep | null = null;
+
+// "Do not ask again" on the AI too-big dialog: silence it for the rest of this drop only.
+// Reset at the start of every drop, so a new drop always asks the first time.
+let hush_ai_too_big = false;
 
 // --- pass one: how many things are in this drop ---------------------------
 
@@ -63,6 +68,19 @@ async function save_file(file: File, parent_id: string | null, contains: () => s
 	if (file.size > MAX_FILE_BYTES) {
 		debug.log(`Refused "${file.name}": ${file.size} bytes is over the ${MAX_FILE_BYTES} byte limit for one file.`);
 		await drop_tells(`"${file.name}" is ${say_bytes(file.size)} — the per-file limit is - ${say_bytes(MAX_FILE_BYTES)}.`);
+		drop_captured();
+		return;
+	}
+
+	// On the AI store a document's content lives in AnythingLLM's small side field, so a file
+	// over the AI cap can't be stored (or opened) there — refuse it. Ask once with a "do not ask
+	// again" choice; once that's set, refuse silently.
+	if (databases.active.storage === T_Storage.llm && file.size > MAX_AI_FILE_BYTES) {
+		debug.log(`Refused "${file.name}" on the AI store: ${file.size} bytes is over the AI cap of ${MAX_AI_FILE_BYTES} bytes.`);
+		if (!hush_ai_too_big) {
+			const hush = await drop_tells_cap(`"${file.name}" is ${say_bytes(file.size)} — too big for the AI store (limit ${say_bytes(MAX_AI_FILE_BYTES)}).`);
+			if (hush) { hush_ai_too_big = true; debug.log('AI too-big dialog: "do not ask again" set for the rest of this drop.'); }
+		}
 		drop_captured();
 		return;
 	}
@@ -220,6 +238,7 @@ export async function save_drop(data: DataTransfer | null, chosen: Set<string>):
 	let contains_id: string | null = null;
 	const contains = () => (contains_id ??= h.predicate_for('contains').id);
 	standing_answer = null;                                   // each drop starts with no standing answer
+	hush_ai_too_big = false;                                  // ...and asks the first too-big file again
 
 	const entries = Array.from(data?.items ?? [])
 		.map((item) => item.webkitGetAsEntry?.())

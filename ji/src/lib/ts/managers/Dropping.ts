@@ -36,7 +36,15 @@ export interface Drop_Message {
 	answer  : () => void;
 }
 
+// A too-big refusal for the AI store, with a "do not ask again" choice. Like a message, it
+// waits on OK — and reports back whether the person ticked "don't ask again".
+export interface Drop_Cap {
+	message : string;
+	answer  : (hide_from_now: boolean) => void;
+}
+
 export const w_drop_message  = writable<Drop_Message | null>(null);
+export const w_drop_cap      = writable<Drop_Cap | null>(null);
 export const w_drop_total    = writable<number>(0);           // how many things the drop holds, folders and skips included
 export const w_drop_captured = writable<number>(0);           // how many have been dealt with so far
 export const w_drop_question = writable<Drop_Question | null>(null);
@@ -50,6 +58,7 @@ export function request_drop_cancel(): void {
 	// up and stops at the cancel check. The choice handed in is never saved.
 	get(w_drop_question)?.answer(T_Keep.old, false);
 	get(w_drop_message)?.answer();
+	get(w_drop_cap)?.answer(false);
 }
 export function drop_was_cancelled(): boolean { return cancel_requested; }
 
@@ -59,6 +68,7 @@ export function drop_started(total: number): void {
 	w_drop_captured.set(0);
 	w_drop_question.set(null);
 	w_drop_message.set(null);
+	w_drop_cap.set(null);
 }
 
 export function drop_captured(): void {
@@ -71,6 +81,7 @@ export function drop_finished(): void {
 	w_drop_captured.set(0);
 	w_drop_question.set(null);
 	w_drop_message.set(null);
+	w_drop_cap.set(null);
 }
 
 // Say one thing and wait for OK. Used where a browser alert used to interrupt.
@@ -79,6 +90,16 @@ export function drop_tells(message: string): Promise<void> {
 		w_drop_message.set({
 			message,
 			answer: () => { w_drop_message.set(null); resolve(); },
+		});
+	});
+}
+
+// Say a too-big refusal and wait for OK; report back whether "do not ask again" was ticked.
+export function drop_tells_cap(message: string): Promise<boolean> {
+	return new Promise((resolve) => {
+		w_drop_cap.set({
+			message,
+			answer: (hide_from_now) => { w_drop_cap.set(null); resolve(hide_from_now); },
 		});
 	});
 }

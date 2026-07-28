@@ -2,6 +2,9 @@
 
 | # | Feature |
 | --- | --- |
+| 33 | Too-big files are turned away from the AI store with a message and a "do not ask again" tick that quiets the rest of that one drop, then resets for the next |
+| 32 | Instant tooltips everywhere — one app tooltip that appears at once, centered just below the cursor, replacing the browser's slow native hints across the whole app |
+| 31 | The AI store keeps its own content — each document's body and the whole record list are saved beside the documents in AnythingLLM (the body never comes back from its API) and read in at launch, so the store fills itself from AnythingLLM on any machine; screens hold their "empty store" decision until that read finishes, and an empty store opens the drop box in place of the list |
 | 30 | The top bar and panel measure themselves — the centered title hides when the row is too narrow to hold it, and the operations view drops (details fill the width) when the window can't fit both; both measured from real on-screen widths, so a resize or a browser zoom triggers them |
 | 29 | The AI answers a question live — words appear one at a time as the model writes them (pushed through the key-holding server, no polling), the spinning gear standing in for the ask button until the last word; the finished answer then settles into the saved conversation with its sources |
 | 28 | A password screen sets up a new browser for the shared AI — on the AI store with the two settings missing, one field takes a password that writes them and drops to the list |

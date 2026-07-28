@@ -38,6 +38,9 @@ const ALLOW = [
 	{ method: 'GET',    re: /^\/api\/v1\/workspace\/[^/]+$/ },                   // read its embedded documents
 	{ method: 'POST',   re: /^\/api\/v1\/workspace\/new$/ },                     // make the workspace
 	{ method: 'POST',   re: /^\/api\/v1\/document\/upload$/ },                   // upload a document's words
+	{ method: 'POST',   re: /^\/api\/v1\/document\/raw-text$/ },                 // stash a document's content (side store)
+	{ method: 'GET',    re: /^\/api\/v1\/documents$/ },                          // list stored documents (to find a side store)
+	{ method: 'GET',    re: /^\/api\/v1\/document\/[^/]+$/ },                    // read one document's details (its side content)
 	{ method: 'POST',   re: /^\/api\/v1\/workspace\/[^/]+\/update-embeddings$/ },// embed / un-embed it
 	{ method: 'POST',   re: /^\/api\/v1\/workspace\/[^/]+\/chat$/ },             // ask a question
 	{ method: 'POST',   re: /^\/api\/v1\/workspace\/[^/]+\/stream-chat$/ },      // ask, answer word-by-word

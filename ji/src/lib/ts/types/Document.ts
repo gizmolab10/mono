@@ -160,6 +160,12 @@ export const NEEDS_CONVERTING: ReadonlySet<T_DocumentExtension> =
 // that ceiling partway through a save.
 export const MAX_FILE_BYTES = 1024 * 1024 * 1024;   // one gigabyte
 
+// The AI store keeps a document's content inside AnythingLLM (in a side document's details
+// field), not on this browser — and that field holds only a few megabytes. Binary content is
+// stored base64 (about a third larger), so the safe per-file limit is well under the field's
+// ~4 MB: refuse anything bigger, since its content couldn't be stored (or opened) there.
+export const MAX_AI_FILE_BYTES = Math.floor(2.8 * 1024 * 1024);   // ~2.8 MB
+
 // A byte count said the way a person reads it — "1.7 GB", "340 MB".
 export function say_bytes(bytes: number): string {
 	const units = ['bytes', 'KB', 'MB', 'GB', 'TB'];

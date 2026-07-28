@@ -4,7 +4,11 @@
 	import { w_llm_docs } from '../../ts/database/LLM_Docs';
 	import { T_Storage } from '../../ts/types/DB_Records';
 	import { w_db_changed } from '../../ts/types/Signal';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { tip } from '../../ts/utilities/Tooltip';
 	import Separator from '../support/Separator.svelte';
+
+	const binPath = svg_paths.trashcan();
 
 	// Trimmed port of ws's D_Data: a readout of the document store plus a storage
 	// db-storage hidden behind a clickable separator. ws showed graph-model counts,
@@ -76,15 +80,15 @@
 		<div class='db-controls'>
 			{#if confirming}
 				<div class='confirm'>
-					<button class='no' onclick={cancel_erase}>no</button>
-					<button class='yes' onclick={do_erase}>yes</button>
+					<button class='no' use:tip={'keep the data'} onclick={cancel_erase}>no</button>
+					<button class='yes' use:tip={'erase everything for good'} onclick={do_erase}>yes</button>
 					<span class='sure'>erase {db_adjective} data?</span>
 				</div>
 			{:else}
 				{#if local_documents > 0}
-					<button class='erase' title='erase all data' onclick={ask_erase}>
+					<button class='erase' aria-label='erase all data' use:tip={'erase all data'} onclick={ask_erase}>
 						<svg class='erase-bin' viewBox='0 0 24 24'>
-							<path d='M4 6 H20 M9 6 V4 H15 V6 M6 6 L7 20 H17 L18 6 M10 10 V17 M14 10 V17'
+							<path d={binPath}
 								fill='none' stroke='currentColor' stroke-width='1.6'
 								stroke-linecap='round' stroke-linejoin='round' />
 						</svg>
@@ -96,7 +100,7 @@
 							class='segment'
 							class:disabled={!built.has(storage)}
 							class:current={$w_storage === storage}
-							title={built.has(storage) ? '' : 'not built yet'}
+							use:tip={built.has(storage) ? null : 'not built yet'}
 							onclick={() => choose(storage)}>{storage}</button>
 					{/each}
 				</div>

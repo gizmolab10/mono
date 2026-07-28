@@ -4,8 +4,15 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
+- [ ] port hits from di (not 3D!)
+    - [ ] so tooltips & hover work more reliably (leave events often do not happen)
+- [ ] debug.log
+    - [ ] should do nothing when not launched on localhost
+    - [ ] list the cruft, move it to work journal? or somewhere else
+- [ ] persist filters for files
+- [ ] write a new file: spec rules based on current code
 - [ ] chats
-    - [ ] question pill bg color -> --mild-accent half way between accent and bg
+    - [x] question pill bg color -> --mild-accent half way between accent and bg
     - [ ] round button at left of each question to mark it as hidden/visible
         - [ ] show/hide hidden questions
         - [ ] button to delete hidden question
@@ -15,30 +22,26 @@ write a proposal for the first unchecked item to the top of handoff.
             - [ ] within (w op =) view document
                 - [ ] when w op is set to view, save the current op
                 - [ ] click in view doc -> set w op back to saved
-- [ ] what is inset for in intersection.svelte?
-- [ ] sideband storage in allm — mechanism proven, see [sideband storage proposal](sideband%20storage%20proposal.md) (un-embedded raw-text doc, payload in its `description`)
-    - [ ] hidden chat exchanges (first use — a `ji-hidden` note; clears the chat hidden/delete items above)
-    - [ ] tags
-    - [ ] messages channel
+    - [ ] sideband storage in allm — mechanism proven, see [sideband storage proposal](sideband%20storage%20proposal.md) (un-embedded raw-text doc, payload in its `description`)
+        - [ ] hidden chat exchanges (first use — a `ji-hidden` note; clears the chat hidden/delete items above)
+        - [ ] tags
+        - [ ] messages channel
+- [ ] what is "inset" constant?
 - [ ] set op to list -> very, very slow
-- [ ] debug.log
-    - [ ] should do nothing when not launched on localhost
-    - [ ] list the cruft, move it to work journal? or somewhere else
 - [ ] merge constants -> configuration
 - [ ] build into ji -> install and configure
     - [ ] WSL on windows
     - [ ] Docker
     - [ ] Qwen
     - [ ] AnythingLLM
-    - [ ] configure -> automatic and manual 
+    - [ ] configure -> automatic and manual
 - [ ] prime directive
     - [ ] trigger on each put
 - [ ] add remote support
     - [ ] supabase not firebase
     - [ ] use person's id
     - [ ] authorization
-- [ ] write a new file: spec rules based on current code
-- [ ] documents table
+- [ ] documents list
     - [ ] when viewing a video or audio item -> begin playing it
     - [ ] add a 'download' unichar to the far right unichar buttons
 - [ ] add support for:
@@ -46,6 +49,7 @@ write a proposal for the first unchecked item to the top of handoff.
     - [ ] **Video (unplayable in-browser):** avi, flv, mkv, mpg, wmv
     - [ ] **Audio (unplayable in-browser):** aiff, wma
     - [ ] **Text:** rtf and md
+    - [ ] **Kindle:** EPUB, KFX, AZW3, AZW4
 - [ ] tags
     - [ ] show tags as a tree (single-parent first)
     - [ ] tag ancestries — multi-parent tags
@@ -56,6 +60,8 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] in drop documents
+    - [x] hover hint drops "or click to go back" when the hierarchy has no docs
 - [x] shrink the insets at outside edges
     - [x] chat -> remove the right-side gap
         - [x] when v scrollbar is hidden

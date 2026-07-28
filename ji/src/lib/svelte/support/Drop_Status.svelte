@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_drop_total, w_drop_captured, w_drop_question, w_drop_message, request_drop_cancel, T_Keep } from '../../ts/managers/Dropping';
+	import { w_drop_total, w_drop_captured, w_drop_question, w_drop_message, w_drop_cap, request_drop_cancel, T_Keep } from '../../ts/managers/Dropping';
 	import { say_bytes } from '../../ts/types/Document';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
@@ -69,6 +69,12 @@
 		const keep = (keep_stored && keep_dropped) ? T_Keep.both : keep_stored ? T_Keep.old : T_Keep.new;
 		question.answer(keep, repeat);
 	}
+
+	// The AI too-big refusal: a "do not ask again" tick sits above its OK. Each new one starts
+	// unticked.
+	let hide_next = $state(false);
+	$effect(() => { if ($w_drop_cap) { hide_next = false; } });
+	function ok_cap() { $w_drop_cap?.answer(hide_next); }
 </script>
 
 {#if busy}
@@ -127,6 +133,16 @@
 	<div class='drop-dialog' onclick={(event) => event.stopPropagation()}>
 		<div class='dialog-text'>{said.message}</div>
 		<button class='dialog-ok' onclick={said.answer}>OK</button>
+	</div>
+{:else if $w_drop_cap}
+	{@const capped = $w_drop_cap}
+	<div class='drop-dialog' onclick={(event) => event.stopPropagation()}>
+		<div class='dialog-text'>{capped.message}</div>
+		<label class='dialog-choice'>
+			<input type='checkbox' bind:checked={hide_next} />
+			do not ask again
+		</label>
+		<button class='dialog-ok' onclick={ok_cap}>OK</button>
 	</div>
 {/if}
 

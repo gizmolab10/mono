@@ -3,14 +3,19 @@ import { preferences, T_Preference } from '../managers/Preferences';
 import { Hierarchy } from '../managers/Hierarchy';
 import { T_Storage } from '../types/DB_Records';
 import { refresh_llm_docs, clear_llm_docs, start_llm_heartbeat, stop_llm_heartbeat } from './LLM_Docs';
-import { db_changed } from '../types/Signal';
+import { db_changed, w_db_changed } from '../types/Signal';
 import type { Writable } from 'svelte/store';
 import { writable, get } from 'svelte/store';
 import { DB_Common } from './DB_Common';
 import { DB_Local } from './DB_Local';
 import { DB_LLM } from './DB_LLM';
 
-// One storage backend paired with the tree that owns its records.
+// True while the active store's records are being fetched in (the AI store reads them from
+// AnythingLLM a moment after launch). Screens hold off "the store is empty" decisions until it
+// clears, so a not-yet-loaded store isn't mistaken for an empty one.
+export const w_hierarchy_loading = writable<boolean>(false);
+
+// One storage backend paired with the hierarchy that owns its records.
 interface Store {
 	db        : DB_Common;
 	hierarchy : Hierarchy;
@@ -46,8 +51,20 @@ class Databases {
 		if (saved === T_Storage.llm) {
 			refresh_llm_docs();
 			start_llm_heartbeat();   // notice an idle connection drop even when nothing's calling
+			this.reload_after_prime(store);   // its records come from AnythingLLM, fetched now
 			if (this.llm_creds_missing()) { w_operation.set(T_Operation.init); }
 		}
+	}
+
+	// The AI store's records live in AnythingLLM. Fetch them into memory, then refill the
+	// hierarchy from what arrived and redraw. A no-op prime (local stores) leaves things as-is.
+	private reload_after_prime(store: Store): void {
+		w_hierarchy_loading.set(true);
+		store.db.prime().then(() => {
+			store.hierarchy.fetch_all();
+			this.w_hierarchy.set(store.hierarchy);
+			db_changed();
+		}).finally(() => w_hierarchy_loading.set(false));
 	}
 
 	// The AI store needs two stored settings — the address pointer and the share token —
@@ -84,6 +101,7 @@ class Databases {
 		if (storage === T_Storage.llm) {
 			refresh_llm_docs();
 			start_llm_heartbeat();   // notice an idle connection drop even when nothing's calling
+			this.reload_after_prime(store);   // its records come from AnythingLLM, fetched now
 			if (this.llm_creds_missing()) { w_operation.set(T_Operation.init); }
 		} else {
 			clear_llm_docs();
@@ -116,3 +134,21 @@ w_hierarchy.subscribe((value) => { h = value; });
 
 // Which storage is active, reachable as `$w_storage` in a component.
 export const w_storage = databases.w_storage;
+
+// The list view is disabled when the active hierarchy holds no documents — the drop box takes
+// its place so the first one can be added. Enforced here (not in the list view) so it holds
+// whatever asked for the list: the operations pill, a help link, a background click, closing the
+// viewer. Held while the store is still loading its records, so a not-yet-loaded store isn't
+// mistaken for an empty one. Re-checked when the operation changes, when loading finishes, and
+// when the store's contents change (so deleting the last document drops to the drop box too).
+function enforce_list_or_drop(): void {
+	if (get(w_hierarchy_loading)) { return; }
+	const op = get(w_operation);
+	const shows_list = op === null || op === T_Operation.files;
+	if (shows_list && h && h.documents.length === 0) {
+		w_operation.set(T_Operation.drop);
+	}
+}
+w_operation.subscribe(() => enforce_list_or_drop());
+w_hierarchy_loading.subscribe(() => enforce_list_or_drop());
+w_db_changed.subscribe(() => enforce_list_or_drop());

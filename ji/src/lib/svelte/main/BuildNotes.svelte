@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { tip } from '../../ts/utilities/Tooltip';
 	import buildsRaw from '../../md/builds.md?raw';
 	import { k } from '../../ts/common/Constants';
 
@@ -54,13 +55,13 @@
 	onclick={(e) => e.stopPropagation()}>
 	<div class='steppers'>
 		{#if show_up}
-			<button class='stepper' aria-label='newer builds' onclick={() => hit_closure(true)}>▲</button>
+			<button class='stepper' aria-label='newer builds' use:tip={'newer builds'} onclick={() => hit_closure(true)}>▲</button>
 		{/if}
 		{#if show_down}
-			<button class='stepper' aria-label='older builds' onclick={() => hit_closure(false)}>▼</button>
+			<button class='stepper' aria-label='older builds' use:tip={'older builds'} onclick={() => hit_closure(false)}>▼</button>
 		{/if}
 	</div>
-	<button class='close' aria-label='close' onclick={onclose}>
+	<button class='close' aria-label='close' use:tip={'close'} onclick={onclose}>
 		<svg class='cross' width={k.svg.cross} height={k.svg.cross} viewBox='0 0 {k.size.cross} {k.size.cross}'>
 			<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
 		</svg>

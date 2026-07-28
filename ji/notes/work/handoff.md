@@ -2,17 +2,17 @@
 
 My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md).
 
-## Next — soften the chat question pill's color
+## Next — drop the "or click to go back" hint when the store is empty
 
-First unchecked in [code debt](code%20debt.md) (under **chats**): the chat question header sits on full `--accent`; make it a softer `--mild-accent`, a color halfway between `--accent` and `--bg`.
+First unchecked in [code debt](code%20debt.md) (under **in drop documents**): the drop box's hover hint reads "drop files & folders here, or click to go back". When the hierarchy holds no documents there's nowhere to go back to (the drop box *is* the only view), so the hint should read just "drop files & folders here".
 
 ### Proposal
 
-Add a `--mild-accent` token — a mix of `--accent` and `--bg` (`color-mix(in srgb, var(--accent) 30%, var(--bg))`, tuned by eye) — beside the other color tokens, and use it for the question header's background in `operations/Chat.svelte` (the `.question` rule). Keep the header's text readable against the lighter fill (its text is currently `--text-on-accent`, chosen for the strong accent — on a mild fill `--text` may read better; pick by eye). One place changes; the collapsed/expanded behavior is untouched.
+In `operations/Drop_Documents.svelte`, the hint is a fixed string on the box (line 55: `use:tip={'drop files & folders here, or click to go back'}`). Make it depend on whether the hierarchy has documents — `$w_hierarchy.documents.length === 0 ? 'drop files & folders here' : 'drop files & folders here, or click to go back'`. The visible instruction line (line 68) is already just "drop files & folders here", so only the hover hint changes. One line; nothing else about the box moves.
 
-**Open question for Jonathan:** exact midpoint, or lean nearer the accent? I'd set the mix and adjust to taste.
+**Steel-man the misread.** The item could mean the *visible* label — but that already says just "drop files & folders here" (line 68); only the hover hint carries the extra clause, so that's what changes.
 
-**Success.** The question pills read softer, halfway to the page color, with the text still legible; nothing else about the chat changes.
+**Success.** On an empty store the drop box's hover hint reads "drop files & folders here" with no "or click to go back"; once there's at least one document, the full hint returns.
 
 ## Context
 

@@ -27,6 +27,19 @@ export class SVG_Paths {
 		return `M ${start} ${start} L ${end} ${end} M ${start} ${end} L ${end} ${start}`;
 	}
 
+	// A trash bin, drawn as a stroked outline: the lid line, the handle, the tapered body, and
+	// two slots down the front. Laid out on a 24-unit grid and scaled to `size`; render with
+	// fill='none' and a stroke.
+	trashcan(size: number = 24): string {
+		const s = size / 24;
+		const n = (v: number) => +(v * s).toFixed(2);
+		return `M ${n(4)} ${n(6)} H ${n(20)} `                                  // lid
+			+ `M ${n(9)} ${n(6)} V ${n(4)} H ${n(15)} V ${n(6)} `               // handle
+			+ `M ${n(6)} ${n(6)} L ${n(7)} ${n(20)} H ${n(17)} L ${n(18)} ${n(6)} ` // body
+			+ `M ${n(10)} ${n(10)} V ${n(17)} `                                 // left slot
+			+ `M ${n(14)} ${n(10)} V ${n(17)}`;                                 // right slot
+	}
+
 	toggle(size: number = 20): string {
 
 		// @returns SVG path string that renders a toggle icon

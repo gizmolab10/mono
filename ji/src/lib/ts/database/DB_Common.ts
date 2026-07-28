@@ -7,6 +7,10 @@ import { T_Record, T_Storage } from '../types/DB_Records';
 export abstract class DB_Common {
 	abstract readonly storage: T_Storage;
 
+	// Pull whatever `load_list` will need into place before the hierarchy loads it. Backends that
+	// keep their records over the network (the AI store) fetch them here; local ones need nothing.
+	prime(): Promise<void> { return Promise.resolve(); }
+
 	// Read / write one record kind's whole list where this storage keeps it.
 	abstract load_list<T>(record: T_Record): T[];
 	abstract save_list<T>(record: T_Record, list: T[]): void;

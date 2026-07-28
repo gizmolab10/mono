@@ -2,6 +2,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { w_operation, T_Operation } from '../../ts/managers/Operations';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import MarkdownIt from 'markdown-it';
@@ -81,10 +82,10 @@
 		// scheme check below, so it never leaks to the browser.
 		if (href.startsWith('action:')) {
 			event.preventDefault();
-			if (href === 'action:list') {
+			if (href === 'action:files') {
 				w_operation.set(T_Operation.files);
 				onclose();
-				debug.log('Help: an "action:list" link switched to the list and closed help.');
+				debug.log('Help: an "action:files" link tried the list (which drops to the drop box when empty) and closed help.');
 			} else if (href === 'action:chat') {
 				w_operation.set(T_Operation.chat);
 				onclose();
@@ -112,7 +113,7 @@
 <div class='help' role='dialog' aria-modal='true' aria-label='help'>
 	<div class='bar'>
 		{#if show_hamburger}
-			<button class='hamburger' onclick={() => w_help_sidebar.update((v) => !v)} aria-label='toggle the help sidebar'>
+			<button class='hamburger' onclick={() => w_help_sidebar.update((v) => !v)} aria-label='toggle the help sidebar' use:tip={'show or hide the page list'}>
 				<svg viewBox='0 0 {k.size.hamburger} {k.size.hamburger}' width={k.size.hamburger} height={k.size.hamburger}>
 					<path d={svg_paths.hamburger(k.size.hamburger)} />
 				</svg>
@@ -121,7 +122,7 @@
 		<span class='spacer'></span>
 		<span class='title'>Help for Intersection</span>
 		<span class='spacer'></span>
-		<button class='close' onclick={onclose} aria-label='close help'>
+		<button class='close' onclick={onclose} aria-label='close help' use:tip={'close help'}>
 			<svg class='cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
 				<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
 			</svg>

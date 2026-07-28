@@ -1,7 +1,8 @@
 # build notes
 
 | Build | Date | Note |
-|----|----|----|
+| ---- | ---- | ---- |
+| 14 | Jul 27, 2026 | store blobs in AnythingLLM |
 | 13 | Jul 25, 2026 | sharing data, needs credentials |
 | 12 | Jul 25, 2026 | new chat view |
 | 11 | Jul 24, 2026 | new operations control and new layout |

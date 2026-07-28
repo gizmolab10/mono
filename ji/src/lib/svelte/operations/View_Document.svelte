@@ -3,6 +3,7 @@
 	import { databases, w_hierarchy } from '../../ts/database/Databases';
 	import { w_operation } from '../../ts/managers/Operations';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { tip } from '../../ts/utilities/Tooltip';
 	import { Direction } from '../../ts/types/Angle';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
@@ -124,19 +125,19 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class='viewer' role='button' tabindex='0' onclick={() => { debug.log('Viewer clicked — back to the list.'); onclose(); }}>
+<div class='viewer' role='button' tabindex='0' use:tip={'back to the list'} onclick={() => { debug.log('Viewer clicked — back to the list.'); onclose(); }}>
 	<div class='view-head'>
 		<!-- Only worth showing the step triangles when there's more than one showable file
 		     on screen to step between; with fewer than two, hide the whole thing. -->
 		{#if can_step}
 			<div class='view-steps'>
-				<button class='step' aria-label='previous file'
+				<button class='step' aria-label='previous file' use:tip={'previous file'}
 					onmousedown={(e) => { e.stopPropagation(); start_hold(onprev); }}
 					onmouseup={stop_hold} onmouseleave={stop_hold}
 					onclick={(e) => { e.stopPropagation(); if (e.detail === 0) { onprev(); } }}>
 					<svg overflow='visible' width={prev_bounds.width} height={prev_bounds.height} viewBox='{prev_bounds.minX} {prev_bounds.minY} {prev_bounds.width} {prev_bounds.height}'><path d={prev_path} /></svg>
 				</button>
-				<button class='step' aria-label='next file'
+				<button class='step' aria-label='next file' use:tip={'next file'}
 					onmousedown={(e) => { e.stopPropagation(); start_hold(onnext); }}
 					onmouseup={stop_hold} onmouseleave={stop_hold}
 					onclick={(e) => { e.stopPropagation(); if (e.detail === 0) { onnext(); } }}>
@@ -147,7 +148,7 @@
 			<span></span>
 		{/if}
 		<span class='view-name'>{doc?.name ?? ''}</span>
-		<button class='view-close' aria-label='close' onclick={onclose}>
+		<button class='view-close' aria-label='close' use:tip={'close'} onclick={onclose}>
 			<svg class='view-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
 				<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
 			</svg>
