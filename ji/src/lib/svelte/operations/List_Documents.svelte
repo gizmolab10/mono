@@ -66,13 +66,24 @@
 
 	let hovered_row = $state<string | null>(null);  // which row the cursor is over — tracked in code, not CSS :hover, so the per-row buttons (which stand a touch taller than the row) still count as "on the row"
 
+	// How long each step of showing the table takes, in thousandths of a second. Set as
+	// the work happens, read by the after-paint line at the bottom, so one log line can
+	// say where the wait went: the walk, the narrowing, or the drawing.
+	let took_walk    = 0;
+	let took_narrow  = 0;
+	let took_counts  = 0;
+	let began_at     = 0;   // when this showing of the table started building
+
 	const rows = $derived.by(() => {
+		const started = performance.now();
+		began_at = started;
 		$w_db_changed;                                   // re-read on every store change
 		const name_of = new Map($w_hierarchy.tags.map((t) => [t.id, t.name]));
 		// Walk parent-first, child-next so folders lead their contents; each row
 		// carries how deep it sits (for the indent) and its folder chain above
 		// (so a filtered-in file can keep its parent folders on screen).
-		return $w_hierarchy.list_documents().map((listed) => {
+		const walked = $w_hierarchy.list_documents();
+		const built = walked.map((listed) => {
 			const tag_ids = listed.tag_ids;
 			const name      = listed.document.name ?? '';
 			const extension = listed.document.extension ?? null;
@@ -98,6 +109,8 @@
 				tag_names    : tag_ids.map((id) => name_of.get(id) ?? '?').join(', '),
 			};
 		});
+		took_walk = performance.now() - started;
+		return built;
 	});
 
 	// Drop everything sitting under a shut folder, before the search even looks. A
@@ -129,6 +142,7 @@
 	// display still honors the folds: a shut folder shows as the path to its matches, while
 	// its matched children stay hidden until you open it. With no filter, only the open rows show.
 	const shown = $derived.by(() => {
+		const started = performance.now();
 		const filtering = picked_tags.size > 0 || $w_filter_text.trim() !== '' || $w_filter_families.length > 0;
 		const searched = filtering ? rows : open_rows;
 		const matched = filter_rows(searched, picked_tags, $w_filter_text, $w_filter_mode, $w_filter_families);
@@ -136,6 +150,7 @@
 		for (const r of matched) { for (const a of r.ancestor_ids) { keep.add(a); } }
 		const display = open_rows.filter((r) => keep.has(r.id));   // fold-respecting: hides matches under a shut folder
 		debug.log(`List: ${filtering ? 'filter on — searched all' : 'no filter — searched open'} ${searched.length} row(s); ${matched.length} match(es); showing ${display.length} open row(s) (a shut folder keeps its matches hidden until opened).`);
+		took_narrow = performance.now() - started;
 		return display;
 	});
 
@@ -148,12 +163,14 @@
 	// its own folder's tally and in each folder further up. Shown in the folder's format
 	// cell in place of "---".
 	const folder_count = $derived.by(() => {
+		const started = performance.now();
 		const matched = filter_rows(rows, picked_tags, $w_filter_text, $w_filter_mode, $w_filter_families);
 		const map = new Map<string, number>();
 		for (const r of matched) {
 			for (const a of r.ancestor_ids) { map.set(a, (map.get(a) ?? 0) + 1); }
 		}
 		debug.log(`Folder counts: ${map.size} folder(s) hold at least one matching file; ${matched.length} file(s) of ${rows.length} row(s) match the filter (folders themselves are never counted).`);
+		took_counts = performance.now() - started;
 		return map;
 	});
 
@@ -248,6 +265,22 @@
 	$effect(() => {
 		if (!scroller) { restored = false; return; }
 		if (!restored && shown.length > 0) { restore_top(); restored = true; }
+	});
+
+	// Where the wait went. Measured once per showing of the table, after the rows are
+	// actually on screen: the three steps that run before any drawing, then the drawing
+	// itself (everything left over), then the whole wait. Each number is thousandths of
+	// a second; the row counts are there so a slow number can be read against its size.
+	let timed = false;
+	$effect(() => {
+		const painted = shown.length;
+		if (timed || painted === 0 || began_at === 0) { return; }
+		timed = true;
+		requestAnimationFrame(() => requestAnimationFrame(() => {
+			const whole   = performance.now() - began_at;
+			const drawing = whole - took_walk - took_narrow - took_counts;
+			debug.log(`List timing: ${whole.toFixed(0)}ms from start to rows on screen for ${painted} row(s) of ${rows.length} in the store — walking and building ${took_walk.toFixed(0)}ms, narrowing ${took_narrow.toFixed(0)}ms, folder counts ${took_counts.toFixed(0)}ms, drawing ${drawing.toFixed(0)}ms.`);
+		}));
 	});
 
 	// How many tags exist in the store to pick from. When zero, the row's pencil

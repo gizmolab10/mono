@@ -4,26 +4,10 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] add 2 new families -> spreadsheet, book
-- [ ] add file formats:
-    - [ ] **Video (unplayable in-browser):** avi, flv, mkv, mpg, wmv
-    - [ ] **Audio (unplayable in-browser):** aiff, wma
-    - [ ] **Text (word):** doc, docx
-    - [ ] **Books (kindle):** EPUB, KFX, AZW3, AZW4
-    - [ ] **Spreadsheet:** csv
-        - [ ] **Excel:** xls, xlsx, xlsm, xlsb, xlt, xltx, xltm
-        - [ ] tsv, tab, psv, gnumeric, dif, slk
-        - [ ] **LibreOffice/OpenDocument:** ods, ots
-        - [ ] **Apple:** numbers
-        - [ ] **Lotus:** wk1, wk3, wk4
-        - [ ] **Quattro Pro:** qpw, wb3
-- [ ] test every file kind with a real file of that kind — built in code, dropped through the real save path, read back and checked (family, showable, how ready its words are, words-or-bytes, bytes byte-for-byte), plus a check that every ending has a row so a new one fails until someone says what it is
-    - [ ] the samples start as real bytes, not valid documents — nothing in ji reads inside a file yet
-    - [ ] when the quick and heavy reading-out is built, these same files test it — and then each one has to be a valid document, not just real bytes
-    - [ ] research where to get them: proper reference samples per format, or failing that the smallest file that genuinely tests each reader (a picture with writing on it, a pdf with real pages, a book with chapters, a clip with speech)
-- [ ] set op to list -> noticeable transition pause
+- [ ] set op to .list -> noticeable transition pause
 - [ ] port Hits.ts from di (not 3D!)
     - [ ] so tooltips & hover work more reliably (leave events often do not happen)
+- [ ] capture the back and forward browser buttons -> navigate back and forth within ji
 - [ ] Anything LLM -> sidebar db
     - [ ] per workspace and thread
     - [ ] small
@@ -31,6 +15,12 @@ write a proposal for the first unchecked item to the top of handoff.
         - [ ] tiny race window
         - [ ] read, merge, write
 - [ ] soon
+    - [ ] work on recent murky tendency
+    - [ ] valid samples documents — with real contents
+        - [ ] merge full family support -> samples
+        - [ ] for quick and heavy extraction, these same files test it
+        - [x] research where to get them — [sample files](proposals/sample%20files.md): requirements and leads
+        - [ ] check those leads before relying on any of them, and note each sample's source and license
     - [ ] write a new file: spec rules based on current code
     - [ ] chats
         - [ ] time each reply, add it to the bottom line of the response
@@ -78,6 +68,24 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] add the rest of the spreadsheet endings — every one from this list is now taken
+    - [x] **Excel:** xls, xlsx, xlsm, xlsb, xlt, xltx, xltm — plus gnumeric, packed like these: raw bytes, never showable, heavy, and each needs its sheets read out before the model can take it
+    - [x] tsv (also spelled tab), psv, dif, slk — rows of words, so stored as words, ready to read, no converting
+    - [x] **LibreOffice/OpenDocument:** ods, ots
+    - [x] **Lotus:** wk1, wk3, wk4
+    - [x] **Quattro Pro:** qpw, wb3
+    - [x] the five old ones are named on their own list too, so they can be told at a glance and dropped later in one line — otherwise they behave like any other packed table
+- [x] add 2 new families -> spreadsheet, book — spreadsheet takes csv, numbers and qb; book takes epub, kfx, azw3 and azw4. Design and what's still owed in [full family support](proposals/full%20family%20support.md)
+    - [x] pdf and web page stopped being families of their own — both are text now, and the viewer draws each from its ending
+    - [x] two refusals lifted, or nothing new could arrive: a dropped file was thrown away when a browser couldn't show it (which also kept out Word files and the unplayable clips), and the drop box hid those endings from its family words
+    - [x] three lists written down that used to be implicit — the pictures, the can't-be-shown kinds, and the two the model reads unconverted (docx and mpg)
+- [x] add file formats:
+    - [x] **Video (unplayable in-browser):** avi, flv, mkv, mpg, wmv
+    - [x] **Audio (unplayable in-browser):** aiff, wma
+    - [x] **Text (word):** doc, docx
+    - [x] **Books (kindle):** EPUB, KFX, AZW3, AZW4
+    - [x] **Spreadsheet:** csv, and **Apple:** numbers
+- [x] test every file kind with a real file of that kind — all 38 built in code from real bytes, saved the way a drop saves, read back and checked (family, showable, how ready its words are, words-or-bytes, bytes byte-for-byte, size and date), all 38 held at once and found again after a reload, plus a check that the table names every ending so a new one fails until someone says what it is. Proved it can fail: one row marked wrong on purpose failed on exactly those lines
 - [x] debug.log
     - [x] determine not accessible when launched on intersection.lol -> log function returns early — worked out once, as the log file is read: is this page served from this machine (localhost or the two ways a browser says the same)? Anywhere else every logged line gives up before building anything. It was already unreachable from elsewhere (the address points at a machine with no log server, and an https page can't make a plain http request) — now it doesn't try. The first line of the log says which way the decision went and what it read
     - [x] remove never-to-be-needed logs — 34 lines that only said an interaction happened (tooltip moves and presses, the accent picker, key presses and clicks across the viewer, drop box, help, header cells, tag picker and folds, the manage-tags stub, and two noisy tree lines), plus the imports and one loop left with nothing to feed

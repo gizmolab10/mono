@@ -2,6 +2,7 @@
 
 | # | Feature |
 | --- | --- |
+| 40 | Spreadsheets and books are taken in, alongside Word files and the clips and sound a browser won't play — none of them open in the viewer, but all are saved, listed, filtered and searched; the drop box names every ending it takes. A pdf and a web page are simply text now, drawn their own way from the file's ending |
 | 39 | The browser's saved settings keep themselves tidy: at launch, old names are brought up to one spelling (`ji_` then parts joined by underscores) with their data moved across — nothing lost, an older value kept aside if its new name is taken — and any name the app no longer uses is removed, other apps' settings untouched |
 | 38 | The list remembers how it was narrowed — the picked tags, the all/any mode, the family picks and the name search all survive a reload, kept separately for each store ("mine" and the AI store), so switching stores brings out that store's own picks; a picked tag the store no longer holds sits out of the filter instead of emptying the list, and stays saved in case it comes back |
 | 37 | Filtering the list (by family, tag, or name) searches the whole hierarchy — a match inside a shut folder is found and its folder shows as the path to it, with the matched children hidden until the folder is opened; the folder-row counts tally the matches after the filter |

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Document, T_DocumentExtension, T_DocumentFamily,
-	UNVIEWABLE_KINDS, ACCEPTABLE_UNVIEWABLE, NEEDS_CONVERTING } from '../types/Document';
+	UNVIEWABLE_KINDS, ACCEPTABLE_UNVIEWABLE, NEEDS_CONVERTING, ARCHIVE_KINDS } from '../types/Document';
 
 // The rules for deciding what a dropped file is. What each kind then answers — family,
 // showable, how ready its words are, words-or-bytes — is checked kind by kind against a
@@ -52,10 +52,22 @@ describe('the drop box words', () => {
 		const families = Document.accepted_families();
 		expect(families).toContain(T_DocumentFamily.sheet);
 		expect(families).toContain(T_DocumentFamily.book);
-		expect(Document.endings_of(T_DocumentFamily.sheet)).toEqual(['csv', 'numbers', 'qb']);
+		expect(Document.endings_of(T_DocumentFamily.sheet)).toEqual([
+			'csv', 'tsv', 'tab', 'psv', 'dif', 'slk',
+			'xls', 'xlsx', 'xlsm', 'xlsb', 'xlt', 'xltx', 'xltm',
+			'ods', 'ots', 'gnumeric', 'wk1', 'wk3', 'wk4', 'qpw', 'wb3', 'numbers', 'qb']);
 		expect(Document.endings_of(T_DocumentFamily.book)).toEqual(['epub', 'kfx', 'azw3', 'azw4']);
 		expect(Document.family_label(T_DocumentFamily.sheet)).toBe('spreadsheet');
 		expect(Document.family_label(T_DocumentFamily.book)).toBe('book');
+	});
+
+	it('names the five old table kinds on their own list, and treats them like any packed table', () => {
+		expect(Array.from(ARCHIVE_KINDS).sort()).toEqual(['qpw', 'wb3', 'wk1', 'wk3', 'wk4']);
+		for (const kind of ARCHIVE_KINDS) {
+			expect(Document.family_of('', kind)).toBe(T_DocumentFamily.sheet);
+			expect(Document.is_viewable(kind)).toBe(false);
+			expect(NEEDS_CONVERTING.has(kind)).toBe(true);
+		}
 	});
 
 	it('now lists the endings a browser cannot show, where before it hid them', () => {

@@ -59,9 +59,28 @@ export enum T_DocumentExtension {
 	ogg     = 'ogg',
 	wma     = 'wma',
 
-	csv     = 'csv',
-	numbers = 'numbers',
-	qb      = 'qb',
+	csv      = 'csv',
+	tsv      = 'tsv',
+	psv      = 'psv',
+	dif      = 'dif',
+	slk      = 'slk',
+	xls      = 'xls',
+	xlsx     = 'xlsx',
+	xlsm     = 'xlsm',
+	xlsb     = 'xlsb',
+	xlt      = 'xlt',
+	xltx     = 'xltx',
+	xltm     = 'xltm',
+	ods      = 'ods',
+	ots      = 'ots',
+	gnumeric = 'gnumeric',
+	wk1      = 'wk1',
+	wk3      = 'wk3',
+	wk4      = 'wk4',
+	qpw      = 'qpw',
+	wb3      = 'wb3',
+	numbers  = 'numbers',
+	qb       = 'qb',
 
 	epub    = 'epub',
 	kfx     = 'kfx',
@@ -69,12 +88,39 @@ export enum T_DocumentExtension {
 	azw4    = 'azw4',
 }
 
+// Tables from schemes nothing has written this century — Lotus and Quattro Pro. Named
+// on their own so the old ones can be told at a glance, and so dropping them later is
+// one line rather than a hunt. They behave like any other packed table.
+export const ARCHIVE_KINDS: ReadonlySet<T_DocumentExtension> =
+	new Set([
+		T_DocumentExtension.wk1,
+		T_DocumentExtension.wk3,
+		T_DocumentExtension.wk4,
+		T_DocumentExtension.qpw,
+		T_DocumentExtension.wb3,
+]);
+
 // The endings that hold a table, and the ones that hold a book. Kept apart from what
 // a browser can show: none of these can be looked at here, but each holds words worth
 // reading — a table's rows, a book's pages.
 export const SHEET_KINDS: ReadonlySet<T_DocumentExtension> =
 	new Set([
 		T_DocumentExtension.csv,
+		T_DocumentExtension.tsv,
+		T_DocumentExtension.psv,
+		T_DocumentExtension.dif,
+		T_DocumentExtension.slk,
+		T_DocumentExtension.xls,
+		T_DocumentExtension.xlsx,
+		T_DocumentExtension.xlsm,
+		T_DocumentExtension.xlsb,
+		T_DocumentExtension.xlt,
+		T_DocumentExtension.xltx,
+		T_DocumentExtension.xltm,
+		T_DocumentExtension.ods,
+		T_DocumentExtension.ots,
+		T_DocumentExtension.gnumeric,
+		...ARCHIVE_KINDS,
 		T_DocumentExtension.numbers,
 		T_DocumentExtension.qb,
 ]);
@@ -113,6 +159,21 @@ export const UNVIEWABLE_KINDS: ReadonlySet<T_DocumentExtension> =
 		T_DocumentExtension.wma,
 		// tables
 		T_DocumentExtension.csv,
+		T_DocumentExtension.tsv,
+		T_DocumentExtension.psv,
+		T_DocumentExtension.dif,
+		T_DocumentExtension.slk,
+		T_DocumentExtension.xls,
+		T_DocumentExtension.xlsx,
+		T_DocumentExtension.xlsm,
+		T_DocumentExtension.xlsb,
+		T_DocumentExtension.xlt,
+		T_DocumentExtension.xltx,
+		T_DocumentExtension.xltm,
+		T_DocumentExtension.ods,
+		T_DocumentExtension.ots,
+		T_DocumentExtension.gnumeric,
+		...ARCHIVE_KINDS,
 		T_DocumentExtension.numbers,
 		T_DocumentExtension.qb,
 		// books
@@ -170,7 +231,13 @@ export const IMAGE_KINDS: ReadonlySet<T_DocumentExtension> =
 // store the right way; the viewer reads it to interpret what it reads back.
 export const TEXT_KINDS: ReadonlySet<T_DocumentExtension> =
 	new Set([
+		// tables written as rows of words — separated by commas, tabs or bars, or in one
+		// of the two older interchange spellings. All words, so all stored as words.
 		T_DocumentExtension.csv,
+		T_DocumentExtension.tsv,
+		T_DocumentExtension.psv,
+		T_DocumentExtension.dif,
+		T_DocumentExtension.slk,
 		T_DocumentExtension.html,
 		T_DocumentExtension.md,
 		T_DocumentExtension.rtf,
@@ -185,6 +252,10 @@ export const TEXT_KINDS: ReadonlySet<T_DocumentExtension> =
 export const READY_KINDS: ReadonlySet<T_DocumentExtension> =
 	new Set([
 		T_DocumentExtension.csv,
+		T_DocumentExtension.tsv,
+		T_DocumentExtension.psv,
+		T_DocumentExtension.dif,
+		T_DocumentExtension.slk,
 		T_DocumentExtension.md,
 		T_DocumentExtension.txt,
 ]);
@@ -240,6 +311,20 @@ export const NEEDS_CONVERTING: ReadonlySet<T_DocumentExtension> =
 		T_DocumentExtension.azw4,
 		// an accounting file: not words at all until something reads its records out
 		T_DocumentExtension.qb,
+		// packed tables — a workbook's sheets have to be read out into plain rows first
+		T_DocumentExtension.xls,
+		T_DocumentExtension.xlsx,
+		T_DocumentExtension.xlsm,
+		T_DocumentExtension.xlsb,
+		T_DocumentExtension.xlt,
+		T_DocumentExtension.xltx,
+		T_DocumentExtension.xltm,
+		T_DocumentExtension.ods,
+		T_DocumentExtension.ots,
+		T_DocumentExtension.gnumeric,
+		// the old ones — a Lotus or Quattro Pro workbook, its rows locked in a scheme
+		// nothing has written this century
+		...ARCHIVE_KINDS,
 		// a Numbers table: a packed bundle, not words — exported to plain rows first
 		T_DocumentExtension.numbers,
 		// A table saved as plain text (csv) is NOT here: ji stores it as its own words,
@@ -400,6 +485,25 @@ export class Document {
 		wma: T_DocumentExtension.wma,
 		aiff: T_DocumentExtension.aiff, aif: T_DocumentExtension.aiff,
 		csv: T_DocumentExtension.csv,
+		tsv: T_DocumentExtension.tsv, tab: T_DocumentExtension.tsv,
+		psv: T_DocumentExtension.psv,
+		dif: T_DocumentExtension.dif,
+		slk: T_DocumentExtension.slk,
+		xls: T_DocumentExtension.xls,
+		xlsx: T_DocumentExtension.xlsx,
+		xlsm: T_DocumentExtension.xlsm,
+		xlsb: T_DocumentExtension.xlsb,
+		xlt: T_DocumentExtension.xlt,
+		xltx: T_DocumentExtension.xltx,
+		xltm: T_DocumentExtension.xltm,
+		ods: T_DocumentExtension.ods,
+		ots: T_DocumentExtension.ots,
+		gnumeric: T_DocumentExtension.gnumeric,
+		wk1: T_DocumentExtension.wk1,
+		wk3: T_DocumentExtension.wk3,
+		wk4: T_DocumentExtension.wk4,
+		qpw: T_DocumentExtension.qpw,
+		wb3: T_DocumentExtension.wb3,
 		numbers: T_DocumentExtension.numbers,
 		qb: T_DocumentExtension.qb,
 		epub: T_DocumentExtension.epub,
@@ -418,6 +522,11 @@ export class Document {
 		// A table saved as plain text is asked about before the plain-text catch-all below,
 		// or it would be taken for ordinary words.
 		if (type === 'text/csv' || type === 'application/csv')  { return T_DocumentExtension.csv; }
+		if (type === 'text/tab-separated-values')               { return T_DocumentExtension.tsv; }
+		if (type === 'application/vnd.ms-excel')                { return T_DocumentExtension.xls; }
+		if (type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') { return T_DocumentExtension.xlsx; }
+		if (type === 'application/vnd.oasis.opendocument.spreadsheet') { return T_DocumentExtension.ods; }
+		if (type === 'application/x-gnumeric')                  { return T_DocumentExtension.gnumeric; }
 		if (type === 'application/epub+zip')                    { return T_DocumentExtension.epub; }
 		if (type === 'application/pdf')                        { return T_DocumentExtension.pdf; }
 		if (type === 'image/svg+xml')                          { return T_DocumentExtension.svg; }

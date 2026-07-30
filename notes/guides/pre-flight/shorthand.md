@@ -21,8 +21,7 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `explain`                         | produce analysis only. Do not touch code, nor propose changes, nor fix problems, nor start the next task. Stop after the analysis and wait for the next instruction                                                                                                     |
 | `mothball`                        | state and confirm the context. then gather everything relevant into a mothball file                                                                                                                                                                                     |
 | `gobbledegook`, `mess`, `verbose` | translate using only plain english and our lexicon. do not use technical or mathematical terms without first defining them. offering to add them to our lexicon                                                                                                         |
-
-
+| `murky`                           | carefully review the chat so far. work out one or more causes of the confusion — in my wording, in yours, in the guides. report them very, very briefly. no fixes unless asked                                                                                          |
 
 ## Abbreviations
 

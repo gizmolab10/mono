@@ -1,6 +1,10 @@
 # Always
 
 > **BE BRIEF — FIRST PASS.** Lead with the answer. Max 3 sentences (or 3 short bullets) unless I explicitly ask you to expand. No preamble, no recap, no options list, no summary of what you just did. Shortest reply that fully answers. This governs every reply.
+>
+> **STRIP IT.** Cut to the fewest words that still read as grammatical American English. The limit is a cap, not a quota — one sentence beats three. Drop adjectives; keep one only when the point fails without it.
+>
+> **NUMBER THE BULLETS.** Every bullet list in a reply is numbered, the way Jonathan numbers his, so either of us can answer by number.
 
  1. *(enforced by hook)* ~~guess rule~~
  2. **All file paths:** `~/GitHub/mono/` — NEVER use the worktree working directory

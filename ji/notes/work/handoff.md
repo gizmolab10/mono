@@ -2,19 +2,18 @@
 
 My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md).
 
-## Next — the log gives up before it tries, away from this machine
+## Where the last session stopped
 
-Still open under **debug.log** in [code debt](code%20debt.md): the logging call should return at once when the page isn't being served from this machine. The other two parts of that item are done — the never-needed lines are out, and the maybe-needed ones are written but silent.
+The work is done and written up. It ended on how I write, not on code.
 
-**Where it stands.** Every logged line is sent to a small server on this mac at a fixed address (`common/Debug.ts`, the address on line 17). The determination asked for in the item: nothing is written from elsewhere. On another machine that address points at *that* machine, which has no log server, so the request fails; served from intersection.lol on this mac, the page is https and a plain http request is blocked before it leaves the browser. Either way the failure is swallowed, so nothing shows — but every logged line still tries, and around ninety lines remain.
+1. **Code, all green.** Two new families (spreadsheet, book) with all eighteen table endings and four book endings; pdf and web page folded into text; every kind of file now tested with a real file of that kind. 112 tests pass, and svelte-check reports no errors and no warnings. Design and what's owed: [full family support](proposals/full%20family%20support.md).
+2. **Nothing owed in the browser.** No visual confirmation is pending; the last change you looked at was the folds, which you passed.
+3. **Written this session:** [sample files](proposals/sample%20files.md) (what a fair test file holds per kind, and where one might come from), ji's [lexicon](../guides/pre-flight/lexicon.md), and [sparsity](sparsity.md) — my replies had gone murky, and that file holds the causes, what got written, and what is still owed.
 
-### Proposal
+## Next — pick one
 
-One check, worked out once when the file is read: is the page being served from this machine (the address bar says localhost, or the address matches the log server's own)? If not, the logging call returns before building anything. The silent companion already returns at once, so it needs nothing.
-
-**Steel-man the misread.** It could mean the log server should refuse outside requests instead — but the item says the logging call returns early, so the check belongs in the app, not the server.
-
-**Success.** On this machine the log fills as it does now. Served anywhere else, nothing is sent — nothing in the browser's network view, no failed requests — and the app behaves exactly the same.
+1. **Finish the writing standard** — three items in [sparsity](sparsity.md): one file for the whole standard, the "name it, don't rename it" rule, and merging two shorthands that ask the same thing. Also in there: the two layers of guides (mono and project), and how to make both arrive every turn.
+2. **Or the next code item** — first unchecked in [code debt](code%20debt.md): the sample files become real documents. Not worth building until extracting words exists; the research for it is already written.
 
 ## Context
 

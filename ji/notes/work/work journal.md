@@ -2,6 +2,20 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-29 — every spreadsheet ending taken
+
+- **Fifteen more table endings**, in three groups by what they actually are. Rows of words (tsv, also spelled tab, plus psv, dif and slk) are stored as their own words and are ready to read, needing nothing done to them. Packed workbooks (the seven Excel endings, ods, ots, gnumeric) are raw bytes, heavy, and each needs its sheets read out first. The four commonest are recognized by what the browser reports as well, for a file that arrives without an ending.
+- **The five old ones are named on their own list.** Lotus (wk1, wk3, wk4) and Quattro Pro (qpw, wb3) behave like any other packed table, but they sit in a list of their own so they can be told at a glance — and dropped later in one line, if it turns out nobody has one.
+- **The table of kinds carried it.** Every new ending needed a row saying what it is, or the test failed — which is exactly what that check is for. Eighteen table endings now, 112 tests.
+
+## 2026-07-29 — spreadsheets and books, and every kind of file tested with a real one
+
+- **Two new families.** Spreadsheet takes csv, numbers and qb; book takes epub, kfx, azw3 and azw4. Neither can be shown here — a row of one never opens — but their words are the point, so both are taken in and listed.
+- **Pdf and web page stopped being families.** Both are words, so both are text now; the viewer draws each its own way from the file's ending. That forced one thing into the open: a picture dropped through the folder door often reports no type at all, and its family had been read off how the viewer would draw it — so the pictures now have a list of their own.
+- **Two refusals lifted, or nothing new could arrive.** A dropped file used to be thrown away entirely when a browser couldn't show it, which quietly kept out Word files and the unplayable clips as well; and the drop box hid those endings from its family words. Both gone.
+- **Every kind of file now has a real file testing it.** All 38 built in code from real bytes, saved the way a drop saves, then read back: family, showable, how ready its words are, words-or-bytes, the bytes byte-for-byte, size and date — all 38 held at once and found again after a reload. A completeness check means a newly added ending fails until someone writes down what it is. I proved the table can fail before trusting it: one row marked wrong on purpose failed on exactly those two lines.
+- **Written up.** What ji decides about a file the moment it arrives, and what's still owed, in [full family support](proposals/full%20family%20support.md) — including the two the model reads unconverted (docx and mpg), and why a plain-text table is deliberately not on the needs-converting list.
+
 ## 2026-07-29 — the log says less, and can say more again on one edit
 
 - **The lines that only said "this happened" are gone.** Thirty-four of them: every tooltip move and mouse press, the accent picker opening and closing, key presses and clicks across the viewer, drop box, help pages, header cells, tag picker and folds, the manage-tags stub, and two in the tree — one line per row of the whole walk, and "the document list is now this long". Four imports and one loop that existed only to feed a removed line went with them.
