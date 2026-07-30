@@ -103,10 +103,10 @@
 
 <div
 	class='modal'
-	bind:this={modal_el}
 	role="dialog"
 	tabindex="-1"
 	onkeyup={() => {}}
+	bind:this={modal_el}
 	style:width={`min(${k.width.modal}px, calc(100vw - 2 * var(--gap)))`}
 	style:top={pageSize < k.paging.notes ? '20px' : '50%'}
 	style:left="50%"
@@ -163,11 +163,11 @@
 		border-radius	: var(--radius-build);
 		box-shadow	 	: var(--shadow-modal);
 		font-size	 	: var(--font-banner);
-		background	 	: var(--white);
-		color		 	: var(--black);
 		padding		 	: var(--pad-modal);
-		position	 	: absolute;
+		color		 	: var(--black);
 		box-sizing	 	: border-box;   /* the capped width includes the padding, so the --gap margins hold */
+		background	 	: var(--bg);
+		position	 	: absolute;
 	}
 
 	.steppers {
@@ -180,16 +180,16 @@
 	}
 
 	.close {
-		position 		: absolute;
 		top      		: var(--inset-popup-edge);
 		right    		: var(--inset-popup-side);
+		position 		: absolute;
 	}
 
 	.stepper, .close {
+		padding    		: var(--pad-stepper);
 		font-size  		: var(--font-large);
 		color      		: var(--black);
 		cursor     		: pointer;
-		padding    		: var(--pad-stepper);
 		background 		: none;
 		border     		: none;
 		line-height		: 1;
@@ -198,19 +198,19 @@
 	/* The step triangles: page-colored inside with an accent outline, filling to the hover color
 	   under the cursor — the same look as the viewer's file steppers. */
 	.stepper {
-		align-items     : center;
 		justify-content : center;
+		align-items     : center;
 		display         : flex;
 	}
 
 	.stepper path {
-		fill         : var(--bg);
 		stroke       : var(--accent);
+		fill         : var(--white);
 		stroke-width : 1;
 	}
 
 	.stepper:hover path {
-		fill : var(--hover);
+		fill         : var(--hover);
 	}
 
 	.close {
@@ -218,6 +218,7 @@
 		border-radius	: var(--radius-percent);
 		width			: var(--size-cross);
 		height			: var(--size-cross);
+		background		: var(--white);
 		box-sizing		: border-box;
 		justify-content	: center;
 		align-items		: center;
@@ -237,12 +238,13 @@
 
 	.cross path {
 		stroke			: var(--black);
+		fill            : var(--white);
 	}
 
 	.header {
+		margin-bottom	: var(--margin-header);
 		justify-content	: center;
 		align-items		: center;
-		margin-bottom	: var(--margin-header);
 		display			: flex;
 	}
 
@@ -260,9 +262,9 @@
 
 	th {
 		border-bottom	: var(--thickness-normal) solid currentColor;
+		opacity			: var(--opacity-header);
 		padding			: var(--pad-cell);
 		text-align		: left;
-		opacity			: var(--opacity-header);
 	}
 
 	td {
@@ -280,8 +282,9 @@
 	/* The note column takes the leftover width; when the popup narrows it clips to one line with an
 	   ellipsis rather than wrapping (which would grow the row height). */
 	th:nth-child(3), td:nth-child(3) {
+		text-overflow	: ellipsis;
 		white-space		: nowrap;
 		overflow		: hidden;
-		text-overflow	: ellipsis;
 	}
+
 </style>

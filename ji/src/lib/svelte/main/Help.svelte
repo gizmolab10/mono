@@ -18,8 +18,8 @@
 	let { onclose }: { onclose: () => void } = $props();
 
 	// Which page is open, and whether the sidebar shows — both saved.
-	const w_helpPage     = preferences.persistent<string>(T_Preference.helpPage, 'index');
-	const w_help_sidebar = preferences.persistent<boolean>(T_Preference.helpSidebar, true);
+	const w_helpPage     = preferences.persistent<string>(T_Preference.help_page, 'index');
+	const w_help_sidebar = preferences.persistent<boolean>(T_Preference.help_sidebar, true);
 
 	// Pull in every manual page at build (raw text, keyed by source path). Relative to this
 	// file, `../../md/manual` is `src/lib/md/manual`.

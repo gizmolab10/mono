@@ -4,7 +4,7 @@
 
 // Which storage holds a document's blob.
 export enum T_Storage {
-	private = 'files',
+	private = 'mine',
 	llm     = 'AI',
 }
 

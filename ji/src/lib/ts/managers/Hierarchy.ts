@@ -42,6 +42,12 @@ export class Hierarchy {
 	persistence = new Persistence();
 	indexes     = new Indexes();
 
+	// Which of this store's folders are shut in the file list, and whether that has been
+	// filled in yet. Kept here so switching to another store and back brings the same
+	// folds back; only my own store also saves them for the next launch.
+	folders_shut  : Set<string> = new Set();
+	folds_restored: boolean     = false;
+
 	// Two instant lookups: a document by its name, and any record by its id. Both are
 	// one-to-one — names are unique across the store, ids across every kind. Rebuilt
 	// on load and on delete; a newly made record adds itself.
@@ -82,11 +88,17 @@ export class Hierarchy {
 	// and so a document flips to ready on its own the moment its text is filled. A
 	// folder is never viewed nor fed to the model — its family marks it.
 	private derive_document_flags(): void {
+		let recomputed = 0;
 		for (const d of this.documents) {
+			// A file's family is worked out from its kind on load too — records saved before this field
+			// existed, or restored from the AI store's index, may not carry it, and without it the family
+			// filter can't see the file. Folders have no extension; leave their family (folder) alone.
+			if (d.extension != null) { d.family = Document.family_of(d.reported_type ?? '', d.extension); recomputed++; }
 			const is_folder = d.family === T_DocumentFamily.folder;
 			d.viewable = is_folder ? false : Document.is_viewable(d.extension);
 			d.status   = is_folder ? S_Document.ready : Document.status_of(d.extension, !!d.text);
 		}
+		debug.log(`Hierarchy: derived flags for ${this.documents.length} document(s); recomputed the family of ${recomputed} file(s) from its kind.`);
 	}
 
 	// Save one record kind's whole list and mark it clean.

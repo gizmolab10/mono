@@ -15,7 +15,7 @@ export const w_operation = preferences.persistent<T_Operation | null>(T_Preferen
 
 // Which document the "view" operation is showing. Persisted, so a reload returns to
 // the same open document; if that document is gone, the view falls back to the list.
-export const w_view_document = preferences.persistent<string | null>(T_Preference.viewDocument, null);
+export const w_view_document = preferences.persistent<string | null>(T_Preference.view_document, null);
 
 // No operation means no open document — leaving every view drops what it pointed at.
 w_operation.subscribe((op) => { if (op !== T_Operation.view) { w_view_document.set(null); } });

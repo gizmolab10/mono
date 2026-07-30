@@ -40,14 +40,14 @@
 	let width = $state(Math.max(k.width.window, window.innerWidth));
 	let height = $state(window.innerHeight);
 	// Show-details is a persistent preference (survives reload), saved via the ported Preferences.
-	const w_show_details = preferences.persistent<boolean>(T_Preference.showDetails, false);
+	const w_show_details = preferences.persistent<boolean>(T_Preference.show_details, false);
 	let showBuildNotes = $state(false);
 	// Which top-level thing is showing — the help overlay or the app itself. A named mode
 	// (not a boolean, whose true/false meaning was easy to flip), guarded to these two
 	// values. Persisted, and "help" by default, so a first-time visitor lands on the
 	// welcome page until they close it, which reveals the app.
 	type App_Mode = 'help' | 'app';
-	const w_app_mode = preferences.persistent<App_Mode>(T_Preference.appMode, 'help');
+	const w_app_mode = preferences.persistent<App_Mode>(T_Preference.mode, 'help');
 
 	// Is there room for both the details column (its fixed width) and the operations view
 	// beside it (its own smallest useful width), with the two outer margins and the one
@@ -148,7 +148,7 @@
 	}
 
 	.build-backdrop {
-		background: color-mix(in srgb, var(--black) 40%, transparent);
+		background: var(--accent);
 		justify-content: center;
 		align-items: center;
 		position: fixed;

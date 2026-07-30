@@ -23,7 +23,7 @@
 	const built = new Set<T_Storage>([T_Storage.private, T_Storage.llm]);
 
 	// The more/less choice, remembered across reloads.
-	const w_show_others = preferences.persistent<boolean>(T_Preference.showOtherStores, false);
+	const w_show_others = preferences.persistent<boolean>(T_Preference.show_stores, false);
 
 	// Pure derived counts — recomputed on every store change (a save or a storage
 	// switch bumps the tick). No write-inside-effect, so nothing can loop.
@@ -57,12 +57,16 @@
 		await $w_hierarchy.erase_all();
 		confirming = false;
 	}
-	function derive_adjective(): string {
-		switch ($w_storage) {
+	function derive_adjective_from(storage: string): string {
+		switch (storage) {
 			case T_Storage.private: return 'my';
 			// case T_Storage.ours: return 'our';
-			case T_Storage.llm:  return 'LLM';
+			case T_Storage.llm:  return 'AI';
+			default: return storage;
 		}
+	}
+	function derive_adjective(): string {
+		return derive_adjective_from ($w_storage);
 	}
 </script>
 
@@ -86,7 +90,7 @@
 				</div>
 			{:else}
 				{#if local_documents > 0}
-					<button class='erase' aria-label='erase all data' use:tip={'erase all data'} onclick={ask_erase}>
+					<button class='erase' aria-label='erase all data' use:tip={`erase all ${derive_adjective()} files`} onclick={ask_erase}>
 						<svg class='erase-bin' viewBox='0 0 24 24'>
 							<path d={binPath}
 								fill='none' stroke='currentColor' stroke-width='1.6'
@@ -100,7 +104,7 @@
 							class='segment'
 							class:disabled={!built.has(storage)}
 							class:current={$w_storage === storage}
-							use:tip={built.has(storage) ? null : 'not built yet'}
+							use:tip={$w_storage === storage ? false : (built.has(storage) ? `explore ${derive_adjective_from(storage)} data` : 'not built yet')}
 							onclick={() => choose(storage)}>{storage}</button>
 					{/each}
 				</div>

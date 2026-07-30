@@ -227,7 +227,7 @@
 	}
 
 	.step path {
-		fill         : var(--bg);
+		fill         : var(--white);
 		stroke       : var(--accent);
 		stroke-width : 1;
 	}
@@ -242,7 +242,7 @@
 		height          : var(--height-control);
 		width           : var(--height-control);
 		box-sizing      : border-box;
-		background      : transparent;
+		background      : var(--white);
 		cursor          : pointer;
 		padding         : 0;
 		align-items     : center;

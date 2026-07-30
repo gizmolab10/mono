@@ -4,8 +4,15 @@
 	// re-push --bg / --accent / --hover onto the page.
 	import { colors } from '../../ts/utilities/Colors';
 	import { tip } from '../../ts/utilities/Tooltip';
+	import { debug } from '../../ts/common/Debug';
 
 	const { w_accent_color } = colors;
+
+	// True while the native color picker is open, so its hover hint is hushed until it closes. There's
+	// no "picker open" event, so track it: it opens on the swatch's click and closes on change or blur.
+	let picking = $state(false);
+	function open_picker()  { picking = true;  debug.log('Accent picker opened — its hover hint is hushed until it closes.'); }
+	function close_picker() { picking = false; debug.log('Accent picker closed — its hover hint is back.'); }
 
 	function pick(e: Event) {
 		const raw = (e.target as HTMLInputElement).value;
@@ -17,8 +24,8 @@
 <div class='color-row'>
 	<div class='color-group'>
 		<span class='label'>accent</span>
-		<label class='picker' use:tip={'pick the accent color'}>
-			<input class='accent' type='color' value={$w_accent_color} oninput={pick} />
+		<label class='picker' class:picking use:tip={picking ? false : 'pick the accent color'}>
+			<input class='accent' type='color' value={$w_accent_color} oninput={pick} onclick={open_picker} onchange={close_picker} onblur={close_picker} />
 		</label>
 	</div>
 </div>
@@ -54,7 +61,8 @@
 		height        : var(--height-control);
 	}
 
-	.picker:hover {
+	/* No hover light while the picker is open. */
+	.picker:not(.picking):hover {
 		background : var(--hover);
 	}
 

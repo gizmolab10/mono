@@ -27,7 +27,7 @@ let discovered_base: string | null = null;   // the address read from the pointe
 let discovered_for:  string | null = null;   // which pointer link it was read from
 
 async function ensure_base(): Promise<void> {
-	const pointer = preferences.read<string>(T_Preference.llmPointer)?.trim();
+	const pointer = preferences.read<string>(T_Preference.ai_pointer)?.trim();
 	if (!pointer) { discovered_base = null; discovered_for = null; return; }
 	if (discovered_base && discovered_for === pointer) { return; }   // already read this pointer
 	try {
@@ -56,9 +56,9 @@ function on_unreachable(): void {
 }
 
 function config(): Config | null {
-	const base      = discovered_base || (preferences.read<string>(T_Preference.llmUrl)?.replace(/\/+$/, '') || 'http://localhost:3001');
-	const key       = preferences.read<string>(T_Preference.llmKey) ?? '';   // never hardcode a real key — it would ship in a build
-	const workspace = preferences.read<string>(T_Preference.llmWorkspace) ?? 'intersection';
+	const base      = discovered_base || (preferences.read<string>(T_Preference.ai_url)?.replace(/\/+$/, '') || 'http://localhost:3001');
+	const key       = preferences.read<string>(T_Preference.ai_key) ?? '';   // never hardcode a real key — it would ship in a build
+	const workspace = preferences.read<string>(T_Preference.ai_workspace) ?? 'intersection';
 	if (!base || !key || !workspace) { return null; }
 	return { base, key, workspace };
 }
@@ -66,10 +66,10 @@ function config(): Config | null {
 // A small map from a ji document id to the document location AnythingLLM assigned it,
 // so a later remove knows what to take out. Kept in local preferences.
 function doc_map(): Record<string, string> {
-	return preferences.read<Record<string, string>>(T_Preference.llmDocMap) ?? {};
+	return preferences.read<Record<string, string>>(T_Preference.ai_docs_map) ?? {};
 }
 function set_doc_map(map: Record<string, string>): void {
-	preferences.write(T_Preference.llmDocMap, map);
+	preferences.write(T_Preference.ai_docs_map, map);
 }
 
 // The workspace slug that the configured workspace *name* resolves to, cached so we

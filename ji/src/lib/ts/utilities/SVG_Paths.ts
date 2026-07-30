@@ -3,7 +3,7 @@ import Angle from '../types/Angle';
 
 // How far, as a fraction of each side, the soft-pointer pulls back from every tip before the corner
 // curves: 0 = sharp tips, toward 0.5 = the pull-backs meet mid-side and it's all curve.
-const POINTER_SOFTEN = 0.44;
+const POINTER_SOFTEN = 0.55 ;
 
 export class SVG_Paths {
 

@@ -2,6 +2,38 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-29 — the browser's saved settings are swept and spelled one way
+
+- **Unknown saved settings are removed at launch.** The app holds the list of names it actually uses — the plain settings, each store's record lists, each store's four filters — and removes anything else saved under its own `ji:` start, naming each removal and its size in the log. Other apps' settings are never touched, and the document bytes live elsewhere and aren't in scope.
+- **Every saved name is spelled the one way, marker included, and the old data moves across.** `ji_` then the parts joined by underscores: `ji_mine_documents`, `ji_ai_key`, `ji_mine_filter_tags`, `ji_details_data_open` — one kind of separator throughout, no slashes, no run-together words, a store's word lowercased so the AI store's data and the AI connection settings share it. The rename runs in three passes (the run-together settings, then a store's slash names, then whatever is left under the old `ji:` start) and it can't lose anything: if a new name is already taken, the older value is kept aside under a name that says so, and the sweep never touches those. The words in the code match the saved ones now, so there is one spelling to remember instead of two.
+- **The rename and the sweep now run before anything reads a setting** — as the settings file itself is read, not from the launch code. Done from the launch code, the screens had already loaded and read the new, empty names: the file list came up empty and the AI connection read as "not set up", which is exactly what went wrong the first time.
+- **Names that say what they hold:** the shut folders, the picked store, the family picks (was "collapsed", "database", "families"), and the remembered scroll spot, now "scroll files to".
+- **The details region's two open/shut flags became one list.** The two sections are named in one place, and which of them are open is saved as a list of those names — an empty list means both shut, nothing saved at all means both open. Each section keeps its own on/off view of the list, so its banner still just flips itself.
+- **The shut folders belong to a store, not to the app.** Each store's set is held by that store's own tree, so switching away and back brings the same folds back. My own store saves its set for the next launch; the AI store's are never saved, since its files come from elsewhere and a remembered fold there would be a guess about a list this browser doesn't own.
+- **A cost, learned the hard way.** The first pass at this ran the rename from the launch code, after the screens had already loaded — so they read the new, empty names, and my own store's records were lost in the window between renaming the names and adding the rename step (the app relaunches on every file save while I work). The rename now runs as the settings file is read, before anything can read a setting, and it can no longer throw a value away.
+
+## 2026-07-29 — the file list remembers how it was narrowed
+
+- **Each store keeps its own filters.** "Mine" and the AI store save their four filters separately — the same tag names and files don't live in both, so one store's picks have no business narrowing the other's list. Switching stores puts away what's on screen and brings out that store's own picks; the log names which store the filters came from and how many were in each.
+- **All four filters survive a reload.** The picked tags, whether a row must carry all the picked tags or any of them, and the typed name text now save themselves the same way the family picks already did, under their own saved settings. Reopen the list and it comes back narrowed exactly as it was left. A line in the log names what was restored — how many tags, which all/any mode, the search words, the families.
+- **A folder's count is files only.** It used to add the subfolders in as well, so a folder holding two subfolders of three files each read eight instead of six. The subfolders are the structure holding the files, not things to tally; only files count now, each one counting for its own folder and for every folder above it.
+- **A picked tag that no longer exists is ignored, not obeyed.** Saved tag picks are matched against the tags the store actually holds; the missing ones sit out of the filter (the pick itself stays saved, so if that tag comes back the filter does too). Without this, deleting the last tag hides the tag picker while its saved picks keep narrowing the list to nothing, with nothing on screen to undo it. The log says how many picks were kept and how many were ignored.
+
+## 2026-07-29 — the family filter finds files inside shut folders, plus tooltip polish
+
+- **The family filter works again, and reaches into shut folders.** Two problems fixed. First, a loaded file's family was blank (the AI store's index didn't carry it), so the family filter couldn't see it — the family is now recomputed from the file's kind on load, the same as its viewable/status flags (folders keep their family). Second, the filter only searched the *open* rows, so files under a shut folder were missed; now an active filter searches the whole list, but the display still honors the folds — a shut folder that holds matches shows as the path to them, its matched children hidden until you open it. The folder-row counts still tally the matches after the filter.
+- **Tooltips step aside when they'd be noise.** Hushed for: the currently-selected storage segment, the ask button while its box is empty, the accent swatch while the native picker is open (its hover light too), and the per-row pencil is hidden entirely when the store has no tags. The family filter segments now show the same hover as the drop box's family words — that family's file endings.
+- **White fills.** The build-notes steppers and the viewer's file-steppers fill white inside (was page-colored), and the round close buttons in both are white inside too.
+- **Build-notes steppers are the viewer's fat triangles.** Newer (up) and older (down) now use the same fat-triangle mark and hover as the viewer's file steppers, stacked one above the other; both slots are always placed, so hiding one never shifts the other.
+
+## 2026-07-28 — softer folder corners, steadier controls, a few polish passes
+
+- **The folder pointer's corners are gently rounded now.** The straight isosceles pointer keeps its straight sides but its three corners curve (a "soften" fraction pulls back from each tip before curving); its box is measured from the actual drawn line so it fills its slot at any softness, and its slot widens with it. Sized to the shared glyph size, filled solid in the accent.
+- **The build-notes steppers are the viewer's fat triangles.** Up (newer) and down (older) now use the same fat triangle and hover as the document viewer's file-steppers, stacked one above the other. Both are always placed with pinned slots — the show/hide logic just flips visibility, so hiding one never shifts the other.
+- **The search box and tag filter hold their height.** When the window shrinks, only the table gives up space now; those two rows no longer squeeze (they matched the family pill, which already held).
+- **Tooltips get out of the way on a click.** A mouse press hides the current hint until the cursor moves again.
+- **Drop box tidying.** Escape or Enter leaves the drop box for the file list; the dashed box lost its own hover hint (the close button carries one); the family words' hover lists their file endings comma-separated.
+
 ## 2026-07-28 — the build-notes popup fits itself to the window
 
 **How the popup is sized and placed** (the rules, so it never spills off-screen):

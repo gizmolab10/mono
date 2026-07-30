@@ -11,7 +11,7 @@
 	// Whether answers show or stay hidden — saved, so the choice holds across reloads.
 	// Managed by the show/hide-all buttons below (collapse_all / expand_all) and applied
 	// once on launch. Per-question toggles don't touch it.
-	const w_show_chat_replies = preferences.persistent<boolean>(T_Preference.showChatReplies, true);
+	const w_show_chat_replies = preferences.persistent<boolean>(T_Preference.show_chat_replies, true);
 
 	// The chat view (the "ask" operation): a question box at the top, then the running
 	// conversation below — each stored exchange newest first, its question above its
@@ -152,9 +152,9 @@
 			{#if asking}
 				<svg class='gear' viewBox='0 0 {GEAR_BOX} {GEAR_BOX}' aria-hidden='true'><path d={gearPath} fill-rule='evenodd' /></svg>
 			{:else}
-				<button class='ask-go' onclick={ask} disabled={!question.trim()} use:tip={'ask the AI'}>ask</button>
+				<button class='ask-go' onclick={ask} disabled={!question.trim()} use:tip={question.trim() ? 'post my question' : false}>ask</button>
 			{/if}
-			<input class='ask-input' type='search' placeholder='ask a question'
+			<input class='ask-input' type='search' placeholder='enter a question'
 				bind:value={question} onkeydown={on_key} disabled={asking} />
 		</div>
 

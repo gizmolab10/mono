@@ -49,8 +49,7 @@
               "title": "index"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -186,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/handoff.md",
+                "file": "ji/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -224,22 +223,22 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "3e1ddbde653729de",
+  "active": "abe0d848a5fe3e12",
   "lastOpenFiles": [
-    "ws/vite.config.js.timestamp-1785267992098-0c6272ac6c399.mjs",
-    "ji/src/lib/svelte/main/BuildNotes.svelte.tmp.63803.098605fdb89e",
-    "ji/notes/work/code debt.md",
-    "ji/src/lib/ts/utilities/SVG_Paths.ts.tmp.34585.47ececa10618",
-    "ji/src/lib/md/manual/index.md",
-    "ji/src/lib/ts/managers/Preferences.ts.tmp.34585.e2e1a1887b87",
-    "ji/src/lib/svelte/operations/List_Documents.svelte.tmp.34585.ed43b363e933",
-    "ji/src/lib/svelte/operations/List_Documents.svelte.tmp.34585.a9df600a27c9",
-    "ji/src/lib/ts/database/Databases.ts.tmp.34585.2d91980b1316",
+    "ji/notes/guides/map.md.tmp.26078.422b2ae94b61",
+    "ji/src/lib/ts/managers/Folds.ts",
+    "ji/src/lib/svelte/details/Details.svelte.tmp.26078.f456c70128d0",
+    "ji/src/lib/ts/types/Details.ts",
+    "ji/src/lib/ts/managers/Preferences.ts.tmp.26078.4d421089dda0",
+    "ji/src/lib/ts/managers/Preferences.ts.tmp.26078.341fdcd189e4",
+    "ji/src/lib/ts/tests/Preferences.test.ts",
+    "ji/src/lib/ts/tests/Mock_Storage.ts.tmp.26078.40528e5802b7",
     "ji/notes/work/handoff.md",
-    "ji/src/lib/svelte/support/Select_Tags.svelte.tmp.34585.349a3ed4df74",
-    "ji/src/lib/svelte/operations/View_Document.svelte.tmp.34585.558b430ff5db",
-    "ji/src/lib/svelte/details/D_Data.svelte.tmp.34585.1dc6b7e68d59",
-    "ji/src/lib/svelte/operations/List_Documents.svelte.tmp.34585.cb27d145f3df",
+    "ji/notes/work/code debt.md",
+    "ji/src/lib/ts/managers/Preferences.ts.tmp.26078.12c3a6c6fecc",
+    "ji/notes/work/working features.md.tmp.20132.a778188256b5",
+    "ji/notes/work/work journal.md.tmp.20132.f8ea2eaba8ab",
+    "ji/src/lib/md/manual/index.md",
     "ji/notes/work/proposals/chat history proposal.md",
     "ji/notes/work/future/sideband storage proposal.md",
     "ji/notes/work/future/wendy/Systems_Map.md",

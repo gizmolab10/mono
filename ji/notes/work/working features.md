@@ -2,6 +2,10 @@
 
 | # | Feature |
 | --- | --- |
+| 39 | The browser's saved settings keep themselves tidy: at launch, old names are brought up to one spelling (`ji_` then parts joined by underscores) with their data moved across — nothing lost, an older value kept aside if its new name is taken — and any name the app no longer uses is removed, other apps' settings untouched |
+| 38 | The list remembers how it was narrowed — the picked tags, the all/any mode, the family picks and the name search all survive a reload, kept separately for each store ("mine" and the AI store), so switching stores brings out that store's own picks; a picked tag the store no longer holds sits out of the filter instead of emptying the list, and stays saved in case it comes back |
+| 37 | Filtering the list (by family, tag, or name) searches the whole hierarchy — a match inside a shut folder is found and its folder shows as the path to it, with the matched children hidden until the folder is opened; the folder-row counts tally the matches after the filter |
+| 36 | The build-notes popup fits itself to the window — width caps at its full size or the window minus a gap each side (the note column clips, no wrap), and it shows as many rows as fit (up to a page of 10), paging the rest; centered when the full page fits, pinned near the top when fewer do, so it never spills off-screen |
 | 35 | Tooltips are paced — a hint holds clear for a short pause, then fades in over half that, so a quick flick past shows nothing; sweeping a column of rows restarts the pause on each one even when they share the same words |
 | 34 | The documents list opens the drop box from a whole zone — pointing anywhere across the two dividers and the header between lights the "drop files below" tab, and clicking there opens the drop box; the drop box itself has a top-left close button (shown only when there are documents to return to) instead of a whole-box click |
 | 33 | Too-big files are turned away from the AI store with a message and a "do not ask again" tick that quiets the rest of that one drop, then resets for the next |

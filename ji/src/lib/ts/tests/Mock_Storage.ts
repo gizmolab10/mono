@@ -10,6 +10,10 @@ class Mock_Storage {
 	setItem(key: string, value: string): void { this.map.set(key, value); }
 	removeItem(key: string): void { this.map.delete(key); }
 	clear(): void { this.map.clear(); }
+	// Walking every saved name, the way a browser store allows — the settings sweep
+	// needs to see what is there before it can decide what to remove.
+	get length(): number { return this.map.size; }
+	key(at: number): string | null { return Array.from(this.map.keys())[at] ?? null; }
 }
 
 (globalThis as any).localStorage = new Mock_Storage();

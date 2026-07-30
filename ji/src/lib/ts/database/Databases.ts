@@ -3,6 +3,8 @@ import { preferences, T_Preference } from '../managers/Preferences';
 import { Hierarchy } from '../managers/Hierarchy';
 import { T_Storage } from '../types/DB_Records';
 import { refresh_llm_docs, clear_llm_docs, start_llm_heartbeat, stop_llm_heartbeat } from './LLM_Docs';
+import { load_filters_forStorage } from '../managers/Filter_Documents';
+import { load_folds_forStorage } from '../managers/Folds';
 import { db_changed, w_db_changed } from '../types/Signal';
 import type { Writable } from 'svelte/store';
 import { writable, get } from 'svelte/store';
@@ -39,8 +41,10 @@ class Databases {
 	active: DB_Common;
 
 	constructor() {
-		const saved = (preferences.read<T_Storage>(T_Preference.database) ?? T_Storage.private);
+		const saved = (preferences.read<T_Storage>(T_Preference.db) ?? T_Storage.private);
+		load_filters_forStorage(saved);   // the list's filters are this storage's own
 		const store = this.store_forBackend(saved);
+		load_folds_forStorage(saved, store.hierarchy);   // its shut folders live with its own tree
 		store.hierarchy.fetch_all();
 		this.w_storage   = writable<T_Storage>(saved);
 		this.active      = store.db;
@@ -71,8 +75,8 @@ class Databases {
 	// to reach AnythingLLM. Missing either means the store can't work, so the init screen
 	// asks for them.
 	private llm_creds_missing(): boolean {
-		const pointer = preferences.read<string>(T_Preference.llmPointer)?.trim();
-		const key     = preferences.read<string>(T_Preference.llmKey)?.trim();
+		const pointer = preferences.read<string>(T_Preference.ai_pointer)?.trim();
+		const key     = preferences.read<string>(T_Preference.ai_key)?.trim();
 		return !pointer || !key;
 	}
 
@@ -89,10 +93,12 @@ class Databases {
 
 	// Switch the active storage: make it active, load its data, save the choice.
 	change_storage(storage: T_Storage): void {
+		load_filters_forStorage(storage);   // put away the old storage's filters, bring out this one's
 		const store = this.store_forBackend(storage);
+		load_folds_forStorage(storage, store.hierarchy);   // same for the shut folders, kept by its own tree
 		store.hierarchy.fetch_all();
 		this.active = store.db;
-		preferences.write(T_Preference.database, storage);
+		preferences.write(T_Preference.db, storage);
 		this.w_storage.set(storage);
 		this.w_hierarchy.set(store.hierarchy);   // the active store's tree changed
 		// Switching onto the AI store reads back what AnythingLLM holds, and opens the init

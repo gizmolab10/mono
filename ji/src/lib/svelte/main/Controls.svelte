@@ -84,7 +84,7 @@
 </script>
 
 <div class='controls-row layer-controls' bind:this={row_el}>
-	<button class='hamburger-button' {onclick} bind:this={hamburger_el} aria-label='toggle details' use:tip={detailsShown ? 'hide the details' : 'show the details'}>
+	<button class='hamburger-button' {onclick} bind:this={hamburger_el} aria-label='toggle details' use:tip={`${detailsShown ? 'hide' : 'show'} details`}>
 		<svg class='hamburger-icon' viewBox='0 0 {size} {size}' width={size} height={size}>
 			<path d={hamburgerPath} />
 		</svg>

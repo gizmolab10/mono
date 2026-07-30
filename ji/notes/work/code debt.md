@@ -4,71 +4,89 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] mildly softer triangles
-    - [ ] bezier curves 6 points
-        - [ ] 3 corners highly curved
-        - [ ] 3 sides hardly curved
-- [ ] db -> Anything LLM
-    - [ ] vital
+- [ ] debug.log
+    - [ ] list the cruft, move it to work journal? or somewhere else
+    - [ ] not accessible when not launched on localhost, right?
+- [ ] set op to list -> noticeable transition pause
+    - [ ] add file formats:
+        - [ ] **Word:** doc, docx
+        - [ ] **Video (unplayable in-browser):** avi, flv, mkv, mpg, wmv
+        - [ ] **Audio (unplayable in-browser):** aiff, wma
+        - [ ] **Text:** rtf and md
+        - [ ] **Kindle:** EPUB, KFX, AZW3, AZW4
+- [ ] port Hits.ts from di (not 3D!)
+    - [ ] so tooltips & hover work more reliably (leave events often do not happen)
+- [ ] Anything LLM -> sidebar db
+    - [ ] per workspace and thread
     - [ ] small
     - [ ] vulnerable to overwrite
-- [ ] port hits from di (not 3D!)
-    - [ ] so tooltips & hover work more reliably (leave events often do not happen)
-- [ ] debug.log
-    - [ ] should do nothing when not launched on localhost
-    - [ ] list the cruft, move it to work journal? or somewhere else
-- [ ] persist filters for files
-- [ ] write a new file: spec rules based on current code
-- [ ] chats
-    - [x] question pill bg color -> --mild-accent half way between accent and bg
-    - [ ] round button at left of each question to mark it as hidden/visible
-        - [ ] show/hide hidden questions
-        - [ ] button to delete hidden question
-    - [ ] click the relevant file ref in the reply
-        - [ ] hover adds pill around file name ref, bg --hover, border 0.5px solid --darkgray
-        - [ ] show it -> clips highlighted
-            - [ ] within (w op =) view document
-                - [ ] when w op is set to view, save the current op
-                - [ ] click in view doc -> set w op back to saved
-    - [ ] sideband storage in allm — mechanism proven, see [sideband storage proposal](sideband%20storage%20proposal.md) (un-embedded raw-text doc, payload in its `description`)
-        - [ ] hidden chat exchanges (first use — a `ji-hidden` note; clears the chat hidden/delete items above)
-        - [ ] tags
-        - [ ] messages channel
-- [ ] what is "inset" constant?
-- [ ] operation.threads or projects
-- [ ] set op to list -> very, very slow
-- [ ] merge constants -> configuration
-- [ ] build into ji -> install and configure
-    - [ ] WSL on windows
-    - [ ] Docker
-    - [ ] Qwen
-    - [ ] AnythingLLM
-    - [ ] configure -> automatic and manual
-- [ ] prime directive
-    - [ ] trigger on each put
-- [ ] add remote support
-    - [ ] supabase not firebase
-    - [ ] use person's id
-    - [ ] authorization
-- [ ] documents list
-    - [ ] when viewing a video or audio item -> begin playing it
-    - [ ] add a 'download' unichar to the far right unichar buttons
-- [ ] add support for:
-    - [ ] **Word:** doc, docx
-    - [ ] **Video (unplayable in-browser):** avi, flv, mkv, mpg, wmv
-    - [ ] **Audio (unplayable in-browser):** aiff, wma
-    - [ ] **Text:** rtf and md
-    - [ ] **Kindle:** EPUB, KFX, AZW3, AZW4
-- [ ] tags
-    - [ ] show tags as a tree (single-parent first)
-    - [ ] tag ancestries — multi-parent tags
-- [ ] wendy -- new app for your brother: Intersection
-    - [ ] give me weak signals / info from the tails (of a bell curve), not just the clusters
-    - [ ] give me the signals that repeat over time or across multiple people — this is a stronger signal.
-    - [ ] present me with these signals in a way that I can sense into each one, and decide if I want to keep them, highlight them or discard them as unimportant.
+        - [ ] tiny race window
+        - [ ] read, merge, write
+- [ ] soon
+    - [ ] write a new file: spec rules based on current code
+    - [ ] chats
+        - [ ] time each reply, add it to the bottom line of the response
+        - [ ] when ai has no chat -> disable chat segment
+        - [x] question pill bg color -> --mild-accent half way between accent and bg
+        - [ ] round button at left of each question to mark it as hidden/visible
+            - [ ] show/hide hidden questions
+            - [ ] button to delete hidden question
+        - [ ] click the relevant file ref in the reply
+            - [ ] hover adds pill around file name ref, bg --hover, border 0.5px solid --darkgray
+            - [ ] show it -> clips highlighted
+                - [ ] within (w op =) view document
+                    - [ ] when w op is set to view, save the current op
+                    - [ ] click in view doc -> set w op back to saved
+        - [ ] sideband storage in allm — mechanism proven, see [sideband storage proposal](sideband%20storage%20proposal.md) (un-embedded raw-text doc, payload in its `description`)
+            - [ ] hidden chat exchanges (first use — a `ji-hidden` note; clears the chat hidden/delete items above)
+            - [ ] tags
+            - [ ] messages channel
+    - [ ] name/content segmented control for search target
+    - [ ] operation.threads or projects
+    - [ ] what is "inset" constant?
+    - [ ] merge constants -> configuration
+    - [ ] build into ji -> install and configure
+        - [ ] WSL on windows
+        - [ ] Docker
+        - [ ] Qwen
+        - [ ] AnythingLLM
+        - [ ] configure -> automatic and manual
+    - [ ] prime directive
+        - [ ] trigger on each put
+    - [ ] add remote support
+        - [ ] supabase not firebase
+        - [ ] use person's id
+        - [ ] authorization
+    - [ ] documents list
+        - [ ] when viewing a video or audio item -> begin playing it
+        - [ ] add a 'download' unichar to the far right unichar buttons
+    - [ ] tags
+        - [ ] show tags as a tree (single-parent first)
+        - [ ] tag ancestries — multi-parent tags
+    - [ ] wendy -- suggestions
+        - [ ] give me weak signals / info from the tails (of a bell curve), not just the clusters
+        - [ ] give me the signals that repeat over time or across multiple people — this is a stronger signal.
+        - [ ] present me with these signals in a way that I can sense into each one, and decide if I want to keep them, highlight them or discard them as unimportant.
 
 ## done
 
+- [x] clean up local storage
+    - [x] using a list of valid keys
+    - [x] remove all invalid keys
+    - [x] rename existing compound keys
+        - [x] preserve data — a rename step runs before anything reads a setting, moving each old name's value to its new one; where a new name is already taken the older value is kept aside under a name that says so, and the sweep never touches those
+        - [x] ji:mine/documents -> ji_mine_documents
+        - [x] ji:llmKey -> ji_ai_key
+    - [x] one spelling everywhere: the start marker is `ji_`, the parts joined by underscores, a store's word lowercased; the words in the code match the saved ones
+    - [x] clearer names: the shut folders, the picked store, the family picks, the remembered scroll spot (`ji_scroll_files_to`), and the details sections' open/shut (now one list, `ji_details_open`, from a two-word set of section names)
+    - [x] the shut folders are my store's only (`ji_my_folders_collapsed`); each store keeps its own set with its own tree, so switching away and back brings the folds back, and the AI store's are never saved
+- [x] filters
+    - [x] persist all user-selected filters for files, for ai — the picked tags, the all/any mode and the typed name text now save and reload the way the families already did, so reopening the list shows it narrowed as it was left. Saved per store, not app-wide: "mine" and the AI store keep their own four filters, and switching stores puts away what's on screen and brings out that store's own picks. A picked tag the store no longer holds sits out of the filter (still saved, in case it comes back) — without that, deleting the last tag hid the picker while its saved picks kept the list empty with nothing on screen to undo it. Verified in the browser.
+    - [x] a folder's count is files only — it used to count the subfolders in between as well, so a folder holding two subfolders of three files each read eight instead of six
+- [x] mildly softer triangles
+    - [x] bezier curves 6 points
+        - [x] 3 corners highly curved
+        - [x] 3 sides hardly curved
 - [x] in drop documents
     - [x] hover hint drops "or click to go back" when the hierarchy has no docs
 - [x] shrink the insets at outside edges

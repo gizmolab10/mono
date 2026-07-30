@@ -35,8 +35,8 @@ export class Colors {
 	// of date — color changes are canvas-visible.
 	w_background_color  = stale_writable<string>('rgb(135, 135, 135)');
 	w_hover_color       = stale_writable<string>('rgb(220, 220, 220)');
-	w_text_color	    = make_stale(preferences.persistent<string>(T_Preference.textColor, 'black'));
-	w_accent_color	    = make_stale(preferences.persistent<string>(T_Preference.accentColor, 'rgb(200, 200, 200)'));
+	w_text_color	    = make_stale(preferences.persistent<string>(T_Preference.color_text, 'black'));
+	w_accent_color	    = make_stale(preferences.persistent<string>(T_Preference.color_accent, 'rgb(200, 200, 200)'));
 
 	constructor() {
 		this.subscribe_to_changes();
@@ -74,11 +74,11 @@ export class Colors {
 	 */
 	private subscribe_to_changes() : void {
 		this.w_text_color.subscribe((color : string) => {
-			preferences.write(T_Preference.textColor, color);
+			preferences.write(T_Preference.color_text, color);
 		});
 
 		this.w_accent_color.subscribe((color : string) => {
-			preferences.write(T_Preference.accentColor, color);
+			preferences.write(T_Preference.color_accent, color);
 			const bg = this.accent_to_background(color);
 			this.w_background_color.set(bg);
 			this.banner = this.ofBannerFor(bg);

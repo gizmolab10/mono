@@ -10,13 +10,47 @@ import { debug } from '../common/Debug';
 // Whether a document must carry ALL the picked tags or just ANY of them.
 export type T_Match = 'all' | 'any';
 
-export const w_filter_tags = writable<Set<string>>(new Set());
-export const w_filter_text = writable<string>('');
-export const w_filter_mode = writable<T_Match>('all');
+// The four filters: the picked tags, whether a row must carry all of them or any,
+// the typed name text, and the picked families (empty means no family filter).
+// Each is saved across reloads, and saved per storage — "mine" and "AI" keep their
+// own picks, since the same tag names and files don't live in both. Switching
+// storages puts away what's on screen and brings out that storage's own filters.
+export const w_filter_tags     = writable<Set<string>>(new Set());
+export const w_filter_text     = writable<string>('');
+export const w_filter_mode     = writable<T_Match>('all');
+export const w_filter_families = writable<string[]>([]);
 
-// The families the user has toggled on, saved across reloads. Empty means none
-// picked. A plain string list of family names (the T_DocumentFamily values).
-export const w_filter_families = preferences.persistent<string[]>(T_Preference.families, []);
+// Which storage the four stores are currently holding filters for. Null until the
+// first load, so the stores' own start-up notifications can't write empty filters
+// over anything saved, and so a load can't write the incoming filters back into
+// the storage just left.
+let filters_for: string | null = null;
+
+function save_filter<T>(key: T_Preference, value: T): void {
+	if (filters_for === null) { return; }
+	preferences.write_forStorage(filters_for, key, value);
+}
+
+w_filter_tags.subscribe((s)     => save_filter(T_Preference.filter_tags, Array.from(s)));
+w_filter_text.subscribe((t)     => save_filter(T_Preference.filter_text, t));
+w_filter_mode.subscribe((m)     => save_filter(T_Preference.filter_mode, m));
+w_filter_families.subscribe((f) => save_filter(T_Preference.format_families, f));
+
+// Bring out one storage's saved filters. Called on launch and on every switch; the
+// hold-off above keeps these four writes from being saved as the previous storage's.
+export function load_filters_forStorage(storage: string): void {
+	filters_for = null;
+	const tags     = preferences.read_forStorage<string[]>(storage, T_Preference.filter_tags) ?? [];
+	const text     = preferences.read_forStorage<string>(storage, T_Preference.filter_text) ?? '';
+	const mode     = preferences.read_forStorage<T_Match>(storage, T_Preference.filter_mode) ?? 'all';
+	const families = preferences.read_forStorage<string[]>(storage, T_Preference.format_families) ?? [];
+	w_filter_tags.set(new Set(tags));
+	w_filter_text.set(text);
+	w_filter_mode.set(mode);
+	w_filter_families.set(families);
+	filters_for = storage;
+	debug.log(`Filters for the "${storage}" storage: ${tags.length} tag(s) [${mode}], name text "${text}", families [${families.join(', ')}]. Saved changes from here on go to "${storage}" only.`);
+}
 
 // Anything the filter can judge: a display name, the tag ids it carries, and its
 // family (so the family filter can act, and so folders can be told apart).

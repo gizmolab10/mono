@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { w_filter_tags, w_filter_text, w_filter_mode, w_filter_families, filter_rows } from '../../ts/managers/Filter_Documents';
+	import { w_folders_shut } from '../../ts/managers/Folds';
 	import { w_operation, w_view_document, T_Operation, w_viewable_run, open_view, close_view } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { Document, T_DocumentFamily } from '../../ts/types/Document';
@@ -32,10 +33,10 @@
 		});
 	}
 
-	// Which folders are shut. One saved list of folder ids, kept across reloads the
-	// way the details region's open sections are. A shut folder's contents drop from
-	// the table until it's opened again.
-	const w_closed = preferences.persistent_set(T_Preference.collapsed);
+	// Which folders are shut. A shut folder's contents drop from the table until it's
+	// opened again. My own store keeps its folds across reloads; the AI store's last
+	// only for this visit — see the shared fold state.
+	const w_closed = w_folders_shut;
 
 	// The open/close triangle: a plain isosceles pointer, pointing down when the
 	// folder is open, right when it's shut. Sized to the shared drawn-glyph size (~19.7).
@@ -105,33 +106,54 @@
 		return rows.filter((r) => !r.ancestor_ids.some((a) => $w_closed.has(a)));
 	});
 
+	// The picked tags that still exist in this store. The picks are saved across
+	// reloads, so a tag deleted since (or a store that hasn't loaded its tags yet)
+	// could otherwise narrow the list to nothing with no picker on screen to undo it.
+	// Ignoring the missing ones can't reach that dead end, and the pick stays saved —
+	// so if that tag comes back, so does the filter.
+	const picked_tags = $derived.by(() => {
+		$w_db_changed;
+		const exists = new Set($w_hierarchy.tags.map((t) => t.id));
+		const kept   = new Set(Array.from($w_filter_tags).filter((id) => exists.has(id)));
+		if (kept.size !== $w_filter_tags.size) {
+			debug.log(`Tag filter: ${$w_filter_tags.size} tag(s) picked, ${kept.size} still in the store — the missing ${$w_filter_tags.size - kept.size} are ignored (still saved).`);
+		}
+		return kept;
+	});
+
 	// Narrowed by the shared search: picked tags, name text, and picked families all
 	// narrow together. filter_rows returns only surviving content rows (never folders);
 	// here each such row pulls its folder chain back on screen, so a matched file never
 	// shows indented under nothing — and a folder left with no surviving row drops.
+	// A filter searches the WHOLE list (so a match inside a shut folder is found), but the
+	// display still honors the folds: a shut folder shows as the path to its matches, while
+	// its matched children stay hidden until you open it. With no filter, only the open rows show.
 	const shown = $derived.by(() => {
-		const matched = filter_rows(open_rows, $w_filter_tags, $w_filter_text, $w_filter_mode, $w_filter_families);
+		const filtering = picked_tags.size > 0 || $w_filter_text.trim() !== '' || $w_filter_families.length > 0;
+		const searched = filtering ? rows : open_rows;
+		const matched = filter_rows(searched, picked_tags, $w_filter_text, $w_filter_mode, $w_filter_families);
 		const keep = new Set(matched.map((r) => r.id));
 		for (const r of matched) { for (const a of r.ancestor_ids) { keep.add(a); } }
-		return open_rows.filter((r) => keep.has(r.id));       // original walk order, ancestors included
+		const display = open_rows.filter((r) => keep.has(r.id));   // fold-respecting: hides matches under a shut folder
+		debug.log(`List: ${filtering ? 'filter on — searched all' : 'no filter — searched open'} ${searched.length} row(s); ${matched.length} match(es); showing ${display.length} open row(s) (a shut folder keeps its matches hidden until opened).`);
+		return display;
 	});
 
 
-	// How many things under each folder match the active filter — the ones on screen
-	// plus the ones a shut fold is hiding. The filter runs over the full walk (not the
-	// folded, on-screen set), so a shut folder still shows its whole matching count; a
-	// folder's tally is its nested items (matching files, plus the folders that hold
-	// them) after the filter. Shown in the folder's format cell in place of "---".
+	// How many files under each folder match the active filter — the ones on screen plus
+	// the ones a shut fold is hiding. The filter runs over the full walk (not the folded,
+	// on-screen set), so a shut folder still shows its whole matching count. Only files
+	// are counted: the folders in between are the structure holding them, not things in
+	// their own right. A file counts for every folder above it, so a nested file shows in
+	// its own folder's tally and in each folder further up. Shown in the folder's format
+	// cell in place of "---".
 	const folder_count = $derived.by(() => {
-		const matched = filter_rows(rows, $w_filter_tags, $w_filter_text, $w_filter_mode, $w_filter_families);
-		const keep = new Set(matched.map((r) => r.id));
-		for (const r of matched) { for (const a of r.ancestor_ids) { keep.add(a); } }
+		const matched = filter_rows(rows, picked_tags, $w_filter_text, $w_filter_mode, $w_filter_families);
 		const map = new Map<string, number>();
-		for (const r of rows) {
-			if (!keep.has(r.id)) { continue; }
+		for (const r of matched) {
 			for (const a of r.ancestor_ids) { map.set(a, (map.get(a) ?? 0) + 1); }
 		}
-		debug.log(`Folder counts: ${map.size} folder(s); ${matched.length} of ${rows.length} row(s) match the filter.`);
+		debug.log(`Folder counts: ${map.size} folder(s) hold at least one matching file; ${matched.length} file(s) of ${rows.length} row(s) match the filter (folders themselves are never counted).`);
 		return map;
 	});
 
@@ -150,7 +172,7 @@
 	// The spot at the top of the scrolled rows — saved across reloads, so the table
 	// can return to the same place. A spot (document + its link), not a pixel distance
 	// and not a bare document id, so a duplicate returns to the very row left.
-	const w_table_top_id = preferences.persistent<string | null>(T_Preference.tableTopId, null);
+	const w_table_top_id = preferences.persistent<string | null>(T_Preference.scroll_files_to, null);
 
 	let scroller  = $state<HTMLElement | null>(null);   // the scrolling rows area
 	let restored  = $state(false);                      // did this table showing already jump to the saved place?
@@ -350,14 +372,15 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 	<td class='name' class:viewable={row.viewable}
 		style:padding-left='{row.depth * 5}px'
-		use:tip={row.viewable ? 'open ' + row.name : false}
+		use:tip={row.viewable ? `open "${row.name}"` : false}
 		onclick={(e) => { if (row.viewable) { e.stopPropagation(); open_view(row); } }}>
 		<span class='name-line'>
 			<span class='tri-slot' style:width='{TRIANGLE}px'>
 				{#if row.has_children}
 					{@const open = !$w_closed.has(row.id)}
 					{@const b = triangle_bounds(open)}
-					<button class='tri' aria-label={open ? 'close folder' : 'open folder'} use:tip={(open ? 'close ' : 'open ') + row.name} onclick={(e) => { e.stopPropagation(); toggle_folder(row.id); }}>
+					{@const prefix = open ? 'collapse' : 'expand'}
+					<button class='tri' aria-label={`${prefix} folder`} use:tip={`${prefix} "${row.name}"`} onclick={(e) => { e.stopPropagation(); toggle_folder(row.id); }}>
 						<svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'>
 							<path d={triangle_path(open)} />
 						</svg>
@@ -391,9 +414,11 @@
 							</svg>
 						</button>
 					{:else}
-						<button class='row-button' aria-label='edit tags' use:tip={'edit tags assigned to ' + row.name}
-							onclick={(e) => { e.stopPropagation(); editing = row.id; }}>✏️</button>
-						<button class='row-button trash' aria-label='delete' use:tip={'remove ' + row.name}
+						{#if tag_count > 0}
+							<button class='row-button' aria-label='edit tags' use:tip={`assign tags to "${row.name}"`}
+								onclick={(e) => { e.stopPropagation(); editing = row.id; }}>✏️</button>
+						{/if}
+						<button class='row-button trash' aria-label='remove' use:tip={`remove "${row.name}"`}
 							onclick={() => confirming = row.id}>
 							<svg class='row-bin' viewBox='0 0 24 24'>
 								<path d={trash_svgpath}
@@ -424,7 +449,7 @@
 				<button
 					class='segment'
 					class:current={$w_filter_families.includes(family)}
-					use:tip={family}
+					use:tip={Document.endings_of(family).join(', ')}
 					onclick={() => toggle_family(family)}>{family}</button>
 			{/each}
 		</div>
@@ -442,8 +467,8 @@
 		     the same action the tab runs. The zone sits in a layer in front of the rows. -->
 		<!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
 		<div class='drop-opener'
-			use:tip={'click to drop files'}
 			onclick={open_drop}
+			use:tip={'click to drop files'}
 			onmouseenter={() => set_drop_opener_hover(true)}
 			onmouseleave={() => set_drop_opener_hover(false)}>
 		<div class='top-sep'>
