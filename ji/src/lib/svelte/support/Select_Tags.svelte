@@ -3,7 +3,6 @@
 	import { w_hierarchy } from '../../ts/database/Databases';
 	import { w_db_changed } from '../../ts/types/Signal';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import { debug } from '../../ts/common/Debug';
 	import type { Snippet } from 'svelte';
 
 	// Pick one or more tags. Shows every tag in the active store as a tag;
@@ -31,12 +30,10 @@
 		if (on) { next.add(id); } else { next.delete(id); }
 		selected = next;
 		ontoggle?.(id, on);
-		debug.log(`Tag picker: ${next.size} of ${tags.length} tag(s) now chosen.`);
 	}
 
 	function toggle_mode() {
 		const next = mode === 'all' ? 'any' : 'all';
-		debug.log(`Match mode toggled from ${mode} to ${next}.`);
 		mode = next;
 	}
 </script>

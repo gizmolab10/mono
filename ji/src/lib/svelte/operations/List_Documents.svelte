@@ -50,8 +50,8 @@
 	function toggle_folder(id: string) {
 		w_closed.update((shut) => {
 			const next = new Set(shut);
-			if (next.has(id)) { next.delete(id); debug.log(`Opened the folder ${id} — its contents come back.`); }
-			else              { next.add(id);    debug.log(`Shut the folder ${id} — its contents drop from the table.`); }
+			if (next.has(id)) { next.delete(id); }
+			else              { next.add(id); }
 			return next;
 		});
 	}
@@ -271,7 +271,6 @@
 		$w_hierarchy.delete_subtree(document_id);
 		confirming = null;
 		if ($w_view_document === document_id) { close_view(); }
-		debug.log(`Trashed document ${document_id} (and anything under it).`);
 	}
 
 	function toggle_tag(document_id: string, tag_id: string, on: boolean) {
@@ -302,14 +301,12 @@
 	let drop_opener_hovered = $state(false);
 	function set_drop_opener_hover(on: boolean): void {
 		drop_opener_hovered = on;
-		debug.log(`Drop-opener zone hover: cursor ${on ? 'entered' : 'left'}; the "drop files below" tab shows ${on ? 'lit' : 'normal'}.`);
 	}
 	// A click anywhere in the zone opens the drop box — the same action the tab runs. Stopped so
 	// the background click-clearer below doesn't see it and bounce straight back to the list.
 	function open_drop(event: MouseEvent): void {
 		event.stopPropagation();
 		w_operation.set(T_Operation.drop);
-		debug.log('Drop-opener clicked — switching to the drop box.');
 	}
 
 	// One click handler for every header, told which column it was. The two middle
@@ -319,11 +316,9 @@
 		event.stopPropagation();                              // don't let this reach the background clearer
 		const op = columns[col].op;
 		if (!op) {
-			debug.log(`The "${columns[col].label}" header does nothing — no add view for it.`);
 			return;
 		}
 		w_operation.set(op);
-		debug.log(`Clicked "${columns[col].label}" — content area now showing "${op}".`);
 	}
 
 	// A click on the empty background leaves the add view and returns to the list.
@@ -333,7 +328,6 @@
 		const target = event.target as HTMLElement;
 		// A click outside an open per-row tag editor closes it (clicks on the picker keep it open).
 		if (editing && !target.closest('.picker')) {
-			debug.log(`Clicked out of the tag editor for document ${editing} — closing it.`);
 			editing = null;
 		}
 		if ($w_operation !== T_Operation.drop) { return; }    // only a click while adding returns to the list
@@ -341,7 +335,6 @@
 		if (target.closest('.add-tag')) { return; }          // keep clicks inside the new-tag field; a click anywhere on the open document closes it
 		w_operation.set(T_Operation.files);
 		w_view_document.set(null);                            // a background click also leaves the view
-		debug.log(`Clicked out of the add view with ${rows.length} document(s) in the store — back to the list.`);
 	}
 
 	// A drop anywhere on the documents view opens the add-documents view first, then
@@ -352,7 +345,6 @@
 	async function documents_drop(event: DragEvent) {
 		event.preventDefault();
 		dragging = false;
-		debug.log('Dropped on the table — opening the add-documents view so the drop reports there.');
 		w_operation.set(T_Operation.drop);
 		await save_drop(event.dataTransfer, new Set());
 	}
@@ -397,7 +389,7 @@
 					     a click outside it (handled by the background) closes it. -->
 					<Select_Tags
 						selected={chosen_for(row.id)}
-						ontoggle={(tag_id, on) => { toggle_tag(row.id, tag_id, on); debug.log(`Toggled a tag on row ${row.id} ${on ? 'on' : 'off'} — closing the picker.`); editing = null; }} />
+						ontoggle={(tag_id, on) => { toggle_tag(row.id, tag_id, on); editing = null; }} />
 				{/if}
 			{:else}
 				<span class='tag-names'>{row.tag_names}</span>

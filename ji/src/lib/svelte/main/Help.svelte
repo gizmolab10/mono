@@ -65,7 +65,6 @@
 
 	function show_page(id: string) {
 		w_helpPage.set(id);
-		debug.log(`Help: showing the "${id}" page.`);
 	}
 
 	function on_key(event: KeyboardEvent) {
@@ -85,13 +84,11 @@
 			if (href === 'action:files') {
 				w_operation.set(T_Operation.files);
 				onclose();
-				debug.log('Help: an "action:files" link tried the list (which drops to the drop box when empty) and closed help.');
 			} else if (href === 'action:chat') {
 				w_operation.set(T_Operation.chat);
 				onclose();
-				debug.log('Help: an "action:chat" link switched to the chat and closed help.');
 			} else {
-				debug.log(`Help: an "${href}" link has no matching action — ignored.`);
+				debug.log_soon(`Help: an "${href}" link has no matching action — ignored.`);
 			}
 			return;
 		}

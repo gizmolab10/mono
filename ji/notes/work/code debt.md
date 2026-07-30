@@ -4,16 +4,24 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] debug.log
-    - [ ] list the cruft, move it to work journal? or somewhere else
-    - [ ] not accessible when not launched on localhost, right?
+- [ ] add 2 new families -> spreadsheet, book
+- [ ] add file formats:
+    - [ ] **Video (unplayable in-browser):** avi, flv, mkv, mpg, wmv
+    - [ ] **Audio (unplayable in-browser):** aiff, wma
+    - [ ] **Text (word):** doc, docx
+    - [ ] **Books (kindle):** EPUB, KFX, AZW3, AZW4
+    - [ ] **Spreadsheet:** csv
+        - [ ] **Excel:** xls, xlsx, xlsm, xlsb, xlt, xltx, xltm
+        - [ ] tsv, tab, psv, gnumeric, dif, slk
+        - [ ] **LibreOffice/OpenDocument:** ods, ots
+        - [ ] **Apple:** numbers
+        - [ ] **Lotus:** wk1, wk3, wk4
+        - [ ] **Quattro Pro:** qpw, wb3
+- [ ] test every file kind with a real file of that kind — built in code, dropped through the real save path, read back and checked (family, showable, how ready its words are, words-or-bytes, bytes byte-for-byte), plus a check that every ending has a row so a new one fails until someone says what it is
+    - [ ] the samples start as real bytes, not valid documents — nothing in ji reads inside a file yet
+    - [ ] when the quick and heavy reading-out is built, these same files test it — and then each one has to be a valid document, not just real bytes
+    - [ ] research where to get them: proper reference samples per format, or failing that the smallest file that genuinely tests each reader (a picture with writing on it, a pdf with real pages, a book with chapters, a clip with speech)
 - [ ] set op to list -> noticeable transition pause
-    - [ ] add file formats:
-        - [ ] **Word:** doc, docx
-        - [ ] **Video (unplayable in-browser):** avi, flv, mkv, mpg, wmv
-        - [ ] **Audio (unplayable in-browser):** aiff, wma
-        - [ ] **Text:** rtf and md
-        - [ ] **Kindle:** EPUB, KFX, AZW3, AZW4
 - [ ] port Hits.ts from di (not 3D!)
     - [ ] so tooltips & hover work more reliably (leave events often do not happen)
 - [ ] Anything LLM -> sidebar db
@@ -70,6 +78,10 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] debug.log
+    - [x] determine not accessible when launched on intersection.lol -> log function returns early — worked out once, as the log file is read: is this page served from this machine (localhost or the two ways a browser says the same)? Anywhere else every logged line gives up before building anything. It was already unreachable from elsewhere (the address points at a machine with no log server, and an https page can't make a plain http request) — now it doesn't try. The first line of the log says which way the decision went and what it read
+    - [x] remove never-to-be-needed logs — 34 lines that only said an interaction happened (tooltip moves and presses, the accent picker, key presses and clicks across the viewer, drop box, help, header cells, tag picker and folds, the manage-tags stub, and two noisy tree lines), plus the imports and one loop left with nothing to feed
+    - [x] rename the not needed now but may in future -> log_soon, does nothing — 13 lines: the measured layout decisions, the viewer's stepping, the two tree oddities, how a dropped file's kind was decided, and a help link with no matching action. One edit to that one body brings them all back
 - [x] clean up local storage
     - [x] using a list of valid keys
     - [x] remove all invalid keys

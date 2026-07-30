@@ -34,13 +34,11 @@
 
 	// Click a segment to switch to that operation — unless it is the inert "ask".
 	function choose(op: T_Operation) {
-		if (is_inert(op)) { debug.log(`Controls: "ask" is inert on the "${$w_storage}" store — click ignored.`); return; }
-		debug.log(`Controls: clicked "${op}" — was "${$w_operation ?? 'landing'}", now "${op}".`);
+		if (is_inert(op)) { return; }
 		w_operation.set(op);
 	}
 
 	function help() {
-		debug.log('Help button clicked — opening the help overlay.');
 		onHelp();
 	}
 
@@ -68,7 +66,7 @@
 		const fits    = room >= need;
 		if (fits !== show_title) {
 			show_title = fits;
-			debug.log(`Controls title: row ${Math.round(room)}px vs needed ${Math.round(need)}px (hamburger ${hamburger_el.offsetWidth} + title ${title_w} + operations ${ops_el.offsetWidth} + help ${help_el.offsetWidth} + gaps ${Math.round(gap * 5)}) — title ${fits ? 'shown' : 'hidden'}.`);
+			debug.log_soon(`Controls title: row ${Math.round(room)}px vs needed ${Math.round(need)}px (hamburger ${hamburger_el.offsetWidth} + title ${title_w} + operations ${ops_el.offsetWidth} + help ${help_el.offsetWidth} + gaps ${Math.round(gap * 5)}) — title ${fits ? 'shown' : 'hidden'}.`);
 		}
 	}
 

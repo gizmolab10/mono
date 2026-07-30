@@ -2,6 +2,12 @@
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).
 
+## 2026-07-29 — the log says less, and can say more again on one edit
+
+- **The lines that only said "this happened" are gone.** Thirty-four of them: every tooltip move and mouse press, the accent picker opening and closing, key presses and clicks across the viewer, drop box, help pages, header cells, tag picker and folds, the manage-tags stub, and two in the tree — one line per row of the whole walk, and "the document list is now this long". Four imports and one loop that existed only to feed a removed line went with them.
+- **Thirteen more are written but silent.** A companion to the logging call takes the same words and says nothing, so a line worth having only while something is being worked on can stay where it belongs: the measured layout decisions (does the title fit, do both regions fit side by side, how many popup rows fit, the chat's scrollbar gap), the viewer's stepping, the two tree oddities (a loop stopped, a thing shown under a second parent), how a dropped file's kind was decided, and a help link with no matching action. Changing that one body makes all thirteen speak again.
+- **What was kept, and why.** The rule that decided each line: does it carry the numbers behind a decision, or does it only say something happened. Roughly ninety kept — the settings rename and sweep, the per-store filters and folds, the list's filter counts and scroll restore, the store's add/replace/erase, the whole drop, the byte store, and every line from the AI store, which is the least finished and so earns its noise.
+
 ## 2026-07-29 — the browser's saved settings are swept and spelled one way
 
 - **Unknown saved settings are removed at launch.** The app holds the list of names it actually uses — the plain settings, each store's record lists, each store's four filters — and removes anything else saved under its own `ji:` start, naming each removal and its size in the log. Other apps' settings are never touched, and the document bytes live elsewhere and aren't in scope.

@@ -2,7 +2,6 @@
 	// Create a new tag: type a name and add it to the active store's tags. `ondone`
 	// lets the caller close this view (the documents view returns to the list).
 	import { w_hierarchy } from '../../ts/database/Databases';
-	import { debug } from '../../ts/common/Debug';
 
 	let { ondone }: { ondone?: () => void } = $props();
 
@@ -12,9 +11,7 @@
 		const trimmed = name.trim();
 		if (trimmed.length > 0) {
 			$w_hierarchy.add_tag(trimmed);
-			debug.log(`Created tag "${trimmed}".`);
 		} else {
-			debug.log('Create tag: nothing typed, so nothing added.');
 		}
 		name = '';
 	}
@@ -37,12 +34,12 @@
 		placeholder='type a tag & ENTER'
 		onkeydown={(e) => {
 			if (e.key === 'Enter') {
-				if (name.trim().length === 0) { debug.log('Empty new-tag field on ENTER — closing the new-tag view.'); ondone?.(); }
+				if (name.trim().length === 0) { ondone?.(); }
 				else { add(); }
 			}
 		}} />
 	{#if ondone}
-		<button class='button' onclick={() => { debug.log('Done adding tags — closing the new-tag view.'); ondone(); }}>done</button>
+		<button class='button' onclick={() => ondone()}>done</button>
 	{/if}
 </div>
 

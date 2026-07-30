@@ -36,14 +36,14 @@
 		const key = event.key;
 		// Escape closes the viewer, always — before the arrow-only and can-step guards
 		// below, so it is caught even when there is nothing to step to.
-		if (key === 'Escape') { debug.log('Escape key: close the viewer.'); w_operation.set(null); return; }
+		if (key === 'Escape') { w_operation.set(null); return; }
 		if (key !== 'ArrowLeft' && key !== 'ArrowUp' && key !== 'ArrowRight' && key !== 'ArrowDown') { return; }
 		const tag = (event.target as HTMLElement | null)?.tagName;
 		if (tag === 'VIDEO' || tag === 'AUDIO' || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'IFRAME') { return; }
 		if (!can_step) { return; }
 		event.preventDefault();
-		if (key === 'ArrowLeft' || key === 'ArrowUp') { debug.log('Arrow key: step back.');    onprev(); }
-		else                                          { debug.log('Arrow key: step forward.'); onnext(); }
+		if (key === 'ArrowLeft' || key === 'ArrowUp') { onprev(); }
+		else                                          { onnext(); }
 	}
 
 	$effect(() => {
@@ -63,7 +63,6 @@
 		stop_hold();                // never two runs at once
 		fn();                       // the first step, right away
 		hold_wait = setTimeout(() => { hold_tick = setInterval(fn, HOLD_TICK); }, HOLD_PAUSE);
-		debug.log('Held a step button down — repeating until let go.');
 	}
 	function stop_hold() {
 		if (hold_wait !== null) { clearTimeout(hold_wait); hold_wait = null; }
@@ -71,12 +70,17 @@
 	}
 	$effect(() => stop_hold);       // let go if the viewer closes mid-hold
 
-	const doc  = $derived($w_hierarchy.document_byID(document_id));
-	const mode = $derived(doc ? Document.view_mode(doc.extension) : null);
+	const doc      = $derived($w_hierarchy.document_byID(document_id));
+	const showable = $derived(doc ? Document.is_viewable(doc.extension) : false);
+	// Which family to draw as. A pdf and a web page are both text by family, but each is
+	// drawn its own way, so those two are told by the file's ending.
+	const family   = $derived(doc ? Document.family_of(doc.reported_type ?? '', doc.extension) : null);
+	const is_pdf   = $derived(doc?.extension === T_DocumentExtension.pdf);
+	const is_page  = $derived(doc?.extension === T_DocumentExtension.html);
 
 	// When a document can't be shown, say which kind it is — so "can't show" is never a mystery.
 	$effect(() => {
-		if (doc && mode === null) { debug.log(`Viewer: nothing to show "${doc.name}" — its kind is "${doc.extension}".`); }
+		if (doc && !showable) { debug.log(`Viewer: nothing to show "${doc.name}" — its kind is "${doc.extension}".`); }
 	});
 
 	// Read the bytes for the shown document, and re-read when the document changes.
@@ -125,7 +129,7 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class='viewer' role='button' tabindex='0' use:tip={'back to the list'} onclick={() => { debug.log('Viewer clicked — back to the list.'); onclose(); }}>
+<div class='viewer' role='button' tabindex='0' use:tip={'back to the list'} onclick={() => onclose()}>
 	<div class='view-head'>
 		<!-- Only worth showing the step triangles when there's more than one showable file
 		     on screen to step between; with fewer than two, hide the whole thing. -->
@@ -158,20 +162,22 @@
 		<div class='view-note'>loading…</div>
 	{:else if content == null}
 		<div class='view-note'>this document's bytes are missing</div>
-	{:else if mode === T_DocumentFamily.image}
+	{:else if !showable}
+		<div class='view-note'>can't show this type here</div>
+	{:else if family === T_DocumentFamily.image}
 		<img class='view-image' src={image_src} alt={doc?.name} />
-	{:else if mode === T_DocumentFamily.pdf}
+	{:else if is_pdf}
 		<iframe class='view-frame' src={source} title={doc?.name}></iframe>
-	{:else if mode === T_DocumentFamily.html}
+	{:else if is_page}
 		<!-- Sandboxed and script-free, so the file's own markup and scripts can't
 		     reach the app; it just renders as a page. -->
 		<iframe class='view-frame' sandbox='' srcdoc={as_text ?? ''} title={doc?.name}></iframe>
-	{:else if mode === T_DocumentFamily.video}
+	{:else if family === T_DocumentFamily.video}
 		<!-- svelte-ignore a11y_media_has_caption -->
 		<video class='view-player' src={source} controls></video>
-	{:else if mode === T_DocumentFamily.audio}
+	{:else if family === T_DocumentFamily.audio}
 		<audio class='view-player' src={source} controls></audio>
-	{:else if mode === T_DocumentFamily.text}
+	{:else if family === T_DocumentFamily.text}
 		<pre class='view-text'>{as_text}</pre>
 	{:else}
 		<div class='view-note'>can't show this type here</div>

@@ -4,15 +4,14 @@
 	// re-push --bg / --accent / --hover onto the page.
 	import { colors } from '../../ts/utilities/Colors';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import { debug } from '../../ts/common/Debug';
 
 	const { w_accent_color } = colors;
 
 	// True while the native color picker is open, so its hover hint is hushed until it closes. There's
 	// no "picker open" event, so track it: it opens on the swatch's click and closes on change or blur.
 	let picking = $state(false);
-	function open_picker()  { picking = true;  debug.log('Accent picker opened — its hover hint is hushed until it closes.'); }
-	function close_picker() { picking = false; debug.log('Accent picker closed — its hover hint is back.'); }
+	function open_picker()  { picking = true; }
+	function close_picker() { picking = false; }
 
 	function pick(e: Event) {
 		const raw = (e.target as HTMLInputElement).value;

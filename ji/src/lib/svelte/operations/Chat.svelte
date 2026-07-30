@@ -86,10 +86,9 @@
 		const next = new Set(collapsed);
 		if (next.has(time)) { next.delete(time); } else { next.add(time); }
 		collapsed = next;
-		debug.log(`Chat: ${next.has(time) ? 'collapsed' : 'expanded'} the answer for exchange at ${time}; ${next.size} collapsed of ${exchanges.length}.`);
 	}
-	function collapse_all() { collapsed = new Set(exchanges.map((e) => e.time)); w_show_chat_replies.set(false); debug.log(`Chat: collapsed all ${exchanges.length} answer(s).`); }
-	function expand_all()   { collapsed = new Set(); w_show_chat_replies.set(true); debug.log('Chat: expanded all answers.'); }
+	function collapse_all() { collapsed = new Set(exchanges.map((e) => e.time)); w_show_chat_replies.set(false); }
+	function expand_all()   { collapsed = new Set(); w_show_chat_replies.set(true); }
 
 	// One toggle for the lot: when every answer is hidden it offers to expand, else to
 	// collapse.
@@ -119,7 +118,7 @@
 		const over = convo_el.scrollHeight > convo_el.clientHeight + 1;   // +1 shrugs off sub-pixel rounding
 		if (over !== overflowing) {
 			overflowing = over;
-			debug.log(`Chat scroll: content ${convo_el.scrollHeight}px vs box ${convo_el.clientHeight}px — ${over ? 'scrollbar showing, keep the right gap' : 'no scrollbar, drop the right gap'}.`);
+			debug.log_soon(`Chat scroll: content ${convo_el.scrollHeight}px vs box ${convo_el.clientHeight}px — ${over ? 'scrollbar showing, keep the right gap' : 'no scrollbar, drop the right gap'}.`);
 		}
 	}
 

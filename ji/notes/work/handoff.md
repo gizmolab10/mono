@@ -2,23 +2,19 @@
 
 My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md).
 
-## Next — the diagnostic log stays home
+## Next — the log gives up before it tries, away from this machine
 
-First unchecked in [code debt](code%20debt.md): **debug.log** — it should do nothing away from this machine, and the cruft it prints wants listing and moving somewhere (the work journal, or its own file).
+Still open under **debug.log** in [code debt](code%20debt.md): the logging call should return at once when the page isn't being served from this machine. The other two parts of that item are done — the never-needed lines are out, and the maybe-needed ones are written but silent.
 
-**Where it stands.** Every logged line is sent to a small server on this mac at a fixed address (`common/Debug.ts`, the address on line 11). Off this machine that address doesn't answer, so each line becomes a request that fails — swallowed quietly, so nothing shows, but every logged line still tries. The app logs freely (the list, the filters, the folds, the settings sweep, the tooltips), so on a phone or another computer that's a steady patter of failing requests.
+**Where it stands.** Every logged line is sent to a small server on this mac at a fixed address (`common/Debug.ts`, the address on line 17). The determination asked for in the item: nothing is written from elsewhere. On another machine that address points at *that* machine, which has no log server, so the request fails; served from intersection.lol on this mac, the page is https and a plain http request is blocked before it leaves the browser. Either way the failure is swallowed, so nothing shows — but every logged line still tries, and around ninety lines remain.
 
 ### Proposal
 
-Two small pieces, neither depending on the other:
+One check, worked out once when the file is read: is the page being served from this machine (the address bar says localhost, or the address matches the log server's own)? If not, the logging call returns before building anything. The silent companion already returns at once, so it needs nothing.
 
-**Say nothing off this machine.** One check, worked out once when the file is read: is the page being served from this machine? If not, logging returns at once — no request built, no failure. This also settles the "not accessible" question in the item: with the check in place, a browser elsewhere sends nothing, so there is nothing to reach.
+**Steel-man the misread.** It could mean the log server should refuse outside requests instead — but the item says the logging call returns early, so the check belongs in the app, not the server.
 
-**Then read what's left.** With the noise gone, walk the logged lines and sort them: the ones that prove a decision (the counts and the values behind a filter or a threshold) stay; the ones that only say "this ran" go. What goes gets listed in one place rather than deleted silently, so a line worth keeping can be brought back — the work journal is the wrong home for it (that's finished work); a short file beside the guides fits better.
-
-**Steel-man the misread.** "Should do nothing when not launched on localhost" could mean off *and* on — silence everywhere unless a switch is thrown — but the item says "when not launched on localhost", so on this machine it keeps working as it does.
-
-**Success.** On this machine the log fills as it does now. Served anywhere else, nothing is sent (nothing in the browser's network view, no failures), and the app behaves the same.
+**Success.** On this machine the log fills as it does now. Served anywhere else, nothing is sent — nothing in the browser's network view, no failed requests — and the app behaves exactly the same.
 
 ## Context
 

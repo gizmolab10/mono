@@ -8,7 +8,6 @@
 	import { Document } from '../../ts/types/Document';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 
 	// The drop box: saves each dropped file (and folder) into the active store,
@@ -31,7 +30,6 @@
 
 	// Leave the drop box and show the file list.
 	function show_files(): void {
-		debug.log('Drop box close button clicked — back to the file list.');
 		w_operation.set(T_Operation.files);
 	}
 
@@ -41,7 +39,6 @@
 	$effect(() => {
 		const on_key = (event: KeyboardEvent): void => {
 			if (event.key === 'Escape' || event.key === 'Enter') {
-				debug.log(`Drop box: "${event.key}" key pressed — back to the file list.`);
 				w_operation.set(T_Operation.files);
 			}
 		};
@@ -60,10 +57,6 @@
 		label   : Document.family_label(family),
 		endings : Document.endings_of(family).join(', '),
 	}));
-	for (const family of families) {
-		debug.log(`Drop box: "${family.label}" covers these endings — ${family.endings || 'none'}.`);
-	}
-
 	async function handleDrop(event: DragEvent) {
 		event.preventDefault();
 		event.stopPropagation();               // the documents view also handles drops; don't double-save

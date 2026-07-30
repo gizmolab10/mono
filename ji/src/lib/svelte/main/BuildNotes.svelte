@@ -75,10 +75,10 @@
 		const spill = modal_el.offsetHeight - (window.innerHeight - 2 * MIN_GAP);   // > 0 means it would leave less than the min gap top and bottom
 		if (spill > 0 && pageSize > 1) {
 			const drop = Math.max(1, Math.ceil(spill / tallest));
-			debug.log(`Build notes: popup ${modal_el.offsetHeight}px spills ${spill.toFixed(0)}px past the ${window.innerHeight}px window — dropping ${drop} of ${pageSize} row(s).`);
+			debug.log_soon(`Build notes: popup ${modal_el.offsetHeight}px spills ${spill.toFixed(0)}px past the ${window.innerHeight}px window — dropping ${drop} of ${pageSize} row(s).`);
 			set_page(pageSize - drop);
 		} else if (-spill >= tallest && pageSize < pageCap) {
-			debug.log(`Build notes: popup ${modal_el.offsetHeight}px leaves ${(-spill).toFixed(0)}px in the ${window.innerHeight}px window (a row is ${tallest.toFixed(0)}px) — adding one to ${pageSize}.`);
+			debug.log_soon(`Build notes: popup ${modal_el.offsetHeight}px leaves ${(-spill).toFixed(0)}px in the ${window.innerHeight}px window (a row is ${tallest.toFixed(0)}px) — adding one to ${pageSize}.`);
 			set_page(pageSize + 1);
 		}
 	}

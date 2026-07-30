@@ -1,5 +1,4 @@
 import { writable } from 'svelte/store';
-import { debug } from '../common/Debug';
 
 // The one hover hint shown at a time. A single ToolTip mounted at the app root reads this and
 // draws the hint centered just below the mouse, appearing after a short pause (the browser's own
@@ -36,14 +35,12 @@ export function start_tips(): () => void {
 		if (el !== current) {
 			current = el;
 			appearance++;
-			debug.log(`Tooltip: cursor moved onto a ${el ? `new hint ("${el.dataset.tip}")` : 'plain spot'} — appearance ${appearance}, its opening pause restarts.`);
 		}
 		const message = el?.dataset.tip ?? null;
 		w_tip.set({ message, x: event.clientX, y: event.clientY, appearance });
 	}
 	function clear() { current = null; w_tip.set({ message: null, x: 0, y: 0, appearance }); }
 	function clear_on_click() {
-		if (current) { debug.log('Tooltip: mouse pressed — hint hidden until the cursor moves again.'); }
 		clear();
 	}
 

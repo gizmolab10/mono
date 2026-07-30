@@ -43,17 +43,17 @@ export function open_view(stop: View_Stop): void {
 	w_view_pos.set(pos < 0 ? 0 : pos);
 	w_view_document.set(stop.id);
 	w_operation.set(T_Operation.view);
-	debug.log(`Viewing "${stop.name}" — stop ${(pos < 0 ? 0 : pos) + 1} of ${run.length} showable on screen.`);
+	debug.log_soon(`Viewing "${stop.name}" — stop ${(pos < 0 ? 0 : pos) + 1} of ${run.length} showable on screen.`);
 }
 
 // Step to the file before or after, wrapping at both ends. Nothing to do with one.
 export function step_view(delta: number): void {
 	const run = get(w_viewable_run);
-	if (run.length < 2) { debug.log(`Step ignored — only ${run.length} showable file on screen.`); return; }
+	if (run.length < 2) { debug.log_soon(`Step ignored — only ${run.length} showable file on screen.`); return; }
 	const pos = (get(w_view_pos) + delta + run.length) % run.length;
 	w_view_pos.set(pos);
 	w_view_document.set(run[pos].id);
-	debug.log(`Stepped ${delta > 0 ? 'forward' : 'back'} to "${run[pos].name}" — stop ${pos + 1} of ${run.length}.`);
+	debug.log_soon(`Stepped ${delta > 0 ? 'forward' : 'back'} to "${run[pos].name}" — stop ${pos + 1} of ${run.length}.`);
 }
 
 // Close the viewer, back to the list.

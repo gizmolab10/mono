@@ -139,7 +139,6 @@ export class Hierarchy {
 		this.records_byID.set(document.id, document);
 		this.persistence.mark_dirty(T_Record.documents, document.id);
 		this.persist(T_Record.documents);
-		debug.log(`the document list is now ${this.documents.length} long.`);
 		return document;
 	}
 
@@ -233,7 +232,7 @@ export class Hierarchy {
 		const walk = (id: string, depth: number, ancestors: string[], via_contains: boolean, via_edge_id: string | null): void => {
 			if (ancestors.includes(id)) {
 				const document = this.document_byID(id);
-				debug.log(`Tree walk: "${document?.name ?? id}" already sits above itself on this branch (depth ${depth}) — a loop, so not following it deeper.`);
+				debug.log_soon(`Tree walk: "${document?.name ?? id}" already sits above itself on this branch (depth ${depth}) — a loop, so not following it deeper.`);
 				return;
 			}
 			const document = this.document_byID(id);
@@ -260,24 +259,10 @@ export class Hierarchy {
 		const listed = ordered.map((row, i) => {
 			const many = (counts.get(row.document.id) ?? 0) >= 2;
 			const is_dedup = many && home_at.get(row.document.id) !== i;
-			if (is_dedup) { debug.log(`Tree walk: "${row.document.name}" shown again under a second parent (depth ${row.depth}) — the lighter "also here".`); }
+			if (is_dedup) { debug.log_soon(`Tree walk: "${row.document.name}" shown again under a second parent (depth ${row.depth}) — the lighter "also here".`); }
 			return { document: row.document, tag_ids: row.tag_ids, depth: row.depth, ancestor_ids: row.ancestor_ids, is_dedup, has_children: row.has_children, relationship_id: row.relationship_id };
 		});
 
-		// Print the list top-to-bottom with each row's nesting depth and the parent it
-		// sits under, so a depth that jumps the wrong way (a child no deeper than its
-		// parent) shows up plainly in the log instead of being guessed at from the screen.
-		let previous_depth = 0;
-		for (const row of listed) {
-			const parent_id = row.ancestor_ids[row.ancestor_ids.length - 1];
-			const parent = parent_id ? this.document_byID(parent_id)?.name ?? parent_id : 'none (root)';
-			const step = row.depth === previous_depth + 1 ? 'in one'
-				: row.depth === previous_depth ? 'same'
-				: row.depth < previous_depth ? `out ${previous_depth - row.depth}`
-				: `IN ${row.depth - previous_depth} (jumped more than one)`;
-			debug.log(`List: "${row.document.name}" — depth ${row.depth} (${step}), under ${parent}.`);
-			previous_depth = row.depth;
-		}
 		return listed;
 	}
 

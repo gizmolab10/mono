@@ -12,14 +12,16 @@ export enum S_Document {
 }
 
 // The broad family a document falls into, from its reported type.
+// A pdf and a web page are text as far as a family goes — both are words, and the
+// viewer picks how to draw them from the file's own ending, not from its family.
 export enum T_DocumentFamily {
     video  = 'video',
     audio  = 'audio',
 	folder = 'folder',
     image  = 'image',
     text   = 'text',
-	html   = 'html',
-    pdf    = 'pdf',
+	book   = 'book',
+	sheet  = 'spreadsheet',
 }
 
 export enum T_DocumentExtension {
@@ -56,7 +58,69 @@ export enum T_DocumentExtension {
 	m4a     = 'm4a',
 	ogg     = 'ogg',
 	wma     = 'wma',
+
+	csv     = 'csv',
+	numbers = 'numbers',
+	qb      = 'qb',
+
+	epub    = 'epub',
+	kfx     = 'kfx',
+	azw3    = 'azw3',
+	azw4    = 'azw4',
 }
+
+// The endings that hold a table, and the ones that hold a book. Kept apart from what
+// a browser can show: none of these can be looked at here, but each holds words worth
+// reading — a table's rows, a book's pages.
+export const SHEET_KINDS: ReadonlySet<T_DocumentExtension> =
+	new Set([
+		T_DocumentExtension.csv,
+		T_DocumentExtension.numbers,
+		T_DocumentExtension.qb,
+]);
+
+export const BOOK_KINDS: ReadonlySet<T_DocumentExtension> =
+	new Set([
+		T_DocumentExtension.epub,
+		T_DocumentExtension.kfx,
+		T_DocumentExtension.azw3,
+		T_DocumentExtension.azw4,
+]);
+
+// Endings a browser won't draw, but the model reads as they stand — so they are worth
+// dropping even though a row of one never opens. Kept apart from the plain can't-be-shown
+// list so the difference is visible: these need nothing done to them first.
+export const ACCEPTABLE_UNVIEWABLE: ReadonlySet<T_DocumentExtension> =
+	new Set([
+		T_DocumentExtension.docx,
+		T_DocumentExtension.mpg,
+]);
+
+// The endings a browser won't draw and the model can't read yet. Still taken in and
+// saved — their words are the point — but each needs turning into something readable
+// first (see the needs-converting list). Everything named in neither list can be shown:
+// words, web pages, pdfs, pictures, and the clips and sound a browser plays.
+export const UNVIEWABLE_KINDS: ReadonlySet<T_DocumentExtension> =
+	new Set([
+		// word processing — no browser draws these
+		T_DocumentExtension.doc,
+		// clips and sound a browser won't play (still stored, still transcribable)
+		T_DocumentExtension.avi,
+		T_DocumentExtension.flv,
+		T_DocumentExtension.mkv,
+		T_DocumentExtension.wmv,
+		T_DocumentExtension.aiff,
+		T_DocumentExtension.wma,
+		// tables
+		T_DocumentExtension.csv,
+		T_DocumentExtension.numbers,
+		T_DocumentExtension.qb,
+		// books
+		T_DocumentExtension.epub,
+		T_DocumentExtension.kfx,
+		T_DocumentExtension.azw3,
+		T_DocumentExtension.azw4,
+]);
 
 // Which endings are moving pictures and which are sound. Kept apart from what a
 // browser can play: an avi belongs to the video family even though no browser
@@ -87,11 +151,26 @@ export const AUDIO_KINDS: ReadonlySet<T_DocumentExtension> =
 		T_DocumentExtension.wma,
 ]);
 
+// The endings that are pictures. Needed on its own now that a family is no longer read
+// off "how would the viewer draw this": a picture dropped through the folder door often
+// reports no type at all, and its ending is the only thing left to tell by. An svg is
+// here too — it is a picture, even though its bytes are words.
+export const IMAGE_KINDS: ReadonlySet<T_DocumentExtension> =
+	new Set([
+		T_DocumentExtension.bmp,
+		T_DocumentExtension.gif,
+		T_DocumentExtension.jpeg,
+		T_DocumentExtension.png,
+		T_DocumentExtension.svg,
+		T_DocumentExtension.webp,
+]);
+
 // How a document's bytes are stored: these extensions save as their plain words;
 // every other saves as the file's own raw bytes, untouched. The drop reads this to
 // store the right way; the viewer reads it to interpret what it reads back.
 export const TEXT_KINDS: ReadonlySet<T_DocumentExtension> =
 	new Set([
+		T_DocumentExtension.csv,
 		T_DocumentExtension.html,
 		T_DocumentExtension.md,
 		T_DocumentExtension.rtf,
@@ -105,6 +184,7 @@ export const TEXT_KINDS: ReadonlySet<T_DocumentExtension> =
 // need their words recognized.
 export const READY_KINDS: ReadonlySet<T_DocumentExtension> =
 	new Set([
+		T_DocumentExtension.csv,
 		T_DocumentExtension.md,
 		T_DocumentExtension.txt,
 ]);
@@ -121,6 +201,7 @@ export const QUICK_KINDS: ReadonlySet<T_DocumentExtension> =
 		T_DocumentExtension.svg,
 		T_DocumentExtension.doc,
 		T_DocumentExtension.docx,
+		T_DocumentExtension.epub,     // pages of marked-up words — stripped, no recognizing needed
 ]);
 
 // The endings the reading tool won't take as they stand. Everything here holds
@@ -152,6 +233,17 @@ export const NEEDS_CONVERTING: ReadonlySet<T_DocumentExtension> =
 		T_DocumentExtension.svg,
 		T_DocumentExtension.rtf,
 		T_DocumentExtension.doc,
+		// books — the pages have to be read out into plain words first
+		T_DocumentExtension.epub,
+		T_DocumentExtension.kfx,
+		T_DocumentExtension.azw3,
+		T_DocumentExtension.azw4,
+		// an accounting file: not words at all until something reads its records out
+		T_DocumentExtension.qb,
+		// a Numbers table: a packed bundle, not words — exported to plain rows first
+		T_DocumentExtension.numbers,
+		// A table saved as plain text (csv) is NOT here: ji stores it as its own words,
+		// and the upload path hands words over, not a file — so its ending never matters.
 ]);
 
 // The largest single file we take in. Raw bytes are stored as-is, so nothing is
@@ -193,44 +285,14 @@ export class Document {
 	last_modified_date? : number | null;   // when the file was last changed, milliseconds since epoch; null for a folder
 	metadata?           : any;
 
-	// How a document shows in the viewer, from its extension, or null when a
-	// browser can't show it here (Word doc, docx, and the ones with no extension —
-	// folders and unrecognized files). Static so it works on the plain objects
-	// loaded from storage, which aren't real Document instances.
-	static view_mode(extension: T_DocumentExtension | null | undefined): T_DocumentFamily | null {
-		switch (extension) {
-			case T_DocumentExtension.pdf:  return T_DocumentFamily.pdf;
-			case T_DocumentExtension.html: return T_DocumentFamily.html;
-			case T_DocumentExtension.txt:
-			case T_DocumentExtension.md:
-			case T_DocumentExtension.rtf:  return T_DocumentFamily.text;
-			case T_DocumentExtension.bmp:
-			case T_DocumentExtension.gif:
-			case T_DocumentExtension.jpeg:
-			case T_DocumentExtension.png:
-			case T_DocumentExtension.svg:
-			case T_DocumentExtension.webp: return T_DocumentFamily.image;
-			// only the clips a browser will actually play; the rest (avi, mkv, wmv,
-			// flv, mpg, wma, aiff) are stored and transcribable but not showable here
-			case T_DocumentExtension.mp4:
-			case T_DocumentExtension.m4v:
-			case T_DocumentExtension.mov:
-			case T_DocumentExtension.webm:
-			case T_DocumentExtension.ogv:  return T_DocumentFamily.video;
-			case T_DocumentExtension.mp3:
-			case T_DocumentExtension.wav:
-			case T_DocumentExtension.ogg:
-			case T_DocumentExtension.m4a:
-			case T_DocumentExtension.aac:
-			case T_DocumentExtension.flac: return T_DocumentFamily.audio;
-			default:                       return null;    // doc, docx, the unplayable clips, no ending
-		}
-	}
-
-	// Can the user open and look at this kind here? Purely about showing — nothing to
-	// do with whether its words have been pulled. A folder (no extension) is false.
+	// Can the user open and look at this kind here? Purely about showing — nothing to do
+	// with whether its words have been pulled. A folder (no extension) is false, and so is
+	// anything a browser won't draw, whether or not the model can read it; everything else
+	// a browser draws for us.
 	static is_viewable(extension: T_DocumentExtension | null | undefined): boolean {
-		return Document.view_mode(extension) !== null;
+		return extension != null
+			&& !UNVIEWABLE_KINDS.has(extension)
+			&& !ACCEPTABLE_UNVIEWABLE.has(extension);
 	}
 
 	// How ready a document's words are for the model. Ready when it is already plain
@@ -251,9 +313,9 @@ export class Document {
 			case T_DocumentFamily.image:  return 'image';
 			case T_DocumentFamily.video:  return 'video';
 			case T_DocumentFamily.audio:  return 'sound';
-			case T_DocumentFamily.pdf:    return 'pdf';
-			case T_DocumentFamily.html:   return 'web page';
 			case T_DocumentFamily.text:   return 'text';
+			case T_DocumentFamily.sheet:  return 'spreadsheet';
+			case T_DocumentFamily.book:   return 'book';
 			case T_DocumentFamily.folder: return 'folder';
 		}
 	}
@@ -276,19 +338,21 @@ export class Document {
 	// from what we accept, so a newly accepted ending shows up here by itself.
 	static endings_of(family: T_DocumentFamily): string[] {
 		return Object.keys(Document.kind_byExtension)
-			.filter((ending) => Document.family_of('', Document.kind_byExtension[ending]) === family)
-			.filter((ending) => Document.view_mode(Document.kind_byExtension[ending]) !== null);   // for now, hide the kinds we can't show
+			.filter((ending) => Document.family_of('', Document.kind_byExtension[ending]) === family);
 	}
 
-	// Which broad family a file belongs to. The browser's reported type decides it
-	// when that type says something useful (its first word — picture, video, sound,
-	// text — plus pdf and web page as named cases). When the type is empty or
-	// unhelpful, the extension decides instead. Anything unrecognized is skipped on
-	// the way in, so a saved file always lands in a real family; text is the last
-	// resort only for a call with no known ending.
+	// Which broad family a file belongs to. Tables and books are told by their ending.
+	// Otherwise the browser's reported type decides, when its first word says something
+	// useful (picture, clip, sound, words); failing that the ending decides. A pdf, a web
+	// page, a Word file and plain words all count as text — words, however they are
+	// wrapped — and the viewer picks how to draw each from its ending. Anything
+	// unrecognized never gets this far, so a saved file always lands in a real family;
+	// text is the last resort.
 	static family_of(reported_type: string, extension: T_DocumentExtension | null | undefined): T_DocumentFamily {
-		if (reported_type === 'application/pdf') { return T_DocumentFamily.pdf; }
-		if (reported_type === 'text/html')       { return T_DocumentFamily.html; }
+		// Asked first: a table saved as plain text reports itself as text, and would
+		// otherwise land in the text family.
+		if (extension && SHEET_KINDS.has(extension)) { return T_DocumentFamily.sheet; }
+		if (extension && BOOK_KINDS.has(extension))  { return T_DocumentFamily.book; }
 		switch (reported_type.split('/')[0]) {
 			case 'image': return T_DocumentFamily.image;
 			case 'video': return T_DocumentFamily.video;
@@ -297,9 +361,8 @@ export class Document {
 		}
 		if (extension && VIDEO_KINDS.has(extension)) { return T_DocumentFamily.video; }
 		if (extension && AUDIO_KINDS.has(extension)) { return T_DocumentFamily.audio; }
-		// Word files count as text for listing, but stay non-viewable (view_mode is null).
-		if (extension === T_DocumentExtension.doc || extension === T_DocumentExtension.docx) { return T_DocumentFamily.text; }
-		return Document.view_mode(extension) ?? T_DocumentFamily.text;
+		if (extension && IMAGE_KINDS.has(extension)) { return T_DocumentFamily.image; }
+		return T_DocumentFamily.text;
 	}
 
 	// A file extension → the kind we store it as. The primary signal, because a
@@ -336,6 +399,13 @@ export class Document {
 		flac: T_DocumentExtension.flac,
 		wma: T_DocumentExtension.wma,
 		aiff: T_DocumentExtension.aiff, aif: T_DocumentExtension.aiff,
+		csv: T_DocumentExtension.csv,
+		numbers: T_DocumentExtension.numbers,
+		qb: T_DocumentExtension.qb,
+		epub: T_DocumentExtension.epub,
+		kfx: T_DocumentExtension.kfx,
+		azw3: T_DocumentExtension.azw3,
+		azw4: T_DocumentExtension.azw4,
 	};
 
 	// The reported type as a fallback when the extension names no kind. The
@@ -345,6 +415,10 @@ export class Document {
 		if (type === 'text/markdown')                          { return T_DocumentExtension.md; }
 		if (type === 'text/html')                              { return T_DocumentExtension.html; }
 		if (type === 'application/rtf' || type === 'text/rtf') { return T_DocumentExtension.rtf; }
+		// A table saved as plain text is asked about before the plain-text catch-all below,
+		// or it would be taken for ordinary words.
+		if (type === 'text/csv' || type === 'application/csv')  { return T_DocumentExtension.csv; }
+		if (type === 'application/epub+zip')                    { return T_DocumentExtension.epub; }
 		if (type === 'application/pdf')                        { return T_DocumentExtension.pdf; }
 		if (type === 'image/svg+xml')                          { return T_DocumentExtension.svg; }
 		if (type.startsWith('text/'))                          { return T_DocumentExtension.txt; }
@@ -381,13 +455,10 @@ export class Document {
 		const ext = file.name.includes('.') ? file.name.split('.').pop()!.toLowerCase() : '';
 		const byExt = Document.kind_byExtension[ext];
 		const kind = byExt ?? Document.kind_byType(file.type);
-		debug.log(`Kind of "${file.name}": extension ".${ext}" -> ${byExt ?? 'none'}, type "${file.type || 'none'}" -> chose ${kind}.`);
-		// For now, a kind we can't show here (Word files, the unplayable clips) is left
-		// out entirely — treated as unknown, so the drop skips it and never saves it.
-		if (kind !== null && Document.view_mode(kind) === null) {
-			debug.log(`Ignoring "${file.name}" for now — ".${ext}" is a ${kind} file, which can't be shown here.`);
-			return null;
-		}
+		debug.log_soon(`Kind of "${file.name}": extension ".${ext}" -> ${byExt ?? 'none'}, type "${file.type || 'none'}" -> chose ${kind}.`);
+		// A kind a browser can't show here (a Word file, a spreadsheet, a book, the
+		// unplayable clips) is still saved: its words are the point, not the looking. The
+		// row simply doesn't open, and the stepper skips it.
 		return kind;
 	}
 

@@ -67,7 +67,7 @@
 		if (line === last_layout_log) { return; }
 		last_layout_log = line;
 		const need = k.width.details + k.width.operations + inset * 2 + gap;
-		debug.log(`Panel layout: window ${width}px vs ${Math.round(need)}px needed for both (details ${k.width.details} + operations ${k.width.operations} + outer ${Math.round(inset * 2)} + between ${Math.round(gap)}) — ${details_only ? 'operations view hidden, details fill the width' : 'both side by side'}.`);
+		debug.log_soon(`Panel layout: window ${width}px vs ${Math.round(need)}px needed for both (details ${k.width.details} + operations ${k.width.operations} + outer ${Math.round(inset * 2)} + between ${Math.round(gap)}) — ${details_only ? 'operations view hidden, details fill the width' : 'both side by side'}.`);
 	});
 
 	function handleResize() {
