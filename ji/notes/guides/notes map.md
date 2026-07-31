@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Notes Map (ji)"
+description: "Every file under the ji notes folder, updated whenever notes are added, moved, or removed."
+tags: [notes]
+date: 2026-07-30
+---
+
 # Notes map — ji
 
 Every file under `notes/`. Update when notes files are added, moved, or removed.
@@ -18,6 +26,6 @@ Every file under `notes/`. Update when notes files are added, moved, or removed.
 - `working features.md` — the running list of shipped features, newest first.
 - `sparsity.md` — making replies short, plain and unmistakable: why they went murky, what has been written, what is still owed, and the two layers of guides (mono and project).
 - `external AnythingLLM storage.md` — how-to: put the Docker AnythingLLM store on an external drive.
-- `proposals/` — design proposals (sideband storage, thin proxy, build LLM, chat history, db, persistables, RAG consistency, full family support — what ji decides about a file the moment it arrives, and what's still owed; sample files — what a fair test file is per kind, and where one might come from; performance — why the file list pauses, measured).
+- `proposals/` — design proposals (sideband storage, thin proxy, build LLM, chat history, db, persistables, RAG consistency, full family support — what ji decides about a file the moment it arrives, and what's still owed; sample files — what a fair test file is per kind, and where one might come from; performance — why the file list pauses, measured; cancel — stopping a drop the moment it is asked for; replace claude — whether local models on your own machine could stand in for Claude Code, and what hardware it would take).
 
 (Note: this map lists what recent work touched; older work/ files — e.g. `prime directive.md`, `future/` — aren't all indexed yet.)

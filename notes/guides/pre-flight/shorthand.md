@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Shorthand"
+description: "The short commands and abbreviations Jonathan types, and what each one does."
+tags: [session-start, collaboration]
+date: 2026-07-29
+---
+
 # Shorthand
 
 Short commands and abbreviations for working with collaborator. NB: ALL urls on this page are relative to `~/GitHub/mono/`

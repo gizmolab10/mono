@@ -1,3 +1,11 @@
+---
+kind: procedure
+title: "Installing AnythingLLM by Hand"
+description: "The steps that get the AnythingLLM engine running on this machine."
+tags: [setup]
+date: 2026-07-24
+---
+
 # Installation Steps
 
 ## **1. Install Docker Desktop**

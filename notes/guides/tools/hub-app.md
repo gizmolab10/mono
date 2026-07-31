@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Hub App"
+description: "What the Hub app is, how it is put together, and what its screens do."
+tags: [architecture, tools]
+date: 2026-05-10
+---
+
 # Hub App
 
 **Started:** 2025-01-09

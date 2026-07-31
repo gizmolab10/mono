@@ -1,3 +1,11 @@
+---
+kind: philosophy
+title: "Collaborator Limitations"
+description: "The failure modes the collaborator falls into, named so they can be spotted early."
+tags: [philosophy, collaboration]
+date: 2026-06-03
+---
+
 # Collaborator Limitations
 
 Known failure modes. Not excuses — just patterns to watch for.

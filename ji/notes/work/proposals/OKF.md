@@ -1,0 +1,127 @@
+# OKF — turning the guides into a knowledge bundle
+
+OKF is an open format for curated knowledge: a folder of markdown files kept in version control, one concept per file, each with a small block of labels at the top. Source: [OKF + RAG](https://medium.com/@ravishkhullar/okf-rag-the-ultimate-ai-agent-architecture-26b9ceed44f1).
+
+The guides are already most of the way there — markdown, in folders, under version control. What's missing is the labels and the one-concept-per-file rule. This covers the project guides as well as the shared ones: 165 files in four bundles, 50 shared, 67 in di, 40 in ws, 8 in ji. 31 of those are index files whose fate step 5 decides, leaving 134 that need a label block.
+
+## Steps
+
+1. [x] **Fix the label set.** Five labels: kind, title, description, tags, date. Settled below.
+2. [x] **Choose the kinds.** Five of them, and the order for picking one. Settled below.
+3. [x] **Add the label block to each guide.** 134 files, done. The body of each file was left exactly as it was — the block sits above it, fenced by three dashes above and below, in the order kind, title, description, tags, date. No title is repeated.
+4. [ ] **Split the files that cover several things.** One concept per file. The always file is the deliberate exception — it stays whole and its rules carry their own tags instead.
+5. [ ] **Decide what happens to the index files.** Either drop them, since the labels do that job now, or keep one list per folder.
+6. [ ] **Verify.** Every file's label block reads cleanly, every tag is on the list, every title is unique.
+
+## Labels
+
+Five labels, every file, same order, no extras. Anything a label can't hold belongs in the body.
+
+| Label | What it holds |
+| --- | --- |
+| kind | What sort of guidance this is. One word, from the Kinds list below. |
+| title | The human name. Unique across every guide, so no two files answer to the same call. |
+| description | One sentence: what this file tells you to do. Written so it stands alone in a search result. |
+| tags | One or more from the closed list below. Nothing invented on the spot. |
+| date | Last real change, as year-month-day. Not a fix to a typo — a change of meaning. |
+
+Left out: an **owner** label, saying who decides what a file says. In a two-person shop the answer is Jonathan every time. A label block is plain text, so a sixth line can go in with one pass over the files whenever it earns its place.
+
+## Tags (closed list)
+
+Twenty-two. The first sixteen came from the shared guides — the folder-by-folder rundown in [synopsis of our guides](../../../../notes/guides/synopsis%20of%20our%20guides.md) is where each one came from. The last six came from the project guides, which are a different animal: they describe apps rather than tell me how to work.
+
+The folder a file sits in is not a tag. A tag says what the file is *about*, so two files in different folders about the same thing find each other.
+
+1. **collaboration** — who does what, turn-taking, proposals, designs
+2. **prose** — voice, journals, how writing should read
+3. **session-start** — what to read or do before acting
+4. **code-style** — naming, formatting, how code is organized
+5. **visual-design** — look and feel, spacing, styling
+6. **refactoring** — reshaping code that already works
+7. **migration** — moving a component to a new shape
+8. **testing** — writing and running tests
+9. **debugging** — finding out why something is wrong
+10. **build** — the tools that turn source into a site
+11. **deploy** — getting a built site online
+12. **setup** — getting a machine or an account ready
+13. **tools** — a single tool's own quirks
+14. **philosophy** — why the work is shaped this way
+15. **porting** — moving work between projects
+16. **notes** — keeping the note files themselves in order
+
+From the project guides:
+
+17. **architecture** — how the parts of an app fit together, and what each part is responsible for
+18. **data** — what gets stored, where it lives, and how it survives a reload
+19. **geometry** — shapes, positions, angles, and the math that places things in space
+20. **user-interface** — the parts a person sees and touches: controls, layout, selection, navigation
+21. **platform** — what a particular host or framework demands of us
+22. **research** — a subject studied before deciding, not a decision already made
+
+Where the last six land, so the list can be checked against real files rather than taken on faith: **architecture** on the top-level overviews and ji's three specs; **data** on what ws calls databases, state, preferences, and recents; **geometry** on di's algebra, axes, rotation, faces, and both dimension files; **user-interface** on di's components and ws's ux files; **platform** on ws's five platforms files; **research** on di's four study files.
+
+New tags are not forbidden forever, but adding one means adding it here first. That's the whole point of closing the list.
+
+## Kinds
+
+Five. The test each one has to pass: knowing the kind changes what I do with the file before I have read a word of it.
+
+| Kind | What it means | What I do with it |
+| --- | --- | --- |
+| rule | A standing instruction. Breaking it is a mistake. | Obey it, every time, without being asked. |
+| procedure | Steps for a task, when that task comes up. | Follow it start to finish while doing that task. |
+| reference | Facts, commands, names, quirks. | Look things up in it. Never obey it. |
+| architecture | How one part of an app actually works. | Read it before touching that part. |
+| philosophy | Why the work is shaped this way. | Read it to judge a call the other kinds don't cover. |
+
+### Why these five and not more
+
+The obey/follow/look-up divide is the whole point — those three cover most of the shared guides and they are genuinely different acts. **architecture** earns its place on volume alone: 70 of the 165 files sit under an architecture folder, and none of the first three fit them. **philosophy** earns its place because those files answer a question the others can't — what to do when no rule applies.
+
+Everything else I considered folded in:
+
+1. A **record** kind for the running logs of past mistakes. It folds into rule: the whole reason those files are read at session start is "never do this again", which is an instruction, not history.
+2. A **specification** kind for ji's three spec files. It folds into architecture: a spec says how a part works, written before the part exists instead of after.
+3. A **map** kind for the index files. Held until step 5 decides whether index files survive at all.
+
+### How the kind is chosen
+
+One question at a time, first yes wins:
+
+1. Does it tell me what to do at all times? → **rule**
+2. Does it tell me how to carry out one task? → **procedure**
+3. Does it describe a part of an app? → **architecture**
+4. Does it explain why rather than what? → **philosophy**
+5. Otherwise → **reference**
+
+Order matters because files straddle. The debugging guide is two principles plus some technique — the first question catches it as a rule, which is right, because those principles apply whether or not I am debugging.
+
+## Reorganize the guides
+
+So it is much easier for me to
+
+1. [ ] grok the big picture
+2. [ ] explore specific issues
+
+No two of the four bundles agree on how they are arranged, so neither goal is reachable today.
+
+### One shape, all four bundles
+
+The shared guides use eight folders. di uses four, ws uses two, ji uses three and leaves three files loose at the top. The same subject lands somewhere different each time — how code should look is `develop/style.md` in the shared guides, `collaborate/style.md` in ws, and `architecture/ui/style.md` in di. Testing is `test/testing.md` shared and `project/philosophy/testing.md` in di.
+
+So: one folder shape, used in all four. A folder that a bundle has nothing to say about simply isn't there. Then I can walk any project and already know where I am.
+
+### A map page per bundle, built from the labels
+
+Every file's title and description, listed on one page, grouped by kind. That page is the big picture, and it is not hand-written — it is assembled from what the labels already say, so it cannot drift out of step with the files the way a hand-kept summary does. Today's hand-kept summary is [synopsis of our guides](../../../../notes/guides/synopsis%20of%20our%20guides.md); it is thorough and it is stale the moment a file changes.
+
+One map per bundle, plus one that stitches the four together. Reading the stitched one is the whole corpus in a few minutes.
+
+### Tags are the way in to a specific issue
+
+Once every file is labeled, a specific issue starts as a tag, not as a guess about which folder someone filed it under. Two files in different projects about the same trouble find each other. This is why the tag list is closed — an open list drifts into synonyms and the search quietly stops working.
+
+## Success
+
+Every one of the 134 files carries a valid label block. No file covers two concepts, except the always file, whose rules carry their own tags. Asking for "everything tagged testing" returns the right set by reading the labels alone.

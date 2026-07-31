@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Preferences Flow (ws)"
+description: "One setting followed all the way from the click to storage and back."
+tags: [architecture, data, user-interface]
+date: 2026-01-12
+---
+
 # Preferences System: Store Presentation and Persistence
 
 Okay, so I like to give people choices about looks and what have you. Of course their choices need to be remembered for them. It's a computer, for crying sake. This is a walk through how one preference flows from UI click to localStorage and back.

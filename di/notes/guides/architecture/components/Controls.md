@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Controls (di)"
+description: "The strip of commands at the top and bottom of the screen, reachable without opening anything."
+tags: [architecture, user-interface]
+date: 2026-05-20
+---
+
 # Controls
 
 The strip of global controls at the top and bottom of the screen — every command the user can reach without opening a panel. The strip is split into two components: the primary controls (a button toolbar that adapts to width) and the secondary controls (the wide zoom slider plus a status row underneath).

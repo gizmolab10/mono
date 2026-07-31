@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { databases, w_hierarchy } from '../../ts/database/Databases';
-	import { w_llm_docs } from '../../ts/database/LLM_Docs';
 	import { T_Storage } from '../../ts/types/DB_Records';
 	import { w_db_changed } from '../../ts/types/Signal';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
@@ -31,10 +30,11 @@
 	const tags            = $derived.by(() => { $w_db_changed; return $w_hierarchy.tags.length; });
 	const db_adjective    = $derived.by(() => { $w_db_changed; return derive_adjective(); });
 
-	// The documents count shown: on the AI store it's what AnythingLLM actually holds
-	// (pulled app-wide into a shared store, so it's right on every machine, not only the
-	// one that dropped the files); every other store shows its own local count.
-	const documents = $derived($w_storage === T_Storage.llm ? $w_llm_docs.length : local_documents);
+	// The documents count shown: what this store's own records hold, on every store.
+	// It used to ask AnythingLLM on the AI store, but that answer counts only the files
+	// whose words were uploaded — a picture or a clip is stored and never counted — so
+	// the number disagreed with the list. The records are the same thing the list draws.
+	const documents = $derived(local_documents);
 
 	function choose(storage: T_Storage) {
 		if (!built.has(storage)) {

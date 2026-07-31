@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Details (ws)"
+description: "The folding sections that show whatever is selected or in focus."
+tags: [architecture, user-interface]
+date: 2026-01-28
+---
+
 # Details Panel Architecture
 
 The details panel shows info about whatever's currently selected or in focus. Collapsible sections, coordinated with UX manager. Also, how how the sections track what to show?

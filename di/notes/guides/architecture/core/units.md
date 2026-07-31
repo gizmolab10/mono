@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Units (di)"
+description: "Every length held in millimetres, then translated into whatever the user wants to read."
+tags: [architecture, data]
+date: 2026-05-10
+---
+
 # Units
 
 The units module is in charge of storing every length the app knows about as a single integer-friendly number — millimetres — and then translating that number into whatever the user wants to read on screen. It also does the reverse: read whatever the user types in and turn it back into millimetres.

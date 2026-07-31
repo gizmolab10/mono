@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Key Paths (di)"
+description: "Every key and modifier, what it does, grouped by the context it is read in."
+tags: [user-interface]
+date: 2026-05-10
+---
+
 # Key Paths
 
 Two columns: which key (with any modifier), and what it does. Grouped by the context the key is interpreted in. Within a context, simpler keys come first.

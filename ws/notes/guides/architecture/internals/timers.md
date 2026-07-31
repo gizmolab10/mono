@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Timers (ws)"
+description: "Mouse timing held by the hits manager, so it survives a redraw."
+tags: [architecture, user-interface]
+date: 2026-01-12
+---
+
 # Timers
 
 Mouse timing logic centralized in Hits manager. Components declare intent ("I need autorepeat"), manager handles lifecycle. State survives re-renders because it lives on the target, not the component.

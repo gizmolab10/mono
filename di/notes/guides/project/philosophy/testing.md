@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Testing (di)"
+description: "Which tests cover which rules, and how each test names the rule it pins."
+tags: [testing]
+date: 2026-06-22
+---
+
 # Testing
 
 Unit tests for pure logic. Vitest runner.

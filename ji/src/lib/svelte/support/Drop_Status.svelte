@@ -41,9 +41,9 @@
 	// starts checked, but keeps whatever it was last set to: turn it off on one question
 	// and it stays off for the next, so a person is never re-asked to opt out. OK is dead
 	// if neither copy is picked.
-	let keep_stored  = $state(false);
 	let keep_dropped = $state(true);
-	let repeat       = $state(true);
+	let keep_stored  = $state(false);
+	let repeat       = $state(false);
 	// The more recent copy shows on top; when the dropped one is newer, it leads.
 	const dropped_newer = $derived($w_drop_question ? ($w_drop_question.dropped.date ?? 0) >= ($w_drop_question.stored.date ?? 0) : true);
 	$effect(() => {

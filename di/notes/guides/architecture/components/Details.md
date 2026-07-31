@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Details (di)"
+description: "The right-side area: four folding sections for preferences, library, parts, and one part."
+tags: [architecture, user-interface]
+date: 2026-05-10
+---
+
 # Details panel — architecture
 
 The right-side panel. Four folding sections, top to bottom: preferences, library, parts, part.

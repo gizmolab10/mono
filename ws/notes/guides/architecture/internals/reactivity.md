@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Reactivity in Svelte 4"
+description: "When Svelte actually tracks a change, and when a component redraws."
+tags: [platform, code-style]
+date: 2026-01-12
+---
+
 # Svelte 4 State Management
 
 How reactivity works in Svelte 4. Not about stores, not about Svelte 5 runes. Just plain old component state.

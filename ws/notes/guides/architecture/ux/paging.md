@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Radial Paging"
+description: "Showing one page at a time when the widgets around the ring do not all fit."
+tags: [architecture, user-interface, geometry]
+date: 2026-01-12
+---
+
 # Radial Paging System Architecture
 
 Three clusters of widgets nestle around the radial ring. Often enough, there's not enough room. So, we show only a page at a time. The user can adjust the page. Lots of ghastly geometry goes into making it feel comfortable.

@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Two Dimensions"
+description: "How flat mode works: the snap, what hides what, and face rotation."
+tags: [architecture, geometry]
+date: 2026-05-10
+---
+
 # Two Dimensions
 
 How 2D mode works: the snap, occlusion, and face rotation.

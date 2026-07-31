@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Gates"
+description: "Which guide must be read before which kind of task."
+tags: [session-start]
+date: 2026-05-10
+---
+
 # Gates
 
 Task-specific checkpoints. BEFORE the task, read the guide.

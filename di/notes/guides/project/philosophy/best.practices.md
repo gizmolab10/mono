@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Best Practices (di)"
+description: "The Svelte patterns di uses, and the rule about which reactive tool to reach for."
+tags: [code-style, platform]
+date: 2026-05-10
+---
+
 # Best Practices
 
 Svelte 5 patterns and choices for the di project, based on research and implementation experience.

@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Always"
+description: "The standing rules that govern every reply, in every project."
+tags: [session-start, collaboration]
+date: 2026-07-29
+---
+
 # Always
 
 > **BE BRIEF — FIRST PASS.** Lead with the answer. Max 3 sentences (or 3 short bullets) unless I explicitly ask you to expand. No preamble, no recap, no options list, no summary of what you just did. Shortest reply that fully answers. This governs every reply.

@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "UX Manager (ws)"
+description: "What is focused, what is grabbed, what is being edited, and what the details show."
+tags: [architecture, user-interface]
+date: 2026-01-12
+---
+
 # UX Manager Architecture
 
 What's focused, what's grabbed, what's being edited, what to show in details. Stores and derived stores. Fast!

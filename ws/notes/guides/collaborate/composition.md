@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Component Composition (ws)"
+description: "Props down, events up, slots for flexible content, compound components for the complicated parts."
+tags: [code-style, platform]
+date: 2026-01-12
+---
+
 # Component Composition in Svelte
 
 Props-down, events-up. Slots for flexible content. Compound components for complex UIs. i wanted to document the pattern and see where we could use it better.

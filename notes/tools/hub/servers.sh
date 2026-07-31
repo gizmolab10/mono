@@ -73,7 +73,7 @@ SITES=(
   "mono-docs|$PORT_MONO_DOCS|.|yarn docs:dev"
   "ga|$PORT_GA|ga|yarn dev"
   "s3|$PORT_S3|s3|yarn dev"
-  "ma|$PORT_LV|lv|yarn dev"
+  "lv|$PORT_LV|lv|yarn dev"
   "ji|$PORT_JI|ji|yarn dev"
   "ma|$PORT_MA|ma|yarn dev"
   "ma-docs|$PORT_MA_DOCS|ma|VITE_PORT=$PORT_MA_DOCS yarn docs:dev"

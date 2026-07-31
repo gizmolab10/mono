@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Architecture Overview (ws)"
+description: "Start here: how the pieces of Webseriously fit together."
+tags: [architecture]
+date: 2026-02-22
+---
+
 # Architecture Overview
 
 Start here. This is how the pieces fit together.

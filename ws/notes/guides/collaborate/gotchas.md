@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Svelte Gotchas (ws)"
+description: "Cryptic Svelte failures and what actually caused each one."
+tags: [platform, debugging]
+date: 2026-01-12
+---
+
 # Lessons about svelte
 
 One day, I edited some code and later, i ran the app. Ack, i get this cryptic error.

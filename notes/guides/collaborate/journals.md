@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Journals"
+description: "The formatting rules for the running journal file."
+tags: [prose, notes]
+date: 2026-05-10
+---
+
 # Journals
 
 Rules for the journal file (`notes/work/journal.md`).

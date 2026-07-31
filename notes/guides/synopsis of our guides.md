@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Synopsis of the Shared Guides"
+description: "A hand-kept rundown of every shared guide, what is thin, and what is missing."
+tags: [notes]
+date: 2026-07-08
+---
+
 # Synopsis of the main guide files
 
 Generic in the sense of "can apply to any development project." These guides are intended to allow hyper fast construction of high quality software.

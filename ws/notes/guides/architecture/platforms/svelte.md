@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Svelte 5 Migration Roadmap"
+description: "The plan for the Svelte 5 upgrade and where it currently stands."
+tags: [platform, migration]
+date: 2026-01-12
+---
+
 # Svelte 5 Migration Roadmap
 
 **Started:** 2026-01-05  

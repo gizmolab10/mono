@@ -25,11 +25,24 @@ type Config = { base: string; key: string; workspace: string };
 // or reading it fails, ji falls back to the stored URL (or localhost).
 let discovered_base: string | null = null;   // the address read from the pointer
 let discovered_for:  string | null = null;   // which pointer link it was read from
+let reading: Promise<void> | null = null;    // a read already on its way — see below
 
+// Two calls that start together would each find nothing remembered and each read the
+// pointer, so the same read went out twice at launch. Now the first read is held here
+// while it runs, and anyone else arriving waits on it instead of starting another.
 async function ensure_base(): Promise<void> {
 	const pointer = preferences.read<string>(T_Preference.ai_pointer)?.trim();
 	if (!pointer) { discovered_base = null; discovered_for = null; return; }
 	if (discovered_base && discovered_for === pointer) { return; }   // already read this pointer
+	if (reading) {
+		debug.log('AnythingLLM: the address is already being read — waiting for that one instead of asking again.');
+		return reading;
+	}
+	reading = read_pointer(pointer).finally(() => { reading = null; });
+	return reading;
+}
+
+async function read_pointer(pointer: string): Promise<void> {
 	try {
 		// A cache-buster, because the pointer host serves the link through a short cache.
 		const url = `${pointer}${pointer.includes('?') ? '&' : '?'}t=${Date.now()}`;
@@ -263,7 +276,7 @@ export const anything_llm = {
 	// answer plus the documents it drew from come back when the stream closes. Returns null
 	// on any failure (logged), so the caller can fall back to the all-at-once ask. "query"
 	// mode keeps the answer grounded in the embedded documents.
-	async ask_stream(question: string, on_word: (word: string) => void): Promise<{ answer: string; sources: string[] } | null> {
+	async ask_stream(question: string, on_word: (word: string) => void): Promise<{ answer: string; sources: string[]; trouble?: string } | null> {
 		await ensure_base();
 		const cfg = config();
 		if (!cfg) { debug.log('AnythingLLM not set up — cannot ask.'); return null; }
@@ -294,6 +307,7 @@ export const anything_llm = {
 		let buffer = '';
 		let answer = '';
 		let pieces = 0;
+		let trouble = '';   // what the model complained about, if it did
 		const seen = new Set<string>();
 		const sources: string[] = [];
 		try {
@@ -310,6 +324,14 @@ export const anything_llm = {
 					if (!payload || payload === '[DONE]') { continue; }
 					let packet: any;
 					try { packet = JSON.parse(payload); } catch { continue; }
+					// A packet can carry a complaint instead of words — the model isn't running,
+					// isn't loaded, refused. It was being thrown away, which is why an ask could
+					// end with nothing said and nothing shown. Keep the first one.
+					const said = String(packet.error ?? '').trim();
+					if (said && !trouble) {
+						trouble = said;
+						debug.log(`AnythingLLM: the model sent a complaint instead of words — "${said}".`);
+					}
 					const piece = String(packet.textResponse ?? '');
 					if (piece) { answer += piece; pieces += 1; on_word(piece); }
 					for (const s of packet.sources ?? []) {
@@ -321,7 +343,12 @@ export const anything_llm = {
 		} catch (e) {
 			debug.log(`AnythingLLM: streaming ask broke mid-answer after ${pieces} piece(s) — ${(e as Error).message}. Keeping what arrived.`);
 		}
-		debug.log(`AnythingLLM: streamed answer to "${question.slice(0, 60)}" — ${pieces} piece(s), ${answer.length} char(s), ${sources.length} source(s).`);
+		debug.log(`AnythingLLM: streamed answer to "${question.slice(0, 60)}" — ${pieces} piece(s), ${answer.length} char(s), ${sources.length} source(s)${trouble ? `, and a complaint: "${trouble}"` : ''}.`);
+		// Nothing said at all is a failure, not an answer: hand back what went wrong so the
+		// asker can show it and keep the question.
+		if (answer.trim() === '') {
+			return { answer: '', sources, trouble: trouble || 'the model sent no words at all' };
+		}
 		return { answer, sources };
 	},
 

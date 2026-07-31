@@ -1,3 +1,11 @@
+---
+kind: procedure
+title: "Running the End-to-End Tests"
+description: "The two things that must already be running before any end-to-end test can pass."
+tags: [testing]
+date: 2026-06-03
+---
+
 # Running the end-to-end tests
 
 The end-to-end test suite is driven by Playwright. It needs two things running before any spec can pass:

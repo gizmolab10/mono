@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Bubble Integration"
+description: "Webseriously runs inside a frame and keeps in step with Bubble by passing messages."
+tags: [architecture, platform]
+date: 2026-01-22
+---
+
 # Bubble Integration Architecture
 
 Bubble plugins are beasts. Webseriously runs in an iframe and uses postMessage to synchronize with bubble. Ugly stuff here, but it works.

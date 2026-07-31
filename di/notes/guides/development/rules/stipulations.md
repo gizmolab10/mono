@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Stipulations"
+description: "The load-bearing rules the app is built on, each one pinned by a test."
+tags: [session-start, testing]
+date: 2026-05-20
+---
+
 # Stipulations
 
 The load-bearing rules the app is built on. Without these written down, work drifts. Anything new should be checked against this list. All entries are guesses pending review.

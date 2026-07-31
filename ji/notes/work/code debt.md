@@ -4,17 +4,19 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] set op to .list -> noticeable transition pause
+- [ ] move the gear in chat to the area below the question-in-flight (ie, where the reply will go)
 - [ ] port Hits.ts from di (not 3D!)
     - [ ] so tooltips & hover work more reliably (leave events often do not happen)
-- [ ] capture the back and forward browser buttons -> navigate back and forth within ji
-- [ ] Anything LLM -> sidebar db
-    - [ ] per workspace and thread
-    - [ ] small
-    - [ ] vulnerable to overwrite
-        - [ ] tiny race window
-        - [ ] read, merge, write
 - [ ] soon
+    - [ ] capture the back and forward browser buttons -> navigate back and forth within ji
+    - [ ] search chat filter
+    - [ ] Anything LLM -> sidebar db
+        - [ ] per workspace and thread
+        - [ ] small
+        - [ ] vulnerable to overwrite
+            - [ ] tiny race window
+            - [ ] read, merge, write
+    - [ ] set op to .list -> noticeable transition pause
     - [ ] work on recent murky tendency
     - [ ] valid samples documents — with real contents
         - [ ] merge full family support -> samples

@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Features (di)"
+description: "The checklist of what di is meant to do, from a drawing to a lumber list."
+tags: [notes, philosophy]
+date: 2026-05-11
+---
+
 # Features
 
 - [ ] assemble a realistic looking drawing of a wood working project

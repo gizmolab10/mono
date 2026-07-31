@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Drag Fixes"
+description: "Three stacked bugs in stretching an edge or corner, and what each fix was."
+tags: [architecture, geometry, debugging]
+date: 2026-05-10
+---
+
 
 ## Edge/corner stretch — done
 

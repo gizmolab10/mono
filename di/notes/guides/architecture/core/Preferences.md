@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Preferences (di)"
+description: "Named values that survive a reload, kept in the browser's own storage."
+tags: [architecture, data]
+date: 2026-05-10
+---
+
 # Preferences
 
 A small wrapper around the browser's local storage. Reads and writes named values that survive across page reloads.

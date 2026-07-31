@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Rendering Types"
+description: "The two shapes a vertex takes once the projection pipeline is done with it."
+tags: [architecture, geometry]
+date: 2026-05-10
+---
+
 # Types
 
 Located in `src/lib/ts/types/Interfaces.ts`. Two interfaces, both simple.

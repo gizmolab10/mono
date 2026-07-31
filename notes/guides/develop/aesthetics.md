@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Aesthetics"
+description: "Visual constants and patterns, arrived at by small perturbations rather than formulas."
+tags: [visual-design]
+date: 2026-05-10
+---
+
 # Aesthetics
 
 Visual design constants and patterns.

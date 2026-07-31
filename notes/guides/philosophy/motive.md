@@ -1,3 +1,11 @@
+---
+kind: philosophy
+title: "Motive"
+description: "Why the work is shaped this way: let structure emerge, keep work files raw, distill guides out of them."
+tags: [philosophy, notes]
+date: 2026-05-10
+---
+
 # Motive
 
 ## The Philosophy Underneath

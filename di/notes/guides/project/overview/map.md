@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Map (di)"
+description: "Every source file in di, grouped by what it belongs to."
+tags: [notes, architecture]
+date: 2026-06-25
+---
+
 # Map — di
 
 ## Config

@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Axes — Rotate and Swap"
+description: "Two ways to reorient a part: rotate it visually, or exchange its axis data."
+tags: [architecture, geometry]
+date: 2026-05-10
+---
+
 # Axes — rotation & swap
 
 Two ways to reorient an SO: rotate (visual, quat-based) and swap (structural, exchanges axis data).

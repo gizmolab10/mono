@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Banned Words (shared)"
+description: "The words that cause friction in any project, each with the word to use instead."
+tags: [prose, session-start]
+date: 2026-07-27
+---
+
 # Substitutions for banned words — every project
 
 These are the \[to be banned\] words that have caused friction, in any project. Use the left column, never the right. Plural, past-tense and gerund forms of the words in the right column are also banned, and should be substituted using the same form.

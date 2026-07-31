@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Hierarchy Spec (ji)"
+description: "What ji's arrangement of documents and tags should become, read against what ws already does."
+tags: [architecture, data]
+date: 2026-07-24
+---
+
 # Hierarchy spec
 
 What ji's tree of documents and tags should become, read against what ws already does. Nothing here is built yet — this is the map before the plan. The shape below is settled; the open questions are narrow.

@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Graph (di)"
+description: "The drawing area: the canvas and everything floating over it."
+tags: [architecture, user-interface]
+date: 2026-05-10
+---
+
 # Graph
 
 The drawing area — the canvas plus everything that floats over it.

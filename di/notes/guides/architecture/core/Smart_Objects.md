@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Smart Objects"
+description: "The data shape of one part: its name, three directions, formulas, repeater settings, and visibility."
+tags: [architecture, data]
+date: 2026-05-10
+---
+
 # Smart Objects
 
 The data shape for one part. Holds the part's name, three directions, formulas, repeater config, visibility, and a back-reference to the scene-tree entry that draws it.

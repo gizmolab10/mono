@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Working with Co"
+description: "Who does what between Jonathan and the collaborator, and what the collaborator must do to stay reliable."
+tags: [collaboration, session-start]
+date: 2026-05-10
+---
+
 # Working with Co
 
 A guide to the division of labor between me and co (Claude). Jonathan's job is hard, complex, always on guard, and damned fast. Jonathan needs co to be reliable and predictable. Co is a guessing algorithm that needs a well-specified context upon which to base these guesses. This will hopefully allow Jonathan to remain "in flow." This is more likely to happen if co avoids crazy suggestions, breaks good code, or misunderstands.

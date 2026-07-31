@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Library (di)"
+description: "Where a saved arrangement is kept, reopened, or dropped inside the current one."
+tags: [architecture, user-interface, data]
+date: 2026-05-10
+---
+
 # Library
 
 The library panel is the place the user goes to start from a saved arrangement, to drop a saved arrangement inside the current one, or to put the current arrangement somewhere they can come back to it.

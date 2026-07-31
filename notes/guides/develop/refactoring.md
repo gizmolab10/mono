@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Refactoring"
+description: "The guardrails for letting the collaborator refactor a temperamental codebase."
+tags: [refactoring]
+date: 2026-05-10
+---
+
 # Refactoring Guide
 
 Code debt. Snarly, ad-hoc, organically fussed with, did i say temperamental? Man crawling across the desert, barely able to say "refactor, need refactor."

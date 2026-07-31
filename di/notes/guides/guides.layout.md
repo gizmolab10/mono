@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Guide Layout (di)"
+description: "A bird's-eye list of every page under the di guides, one line each."
+tags: [notes]
+date: 2026-05-10
+---
+
 # Guide layout
 
 A bird's-eye view of every page under `notes/guides/` with a super-brief description.

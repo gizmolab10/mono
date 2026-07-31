@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Editable Titles (ws)"
+description: "What the editable title component did, captured before it was replaced."
+tags: [architecture, user-interface]
+date: 2026-01-12
+---
+
 # Widget_Title Design Responsibilities
 
 Documented the editable title component before replacing it. Captures what it does (display, selection, inline editing, width measurement, hit detection) and how it coordinates with other systems. Completed replacement work.

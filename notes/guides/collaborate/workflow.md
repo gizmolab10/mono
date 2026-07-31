@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Workflow"
+description: "The turn-taking cadence and the propose-before-acting discipline."
+tags: [collaboration, session-start]
+date: 2026-07-07
+---
+
 # Workflow
 
 See [motive.md](../philosophy/motive.md) for the origin story and philosophy behind this system.

@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "CSS Lessons"
+description: "Styling patterns and gotchas learned from real work; static markup, dynamic appearance."
+tags: [visual-design, code-style]
+date: 2026-05-10
+---
+
 # CSS Lessons
 
 Patterns and gotchas learned from actual work.

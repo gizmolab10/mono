@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Expectations"
+description: "How to get the collaborator's best work and avoid its worst."
+tags: [collaboration]
+date: 2026-05-10
+---
+
 # Expectations
 
 How to engage the co's best and avoid its worst.

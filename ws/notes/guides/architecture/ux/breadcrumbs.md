@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Breadcrumbs (ws)"
+description: "Three parts working together to show either ancestry or browsing history."
+tags: [architecture, user-interface]
+date: 2026-01-12
+---
+
 # Breadcrumbs Design
 
 Breadcrumbs show either ancestry path or navigation history. Three parts work together - selector, next/previous buttons, and the crumb buttons themselves. This doc maps out how they coordinate with UX manager to track history and restore grabs.

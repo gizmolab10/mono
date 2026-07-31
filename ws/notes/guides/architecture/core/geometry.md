@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Geometry (ws)"
+description: "Who does what in layout: the coordinator, the helpers, and what triggers a rebuild."
+tags: [architecture, geometry]
+date: 2026-01-12
+---
+
 # Geometry Manager Design
 
 Quick reference for who does what in layout. Geometry.ts coordinates, the G_* helpers do the actual math. Signals trigger rebuilds, stores trigger reactivity, direct calls when you need control.

@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Intersection Lines"
+description: "Drawing the line where two parts' faces cross each other."
+tags: [architecture, geometry]
+date: 2026-05-10
+---
+
 # Intersection Lines
 
 Where two SOs' faces cross each other, we draw dihedral intersection lines. Lives in `Render.ts`, phase 2c of the render pipeline.

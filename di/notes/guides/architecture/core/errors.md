@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Errors (di)"
+description: "Turning a formula failure into something the user can act on: a red mark and a plain message."
+tags: [architecture, user-interface]
+date: 2026-05-10
+---
+
 # Errors
 
 The errors module is in charge of taking a parser failure or a runtime constraint failure and turning it into something the user can act on: a red span under the bad portion of the formula, a plain-English message, and one or more buttons that propose a fix.

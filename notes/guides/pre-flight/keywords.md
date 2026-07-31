@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Keywords"
+description: "The words in a request that require reading a guide before acting."
+tags: [session-start]
+date: 2026-05-10
+---
+
 # Keywords
 
 Words in input that trigger reading a guide before acting.

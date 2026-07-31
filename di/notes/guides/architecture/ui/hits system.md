@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Hits System (di)"
+description: "One spatial index decides which single element the mouse is talking to."
+tags: [architecture, user-interface]
+date: 2026-05-20
+---
+
 # Hits System Design
 
 Only one element in the app can react to the mouse. The **Hits** spatial index knows which one. It's the **single source of truth** for hover and click dispatch. Consistent behavior everywhere.

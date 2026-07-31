@@ -26,6 +26,22 @@
 
 	let applied_initial = false;   // has the saved show/hide-all choice been applied yet?
 
+	// The name of the model AnythingLLM asked for and could not find, once one ask has hit
+	// it. Kept so the note stays up: no ask can work until that model is installed.
+	let missing_model = $state<string | null>(null);
+
+	// Turn the model's own complaint into something to act on. The one seen so far is a
+	// model that isn't installed, which every ask will hit until it is.
+	function say_trouble(trouble: string): string {
+		const missing = /model ['"]?([^'"]+?)['"]? not found/i.exec(trouble);
+		if (missing) {
+			missing_model = missing[1];
+			debug.log(`Chat: AnythingLLM asked for the model "${missing[1]}" and it is not installed — every ask fails until it is.`);
+			return `AnythingLLM is set to use the model "${missing[1]}", and that model is not installed. Install it where AnythingLLM looks for its models, or choose one you already have in its workspace settings.`;
+		}
+		return `The model answered with nothing — ${trouble}`;
+	}
+
 	// Read the saved conversation back, newest first. Runs on mount (so a refresh resumes)
 	// and again after each new question.
 	async function load() {
@@ -60,7 +76,10 @@
 	async function ask() {
 		const q = question.trim();
 		if (!q || asking) { return; }
-		asking = true; error = null;
+		// Both notes are cleared before asking: the standing one about a model that wasn't
+		// installed must not outlive the installing. If it is still missing, this ask says so
+		// again.
+		asking = true; error = null; missing_model = null;
 		pending = { question: q, reply: '' };
 		question = '';
 		debug.log(`Chat: asking "${q}" (streaming).`);
@@ -70,8 +89,17 @@
 		asking = false;
 		pending = null;
 		if (!result) {
+			question = q;   // hand the question back, so it isn't lost with the failure
 			error = "Couldn't reach the model — is AnythingLLM set up and its model running?";
 			debug.log('Chat: streaming ask failed — model unreachable.');
+			return;
+		}
+		// It answered, but with nothing. That is a failure, not an empty reply: say what the
+		// model complained about and give the question back rather than quietly dropping both.
+		if (result.trouble) {
+			question = q;
+			error = say_trouble(result.trouble);
+			debug.log(`Chat: the ask ended with no words — ${result.trouble}. The question is back in the box.`);
 			return;
 		}
 		await load();   // the finished exchange is now stored — refresh to show it with its sources
@@ -159,6 +187,10 @@
 
 		{#if error}
 			<div class='chat-error'>{error}</div>
+		{:else if missing_model}
+			<!-- Stays up once a missing model is known: no ask can work until it is installed,
+			     so the note outlives the one failure that found it. -->
+			<div class='chat-error'>the model "{missing_model}" is not installed — no question can be answered until it is</div>
 		{/if}
 
 		{#if exchanges.length > 0}

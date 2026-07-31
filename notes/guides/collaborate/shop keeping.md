@@ -1,3 +1,11 @@
+---
+kind: procedure
+title: "Shop Keeping"
+description: "Keeping the note files in a shape that still guides the next session."
+tags: [notes]
+date: 2026-07-07
+---
+
 # Shop keeping
 
 The project's notes are infrastructure. They guide every session that comes after the one that wrote them. When a session ends with notes in the wrong shape — content in the wrong file, old gaps marked as gaps that have already been closed, completed work cluttering the active-work area — the next session starts at a disadvantage. Shop keeping is the work of fixing that shape so the notes keep guiding well.

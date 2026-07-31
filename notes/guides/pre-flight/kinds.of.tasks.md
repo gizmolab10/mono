@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Kinds of Tasks"
+description: "Task types, the guides each one needs, and the conflicts between those guides."
+tags: [session-start]
+date: 2026-06-19
+---
+
  # Kinds of Tasks
 
 Task types and which guides to read before starting. Collaborator will declare one or more of these, assess and state conflicts and update the column below.

@@ -1,3 +1,11 @@
+---
+kind: procedure
+title: "Bubble Plugin How-To"
+description: "Debugging, adding a state, and publishing a new version of the Bubble plugin."
+tags: [platform, deploy]
+date: 2026-01-22
+---
+
 # Bubble Plugin Guide
 
 How-to's for working with the Bubble plugin. For architecture details, see [bubble.md](./bubble.md).

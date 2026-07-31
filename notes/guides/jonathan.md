@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "How Jonathan Guides"
+description: "The phrases Jonathan uses to steer a debugging session and what each one is asking for."
+tags: [collaboration, debugging]
+date: 2026-05-10
+---
+
 # How Jonathan Guides
 
 Patterns from debugging intersection line occlusion (Feb 2025).

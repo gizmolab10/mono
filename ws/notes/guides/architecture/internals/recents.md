@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Recents (ws)"
+description: "A fresh start on remembering the places recently visited."
+tags: [architecture, data]
+date: 2026-01-22
+---
+
 # Recents
 
 recents is broken. let's start over

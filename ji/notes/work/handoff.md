@@ -8,11 +8,11 @@ The work is done and written up. It ended on how I write, not on code.
 
 1. **Code, all green.** Two new families (spreadsheet, book) with all eighteen table endings and four book endings; pdf and web page folded into text; every kind of file now tested with a real file of that kind. 112 tests pass, and svelte-check reports no errors and no warnings. Design and what's owed: [full family support](proposals/full%20family%20support.md).
 2. **Nothing owed in the browser.** No visual confirmation is pending; the last change you looked at was the folds, which you passed.
-3. **Written this session:** [sample files](proposals/sample%20files.md) (what a fair test file holds per kind, and where one might come from), ji's [lexicon](../guides/pre-flight/lexicon.md), and [sparsity](sparsity.md) — my replies had gone murky, and that file holds the causes, what got written, and what is still owed.
+3. **Written this session:** [sample files](proposals/sample%20files.md) (what a fair test file holds per kind, and where one might come from), ji's [lexicon](../guides/pre-flight/lexicon.md), and [sparse replies](sparse%20replies.md) — my replies had gone murky, and that file holds the causes, what got written, and what is still owed.
 
 ## Next — pick one
 
-1. **Finish the writing standard** — three items in [sparsity](sparsity.md): one file for the whole standard, the "name it, don't rename it" rule, and merging two shorthands that ask the same thing. Also in there: the two layers of guides (mono and project), and how to make both arrive every turn.
+1. **Finish the writing standard** — three items in [sparse replies](sparse%20replies.md): one file for the whole standard, the "name it, don't rename it" rule, and merging two shorthands that ask the same thing. Also in there: the two layers of guides (mono and project), and how to make both arrive every turn.
 2. **Or the next code item** — first unchecked in [code debt](code%20debt.md): the sample files become real documents. Not worth building until extracting words exists; the research for it is already written.
 
 ## Context

@@ -1,3 +1,11 @@
+---
+kind: reference
+title: "Adherence Log"
+description: "The hand-written companion to the dashboard, holding what the extractor cannot read on its own."
+tags: [notes, testing]
+date: 2026-05-19
+---
+
 # Adherence log
 
 Hand-recorded sibling to the [adherence dashboard](adherence%20dashboard.md). Each entry is one line. Entries are never edited after they are written. New entries go at the bottom of the relevant section.

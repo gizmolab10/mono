@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "State (ws)"
+description: "State objects that outlive a component rebuild, paired with stores for reactivity."
+tags: [architecture, data]
+date: 2026-01-28
+---
+
 # State Management Architecture
 
 Each state object is a single source of truth. Webseriously uses a hybrid approach: **state objects** (S_* classes) for persistent, object-oriented state that survives component recreation, plus **Svelte stores** (w_* writables) for reactivity. Both are organized by manager domain. Webseriously is a tightly integrated reactive system of considerable complexity, requiring this specialized (non-standard) approach.

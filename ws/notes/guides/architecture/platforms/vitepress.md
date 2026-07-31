@@ -1,3 +1,11 @@
+---
+kind: procedure
+title: "VitePress (ws)"
+description: "Installing, configuring, and running the documentation site."
+tags: [platform, build]
+date: 2026-01-12
+---
+
 # VitePress
 
 i asked the AI to write instructions for installing, configuring and running vitepress in a way that i could understand it and it could read it and do it.

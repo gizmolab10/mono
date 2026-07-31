@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Buttons (ws)"
+description: "The button components that grew ad-hoc, gathered up for a sanity check."
+tags: [architecture, user-interface]
+date: 2026-01-12
+---
+
 # Button Components Analysis
 
 These just cropped up, ad-hoc, at the beginning of the project. Might give it a sanity check.

@@ -1,3 +1,11 @@
+---
+kind: rule
+title: "Pitfalls"
+description: "Edge cases that have caused mistakes, mostly failures to read before acting."
+tags: [session-start, debugging]
+date: 2026-05-10
+---
+
 # Pitfalls
 
 Edge cases and nuances that cause mistakes.
