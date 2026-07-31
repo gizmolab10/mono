@@ -7,6 +7,9 @@ export default defineConfig({
   server: {
     port: ports.ov.port,
     strictPort: true,
+    // Overview reads the guide files, which live outside its own folder — one level up,
+    // in each project's notes. Without this the dev server refuses to serve them.
+    fs: { allow: ['..'] },
     hmr: {
       protocol: 'ws',
       host: 'localhost',

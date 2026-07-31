@@ -1,10 +1,13 @@
 <script lang='ts'>
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
 	import { colors } from '../../ts/utilities/Colors';
 	import { c } from '../../ts/common/Configuration';
 	import { k } from '../../ts/common/Constants';
+	import Content from '../content/Content.svelte';
 	import Details from '../details/Details.svelte';
 	import ToolTip from '../support/ToolTip.svelte';
+	import Controls from './Controls.svelte';
 	import { debug } from '../../ts/common/Debug';
 
 	const { w_background_color, w_accent_color, w_hover_color, w_text_color } = colors;
@@ -36,34 +39,53 @@
 		height = window.innerHeight;
 	}
 
+	// Whether details shows at all is the hamburger's doing, and it is remembered across visits.
+	const w_show_details = preferences.persistent<boolean>(T_Preference.show_details, true);
+
 	// Is there room for both the details column (its fixed width) and the content region
 	// beside it (its own smallest useful width), with the two outer margins and the one
 	// between? Measured from the real window width, so it tracks resize and browser zoom.
 	let room_for_both = $derived(width - gap * 3 >= k.width.details + k.width.content);
 	// Too narrow for both: the content region is dropped and details fill the width.
-	let details_width = $derived(room_for_both ? k.width.details - gap * 2 : width - gap * 2);
-	let content_width = $derived(width - details_width - gap * 3);
+	let details_only = $derived($w_show_details && !room_for_both);
+	let details_width = $derived(details_only ? width - gap * 2 : k.width.details - gap * 2);
+	// With details hidden, content has the whole width to itself.
+	let content_width = $derived($w_show_details ? width - details_width - gap * 3 : width - gap * 2);
 
-	// Say it only when the both-or-details-only switch flips, with the numbers behind it.
+	function toggle_details() {
+		const next = !$w_show_details;
+		w_show_details.set(next);
+		debug.log(`Hamburger clicked: details are now ${next ? 'showing' : 'hidden'}.`);
+	}
+
+	// Say it only when the showing-both / details-only / details-hidden picture changes,
+	// with the numbers behind it.
 	let said_last = '';
 	$effect(() => {
-		const line = `both fit: ${room_for_both}`;
+		const line = `showing details: ${$w_show_details}, both fit: ${room_for_both}`;
 		if (line === said_last) { return; }
 		said_last = line;
 		const needed = k.width.details + k.width.content + gap * 3;
-		debug.log(`Layout: the window is ${width} wide and ${Math.round(needed)} is needed for both (details column ${k.width.details} + content ${k.width.content} + three gaps of ${Math.round(gap)}) — ${room_for_both
-			? `showing both, details ${Math.round(details_width)} wide and content ${Math.round(content_width)} wide.`
-			: `too narrow, so the content region is hidden and details fill ${Math.round(details_width)}.`}`);
+		debug.log(`Layout: the window is ${width} wide and ${Math.round(needed)} is needed for both (details column ${k.width.details} + content ${k.width.content} + three gaps of ${Math.round(gap)}) — ${!$w_show_details
+			? `details are hidden, so content has the whole ${Math.round(content_width)}.`
+			: details_only
+				? `too narrow, so the content region is hidden and details fill ${Math.round(details_width)}.`
+				: `showing both, details ${Math.round(details_width)} wide and content ${Math.round(content_width)} wide.`}`);
 	});
 </script>
 
 <svelte:window onresize={handleResize} />
 
 <div class='frame' style:width='{width}px' style:height='{height}px'>
-	<Details width={details_width} />
-	{#if room_for_both}
-		<div class='region content' style:width='{content_width}px'></div>
-	{/if}
+	<Controls onclick={toggle_details} detailsShown={$w_show_details} />
+	<div class='boxes'>
+		{#if $w_show_details}
+			<Details width={details_width} />
+		{/if}
+		{#if !details_only}
+			<Content width={content_width} />
+		{/if}
+	</div>
 </div>
 
 <!-- The one hover hint for the whole app; each element opts in by carrying its own words. -->
@@ -71,26 +93,25 @@
 
 <style>
 	.frame {
-		background : var(--accent);
-		padding    : var(--gap);
+		background     : var(--accent);
+		padding        : var(--gap);
+		gap            : var(--gap);
+		flex-direction : column;
+		box-sizing     : border-box;
+		position       : fixed;
+		display        : flex;
+		overflow       : hidden;
+		top            : 0;
+		left           : 0;
+	}
+
+	/* The two side-by-side boxes, below the controls row. */
+	.boxes {
 		gap        : var(--gap);
-		box-sizing : border-box;
-		position   : fixed;
-		display    : flex;
 		overflow   : hidden;
-		top        : 0;
-		left       : 0;
-	}
-
-	.region {
-		border-radius : var(--radius);
-		position      : relative;
-		overflow      : hidden;
-	}
-
-	.content {
-		background  : var(--bg);
-		flex-shrink : 0;
+		display    : flex;
+		min-height : 0;
+		flex       : 1;
 	}
 
 	:global(:root) {

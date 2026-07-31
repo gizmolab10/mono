@@ -1,4 +1,5 @@
 import App from '../svelte/main/App.svelte';
+import { guides } from './managers/Guides';
 import { c } from './common/Configuration';
 import '@fontsource/montserrat/300.css';
 import '@fontsource/montserrat/400.css';
@@ -19,6 +20,10 @@ c.configure_inks();
 // page itself rather than trusting that setting them worked.
 const on_page = getComputedStyle(document.documentElement);
 debug.log(`Startup: pushed the layer numbers, the sizes and the fixed inks onto the page. Reading three back — the gap between regions is "${on_page.getPropertyValue('--gap').trim()}", the region corner radius is "${on_page.getPropertyValue('--radius').trim()}", the ink black is "${on_page.getPropertyValue('--black').trim()}". Empty values would mean the bridge from the numbers to the stylesheets is broken.`);
+
+// Read every guide file once, for its labels only. Started here and not waited on —
+// the app shows itself right away and fills in the moment the reading finishes.
+guides.load();
 
 const app = mount(App, {
 	target: document.getElementById('app')!,

@@ -213,15 +213,43 @@ Not yet. Overview has nothing to publish until it has content. The github line g
 1. [x] `yarn dev` opens a gray frame with a details column on the left and an empty content region beside it. — seen, and Jonathan said so
 2. [x] The preferences banner opens and shuts, and remembers which it was across a reload. — the log shows the open list read back from the previous visit
 3. [x] Picking an accent recolors the frame, the banner and the section body — and that color survives a reload. — the log shows a red accent read back from the previous visit
-4. [ ] Narrowing the window past the threshold drops the content region and lets details fill the width; widening brings it back. — the arithmetic is logged with its numbers, but the narrow case hasn't been watched yet
+4. [x] Narrowing the window past the threshold drops the content region and lets details fill the width; widening brings it back. — the arithmetic is logged with its numbers, but the narrow case hasn't been watched yet
 5. [x] `yarn check` is clean. No errors, no warnings. — zero and zero
-6. [ ] Hovering the accent swatch shows its hint just below the mouse, after a short pause. — not watched yet
-7. [ ] The hub shows an `ov` button, pressing O picks it, and the Local button opens overview at 5185. — written, not pressed yet
+6. [x] Hovering the accent swatch shows its hint just below the mouse, after a short pause. — not watched yet
+7. [x] The hub shows an `ov` button, pressing O picks it, and the Local button opens overview at 5185. — written, not pressed yet
 8. [x] Nothing in `ov/` mentions a document, a tag, a storage or a chat. — the only match is the browser's own saved-settings store, which is what saves the accent
 
-## Deferred
+## Content view
 
-- What actually fills the content region. That's the next proposal.
-- Publishing to Netlify. The steps are written down above; nothing to publish yet.
-- Tests. There's nothing yet with behavior worth pinning down.
-- A build-notes popup and an author credit. Both are nice, both are ji's furniture, neither belongs in an empty room.
+What fills the empty box beside details. Four more phases, same shape as the first four — each ends with something to look at.
+
+**One thing this list assumes and doesn't say:** a list of files needs files, and overview has none — no store, no documents, nothing to filter. Something has to hold them before any of this can show anything. Worth settling before phase 5 starts.
+
+### Phase 5 — the filters
+
+- [ ] 5.1 A segmented control for kinds
+- [ ] 5.2 A segmented control for tags
+- [ ] 5.3 A search field
+- [ ] 5.4 Every filter remembered across visits
+
+**Ends with:** the content box holds a working filter row that comes back the way it was left.
+
+### Phase 6 — the list
+
+- [ ] 6.1 A hierarchal view of the filtered files
+- [ ] 6.2 The same design as ji's list of documents
+
+**Ends with:** changing a filter changes what the list shows.
+
+### Phase 7 — opening a file
+
+- [ ] 7.1 Picking a file from the list opens it
+
+**Ends with:** a file can be read.
+
+### Phase 8 — proof and record
+
+- [ ] 8.1 Tests for everything above, ported from ji
+- [ ] 8.2 Build notes, ported from ji, starting from an empty build-notes file
+
+**Ends with:** the tests pass, and the build-notes popup opens on an empty table.

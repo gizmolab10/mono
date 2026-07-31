@@ -35,7 +35,7 @@
 	// the corner radius, the fixed width of the details region, the smallest
 	// window we allow, and the window width below which details wraps full-width.
 	const gap   = k.gap.default;
-	const inset = k.gap.tight;   // the outer margin at the window's four edges — tight, so the app hugs the window
+	const inset = k.gap.default;   // the margin at the window's four edges — the same number the frame is actually drawn with, so what we measure and what we draw agree
 
 	let width = $state(Math.max(k.width.window, window.innerWidth));
 	let height = $state(window.innerHeight);

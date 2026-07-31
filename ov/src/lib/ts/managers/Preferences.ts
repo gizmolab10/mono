@@ -18,10 +18,16 @@ import { debug } from '../common/Debug';
 export enum T_Preference {
 	// Layout
 	details_open    = 'details_open',
+	show_details    = 'show_details',
 
 	// Colors
 	color_accent    = 'color_accent',
 	color_text      = 'color_text',
+
+	// Filters on the guide list
+	filter_kind     = 'filter_kind',
+	filter_tags     = 'filter_tags',
+	filter_text     = 'filter_text',
 }
 
 // Every saved name of ours starts with this.
