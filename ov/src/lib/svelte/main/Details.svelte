@@ -2,9 +2,9 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import type { Writable } from 'svelte/store';
 	import { T_Details } from '../../ts/types/Details';
-	import D_Preferences from './D_Preferences.svelte';
+	import D_Preferences from '../content/D_Preferences.svelte';
 	import { debug } from '../../ts/common/Debug';
-	import Hideable from './Hideable.svelte';
+	import Hideable from '../support/Hideable.svelte';
 
 	// The collapsible details column. The frame computes its width. Which sections are
 	// open is remembered as one saved list of their names — all shut saves an empty

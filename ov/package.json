@@ -9,8 +9,8 @@
     "dev": "vite"
   },
   "dependencies": {
-    "@fontsource/montserrat": "^5.2.8",
-    "color2k": "^2.0.3"
+    "color2k": "^2.0.3",
+    "markdown-it": "^14.1.1"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.0",

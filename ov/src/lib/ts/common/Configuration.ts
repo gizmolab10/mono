@@ -50,6 +50,7 @@ class Configuration {
 		root.setProperty('--font-large',         `${k.font.large}px`);
 		root.setProperty('--font-hero',          `${k.font.em.big}em`);
 		root.setProperty('--font-drop',          `${k.font.em.small}em`);
+		root.setProperty('--font-launch',       `${k.font.em.launch}em`);
 		root.setProperty('--fw-normal',          `${k.font.weight.normal}`);
 		root.setProperty('--fw-banner',          `${k.font.weight.banner}`);
 		root.setProperty('--fw-title',           `${k.font.weight.title}`);

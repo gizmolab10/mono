@@ -1,13 +1,14 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { guides } from '../../ts/managers/Guides';
+	import Guides_List from './Guides_List.svelte';
 	import Separator from '../support/Separator.svelte';
+	import Filters from '../support/Filters.svelte';
+	import { guides } from '../../ts/managers/Guides';
 	import { debug } from '../../ts/common/Debug';
-	import Filters from './Filters.svelte';
+	import { k } from '../../ts/common/Constants';
 
-	// The content box: the three filters across the top, and — for now — a count of what
-	// they leave. The list of the surviving files arrives in the next phase.
-	let { width }: { width: number } = $props();
+	// Looking through the guides: the three filters across the top, how many they leave,
+	// and the list itself.
 
 	// All three filters are remembered across visits.
 	const w_kind  = preferences.persistent<string>(T_Preference.filter_kind, '');
@@ -30,34 +31,20 @@
 	});
 </script>
 
-<div class='region content' style:width='{width}px'>
-	<Filters {w_kind} {w_tags} {w_words} />
-	<Separator />
-	<div class='count'>
-		{#if $w_ready}
-			{matching.length} of {total} guides
-		{:else}
-			reading the guides…
-		{/if}
-	</div>
+<Filters {w_kind} {w_tags} {w_words} />
+<Separator thickness={k.separator.huge}/>
+<div class='count'>
+	{matching.length} guides (of {total})
 </div>
+<Guides_List {w_kind} {w_tags} {w_words} />
 
 <style>
-	.content {
-		border-radius  : var(--radius);
-		background     : var(--bg);
-		padding        : var(--gap);
-		flex-direction : column;
-		box-sizing     : border-box;
-		position       : relative;
-		overflow       : auto;
-		display        : flex;
-		gap            : var(--gap);
-		flex-shrink    : 0;
-	}
-
+	/* Pulled 2px closer to the dividers above and below, so the row takes less height
+	   without anything overlapping. */
 	.count {
-		font-size : var(--font-label);
-		opacity   : var(--opacity-header);
+		opacity    : var(--opacity-header);
+		font-size  : var(--font-label);
+		text-align : center;
+		margin     : -2px 0;
 	}
 </style>

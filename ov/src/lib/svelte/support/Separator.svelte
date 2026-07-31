@@ -8,7 +8,7 @@
 
 	let {
 		radius    = k.radius.corner.banner,
-		thickness = k.separator.normal,
+		thickness = k.separator.big,
 		reach     = 'var(--gap)',
 		onclick   = undefined,
 		vertical  = false,
@@ -138,8 +138,19 @@
 		border     : 0.5px solid var(--darkgray);
 	}
 
+	/* A clear strip of the page color running along both sides of the line, one --gap
+	   thick, the same length as the line itself. It carries past the box's inner edge
+	   with the line, so the line and its flares sit in their own clean channel instead
+	   of touching whatever they run through. */
+	.horizontal {
+		border-top    : var(--gap-small) solid var(--bg);
+		border-bottom : var(--gap-small) solid var(--bg);
+	}
+
 	.vertical {
-		align-self : stretch;
+		border-left   : var(--gap-small) solid var(--bg);
+		border-right  : var(--gap-small) solid var(--bg);
+		align-self    : stretch;
 	}
 
 	.vertical.spacer {

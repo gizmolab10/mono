@@ -3,9 +3,10 @@
 	import { k } from '../../ts/common/Constants';
 	import { tip } from '../../ts/utilities/Tooltip';
 
-	// The controls row: always visible, full width, sitting on the accent. For now it
-	// holds one thing — the hamburger at its left, which shows or hides details.
-	let { onclick, detailsShown }: { onclick: () => void; detailsShown: boolean } = $props();
+	// The controls row: always visible, full width, sitting on the accent. The hamburger
+	// at its left shows or hides details; the build number at its right opens the notes.
+	let { onclick, detailsShown, buildNumber, onBuildOpen }:
+		{ onclick: () => void; detailsShown: boolean; buildNumber: number; onBuildOpen: () => void } = $props();
 
 	const size = k.size.hamburger;
 	const hamburgerPath = svg_paths.hamburger(size);
@@ -17,6 +18,10 @@
 			<path d={hamburgerPath} />
 		</svg>
 	</button>
+	<button class='build-button' onclick={onBuildOpen} use:tip={'show build notes'}>
+		build {buildNumber}
+	</button>
+	<span class='spacer'></span>
 </div>
 
 <style>
@@ -51,5 +56,26 @@
 
 	.hamburger-button:hover .hamburger-icon path {
 		fill : var(--hover);
+	}
+
+	/* Takes up whatever is left, so the two buttons stay together at the left. */
+	.spacer {
+		flex : 1;
+	}
+
+	.build-button {
+		border        : var(--thickness-normal) solid var(--black);
+		height        : var(--height-control);
+		padding       : var(--pad-control);
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-base);
+		background    : var(--white);
+		color         : var(--gray);
+		box-sizing    : border-box;
+		cursor        : pointer;
+	}
+
+	.build-button:hover {
+		background : var(--hover);
 	}
 </style>

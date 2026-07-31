@@ -125,3 +125,20 @@ Once every file is labeled, a specific issue starts as a tag, not as a guess abo
 ## Success
 
 Every one of the 134 files carries a valid label block. No file covers two concepts, except the always file, whose rules carry their own tags. Asking for "everything tagged testing" returns the right set by reading the labels alone.
+
+## ov — the map page, made live
+
+The map page above is the part of this that can't be hand-written without going stale. So it isn't a page — it's an app. `ov`, short for overview, is a small web app whose whole job is to be the picture of these four collections. Its proposal is [ov](./ov.md); the summary is here because this is the plan it serves.
+
+It reaches outside its own folder on purpose: the guides are the thing it shows. What travels with it is only their addresses. At launch it reads each file once, keeps the five labels off the top, and lets the rest go — so the picture cannot drift from the files, because it *is* the files, read fresh every time.
+
+On screen: a details column on the left with the accent color picker, and beside it the guides. Across the top of that, the three ways in — one kind at a time, any number of tags, and words looked for in the titles and descriptions. Below, the files themselves, folders leading their contents, each folder opening and shutting and remembering which it was.
+
+Both of this proposal's goals fall out of that:
+
+- **The big picture** — every file and folder in one list, and a count on each folder saying how many of the files under it match what's asked for.
+- **A specific issue** — pick a tag, and every file about it appears whichever collection it sits in, its folders pulled back on screen around it.
+
+What it found on its first run, which is the check on this whole plan: 165 files across four collections, 31 of them index files (left out, since the folders do that job now), leaving 134 — every one carrying a full label block, none missing. All five kinds turn up. All 22 tags turn up, across 241 placements.
+
+That last count is the argument for closing the tag list: overview shows the tags as a row of pills, and a list that drifts into synonyms becomes a row nobody can read.

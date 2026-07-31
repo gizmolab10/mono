@@ -2,13 +2,16 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
 	import { colors } from '../../ts/utilities/Colors';
+	import { w_app, S_App } from '../../ts/types/App';
 	import { c } from '../../ts/common/Configuration';
-	import { k } from '../../ts/common/Constants';
-	import Content from '../content/Content.svelte';
-	import Details from '../details/Details.svelte';
 	import ToolTip from '../support/ToolTip.svelte';
-	import Controls from './Controls.svelte';
+	import buildsRaw from '../../md/builds.md?raw';
 	import { debug } from '../../ts/common/Debug';
+	import { k } from '../../ts/common/Constants';
+	import BuildNotes from './BuildNotes.svelte';
+	import Operation from './Operation.svelte';
+	import Controls from './Controls.svelte';
+	import Details from './Details.svelte';
 
 	const { w_background_color, w_accent_color, w_hover_color, w_text_color } = colors;
 
@@ -38,6 +41,13 @@
 		width  = Math.max(k.width.window, window.innerWidth);
 		height = window.innerHeight;
 	}
+
+	// The latest build number, read from the build-notes table.
+	const buildNumber = Math.max(...buildsRaw.split('\n')
+		.filter((line) => /^\|\s*\d+/.test(line))
+		.map((line) => parseInt(line.split('|')[1].trim())));
+
+	let showBuildNotes = $state(false);
 
 	// Whether details shows at all is the hamburger's doing, and it is remembered across visits.
 	const w_show_details = preferences.persistent<boolean>(T_Preference.show_details, true);
@@ -76,14 +86,29 @@
 
 <svelte:window onresize={handleResize} />
 
+{#if $w_app === S_App.launch}
+	<div class='launch'>setting up the guides browser...</div>
+{:else}
+
+{#if showBuildNotes}
+	<div
+		class='build-backdrop'
+		role='button'
+		tabindex='-1'
+		onkeyup={() => {}}
+		onclick={() => showBuildNotes = false}>
+		<BuildNotes onclose={() => showBuildNotes = false} />
+	</div>
+{/if}
+
 <div class='frame' style:width='{width}px' style:height='{height}px'>
-	<Controls onclick={toggle_details} detailsShown={$w_show_details} />
+	<Controls onclick={toggle_details} detailsShown={$w_show_details} {buildNumber} onBuildOpen={() => { showBuildNotes = true; debug.log(`Build notes: opened, showing build ${buildNumber}.`); }} />
 	<div class='boxes'>
 		{#if $w_show_details}
 			<Details width={details_width} />
 		{/if}
 		{#if !details_only}
-			<Content width={content_width} />
+			<Operation width={content_width} />
 		{/if}
 	</div>
 </div>
@@ -91,7 +116,23 @@
 <!-- The one hover hint for the whole app; each element opts in by carrying its own words. -->
 <ToolTip message={$w_tip.message} mouseX={$w_tip.x} mouseY={$w_tip.y} appearance={$w_tip.appearance} />
 
+{/if}
+
 <style>
+	/* While the guides are being read: nothing but these words, centered both ways. */
+	.launch {
+		font-size       : var(--font-launch);
+		color           : var(--text);
+		padding         : var(--gap);
+		box-sizing      : border-box;
+		justify-content : center;
+		align-items     : center;
+		position        : fixed;
+		text-align      : center;
+		display         : flex;
+		inset           : 0;
+	}
+
 	.frame {
 		background     : var(--accent);
 		padding        : var(--gap);
@@ -105,6 +146,17 @@
 		left           : 0;
 	}
 
+	/* The build notes sit over everything, on the accent, and a click anywhere shuts them. */
+	.build-backdrop {
+		background      : var(--accent);
+		z-index         : calc(var(--z-frontmost) + 2);
+		justify-content : center;
+		align-items     : center;
+		position        : fixed;
+		display         : flex;
+		inset           : 0;
+	}
+
 	/* The two side-by-side boxes, below the controls row. */
 	.boxes {
 		gap        : var(--gap);
@@ -115,7 +167,7 @@
 	}
 
 	:global(:root) {
-		--font: 'Montserrat', system-ui, sans-serif;
+		--font: system-ui, sans-serif;
 	}
 
 	:global(body) {

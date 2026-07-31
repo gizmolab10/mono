@@ -3,8 +3,8 @@
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { databases } from '../../ts/database/Databases';
 	import { T_Storage } from '../../ts/types/DB_Records';
-	import { k } from '../../ts/common/Constants';
 	import { tip } from '../../ts/utilities/Tooltip';
+	import { k } from '../../ts/common/Constants';
 	import { debug } from '../../ts/common/Debug';
 
 	const w_storage = databases.w_storage;

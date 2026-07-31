@@ -17,7 +17,7 @@ import { debug } from '../common/Debug';
 // the build reads them literally and cannot follow a name. Asking for the address
 // rather than the text is what keeps the files themselves out of the app.
 const addresses: Record<T_Bundle, Record<string, string>> = {
-	[T_Bundle.shared]: import.meta.glob('../../../../../notes/guides/**/*.md',    { query: '?url', import: 'default', eager: true }),
+	[T_Bundle.mono]:   import.meta.glob('../../../../../notes/guides/**/*.md',    { query: '?url', import: 'default', eager: true }),
 	[T_Bundle.di]:     import.meta.glob('../../../../../di/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
 	[T_Bundle.ws]:     import.meta.glob('../../../../../ws/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
 	[T_Bundle.ji]:     import.meta.glob('../../../../../ji/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
@@ -90,7 +90,7 @@ class Guides {
 	 */
 	async load(): Promise<void> {
 		const marker = '/notes/guides/';
-		let read = 0, failed = 0, unlabeled = 0, bytes = 0;
+		let read = 0, failed = 0, unlabeled = 0, bytes = 0, skipped = 0;
 
 		for (const bundle of Object.values(T_Bundle)) {
 			const top = this.hierarchy.folder_at(bundle, '', bundle);
@@ -99,6 +99,11 @@ class Guides {
 				const path = at < 0 ? whole_path : whole_path.slice(at + marker.length);
 				const parts = path.split('/');
 				const name = parts[parts.length - 1].replace(/\.md$/, '');
+
+				// An index file only lists what sits beside it — the folders here do that job,
+				// so it would say nothing the list doesn't already show. Left out entirely, not
+				// merely hidden, so the counts never include one.
+				if (name === 'index') { skipped += 1; continue; }
 
 				// Walk down the folders in the path, making each the first time it's met.
 				let parent = top;
@@ -137,7 +142,7 @@ class Guides {
 		}
 
 		this.hierarchy.reindex();
-		this.say_what_was_found(read, failed, unlabeled, bytes);
+		this.say_what_was_found(read, failed, unlabeled, bytes, skipped);
 		this.w_ready.set(true);
 	}
 
@@ -178,12 +183,12 @@ class Guides {
 	}
 
 	/** Say what the reading turned up, with the counts behind every claim. */
-	private say_what_was_found(read: number, failed: number, unlabeled: number, bytes: number): void {
+	private say_what_was_found(read: number, failed: number, unlabeled: number, bytes: number, skipped: number): void {
 		const per_bundle = Object.values(T_Bundle)
 			.map((bundle) => `${bundle} ${this.files.filter((g) => g.bundle === bundle).length}`)
 			.join(', ');
 		const folders = this.hierarchy.guides.filter((g) => g.is_folder).length;
-		debug.log(`Guides read: ${read} files (${per_bundle}), ${failed} could not be read, hung under ${folders} folders. ${unlabeled} carry no labels at all. Kinds found: ${this.kinds_present().join(', ') || 'none'}. Tags found: ${this.tags_present().length} of the ${ALL_TAGS.length} on the closed list, across ${this.hierarchy.taggings.length} tag placements. ${bytes} characters of text passed through and none of it was kept.`);
+		debug.log(`Guides read: ${read} files (${per_bundle}), ${skipped} index files left out, ${failed} could not be read, hung under ${folders} folders. ${unlabeled} carry no labels at all. Kinds found: ${this.kinds_present().join(', ') || 'none'}. Tags found: ${this.tags_present().length} of the ${ALL_TAGS.length} on the closed list, across ${this.hierarchy.taggings.length} tag placements. ${bytes} characters of text passed through and none of it was kept.`);
 	}
 
 }

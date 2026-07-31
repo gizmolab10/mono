@@ -1,12 +1,9 @@
 import App from '../svelte/main/App.svelte';
+import { w_app, S_App } from './types/App';
 import { guides } from './managers/Guides';
 import { c } from './common/Configuration';
-import '@fontsource/montserrat/300.css';
-import '@fontsource/montserrat/400.css';
-import '@fontsource/montserrat/500.css';
 import { debug } from './common/Debug';
 import { mount } from 'svelte';
-import './utilities/Fonts';
 import '../main.css';
 
 // Mirror the static values (stacking layers, sizes, and the fixed ink colors)
@@ -21,9 +18,13 @@ c.configure_inks();
 const on_page = getComputedStyle(document.documentElement);
 debug.log(`Startup: pushed the layer numbers, the sizes and the fixed inks onto the page. Reading three back — the gap between regions is "${on_page.getPropertyValue('--gap').trim()}", the region corner radius is "${on_page.getPropertyValue('--radius').trim()}", the ink black is "${on_page.getPropertyValue('--black').trim()}". Empty values would mean the bridge from the numbers to the stylesheets is broken.`);
 
-// Read every guide file once, for its labels only. Started here and not waited on —
-// the app shows itself right away and fills in the moment the reading finishes.
-guides.load();
+// Read every guide file once, for its labels only. Nothing but the setting-up words
+// shows until this finishes, so no part of the app ever draws itself against a
+// structure that isn't there yet.
+guides.load().then(() => {
+	w_app.set(S_App.ready);
+	debug.log(`Startup: the guides are read and the app is showing itself.`);
+});
 
 const app = mount(App, {
 	target: document.getElementById('app')!,

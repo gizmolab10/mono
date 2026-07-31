@@ -28,6 +28,12 @@ export enum T_Preference {
 	filter_kind     = 'filter_kind',
 	filter_tags     = 'filter_tags',
 	filter_text     = 'filter_text',
+
+	// The guide list itself
+	folders_shut    = 'folders_shut',
+	scroll_files_to = 'scroll_files_to',
+	view_guide      = 'view_guide',
+	current_op      = 'current_op',
 }
 
 // Every saved name of ours starts with this.

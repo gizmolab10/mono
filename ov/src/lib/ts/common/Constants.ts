@@ -20,6 +20,7 @@ export default class Constants {
 		em           : {
 			tracking : 0.03,			// em — the banner letter-spacing
 			small	 : 1.4,
+			launch	 : 2,				// the setting-up words, shown before anything else
 			big		 : 8,
 		},
 		weight       : {
@@ -86,7 +87,8 @@ export default class Constants {
 
 	separator = {
 		normal : common_separator,
-		fat    : common_separator * 2,
+		big    : common_separator * 1.5,
+		huge   : common_separator * 3,
 	};
 
 	height = {

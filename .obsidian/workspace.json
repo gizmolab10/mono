@@ -8,6 +8,20 @@
         "type": "tabs",
         "children": [
           {
+            "id": "125ebc5befb23845",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ov/notes/work/code debt.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "code debt"
+            }
+          },
+          {
             "id": "e216bb712ce3f9d7",
             "type": "leaf",
             "state": {
@@ -19,62 +33,6 @@
               },
               "icon": "lucide-file",
               "title": "ov"
-            }
-          },
-          {
-            "id": "33146bbc3fc5fca9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ji/notes/work/proposals/OKF.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "OKF"
-            }
-          },
-          {
-            "id": "05ce144a002adabd",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/guides/synopsis of our guides.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "synopsis of our guides"
-            }
-          },
-          {
-            "id": "3e1ddbde653729de",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ji/notes/work/handoff.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "handoff"
-            }
-          },
-          {
-            "id": "cda470ea7a48dc42",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ji/src/lib/md/manual/index.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "index"
             }
           }
         ]
@@ -134,8 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 354.5026054382324,
-    "collapsed": true
+    "width": 354.5026054382324
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -213,13 +170,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/work/proposals/ov.md",
+                "file": "ov/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of ov"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -251,44 +208,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e216bb712ce3f9d7",
+  "active": "125ebc5befb23845",
   "lastOpenFiles": [
-    "ov/src/lib/svelte/support/Separator.svelte",
+    "ws/node_modules/vite/node_modules",
+    "node_modules/sveld/node_modules/rollup-plugin-svelte/node_modules",
+    "node_modules/source-map-explorer/node_modules/open/node_modules",
+    "ji/node_modules/svelte-check/node_modules",
+    "node_modules/fancy-log/node_modules",
+    "node_modules/autoprefixer/node_modules",
+    "node_modules/@sveltejs/vite-plugin-svelte/node_modules/svelte/node_modules",
+    "node_modules/@babel/template/node_modules",
+    "node_modules/@babel/generator/node_modules",
+    "ov/dist/assets/index-CIdwiRNv.js",
+    "ov/dist/assets/index-C2DDEm8Q.css",
+    "ov/dist/assets/Controls-Cdk-S9tG.md",
+    "ov/dist/assets/3D.primer-CCdmSrYH.md",
+    "ov/dist/assets/Hits_3D-BDzA-q20.md",
+    "ov/dist/assets/Details-RzHNKNLy.md",
+    "ov/dist/assets/aesthetics-BravjmBg.md",
+    "ji/notes/work/proposals/ov.md",
+    "ji/src/lib/md/manual/index.md",
+    "ji/notes/work/handoff.md",
+    "notes/guides/synopsis of our guides.md",
+    "ji/notes/work/proposals/OKF.md",
+    "ov/notes/work/code debt.md",
+    "ov/dist/assets/algebra-M-QT8y5M.md",
+    "ov/src/lib/md/builds.md",
+    "ji/notes/work/code debt.md",
+    "ov/notes/code debt.md",
     "ov/dist/assets/debugging-Cm24N4DE.md",
     "ov/dist/assets/svelte.5-DMOHAOSq.md",
-    "ov/dist/assets/index-BvZyzfWY.js",
     "ov/dist/assets/hierarchy spec-bPXoGLIt.md",
     "ov/dist/assets/breadcrumbs-CDedEpEY.md",
-    "ov/dist/assets/index-IxbSVvOe.css",
     "ov/dist/assets/gotchas-DhsnoxdX.md",
     "ov/dist/assets/search-C58qkdkG.md",
     "ov/dist/assets/vitepress-DxAdCTQ9.md",
     "ov/dist/assets/db spec-CP0KCGZ1.md",
     "ov/dist/assets/manually install AnythingLLM-DDZCVXOT.md",
     "ov/dist/assets/roadmap-LnBm4G1O.md",
-    "ov/dist/assets/map-_8DUDF7b.md",
-    "ov/dist/assets/composition-C8WXibjV.md",
-    "ov/dist/assets/preferences-B2ZCofXX.md",
-    "ov/dist/assets/details-CifWGH5b.md",
-    "ov/dist/assets/paging-D84Q39v7.md",
-    "ov/dist/assets/controls-DG7cwVGo.md",
-    "ov/dist/assets/components-xYkaZdl_.md",
-    "ov/dist/assets/buttons-Dc37cuU2.md",
-    "ov/dist/assets/versions-xE3yx2ml.md",
-    "ov/dist/assets/svelte-D4K1worr.md",
-    "ov/dist/assets/bubble-BL9zaJHE.md",
-    "ov/dist/assets/databases-D1Pmv7dO.md",
-    "ov/dist/assets/editors-CiZMV6CY.md",
-    "ov/dist/assets/reactivity-ZLngt4ds.md",
-    "ov/dist/assets/styles-DmcXg8Qx.md",
-    "ov/src/lib/ts/managers/Hierarchy.ts",
-    "ov/src/lib/ts/database/Indexes.ts",
-    "ov/src/lib/ts/database",
-    "ov/src/lib/ts/types/DB_Records.ts",
-    "ov/dist/assets/index-CIaOiq67.js",
-    "ov/dist/assets/montserrat-cyrillic-300-normal-BVP0yxL_.woff",
-    "ov/dist/assets/montserrat-cyrillic-300-normal-DyQnI4ta.woff2",
-    "ov/src/lib/svelte/content/Content.svelte",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import Separator from '../support/Separator.svelte';
 	import { guides } from '../../ts/managers/Guides';
+	import Separator from './Separator.svelte';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import type { Writable } from 'svelte/store';
 
@@ -43,7 +43,7 @@
 		{/each}
 	</div>
 
-	<Separator />
+	<Separator title='choose kinds from above'/>
 
 	<div class='tags'>
 		<button class='tag' class:current={$w_tags.length === 0} onclick={clear_tags} use:tip={'stop filtering by tag'}>any tag</button>
@@ -52,11 +52,13 @@
 		{/each}
 	</div>
 
-	<Separator />
+	<Separator title='choose tags from above'/>
 
+	<!-- Its type is "search", so the browser draws its own clear cross at the right end
+	     once there is text — the same as ji's file search. -->
 	<input
 		class='search'
-		type='text'
+		type='search'
 		placeholder='search titles and descriptions'
 		bind:value={$w_words}
 		use:tip={'type a word to look for'} />

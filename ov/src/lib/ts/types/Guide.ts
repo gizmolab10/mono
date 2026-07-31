@@ -19,12 +19,13 @@ export const ALL_TAGS: string[] = [
 	'architecture', 'data', 'geometry', 'user-interface', 'platform', 'research',
 ];
 
-// The four collections the guides live in.
+// The four collections the guides live in, each named for the folder that holds it.
+// The shared guides sit at the top of the repo, so their root is the repo's own folder.
 export enum T_Bundle {
-	shared = 'shared',
-	di     = 'di',
-	ws     = 'ws',
-	ji     = 'ji',
+	mono = 'mono',
+	di   = 'di',
+	ws   = 'ws',
+	ji   = 'ji',
 }
 
 // The labels off a file's top. A folder carries none of them.
