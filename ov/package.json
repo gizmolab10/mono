@@ -1,0 +1,23 @@
+{
+  "name": "ov",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "preview": "vite preview",
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@fontsource/montserrat": "^5.2.8",
+    "color2k": "^2.0.3"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "@tsconfig/svelte": "^5.0.0",
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.0.0",
+    "typescript": "^5.3.3",
+    "vite": "^6.0.0"
+  }
+}

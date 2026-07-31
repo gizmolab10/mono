@@ -66,6 +66,10 @@
     "deploy": "https://app.netlify.com/projects/jeff-intersection/deploys",
     "repo": "https://github.com/gizmolab10/mono/tree/main/ji"
   },
+  "ov": {
+    "port": 5185,
+    "repo": "https://github.com/gizmolab10/mono/tree/main/ov"
+  },
   "me": {
     "public": "https://jonathansand.me",
     "repo": "https://github.com/gizmolab10/jonathansand-me"

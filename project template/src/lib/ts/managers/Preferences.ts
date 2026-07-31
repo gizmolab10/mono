@@ -1,0 +1,80 @@
+import type { Writable } from 'svelte/store';
+import { writable } from 'svelte/store';
+import { debug } from '../common/Debug';
+
+/**
+ * Preferences — what the browser remembers between visits.
+ *
+ * A thin wrapper around the browser's own saved-settings store. Every name is
+ * spelled the same way: the app's own "ov_" start, then the parts of the name
+ * joined by underscores, plainest part first ("show_details", not "showDetails").
+ * Each name below is the word it is saved under, so the code and the browser's
+ * saved settings always match.
+ *
+ * ji carries a pile of renaming and sweeping code because it has years of saved
+ * names to bring forward. Overview has none, so none of that is here.
+ */
+
+export enum T_Preference {
+	// Layout
+	details_open    = 'details_open',
+
+	// Colors
+	color_accent    = 'color_accent',
+	color_text      = 'color_text',
+}
+
+// Every saved name of ours starts with this.
+const STORAGE_PREFIX = 'ov_';
+
+class Preferences {
+
+	/** Read one saved setting. Nothing saved (or unreadable) reads as nothing. */
+	read<T>(key: T_Preference): T | null {
+		try {
+			const raw = localStorage.getItem(STORAGE_PREFIX + key);
+			if (raw == null || raw == 'undefined') { return null; }
+			return JSON.parse(raw) as T;
+		} catch {
+			return null;
+		}
+	}
+
+	/** Save one setting. */
+	write<T>(key: T_Preference, value: T): void {
+		try {
+			localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+		} catch (e) {
+			console.warn(`Could not save the "${key}" setting:`, e);
+		}
+	}
+
+	/** Forget one setting. */
+	remove(key: T_Preference): void {
+		localStorage.removeItem(STORAGE_PREFIX + key);
+	}
+
+	/** Forget every setting this app saves. */
+	clear(): void {
+		for (const key of Object.values(T_Preference)) {
+			this.remove(key);
+		}
+	}
+
+	/**
+	 * A value that remembers itself: starts at whatever was saved (or the fallback
+	 * when nothing was), and saves again on every change.
+	 */
+	persistent<T>(key: T_Preference, fallback: T): Writable<T> {
+		const saved = this.read<T>(key);
+		debug.log(`Setting "${key}": ${saved === null
+			? `nothing was saved, so it starts at the fallback ${JSON.stringify(fallback)}.`
+			: `read back ${JSON.stringify(saved)} from the last visit.`}`);
+		const w = writable<T>(saved ?? fallback);
+		w.subscribe((v) => this.write(key, v));
+		return w;
+	}
+
+}
+
+export const preferences = new Preferences();

@@ -14,43 +14,57 @@ In build order, in four phases. Each phase ends with something i can look at, so
 
 ### Phase 1 — the empty room
 
-- [ ] 1.1 New `ov/` folder beside ji
-- [ ] 1.2 The five root files: the page, the settings file, the typescript settings, the svelte settings, the vite settings
-- [ ] 1.3 Its own project instructions file and an empty `notes/work/` folder
-- [ ] 1.4 Dependencies: svelte, vite, typescript, the svelte vite plugin and tsconfig, svelte-check, color2k, Montserrat — nothing else
-- [ ] 1.5 Scripts: `dev`, `build`, `preview`, `check`
-- [ ] 1.6 A new entry in the shared ports file: 5185, plus the address of the `ov` folder on github. The vite settings read the port from there.
+- [x] 1.1 New `ov/` folder beside ji
+- [x] 1.2 The five root files: the page, the settings file, the typescript settings, the svelte settings, the vite settings
+- [x] 1.3 Its own project instructions file and a `notes/work/` folder
+- [x] 1.4 Dependencies: svelte, vite, typescript, the svelte vite plugin and tsconfig, svelte-check, color2k, Montserrat — nothing else
+- [x] 1.5 Scripts: `dev`, `build`, `preview`, `check`
+- [x] 1.6 A new entry in the shared ports file: 5185, plus the address of the `ov` folder on github. The vite settings read the port from there.
+- [x] 1.7 `ov` added to the list of folders the top-level settings file treats as its own — without it, nothing installs.
+- [x] 1.8 A list of files not worth keeping, matching ji's
+- [x] 1.9 The one-line file that tells the type checker about vite's own extras, matching ji's
 
-**Ends with:** `yarn dev` serves a blank page on 5185 without complaining.
+**Ends with:** `yarn build` succeeds, which proves the vite settings load and the port entry resolves.
+
+**Left for phase 2:** the page carries no line pointing at the launch file yet. That line arrives with the launch file itself, so the page can never point at something that isn't there.
 
 ### Phase 2 — the bones
 
-- [ ] 2.1 Bring the numbers across, all three unchanged — `Constants.ts`, `Configuration.ts`, `main.css`
-- [ ] 2.2 Bring the support across, unchanged — `Colors.ts`, `Dirty.ts`, `Fonts.ts`, `Tooltip.ts`, and `main.ts`
-- [ ] 2.3 Bring `Debug.ts` across, with its log file named `ov`
-- [ ] 2.4 Trim `Preferences.ts` — read, write, remove, clear, and the remembering-store maker. Marker `ov_`. Nothing else.
-- [ ] 2.5 Trim the section-names file — one entry, `preferences`
+- [x] 2.1 Bring the numbers across — `Constants.ts` and `Configuration.ts` unchanged; `main.css` keeps its layer classes unchanged, but its catalogue of names was rewritten to match what is really pushed (ji's listed three names nothing pushes, and several belonging to screens overview doesn't have)
+- [x] 2.2 Bring the support across, unchanged — `Colors.ts`, `Dirty.ts`, `Fonts.ts`, `Tooltip.ts`
+- [x] 2.3 Bring `Debug.ts` across, with its log file named `ov`
+- [x] 2.4 Trim `Preferences.ts` — read, write, remove, clear, and the remembering-store maker. Marker `ov_`. Nothing else. It says in the log, for each setting, whether it read back a saved value or fell back.
+- [x] 2.5 Trim the section-names file — one entry, `preferences`
+- [x] 2.6 Point the page at the launch file
+- [x] 2.7 `main.ts` pushes the layers, sizes and inks, then reads three of them back off the page and says so in the log. No mounting yet — that line arrives with the app frame at 3.1.
 
-**Ends with:** the page is still blank, but every color and size is already on it. The browser's inspector proves the bridge works before a single component exists.
+**Ends with:** the page is still blank, but every size and fixed ink is already on it. `yarn build` and the type check both come back clean, and the log line proves the bridge works before a single component exists.
 
 ### Phase 3 — the room takes shape
 
-- [ ] 3.1 The app frame: the column on the left, content on the right, and the fits-or-doesn't math
-- [ ] 3.2 Its logging — the window width, the width both columns need, and which way the switch went
-- [ ] 3.3 The details column and its one section
-- [ ] 3.4 The collapsible banner
-- [ ] 3.5 The accent picker, and the hint on its swatch
-- [ ] 3.6 The hint drawer, mounted once for the whole app
-- [ ] 3.7 `yarn check` — every error and every warning fixed, none left for later
+- [x] 3.1 The app frame: the column on the left, content on the right, and the fits-or-doesn't math. It also mounts the app from the launch file.
+- [x] 3.2 Its logging — the window width, the width both columns need, and which way the switch went
+- [x] 3.3 The details column and its one section
+- [x] 3.4 The collapsible banner
+- [x] 3.5 The accent picker, and the hint on its swatch. It says in the log what color was picked, how bright it measured, and whether it was lifted for being too dark.
+- [x] 3.6 The hint drawer, mounted once for the whole app
+- [x] 3.7 `yarn check` — clean, zero errors and zero warnings
 
 **Ends with:** the app in the drawing above, working. Pick a color, it recolors and remembers.
 
+Two small departures, both to keep overview honest rather than faithful:
+
+- **There is no show-or-hide switch for details.** ji has a button for it; overview has nothing to press it with, so the column is simply always there. The narrow-window rule still applies — content drops out, details fill the width.
+- **One number, not two.** ji's arithmetic uses a tight outer margin while its stylesheet pads by the ordinary gap, so the drawing and the arithmetic disagree by a few pixels. Overview uses the ordinary gap for both.
+
+The smallest useful width for the region beside details is named `content` in overview's numbers, where ji calls it `operations` — overview has no operations.
+
 ### Phase 4 — joining the family
 
-- [ ] 4.1 The hub button beside ji, labeled `ov`, with the letter **O**
-- [ ] 4.2 The keystroke, and overview added to both of the hub's project lists
-- [ ] 4.3 The start-servers script: read overview's port, one line saying it runs `yarn dev` in the `ov` folder, and `ov` added to the names the script accepts
-- [ ] 4.4 Walk the success checks — all eight of them, below, one at a time
+- [x] 4.1 The hub button beside ji, labeled `ov`, with the letter **O**
+- [x] 4.2 The keystroke, and overview added to both of the hub's project lists
+- [x] 4.3 The start-servers script: read overview's port, one line saying it runs `yarn dev` in the `ov` folder, and `ov` added to the names the script accepts
+- [x] 4.4 Walk the success checks — five of the eight confirmed, three still want a pair of eyes (see below)
 
 **Ends with:** overview is a button i can press, like every other project.
 
@@ -115,6 +129,7 @@ Everything else, and it's most of ji: the whole `database/` folder, every manage
 New folder `ov/` beside ji, same shape:
 
     ov/
+        .gitignore
         index.html
         package.json
         tsconfig.json
@@ -195,14 +210,14 @@ Not yet. Overview has nothing to publish until it has content. The github line g
 
 ## How i'll know it worked
 
-1. `yarn dev` opens a gray frame with a details column on the left and an empty content region beside it.
-2. The preferences banner opens and shuts, and remembers which it was across a reload.
-3. Picking an accent recolors the frame, the banner and the section body — and that color survives a reload.
-4. Narrowing the window past the threshold drops the content region and lets details fill the width; widening brings it back.
-5. `yarn check` is clean. No errors, no warnings.
-6. Hovering the accent swatch shows its hint just below the mouse, after a short pause.
-7. The hub shows an `ov` button, pressing O picks it, and the Local button opens overview at 5185.
-8. Nothing in `ov/` mentions a document, a tag, a storage or a chat.
+1. [x] `yarn dev` opens a gray frame with a details column on the left and an empty content region beside it. — seen, and Jonathan said so
+2. [x] The preferences banner opens and shuts, and remembers which it was across a reload. — the log shows the open list read back from the previous visit
+3. [x] Picking an accent recolors the frame, the banner and the section body — and that color survives a reload. — the log shows a red accent read back from the previous visit
+4. [ ] Narrowing the window past the threshold drops the content region and lets details fill the width; widening brings it back. — the arithmetic is logged with its numbers, but the narrow case hasn't been watched yet
+5. [x] `yarn check` is clean. No errors, no warnings. — zero and zero
+6. [ ] Hovering the accent swatch shows its hint just below the mouse, after a short pause. — not watched yet
+7. [ ] The hub shows an `ov` button, pressing O picks it, and the Local button opens overview at 5185. — written, not pressed yet
+8. [x] Nothing in `ov/` mentions a document, a tag, a storage or a chat. — the only match is the browser's own saved-settings store, which is what saves the accent
 
 ## Deferred
 

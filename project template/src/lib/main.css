@@ -1,0 +1,75 @@
+/* Global stylesheet.
+
+   Stacking layers. The z numbers live once in Constants; a startup step pushes
+   them onto the page as CSS variables (see Configuration.configure_layers), and
+   these classes read them. Put an element on a layer by adding its class — the
+   number stays in one place. */
+
+.layer-common {
+   z-index: var(--z-common);
+}
+
+.layer-hideable {
+   z-index: var(--z-hideable);
+}
+
+.layer-controls {
+   z-index: var(--z-controls);
+}
+
+.layer-default {
+   z-index: var(--z-frontmost);
+}
+
+/* Everything below is a catalogue, not code — what a component style can read,
+   and where each name comes from.
+
+   Layout sizes, pushed from Constants at startup (Configuration.configure_metrics):
+     --gap                       the gap between regions, and the frame's own inset
+     --gap-fat / --gap-huge / --gap-small / --gap-tight / --gap-details
+                                 the other gaps, in the same family
+     --radius                    the region corner radius
+     --radius-banner             the small (banner / button) corner radius
+     --radius-build              the card corner radius
+     --radius-pill               the pill corner radius
+     --radius-percent            the circle radius (50%)
+     --height-banner             the details banner height
+     --height-hideable           the collapsible banner button height
+     --height-control            the control-pill height
+     --size-button               the square button size
+     --size-cross                the close-button size
+     --size-svg                  the shared drawn-cross size
+     --font-credit / --font-label / --font-base / --font-banner / --font-large /
+       --font-huge               the pixel font sizes
+     --font-hero / --font-drop   the relative (em) font sizes
+     --fw-normal                 the base font weight (body + controls)
+     --fw-banner                 one step heavier — the collapsible banner
+     --fw-title                  two steps heavier — a popup title
+     --tracking                  the banner letter-spacing (em)
+     --inset-cluster             the corner offset for a cluster of controls
+     --inset-pill-top / --inset-pill-left          a pill's position
+     --inset-popup-edge / --inset-popup-side       a popup's corner controls
+     --inset-credit-bottom / --inset-credit-left   the bottom-left corner
+     --thickness-normal          the standard 1px border width
+     --thickness-faint           the hairline stroke width
+     --thickness-fat             the heavy border width
+     --pad-hamburger / --pad-control / --pad-modal / --pad-stepper /
+       --pad-view / --pad-cell   ready-to-use padding shorthands
+     --margin-header             a header's bottom margin
+     --notes-build / --notes-date  table column widths
+     --shadow-modal              a popup drop shadow (offset/blur + a mix of --black)
+     --opacity-drop / --opacity-header / --opacity-label   the dimming levels
+
+   Ink colors, fixed, pushed from Colors (Configuration.configure_inks):
+     --black  #1a1a1a (never #000)   --white   --offwhite
+     --gray   --darkgray   --lightgray
+
+   Theme colors, re-pushed whenever the accent changes (App.svelte's effect,
+   and Colors itself):
+     --accent        the picked color
+     --bg            the page color, derived from the accent
+     --hover         a lighter accent, for hover
+     --text          readable text on --bg
+     --text-on-accent  readable text on the accent itself
+     --accent-dark   a darker, more vivid accent
+     --mild-accent   30% of the way from the page color to the accent */
